@@ -130,7 +130,7 @@ class ItemActions {
                         «IF ownerPermission && standardFields»
                             $uid = «IF app.isLegacy»UserUtil::getVar('uid')«ELSE»$currentUserApi->get('uid')«ENDIF»;
                             // only allow editing for the owner or people with higher permissions
-                            if («IF app.isLegacy»$this«ELSE»$entity«ENDIF»->getCreatedUserId() == $uid || «IF app.isLegacy»SecurityUtil::check«ELSE»$permissionApi->has«ENDIF»Permission($component, $instance, ACCESS_ADD)) {
+                            if («IF app.isLegacy»$this->getCreatedUserId()«ELSE»$entity->getCreatedUserId()->getUid()«ENDIF» == $uid || «IF app.isLegacy»SecurityUtil::check«ELSE»$permissionApi->has«ENDIF»Permission($component, $instance, ACCESS_ADD)) {
                                 «itemActionsForEditAction(controller)»
                             }
                         «ELSE»
@@ -201,7 +201,7 @@ class ItemActions {
               * ACCESS_ADMIN for admin controllers else: «IF relatedEntity.workflow == EntityWorkflowType::NONE»EDIT«ELSE»COMMENT«ENDIF»
               */»
             $uid = «IF app.isLegacy»UserUtil::getVar('uid')«ELSE»$currentUserApi->get('uid')«ENDIF»;
-            if ($authAdmin || (isset($uid) && «IF app.isLegacy»$this«ELSE»$entity«ENDIF»->getCreatedUserId() != '' && «IF app.isLegacy»$this«ELSE»$entity«ENDIF»->getCreatedUserId() == $uid)) {
+            if ($authAdmin || (isset($uid) && «IF app.isLegacy»$this->getCreatedUserId()«ELSE»$entity->getCreatedUserId()->getUid()«ENDIF» != '' && «IF app.isLegacy»$this->getCreatedUserId()«ELSE»$entity->getCreatedUserId()->getUid()«ENDIF» == $uid)) {
                 «FOR elem : refedElems»
 
                     «val useTarget = (elem.source == it)»

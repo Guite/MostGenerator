@@ -114,13 +114,13 @@ class StandardFields {
         {% if obj.createdUserId|default %}
             <dt>{{ __('Creation') }}</dt>
             {% set profileLink = obj.createdUserId.getUid()|profileLinkByUserId() %}
-            <dd class="avatar">{{ «appName.toLowerCase»_userAvatar(uid=obj.createdUserId.id, rating='g') }}</dd>
+            <dd class="avatar">{{ «appName.toLowerCase»_userAvatar(uid=obj.createdUserId.getUid(), rating='g') }}</dd>
             <dd>{{ __f('Created by %user on %date', {'%user': profileLink, '%date': obj.createdDate|localizeddate('medium', 'short')})|raw }}</dd>
         {% endif %}
         {% if obj.updatedUserId|default %}
             <dt>{{ __('Last update') }}</dt>
             {% set profileLink = obj.updatedUserId.getUid()|profileLinkByUserId() %}
-            <dd class="avatar">{{ «appName.toLowerCase»_userAvatar(uid=obj.updatedUserId.id, rating='g') }}</dd>
+            <dd class="avatar">{{ «appName.toLowerCase»_userAvatar(uid=obj.updatedUserId.getUid(), rating='g') }}</dd>
             <dd>{{ __f('Updated by %user on %date', {'%user': profileLink, '%date': obj.updatedDate|localizeddate('medium', 'short')})|raw }}</dd>
         {% endif %}
         </dl>

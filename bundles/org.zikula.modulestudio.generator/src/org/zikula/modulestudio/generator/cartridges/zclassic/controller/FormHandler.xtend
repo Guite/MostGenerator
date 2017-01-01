@@ -1397,7 +1397,7 @@ class FormHandler {
             «ELSE»
                 $uid = $this->container->get('zikula_users_module.current_user')->get('uid');
             «ENDIF»
-            if (isset($entity['createdUserId']) && $entity['createdUserId'] != $uid) {
+            if (isset($entity['createdUserId']) && $entity['createdUserId']«IF !app.isLegacy»->getUid()«ENDIF» != $uid) {
                 «IF !app.isLegacy»
                     $permissionApi = $this->container->get('zikula_permissions_module.api.permission');
                 «ENDIF»
