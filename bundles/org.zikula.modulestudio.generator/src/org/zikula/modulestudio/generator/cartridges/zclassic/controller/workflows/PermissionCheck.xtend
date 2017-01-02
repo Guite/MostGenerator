@@ -84,7 +84,7 @@ class PermissionCheck {
         {
             «IF !app.getAllEntities.filter[hasArchive && null !== getEndDateField].empty»
                 // every user is allowed to perform automatic archiving 
-                if (true === «IF !app.targets('1.3.x')»\«ENDIF»PageUtil::getVar('«app.appName»AutomaticArchiving', false)) {
+                if (true === \PageUtil::getVar('«app.appName»AutomaticArchiving', false)) {
                     return true;
                 }
             «ENDIF»
@@ -104,7 +104,7 @@ class PermissionCheck {
                 // check whether the current user is the owner
                 if (!$result && isset($obj['createdUserId']) && $obj['createdUserId'] == $currentUser) {
                     // allow author update operations for all states which occur before 'approved' in the object's life cycle.
-                    $result = in_array($actionId, «IF app.targets('1.3.x')»array(«ELSE»[«ENDIF»'initial'«IF app.hasWorkflowState(wfType, 'deferred')», 'deferred'«ENDIF»«IF wfType != EntityWorkflowType.NONE», 'waiting'«ENDIF», 'accepted'«IF app.targets('1.3.x')»)«ELSE»]«ENDIF»);
+                    $result = in_array($actionId, ['initial'«IF app.hasWorkflowState(wfType, 'deferred')», 'deferred'«ENDIF»«IF wfType != EntityWorkflowType.NONE», 'waiting'«ENDIF», 'accepted']);
                 }
             «ENDIF»
 
@@ -119,11 +119,9 @@ class PermissionCheck {
         function «app.appName»_workflow_«wfType.textualName»_gettextstrings()
         {
             «val wfDefinition = new Definition»
-            «IF !app.targets('1.3.x')»
-                $serviceManager = \ServiceUtil::getManager();
-                $translator = $serviceManager->get('translator.default');
-            «ENDIF»
-            return «IF app.targets('1.3.x')»array(«ELSE»[«ENDIF»
+            $serviceManager = \ServiceUtil::getManager();
+            $translator = $serviceManager->get('translator.default');
+            return [
                 'title' => «app.gettextCall»('«wfType.textualName.formatForDisplayCapital» workflow («wfType.approvalType.formatForDisplay» approval)'),
                 'description' => «app.gettextCall»('«wfDefinition.workflowDescription(wfType)»'),
 
@@ -131,17 +129,17 @@ class PermissionCheck {
                 «gettextStates(lastState)»
 
                 «gettextActionsPerState(lastState)»
-            «IF app.targets('1.3.x')»)«ELSE»]«ENDIF»;
+            ];
         }
     '''
 
     def private gettextStates(ListFieldItem lastState) '''
         // state titles
-        'states' => «IF app.targets('1.3.x')»array(«ELSE»[«ENDIF»
+        'states' => [
             «FOR state : states»
                 «gettextState(state)»«IF state != lastState»,«ENDIF»
             «ENDFOR»
-        «IF app.targets('1.3.x')»)«ELSE»]«ENDIF»,
+        ],
     '''
 
     def private gettextState(ListFieldItem it) '''
@@ -149,18 +147,18 @@ class PermissionCheck {
 
     def private gettextActionsPerState(ListFieldItem lastState) '''
         // action titles and descriptions for each state
-        'actions' => «IF app.targets('1.3.x')»array(«ELSE»[«ENDIF»
+        'actions' => [
             «FOR state : states»
                 «gettextActionsForState(state)»«IF state != lastState»,«ENDIF»
             «ENDFOR»
-        «IF app.targets('1.3.x')»)«ELSE»]«ENDIF»
+        ]
     '''
 
     def private gettextActionsForState(ListFieldItem it) '''
-        '«value»' => «IF app.targets('1.3.x')»array(«ELSE»[«ENDIF»
+        '«value»' => [
             «actionsForStateImpl»
             «actionsForDestructionImpl»
-        «IF app.targets('1.3.x')»)«ELSE»]«ENDIF»
+        ]
     '''
 
     def private actionsForStateImpl(ListFieldItem it) {
@@ -302,5 +300,5 @@ class PermissionCheck {
         «app.gettextCall»('«title»') => «app.gettextCall»('«getWorkflowActionDescription(wfType, title)»')«IF title != 'Delete'»,«ENDIF»
     '''
 
-    def private gettextCall(Application it) '''«IF targets('1.3.x')»no«ELSE»$translator->__«ENDIF»'''
+    def private gettextCall(Application it) '''$translator->__'''
 }

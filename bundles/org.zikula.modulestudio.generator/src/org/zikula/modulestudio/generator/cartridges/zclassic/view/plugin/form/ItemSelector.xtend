@@ -4,7 +4,6 @@ import de.guite.modulestudio.metamodel.Application
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
-import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
@@ -13,7 +12,6 @@ import org.zikula.modulestudio.generator.extensions.Utils
 class ItemSelector {
 
     extension FormattingExtensions = new FormattingExtensions()
-    extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions()
     extension ModelExtensions = new ModelExtensions()
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions()
     extension NamingExtensions = new NamingExtensions()
@@ -31,22 +29,19 @@ class ItemSelector {
     }
 
     def private itemSelectorBaseImpl(Application it) '''
-        «IF !targets('1.3.x')»
-            namespace «appNamespace»\Form\Plugin\Base;
+        namespace «appNamespace»\Form\Plugin\Base;
 
-            use FormUtil;
-            «IF hasCategorisableEntities»use ModUtil;«ENDIF»
-            use PageUtil;
-            use ServiceUtil;
-            use Zikula_Form_Plugin_TextInput;
-            use Zikula_Form_View;
-            use Zikula_View;
+        use FormUtil;
+        use PageUtil;
+        use ServiceUtil;
+        use Zikula_Form_Plugin_TextInput;
+        use Zikula_Form_View;
+        use Zikula_View;
 
-        «ENDIF»
         /**
          * Item selector plugin base class.
          */
-        class «IF targets('1.3.x')»«appName»_Form_Plugin_Base_«ENDIF»AbstractItemSelector extends Zikula_Form_Plugin_TextInput
+        class AbstractItemSelector extends Zikula_Form_Plugin_TextInput
         {
             /**
              * The treated object type.
@@ -117,57 +112,36 @@ class ItemSelector {
             {
                 static $firstTime = true;
                 if ($firstTime) {
-                    «IF targets('1.3.x')»
-                        PageUtil::addVar('javascript', 'prototype');
-                        PageUtil::addVar('javascript', 'Zikula.UI'); // imageviewer
-                        PageUtil::addVar('javascript', '«rootFolder»/«appName»/javascript/«appName»_finder.js');
-                        PageUtil::addVar('stylesheet', ThemeUtil::getModuleStylesheet('«appName»'));
-                    «ELSE»
-                        PageUtil::addVar('javascript', 'jquery');
-                        PageUtil::addVar('javascript', 'web/bootstrap-media-lightbox/bootstrap-media-lightbox.min.js');
-                        PageUtil::addVar('stylesheet', 'web/bootstrap-media-lightbox/bootstrap-media-lightbox.css');
-                        PageUtil::addVar('javascript', '@«appName»/Resources/public/js/«appName».Finder.js');
-                        PageUtil::addVar('stylesheet', '@«appName»/Resources/public/css/style.css');
-                    «ENDIF»
+                    PageUtil::addVar('javascript', 'jquery');
+                    PageUtil::addVar('javascript', 'web/bootstrap-media-lightbox/bootstrap-media-lightbox.min.js');
+                    PageUtil::addVar('stylesheet', 'web/bootstrap-media-lightbox/bootstrap-media-lightbox.css');
+                    PageUtil::addVar('javascript', '@«appName»/Resources/public/js/«appName».Finder.js');
+                    PageUtil::addVar('stylesheet', '@«appName»/Resources/public/css/style.css');
                 }
                 $firstTime = false;
 
-                «IF !targets('1.3.x')»
-                    $serviceManager = ServiceUtil::getManager();
-                    $permissionApi = $serviceManager->get('zikula_permissions_module.api.permission');
+                $serviceManager = ServiceUtil::getManager();
+                $permissionApi = $serviceManager->get('zikula_permissions_module.api.permission');
 
-                «ENDIF»
-                if (!«IF targets('1.3.x')»SecurityUtil::check«ELSE»$permissionApi->has«ENDIF»Permission('«appName»:' . ucfirst($this->objectType) . ':', '::', ACCESS_COMMENT)) {
+                if (!$permissionApi->hasPermission('«appName»:' . ucfirst($this->objectType) . ':', '::', ACCESS_COMMENT)) {
                     return false;
                 }
                 «IF hasCategorisableEntities»
 
-                    $categorisableObjectTypes = «IF targets('1.3.x')»array(«ELSE»[«ENDIF»«FOR entity : getCategorisableEntities SEPARATOR ', '»'«entity.name.formatForCode»'«ENDFOR»«IF targets('1.3.x')»)«ELSE»]«ENDIF»;
-                    $catIds = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»;
+                    $categorisableObjectTypes = [«FOR entity : getCategorisableEntities SEPARATOR ', '»'«entity.name.formatForCode»'«ENDFOR»];
+                    $catIds = [];
                     if (in_array($this->objectType, $categorisableObjectTypes)) {
                         // fetch selected categories to reselect them in the output
                         // the actual filtering is done inside the repository class
-                        «IF targets('1.3.x')»
-                            $catIds = ModUtil::apiFunc('«appName»', 'category', 'retrieveCategoriesFromRequest', array('ot' => $this->objectType));
-                        «ELSE»
-                            $categoryHelper = $serviceManager->get('«appService».category_helper');
-                            $catIds = $categoryHelper->retrieveCategoriesFromRequest($this->objectType);
-                        «ENDIF»
+                        $categoryHelper = $serviceManager->get('«appService».category_helper');
+                        $catIds = $categoryHelper->retrieveCategoriesFromRequest($this->objectType);
                     }
                 «ENDIF»
 
                 $this->selectedItemId = $this->text;
 
-                «IF targets('1.3.x')»
-                    $entityClass = '«appName»_Entity_' . ucfirst($this->objectType);
-                «ENDIF»
                 $serviceManager = ServiceUtil::getManager();
-                «IF targets('1.3.x')»
-                    $entityManager = $serviceManager->get«IF targets('1.3.x')»Service«ENDIF»('«entityManagerService»');
-                    $repository = $entityManager->getRepository($entityClass);
-                «ELSE»
-                    $repository = $serviceManager->get('«appService».' . $this->objectType . '_factory')->getRepository();
-                «ENDIF»
+                $repository = $serviceManager->get('«appService».' . $this->objectType . '_factory')->getRepository();
 
                 $sort = $repository->getDefaultSortingField();
                 $sdir = 'asc';
@@ -187,22 +161,14 @@ class ItemSelector {
                     // assign category properties
                     $properties = null;
                     if (in_array($this->objectType, $categorisableObjectTypes)) {
-                        «IF targets('1.3.x')»
-                            $properties = ModUtil::apiFunc('«appName»', 'category', 'getAllProperties', array('ot' => $this->objectType));
-                        «ELSE»
-                            $properties = $categoryHelper->getAllProperties($this->objectType);
-                        «ENDIF»
+                        $properties = $categoryHelper->getAllProperties($this->objectType);
                     }
                     $view->assign('properties', $properties)
-                         ->assign('catIds', $catIds)«IF !targets('1.3.x')»
-                         ->assign('categoryHelper', $categoryHelper)«ENDIF»;
+                         ->assign('catIds', $catIds)
+                         ->assign('categoryHelper', $categoryHelper);
                 «ENDIF»
 
-                «IF targets('1.3.x')»
-                    return $view->fetch('external/' . $this->objectType . '/select.tpl');
-                «ELSE»
-                    return $view->fetch('External/' . ucfirst($this->objectType) . '/select.tpl');
-                «ENDIF»
+                return $view->fetch('External/' . ucfirst($this->objectType) . '/select.tpl');
             }
 
             /**
@@ -222,20 +188,14 @@ class ItemSelector {
     '''
 
     def private itemSelectorImpl(Application it) '''
-        «IF !targets('1.3.x')»
-            namespace «appNamespace»\Form\Plugin;
+        namespace «appNamespace»\Form\Plugin;
 
-            use «appNamespace»\Form\Plugin\Base\AbstractItemSelector;
+        use «appNamespace»\Form\Plugin\Base\AbstractItemSelector;
 
-        «ENDIF»
         /**
          * Item selector plugin implementation class.
          */
-        «IF targets('1.3.x')»
-        class «appName»_Form_Plugin_ItemSelector extends «appName»_Form_Plugin_Base_AbstractItemSelector
-        «ELSE»
         class ItemSelector extends AbstractItemSelector
-        «ENDIF»
         {
             // feel free to add your customisation here
         }
@@ -252,7 +212,7 @@ class ItemSelector {
          */
         function smarty_function_«appName.formatForDB»ItemSelector($params, $view)
         {
-            return $view->registerPlugin('«IF targets('1.3.x')»«appName»_Form_Plugin_ItemSelector«ELSE»\\«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Form\\Plugin\\ItemSelector«ENDIF»', $params);
+            return $view->registerPlugin('\\«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Form\\Plugin\\ItemSelector', $params);
         }
     '''
 }

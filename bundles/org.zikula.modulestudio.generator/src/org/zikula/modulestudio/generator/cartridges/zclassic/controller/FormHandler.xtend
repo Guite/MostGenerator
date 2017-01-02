@@ -6,12 +6,9 @@ import de.guite.modulestudio.metamodel.EntityWorkflowType
 import de.guite.modulestudio.metamodel.JoinRelationship
 import de.guite.modulestudio.metamodel.MappedSuperClass
 import org.eclipse.xtext.generator.IFileSystemAccess
-import org.zikula.modulestudio.generator.cartridges.zclassic.controller.actionhandler.ConfigLegacy
-import org.zikula.modulestudio.generator.cartridges.zclassic.controller.actionhandler.FormLegacy
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.actionhandler.Locking
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.actionhandler.Redirect
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.actionhandler.RelationPresets
-import org.zikula.modulestudio.generator.cartridges.zclassic.controller.actionhandler.UploadProcessingLegacy
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.form.AutoCompletionRelationTransformer
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.form.ListFieldTransformer
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.form.UploadFileTransformer
@@ -49,7 +46,6 @@ class FormHandler {
     Redirect redirectHelper = new Redirect
     RelationPresets relationPresetsHelper = new RelationPresets
     Locking locking = new Locking
-    FormLegacy legacyParts = new FormLegacy
 
     Application app
 
@@ -64,44 +60,38 @@ class FormHandler {
             for (entity : getAllEntities.filter[e|e.hasActions('edit')]) {
                 entity.generate('edit', fsa)
             }
-            if (!isLegacy) {
-                // form types
-                for (entity : entities.filter[e|e instanceof MappedSuperClass || e.hasActions('edit')]) {
-                    new EditEntity().generate(entity, fsa)
-                }
-                if (hasColourFields) {
-                    new ColourType().generate(it, fsa)
-                }
-                if (hasGeographical) {
-                    new GeoType().generate(it, fsa)
-                }
-                if (hasTrees) {
-                    new EntityTreeType().generate(it, fsa)
-                }
-                if (hasUploads) {
-                    new UploadType().generate(it, fsa)
-                    new UploadFileTransformer().generate(it, fsa)
-                }
-                if (hasUserFields) {
-                    new UserType().generate(it, fsa)
-                }
-                if (hasMultiListFields) {
-                    new MultiListType().generate(it, fsa)
-                    new ListFieldTransformer().generate(it, fsa)
-                }
-                if (needsAutoCompletion) {
-                    new AutoCompletionRelationType().generate(it, fsa)
-                    new AutoCompletionRelationTransformer().generate(it, fsa)
-                }
+            // form types
+            for (entity : entities.filter[e|e instanceof MappedSuperClass || e.hasActions('edit')]) {
+                new EditEntity().generate(entity, fsa)
+            }
+            if (hasColourFields) {
+                new ColourType().generate(it, fsa)
+            }
+            if (hasGeographical) {
+                new GeoType().generate(it, fsa)
+            }
+            if (hasTrees) {
+                new EntityTreeType().generate(it, fsa)
+            }
+            if (hasUploads) {
+                new UploadType().generate(it, fsa)
+                new UploadFileTransformer().generate(it, fsa)
+            }
+            if (hasUserFields) {
+                new UserType().generate(it, fsa)
+            }
+            if (hasMultiListFields) {
+                new MultiListType().generate(it, fsa)
+                new ListFieldTransformer().generate(it, fsa)
+            }
+            if (needsAutoCompletion) {
+                new AutoCompletionRelationType().generate(it, fsa)
+                new AutoCompletionRelationTransformer().generate(it, fsa)
             }
         }
-        if (isLegacy) {
-            new ConfigLegacy().generate(it, fsa)
-        } else {
-            // additional form types
-            new DeleteEntity().generate(it, fsa)
-            new Config().generate(it, fsa)
-        }
+        // additional form types
+        new DeleteEntity().generate(it, fsa)
+        new Config().generate(it, fsa)
     }
 
     /**
@@ -110,7 +100,7 @@ class FormHandler {
     def private generateCommon(Application it, String actionName, IFileSystemAccess fsa) {
         println('Generating "' + name + '" form handler base class')
         val formHandlerFolder = getAppSourceLibPath + 'Form/Handler/Common/'
-        generateClassPair(fsa, formHandlerFolder + actionName.formatForCodeCapital + (if (isLegacy) '' else 'Handler') + '.php',
+        generateClassPair(fsa, formHandlerFolder + actionName.formatForCodeCapital + 'Handler.php',
             fh.phpFileContent(it, formHandlerCommonBaseImpl(actionName)), fh.phpFileContent(app, formHandlerCommonImpl(actionName))
         )
     }
@@ -121,52 +111,41 @@ class FormHandler {
     def private generate(Entity it, String actionName, IFileSystemAccess fsa) {
         println('Generating form handler classes for "' + name + '_' + actionName + '"')
         val formHandlerFolder = app.getAppSourceLibPath + 'Form/Handler/' + name.formatForCodeCapital + '/'
-        app.generateClassPair(fsa, formHandlerFolder + actionName.formatForCodeCapital + (if (app.isLegacy) '' else 'Handler') + '.php',
+        app.generateClassPair(fsa, formHandlerFolder + actionName.formatForCodeCapital + 'Handler.php',
             fh.phpFileContent(app, formHandlerBaseImpl(actionName)), fh.phpFileContent(app, formHandlerImpl(actionName))
         )
     }
 
     def private formHandlerCommonBaseImpl(Application it, String actionName) '''
-        «IF !isLegacy»
-            namespace «appNamespace»\Form\Handler\Common\Base;
+        namespace «appNamespace»\Form\Handler\Common\Base;
 
-            use Symfony\Component\DependencyInjection\ContainerBuilder;
-            use Symfony\Component\Form\AbstractType;
-            use Symfony\Component\HttpFoundation\RedirectResponse;
-            use Symfony\Component\HttpFoundation\Request;
-            use Symfony\Component\HttpFoundation\RequestStack;
-            use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-            use Symfony\Component\Routing\RouterInterface;
-            use Symfony\Component\Security\Core\Exception\AccessDeniedException;
-            use Zikula\Common\Translator\TranslatorInterface;
-            use Zikula\Common\Translator\TranslatorTrait;
-            use Zikula\Core\Doctrine\EntityAccess;
-            use Zikula\Core\RouteUrl;
-            use ModUtil;
-            use RuntimeException;
-            use UserUtil;
-            «IF needsFeatureActivationHelper»
-                use «appNamespace»\Helper\FeatureActivationHelper;
-            «ENDIF»
-
+        use Symfony\Component\DependencyInjection\ContainerBuilder;
+        use Symfony\Component\Form\AbstractType;
+        use Symfony\Component\HttpFoundation\RedirectResponse;
+        use Symfony\Component\HttpFoundation\Request;
+        use Symfony\Component\HttpFoundation\RequestStack;
+        use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+        use Symfony\Component\Routing\RouterInterface;
+        use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+        use Zikula\Common\Translator\TranslatorInterface;
+        use Zikula\Common\Translator\TranslatorTrait;
+        use Zikula\Core\Doctrine\EntityAccess;
+        use Zikula\Core\RouteUrl;
+        use ModUtil;
+        use RuntimeException;
+        use UserUtil;
+        «IF needsFeatureActivationHelper»
+            use «appNamespace»\Helper\FeatureActivationHelper;
         «ENDIF»
+
         /**
          * This handler class handles the page events of editing forms.
          * It collects common functionality required by different object types.
-        «IF isLegacy»
-            «legacyParts.handlerDescription»
-        «ENDIF»
          */
-        «IF isLegacy»
-        abstract class «appName»_Form_Handler_Common_Base_Abstract«actionName.formatForCodeCapital» extends Zikula_Form_AbstractHandler
-        «ELSE»
         abstract class Abstract«actionName.formatForCodeCapital»Handler
-        «ENDIF»
         {
-            «IF !isLegacy»
-                use TranslatorTrait;
+            use TranslatorTrait;
 
-            «ENDIF»
             /**
              * Name of treated object type.
              *
@@ -198,7 +177,7 @@ class FormHandler {
             /**
              * Reference to treated entity instance.
              *
-             * @var «IF isLegacy»Zikula_«ELSE»EntityAccess«ENDIF»
+             * @var EntityAccess
              */
             protected $entityRef = null;
 
@@ -207,14 +186,14 @@ class FormHandler {
              *
              * @var array
              */
-            protected $idFields = «IF isLegacy»array()«ELSE»[]«ENDIF»;
+            protected $idFields = [];
 
             /**
              * List of identifiers of treated entity.
              *
              * @var array
              */
-            protected $idValues = «IF isLegacy»array()«ELSE»[]«ENDIF»;
+            protected $idValues = [];
 
             /**
              * Code defining the redirect goal after command handling.
@@ -264,7 +243,7 @@ class FormHandler {
                  */
                 protected $hasAttributes = false;
             «ENDIF»
-            «IF !isLegacy && hasSluggable && !getAllEntities.filter[slugUpdatable].empty»
+            «IF hasSluggable && !getAllEntities.filter[slugUpdatable].empty»
 
                 /**
                  * Whether the entity has an editable slug or not.
@@ -282,86 +261,67 @@ class FormHandler {
                  */
                 protected $hasTranslatableFields = false;
             «ENDIF»
-            «IF isLegacy && hasUploads»
 
-                /**
-                 * Array with upload field names and mandatory flags.
-                 *
-                 * @var array
-                 */
-                protected $uploadFields = «IF isLegacy»array()«ELSE»[]«ENDIF»;
-            «ENDIF»
+            /**
+             * @var ContainerBuilder
+             */
+            protected $container;
 
-            «IF isLegacy»
-                «legacyParts.memberVars(it)»
+            /**
+             * The current request.
+             *
+             * @var Request
+             */
+            protected $request = null;
 
-                «legacyParts.stubs»
-            «ELSE»
-                /**
-                 * @var ContainerBuilder
-                 */
-                protected $container;
+            /**
+             * The router.
+             *
+             * @var RouterInterface
+             */
+            protected $router = null;
 
-                /**
-                 * The current request.
-                 *
-                 * @var Request
-                 */
-                protected $request = null;
+            /**
+             * The handled form type.
+             *
+             * @var AbstractType
+             */
+            protected $form = null;
 
-                /**
-                 * The router.
-                 *
-                 * @var RouterInterface
-                 */
-                protected $router = null;
+            /**
+             * Template parameters.
+             *
+             * @var array
+             */
+            protected $templateParameters = [];
 
-                /**
-                 * The handled form type.
-                 *
-                 * @var AbstractType
-                 */
-                protected $form = null;
+            /**
+             * Constructor.
+             *
+             * @param ContainerBuilder    $container    ContainerBuilder service instance
+             * @param TranslatorInterface $translator   Translator service instance
+             * @param RequestStack        $requestStack RequestStack service instance
+             * @param RouterInterface     $router       Router service instance
+             */
+            public function __construct(ContainerBuilder $container, TranslatorInterface $translator, RequestStack $requestStack, RouterInterface $router)
+            {
+                $this->container = $container;
+                $this->setTranslator($translator);
+                $this->request = $requestStack->getCurrentRequest();
+                $this->router = $router;
+            }
 
-                /**
-                 * Template parameters.
-                 *
-                 * @var array
-                 */
-                protected $templateParameters = [];
-
-                /**
-                 * Constructor.
-                 *
-                 * @param ContainerBuilder    $container    ContainerBuilder service instance
-                 * @param TranslatorInterface $translator   Translator service instance
-                 * @param RequestStack        $requestStack RequestStack service instance
-                 * @param RouterInterface     $router       Router service instance
-                 */
-                public function __construct(ContainerBuilder $container, TranslatorInterface $translator, RequestStack $requestStack, RouterInterface $router)
-                {
-                    $this->container = $container;
-                    $this->setTranslator($translator);
-                    $this->request = $requestStack->getCurrentRequest();
-                    $this->router = $router;
-                }
-
-                /**
-                 * Sets the translator.
-                 *
-                 * @param TranslatorInterface $translator Translator service instance
-                 */
-                public function setTranslator(/*TranslatorInterface */$translator)
-                {
-                    $this->translator = $translator;
-                }
-            «ENDIF»
+            /**
+             * Sets the translator.
+             *
+             * @param TranslatorInterface $translator Translator service instance
+             */
+            public function setTranslator(/*TranslatorInterface */$translator)
+            {
+                $this->translator = $translator;
+            }
 
             «processForm»
-            «IF isLegacy»
-
-                «legacyParts.postInitialise(it, actionName)»
-            «ENDIF»
 
             «redirectHelper.getRedirectCodes(it)»
 
@@ -374,10 +334,6 @@ class FormHandler {
 
                 «prepareWorkflowAdditions»
             «ENDIF»
-            «IF isLegacy»
-
-                «new UploadProcessingLegacy().generate(it)»
-            «ENDIF»
         }
     '''
 
@@ -387,98 +343,58 @@ class FormHandler {
          *
          * This method takes care of all necessary initialisation of our data and form states.
          *
-        «IF isLegacy»
-            «' '»* @param Zikula_Form_View $view The form view instance
-        «ELSE»
-            «' '»* @param array $templateParameters List of preassigned template variables
-        «ENDIF»
+         * @param array $templateParameters List of preassigned template variables
          *
          * @return boolean False in case of initialisation errors, otherwise true
-         «IF !isLegacy»
          *
          * @throws NotFoundHttpException Thrown if item to be edited isn't found
          * @throws RuntimeException      Thrown if the workflow actions can not be determined
-         «ENDIF»
          */
-        public function «IF isLegacy»initialize«ELSE»processForm«ENDIF»(«IF isLegacy»Zikula_Form_View $view«ELSE»array $templateParameters«ENDIF»)
+        public function processForm(array $templateParameters)
         {
-            «IF isLegacy»
-                $this->inlineUsage = UserUtil::getTheme() == 'Printer' ? true : false;
-            «ELSE»
-                $this->templateParameters = $templateParameters;
-                $this->templateParameters['inlineUsage'] = UserUtil::getTheme() == 'ZikulaPrinterTheme' ? true : false;
-            «ENDIF»
+            $this->templateParameters = $templateParameters;
+            $this->templateParameters['inlineUsage'] = UserUtil::getTheme() == 'ZikulaPrinterTheme' ? true : false;
 
             «IF !relations.filter(JoinRelationship).empty»
-                «IF isLegacy»
-                    $this->idPrefix = $this->request->query->filter('idp', '', FILTER_SANITIZE_STRING);
-                «ELSE»
-                    $this->idPrefix = $this->request->query->getAlnum('idp', '');
-                «ENDIF»
+                $this->idPrefix = $this->request->query->getAlnum('idp', '');
             «ENDIF»
 
             // initialise redirect goal
-            «IF isLegacy»
-                $this->returnTo = $this->request->query->get('returnTo', null, FILTER_SANITIZE_STRING);
-            «ELSE»
-                $this->returnTo = $this->request->query->get('returnTo', null);
-            «ENDIF»
+            $this->returnTo = $this->request->query->get('returnTo', null);
             if (null === $this->returnTo) {
                 // default to referer
-                «IF isLegacy»
-                    $this->returnTo = SessionUtil::getVar('referer', '');
-                    if ('' == $this->returnTo) {
-                        $this->returnTo = System::serverGetVar('HTTP_REFERER');
-                        SessionUtil::setVar('referer', $this->returnTo);
-                    }
-                «ELSE»
-                    if ($this->request->getSession()->has('referer')) {
-                        $this->returnTo = $this->request->getSession()->get('referer');
-                    } elseif ($this->request->headers->has('referer')) {
-                        $this->returnTo = $this->request->headers->get('referer');
-                        $this->request->getSession()->set('referer', $this->returnTo);
-                    } elseif ($this->request->server->has('HTTP_REFERER')) {
-                        $this->returnTo = $this->request->server->get('HTTP_REFERER');
-                        $this->request->getSession()->set('referer', $this->returnTo);
-                    }
-                «ENDIF»
+                if ($this->request->getSession()->has('referer')) {
+                    $this->returnTo = $this->request->getSession()->get('referer');
+                } elseif ($this->request->headers->has('referer')) {
+                    $this->returnTo = $this->request->headers->get('referer');
+                    $this->request->getSession()->set('referer', $this->returnTo);
+                } elseif ($this->request->server->has('HTTP_REFERER')) {
+                    $this->returnTo = $this->request->server->get('HTTP_REFERER');
+                    $this->request->getSession()->set('referer', $this->returnTo);
+                }
             }
             // store current uri for repeated creations
-            $this->repeatReturnUrl = «IF isLegacy»System::getCurrentURI()«ELSE»$this->request->getSchemeAndHttpHost() . $this->request->getBasePath() . $this->request->getPathInfo()«ENDIF»;
+            $this->repeatReturnUrl = $this->request->getSchemeAndHttpHost() . $this->request->getBasePath() . $this->request->getPathInfo();
 
-            $this->permissionComponent = «IF isLegacy»$this->name . '«ELSE»'«appName»«ENDIF»:' . $this->objectTypeCapital . ':';
+            $this->permissionComponent = '«appName»:' . $this->objectTypeCapital . ':';
 
-            «IF isLegacy»
-                $this->idFields = ModUtil::apiFunc($this->name, 'selection', 'getIdFields', array('ot' => $this->objectType));
-            «ELSE»
-                $selectionHelper = $this->container->get('«appService».selection_helper');
-                $this->idFields = $selectionHelper->getIdFields($this->objectType);
-            «ENDIF»
+            $selectionHelper = $this->container->get('«appService».selection_helper');
+            $this->idFields = $selectionHelper->getIdFields($this->objectType);
 
             // retrieve identifier of the object we wish to view
-            «IF isLegacy»
-                $controllerHelper = new «appName»_Util_Controller($this->view->getServiceManager());
-            «ELSE»
-                $controllerHelper = $this->container->get('«appService».controller_helper');
-            «ENDIF»
+            $controllerHelper = $this->container->get('«appService».controller_helper');
 
-            $this->idValues = $controllerHelper->retrieveIdentifier($this->request, «IF isLegacy»array()«ELSE»[]«ENDIF», $this->objectType, $this->idFields);
+            $this->idValues = $controllerHelper->retrieveIdentifier($this->request, [], $this->objectType, $this->idFields);
             $hasIdentifier = $controllerHelper->isValidIdentifier($this->idValues);
 
             $entity = null;
-            $this->«IF isLegacy»mode«ELSE»templateParameters['mode']«ENDIF» = $hasIdentifier ? 'edit' : 'create';
+            $this->templateParameters['mode'] = $hasIdentifier ? 'edit' : 'create';
 
-            «IF !isLegacy»
-                $permissionApi = $this->container->get('zikula_permissions_module.api.permission');
+            $permissionApi = $this->container->get('zikula_permissions_module.api.permission');
 
-            «ENDIF»
-            if («IF isLegacy»$this->mode«ELSE»$this->templateParameters['mode']«ENDIF» == 'edit') {
-                if (!«IF isLegacy»SecurityUtil::check«ELSE»$permissionApi->has«ENDIF»Permission($this->permissionComponent, $this->createCompositeIdentifier() . '::', ACCESS_EDIT)) {
-                    «IF isLegacy»
-                        return LogUtil::registerPermissionError();
-                    «ELSE»
-                        throw new AccessDeniedException();
-                    «ENDIF»
+            if ($this->templateParameters['mode'] == 'edit') {
+                if (!$permissionApi->hasPermission($this->permissionComponent, $this->createCompositeIdentifier() . '::', ACCESS_EDIT)) {
+                    throw new AccessDeniedException();
                 }
 
                 $entity = $this->initEntityForEditing();
@@ -488,12 +404,8 @@ class FormHandler {
 
                 «locking.addPageLock(it)»
             } else {
-                if (!«IF isLegacy»SecurityUtil::check«ELSE»$permissionApi->has«ENDIF»Permission($this->permissionComponent, '::', ACCESS_EDIT)) {
-                    «IF isLegacy»
-                        return LogUtil::registerPermissionError();
-                    «ELSE»
-                        throw new AccessDeniedException();
-                    «ENDIF»
+                if (!$permissionApi->hasPermission($this->permissionComponent, '::', ACCESS_EDIT)) {
+                    throw new AccessDeniedException();
                 }
 
                 $entity = $this->initEntityForCreation();
@@ -504,70 +416,54 @@ class FormHandler {
 
             «initialiseExtensions»
 
-            «IF isLegacy»
-                $workflowHelper = new «appName»_Util_Workflow($this->view->getServiceManager());
-            «ELSE»
-                $workflowHelper = $this->container->get('«appService».workflow_helper');
-            «ENDIF»
+            $workflowHelper = $this->container->get('«appService».workflow_helper');
             $actions = $workflowHelper->getActionsForObject($entity);
             if (false === $actions || !is_array($actions)) {
-                «IF isLegacy»
-                    return LogUtil::registerError($this->__('Error! Could not determine workflow actions.'));
-                «ELSE»
-                    $this->request->getSession()->getFlashBag()->add('error', $this->__('Error! Could not determine workflow actions.'));
-                    $logger = $this->container->get('logger');
-                    $logArgs = ['app' => '«appName»', 'user' => $this->container->get('zikula_users_module.current_user')->get('uname'), 'entity' => $this->objectType, 'id' => $entity->createCompositeIdentifier()];
-                    $logger->error('{app}: User {user} tried to edit the {entity} with id {id}, but failed to determine available workflow actions.', $logArgs);
-                    throw new \RuntimeException($this->__('Error! Could not determine workflow actions.'));
-                «ENDIF»
+                $this->request->getSession()->getFlashBag()->add('error', $this->__('Error! Could not determine workflow actions.'));
+                $logger = $this->container->get('logger');
+                $logArgs = ['app' => '«appName»', 'user' => $this->container->get('zikula_users_module.current_user')->get('uname'), 'entity' => $this->objectType, 'id' => $entity->createCompositeIdentifier()];
+                $logger->error('{app}: User {user} tried to edit the {entity} with id {id}, but failed to determine available workflow actions.', $logArgs);
+                throw new \RuntimeException($this->__('Error! Could not determine workflow actions.'));
             }
 
-            «IF isLegacy»
-                $this->view->assign('mode', $this->mode)
-                           ->assign('inlineUsage', $this->inlineUsage)
-                           ->assign('actions', $actions);
-            «ELSE»
-                $this->templateParameters['actions'] = $actions;
+            $this->templateParameters['actions'] = $actions;
 
-                $this->form = $this->createForm();
-                if (!is_object($this->form)) {
-                    return false;
-                }
+            $this->form = $this->createForm();
+            if (!is_object($this->form)) {
+                return false;
+            }
 
-                // handle form request and check validity constraints of edited entity
-                if ($this->form->handleRequest($this->request) && $this->form->isSubmitted()) {
-                    if ($this->form->isValid()) {
-                        $result = $this->handleCommand();
-                        if (false === $result) {
-                            $this->templateParameters['form'] = $this->form->createView();
-                        }
-
-                        return $result;
+            // handle form request and check validity constraints of edited entity
+            if ($this->form->handleRequest($this->request) && $this->form->isSubmitted()) {
+                if ($this->form->isValid()) {
+                    $result = $this->handleCommand();
+                    if (false === $result) {
+                        $this->templateParameters['form'] = $this->form->createView();
                     }
-                    if ($this->form->get('cancel')->isClicked()) {
-                        return new RedirectResponse($this->getRedirectUrl(['commandName' => 'cancel']), 302);
-                    }
-                }
 
-                $this->templateParameters['form'] = $this->form->createView();
-            «ENDIF»
+                    return $result;
+                }
+                if ($this->form->get('cancel')->isClicked()) {
+                    return new RedirectResponse($this->getRedirectUrl(['commandName' => 'cancel']), 302);
+                }
+            }
+
+            $this->templateParameters['form'] = $this->form->createView();
 
             // everything okay, no initialisation errors occured
             return true;
         }
 
-        «IF !isLegacy»
-            /**
-             * Creates the form type.
-             */
-            protected function createForm()
-            {
-                // to be customised in sub classes
-                return null;
-            }
-            
-            «fh.getterMethod(it, 'templateParameters', 'array', true)»
-        «ENDIF»
+        /**
+         * Creates the form type.
+         */
+        protected function createForm()
+        {
+            // to be customised in sub classes
+            return null;
+        }
+        
+        «fh.getterMethod(it, 'templateParameters', 'array', true)»
         «createCompositeIdentifier»
 
         «initEntityForEditing»
@@ -575,43 +471,28 @@ class FormHandler {
         «initEntityForCreation»
         «initTranslationsForEditing»
         «initAttributesForEditing»
-        «IF isLegacy»
-            «legacyParts.initCategoriesForEditing(it)»
-        «ENDIF»
     '''
 
     def private initialiseExtensions(Application it) '''
-        «IF !isLegacy && (hasAttributableEntities || hasTranslatable)»
+        «IF hasAttributableEntities || hasTranslatable»
             $featureActivationHelper = $this->container->get('«app.appService».feature_activation_helper');
 
         «ENDIF»
         «IF hasAttributableEntities»
 
             if (true === $this->hasAttributes) {
-                «IF isLegacy»
+                if ($featureActivationHelper->isEnabled(FeatureActivationHelper::ATTRIBUTES, $this->objectType)) {
                     $this->initAttributesForEditing();
-                «ELSE»
-                    if ($featureActivationHelper->isEnabled(FeatureActivationHelper::ATTRIBUTES, $this->objectType)) {
-                        $this->initAttributesForEditing();
-                    }
-                «ENDIF»
+                }
             }
         «ENDIF»
         «IF hasTranslatable»
 
             if (true === $this->hasTranslatableFields) {
-                «IF isLegacy»
+                if ($featureActivationHelper->isEnabled(FeatureActivationHelper::TRANSLATIONS, $this->objectType)) {
                     $this->initTranslationsForEditing();
-                «ELSE»
-                    if ($featureActivationHelper->isEnabled(FeatureActivationHelper::TRANSLATIONS, $this->objectType)) {
-                        $this->initTranslationsForEditing();
-                    }
-                «ENDIF»
+                }
             }
-        «ENDIF»
-        «IF isLegacy»
-
-            «legacyParts.initExtensions(it)»
         «ENDIF»
     '''
 
@@ -639,26 +520,16 @@ class FormHandler {
         /**
          * Initialise existing entity for editing.
          *
-         * @return «IF isLegacy»Zikula_«ENDIF»EntityAccess|null Desired entity instance or null
-         «IF !isLegacy»
+         * @return EntityAccess|null Desired entity instance or null
          *
          * @throws NotFoundHttpException Thrown if item to be edited isn't found
-         «ENDIF»
          */
         protected function initEntityForEditing()
         {
-            «IF isLegacy»
-                $entity = ModUtil::apiFunc($this->name, 'selection', 'getEntity', array('ot' => $this->objectType, 'id' => $this->idValues));
-            «ELSE»
-                $selectionHelper = $this->container->get('«appService».selection_helper');
-                $entity = $selectionHelper->getEntity($this->objectType, $this->idValues);
-            «ENDIF»
+            $selectionHelper = $this->container->get('«appService».selection_helper');
+            $entity = $selectionHelper->getEntity($this->objectType, $this->idValues);
             if (null === $entity) {
-                «IF isLegacy»
-                    return LogUtil::registerError($this->__('No such item.'));
-                «ELSE»
-                    throw new NotFoundHttpException($this->__('No such item.'));
-                «ENDIF»
+                throw new NotFoundHttpException($this->__('No such item.'));
             }
 
             $entity->initWorkflow();
@@ -671,11 +542,9 @@ class FormHandler {
         /**
          * Initialise new entity for creation.
          *
-         * @return «IF isLegacy»Zikula_«ENDIF»EntityAccess|null Desired entity instance or null
-         «IF !isLegacy»
+         * @return EntityAccess|null Desired entity instance or null
          *
          * @throws NotFoundHttpException Thrown if item to be cloned isn't found
-         «ENDIF»
          */
         protected function initEntityForCreation()
         {
@@ -688,39 +557,26 @@ class FormHandler {
                 $this->hasTemplateId = count($templateIdValueParts) == count($this->idFields);
 
                 if (true === $this->hasTemplateId) {
-                    $templateIdValues = «IF isLegacy»array()«ELSE»[]«ENDIF»;
+                    $templateIdValues = [];
                     $i = 0;
                     foreach ($this->idFields as $idField) {
                         $templateIdValues[$idField] = $templateIdValueParts[$i];
                         $i++;
                     }
                     // reuse existing entity
-                    «IF isLegacy»
-                        $entityT = ModUtil::apiFunc($this->name, 'selection', 'getEntity', array('ot' => $this->objectType, 'id' => $templateIdValues));
-                    «ELSE»
-                        $selectionHelper = $this->container->get('«appService».selection_helper');
-                        $entityT = $selectionHelper->getEntity($this->objectType, $templateIdValues);
-                    «ENDIF»
+                    $selectionHelper = $this->container->get('«appService».selection_helper');
+                    $entityT = $selectionHelper->getEntity($this->objectType, $templateIdValues);
                     if (null === $entityT) {
-                        «IF isLegacy»
-                            return LogUtil::registerError($this->__('No such item.'));
-                        «ELSE»
-                            throw new NotFoundHttpException($this->__('No such item.'));
-                        «ENDIF»
+                        throw new NotFoundHttpException($this->__('No such item.'));
                     }
                     $entity = clone $entityT;
                 }
             }
 
-            if (is_null($entity)) {
-                «IF isLegacy»
-                    $entityClass = $this->name . '_Entity_' . ucfirst($this->objectType);
-                    $entity = new $entityClass(«/* TODO constructor arguments if required */»);
-                «ELSE»
-                    $factory = $this->container->get('«appService».' . $this->objectType . '_factory');
-                    $createMethod = 'create' . ucfirst($this->objectType);
-                    $entity = $factory->$createMethod();
-                «ENDIF»
+            if (null === $entity) {
+                $factory = $this->container->get('«appService».' . $this->objectType . '_factory');
+                $createMethod = 'create' . ucfirst($this->objectType);
+                $entity = $factory->$createMethod();
             }
 
             return $entity;
@@ -738,28 +594,16 @@ class FormHandler {
                 $entity = $this->entityRef;
 
                 // retrieve translated fields
-                «IF isLegacy»
-                    $translatableHelper = new «appName»_Util_Translatable($this->view->getServiceManager());
-                «ELSE»
-                    $translatableHelper = $this->container->get('«app.appService».translatable_helper');
-                «ENDIF»
+                $translatableHelper = $this->container->get('«app.appService».translatable_helper');
                 $translations = $translatableHelper->prepareEntityForEditing($this->objectType, $entity);
 
                 // assign translations
                 foreach ($translations as $language => $translationData) {
-                    «IF isLegacy»
-                        $this->view->assign($this->objectTypeLower . $language, $translationData);
-                    «ELSE»
-                        $this->templateParameters[$this->objectTypeLower . $language] = $translationData;
-                    «ENDIF»
+                    $this->templateParameters[$this->objectTypeLower . $language] = $translationData;
                 }
 
                 // assign list of installed languages for translatable extension
-                «IF isLegacy»
-                    $this->view->assign('supportedLanguages', $translatableHelper->getSupportedLanguages($this->objectType));
-                «ELSE»
-                    $this->templateParameters['supportedLanguages'] = $translatableHelper->getSupportedLanguages($this->objectType);
-                «ENDIF»
+                $this->templateParameters['supportedLanguages'] = $translatableHelper->getSupportedLanguages($this->objectType);
             }
         «ENDIF»
     '''
@@ -774,20 +618,16 @@ class FormHandler {
             {
                 $entity = $this->entityRef;
 
-                $entityData = «IF isLegacy»array()«ELSE»[]«ENDIF»;
+                $entityData = [];
 
                 // overwrite attributes array entry with a form compatible format
-                $attributes = «IF isLegacy»array()«ELSE»[]«ENDIF»;
+                $attributes = [];
                 foreach ($this->getAttributeFieldNames() as $fieldName) {
                     $attributes[$fieldName] = $entity->getAttributes()->get($fieldName) ? $entity->getAttributes()->get($fieldName)->getValue() : '';
                 }
                 $entityData['attributes'] = $attributes;
 
-                «IF isLegacy»
-                    $this->view->assign($entityData);
-                «ELSE»
-                    $this->templateParameters['attributes'] = $this->getAttributeFieldNames();
-                «ENDIF»
+                $this->templateParameters['attributes'] = $this->getAttributeFieldNames();
             }
 
             /**
@@ -798,9 +638,9 @@ class FormHandler {
              */
             protected function getAttributeFieldNames()
             {
-                return «IF isLegacy»array(«ELSE»[«ENDIF»
+                return [
                     'field1', 'field2', 'field3'
-                «IF isLegacy»)«ELSE»]«ENDIF»;
+                ];
             }
         «ENDIF»
     '''
@@ -809,47 +649,27 @@ class FormHandler {
         /**
          * Command event handler.
          *
-        «IF isLegacy»
-            «legacyParts.handleCommandDescription(it)»
-        «ELSE»
-            «' '»* @param array $args List of arguments
-        «ENDIF»
+         * @param array $args List of arguments
          *
          * @return mixed Redirect or false on errors
          */
-        public function handleCommand(«IF isLegacy»Zikula_Form_View $view, &«ENDIF»$args«IF !isLegacy» = []«ENDIF»)
+        public function handleCommand($args = [])
         {
-            «IF !isLegacy»
-                // build $args for BC (e.g. used by redirect handling)
-                foreach ($this->templateParameters['actions'] as $action) {
-                    if ($this->form->get($action['id'])->isClicked()) {
-                        $args['commandName'] = $action['id'];
-                    }
+            // build $args for BC (e.g. used by redirect handling)
+            foreach ($this->templateParameters['actions'] as $action) {
+                if ($this->form->get($action['id'])->isClicked()) {
+                    $args['commandName'] = $action['id'];
                 }
-                if ($this->form->get('cancel')->isClicked()) {
-                    $args['commandName'] = 'cancel';
-                }
+            }
+            if ($this->form->get('cancel')->isClicked()) {
+                $args['commandName'] = 'cancel';
+            }
 
-            «ENDIF»
             $action = $args['commandName'];
-            $isRegularAction = !in_array($action, «IF isLegacy»array(«ELSE»[«ENDIF»'delete', 'cancel'«IF isLegacy»)«ELSE»]«ENDIF»);
-            «IF isLegacy»
-
-                if ($isRegularAction) {
-                    // do forms validation including checking all validators on the page to validate their input
-                    if (!$this->view->isValid()) {
-                        return false;
-                    }
-                }
-            «ENDIF»
+            $isRegularAction = !in_array($action, ['delete', 'cancel']);
 
             if ($isRegularAction || $action == 'delete') {
-                «IF isLegacy»$unmappedFormData = «ENDIF»$this->fetchInputData(«IF isLegacy»$view, «ENDIF»$args);
-                «IF isLegacy»
-                    if (false === $unmappedFormData) {
-                        return false;
-                    }
-                «ENDIF»
+                $this->fetchInputData($args);
             }
 
             // get treated entity reference from persisted member var
@@ -858,11 +678,7 @@ class FormHandler {
 
                 $hookHelper = null;
                 if ($entity->supportsHookSubscribers() && $action != 'cancel') {
-                    «IF isLegacy»
-                        $hookHelper = new «app.appName»_Util_Hook($this->view->getServiceManager());
-                    «ELSE»
-                        $hookHelper = $this->container->get('«app.appService».hook_helper');
-                    «ENDIF»
+                    $hookHelper = $this->container->get('«app.appService».hook_helper');
                     // Let any hooks perform additional validation actions
                     $hookType = $action == 'delete' ? 'validate_delete' : 'validate_edit';
                     $validationHooksPassed = $hookHelper->callValidationHooks($entity, $hookType);
@@ -874,14 +690,10 @@ class FormHandler {
             «IF hasTranslatable»
 
                 if ($isRegularAction && true === $this->hasTranslatableFields) {
-                    «IF isLegacy»
-                        $this->processTranslationsForUpdate($entity, $unmappedFormData);
-                    «ELSE»
-                        $featureActivationHelper = $this->container->get('«app.appService».feature_activation_helper');
-                        if ($featureActivationHelper->isEnabled(FeatureActivationHelper::TRANSLATIONS, $this->objectType)) {
-                            $this->processTranslationsForUpdate();
-                        }
-                    «ENDIF»
+                    $featureActivationHelper = $this->container->get('«app.appService».feature_activation_helper');
+                    if ($featureActivationHelper->isEnabled(FeatureActivationHelper::TRANSLATIONS, $this->objectType)) {
+                        $this->processTranslationsForUpdate();
+                    }
                 }
             «ENDIF»
 
@@ -899,60 +711,33 @@ class FormHandler {
                         $url = null;
                         if ($action != 'delete') {
                             $urlArgs = $entity->createUrlArgs();
-                            «IF isLegacy»
-                                $url = new Zikula_ModUrl($this->name, FormUtil::getPassedValue('type', 'user', 'GETPOST'), 'display', ZLanguage::getLanguageCode(), $urlArgs);
-                            «ELSE»
-                                $urlArgs['_locale'] = $this->container->get('request_stack')->getMasterRequest()->getLocale();
-                                $url = new RouteUrl('«appName.formatForDB»_' . $this->objectType . '_display', $urlArgs);
-                            «ENDIF»
+                            $urlArgs['_locale'] = $this->container->get('request_stack')->getMasterRequest()->getLocale();
+                            $url = new RouteUrl('«appName.formatForDB»_' . $this->objectType . '_display', $urlArgs);
                         }
-                        if (!is_null($hookHelper)) {
+                        if (null !== $hookHelper) {
                             $hookHelper->callProcessHooks($entity, $hookType, $url);
                         }
                     }
-                «ENDIF»
-                «IF isLegacy»
-
-                    «legacyParts.clearCache(it)»
                 «ENDIF»
             }
 
             «locking.releasePageLock(it)»
 
-            «IF isLegacy»
-                return $this->view->redirect($this->getRedirectUrl($args));
-            «ELSE»
-                return new RedirectResponse($this->getRedirectUrl($args), 302);
-            «ENDIF»
+            return new RedirectResponse($this->getRedirectUrl($args), 302);
         }
         «IF hasAttributableEntities»
 
             /**
              * Prepare update of attributes.
              *
-             * @param «IF isLegacy»Zikula_«ENDIF»EntityAccess $entity «IF isLegacy»  «ENDIF»Currently treated entity instance
-             «IF isLegacy»
-             * @param Array               $formData Form data to be merged
-             «ENDIF»
+             * @param EntityAccess $entity Currently treated entity instance
              */
-            protected function processAttributesForUpdate($entity«IF isLegacy», $formData«ENDIF»)
+            protected function processAttributesForUpdate($entity)
             {
-                «IF isLegacy»
-                    if (!isset($formData['attributes'])) {
-                        return;
-                    }
-
-                    foreach($formData['attributes'] as $name => $value) {
-                        $entity->setAttribute($name, $value);
-                    }
-
-                    unset($formData['attributes']);
-                «ELSE»
-                    foreach ($this->getAttributeFieldNames() as $fieldName) {
-                        $value = $this->form['attributes' . $fieldName]->getData();
-                        $entity->setAttribute($fieldName, $value);
-                    }
-                «ENDIF»
+                foreach ($this->getAttributeFieldNames() as $fieldName) {
+                    $value = $this->form['attributes' . $fieldName]->getData();
+                    $entity->setAttribute($fieldName, $value);
+                }
                 «/*
                 $entity->setAttribute('url', 'http://www.example.com');
                 $entity->setAttribute('url', null); // remove
@@ -963,33 +748,20 @@ class FormHandler {
 
             /**
              * Prepare update of translations.
-             «IF isLegacy»
-             *
-             * @param Zikula_EntityAccess $entity   Currently treated entity instance
-             * @param Array               $formData Unmapped form data outside the entity scope
-             «ENDIF»
              */
-            protected function processTranslationsForUpdate(«IF isLegacy»$entity, $formData«ENDIF»)
+            protected function processTranslationsForUpdate()
             {
-                «IF isLegacy»
-                    $entityTransClass = $this->name . '_Entity_' . ucfirst($this->objectType) . 'Translation';
-                «ELSE»
-                    // get treated entity reference from persisted member var
-                    $entity = $this->entityRef;
+                // get treated entity reference from persisted member var
+                $entity = $this->entityRef;
 
-                    $entityTransClass = '\\«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Entity\\' . ucfirst($this->objectType) . 'TranslationEntity';
-                «ENDIF»
+                $entityTransClass = '\\«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Entity\\' . ucfirst($this->objectType) . 'TranslationEntity';
                 $transRepository = $this->entityManager->getRepository($entityTransClass);
 
                 // persist translated fields
-                «IF isLegacy»
-                    $translatableHelper = new «appName»_Util_Translatable($this->view->getServiceManager());
-                «ELSE»
-                    $translatableHelper = $this->container->get('«app.appService».translatable_helper');
-                «ENDIF»
-                $translations = $translatableHelper->processEntityAfterEditing($this->objectType, $entity, «IF isLegacy»$formData«ELSE»$this->form«ENDIF»);
+                $translatableHelper = $this->container->get('«app.appService».translatable_helper');
+                $translations = $translatableHelper->processEntityAfterEditing($this->objectType, $entity, $this->form);
 
-                if («IF isLegacy»System::getVar«ELSE»$this->container->get('zikula_extensions_module.api.variable')->getSystemVar«ENDIF»('multilingual') == 1) {
+                if ($this->container->get('zikula_extensions_module.api.variable')->getSystemVar('multilingual') == 1) {
                     foreach ($translations as $locale => $translationFields) {
                         foreach ($translationFields as $fieldName => $value) {
                             $transRepository->translate($entity, $fieldName, $locale, $value);
@@ -1044,10 +816,8 @@ class FormHandler {
          *
          * @param array   $args    arguments from handleCommand method
          * @param Boolean $success true if this is a success, false for default error
-         «IF !isLegacy»
          *
          * @throws RuntimeException Thrown if executing the workflow action fails
-         «ENDIF»
          */
         protected function addDefaultMessage($args, $success = false)
         {
@@ -1056,23 +826,15 @@ class FormHandler {
                 return;
             }
 
-            «IF isLegacy»
-                if (true === $success) {
-                    LogUtil::registerStatus($message);
-                } else {
-                    LogUtil::registerError($message);
-                }
-            «ELSE»
-                $flashType = true === $success ? 'status' : 'error';
-                $this->request->getSession()->getFlashBag()->add($flashType, $message);
-                $logger = $this->container->get('logger');
-                $logArgs = ['app' => '«appName»', 'user' => $this->container->get('zikula_users_module.current_user')->get('uname'), 'entity' => $this->objectType, 'id' => $this->entityRef->createCompositeIdentifier()];
-                if (true === $success) {
-                    $logger->notice('{app}: User {user} updated the {entity} with id {id}.', $logArgs);
-                } else {
-                    $logger->error('{app}: User {user} tried to update the {entity} with id {id}, but failed.', $logArgs);
-                }
-            «ENDIF»
+            $flashType = true === $success ? 'status' : 'error';
+            $this->request->getSession()->getFlashBag()->add($flashType, $message);
+            $logger = $this->container->get('logger');
+            $logArgs = ['app' => '«appName»', 'user' => $this->container->get('zikula_users_module.current_user')->get('uname'), 'entity' => $this->objectType, 'id' => $this->entityRef->createCompositeIdentifier()];
+            if (true === $success) {
+                $logger->notice('{app}: User {user} updated the {entity} with id {id}.', $logArgs);
+            } else {
+                $logger->error('{app}: User {user} tried to update the {entity} with id {id}, but failed.', $logArgs);
+            }
         }
     '''
 
@@ -1080,122 +842,42 @@ class FormHandler {
         /**
          * Input data processing called by handleCommand method.
          *
-         «IF isLegacy»
-         * @param Zikula_Form_View $view The form view instance
-         «ENDIF»
-         * @param array «IF isLegacy»           «ENDIF»$args Additional arguments
-         «IF isLegacy»
-         *
-         * @return array form data after processing
-         «ENDIF»
+         * @param array $args Additional arguments
          */
-        public function fetchInputData(«IF isLegacy»Zikula_Form_View $view, &«ENDIF»$args)
+        public function fetchInputData($args)
         {
             // fetch posted data input values as an associative array
-            «IF isLegacy»
-                $formData = $this->view->getValues();
-                // we want the array with our field values
-                $entityData = $formData[$this->objectTypeLower];
-                unset($formData[$this->objectTypeLower]);
-            «ELSE»
-                $formData = $this->form->getData();
-            «ENDIF»
-            «IF isLegacy»
-
-                // get treated entity reference from persisted member var
-                $entity = $this->entityRef;
-            «ENDIF»
-            «IF (isLegacy && (hasUserFields || hasListFields)) || hasUploads || (!isLegacy && hasSluggable && !getAllEntities.filter[slugUpdatable].empty)»
+            $formData = $this->form->getData();
+            «IF hasSluggable && !getAllEntities.filter[slugUpdatable].empty»
 
                 if ($args['commandName'] != 'cancel') {
-                    «IF isLegacy»
-                        «legacyParts.processSpecialFields(it)»
-
-                    «ENDIF»
-                    «IF hasUploads && isLegacy»
-                        if (count($this->uploadFields) > 0) {
-                            $entityData = $this->handleUploads($entityData, $entity);
-                            if (false === $entityData) {
-                                return false;
-                            }
-                        }
-
-                    «ENDIF»
-                    «IF !isLegacy && hasSluggable»
-                        if (true === $this->hasSlugUpdatableField && isset($entityData['slug'])) {
-                            «IF app.isLegacy»
-                                $controllerHelper = new «app.appName»_Util_Controller($this->view->getServiceManager());
-                            «ELSE»
-                                $controllerHelper = $this->container->get('«app.appService».controller_helper');
-                            «ENDIF»
-                            $entityData['slug'] = $controllerHelper->formatPermalink($entityData['slug']);
-                        }
-                    «ENDIF»
-                «IF hasUploads && isLegacy»
-                } else {
-                    «legacyParts.removeAdditionalUploadInformationBeforeMerge(it)»
-                «ENDIF»
-                }
-            «ENDIF»
-
-            «IF isLegacy»
-                if (isset($entityData['repeatCreation'])) {
-                    if ($this->mode == 'create') {
-                        $this->repeatCreateAction = $entityData['repeatCreation'];
+                    if (true === $this->hasSlugUpdatableField && isset($entityData['slug'])) {
+                        $controllerHelper = $this->container->get('«app.appService».controller_helper');
+                        $entityData['slug'] = $controllerHelper->formatPermalink($entityData['slug']);
                     }
-                    unset($entityData['repeatCreation']);
-                }
-            «ELSE»
-                if ($this->templateParameters['mode'] == 'create' && isset($this->form['repeatCreation']) && $this->form['repeatCreation']->getData() == 1) {
-                    $this->repeatCreateAction = true;
                 }
             «ENDIF»
 
-            «IF isLegacy»
-                if (isset($entityData['additionalNotificationRemarks'])) {
-                    SessionUtil::setVar($this->name . 'AdditionalNotificationRemarks', $entityData['additionalNotificationRemarks']);
-                    unset($entityData['additionalNotificationRemarks']);
-                }
-            «ELSE»
-                if (isset($this->form['additionalNotificationRemarks']) && $this->form['additionalNotificationRemarks']->getData() != '') {
-                    $this->request->getSession()->set('«appName»AdditionalNotificationRemarks', $this->form['additionalNotificationRemarks']->getData());
-                }
-            «ENDIF»
+            if ($this->templateParameters['mode'] == 'create' && isset($this->form['repeatCreation']) && $this->form['repeatCreation']->getData() == 1) {
+                $this->repeatCreateAction = true;
+            }
+
+            if (isset($this->form['additionalNotificationRemarks']) && $this->form['additionalNotificationRemarks']->getData() != '') {
+                $this->request->getSession()->set('«appName»AdditionalNotificationRemarks', $this->form['additionalNotificationRemarks']->getData());
+            }
             «IF hasAttributableEntities»
 
                 if (true === $this->hasAttributes) {
-                    «IF isLegacy»
-                        $this->processAttributesForUpdate($entity, $formData);
-                    «ELSE»
-                        $featureActivationHelper = $this->container->get('«app.appService».feature_activation_helper');
-                        if ($featureActivationHelper->isEnabled(FeatureActivationHelper::ATTRIBUTES, $this->objectType)) {
-                            $this->processAttributesForUpdate($entity);
-                        }
-                    «ENDIF»
+                    $featureActivationHelper = $this->container->get('«app.appService».feature_activation_helper');
+                    if ($featureActivationHelper->isEnabled(FeatureActivationHelper::ATTRIBUTES, $this->objectType)) {
+                        $this->processAttributesForUpdate($entity);
+                    }
                 }
-            «ENDIF»
-            «IF isLegacy»
-
-                «legacyParts.processExtensions(it)»
-
-                // assign fetched data
-                $entity->merge($entityData);
-
-                «legacyParts.postMerge(it)»
-
-                // save updated entity
-                $this->entityRef = $entity;
             «ENDIF»
 
             // return remaining form data
             return $formData;
         }
-        «IF app.isLegacy»
-
-            «legacyParts.writeRelationDataToEntity(it)»
-
-            «legacyParts.persistRelationData(it)»
-        «ENDIF»
     '''
 
     def private dispatch applyAction(Application it) '''
@@ -1206,7 +888,7 @@ class FormHandler {
          *
          * @return bool Whether everything worked well or not
          */
-        public function applyAction(array $args = «IF isLegacy»array()«ELSE»[]«ENDIF»)
+        public function applyAction(array $args = [])
         {
             // stub for subclasses
             return false;
@@ -1218,60 +900,42 @@ class FormHandler {
          * Prepares properties related to advanced workflow.
          *
          * @param bool $enterprise Whether the enterprise workflow is used instead of the standard workflow
-        «IF !isLegacy»
-            «' '»*
-            «' '»* @return array List of additional form options
-        «ENDIF»
+         *
+         * @return array List of additional form options
          */
         protected function prepareWorkflowAdditions($enterprise = false)
         {
-            $roles = «IF isLegacy»array()«ELSE»[]«ENDIF»;
+            $roles = [];
 
             «/* TODO recheck this after https://github.com/zikula/core/issues/2800 has been solved */»
-            «IF isLegacy»
-                $uid = UserUtil::isLoggedIn() ? UserUtil::getVar('uid') : 1;
-            «ELSE»
-                $currentUserApi = $this->container->get('zikula_users_module.current_user');
-                $isLoggedIn = $currentUserApi->isLoggedIn();
-                $uid = $isLoggedIn ? $currentUserApi->get('uid') : 1;
-            «ENDIF»
+            $currentUserApi = $this->container->get('zikula_users_module.current_user');
+            $isLoggedIn = $currentUserApi->isLoggedIn();
+            $uid = $isLoggedIn ? $currentUserApi->get('uid') : 1;
             $roles['isCreator'] = $this->entityRef['createdUserId'] == $uid;
-            «IF !isLegacy»
-                $variableApi = $this->container->get('zikula_extensions_module.api.variable');
-            «ENDIF»
+            $variableApi = $this->container->get('zikula_extensions_module.api.variable');
 
-            $groupArgs = «IF isLegacy»array(«ELSE»[«ENDIF»'uid' => $uid, 'gid' => «IF isLegacy»$this->getVar(«ELSE»$variableApi->get('«appName»', «ENDIF»'moderationGroupFor' . $this->objectTypeCapital, 2)«IF isLegacy»)«ELSE»]«ENDIF»;
-            $roles['isModerator'] = ModUtil::apiFunc('«IF isLegacy»Groups«ELSE»ZikulaGroupsModule«ENDIF»', 'user', 'isgroupmember', $groupArgs);
+            $groupArgs = ['uid' => $uid, 'gid' => $variableApi->get('«appName»', 'moderationGroupFor' . $this->objectTypeCapital, 2)];
+            $roles['isModerator'] = ModUtil::apiFunc('ZikulaGroupsModule', 'user', 'isgroupmember', $groupArgs);
 
             if (true === $enterprise) {
-                $groupArgs = «IF isLegacy»array(«ELSE»[«ENDIF»'uid' => $uid, 'gid' => «IF isLegacy»$this->getVar(«ELSE»$variableApi->get('«appName»', «ENDIF»'superModerationGroupFor' . $this->objectTypeCapital, 2)«IF isLegacy»)«ELSE»]«ENDIF»;
-                $roles['isSuperModerator'] = ModUtil::apiFunc('«IF isLegacy»Groups«ELSE»ZikulaGroupsModule«ENDIF»', 'user', 'isgroupmember', $groupArgs);
+                $groupArgs = ['uid' => $uid, 'gid' => $variableApi->get('«appName»', 'superModerationGroupFor' . $this->objectTypeCapital, 2)];
+                $roles['isSuperModerator'] = ModUtil::apiFunc('ZikulaGroupsModule', 'user', 'isgroupmember', $groupArgs);
             }
 
-            «IF isLegacy»
-                $this->view->assign($roles);
-            «ELSE»
-                return $roles;
-            «ENDIF»
+            return $roles;
         }
     '''
 
     def private formHandlerCommonImpl(Application it, String actionName) '''
-        «IF !isLegacy»
-            namespace «appNamespace»\Form\Handler\Common;
+        namespace «appNamespace»\Form\Handler\Common;
 
-            use «appNamespace»\Form\Handler\Common\Base\Abstract«actionName.formatForCodeCapital»Handler;
+        use «appNamespace»\Form\Handler\Common\Base\Abstract«actionName.formatForCodeCapital»Handler;
 
-        «ENDIF»
         /**
          * This handler class handles the page events of editing forms.
          * It collects common functionality required by different object types.
          */
-        «IF isLegacy»
-        abstract class «appName»_Form_Handler_Common_«actionName.formatForCodeCapital» extends «appName»_Form_Handler_Common_Base_Abstract«actionName.formatForCodeCapital»
-        «ELSE»
         abstract class «actionName.formatForCodeCapital»Handler extends Abstract«actionName.formatForCodeCapital»Handler
-        «ENDIF»
         {
             // feel free to extend the base handler class here
         }
@@ -1287,21 +951,9 @@ class FormHandler {
         /**
          * This handler class handles the page events of editing forms.
          * It aims on the «name.formatForDisplay» object type.
-        «IF app.isLegacy»
-            «' '»*
-            «' '»* More documentation is provided in the parent class.
-        «ENDIF»
          */
-        «IF app.isLegacy»
-        abstract class «app.appName»_Form_Handler_«name.formatForCodeCapital»_Base_Abstract«actionName.formatForCodeCapital» extends «app.appName»_Form_Handler_Common_«actionName.formatForCodeCapital»
-        «ELSE»
         abstract class Abstract«actionName.formatForCodeCapital»Handler extends «actionName.formatForCodeCapital»Handler
-        «ENDIF»
         {
-            «IF app.isLegacy»
-                «formHandlerBasePreInitialise»
-
-            «ENDIF»
             «processForm»
 
             «IF ownerPermission && standardFields»
@@ -1323,41 +975,20 @@ class FormHandler {
 
     def private formHandlerBaseImports(Entity it, String actionName) '''
         «val app = application»
-        «IF !app.isLegacy»
-            namespace «app.appNamespace»\Form\Handler\«name.formatForCodeCapital»\Base;
+        namespace «app.appNamespace»\Form\Handler\«name.formatForCodeCapital»\Base;
 
-            use «app.appNamespace»\Form\Handler\Common\«actionName.formatForCodeCapital»Handler;
+        use «app.appNamespace»\Form\Handler\Common\«actionName.formatForCodeCapital»Handler;
 
-        «ENDIF»
         «locking.imports(it)»
-        «IF !app.isLegacy»
-            use Symfony\Component\HttpFoundation\RedirectResponse;
-            use Symfony\Component\Security\Core\Exception\AccessDeniedException;
-            use ModUtil;
-            use RuntimeException;
-            use System;
-            use UserUtil;
-            «IF app.needsFeatureActivationHelper»
-                use «app.appNamespace»\Helper\FeatureActivationHelper;
-            «ENDIF»
+        use Symfony\Component\HttpFoundation\RedirectResponse;
+        use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+        use ModUtil;
+        use RuntimeException;
+        use System;
+        use UserUtil;
+        «IF app.needsFeatureActivationHelper»
+            use «app.appNamespace»\Helper\FeatureActivationHelper;
         «ENDIF»
-    '''
-
-    // 1.3.x only
-    def private formHandlerBasePreInitialise(Entity it) '''
-        /**
-         * Pre-initialise hook.
-         *
-         * @return void
-         */
-        public function preInitialize()
-        {
-            parent::preInitialize();
-
-            «memberVarAssignments»
-
-            «legacyParts.setMemberVars(it)»
-        }
     '''
 
     def private memberVarAssignments(Entity it) '''
@@ -1370,14 +1001,10 @@ class FormHandler {
             $this->hasAttributes = «attributable.displayBool»;
         «ENDIF»
         «IF app.hasSluggable»
-            $this->hasSlugUpdatableField = «(!app.isLegacy && hasSluggableFields && slugUpdatable).displayBool»;
+            $this->hasSlugUpdatableField = «(hasSluggableFields && slugUpdatable).displayBool»;
         «ENDIF»
         «IF app.hasTranslatable»
             $this->hasTranslatableFields = «hasTranslatableFields.displayBool»;
-        «ENDIF»
-        «IF app.isLegacy && hasUploadFieldsEntity»
-            // array with upload fields and mandatory flags
-            $this->uploadFields = «IF app.isLegacy»array(«ELSE»[«ENDIF»«FOR uploadField : getUploadFieldsEntity SEPARATOR ', '»'«uploadField.name.formatForCode»' => «uploadField.mandatory.displayBool»«ENDFOR»«IF app.isLegacy»)«ELSE»]«ENDIF»;
         «ENDIF»
     '''
 
@@ -1385,28 +1012,18 @@ class FormHandler {
         /**
          * Initialise existing entity for editing.
          *
-         * @return «IF app.isLegacy»Zikula_«ENDIF»EntityAccess desired entity instance or null
+         * @return EntityAccess desired entity instance or null
          */
         protected function initEntityForEditing()
         {
             $entity = parent::initEntityForEditing();
 
             // only allow editing for the owner or people with higher permissions
-            «IF app.isLegacy»
-                $uid = UserUtil::getVar('uid');
-            «ELSE»
-                $uid = $this->container->get('zikula_users_module.current_user')->get('uid');
-            «ENDIF»
-            if (isset($entity['createdUserId']) && $entity['createdUserId']«IF !app.isLegacy»->getUid()«ENDIF» != $uid) {
-                «IF !app.isLegacy»
-                    $permissionApi = $this->container->get('zikula_permissions_module.api.permission');
-                «ENDIF»
-                if (!«IF app.isLegacy»SecurityUtil::check«ELSE»$permissionApi->has«ENDIF»Permission($this->permissionComponent, $this->createCompositeIdentifier() . '::', ACCESS_ADD)) {
-                    «IF app.isLegacy»
-                        return LogUtil::registerPermissionError();
-                    «ELSE»
-                        throw new AccessDeniedException();
-                    «ENDIF»
+            $uid = $this->container->get('zikula_users_module.current_user')->get('uid');
+            if (isset($entity['createdUserId']) && $entity['createdUserId']->getUid() != $uid) {
+                $permissionApi = $this->container->get('zikula_permissions_module.api.permission');
+                if (!$permissionApi->hasPermission($this->permissionComponent, $this->createCompositeIdentifier() . '::', ACCESS_ADD)) {
+                    throw new AccessDeniedException();
                 }
             }
 
@@ -1416,21 +1033,15 @@ class FormHandler {
 
     def private formHandlerImpl(Entity it, String actionName) '''
         «val app = application»
-        «IF !app.isLegacy»
-            namespace «app.appNamespace»\Form\Handler\«name.formatForCodeCapital»;
+        namespace «app.appNamespace»\Form\Handler\«name.formatForCodeCapital»;
 
-            use «app.appNamespace»\Form\Handler\«name.formatForCodeCapital»\Base\Abstract«actionName.formatForCodeCapital»Handler;
+        use «app.appNamespace»\Form\Handler\«name.formatForCodeCapital»\Base\Abstract«actionName.formatForCodeCapital»Handler;
 
-        «ENDIF»
         /**
          * This handler class handles the page events of the Form called by the «formatForCode(app.appName + '_' + name + '_' + actionName)»() function.
          * It aims on the «name.formatForDisplay» object type.
          */
-        «IF app.isLegacy»
-        class «app.appName»_Form_Handler_«name.formatForCodeCapital»_«actionName.formatForCodeCapital» extends «app.appName»_Form_Handler_«name.formatForCodeCapital»_Base_Abstract«actionName.formatForCodeCapital»
-        «ELSE»
         class «actionName.formatForCodeCapital»Handler extends Abstract«actionName.formatForCodeCapital»Handler
-        «ENDIF»
         {
             // feel free to extend the base handler class here
         }
@@ -1443,46 +1054,25 @@ class FormHandler {
          *
          * This method takes care of all necessary initialisation of our data and form states.
          *
-        «IF app.isLegacy»
-            «' '»* @param Zikula_Form_View $view The form view instance
-        «ELSE»
-            «' '»* @param array $templateParameters List of preassigned template variables
-        «ENDIF»
+         * @param array $templateParameters List of preassigned template variables
          *
          * @return boolean False in case of initialisation errors, otherwise true
          */
-        public function «IF app.isLegacy»initialize«ELSE»processForm«ENDIF»(«IF app.isLegacy»Zikula_Form_View $view«ELSE»array $templateParameters«ENDIF»)
+        public function processForm(array $templateParameters)
         {
-            «IF !app.isLegacy»
-                «memberVarAssignments»
+            «memberVarAssignments»
 
-            «ENDIF»
-            $result = parent::«IF app.isLegacy»initialize($view)«ELSE»processForm($templateParameters)«ENDIF»;
-            «IF app.isLegacy»
-                if (true !== $result) {
-                    return $result;
-                }
-            «ENDIF»
+            $result = parent::processForm($templateParameters);
 
-            if ($this->«IF app.isLegacy»mode«ELSE»templateParameters['mode']«ENDIF» == 'create') {
-                «IF app.isLegacy»
-                    $modelHelper = new «app.appName»_Util_Model($this->view->getServiceManager());
-                «ELSE»
-                    $modelHelper = $this->container->get('«app.appService».model_helper');
-                «ENDIF»
+            if ($this->templateParameters['mode'] == 'create') {
+                $modelHelper = $this->container->get('«app.appService».model_helper');
                 if (!$modelHelper->canBeCreated($this->objectType)) {
-                    «IF app.isLegacy»
-                        LogUtil::registerError($this->__('Sorry, but you can not create the «name.formatForDisplay» yet as other items are required which must be created before!'));
+                    $this->request->getSession()->getFlashBag()->add('error', $this->__('Sorry, but you can not create the «name.formatForDisplay» yet as other items are required which must be created before!'));
+                    $logger = $this->container->get('logger');
+                    $logArgs = ['app' => '«app.appName»', 'user' => $this->container->get('zikula_users_module.current_user')->get('uname'), 'entity' => $this->objectType];
+                    $logger->notice('{app}: User {user} tried to create a new {entity}, but failed as it other items are required which must be created before.', $logArgs);
 
-                        return $this->view->redirect($this->getRedirectUrl(array('commandName' => '')));
-                    «ELSE»
-                        $this->request->getSession()->getFlashBag()->add('error', $this->__('Sorry, but you can not create the «name.formatForDisplay» yet as other items are required which must be created before!'));
-                        $logger = $this->container->get('logger');
-                        $logArgs = ['app' => '«app.appName»', 'user' => $this->container->get('zikula_users_module.current_user')->get('uname'), 'entity' => $this->objectType];
-                        $logger->notice('{app}: User {user} tried to create a new {entity}, but failed as it other items are required which must be created before.', $logArgs);
-
-                        return new RedirectResponse($this->getRedirectUrl(['commandName' => '']), 302);
-                    «ENDIF»
+                    return new RedirectResponse($this->getRedirectUrl(['commandName' => '']), 302);
                 }
             }
 
@@ -1496,67 +1086,42 @@ class FormHandler {
             $this->entityRef = $entity;
 
             $entityData = $entity->toArray();
-            «IF app.isLegacy && app.hasListFields»
-
-                «legacyParts.initListFields(it)»
-            «ENDIF»
 
             // assign data to template as array (makes translatable support easier)
-            «IF app.isLegacy»
-                $this->view->assign($this->objectTypeLower, $entityData);
-            «ELSE»
-                $this->templateParameters[$this->objectTypeLower] = $entityData;
-            «ENDIF»
-            «IF app.isLegacy && hasUploadFieldsEntity»
+            $this->templateParameters[$this->objectTypeLower] = $entityData;
 
-                if ($this->«IF app.isLegacy»mode«ELSE»templateParameters['mode']«ENDIF» == 'edit') {
-                    // assign formatted title (used for image thumbnails)
-                    «IF app.isLegacy»
-                        $this->view->assign('formattedEntityTitle', $entity->getTitleFromDisplayPattern());
-                    «ELSE»
-                        $this->templateParameters['formattedEntityTitle'] = $entity->getTitleFromDisplayPattern();
-                    «ENDIF»
+            return $result;
+        }
+
+        /**
+         * Creates the form type.
+         */
+        protected function createForm()
+        {
+            $options = [
+                «IF hasUploadFieldsEntity»
+                    'entity' => $this->entityRef,
+                «ENDIF»
+                'mode' => $this->templateParameters['mode'],
+                'actions' => $this->templateParameters['actions'],
+                «IF !incoming.empty || !outgoing.empty»
+                    'inlineUsage' => $this->templateParameters['inlineUsage']
+                «ENDIF»
+            ];
+            «IF attributable»
+                $featureActivationHelper = $this->container->get('«app.appService».feature_activation_helper');
+                if ($featureActivationHelper->isEnabled(FeatureActivationHelper::ATTRIBUTES, $this->objectType)) {
+                    $options['attributes'] = $this->templateParameters['attributes'];
                 }
             «ENDIF»
-            «IF app.isLegacy && workflow != EntityWorkflowType.NONE»
+            «IF workflow != EntityWorkflowType.NONE»
 
-                $this->prepareWorkflowAdditions(«(workflow == EntityWorkflowType.ENTERPRISE).displayBool»);
+                $workflowRoles = $this->prepareWorkflowAdditions(«(workflow == EntityWorkflowType.ENTERPRISE).displayBool»);
+                $options = array_merge($options, $workflowRoles);
             «ENDIF»
 
-            return «IF app.isLegacy»true«ELSE»$result«ENDIF»;
+            return $this->container->get('form.factory')->create('«app.appNamespace»\Form\Type\«name.formatForCodeCapital»Type', $this->entityRef, $options);
         }
-        «IF !app.isLegacy»
-
-            /**
-             * Creates the form type.
-             */
-            protected function createForm()
-            {
-                $options = [
-                    «IF hasUploadFieldsEntity»
-                        'entity' => $this->entityRef,
-                    «ENDIF»
-                    'mode' => $this->templateParameters['mode'],
-                    'actions' => $this->templateParameters['actions'],
-                    «IF !incoming.empty || !outgoing.empty»
-                        'inlineUsage' => $this->templateParameters['inlineUsage']
-                    «ENDIF»
-                ];
-                «IF attributable»
-                    $featureActivationHelper = $this->container->get('«app.appService».feature_activation_helper');
-                    if ($featureActivationHelper->isEnabled(FeatureActivationHelper::ATTRIBUTES, $this->objectType)) {
-                        $options['attributes'] = $this->templateParameters['attributes'];
-                    }
-                «ENDIF»
-                «IF !app.isLegacy && workflow != EntityWorkflowType.NONE»
-
-                    $workflowRoles = $this->prepareWorkflowAdditions(«(workflow == EntityWorkflowType.ENTERPRISE).displayBool»);
-                    $options = array_merge($options, $workflowRoles);
-                «ENDIF»
-
-                return $this->container->get('form.factory')->create('«app.appNamespace»\Form\Type\«name.formatForCodeCapital»Type', $this->entityRef, $options);
-            }
-        «ENDIF»
     '''
 
     def private dispatch handleCommand(Entity it) '''
@@ -1565,37 +1130,28 @@ class FormHandler {
          *
          * This event handler is called when a command is issued by the user.
          *
-        «IF app.isLegacy»
-            «' '»* @param Zikula_Form_View $view The form view instance
-            «' '»* @param array            $args Additional arguments
-        «ELSE»
-            «' '»* @param array $args List of arguments
-        «ENDIF»
+         * @param array $args List of arguments
          *
          * @return mixed Redirect or false on errors
          */
-        public function handleCommand(«IF app.isLegacy»Zikula_Form_View $view, &«ENDIF»$args«IF !app.isLegacy» = []«ENDIF»)
+        public function handleCommand($args = [])
         {
-            $result = parent::handleCommand(«IF app.isLegacy»$view, «ENDIF»$args);
+            $result = parent::handleCommand($args);
             if (false === $result) {
                 return $result;
             }
 
-            «IF app.isLegacy»
-                return $this->view->redirect($this->getRedirectUrl($args));
-            «ELSE»
-                // build $args for BC (e.g. used by redirect handling)
-                foreach ($this->templateParameters['actions'] as $action) {
-                    if ($this->form->get($action['id'])->isClicked()) {
-                        $args['commandName'] = $action['id'];
-                    }
+            // build $args for BC (e.g. used by redirect handling)
+            foreach ($this->templateParameters['actions'] as $action) {
+                if ($this->form->get($action['id'])->isClicked()) {
+                    $args['commandName'] = $action['id'];
                 }
-                if ($this->form->get('cancel')->isClicked()) {
-                    $args['commandName'] = 'cancel';
-                }
+            }
+            if ($this->form->get('cancel')->isClicked()) {
+                $args['commandName'] = 'cancel';
+            }
 
-                return new RedirectResponse($this->getRedirectUrl($args), 302);
-            «ENDIF»
+            return new RedirectResponse($this->getRedirectUrl($args), 302);
         }
 
         /**
@@ -1618,7 +1174,7 @@ class FormHandler {
                     case 'defer':
                 «ENDIF»
                 case 'submit':
-                    if ($this->«IF app.isLegacy»mode«ELSE»templateParameters['mode']«ENDIF» == 'create') {
+                    if ($this->templateParameters['mode'] == 'create') {
                         $message = $this->__('Done! «name.formatForDisplayCapital» created.');
                     } else {
                         $message = $this->__('Done! «name.formatForDisplayCapital» updated.');
@@ -1643,53 +1199,35 @@ class FormHandler {
          * @param array $args Arguments from handleCommand method
          *
          * @return bool Whether everything worked well or not
-         «IF !app.isLegacy»
          *
          * @throws RuntimeException Thrown if concurrent editing is recognised or another error occurs
-         «ENDIF»
          */
-        public function applyAction(array $args = «IF app.isLegacy»array()«ELSE»[]«ENDIF»)
+        public function applyAction(array $args = [])
         {
             // get treated entity reference from persisted member var
             $entity = $this->entityRef;
-            «IF app.isLegacy»
-
-                if (!$entity->validate()) {
-                    return false;
-                }
-            «ENDIF»
 
             $action = $args['commandName'];
             «locking.getVersion(it)»
 
             $success = false;
-            «IF !app.isLegacy»
-                $flashBag = $this->request->getSession()->getFlashBag();
-                $logger = $this->container->get('logger');
-            «ENDIF»
+            $flashBag = $this->request->getSession()->getFlashBag();
+            $logger = $this->container->get('logger');
             try {
                 «locking.applyLock(it)»
                 // execute the workflow action
-                «IF app.isLegacy»
-                    $workflowHelper = new «app.appName»_Util_Workflow($this->view->getServiceManager());
-                «ELSE»
-                    $workflowHelper = $this->container->get('«app.appService».workflow_helper');
-                «ENDIF»
+                $workflowHelper = $this->container->get('«app.appService».workflow_helper');
                 $success = $workflowHelper->executeAction($entity, $action);
             «locking.catchException(it)»
             } catch(\Exception $e) {
-                «IF app.isLegacy»
-                    LogUtil::registerError($this->__f('Sorry, but an error occured during the %s action. Please apply the changes again!', array($action)) . ' ' . $e->getMessage());
-                «ELSE»
-                    $flashBag->add('error', $this->__f('Sorry, but an error occured during the %action% action. Please apply the changes again!', ['%action%' => $action]) . ' ' . $e->getMessage());
-                    $logArgs = ['app' => '«app.appName»', 'user' => $this->container->get('zikula_users_module.current_user')->get('uname'), 'entity' => '«name.formatForDisplay»', 'id' => $entity->createCompositeIdentifier(), 'errorMessage' => $e->getMessage()];
-                    $logger->error('{app}: User {user} tried to edit the {entity} with id {id}, but failed. Error details: {errorMessage}.', $logArgs);
-                «ENDIF»
+                $flashBag->add('error', $this->__f('Sorry, but an error occured during the %action% action. Please apply the changes again!', ['%action%' => $action]) . ' ' . $e->getMessage());
+                $logArgs = ['app' => '«app.appName»', 'user' => $this->container->get('zikula_users_module.current_user')->get('uname'), 'entity' => '«name.formatForDisplay»', 'id' => $entity->createCompositeIdentifier(), 'errorMessage' => $e->getMessage()];
+                $logger->error('{app}: User {user} tried to edit the {entity} with id {id}, but failed. Error details: {errorMessage}.', $logArgs);
             }
 
             $this->addDefaultMessage($args, $success);
 
-            if ($success && $this->«IF app.isLegacy»mode«ELSE»templateParameters['mode']«ENDIF» == 'create') {
+            if ($success && $this->templateParameters['mode'] == 'create') {
                 // store new identifier
                 foreach ($this->idFields as $idField) {
                     $this->idValues[$idField] = $entity[$idField];
@@ -1702,8 +1240,4 @@ class FormHandler {
             return $success;
         }
     '''
-
-    def private isLegacy(Application it) {
-        targets('1.3.x')
-    }
 }

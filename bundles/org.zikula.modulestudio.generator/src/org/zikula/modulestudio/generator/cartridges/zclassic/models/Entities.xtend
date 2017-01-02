@@ -10,14 +10,12 @@ import de.guite.modulestudio.metamodel.InheritanceRelationship
 import de.guite.modulestudio.metamodel.MappedSuperClass
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.business.ValidationConstraints
-import org.zikula.modulestudio.generator.cartridges.zclassic.models.business.ValidatorLegacy
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.entity.Association
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.entity.EntityConstructor
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.entity.EntityMethods
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.entity.ExtensionManager
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.entity.Property
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.entity.extensions.StandardFieldsTrait
-import org.zikula.modulestudio.generator.cartridges.zclassic.models.event.EventListener
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.event.LifecycleListener
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
@@ -43,7 +41,6 @@ class Entities {
     FileHelper fh = new FileHelper
     Association thAssoc = new Association
     ExtensionManager extMan
-    EventListener thEvLi = new EventListener
     Property thProp
 
     /**
@@ -52,17 +49,9 @@ class Entities {
     def generate(Application it, IFileSystemAccess fsa) {
         entities.forEach(e|e.generate(it, fsa))
 
-        if (targets('1.3.x')) {
-            val validator = new ValidatorLegacy()
-            validator.generateCommon(it, fsa)
-            for (entity : getAllEntities) {
-                validator.generateWrapper(entity, fsa)
-            }
-        } else {
-            new LifecycleListener().generate(it, fsa)
-            if (hasStandardFieldEntities) {
-                new StandardFieldsTrait().generate(it, fsa)
-            }
+        new LifecycleListener().generate(it, fsa)
+        if (hasStandardFieldEntities) {
+            new StandardFieldsTrait().generate(it, fsa)
         }
 
         for (entity : getAllEntities) {
@@ -81,7 +70,7 @@ class Entities {
         }
         thProp = new Property(extMan)
         val entityPath = app.getAppSourceLibPath + 'Entity/'
-        val entityClassSuffix = if (!app.targets('1.3.x')) 'Entity' else ''
+        val entityClassSuffix = 'Entity'
         val entityFileName = name.formatForCodeCapital + entityClassSuffix
         var fileName = ''
         if (!isInheriting) {
@@ -108,17 +97,15 @@ class Entities {
             use Doctrine\Common\Collections\ArrayCollection;
         «ENDIF»
         use Gedmo\Mapping\Annotation as Gedmo;
-        «IF !application.targets('1.3.x')»
-            «IF hasUploadFieldsEntity»
-                use Symfony\Component\HttpFoundation\File\File;
-            «ENDIF»
-            use Symfony\Component\Validator\Constraints as Assert;
-            «IF !getListFieldsEntity.filter[multiple].empty»
-                use Symfony\Component\Validator\Context\ExecutionContextInterface;
-            «ENDIF»
-            «IF !getUniqueDerivedFields.filter[!primaryKey].empty || !getIncomingJoinRelations.filter[unique].empty || !getOutgoingJoinRelations.filter[unique].empty»
-                use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
-            «ENDIF»
+        «IF hasUploadFieldsEntity»
+            use Symfony\Component\HttpFoundation\File\File;
+        «ENDIF»
+        use Symfony\Component\Validator\Constraints as Assert;
+        «IF !getListFieldsEntity.filter[multiple].empty»
+            use Symfony\Component\Validator\Context\ExecutionContextInterface;
+        «ENDIF»
+        «IF !getUniqueDerivedFields.filter[!primaryKey].empty || !getIncomingJoinRelations.filter[unique].empty || !getOutgoingJoinRelations.filter[unique].empty»
+            use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
         «ENDIF»
     '''
 
@@ -132,46 +119,37 @@ class Entities {
             use Doctrine\Common\NotifyPropertyChanged;
             use Doctrine\Common\PropertyChangedListener;
         «ENDIF»
-        «IF standardFields && application.targets('1.3.x')»
-            use DoctrineExtensions\StandardFields\Mapping\Annotation as ZK;
+        «IF hasTranslatableFields»
+            use Gedmo\Translatable\Translatable;
         «ENDIF»
-        «IF !application.targets('1.3.x')»
-            «IF hasTranslatableFields»
-                use Gedmo\Translatable\Translatable;
-            «ENDIF»
-            «IF hasUploadFieldsEntity»
-                use Symfony\Component\HttpFoundation\File\File;
-            «ENDIF»
-            use Symfony\Component\Validator\Constraints as Assert;
-            «IF !getListFieldsEntity.filter[multiple].empty»
-                use Symfony\Component\Validator\Context\ExecutionContextInterface;
-            «ENDIF»
-            «IF !getUniqueDerivedFields.filter[!primaryKey].empty || (hasSluggableFields && slugUnique) || !getIncomingJoinRelations.filter[unique].empty || !getOutgoingJoinRelations.filter[unique].empty || !getUniqueIndexes.empty»
-                use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
-            «ENDIF»
-            «IF standardFields»
-                use «application.appNamespace»\Traits\StandardFieldsTrait;
-                use Zikula\UsersModule\Entity\UserEntity;
-            «ENDIF»
+        «IF hasUploadFieldsEntity»
+            use Symfony\Component\HttpFoundation\File\File;
+        «ENDIF»
+        use Symfony\Component\Validator\Constraints as Assert;
+        «IF !getListFieldsEntity.filter[multiple].empty»
+            use Symfony\Component\Validator\Context\ExecutionContextInterface;
+        «ENDIF»
+        «IF !getUniqueDerivedFields.filter[!primaryKey].empty || (hasSluggableFields && slugUnique) || !getIncomingJoinRelations.filter[unique].empty || !getOutgoingJoinRelations.filter[unique].empty || !getUniqueIndexes.empty»
+            use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+        «ENDIF»
+        «IF standardFields»
+            use «application.appNamespace»\Traits\StandardFieldsTrait;
+            use Zikula\UsersModule\Entity\UserEntity;
         «ENDIF»
     '''
 
     def private modelEntityBaseImpl(DataObject it, Application app) '''
-        «IF !app.targets('1.3.x')»
-            namespace «app.appNamespace»\Entity\Base;
+        namespace «app.appNamespace»\Entity\Base;
 
-        «ENDIF»
         «imports»
-        «IF !app.targets('1.3.x')»
 
-            use DataUtil;
-            use FormUtil;
-            use RuntimeException;
-            use ServiceUtil;
-            use UserUtil;
-            use Zikula_Workflow_Util;
-            use Zikula\Core\Doctrine\EntityAccess;
-        «ENDIF»
+        use DataUtil;
+        use FormUtil;
+        use RuntimeException;
+        use ServiceUtil;
+        use UserUtil;
+        use Zikula_Workflow_Util;
+        use Zikula\Core\Doctrine\EntityAccess;
 
         «modelEntityBaseImplClass(app)»
     '''
@@ -188,16 +166,12 @@ class Entities {
          *
          * @abstract
          */
-        «IF app.targets('1.3.x')»
-        abstract class «app.appName»_Entity_Base_Abstract«name.formatForCodeCapital» extends Zikula_EntityAccess«IF it instanceof Entity && (it as Entity).hasNotifyPolicy» implements NotifyPropertyChanged«ENDIF»
-        «ELSE»
         abstract class Abstract«name.formatForCodeCapital»Entity extends EntityAccess«IF it instanceof Entity && ((it as Entity).hasNotifyPolicy || (it as Entity).hasTranslatableFields)» implements«IF (it as Entity).hasNotifyPolicy» NotifyPropertyChanged«ENDIF»«IF (it as Entity).hasTranslatableFields»«IF (it as Entity).hasNotifyPolicy»,«ENDIF» Translatable«ENDIF»«ENDIF»
-        «ENDIF»
         {
-            «IF it instanceof Entity && (it as Entity).standardFields && !application.targets('1.3.x')»
+            «IF it instanceof Entity && (it as Entity).standardFields»
                 /**
                  * Hook standard fields behaviour.
-                 * Updates createdUserId, updatedUserId, createdDate, updatedDate fields.
+                 * Updates createdBy, updatedBy, createdDate, updatedDate fields.
                  */
                 use StandardFieldsTrait;
 
@@ -207,64 +181,41 @@ class Entities {
     '''
 
     def private modelEntityBaseImplBody(DataObject it, Application app) '''
-        «val validatorClassLegacy = if (app.targets('1.3.x')) app.appName + '_Entity_Validator_' + name.formatForCodeCapital else '\\' + app.vendor.formatForCodeCapital + '\\' + app.name.formatForCodeCapital + 'Module\\Entity\\Validator\\' + name.formatForCodeCapital + 'Validator'»
-        «memberVars(validatorClassLegacy)»
+        «memberVars»
 
         «IF it instanceof Entity»
             «new EntityConstructor().constructor(it, false)»
 
         «ENDIF»
-        «accessors(validatorClassLegacy)»
+        «accessors»
 
-        «IF it instanceof Entity && app.targets('1.3.x')»
-            «thEvLi.generateBase(it as Entity)»
-
-        «ENDIF»
         «new EntityMethods().generate(it, app, thProp)»
     '''
 
-    def private memberVars(DataObject it, String validatorClassLegacy) '''
+    def private memberVars(DataObject it) '''
         /**
          * @var string The tablename this object maps to
          */
         protected $_objectType = '«name.formatForCode»';
-        «IF application.targets('1.3.x')»
-
-            /**
-             * @var «validatorClassLegacy» The validator for this entity
-             */
-            protected $_validator = null;
-        «ENDIF»
 
         /**
-         «IF !application.targets('1.3.x')»
          * @Assert\Type(type="bool")
-         «ENDIF»
          * @var boolean Option to bypass validation if needed
          */
         protected $_bypassValidation = false;
         «IF it instanceof Entity && (it as Entity).hasNotifyPolicy»
 
             /**
-             «IF !application.targets('1.3.x')»
              * @Assert\Type(type="array")
-             «ENDIF»
              * @var array List of change notification listeners
              */
-            protected $_propertyChangedListeners = «IF application.targets('1.3.x')»array()«ELSE»[]«ENDIF»;
-        «ENDIF»
-        «IF application.targets('1.3.x')»
-
-            /**
-             * @var array List of available item actions
-             */
-            protected $_actions = array();
+            protected $_propertyChangedListeners = [];
         «ENDIF»
 
         /**
          * @var array The current workflow data of this object
          */
-        protected $__WORKFLOW__ = «IF application.targets('1.3.x')»array()«ELSE»[]«ENDIF»;
+        protected $__WORKFLOW__ = [];
 
         «FOR field : getDerivedFields»«thProp.persistentProperty(field)»«ENDFOR»
         «extMan.additionalProperties»
@@ -273,16 +224,10 @@ class Entities {
         «FOR relation : getOutgoingJoinRelations»«thAssoc.generate(relation, true)»«ENDFOR»
     '''
 
-    def private accessors(DataObject it, String validatorClassLegacy) '''
+    def private accessors(DataObject it) '''
         «fh.getterAndSetterMethods(it, '_objectType', 'string', false, true, false, '', '')»
-        «IF application.targets('1.3.x')»
-            «fh.getterAndSetterMethods(it, '_validator', validatorClassLegacy, false, true, true, 'null', '')»
-        «ENDIF»
         «fh.getterAndSetterMethods(it, '_bypassValidation', 'boolean', false, true, false, '', '')»
-        «IF application.targets('1.3.x')»
-            «fh.getterAndSetterMethods(it, '_actions', 'array', false, true, true, if (application.targets('1.3.x')) 'Array()' else '[]', '')»
-        «ENDIF»
-        «fh.getterAndSetterMethods(it, '__WORKFLOW__', 'array', false, true, true, if (application.targets('1.3.x')) 'Array()' else '[]', '')»
+        «fh.getterAndSetterMethods(it, '__WORKFLOW__', 'array', false, true, true, '[]', '')»
 
         «FOR field : getDerivedFields»«thProp.fieldAccessor(field)»«ENDFOR»
         «extMan.additionalAccessors»
@@ -292,20 +237,14 @@ class Entities {
     '''
 
     def private modelEntityImpl(DataObject it, Application app) '''
-        «IF !app.targets('1.3.x')»
-            namespace «app.appNamespace»\Entity;
+        namespace «app.appNamespace»\Entity;
 
-            use «app.appNamespace»\Entity\«IF isInheriting»«parentType.name.formatForCodeCapital»«ELSE»Base\Abstract«name.formatForCodeCapital»Entity«ENDIF» as BaseEntity;
+        use «app.appNamespace»\Entity\«IF isInheriting»«parentType.name.formatForCodeCapital»«ELSE»Base\Abstract«name.formatForCodeCapital»Entity«ENDIF» as BaseEntity;
 
-        «ENDIF»
         «imports»
 
         «entityImplClassDocblock(app)»
-        «IF app.targets('1.3.x')»
-        class «entityClassName('', false)» extends «IF isInheriting»«parentType.entityClassName('', false)»«ELSE»«entityClassName('', true)»«ENDIF»
-        «ELSE»
         class «name.formatForCodeCapital»Entity extends BaseEntity
-        «ENDIF»
         {
             // feel free to add your own methods here
             «IF isInheriting»
@@ -324,10 +263,6 @@ class Entities {
                 «FOR relation : getBidirectionalIncomingJoinRelations»«thAssoc.relationAccessor(relation, false)»«ENDFOR»
                 «FOR relation : getOutgoingJoinRelations»«thAssoc.relationAccessor(relation, true)»«ENDFOR»
             «ENDIF»
-            «IF it instanceof Entity && app.targets('1.3.x')»
-
-                «thEvLi.generateImpl(it as Entity)»
-            «ENDIF»
         }
     '''
 
@@ -340,14 +275,12 @@ class Entities {
          «IF it instanceof MappedSuperClass»
           * @ORM\MappedSuperclass
          «ELSEIF it instanceof Entity»
-          * @ORM\Entity(repositoryClass="«IF app.targets('1.3.x')»«app.appName»_Entity_Repository_«name.formatForCodeCapital»«ELSE»\«app.appNamespace»\Entity\Repository\«name.formatForCodeCapital»Repository«ENDIF»"«IF (it as Entity).readOnly», readOnly=true«ENDIF»)
+          * @ORM\Entity(repositoryClass="\«app.appNamespace»\Entity\Repository\«name.formatForCodeCapital»Repository"«IF (it as Entity).readOnly», readOnly=true«ENDIF»)
          «ENDIF»
         «IF it instanceof Entity»
             «entityImplClassDocblockAdditions(app)»
         «ENDIF»
-        «IF !app.targets('1.3.x')»
-            «new ValidationConstraints().classAnnotations(it)»
-        «ENDIF»
+        «new ValidationConstraints().classAnnotations(it)»
          */
     '''
 
@@ -375,9 +308,6 @@ class Entities {
          «ENDIF»
          «IF changeTrackingPolicy != EntityChangeTrackingPolicy::DEFERRED_IMPLICIT»
          «' '»* @ORM\ChangeTrackingPolicy("«changeTrackingPolicy.literal»")
-         «ENDIF»
-         «IF app.targets('1.3.x')»
-         «' '»* @ORM\HasLifecycleCallbacks
          «ENDIF»
     '''
 

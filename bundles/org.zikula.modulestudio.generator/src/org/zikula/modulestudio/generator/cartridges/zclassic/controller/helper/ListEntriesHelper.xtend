@@ -1,4 +1,4 @@
-package org.zikula.modulestudio.generator.cartridges.zclassic.controller.util
+package org.zikula.modulestudio.generator.cartridges.zclassic.controller.helper
 
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.ListField
@@ -23,42 +23,37 @@ class ListEntriesHelper {
      */
     def generate(Application it, IFileSystemAccess fsa) {
         println('Generating helper class for list entries')
-        val helperFolder = if (targets('1.3.x')) 'Util' else 'Helper'
-        generateClassPair(fsa, getAppSourceLibPath + helperFolder + '/ListEntries' + (if (targets('1.3.x')) '' else 'Helper') + '.php',
+        generateClassPair(fsa, getAppSourceLibPath + 'Helper/ListEntriesHelper.php',
             fh.phpFileContent(it, listFieldFunctionsBaseImpl), fh.phpFileContent(it, listFieldFunctionsImpl)
         )
     }
 
     def private listFieldFunctionsBaseImpl(Application it) '''
-        «IF !targets('1.3.x')»
-            namespace «appNamespace»\Helper\Base;
+        namespace «appNamespace»\Helper\Base;
 
-            use Zikula\Common\Translator\TranslatorInterface;
+        use Zikula\Common\Translator\TranslatorInterface;
 
-        «ENDIF»
         /**
          * Helper base class for list field entries related methods.
          */
-        abstract class «IF targets('1.3.x')»«appName»_Util_Base_AbstractListEntries extends Zikula_AbstractBase«ELSE»AbstractListEntriesHelper«ENDIF»
+        abstract class AbstractListEntriesHelper
         {
-            «IF !targets('1.3.x')»
-                /**
-                 * @var TranslatorInterface
-                 */
-                protected $translator;
+            /**
+             * @var TranslatorInterface
+             */
+            protected $translator;
 
-                /**
-                 * Constructor.
-                 * Initialises member vars.
-                 *
-                 * @param TranslatorInterface $translator Translator service instance
-                 */
-                public function __construct(TranslatorInterface $translator)
-                {
-                    $this->translator = $translator;
-                }
+            /**
+             * Constructor.
+             * Initialises member vars.
+             *
+             * @param TranslatorInterface $translator Translator service instance
+             */
+            public function __construct(TranslatorInterface $translator)
+            {
+                $this->translator = $translator;
+            }
 
-            «ENDIF»
             «resolve»
 
             «extractMultiList»
@@ -194,10 +189,10 @@ class ListEntriesHelper {
         public function getEntries($objectType, $fieldName)
         {
             if (empty($objectType) || empty($fieldName)) {
-                return «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»;
+                return [];
             }
 
-            $entries = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»;
+            $entries = [];
             switch ($objectType) {
                 «FOR entity : entities.filter[hasListFieldsEntity]»
                     case '«entity.name.formatForCode»':
@@ -231,7 +226,7 @@ class ListEntriesHelper {
          */
         public function get«name.formatForCodeCapital»EntriesFor«entity.name.formatForCodeCapital»()
         {
-            $states = «IF entity.application.targets('1.3.x')»array()«ELSE»[]«ENDIF»;
+            $states = [];
             «IF name == 'workflowState'»
                 «val visibleStates = items.filter[value != 'initial' && value != 'deleted']»
                 «FOR item : visibleStates»«item.entryInfo(entity.application)»«ENDFOR»
@@ -245,40 +240,34 @@ class ListEntriesHelper {
     '''
 
     def private entryInfo(ListFieldItem it, Application app) '''
-        $states[] = «IF app.targets('1.3.x')»array(«ELSE»[«ENDIF»
+        $states[] = [
             'value'   => '«IF null !== value»«value.replace("'", "")»«ELSE»«name.formatForCode.replace("'", "")»«ENDIF»',
-            'text'    => $this->«IF !app.targets('1.3.x')»translator->«ENDIF»__('«name.formatForDisplayCapital.replace("'", "")»'),
-            'title'   => «IF null !== documentation && documentation != ''»$this->«IF !app.targets('1.3.x')»translator->«ENDIF»__('«documentation.replace("'", "")»')«ELSE»''«ENDIF»,
+            'text'    => $this->translator->__('«name.formatForDisplayCapital.replace("'", "")»'),
+            'title'   => «IF null !== documentation && documentation != ''»$this->translator->__('«documentation.replace("'", "")»')«ELSE»''«ENDIF»,
             'image'   => '«IF null !== image && image != ''»«image».png«ENDIF»',
             'default' => «^default.displayBool»
-        «IF app.targets('1.3.x')»)«ELSE»]«ENDIF»;
+        ];
     '''
 
     def private entryInfoNegative(ListFieldItem it, Application app) '''
-        $states[] = «IF app.targets('1.3.x')»array(«ELSE»[«ENDIF»
+        $states[] = [
             'value'   => '!«IF null !== value»«value.replace("'", "")»«ELSE»«name.formatForCode.replace("'", "")»«ENDIF»',
-            'text'    => $this->«IF !app.targets('1.3.x')»translator->«ENDIF»__('All except «name.formatForDisplay.replace("'", "")»'),
-            'title'   => $this->«IF !app.targets('1.3.x')»translator->«ENDIF»__('Shows all items except these which are «name.formatForDisplay.replace("'", "")»'),
+            'text'    => $this->translator->__('All except «name.formatForDisplay.replace("'", "")»'),
+            'title'   => $this->translator->__('Shows all items except these which are «name.formatForDisplay.replace("'", "")»'),
             'image'   => '',
             'default' => false
-        «IF app.targets('1.3.x')»)«ELSE»]«ENDIF»;
+        ];
     '''
 
     def private listFieldFunctionsImpl(Application it) '''
-        «IF !targets('1.3.x')»
-            namespace «appNamespace»\Helper;
+        namespace «appNamespace»\Helper;
 
-            use «appNamespace»\Helper\Base\AbstractListEntriesHelper;
+        use «appNamespace»\Helper\Base\AbstractListEntriesHelper;
 
-        «ENDIF»
         /**
          * Helper implementation class for list field entries related methods.
          */
-        «IF targets('1.3.x')»
-        class «appName»_Util_ListEntries extends «appName»_Util_Base_AbstractListEntries
-        «ELSE»
         class ListEntriesHelper extends AbstractListEntriesHelper
-        «ENDIF»
         {
             // feel free to add your own convenience methods here
         }

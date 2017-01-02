@@ -60,9 +60,6 @@ class Views {
         // helper templates
         var customHelper = new Custom()
         for (controller : adminAndUserControllers) {
-            if (targets('1.3.x')) {
-                layoutHelper.headerFooterFile(it, controller)
-            }
             for (action : controller.getCustomActions) {
                 customHelper.generate(action, it, controller, fsa)
             }
@@ -78,10 +75,8 @@ class Views {
             new StandardFields().generate(it, fsa)
         }
 
-        if (!targets('1.3.x')) {
-            layoutHelper.baseTemplates(it)
-            new FilterSyntaxDialog().generate(it, fsa)
-        }
+        layoutHelper.baseTemplates(it)
+        new FilterSyntaxDialog().generate(it, fsa)
         if (needsConfig) {
             new Config().generate(it, fsa)
         }

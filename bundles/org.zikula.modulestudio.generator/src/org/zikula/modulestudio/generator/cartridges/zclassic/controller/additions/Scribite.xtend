@@ -134,7 +134,7 @@ class Scribite {
 
         If such a configuration is not available for an editor check if the plugins for
         «appName» are in Scribite/plugins/EDITOR/vendor/plugins. If not then copy the directories from
-            «rootFolder»/«IF targets('1.3.x')»«appName»/docs«ELSE»«getAppDocPath»«ENDIF»/scribite/plugins into modules/Scribite/plugins.
+            «rootFolder»/«getAppDocPath»/scribite/plugins into modules/Scribite/plugins.
     '''
 
     def private ckPlugin(Application it) '''
@@ -144,19 +144,15 @@ class Scribite {
             init: function (editor) {
                 editor.addCommand('insert«appName»', {
                     exec: function (editor) {
-                        «IF targets('1.3.x')»
-                            var url = Zikula.Config.baseURL + Zikula.Config.entrypoint + '?module=«appName»&type=external&func=finder&editor=ckeditor';
-                        «ELSE»
-                            var url = Routing.generate('«appName.formatForDB»_external_finder', { objectType: '«getLeadingEntity.name.formatForCode»', editor: 'ckeditor' });
-                        «ENDIF»
-                        // call method in «appName»«IF targets('1.3.x')»_f«ELSE».F«ENDIF»inder.js and provide current editor
+                        var url = Routing.generate('«appName.formatForDB»_external_finder', { objectType: '«getLeadingEntity.name.formatForCode»', editor: 'ckeditor' });
+                        // call method in «appName».Finder.js and provide current editor
                         «appName»FinderCKEditor(editor, url);
                     }
                 });
                 editor.ui.addButton('«appName.formatForDB»', {
                     label: editor.lang.«appName.formatForDB».title,
                     command: 'insert«appName»',
-                    icon: this.path.replace('docs/scribite/plugins/CKEditor/vendor/ckeditor/plugins/«appName.formatForDB»', '«IF !targets('1.3.x')»public/«ENDIF»images') + 'admin.png'
+                    icon: this.path.replace('docs/scribite/plugins/CKEditor/vendor/ckeditor/plugins/«appName.formatForDB»', 'public/images') + 'admin.png'
                 });
             }
         });
@@ -211,11 +207,7 @@ class Scribite {
                     // Register the command so that it can be invoked by using tinyMCE.activeEditor.execCommand('mce«appName»');
                     ed.addCommand('mce«appName»', function () {
                         ed.windowManager.open({
-                            «IF targets('1.3.x')»
-                                file: Zikula.Config.baseURL + Zikula.Config.entrypoint + '?module=«appName»&type=external&func=finder&editor=tinymce',
-                            «ELSE»
-                                file: Routing.generate('«appName.formatForDB»_external_finder', { objectType: '«getLeadingEntity.name.formatForCode»', editor: 'tinymce' }),
-                            «ENDIF»
+                            file: Routing.generate('«appName.formatForDB»_external_finder', { objectType: '«getLeadingEntity.name.formatForCode»', editor: 'tinymce' }),
                             width: (screen.width * 0.75),
                             height: (screen.height * 0.66),
                             inline: 1,
@@ -231,7 +223,7 @@ class Scribite {
                     ed.addButton('«name.formatForDB»', {
                         title: '«name.formatForDB».desc',
                         cmd: 'mce«appName»',
-                        image: this.path.replace('docs/scribite/plugins/TinyMce/vendor/tinymce/plugins/«appName.formatForDB»', '«IF !targets('1.3.x')»public/«ENDIF»images') + 'admin.png'
+                        image: this.path.replace('docs/scribite/plugins/TinyMce/vendor/tinymce/plugins/«appName.formatForDB»', 'public/images') + 'admin.png'
                         onPostRender: function() {
                             var ctrl = this;
         

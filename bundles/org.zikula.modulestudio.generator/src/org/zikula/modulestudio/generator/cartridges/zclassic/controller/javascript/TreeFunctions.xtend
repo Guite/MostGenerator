@@ -15,20 +15,11 @@ class TreeFunctions {
      * Entry point for tree-related JavaScript functions.
      */
     def generate(Application it, IFileSystemAccess fsa) {
-        var fileName = ''
-        if (targets('1.3.x')) {
-            fileName = appName + '_tree.js'
-        } else {
-            fileName = appName + '.Tree.js'
-        }
+        var fileName = appName + '.Tree.js'
         if (!shouldBeSkipped(getAppJsPath + fileName)) {
             println('Generating JavaScript for tree functions')
             if (shouldBeMarked(getAppJsPath + fileName)) {
-                if (targets('1.3.x')) {
-                    fileName = appName + '_tree.generated.js'
-                } else {
-                    fileName = appName + '.Tree.generated.js'
-                }
+                fileName = appName + '.Tree.generated.js'
             }
             fsa.generateFile(getAppJsPath + fileName, generate)
         }
@@ -37,21 +28,13 @@ class TreeFunctions {
     def private generate(Application it) '''
         'use strict';
 
-        «IF targets('1.3.x')»
-            var currentNodeId = 0;
-        «ELSE»
-            var nodeEntityId = 0;
-        «ENDIF»
+        var nodeEntityId = 0;
 
         «performTreeOperation»
 
-        «IF !targets('1.3.x')»
-            «initTree»
-            
-            «treeContextMenuActions»
-        «ELSE»
-            «initTreeNodes»
-        «ENDIF»
+        «initTree»
+        
+        «treeContextMenuActions»
 
         «treeSave»
     '''
@@ -148,40 +131,6 @@ class TreeFunctions {
             tree.find('ul').on('click', 'li.jstree-node a', function(e) {
                 tree.jstree('save_state');
                 document.location.href = jQuery(this).attr('href');
-            });
-        }
-    '''
-
-    // 1.3.x only
-    def private initTreeNodes(Application it) '''
-        «IF targets('1.3.x')»
-            var «vendorAndName»TreeContextMenu;
-
-            «vendorAndName»TreeContextMenu = Class.create(Zikula.UI.ContextMenu, {
-                selectMenuItem: function ($super, event, item, item_container) {
-                    // open in new tab / window when right-clicked
-                    if (event.isRightClick()) {
-                        item.callback(this.clicked, true);
-                        «IF targets('1.3.x')»
-                            event.stop(); // close the menu
-                        «ELSE»
-                            event.stopPropagation(); // close the menu
-                        «ENDIF»
-                        return;
-                    }
-                    // open in current window when left-clicked
-                    return $super(event, item, item_container);
-                }
-            });
-
-        «ENDIF»
-        /**
-         * Initialise event handlers for all nodes of a given tree root.
-         */
-        function «vendorAndName»InitTreeNodes(objectType, rootId, hasDisplay, hasEdit)
-        {
-            $$('#itemTree' + rootId + ' a').each(function (elem) {
-                «initTreeNodesLegacy»
             });
         }
     '''
@@ -289,104 +238,6 @@ class TreeFunctions {
         return actions;
     '''
 
-    def private initTreeNodesLegacy(Application it) '''
-        var liRef, isRoot, contextMenu;
-
-        // get reference to list item
-        liRef = elem.up();
-        isRoot = (liRef.id === 'tree' + rootId + 'node_' + rootId);
-
-        // define a link id
-        elem.id = liRef.id + 'link';
-
-        // and use it to attach a context menu
-        contextMenu = new «vendorAndName»TreeContextMenu(elem.id, { leftClick: true, animation: false });
-        if (true === hasDisplay) {
-            contextMenu.addItem({
-                label: '<img src="' + Zikula.Config.baseURL + 'images/icons/extrasmall/kview.png" width="16" height="16" alt="' + Zikula.__('Display', 'module_«appName.formatForDB»_js') + '" /> '
-                     + Zikula.__('Display', 'module_«appName.formatForDB»_js'),
-                callback: function (selectedMenuItem, isRightClick) {
-                    var url;
-
-                    currentNodeId = liRef.id.replace('tree' + rootId + 'node_', '');
-                    url = Routing.generate('«appName.formatForDB»_' + objectType.toLowerCase() + '_display', { id: currentNodeId }, true);
-                    «/* TODO more detailed differentiation of parameters to be provided, e.g. slugs and composite keys */»
-
-                    if (isRightClick) {
-                        window.open(url);
-                    } else {
-                        window.location = url;
-                    }
-                }
-            });
-        }
-        if (true === hasEdit) {
-            contextMenu.addItem({
-                label: '<img src="' + Zikula.Config.baseURL + 'images/icons/extrasmall/edit.png" width="16" height="16" alt="' + Zikula.__('Edit', 'module_«appName.formatForDB»_js') + '" /> '
-                     + Zikula.__('Edit', 'module_«appName.formatForDB»_js'),
-                callback: function (selectedMenuItem, isRightClick) {
-                    var url;
-
-                    currentNodeId = liRef.id.replace('tree' + rootId + 'node_', '');
-                    url = Routing.generate('«appName.formatForDB»_' + objectType.toLowerCase() + '_edit', { id: currentNodeId }, true);
-                    «/* TODO more detailed differentiation of parameters to be provided, e.g. slugs and composite keys */»
-
-                    if (isRightClick) {
-                        window.open(url);
-                    } else {
-                        window.location = url;
-                    }
-                }
-            });
-        }
-        contextMenu.addItem({
-            label: '<img src="' + Zikula.Config.baseURL + 'images/icons/extrasmall/insert_table_row.png" width="16" height="16" alt="' + Zikula.__('Add child node', 'module_«appName.formatForDB»_js') + '" /> '
-                 + Zikula.__('Add child node', 'module_«appName.formatForDB»_js'),
-            callback: function () {
-                currentNodeId = liRef.id.replace('tree' + rootId + 'node_', '');
-                «vendorAndName»PerformTreeOperation(objectType, rootId, 'addChildNode');
-            }
-        });
-        contextMenu.addItem({
-            label: '<img src="' + Zikula.Config.baseURL + 'images/icons/extrasmall/14_layer_deletelayer.png" width="16" height="16" alt="' + Zikula.__('Delete node', 'module_«appName.formatForDB»_js') + '" /> '
-                 + Zikula.__('Delete node', 'module_«appName.formatForDB»_js'),
-            callback: function () {
-                var confirmQuestion;
-
-                confirmQuestion = Zikula.__('Do you really want to remove this node?', 'module_«appName.formatForDB»_js');
-                if (!liRef.hasClassName('z-tree-leaf')) {
-                    confirmQuestion = Zikula.__('Do you really want to remove this node including all child nodes?', 'module_«appName.formatForDB»_js');
-                }
-                if (false !== window.confirm(confirmQuestion)) {
-                    currentNodeId = liRef.id.replace('tree' + rootId + 'node_', '');
-                    «vendorAndName»PerformTreeOperation(objectType, rootId, 'deleteNode');
-                }
-            }
-        });
-        contextMenu.addItem({
-            label: '<img src="' + Zikula.Config.baseURL + 'images/icons/extrasmall/14_layer_raiselayer.png" width="16" height="16" alt="' + Zikula.__('Move up', 'module_«appName.formatForDB»_js') + '" /> '
-                 + Zikula.__('Move up', 'module_«appName.formatForDB»_js'),
-            condition: function () {
-                return !isRoot && !liRef.hasClassName('z-tree-first'); // has previous sibling
-            },
-            callback: function () {
-                currentNodeId = liRef.id.replace('tree' + rootId + 'node_', '');
-                «vendorAndName»PerformTreeOperation(objectType, rootId, 'moveNodeUp');
-            }
-        });
-        contextMenu.addItem({
-            label: '<img src="' + Zikula.Config.baseURL + 'images/icons/extrasmall/14_layer_lowerlayer.png" width="16" height="16" alt="' + Zikula.__('Move down', 'module_«appName.formatForDB»_js') + '" /> '
-                 + Zikula.__('Move down', 'module_«appName.formatForDB»_js'),
-            condition: function () {
-                return !isRoot && !liRef.hasClassName('z-tree-last'); // has next sibling
-            },
-            callback: function () {
-                currentNodeId = liRef.attr('id').replace('tree' + rootId + 'node_', '');
-                «vendorAndName»PerformTreeOperation(objectType, rootId, 'moveNodeDown');
-            }
-        });
-    '''
-
     def private performTreeOperation(Application it) '''
         /**
          * Helper function to start several different ajax actions
@@ -394,7 +245,7 @@ class TreeFunctions {
          */
         function «vendorAndName»PerformTreeOperation(objectType, rootId, op)
         {
-            var opParam, params«IF targets('1.3.x')», request«ENDIF»;
+            var opParam, params;
 
             opParam = ((op === 'moveNodeUp' || op === 'moveNodeDown') ? 'moveNode' : op);
             params = 'ot=' + objectType + '&op=' + opParam;
@@ -402,14 +253,10 @@ class TreeFunctions {
             if (op !== 'addRootNode') {
                 params += '&root=' + rootId;
 
-                if (!«IF targets('1.3.x')»currentNodeId«ELSE»nodeEntityId«ENDIF») {
-                    «IF targets('1.3.x')»
-                        Zikula.UI.Alert(Zikula.__('Invalid node id', 'module_«appName.formatForDB»_js'), Zikula.__('Error', 'module_«appName.formatForDB»_js'));
-                    «ELSE»
-                        «vendorAndName»SimpleAlert(jQuery('.tree-container'), Translator.__('Error'), Translator.__('Invalid node id'), 'treeInvalidNodeAlert', 'danger');
-                    «ENDIF»
+                if (!nodeEntityId) {
+                    «vendorAndName»SimpleAlert(jQuery('.tree-container'), Translator.__('Error'), Translator.__('Invalid node id'), 'treeInvalidNodeAlert', 'danger');
                 }
-                params += '&' + ((op === 'addChildNode') ? 'pid' : 'id') + '=' + «IF targets('1.3.x')»currentNodeId«ELSE»nodeEntityId«ENDIF»;
+                params += '&' + ((op === 'addChildNode') ? 'pid' : 'id') + '=' + nodeEntityId;
 
                 if (op === 'moveNodeUp') {
                     params += '&direction=up';
@@ -418,45 +265,24 @@ class TreeFunctions {
                 }
             }
 
-            «IF targets('1.3.x')»
-                request = new Zikula.Ajax.Request(
-                    Zikula.Config.baseURL + 'ajax.php?module=«appName»&func=handleTreeOperation',
-                    {
-                        method: 'post',
-                        parameters: params,
-                        onComplete: function (req) {
-                            if (!req.isSuccess()) {
-                                Zikula.UI.Alert(req.getMessage(), Zikula.__('Error', 'module_«appName.formatForDB»_js'));
-                                return;
-                            }
-                            var data = req.getData();
-                            /*if (data.message) {
-                                Zikula.UI.Alert(data.message, Zikula.__('Success', 'module_«appName.formatForDB»_js'));
-                            }*/
-                            window.location.reload();
-                        }
-                    }
-                );
-            «ELSE»
-                jQuery.ajax({
-                    type: 'POST',
-                    url: Routing.generate('«appName.formatForDB»_ajax_handletreeoperation'),
-                    data: params
-                }).done(function(res) {
-                    // get data returned by the ajax response
-                    var data;
+            jQuery.ajax({
+                type: 'POST',
+                url: Routing.generate('«appName.formatForDB»_ajax_handletreeoperation'),
+                data: params
+            }).done(function(res) {
+                // get data returned by the ajax response
+                var data;
 
-                    data = res.data;
+                data = res.data;
 
-                    /*if (data.message) {
-                        «vendorAndName»SimpleAlert(jQuery('.tree-container'), Translator.__('Success'), data.message, 'treeAjaxDoneAlert', 'success');
-                    }*/
+                /*if (data.message) {
+                    «vendorAndName»SimpleAlert(jQuery('.tree-container'), Translator.__('Success'), data.message, 'treeAjaxDoneAlert', 'success');
+                }*/
 
-                    window.location.reload();
-                }).fail(function(jqXHR, textStatus) {
-                    «vendorAndName»SimpleAlert(jQuery('.tree-container'), Translator.__('Error'), Translator.__('Could not persist your change.'), 'treeAjaxFailedAlert', 'danger');
-                });
-            «ENDIF»
+                window.location.reload();
+            }).fail(function(jqXHR, textStatus) {
+                «vendorAndName»SimpleAlert(jQuery('.tree-container'), Translator.__('Error'), Translator.__('Could not persist your change.'), 'treeAjaxFailedAlert', 'danger');
+            });
         }
     '''
 
@@ -465,90 +291,49 @@ class TreeFunctions {
          * Callback function for config.onSave. This function is called after each tree change.
          *
          * @param node - the node which is currently being moved
-        «IF targets('1.3.x')»
-            «' '»* @param params - array with insertion params, which are [relativenode, dir];
-            «' '»*     - "dir" is a string with value "after", "before" or "bottom" and defines
-            «' '»*       whether the affected node is inserted after, before or as last child of "relativenode"
-            «' '»* @param tree data - serialized to JSON tree data
-        «ELSE»
-            «' '»* @param parentNode - the new parent node
-            «' '»* @param position - can be "after", "before" or "bottom" and defines
-            «' '»*       whether the affected node is inserted after, before or as last child of "relativenode"
-        «ENDIF»
+         * @param parentNode - the new parent node
+         * @param position - can be "after", "before" or "bottom" and defines
+         *       whether the affected node is inserted after, before or as last child of "relativenode"
          *
          * @return true on success, otherwise the change will be reverted
          */
-        function «vendorAndName»TreeSave(node, «IF targets('1.3.x')»params, data«ELSE»parentNode, position«ENDIF»)
+        function «vendorAndName»TreeSave(node, parentNode, position)
         {
-            var nodeParts, rootId, nodeId, destId, requestParams«IF targets('1.3.x')», request«ENDIF»;
+            var nodeParts, rootId, nodeId, destId, requestParams;
 
             // do not allow inserts on root level
-            «IF targets('1.3.x')»
-                if (node.up('li') === undefined) {
-                    return false;
-                }
-            «ELSE»
-                if (node.parents.find('li').length < 1) {
-                    return false;
-                }
-            «ENDIF»
+            if (node.parents.find('li').length < 1) {
+                return false;
+            }
 
-            «IF targets('1.3.x')»
-                nodeParts = node.id.split('node_');
-                rootId = nodeParts[0].replace('tree', '');
-                nodeId = nodeParts[1];
-                destId = params[1].id.replace('tree' + rootId + 'node_', '');
-            «ELSE»
-                nodeParts = node.attr('id').split('node_');
-                rootId = nodeParts[0].replace('tree', '');
-                nodeId = nodeParts[1];
-                destId = parentNode.attr('id').replace('tree' + rootId + 'node_', '');
-            «ENDIF»
+            nodeParts = node.attr('id').split('node_');
+            rootId = nodeParts[0].replace('tree', '');
+            nodeId = nodeParts[1];
+            destId = parentNode.attr('id').replace('tree' + rootId + 'node_', '');
 
             requestParams = {
                 'op': 'moveNodeTo',
-                'direction': «IF targets('1.3.x')»params[0]«ELSE»position«ENDIF»,
+                'direction': position,
                 'root': rootId,
                 'id': nodeId,
                 'destid': destId
             };
 
-            «IF targets('1.3.x')»
-                request = new Zikula.Ajax.Request(
-                    Zikula.Config.baseURL + 'ajax.php?module=«appName»&func=handleTreeOperation',
-                    {
-                        method: 'post',
-                        parameters: requestParams,
-                        onComplete: function (req) {
-                            if (!req.isSuccess()) {
-                                var treeName = 'itemTree' + rootId;
-                                Zikula.UI.Alert(req.getMessage(), Zikula.__('Error', 'module_«appName.formatForDB»_js'));
-
-                                return Zikula.TreeSortable[treeName].revertInsertion();
-                            }
-                            return true;
-                        }
-                    }
-                );
-
-                return request.success();
-            «ELSE»
-                jQuery.ajax({
-                    type: 'POST',
-                    url: Routing.generate('«appName.formatForDB»_ajax_handletreeoperation'),
-                    data: requestParams
-                }).done(function(res) {
-                    return true;
-                }).fail(function(jqXHR, textStatus) {
-                    var treeName = 'itemTree' + rootId;
-                    «vendorAndName»SimpleAlert(jQuery('.tree-container'), Translator.__('Error'), Translator.__('Could not persist your change.'), 'treeAjaxFailedAlert', 'danger');
-
-                    window.location.reload();
-                    return false;
-                });
-
+            jQuery.ajax({
+                type: 'POST',
+                url: Routing.generate('«appName.formatForDB»_ajax_handletreeoperation'),
+                data: requestParams
+            }).done(function(res) {
                 return true;
-            «ENDIF»
+            }).fail(function(jqXHR, textStatus) {
+                var treeName = 'itemTree' + rootId;
+                «vendorAndName»SimpleAlert(jQuery('.tree-container'), Translator.__('Error'), Translator.__('Could not persist your change.'), 'treeAjaxFailedAlert', 'danger');
+
+                window.location.reload();
+                return false;
+            });
+
+            return true;
         }
     '''
 }

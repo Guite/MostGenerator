@@ -70,17 +70,11 @@ class Operations {
          * @param array  $params Additional arguments
          *
          * @return bool False on failure or true if everything worked well
-         «IF !app.targets('1.3.x')»
          *
          * @throws RuntimeException Thrown if executing the workflow action fails
-         «ENDIF»
          */
         function «app.appName»_operation_«opName»(&$entity, $params)
         {
-            «IF app.targets('1.3.x')»
-                $dom = ZLanguage::getModuleDomain('«app.appName»');
-
-            «ENDIF»
 «/*
             // handling of additional parameters
             // $params['foobar'] = isset($params['foobar']) ? (bool)$params['foobar'] : false;
@@ -111,13 +105,11 @@ class Operations {
         }
 
         // get entity manager
-        $serviceManager = «IF !app.targets('1.3.x')»\«ENDIF»ServiceUtil::getManager();
-        $entityManager = $serviceManager->get«IF app.targets('1.3.x')»Service«ENDIF»('«app.entityManagerService»');
-        «IF !app.targets('1.3.x')»
-            $logger = $serviceManager->get('logger');
-            $logArgs = ['app' => '«app.appName»', 'user' => $serviceManager->get('zikula_users_module.current_user')->get('uname')];
+        $serviceManager = \ServiceUtil::getManager();
+        $entityManager = $serviceManager->get('«app.entityManagerService»');
+        $logger = $serviceManager->get('logger');
+        $logArgs = ['app' => '«app.appName»', 'user' => $serviceManager->get('zikula_users_module.current_user')->get('uname')];
 
-        «ENDIF»
         // save entity data
         try {
             //$this->entityManager->transactional(function($entityManager) {
@@ -125,14 +117,10 @@ class Operations {
             $entityManager->flush();
             //});
             $result = true;
-            «IF !app.targets('1.3.x')»
-                $logger->notice('{app}: User {user} updated an entity.', $logArgs);
-            «ENDIF»
+            $logger->notice('{app}: User {user} updated an entity.', $logArgs);
         } catch (\Exception $e) {
-            «IF !app.targets('1.3.x')»
-                $logger->error('{app}: User {user} tried to update an entity, but failed.', $logArgs);
-            «ENDIF»
-            «IF app.targets('1.3.x')»LogUtil::registerError«ELSE»throw new \RuntimeException«ENDIF»($e->getMessage());
+            $logger->error('{app}: User {user} tried to update an entity, but failed.', $logArgs);
+            throw new \RuntimeException($e->getMessage());
         }
     '''
 
@@ -144,26 +132,20 @@ class Operations {
         }
 
         // get entity manager
-        $serviceManager = «IF !app.targets('1.3.x')»\«ENDIF»ServiceUtil::getManager();
-        $entityManager = $serviceManager->get«IF app.targets('1.3.x')»Service«ENDIF»('«app.entityManagerService»');
-        «IF !app.targets('1.3.x')»
-            $logger = $serviceManager->get('logger');
-            $logArgs = ['app' => '«app.appName»', 'user' => $serviceManager->get('zikula_users_module.current_user')->get('uname')];
+        $serviceManager = \ServiceUtil::getManager();
+        $entityManager = $serviceManager->get('«app.entityManagerService»');
+        $logger = $serviceManager->get('logger');
+        $logArgs = ['app' => '«app.appName»', 'user' => $serviceManager->get('zikula_users_module.current_user')->get('uname')];
 
-        «ENDIF»
         // delete entity
         try {
             $entityManager->remove($entity);
             $entityManager->flush();
             $result = true;
-            «IF !app.targets('1.3.x')»
-                $logger->notice('{app}: User {user} deleted an entity.', $logArgs);
-            «ENDIF»
+            $logger->notice('{app}: User {user} deleted an entity.', $logArgs);
         } catch (\Exception $e) {
-            «IF !app.targets('1.3.x')»
-                $logger->error('{app}: User {user} tried to delete an entity, but failed.', $logArgs);
-            «ENDIF»
-            «IF app.targets('1.3.x')»LogUtil::registerError«ELSE»throw new \RuntimeException«ENDIF»($e->getMessage());
+            $logger->error('{app}: User {user} tried to delete an entity, but failed.', $logArgs);
+            throw new \RuntimeException($e->getMessage());
         }
     '''
 
@@ -171,17 +153,12 @@ class Operations {
         // workflow parameters are always lower-cased (#656)
         $recipientType = isset($params['recipientType']) ? $params['recipientType'] : $params['recipienttype'];
 
-        $notifyArgs = «IF app.targets('1.3.x')»array(«ELSE»[«ENDIF»
+        $notifyArgs = [
             'recipientType' => $recipientType,
             'action' => $params['action'],
             'entity' => $entity
-        «IF app.targets('1.3.x')»)«ELSE»]«ENDIF»;
+        ];
 
-        «IF app.targets('1.3.x')»
-            $result = ModUtil::apiFunc('«app.appName»', 'notification', 'process', $notifyArgs);
-        «ELSE»
-            $serviceManager = \ServiceUtil::getManager();
-            $result = $serviceManager->get('«app.appService».notification_helper')->process($notifyArgs);
-        «ENDIF»
+        $result = \ServiceUtil::get('«app.appService».notification_helper')->process($notifyArgs);
     '''
 }

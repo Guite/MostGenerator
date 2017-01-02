@@ -27,12 +27,8 @@ class Finder {
 
     /**
      * Entry point for entity finder form type.
-     * 1.4.x only.
      */
     def generate(Application it, IFileSystemAccess fsa) {
-        if (targets('1.3.x')) {
-            return
-        }
         if (!generateExternalControllerAndFinder) {
             return
         }

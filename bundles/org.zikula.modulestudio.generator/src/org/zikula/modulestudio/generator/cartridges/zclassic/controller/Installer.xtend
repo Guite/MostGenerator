@@ -3,13 +3,11 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.controller
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.EntityTreeType
 import org.eclipse.xtext.generator.IFileSystemAccess
-import org.zikula.modulestudio.generator.cartridges.zclassic.controller.installer.EventListener
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.installer.ExampleData
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.installer.MigrationHelper
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.installer.ModVars
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
-import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
@@ -18,7 +16,6 @@ import org.zikula.modulestudio.generator.extensions.Utils
 class Installer {
 
     extension FormattingExtensions = new FormattingExtensions
-    extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     extension ModelExtensions = new ModelExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension NamingExtensions = new NamingExtensions
@@ -30,37 +27,34 @@ class Installer {
      * Entry point for application installer.
      */
     def generate(Application it, IFileSystemAccess fsa) {
-        val installerPrefix = if (!targets('1.3.x')) name.formatForCodeCapital + 'Module' else ''
-        generateClassPair(fsa, getAppSourceLibPath + installerPrefix + 'Installer.php',
+        generateClassPair(fsa, getAppSourceLibPath + name.formatForCodeCapital + 'ModuleInstaller.php',
             fh.phpFileContent(it, installerBaseClass), fh.phpFileContent(it, installerImpl)
         )
     }
 
     def private installerBaseClass(Application it) '''
-        «IF !targets('1.3.x')»
-            namespace «appNamespace»\Base;
+        namespace «appNamespace»\Base;
 
-            «IF hasCategorisableEntities»
-                use DBUtil;
-            «ENDIF»
-            use Doctrine\DBAL\Connection;
-            use EventUtil;
-            «IF hasCategorisableEntities»
-                use ModUtil;
-            «ENDIF»
-            use RuntimeException;
-            use UserUtil;
-            use Zikula\Core\AbstractExtensionInstaller;
-            use Zikula_Workflow_Util;
-            «IF hasCategorisableEntities»
-                use Zikula\CategoriesModule\Entity\CategoryRegistryEntity;
-            «ENDIF»
-
+        «IF hasCategorisableEntities»
+            use DBUtil;
         «ENDIF»
+        use Doctrine\DBAL\Connection;
+        use EventUtil;
+        «IF hasCategorisableEntities»
+            use ModUtil;
+        «ENDIF»
+        use RuntimeException;
+        use UserUtil;
+        use Zikula\Core\AbstractExtensionInstaller;
+        use Zikula_Workflow_Util;
+        «IF hasCategorisableEntities»
+            use Zikula\CategoriesModule\Entity\CategoryRegistryEntity;
+        «ENDIF»
+
         /**
          * Installer base class.
          */
-        abstract class «IF targets('1.3.x')»«appName»_Base_AbstractInstaller extends Zikula_AbstractInstaller«ELSE»Abstract«name.formatForCodeCapital»ModuleInstaller extends AbstractExtensionInstaller«ENDIF»
+        abstract class Abstract«name.formatForCodeCapital»ModuleInstaller extends AbstractExtensionInstaller
         {
             «installerBaseImpl»
         }
@@ -76,10 +70,6 @@ class Installer {
         «funcListEntityClasses»
 
         «new ExampleData().generate(it)»
-        «IF targets('1.3.x')»
-
-        «new EventListener().generate(it)»
-        «ENDIF»
     '''
 
     def private funcInit(Application it) '''
@@ -87,34 +77,22 @@ class Installer {
          * Install the «appName» application.
          *
          * @return boolean True on success, or false
-         «IF !targets('1.3.x')»
          *
          * @throws RuntimeException Thrown if database tables can not be created or another error occurs
-         «ENDIF»
          */
         public function install()
         {
-            «IF !targets('1.3.x')»
-                $logger = $this->container->get('logger');
+            $logger = $this->container->get('logger');
 
-            «ENDIF»
             «processUploadFolders»
             // create all tables from according entity definitions
             try {
-                «IF targets('1.3.x')»
-                    DoctrineHelper::createSchema($this->entityManager, $this->listEntityClasses());
-                «ELSE»
-                    $this->schemaTool->create($this->listEntityClasses());
-                «ENDIF»
+                $this->schemaTool->create($this->listEntityClasses());
             } catch (\Exception $e) {
-                «IF targets('1.3.x')»
-                    return LogUtil::registerError($this->__('Doctrine Exception') . ': ' . $e->getMessage());
-                «ELSE»
-                    $this->addFlash('error', $this->__('Doctrine Exception') . ': ' . $e->getMessage());
-                    $logger->error('{app}: Could not create the database tables during installation. Error details: {errorMessage}.', ['app' => '«appName»', 'errorMessage' => $e->getMessage()]);
+                $this->addFlash('error', $this->__('Doctrine Exception') . ': ' . $e->getMessage());
+                $logger->error('{app}: Could not create the database tables during installation. Error details: {errorMessage}.', ['app' => '«appName»', 'errorMessage' => $e->getMessage()]);
 
-                    return false;
-                «ENDIF»
+                return false;
             }
             «IF !variables.empty»
 
@@ -126,92 +104,51 @@ class Installer {
             «ENDIF»
             «IF hasCategorisableEntities»
 
-                $categoryRegistryIdsPerEntity = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»;
+                $categoryRegistryIdsPerEntity = [];
 
                 // add default entry for category registry (property named Main)
-                «IF targets('1.3.x')»
-                    include_once '«rootFolder»/«appName»/lib/«appName»/Api/Base/AbstractCategory.php';
-                    include_once '«rootFolder»/«appName»/lib/«appName»/Api/Category.php';
-                    $categoryApi = new «appName»_Api_Category($this->serviceManager);
-                «ELSE»
-                    $categoryHelper = new \«vendor.formatForCodeCapital»\«name.formatForCodeCapital»Module\Helper\CategoryHelper(
-                        $this->container,
-                        $this->container->get('translator.default'),
-                        $this->container->get('session'),
-                        $logger,
-                        $this->container->get('request_stack'),
-                        $this->container->get('zikula_users_module.current_user'),
-                        $this->container->get('zikula_categories_module.api.category_registry'),
-                        $this->container->get('zikula_categories_module.api.category_permission')
-                    );
-                «ENDIF»
-                «IF !targets('1.3.x')»
-                    $categoryGlobal = $this->container->get('zikula_categories_module.api.category')->getCategoryByPath('/__SYSTEM__/Modules/Global');
-                «ELSE»
-                    $categoryGlobal = CategoryUtil::getCategoryByPath('/__SYSTEM__/Modules/Global');
-                «ENDIF»
-                «IF targets('1.3.x')»
-                    «FOR entity : getCategorisableEntities»
+                $categoryHelper = new \«vendor.formatForCodeCapital»\«name.formatForCodeCapital»Module\Helper\CategoryHelper(
+                    $this->container,
+                    $this->container->get('translator.default'),
+                    $this->container->get('session'),
+                    $logger,
+                    $this->container->get('request_stack'),
+                    $this->container->get('zikula_users_module.current_user'),
+                    $this->container->get('zikula_categories_module.api.category_registry'),
+                    $this->container->get('zikula_categories_module.api.category_permission')
+                );
+                $categoryGlobal = $this->container->get('zikula_categories_module.api.category')->getCategoryByPath('/__SYSTEM__/Modules/Global');
+                «FOR entity : getCategorisableEntities»
 
-                        $registryData = array();
-                        $registryData['modname'] = $this->name;
-                        $registryData['table'] = '«entity.name.formatForCodeCapital»';
-                        $registryData['property'] = $categoryApi->getPrimaryProperty(array('ot' => '«entity.name.formatForCodeCapital»'));
-                        $registryData['category_id'] = $categoryGlobal['id'];
-                        $registryData['id'] = false;
-                        if (!DBUtil::insertObject($registryData, 'categories_registry')) {
-                            LogUtil::registerError($this->__f('Error! Could not create a category registry for the %s entity.', array('«entity.name.formatForDisplay»')));
-                        }
-                        $categoryRegistryIdsPerEntity['«entity.name.formatForCode»'] = $registryData['id'];
-                    «ENDFOR»
-                «ELSE»
-                    «FOR entity : getCategorisableEntities»
+                    $registry = new CategoryRegistryEntity();
+                    $registry->setModname('«appName»');
+                    $registry->setEntityname('«entity.name.formatForCodeCapital»Entity');
+                    $registry->setProperty($categoryHelper->getPrimaryProperty(['ot' => '«entity.name.formatForCodeCapital»']));
+                    $registry->setCategory_Id($categoryGlobal['id']);
 
-                        $registry = new CategoryRegistryEntity();
-                        $registry->setModname('«appName»');
-                        $registry->setEntityname('«entity.name.formatForCodeCapital»Entity');
-                        $registry->setProperty($categoryHelper->getPrimaryProperty(['ot' => '«entity.name.formatForCodeCapital»']));
-                        $registry->setCategory_Id($categoryGlobal['id']);
-
-                        try {
-                            $entityManager = $this->container->get('«entityManagerService»');
-                            $entityManager->persist($registry);
-                            $entityManager->flush();
-                        } catch (\Exception $e) {
-                            $this->addFlash('error', $this->__f('Error! Could not create a category registry for the %s entity.', ['%s' => '«entity.name.formatForDisplay»']));
-                            $logger->error('{app}: User {user} could not create a category registry for {entities} during installation. Error details: {errorMessage}.', ['app' => '«appName»', 'user' => $userName, 'entities' => '«entity.nameMultiple.formatForDisplay»', 'errorMessage' => $e->getMessage()]);
-                        }
-                        $categoryRegistryIdsPerEntity['«entity.name.formatForCode»'] = $registry->getId();
-                    «ENDFOR»
-                «ENDIF»
+                    try {
+                        $entityManager = $this->container->get('«entityManagerService»');
+                        $entityManager->persist($registry);
+                        $entityManager->flush();
+                    } catch (\Exception $e) {
+                        $this->addFlash('error', $this->__f('Error! Could not create a category registry for the %s entity.', ['%s' => '«entity.name.formatForDisplay»']));
+                        $logger->error('{app}: User {user} could not create a category registry for {entities} during installation. Error details: {errorMessage}.', ['app' => '«appName»', 'user' => $userName, 'entities' => '«entity.nameMultiple.formatForDisplay»', 'errorMessage' => $e->getMessage()]);
+                    }
+                    $categoryRegistryIdsPerEntity['«entity.name.formatForCode»'] = $registry->getId();
+                «ENDFOR»
             «ENDIF»
 
             // create the default data
             $this->createDefaultData(«IF hasCategorisableEntities»$categoryRegistryIdsPerEntity«ENDIF»);
 
-            «IF targets('1.3.x')»
-                // register persistent event handlers
-                $this->registerPersistentEventHandlers();
-
-            «ENDIF»
             «IF hasHookSubscribers»
-                «IF targets('1.3.x')»
-                    // register hook subscriber bundles
-                    HookUtil::registerSubscriberBundles($this->version->getHookSubscriberBundles());
-                «ELSE»
-                    // install subscriber hooks
-                    $this->hookApi->installSubscriberHooks($this->bundle->getMetaData());
-                «ENDIF»
+                // install subscriber hooks
+                $this->hookApi->installSubscriberHooks($this->bundle->getMetaData());
             «ENDIF»
             «/*TODO see #15
             «IF hasHookProviders»
-                «IF targets('1.3.x')»
-                    // register hook provider bundles
-                    HookUtil::registerProviderBundles($this->version->getHookProviderBundles());
-                «ELSE»
-                    // install provider hooks
-                    $this->hookApi->installProviderHooks($this->bundle->getMetaData());
-                «ENDIF»
+                // install provider hooks
+                $this->hookApi->installProviderHooks($this->bundle->getMetaData());
             «ENDIF»*/»
 
             // initialisation successful
@@ -223,22 +160,14 @@ class Installer {
         «IF hasUploads»
             // Check if upload directories exist and if needed create them
             try {
-                «IF targets('1.3.x')»
-                    $controllerHelper = new «appName»_Util_Controller($this->serviceManager);
-                «ELSE»
-                    $container = $this->container;
-                    $controllerHelper = new \«appNamespace»\Helper\ControllerHelper($container, $container->get('translator.default'), $container->get('session'), $container->get('logger'));
-                «ENDIF»
+                $container = $this->container;
+                $controllerHelper = new \«appNamespace»\Helper\ControllerHelper($container, $container->get('translator.default'), $container->get('session'), $container->get('logger'));
                 $controllerHelper->checkAndCreateAllUploadFolders();
             } catch (\Exception $e) {
-                «IF targets('1.3.x')»
-                    return LogUtil::registerError($e->getMessage());
-                «ELSE»
-                    $this->addFlash('error', $e->getMessage());
-                    $logger->error('{app}: User {user} could not create upload folders during installation. Error details: {errorMessage}.', ['app' => '«appName»', 'user' => $userName, 'errorMessage' => $e->getMessage()]);
+                $this->addFlash('error', $e->getMessage());
+                $logger->error('{app}: User {user} could not create upload folders during installation. Error details: {errorMessage}.', ['app' => '«appName»', 'user' => $userName, 'errorMessage' => $e->getMessage()]);
 
-                    return false;
-                «ENDIF»
+                return false;
             }
         «ENDIF»
     '''
@@ -252,18 +181,14 @@ class Installer {
          * @param integer $oldVersion Version to upgrade from
          *
          * @return boolean True on success, false otherwise
-         «IF !targets('1.3.x')»
          *
          * @throws RuntimeException Thrown if database tables can not be updated
-         «ENDIF»
          */
         public function upgrade($oldVersion)
         {
         /*
-            «IF !targets('1.3.x')»
-                $logger = $this->container->get('logger');
+            $logger = $this->container->get('logger');
 
-            «ENDIF»
             // Upgrade dependent on old version number
             switch ($oldVersion) {
                 case '1.0.0':
@@ -271,42 +196,30 @@ class Installer {
                     // ...
                     // update the database schema
                     try {
-                        «IF targets('1.3.x')»
-                            DoctrineHelper::updateSchema($this->entityManager, $this->listEntityClasses());
-                        «ELSE»
-                            $this->schemaTool->update($this->listEntityClasses());
-                        «ENDIF»
+                        $this->schemaTool->update($this->listEntityClasses());
                     } catch (\Exception $e) {
-                        «IF targets('1.3.x')»
-                            return LogUtil::registerError($this->__('Doctrine Exception') . ': ' . $e->getMessage());
-                        «ELSE»
-                            $this->addFlash('error', $this->__('Doctrine Exception') . ': ' . $e->getMessage());
-                            $logger->error('{app}: Could not update the database tables during the upgrade. Error details: {errorMessage}.', ['app' => '«appName»', 'errorMessage' => $e->getMessage()]);
+                        $this->addFlash('error', $this->__('Doctrine Exception') . ': ' . $e->getMessage());
+                        $logger->error('{app}: Could not update the database tables during the upgrade. Error details: {errorMessage}.', ['app' => '«appName»', 'errorMessage' => $e->getMessage()]);
 
-                            return false;
-                        «ENDIF»
+                        return false;
                     }
             }
-            «IF !targets('1.3.x')»
 
-                // Note there are several helpers available for making migration of your extension easier.
-                // The following convenience methods are each responsible for a single aspect of upgrading to Zikula 1.4.0.
+            // Note there are several helpers available for making migrating your extension from Zikula 1.3 to 1.4 easier.
+            // The following convenience methods are each responsible for a single aspect of upgrading to Zikula 1.4.x.
 
-                // here is a possible usage example
-                // of course 1.2.3 should match the number you used for the last stable 1.3.x module version.
-                /* if ($oldVersion = '1.2.3') {
-                    «new MigrationHelper().generateUsageExample(it)»
-                } * /
-            «ENDIF»
+            // here is a possible usage example
+            // of course 1.2.3 should match the number you used for the last stable 1.3.x module version.
+            /* if ($oldVersion = '1.2.3') {
+                «new MigrationHelper().generateUsageExample(it)»
+            } * /
         */
 
             // update successful
             return true;
         }
-        «IF !targets('1.3.x')»
 
-            «new MigrationHelper().generate(it)»
-        «ENDIF»
+        «new MigrationHelper().generate(it)»
     '''
 
     def private funcDelete(Application it) '''
@@ -314,64 +227,35 @@ class Installer {
          * Uninstall «appName».
          *
          * @return boolean True on success, false otherwise
-         «IF !targets('1.3.x')»
          *
          * @throws RuntimeException Thrown if database tables or stored workflows can not be removed
-         «ENDIF»
          */
         public function uninstall()
         {
-            «IF !targets('1.3.x')»
-                $logger = $this->container->get('logger');
+            $logger = $this->container->get('logger');
 
-            «ENDIF»
             // delete stored object workflows
-            $result = Zikula_Workflow_Util::deleteWorkflowsForModule(«IF targets('1.3.x')»$this->getName()«ELSE»'«appName»'«ENDIF»);
+            $result = Zikula_Workflow_Util::deleteWorkflowsForModule('«appName»');
             if (false === $result) {
-                «IF targets('1.3.x')»
-                    return LogUtil::registerError($this->__f('An error was encountered while removing stored object workflows for the %s extension.', array($this->getName())));
-                «ELSE»
-                    $this->addFlash('error', $this->__f('An error was encountered while removing stored object workflows for the %s extension.', ['%s' => '«appName»']));
-                    $logger->error('{app}: Could not remove stored object workflows during uninstallation.', ['app' => '«appName»']);
+                $this->addFlash('error', $this->__f('An error was encountered while removing stored object workflows for the %s extension.', ['%s' => '«appName»']));
+                $logger->error('{app}: Could not remove stored object workflows during uninstallation.', ['app' => '«appName»']);
 
-                    return false;
-                «ENDIF»
+                return false;
             }
 
             try {
-                «IF targets('1.3.x')»
-                    DoctrineHelper::dropSchema($this->entityManager, $this->listEntityClasses());
-                «ELSE»
-                    $this->schemaTool->drop($this->listEntityClasses());
-                «ENDIF»
+                $this->schemaTool->drop($this->listEntityClasses());
             } catch (\Exception $e) {
-                «IF targets('1.3.x')»
-                    return LogUtil::registerError($this->__('Doctrine Exception') . ': ' . $e->getMessage());
-                «ELSE»
-                    $this->addFlash('error', $this->__('Doctrine Exception') . ': ' . $e->getMessage());
-                    $logger->error('{app}: Could not remove the database tables during uninstallation. Error details: {errorMessage}.', ['app' => '«appName»', 'errorMessage' => $e->getMessage()]);
+                $this->addFlash('error', $this->__('Doctrine Exception') . ': ' . $e->getMessage());
+                $logger->error('{app}: Could not remove the database tables during uninstallation. Error details: {errorMessage}.', ['app' => '«appName»', 'errorMessage' => $e->getMessage()]);
 
-                    return false;
-                «ENDIF»
+                return false;
             }
 
-            «IF targets('1.3.x')»
-                // unregister persistent event handlers
-                EventUtil::unregisterPersistentModuleHandlers($this->name);
-
-            «ENDIF»
-            «IF targets('1.3.x')»
-                // unregister hook subscriber bundles
-                HookUtil::unregisterSubscriberBundles($this->version->getHookSubscriberBundles());
-            «ELSE»
-                // uninstall subscriber hooks
-                $this->hookApi->uninstallSubscriberHooks($this->bundle->getMetaData());
-            «ENDIF»
+            // uninstall subscriber hooks
+            $this->hookApi->uninstallSubscriberHooks($this->bundle->getMetaData());
             «/*TODO see #15
-            «IF targets('1.3.x')»
-                // unregister hook provider bundles
-                $this->hookApi->unregisterProviderBundles($this->version->getHookProviderBundles());
-            «ELSE»
+            «IF hasHookProviders»
                 // uninstall provider hooks
                 $this->hookApi->uninstallProviderHooks($this->bundle->getMetaData());
             «ENDIF»*/»
@@ -381,25 +265,23 @@ class Installer {
                 $this->delVars();
             «ENDIF»
             «IF hasCategorisableEntities»
-
+                «/* TODO replace by API usage */»
                 // remove category registry entries
-                ModUtil::dbInfoLoad('«IF targets('1.3.x')»Categories«ELSE»ZikulaCategoriesModule«ENDIF»');
-                DBUtil::deleteWhere('categories_registry', 'modname = \'«IF targets('1.3.x')»' . $this->getName() . '«ELSE»«appName»«ENDIF»\'');
+                ModUtil::dbInfoLoad('ZikulaCategoriesModule');
+                DBUtil::deleteWhere('categories_registry', 'modname = \'«appName»\'');
             «ENDIF»
             «IF hasUploads»
 
-                // remove all thumbnails
-                $manager = «IF targets('1.3.x')»$this->getServiceManager()->getService«ELSE»$this->container->get«ENDIF»('systemplugin.imagine.manager');
-                $manager->setModule(«IF targets('1.3.x')»$this->getName()«ELSE»'«appName»'«ENDIF»);
-                $manager->cleanupModuleThumbs();
+                «IF hasImageFields»
+                    // remove all thumbnails
+                    $manager = $this->container->get('systemplugin.imagine.manager');
+                    $manager->setModule('«appName»');
+                    $manager->cleanupModuleThumbs();
 
-                // remind user about upload folders not being deleted
-                $uploadPath = «IF targets('1.3.x')»FileUtil::getDataDirectory()«ELSE»$this->container->getParameter('datadir')«ENDIF» . '/«IF targets('1.3.x')»' . $this->getName() . '«ELSE»«appName»«ENDIF»/';
-                «IF targets('1.3.x')»
-                    LogUtil::registerStatus($this->__f('The upload directories at [%s] can be removed manually.', $uploadPath));
-                «ELSE»
-                    $this->addFlash('status', $this->__f('The upload directories at [%s] can be removed manually.', ['%s' => $uploadPath]));
                 «ENDIF»
+                // remind user about upload folders not being deleted
+                $uploadPath = $this->container->getParameter('datadir') . '/«appName»/';
+                $this->addFlash('status', $this->__f('The upload directories at [%s] can be removed manually.', ['%s' => $uploadPath]));
             «ENDIF»
 
             // uninstallation successful
@@ -415,7 +297,7 @@ class Installer {
          */
         protected function listEntityClasses()
         {
-            $classNames = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»;
+            $classNames = [];
             «FOR entity : getAllEntities»
                 $classNames[] = '«entity.entityClassName('', false)»';
                 «IF entity.loggable»
@@ -440,20 +322,14 @@ class Installer {
     '''
 
     def private installerImpl(Application it) '''
-        «IF !targets('1.3.x')»
-            namespace «appNamespace»;
+        namespace «appNamespace»;
 
-            use «appNamespace»\Base\Abstract«name.formatForCodeCapital»ModuleInstaller;
+        use «appNamespace»\Base\Abstract«name.formatForCodeCapital»ModuleInstaller;
 
-        «ENDIF»
         /**
          * Installer implementation class.
          */
-        «IF targets('1.3.x')»
-        class «appName»_Installer extends «appName»_Base_AbstractInstaller
-        «ELSE»
         class «name.formatForCodeCapital»ModuleInstaller extends Abstract«name.formatForCodeCapital»ModuleInstaller
-        «ENDIF»
         {
             // feel free to extend the installer here
         }

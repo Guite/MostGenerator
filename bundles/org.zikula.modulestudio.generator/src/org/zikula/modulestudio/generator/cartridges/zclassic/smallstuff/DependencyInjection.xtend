@@ -14,9 +14,6 @@ class DependencyInjection {
     FileHelper fh = new FileHelper
 
     def generate(Application it, IFileSystemAccess fsa) {
-        if (targets('1.3.x')) {
-            return
-        }
         val extensionFileName = vendor.formatForCodeCapital + name.formatForCodeCapital + 'Extension.php'
         generateClassPair(fsa, getAppSourceLibPath + 'DependencyInjection/' + extensionFileName,
             fh.phpFileContent(it, extensionBaseImpl), fh.phpFileContent(it, extensionImpl)

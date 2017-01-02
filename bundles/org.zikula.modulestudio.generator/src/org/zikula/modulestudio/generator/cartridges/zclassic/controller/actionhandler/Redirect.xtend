@@ -33,12 +33,12 @@ class Redirect {
          */
         protected function getRedirectCodes()
         {
-            $codes = «IF isLegacy»array()«ELSE»[]«ENDIF»;
+            $codes = [];
 
             «FOR someController : controllers»
                 «val controllerName = someController.formattedName»
                 «IF someController.hasActions('index')»
-                    // «IF isLegacy»main«ELSE»index«ENDIF» page of «controllerName» area
+                    // index page of «controllerName» area
                     $codes[] = '«controllerName»';
                 «ENDIF»
                 «IF someController.hasActions('view')»
@@ -97,7 +97,7 @@ class Redirect {
          */
         protected function getDefaultReturnUrl($args)
         {
-            $objectIsPersisted = $args['commandName'] != 'delete' && !($this->«IF app.isLegacy»mode«ELSE»templateParameters['mode']«ENDIF» == 'create' && $args['commandName'] == 'cancel');
+            $objectIsPersisted = $args['commandName'] != 'delete' && !($this->templateParameters['mode'] == 'create' && $args['commandName'] == 'cancel');
 
             if (null !== $this->returnTo) {
                 «/* TODO improve this check considering slugs */»
@@ -109,51 +109,28 @@ class Redirect {
             }
 
             «IF hasActions('view') || hasActions('index') || hasActions('display') && tree != EntityTreeType.NONE»
-                «IF app.isLegacy»
-                    $legacyControllerType = $this->request->query->filter('lct', 'user', FILTER_SANITIZE_STRING);
-                «ELSE»
-                    $routeArea = array_key_exists('routeArea', $this->templateParameters) ? $this->templateParameters['routeArea'] : '';
-                «ENDIF»
+                $routeArea = array_key_exists('routeArea', $this->templateParameters) ? $this->templateParameters['routeArea'] : '';
 
             «ENDIF»
             «IF hasActions('view')»
                 // redirect to the list of «nameMultiple.formatForCode»
-                $viewArgs = «IF app.isLegacy»array('ot' => $this->objectType, 'lct' => $legacyControllerType)«ELSE»[]«ENDIF»;
+                $viewArgs = [];
                 «IF tree != EntityTreeType.NONE»
                     $viewArgs['tpl'] = 'tree';
                 «ENDIF»
-                «IF app.isLegacy»
-                    $url = ModUtil::url($this->name, FormUtil::getPassedValue('type', 'user', 'GETPOST'), 'view', $viewArgs);
-                «ELSE»
-                    $url = $this->router->generate('«app.appName.formatForDB»_' . $this->objectTypeLower . '_' . $routeArea . 'view', $viewArgs);
-                «ENDIF»
+                $url = $this->router->generate('«app.appName.formatForDB»_' . $this->objectTypeLower . '_' . $routeArea . 'view', $viewArgs);
             «ELSEIF hasActions('index')»
-                // redirect to the «IF app.isLegacy»main«ELSE»index«ENDIF» page
-                «IF app.isLegacy»
-                    $indexArgs = array('lct' => $legacyControllerType);
-                    $url = ModUtil::url($this->name, FormUtil::getPassedValue('type', 'user', 'GETPOST'), 'main', $indexArgs);
-                «ELSE»
-                    $url = $this->router->generate('«app.appName.formatForDB»_' . $this->objectTypeLower . '_' . $routeArea . 'index');
-                «ENDIF»
+                // redirect to the index page
+                $url = $this->router->generate('«app.appName.formatForDB»_' . $this->objectTypeLower . '_' . $routeArea . 'index');
             «ELSE»
-                «IF app.isLegacy»
-                    $url = System::getHomepageUrl();
-                «ELSE»
-                    $url = $this->router->generate('home');
-                «ENDIF»
+                $url = $this->router->generate('home');
             «ENDIF»
             «IF hasActions('display') && tree != EntityTreeType.NONE»
 
                 if ($objectIsPersisted) {
                     // redirect to the detail page of treated «name.formatForCode»
-                    «IF app.isLegacy»
-                        $currentType = FormUtil::getPassedValue('type', 'user', 'GETPOST');
-                        $displayArgs = array('ot' => $this->objectType, «routeParamsLegacy('this->idValues', false, true)»);
-                        $url = ModUtil::url($this->name, $currentType, 'display', $displayArgs);
-                    «ELSE»
-                        $displayArgs = [«routeParams('this->idValues', false)»];
-                        $url = $this->router->generate('«app.appName.formatForDB»_' . $this->objectTypeLower . '_' . $routeArea . 'display', $displayArgs);
-                    «ENDIF»
+                    $displayArgs = [«routeParams('this->idValues', false)»];
+                    $url = $this->router->generate('«app.appName.formatForDB»_' . $this->objectTypeLower . '_' . $routeArea . 'display', $displayArgs);
                 }
             «ENDIF»
 
@@ -172,21 +149,17 @@ class Redirect {
         protected function getRedirectUrl($args)
         {
             «IF !incoming.empty || !outgoing.empty»
-                if (true === $this->«IF app.isLegacy»inlineUsage«ELSE»templateParameters['inlineUsage']«ENDIF») {
-                    $urlArgs = «IF app.isLegacy»array(«ELSE»[«ENDIF»
+                if (true === $this->templateParameters['inlineUsage']) {
+                    $urlArgs = [
                         'idPrefix' => $this->idPrefix,
                         'commandName' => $args['commandName']
-                    «IF app.isLegacy»)«ELSE»]«ENDIF»;
+                    ];
                     foreach ($this->idFields as $idField) {
                         $urlArgs[$idField] = $this->idValues[$idField];
                     }
 
-                    // inline usage, return to special function for closing the «IF app.isLegacy»Zikula.UI.Window«ELSE»modal window«ENDIF» instance
-                    «IF app.isLegacy»
-                        return ModUtil::url($this->name, FormUtil::getPassedValue('type', 'user', 'GETPOST'), 'handleInlineRedirect', $urlArgs);
-                    «ELSE»
-                        return $this->router->generate('«app.appName.formatForDB»_' . $this->objectTypeLower . '_handleinlineredirect', $urlArgs);
-                    «ENDIF»
+                    // inline usage, return to special function for closing the modal window instance
+                    return $this->router->generate('«app.appName.formatForDB»_' . $this->objectTypeLower . '_handleinlineredirect', $urlArgs);
                 }
 
             «ENDIF»
@@ -194,13 +167,9 @@ class Redirect {
                 return $this->repeatReturnUrl;
             }
 
-            «IF app.isLegacy»
-                SessionUtil::delVar('referer');
-            «ELSE»
-                if ($this->request->getSession()->has('referer')) {
-                    $this->request->getSession()->del('referer');
-                }
-            «ENDIF»
+            if ($this->request->getSession()->has('referer')) {
+                $this->request->getSession()->del('referer');
+            }
 
             // normal usage, compute return url from given redirect code
             if (!in_array($this->returnTo, $this->getRedirectCodes())) {
@@ -215,35 +184,21 @@ class Redirect {
                     «val controllerName = someController.formattedName»
                     «IF someController.hasActions('index')»
                         case '«controllerName»':
-                            «IF app.isLegacy»
-                                return ModUtil::url($this->name, '«controllerName»', 'main');
-                            «ELSE»
-                                return $this->router->generate('«app.appName.formatForDB»_' . $this->objectTypeLower . '_«IF someController instanceof AdminController»admin«ENDIF»index');
-                            «ENDIF»
+                            return $this->router->generate('«app.appName.formatForDB»_' . $this->objectTypeLower . '_«IF someController instanceof AdminController»admin«ENDIF»index');
                     «ENDIF»
                     «IF someController.hasActions('view')»
                         case '«controllerName»View':
-                            «IF app.isLegacy»
-                                return ModUtil::url($this->name, '«controllerName»', 'view', array('ot' => $this->objectType));
-                            «ELSE»
-                                return $this->router->generate('«app.appName.formatForDB»_' . $this->objectTypeLower . '_«IF someController instanceof AdminController»admin«ENDIF»view');
-                            «ENDIF»
+                            return $this->router->generate('«app.appName.formatForDB»_' . $this->objectTypeLower . '_«IF someController instanceof AdminController»admin«ENDIF»view');
                     «ENDIF»
                     «IF someController.hasActions('display')»
                         case '«controllerName»Display':
-                            if ($args['commandName'] != 'delete' && !($this->«IF app.isLegacy»mode«ELSE»templateParameters['mode']«ENDIF» == 'create' && $args['commandName'] == 'cancel')) {
-                                «IF app.isLegacy»
-                                    $urlArgs['ot'] = $this->objectType;
-                                «ENDIF»
+                            if ($args['commandName'] != 'delete' && !($this->templateParameters['mode'] == 'create' && $args['commandName'] == 'cancel')) {
                                 foreach ($this->idFields as $idField) {
                                     $urlArgs[$idField] = $this->idValues[$idField];
                                 }
-                                «IF app.isLegacy»
-                                    return ModUtil::url($this->name, '«controllerName»', 'display', $urlArgs);
-                                «ELSE»
-                                    return $this->router->generate('«app.appName.formatForDB»_' . $this->objectTypeLower . '_«IF someController instanceof AdminController»admin«ENDIF»display', $urlArgs);
-                                «ENDIF»
+                                return $this->router->generate('«app.appName.formatForDB»_' . $this->objectTypeLower . '_«IF someController instanceof AdminController»admin«ENDIF»display', $urlArgs);
                             }
+
                             return $this->getDefaultReturnUrl($args);
                     «ENDIF»
                 «ENDIF»
@@ -256,21 +211,14 @@ class Redirect {
                             «val controllerName = someController.formattedName»
                             «IF someController.hasActions('view')»
                                 case '«controllerName»View«sourceEntity.name.formatForCodeCapital»':
-                                    «IF app.isLegacy»
-                                        return ModUtil::url($this->name, '«controllerName»', 'view', array('ot' => '«sourceEntity.name.formatForCode»'));
-                                    «ELSE»
-                                        return $this->router->generate('«app.appName.formatForDB»_«sourceEntity.name.formatForDB»_«IF someController instanceof AdminController»admin«ENDIF»view');
-                                    «ENDIF»
+                                    return $this->router->generate('«app.appName.formatForDB»_«sourceEntity.name.formatForDB»_«IF someController instanceof AdminController»admin«ENDIF»view');
                             «ENDIF»
                             «IF someController.hasActions('display')»
                                 case '«controllerName»Display«sourceEntity.name.formatForCodeCapital»':
                                     if (!empty($this->relationPresets['«incomingRelation.getRelationAliasName(false)»'])) {
-                                        «IF app.isLegacy»
-                                            return ModUtil::url($this->name, '«controllerName»', 'display', array('ot' => '«sourceEntity.name.formatForCode»', 'id' => $this->relationPresets['«incomingRelation.getRelationAliasName(false)»']«IF sourceEntity.hasSluggableFields»«/*, 'slug' => 'TODO'*/»«ENDIF»));
-                                        «ELSE»
-                                            return $this->router->generate('«app.appName.formatForDB»_«sourceEntity.name.formatForDB»_«IF someController instanceof AdminController»admin«ENDIF»display',  ['id' => $this->relationPresets['«incomingRelation.getRelationAliasName(false)»']«IF sourceEntity.hasSluggableFields»«/*, 'slug' => 'TODO'*/»«ENDIF»]);
-                                        «ENDIF»
+                                        return $this->router->generate('«app.appName.formatForDB»_«sourceEntity.name.formatForDB»_«IF someController instanceof AdminController»admin«ENDIF»display',  ['id' => $this->relationPresets['«incomingRelation.getRelationAliasName(false)»']«IF sourceEntity.hasSluggableFields»«/*, 'slug' => 'TODO'*/»«ENDIF»]);
                                     }
+
                                     return $this->getDefaultReturnUrl($args);
                             «ENDIF»
                         «ENDIF»
@@ -282,8 +230,4 @@ class Redirect {
             }
         }
     '''
-
-    private def isLegacy(Application it) {
-        targets('1.3.x')
-    }
 }

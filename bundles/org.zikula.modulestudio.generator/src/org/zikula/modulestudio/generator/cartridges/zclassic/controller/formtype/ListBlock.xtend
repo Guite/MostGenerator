@@ -24,7 +24,6 @@ class ListBlock {
 
     /**
      * Entry point for list block form type.
-     * 1.4.x only.
      */
     def generate(Application it, IFileSystemAccess fsa) {
         if (!generateListBlock) {
@@ -180,7 +179,7 @@ class ListBlock {
          */
         public function addCategoriesField(FormBuilderInterface $builder, array $options)
         {
-            if (!$options['isCategorisable'] || is_null($options['categoryHelper'])) {
+            if (!$options['isCategorisable'] || null === $options['categoryHelper']) {
                 return;
             }
 

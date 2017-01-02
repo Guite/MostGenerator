@@ -43,11 +43,7 @@ class Actions {
     def actionImpl(Action it) '''
         «IF it instanceof MainAction»
             // parameter specifying which type of objects we are treating
-            «IF isLegacy»
-                $objectType = $this->request->query->filter('ot', '«app.getLeadingEntity.name.formatForCode»', FILTER_SANITIZE_STRING);
-            «ELSE»
-                $objectType = $request->query->getAlnum('ot', '«app.getLeadingEntity.name.formatForCode»');
-            «ENDIF»
+            $objectType = $request->query->getAlnum('ot', '«app.getLeadingEntity.name.formatForCode»');
 
             $permLevel = «IF controller instanceof AdminController»ACCESS_ADMIN«ELSE»«getPermissionAccessLevel»«ENDIF»;
             «permissionCheck('', '')»
@@ -55,12 +51,8 @@ class Actions {
             «initControllerHelper»
 
             // parameter specifying which type of objects we are treating
-            «IF isLegacy»
-                $objectType = $this->request->query->filter('ot', '«app.getLeadingEntity.name.formatForCode»', FILTER_SANITIZE_STRING);
-            «ELSE»
-                $objectType = $request->query->getAlnum('ot', '«app.getLeadingEntity.name.formatForCode»');
-            «ENDIF»
-            $utilArgs = «IF isLegacy»array(«ELSE»[«ENDIF»'controller' => '«controller.formattedName»', 'action' => '«name.formatForCode.toFirstLower»'«IF isLegacy»)«ELSE»]«ENDIF»;
+            $objectType = $request->query->getAlnum('ot', '«app.getLeadingEntity.name.formatForCode»');
+            $utilArgs = ['controller' => '«controller.formattedName»', 'action' => '«name.formatForCode.toFirstLower»'];
             if (!in_array($objectType, $controllerHelper->getObjectTypes('controllerAction', $utilArgs))) {
                 $objectType = $controllerHelper->getDefaultObjectType('controllerAction', $utilArgs);
             }
@@ -72,43 +64,30 @@ class Actions {
 
     def private redirectLegacyAction(Action it) '''
 
-        «IF !isLegacy»
-            // forward GET parameters
-            $redirectArgs = $this->request->query->«IF isLegacy»getCollection«ELSE»all«ENDIF»();
+        // forward GET parameters
+        $redirectArgs = $this->request->query->all();
 
-            // remove unrequired fields
-            if (isset($redirectArgs['module'])) {
-                unset($redirectArgs['module']);
-            }
-            if (isset($redirectArgs['type'])) {
-                unset($redirectArgs['type']);
-            }
-            if (isset($redirectArgs['func'])) {
-                unset($redirectArgs['func']);
-            }
-            if (isset($redirectArgs['ot'])) {
-                unset($redirectArgs['ot']);
-            }
+        // remove unrequired fields
+        if (isset($redirectArgs['module'])) {
+            unset($redirectArgs['module']);
+        }
+        if (isset($redirectArgs['type'])) {
+            unset($redirectArgs['type']);
+        }
+        if (isset($redirectArgs['func'])) {
+            unset($redirectArgs['func']);
+        }
+        if (isset($redirectArgs['ot'])) {
+            unset($redirectArgs['ot']);
+        }
 
-            $routeArea = '«IF controller instanceof AdminController»admin«ENDIF»';
+        $routeArea = '«IF controller instanceof AdminController»admin«ENDIF»';
 
-        «ENDIF»
         // redirect to entity controller
-        «IF isLegacy»
-            «/*
-            $redirectUrl = ModUtil::url($this->name, $objectType, '«name.formatForCode»', $redirectArgs);
+        $logger = $this->get('logger');
+        $logger->warning('{app}: The {controller} controller\'s {action} action is deprecated. Please use entity-related controllers instead.', ['app' => '«app.appName»', 'controller' => '«controller.name.formatForDisplay»', 'action' => '«name.formatForDisplay»']);
 
-            return $this->redirect($redirectUrl); */»
-            System::queryStringSetVar('lct', '«controller.formattedName»');
-            $this->request->query->set('lct', '«controller.formattedName»');
-
-            return ModUtil::func($this->name, $objectType, '«name.formatForCode»', array('lct' => '«controller.formattedName»'));
-        «ELSE»
-            $logger = $this->get('logger');
-            $logger->warning('{app}: The {controller} controller\'s {action} action is deprecated. Please use entity-related controllers instead.', ['app' => '«app.appName»', 'controller' => '«controller.name.formatForDisplay»', 'action' => '«name.formatForDisplay»']);
-
-            return $this->redirectToRoute('«app.appName.formatForDB»_' . strtolower($objectType) . '_' . $routeArea . '«name.formatForDB»', $redirectArgs);
-        «ENDIF»
+        return $this->redirectToRoute('«app.appName.formatForDB»_' . strtolower($objectType) . '_' . $routeArea . '«name.formatForDB»', $redirectArgs);
     '''
 
     def actionImpl(Entity it, Action action) '''
@@ -117,12 +96,8 @@ class Actions {
         «ELSE»
             // parameter specifying which type of objects we are treating
             $objectType = '«name.formatForCode»';
-            $utilArgs = «IF isLegacy»array(«ELSE»[«ENDIF»'controller' => '«name.formatForCode»', 'action' => '«action.name.formatForCode.toFirstLower»'«IF isLegacy»)«ELSE»]«ENDIF»;
-            «IF isLegacy»
-                $permLevel = $legacyControllerType == 'admin' ? ACCESS_ADMIN : «action.getPermissionAccessLevel»;
-            «ELSE»
-                $permLevel = $isAdmin ? ACCESS_ADMIN : «action.getPermissionAccessLevel»;
-            «ENDIF»
+            $utilArgs = ['controller' => '«name.formatForCode»', 'action' => '«action.name.formatForCode.toFirstLower»'];
+            $permLevel = $isAdmin ? ACCESS_ADMIN : «action.getPermissionAccessLevel»;
             «action.permissionCheck("' . ucfirst($objectType) . '", '')»
         «ENDIF»
         «actionImplBody(it, action)»
@@ -132,24 +107,16 @@ class Actions {
      * Initialise controller helper.
      */
     def private initControllerHelper() '''
-        «IF isLegacy»
-            $controllerHelper = new «app.appName»_Util_Controller($this->serviceManager);
-        «ELSE»
-            $controllerHelper = $this->get('«app.appService».controller_helper');
-        «ENDIF»
+        $controllerHelper = $this->get('«app.appService».controller_helper');
     '''
 
     /**
      * Permission checks in system use cases.
      */
     def private permissionCheck(Action it, String objectTypeVar, String instanceId) '''
-        «IF isLegacy»
-            $this->throwForbiddenUnless(SecurityUtil::checkPermission($this->name . ':«objectTypeVar»:', «instanceId»'::', $permLevel), LogUtil::getErrorMsgPermission());
-        «ELSE»
-            if (!$this->hasPermission($this->name . ':«objectTypeVar»:', «instanceId»'::', $permLevel)) {
-                throw new AccessDeniedException();
-            }
-        «ENDIF»
+        if (!$this->hasPermission($this->name . ':«objectTypeVar»:', «instanceId»'::', $permLevel)) {
+            throw new AccessDeniedException();
+        }
     '''
 
     def private getPermissionAccessLevel(Action it) {
@@ -176,44 +143,19 @@ class Actions {
 
             «IF controller.hasActions('view')»
                 // redirect to view action
-                «IF isLegacy»
-                    $redirectUrl = ModUtil::url($this->name, '«controller.formattedName»', 'view', array('lct' => '«controller.formattedName»'));
+                $routeArea = '«IF controller instanceof AdminController»admin«ENDIF»';
 
-                    return $this->redirect($redirectUrl);
-                «ELSE»
-                    $routeArea = '«IF controller instanceof AdminController»admin«ENDIF»';
-
-                    return $this->redirectToRoute('«app.appName.formatForDB»_' . strtolower($objectType) . '_' . $routeArea . 'view');
-                «ENDIF»
-            «ELSEIF isLegacy && controller.isConfigController»
-                // redirect to config action
-                «IF isLegacy»
-                    $redirectUrl = ModUtil::url($this->name, '«controller.formattedName»', 'config', array('lct' => '«controller.formattedName»'));
-
-                    return $this->redirect($redirectUrl);
-                «ELSE»
-                    $routeArea = '«IF controller instanceof AdminController»admin«ENDIF»';
-
-                    return $this->redirectToRoute('«app.appName.formatForDB»_«controller.formattedName.toLowerCase»_' . $routeArea . 'config');
-                «ENDIF»
+                return $this->redirectToRoute('«app.appName.formatForDB»_' . strtolower($objectType) . '_' . $routeArea . 'view');
             «ELSE»
                 «redirectLegacyAction»
 «/*
-                «IF isLegacy»
-                    // set caching id
-                    $this->view->setCacheId('main');
-                «ELSE»
-                    $templateParameters = [
-                        'routeArea' => $isAdmin ? 'admin' : ''
-                    ];
-                «ENDIF»
+                $templateParameters = [
+                    'routeArea' => $isAdmin ? 'admin' : ''
+                ];
 
-                // return «IF isLegacy»main«ELSE»index«ENDIF» template
-                «IF isLegacy»
-                    return $this->view->fetch('«controller.formattedName»/main.tpl');
-                «ELSE»
-                    return $this->render('@«app.appName»/«controller.formattedName.toFirstUpper»/index.html.twig', $templateParameters);
-                «ENDIF»*/»
+                // return index template
+                return $this->render('@«app.appName»/«controller.formattedName.toFirstUpper»/index.html.twig', $templateParameters);
+*/»
             «ENDIF»
         «ENDIF»
     '''
@@ -221,172 +163,85 @@ class Actions {
     def private dispatch actionImplBody(Entity it, MainAction action) '''
         «IF app.hasAdminController && app.getAllAdminControllers.head.hasActions('view')»
 
-            if («IF isLegacy»$legacyControllerType == 'admin'«ELSE»$isAdmin«ENDIF») {
+            if ($isAdmin) {
                 «redirectFromIndexToView(app.getAllAdminControllers.head)»
             }
         «ENDIF»
         «IF app.hasUserController && app.getAllUserControllers.head.hasActions('view')»
 
-            if («IF isLegacy»$legacyControllerType == 'admin'«ELSE»!$isAdmin«ENDIF») {
+            if (!$isAdmin) {
                 «redirectFromIndexToView(app.getMainUserController)»
             }
         «ENDIF»
 
-        «IF isLegacy»
-            // set caching id
-            $view = Zikula_View::getInstance('«app.appName»', false);
-            $this->view->setCacheId('«name.formatForCode»_main');
-        «ELSE»
-            $templateParameters = [
-                'routeArea' => $isAdmin ? 'admin' : ''
-            ];
-        «ENDIF»
+        $templateParameters = [
+            'routeArea' => $isAdmin ? 'admin' : ''
+        ];
 
-        // return «IF isLegacy»main«ELSE»index«ENDIF» template
-        «IF isLegacy»
-            return $this->view->fetch('«name.formatForCode»/main.tpl');
-        «ELSE»
-            return $this->render('@«app.appName»/«name.formatForCodeCapital»/index.html.twig', $templateParameters);
-        «ENDIF»
+        // return index template
+        return $this->render('@«app.appName»/«name.formatForCodeCapital»/index.html.twig', $templateParameters);
     '''
 
     def private redirectFromIndexToView(Entity it, Controller controller) '''
 
-        «IF isLegacy»
-            $redirectUrl = ModUtil::url($this->name, '«name.formatForCode»', 'view', array('lct' => $legacyControllerType));
-
-            return $this->redirect($redirectUrl);
-        «ELSE»
-            return $this->redirectToRoute('«app.appName.formatForDB»_«name.formatForDB»_' . ($isAdmin ? 'admin' : '') . 'view');
-        «ENDIF»
+        return $this->redirectToRoute('«app.appName.formatForDB»_«name.formatForDB»_' . ($isAdmin ? 'admin' : '') . 'view');
     '''
 
     def private actionImplBodyAjaxView(ViewAction it) '''
-        «IF isLegacy»
-            $entityClass = $this->name . '_Entity_' . ucfirst($objectType);
-            $repository = $this->entityManager->getRepository($entityClass);
-            $repository->setControllerArguments(array());
-        «ELSE»
-            $repository = $this->get('«app.appService».' . $objectType . '_factory')->getRepository();
-            $repository->setRequest($request);
-        «ENDIF»
+        $repository = $this->get('«app.appService».' . $objectType . '_factory')->getRepository();
+        $repository->setRequest($request);
 
         // parameter for used sorting field
-        «IF isLegacy»
-            $sort = $this->request->query->filter('sort', '', FILTER_SANITIZE_STRING);
-        «ELSE»
-            $sort = $request->query->getAlnum('sort', '');
-        «ENDIF»
+        $sort = $request->query->getAlnum('sort', '');
         «new ControllerHelperFunctions().defaultSorting(it, app)»
 
         // parameter for used sort order
-        «IF isLegacy»
-            $sortdir = $this->request->query->filter('sortdir', '', FILTER_SANITIZE_STRING);
-        «ELSE»
-            $sortdir = $request->query->getAlpha('sortdir', '');
-        «ENDIF»
-        $sortdir = strtolower($sortdir);
+        $sortdir = strtolower($request->query->getAlpha('sortdir', ''));
         if ($sortdir != 'asc' && $sortdir != 'desc') {
             $sortdir = 'asc';
         }
 
         // convenience vars to make code clearer
-        $currentUrlArgs = «IF isLegacy»array(«ELSE»[«ENDIF»'ot' => $objectType«IF isLegacy»)«ELSE»]«ENDIF»;
+        $currentUrlArgs = ['ot' => $objectType];
 
-        «IF isLegacy»
-            $where = $this->request->query->get('where', '');
-        «ELSE»
-            $where = $request->query->get('where', '');
-        «ENDIF»
+        $where = $request->query->get('where', '');
         $where = str_replace('"', '', $where);
 
-        «IF isLegacy»
-            $selectionArgs = array(
-                'ot' => $objectType,
-                'where' => $where,
-                'orderBy' => $sort . ' ' . $sortdir
-            );
-        «ELSE»
-            $selectionHelper = $this->get('«app.appService».selection_helper');
-        «ENDIF»
+        $selectionHelper = $this->get('«app.appService».selection_helper');
 
         «prepareViewUrlArgs(false)»
-        «IF isLegacy»
-
-            // prepare access level for cache id
-            $accessLevel = ACCESS_READ;
-            $component = '«app.appName»:' . ucfirst($objectType) . ':';
-            $instance = '::';
-            if («IF isLegacy»SecurityUtil::check«ELSE»$this->has«ENDIF»Permission($component, $instance, ACCESS_COMMENT)) {
-                $accessLevel = ACCESS_COMMENT;
-            }
-            if («IF isLegacy»SecurityUtil::check«ELSE»$this->has«ENDIF»Permission($component, $instance, ACCESS_EDIT)) {
-                $accessLevel = ACCESS_EDIT;
-            }
-        «ENDIF»
 
         $resultsPerPage = 0;
         if ($showAllEntries == 1) {
             // retrieve item list without pagination
-            «IF isLegacy»
-                $entities = ModUtil::apiFunc($this->name, 'selection', 'getEntities', $selectionArgs);
-            «ELSE»
-                $entities = $selectionHelper->getEntities($objectType, [], $where, $sort . ' ' . $sortdir);
-            «ENDIF»
+            $entities = $selectionHelper->getEntities($objectType, [], $where, $sort . ' ' . $sortdir);
             $objectCount = count($entities);
         } else {
             // the current offset which is used to calculate the pagination
-            «IF isLegacy»
-                $currentPage = (int) $this->request->query->filter('pos', 1, FILTER_VALIDATE_INT);
-            «ELSE»
-                $currentPage = $request->query->getInt('pos', 1);
-            «ENDIF»
+            $currentPage = $request->query->getInt('pos', 1);
 
             // the number of items displayed on a page for pagination
-            «IF isLegacy»
-                $resultsPerPage = (int) $this->request->query->filter('num', 0, FILTER_VALIDATE_INT);
-                if ($resultsPerPage == 0) {
-                    $resultsPerPage = $this->getVar($objectType . 'EntriesPerPage', 10);
-                }
-            «ELSE»
-                $resultsPerPage = $request->query->getInt('num', 0);
-                if (in_array($resultsPerPage, [0, 10])) {
-                    $resultsPerPage = $this->getVar($objectType . 'EntriesPerPage', 10);
-                }
-            «ENDIF»
+            $resultsPerPage = $request->query->getInt('num', 0);
+            if (in_array($resultsPerPage, [0, 10])) {
+                $resultsPerPage = $this->getVar($objectType . 'EntriesPerPage', 10);
+            }
 
             // retrieve item list with pagination
-            «IF isLegacy»
-                $selectionArgs['currentPage'] = $currentPage;
-                $selectionArgs['resultsPerPage'] = $resultsPerPage;
-                list($entities, $objectCount) = ModUtil::apiFunc($this->name, 'selection', 'getEntitiesPaginated', $selectionArgs);
-            «ELSE»
-                list($entities, $objectCount) = $selectionHelper->getEntitiesPaginated($objectType, $where, $sort . ' ' . $sortdir, $currentPage, $resultsPerPage);
-            «ENDIF»
+            list($entities, $objectCount) = $selectionHelper->getEntitiesPaginated($objectType, $where, $sort . ' ' . $sortdir, $currentPage, $resultsPerPage);
         }
 
         «IF app.hasCategorisableEntities»
-            if (in_array($objectType, «IF isLegacy»array(«ELSE»[«ENDIF»'«app.getCategorisableEntities.map[e|e.name.formatForCode].join('\', \'')»'«IF isLegacy»)«ELSE»]«ENDIF»)) {
-                «IF !isLegacy»
+            if (in_array($objectType, ['«app.getCategorisableEntities.map[e|e.name.formatForCode].join('\', \'')»'])) {
                 $featureActivationHelper = $this->get('«app.appService».feature_activation_helper');
                 if ($featureActivationHelper->isEnabled(FeatureActivationHelper::CATEGORIES, $objectType)) {
-                «ENDIF»
-                $filteredEntities = «IF isLegacy»array()«ELSE»[]«ENDIF»;
-                foreach ($entities as $entity) {
-                    «IF !isLegacy»
+                    $filteredEntities = [];
+                    foreach ($entities as $entity) {
                         if ($this->get('«app.appService».category_helper')->hasPermission($entity)) {
                             $filteredEntities[] = $entity;
                         }
-                    «ELSE»
-                        if (ModUtil::apiFunc($this->name, 'category', 'hasPermission', array('entity' => $entity))) {
-                            $filteredEntities[] = $entity;
-                        }
-                    «ENDIF»
+                    }
+                    $entities = $filteredEntities;
                 }
-                $entities = $filteredEntities;
-                «IF !isLegacy»
-                }
-                «ENDIF»
             }
 
         «ENDIF»
@@ -407,230 +262,115 @@ class Actions {
     '''
 
     def private dispatch actionImplBody(Entity it, ViewAction action) '''
-        «IF isLegacy»
-            $entityClass = $this->name . '_Entity_' . ucfirst($objectType);
-            $repository = $this->entityManager->getRepository($entityClass);
-            $repository->setControllerArguments(array());
-        «ELSE»
-            $repository = $this->get('«app.appService».' . $objectType . '_factory')->getRepository();
-            $repository->setRequest($request);
+        $repository = $this->get('«app.appService».' . $objectType . '_factory')->getRepository();
+        $repository->setRequest($request);
+        $viewHelper = $this->get('«app.appService».view_helper');
+        $templateParameters = [
+            'routeArea' => $isAdmin ? 'admin' : ''
+        ];
+        «IF app.hasUploads»
+            $imageHelper = $this->get('«app.appService».image_helper');
         «ENDIF»
-        «IF isLegacy»
-            $viewHelper = new «app.appName»_Util_View($this->serviceManager);
-        «ELSE»
-            $viewHelper = $this->get('«app.appService».view_helper');
-            $templateParameters = [
-                'routeArea' => $isAdmin ? 'admin' : ''
-            ];
-            «IF app.hasUploads»
-                $imageHelper = $this->get('«app.appService».image_helper');
-            «ENDIF»
-            $selectionHelper = $this->get('«app.appService».selection_helper');
-        «ENDIF»
+        $selectionHelper = $this->get('«app.appService».selection_helper');
         «IF tree != EntityTreeType.NONE»
 
-            «IF isLegacy»
-                $tpl = $this->request->query->filter('tpl', '', FILTER_SANITIZE_STRING);
-            «ELSE»
-                $tpl = $request->query->getAlpha('tpl', '');
-            «ENDIF»
+            $tpl = $request->query->getAlpha('tpl', '');
             if ($tpl == 'tree') {
-                «IF isLegacy»
-                    $trees = ModUtil::apiFunc($this->name, 'selection', 'getAllTrees', array('ot' => $objectType));
-                    $this->view->assign('trees', $trees)
-                               ->assign($repository->getAdditionalTemplateParameters('controllerAction', $utilArgs));
-                «ELSE»
-                    $trees = $selectionHelper->getAllTrees($objectType);
-                    $templateParameters['trees'] = $trees;
-                    $templateParameters = array_merge($templateParameters, $repository->getAdditionalTemplateParameters(«IF app.hasUploads»$imageHelper, «ENDIF»'controllerAction', $utilArgs));
-                    «IF app.needsFeatureActivationHelper»
-                        $templateParameters['featureActivationHelper'] = $this->get('«app.appService».feature_activation_helper');
-                    «ENDIF»
+                $trees = $selectionHelper->getAllTrees($objectType);
+                $templateParameters['trees'] = $trees;
+                $templateParameters = array_merge($templateParameters, $repository->getAdditionalTemplateParameters(«IF app.hasUploads»$imageHelper, «ENDIF»'controllerAction', $utilArgs));
+                «IF app.needsFeatureActivationHelper»
+                    $templateParameters['featureActivationHelper'] = $this->get('«app.appService».feature_activation_helper');
                 «ENDIF»
                 // fetch and return the appropriate template
-                «IF isLegacy»
-                    return $viewHelper->processTemplate($this->view, $objectType, 'view', array());
-                «ELSE»
-                    return $viewHelper->processTemplate($this->get('twig'), $objectType, 'view', $request, $templateParameters);
-                «ENDIF»
+                return $viewHelper->processTemplate($this->get('twig'), $objectType, 'view', $request, $templateParameters);
             }
         «ENDIF»
 
         // convenience vars to make code clearer
-        $currentUrlArgs = «IF isLegacy»array()«ELSE»[]«ENDIF»;
+        $currentUrlArgs = [];
         $where = '';
 
         «prepareViewUrlArgs(true)»
 
-        $additionalParameters = $repository->getAdditionalTemplateParameters(«IF !isLegacy && app.hasUploads»$imageHelper, «ENDIF»'controllerAction', $utilArgs);
+        $additionalParameters = $repository->getAdditionalTemplateParameters(«IF app.hasUploads»$imageHelper, «ENDIF»'controllerAction', $utilArgs);
 
         $resultsPerPage = 0;
         if ($showAllEntries != 1) {
             // the number of items displayed on a page for pagination
-            «IF isLegacy»
-                $resultsPerPage = (int) $this->request->query->filter('num', 0, FILTER_VALIDATE_INT);
-                if ($resultsPerPage == 0) {
-                    $resultsPerPage = $this->getVar($objectType . 'EntriesPerPage', 10);
-                }
-            «ELSE»
-                $resultsPerPage = $num;
-                if (in_array($resultsPerPage, [0, 10])) {
-                    $resultsPerPage = $this->getVar($objectType . 'EntriesPerPage', 10);
-                }
-            «ENDIF»
+            $resultsPerPage = $num;
+            if (in_array($resultsPerPage, [0, 10])) {
+                $resultsPerPage = $this->getVar($objectType . 'EntriesPerPage', 10);
+            }
         }
 
         // parameter for used sorting field
-        «IF isLegacy»
-            $sort = $this->request->query->filter('sort', '', FILTER_SANITIZE_STRING);
-        «ENDIF»
         «new ControllerHelperFunctions().defaultSorting(it, app)»
 
-        «IF isLegacy»
-            // parameter for used sort order
-            $sortdir = $this->request->query->filter('sortdir', '', FILTER_SANITIZE_STRING);
-            $sortdir = strtolower($sortdir);
-            if ($sortdir != 'asc' && $sortdir != 'desc') {
-                $sortdir = 'asc';
-            }
-        «ELSE»
-            // parameter for used sort order
-            $sortdir = strtolower($sortdir);
+        // parameter for used sort order
+        $sortdir = strtolower($sortdir);
 
-            «sortableColumns»
-        «ENDIF»
+        «sortableColumns»
 
-        «IF isLegacy»
-            $selectionArgs = array(
-                'ot' => $objectType,
-                'where' => $where,
-                'orderBy' => $sort . ' ' . $sortdir
-            );
+        $templateParameters['sort'] = $sort;
+        $templateParameters['sortdir'] = $sortdir;
+        $templateParameters['num'] = $resultsPerPage;
 
-            // prepare access level for cache id
-            $accessLevel = ACCESS_READ;
-            $component = '«app.appName»:' . ucfirst($objectType) . ':';
-            $instance = '::';
-            if (SecurityUtil::checkPermission($component, $instance, ACCESS_COMMENT)) {
-                $accessLevel = ACCESS_COMMENT;
-            }
-            if (SecurityUtil::checkPermission($component, $instance, ACCESS_EDIT)) {
-                $accessLevel = ACCESS_EDIT;
-            }
+        $tpl = '';
+        if ($request->isMethod('POST')) {
+            $tpl = $request->request->getAlnum('tpl', '');
+        } elseif ($request->isMethod('GET')) {
+            $tpl = $request->query->getAlnum('tpl', '');
+        }
+        $templateParameters['tpl'] = $tpl;
 
-            $templateFile = $viewHelper->getViewTemplate($this->view, $objectType, 'view', array());
-            $cacheId = $objectType . '_view|_sort_' . $sort . '_' . $sortdir;
-        «ELSE»
-            $templateParameters['sort'] = $sort;
-            $templateParameters['sortdir'] = $sortdir;
-            $templateParameters['num'] = $resultsPerPage;
-
-            $tpl = '';
-            if ($request->isMethod('POST')) {
-                $tpl = $request->request->getAlnum('tpl', '');
-            } elseif ($request->isMethod('GET')) {
-                $tpl = $request->query->getAlnum('tpl', '');
-            }
-            $templateParameters['tpl'] = $tpl;
-
-            $quickNavForm = $this->createForm('«app.appNamespace»\Form\Type\QuickNavigation\\' . ucfirst($objectType) . 'QuickNavType', $templateParameters);
-            if ($quickNavForm->handleRequest($request) && $quickNavForm->isSubmitted()) {
-                $quickNavData = $quickNavForm->getData();
-                foreach ($quickNavData as $fieldName => $fieldValue) {
-                    if ($fieldName == 'routeArea') {
-                        continue;
-                    }
-                    if ($fieldName == 'all') {
-                        $showAllEntries = $additionalUrlParameters['all'] = $templateParameters['all'] = $fieldValue;
-                    } elseif ($fieldName == 'own') {
-                        $showOwnEntries = $additionalUrlParameters['own'] = $templateParameters['own'] = $fieldValue;
-                    } elseif ($fieldName == 'num') {
-                        $resultsPerPage = $additionalUrlParameters['num'] = $fieldValue;
-                    } else {
-                        // set filter as query argument, fetched inside repository
-                        $request->query->set($fieldName, $fieldValue);
-                    }
+        $quickNavForm = $this->createForm('«app.appNamespace»\Form\Type\QuickNavigation\\' . ucfirst($objectType) . 'QuickNavType', $templateParameters);
+        if ($quickNavForm->handleRequest($request) && $quickNavForm->isSubmitted()) {
+            $quickNavData = $quickNavForm->getData();
+            foreach ($quickNavData as $fieldName => $fieldValue) {
+                if ($fieldName == 'routeArea') {
+                    continue;
+                }
+                if ($fieldName == 'all') {
+                    $showAllEntries = $additionalUrlParameters['all'] = $templateParameters['all'] = $fieldValue;
+                } elseif ($fieldName == 'own') {
+                    $showOwnEntries = $additionalUrlParameters['own'] = $templateParameters['own'] = $fieldValue;
+                } elseif ($fieldName == 'num') {
+                    $resultsPerPage = $additionalUrlParameters['num'] = $fieldValue;
+                } else {
+                    // set filter as query argument, fetched inside repository
+                    $request->query->set($fieldName, $fieldValue);
                 }
             }
-            $sortableColumns->setOrderBy($sortableColumns->getColumn($sort), strtoupper($sortdir));
-            $sortableColumns->setAdditionalUrlParameters($additionalUrlParameters);
-        «ENDIF»
+        }
+        $sortableColumns->setOrderBy($sortableColumns->getColumn($sort), strtoupper($sortdir));
+        $sortableColumns->setAdditionalUrlParameters($additionalUrlParameters);
 
         if ($showAllEntries == 1) {
-            «IF isLegacy»
-                // set cache id
-                $this->view->setCacheId($cacheId . '_all_1_own_' . $showOwnEntries . '_' . $accessLevel);
-
-                // if page is cached return cached content
-                if ($this->view->is_cached($templateFile)) {
-                    return $viewHelper->processTemplate($this->view, $objectType, 'view', array(), $templateFile);
-                }
-
-            «ENDIF»
             // retrieve item list without pagination
-            «IF isLegacy»
-                $entities = ModUtil::apiFunc($this->name, 'selection', 'getEntities', $selectionArgs);
-            «ELSE»
-                $entities = $selectionHelper->getEntities($objectType, [], $where, $sort . ' ' . $sortdir);
-            «ENDIF»
+            $entities = $selectionHelper->getEntities($objectType, [], $where, $sort . ' ' . $sortdir);
         } else {
             // the current offset which is used to calculate the pagination
-            «IF isLegacy»
-                $currentPage = (int) $this->request->query->filter('pos', 1, FILTER_VALIDATE_INT);
-            «ELSE»
-                $currentPage = $pos;
-            «ENDIF»
+            $currentPage = $pos;
 
-            «IF isLegacy»
-                // set cache id
-                $this->view->setCacheId($cacheId . '_amount_' . $resultsPerPage . '_page_' . $currentPage . '_own_' . $showOwnEntries . '_' . $accessLevel);
-
-                // if page is cached return cached content
-                if ($this->view->is_cached($templateFile)) {
-                    return $viewHelper->processTemplate($this->view, $objectType, 'view', array(), $templateFile);
-                }
-
-            «ENDIF»
             // retrieve item list with pagination
-            «IF isLegacy»
-                $selectionArgs['currentPage'] = $currentPage;
-                $selectionArgs['resultsPerPage'] = $resultsPerPage;
-                list($entities, $objectCount) = ModUtil::apiFunc($this->name, 'selection', 'getEntitiesPaginated', $selectionArgs);
-            «ELSE»
-                list($entities, $objectCount) = $selectionHelper->getEntitiesPaginated($objectType, $where, $sort . ' ' . $sortdir, $currentPage, $resultsPerPage);
-            «ENDIF»
+            list($entities, $objectCount) = $selectionHelper->getEntitiesPaginated($objectType, $where, $sort . ' ' . $sortdir, $currentPage, $resultsPerPage);
 
-            «IF isLegacy»
-                $this->view->assign('currentPage', $currentPage)
-                           ->assign('pager', array('numitems'     => $objectCount,
-                                                   'itemsperpage' => $resultsPerPage));
-            «ELSE»
-                $templateParameters['currentPage'] = $currentPage;
-                $templateParameters['pager'] = ['numitems' => $objectCount, 'itemsperpage' => $resultsPerPage];
-            «ENDIF»
+            $templateParameters['currentPage'] = $currentPage;
+            $templateParameters['pager'] = ['numitems' => $objectCount, 'itemsperpage' => $resultsPerPage];
         }
 
         «IF categorisable»
-            «IF !isLegacy»
             $featureActivationHelper = $this->get('«app.appService».feature_activation_helper');
             if ($featureActivationHelper->isEnabled(FeatureActivationHelper::CATEGORIES, $objectType)) {
-            «ENDIF»
-            $filteredEntities = «IF isLegacy»array()«ELSE»[]«ENDIF»;
-            foreach ($entities as $entity) {
-                «IF !isLegacy»
+                $filteredEntities = [];
+                foreach ($entities as $entity) {
                     if ($this->get('«app.appService».category_helper')->hasPermission($entity)) {
                         $filteredEntities[] = $entity;
                     }
-                «ELSE»
-                    if (ModUtil::apiFunc($this->name, 'category', 'hasPermission', array('entity' => $entity))) {
-                        $filteredEntities[] = $entity;
-                    }
-                «ENDIF»
+                }
+                $entities = $filteredEntities;
             }
-            $entities = $filteredEntities;
-            «IF !isLegacy»
-            }
-            «ENDIF»
 
         «ENDIF»
         foreach ($entities as $k => $entity) {
@@ -684,21 +424,12 @@ class Actions {
     '''
 
     def private prepareViewUrlArgs(NamedObject it, Boolean hasView) '''
-        «IF isLegacy»
-            $showOwnEntries = (int) $this->request->query->filter('own', $this->getVar('showOnlyOwnEntries', 0), FILTER_VALIDATE_INT);
-            $showAllEntries = (int) $this->request->query->filter('all', 0, FILTER_VALIDATE_INT);
-        «ELSE»
-            $showOwnEntries = $request->query->getInt('own', $this->getVar('showOnlyOwnEntries', 0));
-            $showAllEntries = $request->query->getInt('all', 0);
-        «ENDIF»
+        $showOwnEntries = $request->query->getInt('own', $this->getVar('showOnlyOwnEntries', 0));
+        $showAllEntries = $request->query->getInt('all', 0);
 
         «IF app.generateCsvTemplates»
             if (!$showAllEntries) {
-                «IF isLegacy»
-                    $csv = (int) $this->request->query->filter('usecsvext', 0, FILTER_VALIDATE_INT);
-                «ELSE»
-                    $csv = $request->getRequestFormat() == 'csv' ? 1 : 0;
-                «ENDIF»
+                $csv = $request->getRequestFormat() == 'csv' ? 1 : 0;
                 if ($csv == 1) {
                     $showAllEntries = 1;
                 }
@@ -706,13 +437,8 @@ class Actions {
 
         «ENDIF»
         «IF hasView»
-            «IF isLegacy»
-                $this->view->assign('showOwnEntries', $showOwnEntries)
-                           ->assign('showAllEntries', $showAllEntries);
-            «ELSE»
-                $templateParameters['own'] = $showAllEntries;
-                $templateParameters['all'] = $showOwnEntries;
-            «ENDIF»
+            $templateParameters['own'] = $showAllEntries;
+            $templateParameters['all'] = $showOwnEntries;
         «ENDIF»
         if ($showAllEntries == 1) {
             $currentUrlArgs['all'] = 1;
@@ -725,72 +451,43 @@ class Actions {
     def private prepareViewItemsEntity(Entity it) '''
         «IF !skipHookSubscribers»
 
-            // build «IF isLegacy»ModUrl«ELSE»RouteUrl«ENDIF» instance for display hooks
-            «IF isLegacy»
-                $currentUrlObject = new Zikula_ModUrl($this->name, '«name.formatForCode»', 'view', ZLanguage::getLanguageCode(), $currentUrlArgs);
-            «ELSE»
-                $currentUrlArgs['_locale'] = $request->getLocale();
-                $currentUrlObject = new RouteUrl('«app.appName.formatForDB»_«name.formatForCode»_' . /*($isAdmin ? 'admin' : '') . */'view', $currentUrlArgs);
-            «ENDIF»
+            // build RouteUrl instance for display hooks
+            $currentUrlArgs['_locale'] = $request->getLocale();
+            $currentUrlObject = new RouteUrl('«app.appName.formatForDB»_«name.formatForCode»_' . /*($isAdmin ? 'admin' : '') . */'view', $currentUrlArgs);
         «ENDIF»
 
-        «IF isLegacy»
-            // assign the object data, sorting information and details for creating the pager
-            $this->view->assign('items', $entities)
-                       ->assign('sort', $sort)
-                       ->assign('sdir', $sortdir)
-                       ->assign('pageSize', $resultsPerPage)
-                       «IF !skipHookSubscribers»
-                       ->assign('currentUrlObject', $currentUrlObject)
-                       «ENDIF»
-                       ->assign($additionalParameters);
-        «ELSE»
-            $templateParameters['items'] = $entities;
-            $templateParameters['sort'] = $sort;
-            $templateParameters['sortdir'] = $sortdir;
-            $templateParameters['num'] = $resultsPerPage;
-            «IF !skipHookSubscribers»
-            $templateParameters['currentUrlObject'] = $currentUrlObject;
-            «ENDIF»
-            $templateParameters = array_merge($templateParameters, $additionalParameters);
+        $templateParameters['items'] = $entities;
+        $templateParameters['sort'] = $sort;
+        $templateParameters['sortdir'] = $sortdir;
+        $templateParameters['num'] = $resultsPerPage;
+        «IF !skipHookSubscribers»
+        $templateParameters['currentUrlObject'] = $currentUrlObject;
+        «ENDIF»
+        $templateParameters = array_merge($templateParameters, $additionalParameters);
 
-            $templateParameters['sort'] = $sortableColumns->generateSortableColumns();
-            $templateParameters['quickNavForm'] = $quickNavForm->createView();
+        $templateParameters['sort'] = $sortableColumns->generateSortableColumns();
+        $templateParameters['quickNavForm'] = $quickNavForm->createView();
 
-            $templateParameters['showAllEntries'] = $templateParameters['all'];
-            $templateParameters['showOwnEntries'] = $templateParameters['own'];
-            «IF app.needsFeatureActivationHelper»
+        $templateParameters['showAllEntries'] = $templateParameters['all'];
+        $templateParameters['showOwnEntries'] = $templateParameters['own'];
+        «IF app.needsFeatureActivationHelper»
 
-                $templateParameters['featureActivationHelper'] = $this->get('«app.appService».feature_activation_helper');
-            «ENDIF»
+            $templateParameters['featureActivationHelper'] = $this->get('«app.appService».feature_activation_helper');
         «ENDIF»
 
-        «IF isLegacy»
-            $modelHelper = new «app.appName»_Util_Model($this->serviceManager);
-            $this->view->assign('canBeCreated', $modelHelper->canBeCreated($objectType));
-        «ELSE»
-            $modelHelper = $this->get('«app.appService».model_helper');
-            $templateParameters['canBeCreated'] = $modelHelper->canBeCreated($objectType);
-        «ENDIF»
+        $modelHelper = $this->get('«app.appService».model_helper');
+        $templateParameters['canBeCreated'] = $modelHelper->canBeCreated($objectType);
 
         // fetch and return the appropriate template
-        «IF isLegacy»
-            return $viewHelper->processTemplate($this->view, $objectType, 'view', array(), $templateFile);
-        «ELSE»
-            return $viewHelper->processTemplate($this->get('twig'), $objectType, 'view', $request, $templateParameters);
-        «ENDIF»
+        return $viewHelper->processTemplate($this->get('twig'), $objectType, 'view', $request, $templateParameters);
     '''
 
     def private prepareViewItemsAjax(Controller it) '''
-        $items = «IF isLegacy»array()«ELSE»[]«ENDIF»;
+        $items = [];
         «IF app.hasListFields»
-            «IF isLegacy»
-                $listHelper = new «app.appName»_Util_ListEntries($this->serviceManager);
-            «ELSE»
-                $listHelper = $this->get('«app.appService».listentries_helper');
-            «ENDIF»
+            $listHelper = $this->get('«app.appService».listentries_helper');
 
-            $listObjectTypes = «IF isLegacy»array(«ELSE»[«ENDIF»«FOR entity : app.getListEntities SEPARATOR ', '»'«entity.name.formatForCode»'«ENDFOR»«IF isLegacy»)«ELSE»]«ENDIF»;
+            $listObjectTypes = [«FOR entity : app.getListEntities SEPARATOR ', '»'«entity.name.formatForCode»'«ENDFOR»];
             $hasListFields = in_array($objectType, $listObjectTypes);
 
             foreach ($entities as $item) {
@@ -815,12 +512,12 @@ class Actions {
             }
         «ENDIF»
 
-        $result = «IF isLegacy»array(«ELSE»[«ENDIF»
+        $result = [
             'objectCount' => $objectCount,
             'items' => $items
-        «IF isLegacy»)«ELSE»]«ENDIF»;
+        ];
 
-        return new «IF isLegacy»Zikula_Response_Ajax«ELSE»AjaxResponse«ENDIF»($result);
+        return new AjaxResponse($result);
     '''
 
     def private dispatch actionImplBody(DisplayAction it) '''
@@ -834,41 +531,24 @@ class Actions {
     def private actionImplBodyAjaxDisplay(DisplayAction it) '''
         «initControllerHelper»
 
-        «IF isLegacy»
-            $entityClass = $this->name . '_Entity_' . ucfirst($objectType);
-            $repository = $this->entityManager->getRepository($entityClass);
-            $repository->setControllerArguments(array());
+        $repository = $this->get('«app.appService».' . $objectType . '_factory')->getRepository();
+        $repository->setRequest($request);
 
-            $idFields = ModUtil::apiFunc($this->name, 'selection', 'getIdFields', array('ot' => $objectType));
-        «ELSE»
-            $repository = $this->get('«app.appService».' . $objectType . '_factory')->getRepository();
-            $repository->setRequest($request);
-
-            $selectionHelper = $this->get('«app.appService».selection_helper');
-            $idFields = $selectionHelper->getIdFields($objectType);
-        «ENDIF»
+        $selectionHelper = $this->get('«app.appService».selection_helper');
+        $idFields = $selectionHelper->getIdFields($objectType);
 
         // retrieve identifier of the object we wish to view
-        $idValues = $controllerHelper->retrieveIdentifier($«IF isLegacy»this->«ENDIF»request, «IF isLegacy»array()«ELSE»[]«ENDIF», $objectType, $idFields);
+        $idValues = $controllerHelper->retrieveIdentifier($request, [], $objectType, $idFields);
         $hasIdentifier = $controllerHelper->isValidIdentifier($idValues);
 
-        «IF isLegacy»
-            $this->throwNotFoundUnless($hasIdentifier, $this->__('Error! Invalid identifier received.'));
-        «ELSE»
-            if (!$hasIdentifier) {
-                throw new NotFoundHttpException($this->__('Error! Invalid identifier received.'));
-            }
-        «ENDIF»
+        if (!$hasIdentifier) {
+            throw new NotFoundHttpException($this->__('Error! Invalid identifier received.'));
+        }
 
-        «IF isLegacy»
-            $entity = ModUtil::apiFunc($this->name, 'selection', 'getEntity', array('ot' => $objectType, 'id' => $idValues));
-            $this->throwNotFoundUnless(null !== $entity, $this->__('No such item.'));
-        «ELSE»
-            $entity = $selectionHelper->getEntity($objectType, $idValues);
-            if (null === $entity) {
-                throw new NotFoundHttpException($this->__('No such item.'));
-            }
-        «ENDIF»
+        $entity = $selectionHelper->getEntity($objectType, $idValues);
+        if (null === $entity) {
+            throw new NotFoundHttpException($this->__('No such item.'));
+        }
         unset($idValues);
 
         $entity->initWorkflow();
@@ -877,75 +557,29 @@ class Actions {
 
         «permissionCheck("' . ucfirst($objectType) . '", "$instanceId . ")»
         «IF app.hasCategorisableEntities»
-            if (in_array($objectType, «IF isLegacy»array(«ELSE»[«ENDIF»'«app.getCategorisableEntities.map[e|e.name.formatForCode].join('\', \'')»'«IF isLegacy»)«ELSE»]«ENDIF»)) {
-                «IF isLegacy»
-                    $this->throwForbiddenUnless(ModUtil::apiFunc($this->name, 'category', 'hasPermission', array('entity' => $entity)), LogUtil::getErrorMsgPermission());
-                «ELSE»
-                    $featureActivationHelper = $this->get('«app.appService».feature_activation_helper');
-                    if ($featureActivationHelper->isEnabled(FeatureActivationHelper::CATEGORIES, $objectType)) {
-                        if (!$this->get('«app.appService».category_helper')->hasPermission($entity)) {
-                            throw new AccessDeniedException();
-                        }
+            if (in_array($objectType, ['«app.getCategorisableEntities.map[e|e.name.formatForCode].join('\', \'')»'])) {
+                $featureActivationHelper = $this->get('«app.appService».feature_activation_helper');
+                if ($featureActivationHelper->isEnabled(FeatureActivationHelper::CATEGORIES, $objectType)) {
+                    if (!$this->get('«app.appService».category_helper')->hasPermission($entity)) {
+                        throw new AccessDeniedException();
                     }
-                «ENDIF»
+                }
             }
         «ENDIF»
 
-        $result = «IF isLegacy»array(«ELSE»[«ENDIF»
+        $result = [
             'result' => true,
             $objectType => $entity->toArray()
-        «IF isLegacy»)«ELSE»]«ENDIF»;
+        ];
 
-        return new «IF isLegacy»Zikula_Response_Ajax«ELSE»AjaxResponse«ENDIF»($result);
+        return new AjaxResponse($result);
     '''
 
     def private dispatch actionImplBody(Entity it, DisplayAction action) '''
-        «IF isLegacy»
-            «initControllerHelper»
+        $repository = $this->get('«app.appService».' . $objectType . '_factory')->getRepository();
+        $repository->setRequest($request);
 
-            $entityClass = $this->name . '_Entity_' . ucfirst($objectType);
-            $repository = $this->entityManager->getRepository($entityClass);
-            $repository->setControllerArguments(array());
-
-            $idFields = ModUtil::apiFunc($this->name, 'selection', 'getIdFields', array('ot' => $objectType));
-
-            // retrieve identifier of the object we wish to view
-            $idValues = $controllerHelper->retrieveIdentifier($this->request, array(), $objectType, $idFields);
-            $hasIdentifier = $controllerHelper->isValidIdentifier($idValues);
-
-            // check for unique permalinks (without id)
-            $hasSlug = false;
-            $slug = '';
-            if (false === $hasIdentifier) {
-                $entityClass = $this->name . '_Entity_' . ucfirst($objectType);
-                $meta = $this->entityManager->getClassMetadata($entityClass);
-                $hasSlug = $meta->hasField('slug') && $meta->isUniqueField('slug');
-                if ($hasSlug) {
-                    $slug = $this->request->query->filter('slug', '', FILTER_SANITIZE_STRING);
-                    $hasSlug = (!empty($slug));
-                }
-            }
-            $hasIdentifier |= $hasSlug;
-
-            $this->throwNotFoundUnless($hasIdentifier, $this->__('Error! Invalid identifier received.'));
-
-            $selectionArgs = array('ot' => $objectType, 'id' => $idValues);
-            «IF hasSluggableFields»
-                if ($legacyControllerType == 'user' && $hasSlug) {
-                    $selectionArgs['slug'] = $slug;
-                }
-            «ENDIF»
-
-            $entity = ModUtil::apiFunc($this->name, 'selection', 'getEntity', $selectionArgs);
-            $this->throwNotFoundUnless($entity != null, $this->__('No such item.'));
-            unset($idValues);
-        «ELSE»
-            $repository = $this->get('«app.appService».' . $objectType . '_factory')->getRepository();
-            $repository->setRequest($request);
-
-            $entity = $«name.formatForCode»;
-
-        «ENDIF»
+        $entity = $«name.formatForCode»;
 
         $entity->initWorkflow();
 
@@ -953,162 +587,100 @@ class Actions {
 
         «action.permissionCheck("' . ucfirst($objectType) . '", "$instanceId . ")»
         «IF categorisable»
-            «IF isLegacy»
-                $this->throwForbiddenUnless(ModUtil::apiFunc($this->name, 'category', 'hasPermission', array('entity' => $entity)), LogUtil::getErrorMsgPermission());
-            «ELSE»
-                $featureActivationHelper = $this->get('«app.appService».feature_activation_helper');
-                if ($featureActivationHelper->isEnabled(FeatureActivationHelper::CATEGORIES, $objectType)) {
-                    if (!$this->get('«app.appService».category_helper')->hasPermission($entity)) {
-                        throw new AccessDeniedException();
-                    }
+            $featureActivationHelper = $this->get('«app.appService».feature_activation_helper');
+            if ($featureActivationHelper->isEnabled(FeatureActivationHelper::CATEGORIES, $objectType)) {
+                if (!$this->get('«app.appService».category_helper')->hasPermission($entity)) {
+                    throw new AccessDeniedException();
                 }
-            «ENDIF»
+            }
         «ENDIF»
 
         «processDisplayOutput»
     '''
 
     def private prepareDisplayPermissionCheck(Entity it) '''
-        // «IF !skipHookSubscribers»build «IF isLegacy»ModUrl«ELSE»RouteUrl«ENDIF» instance for display hooks; also «ENDIF»create identifier for permission check
+        // «IF !skipHookSubscribers»build RouteUrl instance for display hooks; also «ENDIF»create identifier for permission check
         «IF !skipHookSubscribers»
             $currentUrlArgs = $entity->createUrlArgs();
         «ENDIF»
         $instanceId = $entity->createCompositeIdentifier();
         «IF !skipHookSubscribers»
             $currentUrlArgs['id'] = $instanceId; // TODO remove this
-            «IF isLegacy»
-                $currentUrlObject = new Zikula_ModUrl($this->name, '«name.formatForCode»', 'display', ZLanguage::getLanguageCode(), $currentUrlArgs);
-            «ELSE»
-                $currentUrlArgs['_locale'] = $request->getLocale();
-                $currentUrlObject = new RouteUrl('«app.appName.formatForDB»_«name.formatForCode»_' . /*($isAdmin ? 'admin' : '') . */'display', $currentUrlArgs);
-            «ENDIF»
+            $currentUrlArgs['_locale'] = $request->getLocale();
+            $currentUrlObject = new RouteUrl('«app.appName.formatForDB»_«name.formatForCode»_' . /*($isAdmin ? 'admin' : '') . */'display', $currentUrlArgs);
         «ENDIF»
     '''
 
     def private processDisplayOutput(Entity it) '''
-        «IF isLegacy»
-            $viewHelper = new «app.appName»_Util_View($this->serviceManager);
-        «ELSE»
-            $viewHelper = $this->get('«app.appService».view_helper');
-            $templateParameters = [
-                'routeArea' => $isAdmin ? 'admin' : ''
-            ];
+        $viewHelper = $this->get('«app.appService».view_helper');
+        $templateParameters = [
+            'routeArea' => $isAdmin ? 'admin' : ''
+        ];
+        $templateParameters[$objectType] = $entity;
+        «IF !skipHookSubscribers»
+        $templateParameters['currentUrlObject'] = $currentUrlObject;
         «ENDIF»
-        «IF isLegacy»
-            $templateFile = $viewHelper->getViewTemplate($this->view, $objectType, 'display', array());
-
-            // set cache id
-            $component = $this->name . ':' . ucfirst($objectType) . ':';
-            $instance = $instanceId . '::';
-            $accessLevel = ACCESS_READ;
-            if (SecurityUtil::checkPermission($component, $instance, ACCESS_COMMENT)) {
-                $accessLevel = ACCESS_COMMENT;
-            }
-            if (SecurityUtil::checkPermission($component, $instance, ACCESS_EDIT)) {
-                $accessLevel = ACCESS_EDIT;
-            }
-            $this->view->setCacheId($objectType . '_display|' . $instanceId . '|a' . $accessLevel);
-
-            // assign output data to view object.
-            $this->view->assign($objectType, $entity)
-                       «IF !skipHookSubscribers»
-                       ->assign('currentUrlObject', $currentUrlObject)
-                       «ENDIF»
-                       ->assign($repository->getAdditionalTemplateParameters('controllerAction', $utilArgs));
-        «ELSE»
-            $templateParameters[$objectType] = $entity;
-            «IF !skipHookSubscribers»
-            $templateParameters['currentUrlObject'] = $currentUrlObject;
-            «ENDIF»
-            «IF app.hasUploads»
-                $imageHelper = $this->get('«app.appService».image_helper');
-            «ENDIF»
-            $templateParameters = array_merge($templateParameters, $repository->getAdditionalTemplateParameters(«IF app.hasUploads»$imageHelper, «ENDIF»'controllerAction', $utilArgs));
-            «IF app.needsFeatureActivationHelper»
-                $templateParameters['featureActivationHelper'] = $this->get('«app.appService».feature_activation_helper');
-            «ENDIF»
+        «IF app.hasUploads»
+            $imageHelper = $this->get('«app.appService».image_helper');
+        «ENDIF»
+        $templateParameters = array_merge($templateParameters, $repository->getAdditionalTemplateParameters(«IF app.hasUploads»$imageHelper, «ENDIF»'controllerAction', $utilArgs));
+        «IF app.needsFeatureActivationHelper»
+            $templateParameters['featureActivationHelper'] = $this->get('«app.appService».feature_activation_helper');
         «ENDIF»
 
         // fetch and return the appropriate template
-        «IF isLegacy»
-            return $viewHelper->processTemplate($this->view, $objectType, 'display', array(), $templateFile);
-        «ELSE»
-            $response = $viewHelper->processTemplate($this->get('twig'), $objectType, 'display', $request, $templateParameters);
-            «IF app.generateIcsTemplates»
+        $response = $viewHelper->processTemplate($this->get('twig'), $objectType, 'display', $request, $templateParameters);
+        «IF app.generateIcsTemplates»
 
-                $format = $request->getRequestFormat();
-                if ($format == 'ics') {
-                    $fileName = $objectType . '_' . (property_exists($entity, 'slug') ? $entity['slug'] : $entity->getTitleFromDisplayPattern()) . '.ics';
-                    $response->headers->set('Content-Disposition', 'attachment; filename=' . $fileName);
-                }
-            «ENDIF»
-
-            return $response;
+            $format = $request->getRequestFormat();
+            if ($format == 'ics') {
+                $fileName = $objectType . '_' . (property_exists($entity, 'slug') ? $entity['slug'] : $entity->getTitleFromDisplayPattern()) . '.ics';
+                $response->headers->set('Content-Disposition', 'attachment; filename=' . $fileName);
+            }
         «ENDIF»
+
+        return $response;
     '''
 
     def private dispatch actionImplBody(EditAction it) {
         switch controller {
             AjaxController: '''
-        $this->checkAjaxToken();
-
         «initControllerHelper»
 
-        «IF isLegacy»
-            $idFields = ModUtil::apiFunc($this->name, 'selection', 'getIdFields', array('ot' => $objectType));
-        «ELSE»
-            $selectionHelper = $this->get('«app.appService».selection_helper');
-            $idFields = $selectionHelper->getIdFields($objectType);
-        «ENDIF»
+        $selectionHelper = $this->get('«app.appService».selection_helper');
+        $idFields = $selectionHelper->getIdFields($objectType);
 
-        «IF isLegacy»
-            $data = $this->request->query->get('data', null);
-        «ELSE»
-            $data = $request->query->get('data', null);
-        «ENDIF»
+        $data = $request->query->get('data', null);
         $data = json_decode($data, true);
 
-        $idValues = «IF isLegacy»array()«ELSE»[]«ENDIF»;
+        $idValues = [];
         foreach ($idFields as $idField) {
             $idValues[$idField] = isset($data[$idField]) ? $data[$idField] : '';
         }
         $hasIdentifier = $controllerHelper->isValidIdentifier($idValues);
-        «IF isLegacy»
-            $this->throwNotFoundUnless($hasIdentifier, $this->__('Error! Invalid identifier received.'));
-        «ELSE»
-            if (!$hasIdentifier) {
-                throw new NotFoundHttpException($this->__('Error! Invalid identifier received.'));
-            }
-        «ENDIF»
+        if (!$hasIdentifier) {
+            throw new NotFoundHttpException($this->__('Error! Invalid identifier received.'));
+        }
 
-        «IF isLegacy»
-            $entity = ModUtil::apiFunc($this->name, 'selection', 'getEntity', array('ot' => $objectType, 'id' => $idValues));
-            $this->throwNotFoundUnless(null !== $entity, $this->__('No such item.'));
-        «ELSE»
-            $entity = $selectionHelper->getEntity($objectType, $idValues);
-            if (null === $entity) {
-                throw new NotFoundHttpException($this->__('No such item.'));
-            }
-        «ENDIF»
+        $entity = $selectionHelper->getEntity($objectType, $idValues);
+        if (null === $entity) {
+            throw new NotFoundHttpException($this->__('No such item.'));
+        }
         unset($idValues);
 
         $instanceId = $entity->createCompositeIdentifier();
 
         «permissionCheck("' . ucfirst($objectType) . '", "$instanceId . ")»
 
-        $result = «IF isLegacy»array(«ELSE»[«ENDIF»
+        $result = [
             'result' => false,
             $objectType => $entity->toArray()
-        «IF isLegacy»)«ELSE»]«ENDIF»;
+        ];
 
         $hasErrors = false;
         «IF app.hasHookSubscribers»
             if ($entity->supportsHookSubscribers()) {
-                «IF isLegacy»
-                    $hookHelper = new «app.appName»_Util_Hook($this->serviceManager);
-                «ELSE»
-                    $hookHelper = $this->get('«app.appService».hook_helper');
-                «ENDIF»
+                $hookHelper = $this->get('«app.appService».hook_helper');
                 // Let any hooks perform additional validation actions
                 $hookType = 'validate_edit';
                 $validationHooksPassed = $hookHelper->callValidationHooks($entity, $hookType);
@@ -1132,30 +704,24 @@ class Actions {
                     $url = null;
                     if ($action != 'delete') {
                         $urlArgs = $entity->createUrlArgs();
-                        «IF isLegacy»
-                            $url = new Zikula_ModUrl($this->name, FormUtil::getPassedValue('type', 'user', 'GETPOST'), 'display', ZLanguage::getLanguageCode(), $urlArgs);
-                        «ELSE»
-                            $urlArgs['_locale'] = $request->getLocale();
-                            $url = new RouteUrl('«app.appName.formatForDB»_' . $objectType . '_' . ($isAdmin ? 'admin' : '') . 'display', $urlArgs);
-                        «ENDIF»
+                        $urlArgs['_locale'] = $request->getLocale();
+                        $url = new RouteUrl('«app.appName.formatForDB»_' . $objectType . '_' . ($isAdmin ? 'admin' : '') . 'display', $urlArgs);
                     }
                     $hookHelper->callProcessHooks($entity, $hookType, $url);
                 }
             «ENDIF»
-            «IF !isLegacy»
 
-                $logger = $this->get('logger');
-                $logArgs = ['app' => '«app.appName»', 'user' => $this->get('zikula_users_module.current_user')->get('uname'), 'entity' => $objectType, 'id' => $instanceId];
-                $logger->notice('{app}: User {user} updated the {entity} with id {id} using ajax.', $logArgs);
-            «ENDIF»
+            $logger = $this->get('logger');
+            $logArgs = ['app' => '«app.appName»', 'user' => $this->get('zikula_users_module.current_user')->get('uname'), 'entity' => $objectType, 'id' => $instanceId];
+            $logger->notice('{app}: User {user} updated the {entity} with id {id} using ajax.', $logArgs);
         }
 
-        $result = «IF isLegacy»array(«ELSE»[«ENDIF»
+        $result = [
             'result' => true,
             $objectType => $entity->toArray()
-        «IF isLegacy»)«ELSE»]«ENDIF»;
+        ];
 
-        return new «IF isLegacy»Zikula_Response_Ajax«ELSE»AjaxResponse«ENDIF»($result);
+        return new AjaxResponse($result);
                     '''
             default: '''
         «redirectLegacyAction»
@@ -1164,46 +730,31 @@ class Actions {
     }
 
     def private dispatch actionImplBody(Entity it, EditAction action) '''
-        «IF isLegacy»
-            // create new Form reference
-            $view = FormUtil::newForm($this->name, $this);
+        $repository = $this->get('«app.appService».' . $objectType . '_factory')->getRepository();
 
-            // build form handler class name
-            $handlerClass = $this->name . '_Form_Handler_«name.formatForCodeCapital»_Edit';
-
-            // determine the output template
-            $viewHelper = new «app.appName»_Util_View($this->serviceManager);
-            $template = $viewHelper->getViewTemplate($this->view, $objectType, 'edit', array());
-
-            // execute form using supplied template and page event handler
-            return $view->execute($template, new $handlerClass());
-        «ELSE»
-            $repository = $this->get('«app.appService».' . $objectType . '_factory')->getRepository();
-
-            $templateParameters = [
-                'routeArea' => $isAdmin ? 'admin' : ''
-            ];
-            «IF app.hasUploads»
-                $imageHelper = $this->get('«app.appService».image_helper');
-            «ENDIF»
-            $templateParameters = array_merge($templateParameters, $repository->getAdditionalTemplateParameters(«IF app.hasUploads»$imageHelper, «ENDIF»'controllerAction', $utilArgs));
-
-            // delegate form processing to the form handler
-            $formHandler = $this->get('«app.appService».form.handler.«name.formatForDB»');
-            $result = $formHandler->processForm($templateParameters);
-            if ($result instanceof RedirectResponse) {
-                return $result;
-            }
-
-            $viewHelper = $this->get('«app.appService».view_helper');
-            $templateParameters = $formHandler->getTemplateParameters();
-            «IF app.needsFeatureActivationHelper»
-                $templateParameters['featureActivationHelper'] = $this->get('«app.appService».feature_activation_helper');
-            «ENDIF»
-
-            // fetch and return the appropriate template
-            return $viewHelper->processTemplate($this->get('twig'), $objectType, 'edit', $request, $templateParameters);
+        $templateParameters = [
+            'routeArea' => $isAdmin ? 'admin' : ''
+        ];
+        «IF app.hasUploads»
+            $imageHelper = $this->get('«app.appService».image_helper');
         «ENDIF»
+        $templateParameters = array_merge($templateParameters, $repository->getAdditionalTemplateParameters(«IF app.hasUploads»$imageHelper, «ENDIF»'controllerAction', $utilArgs));
+
+        // delegate form processing to the form handler
+        $formHandler = $this->get('«app.appService».form.handler.«name.formatForDB»');
+        $result = $formHandler->processForm($templateParameters);
+        if ($result instanceof RedirectResponse) {
+            return $result;
+        }
+
+        $viewHelper = $this->get('«app.appService».view_helper');
+        $templateParameters = $formHandler->getTemplateParameters();
+        «IF app.needsFeatureActivationHelper»
+            $templateParameters['featureActivationHelper'] = $this->get('«app.appService».feature_activation_helper');
+        «ENDIF»
+
+        // fetch and return the appropriate template
+        return $viewHelper->processTemplate($this->get('twig'), $objectType, 'edit', $request, $templateParameters);
     '''
 
     def private dispatch actionImplBody(DeleteAction it) '''
@@ -1211,54 +762,24 @@ class Actions {
     '''
 
     def private dispatch actionImplBody(Entity it, DeleteAction action) '''
-        «IF isLegacy»
-            «initControllerHelper»
+        $entity = $«name.formatForCode»;
 
-            $idFields = ModUtil::apiFunc($this->name, 'selection', 'getIdFields', array('ot' => $objectType));
-
-            // retrieve identifier of the object we wish to delete
-            $idValues = $controllerHelper->retrieveIdentifier($this->request, array(), $objectType, $idFields);
-            $hasIdentifier = $controllerHelper->isValidIdentifier($idValues);
-
-            $this->throwNotFoundUnless($hasIdentifier, $this->__('Error! Invalid identifier received.'));
-
-            $selectionArgs = array('ot' => $objectType, 'id' => $idValues);
-            «IF hasSluggableFields»
-                if ($legacyControllerType == 'user') {
-                    $selectionArgs['slug'] = $slug;
-                }
-            «ENDIF»
-
-            $entity = ModUtil::apiFunc($this->name, 'selection', 'getEntity', $selectionArgs);
-            $this->throwNotFoundUnless($entity != null, $this->__('No such item.'));
-        «ELSE»
-            $entity = $«name.formatForCode»;
-
-            $logger = $this->get('logger');
-            $logArgs = ['app' => '«app.appName»', 'user' => $this->get('zikula_users_module.current_user')->get('uname'), 'entity' => '«name.formatForDisplay»', 'id' => $entity->createCompositeIdentifier()];
-        «ENDIF»
+        $logger = $this->get('logger');
+        $logArgs = ['app' => '«app.appName»', 'user' => $this->get('zikula_users_module.current_user')->get('uname'), 'entity' => '«name.formatForDisplay»', 'id' => $entity->createCompositeIdentifier()];
 
         $entity->initWorkflow();
 
         // determine available workflow actions
-        «IF isLegacy»
-            $workflowHelper = new «app.appName»_Util_Workflow($this->serviceManager);
-        «ELSE»
-            $workflowHelper = $this->get('«app.appService».workflow_helper');
-        «ENDIF»
+        $workflowHelper = $this->get('«app.appService».workflow_helper');
         $actions = $workflowHelper->getActionsForObject($entity);
         if (false === $actions || !is_array($actions)) {
-            «IF isLegacy»
-                return LogUtil::registerError($this->__('Error! Could not determine workflow actions.'));
-            «ELSE»
-                $this->addFlash('error', $this->__('Error! Could not determine workflow actions.'));
-                $logger->error('{app}: User {user} tried to delete the {entity} with id {id}, but failed to determine available workflow actions.', $logArgs);
-                throw new \RuntimeException($this->__('Error! Could not determine workflow actions.'));
-            «ENDIF»
+            $this->addFlash('error', $this->__('Error! Could not determine workflow actions.'));
+            $logger->error('{app}: User {user} tried to delete the {entity} with id {id}, but failed to determine available workflow actions.', $logArgs);
+            throw new \RuntimeException($this->__('Error! Could not determine workflow actions.'));
         }
 
         «IF app.hasAdminController && app.hasUserController»
-        if («IF isLegacy»$legacyControllerType == 'admin'«ELSE»$isAdmin«ENDIF») {
+        if ($isAdmin) {
             «redirectAfterDeletion(app.getAllAdminControllers.head)»
         } else {
             «redirectAfterDeletion(app.getMainUserController)»
@@ -1280,86 +801,45 @@ class Actions {
             break;
         }
         if (!$deleteAllowed) {
-            «IF isLegacy»
-                return LogUtil::registerError($this->__('Error! It is not allowed to delete this «name.formatForDisplay».'));
-            «ELSE»
-                $this->addFlash('error', $this->__('Error! It is not allowed to delete this «name.formatForDisplay».'));
-                $logger->error('{app}: User {user} tried to delete the {entity} with id {id}, but this action was not allowed.', $logArgs);
+            $this->addFlash('error', $this->__('Error! It is not allowed to delete this «name.formatForDisplay».'));
+            $logger->error('{app}: User {user} tried to delete the {entity} with id {id}, but this action was not allowed.', $logArgs);
 
-                return $this->redirectToRoute($redirectRoute);
-            «ENDIF»
+            return $this->redirectToRoute($redirectRoute);
         }
 
-        «IF isLegacy»
-            $confirmation = (bool) $this->request->request->filter('confirmation', false, FILTER_VALIDATE_BOOLEAN);
-            if ($confirmation) {
+        $form = $this->createForm('«app.appNamespace»\Form\DeleteEntityType', $entity);
+
+        if ($form->handleRequest($request)->isValid()) {
+            if ($form->get('delete')->isClicked()) {
                 «deletionProcess(action)»
+            } elseif ($form->get('cancel')->isClicked()) {
+                $this->addFlash('status', $this->__('Operation cancelled.'));
+
+                return $this->redirectToRoute($redirectRoute);
             }
-        «ELSE»
-            $form = $this->createForm('«app.appNamespace»\Form\DeleteEntityType', $entity);
+        }
 
-            if ($form->handleRequest($request)->isValid()) {
-                if ($form->get('delete')->isClicked()) {
-                    «deletionProcess(action)»
-                } elseif ($form->get('cancel')->isClicked()) {
-                    $this->addFlash('status', $this->__('Operation cancelled.'));
+        $repository = $this->get('«app.appService».' . $objectType . '_factory')->getRepository();
 
-                    return $this->redirectToRoute($redirectRoute);
-                }
-            }
+        $viewHelper = $this->get('«app.appService».view_helper');
+        $templateParameters = [
+            'routeArea' => $isAdmin ? 'admin' : '',
+            'deleteForm' => $form->createView()
+        ];
+
+        $templateParameters[$objectType] = $entity;
+        «IF app.hasUploads»
+            $imageHelper = $this->get('«app.appService».image_helper');
         «ENDIF»
-
-        «IF isLegacy»
-            $entityClass = $this->name . '_Entity_' . ucfirst($objectType);
-            $repository = $this->entityManager->getRepository($entityClass);
-        «ELSE»
-            $repository = $this->get('«app.appService».' . $objectType . '_factory')->getRepository();
-        «ENDIF»
-
-        «IF isLegacy»
-            $viewHelper = new «app.appName»_Util_View($this->serviceManager);
-        «ELSE»
-            $viewHelper = $this->get('«app.appService».view_helper');
-            $templateParameters = [
-                'routeArea' => $isAdmin ? 'admin' : '',
-                'deleteForm' => $form->createView()
-            ];
-        «ENDIF»
-
-        «IF isLegacy»
-            // set caching id
-            $this->view->setCaching(Zikula_View::CACHE_DISABLED);
-
-            // assign the object we loaded above
-            $this->view->assign($objectType, $entity)
-                       ->assign($repository->getAdditionalTemplateParameters('controllerAction', $utilArgs));
-        «ELSE»
-            $templateParameters[$objectType] = $entity;
-            «IF app.hasUploads»
-                $imageHelper = $this->get('«app.appService».image_helper');
-            «ENDIF»
-            $templateParameters = array_merge($templateParameters, $repository->getAdditionalTemplateParameters(«IF app.hasUploads»$imageHelper, «ENDIF»'controllerAction', $utilArgs));
-        «ENDIF»
+        $templateParameters = array_merge($templateParameters, $repository->getAdditionalTemplateParameters(«IF app.hasUploads»$imageHelper, «ENDIF»'controllerAction', $utilArgs));
 
         // fetch and return the appropriate template
-        «IF isLegacy»
-            return $viewHelper->processTemplate($this->view, $objectType, 'delete', array());
-        «ELSE»
-            return $viewHelper->processTemplate($this->get('twig'), $objectType, 'delete', $request, $templateParameters);
-        «ENDIF»
+        return $viewHelper->processTemplate($this->get('twig'), $objectType, 'delete', $request, $templateParameters);
     '''
 
     def private deletionProcess(Entity it, DeleteAction action) '''
-        «IF isLegacy»
-            $this->checkCsrfToken();
-
-        «ENDIF»
         «IF !skipHookSubscribers»
-            «IF isLegacy»
-                $hookHelper = new «app.appName»_Util_Hook($this->serviceManager);
-            «ELSE»
-                $hookHelper = $this->get('«app.appService».hook_helper');
-            «ENDIF»
+            $hookHelper = $this->get('«app.appService».hook_helper');
             // Let any hooks perform additional validation actions
             $hookType = 'validate_delete';
             $validationHooksPassed = $hookHelper->callValidationHooks($entity, $hookType);
@@ -1377,12 +857,8 @@ class Actions {
         // execute the workflow action
         $success = $workflowHelper->executeAction($entity, $deleteActionId);
         if ($success) {
-            «IF isLegacy»
-                $this->registerStatus($this->__('Done! Item deleted.'));
-            «ELSE»
-                $this->addFlash('status', $this->__('Done! Item deleted.'));
-                $logger->notice('{app}: User {user} deleted the {entity} with id {id}.', $logArgs);
-            «ENDIF»
+            $this->addFlash('status', $this->__('Done! Item deleted.'));
+            $logger->notice('{app}: User {user} deleted the {entity} with id {id}.', $logArgs);
         }
     '''
 
@@ -1394,72 +870,33 @@ class Actions {
             $hookHelper->callProcessHooks($entity, $hookType, null);
         «ENDIF»
 
-        «IF isLegacy»
-            // The «name.formatForDisplay» was deleted, so we clear all cached pages this item.
-            $cacheArgs = array('ot' => $objectType, 'item' => $entity);
-            ModUtil::apiFunc($this->name, 'cache', 'clearItemCache', $cacheArgs);
-
-            return $this->redirect($redirectUrl);
-        «ELSE»
-            return $this->redirectToRoute($redirectRoute);
-        «ENDIF»
+        return $this->redirectToRoute($redirectRoute);
     '''
 
     def private redirectAfterDeletion(Entity it, Controller controller) '''
-        «IF isLegacy»
-            // redirect to the «IF controller.hasActions('view')»list of «nameMultiple.formatForDisplay»«ELSE»main page«ENDIF»
-            $redirectUrl = ModUtil::url($this->name, '«name.formatForCode»', '«IF controller.hasActions('view')»view«ELSE»main«ENDIF»', array('lct' => $legacyControllerType));
-        «ELSE»
-            // redirect to the «IF controller.hasActions('view')»list of «nameMultiple.formatForDisplay»«ELSE»index page«ENDIF»
-            $redirectRoute = '«app.appName.formatForDB»_«name.formatForDB»_' . ($isAdmin ? 'admin' : '') . '«IF controller.hasActions('view')»view«ELSE»index«ENDIF»';
-        «ENDIF»
+        // redirect to the «IF controller.hasActions('view')»list of «nameMultiple.formatForDisplay»«ELSE»index page«ENDIF»
+        $redirectRoute = '«app.appName.formatForDB»_«name.formatForDB»_' . ($isAdmin ? 'admin' : '') . '«IF controller.hasActions('view')»view«ELSE»index«ENDIF»';
     '''
 
     def private dispatch actionImplBody(CustomAction it) '''
-        «IF isLegacy && controller instanceof AdminController
-            && (name == 'config' || name == 'modifyconfig' || name == 'preferences')»
-            «val actionName = 'modify'»
-            // Create new Form reference
-            $view = FormUtil::newForm('«app.appName.formatForCode»', $this);
-
-            $handlerClass = '«app.appName»_Form_Handler_«controller.name.formatForCodeCapital»_«actionName.formatForCodeCapital»';
-
-            // Execute form using supplied template and page event handler
-            return $view->execute('«controller.formattedName.toFirstUpper»/«actionName.formatForCode.toFirstLower».«IF controller.application.targets('1.3.x')»tpl«ELSE»html.twig«ENDIF»', new $handlerClass());
-        «ELSE»
-            /** TODO: custom logic */
-        «ENDIF»
+        /** TODO: custom logic */
 
         «IF controller instanceof AjaxController»
-            return new «IF isLegacy»Zikula_Response_Ajax«ELSE»AjaxResponse«ENDIF»(«IF isLegacy»array(«ELSE»[«ENDIF»'result' => true«IF isLegacy»)«ELSE»]«ENDIF»);
+            return new AjaxResponse(['result' => true]);
         «ELSE»
             // return template
-            «IF isLegacy»
-                return $this->view->fetch('«controller.formattedName»/«name.formatForCode.toFirstLower».tpl');
-            «ELSE»
-                return $this->render('@«app.appName»/«controller.formattedName.toFirstUpper»/«name.formatForCode.toFirstLower».html.twig');
-            «ENDIF»
+            return $this->render('@«app.appName»/«controller.formattedName.toFirstUpper»/«name.formatForCode.toFirstLower».html.twig');
         «ENDIF»
     '''
 
     def private dispatch actionImplBody(Entity it, CustomAction action) '''
         /** TODO: custom logic */
-        «IF !isLegacy»
 
-            $templateParameters = [
-                'routeArea' => $isAdmin ? 'admin' : ''
-            ];
-        «ENDIF»
+        $templateParameters = [
+            'routeArea' => $isAdmin ? 'admin' : ''
+        ];
 
         // return template
-        «IF isLegacy»
-            return $this->view->fetch('«name.formatForCode»/«action.name.formatForCode.toFirstLower».tpl');
-        «ELSE»
-            return $this->render('@«app.appName»/«name.formatForCodeCapital»/«action.name.formatForCode.toFirstLower».html.twig', $templateParameters);
-        «ENDIF»
+        return $this->render('@«app.appName»/«name.formatForCodeCapital»/«action.name.formatForCode.toFirstLower».html.twig', $templateParameters);
     '''
-
-    def private isLegacy() {
-        app.targets('1.3.x')
-    }
 }

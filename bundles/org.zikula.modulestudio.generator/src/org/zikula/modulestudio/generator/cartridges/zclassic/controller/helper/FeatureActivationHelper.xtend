@@ -1,4 +1,4 @@
-package org.zikula.modulestudio.generator.cartridges.zclassic.controller.util
+package org.zikula.modulestudio.generator.cartridges.zclassic.controller.helper
 
 import de.guite.modulestudio.metamodel.Application
 import org.eclipse.xtext.generator.IFileSystemAccess
@@ -17,7 +17,6 @@ class FeatureActivationHelper {
 
     FileHelper fh = new FileHelper
 
-    // 1.4.x only
     /**
      * Entry point for the helper class creation.
      */

@@ -4,11 +4,9 @@ import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.EntityTreeType
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
-import org.zikula.modulestudio.generator.extensions.Utils
 
 class Tree {
     extension FormattingExtensions = new FormattingExtensions
-    extension Utils = new Utils
 
     def generate(Entity it, Application app) '''
         «IF tree != EntityTreeType.NONE»
@@ -45,7 +43,7 @@ class Tree {
 
             // alternatively we could probably select all nodes with root = $rootId
 
-            return array_merge(«IF application.targets('1.3.x')»array($rootNode)«ELSE»[$rootNode]«ENDIF», $children);
+            return array_merge([$rootNode], $children);
         }
     '''
 
@@ -59,19 +57,19 @@ class Tree {
          */
         public function selectAllTrees($useJoins = true)
         {
-            $trees = «IF application.targets('1.3.x')»array()«ELSE»[]«ENDIF»;
+            $trees = [];
 
             $slimMode = false;
 
             // get all root nodes
-            $qb = $this->genericBaseQuery('tbl.lvl«IF application.targets('1.3.x')» = «ELSE»:eq:«ENDIF»0', '', $useJoins, $slimMode);
+            $qb = $this->genericBaseQuery('tbl.lvl:eq:0', '', $useJoins, $slimMode);
             $query = $this->getQueryFromBuilder($qb);
             $rootNodes = $query->getResult();
 
             foreach ($rootNodes as $rootNode) {
                 // fetch children
                 $children = $this->children($rootNode);
-                $trees[$rootNode->getId()] = array_merge(«IF application.targets('1.3.x')»array($rootNode)«ELSE»[$rootNode]«ENDIF», $children);
+                $trees[$rootNode->getId()] = array_merge([$rootNode], $children);
             }
 
             return $trees;

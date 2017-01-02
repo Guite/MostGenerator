@@ -24,27 +24,8 @@ class UrlExtensions {
     extension ModelExtensions = new ModelExtensions
 
     /**
-     * General utility functions.
-     */
-    extension Utils = new Utils
-
-    /**
      * Collects parameters for a route relating a given entity,
-     * either for a Zikula_View template or for php source code.
-     * Old version for ZK 1.3.x where pk fields are required also if a unique slug is present.
-     *
-     * @param it The {@link Entity} to be linked to
-     * @param objName The name of the object variable carrying the entity object in the output
-     * @param template Whether to create the syntax for a template (true) or for source code (false)
-     * @param withSlug Whether to append the slug or not (since in 1.3.x only display pages use it)
-     * @return String collected url parameter string.
-     */
-    def routeParamsLegacy(Entity it, String objName, Boolean template, Boolean withSlug) '''«routePkParams(objName, template)»«IF withSlug»«appendSlug(objName, template)»«ENDIF»'''
-
-    /**
-     * Collects parameters for a route relating a given entity,
-     * either for a Zikula_View template or for php source code.
-     * New version for ZK 1.4.x using Symfony routing.
+     * either for a Twig template or for php source code.
      *
      * @param it The {@link Entity} to be linked to
      * @param objName The name of the object variable carrying the entity object in the output
@@ -55,22 +36,7 @@ class UrlExtensions {
 
     /**
      * Collects parameters for a route relating a given entity,
-     * either for a Zikula_View template or for php source code.
-     * Old version for ZK 1.3.x where pk fields are required also if a unique slug is present.
-     *
-     * @param it The {@link Entity} to be linked to
-     * @param objName The name of the object variable carrying the entity object in the output
-     * @param template Whether to create the syntax for a template (true) or for source code (false)
-     * @param withSlug Whether to append the slug or not (since in 1.3.x only display pages use it)
-     * @param customVarName Custom name for using another field name as url parameter
-     * @return String collected url parameter string.
-     */
-    def routeParamsLegacy(Entity it, String objName, Boolean template, Boolean withSlug, String customVarName) '''«routePkParams(objName, template, customVarName)»«IF withSlug»«appendSlug(objName, template)»«ENDIF»'''
-
-    /**
-     * Collects parameters for a route relating a given entity,
-     * either for a Zikula_View template or for php source code.
-     * New version for ZK 1.4.x using Symfony routing.
+     * either for a Twig template or for php source code.
      *
      * @param it The {@link Entity} to be linked to
      * @param objName The name of the object variable carrying the entity object in the output
@@ -82,7 +48,7 @@ class UrlExtensions {
 
     /**
      * Collects primary key parameters for a route relating a given entity,
-     * either for a Zikula_View template or for php source code.
+     * either for a Twig template or for php source code.
      *
      * @param it The {@link Entity} to be linked to
      * @param objName The name of the object variable carrying the entity object in the output
@@ -98,7 +64,7 @@ class UrlExtensions {
 
     /**
      * Collects primary key parameters for a route relating a given entity,
-     * either for a Zikula_View template or for php source code.
+     * either for a Twig template or for php source code.
      *
      * @param it The {@link Entity} to be linked to
      * @param objName The name of the object variable carrying the entity object in the output
@@ -124,11 +90,7 @@ class UrlExtensions {
     def appendSlug(Entity it, String objName, Boolean template) {
         if (hasSluggableFields) {
             if (template) {
-                if (application.targets('1.3.x')) {
-                    ''' slug=$«objName».slug'''
-                } else {
-                    ''', 'slug': «objName».slug'''
-                }
+                ''', 'slug': «objName».slug'''
             } else {
                 ''', 'slug' => $«objName»['slug']'''
             }
@@ -158,14 +120,9 @@ class UrlExtensions {
     def private CharSequence routeParamsForTemplate(Iterable<DerivedField> it, String objName) {
         if (size == 0) ''
         else {
-            if (head.entity.application.targets('1.3.x')) {
-                ' ' + head.name.formatForCode + '=$' + objName + '.' + head.name.formatForCode
-                    + tail.routeParamsForTemplate(objName)
-            } else {
-                '\'' + head.name.formatForCode + '\': ' + objName + '.' + head.name.formatForCode
-                    + (if (size > 1) ', ' else '')
-                    + tail.routeParamsForTemplate(objName)
-            }
+            '\'' + head.name.formatForCode + '\': ' + objName + '.' + head.name.formatForCode
+                + (if (size > 1) ', ' else '')
+                + tail.routeParamsForTemplate(objName)
         }
     }
 
@@ -194,14 +151,9 @@ class UrlExtensions {
     def private routeParamsForTemplate(Iterable<DerivedField> it, String objName, String customVarName) {
         if (size == 0) ''
         else {
-            if (head.entity.application.targets('1.3.x')) {
-                ' ' + customVarName + '=$' + objName + '.' + head.name.formatForCode
-                    + tail.routeParamsForTemplate(objName)
-            } else {
-                '\'' + customVarName + '\': ' + objName + '.' + head.name.formatForCode
-                    + (if (!empty) ', ' else '')
-                    + tail.routeParamsForTemplate(objName)
-            }
+            '\'' + customVarName + '\': ' + objName + '.' + head.name.formatForCode
+                + (if (!empty) ', ' else '')
+                + tail.routeParamsForTemplate(objName)
         }
     }
 }

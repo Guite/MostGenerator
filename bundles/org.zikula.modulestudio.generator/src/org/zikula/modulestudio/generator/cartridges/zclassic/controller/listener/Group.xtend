@@ -1,42 +1,38 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener
 
 import de.guite.modulestudio.metamodel.Application
-import org.zikula.modulestudio.generator.extensions.Utils
 
 class Group {
-    extension Utils = new Utils
 
     CommonExample commonExample = new CommonExample()
 
     def generate(Application it, Boolean isBase) '''
-        «IF !targets('1.3.x')»
-            «IF isBase»
-                /**
-                 * Makes our handlers known to the event system.
-                 */
-            «ELSE»
-                /**
-                 * {@inheritdoc}
-                 */
-            «ENDIF»
-            public static function getSubscribedEvents()
-            {
-                «IF isBase»
-                    return [
-                        GroupEvents::GROUP_CREATE      => ['create', 5],
-                        GroupEvents::GROUP_UPDATE      => ['update', 5],
-                        GroupEvents::GROUP_DELETE      => ['delete', 5],
-                        GroupEvents::GROUP_ADD_USER    => ['addUser', 5],
-                        GroupEvents::GROUP_REMOVE_USER => ['removeUser', 5],
-                        GroupEvents::GROUP_APPLICATION_PROCESSED => ['applicationProcessed', 5],
-                        GroupEvents::GROUP_NEW_APPLICATION => ['newApplication', 5]
-                    ];
-                «ELSE»
-                    return parent::getSubscribedEvents();
-                «ENDIF»
-            }
-
+        «IF isBase»
+            /**
+             * Makes our handlers known to the event system.
+             */
+        «ELSE»
+            /**
+             * {@inheritdoc}
+             */
         «ENDIF»
+        public static function getSubscribedEvents()
+        {
+            «IF isBase»
+                return [
+                    GroupEvents::GROUP_CREATE      => ['create', 5],
+                    GroupEvents::GROUP_UPDATE      => ['update', 5],
+                    GroupEvents::GROUP_DELETE      => ['delete', 5],
+                    GroupEvents::GROUP_ADD_USER    => ['addUser', 5],
+                    GroupEvents::GROUP_REMOVE_USER => ['removeUser', 5],
+                    GroupEvents::GROUP_APPLICATION_PROCESSED => ['applicationProcessed', 5],
+                    GroupEvents::GROUP_NEW_APPLICATION => ['newApplication', 5]
+                ];
+            «ELSE»
+                return parent::getSubscribedEvents();
+            «ENDIF»
+        }
+
         «IF isBase»
         /**
          * Listener for the `group.create` event.
@@ -44,14 +40,14 @@ class Group {
          * Occurs after a group is created. All handlers are notified.
          * The full group record created is available as the subject.
          *
-         * @param «IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance
+         * @param GenericEvent $event The event instance
          */
         «ELSE»
             /**
              * {@inheritdoc}
              */
         «ENDIF»
-        public «IF targets('1.3.x')»static «ENDIF»function create(«IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
+        public function create(GenericEvent $event)
         {
             «IF !isBase»
                 parent::create($event);
@@ -67,14 +63,14 @@ class Group {
          * Occurs after a group is updated. All handlers are notified.
          * The full updated group record is available as the subject.
          *
-         * @param «IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance
+         * @param GenericEvent $event The event instance
          */
         «ELSE»
             /**
              * {@inheritdoc}
              */
         «ENDIF»
-        public «IF targets('1.3.x')»static «ENDIF»function update(«IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
+        public function update(GenericEvent $event)
         {
             «IF !isBase»
                 parent::update($event);
@@ -90,14 +86,14 @@ class Group {
          * Occurs after a group is deleted from the system. All handlers are notified.
          * The full group record deleted is available as the subject.
          *
-         * @param «IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance
+         * @param GenericEvent $event The event instance
          */
         «ELSE»
             /**
              * {@inheritdoc}
              */
         «ENDIF»
-        public «IF targets('1.3.x')»static «ENDIF»function delete(«IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
+        public function delete(GenericEvent $event)
         {
             «IF !isBase»
                 parent::delete($event);
@@ -114,14 +110,14 @@ class Group {
          * It does not apply to pending membership requests.
          * The uid and gid are available as the subject.
          *
-         * @param «IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance
+         * @param GenericEvent $event The event instance
          */
         «ELSE»
             /**
              * {@inheritdoc}
              */
         «ENDIF»
-        public «IF targets('1.3.x')»static «ENDIF»function addUser(«IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
+        public function addUser(GenericEvent $event)
         {
             «IF !isBase»
                 parent::addUser($event);
@@ -137,14 +133,14 @@ class Group {
          * Occurs after a user is removed from a group. All handlers are notified.
          * The uid and gid are available as the subject.
          *
-         * @param «IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance
+         * @param GenericEvent $event The event instance
          */
         «ELSE»
             /**
              * {@inheritdoc}
              */
         «ENDIF»
-        public «IF targets('1.3.x')»static «ENDIF»function removeUser(«IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
+        public function removeUser(GenericEvent $event)
         {
             «IF !isBase»
                 parent::removeUser($event);

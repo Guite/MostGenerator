@@ -8,7 +8,6 @@ import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
-import org.zikula.modulestudio.generator.extensions.Utils
 
 class Emails {
 
@@ -16,7 +15,6 @@ class Emails {
     extension FormattingExtensions = new FormattingExtensions
     extension ModelExtensions = new ModelExtensions
     extension NamingExtensions = new NamingExtensions
-    extension Utils = new Utils
 
     def generate(Application it, IFileSystemAccess fsa) {
         val entitiesWithWorkflow = getAllEntities.filter[workflow != EntityWorkflowType.NONE]
@@ -24,8 +22,8 @@ class Emails {
             return
         }
 
-        val templatePath = getViewPath + if (targets('1.3.x')) 'email' else 'Email' + '/'
-        val templateExtension = if (targets('1.3.x')) '.tpl' else '.html.twig'
+        val templatePath = getViewPath + 'Email/'
+        val templateExtension = '.html.twig'
 
         for (entity : entitiesWithWorkflow) {
             var fileName = 'notify' + entity.name.formatForCodeCapital + 'Creator' + templateExtension
@@ -33,7 +31,7 @@ class Emails {
                 if (shouldBeMarked(templatePath + fileName)) {
                     fileName = 'notify' + entity.name.formatForCodeCapital + 'Creator.generated' + templateExtension
                 }
-                fsa.generateFile(templatePath + fileName, if (targets('1.3.x')) entity.notifyCreatorTemplateLegacy else entity.notifyCreatorTemplate)
+                fsa.generateFile(templatePath + fileName, entity.notifyCreatorTemplate)
             }
 
             fileName = 'notify' + entity.name.formatForCodeCapital + 'Moderator' + templateExtension
@@ -41,36 +39,10 @@ class Emails {
                 if (shouldBeMarked(templatePath + fileName)) {
                     fileName = 'notify' + entity.name.formatForCodeCapital + 'Moderator.generated' + templateExtension
                 }
-                fsa.generateFile(templatePath + fileName, if (targets('1.3.x')) entity.notifyModeratorTemplateLegacy else entity.notifyModeratorTemplate)
+                fsa.generateFile(templatePath + fileName, entity.notifyModeratorTemplate)
             }
         }
     }
-
-    def private notifyCreatorTemplateLegacy(Entity it) '''
-        <p>{gt text='Hello %s' tag=$recipient.name},</p>
-
-        <p>{gt text='Your «name.formatForDisplay» "%s" has been changed.' tag=$mailData.name}</p>
-
-        <p>{gt text='It\'s new state is: %s' tag=$mailData.newState}</p>
-
-        {if $mailData.remarks ne ''}
-            <p>{gt text='Additional remarks:'}<br />{$mailData.remarks|safetext|nl2br}</p>
-        {/if}
-
-        {gt text='Deleted' assign='deletedStateText'}
-        {if $mailData.newState ne $deletedStateText}
-            «IF application.hasUserController»
-                «IF application.getMainUserController.hasActions('display')»
-                    <p>{gt text='Link to your «name.formatForDisplay»:'} <a href="{$mailData.displayUrl|safetext}" title="{$mailData.name|replace:'"':''}">{$mailData.displayUrl|safetext}</a></p>
-                «ENDIF»
-                «IF application.getMainUserController.hasActions('edit')»
-                    <p>{gt text='Edit your «name.formatForDisplay»:'} <a href="{$mailData.editUrl|safetext}" title="{gt text='Edit'}">{$mailData.editUrl|safetext}</a></p>
-                «ENDIF»
-            «ENDIF»
-        {/if}
-
-        <p>{gt text='This mail has been sent automatically by %s.' tag=$modvars.ZConfig.sitename}</p>
-    '''
 
     def private notifyCreatorTemplate(Entity it) '''
         <p>{{ __f('Hello %s', { '%s': recipient.name }) }},</p>
@@ -95,32 +67,6 @@ class Emails {
         {% endif %}
 
         <p>{{ __f('This mail has been sent automatically by %s.', { '%s': getModVar('ZConfig', 'sitename') }) }}</p>
-    '''
-
-    def private notifyModeratorTemplateLegacy(Entity it) '''
-        <p>{gt text='Hello %s' tag=$recipient.name},</p>
-
-        <p>{gt text='A user changed his «name.formatForDisplay» "%s".' tag=$mailData.name}</p>
-
-        <p>{gt text='It\'s new state is: %s' tag=$mailData.newState}</p>
-
-        {if $mailData.remarks ne ''}
-            <p>{gt text='Additional remarks:'}<br />{$mailData.remarks|safetext|nl2br}</p>
-        {/if}
-
-        {gt text='Deleted' assign='deletedStateText'}
-        {if $mailData.newState ne $deletedStateText}
-            «IF application.hasAdminController && application.getAllAdminControllers.head.hasActions('display')
-                || application.hasUserController && application.getMainUserController.hasActions('display')»
-                <p>{gt text='Link to the «name.formatForDisplay»:'} <a href="{$mailData.displayUrl|safetext}" title="{$mailData.name|replace:'"':''}">{$mailData.displayUrl|safetext}</a></p>
-            «ENDIF»
-            «IF application.hasAdminController && application.getAllAdminControllers.head.hasActions('edit')
-                || application.hasUserController && application.getMainUserController.hasActions('edit')»
-                <p>{gt text='Edit the «name.formatForDisplay»:'} <a href="{$mailData.editUrl|safetext}" title="{gt text='Edit'}">{$mailData.editUrl|safetext}</a></p>
-            «ENDIF»
-        {/if}
-
-        <p>{gt text='This mail has been sent automatically by %s.' tag=$modvars.ZConfig.sitename}</p>
     '''
 
     def private notifyModeratorTemplate(Entity it) '''

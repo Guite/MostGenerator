@@ -159,7 +159,7 @@ class ControllerExtensions {
     /**
      * Determines the default action used for linking to a certain entity.
      */
-    def defaultAction(Entity it) '''«IF hasActions('display')»display«ELSEIF hasActions('view')»view«ELSE»«IF application.targets('1.3.x')»main«ELSE»index«ENDIF»«ENDIF»'''
+    def defaultAction(Entity it) '''«IF hasActions('display')»display«ELSEIF hasActions('view')»view«ELSE»index«ENDIF»'''
 
     /**
      * Checks whether the application has at least one view action or not.
@@ -228,17 +228,7 @@ class ControllerExtensions {
      * Determines the controller in which the config action is living.
      */
     def configController(Application it) {
-        if (!targets('1.3.x')) {
-            'config'
-        } else {
-            if (!getAllAdminControllers.empty)
-                getAllAdminControllers.head.formattedName
-            else
-                if (!getAllUserControllers.empty)
-                    getMainUserController.formattedName
-                else
-                    controllers.head.formattedName
-        }
+        'config'
     }
 
     /**

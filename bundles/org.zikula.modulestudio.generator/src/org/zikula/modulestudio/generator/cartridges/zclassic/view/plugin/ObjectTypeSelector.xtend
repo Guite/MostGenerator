@@ -17,7 +17,7 @@ class ObjectTypeSelector {
     Boolean generateSmartyPlugin
 
     def generate(Application it, IFileSystemAccess fsa, Boolean enforceLegacy) {
-        generateSmartyPlugin = targets('1.3.x') || enforceLegacy
+        generateSmartyPlugin = enforceLegacy
         if (generateSmartyPlugin) {
             val pluginFilePath = viewPluginFilePath('function', 'ObjectTypeSelector')
             if (!shouldBeSkipped(pluginFilePath)) {
@@ -44,12 +44,7 @@ class ObjectTypeSelector {
          */
         «IF !generateSmartyPlugin»public «ENDIF»function «IF generateSmartyPlugin»smarty_function_«appName.formatForDB»«ELSE»get«ENDIF»ObjectTypeSelector(«IF generateSmartyPlugin»$params, $view«ENDIF»)
         {
-            «IF targets('1.3.x')»
-                $dom = ZLanguage::getModuleDomain('«appName»');
-                $result = array();
-            «ELSE»
-                $result = [];
-            «ENDIF»
+            $result = [];
 
             «entityEntries»
 
@@ -67,11 +62,7 @@ class ObjectTypeSelector {
 
     def private entityEntries(Application it) '''
         «FOR entity : getAllEntities»
-            «IF targets('1.3.x')»
-                $result[] = array('text' => __('«entity.nameMultiple.formatForDisplayCapital»', $dom), 'value' => '«entity.name.formatForCode»');
-            «ELSE»
-                $result[] = ['text' => $this->__('«entity.nameMultiple.formatForDisplayCapital»'), 'value' => '«entity.name.formatForCode»'];
-            «ENDIF»
+            $result[] = ['text' => $this->__('«entity.nameMultiple.formatForDisplayCapital»'), 'value' => '«entity.name.formatForCode»'];
         «ENDFOR»
     '''
 }

@@ -15,7 +15,7 @@ class TemplateSelector {
     Boolean generateSmartyPlugin
 
     def generate(Application it, IFileSystemAccess fsa, Boolean enforceLegacy) {
-        generateSmartyPlugin = targets('1.3.x') || enforceLegacy
+        generateSmartyPlugin = enforceLegacy
         if (generateSmartyPlugin) {
             val pluginFilePath = viewPluginFilePath('function', 'TemplateSelector')
             if (!shouldBeSkipped(pluginFilePath)) {
@@ -42,21 +42,12 @@ class TemplateSelector {
          */
         «IF !generateSmartyPlugin»public «ENDIF»function «IF generateSmartyPlugin»smarty_function_«appName.formatForDB»«ELSE»get«ENDIF»TemplateSelector(«IF generateSmartyPlugin»$params, $view«ENDIF»)
         {
-            «val templateExtension = if (targets('1.3.x')) '.tpl' else '.html.twig'»
-            «IF targets('1.3.x')»
-                $dom = ZLanguage::getModuleDomain('«appName»');
-                $result = array();
+            «val templateExtension = '.html.twig'»
+            $result = [];
 
-                $result[] = array('text' => __('Only item titles', $dom), 'value' => 'itemlist_display«templateExtension»');
-                $result[] = array('text' => __('With description', $dom), 'value' => 'itemlist_display_description«templateExtension»');
-                $result[] = array('text' => __('Custom template', $dom), 'value' => 'custom');
-            «ELSE»
-                $result = [];
-
-                $result[] = ['text' => $this->__('Only item titles'), 'value' => 'itemlist_display«templateExtension»'];
-                $result[] = ['text' => $this->__('With description'), 'value' => 'itemlist_display_description«templateExtension»'];
-                $result[] = ['text' => $this->__('Custom template'), 'value' => 'custom'];
-            «ENDIF»
+            $result[] = ['text' => $this->__('Only item titles'), 'value' => 'itemlist_display«templateExtension»'];
+            $result[] = ['text' => $this->__('With description'), 'value' => 'itemlist_display_description«templateExtension»'];
+            $result[] = ['text' => $this->__('Custom template'), 'value' => 'custom'];
 
             «IF generateSmartyPlugin»
                 if (array_key_exists('assign', $params)) {

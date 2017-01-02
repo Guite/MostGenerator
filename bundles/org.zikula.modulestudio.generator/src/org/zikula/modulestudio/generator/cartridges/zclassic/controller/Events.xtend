@@ -26,10 +26,6 @@ class Events {
      * Entry point for event definition class.
      */
     def generate(Application it, IFileSystemAccess fsa) {
-        if (targets('1.3.x')) {
-            return
-        }
-
         app = it
 
         generateClassPair(fsa, getAppSourceLibPath + name.formatForCodeCapital + 'Events.php',

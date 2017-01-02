@@ -1,39 +1,35 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener
 
 import de.guite.modulestudio.metamodel.Application
-import org.zikula.modulestudio.generator.extensions.Utils
 
 class UserLogin {
-    extension Utils = new Utils
 
     CommonExample commonExample = new CommonExample()
 
     def generate(Application it, Boolean isBase) '''
-        «IF !targets('1.3.x')»
-            «IF isBase»
-                /**
-                 * Makes our handlers known to the event system.
-                 */
-            «ELSE»
-                /**
-                 * {@inheritdoc}
-                 */
-            «ENDIF»
-            public static function getSubscribedEvents()
-            {
-                «IF isBase»
-                    return [
-                        AccessEvents::LOGIN_STARTED => ['started', 5],
-                        AccessEvents::LOGIN_VETO    => ['veto', 5],
-                        AccessEvents::LOGIN_SUCCESS => ['succeeded', 5],
-                        AccessEvents::LOGIN_FAILED  => ['failed', 5]
-                    ];
-                «ELSE»
-                    return parent::getSubscribedEvents();
-                «ENDIF»
-            }
-
+        «IF isBase»
+            /**
+             * Makes our handlers known to the event system.
+             */
+        «ELSE»
+            /**
+             * {@inheritdoc}
+             */
         «ENDIF»
+        public static function getSubscribedEvents()
+        {
+            «IF isBase»
+                return [
+                    AccessEvents::LOGIN_STARTED => ['started', 5],
+                    AccessEvents::LOGIN_VETO    => ['veto', 5],
+                    AccessEvents::LOGIN_SUCCESS => ['succeeded', 5],
+                    AccessEvents::LOGIN_FAILED  => ['failed', 5]
+                ];
+            «ELSE»
+                return parent::getSubscribedEvents();
+            «ENDIF»
+        }
+
         «IF isBase»
         /**
          * Listener for the `module.users.ui.login.started` event.
@@ -52,14 +48,14 @@ class UserLogin {
          *
          * This event does not have any subject, arguments, or data.
          *
-         * @param «IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance
+         * @param GenericEvent $event The event instance
          */
         «ELSE»
             /**
              * {@inheritdoc}
              */
         «ENDIF»
-        public «IF targets('1.3.x')»static «ENDIF»function started(«IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
+        public function started(GenericEvent $event)
         {
             «IF !isBase»
                 parent::started($event);
@@ -76,7 +72,7 @@ class UserLogin {
          * (All prerequisites for a successful login have been checked and are satisfied.)
          * This event allows a module to intercept the login process and prevent a successful login from taking place.
          *
-         * A handler that needs to veto a login attempt should call `stop«IF !targets('1.3.x')»Propagation«ENDIF»()`. This will prevent other handlers
+         * A handler that needs to veto a login attempt should call `stopPropagation()`. This will prevent other handlers
          * from receiving the event, will return to the login process, and will prevent the login from taking place.
          * A handler that vetoes a login attempt should set an appropriate error message and give any additional
          * feedback to the user attempting to log in that might be appropriate.
@@ -93,14 +89,14 @@ class UserLogin {
          * The arguments of the event are:
          *     `'authentication_method'` will contain the name of the module and the name of the method that was used to authenticated the user.
          *
-         * @param «IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance
+         * @param GenericEvent $event The event instance
          */
         «ELSE»
             /**
              * {@inheritdoc}
              */
         «ENDIF»
-        public «IF targets('1.3.x')»static «ENDIF»function veto(«IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
+        public function veto(GenericEvent $event)
         {
             «IF !isBase»
                 parent::veto($event);
@@ -117,12 +113,7 @@ class UserLogin {
          *
          * The event subject contains the UserEntity.
          * The arguments of the event are as follows:
-        «IF targets('1.3.x')»
-            «' '»*     `'authentication_module'` an array containing the authenticating module name (`'modname'`) and method (`'method'`) 
-            «' '»*       used to log the user in.
-        «ELSE»
-            «' '»*     `'authentication_module'` will contain the alias (name) of the method that was used to authenticate the user.
-        «ENDIF»
+         *     `'authentication_module'` will contain the alias (name) of the method that was used to authenticate the user.
          *     `'redirecturl'` will contain the value of the 'returnurl' parameter, if one was supplied, or an empty
          *       string. This can be modified to change where the user is redirected following the login.
          *
@@ -136,14 +127,14 @@ class UserLogin {
          * Finally, this event only fires in the event of a "normal" UI-oriented log-in attempt. A module attempting to log in
          * programmatically by directly calling the core functions will not see this event fired.
          *
-         * @param «IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance
+         * @param GenericEvent $event The event instance
          */
         «ELSE»
             /**
              * {@inheritdoc}
              */
         «ENDIF»
-        public «IF targets('1.3.x')»static «ENDIF»function succeeded(«IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
+        public function succeeded(GenericEvent $event)
         {
             «IF !isBase»
                 parent::succeeded($event);
@@ -160,13 +151,7 @@ class UserLogin {
          *
          * The event subject contains the UserEntity if it has been found, otherwise null.
          * The arguments of the event are as follows:
-        «IF targets('1.3.x')»
-            «' '»* `'authentication_module'` an array containing the authenticating module name (`'modname'`) and method (`'method'`) 
-            «' '»*   used to log the user in.
-            «' '»* `'authentication_info'` an array containing the authentication information entered by the user (contents will vary by method).
-        «ELSE»
-            «' '»* `'authenticationMethod'` will contain an instance of the authenticationMethod used that produced the failed login.
-        «ENDIF»
+         * `'authenticationMethod'` will contain an instance of the authenticationMethod used that produced the failed login.
          * `'redirecturl'` will initially contain an empty string. This can be modified to change where the user is redirected following the failed login.
          *
          * If a `'redirecturl'` is specified by any entity intercepting and processing the `module.users.ui.login.failed` event, then
@@ -180,14 +165,14 @@ class UserLogin {
          * Finally, this event only fires in the event of a "normal" UI-oriented log-in attempt. A module attempting to log in
          * programmatically by directly calling core functions will not see this event fired.
          *
-         * @param «IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance
+         * @param GenericEvent $event The event instance
          */
         «ELSE»
             /**
              * {@inheritdoc}
              */
         «ENDIF»
-        public «IF targets('1.3.x')»static «ENDIF»function failed(«IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
+        public function failed(GenericEvent $event)
         {
             «IF !isBase»
                 parent::failed($event);

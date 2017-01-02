@@ -19,7 +19,6 @@ class DeleteEntity {
 
     /**
      * Entry point for entity deletion form type.
-     * 1.4.x only.
      */
     def generate(Application it, IFileSystemAccess fsa) {
         if (!hasDeleteActions) {

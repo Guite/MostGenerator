@@ -51,109 +51,17 @@ class Bootstrap {
     def private bootstrapBaseImpl(Application it) '''
         «bootstrapDocs»
         «initExtensions»
-        «IF targets('1.3.x') && !referredApplications.empty»
-
-            «FOR referredApp : referredApplications»
-                if (ModUtil::available('«referredApp.name.formatForCodeCapital»')) {
-                    // load Doctrine 2 data of «referredApp.name.formatForCodeCapital»
-                    ModUtil::initOOModule('«referredApp.name.formatForCodeCapital»');
-                }
-            «ENDFOR»
-        «ENDIF»
         «archiveObjectsCall»
 
     '''
 
     def private initExtensions(Application it) '''
-        «IF targets('1.3.x')»
-            «IF needsExtensionListener»
-                // initialise doctrine extension listeners
-                $helper = ServiceUtil::getService('doctrine_extensions');
-                «initTree»
-                «initLoggable»
-                «initSluggable»
-                «initSoftDeleteable»
-                «initSortable»
-                «initTimestampable»
-                «initStandardFields»
-                «initTranslatable»
-            «ENDIF»
-        «ELSE»
-            «initLoggable»
-        «ENDIF»
-    '''
-
-    def private needsExtensionListener(Application it) {
-        (hasTrees || hasLoggable || hasSluggable || hasSoftDeleteable || hasSortable || hasTimestampable || hasTranslatable || hasStandardFieldEntities)
-    }
-
-    def private initTree(Application it) '''
-        «IF hasTrees»
-            $helper->getListener('tree');
-        «ENDIF»
-    '''
-
-    def private initLoggable(Application it) '''
         «IF hasLoggable»
             // set current user name to loggable listener
-            «IF targets('1.3.x')»
-                $loggableListener = $helper->getListener('loggable');
-                $userName = UserUtil::isLoggedIn() ? UserUtil::getVar('uname') : __('Guest');
-            «ELSE»
-                $loggableListener = ServiceUtil::get('doctrine_extensions.listener.loggable');
-                $currentUserApi = ServiceUtil::get('zikula_users_module.current_user');
-                $userName = $currentUserApi->isLoggedIn() ? $currentUserApi->get('uname') : __('Guest');
-            «ENDIF»
+            $loggableListener = ServiceUtil::get('doctrine_extensions.listener.loggable');
+            $currentUserApi = ServiceUtil::get('zikula_users_module.current_user');
+            $userName = $currentUserApi->isLoggedIn() ? $currentUserApi->get('uname') : __('Guest');
             $loggableListener->setUsername($userName);
-        «ENDIF»
-    '''
-
-    def private initSluggable(Application it) '''
-        «IF hasSluggable»
-            $helper->getListener('sluggable');
-        «ENDIF»
-    '''
-
-    def private initSoftDeleteable(Application it) '''
-        «IF hasSoftDeleteable && !targets('1.3.x')»
-            $helper->getListener('softdeleteable');
-        «ENDIF»
-    '''
-
-    def private initSortable(Application it) '''
-        «IF hasSortable»
-            $helper->getListener('sortable');
-        «ENDIF»
-    '''
-
-    def private initTimestampable(Application it) '''
-        «IF hasTimestampable || hasStandardFieldEntities»
-            $helper->getListener('timestampable');
-        «ENDIF»
-    '''
-
-    def private initStandardFields(Application it) '''
-        «IF hasStandardFieldEntities»
-            $helper->getListener('standardfields');
-        «ENDIF»
-    '''
-
-    def private initTranslatable(Application it) '''
-        «IF hasTranslatable»
-            «IF !targets('1.3.x')»
-                $request = ServiceUtil::get('request_stack')->getMasterRequest();
-            «ENDIF»
-            $translatableListener = $helper->getListener('translatable');
-            //$translatableListener->setTranslatableLocale(«IF targets('1.3.x')»ZLanguage::getLanguageCode()«ELSE»$request->getLocale()«ENDIF»);
-            $currentLanguage = preg_replace('#[^a-z-].#', '', FormUtil::getPassedValue('lang', System::getVar('language_i18n', 'en'), 'GET'));
-            $translatableListener->setTranslatableLocale($currentLanguage);
-            /*
-             * Sometimes it is desired to set a default translation as a fallback if record does not have a translation
-             * on used locale. In that case Translation Listener takes the current value of Entity.
-             * But there is a way to specify a default locale which would force Entity to not update it`s field
-             * if current locale is not a default.
-             */
-            //$translatableListener->setDefaultLocale(System::getVar('language_i18n', 'en'));
         «ENDIF»
     '''
 
@@ -168,7 +76,7 @@ class Bootstrap {
             function «prefix()»PerformRegularAmendments()
             {
                 $currentType = FormUtil::getPassedValue('type', 'user', 'GETPOST', FILTER_SANITIZE_STRING);
-                $currentFunc = FormUtil::getPassedValue('func', '«IF targets('1.3.x')»main«ELSE»index«ENDIF»', 'GETPOST', FILTER_SANITIZE_STRING);
+                $currentFunc = FormUtil::getPassedValue('func', 'index', 'GETPOST', FILTER_SANITIZE_STRING);
                 if ($currentType == 'admin' || $currentFunc == 'edit' || $currentFunc == 'initialize') {
                     return;
                 }
@@ -181,28 +89,23 @@ class Bootstrap {
 
                 PageUtil::registerVar('«appName»AutomaticArchiving', false, true);
                 $serviceManager = ServiceUtil::getManager();
-                «IF targets('1.3.x')»
-                    $entityManager = $serviceManager->get«IF targets('1.3.x')»Service«ENDIF»('«entityManagerService»');
-                    // check if own services exist (which is not true if the module is not installed yet)
-                «ELSE»
-                    // check if own services exist (which is not true if the module is not installed yet)
-                    if (!$serviceManager->has('«appService».workflow_helper')) {
+                // check if own services exist (which is not true if the module is not installed yet)
+                if (!$serviceManager->has('«appService».workflow_helper')) {
+                    return;
+                }
+                $workflowHelper = $serviceManager->get('«appService».workflow_helper');
+                «IF hasHookSubscribers»
+
+                    if (!$serviceManager->has('«appService».hook_helper')) {
                         return;
                     }
-                    $workflowHelper = $serviceManager->get('«appService».workflow_helper');
-                    «IF hasHookSubscribers»
-
-                        if (!$serviceManager->has('«appService».hook_helper')) {
-                            return;
-                        }
-                        $hookHelper = $serviceManager->get('«appService».hook_helper');
-                    «ENDIF»
-
-                    $logger = $serviceManager->get('logger');
-                    $permissionApi = $serviceManager->get('zikula_permissions_module.api.permission');
-                    $session = $serviceManager->get('session');
-                    $translator = $serviceManager->get('translator.default');
+                    $hookHelper = $serviceManager->get('«appService».hook_helper');
                 «ENDIF»
+
+                $logger = $serviceManager->get('logger');
+                $permissionApi = $serviceManager->get('zikula_permissions_module.api.permission');
+                $session = $serviceManager->get('session');
+                $translator = $serviceManager->get('translator.default');
                 «FOR entity : entitiesWithArchive»
 
                     if (!$serviceManager->has('«appService».«entity.name.formatForCode»_factory')) {
@@ -210,21 +113,10 @@ class Bootstrap {
                     }
 
                     // perform update for «entity.nameMultiple.formatForDisplay» becoming archived
-                    «IF !targets('1.3.x')»
-                        $logger->notice('{app}: Automatic archiving for the {entity} entity started.', ['app' => '«appName»', 'entity' => '«entity.name.formatForCode»']);
-                    «ENDIF»
-                    «IF targets('1.3.x')»
-                        $entityClass = '«appName»_Entity_«entity.name.formatForCodeCapital»';
-                        $repository = $entityManager->getRepository($entityClass);
-                    «ELSE»
-                        $repository = $serviceManager->get('«appService».«entity.name.formatForCode»_factory')->getRepository();
-                    «ENDIF»
-                    «IF targets('1.3.x')»
-                        $repository->archiveObjects();
-                    «ELSE»
-                        $repository->archiveObjects($permissionApi, $session, $translator, $workflowHelper«IF !entity.skipHookSubscribers», $hookHelper«ENDIF»);
-                        $logger->notice('{app}: Automatic archiving for the {entity} entity completed.', ['app' => '«appName»', 'entity' => '«entity.name.formatForCode»']);
-                    «ENDIF»
+                    $logger->notice('{app}: Automatic archiving for the {entity} entity started.', ['app' => '«appName»', 'entity' => '«entity.name.formatForCode»']);
+                    $repository = $serviceManager->get('«appService».«entity.name.formatForCode»_factory')->getRepository();
+                    $repository->archiveObjects($permissionApi, $session, $translator, $workflowHelper«IF !entity.skipHookSubscribers», $hookHelper«ENDIF»);
+                    $logger->notice('{app}: Automatic archiving for the {entity} entity completed.', ['app' => '«appName»', 'entity' => '«entity.name.formatForCode»']);
                 «ENDFOR»
                 PageUtil::setVar('«appName»AutomaticArchiving', false);
             }

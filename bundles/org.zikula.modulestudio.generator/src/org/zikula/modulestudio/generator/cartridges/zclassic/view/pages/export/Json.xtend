@@ -5,14 +5,12 @@ import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
-import org.zikula.modulestudio.generator.extensions.Utils
 
 class Json {
 
     extension ControllerExtensions = new ControllerExtensions
     extension FormattingExtensions = new FormattingExtensions
     extension NamingExtensions = new NamingExtensions
-    extension Utils = new Utils
 
     def generate(Entity it, String appName, IFileSystemAccess fsa) {
         println('Generating json view templates for entity "' + name.formatForDisplay + '"')
@@ -20,27 +18,16 @@ class Json {
         if (hasActions('view')) {
             templateFilePath = templateFileWithExtension('view', 'json')
             if (!application.shouldBeSkipped(templateFilePath)) {
-                fsa.generateFile(templateFilePath, if (application.targets('1.3.x')) jsonViewLegacy(appName) else jsonView(appName))
+                fsa.generateFile(templateFilePath, jsonView(appName))
             }
         }
         if (hasActions('display')) {
             templateFilePath = templateFileWithExtension('display', 'json')
             if (!application.shouldBeSkipped(templateFilePath)) {
-                fsa.generateFile(templateFilePath, if (application.targets('1.3.x')) jsonDisplayLegacy(appName) else jsonDisplay(appName))
+                fsa.generateFile(templateFilePath, jsonDisplay(appName))
             }
         }
     }
-
-    def private jsonViewLegacy(Entity it, String appName) '''
-        «val objName = name.formatForCode»
-        {* purpose of this template: «nameMultiple.formatForDisplay» view json view *}
-        {«appName.formatForDB»TemplateHeaders contentType='application/json'}[
-        {foreach item='«objName»' from=$items name='«nameMultiple.formatForCode»'}
-            {if not $smarty.foreach.«nameMultiple.formatForCode».first},{/if}
-            {$«objName»->toJson()}
-        {/foreach}
-        ]
-    '''
 
     def private jsonView(Entity it, String appName) '''
         «val objName = name.formatForCode»
@@ -51,13 +38,6 @@ class Json {
             {{ «objName».toJson() }}
         {% endfor %}
         ]
-    '''
-
-    def private jsonDisplayLegacy(Entity it, String appName) '''
-        «val objName = name.formatForCode»
-        {* purpose of this template: «nameMultiple.formatForDisplay» display json view *}
-        {«appName.formatForDB»TemplateHeaders contentType='application/json'}
-        {$«objName»->toJson()}
     '''
 
     def private jsonDisplay(Entity it, String appName) '''

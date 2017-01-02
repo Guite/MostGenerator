@@ -36,7 +36,6 @@ class QuickNavigation {
 
     /**
      * Entry point for quick navigation form type.
-     * 1.4.x only.
      */
     def generate(Application it, IFileSystemAccess fsa) {
         if (!hasViewActions) {

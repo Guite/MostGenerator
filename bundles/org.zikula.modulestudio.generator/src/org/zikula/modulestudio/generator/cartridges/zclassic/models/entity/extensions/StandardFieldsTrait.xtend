@@ -6,7 +6,6 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelp
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
-// 1.4.x only
 class StandardFieldsTrait {
 
     extension NamingExtensions = new NamingExtensions
@@ -15,9 +14,6 @@ class StandardFieldsTrait {
     FileHelper fh = new FileHelper
 
     def generate(Application it, IFileSystemAccess fsa) {
-        if (targets('1.3.x')) {
-            return
-        }
         val filePath = getAppSourceLibPath + 'Traits/StandardFieldsTrait.php'
         if (!shouldBeSkipped(filePath)) {
             if (shouldBeMarked(filePath)) {

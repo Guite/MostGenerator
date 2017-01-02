@@ -11,34 +11,32 @@ class Kernel {
     CommonExample commonExample = new CommonExample()
 
     def generate(Application it, Boolean isBase) '''
-        «IF !targets('1.3.x')»
-            «IF isBase»
-                /**
-                 * Makes our handlers known to the event system.
-                 */
-            «ELSE»
-                /**
-                 * {@inheritdoc}
-                 */
-            «ENDIF»
-            public static function getSubscribedEvents()
-            {
-                «IF isBase»
-                    return [
-                        KernelEvents::REQUEST        => ['onRequest', 5],
-                        KernelEvents::CONTROLLER     => ['onController', 5],
-                        KernelEvents::VIEW           => ['onView', 5],
-                        KernelEvents::RESPONSE       => ['onResponse', 5],
-                        KernelEvents::FINISH_REQUEST => ['onFinishRequest', 5],
-                        KernelEvents::TERMINATE      => ['onTerminate', 5],
-                        KernelEvents::EXCEPTION      => ['onException', 5]
-                    ];
-                «ELSE»
-                    return parent::getSubscribedEvents();
-                «ENDIF»
-            }
-
+        «IF isBase»
+            /**
+             * Makes our handlers known to the event system.
+             */
+        «ELSE»
+            /**
+             * {@inheritdoc}
+             */
         «ENDIF»
+        public static function getSubscribedEvents()
+        {
+            «IF isBase»
+                return [
+                    KernelEvents::REQUEST        => ['onRequest', 5],
+                    KernelEvents::CONTROLLER     => ['onController', 5],
+                    KernelEvents::VIEW           => ['onView', 5],
+                    KernelEvents::RESPONSE       => ['onResponse', 5],
+                    KernelEvents::FINISH_REQUEST => ['onFinishRequest', 5],
+                    KernelEvents::TERMINATE      => ['onTerminate', 5],
+                    KernelEvents::EXCEPTION      => ['onException', 5]
+                ];
+            «ELSE»
+                return parent::getSubscribedEvents();
+            «ENDIF»
+        }
+
         «IF isBase»
         /**
          * Listener for the `kernel.request` event.

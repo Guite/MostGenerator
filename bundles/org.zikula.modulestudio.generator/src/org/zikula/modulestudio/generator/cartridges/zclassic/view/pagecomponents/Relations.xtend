@@ -26,76 +26,9 @@ class Relations {
     def displayItemList(Entity it, Application app, Boolean many, IFileSystemAccess fsa) {
         val templatePath = templateFile('includeDisplayItemList' + (if (many) 'Many' else 'One'))
         if (!app.shouldBeSkipped(templatePath)) {
-            fsa.generateFile(templatePath, if (app.targets('1.3.x')) inclusionTemplateLegacy(app, many) else inclusionTemplate(app, many))
+            fsa.generateFile(templatePath, inclusionTemplate(app, many))
         }
     }
-
-    def private inclusionTemplateLegacy(Entity it, Application app, Boolean many) '''
-        {* purpose of this template: inclusion template for display of related «nameMultiple.formatForDisplay» *}
-        {assign var='lct' value='user'}
-        {if isset($smarty.get.lct) && $smarty.get.lct eq 'admin'}
-            {assign var='lct' value='admin'}
-        {/if}
-        {checkpermission component='«app.appName»:«name.formatForCodeCapital»:' instance='::' level='ACCESS_«IF workflow == EntityWorkflowType::NONE»EDIT«ELSE»COMMENT«ENDIF»' assign='hasAdminPermission'}
-        «IF ownerPermission»
-            {checkpermission component='«app.appName»:«name.formatForCodeCapital»:' instance='::' level='ACCESS_«IF workflow == EntityWorkflowType::NONE»EDIT«ELSE»COMMENT«ENDIF»' assign='hasEditPermission'}
-        «ENDIF»
-        «IF hasActions('display')»
-            {if !isset($nolink)}
-                {assign var='nolink' value=false}
-            {/if}
-        «ENDIF»
-        «IF !many»
-            <h4>
-        «ELSE»
-            {if isset($items) && $items ne null && count($items) gt 0}
-            <ul class="«app.appName.toLowerCase»-related-item-list «name.formatForCode»">
-            {foreach name='relLoop' item='item' from=$items}
-                {if $hasAdminPermission || $item.workflowState eq 'approved'«IF ownerPermission» || ($item.workflowState eq 'defered' && $hasEditPermission && isset($uid) && $item.createdUserId eq $uid)«ENDIF»}
-                <li>
-        «ENDIF»
-        «IF hasActions('display')»
-            {strip}
-            {if !$nolink}
-                <a href="{modurl modname='«app.appName»' type=$lct func='display' ot='«name.formatForCode»' «routeParamsLegacy('item', true, true)»}" title="{$item->getTitleFromDisplayPattern()|replace:"\"":""}">
-            {/if}
-        «ENDIF»
-            {$item->getTitleFromDisplayPattern()}
-        «IF hasActions('display')»
-            {if !$nolink}
-                </a>
-                <a id="«name.formatForCode»Item«FOR pkField : getPrimaryKeyFields SEPARATOR '_'»{$item.«pkField.name.formatForCode»}«ENDFOR»Display" href="{modurl modname='«app.appName»' type=$lct func='display' ot='«name.formatForCode»' «routeParamsLegacy('item', true, true)» theme='Printer' forcelongurl=true}" title="{gt text='Open quick view window'}" class="z-hide">{icon type='view' size='extrasmall' __alt='Quick view'}</a>
-            {/if}
-            {/strip}
-        «ENDIF»
-        «IF !many»</h4>
-        «ENDIF»
-        «IF hasActions('display')»
-            {if !$nolink}
-            <script type="text/javascript">
-            /* <![CDATA[ */
-                document.observe('dom:loaded', function() {
-                    «app.vendorAndName»InitInlineWindow($('«name.formatForCode»Item«FOR pkField : getPrimaryKeyFields SEPARATOR '_'»{{$item.«pkField.name.formatForCode»}}«ENDFOR»Display'), '{{$item->getTitleFromDisplayPattern()|replace:"'":""}}');
-                });
-            /* ]]> */
-            </script>
-            {/if}
-        «ENDIF»
-        «IF hasImageFieldsEntity»
-            <br />
-            «val imageFieldName = getImageFieldsEntity.head.name.formatForCode»
-            {if $item.«imageFieldName» ne '' && isset($item.«imageFieldName»FullPath) && $item.«imageFieldName»Meta.isImage}
-                {thumb image=$item.«imageFieldName»FullPath objectid="«name.formatForCode»«IF hasCompositeKeys»«FOR pkField : getPrimaryKeyFields»-`$item.«pkField.name.formatForCode»`«ENDFOR»«ELSE»-`$item.«primaryKeyFields.head.name.formatForCode»`«ENDIF»" preset=$relationThumbPreset tag=true img_alt=$item->getTitleFromDisplayPattern()}
-            {/if}
-        «ENDIF»
-        «IF many»
-                </li>
-                {/if}
-            {/foreach}
-            </ul>
-            {/if}
-        «ENDIF»
-    '''
 
     def private inclusionTemplate(Entity it, Application app, Boolean many) '''
         {# purpose of this template: inclusion template for display of related «nameMultiple.formatForDisplay» #}

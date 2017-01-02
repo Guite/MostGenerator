@@ -21,36 +21,26 @@ class MailzView {
     extension Utils = new Utils
 
     def generate(Application it, IFileSystemAccess fsa) {
-        val templatePath = getViewPath + (if (targets('1.3.x')) 'mailz' else 'Mailz') + '/'
-        val templateExtension = if (targets('1.3.x')) '.tpl' else '.twig'
+        val templatePath = getViewPath + 'Mailz/'
+        val templateExtension = '.twig'
         var entityTemplate = ''
         for (entity : getAllEntities) {
-            entityTemplate = templatePath + 'itemlist_' + entity.name.formatForCode + (if (targets('1.3.x')) '_text' else '.text') + templateExtension
+            entityTemplate = templatePath + 'itemlist_' + entity.name.formatForCode + '.text' + templateExtension
             if (!shouldBeSkipped(entityTemplate)) {
                 if (shouldBeMarked(entityTemplate)) {
-                    entityTemplate = templatePath + 'itemlist_' + entity.name.formatForCode + (if (targets('1.3.x')) '_text.generated' else '.generated.text') + templateExtension
+                    entityTemplate = templatePath + 'itemlist_' + entity.name.formatForCode + '.generated.text' + templateExtension
                 }
-                fsa.generateFile(entityTemplate, if (targets('1.3.x')) entity.textTemplateLegacy(it) else entity.textTemplate(it))
+                fsa.generateFile(entityTemplate, entity.textTemplate(it))
             }
-            entityTemplate = templatePath + 'itemlist_' + entity.name.formatForCode + (if (targets('1.3.x')) '_html' else '.html') + templateExtension
+            entityTemplate = templatePath + 'itemlist_' + entity.name.formatForCode + '.html' + templateExtension
             if (!shouldBeSkipped(entityTemplate)) {
                 if (shouldBeMarked(entityTemplate)) {
-                    entityTemplate = templatePath + 'itemlist_' + entity.name.formatForCode + (if (targets('1.3.x')) '_html.generated' else '.generated.html') + templateExtension
+                    entityTemplate = templatePath + 'itemlist_' + entity.name.formatForCode + '.generated.html' + templateExtension
                 }
-                fsa.generateFile(entityTemplate, if (targets('1.3.x')) entity.htmlTemplateLegacy(it) else entity.htmlTemplate(it))
+                fsa.generateFile(entityTemplate, entity.htmlTemplate(it))
             }
         }
     }
-
-    def private textTemplateLegacy(Entity it, Application app) '''
-        {* Purpose of this template: Display «nameMultiple.formatForDisplay» in text mailings *}
-        {foreach item='«name.formatForCode»' from=$items}
-        «mailzEntryText(app.appName)»
-        -----
-        {foreachelse}
-        {gt text='No «nameMultiple.formatForDisplay» found.'}
-        {/foreach}
-    '''
 
     def private textTemplate(Entity it, Application app) '''
         {# Purpose of this template: Display «nameMultiple.formatForDisplay» in text mailings #}
@@ -60,23 +50,6 @@ class MailzView {
         {% else %}
         {{ __('No «nameMultiple.formatForDisplay» found.') }}
         {% endfor %}
-    '''
-
-    def private htmlTemplateLegacy(Entity it, Application app) '''
-        {* Purpose of this template: Display «nameMultiple.formatForDisplay» in html mailings *}
-        «IF app.generateListContentType»{*«ENDIF»
-        <ul>
-        {foreach item='«name.formatForCode»' from=$items}
-            <li>
-                «mailzEntryHtml(app)»
-            </li>
-        {foreachelse}
-            <li>{gt text='No «nameMultiple.formatForDisplay» found.'}</li>
-        {/foreach}
-        </ul>
-        «IF app.generateListContentType»*}
-
-        {include file='contenttype/itemlist_«name.formatForCode»_display_description.tpl'}«ENDIF»
     '''
 
     def private htmlTemplate(Entity it, Application app) '''
@@ -97,11 +70,7 @@ class MailzView {
     '''
 
     def private mailzEntryText(Entity it, String appName) '''
-        «IF application.targets('1.3.x')»
-            {$«name.formatForCode»->getTitleFromDisplayPattern()}
-        «ELSE»
-            {{ «name.formatForCode».getTitleFromDisplayPattern() }}
-        «ENDIF»
+        {{ «name.formatForCode».getTitleFromDisplayPattern() }}
         «mailzEntryHtmlLinkUrlDisplay(application)»
     '''
 
@@ -114,40 +83,22 @@ class MailzView {
     '''
 
     def private mailzEntryHtmlLinkUrlDisplay(Entity it, Application app) '''
-        «IF application.targets('1.3.x')»
-            {modurl modname='«app.appName»' type='user' func='display' ot='«name.formatForCode»'«routeParamsLegacy(name.formatForCode, true, true)» fqurl=true}
-        «ELSE»
-            {{ url('«app.appName.formatForDB»_«name.formatForDB»_display'«routeParams(name.formatForCode, true)») }}
-        «ENDIF»'''
+        {{ url('«app.appName.formatForDB»_«name.formatForDB»_display'«routeParams(name.formatForCode, true)») }}'''
 
     def private mailzEntryHtmlLinkUrlMain(Entity it, Application app) '''
         «IF app.hasUserController»
-            «IF app.targets('1.3.x')»
-                «IF app.getMainUserController.hasActions('view')»
-                    {modurl modname='«app.appName»' type='user' func='view' fqurl=true}
-                «ELSEIF app.getMainUserController.hasActions('index')»
-                    {modurl modname='«app.appName»' type='user' func='main' fqurl=true}
-                «ELSE»
-                    {modurl modname='«app.appName»' type='user' func='main' fqurl=true}
-                «ENDIF»
+            «IF app.getMainUserController.hasActions('view')»
+                {{ url('«app.appName.formatForDB»_«name.formatForDB»_view') }}
+            «ELSEIF app.getMainUserController.hasActions('index')»
+                {{ url('«app.appName.formatForDB»_«name.formatForDB»_index') }}
             «ELSE»
-                «IF app.getMainUserController.hasActions('view')»
-                    {{ url('«app.appName.formatForDB»_«name.formatForDB»_view') }}
-                «ELSEIF app.getMainUserController.hasActions('index')»
-                    {{ url('«app.appName.formatForDB»_«name.formatForDB»_index') }}
-                «ELSE»
-                    {{ url('«app.appName.formatForDB»_«name.formatForDB»_index') }}
-                «ENDIF»
+                {{ url('«app.appName.formatForDB»_«name.formatForDB»_index') }}
             «ENDIF»
         «ELSE»
-            «IF app.targets('1.3.x')»{homepage}«ELSE»{{ app.request.getSchemeAndHttpHost() ~ app.request.getBasePath() }}«ENDIF»
+            {{ app.request.getSchemeAndHttpHost() ~ app.request.getBasePath() }}
         «ENDIF»'''
 
     def private mailzEntryHtmlLinkText(Entity it, Application app) '''
-        «IF app.targets('1.3.x')»
-            {$«name.formatForCode»->getTitleFromDisplayPattern()}
-        «ELSE»
-            {{ «name.formatForCode».getTitleFromDisplayPattern() }}
-        «ENDIF»
+        {{ «name.formatForCode».getTitleFromDisplayPattern() }}
     '''
 }

@@ -1,4 +1,4 @@
-package org.zikula.modulestudio.generator.cartridges.zclassic.controller.util
+package org.zikula.modulestudio.generator.cartridges.zclassic.controller.helper
 
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.Entity
@@ -27,42 +27,37 @@ class ModelHelper {
      */
     def generate(Application it, IFileSystemAccess fsa) {
         println('Generating helper class for model layer')
-        val helperFolder = if (targets('1.3.x')) 'Util' else 'Helper'
-        generateClassPair(fsa, getAppSourceLibPath + helperFolder + '/Model' + (if (targets('1.3.x')) '' else 'Helper') + '.php',
+        generateClassPair(fsa, getAppSourceLibPath + 'Helper/ModelHelper.php',
             fh.phpFileContent(it, modelFunctionsBaseImpl), fh.phpFileContent(it, modelFunctionsImpl)
         )
     }
 
     def private modelFunctionsBaseImpl(Application it) '''
-        «IF !targets('1.3.x')»
-            namespace «appNamespace»\Helper\Base;
+        namespace «appNamespace»\Helper\Base;
 
-            use Symfony\Component\DependencyInjection\ContainerBuilder;
+        use Symfony\Component\DependencyInjection\ContainerBuilder;
 
-        «ENDIF»
         /**
          * Helper base class for model layer methods.
          */
-        abstract class «IF targets('1.3.x')»«appName»_Util_Base_AbstractModel extends Zikula_AbstractBase«ELSE»AbstractModelHelper«ENDIF»
+        abstract class AbstractModelHelper
         {
-            «IF !targets('1.3.x')»
-                /**
-                 * @var ContainerBuilder
-                 */
-                protected $container;
+            /**
+             * @var ContainerBuilder
+             */
+            protected $container;
 
-                /**
-                 * Constructor.
-                 * Initialises member vars.
-                 *
-                 * @param ContainerBuilder $container ContainerBuilder service instance
-                 */
-                public function __construct(ContainerBuilder $container)
-                {
-                    $this->container = $container;
-                }
+            /**
+             * Constructor.
+             * Initialises member vars.
+             *
+             * @param ContainerBuilder $container ContainerBuilder service instance
+             */
+            public function __construct(ContainerBuilder $container)
+            {
+                $this->container = $container;
+            }
 
-            «ENDIF»
             «canBeCreated»
 
             «hasExistingInstances»
@@ -90,12 +85,8 @@ class ModelHelper {
          */
         public function canBeCreated($objectType)
         {
-            «IF targets('1.3.x')»
-                $controllerHelper = new «appName»_Util_Controller($this->serviceManager);
-            «ELSE»
-                $controllerHelper = $this->container->get('«appService».controller_helper');
-            «ENDIF»
-            if (!in_array($objectType, $controllerHelper->getObjectTypes('util', «IF targets('1.3.x')»array(«ELSE»[«ENDIF»'util' => 'model', 'action' => 'canBeCreated'«IF targets('1.3.x')»)«ELSE»]«ENDIF»))) {
+            $controllerHelper = $this->container->get('«appService».controller_helper');
+            if (!in_array($objectType, $controllerHelper->getObjectTypes('util', ['util' => 'model', 'action' => 'canBeCreated']))) {
                 throw new Exception('Error! Invalid object type received.');
             }
 
@@ -155,41 +146,26 @@ class ModelHelper {
          */
         protected function hasExistingInstances($objectType)
         {
-            «IF targets('1.3.x')»
-                $controllerHelper = new «appName»_Util_Controller($this->serviceManager);
-            «ELSE»
-                $controllerHelper = $this->container->get('«appService».controller_helper');
-            «ENDIF»
-            if (!in_array($objectType, $controllerHelper->getObjectTypes('util', «IF targets('1.3.x')»array(«ELSE»[«ENDIF»'util' => 'model', 'action' => 'hasExistingInstances'«IF targets('1.3.x')»)«ELSE»]«ENDIF»))) {
+            $controllerHelper = $this->container->get('«appService».controller_helper');
+            if (!in_array($objectType, $controllerHelper->getObjectTypes('util', ['util' => 'model', 'action' => 'hasExistingInstances']))) {
                 throw new Exception('Error! Invalid object type received.');
             }
 
-            «IF targets('1.3.x')»
-                $entityClass = '«appName»_Entity_' . ucfirst($objectType);
-                $repository = $this->entityManager->getRepository($entityClass);
-            «ELSE»
-                $repository = $this->container->get('«appService».' . $objectType . '_factory')->getRepository();
-            «ENDIF»
+            $repository = $this->container->get('«appService».' . $objectType . '_factory')->getRepository();
 
-            return ($repository->selectCount() > 0);
+            return $repository->selectCount() > 0;
         }
     '''
 
     def private modelFunctionsImpl(Application it) '''
-        «IF !targets('1.3.x')»
-            namespace «appNamespace»\Helper;
+        namespace «appNamespace»\Helper;
 
-            use «appNamespace»\Helper\Base\AbstractModelHelper;
+        use «appNamespace»\Helper\Base\AbstractModelHelper;
 
-        «ENDIF»
         /**
          * Helper implementation class for model layer methods.
          */
-        «IF targets('1.3.x')»
-        class «appName»_Util_Model extends «appName»_Util_Base_AbstractModel
-        «ELSE»
         class ModelHelper extends AbstractModelHelper
-        «ENDIF»
         {
             // feel free to add your own convenience methods here
         }

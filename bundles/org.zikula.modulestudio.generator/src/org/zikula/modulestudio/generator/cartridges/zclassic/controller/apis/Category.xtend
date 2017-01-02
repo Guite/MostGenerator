@@ -18,29 +18,11 @@ class Category {
     FileHelper fh = new FileHelper
 
     def generate(Application it, IFileSystemAccess fsa) {
-        println('Generating category api')
-        if (isLegacy) {
-            generateClassPair(fsa, getAppSourceLibPath + 'Api/Category.php',
-                fh.phpFileContent(it, categoryApiBaseClass), fh.phpFileContent(it, categoryApiImpl)
-            )
-        } else {
-            generateClassPair(fsa, getAppSourceLibPath + 'Helper/CategoryHelper.php',
-                fh.phpFileContent(it, categoryHelperBaseClass), fh.phpFileContent(it, categoryHelperImpl)
-            )
-        }
+        println('Generating category helper')
+        generateClassPair(fsa, getAppSourceLibPath + 'Helper/CategoryHelper.php',
+            fh.phpFileContent(it, categoryHelperBaseClass), fh.phpFileContent(it, categoryHelperImpl)
+        )
     }
-
-    def private categoryApiBaseClass(Application it) '''
-        use Doctrine\ORM\QueryBuilder;
-
-        /**
-         * Category api base class.
-         */
-        abstract class «appName»_Api_Base_AbstractCategory extends Zikula_AbstractApi
-        {
-            «categoryBaseImpl»
-        }
-    '''
 
     def private categoryHelperBaseClass(Application it) '''
         namespace «appNamespace»\Helper\Base;
@@ -141,41 +123,25 @@ class Category {
         /**
          * Retrieves the main/default category of «appName».
          *
-         «IF isLegacy»
-         * @param string $args['ot']       The object type to retrieve (optional)
-         * @param string $args['registry'] Name of category registry to be used (optional)
-         «ELSE»
          * @param string $objectType The object type to retrieve (optional)
          * @param string $registry   Name of category registry to be used (optional)
-         «ENDIF»
          * @deprecated Use the methods getAllProperties, getAllPropertiesWithMainCat, getMainCatForProperty and getPrimaryProperty instead
          *
          * @return mixed Category array on success, false on failure
          */
-        public function getMainCat(«IF isLegacy»array $args = array()«ELSE»$objectType = '', $registry = ''«ENDIF»)
+        public function getMainCat($objectType = '', $registry = '')
         {
-            «IF isLegacy»
-                if (!isset($args['registry']) || empty($args['registry'])) {
-                    // default to the primary registry
-                    $args['registry'] = $this->getPrimaryProperty($args);
-                }
-            «ELSE»
-                if (empty($registry)) {
-                    // default to the primary registry
-                    $registry = $this->getPrimaryProperty($objectType);
-                }
-            «ENDIF»
+            if (empty($registry)) {
+                // default to the primary registry
+                $registry = $this->getPrimaryProperty($objectType);
+            }
 
-            $objectType = $this->determineObjectType(«IF isLegacy»$args«ELSE»$objectType«ENDIF», 'getMainCat');
-            «IF !isLegacy»
+            $objectType = $this->determineObjectType($objectType, 'getMainCat');
 
-                $logArgs = ['app' => '«appName»', 'user' => $this->currentUserApi->get('uname')];
-                $this->logger->warning('{app}: User {user} called CategoryHelper#getMainCat which is deprecated.', $logArgs);
+            $logArgs = ['app' => '«appName»', 'user' => $this->currentUserApi->get('uname')];
+            $this->logger->warning('{app}: User {user} called CategoryHelper#getMainCat which is deprecated.', $logArgs);
 
-                return $this->categoryRegistryApi->getModuleCategoryId('«appName»', ucfirst($objectType) . 'Entity', $registry, 32); // 32 == /__System/Modules/Global
-            «ELSE»
-                return CategoryRegistryUtil::getRegisteredModuleCategory(«IF isLegacy»$this->name«ELSE»'«appName»'«ENDIF», ucfirst($objectType)«IF !isLegacy» . 'Entity'«ENDIF», «IF isLegacy»$args['registry']«ELSE»$registry«ENDIF», 32); // 32 == /__System/Modules/Global
-            «ENDIF»
+            return $this->categoryRegistryApi->getModuleCategoryId('«appName»', ucfirst($objectType) . 'Entity', $registry, 32); // 32 == /__System/Modules/Global
         }
 
         /**
@@ -183,31 +149,19 @@ class Category {
          * or not. Subclass can override this method to apply a custom behaviour
          * to certain category registries for example.
          *
-         «IF isLegacy»
-         * @param string $args['ot']       The object type to retrieve (optional)
-         * @param string $args['registry'] Name of category registry to be used (optional)
-         «ELSE»
          * @param string $objectType The object type to retrieve (optional)
          * @param string $registry   Name of category registry to be used (optional)
-         «ENDIF»
          *
          * @return boolean true if multiple selection is allowed, else false
          */
-        public function hasMultipleSelection(«IF isLegacy»array $args = array()«ELSE»$objectType = '', $registry = ''«ENDIF»)
+        public function hasMultipleSelection($objectType = '', $registry = '')
         {
-            «IF isLegacy»
-                if (!isset($args['registry']) || empty($args['registry'])) {
-                    // default to the primary registry
-                    $args['registry'] = $this->getPrimaryProperty($args);
-                }
-            «ELSE»
-                if (empty($args['registry'])) {
-                    // default to the primary registry
-                    $registry = $this->getPrimaryProperty($objectType);
-                }
-            «ENDIF»
+            if (empty($args['registry'])) {
+                // default to the primary registry
+                $registry = $this->getPrimaryProperty($objectType);
+            }
 
-            $objectType = $this->determineObjectType(«IF isLegacy»$args«ELSE»$objectType«ENDIF», 'hasMultipleSelection');
+            $objectType = $this->determineObjectType($objectType, 'hasMultipleSelection');
 
             // we make no difference between different category registries here
             // if you need a custom behaviour you should override this method
@@ -227,100 +181,52 @@ class Category {
         /**
          * Retrieves input data from POST for all registries.
          *
-         «IF isLegacy»
-         * @param string $args['ot']       The object type to retrieve (optional)
-         * @param string $args['source'] Where to retrieve the data from (defaults to POST)
-         «ELSE»
          * @param string $objectType The object type to retrieve (optional)
          * @param string $source     Where to retrieve the data from (defaults to POST)
-         «ENDIF»
          *
          * @return array The fetched data indexed by the registry id
          */
-        public function retrieveCategoriesFromRequest(«IF isLegacy»array $args = array()«ELSE»$objectType = '', $source = 'POST'«ENDIF»)
+        public function retrieveCategoriesFromRequest($objectType = '', $source = 'POST')
         {
-            «IF isLegacy»
-                $dataSource = $this->request->request;
-                if (isset($args['source']) && $args['source'] == 'GET') {
-                    $dataSource = $this->request->query;
+            $request = $this->requestStack->getCurrentRequest();
+            $dataSource = $source == 'GET' ? $request->query : $request->request;
+
+            $catIdsPerRegistry = [];
+
+            $objectType = $this->determineObjectType($objectType, 'retrieveCategoriesFromRequest');
+            $properties = $this->getAllProperties($objectType);
+            $inputValues = null;
+            $inputName = '«appName.toLowerCase»_' . strtolower($objectType) . 'quicknav';
+            if (!$dataSource->has($inputName)) {
+                $inputName = '«appName.toLowerCase»_' . strtolower($objectType) . 'finder';
+            }
+            if ($dataSource->has($inputName)) {
+                $inputValues = $dataSource->get($inputName);
+            }
+            if (null === $inputValues) {
+                return $catIdsPerRegistry;
+            }
+            $inputCategories = isset($inputValues['categories']) ? $inputValues['categories'] : [];
+
+            if (!count($inputCategories)) {
+                return $catIdsPerRegistry;
+            }
+
+            foreach ($properties as $propertyName => $propertyId) {
+                $inputValue = isset($inputCategories['registry_' . $propertyId]) ? $inputCategories['registry_' . $propertyId] : [];
+                if (!is_array($inputValue)) {
+                    $inputValue = [$inputValue];
                 }
-            «ELSE»
-                $request = $this->requestStack->getCurrentRequest();
-                $dataSource = $source == 'GET' ? $request->query : $request->request;
-            «ENDIF»
 
-            $catIdsPerRegistry = «IF isLegacy»array()«ELSE»[]«ENDIF»;
-
-            $objectType = $this->determineObjectType(«IF isLegacy»$args«ELSE»$objectType«ENDIF», 'retrieveCategoriesFromRequest');
-            $properties = $this->getAllProperties(«IF isLegacy»$args«ELSE»$objectType«ENDIF»);
-            «IF isLegacy»
-                foreach ($properties as $propertyName => $propertyId) {
-                    $hasMultiSelection = $this->hasMultipleSelection(«IF isLegacy»array(«ELSE»[«ENDIF»
-                        'ot' => $objectType,
-                        'registry' => $propertyName
-                    «IF isLegacy»)«ELSE»]«ENDIF»);
-                    if (true === $hasMultiSelection) {
-                        $argName = 'catids' . $propertyName;
-                        $inputValue = $dataSource->get($argName, «IF isLegacy»array()«ELSE»[]«ENDIF»);
-                        if (!is_array($inputValue)) {
-                            $inputValue = explode(',', $inputValue);
-                        }
-                    } else {
-                        $argName = 'catid' . $propertyName;
-                        «IF isLegacy»
-                            $inputVal = (int) $dataSource->filter($argName, 0, FILTER_VALIDATE_INT);
-                        «ELSE»
-                            $inputVal = $dataSource->getInt($argName, 0);
-                        «ENDIF»
-                        $inputValue = «IF isLegacy»array()«ELSE»[]«ENDIF»;
-                        if ($inputVal > 0) {
-                            $inputValue[] = $inputVal;
-                        }
+                // prevent "All" option hiding all entries
+                foreach ($inputValue as $k => $v) {
+                    if ($v == 0) {
+                        unset($inputValue[$k]);
                     }
-
-                    // prevent "All" option hiding all entries
-                    foreach ($inputValue as $k => $v) {
-                        if ($v == 0) {
-                            unset($inputValue[$k]);
-                        }
-                    }
-
-                    $catIdsPerRegistry[$propertyName] = $inputValue;
-                }
-            «ELSE»
-                $inputValues = null;
-                $inputName = '«appName.toLowerCase»_' . strtolower($objectType) . 'quicknav';
-                if (!$dataSource->has($inputName)) {
-                    $inputName = '«appName.toLowerCase»_' . strtolower($objectType) . 'finder';
-                }
-                if ($dataSource->has($inputName)) {
-                    $inputValues = $dataSource->get($inputName);
-                }
-                if (null === $inputValues) {
-                    return $catIdsPerRegistry;
-                }
-                $inputCategories = isset($inputValues['categories']) ? $inputValues['categories'] : [];
-
-                if (!count($inputCategories)) {
-                    return $catIdsPerRegistry;
                 }
 
-                foreach ($properties as $propertyName => $propertyId) {
-                    $inputValue = isset($inputCategories['registry_' . $propertyId]) ? $inputCategories['registry_' . $propertyId] : [];
-                    if (!is_array($inputValue)) {
-                        $inputValue = [$inputValue];
-                    }
-
-                    // prevent "All" option hiding all entries
-                    foreach ($inputValue as $k => $v) {
-                        if ($v == 0) {
-                            unset($inputValue[$k]);
-                        }
-                    }
-
-                    $catIdsPerRegistry[$propertyName] = $inputValue;
-                }
-            «ENDIF»
+                $catIdsPerRegistry[$propertyName] = $inputValue;
+            }
 
             return $catIdsPerRegistry;
         }
@@ -328,39 +234,23 @@ class Category {
         /**
          * Adds a list of where clauses for a certain list of categories to a given query builder.
          *
-         «IF isLegacy»
-         * @param QueryBuilder $args['qb']     Query builder instance to be enhanced
-         * @param string       $args['ot']     The object type to be treated (optional)
-         * @param array        $args['catids'] Category ids grouped by property name
-         «ELSE»
          * @param QueryBuilder $queryBuilder Query builder instance to be enhanced
          * @param string       $objectType   The object type to be treated (optional)
          * @param array        $catIds       Category ids grouped by property name
-         «ENDIF»
          *
          * @return QueryBuilder The enriched query builder instance
          */
-        public function buildFilterClauses(«IF isLegacy»array $args = array()«ELSE»QueryBuilder $queryBuilder, $objectType = '', $catIds = []«ENDIF»)
+        public function buildFilterClauses(QueryBuilder $queryBuilder, $objectType = '', $catIds = [])
         {
-            $qb = «IF isLegacy»$args['qb']«ELSE»$queryBuilder«ENDIF»;
+            $qb = $queryBuilder;
 
-            $properties = $this->getAllProperties(«IF isLegacy»$args«ELSE»$objectType«ENDIF»);
-            «IF isLegacy»
-                $catIds = $args['catids'];
-            «ENDIF»
+            $properties = $this->getAllProperties($objectType);
 
-            $filtersPerRegistry = «IF isLegacy»array()«ELSE»[]«ENDIF»;
-            «IF isLegacy»
-                $filterParameters = array(
-                    'values' => array(),
-                    'registries' => array()
-                );
-            «ELSE»
-                $filterParameters = [
-                    'values' => [],
-                    'registries' => []
-                ];
-            «ENDIF»
+            $filtersPerRegistry = [];
+            $filterParameters = [
+                'values' => [],
+                'registries' => []
+            ];
 
             foreach ($properties as $propertyName => $propertyId) {
                 if (!isset($catIds[$propertyName]) || !is_array($catIds[$propertyName]) || !count($catIds[$propertyName])) {
@@ -391,125 +281,72 @@ class Category {
         /**
          * Returns a list of all registries / properties for a given object type.
          *
-         «IF isLegacy»
-         * @param string $args['ot'] The object type to retrieve (optional)
-         «ELSE»
          * @param string $objectType The object type to retrieve (optional)
-         «ENDIF»
          *
          * @return array list of the registries (property name as key, id as value)
          */
-        public function getAllProperties(«IF isLegacy»array $args = array()«ELSE»$objectType = ''«ENDIF»)
+        public function getAllProperties($objectType = '')
         {
-            $objectType = $this->determineObjectType(«IF isLegacy»$args«ELSE»$objectType«ENDIF», 'getAllProperties');
+            $objectType = $this->determineObjectType($objectType, 'getAllProperties');
 
-            «IF !isLegacy»
-                $propertyIdsPerName = $this->categoryRegistryApi->getModuleRegistriesIds('«appName»', ucfirst($objectType) . 'Entity');
-            «ELSE»
-                $propertyIdsPerName = CategoryRegistryUtil::getRegisteredModuleCategoriesIds(«IF isLegacy»$this->name«ELSE»'«appName»'«ENDIF», ucfirst($objectType)«IF !isLegacy» . 'Entity'«ENDIF»);
-            «ENDIF»
-
-            return $propertyIdsPerName;
+            return $this->categoryRegistryApi->getModuleRegistriesIds('«appName»', ucfirst($objectType) . 'Entity');
         }
 
         /**
          * Returns a list of all registries with main category for a given object type.
          *
-         «IF isLegacy»
-         * @param string $args['ot']       The object type to retrieve (optional)
-         * @param string $args['arraykey'] Key for the result array (optional)
-         «ELSE»
          * @param string $objectType The object type to retrieve (optional)
          * @param string $arrayKey   Key for the result array (optional)
-         «ENDIF»
          *
          * @return array list of the registries (registry id as key, main category id as value)
          */
-        public function getAllPropertiesWithMainCat(«IF isLegacy»array $args = array()«ELSE»$objectType = '', $arrayKey = ''«ENDIF»)
+        public function getAllPropertiesWithMainCat($objectType = '', $arrayKey = '')
         {
-            $objectType = $this->determineObjectType(«IF isLegacy»$args«ELSE»$objectType«ENDIF», 'getAllPropertiesWithMainCat');
+            $objectType = $this->determineObjectType($objectType, 'getAllPropertiesWithMainCat');
 
-            «IF isLegacy»
-                if (!isset($args['arraykey'])) {
-                    $args['arraykey'] = '';
-                }
-
-            «ENDIF»
-            «IF !isLegacy»
-                $registryInfo = $this->categoryRegistryApi->getModuleCategoryIds('«appName»', ucfirst($objectType) . 'Entity', $arrayKey);
-            «ELSE»
-                $registryInfo = CategoryRegistryUtil::getRegisteredModuleCategories(«IF isLegacy»$this->name«ELSE»'«appName»'«ENDIF», ucfirst($objectType)«IF !isLegacy» . 'Entity'«ENDIF», «IF isLegacy»$args['arraykey']«ELSE»$arrayKey«ENDIF»);
-            «ENDIF»
-
-            return $registryInfo;
+            return $this->categoryRegistryApi->getModuleCategoryIds('«appName»', ucfirst($objectType) . 'Entity', $arrayKey);
         }
 
         /**
          * Returns the main category id for a given object type and a certain property name.
          *
-         «IF isLegacy»
-         * @param string $args['ot']       The object type to retrieve (optional)
-         * @param string $args['property'] The property name (optional)
-         «ELSE»
          * @param string $objectType The object type to retrieve (optional)
          * @param string $property   The property name (optional)
-         «ENDIF»
          *
          * @return integer The main category id of desired tree
          */
-        public function getMainCatForProperty(«IF isLegacy»array $args = array()«ELSE»$objectType = '', $property = ''«ENDIF»)
+        public function getMainCatForProperty($objectType = '', $property = '')
         {
-            $objectType = $this->determineObjectType(«IF isLegacy»$args«ELSE»$objectType«ENDIF», 'getMainCatForProperty');
+            $objectType = $this->determineObjectType($objectType, 'getMainCatForProperty');
 
-            «IF !isLegacy»
-                $catId = $this->categoryRegistryApi->getModuleCategoryId('«appName»', ucfirst($objectType) . 'Entity', $property);
-            «ELSE»
-                $catId = CategoryRegistryUtil::getRegisteredModuleCategory(«IF isLegacy»$this->name«ELSE»'«appName»'«ENDIF», ucfirst($objectType)«IF !isLegacy» . 'Entity'«ENDIF», «IF isLegacy»$args['property']«ELSE»$property«ENDIF»);
-            «ENDIF»
-
-            return $catId;
+            return $this->categoryRegistryApi->getModuleCategoryId('«appName»', ucfirst($objectType) . 'Entity', $property);
         }
 
         /**
          * Returns the name of the primary registry.
          *
-         «IF isLegacy»
-         * @param string $args['ot'] The object type to retrieve (optional)
-         «ELSE»
          * @param string $objectType The object type to retrieve (optional)
-         «ENDIF»
          *
          * @return string name of the main registry
          */
-        public function getPrimaryProperty(«IF isLegacy»array $args = array()«ELSE»$objectType = ''«ENDIF»)
+        public function getPrimaryProperty($objectType = '')
         {
-            $objectType = $this->determineObjectType(«IF isLegacy»$args«ELSE»$objectType«ENDIF», 'getPrimaryProperty');
-
-            $registry = 'Main';
-
-            return $registry;
+            return 'Main';
         }
 
         /**
          * Checks whether permissions are granted to the given categories or not.
          *
-         «IF isLegacy»
-         * @param string $args['entity'] The entity to check permission for
-         «ELSE»
          * @param object $entity The entity to check permission for
-         «ENDIF»
          *
          * @return boolean True if permissions are given, false otherwise
          */
-        public function hasPermission(«IF isLegacy»array $args = array()«ELSE»$entity«ENDIF»)
+        public function hasPermission($entity)
         {
-            «IF isLegacy»
-                $entity = $args['entity'];
-            «ENDIF»
             $objectType = $entity->get_objectType();
             $categories = $entity['categories'];
 
-            $registries = $this->getAllProperties(«IF isLegacy»array('ot' => $objectType)«ELSE»$objectType«ENDIF»);
+            $registries = $this->getAllProperties($objectType);
             $registries = array_flip($registries);
 
             $categoryInfo = [];
@@ -522,46 +359,27 @@ class Category {
                 $categoryInfo[$registryName][] = $category->getCategory()->toArray();
             }
 
-            return «IF !isLegacy»$this->categoryPermissionApi->«ELSE»CategoryUtil::«ENDIF»hasCategoryAccess($categoryInfo«IF isLegacy», '«appName»'«ENDIF», ACCESS_OVERVIEW);
+            return $this->categoryPermissionApi->hasCategoryAccess($categoryInfo, ACCESS_OVERVIEW);
         }
 
         /**
          * Determine object type using controller util methods.
          *
-         «IF isLegacy»
-         * @param string $args['ot'] The object type to retrieve (optional)
-         * @param string $methodName Name of calling method
-         «ELSE»
          * @param string $objectType The object type to retrieve (optional)
          * @param string $methodName Name of calling method
-         «ENDIF»
          *
          * @return string name of the determined object type
          */
-        protected function determineObjectType(«IF isLegacy»array $args = array()«ELSE»$objectType = ''«ENDIF», $methodName = '')
+        protected function determineObjectType($objectType = '', $methodName = '')
         {
-            «IF isLegacy»
-                $objectType = isset($args['ot']) ? $args['ot'] : '';
-                $controllerHelper = new «appName»_Util_Controller($this->serviceManager);
-            «ELSE»«/* we can not use the container here, because it is not available yet during installation */»
-                $controllerHelper = new \«appNamespace»\Helper\ControllerHelper($this->container, $this->translator, $this->session, $this->logger);
-            «ENDIF»
-            $utilArgs = «IF isLegacy»array(«ELSE»[«ENDIF»'api' => 'category', 'action' => $methodName«IF isLegacy»)«ELSE»]«ENDIF»;
+            «/* we can not use the container here, because it is not available yet during installation */»
+            $controllerHelper = new \«appNamespace»\Helper\ControllerHelper($this->container, $this->translator, $this->session, $this->logger);
+            $utilArgs = ['api' => 'category', 'action' => $methodName];
             if (!in_array($objectType, $controllerHelper->getObjectTypes('api', $utilArgs))) {
                 $objectType = $controllerHelper->getDefaultObjectType('api', $utilArgs);
             }
 
             return $objectType;
-        }
-    '''
-
-    def private categoryApiImpl(Application it) '''
-        /**
-         * Category api implementation class.
-         */
-        class «appName»_Api_Category extends «appName»_Api_Base_AbstractCategory
-        {
-            // feel free to extend the category api here
         }
     '''
 
@@ -578,8 +396,4 @@ class Category {
             // feel free to extend the category helper here
         }
     '''
-
-    def private isLegacy(Application it) {
-        targets('1.3.x')
-    }
 }

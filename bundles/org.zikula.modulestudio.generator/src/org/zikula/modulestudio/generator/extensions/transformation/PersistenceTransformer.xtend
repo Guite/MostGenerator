@@ -1,19 +1,14 @@
 package org.zikula.modulestudio.generator.extensions.transformation
 
 import de.guite.modulestudio.metamodel.Application
-import de.guite.modulestudio.metamodel.DeleteAction
-import de.guite.modulestudio.metamodel.DisplayAction
-import de.guite.modulestudio.metamodel.EditAction
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.EntityWorkflowType
 import de.guite.modulestudio.metamodel.ModuleStudioFactory
 import de.guite.modulestudio.metamodel.UploadField
 import de.guite.modulestudio.metamodel.UserController
-import de.guite.modulestudio.metamodel.ViewAction
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
-import org.zikula.modulestudio.generator.extensions.Utils
 
 /**
  * This class adds primary key fields to all entities of an application.
@@ -29,11 +24,6 @@ class PersistenceTransformer {
      * Extension methods for formatting names.
      */
     extension FormattingExtensions = new FormattingExtensions
-
-    /**
-     * Extension methods for general purposes.
-     */
-    extension Utils = new Utils
 
     /**
      * Extension methods related to the model layer.
@@ -56,42 +46,15 @@ class PersistenceTransformer {
         addViewSettings
         addImageSettings
 
-        // add legacy bridge methods to admin/user controllers
-        if (targets('1.3.x')) {
-            val factory = ModuleStudioFactory.eINSTANCE
-            for (legacyController : getAdminAndUserControllers) {
-                if (legacyController.hasActions('view') && legacyController.actions.filter(ViewAction).empty) {
-                    legacyController.actions += factory.createViewAction => [
-                        name = 'View'
-                    ]
-                }
-                if (legacyController.hasActions('display') && legacyController.actions.filter(DisplayAction).empty) {
-                    legacyController.actions += factory.createDisplayAction => [
-                        name = 'Display'
-                    ]
-                }
-                if (legacyController.hasActions('edit') && legacyController.actions.filter(EditAction).empty) {
-                    legacyController.actions += factory.createEditAction => [
-                        name = 'Edit'
-                    ]
-                }
-                if (legacyController.hasActions('delete') && legacyController.actions.filter(DeleteAction).empty) {
-                    legacyController.actions += factory.createDeleteAction => [
-                        name = 'Delete'
-                    ]
-                }
-            }
-        } else {
-            // temporarily add a user controller to ensure user action links are also available for the user area
-            if (controllers.filter(UserController).empty) {
-                var userController = ModuleStudioFactory.eINSTANCE.createUserController => [
-                    name = 'User'
-                ]
-                userController.actions += ModuleStudioFactory.eINSTANCE.createMainAction => [
-                    name = 'Index'
-                ]
-                controllers += userController
-            }
+        // temporarily add a user controller to ensure user action links are also available for the user area
+        if (controllers.filter(UserController).empty) {
+            var userController = ModuleStudioFactory.eINSTANCE.createUserController => [
+                name = 'User'
+            ]
+            userController.actions += ModuleStudioFactory.eINSTANCE.createMainAction => [
+                name = 'Index'
+            ]
+            controllers += userController
         }
     }
 

@@ -27,7 +27,6 @@ class Config {
 
     /**
      * Entry point for config form type.
-     * 1.4.x only.
      */
     def generate(Application it, IFileSystemAccess fsa) {
         if (!needsConfig) {

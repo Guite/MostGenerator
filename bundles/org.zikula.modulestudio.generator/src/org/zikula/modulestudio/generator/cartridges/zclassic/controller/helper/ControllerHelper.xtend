@@ -1,4 +1,4 @@
-package org.zikula.modulestudio.generator.cartridges.zclassic.controller.util
+package org.zikula.modulestudio.generator.cartridges.zclassic.controller.helper
 
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.Entity
@@ -26,94 +26,89 @@ class ControllerHelper {
      */
     def generate(Application it, IFileSystemAccess fsa) {
         println('Generating helper class for controller layer')
-        val helperFolder = if (targets('1.3.x')) 'Util' else 'Helper'
-        generateClassPair(fsa, getAppSourceLibPath + helperFolder + '/Controller' + (if (targets('1.3.x')) '' else 'Helper') + '.php',
+        generateClassPair(fsa, getAppSourceLibPath + 'Helper/ControllerHelper.php',
             fh.phpFileContent(it, controllerFunctionsBaseImpl), fh.phpFileContent(it, controllerFunctionsImpl)
         )
     }
 
     def private controllerFunctionsBaseImpl(Application it) '''
-        «IF !targets('1.3.x')»
-            namespace «appNamespace»\Helper\Base;
+        namespace «appNamespace»\Helper\Base;
 
-            use DataUtil;
-            «IF hasUploads»
-                use FileUtil;
-            «ENDIF»
-            «IF hasGeographical»
-                use UserUtil;
-            «ENDIF»
-            «IF hasUploads || hasGeographical»
-                use Psr\Log\LoggerInterface;
-            «ENDIF»
-            use Symfony\Component\DependencyInjection\ContainerBuilder;
-            «IF hasUploads»
-                use Symfony\Component\Filesystem\Filesystem;
-                use Symfony\Component\Filesystem\Exception\IOExceptionInterface;
-            «ENDIF»
-            use Symfony\Component\HttpFoundation\Request;
-            «IF hasUploads»
-                use Symfony\Component\HttpFoundation\Session\SessionInterface;
-            «ENDIF»
-            use Zikula\Common\Translator\TranslatorInterface;
-
+        use DataUtil;
+        «IF hasUploads»
+            use FileUtil;
         «ENDIF»
+        «IF hasGeographical»
+            use UserUtil;
+        «ENDIF»
+        «IF hasUploads || hasGeographical»
+            use Psr\Log\LoggerInterface;
+        «ENDIF»
+        use Symfony\Component\DependencyInjection\ContainerBuilder;
+        «IF hasUploads»
+            use Symfony\Component\Filesystem\Filesystem;
+            use Symfony\Component\Filesystem\Exception\IOExceptionInterface;
+        «ENDIF»
+        use Symfony\Component\HttpFoundation\Request;
+        «IF hasUploads»
+            use Symfony\Component\HttpFoundation\Session\SessionInterface;
+        «ENDIF»
+        use Zikula\Common\Translator\TranslatorInterface;
+
         /**
          * Helper base class for controller layer methods.
          */
-        abstract class «IF targets('1.3.x')»«appName»_Util_Base_AbstractController extends Zikula_AbstractBase«ELSE»AbstractControllerHelper«ENDIF»
+        abstract class AbstractControllerHelper
         {
-            «IF !targets('1.3.x')»
-                /**
-                 * @var ContainerBuilder
-                 */
-                protected $container;
+            /**
+             * @var ContainerBuilder
+             */
+            protected $container;
+
+            /**
+             * @var TranslatorInterface
+             */
+            protected $translator;
+            «IF hasUploads»
 
                 /**
-                 * @var TranslatorInterface
+                 * @var SessionInterface
                  */
-                protected $translator;
+                protected $session;
+            «ENDIF»
+            «IF hasUploads || hasGeographical»
+
+                /**
+                 * @var LoggerInterface
+                 */
+                protected $logger;
+            «ENDIF»
+
+            /**
+             * Constructor.
+             * Initialises member vars.
+             *
+             * @param ContainerBuilder    $container  ContainerBuilder service instance
+             * @param TranslatorInterface $translator Translator service instance
+             «IF hasUploads»
+                 * @param SessionInterface    $session    Session service instance
+             «ENDIF»
+             «IF hasUploads || hasGeographical»
+                 * @param LoggerInterface     $logger     Logger service instance
+             «ENDIF»
+             */
+            public function __construct(ContainerBuilder $container, TranslatorInterface $translator«IF hasUploads», SessionInterface $session«ENDIF»«IF hasUploads || hasGeographical», LoggerInterface $logger«ENDIF»)
+            {
+                $this->container = $container;
+                $this->translator = $translator;
                 «IF hasUploads»
-
-                    /**
-                     * @var SessionInterface
-                     */
-                    protected $session;
+                    $this->session = $session;
                 «ENDIF»
                 «IF hasUploads || hasGeographical»
-
-                    /**
-                     * @var LoggerInterface
-                     */
-                    protected $logger;
+                    $this->logger = $logger;
                 «ENDIF»
+            }
 
-                /**
-                 * Constructor.
-                 * Initialises member vars.
-                 *
-                 * @param ContainerBuilder    $container  ContainerBuilder service instance
-                 * @param TranslatorInterface $translator Translator service instance
-                 «IF hasUploads»
-                     * @param SessionInterface    $session    Session service instance
-                 «ENDIF»
-                 «IF hasUploads || hasGeographical»
-                     * @param LoggerInterface     $logger     Logger service instance
-                 «ENDIF»
-                 */
-                public function __construct(ContainerBuilder $container, TranslatorInterface $translator«IF hasUploads», SessionInterface $session«ENDIF»«IF hasUploads || hasGeographical», LoggerInterface $logger«ENDIF»)
-                {
-                    $this->container = $container;
-                    $this->translator = $translator;
-                    «IF hasUploads»
-                        $this->session = $session;
-                    «ENDIF»
-                    «IF hasUploads || hasGeographical»
-                        $this->logger = $logger;
-                    «ENDIF»
-                }
-
-            «ENDIF»
             «getObjectTypes»
 
             «getDefaultObjectType»
@@ -144,18 +139,18 @@ class ControllerHelper {
         /**
          * Returns an array of all allowed object types in «appName».
          *
-         * @param string $context Usage context (allowed values: controllerAction, api«IF !targets('1.3.x')», helper«ENDIF», actionHandler, block, contentType, util)
+         * @param string $context Usage context (allowed values: controllerAction, api, helper, actionHandler, block, contentType, util)
          * @param array  $args    Additional arguments
          *
          * @return array List of allowed object types
          */
-        public function getObjectTypes($context = '', $args = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»)
+        public function getObjectTypes($context = '', $args = [])
         {
-            if (!in_array($context, «IF targets('1.3.x')»array(«ELSE»[«ENDIF»'controllerAction', 'api'«IF !targets('1.3.x')», 'helper'«ENDIF», 'actionHandler', 'block', 'contentType', 'util'«IF targets('1.3.x')»)«ELSE»]«ENDIF»)) {
+            if (!in_array($context, ['controllerAction', 'api', 'helper', 'actionHandler', 'block', 'contentType', 'util'])) {
                 $context = 'controllerAction';
             }
 
-            $allowedObjectTypes = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»;
+            $allowedObjectTypes = [];
             «FOR entity : entities»
                 $allowedObjectTypes[] = '«entity.name.formatForCode»';
             «ENDFOR»
@@ -168,14 +163,14 @@ class ControllerHelper {
         /**
          * Returns the default object type in «appName».
          *
-         * @param string $context Usage context (allowed values: controllerAction, api«IF !targets('1.3.x')», helper«ENDIF», actionHandler, block, contentType, util)
+         * @param string $context Usage context (allowed values: controllerAction, api, helper, actionHandler, block, contentType, util)
          * @param array  $args    Additional arguments
          *
          * @return string The name of the default object type
          */
-        public function getDefaultObjectType($context = '', $args = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»)
+        public function getDefaultObjectType($context = '', $args = [])
         {
-            if (!in_array($context, «IF targets('1.3.x')»array(«ELSE»[«ENDIF»'controllerAction', 'api'«IF !targets('1.3.x')», 'helper'«ENDIF», 'actionHandler', 'block', 'contentType', 'util'«IF targets('1.3.x')»)«ELSE»]«ENDIF»)) {
+            if (!in_array($context, ['controllerAction', 'api', 'helper', 'actionHandler', 'block', 'contentType', 'util'])) {
                 $context = 'controllerAction';
             }
 
@@ -210,46 +205,34 @@ class ControllerHelper {
         /**
          * Retrieve identifier parameters for a given object type.
          *
-         * @param «IF targets('1.3.x')»Zikula_Request_Http«ELSE»Request«ENDIF» $request    The current request
+         * @param Request $request    The current request
          * @param array   $args       List of arguments used as fallback if request does not contain a field
          * @param string  $objectType Name of treated entity type
          * @param array   $idFields   List of identifier field names
          *
          * @return array List of fetched identifiers
          */
-        public function retrieveIdentifier(«IF targets('1.3.x')»Zikula_Request_Http«ELSE»Request«ENDIF» $request, array $args, $objectType = '', array $idFields)
+        public function retrieveIdentifier(Request $request, array $args, $objectType = '', array $idFields)
         {
-            $idValues = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»;
-            «IF !targets('1.3.x')»
-                $routeParams = $request->get('_route_params', []);
-            «ENDIF»
+            $idValues = [];
+            $routeParams = $request->get('_route_params', []);
             foreach ($idFields as $idField) {
                 $defaultValue = isset($args[$idField]) && is_numeric($args[$idField]) ? $args[$idField] : 0;
                 if ($this->hasCompositeKeys($objectType)) {
                     // composite key may be alphanumeric
-                    «IF !targets('1.3.x')»
                     if (array_key_exists($idField, $routeParams)) {
                         $id = !empty($routeParams[$idField]) ? $routeParams[$idField] : $defaultValue;
-                    } else«ENDIF»if ($request->query->has($idField)) {
-                        «IF targets('1.3.x')»
-                            $id = $request->query->get($idField, $defaultValue);
-                        «ELSE»
-                            $id = $request->query->getAlnum($idField, $defaultValue);
-                        «ENDIF»
+                    } elseif ($request->query->has($idField)) {
+                        $id = $request->query->getAlnum($idField, $defaultValue);
                     } else {
                         $id = $defaultValue;
                     }
                 } else {
                     // single identifier
-                    «IF !targets('1.3.x')»
                     if (array_key_exists($idField, $routeParams)) {
                         $id = (int) !empty($routeParams[$idField]) ? $routeParams[$idField] : $defaultValue;
-                    } else«ENDIF»if ($request->query->has($idField)) {
-                        «IF targets('1.3.x')»
-                            $id = (int) $request->query->filter($idField, $defaultValue, FILTER_VALIDATE_INT);
-                        «ELSE»
-                            $id = $request->query->getInt($idField, $defaultValue);
-                        «ENDIF»
+                    } elseif ($request->query->has($idField)) {
+                        $id = $request->query->getInt($idField, $defaultValue);
                     } else {
                         $id = $defaultValue;
                     }
@@ -258,15 +241,10 @@ class ControllerHelper {
                 // fallback if id has not been found yet
                 if (!$id && $idField != 'id' && count($idFields) == 1) {
                     $defaultValue = isset($args['id']) && is_numeric($args['id']) ? $args['id'] : 0;
-                    «IF !targets('1.3.x')»
                     if (array_key_exists('id', $routeParams)) {
                         $id = (int) !empty($routeParams['id']) ? $routeParams['id'] : $defaultValue;
-                    } else«ENDIF»if ($request->query->has('id')) {
-                        «IF targets('1.3.x')»
-                            $id = (int) $request->query->filter('id', $defaultValue, FILTER_VALIDATE_INT);
-                        «ELSE»
-                            $id = (int) $request->query->getInt('id', $defaultValue);
-                        «ENDIF»
+                    } elseif ($request->query->has('id')) {
+                        $id = (int) $request->query->getInt('id', $defaultValue);
                     } else {
                         $id = $defaultValue;
                     }
@@ -314,8 +292,8 @@ class ControllerHelper {
         public function formatPermalink($name)
         {
             $name = str_replace(
-                «IF targets('1.3.x')»array(«ELSE»[«ENDIF»'ä', 'ö', 'ü', 'Ä', 'Ö', 'Ü', 'ß', '.', '?', '"', '/', ':', 'é', 'è', 'â'«IF targets('1.3.x')»)«ELSE»]«ENDIF»,
-                «IF targets('1.3.x')»array(«ELSE»[«ENDIF»'ae', 'oe', 'ue', 'Ae', 'Oe', 'Ue', 'ss', '', '', '', '-', '-', 'e', 'e', 'a'«IF targets('1.3.x')»)«ELSE»]«ENDIF»,
+                ['ä', 'ö', 'ü', 'Ä', 'Ö', 'Ü', 'ß', '.', '?', '"', '/', ':', 'é', 'è', 'â'],
+                ['ae', 'oe', 'ue', 'Ae', 'Oe', 'Ue', 'ss', '', '', '', '-', '-', 'e', 'e', 'a'],
                 $name
             );
             $name = DataUtil::formatPermalink($name);
@@ -342,7 +320,7 @@ class ControllerHelper {
                 throw new Exception('Error! Invalid object type received.');
             }
 
-            $basePath = «IF targets('1.3.x')»FileUtil::getDataDirectory()«ELSE»$this->container->getParameter('datadir')«ENDIF» . '/«appName»/';
+            $basePath = $this->container->getParameter('datadir') . '/«appName»/';
 
             switch ($objectType) {
                 «FOR entity : getUploadEntities.filter(Entity)»
@@ -412,75 +390,46 @@ class ControllerHelper {
         {
             $uploadPath = $this->getFileBaseFolder($objectType, $fieldName, true);
 
-            «IF targets('1.3.x')»
-                // Check if directory exist and try to create it if needed
-                if (!is_dir($uploadPath) && !FileUtil::mkdirs($uploadPath, 0777)) {
-                    LogUtil::registerStatus($this->__f('The upload directory "%s" does not exist and could not be created. Try to create it yourself and make sure that this folder is accessible via the web and writable by the webserver.', array($uploadPath)));
+            $fs = new Filesystem();
+            $flashBag = $this->session->getFlashBag();
+
+            // Check if directory exist and try to create it if needed
+            if (!$fs->exists($uploadPath)) {
+                try {
+                    $fs->mkdir($uploadPath, 0777);
+                } catch (IOExceptionInterface $e) {
+                    $flashBag->add('error', $this->translator->__f('The upload directory "%s" does not exist and could not be created. Try to create it yourself and make sure that this folder is accessible via the web and writable by the webserver.', ['%s' => $e->getPath()]));
+                    $this->logger->error('{app}: The upload directory {directory} does not exist and could not be created.', ['app' => '«appName»', 'directory' => $uploadPath]);
 
                     return false;
                 }
+            }
 
-                // Check if directory is writable and change permissions if needed
-                if (!is_writable($uploadPath) && !chmod($uploadPath, 0777)) {
-                    LogUtil::registerStatus($this->__f('Warning! The upload directory at "%s" exists but is not writable by the webserver.', array($uploadPath)));
+            // Check if directory is writable and change permissions if needed
+            if (!is_writable($uploadPath)) {
+                try {
+                    $fs->chmod($uploadPath, 0777);
+                } catch (IOExceptionInterface $e) {
+                    $flashBag->add('warning', $this->translator->__f('Warning! The upload directory at "%s" exists but is not writable by the webserver.', ['%s' => $e->getPath()]));
+                    $this->logger->error('{app}: The upload directory {directory} exists but is not writable by the webserver.', ['app' => '«appName»', 'directory' => $uploadPath]);
 
                     return false;
                 }
+            }
 
-                // Write a htaccess file into the upload directory
-                $htaccessFilePath = $uploadPath . '/.htaccess';
-                $htaccessFileTemplate = '«rootFolder»/«appName»/docs/htaccessTemplate';
-                if (!file_exists($htaccessFilePath) && file_exists($htaccessFileTemplate)) {
+            // Write a htaccess file into the upload directory
+            $htaccessFilePath = $uploadPath . '/.htaccess';
+            $htaccessFileTemplate = '«rootFolder»/«if (systemModule) name.formatForCode else appName»/«getAppDocPath»htaccessTemplate';
+            if (!$fs->exists($htaccessFilePath) && $fs->exists($htaccessFileTemplate)) {
+                try {
                     $extensions = str_replace(',', '|', str_replace(' ', '', $allowedExtensions));
-                    $htaccessContent = str_replace('__EXTENSIONS__', $extensions, FileUtil::readFile($htaccessFileTemplate));
-                    if (!FileUtil::writeFile($htaccessFilePath, $htaccessContent)) {
-                        LogUtil::registerStatus($this->__f('Warning! Could not write the .htaccess file at "%s".', array($htaccessFilePath)));
-
-                        return false;
-                    }
+                    $htaccessContent = str_replace('__EXTENSIONS__', $extensions, file_get_contents($htaccessFileTemplate, false));
+                    $fs->dumpFile($htaccessFilePath, $htaccessContent);
+                } catch (IOExceptionInterface $e) {
+                    $flashBag->add('error', $this->translator->__f('An error occured during creation of the .htaccess file in directory "%s".', ['%s' => $e->getPath()]));
+                    $this->logger->error('{app}: An error occured during creation of the .htaccess file in directory {directory}.', ['app' => '«appName»', 'directory' => $uploadPath]);
                 }
-            «ELSE»
-                $fs = new Filesystem();
-                $flashBag = $this->session->getFlashBag();
-
-                // Check if directory exist and try to create it if needed
-                if (!$fs->exists($uploadPath)) {
-                    try {
-                        $fs->mkdir($uploadPath, 0777);
-                    } catch (IOExceptionInterface $e) {
-                        $flashBag->add('error', $this->translator->__f('The upload directory "%s" does not exist and could not be created. Try to create it yourself and make sure that this folder is accessible via the web and writable by the webserver.', ['%s' => $e->getPath()]));
-                        $this->logger->error('{app}: The upload directory {directory} does not exist and could not be created.', ['app' => '«appName»', 'directory' => $uploadPath]);
-
-                        return false;
-                    }
-                }
-
-                // Check if directory is writable and change permissions if needed
-                if (!is_writable($uploadPath)) {
-                    try {
-                        $fs->chmod($uploadPath, 0777);
-                    } catch (IOExceptionInterface $e) {
-                        $flashBag->add('warning', $this->translator->__f('Warning! The upload directory at "%s" exists but is not writable by the webserver.', ['%s' => $e->getPath()]));
-                        $this->logger->error('{app}: The upload directory {directory} exists but is not writable by the webserver.', ['app' => '«appName»', 'directory' => $uploadPath]);
-
-                        return false;
-                    }
-                }
-
-                // Write a htaccess file into the upload directory
-                $htaccessFilePath = $uploadPath . '/.htaccess';
-                $htaccessFileTemplate = '«rootFolder»/«if (systemModule) name.formatForCode else appName»/«getAppDocPath»htaccessTemplate';
-                if (!$fs->exists($htaccessFilePath) && $fs->exists($htaccessFileTemplate)) {
-                    try {
-                        $extensions = str_replace(',', '|', str_replace(' ', '', $allowedExtensions));
-                        $htaccessContent = str_replace('__EXTENSIONS__', $extensions, file_get_contents($htaccessFileTemplate, false));
-                        $fs->dumpFile($htaccessFilePath, $htaccessContent);
-                    } catch (IOExceptionInterface $e) {
-                        $flashBag->add('error', $this->translator->__f('An error occured during creation of the .htaccess file in directory "%s".', ['%s' => $e->getPath()]));
-                        $this->logger->error('{app}: An error occured during creation of the .htaccess file in directory {directory}.', ['app' => '«appName»', 'directory' => $uploadPath]);
-                    }
-                }
-            «ENDIF»
+            }
 
             return true;
         }
@@ -492,7 +441,7 @@ class ControllerHelper {
          * To use this please customise it to your needs in the concrete subclass.
          * Also you have to call this method in a PrePersist-Handler of the
          * corresponding entity class.
-         * There is also a method on JS level available in «getAppJsPath»«appName»«IF targets('1.3.x')»_e«ELSE».E«ENDIF»ditFunctions.js.
+         * There is also a method on JS level available in «getAppJsPath»«appName».EditFunctions.js.
          *
          * @param string $address The address input string
          *
@@ -500,14 +449,14 @@ class ControllerHelper {
          */
         public function performGeoCoding($address)
         {
-            $lang = «IF targets('1.3.x')»ZLanguage::getLanguageCode()«ELSE»$this->container->get('request_stack')->getMasterRequest()->getLocale()«ENDIF»;
+            $lang = $this->container->get('request_stack')->getMasterRequest()->getLocale();
             $url = 'https://maps.googleapis.com/maps/api/geocode/json?address=' . urlencode($address);
             $url .= '&region=' . $lang . '&language=' . $lang . '&sensor=false';
 
             $json = '';
 
             // we can either use Snoopy if available
-            //require_once('«rootFolder»/«IF targets('1.3.x')»«appName»/lib«ELSE»«if (systemModule) name.formatForCode else appName»«ENDIF»/vendor/Snoopy/Snoopy.class.php');
+            //require_once('«rootFolder»/«if (systemModule) name.formatForCode else vendor.formatForCode + '/' + name.formatForCode»/vendor/Snoopy/Snoopy.class.php');
             //$snoopy = new Snoopy();
             //$snoopy->fetch($url);
             //$json = $snoopy->results;
@@ -528,10 +477,10 @@ class ControllerHelper {
             }
 
             // create the result array
-            $result = «IF targets('1.3.x')»array(«ELSE»[«ENDIF»
+            $result = [
                 'latitude' => 0,
                 'longitude' => 0
-            «IF targets('1.3.x')»)«ELSE»]«ENDIF»;
+            ];
 
             if ($json != '') {
                 $data = json_decode($json);
@@ -543,10 +492,8 @@ class ControllerHelper {
                     $result['latitude'] = str_replace(',', '.', $location->lat);
                     $result['longitude'] = str_replace(',', '.', $location->lng);
                 } else {
-                    «IF !targets('1.3.x')»
-                        $logArgs = ['app' => '«appName»', 'user' => $this->container->get('zikula_users_module.current_user')->get('uname'), 'field' => $field, 'address' => $address];
-                        $this->logger->warning('{app}: User {user} tried geocoding for address "{address}", but failed.', $logArgs);
-                    «ENDIF»
+                    $logArgs = ['app' => '«appName»', 'user' => $this->container->get('zikula_users_module.current_user')->get('uname'), 'field' => $field, 'address' => $address];
+                    $this->logger->warning('{app}: User {user} tried geocoding for address "{address}", but failed.', $logArgs);
                 }
             }
 
@@ -555,20 +502,14 @@ class ControllerHelper {
     '''
 
     def private controllerFunctionsImpl(Application it) '''
-        «IF !targets('1.3.x')»
-            namespace «appNamespace»\Helper;
+        namespace «appNamespace»\Helper;
 
-            use «appNamespace»\Helper\Base\AbstractControllerHelper;
+        use «appNamespace»\Helper\Base\AbstractControllerHelper;
 
-        «ENDIF»
         /**
          * Helper implementation class for controller layer methods.
          */
-        «IF targets('1.3.x')»
-        class «appName»_Util_Controller extends «appName»_Util_Base_AbstractController
-        «ELSE»
         class ControllerHelper extends AbstractControllerHelper
-        «ENDIF»
         {
             // feel free to add your own convenience methods here
         }

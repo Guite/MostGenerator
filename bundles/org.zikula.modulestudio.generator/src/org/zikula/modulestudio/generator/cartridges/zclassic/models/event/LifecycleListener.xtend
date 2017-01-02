@@ -8,7 +8,6 @@ import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
-// 1.4.x only
 class LifecycleListener {
 
     extension FormattingExtensions = new FormattingExtensions
@@ -21,9 +20,6 @@ class LifecycleListener {
     EventAction eventAction = new EventAction('$entity')
 
     def generate(Application it, IFileSystemAccess fsa) {
-        if (targets('1.3.x')) {
-            return
-        }
         app = it
         generateClassPair(fsa, getAppSourceLibPath + 'Listener/EntityLifecycleListener.php',
             fh.phpFileContent(it, lifecycleListenerBaseImpl), fh.phpFileContent(it, lifecycleListenerImpl)
@@ -229,7 +225,7 @@ class LifecycleListener {
                     }
                 «ENDIF»
 
-                «eventAction.postLoad(app, null)»
+                «eventAction.postLoad(app)»
             }
 
             /**

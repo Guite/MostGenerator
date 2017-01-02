@@ -67,12 +67,10 @@ class ExampleData {
     '''
 
     def private exampleRows(Application it) '''
-        «IF !targets('1.3.x')»
-            $entityManager = $this->container->get('«entityManagerService»');
-            $logger = $this->container->get('logger');
-            $request = $this->container->get('request_stack')->getMasterRequest();
+        $entityManager = $this->container->get('«entityManagerService»');
+        $logger = $this->container->get('logger');
+        $request = $this->container->get('request_stack')->getMasterRequest();
 
-        «ENDIF»
         «FOR entity : getAllEntities»«entity.truncateTable»«ENDFOR»
         «IF amountOfExampleRows > 0»
             «IF !getAllEntities.filter[tree != EntityTreeType.NONE].empty»
@@ -84,13 +82,8 @@ class ExampleData {
 
     def private truncateTable(Entity it) '''
         «val app = application»
-        «IF app.targets('1.3.x')»
-            $entityClass = '«app.appName»_Entity_«name.formatForCodeCapital»';
-            $this->entityManager->getRepository($entityClass)->truncateTable();
-        «ELSE»
-            $entityClass = '«app.vendor.formatForCodeCapital»\«app.name.formatForCodeCapital»Module\Entity\«name.formatForCodeCapital»Entity';
-            $entityManager->getRepository($entityClass)->truncateTable($logger);
-        «ENDIF»
+        $entityClass = '«app.vendor.formatForCodeCapital»\«app.name.formatForCodeCapital»Module\Entity\«name.formatForCodeCapital»Entity';
+        $entityManager->getRepository($entityClass)->truncateTable($logger);
     '''
 
     def private createExampleRows(Application it) '''
@@ -141,7 +134,7 @@ class ExampleData {
 
     def private initExampleObjects(Entity it, Application app) '''
         «FOR number : 1..app.amountOfExampleRows»
-            $«name.formatForCode»«number» = new «IF app.targets('1.3.x')»\«app.appName»_Entity_«name.formatForCodeCapital»«ELSE»\«app.vendor.formatForCodeCapital»\«app.name.formatForCodeCapital»Module\Entity\«name.formatForCodeCapital»Entity«ENDIF»(«exampleRowsConstructorArguments(number)»);
+            $«name.formatForCode»«number» = new \«app.vendor.formatForCodeCapital»\«app.name.formatForCodeCapital»Module\Entity\«name.formatForCodeCapital»Entity(«exampleRowsConstructorArguments(number)»);
         «ENDFOR»
         «/* this last line is on purpose */»
     '''
@@ -150,7 +143,7 @@ class ExampleData {
         «val entityName = name.formatForCode»
         «IF categorisable»
             $categoryId = 41; // Business and work
-            $category = $«IF app.targets('1.3.x')»this->«ENDIF»entityManager->find('Zikula«IF app.targets('1.3.x')»_Doctrine2_Entity_Category«ELSE»CategoriesModule:CategoryEntity«ENDIF»', $categoryId);
+            $category = $entityManager->find('ZikulaCategoriesModule:CategoryEntity', $categoryId);
         «ENDIF»
         «FOR number : 1..app.amountOfExampleRows»
             «IF isInheriting»
@@ -158,7 +151,7 @@ class ExampleData {
             «ENDIF»
             «FOR field : getFieldsForExampleData»«exampleRowAssignment(field, it, entityName, number)»«ENDFOR»
             «/*«IF hasTranslatableFields»
-                $«entityName»«number»->setLocale(«IF app.targets('1.3.x')»ZLanguage::getLanguageCode()«ELSE»$request->getLocale()«ENDIF»);
+                $«entityName»«number»->setLocale($request->getLocale());
             «ENDIF»*/»
             «IF tree != EntityTreeType.NONE»
                 $«entityName»«number»->setParent(«IF number == 1»null«ELSE»$«entityName»1«ENDIF»);
@@ -173,7 +166,7 @@ class ExampleData {
             «FOR relation : incoming.filter(OneToManyRelationship).filter[bidirectional].filter[source.application == app]»«relation.exampleRowAssignmentIncoming(entityName, number)»«ENDFOR»
             «IF categorisable»
                 // create category assignment
-                $«entityName»«number»->getCategories()->add(new «IF app.targets('1.3.x')»\«app.appName»_Entity_«name.formatForCodeCapital»Category«ELSE»\«app.vendor.formatForCodeCapital»\«app.name.formatForCodeCapital»Module\Entity\«name.formatForCodeCapital»CategoryEntity«ENDIF»($categoryRegistryIdsPerEntity['«name.formatForCode»'], $category, $«entityName»«number»));
+                $«entityName»«number»->getCategories()->add(new \«app.vendor.formatForCodeCapital»\«app.name.formatForCodeCapital»Module\Entity\«name.formatForCodeCapital»CategoryEntity($categoryRegistryIdsPerEntity['«name.formatForCode»'], $category, $«entityName»«number»));
             «ENDIF»
             «IF attributable»
                 // create example attributes
@@ -191,22 +184,14 @@ class ExampleData {
     def private persistExampleObjects(Application it) '''
         // execute the workflow action for each entity
         $action = 'submit';
-        «IF targets('1.3.x')»
-            $workflowHelper = new «appName»_Util_Workflow($this->serviceManager);
-        «ELSE»
-            $workflowHelper = new \«appNamespace»\Helper\WorkflowHelper($this->container, $this->container->get('translator.default'));
-        «ENDIF»
+        $workflowHelper = new \«appNamespace»\Helper\WorkflowHelper($this->container, $this->container->get('translator.default'));
         try {
             «FOR entity : getAllEntities»«entity.persistEntities(it)»«ENDFOR»
         } catch(\Exception $e) {
-            «IF targets('1.3.x')»
-                return LogUtil::registerError($this->__('Exception during example data creation') . ': ' . $e->getMessage());
-            «ELSE»
-                $this->addFlash('error', $this->__('Exception during example data creation') . ': ' . $e->getMessage());
-                $logger->error('{app}: Could not completely create example data during installation. Error details: {errorMessage}.', ['app' => '«appName»', 'errorMessage' => $e->getMessage()]);
+            $this->addFlash('error', $this->__('Exception during example data creation') . ': ' . $e->getMessage());
+            $logger->error('{app}: Could not completely create example data during installation. Error details: {errorMessage}.', ['app' => '«appName»', 'errorMessage' => $e->getMessage()]);
 
-                return false;
-            «ENDIF»
+            return false;
         }
     '''
 
@@ -309,7 +294,7 @@ class ExampleData {
             BooleanField: if (defaultValue == 'true') 'true' else 'false'
             IntegerField: exampleRowValueNumber(dataEntity, number)
             DecimalField: exampleRowValueNumber(dataEntity, number)
-            StringField: if (it.country || it.language || it.locale) '''«IF dataEntity.application.targets('1.3.x')»ZLanguage::getLanguageCode()«ELSE»$request->getLocale()«ENDIF»''' else if (it.currency) 'EUR' else if (it.htmlcolour) '\'#ff6600\'' else exampleRowValueText(dataEntity, number)
+            StringField: if (it.country || it.language || it.locale) '''$request->getLocale()''' else if (it.currency) 'EUR' else if (it.htmlcolour) '\'#ff6600\'' else exampleRowValueText(dataEntity, number)
             TextField: exampleRowValueText(dataEntity, number)
             EmailField: '\'' + entity.application.email + '\''
             UrlField: '\'' + entity.application.url + '\''

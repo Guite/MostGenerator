@@ -33,9 +33,7 @@ class EntityMethods {
     extension Utils = new Utils
 
     def dispatch generate(DataObject it, Application app, Property thProp) '''
-        «IF !app.targets('1.3.x')»
-            «validationMethods»
-        «ENDIF»
+        «validationMethods»
 
         «validate»
 
@@ -51,11 +49,7 @@ class EntityMethods {
 
         «getTitleFromDisplayPattern(app)»
 
-        «IF app.targets('1.3.x')»
-            «initValidator»
-        «ELSE»
-            «validationMethods»
-        «ENDIF»
+        «validationMethods»
 
         «initWorkflow(app)»
 
@@ -64,10 +58,6 @@ class EntityMethods {
         «validate»
 
         «toJson»
-        «IF app.targets('1.3.x')»
-
-            «new ItemActions().prepareItemActions(it, app)»
-        «ENDIF»
 
         «createUrlArgs»
 
@@ -151,11 +141,7 @@ class EntityMethods {
         {
             «IF hasListFieldsEntity»
                 $serviceManager = ServiceUtil::getManager();
-                «IF app.targets('1.3.x')»
-                    $listHelper = new «app.appName»_Util_ListEntries(ServiceUtil::getManager());
-                «ELSE»
-                    $listHelper = $serviceManager->get('«app.appService».listentries_helper');
-                «ENDIF»
+                $listHelper = $serviceManager->get('«app.appService».listentries_helper');
 
             «ENDIF»
             $formattedTitle = «parseDisplayPattern»;
@@ -215,40 +201,17 @@ class EntityMethods {
         }
     }
 
-    /**
-     * Initialises the validator instance. Used for 1.3.x target only, replaced by Symfony Validator in 1.4.x.
-     */
-    def private initValidator(Entity it) '''
-        «val validatorClassLegacy = application.appName + '_Entity_Validator_' + name.formatForCodeCapital»
-        /**
-         * Initialises the validator and return it's instance.
-         *
-         * @return «validatorClassLegacy» The validator for this entity
-         */
-        public function initValidator()
-        {
-            if (!is_null($this->_validator)) {
-                return $this->_validator;
-            }
-            $this->_validator = new «validatorClassLegacy»($this);
-
-            return $this->_validator;
-        }
-    '''
-
     def private initWorkflow(Entity it, Application app) '''
         /**
          * Sets/retrieves the workflow details.
          *
          * @param boolean $forceLoading load the workflow record
-         «IF !app.targets('1.3.x')»
          *
          * @throws RuntimeException Thrown if retrieving the workflow object fails
-         «ENDIF»
          */
         public function initWorkflow($forceLoading = false)
         {
-            $currentFunc = FormUtil::getPassedValue('func', '«IF app.targets('1.3.x')»main«ELSE»index«ENDIF»', 'GETPOST', FILTER_SANITIZE_STRING);
+            $currentFunc = FormUtil::getPassedValue('func', 'index', 'GETPOST', FILTER_SANITIZE_STRING);
             $isReuse = FormUtil::getPassedValue('astemplate', '', 'GETPOST', FILTER_SANITIZE_STRING);
 
             «loadWorkflow»
@@ -265,21 +228,17 @@ class EntityMethods {
             $this->setWorkflowState('initial');
 
             $serviceManager = ServiceUtil::getManager();
-            «IF app.targets('1.3.x')»
-                $workflowHelper = new «app.appName»_Util_Workflow($serviceManager);
-            «ELSE»
-                $workflowHelper = $serviceManager->get('«app.appService».workflow_helper');
-            «ENDIF»
+            $workflowHelper = $serviceManager->get('«app.appService».workflow_helper');
 
             $schemaName = $workflowHelper->getWorkflowName($this['_objectType']);
-            $this['__WORKFLOW__'] = «IF app.targets('1.3.x')»array(«ELSE»[«ENDIF»
+            $this['__WORKFLOW__'] = [
                 'module' => '«app.appName»',
                 'state' => $this['workflowState'],
                 'obj_table' => $this['_objectType'],
                 'obj_idcolumn' => '«primaryKeyFields.head.name.formatForCode»',
                 'obj_id' => 0,
                 'schemaname' => $schemaName
-            «IF app.targets('1.3.x')»)«ELSE»]«ENDIF»;
+            ];
         }
     '''
 
@@ -290,18 +249,12 @@ class EntityMethods {
         /**
          * Start validation and raise exception if invalid data is found.
          *
-        «IF application.targets('1.3.x')»
-            «' '»* @return void
-            «' '»*
-            «' '»* @throws Zikula_Exception Thrown if a validation error occurs
-        «ELSE»
-            «' '»* @return boolean Whether everything is valid or not
-        «ENDIF»
+         * @return boolean Whether everything is valid or not
          */
         public function validate()
         {
             if (true === $this->_bypassValidation) {
-                return«IF !application.targets('1.3.x')» true«ENDIF»;
+                return true;
             }
 
         «val emailFields = getDerivedFields.filter(EmailField)»
@@ -313,26 +266,19 @@ class EntityMethods {
                     }
                 «ENDFOR»
             «ENDIF»
-            «IF application.targets('1.3.x')»
-                $result = $this->initValidator()->validateAll();
-                if (is_array($result)) {
-                    throw new Zikula_Exception($result['message'], $result['code'], $result['debugArray']);
+            $serviceManager = ServiceUtil::getManager();
+
+            $validator = $serviceManager->get('validator');
+            $errors = $validator->validate($this);
+
+            if (count($errors) > 0) {
+                $flashBag = $serviceManager->get('session')->getFlashBag();
+                foreach ($errors as $error) {
+                    $flashBag->add('error', $error->getMessage());
                 }
-            «ELSE»
-                $serviceManager = ServiceUtil::getManager();
 
-                $validator = $serviceManager->get('validator');
-                $errors = $validator->validate($this);
-
-                if (count($errors) > 0) {
-                    $flashBag = $serviceManager->get('session')->getFlashBag();
-                    foreach ($errors as $error) {
-                        $flashBag->add('error', $error->getMessage());
-                    }
-
-                    return false;
-                }
-            «ENDIF»
+                return false;
+            }
 
             return true;
         }
@@ -359,7 +305,7 @@ class EntityMethods {
          */
         public function createUrlArgs()
         {
-            $args = «IF application.targets('1.3.x')»array('ot' => $this['_objectType'])«ELSE»[]«ENDIF»;
+            $args = [];
 
             «IF hasCompositeKeys»
                 «FOR pkField : getPrimaryKeyFields»
@@ -418,7 +364,7 @@ class EntityMethods {
          */
         public function getHookAreaPrefix()
         {
-            return '«IF application.targets('1.3.x')»«application.name.formatForDB»«ELSE»«application.appName.formatForDB»«ENDIF».ui_hooks.«nameMultiple.formatForDB»';
+            return '«application.appName.formatForDB».ui_hooks.«nameMultiple.formatForDB»';
         }
     '''
 
@@ -427,37 +373,28 @@ class EntityMethods {
         $idColumn = '«primaryKeyFields.head.name.formatForCode»';
 
         $serviceManager = ServiceUtil::getManager();
-        «IF application.targets('1.3.x')»
-            $workflowHelper = new «application.appName»_Util_Workflow($serviceManager);
+        «IF application.amountOfExampleRows > 0»
+            $workflowHelper = new \«application.appNamespace»\Helper\WorkflowHelper($serviceManager, $serviceManager->get('translator.default'));
         «ELSE»
-            «IF application.amountOfExampleRows > 0»
-                $workflowHelper = new \«application.appNamespace»\Helper\WorkflowHelper($serviceManager, $serviceManager->get('translator.default'));
-            «ELSE»
-                $workflowHelper = $serviceManager->get('«application.appService».workflow_helper');
-            «ENDIF»
+            $workflowHelper = $serviceManager->get('«application.appService».workflow_helper');
         «ENDIF»
 
         $schemaName = $workflowHelper->getWorkflowName($this['_objectType']);
-        $this['__WORKFLOW__'] = «IF application.targets('1.3.x')»array(«ELSE»[«ENDIF»
+        $this['__WORKFLOW__'] = [
             'module' => '«application.appName»',
             'state' => $this['workflowState'],
             'obj_table' => $this['_objectType'],
             'obj_idcolumn' => $idColumn,
             'obj_id' => $this[$idColumn],
             'schemaname' => $schemaName
-        «IF application.targets('1.3.x')»)«ELSE»]«ENDIF»;
+        ];
 
         // load the real workflow only when required (e. g. when func is edit or delete)
-        if ((!in_array($currentFunc, «IF application.targets('1.3.x')»array(«ELSE»[«ENDIF»'«IF application.targets('1.3.x')»main«ELSE»index«ENDIF»', 'view', 'display'«IF application.targets('1.3.x')»)«ELSE»]«ENDIF») && empty($isReuse)) || $forceLoading) {
+        if ((!in_array($currentFunc, ['index', 'view', 'display']) && empty($isReuse)) || $forceLoading) {
             $result = Zikula_Workflow_Util::getWorkflowForObject($this, $this['_objectType'], $idColumn, '«application.appName»');
             if (!$result) {
-                «IF application.targets('1.3.x')»
-                    $dom = ZLanguage::getModuleDomain('«application.appName»');
-                    LogUtil::registerError(__('Error! Could not load the associated workflow.', $dom));
-                «ELSE»
-                    $flashBag = $serviceManager->get('session')->getFlashBag();
-                    $flashBag->add('error', $serviceManager->get('translator.default')->__('Error! Could not load the associated workflow.'));
-                «ENDIF»
+                $flashBag = $serviceManager->get('session')->getFlashBag();
+                $flashBag->add('error', $serviceManager->get('translator.default')->__('Error! Could not load the associated workflow.'));
             }
         }
 
@@ -485,11 +422,11 @@ class EntityMethods {
         /**
          * Returns an array of all related objects that need to be persisted after clone.
          * 
-         * @param array $objects The objects are added to this array. Default: «IF app.targets('1.3.x')»array()«ELSE»[]«ENDIF»
+         * @param array $objects The objects are added to this array. Default: []
          * 
          * @return array of entity objects
          */
-        public function getRelatedObjectsToPersist(&$objects = «IF app.targets('1.3.x')»array()«ELSE»[]«ENDIF») 
+        public function getRelatedObjectsToPersist(&$objects = []) 
         {
             «val joinsIn = incomingJoinRelationsForCloning.filter[!(it instanceof ManyToManyRelationship)]»
             «val joinsOut = outgoingJoinRelationsForCloning.filter[!(it instanceof ManyToManyRelationship)]»
@@ -508,7 +445,7 @@ class EntityMethods {
 
                 return $objects;
             «ELSE»
-                return «IF app.targets('1.3.x')»array()«ELSE»[]«ENDIF»;
+                return [];
             «ENDIF»
         }
     '''
@@ -538,11 +475,6 @@ class EntityMethods {
                 «FOR field : primaryKeyFields»
                     $this->set«field.name.formatForCodeCapital»(«thProp.defaultFieldData(field)»);
                 «ENDFOR»
-                «IF app.targets('1.3.x')»
-
-                    // init validator
-                    $this->initValidator();
-                «ENDIF»
 
                 // reset Workflow
                 $this->resetWorkflow();
@@ -551,7 +483,8 @@ class EntityMethods {
                     // reset upload fields
                     «FOR field : getUploadFieldsEntity»
                         $this->set«field.name.formatForCodeCapital»('');
-                        $this->set«field.name.formatForCodeCapital»Meta(«IF app.targets('1.3.x')»array()«ELSE»[]«ENDIF»);
+                        $this->set«field.name.formatForCodeCapital»Meta([]);
+                        $this->set«field.name.formatForCodeCapital»Url('');
                     «ENDFOR»
                 «ENDIF»
                 «IF it instanceof Entity && (it as Entity).standardFields»

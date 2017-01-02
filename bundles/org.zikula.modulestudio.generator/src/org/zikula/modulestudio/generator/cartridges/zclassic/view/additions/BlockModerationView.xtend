@@ -12,37 +12,15 @@ class BlockModerationView {
     extension Utils = new Utils
 
     def generate(Application it, IFileSystemAccess fsa) {
-        if (targets('1.3.x')) {
-            val templatePath = getViewPath + 'block/'
-            var fileName = 'moderation.tpl'
-            if (!shouldBeSkipped(templatePath + fileName)) {
-                if (shouldBeMarked(templatePath + fileName)) {
-                    fileName = 'moderation.generated.tpl'
-                }
-                fsa.generateFile(templatePath + fileName, displayTemplateLegacy)
+        val templatePath = getViewPath + 'Block/'
+        var fileName = 'moderation.html.twig'
+        if (!shouldBeSkipped(templatePath + fileName)) {
+            if (shouldBeMarked(templatePath + fileName)) {
+                fileName = 'moderation.generated.html.twig'
             }
-        } else {
-            val templatePath = getViewPath + 'Block/'
-            var fileName = 'moderation.html.twig'
-            if (!shouldBeSkipped(templatePath + fileName)) {
-                if (shouldBeMarked(templatePath + fileName)) {
-                    fileName = 'moderation.generated.html.twig'
-                }
-                fsa.generateFile(templatePath + fileName, displayTemplate)
-            }
+            fsa.generateFile(templatePath + fileName, displayTemplate)
         }
     }
-
-    def private displayTemplateLegacy(Application it) '''
-        {* Purpose of this template: show moderation block *}
-        {if count($moderationObjects) gt 0}
-            <ul>
-            {foreach item='modItem' from=$moderationObjects}
-                <li><a href="{modurl modname='«appName»' type='admin' func='view' ot=$modItem.objectType workflowState=$modItem.state}" class="z-bold">{$modItem.message}</a></li>
-            {/foreach}
-            </ul>
-        {/if}
-    '''
 
     def private displayTemplate(Application it) '''
         {# Purpose of this template: show moderation block #}

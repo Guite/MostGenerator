@@ -24,9 +24,6 @@ class Factory {
     Application app
 
     def generate(Application it, IFileSystemAccess fsa) {
-        if (targets('1.3.x')) {
-            return
-        }
         this.fsa = fsa
         app = it
         getAllEntities.forEach(e|e.generate)
@@ -67,11 +64,7 @@ class Factory {
          *
          * This is the base factory class for «name.formatForDisplay» entities.
          */
-        «IF app.targets('1.3.x')»
-        abstract class «app.appName»_Entity_Factory_Base_Abstract«name.formatForCodeCapital»
-        «ELSE»
         abstract class Abstract«name.formatForCodeCapital»Factory
-        «ENDIF»
         {
             /**
              * @var String Full qualified class name to be used for «nameMultiple.formatForDisplay».
@@ -115,22 +108,16 @@ class Factory {
     '''
 
     def private modelFactoryImpl(Entity it) '''
-        «IF !app.targets('1.3.x')»
-            namespace «app.appNamespace»\Entity\Factory;
+        namespace «app.appNamespace»\Entity\Factory;
 
-            use «app.appNamespace»\Entity\Factory\«IF isInheriting»«parentType.name.formatForCodeCapital»«ELSE»Base\Abstract«name.formatForCodeCapital»«ENDIF»Factory;
+        use «app.appNamespace»\Entity\Factory\«IF isInheriting»«parentType.name.formatForCodeCapital»«ELSE»Base\Abstract«name.formatForCodeCapital»«ENDIF»Factory;
 
-        «ENDIF»
         /**
          * Factory class used to retrieve entity and repository instances.
          *
          * This is the concrete factory class for «name.formatForDisplay» entities.
          */
-        «IF app.targets('1.3.x')»
-        class «app.appName»_Entity_Factory_«name.formatForCodeCapital» extends «IF isInheriting»«app.appName»_Entity_Factory_«parentType.name.formatForCodeCapital»«ELSE»«app.appName»_Entity_Factory_Base_Abstract«name.formatForCodeCapital»«ENDIF»
-        «ELSE»
         class «name.formatForCodeCapital»Factory extends «IF isInheriting»«parentType.name.formatForCodeCapital»«ELSE»Abstract«name.formatForCodeCapital»«ENDIF»Factory
-        «ENDIF»
         {
             // feel free to customise the manager
         }

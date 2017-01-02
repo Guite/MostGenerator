@@ -12,14 +12,12 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.view.pagecomponents
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
-import org.zikula.modulestudio.generator.extensions.Utils
 
 class Csv {
 
     extension FormattingExtensions = new FormattingExtensions
     extension ModelExtensions = new ModelExtensions
     extension NamingExtensions = new NamingExtensions
-    extension Utils = new Utils
 
     SimpleFields fieldHelper = new SimpleFields
 
@@ -27,31 +25,9 @@ class Csv {
         val templateFilePath = templateFileWithExtension('view', 'csv')
         if (!application.shouldBeSkipped(templateFilePath)) {
             println('Generating csv view templates for entity "' + name.formatForDisplay + '"')
-            fsa.generateFile(templateFilePath, if (application.targets('1.3.x')) csvViewLegacy(appName) else csvView(appName))
+            fsa.generateFile(templateFilePath, csvView(appName))
         }
     }
-
-    def private csvViewLegacy(Entity it, String appName) '''
-        {* purpose of this template: «nameMultiple.formatForDisplay» view csv view *}
-        {«appName.formatForDB»TemplateHeaders contentType='text/comma-separated-values; charset=iso-8859-15' asAttachment=true fileName='«nameMultiple.formatForCodeCapital».csv'}
-        {strip}«FOR field : getDisplayFields.filter[name != 'workflowState'] SEPARATOR ';'»«field.headerLine»«ENDFOR»«IF geographical»«FOR geoFieldName : newArrayList('latitude', 'longitude')»;"{gt text='«geoFieldName.formatForDisplayCapital»'}"«ENDFOR»«ENDIF»«IF softDeleteable»;"{gt text='Deleted at'}"«ENDIF»;"{gt text='Workflow state'}"
-        «FOR relation : incoming.filter(OneToManyRelationship).filter[bidirectional]»«relation.headerLineRelation(false)»«ENDFOR»
-        «FOR relation : outgoing.filter(OneToOneRelationship)»«relation.headerLineRelation(true)»«ENDFOR»
-        «FOR relation : incoming.filter(ManyToManyRelationship).filter[bidirectional]»«relation.headerLineRelation(false)»«ENDFOR»
-        «FOR relation : outgoing.filter(OneToManyRelationship)»«relation.headerLineRelation(true)»«ENDFOR»
-        «FOR relation : outgoing.filter(ManyToManyRelationship)»«relation.headerLineRelation(true)»«ENDFOR»{/strip}
-        «val objName = name.formatForCode»
-        {foreach item='«objName»' from=$items}
-        {strip}
-            «FOR field : getDisplayFields.filter[e|e.name != 'workflowState'] SEPARATOR ';'»«field.displayEntry»«ENDFOR»«IF geographical»«FOR geoFieldName : newArrayList('latitude', 'longitude')»;"{$«name.formatForCode».«geoFieldName»|«appName.formatForDB»FormatGeoData}"«ENDFOR»«ENDIF»«IF softDeleteable»;"{$«name.formatForCode».deletedAt|dateformat:'datebrief'}"«ENDIF»;"{$«name.formatForCode».workflowState|«appName.formatForDB»ObjectState:false|lower}"
-            «FOR relation : incoming.filter(OneToManyRelationship).filter[bidirectional]»«relation.displayRelatedEntry(false)»«ENDFOR»
-            «FOR relation : outgoing.filter(OneToOneRelationship)»«relation.displayRelatedEntry(true)»«ENDFOR»
-            «FOR relation : incoming.filter(ManyToManyRelationship).filter[bidirectional]»«relation.displayRelatedEntries(false)»«ENDFOR»
-            «FOR relation : outgoing.filter(OneToManyRelationship)»«relation.displayRelatedEntries(true)»«ENDFOR»
-            «FOR relation : outgoing.filter(ManyToManyRelationship)»«relation.displayRelatedEntries(true)»«ENDFOR»
-        {/strip}
-        {/foreach}
-    '''
 
     def private csvView(Entity it, String appName) '''
         {# purpose of this template: «nameMultiple.formatForDisplay» view csv view #}
@@ -75,39 +51,31 @@ class Csv {
     '''
 
     def private headerLine(DerivedField it) '''
-        "«IF entity.application.targets('1.3.x')»{gt text='«name.formatForDisplayCapital»'}«ELSE»{{ __('«name.formatForDisplayCapital»') }}«ENDIF»"'''
+        "{{ __('«name.formatForDisplayCapital»') }}"'''
 
-    def private headerLineRelation(JoinRelationship it, Boolean useTarget) ''';"«IF application.targets('1.3.x')»{gt text='«getRelationAliasName(useTarget).formatForDisplayCapital»'}«ELSE»{{ __('«getRelationAliasName(useTarget).formatForDisplayCapital»') }}«ENDIF»"'''
+    def private headerLineRelation(JoinRelationship it, Boolean useTarget) ''';"{{ __('«getRelationAliasName(useTarget).formatForDisplayCapital»') }}"'''
 
     def private dispatch displayEntry(DerivedField it) '''
         "«fieldHelper.displayField(it, entity.name.formatForCode, 'viewcsv')»"'''
 
     def private dispatch displayEntry(BooleanField it) '''
-        "«IF entity.application.targets('1.3.x')»{if !$«entity.name.formatForCode».«name.formatForCode»}0{else}1{/if}«ELSE»{% if not «entity.name.formatForCode».«name.formatForCode» %}0{% else %}1{% endif %}«ENDIF»"'''
+        "{% if not «entity.name.formatForCode».«name.formatForCode» %}0{% else %}1{% endif %}"'''
 
     def private displayRelatedEntry(JoinRelationship it, Boolean useTarget) '''
         «val relationAliasName = getRelationAliasName(useTarget).formatForCode»
         «val mainEntity = (if (!useTarget) target else source)»
         «val relObjName = mainEntity.name.formatForCode + '.' + relationAliasName»
-        ;"«IF application.targets('1.3.x')»{if isset($«relObjName») && $«relObjName» ne null}{$«relObjName»->getTitleFromDisplayPattern()|default:''}{/if}«ELSE»{% if «relObjName»|default %}{{ «relObjName».getTitleFromDisplayPattern() }}{% endif %}«ENDIF»"'''
+        ;"{% if «relObjName»|default %}{{ «relObjName».getTitleFromDisplayPattern() }}{% endif %}"'''
 
     def private displayRelatedEntries(JoinRelationship it, Boolean useTarget) '''
         «val relationAliasName = getRelationAliasName(useTarget).formatForCode»
         «val mainEntity = (if (!useTarget) target else source)»
         «val relObjName = mainEntity.name.formatForCode + '.' + relationAliasName»
         ;"
-        «IF application.targets('1.3.x')»
-            {if isset($«relObjName») && $«relObjName» ne null}
-                {foreach name='relationLoop' item='relatedItem' from=$«relObjName»}
-                {$relatedItem->getTitleFromDisplayPattern()|default:''}{if !$smarty.foreach.relationLoop.last}, {/if}
-                {/foreach}
-            {/if}
-        «ELSE»
-            {% if «relObjName»|default %}
-                {% for relatedItem in «relObjName» %}
-                {{ relatedItem.getTitleFromDisplayPattern() }}{% if not loop.last %}, {% endif %}
-                {% endfor %}
-            {% endif %}
-        «ENDIF»
+        {% if «relObjName»|default %}
+            {% for relatedItem in «relObjName» %}
+            {{ relatedItem.getTitleFromDisplayPattern() }}{% if not loop.last %}, {% endif %}
+            {% endfor %}
+        {% endif %}
         "'''
 }

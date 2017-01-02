@@ -21,38 +21,36 @@ class ThirdParty {
 
     def generate(Application it, Boolean isBase) '''
         «val needsDetailContentType = generateDetailContentType && hasUserController && getMainUserController.hasActions('display')»
-        «IF !targets('1.3.x')»
-            «IF isBase»
-                /**
-                 * Makes our handlers known to the event system.
-                 */
-            «ELSE»
-                /**
-                 * {@inheritdoc}
-                 */
-            «ENDIF»
-            public static function getSubscribedEvents()
-            {
-                «IF isBase»
-                    return [
-                        «IF needsApproval && generatePendingContentSupport»
-                            'get.pending_content'                   => ['pendingContentListener', 5],
-                        «ENDIF»
-                        «IF generateListContentType || needsDetailContentType»
-                            'module.content.gettypes'               => ['contentGetTypes', 5],
-                        «ENDIF»
-                        «IF generateScribitePlugins»
-                            'module.scribite.editorhelpers'         => ['getEditorHelpers', 5],
-                            'moduleplugin.tinymce.externalplugins'  => ['getTinyMcePlugins', 5],
-                            'moduleplugin.ckeditor.externalplugins' => ['getCKEditorPlugins', 5]
-                        «ENDIF»
-                    ];
-                «ELSE»
-                    return parent::getSubscribedEvents();
-                «ENDIF»
-            }
-
+        «IF isBase»
+            /**
+             * Makes our handlers known to the event system.
+             */
+        «ELSE»
+            /**
+             * {@inheritdoc}
+             */
         «ENDIF»
+        public static function getSubscribedEvents()
+        {
+            «IF isBase»
+                return [
+                    «IF needsApproval && generatePendingContentSupport»
+                        'get.pending_content'                   => ['pendingContentListener', 5],
+                    «ENDIF»
+                    «IF generateListContentType || needsDetailContentType»
+                        'module.content.gettypes'               => ['contentGetTypes', 5],
+                    «ENDIF»
+                    «IF generateScribitePlugins»
+                        'module.scribite.editorhelpers'         => ['getEditorHelpers', 5],
+                        'moduleplugin.tinymce.externalplugins'  => ['getTinyMcePlugins', 5],
+                        'moduleplugin.ckeditor.externalplugins' => ['getCKEditorPlugins', 5]
+                    «ENDIF»
+                ];
+            «ELSE»
+                return parent::getSubscribedEvents();
+            «ENDIF»
+        }
+
         «IF needsApproval && generatePendingContentSupport»
             «pendingContentListener(isBase)»
         «ENDIF»
@@ -93,14 +91,14 @@ class ThirdParty {
          * assemped as a {@link Zikula_Provider_AggregateItem} and added to the event
          * subject's collection.
          *
-         * @param «IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance
+         * @param GenericEvent $event The event instance
          */
         «ELSE»
             /**
              * {@inheritdoc}
              */
         «ENDIF»
-        public «IF targets('1.3.x')»static «ENDIF»function pendingContentListener(«IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
+        public function pendingContentListener(GenericEvent $event)
         {
             «IF !isBase»
                 parent::pendingContentListener($event);
@@ -121,27 +119,23 @@ class ThirdParty {
             // was already registered before
         «ELSE»
             $serviceManager = ServiceUtil::getManager();
-            «IF targets('1.3.x')»
-                $workflowHelper = new «appName»_Util_Workflow($this->serviceManager);
-            «ELSE»
-                $workflowHelper = $serviceManager->get('«appService».workflow_helper');
-            «ENDIF»
+            $workflowHelper = $serviceManager->get('«appService».workflow_helper');
 
             $modname = '«appName»';
             $useJoins = false;
 
-            $collection = new «IF targets('1.3.x')»Zikula_Collection_«ENDIF»Container($modname);
+            $collection = new Container($modname);
             $amounts = $workflowHelper->collectAmountOfModerationItems();
             if (count($amounts) > 0) {
                 foreach ($amounts as $amountInfo) {
                     $aggregateType = $amountInfo['aggregateType'];
                     $description = $amountInfo['description'];
                     $amount = $amountInfo['amount'];
-                    $viewArgs = «IF targets('1.3.x')»array(«ELSE»[«ENDIF»
+                    $viewArgs = [
                         'ot' => $amountInfo['objectType'],
                         'workflowState' => $amountInfo['state']
-                    «IF targets('1.3.x')»)«ELSE»]«ENDIF»;
-                    $aggregateItem = new «IF targets('1.3.x')»Zikula_Provider_«ENDIF»AggregateItem($aggregateType, $description, $amount, 'admin', 'view', $viewArgs);
+                    ];
+                    $aggregateItem = new AggregateItem($aggregateType, $description, $amount, 'admin', 'view', $viewArgs);
                     $collection->add($aggregateItem);
                 }
 
@@ -162,14 +156,14 @@ class ThirdParty {
          * The subject is an instance of Content_Types.
          * You can register custom content types as well as custom layout types.
          *
-         * @param «IF !targets('1.3.x')»\«ENDIF»«/*IF targets('1.3.x')*/»Zikula_Event«/*ELSE»GenericEvent«ENDIF*/» $event The event instance
+         * @param \Zikula_Event $event The event instance
          */
         «ELSE»
             /**
              * {@inheritdoc}
              */
         «ENDIF»
-        public «IF targets('1.3.x')»static «ENDIF»function contentGetTypes(«IF !targets('1.3.x')»\«ENDIF»«/*IF targets('1.3.x')*/»Zikula_Event«/*ELSE»GenericEvent«ENDIF*/» $event)
+        public function contentGetTypes(\Zikula_Event $event)
         {
             «IF !isBase»
                 parent::contentGetTypes($event);
@@ -205,14 +199,14 @@ class ThirdParty {
          * This occurs when Scribite adds pagevars to the editor page.
          * «appName» will use this to add a javascript helper to add custom items.
          *
-         * @param «IF !targets('1.3.x')»\«ENDIF»«/*IF targets('1.3.x')*/»Zikula_Event«/*ELSE»GenericEvent«ENDIF*/» $event The event instance
+         * @param \Zikula_Event $event The event instance
          */
         «ELSE»
             /**
              * {@inheritdoc}
              */
         «ENDIF»
-        public «IF targets('1.3.x')»static «ENDIF»function getEditorHelpers(«IF !targets('1.3.x')»\«ENDIF»«/*IF targets('1.3.x')*/»Zikula_Event«/*ELSE»GenericEvent«ENDIF*/» $event)
+        public function getEditorHelpers(\Zikula_Event $event)
         {
             «IF !isBase»
                 parent::getEditorHelpers($event);
@@ -229,11 +223,11 @@ class ThirdParty {
         $helpers = $event->getSubject();
 
         $helpers->add(
-            «IF targets('1.3.x')»array(«ELSE»[«ENDIF»
+            [
                 'module' => '«appName»',
                 'type'   => 'javascript',
-                'path'   => '«rootFolder»/«IF targets('1.3.x')»«appName»/javascript/«ELSE»«if (systemModule) name.formatForCodeCapital else vendor.formatForCodeCapital + '/' + name.formatForCodeCapital»Module/«getAppJsPath»«ENDIF»«appName»«IF targets('1.3.x')»_f«ELSE».F«ENDIF»inder.js'
-            «IF targets('1.3.x')»)«ELSE»]«ENDIF»
+                'path'   => '«rootFolder»/«if (systemModule) name.formatForCodeCapital else vendor.formatForCodeCapital + '/' + name.formatForCodeCapital»Module/«getAppJsPath»«appName».Finder.js'
+            ]
         );
     '''
 
@@ -244,14 +238,14 @@ class ThirdParty {
          *
          * Adds external plugin to TinyMCE.
          *
-         * @param «IF !targets('1.3.x')»\«ENDIF»«/*IF targets('1.3.x')*/»Zikula_Event«/*ELSE»GenericEvent«ENDIF*/» $event The event instance
+         * @param \Zikula_Event $event The event instance
          */
         «ELSE»
             /**
              * {@inheritdoc}
              */
         «ENDIF»
-        public «IF targets('1.3.x')»static «ENDIF»function getTinyMcePlugins(«IF !targets('1.3.x')»\«ENDIF»«/*IF targets('1.3.x')*/»Zikula_Event«/*ELSE»GenericEvent«ENDIF*/» $event)
+        public function getTinyMcePlugins(\Zikula_Event $event)
         {
             «IF !isBase»
                 parent::getTinyMcePlugins($event);
@@ -268,10 +262,10 @@ class ThirdParty {
         $plugins = $event->getSubject();
 
         $plugins->add(
-            «IF targets('1.3.x')»array(«ELSE»[«ENDIF»
+            [
                 'name' => '«appName.formatForDB»',
-                'path' => '«rootFolder»/«IF targets('1.3.x')»«appName»/docs/«ELSE»«if (systemModule) name.formatForCodeCapital else vendor.formatForCodeCapital + '/' + name.formatForCodeCapital»Module/«getAppDocPath»«ENDIF»scribite/plugins/TinyMce/vendor/tinymce/plugins/«appName.formatForDB»/plugin.js'
-            «IF targets('1.3.x')»)«ELSE»]«ENDIF»
+                'path' => '«rootFolder»/«if (systemModule) name.formatForCodeCapital else vendor.formatForCodeCapital + '/' + name.formatForCodeCapital»Module/«getAppDocPath»scribite/plugins/TinyMce/vendor/tinymce/plugins/«appName.formatForDB»/plugin.js'
+            ]
         );
     '''
 
@@ -282,14 +276,14 @@ class ThirdParty {
          *
          * Adds external plugin to CKEditor.
          *
-         * @param «IF !targets('1.3.x')»\«ENDIF»«/*IF targets('1.3.x')*/»Zikula_Event«/*ELSE»GenericEvent«ENDIF*/» $event The event instance
+         * @param \Zikula_Event $event The event instance
          */
         «ELSE»
             /**
              * {@inheritdoc}
              */
         «ENDIF»
-        public «IF targets('1.3.x')»static «ENDIF»function getCKEditorPlugins(«IF !targets('1.3.x')»\«ENDIF»«/*IF targets('1.3.x')*/»Zikula_Event«/*ELSE»GenericEvent«ENDIF*/» $event)
+        public function getCKEditorPlugins(\Zikula_Event $event)
         {
             «IF !isBase»
                 parent::getCKEditorPlugins($event);
@@ -306,12 +300,12 @@ class ThirdParty {
         $plugins = $event->getSubject();
 
         $plugins->add(
-            «IF targets('1.3.x')»array(«ELSE»[«ENDIF»
+            [
                 'name' => '«appName.formatForDB»',
-                'path' => '«rootFolder»/«IF targets('1.3.x')»«appName»/docs/«ELSE»«if (systemModule) name.formatForCodeCapital else vendor.formatForCodeCapital + '/' + name.formatForCodeCapital»Module/«getAppDocPath»«ENDIF»scribite/plugins/CKEditor/vendor/ckeditor/plugins/«appName.formatForDB»/',
+                'path' => '«rootFolder»/«if (systemModule) name.formatForCodeCapital else vendor.formatForCodeCapital + '/' + name.formatForCodeCapital»Module/«getAppDocPath»scribite/plugins/CKEditor/vendor/ckeditor/plugins/«appName.formatForDB»/',
                 'file' => 'plugin.js',
                 'img'  => 'ed_«appName.formatForDB».gif'
-            «IF targets('1.3.x')»)«ELSE»]«ENDIF»
+            ]
         );
     '''
 }

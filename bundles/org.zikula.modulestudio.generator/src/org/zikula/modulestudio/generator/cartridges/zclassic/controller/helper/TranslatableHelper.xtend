@@ -1,4 +1,4 @@
-package org.zikula.modulestudio.generator.cartridges.zclassic.controller.util
+package org.zikula.modulestudio.generator.cartridges.zclassic.controller.helper
 
 import de.guite.modulestudio.metamodel.AbstractDateField
 import de.guite.modulestudio.metamodel.AbstractIntegerField
@@ -33,70 +33,65 @@ class TranslatableHelper {
      */
     def generate(Application it, IFileSystemAccess fsa) {
         println('Generating helper class for translatable entities')
-        val helperFolder = if (targets('1.3.x')) 'Util' else 'Helper'
-        generateClassPair(fsa, getAppSourceLibPath + helperFolder + '/Translatable' + (if (targets('1.3.x')) '' else 'Helper') + '.php',
+        generateClassPair(fsa, getAppSourceLibPath + 'Helper/TranslatableHelper.php',
             fh.phpFileContent(it, translatableFunctionsBaseImpl), fh.phpFileContent(it, translatableFunctionsImpl)
         )
     }
 
     def private translatableFunctionsBaseImpl(Application it) '''
-        «IF !targets('1.3.x')»
-            namespace «appNamespace»\Helper\Base;
+        namespace «appNamespace»\Helper\Base;
 
-            use Symfony\Component\DependencyInjection\ContainerBuilder;
-            use Symfony\Component\Form\FormInterface;
-            use Symfony\Component\HttpFoundation\Request;
-            use Symfony\Component\HttpFoundation\RequestStack;
-            use Zikula\Common\Translator\TranslatorInterface;
-            use Zikula\Core\Doctrine\EntityAccess;
-            use Zikula\ExtensionsModule\Api\VariableApi;
-            use ZLanguage;
+        use Symfony\Component\DependencyInjection\ContainerBuilder;
+        use Symfony\Component\Form\FormInterface;
+        use Symfony\Component\HttpFoundation\Request;
+        use Symfony\Component\HttpFoundation\RequestStack;
+        use Zikula\Common\Translator\TranslatorInterface;
+        use Zikula\Core\Doctrine\EntityAccess;
+        use Zikula\ExtensionsModule\Api\VariableApi;
+        use ZLanguage;
 
-        «ENDIF»
         /**
          * Helper base class for translatable methods.
          */
-        abstract class «IF targets('1.3.x')»«appName»_Util_Base_AbstractTranslatable extends Zikula_AbstractBase«ELSE»AbstractTranslatableHelper«ENDIF»
+        abstract class AbstractTranslatableHelper
         {
-            «IF !targets('1.3.x')»
-                /**
-                 * @var ContainerBuilder
-                 */
-                protected $container;
+            /**
+             * @var ContainerBuilder
+             */
+            protected $container;
 
-                /**
-                 * @var TranslatorInterface
-                 */
-                protected $translator;
+            /**
+             * @var TranslatorInterface
+             */
+            protected $translator;
 
-                /**
-                 * @var Request
-                 */
-                protected $request;
+            /**
+             * @var Request
+             */
+            protected $request;
 
-                /**
-                 * @var VariableApi
-                 */
-                protected $variableApi;
+            /**
+             * @var VariableApi
+             */
+            protected $variableApi;
 
-                /**
-                 * Constructor.
-                 * Initialises member vars.
-                 *
-                 * @param ContainerBuilder    $container    ContainerBuilder service instance
-                 * @param TranslatorInterface $translator   Translator service instance
-                 * @param RequestStack        $requestStack RequestStack service instance
-                 * @param VariableApi         $variableApi  VariableApi service instance
-                 */
-                public function __construct(ContainerBuilder $container, TranslatorInterface $translator, RequestStack $requestStack, VariableApi $variableApi)
-                {
-                    $this->container = $container;
-                    $this->translator = $translator;
-                    $this->request = $requestStack->getMasterRequest();
-                    $this->variableApi = $variableApi;
-                }
+            /**
+             * Constructor.
+             * Initialises member vars.
+             *
+             * @param ContainerBuilder    $container    ContainerBuilder service instance
+             * @param TranslatorInterface $translator   Translator service instance
+             * @param RequestStack        $requestStack RequestStack service instance
+             * @param VariableApi         $variableApi  VariableApi service instance
+             */
+            public function __construct(ContainerBuilder $container, TranslatorInterface $translator, RequestStack $requestStack, VariableApi $variableApi)
+            {
+                $this->container = $container;
+                $this->translator = $translator;
+                $this->request = $requestStack->getMasterRequest();
+                $this->variableApi = $variableApi;
+            }
 
-            «ENDIF»
             «getTranslatableFieldsImpl»
 
             «getCurrentLanguage»
@@ -121,7 +116,7 @@ class TranslatableHelper {
          */
         public function getTranslatableFields($objectType)
         {
-            $fields = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»;
+            $fields = [];
             switch ($objectType) {
                 «FOR entity : getTranslatableEntities»
                     «entity.translatableFieldList»
@@ -140,11 +135,7 @@ class TranslatableHelper {
          */
         public function getCurrentLanguage()
         {
-            «IF targets('1.3.x')»
-                return ZLanguage::getLanguageCode();
-            «ELSE»
-                return $this->request->getLocale();
-            «ENDIF»
+            return $this->request->getLocale();
         }
     '''
 
@@ -158,16 +149,12 @@ class TranslatableHelper {
          */
         public function getSupportedLanguages($objectType)
         {
-            if («IF targets('1.3.x')»System::getVar(«ELSE»$this->variableApi->getSystemVar(«ENDIF»'multilingual')) {
+            if ($this->variableApi->getSystemVar('multilingual')) {
                 return ZLanguage::getInstalledLanguages();
             }
 
             // if multi language is disabled use only the current language
-            «IF targets('1.3.x')»
-                return array($this->getCurrentLanguage());
-            «ELSE»
-                return [$this->getCurrentLanguage()];
-            «ENDIF»
+            return [$this->getCurrentLanguage()];
         }
     '''
 
@@ -177,14 +164,14 @@ class TranslatableHelper {
          * This ensures easy compatibility to the Forms plugins where it
          * it is not possible yet to define sub arrays in the group attribute.
          *
-         * @param string«IF targets('1.3.x')»       «ENDIF»       $objectType The currently treated object type
-         * @param «IF targets('1.3.x')»Zikula_«ENDIF»EntityAccess $entity     The entity being edited
+         * @param string       $objectType The currently treated object type
+         * @param EntityAccess $entity     The entity being edited
          *
          * @return array collected translations having the language codes as keys
          */
         public function prepareEntityForEditing($objectType, $entity)
         {
-            $translations = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»;
+            $translations = [];
 
             // check arguments
             if (!$objectType || !$entity) {
@@ -197,23 +184,15 @@ class TranslatableHelper {
                 return $translations;
             }
 
-            if («IF targets('1.3.x')»System::getVar(«ELSE»$this->variableApi->getSystemVar(«ENDIF»'multilingual') != 1) {
+            if ($this->variableApi->getSystemVar('multilingual') != 1) {
                 // Translatable extension did already fetch current translation
                 return $translations;
             }
 
             // prepare form data to edit multiple translations at once
-            «IF targets('1.3.x')»
-                $entityManager = $this->serviceManager->getService('«entityManagerService»');
-            «ENDIF»
 
             // get translations
-            «IF targets('1.3.x')»
-                $entityClass = '«appName»_Entity_' . ucfirst($objectType) . 'Translation';
-                $repository = $entityManager->getRepository($entityClass);
-            «ELSE»
-                $repository = $this->container->get('«appService».' . $objectType . '_factory')->getRepository();
-            «ENDIF»
+            $repository = $this->container->get('«appService».' . $objectType . '_factory')->getRepository();
             $entityTranslations = $repository->findTranslations($entity);
 
             $supportedLanguages = $this->getSupportedLanguages($objectType);
@@ -223,7 +202,7 @@ class TranslatableHelper {
                     // Translatable extension did already fetch current translation
                     continue;
                 }
-                $translationData = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»;
+                $translationData = [];
                 foreach ($fields as $field) {
                     $translationData[$field['name'] . $language] = isset($entityTranslations[$language]) ? $entityTranslations[$language][$field['name']] : $field['default'];
                 }
@@ -241,21 +220,17 @@ class TranslatableHelper {
          * This ensures easy compatibility to the Forms plugins where it
          * it is not possible yet to define sub arrays in the group attribute.
          *
-         * @param string              $objectType The currently treated object type
-         * @param Zikula_EntityAccess $entity     The entity being edited
-         «IF targets('1.3.x')»
-         * @param array               $formData   Form data containing translations
-         «ELSE»
-         * @param FormInterface       $form       Form containing translations
-         «ENDIF»
+         * @param string        $objectType The currently treated object type
+         * @param EntityAccess  $entity     The entity being edited
+         * @param FormInterface $form       Form containing translations
          *
          * @return array collected translations having the language codes as keys
          */
-        public function processEntityAfterEditing($objectType, $entity, $form«IF targets('1.3.x')»Data«ENDIF»)
+        public function processEntityAfterEditing($objectType, $entity, $form)
         {
-            $translations = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»;
+            $translations = [];
             // check arguments
-            if (!$objectType«IF targets('1.3.x')» || !is_array($formData)«ENDIF») {
+            if (!$objectType) {
                 return $translations;
             }
 
@@ -265,7 +240,7 @@ class TranslatableHelper {
             }
 
             $useOnlyCurrentLanguage = true;
-            if («IF targets('1.3.x')»System::getVar(«ELSE»$this->variableApi->getSystemVar(«ENDIF»'multilingual') == 1) {
+            if ($this->variableApi->getSystemVar('multilingual') == 1) {
                 $useOnlyCurrentLanguage = false;
                 $supportedLanguages = $this->getSupportedLanguages($objectType);
                 $currentLanguage = $this->getCurrentLanguage();
@@ -274,13 +249,9 @@ class TranslatableHelper {
                         // skip current language as this is not treated as translation on controller level
                         continue;
                     }
-                    $translations[$language] = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»;
+                    $translations[$language] = [];
                     $translationKey = strtolower($objectType) . $language;
-                    «IF targets('1.3.x')»
-                        $translationData = $formData[$translationKey];
-                    «ELSE»
-                        $translationData = isset($form[$translationKey]) && $form[$translationKey]->getData();
-                    «ENDIF»
+                    $translationData = isset($form[$translationKey]) && $form[$translationKey]->getData();
                     foreach ($fields as $field) {
                         $translations[$language][$field['name']] = isset($translationData[$field['name'] . $language]) ? $translationData[$field['name'] . $language] : '';
                         unset($formData[$field['name'] . $language]);
@@ -289,7 +260,7 @@ class TranslatableHelper {
             }
             if (true === $useOnlyCurrentLanguage) {
                 $language = $this->getCurrentLanguage();
-                $translations[$language] = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»;
+                $translations[$language] = [];
                 foreach ($fields as $field) {
                     $translations[$language][$field['name']] = isset($entity[$field['name']]) ? $entity[$field['name']] : '';
                 }
@@ -301,9 +272,9 @@ class TranslatableHelper {
 
     def private translatableFieldList(Entity it) '''
             case '«name.formatForCode»':
-                $fields = «IF application.targets('1.3.x')»array(«ELSE»[«ENDIF»
+                $fields = [
                     «translatableFieldDefinition»
-                «IF application.targets('1.3.x')»)«ELSE»]«ENDIF»;
+                ];
                 break;
     '''
 
@@ -311,20 +282,20 @@ class TranslatableHelper {
         «FOR field : getTranslatableFields SEPARATOR ','»«field.translatableFieldDefinition»«ENDFOR»
 «/* TODO no slug input element yet, see https://github.com/Atlantic18/DoctrineExtensions/issues/140
 «IF hasTranslatableSlug»,
-                    «IF application.targets('1.3.x')»array(«ELSE»[«ENDIF»
+                    [
                         'name' => 'slug',
                         'default' => ''
-                    «IF application.targets('1.3.x')»)«ELSE»]«ENDIF»
+                    ]
 «ENDIF»*/»
     '''
 
     def private translatableFieldDefinition(EntityField it) {
         switch it {
             BooleanField: '''
-                    «IF entity.application.targets('1.3.x')»array(«ELSE»[«ENDIF»
+                    [
                         'name' => '«name»',
                         'default' => «IF null !== it.defaultValue && it.defaultValue != ''»«(it.defaultValue == 'true').displayBool»«ELSE»false«ENDIF»
-                    «IF entity.application.targets('1.3.x')»)«ELSE»]«ENDIF»'''
+                    ]'''
             AbstractIntegerField: translatableFieldDefinitionNumeric
             DecimalField: translatableFieldDefinitionNumeric
             FloatField: translatableFieldDefinitionNumeric
@@ -332,50 +303,44 @@ class TranslatableHelper {
             ArrayField: translatableFieldDefinitionNoDefault
             ObjectField: translatableFieldDefinitionNoDefault
             AbstractDateField: '''
-                    «IF entity.application.targets('1.3.x')»array(«ELSE»[«ENDIF»
+                    [
                         'name' => '«name»',
                         'default' => '«IF null !== it.defaultValue && it.defaultValue != ''»«it.defaultValue»«ENDIF»'
-                    «IF entity.application.targets('1.3.x')»)«ELSE»]«ENDIF»'''
+                    ]'''
             DerivedField: '''
-                    «IF entity.application.targets('1.3.x')»array(«ELSE»[«ENDIF»
+                    [
                         'name' => '«name»',
-                        'default' => $this«IF !entity.application.targets('1.3.x')»->translator«ENDIF»->__('«IF null !== it.defaultValue && it.defaultValue != ''»«it.defaultValue»«ELSE»«name.formatForDisplayCapital»«ENDIF»')
-                    «IF entity.application.targets('1.3.x')»)«ELSE»]«ENDIF»'''
+                        'default' => $this->translator->__('«IF null !== it.defaultValue && it.defaultValue != ''»«it.defaultValue»«ELSE»«name.formatForDisplayCapital»«ENDIF»')
+                    ]'''
             CalculatedField: '''
-                    «IF entity.application.targets('1.3.x')»array(«ELSE»[«ENDIF»
+                    [
                         'name' => '«name»',
-                        'default' => $this«IF !entity.application.targets('1.3.x')»->translator«ENDIF»->__('«name.formatForDisplayCapital»')
-                    «IF entity.application.targets('1.3.x')»)«ELSE»]«ENDIF»'''
+                        'default' => $this->translator->__('«name.formatForDisplayCapital»')
+                    ]'''
         }
     }
 
     def private translatableFieldDefinitionNumeric(DerivedField it) '''
-                    «IF entity.application.targets('1.3.x')»array(«ELSE»[«ENDIF»
+                    [
                         'name' => '«name»',
                         'default' => 0
-                    «IF entity.application.targets('1.3.x')»)«ELSE»]«ENDIF»'''
+                    ]'''
 
     def private translatableFieldDefinitionNoDefault(DerivedField it) '''
-                    «IF entity.application.targets('1.3.x')»array(«ELSE»[«ENDIF»
+                    [
                         'name' => '«name»',
                         'default' => ''
-                    «IF entity.application.targets('1.3.x')»)«ELSE»]«ENDIF»'''
+                    ]'''
 
     def private translatableFunctionsImpl(Application it) '''
-        «IF !targets('1.3.x')»
-            namespace «appNamespace»\Helper;
+        namespace «appNamespace»\Helper;
 
-            use «appNamespace»\Helper\Base\AbstractTranslatableHelper;
+        use «appNamespace»\Helper\Base\AbstractTranslatableHelper;
 
-        «ENDIF»
         /**
          * Helper implementation class for translatable methods.
          */
-        «IF targets('1.3.x')»
-        class «appName»_Util_Translatable extends «appName»_Util_Base_AbstractTranslatable
-        «ELSE»
         class TranslatableHelper extends AbstractTranslatableHelper
-        «ENDIF»
         {
             // feel free to add your own convenience methods here
         }

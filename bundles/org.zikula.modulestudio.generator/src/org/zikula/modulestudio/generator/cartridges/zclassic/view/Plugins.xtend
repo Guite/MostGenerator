@@ -1,11 +1,8 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.view
 
 import de.guite.modulestudio.metamodel.Application
-import de.guite.modulestudio.metamodel.DateField
-import de.guite.modulestudio.metamodel.TimeField
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
-import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.ActionUrl
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.FormatGeoData
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.FormatIcalText
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.GetCountryName
@@ -14,24 +11,10 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.GetList
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.ModerationObjects
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.ObjectState
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.ObjectTypeSelector
-import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.TemplateHeaders
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.TemplateSelector
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.TreeData
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.TreeSelection
-import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.ValidationError
-import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.form.AbstractObjectSelector
-import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.form.ColourInput
-import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.form.CountrySelector
-import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.form.DateInput
-import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.form.Frame
-import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.form.GeoInput
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.form.ItemSelector
-import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.form.RelationSelectorAutoComplete
-import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.form.RelationSelectorList
-import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.form.TimeInput
-import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.form.TreeSelector
-import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.form.UserInput
-import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
@@ -40,7 +23,7 @@ import org.zikula.modulestudio.generator.extensions.Utils
 import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
 
 class Plugins {
-    extension ControllerExtensions = new ControllerExtensions
+
     extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     extension ModelExtensions = new ModelExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
@@ -52,46 +35,31 @@ class Plugins {
 
     def generate(Application it, IFileSystemAccess fsa) {
         this.fsa = fsa
-        if (!targets('1.3.x')) {
-            println('Generating Twig extension class')
-            val fh = new FileHelper
-            val twigFolder = 'Twig'
-            generateClassPair(fsa, getAppSourceLibPath + twigFolder + '/TwigExtension.php',
-                fh.phpFileContent(it, twigExtensionBaseImpl), fh.phpFileContent(it, twigExtensionImpl)
-            )
-        } else {
-            generateInternal
-        }
+        println('Generating Twig extension class')
+        val fh = new FileHelper
+        val twigFolder = 'Twig'
+        generateClassPair(fsa, getAppSourceLibPath + twigFolder + '/TwigExtension.php',
+            fh.phpFileContent(it, twigExtensionBaseImpl), fh.phpFileContent(it, twigExtensionImpl)
+        )
     }
 
     def generateInternal(Application it) {
         val result = newArrayList
         result += viewPlugins
-        if (targets('1.3.x')) {
-            if (hasEditActions || needsConfig) {
-                new Frame().generate(it, fsa)
-            }
-        } else {
-            // content type editing is not ready for Twig yet
-            if (generateListContentType || generateDetailContentType) {
-                new ObjectTypeSelector().generate(it, fsa, true)
-            }
-            if (generateListContentType) {
-                new TemplateSelector().generate(it, fsa, true)
-            }
-            if (generateDetailContentType) {
-                new ItemSelector().generate(it, fsa)
-            }
+        // content type editing is not ready for Twig yet
+        if (generateListContentType || generateDetailContentType) {
+            new ObjectTypeSelector().generate(it, fsa, true)
         }
-        if (hasEditActions && targets('1.3.x')) {
-            editPlugins
-            new ValidationError().generate(it, fsa)
+        if (generateListContentType) {
+            new TemplateSelector().generate(it, fsa, true)
+        }
+        if (generateDetailContentType) {
+            new ItemSelector().generate(it, fsa)
         }
         result += otherPlugins
         result.join("\n\n")
     }
 
-    // 1.4.x only
     def private twigExtensionBaseImpl(Application it) '''
         namespace «appNamespace»\Twig\Base;
 
@@ -123,7 +91,6 @@ class Plugins {
         }
     '''
 
-    // 1.4.x only
     def private twigExtensionBody(Application it) '''
         «val appNameLower = appName.toLowerCase»
         use TranslatorTrait;
@@ -269,7 +236,6 @@ class Plugins {
         «twigExtensionCompat»
     '''
 
-    // 1.4.x only
     def private twigExtensionCompat(Application it) '''
         /**
          * Returns the value of a user variable.
@@ -327,7 +293,6 @@ class Plugins {
         }
     '''
 
-    // 1.4.x only
     def private twigExtensionImpl(Application it) '''
         namespace «appNamespace»\Twig;
 
@@ -344,13 +309,7 @@ class Plugins {
 
     def private viewPlugins(Application it) {
         val result = newArrayList
-        if (targets('1.3.x')) {
-            result += new ActionUrl().generate(it, fsa)
-        }
         result += new ObjectState().generate(it, fsa)
-        if (targets('1.3.x')) {
-            result += new TemplateHeaders().generate(it, fsa)
-        }
         if (hasCountryFields) {
             result += new GetCountryName().generate(it, fsa)
         }
@@ -374,43 +333,6 @@ class Plugins {
             result += new FormatIcalText().generate(it, fsa)
         }
         result.join("\n\n")
-    }
-
-    def private editPlugins(Application it) {
-        if (!targets('1.3.x')) {
-            return
-        }
-
-        if (hasColourFields) {
-            new ColourInput().generate(it, fsa)
-        }
-        if (hasCountryFields) {
-            new CountrySelector().generate(it, fsa)
-        }
-        if (hasGeographical) {
-            new GeoInput().generate(it, fsa)
-        }
-        if (!entities.filter[!fields.filter(DateField).empty].empty) {
-            new DateInput().generate(it, fsa)
-        }
-        if (!entities.filter[!fields.filter(TimeField).empty].empty) {
-            new TimeInput().generate(it, fsa)
-        }
-
-        val hasRelations = !relations.empty
-        if (hasTrees || hasRelations) {
-            new AbstractObjectSelector().generate(it, fsa)
-        }
-        if (hasTrees) {
-            new TreeSelector().generate(it, fsa)
-        }
-        if (hasRelations) {
-            new RelationSelectorList().generate(it, fsa)
-            new RelationSelectorAutoComplete().generate(it, fsa)
-        }
-        if (hasUserFields) {
-            new UserInput().generate(it, fsa)
-        }
     }
 
     def private otherPlugins(Application it) {

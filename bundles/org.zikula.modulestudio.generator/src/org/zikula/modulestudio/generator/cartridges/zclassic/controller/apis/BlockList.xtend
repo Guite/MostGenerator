@@ -22,31 +22,27 @@ class BlockList {
 
     def generate(Application it, IFileSystemAccess fsa) {
         println('Generating block for multiple objects')
-        generateClassPair(fsa, getAppSourceLibPath + 'Block/ItemList' + (if (targets('1.3.x')) '' else 'Block') + '.php',
+        generateClassPair(fsa, getAppSourceLibPath + 'Block/ItemListBlock.php',
             fh.phpFileContent(it, listBlockBaseClass), fh.phpFileContent(it, listBlockImpl)
         )
         new BlocksView().generate(it, fsa)
-        if (!targets('1.3.x')) {
-            // form type class
-            new ListBlock().generate(it, fsa)
-        }
+        // form type class
+        new ListBlock().generate(it, fsa)
     }
 
     def private listBlockBaseClass(Application it) '''
-        «IF !targets('1.3.x')»
-            namespace «appNamespace»\Block\Base;
+        namespace «appNamespace»\Block\Base;
 
-            use Zikula\BlocksModule\AbstractBlockHandler;
-            use Zikula\Core\AbstractBundle;
-            «IF hasCategorisableEntities»
-                use «appNamespace»\Helper\FeatureActivationHelper;
-            «ENDIF»
-
+        use Zikula\BlocksModule\AbstractBlockHandler;
+        use Zikula\Core\AbstractBundle;
+        «IF hasCategorisableEntities»
+            use «appNamespace»\Helper\FeatureActivationHelper;
         «ENDIF»
+
         /**
          * Generic item list block base class.
          */
-        abstract class «IF targets('1.3.x')»«appName»_Block_Base_AbstractItemList extends Zikula_Controller_AbstractBlock«ELSE»AbstractItemListBlock extends AbstractBlockHandler«ENDIF»
+        abstract class AbstractItemListBlock extends AbstractBlockHandler
         {
             «listBlockBaseImpl»
         }
@@ -62,12 +58,7 @@ class BlockList {
             protected $categorisableObjectTypes;
 
         «ENDIF»
-        «IF targets('1.3.x')»
-            «init»
-
-            «info»
-
-        «ELSEIF hasCategorisableEntities»
+        «IF hasCategorisableEntities»
             /**
              * Constructor.
              *
@@ -91,10 +82,6 @@ class BlockList {
 
         «modify»
 
-        «IF targets('1.3.x')»
-            «update»
-
-        «ENDIF»
         /**
          * Returns default settings for this block.
          *
@@ -102,14 +89,14 @@ class BlockList {
          */
         protected function getDefaults()
         {
-            $defaults = «IF targets('1.3.x')»array(«ELSE»[«ENDIF»
+            $defaults = [
                 'objectType' => '«getLeadingEntity.name.formatForCode»',
                 'sorting' => 'default',
                 'amount' => 5,
-                'template' => 'itemlist_display.«IF targets('1.3.x')»tpl«ELSE»html.twig«ENDIF»',
+                'template' => 'itemlist_display.html.twig',
                 'customTemplate' => '',
                 'filter' => ''
-            «IF targets('1.3.x')»)«ELSE»]«ENDIF»;
+            ];
 
             return $defaults;
         }
@@ -126,20 +113,9 @@ class BlockList {
             protected function resolveCategoryIds(array $properties)
             {
                 if (!isset($properties['catIds'])) {
-                    «IF targets('1.3.x')»
-                        $primaryRegistry = ModUtil::apiFunc('«appName»', 'category', 'getPrimaryProperty', array('ot' => $properties['objectType']));
-                    «ELSE»
-                        $categoryHelper = $this->get('«appService».category_helper');
-                        $primaryRegistry = $categoryHelper->getPrimaryProperty($properties['objectType']);
-                    «ENDIF»
-                    $properties['catIds'] = «IF targets('1.3.x')»array(«ELSE»[«ENDIF»$primaryRegistry => «IF targets('1.3.x')»array())«ELSE»[]]«ENDIF»;
-                    «IF targets('1.3.x')»
-                        // backwards compatibility
-                        if (isset($properties['catId'])) {
-                            $properties['catIds'][$primaryRegistry][] = $properties['catId'];
-                            unset($properties['catId']);
-                        }
-                    «ENDIF»
+                    $categoryHelper = $this->get('«appService».category_helper');
+                    $primaryRegistry = $categoryHelper->getPrimaryProperty($properties['objectType']);
+                    $properties['catIds'] = [$primaryRegistry => []];
                 } elseif (!is_array($properties['catIds'])) {
                     $properties['catIds'] = explode(',', $properties['catIds']);
                 }
@@ -149,148 +125,41 @@ class BlockList {
         «ENDIF»
     '''
 
-    // 1.3.x only
-    def private init(Application it) '''
-        /**
-         * Initialise the block.
-         */
-        public function init()
-        {
-            //SecurityUtil::registerPermissionSchema('«appName»:ItemListBlock:', 'Block title::');
-            «IF hasCategorisableEntities»
-
-                $this->categorisableObjectTypes = array(«FOR entity : getCategorisableEntities SEPARATOR ', '»'«entity.name.formatForCode»'«ENDFOR»);
-            «ENDIF»
-        }
-    '''
-
-    // 1.3.x only
-    def private info(Application it) '''
-        /**
-         * Get information on the block.
-         *
-         * @return array The block information
-         */
-        public function info()
-        {
-            $requirementMessage = '';
-            // check if the module is available at all
-            if (!ModUtil::available('«appName»')) {
-                $requirementMessage .= $this->__('Notice: This block will not be displayed until you activate the «appName» module.');
-            }
-
-            return array(
-                'module'          => '«appName»',
-                'text_type'       => $this->__('«appName» list view'),
-                'text_type_long'  => $this->__('Display list of «appName» objects.'),
-                'allow_multiple'  => true,
-                'form_content'    => false,
-                'form_refresh'    => false,
-                'show_preview'    => true,
-                'admin_tableless' => true,
-                'requirement'     => $requirementMessage
-            );
-        }
-    '''
-
     def private display(Application it) '''
         /**
          * Display the block content.
          *
-        «IF targets('1.3.x')»
-            «' '»* @param array $blockinfo the blockinfo structure
-            «' '»*
-            «' '»* @return string output of the rendered block
-        «ELSE»
-            «' '»* @param array $properties The block properties array
-            «' '»*
-            «' '»* @return array|string
-        «ENDIF»
+         * @param array $properties The block properties array
+         *
+         * @return array|string
          */
-        public function display(«IF targets('1.3.x')»$blockinfo«ELSE»array $properties«ENDIF»)
+        public function display(array $properties)
         {
             // only show block content if the user has the required permissions
-            «IF targets('1.3.x')»
-                if (!SecurityUtil::checkPermission('«appName»:ItemListBlock:', "$blockinfo[title]::", ACCESS_OVERVIEW)) {
-                    return false;
-                }
-            «ELSE»
-                if (!$this->hasPermission('«appName»:ItemListBlock:', "$properties[title]::", ACCESS_OVERVIEW)) {
-                    return false;
-                }
-            «ENDIF»
-            «IF targets('1.3.x')»
-
-                // check if the module is available at all
-                if (!ModUtil::available('«appName»')) {
-                    return false;
-                }
-
-                // get current block content
-                $properties = BlockUtil::varsFromContent($blockinfo['content']);
-                $properties['bid'] = $blockinfo['bid'];
-            «ENDIF»
+            if (!$this->hasPermission('«appName»:ItemListBlock:', "$properties[title]::", ACCESS_OVERVIEW)) {
+                return false;
+            }
 
             // set default values for all params which are not properly set
             $defaults = $this->getDefaults();
             $properties = array_merge($defaults, $properties);
             «IF hasCategorisableEntities»
 
-                «IF targets('1.3.x')»
+                $featureActivationHelper = $this->get('«appService».feature_activation_helper');
+                if ($featureActivationHelper->isEnabled(FeatureActivationHelper::CATEGORIES, $properties['objectType'])) {
                     $properties = $this->resolveCategoryIds($properties);
-                «ELSE»
-                    $featureActivationHelper = $this->get('«appService».feature_activation_helper');
-                    if ($featureActivationHelper->isEnabled(FeatureActivationHelper::CATEGORIES, $properties['objectType'])) {
-                        $properties = $this->resolveCategoryIds($properties);
-                    }
-                «ENDIF»
+                }
             «ENDIF»
 
-            «IF targets('1.3.x')»
-                ModUtil::initOOModule('«appName»');
-
-                $controllerHelper = new «appName»_Util_Controller($this->serviceManager);
-            «ELSE»
-                $controllerHelper = $this->get('«appService».controller_helper');
-            «ENDIF»
-            $utilArgs = «IF targets('1.3.x')»array(«ELSE»[«ENDIF»'name' => 'list'«IF targets('1.3.x')»)«ELSE»]«ENDIF»;
+            $controllerHelper = $this->get('«appService».controller_helper');
+            $utilArgs = ['name' => 'list'];
             if (!isset($properties['objectType']) || !in_array($properties['objectType'], $controllerHelper->getObjectTypes('block', $utilArgs))) {
                 $properties['objectType'] = $controllerHelper->getDefaultObjectType('block', $utilArgs);
             }
 
             $objectType = $properties['objectType'];
 
-            «IF targets('1.3.x')»
-                $entityClass = '«appName»_Entity_' . ucfirst($objectType);
-                $entityManager = $this->serviceManager->get«IF targets('1.3.x')»Service«ENDIF»('«entityManagerService»');
-                $repository = $entityManager->getRepository($entityClass);
-            «ELSE»
-                $repository = $this->get('«appService».' . $objectType . '_factory')->getRepository();
-            «ENDIF»
-
-            «IF targets('1.3.x')»
-                $this->view->setCaching(Zikula_View::CACHE_ENABLED);
-                // set cache id
-                $component = '«appName»:' . ucfirst($objectType) . ':';
-                $instance = '::';
-                $accessLevel = ACCESS_READ;
-                if (SecurityUtil::checkPermission($component, $instance, ACCESS_COMMENT)) {
-                    $accessLevel = ACCESS_COMMENT;
-                }
-                if (SecurityUtil::checkPermission($component, $instance, ACCESS_EDIT)) {
-                    $accessLevel = ACCESS_EDIT;
-                }
-                $this->view->setCacheId('view|ot_' . $objectType . '_sort_' . $properties['sorting'] . '_amount_' . $properties['amount'] . '_' . $accessLevel);
-
-                $template = $this->getDisplayTemplate($properties);
-
-                // if page is cached return cached content
-                if ($this->view->is_cached($template)) {
-                    $blockinfo['content'] = $this->view->fetch($template);
-
-                    return BlockUtil::themeBlock($blockinfo);
-                }
-            «ENDIF»
+            $repository = $this->get('«appService».' . $objectType . '_factory')->getRepository();
 
             // create query
             $where = $properties['filter'];
@@ -301,99 +170,58 @@ class BlockList {
                 // fetch category registries
                 $catProperties = null;
                 if (in_array($objectType, $this->categorisableObjectTypes)) {
-                    «IF targets('1.3.x')»
-                        $catProperties = ModUtil::apiFunc('«appName»', 'category', 'getAllProperties', array('ot' => $objectType));
+                    if ($featureActivationHelper->isEnabled(FeatureActivationHelper::CATEGORIES, $properties['objectType'])) {
+                        $categoryHelper = $this->get('«appService».category_helper');
+                        $catProperties = $categoryHelper->getAllProperties($objectType);
                         // apply category filters
                         if (is_array($properties['catIds']) && count($properties['catIds']) > 0) {
-                            $qb = ModUtil::apiFunc('«appName»', 'category', 'buildFilterClauses', array('qb' => $qb, 'ot' => $objectType, 'catids' => $properties['catIds']));
+                            $qb = $categoryHelper->buildFilterClauses($qb, $objectType, $properties['catIds']);
                         }
-                    «ELSE»
-                        if ($featureActivationHelper->isEnabled(FeatureActivationHelper::CATEGORIES, $properties['objectType'])) {
-                            $categoryHelper = $this->get('«appService».category_helper');
-                            $catProperties = $categoryHelper->getAllProperties($objectType);
-                            // apply category filters
-                            if (is_array($properties['catIds']) && count($properties['catIds']) > 0) {
-                                $qb = $categoryHelper->buildFilterClauses($qb, $objectType, $properties['catIds']);
-                            }
-                        }
-                    «ENDIF»
+                    }
                 }
             «ENDIF»
 
             // get objects from database
             $currentPage = 1;
             $resultsPerPage = $properties['amount'];
-            list($query, $count) = $repository->getSelectWherePaginatedQuery($qb, $currentPage, $resultsPerPage);
-            «IF targets('1.3.x')»$entities«ELSE»list($entities, $objectCount)«ENDIF» = $repository->retrieveCollectionResult($query, $orderBy, true);
+            $query = $repository->getSelectWherePaginatedQuery($qb, $currentPage, $resultsPerPage);
+            list($entities, $objectCount) = $repository->retrieveCollectionResult($query, $orderBy, true);
             «IF hasCategorisableEntities»
 
-                «IF !targets('1.3.x')»
                 if ($featureActivationHelper->isEnabled(FeatureActivationHelper::CATEGORIES, $objectType)) {
-                «ENDIF»
-                $filteredEntities = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»;
-                foreach ($entities as $entity) {
-                    «IF !targets('1.3.x')»
+                    $filteredEntities = [];
+                    foreach ($entities as $entity) {
                         if ($this->get('«appService».category_helper')->hasPermission($entity)) {
                             $filteredEntities[] = $entity;
                         }
-                    «ELSE»
-                        if (ModUtil::apiFunc($this->name, 'category', 'hasPermission', array('entity' => $entity))) {
-                            $filteredEntities[] = $entity;
-                        }
-                    «ENDIF»
-                }
-                $entities = $filteredEntities;
-                «IF !targets('1.3.x')»
-                }
-                «ENDIF»
-            «ENDIF»
-
-            «IF targets('1.3.x')»
-                // assign block vars and fetched data
-                $this->view->assign('vars', $properties)
-                           ->assign('objectType', $objectType)
-                           ->assign('items', $entities)
-                           ->assign($repository->getAdditionalTemplateParameters('block'));
-                «IF hasCategorisableEntities»
-
-                    // assign category registries
-                    $this->view->assign('properties', $catProperties);
-                «ENDIF»
-
-                // set a block title
-                if (empty($blockinfo['title'])) {
-                    $blockinfo['title'] = $this->__('«appName» items');
-                }
-
-                $blockinfo['content'] = $this->view->fetch($template);
-
-                // return the block to the theme
-                return BlockUtil::themeBlock($blockinfo);
-            «ELSE»
-                // set a block title
-                if (empty($properties['title'])) {
-                    $properties['title'] = $this->__('«appName» items');
-                }
-
-                $template = $this->getDisplayTemplate($properties);
-
-                $templateParameters = [
-                    'vars' => $properties,
-                    'objectType' => $objectType,
-                    'items' => $entities
-                ];
-                «IF hasCategorisableEntities»
-                    if ($featureActivationHelper->isEnabled(FeatureActivationHelper::CATEGORIES, $properties['objectType'])) {
-                        $templateParameters['properties'] = $properties;
                     }
-                «ENDIF»
-                «IF hasUploads»
-                    $imageHelper = $this->get('«appService».image_helper');
-                «ENDIF»
-                $templateParameters = array_merge($templateParameters, $repository->getAdditionalTemplateParameters(«IF hasUploads»$imageHelper, «ENDIF»'block'));
-
-                return $this->renderView($template, $templateParameters);
+                    $entities = $filteredEntities;
+                }
             «ENDIF»
+
+            // set a block title
+            if (empty($properties['title'])) {
+                $properties['title'] = $this->__('«appName» items');
+            }
+
+            $template = $this->getDisplayTemplate($properties);
+
+            $templateParameters = [
+                'vars' => $properties,
+                'objectType' => $objectType,
+                'items' => $entities
+            ];
+            «IF hasCategorisableEntities»
+                if ($featureActivationHelper->isEnabled(FeatureActivationHelper::CATEGORIES, $properties['objectType'])) {
+                    $templateParameters['properties'] = $properties;
+                }
+            «ENDIF»
+            «IF hasUploads»
+                $imageHelper = $this->get('«appService».image_helper');
+            «ENDIF»
+            $templateParameters = array_merge($templateParameters, $repository->getAdditionalTemplateParameters(«IF hasUploads»$imageHelper, «ENDIF»'block'));
+
+            return $this->renderView($template, $templateParameters);
         }
     '''
 
@@ -413,26 +241,23 @@ class BlockList {
             }
 
             $templateForObjectType = str_replace('itemlist_', 'itemlist_' . $properties['objectType'] . '_', $templateFile);
-            «IF !targets('1.3.x')»
-                «/* TODO find a better way considering overriding */»
-                $templateDirectory = str_replace('Block/Base/AbstractItemListBlock.php', 'Resources/views/', __FILE__);
-            «ENDIF»
+            «/* TODO find a better way considering overriding */»
+            $templateDirectory = str_replace('Block/Base/AbstractItemListBlock.php', 'Resources/views/', __FILE__);
 
             $template = '';
-            if («IF targets('1.3.x')»$this->view->template_exists(«ELSE»file_exists($templateDirectory . «ENDIF»'«IF targets('1.3.x')»contenttype«ELSE»ContentType«ENDIF»/' . $templateForObjectType)) {
-                $template = '«IF targets('1.3.x')»contenttype«ELSE»ContentType«ENDIF»/' . $templateForObjectType;
-            } elseif («IF targets('1.3.x')»$this->view->template_exists(«ELSE»file_exists($templateDirectory . «ENDIF»'«IF targets('1.3.x')»block«ELSE»Block«ENDIF»/' . $templateForObjectType)) {
-                $template = '«IF targets('1.3.x')»block«ELSE»Block«ENDIF»/' . $templateForObjectType;
-            } elseif («IF targets('1.3.x')»$this->view->template_exists(«ELSE»file_exists($templateDirectory . «ENDIF»'«IF targets('1.3.x')»contenttype«ELSE»ContentType«ENDIF»/' . $templateFile)) {
-                $template = '«IF targets('1.3.x')»contenttype«ELSE»ContentType«ENDIF»/' . $templateFile;
-            } elseif («IF targets('1.3.x')»$this->view->template_exists(«ELSE»file_exists($templateDirectory . «ENDIF»'«IF targets('1.3.x')»block«ELSE»Block«ENDIF»/' . $templateFile)) {
-                $template = '«IF targets('1.3.x')»block«ELSE»Block«ENDIF»/' . $templateFile;
+            if (file_exists($templateDirectory . 'ContentType/' . $templateForObjectType)) {
+                $template = 'ContentType/' . $templateForObjectType;
+            } elseif (file_exists($templateDirectory . 'Block/' . $templateForObjectType)) {
+                $template = 'Block/' . $templateForObjectType;
+            } elseif (file_exists($templateDirectory . 'ContentType/' . $templateFile)) {
+                $template = 'ContentType/' . $templateFile;
+            } elseif (file_exists($templateDirectory . 'Block/' . $templateFile)) {
+                $template = 'Block/' . $templateFile;
             } else {
-                $template = '«IF targets('1.3.x')»block«ELSE»Block«ENDIF»/itemlist.«IF targets('1.3.x')»tpl«ELSE»html.twig«ENDIF»';
+                $template = 'Block/itemlist.html.twig';
             }
-            «IF !targets('1.3.x')»
-                $template = '@«appName»/' . $template;
-            «ENDIF»
+
+            $template = '@«appName»/' . $template;
 
             return $template;
         }
@@ -455,12 +280,8 @@ class BlockList {
 
             $sortParam = '';
             if ($properties['sorting'] == 'newest') {
-                «IF targets('1.3.x')»
-                    $idFields = ModUtil::apiFunc('«appName»', 'selection', 'getIdFields', array('ot' => $properties['objectType']));
-                «ELSE»
-                    $selectionHelper = $this->get('«appService».selection_helper');
-                    $idFields = $selectionHelper->getIdFields($properties['objectType']);
-                «ENDIF»
+                $selectionHelper = $this->get('«appService».selection_helper');
+                $idFields = $selectionHelper->getIdFields($properties['objectType']);
                 if (count($idFields) == 1) {
                     $sortParam = $idFields[0] . ' DESC';
                 } else {
@@ -480,147 +301,64 @@ class BlockList {
     '''
 
     def private modify(Application it) '''
-        «val templateExtension = if (targets('1.3.x')) '.tpl' else '.html.twig'»
-        «IF targets('1.3.x')»
-            /**
-             * Modify block settings.
-             *
-             * @param array $blockinfo the blockinfo structure
-             *
-             * @return string output of the block editing form
-             */
-            public function modify($blockinfo)
-            {
-                // Get current content
-                $properties = BlockUtil::varsFromContent($blockinfo['content']);
+        /**
+         * Returns the fully qualified class name of the block's form class.
+         *
+         * @return string Template path
+         */
+        public function getFormClassName()
+        {
+            return '«appNamespace»\Block\Form\Type\ItemListBlockType';
+        }
 
-                // set default values for all params which are not properly set
-                $defaults = $this->getDefaults();
-                $properties = array_merge($defaults, $properties);
-                «IF hasCategorisableEntities»
+        /**
+         * Returns any array of form options.
+         *
+         * @return array Options array
+         */
+        public function getFormOptions()
+        {
+            $objectType = '«leadingEntity.name.formatForCode»';
 
-                    $properties = $this->resolveCategoryIds($properties);
-                «ENDIF»
-
-                $this->view->setCaching(Zikula_View::CACHE_DISABLED);
-
-                // assign the appropriate values
-                $this->view->assign($properties);
-
-                // Return the output that has been generated by this function
-                return $this->view->fetch('block/itemlist_modify«templateExtension»');
-            }
-        «ELSE»
-            /**
-             * Returns the fully qualified class name of the block's form class.
-             *
-             * @return string Template path
-             */
-            public function getFormClassName()
-            {
-                return '«appNamespace»\Block\Form\Type\ItemListBlockType';
-            }
-
-            /**
-             * Returns any array of form options.
-             *
-             * @return array Options array
-             */
-            public function getFormOptions()
-            {
-                $objectType = '«leadingEntity.name.formatForCode»';
-
-                $request = $this->get('request_stack')->getCurrentRequest();
-                if ($request->attributes->has('blockEntity')) {
-                    $blockEntity = $request->attributes->get('blockEntity');
-                    if (is_object($blockEntity) && method_exists($blockEntity, 'getContent')) {
-                        $blockProperties = $blockEntity->getContent();
-                        if (isset($blockProperties['objectType'])) {
-                            $objectType = $blockProperties['objectType'];
-                        }
+            $request = $this->get('request_stack')->getCurrentRequest();
+            if ($request->attributes->has('blockEntity')) {
+                $blockEntity = $request->attributes->get('blockEntity');
+                if (is_object($blockEntity) && method_exists($blockEntity, 'getContent')) {
+                    $blockProperties = $blockEntity->getContent();
+                    if (isset($blockProperties['objectType'])) {
+                        $objectType = $blockProperties['objectType'];
                     }
                 }
-
-                return [
-                    'objectType' => $objectType«IF hasCategorisableEntities»,
-                    'isCategorisable' => in_array($objectType, $this->categorisableObjectTypes),
-                    'categoryHelper' => $this->get('«appService».category_helper'),
-                    'featureActivationHelper' => $this->get('«appService».feature_activation_helper')«ENDIF»
-                ];
             }
 
-            /**
-             * Returns the template used for rendering the editing form.
-             *
-             * @return string Template path
-             */
-            public function getFormTemplate()
-            {
-                return '@«appName»/Block/itemlist_modify«templateExtension»';
-            }
-        «ENDIF»
-    '''
+            return [
+                'objectType' => $objectType«IF hasCategorisableEntities»,
+                'isCategorisable' => in_array($objectType, $this->categorisableObjectTypes),
+                'categoryHelper' => $this->get('«appService».category_helper'),
+                'featureActivationHelper' => $this->get('«appService».feature_activation_helper')«ENDIF»
+            ];
+        }
 
-    // 1.3.x only
-    def private update(Application it) '''
         /**
-         * Update block settings.
+         * Returns the template used for rendering the editing form.
          *
-         * @param array $blockinfo the blockinfo structure
-         *
-         * @return array the modified blockinfo structure
+         * @return string Template path
          */
-        public function update($blockinfo)
+        public function getFormTemplate()
         {
-            // Get current content
-            $properties = BlockUtil::varsFromContent($blockinfo['content']);
-
-            $properties['objectType'] = $this->request->request->filter('objecttype', '«getLeadingEntity.name.formatForCode»', FILTER_SANITIZE_STRING);
-            $properties['sorting'] = $this->request->request->filter('sorting', 'default', FILTER_SANITIZE_STRING);
-            $properties['amount'] = (int) $this->request->request->filter('amount', 5, FILTER_VALIDATE_INT);
-            $properties['template'] = $this->request->request->get('template', '');
-            $properties['customTemplate'] = $this->request->request->get('customtemplate', '');
-            $properties['filter'] = $this->request->request->get('filter', '');
-
-            $controllerHelper = new «appName»_Util_Controller($this->serviceManager);
-            if (!in_array($properties['objectType'], $controllerHelper->getObjectTypes('block'))) {
-                $properties['objectType'] = $controllerHelper->getDefaultObjectType('block');
-            }
-
-            $primaryRegistry = ModUtil::apiFunc('«appName»', 'category', 'getPrimaryProperty', array('ot' => $properties['objectType']));
-            $properties['catIds'] = array($primaryRegistry => array());
-            if (in_array($properties['objectType'], $this->categorisableObjectTypes)) {
-                $properties['catIds'] = ModUtil::apiFunc('«appName»', 'category', 'retrieveCategoriesFromRequest', array('ot' => $properties['objectType']));
-            }
-
-            // write back the new contents
-            $blockinfo['content'] = BlockUtil::varsToContent($properties);
-
-            // clear the block cache
-            $this->view->clear_cache('block/itemlist_display.tpl');
-            $this->view->clear_cache('block/itemlist_' . $properties['objectType'] . '_display.tpl');
-            $this->view->clear_cache('block/itemlist_display_description.tpl');
-            $this->view->clear_cache('block/itemlist_' . $properties['objectType'] . '_display_description.tpl');
-
-            return $blockinfo;
+            return '@«appName»/Block/itemlist_modify.html.twig';
         }
     '''
 
     def private listBlockImpl(Application it) '''
-        «IF !targets('1.3.x')»
-            namespace «appNamespace»\Block;
+        namespace «appNamespace»\Block;
 
-            use «appNamespace»\Block\Base\AbstractItemListBlock;
+        use «appNamespace»\Block\Base\AbstractItemListBlock;
 
-        «ENDIF»
         /**
          * Generic item list block implementation class.
          */
-        «IF targets('1.3.x')»
-        class «appName»_Block_ItemList extends «appName»_Block_Base_AbstractItemList
-        «ELSE»
         class ItemListBlock extends AbstractItemListBlock
-        «ENDIF»
         {
             // feel free to extend the item list block here
         }

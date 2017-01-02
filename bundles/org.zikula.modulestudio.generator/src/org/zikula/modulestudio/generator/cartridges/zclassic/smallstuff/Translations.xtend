@@ -18,10 +18,5 @@ class Translations {
         // See https://github.com/Guite/MostGenerator/issues/8 for more information.
         val localePath = getAppLocalePath
         createPlaceholder(fsa, localePath)
-        if (!targets('1.3.x')) {
-            return
-        }
-        createPlaceholder(fsa, localePath + 'de/')
-        createPlaceholder(fsa, localePath + 'de/LC_MESSAGES/')
     }
 }

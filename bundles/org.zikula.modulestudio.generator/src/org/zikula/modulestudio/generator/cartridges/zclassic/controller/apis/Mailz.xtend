@@ -18,25 +18,23 @@ class Mailz {
     FileHelper fh = new FileHelper
 
     def generate(Application it, IFileSystemAccess fsa) {
-        generateClassPair(fsa, getAppSourceLibPath + 'Api/Mailz' + (if (targets('1.3.x')) '' else 'Api') + '.php',
+        generateClassPair(fsa, getAppSourceLibPath + 'Api/MailzApi.php',
             fh.phpFileContent(it, mailzBaseClass), fh.phpFileContent(it, mailzImpl)
         )
         new MailzView().generate(it, fsa)
     }
 
     def private mailzBaseClass(Application it) '''
-        «IF !targets('1.3.x')»
-            namespace «appNamespace»\Api\Base;
+        namespace «appNamespace»\Api\Base;
 
-            use ModUtil;
-            use ServiceUtil;
-            use Zikula_AbstractBase;
+        use ModUtil;
+        use ServiceUtil;
+        use Zikula_AbstractBase;
 
-        «ENDIF»
         /**
          * Mailz api base class.
          */
-        abstract class «IF targets('1.3.x')»«appName»_Api_Base_AbstractMailz extends Zikula_AbstractApi«ELSE»AbstractMailzApi extends Zikula_AbstractBase«ENDIF»
+        abstract class AbstractMailzApi extends Zikula_AbstractBase
         {
             «mailzBaseImpl»
         }
@@ -50,26 +48,24 @@ class Mailz {
          *
          * @return array List of provided plugin functions
          */
-        public function getPlugins(array $args = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»)
+        public function getPlugins(array $args = [])
         {
-            «IF !targets('1.3.x')»
-                $translator = $this->get('translator.default');
+            $translator = $this->get('translator.default');
 
-            «ENDIF»
             «val itemDesc = getLeadingEntity.nameMultiple.formatForDisplay»
-            $plugins = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»;
-            $plugins[] = «IF targets('1.3.x')»array(«ELSE»[«ENDIF»
+            $plugins = [];
+            $plugins[] = [
                 'pluginid'      => 1,
                 'module'        => '«appName»',
-                'title'         => $«IF targets('1.3.x')»this«ELSE»translator«ENDIF»->__('3 newest «itemDesc»'),
-                'description'   => $«IF targets('1.3.x')»this«ELSE»translator«ENDIF»->__('A list of the three newest «itemDesc».')
-            «IF targets('1.3.x')»)«ELSE»]«ENDIF»;
-            $plugins[] = «IF targets('1.3.x')»array(«ELSE»[«ENDIF»
+                'title'         => $translator->__('3 newest «itemDesc»'),
+                'description'   => $translator->__('A list of the three newest «itemDesc».')
+            ];
+            $plugins[] = [
                 'pluginid'      => 2,
                 'module'        => '«appName»',
-                'title'         => $«IF targets('1.3.x')»this«ELSE»translator«ENDIF»->__('3 random «itemDesc»'),
-                'description'   => $«IF targets('1.3.x')»this«ELSE»translator«ENDIF»->__('A list of three random «itemDesc».')
-            «IF targets('1.3.x')»)«ELSE»]«ENDIF»;
+                'title'         => $translator->__('3 random «itemDesc»'),
+                'description'   => $translator->__('A list of three random «itemDesc».')
+            ];
 
             return $plugins;
         }
@@ -86,29 +82,17 @@ class Mailz {
          *
          * @return string output of plugin template
          */
-        public function getContent(array $args = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»)
+        public function getContent(array $args = [])
         {
-            «IF targets('1.3.x')»
-                ModUtil::initOOModule('«appName»');
-            «ENDIF»
             // $args is something like:
             // Array ( [uid] => 5 [contenttype] => h [pluginid] => 1 [nid] => 1 [last] => 0000-00-00 00:00:00 [params] => Array ( [] => ) ) 1
             «val leadingEntity = getLeadingEntity»
             $objectType = '«leadingEntity.name.formatForCode»';
 
-            «IF targets('1.3.x')»
-                $entityClass = '«appName»_Entity_' . ucfirst($objectType);
-                $serviceManager = ServiceUtil::getManager();
-                $entityManager = $serviceManager->get«IF targets('1.3.x')»Service«ENDIF»('«entityManagerService»');
-                $repository = $entityManager->getRepository($entityClass);
+            $repository = $this->get('«appService».' . $objectType . '_factory')->getRepository();
 
-                $idFields = ModUtil::apiFunc('«appName»', 'selection', 'getIdFields', array('ot' => $objectType));
-            «ELSE»
-                $repository = $this->get('«appService».' . $objectType . '_factory')->getRepository();
-
-                $selectionHelper = $this->get('«appService».selection_helper');
-                $idFields = $selectionHelper->getIdFields($objectType);
-            «ENDIF»
+            $selectionHelper = $this->get('«appService».selection_helper');
+            $idFields = $selectionHelper->getIdFields($objectType);
 
             $sortParam = '';
             if ($args['pluginid'] == 2) {
@@ -130,68 +114,36 @@ class Mailz {
             $resultsPerPage = 3;
 
             // get objects from database
-            «IF targets('1.3.x')»
-                $selectionArgs = array(
-                    'ot' => $objectType,
-                    'where' => $where,
-                    'orderBy' => $sortParam,
-                    'currentPage' => 1,
-                    'resultsPerPage' => $resultsPerPage
-                );
-                list($entities, $objectCount) = ModUtil::apiFunc('«appName»', 'selection', 'getEntitiesPaginated', $selectionArgs);
-            «ELSE»
-                list($entities, $objectCount) = $selectionHelper->getEntitiesPaginated($objectType, $where, $orderBy, 1, $resultsPerPage);
-            «ENDIF»
+            list($entities, $objectCount) = $selectionHelper->getEntitiesPaginated($objectType, $where, $orderBy, 1, $resultsPerPage);
 
             $templateType = $args['contenttype'] == 't' ? 'text' : 'html';
 
-            «IF targets('1.3.x')»
-                $view = Zikula_View::getInstance('«appName»', true);
-
-                //$data = array('sorting' => $this->sorting, 'amount' => $this->amount, 'filter' => $this->filter, 'template' => $this->template);
-                //$view->assign('vars', $data);
-
-                $view->assign('objectType', $objectType)
-                     ->assign('items', $entities)
-                     ->assign($repository->getAdditionalTemplateParameters('api', array('name' => 'mailz')));
-
-                return $view->fetch('mailz/itemlist_«leadingEntity.name.formatForCode»_' . $templateType . '.tpl');
-            «ELSE»
-                $templating = $this->get('twig');
-
-                //$templateParameters = ['sorting' => $this->sorting, 'amount' => $this->amount, 'filter' => $this->filter, 'template' => $this->template];
-                $templateParameters = [
-                    'objectType' => $objectType,
-                    'items' => $entities
-                ];
-                «IF hasUploads»
-                    $imageHelper = $this->get('«appService».image_helper');
-                «ENDIF»
-                $templateParameters = array_merge($templateParameters, $repository->getAdditionalTemplateParameters(«IF hasUploads»$imageHelper, «ENDIF»'api', ['name' => 'mailz']));
-
-                return $templating->render(
-                    '@«appName»/Mailz/itemlist_«leadingEntity.name.formatForCode».' . $templateType . '.twig',
-                    $templateParameters
-                );
+            //$templateParameters = ['sorting' => $this->sorting, 'amount' => $this->amount, 'filter' => $this->filter, 'template' => $this->template];
+            $templateParameters = [
+                'objectType' => $objectType,
+                'items' => $entities
+            ];
+            «IF hasUploads»
+                $imageHelper = $this->get('«appService».image_helper');
             «ENDIF»
+            $templateParameters = array_merge($templateParameters, $repository->getAdditionalTemplateParameters(«IF hasUploads»$imageHelper, «ENDIF»'api', ['name' => 'mailz']));
+
+            return $this->get('twig')->render(
+                '@«appName»/Mailz/itemlist_«leadingEntity.name.formatForCode».' . $templateType . '.twig',
+                $templateParameters
+            );
         }
     '''
 
     def private mailzImpl(Application it) '''
-        «IF !targets('1.3.x')»
-            namespace «appNamespace»\Api;
+        namespace «appNamespace»\Api;
 
-            use «appNamespace»\Api\Base\AbstractMailzApi;
+        use «appNamespace»\Api\Base\AbstractMailzApi;
 
-        «ENDIF»
         /**
          * Mailz api implementation class.
          */
-        «IF targets('1.3.x')»
-        class «appName»_Api_Mailz extends «appName»_Api_Base_AbstractMailz
-        «ELSE»
         class MailzApi extends AbstractMailzApi
-        «ENDIF»
         {
             // feel free to extend the mailz api here
         }

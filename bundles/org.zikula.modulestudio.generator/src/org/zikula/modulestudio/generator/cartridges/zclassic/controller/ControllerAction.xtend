@@ -13,12 +13,10 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.controller.action.A
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.action.Annotations
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
-import org.zikula.modulestudio.generator.extensions.Utils
 
 class ControllerAction {
     extension ControllerExtensions = new ControllerExtensions
     extension FormattingExtensions = new FormattingExtensions
-    extension Utils = new Utils
 
     Application app
     Actions actionsImpl
@@ -30,28 +28,22 @@ class ControllerAction {
 
     def generate(Action it, Boolean isBase) '''
         «actionDoc(null, isBase, false)»
-        public function «methodName(false)»«IF isLegacy»()«ELSE»Action(«methodArgs»)«ENDIF»
+        public function «methodName(false)»Action(«methodArgs»)
         {
             «IF isBase»
                 «actionsImpl.actionImpl(it)»
             «ELSE»
-                return parent::«methodName(false)»Action(«IF !isLegacy»$request«ENDIF»);
+                return parent::«methodName(false)»Action($request);
             «ENDIF»
         }
     '''
 
     def generate(Entity it, Action action, Boolean isBase, Boolean isAdmin) '''
         «action.actionDoc(it, isBase, isAdmin)»
-        public function «action.methodName(isAdmin)»«IF isLegacy»()«ELSE»Action(«methodArgs(it, action)»)«ENDIF»
+        public function «action.methodName(isAdmin)»Action(«methodArgs(it, action)»)
         {
             «IF isBase»
-                «IF isLegacy»
-                    $legacyControllerType = $this->request->query->filter('lct', 'user', FILTER_SANITIZE_STRING);
-                    System::queryStringSetVar('type', $legacyControllerType);
-                    $this->request->query->set('type', $legacyControllerType);
-
-                «ENDIF»
-                «IF softDeleteable && !isLegacy»
+                «IF softDeleteable»
                     «IF isAdmin»
                         //$this->entityManager->getFilters()->disable('soft-deleteable');
                     «ELSE»
@@ -59,16 +51,12 @@ class ControllerAction {
                     «ENDIF»
 
                 «ENDIF»
-                «IF isLegacy»
-                    «actionsImpl.actionImpl(it, action)»
-                «ELSE»
-                    return $this->«action.methodName(false)»Internal(«methodArgsCall(it, action)», «isAdmin.displayBool»);
-                «ENDIF»
+                return $this->«action.methodName(false)»Internal(«methodArgsCall(it, action)», «isAdmin.displayBool»);
             «ELSE»
                 return parent::«action.methodName(isAdmin)»Action(«methodArgsCall(it, action)»);
             «ENDIF»
         }
-        «IF !isLegacy && isBase && !isAdmin»
+        «IF isBase && !isAdmin»
 
             /**
              * This method includes the common implementation code for «action.methodName(true)»() and «action.methodName(false)»().
@@ -84,14 +72,10 @@ class ControllerAction {
         /**
          * «actionDocMethodDescription(isAdmin)»
         «actionDocMethodDocumentation»
-        «IF !isLegacy»
-            «val annotationHelper = new Annotations(app)»
-            «annotationHelper.generate(it, entity, isBase, isAdmin)»
-        «ENDIF»
+        «val annotationHelper = new Annotations(app)»
+        «annotationHelper.generate(it, entity, isBase, isAdmin)»
          *
-         «IF !isLegacy»
          * @param Request  $request      Current request instance
-         «ENDIF»
         «IF null !== entity»
             «actionDocMethodParams(entity, it)»
         «ELSE»
@@ -99,7 +83,6 @@ class ControllerAction {
         «ENDIF»
          *
          * @return mixed Output
-         «IF !isLegacy»
          *
          * @throws AccessDeniedException Thrown if the user doesn't have required permissions
          «IF it instanceof DisplayAction»
@@ -110,7 +93,6 @@ class ControllerAction {
          «ELSEIF it instanceof DeleteAction»
          * @throws NotFoundHttpException Thrown by param converter if item to be deleted isn't found
          * @throws RuntimeException      Thrown if another critical error occurs (e.g. workflow actions not available)
-         «ENDIF»
          «ENDIF»
          */
     '''
@@ -136,21 +118,17 @@ class ControllerAction {
     }
 
     def private actionDocMethodParams(Action it) {
-        if (!isLegacy && it instanceof MainAction) {
+        if (it instanceof MainAction) {
             ''
         } else if (!(it instanceof MainAction || it instanceof CustomAction)) {
             ' * @param string  $ot           Treated object type\n'
             + '''«actionDocAdditionalParams(null)»'''
-            + (if (isLegacy) ' * @param string  $tpl          Name of alternative template (to be used instead of the default template)\n' else '')
-            + (if (isLegacy) ' * @param boolean $raw          Optional way to display a template instead of fetching it (required for standalone output)\n' else '')
         }
     }
 
     def private actionDocMethodParams(Entity it, Action action) {
         if (!(action instanceof MainAction || action instanceof CustomAction)) {
             '''«actionDocAdditionalParams(action, it)»'''
-            + (if (isLegacy) ' * @param string  $tpl          Name of alternative template (to be used instead of the default template)\n' else '')
-            + (if (isLegacy) ' * @param boolean $raw          Optional way to display a template instead of fetching it (required for standalone output)\n' else '')
         }
     }
 
@@ -162,19 +140,18 @@ class ControllerAction {
                + ' * @param int     $pos          Current pager position\n'
                + ' * @param int     $num          Amount of entries to display\n'
             DisplayAction:
-                (if (null !== refEntity && !isLegacy) ' * @param ' + refEntity.name.formatForCodeCapital + 'Entity $' + refEntity.name.formatForCode + '      Treated ' + refEntity.name.formatForDisplay + ' instance\n'
+                (if (null !== refEntity) ' * @param ' + refEntity.name.formatForCodeCapital + 'Entity $' + refEntity.name.formatForCode + '      Treated ' + refEntity.name.formatForDisplay + ' instance\n'
                  else ' * @param int     $id           Identifier of entity to be shown\n')
             DeleteAction:
-                (if (null !== refEntity && !isLegacy) ' * @param ' + refEntity.name.formatForCodeCapital + 'Entity $' + refEntity.name.formatForCode + '      Treated ' + refEntity.name.formatForDisplay + ' instance\n'
+                (if (null !== refEntity) ' * @param ' + refEntity.name.formatForCodeCapital + 'Entity $' + refEntity.name.formatForCode + '      Treated ' + refEntity.name.formatForDisplay + ' instance\n'
                  else ' * @param int     $id           Identifier of entity to be deleted\n')
-               + (if (isLegacy) ' * @param boolean $confirmation Confirm the deletion, else a confirmation page is displayed\n' else '')
             default: ''
         }
     }
 
-    def private dispatch methodName(Action it, Boolean isAdmin) '''«IF isLegacy || !isAdmin»«name.formatForCode.toFirstLower»«ELSE»admin«name.formatForCodeCapital»«ENDIF»'''
+    def private dispatch methodName(Action it, Boolean isAdmin) '''«IF !isAdmin»«name.formatForCode.toFirstLower»«ELSE»admin«name.formatForCodeCapital»«ENDIF»'''
 
-    def private dispatch methodName(MainAction it, Boolean isAdmin) '''«IF isLegacy»main«ELSE»«IF isAdmin»adminIndex«ELSE»index«ENDIF»«ENDIF»'''
+    def private dispatch methodName(MainAction it, Boolean isAdmin) '''«IF isAdmin»adminIndex«ELSE»index«ENDIF»'''
 
     def private methodArgs(Action action) '''Request $request''' 
 
@@ -192,8 +169,4 @@ class ControllerAction {
 
     def private dispatch methodArgs(Entity it, DeleteAction action) '''Request $request, «name.formatForCodeCapital»Entity $«name.formatForCode»''' 
     def private dispatch methodArgsCall(Entity it, DeleteAction action) '''$request, $«name.formatForCode»''' 
-
-    def private isLegacy() {
-        app.targets('1.3.x')
-    }
 }

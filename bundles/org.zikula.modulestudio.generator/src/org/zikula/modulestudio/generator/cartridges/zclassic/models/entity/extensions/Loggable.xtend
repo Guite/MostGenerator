@@ -5,20 +5,18 @@ import de.guite.modulestudio.metamodel.Entity
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
-import org.zikula.modulestudio.generator.extensions.Utils
 
 class Loggable extends AbstractExtension implements EntityExtensionInterface {
 
     extension FormattingExtensions = new FormattingExtensions
     extension ModelExtensions = new ModelExtensions
     extension NamingExtensions = new NamingExtensions
-    extension Utils = new Utils
 
     /**
      * Generates additional annotations on class level.
      */
     override classAnnotations(Entity it) '''
-         «' '»* @Gedmo\Loggable(logEntryClass="«IF !application.targets('1.3.x')»\«ENDIF»«entityClassName('logEntry', false)»")
+         «' '»* @Gedmo\Loggable(logEntryClass="\«entityClassName('logEntry', false)»")
     '''
 
     /**
@@ -59,7 +57,7 @@ class Loggable extends AbstractExtension implements EntityExtensionInterface {
      * Returns the extension base class.
      */
     override extensionBaseClass(Entity it) {
-        if (application.targets('1.3.x')) 'AbstractLogEntry' else 'LogEntry'
+        'LogEntry'
     }
 
     /**

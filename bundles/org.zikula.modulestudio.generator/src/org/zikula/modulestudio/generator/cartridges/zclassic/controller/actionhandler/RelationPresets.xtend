@@ -24,13 +24,13 @@ class RelationPresets {
          *
          * @var mixed
          */
-        protected $relationPresets = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»;
+        protected $relationPresets = [];
     '''
 
     def initPresets(Entity it) '''
         «val owningAssociations = getOwningAssociations(it.application)»
         «val ownedMMAssociations = getOwnedMMAssociations(it.application)»
-        «IF !application.targets('1.3.x') && (!owningAssociations.empty || !ownedMMAssociations.empty)»
+        «IF !owningAssociations.empty || !ownedMMAssociations.empty»
             $selectionHelper = $this->container->get('«application.appService».selection_helper');
         «ENDIF»
         «IF !owningAssociations.empty»
@@ -67,11 +67,7 @@ class RelationPresets {
 
     def private initSinglePreset(JoinRelationship it, Boolean useTarget) '''
         «val alias = getRelationAliasName(useTarget)»
-        «IF source.application.targets('1.3.x')»
-            $this->relationPresets['«alias»'] = FormUtil::getPassedValue('«alias»', '', 'GET');
-        «ELSE»
-            $this->relationPresets['«alias»'] = $this->request->get('«alias»', '');
-        «ENDIF»
+        $this->relationPresets['«alias»'] = $this->request->get('«alias»', '');
     '''
 
     def private getOwningAssociations(Entity it, Application refApp) {
@@ -95,9 +91,7 @@ class RelationPresets {
         «IF !owningAssociationsNonEditable.empty || !ownedMMAssociationsNonEditable.empty»
 
             if ($args['commandName'] == 'create') {
-                «IF !app.targets('1.3.x')»
-                    $selectionHelper = $this->container->get('«app.appService».selection_helper');
-                «ENDIF»
+                $selectionHelper = $this->container->get('«app.appService».selection_helper');
                 «IF !owningAssociationsNonEditable.empty»
                 // save predefined incoming relationship from parent entity
                 «FOR relation : owningAssociationsNonEditable»
@@ -110,11 +104,7 @@ class RelationPresets {
                     «relation.saveSinglePreset(true)»
                 «ENDFOR»
                 «ENDIF»
-                «IF app.targets('1.3.x')»
-                    $this->entityManager->flush();
-                «ELSE»
-                    $this->container->get('doctrine.orm.entity_manager')->flush();
-                «ENDIF»
+                $this->container->get('doctrine.orm.entity_manager')->flush();
             }
         «ENDIF»
     '''
@@ -124,11 +114,7 @@ class RelationPresets {
         «val aliasInverse = getRelationAliasName(!useTarget)»
         «val otherObjectType = (if (useTarget) target else source).name.formatForCode»
         if (!empty($this->relationPresets['«alias»'])) {
-            «IF application.targets('1.3.x')»
-                $relObj = ModUtil::apiFunc('«application.appName»', 'selection', 'getEntity', array('ot' => '«otherObjectType»', 'id' => $this->relationPresets['«alias»']));
-            «ELSE»
-                $relObj = $selectionHelper->getEntity('«otherObjectType»', $this->relationPresets['«alias»']);
-            «ENDIF»
+            $relObj = $selectionHelper->getEntity('«otherObjectType»', $this->relationPresets['«alias»']);
             if (null !== $relObj) {
                 «IF !useTarget && it instanceof ManyToManyRelationship»
                     $entity->«IF isManySide(useTarget)»add«ELSE»set«ENDIF»«alias.toFirstUpper»($relObj);

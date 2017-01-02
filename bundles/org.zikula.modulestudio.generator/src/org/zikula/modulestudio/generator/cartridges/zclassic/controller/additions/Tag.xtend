@@ -23,24 +23,18 @@ class Tag {
     }
 
     def private tagBaseClass(Application it) '''
-        «IF !targets('1.3.x')»
-            namespace «appNamespace»\TaggedObjectMeta\Base;
+        namespace «appNamespace»\TaggedObjectMeta\Base;
 
-            use DateUtil;
-            use ServiceUtil;
-            use UserUtil;
-            use Zikula\TagModule\AbstractTaggedObjectMeta;
-            use Zikula\Core\UrlInterface;
+        use DateUtil;
+        use ServiceUtil;
+        use UserUtil;
+        use Zikula\TagModule\AbstractTaggedObjectMeta;
+        use Zikula\Core\UrlInterface;
 
-        «ENDIF»
         /**
          * This class provides object meta data for the Tag module.
          */
-        «IF targets('1.3.x')»
-        abstract class «appName»_TaggedObjectMeta_Base_Abstract«appName» extends Tag_AbstractTaggedObjectMeta
-        «ELSE»
         abstract class Abstract«appName» extends AbstractTaggedObjectMeta
-        «ENDIF»
         {
             «tagBaseImpl»
         }
@@ -50,13 +44,13 @@ class Tag {
         /**
          * Constructor.
          *
-         * @param integer             $objectId  Identifier of treated object
-         * @param integer             $areaId    Name of hook area
-         * @param string              $module    Name of the owning module
-         * @param string              $urlString **deprecated**
-         * @param «IF targets('1.3.x')»Zikula_ModUrl«ELSE»UrlInterface«ENDIF» $urlObject Object carrying url arguments
+         * @param integer      $objectId  Identifier of treated object
+         * @param integer      $areaId    Name of hook area
+         * @param string       $module    Name of the owning module
+         * @param string       $urlString **deprecated**
+         * @param UrlInterface $urlObject Object carrying url arguments
          */
-        function __construct($objectId, $areaId, $module, $urlString = null, «IF targets('1.3.x')»Zikula_ModUrl«ELSE»UrlInterface«ENDIF» $urlObject = null)
+        function __construct($objectId, $areaId, $module, $urlString = null, UrlInterface $urlObject = null)
         {
             // call base constructor to store arguments in member vars
             parent::__construct($objectId, $areaId, $module, $urlString, $urlObject);
@@ -67,24 +61,14 @@ class Tag {
 
             $serviceManager = ServiceUtil::getManager();
 
-            «IF !targets('1.3.x')»
-                $permissionApi = $serviceManager->get('zikula_permissions_module.api.permission');
-            «ENDIF»
+            $permissionApi = $serviceManager->get('zikula_permissions_module.api.permission');
             $component = $module . ':' . ucfirst($objectType) . ':';
-            $perm = «IF targets('1.3.x')»SecurityUtil::check«ELSE»$permissionApi->has«ENDIF»Permission($component, $objectId . '::', ACCESS_READ);
+            $perm = $permissionApi->hasPermission($component, $objectId . '::', ACCESS_READ);
             if (!$perm) {
                 return;
             }
 
-            «IF targets('1.3.x')»
-                $entityClass = $module . '_Entity_' . ucfirst($objectType);
-            «ENDIF»
-            «IF targets('1.3.x')»
-                $entityManager = $serviceManager->get«IF targets('1.3.x')»Service«ENDIF»('«entityManagerService»');
-                $repository = $entityManager->getRepository($entityClass);
-            «ELSE»
-                $repository = $serviceManager->get('«appService».' . $objectType . '_factory')->getRepository();
-            «ENDIF»
+            $repository = $serviceManager->get('«appService».' . $objectType . '_factory')->getRepository();
             $useJoins = false;
 
             /** TODO support composite identifiers properly at this point */
@@ -142,20 +126,14 @@ class Tag {
     '''
 
     def private tagImpl(Application it) '''
-        «IF !targets('1.3.x')»
-            namespace «appNamespace»\TaggedObjectMeta;
+        namespace «appNamespace»\TaggedObjectMeta;
 
-            use «appNamespace»\TaggedObjectMeta\Base\Abstract«appName»;
+        use «appNamespace»\TaggedObjectMeta\Base\Abstract«appName»;
 
-        «ENDIF»
         /**
          * This class provides object meta data for the Tag module.
          */
-        «IF targets('1.3.x')»
-        class «appName»_TaggedObjectMeta_«appName» extends «appName»_TaggedObjectMeta_Base_Abstract«appName»
-        «ELSE»
         class «appName» extends Abstract«appName»
-        «ENDIF»
         {
             // feel free to extend the tag support here
         }

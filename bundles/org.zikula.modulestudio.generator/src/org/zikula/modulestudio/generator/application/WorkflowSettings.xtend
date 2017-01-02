@@ -108,11 +108,6 @@ class WorkflowSettings {
         val targetBasePath = getPathToModuleRoot
         var imagePath = 'Resources' + File.separator + 'public' + File.separator + 'images' //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
         var targetFolder = new File(targetBasePath + imagePath)
-        if (!targetFolder.exists) {
-            // BC support for 1.3.x
-            imagePath = 'src' + File.separator + 'modules' + File.separator + appName.toFirstUpper + File.separator + 'images' //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-            targetFolder = new File(targetBasePath + imagePath)
-        }
 
         targetFolder
     }

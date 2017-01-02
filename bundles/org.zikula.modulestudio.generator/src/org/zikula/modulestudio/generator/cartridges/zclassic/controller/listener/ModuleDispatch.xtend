@@ -11,41 +11,39 @@ class ModuleDispatch {
     CommonExample commonExample = new CommonExample()
 
     def generate(Application it, Boolean isBase) '''
-        «IF !targets('1.3.x')»
-            /**
-             * Makes our handlers known to the event system.
-             */
-            public static function getSubscribedEvents()
-            {
-                «IF isBase»
-                    return [
-                        'module_dispatch.postloadgeneric'  => ['postLoadGeneric', 5],
-                        'module_dispatch.preexecute'       => ['preExecute', 5],
-                        'module_dispatch.postexecute'      => ['postExecute', 5],
-                        'module_dispatch.custom_classname' => ['customClassname', 5],
-                        'module_dispatch.service_links'    => ['serviceLinks', 5]
-                    ];
-                «ELSE»
-                    return parent::getSubscribedEvents();
-                «ENDIF»
-            }
+        /**
+         * Makes our handlers known to the event system.
+         */
+        public static function getSubscribedEvents()
+        {
+            «IF isBase»
+                return [
+                    'module_dispatch.postloadgeneric'  => ['postLoadGeneric', 5],
+                    'module_dispatch.preexecute'       => ['preExecute', 5],
+                    'module_dispatch.postexecute'      => ['postExecute', 5],
+                    'module_dispatch.custom_classname' => ['customClassname', 5],
+                    'module_dispatch.service_links'    => ['serviceLinks', 5]
+                ];
+            «ELSE»
+                return parent::getSubscribedEvents();
+            «ENDIF»
+        }
 
-        «ENDIF»
         «IF isBase»
         /**
          * Listener for the `module_dispatch.postloadgeneric` event.
          *
          * Called after a module api or controller has been loaded.
-         * Receives the args `«IF targets('1.3.x')»array(«ELSE»[«ENDIF»'modinfo' => $modinfo, 'type' => $type, 'force' => $force, 'api' => $api«IF targets('1.3.x')»)«ELSE»]«ENDIF»`.
+         * Receives the args `['modinfo' => $modinfo, 'type' => $type, 'force' => $force, 'api' => $api]`.
          *
-         * @param «IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance
+         * @param GenericEvent $event The event instance
          */
         «ELSE»
             /**
              * {@inheritdoc}
              */
         «ENDIF»
-        public «IF targets('1.3.x')»static «ENDIF»function postLoadGeneric(«IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
+        public function postLoadGeneric(GenericEvent $event)
         {
             «IF !isBase»
                 parent::postLoadGeneric($event);
@@ -59,24 +57,24 @@ class ModuleDispatch {
          * Listener for the `module_dispatch.preexecute` event.
          *
          * Occurs in `ModUtil::exec()` before function call with the following args:
-         *     `«IF targets('1.3.x')»array(«ELSE»[«ENDIF»
+         *     `[
          *          'modname' => $modname,
          *          'modfunc' => $modfunc,
          *          'args' => $args,
          *          'modinfo' => $modinfo,
          *          'type' => $type,
          *          'api' => $api
-         *      «IF targets('1.3.x')»)«ELSE»]«ENDIF»`
+         *      ]`
          * .
          *
-         * @param «IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance
+         * @param GenericEvent $event The event instance
          */
         «ELSE»
             /**
              * {@inheritdoc}
              */
         «ENDIF»
-        public «IF targets('1.3.x')»static «ENDIF»function preExecute(«IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
+        public function preExecute(GenericEvent $event)
         {
             «IF !isBase»
                 parent::preExecute($event);
@@ -90,26 +88,26 @@ class ModuleDispatch {
          * Listener for the `module_dispatch.postexecute` event.
          *
          * Occurs in `ModUtil::exec()` after function call with the following args:
-         *     `«IF targets('1.3.x')»array(«ELSE»[«ENDIF»
+         *     `[
          *          'modname' => $modname,
          *          'modfunc' => $modfunc,
          *          'args' => $args,
          *          'modinfo' => $modinfo,
          *          'type' => $type,
          *          'api' => $api
-         *      «IF targets('1.3.x')»)«ELSE»]«ENDIF»`
+         *      ]`
          * .
          * Receives the modules output with `$event->getData();`.
          * Can modify this output with `$event->setData($data);`.
          *
-         * @param «IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance
+         * @param GenericEvent $event The event instance
          */
         «ELSE»
             /**
              * {@inheritdoc}
              */
         «ENDIF»
-        public «IF targets('1.3.x')»static «ENDIF»function postExecute(«IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
+        public function postExecute(GenericEvent $event)
         {
             «IF !isBase»
                 parent::postExecute($event);
@@ -125,17 +123,17 @@ class ModuleDispatch {
          * In order to override the classname calculated in `ModUtil::exec()`.
          * In order to override a pre-existing controller/api method, use this event type to override the class name that is loaded.
          * This allows to override the methods using inheritance.
-         * Receives no subject, args of `«IF targets('1.3.x')»array(«ELSE»[«ENDIF»'modname' => $modname, 'modinfo' => $modinfo, 'type' => $type, 'api' => $api«IF targets('1.3.x')»)«ELSE»]«ENDIF»`
-         * and 'event data' of `$className`. This can be altered by setting `$event->setData()` followed by `$event->stop«IF !targets('1.3.x')»Propagation«ENDIF»()`.
+         * Receives no subject, args of `['modname' => $modname, 'modinfo' => $modinfo, 'type' => $type, 'api' => $api]`
+         * and 'event data' of `$className`. This can be altered by setting `$event->setData()` followed by `$event->stopPropagation()`.
          *
-         * @param «IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance
+         * @param GenericEvent $event The event instance
          */
         «ELSE»
             /**
              * {@inheritdoc}
              */
         «ENDIF»
-        public «IF targets('1.3.x')»static «ENDIF»function customClassname(«IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
+        public function customClassname(GenericEvent $event)
         {
             «IF !isBase»
                 parent::customClassName($event);
@@ -152,26 +150,25 @@ class ModuleDispatch {
          * Adds sublinks to a Services menu that is appended to all modules if populated.
          * Triggered by module_dispatch.postexecute in bootstrap.
          *
-         * @param «IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance
+         * @param GenericEvent $event The event instance
          */
         «ELSE»
             /**
              * {@inheritdoc}
              */
         «ENDIF»
-        public «IF targets('1.3.x')»static «ENDIF»function serviceLinks(«IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
+        public function serviceLinks(GenericEvent $event)
         {
             «IF !isBase»
                 parent::customClassName($event);
 
                 // Format data like so:
-                «IF targets('1.3.x')»
-                    // $dom = ZLanguage::getModuleDomain('«appName»');
-                    // $event->data[] = array('url' => ModUtil::url('«appName»', 'user', 'main'), 'text' => __('Link text', $dom));
-                «ELSE»
-                    // $serviceManager = \ServiceUtil::getManager();
-                    // $event->data[] = ['url' => $serviceManager->get('router')->generate('«appName.formatForDB»_user_index'), 'text' => $serviceManager->get('translator.default')->__('Link text')];
-                «ENDIF»
+                // $router = \ServiceUtil::get('router');
+                // $translator = \ServiceUtil::get('translator.default');
+                // $event->data[] = [
+                //     'url' => $router->generate('«appName.formatForDB»_user_index'),
+                //     'text' => $translator->__('Link text')
+                // ];
 
                 «commonExample.generalEventProperties(it)»
             «ENDIF»

@@ -46,14 +46,14 @@ class MultiHook {
          */
         function «app.appName»_needleapi_«name.formatForDB»_baseInfo()
         {
-            $info = «IF app.targets('1.3.x')»array(«ELSE»[«ENDIF»
+            $info = [
                 // module name
                 'module'  => '«app.appName»',
                 // possible needles
                 'info'    => '«app.prefix.toUpperCase»{«IF hasActions('view')»«nameMultiple.formatForCode.toUpperCase»«ENDIF»«IF hasActions('display')»«IF hasActions('view')»|«ENDIF»«name.formatForCode.toUpperCase»-«name.formatForCode»Id«ENDIF»}',
                 // whether a reverse lookup is possible, needs «app.appName»_needleapi_«name.formatForDisplay»_inspect() function
                 'inspect' => false
-            «IF app.targets('1.3.x')»)«ELSE»]«ENDIF»;
+            ];
 
             return $info;
         }
@@ -77,13 +77,13 @@ class MultiHook {
             // cache the results
             static $cache;
             if (!isset($cache)) {
-                $cache = array();
+                $cache = [];
             }
 
-            $dom = \ZLanguage::getModuleDomain('«app.appName»');
+            $translator = \ServiceUtil::get('translator.default');
 
             if (empty($nid)) {
-                return '<em>' . \DataUtil::formatForDisplay(__('No correct needle id given.', $dom)) . '</em>';
+                return '<em>' . \DataUtil::formatForDisplay(__('No correct needle id given.')) . '</em>';
             }
 
             if (isset($cache[$nid])) {
@@ -92,7 +92,7 @@ class MultiHook {
             }
 
             if (!\ModUtil::available('«app.appName»')) {
-                $cache[$nid] = '<em>' . \DataUtil::formatForDisplay(__f('Module %s is not available.', array('«app.appName»'), $dom)) . '</em>';
+                $cache[$nid] = '<em>' . \DataUtil::formatForDisplay($translator->__f('Module %s is not available.', ['%s' => «app.appName»'])) . '</em>';
 
                 return $cache[$nid];
             }
@@ -100,10 +100,8 @@ class MultiHook {
             // strip application prefix from needle
             $needleId = str_replace('«app.prefix.toUpperCase»', '', $nid);
 
-            «IF !app.targets('1.3.x')»
-                $router = \ServiceUtil::getService('router');
+            $router = \ServiceUtil::getService('router');
 
-            «ENDIF»
             «IF hasActions('view')»
                 if ($needleId == '«nameMultiple.formatForCode.toUpperCase»') {
                     if (!\SecurityUtil::checkPermission('«app.appName»:«name.formatForCodeCapital»:', '::', ACCESS_READ)) {
@@ -113,11 +111,7 @@ class MultiHook {
                     }
                 }
 
-                «IF app.targets('1.3.x')»
-                    $cache[$nid] = '<a href="' . ModUtil::url('«app.appName»', '«name.formatForCode»', 'view') . '" title="' . __('View «nameMultiple.formatForDisplay»', $dom) . '">' . __('«nameMultiple.formatForDisplayCapital»', $dom) . '</a>';
-                «ELSE»
-                    $cache[$nid] = '<a href="' . $router->generate('«app.appName.formatForDB»_«nameMultiple.formatForDB»_view') . '" title="' . __('View «nameMultiple.formatForDisplay»', $dom) . '">' . __('«nameMultiple.formatForDisplayCapital»', $dom) . '</a>';
-                «ENDIF»
+                $cache[$nid] = '<a href="' . $router->generate('«app.appName.formatForDB»_«nameMultiple.formatForDB»_view') . '" title="' . $translator->__('View «nameMultiple.formatForDisplay»') . '">' . $translator->__('«nameMultiple.formatForDisplayCapital»') . '</a>';
             «ENDIF»
             «IF hasActions('display')»
                 $needleParts = explode('-', $needleId);
@@ -127,36 +121,25 @@ class MultiHook {
                     return $cache[$nid];
                 }
 
-                «IF !app.targets('1.3.x')»
-                    $permissionApi = \ServiceUtil::get('zikula_permissions_module.api.permission');
-                «ENDIF»
+                $permissionApi = \ServiceUtil::get('zikula_permissions_module.api.permission');
                 $entityId = (int)$needleParts[1];
 
-                if (!«IF app.targets('1.3.x')»SecurityUtil::check«ELSE»$permissionApi->has«ENDIF»Permission('«app.appName»:«name.formatForCodeCapital»:', $entityId . '::', ACCESS_READ)) {
+                if (!$permissionApi->hasPermission('«app.appName»:«name.formatForCodeCapital»:', $entityId . '::', ACCESS_READ)) {
                     $cache[$nid] = '';
 
                     return $cache[$nid];
                 }
 
-                «IF app.targets('1.3.x')»
-                    $entity = \ModUtil::apiFunc('«app.appName»', 'selection', 'getEntity', array('ot' => '«name.formatForCode»', 'id' => $entityId));
-                «ELSE»
-                    $selectionHelper = \ServiceUtil::get('«app.appService».selection_helper');
-                    $entity = $selectionHelper->getEntity('«name.formatForCode»', $entityId);
-                «ENDIF»
+                $selectionHelper = \ServiceUtil::get('«app.appService».selection_helper');
+                $entity = $selectionHelper->getEntity('«name.formatForCode»', $entityId);
                 if (null === $entity) {
-                    $cache[$nid] = '<em>' . __f('«name.formatForDisplayCapital» with id %s could not be found', «IF app.targets('1.3.x')»array(«ELSE»[«ENDIF»$entityId«IF app.targets('1.3.x')»)«ELSE»]«ENDIF», $dom) . '</em>';
+                    $cache[$nid] = '<em>' . $translator->__f('«name.formatForDisplayCapital» with id %s could not be found', ['%s' => $entityId]) . '</em>';
 
                     return $cache[$nid];
                 }
 
                 $title = $entity->getTitleFromDisplayPattern();
-
-                «IF app.targets('1.3.x')»
-                    $cache[$nid] = '<a href="' . ModUtil::url('«app.appName»', '«name.formatForCode»', 'display', array('id' => $entityId)) . '" title="' . str_replace('"', '', $title) . '">' . $title . '</a>';
-                «ELSE»
-                    $cache[$nid] = '<a href="' . $router->generate('«app.appName.formatForDB»_«nameMultiple.formatForDB»_display', ['id' => $entityId]) . '" title="' . str_replace('"', '', $title) . '">' . $title . '</a>';
-                «ENDIF»
+                $cache[$nid] = '<a href="' . $router->generate('«app.appName.formatForDB»_«nameMultiple.formatForDB»_display', ['id' => $entityId]) . '" title="' . str_replace('"', '', $title) . '">' . $title . '</a>';
             «ENDIF»
 
             return $cache[$nid];

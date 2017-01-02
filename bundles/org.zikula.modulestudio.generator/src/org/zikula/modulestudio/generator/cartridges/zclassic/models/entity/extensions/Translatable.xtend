@@ -6,20 +6,18 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelp
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
-import org.zikula.modulestudio.generator.extensions.Utils
 
 class Translatable extends AbstractExtension implements EntityExtensionInterface {
 
     extension FormattingExtensions = new FormattingExtensions
     extension ModelExtensions = new ModelExtensions
     extension NamingExtensions = new NamingExtensions
-    extension Utils = new Utils
 
     /**
      * Generates additional annotations on class level.
      */
     override classAnnotations(Entity it) '''
-         «' '»* @Gedmo\TranslationEntity(class="«IF !application.targets('1.3.x')»\«ENDIF»«entityClassName('translation', false)»")
+         «' '»* @Gedmo\TranslationEntity(class="\«entityClassName('translation', false)»")
     '''
 
     /**
@@ -42,9 +40,7 @@ class Translatable extends AbstractExtension implements EntityExtensionInterface
          «IF loggable»
              * @Gedmo\Versioned
          «ENDIF»
-         «IF !application.targets('1.3.x')»
-             * Assert\Locale()
-         «ENDIF»
+         * Assert\Locale()
          * @Gedmo\Locale«/*the same as @Gedmo\Language*/»
          * @var string $locale
          */
@@ -77,7 +73,7 @@ class Translatable extends AbstractExtension implements EntityExtensionInterface
      * Returns the extension base class.
      */
     override extensionBaseClass(Entity it) {
-        if (application.targets('1.3.x')) 'AbstractTranslation' else 'Translation'
+        'Translation'
     }
 
     /**

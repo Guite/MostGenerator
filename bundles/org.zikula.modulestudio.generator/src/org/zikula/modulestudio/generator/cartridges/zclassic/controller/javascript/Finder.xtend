@@ -18,20 +18,11 @@ class Finder {
      * Entry point for the JavaScript file with finder functionality.
      */
     def generate(Application it, IFileSystemAccess fsa) {
-        var fileName = ''
-        if (targets('1.3.x')) {
-            fileName = appName + '_finder.js'
-        } else {
-            fileName = appName + '.Finder.js'
-        }
+        var fileName = appName + '.Finder.js'
         if (!shouldBeSkipped(getAppJsPath + fileName)) {
             println('Generating JavaScript for finder component')
             if (shouldBeMarked(getAppJsPath + fileName)) {
-                if (targets('1.3.x')) {
-                    fileName = appName + '_finder.generated.js'
-                } else {
-                    fileName = appName + '.Finder.generated.js'
-                }
+                fileName = appName + '.Finder.generated.js'
             }
             fsa.generateFile(getAppJsPath + fileName, generate)
         }
@@ -66,11 +57,7 @@ class Finder {
             current«appName»Editor = editor;
 
             editor.popup(
-                «IF targets('1.3.x')»
-                    Zikula.Config.baseURL + Zikula.Config.entrypoint + '?module=«appName»&type=external&func=finder&editor=ckeditor',
-                «ELSE»
-                    Routing.generate('«appName.formatForDB»_external_finder', { objectType: '«getLeadingEntity.name.formatForCode»', editor: 'ckeditor' }),
-                «ENDIF»
+                Routing.generate('«appName.formatForDB»_external_finder', { objectType: '«getLeadingEntity.name.formatForCode»', editor: 'ckeditor' }),
                 /*width*/ '80%', /*height*/ '70%',
                 'location=no,menubar=no,toolbar=no,dependent=yes,minimizable=no,modal=yes,alwaysRaised=yes,resizable=yes,scrollbars=yes'
             );
@@ -85,42 +72,27 @@ class Finder {
 
         «objName».finder.onLoad = function (baseId, selectedId)
         {
-            «IF targets('1.3.x')»
-                $$('div.category-selector select').invoke('observe', 'change', «objName».finder.onParamChanged);
-                $('«elemPrefix»Sort').observe('change', «objName».finder.onParamChanged);
-                $('«elemPrefix»SortDir').observe('change', «objName».finder.onParamChanged);
-                $('«elemPrefix»PageSize').observe('change', «objName».finder.onParamChanged);
-                $('«elemPrefix»SearchGo').observe('click', «objName».finder.onParamChanged);
-                $('«elemPrefix»SearchGo').observe('keypress', «objName».finder.onParamChanged);
-                $('«elemPrefix»Submit').addClassName('z-hide');
-                $('«elemPrefix»Cancel').observe('click', «objName».finder.handleCancel);
-            «ELSE»
-                jQuery('select').not("[id$='pasteas']").change(«objName».finder.onParamChanged);
-                «/*jQuery('.btn-success').addClass('hidden');*/»
-                jQuery('.btn-default').click(«objName».finder.handleCancel);
+            jQuery('select').not("[id$='pasteas']").change(«objName».finder.onParamChanged);
+            «/*jQuery('.btn-success').addClass('hidden');*/»
+            jQuery('.btn-default').click(«objName».finder.handleCancel);
 
-                var selectedItems = jQuery('#«appName.toLowerCase»ItemContainer li a');
-                selectedItems.bind('click keypress', function (e) {
-                    e.preventDefault();
-                    «objName».finder.selectItem(jQuery(this).data('itemid'));
-                });
-            «ENDIF»
+            var selectedItems = jQuery('#«appName.toLowerCase»ItemContainer li a');
+            selectedItems.bind('click keypress', function (e) {
+                e.preventDefault();
+                «objName».finder.selectItem(jQuery(this).data('itemid'));
+            });
         };
 
         «objName».finder.onParamChanged = function ()
         {
-            «IF targets('1.3.x')»$('«ELSE»jQuery('#«ENDIF»«elemPrefix»SelectorForm').submit();
+            jQuery('#«elemPrefix»SelectorForm').submit();
         };
 
         «objName».finder.handleCancel = function ()
         {
             var editor;
 
-            «IF targets('1.3.x')»
-                editor = $F('editorName');
-            «ELSE»
-                editor = jQuery("[id$='editor']").first().val();
-            «ENDIF»
+            editor = jQuery("[id$='editor']").first().val();
             if ('tinymce' === editor) {
                 «vendorAndName»ClosePopup();
             } else if ('ckeditor' === editor) {
@@ -136,17 +108,10 @@ class Finder {
             var quoteFinder, itemUrl, itemTitle, itemDescription, pasteMode;
 
             quoteFinder = new RegExp('"', 'g');
-            «IF targets('1.3.x')»
-                itemUrl = $F('url' + itemId).replace(quoteFinder, '');
-                itemTitle = $F('title' + itemId).replace(quoteFinder, '').trim();
-                itemDescription = $F('desc' + itemId).replace(quoteFinder, '').trim();
-                pasteMode = $F('«elemPrefix»PasteAs');
-            «ELSE»
-                itemUrl = jQuery('#url' + itemId).val().replace(quoteFinder, '');
-                itemTitle = jQuery('#title' + itemId).val().replace(quoteFinder, '').trim();
-                itemDescription = jQuery('#desc' + itemId).val().replace(quoteFinder, '').trim();
-                pasteMode = jQuery("[id$='pasteas']").first().val();
-            «ENDIF»
+            itemUrl = jQuery('#url' + itemId).val().replace(quoteFinder, '');
+            itemTitle = jQuery('#title' + itemId).val().replace(quoteFinder, '').trim();
+            itemDescription = jQuery('#desc' + itemId).val().replace(quoteFinder, '').trim();
+            pasteMode = jQuery("[id$='pasteas']").first().val();
 
             if (pasteMode === '2' || pasteMode !== '1') {
                 return '' + itemId;
@@ -168,11 +133,7 @@ class Finder {
         {
             var editor, html;
 
-            «IF targets('1.3.x')»
-                editor = $F('editorName');
-            «ELSE»
-                editor = jQuery("[id$='editor']").first().val();
-            «ENDIF»
+            editor = jQuery("[id$='editor']").first().val();
             if ('tinymce' === editor) {
                 html = «vendorAndName»GetPasteSnippet('html', itemId);
                 tinyMCE.activeEditor.execCommand('mceInsertContent', false, html);
@@ -213,106 +174,59 @@ class Finder {
             «objName».itemSelector.selectedId = selectedId;
 
             // required as a changed object type requires a new instance of the item selector plugin
-            «IF targets('1.3.x')»
-                $('«elemPrefix»ObjectType').observe('change', «objName».itemSelector.onParamChanged);
+            jQuery('#«elemPrefix»ObjectType').change(«objName».itemSelector.onParamChanged);
 
-                if ($(baseId + '_catidMain') != undefined) {
-                    $(baseId + '_catidMain').observe('change', «objName».itemSelector.onParamChanged);
-                } else if ($(baseId + '_catidsMain') != undefined) {
-                    $(baseId + '_catidsMain').observe('change', «objName».itemSelector.onParamChanged);
-                }
-                $(baseId + 'Id').observe('change', «objName».itemSelector.onItemChanged);
-                $(baseId + 'Sort').observe('change', «objName».itemSelector.onParamChanged);
-                $(baseId + 'SortDir').observe('change', «objName».itemSelector.onParamChanged);
-                $('«elemPrefix»SearchGo').observe('click', «objName».itemSelector.onParamChanged);
-                $('«elemPrefix»SearchGo').observe('keypress', «objName».itemSelector.onParamChanged);
-            «ELSE»
-                jQuery('#«elemPrefix»ObjectType').change(«objName».itemSelector.onParamChanged);
-
-                if (jQuery('#' + baseId + '_catidMain').length > 0) {
-                    jQuery('#' + baseId + '_catidMain').change(«objName».itemSelector.onParamChanged);
-                } else if (jQuery('#' + baseId + '_catidsMain').length > 0) {
-                    jQuery('#' + baseId + '_catidsMain').change(«objName».itemSelector.onParamChanged);
-                }
-                jQuery('#' + baseId + 'Id').change(«objName».itemSelector.onItemChanged);
-                jQuery('#' + baseId + 'Sort').change(«objName».itemSelector.onParamChanged);
-                jQuery('#' + baseId + 'SortDir').change(«objName».itemSelector.onParamChanged);
-                jQuery('#«elemPrefix»SearchGo').click(«objName».itemSelector.onParamChanged);
-                jQuery('#«elemPrefix»SearchGo').keypress(«objName».itemSelector.onParamChanged);
-            «ENDIF»
+            if (jQuery('#' + baseId + '_catidMain').length > 0) {
+                jQuery('#' + baseId + '_catidMain').change(«objName».itemSelector.onParamChanged);
+            } else if (jQuery('#' + baseId + '_catidsMain').length > 0) {
+                jQuery('#' + baseId + '_catidsMain').change(«objName».itemSelector.onParamChanged);
+            }
+            jQuery('#' + baseId + 'Id').change(«objName».itemSelector.onItemChanged);
+            jQuery('#' + baseId + 'Sort').change(«objName».itemSelector.onParamChanged);
+            jQuery('#' + baseId + 'SortDir').change(«objName».itemSelector.onParamChanged);
+            jQuery('#«elemPrefix»SearchGo').click(«objName».itemSelector.onParamChanged);
+            jQuery('#«elemPrefix»SearchGo').keypress(«objName».itemSelector.onParamChanged);
 
             «objName».itemSelector.getItemList();
         };
 
         «objName».itemSelector.onParamChanged = function ()
         {
-            «IF targets('1.3.x')»$('«ELSE»jQuery('#«ENDIF»ajax_indicator').removeClass«IF targets('1.3.x')»Name«ENDIF»('«IF targets('1.3.x')»z-hide«ELSE»hidden«ENDIF»');
+            jQuery('#ajax_indicator').removeClass('hidden');
 
             «objName».itemSelector.getItemList();
         };
 
         «objName».itemSelector.getItemList = function ()
         {
-            var baseId, params«IF targets('1.3.x')», request«ENDIF»;
+            var baseId, params;
 
             baseId = «name.formatForDB».itemSelector.baseId;
             params = 'ot=' + baseId + '&';
-            «IF targets('1.3.x')»
-                if ($(baseId + '_catidMain') != undefined) {
-                    params += 'catidMain=' + $F(baseId + '_catidMain') + '&';
-                } else if ($(baseId + '_catidsMain') != undefined) {
-                    params += 'catidsMain=' + $F(baseId + '_catidsMain') + '&';
-                }
-                params += 'sort=' + $F(baseId + 'Sort') + '&' +
-                          'sortdir=' + $F(baseId + 'SortDir') + '&' +
-                          'q=' + $F(baseId + 'SearchTerm');
-            «ELSE»
-                if (jQuery('#' + baseId + '_catidMain').length > 0) {
-                    params += 'catidMain=' + jQuery('#' + baseId + '_catidMain').val() + '&';
-                } else if (jQuery('#' + baseId + '_catidsMain').length > 0) {
-                    params += 'catidsMain=' + jQuery('#' + baseId + '_catidsMain').val() + '&';
-                }
-                params += 'sort=' + jQuery('#' + baseId + 'Sort').val() + '&' +
-                          'sortdir=' + jQuery('#' + baseId + 'SortDir').val() + '&' +
-                          'q=' + jQuery('#' + baseId + 'SearchTerm').val();
-            «ENDIF»
+            if (jQuery('#' + baseId + '_catidMain').length > 0) {
+                params += 'catidMain=' + jQuery('#' + baseId + '_catidMain').val() + '&';
+            } else if (jQuery('#' + baseId + '_catidsMain').length > 0) {
+                params += 'catidsMain=' + jQuery('#' + baseId + '_catidsMain').val() + '&';
+            }
+            params += 'sort=' + jQuery('#' + baseId + 'Sort').val() + '&' +
+                      'sortdir=' + jQuery('#' + baseId + 'SortDir').val() + '&' +
+                      'q=' + jQuery('#' + baseId + 'SearchTerm').val();
 
-            «IF targets('1.3.x')»
-                request = new Zikula.Ajax.Request(
-                    Zikula.Config.baseURL + 'ajax.php?module=«appName»&func=getItemListFinder',
-                    {
-                        method: 'post',
-                        parameters: params,
-                        onFailure: function(req) {
-                            Zikula.showajaxerror(req.getMessage());
-                        },
-                        onSuccess: function(req) {
-                            var baseId;
-                            baseId = «objName».itemSelector.baseId;
-                            «objName».itemSelector.items[baseId] = req.getData();
-                            $('ajax_indicator').addClassName('z-hide');
-                            «objName».itemSelector.updateItemDropdownEntries();
-                            «objName».itemSelector.updatePreview();
-                        }
-                    }
-                );
-            «ELSE»
-                jQuery.ajax({
-                    type: 'POST',
-                    url: Routing.generate('«appName.formatForDB»_ajax_getitemlistfinder'),
-                    data: params
-                }).done(function(res) {
-                    // get data returned by the ajax response
-                    var baseId;
-                    baseId = «objName».itemSelector.baseId;
-                    «objName».itemSelector.items[baseId] = res.data;
-                    jQuery('#ajax_indicator').addClass('hidden');
-                    «objName».itemSelector.updateItemDropdownEntries();
-                    «objName».itemSelector.updatePreview();
-                })«/*.fail(function(jqXHR, textStatus) {
-                    // nothing to do yet
-                })*/»;
-            «ENDIF»
+            jQuery.ajax({
+                type: 'POST',
+                url: Routing.generate('«appName.formatForDB»_ajax_getitemlistfinder'),
+                data: params
+            }).done(function(res) {
+                // get data returned by the ajax response
+                var baseId;
+                baseId = «objName».itemSelector.baseId;
+                «objName».itemSelector.items[baseId] = res.data;
+                jQuery('#ajax_indicator').addClass('hidden');
+                «objName».itemSelector.updateItemDropdownEntries();
+                «objName».itemSelector.updatePreview();
+            })«/*.fail(function(jqXHR, textStatus) {
+                // nothing to do yet
+            })*/»;
         };
 
         «objName».itemSelector.updateItemDropdownEntries = function ()
@@ -320,7 +234,7 @@ class Finder {
             var baseId, itemSelector, items, i, item;
 
             baseId = «objName».itemSelector.baseId;
-            itemSelector = «IF targets('1.3.x')»$(«ELSE»jQuery('#' + «ENDIF»baseId + 'Id');
+            itemSelector = jQuery('#' + baseId + 'Id');
             itemSelector.length = 0;
 
             items = «objName».itemSelector.items[baseId];
@@ -330,11 +244,7 @@ class Finder {
             }
 
             if («objName».itemSelector.selectedId > 0) {
-                «IF targets('1.3.x')»
-                    $(baseId + 'Id').value = «objName».itemSelector.selectedId;
-                «ELSE»
-                    jQuery('#' + baseId + 'Id').val(«objName».itemSelector.selectedId);
-                «ENDIF»
+                jQuery('#' + baseId + 'Id').val(«objName».itemSelector.selectedId);
             }
         };
 
@@ -345,11 +255,7 @@ class Finder {
             baseId = «objName».itemSelector.baseId;
             items = «objName».itemSelector.items[baseId];
 
-            «IF targets('1.3.x')»
-                $(baseId + 'PreviewContainer').addClassName('z-hide');
-            «ELSE»
-                jQuery('#' + baseId + 'PreviewContainer').addClass('hidden');
-            «ENDIF»
+            jQuery('#' + baseId + 'PreviewContainer').addClass('hidden');
 
             if (items.length === 0) {
                 return;
@@ -366,15 +272,9 @@ class Finder {
             }
 
             if (null !== selectedElement) {
-                «IF targets('1.3.x')»
-                    $(baseId + 'PreviewContainer')
-                        .update(window.atob(selectedElement.previewInfo))
-                        .removeClassName('z-hide');
-                «ELSE»
-                    jQuery('#' + baseId + 'PreviewContainer')
-                        .html(window.atob(selectedElement.previewInfo))
-                        .removeClass('hidden');
-                «ENDIF»
+                jQuery('#' + baseId + 'PreviewContainer')
+                    .html(window.atob(selectedElement.previewInfo))
+                    .removeClass('hidden');
             }
         };
 
@@ -383,11 +283,11 @@ class Finder {
             var baseId, itemSelector, preview;
 
             baseId = «objName».itemSelector.baseId;
-            itemSelector = «IF targets('1.3.x')»$(«ELSE»jQuery('#' + «ENDIF»baseId + 'Id');
+            itemSelector = jQuery('#' + baseId + 'Id');
             preview = window.atob(«objName».itemSelector.items[baseId][itemSelector.selectedIndex].previewInfo);
 
-            «IF targets('1.3.x')»$(«ELSE»jQuery('#' + «ENDIF»baseId + 'PreviewContainer').«IF targets('1.3.x')»update«ELSE»html«ENDIF»(preview);
-            «objName».itemSelector.selectedId = «IF targets('1.3.x')»$F(baseId + 'Id')«ELSE»jQuery('#' + baseId + 'Id').val()«ENDIF»;
+            jQuery('#' + baseId + 'PreviewContainer').html(preview);
+            «objName».itemSelector.selectedId = jQuery('#' + baseId + 'Id').val();
         };
     '''
 }

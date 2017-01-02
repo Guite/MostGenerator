@@ -13,88 +13,28 @@ class ItemActionsView {
 
     def generateView(Entity it, String subject) '''
         «IF subject == 'markup'»
-            «IF application.targets('1.3.x')»
-                {if count($«name.formatForCode»._actions) gt 0}
-                    «markup('view')»
-                    «IF application.targets('1.3.x')»
-                        «javaScript('view')»
-                    «ENDIF»
-                {/if}
-            «ELSE»
-                {% set itemActions = knp_menu_get('«application.appName»:ItemActionsMenu:menu', [], { entity: «name.formatForCode», area: routeArea, context: 'view' }) %}
-                «markup('view')»
-            «ENDIF»
+            {% set itemActions = knp_menu_get('«application.appName»:ItemActionsMenu:menu', [], { entity: «name.formatForCode», area: routeArea, context: 'view' }) %}
+            «markup('view')»
         «ELSEIF subject == 'javascript'»
             «javaScript('view')»
         «ENDIF»
     '''
 
     def generateDisplay(Entity it) '''
-        «IF application.targets('1.3.x')»
-            {if count($«name.formatForCode»._actions) gt 0}
-                «markup('display')»
-                «javaScript('display')»
-            {/if}
-        «ELSE»
-            {% set itemActions = knp_menu_get('«application.appName»:ItemActionsMenu:menu', [], { entity: «name.formatForCode», area: routeArea, context: 'display' }) %}
-            «markup('display')»
-            «javaScript('display')»
-        «ENDIF»
+        {% set itemActions = knp_menu_get('«application.appName»:ItemActionsMenu:menu', [], { entity: «name.formatForCode», area: routeArea, context: 'display' }) %}
+        «markup('display')»
+        «javaScript('display')»
     '''
 
     def private markup(Entity it, String context) '''
-        «IF application.targets('1.3.x')»
-            «IF context == 'display'»
-                <p id="«itemActionContainerViewId»">
-                    «linkList(context)»
-                </p>
-            «ELSEIF context == 'view'»
-                «trigger(context)»
-                «linkList(context)»
-            «ENDIF»
-        «ELSE»
-            <div class="dropdown">
-                «trigger(context)»
-                {{ knp_menu_render(itemActions, { template: 'ZikulaMenuModule:Override:actions.html.twig' }) }}
-            </div>
-        «ENDIF»
+        <div class="dropdown">
+            «trigger(context)»
+            {{ knp_menu_render(itemActions, { template: 'ZikulaMenuModule:Override:actions.html.twig' }) }}
+        </div>
     '''
-
-    def private linkList(Entity it, String context) '''
-        «IF application.targets('1.3.x')»
-            {foreach item='option' from=$«name.formatForCode»._actions}
-                «linkEntry(context)»
-            {/foreach}
-        «ELSE»
-            {% for option in actionLinks %}
-                «linkEntry(context)»
-            {% endfor %}
-        «ENDIF»
-    '''
-
-    def private linkEntry(Entity it, String context) '''
-        «IF application.targets('1.3.x')»
-            «IF context == 'display'»
-                <a «linkEntryCommonAttributesLegacy» class="z-icon-es-{$option.icon}">{$option.linkText|safetext}</a>
-            «ELSEIF context == 'view'»
-                <a «linkEntryCommonAttributesLegacy»{if $option.icon eq 'preview'} target="_blank"{/if}>{icon type=$option.icon size='extrasmall' alt=$option.linkText|safetext}</a>
-            «ENDIF»
-        «ELSE»
-            <li role="presentation"><a «linkEntryCommonAttributes» role="menuitem" tabindex="-1" class="fa fa-{{ option.icon }}">{{ option.linkText }}</a></li>
-«/*
-    <li role="presentation" class="dropdown-header">Dropdown group heading</li>
-    <li role="presentation" class="disabled"><a role="menuitem" tabindex="-1" href="#">Disabled link</a></li>
-    <li role="presentation" class="divider"></li>
-*/»
-        «ENDIF»
-    '''
-
-    def private linkEntryCommonAttributesLegacy(Entity it) '''href="{$option.url.type|«application.appName.formatForDB»ActionUrl:$option.url.func:$option.url.arguments}" title="{$option.linkTitle|safetext}"'''
-
-    def private linkEntryCommonAttributes(Entity it) '''href="{{ option.url }}" title="{{ option.linkTitle|e('html_attr') }}"'''
 
     def private javaScript(Entity it, String context) '''
-        «IF !application.targets('1.3.x') && context == 'view'»
+        «IF context == 'view'»
             $('.«application.appName.toLowerCase»-«name.formatForDB» .dropdown > ul').removeClass('list-inline').addClass('list-unstyled dropdown-menu dropdown-menu-right');
             $('.«application.appName.toLowerCase»-«name.formatForDB» .dropdown > ul a').each(function (index) {
                 $(this).html($(this).html() + $(this).find('i').first().data('original-title'));
@@ -104,44 +44,26 @@ class ItemActionsView {
         «ELSE»
             <script type="text/javascript">
             /* <![CDATA[ */
-                «IF application.targets('1.3.x')»
-                    document.observe('dom:loaded', function() {
-                        «application.vendorAndName»InitItemActions('«name.formatForCode»', '«context»', '«itemActionContainerViewIdForJs»');
-                    });
-                «ELSE»
-                    ( function($) {
-                        $(document).ready(function() {
-                            $('h2 .dropdown > ul, h3 .dropdown > ul').removeClass('list-inline').addClass('list-unstyled dropdown-menu');
-                            $('h2 .dropdown > ul a, h3 .dropdown > ul a').each(function (index) {
-                                $(this).html($(this).html() + $(this).find('i').first().data('original-title'));
-                            });
-                            $('h2 .dropdown > ul a i, h3 .dropdown > ul a i').addClass('fa-fw');
-                            $('h2 .dropdown-toggle, h3 .dropdown-toggle').removeClass('hidden').dropdown();
+                ( function($) {
+                    $(document).ready(function() {
+                        $('h2 .dropdown > ul, h3 .dropdown > ul').removeClass('list-inline').addClass('list-unstyled dropdown-menu');
+                        $('h2 .dropdown > ul a, h3 .dropdown > ul a').each(function (index) {
+                            $(this).html($(this).html() + $(this).find('i').first().data('original-title'));
                         });
-                    })(jQuery);
-                «ENDIF»
+                        $('h2 .dropdown > ul a i, h3 .dropdown > ul a i').addClass('fa-fw');
+                        $('h2 .dropdown-toggle, h3 .dropdown-toggle').removeClass('hidden').dropdown();
+                    });
+                })(jQuery);
             /* ]]> */
             </script>
         «ENDIF»
     '''
 
     def trigger(Entity it, String context) '''
-        «IF application.targets('1.3.x')»
-            {icon id="«itemActionContainerViewIdForSmarty»Trigger" type='options' size='extrasmall' __alt='Actions' class='z-pointer z-hide'}
-        «ELSE»
-            <a id="«itemActionContainerViewId»DropDownToggle" role="button" data-toggle="dropdown" data-target="#" href="javascript:void(0);" class="hidden dropdown-toggle"><i class="fa fa-tasks"></i>«IF context == 'display'» {{ __('Actions') }}«ENDIF» <span class="caret"></span></a>
-«/*            <button id="«itemActionContainerViewId»DropDownToggle" class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown"><i class="fa fa-tasks"></i>«IF context == 'display'» {{ __('Actions') }}«ENDIF» <span class="caret"></span></button>*/»
-        «ENDIF»
+        <a id="«itemActionContainerViewId»DropDownToggle" role="button" data-toggle="dropdown" data-target="#" href="javascript:void(0);" class="hidden dropdown-toggle"><i class="fa fa-tasks"></i>«IF context == 'display'» {{ __('Actions') }}«ENDIF» <span class="caret"></span></a>
+«/*        <button id="«itemActionContainerViewId»DropDownToggle" class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown"><i class="fa fa-tasks"></i>«IF context == 'display'» {{ __('Actions') }}«ENDIF» <span class="caret"></span></button>*/»
     '''
 
     def itemActionContainerViewId(Entity it) '''
-        itemActions«FOR pkField : getPrimaryKeyFields SEPARATOR '_'»«IF application.targets('1.3.x')»{$«name.formatForCode».«pkField.name.formatForCode»}«ELSE»{{ «name.formatForCode».«pkField.name.formatForCode» }}«ENDIF»«ENDFOR»'''
-
-    // 1.3.x only
-    def private itemActionContainerViewIdForJs(Entity it) '''
-        itemActions«FOR pkField : getPrimaryKeyFields SEPARATOR '_'»{{$«name.formatForCode».«pkField.name.formatForCode»}}«ENDFOR»'''
-
-    // 1.3.x only
-    def private itemActionContainerViewIdForSmarty(Entity it) '''
-        itemActions«FOR pkField : getPrimaryKeyFields SEPARATOR '_'»`$«name.formatForCode».«pkField.name.formatForCode»`«ENDFOR»'''
+        itemActions«FOR pkField : getPrimaryKeyFields SEPARATOR '_'»{{ «name.formatForCode».«pkField.name.formatForCode» }}«ENDFOR»'''
 }

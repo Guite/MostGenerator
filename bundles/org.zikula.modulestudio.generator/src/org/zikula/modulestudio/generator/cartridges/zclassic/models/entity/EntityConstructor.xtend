@@ -87,11 +87,7 @@ class EntityConstructor {
             $this->«mandatoryField.name.formatForCode» = 1;
         «ENDFOR»
         «FOR mandatoryField : mandatoryFields.filter(UserField).filter[null === defaultValue || defaultValue == '' || defaultValue == '0']»
-            «IF application.targets('1.3.x')»
-                $this->«mandatoryField.name.formatForCode» = UserUtil::getVar('uname');
-            «ELSE»
-                $this->«mandatoryField.name.formatForCode» = $serviceManager->get('zikula_users_module.current_user')->get('uname');
-            «ENDIF»
+            $this->«mandatoryField.name.formatForCode» = $serviceManager->get('zikula_users_module.current_user')->get('uname');
         «ENDFOR»
         «FOR mandatoryField : mandatoryFields.filter(DecimalField).filter[null === defaultValue || defaultValue == '' || defaultValue == '0']»
             $this->«mandatoryField.name.formatForCode» = 1;
@@ -104,14 +100,10 @@ class EntityConstructor {
         «ENDFOR»
         «IF !getListFieldsEntity.filter[name != 'workflowState' && (null === defaultValue || defaultValue.length == 0)].empty»
 
-            «IF application.targets('1.3.x')»
-                $listHelper = new «application.appName»_Util_ListEntries(ServiceUtil::getManager());
-            «ELSE»
-                $listHelper = $serviceManager->get('«application.appService».listentries_helper');
-            «ENDIF»
+            $listHelper = $serviceManager->get('«application.appService».listentries_helper');
             «FOR listField : getListFieldsEntity.filter[name != 'workflowState' && (null === defaultValue || defaultValue.length == 0)]»
 
-                $items = «IF application.targets('1.3.x')»array()«ELSE»[]«ENDIF»;
+                $items = [];
                 $listEntries = $listHelper->get«listField.name.formatForCodeCapital»EntriesFor«name.formatForCodeCapital»();
                 foreach ($listEntries as $listEntry) {
                     if (true === $listEntry['default']) {
@@ -137,9 +129,6 @@ class EntityConstructor {
                 «ENDFOR»
             «ENDFOR»
         «ELSE»
-        «ENDIF»
-        «IF application.targets('1.3.x')»
-            $this->initValidator();
         «ENDIF»
         $this->initWorkflow();
         «new Association().initCollections(it)»

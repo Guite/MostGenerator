@@ -4,16 +4,14 @@ import de.guite.modulestudio.metamodel.Application
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
-import org.zikula.modulestudio.generator.extensions.Utils
 
 class Attributes {
     extension ControllerExtensions = new ControllerExtensions
     extension NamingExtensions = new NamingExtensions
-    extension Utils = new Utils
 
     def generate (Application it, IFileSystemAccess fsa) {
-        val templatePath = getViewPath + (if (targets('1.3.x')) 'helper' else 'Helper') + '/'
-        val templateExtension = if (targets('1.3.x')) '.tpl' else '.html.twig'
+        val templatePath = getViewPath + 'Helper/'
+        val templateExtension = '.html.twig'
 
         var fileName = ''
         if (hasViewActions || hasDisplayActions) {
@@ -22,7 +20,7 @@ class Attributes {
                 if (shouldBeMarked(templatePath + fileName)) {
                     fileName = 'includeAttributesDisplay.generated' + templateExtension
                 }
-                fsa.generateFile(templatePath + fileName, if (targets('1.3.x')) attributesViewImplLegacy else attributesViewImpl)
+                fsa.generateFile(templatePath + fileName, attributesViewImpl)
             }
         }
         if (hasEditActions) {
@@ -31,26 +29,10 @@ class Attributes {
                 if (shouldBeMarked(templatePath + fileName)) {
                     fileName = 'includeAttributesEdit.generated' + templateExtension
                 }
-                fsa.generateFile(templatePath + fileName, if (targets('1.3.x')) attributesEditImplLegacy else attributesEditImpl)
+                fsa.generateFile(templatePath + fileName, attributesEditImpl)
             }
         }
     }
-
-    def private attributesViewImplLegacy(Application it) '''
-        {* purpose of this template: reusable display of entity attributes *}
-        {if isset($obj.attributes)}
-            {if isset($panel) && $panel eq true}
-                <h3 class="attributes z-panel-header z-panel-indicator z-pointer">{gt text='Attributes'}</h3>
-                <div class="attributes z-panel-content" style="display: none">
-            {else}
-                <h3 class="attributes">{gt text='Attributes'}</h3>
-            {/if}
-            «viewBodyLegacy»
-            {if isset($panel) && $panel eq true}
-                </div>
-            {/if}
-        {/if}
-    '''
 
     def private attributesViewImpl(Application it) '''
         {# purpose of this template: reusable display of entity attributes #}
@@ -74,15 +56,6 @@ class Attributes {
         {% endif %}
     '''
 
-    def private viewBodyLegacy(Application it) '''
-        <dl class="propertylist">
-        {foreach key='attributeName' item='attributeInfo' from=$obj.attributes}
-            <dt>{$attributeName|safetext}</dt>
-            <dd>{$attributeInfo.value|default:''|safetext}</dd>
-        {/foreach}
-        </dl>
-    '''
-
     def private viewBody(Application it) '''
         <dl class="propertylist">
         {% for attributeName, attributeInfo in obj.attributes %}
@@ -90,23 +63,6 @@ class Attributes {
             <dd>{{ attributeInfo.value }}</dd>
         {% endfor %}
         </dl>
-    '''
-
-    def private attributesEditImplLegacy(Application it) '''
-        {* purpose of this template: reusable editing of entity attributes *}
-        {if isset($panel) && $panel eq true}
-            <h3 class="attributes z-panel-header z-panel-indicator z-pointer">{gt text='Attributes'}</h3>
-            <fieldset class="attributes z-panel-content" style="display: none">
-        {else}
-            <fieldset class="attributes">
-        {/if}
-            <legend>{gt text='Attributes'}</legend>
-            «editBodyLegacy»
-        {if isset($panel) && $panel eq true}
-            </fieldset>
-        {else}
-            </fieldset>
-        {/if}
     '''
 
     def private attributesEditImpl(Application it) '''
@@ -130,17 +86,6 @@ class Attributes {
         {% else %}
             </fieldset>
         {% endif %}
-    '''
-
-    def private editBodyLegacy(Application it) '''
-        {formvolatile}
-        {foreach key='attributeName' item='attributeValue' from=$attributes}
-            <div class="z-formrow">
-                {formlabel for="attributes`$attributeName`"' text=$attributeName}
-                {formtextinput id="attributes`$attributeName`" group='attributes' dataField=$attributeName maxLength=255}
-            </div>
-        {/foreach}
-        {/formvolatile}
     '''
 
     def private editBody(Application it) '''

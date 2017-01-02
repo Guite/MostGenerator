@@ -74,8 +74,7 @@ class Utils {
      * @return String The formatted name.
      */
     def String appName(Application it) {
-        if (targets('1.3.x')) name.formatForCodeCapital
-        else vendor.formatForCodeCapital + name.formatForCodeCapital + 'Module'
+        vendor.formatForCodeCapital + name.formatForCodeCapital + 'Module'
     }
 
     /**
@@ -86,8 +85,7 @@ class Utils {
      * @return String The formatted namespace.
      */
     def appNamespace(Application it) {
-        if (targets('1.3.x')) ''
-        else vendor.formatForCodeCapital + '\\' + name.formatForCodeCapital + 'Module'
+        vendor.formatForCodeCapital + '\\' + name.formatForCodeCapital + 'Module'
     }
 
     /**
@@ -98,8 +96,7 @@ class Utils {
      * @return String The formatted service prefix.
      */
     def String appService(Application it) {
-        if (targets('1.3.x')) ''
-        else vendor.formatForDB + '_' + name.formatForDB + '_module'
+        vendor.formatForDB + '_' + name.formatForDB + '_module'
     }
 
     /**
@@ -122,25 +119,19 @@ class Utils {
      * @return Boolean The result.
      */
     def Boolean targets(Application it, String version) {
-        // we query '1.3.x' for BC
-        val useSymfony = (version != '1.3.x')
         val useUnstableCore = (version == '1.4-dev')
 
         switch getCoreVersion {
-            case ZK135:
-                !useSymfony && !useUnstableCore
-            case ZK136:
-                !useSymfony && !useUnstableCore
             case ZK20:
                 version == '2.x'
             case ZK14:
-                useSymfony && !useUnstableCore
+                !useUnstableCore
             case ZK14DEV:
                 useUnstableCore
             case ZKPRE14:
-                useSymfony && !useUnstableCore
+                !useUnstableCore
             default:
-                useSymfony && !useUnstableCore
+                !useUnstableCore
         }
     }
 

@@ -23,7 +23,7 @@ class Newsletter {
 
     def generate(Application it, IFileSystemAccess fsa) {
         val pluginPath = getAppSourceLibPath + 'NewsletterPlugin/'
-        val pluginClassSuffix = if (!targets('1.3.x')) 'Plugin' else ''
+        val pluginClassSuffix = 'Plugin'
         var pluginFileName = 'ItemList' + pluginClassSuffix + '.php'
         if (!generateOnlyBaseClasses && !shouldBeSkipped(pluginPath + pluginFileName)) {
             if (shouldBeMarked(pluginPath + pluginFileName)) {
@@ -35,19 +35,17 @@ class Newsletter {
     }
 
     def private newsletterClass(Application it) '''
-        «IF !targets('1.3.x')»
-            namespace «appNamespace»\NewsletterPlugin;
+        namespace «appNamespace»\NewsletterPlugin;
 
-            use FormUtil;
-            use ModUtil;
-            use Newsletter_AbstractPlugin;
-            use ServiceUtil;
-        «ENDIF»
+        use FormUtil;
+        use ModUtil;
+        use Newsletter_AbstractPlugin;
+        use ServiceUtil;
 
         /**
          * Newsletter plugin class.
          */
-        class «IF targets('1.3.x')»«appName»_NewsletterPlugin_ItemList«ELSE»ItemListPlugin«ENDIF» extends Newsletter_AbstractPlugin
+        class ItemListPlugin extends Newsletter_AbstractPlugin
         {
             «newsletterImpl»
         }
@@ -62,13 +60,9 @@ class Newsletter {
          */
         public function getTitle()
         {
-            «IF targets('1.3.x')»
-                return $this->__('Latest «IF entities.size < 2»«itemDesc»«ELSE»«appName» items«ENDIF»');
-            «ELSE»
-                $serviceManager = ServiceUtil::getManager();
+            $serviceManager = ServiceUtil::getManager();
 
-                return $serviceManager->get('translator.default')->__('Latest «IF entities.size < 2»«itemDesc»«ELSE»«appName» items«ENDIF»');
-            «ENDIF»
+            return $serviceManager->get('translator.default')->__('Latest «IF entities.size < 2»«itemDesc»«ELSE»«appName» items«ENDIF»');
         }
 
         /**
@@ -78,13 +72,9 @@ class Newsletter {
          */
         public function getDisplayName()
         {
-            «IF targets('1.3.x')»
-                return $this->__('List of «itemDesc»«IF entities.size > 1» and other «appName» items«ENDIF»');
-            «ELSE»
-                $serviceManager = ServiceUtil::getManager();
+            $serviceManager = ServiceUtil::getManager();
 
-                return $serviceManager->get('translator.default')->__('List of «itemDesc»«IF entities.size > 1» and other «appName» items«ENDIF»');
-            «ENDIF»
+            return $serviceManager->get('translator.default')->__('List of «itemDesc»«IF entities.size > 1» and other «appName» items«ENDIF»');
         }
 
         /**
@@ -94,13 +84,9 @@ class Newsletter {
          */
         public function getDescription()
         {
-            «IF targets('1.3.x')»
-                return $this->__('This plugin shows a list of «itemDesc»«IF entities.size > 1» and other items«ENDIF» of the «appName» module.');
-            «ELSE»
-                $serviceManager = ServiceUtil::getManager();
-            
-                return $serviceManager->get('translator.default')->__('This plugin shows a list of «itemDesc»«IF entities.size > 1» and other items«ENDIF» of the «appName» module.');
-            «ENDIF»
+            $serviceManager = ServiceUtil::getManager();
+        
+            return $serviceManager->get('translator.default')->__('This plugin shows a list of «itemDesc»«IF entities.size > 1» and other items«ENDIF» of the «appName» module.');
         }
 
         /**
@@ -111,14 +97,10 @@ class Newsletter {
          */
         public function pluginAvailable()
         {
-            «IF targets('1.3.x')»
-                return ModUtil::available($this->modname);
-            «ELSE»
-                $serviceManager = ServiceUtil::getManager();
-                $kernel = $serviceManager->get('kernel');
+            $serviceManager = ServiceUtil::getManager();
+            $kernel = $serviceManager->get('kernel');
 
-                return null !== $kernel->getModule($this->modname);
-            «ENDIF»
+            return null !== $kernel->getModule($this->modname);
         }
 
         /**
@@ -128,36 +110,30 @@ class Newsletter {
          */
         public function getParameters()
         {
-            «IF !targets('1.3.x')»
-                $serviceManager = ServiceUtil::getManager();
-                $translator = $serviceManager->get('translator.default');
+            $serviceManager = ServiceUtil::getManager();
+            $translator = $serviceManager->get('translator.default');
 
-            «ENDIF»
-            $objectTypes = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»;
-            if ($this->pluginAvailable()«IF targets('1.3.x')» && ModUtil::loadApi($this->modname)«ENDIF») {
+            $objectTypes = [];
+            if ($this->pluginAvailable()) {
                 «FOR entity : getAllEntities»
-                    «IF targets('1.3.x')»
-                        $objectTypes['«entity.name.formatForCode»'] = array('name' => $this->__('«entity.nameMultiple.formatForDisplayCapital»'));
-                    «ELSE»
-                        $objectTypes['«entity.name.formatForCode»'] = ['name' => $translator->__('«entity.nameMultiple.formatForDisplayCapital»')];
-                    «ENDIF»
+                    $objectTypes['«entity.name.formatForCode»'] = ['name' => $translator->__('«entity.nameMultiple.formatForDisplayCapital»')];
                 «ENDFOR»
             }
 
-            $active = $this->getPluginVar('ObjectTypes', «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»);
+            $active = $this->getPluginVar('ObjectTypes', []);
             foreach ($objectTypes as $k => $v) {
                 $objectTypes[$k]['nwactive'] = in_array($k, $active);
             }
 
-            $args = $this->getPluginVar('Args', «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»);
+            $args = $this->getPluginVar('Args', []);
 
-            return «IF targets('1.3.x')»array(«ELSE»[«ENDIF»
+            return [
                 'number' => 1,
-                'param'  => «IF targets('1.3.x')»array(«ELSE»[«ENDIF»
+                'param'  => [
                     'ObjectTypes'=> $objectTypes,
                     'Args' => $args
-                «IF targets('1.3.x')»)«ELSE»]«ENDIF»
-            «IF targets('1.3.x')»)«ELSE»]«ENDIF»;
+                ]
+            ];
         }
 
         /**
@@ -166,12 +142,12 @@ class Newsletter {
         public function setParameters()
         {
             // Object types to be used in the newsletter
-            $objectTypes = FormUtil::getPassedValue($this->modname . 'ObjectTypes', «IF targets('1.3.x')»array()«ELSE»[]«ENDIF», 'POST');
+            $objectTypes = FormUtil::getPassedValue($this->modname . 'ObjectTypes', [], 'POST');
 
             $this->setPluginVar('ObjectTypes', array_keys($objectTypes));
 
             // Additional arguments
-            $args = FormUtil::getPassedValue($this->modname . 'Args', «IF targets('1.3.x')»array()«ELSE»[]«ENDIF», 'POST');
+            $args = FormUtil::getPassedValue($this->modname . 'Args', [], 'POST');
 
             $this->setPluginVar('Args', $args);
         }
@@ -186,17 +162,14 @@ class Newsletter {
         public function getPluginData($filtAfterDate = null)
         {
             if (!$this->pluginAvailable()) {
-                return «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»;
+                return [];
             }
-            «IF targets('1.3.x')»
-                ModUtil::initOOModule($this->modname);
-            «ENDIF»
 
             // collect data for each activated object type
             $itemsGrouped = $this->getItemsPerObjectType($filtAfterDate);
 
             // now flatten for presentation
-            $items = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»;
+            $items = [];
             if ($itemsGrouped) {
                 foreach ($itemsGrouped as $objectTypes => $itemList) {
                     foreach ($itemList as $item) {
@@ -217,23 +190,21 @@ class Newsletter {
          */
         protected function getItemsPerObjectType($filtAfterDate = null)
         {
-            $objectTypes = $this->getPluginVar('ObjectTypes', «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»);
-            $args = $this->getPluginVar('Args', «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»);
+            $objectTypes = $this->getPluginVar('ObjectTypes', []);
+            $args = $this->getPluginVar('Args', []);
 
-            «IF !targets('1.3.x')»
-                $serviceManager = ServiceUtil::getManager();
-                $permissionApi = $serviceManager->get('zikula_permissions_module.api.permission');
+            $serviceManager = ServiceUtil::getManager();
+            $permissionApi = $serviceManager->get('zikula_permissions_module.api.permission');
 
-            «ENDIF»
-            $output = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»;
+            $output = [];
 
             foreach ($objectTypes as $objectType) {
-                if (!«IF targets('1.3.x')»SecurityUtil::check«ELSE»$permissionApi->has«ENDIF»Permission($this->modname . ':' . ucfirst($objectType) . ':', '::', ACCESS_READ, $this->userNewsletter)) {
+                if (!$permissionApi->hasPermission($this->modname . ':' . ucfirst($objectType) . ':', '::', ACCESS_READ, $this->userNewsletter)) {
                     // the newsletter has no permission for these items
                     continue;
                 }
 
-                $otArgs = isset($args[$objectType]) ? $args[$objectType] : «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»;
+                $otArgs = isset($args[$objectType]) ? $args[$objectType] : [];
                 $otArgs['objectType'] = $objectType;
 
                 // perform the data selection
@@ -254,16 +225,8 @@ class Newsletter {
         protected function selectPluginData($args, $filtAfterDate = null)
         {
             $objectType = $args['objectType'];
-            «IF targets('1.3.x')»
-                $entityClass = '«appName»_Entity_' . ucfirst($objectType);
-            «ENDIF»
             $serviceManager = ServiceUtil::getManager();
-            «IF targets('1.3.x')»
-                $entityManager = $serviceManager->get«IF targets('1.3.x')»Service«ENDIF»('«entityManagerService»');
-                $repository = $entityManager->getRepository($entityClass);
-            «ELSE»
-                $repository = $serviceManager->get('«appService».' . $objectType . '_factory')->getRepository();
-            «ENDIF»
+            $repository = $serviceManager->get('«appService».' . $objectType . '_factory')->getRepository();
 
             // create query
             $where = isset($args['filter']) ? $args['filter'] : '';
@@ -281,8 +244,8 @@ class Newsletter {
             // get objects from database
             $currentPage = 1;
             $resultsPerPage = isset($args['amount']) && is_numeric($args['amount']) ? $args['amount'] : $this->nItems;
-            list($query, $count) = $repository->getSelectWherePaginatedQuery($qb, $currentPage, $resultsPerPage);
-            «IF targets('1.3.x')»$entities«ELSE»list($entities, $objectCount)«ENDIF» = $repository->retrieveCollectionResult($query, $orderBy, true);
+            $query = $repository->getSelectWherePaginatedQuery($qb, $currentPage, $resultsPerPage);
+            list($entities, $objectCount) = $repository->retrieveCollectionResult($query, $orderBy, true);
 
             // post processing
             $descriptionFieldName = $repository->getDescriptionFieldName();
@@ -290,9 +253,9 @@ class Newsletter {
                 $previewFieldName = $repository->getPreviewFieldName();
             «ENDIF»
 
-            $items = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»;
+            $items = [];
             foreach ($entities as $k => $item) {
-                $items[$k] = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»;
+                $items[$k] = [];
 
                 // Set title of this item.
                 $items[$k]['nl_title'] = $item->getTitleFromDisplayPattern();
@@ -301,11 +264,7 @@ class Newsletter {
                     // Set (full qualified) link of title
                     $urlArgs = $item->createUrlArgs();
                     $urlArgs['lang'] = $this->lang;
-                    «IF targets('1.3.x')»
-                        $items[$k]['nl_url_title'] = ModUtil::url($this->modname, 'user', 'display', $urlArgs, null, null, true);
-                    «ELSE»
-                        $url = $serviceManager->get('router')->generate('«appName.formatForDB»_' . strtolower($objectType) . '_display', $urlArgs, true);
-                    «ENDIF»
+                    $items[$k]['nl_url_title'] = $serviceManager->get('router')->generate('«appName.formatForDB»_' . strtolower($objectType) . '_display', $urlArgs, true);
                 «ELSE»
                     $items[$k]['nl_url_title'] = null;
                 «ENDIF»
@@ -318,11 +277,7 @@ class Newsletter {
 
                 // A picture to display in Newsletter next to the item
                 «IF hasImageFields»
-                    «IF targets('1.3.x')»
-                        $items[$k]['nl_picture'] = $previewFieldName != '' && !empty($item[$previewFieldName) ? $item[$previewFieldName . 'FullPath'] : '';
-                    «ELSE»
-                        $items[$k]['nl_picture'] = $previewFieldName != '' && !empty($item[$previewFieldName) ? $item[$previewFieldName]->getPathname() : '';
-                    «ENDIF»
+                    $items[$k]['nl_picture'] = $previewFieldName != '' && !empty($item[$previewFieldName) ? $item[$previewFieldName]->getPathname() : '';
                 «ELSE»
                     $items[$k]['nl_picture'] = '';
                 «ENDIF»
@@ -347,12 +302,8 @@ class Newsletter {
 
             $sortParam = '';
             if ($args['sorting'] == 'newest') {
-                «IF targets('1.3.x')»
-                    $idFields = ModUtil::apiFunc($this->modname, 'selection', 'getIdFields', array('ot' => $args['objectType']));
-                «ELSE»
-                    $selectionHelper = ServiceUtil::get('«appService».selection_helper');
-                    $idFields = $selectionHelper->getIdFields($args['objectType']);
-                «ENDIF»
+                $selectionHelper = ServiceUtil::get('«appService».selection_helper');
+                $idFields = $selectionHelper->getIdFields($args['objectType']);
                 if (count($idFields) == 1) {
                     $sortParam = $idFields[0] . ' DESC';
                 } else {

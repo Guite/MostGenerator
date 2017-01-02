@@ -29,21 +29,15 @@ class ContentTypeSingle {
     }
 
     def private contentTypeBaseClass(Application it) '''
-        «IF !targets('1.3.x')»
-            namespace «appNamespace»\ContentType\Base;
+        namespace «appNamespace»\ContentType\Base;
 
-            use ModUtil;
-            use ServiceUtil;
+        use ModUtil;
+        use ServiceUtil;
 
-        «ENDIF»
         /**
          * Generic single item display content plugin base class.
          */
-        «IF targets('1.3.x')»
-        abstract class «appName»_ContentType_Base_AbstractItem extends Content_AbstractContentType
-        «ELSE»
         abstract class AbstractItem extends \Content_AbstractContentType
-        «ENDIF»
         {
             «contentTypeBaseImpl»
         }
@@ -81,15 +75,7 @@ class ContentTypeSingle {
          */
         public function getTitle()
         {
-            «IF targets('1.3.x')»
-                $dom = ZLanguage::getModuleDomain('«appName»');
-
-                return __('«appName» detail view', $dom);
-            «ELSE»
-                $serviceManager = ServiceUtil::getManager();
-
-                return $serviceManager->get('translator.default')->__('«appName» detail view');
-            «ENDIF»
+            return ServiceUtil::get('translator.default')->__('«appName» detail view');
         }
 
         /**
@@ -99,15 +85,7 @@ class ContentTypeSingle {
          */
         public function getDescription()
         {
-            «IF targets('1.3.x')»
-                $dom = ZLanguage::getModuleDomain('«appName»');
-
-                return __('Display or link a single «appName» object.', $dom);
-            «ELSE»
-                $serviceManager = ServiceUtil::getManager();
-
-                return $serviceManager->get('translator.default')->__('Display or link a single «appName» object.');
-            «ENDIF»
+            return ServiceUtil::get('translator.default')->__('Display or link a single «appName» object.');
         }
 
         /**
@@ -118,13 +96,9 @@ class ContentTypeSingle {
         public function loadData(&$data)
         {
             $serviceManager = ServiceUtil::getManager();
-            «IF targets('1.3.x')»
-                $controllerHelper = new «appName»_Util_Controller($serviceManager);
-            «ELSE»
-                $controllerHelper = $serviceManager->get('«appService».controller_helper');
-            «ENDIF»
+            $controllerHelper = $serviceManager->get('«appService».controller_helper');
 
-            $utilArgs = «IF targets('1.3.x')»array(«ELSE»[«ENDIF»'name' => 'detail'«IF targets('1.3.x')»)«ELSE»]«ENDIF»;
+            $utilArgs = ['name' => 'detail'];
             if (!isset($data['objectType']) || !in_array($data['objectType'], $controllerHelper->getObjectTypes('contentType', $utilArgs))) {
                 $data['objectType'] = $controllerHelper->getDefaultObjectType('contentType', $utilArgs);
             }
@@ -150,6 +124,7 @@ class ContentTypeSingle {
         public function display()
         {
             if (null !== $this->id && !empty($this->displayMode)) {
+                «/* TODO use router */»
                 return ModUtil::func('«appName»', 'external', 'display', $this->getDisplayArguments());
             }
 
@@ -162,18 +137,11 @@ class ContentTypeSingle {
         public function displayEditing()
         {
             if (null !== $this->id && !empty($this->displayMode)) {
+                «/* TODO use router */»
                 return ModUtil::func('«appName»', 'external', 'display', $this->getDisplayArguments());
             }
 
-            «IF targets('1.3.x')»
-                $dom = ZLanguage::getModuleDomain('«appName»');
-
-                return __('No item selected.', $dom);
-            «ELSE»
-                $serviceManager = ServiceUtil::getManager();
-                
-                return $serviceManager->get('translator.default')->__('No item selected.');
-            «ENDIF»
+            return ServiceUtil::get('translator.default')->__('No item selected.');
         }
 
         /**
@@ -183,12 +151,12 @@ class ContentTypeSingle {
          */
         protected function getDisplayArguments()
         {
-            return «IF targets('1.3.x')»array(«ELSE»[«ENDIF»
+            return [
                 'objectType' => $this->objectType,
                 'source' => 'contentType',
                 'displayMode' => $this->displayMode,
                 'id' => $this->id
-            «IF targets('1.3.x')»)«ELSE»]«ENDIF»;
+            ];
         }
 
         /**
@@ -198,11 +166,11 @@ class ContentTypeSingle {
          */
         public function getDefaultData()
         {
-            return «IF targets('1.3.x')»array(«ELSE»[«ENDIF»
+            return [
                 'objectType' => '«getLeadingEntity.name.formatForCode»',
                  'id' => null,
                  'displayMode' => 'embed'
-             «IF targets('1.3.x')»)«ELSE»]«ENDIF»;
+             ];
         }
 
         /**
@@ -211,46 +179,34 @@ class ContentTypeSingle {
         public function startEditing()
         {
             // ensure our custom plugins are loaded
-            «IF targets('1.3.x')»
-                array_push($this->view->plugins_dir, '«rootFolder»/«appName»/templates/plugins');
-            «ELSE»
-                array_push($this->view->plugins_dir, '«rootFolder»/«if (systemModule) name.formatForCode else appName»/«getViewPath»/plugins');
-            «ENDIF»
+            array_push($this->view->plugins_dir, '«rootFolder»/«if (systemModule) name.formatForCode else vendor.formatForCodeCapital + '/' + name.formatForCodeCapital»/«getViewPath»/plugins');
 
             // required as parameter for the item selector plugin
             $this->view->assign('objectType', $this->objectType);
         }
-        «IF !targets('1.3.x')»
 
-            /**
-             * Returns the edit template path.
-             *
-             * @return string
-             */
-            public function getEditTemplate()
-            {
-                $absoluteTemplatePath = str_replace('ContentType/Base/AbstractItem.php', 'Resources/views/ContentType/item_edit.tpl', __FILE__);
+        /**
+         * Returns the edit template path.
+         *
+         * @return string
+         */
+        public function getEditTemplate()
+        {
+            $absoluteTemplatePath = str_replace('ContentType/Base/AbstractItem.php', 'Resources/views/ContentType/item_edit.tpl', __FILE__);
 
-                return 'file:' . $absoluteTemplatePath;
-            }
-        «ENDIF»
+            return 'file:' . $absoluteTemplatePath;
+        }
     '''
 
     def private contentTypeImpl(Application it) '''
-        «IF !targets('1.3.x')»
-            namespace «appNamespace»\ContentType;
+        namespace «appNamespace»\ContentType;
 
-            use «appNamespace»\ContentType\Base\AbstractItem;
+        use «appNamespace»\ContentType\Base\AbstractItem;
 
-        «ENDIF»
         /**
          * Generic single item display content plugin implementation class.
          */
-        «IF targets('1.3.x')»
-        class «appName»_ContentType_Item extends «appName»_ContentType_Base_AbstractItem
-        «ELSE»
         class Item extends AbstractItem
-        «ENDIF»
         {
             // feel free to extend the content type here
         }

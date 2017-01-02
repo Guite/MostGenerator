@@ -1,11 +1,8 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.view
 
-import de.guite.modulestudio.metamodel.AdminController
 import de.guite.modulestudio.metamodel.Application
-import de.guite.modulestudio.metamodel.Controller
 import de.guite.modulestudio.metamodel.DateField
 import de.guite.modulestudio.metamodel.DatetimeField
-import de.guite.modulestudio.metamodel.UserController
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
@@ -36,7 +33,6 @@ class Layout {
         this.fsa = fsa
     }
 
-    // 1.4.x only
     def baseTemplates(Application it) {
         val templatePath = getViewPath
         val templateExtension = '.html.twig'
@@ -63,7 +59,6 @@ class Layout {
         }
     }
 
-    // 1.4.x only
     def baseTemplate(Application it) '''
         {# purpose of this template: general base layout #}
         {% block header %}
@@ -142,7 +137,6 @@ class Layout {
         «ENDIF»
     '''
 
-    // 1.4.x only
     def adminBaseTemplate(Application it) '''
         {# purpose of this template: admin area base layout #}
         {% extends '«appName»::base.html.twig' %}
@@ -164,7 +158,6 @@ class Layout {
         {% endblock %}
     '''
 
-    // 1.4.x only
     def formBaseTemplate(Application it) '''
         {# purpose of this template: apply some general form extensions #}
         {% extends 'ZikulaFormExtensionBundle:Form:bootstrap_3_zikula_admin_layout.html.twig' %}
@@ -283,100 +276,8 @@ class Layout {
         «ENDIF»
     '''
 
-    // 1.3.x only
-    def headerFooterFile(Application it, Controller controller) {
-        val templatePath = getViewPath + controller.formattedName + '/'
-        val templateExtension = '.tpl'
-        var fileName = 'header' + templateExtension
-        if (!shouldBeSkipped(templatePath + fileName)) {
-            if (shouldBeMarked(templatePath + fileName)) {
-                fileName = 'header.generated' + templateExtension
-            }
-            fsa.generateFile(templatePath + fileName, headerImpl(controller))
-        }
-        fileName = 'footer' + templateExtension
-        if (!shouldBeSkipped(templatePath + fileName)) {
-            if (shouldBeMarked(templatePath + fileName)) {
-                fileName = 'footer.generated' + templateExtension
-            }
-            fsa.generateFile(templatePath + fileName, footerImpl(controller))
-        }
-    }
-
-    // 1.3.x only
-    def private headerImpl(Application it, Controller controller) '''
-        {* purpose of this template: header for «controller.formattedName» area *}
-        {pageaddvar name='javascript' value='prototype'}
-        {pageaddvar name='javascript' value='validation'}
-        {pageaddvar name='javascript' value='zikula'}
-        {pageaddvar name='javascript' value='livepipe'}
-        {pageaddvar name='javascript' value='zikula.ui'}
-        «IF hasUploads»
-            {pageaddvar name='javascript' value='zikula.imageviewer'}
-        «ENDIF»
-        {pageaddvar name='javascript' value='«rootFolder»/«appName»/javascript/«appName».js'}
-
-        {* initialise additional gettext domain for translations within javascript *}
-        {pageaddvar name='jsgettext' value='module_«appName.formatForDB»_js:«appName»'}
-
-        {if !isset($smarty.get.theme) || $smarty.get.theme ne 'Printer'}
-            «IF controller instanceof AdminController»
-                {adminheader}
-            «ELSE»
-                <div class="z-frontendbox">
-                    <h2>{modgetinfo info='displayname' modname='«appName»'}</h2>
-                    {modulelinks modname='«appName»' type='«controller.formattedName»'}
-                </div>
-            «ENDIF»
-            «IF generateModerationPanel && needsApproval && controller instanceof UserController»
-                {nocache}
-                    {«appName.formatForDB»ModerationObjects assign='moderationObjects'}
-                    {if count($moderationObjects) gt 0}
-                        {foreach item='modItem' from=$moderationObjects}
-                            <p class="z-informationmsg z-center">
-                                <a href="{modurl modname='«appName»' type='admin' func='view' ot=$modItem.objectType workflowState=$modItem.state}" class="z-bold">{$modItem.message}</a>
-                            </p>
-                        {/foreach}
-                    {/if}
-                {/nocache}
-            «ENDIF»
-        {/if}
-        «IF controller instanceof AdminController»
-        «ELSE»
-            {insert name='getstatusmsg'}
-        «ENDIF»
-    '''
-
-    // 1.3.x only
-    def private footerImpl(Application it, Controller controller) '''
-        {* purpose of this template: footer for «controller.formattedName» area *}
-        {if !isset($smarty.get.theme) || $smarty.get.theme ne 'Printer'}
-            «IF generatePoweredByBacklinksIntoFooterTemplates»
-                «new FileHelper().msWeblink(it)»
-            «ENDIF»
-            «IF controller instanceof AdminController»
-                {adminfooter}
-            «ENDIF»
-        «IF hasEditActions»
-        {elseif isset($smarty.get.func) && $smarty.get.func eq 'edit'}
-            {pageaddvar name='stylesheet' value='style/core.css'}
-            {pageaddvar name='stylesheet' value='«rootFolder»/«appName»/style/style.css'}
-            {pageaddvar name='stylesheet' value='system/Theme/style/form/style.css'}
-            {pageaddvar name='stylesheet' value='themes/Andreas08/style/fluid960gs/reset.css'}
-            {capture assign='pageStyles'}
-            <style type="text/css">
-                body {
-                    font-size: 70%;
-                }
-            </style>
-            {/capture}
-            {pageaddvar name='header' value=$pageStyles}
-        «ENDIF»
-        {/if}
-    '''
-
     def pdfHeaderFile(Application it) {
-        val templateExtension = if (isLegacy) '.tpl' else '.html.twig'
+        val templateExtension = '.html.twig'
         var fileName = 'includePdfHeader' + templateExtension
         if (!shouldBeSkipped(getViewPath + fileName)) {
             if (shouldBeMarked(getViewPath + fileName)) {
@@ -388,10 +289,10 @@ class Layout {
 
     def private pdfHeaderImpl(Application it) '''
         <!DOCTYPE html>
-        <html xml:lang="«IF isLegacy»{lang}«ELSE»{{ app.request.locale }}«ENDIF»" lang="«IF isLegacy»{lang}«ELSE»{{ app.request.locale }}«ENDIF»" dir="«IF isLegacy»{langdirection}«ELSE»{{ localeApi.language_direction }}«ENDIF»">
+        <html xml:lang="{{ app.request.locale }}" lang="{{ app.request.locale }}" dir="{{ localeApi.language_direction }}">
         <head>
             <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-            <title>«IF isLegacy»{pagegetvar name='title'}«ELSE»{{ pageGetVar('title') }}«ENDIF»</title>
+            <title>{{ pageGetVar('title') }}</title>
         <style>
             @page {
                 margin: 0 2cm 1cm 1cm;
@@ -405,8 +306,4 @@ class Layout {
         </head>
         <body>
     '''
-
-    def private isLegacy(Application it) {
-        targets('1.3.x')
-    }
 }

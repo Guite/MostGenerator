@@ -43,12 +43,9 @@ class ServiceDefinitions {
 
     /**
      * Entry point for service definitions.
-     * This generates yaml files describing DI configuration.
+     * This generates YAML files describing DI configuration.
      */
     def generate(Application it, IFileSystemAccess fsa) {
-        if (targets('1.3.x')) {
-            return
-        }
         modPrefix = appService
 
         generateServiceFile(fsa, 'services', mainServiceFile)

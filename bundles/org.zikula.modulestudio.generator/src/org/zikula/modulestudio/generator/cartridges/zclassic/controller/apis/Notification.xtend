@@ -17,27 +17,12 @@ class Notification {
 
     FileHelper fh = new FileHelper
 
+    /** TODO add docblocks to methods */
     def generate(Application it, IFileSystemAccess fsa) {
-        if (targets('1.3.x')) {
-            generateClassPair(fsa, getAppSourceLibPath + 'Api/Notification.php',
-                fh.phpFileContent(it, notificationApiBaseClass), fh.phpFileContent(it, notificationApiImpl)
-            )
-        } else {
-            generateClassPair(fsa, getAppSourceLibPath + 'Helper/NotificationHelper.php',
-                fh.phpFileContent(it, notificationHelperBaseClass), fh.phpFileContent(it, notificationHelperImpl)
-            )
-        }
+        generateClassPair(fsa, getAppSourceLibPath + 'Helper/NotificationHelper.php',
+            fh.phpFileContent(it, notificationHelperBaseClass), fh.phpFileContent(it, notificationHelperImpl)
+        )
     }
-
-    def private notificationApiBaseClass(Application it) '''
-        /**
-         * Notification api base class.
-         */
-        abstract class «appName»_Api_Base_AbstractNotification extends Zikula_AbstractApi
-        {
-            «notificationApiBaseImpl»
-        }
-    '''
 
     def private notificationHelperBaseClass(Application it) '''
         namespace «appNamespace»\Helper\Base;
@@ -69,56 +54,54 @@ class Notification {
     '''
 
     def private notificationApiBaseImpl(Application it) '''
-        «IF !targets('1.3.x')»
-            use TranslatorTrait;
+        use TranslatorTrait;
 
-            /**
-             * @var SessionInterface
-             */
-            protected $session;
+        /**
+         * @var SessionInterface
+         */
+        protected $session;
 
-            /**
-             * @var RouterInterface
-             */
-            protected $router;
+        /**
+         * @var RouterInterface
+         */
+        protected $router;
 
-            /**
-             * @var KernelInterface
-             */
-            protected $kernel;
+        /**
+         * @var KernelInterface
+         */
+        protected $kernel;
 
-            /**
-             * @var Request
-             */
-            protected $request;
+        /**
+         * @var Request
+         */
+        protected $request;
 
-            /**
-             * @var VariableApi
-             */
-            protected $variableApi;
+        /**
+         * @var VariableApi
+         */
+        protected $variableApi;
 
-            /**
-             * @var Twig_Environment
-             */
-            protected $templating;
+        /**
+         * @var Twig_Environment
+         */
+        protected $templating;
 
-            /**
-             * @var MailerApi
-             */
-            protected $mailer;
+        /**
+         * @var MailerApi
+         */
+        protected $mailer;
 
-            /**
-             * @var WorkflowHelper
-             */
-            protected $workflowHelper;
+        /**
+         * @var WorkflowHelper
+         */
+        protected $workflowHelper;
 
-        «ENDIF»
         /**
          * List of notification recipients.
          *
          * @var array $recipients
          */
-        private $recipients = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»;
+        private $recipients = [];
 
         /**
          * Which type of recipient is used ("creator", "moderator" or "superModerator").
@@ -130,7 +113,7 @@ class Notification {
         /**
          * The entity which has been changed before.
          *
-         * @var «IF targets('1.3.x')»Zikula_«ENDIF»EntityAccess entity
+         * @var EntityAccess entity
          */
         private $entity = '';
 
@@ -148,54 +131,52 @@ class Notification {
          */
         protected $name;
 
-        «IF !targets('1.3.x')»
-            /**
-             * Constructor.
-             * Initialises member vars.
-             *
-             * @param TranslatorInterface $translator     Translator service instance
-             * @param SessionInterface    $session        Session service instance
-             * @param Routerinterface     $router         Router service instance
-             * @param KernelInterface     $kernel         Kernel service instance
-             * @param RequestStack        $requestStack   RequestStack service instance
-             * @param VariableApi         $variableApi    VariableApi service instance
-             * @param Twig_Environment    $twig           Twig service instance
-             * @param MailerApi           $mailerApi      MailerApi service instance
-             * @param WorkflowHelper      $workflowHelper WorkflowHelper service instance
-             */
-            public function __construct(
-                TranslatorInterface $translator,
-                SessionInterface $session,
-                RouterInterface $router,
-                KernelInterface $kernel,
-                RequestStack $requestStack,
-                VariableApi $variableApi,
-                Twig_Environment $twig,
-                MailerApi $mailerApi,
-                WorkflowHelper $workflowHelper)
-            {
-                $this->setTranslator($translator);
-                $this->session = $session;
-                $this->router = $router;
-                $this->kernel = $kernel;
-                $this->request = $requestStack->getMasterRequest();
-                $this->variableApi = $variableApi;
-                $this->templating = $twig;
-                $this->mailerApi = $mailerApi;
-                $this->workflowHelper = $workflowHelper;
-                $this->name = '«appName»';
-            }
+        /**
+         * Constructor.
+         * Initialises member vars.
+         *
+         * @param TranslatorInterface $translator     Translator service instance
+         * @param SessionInterface    $session        Session service instance
+         * @param Routerinterface     $router         Router service instance
+         * @param KernelInterface     $kernel         Kernel service instance
+         * @param RequestStack        $requestStack   RequestStack service instance
+         * @param VariableApi         $variableApi    VariableApi service instance
+         * @param Twig_Environment    $twig           Twig service instance
+         * @param MailerApi           $mailerApi      MailerApi service instance
+         * @param WorkflowHelper      $workflowHelper WorkflowHelper service instance
+         */
+        public function __construct(
+            TranslatorInterface $translator,
+            SessionInterface $session,
+            RouterInterface $router,
+            KernelInterface $kernel,
+            RequestStack $requestStack,
+            VariableApi $variableApi,
+            Twig_Environment $twig,
+            MailerApi $mailerApi,
+            WorkflowHelper $workflowHelper)
+        {
+            $this->setTranslator($translator);
+            $this->session = $session;
+            $this->router = $router;
+            $this->kernel = $kernel;
+            $this->request = $requestStack->getMasterRequest();
+            $this->variableApi = $variableApi;
+            $this->templating = $twig;
+            $this->mailerApi = $mailerApi;
+            $this->workflowHelper = $workflowHelper;
+            $this->name = '«appName»';
+        }
 
-            /**
-             * Sets the translator.
-             *
-             * @param TranslatorInterface $translator Translator service instance
-             */
-            public function setTranslator(/*TranslatorInterface */$translator)
-            {
-                $this->translator = $translator;
-            }
-        «ENDIF»
+        /**
+         * Sets the translator.
+         *
+         * @param TranslatorInterface $translator Translator service instance
+         */
+        public function setTranslator(/*TranslatorInterface */$translator)
+        {
+            $this->translator = $translator;
+        }
 
         /**
          * Sends a mail to either an item's creator or a group of moderators.
@@ -226,25 +207,15 @@ class Notification {
                 return true;
             }
 
-            «IF targets('1.3.x')»
-                if (!ModUtil::available('Mailer') || !ModUtil::loadApi('Mailer', 'user')) {
-                    return LogUtil::registerError($this->__('Could not inform other persons about your amendments, because the Mailer module is not available - please contact an administrator about that!'));
-                }
-            «ELSE»
-                if (null === $this->kernel->getModule('ZikulaMailerModule')) {
-                    $this->session->getFlashBag()->add('error', $this->__('Could not inform other persons about your amendments, because the Mailer module is not available - please contact an administrator about that!'));
+            if (null === $this->kernel->getModule('ZikulaMailerModule')) {
+                $this->session->getFlashBag()->add('error', $this->__('Could not inform other persons about your amendments, because the Mailer module is not available - please contact an administrator about that!'));
 
-                    return false;
-                }
-            «ENDIF»
+                return false;
+            }
 
             $result = $this->sendMails();
 
-            «IF targets('1.3.x')»
-                SessionUtil::delVar($this->name . 'AdditionalNotificationRemarks');
-            «ELSE»
-                $this->session->del($this->name . 'AdditionalNotificationRemarks');
-            «ENDIF»
+            $this->session->del($this->name . 'AdditionalNotificationRemarks');
 
             return $result;
         }
@@ -254,23 +225,16 @@ class Notification {
          */
         protected function collectRecipients()
         {
-            $this->recipients = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»;
+            $this->recipients = [];
 
             if ($this->recipientType == 'moderator' || $this->recipientType == 'superModerator') {
                 $objectType = $this->entity['_objectType'];
-                «IF targets('1.3.x')»
-                    $moderatorGroupId = $this->getVar('moderationGroupFor' . $objectType, 2);
-                    if ($this->recipientType == 'superModerator') {
-                        $moderatorGroupId = $this->getVar('superModerationGroupFor' . $objectType, 2);
-                    }
-                «ELSE»
-                    $moderatorGroupId = $this->variableApi->get('«appName»', 'moderationGroupFor' . $objectType, 2);
-                    if ($this->recipientType == 'superModerator') {
-                        $moderatorGroupId = $this->variableApi->get('«appName»', 'superModerationGroupFor' . $objectType, 2);
-                    }
-                «ENDIF»
+                $moderatorGroupId = $this->variableApi->get('«appName»', 'moderationGroupFor' . $objectType, 2);
+                if ($this->recipientType == 'superModerator') {
+                    $moderatorGroupId = $this->variableApi->get('«appName»', 'superModerationGroupFor' . $objectType, 2);
+                }
 
-                $moderatorGroup = ModUtil::apiFunc('«IF targets('1.3.x')»Groups«ELSE»ZikulaGroupsModule«ENDIF»', 'user', 'get', «IF targets('1.3.x')»array(«ELSE»[«ENDIF»'gid' => $moderatorGroupId«IF targets('1.3.x')»)«ELSE»]«ENDIF»);
+                $moderatorGroup = ModUtil::apiFunc('ZikulaGroupsModule', 'user', 'get', ['gid' => $moderatorGroupId]);
                 foreach (array_keys($moderatorGroup['members']) as $uid) {
                     $this->addRecipient($uid);
                 }
@@ -295,10 +259,10 @@ class Notification {
         {
             $userVars = UserUtil::getVars($userId);
 
-            $recipient = «IF targets('1.3.x')»array(«ELSE»[«ENDIF»
+            $recipient = [
                 'name' => (isset($userVars['name']) && !empty($userVars['name']) ? $userVars['name'] : $userVars['uname']),
                 'email' => $userVars['email']
-            «IF targets('1.3.x')»)«ELSE»]«ENDIF»;
+            ];
             $this->recipients[] = $recipient;
 
             return $recipient;
@@ -310,18 +274,11 @@ class Notification {
         protected function sendMails()
         {
             $objectType = $this->entity['_objectType'];
-            «IF targets('1.3.x')»
-                $siteName = System::getVar('sitename');
-            «ELSE»
-                $siteName = $this->variableApi->getSystemVar('sitename_' . $this->request->getLocale(), $this->variableApi->getSystemVar('sitename_en'));
-                $adminMail = $this->variableApi->getSystemVar('adminmail');
-            «ENDIF»
+            $siteName = $this->variableApi->getSystemVar('sitename_' . $this->request->getLocale(), $this->variableApi->getSystemVar('sitename_en'));
+            $adminMail = $this->variableApi->getSystemVar('adminmail');
 
-            «IF targets('1.3.x')»
-                $view = Zikula_View::getInstance('«appName»');
-            «ENDIF»
             $templateType = $this->recipientType == 'creator' ? 'Creator' : 'Moderator';
-            $template = '«IF targets('1.3.x')»email«ELSE»Email«ENDIF»/notify' . ucfirst($objectType) . $templateType .  '.«IF targets('1.3.x')»tpl«ELSE»html.twig«ENDIF»';
+            $template = 'Email/notify' . ucfirst($objectType) . $templateType .  '.html.twig';
 
             $mailData = $this->prepareEmailData();
             $subject = $this->getMailSubject();
@@ -336,41 +293,23 @@ class Notification {
                     continue;
                 }
 
-                «IF targets('1.3.x')»
-                    $view->assign('recipient', $recipient)
-                         ->assign('mailData', $mailData);
-                «ELSE»
-                    $templateParameters = [
-                        'recipient' => $recipient,
-                        'mailData' => $mailData
-                    ];
-                «ENDIF»
+                $templateParameters = [
+                    'recipient' => $recipient,
+                    'mailData' => $mailData
+                ];
 
-                «IF targets('1.3.x')»
-                    $mailArgs = array(
-                        'fromname' => $siteName,
-                        'toname' => $recipient['name'],
-                        'toaddress' => $recipient['email'],
-                        'subject' => $this->getMailSubject(),
-                        'body' => $view->fetch($template),
-                        'html' => true
-                    );
+                $body = $this->templating->render('@«appName»/' . $template, $templateParameters);
+                $altBody = '';
+                $html = true;
 
-                    $totalResult &= ModUtil::apiFunc('Mailer', 'user', 'sendmessage', $mailArgs);
-                «ELSE»
-                    $body = $this->templating->render('@«appName»/' . $template, $templateParameters);
-                    $altBody = '';
-                    $html = true;
+                // create new message instance
+                /** @var Swift_Message */
+                $message = Swift_Message::newInstance();
 
-                    // create new message instance
-                    /** @var Swift_Message */
-                    $message = Swift_Message::newInstance();
+                $message->setFrom([$adminMail => $siteName]);
+                $message->setTo([$recipient['email'] => $recipient['name']]);
 
-                    $message->setFrom([$adminMail => $siteName]);
-                    $message->setTo([$recipient['email'] => $recipient['name']]);
-
-                    $totalResult &= $this->mailerApi->sendMessage($message, $subject, $body, $altBody, $html);
-                «ENDIF»
+                $totalResult &= $this->mailerApi->sendMessage($message, $subject, $body, $altBody, $html);
             }
 
             return $totalResult;
@@ -400,88 +339,53 @@ class Notification {
 
         protected function prepareEmailData()
         {
-            «IF targets('1.3.x')»
-                $serviceManager = ServiceUtil::getManager();
-                $workflowHelper = new «appName»_Util_Workflow($serviceManager);
-
-            «ENDIF»
             $objectType = $this->entity['_objectType'];
             $state = $this->entity['workflowState'];
-            $stateInfo = $«IF !targets('1.3.x')»this->«ENDIF»workflowHelper->getStateInfo($state);
+            $stateInfo = $this->workflowHelper->getStateInfo($state);
 
-            «IF targets('1.3.x')»
-                $remarks = SessionUtil::getVar($this->name . 'AdditionalNotificationRemarks', '');
-            «ELSE»
-                $remarks = $this->session->get($this->name . 'AdditionalNotificationRemarks', '');
-            «ENDIF»
+            $remarks = $this->session->get($this->name . 'AdditionalNotificationRemarks', '');
 
             $urlArgs = $this->entity->createUrlArgs();
             $displayUrl = '';
             $editUrl = '';
 
             if ($this->recipientType == 'moderator' || $this->recipientType == 'superModerator') {
-                «IF !targets('1.3.x') && (hasAdminController && getAllAdminControllers.head.hasActions('display')
+                «IF hasAdminController && getAllAdminControllers.head.hasActions('display')
                     || hasUserController && getMainUserController.hasActions('display')
                     || hasAdminController && getAllAdminControllers.head.hasActions('edit')
-                    || hasUserController && getMainUserController.hasActions('edit'))»
+                    || hasUserController && getMainUserController.hasActions('edit')»
                     $routeArea = '«IF hasAdminController && getAllAdminControllers.head.hasActions('display')»admin«ENDIF»';
                 «ENDIF»
                 «IF hasAdminController && getAllAdminControllers.head.hasActions('display')
                     || hasUserController && getMainUserController.hasActions('display')»
-                    «IF targets('1.3.x')»
-                        $displayUrl = ModUtil::url($this->name, '«IF hasAdminController && getAllAdminControllers.head.hasActions('display')»admin«ELSE»user«ENDIF»', 'display', $urlArgs, null, null, true); // absolute
-                    «ELSE»
-                        $displayUrl = $this->router->generate('«appName.formatForDB»_' . strtolower($objectType) . '_' . $routeArea . 'display', $urlArgs, true);
-                    «ENDIF»
+                    $displayUrl = $this->router->generate('«appName.formatForDB»_' . strtolower($objectType) . '_' . $routeArea . 'display', $urlArgs, true);
                 «ENDIF»
                 «IF hasAdminController && getAllAdminControllers.head.hasActions('edit')
                     || hasUserController && getMainUserController.hasActions('edit')»
-                    «IF targets('1.3.x')»
-                        $editUrl = ModUtil::url($this->name, '«IF hasAdminController && getAllAdminControllers.head.hasActions('display')»admin«ELSE»user«ENDIF»', 'edit', $urlArgs, null, null, true); // absolute
-                    «ELSE»
-                        $editUrl = $this->router->generate('«appName.formatForDB»_' . strtolower($objectType) . '_' . $routeArea . 'edit', $urlArgs, true);
-                    «ENDIF»
+                    $editUrl = $this->router->generate('«appName.formatForDB»_' . strtolower($objectType) . '_' . $routeArea . 'edit', $urlArgs, true);
                 «ENDIF»
             } elseif ($this->recipientType == 'creator') {
                 «IF hasUserController»
                     «IF getMainUserController.hasActions('display')»
-                        «IF targets('1.3.x')»
-                            $displayUrl = ModUtil::url($this->name, 'user', 'display', $urlArgs, null, null, true); // absolute
-                        «ELSE»
-                            $displayUrl = $this->router->generate('«appName.formatForDB»_' . strtolower($objectType) . '_display', $urlArgs, true);
-                        «ENDIF»
+                        $displayUrl = $this->router->generate('«appName.formatForDB»_' . strtolower($objectType) . '_display', $urlArgs, true);
                     «ENDIF»
                     «IF getMainUserController.hasActions('edit')»
-                        «IF targets('1.3.x')»
-                            $editUrl = ModUtil::url($this->name, 'user', 'edit', $urlArgs, null, null, true); // absolute
-                        «ELSE»
-                            $editUrl = $this->router->generate('«appName.formatForDB»_' . strtolower($objectType) . '_edit', $urlArgs, true);
-                        «ENDIF»
+                        $editUrl = $this->router->generate('«appName.formatForDB»_' . strtolower($objectType) . '_edit', $urlArgs, true);
                     «ENDIF»
                 «ELSE»
                     // nothing to do as no user controller is available
                 «ENDIF»
             }
 
-            $emailData = «IF targets('1.3.x')»array(«ELSE»[«ENDIF»
+            $emailData = [
                 'name' => $this->entity->getTitleFromDisplayPattern(),
                 'newState' => $stateInfo['text'],
                 'remarks' => $remarks,
                 'displayUrl' => $displayUrl,
                 'editUrl' => $editUrl
-            «IF targets('1.3.x')»)«ELSE»]«ENDIF»;
+            ];
 
             return $emailData;
-        }
-    '''
-
-    def private notificationApiImpl(Application it) '''
-        /**
-         * Notification api implementation class.
-         */
-        class «appName»_Api_Notification extends «appName»_Api_Base_AbstractNotification
-        {
-            // feel free to extend the notification api here
         }
     '''
 

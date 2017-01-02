@@ -25,13 +25,11 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelp
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
-import org.zikula.modulestudio.generator.extensions.Utils
 
 class Property {
     extension FormattingExtensions = new FormattingExtensions
     extension ModelExtensions = new ModelExtensions
     extension ModelJoinExtensions = new ModelJoinExtensions
-    extension Utils = new Utils
 
     FileHelper fh = new FileHelper
     ExtensionManager extMan
@@ -45,20 +43,6 @@ class Property {
         persistentProperty(name.formatForCode, fieldTypeAsString, '')
     }
 
-    /**
-     * Do only use integer (no smallint or bigint) for version fields.
-     * This is just a hack for a minor bug in Doctrine 2.1 (fixed in 2.2).
-     * After we dropped support for Zikula 1.3.x (#260) the following define for IntegerField
-     * can be removed completely as the define for DerivedField can be used then instead.
-     */
-    def dispatch persistentProperty(IntegerField it) {
-        if (version && entity instanceof Entity && (entity as Entity).hasOptimisticLock && entity.application.targets('1.3.x')) {
-            persistentProperty(name.formatForCode, 'integer', '')
-        } else {
-            persistentProperty(name.formatForCode, fieldTypeAsString, '')
-        }
-    }
-
     def dispatch persistentProperty(UploadField it) '''
         /**
          * «name.formatForDisplayCapital» meta data array.
@@ -67,45 +51,24 @@ class Property {
          «IF translatable»
           * @Gedmo\Translatable
          «ENDIF»
-         «IF !entity.application.targets('1.3.x')»
          * @Assert\Type(type="array")
-         «ENDIF»
          * @var array $«name.formatForCode»Meta
          */
-        protected $«name.formatForCode»Meta = «IF entity.application.targets('1.3.x')»array()«ELSE»[]«ENDIF»;
+        protected $«name.formatForCode»Meta = [];
 
         «persistentProperty(name.formatForCode, fieldTypeAsString, '')»
-        «IF entity.application.targets('1.3.x')»
-            /**
-             * The full path to the «name.formatForDisplay».
-             *
-             «IF !entity.application.targets('1.3.x')»
-             * @Assert\Type(type="string")
-            «ENDIF»
-             * @var string $«name.formatForCode»FullPath
-             */
-            protected $«name.formatForCode»FullPath = '';
-
-            /**
-             * Full «name.formatForDisplay» path as url.
-             *
-             * @var string $«name.formatForCode»FullPathUrl
-             */
-            protected $«name.formatForCode»FullPathUrl = '';
-        «ELSE»
-            /**
-             * Full «name.formatForDisplay» path as url.
-             *
-             * @Assert\Type(type="string")
-             * @Assert\Url()
-             * @var string $«name.formatForCode»Url
-             */
-            protected $«name.formatForCode»Url = '';
-        «ENDIF»
+        /**
+         * Full «name.formatForDisplay» path as url.
+         *
+         * @Assert\Type(type="string")
+         * @Assert\Url()
+         * @var string $«name.formatForCode»Url
+         */
+        protected $«name.formatForCode»Url = '';
     '''
 
     def dispatch persistentProperty(ArrayField it) {
-        persistentProperty(name.formatForCode, fieldTypeAsString, if (entity.application.targets('1.3.x')) ' = array()' else ' = []')
+        persistentProperty(name.formatForCode, fieldTypeAsString, ' = []')
     }
 
     /**
@@ -134,9 +97,7 @@ class Property {
         «extMan.columnAnnotations(it)»
          * @ORM\Column(«IF null !== dbName && dbName != ''»name="«dbName.formatForCode»", «ENDIF»«persistentPropertyImpl(type.toLowerCase)»«IF unique», unique=true«ENDIF»«IF nullable», nullable=true«ENDIF»)
         «persistentPropertyAdditions»
-        «IF !entity.application.targets('1.3.x')»
-            «thVal.fieldAnnotations(it)»
-        «ENDIF»
+        «thVal.fieldAnnotations(it)»
          * @var «IF type == 'bigint' || type == 'smallint'»integer«ELSEIF type == 'datetime'»\DateTime«ELSE»«type»«ENDIF» $«name.formatForCode»
          */
         «modifier» $«name.formatForCode»«IF init != ''»«init»«ELSE»«IF !(it instanceof AbstractDateField)» = «defaultFieldData»«ENDIF»«ENDIF»;
@@ -154,7 +115,7 @@ class Property {
             UrlField:
                 '''«/*type="«type»", */»length=«it.length»'''
             ArrayField:
-                '''type="«IF entity.application.targets('1.3.x')»array«ELSE»«arrayType.literal.toLowerCase»«ENDIF»"«/*», length=«it.length*/»'''
+                '''type="«arrayType.literal.toLowerCase»"«/*», length=«it.length*/»'''
             UploadField:
                 '''«/*type="«type»", */»length=«it.length»'''
             ListField:
@@ -184,8 +145,8 @@ class Property {
                 if (null !== it.defaultValue && it.defaultValue.length > 0) it.defaultValue else '0'
             DecimalField:
                 if (null !== it.defaultValue && it.defaultValue.length > 0) it.defaultValue else '0.00'
-            ArrayField: if (entity.application.targets('1.3.x')) 'array()' else '[]'
-            UploadField: if (entity.application.targets('1.3.x') && null !== it.defaultValue && it.defaultValue.length > 0) '\'' + it.defaultValue + '\'' else 'null'
+            ArrayField: '[]'
+            UploadField: 'null'
             ObjectField: 'null'
             ListField: if (null !== it.defaultValue && it.defaultValue.length > 0) '\'' + it.defaultValue + '\'' else 'null'
             AbstractStringField: if (null !== it.defaultValue && it.defaultValue.length > 0) '\'' + it.defaultValue + '\'' else '\'\''
@@ -219,12 +180,7 @@ class Property {
 
     def dispatch fieldAccessor(UploadField it) '''
         «fieldAccessorDefault»
-        «IF entity.application.targets('1.3.x')»
-            «fh.getterAndSetterMethods(it, name.formatForCode + 'FullPath', 'string', false, true, false, '', '')»
-            «fh.getterAndSetterMethods(it, name.formatForCode + 'FullPathUrl', 'string', false, true, false, '', '')»
-        «ELSE»
-            «fh.getterAndSetterMethods(it, name.formatForCode + 'Url', 'string', false, true, false, '', '')»
-        «ENDIF»
-        «fh.getterAndSetterMethods(it, name.formatForCode + 'Meta', 'array', true, true, true, if (entity.application.targets('1.3.x')) 'Array()' else '[]', '')»
+        «fh.getterAndSetterMethods(it, name.formatForCode + 'Url', 'string', false, true, false, '', '')»
+        «fh.getterAndSetterMethods(it, name.formatForCode + 'Meta', 'array', true, true, true, '[]', '')»
     '''
 }

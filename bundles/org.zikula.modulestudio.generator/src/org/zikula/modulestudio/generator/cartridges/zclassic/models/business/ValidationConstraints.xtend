@@ -319,14 +319,10 @@ class ValidationConstraints {
             public static function get«name.formatForCodeCapital»AllowedValues()
             {
                 $serviceManager = ServiceUtil::getManager();
-                «IF app.targets('1.3.x')»
-                    $helper = new «app.appName»_Util_ListEntries($serviceManager);
-                «ELSE»
-                    $helper = $serviceManager->get('«app.appService».listentries_helper');
-                «ENDIF»
+                $helper = $serviceManager->get('«app.appService».listentries_helper');
                 $listEntries = $helper->get«name.formatForCodeCapital»EntriesFor«entity.name.formatForCodeCapital»();
 
-                $allowedValues = «IF app.targets('1.3.x')»array()«ELSE»[«IF name == 'workflowState'»'initial'«ENDIF»]«ENDIF»;
+                $allowedValues = [«IF name == 'workflowState'»'initial'«ENDIF»];
                 foreach ($listEntries as $entry) {
                     $allowedValues[] = $entry['value'];
                 }
@@ -340,15 +336,11 @@ class ValidationConstraints {
             public function is«name.formatForCodeCapital»ValueAllowed(ExecutionContextInterface $context)
             {
                 $serviceManager = ServiceUtil::getManager();
-                «IF app.targets('1.3.x')»
-                    $helper = new «app.appName»_Util_ListEntries($serviceManager);
-                «ELSE»
-                    $helper = $serviceManager->get('«app.appService».listentries_helper');
-                «ENDIF»
+                $helper = $serviceManager->get('«app.appService».listentries_helper');
                 $listEntries = $helper->get«name.formatForCodeCapital»EntriesFor«entity.name.formatForCodeCapital»();
                 $dom = ZLanguage::getModuleDomain('«app.appName»');
 
-                $allowedValues = «IF app.targets('1.3.x')»array()«ELSE»[]«ENDIF»;
+                $allowedValues = [];
                 foreach ($listEntries as $entry) {
                     $allowedValues[] = $entry['value'];
                 }
@@ -387,7 +379,7 @@ class ValidationConstraints {
 
             $uname = UserUtil::getVar('uname', $this['«name.formatForCode»']);
 
-            return (!is_null($uname) && !empty($uname));
+            return null !== $uname && !empty($uname);
         }
     '''
 

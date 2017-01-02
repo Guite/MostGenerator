@@ -15,13 +15,9 @@ class Routing {
     extension Utils = new Utils
 
     /**
-     * Entry point for workflow definitions.
-     * This generates xml files describing the workflows used in the application.
+     * Entry point for Routing YAML file.
      */
     def generate(Application it, IFileSystemAccess fsa) {
-        if (targets('1.3.x')) {
-            return
-        }
         var configFileName = getResourcesPath + 'config/routing.yml'
         if (!shouldBeSkipped(configFileName)) {
             if (shouldBeMarked(configFileName)) {

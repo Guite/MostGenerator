@@ -13,7 +13,6 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.models.entity.exten
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.entity.extensions.Sluggable
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.entity.extensions.SoftDeleteable
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.entity.extensions.Sortable
-import org.zikula.modulestudio.generator.cartridges.zclassic.models.entity.extensions.StandardFields
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.entity.extensions.Translatable
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.entity.extensions.Tree
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
@@ -55,9 +54,6 @@ class ExtensionManager {
         }
         if (entity.categorisable) {
             this.extensions += new Categories
-        }
-        if (entity.standardFields) {
-            this.extensions += new StandardFields
         }
     }
 

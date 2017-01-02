@@ -164,15 +164,10 @@ class ModelExtensions {
     }
 
     /**
-     * Prepends the application database prefix to a given string.
-     * Beginning with Zikula 1.4.0 the vendor is prefixed, too.
+     * Prepends the application vendor and the database prefix to a given string.
      */
     def tableNameWithPrefix(Application it, String inputString) {
-        if (targets('1.3.x')) {
-            prefix + '_' + inputString
-        } else {
-            vendor.formatForDB + '_' + prefix() + '_' + inputString
-        }
+        vendor.formatForDB + '_' + prefix() + '_' + inputString
     }
 
     /**
@@ -262,7 +257,7 @@ class ModelExtensions {
      * Concatenates all id strings using underscore as delimiter.
      * Used for generating some view templates. 
      */
-    def idFieldsAsParameterTemplate(DataObject it) '''«IF application.targets('1.3.x')»«FOR pkField : getPrimaryKeyFields SEPARATOR '_'»`$«name.formatForCode».«pkField.name.formatForCode»`«ENDFOR»«ELSE»«FOR pkField : getPrimaryKeyFields SEPARATOR ' ~ \'_\' ~ '»«name.formatForCode».«pkField.name.formatForCode»«ENDFOR»«ENDIF»'''
+    def idFieldsAsParameterTemplate(DataObject it) '''«FOR pkField : getPrimaryKeyFields SEPARATOR ' ~ \'_\' ~ '»«name.formatForCode».«pkField.name.formatForCode»«ENDFOR»'''
 
     /**
      * Returns a list of all fields which should be displayed on the view page.

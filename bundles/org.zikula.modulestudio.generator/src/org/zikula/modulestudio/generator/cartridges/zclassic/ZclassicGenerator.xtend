@@ -8,19 +8,17 @@ import org.eclipse.xtext.generator.IGenerator
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.ControllerLayer
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.Events
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.FormHandler
+import org.zikula.modulestudio.generator.cartridges.zclassic.controller.HelperServices
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.Installer
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.Listeners
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.ServiceDefinitions
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.Uploads
-import org.zikula.modulestudio.generator.cartridges.zclassic.controller.UtilityServices
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.Workflow
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.additions.MultiHook
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.additions.Newsletter
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.additions.Tag
-import org.zikula.modulestudio.generator.cartridges.zclassic.controller.apis.Account
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.apis.BlockList
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.apis.BlockModeration
-import org.zikula.modulestudio.generator.cartridges.zclassic.controller.apis.Cache
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.apis.Category
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.apis.ContentTypeList
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.apis.ContentTypeSingle
@@ -37,11 +35,9 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.Dependen
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.Docs
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.GitIgnore
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.ModuleFile
-import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.OverrideTemplates
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.PhpUnitXmlDist
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.Translations
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.TravisFile
-import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.VersionFileLegacy
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.ZikulaManifest
 import org.zikula.modulestudio.generator.cartridges.zclassic.tests.Tests
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.Forms
@@ -53,7 +49,6 @@ import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
-import org.zikula.modulestudio.generator.extensions.Utils
 import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
 
 class ZclassicGenerator implements IGenerator {
@@ -62,7 +57,6 @@ class ZclassicGenerator implements IGenerator {
     extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     extension ModelExtensions = new ModelExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
-    extension Utils = new Utils
     extension WorkflowExtensions = new WorkflowExtensions
 
     IFileSystemAccess fsa
@@ -95,7 +89,6 @@ class ZclassicGenerator implements IGenerator {
         pm?.subTask('Basic information')
         println('Generating basic information')
         new ModuleFile().generate(it, fsa)
-        new VersionFileLegacy().generate(it, fsa)
         new DependencyInjection().generate(it, fsa)
         new ComposerFile().generate(it, fsa)
         new ZikulaManifest().generate(it, fsa)
@@ -125,9 +118,9 @@ class ZclassicGenerator implements IGenerator {
         pm?.subTask('Controller: Controller classes')
         println('Generating controller classes')
         new ControllerLayer().generate(it, fsa)
-        pm?.subTask('Controller: Utility service classes')
-        println('Generating utility service classes')
-        new UtilityServices().generate(it, fsa)
+        pm?.subTask('Controller: Helper service classes')
+        println('Generating helper service classes')
+        new HelperServices().generate(it, fsa)
         pm?.subTask('Controller: Action handler classes')
         println('Generating action handler classes')
         new FormHandler().generate(it, fsa)
@@ -207,18 +200,6 @@ class ZclassicGenerator implements IGenerator {
     }
 
     def private generateIntegrationApis(Application it) {
-        if (targets('1.3.x')) {
-            if (generateAccountApi) {
-                pm?.subTask('Integration: Account api')
-                println('Generating account api')
-                new Account().generate(it, fsa)
-            }
-
-            pm?.subTask('Integration: Cache api')
-            println('Generating cache api')
-            new Cache().generate(it, fsa)
-        }
-
         pm?.subTask('Integration: Selection api')
         println('Generating selection api')
         new Selection().generate(it, fsa)
@@ -273,11 +254,6 @@ class ZclassicGenerator implements IGenerator {
         pm?.subTask('Additions: Documentation')
         println('Generating documentation')
         new Docs().generate(it, fsa)
-        if (targets('1.3.x')) {
-            pm?.subTask('Additions: Override templates')
-            println('Generating override templates')
-            new OverrideTemplates().generate(it, fsa)
-        }
 
         if (generateTests) {
             pm?.subTask('Additions: Tests')

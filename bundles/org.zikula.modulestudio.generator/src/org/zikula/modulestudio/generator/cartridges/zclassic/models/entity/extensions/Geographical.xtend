@@ -3,11 +3,8 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.models.entity.exte
 import de.guite.modulestudio.metamodel.DerivedField
 import de.guite.modulestudio.metamodel.Entity
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
-import org.zikula.modulestudio.generator.extensions.Utils
 
 class Geographical extends AbstractExtension implements EntityExtensionInterface {
-
-    extension Utils = new Utils
 
     /**
      * Generates additional annotations on class level.
@@ -33,9 +30,7 @@ class Geographical extends AbstractExtension implements EntityExtensionInterface
              * @Gedmo\Versioned
          «ENDIF»
          * @ORM\Column(type="decimal", precision=12, scale=7)
-         «IF !application.targets('1.3.x')»
          * @Assert\Type(type="float")
-         «ENDIF»
          * @var decimal $latitude
          */
         protected $latitude = 0.00;
@@ -47,9 +42,7 @@ class Geographical extends AbstractExtension implements EntityExtensionInterface
              * @Gedmo\Versioned
          «ENDIF»
          * @ORM\Column(type="decimal", precision=12, scale=7)
-         «IF !application.targets('1.3.x')»
          * @Assert\Type(type="float")
-         «ENDIF»
          * @var decimal $longitude
          */
         protected $longitude = 0.00;

@@ -1,57 +1,53 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener
 
 import de.guite.modulestudio.metamodel.Application
-import org.zikula.modulestudio.generator.extensions.Utils
 
 class UserRegistration {
-    extension Utils = new Utils
 
     CommonExample commonExample = new CommonExample()
 
     def generate(Application it, Boolean isBase) '''
-        «IF !targets('1.3.x')»
-            «IF isBase»
-                /**
-                 * Makes our handlers known to the event system.
-                 */
-            «ELSE»
-                /**
-                 * {@inheritdoc}
-                 */
-            «ENDIF»
-            public static function getSubscribedEvents()
-            {
-                «IF isBase»
-                    return [
-                        RegistrationEvents::REGISTRATION_STARTED        => ['started', 5],
-                        RegistrationEvents::FULL_USER_CREATE_VETO       => ['createVeto', 5],
-                        RegistrationEvents::REGISTRATION_SUCCEEDED      => ['succeeded', 5],
-                        RegistrationEvents::REGISTRATION_FAILED         => ['failed', 5],
-                        RegistrationEvents::CREATE_REGISTRATION         => ['create', 5],
-                        RegistrationEvents::UPDATE_REGISTRATION         => ['update', 5],
-                        RegistrationEvents::DELETE_REGISTRATION         => ['delete', 5],
-                        RegistrationEvents::FORCE_REGISTRATION_APPROVAL => ['forceApproval', 5]
-                    ];
-                «ELSE»
-                    return parent::getSubscribedEvents();
-                «ENDIF»
-            }
-
+        «IF isBase»
+            /**
+             * Makes our handlers known to the event system.
+             */
+        «ELSE»
+            /**
+             * {@inheritdoc}
+             */
         «ENDIF»
+        public static function getSubscribedEvents()
+        {
+            «IF isBase»
+                return [
+                    RegistrationEvents::REGISTRATION_STARTED        => ['started', 5],
+                    RegistrationEvents::FULL_USER_CREATE_VETO       => ['createVeto', 5],
+                    RegistrationEvents::REGISTRATION_SUCCEEDED      => ['succeeded', 5],
+                    RegistrationEvents::REGISTRATION_FAILED         => ['failed', 5],
+                    RegistrationEvents::CREATE_REGISTRATION         => ['create', 5],
+                    RegistrationEvents::UPDATE_REGISTRATION         => ['update', 5],
+                    RegistrationEvents::DELETE_REGISTRATION         => ['delete', 5],
+                    RegistrationEvents::FORCE_REGISTRATION_APPROVAL => ['forceApproval', 5]
+                ];
+            «ELSE»
+                return parent::getSubscribedEvents();
+            «ENDIF»
+        }
+
         «IF isBase»
         /**
          * Listener for the `module.users.ui.registration.started` event.
          *
          * Occurs at the beginning of the registration process, before the registration form is displayed to the user.
          *
-         * @param «IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance
+         * @param GenericEvent $event The event instance
          */
         «ELSE»
             /**
              * {@inheritdoc}
              */
         «ENDIF»
-        public «IF targets('1.3.x')»static «ENDIF»function started(«IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
+        public function started(GenericEvent $event)
         {
             «IF !isBase»
                 parent::started($event);
@@ -59,9 +55,8 @@ class UserRegistration {
                 «commonExample.generalEventProperties(it)»
             «ENDIF»
         }
-        «IF !targets('1.3.x')»
 
-            «IF isBase»
+        «IF isBase»
             /**
              * Listener for the `full.user.create.veto` event.
              *
@@ -85,20 +80,19 @@ class UserRegistration {
              *
              * @param GenericEvent $event The event instance
              */
-            «ELSE»
-                /**
-                 * {@inheritdoc}
-                 */
-            «ENDIF»
-            public function createVeto(GenericEvent $event)
-            {
-                «IF !isBase»
-                    parent::createVeto($event);
-
-                    «commonExample.generalEventProperties(it)»
-                «ENDIF»
-            }
+        «ELSE»
+            /**
+             * {@inheritdoc}
+             */
         «ENDIF»
+        public function createVeto(GenericEvent $event)
+        {
+            «IF !isBase»
+                parent::createVeto($event);
+
+                «commonExample.generalEventProperties(it)»
+            «ENDIF»
+        }
 
         «IF isBase»
         /**
@@ -153,14 +147,14 @@ class UserRegistration {
          * be expecting to return to the log-in screen . Being redirected to a different page might be disorienting to the user. Second, 
          * an event handler that was notified prior to the current handler may already have changed the `'redirectUrl'`.
          *
-         * @param «IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance
+         * @param GenericEvent $event The event instance
          */
         «ELSE»
             /**
              * {@inheritdoc}
              */
         «ENDIF»
-        public «IF targets('1.3.x')»static «ENDIF»function succeeded(«IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
+        public function succeeded(GenericEvent $event)
         {
             «IF !isBase»
                 parent::succeeded($event);
@@ -190,14 +184,14 @@ class UserRegistration {
          * Being redirected to a different page might be disorienting to the user. Second, an event handler that was notified
          * prior to the current handler may already have changed the `'redirectUrl'`.
          *
-         * @param «IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance
+         * @param GenericEvent $event The event instance
          */
         «ELSE»
             /**
              * {@inheritdoc}
              */
         «ENDIF»
-        public «IF targets('1.3.x')»static «ENDIF»function failed(«IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
+        public function failed(GenericEvent $event)
         {
             «IF !isBase»
                 parent::failed($event);
@@ -217,14 +211,14 @@ class UserRegistration {
          * The subject of the event is set to the UserEntity that was created.
          * This event occurs before the $authenticationMethod->register() method is called.
          *
-         * @param «IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance
+         * @param GenericEvent $event The event instance
          */
         «ELSE»
             /**
              * {@inheritdoc}
              */
         «ENDIF»
-        public «IF targets('1.3.x')»static «ENDIF»function create(«IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
+        public function create(GenericEvent $event)
         {
             «IF !isBase»
                 parent::create($event);
@@ -242,14 +236,14 @@ class UserRegistration {
          * The subject of the event is set to the UserEntity, with the updated values. The event data contains the
          * original UserEntity in an array `['oldValue' => $originalUser]`.
          *
-         * @param «IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance
+         * @param GenericEvent $event The event instance
          */
         «ELSE»
             /**
              * {@inheritdoc}
              */
         «ENDIF»
-        public «IF targets('1.3.x')»static «ENDIF»function update(«IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
+        public function update(GenericEvent $event)
         {
             «IF !isBase»
                 parent::update($event);
@@ -268,14 +262,14 @@ class UserRegistration {
          * event will fire. This is a storage-level event, not a UI event. It should not be used for UI-level actions such as redirects.
          * The subject of the event is set to the Uid being deleted.
          *
-         * @param «IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance
+         * @param GenericEvent $event The event instance
          */
         «ELSE»
-            /**
-             * {@inheritdoc}
-             */
+        /**
+         * {@inheritdoc}
+         */
         «ENDIF»
-        public «IF targets('1.3.x')»static «ENDIF»function delete(«IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
+        public function delete(GenericEvent $event)
         {
             «IF !isBase»
                 parent::delete($event);
@@ -283,9 +277,8 @@ class UserRegistration {
                 «commonExample.generalEventProperties(it)»
             «ENDIF»
         }
-        «IF !targets('1.3.x')»
 
-            «IF isBase»
+        «IF isBase»
             /**
              * Listener for the `force.registration.approval` event.
              *
@@ -293,19 +286,18 @@ class UserRegistration {
              *
              * @param GenericEvent $event The event instance
              */
-            «ELSE»
-                /**
-                 * {@inheritdoc}
-                 */
-            «ENDIF»
-            public function forceApproval(GenericEvent $event)
-            {
-                «IF !isBase»
-                    parent::forceApproval($event);
-
-                    «commonExample.generalEventProperties(it)»
-                «ENDIF»
-            }
+        «ELSE»
+            /**
+             * {@inheritdoc}
+             */
         «ENDIF»
+        public function forceApproval(GenericEvent $event)
+        {
+            «IF !isBase»
+                parent::forceApproval($event);
+
+                «commonExample.generalEventProperties(it)»
+            «ENDIF»
+        }
     '''
 }
