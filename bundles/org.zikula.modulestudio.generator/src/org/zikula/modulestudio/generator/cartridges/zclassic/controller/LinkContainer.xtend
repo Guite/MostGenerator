@@ -10,16 +10,17 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelp
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
+import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
-// 1.4+ only
 class LinkContainer {
 
     extension ControllerExtensions = new ControllerExtensions
     extension FormattingExtensions = new FormattingExtensions
     extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
+    extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension ModelExtensions = new ModelExtensions
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
@@ -39,7 +40,6 @@ class LinkContainer {
         )
     }
 
-    // 1.4+ only
     def private linkContainerBaseImpl(Controller it) '''
         namespace «app.appNamespace»\Container\Base;
 
@@ -125,15 +125,7 @@ class LinkContainer {
                 «ENDIF»
             }
 
-            /**
-             * Sets the translator.
-             *
-             * @param TranslatorInterface $translator Translator service instance
-             */
-            public function setTranslator(/*TranslatorInterface */$translator)
-            {
-                $this->translator = $translator;
-            }
+            «app.setTranslatorMethod»
 
             /**
              * Returns available header links.
@@ -253,15 +245,7 @@ class LinkContainer {
             use ContainerAwareTrait;
             use TranslatorTrait;
 
-            /**
-             * Sets the translator.
-             *
-             * @param TranslatorInterface $translator Translator service instance
-             */
-            public function setTranslator(/*TranslatorInterface */$translator)
-            {
-                $this->translator = $translator;
-            }
+            «app.setTranslatorMethod»
 
             /**
              * Builds the menu.

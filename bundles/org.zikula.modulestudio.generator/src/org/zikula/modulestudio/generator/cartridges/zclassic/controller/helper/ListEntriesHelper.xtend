@@ -6,12 +6,15 @@ import de.guite.modulestudio.metamodel.ListFieldItem
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
+import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class ListEntriesHelper {
+
     extension FormattingExtensions = new FormattingExtensions
+    extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension ModelExtensions = new ModelExtensions
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
@@ -32,16 +35,14 @@ class ListEntriesHelper {
         namespace «appNamespace»\Helper\Base;
 
         use Zikula\Common\Translator\TranslatorInterface;
+        use Zikula\Common\Translator\TranslatorTrait;
 
         /**
          * Helper base class for list field entries related methods.
          */
         abstract class AbstractListEntriesHelper
         {
-            /**
-             * @var TranslatorInterface
-             */
-            protected $translator;
+            use TranslatorTrait;
 
             /**
              * Constructor.
@@ -51,8 +52,10 @@ class ListEntriesHelper {
              */
             public function __construct(TranslatorInterface $translator)
             {
-                $this->translator = $translator;
+                $this->setTranslator($translator);
             }
+
+            «setTranslatorMethod»
 
             «resolve»
 
@@ -242,8 +245,8 @@ class ListEntriesHelper {
     def private entryInfo(ListFieldItem it, Application app) '''
         $states[] = [
             'value'   => '«IF null !== value»«value.replace("'", "")»«ELSE»«name.formatForCode.replace("'", "")»«ENDIF»',
-            'text'    => $this->translator->__('«name.formatForDisplayCapital.replace("'", "")»'),
-            'title'   => «IF null !== documentation && documentation != ''»$this->translator->__('«documentation.replace("'", "")»')«ELSE»''«ENDIF»,
+            'text'    => $this->__('«name.formatForDisplayCapital.replace("'", "")»'),
+            'title'   => «IF null !== documentation && documentation != ''»$this->__('«documentation.replace("'", "")»')«ELSE»''«ENDIF»,
             'image'   => '«IF null !== image && image != ''»«image».png«ENDIF»',
             'default' => «^default.displayBool»
         ];
@@ -252,8 +255,8 @@ class ListEntriesHelper {
     def private entryInfoNegative(ListFieldItem it, Application app) '''
         $states[] = [
             'value'   => '!«IF null !== value»«value.replace("'", "")»«ELSE»«name.formatForCode.replace("'", "")»«ENDIF»',
-            'text'    => $this->translator->__('All except «name.formatForDisplay.replace("'", "")»'),
-            'title'   => $this->translator->__('Shows all items except these which are «name.formatForDisplay.replace("'", "")»'),
+            'text'    => $this->__('All except «name.formatForDisplay.replace("'", "")»'),
+            'title'   => $this->__('Shows all items except these which are «name.formatForDisplay.replace("'", "")»'),
             'image'   => '',
             'default' => false
         ];

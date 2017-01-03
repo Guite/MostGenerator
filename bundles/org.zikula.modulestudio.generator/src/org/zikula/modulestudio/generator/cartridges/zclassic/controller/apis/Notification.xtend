@@ -5,6 +5,7 @@ import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
+import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
@@ -12,12 +13,12 @@ class Notification {
 
     extension ControllerExtensions = new ControllerExtensions
     extension FormattingExtensions = new FormattingExtensions
+    extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
 
     FileHelper fh = new FileHelper
 
-    /** TODO add docblocks to methods */
     def generate(Application it, IFileSystemAccess fsa) {
         generateClassPair(fsa, getAppSourceLibPath + 'Helper/NotificationHelper.php',
             fh.phpFileContent(it, notificationHelperBaseClass), fh.phpFileContent(it, notificationHelperImpl)
@@ -168,15 +169,7 @@ class Notification {
             $this->name = '«appName»';
         }
 
-        /**
-         * Sets the translator.
-         *
-         * @param TranslatorInterface $translator Translator service instance
-         */
-        public function setTranslator(/*TranslatorInterface */$translator)
-        {
-            $this->translator = $translator;
-        }
+        «setTranslatorMethod»
 
         /**
          * Sends a mail to either an item's creator or a group of moderators.
@@ -315,6 +308,11 @@ class Notification {
             return $totalResult;
         }
 
+        /**
+         * Returns the subject used for the emails to be sent.
+         *
+         * @return string
+         */
         protected function getMailSubject()
         {
             $mailSubject = '';
@@ -337,6 +335,11 @@ class Notification {
             return $mailSubject;
         }
 
+        /**
+         * Collects data used by the email templates.
+         *
+         * @return array
+         */
         protected function prepareEmailData()
         {
             $objectType = $this->entity['_objectType'];

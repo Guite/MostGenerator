@@ -311,15 +311,7 @@ class FormHandler {
                 $this->router = $router;
             }
 
-            /**
-             * Sets the translator.
-             *
-             * @param TranslatorInterface $translator Translator service instance
-             */
-            public function setTranslator(/*TranslatorInterface */$translator)
-            {
-                $this->translator = $translator;
-            }
+            «setTranslatorMethod»
 
             «processForm»
 

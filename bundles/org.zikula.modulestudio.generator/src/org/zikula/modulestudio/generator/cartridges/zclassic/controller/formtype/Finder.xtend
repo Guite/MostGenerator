@@ -82,15 +82,7 @@ class Finder {
                 «ENDIF»
             }
 
-            /**
-             * Sets the translator.
-             *
-             * @param TranslatorInterface $translator Translator service instance
-             */
-            public function setTranslator(/*TranslatorInterface */$translator)
-            {
-                $this->translator = $translator;
-            }
+            «app.setTranslatorMethod»
 
             /**
              * {@inheritdoc}

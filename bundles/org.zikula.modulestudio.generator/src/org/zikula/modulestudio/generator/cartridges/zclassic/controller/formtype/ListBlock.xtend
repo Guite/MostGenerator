@@ -63,15 +63,7 @@ class ListBlock {
                 $this->setTranslator($translator);
             }
 
-            /**
-             * Sets the translator.
-             *
-             * @param TranslatorInterface $translator Translator service instance
-             */
-            public function setTranslator(/*TranslatorInterface */$translator)
-            {
-                $this->translator = $translator;
-            }
+            «setTranslatorMethod»
 
             /**
              * {@inheritdoc}
