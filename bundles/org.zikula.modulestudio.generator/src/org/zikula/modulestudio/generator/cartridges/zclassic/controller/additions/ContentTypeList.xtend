@@ -1,4 +1,4 @@
-package org.zikula.modulestudio.generator.cartridges.zclassic.controller.apis
+package org.zikula.modulestudio.generator.cartridges.zclassic.controller.additions
 
 import de.guite.modulestudio.metamodel.Application
 import org.eclipse.xtext.generator.IFileSystemAccess
