@@ -30,6 +30,7 @@ class StandardFieldsTrait {
         use Doctrine\ORM\Mapping as ORM;
         use Gedmo\Mapping\Annotation as Gedmo;
         use Symfony\Component\Validator\Constraints as Assert;
+        use Zikula\UsersModule\Entity\UserEntity;
 
         /**
          * Standard fields trait implementation class.
@@ -42,15 +43,7 @@ class StandardFieldsTrait {
              * @ORM\ManyToOne(targetEntity="Zikula\UsersModule\Entity\UserEntity")
              * @ORM\JoinColumn(referencedColumnName="uid")
              */
-            protected $createdUserId;
-
-            /**
-             * @var UserEntity
-             * @Gedmo\Blameable(on="update")
-             * @ORM\ManyToOne(targetEntity="Zikula\UsersModule\Entity\UserEntity")
-             * @ORM\JoinColumn(referencedColumnName="uid")
-             */
-            protected $updatedUserId;
+            protected $createdBy;
 
             /**
              * @ORM\Column(type="datetime")
@@ -61,6 +54,14 @@ class StandardFieldsTrait {
             protected $createdDate;
 
             /**
+             * @var UserEntity
+             * @Gedmo\Blameable(on="update")
+             * @ORM\ManyToOne(targetEntity="Zikula\UsersModule\Entity\UserEntity")
+             * @ORM\JoinColumn(referencedColumnName="uid")
+             */
+            protected $updatedBy;
+
+            /**
              * @ORM\Column(type="datetime")
              * @Gedmo\Timestampable(on="update")
              * @Assert\DateTime()
@@ -68,9 +69,9 @@ class StandardFieldsTrait {
              */
             protected $updatedDate;
 
-            «fh.getterAndSetterMethods(it, 'createdUserId', 'string', false, true, false, '', '')»
-            «fh.getterAndSetterMethods(it, 'updatedUserId', 'string', false, true, false, '', '')»
+            «fh.getterAndSetterMethods(it, 'createdBy', 'UserEntity', false, true, false, '', '')»
             «fh.getterAndSetterMethods(it, 'createdDate', 'datetime', false, true, false, '', '')»
+            «fh.getterAndSetterMethods(it, 'updatedBy', 'UserEntity', false, true, false, '', '')»
             «fh.getterAndSetterMethods(it, 'updatedDate', 'datetime', false, true, false, '', '')»
         }
     '''

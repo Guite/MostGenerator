@@ -903,7 +903,7 @@ class FormHandler {
             $currentUserApi = $this->container->get('zikula_users_module.current_user');
             $isLoggedIn = $currentUserApi->isLoggedIn();
             $uid = $isLoggedIn ? $currentUserApi->get('uid') : 1;
-            $roles['isCreator'] = $this->entityRef['createdUserId'] == $uid;
+            $roles['isCreator'] = method_exists($this->entityRef, 'getCreatedBy') && $this->entityRef->getCreatedBy()->getUid() == $uid;
             $variableApi = $this->container->get('zikula_extensions_module.api.variable');
 
             $groupArgs = ['uid' => $uid, 'gid' => $variableApi->get('«appName»', 'moderationGroupFor' . $this->objectTypeCapital, 2)];
@@ -1012,7 +1012,7 @@ class FormHandler {
 
             // only allow editing for the owner or people with higher permissions
             $uid = $this->container->get('zikula_users_module.current_user')->get('uid');
-            if (isset($entity['createdUserId']) && $entity['createdUserId']->getUid() != $uid) {
+            if (!method_exists($entity, 'getCreatedBy') || $entity->getCreatedBy()->getUid() != $uid) {
                 $permissionApi = $this->container->get('zikula_permissions_module.api.permission');
                 if (!$permissionApi->hasPermission($this->permissionComponent, $this->createCompositeIdentifier() . '::', ACCESS_ADD)) {
                     throw new AccessDeniedException();

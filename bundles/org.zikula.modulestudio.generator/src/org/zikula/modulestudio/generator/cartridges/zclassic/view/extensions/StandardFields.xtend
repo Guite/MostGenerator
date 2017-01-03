@@ -38,7 +38,7 @@ class StandardFields {
 
     def private standardFieldsViewImpl(Application it) '''
         {# purpose of this template: reusable display of standard fields #}
-        {% if obj.createdUserId|default or obj.updatedUserId|default %}
+        {% if obj.createdBy|default or obj.updatedBy|default %}
             {% if panel|default(false) == true %}
                 <div class="panel panel-default">
                     <div class="panel-heading">
@@ -60,16 +60,16 @@ class StandardFields {
 
     def private viewBody(Application it) '''
         <dl class="propertylist">
-        {% if obj.createdUserId|default %}
+        {% if obj.createdBy|default %}
             <dt>{{ __('Creation') }}</dt>
-            {% set profileLink = obj.createdUserId.getUid()|profileLinkByUserId() %}
-            <dd class="avatar">{{ «appName.toLowerCase»_userAvatar(uid=obj.createdUserId.getUid(), rating='g') }}</dd>
+            {% set profileLink = obj.createdBy.getUid()|profileLinkByUserId() %}
+            <dd class="avatar">{{ «appName.toLowerCase»_userAvatar(uid=obj.createdBy.getUid(), rating='g') }}</dd>
             <dd>{{ __f('Created by %user on %date', {'%user': profileLink, '%date': obj.createdDate|localizeddate('medium', 'short')})|raw }}</dd>
         {% endif %}
-        {% if obj.updatedUserId|default %}
+        {% if obj.updatedBy|default %}
             <dt>{{ __('Last update') }}</dt>
-            {% set profileLink = obj.updatedUserId.getUid()|profileLinkByUserId() %}
-            <dd class="avatar">{{ «appName.toLowerCase»_userAvatar(uid=obj.updatedUserId.getUid(), rating='g') }}</dd>
+            {% set profileLink = obj.updatedBy.getUid()|profileLinkByUserId() %}
+            <dd class="avatar">{{ «appName.toLowerCase»_userAvatar(uid=obj.updatedBy.getUid(), rating='g') }}</dd>
             <dd>{{ __f('Updated by %user on %date', {'%user': profileLink, '%date': obj.updatedDate|localizeddate('medium', 'short')})|raw }}</dd>
         {% endif %}
         </dl>
@@ -77,7 +77,7 @@ class StandardFields {
 
     def private standardFieldsEditImpl(Application it) '''
         {# purpose of this template: reusable editing of standard fields #}
-        {% if obj.createdUserId|default or obj.updatedUserId|default %}
+        {% if obj.createdBy|default or obj.updatedBy|default %}
             {% if panel|default(false) == true %}
                 <div class="panel panel-default">
                     <div class="panel-heading">
@@ -102,12 +102,12 @@ class StandardFields {
 
     def private editBody(Application it) '''
         <ul>
-        {% if obj.createdUserId|default %}
-            <li>{{ __f('Created by %user', {'%user': obj.createdUserId.getUname()}) }}</li>
+        {% if obj.createdBy|default %}
+            <li>{{ __f('Created by %user', {'%user': obj.createdBy.getUname()}) }}</li>
             <li>{{ __f('Created on %date', {'%date': obj.createdDate|localizeddate('medium', 'short')}) }}</li>
         {% endif %}
-        {% if obj.updatedUserId|default %}
-            <li>{{ __f('Updated by %user', {'%user': obj.updatedUserId.getUname()}) }}</li>
+        {% if obj.updatedBy|default %}
+            <li>{{ __f('Updated by %user', {'%user': obj.updatedBy.getUname()}) }}</li>
             <li>{{ __f('Updated on %date', {'%date': obj.updatedDate|localizeddate('medium', 'short')}) }}</li>
         {% endif %}
         </ul>

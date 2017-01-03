@@ -399,9 +399,9 @@ class Actions {
                 «addSortColumn('longitude')»
             «ENDIF»
             «IF standardFields»
-                «addSortColumn('createdUserId')»
+                «addSortColumn('createdBy')»
                 «addSortColumn('createdDate')»
-                «addSortColumn('updatedUserId')»
+                «addSortColumn('updatedBy')»
                 «addSortColumn('updatedDate')»
             «ENDIF»
         ]);

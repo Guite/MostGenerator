@@ -444,7 +444,7 @@ class QuickNavigation {
                         «ENDFOR»
                         «IF standardFields»
                             $this->__('Creation date') => 'createdDate',
-                            $this->__('Creator') => 'createdUserId',
+                            $this->__('Creator') => 'createdBy',
                             $this->__('Update date') => 'updatedDate'
                         «ENDIF»
                     ],

@@ -76,7 +76,7 @@ class ItemActions {
                         «IF ownerPermission && standardFields»
                             $uid = $currentUserApi->get('uid');
                             // only allow editing for the owner or people with higher permissions
-                            if ($entity->getCreatedUserId()->getUid() == $uid || $permissionApi->hasPermission($component, $instance, ACCESS_ADD)) {
+                            if ($entity->getCreatedBy()->getUid() == $uid || $permissionApi->hasPermission($component, $instance, ACCESS_ADD)) {
                                 «itemActionsForEditAction(controller)»
                             }
                         «ELSE»
@@ -121,7 +121,7 @@ class ItemActions {
               * ACCESS_ADMIN for admin controllers else: «IF relatedEntity.workflow == EntityWorkflowType::NONE»EDIT«ELSE»COMMENT«ENDIF»
               */»
             $uid = $currentUserApi->get('uid');
-            if ($authAdmin || (isset($uid) && $entity->getCreatedUserId()->getUid() == $uid)) {
+            if ($authAdmin || (isset($uid) && && method_exists($entity, 'getCreatedBy') && $entity->getCreatedBy()->getUid() == $uid)) {
                 «FOR elem : refedElems»
 
                     «val useTarget = (elem.source == it)»

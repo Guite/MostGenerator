@@ -47,7 +47,7 @@ class Relations {
             {% if items|default and items|length > 0 %}
             <ul class="«app.appName.toLowerCase»-related-item-list «name.formatForCode»">
             {% for item in items %}
-                {% if hasAdminPermission or item.workflowState == 'approved'«IF ownerPermission» or (item.workflowState == 'defered' and hasEditPermission and currentUser|default and item.createdUserId.getUid() == currentUser.uid)«ENDIF» %}
+                {% if hasAdminPermission or item.workflowState == 'approved'«IF ownerPermission» or (item.workflowState == 'defered' and hasEditPermission and currentUser|default and item.createdBy.getUid() == currentUser.uid)«ENDIF» %}
                 <li>
         «ENDIF»
         «IF hasActions('display')»
@@ -95,44 +95,6 @@ class Relations {
         «ENDIF»
     '''
 
-    def displayRelatedItemsLegacy(JoinRelationship it, String appName, Entity relatedEntity) '''
-        «val incoming = (if (target == relatedEntity && source != relatedEntity) true else false)»«/* use outgoing mode for self relations #547 */»
-        «val useTarget = !incoming»
-        «val relationAliasName = getRelationAliasName(useTarget).formatForCode.toFirstLower»
-        «val relationAliasNameParam = getRelationAliasName(!useTarget).formatForCode»
-        «val otherEntity = (if (!useTarget) source else target) as Entity»
-        «val many = isManySideDisplay(useTarget)»
-        {if $lct eq 'admin'}
-            <h4>{gt text='«otherEntity.getEntityNameSingularPlural(many).formatForDisplayCapital»'}</h4>
-        {else}
-            <h3>{gt text='«otherEntity.getEntityNameSingularPlural(many).formatForDisplayCapital»'}</h3>
-        {/if}
-
-        {if isset($«relatedEntity.name.formatForCode».«relationAliasName») && $«relatedEntity.name.formatForCode».«relationAliasName» ne null}
-            {include file='«otherEntity.name.formatForCode»/includeDisplayItemList«IF many»Many«ELSE»One«ENDIF».tpl' item«IF many»s«ENDIF»=$«relatedEntity.name.formatForCode».«relationAliasName»}
-        {/if}
-
-        «IF otherEntity.hasActions('edit')»
-            «IF !many»
-                {if !isset($«relatedEntity.name.formatForCode».«relationAliasName») || $«relatedEntity.name.formatForCode».«relationAliasName» eq null}
-            «ENDIF»
-            {assign var='permLevel' value='ACCESS_«IF relatedEntity.workflow == EntityWorkflowType::NONE»EDIT«ELSE»COMMENT«ENDIF»'}
-            {if $lct eq 'admin'}
-                {assign var='permLevel' value='ACCESS_ADMIN'}
-            {/if}
-            {checkpermission component='«appName»:«relatedEntity.name.formatForCodeCapital»:' instance='«relatedEntity.idFieldsAsParameterTemplate»::' level=$permLevel assign='mayManage'}
-            {if $mayManage || (isset($uid) && isset($«relatedEntity.name.formatForCode».createdUserId) && $«relatedEntity.name.formatForCode».createdUserId eq $uid)}
-            <p class="managelink">
-                {gt text='Create «otherEntity.name.formatForDisplay»' assign='createTitle'}
-                <a href="{modurl modname='«appName»' type=$lct func='edit' ot='«otherEntity.name.formatForCode»' «relationAliasNameParam»="«relatedEntity.idFieldsAsParameterTemplate»"}" title="{$createTitle}" class="z-icon-es-add">{$createTitle}</a>
-            </p>
-            {/if}
-            «IF !many»
-                {/if}
-            «ENDIF»
-        «ENDIF»
-    '''
-
     def displayRelatedItems(JoinRelationship it, String appName, Entity relatedEntity) '''
         «val incoming = (if (target == relatedEntity && source != relatedEntity) true else false)»«/* use outgoing mode for self relations #547 */»
         «val useTarget = !incoming»
@@ -162,7 +124,7 @@ class Relations {
                 {% set permLevel = 'ACCESS_ADMIN' %}
             {% endif %}
             {% set mayManage = hasPermission('«appName»:«relatedEntity.name.formatForCodeCapital»:', «relatedEntity.idFieldsAsParameterTemplate» ~ '::', permLevel) %}
-            {% if mayManage or (currentUser|default and «relatedEntity.name.formatForCode».createdUserId|default and «relatedEntity.name.formatForCode».createdUserId.getUid() == currentUser.uid) %}
+            {% if mayManage or (currentUser|default and «relatedEntity.name.formatForCode».createdBy|default and «relatedEntity.name.formatForCode».createdBy.getUid() == currentUser.uid) %}
             <p class="managelink">
                 {% set createTitle = __('Create «otherEntity.name.formatForDisplay»') %}
                 <a href="{{ path('«appName.formatForDB»_«otherEntity.name.formatForDB»_' ~ routeArea ~ 'edit', { «relationAliasNameParam»: «relatedEntity.idFieldsAsParameterTemplate» }) }}" title="{{ createTitle }}" class="fa fa-plus">{{ createTitle }}</a>

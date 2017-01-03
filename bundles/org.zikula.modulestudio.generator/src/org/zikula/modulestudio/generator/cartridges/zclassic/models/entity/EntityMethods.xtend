@@ -489,10 +489,10 @@ class EntityMethods {
                 «ENDIF»
                 «IF it instanceof Entity && (it as Entity).standardFields»
 
+                    $this->setCreatedBy(null);
                     $this->setCreatedDate(null);
-                    $this->setCreatedUserId(null);
+                    $this->setUpdatedBy(null);
                     $this->setUpdatedDate(null);
-                    $this->setUpdatedUserId(null);
                 «ENDIF»
 
                 «IF !joinsIn.empty || !joinsOut.empty»

@@ -67,9 +67,9 @@ class Rss {
             <link>{{ url('«appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ '«defaultAction»'«IF hasActions('display')»«routeParams(objName, true)»«ENDIF») }}</link>
             <guid>{{ url('«appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ '«defaultAction»'«IF hasActions('display')»«routeParams(objName, true)»«ENDIF») }}</guid>
             «IF standardFields»
-                {% if «objName».createdUserId is defined %}
-                    {% set realName = «appName.toLowerCase»_userVar('name', obj.createdUserId.getUid()) %}
-                    <author>{{ «objName».createdUserId.getEmail() }} ({{ realName|default(obj.createdUserId.getUname()) }})</author>
+                {% if «objName».createdBy|default %}
+                    {% set realName = «appName.toLowerCase»_userVar('name', obj.createdBy.getUid()) %}
+                    <author>{{ «objName».createdBy.getEmail() }} ({{ realName|default(obj.createdBy.getUname()) }})</author>
                 {% endif %}
             «ENDIF»
             «IF categorisable»

@@ -231,8 +231,8 @@ class Notification {
                 foreach (array_keys($moderatorGroup['members']) as $uid) {
                     $this->addRecipient($uid);
                 }
-            } elseif ($this->recipientType == 'creator' && isset($this->entity['createdUserId'])) {
-                $creatorUid = $this->entity['createdUserId'];
+            } elseif ($this->recipientType == 'creator' && method_exists($entity, 'getCreatedBy')) {
+                $creatorUid = $this->entity->getCreatedBy()->getUid();
 
                 $this->addRecipient($creatorUid);
             }

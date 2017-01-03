@@ -65,8 +65,8 @@ class UserDeletion {
 
             $qb = $this->getEntityManager()->createQueryBuilder();
             $qb->update('«entityClassName('', false)»', 'tbl')
-               ->set('tbl.createdUserId', $newUserId)
-               ->where('tbl.createdUserId = :creator')
+               ->set('tbl.createdBy', $newUserId)
+               ->where('tbl.createdBy= :creator')
                ->setParameter('creator', $userId);
             $query = $qb->getQuery();
             «IF hasPessimisticWriteLock»
@@ -103,8 +103,8 @@ class UserDeletion {
 
             $qb = $this->getEntityManager()->createQueryBuilder();
             $qb->update('«entityClassName('', false)»', 'tbl')
-               ->set('tbl.updatedUserId', $newUserId)
-               ->where('tbl.updatedUserId = :editor')
+               ->set('tbl.updatedBy', $newUserId)
+               ->where('tbl.updatedBy = :editor')
                ->setParameter('editor', $userId);
             $query = $qb->getQuery();
             «IF hasPessimisticWriteLock»
@@ -139,7 +139,7 @@ class UserDeletion {
 
             $qb = $this->getEntityManager()->createQueryBuilder();
             $qb->delete('«entityClassName('', false)»', 'tbl')
-               ->where('tbl.createdUserId = :creator')
+               ->where('tbl.createdBy = :creator')
                ->setParameter('creator', $userId);
             $query = $qb->getQuery();
             «initDeleteQueryAdditions»
@@ -173,7 +173,7 @@ class UserDeletion {
 
             $qb = $this->getEntityManager()->createQueryBuilder();
             $qb->delete('«entityClassName('', false)»', 'tbl')
-               ->where('tbl.updatedUserId = :editor')
+               ->where('tbl.updatedBy = :editor')
                ->setParameter('editor', $userId);
             $query = $qb->getQuery();
             «initDeleteQueryAdditions»

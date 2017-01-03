@@ -41,7 +41,7 @@ class Ics {
         UID:{{ 'ICAL' ~ «objName».«getStartDateField.name.formatForCode» ~ random(5000) ~ «objName».«getEndDateField.name.formatForCode» }}
         DTSTAMP:{{ 'now'|date('Ymd\THi00\Z') }}
         «IF standardFields»
-            ORGANIZER;CN="{{ «objName».createdUserId.getUname() }}":MAILTO:{{ «objName».createdUserId.getEmail() }}
+            ORGANIZER;CN="{{ «objName».createdBy.getUname() }}":MAILTO:{{ «objName».createdBy.getEmail() }}
         «ENDIF»
         «IF categorisable»
             CATEGORIES:{% for propName, catMapping in «objName».categories %}{% if not loop.first %},{% endif %}{{ catMapping.category.display_name[lang]|upper %}{% endfor %}

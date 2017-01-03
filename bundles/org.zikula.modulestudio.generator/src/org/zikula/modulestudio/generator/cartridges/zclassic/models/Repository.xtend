@@ -1249,7 +1249,7 @@ class Repository {
                 if ($showOnlyOwnEntries == 1) {
                     «/*$uid = $serviceManager->get('zikula_users_module.current_user')->get('uid');*/»
                     $uid = $this->getRequest()->getSession()->get('uid');
-                    $qb->andWhere('tbl.createdUserId = :creator')
+                    $qb->andWhere('tbl.createdBy = :creator')
                        ->setParameter('creator', $uid);
                 }
             «ENDIF»
@@ -1373,9 +1373,9 @@ class Repository {
              'deletedAt',
         «ENDIF»
         «IF standardFields»
-             'createdUserId',
-             'updatedUserId',
+             'createdBy',
              'createdDate',
+             'updatedBy',
              'updatedDate',
         «ENDIF»
     '''
