@@ -38,10 +38,10 @@ class StandardFieldsTrait {
         trait StandardFieldsTrait
         {
             /**
-             * @var UserEntity
              * @Gedmo\Blameable(on="create")
              * @ORM\ManyToOne(targetEntity="Zikula\UsersModule\Entity\UserEntity")
              * @ORM\JoinColumn(referencedColumnName="uid")
+             * @var UserEntity
              */
             protected $createdBy;
 
@@ -54,10 +54,10 @@ class StandardFieldsTrait {
             protected $createdDate;
 
             /**
-             * @var UserEntity
              * @Gedmo\Blameable(on="update")
              * @ORM\ManyToOne(targetEntity="Zikula\UsersModule\Entity\UserEntity")
              * @ORM\JoinColumn(referencedColumnName="uid")
+             * @var UserEntity
              */
             protected $updatedBy;
 
