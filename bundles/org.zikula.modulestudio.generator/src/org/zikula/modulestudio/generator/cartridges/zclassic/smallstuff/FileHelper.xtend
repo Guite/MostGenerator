@@ -38,7 +38,7 @@ class FileHelper {
         «content»
     '''
 
-    def phpFileHeaderVersionClass(Application it) '''
+    def phpFileHeaderBootstrapFile(Application it) '''
         <?php
         /**
          «phpFileHeaderImpl»

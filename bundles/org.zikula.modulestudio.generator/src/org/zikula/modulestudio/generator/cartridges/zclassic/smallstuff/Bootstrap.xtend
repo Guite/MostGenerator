@@ -23,21 +23,30 @@ class Bootstrap {
         val basePath = getAppSourcePath + 'Base/bootstrap.php'
         if (!shouldBeSkipped(basePath)) {
             if (shouldBeMarked(basePath)) {
-                fsa.generateFile(basePath.replace('.php', '.generated.php'), fh.phpFileContent(it, bootstrapBaseImpl))
+                fsa.generateFile(basePath.replace('.php', '.generated.php'), bootstrapFile(true))
             } else {
-                fsa.generateFile(basePath, fh.phpFileContent(it, bootstrapBaseImpl))
+                fsa.generateFile(basePath, bootstrapFile(true))
             }
         }
 
         val concretePath = getAppSourcePath + 'bootstrap.php'
         if (!generateOnlyBaseClasses && !shouldBeSkipped(concretePath)) {
             if (shouldBeMarked(concretePath)) {
-                fsa.generateFile(concretePath.replace('.php', '.generated.php'), fh.phpFileContent(it, bootstrapImpl))
+                fsa.generateFile(concretePath.replace('.php', '.generated.php'), bootstrapFile(false))
             } else {
-                fsa.generateFile(concretePath, fh.phpFileContent(it, bootstrapImpl))
+                fsa.generateFile(concretePath, bootstrapFile(false))
             }
         }
     }
+
+    def private bootstrapFile(Application it, Boolean isBase) '''
+        «fh.phpFileHeaderBootstrapFile(it)»
+        «IF isBase»
+            «bootstrapBaseImpl»
+        «ELSE»
+            «bootstrapImpl»
+        «ENDIF»
+    '''
 
     def private bootstrapDocs() '''
         /**
