@@ -61,7 +61,7 @@ class Custom {
         «ENDIF»
         {% block content %}
             <div class="«app.appName.toLowerCase»-«name.formatForDB» «app.appName.toLowerCase»-«name.formatForDB»">
-                <p>Please override this template by moving it from <em>/«app.rootFolder»/«if (app.systemModule) app.name.formatForCode else app.vendor.formatForCodeCapital + '/' + app.name.formatForCode»/«app.getViewPath»«controller.formattedName.toFirstUpper»/«name.formatForCode.toFirstLower».html.twig</em> to either <em>/themes/YourTheme/Resources/«app.appName»/views/«controller.formattedName.toFirstUpper»/«name.formatForCode.toFirstLower».html.twig</em> or <em>/app/Resources/«app.appName»/views/«controller.formattedName.toFirstUpper»/«name.formatForCode.toFirstLower».html.twig</em>.</p>
+                <p>Please override this template by moving it from <em>/«app.rootFolder»/«if (app.systemModule) app.name.formatForCodeCapital else app.vendor.formatForCodeCapital + '/' + app.name.formatForCodeCapital»Module/«app.getViewPath»«controller.formattedName.toFirstUpper»/«name.formatForCode.toFirstLower».html.twig</em> to either <em>/themes/YourTheme/Resources/«app.appName»/views/«controller.formattedName.toFirstUpper»/«name.formatForCode.toFirstLower».html.twig</em> or <em>/app/Resources/«app.appName»/views/«controller.formattedName.toFirstUpper»/«name.formatForCode.toFirstLower».html.twig</em>.</p>
             </div>
         {% endblock %}
     '''
@@ -75,7 +75,7 @@ class Custom {
         {% block adminPageIcon %}square{% endblock %}
         {% block content %}
             <div class="«app.appName.toLowerCase»-«name.formatForDB» «app.appName.toLowerCase»-«name.formatForDB»">
-                <p>Please override this template by moving it from <em>/«app.rootFolder»/«if (app.systemModule) app.name.formatForCode else app.vendor.formatForCodeCapital + '/' + app.name.formatForCode»/«app.getViewPath»«entity.name.formatForDisplayCapital»/«name.formatForCode.toFirstLower».html.twig</em> to either <em>/themes/YourTheme/Resources/«app.appName»/views/«entity.name.formatForDisplayCapital»/«name.formatForCode.toFirstLower».html.twig</em> or <em>/app/Resources/«app.appName»/views/«entity.name.formatForDisplayCapital»/«name.formatForCode.toFirstLower».html.twig</em>.</p>
+                <p>Please override this template by moving it from <em>/«app.rootFolder»/«if (app.systemModule) app.name.formatForCodeCapital else app.vendor.formatForCodeCapital + '/' + app.name.formatForCodeCapital»Module/«app.getViewPath»«entity.name.formatForDisplayCapital»/«name.formatForCode.toFirstLower».html.twig</em> to either <em>/themes/YourTheme/Resources/«app.appName»/views/«entity.name.formatForDisplayCapital»/«name.formatForCode.toFirstLower».html.twig</em> or <em>/app/Resources/«app.appName»/views/«entity.name.formatForDisplayCapital»/«name.formatForCode.toFirstLower».html.twig</em>.</p>
             </div>
         {% endblock %}
     '''
