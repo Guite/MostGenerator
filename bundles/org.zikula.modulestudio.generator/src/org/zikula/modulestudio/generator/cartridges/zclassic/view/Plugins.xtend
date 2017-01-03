@@ -70,9 +70,9 @@ class Plugins {
         «IF hasTrees»
             use Symfony\Component\Routing\RouterInterface;
         «ENDIF»
+        use Twig_Extension;
         use Zikula\Common\Translator\TranslatorInterface;
         use Zikula\Common\Translator\TranslatorTrait;
-        use Zikula\Core\Doctrine\EntityAccess;
         use Zikula\ExtensionsModule\Api\VariableApi;
         «IF hasListFields»
             use «appNamespace»\Helper\ListEntriesHelper;
@@ -85,7 +85,7 @@ class Plugins {
         /**
          * Twig extension base class.
          */
-        abstract class AbstractTwigExtension extends \Twig_Extension
+        abstract class AbstractTwigExtension extends Twig_Extension
         {
             «twigExtensionBody»
         }

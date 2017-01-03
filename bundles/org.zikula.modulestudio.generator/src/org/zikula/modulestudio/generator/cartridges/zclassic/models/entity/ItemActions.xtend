@@ -121,7 +121,7 @@ class ItemActions {
               * ACCESS_ADMIN for admin controllers else: «IF relatedEntity.workflow == EntityWorkflowType::NONE»EDIT«ELSE»COMMENT«ENDIF»
               */»
             $uid = $currentUserApi->get('uid');
-            if ($authAdmin || (isset($uid) && && method_exists($entity, 'getCreatedBy') && $entity->getCreatedBy()->getUid() == $uid)) {
+            if ($authAdmin || (isset($uid) && method_exists($entity, 'getCreatedBy') && $entity->getCreatedBy()->getUid() == $uid)) {
                 «FOR elem : refedElems»
 
                     «val useTarget = (elem.source == it)»

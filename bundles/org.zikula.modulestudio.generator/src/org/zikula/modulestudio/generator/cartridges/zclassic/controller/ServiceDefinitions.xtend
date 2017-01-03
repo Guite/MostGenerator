@@ -95,14 +95,27 @@ class ServiceDefinitions {
         # Upload handler class
         «modPrefix».upload_handler:
             class: «appNamespace»\UploadHandler
-            arguments: ["@translator.default", "@zikula_users_module.current_user", "@zikula_extensions_module.api.variable"]
+            arguments:
+                - "@translator.default"
+                - "@zikula_users_module.current_user"
+                - "@zikula_extensions_module.api.variable"
     '''
 
     def private linkContainer(Application it) '''
         services:
             «modPrefix».link_container:
                 class: «appNamespace»\Container\LinkContainer
-                arguments: ["@translator.default", "@router", "@zikula_permissions_module.api.permission", "@«modPrefix».controller_helper"«IF generateAccountApi», "@zikula_extensions_module.api.variable"«ENDIF»«IF generateAccountApi || !controllers.filter[c|c.hasActions('edit')].empty», "@zikula_users_module.current_user"«ENDIF»]
+                arguments:
+                    - "@translator.default"
+                    - "@router"
+                    - "@zikula_permissions_module.api.permission"
+                    - "@«modPrefix».controller_helper"
+                    «IF generateAccountApi»
+                        - "@zikula_extensions_module.api.variable"
+                    «ENDIF»
+                    «IF generateAccountApi || !controllers.filter[c|c.hasActions('edit')].empty»
+                        - "@zikula_users_module.current_user"
+                    «ENDIF»
                 tags:
                     - { name: zikula.link_container }
     '''
@@ -117,7 +130,9 @@ class ServiceDefinitions {
         «FOR entity : entities»
             «modPrefix».«entity.name.formatForCode»_factory:
                 class: «appNamespace»\Entity\Factory\«entity.name.formatForCodeCapital»Factory
-                arguments: ["@doctrine.orm.entity_manager", «appNamespace»\Entity\«entity.name.formatForCodeCapital»Entity]
+                arguments:
+                    - "@«entityManagerService»"
+                    - «appNamespace»\Entity\«entity.name.formatForCodeCapital»Entity
 
         «ENDFOR»
     '''
@@ -182,7 +197,8 @@ class ServiceDefinitions {
 
             «modPrefix».form.type.field.multilist:
                 class: «nsBase»Field\MultiListType
-                arguments: ["@«modPrefix».listentries_helper"]
+                arguments:
+                    - "@«modPrefix».listentries_helper"
                 tags:
                     - { name: form.type }
         «ENDIF»
@@ -197,7 +213,8 @@ class ServiceDefinitions {
 
             «modPrefix».form.type.field.upload:
                 class: «nsBase»Field\UploadType
-                arguments: ["@translator.default"]
+                arguments:
+                    - "@translator.default"
                 tags:
                     - { name: form.type }
         «ENDIF»
@@ -212,7 +229,9 @@ class ServiceDefinitions {
 
             «modPrefix».form.type.field.autocompletionrelation:
                 class: «nsBase»Field\AutoCompletionRelationType
-                arguments: ["@translator.default", "@doctrine.orm.entity_manager"]
+                arguments:
+                    - "@translator.default"
+                    - "@«entityManagerService»"
                 tags:
                     - { name: form.type }
         «ENDIF»
@@ -231,7 +250,15 @@ class ServiceDefinitions {
 
                 «modPrefix».form.type.«entity.name.formatForDB»quicknav:
                     class: «nsBase»QuickNavigation\«entity.name.formatForCodeCapital»QuickNavType
-                    arguments: ["@translator.default", "@request_stack"«IF entity.hasListFieldsEntity», "@«modPrefix».listentries_helper"«ENDIF»«IF needsFeatureActivationHelper», "@«modPrefix».feature_activation_helper"«ENDIF»]
+                    arguments:
+                        - "@translator.default"
+                        - "@request_stack"
+                        «IF entity.hasListFieldsEntity»
+                            - "@«modPrefix».listentries_helper"
+                        «ENDIF»
+                        «IF needsFeatureActivationHelper»
+                            - "@«modPrefix».feature_activation_helper"
+                        «ENDIF»
                     tags:
                         - { name: form.type }
             «ENDFOR»
@@ -242,14 +269,30 @@ class ServiceDefinitions {
 
                     «modPrefix».form.handler.«entity.name.formatForDB»:
                         class: «nsBase.replace('Type\\', '')»Handler\«entity.name.formatForCodeCapital»\EditHandler
-                        arguments: ["@service_container", "@translator.default", "@request_stack", "@router"]
+                        arguments:
+                            - "@service_container"
+                            - "@translator.default"
+                            - "@request_stack"
+                            - "@router"
                         tags:
                             - { name: form.type }
                 «ENDIF»
 
                 «modPrefix».form.type.«entity.name.formatForDB»:
                     class: «nsBase»«entity.name.formatForCodeCapital»Type
-                    arguments: ["@translator.default", "@«modPrefix».«entity.name.formatForCode»_factory"«IF entity instanceof Entity && (entity as Entity).hasTranslatableFields», "@zikula_extensions_module.api.variable", "@«modPrefix».translatable_helper"«ENDIF»«IF entity.hasListFieldsEntity», "@«modPrefix».listentries_helper"«ENDIF»«IF needsFeatureActivationHelper», "@«modPrefix».feature_activation_helper"«ENDIF»]
+                    arguments:
+                        - "@translator.default"
+                        - "@«modPrefix».«entity.name.formatForCode»_factory"
+                        «IF entity instanceof Entity && (entity as Entity).hasTranslatableFields»
+                            - "@zikula_extensions_module.api.variable"
+                            - "@«modPrefix».translatable_helper"
+                        «ENDIF»
+                        «IF entity.hasListFieldsEntity»
+                            - "@«modPrefix».listentries_helper"
+                        «ENDIF»
+                        «IF needsFeatureActivationHelper»
+                            - "@«modPrefix».feature_activation_helper"
+                        «ENDIF»
                     tags:
                         - { name: form.type }
             «ENDFOR»
@@ -258,7 +301,8 @@ class ServiceDefinitions {
 
             «modPrefix».form.type.deleteentity:
                 class: «nsBase.replace('Type\\', '')»DeleteEntityType
-                arguments: ["@translator.default"]
+                arguments:
+                    - "@translator.default"
                 tags:
                     - { name: form.type }
         «ENDIF»
@@ -266,7 +310,8 @@ class ServiceDefinitions {
 
             «modPrefix».form.type.block.itemlist:
                 class: «nsBase.replace('Form\\Type\\', '')»Block\Form\Type\ItemListBlockType
-                arguments: ["@translator.default"]
+                arguments:
+                    - "@translator.default"
                 tags:
                     - { name: form.type }
         «ENDIF»
@@ -275,7 +320,11 @@ class ServiceDefinitions {
 
                 «modPrefix».form.type.«entity.name.formatForDB»finder:
                     class: «nsBase»Finder\«entity.name.formatForCodeCapital»FinderType
-                    arguments: ["@translator.default"«IF needsFeatureActivationHelper», "@«modPrefix».feature_activation_helper"«ENDIF»]
+                    arguments:
+                        - "@translator.default"
+                        «IF needsFeatureActivationHelper»
+                            - "@«modPrefix».feature_activation_helper"
+                        «ENDIF»
                     tags:
                         - { name: form.type }
             «ENDFOR»
@@ -284,7 +333,12 @@ class ServiceDefinitions {
 
             «modPrefix».form.type.appsettings:
                 class: «nsBase.replace('Type\\', '')»AppSettingsType
-                arguments: ["@translator.default", "@zikula_extensions_module.api.variable"«IF hasUserGroupSelectors», "@zikula_groups_module.group_repository"«ENDIF»]
+                arguments:
+                    - "@translator.default"
+                    - "@zikula_extensions_module.api.variable"
+                    «IF hasUserGroupSelectors»
+                        - "@zikula_groups_module.group_repository"
+                    «ENDIF»
                 tags:
                     - { name: form.type }
         «ENDIF»
@@ -301,12 +355,28 @@ class ServiceDefinitions {
         «IF hasCategorisableEntities»
             «modPrefix».category_helper:
                 class: «nsBase»CategoryHelper
-                arguments: ["@service_container", "@translator.default", "@session", "@logger", "@request_stack", "@zikula_users_module.current_user", "@zikula_categories_module.api.category_registry", "@zikula_categories_module.api.category_permission"]
+                arguments:
+                    - "@service_container"
+                    - "@translator.default"
+                    - "@session"
+                    - "@logger"
+                    - "@request_stack"
+                    - "@zikula_users_module.current_user"
+                    - "@zikula_categories_module.api.category_registry"
+                    - "@zikula_categories_module.api.category_permission"
 
         «ENDIF»
         «modPrefix».controller_helper:
             class: «nsBase»ControllerHelper
-            arguments: ["@service_container", "@translator.default"«IF hasUploads», "@session"«ENDIF»«IF hasUploads || hasGeographical», "@logger"«ENDIF»]
+            arguments:
+                - "@service_container"
+                - "@translator.default"
+                «IF hasUploads»
+                    - "@session"
+                «ENDIF»
+                «IF hasUploads || hasGeographical»
+                    - "@logger"
+                «ENDIF»
         «IF needsFeatureActivationHelper»
 
             «modPrefix».feature_activation_helper:
@@ -316,48 +386,75 @@ class ServiceDefinitions {
 
             «modPrefix».hook_helper:
                 class: «nsBase»HookHelper
-                arguments: ["@hook_dispatcher"]
+                arguments:
+                    - "@hook_dispatcher"
         «ENDIF»
         «IF hasUploads»
 
             «modPrefix».image_helper:
                 class: «nsBase»ImageHelper
-                arguments: ["@translator.default", "@session", "@zikula_extensions_module.api.variable"]
+                arguments:
+                    - "@translator.default"
+                    - "@session"
+                    - "@zikula_extensions_module.api.variable"
         «ENDIF»
         «IF hasListFields»
 
             «modPrefix».listentries_helper:
                 class: «nsBase»ListEntriesHelper
-                arguments: ["@translator.default"]
+                arguments:
+                    - "@translator.default"
         «ENDIF»
 
         «modPrefix».model_helper:
             class: «nsBase»ModelHelper
-            arguments: ["@service_container"]
+            arguments:
+                - "@service_container"
         «IF needsApproval»
 
             «modPrefix».notification_helper:
                 class: «nsBase»NotificationHelper
-                arguments: ["@translator.default", "@session", "@router", "@kernel", "@request_stack", "@zikula_extensions_module.api.variable", "@twig", "@zikula_mailer_module.api.mailer", "@«modPrefix».workflow_helper"]
+                arguments:
+                    - "@translator.default"
+                    - "@session"
+                    - "@router"
+                    - "@kernel"
+                    - "@request_stack"
+                    - "@zikula_extensions_module.api.variable"
+                    - "@twig"
+                    - "@zikula_mailer_module.api.mailer"
+                    - "@«modPrefix».workflow_helper"
         «ENDIF»
 
         «modPrefix».selection_helper:
             class: «nsBase»SelectionHelper
-            arguments: ["@service_container", "@doctrine.orm.entity_manager", "@translator.default", "@«modPrefix».controller_helper"]
+            arguments:
+                - "@service_container"
+                - "@«entityManagerService»"
+                - "@translator.default"
+                - "@«modPrefix».controller_helper"
         «IF hasTranslatable»
 
             «modPrefix».translatable_helper:
                 class: «nsBase»TranslatableHelper
-                arguments: ["@service_container", "@translator.default", "@request_stack", "@zikula_extensions_module.api.variable"]
+                arguments:
+                    - "@service_container"
+                    - "@translator.default"
+                    - "@request_stack"
+                    - "@zikula_extensions_module.api.variable"
         «ENDIF»
 
         «modPrefix».view_helper:
             class: «nsBase»ViewHelper
-            arguments: ["@service_container", "@translator.default"]
+            arguments:
+                - "@service_container"
+                - "@translator.default"
 
         «modPrefix».workflow_helper:
             class: «nsBase»WorkflowHelper
-            arguments: ["@service_container", "@translator.default"]
+            arguments:
+                - "@service_container"
+                - "@translator.default"
     '''
 
     def private twig(Application it) '''
@@ -370,7 +467,22 @@ class ServiceDefinitions {
         «val nsBase = appNamespace + '\\Twig\\'»
         «modPrefix».twig_extension:
             class: «nsBase»TwigExtension
-            arguments: ["@translator.default"«IF hasTrees», "@router"«ENDIF»«IF generateIcsTemplates && hasEntitiesWithIcsTemplates», "@request_stack"«ENDIF», "@zikula_extensions_module.api.variable", "@«modPrefix».workflow_helper"«IF hasUploads», "@«modPrefix».view_helper"«ENDIF»«IF hasListFields», "@«modPrefix».listentries_helper"«ENDIF»]
+            arguments:
+                - "@translator.default"
+                «IF hasTrees»
+                    - "@router"
+                «ENDIF»
+                «IF generateIcsTemplates && hasEntitiesWithIcsTemplates»
+                    - "@request_stack"
+                «ENDIF»
+                - "@zikula_extensions_module.api.variable"
+                - "@«modPrefix».workflow_helper"
+                «IF hasUploads»
+                    - "@«modPrefix».view_helper"
+                «ENDIF»
+                «IF hasListFields»
+                    - "@«modPrefix».listentries_helper"
+                «ENDIF»
             public: false
             tags:
                 - { name: twig.extension }

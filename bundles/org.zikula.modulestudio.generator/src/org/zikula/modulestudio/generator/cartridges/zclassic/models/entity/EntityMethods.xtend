@@ -469,73 +469,76 @@ class EntityMethods {
          */
         public function __clone()
         {
-            // If the entity has an identity, proceed as normal.
-            if («FOR field : primaryKeyFields SEPARATOR ' && '»$this->«field.name.formatForCode»«ENDFOR») {
-                // unset identifiers
-                «FOR field : primaryKeyFields»
-                    $this->set«field.name.formatForCodeCapital»(«thProp.defaultFieldData(field)»);
-                «ENDFOR»
-
-                // reset Workflow
-                $this->resetWorkflow();
-                «IF hasUploadFieldsEntity»
-
-                    // reset upload fields
-                    «FOR field : getUploadFieldsEntity»
-                        $this->set«field.name.formatForCodeCapital»('');
-                        $this->set«field.name.formatForCodeCapital»Meta([]);
-                        $this->set«field.name.formatForCodeCapital»Url('');
-                    «ENDFOR»
-                «ENDIF»
-                «IF it instanceof Entity && (it as Entity).standardFields»
-
-                    $this->setCreatedBy(null);
-                    $this->setCreatedDate(null);
-                    $this->setUpdatedBy(null);
-                    $this->setUpdatedDate(null);
-                «ENDIF»
-
-                «IF !joinsIn.empty || !joinsOut.empty»
-                    // handle related objects
-                    // prevent shared references by doing a deep copy - see (2) and (3) for more information
-                    // clone referenced objects only if a new record is necessary
-                    «FOR out: newArrayList(false, true)»
-                        «FOR relation : if (out) joinsOut else joinsIn»
-                            «var aliasName = relation.getRelationAliasName(out)»
-                            $collection = $this->«aliasName»;
-                            $this->«aliasName» = new ArrayCollection();
-                            foreach ($collection as $rel) {
-                                $this->add«aliasName.formatForCodeCapital»(«IF !(relation instanceof ManyToManyRelationship)» clone«ENDIF» $rel);
-                            }
-                        «ENDFOR»
-                    «ENDFOR»
-                «ENDIF»
-                «IF it instanceof Entity»
-                    «IF categorisable»
-
-                        // clone categories
-                        $categories = $this->categories;
-                        $this->categories = new ArrayCollection();
-                        foreach ($categories as $c) {
-                            $newCat = clone $c;
-                            $this->categories->add($newCat);
-                            $newCat->setEntity($this);
-                        }
-                    «ENDIF»
-                    «IF attributable»
-
-                        // clone attributes
-                        $attributes = $this->attributes;
-                        $this->attributes = new ArrayCollection();
-                        foreach ($attributes as $a) {
-                            $newAttr = clone $a;
-                            $this->attributes->add($newAttr);
-                            $newAttr->setEntity($this);
-                        }
-                    «ENDIF»
-                «ENDIF»
+            // if the entity has no identity do nothing, do NOT throw an exception
+            if (!(«FOR field : primaryKeyFields SEPARATOR ' && '»$this->«field.name.formatForCode»«ENDFOR»)) {
+                return;
             }
-            // otherwise do nothing, do NOT throw an exception!
+
+            // otherwise proceed
+
+            // unset identifiers
+            «FOR field : primaryKeyFields»
+                $this->set«field.name.formatForCodeCapital»(«thProp.defaultFieldData(field)»);
+            «ENDFOR»
+
+            // reset workflow
+            $this->resetWorkflow();
+            «IF hasUploadFieldsEntity»
+
+                // reset upload fields
+                «FOR field : getUploadFieldsEntity»
+                    $this->set«field.name.formatForCodeCapital»('');
+                    $this->set«field.name.formatForCodeCapital»Meta([]);
+                    $this->set«field.name.formatForCodeCapital»Url('');
+                «ENDFOR»
+            «ENDIF»
+            «IF it instanceof Entity && (it as Entity).standardFields»
+
+                $this->setCreatedBy(null);
+                $this->setCreatedDate(null);
+                $this->setUpdatedBy(null);
+                $this->setUpdatedDate(null);
+            «ENDIF»
+
+            «IF !joinsIn.empty || !joinsOut.empty»
+                // handle related objects
+                // prevent shared references by doing a deep copy - see (2) and (3) for more information
+                // clone referenced objects only if a new record is necessary
+                «FOR out: newArrayList(false, true)»
+                    «FOR relation : if (out) joinsOut else joinsIn»
+                        «var aliasName = relation.getRelationAliasName(out)»
+                        $collection = $this->«aliasName»;
+                        $this->«aliasName» = new ArrayCollection();
+                        foreach ($collection as $rel) {
+                            $this->add«aliasName.formatForCodeCapital»(«IF !(relation instanceof ManyToManyRelationship)» clone«ENDIF» $rel);
+                        }
+                    «ENDFOR»
+                «ENDFOR»
+            «ENDIF»
+            «IF it instanceof Entity»
+                «IF categorisable»
+
+                    // clone categories
+                    $categories = $this->categories;
+                    $this->categories = new ArrayCollection();
+                    foreach ($categories as $c) {
+                        $newCat = clone $c;
+                        $this->categories->add($newCat);
+                        $newCat->setEntity($this);
+                    }
+                «ENDIF»
+                «IF attributable»
+
+                    // clone attributes
+                    $attributes = $this->attributes;
+                    $this->attributes = new ArrayCollection();
+                    foreach ($attributes as $a) {
+                        $newAttr = clone $a;
+                        $this->attributes->add($newAttr);
+                        $newAttr->setEntity($this);
+                    }
+                «ENDIF»
+            «ENDIF»
         }
     '''
 }
