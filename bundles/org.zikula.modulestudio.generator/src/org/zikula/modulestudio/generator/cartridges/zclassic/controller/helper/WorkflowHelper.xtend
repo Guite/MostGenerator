@@ -111,7 +111,7 @@ class WorkflowHelper {
     def private stateInfo(Application it, ListFieldItem item) '''
         $states[] = [
             'value' => '«item.value»',
-            'text' => $this->->translator__('«item.name»'),
+            'text' => $this->translator__('«item.name»'),
             'ui' => '«uiFeedback(item)»'
         ];
     '''

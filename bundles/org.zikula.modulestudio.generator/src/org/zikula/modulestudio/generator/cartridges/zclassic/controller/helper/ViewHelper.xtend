@@ -341,18 +341,18 @@ class ViewHelper {
          */
         public function getReadableFileSize($size, $nodesc = false, $onlydesc = false)
         {
-            $sizeDesc = $this->->translator__('Bytes');
+            $sizeDesc = $this->translator__('Bytes');
             if ($size >= 1024) {
                 $size /= 1024;
-                $sizeDesc = $this->->translator__('KB');
+                $sizeDesc = $this->translator__('KB');
             }
             if ($size >= 1024) {
                 $size /= 1024;
-                $sizeDesc = $this->->translator__('MB');
+                $sizeDesc = $this->translator__('MB');
             }
             if ($size >= 1024) {
                 $size /= 1024;
-                $sizeDesc = $this->->translator__('GB');
+                $sizeDesc = $this->translator__('GB');
             }
             $sizeDesc = '&nbsp;' . $sizeDesc;
 
