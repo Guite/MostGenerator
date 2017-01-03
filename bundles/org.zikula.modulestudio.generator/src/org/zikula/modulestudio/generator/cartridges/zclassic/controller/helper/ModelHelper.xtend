@@ -48,8 +48,7 @@ class ModelHelper {
             protected $container;
 
             /**
-             * Constructor.
-             * Initialises member vars.
+             * ModelHelper constructor.
              *
              * @param ContainerBuilder $container ContainerBuilder service instance
              */

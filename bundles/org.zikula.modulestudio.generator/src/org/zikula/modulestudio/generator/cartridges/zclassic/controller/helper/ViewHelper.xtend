@@ -56,8 +56,7 @@ class ViewHelper {
             protected $translator;
 
             /**
-             * Constructor.
-             * Initialises member vars.
+             * ViewHelper constructor.
              *
              * @param ContainerBuilder    $container  ContainerBuilder service instance
              * @param TranslatorInterface $translator Translator service instance

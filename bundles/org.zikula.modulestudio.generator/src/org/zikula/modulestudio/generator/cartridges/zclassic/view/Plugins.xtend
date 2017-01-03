@@ -134,8 +134,7 @@ class Plugins {
 
         «ENDIF»
         /**
-         * Constructor.
-         * Initialises member vars.
+         * TwigExtension constructor.
          *
          * @param TranslatorInterface $translator     Translator service instance
         «IF hasTrees»

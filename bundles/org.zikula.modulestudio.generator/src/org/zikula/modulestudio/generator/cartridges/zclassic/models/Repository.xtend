@@ -114,16 +114,16 @@ class Repository {
             «/*IF tree != EntityTreeType.NONE»
 
                 /**
-                 * Constructor.
+                 * «name.formatForCodeCapital»Repository constructor.
                  *
-                 * @param EntityManager $em    The entity manager
-                 * @param ClassMetadata $class The class meta data
+                 * @param EntityManager $entityManager The entity manager
+                 * @param ClassMetadata $class         The class meta data
                  * /
-                public function __construct(EntityManager $em, ClassMetadata $class)
+                public function __construct(EntityManager $entityManager, ClassMetadata $class)
                 {
-                    parent::__construct($em, $class);
+                    parent::__construct($entityManager, $class);
 
-                    $this->initializeTreeRepository($em, $class);
+                    $this->initializeTreeRepository($entityManager, $class);
                 }
                 «IF tree == EntityTreeType.NESTED»
 

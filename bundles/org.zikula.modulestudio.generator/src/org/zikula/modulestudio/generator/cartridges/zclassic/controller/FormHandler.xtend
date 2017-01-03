@@ -296,7 +296,7 @@ class FormHandler {
             protected $templateParameters = [];
 
             /**
-             * Constructor.
+             * «actionName.formatForCodeCapital»Handler constructor.
              *
              * @param ContainerBuilder    $container    ContainerBuilder service instance
              * @param TranslatorInterface $translator   Translator service instance

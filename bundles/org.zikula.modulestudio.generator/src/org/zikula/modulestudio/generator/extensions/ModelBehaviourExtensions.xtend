@@ -166,6 +166,20 @@ class ModelBehaviourExtensions {
         getAllEntities.filter[standardFields]
     }
 
+    /**
+     * Checks whether the application provides automatic archiving.
+     */
+    def hasAutomaticArchiving(Application it) {
+        !getArchivingEntities.empty
+    }
+
+    /**
+     * Returns a list of all entities supporting automatic archiving.
+     */
+    def getArchivingEntities(Application it) {
+        getAllEntities.filter[hasArchive && null !== getEndDateField]
+    }
+
 
 
     /**

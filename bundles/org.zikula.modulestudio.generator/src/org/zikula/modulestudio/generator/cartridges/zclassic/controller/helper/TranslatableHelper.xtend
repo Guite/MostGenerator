@@ -76,8 +76,7 @@ class TranslatableHelper {
             protected $variableApi;
 
             /**
-             * Constructor.
-             * Initialises member vars.
+             * TranslatableHelper constructor.
              *
              * @param ContainerBuilder    $container    ContainerBuilder service instance
              * @param TranslatorInterface $translator   Translator service instance

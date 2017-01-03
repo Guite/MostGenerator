@@ -45,8 +45,7 @@ class ListEntriesHelper {
             use TranslatorTrait;
 
             /**
-             * Constructor.
-             * Initialises member vars.
+             * ListEntriesHelper constructor.
              *
              * @param TranslatorInterface $translator Translator service instance
              */

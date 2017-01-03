@@ -97,8 +97,7 @@ class LinkContainer {
 
             «ENDIF»
             /**
-             * Constructor.
-             * Initialises member vars.
+             * LinkContainer constructor.
              *
              * @param TranslatorInterface $translator       Translator service instance
              * @param Routerinterface     $router           Router service instance

@@ -166,7 +166,7 @@ class Uploads {
             protected $forbiddenFileTypes;
 
             /**
-             * Constructor initialising the supported object types.
+             * UploadHandler constructor.
              *
              * @param TranslatorInterface $translator     Translator service instance
              * @param CurrentUserApi      $currentUserApi CurrentUserApi service instance

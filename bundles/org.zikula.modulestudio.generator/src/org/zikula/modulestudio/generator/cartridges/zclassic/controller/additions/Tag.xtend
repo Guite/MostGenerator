@@ -42,7 +42,7 @@ class Tag {
 
     def private tagBaseImpl(Application it) '''
         /**
-         * Constructor.
+         * «appName» constructor.
          *
          * @param integer      $objectId  Identifier of treated object
          * @param integer      $areaId    Name of hook area

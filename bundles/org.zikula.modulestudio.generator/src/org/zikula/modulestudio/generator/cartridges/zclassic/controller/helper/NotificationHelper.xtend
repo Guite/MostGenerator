@@ -134,8 +134,7 @@ class NotificationHelper {
         protected $name;
 
         /**
-         * Constructor.
-         * Initialises member vars.
+         * NotificationHelper constructor.
          *
          * @param TranslatorInterface $translator     Translator service instance
          * @param SessionInterface    $session        Session service instance

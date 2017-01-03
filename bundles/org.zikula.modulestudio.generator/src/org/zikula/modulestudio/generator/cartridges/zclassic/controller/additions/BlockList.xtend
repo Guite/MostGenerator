@@ -60,7 +60,7 @@ class BlockList {
         «ENDIF»
         «IF hasCategorisableEntities»
             /**
-             * Constructor.
+             * ItemListBlock constructor.
              *
              * @param AbstractBundle $bundle An AbstractBundle instance
              *

@@ -27,7 +27,8 @@ class EntityConstructor {
 
     def constructor(Entity it, Boolean isInheriting) '''
         /**
-         * Constructor.
+         * «name.formatForCodeCapital»Entity constructor.
+         *
          * Will not be called by Doctrine and can therefore be used
          * for own implementation purposes. It is also possible to add
          * arbitrary arguments as with every other class method.

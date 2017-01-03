@@ -65,8 +65,7 @@ class ImageHelper {
             protected $name;
 
             /**
-             * Constructor.
-             * Initialises member vars.
+             * ImageHelper constructor.
              *
              * @param TranslatorInterface $translator  Translator service instance
              * @param SessionInterface    $session     Session service instance

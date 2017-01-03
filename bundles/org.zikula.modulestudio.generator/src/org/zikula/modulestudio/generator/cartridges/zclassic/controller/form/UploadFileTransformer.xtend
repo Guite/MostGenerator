@@ -63,7 +63,7 @@ class UploadFileTransformer {
             protected $fieldName = '';
 
             /**
-             * Constructor.
+             * UploadFileTransformer constructor.
              *
              * @param UploadType $formType  The form type containing this transformer
              * @param string     $fieldName The form field name

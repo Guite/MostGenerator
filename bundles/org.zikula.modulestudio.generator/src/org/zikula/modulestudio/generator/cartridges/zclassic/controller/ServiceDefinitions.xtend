@@ -352,6 +352,20 @@ class ServiceDefinitions {
     def private servicesHelper(Application it) '''
         # Helper classes
         «val nsBase = appNamespace + '\\Helper\\'»
+        «IF hasAutomaticArchiving»
+            «modPrefix».archive_helper:
+                class: «nsBase»ArchiveHelper
+                arguments:
+                    - "@service_container"
+                    - "@translator.default"
+                    - "@session"
+                    - "@logger"
+                    - "@zikula_permissions_module.api.permission"
+                    - "@«modPrefix».workflow_helper"
+                    «IF hasHookSubscribers»
+                        - "@«modPrefix».hook_helper"
+                    «ENDIF»
+        «ENDIF»
         «IF hasCategorisableEntities»
             «modPrefix».category_helper:
                 class: «nsBase»CategoryHelper
