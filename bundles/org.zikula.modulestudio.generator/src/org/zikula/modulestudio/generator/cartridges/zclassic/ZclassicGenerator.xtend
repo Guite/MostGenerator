@@ -19,13 +19,9 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.controller.addition
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.additions.Tag
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.apis.BlockList
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.apis.BlockModeration
-import org.zikula.modulestudio.generator.cartridges.zclassic.controller.apis.Category
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.apis.ContentTypeList
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.apis.ContentTypeSingle
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.apis.Mailz
-import org.zikula.modulestudio.generator.cartridges.zclassic.controller.apis.Notification
-import org.zikula.modulestudio.generator.cartridges.zclassic.controller.apis.Search
-import org.zikula.modulestudio.generator.cartridges.zclassic.controller.apis.Selection
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.Entities
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.Factory
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.Repository
@@ -47,7 +43,6 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.view.Styles
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.Views
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
-import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
 
@@ -56,7 +51,6 @@ class ZclassicGenerator implements IGenerator {
     extension ControllerExtensions = new ControllerExtensions
     extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     extension ModelExtensions = new ModelExtensions
-    extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension WorkflowExtensions = new WorkflowExtensions
 
     IFileSystemAccess fsa
@@ -167,7 +161,6 @@ class ZclassicGenerator implements IGenerator {
     def private generateIntegration(Application it) {
         generateIntegrationBlocks
         generateIntegrationContentTypes
-        generateIntegrationApis
         generateIntegrationThirdParty
     }
 
@@ -196,28 +189,6 @@ class ZclassicGenerator implements IGenerator {
             if (needsDetailContentType) {
                 new ContentTypeSingle().generate(it, fsa)
             }
-        }
-    }
-
-    def private generateIntegrationApis(Application it) {
-        pm?.subTask('Integration: Selection api')
-        println('Generating selection api')
-        new Selection().generate(it, fsa)
-
-        if (hasCategorisableEntities) {
-            pm?.subTask('Integration: Category api')
-            println('Generating category api')
-            new Category().generate(it, fsa)
-        }
-        if (generateSearchApi && !entities.filter[hasAbstractStringFieldsEntity].empty) {
-            pm?.subTask('Integration: Search api')
-            println('Generating search api')
-            new Search().generate(it, fsa)
-        }
-        if (needsApproval) {
-            pm?.subTask('Integration: Notification api')
-            println('Generating notification api')
-            new Notification().generate(it, fsa)
         }
     }
 

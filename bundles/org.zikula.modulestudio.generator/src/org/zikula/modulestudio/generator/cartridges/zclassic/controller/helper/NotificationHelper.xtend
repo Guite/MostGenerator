@@ -1,4 +1,4 @@
-package org.zikula.modulestudio.generator.cartridges.zclassic.controller.apis
+package org.zikula.modulestudio.generator.cartridges.zclassic.controller.helper
 
 import de.guite.modulestudio.metamodel.Application
 import org.eclipse.xtext.generator.IFileSystemAccess
@@ -9,7 +9,7 @@ import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
-class Notification {
+class NotificationHelper {
 
     extension ControllerExtensions = new ControllerExtensions
     extension FormattingExtensions = new FormattingExtensions
@@ -20,6 +20,7 @@ class Notification {
     FileHelper fh = new FileHelper
 
     def generate(Application it, IFileSystemAccess fsa) {
+        println('Generating helper class for workflow notifications')
         generateClassPair(fsa, getAppSourceLibPath + 'Helper/NotificationHelper.php',
             fh.phpFileContent(it, notificationHelperBaseClass), fh.phpFileContent(it, notificationHelperImpl)
         )

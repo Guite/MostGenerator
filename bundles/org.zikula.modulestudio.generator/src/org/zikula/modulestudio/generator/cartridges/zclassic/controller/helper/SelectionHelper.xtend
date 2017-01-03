@@ -1,4 +1,4 @@
-package org.zikula.modulestudio.generator.cartridges.zclassic.controller.apis
+package org.zikula.modulestudio.generator.cartridges.zclassic.controller.helper
 
 import de.guite.modulestudio.metamodel.Application
 import org.eclipse.xtext.generator.IFileSystemAccess
@@ -8,7 +8,7 @@ import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
-class Selection {
+class SelectionHelper {
     extension FormattingExtensions = new FormattingExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension NamingExtensions = new NamingExtensions
@@ -17,6 +17,7 @@ class Selection {
     FileHelper fh = new FileHelper
 
     def generate(Application it, IFileSystemAccess fsa) {
+        println('Generating helper class for entity selections')
         generateClassPair(fsa, getAppSourceLibPath + 'Helper/SelectionHelper.php',
             fh.phpFileContent(it, selectionHelperBaseClass), fh.phpFileContent(it, selectionHelperImpl)
         )

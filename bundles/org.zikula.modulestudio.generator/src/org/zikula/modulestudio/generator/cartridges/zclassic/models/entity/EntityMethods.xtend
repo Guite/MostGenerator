@@ -6,7 +6,6 @@ import de.guite.modulestudio.metamodel.DataObject
 import de.guite.modulestudio.metamodel.DateField
 import de.guite.modulestudio.metamodel.DatetimeField
 import de.guite.modulestudio.metamodel.DecimalField
-import de.guite.modulestudio.metamodel.EmailField
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.EntityField
 import de.guite.modulestudio.metamodel.FloatField
@@ -15,7 +14,6 @@ import de.guite.modulestudio.metamodel.ManyToManyRelationship
 import de.guite.modulestudio.metamodel.TimeField
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.business.ValidationConstraints
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
-import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.ModelInheritanceExtensions
 import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
@@ -25,7 +23,6 @@ import org.zikula.modulestudio.generator.extensions.Utils
 class EntityMethods {
 
     extension FormattingExtensions = new FormattingExtensions
-    extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     extension ModelExtensions = new ModelExtensions
     extension ModelInheritanceExtensions = new ModelInheritanceExtensions
     extension ModelJoinExtensions = new ModelJoinExtensions
@@ -50,10 +47,6 @@ class EntityMethods {
         «getTitleFromDisplayPattern(app)»
 
         «validationMethods»
-
-        «initWorkflow(app)»
-
-        «resetWorkflow(app)»
 
         «validate»
 
@@ -140,8 +133,7 @@ class EntityMethods {
         public function getTitleFromDisplayPattern()
         {
             «IF hasListFieldsEntity»
-                $serviceManager = ServiceUtil::getManager();
-                $listHelper = $serviceManager->get('«app.appService».listentries_helper');
+                $listHelper = ServiceUtil::get('«app.appService».listentries_helper');
 
             «ENDIF»
             $formattedTitle = «parseDisplayPattern»;
@@ -201,47 +193,6 @@ class EntityMethods {
         }
     }
 
-    def private initWorkflow(Entity it, Application app) '''
-        /**
-         * Sets/retrieves the workflow details.
-         *
-         * @param boolean $forceLoading load the workflow record
-         *
-         * @throws RuntimeException Thrown if retrieving the workflow object fails
-         */
-        public function initWorkflow($forceLoading = false)
-        {
-            $currentFunc = FormUtil::getPassedValue('func', 'index', 'GETPOST', FILTER_SANITIZE_STRING);
-            $isReuse = FormUtil::getPassedValue('astemplate', '', 'GETPOST', FILTER_SANITIZE_STRING);
-
-            «loadWorkflow»
-        }
-    '''
-
-    def private resetWorkflow(Entity it, Application app) '''
-        /**
-         * Resets workflow data back to initial state.
-         * To be used after cloning an entity object.
-         */
-        public function resetWorkflow()
-        {
-            $this->setWorkflowState('initial');
-
-            $serviceManager = ServiceUtil::getManager();
-            $workflowHelper = $serviceManager->get('«app.appService».workflow_helper');
-
-            $schemaName = $workflowHelper->getWorkflowName($this['_objectType']);
-            $this['__WORKFLOW__'] = [
-                'module' => '«app.appName»',
-                'state' => $this['workflowState'],
-                'obj_table' => $this['_objectType'],
-                'obj_idcolumn' => '«primaryKeyFields.head.name.formatForCode»',
-                'obj_id' => 0,
-                'schemaname' => $schemaName
-            ];
-        }
-    '''
-
     /**
      * Performs validation.
      */
@@ -257,7 +208,8 @@ class EntityMethods {
                 return true;
             }
 
-        «val emailFields = getDerivedFields.filter(EmailField)»
+            «/* TODO remove this soon
+            val emailFields = getDerivedFields.filter(EmailField)»
             «IF emailFields.size > 0»
                 // decode possibly encoded mail addresses (#201)
                 «FOR emailField : emailFields»
@@ -265,7 +217,7 @@ class EntityMethods {
                         $this['«emailField.name.formatForCode»'] = html_entity_decode($this['«emailField.name.formatForCode»']);
                     }
                 «ENDFOR»
-            «ENDIF»
+            «ENDIF*/»
             $serviceManager = ServiceUtil::getManager();
 
             $validator = $serviceManager->get('validator');
@@ -368,43 +320,6 @@ class EntityMethods {
         }
     '''
 
-    def private loadWorkflow(Entity it) '''
-        // apply workflow with most important information
-        $idColumn = '«primaryKeyFields.head.name.formatForCode»';
-
-        $serviceManager = ServiceUtil::getManager();
-        «IF application.amountOfExampleRows > 0»
-            $workflowHelper = new \«application.appNamespace»\Helper\WorkflowHelper($serviceManager, $serviceManager->get('translator.default'));
-        «ELSE»
-            $workflowHelper = $serviceManager->get('«application.appService».workflow_helper');
-        «ENDIF»
-
-        $schemaName = $workflowHelper->getWorkflowName($this['_objectType']);
-        $this['__WORKFLOW__'] = [
-            'module' => '«application.appName»',
-            'state' => $this['workflowState'],
-            'obj_table' => $this['_objectType'],
-            'obj_idcolumn' => $idColumn,
-            'obj_id' => $this[$idColumn],
-            'schemaname' => $schemaName
-        ];
-
-        // load the real workflow only when required (e. g. when func is edit or delete)
-        if ((!in_array($currentFunc, ['index', 'view', 'display']) && empty($isReuse)) || $forceLoading) {
-            $result = Zikula_Workflow_Util::getWorkflowForObject($this, $this['_objectType'], $idColumn, '«application.appName»');
-            if (!$result) {
-                $flashBag = $serviceManager->get('session')->getFlashBag();
-                $flashBag->add('error', $serviceManager->get('translator.default')->__('Error! Could not load the associated workflow.'));
-            }
-        }
-
-        if (!is_object($this['__WORKFLOW__']) && !isset($this['__WORKFLOW__']['schemaname'])) {
-            $workflow = $this['__WORKFLOW__'];
-            $workflow['schemaname'] = $schemaName;
-            $this['__WORKFLOW__'] = $workflow;
-        }
-    '''
-
     def private toStringImpl(DataObject it, Application app) '''
         /**
          * ToString interceptor implementation.
@@ -414,7 +329,7 @@ class EntityMethods {
          */
         public function __toString()
         {
-            return '«name.formatForDisplayCapital» ' . $this->createCompositeIdentifier();
+            return '«name.formatForDisplayCapital» ' . $this->createCompositeIdentifier() . ': ' . $this->getTitleFromDisplayPattern();
         }
     '''
 

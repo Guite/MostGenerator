@@ -17,14 +17,14 @@ class StandardFieldsTrait {
         val filePath = getAppSourceLibPath + 'Traits/StandardFieldsTrait.php'
         if (!shouldBeSkipped(filePath)) {
             if (shouldBeMarked(filePath)) {
-                fsa.generateFile(filePath.replace('.php', '.generated.php'), fh.phpFileContent(it, traitImpl))
+                fsa.generateFile(filePath.replace('.php', '.generated.php'), fh.phpFileContent(it, traitFile))
             } else {
-                fsa.generateFile(filePath, fh.phpFileContent(it, traitImpl))
+                fsa.generateFile(filePath, fh.phpFileContent(it, traitFile))
             }
         }
     }
 
-    def private traitImpl(Application it) '''
+    def private traitFile(Application it) '''
         namespace «appNamespace»\Traits;
 
         use Doctrine\ORM\Mapping as ORM;
@@ -37,42 +37,46 @@ class StandardFieldsTrait {
          */
         trait StandardFieldsTrait
         {
-            /**
-             * @Gedmo\Blameable(on="create")
-             * @ORM\ManyToOne(targetEntity="Zikula\UsersModule\Entity\UserEntity")
-             * @ORM\JoinColumn(referencedColumnName="uid")
-             * @var UserEntity
-             */
-            protected $createdBy;
-
-            /**
-             * @ORM\Column(type="datetime")
-             * @Gedmo\Timestampable(on="create")
-             * @Assert\DateTime()
-             * @var \DateTime $createdDate
-             */
-            protected $createdDate;
-
-            /**
-             * @Gedmo\Blameable(on="update")
-             * @ORM\ManyToOne(targetEntity="Zikula\UsersModule\Entity\UserEntity")
-             * @ORM\JoinColumn(referencedColumnName="uid")
-             * @var UserEntity
-             */
-            protected $updatedBy;
-
-            /**
-             * @ORM\Column(type="datetime")
-             * @Gedmo\Timestampable(on="update")
-             * @Assert\DateTime()
-             * @var \DateTime $updatedDate
-             */
-            protected $updatedDate;
-
-            «fh.getterAndSetterMethods(it, 'createdBy', 'UserEntity', false, true, false, '', '')»
-            «fh.getterAndSetterMethods(it, 'createdDate', 'datetime', false, true, false, '', '')»
-            «fh.getterAndSetterMethods(it, 'updatedBy', 'UserEntity', false, true, false, '', '')»
-            «fh.getterAndSetterMethods(it, 'updatedDate', 'datetime', false, true, false, '', '')»
+            «traitImpl»
         }
+    '''
+
+    def private traitImpl(Application it) '''
+        /**
+         * @Gedmo\Blameable(on="create")
+         * @ORM\ManyToOne(targetEntity="Zikula\UsersModule\Entity\UserEntity")
+         * @ORM\JoinColumn(referencedColumnName="uid")
+         * @var UserEntity
+         */
+        protected $createdBy;
+
+        /**
+         * @ORM\Column(type="datetime")
+         * @Gedmo\Timestampable(on="create")
+         * @Assert\DateTime()
+         * @var \DateTime $createdDate
+         */
+        protected $createdDate;
+
+        /**
+         * @Gedmo\Blameable(on="update")
+         * @ORM\ManyToOne(targetEntity="Zikula\UsersModule\Entity\UserEntity")
+         * @ORM\JoinColumn(referencedColumnName="uid")
+         * @var UserEntity
+         */
+        protected $updatedBy;
+
+        /**
+         * @ORM\Column(type="datetime")
+         * @Gedmo\Timestampable(on="update")
+         * @Assert\DateTime()
+         * @var \DateTime $updatedDate
+         */
+        protected $updatedDate;
+
+        «fh.getterAndSetterMethods(it, 'createdBy', 'UserEntity', false, true, false, '', '')»
+        «fh.getterAndSetterMethods(it, 'createdDate', 'datetime', false, true, false, '', '')»
+        «fh.getterAndSetterMethods(it, 'updatedBy', 'UserEntity', false, true, false, '', '')»
+        «fh.getterAndSetterMethods(it, 'updatedDate', 'datetime', false, true, false, '', '')»
     '''
 }

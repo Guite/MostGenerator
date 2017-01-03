@@ -13,8 +13,10 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.models.business.Val
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.entity.Association
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.entity.EntityConstructor
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.entity.EntityMethods
+import org.zikula.modulestudio.generator.cartridges.zclassic.models.entity.EntityWorkflowTrait
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.entity.ExtensionManager
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.entity.Property
+import org.zikula.modulestudio.generator.cartridges.zclassic.models.entity.extensions.GeographicalTrait
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.entity.extensions.StandardFieldsTrait
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.event.LifecycleListener
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
@@ -50,6 +52,10 @@ class Entities {
         entities.forEach(e|e.generate(it, fsa))
 
         new LifecycleListener().generate(it, fsa)
+        new EntityWorkflowTrait().generate(it, fsa)
+        if (hasGeographical) {
+            new GeographicalTrait().generate(it, fsa)
+        }
         if (hasStandardFieldEntities) {
             new StandardFieldsTrait().generate(it, fsa)
         }
@@ -107,6 +113,7 @@ class Entities {
         «IF !getUniqueDerivedFields.filter[!primaryKey].empty || !getIncomingJoinRelations.filter[unique].empty || !getOutgoingJoinRelations.filter[unique].empty»
             use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
         «ENDIF»
+        use «application.appNamespace»\Traits\EntityWorkflowTrait;
     '''
 
     def private dispatch imports(Entity it) '''
@@ -132,6 +139,10 @@ class Entities {
         «IF !getUniqueDerivedFields.filter[!primaryKey].empty || (hasSluggableFields && slugUnique) || !getIncomingJoinRelations.filter[unique].empty || !getOutgoingJoinRelations.filter[unique].empty || !getUniqueIndexes.empty»
             use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
         «ENDIF»
+        use «application.appNamespace»\Traits\EntityWorkflowTrait;
+        «IF geographical»
+            use «application.appNamespace»\Traits\GeographicalTrait;
+        «ENDIF»
         «IF standardFields»
             use «application.appNamespace»\Traits\StandardFieldsTrait;
         «ENDIF»
@@ -143,11 +154,8 @@ class Entities {
         «imports»
 
         use DataUtil;
-        use FormUtil;
         use RuntimeException;
         use ServiceUtil;
-        use UserUtil;
-        use Zikula_Workflow_Util;
         use Zikula\Core\Doctrine\EntityAccess;
 
         «modelEntityBaseImplClass(app)»
@@ -167,10 +175,21 @@ class Entities {
          */
         abstract class Abstract«name.formatForCodeCapital»Entity extends EntityAccess«IF it instanceof Entity && ((it as Entity).hasNotifyPolicy || (it as Entity).hasTranslatableFields)» implements«IF (it as Entity).hasNotifyPolicy» NotifyPropertyChanged«ENDIF»«IF (it as Entity).hasTranslatableFields»«IF (it as Entity).hasNotifyPolicy»,«ENDIF» Translatable«ENDIF»«ENDIF»
         {
+            /**
+             * Hook entity workflow field and behaviour.
+             */
+            use EntityWorkflowTrait;
+
+            «IF it instanceof Entity && (it as Entity).geographical»
+                /**
+                 * Hook geographical behaviour embedding latitude and longitude fields.
+                 */
+                use GeographicalTrait;
+
+            «ENDIF»
             «IF it instanceof Entity && (it as Entity).standardFields»
                 /**
-                 * Hook standard fields behaviour.
-                 * Updates createdBy, updatedBy, createdDate, updatedDate fields.
+                 * Hook standard fields behaviour embedding createdBy, updatedBy, createdDate, updatedDate fields.
                  */
                 use StandardFieldsTrait;
 
@@ -211,11 +230,6 @@ class Entities {
             protected $_propertyChangedListeners = [];
         «ENDIF»
 
-        /**
-         * @var array The current workflow data of this object
-         */
-        protected $__WORKFLOW__ = [];
-
         «FOR field : getDerivedFields»«thProp.persistentProperty(field)»«ENDFOR»
         «extMan.additionalProperties»
 
@@ -226,7 +240,6 @@ class Entities {
     def private accessors(DataObject it) '''
         «fh.getterAndSetterMethods(it, '_objectType', 'string', false, true, false, '', '')»
         «fh.getterAndSetterMethods(it, '_bypassValidation', 'boolean', false, true, false, '', '')»
-        «fh.getterAndSetterMethods(it, '__WORKFLOW__', 'array', false, true, true, '[]', '')»
 
         «FOR field : getDerivedFields»«thProp.fieldAccessor(field)»«ENDFOR»
         «extMan.additionalAccessors»

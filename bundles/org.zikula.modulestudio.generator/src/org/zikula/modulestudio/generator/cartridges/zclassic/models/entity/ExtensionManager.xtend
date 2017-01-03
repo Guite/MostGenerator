@@ -8,7 +8,6 @@ import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.entity.extensions.Attributes
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.entity.extensions.Categories
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.entity.extensions.EntityExtensionInterface
-import org.zikula.modulestudio.generator.cartridges.zclassic.models.entity.extensions.Geographical
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.entity.extensions.Loggable
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.entity.extensions.Sluggable
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.entity.extensions.SoftDeleteable
@@ -28,9 +27,6 @@ class ExtensionManager {
         this.entity = entity
 
         this.extensions = newArrayList()
-        if (entity.geographical) {
-            this.extensions += new Geographical
-        }
         if (entity.loggable) {
             this.extensions += new Loggable
         }
