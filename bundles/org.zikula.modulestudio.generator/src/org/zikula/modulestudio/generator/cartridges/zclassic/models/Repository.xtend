@@ -876,8 +876,8 @@ class Repository {
                     «IF ownerPermission»
                         «/*$serviceManager = ServiceUtil::getManager();
                         $variableApi = $serviceManager->get('zikula_extensions_module.api.variable');
-                        $showOnlyOwnEntries = $this->getRequest()->query->getDigits('own', $variableApi->get('«app.appName»', 'showOnlyOwnEntries', 0));*/»
-                        $showOnlyOwnEntries = $this->getRequest()->query->getDigits('own', 0);
+                        $showOnlyOwnEntries = $this->getRequest()->query->getInt('own', $variableApi->get('«app.appName»', 'showOnlyOwnEntries', 0));*/»
+                        $showOnlyOwnEntries = $this->getRequest()->query->getInt('own', 0);
                         if ($showOnlyOwnEntries == 1) {
                             // allow the owner to see his deferred «nameMultiple.formatForDisplay»
                             $onlineStates[] = 'deferred';
@@ -1244,8 +1244,8 @@ class Repository {
 
                 «/*$serviceManager = ServiceUtil::getManager();
                 $variableApi = $serviceManager->get('zikula_extensions_module.api.variable');
-                $showOnlyOwnEntries = $this->getRequest()->query->getDigits('own', $variableApi->get('«app.appName»', 'showOnlyOwnEntries', 0));*/»
-                $showOnlyOwnEntries = $this->getRequest()->query->getDigits('own', 0);
+                $showOnlyOwnEntries = $this->getRequest()->query->getInt('own', $variableApi->get('«app.appName»', 'showOnlyOwnEntries', 0));*/»
+                $showOnlyOwnEntries = $this->getRequest()->query->getInt('own', 0);
                 if ($showOnlyOwnEntries == 1) {
                     «/*$uid = $serviceManager->get('zikula_users_module.current_user')->get('uid');*/»
                     $uid = $this->getRequest()->getSession()->get('uid');
