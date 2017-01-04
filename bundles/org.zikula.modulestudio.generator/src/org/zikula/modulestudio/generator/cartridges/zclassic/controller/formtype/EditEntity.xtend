@@ -717,12 +717,8 @@ class EditEntity {
     def private dispatch formType(ListField it) '''«IF multiple»«app.appNamespace»\Form\Type\Field\MultiList«ELSE»«nsSymfonyFormType»Choice«ENDIF»'''
     def private dispatch titleAttribute(ListField it) '''Choose the «name.formatForDisplay»'''
     def private dispatch additionalOptions(ListField it) '''
-        «IF !expanded»
-            «IF mandatory»
-                'placeholder' => '',
-            «ELSE»
-                'placeholder' => $this->__('Choose an option'),
-            «ENDIF»
+        «IF !expanded && !mandatory»
+            'placeholder' => $this->__('Choose an option'),
         «ENDIF»
         'choices' => $choices,
         'choices_as_values' => true,
