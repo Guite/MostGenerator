@@ -3,7 +3,9 @@ package org.zikula.modulestudio.generator.extensions.transformation
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.EntityWorkflowType
+import de.guite.modulestudio.metamodel.IpAddressScope
 import de.guite.modulestudio.metamodel.ModuleStudioFactory
+import de.guite.modulestudio.metamodel.StringField
 import de.guite.modulestudio.metamodel.UploadField
 import de.guite.modulestudio.metamodel.UserController
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
@@ -70,9 +72,19 @@ class PersistenceTransformer {
             addPrimaryKey
         }
         //println('Added primary key, field size now: ' + fields.size + ' fields')
+
         addWorkflowState
+
+        // make optional upload fields nullable, too
         for (field : fields.filter(UploadField).filter[f|!f.mandatory]) {
             field.nullable = true
+        }
+
+        // add nospace constraint if required
+        for (field : fields.filter(StringField)) {
+            if (field.bic || field.country || field.currency || field.language || field.locale || field.ipAddress != IpAddressScope.NONE || field.htmlcolour || field.uuid) {
+                field.nospace = true
+            }
         }
     }
 
