@@ -10,21 +10,23 @@ module org.zikula.modulestudio.generator.workflow.msManual
 var name
 // model folder
 var dir
-// cartridge name (zclassic, reporting)
-var cartridge = 'zclassic'
+
+// vendor
+var vendorName = 'Guite'
 
 // The path where to find the model, without trailing slash
 var modelPath = '/home/axel/projects/GitClones/Applications/models/${dir}'
 
 // Destination folder
-var targetDir = '/home/axel/batchOutput/${name}/${cartridge}/${name}/'
+var targetDir = '/home/axel/batchOutput/'
 
 Workflow {
     // Call the file reader workflow and provide required properties
     component = @msWorkflow {
+        vendorName = vendorName
         modelName = name
         modelPath = modelPath
-        cartridgeName = cartridge
+        cartridgeName = 'zclassic'
         targetDir = targetDir
         // whether to validate the model before processing
         doValidation = 'true'

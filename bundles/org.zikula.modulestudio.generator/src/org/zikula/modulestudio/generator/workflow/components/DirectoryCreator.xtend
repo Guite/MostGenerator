@@ -25,7 +25,7 @@ class DirectoryCreator implements IWorkflowComponent {
     override invoke(IWorkflowContext ctx) {
         if (!directory.empty) {
             val dirHandle = new File(directory)
-            if (!dirHandle.mkdirs) {
+            if (!dirHandle.exists && !dirHandle.mkdirs) {
                 throw new IllegalStateException('Error during creation of directory "' + directory + '".')
             }
         }

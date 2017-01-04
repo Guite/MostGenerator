@@ -96,7 +96,7 @@ class WorkflowSettings {
      * @return module base path
      */
     def getPathToModuleRoot() {
-        outputPath + File.separator + 'zclassic' + File.separator + appName.toFirstUpper + File.separator //$NON-NLS-1$
+        outputPath + File.separator + appVendor.toFirstUpper + File.separator + appName.toFirstUpper + 'Module' + File.separator //$NON-NLS-1$
     }
 
     /**

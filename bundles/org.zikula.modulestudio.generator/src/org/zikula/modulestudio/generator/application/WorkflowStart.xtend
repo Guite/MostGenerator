@@ -3,7 +3,6 @@ package org.zikula.modulestudio.generator.application
 
 import com.google.inject.Injector
 import de.guite.modulestudio.metamodel.Application
-import de.guite.modulestudio.metamodel.CoreVersion
 import java.io.File
 import java.io.IOException
 import org.eclipse.emf.common.util.Diagnostic
@@ -102,21 +101,19 @@ class WorkflowStart {
 
         try {
             val progressMonitor = settings.progressMonitor
-            progressMonitor.beginTask('Generating "' + settings.appVendor + File.separator + settings.appName + ' ' + settings.appVersion + '" ...', -1)
+            progressMonitor.beginTask('Generating "' + settings.appVendor + File.separator + settings.appName + 'Module ' + settings.appVersion + '" ...', -1)
 
             for (singleCartridge : #['zclassic']) { //$NON-NLS-1$
                 // The generator cartridge to execute
                 currentCartridge = singleCartridge.toString
 
-                if (!'reporting'.equals(currentCartridge)) {
-                    val generator = new MostGenerator
-                    generator.setCartridge(currentCartridge)
-                    generator.setMonitor(settings.progressMonitor)
+                val generator = new MostGenerator
+                generator.setCartridge(currentCartridge)
+                generator.setMonitor(settings.progressMonitor)
 
-                    val fileSystemAccess = getConfiguredFileSystemAccess
+                val fileSystemAccess = getConfiguredFileSystemAccess
 
-                    generator.doGenerate(getModel, fileSystemAccess)
-                }
+                generator.doGenerate(getModel, fileSystemAccess)
             }
             success = true
         } catch (IOException e) {
@@ -137,8 +134,7 @@ class WorkflowStart {
         val configuredFileSystemAccess = injector
                 .getInstance(JavaIoFileSystemAccess)
 
-        configuredFileSystemAccess.setOutputPath(
-            'DEFAULT_OUTPUT', settings.getOutputPath + File.separator + currentCartridge + File.separator + settings.getAppName + File.separator)
+        configuredFileSystemAccess.setOutputPath('DEFAULT_OUTPUT', settings.getPathToModuleRoot)
 
         configuredFileSystemAccess
     }
@@ -164,20 +160,15 @@ class WorkflowStart {
         settings.appVersion = if (null !== app.version) app.version else '1.0.0' //$NON-NLS-1$
 
         // compute destination path for model files
-        var modelDestinationPath = File.separator + 'model' + File.separator //$NON-NLS-1$
         if (!app.generatorSettings.isEmpty) {
             val genSettings = app.generatorSettings.head
             if (genSettings.writeModelToDocs) {
-                modelDestinationPath = File.separator + 'zclassic' + File.separator + settings.appName + File.separator
-                val targetVersion = genSettings.targetCoreVersion
-                if (targetVersion == CoreVersion.ZK135 || targetVersion == CoreVersion.ZK136) {
-                    modelDestinationPath += 'src' + File.separator + 'modules' + File.separator + settings.appName + File.separator + 'docs' + File.separator + 'model' + File.separator //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
-                } else {
-                    modelDestinationPath += 'Resources' + File.separator + 'docs' + File.separator + 'model' + File.separator //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-                }
+                //modelDestinationPath = File.separator + 'zclassic' + File.separator + settings.appName + File.separator
+                var modelDestinationPath = settings.getPathToModuleRoot
+                modelDestinationPath += 'Resources' + File.separator + 'docs' + File.separator + 'model' + File.separator //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                settings.modelDestinationPath = modelDestinationPath
             }
         }
-        settings.modelDestinationPath = settings.outputPath + modelDestinationPath
 
         return
     }

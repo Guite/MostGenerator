@@ -12,18 +12,16 @@ var modelName = 'AutoMusic'
 //var modelPath = '/home/axel/projects/GitClones/Applications/models/zikula'
 var modelPath = '/home/axel/model'
 
-// The generator cartridge to execute (zclassic, reporting)
-var cartridge = 'zclassic'
-
 // Destination folder
-var targetDir = '${modelPath}/output/${modelName}/'
+var targetDir = '${modelPath}/'
 
 Workflow {
     // Call the file reader workflow and provide required properties
     component = @msWorkflow {
+        vendorName = 'Guite'
         modelName = modelName
         modelPath = modelPath
-        cartridgeName = cartridge
+        cartridgeName = 'zclassic'
         targetDir = targetDir
         doValidation = 'true'      // whether to validate the model before processing
         doModelCopy = 'true'       // whether to copy the models into the target folder

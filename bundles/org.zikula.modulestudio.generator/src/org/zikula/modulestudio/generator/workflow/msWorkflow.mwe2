@@ -20,6 +20,8 @@ import org.zikula.modulestudio.generator.workflow.components.MostGeneratorCompon
 import org.zikula.modulestudio.generator.workflow.components.StopWatch
 import org.zikula.modulestudio.generator.workflow.components.Validator
 
+// The vendor name
+var vendorName
 // The model to be processed (file name without extension)
 var modelName
 // The path where to find the model, without trailing slash
@@ -35,15 +37,10 @@ var doModelCopy
 // Destination folder
 var targetDir
 
-// Cartridge-specific destination folder
-var targetDirCartridge = '${targetDir}${cartridgeName}'
-
 // calculated from input vars
 var modelFile = '${modelPath}/${modelName}.mostapp'
-//var diagramFile = '${modelPath}/${modelName}.mostdiagram'
 // note: this does not consider the writeModelToDocs generator setting (yet)
 var modelFileCopy = '${targetDir}/model/${modelName}.mostapp'
-//var diagramFileCopy = '${targetDir}/model/${modelName}.mostdiagram'
 var modelFileEnriched = '${modelPath}/${modelName}_enriched.mostapp'
 var modelFileEnrichedCopy = '${targetDir}/model/${modelName}_enriched.mostapp'
 
@@ -78,15 +75,15 @@ Workflow {
         slot = mostSlot
     }
 
-    component = Logger { message = 'Creating output directory ${targetDirCartridge}.' }
+    component = Logger { message = 'Creating output directory ${targetDir}.' }
     component = DirectoryCreator {
-       directory = targetDirCartridge
+       directory = targetDir
     }
 
-    component = Logger { message = 'Clearing output directory ${targetDirCartridge}.' }
+    /*component = Logger { message = 'Clearing output directory ${targetDir}.' }
     component = DirectoryCleaner {
-       directory = targetDirCartridge
-    }
+       directory = targetDir
+    }*/
 
     // start generator component
     component = Logger { message = 'Starting generator cartridge:' }
@@ -98,7 +95,7 @@ Workflow {
         cartridge = cartridgeName
         // specify where to put the generated code
         outlet = {
-            path = '${targetDirCartridge}/${modelName}/'
+            path = '${targetDir}/${vendorName}/${modelName}Module/'
         }
     }
 
@@ -118,9 +115,6 @@ Workflow {
         // enriched domain model
         sourceModelFileEnriched = modelFileEnriched
         targetModelFileEnriched = modelFileEnrichedCopy
-        // diagram model
-        //sourceDiagramFile = diagramFile
-        //targetDiagramFile = diagramFileCopy
     }
 
     // output required generation time

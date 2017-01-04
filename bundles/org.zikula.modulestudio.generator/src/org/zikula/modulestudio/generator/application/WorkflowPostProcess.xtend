@@ -44,6 +44,9 @@ class WorkflowPostProcess {
      * Copies the model files into the output folder.
      */
     def private copyModelFiles() {
+        if (null === settings.modelDestinationPath) {
+            return
+        }
         val srcPath = settings.modelPath.replaceFirst('file:', '') //$NON-NLS-1$ //$NON-NLS-2$
         val modelFileName = new File(srcPath).name
         val copier = new ModelFileCopier => [
@@ -51,14 +54,12 @@ class WorkflowPostProcess {
             targetModelFile = settings.modelDestinationPath + modelFileName
             sourceModelFileEnriched = srcPath.replace('.mostapp', '_enriched.mostapp') //$NON-NLS-1$ //$NON-NLS-2$
             targetModelFileEnriched = settings.modelDestinationPath + modelFileName.replace('.mostapp', '_enriched.mostapp') //$NON-NLS-1$ //$NON-NLS-2$
-            //sourceDiagramFile = srcPath.replace('.mostapp', '.mostdiagram') //$NON-NLS-1$ //$NON-NLS-2$
-            //targetDiagramFile = settings.modelDestinationPath + modelFileName.replace('.mostapp', '.mostdiagram') //$NON-NLS-1$ //$NON-NLS-2$
         ]
         copier.invoke
     }
 
     /**
-     * Copies the admin image for zclassic cartridge.
+     * Copies the admin image for the generated application.
      */
     def private copyAdminImage() {
         val url = settings.adminImageUrl
