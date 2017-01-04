@@ -122,10 +122,9 @@ class Scribite {
     }
 
     def private integration(Application it) '''
-        SCRIBITE INTEGRATION
-        --------------------
+        # SCRIBITE INTEGRATION
 
-        It is easy to include «appName» in your Scribite editors.
+        It is easy to include «appName» in your [Scribite editors](https://github.com/zikula-modules/Scribite/).
         «appName» contains already the a popup for selecting «getLeadingEntity.nameMultiple.formatForDisplay»«IF entities.size() > 1» and other items«ENDIF».
         Please note that Scribite 5.0+ is required for this.
 

@@ -31,6 +31,7 @@ class EntityWorkflowTrait {
     def private traitFile(Application it) '''
         namespace «appNamespace»\Traits;
 
+        use FormUtil;
         use ServiceUtil;
         use Zikula_Workflow_Util;
 
