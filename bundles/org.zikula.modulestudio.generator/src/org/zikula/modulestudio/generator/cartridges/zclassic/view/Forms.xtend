@@ -101,7 +101,7 @@ class Forms {
             '@«application.appName»/Form/bootstrap_3.html.twig',
             'ZikulaFormExtensionBundle:Form:form_div_layout.html.twig'
         ] %}
-        {{ form_start(form, {attr: {id: '«name.formatForCode»EditForm'}}) }}
+        {{ form_start(form, {attr: {id: '«name.formatForCode»EditForm', class: '«app.vendorAndName.toLowerCase»-edit-form'}}) }}
         {{ form_errors(form) }}
         «IF useGroupingPanels('edit')»
             <div class="panel-group" id="accordion">
@@ -213,15 +213,9 @@ class Forms {
                 <script type="text/javascript" src="{{ pagevars.homepath }}plugins/Mapstraction/lib/vendor/mxn/mxn.googlev3.geocoder.js"></script>#}
                 <script type="text/javascript">
                 /* <![CDATA[ */
-
-                    var mapstraction;
-                    var marker;
-
                     ( function($) {
                         $(document).ready(function() {
-                            «newCoordinatesEventHandler»
-
-                            «initGeographical(app)»
+                            «app.vendorAndName»InitGeographicalEditing({{ «name.formatForDB».latitude|«app.appName.formatForDB»_geoData }}, {{ «name.formatForDB».longitude|«app.appName.formatForDB»_geoData }}, mode);
                         });
                     })(jQuery);
                 /* ]]> */
@@ -240,46 +234,9 @@ class Forms {
     def private jsInitImpl(Entity it, Application app) '''
         «relationHelper.initJs(it, app, false)»
 
-        var formButtons;
-        var triggerValidation = true;
-
-        function executeCustomValidationConstraints()
-        {
-            «application.vendorAndName»PerformCustomValidationRules('«name.formatForCode»', '{% if mode != 'create' %}{{ «FOR pkField : getPrimaryKeyFields SEPARATOR ' ~ '»«name.formatForDB».«pkField.name.formatForCode»«ENDFOR» }}{% endif %}');
-        }
-
-        function triggerFormValidation()
-        {
-            executeCustomValidationConstraints();
-            if (!document.getElementById('«name.formatForCode»EditForm').checkValidity()) {
-                // This does not really submit the form,
-                // but causes the browser to display the error message
-                jQuery('#«name.formatForCode»EditForm').find(':submit').first().click();
-            }
-        }
-
-        function handleFormSubmit (event) {
-            if (triggerValidation) {
-                triggerFormValidation();
-                if (!document.getElementById('«name.formatForCode»EditForm').checkValidity()) {
-                    event.preventDefault();
-                    return false;
-                }
-            }
-
-            // hide form buttons to prevent double submits by accident
-            formButtons.each(function (index) {
-                jQuery(this).addClass('hidden');
-            });
-
-            return true;
-        }
 
         ( function($) {
             $(document).ready(function() {
-                «IF hasImageFieldsEntity»
-                    $('a.lightbox').lightbox();
-                «ENDIF»
                 «val userFields = getUserFieldsEntity»
                 «IF !userFields.empty»
                     // initialise auto completion for user fields
@@ -289,99 +246,10 @@ class Forms {
                     «ENDFOR»
                 «ENDIF»
                 «relationHelper.initJs(it, app, true)»
-
-                var allFormFields = $('#«name.formatForCode»EditForm input, #«name.formatForCode»EditForm select, #«name.formatForCode»EditForm textarea');
-                allFormFields.change(executeCustomValidationConstraints);
-
-                formButtons = $('#«name.formatForCode»EditForm .form-buttons input');
-                $('.btn-danger').first().bind('click keypress', function (event) {
-                    if (!window.confirm('{{ __('Really delete this «name.formatForDisplay»?') }}')) {
-                        event.preventDefault();
-                    }
-                });
-                $('#«name.formatForCode»EditForm button[type=submit]').bind('click keypress', function (event) {
-                    triggerValidation = !$(this).attr('formnovalidate');
-                });
-                $('#«name.formatForCode»EditForm').submit(handleFormSubmit);
-
-                {% if mode != 'create' %}
-                    triggerFormValidation();
-                {% endif %}
-
+                «app.vendorAndName»InitEditForm({{ mode }}, '{% if mode != 'create' %}{{ «FOR pkField : getPrimaryKeyFields SEPARATOR ' ~ '»«name.formatForDB».«pkField.name.formatForCode»«ENDFOR» }}{% endif %}');
                 «FOR field : getDerivedFields»«field.additionalInitScript»«ENDFOR»
             });
         })(jQuery);
-    '''
-
-    def private newCoordinatesEventHandler(Entity it) '''
-        function newCoordinatesEventHandler() {
-            var location = new mxn.LatLonPoint($('#latitude').val(), $('#longitude').val());
-            marker.hide();
-            mapstraction.removeMarker(marker);
-            marker = new mxn.Marker(location);
-            mapstraction.addMarker(marker, true);
-            mapstraction.setCenterAndZoom(location, 18);
-        }
-    '''
-
-    def private initGeographical(Entity it, Application app) '''
-        mapstraction = new mxn.Mapstraction('mapContainer', 'googlev3');
-        mapstraction.addControls({
-            pan: true,
-            zoom: 'small',
-            map_type: true
-        });
-
-        var latlon = new mxn.LatLonPoint({{ «name.formatForDB».latitude|«app.appName.formatForDB»_geoData }}, {{ «name.formatForDB».longitude|«app.appName.formatForDB»_geoData }});
-
-        mapstraction.setMapType(mxn.Mapstraction.SATELLITE);
-        mapstraction.setCenterAndZoom(latlon, 16);
-        mapstraction.mousePosition('position');
-
-        // add a marker
-        marker = new mxn.Marker(latlon);
-        mapstraction.addMarker(marker, true);
-
-        // init event handler
-        $('#latitude').change(newCoordinatesEventHandler);
-        $('#longitude').change(newCoordinatesEventHandler);
-
-        $('#collapseMap').on('hidden.bs.collapse', function () {
-            // redraw the map after it's panel has been opened (see also #340)
-            mapstraction.resizeTo($('#mapContainer').width(), $('#mapContainer').height());
-        })
-
-        mapstraction.click.addHandler(function(event_name, event_source, event_args) {
-        	var coords = event_args.location;
-            $("[id$='latitude']").val(coords.lat.toFixed(7));
-            $("[id$='longitude']").val(coords.lng.toFixed(7));
-            newCoordinatesEventHandler();
-        });
-
-        {% if mode == 'create' %}
-            // derive default coordinates from users position with html5 geolocation feature
-            /*if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(«app.vendorAndName»SetDefaultCoordinates, «app.vendorAndName»HandlePositionError, { enableHighAccuracy: true, maximumAge: 10000, timeout: 20000 });
-            }*/
-        {% endif %}
-
-        {#
-            Initialise geocoding functionality.
-            In contrast to the map picker this one determines coordinates for a given address.
-            To use this please customise the following method for assembling the address.
-            Furthermore you will need a link or a button with id="linkGetCoordinates" which will
-            be used by the script for adding a corresponding click event handler.
-
-            var determineAddressForGeoCoding = function () {
-                var address = {
-                    address : $('#street').val() + ' ' + $('#houseNumber').val() + ' ' + $('#zipcode').val() + ' ' + $('#city').val() + ' ' + $('#country').val()
-                };
-
-                return address;
-            }
-
-            «app.vendorAndName»InitGeoCoding(determineAddressForGeoCoding);
-        #}
     '''
 
     def private fieldWrapper(DerivedField it, String groupSuffix, String idSuffix) '''

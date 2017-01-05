@@ -56,7 +56,7 @@ class Display {
         {% block title %}
             {% set templateTitle = «objName».getTitleFromDisplayPattern()|default(__('«name.formatForDisplayCapital»')) %}
             «templateHeading(appName)»
-            «new ItemActionsView().generateDisplay(it)»
+            «new ItemActionsView().generate(it, 'display')»
         {% endblock %}
         {% block admin_page_icon 'eye' %}
         {% block content %}
@@ -120,36 +120,24 @@ class Display {
                 «callDisplayHooks(appName)»
             {% endblock %}
         «ENDIF»
-        {% block footer %}
-            {{ parent() }}
-            «IF hasBooleansWithAjaxToggleEntity('display') || hasImageFieldsEntity»
-
-                {% if app.request.query.get('theme') != 'ZikulaPrinterTheme' %}
+        «IF geographical»
+            {% block footer %}
+                {{ parent() }}
+                {{ pageAddAsset('javascript', 'https://maps.google.com/maps/api/js?sensor=false') }}
+                {{ pageAddAsset('javascript', pagevars.homepath ~ 'plugins/Mapstraction/lib/vendor/mxn/mxn.js?(googlev3)') }}
+                {% set geoScripts %}
                     <script type="text/javascript">
                     /* <![CDATA[ */
                         ( function($) {
                             $(document).ready(function() {
-                                «IF hasImageFieldsEntity»
-                                    $('a.lightbox').lightbox();
-                                «ENDIF»
-                                «IF hasBooleansWithAjaxToggleEntity('display')»
-                                    «initAjaxToggle»
-                                «ENDIF»
+                                «application.vendorAndName»InitGeographicalDisplay({{ «objName».latitude|«application.name.formatForDB»_geoData }}, {{ «objName».longitude|«application.name.formatForDB»_geoData }})
                             });
                         })(jQuery);
                     /* ]]> */
                     </script>
-                {% endif %}
-            «ENDIF»
-        {% endblock %}
-    '''
-
-    def private initAjaxToggle(Entity it) '''
-        «IF hasBooleansWithAjaxToggleEntity('display')»
-            {% set itemid = «name.formatForCode».createCompositeIdentifier() %}
-            «FOR field : getBooleansWithAjaxToggleEntity('display')»
-                «application.vendorAndName»InitToggle('«name.formatForCode»', '«field.name.formatForCode»', '{{ itemid|e('html_attr') }}');
-            «ENDFOR»
+                {% endset %}
+                {{ pageAddAsset('footer', geoScripts) }}
+            {% endblock %}
         «ENDIF»
     '''
 
@@ -204,16 +192,7 @@ class Display {
                     {{ «relObjName».getTitleFromDisplayPattern() }}
                   «IF linkEntity.hasDisplayAction»
                     {% endspaceless %}</a>
-                    <a id="«linkEntity.name.formatForCode»Item{{ «FOR pkField : linkEntity.getPrimaryKeyFields SEPARATOR ' ~ '»«relObjName».«pkField.name.formatForCode»«ENDFOR» }}Display" href="{{ path('«linkEntity.application.appName.formatForDB»_«linkEntity.name.formatForDB»_' ~ routeArea ~ 'display', { «linkEntity.routePkParams(relObjName, true)»«linkEntity.appendSlug(relObjName, true)», 'theme': 'ZikulaPrinterTheme' }) }}" title="{{ __('Open quick view window')|e('html_attr') }}" class="hidden"><span class="fa fa-eye"></span></a>
-                    <script type="text/javascript">
-                    /* <![CDATA[ */
-                        ( function($) {
-                            $(document).ready(function() {
-                                «application.vendorAndName»InitInlineWindow($('«linkEntity.name.formatForCode»Item{{ «FOR pkField : linkEntity.getPrimaryKeyFields SEPARATOR ' ~ '»«relObjName».«pkField.name.formatForCode»«ENDFOR» }}Display'), '{{ «relObjName».getTitleFromDisplayPattern()|e('js') }}');
-                            });
-                        })(jQuery);
-                    /* ]]> */
-                    </script>
+                    <a id="«linkEntity.name.formatForCode»Item{{ «FOR pkField : linkEntity.getPrimaryKeyFields SEPARATOR ' ~ '»«relObjName».«pkField.name.formatForCode»«ENDFOR» }}Display" href="{{ path('«linkEntity.application.appName.formatForDB»_«linkEntity.name.formatForDB»_' ~ routeArea ~ 'display', { «linkEntity.routePkParams(relObjName, true)»«linkEntity.appendSlug(relObjName, true)», 'theme': 'ZikulaPrinterTheme' }) }}" title="{{ __('Open quick view window')|e('html_attr') }}" class="«application.vendorAndName.toLowerCase»-inline-window hidden" data-modal-title="{{ «relObjName».getTitleFromDisplayPattern()|e('html_attr') }}"><span class="fa fa-id-card-o"></span></a>
                   «ENDIF»
               {% else %}
                   {{ «relObjName».getTitleFromDisplayPattern() }}
@@ -234,21 +213,6 @@ class Display {
             «ELSE»
                 <h3 class="«application.appName.toLowerCase»-map">{{ __('Map') }}</h3>
             «ENDIF»
-            {% set geoScripts %}
-                <script type="text/javascript" src="https://maps.google.com/maps/api/js?sensor=false"></script>
-                <script type="text/javascript" src="{{ pagevars.homepath }}plugins/Mapstraction/lib/vendor/mxn/mxn.js?(googlev3)"></script>
-                <script type="text/javascript">
-                /* <![CDATA[ */
-                    var mapstraction;
-                    ( function($) {
-                        $(document).ready(function() {
-                            «initGeographical(objName)»
-                        });
-                    })(jQuery);
-                /* ]]> */
-                </script>
-            {% endset %}
-            {{ pageAddAsset('header', geoScripts) }}
             <div id="mapContainer" class="«application.appName.toLowerCase»-mapcontainer">
             </div>
             «IF useGroupingPanels('display')»
@@ -293,30 +257,6 @@ class Display {
         «IF standardFields»
             {{ include('@«application.appName»/Helper/includeStandardFieldsDisplay.html.twig', { obj: «objName»«IF useGroupingPanels('display')», panel: true«ENDIF» }) }}
         «ENDIF»
-    '''
-
-    def private initGeographical(Entity it, String objName) '''
-        mapstraction = new mxn.Mapstraction('mapContainer', 'googlev3');
-        mapstraction.addControls({
-            pan: true,
-            zoom: 'small',
-            map_type: true
-        });
-
-        var latlon = new mxn.LatLonPoint({{ «objName».latitude|«application.name.formatForDB»_geoData }}, {{ «objName».longitude|«application.name.formatForDB»_geoData }});
-
-        mapstraction.setMapType(mxn.Mapstraction.SATELLITE);
-        mapstraction.setCenterAndZoom(latlon, 18);
-        mapstraction.mousePosition('position');
-
-        // add a marker
-        var marker = new mxn.Marker(latlon);
-        mapstraction.addMarker(marker, true);
-
-        $('#collapseMap').on('hidden.bs.collapse', function () {
-            // redraw the map after it's panel has been opened (see also #340)
-            mapstraction.resizeTo($('#mapContainer').width(), $('#mapContainer').height());
-        })
     '''
 
     def private callDisplayHooks(Entity it, String appName) '''

@@ -6,14 +6,12 @@ import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
-import org.zikula.modulestudio.generator.extensions.Utils
 
 class ViewHierarchy {
 
     extension ControllerExtensions = new ControllerExtensions
     extension FormattingExtensions = new FormattingExtensions
     extension NamingExtensions = new NamingExtensions
-    extension Utils = new Utils
 
     def generate(Entity it, String appName, IFileSystemAccess fsa) {
         println('Generating tree view templates for entity "' + name.formatForDisplay + '"')
@@ -44,21 +42,7 @@ class ViewHierarchy {
                     «IF hasEditAction»
                     {% if hasPermission('«appName»:«name.formatForCodeCapital»:', '::', 'ACCESS_«IF workflow == EntityWorkflowType::NONE»EDIT«ELSE»COMMENT«ENDIF»') %}
                         {% set addRootTitle = __('Add root node') %}
-                        <a id="treeAddRoot" href="javascript:void(0)" title="{{ addRootTitle|e('html_attr') }}" class="fa fa-plus hidden">{{ addRootTitle }}</a>
-
-                        <script type="text/javascript">
-                        /* <![CDATA[ */
-                            ( function($) {
-                                $(document).ready(function() {
-                                    $('#treeAddRoot').click( function(event) {
-                                        «application.vendorAndName»PerformTreeOperation('«objName»', 1, 'addRootNode');
-                                        event.stopPropagation();
-                                    }).removeClass('hidden');
-                                });
-                            })(jQuery);
-                        /* ]]> */
-                        </script>
-                        <noscript><p>{{ __('This function requires JavaScript activated!') }}</p></noscript>
+                        <a id="treeAddRoot" href="javascript:void(0)" title="{{ addRootTitle|e('html_attr') }}" class="fa fa-plus hidden" data-object-type="«objName»">{{ addRootTitle }}</a>
                     {% endif %}
                     «ENDIF»
                     {% set switchTitle = __('Switch to table view') %}
@@ -74,6 +58,12 @@ class ViewHierarchy {
                 <br style="clear: left" />
             </div>
         {% endblock %}
+        {% block footer %}
+            {{ parent() }}
+            {{ pageAddAsset('stylesheet', asset('jstree/dist/themes/default/style.min.css')) }}
+            {{ pageAddAsset('javascript', asset('jstree/dist/jstree.min.js')) }}
+            {{ pageAddAsset('javascript', zasset('@«appName»:js/«appName».Tree.js')) }}
+        {% endblock %}
     '''
 
     def private hierarchyItemsView(Entity it, String appName) '''
@@ -88,29 +78,12 @@ class ViewHierarchy {
 
         <p><a href="#" id="{{ idPrefix }}Expand" title="{{ __('Expand all nodes') }}">{{ __('Expand all') }}</a> | <a href="#" id="{{ idPrefix }}Collapse" title="{{ __('Collapse all nodes') }}">{{ __('Collapse all') }}</a></p>
 
-        <div id="{{ idPrefix }}" class="tree-container">
+        <div id="{{ idPrefix }}" class="tree-container" data-object-type="«name.formatForCode»" data-root-id="{{ rootId|e('html_attr') }}" data-has-display="«hasDisplayAction.displayBool»" data-has-edit="«(hasEditAction && !readOnly).displayBool»">
             {% if hasNodes %}
-                <ul id="itemTree{{ rootId }}">
+                <ul id="itemTree{{ rootId|e('html_attr') }}">
                     {{ «appName.formatForDB»_treeData(objectType='«name.formatForCode»', tree=items, routeArea=routeArea, rootId=rootId) }}
                 </ul>
             {% endif %}
         </div>
-
-        {{ pageAddAsset('javascript', zasset('@«appName»:js/«appName».Tree.js')) }}
-
-        {% if hasNodes %}
-            {{ pageAddAsset('javascript', asset('jstree/dist/jstree.min.js')) }}
-            {{ pageAddAsset('stylesheet', asset('jstree/dist/themes/default/style.min.css')) }}
-            <script type="text/javascript">
-            /* <![CDATA[ */
-                ( function($) {
-                    $(document).ready(function() {
-                        «application.vendorAndName»InitTree('{{ idPrefix|e('js') }}', '«name.formatForCode»', '{{ rootId|e('js') }}', «hasDisplayAction.displayBool», «(hasEditAction && !readOnly).displayBool»);
-                    });
-                })(jQuery);
-            /* ]]> */
-            </script>
-            <noscript><p>{{ __('This function requires JavaScript activated!') }}</p></noscript>
-        {% endif %}
     '''
 }

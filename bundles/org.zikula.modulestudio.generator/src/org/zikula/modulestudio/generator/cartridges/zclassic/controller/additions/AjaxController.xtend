@@ -33,7 +33,7 @@ class AjaxController {
     }
 
     def private ajaxControllerBaseClass(Application it) '''
-        namespace «appNamespace»\Base\Controller;
+        namespace «appNamespace»\Controller\Base;
 
         «IF !getAllUserFields.empty»
             use DataUtil;

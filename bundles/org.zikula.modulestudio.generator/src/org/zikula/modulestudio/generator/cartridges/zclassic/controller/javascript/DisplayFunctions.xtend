@@ -1,9 +1,6 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.controller.javascript
 
 import de.guite.modulestudio.metamodel.Application
-import de.guite.modulestudio.metamodel.DerivedField
-import de.guite.modulestudio.metamodel.Entity
-import de.guite.modulestudio.metamodel.JoinRelationship
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
@@ -13,6 +10,7 @@ import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class DisplayFunctions {
+
     extension ControllerExtensions = new ControllerExtensions
     extension FormattingExtensions = new FormattingExtensions
     extension ModelExtensions = new ModelExtensions
@@ -36,133 +34,214 @@ class DisplayFunctions {
 
     def private generate(Application it) '''
         'use strict';
-        «IF hasViewActions»
 
-            «initQuickNavigation»
-        «ENDIF»
-        «IF !getJoinRelations.empty»
-
-            «initRelationWindow»
-        «ENDIF»
-        «IF hasBooleansWithAjaxToggle»
-
-            «initToggle»
-
-            «toggleFlag»
-        «ENDIF»
-
-        «simpleAlert»
-    '''
-
-    def private initQuickNavigation(Application it) '''
         function «vendorAndName»CapitaliseFirstLetter(string)
         {
             return string.charAt(0).toUpperCase() + string.substring(1);
         }
+        «IF hasViewActions»
 
-        /**
-         * Submits a quick navigation form.
-         */
-        function «vendorAndName»SubmitQuickNavForm(objectType)
-        {
-            jQuery('#«appName.toLowerCase»' + «vendorAndName»CapitaliseFirstLetter(objectType) + 'QuickNavForm').submit();
-        }
+            «initQuickNavigation»
+        «ENDIF»
+        «IF hasBooleansWithAjaxToggle»
 
+            «toggleFlag»
+
+            «initAjaxToggles»
+        «ENDIF»
+
+        «simpleAlert»
+        «IF hasViewActions»
+
+            «initMassToggle»
+        «ENDIF»
+        «IF hasViewActions || hasDisplayActions»
+
+            «initItemActions»
+        «ENDIF»
+        «IF !getJoinRelations.empty && hasDisplayActions»
+
+            «initRelationWindow»
+
+            «initQuickViewModals»
+        «ENDIF»
+
+        «onLoad»
+    '''
+
+    def private initQuickNavigation(Application it) '''
         /**
          * Initialise the quick navigation panel in list views.
          */
-        function «vendorAndName»InitQuickNavigation(objectType)
+        function «vendorAndName»InitQuickNavigation()
         {
-            if (jQuery('#«appName.toLowerCase»' + «vendorAndName»CapitaliseFirstLetter(objectType) + 'QuickNavForm').length < 1) {
+            var quickNavForm;
+            var objectType;
+
+            if (jQuery('.«appName.toLowerCase»-quicknav').length < 1) {
                 return;
             }
 
+            quickNavForm = jQuery('.«appName.toLowerCase»-quicknav').first();
+            objectType = quickNavForm.attr('id').replace('«appName.toFirstLower»', '').replace('QuickNavForm', '');
+
+            quickNavForm.find('select').change(function (event) {
+                quickNavForm.submit();
+            });
+
             var fieldPrefix = '«appName.formatForDB»_' + objectType.toLowerCase() + 'quicknav_';
-            if (jQuery('#' + fieldPrefix + 'catid').length > 0) {
-                jQuery('#' + fieldPrefix + 'catid').change(«initQuickNavigationSubmitCall»);
-            }
-            if (jQuery('#' + fieldPrefix + 'sortBy').length > 0) {
-                jQuery('#' + fieldPrefix + 'sortBy').change(«initQuickNavigationSubmitCall»);
-            }
-            if (jQuery('#' + fieldPrefix + 'sortDir').length > 0) {
-                jQuery('#' + fieldPrefix + 'sortDir').change(«initQuickNavigationSubmitCall»);
-            }
-            if (jQuery('#' + fieldPrefix + 'num').length > 0) {
-                jQuery('#' + fieldPrefix + 'num').change(«initQuickNavigationSubmitCall»);
-            }
-
-            switch (objectType) {
-            «FOR entity : getAllEntities»
-                «entity.initQuickNavigationEntity»
-            «ENDFOR»
-            default:
-                break;
+            // we can hide the submit button if we have no visible quick search field
+            if (jQuery('#' + fieldPrefix + 'q').length < 1 || jQuery('#' + fieldPrefix + 'q').parent().parent().hasClass('hidden')) {
+                jQuery('#' + fieldPrefix + 'updateview').addClass('hidden');
             }
         }
     '''
 
-    def private initQuickNavigationSubmitCall(Application it) '''function () { «vendorAndName»SubmitQuickNavForm(objectType); }'''
+    def private toggleFlag(Application it) '''
+        /**
+         * Toggles a certain flag for a given item.
+         */
+        function «vendorAndName»ToggleFlag(objectType, fieldName, itemId)
+        {
+            jQuery.ajax({
+                type: 'POST',
+                url: Routing.generate('«appName.formatForDB»_ajax_toggleflag'),
+                data: {
+                    ot: objectType,
+                    field: fieldName,
+                    id: itemId
+                }
+            }).done(function(res) {
+                // get data returned by the ajax response
+                var fieldNameCapitalised, idSuffix, data;
 
-    def private initQuickNavigationEntity(Entity it) '''
-        case '«name.formatForCode»':
-            «IF !getBidirectionalIncomingJoinRelationsWithOneSource.empty»
-                «FOR relation: getBidirectionalIncomingJoinRelationsWithOneSource»
-                    «relation.jsInit»
-                «ENDFOR»
-            «ENDIF»
-            «IF hasListFieldsEntity»
-                «FOR field : getListFieldsEntity»
-                    «field.jsInit»
-                «ENDFOR»
-            «ENDIF»
-            «IF hasUserFieldsEntity»
-                «FOR field : getUserFieldsEntity»
-                    «field.jsInit»
-                «ENDFOR»
-            «ENDIF»
-            «IF hasCountryFieldsEntity»
-                «FOR field : getCountryFieldsEntity»
-                    «field.jsInit»
-                «ENDFOR»
-            «ENDIF»
-            «IF hasLanguageFieldsEntity»
-                «FOR field : getLanguageFieldsEntity»
-                    «field.jsInit»
-                «ENDFOR»
-            «ENDIF»
-            «IF hasLocaleFieldsEntity»
-                «FOR field : getLocaleFieldsEntity»
-                    «field.jsInit»
-                «ENDFOR»
-            «ENDIF»
-            «IF hasBooleanFieldsEntity»
-                «FOR field : getBooleanFieldsEntity»
-                    «field.jsInit»
-                «ENDFOR»
-            «ENDIF»
-            break;
-    '''
+                fieldNameCapitalised = «vendorAndName»CapitaliseFirstLetter(fieldName);
+                idSuffix = fieldNameCapitalised + itemId;
+                data = res.data;
 
-    def private dispatch jsInit(DerivedField it) '''
-        if (jQuery('#' + fieldPrefix + '«name.formatForCode»').length > 0) {
-            jQuery('#' + fieldPrefix + '«name.formatForCode»').change(«initQuickNavigationSubmitCall(entity.application)»);
+                /*if (data.message) {
+                    «vendorAndName»SimpleAlert(jQuery('#toggle' + idSuffix), Translator.__('Success'), data.message, 'toggle' + idSuffix + 'DoneAlert', 'success');
+                }*/
+
+                idSuffix = idSuffix.toLowerCase();
+                if (true === data.state) {
+                    jQuery('#no' + idSuffix).addClass('hidden');
+                    jQuery('#yes' + idSuffix).removeClass('hidden');
+                } else {
+                    jQuery('#yes' + idSuffix).addClass('hidden');
+                    jQuery('#no' + idSuffix).removeClass('hidden');
+                }
+            })«/*.fail(function(jqXHR, textStatus) {
+                // nothing to do yet
+                var idSuffix = fieldName + '_' + itemId;
+                «vendorAndName»SimpleAlert(jQuery('#toggle' + idSuffix), Translator.__('Error'), Translator.__('Could not persist your change.'), 'toggle' + idSuffix + 'FailedAlert', 'danger');
+            })*/»;
         }
     '''
 
-    def private dispatch jsInit(JoinRelationship it) '''
-        «val sourceAliasName = getRelationAliasName(false)»
-        if (jQuery('#' + fieldPrefix + '«sourceAliasName.formatForDB»').length > 0) {
-            jQuery('#' + fieldPrefix + '«sourceAliasName.formatForDB»').change(«initQuickNavigationSubmitCall(application)»);
+    def private initAjaxToggles(Application it) '''
+        /**
+         * Initialise ajax-based toggle for all affected boolean fields on the current page.
+         */
+        function «vendorAndName»InitAjaxToggles()
+        {
+            jQuery('.«vendorAndName.toLowerCase»-ajax-toggle').click(function (event) {
+                var objectType;
+                var fieldName;
+                var itemId;
+
+                event.preventDefault();
+                objectType = jQuery(this).data('object-type');
+                fieldName = jQuery(this).data('field-name');
+                itemId = jQuery(this).data('item-id');
+
+                «vendorAndName»ToggleFlag(objectType, fieldName, itemId);
+            }).removeClass('hidden');
         }
+    '''
+
+    def private simpleAlert(Application it) '''
+        /**
+         * Simulates a simple alert using bootstrap.
+         */
+        function «vendorAndName»SimpleAlert(beforeElem, title, content, alertId, cssClass)
+        {
+            var alertBox;
+
+            alertBox = ' \
+                <div id="' + alertId + '" class="alert alert-' + cssClass + ' fade"> \
+                  <button type="button" class="close" data-dismiss="alert">&times;</button> \
+                  <h4>' + title + '</h4> \
+                  <p>' + content + '</p> \
+                </div>';
+
+            // insert alert before the given element
+            beforeElem.before(alertBox);
+
+            jQuery('#' + alertId).delay(200).addClass('in').fadeOut(4000, function () {
+                jQuery(this).remove();
+            });
+        }
+    '''
+
+    def private initMassToggle(Application it) '''
+        /**
+         * Initialises the mass toggle functionality for admin view pages.
+         */
+        function «vendorAndName»InitMassToggle()
+        {
+            if (jQuery('.«vendorAndName.toLowerCase»-mass-toggle').length > 0) {
+                jQuery('.«vendorAndName.toLowerCase»-mass-toggle').click(function (event) {
+                    jQuery('.«vendorAndName.toLowerCase»-toggle-checkbox').prop('checked', jQuery(this).prop('checked'));
+                });
+            }
+        }
+    '''
+
+    def private initItemActions(Application it) '''
+        /**
+         * Creates a dropdown menu for the item actions.
+         */
+        function «vendorAndName»InitItemActions(context)
+        {
+            var containerSelector;
+            var containers;
+            var listClasses;
+
+            containerSelector = '';
+            if (context == 'view') {
+                containerSelector = '.«appName.toLowerCase»-view';
+                listClasses = 'list-unstyled dropdown-menu dropdown-menu-right';
+            } else if (context == 'display') {
+                containerSelector = 'h2, h3';
+                listClasses = 'list-unstyled dropdown-menu';
+            }
+
+            if (containerSelector == '') {
+                return;
+            }
+
+            containers = jQuery(containerSelector);
+            if (containers.length < 1) {
+                return;
+            }
+
+            containers.find('.dropdown > ul').removeClass('list-inline').addClass(listClasses);
+            containers.find('.dropdown > ul a').each(function (index) {
+                jQuery(this).html(jQuery(this).html() + jQuery(this).find('i').first().data('original-title'));
+            });
+            containers.find('.dropdown > ul a i').addClass('fa-fw');
+            containers.find('.dropdown-toggle').removeClass('hidden').dropdown();
     '''
 
     def private initRelationWindow(Application it) '''
         /**
          * Helper function to create new Bootstrap modal window instances.
          */
-        function «vendorAndName»InitInlineWindow(containerElem, title)
+        function «vendorAndName»InitInlineWindow(containerElem)
         {
             var newWindowId;
+            var modalTitle;
 
             // show the container (hidden for users without JavaScript)
             containerElem.removeClass('hidden');
@@ -191,7 +270,7 @@ class DisplayFunctions {
                                 effect: 'explode',
                                 duration: 1000
                             },
-                            title: title,
+                            title: containerElem.data('modal-title'),
                             width: 600,
                             height: 400,
                             modal: false
@@ -205,89 +284,49 @@ class DisplayFunctions {
             // return the dialog selector id;
             return newWindowId;
         }
-
     '''
 
-    def private initToggle(Application it) '''
+    def private initQuickViewModals(Application it) '''
         /**
-         * Initialise ajax-based toggle for boolean fields.
+         * Initialises modals for inline display of related items.
          */
-        function «vendorAndName»InitToggle(objectType, fieldName, itemId)
+        function «vendorAndName»InitQuickViewModals()
         {
-            var idSuffix = «vendorAndName»CapitaliseFirstLetter(fieldName) + itemId;
-            if (jQuery('#toggle' + idSuffix).length < 1) {
-                return;
-            }
-            jQuery('#toggle' + idSuffix).click( function() {
-                «vendorAndName»ToggleFlag(objectType, fieldName, itemId);
-            }).removeClass('hidden');
-        }
-
-    '''
-
-    def private toggleFlag(Application it) '''
-        /**
-         * Toggles a certain flag for a given item.
-         */
-        function «vendorAndName»ToggleFlag(objectType, fieldName, itemId)
-        {
-            var fieldNameCapitalised = «vendorAndName»CapitaliseFirstLetter(fieldName);
-            var params = 'ot=' + objectType + '&field=' + fieldName + '&id=' + itemId;
-
-            jQuery.ajax({
-                type: 'POST',
-                url: Routing.generate('«appName.formatForDB»_ajax_toggleflag'),
-                data: params
-            }).done(function(res) {
-                // get data returned by the ajax response
-                var idSuffix, data;
-
-                idSuffix = fieldName + '_' + itemId;
-                data = res.data;
-
-                /*if (data.message) {
-                    «vendorAndName»SimpleAlert(jQuery('#toggle' + idSuffix), Translator.__('Success'), data.message, 'toggle' + idSuffix + 'DoneAlert', 'success');
-                }*/
-
-                idSuffix = idSuffix.toLowerCase();
-                var state = data.state;
-                if (true === state) {
-                    jQuery('#no' + idSuffix).addClass('hidden');
-                    jQuery('#yes' + idSuffix).removeClass('hidden');
-                } else {
-                    jQuery('#yes' + idSuffix).addClass('hidden');
-                    jQuery('#no' + idSuffix).removeClass('hidden');
-                }
-            })«/*.fail(function(jqXHR, textStatus) {
-                // nothing to do yet
-                var idSuffix = fieldName + '_' + itemId;
-                «vendorAndName»SimpleAlert(jQuery('#toggle' + idSuffix), Translator.__('Error'), Translator.__('Could not persist your change.'), 'toggle' + idSuffix + 'FailedAlert', 'danger');
-            })*/»;
-        }
-
-    '''
-
-    def private simpleAlert(Application it) '''
-        /**
-         * Simulates a simple alert using bootstrap.
-         */
-        function «vendorAndName»SimpleAlert(beforeElem, title, content, alertId, cssClass)
-        {
-            var alertBox;
-
-            alertBox = ' \
-                <div id="' + alertId + '" class="alert alert-' + cssClass + ' fade"> \
-                  <button type="button" class="close" data-dismiss="alert">&times;</button> \
-                  <h4>' + title + '</h4> \
-                  <p>' + content + '</p> \
-                </div>';
-
-            // insert alert before the given element
-            beforeElem.before(alertBox);
-
-            jQuery('#' + alertId).delay(200).addClass('in').fadeOut(4000, function () {
-                jQuery(this).remove();
+            jQuery('.«vendorAndName.toLowerCase»-inline-window').each(function (index) {
+                «vendorAndName»InitInlineWindow(jQuery(this));
             });
         }
+    '''
+
+    def private onLoad(Application it) '''
+        jQuery(document).ready(function() {
+            var isViewPage;
+            var isDisplayPage;
+
+            isViewPage = jQuery(#.«appName.toLowerCase»-view').length > 0;
+            isDisplayPage = jQuery(#.«appName.toLowerCase»-display').length > 0;
+
+            «IF hasImageFields»
+                jQuery('a.lightbox').lightbox();
+
+            «ENDIF»
+            if (isViewPage) {
+                «vendorAndName»InitQuickNavigation();
+                «vendorAndName»InitMassToggle();
+                «vendorAndName»InitItemActions('view');
+                «IF hasBooleansWithAjaxToggleInView»
+                    «vendorAndName»InitAjaxToggles();
+                «ENDIF»
+            } else if (isDisplayPage) {
+                «vendorAndName»InitItemActions('display');
+                «IF hasBooleansWithAjaxToggleInDisplay»
+                    «vendorAndName»InitAjaxToggles();
+                «ENDIF»
+            }
+            «IF !getJoinRelations.empty && hasDisplayActions»
+
+                «vendorAndName»InitQuickViewModals();
+            «ENDIF»
+        });
     '''
 }

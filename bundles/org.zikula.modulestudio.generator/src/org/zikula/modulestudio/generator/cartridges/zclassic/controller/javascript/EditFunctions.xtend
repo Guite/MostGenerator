@@ -4,16 +4,15 @@ import de.guite.modulestudio.metamodel.AbstractDateField
 import de.guite.modulestudio.metamodel.Application
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
-import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class EditFunctions {
+
     extension FormattingExtensions = new FormattingExtensions
     extension ModelExtensions = new ModelExtensions
-    extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension ModelJoinExtensions = new ModelJoinExtensions
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
@@ -49,13 +48,9 @@ class EditFunctions {
             «initDateField»
 
         «ENDIF»
-        «IF hasGeographical»
-            «initGeoCoding»
+        «initEditForm»
 
-            «initGeoLocation»
-
-        «ENDIF»
-        «relationFunctions»
+        «relationshipFunctions»
     '''
 
     def private initUserField(Application it) '''
@@ -158,67 +153,74 @@ class EditFunctions {
         }
     '''
 
-    def private initGeoCoding(Application it) '''
-        /**
-         * Example method for initialising geo coding functionality in JavaScript.
-         * In contrast to the map picker this one determines coordinates for a given address.
-         * Uses a callback function for retrieving the address to be converted, so that it can be easily customised in each edit template.
-         * There is also a method on PHP level available in the \«vendor.formatForCodeCapital»\«name.formatForCodeCapital»Module\Helper\ControllerHelper class.
-         */
-        function «vendorAndName»InitGeoCoding(addressCallback)
+    def private initEditForm(Application it) '''
+        var editedObjectType;
+        var editedEntityId;
+        var editForm;
+        var formButtons;
+        var triggerValidation = true;
+
+        function «vendorAndName»TriggerFormValidation()
         {
-            jQuery('#linkGetCoordinates').click( function (evt) {
-                «vendorAndName»DoGeoCoding(addressCallback);
-            });
+            «vendorAndName»PerformCustomValidationRules(editedObjectType, editedEntityId);
+
+            if (!editForm.get(0).checkValidity()) {
+                // This does not really submit the form,
+                // but causes the browser to display the error message
+                editForm.find(':submit').first().click();
+            }
         }
 
-        /**
-         * Performs the actual geo coding using Mapstraction.
-         */
-        function «vendorAndName»DoGeoCoding(addressCallback)
-        {
-            var address = {
-                address : jQuery('#street').val() + ' ' + jQuery('#houseNumber').val() + ' ' + jQuery('#zipcode').val() + ' ' + jQuery('#city').val() + ' ' + jQuery('#country').val()
-            };
-
-            // Check whether the given callback is executable
-            if (typeof addressCallback === 'function') {
-                address = addressCallback();
-            }
-
-            var geocoder = new mxn.Geocoder('googlev3', «vendorAndName»GeoCodeReturn, «vendorAndName»GeoCodeErrorCallback);
-            geocoder.geocode(address);
-
-            function «vendorAndName»GeoCodeErrorCallback (status) {
-                if (status != 'ZERO_RESULTS') {
-                    «vendorAndName»SimpleAlert(jQuery('#mapContainer'), Translator.__('Error during geocoding'), status, 'geoCodingAlert', 'danger');
+        function «vendorAndName»HandleFormSubmit (event) {
+            if (triggerValidation) {
+                «vendorAndName»TriggerFormValidation();
+                if (!editForm.get(0).checkValidity()) {
+                    event.preventDefault();
+                    return false;
                 }
             }
 
-            function «vendorAndName»GeoCodeReturn (location) {
-                jQuery("[id$='latitude']").val(location.point.lat.toFixed(7));
-                jQuery("[id$='longitude']").val(location.point.lng.toFixed(7));
-                newCoordinatesEventHandler();
+            // hide form buttons to prevent double submits by accident
+            formButtons.each(function (index) {
+                jQuery(this).addClass('hidden');
+            });
+
+            return true;
+        }
+
+        /**
+         * Initialises an entity edit form.
+         */
+        function «vendorAndName»InitEditForm(mode, entityId)
+        {
+            if (jQuery('.«vendorAndName.toLowerCase»-edit-form').length < 1) {
+                return;
+            }
+
+            editForm = jQuery('.«vendorAndName.toLowerCase»-edit-form').first();
+            editedObjectType = editForm.attr('id').replace('EditForm', '');
+            editedEntityId = entityId;
+
+            var allFormFields = editForm.find('input, select, textarea');
+            allFormFields.change(«vendorAndName»ExecuteCustomValidationConstraints);
+
+            formButtons = editForm.find('.form-buttons input');
+            editForm.find('.btn-danger').first().bind('click keypress', function (event) {
+                if (!window.confirm(Translator.__('Do you really want to delete this entry?'))) {
+                    event.preventDefault();
+                }
+            });
+            editForm.find('button[type=submit]').bind('click keypress', function (event) {
+                triggerValidation = !jQuery(this).attr('formnovalidate');
+            });
+            editForm.submit(«vendorAndName»HandleFormSubmit);
+            if (mode != 'create') {
+                «vendorAndName»TriggerFormValidation();
             }
         }
     '''
 
-    def private initGeoLocation(Application it) '''
-        /**
-         * Callback method for geolocation functionality.
-         */
-        function «vendorAndName»SetDefaultCoordinates (position) {
-            jQuery("[id$='latitude']").val(position.coords.latitude.toFixed(7));
-            jQuery("[id$='longitude']").val(position.coords.longitude.toFixed(7));
-            newCoordinatesEventHandler();
-        }
-
-        function «vendorAndName»HandlePositionError (event) {
-            «vendorAndName»SimpleAlert(jQuery('#mapContainer'), Translator.__('Error during geolocation'), event.message, 'geoLocationAlert', 'danger');
-        }
-    '''
-
-    def private relationFunctions(Application it) '''
+    def private relationshipFunctions(Application it) '''
         «IF needsAutoCompletion»
             «toggleRelatedItemForm»
 
@@ -446,17 +448,14 @@ class EditFunctions {
             var acOptions, acDataSet, itemIds, itemIdsArr, acUrl;
 
             // add handling for the toggle link if existing
-            if (jQuery('#' + idPrefix + 'AddLink').length > 0) {
-                jQuery('#' + idPrefix + 'AddLink').click( function (e) {
-                    «vendorAndName»ToggleRelatedItemForm(idPrefix);
-                });
-            }
+            jQuery('#' + idPrefix + 'AddLink').click( function (e) {
+                «vendorAndName»ToggleRelatedItemForm(idPrefix);
+            });
+
             // add handling for the cancel button
-            if (jQuery('#' + idPrefix + 'SelectorDoCancel').length > 0) {
-                jQuery('#' + idPrefix + 'SelectorDoCancel').click( function (e) {
-                    «vendorAndName»ResetRelatedItemForm(idPrefix);
-                });
-            }
+            jQuery('#' + idPrefix + 'SelectorDoCancel').click( function (e) {
+                «vendorAndName»ResetRelatedItemForm(idPrefix);
+            });
 
             // clear values and ensure starting state
             «vendorAndName»ResetRelatedItemForm(idPrefix);

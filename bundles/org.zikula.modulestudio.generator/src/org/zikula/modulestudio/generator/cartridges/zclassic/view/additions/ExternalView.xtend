@@ -220,9 +220,12 @@ class ExternalView {
                 {{ form_end(finderForm) }}
             </div>
 
-            «findTemplateJs(app)»
-
             «findTemplateEditForm(app)»
+
+            {% set customJsInit %}
+                «findTemplateJs(app)»
+            {% endset %}
+            {{ pageAddAsset('footer', customJsInit) }}
         </body>
         </html>
     '''
@@ -260,18 +263,6 @@ class ExternalView {
         </div>
     '''
 
-    def private findTemplateJs(Entity it, Application app) '''
-        <script type="text/javascript">
-        /* <![CDATA[ */
-            ( function($) {
-                $(document).ready(function() {
-                    «app.appName.toFirstLower».finder.onLoad();
-                });
-            })(jQuery);
-        /* ]]> */
-        </script>
-    '''
-
     def private findTemplateEditForm(Entity it, Application app) '''
         «IF hasEditAction»
             {#
@@ -282,6 +273,18 @@ class ExternalView {
             </div>
             #}
         «ENDIF»
+    '''
+
+    def private findTemplateJs(Entity it, Application app) '''
+        <script type="text/javascript">
+        /* <![CDATA[ */
+            ( function($) {
+                $(document).ready(function() {
+                    «app.appName.toFirstLower».finder.onLoad();
+                });
+            })(jQuery);
+        /* ]]> */
+        </script>
     '''
 
     def private selectTemplate(Entity it, Application app) '''

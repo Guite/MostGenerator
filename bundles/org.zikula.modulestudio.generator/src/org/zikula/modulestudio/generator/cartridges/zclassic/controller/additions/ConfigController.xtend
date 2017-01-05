@@ -24,7 +24,7 @@ class ConfigController {
     }
 
     def private configControllerBaseClass(Application it) '''
-        namespace «appNamespace»\Base\Controller;
+        namespace «appNamespace»\Controller\Base;
 
         use Symfony\Component\HttpFoundation\Request;
         use Symfony\Component\Security\Core\Exception\AccessDeniedException;
@@ -111,7 +111,7 @@ class ConfigController {
     def private configControllerImpl(Application it) '''
         namespace «appNamespace»\Controller;
 
-        use «appNamespace»\Controller\Base\AbstractAjaxController;
+        use «appNamespace»\Controller\Base\AbstractConfigController;
         use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
         use Symfony\Component\HttpFoundation\Request;
         use Symfony\Component\Security\Core\Exception\AccessDeniedException;

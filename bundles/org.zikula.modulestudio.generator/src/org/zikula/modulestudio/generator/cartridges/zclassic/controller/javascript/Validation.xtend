@@ -11,6 +11,7 @@ import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class Validation {
+
     extension FormattingExtensions = new FormattingExtensions
     extension ModelExtensions = new ModelExtensions
     extension NamingExtensions = new NamingExtensions
@@ -103,28 +104,23 @@ class Validation {
              */
             function «vendorAndName»UniqueCheck(ucOt, val, elem, ucEx)
             {
-                var params;
-
                 if (elem.val() == window['last' + «vendorAndName»CapitaliseFirstLetter(ucOt) + «vendorAndName»CapitaliseFirstLetter(elem.attr('id')) ]) {
                     return true;
                 }
 
                 window['last' + «vendorAndName»CapitaliseFirstLetter(ucOt) + «vendorAndName»CapitaliseFirstLetter(elem.attr('id')) ] = elem.val();
 
-                // build parameters object
-                params = {
-                    ot: ucOt,
-                    fn: encodeURIComponent(elem.attr('id')),
-                    v: encodeURIComponent(val),
-                    ex: ucEx
-                };
-
                 var result = true;
 
                 jQuery.ajax({
                     type: 'POST',
                     url: Routing.generate('«appName.formatForDB»_ajax_checkforduplicate'),
-                    data: params,
+                    data: {
+                        ot: ucOt,
+                        fn: encodeURIComponent(elem.attr('id')),
+                        v: encodeURIComponent(val),
+                        ex: ucEx
+                    },
                     async: false
                 }).done(function(res) {
                     if (null == res.data || true === res.data.isDuplicate) {

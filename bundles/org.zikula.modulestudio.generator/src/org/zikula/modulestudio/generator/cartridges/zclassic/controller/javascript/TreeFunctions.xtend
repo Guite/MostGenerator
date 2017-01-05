@@ -7,6 +7,7 @@ import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class TreeFunctions {
+
     extension FormattingExtensions = new FormattingExtensions
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
@@ -37,6 +38,8 @@ class TreeFunctions {
         «treeContextMenuActions»
 
         «treeSave»
+
+        «onLoad»
     '''
 
     def private initTree(Application it) '''
@@ -248,20 +251,24 @@ class TreeFunctions {
             var opParam, params;
 
             opParam = ((op === 'moveNodeUp' || op === 'moveNodeDown') ? 'moveNode' : op);
-            params = 'ot=' + objectType + '&op=' + opParam;
+            params = {
+                ot: objectType,
+                op: opParam
+            };
 
             if (op !== 'addRootNode') {
-                params += '&root=' + rootId;
+                params[root] = rootId;
 
                 if (!nodeEntityId) {
                     «vendorAndName»SimpleAlert(jQuery('.tree-container'), Translator.__('Error'), Translator.__('Invalid node id'), 'treeInvalidNodeAlert', 'danger');
+                    return;
                 }
-                params += '&' + ((op === 'addChildNode') ? 'pid' : 'id') + '=' + nodeEntityId;
+                params[(op === 'addChildNode' ? 'pid' : 'id'] = nodeEntityId;
 
                 if (op === 'moveNodeUp') {
-                    params += '&direction=up';
+                    params[direction] = 'up';
                 } else if (op === 'moveNodeDown') {
-                    params += '&direction=down';
+                    params[direction] = 'down';
                 }
             }
 
@@ -299,7 +306,7 @@ class TreeFunctions {
          */
         function «vendorAndName»TreeSave(node, parentNode, position)
         {
-            var nodeParts, rootId, nodeId, destId, requestParams;
+            var nodeParts, rootId, nodeId, destId;
 
             // do not allow inserts on root level
             if (node.parents.find('li').length < 1) {
@@ -311,18 +318,16 @@ class TreeFunctions {
             nodeId = nodeParts[1];
             destId = parentNode.attr('id').replace('tree' + rootId + 'node_', '');
 
-            requestParams = {
-                'op': 'moveNodeTo',
-                'direction': position,
-                'root': rootId,
-                'id': nodeId,
-                'destid': destId
-            };
-
             jQuery.ajax({
                 type: 'POST',
                 url: Routing.generate('«appName.formatForDB»_ajax_handletreeoperation'),
-                data: requestParams
+                data: {
+                    op: 'moveNodeTo',
+                    direction: position,
+                    root: rootId,
+                    id: nodeId,
+                    destid: destId
+                }
             }).done(function(res) {
                 return true;
             }).fail(function(jqXHR, textStatus) {
@@ -335,5 +340,28 @@ class TreeFunctions {
 
             return true;
         }
+    '''
+
+    def private onLoad(Application it) '''
+        jQuery(document).ready(function() {
+            if (jQuery('#treeAddRoot').length > 0) {
+                jQuery('#treeAddRoot').click( function(event) {
+                    event.preventDefault();
+                    «vendorAndName»PerformTreeOperation(jQuery(this).data('object-type'), 1, 'addRootNode');
+                }).removeClass('hidden');
+            }
+
+            if (jQuery('.tree-container').length > 0) {
+                var treeContainer;
+                var idPrefix;
+                var objectType;
+
+                treeContainer = jQuery('.tree-container').first();
+                idPrefix = treeContainer.attr('id');
+                objectType = treeContainer.data('object-type');
+
+                «vendorAndName»InitTree(idPrefix, '«name.formatForCode»', treeContainer.data('root-id'), treeContainer.data('has-display'), treeContainer.data('has-edit'));
+            }
+        });
     '''
 }

@@ -65,7 +65,7 @@ class Layout {
             «/*{{ pageAddAsset('javascript', 'jquery-ui') }}*/»
             {{ pageAddAsset('stylesheet', asset('jquery-ui/themes/base/jquery-ui.min.css')) }}
             {{ pageAddAsset('javascript', asset('bootstrap/js/bootstrap.min.js')) }}
-            «IF hasUploads»
+            «IF hasImageFields»
                 {{ pageAddAsset('javascript', asset('bootstrap-media-lightbox/bootstrap-media-lightbox.min.js')) }}
                 {{ pageAddAsset('stylesheet', asset('bootstrap-media-lightbox/bootstrap-media-lightbox.css')) }}
             «ENDIF»
@@ -73,8 +73,12 @@ class Layout {
                 {{ pageAddAsset('stylesheet', asset('bootstrap-jqueryui/bootstrap-jqueryui.min.css')) }}
                 {{ pageAddAsset('javascript', asset('bootstrap-jqueryui/bootstrap-jqueryui.min.js')) }}
             «ENDIF»
-            {{ pageAddAsset('javascript', zasset('@«appName»:js/«appName».js')) }}
-            {{ polyfill([«IF hasGeographical»'geolocation', «ENDIF»'forms', 'forms-ext']) }}
+            {% if app.request.query.get('theme') != 'ZikulaPrinterTheme' %}
+                {{ pageAddAsset('javascript', zasset('@«appName»:js/«appName».js')) }}
+                «IF hasEditActions»
+                    {{ polyfill([«IF hasGeographical»'geolocation', «ENDIF»'forms', 'forms-ext']) }}
+                «ENDIF»
+            {% endif %}
         {% endblock %}
 
         {% if app.request.query.get('theme') != 'ZikulaPrinterTheme' %}

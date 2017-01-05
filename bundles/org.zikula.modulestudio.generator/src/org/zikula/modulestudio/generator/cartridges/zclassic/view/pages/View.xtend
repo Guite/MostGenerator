@@ -89,7 +89,6 @@ class View {
                 «callDisplayHooks(appName)»
             {% endblock %}
         «ENDIF»
-        «ajaxToggle»
     '''
 
     def private pageNavLinks(Entity it, String appName) '''
@@ -163,7 +162,7 @@ class View {
                 <tr>
                     {% if routeArea == 'admin' %}
                         <th id="hSelect" scope="col" class="text-center">
-                            <input type="checkbox" id="toggle«nameMultiple.formatForCodeCapital»" />
+                            <input type="checkbox" class="«application.vendorAndName.toLowerCase»-mass-toggle" />
                         </th>
                     {% endif %}
                     «FOR field : listItemsFields»«field.headerLine»«ENDFOR»
@@ -186,7 +185,7 @@ class View {
                 <tr>
                     {% if routeArea == 'admin' %}
                         <td headers="hSelect" class="text-center">
-                            <input type="checkbox" name="items[]" value="{{ «name.formatForCode».«getPrimaryKeyFields.head.name.formatForCode» }}" class="«nameMultiple.formatForCode.toLowerCase»-checkbox" />
+                            <input type="checkbox" name="items[]" value="{{ «name.formatForCode».«getPrimaryKeyFields.head.name.formatForCode» }}" class="«application.vendorAndName.toLowerCase»-toggle-checkbox" />
                         </td>
                     {% endif %}
             «ENDIF»
@@ -286,54 +285,6 @@ class View {
         {% endif % #}
     '''
 
-    def private ajaxToggle(Entity it) '''
-        «IF hasBooleansWithAjaxToggleEntity('view') || hasImageFieldsEntity || listType == LIST_TYPE_TABLE»
-            {% block footer %}
-                {{ parent() }}
-
-                <script type="text/javascript">
-                /* <![CDATA[ */
-                    ( function($) {
-                        $(document).ready(function() {
-                            «IF hasImageFieldsEntity»
-                                $('a.lightbox').lightbox();
-                            «ENDIF»
-                            «new ItemActionsView().generateView(it, 'javascript')»
-                            «initAjaxSingleToggle»
-                            «IF listType == LIST_TYPE_TABLE»
-                                «initMassToggle»
-                            «ENDIF»
-                        });
-                    })(jQuery);
-                /* ]]> */
-                </script>
-            {% endblock %}
-        «ENDIF»
-    '''
-
-    def private initAjaxSingleToggle(Entity it) '''
-        «IF hasBooleansWithAjaxToggleEntity('view')»
-            «val objName = name.formatForCode»
-            {% for «objName» in items %}
-                {% set itemid = «objName».createCompositeIdentifier() %}
-                «FOR field : getBooleansWithAjaxToggleEntity('view')»
-                    «application.vendorAndName»InitToggle('«objName»', '«field.name.formatForCode»', '{{ itemid|e('js') }}');
-                «ENDFOR»
-            {% endfor %}
-        «ENDIF»
-    '''
-
-    def private initMassToggle(Entity it) '''
-        {% if routeArea == 'admin' %}
-            {# init the "toggle all" functionality #}
-            if ($('#toggle«nameMultiple.formatForCodeCapital»').length > 0) {
-                $('#toggle«nameMultiple.formatForCodeCapital»').click(function (event) {
-                    $('.«nameMultiple.formatForCode.toLowerCase»-checkbox').prop('checked', $(this).prop('checked'));
-                });
-            }
-        {% endif %}
-    '''
-
     def private columnDef(DerivedField it) '''
         «IF name == 'workflowState'»{% if routeArea == 'admin' %}«ENDIF»
         <col id="c«markupIdCode(false)»" />
@@ -425,16 +376,7 @@ class View {
               {{ «relObjName».getTitleFromDisplayPattern() }}
             «IF linkEntity.hasDisplayAction»
                 {% endspaceless %}</a>
-                <a id="«linkEntity.name.formatForCode»Item«FOR pkField : mainEntity.getPrimaryKeyFields SEPARATOR '_'»{{ «mainEntity.name.formatForCode».«pkField.name.formatForCode» }}«ENDFOR»_rel_«FOR pkField : linkEntity.getPrimaryKeyFields SEPARATOR '_'»{{ «relObjName».«pkField.name.formatForCode» }}«ENDFOR»Display" href="{{ path('«application.appName.formatForDB»_«linkEntity.name.formatForDB»_' ~ routeArea ~ 'display', {«linkEntity.routePkParams(relObjName, true)»«linkEntity.appendSlug(relObjName, true)», 'theme': 'ZikulaPrinterTheme' }) }}" title="{{ __('Open quick view window')|e('html_attr') }}" class="fa fa-search-plus hidden"></a>
-                <script type="text/javascript">
-                /* <![CDATA[ */
-                    ( function($) {
-                        $(document).ready(function() {
-                            «application.vendorAndName»InitInlineWindow($('#«linkEntity.name.formatForCode»Item«FOR pkField : mainEntity.getPrimaryKeyFields SEPARATOR '_'»{{ «mainEntity.name.formatForCode».«pkField.name.formatForCode» }}«ENDFOR»_rel_«FOR pkField : linkEntity.getPrimaryKeyFields SEPARATOR '_'»{{ «relObjName».«pkField.name.formatForCode» }}«ENDFOR»Display'), '{{ «relObjName».getTitleFromDisplayPattern()|e('js') }}');
-                        });
-                    })(jQuery);
-                /* ]]> */
-                </script>
+                <a id="«linkEntity.name.formatForCode»Item«FOR pkField : mainEntity.getPrimaryKeyFields SEPARATOR '_'»{{ «mainEntity.name.formatForCode».«pkField.name.formatForCode» }}«ENDFOR»_rel_«FOR pkField : linkEntity.getPrimaryKeyFields SEPARATOR '_'»{{ «relObjName».«pkField.name.formatForCode» }}«ENDFOR»Display" href="{{ path('«application.appName.formatForDB»_«linkEntity.name.formatForDB»_' ~ routeArea ~ 'display', {«linkEntity.routePkParams(relObjName, true)»«linkEntity.appendSlug(relObjName, true)», 'theme': 'ZikulaPrinterTheme' }) }}" title="{{ __('Open quick view window')|e('html_attr') }}" class="«application.vendorAndName.toLowerCase»-inline-window hidden" data-modal-title="{{ «relObjName».getTitleFromDisplayPattern()|e('html_attr') }}"><span class="fa fa-id-card-o"></span></a>
             «ENDIF»
         {% else %}
             {{ __('Not set.') }}
@@ -471,7 +413,7 @@ class View {
         «ELSE»
             <td id="«new ItemActionsView().itemActionContainerViewId(it)»" headers="hItemActions" class="actions text-right nowrap z-w02">
         «ENDIF»
-            «new ItemActionsView().generateView(it, 'markup')»
+            «new ItemActionsView().generate(it, 'view')»
         </«listType.asItemTag»>
     '''
 

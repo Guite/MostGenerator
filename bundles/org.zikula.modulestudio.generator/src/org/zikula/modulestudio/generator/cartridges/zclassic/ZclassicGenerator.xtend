@@ -22,9 +22,11 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.controller.addition
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.additions.MultiHook
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.additions.Newsletter
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.additions.Tag
+import org.zikula.modulestudio.generator.cartridges.zclassic.controller.javascript.ConfigFunctions
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.javascript.DisplayFunctions
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.javascript.EditFunctions
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.javascript.Finder
+import org.zikula.modulestudio.generator.cartridges.zclassic.controller.javascript.GeoFunctions
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.javascript.TreeFunctions
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.javascript.Validation
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.Entities
@@ -147,13 +149,19 @@ class ZclassicGenerator implements IGenerator {
         }
         pm?.subTask('Controller: JavaScript files')
         println('Generating JavaScript files')
-        if (generateExternalControllerAndFinder) {
-            new Finder().generate(it, fsa)
+        if (hasImageFields) {
+            new ConfigFunctions().generate(it, fsa)
         }
+        new DisplayFunctions().generate(it, fsa)
         if (hasEditActions) {
             new EditFunctions().generate(it, fsa)
         }
-        new DisplayFunctions().generate(it, fsa)
+        if (generateExternalControllerAndFinder) {
+            new Finder().generate(it, fsa)
+        }
+        if (hasGeographical) {
+            new GeoFunctions().generate(it, fsa)
+        }
         if (hasTrees) {
             new TreeFunctions().generate(it, fsa)
         }

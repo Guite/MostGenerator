@@ -176,11 +176,8 @@ class Finder {
             // required as a changed object type requires a new instance of the item selector plugin
             jQuery('#«elemPrefix»ObjectType').change(«objName».itemSelector.onParamChanged);
 
-            if (jQuery('#' + baseId + '_catidMain').length > 0) {
-                jQuery('#' + baseId + '_catidMain').change(«objName».itemSelector.onParamChanged);
-            } else if (jQuery('#' + baseId + '_catidsMain').length > 0) {
-                jQuery('#' + baseId + '_catidsMain').change(«objName».itemSelector.onParamChanged);
-            }
+            jQuery('#' + baseId + '_catidMain').change(«objName».itemSelector.onParamChanged);
+            jQuery('#' + baseId + '_catidsMain').change(«objName».itemSelector.onParamChanged);
             jQuery('#' + baseId + 'Id').change(«objName».itemSelector.onItemChanged);
             jQuery('#' + baseId + 'Sort').change(«objName».itemSelector.onParamChanged);
             jQuery('#' + baseId + 'SortDir').change(«objName».itemSelector.onParamChanged);
@@ -199,18 +196,21 @@ class Finder {
 
         «objName».itemSelector.getItemList = function ()
         {
-            var baseId, params;
+            var baseId;
+            var params;
 
             baseId = «name.formatForDB».itemSelector.baseId;
-            params = 'ot=' + baseId + '&';
-            if (jQuery('#' + baseId + '_catidMain').length > 0) {
-                params += 'catidMain=' + jQuery('#' + baseId + '_catidMain').val() + '&';
-            } else if (jQuery('#' + baseId + '_catidsMain').length > 0) {
-                params += 'catidsMain=' + jQuery('#' + baseId + '_catidsMain').val() + '&';
+            params = {
+                ot: baseId
+                sort: jQuery('#' + baseId + 'Sort').val(),
+                sortdir: jQuery('#' + baseId + 'SortDir').val(),
+                q: jQuery('#' + baseId + 'SearchTerm').val()
             }
-            params += 'sort=' + jQuery('#' + baseId + 'Sort').val() + '&' +
-                      'sortdir=' + jQuery('#' + baseId + 'SortDir').val() + '&' +
-                      'q=' + jQuery('#' + baseId + 'SearchTerm').val();
+            if (jQuery('#' + baseId + '_catidMain').length > 0) {
+                params[catidMain] = jQuery('#' + baseId + '_catidMain').val();
+            } else if (jQuery('#' + baseId + '_catidsMain').length > 0) {
+                params[catidsMain] = jQuery('#' + baseId + '_catidsMain').val();
+            }
 
             jQuery.ajax({
                 type: 'POST',

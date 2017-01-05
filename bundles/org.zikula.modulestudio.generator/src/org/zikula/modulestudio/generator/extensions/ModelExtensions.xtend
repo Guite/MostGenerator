@@ -157,6 +157,20 @@ class ModelExtensions {
     }
 
     /**
+     * Checks whether the application contains at least one entity with at least one boolean field having ajax toggle enabled for it's view action.
+     */
+    def hasBooleansWithAjaxToggleInView(Application it) {
+        !getAllEntities.filter[hasBooleansWithAjaxToggleEntity('view')].empty
+    }
+
+    /**
+     * Checks whether the application contains at least one entity with at least one boolean field having ajax toggle enabled for it's display action.
+     */
+    def hasBooleansWithAjaxToggleInDisplay(Application it) {
+        !getAllEntities.filter[hasBooleansWithAjaxToggleEntity('display')].empty
+    }
+
+    /**
      * Returns a list of all entities with at least one boolean field having ajax toggle enabled.
      */
     def getEntitiesWithAjaxToggle(Application it) {

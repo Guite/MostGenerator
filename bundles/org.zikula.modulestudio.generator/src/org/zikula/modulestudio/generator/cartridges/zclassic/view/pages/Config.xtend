@@ -70,26 +70,7 @@ class Config {
         «IF hasImageFields»
             {% block footer %}
                 {{ parent() }}
-
-                <script type="text/javascript">
-                /* <![CDATA[ */
-                    ( function($) {
-                        function «prefix.formatForDB»ToggleShrinkSettings(fieldName) {
-                            var idSuffix = fieldName.replace('«appName.toLowerCase»_appsettings_', '');
-                            $('#shrinkDetails' + idSuffix).toggleClass('hidden', !$('#«appName.toLowerCase»_appsettings_enableShrinkingFor' + idSuffix).prop('checked'));
-                        }
-
-                        $(document).ready(function() {
-                            $('.shrink-enabler').each(function (index) {
-                                $(this).bind('click keyup', function (event) {
-                                    «prefix.formatForDB»ToggleShrinkSettings($(this).attr('id').replace('enableShrinkingFor', ''));
-                                });
-                                «prefix.formatForDB»ToggleShrinkSettings($(this).attr('id').replace('enableShrinkingFor', ''));
-                            });
-                        });
-                    })(jQuery);
-                /* ]]> */
-                </script>
+                {{ pageAddAsset('javascript', zasset('@«appName»:javascript/«appName».Config.js')) }}
             {% endblock %}
         «ENDIF»
     '''

@@ -40,21 +40,6 @@ class ViewQuickNavForm {
                 {{ form_widget(quickNavForm.updateview) }}
             </fieldset>
             {{ form_end(quickNavForm) }}
-            <script type="text/javascript">
-            /* <![CDATA[ */
-                ( function($) {
-                    $(document).ready(function() {
-                        «application.vendorAndName»InitQuickNavigation('«name.formatForCode»');
-                        «IF hasAbstractStringFieldsEntity»
-                            {% if searchFilter|default and searchFilter == false %}
-                                {# we can hide the submit button if we have no quick search field #}
-                                $('#«application.appName.formatForDB»_«name.formatForDB»quicknav_updateview').addClass('hidden');
-                            {% endif %}
-                        «ENDIF»
-                    });
-                })(jQuery);
-            /* ]]> */
-            </script>
         {% endif %}
     '''
 
