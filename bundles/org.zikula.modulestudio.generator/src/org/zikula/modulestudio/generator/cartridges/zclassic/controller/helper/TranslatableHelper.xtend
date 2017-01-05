@@ -21,18 +21,18 @@ import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class TranslatableHelper {
+
     extension FormattingExtensions = new FormattingExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
-
-    FileHelper fh = new FileHelper
 
     /**
      * Entry point for the helper class creation.
      */
     def generate(Application it, IFileSystemAccess fsa) {
         println('Generating helper class for translatable entities')
+        val fh = new FileHelper
         generateClassPair(fsa, getAppSourceLibPath + 'Helper/TranslatableHelper.php',
             fh.phpFileContent(it, translatableFunctionsBaseImpl), fh.phpFileContent(it, translatableFunctionsImpl)
         )

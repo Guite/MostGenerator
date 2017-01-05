@@ -19,13 +19,12 @@ class ListEntriesHelper {
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
 
-    FileHelper fh = new FileHelper
-
     /**
      * Entry point for the helper class creation.
      */
     def generate(Application it, IFileSystemAccess fsa) {
         println('Generating helper class for list entries')
+        val fh = new FileHelper
         generateClassPair(fsa, getAppSourceLibPath + 'Helper/ListEntriesHelper.php',
             fh.phpFileContent(it, listFieldFunctionsBaseImpl), fh.phpFileContent(it, listFieldFunctionsImpl)
         )

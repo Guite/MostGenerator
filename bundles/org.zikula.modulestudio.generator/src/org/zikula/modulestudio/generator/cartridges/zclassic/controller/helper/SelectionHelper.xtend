@@ -9,15 +9,15 @@ import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class SelectionHelper {
+
     extension FormattingExtensions = new FormattingExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
 
-    FileHelper fh = new FileHelper
-
     def generate(Application it, IFileSystemAccess fsa) {
         println('Generating helper class for entity selections')
+        val fh = new FileHelper
         generateClassPair(fsa, getAppSourceLibPath + 'Helper/SelectionHelper.php',
             fh.phpFileContent(it, selectionHelperBaseClass), fh.phpFileContent(it, selectionHelperImpl)
         )

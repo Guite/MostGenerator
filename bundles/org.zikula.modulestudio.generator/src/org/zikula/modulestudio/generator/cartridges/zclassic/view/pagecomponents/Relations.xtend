@@ -36,7 +36,7 @@ class Relations {
         «IF ownerPermission»
             {% set hasEditPermission = hasPermission('«app.appName»:«name.formatForCodeCapital»:', '::', 'ACCESS_«IF workflow == EntityWorkflowType::NONE»EDIT«ELSE»COMMENT«ENDIF»') %}
         «ENDIF»
-        «IF hasActions('display')»
+        «IF hasDisplayAction»
             {% if nolink is not defined %}
                 {% set nolink = false %}
             {% endif %}
@@ -50,14 +50,14 @@ class Relations {
                 {% if hasAdminPermission or item.workflowState == 'approved'«IF ownerPermission» or (item.workflowState == 'defered' and hasEditPermission and currentUser|default and item.createdBy.getUid() == currentUser.uid)«ENDIF» %}
                 <li>
         «ENDIF»
-        «IF hasActions('display')»
+        «IF hasDisplayAction»
             {% spaceless %}
             {% if not nolink %}
                 <a href="{{ path('«app.appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ 'display'«routeParams('item', true)») }}" title="{{ item.getTitleFromDisplayPattern()|e('html_attr') }}">
             {% endif %}
         «ENDIF»
             {{ item.getTitleFromDisplayPattern() }}
-        «IF hasActions('display')»
+        «IF hasDisplayAction»
             {% if not nolink %}
                 </a>
                 <a id="«name.formatForCode»Item«FOR pkField : getPrimaryKeyFields SEPARATOR '_'»{{ item.«pkField.name.formatForCode» }}«ENDFOR»Display" href="{{ path('«app.appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ 'display', { «routePkParams('item', true)»«appendSlug('item', true)», 'theme': 'ZikulaPrinterTheme' }) }}" title="{{ __('Open quick view window') }}" class="fa fa-search-plus hidden"></a>
@@ -66,7 +66,7 @@ class Relations {
         «ENDIF»
         «IF !many»</h4>
         «ENDIF»
-        «IF hasActions('display')»
+        «IF hasDisplayAction»
             {% if not nolink %}
                 <script type="text/javascript">
                 /* <![CDATA[ */
@@ -115,7 +115,7 @@ class Relations {
             ) }}
         {% endif %}
 
-        «IF otherEntity.hasActions('edit')»
+        «IF otherEntity.hasEditAction»
             «IF !many»
                 {% if «relatedEntity.name.formatForCode».«relationAliasName» is not defined or «relatedEntity.name.formatForCode».«relationAliasName» is null %}
             «ENDIF»

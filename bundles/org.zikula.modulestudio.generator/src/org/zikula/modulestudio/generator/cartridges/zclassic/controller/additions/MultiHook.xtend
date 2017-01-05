@@ -22,7 +22,7 @@ class MultiHook {
 
     def generate(Application it, IFileSystemAccess fsa) {
         app = it
-        for (entity: getAllEntities.filter[e|e.hasActions('view') || e.hasActions('display')]) {
+        for (entity: getAllEntities.filter[hasViewAction || hasDisplayAction]) {
             entity.generateNeedle(fsa)
         }
     }
@@ -50,7 +50,7 @@ class MultiHook {
                 // module name
                 'module'  => '«app.appName»',
                 // possible needles
-                'info'    => '«app.prefix.toUpperCase»{«IF hasActions('view')»«nameMultiple.formatForCode.toUpperCase»«ENDIF»«IF hasActions('display')»«IF hasActions('view')»|«ENDIF»«name.formatForCode.toUpperCase»-«name.formatForCode»Id«ENDIF»}',
+                'info'    => '«app.prefix.toUpperCase»{«IF hasViewAction»«nameMultiple.formatForCode.toUpperCase»«ENDIF»«IF hasDisplayAction»«IF hasViewAction»|«ENDIF»«name.formatForCode.toUpperCase»-«name.formatForCode»Id«ENDIF»}',
                 // whether a reverse lookup is possible, needs «app.appName»_needleapi_«name.formatForDisplay»_inspect() function
                 'inspect' => false
             ];
@@ -102,7 +102,7 @@ class MultiHook {
 
             $router = \ServiceUtil::getService('router');
 
-            «IF hasActions('view')»
+            «IF hasViewAction»
                 if ($needleId == '«nameMultiple.formatForCode.toUpperCase»') {
                     if (!\SecurityUtil::checkPermission('«app.appName»:«name.formatForCodeCapital»:', '::', ACCESS_READ)) {
                         $cache[$nid] = '';
@@ -113,7 +113,7 @@ class MultiHook {
 
                 $cache[$nid] = '<a href="' . $router->generate('«app.appName.formatForDB»_«nameMultiple.formatForDB»_view') . '" title="' . $translator->__('View «nameMultiple.formatForDisplay»') . '">' . $translator->__('«nameMultiple.formatForDisplayCapital»') . '</a>';
             «ENDIF»
-            «IF hasActions('display')»
+            «IF hasDisplayAction»
                 $needleParts = explode('-', $needleId);
                 if ($needleParts[0] != '«name.formatForCode.toUpperCase»' || count($needleParts) < 2) {
                     $cache[$nid] = '';

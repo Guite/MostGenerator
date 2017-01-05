@@ -253,6 +253,9 @@ class Newsletter {
                 $previewFieldName = $repository->getPreviewFieldName();
             «ENDIF»
 
+            «IF hasDisplayActions»
+                $hasDisplayPage = in_array($objectType, ['«getAllEntities.filter[hasDisplayAction].map[name.formatForCode].join('\', \'')»']);
+            «ENDIF»
             $items = [];
             foreach ($entities as $k => $item) {
                 $items[$k] = [];
@@ -260,11 +263,15 @@ class Newsletter {
                 // Set title of this item.
                 $items[$k]['nl_title'] = $item->getTitleFromDisplayPattern();
 
-                «IF hasUserController && getMainUserController.hasActions('display')»
-                    // Set (full qualified) link of title
-                    $urlArgs = $item->createUrlArgs();
-                    $urlArgs['lang'] = $this->lang;
-                    $items[$k]['nl_url_title'] = $serviceManager->get('router')->generate('«appName.formatForDB»_' . strtolower($objectType) . '_display', $urlArgs, true);
+                «IF hasDisplayActions»
+                    if ($hasDisplayPage) {
+                        // Set (full qualified) link of title
+                        $urlArgs = $item->createUrlArgs();
+                        $urlArgs['lang'] = $this->lang;
+                        $items[$k]['nl_url_title'] = $serviceManager->get('router')->generate('«appName.formatForDB»_' . strtolower($objectType) . '_display', $urlArgs, true);
+                    } else {
+                        $items[$k]['nl_url_title'] = null;
+                    }
                 «ELSE»
                     $items[$k]['nl_url_title'] = null;
                 «ENDIF»

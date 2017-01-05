@@ -57,11 +57,11 @@ class FormHandler {
         if (hasEditActions()) {
             // form handlers
             generateCommon('edit', fsa)
-            for (entity : getAllEntities.filter[e|e.hasActions('edit')]) {
+            for (entity : getAllEntities.filter[hasEditAction]) {
                 entity.generate('edit', fsa)
             }
             // form types
-            for (entity : entities.filter[e|e instanceof MappedSuperClass || e.hasActions('edit')]) {
+            for (entity : entities.filter[e|e instanceof MappedSuperClass || (e as Entity).hasEditAction]) {
                 new EditEntity().generate(entity, fsa)
             }
             if (hasColourFields) {

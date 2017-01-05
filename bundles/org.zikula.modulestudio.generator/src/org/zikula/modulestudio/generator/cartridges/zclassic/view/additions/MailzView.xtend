@@ -12,6 +12,7 @@ import org.zikula.modulestudio.generator.extensions.UrlExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class MailzView {
+
     extension ControllerExtensions = new ControllerExtensions
     extension FormattingExtensions = new FormattingExtensions
     extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
@@ -71,34 +72,21 @@ class MailzView {
 
     def private mailzEntryText(Entity it, String appName) '''
         {{ «name.formatForCode».getTitleFromDisplayPattern() }}
-        «mailzEntryHtmlLinkUrlDisplay(application)»
+        «mailzEntryHtmlLinkUrl(application)»
     '''
 
     def private mailzEntryHtml(Entity it, Application app) '''
-        «IF app.hasUserController && app.getMainUserController.hasActions('display')»
-            <a href="«mailzEntryHtmlLinkUrlDisplay(app)»">«mailzEntryHtmlLinkText(app)»</a>
-        «ELSE»
-            <a href="«mailzEntryHtmlLinkUrlMain(app)»">«mailzEntryHtmlLinkText(app)»</a>
-        «ENDIF»
+        <a href="«mailzEntryHtmlLinkUrl(app)»">{{ «name.formatForCode».getTitleFromDisplayPattern() }}</a>
     '''
 
-    def private mailzEntryHtmlLinkUrlDisplay(Entity it, Application app) '''
-        {{ url('«app.appName.formatForDB»_«name.formatForDB»_display'«routeParams(name.formatForCode, true)») }}'''
-
-    def private mailzEntryHtmlLinkUrlMain(Entity it, Application app) '''
-        «IF app.hasUserController»
-            «IF app.getMainUserController.hasActions('view')»
-                {{ url('«app.appName.formatForDB»_«name.formatForDB»_view') }}
-            «ELSEIF app.getMainUserController.hasActions('index')»
-                {{ url('«app.appName.formatForDB»_«name.formatForDB»_index') }}
-            «ELSE»
-                {{ url('«app.appName.formatForDB»_«name.formatForDB»_index') }}
-            «ENDIF»
+    def private mailzEntryHtmlLinkUrl(Entity it, Application app) '''
+        «IF hasDisplayAction»
+            {{ url('«app.appName.formatForDB»_«name.formatForDB»_display'«routeParams(name.formatForCode, true)») }}
+        «ELSEIF hasViewAction»
+            {{ url('«app.appName.formatForDB»_«name.formatForDB»_view') }}
+        «ELSEIF hasIndexAction»
+            {{ url('«app.appName.formatForDB»_«name.formatForDB»_index') }}
         «ELSE»
             {{ app.request.getSchemeAndHttpHost() ~ app.request.getBasePath() }}
         «ENDIF»'''
-
-    def private mailzEntryHtmlLinkText(Entity it, Application app) '''
-        {{ «name.formatForCode».getTitleFromDisplayPattern() }}
-    '''
 }

@@ -47,7 +47,7 @@ class Forms {
             }
         }
 
-        for (entity : getAllEntities.filter[hasActions('edit')]) {
+        for (entity : getAllEntities.filter[hasEditAction]) {
             entity.generate(it, 'edit', fsa)
             if (needsAutoCompletion) {
                 entity.entityInlineRedirectHandlerFile(it, fsa)

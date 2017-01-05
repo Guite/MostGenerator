@@ -20,10 +20,9 @@ class SearchHelper {
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
 
-    FileHelper fh = new FileHelper
-
     def generate(Application it, IFileSystemAccess fsa) {
         println('Generating helper class for search integration')
+        val fh = new FileHelper
         generateClassPair(fsa, getAppSourceLibPath + 'Helper/SearchHelper.php',
             fh.phpFileContent(it, searchHelperBaseClass), fh.phpFileContent(it, searchHelperImpl)
         )
@@ -173,7 +172,7 @@ class SearchHelper {
 
                 $descriptionField = $repository->getDescriptionFieldName();
 
-                $entitiesWithDisplayAction = [«FOR entity : getAllEntities.filter[hasActions('display')] SEPARATOR ', '»'«entity.name.formatForCode»'«ENDFOR»];
+                $entitiesWithDisplayAction = ['«getAllEntities.filter[hasDisplayAction].map[name.formatForCode].join('\', \'')»'];
 
                 foreach ($entities as $entity) {
                     $urlArgs = $entity->createUrlArgs();

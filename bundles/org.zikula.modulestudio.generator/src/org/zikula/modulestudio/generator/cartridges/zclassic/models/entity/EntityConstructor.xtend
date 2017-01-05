@@ -88,7 +88,7 @@ class EntityConstructor {
             $this->«mandatoryField.name.formatForCode» = 1;
         «ENDFOR»
         «FOR mandatoryField : mandatoryFields.filter(UserField).filter[null === defaultValue || defaultValue == '' || defaultValue == '0']»
-            $this->«mandatoryField.name.formatForCode» = $serviceManager->get('zikula_users_module.current_user')->get('uname');
+            $this->«mandatoryField.name.formatForCode» = $serviceManager->get('zikula_users_module.current_user')->get('uid');
         «ENDFOR»
         «FOR mandatoryField : mandatoryFields.filter(DecimalField).filter[null === defaultValue || defaultValue == '' || defaultValue == '0']»
             $this->«mandatoryField.name.formatForCode» = 1;

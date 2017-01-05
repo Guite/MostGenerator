@@ -31,13 +31,13 @@ class Xml {
     def generate(Entity it, String appName, IFileSystemAccess fsa) {
         println('Generating xml view templates for entity "' + name.formatForDisplay + '"')
         var templateFilePath = ''
-        if (hasActions('view')) {
+        if (hasViewAction) {
             templateFilePath = templateFileWithExtension('view', 'xml')
             if (!application.shouldBeSkipped(templateFilePath)) {
                 fsa.generateFile(templateFilePath, xmlView(appName))
             }
         }
-        if (hasActions('display')) {
+        if (hasDisplayAction) {
             templateFilePath = templateFileWithExtension('display', 'xml')
             if (!application.shouldBeSkipped(templateFilePath)) {
                 fsa.generateFile(templateFilePath, xmlDisplay(appName))

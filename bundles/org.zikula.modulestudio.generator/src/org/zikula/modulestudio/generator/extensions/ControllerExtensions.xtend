@@ -1,7 +1,6 @@
 package org.zikula.modulestudio.generator.extensions
 
 import de.guite.modulestudio.metamodel.Action
-import de.guite.modulestudio.metamodel.AdminController
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.Controller
 import de.guite.modulestudio.metamodel.CustomAction
@@ -13,7 +12,6 @@ import de.guite.modulestudio.metamodel.IntVar
 import de.guite.modulestudio.metamodel.JoinRelationship
 import de.guite.modulestudio.metamodel.MainAction
 import de.guite.modulestudio.metamodel.ManyToManyRelationship
-import de.guite.modulestudio.metamodel.UserController
 import de.guite.modulestudio.metamodel.ViewAction
 
 /**
@@ -45,121 +43,62 @@ class ControllerExtensions {
     }
 
     /**
-     * Returns a list of all user controllers in the given application.
+     * Checks whether an entity owns an index action.
      */
-    def getAllUserControllers(Application it) {
-        controllers.filter(UserController)
-    }
-    /**
-     * Checks whether the application has an user controller or not.
-     */
-    def hasUserController(Application it) {
-        !getAllUserControllers.empty
-    }
-    /**
-     * Returns the default user controller.
-     */
-    def getMainUserController(Application it) {
-        getAllUserControllers.head
+    def hasIndexAction(Entity it) {
+        !actions.filter(MainAction).empty
     }
 
     /**
-     * Returns a list of all admin controllers in the given application.
+     * Checks whether an entity owns a view action.
      */
-    def getAllAdminControllers(Application it) {
-        controllers.filter(AdminController)
-    }
-    /**
-     * Checks whether the application has an admin controller or not.
-     */
-    def hasAdminController(Application it) {
-        !getAllAdminControllers.empty
+    def hasViewAction(Entity it) {
+        !actions.filter(ViewAction).empty
     }
 
     /**
-     * Checks whether a controller owns actions of a given type.
+     * Checks whether an entity owns a display action.
      */
-    def dispatch hasActions(Controller it, String type) {
-        switch type {
-            case 'index'    : !actions.filter(MainAction).empty 
-            case 'view'     : !actions.filter(ViewAction).empty 
-            case 'display'  : !actions.filter(DisplayAction).empty 
-            case 'edit'     : !actions.filter(EditAction).empty
-            case 'delete'   : !actions.filter(DeleteAction).empty
-            case 'custom'   : !actions.filter(CustomAction).empty 
-            default : false
-        }
+    def hasDisplayAction(Entity it) {
+        !actions.filter(DisplayAction).empty
     }
 
     /**
-     * Temporary bridge from legacy to entity controllers.
+     * Checks whether an entity owns an edit action.
      */
-    def private hasActionsBridge(Controller it, String type) {
-        val allEntityActions = application.getAllEntities.map[actions]
-        switch type {
-            case 'index'    : !actions.filter(MainAction).empty || allEntityActions.filter(MainAction).empty 
-            case 'view'     : application.hasViewActions 
-            case 'display'  : application.hasDisplayActions 
-            case 'edit'     : application.hasEditActions
-            case 'delete'   : application.hasDeleteActions
-            case 'custom'   : !actions.filter(CustomAction).empty || !allEntityActions.filter(CustomAction).empty
-            default : false
-        }
-    }
-
-    def dispatch hasActions(AdminController it, String type) {
-        hasActionsBridge(type)
+    def hasEditAction(Entity it) {
+        !actions.filter(EditAction).empty
     }
 
     /**
-     * Temporary bridge from legacy to entity controllers.
+     * Checks whether an entity owns a delete action.
      */
-    def dispatch hasActions(UserController it, String type) {
-        hasActionsBridge(type)
+    def hasDeleteAction(Entity it) {
+        !actions.filter(DeleteAction).empty
     }
 
     /**
-     * Returns a list of all actions in the user controller.
-     * Cares for BC by collecting all distinct entity actions, too.
+     * Checks whether an entity owns a custom action.
      */
-    def getAllUserActions(UserController it) {
-        var allActions = newArrayList
-        allActions += actions.map[name.formatForCode.toFirstLower]
-        if (application.hasViewActions) {
-            allActions += 'view'
-        }
-        if (application.hasDisplayActions) {
-            allActions += 'display'
-        }
-        if (application.hasEditActions) {
-            allActions += 'edit'
-        }
-        if (application.hasDeleteActions) {
-            allActions += 'delete'
-        }
-
-        allActions
-    }
-
-    /**
-     * Checks whether an entity owns actions of a given type.
-     */
-    def dispatch hasActions(Entity it, String type) {
-        switch type {
-            case 'index'    : !actions.filter(MainAction).empty 
-            case 'view'     : !actions.filter(ViewAction).empty 
-            case 'display'  : !actions.filter(DisplayAction).empty 
-            case 'edit'     : !actions.filter(EditAction).empty
-            case 'delete'   : !actions.filter(DeleteAction).empty
-            case 'custom'   : !actions.filter(CustomAction).empty 
-            default : false
-        }
+    def hasCustomAction(Entity it) {
+        !actions.filter(CustomAction).empty
     }
 
     /**
      * Determines the default action used for linking to a certain entity.
      */
-    def defaultAction(Entity it) '''«IF hasActions('display')»display«ELSEIF hasActions('view')»view«ELSE»index«ENDIF»'''
+    def defaultAction(Entity it) '''«IF hasDisplayAction»display«ELSEIF hasViewAction»view«ELSEIF hasIndexAction»index«ELSE»«actions.head.name.formatForCode»«ENDIF»'''
+
+    def getPrimaryAction(Entity it) {
+        if (hasIndexAction) {
+            return 'index'
+        }
+        if (hasViewAction) {
+            return 'view'
+        }
+
+        return actions.head.name.formatForDB
+    }
 
     /**
      * Checks whether the application has at least one view action or not.
@@ -172,7 +111,7 @@ class ControllerExtensions {
      * Returns a list of all view actions in the given application.
      */
     def getViewActions(Application it) {
-        controllers.map[actions].flatten.filter(ViewAction) + getAllEntities.map[actions].flatten.filter(ViewAction)
+        getAllEntities.map[actions].flatten.filter(ViewAction)
     }
 
     /**
@@ -186,7 +125,7 @@ class ControllerExtensions {
      * Returns a list of all display actions in the given application.
      */
     def getDisplayActions(Application it) {
-        controllers.map[actions].flatten.filter(DisplayAction) + getAllEntities.map[actions].flatten.filter(DisplayAction)
+        getAllEntities.map[actions].flatten.filter(DisplayAction)
     }
 
     /**
@@ -200,7 +139,7 @@ class ControllerExtensions {
      * Returns a list of all edit actions in the given application.
      */
     def getEditActions(Application it) {
-        controllers.map[actions].flatten.filter(EditAction) + getAllEntities.map[actions].flatten.filter(EditAction)
+        getAllEntities.map[actions].flatten.filter(EditAction)
     }
 
     /**
@@ -214,28 +153,7 @@ class ControllerExtensions {
      * Returns a list of all delete actions in the given application.
      */
     def getDeleteActions(Application it) {
-        controllers.map[actions].flatten.filter(DeleteAction) + getAllEntities.map[actions].flatten.filter(DeleteAction)
-    }
-
-    /**
-     * Get a list of only admin and user controllers.
-     */
-    def getAdminAndUserControllers(Application it) {
-        controllers.filter(AdminController) + controllers.filter(UserController)
-    }
-
-    /**
-     * Determines the controller in which the config action is living.
-     */
-    def configController(Application it) {
-        'config'
-    }
-
-    /**
-     * Checks for whether the given controller is responsible for the config action.
-     */
-    def isConfigController(Controller it) {
-        application.configController == formattedName
+        getAllEntities.map[actions].flatten.filter(DeleteAction)
     }
 
     /**
@@ -266,16 +184,9 @@ class ControllerExtensions {
     }
 
     /**
-     * Returns a list of all custom actions contained by a given controller.
-     */
-    def dispatch getCustomActions(Controller it) {
-        actions.filter(CustomAction)
-    }
-
-    /**
      * Returns a list of all custom actions contained by a given entity.
      */
-    def dispatch getCustomActions(Entity it) {
+    def getCustomActions(Entity it) {
         actions.filter(CustomAction)
     }
 

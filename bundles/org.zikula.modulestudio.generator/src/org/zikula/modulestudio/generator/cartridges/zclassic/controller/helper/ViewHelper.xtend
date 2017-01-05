@@ -15,13 +15,12 @@ class ViewHelper {
     extension Utils = new Utils
     extension ViewExtensions = new ViewExtensions
 
-    FileHelper fh = new FileHelper
-
     /**
      * Entry point for the helper class creation.
      */
     def generate(Application it, IFileSystemAccess fsa) {
         println('Generating helper class for view layer')
+        val fh = new FileHelper
         generateClassPair(fsa, getAppSourceLibPath + 'Helper/ViewHelper.php',
             fh.phpFileContent(it, viewFunctionsBaseImpl), fh.phpFileContent(it, viewFunctionsImpl)
         )

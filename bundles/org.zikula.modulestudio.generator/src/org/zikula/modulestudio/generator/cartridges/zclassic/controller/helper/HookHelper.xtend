@@ -9,11 +9,10 @@ import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class HookHelper {
+
     extension ModelExtensions = new ModelExtensions
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
-
-    FileHelper fh = new FileHelper
 
     /**
      * Entry point for the helper class creation.
@@ -22,7 +21,7 @@ class HookHelper {
         if (!hasHookSubscribers) {
             return
         }
-
+        val fh = new FileHelper
         println('Generating helper class for hook calls')
         generateClassPair(fsa, getAppSourceLibPath + 'Helper/HookHelper.php',
             fh.phpFileContent(it, hookFunctionsBaseImpl), fh.phpFileContent(it, hookFunctionsImpl)

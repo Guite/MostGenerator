@@ -41,7 +41,7 @@ class ViewHierarchy {
                 «ENDIF»
 
                 <p>
-                    «IF hasActions('edit')»
+                    «IF hasEditAction»
                     {% if hasPermission('«appName»:«name.formatForCodeCapital»:', '::', 'ACCESS_«IF workflow == EntityWorkflowType::NONE»EDIT«ELSE»COMMENT«ENDIF»') %}
                         {% set addRootTitle = __('Add root node') %}
                         <a id="treeAddRoot" href="javascript:void(0)" title="{{ addRootTitle|e('html_attr') }}" class="fa fa-plus hidden">{{ addRootTitle }}</a>
@@ -91,7 +91,7 @@ class ViewHierarchy {
         <div id="{{ idPrefix }}" class="tree-container">
             {% if hasNodes %}
                 <ul id="itemTree{{ rootId }}">
-                    {{ «appName.formatForDB»_treeData(objectType='«name.formatForCode»', tree=items, controller='«name.formatForCode»', rootId=rootId) }}
+                    {{ «appName.formatForDB»_treeData(objectType='«name.formatForCode»', tree=items, routeArea=routeArea, rootId=rootId) }}
                 </ul>
             {% endif %}
         </div>
@@ -105,7 +105,7 @@ class ViewHierarchy {
             /* <![CDATA[ */
                 ( function($) {
                     $(document).ready(function() {
-                        «application.vendorAndName»InitTree('{{ idPrefix|e('js') }}', '«name.formatForCode»', '{{ rootId|e('js') }}', «hasActions('display').displayBool», «(hasActions('edit') && !readOnly).displayBool»);
+                        «application.vendorAndName»InitTree('{{ idPrefix|e('js') }}', '«name.formatForCode»', '{{ rootId|e('js') }}', «hasDisplayAction.displayBool», «(hasEditAction && !readOnly).displayBool»);
                     });
                 })(jQuery);
             /* ]]> */

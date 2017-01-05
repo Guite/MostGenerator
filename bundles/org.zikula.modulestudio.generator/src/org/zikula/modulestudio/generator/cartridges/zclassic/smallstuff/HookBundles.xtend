@@ -19,25 +19,25 @@ class HookBundles {
             «/* we register one hook subscriber bundle for each entity type */»«val areaName = entity.nameMultiple.formatForDB»
             $bundle = new SubscriberBundle('«appName»', 'subscriber.«areaPrefix».ui_hooks.«areaName»', 'ui_hooks', $this->__('«areaPrefix» «entity.nameMultiple.formatForDisplayCapital» Display Hooks'));
             «/* $bundle->addEvent('hook type', 'event name triggered by *this* module');*/»
-            «IF entity.hasActions('view') || entity.hasActions('display')»
+            «IF entity.hasViewAction || entity.hasDisplayAction»
                 // Display hook for view/display templates.
                 $bundle->addEvent('display_view', '«uiArea»«areaName».display_view');
             «ENDIF»
             // Display hook for create/edit forms.
             $bundle->addEvent('form_edit', '«uiArea»«areaName».form_edit');
-            «IF entity.hasActions('edit') || entity.hasActions('delete')»
+            «IF entity.hasEditAction || entity.hasDeleteAction»
                 // Display hook for delete dialogues.
                 $bundle->addEvent('form_delete', '«uiArea»«areaName».form_delete');
             «ENDIF»
             // Validate input from an ui create/edit form.
             $bundle->addEvent('validate_edit', '«uiArea»«areaName».validate_edit');
-            «IF entity.hasActions('edit') || entity.hasActions('delete')»
+            «IF entity.hasEditAction || entity.hasDeleteAction»
                 // Validate input from an ui delete form.
                 $bundle->addEvent('validate_delete', '«uiArea»«areaName».validate_delete');
             «ENDIF»
             // Perform the final update actions for a ui create/edit form.
             $bundle->addEvent('process_edit', '«uiArea»«areaName».process_edit');
-            «IF entity.hasActions('edit') || entity.hasActions('delete')»
+            «IF entity.hasEditAction || entity.hasDeleteAction»
                 // Perform the final delete actions for a ui form.
                 $bundle->addEvent('process_delete', '«uiArea»«areaName».process_delete');
             «ENDIF»

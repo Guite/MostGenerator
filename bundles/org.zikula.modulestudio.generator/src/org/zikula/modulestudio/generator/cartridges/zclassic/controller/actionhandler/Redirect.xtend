@@ -1,7 +1,5 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.controller.actionhandler
 
-import de.guite.modulestudio.metamodel.AdminController
-import de.guite.modulestudio.metamodel.AjaxController
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.EntityTreeType
@@ -35,21 +33,7 @@ class Redirect {
         {
             $codes = [];
 
-            «FOR someController : controllers»
-                «val controllerName = someController.formattedName»
-                «IF someController.hasActions('index')»
-                    // index page of «controllerName» area
-                    $codes[] = '«controllerName»';
-                «ENDIF»
-                «IF someController.hasActions('view')»
-                    // «controllerName» list of entities
-                    $codes[] = '«controllerName»View';
-                «ENDIF»
-                «IF someController.hasActions('display')»
-                    // «controllerName» display page of treated entity
-                    $codes[] = '«controllerName»Display';
-                «ENDIF»
-            «ENDFOR»
+            // to be filled by subclasses
 
             return $codes;
         }
@@ -65,20 +49,40 @@ class Redirect {
         {
             $codes = parent::getRedirectCodes();
 
+            «IF hasIndexAction»
+                // user index page of «name.formatForDisplay» area
+                $codes[] = 'userIndex';
+                // admin index page of «name.formatForDisplay» area
+                $codes[] = 'adminIndex';
+            «ENDIF»
+            «IF hasViewAction»
+                // user list of «nameMultiple.formatForDisplay»
+                $codes[] = 'userView';
+                // admin list of «nameMultiple.formatForDisplay»
+                $codes[] = 'adminView';
+            «ENDIF»
+            «IF hasDisplayAction»
+                // user detail page of treated «name.formatForDisplay»
+                $codes[] = 'userDisplay';
+                // admin detail page of treated «name.formatForDisplay»
+                $codes[] = 'adminDisplay';
+            «ENDIF»
+
             «FOR incomingRelation : getIncomingJoinRelationsWithOneSource.filter[source.application == app && source instanceof Entity]»
                 «val sourceEntity = incomingRelation.source as Entity»
                 «IF sourceEntity.name != it.name»
-                    «FOR someController : app.controllers»
-                        «val controllerName = someController.formattedName»
-                        «IF someController.hasActions('view')»
-                            // «controllerName» list of «sourceEntity.nameMultiple.formatForDisplay»
-                            $codes[] = '«controllerName»View«sourceEntity.name.formatForCodeCapital»';
-                        «ENDIF»
-                        «IF someController.hasActions('display')»
-                            // «controllerName» display page of treated «sourceEntity.name.formatForDisplay»
-                            $codes[] = '«controllerName»Display«sourceEntity.name.formatForCodeCapital»';
-                        «ENDIF»
-                    «ENDFOR»
+                    «IF sourceEntity.hasViewAction»
+                        // user list of «sourceEntity.nameMultiple.formatForDisplay»
+                        $codes[] = 'userView«sourceEntity.name.formatForCodeCapital»';
+                        // admin list of «sourceEntity.nameMultiple.formatForDisplay»
+                        $codes[] = 'adminView«sourceEntity.name.formatForCodeCapital»';
+                    «ENDIF»
+                    «IF sourceEntity.hasDisplayAction»
+                        // user detail page of related «sourceEntity.name.formatForDisplay»
+                        $codes[] = 'userDisplay«sourceEntity.name.formatForCodeCapital»';
+                        // admin detail page of related «sourceEntity.name.formatForDisplay»
+                        $codes[] = 'adminDisplay«sourceEntity.name.formatForCodeCapital»';
+                    «ENDIF»
                 «ENDIF»
             «ENDFOR»
 
@@ -108,29 +112,30 @@ class Redirect {
                 }
             }
 
-            «IF hasActions('view') || hasActions('index') || hasActions('display') && tree != EntityTreeType.NONE»
+            «IF hasIndexAction || hasViewAction || hasDisplayAction && tree != EntityTreeType.NONE»
                 $routeArea = array_key_exists('routeArea', $this->templateParameters) ? $this->templateParameters['routeArea'] : '';
+                $routePrefix = '«app.appName.formatForDB»_' . $this->objectTypeLower . '_' . $routeArea;
 
             «ENDIF»
-            «IF hasActions('view')»
+            «IF hasViewAction»
                 // redirect to the list of «nameMultiple.formatForCode»
                 $viewArgs = [];
                 «IF tree != EntityTreeType.NONE»
                     $viewArgs['tpl'] = 'tree';
                 «ENDIF»
-                $url = $this->router->generate('«app.appName.formatForDB»_' . $this->objectTypeLower . '_' . $routeArea . 'view', $viewArgs);
-            «ELSEIF hasActions('index')»
+                $url = $this->router->generate($routePrefix . 'view', $viewArgs);
+            «ELSEIF hasIndexAction»
                 // redirect to the index page
-                $url = $this->router->generate('«app.appName.formatForDB»_' . $this->objectTypeLower . '_' . $routeArea . 'index');
+                $url = $this->router->generate($routePrefix . 'index');
             «ELSE»
                 $url = $this->router->generate('home');
             «ENDIF»
-            «IF hasActions('display') && tree != EntityTreeType.NONE»
+            «IF hasDisplayAction && tree != EntityTreeType.NONE»
 
                 if ($objectIsPersisted) {
                     // redirect to the detail page of treated «name.formatForCode»
                     $displayArgs = [«routeParams('this->idValues', false)»];
-                    $url = $this->router->generate('«app.appName.formatForDB»_' . $this->objectTypeLower . '_' . $routeArea . 'display', $displayArgs);
+                    $url = $this->router->generate($routePrefix . 'display', $displayArgs);
                 }
             «ENDIF»
 
@@ -177,52 +182,51 @@ class Redirect {
                 return $this->getDefaultReturnUrl($args);
             }
 
+            $routeArea = substr($this->returnTo, 0, 5) == 'admin' ? 'admin' : '';
+            $routePrefix = '«app.appName.formatForDB»_' . $this->objectTypeLower . '_' . $routeArea;
+
             // parse given redirect code and return corresponding url
             switch ($this->returnTo) {
-                «FOR someController : app.controllers»
-                «IF !(someController instanceof AjaxController)»
-                    «val controllerName = someController.formattedName»
-                    «IF someController.hasActions('index')»
-                        case '«controllerName»':
-                            return $this->router->generate('«app.appName.formatForDB»_' . $this->objectTypeLower . '_«IF someController instanceof AdminController»admin«ENDIF»index');
-                    «ENDIF»
-                    «IF someController.hasActions('view')»
-                        case '«controllerName»View':
-                            return $this->router->generate('«app.appName.formatForDB»_' . $this->objectTypeLower . '_«IF someController instanceof AdminController»admin«ENDIF»view');
-                    «ENDIF»
-                    «IF someController.hasActions('display')»
-                        case '«controllerName»Display':
-                            if ($args['commandName'] != 'delete' && !($this->templateParameters['mode'] == 'create' && $args['commandName'] == 'cancel')) {
-                                foreach ($this->idFields as $idField) {
-                                    $urlArgs[$idField] = $this->idValues[$idField];
-                                }
-                                return $this->router->generate('«app.appName.formatForDB»_' . $this->objectTypeLower . '_«IF someController instanceof AdminController»admin«ENDIF»display', $urlArgs);
+                «IF hasIndexAction»
+                    case 'userIndex':
+                    case 'adminIndex':
+                        return $this->router->generate($routePrefix . 'index');
+                «ENDIF»
+                «IF hasViewAction»
+                    case 'userView':
+                    case 'adminView':
+                        return $this->router->generate($routePrefix . 'view');
+                «ENDIF»
+                «IF hasDisplayAction»
+                    case 'userDisplay':
+                    case 'adminDisplay':
+                        if ($args['commandName'] != 'delete' && !($this->templateParameters['mode'] == 'create' && $args['commandName'] == 'cancel')) {
+                            foreach ($this->idFields as $idField) {
+                                $urlArgs[$idField] = $this->idValues[$idField];
                             }
 
-                            return $this->getDefaultReturnUrl($args);
-                    «ENDIF»
+                            return $this->router->generate($routePrefix . 'display', $urlArgs);
+                        }
+
+                        return $this->getDefaultReturnUrl($args);
                 «ENDIF»
-                «ENDFOR»
                 «FOR incomingRelation : getIncomingJoinRelationsWithOneSource.filter[source.application == app && source instanceof Entity]»
                     «val sourceEntity = incomingRelation.source as Entity»
                     «IF sourceEntity.name != it.name»
-                        «FOR someController : app.controllers»
-                        «IF !(someController instanceof AjaxController)»
-                            «val controllerName = someController.formattedName»
-                            «IF someController.hasActions('view')»
-                                case '«controllerName»View«sourceEntity.name.formatForCodeCapital»':
-                                    return $this->router->generate('«app.appName.formatForDB»_«sourceEntity.name.formatForDB»_«IF someController instanceof AdminController»admin«ENDIF»view');
-                            «ENDIF»
-                            «IF someController.hasActions('display')»
-                                case '«controllerName»Display«sourceEntity.name.formatForCodeCapital»':
-                                    if (!empty($this->relationPresets['«incomingRelation.getRelationAliasName(false)»'])) {
-                                        return $this->router->generate('«app.appName.formatForDB»_«sourceEntity.name.formatForDB»_«IF someController instanceof AdminController»admin«ENDIF»display',  ['id' => $this->relationPresets['«incomingRelation.getRelationAliasName(false)»']«IF sourceEntity.hasSluggableFields»«/*, 'slug' => 'TODO'*/»«ENDIF»]);
-                                    }
-
-                                    return $this->getDefaultReturnUrl($args);
-                            «ENDIF»
+                        «IF sourceEntity.hasViewAction»
+                            case 'userView«sourceEntity.name.formatForCodeCapital»':
+                            case 'adminView«sourceEntity.name.formatForCodeCapital»':
+                                return $this->router->generate('«app.appName.formatForDB»_«sourceEntity.name.formatForDB»_' . $routeArea . 'view');
                         «ENDIF»
-                        «ENDFOR»
+                        «IF sourceEntity.hasDisplayAction»
+                            case 'userDisplay«sourceEntity.name.formatForCodeCapital»':
+                            case 'adminDisplay«sourceEntity.name.formatForCodeCapital»':
+                                if (!empty($this->relationPresets['«incomingRelation.getRelationAliasName(false)»'])) {
+                                    return $this->router->generate('«app.appName.formatForDB»_«sourceEntity.name.formatForDB»_' . $routeArea . 'display',  ['id' => $this->relationPresets['«incomingRelation.getRelationAliasName(false)»']«IF sourceEntity.hasSluggableFields»«/*, 'slug' => 'TODO'*/»«ENDIF»]);
+                                }
+
+                                return $this->getDefaultReturnUrl($args);
+                        «ENDIF»
                     «ENDIF»
                 «ENDFOR»
                 default:

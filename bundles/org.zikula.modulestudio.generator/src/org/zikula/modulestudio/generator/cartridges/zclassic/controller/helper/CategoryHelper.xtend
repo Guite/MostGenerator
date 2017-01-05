@@ -15,10 +15,9 @@ class CategoryHelper {
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
 
-    FileHelper fh = new FileHelper
-
     def generate(Application it, IFileSystemAccess fsa) {
         println('Generating helper class for category functions')
+        val fh = new FileHelper
         generateClassPair(fsa, getAppSourceLibPath + 'Helper/CategoryHelper.php',
             fh.phpFileContent(it, categoryHelperBaseClass), fh.phpFileContent(it, categoryHelperImpl)
         )

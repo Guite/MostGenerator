@@ -29,9 +29,9 @@ class Utils {
     }
 
     /**
-     * Returns the homepage url of ModuleStudio.
+     * Returns the website url of ModuleStudio.
      *
-     * @return String The homepage url.
+     * @return String The website url.
      */
     def msUrl() {
         'http://modulestudio.de'

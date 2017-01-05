@@ -14,19 +14,19 @@ import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class ModelHelper {
+
     extension FormattingExtensions = new FormattingExtensions
     extension ModelExtensions = new ModelExtensions
     extension ModelJoinExtensions = new ModelJoinExtensions
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
 
-    FileHelper fh = new FileHelper
-
     /**
      * Entry point for the helper class creation.
      */
     def generate(Application it, IFileSystemAccess fsa) {
         println('Generating helper class for model layer')
+        val fh = new FileHelper
         generateClassPair(fsa, getAppSourceLibPath + 'Helper/ModelHelper.php',
             fh.phpFileContent(it, modelFunctionsBaseImpl), fh.phpFileContent(it, modelFunctionsImpl)
         )

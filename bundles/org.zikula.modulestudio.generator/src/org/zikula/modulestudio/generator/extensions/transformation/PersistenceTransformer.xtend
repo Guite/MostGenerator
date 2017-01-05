@@ -7,7 +7,6 @@ import de.guite.modulestudio.metamodel.IpAddressScope
 import de.guite.modulestudio.metamodel.ModuleStudioFactory
 import de.guite.modulestudio.metamodel.StringField
 import de.guite.modulestudio.metamodel.UploadField
-import de.guite.modulestudio.metamodel.UserController
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
@@ -47,17 +46,6 @@ class PersistenceTransformer {
         addWorkflowSettings
         addViewSettings
         addImageSettings
-
-        // temporarily add a user controller to ensure user action links are also available for the user area
-        if (controllers.filter(UserController).empty) {
-            var userController = ModuleStudioFactory.eINSTANCE.createUserController => [
-                name = 'User'
-            ]
-            userController.actions += ModuleStudioFactory.eINSTANCE.createMainAction => [
-                name = 'Index'
-            ]
-            controllers += userController
-        }
     }
 
     /**
@@ -255,7 +243,7 @@ class PersistenceTransformer {
     }
 
     def private addViewSettings(Application it) {
-        val entitiesWithView = entities.filter(Entity).filter[hasActions('view')]
+        val entitiesWithView = getAllEntities.filter[hasViewAction]
         if (entitiesWithView.empty) {
             return
         }
@@ -320,7 +308,7 @@ class PersistenceTransformer {
             for (imageUploadField : entity.imageFieldsEntity) {
                 val fieldSuffix = entity.name.formatForCodeCapital + imageUploadField.name.formatForCodeCapital
                 for (action : #['view', 'display', 'edit']) {
-                    if (entity.hasActions(action)) {
+                    if ((action == 'view' && entity.hasViewAction) || (action == 'display' && entity.hasDisplayAction) || (action == 'edit' && entity.hasEditAction)) {
                         varContainer.vars += factory.createIntVar => [
                             name = 'thumbnailWidth' + fieldSuffix + action.toFirstUpper
                             value = if (action == 'view') '32' else '240'

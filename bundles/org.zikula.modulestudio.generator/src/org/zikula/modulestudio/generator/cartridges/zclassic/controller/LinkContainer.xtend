@@ -1,9 +1,6 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.controller
 
-import de.guite.modulestudio.metamodel.AdminController
 import de.guite.modulestudio.metamodel.Application
-import de.guite.modulestudio.metamodel.Controller
-import de.guite.modulestudio.metamodel.UserController
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.entity.ItemActions
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
@@ -26,25 +23,23 @@ class LinkContainer {
     extension Utils = new Utils
 
     FileHelper fh = new FileHelper
-    Application app
 
-    def generate(Controller it, IFileSystemAccess fsa) {
-        app = application
+    def generate(Application it, IFileSystemAccess fsa) {
         println('Generating link container class')
-        app.generateClassPair(fsa, app.getAppSourceLibPath + 'Container/LinkContainer.php',
-            fh.phpFileContent(app, linkContainerBaseImpl), fh.phpFileContent(app, linkContainerImpl)
+        generateClassPair(fsa, getAppSourceLibPath + 'Container/LinkContainer.php',
+            fh.phpFileContent(it, linkContainerBaseImpl), fh.phpFileContent(it, linkContainerImpl)
         )
         println('Generating item actions menu class')
-        app.generateClassPair(fsa, app.getAppSourceLibPath + 'Menu/ItemActionsMenu.php',
-            fh.phpFileContent(app, itemActionsMenuBaseImpl), fh.phpFileContent(app, itemActionsMenuImpl)
+        generateClassPair(fsa, getAppSourceLibPath + 'Menu/ItemActionsMenu.php',
+            fh.phpFileContent(it, itemActionsMenuBaseImpl), fh.phpFileContent(it, itemActionsMenuImpl)
         )
     }
 
-    def private linkContainerBaseImpl(Controller it) '''
-        namespace «app.appNamespace»\Container\Base;
+    def private linkContainerBaseImpl(Application it) '''
+        namespace «appNamespace»\Container\Base;
 
         use Symfony\Component\Routing\RouterInterface;
-        «IF app.generateAccountApi»
+        «IF generateAccountApi»
             use UserUtil;
         «ENDIF»
         use Zikula\Common\Translator\TranslatorInterface;
@@ -52,13 +47,13 @@ class LinkContainer {
         use Zikula\Core\Doctrine\EntityAccess;
         use Zikula\Core\LinkContainer\LinkContainerInterface;
         use Zikula\PermissionsModule\Api\PermissionApi;
-        «IF app.generateAccountApi»
+        «IF generateAccountApi»
             use Zikula\ExtensionsModule\Api\VariableApi;
         «ENDIF»
-        «IF app.generateAccountApi || !app.controllers.filter[c|c.hasActions('edit')].empty»
+        «IF generateAccountApi || hasEditActions»
             use Zikula\UsersModule\Api\CurrentUserApi;
         «ENDIF»
-        use «app.appNamespace»\Helper\ControllerHelper;
+        use «appNamespace»\Helper\ControllerHelper;
 
         /**
          * This is the link container service implementation class.
@@ -82,14 +77,14 @@ class LinkContainer {
              */
             protected $controllerHelper;
 
-            «IF app.generateAccountApi»
+            «IF generateAccountApi»
                 /**
                  * @var VariableApi
                  */
                 protected $variableApi;
 
             «ENDIF»
-            «IF app.generateAccountApi || !app.controllers.filter[c|c.hasActions('edit')].empty»
+            «IF generateAccountApi || hasEditActions»
                 /**
                  * @var CurrentUserApi
                  */
@@ -103,28 +98,28 @@ class LinkContainer {
              * @param Routerinterface     $router           Router service instance
              * @param PermissionApi       $permissionApi    PermissionApi service instance
              * @param ControllerHelper    $controllerHelper ControllerHelper service instance
-             «IF app.generateAccountApi»
+             «IF generateAccountApi»
              * @param VariableApi         $variableApi      VariableApi service instance
              «ENDIF»
-             «IF app.generateAccountApi || !app.controllers.filter[c|c.hasActions('edit')].empty»
+             «IF generateAccountApi || hasEditActions»
              * @param CurrentUserApi      $currentUserApi   CurrentUserApi service instance
              «ENDIF»
              */
-            public function __construct(TranslatorInterface $translator, RouterInterface $router, PermissionApi $permissionApi, ControllerHelper $controllerHelper«IF app.generateAccountApi», VariableApi $variableApi«ENDIF»«IF app.generateAccountApi || !app.controllers.filter[c|c.hasActions('edit')].empty», CurrentUserApi $currentUserApi«ENDIF»)
+            public function __construct(TranslatorInterface $translator, RouterInterface $router, PermissionApi $permissionApi, ControllerHelper $controllerHelper«IF generateAccountApi», VariableApi $variableApi«ENDIF»«IF generateAccountApi || hasEditActions», CurrentUserApi $currentUserApi«ENDIF»)
             {
                 $this->setTranslator($translator);
                 $this->router = $router;
                 $this->permissionApi = $permissionApi;
                 $this->controllerHelper = $controllerHelper;
-                «IF app.generateAccountApi»
+                «IF generateAccountApi»
                     $this->variableApi = $variableApi;
                 «ENDIF»
-                «IF app.generateAccountApi || !app.controllers.filter[c|c.hasActions('edit')].empty»
+                «IF generateAccountApi || hasEditActions»
                     $this->currentUserApi = $currentUserApi;
                 «ENDIF»
             }
 
-            «app.setTranslatorMethod»
+            «setTranslatorMethod»
 
             /**
              * Returns available header links.
@@ -143,9 +138,9 @@ class LinkContainer {
                 // Create an array of links to return
                 $links = [];
 
-                «IF app.generateAccountApi»
+                «IF generateAccountApi»
                     if (LinkContainerInterface::TYPE_ACCOUNT == $type) {
-                        $useAccountPage = $this->variableApi->get('«app.appName»', 'useAccountPage', true);
+                        $useAccountPage = $this->variableApi->get('«appName»', 'useAccountPage', true);
                         if (false === $useAccountPage) {
                             return $links;
                         }
@@ -161,40 +156,32 @@ class LinkContainer {
                             return $links;
                         }
 
-                        «IF !app.getAllUserControllers.empty && app.getMainUserController.hasActions('view')»
-                            «FOR entity : app.getAllEntities.filter[standardFields && ownerPermission]»
-                                $objectType = '«entity.name.formatForCode»';
-                                if ($this->permissionApi->hasPermission($this->getBundleName() . ':' . ucfirst($objectType) . ':', '::', ACCESS_READ)) {
-                                    $links[] = [
-                                        'url' => $this->router->generate('«app.appName.formatForDB»_' . strtolower($objectType) . '_view', ['own' => 1]),
-                                        'text' => $this->__('My «entity.nameMultiple.formatForDisplay»'),
-                                        'icon' => 'list-alt'
-                                    ];
-                                }
-                            «ENDFOR»
-                        «ENDIF»
-                        «IF !app.getAllAdminControllers.empty»
-                            if ($this->permissionApi->hasPermission($this->getBundleName() . '::', '::', ACCESS_ADMIN)) {
+                        «FOR entity : getAllEntities.filter[standardFields && ownerPermission]»
+                            $objectType = '«entity.name.formatForCode»';
+                            if ($this->permissionApi->hasPermission($this->getBundleName() . ':' . ucfirst($objectType) . ':', '::', ACCESS_READ)) {
                                 $links[] = [
-                                    'url' => $this->router->generate('«app.appName.formatForDB»_admin_index'),
-                                    'text' => $this->__('«app.name.formatForDisplayCapital» Backend'),
-                                    'icon' => 'wrench'
+                                    'url' => $this->router->generate('«appName.formatForDB»_' . strtolower($objectType) . '_view', ['own' => 1]),
+                                    'text' => $this->__('My «entity.nameMultiple.formatForDisplay»'),
+                                    'icon' => 'list-alt'
                                 ];
                             }
-                        «ENDIF»
+                        «ENDFOR»
+                        if ($this->permissionApi->hasPermission($this->getBundleName() . '::', '::', ACCESS_ADMIN)) {
+                            $links[] = [
+                                'url' => $this->router->generate('«appName.formatForDB»_«getLeadingEntity.name.formatForDB»_admin«getLeadingEntity.getPrimaryAction»'),
+                                'text' => $this->__('«name.formatForDisplayCapital» Backend'),
+                                'icon' => 'wrench'
+                            ];
+                        }
 
                         return $links;
                     }
 
                 «ENDIF»
-                «/* TODO legacy, see #715 - remove also temporary addition of user controller in PersistenceTransformer class */»
-                «val linkControllers = app.getAdminAndUserControllers»
+
+                $routeArea = LinkContainerInterface::TYPE_ADMIN == $type ? 'admin' : '';
                 «val menuLinksHelper = new MenuLinksHelperFunctions»
-                «FOR linkController : linkControllers»
-                    if («IF linkController instanceof AdminController»LinkContainerInterface::TYPE_ADMIN«ELSEIF linkController instanceof UserController»LinkContainerInterface::TYPE_USER«ELSE»'«linkController.name.formatForCode»'«ENDIF» == $type) {
-                        «menuLinksHelper.generate(linkController)»
-                    }
-                «ENDFOR»
+                «menuLinksHelper.generate(it)»
 
                 return $links;
             }
@@ -206,15 +193,15 @@ class LinkContainer {
              */
             public function getBundleName()
             {
-                return '«app.appName»';
+                return '«appName»';
             }
         }
     '''
 
-    def private linkContainerImpl(Controller it) '''
-        namespace «app.appNamespace»\Container;
+    def private linkContainerImpl(Application it) '''
+        namespace «appNamespace»\Container;
 
-        use «app.appNamespace»\Container\Base\AbstractLinkContainer;
+        use «appNamespace»\Container\Base\AbstractLinkContainer;
 
         /**
          * This is the link container service implementation class.
@@ -225,15 +212,15 @@ class LinkContainer {
         }
     '''
 
-    def private itemActionsMenuBaseImpl(Controller it) '''
-        namespace «app.appNamespace»\Menu\Base;
+    def private itemActionsMenuBaseImpl(Application it) '''
+        namespace «appNamespace»\Menu\Base;
 
         use Knp\Menu\FactoryInterface;
         use Symfony\Component\DependencyInjection\ContainerAwareInterface;
         use Symfony\Component\DependencyInjection\ContainerAwareTrait;
         use Zikula\Common\Translator\TranslatorTrait;
-        «FOR entity : app.entities»
-            use «app.appNamespace»\Entity\«entity.name.formatForCodeCapital»Entity;
+        «FOR entity : getAllEntities»
+            use «appNamespace»\Entity\«entity.name.formatForCodeCapital»Entity;
         «ENDFOR»
 
         /**
@@ -244,7 +231,7 @@ class LinkContainer {
             use ContainerAwareTrait;
             use TranslatorTrait;
 
-            «app.setTranslatorMethod»
+            «setTranslatorMethod»
 
             /**
              * Builds the menu.
@@ -264,24 +251,24 @@ class LinkContainer {
                 $this->setTranslator($this->container->get('translator'));
 
                 $entity = $options['entity'];
-                $area = $options['area'];
+                $routeArea = $options['area'];
                 $context = $options['context'];
 
                 $permissionApi = $this->container->get('zikula_permissions_module.api.permission');
                 $currentUserApi = $this->container->get('zikula_users_module.current_user');
                 $menu->setChildrenAttribute('class', 'list-inline');
 
-                «new ItemActions().itemActionsImpl(app)»
+                «new ItemActions().itemActionsImpl(it)»
 
                 return $menu;
             }
         }
     '''
 
-    def private itemActionsMenuImpl(Controller it) '''
-        namespace «app.appNamespace»\Menu;
+    def private itemActionsMenuImpl(Application it) '''
+        namespace «appNamespace»\Menu;
 
-        use «app.appNamespace»\Menu\Base\AbstractItemActionsMenu;
+        use «appNamespace»\Menu\Base\AbstractItemActionsMenu;
 
         /**
          * This is the item actions menu implementation class.

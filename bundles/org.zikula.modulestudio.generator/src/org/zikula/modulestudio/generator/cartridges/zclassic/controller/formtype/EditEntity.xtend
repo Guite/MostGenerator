@@ -61,7 +61,7 @@ class EditEntity {
      * Entry point for entity editing form type.
      */
     def generate(DataObject it, IFileSystemAccess fsa) {
-        if (!(it instanceof MappedSuperClass) && !hasActions('edit')) {
+        if (!(it instanceof MappedSuperClass) && !(it as Entity).hasEditAction) {
             return
         }
         if (it instanceof Entity) {

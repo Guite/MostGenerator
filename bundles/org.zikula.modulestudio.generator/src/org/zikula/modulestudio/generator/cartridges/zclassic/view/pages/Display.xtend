@@ -198,11 +198,11 @@ class Display {
             <dt>{{ __('«relationAliasName.formatForDisplayCapital»') }}</dt>
             <dd>
               {% if app.request.query.get('theme') != 'ZikulaPrinterTheme' %}
-                  «IF linkEntity.hasActions('display')»
+                  «IF linkEntity.hasDisplayAction»
                       <a href="{{ path('«linkEntity.application.appName.formatForDB»_«linkEntity.name.toLowerCase»_' ~ routeArea ~ 'display'«linkEntity.routeParams(relObjName, true)») }}">{% spaceless %}
                   «ENDIF»
                     {{ «relObjName».getTitleFromDisplayPattern() }}
-                  «IF linkEntity.hasActions('display')»
+                  «IF linkEntity.hasDisplayAction»
                     {% endspaceless %}</a>
                     <a id="«linkEntity.name.formatForCode»Item{{ «FOR pkField : linkEntity.getPrimaryKeyFields SEPARATOR ' ~ '»«relObjName».«pkField.name.formatForCode»«ENDFOR» }}Display" href="{{ path('«linkEntity.application.appName.formatForDB»_«linkEntity.name.formatForDB»_' ~ routeArea ~ 'display', { «linkEntity.routePkParams(relObjName, true)»«linkEntity.appendSlug(relObjName, true)», 'theme': 'ZikulaPrinterTheme' }) }}" title="{{ __('Open quick view window')|e('html_attr') }}" class="hidden"><span class="fa fa-eye"></span></a>
                     <script type="text/javascript">

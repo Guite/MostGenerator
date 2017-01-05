@@ -4,7 +4,6 @@ import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.Variable
 import de.guite.modulestudio.metamodel.Variables
 import org.eclipse.xtext.generator.IFileSystemAccess
-import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
@@ -12,14 +11,13 @@ import org.zikula.modulestudio.generator.extensions.Utils
 
 class Config {
 
-    extension ControllerExtensions = new ControllerExtensions
     extension FormattingExtensions = new FormattingExtensions
     extension ModelExtensions = new ModelExtensions
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
 
     def generate(Application it, IFileSystemAccess fsa) {
-        val templatePath = getViewPath + configController.formatForDB.toFirstUpper + '/'
+        val templatePath = getViewPath + 'Config/'
         val templateExtension = '.html.twig'
         var fileName = 'config' + templateExtension
         if (!shouldBeSkipped(templatePath + fileName)) {

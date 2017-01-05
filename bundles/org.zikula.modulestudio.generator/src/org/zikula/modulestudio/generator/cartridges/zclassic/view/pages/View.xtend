@@ -94,7 +94,7 @@ class View {
 
     def private pageNavLinks(Entity it, String appName) '''
         «val objName = name.formatForCode»
-        «IF hasActions('edit')»
+        «IF hasEditAction»
             {% if canBeCreated %}
                 {% if hasPermission('«appName»:«name.formatForCodeCapital»:', '::', 'ACCESS_«IF workflow == EntityWorkflowType::NONE»EDIT«ELSE»COMMENT«ENDIF»') %}
                     {% set createTitle = __('Create «name.formatForDisplay»') %}
@@ -397,7 +397,7 @@ class View {
 
     def private dispatch displayEntryInner(DerivedField it, Boolean useTarget) '''
         «IF newArrayList('name', 'title').contains(name)»
-            «IF entity instanceof Entity && entity.hasActions('display')»
+            «IF entity instanceof Entity && (entity as Entity).hasDisplayAction»
                 <a href="{{ path('«entity.application.appName.formatForDB»_«entity.name.formatForDB»_' ~ routeArea ~ 'display'«(entity as Entity).routeParams(entity.name.formatForCode, true)») }}" title="{{ __('View detail page')|e('html_attr') }}">«displayLeadingEntry»</a>
             «ELSE»
                 «displayLeadingEntry»
@@ -419,11 +419,11 @@ class View {
         «val linkEntity = (if (useTarget) target else source) as Entity»
         «var relObjName = mainEntity.name.formatForCode + '.' + relationAliasName»
         {% if «relObjName»|default %}
-            «IF linkEntity.hasActions('display')»
+            «IF linkEntity.hasDisplayAction»
                 <a href="{{ path('«linkEntity.application.appName.formatForDB»_«linkEntity.name.formatForDB»_' ~ routeArea ~ 'display'«linkEntity.routeParams(relObjName, true)») }}">{% spaceless %}
             «ENDIF»
               {{ «relObjName».getTitleFromDisplayPattern() }}
-            «IF linkEntity.hasActions('display')»
+            «IF linkEntity.hasDisplayAction»
                 {% endspaceless %}</a>
                 <a id="«linkEntity.name.formatForCode»Item«FOR pkField : mainEntity.getPrimaryKeyFields SEPARATOR '_'»{{ «mainEntity.name.formatForCode».«pkField.name.formatForCode» }}«ENDFOR»_rel_«FOR pkField : linkEntity.getPrimaryKeyFields SEPARATOR '_'»{{ «relObjName».«pkField.name.formatForCode» }}«ENDFOR»Display" href="{{ path('«application.appName.formatForDB»_«linkEntity.name.formatForDB»_' ~ routeArea ~ 'display', {«linkEntity.routePkParams(relObjName, true)»«linkEntity.appendSlug(relObjName, true)», 'theme': 'ZikulaPrinterTheme' }) }}" title="{{ __('Open quick view window')|e('html_attr') }}" class="fa fa-search-plus hidden"></a>
                 <script type="text/javascript">

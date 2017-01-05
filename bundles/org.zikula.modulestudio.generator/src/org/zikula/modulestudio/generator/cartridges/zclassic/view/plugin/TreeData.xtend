@@ -4,11 +4,14 @@ import de.guite.modulestudio.metamodel.Application
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
+import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class TreeData {
+
     extension ControllerExtensions = new ControllerExtensions
     extension FormattingExtensions = new FormattingExtensions
+    extension ModelExtensions = new ModelExtensions
     extension Utils = new Utils
 
     def generate(Application it, IFileSystemAccess fsa) {
@@ -20,21 +23,17 @@ class TreeData {
          * The «appName.formatForDB»_treeData function delivers the html output for a JS tree
          * based on given tree entities.
          *
-         * Available parameters:
-         *   - objectType: Name of treated object type.
-         *   - tree:       Object collection with tree items.
-         *   - controller: Optional name of controller, defaults to 'user'.
-         *   - rootId:     Optional id of root node, defaults to 1.
+         * @param string  $objectType Name of treated object type
+         * @param array   $tree       Object collection with tree items
+         * @param string  $routeArea  Either 'admin' or an emptyy string
+         * @param integer $rootId     Optional id of root node, defaults to 1
          *
-         * @return string The output of the plugin
+         * @return string Output markup
          */
-        public function getTreeData($objectType, $tree, $controller = 'user', $rootId = 1)
+        public function getTreeData($objectType, $tree, $routeArea = '', $rootId = 1)
         {
             // check whether an edit action is available
-            $controllerHasEditAction = false;
-            switch ($controller) {
-                «controllerEditActionFlags»
-            }
+            $hasEditAction = in_array($objectType, ['«getAllEntities.filter[hasEditAction].map[name.formatForCode].join('\', \'')»']);
 
             $serviceManager = \ServiceUtil::getManager();
             $repository = $serviceManager->get('«appService».' . $objectType . '_factory')->getRepository();
@@ -43,24 +42,33 @@ class TreeData {
             $result = '';
             foreach ($tree as $node) {
                 if ($node->getLvl() < 1) {
-                    $result .= $this->processTreeItemWithChildren($objectType, $controller, $node, $rootId, $descriptionFieldName, $controllerHasEditAction);
+                    $result .= $this->processTreeItemWithChildren($objectType, $node, $routeArea, $rootId, $descriptionFieldName, $hasEditAction);
                 }
             }
 
             return $result;
         }
 
-        protected function processTreeItemWithChildren($objectType, $controller, $node, $rootId, $descriptionFieldName, $controllerHasEditAction)
+        /**
+         * Builds an unordered list for a tree node and it's children.
+         *
+         * @param string  $objectType           Name of treated object type
+         * @param object  $node                 The processed tree node
+         * @param string  $routeArea            Either 'admin' or an emptyy string
+         * @param integer $rootId               Optional id of root node, defaults to 1
+         * @param string  $descriptionFieldName Name of field to be used as a description
+         * @param boolean $hasEditAction        Whether item editing is possible or not
+         *
+         * @return string Output markup
+        protected function processTreeItemWithChildren($objectType, $node, $routeArea, $rootId, $descriptionFieldName, $hasEditAction)
         {
-            $output = '';
             $idPrefix = 'tree' . $rootId . 'node_' . $node->createCompositeIdentifier();
             $title = ($descriptionFieldName != '' ? strip_tags($node[$descriptionFieldName]) : '');
             $liTag = '<li id="' . $idPrefix . '" title="' . str_replace('"', '', $title) . '" class="lvl' . $node->getLvl() . '">';
 
             $liContent = $node->getTitleFromDisplayPattern();
-            if ($controllerHasEditAction) {
+            if ($hasEditAction) {
                 $urlArgs = $node->createUrlArgs();
-                $routeArea = $controller == 'admin' ? 'admin' : '';«/* TODO fix this (#715) */»
                 $url = $this->router->generate('«appName.formatForDB»_' . strtolower($objectType) . '_' . $routeArea . 'edit', $urlArgs);
 
                 $liContent = '<a href="' . $url . '" title="' . str_replace('"', '', $title) . '">' . $liContent . '</a>';
@@ -71,25 +79,14 @@ class TreeData {
             if (count($node->getChildren()) > 0) {
                 $treeItem .= '<ul>';
                 foreach ($node->getChildren() as $childNode) {
-                    $treeItem .= $this->processTreeItemWithChildren($objectType, $controller, $childNode, $rootId, $descriptionFieldName, $controllerHasEditAction);
+                    $treeItem .= $this->processTreeItemWithChildren($objectType, $controller, $childNode, $rootId, $descriptionFieldName, $hasEditAction);
                 }
                 $treeItem .= '</ul>';
             }
 
             $treeItem .= '</li>';
 
-            $output .= $treeItem;
-
-            return $output;
+            return $treeItem;
         }
-    '''
-
-    def private controllerEditActionFlags(Application it) '''
-        «FOR controller : controllers.filter[hasActions('edit')]»
-            case '«controller.formattedName»': $controllerHasEditAction = true; break;
-        «ENDFOR»
-        «FOR entity : entities.filter[hasActions('edit')]»
-            case '«entity.name.formatForCode»': $controllerHasEditAction = true; break;
-        «ENDFOR»
     '''
 }

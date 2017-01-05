@@ -15,13 +15,12 @@ class FeatureActivationHelper {
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
 
-    FileHelper fh = new FileHelper
-
     /**
      * Entry point for the helper class creation.
      */
     def generate(Application it, IFileSystemAccess fsa) {
         println('Generating helper class for dynamic feature enablement')
+        val fh = new FileHelper
         generateClassPair(fsa, getAppSourceLibPath + 'Helper/FeatureActivationHelper.php',
             fh.phpFileContent(it, featureEnablementFunctionsBaseImpl), fh.phpFileContent(it, featureEnablementFunctionsImpl)
         )

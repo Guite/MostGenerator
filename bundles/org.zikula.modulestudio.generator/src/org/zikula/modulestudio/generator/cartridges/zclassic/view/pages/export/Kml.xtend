@@ -19,13 +19,13 @@ class Kml {
     def generate(Entity it, String appName, IFileSystemAccess fsa) {
         println('Generating kml view templates for entity "' + name.formatForDisplay + '"')
         var templateFilePath = ''
-        if (hasActions('view')) {
+        if (hasViewAction) {
             templateFilePath = templateFileWithExtension('view', 'kml')
             if (!application.shouldBeSkipped(templateFilePath)) {
                 fsa.generateFile(templateFilePath, kmlView(appName))
             }
         }
-        if (hasActions('display')) {
+        if (hasDisplayAction) {
             templateFilePath = templateFileWithExtension('display', 'kml')
             if (!application.shouldBeSkipped(templateFilePath)) {
                 fsa.generateFile(templateFilePath, kmlDisplay(appName))
@@ -45,7 +45,7 @@ class Kml {
                 <name>«IF !stringFields.empty»{{ «objName».get«stringFields.head.name.formatForCodeCapital»() }}«ELSE»{{ __('«name.formatForDisplayCapital»') }}«ENDIF»</name>
                 «val textFields = fields.filter(TextField)»
                 «IF !textFields.empty && textFields.head != stringFields.head»
-                    <description><![CDATA[{{ «objName».get«textFields.head.name.formatForCodeCapital»() }}«IF hasActions('display')»<br /><a href="{{ url('«appName.toLowerCase»_«name.formatForCode.toLowerCase»_display'«routeParams(name.formatForCode, true)») }}">{{ __('Details') }}</a>«ENDIF»]]></description>
+                    <description><![CDATA[{{ «objName».get«textFields.head.name.formatForCodeCapital»() }}«IF hasDisplayAction»<br /><a href="{{ url('«appName.toLowerCase»_«name.formatForCode.toLowerCase»_display'«routeParams(name.formatForCode, true)») }}">{{ __('Details') }}</a>«ENDIF»]]></description>
                 «ENDIF»
                 <Point>
                     <coordinates>{{ «objName».getLongitude() }}, {{ «objName».getLatitude() }}, 0</coordinates>
@@ -67,7 +67,7 @@ class Kml {
                 <name>«IF !stringFields.empty»{{ «objName».get«stringFields.head.name.formatForCodeCapital»() }}«ELSE»{{ __('«name.formatForDisplayCapital»') }}«ENDIF»</name>
                 «val textFields = fields.filter(TextField)»
                 «IF !textFields.empty && textFields.head != stringFields.head»
-                    <description><![CDATA[{{ «objName».get«textFields.head.name.formatForCodeCapital»() }}«IF hasActions('display')»<br /><a href="{{ url('«appName.toLowerCase»_«name.formatForCode.toLowerCase»_display'«routeParams(name.formatForCode, true)») }}">{{ __('Details') }}</a>«ENDIF»]]></description>
+                    <description><![CDATA[{{ «objName».get«textFields.head.name.formatForCodeCapital»() }}«IF hasDisplayAction»<br /><a href="{{ url('«appName.toLowerCase»_«name.formatForCode.toLowerCase»_display'«routeParams(name.formatForCode, true)») }}">{{ __('Details') }}</a>«ENDIF»]]></description>
                 «ENDIF»
                 <Point>
                     <coordinates>{{ «objName».getLongitude() }}, {{ «objName».getLatitude() }}, 0</coordinates>

@@ -15,13 +15,13 @@ class Json {
     def generate(Entity it, String appName, IFileSystemAccess fsa) {
         println('Generating json view templates for entity "' + name.formatForDisplay + '"')
         var templateFilePath = ''
-        if (hasActions('view')) {
+        if (hasViewAction) {
             templateFilePath = templateFileWithExtension('view', 'json')
             if (!application.shouldBeSkipped(templateFilePath)) {
                 fsa.generateFile(templateFilePath, jsonView(appName))
             }
         }
-        if (hasActions('display')) {
+        if (hasDisplayAction) {
             templateFilePath = templateFileWithExtension('display', 'json')
             if (!application.shouldBeSkipped(templateFilePath)) {
                 fsa.generateFile(templateFilePath, jsonDisplay(appName))

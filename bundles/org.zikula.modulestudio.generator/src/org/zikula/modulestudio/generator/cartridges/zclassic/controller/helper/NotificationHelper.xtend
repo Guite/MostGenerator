@@ -6,6 +6,7 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelp
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
+import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
@@ -14,13 +15,13 @@ class NotificationHelper {
     extension ControllerExtensions = new ControllerExtensions
     extension FormattingExtensions = new FormattingExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
+    extension ModelExtensions = new ModelExtensions
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
 
-    FileHelper fh = new FileHelper
-
     def generate(Application it, IFileSystemAccess fsa) {
         println('Generating helper class for workflow notifications')
+        val fh = new FileHelper
         generateClassPair(fsa, getAppSourceLibPath + 'Helper/NotificationHelper.php',
             fh.phpFileContent(it, notificationHelperBaseClass), fh.phpFileContent(it, notificationHelperImpl)
         )
@@ -349,36 +350,14 @@ class NotificationHelper {
             $remarks = $this->session->get($this->name . 'AdditionalNotificationRemarks', '');
 
             $urlArgs = $this->entity->createUrlArgs();
-            $displayUrl = '';
-            $editUrl = '';
 
-            if ($this->recipientType == 'moderator' || $this->recipientType == 'superModerator') {
-                «IF hasAdminController && getAllAdminControllers.head.hasActions('display')
-                    || hasUserController && getMainUserController.hasActions('display')
-                    || hasAdminController && getAllAdminControllers.head.hasActions('edit')
-                    || hasUserController && getMainUserController.hasActions('edit')»
-                    $routeArea = '«IF hasAdminController && getAllAdminControllers.head.hasActions('display')»admin«ENDIF»';
-                «ENDIF»
-                «IF hasAdminController && getAllAdminControllers.head.hasActions('display')
-                    || hasUserController && getMainUserController.hasActions('display')»
-                    $displayUrl = $this->router->generate('«appName.formatForDB»_' . strtolower($objectType) . '_' . $routeArea . 'display', $urlArgs, true);
-                «ENDIF»
-                «IF hasAdminController && getAllAdminControllers.head.hasActions('edit')
-                    || hasUserController && getMainUserController.hasActions('edit')»
-                    $editUrl = $this->router->generate('«appName.formatForDB»_' . strtolower($objectType) . '_' . $routeArea . 'edit', $urlArgs, true);
-                «ENDIF»
-            } elseif ($this->recipientType == 'creator') {
-                «IF hasUserController»
-                    «IF getMainUserController.hasActions('display')»
-                        $displayUrl = $this->router->generate('«appName.formatForDB»_' . strtolower($objectType) . '_display', $urlArgs, true);
-                    «ENDIF»
-                    «IF getMainUserController.hasActions('edit')»
-                        $editUrl = $this->router->generate('«appName.formatForDB»_' . strtolower($objectType) . '_edit', $urlArgs, true);
-                    «ENDIF»
-                «ELSE»
-                    // nothing to do as no user controller is available
-                «ENDIF»
-            }
+            $hasDisplayAction = in_array($objectType, ['«getAllEntities.filter[hasDisplayAction].map[name.formatForCode].join('\', \'')»']);
+            $hasEditAction = in_array($objectType, ['«getAllEntities.filter[hasEditAction].map[name.formatForCode].join('\', \'')»']);
+            $routeArea = in_array($this->recipientType, ['moderator', 'superModerator']) ? 'admin' : '';
+            $routePrefix = '«appName.formatForDB»_' . strtolower($objectType) . '_' . $routeArea;
+
+            $displayUrl = $hasDisplayAction ? $this->router->generate($routePrefix . 'display', $urlArgs, true) : '';
+            $editUrl = $hasEditAction ? $this->router->generate($routePrefix . 'edit', $urlArgs, true) : '';
 
             $emailData = [
                 'name' => $this->entity->getTitleFromDisplayPattern(),

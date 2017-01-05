@@ -36,7 +36,7 @@ class DisplayFunctions {
 
     def private generate(Application it) '''
         'use strict';
-        «IF !controllers.map[hasActions('view')].empty»
+        «IF hasViewActions»
 
             «initQuickNavigation»
         «ENDIF»

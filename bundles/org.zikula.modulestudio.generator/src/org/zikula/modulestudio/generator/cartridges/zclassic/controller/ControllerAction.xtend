@@ -26,18 +26,6 @@ class ControllerAction {
         actionsImpl = new Actions(app)
     }
 
-    def generate(Action it, Boolean isBase) '''
-        «actionDoc(null, isBase, false)»
-        public function «methodName(false)»Action(«methodArgs»)
-        {
-            «IF isBase»
-                «actionsImpl.actionImpl(it)»
-            «ELSE»
-                return parent::«methodName(false)»Action($request);
-            «ENDIF»
-        }
-    '''
-
     def generate(Entity it, Action action, Boolean isBase, Boolean isAdmin) '''
         «action.actionDoc(it, isBase, isAdmin)»
         public function «action.methodName(isAdmin)»Action(«methodArgs(it, action)»)
@@ -152,8 +140,6 @@ class ControllerAction {
     def private dispatch methodName(Action it, Boolean isAdmin) '''«IF !isAdmin»«name.formatForCode.toFirstLower»«ELSE»admin«name.formatForCodeCapital»«ENDIF»'''
 
     def private dispatch methodName(MainAction it, Boolean isAdmin) '''«IF isAdmin»adminIndex«ELSE»index«ENDIF»'''
-
-    def private methodArgs(Action action) '''Request $request''' 
 
     def private dispatch methodArgs(Entity it, Action action) '''Request $request''' 
     def private dispatch methodArgsCall(Entity it, Action action) '''$request''' 

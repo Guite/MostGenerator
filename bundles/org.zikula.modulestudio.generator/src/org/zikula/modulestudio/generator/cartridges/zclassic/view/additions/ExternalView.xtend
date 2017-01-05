@@ -25,7 +25,7 @@ class ExternalView {
     def generate(Application it, IFileSystemAccess fsa) {
         var fileName = ''
         val templateExtension = '.html.twig'
-        for (entity : getAllEntities.filter[hasActions('display')]) {
+        for (entity : getAllEntities.filter[hasDisplayAction]) {
             val templatePath = getViewPath + 'External/' + entity.name.formatForCodeCapital + '/'
 
             fileName = 'display' + templateExtension
@@ -67,12 +67,12 @@ class ExternalView {
         {# Purpose of this template: Display one certain «name.formatForDisplay» within an external context #}
         <div id="«name.formatForCode»{$«name.formatForCode».«getFirstPrimaryKey.name.formatForCode»}" class="«app.appName.toLowerCase»-external-«name.formatForDB»">
         {% if displayMode == 'link' %}
-            <p«IF app.hasUserController» class="«app.appName.toLowerCase»-external-link"«ENDIF»>
-            «IF app.hasUserController»
+            <p«IF hasDisplayAction» class="«app.appName.toLowerCase»-external-link"«ENDIF»>
+            «IF hasDisplayAction»
                 <a href="{{ path('«app.appName.formatForDB»_«name.formatForDB»_display'«routeParams(name.formatForCode, true)») }}" title="{{ «name.formatForCode».getTitleFromDisplayPattern()|e('html_attr') }}">
             «ENDIF»
             {{ «name.formatForCode».getTitleFromDisplayPattern()«IF !skipHookSubscribers»|notifyFilters('«app.name.formatForDB».filter_hooks.«nameMultiple.formatForDB».filter')«ENDIF» }}
-            «IF app.hasUserController»
+            «IF hasDisplayAction»
                 </a>
             «ENDIF»
             </p>
@@ -228,9 +228,9 @@ class ExternalView {
     '''
 
     def private findTemplateObjectTypeSwitcher(Entity it, Application app) '''
-        «IF app.getAllEntities.filter[hasActions('display')].size > 1»
+        «IF app.hasDisplayActions»
             <ul class="nav nav-tabs«/*pills nav-justified*/»">
-            «FOR entity : app.getAllEntities.filter[hasActions('display')]/*.filter[e|e.name != name]*/»
+            «FOR entity : app.getAllEntities.filter[hasDisplayAction]»
                 <li{{ objectType == '«entity.name.formatForCode»' ? ' class="active"' : '' }}><a href="{{ path('«app.appName.formatForDB»_external_finder', {'objectType': '«entity.name.formatForCode»', 'editor': editorName}) }}" title="{{ __('Search and select «entity.name.formatForDisplay»') }}">{{ __('«entity.nameMultiple.formatForDisplayCapital»') }}</a></li>
             «ENDFOR»
             </ul>
@@ -247,7 +247,7 @@ class ExternalView {
                             <li>
                                 {% set itemId = «name.formatForCode».createCompositeIdentifier() %}
                                 <a href="#" data-itemid="{{ itemId }}">{{ «name.formatForCode».getTitleFromDisplayPattern() }}</a>
-                                <input type="hidden" id="url{{ itemId }}" value="«IF app.hasUserController»{{ url('«app.appName.formatForDB»_«name.formatForDB»_display'«routeParams(name.formatForCode, true)») }}«ENDIF»" />
+                                <input type="hidden" id="url{{ itemId }}" value="{{ url('«app.appName.formatForDB»_«name.formatForDB»_display'«routeParams(name.formatForCode, true)») }}" />
                                 <input type="hidden" id="title{{ itemId }}" value="{{ «name.formatForCode».getTitleFromDisplayPattern()|e('html_attr') }}" />
                                 <input type="hidden" id="desc{{ itemId }}" value="{% set description %}«displayDescription('', '')»{% endset %}{{ description|striptags|e('html_attr') }}" />
                             </li>
@@ -273,7 +273,7 @@ class ExternalView {
     '''
 
     def private findTemplateEditForm(Entity it, Application app) '''
-        «IF !app.getAllAdminControllers.empty»
+        «IF hasEditAction»
             {#
             <div class="«app.appName.toLowerCase»-finderform">
                 <fieldset>

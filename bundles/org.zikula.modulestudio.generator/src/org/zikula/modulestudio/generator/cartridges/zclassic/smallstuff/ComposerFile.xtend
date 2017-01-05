@@ -17,6 +17,7 @@ import org.zikula.modulestudio.generator.extensions.Utils
 import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
 
 class ComposerFile {
+
     extension ControllerExtensions = new ControllerExtensions
     extension FormattingExtensions = new FormattingExtensions
     extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions 
@@ -106,16 +107,8 @@ class ComposerFile {
     '''
 
     def private generateCapabilities(Application it) '''
-        «IF hasUserController»
-            "user": {"route": "«appName.formatForDB»_user_index"},
-        «ELSE»
-            "user": {"route": "«appName.formatForDB»_«getLeadingEntity.name.formatForDB»_«getLeadingEntity.getPrimaryAction»"},
-        «ENDIF»
-        «IF hasAdminController»
-            "admin": {"route": "«appName.formatForDB»_admin_index"}«IF hasExtraCapabilities»,«ENDIF»
-        «ELSE»
-            "admin": {"route": "«appName.formatForDB»_«getLeadingEntity.name.formatForDB»_admin«getLeadingEntity.getPrimaryAction»"}«IF hasExtraCapabilities»,«ENDIF»
-        «ENDIF»
+        "user": {"route": "«appName.formatForDB»_«getLeadingEntity.name.formatForDB»_«getLeadingEntity.getPrimaryAction»"},
+        "admin": {"route": "«appName.formatForDB»_«getLeadingEntity.name.formatForDB»_admin«getLeadingEntity.getPrimaryAction»"}«IF hasExtraCapabilities»,«ENDIF»
         «IF generateSearchApi»
             "searchable": {"class": "«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Helper\\SearchHelper"},
         «ENDIF»
@@ -154,16 +147,6 @@ class ComposerFile {
             return true
         }
         false
-    }
-
-    def private getPrimaryAction(Entity it) {
-        if (hasActions('index')) {
-            return 'index'
-        }
-        if (hasActions('view')) {
-            return 'view'
-        }
-        return actions.head.name.formatForDB
     }
 
     def private permissionSchema(Entity it, String appName) '''

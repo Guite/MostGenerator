@@ -20,7 +20,7 @@ class ThirdParty {
     CommonExample commonExample = new CommonExample()
 
     def generate(Application it, Boolean isBase) '''
-        «val needsDetailContentType = generateDetailContentType && hasUserController && getMainUserController.hasActions('display')»
+        «val needsDetailContentType = generateDetailContentType && hasDisplayActions»
         «IF isBase»
             /**
              * Makes our handlers known to the event system.
@@ -179,7 +179,7 @@ class ThirdParty {
         // intended is using the add() method to add a plugin like below
         $types = $event->getSubject();
 
-        «IF generateDetailContentType && hasUserController && getMainUserController.hasActions('display')»
+        «IF generateDetailContentType && hasDisplayActions»
 
             // plugin for showing a single item
             $types->add('«appName»_ContentType_Item');

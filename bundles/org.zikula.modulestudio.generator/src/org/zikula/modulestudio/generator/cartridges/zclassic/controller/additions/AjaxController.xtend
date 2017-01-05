@@ -1,12 +1,11 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.controller.additions
 
-import de.guite.modulestudio.metamodel.AjaxController
 import de.guite.modulestudio.metamodel.Application
-import de.guite.modulestudio.metamodel.Controller
 import de.guite.modulestudio.metamodel.StringField
 import de.guite.modulestudio.metamodel.TextField
+import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.ControllerHelperFunctions
-import org.zikula.modulestudio.generator.extensions.ControllerExtensions
+import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
@@ -15,9 +14,8 @@ import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
-class Ajax {
+class AjaxController {
 
-    extension ControllerExtensions = new ControllerExtensions
     extension FormattingExtensions = new FormattingExtensions
     extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     extension ModelExtensions = new ModelExtensions
@@ -26,37 +24,68 @@ class Ajax {
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
 
-    def dispatch additionalAjaxFunctionsBase(Controller it, Application app) {
+    def generate(Application it, IFileSystemAccess fsa) {
+        println('Ajax controller class')
+        val fh = new FileHelper
+        generateClassPair(fsa, getAppSourceLibPath + 'Controller/AjaxController.php',
+            fh.phpFileContent(it, ajaxControllerBaseClass), fh.phpFileContent(it, ajaxControllerImpl)
+        )
     }
 
-    def dispatch additionalAjaxFunctionsBase(AjaxController it, Application app) '''
-        «userSelectorsBase(app)»
-        «IF app.generateExternalControllerAndFinder»
+    def private ajaxControllerBaseClass(Application it) '''
+        namespace «appNamespace»\Base\Controller;
 
-            «getItemListFinderBase(app)»
+        «IF !getAllUserFields.empty»
+            use DataUtil;
+            use Doctrine\ORM\AbstractQuery;
         «ENDIF»
-        «val joinRelations = app.getJoinRelations»
+        use Symfony\Component\HttpFoundation\JsonResponse;
+        use Symfony\Component\HttpFoundation\Request;
+        use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+        use RuntimeException;
+        use Zikula\Core\Controller\AbstractController;
+        use Zikula\Core\Response\Ajax\AjaxResponse;
+        use Zikula\Core\Response\Ajax\BadDataResponse;
+        use Zikula\Core\Response\Ajax\FatalResponse;
+        use Zikula\Core\Response\Ajax\NotFoundResponse;
+
+        /**
+         * Ajax controller base class.
+         */
+        abstract class AbstractAjaxController extends AbstractController
+        {
+            «additionalAjaxFunctionsBase»
+        }
+    '''
+
+    def additionalAjaxFunctionsBase(Application it) '''
+        «userSelectorsBase»
+        «IF generateExternalControllerAndFinder»
+
+            «getItemListFinderBase»
+        «ENDIF»
+        «val joinRelations = getJoinRelations»
         «IF !joinRelations.empty»
 
-            «getItemListAutoCompletionBase(app)»
+            «getItemListAutoCompletionBase»
         «ENDIF»
-        «IF app.entities.exists[getUniqueDerivedFields.filter[!primaryKey].size > 0]
-        || (app.hasSluggable && !app.getAllEntities.filter[hasSluggableFields && slugUnique].empty)»
+        «IF entities.exists[getUniqueDerivedFields.filter[!primaryKey].size > 0]
+        || (hasSluggable && !getAllEntities.filter[hasSluggableFields && slugUnique].empty)»
 
-            «checkForDuplicateBase(app)»
+            «checkForDuplicateBase»
         «ENDIF»
-        «IF app.hasBooleansWithAjaxToggle»
+        «IF hasBooleansWithAjaxToggle»
 
-            «toggleFlagBase(app)»
+            «toggleFlagBase»
         «ENDIF»
-        «IF app.hasTrees»
+        «IF hasTrees»
         
-            «handleTreeOperationBase(app)»
+            «handleTreeOperationBase»
         «ENDIF»
     '''
 
-    def private userSelectorsBase(AjaxController it, Application app) '''
-        «val userFields = app.getAllUserFields»
+    def private userSelectorsBase(Application it) '''
+        «val userFields = getAllUserFields»
         «IF !userFields.empty»
             «FOR userField : userFields»
 
@@ -66,19 +95,19 @@ class Ajax {
                 }
             «ENDFOR»
 
-            «getCommonUsersListBase(app)»
+            «getCommonUsersListBase»
         «ENDIF»
     '''
 
-    def private getCommonUsersListBase(AjaxController it, Application app) '''
+    def private getCommonUsersListBase(Application it) '''
         «getCommonUsersListDocBlock(true)»
         «getCommonUsersListSignature»
         {
-            «getCommonUsersListBaseImpl(app)»
+            «getCommonUsersListBaseImpl»
         }
     '''
 
-    def private getCommonUsersListDocBlock(AjaxController it, Boolean isBase) '''
+    def private getCommonUsersListDocBlock(Application it, Boolean isBase) '''
         /**
          * Retrieve a general purpose list of users.
          «IF !isBase»
@@ -93,11 +122,11 @@ class Ajax {
          */ 
     '''
 
-    def private getCommonUsersListSignature(AjaxController it) '''
+    def private getCommonUsersListSignature(Application it) '''
         public function getCommonUsersListAction(Request $request)
     '''
 
-    def private getCommonUsersListBaseImpl(AjaxController it, Application app) '''
+    def private getCommonUsersListBaseImpl(Application it) '''
         if (!$this->hasPermission($this->name . '::Ajax', '::', ACCESS_EDIT)) {
             return true;
         }
@@ -114,14 +143,14 @@ class Ajax {
             FROM Zikula\Module\UsersModule\Entity\UserEntity u
             WHERE u.uname LIKE :fragment
         ';
-        $entityManager = $this->get('«app.entityManagerService»');
+        $entityManager = $this->get('«entityManagerService»');
         $query = $entityManager->createQuery($dql);
         $query->setParameter('fragment', '%' . $fragment . '%');
         $results = $query->getArrayResult();
 
         // load avatar plugin
         include_once 'lib/legacy/viewplugins/function.useravatar.php';
-        $view = \Zikula_View::getInstance('«app.appName»', false);
+        $view = \Zikula_View::getInstance('«appName»', false);
 
         $resultItems = [];
         if (is_array($results) && count($results) > 0) {
@@ -137,17 +166,17 @@ class Ajax {
         return new JsonResponse($resultItems);
     '''
 
-    def private getItemListFinderBase(AjaxController it, Application app) '''
+    def private getItemListFinderBase(Application it) '''
         «getItemListFinderDocBlock(true)»
         «getItemListFinderSignature»
         {
-            «getItemListFinderBaseImpl(app)»
+            «getItemListFinderBaseImpl»
         }
 
-        «getItemListFinderPrepareSlimItem(app)»
+        «getItemListFinderPrepareSlimItem»
     '''
 
-    def private getItemListFinderDocBlock(AjaxController it, Boolean isBase) '''
+    def private getItemListFinderDocBlock(Application it, Boolean isBase) '''
         /**
          * Retrieve item list for finder selections in Forms, Content type plugin and Scribite.
         «IF !isBase»
@@ -164,30 +193,30 @@ class Ajax {
          */
     '''
 
-    def private getItemListFinderSignature(AjaxController it) '''
+    def private getItemListFinderSignature(Application it) '''
         public function getItemListFinderAction(Request $request)
     '''
 
-    def private getItemListFinderBaseImpl(AjaxController it, Application app) '''
+    def private getItemListFinderBaseImpl(Application it) '''
         if (!$this->hasPermission($this->name . '::Ajax', '::', ACCESS_EDIT)) {
             return true;
         }
 
-        $objectType = '«app.getLeadingEntity.name.formatForCode»';
+        $objectType = '«getLeadingEntity.name.formatForCode»';
         if ($request->isMethod('POST') && $request->request->has('ot')) {
-            $objectType = $request->request->getAlnum('ot', '«app.getLeadingEntity.name.formatForCode»');
+            $objectType = $request->request->getAlnum('ot', '«getLeadingEntity.name.formatForCode»');
         } elseif ($request->isMethod('GET') && $request->query->has('ot')) {
-            $objectType = $request->query->getAlnum('ot', '«app.getLeadingEntity.name.formatForCode»');
+            $objectType = $request->query->getAlnum('ot', '«getLeadingEntity.name.formatForCode»');
         }
-        $controllerHelper = $this->get('«app.appService».controller_helper');
-        $utilArgs = ['controller' => '«formattedName»', 'action' => 'getItemListFinder'];
+        $controllerHelper = $this->get('«appService».controller_helper');
+        $utilArgs = ['controller' => 'ajax', 'action' => 'getItemListFinder'];
         if (!in_array($objectType, $controllerHelper->getObjectTypes('controllerAction', $utilArgs))) {
             $objectType = $controllerHelper->getDefaultObjectType('controllerAction', $utilArgs);
         }
 
-        $repository = $this->get('«app.appService».' . $objectType . '_factory')->getRepository();
+        $repository = $this->get('«appService».' . $objectType . '_factory')->getRepository();
         $repository->setRequest($request);
-        $selectionHelper = $this->get('«app.appService».selection_helper');
+        $selectionHelper = $this->get('«appService».selection_helper');
         $idFields = $selectionHelper->getIdFields($objectType);
 
         $descriptionField = $repository->getDescriptionFieldName();
@@ -223,7 +252,7 @@ class Ajax {
         return new AjaxResponse($slimItems);
     '''
 
-    def private getItemListFinderPrepareSlimItem(AjaxController it, Application app) '''
+    def private getItemListFinderPrepareSlimItem(Application it) '''
         /**
          * Builds and returns a slim data array from a given entity.
          *
@@ -236,7 +265,7 @@ class Ajax {
          */
         protected function prepareSlimItem($objectType, $item, $itemId, $descriptionField)
         {
-            $view = Zikula_View::getInstance('«app.appName»', false);
+            $view = Zikula_View::getInstance('«appName»', false);
             $view->assign($objectType, $item);
             $previewInfo = base64_encode($view->fetch('External/' . ucfirst($objectType) . '/info.html.twig'));
 
@@ -252,15 +281,15 @@ class Ajax {
         }
     '''
 
-    def private getItemListAutoCompletionBase(AjaxController it, Application app) '''
+    def private getItemListAutoCompletionBase(Application it) '''
         «getItemListAutoCompletionDocBlock(true)»
         «getItemListAutoCompletionSignature»
         {
-            «getItemListAutoCompletionBaseImpl(app)»
+            «getItemListAutoCompletionBaseImpl»
         }
     '''
 
-    def private getItemListAutoCompletionDocBlock(AjaxController it, Boolean isBase) '''
+    def private getItemListAutoCompletionDocBlock(Application it, Boolean isBase) '''
         /**
          * Searches for entities for auto completion usage.
         «IF !isBase»
@@ -275,29 +304,29 @@ class Ajax {
          */
     '''
 
-    def private getItemListAutoCompletionSignature(AjaxController it) '''
+    def private getItemListAutoCompletionSignature(Application it) '''
         public function getItemListAutoCompletionAction(Request $request)
     '''
 
-    def private getItemListAutoCompletionBaseImpl(AjaxController it, Application app) '''
+    def private getItemListAutoCompletionBaseImpl(Application it) '''
         if (!$this->hasPermission($this->name . '::Ajax', '::', ACCESS_EDIT)) {
             return true;
         }
 
-        $objectType = '«app.getLeadingEntity.name.formatForCode»';
+        $objectType = '«getLeadingEntity.name.formatForCode»';
         if ($request->isMethod('POST') && $request->request->has('ot')) {
-            $objectType = $request->request->getAlnum('ot', '«app.getLeadingEntity.name.formatForCode»');
+            $objectType = $request->request->getAlnum('ot', '«getLeadingEntity.name.formatForCode»');
         } elseif ($request->isMethod('GET') && $request->query->has('ot')) {
-            $objectType = $request->query->getAlnum('ot', '«app.getLeadingEntity.name.formatForCode»');
+            $objectType = $request->query->getAlnum('ot', '«getLeadingEntity.name.formatForCode»');
         }
-        $controllerHelper = $this->get('«app.appService».controller_helper');
-        $utilArgs = ['controller' => '«formattedName»', 'action' => 'getItemListAutoCompletion'];
+        $controllerHelper = $this->get('«appService».controller_helper');
+        $utilArgs = ['controller' => 'ajax', 'action' => 'getItemListAutoCompletion'];
         if (!in_array($objectType, $controllerHelper->getObjectTypes('controllerAction', $utilArgs))) {
             $objectType = $controllerHelper->getDefaultObjectType('controllerAction', $utilArgs);
         }
 
-        $repository = $this->get('«app.appService».' . $objectType . '_factory')->getRepository();
-        $selectionHelper = $this->get('«app.appService».selection_helper');
+        $repository = $this->get('«appService».' . $objectType . '_factory')->getRepository();
+        $selectionHelper = $this->get('«appService».selection_helper');
         $idFields = $selectionHelper->getIdFields($objectType);
 
         $fragment = '';
@@ -313,7 +342,7 @@ class Ajax {
 
         // parameter for used sorting field
         $sort = $request->query->get('sort', '');
-        «new ControllerHelperFunctions().defaultSorting(it, app)»
+        «new ControllerHelperFunctions().defaultSorting(null, it)»
         $sortParam = $sort . ' asc';
 
         $currentPage = 1;
@@ -325,7 +354,7 @@ class Ajax {
         $resultItems = [];
 
         if ((is_array($entities) || is_object($entities)) && count($entities) > 0) {
-            «prepareForAutoCompletionProcessing(app)»
+            «prepareForAutoCompletionProcessing»
             foreach ($entities as $item) {
                 $itemTitle = $item->getTitleFromDisplayPattern();
                 $itemTitleStripped = str_replace('"', '', $itemTitle);
@@ -340,7 +369,7 @@ class Ajax {
                     'description' => $itemDescription,
                     'image' => ''
                 ];
-                «IF app.hasImageFields»
+                «IF hasImageFields»
 
                     // check for preview image
                     if (!empty($previewFieldName) && !empty($item[$previewFieldName])) {
@@ -358,26 +387,26 @@ class Ajax {
         return new JsonResponse($resultItems);
     '''
 
-    def private prepareForAutoCompletionProcessing(AjaxController it, Application app) '''
+    def private prepareForAutoCompletionProcessing(Application it) '''
         $descriptionFieldName = $repository->getDescriptionFieldName();
         $previewFieldName = $repository->getPreviewFieldName();
-        «IF app.hasImageFields»
+        «IF hasImageFields»
             «/* TODO use custom image helper instead of pure imagine plugin */»
-            //$imageHelper = $this->get('«app.appService».image_helper');
+            //$imageHelper = $this->get('«appService».image_helper');
             //$imagineManager = $imageHelper->getManager($objectType, $previewFieldName, 'controllerAction', $utilArgs);
             $imagineManager = $this->get('systemplugin.imagine.manager');
         «ENDIF»
     '''
 
-    def private checkForDuplicateBase(AjaxController it, Application app) '''
+    def private checkForDuplicateBase(Application it) '''
         «checkForDuplicateDocBlock(true)»
         «checkForDuplicateSignature»
         {
-            «checkForDuplicateBaseImpl(app)»
+            «checkForDuplicateBaseImpl»
         }
     '''
 
-    def private checkForDuplicateDocBlock(AjaxController it, Boolean isBase) '''
+    def private checkForDuplicateDocBlock(Application it, Boolean isBase) '''
         /**
          * Checks whether a field value is a duplicate or not.
         «IF !isBase»
@@ -394,32 +423,32 @@ class Ajax {
          */
     '''
 
-    def private checkForDuplicateSignature(AjaxController it) '''
+    def private checkForDuplicateSignature(Application it) '''
         public function checkForDuplicateAction(Request $request)
     '''
 
-    def private checkForDuplicateBaseImpl(AjaxController it, Application app) '''
+    def private checkForDuplicateBaseImpl(Application it) '''
         if (!$this->hasPermission($this->name . '::Ajax', '::', ACCESS_EDIT)) {
             throw new AccessDeniedException();
         }
 
-        «prepareDuplicateCheckParameters(app)»
+        «prepareDuplicateCheckParameters»
         /* can probably be removed
          * $createMethod = 'create' . ucfirst($objectType);
-         * $object = $this->get('«app.appService».' . $objectType . '_factory')->$createMethod();
+         * $object = $this->get('«appService».' . $objectType . '_factory')->$createMethod();
          */
 
         $result = false;
         switch ($objectType) {
-        «FOR entity : app.getAllEntities»
+        «FOR entity : getAllEntities»
             «val uniqueFields = entity.getUniqueDerivedFields.filter[!primaryKey]»
             «IF !uniqueFields.empty || (entity.hasSluggableFields && entity.slugUnique)»
                 case '«entity.name.formatForCode»':
-                    $repository = $this->get('«app.appService».' . $objectType . '_factory')->getRepository();
+                    $repository = $this->get('«appService».' . $objectType . '_factory')->getRepository();
                     switch ($fieldName) {
                     «FOR uniqueField : uniqueFields»
                         case '«uniqueField.name.formatForCode»':
-                                $result = $repository->detectUniqueState('«uniqueField.name.formatForCode»', $value, $exclude«IF !application.entities.filter[hasCompositeKeys].empty»[0]«ENDIF»);
+                                $result = $repository->detectUniqueState('«uniqueField.name.formatForCode»', $value, $exclude«IF !entities.filter[hasCompositeKeys].empty»[0]«ENDIF»);
                                 break;
                     «ENDFOR»
                     «IF entity.hasSluggableFields && entity.slugUnique»
@@ -440,12 +469,12 @@ class Ajax {
         return new AjaxResponse($result);
     '''
 
-    def private prepareDuplicateCheckParameters(AjaxController it, Application app) '''
+    def private prepareDuplicateCheckParameters(Application it) '''
         $postData = $request->request;
 
-        $objectType = $postData->getAlnum('ot', '«app.getLeadingEntity.name.formatForCode»');
-        $controllerHelper = $this->get('«app.appService».controller_helper');
-        $utilArgs = ['controller' => '«formattedName»', 'action' => 'checkForDuplicate'];
+        $objectType = $postData->getAlnum('ot', '«getLeadingEntity.name.formatForCode»');
+        $controllerHelper = $this->get('«appService».controller_helper');
+        $utilArgs = ['controller' => 'ajax', 'action' => 'checkForDuplicate'];
         if (!in_array($objectType, $controllerHelper->getObjectTypes('controllerAction', $utilArgs))) {
             $objectType = $controllerHelper->getDefaultObjectType('controllerAction', $utilArgs);
         }
@@ -460,7 +489,7 @@ class Ajax {
         // check if the given field is existing and unique
         $uniqueFields = [];
         switch ($objectType) {
-            «FOR entity : app.getAllEntities»
+            «FOR entity : getAllEntities»
                 «val uniqueFields = entity.getUniqueDerivedFields.filter[!primaryKey]»
                 «IF !uniqueFields.empty || (entity.hasSluggableFields && entity.slugUnique)»
                     case '«entity.name.formatForCode»':
@@ -474,22 +503,22 @@ class Ajax {
         }
 
         $exclude = $postData->get('ex', '');
-        «IF !application.entities.filter[hasCompositeKeys].empty»
+        «IF !entities.filter[hasCompositeKeys].empty»
             if (false !== strpos($exclude, '_')) {
                 $exclude = explode('_', $exclude);
             }
         «ENDIF» 
     '''
 
-    def private toggleFlagBase(AjaxController it, Application app) '''
+    def private toggleFlagBase(Application it) '''
         «toggleFlagDocBlock(true)»
         «toggleFlagSignature»
         {
-            «toggleFlagBaseImpl(app)»
+            «toggleFlagBaseImpl»
         }
     '''
 
-    def private toggleFlagDocBlock(AjaxController it, Boolean isBase) '''
+    def private toggleFlagDocBlock(Application it, Boolean isBase) '''
         /**
          * Changes a given flag (boolean field) by switching between true and false.
         «IF !isBase»
@@ -506,22 +535,22 @@ class Ajax {
          */
     '''
 
-    def private toggleFlagSignature(AjaxController it) '''
+    def private toggleFlagSignature(Application it) '''
         public function toggleFlagAction(Request $request)
     '''
 
-    def private toggleFlagBaseImpl(AjaxController it, Application app) '''
+    def private toggleFlagBaseImpl(Application it) '''
         if (!$this->hasPermission($this->name . '::Ajax', '::', ACCESS_EDIT)) {
             throw new AccessDeniedException();
         }
 
         $postData = $request->request;
 
-        $objectType = $postData->getAlnum('ot', '«app.getLeadingEntity.name.formatForCode»');
+        $objectType = $postData->getAlnum('ot', '«getLeadingEntity.name.formatForCode»');
         $field = $postData->getAlnum('field', '');
         $id = $postData->getInt('id', 0);
 
-        «val entities = app.getEntitiesWithAjaxToggle»
+        «val entities = getEntitiesWithAjaxToggle»
         if ($id == 0
             || («FOR entity : entities SEPARATOR ' && '»$objectType != '«entity.name.formatForCode»'«ENDFOR»)
         «FOR entity : entities»
@@ -532,7 +561,7 @@ class Ajax {
         }
 
         // select data from data source
-        $selectionHelper = $this->get('«app.appService».selection_helper');
+        $selectionHelper = $this->get('«appService».selection_helper');
         $entity = $selectionHelper->getEntity($objectType, $id);
         if (null === $entity) {
             return new NotFoundResponse($this->__('No such item.'));
@@ -542,7 +571,7 @@ class Ajax {
         $entity[$field] = !$entity[$field];
 
         // save entity back to database
-        $entityManager = $this->get('«app.entityManagerService»');
+        $entityManager = $this->get('«entityManagerService»');
         $entityManager->flush();
 
         // return response
@@ -552,21 +581,21 @@ class Ajax {
         ];
 
         $logger = $this->get('logger');
-        $logArgs = ['app' => '«app.appName»', 'user' => $this->get('zikula_users_module.current_user')->get('uname'), 'field' => $field, 'entity' => $objectType, 'id' => $id];
+        $logArgs = ['app' => '«appName»', 'user' => $this->get('zikula_users_module.current_user')->get('uname'), 'field' => $field, 'entity' => $objectType, 'id' => $id];
         $logger->notice('{app}: User {user} toggled the {field} flag the {entity} with id {id}.', $logArgs);
 
         return new AjaxResponse($result);
     '''
 
-    def private handleTreeOperationBase(AjaxController it, Application app) '''
+    def private handleTreeOperationBase(Application it) '''
         «handleTreeOperationDocBlock(true)»
         «handleTreeOperationSignature»
         {
-            «handleTreeOperationBaseImpl(app)»
+            «handleTreeOperationBaseImpl»
         }
     '''
 
-    def private handleTreeOperationDocBlock(AjaxController it, Boolean isBase) '''
+    def private handleTreeOperationDocBlock(Application it, Boolean isBase) '''
         /**
          * Performs different operations on tree hierarchies.
         «IF !isBase»
@@ -590,18 +619,18 @@ class Ajax {
          */
     '''
 
-    def private handleTreeOperationSignature(AjaxController it) '''
+    def private handleTreeOperationSignature(Application it) '''
         public function handleTreeOperationAction(Request $request)
     '''
 
-    def private handleTreeOperationBaseImpl(AjaxController it, Application app) '''
+    def private handleTreeOperationBaseImpl(Application it) '''
         if (!$this->hasPermission($this->name . '::Ajax', '::', ACCESS_EDIT)) {
             throw new AccessDeniedException();
         }
 
         $postData = $request->request;
 
-        «val treeEntities = app.getTreeEntities»
+        «val treeEntities = getTreeEntities»
         // parameter specifying which type of objects we are treating
         $objectType = $postData->getAlnum('ot', '«treeEntities.head.name.formatForCode»');
         // ensure that we use only object types with tree extension enabled
@@ -609,7 +638,7 @@ class Ajax {
             $objectType = '«treeEntities.head.name.formatForCode»';
         }
 
-        «prepareTreeOperationParameters(app)»
+        «prepareTreeOperationParameters»
 
         $returnValue = [
             'data'    => [],
@@ -617,7 +646,7 @@ class Ajax {
         ];
 
         $createMethod = 'create' . ucfirst($objectType);
-        $repository = $this->get('«app.appService».' . $objectType . '_factory')->getRepository();
+        $repository = $this->get('«appService».' . $objectType . '_factory')->getRepository();
 
         $rootId = 1;
         if (!in_array($op, ['addRootNode'])) {
@@ -627,7 +656,7 @@ class Ajax {
             }
         }
 
-        $selectionHelper = $this->get('«app.appService».selection_helper');
+        $selectionHelper = $this->get('«appService».selection_helper');
 
         // Select tree
         $tree = null;
@@ -642,15 +671,15 @@ class Ajax {
             foreach ($verificationResult as $errorMsg) {
                 $errorMessages[] = $errorMsg;
             }
-            throw new \RuntimeException(implode('<br />', $errorMessages));
+            throw new RuntimeException(implode('<br />', $errorMessages));
         }
         $repository->recover();
-        $entityManager = $this->get('«app.entityManagerService»');
+        $entityManager = $this->get('«entityManagerService»');
         $entityManager->clear(); // clear cached nodes
 
-        «treeOperationDetermineEntityFields(app)»
+        «treeOperationDetermineEntityFields»
 
-        «treeOperationSwitch(app)»
+        «treeOperationSwitch»
 
         $returnValue['message'] = $this->__('The operation was successful.');
 
@@ -662,7 +691,7 @@ class Ajax {
         return new AjaxResponse($returnValue);
     '''
 
-    def private prepareTreeOperationParameters(AjaxController it, Application app) '''
+    def private prepareTreeOperationParameters(Application it) '''
         $op = $postData->getAlpha('op', '');
         if (!in_array($op, ['addRootNode', 'addChildNode', 'deleteNode', 'moveNode', 'moveNodeTo'])) {
             throw new FatalResponse($this->__('Error: invalid operation.'));
@@ -678,11 +707,11 @@ class Ajax {
         }
     '''
 
-    def private treeOperationDetermineEntityFields(AjaxController it, Application app) '''
+    def private treeOperationDetermineEntityFields(Application it) '''
         $titleFieldName = $descriptionFieldName = '';
 
         switch ($objectType) {
-            «FOR entity : app.getTreeEntities»
+            «FOR entity : getTreeEntities»
                 case '«entity.name.formatForCode»':
                     «val stringFields = entity.fields.filter(StringField).filter[length >= 20 && !nospace && !country && !htmlcolour && !language && !locale]»
                         $titleFieldName = '«IF !stringFields.empty»«stringFields.head.name.formatForCode»«ENDIF»';
@@ -700,43 +729,43 @@ class Ajax {
         }
     '''
 
-    def private treeOperationSwitch(AjaxController it, Application app) '''
+    def private treeOperationSwitch(Application it) '''
         $logger = $this->get('logger');
-        $logArgs = ['app' => '«app.appName»', 'user' => $this->get('zikula_users_module.current_user')->get('uname'), 'entity' => $objectType];
-        $selectionHelper = $this->get('«app.appService».selection_helper');
+        $logArgs = ['app' => '«appName»', 'user' => $this->get('zikula_users_module.current_user')->get('uname'), 'entity' => $objectType];
+        $selectionHelper = $this->get('«appService».selection_helper');
 
         switch ($op) {
             case 'addRootNode':
-                            «treeOperationAddRootNode(app)»
+                            «treeOperationAddRootNode»
 
                             $logger->notice('{app}: User {user} added a new root node in the {entity} tree.', $logArgs);
                             break;
             case 'addChildNode':
-                            «treeOperationAddChildNode(app)»
+                            «treeOperationAddChildNode»
 
                             $logger->notice('{app}: User {user} added a new child node in the {entity} tree.', $logArgs);
                             break;
             case 'deleteNode':
-                            «treeOperationDeleteNode(app)»
+                            «treeOperationDeleteNode»
 
                             $logger->notice('{app}: User {user} deleted a node from the {entity} tree.', $logArgs);
                             break;
             case 'moveNode':
-                            «treeOperationMoveNode(app)»
+                            «treeOperationMoveNode»
 
                             $logger->notice('{app}: User {user} moved a node in the {entity} tree.', $logArgs);
                             break;
             case 'moveNodeTo':
-                            «treeOperationMoveNodeTo(app)»
+                            «treeOperationMoveNodeTo»
 
                             $logger->notice('{app}: User {user} moved a node in the {entity} tree.', $logArgs);
                             break;
         }
     '''
 
-    def private treeOperationAddRootNode(AjaxController it, Application app) '''
+    def private treeOperationAddRootNode(Application it) '''
         //$entityManager->transactional(function($entityManager) {
-            $entity = $this->get('«app.appService».' . $objectType . '_factory')->$createMethod();
+            $entity = $this->get('«appService».' . $objectType . '_factory')->$createMethod();
             $entityData = [];
             if (!empty($titleFieldName)) {
                 $entityData[$titleFieldName] = $this->__('New root node');
@@ -746,7 +775,7 @@ class Ajax {
             }
             $entity->merge($entityData);
             «/*IF hasTranslatableFields»
-                $entity->setLocale(«IF app.isLegacy»ZLanguage::getLanguageCode()«ELSE»$request->getLocale()«ENDIF»);
+                $entity->setLocale(«IF isLegacy»ZLanguage::getLanguageCode()«ELSE»$request->getLocale()«ENDIF»);
             «ENDIF*/»
 
             // save new object to set the root id
@@ -754,23 +783,23 @@ class Ajax {
             try {
                 if ($entity->validate()) {
                     // execute the workflow action
-                    $workflowHelper = $this->get('«app.appService».workflow_helper');
+                    $workflowHelper = $this->get('«appService».workflow_helper');
                     $success = $workflowHelper->executeAction($entity, $action);
                 }
             } catch(\Exception $e) {
-                throw new \RuntimeException($this->__f('Sorry, but an error occured during the %s action. Please apply the changes again!', ['%s' => $action]) . '  ' . $e->getMessage());
+                throw new RuntimeException($this->__f('Sorry, but an error occured during the %s action. Please apply the changes again!', ['%s' => $action]) . '  ' . $e->getMessage());
             }
         //});
     '''
 
-    def private treeOperationAddChildNode(AjaxController it, Application app) '''
+    def private treeOperationAddChildNode(Application it) '''
         $parentId = $postData->getInt('pid', 0);
         if (!$parentId) {
             throw new FatalResponse($this->__('Error: invalid parent node.'));
         }
 
         //$entityManager->transactional(function($entityManager) {
-            $childEntity = $this->get('«app.appService».' . $objectType . '_factory')->$createMethod();
+            $childEntity = $this->get('«appService».' . $objectType . '_factory')->$createMethod();
             $entityData = [];
             $entityData[$titleFieldName] = $this->__('New child node');
             if (!empty($descriptionFieldName)) {
@@ -783,15 +812,15 @@ class Ajax {
             try {
                 if ($childEntity->validate()) {
                     // execute the workflow action
-                    $workflowHelper = $this->get('«app.appService».workflow_helper');
+                    $workflowHelper = $this->get('«appService».workflow_helper');
                     $success = $workflowHelper->executeAction($childEntity, $action);
                 }
             } catch(\Exception $e) {
-                throw new \RuntimeException($this->__f('Sorry, but an error occured during the %s action. Please apply the changes again!', ['%s' => $action]) . '  ' . $e->getMessage());
+                throw new RuntimeException($this->__f('Sorry, but an error occured during the %s action. Please apply the changes again!', ['%s' => $action]) . '  ' . $e->getMessage());
             }
 
             //$childEntity->setParent($parentEntity);
-            $parentEntity = $selectionHelper->getEntity($objectType, $parentId«IF app.hasSluggable», ''«ENDIF», false);
+            $parentEntity = $selectionHelper->getEntity($objectType, $parentId«IF hasSluggable», ''«ENDIF», false);
             if (null === $parentEntity) {
                 return new NotFoundResponse($this->__('No such item.'));
             }
@@ -800,9 +829,9 @@ class Ajax {
         $entityManager->flush();
     '''
 
-    def private treeOperationDeleteNode(AjaxController it, Application app) '''
+    def private treeOperationDeleteNode(Application it) '''
         // remove node from tree and reparent all children
-        $entity = $selectionHelper->getEntity($objectType, $id«IF app.hasSluggable», ''«ENDIF», false);
+        $entity = $selectionHelper->getEntity($objectType, $id«IF hasSluggable», ''«ENDIF», false);
         if (null === $entity) {
             return new NotFoundResponse($this->__('No such item.'));
         }
@@ -814,24 +843,24 @@ class Ajax {
         try {
             if ($entity->validate()) {
                 // execute the workflow action
-                $workflowHelper = $this->get('«app.appService».workflow_helper');
+                $workflowHelper = $this->get('«appService».workflow_helper');
                 $success = $workflowHelper->executeAction($entity, $action);
             }
         } catch(\Exception $e) {
-            throw new \RuntimeException($this->__f('Sorry, but an error occured during the %s action. Please apply the changes again!', ['%s' => $action]) . '  ' . $e->getMessage());
+            throw new RuntimeException($this->__f('Sorry, but an error occured during the %s action. Please apply the changes again!', ['%s' => $action]) . '  ' . $e->getMessage());
         }
 
         $repository->removeFromTree($entity);
         $entityManager->clear(); // clear cached nodes
     '''
 
-    def private treeOperationMoveNode(AjaxController it, Application app) '''
+    def private treeOperationMoveNode(Application it) '''
         $moveDirection = $postData->getAlpha('direction', '');
         if (!in_array($moveDirection, ['up', 'down'])) {
             throw new FatalResponse($this->__('Error: invalid direction.'));
         }
 
-        $entity = $selectionHelper->getEntity($objectType, $id«IF app.hasSluggable», ''«ENDIF», false);
+        $entity = $selectionHelper->getEntity($objectType, $id«IF hasSluggable», ''«ENDIF», false);
         if (null === $entity) {
             return new NotFoundResponse($this->__('No such item.'));
         }
@@ -844,7 +873,7 @@ class Ajax {
         $entityManager->flush();
     '''
 
-    def private treeOperationMoveNodeTo(AjaxController it, Application app) '''
+    def private treeOperationMoveNodeTo(Application it) '''
         $moveDirection = $postData->getAlpha('direction', '');
         if (!in_array($moveDirection, ['after', 'before', 'bottom'])) {
             throw new FatalResponse($this->__('Error: invalid direction.'));
@@ -856,8 +885,8 @@ class Ajax {
         }
 
         //$entityManager->transactional(function($entityManager) {
-            $entity = $selectionHelper->getEntity($objectType, $id«IF app.hasSluggable», ''«ENDIF», false);
-            $destEntity = $selectionHelper->getEntity($objectType, $destId«IF app.hasSluggable», ''«ENDIF», false);
+            $entity = $selectionHelper->getEntity($objectType, $id«IF hasSluggable», ''«ENDIF», false);
+            $destEntity = $selectionHelper->getEntity($objectType, $destId«IF hasSluggable», ''«ENDIF», false);
             if (null === $entity || null === $destEntity) {
                 return new NotFoundResponse($this->__('No such item.'));
             }
@@ -875,38 +904,34 @@ class Ajax {
 
 
 
+    def additionalAjaxFunctions(Application it) '''
+        «userSelectorsImpl»
+        «IF generateExternalControllerAndFinder»
 
-    def dispatch additionalAjaxFunctions(Controller it, Application app) {
-    }
-
-    def dispatch additionalAjaxFunctions(AjaxController it, Application app) '''
-        «userSelectorsImpl(app)»
-        «IF app.generateExternalControllerAndFinder»
-
-            «getItemListFinderImpl(app)»
+            «getItemListFinderImpl»
         «ENDIF»
-        «val joinRelations = app.getJoinRelations»
+        «val joinRelations = getJoinRelations»
         «IF !joinRelations.empty»
 
-            «getItemListAutoCompletionImpl(app)»
+            «getItemListAutoCompletionImpl»
         «ENDIF»
-        «IF app.entities.exists[getUniqueDerivedFields.filter[!primaryKey].size > 0]
-        || (app.hasSluggable && !app.getAllEntities.filter[hasSluggableFields && slugUnique].empty)»
+        «IF entities.exists[getUniqueDerivedFields.filter[!primaryKey].size > 0]
+        || (hasSluggable && !getAllEntities.filter[hasSluggableFields && slugUnique].empty)»
 
-            «checkForDuplicateImpl(app)»
+            «checkForDuplicateImpl»
         «ENDIF»
-        «IF app.hasBooleansWithAjaxToggle»
+        «IF hasBooleansWithAjaxToggle»
 
-            «toggleFlagImpl(app)»
+            «toggleFlagImpl»
         «ENDIF»
-        «IF app.hasTrees»
+        «IF hasTrees»
         
-            «handleTreeOperationImpl(app)»
+            «handleTreeOperationImpl»
         «ENDIF»
     '''
 
-    def private userSelectorsImpl(AjaxController it, Application app) '''
-        «val userFields = app.getAllUserFields»
+    def private userSelectorsImpl(Application it) '''
+        «val userFields = getAllUserFields»
         «IF !userFields.empty»
             «FOR userField : userFields»
 
@@ -921,11 +946,11 @@ class Ajax {
                 }
             «ENDFOR»
 
-            «getCommonUsersListImpl(app)»
+            «getCommonUsersListImpl»
         «ENDIF»
     '''
 
-    def private getCommonUsersListImpl(AjaxController it, Application app) '''
+    def private getCommonUsersListImpl(Application it) '''
         «getCommonUsersListDocBlock(false)»
         «getCommonUsersListSignature»
         {
@@ -933,7 +958,7 @@ class Ajax {
         }
     '''
 
-    def private getItemListFinderImpl(AjaxController it, Application app) '''
+    def private getItemListFinderImpl(Application it) '''
         «getItemListFinderDocBlock(false)»
         «getItemListFinderSignature»
         {
@@ -941,7 +966,7 @@ class Ajax {
         }
     '''
 
-    def private getItemListAutoCompletionImpl(AjaxController it, Application app) '''
+    def private getItemListAutoCompletionImpl(Application it) '''
         «getItemListAutoCompletionDocBlock(false)»
         «getItemListAutoCompletionSignature»
         {
@@ -949,7 +974,7 @@ class Ajax {
         }
     '''
 
-    def private checkForDuplicateImpl(AjaxController it, Application app) '''
+    def private checkForDuplicateImpl(Application it) '''
         «checkForDuplicateDocBlock(false)»
         «checkForDuplicateSignature»
         {
@@ -957,7 +982,7 @@ class Ajax {
         }
     '''
 
-    def private toggleFlagImpl(AjaxController it, Application app) '''
+    def private toggleFlagImpl(Application it) '''
         «toggleFlagDocBlock(false)»
         «toggleFlagSignature»
         {
@@ -965,11 +990,39 @@ class Ajax {
         }
     '''
 
-    def private handleTreeOperationImpl(AjaxController it, Application app) '''
+    def private handleTreeOperationImpl(Application it) '''
         «handleTreeOperationDocBlock(false)»
         «handleTreeOperationSignature»
         {
             return parent::handleTreeOperationAction($request);
+        }
+    '''
+
+    def private ajaxControllerImpl(Application it) '''
+        namespace «appNamespace»\Controller;
+
+        use «appNamespace»\Controller\Base\AbstractAjaxController;
+        use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+        use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+        use Symfony\Component\HttpFoundation\JsonResponse;
+        use Symfony\Component\HttpFoundation\Request;
+        use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+        use RuntimeException;
+        use Zikula\Core\Response\Ajax\AjaxResponse;
+        use Zikula\Core\Response\Ajax\BadDataResponse;
+        use Zikula\Core\Response\Ajax\FatalResponse;
+        use Zikula\Core\Response\Ajax\NotFoundResponse;
+
+        /**
+         * Ajax controller implementation class.
+         *
+         * @Route("/ajax")
+         */
+        class AjaxController extends AbstractAjaxController
+        {
+            «additionalAjaxFunctions»
+
+            // feel free to add your own ajax controller methods here
         }
     '''
 }

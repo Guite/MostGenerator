@@ -71,7 +71,7 @@ class Tag {
             $repository = $serviceManager->get('«appService».' . $objectType . '_factory')->getRepository();
             $useJoins = false;
 
-            /** TODO support composite identifiers properly at this point */
+            «/* TODO support composite identifiers properly at this point */»
             $entity = $repository->selectById($objectId, $useJoins);
             if (false === $entity || (!is_array($entity) && !is_object($entity))) {
                 return;

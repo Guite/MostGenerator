@@ -22,6 +22,11 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.controller.addition
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.additions.MultiHook
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.additions.Newsletter
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.additions.Tag
+import org.zikula.modulestudio.generator.cartridges.zclassic.controller.javascript.DisplayFunctions
+import org.zikula.modulestudio.generator.cartridges.zclassic.controller.javascript.EditFunctions
+import org.zikula.modulestudio.generator.cartridges.zclassic.controller.javascript.Finder
+import org.zikula.modulestudio.generator.cartridges.zclassic.controller.javascript.TreeFunctions
+import org.zikula.modulestudio.generator.cartridges.zclassic.controller.javascript.Validation
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.Entities
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.Factory
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.Repository
@@ -43,6 +48,7 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.view.Styles
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.Views
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
+import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
 
@@ -50,6 +56,7 @@ class ZclassicGenerator implements IGenerator {
 
     extension ControllerExtensions = new ControllerExtensions
     extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
+    extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension ModelExtensions = new ModelExtensions
     extension WorkflowExtensions = new WorkflowExtensions
 
@@ -138,6 +145,19 @@ class ZclassicGenerator implements IGenerator {
             println('Generating upload handlers')
             new Uploads().generate(it, fsa)
         }
+        pm?.subTask('Controller: JavaScript files')
+        println('Generating JavaScript files')
+        if (generateExternalControllerAndFinder) {
+            new Finder().generate(it, fsa)
+        }
+        if (hasEditActions) {
+            new EditFunctions().generate(it, fsa)
+        }
+        new DisplayFunctions().generate(it, fsa)
+        if (hasTrees) {
+            new TreeFunctions().generate(it, fsa)
+        }
+        new Validation().generate(it, fsa)
     }
 
     def private generateView(Application it) {
@@ -179,7 +199,7 @@ class ZclassicGenerator implements IGenerator {
     }
 
     def private generateIntegrationContentTypes(Application it) {
-        val needsDetailContentType = generateDetailContentType && hasUserController && getMainUserController.hasActions('display')
+        val needsDetailContentType = generateDetailContentType && hasDisplayActions
         if (generateListContentType || needsDetailContentType) {
             pm?.subTask('Integration: Content types')
             println('Generating content types')
@@ -208,10 +228,7 @@ class ZclassicGenerator implements IGenerator {
             println('Generating MultiHook needles')
             new MultiHook().generate(it, fsa)
         }
-        if (generateTagSupport &&
-            ((hasUserController && getMainUserController.hasActions('display'))
-            || (!getAllAdminControllers.empty && getAllAdminControllers.head.hasActions('display'))
-            || !getAllEntities.filter[hasActions('display')].empty)) {
+        if (generateTagSupport && hasDisplayActions) {
             pm?.subTask('Integration: Tag support')
             println('Generating tag support')
             new Tag().generate(it, fsa)

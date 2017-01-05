@@ -56,13 +56,11 @@ class Emails {
         {% endif %}
 
         {% if mailData.newState != __('Deleted') %}
-            «IF application.hasUserController»
-                «IF application.getMainUserController.hasActions('display')»
-                    <p>{{ __('Link to your «name.formatForDisplay»:') }} <a href="{{ mailData.displayUrl|e('html_attr') }}" title="{{ mailData.name|e('html_attr') }}">{{ mailData.displayUrl }}</a></p>
-                «ENDIF»
-                «IF application.getMainUserController.hasActions('edit')»
-                    <p>{{ __('Edit your «name.formatForDisplay»:') }} <a href="{{ mailData.editUrl|e('html_attr') }}" title="{{ __('Edit') }}">{{ mailData.editUrl }}</a></p>
-                «ENDIF»
+            «IF hasDisplayAction»
+                <p>{{ __('Link to your «name.formatForDisplay»:') }} <a href="{{ mailData.displayUrl|e('html_attr') }}" title="{{ mailData.name|e('html_attr') }}">{{ mailData.displayUrl }}</a></p>
+            «ENDIF»
+            «IF hasEditAction»
+                <p>{{ __('Edit your «name.formatForDisplay»:') }} <a href="{{ mailData.editUrl|e('html_attr') }}" title="{{ __('Edit') }}">{{ mailData.editUrl }}</a></p>
             «ENDIF»
         {% endif %}
 
@@ -81,12 +79,10 @@ class Emails {
         {% endif %}
 
         {% if mailData.newState != __('Deleted') %}
-            «IF application.hasAdminController && application.getAllAdminControllers.head.hasActions('display')
-                || application.hasUserController && application.getMainUserController.hasActions('display')»
+            «IF hasDisplayAction»
                 <p>{{ __('Link to the «name.formatForDisplay»:') }} <a href="{{ mailData.displayUrl|e('html_attr') }}" title="{{ mailData.name|e('html_attr') }}">{{ mailData.displayUrl }}</a></p>
             «ENDIF»
-            «IF application.hasAdminController && application.getAllAdminControllers.head.hasActions('edit')
-                || application.hasUserController && application.getMainUserController.hasActions('edit')»
+            «IF hasEditAction»
                 <p>{{ __('Edit the «name.formatForDisplay»:') }} <a href="{{ mailData.editUrl|e('html_attr') }}" title="{{ __('Edit') }}">{{ mailData.editUrl }}</a></p>
             «ENDIF»
         {% endif %}

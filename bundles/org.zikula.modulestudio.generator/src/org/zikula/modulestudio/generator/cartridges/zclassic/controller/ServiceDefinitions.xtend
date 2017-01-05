@@ -113,7 +113,7 @@ class ServiceDefinitions {
                     «IF generateAccountApi»
                         - "@zikula_extensions_module.api.variable"
                     «ENDIF»
-                    «IF generateAccountApi || !controllers.filter[c|c.hasActions('edit')].empty»
+                    «IF generateAccountApi || hasEditActions»
                         - "@zikula_users_module.current_user"
                     «ENDIF»
                 tags:
@@ -163,7 +163,7 @@ class ServiceDefinitions {
             'Core', 'Kernel', 'Installer', 'ModuleDispatch', 'Mailer', 'Page', 'Theme', 'View',
             'UserLogin', 'UserLogout', 'User', 'UserRegistration', 'Users', 'Group')
 
-        val needsDetailContentType = generateDetailContentType && hasUserController && getMainUserController.hasActions('display')
+        val needsDetailContentType = generateDetailContentType && hasDisplayActions
         if (generatePendingContentSupport || generateListContentType || needsDetailContentType) {
             listeners.add('ThirdParty')
         }
@@ -246,7 +246,7 @@ class ServiceDefinitions {
         # Form types
         «val nsBase = appNamespace + '\\Form\\Type\\'»
         «IF hasViewActions»
-            «FOR entity : getAllEntities.filter[e|e.hasActions('view')]»
+            «FOR entity : getAllEntities.filter[hasViewAction]»
 
                 «modPrefix».form.type.«entity.name.formatForDB»quicknav:
                     class: «nsBase»QuickNavigation\«entity.name.formatForCodeCapital»QuickNavType
@@ -264,7 +264,7 @@ class ServiceDefinitions {
             «ENDFOR»
         «ENDIF»
         «IF hasEditActions»
-            «FOR entity : entities.filter[e|e instanceof MappedSuperClass || e.hasActions('edit')]»
+            «FOR entity : entities.filter[e|e instanceof MappedSuperClass || (e as Entity).hasEditAction]»
                 «IF entity instanceof Entity»
 
                     «modPrefix».form.handler.«entity.name.formatForDB»:

@@ -13,6 +13,7 @@ import org.zikula.modulestudio.generator.extensions.UrlExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class ContentTypeListView {
+
     extension ControllerExtensions = new ControllerExtensions
     extension FormattingExtensions = new FormattingExtensions
     extension ModelExtensions = new ModelExtensions
@@ -86,7 +87,7 @@ class ContentTypeListView {
         {# Purpose of this template: Display «nameMultiple.formatForDisplay» within an external context #}
         {% for «name.formatForCode» in items %}
             <h3>{{ «name.formatForCode».getTitleFromDisplayPattern() }}</h3>
-            «IF app.hasUserController && app.getMainUserController.hasActions('display')»
+            «IF hasDisplayAction»
                 <p>«detailLink(app.appName)»</p>
             «ENDIF»
         {% endfor %}

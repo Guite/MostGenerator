@@ -1,10 +1,7 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.controller.action
 
 import de.guite.modulestudio.metamodel.Action
-import de.guite.modulestudio.metamodel.AdminController
-import de.guite.modulestudio.metamodel.AjaxController
 import de.guite.modulestudio.metamodel.Application
-import de.guite.modulestudio.metamodel.Controller
 import de.guite.modulestudio.metamodel.CustomAction
 import de.guite.modulestudio.metamodel.DeleteAction
 import de.guite.modulestudio.metamodel.DisplayAction
@@ -12,7 +9,6 @@ import de.guite.modulestudio.metamodel.EditAction
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.EntityTreeType
 import de.guite.modulestudio.metamodel.MainAction
-import de.guite.modulestudio.metamodel.NamedObject
 import de.guite.modulestudio.metamodel.OneToManyRelationship
 import de.guite.modulestudio.metamodel.OneToOneRelationship
 import de.guite.modulestudio.metamodel.ViewAction
@@ -40,56 +36,6 @@ class Actions {
         this.app = app
     }
 
-    def actionImpl(Action it) '''
-        «IF it instanceof MainAction»
-            // parameter specifying which type of objects we are treating
-            $objectType = $request->query->getAlnum('ot', '«app.getLeadingEntity.name.formatForCode»');
-
-            $permLevel = «IF controller instanceof AdminController»ACCESS_ADMIN«ELSE»«getPermissionAccessLevel»«ENDIF»;
-            «permissionCheck('', '')»
-        «ELSE»
-            «initControllerHelper»
-
-            // parameter specifying which type of objects we are treating
-            $objectType = $request->query->getAlnum('ot', '«app.getLeadingEntity.name.formatForCode»');
-            $utilArgs = ['controller' => '«controller.formattedName»', 'action' => '«name.formatForCode.toFirstLower»'];
-            if (!in_array($objectType, $controllerHelper->getObjectTypes('controllerAction', $utilArgs))) {
-                $objectType = $controllerHelper->getDefaultObjectType('controllerAction', $utilArgs);
-            }
-            $permLevel = «IF controller instanceof AdminController»ACCESS_ADMIN«ELSE»«getPermissionAccessLevel»«ENDIF»;
-            «permissionCheck("' . ucfirst($objectType) . '", '')»
-        «ENDIF»
-        «actionImplBody»
-    '''
-
-    def private redirectLegacyAction(Action it) '''
-
-        // forward GET parameters
-        $redirectArgs = $this->request->query->all();
-
-        // remove unrequired fields
-        if (isset($redirectArgs['module'])) {
-            unset($redirectArgs['module']);
-        }
-        if (isset($redirectArgs['type'])) {
-            unset($redirectArgs['type']);
-        }
-        if (isset($redirectArgs['func'])) {
-            unset($redirectArgs['func']);
-        }
-        if (isset($redirectArgs['ot'])) {
-            unset($redirectArgs['ot']);
-        }
-
-        $routeArea = '«IF controller instanceof AdminController»admin«ENDIF»';
-
-        // redirect to entity controller
-        $logger = $this->get('logger');
-        $logger->warning('{app}: The {controller} controller\'s {action} action is deprecated. Please use entity-related controllers instead.', ['app' => '«app.appName»', 'controller' => '«controller.name.formatForDisplay»', 'action' => '«name.formatForDisplay»']);
-
-        return $this->redirectToRoute('«app.appName.formatForDB»_' . strtolower($objectType) . '_' . $routeArea . '«name.formatForDB»', $redirectArgs);
-    '''
-
     def actionImpl(Entity it, Action action) '''
         «IF it instanceof MainAction»
             «permissionCheck('', '')»
@@ -101,13 +47,6 @@ class Actions {
             «action.permissionCheck("' . ucfirst($objectType) . '", '')»
         «ENDIF»
         «actionImplBody(it, action)»
-    '''
-
-    /**
-     * Initialise controller helper.
-     */
-    def private initControllerHelper() '''
-        $controllerHelper = $this->get('«app.appService».controller_helper');
     '''
 
     /**
@@ -131,134 +70,20 @@ class Actions {
         }
     }
 
-    def private dispatch actionImplBody(Action it) {
-    }
-
     def private dispatch actionImplBody(Entity it, Action action) {
     }
 
-    def private dispatch actionImplBody(MainAction it) '''
-        «IF controller instanceof AjaxController»
-        «ELSE»
-
-            «IF controller.hasActions('view')»
-                // redirect to view action
-                $routeArea = '«IF controller instanceof AdminController»admin«ENDIF»';
-
-                return $this->redirectToRoute('«app.appName.formatForDB»_' . strtolower($objectType) . '_' . $routeArea . 'view');
-            «ELSE»
-                «redirectLegacyAction»
-«/*
-                $templateParameters = [
-                    'routeArea' => $isAdmin ? 'admin' : ''
-                ];
-
-                // return index template
-                return $this->render('@«app.appName»/«controller.formattedName.toFirstUpper»/index.html.twig', $templateParameters);
-*/»
-            «ENDIF»
-        «ENDIF»
-    '''
-
     def private dispatch actionImplBody(Entity it, MainAction action) '''
-        «IF app.hasAdminController && app.getAllAdminControllers.head.hasActions('view')»
+        «IF hasViewAction»
+            return $this->redirectToRoute('«app.appName.formatForDB»_«name.formatForDB»_' . ($isAdmin ? 'admin' : '') . 'view');
 
-            if ($isAdmin) {
-                «redirectFromIndexToView(app.getAllAdminControllers.head)»
-            }
         «ENDIF»
-        «IF app.hasUserController && app.getAllUserControllers.head.hasActions('view')»
-
-            if (!$isAdmin) {
-                «redirectFromIndexToView(app.getMainUserController)»
-            }
-        «ENDIF»
-
         $templateParameters = [
             'routeArea' => $isAdmin ? 'admin' : ''
         ];
 
         // return index template
         return $this->render('@«app.appName»/«name.formatForCodeCapital»/index.html.twig', $templateParameters);
-    '''
-
-    def private redirectFromIndexToView(Entity it, Controller controller) '''
-
-        return $this->redirectToRoute('«app.appName.formatForDB»_«name.formatForDB»_' . ($isAdmin ? 'admin' : '') . 'view');
-    '''
-
-    def private actionImplBodyAjaxView(ViewAction it) '''
-        $repository = $this->get('«app.appService».' . $objectType . '_factory')->getRepository();
-        $repository->setRequest($request);
-
-        // parameter for used sorting field
-        $sort = $request->query->getAlnum('sort', '');
-        «new ControllerHelperFunctions().defaultSorting(it, app)»
-
-        // parameter for used sort order
-        $sortdir = strtolower($request->query->getAlpha('sortdir', ''));
-        if ($sortdir != 'asc' && $sortdir != 'desc') {
-            $sortdir = 'asc';
-        }
-
-        // convenience vars to make code clearer
-        $currentUrlArgs = ['ot' => $objectType];
-
-        $where = $request->query->get('where', '');
-        $where = str_replace('"', '', $where);
-
-        $selectionHelper = $this->get('«app.appService».selection_helper');
-
-        «prepareViewUrlArgs(false)»
-
-        $resultsPerPage = 0;
-        if ($showAllEntries == 1) {
-            // retrieve item list without pagination
-            $entities = $selectionHelper->getEntities($objectType, [], $where, $sort . ' ' . $sortdir);
-            $objectCount = count($entities);
-        } else {
-            // the current offset which is used to calculate the pagination
-            $currentPage = $request->query->getInt('pos', 1);
-
-            // the number of items displayed on a page for pagination
-            $resultsPerPage = $request->query->getInt('num', 0);
-            if (in_array($resultsPerPage, [0, 10])) {
-                $resultsPerPage = $this->getVar($objectType . 'EntriesPerPage', 10);
-            }
-
-            // retrieve item list with pagination
-            list($entities, $objectCount) = $selectionHelper->getEntitiesPaginated($objectType, $where, $sort . ' ' . $sortdir, $currentPage, $resultsPerPage);
-        }
-
-        «IF app.hasCategorisableEntities»
-            if (in_array($objectType, ['«app.getCategorisableEntities.map[e|e.name.formatForCode].join('\', \'')»'])) {
-                $featureActivationHelper = $this->get('«app.appService».feature_activation_helper');
-                if ($featureActivationHelper->isEnabled(FeatureActivationHelper::CATEGORIES, $objectType)) {
-                    $filteredEntities = [];
-                    foreach ($entities as $entity) {
-                        if ($this->get('«app.appService».category_helper')->hasPermission($entity)) {
-                            $filteredEntities[] = $entity;
-                        }
-                    }
-                    $entities = $filteredEntities;
-                }
-            }
-
-        «ENDIF»
-
-        foreach ($entities as $k => $entity) {
-            $entity->initWorkflow();
-        }
-
-        «prepareViewItemsAjax(controller)»
-    '''
-
-    def private dispatch actionImplBody(ViewAction it) '''
-        «IF controller instanceof AjaxController»
-            «actionImplBodyAjaxView»
-        «ELSE»
-            «redirectLegacyAction»
-        «ENDIF»
     '''
 
     def private dispatch actionImplBody(Entity it, ViewAction action) '''
@@ -291,7 +116,7 @@ class Actions {
         $currentUrlArgs = [];
         $where = '';
 
-        «prepareViewUrlArgs(true)»
+        «prepareViewUrlArgs»
 
         $additionalParameters = $repository->getAdditionalTemplateParameters(«IF app.hasUploads»$imageHelper, «ENDIF»'controllerAction', $utilArgs);
 
@@ -305,7 +130,7 @@ class Actions {
         }
 
         // parameter for used sorting field
-        «new ControllerHelperFunctions().defaultSorting(it, app)»
+        «new ControllerHelperFunctions().defaultSorting(action, app)»
 
         // parameter for used sort order
         $sortdir = strtolower($sortdir);
@@ -376,7 +201,7 @@ class Actions {
         foreach ($entities as $k => $entity) {
             $entity->initWorkflow();
         }
-        «prepareViewItemsEntity»
+        «prepareViewItems»
     '''
 
     def private sortableColumns(Entity it) '''
@@ -423,7 +248,7 @@ class Actions {
         new Column('«columnName.formatForCode»'),
     '''
 
-    def private prepareViewUrlArgs(NamedObject it, Boolean hasView) '''
+    def private prepareViewUrlArgs(Entity it) '''
         $showOwnEntries = $request->query->getInt('own', $this->getVar('showOnlyOwnEntries', 0));
         $showAllEntries = $request->query->getInt('all', 0);
 
@@ -436,10 +261,8 @@ class Actions {
             }
 
         «ENDIF»
-        «IF hasView»
-            $templateParameters['own'] = $showAllEntries;
-            $templateParameters['all'] = $showOwnEntries;
-        «ENDIF»
+        $templateParameters['own'] = $showAllEntries;
+        $templateParameters['all'] = $showOwnEntries;
         if ($showAllEntries == 1) {
             $currentUrlArgs['all'] = 1;
         }
@@ -448,7 +271,7 @@ class Actions {
         }
     '''
 
-    def private prepareViewItemsEntity(Entity it) '''
+    def private prepareViewItems(Entity it) '''
         «IF !skipHookSubscribers»
 
             // build RouteUrl instance for display hooks
@@ -480,99 +303,6 @@ class Actions {
 
         // fetch and return the appropriate template
         return $viewHelper->processTemplate($this->get('twig'), $objectType, 'view', $request, $templateParameters);
-    '''
-
-    def private prepareViewItemsAjax(Controller it) '''
-        $items = [];
-        «IF app.hasListFields»
-            $listHelper = $this->get('«app.appService».listentries_helper');
-
-            $listObjectTypes = [«FOR entity : app.getListEntities SEPARATOR ', '»'«entity.name.formatForCode»'«ENDFOR»];
-            $hasListFields = in_array($objectType, $listObjectTypes);
-
-            foreach ($entities as $item) {
-                $currItem = $item->toArray();
-                if ($hasListFields) {
-                    // convert list field values to their corresponding labels
-                    switch ($objectType) {
-                        «FOR entity : app.getListEntities»
-                            case '«entity.name.formatForCode»':
-                                «FOR field : entity.getListFieldsEntity»
-                                    $currItem['«field.name.formatForCode»'] = $listHelper->resolve($currItem['«field.name.formatForCode»'], $objectType, '«field.name.formatForCode»', ', ');
-                                «ENDFOR»
-                                break;
-                        «ENDFOR»
-                    }
-                }
-                $items[] = $currItem;
-            }
-        «ELSE»
-            foreach ($entities as $item) {
-                $items[] = $item->toArray();
-            }
-        «ENDIF»
-
-        $result = [
-            'objectCount' => $objectCount,
-            'items' => $items
-        ];
-
-        return new AjaxResponse($result);
-    '''
-
-    def private dispatch actionImplBody(DisplayAction it) '''
-        «IF controller instanceof AjaxController»
-            «actionImplBodyAjaxDisplay»
-        «ELSE»
-            «redirectLegacyAction»
-        «ENDIF»
-    '''
-
-    def private actionImplBodyAjaxDisplay(DisplayAction it) '''
-        «initControllerHelper»
-
-        $repository = $this->get('«app.appService».' . $objectType . '_factory')->getRepository();
-        $repository->setRequest($request);
-
-        $selectionHelper = $this->get('«app.appService».selection_helper');
-        $idFields = $selectionHelper->getIdFields($objectType);
-
-        // retrieve identifier of the object we wish to view
-        $idValues = $controllerHelper->retrieveIdentifier($request, [], $objectType, $idFields);
-        $hasIdentifier = $controllerHelper->isValidIdentifier($idValues);
-
-        if (!$hasIdentifier) {
-            throw new NotFoundHttpException($this->__('Error! Invalid identifier received.'));
-        }
-
-        $entity = $selectionHelper->getEntity($objectType, $idValues);
-        if (null === $entity) {
-            throw new NotFoundHttpException($this->__('No such item.'));
-        }
-        unset($idValues);
-
-        $entity->initWorkflow();
-
-        $instanceId = $entity->createCompositeIdentifier();
-
-        «permissionCheck("' . ucfirst($objectType) . '", "$instanceId . ")»
-        «IF app.hasCategorisableEntities»
-            if (in_array($objectType, ['«app.getCategorisableEntities.map[e|e.name.formatForCode].join('\', \'')»'])) {
-                $featureActivationHelper = $this->get('«app.appService».feature_activation_helper');
-                if ($featureActivationHelper->isEnabled(FeatureActivationHelper::CATEGORIES, $objectType)) {
-                    if (!$this->get('«app.appService».category_helper')->hasPermission($entity)) {
-                        throw new AccessDeniedException();
-                    }
-                }
-            }
-        «ENDIF»
-
-        $result = [
-            'result' => true,
-            $objectType => $entity->toArray()
-        ];
-
-        return new AjaxResponse($result);
     '''
 
     def private dispatch actionImplBody(Entity it, DisplayAction action) '''
@@ -642,93 +372,6 @@ class Actions {
         return $response;
     '''
 
-    def private dispatch actionImplBody(EditAction it) {
-        switch controller {
-            AjaxController: '''
-        «initControllerHelper»
-
-        $selectionHelper = $this->get('«app.appService».selection_helper');
-        $idFields = $selectionHelper->getIdFields($objectType);
-
-        $data = $request->query->get('data', null);
-        $data = json_decode($data, true);
-
-        $idValues = [];
-        foreach ($idFields as $idField) {
-            $idValues[$idField] = isset($data[$idField]) ? $data[$idField] : '';
-        }
-        $hasIdentifier = $controllerHelper->isValidIdentifier($idValues);
-        if (!$hasIdentifier) {
-            throw new NotFoundHttpException($this->__('Error! Invalid identifier received.'));
-        }
-
-        $entity = $selectionHelper->getEntity($objectType, $idValues);
-        if (null === $entity) {
-            throw new NotFoundHttpException($this->__('No such item.'));
-        }
-        unset($idValues);
-
-        $instanceId = $entity->createCompositeIdentifier();
-
-        «permissionCheck("' . ucfirst($objectType) . '", "$instanceId . ")»
-
-        $result = [
-            'result' => false,
-            $objectType => $entity->toArray()
-        ];
-
-        $hasErrors = false;
-        «IF app.hasHookSubscribers»
-            if ($entity->supportsHookSubscribers()) {
-                $hookHelper = $this->get('«app.appService».hook_helper');
-                // Let any hooks perform additional validation actions
-                $hookType = 'validate_edit';
-                $validationHooksPassed = $hookHelper->callValidationHooks($entity, $hookType);
-                $hasErrors = !$validationHooksPassed;
-            }
-        «ENDIF»
-
-        if (!$hasErrors) {
-            foreach ($idFields as $idField) {
-                unset($data[$idField]);
-            }
-            foreach ($data as $key => $value) {
-                $entity[$key] = $value;
-            }
-            $this->entityManager->persist($entity);
-            $this->entityManager->flush();
-            «IF app.hasHookSubscribers»
-
-                if ($entity->supportsHookSubscribers()) {
-                    $hookType = 'process_edit';
-                    $url = null;
-                    if ($action != 'delete') {
-                        $urlArgs = $entity->createUrlArgs();
-                        $urlArgs['_locale'] = $request->getLocale();
-                        $url = new RouteUrl('«app.appName.formatForDB»_' . $objectType . '_' . ($isAdmin ? 'admin' : '') . 'display', $urlArgs);
-                    }
-                    $hookHelper->callProcessHooks($entity, $hookType, $url);
-                }
-            «ENDIF»
-
-            $logger = $this->get('logger');
-            $logArgs = ['app' => '«app.appName»', 'user' => $this->get('zikula_users_module.current_user')->get('uname'), 'entity' => $objectType, 'id' => $instanceId];
-            $logger->notice('{app}: User {user} updated the {entity} with id {id} using ajax.', $logArgs);
-        }
-
-        $result = [
-            'result' => true,
-            $objectType => $entity->toArray()
-        ];
-
-        return new AjaxResponse($result);
-                    '''
-            default: '''
-        «redirectLegacyAction»
-                    '''
-        }
-    }
-
     def private dispatch actionImplBody(Entity it, EditAction action) '''
         $repository = $this->get('«app.appService».' . $objectType . '_factory')->getRepository();
 
@@ -757,10 +400,6 @@ class Actions {
         return $viewHelper->processTemplate($this->get('twig'), $objectType, 'edit', $request, $templateParameters);
     '''
 
-    def private dispatch actionImplBody(DeleteAction it) '''
-        «redirectLegacyAction»
-    '''
-
     def private dispatch actionImplBody(Entity it, DeleteAction action) '''
         $entity = $«name.formatForCode»;
 
@@ -778,17 +417,8 @@ class Actions {
             throw new \RuntimeException($this->__('Error! Could not determine workflow actions.'));
         }
 
-        «IF app.hasAdminController && app.hasUserController»
-        if ($isAdmin) {
-            «redirectAfterDeletion(app.getAllAdminControllers.head)»
-        } else {
-            «redirectAfterDeletion(app.getMainUserController)»
-        }
-        «ELSEIF app.hasAdminController»
-            «redirectAfterDeletion(app.getAllAdminControllers.head)»
-        «ELSEIF app.hasUserController»
-            «redirectAfterDeletion(app.getMainUserController)»
-        «ENDIF»
+        // redirect to the «IF hasViewAction»list of «nameMultiple.formatForDisplay»«ELSE»index page«ENDIF»
+        $redirectRoute = '«app.appName.formatForDB»_«name.formatForDB»_' . ($isAdmin ? 'admin' : '') . '«IF hasViewAction»view«ELSE»index«ENDIF»';
 
         // check whether deletion is allowed
         $deleteActionId = 'delete';
@@ -871,22 +501,6 @@ class Actions {
         «ENDIF»
 
         return $this->redirectToRoute($redirectRoute);
-    '''
-
-    def private redirectAfterDeletion(Entity it, Controller controller) '''
-        // redirect to the «IF controller.hasActions('view')»list of «nameMultiple.formatForDisplay»«ELSE»index page«ENDIF»
-        $redirectRoute = '«app.appName.formatForDB»_«name.formatForDB»_' . ($isAdmin ? 'admin' : '') . '«IF controller.hasActions('view')»view«ELSE»index«ENDIF»';
-    '''
-
-    def private dispatch actionImplBody(CustomAction it) '''
-        /** TODO: custom logic */
-
-        «IF controller instanceof AjaxController»
-            return new AjaxResponse(['result' => true]);
-        «ELSE»
-            // return template
-            return $this->render('@«app.appName»/«controller.formattedName.toFirstUpper»/«name.formatForCode.toFirstLower».html.twig');
-        «ENDIF»
     '''
 
     def private dispatch actionImplBody(Entity it, CustomAction action) '''

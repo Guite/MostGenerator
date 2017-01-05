@@ -52,7 +52,7 @@ class Listeners {
         this.app = it
         listenerSuffix = 'Listener.php'
 
-        val needsDetailContentType = generateDetailContentType && hasUserController && getMainUserController.hasActions('display')
+        val needsDetailContentType = generateDetailContentType && hasDisplayActions
         needsThirdPartyListener = (generatePendingContentSupport || generateListContentType || needsDetailContentType || generateScribitePlugins)
 
         println('Generating event listener base classes')

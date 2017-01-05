@@ -65,7 +65,6 @@ class FileHelper {
         </p>
     '''
 
-
     def getterAndSetterMethods(Object it, String name, String type, Boolean isMany, Boolean nullable, Boolean useHint, String init, CharSequence customImpl) '''
         «getterMethod(name, type, isMany)»
         «setterMethod(name, type, isMany, nullable, useHint, init, customImpl)»

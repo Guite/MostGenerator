@@ -322,7 +322,7 @@ class ValidationConstraints {
                 $helper = $serviceManager->get('«app.appService».listentries_helper');
                 $listEntries = $helper->get«name.formatForCodeCapital»EntriesFor«entity.name.formatForCodeCapital»();
 
-                $allowedValues = [«IF name == 'workflowState'»'initial'«ENDIF»];
+                $allowedValues = [«IF name == 'workflowState'»'initial'«ELSEIF !mandatory»''«ENDIF»];
                 foreach ($listEntries as $entry) {
                     $allowedValues[] = $entry['value'];
                 }

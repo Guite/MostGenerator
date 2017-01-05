@@ -58,13 +58,6 @@ class Views {
         }
 
         // helper templates
-        var customHelper = new Custom()
-        for (controller : adminAndUserControllers) {
-            for (action : controller.getCustomActions) {
-                customHelper.generate(action, it, controller, fsa)
-            }
-        }
-
         if (hasAttributableEntities) {
             new Attributes().generate(it, fsa)
         }
@@ -87,10 +80,10 @@ class Views {
     }
 
     def private generateViews(Application it, Entity entity) {
-        if (entity.hasActions('index')) {
+        if (entity.hasIndexAction) {
             new Index().generate(entity, fsa)
         }
-        if (entity.hasActions('view')) {
+        if (entity.hasViewAction) {
             new View().generate(entity, appName, 3, fsa)
             if (entity.tree != EntityTreeType.NONE) {
                 new ViewHierarchy().generate(entity, appName, fsa)
@@ -105,7 +98,7 @@ class Views {
                 new Atom().generate(entity, appName, fsa)
             }
         }
-        if (entity.hasActions('view') || entity.hasActions('display')) {
+        if (entity.hasViewAction || entity.hasDisplayAction) {
             if (generateXmlTemplates) {
                 new Xml().generate(entity, appName, fsa)
             }
@@ -116,15 +109,15 @@ class Views {
                 new Kml().generate(entity, appName, fsa)
             }
         }
-        if (entity.hasActions('display')) {
+        if (entity.hasDisplayAction) {
             if (generateIcsTemplates && null !== entity.startDateField && null !== entity.endDateField) {
                 new Ics().generate(entity, appName, fsa)
             }
         }
-        if (entity.hasActions('display')) {
+        if (entity.hasDisplayAction) {
             new Display().generate(entity, appName, fsa)
         }
-        if (entity.hasActions('delete')) {
+        if (entity.hasDeleteAction) {
             new Delete().generate(entity, appName, fsa)
         }
 
