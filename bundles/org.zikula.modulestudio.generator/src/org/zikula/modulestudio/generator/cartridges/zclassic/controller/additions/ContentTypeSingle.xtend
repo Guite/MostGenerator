@@ -124,8 +124,7 @@ class ContentTypeSingle {
         public function display()
         {
             if (null !== $this->id && !empty($this->displayMode)) {
-                «/* TODO use router */»
-                return ModUtil::func('«appName»', 'external', 'display', $this->getDisplayArguments());
+                return ServiceUtil::get('router')->generate('«appName.formatForDB»_external_display', $this->getDisplayArguments());
             }
 
             return '';
@@ -137,8 +136,7 @@ class ContentTypeSingle {
         public function displayEditing()
         {
             if (null !== $this->id && !empty($this->displayMode)) {
-                «/* TODO use router */»
-                return ModUtil::func('«appName»', 'external', 'display', $this->getDisplayArguments());
+                return ServiceUtil::get('router')->generate('«appName.formatForDB»_external_display', $this->getDisplayArguments());
             }
 
             return ServiceUtil::get('translator.default')->__('No item selected.');

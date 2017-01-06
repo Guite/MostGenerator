@@ -137,28 +137,25 @@ class AjaxController {
         } elseif ($request->isMethod('GET') && $request->query->has('fragment')) {
             $fragment = $request->query->get('fragment', '');
         }
-        «/* TODO use repository method */»
-        $dql = '
-            SELECT u
-            FROM Zikula\Module\UsersModule\Entity\UserEntity u
-            WHERE u.uname LIKE :fragment
-        ';
-        $entityManager = $this->get('«entityManagerService»');
-        $query = $entityManager->createQuery($dql);
-        $query->setParameter('fragment', '%' . $fragment . '%');
-        $results = $query->getArrayResult();
+
+        $userRepository = $this->get('zikula_users_module.user_repository');
+        $limit = 50;
+        $filter = [
+            'uname' => ['operator' => 'like', 'operand' => '%' . $fragment . '%']
+        ];
+        $results = $userRepository->query($filter, ['uname' => 'asc'], $limit);
 
         // load avatar plugin
         include_once 'lib/legacy/viewplugins/function.useravatar.php';
         $view = \Zikula_View::getInstance('«appName»', false);
 
         $resultItems = [];
-        if (is_array($results) && count($results) > 0) {
+        if (count($results) > 0) {
             foreach ($results as $result) {
                 $resultItems[] = [
-                    'uid' => $result['uid'],
-                    'uname' => DataUtil::formatForDisplay($result['uname']),
-                    'avatar' => smarty_function_useravatar(['uid' => $result['uid'], 'rating' => 'g'], $view)
+                    'uid' => $result->getUid(),
+                    'uname' => $result->getUname(),
+                    'avatar' => smarty_function_useravatar(['uid' => $result->getUid(), 'rating' => 'g'], $view)
                 ];
             }
         }

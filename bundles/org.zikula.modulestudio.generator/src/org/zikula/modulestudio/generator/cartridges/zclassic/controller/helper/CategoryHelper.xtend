@@ -255,9 +255,12 @@ class CategoryHelper {
                     continue;
                 }
 
-                $filterParameters['values'][$propertyName] = $catIds[$propertyName];
+                $filtersPerRegistry[] = '(
+                    tblCategories.categoryRegistryId = :propId' . $propertyName . '
+                    AND tblCategories.category IN (:categories' . $propertyName . ')
+                )';
                 $filterParameters['registries'][$propertyName] = $propertyId;
-                $filtersPerRegistry[] = '(tblCategories.category IN (:propName' . $propertyName . ') AND tblCategories.categoryRegistryId = :propId' . $propertyName . ')';
+                $filterParameters['values'][$propertyName] = $catIds[$propertyName];
             }
 
             if (count($filtersPerRegistry) > 0) {
@@ -268,8 +271,8 @@ class CategoryHelper {
                     $qb->andWhere($qb->expr()->orX()->addMultiple($filtersPerRegistry));*/»$qb->andWhere('(' . implode(' OR ', $filtersPerRegistry) . ')');
                 }
                 foreach ($filterParameters['values'] as $propertyName => $filterValue) {
-                    $qb->setParameter('propName' . $propertyName, $filterValue)
-                       ->setParameter('propId' . $propertyName, $filterParameters['registries'][$propertyName]);
+                    $qb->setParameter('propId' . $propertyName, $filterParameters['registries'][$propertyName]);
+                       ->setParameter('categories' . $propertyName, $filterValue)
                 }
             }
 

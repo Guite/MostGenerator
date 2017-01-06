@@ -86,7 +86,7 @@ class Layout {
 
         {% if app.request.query.get('theme') != 'ZikulaPrinterTheme' %}
             {% block appTitle %}
-                {{ moduleHeader('user«/* TODO controller.formattedName */»', '«/* custom title */»', '«/* title link */»', false, true«/* flashes */», false, true«/* image */») }}
+                {{ moduleHeader('user', '«/* custom title */»', '«/* title link */»', false, true«/* flashes */», false, true«/* image */») }}
             {% endblock %}
         {% endif %}
 

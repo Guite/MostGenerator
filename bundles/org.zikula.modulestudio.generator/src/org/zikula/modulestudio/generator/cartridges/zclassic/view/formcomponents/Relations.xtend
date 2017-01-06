@@ -137,26 +137,24 @@ class Relations {
         {% if displayMode == 'choices' %}
             {{ form_row(attribute(form, alias)) }}
         {% elseif displayMode == 'autocomplete' %}
-            «IF !isManyToMany && !incoming»
+            «/*IF !isManyToMany && !incoming»
                 «component_ParentEditing(ownEntity, many)»
-            «ELSE»
-                {% set createUrl = allowEditing ? path('«app.appName.formatForDB»_«ownEntity.name.formatForDB»_' ~ routeArea ~ 'edit') : '' %}
+            «ELSE*/»{% set createUrl = allowEditing ? path('«app.appName.formatForDB»_«ownEntity.name.formatForDB»_' ~ routeArea ~ 'edit') : '' %}
                 {{ form_row(attribute(form, alias)) }}
-                «component_AutoComplete(app, ownEntity, many, incoming, hasEdit)»
-            «ENDIF»
+                «component_AutoComplete(app, ownEntity, many, incoming, hasEdit)»«/*ENDIF*/»
         {% endif %}
     '''
-
+/*
     def private component_ParentEditing(JoinRelationship it, Entity targetEntity, Boolean many) '''
-        «/*just a reminder for the parent view which is not tested yet (see #10)
+        «/* just a reminder for the parent view which is not tested yet (see #10)
             Example: create children (e.g. an address) while creating a parent (e.g. a new customer).
             Problem: address must know the customerid.
-            TODO only for $mode != create: 
+            To do only for $mode != create: 
                 <p>ADD: button to create «targetEntity.getEntityNameSingularPlural(many).formatForDisplay» with inline editing (form dialog)</p>
                 <p>EDIT: display of related «targetEntity.getEntityNameSingularPlural(many).formatForDisplay» with inline editing (form dialog)</p>
-        */»
+        * /»
     '''
-
+*/
     def private component_AutoComplete(JoinRelationship it, Application app, Entity targetEntity, Boolean many, Boolean incoming, Boolean includeEditing) '''
         <div class="«app.appName.toLowerCase»-relation-leftside">
             «val includeStatement = component_IncludeStatementForAutoCompleterItemList(targetEntity, many, incoming, includeEditing)»

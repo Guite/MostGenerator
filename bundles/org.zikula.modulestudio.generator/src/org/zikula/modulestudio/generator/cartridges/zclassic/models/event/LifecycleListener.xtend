@@ -194,28 +194,28 @@ class LifecycleListener {
 
                     // prepare helper fields for uploaded files
                     $objectType = $entity->get_objectType();
-                    $controllerHelper = ServiceUtil::get('«appService».controller_helper');
-                    $request = ServiceUtil::get('request_stack')->getCurrentRequest();
-                    $baseUrl = $request->getSchemeAndHttpHost() . $request->getBasePath();
-
                     $uploadFields = $this->getUploadFields($objectType);
 
                     if (count($uploadFields) > 0) {
+                        $controllerHelper = ServiceUtil::get('«appService».controller_helper');
+                        $request = ServiceUtil::get('request_stack')->getCurrentRequest();
+                        $baseUrl = $request->getSchemeAndHttpHost() . $request->getBasePath();
+                        $uploadManager = ServiceUtil::get('«appService».upload_handler');
                         foreach ($uploadFields as $fieldName) {
                             if (empty($entity[$fieldName])) {
                                 continue;
                             }
                             $basePath = $controllerHelper->getFileBaseFolder($objectType, $fieldName);
-                            $fullPath = $basePath . $entity[$fieldName];
-                            if (file_exists($fullPath)) {
-                                $entity[$fieldName] = new File($fullPath);
-                                $entity[$fieldName . 'Url'] = $baseUrl . '/' . $fullPath;
+                            $filePath = $basePath . $entity[$fieldName];
+                            if (file_exists($filePath)) {
+                                $fileName = $entity[$fieldName];
+                                $entity[$fieldName] = new File($filePath);
+                                $entity[$fieldName . 'Url'] = $baseUrl . '/' . $filePath;
 
-                                // just some backwards compatibility stuff«/*TODO remove on demand handling of upload meta data */»
-                                /*if (!isset($entity[$fieldName . 'Meta']) || !is_array($entity[$fieldName . 'Meta']) || !count($entity[$fieldName . 'Meta'])) {
-                                    // assign new meta data
-                                    $entity[$fieldName . 'Meta'] = $uploadManager->readMetaDataForFile($entity[$fieldName], $fullPath);
-                                }*/
+                                // determine meta data if it does not exist
+                                if (!is_array($entity[$fieldName . 'Meta']) || !count($entity[$fieldName . 'Meta'])) {
+                                    $entity[$fieldName . 'Meta'] = $uploadManager->readMetaDataForFile($fileName, $filePath);
+                                }
                             } else {
                                 $entity[$fieldName] = null;
                                 $entity[$fieldName . 'Url'] = '';

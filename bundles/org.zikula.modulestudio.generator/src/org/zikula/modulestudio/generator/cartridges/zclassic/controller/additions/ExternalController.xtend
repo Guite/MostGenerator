@@ -152,7 +152,7 @@ class ExternalController {
          «IF !isBase»
          *
          * @Route("/finder/{objectType}/{editor}/{sort}/{sortdir}/{pos}/{num}",
-         *        requirements = {"editor" = "tinymce|ckeditor", "sortdir" = "asc|desc", "pos" = "\d+", "num" = "\d+"},
+         *        requirements = {"editor" = "ckeditor|tinymce", "sortdir" = "asc|desc", "pos" = "\d+", "num" = "\d+"},
          *        defaults = {"sort" = "", "sortdir" = "asc", "pos" = 1, "num" = 0},
          *        methods = {"GET"},
          *        options={"expose"=true}
@@ -178,8 +178,9 @@ class ExternalController {
     '''
 
     def private finderBaseImpl(Application it) '''
-        «/* TODO remove PageUtil usage */»
-        PageUtil::addVar('stylesheet', '@«appName»/Resources/public/css/style.css');
+        $assetHelper = $this->get('zikula_core.common.theme.asset_helper');
+        $cssAssetBag = $this->get('zikula_core.common.theme.assets_css');
+        $cssAssetBag->add($assetHelper->resolve('@«appName»:css/style.css'));
 
         $controllerHelper = $this->get('«appService».controller_helper');
         $utilArgs = ['controller' => 'external', 'action' => 'finder'];
@@ -191,7 +192,7 @@ class ExternalController {
             throw new AccessDeniedException();
         }
 
-        if (empty($editor) || !in_array($editor, ['tinymce', 'ckeditor'])) {
+        if (empty($editor) || !in_array($editor, ['ckeditor', 'tinymce'])) {
             return $this->__('Error: Invalid editor context given for external controller action.');
         }
 

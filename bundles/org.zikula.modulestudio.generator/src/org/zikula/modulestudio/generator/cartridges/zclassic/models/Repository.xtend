@@ -257,6 +257,9 @@ class Repository {
         «ENDIF»
         use Zikula\UsersModule\Api\CurrentUserApi;
         use «app.appNamespace»\Entity\«name.formatForCodeCapital»Entity;
+        «IF hasTranslatableFields»
+            use «app.appNamespace»\Helper\FeatureActivationHelper;
+        «ENDIF»
         «IF hasArchive && null !== getEndDateField && !skipHookSubscribers»
             use «app.appNamespace»\Helper\HookHelper;
         «ENDIF»
@@ -567,7 +570,7 @@ class Repository {
          */
         public function selectById($id = 0, $useJoins = true, $slimMode = false)
         {
-            $results = $this->selectByIdList([$id], $useJoins, $slimMode);
+            $results = $this->selectByIdList(is_array($id) ? $id : [$id], $useJoins, $slimMode);
 
             return count($results) > 0 ? $results[0] : null;
         }
@@ -636,7 +639,7 @@ class Repository {
          * Adds where clauses excluding desired identifiers from selection.
          *
          * @param QueryBuilder $qb        Query builder to be enhanced
-         * @param «IF hasCompositeKeys»mixed  «ELSE»integer«ENDIF»      $excludeId The id (or array of ids) to be excluded from selection
+         * @param «IF hasCompositeKeys»mixed  «ELSE»integer«ENDIF»      $excludeId The id«IF hasCompositeKeys» (or array of ids)«ENDIF» to be excluded from selection
          *
          * @return QueryBuilder Enriched query builder instance
          */
@@ -927,7 +930,7 @@ class Repository {
          * Selects entities by a given search fragment.
          *
          * @param string  $fragment       The fragment to search for
-         * @param array   $exclude        Comma separated list with ids to be excluded from search
+         * @param array   $exclude        List with identifiers to be excluded from search
          * @param string  $orderBy        The order-by clause to use when retrieving the collection (optional) (default='')
          * @param integer $currentPage    Where to start selection
          * @param integer $resultsPerPage Amount of items to select
@@ -939,8 +942,7 @@ class Repository {
         {
             $qb = $this->genericBaseQuery('', $orderBy, $useJoins);
             if (count($exclude) > 0) {
-                $qb->andWhere('tbl.«getFirstPrimaryKey.name.formatForCode» NOT IN (:excludeList)')«/* TODO fix composite keys */»
-                   ->setParameter('excludeList', $exclude);
+            	$qb = $this->addExclusion($qb, $exclude);
             }
 
             $qb = $this->addSearchFilter($qb, $fragment);
@@ -1299,13 +1301,16 @@ class Repository {
         public function getQueryFromBuilder(QueryBuilder $qb)
         {
             $query = $qb->getQuery();
-            «IF hasTranslatableFields»«/* TODO decide whether this should be controlled by FeatureActivationHelper, too */»
+            «IF hasTranslatableFields»
 
-                // set the translation query hint
-                $query->setHint(
-                    Query::HINT_CUSTOM_OUTPUT_WALKER,
-                    'Gedmo\\Translatable\\Query\\TreeWalker\\TranslationWalker'
-                );
+                $featureActivationHelper = \ServiceUtil::get('«app.appService».feature_activation_helper');
+                if ($featureActivationHelper->isEnabled(FeatureActivationHelper::TRANSLATIONS, '«name.formatForCode»')) {
+                    // set the translation query hint
+                    $query->setHint(
+                        Query::HINT_CUSTOM_OUTPUT_WALKER,
+                        'Gedmo\\Translatable\\Query\\TreeWalker\\TranslationWalker'
+                    );
+                }
             «ENDIF»
             «IF hasPessimisticReadLock»
 
