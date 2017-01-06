@@ -162,7 +162,7 @@ class EditFunctions {
 
         function «vendorAndName»TriggerFormValidation()
         {
-            «vendorAndName»PerformCustomValidationRules(editedObjectType, editedEntityId);
+            «vendorAndName»PerformCustomValidationConstraints(editedObjectType, editedEntityId);
 
             if (!editForm.get(0).checkValidity()) {
                 // This does not really submit the form,

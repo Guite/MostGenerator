@@ -70,8 +70,8 @@ class EditEntity {
             if (categorisable) extensions.add('categories')
         }
         app = it.application
-        incomingRelations = getBidirectionalIncomingJoinRelations.filter[source.application == app && source instanceof Entity && getEditStageCode(true) > 0]
-        outgoingRelations = getOutgoingJoinRelations.filter[target.application == app && target instanceof Entity && getEditStageCode(false) > 0]
+        incomingRelations = getEditableJoinRelations(true).filter[getEditStageCode(true) > 0]
+        outgoingRelations = getEditableJoinRelations(false).filter[getEditStageCode(false) > 0]
         app.generateClassPair(fsa, app.getAppSourceLibPath + 'Form/Type/' + name.formatForCodeCapital + 'Type.php',
             fh.phpFileContent(app, editTypeBaseImpl), fh.phpFileContent(app, editTypeImpl)
         )
@@ -441,44 +441,47 @@ class EditEntity {
     '''
 
     def private fieldImpl(DerivedField it, String groupSuffix, String idSuffix) '''
-        «IF it instanceof ListField»
-            «fetchListEntries»
-        «ENDIF»
-        «val isExpandedListField = it instanceof ListField && (it as ListField).expanded»
-        $builder->add('«name.formatForCode»'«IF idSuffix != ''» . «idSuffix»«ENDIF», '«formType»Type', [
-            'label' => $this->__('«name.formatForDisplayCapital»') . ':',
-            «IF null !== documentation && documentation != ''»
-                'label_attr' => [
-                    'class' => 'tooltips«IF isExpandedListField» «IF (it as ListField).multiple»checkbox«ELSE»radio«ENDIF»-inline«ENDIF»',
-                    'title' => $this->__('«documentation.replace("'", '"')»')
-                ],
-                «helpAttribute»
-            «ELSEIF isExpandedListField»
-                'label_attr' => [
-                    'class' => '«IF (it as ListField).multiple»checkbox«ELSE»radio«ENDIF»-inline'
-                ],
+        «/* No input fields for foreign keys, relations are processed further down */»
+        «IF entity.getIncomingJoinRelations.filter[e|e.getSourceFields.head == name.formatForDB].empty»
+            «IF it instanceof ListField»
+                «fetchListEntries»
             «ENDIF»
-            «IF readonly»
-                'disabled' => true,
-            «ENDIF»
-            «IF !(it instanceof BooleanField || it instanceof UploadField)»
-                'empty_data' => '«defaultValue»',
-            «ENDIF»
-            «IF idSuffix != ''»
-                'mapped' => false,
-            «ENDIF»
-            'attr' => [
-                'class' => '«validationHelper.fieldValidationCssClass(it)»',
+            «val isExpandedListField = it instanceof ListField && (it as ListField).expanded»
+            $builder->add('«name.formatForCode»'«IF idSuffix != ''» . «idSuffix»«ENDIF», '«formType»Type', [
+                'label' => $this->__('«name.formatForDisplayCapital»') . ':',
+                «IF null !== documentation && documentation != ''»
+                    'label_attr' => [
+                        'class' => 'tooltips«IF isExpandedListField» «IF (it as ListField).multiple»checkbox«ELSE»radio«ENDIF»-inline«ENDIF»',
+                        'title' => $this->__('«documentation.replace("'", '"')»')
+                    ],
+                    «helpAttribute»
+                «ELSEIF isExpandedListField»
+                    'label_attr' => [
+                        'class' => '«IF (it as ListField).multiple»checkbox«ELSE»radio«ENDIF»-inline'
+                    ],
+                «ENDIF»
                 «IF readonly»
-                    'readonly' => 'readonly',
+                    'disabled' => true,
                 «ENDIF»
-                «IF it instanceof IntegerField && (it as IntegerField).range»
-                    'min' => «(it as IntegerField).minValue»,
-                    'max' => «(it as IntegerField).maxValue»,
+                «IF !(it instanceof BooleanField || it instanceof UploadField)»
+                    'empty_data' => '«defaultValue»',
                 «ENDIF»
-                'title' => $this->__('«titleAttribute»')
-            ],«additionalOptions»
-        ]);
+                «IF idSuffix != ''»
+                    'mapped' => false,
+                «ENDIF»
+                'attr' => [
+                    'class' => '«validationHelper.fieldValidationCssClass(it)»',
+                    «IF readonly»
+                        'readonly' => 'readonly',
+                    «ENDIF»
+                    «IF it instanceof IntegerField && (it as IntegerField).range»
+                        'min' => «(it as IntegerField).minValue»,
+                        'max' => «(it as IntegerField).maxValue»,
+                    «ENDIF»
+                    'title' => $this->__('«titleAttribute»')
+                ],«additionalOptions»
+            ]);
+        «ENDIF»
     '''
 
     def private helpAttribute(DerivedField it) '''«IF !helpMessages.empty»'help' => «IF helpMessages.length > 1»[«ENDIF»«helpMessages.join(', ')»«IF helpMessages.length > 1»]«ENDIF»,«ENDIF»'''

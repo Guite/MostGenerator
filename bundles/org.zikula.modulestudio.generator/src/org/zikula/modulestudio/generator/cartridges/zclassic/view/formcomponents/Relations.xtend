@@ -29,8 +29,8 @@ class Relations {
      * This method creates the templates to be included into the edit forms.
      */
     def generateInclusionTemplate(Entity it, Application app, IFileSystemAccess fsa) '''
-        «FOR relation : getBidirectionalIncomingJoinRelations.filter[source.application == app]»«relation.generate(app, false, true, fsa)»«ENDFOR»
-        «FOR relation : getOutgoingJoinRelations.filter[target.application == app]»«relation.generate(app, false, false, fsa)»«ENDFOR»
+        «FOR relation : getEditableJoinRelations(true)»«relation.generate(app, false, true, fsa)»«ENDFOR»
+        «FOR relation : getEditableJoinRelations(false)»«relation.generate(app, false, false, fsa)»«ENDFOR»
     '''
 
     /**
@@ -38,8 +38,8 @@ class Relations {
      * This method creates the include statement contained in the including template.
      */
     def generateIncludeStatement(Entity it, Application app, IFileSystemAccess fsa) '''
-        «FOR relation : getBidirectionalIncomingJoinRelations.filter[source.application == app && source instanceof Entity]»«relation.generate(app, true, true, fsa)»«ENDFOR»
-        «FOR relation : getOutgoingJoinRelations.filter[target.application == app && target instanceof Entity]»«relation.generate(app, true, false, fsa)»«ENDFOR»
+        «FOR relation : getEditableJoinRelations(true)»«relation.generate(app, true, true, fsa)»«ENDFOR»
+        «FOR relation : getEditableJoinRelations(false)»«relation.generate(app, true, false, fsa)»«ENDFOR»
     '''
 
     def private generate(JoinRelationship it, Application app, Boolean onlyInclude, Boolean incoming, IFileSystemAccess fsa) {
@@ -49,10 +49,10 @@ class Relations {
         }
 
         val useTarget = !incoming
-        if (useTarget && !isManyToMany) {
-            /* Exclude parent view for 1:1 1:n and n:1 for now - see https://github.com/Guite/MostGenerator/issues/10 */
+        /*if (useTarget && !isManyToMany) {
+            /* Exclude parent view for 1:1 and 1:n for now - see https://github.com/Guite/MostGenerator/issues/10 * /
             return ''''''
-        }
+        }*/
 
         val hasEdit = (stageCode > 1)
         val editSnippet = if (hasEdit) 'Edit' else ''
@@ -215,8 +215,8 @@ class Relations {
     '''
 
     def initJs(Entity it, Application app, Boolean insideLoader) '''
-        «val incomingJoins = getBidirectionalIncomingJoinRelations.filter[source.application == app && usesAutoCompletion(true)]»
-        «val outgoingJoins = outgoingJoinRelations.filter[target.application == app && usesAutoCompletion(false)]»
+        «val incomingJoins = getEditableJoinRelations(true).filter[usesAutoCompletion(true)]»
+        «val outgoingJoins = getEditableJoinRelations(false).filter[usesAutoCompletion(false)]»
         «IF !incomingJoins.empty || !outgoingJoins.empty»
             «IF !insideLoader»
                 var editImage = '{{ editImage }}';
@@ -235,10 +235,10 @@ class Relations {
         }
 
         val useTarget = !incoming
-        if (useTarget && !isManyToMany) {
-            /* Exclude parent view for 1:1 and 1:n for now - see https://github.com/Guite/MostGenerator/issues/10 */
+        /*if (useTarget && !isManyToMany) {
+            /* Exclude parent view for 1:1 and 1:n for now - see https://github.com/Guite/MostGenerator/issues/10 * /
             return ''''''
-        }
+        }*/
 
         if (!usesAutoCompletion(incoming)) {
             return ''''''

@@ -76,12 +76,8 @@ class Section {
 
     def private displayHooks(Entity it, Application app) '''
         {# include display hooks #}
-        {% if mode != 'create' %}
-            {% set hookId = «FOR pkField : getPrimaryKeyFields SEPARATOR ' ~ '»«name.formatForDB».«pkField.name.formatForCode»«ENDFOR» %}
-            {% set hooks = notifyDisplayHooks(eventName='«app.appName.formatForDB».ui_hooks.«nameMultiple.formatForDB».form_edit', id=hookId) %}
-        {% else %}
-            {% set hooks = notifyDisplayHooks(eventName='«app.appName.formatForDB».ui_hooks.«nameMultiple.formatForDB».form_edit', id=null) %}
-        {% endif %}
+        {% set hookId = mode != 'create' ? «FOR pkField : getPrimaryKeyFields SEPARATOR ' ~ '»«name.formatForDB».«pkField.name.formatForCode»«ENDFOR» : null %}
+        {% set hooks = notifyDisplayHooks(eventName='«app.appName.formatForDB».ui_hooks.«nameMultiple.formatForDB».form_edit', id=hookId) %}
         {% if hooks is iterable and hooks|length > 0 %}
             {% for providerArea, hook in hooks %}
                 {% if providerArea != 'provider.scribite.ui_hooks.editor' %}{# fix for #664 #}

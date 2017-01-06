@@ -4,6 +4,7 @@ import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.CascadeType
 import de.guite.modulestudio.metamodel.DataObject
 import de.guite.modulestudio.metamodel.DerivedField
+import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.IntegerField
 import de.guite.modulestudio.metamodel.JoinRelationship
 import de.guite.modulestudio.metamodel.ManyToManyRelationship
@@ -124,7 +125,18 @@ class ModelJoinExtensions {
     def getOutgoingJoinRelationsForCloning(DataObject it) {
         getOutgoingJoinRelations.filter[isManySide(true) && hasCascadePersist]
     }
-    
+
+    /**
+     * Returns a list of all relationships for a given data object which should be included into editing.
+     */
+    def getEditableJoinRelations(DataObject it, Boolean incoming) {
+        if (incoming) {
+            getBidirectionalIncomingJoinRelations.filter[source.application == application && source instanceof Entity]
+        } else {
+            getOutgoingJoinRelations.filter[target.application == application && target instanceof Entity]
+        }
+    }
+
     def hasCascadePersist(JoinRelationship it) {
         newArrayList(
             CascadeType.PERSIST_VALUE,
