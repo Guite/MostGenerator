@@ -113,13 +113,11 @@ class DisplayFunctions {
                 }
             }).done(function(res) {
                 // get data returned by the ajax response
-                var fieldNameCapitalised;
                 var idSuffix;
                 var toggleLink;
                 var data;
 
-                fieldNameCapitalised = «vendorAndName»CapitaliseFirstLetter(fieldName);
-                idSuffix = fieldNameCapitalised + itemId;
+                idSuffix = «vendorAndName»CapitaliseFirstLetter(fieldName) + itemId;
                 toggleLink = jQuery('#toggle' + idSuffix);
                 data = res.data;
 
