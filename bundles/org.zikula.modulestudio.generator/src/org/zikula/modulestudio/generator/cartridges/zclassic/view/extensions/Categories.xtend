@@ -6,6 +6,7 @@ import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 
 class Categories {
+
     extension ControllerExtensions = new ControllerExtensions
     extension NamingExtensions = new NamingExtensions
 

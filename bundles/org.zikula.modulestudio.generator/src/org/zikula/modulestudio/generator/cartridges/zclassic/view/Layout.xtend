@@ -93,7 +93,7 @@ class Layout {
         {{ pageSetVar('title', block('pageTitle')|default(block('title'))) }}
 
         «IF generateModerationPanel && needsApproval»
-            {{ block('moderation_panel') }}
+            {{ include('@«appName»/Helper/moderationPanel.html.twig') }}
 
         «ENDIF»
         {{ showflashes() }}
@@ -122,23 +122,6 @@ class Layout {
             «ENDIF»
             {% endif %}
         {% endblock %}
-        «IF generateModerationPanel && needsApproval»
-
-            {% block moderation_panel %}
-                {% if app.request.query.get('theme') != 'ZikulaPrinterTheme' %}
-                    {% set moderationObjects = «appName.formatForDB»_moderationObjects() %}
-                    {% if moderationObjects|length > 0 %}
-                        {% for modItem in moderationObjects %}
-                            <p class="alert alert-info alert-dismissable text-center">
-                                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-                                {% set itemObjectType = modItem.objectType|lower %}
-                                <a href="{{ path('«appName.formatForDB»_' ~ itemObjectType ~ '_adminview', { workflowState: modItem.state }) }}" class="bold alert-link">{{ modItem.message }}</a>
-                            </p>
-                        {% endfor %}
-                    {% endif %}
-                {% endif %}
-            {% endblock %}
-        «ENDIF»
     '''
 
     def adminBaseTemplate(Application it) '''

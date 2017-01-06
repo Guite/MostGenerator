@@ -1228,9 +1228,7 @@ class Repository {
 
                 // you could add explicit filters at this point, something like
                 // $filterUtil->addFilter('foo:eq:something,bar:gt:100');
-                // read more at
-                // https://github.com/zikula/core/blob/1.4/src/lib/legacy/util/FilterUtil/docs/developers.md
-                // https://github.com/zikula/core/blob/1.4/src/lib/legacy/util/FilterUtil/docs/users.md
+                // read more at https://github.com/zikula/core/tree/1.4/src/docs/Core-2.0/FilterUtil
 
                 // now enrich the query builder
                 $filterUtil->enrichQuery();
