@@ -172,8 +172,8 @@ class Redirect {
                 return $this->repeatReturnUrl;
             }
 
-            if ($this->request->getSession()->has('referer')) {
-                $this->request->getSession()->del('referer');
+            if ($this->request->getSession()->has('«app.appName.formatForDB»Referer')) {
+                $this->request->getSession()->del('«app.appName.formatForDB»Referer');
             }
 
             // normal usage, compute return url from given redirect code
