@@ -55,7 +55,10 @@ class QuickNavigation {
 
         use Symfony\Component\Form\AbstractType;
         use Symfony\Component\Form\FormBuilderInterface;
-        use Symfony\Component\HttpFoundation\RequestStack;
+        «IF !incomingRelations.empty»
+            use Symfony\Component\HttpFoundation\Request;
+            use Symfony\Component\HttpFoundation\RequestStack;
+        «ENDIF»
         use Zikula\Common\Translator\TranslatorInterface;
         use Zikula\Common\Translator\TranslatorTrait;
         «IF app.needsFeatureActivationHelper»
@@ -71,11 +74,13 @@ class QuickNavigation {
         abstract class Abstract«name.formatForCodeCapital»QuickNavType extends AbstractType
         {
             use TranslatorTrait;
+            «IF !incomingRelations.empty»
 
-            /**
-             * @var RequestStack
-             */
-            protected $requestStack;
+                /**
+                 * @var Request
+                 */
+                protected $request;
+            «ENDIF»
             «IF hasListFieldsEntity»
 
                 /**
@@ -95,7 +100,9 @@ class QuickNavigation {
              * «name.formatForCodeCapital»QuickNavType constructor.
              *
              * @param TranslatorInterface $translator   Translator service instance
+            «IF !incomingRelations.empty»
              * @param RequestStack        $requestStack RequestStack service instance
+            «ENDIF»
             «IF hasListFieldsEntity»
                 «' '»* @param ListEntriesHelper   $listHelper   ListEntriesHelper service instance
             «ENDIF»
@@ -103,10 +110,12 @@ class QuickNavigation {
                 «' '»* @param FeatureActivationHelper $featureActivationHelper FeatureActivationHelper service instance
             «ENDIF»
              */
-            public function __construct(TranslatorInterface $translator, RequestStack $requestStack«IF hasListFieldsEntity», ListEntriesHelper $listHelper«ENDIF»«IF app.needsFeatureActivationHelper», FeatureActivationHelper $featureActivationHelper«ENDIF»)
+            public function __construct(TranslatorInterface $translator«IF !incomingRelations.empty», RequestStack $requestStack«ENDIF»«IF hasListFieldsEntity», ListEntriesHelper $listHelper«ENDIF»«IF app.needsFeatureActivationHelper», FeatureActivationHelper $featureActivationHelper«ENDIF»)
             {
                 $this->setTranslator($translator);
-                $this->requestStack = $requestStack;
+                «IF !incomingRelations.empty»
+                    $this->request = $requestStack->getMasterRequest();
+                «ENDIF»
                 «IF hasListFieldsEntity»
                     $this->listHelper = $listHelper;
                 «ENDIF»
@@ -271,11 +280,10 @@ class QuickNavigation {
         public function addIncomingRelationshipFields(FormBuilderInterface $builder, array $options)
         {
             $mainSearchTerm = '';
-            $request = $this->requestStack->getCurrentRequest();
-            if ($request->query->has('q')) {
+            if ($this->request->query->has('q')) {
                 // remove current search argument from request to avoid filtering related items
-                $mainSearchTerm = $request->query->get('q');
-                $request->query->remove('q');
+                $mainSearchTerm = $this->request->query->get('q');
+                $this->request->query->remove('q');
             }
 
             «FOR relation : incomingRelations»
@@ -284,7 +292,7 @@ class QuickNavigation {
 
             if ($mainSearchTerm != '') {
                 // readd current search argument
-                $request->query->set('q', $mainSearchTerm);
+                $this->request->query->set('q', $mainSearchTerm);
             }
         }
     '''

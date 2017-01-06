@@ -108,7 +108,7 @@ class Actions {
                     $templateParameters['featureActivationHelper'] = $this->get('«app.appService».feature_activation_helper');
                 «ENDIF»
                 // fetch and return the appropriate template
-                return $viewHelper->processTemplate($objectType, 'view', $request, $templateParameters);
+                return $viewHelper->processTemplate($objectType, 'view', $templateParameters);
             }
         «ENDIF»
 
@@ -302,7 +302,7 @@ class Actions {
         $templateParameters['canBeCreated'] = $modelHelper->canBeCreated($objectType);
 
         // fetch and return the appropriate template
-        return $viewHelper->processTemplate($objectType, 'view', $request, $templateParameters);
+        return $viewHelper->processTemplate($objectType, 'view', $templateParameters);
     '''
 
     def private dispatch actionImplBody(Entity it, DisplayAction action) '''
@@ -359,7 +359,7 @@ class Actions {
         «ENDIF»
 
         // fetch and return the appropriate template
-        $response = $viewHelper->processTemplate($objectType, 'display', $request, $templateParameters);
+        $response = $viewHelper->processTemplate($objectType, 'display', $templateParameters);
         «IF app.generateIcsTemplates»
 
             $format = $request->getRequestFormat();
@@ -397,7 +397,7 @@ class Actions {
         «ENDIF»
 
         // fetch and return the appropriate template
-        return $viewHelper->processTemplate($objectType, 'edit', $request, $templateParameters);
+        return $viewHelper->processTemplate($objectType, 'edit', $templateParameters);
     '''
 
     def private dispatch actionImplBody(Entity it, DeleteAction action) '''
@@ -464,7 +464,7 @@ class Actions {
         $templateParameters = array_merge($templateParameters, $repository->getAdditionalTemplateParameters(«IF app.hasUploads»$imageHelper, «ENDIF»'controllerAction', $utilArgs));
 
         // fetch and return the appropriate template
-        return $viewHelper->processTemplate($objectType, 'delete', $request, $templateParameters);
+        return $viewHelper->processTemplate($objectType, 'delete', $templateParameters);
     '''
 
     def private deletionProcess(Entity it, DeleteAction action) '''

@@ -34,6 +34,7 @@ class ViewHelper {
         use System;
         use Symfony\Component\DependencyInjection\ContainerBuilder;
         use Symfony\Component\HttpFoundation\Request;
+        use Symfony\Component\HttpFoundation\RequestStack;
         use Symfony\Component\HttpFoundation\Response;
         use Symfony\Component\Templating\EngineInterface;
         use Zikula\Common\Translator\TranslatorInterface;
@@ -60,19 +61,26 @@ class ViewHelper {
             protected $templating;
 
             /**
+             * @var Request
+             */
+            protected $request;
+
+            /**
              * ViewHelper constructor.
              *
-             * @param ContainerBuilder    $container  ContainerBuilder service instance
-             * @param TranslatorInterface $translator Translator service instance
-             * @param EngineInterface     $templating EngineInterface service instance
+             * @param ContainerBuilder    $container    ContainerBuilder service instance
+             * @param TranslatorInterface $translator   Translator service instance
+             * @param EngineInterface     $templating   EngineInterface service instance
+             * @param RequestStack        $requestStack RequestStack service instance
              *
              * @return void
              */
-            public function __construct(ContainerBuilder $container, TranslatorInterface $translator, EngineInterface $templating)
+            public function __construct(ContainerBuilder $container, TranslatorInterface $translator, EngineInterface $templating, RequestStack $requestStack)
             {
                 $this->container = $container;
                 $this->translator = $translator;
                 $this->templating = $templating;
+                $this->request = $requestStack->getMasterRequest();
             }
 
             «getViewTemplate»
@@ -95,26 +103,25 @@ class ViewHelper {
         /**
          * Determines the view template for a certain method with given parameters.
          *
-         * @param string  $type    Current controller (name of currently treated entity)
-         * @param string  $func    Current function (index, view, ...)
-         * @param Request $request Current request
+         * @param string $type Current controller (name of currently treated entity)
+         * @param string $func Current function (index, view, ...)
          *
          * @return string name of template file
          */
-        public function getViewTemplate($type, $func, Request $request)
+        public function getViewTemplate($type, $func)
         {
             // create the base template name
             $template = '@«appName»/' . ucfirst($type) . '/' . $func;
 
             // check for template extension
-            $templateExtension = $this->determineExtension($type, $func, $request);
+            $templateExtension = $this->determineExtension($type, $func);
 
             // check whether a special template is used
             $tpl = '';
-            if ($request->isMethod('POST')) {
-                $tpl = $request->request->getAlnum('tpl', '');
-            } elseif ($request->isMethod('GET')) {
-                $tpl = $request->query->getAlnum('tpl', '');
+            if ($this->request->isMethod('POST')) {
+                $tpl = $this->request->request->getAlnum('tpl', '');
+            } elseif ($this->request->isMethod('GET')) {
+                $tpl = $this->request->query->getAlnum('tpl', '');
             }
 
             $templateExtension = '.' . $templateExtension;
@@ -139,31 +146,30 @@ class ViewHelper {
          *
          * @param string  $type               Current controller (name of currently treated entity)
          * @param string  $func               Current function (index, view, ...)
-         * @param Request $request            Current request
          * @param array   $templateParameters Template data
          * @param string  $template           Optional assignment of precalculated template file
          *
          * @return mixed Output
          */
-        public function processTemplate($type, $func, Request $request, $templateParameters = [], $template = '')
+        public function processTemplate($type, $func, $templateParameters = [], $template = '')
         {
-            $templateExtension = $this->determineExtension($type, $func, $request);
+            $templateExtension = $this->determineExtension($type, $func);
             if (empty($template)) {
-                $template = $this->getViewTemplate($type, $func, $request);
+                $template = $this->getViewTemplate($type, $func);
             }
 
             if ($templateExtension == 'pdf.twig') {
                 $template = str_replace('.pdf', '.html', $template);
 
-                return $this->processPdf($request, $templateParameters, $template);
+                return $this->processPdf($templateParameters, $template);
             }
 
             // look whether we need output with or without the theme
             $raw = false;
-            if ($request->isMethod('POST')) {
-                $raw = (bool) $request->request->get('raw', false);
-            } elseif ($request->isMethod('GET')) {
-                $raw = (bool) $request->query->get('raw', false);
+            if ($this->request->isMethod('POST')) {
+                $raw = (bool) $this->request->request->get('raw', false);
+            } elseif ($this->request->isMethod('GET')) {
+                $raw = (bool) $this->request->query->get('raw', false);
             }
             if (!$raw && $templateExtension != 'html.twig') {
                 $raw = true;
@@ -237,13 +243,12 @@ class ViewHelper {
         /**
          * Get extension of the currently treated template.
          *
-         * @param string  $type    Current controller (name of currently treated entity)
-         * @param string  $func    Current function (index, view, ...)
-         * @param Request $request Current request
+         * @param string $type Current controller (name of currently treated entity)
+         * @param string $func Current function (index, view, ...)
          *
          * @return array List of allowed template extensions
          */
-        protected function determineExtension($type, $func, Request $request)
+        protected function determineExtension($type, $func)
         {
             $templateExtension = 'html.twig';
             if (!in_array($func, ['view', 'display'])) {
@@ -251,7 +256,7 @@ class ViewHelper {
             }
 
             $extensions = $this->availableExtensions($type, $func);
-            $format = $request->getRequestFormat();
+            $format = $this->request->getRequestFormat();
             if ($format != 'html' && in_array($format, $extensions)) {
                 $templateExtension = $format . '.twig';
             }
@@ -296,19 +301,18 @@ class ViewHelper {
         /**
          * Processes a template file using dompdf (LGPL).
          *
-         * @param Request $request            Current request
-         * @param array   $templateParameters Template data
-         * @param string  $template           Name of template to use
+         * @param array  $templateParameters Template data
+         * @param string $template           Name of template to use
          *
          * @return mixed Output
          */
-        protected function processPdf(Request $request, $templateParameters = [], $template)
+        protected function processPdf($templateParameters = [], $template)
         {
             // first the content, to set page vars
             $output = $this->templating->render($template, $templateParameters);
 
             // make local images absolute
-            $output = str_replace('img src="/', 'img src="' . $request->server->get('DOCUMENT_ROOT') . '/', $output);
+            $output = str_replace('img src="/', 'img src="' . $this->request->server->get('DOCUMENT_ROOT') . '/', $output);
 
             // see http://codeigniter.com/forums/viewthread/69388/P15/#561214
             //$output = utf8_decode($output);

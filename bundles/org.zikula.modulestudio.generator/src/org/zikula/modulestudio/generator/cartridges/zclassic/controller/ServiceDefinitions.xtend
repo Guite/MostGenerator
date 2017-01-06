@@ -252,7 +252,9 @@ class ServiceDefinitions {
                     class: «nsBase»QuickNavigation\«entity.name.formatForCodeCapital»QuickNavType
                     arguments:
                         - "@translator.default"
-                        - "@request_stack"
+                        «IF !entity.getBidirectionalIncomingJoinRelationsWithOneSource.filter[source instanceof Entity].empty»
+                            - "@request_stack"
+                        «ENDIF»
                         «IF entity.hasListFieldsEntity»
                             - "@«modPrefix».listentries_helper"
                         «ENDIF»
@@ -464,6 +466,7 @@ class ServiceDefinitions {
                 - "@service_container"
                 - "@translator.default"
                 - "@templating"«/* this does not use "@twig" on purpose */»
+                - "@request_stack"
 
         «modPrefix».workflow_helper:
             class: «nsBase»WorkflowHelper
