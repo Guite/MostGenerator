@@ -60,7 +60,7 @@ class Locking {
         «IF hasOptimisticLock»
 
             if ($this->templateParameters['mode'] == 'edit') {
-                $this->request->getSession()->set('«application.appName»EntityVersion', $entity->get«getVersionField.name.formatForCodeCapital»());
+                $this->request->getSession()->set('«application.appName»EntityVersion', $this->entityRef->get«getVersionField.name.formatForCodeCapital»());
             }
         «ENDIF»
     '''

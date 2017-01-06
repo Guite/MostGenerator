@@ -11,6 +11,7 @@ import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class RelationPresets {
+
     extension ControllerExtensions = new ControllerExtensions
     extension FormattingExtensions = new FormattingExtensions
     extension ModelJoinExtensions = new ModelJoinExtensions
@@ -27,12 +28,46 @@ class RelationPresets {
         protected $relationPresets = [];
     '''
 
-    def initPresets(Entity it) '''
-        «val owningAssociations = getOwningAssociations(it.application)»
-        «val ownedMMAssociations = getOwnedMMAssociations(it.application)»
+    def baseMethod(Application it) '''
+
+        /**
+         * Initialises relationship presets.
+         */
+        protected function initRelationPresets()
+        {
+            // to be customised in sub classes
+        }
+    '''
+
+    def callBaseMethod(Application it) '''
+
+        $this->initRelationPresets();
+    '''
+
+    def childMethod(Entity it) '''
+        «val owningAssociations = getOwningAssociations(application)»
+        «val ownedMMAssociations = getOwnedMMAssociations(application)»
         «IF !owningAssociations.empty || !ownedMMAssociations.empty»
-            $selectionHelper = $this->container->get('«application.appService».selection_helper');
+
+            /**
+             * Initialises relationship presets.
+             */
+            protected function initRelationPresets()
+            {
+                $entity = $this->entityRef;
+
+                «initPresets»
+
+                // save entity reference for later reuse
+                $this->entityRef = $entity;
+            }
         «ENDIF»
+    '''
+
+    def initPresets(Entity it) '''
+        «val owningAssociations = getOwningAssociations(application)»
+        «val ownedMMAssociations = getOwnedMMAssociations(application)»
+        $selectionHelper = $this->container->get('«application.appService».selection_helper');
         «IF !owningAssociations.empty»
 
             // assign identifiers of predefined incoming relationships

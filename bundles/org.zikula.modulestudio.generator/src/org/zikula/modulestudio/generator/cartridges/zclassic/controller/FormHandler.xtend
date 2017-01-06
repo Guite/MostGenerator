@@ -346,8 +346,8 @@ class FormHandler {
         {
             $this->templateParameters = $templateParameters;
             $this->templateParameters['inlineUsage'] = UserUtil::getTheme() == 'ZikulaPrinterTheme' ? true : false;
-
             «IF !relations.filter(JoinRelationship).empty»
+
                 $this->idPrefix = $this->request->query->getAlnum('idp', '');
             «ENDIF»
 
@@ -407,6 +407,9 @@ class FormHandler {
             $this->entityRef = $entity;
 
             «initialiseExtensions»
+            «IF !relations.filter(JoinRelationship).empty»
+                «relationPresetsHelper.callBaseMethod(it)»
+            «ENDIF»
 
             $workflowHelper = $this->container->get('«appService».workflow_helper');
             $actions = $workflowHelper->getActionsForObject($entity);
@@ -454,6 +457,10 @@ class FormHandler {
             // to be customised in sub classes
             return null;
         }
+        «IF !relations.filter(JoinRelationship).empty»
+
+            «relationPresetsHelper.baseMethod(it)»
+        «ENDIF»
         
         «fh.getterMethod(it, 'templateParameters', 'array', true)»
         «createCompositeIdentifier»
@@ -1067,23 +1074,18 @@ class FormHandler {
                     return new RedirectResponse($this->getRedirectUrl(['commandName' => '']), 302);
                 }
             }
-
-            $entity = $this->entityRef;
             «locking.setVersion(it)»
-            «IF !incoming.empty || !outgoing.empty»
-                «relationPresetsHelper.initPresets(it)»
-            «ENDIF»
 
-            // save entity reference for later reuse
-            $this->entityRef = $entity;
-
-            $entityData = $entity->toArray();
+            $entityData = $this->entityRef->toArray();
 
             // assign data to template as array (makes translatable support easier)
             $this->templateParameters[$this->objectTypeLower] = $entityData;
 
             return $result;
         }
+        «IF !incoming.empty || !outgoing.empty»
+            «relationPresetsHelper.childMethod(it)»
+        «ENDIF»
 
         /**
          * Creates the form type.
