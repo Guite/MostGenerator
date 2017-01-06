@@ -402,7 +402,7 @@ class EntityMethods {
 
                 // reset upload fields
                 «FOR field : getUploadFieldsEntity»
-                    $this->set«field.name.formatForCodeCapital»('');
+                    $this->set«field.name.formatForCodeCapital»(null);
                     $this->set«field.name.formatForCodeCapital»Meta([]);
                     $this->set«field.name.formatForCodeCapital»Url('');
                 «ENDFOR»
