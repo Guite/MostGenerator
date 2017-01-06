@@ -152,6 +152,12 @@ class ViewHelper {
                 $template = $this->getViewTemplate($type, $func, $request);
             }
 
+            if ($templateExtension == 'pdf.twig') {
+                $template = str_replace('.pdf', '.html', $template);
+
+                return $this->processPdf($request, $templateParameters, $template);
+            }
+
             // look whether we need output with or without the theme
             $raw = false;
             if ($request->isMethod('POST')) {
@@ -163,34 +169,37 @@ class ViewHelper {
                 $raw = true;
             }
 
+            $output = $this->templating->render($template, $templateParameters);
+            «val supportedFormats = getListOfViewFormats + getListOfDisplayFormats»
             $response = null;
             if (true === $raw) {
                 // standalone output
-                if ($templateExtension == 'pdf.twig') {
-                    $template = str_replace('.pdf', '.html', $template);
+                «IF supportedFormats.exists[e|e == 'csv']»
+                    if ($templateExtension == 'csv.twig') {
+                        // convert to UTF-16 for improved excel compatibility
+                        // see http://stackoverflow.com/questions/4348802/how-can-i-output-a-utf-8-csv-in-php-that-excel-will-read-properly
+                        $output = chr(255) . chr(254) . mb_convert_encoding($output, 'UTF-16LE', 'UTF-8');
+                    }
 
-                    return $this->processPdf($request, $templateParameters, $template);
-                }
-
-                $response = new PlainResponse($this->templating->render($template, $templateParameters));
+                «ENDIF»
+                $response = new PlainResponse($output);
+            } else {
+                // normal output
+                $response = new Response($output);
             }
-
-            // normal output
-            $response = new Response($this->templating->render($template, $templateParameters));
-            «val supportedFormats = getListOfViewFormats + getListOfDisplayFormats»
 
             // check if we need to set any custom headers
             switch ($templateExtension) {
                 «IF supportedFormats.exists[e|e == 'csv']»
                     case 'csv.twig':
-                        $response->headers->set('Content-Type', 'text/comma-separated-values; charset=iso-8859-15');
-                        $fileName = $type . '-list.csv';
-                        $response->headers->set('Content-Disposition', 'attachment; filename=' . $fileName);
+                        $response->headers->set('Content-Encoding', 'UTF-8');
+                        $response->headers->set('Content-Type', 'text/csv; charset=UTF-8');
+                        $response->headers->set('Content-Disposition', 'attachment; filename=' . $type . '-list.csv');
                         break;
                 «ENDIF»
                 «IF supportedFormats.exists[e|e == 'ics']»
                     case 'ics.twig':
-                        $response->headers->set('Content-Type', 'text/calendar; charset=iso-8859-15«/*charset=utf-8*/»');
+                        $response->headers->set('Content-Type', 'text/calendar; charset=utf-8');
                         break;
                 «ENDIF»
                 «IF supportedFormats.exists[e|e == 'json']»
