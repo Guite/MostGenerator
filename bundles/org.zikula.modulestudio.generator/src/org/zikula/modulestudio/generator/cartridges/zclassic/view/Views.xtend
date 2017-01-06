@@ -8,6 +8,7 @@ import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.additions.Emails
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.extensions.Attributes
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.extensions.Categories
+import org.zikula.modulestudio.generator.cartridges.zclassic.view.extensions.ModerationPanel
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.extensions.StandardFields
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.pagecomponents.FilterSyntaxDialog
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.pagecomponents.Relations
@@ -63,6 +64,9 @@ class Views {
         }
         if (hasCategorisableEntities) {
             new Categories().generate(it, fsa)
+        }
+        if (generateModerationPanel && needsApproval) {
+            new ModerationPanel().generate(it, fsa)
         }
         if (hasStandardFieldEntities) {
             new StandardFields().generate(it, fsa)
