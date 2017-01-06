@@ -113,6 +113,9 @@ class Entities {
         «IF !getUniqueDerivedFields.filter[!primaryKey].empty || !getIncomingJoinRelations.filter[unique].empty || !getOutgoingJoinRelations.filter[unique].empty»
             use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
         «ENDIF»
+        «IF hasUserFieldsEntity»
+            use UserUtil;
+        «ENDIF»
         use «application.appNamespace»\Traits\EntityWorkflowTrait;
     '''
 
@@ -138,6 +141,9 @@ class Entities {
         «ENDIF»
         «IF !getUniqueDerivedFields.filter[!primaryKey].empty || (hasSluggableFields && slugUnique) || !getIncomingJoinRelations.filter[unique].empty || !getOutgoingJoinRelations.filter[unique].empty || !getUniqueIndexes.empty»
             use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+        «ENDIF»
+        «IF hasUserFieldsEntity»
+            use UserUtil;
         «ENDIF»
         use «application.appNamespace»\Traits\EntityWorkflowTrait;
         «IF geographical»

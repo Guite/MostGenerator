@@ -978,7 +978,6 @@ class FormHandler {
         use ModUtil;
         use RuntimeException;
         use System;
-        use UserUtil;
         «IF app.needsFeatureActivationHelper»
             use «app.appNamespace»\Helper\FeatureActivationHelper;
         «ENDIF»
