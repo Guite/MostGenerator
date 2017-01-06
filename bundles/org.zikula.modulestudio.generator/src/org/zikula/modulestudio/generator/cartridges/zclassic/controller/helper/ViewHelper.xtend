@@ -35,7 +35,7 @@ class ViewHelper {
         use Symfony\Component\DependencyInjection\ContainerBuilder;
         use Symfony\Component\HttpFoundation\Request;
         use Symfony\Component\HttpFoundation\Response;
-        use Twig_Environment;
+        use Symfony\Component\Templating\EngineInterface;
         use Zikula\Common\Translator\TranslatorInterface;
         use Zikula\Core\Response\PlainResponse;
 
@@ -55,17 +55,24 @@ class ViewHelper {
             protected $translator;
 
             /**
+             * @var EngineInterface
+             */
+            protected $templating;
+
+            /**
              * ViewHelper constructor.
              *
              * @param ContainerBuilder    $container  ContainerBuilder service instance
              * @param TranslatorInterface $translator Translator service instance
+             * @param EngineInterface     $templating EngineInterface service instance
              *
              * @return void
              */
-            public function __construct(ContainerBuilder $container, TranslatorInterface $translator)
+            public function __construct(ContainerBuilder $container, TranslatorInterface $translator, EngineInterface $templating)
             {
                 $this->container = $container;
                 $this->translator = $translator;
+                $this->templating = $templating;
             }
 
             «getViewTemplate»
@@ -88,20 +95,19 @@ class ViewHelper {
         /**
          * Determines the view template for a certain method with given parameters.
          *
-         * @param Twig_Environment $twig    Reference to view object
-         * @param string           $type    Current controller (name of currently treated entity)
-         * @param string           $func    Current function (index, view, ...)
-         * @param Request          $request Current request
+         * @param string  $type    Current controller (name of currently treated entity)
+         * @param string  $func    Current function (index, view, ...)
+         * @param Request $request Current request
          *
          * @return string name of template file
          */
-        public function getViewTemplate(Twig_Environment $twig, $type, $func, Request $request)
+        public function getViewTemplate($type, $func, Request $request)
         {
             // create the base template name
             $template = '@«appName»/' . ucfirst($type) . '/' . $func;
 
             // check for template extension
-            $templateExtension = $this->determineExtension($twig, $type, $func, $request);
+            $templateExtension = $this->determineExtension($type, $func, $request);
 
             // check whether a special template is used
             $tpl = '';
@@ -112,11 +118,15 @@ class ViewHelper {
             }
 
             $templateExtension = '.' . $templateExtension;
-            «/* TODO refactor this, e.g. using http://twig.sensiolabs.org/api/master/Twig_Environment.html#method_resolveTemplate */»
+
             // check if custom template exists
             if (!empty($tpl)) {
-                $template .= DataUtil::formatForOS(ucfirst($tpl));
+                $customTemplate = $template . DataUtil::formatForOS(ucfirst($tpl));
+                if ($this->templating->exists($customTemplate . $templateExtension)) {
+                    $template = $customTemplate;
+                }
             }
+
             $template .= $templateExtension;
 
             return $template;
@@ -127,20 +137,19 @@ class ViewHelper {
         /**
          * Helper method for managing view templates.
          *
-         * @param Twig_Environment $twig               Reference to view object
-         * @param string           $type               Current controller (name of currently treated entity)
-         * @param string           $func               Current function (index, view, ...)
-         * @param Request          $request            Current request
-         * @param array            $templateParameters Template data
-         * @param string           $template           Optional assignment of precalculated template file
+         * @param string  $type               Current controller (name of currently treated entity)
+         * @param string  $func               Current function (index, view, ...)
+         * @param Request $request            Current request
+         * @param array   $templateParameters Template data
+         * @param string  $template           Optional assignment of precalculated template file
          *
          * @return mixed Output
          */
-        public function processTemplate(Twig_Environment $twig, $type, $func, Request $request, $templateParameters = [], $template = '')
+        public function processTemplate($type, $func, Request $request, $templateParameters = [], $template = '')
         {
-            $templateExtension = $this->determineExtension($twig, $type, $func, $request);
+            $templateExtension = $this->determineExtension($type, $func, $request);
             if (empty($template)) {
-                $template = $this->getViewTemplate($twig, $type, $func, $request);
+                $template = $this->getViewTemplate($type, $func, $request);
             }
 
             // look whether we need output with or without the theme
@@ -160,14 +169,14 @@ class ViewHelper {
                 if ($templateExtension == 'pdf.twig') {
                     $template = str_replace('.pdf', '.html', $template);
 
-                    return $this->processPdf($twig, $request, $templateParameters, $template);
+                    return $this->processPdf($request, $templateParameters, $template);
                 }
 
-                $response = new PlainResponse($twig->render($template, $templateParameters));
+                $response = new PlainResponse($this->templating->render($template, $templateParameters));
             }
 
             // normal output
-            $response = new Response($twig->render($template, $templateParameters));
+            $response = new Response($this->templating->render($template, $templateParameters));
             «val supportedFormats = getListOfViewFormats + getListOfDisplayFormats»
 
             // check if we need to set any custom headers
@@ -219,14 +228,13 @@ class ViewHelper {
         /**
          * Get extension of the currently treated template.
          *
-         * @param Twig_Environment $twig    Reference to view object
-         * @param string           $type    Current controller (name of currently treated entity)
-         * @param string           $func    Current function (index, view, ...)
-         * @param Request          $request Current request
+         * @param string  $type    Current controller (name of currently treated entity)
+         * @param string  $func    Current function (index, view, ...)
+         * @param Request $request Current request
          *
          * @return array List of allowed template extensions
          */
-        protected function determineExtension(Twig_Environment $twig, $type, $func, Request $request)
+        protected function determineExtension($type, $func, Request $request)
         {
             $templateExtension = 'html.twig';
             if (!in_array($func, ['view', 'display'])) {
@@ -279,17 +287,16 @@ class ViewHelper {
         /**
          * Processes a template file using dompdf (LGPL).
          *
-         * @param Twig_Environment $twig               Reference to view object
-         * @param Request          $request            Current request
-         * @param array            $templateParameters Template data
-         * @param string           $template           Name of template to use
+         * @param Request $request            Current request
+         * @param array   $templateParameters Template data
+         * @param string  $template           Name of template to use
          *
          * @return mixed Output
          */
-        protected function processPdf(Twig_Environment $twig, Request $request, $templateParameters = [], $template)
+        protected function processPdf(Request $request, $templateParameters = [], $template)
         {
             // first the content, to set page vars
-            $output = $twig->render($template, $templateParameters);
+            $output = $this->templating->render($template, $templateParameters);
 
             // make local images absolute
             $output = str_replace('img src="/', 'img src="' . $request->server->get('DOCUMENT_ROOT') . '/', $output);
@@ -298,7 +305,7 @@ class ViewHelper {
             //$output = utf8_decode($output);
 
             // then the surrounding
-            $output = $twig->render('includePdfHeader.html.twig') . $output . '</body></html>';
+            $output = $this->templating->render('includePdfHeader.html.twig') . $output . '</body></html>';
 
             $controllerHelper = $this->container->get('«appService».controller_helper');
             // create name of the pdf output file

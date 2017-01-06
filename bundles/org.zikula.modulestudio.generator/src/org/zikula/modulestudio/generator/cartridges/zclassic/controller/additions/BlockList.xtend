@@ -241,23 +241,23 @@ class BlockList {
             }
 
             $templateForObjectType = str_replace('itemlist_', 'itemlist_' . $properties['objectType'] . '_', $templateFile);
-            «/* TODO find a better way considering overriding */»
-            $templateDirectory = str_replace('Block/Base/AbstractItemListBlock.php', 'Resources/views/', __FILE__);
+            $templating = $this->get('templating');
+
+            $templateOptions = [
+                'ContentType/' . $templateForObjectType,
+                'Block/' . $templateForObjectType,
+                'ContentType/' . $templateFile,
+                'Block/' . $templateFile,
+                'Block/itemlist.html.twig'
+            ];
 
             $template = '';
-            if (file_exists($templateDirectory . 'ContentType/' . $templateForObjectType)) {
-                $template = 'ContentType/' . $templateForObjectType;
-            } elseif (file_exists($templateDirectory . 'Block/' . $templateForObjectType)) {
-                $template = 'Block/' . $templateForObjectType;
-            } elseif (file_exists($templateDirectory . 'ContentType/' . $templateFile)) {
-                $template = 'ContentType/' . $templateFile;
-            } elseif (file_exists($templateDirectory . 'Block/' . $templateFile)) {
-                $template = 'Block/' . $templateFile;
-            } else {
-                $template = 'Block/itemlist.html.twig';
+            for ($templateOptions as $templatePath) {
+                if ($templating->exists('@«appName»/' . $templatePath)) {
+                    $template = '@«appName»/' . $templatePath;
+                    break;
+                }
             }
-
-            $template = '@«appName»/' . $template;
 
             return $template;
         }

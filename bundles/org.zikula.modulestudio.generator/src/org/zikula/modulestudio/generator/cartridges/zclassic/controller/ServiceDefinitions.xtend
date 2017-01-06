@@ -463,6 +463,7 @@ class ServiceDefinitions {
             arguments:
                 - "@service_container"
                 - "@translator.default"
+                - "@templating"«/* this does not use "@twig" on purpose */»
 
         «modPrefix».workflow_helper:
             class: «nsBase»WorkflowHelper
