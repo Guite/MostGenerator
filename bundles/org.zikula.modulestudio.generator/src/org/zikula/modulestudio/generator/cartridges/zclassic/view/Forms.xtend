@@ -246,7 +246,7 @@ class Forms {
                     «ENDFOR»
                 «ENDIF»
                 «relationHelper.initJs(it, app, true)»
-                «app.vendorAndName»InitEditForm({{ mode }}, '{% if mode != 'create' %}{{ «FOR pkField : getPrimaryKeyFields SEPARATOR ' ~ '»«name.formatForDB».«pkField.name.formatForCode»«ENDFOR» }}{% endif %}');
+                «app.vendorAndName»InitEditForm('{{ mode }}', '{% if mode != 'create' %}{{ «FOR pkField : getPrimaryKeyFields SEPARATOR ' ~ '»«name.formatForDB».«pkField.name.formatForCode»«ENDFOR» }}{% endif %}');
                 «FOR field : getDerivedFields»«field.additionalInitScript»«ENDFOR»
             });
         })(jQuery);
@@ -318,7 +318,7 @@ class Forms {
                 {{ pageAddAsset('stylesheet', asset('bootstrap/css/bootstrap-theme.min.css')) }}
                 {{ pageAddAsset('javascript', asset('jquery/jquery.min.js')) }}
                 {{ pageAddAsset('javascript', asset('bootstrap/js/bootstrap.min.js')) }}
-                {{ pageAddAsset('javascript', zasset('@«appName»:javascript/«appName».EditFunctions.js')) }}
+                {{ pageAddAsset('javascript', zasset('@«appName»:js/«appName».EditFunctions.js')) }}
             </head>
             <body>
                 <script type="text/javascript">

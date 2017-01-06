@@ -113,24 +113,22 @@ class DisplayFunctions {
                 }
             }).done(function(res) {
                 // get data returned by the ajax response
-                var fieldNameCapitalised, idSuffix, data;
+                var fieldNameCapitalised;
+                var idSuffix;
+                var toggleLink;
+                var data;
 
                 fieldNameCapitalised = «vendorAndName»CapitaliseFirstLetter(fieldName);
                 idSuffix = fieldNameCapitalised + itemId;
+                toggleLink = jQuery('#toggle' + idSuffix);
                 data = res.data;
 
-                /*if (data.message) {
-                    «vendorAndName»SimpleAlert(jQuery('#toggle' + idSuffix), Translator.__('Success'), data.message, 'toggle' + idSuffix + 'DoneAlert', 'success');
-                }*/
-
-                idSuffix = idSuffix.toLowerCase();
-                if (true === data.state) {
-                    jQuery('#no' + idSuffix).addClass('hidden');
-                    jQuery('#yes' + idSuffix).removeClass('hidden');
-                } else {
-                    jQuery('#yes' + idSuffix).addClass('hidden');
-                    jQuery('#no' + idSuffix).removeClass('hidden');
+                if (data.message) {
+                    «vendorAndName»SimpleAlert(toggleLink, Translator.__('Success'), data.message, 'toggle' + idSuffix + 'DoneAlert', 'success');
                 }
+
+                toggleLink.find('.fa-check').toggleClass('hidden', true !== data.state);
+                toggleLink.find('.fa-times').toggleClass('hidden', true === data.state);
             })«/*.fail(function(jqXHR, textStatus) {
                 // nothing to do yet
                 var idSuffix = fieldName + '_' + itemId;
@@ -232,6 +230,7 @@ class DisplayFunctions {
             });
             containers.find('.dropdown > ul a i').addClass('fa-fw');
             containers.find('.dropdown-toggle').removeClass('hidden').dropdown();
+        }
     '''
 
     def private initRelationWindow(Application it) '''
@@ -303,8 +302,8 @@ class DisplayFunctions {
             var isViewPage;
             var isDisplayPage;
 
-            isViewPage = jQuery(#.«appName.toLowerCase»-view').length > 0;
-            isDisplayPage = jQuery(#.«appName.toLowerCase»-display').length > 0;
+            isViewPage = jQuery('.«appName.toLowerCase»-view').length > 0;
+            isDisplayPage = jQuery('.«appName.toLowerCase»-display').length > 0;
 
             «IF hasImageFields»
                 jQuery('a.lightbox').lightbox();

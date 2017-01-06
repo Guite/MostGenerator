@@ -29,13 +29,8 @@ class SimpleFields {
         if (ajaxTogglability && (page == 'view' || page == 'display')) '''
             {% set itemid = «objName».createCompositeIdentifier() %}
             <a id="toggle«name.formatForCodeCapital»{{ itemid }}" href="javascript:void(0);" class="«entity.application.vendorAndName.toLowerCase»-ajax-toggle hidden" data-object-type="«entity.name.formatForCode»" data-field-name="«name.formatForCode»" data-item-id="{{ itemid }}">
-            {% if «objName».«name.formatForCode» %}
-                <i class="cursor-pointer fa fa-check" id="yes«name.formatForCodeCapital»{{ itemid }}" title="{{ __('This setting is enabled. Click here to disable it.') }}"></i>
-                <i class="cursor-pointer fa fa-times hidden" id="no«name.formatForCodeCapital»{{ itemid }}" title="{{ __('This setting is disabled. Click here to enable it.') }}"></i>
-            {% else %}
-                <i class="cursor-pointer fa fa-check hidden" id="yes«name.formatForCodeCapital»{{ itemid }}" title="{{ __('This setting is enabled. Click here to disable it.') }}"></i>
-                <i class="cursor-pointer fa fa-times" id="no«name.formatForCodeCapital»{{ itemid }}" title="{{ __('This setting is disabled. Click here to enable it.') }}"></i>
-            {% endif %}
+                <i class="fa fa-check{% if not «objName».«name.formatForCode» %} hidden{% endif %}" id="yes«name.formatForCodeCapital»{{ itemid }}" title="{{ __('This setting is enabled. Click here to disable it.') }}"></i>
+                <i class="fa fa-times{% if «objName».«name.formatForCode» %} hidden{% endif %}" id="no«name.formatForCodeCapital»{{ itemid }}" title="{{ __('This setting is disabled. Click here to enable it.') }}"></i>
             </a>
             <noscript><div id="noscript«name.formatForCodeCapital»{{ itemid }}">
                 {% if «objName».«name.formatForCode» %}

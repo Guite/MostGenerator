@@ -75,6 +75,9 @@ class Layout {
             «ENDIF»
             {% if app.request.query.get('theme') != 'ZikulaPrinterTheme' %}
                 {{ pageAddAsset('javascript', zasset('@«appName»:js/«appName».js')) }}
+                «IF hasGeographical»
+                    {{ pageAddAsset('javascript', zasset('@«appName»:js/«appName».Geo.js')) }}
+                «ENDIF»
                 «IF hasEditActions»
                     {{ polyfill([«IF hasGeographical»'geolocation', «ENDIF»'forms', 'forms-ext']) }}
                 «ENDIF»

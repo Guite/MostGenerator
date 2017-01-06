@@ -70,7 +70,7 @@ class Config {
         «IF hasImageFields»
             {% block footer %}
                 {{ parent() }}
-                {{ pageAddAsset('javascript', zasset('@«appName»:javascript/«appName».Config.js')) }}
+                {{ pageAddAsset('javascript', zasset('@«appName»:js/«appName».Config.js')) }}
             {% endblock %}
         «ENDIF»
     '''
