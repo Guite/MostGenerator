@@ -338,7 +338,6 @@ class ValidationConstraints {
                 $serviceManager = ServiceUtil::getManager();
                 $helper = $serviceManager->get('«app.appService».listentries_helper');
                 $listEntries = $helper->get«name.formatForCodeCapital»EntriesFor«entity.name.formatForCodeCapital»();
-                $dom = ZLanguage::getModuleDomain('«app.appName»');
 
                 $allowedValues = [];
                 foreach ($listEntries as $entry) {
@@ -351,7 +350,7 @@ class ValidationConstraints {
                         continue;
                     }
                     if (!in_array($value, $allowedValues, true)) {
-                        $context->buildViolation(__('Invalid value provided', $dom))
+                        $context->buildViolation($serviceManager->get('translator.default')->__('Invalid value provided'))
                             ->atPath('«name.formatForCode»')
                             ->addViolation();
                     }

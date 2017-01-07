@@ -773,7 +773,7 @@ class AjaxController {
             }
             $entity->merge($entityData);
             «/*IF hasTranslatableFields»
-                $entity->setLocale(«IF isLegacy»ZLanguage::getLanguageCode()«ELSE»$request->getLocale()«ENDIF»);
+                $entity->setLocale($request->getLocale());
             «ENDIF*/»
 
             // save new object to set the root id

@@ -32,7 +32,6 @@ class ContentTypeList {
         namespace «appNamespace»\ContentType\Base;
 
         use ServiceUtil;
-        use ZLanguage;
         «IF needsFeatureActivationHelper»
             use «appNamespace»\Helper\FeatureActivationHelper;
         «ENDIF»
@@ -257,8 +256,6 @@ class ContentTypeList {
          */
         public function display()
         {
-            $dom = ZLanguage::getModuleDomain('«appName»');
-
             $serviceManager = ServiceUtil::getManager();
             $repository = $serviceManager->get('«appService».' . $this->objectType . '_factory')->getRepository();
             $permissionApi = $serviceManager->get('zikula_permissions_module.api.permission');
