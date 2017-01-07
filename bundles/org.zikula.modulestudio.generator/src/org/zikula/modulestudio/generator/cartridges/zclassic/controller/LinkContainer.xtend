@@ -216,6 +216,7 @@ class LinkContainer {
         namespace «appNamespace»\Menu\Base;
 
         use Knp\Menu\FactoryInterface;
+        use Knp\Menu\MenuItem;
         use Symfony\Component\DependencyInjection\ContainerAwareInterface;
         use Symfony\Component\DependencyInjection\ContainerAwareTrait;
         use Zikula\Common\Translator\TranslatorTrait;
@@ -239,7 +240,7 @@ class LinkContainer {
              * @param FactoryInterface $factory Menu factory
              * @param array            $options Additional options
              *
-             * @return \Knp\Menu\MenuItem The assembled menu
+             * @return MenuItem The assembled menu
              */
             public function menu(FactoryInterface $factory, array $options)
             {

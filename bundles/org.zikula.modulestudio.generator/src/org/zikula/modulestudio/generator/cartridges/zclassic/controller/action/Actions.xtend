@@ -12,7 +12,6 @@ import de.guite.modulestudio.metamodel.MainAction
 import de.guite.modulestudio.metamodel.OneToManyRelationship
 import de.guite.modulestudio.metamodel.OneToOneRelationship
 import de.guite.modulestudio.metamodel.ViewAction
-import org.zikula.modulestudio.generator.cartridges.zclassic.controller.ControllerHelperFunctions
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
@@ -101,9 +100,6 @@ class Actions {
                 return $viewHelper->processTemplate($objectType, 'view', $templateParameters);
             }
         «ENDIF»
-
-        // parameter for used sorting field
-        «new ControllerHelperFunctions().defaultSorting(action, app)»
 
         // parameter for used sort order
         $sortdir = strtolower($sortdir);

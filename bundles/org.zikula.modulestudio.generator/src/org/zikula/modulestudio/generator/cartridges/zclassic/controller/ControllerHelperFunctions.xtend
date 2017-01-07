@@ -1,11 +1,10 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.controller
 
 import de.guite.modulestudio.metamodel.Application
-import de.guite.modulestudio.metamodel.ViewAction
 
 class ControllerHelperFunctions {
 
-    def defaultSorting(ViewAction it, Application app) '''
+    def defaultSorting(Application it) '''
         if (empty($sort) || !in_array($sort, $repository->getAllowedSortingFields())) {
             $sort = $repository->getDefaultSortingField();
             $request->query->set('sort', $sort);

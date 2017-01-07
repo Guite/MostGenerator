@@ -339,7 +339,7 @@ class AjaxController {
 
         // parameter for used sorting field
         $sort = $request->query->get('sort', '');
-        «new ControllerHelperFunctions().defaultSorting(null, it)»
+        «new ControllerHelperFunctions().defaultSorting(it)»
         $sortParam = $sort . ' asc';
 
         $currentPage = 1;

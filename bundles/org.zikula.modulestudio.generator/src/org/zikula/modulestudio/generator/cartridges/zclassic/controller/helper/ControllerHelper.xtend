@@ -3,6 +3,7 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.controller.helper
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.Entity
 import org.eclipse.xtext.generator.IFileSystemAccess
+import org.zikula.modulestudio.generator.cartridges.zclassic.controller.ControllerHelperFunctions
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
@@ -331,9 +332,14 @@ class ControllerHelper {
                 throw new Exception('Error! Invalid object type received.');
             }
 
+            $utilArgs = ['controller' => $objectType, 'action' => 'view'];
             $request = $this->container->get('request_stack')->getMasterRequest();
-            $repository = $this->get('«appService».' . $objectType . '_factory')->getRepository();
+            $repository = $this->container->get('«appService».' . $objectType . '_factory')->getRepository();
             $repository->setRequest($request);
+
+            // parameter for used sorting field
+            «new ControllerHelperFunctions().defaultSorting(it)»
+
             «IF hasTrees»
 
                 if ('tree' == $request->query->getAlnum('tpl', '')) {
@@ -344,14 +350,15 @@ class ControllerHelper {
                     $templateParameters['trees'] = $selectionHelper->getAllTrees($objectType);
                     $templateParameters = array_merge($templateParameters, $repository->getAdditionalTemplateParameters(«IF hasUploads»$imageHelper, «ENDIF»'controllerAction', $utilArgs));
                     «IF needsFeatureActivationHelper»
-                        $templateParameters['featureActivationHelper'] = $this->get('«appService».feature_activation_helper');
+                        $templateParameters['featureActivationHelper'] = $this->container->get('«appService».feature_activation_helper');
                     «ENDIF»
 
                     return $templateParameters;
                 }
             «ENDIF»
 
-            $showOwnEntries = $request->query->getInt('own', $this->getVar('showOnlyOwnEntries', 0));
+            $variableApi = $this->container->get('zikula_extensions_module.api.variable');
+            $showOwnEntries = $request->query->getInt('own', $variableApi->get('«appName»', 'showOnlyOwnEntries', 0));
             $showAllEntries = $request->query->getInt('all', 0);
 
             «IF generateCsvTemplates»
@@ -378,7 +385,7 @@ class ControllerHelper {
                 // the number of items displayed on a page for pagination
                 $resultsPerPage = $request->query->getInt('num', 0);
                 if (in_array($resultsPerPage, [0, 10])) {
-                    $resultsPerPage = $this->container->get('zikula_extensions_module.api.variable')->get('«appName»', $objectType . 'EntriesPerPage', 10);
+                    $resultsPerPage = $variableApi->get('«appName»', $objectType . 'EntriesPerPage', 10);
                 }
             }
 
@@ -430,7 +437,7 @@ class ControllerHelper {
             $templateParameters['sort'] = $sort;
             $templateParameters['sortdir'] = $sortdir;
 
-            $selectionHelper = $this->get('«appService».selection_helper');
+            $selectionHelper = $this->container->get('«appService».selection_helper');
 
             $where = '';
             if ($showAllEntries == 1) {
@@ -454,7 +461,7 @@ class ControllerHelper {
                 if (true === $supportsHooks) {
                     // build RouteUrl instance for display hooks
                     $currentUrlArgs['_locale'] = $request->getLocale();
-                    $currentUrlObject = new RouteUrl('«appName.formatForDB»_«name.formatForCode»_' . /*($isAdmin ? 'admin' : '') . */'view', $currentUrlArgs);
+                    $currentUrlObject = new RouteUrl('«appName.formatForDB»_«name.formatForDB»_' . /*($isAdmin ? 'admin' : '') . */'view', $currentUrlArgs);
                 }
 
             «ENDIF»
