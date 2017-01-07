@@ -73,7 +73,7 @@ class Layout {
                 {{ pageAddAsset('stylesheet', asset('bootstrap-jqueryui/bootstrap-jqueryui.min.css')) }}
                 {{ pageAddAsset('javascript', asset('bootstrap-jqueryui/bootstrap-jqueryui.min.js')) }}
             «ENDIF»
-            {% if app.request.query.get('theme') != 'ZikulaPrinterTheme' %}
+            {% if not app.request.query.getBoolean('raw', false) %}
                 {{ pageAddAsset('javascript', zasset('@«appName»:js/«appName».js')) }}
                 «IF hasGeographical»
                     {{ pageAddAsset('javascript', zasset('@«appName»:js/«appName».Geo.js')) }}
@@ -84,7 +84,7 @@ class Layout {
             {% endif %}
         {% endblock %}
 
-        {% if app.request.query.get('theme') != 'ZikulaPrinterTheme' %}
+        {% if not app.request.query.getBoolean('raw', false) %}
             {% block appTitle %}
                 {{ moduleHeader('user', '«/* custom title */»', '«/* title link */»', false, true«/* flashes */», false, true«/* image */») }}
             {% endblock %}
@@ -104,12 +104,12 @@ class Layout {
         {% block content %}{% endblock %}
 
         {% block footer %}
-            {% if app.request.query.get('theme') != 'ZikulaPrinterTheme' %}
+            {% if not app.request.query.getBoolean('raw', false) %}
                 «IF generatePoweredByBacklinksIntoFooterTemplates»
                     «new FileHelper().msWeblink(it)»
                 «ENDIF»
             «IF hasEditActions»
-            {% elseif app.request.query.get('func') == 'edit' %}
+            {% elseif 'edit' in app.request.get('_route') %}
                 {{ pageAddAsset('stylesheet', 'style/core.css') }}
                 {{ pageAddAsset('stylesheet', zasset('@«appName»:css/style.css')) }}
                 {{ pageAddAsset('stylesheet', zasset('@ZikulaThemeModule:css/form/style.css')) }}
@@ -131,7 +131,7 @@ class Layout {
         {# purpose of this template: admin area base layout #}
         {% extends '«appName»::base.html.twig' %}
         {% block header %}
-            {% if app.request.query.get('theme') != 'ZikulaPrinterTheme' %}
+            {% if not app.request.query.getBoolean('raw', false) %}
                 {{ adminHeader() }}
             {% endif %}
             {{ parent() }}
@@ -141,7 +141,7 @@ class Layout {
             <h3><span class="fa fa-{% block admin_page_icon %}{% endblock %}"></span>{% block title %}{% endblock %}</h3>
         {% endblock %}
         {% block footer %}
-            {% if app.request.query.get('theme') != 'ZikulaPrinterTheme' %}
+            {% if not app.request.query.getBoolean('raw', false) %}
                 {{ adminFooter() }}
             {% endif %}
             {{ parent() }}

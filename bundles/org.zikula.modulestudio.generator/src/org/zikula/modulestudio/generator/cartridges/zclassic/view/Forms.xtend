@@ -14,7 +14,6 @@ import de.guite.modulestudio.metamodel.UploadField
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.formcomponents.Relations
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.formcomponents.Section
-import org.zikula.modulestudio.generator.cartridges.zclassic.view.formcomponents.SimpleFields
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
@@ -35,7 +34,6 @@ class Forms {
     extension Utils = new Utils
     extension ViewExtensions = new ViewExtensions
 
-    SimpleFields fieldHelper = new SimpleFields
     Relations relationHelper = new Relations
 
     def generate(Application it, IFileSystemAccess fsa) {
@@ -257,13 +255,21 @@ class Forms {
         «IF entity.getIncomingJoinRelations.filter[e|e.getSourceFields.head == name.formatForDB].empty»
             «IF !visible»
                 <div class="hidden">
-                    «fieldHelper.formRow(it, groupSuffix, idSuffix)»
+                    «formRow(it, groupSuffix, idSuffix)»
                 </div>
             «ELSE»
-                «fieldHelper.formRow(it, groupSuffix, idSuffix)»
+                «formRow(it, groupSuffix, idSuffix)»
             «ENDIF»
         «ENDIF»
     '''
+
+    def private formRow(DerivedField it, String groupSuffix, String idSuffix) {
+        if (groupSuffix != '' || idSuffix != '') {
+            '''{{ form_row(attribute(form, «IF groupSuffix != ''»«groupSuffix» ~ «ENDIF»'«name.formatForCode»'«IF idSuffix != ''» ~ «idSuffix»«ENDIF»)) }}'''
+        } else {
+            '''{{ form_row(form.«name.formatForCode») }}'''
+        }
+    }
 
     def private additionalInitScript(DerivedField it) {
         switch it {

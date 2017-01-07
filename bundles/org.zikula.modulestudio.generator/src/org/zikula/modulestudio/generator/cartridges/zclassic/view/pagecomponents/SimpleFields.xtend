@@ -73,7 +73,7 @@ class SimpleFields {
                 {% if «realName» > 0 %}
             «ENDIF»
             «IF page == 'display'»
-                  {% if app.request.query.get('theme') != 'ZikulaPrinterTheme' %}
+                  {% if not isQuickView %}
             «ENDIF»
                 {{ «realName»|profileLinkByUserId() }}
                 <span class="avatar">{{ «entity.application.appName.formatForDB»_userAvatar(uid=«realName», rating='g') }}</span>
@@ -104,7 +104,7 @@ class SimpleFields {
                 {% if «realName» is not empty %}
             «ENDIF»
             «IF page == 'display'»
-                  {% if app.request.query.get('theme') != 'ZikulaPrinterTheme' %}
+                  {% if not isQuickView %}
             «ENDIF»
             <a href="mailto:{{ «realName»|protectMail }}" title="{{ __('Send an email') }}" class="fa fa-envelope"></a>
             «IF page == 'display'»
@@ -126,7 +126,7 @@ class SimpleFields {
                 {% if «realName» is not empty %}
             «ENDIF»
             «IF page == 'display'»
-                  {% if app.request.query.get('theme') != 'ZikulaPrinterTheme' %}
+                  {% if not isQuickView %}
             «ENDIF»
             <a href="{{ «realName» }}" title="{{ __('Visit this page') }}" class="fa fa-external-link-square"></a>
             «IF page == 'display'»

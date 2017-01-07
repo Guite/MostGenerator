@@ -60,17 +60,18 @@ class Display {
         {% endblock %}
         {% block admin_page_icon 'eye' %}
         {% block content %}
+            {% set isQuickView = app.request.query.getBoolean('raw', false) %}
             <div class="«appName.toLowerCase»-«name.formatForDB» «appName.toLowerCase»-display">
 
             «IF !refedElems.empty»
-                {% if app.request.query.get('theme') != 'ZikulaPrinterTheme' %}
+                {% if not isQuickView %}
                     <div class="row">
                         <div class="col-sm-9">
                 {% endif %}
             «ENDIF»
             «IF useGroupingPanels('display')»
 
-                {% if app.request.query.get('theme') != 'ZikulaPrinterTheme' %}
+                {% if not isQuickView %}
                     <div class="panel-group" id="accordion">
                         <div class="panel panel-default">
                             <div class="panel-heading">
@@ -83,7 +84,7 @@ class Display {
 
             «fieldDetails(appName)»
             «IF useGroupingPanels('display')»
-                {% if app.request.query.get('theme') != 'ZikulaPrinterTheme' %}
+                {% if not isQuickView %}
                             </div>
                         </div>
                     </div>
@@ -91,7 +92,7 @@ class Display {
             «ENDIF»
             «displayExtensions(objName)»
 
-            {% if app.request.query.get('theme') != 'ZikulaPrinterTheme' %}
+            {% if not isQuickView %}
                 «IF !skipHookSubscribers»
                     {# include display hooks #}
                     {{ block('display_hooks') }}
@@ -185,14 +186,14 @@ class Display {
         {% if «relObjName»|default %}
             <dt>{{ __('«relationAliasName.formatForDisplayCapital»') }}</dt>
             <dd>
-              {% if app.request.query.get('theme') != 'ZikulaPrinterTheme' %}
+              {% if not isQuickView %}
                   «IF linkEntity.hasDisplayAction»
                       <a href="{{ path('«linkEntity.application.appName.formatForDB»_«linkEntity.name.toLowerCase»_' ~ routeArea ~ 'display'«linkEntity.routeParams(relObjName, true)») }}">{% spaceless %}
                   «ENDIF»
                     {{ «relObjName».getTitleFromDisplayPattern() }}
                   «IF linkEntity.hasDisplayAction»
                     {% endspaceless %}</a>
-                    <a id="«linkEntity.name.formatForCode»Item{{ «FOR pkField : linkEntity.getPrimaryKeyFields SEPARATOR ' ~ '»«relObjName».«pkField.name.formatForCode»«ENDFOR» }}Display" href="{{ path('«linkEntity.application.appName.formatForDB»_«linkEntity.name.formatForDB»_' ~ routeArea ~ 'display', { «linkEntity.routePkParams(relObjName, true)»«linkEntity.appendSlug(relObjName, true)», 'theme': 'ZikulaPrinterTheme' }) }}" title="{{ __('Open quick view window')|e('html_attr') }}" class="«application.vendorAndName.toLowerCase»-inline-window hidden" data-modal-title="{{ «relObjName».getTitleFromDisplayPattern()|e('html_attr') }}"><span class="fa fa-id-card-o"></span></a>
+                    <a id="«linkEntity.name.formatForCode»Item{{ «FOR pkField : linkEntity.getPrimaryKeyFields SEPARATOR ' ~ '»«relObjName».«pkField.name.formatForCode»«ENDFOR» }}Display" href="{{ path('«linkEntity.application.appName.formatForDB»_«linkEntity.name.formatForDB»_' ~ routeArea ~ 'display', { «linkEntity.routePkParams(relObjName, true)»«linkEntity.appendSlug(relObjName, true)», 'raw': 1 }) }}" title="{{ __('Open quick view window')|e('html_attr') }}" class="«application.vendorAndName.toLowerCase»-inline-window hidden" data-modal-title="{{ «relObjName».getTitleFromDisplayPattern()|e('html_attr') }}"><span class="fa fa-id-card-o"></span></a>
                   «ENDIF»
               {% else %}
                   {{ «relObjName».getTitleFromDisplayPattern() }}

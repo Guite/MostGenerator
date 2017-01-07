@@ -152,9 +152,9 @@ class ViewHelper {
             // look whether we need output with or without the theme
             $raw = false;
             if ($this->request->isMethod('POST')) {
-                $raw = (bool) $this->request->request->get('raw', false);
+                $raw = $this->request->request->getBoolean('raw', false);
             } elseif ($this->request->isMethod('GET')) {
-                $raw = (bool) $this->request->query->get('raw', false);
+                $raw = $this->request->query->getBoolean('raw', false);
             }
             if (!$raw && $templateExtension != 'html.twig') {
                 $raw = true;

@@ -133,7 +133,6 @@ class FormHandler {
         use Zikula\Core\RouteUrl;
         use ModUtil;
         use RuntimeException;
-        use UserUtil;
         «IF needsFeatureActivationHelper»
             use «appNamespace»\Helper\FeatureActivationHelper;
         «ENDIF»
@@ -345,7 +344,7 @@ class FormHandler {
         public function processForm(array $templateParameters)
         {
             $this->templateParameters = $templateParameters;
-            $this->templateParameters['inlineUsage'] = UserUtil::getTheme() == 'ZikulaPrinterTheme' ? true : false;
+            $this->templateParameters['inlineUsage'] = $this->request->query->getBoolean('raw', false);
             «IF !relations.filter(JoinRelationship).empty»
 
                 $this->idPrefix = $this->request->query->getAlnum('idp', '');
