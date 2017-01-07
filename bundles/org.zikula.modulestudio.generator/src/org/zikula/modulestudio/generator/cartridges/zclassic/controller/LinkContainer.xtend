@@ -248,7 +248,7 @@ class LinkContainer {
                     return $menu;
                 }
 
-                $this->setTranslator($this->container->get('translator'));
+                $this->setTranslator($this->container->get('translator.default'));
 
                 $entity = $options['entity'];
                 $routeArea = $options['area'];
