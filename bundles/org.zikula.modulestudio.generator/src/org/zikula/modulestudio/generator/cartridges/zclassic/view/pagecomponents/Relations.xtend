@@ -41,15 +41,14 @@ class Relations {
                 {% set nolink = false %}
             {% endif %}
         «ENDIF»
-        «IF !many»
-            <h4>
-        «ELSE»
+        «IF many»
             {% if items|default and items|length > 0 %}
-            <ul class="«app.appName.toLowerCase»-related-item-list «name.formatForCode»">
+            <ul class="list-group «app.appName.toLowerCase»-related-item-list «name.formatForDB»">
             {% for item in items %}
                 {% if hasAdminPermission or item.workflowState == 'approved'«IF ownerPermission» or (item.workflowState == 'defered' and hasEditPermission and currentUser|default and item.createdBy.getUid() == currentUser.uid)«ENDIF» %}
-                <li>
+                <li class="list-group-item">
         «ENDIF»
+        <h4«IF many» class="list-group-item-heading"«ENDIF»>
         «IF hasDisplayAction»
             {% spaceless %}
             {% if not nolink %}
@@ -64,13 +63,13 @@ class Relations {
             {% endif %}
             {% endspaceless %}
         «ENDIF»
-        «IF !many»</h4>
-        «ENDIF»
+        </h4>
         «IF hasImageFieldsEntity»
-            <br />
             «val imageFieldName = getImageFieldsEntity.head.name.formatForCode»
             {% if item.«imageFieldName» is not empty and item.«imageFieldName»Meta.isImage %}
-                <img src="{{ item.«imageFieldName».getPathname()|imagine_filter('zkroot', relationThumbRuntimeOptions) }}" alt="{{ item.getTitleFromDisplayPattern()|e('html_attr') }}" width="{{ relationThumbRuntimeOptions.thumbnail.size[0] }}" height="{{ relationThumbRuntimeOptions.thumbnail.size[1] }}" class="img-rounded" />
+                <p«IF many» class="list-group-item-text"«ENDIF»>
+                    <img src="{{ item.«imageFieldName».getPathname()|imagine_filter('zkroot', relationThumbRuntimeOptions) }}" alt="{{ item.getTitleFromDisplayPattern()|e('html_attr') }}" width="{{ relationThumbRuntimeOptions.thumbnail.size[0] }}" height="{{ relationThumbRuntimeOptions.thumbnail.size[1] }}" class="img-rounded" />
+                </p>
             {% endif %}
         «ENDIF»
         «IF many»
