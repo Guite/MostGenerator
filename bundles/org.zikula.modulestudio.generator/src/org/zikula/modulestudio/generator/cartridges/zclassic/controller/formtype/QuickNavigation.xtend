@@ -61,6 +61,9 @@ class QuickNavigation {
         «ENDIF»
         use Zikula\Common\Translator\TranslatorInterface;
         use Zikula\Common\Translator\TranslatorTrait;
+        «IF hasLocaleFieldsEntity && app.targets('1.4-dev')»
+            use Zikula\SettingsModule\Api\LocaleApi;
+        «ENDIF»
         «IF app.needsFeatureActivationHelper»
             use «app.appNamespace»\Helper\FeatureActivationHelper;
         «ENDIF»
@@ -88,6 +91,13 @@ class QuickNavigation {
                  */
                 protected $listHelper;
             «ENDIF»
+            «IF hasLocaleFieldsEntity && app.targets('1.4-dev')»
+
+                /**
+                 * @var LocaleApi
+                 */
+                protected $localeApi;
+            «ENDIF»
             «IF app.needsFeatureActivationHelper»
 
                 /**
@@ -106,11 +116,14 @@ class QuickNavigation {
             «IF hasListFieldsEntity»
                 «' '»* @param ListEntriesHelper   $listHelper   ListEntriesHelper service instance
             «ENDIF»
+            «IF hasLocaleFieldsEntity && app.targets('1.4-dev')»
+                «' '»* @param LocaleApi           $localeApi    LocaleApi service instance
+            «ENDIF»
             «IF app.needsFeatureActivationHelper»
                 «' '»* @param FeatureActivationHelper $featureActivationHelper FeatureActivationHelper service instance
             «ENDIF»
              */
-            public function __construct(TranslatorInterface $translator«IF !incomingRelations.empty», RequestStack $requestStack«ENDIF»«IF hasListFieldsEntity», ListEntriesHelper $listHelper«ENDIF»«IF app.needsFeatureActivationHelper», FeatureActivationHelper $featureActivationHelper«ENDIF»)
+            public function __construct(TranslatorInterface $translator«IF !incomingRelations.empty», RequestStack $requestStack«ENDIF»«IF hasListFieldsEntity», ListEntriesHelper $listHelper«ENDIF»«IF hasLocaleFieldsEntity && app.targets('1.4-dev')», LocaleApi $localeApi«ENDIF»«IF app.needsFeatureActivationHelper», FeatureActivationHelper $featureActivationHelper«ENDIF»)
             {
                 $this->setTranslator($translator);
                 «IF !incomingRelations.empty»
@@ -118,6 +131,9 @@ class QuickNavigation {
                 «ENDIF»
                 «IF hasListFieldsEntity»
                     $this->listHelper = $listHelper;
+                «ENDIF»
+                «IF hasLocaleFieldsEntity && app.targets('1.4-dev')»
+                    $this->localeApi = $localeApi;
                 «ENDIF»
                 «IF app.needsFeatureActivationHelper»
                     $this->featureActivationHelper = $featureActivationHelper;
@@ -540,7 +556,8 @@ class QuickNavigation {
 
     def private dispatch fieldType(StringField it) '''«IF country»Country«ELSEIF language»Language«ELSEIF locale»Locale«ELSEIF currency»Currency«ELSEIF timezone»Timezone«ENDIF»'''
     def private dispatch additionalOptions(StringField it) '''
-        'placeholder' => $this->__('All')
+        'placeholder' => $this->__('All')«IF locale && app.targets('1.4-dev')»,
+        'choices' => $this->localeApi->getSupportedLocaleNames()«ENDIF»
     '''
 
     def private dispatch additionalOptions(UserField it) '''

@@ -258,6 +258,9 @@ class ServiceDefinitions {
                         «IF entity.hasListFieldsEntity»
                             - "@«modPrefix».listentries_helper"
                         «ENDIF»
+                        «IF entity.hasLocaleFieldsEntity && targets('1.4-dev')»
+                            - "@zikula_settings_module.locale_api"
+                        «ENDIF»
                         «IF needsFeatureActivationHelper»
                             - "@«modPrefix».feature_activation_helper"
                         «ENDIF»
@@ -291,6 +294,9 @@ class ServiceDefinitions {
                         «ENDIF»
                         «IF entity.hasListFieldsEntity»
                             - "@«modPrefix».listentries_helper"
+                        «ENDIF»
+                        «IF entity.hasLocaleFieldsEntity && targets('1.4-dev')»
+                            - "@zikula_settings_module.locale_api"
                         «ENDIF»
                         «IF needsFeatureActivationHelper»
                             - "@«modPrefix».feature_activation_helper"
