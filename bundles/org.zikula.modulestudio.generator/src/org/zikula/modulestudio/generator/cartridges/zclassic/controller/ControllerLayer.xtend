@@ -124,9 +124,6 @@ class ControllerLayer {
         «ENDIF»
         use ModUtil;
         use RuntimeException;
-        «IF hasIndexAction || hasViewAction || hasDeleteAction»
-            use System;
-        «ENDIF»
         «IF hasViewAction»
             use Zikula\Component\SortableColumns\Column;
             use Zikula\Component\SortableColumns\SortableColumns;

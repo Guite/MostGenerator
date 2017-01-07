@@ -248,7 +248,6 @@ class Repository {
         use ModUtil;
         use Psr\Log\LoggerInterface;
         use ServiceUtil;
-        use System;
         use Zikula\Common\Translator\TranslatorInterface;
         «IF hasArchive && null !== getEndDateField»
             use Symfony\Component\HttpFoundation\Session\SessionInterface;

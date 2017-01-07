@@ -31,7 +31,6 @@ class ViewHelper {
 
         use DataUtil;
         use PageUtil;
-        use System;
         use Symfony\Component\DependencyInjection\ContainerBuilder;
         use Symfony\Component\HttpFoundation\Request;
         use Symfony\Component\HttpFoundation\RequestStack;
@@ -320,9 +319,11 @@ class ViewHelper {
             // then the surrounding
             $output = $this->templating->render('includePdfHeader.html.twig') . $output . '</body></html>';
 
+            $siteName = $this->container->get('zikula_extensions_module.api.variable')->getSystemVar('sitename');
+
             $controllerHelper = $this->container->get('«appService».controller_helper');
             // create name of the pdf output file
-            $fileTitle = $controllerHelper->formatPermalink(System::getVar('sitename'))
+            $fileTitle = $controllerHelper->formatPermalink($siteName)
                        . '-'
                        . $controllerHelper->formatPermalink(PageUtil::getVar('title'))
                        . '-' . date('Ymd') . '.pdf';
@@ -340,10 +341,7 @@ class ViewHelper {
             // stream output to browser
             $pdf->stream($fileTitle);
 
-            // prevent additional output by shutting down the system
-            System::shutDown();
-
-            return true;
+            return new Response(); 
         }
     '''
 

@@ -984,7 +984,6 @@ class FormHandler {
         use Symfony\Component\Security\Core\Exception\AccessDeniedException;
         use ModUtil;
         use RuntimeException;
-        use System;
         «IF app.needsFeatureActivationHelper»
             use «app.appNamespace»\Helper\FeatureActivationHelper;
         «ENDIF»

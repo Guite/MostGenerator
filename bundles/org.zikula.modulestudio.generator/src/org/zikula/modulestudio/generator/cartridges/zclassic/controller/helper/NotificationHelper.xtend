@@ -268,7 +268,7 @@ class NotificationHelper {
         protected function sendMails()
         {
             $objectType = $this->entity['_objectType'];
-            $siteName = $this->variableApi->getSystemVar('sitename_' . $this->request->getLocale(), $this->variableApi->getSystemVar('sitename_en'));
+            $siteName = $this->variableApi->getSystemVar('sitename');
             $adminMail = $this->variableApi->getSystemVar('adminmail');
 
             $templateType = $this->recipientType == 'creator' ? 'Creator' : 'Moderator';
