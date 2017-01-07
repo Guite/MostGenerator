@@ -57,9 +57,11 @@ class ControllerHelper {
             use Symfony\Component\HttpFoundation\Session\SessionInterface;
         «ENDIF»
         use Zikula\Common\Translator\TranslatorInterface;
-        use Zikula\Component\SortableColumns\SortableColumns;
-        «IF hasHookSubscribers»
-            use Zikula\Core\RouteUrl;
+        «IF hasViewActions»
+            use Zikula\Component\SortableColumns\SortableColumns;
+            «IF hasHookSubscribers»
+                use Zikula\Core\RouteUrl;
+            «ENDIF»
         «ENDIF»
 
         /**
