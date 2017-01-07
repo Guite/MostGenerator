@@ -471,8 +471,7 @@ class Actions {
         «IF !skipHookSubscribers»
             $hookHelper = $this->get('«app.appService».hook_helper');
             // Let any hooks perform additional validation actions
-            $hookType = 'validate_delete';
-            $validationHooksPassed = $hookHelper->callValidationHooks($entity, $hookType);
+            $validationHooksPassed = $hookHelper->callValidationHooks($entity, 'validate_delete');
             if ($validationHooksPassed) {
                 «performDeletion(action)»
                 «deletePostProcessing(action)»
@@ -496,8 +495,7 @@ class Actions {
         «IF !skipHookSubscribers»
 
             // Let any hooks know that we have deleted the «name.formatForDisplay»
-            $hookType = 'process_delete';
-            $hookHelper->callProcessHooks($entity, $hookType, null);
+            $hookHelper->callProcessHooks($entity, 'process_delete', null);
         «ENDIF»
 
         return $this->redirectToRoute($redirectRoute);

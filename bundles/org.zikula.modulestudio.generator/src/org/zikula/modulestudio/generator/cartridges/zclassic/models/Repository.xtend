@@ -1436,8 +1436,7 @@ class Repository {
 
                 «IF !skipHookSubscribers»
                     // Let any hooks perform additional validation actions
-                    $hookType = 'validate_edit';
-                    $validationHooksPassed = $hookHelper->callValidationHooks($entity, $hookType);
+                    $validationHooksPassed = $hookHelper->callValidationHooks($entity, 'validate_edit');
                     if (!$validationHooksPassed) {
                         continue;
                     }
@@ -1461,11 +1460,10 @@ class Repository {
                 «IF !skipHookSubscribers»
 
                     // Let any hooks know that we have updated an item
-                    $hookType = 'process_edit';
                     $urlArgs = $entity->createUrlArgs();
-                    $urlArgs['_locale'] = $serviceManager->get('request_stack')->getMasterRequest()->getLocale();
+                    $urlArgs['_locale'] = \ServiceUtil::get('request_stack')->getMasterRequest()->getLocale();
                     $url = new RouteUrl('«app.appName.formatForDB»_«name.formatForCode»_display', $urlArgs);
-                    $hookHelper->callProcessHooks($entity, $hookType, $url);
+                    $hookHelper->callProcessHooks($entity, 'process_edit', $url);
                 «ENDIF»
             }
 
