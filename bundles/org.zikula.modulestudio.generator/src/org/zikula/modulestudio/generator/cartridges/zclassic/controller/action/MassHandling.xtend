@@ -68,6 +68,7 @@ class MassHandling {
 
         $action = strtolower($action);
 
+        $selectionHelper = $this->get('«application.appService».selection_helper');
         $workflowHelper = $this->get('«application.appService».workflow_helper');
         «IF !skipHookSubscribers»
             $hookHelper = $this->get('«application.appService».hook_helper');
@@ -78,9 +79,10 @@ class MassHandling {
         // process each item
         foreach ($items as $itemid) {
             // check if item exists, and get record instance
-            $selectionHelper = $this->get('«application.appService».selection_helper');
             $entity = $selectionHelper->getEntity($objectType, $itemid«IF application.hasSluggable», ''«ENDIF», false);
-
+            if (null === $entity) {
+                continue;
+            }
             $entity->initWorkflow();
 
             // check if $action can be applied to this entity (may depend on it's current workflow state)
