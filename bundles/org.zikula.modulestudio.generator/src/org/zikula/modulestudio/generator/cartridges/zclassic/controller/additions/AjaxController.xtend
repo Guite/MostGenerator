@@ -113,7 +113,7 @@ class AjaxController {
          «IF !isBase»
          *
          * @Route("/getCommonUsersList", options={"expose"=true})
-         «/*»* @Method("POST")*/»
+         * @Method("GET")
          «ENDIF»
          *
          * @param string $fragment The search fragment
@@ -179,7 +179,7 @@ class AjaxController {
         «IF !isBase»
          *
          * @Route("/getItemListFinder", options={"expose"=true})
-         «/*»* @Method("POST")*/»
+         * @Method("POST")
         «ENDIF»
          *
          * @param string $ot      Name of currently used object type
@@ -292,7 +292,7 @@ class AjaxController {
         «IF !isBase»
          *
          * @Route("/getItemListAutoCompletion", options={"expose"=true})
-         «/*»* @Method("POST")*/»
+         * @Method("GET")
         «ENDIF»
          *
          * @param Request $request Current request instance
@@ -409,7 +409,7 @@ class AjaxController {
         «IF !isBase»
          *
          * @Route("/checkForDuplicate", options={"expose"=true})
-         «/*»* @Method("POST")*/»
+         * @Method("POST")
         «ENDIF»
          *
          * @param Request $request Current request instance
@@ -521,7 +521,7 @@ class AjaxController {
         «IF !isBase»
          *
          * @Route("/toggleFlag", options={"expose"=true})
-         «/*»* @Method("POST")*/»
+         * @Method("POST")
         «ENDIF»
          *
          * @param Request $request Current request instance
