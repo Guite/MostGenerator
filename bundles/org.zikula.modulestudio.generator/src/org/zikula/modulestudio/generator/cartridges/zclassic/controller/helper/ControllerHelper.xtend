@@ -49,8 +49,8 @@ class ControllerHelper {
         «ENDIF»
         use Symfony\Component\DependencyInjection\ContainerBuilder;
         «IF hasUploads»
-            use Symfony\Component\Filesystem\Filesystem;
             use Symfony\Component\Filesystem\Exception\IOExceptionInterface;
+            use Symfony\Component\Filesystem\Filesystem;
         «ENDIF»
         use Symfony\Component\HttpFoundation\Request;
         «IF hasUploads»
