@@ -246,7 +246,7 @@ class BlockList {
             ];
 
             $template = '';
-            for ($templateOptions as $templatePath) {
+            foreach ($templateOptions as $templatePath) {
                 if ($templating->exists('@«appName»/' . $templatePath)) {
                     $template = '@«appName»/' . $templatePath;
                     break;
