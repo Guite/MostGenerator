@@ -71,7 +71,7 @@ class ExampleData {
         $logger = $this->container->get('logger');
         $request = $this->container->get('request_stack')->getMasterRequest();
 
-        «FOR entity : getAllEntities»«entity.truncateTable»«ENDFOR»
+        «FOR entity : getAllEntities.filter[tree == EntityTreeType.NONE && !softDeleteable]»«entity.truncateTable»«ENDFOR»
         «IF amountOfExampleRows > 0»
             «IF !getAllEntities.filter[tree != EntityTreeType.NONE].empty»
                 $treeCounterRoot = 1;
