@@ -43,9 +43,9 @@ class Joins {
         /**
          * Helper method to add joins to from clause.
          *
-         * @param QueryBuilder $qb query builder instance used to create the query
+         * @param QueryBuilder $qb Query builder instance used to create the query
          *
-         * @return String Enhancement for from clause
+         * @return QueryBuilder The query builder enriched by additional joins
          */
         protected function addJoinsToFrom(QueryBuilder $qb)
         {

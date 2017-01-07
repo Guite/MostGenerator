@@ -261,23 +261,21 @@ class Display {
 
     def private callDisplayHooks(Entity it, String appName) '''
         {% set hooks = notifyDisplayHooks(eventName='«appName.formatForDB».ui_hooks.«nameMultiple.formatForDB».display_view', id=«displayHookId», urlObject=currentUrlObject) %}
-        {% for providerArea, hook in hooks %}
-            {% if providerArea != 'provider.scribite.ui_hooks.editor' %}{# fix for #664 #}
-                «IF useGroupingPanels('display')»
-                    <div class="panel panel-default">
-                        <div class="panel-heading">
-                            <h3 class="panel-title"><a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapseHook{{ loop.index }}">{{ providerArea }}</a></h3>
-                        </div>
-                        <div id="collapseHook{{ loop.index  }}" class="panel-collapse collapse in">
-                            <div class="panel-body">
-                                {{ hook }}
-                            </div>
+        {% for providerArea, hook in hooks if providerArea != 'provider.scribite.ui_hooks.editor' %}
+            «IF useGroupingPanels('display')»
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title"><a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapseHook{{ loop.index }}">{{ providerArea }}</a></h3>
+                    </div>
+                    <div id="collapseHook{{ loop.index  }}" class="panel-collapse collapse in">
+                        <div class="panel-body">
+                            {{ hook }}
                         </div>
                     </div>
-                «ELSE»
-                    {{ hook }}
-                «ENDIF»
-            {% endif %}
+                </div>
+            «ELSE»
+                {{ hook }}
+            «ENDIF»
         {% endfor %}
     '''
 

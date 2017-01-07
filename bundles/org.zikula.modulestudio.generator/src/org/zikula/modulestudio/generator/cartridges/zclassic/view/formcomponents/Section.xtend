@@ -79,25 +79,23 @@ class Section {
         {% set hookId = mode != 'create' ? «FOR pkField : getPrimaryKeyFields SEPARATOR ' ~ '»«name.formatForDB».«pkField.name.formatForCode»«ENDFOR» : null %}
         {% set hooks = notifyDisplayHooks(eventName='«app.appName.formatForDB».ui_hooks.«nameMultiple.formatForDB».form_edit', id=hookId) %}
         {% if hooks is iterable and hooks|length > 0 %}
-            {% for providerArea, hook in hooks %}
-                {% if providerArea != 'provider.scribite.ui_hooks.editor' %}{# fix for #664 #}
-                    «IF useGroupingPanels('edit')»
-                        <div class="panel panel-default">
-                            <div class="panel-heading">
-                                <h3 class="panel-title"><a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapseHook{{ loop.index }}">{{ providerArea }}</a></h3>
-                            </div>
-                            <div id="collapseHook{{ loop.index }}" class="panel-collapse collapse in">
-                                <div class="panel-body">
-                                    {{ hook }}
-                                </div>
+            {% for providerArea, hook in hooks if providerArea != 'provider.scribite.ui_hooks.editor' %}
+                «IF useGroupingPanels('edit')»
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h3 class="panel-title"><a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapseHook{{ loop.index }}">{{ providerArea }}</a></h3>
+                        </div>
+                        <div id="collapseHook{{ loop.index }}" class="panel-collapse collapse in">
+                            <div class="panel-body">
+                                {{ hook }}
                             </div>
                         </div>
-                    «ELSE»
-                        <fieldset>
-                            {{ hook }}
-                        </fieldset>
-                    «ENDIF»
-                {% endif %}
+                    </div>
+                «ELSE»
+                    <fieldset>
+                        {{ hook }}
+                    </fieldset>
+                «ENDIF»
             {% endfor %}
         {% endif %}
     '''
