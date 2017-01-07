@@ -982,7 +982,6 @@ class FormHandler {
         «locking.imports(it)»
         use Symfony\Component\HttpFoundation\RedirectResponse;
         use Symfony\Component\Security\Core\Exception\AccessDeniedException;
-        use ModUtil;
         use RuntimeException;
         «IF app.needsFeatureActivationHelper»
             use «app.appNamespace»\Helper\FeatureActivationHelper;

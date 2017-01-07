@@ -105,7 +105,12 @@ class ControllerLayer {
     def private entityControllerBaseImports(Entity it) '''
         namespace «app.appNamespace»\Controller\Base;
 
-        use «entityClassName('', false)»;
+        «IF hasEditAction && app.needsAutoCompletion»
+            use JCSSUtil;
+        «ENDIF»
+        «IF hasEditAction || hasDeleteAction»
+            use RuntimeException;
+        «ENDIF»
         use Symfony\Component\HttpFoundation\Request;
         use Symfony\Component\Security\Core\Exception\AccessDeniedException;
         «IF hasDisplayAction || hasEditAction || hasDeleteAction»
@@ -119,28 +124,22 @@ class ControllerLayer {
             use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
         «ENDIF»
         use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-        «IF hasEditAction && app.needsAutoCompletion»
-            use JCSSUtil;
-        «ENDIF»
-        use ModUtil;
-        use RuntimeException;
         «IF hasViewAction»
             use Zikula\Component\SortableColumns\Column;
             use Zikula\Component\SortableColumns\SortableColumns;
         «ENDIF»
         use Zikula\Core\Controller\AbstractController;
+        «IF hasEditAction && app.needsAutoCompletion»
+            use Zikula\Core\Response\PlainResponse;
+        «ENDIF»
         «IF !skipHookSubscribers»
             use Zikula\Core\RouteUrl;
         «ENDIF»
-        «entityControllerBaseImportsResponse»
+        use «entityClassName('', false)»;
         «IF app.hasCategorisableEntities»
             use «app.appNamespace»\Helper\FeatureActivationHelper;
         «ENDIF»
 
-    '''
-
-    def private entityControllerBaseImportsResponse(Entity it) '''
-        use Zikula\Core\Response\PlainResponse;
     '''
 
     def private entityControllerImpl(Entity it) '''
@@ -148,15 +147,17 @@ class ControllerLayer {
 
         use «app.appNamespace»\Controller\Base\Abstract«name.formatForCodeCapital»Controller;
 
-        use RuntimeException;
+        «IF hasEditAction || hasDeleteAction»
+            use RuntimeException;
+        «ENDIF»
+        use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
         use Symfony\Component\HttpFoundation\Request;
         use Symfony\Component\Security\Core\Exception\AccessDeniedException;
         «IF hasDisplayAction || hasEditAction || hasDeleteAction»
             use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
         «ENDIF»
-        use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
         use Zikula\ThemeModule\Engine\Annotation\Theme;
-        use «app.appNamespace»\Entity\«name.formatForCodeCapital»Entity;
+        use «entityClassName('', false)»;
 
         /**
          * «name.formatForDisplayCapital» controller class providing navigation and interaction functionality.

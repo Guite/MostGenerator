@@ -27,7 +27,6 @@ class Mailz {
     def private mailzBaseClass(Application it) '''
         namespace «appNamespace»\Api\Base;
 
-        use ModUtil;
         use ServiceUtil;
         use Zikula_AbstractBase;
 

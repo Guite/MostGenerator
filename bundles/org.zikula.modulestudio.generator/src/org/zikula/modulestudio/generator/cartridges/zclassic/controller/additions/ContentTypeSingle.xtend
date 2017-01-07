@@ -29,7 +29,6 @@ class ContentTypeSingle {
     def private contentTypeBaseClass(Application it) '''
         namespace «appNamespace»\ContentType\Base;
 
-        use ModUtil;
         use ServiceUtil;
 
         /**

@@ -58,19 +58,18 @@ class ControllerAction {
 
     def private actionDoc(Action it, Entity entity, Boolean isBase, Boolean isAdmin) '''
         /**
+         «IF isBase»
          * «actionDocMethodDescription(isAdmin)»
-        «actionDocMethodDocumentation»
-        «val annotationHelper = new Annotations(app)»
-        «annotationHelper.generate(it, entity, isBase, isAdmin)»
+         «ELSE»
+         * {@inheritdoc}
+         «ENDIF»
+        «IF isBase»«actionDocMethodDocumentation»«ENDIF»
+        «new Annotations(app).generate(it, entity, isBase, isAdmin)»
          *
-         * @param Request  $request      Current request instance
-        «IF null !== entity»
-            «actionDocMethodParams(entity, it)»
-        «ELSE»
-            «actionDocMethodParams»
-        «ENDIF»
+         * @param Request $request Current request instance
+        «actionDocMethodParams(entity, it)»
          *
-         * @return mixed Output
+         * @return Response Output
          *
          * @throws AccessDeniedException Thrown if the user doesn't have required permissions
          «IF it instanceof DisplayAction»
@@ -105,15 +104,6 @@ class ControllerAction {
         }
     }
 
-    def private actionDocMethodParams(Action it) {
-        if (it instanceof MainAction) {
-            ''
-        } else if (!(it instanceof MainAction || it instanceof CustomAction)) {
-            ' * @param string  $ot           Treated object type\n'
-            + '''«actionDocAdditionalParams(null)»'''
-        }
-    }
-
     def private actionDocMethodParams(Entity it, Action action) {
         if (!(action instanceof MainAction || action instanceof CustomAction)) {
             '''«actionDocAdditionalParams(action, it)»'''
@@ -123,16 +113,14 @@ class ControllerAction {
     def private actionDocAdditionalParams(Action it, Entity refEntity) {
         switch it {
             ViewAction:
-                 ' * @param string  $sort         Sorting field\n'
-               + ' * @param string  $sortdir      Sorting direction\n'
-               + ' * @param int     $pos          Current pager position\n'
-               + ' * @param int     $num          Amount of entries to display\n'
+                 ' * @param string $sort         Sorting field\n'
+               + ' * @param string $sortdir      Sorting direction\n'
+               + ' * @param int    $pos          Current pager position\n'
+               + ' * @param int    $num          Amount of entries to display\n'
             DisplayAction:
-                (if (null !== refEntity) ' * @param ' + refEntity.name.formatForCodeCapital + 'Entity $' + refEntity.name.formatForCode + '      Treated ' + refEntity.name.formatForDisplay + ' instance\n'
-                 else ' * @param int     $id           Identifier of entity to be shown\n')
+                ' * @param ' + refEntity.name.formatForCodeCapital + 'Entity $' + refEntity.name.formatForCode + ' Treated ' + refEntity.name.formatForDisplay + ' instance\n'
             DeleteAction:
-                (if (null !== refEntity) ' * @param ' + refEntity.name.formatForCodeCapital + 'Entity $' + refEntity.name.formatForCode + '      Treated ' + refEntity.name.formatForDisplay + ' instance\n'
-                 else ' * @param int     $id           Identifier of entity to be deleted\n')
+                ' * @param ' + refEntity.name.formatForCodeCapital + 'Entity $' + refEntity.name.formatForCode + ' Treated ' + refEntity.name.formatForDisplay + ' instance\n'
             default: ''
         }
     }

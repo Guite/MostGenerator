@@ -38,7 +38,6 @@ class Newsletter {
         namespace «appNamespace»\NewsletterPlugin;
 
         use FormUtil;
-        use ModUtil;
         use Newsletter_AbstractPlugin;
         use ServiceUtil;
 

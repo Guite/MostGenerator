@@ -165,7 +165,7 @@ class Annotations {
         val needsMapping = hasSluggableFields || hasCompositeKeys
         if (!needsMapping) {
             output = '"id" = "' + getFirstPrimaryKey.name.formatForCode + '", "repository_method" = "selectById"'
-            // since we use the id property selectById receives the slug value directly instead ['id' => 123]
+            // since we use the id property selectById receives the identifier value directly instead ['id' => 123]
             return output
         }
 

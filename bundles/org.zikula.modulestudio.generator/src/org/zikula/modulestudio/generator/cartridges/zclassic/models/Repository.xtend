@@ -245,7 +245,6 @@ class Repository {
         «IF !fields.filter(AbstractDateField).empty»
             use Zikula\Component\FilterUtil\Plugin\DatePlugin as DateFilter;
         «ENDIF»
-        use ModUtil;
         use Psr\Log\LoggerInterface;
         use ServiceUtil;
         use Zikula\Common\Translator\TranslatorInterface;
