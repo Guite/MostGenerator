@@ -48,7 +48,9 @@ class TranslatableHelper {
         use Zikula\Common\Translator\TranslatorInterface;
         use Zikula\Core\Doctrine\EntityAccess;
         use Zikula\ExtensionsModule\Api\VariableApi;
-        use ZLanguage;
+        «IF !targets('1.4-dev')»
+            use ZLanguage;
+        «ENDIF»
 
         /**
          * Helper base class for translatable methods.
@@ -149,7 +151,11 @@ class TranslatableHelper {
         public function getSupportedLanguages($objectType)
         {
             if ($this->variableApi->getSystemVar('multilingual')) {
-                return ZLanguage::getInstalledLanguages();
+                «IF targets('1.4-dev')»
+                    return $this->container->get('zikula_settings_module.locale_api')->getSupportedLocales();
+                «ELSE»
+                    return ZLanguage::getInstalledLanguages();
+                «ENDIF»
             }
 
             // if multi language is disabled use only the current language
