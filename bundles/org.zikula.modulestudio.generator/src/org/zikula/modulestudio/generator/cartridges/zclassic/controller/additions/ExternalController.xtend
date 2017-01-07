@@ -69,14 +69,14 @@ class ExternalController {
          * Displays one item of a certain object type using a separate template for external usages.
          «IF !isBase»
          *
-         * @Route("/display/{ot}/{id}/{source}/{displayMode}",
+         * @Route("/display/{objectType}/{id}/{source}/{displayMode}",
          *        requirements = {"id" = "\d+", "source" = "contentType|scribite", "displayMode" = "link|embed"},
          *        defaults = {"source" = "contentType", "contentType" = "embed"},
          *        methods = {"GET"}
          * )
          «ENDIF»
          *
-         * @param string $ot          The currently treated object type
+         * @param string $objectType  The currently treated object type
          * @param int    $id          Identifier of the entity to be shown
          * @param string $source      Source of this call (contentType or scribite)
          * @param string $displayMode Display mode (link or embed)
@@ -86,13 +86,11 @@ class ExternalController {
     '''
 
     def private displaySignature(Application it) '''
-        public function displayAction($ot, $id, $source, $displayMode)
+        public function displayAction($objectType, $id, $source, $displayMode)
     '''
 
     def private displayBaseImpl(Application it) '''
         $controllerHelper = $this->get('«appService».controller_helper');
-
-        $objectType = $ot;
         $utilArgs = ['controller' => 'external', 'action' => 'display'];
         if (!in_array($objectType, $controllerHelper->getObjectTypes('controller', $utilArgs))) {
             $objectType = $controllerHelper->getDefaultObjectType('controllerType', $utilArgs);
@@ -306,7 +304,7 @@ class ExternalController {
         «displayDocBlock(false)»
         «displaySignature»
         {
-            return parent::displayAction($ot, $id, $source, $displayMode);
+            return parent::displayAction($objectType, $id, $source, $displayMode);
         }
     '''
 

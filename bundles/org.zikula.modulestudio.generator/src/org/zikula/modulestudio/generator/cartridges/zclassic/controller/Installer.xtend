@@ -123,7 +123,7 @@ class Installer {
                     $registry = new CategoryRegistryEntity();
                     $registry->setModname('«appName»');
                     $registry->setEntityname('«entity.name.formatForCodeCapital»Entity');
-                    $registry->setProperty($categoryHelper->getPrimaryProperty(['ot' => '«entity.name.formatForCodeCapital»']));
+                    $registry->setProperty($categoryHelper->getPrimaryProperty('«entity.name.formatForCodeCapital»'));
                     $registry->setCategory_Id($categoryGlobal['id']);
 
                     try {

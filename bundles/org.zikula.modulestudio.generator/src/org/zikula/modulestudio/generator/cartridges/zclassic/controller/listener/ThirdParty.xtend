@@ -132,10 +132,9 @@ class ThirdParty {
                     $description = $amountInfo['description'];
                     $amount = $amountInfo['amount'];
                     $viewArgs = [
-                        'ot' => $amountInfo['objectType'],
                         'workflowState' => $amountInfo['state']
                     ];
-                    $aggregateItem = new AggregateItem($aggregateType, $description, $amount, 'admin', 'view', $viewArgs);
+                    $aggregateItem = new AggregateItem($aggregateType, $description, $amount, $amountInfo['objectType'], 'adminview', $viewArgs);
                     $collection->add($aggregateItem);
                 }
 
