@@ -289,13 +289,7 @@ class ContentTypeList {
             «IF hasCategorisableEntities»
 
                 if ($featureActivationHelper->isEnabled(FeatureActivationHelper::CATEGORIES, $this->objectType)) {
-                    $filteredEntities = [];
-                    foreach ($entities as $entity) {
-                        if ($this->get('«appService».category_helper')->hasPermission($entity)) {
-                            $filteredEntities[] = $entity;
-                        }
-                    }
-                    $entities = $filteredEntities;
+                    $entities = $categoryHelper->filterEntitiesByPermission($entities);
                 }
             «ENDIF»
 
@@ -315,11 +309,13 @@ class ContentTypeList {
                 'items' => $entities
             ];
             «IF hasCategorisableEntities»
+
                 if ($featureActivationHelper->isEnabled(FeatureActivationHelper::CATEGORIES, $this->objectType)) {
                     $templateParameters['registries'] = $this->catRegistries;
                     $templateParameters['properties'] = $this->catProperties;
                 }
             «ENDIF»
+
             «IF hasUploads»
                 $imageHelper = $serviceManager->get('«appService».image_helper');
             «ENDIF»

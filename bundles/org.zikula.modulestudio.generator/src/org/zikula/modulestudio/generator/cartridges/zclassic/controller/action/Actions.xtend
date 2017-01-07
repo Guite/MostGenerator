@@ -101,8 +101,7 @@ class Actions {
 
             $tpl = $request->query->getAlpha('tpl', '');
             if ($tpl == 'tree') {
-                $trees = $selectionHelper->getAllTrees($objectType);
-                $templateParameters['trees'] = $trees;
+                $templateParameters['trees'] = $selectionHelper->getAllTrees($objectType);
                 $templateParameters = array_merge($templateParameters, $repository->getAdditionalTemplateParameters(«IF app.hasUploads»$imageHelper, «ENDIF»'controllerAction', $utilArgs));
                 «IF app.needsFeatureActivationHelper»
                     $templateParameters['featureActivationHelper'] = $this->get('«app.appService».feature_activation_helper');
@@ -188,13 +187,7 @@ class Actions {
         «IF categorisable»
             $featureActivationHelper = $this->get('«app.appService».feature_activation_helper');
             if ($featureActivationHelper->isEnabled(FeatureActivationHelper::CATEGORIES, $objectType)) {
-                $filteredEntities = [];
-                foreach ($entities as $entity) {
-                    if ($this->get('«app.appService».category_helper')->hasPermission($entity)) {
-                        $filteredEntities[] = $entity;
-                    }
-                }
-                $entities = $filteredEntities;
+                $entities = $this->get('«app.appService».category_helper')->filterEntitiesByPermission($entities);
             }
 
         «ENDIF»
@@ -309,9 +302,7 @@ class Actions {
         $repository = $this->get('«app.appService».' . $objectType . '_factory')->getRepository();
         $repository->setRequest($request);
 
-        $entity = $«name.formatForCode»;
-
-        $entity->initWorkflow();
+        $«name.formatForCode»->initWorkflow();
 
         «prepareDisplayPermissionCheck»
 
@@ -319,7 +310,7 @@ class Actions {
         «IF categorisable»
             $featureActivationHelper = $this->get('«app.appService».feature_activation_helper');
             if ($featureActivationHelper->isEnabled(FeatureActivationHelper::CATEGORIES, $objectType)) {
-                if (!$this->get('«app.appService».category_helper')->hasPermission($entity)) {
+                if (!$this->get('«app.appService».category_helper')->hasPermission($«name.formatForCode»)) {
                     throw new AccessDeniedException();
                 }
             }
@@ -331,9 +322,9 @@ class Actions {
     def private prepareDisplayPermissionCheck(Entity it) '''
         // «IF !skipHookSubscribers»build RouteUrl instance for display hooks; also «ENDIF»create identifier for permission check
         «IF !skipHookSubscribers»
-            $currentUrlArgs = $entity->createUrlArgs();
+            $currentUrlArgs = $«name.formatForCode»->createUrlArgs();
         «ENDIF»
-        $instanceId = $entity->createCompositeIdentifier();
+        $instanceId = $«name.formatForCode»->createCompositeIdentifier();
         «IF !skipHookSubscribers»
             $currentUrlArgs['id'] = $instanceId; // TODO remove this
             $currentUrlArgs['_locale'] = $request->getLocale();
@@ -344,11 +335,11 @@ class Actions {
     def private processDisplayOutput(Entity it) '''
         $viewHelper = $this->get('«app.appService».view_helper');
         $templateParameters = [
-            'routeArea' => $isAdmin ? 'admin' : ''
+            'routeArea' => $isAdmin ? 'admin' : '',
+            $objectType => $«name.formatForCode»
         ];
-        $templateParameters[$objectType] = $entity;
         «IF !skipHookSubscribers»
-        $templateParameters['currentUrlObject'] = $currentUrlObject;
+            $templateParameters['currentUrlObject'] = $currentUrlObject;
         «ENDIF»
         «IF app.hasUploads»
             $imageHelper = $this->get('«app.appService».image_helper');
@@ -364,7 +355,7 @@ class Actions {
 
             $format = $request->getRequestFormat();
             if ($format == 'ics') {
-                $fileName = $objectType . '_' . (property_exists($entity, 'slug') ? $entity['slug'] : $entity->getTitleFromDisplayPattern()) . '.ics';
+                $fileName = $objectType . '_' . (property_exists($«name.formatForCode», 'slug') ? $«name.formatForCode»['slug'] : $«name.formatForCode»->getTitleFromDisplayPattern()) . '.ics';
                 $response->headers->set('Content-Disposition', 'attachment; filename=' . $fileName);
             }
         «ENDIF»
@@ -401,16 +392,14 @@ class Actions {
     '''
 
     def private dispatch actionImplBody(Entity it, DeleteAction action) '''
-        $entity = $«name.formatForCode»;
-
         $logger = $this->get('logger');
-        $logArgs = ['app' => '«app.appName»', 'user' => $this->get('zikula_users_module.current_user')->get('uname'), 'entity' => '«name.formatForDisplay»', 'id' => $entity->createCompositeIdentifier()];
+        $logArgs = ['app' => '«app.appName»', 'user' => $this->get('zikula_users_module.current_user')->get('uname'), 'entity' => '«name.formatForDisplay»', 'id' => $«name.formatForCode»->createCompositeIdentifier()];
 
-        $entity->initWorkflow();
+        $«name.formatForCode»->initWorkflow();
 
         // determine available workflow actions
         $workflowHelper = $this->get('«app.appService».workflow_helper');
-        $actions = $workflowHelper->getActionsForObject($entity);
+        $actions = $workflowHelper->getActionsForObject($«name.formatForCode»);
         if (false === $actions || !is_array($actions)) {
             $this->addFlash('error', $this->__('Error! Could not determine workflow actions.'));
             $logger->error('{app}: User {user} tried to delete the {entity} with id {id}, but failed to determine available workflow actions.', $logArgs);
@@ -437,7 +426,7 @@ class Actions {
             return $this->redirectToRoute($redirectRoute);
         }
 
-        $form = $this->createForm('«app.appNamespace»\Form\DeleteEntityType', $entity);
+        $form = $this->createForm('«app.appNamespace»\Form\DeleteEntityType', $«name.formatForCode»);
 
         if ($form->handleRequest($request)->isValid()) {
             if ($form->get('delete')->isClicked()) {
@@ -454,10 +443,10 @@ class Actions {
         $viewHelper = $this->get('«app.appService».view_helper');
         $templateParameters = [
             'routeArea' => $isAdmin ? 'admin' : '',
-            'deleteForm' => $form->createView()
+            'deleteForm' => $form->createView(),
+            $objectType => $«name.formatForCode»
         ];
 
-        $templateParameters[$objectType] = $entity;
         «IF app.hasUploads»
             $imageHelper = $this->get('«app.appService».image_helper');
         «ENDIF»
@@ -471,31 +460,26 @@ class Actions {
         «IF !skipHookSubscribers»
             $hookHelper = $this->get('«app.appService».hook_helper');
             // Let any hooks perform additional validation actions
-            $validationHooksPassed = $hookHelper->callValidationHooks($entity, 'validate_delete');
+            $validationHooksPassed = $hookHelper->callValidationHooks($«name.formatForCode», 'validate_delete');
             if ($validationHooksPassed) {
-                «performDeletion(action)»
-                «deletePostProcessing(action)»
+                «performDeletionAndRedirect(action)»
             }
         «ELSE»
-            «performDeletion(action)»
-            «deletePostProcessing(action)»
+            «performDeletionAndRedirect(action)»
         «ENDIF»
     '''
 
-    def private performDeletion(Entity it, DeleteAction action) '''
+    def private performDeletionAndRedirect(Entity it, DeleteAction action) '''
         // execute the workflow action
-        $success = $workflowHelper->executeAction($entity, $deleteActionId);
+        $success = $workflowHelper->executeAction($«name.formatForCode», $deleteActionId);
         if ($success) {
             $this->addFlash('status', $this->__('Done! Item deleted.'));
             $logger->notice('{app}: User {user} deleted the {entity} with id {id}.', $logArgs);
         }
-    '''
-
-    def private deletePostProcessing(Entity it, DeleteAction action) '''
         «IF !skipHookSubscribers»
 
             // Let any hooks know that we have deleted the «name.formatForDisplay»
-            $hookHelper->callProcessHooks($entity, 'process_delete', null);
+            $hookHelper->callProcessHooks($«name.formatForCode», 'process_delete', null);
         «ENDIF»
 
         return $this->redirectToRoute($redirectRoute);

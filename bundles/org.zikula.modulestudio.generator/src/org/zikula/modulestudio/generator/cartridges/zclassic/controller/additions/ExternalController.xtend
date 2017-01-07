@@ -253,13 +253,7 @@ class ExternalController {
             if (in_array($objectType, ['«getCategorisableEntities.map[e|e.name.formatForCode].join('\', \'')»'])) {
                 $featureActivationHelper = $this->get('«appService».feature_activation_helper');
                 if ($featureActivationHelper->isEnabled(FeatureActivationHelper::CATEGORIES, $objectType)) {
-                    $filteredEntities = [];
-                    foreach ($entities as $entity) {
-                        if ($this->get('«appService».category_helper')->hasPermission($entity)) {
-                            $filteredEntities[] = $entity;
-                        }
-                    }
-                    $entities = $filteredEntities;
+                    $entities = $this->get('«appService».category_helper')->filterEntitiesByPermission($entities);
                 }
             }
 

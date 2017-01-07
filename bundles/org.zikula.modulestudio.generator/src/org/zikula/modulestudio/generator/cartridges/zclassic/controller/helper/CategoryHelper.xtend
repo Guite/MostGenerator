@@ -336,6 +336,25 @@ class CategoryHelper {
         }
 
         /**
+         * Filters a given list of entities to these the current user has permissions for.
+         *
+         * @param array $entities The given list of entities
+         *
+         * @return array The filtered list of entities
+         */
+        public function filterEntitiesByPermission($entities)
+        {
+            $filteredEntities = [];
+            foreach ($entities as $entity) {
+                if ($this->hasPermission($entity)) {
+                    $filteredEntities[] = $entity;
+                }
+            }
+
+            return $filteredEntities;
+        }
+
+        /**
          * Checks whether permissions are granted to the given categories or not.
          *
          * @param object $entity The entity to check permission for

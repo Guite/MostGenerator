@@ -189,13 +189,7 @@ class BlockList {
             «IF hasCategorisableEntities»
 
                 if ($featureActivationHelper->isEnabled(FeatureActivationHelper::CATEGORIES, $objectType)) {
-                    $filteredEntities = [];
-                    foreach ($entities as $entity) {
-                        if ($this->get('«appService».category_helper')->hasPermission($entity)) {
-                            $filteredEntities[] = $entity;
-                        }
-                    }
-                    $entities = $filteredEntities;
+                    $entities = $this->get('«appService».category_helper')->filterEntitiesByPermission($entities);
                 }
             «ENDIF»
 
