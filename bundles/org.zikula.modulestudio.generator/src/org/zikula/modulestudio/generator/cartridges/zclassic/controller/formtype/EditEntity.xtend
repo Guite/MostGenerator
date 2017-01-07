@@ -872,8 +872,10 @@ class EditEntity {
                     // select without joins
                     return $er->getListQueryBuilder('', '', false);
                 },
-                «IF outgoing && !nullable»
-                    'placeholder' => $this->__('Please choose an option'),
+                «IF /*outgoing && */!nullable»
+                    «IF !isManySide(outgoing)»
+                        'placeholder' => $this->__('Please choose an option'),
+                    «ENDIF»
                     'required' => false,
                 «ENDIF»
             «ENDIF»
