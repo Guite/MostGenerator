@@ -3,7 +3,6 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.controller.additio
 import de.guite.modulestudio.metamodel.Application
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
-import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
@@ -14,7 +13,6 @@ import org.zikula.modulestudio.generator.extensions.Utils
 class Scribite {
 
     extension FormattingExtensions = new FormattingExtensions
-    extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     extension ModelExtensions = new ModelExtensions
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
@@ -133,7 +131,7 @@ class Scribite {
 
         If such a configuration is not available for an editor check if the plugins for
         «appName» are in Scribite/plugins/EDITOR/vendor/plugins. If not then copy the directories from
-            «rootFolder»/«getAppDocPath»/scribite/plugins into modules/Scribite/plugins.
+            «relativeAppRootPath»/«getAppDocPath»/scribite/plugins into modules/Scribite/plugins.
     '''
 
     def private ckPlugin(Application it) '''
