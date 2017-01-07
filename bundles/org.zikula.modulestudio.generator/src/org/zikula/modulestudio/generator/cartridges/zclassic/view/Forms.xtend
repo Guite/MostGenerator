@@ -316,7 +316,7 @@ class Forms {
     def private inlineRedirectHandlerImpl(Application it) '''
         {# purpose of this template: close an iframe from within this iframe #}
         <!DOCTYPE html>
-        <html xml:lang="{{ app.request.locale }}" lang="{{ app.request.locale }}" dir="{{ localeApi.language_direction }}">
+        <html xml:lang="{{ app.request.locale }}" lang="{{ app.request.locale }}" dir="auto">
             <head>
                 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
                 {{ jcssConfig }}
