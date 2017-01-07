@@ -464,7 +464,6 @@ class ServiceDefinitions {
             class: «nsBase»ViewHelper
             arguments:
                 - "@service_container"
-                - "@translator.default"
                 - "@templating"«/* this does not use "@twig" on purpose */»
                 - "@request_stack"
 
@@ -495,9 +494,6 @@ class ServiceDefinitions {
                 «ENDIF»
                 - "@zikula_extensions_module.api.variable"
                 - "@«modPrefix».workflow_helper"
-                «IF hasUploads»
-                    - "@«modPrefix».view_helper"
-                «ENDIF»
                 «IF hasListFields»
                     - "@«modPrefix».listentries_helper"
                 «ENDIF»

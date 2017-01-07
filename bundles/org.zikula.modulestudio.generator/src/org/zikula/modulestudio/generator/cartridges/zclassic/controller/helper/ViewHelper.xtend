@@ -3,14 +3,12 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.controller.helper
 import de.guite.modulestudio.metamodel.Application
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
-import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 import org.zikula.modulestudio.generator.extensions.ViewExtensions
 
 class ViewHelper {
 
-    extension ModelExtensions = new ModelExtensions
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
     extension ViewExtensions = new ViewExtensions
@@ -36,7 +34,6 @@ class ViewHelper {
         use Symfony\Component\HttpFoundation\RequestStack;
         use Symfony\Component\HttpFoundation\Response;
         use Symfony\Component\Templating\EngineInterface;
-        use Zikula\Common\Translator\TranslatorInterface;
         use Zikula\Core\Response\PlainResponse;
 
         /**
@@ -48,11 +45,6 @@ class ViewHelper {
              * @var ContainerBuilder
              */
             protected $container;
-
-            /**
-             * @var TranslatorInterface
-             */
-            protected $translator;
 
             /**
              * @var EngineInterface
@@ -67,17 +59,15 @@ class ViewHelper {
             /**
              * ViewHelper constructor.
              *
-             * @param ContainerBuilder    $container    ContainerBuilder service instance
-             * @param TranslatorInterface $translator   Translator service instance
-             * @param EngineInterface     $templating   EngineInterface service instance
-             * @param RequestStack        $requestStack RequestStack service instance
+             * @param ContainerBuilder $container    ContainerBuilder service instance
+             * @param EngineInterface  $templating   EngineInterface service instance
+             * @param RequestStack     $requestStack RequestStack service instance
              *
              * @return void
              */
-            public function __construct(ContainerBuilder $container, TranslatorInterface $translator, EngineInterface $templating, RequestStack $requestStack)
+            public function __construct(ContainerBuilder $container, EngineInterface $templating, RequestStack $requestStack)
             {
                 $this->container = $container;
-                $this->translator = $translator;
                 $this->templating = $templating;
                 $this->request = $requestStack->getMasterRequest();
             }
@@ -91,10 +81,6 @@ class ViewHelper {
             «availableExtensions»
 
             «processPdf»
-            «IF hasUploads»
-
-                «getReadableFileSize»
-            «ENDIF»
         }
     '''
 
@@ -328,7 +314,11 @@ class ViewHelper {
                        . $controllerHelper->formatPermalink(PageUtil::getVar('title'))
                        . '-' . date('Ymd') . '.pdf';
 
-            // if ($_GET['dbg'] == 1) die($output);
+            /*
+            if (true === $this->request->query->getBoolean('dbg', false)) {
+                die($output);
+            }
+            */
 
             // instantiate pdf object
             $pdf = new \DOMPDF();
@@ -342,54 +332,6 @@ class ViewHelper {
             $pdf->stream($fileTitle);
 
             return new Response(); 
-        }
-    '''
-
-    def private getReadableFileSize(Application it) '''
-        /**
-         * Display a given file size in a readable format
-         *
-         * @param string  $size     File size in bytes
-         * @param boolean $nodesc   If set to true the description will not be appended
-         * @param boolean $onlydesc If set to true only the description will be returned
-         *
-         * @return string File size in a readable form
-         */
-        public function getReadableFileSize($size, $nodesc = false, $onlydesc = false)
-        {
-            $sizeDesc = $this->translator__('Bytes');
-            if ($size >= 1024) {
-                $size /= 1024;
-                $sizeDesc = $this->translator__('KB');
-            }
-            if ($size >= 1024) {
-                $size /= 1024;
-                $sizeDesc = $this->translator__('MB');
-            }
-            if ($size >= 1024) {
-                $size /= 1024;
-                $sizeDesc = $this->translator__('GB');
-            }
-            $sizeDesc = '&nbsp;' . $sizeDesc;
-
-            // format number
-            $dec_point = ',';
-            $thousands_separator = '.';
-            if ($size - number_format($size, 0) >= 0.005) {
-                $size = number_format($size, 2, $dec_point, $thousands_separator);
-            } else {
-                $size = number_format($size, 0, '', $thousands_separator);
-            }
-
-            // append size descriptor if desired
-            if (!$nodesc) {
-                $size .= $sizeDesc;
-            }
-
-            // return either only the description or the complete string
-            $result = ($onlydesc) ? $sizeDesc : $size;
-
-            return $result;
         }
     '''
 

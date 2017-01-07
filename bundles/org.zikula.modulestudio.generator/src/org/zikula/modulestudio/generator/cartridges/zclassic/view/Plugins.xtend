@@ -77,9 +77,6 @@ class Plugins {
         «IF hasListFields»
             use «appNamespace»\Helper\ListEntriesHelper;
         «ENDIF»
-        «IF hasUploads»
-            use «appNamespace»\Helper\ViewHelper;
-        «ENDIF»
         use «appNamespace»\Helper\WorkflowHelper;
 
         /**
@@ -119,13 +116,6 @@ class Plugins {
          */
         protected $workflowHelper;
 
-        «IF hasUploads»
-            /**
-             * @var ViewHelper
-             */
-            protected $viewHelper;
-
-        «ENDIF»
         «IF hasListFields»
             /**
              * @var ListEntriesHelper
@@ -145,14 +135,11 @@ class Plugins {
         «ENDIF»
          * @param VariableApi         $variableApi    VariableApi service instance
          * @param WorkflowHelper      $workflowHelper WorkflowHelper service instance
-        «IF hasUploads»
-            «' '»* @param ViewHelper          $viewHelper     ViewHelper service instance
-        «ENDIF»
         «IF hasListFields»
             «' '»* @param ListEntriesHelper   $listHelper     ListEntriesHelper service instance
         «ENDIF»
          */
-        public function __construct(TranslatorInterface $translator«IF hasTrees», RouterInterface $router«ENDIF»«IF generateIcsTemplates && hasEntitiesWithIcsTemplates», RequestStack $requestStack«ENDIF», VariableApi $variableApi, WorkflowHelper $workflowHelper«IF hasUploads», ViewHelper $viewHelper«ENDIF»«IF hasListFields», ListEntriesHelper $listHelper«ENDIF»)
+        public function __construct(TranslatorInterface $translator«IF hasTrees», RouterInterface $router«ENDIF»«IF generateIcsTemplates && hasEntitiesWithIcsTemplates», RequestStack $requestStack«ENDIF», VariableApi $variableApi, WorkflowHelper $workflowHelper«IF hasListFields», ListEntriesHelper $listHelper«ENDIF»)
         {
             $this->setTranslator($translator);
             «IF hasTrees»
@@ -163,9 +150,6 @@ class Plugins {
             «ENDIF»
             $this->variableApi = $variableApi;
             $this->workflowHelper = $workflowHelper;
-            «IF hasUploads»
-                $this->viewHelper = $viewHelper;
-            «ENDIF»
             «IF hasListFields»
                 $this->listHelper = $listHelper;
             «ENDIF»

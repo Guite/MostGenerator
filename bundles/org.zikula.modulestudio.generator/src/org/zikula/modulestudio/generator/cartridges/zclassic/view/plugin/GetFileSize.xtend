@@ -11,6 +11,8 @@ class GetFileSize {
 
     def generate(Application it, IFileSystemAccess fsa) {
         getFileSizeImpl
+
+        getReadableFileSize
     }
 
     def private getFileSizeImpl(Application it) '''
@@ -41,7 +43,55 @@ class GetFileSize {
                 return '';
             }
 
-            return $this->viewHelper->getReadableFileSize($size, $nodesc, $onlydesc);
+            return $this->getReadableFileSize($size, $nodesc, $onlydesc);
+        }
+    '''
+
+    def private getReadableFileSize(Application it) '''
+        /**
+         * Display a given file size in a readable format
+         *
+         * @param string  $size     File size in bytes
+         * @param boolean $nodesc   If set to true the description will not be appended
+         * @param boolean $onlydesc If set to true only the description will be returned
+         *
+         * @return string File size in a readable form
+         */
+        private function getReadableFileSize($size, $nodesc = false, $onlydesc = false)
+        {
+            $sizeDesc = $this->__('Bytes');
+            if ($size >= 1024) {
+                $size /= 1024;
+                $sizeDesc = $this->__('KB');
+            }
+            if ($size >= 1024) {
+                $size /= 1024;
+                $sizeDesc = $this->__('MB');
+            }
+            if ($size >= 1024) {
+                $size /= 1024;
+                $sizeDesc = $this->__('GB');
+            }
+            $sizeDesc = '&nbsp;' . $sizeDesc;
+
+            // format number
+            $dec_point = ',';
+            $thousands_separator = '.';
+            if ($size - number_format($size, 0) >= 0.005) {
+                $size = number_format($size, 2, $dec_point, $thousands_separator);
+            } else {
+                $size = number_format($size, 0, '', $thousands_separator);
+            }
+
+            // append size descriptor if desired
+            if (!$nodesc) {
+                $size .= $sizeDesc;
+            }
+
+            // return either only the description or the complete string
+            $result = ($onlydesc) ? $sizeDesc : $size;
+
+            return $result;
         }
     '''
 }
