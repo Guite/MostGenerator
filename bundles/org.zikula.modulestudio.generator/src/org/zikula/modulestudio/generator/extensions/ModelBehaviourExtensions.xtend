@@ -218,6 +218,13 @@ class ModelBehaviourExtensions {
     }
 
     /**
+     * Returns whether form input fields for slug elements can be used or not.
+     */
+    def supportsSlugInputFields(Application it) {
+        false // no slug input element yet, see https://github.com/Atlantic18/DoctrineExtensions/issues/140
+    }
+
+    /**
      * Checks whether the entity contains at least one field with the timestampable extension enabled.
      */
     def hasTimestampableFields(Entity it) {

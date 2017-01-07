@@ -421,7 +421,7 @@ class EditEntity {
     '''
 
     def private slugField(Entity it, String groupSuffix, String idSuffix) '''
-        «IF hasSluggableFields && slugUpdatable»
+        «IF hasSluggableFields && slugUpdatable && application.supportsSlugInputFields»
             $builder->add('slug'«IF idSuffix != ''» . «idSuffix»«ENDIF», '«nsSymfonyFormType»TextType', [
                 'label' => $this->__('Permalink') . ':',
                 'required' => false«/* slugUnique.displayBool */»,

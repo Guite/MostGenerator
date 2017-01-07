@@ -279,13 +279,12 @@ class TranslatableHelper {
 
     def private translatableFieldDefinition(Entity it) '''
         «FOR field : getTranslatableFields SEPARATOR ','»«field.translatableFieldDefinition»«ENDFOR»
-«/* TODO no slug input element yet, see https://github.com/Atlantic18/DoctrineExtensions/issues/140
-«IF hasTranslatableSlug»,
-                    [
-                        'name' => 'slug',
-                        'default' => ''
-                    ]
-«ENDIF»*/»
+        «IF application.supportsSlugInputFields && hasTranslatableSlug»,
+            [
+                'name' => 'slug',
+                'default' => ''
+            ]
+        «ENDIF»
     '''
 
     def private translatableFieldDefinition(EntityField it) {

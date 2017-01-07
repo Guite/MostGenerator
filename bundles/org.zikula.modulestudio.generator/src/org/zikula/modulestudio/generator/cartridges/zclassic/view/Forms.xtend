@@ -196,7 +196,7 @@ class Forms {
     '''
 
     def private slugField(Entity it, String groupSuffix, String idSuffix) '''
-        «IF hasSluggableFields && slugUpdatable»
+        «IF hasSluggableFields && slugUpdatable && application.supportsSlugInputFields»
             {{ form_row(form.«IF groupSuffix != ''»«groupSuffix».«ENDIF»slug«idSuffix») }}
         «ENDIF»
     '''
