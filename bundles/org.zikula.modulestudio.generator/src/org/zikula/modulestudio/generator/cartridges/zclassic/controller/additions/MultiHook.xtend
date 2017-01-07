@@ -91,7 +91,7 @@ class MultiHook {
                 return $cache[$nid];
             }
 
-            if (!\ModUtil::available('«app.appName»')) {
+            if (!\ServiceUtil::get('kernel')->isBundle('«app.appName»')) {
                 $cache[$nid] = '<em>' . \DataUtil::formatForDisplay($translator->__f('Module %s is not available.', ['%s' => «app.appName»'])) . '</em>';
 
                 return $cache[$nid];

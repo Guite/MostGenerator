@@ -22,7 +22,7 @@ class Locking {
     '''
 
     def addPageLock(Application it) '''
-        if (true === $this->hasPageLockSupport && \ModUtil::available('ZikulaPageLockModule')) {
+        if (true === $this->hasPageLockSupport && $this->container->get('kernel')->isBundle('ZikulaPageLockModule')) {
             // try to guarantee that only one person at a time can be editing this entity
             $lockingApi = $this->container->get('zikula_pagelock_module.api.locking');
             $lockName = '«appName»' . $this->objectTypeCapital . $this->createCompositeIdentifier();
@@ -36,7 +36,7 @@ class Locking {
     '''
 
     def releasePageLock(Application it) '''
-        if (true === $this->hasPageLockSupport && $this->templateParameters['mode'] == 'edit' && \ModUtil::available('ZikulaPageLockModule')) {
+        if (true === $this->hasPageLockSupport && $this->templateParameters['mode'] == 'edit' && $this->container->get('kernel')->isBundle('ZikulaPageLockModule')) {
             $lockingApi = $this->container->get('zikula_pagelock_module.api.locking');
             $lockName = '«appName»' . $this->objectTypeCapital . $this->createCompositeIdentifier();
             $lockingApi->releaseLock($lockName);

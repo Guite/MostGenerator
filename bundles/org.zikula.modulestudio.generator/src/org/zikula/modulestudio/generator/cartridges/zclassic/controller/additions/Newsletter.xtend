@@ -60,9 +60,7 @@ class Newsletter {
          */
         public function getTitle()
         {
-            $serviceManager = ServiceUtil::getManager();
-
-            return $serviceManager->get('translator.default')->__('Latest «IF entities.size < 2»«itemDesc»«ELSE»«appName» items«ENDIF»');
+            return ServiceUtil::get('translator.default')->__('Latest «IF entities.size < 2»«itemDesc»«ELSE»«appName» items«ENDIF»');
         }
 
         /**
@@ -72,9 +70,7 @@ class Newsletter {
          */
         public function getDisplayName()
         {
-            $serviceManager = ServiceUtil::getManager();
-
-            return $serviceManager->get('translator.default')->__('List of «itemDesc»«IF entities.size > 1» and other «appName» items«ENDIF»');
+            return ServiceUtil::get('translator.default')->__('List of «itemDesc»«IF entities.size > 1» and other «appName» items«ENDIF»');
         }
 
         /**
@@ -84,9 +80,7 @@ class Newsletter {
          */
         public function getDescription()
         {
-            $serviceManager = ServiceUtil::getManager();
-        
-            return $serviceManager->get('translator.default')->__('This plugin shows a list of «itemDesc»«IF entities.size > 1» and other items«ENDIF» of the «appName» module.');
+            return ServiceUtil::get('translator.default')->__('This plugin shows a list of «itemDesc»«IF entities.size > 1» and other items«ENDIF» of the «appName» module.');
         }
 
         /**
@@ -97,10 +91,7 @@ class Newsletter {
          */
         public function pluginAvailable()
         {
-            $serviceManager = ServiceUtil::getManager();
-            $kernel = $serviceManager->get('kernel');
-
-            return null !== $kernel->getModule($this->modname);
+            return ServiceUtil::get('kernel')->isBundle($this->modname);
         }
 
         /**
@@ -110,8 +101,7 @@ class Newsletter {
          */
         public function getParameters()
         {
-            $serviceManager = ServiceUtil::getManager();
-            $translator = $serviceManager->get('translator.default');
+            $translator = ServiceUtil::get('translator.default');
 
             $objectTypes = [];
             if ($this->pluginAvailable()) {
@@ -193,8 +183,7 @@ class Newsletter {
             $objectTypes = $this->getPluginVar('ObjectTypes', []);
             $args = $this->getPluginVar('Args', []);
 
-            $serviceManager = ServiceUtil::getManager();
-            $permissionApi = $serviceManager->get('zikula_permissions_module.api.permission');
+            $permissionApi = ServiceUtil::get('zikula_permissions_module.api.permission');
 
             $output = [];
 
@@ -225,8 +214,7 @@ class Newsletter {
         protected function selectPluginData($args, $filtAfterDate = null)
         {
             $objectType = $args['objectType'];
-            $serviceManager = ServiceUtil::getManager();
-            $repository = $serviceManager->get('«appService».' . $objectType . '_factory')->getRepository();
+            $repository = ServiceUtil::get('«appService».' . $objectType . '_factory')->getRepository();
 
             // create query
             $where = isset($args['filter']) ? $args['filter'] : '';
