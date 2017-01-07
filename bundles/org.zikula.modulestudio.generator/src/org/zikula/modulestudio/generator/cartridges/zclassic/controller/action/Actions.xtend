@@ -87,117 +87,49 @@ class Actions {
     '''
 
     def private dispatch actionImplBody(Entity it, ViewAction action) '''
-        $repository = $this->get('«app.appService».' . $objectType . '_factory')->getRepository();
-        $repository->setRequest($request);
         $viewHelper = $this->get('«app.appService».view_helper');
         $templateParameters = [
             'routeArea' => $isAdmin ? 'admin' : ''
         ];
-        «IF app.hasUploads»
-            $imageHelper = $this->get('«app.appService».image_helper');
-        «ENDIF»
-        $selectionHelper = $this->get('«app.appService».selection_helper');
+        $controllerHelper = $this->get('«app.appService».controller_helper');
         «IF tree != EntityTreeType.NONE»
 
-            $tpl = $request->query->getAlpha('tpl', '');
-            if ($tpl == 'tree') {
-                $templateParameters['trees'] = $selectionHelper->getAllTrees($objectType);
-                $templateParameters = array_merge($templateParameters, $repository->getAdditionalTemplateParameters(«IF app.hasUploads»$imageHelper, «ENDIF»'controllerAction', $utilArgs));
-                «IF app.needsFeatureActivationHelper»
-                    $templateParameters['featureActivationHelper'] = $this->get('«app.appService».feature_activation_helper');
-                «ENDIF»
+            if ('tree' == $request->query->getAlnum('tpl', '')) {
+                $templateParameters = $controllerHelper->processViewActionParameters($objectType, null, $templateParameters«IF app.hasHookSubscribers», «(!skipHookSubscribers).displayBool»«ENDIF»);
+
                 // fetch and return the appropriate template
                 return $viewHelper->processTemplate($objectType, 'view', $templateParameters);
             }
         «ENDIF»
-
-        // convenience vars to make code clearer
-        $currentUrlArgs = [];
-        $where = '';
-
-        «prepareViewUrlArgs»
-
-        $additionalParameters = $repository->getAdditionalTemplateParameters(«IF app.hasUploads»$imageHelper, «ENDIF»'controllerAction', $utilArgs);
-
-        $resultsPerPage = 0;
-        if ($showAllEntries != 1) {
-            // the number of items displayed on a page for pagination
-            $resultsPerPage = $num;
-            if (in_array($resultsPerPage, [0, 10])) {
-                $resultsPerPage = $this->getVar($objectType . 'EntriesPerPage', 10);
-            }
-        }
 
         // parameter for used sorting field
         «new ControllerHelperFunctions().defaultSorting(action, app)»
 
         // parameter for used sort order
         $sortdir = strtolower($sortdir);
+        $request->query->set('sort', $sort);
+        $request->query->set('sortdir', $sortdir);
 
-        «sortableColumns»
+        «initSortableColumns»
 
-        $templateParameters['sort'] = $sort;
-        $templateParameters['sortdir'] = $sortdir;
-        $templateParameters['num'] = $resultsPerPage;
-
-        $tpl = '';
-        if ($request->isMethod('POST')) {
-            $tpl = $request->request->getAlnum('tpl', '');
-        } elseif ($request->isMethod('GET')) {
-            $tpl = $request->query->getAlnum('tpl', '');
-        }
-        $templateParameters['tpl'] = $tpl;
-
-        $quickNavForm = $this->createForm('«app.appNamespace»\Form\Type\QuickNavigation\\' . ucfirst($objectType) . 'QuickNavType', $templateParameters);
-        if ($quickNavForm->handleRequest($request) && $quickNavForm->isSubmitted()) {
-            $quickNavData = $quickNavForm->getData();
-            foreach ($quickNavData as $fieldName => $fieldValue) {
-                if ($fieldName == 'routeArea') {
-                    continue;
-                }
-                if ($fieldName == 'all') {
-                    $showAllEntries = $additionalUrlParameters['all'] = $templateParameters['all'] = $fieldValue;
-                } elseif ($fieldName == 'own') {
-                    $showOwnEntries = $additionalUrlParameters['own'] = $templateParameters['own'] = $fieldValue;
-                } elseif ($fieldName == 'num') {
-                    $resultsPerPage = $additionalUrlParameters['num'] = $fieldValue;
-                } else {
-                    // set filter as query argument, fetched inside repository
-                    $request->query->set($fieldName, $fieldValue);
-                }
-            }
-        }
-        $sortableColumns->setOrderBy($sortableColumns->getColumn($sort), strtoupper($sortdir));
-        $sortableColumns->setAdditionalUrlParameters($additionalUrlParameters);
-
-        if ($showAllEntries == 1) {
-            // retrieve item list without pagination
-            $entities = $selectionHelper->getEntities($objectType, [], $where, $sort . ' ' . $sortdir);
-        } else {
-            // the current offset which is used to calculate the pagination
-            $currentPage = $pos;
-
-            // retrieve item list with pagination
-            list($entities, $objectCount) = $selectionHelper->getEntitiesPaginated($objectType, $where, $sort . ' ' . $sortdir, $currentPage, $resultsPerPage);
-
-            $templateParameters['currentPage'] = $currentPage;
-            $templateParameters['pager'] = ['numitems' => $objectCount, 'itemsperpage' => $resultsPerPage];
-        }
+        $templateParameters = $controllerHelper->processViewActionParameters($objectType, $sortableColumns, $templateParameters«IF app.hasHookSubscribers», «(!skipHookSubscribers).displayBool»«ENDIF»);
 
         «IF categorisable»
             $featureActivationHelper = $this->get('«app.appService».feature_activation_helper');
             if ($featureActivationHelper->isEnabled(FeatureActivationHelper::CATEGORIES, $objectType)) {
-                $entities = $this->get('«app.appService».category_helper')->filterEntitiesByPermission($entities);
+                $templateParameters['items'] = $this->get('«app.appService».category_helper')->filterEntitiesByPermission($templateParameters['items']);
             }
 
         «ENDIF»
-        foreach ($entities as $k => $entity) {
+        foreach ($templateParameters['items'] as $k => $entity) {
             $entity->initWorkflow();
         }
-        «prepareViewItems»
+
+        // fetch and return the appropriate template
+        return $viewHelper->processTemplate($objectType, 'view', $templateParameters);
     '''
 
-    def private sortableColumns(Entity it) '''
+    def private initSortableColumns(Entity it) '''
         $sortableColumns = new SortableColumns($this->get('router'), '«app.appName.formatForDB»_«name.toLowerCase»_' . ($isAdmin ? 'admin' : '') . 'view', 'sort', 'sortdir');
         «val listItemsFields = getSortingFields»
         «val listItemsIn = incoming.filter(OneToManyRelationship).filter[bidirectional && source instanceof Entity]»
@@ -223,79 +155,10 @@ class Actions {
                 «addSortColumn('updatedDate')»
             «ENDIF»
         ]);
-
-        $additionalUrlParameters = [
-            'all' => $showAllEntries,
-            'own' => $showOwnEntries,
-            'num' => $resultsPerPage
-        ];
-        foreach ($additionalParameters as $parameterName => $parameterValue) {
-            if (false !== stripos($parameterName, 'thumbRuntimeOptions')) {
-                continue;
-            }
-            $additionalUrlParameters[$parameterName] = $parameterValue;
-        }
     '''
 
     def private addSortColumn(Entity it, String columnName) '''
         new Column('«columnName.formatForCode»'),
-    '''
-
-    def private prepareViewUrlArgs(Entity it) '''
-        $showOwnEntries = $request->query->getInt('own', $this->getVar('showOnlyOwnEntries', 0));
-        $showAllEntries = $request->query->getInt('all', 0);
-
-        «IF app.generateCsvTemplates»
-            if (!$showAllEntries) {
-                $csv = $request->getRequestFormat() == 'csv' ? 1 : 0;
-                if ($csv == 1) {
-                    $showAllEntries = 1;
-                }
-            }
-
-        «ENDIF»
-        $templateParameters['own'] = $showAllEntries;
-        $templateParameters['all'] = $showOwnEntries;
-        if ($showAllEntries == 1) {
-            $currentUrlArgs['all'] = 1;
-        }
-        if ($showOwnEntries == 1) {
-            $currentUrlArgs['own'] = 1;
-        }
-    '''
-
-    def private prepareViewItems(Entity it) '''
-        «IF !skipHookSubscribers»
-
-            // build RouteUrl instance for display hooks
-            $currentUrlArgs['_locale'] = $request->getLocale();
-            $currentUrlObject = new RouteUrl('«app.appName.formatForDB»_«name.formatForCode»_' . /*($isAdmin ? 'admin' : '') . */'view', $currentUrlArgs);
-        «ENDIF»
-
-        $templateParameters['items'] = $entities;
-        $templateParameters['sort'] = $sort;
-        $templateParameters['sortdir'] = $sortdir;
-        $templateParameters['num'] = $resultsPerPage;
-        «IF !skipHookSubscribers»
-        $templateParameters['currentUrlObject'] = $currentUrlObject;
-        «ENDIF»
-        $templateParameters = array_merge($templateParameters, $additionalParameters);
-
-        $templateParameters['sort'] = $sortableColumns->generateSortableColumns();
-        $templateParameters['quickNavForm'] = $quickNavForm->createView();
-
-        $templateParameters['showAllEntries'] = $templateParameters['all'];
-        $templateParameters['showOwnEntries'] = $templateParameters['own'];
-        «IF app.needsFeatureActivationHelper»
-
-            $templateParameters['featureActivationHelper'] = $this->get('«app.appService».feature_activation_helper');
-        «ENDIF»
-
-        $modelHelper = $this->get('«app.appService».model_helper');
-        $templateParameters['canBeCreated'] = $modelHelper->canBeCreated($objectType);
-
-        // fetch and return the appropriate template
-        return $viewHelper->processTemplate($objectType, 'view', $templateParameters);
     '''
 
     def private dispatch actionImplBody(Entity it, DisplayAction action) '''
@@ -308,6 +171,7 @@ class Actions {
 
         «action.permissionCheck("' . ucfirst($objectType) . '", "$instanceId . ")»
         «IF categorisable»
+
             $featureActivationHelper = $this->get('«app.appService».feature_activation_helper');
             if ($featureActivationHelper->isEnabled(FeatureActivationHelper::CATEGORIES, $objectType)) {
                 if (!$this->get('«app.appService».category_helper')->hasPermission($«name.formatForCode»)) {
@@ -323,13 +187,10 @@ class Actions {
         // «IF !skipHookSubscribers»build RouteUrl instance for display hooks; also «ENDIF»create identifier for permission check
         «IF !skipHookSubscribers»
             $currentUrlArgs = $«name.formatForCode»->createUrlArgs();
-        «ENDIF»
-        $instanceId = $«name.formatForCode»->createCompositeIdentifier();
-        «IF !skipHookSubscribers»
-            $currentUrlArgs['id'] = $instanceId; // TODO remove this
             $currentUrlArgs['_locale'] = $request->getLocale();
             $currentUrlObject = new RouteUrl('«app.appName.formatForDB»_«name.formatForCode»_' . /*($isAdmin ? 'admin' : '') . */'display', $currentUrlArgs);
         «ENDIF»
+        $instanceId = $«name.formatForCode»->createCompositeIdentifier();
     '''
 
     def private processDisplayOutput(Entity it) '''

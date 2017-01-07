@@ -4,7 +4,9 @@ import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.Entity
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
+import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
+import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
@@ -12,7 +14,9 @@ import org.zikula.modulestudio.generator.extensions.Utils
 
 class ControllerHelper {
 
+    extension ControllerExtensions = new ControllerExtensions
     extension FormattingExtensions = new FormattingExtensions
+    extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     extension ModelExtensions = new ModelExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension NamingExtensions = new NamingExtensions
@@ -52,6 +56,10 @@ class ControllerHelper {
             use Symfony\Component\HttpFoundation\Session\SessionInterface;
         «ENDIF»
         use Zikula\Common\Translator\TranslatorInterface;
+        use Zikula\Component\SortableColumns\SortableColumns;
+        «IF hasHookSubscribers»
+            use Zikula\Core\RouteUrl;
+        «ENDIF»
 
         /**
          * Helper base class for controller layer methods.
@@ -117,6 +125,10 @@ class ControllerHelper {
             «isValidIdentifier»
 
             «formatPermalink»
+            «IF hasViewActions»
+
+                «processViewActionParameters»
+            «ENDIF»
             «IF hasUploads»
 
                 «getFileBaseFolder»
@@ -296,6 +308,182 @@ class ControllerHelper {
             $name = DataUtil::formatPermalink($name);
 
             return strtolower($name);
+        }
+    '''
+
+    def private processViewActionParameters(Application it) '''
+        /**
+         * Processes the parameters for a view action.
+         * This includes handling pagination, quick navigation forms and other aspects.
+         *
+         * @param string          $objectType         Name of treated entity type
+         * @param SortableColumns $sortableColumns    Used SortableColumns instance
+         * @param array           $templateParameters Template data
+         «IF hasHookSubscribers»
+         * @param boolean         $supportsHooks      Whether hooks are supported or not
+         «ENDIF»
+         *
+         * @return array Enriched template parameters used for creating the response
+         */
+        public function processViewActionParameters($objectType, SortableColumns $sortableColumns, array $templateParameters = []«IF hasHookSubscribers», $supportsHooks = false«ENDIF»)
+        {
+            if (!in_array($objectType, $this->getObjectTypes())) {
+                throw new Exception('Error! Invalid object type received.');
+            }
+
+            $request = $this->container->get('request_stack')->getMasterRequest();
+            $repository = $this->get('«appService».' . $objectType . '_factory')->getRepository();
+            $repository->setRequest($request);
+            «IF hasTrees»
+
+                if ('tree' == $request->query->getAlnum('tpl', '')) {
+                    $selectionHelper = $this->container->get('«appService».selection_helper');
+                    «IF hasUploads»
+                        $imageHelper = $this->container->get('«appService».image_helper');
+                    «ENDIF»
+                    $templateParameters['trees'] = $selectionHelper->getAllTrees($objectType);
+                    $templateParameters = array_merge($templateParameters, $repository->getAdditionalTemplateParameters(«IF hasUploads»$imageHelper, «ENDIF»'controllerAction', $utilArgs));
+                    «IF needsFeatureActivationHelper»
+                        $templateParameters['featureActivationHelper'] = $this->get('«appService».feature_activation_helper');
+                    «ENDIF»
+
+                    return $templateParameters;
+                }
+            «ENDIF»
+
+            $showOwnEntries = $request->query->getInt('own', $this->getVar('showOnlyOwnEntries', 0));
+            $showAllEntries = $request->query->getInt('all', 0);
+
+            «IF generateCsvTemplates»
+                if (!$showAllEntries && $request->getRequestFormat() == 'csv') {
+                    $showAllEntries = 1;
+                }
+
+            «ENDIF»
+
+            «IF hasHookSubscribers»
+                if (true === $supportsHooks) {
+                    $currentUrlArgs = [];
+                    if ($showAllEntries == 1) {
+                        $currentUrlArgs['all'] = 1;
+                    }
+                    if ($showOwnEntries == 1) {
+                        $currentUrlArgs['own'] = 1;
+                    }
+                }
+
+            «ENDIF»
+            $resultsPerPage = 0;
+            if ($showAllEntries != 1) {
+                // the number of items displayed on a page for pagination
+                $resultsPerPage = $request->query->getInt('num', 0);
+                if (in_array($resultsPerPage, [0, 10])) {
+                    $resultsPerPage = $this->container->get('zikula_extensions_module.api.variable')->get('«appName»', $objectType . 'EntriesPerPage', 10);
+                }
+            }
+
+            «IF hasUploads»
+                $imageHelper = $this->container->get('«appService».image_helper');
+            «ENDIF»
+            $additionalParameters = $repository->getAdditionalTemplateParameters(«IF hasUploads»$imageHelper, «ENDIF»'controllerAction', $utilArgs);
+
+            $additionalUrlParameters = [
+                'all' => $showAllEntries,
+                'own' => $showOwnEntries,
+                'num' => $resultsPerPage
+            ];
+            foreach ($additionalParameters as $parameterName => $parameterValue) {
+                if (false !== stripos($parameterName, 'thumbRuntimeOptions')) {
+                    continue;
+                }
+                $additionalUrlParameters[$parameterName] = $parameterValue;
+            }
+
+            $templateParameters['own'] = $showAllEntries;
+            $templateParameters['all'] = $showOwnEntries;
+            $templateParameters['num'] = $resultsPerPage;
+            $templateParameters['tpl'] = $request->query->getAlnum('tpl', '');
+
+            $quickNavForm = $this->container->get('form.factory')->create('«appNamespace»\Form\Type\QuickNavigation\\' . ucfirst($objectType) . 'QuickNavType', $templateParameters);
+            if ($quickNavForm->handleRequest($request) && $quickNavForm->isSubmitted()) {
+                $quickNavData = $quickNavForm->getData();
+                foreach ($quickNavData as $fieldName => $fieldValue) {
+                    if ($fieldName == 'routeArea') {
+                        continue;
+                    }
+                    if ($fieldName == 'all') {
+                        $showAllEntries = $additionalUrlParameters['all'] = $templateParameters['all'] = $fieldValue;
+                    } elseif ($fieldName == 'own') {
+                        $showOwnEntries = $additionalUrlParameters['own'] = $templateParameters['own'] = $fieldValue;
+                    } elseif ($fieldName == 'num') {
+                        $resultsPerPage = $additionalUrlParameters['num'] = $fieldValue;
+                    } else {
+                        // set filter as query argument, fetched inside repository
+                        $request->query->set($fieldName, $fieldValue);
+                    }
+                }
+            }
+            $sort = $request->query->get('sort');
+            $sortdir = $request->query->get('sortdir');
+            $sortableColumns->setOrderBy($sortableColumns->getColumn($sort), strtoupper($sortdir));
+            $sortableColumns->setAdditionalUrlParameters($additionalUrlParameters);
+            $templateParameters['sort'] = $sort;
+            $templateParameters['sortdir'] = $sortdir;
+
+            $selectionHelper = $this->get('«appService».selection_helper');
+
+            $where = '';
+            if ($showAllEntries == 1) {
+                // retrieve item list without pagination
+                $entities = $selectionHelper->getEntities($objectType, [], $where, $sort . ' ' . $sortdir);
+            } else {
+                // the current offset which is used to calculate the pagination
+                $currentPage = $request->query->getInt('pos', 1);
+
+                // retrieve item list with pagination
+                list($entities, $objectCount) = $selectionHelper->getEntitiesPaginated($objectType, $where, $sort . ' ' . $sortdir, $currentPage, $resultsPerPage);
+
+                $templateParameters['currentPage'] = $currentPage;
+                $templateParameters['pager'] = [
+                    'amountOfItems' => $objectCount,
+                    'itemsPerPage' => $resultsPerPage
+                ];
+            }
+
+            «IF hasHookSubscribers»
+                if (true === $supportsHooks) {
+                    // build RouteUrl instance for display hooks
+                    $currentUrlArgs['_locale'] = $request->getLocale();
+                    $currentUrlObject = new RouteUrl('«appName.formatForDB»_«name.formatForCode»_' . /*($isAdmin ? 'admin' : '') . */'view', $currentUrlArgs);
+                }
+
+            «ENDIF»
+            $templateParameters['items'] = $entities;
+            $templateParameters['sort'] = $sort;
+            $templateParameters['sortdir'] = $sortdir;
+            $templateParameters['num'] = $resultsPerPage;
+            «IF hasHookSubscribers»
+                if (true === $supportsHooks) {
+                    $templateParameters['currentUrlObject'] = $currentUrlObject;
+                }
+            «ENDIF»
+            $templateParameters = array_merge($templateParameters, $additionalParameters);
+
+            $templateParameters['sort'] = $sortableColumns->generateSortableColumns();
+            $templateParameters['quickNavForm'] = $quickNavForm->createView();
+
+            $templateParameters['showAllEntries'] = $templateParameters['all'];
+            $templateParameters['showOwnEntries'] = $templateParameters['own'];
+            «IF needsFeatureActivationHelper»
+
+                $templateParameters['featureActivationHelper'] = $this->container->get('«appService».feature_activation_helper');
+            «ENDIF»
+            «IF hasEditActions»
+
+                $templateParameters['canBeCreated'] = $this->container->get('«appService».model_helper')->canBeCreated($objectType);
+            «ENDIF»
+
+            return $templateParameters;
         }
     '''
 

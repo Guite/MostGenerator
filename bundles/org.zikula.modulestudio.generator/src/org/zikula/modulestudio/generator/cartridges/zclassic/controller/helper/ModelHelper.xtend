@@ -7,6 +7,7 @@ import de.guite.modulestudio.metamodel.JoinRelationship
 import de.guite.modulestudio.metamodel.RelationEditType
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
+import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
@@ -15,6 +16,7 @@ import org.zikula.modulestudio.generator.extensions.Utils
 
 class ModelHelper {
 
+    extension ControllerExtensions = new ControllerExtensions
     extension FormattingExtensions = new FormattingExtensions
     extension ModelExtensions = new ModelExtensions
     extension ModelJoinExtensions = new ModelJoinExtensions
@@ -92,7 +94,7 @@ class ModelHelper {
             $result = false;
 
             switch ($objectType) {
-                «FOR entity : getAllEntities.filter[tree == EntityTreeType.NONE]»
+                «FOR entity : getAllEntities.filter[hasEditAction && tree == EntityTreeType.NONE]»
                     case '«entity.name.formatForCode»':
                         «entity.canBeCreatedImpl»
                         break;

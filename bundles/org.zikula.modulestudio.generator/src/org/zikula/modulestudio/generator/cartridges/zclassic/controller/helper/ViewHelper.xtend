@@ -99,20 +99,12 @@ class ViewHelper {
             $template = '@«appName»/' . ucfirst($type) . '/' . $func;
 
             // check for template extension
-            $templateExtension = $this->determineExtension($type, $func);
+            $templateExtension = '.' . $this->determineExtension($type, $func);
 
             // check whether a special template is used
-            $tpl = '';
-            if ($this->request->isMethod('POST')) {
-                $tpl = $this->request->request->getAlnum('tpl', '');
-            } elseif ($this->request->isMethod('GET')) {
-                $tpl = $this->request->query->getAlnum('tpl', '');
-            }
-
-            $templateExtension = '.' . $templateExtension;
-
-            // check if custom template exists
+            $tpl = $this->request->query->getAlnum('tpl', '');
             if (!empty($tpl)) {
+                // check if custom template exists
                 $customTemplate = $template . DataUtil::formatForOS(ucfirst($tpl));
                 if ($this->templating->exists($customTemplate . $templateExtension)) {
                     $template = $customTemplate;
@@ -136,7 +128,7 @@ class ViewHelper {
          *
          * @return mixed Output
          */
-        public function processTemplate($type, $func, $templateParameters = [], $template = '')
+        public function processTemplate($type, $func, array $templateParameters = [], $template = '')
         {
             $templateExtension = $this->determineExtension($type, $func);
             if (empty($template)) {
@@ -150,12 +142,7 @@ class ViewHelper {
             }
 
             // look whether we need output with or without the theme
-            $raw = false;
-            if ($this->request->isMethod('POST')) {
-                $raw = $this->request->request->getBoolean('raw', false);
-            } elseif ($this->request->isMethod('GET')) {
-                $raw = $this->request->query->getBoolean('raw', false);
-            }
+            $raw = $this->request->query->getBoolean('raw', false);
             if (!$raw && $templateExtension != 'html.twig') {
                 $raw = true;
             }
@@ -291,7 +278,7 @@ class ViewHelper {
          *
          * @return mixed Output
          */
-        protected function processPdf($templateParameters = [], $template)
+        protected function processPdf(array $templateParameters = [], $template)
         {
             // first the content, to set page vars
             $output = $this->templating->render($template, $templateParameters);
