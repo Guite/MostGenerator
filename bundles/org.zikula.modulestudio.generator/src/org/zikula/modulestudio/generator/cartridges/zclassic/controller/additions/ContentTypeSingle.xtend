@@ -5,7 +5,6 @@ import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.additions.ContentTypeSingleView
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
-import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
@@ -13,7 +12,6 @@ import org.zikula.modulestudio.generator.extensions.Utils
 class ContentTypeSingle {
 
     extension FormattingExtensions = new FormattingExtensions
-    extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     extension ModelExtensions = new ModelExtensions
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
@@ -177,7 +175,7 @@ class ContentTypeSingle {
         public function startEditing()
         {
             // ensure our custom plugins are loaded
-            array_push($this->view->plugins_dir, '«rootFolder»/«if (systemModule) name.formatForCode else vendor.formatForCodeCapital + '/' + name.formatForCodeCapital»/«getViewPath»/plugins');
+            array_push($this->view->plugins_dir, '«relativeAppRootPath»/«getViewPath»/plugins');
 
             // required as parameter for the item selector plugin
             $this->view->assign('objectType', $this->objectType);

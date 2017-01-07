@@ -181,6 +181,17 @@ class NamingExtensions {
     }
 
     /**
+     * Returns the relative path to the application's root directory.
+     */
+    def relativeAppRootPath(Application it) {
+        if (systemModule) {
+            'system/' + name.formatForCode + 'Module'
+        } else {
+            'modules/' + vendor.formatForCodeCapital + '/' + name.formatForCodeCapital + 'Module'
+        }
+    }
+
+    /**
      * Returns the base path for the source code of the generated application.
      */
     def getAppSourceLibPath(Application it) {

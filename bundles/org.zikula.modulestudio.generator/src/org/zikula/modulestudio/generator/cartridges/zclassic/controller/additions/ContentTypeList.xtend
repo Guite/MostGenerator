@@ -5,7 +5,6 @@ import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.additions.ContentTypeListView
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
-import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
@@ -14,7 +13,6 @@ import org.zikula.modulestudio.generator.extensions.Utils
 class ContentTypeList {
 
     extension FormattingExtensions = new FormattingExtensions
-    extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension ModelExtensions = new ModelExtensions
     extension NamingExtensions = new NamingExtensions
@@ -426,7 +424,7 @@ class ContentTypeList {
             $this->view->toplevelmodule = '«appName»';
 
             // ensure our custom plugins are loaded
-            array_push($this->view->plugins_dir, '«rootFolder»/«if (systemModule) name.formatForCode else vendor.formatForCodeCapital + '/' + name.formatForCodeCapital»/«getViewPath»/plugins');
+            array_push($this->view->plugins_dir, '«relativeAppRootPath»/«getViewPath»/plugins');
             «IF hasCategorisableEntities»
 
                 $featureActivationHelper = $serviceManager->get('«appService».feature_activation_helper');

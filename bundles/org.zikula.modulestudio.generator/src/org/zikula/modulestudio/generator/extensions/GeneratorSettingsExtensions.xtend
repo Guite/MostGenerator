@@ -23,14 +23,6 @@ class GeneratorSettingsExtensions {
     }
 
     /**
-     * Returns the root folder depending on whether a system or
-     * a normal module is to be generated.
-     */
-    def rootFolder(Application it) {
-        if (isSystemModule) 'system' else 'modules'
-    }
-
-    /**
      * Returns the desired amount of example rows created during installation.
      */
     def int amountOfExampleRows(Application it) {

@@ -226,7 +226,7 @@ class ThirdParty {
             [
                 'module' => '«appName»',
                 'type'   => 'javascript',
-                'path'   => '«rootFolder»/«if (systemModule) name.formatForCodeCapital else vendor.formatForCodeCapital + '/' + name.formatForCodeCapital»Module/«getAppJsPath»«appName».Finder.js'
+                'path'   => '«relativeAppRootPath»/«getAppJsPath»«appName».Finder.js'
             ]
         );
     '''
@@ -264,7 +264,7 @@ class ThirdParty {
         $plugins->add(
             [
                 'name' => '«appName.formatForDB»',
-                'path' => '«rootFolder»/«if (systemModule) name.formatForCodeCapital else vendor.formatForCodeCapital + '/' + name.formatForCodeCapital»Module/«getAppDocPath»scribite/plugins/TinyMce/vendor/tinymce/plugins/«appName.formatForDB»/plugin.js'
+                'path' => '«relativeAppRootPath»/«getAppDocPath»scribite/plugins/TinyMce/vendor/tinymce/plugins/«appName.formatForDB»/plugin.js'
             ]
         );
     '''
@@ -302,7 +302,7 @@ class ThirdParty {
         $plugins->add(
             [
                 'name' => '«appName.formatForDB»',
-                'path' => '«rootFolder»/«if (systemModule) name.formatForCodeCapital else vendor.formatForCodeCapital + '/' + name.formatForCodeCapital»Module/«getAppDocPath»scribite/plugins/CKEditor/vendor/ckeditor/plugins/«appName.formatForDB»/',
+                'path' => '«relativeAppRootPath»/«getAppDocPath»scribite/plugins/CKEditor/vendor/ckeditor/plugins/«appName.formatForDB»/',
                 'file' => 'plugin.js',
                 'img'  => 'ed_«appName.formatForDB».gif'
             ]

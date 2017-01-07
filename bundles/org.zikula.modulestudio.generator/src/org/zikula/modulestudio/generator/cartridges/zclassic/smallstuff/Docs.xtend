@@ -133,9 +133,9 @@ class Docs {
         # INSTALLATION INSTRUCTIONS
 
         «IF isSystemModule»
-            1. Copy «appName» into your `«rootFolder»` directory. Afterwards you should have a folder named `«rootFolder»/«name.formatForCodeCapital»Module/Resources`.
+            1. Copy «appName» into your `system` directory. Afterwards you should have a folder named `«relativeAppRootPath»/Resources`.
         «ELSE»
-            1. Copy «appName» into your `«rootFolder»` directory. Afterwards you should have a folder named `«rootFolder»/«vendor.formatForCodeCapital»/«name.formatForCodeCapital»Module/Resources`.
+            1. Copy «appName» into your `modules` directory. Afterwards you should have a folder named `«relativeAppRootPath»/Resources`.
         «ENDIF»
         2. Initialize and activate «appName» in the extensions administration.
         «IF hasUploads»

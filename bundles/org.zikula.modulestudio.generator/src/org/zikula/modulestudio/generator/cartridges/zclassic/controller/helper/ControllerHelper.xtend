@@ -5,7 +5,6 @@ import de.guite.modulestudio.metamodel.Entity
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
-import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
@@ -14,7 +13,6 @@ import org.zikula.modulestudio.generator.extensions.Utils
 class ControllerHelper {
 
     extension FormattingExtensions = new FormattingExtensions
-    extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     extension ModelExtensions = new ModelExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension NamingExtensions = new NamingExtensions
@@ -418,7 +416,7 @@ class ControllerHelper {
 
             // Write a htaccess file into the upload directory
             $htaccessFilePath = $uploadPath . '/.htaccess';
-            $htaccessFileTemplate = '«rootFolder»/«if (systemModule) name.formatForCode else appName»/«getAppDocPath»htaccessTemplate';
+            $htaccessFileTemplate = '«relativeAppRootPath»/«getAppDocPath»htaccessTemplate';
             if (!$fs->exists($htaccessFilePath) && $fs->exists($htaccessFileTemplate)) {
                 try {
                     $extensions = str_replace(',', '|', str_replace(' ', '', $allowedExtensions));
@@ -455,7 +453,7 @@ class ControllerHelper {
             $json = '';
 
             // we can either use Snoopy if available
-            //require_once('«rootFolder»/«if (systemModule) name.formatForCode else vendor.formatForCode + '/' + name.formatForCode»/vendor/Snoopy/Snoopy.class.php');
+            //require_once('«relativeAppRootPath»/vendor/Snoopy/Snoopy.class.php');
             //$snoopy = new Snoopy();
             //$snoopy->fetch($url);
             //$json = $snoopy->results;
