@@ -210,7 +210,7 @@ class LifecycleListener {
                     if (count($uploadFields) > 0) {
                         $request = $this->container->get('request_stack')->getCurrentRequest();
                         $baseUrl = $request->getSchemeAndHttpHost() . $request->getBasePath();
-                        $uploadHelper = $this->container->get('«appNamespace».upload_helper');
+                        $uploadHelper = $this->container->get('«appService».upload_helper');
                         foreach ($uploadFields as $fieldName) {
                             if (empty($entity[$fieldName])) {
                                 continue;
