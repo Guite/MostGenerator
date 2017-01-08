@@ -149,7 +149,7 @@ class ImageHelper {
             $options = [
                 'thumbnail' => [
                     'size'      => [100, 100], // thumbnail width and height in pixels
-                    'mode'      => $this->variableApi->get('«appName»', 'thumbnailMode' . ucfirst($objectType), 'inset'),
+                    'mode'      => $this->variableApi->get('«appName»', 'thumbnailMode' . ucfirst($objectType) . ucfirst($fieldName), 'inset'),
                     'extension' => null        // file extension for thumbnails (jpg, png, gif; null for original file type)
                 ]
             ];

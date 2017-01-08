@@ -289,24 +289,19 @@ class PersistenceTransformer {
                     value = '600'
                     documentation = 'The maximum image height in pixels.'
                 ]
-            }
-        }
-        for (entity : entitiesWithImageUploads) {
-            val thumbModeVar = factory.createListVar => [
-                name = 'thumbnailMode' + entity.name.formatForCodeCapital
-                value = 'inset'
-                documentation = 'Thumbnail mode (inset or outbound).'
-            ]
-            thumbModeVar.items += factory.createListVarItem => [
-                name = 'Inset'
-                ^default = true
-            ]
-            thumbModeVar.items += factory.createListVarItem => [
-                name = 'Outbound'
-            ]
-            varContainer.vars += thumbModeVar
-            for (imageUploadField : entity.imageFieldsEntity) {
-                val fieldSuffix = entity.name.formatForCodeCapital + imageUploadField.name.formatForCodeCapital
+                val thumbModeVar = factory.createListVar => [
+                    name = 'thumbnailMode' + fieldSuffix
+                    value = 'inset'
+                    documentation = 'Thumbnail mode (inset or outbound).'
+                ]
+                thumbModeVar.items += factory.createListVarItem => [
+                    name = 'Inset'
+                    ^default = true
+                ]
+                thumbModeVar.items += factory.createListVarItem => [
+                    name = 'Outbound'
+                ]
+                varContainer.vars += thumbModeVar
                 for (action : #['view', 'display', 'edit']) {
                     if ((action == 'view' && entity.hasViewAction) || (action == 'display' && entity.hasDisplayAction) || (action == 'edit' && entity.hasEditAction)) {
                         varContainer.vars += factory.createIntVar => [

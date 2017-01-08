@@ -41,11 +41,26 @@ class Config {
                     'ZikulaFormExtensionBundle:Form:form_div_layout.html.twig'
                 ] %}
                 {{ form_start(form) }}
-                «IF hasMultipleConfigSections»
+                «IF hasMultipleConfigSections || hasImageFields»
                     <ul class="nav nav-pills">
                     «FOR varContainer : getSortedVariableContainers»
                         {% set tabTitle = __('«varContainer.name.formatForDisplayCapital»') %}
-                        <li«IF varContainer == getSortedVariableContainers.head» class="active"«ENDIF» data-toggle="pill"><a href="#tab«varContainer.sortOrder»" title="{{ tabTitle|e('html_attr') }}" role="tab" data-toggle="tab">{{ tabTitle }}</a></li>
+                        <li«IF varContainer == getSortedVariableContainers.head || varContainer.isImageArea»class="«IF varContainer == getSortedVariableContainers.head»active«ENDIF»«IF varContainer.isImageArea» dropdown«ENDIF»"«ENDIF» role="presentation">
+                            «IF varContainer.isImageArea»
+                                <a id="imagesTabDrop" class="dropdown-toggle" href="#" data-toggle="dropdown" aria-controls="imagesTabDropSections" aria-expanded="false">{{ tabTitle }}<span class="caret"></span></a>
+                                <ul id="imagesTabDropSections" class="dropdown-menu" aria-labelledby="imagesTabDrop">
+                                «FOR entity : getAllEntities.filter[hasImageFieldsEntity]»
+                                    «FOR imageUploadField : entity.imageFieldsEntity»
+                                        <li>
+                                            <a id="images«entity.name.formatForCodeCapital»«imageUploadField.name.formatForCodeCapital»Tab" href="#tabImages«entity.name.formatForCodeCapital»«imageUploadField.name.formatForCodeCapital»" role="tab" data-toggle="tab" aria-controls="tabImages«entity.name.formatForCodeCapital»«imageUploadField.name.formatForCodeCapital»">«entity.nameMultiple.formatForDisplayCapital» «imageUploadField.name.formatForDisplay»</a>
+                                        </li>
+                                    «ENDFOR»
+                                «ENDFOR»
+                                </ul>
+                            «ELSE»
+                                <a id="vars«varContainer.sortOrder»Tab" href="#tab«varContainer.sortOrder»" title="{{ tabTitle|e('html_attr') }}" role="tab" data-toggle="tab">{{ tabTitle }}</a>
+                            «ENDIF»
+                        </li>
                     «ENDFOR»
                     </ul>
 
@@ -80,15 +95,34 @@ class Config {
     '''
 
     def private configSection(Variables it, Application app, Boolean isPrimaryVarContainer) '''
-        «IF app.hasMultipleConfigSections»
-            {% set tabTitle = __('«name.formatForDisplayCapital»') %}
-            <div role="tabpanel" class="tab-pane fade«IF isPrimaryVarContainer» in active«ENDIF»" id="tab«sortOrder»">
-                «configSectionBody(app, isPrimaryVarContainer)»
-            </div>
+        «IF app.hasMultipleConfigSections || app.hasImageFields»
+            «IF isImageArea»
+                «configSectionBodyImages(app, isPrimaryVarContainer)»
+            «ELSE»
+                <div role="tabpanel" class="tab-pane fade«IF isPrimaryVarContainer» in active«ENDIF»" id="tab«sortOrder»" aria-labelledby="vars«sortOrder»Tab">
+                    {% set tabTitle = __('«name.formatForDisplayCapital»') %}
+                    «configSectionBody(app, isPrimaryVarContainer)»
+                </div>
+            «ENDIF»
         «ELSE»
             {% set tabTitle = __('«name.formatForDisplayCapital»') %}
             «configSectionBody(app, isPrimaryVarContainer)»
         «ENDIF»
+    '''
+
+    def private configSectionBodyImages(Variables it, Application app, Boolean isPrimaryVarContainer) '''
+        «FOR entity : app.getAllEntities.filter[hasImageFieldsEntity]»
+            «FOR imageUploadField : entity.imageFieldsEntity»
+                <div role="tabpanel" class="tab-pane fade«IF isPrimaryVarContainer && entity == app.getAllEntities.filter[hasImageFieldsEntity].head && imageUploadField == entity.imageFieldsEntity.head» in active«ENDIF»" id="tabImages«entity.name.formatForCodeCapital»«imageUploadField.name.formatForCodeCapital»" aria-labelledby="images«entity.name.formatForCodeCapital»«imageUploadField.name.formatForCodeCapital»Tab">
+                    {% set tabTitle = __('Image settings for «entity.nameMultiple.formatForDisplay» «imageUploadField.name.formatForDisplay»') %}
+                    <fieldset>
+                        <legend>{{ tabTitle }}</legend>
+
+                        «FOR modvar : vars.filter[name.endsWith(entity.name.formatForCodeCapital + imageUploadField.name.formatForCodeCapital)]»«modvar.formRow»«ENDFOR»
+                    </fieldset>
+                </div>
+            «ENDFOR»
+        «ENDFOR»
     '''
 
     def private configSectionBody(Variables it, Application app, Boolean isPrimaryVarContainer) '''
@@ -104,6 +138,10 @@ class Config {
             «FOR modvar : vars»«modvar.formRow»«ENDFOR»
         </fieldset>
     '''
+
+    def private isImageArea(Variables it) {
+        it.name == 'Images' && !it.vars.filter[name.formatForCode.startsWith('shrinkWidth')].empty
+    }
 
     def private formRow(Variable it) '''
         «IF name.formatForCode.startsWith('shrinkWidth')»
