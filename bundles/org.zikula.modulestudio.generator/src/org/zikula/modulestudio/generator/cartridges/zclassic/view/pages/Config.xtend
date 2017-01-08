@@ -45,7 +45,7 @@ class Config {
                     <ul class="nav nav-pills">
                     «FOR varContainer : getSortedVariableContainers»
                         {% set tabTitle = __('«varContainer.name.formatForDisplayCapital»') %}
-                        <li«IF varContainer == getSortedVariableContainers.head || varContainer.isImageArea»class="«IF varContainer == getSortedVariableContainers.head»active«ENDIF»«IF varContainer.isImageArea» dropdown«ENDIF»"«ENDIF» role="presentation">
+                        <li«IF varContainer == getSortedVariableContainers.head || varContainer.isImageArea» class="«IF varContainer == getSortedVariableContainers.head»active«ENDIF»«IF varContainer.isImageArea» dropdown«ENDIF»"«ENDIF» role="presentation">
                             «IF varContainer.isImageArea»
                                 <a id="imagesTabDrop" class="dropdown-toggle" href="#" data-toggle="dropdown" aria-controls="imagesTabDropSections" aria-expanded="false">{{ tabTitle }}<span class="caret"></span></a>
                                 <ul id="imagesTabDropSections" class="dropdown-menu" aria-labelledby="imagesTabDrop">
@@ -118,7 +118,7 @@ class Config {
                     <fieldset>
                         <legend>{{ tabTitle }}</legend>
 
-                        «FOR modvar : vars.filter[name.endsWith(entity.name.formatForCodeCapital + imageUploadField.name.formatForCodeCapital)]»«modvar.formRow»«ENDFOR»
+                        «FOR modvar : vars.filter[name.contains(entity.name.formatForCodeCapital + imageUploadField.name.formatForCodeCapital)]»«modvar.formRow»«ENDFOR»
                     </fieldset>
                 </div>
             «ENDFOR»
