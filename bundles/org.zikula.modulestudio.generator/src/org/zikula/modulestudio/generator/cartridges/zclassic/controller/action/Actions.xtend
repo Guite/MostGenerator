@@ -15,16 +15,15 @@ import de.guite.modulestudio.metamodel.ViewAction
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
-import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class Actions {
+
     extension ControllerExtensions = new ControllerExtensions
     extension FormattingExtensions = new FormattingExtensions
     extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
-    extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension ModelExtensions = new ModelExtensions
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
@@ -41,7 +40,6 @@ class Actions {
         «ELSE»
             // parameter specifying which type of objects we are treating
             $objectType = '«name.formatForCode»';
-            $utilArgs = ['controller' => '«name.formatForCode»', 'action' => '«action.name.formatForCode.toFirstLower»'];
             $permLevel = $isAdmin ? ACCESS_ADMIN : «action.getPermissionAccessLevel»;
             «action.permissionCheck("' . ucfirst($objectType) . '", '')»
         «ENDIF»
@@ -73,24 +71,24 @@ class Actions {
     }
 
     def private dispatch actionImplBody(Entity it, MainAction action) '''
-        «IF hasViewAction»
-            return $this->redirectToRoute('«app.appName.formatForDB»_«name.formatForDB»_' . ($isAdmin ? 'admin' : '') . 'view');
-
-        «ENDIF»
         $templateParameters = [
             'routeArea' => $isAdmin ? 'admin' : ''
         ];
 
+        «IF hasViewAction»
+            return $this->redirectToRoute('«app.appName.formatForDB»_«name.formatForDB»_' . $templateParameters['routeArea'] . 'view');
+
+        «ENDIF»
         // return index template
         return $this->render('@«app.appName»/«name.formatForCodeCapital»/index.html.twig', $templateParameters);
     '''
 
     def private dispatch actionImplBody(Entity it, ViewAction action) '''
-        $viewHelper = $this->get('«app.appService».view_helper');
         $templateParameters = [
             'routeArea' => $isAdmin ? 'admin' : ''
         ];
         $controllerHelper = $this->get('«app.appService».controller_helper');
+        $viewHelper = $this->get('«app.appService».view_helper');
         «IF tree != EntityTreeType.NONE»
 
             if ('tree' == $request->query->getAlnum('tpl', '')) {
@@ -158,14 +156,15 @@ class Actions {
     '''
 
     def private dispatch actionImplBody(Entity it, DisplayAction action) '''
-        $repository = $this->get('«app.appService».' . $objectType . '_factory')->getRepository();
-        $repository->setRequest($request);
+        // create identifier for permission check
+        $instanceId = $«name.formatForCode»->createCompositeIdentifier();
+        «action.permissionCheck("' . ucfirst($objectType) . '", "$instanceId . ")»
 
         $«name.formatForCode»->initWorkflow();
-
-        «prepareDisplayPermissionCheck»
-
-        «action.permissionCheck("' . ucfirst($objectType) . '", "$instanceId . ")»
+        $templateParameters = [
+            'routeArea' => $isAdmin ? 'admin' : '',
+            $objectType => $«name.formatForCode»
+        ];
         «IF categorisable»
 
             $featureActivationHelper = $this->get('«app.appService».feature_activation_helper');
@@ -176,38 +175,15 @@ class Actions {
             }
         «ENDIF»
 
+        $controllerHelper = $this->get('«app.appService».controller_helper');
+        $templateParameters = $controllerHelper->processDisplayActionParameters($objectType, $templateParameters«IF app.hasHookSubscribers», «(!skipHookSubscribers).displayBool»«ENDIF»);
+
         «processDisplayOutput»
     '''
 
-    def private prepareDisplayPermissionCheck(Entity it) '''
-        // «IF !skipHookSubscribers»build RouteUrl instance for display hooks; also «ENDIF»create identifier for permission check
-        «IF !skipHookSubscribers»
-            $currentUrlArgs = $«name.formatForCode»->createUrlArgs();
-            $currentUrlArgs['_locale'] = $request->getLocale();
-            $currentUrlObject = new RouteUrl('«app.appName.formatForDB»_«name.formatForCode»_' . /*($isAdmin ? 'admin' : '') . */'display', $currentUrlArgs);
-        «ENDIF»
-        $instanceId = $«name.formatForCode»->createCompositeIdentifier();
-    '''
-
     def private processDisplayOutput(Entity it) '''
-        $viewHelper = $this->get('«app.appService».view_helper');
-        $templateParameters = [
-            'routeArea' => $isAdmin ? 'admin' : '',
-            $objectType => $«name.formatForCode»
-        ];
-        «IF !skipHookSubscribers»
-            $templateParameters['currentUrlObject'] = $currentUrlObject;
-        «ENDIF»
-        «IF app.hasUploads»
-            $imageHelper = $this->get('«app.appService».image_helper');
-        «ENDIF»
-        $templateParameters = array_merge($templateParameters, $repository->getAdditionalTemplateParameters(«IF app.hasUploads»$imageHelper, «ENDIF»'controllerAction', $utilArgs));
-        «IF app.needsFeatureActivationHelper»
-            $templateParameters['featureActivationHelper'] = $this->get('«app.appService».feature_activation_helper');
-        «ENDIF»
-
         // fetch and return the appropriate template
-        $response = $viewHelper->processTemplate($objectType, 'display', $templateParameters);
+        $response = $this->get('«app.appService».view_helper')->processTemplate($objectType, 'display', $templateParameters);
         «IF app.generateIcsTemplates»
 
             $format = $request->getRequestFormat();
@@ -221,15 +197,12 @@ class Actions {
     '''
 
     def private dispatch actionImplBody(Entity it, EditAction action) '''
-        $repository = $this->get('«app.appService».' . $objectType . '_factory')->getRepository();
-
         $templateParameters = [
             'routeArea' => $isAdmin ? 'admin' : ''
         ];
-        «IF app.hasUploads»
-            $imageHelper = $this->get('«app.appService».image_helper');
-        «ENDIF»
-        $templateParameters = array_merge($templateParameters, $repository->getAdditionalTemplateParameters(«IF app.hasUploads»$imageHelper, «ENDIF»'controllerAction', $utilArgs));
+
+        $controllerHelper = $this->get('«app.appService».controller_helper');
+        $templateParameters = $controllerHelper->processEditActionParameters($objectType, $templateParameters);
 
         // delegate form processing to the form handler
         $formHandler = $this->get('«app.appService».form.handler.«name.formatForDB»');
@@ -238,14 +211,10 @@ class Actions {
             return $result;
         }
 
-        $viewHelper = $this->get('«app.appService».view_helper');
         $templateParameters = $formHandler->getTemplateParameters();
-        «IF app.needsFeatureActivationHelper»
-            $templateParameters['featureActivationHelper'] = $this->get('«app.appService».feature_activation_helper');
-        «ENDIF»
 
         // fetch and return the appropriate template
-        return $viewHelper->processTemplate($objectType, 'edit', $templateParameters);
+        return $this->get('«app.appService».view_helper')->processTemplate($objectType, 'edit', $templateParameters);
     '''
 
     def private dispatch actionImplBody(Entity it, DeleteAction action) '''
@@ -295,22 +264,17 @@ class Actions {
             }
         }
 
-        $repository = $this->get('«app.appService».' . $objectType . '_factory')->getRepository();
-
-        $viewHelper = $this->get('«app.appService».view_helper');
         $templateParameters = [
             'routeArea' => $isAdmin ? 'admin' : '',
             'deleteForm' => $form->createView(),
             $objectType => $«name.formatForCode»
         ];
 
-        «IF app.hasUploads»
-            $imageHelper = $this->get('«app.appService».image_helper');
-        «ENDIF»
-        $templateParameters = array_merge($templateParameters, $repository->getAdditionalTemplateParameters(«IF app.hasUploads»$imageHelper, «ENDIF»'controllerAction', $utilArgs));
+        $controllerHelper = $this->get('«app.appService».controller_helper');
+        $templateParameters = $controllerHelper->processDeleteActionParameters($objectType, $templateParameters«IF app.hasHookSubscribers», «(!skipHookSubscribers).displayBool»«ENDIF»);
 
         // fetch and return the appropriate template
-        return $viewHelper->processTemplate($objectType, 'delete', $templateParameters);
+        return $this->get('«app.appService».view_helper')->processTemplate($objectType, 'delete', $templateParameters);
     '''
 
     def private deletionProcess(Entity it, DeleteAction action) '''

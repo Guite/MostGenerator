@@ -89,7 +89,7 @@ class TranslatableHelper {
             {
                 $this->container = $container;
                 $this->translator = $translator;
-                $this->request = $requestStack->getMasterRequest();
+                $this->request = $requestStack->getCurrentRequest();
                 $this->variableApi = $variableApi;
             }
 

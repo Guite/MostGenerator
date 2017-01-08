@@ -212,9 +212,9 @@ class SelectionHelper {
          */
         protected function determineObjectType($objectType = '', $methodName = '')
         {
-            $utilArgs = ['api' => 'selection', 'action' => $methodName];
-            if (!in_array($objectType, $this->controllerHelper->getObjectTypes('api', $utilArgs))) {
-                $objectType = $this->controllerHelper->getDefaultObjectType('api', $utilArgs);
+            $contextArgs = ['helper' => 'selection', 'action' => $methodName];
+            if (!in_array($objectType, $this->controllerHelper->getObjectTypes('helper', $contextArgs))) {
+                $objectType = $this->controllerHelper->getDefaultObjectType('helper', $contextArgs);
             }
 
             return $objectType;

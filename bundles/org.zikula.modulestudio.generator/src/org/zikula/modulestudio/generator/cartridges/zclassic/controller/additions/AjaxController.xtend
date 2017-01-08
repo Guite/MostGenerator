@@ -206,9 +206,9 @@ class AjaxController {
             $objectType = $request->query->getAlnum('ot', '«getLeadingEntity.name.formatForCode»');
         }
         $controllerHelper = $this->get('«appService».controller_helper');
-        $utilArgs = ['controller' => 'ajax', 'action' => 'getItemListFinder'];
-        if (!in_array($objectType, $controllerHelper->getObjectTypes('controllerAction', $utilArgs))) {
-            $objectType = $controllerHelper->getDefaultObjectType('controllerAction', $utilArgs);
+        $contextArgs = ['controller' => 'ajax', 'action' => 'getItemListFinder'];
+        if (!in_array($objectType, $controllerHelper->getObjectTypes('controllerAction', $contextArgs))) {
+            $objectType = $controllerHelper->getDefaultObjectType('controllerAction', $contextArgs);
         }
 
         $repository = $this->get('«appService».' . $objectType . '_factory')->getRepository();
@@ -317,9 +317,9 @@ class AjaxController {
             $objectType = $request->query->getAlnum('ot', '«getLeadingEntity.name.formatForCode»');
         }
         $controllerHelper = $this->get('«appService».controller_helper');
-        $utilArgs = ['controller' => 'ajax', 'action' => 'getItemListAutoCompletion'];
-        if (!in_array($objectType, $controllerHelper->getObjectTypes('controllerAction', $utilArgs))) {
-            $objectType = $controllerHelper->getDefaultObjectType('controllerAction', $utilArgs);
+        $contextArgs = ['controller' => 'ajax', 'action' => 'getItemListAutoCompletion'];
+        if (!in_array($objectType, $controllerHelper->getObjectTypes('controllerAction', $contextArgs))) {
+            $objectType = $controllerHelper->getDefaultObjectType('controllerAction', $contextArgs);
         }
 
         $repository = $this->get('«appService».' . $objectType . '_factory')->getRepository();
@@ -390,7 +390,7 @@ class AjaxController {
         «IF hasImageFields»
             «/* TODO use custom image helper instead of pure imagine plugin */»
             //$imageHelper = $this->get('«appService».image_helper');
-            //$imagineManager = $imageHelper->getManager($objectType, $previewFieldName, 'controllerAction', $utilArgs);
+            //$imagineManager = $imageHelper->getManager($objectType, $previewFieldName, 'controllerAction', $contextArgs);
             $imagineManager = $this->get('systemplugin.imagine.manager');
         «ENDIF»
     '''
@@ -471,9 +471,9 @@ class AjaxController {
 
         $objectType = $postData->getAlnum('ot', '«getLeadingEntity.name.formatForCode»');
         $controllerHelper = $this->get('«appService».controller_helper');
-        $utilArgs = ['controller' => 'ajax', 'action' => 'checkForDuplicate'];
-        if (!in_array($objectType, $controllerHelper->getObjectTypes('controllerAction', $utilArgs))) {
-            $objectType = $controllerHelper->getDefaultObjectType('controllerAction', $utilArgs);
+        $contextArgs = ['controller' => 'ajax', 'action' => 'checkForDuplicate'];
+        if (!in_array($objectType, $controllerHelper->getObjectTypes('controllerAction', $contextArgs))) {
+            $objectType = $controllerHelper->getDefaultObjectType('controllerAction', $contextArgs);
         }
 
         $fieldName = $postData->getAlnum('fn', '');

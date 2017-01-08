@@ -71,7 +71,7 @@ class UploadFileTransformer {
             public function __construct(UploadType $formType, $fieldName)
             {
                 $this->formType = $formType;
-                $this->request = ServiceUtil::get('request_stack')->getMasterRequest();
+                $this->request = ServiceUtil::get('request_stack')->getCurrentRequest();
                 $this->controllerHelper = ServiceUtil::get('«appService».controller_helper');
                 $this->uploadHandler = ServiceUtil::get('«appService».upload_handler');
                 $this->fieldName = $fieldName;

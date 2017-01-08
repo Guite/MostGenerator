@@ -168,9 +168,9 @@ class ContentTypeList {
             $serviceManager = ServiceUtil::getManager();
             $controllerHelper = $serviceManager->get('«appService».controller_helper');
 
-            $utilArgs = ['name' => 'list'];
-            if (!isset($data['objectType']) || !in_array($data['objectType'], $controllerHelper->getObjectTypes('contentType', $utilArgs))) {
-                $data['objectType'] = $controllerHelper->getDefaultObjectType('contentType', $utilArgs);
+            $contextArgs = ['name' => 'list'];
+            if (!isset($data['objectType']) || !in_array($data['objectType'], $controllerHelper->getObjectTypes('contentType', $contextArgs))) {
+                $data['objectType'] = $controllerHelper->getDefaultObjectType('contentType', $contextArgs);
             }
 
             $this->objectType = $data['objectType'];
@@ -429,7 +429,7 @@ class ContentTypeList {
                     // assign categories lists for simulating category selectors
                     $serviceManager = ServiceUtil::getManager();
                     $translator = $serviceManager->get('translator.default');
-                    $locale = $serviceManager->get('request_stack')->getMasterRequest()->getLocale();
+                    $locale = $serviceManager->get('request_stack')->getCurrentRequest()->getLocale();
                     $categories = [];
                     $categoryApi = $serviceManager->get('zikula_categories_module.api.category');
                     foreach ($this->catRegistries as $registryId => $registryCid) {

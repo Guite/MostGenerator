@@ -69,7 +69,7 @@ class ViewHelper {
             {
                 $this->container = $container;
                 $this->templating = $templating;
-                $this->request = $requestStack->getMasterRequest();
+                $this->request = $requestStack->getCurrentRequest();
             }
 
             «getViewTemplate»

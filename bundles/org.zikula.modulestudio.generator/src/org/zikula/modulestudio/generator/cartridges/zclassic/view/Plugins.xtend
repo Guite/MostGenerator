@@ -146,7 +146,7 @@ class Plugins {
                 $this->router = $router;
             «ENDIF»
             «IF generateIcsTemplates && hasEntitiesWithIcsTemplates»
-                $this->request = $requestStack->getMasterRequest();
+                $this->request = $requestStack->getCurrentRequest();
             «ENDIF»
             $this->variableApi = $variableApi;
             $this->workflowHelper = $workflowHelper;

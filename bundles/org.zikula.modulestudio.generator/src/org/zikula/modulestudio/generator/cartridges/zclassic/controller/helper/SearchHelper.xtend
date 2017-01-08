@@ -101,7 +101,7 @@ class SearchHelper {
             «IF hasCategorisableEntities»
                 $featureActivationHelper = $serviceManager->get('«appService».feature_activation_helper');
             «ENDIF»
-            $request = $serviceManager->get('request_stack')->getMasterRequest();
+            $request = $serviceManager->get('request_stack')->getCurrentRequest();
 
             if (!$permissionApi->hasPermission($this->name . '::', '::', ACCESS_READ)) {
                 return [];
@@ -125,8 +125,7 @@ class SearchHelper {
             }
 
             $controllerHelper = $serviceManager->get('«appService».controller_helper');
-            $utilArgs = ['helper' => 'search', 'action' => 'getResults'];
-            $allowedTypes = $controllerHelper->getObjectTypes('helper', $utilArgs);
+            $allowedTypes = $controllerHelper->getObjectTypes('helper', ['helper' => 'search', 'action' => 'getResults']);
 
             foreach ($searchTypes as $objectType) {
                 if (!in_array($objectType, $allowedTypes)) {

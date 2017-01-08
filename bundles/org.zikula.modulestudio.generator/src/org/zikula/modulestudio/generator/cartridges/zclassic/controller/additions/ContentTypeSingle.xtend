@@ -95,9 +95,9 @@ class ContentTypeSingle {
             $serviceManager = ServiceUtil::getManager();
             $controllerHelper = $serviceManager->get('«appService».controller_helper');
 
-            $utilArgs = ['name' => 'detail'];
-            if (!isset($data['objectType']) || !in_array($data['objectType'], $controllerHelper->getObjectTypes('contentType', $utilArgs))) {
-                $data['objectType'] = $controllerHelper->getDefaultObjectType('contentType', $utilArgs);
+            $contextArgs = ['name' => 'detail'];
+            if (!isset($data['objectType']) || !in_array($data['objectType'], $controllerHelper->getObjectTypes('contentType', $contextArgs))) {
+                $data['objectType'] = $controllerHelper->getDefaultObjectType('contentType', $contextArgs);
             }
 
             $this->objectType = $data['objectType'];

@@ -69,7 +69,7 @@ class ExampleData {
     def private exampleRows(Application it) '''
         $entityManager = $this->container->get('«entityManagerService»');
         $logger = $this->container->get('logger');
-        $request = $this->container->get('request_stack')->getMasterRequest();
+        $request = $this->container->get('request_stack')->getCurrentRequest();
 
         «FOR entity : getAllEntities.filter[tree == EntityTreeType.NONE && !softDeleteable]»«entity.truncateTable»«ENDFOR»
         «IF amountOfExampleRows > 0»

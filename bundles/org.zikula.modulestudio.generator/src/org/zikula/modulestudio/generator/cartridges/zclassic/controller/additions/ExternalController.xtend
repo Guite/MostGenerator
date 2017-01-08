@@ -91,9 +91,9 @@ class ExternalController {
 
     def private displayBaseImpl(Application it) '''
         $controllerHelper = $this->get('«appService».controller_helper');
-        $utilArgs = ['controller' => 'external', 'action' => 'display'];
-        if (!in_array($objectType, $controllerHelper->getObjectTypes('controller', $utilArgs))) {
-            $objectType = $controllerHelper->getDefaultObjectType('controllerType', $utilArgs);
+        $contextArgs = ['controller' => 'external', 'action' => 'display'];
+        if (!in_array($objectType, $controllerHelper->getObjectTypes('controller', $contextArgs))) {
+            $objectType = $controllerHelper->getDefaultObjectType('controllerType', $contextArgs);
         }
 
         $component = $this->name . ':' . ucfirst($objectType) . ':';
@@ -181,9 +181,9 @@ class ExternalController {
         $cssAssetBag->add($assetHelper->resolve('@«appName»:css/style.css'));
 
         $controllerHelper = $this->get('«appService».controller_helper');
-        $utilArgs = ['controller' => 'external', 'action' => 'finder'];
-        if (!in_array($objectType, $controllerHelper->getObjectTypes('controller', $utilArgs))) {
-            $objectType = $controllerHelper->getDefaultObjectType('controllerType', $utilArgs);
+        $contextArgs = ['controller' => 'external', 'action' => 'finder'];
+        if (!in_array($objectType, $controllerHelper->getObjectTypes('controller', $contextArgs))) {
+            $objectType = $controllerHelper->getDefaultObjectType('controllerType', $contextArgs);
         }
 
         if (!$this->hasPermission('«appName»:' . ucfirst($objectType) . ':', '::', ACCESS_COMMENT)) {

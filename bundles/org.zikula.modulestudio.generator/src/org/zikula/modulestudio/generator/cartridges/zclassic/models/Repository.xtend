@@ -1461,7 +1461,7 @@ class Repository {
 
                     // Let any hooks know that we have updated an item
                     $urlArgs = $entity->createUrlArgs();
-                    $urlArgs['_locale'] = \ServiceUtil::get('request_stack')->getMasterRequest()->getLocale();
+                    $urlArgs['_locale'] = \ServiceUtil::get('request_stack')->getCurrentRequest()->getLocale();
                     $url = new RouteUrl('«app.appName.formatForDB»_«name.formatForCode»_display', $urlArgs);
                     $hookHelper->callProcessHooks($entity, 'process_edit', $url);
                 «ENDIF»

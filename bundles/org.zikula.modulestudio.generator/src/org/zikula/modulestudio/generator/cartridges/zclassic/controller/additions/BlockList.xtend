@@ -152,9 +152,9 @@ class BlockList {
             «ENDIF»
 
             $controllerHelper = $this->get('«appService».controller_helper');
-            $utilArgs = ['name' => 'list'];
-            if (!isset($properties['objectType']) || !in_array($properties['objectType'], $controllerHelper->getObjectTypes('block', $utilArgs))) {
-                $properties['objectType'] = $controllerHelper->getDefaultObjectType('block', $utilArgs);
+            $contextArgs = ['name' => 'list'];
+            if (!isset($properties['objectType']) || !in_array($properties['objectType'], $controllerHelper->getObjectTypes('block', $contextArgs))) {
+                $properties['objectType'] = $controllerHelper->getDefaultObjectType('block', $contextArgs);
             }
 
             $objectType = $properties['objectType'];

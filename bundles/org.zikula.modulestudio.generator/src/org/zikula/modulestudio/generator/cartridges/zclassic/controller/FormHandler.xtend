@@ -709,7 +709,7 @@ class FormHandler {
                         $url = null;
                         if ($action != 'delete') {
                             $urlArgs = $entity->createUrlArgs();
-                            $urlArgs['_locale'] = $this->container->get('request_stack')->getMasterRequest()->getLocale();
+                            $urlArgs['_locale'] = $this->container->get('request_stack')->getCurrentRequest()->getLocale();
                             $url = new RouteUrl('«appName.formatForDB»_' . $this->objectType . '_display', $urlArgs);
                         }
                         if (null !== $hookHelper) {

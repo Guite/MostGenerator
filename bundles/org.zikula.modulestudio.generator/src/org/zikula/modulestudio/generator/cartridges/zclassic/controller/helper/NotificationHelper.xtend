@@ -162,7 +162,7 @@ class NotificationHelper {
             $this->session = $session;
             $this->router = $router;
             $this->kernel = $kernel;
-            $this->request = $requestStack->getMasterRequest();
+            $this->request = $requestStack->getCurrentRequest();
             $this->variableApi = $variableApi;
             $this->templating = $twig;
             $this->mailerApi = $mailerApi;

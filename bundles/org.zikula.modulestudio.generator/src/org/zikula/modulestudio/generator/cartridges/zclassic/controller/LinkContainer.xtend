@@ -130,8 +130,8 @@ class LinkContainer {
              */
             public function getLinks($type = LinkContainerInterface::TYPE_ADMIN)
             {
-                $utilArgs = ['api' => 'linkContainer', 'action' => 'getLinks'];
-                $allowedObjectTypes = $this->controllerHelper->getObjectTypes('api', $utilArgs);
+                $contextArgs = ['api' => 'linkContainer', 'action' => 'getLinks'];
+                $allowedObjectTypes = $this->controllerHelper->getObjectTypes('api', $contextArgs);
         
                 $permLevel = LinkContainerInterface::TYPE_ADMIN == $type ? ACCESS_ADMIN : ACCESS_READ;
 

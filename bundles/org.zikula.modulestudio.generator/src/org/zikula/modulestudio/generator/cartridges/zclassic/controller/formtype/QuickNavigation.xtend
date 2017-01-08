@@ -127,7 +127,7 @@ class QuickNavigation {
             {
                 $this->setTranslator($translator);
                 «IF !incomingRelations.empty»
-                    $this->request = $requestStack->getMasterRequest();
+                    $this->request = $requestStack->getCurrentRequest();
                 «ENDIF»
                 «IF hasListFieldsEntity»
                     $this->listHelper = $listHelper;

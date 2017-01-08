@@ -394,9 +394,9 @@ class CategoryHelper {
         {
             «/* we can not use the container here, because it is not available yet during installation */»
             $controllerHelper = new \«appNamespace»\Helper\ControllerHelper($this->container, $this->translator, $this->session, $this->logger);
-            $utilArgs = ['api' => 'category', 'action' => $methodName];
-            if (!in_array($objectType, $controllerHelper->getObjectTypes('api', $utilArgs))) {
-                $objectType = $controllerHelper->getDefaultObjectType('api', $utilArgs);
+            $contextArgs = ['helper' => 'category', 'action' => $methodName];
+            if (!in_array($objectType, $controllerHelper->getObjectTypes('api', $contextArgs))) {
+                $objectType = $controllerHelper->getDefaultObjectType('api', $contextArgs);
             }
 
             return $objectType;

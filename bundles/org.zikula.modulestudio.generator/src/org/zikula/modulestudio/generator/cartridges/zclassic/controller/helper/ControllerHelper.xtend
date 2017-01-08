@@ -132,6 +132,18 @@ class ControllerHelper {
 
                 «processViewActionParameters»
             «ENDIF»
+            «IF hasDisplayActions»
+
+                «processDisplayActionParameters»
+            «ENDIF»
+            «IF hasEditActions»
+
+                «processEditActionParameters»
+            «ENDIF»
+            «IF hasDeleteActions»
+
+                «processDeleteActionParameters»
+            «ENDIF»
             «IF hasUploads»
 
                 «getFileBaseFolder»
@@ -330,12 +342,12 @@ class ControllerHelper {
          */
         public function processViewActionParameters($objectType, SortableColumns $sortableColumns, array $templateParameters = []«IF hasHookSubscribers», $supportsHooks = false«ENDIF»)
         {
-            if (!in_array($objectType, $this->getObjectTypes())) {
+            $contextArgs = ['controller' => $objectType, 'action' => 'view'];
+            if (!in_array($objectType, $this->getObjectTypes($contextArgs))) {
                 throw new Exception('Error! Invalid object type received.');
             }
 
-            $utilArgs = ['controller' => $objectType, 'action' => 'view'];
-            $request = $this->container->get('request_stack')->getMasterRequest();
+            $request = $this->container->get('request_stack')->getCurrentRequest();
             $repository = $this->container->get('«appService».' . $objectType . '_factory')->getRepository();
             $repository->setRequest($request);
 
@@ -350,7 +362,7 @@ class ControllerHelper {
                         $imageHelper = $this->container->get('«appService».image_helper');
                     «ENDIF»
                     $templateParameters['trees'] = $selectionHelper->getAllTrees($objectType);
-                    $templateParameters = array_merge($templateParameters, $repository->getAdditionalTemplateParameters(«IF hasUploads»$imageHelper, «ENDIF»'controllerAction', $utilArgs));
+                    $templateParameters = array_merge($templateParameters, $repository->getAdditionalTemplateParameters(«IF hasUploads»$imageHelper, «ENDIF»'controllerAction', $contextArgs));
                     «IF needsFeatureActivationHelper»
                         $templateParameters['featureActivationHelper'] = $this->container->get('«appService».feature_activation_helper');
                     «ENDIF»
@@ -394,7 +406,7 @@ class ControllerHelper {
             «IF hasUploads»
                 $imageHelper = $this->container->get('«appService».image_helper');
             «ENDIF»
-            $additionalParameters = $repository->getAdditionalTemplateParameters(«IF hasUploads»$imageHelper, «ENDIF»'controllerAction', $utilArgs);
+            $additionalParameters = $repository->getAdditionalTemplateParameters(«IF hasUploads»$imageHelper, «ENDIF»'controllerAction', $contextArgs);
 
             $additionalUrlParameters = [
                 'all' => $showAllEntries,
@@ -463,7 +475,7 @@ class ControllerHelper {
                 if (true === $supportsHooks) {
                     // build RouteUrl instance for display hooks
                     $currentUrlArgs['_locale'] = $request->getLocale();
-                    $currentUrlObject = new RouteUrl('«appName.formatForDB»_«name.formatForDB»_' . /*($isAdmin ? 'admin' : '') . */'view', $currentUrlArgs);
+                    $currentUrlObject = new RouteUrl('«appName.formatForDB»_' . $objectType . '_' . /*$templateParameters['routeArea'] . */'view', $currentUrlArgs);
                 }
 
             «ENDIF»
@@ -483,14 +495,126 @@ class ControllerHelper {
 
             $templateParameters['showAllEntries'] = $templateParameters['all'];
             $templateParameters['showOwnEntries'] = $templateParameters['own'];
-            «IF needsFeatureActivationHelper»
 
+            «IF needsFeatureActivationHelper»
                 $templateParameters['featureActivationHelper'] = $this->container->get('«appService».feature_activation_helper');
             «ENDIF»
             «IF hasEditActions»
-
                 $templateParameters['canBeCreated'] = $this->container->get('«appService».model_helper')->canBeCreated($objectType);
             «ENDIF»
+
+            return $templateParameters;
+        }
+    '''
+
+    def private processDisplayActionParameters(Application it) '''
+        /**
+         * Processes the parameters for a display action.
+         *
+         * @param string  $objectType         Name of treated entity type
+         * @param array   $templateParameters Template data
+         «IF hasHookSubscribers»
+         * @param boolean $supportsHooks      Whether hooks are supported or not
+         «ENDIF»
+         *
+         * @return array Enriched template parameters used for creating the response
+         */
+        public function processDisplayActionParameters($objectType, array $templateParameters = []«IF hasHookSubscribers», $supportsHooks = false«ENDIF»)
+        {
+            $contextArgs = ['controller' => $objectType, 'action' => 'display'];
+            if (!in_array($objectType, $this->getObjectTypes($contextArgs))) {
+                throw new Exception('Error! Invalid object type received.');
+            }
+
+            $request = $this->container->get('request_stack')->getCurrentRequest();
+            $repository = $this->container->get('«appService».' . $objectType . '_factory')->getRepository();
+            $repository->setRequest($request);
+            $entity = $templateParameters[$objectType];
+            «IF hasHookSubscribers»
+
+                if (true === $supportsHooks) {
+                    // build RouteUrl instance for display hooks
+                    $currentUrlArgs = $entity->createUrlArgs();
+                    $currentUrlArgs['_locale'] = $request->getLocale();
+                    $currentUrlObject = new RouteUrl('«appName.formatForDB»_' . $objectType . '_' . /*$templateParameters['routeArea'] . */'display', $currentUrlArgs);
+                    $templateParameters['currentUrlObject'] = $currentUrlObject;
+                }
+            «ENDIF»
+
+            «IF hasUploads»
+                $imageHelper = $this->container->get('«appService».image_helper');
+            «ENDIF»
+            $additionalParameters = $repository->getAdditionalTemplateParameters(«IF hasUploads»$imageHelper, «ENDIF»'controllerAction', $contextArgs);
+            $templateParameters = array_merge($templateParameters, $additionalParameters);
+            «IF needsFeatureActivationHelper»
+                $templateParameters['featureActivationHelper'] = $this->container->get('«appService».feature_activation_helper');
+            «ENDIF»
+
+            return $templateParameters;
+        }
+    '''
+
+    def private processEditActionParameters(Application it) '''
+        /**
+         * Processes the parameters for an edit action.
+         *
+         * @param string  $objectType         Name of treated entity type
+         * @param array   $templateParameters Template data
+         *
+         * @return array Enriched template parameters used for creating the response
+         */
+        public function processEditActionParameters($objectType, array $templateParameters = [])
+        {
+            $contextArgs = ['controller' => $objectType, 'action' => 'edit'];
+            if (!in_array($objectType, $this->getObjectTypes($contextArgs))) {
+                throw new Exception('Error! Invalid object type received.');
+            }
+
+            $request = $this->container->get('request_stack')->getCurrentRequest();
+            $repository = $this->container->get('«appService».' . $objectType . '_factory')->getRepository();
+            $repository->setRequest($request);
+
+            «IF hasUploads»
+                $imageHelper = $this->container->get('«appService».image_helper');
+            «ENDIF»
+            $additionalParameters = $repository->getAdditionalTemplateParameters(«IF hasUploads»$imageHelper, «ENDIF»'controllerAction', $contextArgs);
+            $templateParameters = array_merge($templateParameters, $additionalParameters);
+            «IF needsFeatureActivationHelper»
+                $templateParameters['featureActivationHelper'] = $this->container->get('«appService».feature_activation_helper');
+            «ENDIF»
+
+            return $templateParameters;
+        }
+    '''
+
+    def private processDeleteActionParameters(Application it) '''
+        /**
+         * Processes the parameters for a delete action.
+         *
+         * @param string  $objectType         Name of treated entity type
+         * @param array   $templateParameters Template data
+         «IF hasHookSubscribers»
+         * @param boolean $supportsHooks      Whether hooks are supported or not
+         «ENDIF»
+         *
+         * @return array Enriched template parameters used for creating the response
+         */
+        public function processDeleteActionParameters($objectType, array $templateParameters = []«IF hasHookSubscribers», $supportsHooks = false«ENDIF»)
+        {
+            $contextArgs = ['controller' => $objectType, 'action' => 'delete'];
+            if (!in_array($objectType, $this->getObjectTypes($contextArgs))) {
+                throw new Exception('Error! Invalid object type received.');
+            }
+
+            $request = $this->container->get('request_stack')->getCurrentRequest();
+            $repository = $this->container->get('«appService».' . $objectType . '_factory')->getRepository();
+            $repository->setRequest($request);
+
+            «IF hasUploads»
+                $imageHelper = $this->container->get('«appService».image_helper');
+            «ENDIF»
+            $additionalParameters = $repository->getAdditionalTemplateParameters(«IF hasUploads»$imageHelper, «ENDIF»'controllerAction', $contextArgs);
+            $templateParameters = array_merge($templateParameters, $additionalParameters);
 
             return $templateParameters;
         }
@@ -643,7 +767,7 @@ class ControllerHelper {
          */
         public function performGeoCoding($address)
         {
-            $lang = $this->container->get('request_stack')->getMasterRequest()->getLocale();
+            $lang = $this->container->get('request_stack')->getCurrentRequest()->getLocale();
             $url = 'https://maps.googleapis.com/maps/api/geocode/json?address=' . urlencode($address);
             $url .= '&region=' . $lang . '&language=' . $lang . '&sensor=false';
 
