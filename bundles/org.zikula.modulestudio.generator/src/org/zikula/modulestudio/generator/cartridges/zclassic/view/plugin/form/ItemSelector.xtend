@@ -31,7 +31,8 @@ class ItemSelector {
     def private itemSelectorBaseImpl(Application it) '''
         namespace «appNamespace»\Form\Plugin\Base;
 
-        use ServiceUtil;
+        use Symfony\Component\DependencyInjection\ContainerAwareInterface;
+        use Symfony\Component\DependencyInjection\ContainerAwareTrait;
         use Zikula_Form_Plugin_TextInput;
         use Zikula_Form_View;
         use Zikula_View;
@@ -39,8 +40,10 @@ class ItemSelector {
         /**
          * Item selector plugin base class.
          */
-        class AbstractItemSelector extends Zikula_Form_Plugin_TextInput
+        class AbstractItemSelector extends Zikula_Form_Plugin_TextInput implements ContainerAwareInterface
         {
+            use ContainerAwareTrait;
+
             /**
              * The treated object type.
              *
@@ -108,14 +111,12 @@ class ItemSelector {
              */
             public function render(Zikula_Form_View $view)
             {
-                $serviceManager = ServiceUtil::getManager();
-
                 static $firstTime = true;
                 if ($firstTime) {
-                    $assetHelper = $serviceManager->get('zikula_core.common.theme.asset_helper');
-                    $cssAssetBag = $serviceManager->get('zikula_core.common.theme.assets_css');
-                    $jsAssetBag = $serviceManager->get('zikula_core.common.theme.assets_js');
-                    $homePath = $serviceManager->get('router')->generate('home');
+                    $assetHelper = $this->container->get('zikula_core.common.theme.asset_helper');
+                    $cssAssetBag = $this->container->get('zikula_core.common.theme.assets_css');
+                    $jsAssetBag = $this->container->get('zikula_core.common.theme.assets_js');
+                    $homePath = $this->container->get('router')->generate('home');
 
                     $jsAssetBag->add($homePath . 'web/bootstrap-media-lightbox/bootstrap-media-lightbox.min.js');
                     $cssAssetBag->add($homePath . 'web/bootstrap-media-lightbox/bootstrap-media-lightbox.css');
@@ -124,7 +125,7 @@ class ItemSelector {
                 }
                 $firstTime = false;
 
-                $permissionApi = $serviceManager->get('zikula_permissions_module.api.permission');
+                $permissionApi = $this->container->get('zikula_permissions_module.api.permission');
 
                 if (!$permissionApi->hasPermission('«appName»:' . ucfirst($this->objectType) . ':', '::', ACCESS_COMMENT)) {
                     return false;
@@ -136,14 +137,14 @@ class ItemSelector {
                     if (in_array($this->objectType, $categorisableObjectTypes)) {
                         // fetch selected categories to reselect them in the output
                         // the actual filtering is done inside the repository class
-                        $categoryHelper = $serviceManager->get('«appService».category_helper');
+                        $categoryHelper = $this->container->get('«appService».category_helper');
                         $catIds = $categoryHelper->retrieveCategoriesFromRequest($this->objectType);
                     }
                 «ENDIF»
 
                 $this->selectedItemId = $this->text;
 
-                $repository = $serviceManager->get('«appService».entity_factory')->getRepository($this->objectType);
+                $repository = $this->container->get('«appService».entity_factory')->getRepository($this->objectType);
 
                 $sort = $repository->getDefaultSortingField();
                 $sdir = 'asc';
@@ -183,7 +184,7 @@ class ItemSelector {
             public function decode(Zikula_Form_View $view)
             {
                 parent::decode($view);
-                $this->objectType = ServiceUtil::get('request_stack')->getCurrentRequest()->request->get('«appName»_objecttype', '«getLeadingEntity.name.formatForCode»');
+                $this->objectType = $this->container->get('request_stack')->getCurrentRequest()->request->get('«appName»_objecttype', '«getLeadingEntity.name.formatForCode»');
                 $this->selectedItemId = $this->text;
             }
         }

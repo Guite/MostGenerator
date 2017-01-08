@@ -38,13 +38,16 @@ class Newsletter {
         namespace «appNamespace»\NewsletterPlugin;
 
         use Newsletter_AbstractPlugin;
-        use ServiceUtil;
+        use Symfony\Component\DependencyInjection\ContainerAwareInterface;
+        use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
         /**
          * Newsletter plugin class.
          */
-        class ItemListPlugin extends Newsletter_AbstractPlugin
+        class ItemListPlugin extends Newsletter_AbstractPlugin implements ContainerAwareInterface
         {
+            use ContainerAwareTrait;
+
             «newsletterImpl»
         }
     '''
@@ -58,7 +61,7 @@ class Newsletter {
          */
         public function getTitle()
         {
-            return ServiceUtil::get('translator.default')->__('Latest «IF entities.size < 2»«itemDesc»«ELSE»«appName» items«ENDIF»');
+            return $this->container->get('translator.default')->__('Latest «IF entities.size < 2»«itemDesc»«ELSE»«appName» items«ENDIF»');
         }
 
         /**
@@ -68,7 +71,7 @@ class Newsletter {
          */
         public function getDisplayName()
         {
-            return ServiceUtil::get('translator.default')->__('List of «itemDesc»«IF entities.size > 1» and other «appName» items«ENDIF»');
+            return $this->container->get('translator.default')->__('List of «itemDesc»«IF entities.size > 1» and other «appName» items«ENDIF»');
         }
 
         /**
@@ -78,7 +81,7 @@ class Newsletter {
          */
         public function getDescription()
         {
-            return ServiceUtil::get('translator.default')->__('This plugin shows a list of «itemDesc»«IF entities.size > 1» and other items«ENDIF» of the «appName» module.');
+            return $this->container->get('translator.default')->__('This plugin shows a list of «itemDesc»«IF entities.size > 1» and other items«ENDIF» of the «appName» module.');
         }
 
         /**
@@ -89,7 +92,7 @@ class Newsletter {
          */
         public function pluginAvailable()
         {
-            return ServiceUtil::get('kernel')->isBundle($this->modname);
+            return $this->container->get('kernel')->isBundle($this->modname);
         }
 
         /**
@@ -99,7 +102,7 @@ class Newsletter {
          */
         public function getParameters()
         {
-            $translator = ServiceUtil::get('translator.default');
+            $translator = $this->container->get('translator.default');
 
             $objectTypes = [];
             if ($this->pluginAvailable()) {
@@ -130,7 +133,7 @@ class Newsletter {
         public function setParameters()
         {
             // Object types to be used in the newsletter
-            $request = ServiceUtil::get('request_stack')->getCurrentRequest();
+            $request = $this->container->get('request_stack')->getCurrentRequest();
             $objectTypes = $request->request->get($this->modname . 'ObjectTypes', []);
 
             $this->setPluginVar('ObjectTypes', array_keys($objectTypes));
@@ -182,7 +185,7 @@ class Newsletter {
             $objectTypes = $this->getPluginVar('ObjectTypes', []);
             $args = $this->getPluginVar('Args', []);
 
-            $permissionApi = ServiceUtil::get('zikula_permissions_module.api.permission');
+            $permissionApi = $this->container->get('zikula_permissions_module.api.permission');
 
             $output = [];
 
@@ -213,7 +216,7 @@ class Newsletter {
         protected function selectPluginData(array $args = [], $filterAfterDate = null)
         {
             $objectType = $args['objectType'];
-            $repository = ServiceUtil::get('«appService».entity_factory')->getRepository($objectType);
+            $repository = $this->container->get('«appService».entity_factory')->getRepository($objectType);
 
             // create query
             $where = isset($args['filter']) ? $args['filter'] : '';
@@ -242,7 +245,7 @@ class Newsletter {
 
             «IF hasDisplayActions»
                 $hasDisplayPage = in_array($objectType, ['«getAllEntities.filter[hasDisplayAction].map[name.formatForCode].join('\', \'')»']);
-                $router = ServiceUtil::get('router');
+                $router = $this->container->get('router');
             «ENDIF»
             $items = [];
             foreach ($entities as $k => $item) {
@@ -297,7 +300,7 @@ class Newsletter {
 
             $sortParam = '';
             if ($args['sorting'] == 'newest') {
-                $selectionHelper = ServiceUtil::get('«appService».selection_helper');
+                $selectionHelper = $this->container->get('«appService».selection_helper');
                 $idFields = $selectionHelper->getIdFields($args['objectType']);
                 if (count($idFields) == 1) {
                     $sortParam = $idFields[0] . ' DESC';

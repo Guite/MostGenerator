@@ -185,7 +185,7 @@ class MigrationHelper {
          */
         protected function dropEventHandlersFromDatabase()
         {
-            EventUtil::unregisterPersistentModuleHandlers('«name.formatForCodeCapital»');
+            \EventUtil::unregisterPersistentModuleHandlers('«name.formatForCodeCapital»');
         }
     '''
 

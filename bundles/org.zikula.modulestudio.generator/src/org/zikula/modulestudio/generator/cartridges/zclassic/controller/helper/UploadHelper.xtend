@@ -34,7 +34,6 @@ class UploadHelper {
         namespace «appNamespace»\Helper\Base;
 
         use Psr\Log\LoggerInterface;
-        use ServiceUtil;
         use Symfony\Component\Filesystem\Exception\IOExceptionInterface;
         use Symfony\Component\Filesystem\Filesystem;
         use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -72,6 +71,11 @@ class UploadHelper {
             protected $variableApi;
 
             /**
+             * @var ControllerHelper
+             */
+            protected $controllerHelper;
+
+            /**
              * @var array List of object types with upload fields
              */
             protected $allowedObjectTypes;
@@ -89,24 +93,28 @@ class UploadHelper {
             /**
              * UploadHelper constructor.
              *
-             * @param TranslatorInterface $translator     Translator service instance
-             * @param SessionInterface    $session        Session service instance
-             * @param LoggerInterface     $logger         Logger service instance
-             * @param CurrentUserApi      $currentUserApi CurrentUserApi service instance
-             * @param VariableApi         $variableApi    VariableApi service instance
+             * @param TranslatorInterface $translator       Translator service instance
+             * @param SessionInterface    $session          Session service instance
+             * @param LoggerInterface     $logger           Logger service instance
+             * @param CurrentUserApi      $currentUserApi   CurrentUserApi service instance
+             * @param VariableApi         $variableApi      VariableApi service instance
+             * @param ControllerHelper    $controllerHelper ControllerHelper service instance
              */
             public function __construct(
                 TranslatorInterface $translator,
                 SessionInterface $session,
                 LoggerInterface $logger,
                 CurrentUserApi $currentUserApi,
-                VariableApi $variableApi)
+                VariableApi $variableApi,
+                ControllerHelper $controllerHelper)
             {
                 $this->setTranslator($translator);
                 $this->session = $session;
                 $this->logger = $logger;
                 $this->currentUserApi = $currentUserApi;
                 $this->variableApi = $variableApi;
+                $this->controllerHelper = $controllerHelper;
+
                 $this->allowedObjectTypes = [«FOR entity : getUploadEntities SEPARATOR ', '»'«entity.name.formatForCode»'«ENDFOR»];
                 $this->imageFileTypes = ['gif', 'jpeg', 'jpg', 'png', 'swf'];
                 $this->forbiddenFileTypes = ['cgi', 'pl', 'asp', 'phtml', 'php', 'php3', 'php4', 'php5', 'exe', 'com', 'bat', 'jsp', 'cfm', 'shtml'];
@@ -169,13 +177,11 @@ class UploadHelper {
             $fileNameParts[count($fileNameParts) - 1] = $extension;
             $fileName = implode('.', $fileNameParts);
 
-            $serviceManager = ServiceUtil::getManager();
-            $controllerHelper = $serviceManager->get('«appService».controller_helper');
             $flashBag = $this->session->getFlashBag();
 
             // retrieve the final file name
             try {
-                $basePath = $controllerHelper->getFileBaseFolder($objectType, $fieldName);
+                $basePath = $this->controllerHelper->getFileBaseFolder($objectType, $fieldName);
             } catch (\Exception $e) {
                 $flashBag->add('error', $e->getMessage());
                 $this->logger->error('{app}: User {user} could not detect upload destination path for entity {entity} and field {field}.', ['app' => '«appName»', 'user' => $this->currentUserApi->get('uname'), 'entity' => $objectType, 'field' => $fieldName]);
@@ -487,9 +493,6 @@ class UploadHelper {
             if (empty($entity[$fieldName])) {
                 return $entity;
             }
-
-            $serviceManager = ServiceUtil::getManager();
-            $controllerHelper = $serviceManager->get('«appService».controller_helper');
 
             // remove the file
             if (is_array($entity[$fieldName]) && isset($entity[$fieldName][$fieldName])) {

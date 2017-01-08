@@ -27,14 +27,17 @@ class Mailz {
     def private mailzBaseClass(Application it) '''
         namespace «appNamespace»\Api\Base;
 
-        use ServiceUtil;
+        use Symfony\Component\DependencyInjection\ContainerAwareInterface;
+        use Symfony\Component\DependencyInjection\ContainerAwareTrait;
         use Zikula_AbstractBase;
 
         /**
          * Mailz api base class.
          */
-        abstract class AbstractMailzApi extends Zikula_AbstractBase
+        abstract class AbstractMailzApi extends Zikula_AbstractBase implements ContainerAwareInterface
         {
+            use ContainerAwareTrait;
+
             «mailzBaseImpl»
         }
     '''
@@ -49,7 +52,7 @@ class Mailz {
          */
         public function getPlugins(array $args = [])
         {
-            $translator = $this->get('translator.default');
+            $translator = $this->container->get('translator.default');
 
             «val itemDesc = getLeadingEntity.nameMultiple.formatForDisplay»
             $plugins = [];
@@ -88,9 +91,9 @@ class Mailz {
             «val leadingEntity = getLeadingEntity»
             $objectType = '«leadingEntity.name.formatForCode»';
 
-            $repository = $this->get('«appService».entity_factory')->getRepository($objectType);
+            $repository = $this->container->get('«appService».entity_factory')->getRepository($objectType);
 
-            $selectionHelper = $this->get('«appService».selection_helper');
+            $selectionHelper = $this->container->get('«appService».selection_helper');
             $idFields = $selectionHelper->getIdFields($objectType);
 
             $sortParam = '';
@@ -123,11 +126,11 @@ class Mailz {
                 'items' => $entities
             ];
             «IF hasUploads»
-                $imageHelper = $this->get('«appService».image_helper');
+                $imageHelper = $this->container->get('«appService».image_helper');
             «ENDIF»
             $templateParameters = array_merge($templateParameters, $repository->getAdditionalTemplateParameters(«IF hasUploads»$imageHelper, «ENDIF»'api', ['name' => 'mailz']));
 
-            return $this->get('twig')->render(
+            return $this->container->get('twig')->render(
                 '@«appName»/Mailz/itemlist_«leadingEntity.name.formatForCode».' . $templateType . '.twig',
                 $templateParameters
             );

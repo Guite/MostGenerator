@@ -473,6 +473,8 @@ class ServiceDefinitions {
                     - "@zikula_extensions_module.api.variable"
                     - "@twig"
                     - "@zikula_mailer_module.api.mailer"
+                    - "@zikula_groups_module.group_repository"
+                    - "@zikula_users_module.user_repository"
                     - "@«modPrefix».workflow_helper"
         «ENDIF»
 
@@ -504,6 +506,7 @@ class ServiceDefinitions {
                     - "@logger"
                     - "@zikula_users_module.current_user"
                     - "@zikula_extensions_module.api.variable"
+                    - "@«modPrefix».controller_helper"
         «ENDIF»
 
         «modPrefix».view_helper:

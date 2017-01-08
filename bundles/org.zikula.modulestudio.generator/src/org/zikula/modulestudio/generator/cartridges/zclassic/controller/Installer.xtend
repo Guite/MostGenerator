@@ -35,14 +35,7 @@ class Installer {
     def private installerBaseClass(Application it) '''
         namespace «appNamespace»\Base;
 
-        «IF hasCategorisableEntities»
-            use DBUtil;
-        «ENDIF»
         use Doctrine\DBAL\Connection;
-        use EventUtil;
-        «IF hasCategorisableEntities»
-            use ModUtil;
-        «ENDIF»
         use RuntimeException;
         use UserUtil;
         use Zikula\Core\AbstractExtensionInstaller;
@@ -265,10 +258,12 @@ class Installer {
                 $this->delVars();
             «ENDIF»
             «IF hasCategorisableEntities»
-                «/* TODO replace by API usage */»
                 // remove category registry entries
-                ModUtil::dbInfoLoad('ZikulaCategoriesModule');
-                DBUtil::deleteWhere('categories_registry', 'modname = \'«appName»\'');
+                $categoryRegistryApi = $this->container->get('zikula_categories_module.api.category_registry');
+                // assume that not more than five registries exist
+                for ($i = 1; $i <= 5; $i++) {
+                    $categoryRegistryApi->deleteRegistry('«appName»');
+                }
             «ENDIF»
             «IF hasUploads»
 

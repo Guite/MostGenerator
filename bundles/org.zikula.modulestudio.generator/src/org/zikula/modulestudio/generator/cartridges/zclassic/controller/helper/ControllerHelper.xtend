@@ -37,7 +37,6 @@ class ControllerHelper {
     def private controllerFunctionsBaseImpl(Application it) '''
         namespace «appNamespace»\Helper\Base;
 
-        use DataUtil;
         «IF hasUploads || hasGeographical»
             use Psr\Log\LoggerInterface;
         «ENDIF»
@@ -435,9 +434,9 @@ class ControllerHelper {
                 ['ae', 'oe', 'ue', 'Ae', 'Oe', 'Ue', 'ss', '', '', '', '-', '-', 'e', 'e', 'a'],
                 $name
             );
-            $name = DataUtil::formatPermalink($name);
+            $name = preg_replace("#(\s*\/\s*|\s*\+\s*|\s+)#", '-', strtolower($name));
 
-            return strtolower($name);
+            return $name;
         }
     '''
 

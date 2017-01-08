@@ -25,17 +25,18 @@ class Tag {
     def private tagBaseClass(Application it) '''
         namespace «appNamespace»\TaggedObjectMeta\Base;
 
-        use DateUtil;
-        use ServiceUtil;
-        use UserUtil;
-        use Zikula\TagModule\AbstractTaggedObjectMeta;
+        use Symfony\Component\DependencyInjection\ContainerAwareInterface;
+        use Symfony\Component\DependencyInjection\ContainerAwareTrait;
         use Zikula\Core\UrlInterface;
+        use Zikula\TagModule\AbstractTaggedObjectMeta;
 
         /**
          * This class provides object meta data for the Tag module.
          */
-        abstract class Abstract«appName» extends AbstractTaggedObjectMeta
+        abstract class Abstract«appName» extends AbstractTaggedObjectMeta implements ContainerAwareInterface
         {
+            use ContainerAwareTrait;
+
             «tagBaseImpl»
         }
     '''
@@ -59,21 +60,19 @@ class Tag {
             $urlArgs = $urlObject->getArgs();
             $objectType = isset($urlArgs['ot']) ? $urlArgs['ot'] : '«getLeadingEntity.name.formatForCode»';
 
-            $serviceManager = ServiceUtil::getManager();
-
-            $permissionApi = $serviceManager->get('zikula_permissions_module.api.permission');
+            $permissionApi = $this->container->get('zikula_permissions_module.api.permission');
             $component = $module . ':' . ucfirst($objectType) . ':';
             $perm = $permissionApi->hasPermission($component, $objectId . '::', ACCESS_READ);
             if (!$perm) {
                 return;
             }
 
-            $repository = $serviceManager->get('«appService».entity_factory')->getRepository($objectType);
+            $repository = $this->container->get('«appService».entity_factory')->getRepository($objectType);
             $useJoins = false;
 
             «/* TODO support composite identifiers properly at this point */»
             $entity = $repository->selectById($objectId, $useJoins);
-            if (false === $entity || (!is_array($entity) && !is_object($entity))) {
+            if (null === $entity) {
                 return;
             }
 
@@ -110,8 +109,7 @@ class Tag {
          */
         public function setObjectDate($date)
         {
-«/*            $this->date = $date; */»
-            $this->date = DateUtil::formatDatetime($date, 'datetimebrief');
+            $this->date = «/* $date; */»\DateUtil::formatDatetime($date, 'datetimebrief');
         }
 
         /**

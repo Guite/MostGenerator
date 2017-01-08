@@ -440,7 +440,7 @@ class FormHandler {
                 ControllerHelper $controllerHelper,
                 ModelHelper $modelHelper,
                 SelectionHelper $selectionHelper,
-                WorkflowHelperHelper $workflowHelper«IF hasHookSubscribers»,
+                WorkflowHelper $workflowHelper«IF hasHookSubscribers»,
                 HookHelper $hookHelper«ENDIF»«IF hasTranslatable»,
                 TranslatableHelper $translatableHelper«ENDIF»«IF needsFeatureActivationHelper»,
                 FeatureActivationHelper $featureActivationHelper«ENDIF»)

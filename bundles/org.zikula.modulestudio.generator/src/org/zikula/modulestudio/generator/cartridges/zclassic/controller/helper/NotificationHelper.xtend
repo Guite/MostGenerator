@@ -30,9 +30,6 @@ class NotificationHelper {
     def private notificationHelperBaseClass(Application it) '''
         namespace «appNamespace»\Helper\Base;
 
-        use ModUtil;
-        use UserUtil;
-
         use Swift_Message;
         use Symfony\Component\HttpFoundation\Request;
         use Symfony\Component\HttpFoundation\RequestStack;
@@ -44,7 +41,9 @@ class NotificationHelper {
         use Zikula\Common\Translator\TranslatorTrait;
         use Zikula\Core\Doctrine\EntityAccess;
         use Zikula\ExtensionsModule\Api\VariableApi;
+        use Zikula\GroupsModule\Entity\RepositoryInterface\GroupRepositoryInterface;
         use Zikula\MailerModule\Api\MailerApi;
+        use Zikula\UsersModule\Entity\RepositoryInterface\UserRepositoryInterface;
         use «appNamespace»\Helper\WorkflowHelper;
 
         /**
@@ -95,6 +94,16 @@ class NotificationHelper {
         protected $mailer;
 
         /**
+         * @var GroupRepositoryInterface
+         */
+        protected $groupRepository;
+
+        /**
+         * @var UserRepositoryInterface
+         */
+        protected $userRepository;
+
+        /**
          * @var WorkflowHelper
          */
         protected $workflowHelper;
@@ -137,15 +146,17 @@ class NotificationHelper {
         /**
          * NotificationHelper constructor.
          *
-         * @param KernelInterface     $kernel         Kernel service instance
-         * @param TranslatorInterface $translator     Translator service instance
-         * @param SessionInterface    $session        Session service instance
-         * @param Routerinterface     $router         Router service instance
-         * @param RequestStack        $requestStack   RequestStack service instance
-         * @param VariableApi         $variableApi    VariableApi service instance
-         * @param Twig_Environment    $twig           Twig service instance
-         * @param MailerApi           $mailerApi      MailerApi service instance
-         * @param WorkflowHelper      $workflowHelper WorkflowHelper service instance
+         * @param KernelInterface          $kernel          Kernel service instance
+         * @param TranslatorInterface      $translator      Translator service instance
+         * @param SessionInterface         $session         Session service instance
+         * @param Routerinterface          $router          Router service instance
+         * @param RequestStack             $requestStack    RequestStack service instance
+         * @param VariableApi              $variableApi     VariableApi service instance
+         * @param Twig_Environment         $twig            Twig service instance
+         * @param MailerApi                $mailerApi       MailerApi service instance
+         * @param GroupRepositoryInterface $groupRepository GroupRepository service instance
+         * @param UserRepositoryInterface  $userRepository  UserRepository service instance
+         * @param WorkflowHelper           $workflowHelper  WorkflowHelper service instance
          */
         public function __construct(
             KernelInterface $kernel,
@@ -156,6 +167,8 @@ class NotificationHelper {
             VariableApi $variableApi,
             Twig_Environment $twig,
             MailerApi $mailerApi,
+            GroupRepositoryInterface $groupRepository,
+            UserRepositoryInterface $userRepository,
             WorkflowHelper $workflowHelper)
         {
             $this->kernel = $kernel;
@@ -166,6 +179,8 @@ class NotificationHelper {
             $this->variableApi = $variableApi;
             $this->templating = $twig;
             $this->mailerApi = $mailerApi;
+            $this->groupRepository = $groupRepository;
+            $this->userRepository = $userRepository;
             $this->workflowHelper = $workflowHelper;
             $this->name = '«appName»';
         }
@@ -228,9 +243,11 @@ class NotificationHelper {
                     $moderatorGroupId = $this->variableApi->get('«appName»', 'superModerationGroupFor' . $objectType, 2);
                 }
 
-                $moderatorGroup = ModUtil::apiFunc('ZikulaGroupsModule', 'user', 'get', ['gid' => $moderatorGroupId]);
-                foreach (array_keys($moderatorGroup['members']) as $uid) {
-                    $this->addRecipient($uid);
+                $moderatorGroup = $this->groupRepository->find($moderatorGroupId);
+                if (null !== $moderatorGroup) {
+                    foreach (array_keys($moderatorGroup['members']) as $uid) {
+                        $this->addRecipient($uid);
+                    }
                 }
             } elseif ($this->recipientType == 'creator' && method_exists($entity, 'getCreatedBy')) {
                 $creatorUid = $this->entity->getCreatedBy()->getUid();
@@ -251,11 +268,16 @@ class NotificationHelper {
          */
         protected function addRecipient($userId)
         {
-            $userVars = UserUtil::getVars($userId);
+            $user = $this->userRepository->find($userId);
+            if (null === $user) {
+                return;
+            }
+
+            $userAttributes = $user->getAttributes();
 
             $this->recipients[] = [
-                'name' => (isset($userVars['name']) && !empty($userVars['name']) ? $userVars['name'] : $userVars['uname']),
-                'email' => $userVars['email']
+                'name' => isset($userAttributes['name']) && !empty($userAttributes['name']) ? $userAttributes['name'] : $user->getUname(),
+                'email' => $user->getEmail()
             ];
         }
 

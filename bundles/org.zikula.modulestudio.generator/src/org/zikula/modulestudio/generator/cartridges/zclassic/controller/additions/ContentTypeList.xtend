@@ -31,7 +31,8 @@ class ContentTypeList {
     def private contentTypeBaseClass(Application it) '''
         namespace «appNamespace»\ContentType\Base;
 
-        use ServiceUtil;
+        use Symfony\Component\DependencyInjection\ContainerAwareInterface;
+        use Symfony\Component\DependencyInjection\ContainerAwareTrait;
         «IF needsFeatureActivationHelper»
             use «appNamespace»\Helper\FeatureActivationHelper;
         «ENDIF»
@@ -39,8 +40,10 @@ class ContentTypeList {
         /**
          * Generic item list content plugin base class.
          */
-        abstract class AbstractItemList extends \Content_AbstractContentType
+        abstract class AbstractItemList extends \Content_AbstractContentType implements ContainerAwareInterface
         {
+            use ContainerAwareTrait;
+
             «contentTypeBaseImpl»
         }
     '''
@@ -145,7 +148,7 @@ class ContentTypeList {
          */
         public function getTitle()
         {
-            return ServiceUtil::get('translator.default')->__('«appName» list view');
+            return $this->container->get('translator.default')->__('«appName» list view');
         }
 
         /**
@@ -155,7 +158,7 @@ class ContentTypeList {
          */
         public function getDescription()
         {
-            return ServiceUtil::get('translator.default')->__('Display list of «appName» objects.');
+            return $this->container->get('translator.default')->__('Display list of «appName» objects.');
         }
 
         /**
@@ -165,8 +168,7 @@ class ContentTypeList {
          */
         public function loadData(&$data)
         {
-            $serviceManager = ServiceUtil::getManager();
-            $controllerHelper = $serviceManager->get('«appService».controller_helper');
+            $controllerHelper = $this->container->get('«appService».controller_helper');
 
             $contextArgs = ['name' => 'list'];
             if (!isset($data['objectType']) || !in_array($data['objectType'], $controllerHelper->getObjectTypes('contentType', $contextArgs))) {
@@ -197,16 +199,16 @@ class ContentTypeList {
             $this->customTemplate = $data['customTemplate'];
             $this->filter = $data['filter'];
             «IF hasCategorisableEntities»
-                $featureActivationHelper = $serviceManager->get('«appService».feature_activation_helper');
+                $featureActivationHelper = $this->container->get('«appService».feature_activation_helper');
                 if ($featureActivationHelper->isEnabled(FeatureActivationHelper::CATEGORIES, $this->objectType)) {
                     $this->categorisableObjectTypes = [«FOR entity : getCategorisableEntities SEPARATOR ', '»'«entity.name.formatForCode»'«ENDFOR»];
-                    $categoryHelper = $serviceManager->get('«appService».category_helper');
+                    $categoryHelper = $this->container->get('«appService».category_helper');
 
                     // fetch category properties
                     $this->catRegistries = [];
                     $this->catProperties = [];
                     if (in_array($this->objectType, $this->categorisableObjectTypes)) {
-                        $selectionHelper = $serviceManager->get('«appService».selection_helper');
+                        $selectionHelper = $this->container->get('«appService».selection_helper');
                         $idFields = $selectionHelper->getIdFields($this->objectType);
                         $this->catRegistries = $categoryHelper->getAllPropertiesWithMainCat($this->objectType, $idFields[0]);
                         $this->catProperties = $categoryHelper->getAllProperties($this->objectType);
@@ -256,9 +258,8 @@ class ContentTypeList {
          */
         public function display()
         {
-            $serviceManager = ServiceUtil::getManager();
-            $repository = $serviceManager->get('«appService».entity_factory')->getRepository($objectType);
-            $permissionApi = $serviceManager->get('zikula_permissions_module.api.permission');
+            $repository = $this->container->get('«appService».entity_factory')->getRepository($objectType);
+            $permissionApi = $this->container->get('zikula_permissions_module.api.permission');
 
             // create query
             $where = $this->filter;
@@ -266,12 +267,12 @@ class ContentTypeList {
             $qb = $repository->genericBaseQuery($where, $orderBy);
             «IF hasCategorisableEntities»
 
-                $featureActivationHelper = $serviceManager->get('«appService».feature_activation_helper');
+                $featureActivationHelper = $this->container->get('«appService».feature_activation_helper');
                 if ($featureActivationHelper->isEnabled(FeatureActivationHelper::CATEGORIES, $this->objectType)) {
                     // apply category filters
                     if (in_array($this->objectType, $this->categorisableObjectTypes)) {
                         if (is_array($this->catIds) && count($this->catIds) > 0) {
-                            $categoryHelper = $serviceManager->get('«appService».category_helper');
+                            $categoryHelper = $this->container->get('«appService».category_helper');
                             $qb = $categoryHelper->buildFilterClauses($qb, $this->objectType, $this->catIds);
                         }
                     }
@@ -314,13 +315,13 @@ class ContentTypeList {
             «ENDIF»
 
             «IF hasUploads»
-                $imageHelper = $serviceManager->get('«appService».image_helper');
+                $imageHelper = $this->container->get('«appService».image_helper');
             «ENDIF»
             $templateParameters = array_merge($templateData, $repository->getAdditionalTemplateParameters(«IF hasUploads»$imageHelper, «ENDIF»'contentType'));
 
             $template = $this->getDisplayTemplate();
 
-            return $serviceManager->get('twig')->render('@«appName»/' . $template, $templateParameters);
+            return $this->container->get('twig')->render('@«appName»/' . $template, $templateParameters);
         }
 
         /**
@@ -364,7 +365,7 @@ class ContentTypeList {
 
             $sortParam = '';
             if ($this->sorting == 'newest') {
-                $selectionHelper = ServiceUtil::get('«appService».selection_helper');
+                $selectionHelper = $this->container->get('«appService».selection_helper');
                 $idFields = $selectionHelper->getIdFields($this->objectType);
                 if (count($idFields) == 1) {
                     $sortParam = $idFields[0] . ' DESC';
@@ -420,18 +421,17 @@ class ContentTypeList {
             array_push($this->view->plugins_dir, '«relativeAppRootPath»/«getViewPath»/plugins');
             «IF hasCategorisableEntities»
 
-                $featureActivationHelper = $serviceManager->get('«appService».feature_activation_helper');
+                $featureActivationHelper = $this->container->get('«appService».feature_activation_helper');
                 if ($featureActivationHelper->isEnabled(FeatureActivationHelper::CATEGORIES, $this->objectType)) {
                     // assign category data
                     $this->view->assign('registries', $this->catRegistries)
                                ->assign('properties', $this->catProperties);
 
                     // assign categories lists for simulating category selectors
-                    $serviceManager = ServiceUtil::getManager();
-                    $translator = $serviceManager->get('translator.default');
-                    $locale = $serviceManager->get('request_stack')->getCurrentRequest()->getLocale();
+                    $translator = $this->container->get('translator.default');
+                    $locale = $this->container->get('request_stack')->getCurrentRequest()->getLocale();
                     $categories = [];
-                    $categoryApi = $serviceManager->get('zikula_categories_module.api.category');
+                    $categoryApi = $this->container->get('zikula_categories_module.api.category');
                     foreach ($this->catRegistries as $registryId => $registryCid) {
                         $propName = '';
                         foreach ($this->catProperties as $propertyName => $propertyId) {
@@ -454,7 +454,7 @@ class ContentTypeList {
                     }
 
                     $this->view->assign('categories', $categories)
-                               ->assign('categoryHelper', $serviceManager->get('«appService».category_helper'));
+                               ->assign('categoryHelper', $this->container->get('«appService».category_helper'));
                 }
             «ENDIF»
         }
