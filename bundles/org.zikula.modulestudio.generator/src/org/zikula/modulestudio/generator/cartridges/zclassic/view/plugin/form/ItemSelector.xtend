@@ -141,7 +141,7 @@ class ItemSelector {
                 $this->selectedItemId = $this->text;
 
                 $serviceManager = ServiceUtil::getManager();
-                $repository = $serviceManager->get('«appService».' . $this->objectType . '_factory')->getRepository();
+                $repository = $serviceManager->get('«appService».«name.formatForDB»_factory')->getRepository($this->objectType);
 
                 $sort = $repository->getDefaultSortingField();
                 $sdir = 'asc';

@@ -102,7 +102,7 @@ class EditEntity {
         «IF hasLocaleFieldsEntity && app.targets('1.4-dev')»
             use Zikula\SettingsModule\Api\LocaleApi;
         «ENDIF»
-        use «app.appNamespace»\Entity\Factory\«name.formatForCodeCapital»Factory;
+        use «app.appNamespace»\Entity\Factory\«app.name.formatForCodeCapital»Factory;
         «IF app.needsFeatureActivationHelper»
             use «app.appNamespace»\Helper\FeatureActivationHelper;
         «ENDIF»
@@ -121,7 +121,7 @@ class EditEntity {
             use TranslatorTrait;
 
             /**
-             * @var «name.formatForCodeCapital»Factory
+             * @var «app.name.formatForCodeCapital»Factory
              */
             protected $entityFactory;
             «IF extensions.contains('translatable')»
@@ -162,7 +162,7 @@ class EditEntity {
              * «name.formatForCodeCapital»Type constructor.
              *
              * @param TranslatorInterface $translator «IF extensions.contains('translatable')» «ENDIF»   Translator service instance
-             * @param «name.formatForCodeCapital»Factory        $entityFactory Entity factory service instance
+             * @param «app.name.formatForCodeCapital»Factory        $entityFactory Entity factory service instance
             «IF extensions.contains('translatable')»
                 «' '»* @param VariableApi         $variableApi VariableApi service instance
                 «' '»* @param TranslatableHelper  $listHelper  TranslatableHelper service instance
@@ -177,7 +177,7 @@ class EditEntity {
                 «' '»* @param FeatureActivationHelper $featureActivationHelper FeatureActivationHelper service instance
             «ENDIF»
              */
-            public function __construct(TranslatorInterface $translator, «name.formatForCodeCapital»Factory $entityFactory«IF extensions.contains('translatable')», VariableApi $variableApi, TranslatableHelper $translatableHelper«ENDIF»«IF hasListFieldsEntity», ListEntriesHelper $listHelper«ENDIF»«IF hasLocaleFieldsEntity && app.targets('1.4-dev')», LocaleApi $localeApi«ENDIF»«IF app.needsFeatureActivationHelper», FeatureActivationHelper $featureActivationHelper«ENDIF»)
+            public function __construct(TranslatorInterface $translator, «app.name.formatForCodeCapital»Factory $entityFactory«IF extensions.contains('translatable')», VariableApi $variableApi, TranslatableHelper $translatableHelper«ENDIF»«IF hasListFieldsEntity», ListEntriesHelper $listHelper«ENDIF»«IF hasLocaleFieldsEntity && app.targets('1.4-dev')», LocaleApi $localeApi«ENDIF»«IF app.needsFeatureActivationHelper», FeatureActivationHelper $featureActivationHelper«ENDIF»)
             {
                 $this->setTranslator($translator);
                 $this->entityFactory = $entityFactory;

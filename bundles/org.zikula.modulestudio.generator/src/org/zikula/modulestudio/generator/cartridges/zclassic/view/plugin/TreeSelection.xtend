@@ -28,7 +28,7 @@ class TreeSelection {
         public function getTreeSelection($objectType, $node, $target, $skipRootNode = true)
         {
             $serviceManager = \ServiceUtil::getManager();
-            $repository = $serviceManager->get('«appService».' . $params['objectType'] . '_factory')->getRepository();
+            $repository = $serviceManager->get('«appService».«name.formatForDB»_factory')->getRepository($objectType);
             $titleFieldName = $repository->getTitleFieldName();
 
             $result = null;

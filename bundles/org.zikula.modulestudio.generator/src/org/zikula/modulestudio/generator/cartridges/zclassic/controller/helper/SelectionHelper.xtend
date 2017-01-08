@@ -233,7 +233,7 @@ class SelectionHelper {
                 throw new \InvalidArgumentException($this->translator->__('Invalid object type received.'));
             }
 
-            return $this->container->get('«appService».' . $objectType . '_factory')->getRepository();
+            return $this->container->get('«appService».«name.formatForDB»_factory')->getRepository($objectType);
         }
         «IF hasTrees»
 

@@ -135,11 +135,11 @@ class ArchiveHelper {
             PageUtil::registerVar('«appName»AutomaticArchiving', false, true);
             «FOR entity : getArchivingEntities»
 
-                if ($this->container->has('«appService».«entity.name.formatForCode»_factory')) {
+                if ($this->container->has('«appService».«name.formatForDB»_factory')) {
                     // perform update for «entity.nameMultiple.formatForDisplay» becoming archived
                     $logArgs = ['app' => '«appName»', 'entity' => '«entity.name.formatForCode»'];
                     $this->logger->notice('{app}: Automatic archiving for the {entity} entity started.', $logArgs);
-                    $repository = $this->container->get('«appService».«entity.name.formatForCode»_factory')->getRepository();
+                    $repository = $this->container->get('«appService».«name.formatForDB»_factory')->getRepository('«entity.name.formatForCode»');
                     $repository->archiveObjects($this->permissionApi, $this->session, $this->translator, $this->workflowHelper«IF !entity.skipHookSubscribers», $this->hookHelper«ENDIF»);
                     $this->logger->notice('{app}: Automatic archiving for the {entity} entity completed.', $logArgs);
                 }

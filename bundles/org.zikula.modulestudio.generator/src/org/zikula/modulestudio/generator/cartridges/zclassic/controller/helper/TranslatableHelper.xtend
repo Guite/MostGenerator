@@ -197,7 +197,7 @@ class TranslatableHelper {
             // prepare form data to edit multiple translations at once
 
             // get translations
-            $repository = $this->container->get('«appService».' . $objectType . '_factory')->getRepository();
+            $repository = $this->container->get('«appService».«name.formatForDB»_factory')->getRepository($objectType);
             $entityTranslations = $repository->findTranslations($entity);
 
             $supportedLanguages = $this->getSupportedLanguages($objectType);

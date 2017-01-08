@@ -147,7 +147,7 @@ class SearchHelper {
                     «ENDFOR»
                 }
 
-                $repository = $serviceManager->get('«appService».' . $objectType . '_factory')->getRepository();
+                $repository = $serviceManager->get('«appService».«name.formatForDB»_factory')->getRepository($objectType);
 
                 // build the search query without any joins
                 $qb = $repository->genericBaseQuery('', '', false);

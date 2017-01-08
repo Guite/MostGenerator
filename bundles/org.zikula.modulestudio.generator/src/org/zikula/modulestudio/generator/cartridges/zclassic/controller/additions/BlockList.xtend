@@ -159,7 +159,7 @@ class BlockList {
 
             $objectType = $properties['objectType'];
 
-            $repository = $this->get('«appService».' . $objectType . '_factory')->getRepository();
+            $repository = $this->get('«appService».«name.formatForDB»_factory')->getRepository($objectType);
 
             // create query
             $where = $properties['filter'];

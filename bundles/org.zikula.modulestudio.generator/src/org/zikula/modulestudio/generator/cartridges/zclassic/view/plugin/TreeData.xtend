@@ -36,7 +36,7 @@ class TreeData {
             $hasEditAction = in_array($objectType, ['«getAllEntities.filter[hasEditAction].map[name.formatForCode].join('\', \'')»']);
 
             $serviceManager = \ServiceUtil::getManager();
-            $repository = $serviceManager->get('«appService».' . $objectType . '_factory')->getRepository();
+            $repository = $serviceManager->get('«appService».«name.formatForDB»_factory')->getRepository($objectType);
             $descriptionFieldName = $repository->getDescriptionFieldName();
 
             $result = '';

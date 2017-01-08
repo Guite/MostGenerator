@@ -109,8 +109,8 @@ class ZclassicGenerator implements IGenerator {
         println('Generating repository classes')
         new Repository().generate(it, fsa)
 
-        pm?.subTask('Model: Factory classes')
-        println('Generating factory classes')
+        pm?.subTask('Model: Factory class')
+        println('Generating factory class')
         new Factory().generate(it, fsa)
     }
 

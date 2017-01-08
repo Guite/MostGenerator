@@ -88,7 +88,7 @@ class Mailz {
             «val leadingEntity = getLeadingEntity»
             $objectType = '«leadingEntity.name.formatForCode»';
 
-            $repository = $this->get('«appService».' . $objectType . '_factory')->getRepository();
+            $repository = $this->get('«appService».«name.formatForDB»_factory')->getRepository($objectType);
 
             $selectionHelper = $this->get('«appService».selection_helper');
             $idFields = $selectionHelper->getIdFields($objectType);

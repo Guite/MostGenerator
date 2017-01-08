@@ -1,125 +1,105 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.models
 
 import de.guite.modulestudio.metamodel.Application
-import de.guite.modulestudio.metamodel.Entity
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
-import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
-import org.zikula.modulestudio.generator.extensions.ModelInheritanceExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class Factory {
+
     extension FormattingExtensions = new FormattingExtensions
-    extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     extension ModelExtensions = new ModelExtensions
-    extension ModelInheritanceExtensions = new ModelInheritanceExtensions
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
 
-    IFileSystemAccess fsa
     FileHelper fh = new FileHelper
-    Application app
-
-    def generate(Application it, IFileSystemAccess fsa) {
-        this.fsa = fsa
-        app = it
-        getAllEntities.forEach(e|e.generate)
-    }
 
     /**
-     * Creates a factory class file for every Entity instance.
+     * Creates a factory class file for easy entity creation.
      */
-    def private generate(Entity it) {
-        println('Generating factory classes for entity "' + name.formatForDisplay + '"')
-        val factoryPath = app.getAppSourceLibPath + 'Entity/Factory/'
-
-        var fileName = 'Base/Abstract' + name.formatForCodeCapital + 'Factory.php'
-        if (!isInheriting && !app.shouldBeSkipped(factoryPath + fileName)) {
-            if (app.shouldBeMarked(factoryPath + fileName)) {
-                fileName = 'Base/' + name.formatForCodeCapital + '.generated.php'
-            }
-            fsa.generateFile(factoryPath + fileName, fh.phpFileContent(app, modelFactoryBaseImpl))
-        }
-
-        fileName = name.formatForCodeCapital + 'Factory.php'
-        if (!app.generateOnlyBaseClasses && !app.shouldBeSkipped(factoryPath + fileName)) {
-            if (app.shouldBeMarked(factoryPath + fileName)) {
-                fileName = name.formatForCodeCapital + '.generated.php'
-            }
-            fsa.generateFile(factoryPath + fileName, fh.phpFileContent(app, modelFactoryImpl))
-        }
+    def generate(Application it, IFileSystemAccess fsa) {
+        println('Generating entity factory class')
+        generateClassPair(fsa, getAppSourceLibPath + 'Entity/Factory/' + name.formatForCodeCapital + 'Factory.php',
+            fh.phpFileContent(it, modelFactoryBaseImpl), fh.phpFileContent(it, modelFactoryImpl)
+        )
     }
 
-    def private modelFactoryBaseImpl(Entity it) '''
-        namespace «app.appNamespace»\Entity\Factory\Base;
+    def private modelFactoryBaseImpl(Application it) '''
+        namespace «appNamespace»\Entity\Factory\Base;
 
         use Doctrine\Common\Persistence\ObjectManager;
         use Doctrine\ORM\EntityRepository;
 
         /**
-         * Factory class used to retrieve entity and repository instances.
+         * Factory class used to create entities and receive entity repositories.
          *
-         * This is the base factory class for «name.formatForDisplay» entities.
+         * This is the base factory class.
          */
         abstract class Abstract«name.formatForCodeCapital»Factory
         {
-            /**
-             * @var String Full qualified class name to be used for «nameMultiple.formatForDisplay».
-             */
-            protected $className;
-
             /**
              * @var ObjectManager The object manager to be used for determining the repository
              */
             protected $objectManager;
 
             /**
-             * @var EntityRepository The currently used repository
-             */
-            protected $repository;
-
-            /**
              * «name.formatForCodeCapital»Factory constructor.
              *
-             * @param ObjectManager $objectManager The object manager to be used for determining the repository
-             * @param String        $className     Full qualified class name to be used for «nameMultiple.formatForDisplay»
+             * @param ObjectManager $objectManager The object manager to be used for determining the repositories
              */
-            public function __construct(ObjectManager $objectManager, $className)
+            public function __construct(ObjectManager $objectManager)
             {
-                $this->className = $className;
                 $this->objectManager = $objectManager;
-                $this->repository = $this->objectManager->getRepository($className);
             }
 
-            public function create«name.formatForCodeCapital»()
+            /**
+             * Returns a repository for a given object type.
+             *
+             * @param string $objectType Name of desired entity type
+             *
+             * @return EntityRepository The repository responsible for the given object type
+             */
+            public function getRepository($objectType)
             {
-                $entityClass = $this->className;
+                $entityClass = '«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Entity\\' . ucfirst($objectType) . 'Entity';
 
-                return new $entityClass(«/* TODO constructor arguments if required */»);
+                return $this->objectManager->getRepository($className);
             }
+            «FOR entity : getAllEntities»
 
-            «fh.getterAndSetterMethods(it, 'className', 'string', false, true, false, '', '')»
+                /**
+                 * Creates a new «entity.name.formatForCode» instance.
+                 *
+                 * @return «appNamespace»\Entity\«entity.name.formatForCode»Entity The newly created entity instance
+                 */
+                public function create«entity.name.formatForCodeCapital»()
+                {
+                    $entityClass = '«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Entity\\«entity.name.formatForCode»Entity';
+
+                    return new $entityClass(«/* TODO constructor arguments if required */»);
+                }
+            «ENDFOR»
+
             «fh.getterAndSetterMethods(it, 'objectManager', 'ObjectManager', false, true, false, '', '')»
-            «fh.getterAndSetterMethods(it, 'repository', 'EntityRepository', false, true, false, '', '')»
         }
     '''
 
-    def private modelFactoryImpl(Entity it) '''
-        namespace «app.appNamespace»\Entity\Factory;
+    def private modelFactoryImpl(Application it) '''
+        namespace «appNamespace»\Entity\Factory;
 
-        use «app.appNamespace»\Entity\Factory\«IF isInheriting»«parentType.name.formatForCodeCapital»«ELSE»Base\Abstract«name.formatForCodeCapital»«ENDIF»Factory;
+        use «appNamespace»\Entity\Factory\Base\Abstract«name.formatForCodeCapital»Factory;
 
         /**
-         * Factory class used to retrieve entity and repository instances.
+         * Factory class used to create entities and receive entity repositories.
          *
-         * This is the concrete factory class for «name.formatForDisplay» entities.
+         * This is the concrete factory class.
          */
-        class «name.formatForCodeCapital»Factory extends «IF isInheriting»«parentType.name.formatForCodeCapital»«ELSE»Abstract«name.formatForCodeCapital»«ENDIF»Factory
+        class «name.formatForCodeCapital»Factory extends Abstract«name.formatForCodeCapital»Factory
         {
-            // feel free to customise the manager
+            // feel free to customise the factory
         }
     '''
 }

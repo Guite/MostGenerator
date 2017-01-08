@@ -50,7 +50,7 @@ class ServiceDefinitions {
 
         generateServiceFile(fsa, 'services', mainServiceFile)
         generateServiceFile(fsa, 'linkContainer', linkContainer)
-        generateServiceFile(fsa, 'entityFactories', entityFactories)
+        generateServiceFile(fsa, 'entityFactory', entityFactory)
         generateServiceFile(fsa, 'eventSubscriber', eventSubscriber)
         if (hasEditActions) {
             generateServiceFile(fsa, 'formFields', formFields)
@@ -64,7 +64,7 @@ class ServiceDefinitions {
     def private mainServiceFile(Application it) '''
         imports:
           - { resource: 'linkContainer.yml' }
-          - { resource: 'entityFactories.yml' }
+          - { resource: 'entityFactory.yml' }
           - { resource: 'eventSubscriber.yml' }
         «IF hasEditActions»
             «'  '»- { resource: 'formFields.yml' }
@@ -99,21 +99,17 @@ class ServiceDefinitions {
                     - { name: zikula.link_container }
     '''
 
-    def private entityFactories(Application it) '''
+    def private entityFactory(Application it) '''
         services:
-            «servicesEntityFactories»
+            «servicesEntityFactory»
     '''
 
-    def private servicesEntityFactories(Application it) '''
-        # Entity factory classes
-        «FOR entity : entities»
-            «modPrefix».«entity.name.formatForCode»_factory:
-                class: «appNamespace»\Entity\Factory\«entity.name.formatForCodeCapital»Factory
-                arguments:
-                    - "@«entityManagerService»"
-                    - «appNamespace»\Entity\«entity.name.formatForCodeCapital»Entity
-
-        «ENDFOR»
+    def private servicesEntityFactory(Application it) '''
+        # Entity factory class
+        «modPrefix».«name.formatForDB»_factory:
+            class: «appNamespace»\Entity\Factory\«name.formatForCodeCapital»Factory
+            arguments:
+                - "@«entityManagerService»"
     '''
 
     def private eventSubscriber(Application it) '''
@@ -266,7 +262,7 @@ class ServiceDefinitions {
                     class: «nsBase»«entity.name.formatForCodeCapital»Type
                     arguments:
                         - "@translator.default"
-                        - "@«modPrefix».«entity.name.formatForCode»_factory"
+                        - "@«modPrefix».«name.formatForCode»_factory"
                         «IF entity instanceof Entity && (entity as Entity).hasTranslatableFields»
                             - "@zikula_extensions_module.api.variable"
                             - "@«modPrefix».translatable_helper"

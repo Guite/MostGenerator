@@ -257,7 +257,7 @@ class ContentTypeList {
         public function display()
         {
             $serviceManager = ServiceUtil::getManager();
-            $repository = $serviceManager->get('«appService».' . $this->objectType . '_factory')->getRepository();
+            $repository = $serviceManager->get('«appService».«name.formatForDB»_factory')->getRepository($objectType);
             $permissionApi = $serviceManager->get('zikula_permissions_module.api.permission');
 
             // create query
