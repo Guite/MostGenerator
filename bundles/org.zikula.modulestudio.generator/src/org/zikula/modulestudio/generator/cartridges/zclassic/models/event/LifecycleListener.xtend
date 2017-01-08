@@ -200,7 +200,7 @@ class LifecycleListener {
                         $controllerHelper = ServiceUtil::get('«appService».controller_helper');
                         $request = ServiceUtil::get('request_stack')->getCurrentRequest();
                         $baseUrl = $request->getSchemeAndHttpHost() . $request->getBasePath();
-                        $uploadManager = ServiceUtil::get('«appService».upload_handler');
+                        $uploadHelper = ServiceUtil::get('«appService».upload_helper');
                         foreach ($uploadFields as $fieldName) {
                             if (empty($entity[$fieldName])) {
                                 continue;
@@ -214,7 +214,7 @@ class LifecycleListener {
 
                                 // determine meta data if it does not exist
                                 if (!is_array($entity[$fieldName . 'Meta']) || !count($entity[$fieldName . 'Meta'])) {
-                                    $entity[$fieldName . 'Meta'] = $uploadManager->readMetaDataForFile($fileName, $filePath);
+                                    $entity[$fieldName . 'Meta'] = $uploadHelper->readMetaDataForFile($fileName, $filePath);
                                 }
                             } else {
                                 $entity[$fieldName] = null;

@@ -14,6 +14,7 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.controller.helper.N
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.helper.SearchHelper
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.helper.SelectionHelper
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.helper.TranslatableHelper
+import org.zikula.modulestudio.generator.cartridges.zclassic.controller.helper.UploadHelper
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.helper.ViewHelper
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.helper.WorkflowHelper
 import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
@@ -44,6 +45,7 @@ class HelperServices {
         }
         if (hasUploads) {
             new ImageHelper().generate(it, fsa)
+            new UploadHelper().generate(it, fsa)
         }
         if (hasListFields) {
             new ListEntriesHelper().generate(it, fsa)

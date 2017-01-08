@@ -49,9 +49,6 @@ class ServiceDefinitions {
         modPrefix = appService
 
         generateServiceFile(fsa, 'services', mainServiceFile)
-        if (hasUploads) {
-            generateServiceFile(fsa, 'uploadHandler', uploadHandler)
-        }
         generateServiceFile(fsa, 'linkContainer', linkContainer)
         generateServiceFile(fsa, 'entityFactories', entityFactories)
         generateServiceFile(fsa, 'eventSubscriber', eventSubscriber)
@@ -66,9 +63,6 @@ class ServiceDefinitions {
 
     def private mainServiceFile(Application it) '''
         imports:
-        «IF hasUploads»
-            «'  '»- { resource: 'uploadHandler.yml' }
-        «ENDIF»
           - { resource: 'linkContainer.yml' }
           - { resource: 'entityFactories.yml' }
           - { resource: 'eventSubscriber.yml' }
@@ -84,21 +78,6 @@ class ServiceDefinitions {
         parameters:
             liip_imagine.cache.signer.class: «appNamespace»\Imagine\Cache\DummySigner
         «ENDIF»
-    '''
-
-    def private uploadHandler(Application it) '''
-        services:
-            «servicesUploadHandler»
-    '''
-
-    def private servicesUploadHandler(Application it) '''
-        # Upload handler class
-        «modPrefix».upload_handler:
-            class: «appNamespace»\UploadHandler
-            arguments:
-                - "@translator.default"
-                - "@zikula_users_module.current_user"
-                - "@zikula_extensions_module.api.variable"
     '''
 
     def private linkContainer(Application it) '''
@@ -463,6 +442,15 @@ class ServiceDefinitions {
                     - "@service_container"
                     - "@translator.default"
                     - "@request_stack"
+                    - "@zikula_extensions_module.api.variable"
+        «ENDIF»
+        «IF hasUploads»
+
+            «modPrefix».upload_helper:
+                class: «nsBase»\UploadHelper
+                arguments:
+                    - "@translator.default"
+                    - "@zikula_users_module.current_user"
                     - "@zikula_extensions_module.api.variable"
         «ENDIF»
 

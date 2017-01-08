@@ -115,8 +115,7 @@ class EventAction {
         $objectId = «entityVar»->createCompositeIdentifier();
 
         «IF hasUploads»
-            // retrieve the upload handler
-            $uploadManager = $serviceManager->get('«appService».upload_handler');
+            $uploadHelper = $serviceManager->get('«appService».upload_helper');
             $uploadFields = $this->getUploadFields($objectType);
 
             foreach ($uploadFields as $uploadField) {
@@ -125,7 +124,7 @@ class EventAction {
                 }
 
                 // remove upload file
-                $uploadManager->deleteUploadFile(«entityVar», $uploadField);
+                $uploadHelper->deleteUploadFile(«entityVar», $uploadField);
             }
         «ENDIF»
 
