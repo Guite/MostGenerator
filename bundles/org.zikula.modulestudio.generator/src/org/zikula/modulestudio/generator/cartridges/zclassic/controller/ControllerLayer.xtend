@@ -105,9 +105,6 @@ class ControllerLayer {
     def private entityControllerBaseImports(Entity it) '''
         namespace «app.appNamespace»\Controller\Base;
 
-        «IF hasEditAction && app.needsAutoCompletion»
-            use JCSSUtil;
-        «ENDIF»
         «IF hasEditAction || hasDeleteAction»
             use RuntimeException;
         «ENDIF»

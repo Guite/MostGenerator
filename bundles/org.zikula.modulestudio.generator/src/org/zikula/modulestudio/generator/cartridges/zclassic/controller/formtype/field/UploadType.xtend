@@ -23,7 +23,6 @@ class UploadType {
     def private uploadTypeBaseImpl(Application it) '''
         namespace «appNamespace»\Form\Type\Field\Base;
 
-        use ServiceUtil;
         use Symfony\Component\Form\AbstractType;
         use Symfony\Component\Form\FormBuilderInterface;
         use Symfony\Component\Form\FormInterface;
@@ -33,6 +32,7 @@ class UploadType {
         use Symfony\Component\PropertyAccess\PropertyAccess;
         use Zikula\Common\Translator\TranslatorInterface;
         use «appNamespace»\Form\DataTransformer\UploadFileTransformer;
+        use «appNamespace»\Helper\ImageHelper;
 
         /**
          * Upload field type base class.
@@ -43,6 +43,11 @@ class UploadType {
              * @var TranslatorInterface
              */
             protected $translator;
+
+            /**
+             * @var ImageHelper
+             */
+            protected $imageHelper;
 
             /**
              * @var FormBuilderInterface
@@ -57,11 +62,13 @@ class UploadType {
             /**
              * UploadTypeExtension constructor.
              *
-             * @param TranslatorInterface $translator Translator service instance
+             * @param TranslatorInterface $translator  Translator service instance
+             * @param ImageHelper         $imageHelper ImageHelper service instance
              */
-            public function __construct(TranslatorInterface $translator)
+            public function __construct(TranslatorInterface $translator, ImageHelper $imageHelper)
             {
                 $this->translator = $translator;
+                $this->imageHelper = $imageHelper;
             }
 
             /**
@@ -143,8 +150,7 @@ class UploadType {
                 $view->vars['thumbRuntimeOptions'] = null;
 
                 if (true === $fileMeta['isImage']) {
-                    $imageHelper = ServiceUtil::get('«appService».image_helper');
-                    $view->vars['thumbRuntimeOptions'] = $imageHelper->getRuntimeOptions($this->entity->get_objectType(), $fieldName, 'controllerAction', ['action' => 'edit']);
+                    $view->vars['thumbRuntimeOptions'] = $this->imageHelper->getRuntimeOptions($this->entity->get_objectType(), $fieldName, 'controllerAction', ['action' => 'edit']);
                 }
             }
 

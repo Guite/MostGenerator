@@ -319,7 +319,6 @@ class Forms {
         <html xml:lang="{{ app.request.locale }}" lang="{{ app.request.locale }}" dir="auto">
             <head>
                 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-                {{ jcssConfig }}
                 {{ pageAddAsset('stylesheet', asset('bootstrap/css/bootstrap.min.css')) }}
                 {{ pageAddAsset('stylesheet', asset('bootstrap/css/bootstrap-theme.min.css')) }}
                 {{ pageAddAsset('javascript', asset('jquery/jquery.min.js')) }}

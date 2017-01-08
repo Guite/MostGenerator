@@ -32,7 +32,6 @@ class SearchHelper {
     def private searchHelperBaseClass(Application it) '''
         namespace «appNamespace»\Helper\Base;
 
-        use ServiceUtil;
         use Zikula\Core\RouteUrl;
         use Zikula\SearchModule\AbstractSearchable;
         «IF hasCategorisableEntities»
@@ -66,8 +65,7 @@ class SearchHelper {
          */
         public function getOptions($active, $modVars = null)
         {
-            $serviceManager = ServiceUtil::getManager();
-            $permissionApi = $serviceManager->get('zikula_permissions_module.api.permission');
+            $permissionApi = $this->container->get('zikula_permissions_module.api.permission');
 
             if (!$permissionApi->hasPermission($this->name . '::', '::', ACCESS_READ)) {
                 return '';
@@ -96,20 +94,18 @@ class SearchHelper {
          */
         public function getResults(array $words, $searchType = 'AND', $modVars = null)
         {
-            $serviceManager = ServiceUtil::getManager();
-            $permissionApi = $serviceManager->get('zikula_permissions_module.api.permission');
+            $permissionApi = $this->container->get('zikula_permissions_module.api.permission');
             «IF hasCategorisableEntities»
-                $featureActivationHelper = $serviceManager->get('«appService».feature_activation_helper');
+                $featureActivationHelper = $this->container->get('«appService».feature_activation_helper');
             «ENDIF»
-            $request = $serviceManager->get('request_stack')->getCurrentRequest();
+            $request = $this->container->get('request_stack')->getCurrentRequest();
 
             if (!$permissionApi->hasPermission($this->name . '::', '::', ACCESS_READ)) {
                 return [];
             }
 
             // save session id as it is used when inserting search results below
-            $session = $serviceManager->get('session');
-            $sessionId = $session->getId();
+            $sessionId = $this->container->get('session')->getId();
 
             // initialise array for results
             $records = [];
@@ -124,7 +120,7 @@ class SearchHelper {
                 }
             }
 
-            $controllerHelper = $serviceManager->get('«appService».controller_helper');
+            $controllerHelper = $this->container->get('«appService».controller_helper');
             $allowedTypes = $controllerHelper->getObjectTypes('helper', ['helper' => 'search', 'action' => 'getResults']);
 
             foreach ($searchTypes as $objectType) {
@@ -147,7 +143,7 @@ class SearchHelper {
                     «ENDFOR»
                 }
 
-                $repository = $serviceManager->get('«appService».entity_factory')->getRepository($objectType);
+                $repository = $this->container->get('«appService».entity_factory')->getRepository($objectType);
 
                 // build the search query without any joins
                 $qb = $repository->genericBaseQuery('', '', false);
@@ -185,7 +181,7 @@ class SearchHelper {
                     «IF hasCategorisableEntities»
                         if (in_array($objectType, ['«getCategorisableEntities.map[e|e.name.formatForCode].join('\', \'')»'])) {
                             if ($featureActivationHelper->isEnabled(FeatureActivationHelper::CATEGORIES, $objectType)) {
-                                if (!$serviceManager->get('«appService».category_helper')->hasPermission($entity)) {
+                                if (!$this->container->get('«appService».category_helper')->hasPermission($entity)) {
                                     continue;
                                 }
                             }

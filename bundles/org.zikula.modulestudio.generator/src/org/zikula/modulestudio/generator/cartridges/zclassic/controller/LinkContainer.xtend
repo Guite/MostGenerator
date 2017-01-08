@@ -39,9 +39,6 @@ class LinkContainer {
         namespace «appNamespace»\Container\Base;
 
         use Symfony\Component\Routing\RouterInterface;
-        «IF generateAccountApi»
-            use UserUtil;
-        «ENDIF»
         use Zikula\Common\Translator\TranslatorInterface;
         use Zikula\Common\Translator\TranslatorTrait;
         use Zikula\Core\Doctrine\EntityAccess;
@@ -142,13 +139,6 @@ class LinkContainer {
                     if (LinkContainerInterface::TYPE_ACCOUNT == $type) {
                         $useAccountPage = $this->variableApi->get('«appName»', 'useAccountPage', true);
                         if (false === $useAccountPage) {
-                            return $links;
-                        }
-
-                        $userName = isset($args['uname']) ? $args['uname'] : $this->currentUserApi->get('uname');
-                        // does this user exist?
-                        if (false === UserUtil::getIdFromName($userName)) {
-                            // user does not exist
                             return $links;
                         }
 

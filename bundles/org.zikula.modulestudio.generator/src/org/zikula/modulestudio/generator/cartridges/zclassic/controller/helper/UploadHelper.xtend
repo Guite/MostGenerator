@@ -33,14 +33,16 @@ class UploadHelper {
     def private uploadFunctionsBaseImpl(Application it) '''
         namespace «appNamespace»\Helper\Base;
 
+        use Psr\Log\LoggerInterface;
+        use ServiceUtil;
         use Symfony\Component\Filesystem\Exception\IOExceptionInterface;
         use Symfony\Component\Filesystem\Filesystem;
         use Symfony\Component\HttpFoundation\File\UploadedFile;
+        use Symfony\Component\HttpFoundation\Session\SessionInterface;
         use Zikula\Common\Translator\TranslatorInterface;
         use Zikula\Common\Translator\TranslatorTrait;
         use Zikula\ExtensionsModule\Api\VariableApi;
         use Zikula\UsersModule\Api\CurrentUserApi;
-        use ServiceUtil;
 
         /**
          * Helper base class for upload handling.
@@ -48,6 +50,16 @@ class UploadHelper {
         abstract class AbstractUploadHelper
         {
             use TranslatorTrait;
+
+            /**
+             * @var SessionInterface
+             */
+            protected $session;
+
+            /**
+             * @var LoggerInterface
+             */
+            protected $logger;
 
             /**
              * @var CurrentUserApi
@@ -78,12 +90,21 @@ class UploadHelper {
              * UploadHelper constructor.
              *
              * @param TranslatorInterface $translator     Translator service instance
+             * @param SessionInterface    $session        Session service instance
+             * @param LoggerInterface     $logger         Logger service instance
              * @param CurrentUserApi      $currentUserApi CurrentUserApi service instance
              * @param VariableApi         $variableApi    VariableApi service instance
              */
-            public function __construct(TranslatorInterface $translator, CurrentUserApi $currentUserApi, VariableApi $variableApi)
+            public function __construct(
+                TranslatorInterface $translator,
+                SessionInterface $session,
+                LoggerInterface $logger,
+                CurrentUserApi $currentUserApi,
+                VariableApi $variableApi)
             {
                 $this->setTranslator($translator);
+                $this->session = $session;
+                $this->logger = $logger;
                 $this->currentUserApi = $currentUserApi;
                 $this->variableApi = $variableApi;
                 $this->allowedObjectTypes = [«FOR entity : getUploadEntities SEPARATOR ', '»'«entity.name.formatForCode»'«ENDFOR»];
@@ -150,15 +171,14 @@ class UploadHelper {
 
             $serviceManager = ServiceUtil::getManager();
             $controllerHelper = $serviceManager->get('«appService».controller_helper');
-            $flashBag = $serviceManager->get('session')->getFlashBag();
-            $logger = $serviceManager->get('logger');
+            $flashBag = $this->session->getFlashBag();
 
             // retrieve the final file name
             try {
                 $basePath = $controllerHelper->getFileBaseFolder($objectType, $fieldName);
             } catch (\Exception $e) {
                 $flashBag->add('error', $e->getMessage());
-                $logger->error('{app}: User {user} could not detect upload destination path for entity {entity} and field {field}.', ['app' => '«appName»', 'user' => $this->currentUserApi->get('uname'), 'entity' => $objectType, 'field' => $fieldName]);
+                $this->logger->error('{app}: User {user} could not detect upload destination path for entity {entity} and field {field}.', ['app' => '«appName»', 'user' => $this->currentUserApi->get('uname'), 'entity' => $objectType, 'field' => $fieldName]);
 
                 return false;
             }
@@ -221,14 +241,12 @@ class UploadHelper {
          */
         protected function validateFileUpload($objectType, $file, $fieldName)
         {
-            $serviceManager = ServiceUtil::getManager();
-            $flashBag = $serviceManager->get('session')->getFlashBag();
-            $logger = $serviceManager->get('logger');
+            $flashBag = $this->session->getFlashBag();
 
             // check if a file has been uploaded properly without errors
             if ($file->getError() != UPLOAD_ERR_OK) {
                 $flashBag->add('error', $file->getErrorMessage());
-                $logger->error('{app}: User {user} tried to upload a file with errors: ' . $file->getErrorMessage(), ['app' => '«appName»', 'user' => $this->currentUserApi->get('uname')]);
+                $this->logger->error('{app}: User {user} tried to upload a file with errors: ' . $file->getErrorMessage(), ['app' => '«appName»', 'user' => $this->currentUserApi->get('uname')]);
 
                 return false;
             }
@@ -246,7 +264,7 @@ class UploadHelper {
             $isValidExtension = $this->isAllowedFileExtension($objectType, $fieldName, $extension);
             if (false === $isValidExtension) {
                 $flashBag->add('error', $this->__('Error! This file type is not allowed. Please choose another file format.'));
-                $logger->error('{app}: User {user} tried to upload a file with a forbidden extension ("{extension}").', ['app' => '«appName»', 'user' => $this->currentUserApi->get('uname'), 'extension' => $extension]);
+                $this->logger->error('{app}: User {user} tried to upload a file with a forbidden extension ("{extension}").', ['app' => '«appName»', 'user' => $this->currentUserApi->get('uname'), 'extension' => $extension]);
 
                 return false;
             }
@@ -262,7 +280,7 @@ class UploadHelper {
             $imgInfo = getimagesize(«fileVar»);
             if (!is_array($imgInfo) || !$imgInfo[0] || !$imgInfo[1]) {
                 $flashBag->add('error', $this->__('Error! This file type seems not to be a valid image.'));
-                $logger->error('{app}: User {user} tried to upload a file which is seems not to be a valid image.', ['app' => '«appName»', 'user' => $this->currentUserApi->get('uname')]);
+                $this->logger->error('{app}: User {user} tried to upload a file which is seems not to be a valid image.', ['app' => '«appName»', 'user' => $this->currentUserApi->get('uname')]);
 
                 return false;
             }

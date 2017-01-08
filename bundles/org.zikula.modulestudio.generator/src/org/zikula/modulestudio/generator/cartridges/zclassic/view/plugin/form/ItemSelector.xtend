@@ -143,7 +143,6 @@ class ItemSelector {
 
                 $this->selectedItemId = $this->text;
 
-                $serviceManager = ServiceUtil::getManager();
                 $repository = $serviceManager->get('«appService».entity_factory')->getRepository($this->objectType);
 
                 $sort = $repository->getDefaultSortingField();

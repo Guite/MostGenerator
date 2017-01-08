@@ -37,7 +37,6 @@ class Newsletter {
     def private newsletterClass(Application it) '''
         namespace «appNamespace»\NewsletterPlugin;
 
-        use FormUtil;
         use Newsletter_AbstractPlugin;
         use ServiceUtil;
 
@@ -131,12 +130,13 @@ class Newsletter {
         public function setParameters()
         {
             // Object types to be used in the newsletter
-            $objectTypes = FormUtil::getPassedValue($this->modname . 'ObjectTypes', [], 'POST');
+            $request = ServiceUtil::get('request_stack')->getCurrentRequest();
+            $objectTypes = $request->request->get($this->modname . 'ObjectTypes', []);
 
             $this->setPluginVar('ObjectTypes', array_keys($objectTypes));
 
             // Additional arguments
-            $args = FormUtil::getPassedValue($this->modname . 'Args', [], 'POST');
+            $args = $request->request->get($this->modname . 'Args', []);
 
             $this->setPluginVar('Args', $args);
         }

@@ -55,8 +55,7 @@ class InlineRedirect {
         $templateParameters = [
             'itemId' => $id,
             'idPrefix' => $idPrefix,
-            'commandName' => $commandName,
-            'jcssConfig' => JCSSUtil::getJSConfig()
+            'commandName' => $commandName
         ];
 
         return new PlainResponse($this->get('twig')->render('@«application.appName»/«name.formatForCode.toFirstUpper»/inlineRedirectHandler.html.twig', $templateParameters));

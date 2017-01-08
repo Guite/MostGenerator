@@ -190,6 +190,7 @@ class ServiceDefinitions {
                 class: «nsBase»Field\UploadType
                 arguments:
                     - "@translator.default"
+                    - "@«modPrefix».image_helper"
                 tags:
                     - { name: form.type }
 
@@ -500,6 +501,8 @@ class ServiceDefinitions {
                 class: «nsBase»\UploadHelper
                 arguments:
                     - "@translator.default"
+                    - "@session"
+                    - "@logger"
                     - "@zikula_users_module.current_user"
                     - "@zikula_extensions_module.api.variable"
         «ENDIF»
