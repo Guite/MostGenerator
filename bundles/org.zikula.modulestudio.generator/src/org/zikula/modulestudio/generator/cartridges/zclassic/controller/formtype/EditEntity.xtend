@@ -163,19 +163,19 @@ class EditEntity {
              *
              * @param TranslatorInterface $translator «IF extensions.contains('translatable')» «ENDIF»   Translator service instance
              * @param «app.name.formatForCodeCapital»Factory        $entityFactory Entity factory service instance
-            «IF extensions.contains('translatable')»
-                «' '»* @param VariableApi         $variableApi VariableApi service instance
-                «' '»* @param TranslatableHelper  $listHelper  TranslatableHelper service instance
-            «ENDIF»
-            «IF hasListFieldsEntity»
-                «' '»* @param ListEntriesHelper   $listHelper    «IF extensions.contains('translatable')» «ENDIF»ListEntriesHelper service instance
-            «ENDIF»
-            «IF hasLocaleFieldsEntity && app.targets('1.4-dev')»
-                «' '»* @param LocaleApi           $localeApi     «IF extensions.contains('translatable')» «ENDIF»LocaleApi service instance
-            «ENDIF»
-            «IF app.needsFeatureActivationHelper»
-                «' '»* @param FeatureActivationHelper $featureActivationHelper FeatureActivationHelper service instance
-            «ENDIF»
+             «IF extensions.contains('translatable')»
+             * @param VariableApi         $variableApi VariableApi service instance
+             * @param TranslatableHelper  $translatableHelper TranslatableHelper service instance
+             «ENDIF»
+             «IF hasListFieldsEntity»
+             * @param ListEntriesHelper   $listHelper    «IF extensions.contains('translatable')» «ENDIF»ListEntriesHelper service instance
+             «ENDIF»
+             «IF hasLocaleFieldsEntity && app.targets('1.4-dev')»
+             * @param LocaleApi           $localeApi     «IF extensions.contains('translatable')» «ENDIF»LocaleApi service instance
+             «ENDIF»
+             «IF app.needsFeatureActivationHelper»
+             * @param FeatureActivationHelper $featureActivationHelper FeatureActivationHelper service instance
+             «ENDIF»
              */
             public function __construct(TranslatorInterface $translator, «app.name.formatForCodeCapital»Factory $entityFactory«IF extensions.contains('translatable')», VariableApi $variableApi, TranslatableHelper $translatableHelper«ENDIF»«IF hasListFieldsEntity», ListEntriesHelper $listHelper«ENDIF»«IF hasLocaleFieldsEntity && app.targets('1.4-dev')», LocaleApi $localeApi«ENDIF»«IF app.needsFeatureActivationHelper», FeatureActivationHelper $featureActivationHelper«ENDIF»)
             {

@@ -41,27 +41,24 @@ class TranslatableHelper {
     def private translatableFunctionsBaseImpl(Application it) '''
         namespace «appNamespace»\Helper\Base;
 
-        use Symfony\Component\DependencyInjection\ContainerBuilder;
         use Symfony\Component\Form\FormInterface;
         use Symfony\Component\HttpFoundation\Request;
         use Symfony\Component\HttpFoundation\RequestStack;
         use Zikula\Common\Translator\TranslatorInterface;
         use Zikula\Core\Doctrine\EntityAccess;
         use Zikula\ExtensionsModule\Api\VariableApi;
-        «IF !targets('1.4-dev')»
+        «IF targets('1.4-dev')»
+            use Zikula\SettingsModule\Api\LocaleApi;
+        «ELSE»
             use ZLanguage;
         «ENDIF»
+        use «appNamespace»\Entity\Factory\«name.formatForCodeCapital»Factory;
 
         /**
          * Helper base class for translatable methods.
          */
         abstract class AbstractTranslatableHelper
         {
-            /**
-             * @var ContainerBuilder
-             */
-            protected $container;
-
             /**
              * @var TranslatorInterface
              */
@@ -76,21 +73,39 @@ class TranslatableHelper {
              * @var VariableApi
              */
             protected $variableApi;
+            «IF targets('1.4-dev')»
+
+                /**
+                 * @var LocaleApi
+                 */
+                protected $localeApi;
+            «ENDIF»
+
+            /**
+             * @var «name.formatForCodeCapital»Factory
+             */
+            private $entityFactory;
 
             /**
              * TranslatableHelper constructor.
              *
-             * @param ContainerBuilder    $container    ContainerBuilder service instance
              * @param TranslatorInterface $translator   Translator service instance
              * @param RequestStack        $requestStack RequestStack service instance
              * @param VariableApi         $variableApi  VariableApi service instance
+             «IF targets('1.4-dev')»
+             * @param LocaleApi           $localeApi    LocaleApi service instance
+             «ENDIF»
+             * @param «name.formatForCodeCapital»Factory $entityFactory «name.formatForCodeCapital»Factory service instance
              */
-            public function __construct(ContainerBuilder $container, TranslatorInterface $translator, RequestStack $requestStack, VariableApi $variableApi)
+            public function __construct(TranslatorInterface $translator, RequestStack $requestStack, VariableApi $variableApi, «IF targets('1.4-dev')»LocaleApi $localeApi, «ENDIF»«name.formatForCodeCapital»Factory $entityFactory)
             {
-                $this->container = $container;
                 $this->translator = $translator;
                 $this->request = $requestStack->getCurrentRequest();
                 $this->variableApi = $variableApi;
+                «IF targets('1.4-dev')»
+                    $this->localeApi = $localeApi;
+                «ENDIF»
+                $this->entityFactory = $entityFactory;
             }
 
             «getTranslatableFieldsImpl»
@@ -152,7 +167,7 @@ class TranslatableHelper {
         {
             if ($this->variableApi->getSystemVar('multilingual')) {
                 «IF targets('1.4-dev')»
-                    return $this->container->get('zikula_settings_module.locale_api')->getSupportedLocales();
+                    return $this->localeApi->getSupportedLocales();
                 «ELSE»
                     return ZLanguage::getInstalledLanguages();
                 «ENDIF»
@@ -197,7 +212,7 @@ class TranslatableHelper {
             // prepare form data to edit multiple translations at once
 
             // get translations
-            $repository = $this->container->get('«appService».entity_factory')->getRepository($objectType);
+            $repository = $this->entityFactory->getRepository($objectType);
             $entityTranslations = $repository->findTranslations($entity);
 
             $supportedLanguages = $this->getSupportedLanguages($objectType);

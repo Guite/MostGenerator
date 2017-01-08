@@ -22,21 +22,20 @@ class Locking {
     '''
 
     def addPageLock(Application it) '''
-        if (true === $this->hasPageLockSupport && $this->container->get('kernel')->isBundle('ZikulaPageLockModule')) {
+        if (true === $this->hasPageLockSupport && $this->kernel->isBundle('ZikulaPageLockModule')) {
             // try to guarantee that only one person at a time can be editing this entity
             $lockingApi = $this->container->get('zikula_pagelock_module.api.locking');
             $lockName = '«appName»' . $this->objectTypeCapital . $this->createCompositeIdentifier();
             $lockingApi->addLock($lockName, $this->getRedirectUrl(null));
             «IF hasUploads»
                 // reload entity as the addLock call above has triggered the preUpdate event
-                $entityManager = $this->container->get('doctrine.orm.entity_manager');
-                $entityManager->refresh($entity);
+                $this->entityFactory->getObjectManager()->refresh($entity);
             «ENDIF»
         }
     '''
 
     def releasePageLock(Application it) '''
-        if (true === $this->hasPageLockSupport && $this->templateParameters['mode'] == 'edit' && $this->container->get('kernel')->isBundle('ZikulaPageLockModule')) {
+        if (true === $this->hasPageLockSupport && $this->templateParameters['mode'] == 'edit' && $this->kernel->isBundle('ZikulaPageLockModule')) {
             $lockingApi = $this->container->get('zikula_pagelock_module.api.locking');
             $lockName = '«appName»' . $this->objectTypeCapital . $this->createCompositeIdentifier();
             $lockingApi->releaseLock($lockName);
@@ -93,8 +92,8 @@ class Locking {
         «IF hasOptimisticLock»
             } catch(OptimisticLockException $e) {
                 $flashBag->add('error', $this->__('Sorry, but someone else has already changed this record. Please apply the changes again!'));
-                $logArgs = ['app' => '«application.appName»', 'user' => $this->container->get('zikula_users_module.current_user')->get('uname'), 'entity' => '«name.formatForDisplay»', 'id' => $entity->createCompositeIdentifier()];
-                $logger->error('{app}: User {user} tried to edit the {entity} with id {id}, but failed as someone else has already changed it.', $logArgs);
+                $logArgs = ['app' => '«application.appName»', 'user' => $this->currentUserApi->get('uname'), 'entity' => '«name.formatForDisplay»', 'id' => $entity->createCompositeIdentifier()];
+                $this->logger->error('{app}: User {user} tried to edit the {entity} with id {id}, but failed as someone else has already changed it.', $logArgs);
         «ENDIF»
     '''
 }

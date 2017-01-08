@@ -119,23 +119,44 @@ class FormHandler {
     def private formHandlerCommonBaseImpl(Application it, String actionName) '''
         namespace «appNamespace»\Form\Handler\Common\Base;
 
+        use ModUtil;
+        use Psr\Log\LoggerInterface;
+        use RuntimeException;
         use Symfony\Component\DependencyInjection\ContainerBuilder;
         use Symfony\Component\Form\AbstractType;
+        use Symfony\Component\Form\FormFactoryInterface;
         use Symfony\Component\HttpFoundation\RedirectResponse;
         use Symfony\Component\HttpFoundation\Request;
         use Symfony\Component\HttpFoundation\RequestStack;
         use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+        use Symfony\Component\HttpKernel\KernelInterface;
         use Symfony\Component\Routing\RouterInterface;
         use Symfony\Component\Security\Core\Exception\AccessDeniedException;
         use Zikula\Common\Translator\TranslatorInterface;
         use Zikula\Common\Translator\TranslatorTrait;
         use Zikula\Core\Doctrine\EntityAccess;
-        use Zikula\Core\RouteUrl;
-        use ModUtil;
-        use RuntimeException;
+        «IF hasHookSubscribers»
+            use Zikula\Core\RouteUrl;
+        «ENDIF»
+        «IF hasTranslatable || needsApproval»
+            use Zikula\ExtensionsModule\Api\VariableApi;
+        «ENDIF»
+        use Zikula\PermissionsModule\Api\PermissionApi;
+        use Zikula\UsersModule\Api\CurrentUserApi;
+        use «appNamespace»\Entity\Factory\«name.formatForCodeCapital»Factory;
         «IF needsFeatureActivationHelper»
             use «appNamespace»\Helper\FeatureActivationHelper;
         «ENDIF»
+        use «appNamespace»\Helper\ControllerHelper;
+        «IF hasHookSubscribers»
+            use «appNamespace»\Helper\HookHelper;
+        «ENDIF»
+        use «appNamespace»\Helper\ModelHelper;
+        use «appNamespace»\Helper\SelectionHelper;
+        «IF hasTranslatable»
+            use «appNamespace»\Helper\TranslatableHelper;
+        «ENDIF»
+        use «appNamespace»\Helper\WorkflowHelper;
 
         /**
          * This handler class handles the page events of editing forms.
@@ -267,25 +288,103 @@ class FormHandler {
             protected $container;
 
             /**
+             * @var KernelInterface
+             */
+            protected $kernel;
+
+            /**
+             * @var FormFactoryInterface
+             */
+            protected $formFactory;
+
+            /**
              * The current request.
              *
              * @var Request
              */
-            protected $request = null;
+            protected $request;
 
             /**
              * The router.
              *
              * @var RouterInterface
              */
-            protected $router = null;
+            protected $router;
+
+            /**
+             * @var LoggerInterface
+             */
+            protected $logger;
+
+            /**
+             * @var PermissionApi
+             */
+            protected $permissionApi;
+
+            «IF hasTranslatable || needsApproval»
+                /**
+                 * @var VariableApi
+                 */
+                protected $variableApi;
+
+            «ENDIF»
+            /**
+             * @var CurrentUserApi
+             */
+            private $currentUserApi;
+
+            /**
+             * @var «name.formatForCodeCapital»Factory
+             */
+            private $entityFactory;
+
+            /**
+             * @var ControllerHelper
+             */
+            protected $controllerHelper;
+            «IF hasHookSubscribers»
+
+                /**
+                 * @var HookHelper
+                 */
+                protected $hookHelper;
+            «ENDIF»
+
+            /**
+             * @var ModelHelper
+             */
+            protected $modelHelper;
+
+            /**
+             * @var SelectionHelper
+             */
+            protected $selectionHelper;
+
+            /**
+             * @var WorkflowHelper
+             */
+            protected $workflowHelper;
+            «IF hasTranslatable»
+
+                /**
+                 * @var TranslatableHelper
+                 */
+                protected $translatableHelper;
+            «ENDIF»
+            «IF needsFeatureActivationHelper»
+
+                /**
+                 * @var FeatureActivationHelper
+                 */
+                protected $featureActivationHelper;
+            «ENDIF»
 
             /**
              * The handled form type.
              *
              * @var AbstractType
              */
-            protected $form = null;
+            protected $form;
 
             /**
              * Template parameters.
@@ -297,17 +396,81 @@ class FormHandler {
             /**
              * «actionName.formatForCodeCapital»Handler constructor.
              *
-             * @param ContainerBuilder    $container    ContainerBuilder service instance
-             * @param TranslatorInterface $translator   Translator service instance
-             * @param RequestStack        $requestStack RequestStack service instance
-             * @param RouterInterface     $router       Router service instance
+             * @param ContainerBuilder     $container       ContainerBuilder service instance
+             * @param KernelInterface      $kernel           Kernel service instance
+             * @param TranslatorInterface  $translator       Translator service instance
+             * @param FormFactoryInterface $formFactory      FormFactory service instance
+             * @param RequestStack         $requestStack     RequestStack service instance
+             * @param RouterInterface      $router           Router service instance
+             * @param LoggerInterface      $logger           Logger service instance
+             * @param PermissionApi        $permissionApi    PermissionApi service instance
+             «IF hasTranslatable || needsApproval»
+             * @param VariableApi          $variableApi      VariableApi service instance
+             «ENDIF»
+             * @param CurrentUserApi       $currentUserApi   CurrentUserApi service instance
+             * @param «name.formatForCodeCapital»Factory $entityFactory «name.formatForCodeCapital»Factory service instance
+             * @param ControllerHelper     $controllerHelper ControllerHelper service instance
+             * @param ModelHelper          $modelHelper      ModelHelper service instance
+             * @param SelectionHelper      $selectionHelper  SelectionHelper service instance
+             * @param WorkflowHelper       $workflowHelper   WorkflowHelper service instance
+             «IF hasHookSubscribers»
+             * @param HookHelper           $hookHelper       HookHelper service instance
+             «ENDIF»
+             «IF hasTranslatable»
+             * @param TranslatableHelper   $translatableHelper TranslatableHelper service instance
+             «ENDIF»
+             «IF needsFeatureActivationHelper»
+             * @param FeatureActivationHelper $featureActivationHelper FeatureActivationHelper service instance
+             «ENDIF»
              */
-            public function __construct(ContainerBuilder $container, TranslatorInterface $translator, RequestStack $requestStack, RouterInterface $router)
+            public function __construct(
+                ContainerBuilder $container,
+                KernelInterface $kernel,
+                TranslatorInterface $translator,
+                FormFactoryInterface $formFactory,
+                RequestStack $requestStack,
+                RouterInterface $router,
+                LoggerInterface $logger,
+                PermissionApi $permissionApi,
+                «IF hasTranslatable || needsApproval»
+                    VariableApi $variableApi,
+                «ENDIF»
+                CurrentUserApi $currentUserApi,
+                «name.formatForCodeCapital»Factory $entityFactory,
+                ControllerHelper $controllerHelper,
+                ModelHelper $modelHelper,
+                SelectionHelper $selectionHelper,
+                WorkflowHelperHelper $workflowHelper«IF hasHookSubscribers»,
+                HookHelper $hookHelper«ENDIF»«IF hasTranslatable»,
+                TranslatableHelper $translatableHelper«ENDIF»«IF needsFeatureActivationHelper»,
+                FeatureActivationHelper $featureActivationHelper«ENDIF»)
             {
                 $this->container = $container;
+                $this->kernel = $kernel;
                 $this->setTranslator($translator);
+                $this->formFactory = $formFactory;
                 $this->request = $requestStack->getCurrentRequest();
                 $this->router = $router;
+                $this->logger = $logger;
+                $this->permissionApi = $permissionApi;
+                «IF hasTranslatable || needsApproval»
+                    $this->variableApi = $variableApi;
+                «ENDIF»
+                $this->currentUserApi = $currentUserApi;
+                $this->entityFactory = $entityFactory;
+                $this->controllerHelper = $controllerHelper;
+                $this->modelHelper = $modelHelper;
+                $this->selectionHelper = $selectionHelper;
+                $this->workflowHelper = $workflowHelper;
+                «IF hasHookSubscribers»
+                    $this->hookHelper = $hookHelper;
+                «ENDIF»
+                «IF hasTranslatable»
+                    $this->translatableHelper = $translatableHelper;
+                «ENDIF»
+                «IF needsFeatureActivationHelper»
+                    $this->featureActivationHelper = $featureActivationHelper;
+                «ENDIF»
             }
 
             «setTranslatorMethod»
@@ -369,22 +532,17 @@ class FormHandler {
 
             $this->permissionComponent = '«appName»:' . $this->objectTypeCapital . ':';
 
-            $selectionHelper = $this->container->get('«appService».selection_helper');
-            $this->idFields = $selectionHelper->getIdFields($this->objectType);
+            $this->idFields = $this->selectionHelper->getIdFields($this->objectType);
 
             // retrieve identifier of the object we wish to view
-            $controllerHelper = $this->container->get('«appService».controller_helper');
-
-            $this->idValues = $controllerHelper->retrieveIdentifier($this->request, [], $this->objectType, $this->idFields);
-            $hasIdentifier = $controllerHelper->isValidIdentifier($this->idValues);
+            $this->idValues = $this->controllerHelper->retrieveIdentifier($this->request, [], $this->objectType, $this->idFields);
+            $hasIdentifier = $this->controllerHelper->isValidIdentifier($this->idValues);
 
             $entity = null;
             $this->templateParameters['mode'] = $hasIdentifier ? 'edit' : 'create';
 
-            $permissionApi = $this->container->get('zikula_permissions_module.api.permission');
-
             if ($this->templateParameters['mode'] == 'edit') {
-                if (!$permissionApi->hasPermission($this->permissionComponent, $this->createCompositeIdentifier() . '::', ACCESS_EDIT)) {
+                if (!$this->permissionApi->hasPermission($this->permissionComponent, $this->createCompositeIdentifier() . '::', ACCESS_EDIT)) {
                     throw new AccessDeniedException();
                 }
 
@@ -395,7 +553,7 @@ class FormHandler {
 
                 «locking.addPageLock(it)»
             } else {
-                if (!$permissionApi->hasPermission($this->permissionComponent, '::', ACCESS_EDIT)) {
+                if (!$this->permissionApi->hasPermission($this->permissionComponent, '::', ACCESS_EDIT)) {
                     throw new AccessDeniedException();
                 }
 
@@ -410,13 +568,11 @@ class FormHandler {
                 «relationPresetsHelper.callBaseMethod(it)»
             «ENDIF»
 
-            $workflowHelper = $this->container->get('«appService».workflow_helper');
-            $actions = $workflowHelper->getActionsForObject($entity);
+            $actions = $this->workflowHelper->getActionsForObject($entity);
             if (false === $actions || !is_array($actions)) {
                 $this->request->getSession()->getFlashBag()->add('error', $this->__('Error! Could not determine workflow actions.'));
-                $logger = $this->container->get('logger');
-                $logArgs = ['app' => '«appName»', 'user' => $this->container->get('zikula_users_module.current_user')->get('uname'), 'entity' => $this->objectType, 'id' => $entity->createCompositeIdentifier()];
-                $logger->error('{app}: User {user} tried to edit the {entity} with id {id}, but failed to determine available workflow actions.', $logArgs);
+                $logArgs = ['app' => '«appName»', 'user' => $this->currentUserApi->get('uname'), 'entity' => $this->objectType, 'id' => $entity->createCompositeIdentifier()];
+                $this->logger->error('{app}: User {user} tried to edit the {entity} with id {id}, but failed to determine available workflow actions.', $logArgs);
                 throw new \RuntimeException($this->__('Error! Could not determine workflow actions.'));
             }
 
@@ -472,14 +628,10 @@ class FormHandler {
     '''
 
     def private initialiseExtensions(Application it) '''
-        «IF hasAttributableEntities || hasTranslatable»
-            $featureActivationHelper = $this->container->get('«app.appService».feature_activation_helper');
-
-        «ENDIF»
         «IF hasAttributableEntities»
 
             if (true === $this->hasAttributes) {
-                if ($featureActivationHelper->isEnabled(FeatureActivationHelper::ATTRIBUTES, $this->objectType)) {
+                if ($this->featureActivationHelper->isEnabled(FeatureActivationHelper::ATTRIBUTES, $this->objectType)) {
                     $this->initAttributesForEditing();
                 }
             }
@@ -487,7 +639,7 @@ class FormHandler {
         «IF hasTranslatable»
 
             if (true === $this->hasTranslatableFields) {
-                if ($featureActivationHelper->isEnabled(FeatureActivationHelper::TRANSLATIONS, $this->objectType)) {
+                if ($this->featureActivationHelper->isEnabled(FeatureActivationHelper::TRANSLATIONS, $this->objectType)) {
                     $this->initTranslationsForEditing();
                 }
             }
@@ -524,8 +676,7 @@ class FormHandler {
          */
         protected function initEntityForEditing()
         {
-            $selectionHelper = $this->container->get('«appService».selection_helper');
-            $entity = $selectionHelper->getEntity($this->objectType, $this->idValues);
+            $entity = $this->selectionHelper->getEntity($this->objectType, $this->idValues);
             if (null === $entity) {
                 throw new NotFoundHttpException($this->__('No such item.'));
             }
@@ -562,8 +713,7 @@ class FormHandler {
                         $i++;
                     }
                     // reuse existing entity
-                    $selectionHelper = $this->container->get('«appService».selection_helper');
-                    $entityT = $selectionHelper->getEntity($this->objectType, $templateIdValues);
+                    $entityT = $this->selectionHelper->getEntity($this->objectType, $templateIdValues);
                     if (null === $entityT) {
                         throw new NotFoundHttpException($this->__('No such item.'));
                     }
@@ -572,9 +722,8 @@ class FormHandler {
             }
 
             if (null === $entity) {
-                $factory = $this->container->get('«appService».entity_factory');
                 $createMethod = 'create' . ucfirst($this->objectType);
-                $entity = $factory->$createMethod();
+                $entity = $this->entityFactory->$createMethod();
             }
 
             return $entity;
@@ -592,8 +741,7 @@ class FormHandler {
                 $entity = $this->entityRef;
 
                 // retrieve translated fields
-                $translatableHelper = $this->container->get('«app.appService».translatable_helper');
-                $translations = $translatableHelper->prepareEntityForEditing($this->objectType, $entity);
+                $translations = $this->translatableHelper->prepareEntityForEditing($this->objectType, $entity);
 
                 // assign translations
                 foreach ($translations as $language => $translationData) {
@@ -601,7 +749,7 @@ class FormHandler {
                 }
 
                 // assign list of installed languages for translatable extension
-                $this->templateParameters['supportedLanguages'] = $translatableHelper->getSupportedLanguages($this->objectType);
+                $this->templateParameters['supportedLanguages'] = $this->translatableHelper->getSupportedLanguages($this->objectType);
             }
         «ENDIF»
     '''
@@ -674,12 +822,10 @@ class FormHandler {
             $entity = $this->entityRef;
             «IF hasHookSubscribers»
 
-                $hookHelper = null;
                 if ($entity->supportsHookSubscribers() && $action != 'cancel') {
-                    $hookHelper = $this->container->get('«app.appService».hook_helper');
                     // Let any hooks perform additional validation actions
                     $hookType = $action == 'delete' ? 'validate_delete' : 'validate_edit';
-                    $validationHooksPassed = $hookHelper->callValidationHooks($entity, $hookType);
+                    $validationHooksPassed = $this->hookHelper->callValidationHooks($entity, $hookType);
                     if (!$validationHooksPassed) {
                         return false;
                     }
@@ -688,8 +834,7 @@ class FormHandler {
             «IF hasTranslatable»
 
                 if ($isRegularAction && true === $this->hasTranslatableFields) {
-                    $featureActivationHelper = $this->container->get('«app.appService».feature_activation_helper');
-                    if ($featureActivationHelper->isEnabled(FeatureActivationHelper::TRANSLATIONS, $this->objectType)) {
+                    if ($this->featureActivationHelper->isEnabled(FeatureActivationHelper::TRANSLATIONS, $this->objectType)) {
                         $this->processTranslationsForUpdate();
                     }
                 }
@@ -709,12 +854,10 @@ class FormHandler {
                         $url = null;
                         if ($action != 'delete') {
                             $urlArgs = $entity->createUrlArgs();
-                            $urlArgs['_locale'] = $this->container->get('request_stack')->getCurrentRequest()->getLocale();
+                            $urlArgs['_locale'] = $this->request->getLocale();
                             $url = new RouteUrl('«appName.formatForDB»_' . $this->objectType . '_display', $urlArgs);
                         }
-                        if (null !== $hookHelper) {
-                            $hookHelper->callProcessHooks($entity, $hookType, $url);
-                        }
+                        $this->hookHelper->callProcessHooks($entity, $hookType, $url);
                     }
                 «ENDIF»
             }
@@ -756,10 +899,9 @@ class FormHandler {
                 $transRepository = $this->entityManager->getRepository($entityTransClass);
 
                 // persist translated fields
-                $translatableHelper = $this->container->get('«app.appService».translatable_helper');
-                $translations = $translatableHelper->processEntityAfterEditing($this->objectType, $entity, $this->form);
+                $translations = $this->translatableHelper->processEntityAfterEditing($this->objectType, $entity, $this->form);
 
-                if ($this->container->get('zikula_extensions_module.api.variable')->getSystemVar('multilingual') == 1) {
+                if ($this->variableApi->getSystemVar('multilingual') == 1) {
                     foreach ($translations as $locale => $translationFields) {
                         foreach ($translationFields as $fieldName => $value) {
                             $transRepository->translate($entity, $fieldName, $locale, $value);
@@ -826,12 +968,11 @@ class FormHandler {
 
             $flashType = true === $success ? 'status' : 'error';
             $this->request->getSession()->getFlashBag()->add($flashType, $message);
-            $logger = $this->container->get('logger');
-            $logArgs = ['app' => '«appName»', 'user' => $this->container->get('zikula_users_module.current_user')->get('uname'), 'entity' => $this->objectType, 'id' => $this->entityRef->createCompositeIdentifier()];
+            $logArgs = ['app' => '«appName»', 'user' => $this->currentUserApi->get('uname'), 'entity' => $this->objectType, 'id' => $this->entityRef->createCompositeIdentifier()];
             if (true === $success) {
-                $logger->notice('{app}: User {user} updated the {entity} with id {id}.', $logArgs);
+                $this->logger->notice('{app}: User {user} updated the {entity} with id {id}.', $logArgs);
             } else {
-                $logger->error('{app}: User {user} tried to update the {entity} with id {id}, but failed.', $logArgs);
+                $this->logger->error('{app}: User {user} tried to update the {entity} with id {id}, but failed.', $logArgs);
             }
         }
     '''
@@ -850,8 +991,7 @@ class FormHandler {
 
                 if ($args['commandName'] != 'cancel') {
                     if (true === $this->hasSlugUpdatableField && isset($entityData['slug'])) {
-                        $controllerHelper = $this->container->get('«app.appService».controller_helper');
-                        $entityData['slug'] = $controllerHelper->formatPermalink($entityData['slug']);
+                        $entityData['slug'] = $this->controllerHelper->formatPermalink($entityData['slug']);
                     }
                 }
             «ENDIF»
@@ -866,8 +1006,7 @@ class FormHandler {
             «IF hasAttributableEntities»
 
                 if (true === $this->hasAttributes) {
-                    $featureActivationHelper = $this->container->get('«app.appService».feature_activation_helper');
-                    if ($featureActivationHelper->isEnabled(FeatureActivationHelper::ATTRIBUTES, $this->objectType)) {
+                    if ($this->featureActivationHelper->isEnabled(FeatureActivationHelper::ATTRIBUTES, $this->objectType)) {
                         $this->processAttributesForUpdate($entity);
                     }
                 }
@@ -906,18 +1045,16 @@ class FormHandler {
             $roles = [];
 
             «/* TODO recheck this after https://github.com/zikula/core/issues/2800 has been solved */»
-            $currentUserApi = $this->container->get('zikula_users_module.current_user');
-            $isLoggedIn = $currentUserApi->isLoggedIn();
-            $uid = $isLoggedIn ? $currentUserApi->get('uid') : 1;
+            $isLoggedIn = $this->currentUserApi->isLoggedIn();
+            $uid = $isLoggedIn ? $this->currentUserApi->get('uid') : 1;
             $roles['isCreator'] = $this->templateParameters['mode'] == 'create'
                 || (method_exists($this->entityRef, 'getCreatedBy') && $this->entityRef->getCreatedBy()->getUid() == $uid);
-            $variableApi = $this->container->get('zikula_extensions_module.api.variable');
 
-            $groupArgs = ['uid' => $uid, 'gid' => $variableApi->get('«appName»', 'moderationGroupFor' . $this->objectTypeCapital, 2)];
+            $groupArgs = ['uid' => $uid, 'gid' => $this->variableApi->get('«appName»', 'moderationGroupFor' . $this->objectTypeCapital, 2)];
             $roles['isModerator'] = ModUtil::apiFunc('ZikulaGroupsModule', 'user', 'isgroupmember', $groupArgs);
 
             if (true === $enterprise) {
-                $groupArgs = ['uid' => $uid, 'gid' => $variableApi->get('«appName»', 'superModerationGroupFor' . $this->objectTypeCapital, 2)];
+                $groupArgs = ['uid' => $uid, 'gid' => $this->variableApi->get('«appName»', 'superModerationGroupFor' . $this->objectTypeCapital, 2)];
                 $roles['isSuperModerator'] = ModUtil::apiFunc('ZikulaGroupsModule', 'user', 'isgroupmember', $groupArgs);
             }
 
@@ -1015,10 +1152,8 @@ class FormHandler {
             $entity = parent::initEntityForEditing();
 
             // only allow editing for the owner or people with higher permissions
-            $uid = $this->container->get('zikula_users_module.current_user')->get('uid');
-            if (!method_exists($entity, 'getCreatedBy') || $entity->getCreatedBy()->getUid() != $uid) {
-                $permissionApi = $this->container->get('zikula_permissions_module.api.permission');
-                if (!$permissionApi->hasPermission($this->permissionComponent, $this->createCompositeIdentifier() . '::', ACCESS_ADD)) {
+            if (!method_exists($entity, 'getCreatedBy') || $entity->getCreatedBy()->getUid() != $this->currentUserApi->get('uid')) {
+                if (!$this->permissionApi->hasPermission($this->permissionComponent, $this->createCompositeIdentifier() . '::', ACCESS_ADD)) {
                     throw new AccessDeniedException();
                 }
             }
@@ -1061,12 +1196,10 @@ class FormHandler {
             $result = parent::processForm($templateParameters);
 
             if ($this->templateParameters['mode'] == 'create') {
-                $modelHelper = $this->container->get('«app.appService».model_helper');
-                if (!$modelHelper->canBeCreated($this->objectType)) {
+                if (!$this->modelHelper->canBeCreated($this->objectType)) {
                     $this->request->getSession()->getFlashBag()->add('error', $this->__('Sorry, but you can not create the «name.formatForDisplay» yet as other items are required which must be created before!'));
-                    $logger = $this->container->get('logger');
-                    $logArgs = ['app' => '«app.appName»', 'user' => $this->container->get('zikula_users_module.current_user')->get('uname'), 'entity' => $this->objectType];
-                    $logger->notice('{app}: User {user} tried to create a new {entity}, but failed as it other items are required which must be created before.', $logArgs);
+                    $logArgs = ['app' => '«app.appName»', 'user' => $this->currentUserApi->get('uname'), 'entity' => $this->objectType];
+                    $this->logger->notice('{app}: User {user} tried to create a new {entity}, but failed as it other items are required which must be created before.', $logArgs);
 
                     return new RedirectResponse($this->getRedirectUrl(['commandName' => '']), 302);
                 }
@@ -1100,8 +1233,7 @@ class FormHandler {
                 «ENDIF»
             ];
             «IF attributable»
-                $featureActivationHelper = $this->container->get('«app.appService».feature_activation_helper');
-                if ($featureActivationHelper->isEnabled(FeatureActivationHelper::ATTRIBUTES, $this->objectType)) {
+                if ($this->featureActivationHelper->isEnabled(FeatureActivationHelper::ATTRIBUTES, $this->objectType)) {
                     $options['attributes'] = $this->templateParameters['attributes'];
                 }
             «ENDIF»
@@ -1111,7 +1243,7 @@ class FormHandler {
                 $options = array_merge($options, $workflowRoles);
             «ENDIF»
 
-            return $this->container->get('form.factory')->create('«app.appNamespace»\Form\Type\«name.formatForCodeCapital»Type', $this->entityRef, $options);
+            return $this->formFactory->create('«app.appNamespace»\Form\Type\«name.formatForCodeCapital»Type', $this->entityRef, $options);
         }
     '''
 
@@ -1203,17 +1335,15 @@ class FormHandler {
 
             $success = false;
             $flashBag = $this->request->getSession()->getFlashBag();
-            $logger = $this->container->get('logger');
             try {
                 «locking.applyLock(it)»
                 // execute the workflow action
-                $workflowHelper = $this->container->get('«app.appService».workflow_helper');
-                $success = $workflowHelper->executeAction($entity, $action);
+                $success = $this->workflowHelper->executeAction($entity, $action);
             «locking.catchException(it)»
             } catch(\Exception $e) {
                 $flashBag->add('error', $this->__f('Sorry, but an error occured during the %action% action. Please apply the changes again!', ['%action%' => $action]) . ' ' . $e->getMessage());
-                $logArgs = ['app' => '«app.appName»', 'user' => $this->container->get('zikula_users_module.current_user')->get('uname'), 'entity' => '«name.formatForDisplay»', 'id' => $entity->createCompositeIdentifier(), 'errorMessage' => $e->getMessage()];
-                $logger->error('{app}: User {user} tried to edit the {entity} with id {id}, but failed. Error details: {errorMessage}.', $logArgs);
+                $logArgs = ['app' => '«app.appName»', 'user' => $this->currentUserApi->get('uname'), 'entity' => '«name.formatForDisplay»', 'id' => $entity->createCompositeIdentifier(), 'errorMessage' => $e->getMessage()];
+                $this->logger->error('{app}: User {user} tried to edit the {entity} with id {id}, but failed. Error details: {errorMessage}.', $logArgs);
             }
 
             $this->addDefaultMessage($args, $success);

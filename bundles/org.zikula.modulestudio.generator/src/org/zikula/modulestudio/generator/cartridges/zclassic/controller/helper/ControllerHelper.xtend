@@ -47,37 +47,47 @@ class ControllerHelper {
         «IF hasUploads || hasGeographical»
             use Psr\Log\LoggerInterface;
         «ENDIF»
-        use Symfony\Component\DependencyInjection\ContainerBuilder;
         «IF hasUploads»
             use Symfony\Component\Filesystem\Exception\IOExceptionInterface;
             use Symfony\Component\Filesystem\Filesystem;
         «ENDIF»
+        «IF hasViewActions»
+            use Symfony\Component\Form\FormFactoryInterface;
+        «ENDIF»
         use Symfony\Component\HttpFoundation\Request;
+        use Symfony\Component\HttpFoundation\RequestStack;
         «IF hasUploads»
             use Symfony\Component\HttpFoundation\Session\SessionInterface;
+            use Zikula\Common\Translator\TranslatorInterface;
+            use Zikula\Common\Translator\TranslatorTrait;
         «ENDIF»
-        use Zikula\Common\Translator\TranslatorInterface;
         «IF hasViewActions»
             use Zikula\Component\SortableColumns\SortableColumns;
-            «IF hasHookSubscribers»
-                use Zikula\Core\RouteUrl;
-            «ENDIF»
         «ENDIF»
+        «IF (hasViewActions || hasDisplayActions) && hasHookSubscribers»
+            use Zikula\Core\RouteUrl;
+        «ENDIF»
+        «IF hasViewActions»
+            use Zikula\ExtensionsModule\Api\VariableApi;
+        «ENDIF»
+        «IF hasGeographical»
+            use Zikula\UsersModule\Api\CurrentUserApi;
+        «ENDIF»
+        use «appNamespace»\Entity\Factory\«name.formatForCodeCapital»Factory;
 
         /**
          * Helper base class for controller layer methods.
          */
         abstract class AbstractControllerHelper
         {
-            /**
-             * @var ContainerBuilder
-             */
-            protected $container;
+            «IF hasUploads»
+                use TranslatorTrait;
 
+            «ENDIF»
             /**
-             * @var TranslatorInterface
+             * @var Request
              */
-            protected $translator;
+            protected $request;
             «IF hasUploads»
 
                 /**
@@ -92,31 +102,165 @@ class ControllerHelper {
                  */
                 protected $logger;
             «ENDIF»
+            «IF hasViewActions»
+
+                /**
+                 * @var FormFactoryInterface
+                 */
+                protected $formFactory;
+
+                /**
+                 * @var VariableApi
+                 */
+                protected $variableApi;
+            «ENDIF»
+            «IF hasGeographical»
+
+                /**
+                 * @var CurrentUserApi
+                 */
+                protected $currentUserApi;
+            «ENDIF»
+
+            /**
+             * @var «name.formatForCodeCapital»Factory
+             */
+            private $entityFactory;
+            «IF hasViewActions && hasEditActions»
+
+                /**
+                 * @var ModelHelper
+                 */
+                private $modelHelper;
+            «ENDIF»
+
+            /**
+             * @var SelectionHelper
+             */
+            private $selectionHelper;
+            «IF hasUploads»
+
+                /**
+                 * @var ImageHelper
+                 */
+                private $imageHelper;
+            «ENDIF»
+            «IF needsFeatureActivationHelper»
+
+                /**
+                 * @var FeatureActivationHelper
+                 */
+                private $featureActivationHelper;
+            «ENDIF»
+            «IF hasUploads»
+
+                /**
+                 * @var String
+                 */
+                private $dataDirectory;
+            «ENDIF»
 
             /**
              * ControllerHelper constructor.
              *
-             * @param ContainerBuilder    $container  ContainerBuilder service instance
-             * @param TranslatorInterface $translator Translator service instance
              «IF hasUploads»
-                 * @param SessionInterface    $session    Session service instance
+             * @param TranslatorInterface $translator      Translator service instance
+             «ENDIF»
+             * @param RequestStack        $requestStack    RequestStack service instance
+             «IF hasUploads»
+             * @param SessionInterface    $session         Session service instance
              «ENDIF»
              «IF hasUploads || hasGeographical»
-                 * @param LoggerInterface     $logger     Logger service instance
+             * @param LoggerInterface     $logger          Logger service instance
+             «ENDIF»
+             «IF hasViewActions»
+             * @param FormFactoryInterface $formFactory    FormFactory service instance
+             * @param VariableApi         $variableApi     VariableApi service instance
+             «ENDIF»
+             «IF hasGeographical»
+             * @param CurrentUserApi      $currentUserApi  CurrentUserApi service instance
+             «ENDIF»
+             * @param «name.formatForCodeCapital»Factory $entityFactory «name.formatForCodeCapital»Factory service instance
+             «IF hasViewActions && hasEditActions»
+             * @param ModelHelper         $modelHelper     ModelHelper service instance
+             «ENDIF»
+             * @param SelectionHelper     $selectionHelper SelectionHelper service instance
+             «IF hasUploads»
+             * @param ImageHelper         $imageHelper     ImageHelper service instance
+             «ENDIF»
+             «IF needsFeatureActivationHelper»
+             * @param FeatureActivationHelper $featureActivationHelper FeatureActivationHelper service instance
+             «ENDIF»
+             «IF hasUploads»
+             * @param String              $dataDirectory   The data directory name
              «ENDIF»
              */
-            public function __construct(ContainerBuilder $container, TranslatorInterface $translator«IF hasUploads», SessionInterface $session«ENDIF»«IF hasUploads || hasGeographical», LoggerInterface $logger«ENDIF»)
+            public function __construct(
+                «IF hasUploads»
+                    TranslatorInterface $translator,
+                «ENDIF»
+                RequestStack $requestStack,
+                «IF hasUploads»
+                    SessionInterface $session,
+                «ENDIF»
+                «IF hasUploads || hasGeographical»
+                    LoggerInterface $logger,
+                «ENDIF»
+                «IF hasViewActions»
+                    FormFactoryInterface $formFactory,
+                    VariableApi $variableApi,
+                «ENDIF»
+                «IF hasGeographical»
+                    CurrentUserApi $currentUserApi,
+                «ENDIF»
+                «name.formatForCodeCapital»Factory $entityFactory,
+                «IF hasViewActions && hasEditActions»
+                    ModelHelper $modelHelper,
+                «ENDIF»
+                SelectionHelper $selectionHelper«IF hasUploads»,
+                    ImageHelper $imageHelper
+                «ENDIF»«IF needsFeatureActivationHelper»,
+                    FeatureActivationHelper $featureActivationHelper
+                «ENDIF»«IF hasUploads»,
+                    $dataDirectory«ENDIF»)
             {
-                $this->container = $container;
-                $this->translator = $translator;
+                «IF hasUploads»
+                    $this->setTranslator($translator);
+                «ENDIF»
+                $this->request = $requestStack->getCurrentRequest();
                 «IF hasUploads»
                     $this->session = $session;
                 «ENDIF»
                 «IF hasUploads || hasGeographical»
                     $this->logger = $logger;
                 «ENDIF»
+                «IF hasViewActions»
+                    $this->formFactory = $formFactory;
+                    $this->variableApi = $variableApi;
+                «ENDIF»
+                «IF hasGeographical»
+                    $this->currentUserApi = $currentUserApi;
+                «ENDIF»
+                $this->entityFactory = $entityFactory;
+                «IF hasViewActions && hasEditActions»
+                    $this->modelHelper = $modelHelper;
+                «ENDIF»
+                $this->selectionHelper = $selectionHelper;
+                «IF hasUploads»
+                    $this->imageHelper = $imageHelper;
+                «ENDIF»
+                «IF needsFeatureActivationHelper»
+                    $this->featureActivationHelper = $featureActivationHelper;
+                «ENDIF»
+                «IF hasUploads»
+                    $this->dataDirectory = $dataDirectory;
+                «ENDIF»
             }
 
+            «IF hasUploads»
+                «setTranslatorMethod»
+
+            «ENDIF»
             «getObjectTypes»
 
             «getDefaultObjectType»
@@ -343,12 +487,12 @@ class ControllerHelper {
         public function processViewActionParameters($objectType, SortableColumns $sortableColumns, array $templateParameters = []«IF hasHookSubscribers», $supportsHooks = false«ENDIF»)
         {
             $contextArgs = ['controller' => $objectType, 'action' => 'view'];
-            if (!in_array($objectType, $this->getObjectTypes($contextArgs))) {
+            if (!in_array($objectType, $this->getObjectTypes('controllerAction', $contextArgs))) {
                 throw new Exception('Error! Invalid object type received.');
             }
 
-            $request = $this->container->get('request_stack')->getCurrentRequest();
-            $repository = $this->container->get('«appService».entity_factory')->getRepository($objectType);
+            $request = $this->request;
+            $repository = $this->entityFactory->getRepository($objectType);
             $repository->setRequest($request);
 
             // parameter for used sorting field
@@ -357,22 +501,17 @@ class ControllerHelper {
             «IF hasTrees»
 
                 if ('tree' == $request->query->getAlnum('tpl', '')) {
-                    $selectionHelper = $this->container->get('«appService».selection_helper');
-                    «IF hasUploads»
-                        $imageHelper = $this->container->get('«appService».image_helper');
-                    «ENDIF»
-                    $templateParameters['trees'] = $selectionHelper->getAllTrees($objectType);
-                    $templateParameters = array_merge($templateParameters, $repository->getAdditionalTemplateParameters(«IF hasUploads»$imageHelper, «ENDIF»'controllerAction', $contextArgs));
+                    $templateParameters['trees'] = $this->selectionHelper->getAllTrees($objectType);
+                    $templateParameters = array_merge($templateParameters, $repository->getAdditionalTemplateParameters(«IF hasUploads»$this->imageHelper, «ENDIF»'controllerAction', $contextArgs));
                     «IF needsFeatureActivationHelper»
-                        $templateParameters['featureActivationHelper'] = $this->container->get('«appService».feature_activation_helper');
+                        $templateParameters['featureActivationHelper'] = $this->featureActivationHelper;
                     «ENDIF»
 
                     return $templateParameters;
                 }
             «ENDIF»
 
-            $variableApi = $this->container->get('zikula_extensions_module.api.variable');
-            $showOwnEntries = $request->query->getInt('own', $variableApi->get('«appName»', 'showOnlyOwnEntries', 0));
+            $showOwnEntries = $request->query->getInt('own', $this->variableApi->get('«appName»', 'showOnlyOwnEntries', 0));
             $showAllEntries = $request->query->getInt('all', 0);
 
             «IF generateCsvTemplates»
@@ -399,14 +538,11 @@ class ControllerHelper {
                 // the number of items displayed on a page for pagination
                 $resultsPerPage = $request->query->getInt('num', 0);
                 if (in_array($resultsPerPage, [0, 10])) {
-                    $resultsPerPage = $variableApi->get('«appName»', $objectType . 'EntriesPerPage', 10);
+                    $resultsPerPage = $this->variableApi->get('«appName»', $objectType . 'EntriesPerPage', 10);
                 }
             }
 
-            «IF hasUploads»
-                $imageHelper = $this->container->get('«appService».image_helper');
-            «ENDIF»
-            $additionalParameters = $repository->getAdditionalTemplateParameters(«IF hasUploads»$imageHelper, «ENDIF»'controllerAction', $contextArgs);
+            $additionalParameters = $repository->getAdditionalTemplateParameters(«IF hasUploads»$this->imageHelper, «ENDIF»'controllerAction', $contextArgs);
 
             $additionalUrlParameters = [
                 'all' => $showAllEntries,
@@ -425,7 +561,7 @@ class ControllerHelper {
             $templateParameters['num'] = $resultsPerPage;
             $templateParameters['tpl'] = $request->query->getAlnum('tpl', '');
 
-            $quickNavForm = $this->container->get('form.factory')->create('«appNamespace»\Form\Type\QuickNavigation\\' . ucfirst($objectType) . 'QuickNavType', $templateParameters);
+            $quickNavForm = $this->formFactory->create('«appNamespace»\Form\Type\QuickNavigation\\' . ucfirst($objectType) . 'QuickNavType', $templateParameters);
             if ($quickNavForm->handleRequest($request) && $quickNavForm->isSubmitted()) {
                 $quickNavData = $quickNavForm->getData();
                 foreach ($quickNavData as $fieldName => $fieldValue) {
@@ -451,18 +587,16 @@ class ControllerHelper {
             $templateParameters['sort'] = $sort;
             $templateParameters['sortdir'] = $sortdir;
 
-            $selectionHelper = $this->container->get('«appService».selection_helper');
-
             $where = '';
             if ($showAllEntries == 1) {
                 // retrieve item list without pagination
-                $entities = $selectionHelper->getEntities($objectType, [], $where, $sort . ' ' . $sortdir);
+                $entities = $this->selectionHelper->getEntities($objectType, [], $where, $sort . ' ' . $sortdir);
             } else {
                 // the current offset which is used to calculate the pagination
                 $currentPage = $request->query->getInt('pos', 1);
 
                 // retrieve item list with pagination
-                list($entities, $objectCount) = $selectionHelper->getEntitiesPaginated($objectType, $where, $sort . ' ' . $sortdir, $currentPage, $resultsPerPage);
+                list($entities, $objectCount) = $this->selectionHelper->getEntitiesPaginated($objectType, $where, $sort . ' ' . $sortdir, $currentPage, $resultsPerPage);
 
                 $templateParameters['currentPage'] = $currentPage;
                 $templateParameters['pager'] = [
@@ -497,10 +631,10 @@ class ControllerHelper {
             $templateParameters['showOwnEntries'] = $templateParameters['own'];
 
             «IF needsFeatureActivationHelper»
-                $templateParameters['featureActivationHelper'] = $this->container->get('«appService».feature_activation_helper');
+                $templateParameters['featureActivationHelper'] = $this->featureActivationHelper;
             «ENDIF»
             «IF hasEditActions»
-                $templateParameters['canBeCreated'] = $this->container->get('«appService».model_helper')->canBeCreated($objectType);
+                $templateParameters['canBeCreated'] = $this->modelHelper->canBeCreated($objectType);
             «ENDIF»
 
             return $templateParameters;
@@ -522,32 +656,28 @@ class ControllerHelper {
         public function processDisplayActionParameters($objectType, array $templateParameters = []«IF hasHookSubscribers», $supportsHooks = false«ENDIF»)
         {
             $contextArgs = ['controller' => $objectType, 'action' => 'display'];
-            if (!in_array($objectType, $this->getObjectTypes($contextArgs))) {
+            if (!in_array($objectType, $this->getObjectTypes('controllerAction', $contextArgs))) {
                 throw new Exception('Error! Invalid object type received.');
             }
 
-            $request = $this->container->get('request_stack')->getCurrentRequest();
-            $repository = $this->container->get('«appService».entity_factory')->getRepository($objectType);
-            $repository->setRequest($request);
+            $repository = $this->entityFactory->getRepository($objectType);
+            $repository->setRequest($this->request);
             $entity = $templateParameters[$objectType];
             «IF hasHookSubscribers»
 
                 if (true === $supportsHooks) {
                     // build RouteUrl instance for display hooks
                     $currentUrlArgs = $entity->createUrlArgs();
-                    $currentUrlArgs['_locale'] = $request->getLocale();
+                    $currentUrlArgs['_locale'] = $this->request->getLocale();
                     $currentUrlObject = new RouteUrl('«appName.formatForDB»_' . $objectType . '_' . /*$templateParameters['routeArea'] . */'display', $currentUrlArgs);
                     $templateParameters['currentUrlObject'] = $currentUrlObject;
                 }
             «ENDIF»
 
-            «IF hasUploads»
-                $imageHelper = $this->container->get('«appService».image_helper');
-            «ENDIF»
-            $additionalParameters = $repository->getAdditionalTemplateParameters(«IF hasUploads»$imageHelper, «ENDIF»'controllerAction', $contextArgs);
+            $additionalParameters = $repository->getAdditionalTemplateParameters(«IF hasUploads»$this->imageHelper, «ENDIF»'controllerAction', $contextArgs);
             $templateParameters = array_merge($templateParameters, $additionalParameters);
             «IF needsFeatureActivationHelper»
-                $templateParameters['featureActivationHelper'] = $this->container->get('«appService».feature_activation_helper');
+                $templateParameters['featureActivationHelper'] = $this->featureActivationHelper;
             «ENDIF»
 
             return $templateParameters;
@@ -566,21 +696,17 @@ class ControllerHelper {
         public function processEditActionParameters($objectType, array $templateParameters = [])
         {
             $contextArgs = ['controller' => $objectType, 'action' => 'edit'];
-            if (!in_array($objectType, $this->getObjectTypes($contextArgs))) {
+            if (!in_array($objectType, $this->getObjectTypes('controllerAction', $contextArgs))) {
                 throw new Exception('Error! Invalid object type received.');
             }
 
-            $request = $this->container->get('request_stack')->getCurrentRequest();
-            $repository = $this->container->get('«appService».entity_factory')->getRepository($objectType);
-            $repository->setRequest($request);
+            $repository = $this->entityFactory->getRepository($objectType);
+            $repository->setRequest($this->request);
 
-            «IF hasUploads»
-                $imageHelper = $this->container->get('«appService».image_helper');
-            «ENDIF»
-            $additionalParameters = $repository->getAdditionalTemplateParameters(«IF hasUploads»$imageHelper, «ENDIF»'controllerAction', $contextArgs);
+            $additionalParameters = $repository->getAdditionalTemplateParameters(«IF hasUploads»$this->imageHelper, «ENDIF»'controllerAction', $contextArgs);
             $templateParameters = array_merge($templateParameters, $additionalParameters);
             «IF needsFeatureActivationHelper»
-                $templateParameters['featureActivationHelper'] = $this->container->get('«appService».feature_activation_helper');
+                $templateParameters['featureActivationHelper'] = $this->featureActivationHelper;
             «ENDIF»
 
             return $templateParameters;
@@ -602,18 +728,14 @@ class ControllerHelper {
         public function processDeleteActionParameters($objectType, array $templateParameters = []«IF hasHookSubscribers», $supportsHooks = false«ENDIF»)
         {
             $contextArgs = ['controller' => $objectType, 'action' => 'delete'];
-            if (!in_array($objectType, $this->getObjectTypes($contextArgs))) {
+            if (!in_array($objectType, $this->getObjectTypes('controllerAction', $contextArgs))) {
                 throw new Exception('Error! Invalid object type received.');
             }
 
-            $request = $this->container->get('request_stack')->getCurrentRequest();
-            $repository = $this->container->get('«appService».entity_factory')->getRepository($objectType);
-            $repository->setRequest($request);
+            $repository = $this->entityFactory->getRepository($objectType);
+            $repository->setRequest($this->request);
 
-            «IF hasUploads»
-                $imageHelper = $this->container->get('«appService».image_helper');
-            «ENDIF»
-            $additionalParameters = $repository->getAdditionalTemplateParameters(«IF hasUploads»$imageHelper, «ENDIF»'controllerAction', $contextArgs);
+            $additionalParameters = $repository->getAdditionalTemplateParameters(«IF hasUploads»$this->imageHelper, «ENDIF»'controllerAction', $contextArgs);
             $templateParameters = array_merge($templateParameters, $additionalParameters);
 
             return $templateParameters;
@@ -634,11 +756,12 @@ class ControllerHelper {
          */
         public function getFileBaseFolder($objectType, $fieldName, $ignoreCreate = false)
         {
-            if (!in_array($objectType, $this->getObjectTypes())) {
+            $contextArgs = ['helper' => $objectType, 'action' => 'getFileBaseFolder'];
+            if (!in_array($objectType, $this->getObjectTypes('helper', $contextArgs))) {
                 throw new Exception('Error! Invalid object type received.');
             }
 
-            $basePath = $this->container->getParameter('datadir') . '/«appName»/';
+            $basePath = $this->dataDirectory . '/«appName»/';
 
             switch ($objectType) {
                 «FOR entity : getUploadEntities.filter(Entity)»
@@ -716,7 +839,7 @@ class ControllerHelper {
                 try {
                     $fs->mkdir($uploadPath, 0777);
                 } catch (IOExceptionInterface $e) {
-                    $flashBag->add('error', $this->translator->__f('The upload directory "%s" does not exist and could not be created. Try to create it yourself and make sure that this folder is accessible via the web and writable by the webserver.', ['%s' => $e->getPath()]));
+                    $flashBag->add('error', $this->__f('The upload directory "%s" does not exist and could not be created. Try to create it yourself and make sure that this folder is accessible via the web and writable by the webserver.', ['%s' => $e->getPath()]));
                     $this->logger->error('{app}: The upload directory {directory} does not exist and could not be created.', ['app' => '«appName»', 'directory' => $uploadPath]);
 
                     return false;
@@ -728,7 +851,7 @@ class ControllerHelper {
                 try {
                     $fs->chmod($uploadPath, 0777);
                 } catch (IOExceptionInterface $e) {
-                    $flashBag->add('warning', $this->translator->__f('Warning! The upload directory at "%s" exists but is not writable by the webserver.', ['%s' => $e->getPath()]));
+                    $flashBag->add('warning', $this->__f('Warning! The upload directory at "%s" exists but is not writable by the webserver.', ['%s' => $e->getPath()]));
                     $this->logger->error('{app}: The upload directory {directory} exists but is not writable by the webserver.', ['app' => '«appName»', 'directory' => $uploadPath]);
 
                     return false;
@@ -744,7 +867,7 @@ class ControllerHelper {
                     $htaccessContent = str_replace('__EXTENSIONS__', $extensions, file_get_contents($htaccessFileTemplate, false));
                     $fs->dumpFile($htaccessFilePath, $htaccessContent);
                 } catch (IOExceptionInterface $e) {
-                    $flashBag->add('error', $this->translator->__f('An error occured during creation of the .htaccess file in directory "%s".', ['%s' => $e->getPath()]));
+                    $flashBag->add('error', $this->__f('An error occured during creation of the .htaccess file in directory "%s".', ['%s' => $e->getPath()]));
                     $this->logger->error('{app}: An error occured during creation of the .htaccess file in directory {directory}.', ['app' => '«appName»', 'directory' => $uploadPath]);
                 }
             }
@@ -767,7 +890,7 @@ class ControllerHelper {
          */
         public function performGeoCoding($address)
         {
-            $lang = $this->container->get('request_stack')->getCurrentRequest()->getLocale();
+            $lang = $this->request->getLocale();
             $url = 'https://maps.googleapis.com/maps/api/geocode/json?address=' . urlencode($address);
             $url .= '&region=' . $lang . '&language=' . $lang . '&sensor=false';
 
@@ -810,7 +933,7 @@ class ControllerHelper {
                     $result['latitude'] = str_replace(',', '.', $location->lat);
                     $result['longitude'] = str_replace(',', '.', $location->lng);
                 } else {
-                    $logArgs = ['app' => '«appName»', 'user' => $this->container->get('zikula_users_module.current_user')->get('uname'), 'field' => $field, 'address' => $address];
+                    $logArgs = ['app' => '«appName»', 'user' => $this->currentUserApi->get('uname'), 'field' => $field, 'address' => $address];
                     $this->logger->warning('{app}: User {user} tried geocoding for address "{address}", but failed.', $logArgs);
                 }
             }

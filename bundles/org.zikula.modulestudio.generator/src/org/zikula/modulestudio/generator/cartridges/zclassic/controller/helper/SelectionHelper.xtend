@@ -26,9 +26,9 @@ class SelectionHelper {
     def private selectionHelperBaseClass(Application it) '''
         namespace «appNamespace»\Helper\Base;
 
-        use Doctrine\Common\Persistence\ObjectManager;
-        use Symfony\Component\DependencyInjection\ContainerBuilder;
+        use InvalidArgumentException;
         use Zikula\Common\Translator\TranslatorInterface;
+        use «appNamespace»\Entity\Factory\«name.formatForCodeCapital»Factory;
         use «appNamespace»\Helper\ControllerHelper;
 
         /**
@@ -37,19 +37,14 @@ class SelectionHelper {
         abstract class AbstractSelectionHelper
         {
             /**
-             * @var ContainerBuilder
-             */
-            protected $container;
-
-            /**
-             * @var ObjectManager The object manager to be used for determining the repository
-             */
-            protected $objectManager;
-
-            /**
              * @var TranslatorInterface
              */
             protected $translator;
+
+            /**
+             * @var «name.formatForCodeCapital»Factory
+             */
+            private $entityFactory;
 
             /**
              * @var ControllerHelper
@@ -59,16 +54,14 @@ class SelectionHelper {
             /**
              * SelectionHelper constructor.
              *
-             * @param ContainerBuilder    $container        ContainerBuilder service instance
-             * @param ObjectManager       $objectManager    The object manager to be used for retrieving entity meta data
              * @param TranslatorInterface $translator       Translator service instance
+             * @param «name.formatForCodeCapital»Factory $entityFactory «name.formatForCodeCapital»Factory service instance
              * @param ControllerHelper    $controllerHelper ControllerHelper service instance
              */
-            public function __construct(ContainerBuilder $container, ObjectManager $objectManager, TranslatorInterface $translator, ControllerHelper $controllerHelper)
+            public function __construct(TranslatorInterface $translator, «name.formatForCodeCapital»Factory $entityFactory, ControllerHelper $controllerHelper)
             {
-                $this->container = $container;
-                $this->objectManager = $objectManager;
                 $this->translator = $translator;
+                $this->entityFactory = $entityFactory;
                 $this->controllerHelper = $controllerHelper;
             }
 
@@ -89,7 +82,7 @@ class SelectionHelper {
             $objectType = $this->determineObjectType($objectType, 'getIdFields');
             $entityClass = '«vendor.formatForCodeCapital»«name.formatForCodeCapital»Module:' . ucfirst($objectType) . 'Entity';
 
-            $meta = $this->objectManager->getClassMetadata($entityClass);
+            $meta = $this->entityFactory->getObjectManager()->getClassMetadata($entityClass);
 
             if ($this->hasCompositeKeys($objectType)) {
                 $idFields = $meta->getIdentifierFieldNames();
@@ -128,7 +121,7 @@ class SelectionHelper {
         public function getEntity($objectType = '', $id = ''«IF hasSluggable», $slug = ''«ENDIF», $useJoins = true, $slimMode = false)
         {
             if (empty($id)«IF hasSluggable» && empty($slug)«ENDIF») {
-                throw new \InvalidArgumentException($this->translator->__('Invalid identifier received.'));
+                throw new InvalidArgumentException($this->translator->__('Invalid identifier received.'));
             }
 
             $objectType = $this->determineObjectType($objectType, 'getEntity');
@@ -230,10 +223,10 @@ class SelectionHelper {
         protected function getRepository($objectType = '')
         {
             if (empty($objectType)) {
-                throw new \InvalidArgumentException($this->translator->__('Invalid object type received.'));
+                throw new InvalidArgumentException($this->translator->__('Invalid object type received.'));
             }
 
-            return $this->container->get('«appService».entity_factory')->getRepository($objectType);
+            return $this->entityFactory->getRepository($objectType);
         }
         «IF hasTrees»
 

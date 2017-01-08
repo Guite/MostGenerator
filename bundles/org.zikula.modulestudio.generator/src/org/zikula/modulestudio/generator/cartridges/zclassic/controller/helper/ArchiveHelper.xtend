@@ -30,21 +30,16 @@ class ArchiveHelper {
 
         use PageUtil;
         use Psr\Log\LoggerInterface;
-        use Symfony\Component\DependencyInjection\ContainerBuilder;
         use Symfony\Component\HttpFoundation\Session\SessionInterface;
         use Zikula\Common\Translator\TranslatorInterface;
         use Zikula\PermissionsModule\Api\PermissionApi;
+        use «appNamespace»\Entity\Factory\«name.formatForCodeCapital»Factory;
 
         /**
          * Archive helper base class.
          */
         abstract class AbstractArchiveHelper
         {
-            /**
-             * @var ContainerBuilder
-             */
-            protected $container;
-
             /**
              * @var TranslatorInterface
              */
@@ -66,6 +61,11 @@ class ArchiveHelper {
             private $permissionApi;
 
             /**
+             * @var «name.formatForCodeCapital»Factory
+             */
+            private $entityFactory;
+
+            /**
              * @var WorkflowHelper
              */
             private $workflowHelper;
@@ -80,30 +80,30 @@ class ArchiveHelper {
             /**
              * ArchiveHelper constructor.
              *
-             * @param ContainerBuilder    $container      ContainerBuilder service instance
              * @param TranslatorInterface $translator     Translator service instance
              * @param SessionInterface    $session        Session service instance
              * @param LoggerInterface     $logger         Logger service instance
              * @param PermissionApi       $permissionApi  PermissionApi service instance
+             * @param «name.formatForCodeCapital»Factory $entityFactory «name.formatForCodeCapital»Factory service instance
              * @param WorkflowHelper      $workflowHelper WorkflowHelper service instance
              «IF hasHookSubscribers»
              * @param HookHelper          $hookHelper     HookHelper service instance
              «ENDIF»
              */
             public function __construct(
-                ContainerBuilder $container,
                 TranslatorInterface $translator,
                 SessionInterface $session,
                 LoggerInterface $logger,
                 PermissionApi $permissionApi,
+                «name.formatForCodeCapital»Factory $entityFactory,
                 WorkflowHelper $workflowHelper«IF hasHookSubscribers»,
                 HookHelper $hookHelper«ENDIF»)
             {
-                $this->container = $container;
                 $this->translator = $translator;
                 $this->session = $session;
                 $this->logger = $logger;
                 $this->permissionApi = $permissionApi;
+                $this->entityFactory = $entityFactory;
                 $this->workflowHelper = $workflowHelper;
                 «IF hasHookSubscribers»
                     $this->hookHelper = $hookHelper;
@@ -132,18 +132,13 @@ class ArchiveHelper {
                 return;
             }
 
-            if (!$this->container->has('«appService».entity_factory')) {
-                return;
-            }
-
             PageUtil::registerVar('«appName»AutomaticArchiving', false, true);
-            $entityFactory = $this->container->get('«appService».entity_factory');
             «FOR entity : getArchivingEntities»
 
                 // perform update for «entity.nameMultiple.formatForDisplay» becoming archived
                 $logArgs = ['app' => '«appName»', 'entity' => '«entity.name.formatForCode»'];
                 $this->logger->notice('{app}: Automatic archiving for the {entity} entity started.', $logArgs);
-                $repository = $entityFactory->getRepository('«entity.name.formatForCode»');
+                $repository = $this->entityFactory->getRepository('«entity.name.formatForCode»');
                 $repository->archiveObjects($this->permissionApi, $this->session, $this->translator, $this->workflowHelper«IF !entity.skipHookSubscribers», $this->hookHelper«ENDIF»);
                 $this->logger->notice('{app}: Automatic archiving for the {entity} entity completed.', $logArgs);
             «ENDFOR»

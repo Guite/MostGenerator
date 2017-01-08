@@ -46,10 +46,10 @@ class LinkContainer {
         use Zikula\Common\Translator\TranslatorTrait;
         use Zikula\Core\Doctrine\EntityAccess;
         use Zikula\Core\LinkContainer\LinkContainerInterface;
-        use Zikula\PermissionsModule\Api\PermissionApi;
         «IF generateAccountApi»
             use Zikula\ExtensionsModule\Api\VariableApi;
         «ENDIF»
+        use Zikula\PermissionsModule\Api\PermissionApi;
         «IF generateAccountApi || hasEditActions»
             use Zikula\UsersModule\Api\CurrentUserApi;
         «ENDIF»
@@ -72,11 +72,6 @@ class LinkContainer {
              */
             protected $permissionApi;
 
-            /**
-             * @var ControllerHelper
-             */
-            protected $controllerHelper;
-
             «IF generateAccountApi»
                 /**
                  * @var VariableApi
@@ -92,31 +87,36 @@ class LinkContainer {
 
             «ENDIF»
             /**
+             * @var ControllerHelper
+             */
+            protected $controllerHelper;
+
+            /**
              * LinkContainer constructor.
              *
              * @param TranslatorInterface $translator       Translator service instance
              * @param Routerinterface     $router           Router service instance
              * @param PermissionApi       $permissionApi    PermissionApi service instance
-             * @param ControllerHelper    $controllerHelper ControllerHelper service instance
              «IF generateAccountApi»
              * @param VariableApi         $variableApi      VariableApi service instance
              «ENDIF»
              «IF generateAccountApi || hasEditActions»
              * @param CurrentUserApi      $currentUserApi   CurrentUserApi service instance
              «ENDIF»
+             * @param ControllerHelper    $controllerHelper ControllerHelper service instance
              */
-            public function __construct(TranslatorInterface $translator, RouterInterface $router, PermissionApi $permissionApi, ControllerHelper $controllerHelper«IF generateAccountApi», VariableApi $variableApi«ENDIF»«IF generateAccountApi || hasEditActions», CurrentUserApi $currentUserApi«ENDIF»)
+            public function __construct(TranslatorInterface $translator, RouterInterface $router, PermissionApi $permissionApi«IF generateAccountApi», VariableApi $variableApi«ENDIF»«IF generateAccountApi || hasEditActions», CurrentUserApi $currentUserApi«ENDIF», ControllerHelper $controllerHelper)
             {
                 $this->setTranslator($translator);
                 $this->router = $router;
                 $this->permissionApi = $permissionApi;
-                $this->controllerHelper = $controllerHelper;
                 «IF generateAccountApi»
                     $this->variableApi = $variableApi;
                 «ENDIF»
                 «IF generateAccountApi || hasEditActions»
                     $this->currentUserApi = $currentUserApi;
                 «ENDIF»
+                $this->controllerHelper = $controllerHelper;
             }
 
             «setTranslatorMethod»

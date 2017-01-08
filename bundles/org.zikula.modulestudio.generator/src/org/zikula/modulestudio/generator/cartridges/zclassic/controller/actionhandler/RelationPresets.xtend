@@ -8,7 +8,6 @@ import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
-import org.zikula.modulestudio.generator.extensions.Utils
 
 class RelationPresets {
 
@@ -16,7 +15,6 @@ class RelationPresets {
     extension FormattingExtensions = new FormattingExtensions
     extension ModelJoinExtensions = new ModelJoinExtensions
     extension NamingExtensions = new NamingExtensions
-    extension Utils = new Utils
 
     def memberFields(Application it) '''
 
@@ -67,7 +65,6 @@ class RelationPresets {
     def initPresets(Entity it) '''
         «val owningAssociations = getOwningAssociations(application)»
         «val ownedMMAssociations = getOwnedMMAssociations(application)»
-        $selectionHelper = $this->container->get('«application.appService».selection_helper');
         «IF !owningAssociations.empty»
 
             // assign identifiers of predefined incoming relationships
@@ -126,7 +123,6 @@ class RelationPresets {
         «IF !owningAssociationsNonEditable.empty || !ownedMMAssociationsNonEditable.empty»
 
             if ($args['commandName'] == 'create') {
-                $selectionHelper = $this->container->get('«app.appService».selection_helper');
                 «IF !owningAssociationsNonEditable.empty»
                 // save predefined incoming relationship from parent entity
                 «FOR relation : owningAssociationsNonEditable»
@@ -139,7 +135,7 @@ class RelationPresets {
                     «relation.saveSinglePreset(true)»
                 «ENDFOR»
                 «ENDIF»
-                $this->container->get('doctrine.orm.entity_manager')->flush();
+                $this->entityFactory->getObjectManager()->flush();
             }
         «ENDIF»
     '''
@@ -149,7 +145,7 @@ class RelationPresets {
         «val aliasInverse = getRelationAliasName(!useTarget)»
         «val otherObjectType = (if (useTarget) target else source).name.formatForCode»
         if (!empty($this->relationPresets['«alias»'])) {
-            $relObj = $selectionHelper->getEntity('«otherObjectType»', $this->relationPresets['«alias»']);
+            $relObj = $this->selectionHelper->getEntity('«otherObjectType»', $this->relationPresets['«alias»']);
             if (null !== $relObj) {
                 «IF !useTarget && it instanceof ManyToManyRelationship»
                     $entity->«IF isManySide(useTarget)»add«ELSE»set«ENDIF»«alias.toFirstUpper»($relObj);

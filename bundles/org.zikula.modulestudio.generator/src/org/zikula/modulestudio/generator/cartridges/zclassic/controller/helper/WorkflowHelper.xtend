@@ -34,10 +34,18 @@ class WorkflowHelper {
     def private workflowFunctionsBaseImpl(Application it) '''
         namespace «appNamespace»\Helper\Base;
 
-        use Symfony\Component\DependencyInjection\ContainerBuilder;
+        «IF needsApproval»
+            use Psr\Log\LoggerInterface;
+        «ENDIF»
         use Zikula\Common\Translator\TranslatorInterface;
         use Zikula\Core\Doctrine\EntityAccess;
+        «IF needsApproval»
+            use Zikula\PermissionsModule\Api\PermissionApi;
+        «ENDIF»
         use Zikula_Workflow_Util;
+        «IF needsApproval»
+            use «appNamespace»\Entity\Factory\«name.formatForCodeCapital»Factory;
+        «ENDIF»
 
         /**
          * Helper base class for workflow methods.
@@ -52,28 +60,55 @@ class WorkflowHelper {
             protected $name;
 
             /**
-             * @var ContainerBuilder
-             */
-            protected $container;
-
-            /**
              * @var TranslatorInterface
              */
             protected $translator;
+            «IF needsApproval»
+
+                /**
+                 * @var LoggerInterface
+                 */
+                protected $logger;
+
+                /**
+                 * @var PermissionApi
+                 */
+                private $permissionApi;
+
+                /**
+                 * @var «name.formatForCodeCapital»Factory
+                 */
+                private $entityFactory;
+            «ENDIF»
+
+            /**
+             * @var ListEntriesHelper
+             */
+            private $listEntriesHelper;
 
             /**
              * WorkflowHelper constructor.
              *
-             * @param ContainerBuilder    $container  ContainerBuilder service instance
-             * @param TranslatorInterface $translator Translator service instance
+             * @param TranslatorInterface $translator        Translator service instance
+             «IF needsApproval»
+             * @param LoggerInterface     $logger            Logger service instance
+             * @param PermissionApi       $permissionApi     PermissionApi service instance
+             * @param «name.formatForCodeCapital»Factory $entityFactory «name.formatForCodeCapital»Factory service instance
+             «ENDIF»
+             * @param ListEntriesHelper   $listEntriesHelper ListEntriesHelper service instance
              *
              * @return void
              */
-            public function __construct(ContainerBuilder $container, TranslatorInterface $translator)
+            public function __construct(TranslatorInterface $translator, «IF needsApproval»LoggerInterface $logger, PermissionApi $permissionApi, «name.formatForCodeCapital»Factory $entityFactory, «ENDIF»ListEntriesHelper $listEntriesHelper)
             {
                 $this->name = '«appName»';
-                $this->container = $container;
                 $this->translator = $translator;
+                «IF needsApproval»
+                    $this->logger = $logger;
+                    $this->permissionApi = $permissionApi;
+                    $this->entityFactory = $entityFactory;
+                «ENDIF»
+                $this->listEntriesHelper = $listEntriesHelper;
             }
 
             «getObjectStates»
@@ -223,8 +258,7 @@ class WorkflowHelper {
             $wfActions = Zikula_Workflow_Util::getActionsForObject($entity, $objectType, $idColumn, $this->name);
 
             // as we use the workflows for multiple object types we must maybe filter out some actions
-            $listHelper = $this->container->get('«appService».listentries_helper');
-            $states = $listHelper->getEntries($objectType, 'workflowState');
+            $states = $this->listEntriesHelper->getEntries($objectType, 'workflowState');
             $allowedStates = [];
             foreach ($states as $state) {
                 $allowedStates[] = $state['value'];
@@ -413,7 +447,6 @@ class WorkflowHelper {
             «IF entitiesNotNone.empty»
                 // nothing required here as no entities use enhanced workflows including approval actions
             «ELSE»
-                $logger = $this->container->get('logger');
 
                 // check if objects are waiting for«IF !entitiesEnterprise.empty» acceptance or«ENDIF» approval
                 $state = 'waiting';
@@ -439,9 +472,8 @@ class WorkflowHelper {
 
     def private readAmountForObjectTypeAndState(Entity it, String requiredAction) '''
         $objectType = '«name.formatForCode»';
-        $permissionApi = $this->container->get('zikula_permissions_module.api.permission');
         «val permissionLevel = if (requiredAction == 'approval') 'ADD' else if (requiredAction == 'acceptance') 'EDIT' else 'MODERATE'»
-        if ($permissionApi->hasPermission('«application.appName»:' . ucfirst($objectType) . ':', '::', ACCESS_«permissionLevel»)) {
+        if ($this->permissionApi->hasPermission('«application.appName»:' . ucfirst($objectType) . ':', '::', ACCESS_«permissionLevel»)) {
             $amount = $this->getAmountOfModerationItems($objectType, $state);
             if ($amount > 0) {
                 $amounts[] = [
@@ -453,7 +485,7 @@ class WorkflowHelper {
                     'message' => $this->translator->_fn('One «name.formatForDisplay» is waiting for «requiredAction».', '%s «nameMultiple.formatForDisplay» are waiting for «requiredAction».', $amount, ['%s' => $amount])
                 ];
 
-                $logger->info('{app}: There are {amount} {entities} waiting for approval.', ['app' => '«application.appName»', 'amount' => $amount, 'entities' => '«nameMultiple.formatForDisplay»']);
+                $this->logger->info('{app}: There are {amount} {entities} waiting for approval.', ['app' => '«application.appName»', 'amount' => $amount, 'entities' => '«nameMultiple.formatForDisplay»']);
             }
         }
     '''
@@ -470,7 +502,7 @@ class WorkflowHelper {
          */
         public function getAmountOfModerationItems($objectType, $state)
         {
-            $repository = $this->container->get('«appService».entity_factory')->getRepository($objectType);
+            $repository = $this->entityFactory->getRepository($objectType);
 
             $where = 'tbl.workflowState:eq:' . $state;
             $parameters = ['workflowState' => $state];

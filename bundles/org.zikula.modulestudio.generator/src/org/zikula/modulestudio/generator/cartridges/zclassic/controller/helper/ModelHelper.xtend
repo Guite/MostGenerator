@@ -37,7 +37,7 @@ class ModelHelper {
     def private modelFunctionsBaseImpl(Application it) '''
         namespace «appNamespace»\Helper\Base;
 
-        use Symfony\Component\DependencyInjection\ContainerBuilder;
+        use «appNamespace»\Entity\Factory\«name.formatForCodeCapital»Factory;
 
         /**
          * Helper base class for model layer methods.
@@ -45,18 +45,25 @@ class ModelHelper {
         abstract class AbstractModelHelper
         {
             /**
-             * @var ContainerBuilder
+             * @var «name.formatForCodeCapital»Factory
              */
-            protected $container;
+            private $entityFactory;
+
+            /**
+             * @var ControllerHelper
+             */
+            private $controllerHelper;
 
             /**
              * ModelHelper constructor.
              *
-             * @param ContainerBuilder $container ContainerBuilder service instance
+             * @param «name.formatForCodeCapital»Factory $entityFactory «name.formatForCodeCapital»Factory service instance
+             * @param ControllerHelper $controllerHelper ControllerHelper service instance
              */
-            public function __construct(ContainerBuilder $container)
+            public function __construct(«name.formatForCodeCapital»Factory $entityFactory, ControllerHelper $controllerHelper)
             {
-                $this->container = $container;
+                $this->entityFactory = $entityFactory;
+                $this->controllerHelper = $controllerHelper;
             }
 
             «canBeCreated»
@@ -86,8 +93,7 @@ class ModelHelper {
          */
         public function canBeCreated($objectType)
         {
-            $controllerHelper = $this->container->get('«appService».controller_helper');
-            if (!in_array($objectType, $controllerHelper->getObjectTypes('util', ['util' => 'model', 'action' => 'canBeCreated']))) {
+            if (!in_array($objectType, $this->controllerHelper->getObjectTypes('helper', ['helper' => 'model', 'action' => 'canBeCreated']))) {
                 throw new Exception('Error! Invalid object type received.');
             }
 
@@ -147,12 +153,11 @@ class ModelHelper {
          */
         protected function hasExistingInstances($objectType)
         {
-            $controllerHelper = $this->container->get('«appService».controller_helper');
-            if (!in_array($objectType, $controllerHelper->getObjectTypes('util', ['util' => 'model', 'action' => 'hasExistingInstances']))) {
+            if (!in_array($objectType, $this->controllerHelper->getObjectTypes('helper', ['helper' => 'model', 'action' => 'hasExistingInstances']))) {
                 throw new Exception('Error! Invalid object type received.');
             }
 
-            $repository = $this->container->get('«appService».entity_factory')->getRepository($objectType);
+            $repository = $this->entityFactory->getRepository($objectType);
 
             return $repository->selectCount() > 0;
         }

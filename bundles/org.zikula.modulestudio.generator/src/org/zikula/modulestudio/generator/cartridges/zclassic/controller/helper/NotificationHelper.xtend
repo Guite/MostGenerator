@@ -137,10 +137,10 @@ class NotificationHelper {
         /**
          * NotificationHelper constructor.
          *
+         * @param KernelInterface     $kernel         Kernel service instance
          * @param TranslatorInterface $translator     Translator service instance
          * @param SessionInterface    $session        Session service instance
          * @param Routerinterface     $router         Router service instance
-         * @param KernelInterface     $kernel         Kernel service instance
          * @param RequestStack        $requestStack   RequestStack service instance
          * @param VariableApi         $variableApi    VariableApi service instance
          * @param Twig_Environment    $twig           Twig service instance
@@ -148,20 +148,20 @@ class NotificationHelper {
          * @param WorkflowHelper      $workflowHelper WorkflowHelper service instance
          */
         public function __construct(
+            KernelInterface $kernel,
             TranslatorInterface $translator,
             SessionInterface $session,
             RouterInterface $router,
-            KernelInterface $kernel,
             RequestStack $requestStack,
             VariableApi $variableApi,
             Twig_Environment $twig,
             MailerApi $mailerApi,
             WorkflowHelper $workflowHelper)
         {
+            $this->kernel = $kernel;
             $this->setTranslator($translator);
             $this->session = $session;
             $this->router = $router;
-            $this->kernel = $kernel;
             $this->request = $requestStack->getCurrentRequest();
             $this->variableApi = $variableApi;
             $this->templating = $twig;

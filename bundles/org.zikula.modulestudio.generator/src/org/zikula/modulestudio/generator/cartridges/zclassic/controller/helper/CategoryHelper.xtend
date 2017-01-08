@@ -28,7 +28,6 @@ class CategoryHelper {
 
         use Doctrine\ORM\QueryBuilder;
         use Psr\Log\LoggerInterface;
-        use Symfony\Component\DependencyInjection\ContainerBuilder;
         use Symfony\Component\HttpFoundation\RequestStack;
         use Symfony\Component\HttpFoundation\Session\SessionInterface;
         use Zikula\CategoriesModule\Api\CategoryRegistryApi;
@@ -42,11 +41,6 @@ class CategoryHelper {
         abstract class AbstractCategoryHelper
         {
             /**
-             * @var ContainerBuilder
-             */
-            protected $container;
-
-            /**
              * @var TranslatorInterface
              */
             protected $translator;
@@ -57,14 +51,14 @@ class CategoryHelper {
             protected $session;
 
             /**
+             * @var Request
+             */
+            protected $request;
+
+            /**
              * @var LoggerInterface
              */
             protected $logger;
-
-            /**
-             * @var RequestStack
-             */
-            protected $requestStack;
 
             /**
              * @var CurrentUserApi
@@ -84,30 +78,27 @@ class CategoryHelper {
             /**
              * CategoryHelper constructor.
              *
-             * @param ContainerBuilder      $container             ContainerBuilder service instance
              * @param TranslatorInterface   $translator            Translator service instance
              * @param SessionInterface      $session               Session service instance
-             * @param LoggerInterface       $logger                Logger service instance
              * @param RequestStack          $requestStack          RequestStack service instance
+             * @param LoggerInterface       $logger                Logger service instance
              * @param CurrentUserApi        $currentUserApi        CurrentUserApi service instance
              * @param CategoryRegistryApi   $categoryRegistryApi   CategoryRegistryApi service instance
              * @param CategoryPermissionApi $categoryPermissionApi CategoryPermissionApi service instance
              */
             public function __construct(
-                ContainerBuilder $container,
                 TranslatorInterface $translator,
                 SessionInterface $session,
-                LoggerInterface $logger,
                 RequestStack $requestStack,
+                LoggerInterface $logger,
                 CurrentUserApi $currentUserApi,
                 CategoryRegistryApi $categoryRegistryApi,
                 CategoryPermissionApi $categoryPermissionApi)
             {
-                $this->container = $container;
                 $this->translator = $translator;
                 $this->session = $session;
+                $this->request = $requestStack->getCurrentRequest();
                 $this->logger = $logger;
-                $this->requestStack = $requestStack;
                 $this->currentUserApi = $currentUserApi;
                 $this->categoryRegistryApi = $categoryRegistryApi;
                 $this->categoryPermissionApi = $categoryPermissionApi;
@@ -129,12 +120,13 @@ class CategoryHelper {
          */
         public function getMainCat($objectType = '', $registry = '')
         {
+            if (empty($objectType)) {
+                return false;
+        	}
             if (empty($registry)) {
                 // default to the primary registry
                 $registry = $this->getPrimaryProperty($objectType);
             }
-
-            $objectType = $this->determineObjectType($objectType, 'getMainCat');
 
             $logArgs = ['app' => '«appName»', 'user' => $this->currentUserApi->get('uname')];
             $this->logger->warning('{app}: User {user} called CategoryHelper#getMainCat which is deprecated.', $logArgs);
@@ -154,12 +146,13 @@ class CategoryHelper {
          */
         public function hasMultipleSelection($objectType = '', $registry = '')
         {
+            if (empty($objectType)) {
+                return false;
+        	}
             if (empty($args['registry'])) {
                 // default to the primary registry
                 $registry = $this->getPrimaryProperty($objectType);
             }
-
-            $objectType = $this->determineObjectType($objectType, 'hasMultipleSelection');
 
             // we make no difference between different category registries here
             // if you need a custom behaviour you should override this method
@@ -186,12 +179,13 @@ class CategoryHelper {
          */
         public function retrieveCategoriesFromRequest($objectType = '', $source = 'POST')
         {
-            $request = $this->requestStack->getCurrentRequest();
-            $dataSource = $source == 'GET' ? $request->query : $request->request;
+            if (empty($objectType)) {
+                return [];
+        	}
 
+            $dataSource = $source == 'GET' ? $this->request->query : $this->request->request;
             $catIdsPerRegistry = [];
 
-            $objectType = $this->determineObjectType($objectType, 'retrieveCategoriesFromRequest');
             $properties = $this->getAllProperties($objectType);
             $inputValues = null;
             $inputName = '«appName.toLowerCase»_' . strtolower($objectType) . 'quicknav';
@@ -288,7 +282,9 @@ class CategoryHelper {
          */
         public function getAllProperties($objectType = '')
         {
-            $objectType = $this->determineObjectType($objectType, 'getAllProperties');
+            if (empty($objectType)) {
+                return [];
+        	}
 
             return $this->categoryRegistryApi->getModuleRegistriesIds('«appName»', ucfirst($objectType) . 'Entity');
         }
@@ -303,7 +299,9 @@ class CategoryHelper {
          */
         public function getAllPropertiesWithMainCat($objectType = '', $arrayKey = '')
         {
-            $objectType = $this->determineObjectType($objectType, 'getAllPropertiesWithMainCat');
+            if (empty($objectType)) {
+                return [];
+        	}
 
             return $this->categoryRegistryApi->getModuleCategoryIds('«appName»', ucfirst($objectType) . 'Entity', $arrayKey);
         }
@@ -318,7 +316,9 @@ class CategoryHelper {
          */
         public function getMainCatForProperty($objectType = '', $property = '')
         {
-            $objectType = $this->determineObjectType($objectType, 'getMainCatForProperty');
+            if (empty($objectType)) {
+                return 0;
+        	}
 
             return $this->categoryRegistryApi->getModuleCategoryId('«appName»', ucfirst($objectType) . 'Entity', $property);
         }
@@ -380,26 +380,6 @@ class CategoryHelper {
             }
 
             return $this->categoryPermissionApi->hasCategoryAccess($categoryInfo, ACCESS_OVERVIEW);
-        }
-
-        /**
-         * Determine object type using controller util methods.
-         *
-         * @param string $objectType The object type to retrieve (optional)
-         * @param string $methodName Name of calling method
-         *
-         * @return string name of the determined object type
-         */
-        protected function determineObjectType($objectType = '', $methodName = '')
-        {
-            «/* we can not use the container here, because it is not available yet during installation */»
-            $controllerHelper = new \«appNamespace»\Helper\ControllerHelper($this->container, $this->translator, $this->session, $this->logger);
-            $contextArgs = ['helper' => 'category', 'action' => $methodName];
-            if (!in_array($objectType, $controllerHelper->getObjectTypes('api', $contextArgs))) {
-                $objectType = $controllerHelper->getDefaultObjectType('api', $contextArgs);
-            }
-
-            return $objectType;
         }
     '''
 

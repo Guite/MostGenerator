@@ -88,13 +88,13 @@ class ServiceDefinitions {
                     - "@translator.default"
                     - "@router"
                     - "@zikula_permissions_module.api.permission"
-                    - "@«modPrefix».controller_helper"
                     «IF generateAccountApi»
                         - "@zikula_extensions_module.api.variable"
                     «ENDIF»
                     «IF generateAccountApi || hasEditActions»
                         - "@zikula_users_module.current_user"
                     «ENDIF»
+                    - "@«modPrefix».controller_helper"
                 tags:
                     - { name: zikula.link_container }
     '''
@@ -251,9 +251,31 @@ class ServiceDefinitions {
                         class: «nsBase.replace('Type\\', '')»Handler\«entity.name.formatForCodeCapital»\EditHandler
                         arguments:
                             - "@service_container"
+                            - "@kernel"
                             - "@translator.default"
+                            - "@form.factory"
                             - "@request_stack"
                             - "@router"
+                            - "@logger"
+                            - "@zikula_permissions_module.api.permission"
+                            «IF hasTranslatable || needsApproval»
+                                - "@zikula_extensions_module.api.variable"
+                            «ENDIF»
+                            - "@zikula_users_module.current_user"
+                            - "@«modPrefix».entity_factory"
+                            - "@«modPrefix».controller_helper"
+                            - "@«modPrefix».model_helper"
+                            - "@«modPrefix».selection_helper"
+                            - "@«modPrefix».workflow_helper"
+                            «IF hasHookSubscribers»
+                                - "@«modPrefix».hook_helper"
+                            «ENDIF»
+                            «IF hasTranslatable»
+                                - "@«modPrefix».translatable_helper"
+                            «ENDIF»
+                            «IF needsFeatureActivationHelper»
+                                - "@«modPrefix».feature_activation_helper"
+                            «ENDIF»
                         tags:
                             - { name: form.type }
                 «ENDIF»
@@ -339,11 +361,11 @@ class ServiceDefinitions {
             «modPrefix».archive_helper:
                 class: «nsBase»ArchiveHelper
                 arguments:
-                    - "@service_container"
                     - "@translator.default"
                     - "@session"
                     - "@logger"
                     - "@zikula_permissions_module.api.permission"
+                    - "@«modPrefix».entity_factory"
                     - "@«modPrefix».workflow_helper"
                     «IF hasHookSubscribers»
                         - "@«modPrefix».hook_helper"
@@ -353,11 +375,10 @@ class ServiceDefinitions {
             «modPrefix».category_helper:
                 class: «nsBase»CategoryHelper
                 arguments:
-                    - "@service_container"
                     - "@translator.default"
                     - "@session"
-                    - "@logger"
                     - "@request_stack"
+                    - "@logger"
                     - "@zikula_users_module.current_user"
                     - "@zikula_categories_module.api.category_registry"
                     - "@zikula_categories_module.api.category_permission"
@@ -366,13 +387,36 @@ class ServiceDefinitions {
         «modPrefix».controller_helper:
             class: «nsBase»ControllerHelper
             arguments:
-                - "@service_container"
-                - "@translator.default"
+                «IF hasUploads»
+                    - "@translator.default"
+                «ENDIF»
+                - "@request_stack"
                 «IF hasUploads»
                     - "@session"
                 «ENDIF»
                 «IF hasUploads || hasGeographical»
                     - "@logger"
+                «ENDIF»
+                «IF hasViewActions»
+                    - "@form.factory"
+                    - "@zikula_extensions_module.api.variable"
+                «ENDIF»
+                «IF hasGeographical»
+                    - "@zikula_users_module.current_user"
+                «ENDIF»
+                - "@«modPrefix».entity_factory"
+                «IF hasViewActions && hasEditActions»
+                    - "@«modPrefix».model_helper"
+                «ENDIF»
+                - "@«modPrefix».selection_helper"
+                «IF hasUploads»
+                    - "@«modPrefix».image_helper"
+                «ENDIF»
+                «IF needsFeatureActivationHelper»
+                    - "@«modPrefix».feature_activation_helper"
+                «ENDIF»
+                «IF hasUploads»
+                    - "%datadir%"
                 «ENDIF»
         «IF needsFeatureActivationHelper»
 
@@ -406,16 +450,17 @@ class ServiceDefinitions {
         «modPrefix».model_helper:
             class: «nsBase»ModelHelper
             arguments:
-                - "@service_container"
+                - "@«modPrefix».entity_factory"
+                - "@«modPrefix».controller_helper"
         «IF needsApproval»
 
             «modPrefix».notification_helper:
                 class: «nsBase»NotificationHelper
                 arguments:
+                    - "@kernel"
                     - "@translator.default"
                     - "@session"
                     - "@router"
-                    - "@kernel"
                     - "@request_stack"
                     - "@zikula_extensions_module.api.variable"
                     - "@twig"
@@ -426,19 +471,21 @@ class ServiceDefinitions {
         «modPrefix».selection_helper:
             class: «nsBase»SelectionHelper
             arguments:
-                - "@service_container"
-                - "@«entityManagerService»"
                 - "@translator.default"
+                - "@«modPrefix».entity_factory"
                 - "@«modPrefix».controller_helper"
         «IF hasTranslatable»
 
             «modPrefix».translatable_helper:
                 class: «nsBase»TranslatableHelper
                 arguments:
-                    - "@service_container"
                     - "@translator.default"
                     - "@request_stack"
                     - "@zikula_extensions_module.api.variable"
+                    «IF targets('1.4-dev')»
+                        - "@zikula_settings_module.locale_api"
+                    «ENDIF»
+                    - "@«modPrefix».entity_factory"
         «ENDIF»
         «IF hasUploads»
 
@@ -453,15 +500,22 @@ class ServiceDefinitions {
         «modPrefix».view_helper:
             class: «nsBase»ViewHelper
             arguments:
-                - "@service_container"
                 - "@templating"«/* this does not use "@twig" on purpose */»
                 - "@request_stack"
+                - "@zikula_permissions_module.api.permission"
+                - "@zikula_extensions_module.api.variable"
+                - "@«modPrefix».controller_helper"
 
         «modPrefix».workflow_helper:
             class: «nsBase»WorkflowHelper
             arguments:
-                - "@service_container"
                 - "@translator.default"
+                «IF needsApproval»
+                    - "@logger"
+                    - "@zikula_permissions_module.api.permission"
+                    - "@«modPrefix».entity_factory"
+                «ENDIF»
+                - "@«modPrefix».listentries_helper"
     '''
 
     def private twig(Application it) '''

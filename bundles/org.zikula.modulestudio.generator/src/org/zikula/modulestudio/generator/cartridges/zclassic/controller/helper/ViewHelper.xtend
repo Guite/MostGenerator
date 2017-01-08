@@ -29,23 +29,19 @@ class ViewHelper {
 
         use DataUtil;
         use PageUtil;
-        use Symfony\Component\DependencyInjection\ContainerBuilder;
         use Symfony\Component\HttpFoundation\Request;
         use Symfony\Component\HttpFoundation\RequestStack;
         use Symfony\Component\HttpFoundation\Response;
         use Symfony\Component\Templating\EngineInterface;
         use Zikula\Core\Response\PlainResponse;
+        use Zikula\ExtensionsModule\Api\VariableApi;
+        use Zikula\PermissionsModule\Api\PermissionApi;
 
         /**
          * Helper base class for view layer methods.
          */
         abstract class AbstractViewHelper
         {
-            /**
-             * @var ContainerBuilder
-             */
-            protected $container;
-
             /**
              * @var EngineInterface
              */
@@ -57,19 +53,38 @@ class ViewHelper {
             protected $request;
 
             /**
+             * @var PermissionApi
+             */
+            protected $permissionApi;
+
+            /**
+             * @var VariableApi
+             */
+            protected $variableApi;
+
+            /**
+             * @var ControllerHelper
+             */
+            protected $controllerHelper;
+
+            /**
              * ViewHelper constructor.
              *
-             * @param ContainerBuilder $container    ContainerBuilder service instance
-             * @param EngineInterface  $templating   EngineInterface service instance
-             * @param RequestStack     $requestStack RequestStack service instance
+             * @param EngineInterface  $templating       EngineInterface service instance
+             * @param RequestStack     $requestStack     RequestStack service instance
+             * @param PermissionApi    $permissionApi    PermissionApi service instance
+             * @param VariableApi      $variableApi      VariableApi service instance
+             * @param ControllerHelper $controllerHelper ControllerHelper service instance
              *
              * @return void
              */
-            public function __construct(ContainerBuilder $container, EngineInterface $templating, RequestStack $requestStack)
+            public function __construct(EngineInterface $templating, RequestStack $requestStack, PermissionApi $permissionApi, VariableApi $variableApi, ControllerHelper $controllerHelper)
             {
-                $this->container = $container;
                 $this->templating = $templating;
                 $this->request = $requestStack->getCurrentRequest();
+                $this->permissionApi = $permissionApi;
+                $this->variableApi = $variableApi;
+                $this->controllerHelper = $controllerHelper;
             }
 
             «getViewTemplate»
@@ -249,8 +264,7 @@ class ViewHelper {
         public function availableExtensions($type, $func)
         {
             $extensions = [];
-            $permissionApi = $this->container->get('zikula_permissions_module.api.permission');
-            $hasAdminAccess = $permissionApi->hasPermission('«appName»:' . ucfirst($type) . ':', '::', ACCESS_ADMIN);
+            $hasAdminAccess = $this->permissionApi->hasPermission('«appName»:' . ucfirst($type) . ':', '::', ACCESS_ADMIN);
             if ($func == 'view') {
                 if ($hasAdminAccess) {
                     $extensions = [«FOR format : getListOfViewFormats SEPARATOR ', '»'«format»'«ENDFOR»];
@@ -292,13 +306,12 @@ class ViewHelper {
             // then the surrounding
             $output = $this->templating->render('includePdfHeader.html.twig') . $output . '</body></html>';
 
-            $siteName = $this->container->get('zikula_extensions_module.api.variable')->getSystemVar('sitename');
+            $siteName = $this->variableApi->getSystemVar('sitename');
 
-            $controllerHelper = $this->container->get('«appService».controller_helper');
             // create name of the pdf output file
-            $fileTitle = $controllerHelper->formatPermalink($siteName)
+            $fileTitle = $this->controllerHelper->formatPermalink($siteName)
                        . '-'
-                       . $controllerHelper->formatPermalink(PageUtil::getVar('title'))
+                       . $this->controllerHelper->formatPermalink(PageUtil::getVar('title'))
                        . '-' . date('Ymd') . '.pdf';
 
             /*
