@@ -250,7 +250,6 @@ class ServiceDefinitions {
                     «modPrefix».form.handler.«entity.name.formatForDB»:
                         class: «nsBase.replace('Type\\', '')»Handler\«entity.name.formatForCodeCapital»\EditHandler
                         arguments:
-                            - "@service_container"
                             - "@kernel"
                             - "@translator.default"
                             - "@form.factory"
@@ -276,6 +275,8 @@ class ServiceDefinitions {
                             «IF needsFeatureActivationHelper»
                                 - "@«modPrefix».feature_activation_helper"
                             «ENDIF»
+                        calls:
+                            - [setLockingApi, ['@?zikula_pagelock_module.api.locking']]
                         tags:
                             - { name: form.type }
                 «ENDIF»

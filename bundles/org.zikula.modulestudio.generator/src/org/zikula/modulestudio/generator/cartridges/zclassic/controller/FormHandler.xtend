@@ -122,7 +122,6 @@ class FormHandler {
         use ModUtil;
         use Psr\Log\LoggerInterface;
         use RuntimeException;
-        use Symfony\Component\DependencyInjection\ContainerBuilder;
         use Symfony\Component\Form\AbstractType;
         use Symfony\Component\Form\FormFactoryInterface;
         use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -141,6 +140,7 @@ class FormHandler {
         «IF hasTranslatable || needsApproval»
             use Zikula\ExtensionsModule\Api\VariableApi;
         «ENDIF»
+        use Zikula\PageLockModule\Api\LockingApi;
         use Zikula\PermissionsModule\Api\PermissionApi;
         use Zikula\UsersModule\Api\CurrentUserApi;
         use «appNamespace»\Entity\Factory\«name.formatForCodeCapital»Factory;
@@ -283,11 +283,6 @@ class FormHandler {
             «ENDIF»
 
             /**
-             * @var ContainerBuilder
-             */
-            protected $container;
-
-            /**
              * @var KernelInterface
              */
             protected $kernel;
@@ -380,6 +375,13 @@ class FormHandler {
             «ENDIF»
 
             /**
+             * Reference to optional locking api.
+             *
+             * @var LockingApi
+             */
+            protected $lockingApi = null;
+
+            /**
              * The handled form type.
              *
              * @var AbstractType
@@ -396,7 +398,6 @@ class FormHandler {
             /**
              * «actionName.formatForCodeCapital»Handler constructor.
              *
-             * @param ContainerBuilder     $container       ContainerBuilder service instance
              * @param KernelInterface      $kernel           Kernel service instance
              * @param TranslatorInterface  $translator       Translator service instance
              * @param FormFactoryInterface $formFactory      FormFactory service instance
@@ -424,7 +425,6 @@ class FormHandler {
              «ENDIF»
              */
             public function __construct(
-                ContainerBuilder $container,
                 KernelInterface $kernel,
                 TranslatorInterface $translator,
                 FormFactoryInterface $formFactory,
@@ -445,7 +445,6 @@ class FormHandler {
                 TranslatableHelper $translatableHelper«ENDIF»«IF needsFeatureActivationHelper»,
                 FeatureActivationHelper $featureActivationHelper«ENDIF»)
             {
-                $this->container = $container;
                 $this->kernel = $kernel;
                 $this->setTranslator($translator);
                 $this->formFactory = $formFactory;
@@ -488,6 +487,16 @@ class FormHandler {
 
                 «prepareWorkflowAdditions»
             «ENDIF»
+
+            /**
+             * Sets optional locking api reference.
+             *
+             * @param LockingApi $lockingApi
+             */
+            public function setLockingApi(LockingApi $lockingApi)
+            {
+                $this->lockingApi = $lockingApi;
+            }
         }
     '''
 
