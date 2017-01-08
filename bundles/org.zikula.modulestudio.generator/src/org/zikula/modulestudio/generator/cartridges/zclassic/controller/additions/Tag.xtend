@@ -60,6 +60,8 @@ class Tag {
             $urlArgs = $urlObject->getArgs();
             $objectType = isset($urlArgs['ot']) ? $urlArgs['ot'] : '«getLeadingEntity.name.formatForCode»';
 
+            $this->setContainer(\ServiceUtil::getManager());
+
             $permissionApi = $this->container->get('zikula_permissions_module.api.permission');
             $component = $module . ':' . ucfirst($objectType) . ':';
             $perm = $permissionApi->hasPermission($component, $objectId . '::', ACCESS_READ);

@@ -33,59 +33,32 @@ class LifecycleListener {
         use Doctrine\Common\Persistence\Event\LifecycleEventArgs;
         use Doctrine\ORM\Event\PreUpdateEventArgs;
         use Doctrine\ORM\Events;
+        use Symfony\Component\DependencyInjection\ContainerAwareInterface;
+        use Symfony\Component\DependencyInjection\ContainerAwareTrait;
         «IF hasUploads»
             use Symfony\Component\HttpFoundation\File\File;
-            use Symfony\Component\HttpFoundation\Request;
-            use Symfony\Component\HttpFoundation\RequestStack;
         «ENDIF»
         use Zikula\Core\Doctrine\EntityAccess;
         use «appNamespace»\«name.formatForCodeCapital»Events;
         «FOR entity : entities»
             use «appNamespace»\Event\Filter«entity.name.formatForCodeCapital»Event;
         «ENDFOR»
-        «IF hasUploads»
-            use «appNamespace»\Helper\ControllerHelper;
-            use «appNamespace»\Helper\UploadHelper;
-        «ENDIF»
 
         /**
          * Event subscriber base class for entity lifecycle events.
          */
-        abstract class AbstractEntityLifecycleListener implements EventSubscriber
+        abstract class AbstractEntityLifecycleListener implements EventSubscriber, ContainerAwareInterface
         {
-            «IF hasUploads»
-                /**
-                 * @var Request
-                 */
-                protected $request;
+            use ContainerAwareTrait;
 
-                /**
-                 * @var ControllerHelper
-                 */
-                protected $controllerHelper;
+            /**
+             * EntityLifecycleListener constructor.
+             */
+            public function __construct()
+            {
+                $this->setContainer(\ServiceUtil::getManager());
+            }
 
-                /**
-                 * @var UploadHelper
-                 */
-                protected $uploadHelper;
-
-                /**
-                 * EntityLifecycleListener constructor.
-                 *
-                 * @param RequestStack     $requestStack     RequestStack service instance
-                 * @param ControllerHelper $controllerHelper ControllerHelper service instance
-                 * @param UploadHelper     $uploadHelper     UploadHelper service instance
-                 *
-                 * @return void
-                 */
-                public function __construct(RequestStack $requestStack, ControllerHelper $controllerHelper, UploadHelper $uploadHelper)
-                {
-                    $this->request = $requestStack->getCurrentRequest();
-                    $this->controllerHelper = $controllerHelper;
-                    $this->uploadHelper = $uploadHelper;
-                }
-
-            «ENDIF»
             /**
              * Returns list of events to subscribe.
              *
@@ -235,12 +208,14 @@ class LifecycleListener {
                     $uploadFields = $this->getUploadFields($objectType);
 
                     if (count($uploadFields) > 0) {
-                        $baseUrl = $this->request->getSchemeAndHttpHost() . $this->request->getBasePath();
+                        $request = $this->container->get('request_stack')->getCurrentRequest();
+                        $baseUrl = $request->getSchemeAndHttpHost() . $request->getBasePath();
+                        $uploadHelper = $this->container->get('«appNamespace».upload_helper');
                         foreach ($uploadFields as $fieldName) {
                             if (empty($entity[$fieldName])) {
                                 continue;
                             }
-                            $basePath = $this->controllerHelper->getFileBaseFolder($objectType, $fieldName);
+                            $basePath = $uploadHelper->getFileBaseFolder($objectType, $fieldName);
                             $filePath = $basePath . $entity[$fieldName];
                             if (file_exists($filePath)) {
                                 $fileName = $entity[$fieldName];
@@ -249,7 +224,7 @@ class LifecycleListener {
 
                                 // determine meta data if it does not exist
                                 if (!is_array($entity[$fieldName . 'Meta']) || !count($entity[$fieldName . 'Meta'])) {
-                                    $entity[$fieldName . 'Meta'] = $this->uploadHelper->readMetaDataForFile($fileName, $filePath);
+                                    $entity[$fieldName . 'Meta'] = $uploadHelper->readMetaDataForFile($fileName, $filePath);
                                 }
                             } else {
                                 $entity[$fieldName] = null;

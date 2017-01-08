@@ -33,6 +33,10 @@ class ArchiveHelper {
         use Zikula\Common\Translator\TranslatorInterface;
         use Zikula\PermissionsModule\Api\PermissionApi;
         use «appNamespace»\Entity\Factory\«name.formatForCodeCapital»Factory;
+        «IF hasHookSubscribers»
+            use «appNamespace»\Helper\HookHelper;
+        «ENDIF»
+        use «appNamespace»\Helper\WorkflowHelper;
 
         /**
          * Archive helper base class.

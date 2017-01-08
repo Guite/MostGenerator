@@ -38,6 +38,14 @@ class Mailz {
         {
             use ContainerAwareTrait;
 
+            /**
+             * MailzApi constructor.
+             */
+            public function __construct()
+            {
+                $this->setContainer(\ServiceUtil::getManager());
+            }
+
             «mailzBaseImpl»
         }
     '''

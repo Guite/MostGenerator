@@ -66,7 +66,7 @@ class Factory {
             {
                 $entityClass = '«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Entity\\' . ucfirst($objectType) . 'Entity';
 
-                return $this->objectManager->getRepository($className);
+                return $this->objectManager->getRepository($entityClass);
             }
             «FOR entity : getAllEntities»
 

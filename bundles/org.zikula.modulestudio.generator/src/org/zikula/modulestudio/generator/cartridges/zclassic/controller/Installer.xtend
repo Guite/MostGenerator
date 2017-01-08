@@ -153,8 +153,8 @@ class Installer {
             // Check if upload directories exist and if needed create them
             try {
                 $container = $this->container;
-                $controllerHelper = new \«appNamespace»\Helper\ControllerHelper($container, $container->get('translator.default'), $container->get('session'), $container->get('logger'));
-                $controllerHelper->checkAndCreateAllUploadFolders();
+                $uploadHelper = new \«appNamespace»\Helper\UploadHelper($container->get('translator.default'), $container->get('session'), $container->get('logger'), $container->get('zikula_users_module.current_user'), $container->get('zikula_extensions_module.api.variable'), $container->get('%datadir%'));
+                $uploadHelper->checkAndCreateAllUploadFolders();
             } catch (\Exception $e) {
                 $this->addFlash('error', $e->getMessage());
                 $logger->error('{app}: User {user} could not create upload folders during installation. Error details: {errorMessage}.', ['app' => '«appName»', 'user' => $userName, 'errorMessage' => $e->getMessage()]);

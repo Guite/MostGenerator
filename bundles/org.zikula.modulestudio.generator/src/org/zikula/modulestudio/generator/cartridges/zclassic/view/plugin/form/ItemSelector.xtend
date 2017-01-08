@@ -59,6 +59,14 @@ class ItemSelector {
             public $selectedItemId = 0;
 
             /**
+             * ItemSelector constructor.
+             */
+            public function __construct()
+            {
+                $this->setContainer(\ServiceUtil::getManager());
+            }
+
+            /**
              * Get filename of this file.
              * The information is used to re-establish the plugins on postback.
              *

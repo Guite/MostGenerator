@@ -34,6 +34,7 @@ class ViewHelper {
         use Zikula\Core\Response\PlainResponse;
         use Zikula\ExtensionsModule\Api\VariableApi;
         use Zikula\PermissionsModule\Api\PermissionApi;
+        use «appNamespace»\Helper\ControllerHelper;
 
         /**
          * Helper base class for view layer methods.

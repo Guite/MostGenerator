@@ -60,6 +60,14 @@ class ContentTypeSingle {
         protected $displayMode;
 
         /**
+         * Item constructor.
+         */
+        public function __construct()
+        {
+            $this->setContainer(\ServiceUtil::getManager());
+        }
+
+        /**
          * Returns the module providing this content type.
          *
          * @return string The module name

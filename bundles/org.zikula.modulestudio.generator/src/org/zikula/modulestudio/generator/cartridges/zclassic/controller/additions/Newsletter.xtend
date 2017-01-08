@@ -48,6 +48,14 @@ class Newsletter {
         {
             use ContainerAwareTrait;
 
+            /**
+             * ItemListPlugin constructor.
+             */
+            public function __construct()
+            {
+                $this->setContainer(\ServiceUtil::getManager());
+            }
+
             «newsletterImpl»
         }
     '''

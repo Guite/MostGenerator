@@ -121,12 +121,6 @@ class ServiceDefinitions {
         # Event subscriber and listener classes
         «modPrefix».entity_lifecycle_listener:
             class: «appNamespace»\Listener\EntityLifecycleListener
-            «IF hasUploads»
-                arguments:
-                    - "@request_stack"
-                    - "@«modPrefix».controller_helper"
-                    - "@«modPrefix».upload_helper"
-            «ENDIF»
             tags:
                 - { name: doctrine.event_subscriber }
 
@@ -209,13 +203,6 @@ class ServiceDefinitions {
                     - "@«modPrefix».image_helper"
                 tags:
                     - { name: form.type }
-
-            «modPrefix».form.upload_file_transformer:
-                class: «nsBase»Field\DataTransformer\UploadFileTransformer
-                calls:
-                    - [setRequestStack, ["@request_stack"]]
-                    - [setControllerHelper, ["@«modPrefix».controller_helper"]]
-                    - [setUploadHelper, ["@«modPrefix».upload_helper"]]
         «ENDIF»
         «IF hasUserFields»
 
@@ -443,9 +430,6 @@ class ServiceDefinitions {
                 «IF needsFeatureActivationHelper»
                     - "@«modPrefix».feature_activation_helper"
                 «ENDIF»
-                «IF hasUploads»
-                    - "%datadir%"
-                «ENDIF»
         «IF needsFeatureActivationHelper»
 
             «modPrefix».feature_activation_helper:
@@ -518,14 +502,14 @@ class ServiceDefinitions {
         «IF hasUploads»
 
             «modPrefix».upload_helper:
-                class: «nsBase»\UploadHelper
+                class: «nsBase»UploadHelper
                 arguments:
                     - "@translator.default"
                     - "@session"
                     - "@logger"
                     - "@zikula_users_module.current_user"
                     - "@zikula_extensions_module.api.variable"
-                    - "@«modPrefix».controller_helper"
+                    - "%datadir%"
         «ENDIF»
 
         «modPrefix».view_helper:

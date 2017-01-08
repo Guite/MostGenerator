@@ -46,6 +46,7 @@ class WorkflowHelper {
         «IF needsApproval»
             use «appNamespace»\Entity\Factory\«name.formatForCodeCapital»Factory;
         «ENDIF»
+        use «appNamespace»\Helper\ListEntriesHelper;
 
         /**
          * Helper base class for workflow methods.
