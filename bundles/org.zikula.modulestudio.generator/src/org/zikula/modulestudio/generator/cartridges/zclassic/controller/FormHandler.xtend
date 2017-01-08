@@ -572,7 +572,7 @@ class FormHandler {
             }
 
             if (null === $entity) {
-                $factory = $this->container->get('«appService».«name.formatForDB»_factory');
+                $factory = $this->container->get('«appService».entity_factory');
                 $createMethod = 'create' . ucfirst($this->objectType);
                 $entity = $factory->$createMethod();
             }

@@ -211,7 +211,7 @@ class AjaxController {
             $objectType = $controllerHelper->getDefaultObjectType('controllerAction', $contextArgs);
         }
 
-        $repository = $this->get('«appService».«name.formatForDB»_factory')->getRepository($objectType);
+        $repository = $this->get('«appService».entity_factory')->getRepository($objectType);
         $repository->setRequest($request);
         $selectionHelper = $this->get('«appService».selection_helper');
         $idFields = $selectionHelper->getIdFields($objectType);
@@ -322,7 +322,7 @@ class AjaxController {
             $objectType = $controllerHelper->getDefaultObjectType('controllerAction', $contextArgs);
         }
 
-        $repository = $this->get('«appService».«name.formatForDB»_factory')->getRepository($objectType);
+        $repository = $this->get('«appService».entity_factory')->getRepository($objectType);
         $selectionHelper = $this->get('«appService».selection_helper');
         $idFields = $selectionHelper->getIdFields($objectType);
 
@@ -432,7 +432,7 @@ class AjaxController {
         «prepareDuplicateCheckParameters»
         /* can probably be removed
          * $createMethod = 'create' . ucfirst($objectType);
-         * $object = $repository = $this->get('«appService».«name.formatForDB»_factory')->$createMethod();
+         * $object = $repository = $this->get('«appService».entity_factory')->$createMethod();
          */
 
         $result = false;
@@ -441,7 +441,7 @@ class AjaxController {
             «val uniqueFields = entity.getUniqueDerivedFields.filter[!primaryKey]»
             «IF !uniqueFields.empty || (entity.hasSluggableFields && entity.slugUnique)»
                 case '«entity.name.formatForCode»':
-                    $repository = $this->get('«appService».«name.formatForDB»_factory')->getRepository($objectType);
+                    $repository = $this->get('«appService».entity_factory')->getRepository($objectType);
                     switch ($fieldName) {
                     «FOR uniqueField : uniqueFields»
                         case '«uniqueField.name.formatForCode»':
@@ -644,7 +644,7 @@ class AjaxController {
         ];
 
         $createMethod = 'create' . ucfirst($objectType);
-        $repository = $this->get('«appService».«name.formatForDB»_factory')->getRepository($objectType);
+        $repository = $this->get('«appService».entity_factory')->getRepository($objectType);
 
         $rootId = 1;
         if (!in_array($op, ['addRootNode'])) {
@@ -763,7 +763,7 @@ class AjaxController {
 
     def private treeOperationAddRootNode(Application it) '''
         //$entityManager->transactional(function($entityManager) {
-            $entity = $this->get('«appService».«name.formatForDB»_factory')->$createMethod();
+            $entity = $this->get('«appService».entity_factory')->$createMethod();
             $entityData = [];
             if (!empty($titleFieldName)) {
                 $entityData[$titleFieldName] = $this->__('New root node');
@@ -797,7 +797,7 @@ class AjaxController {
         }
 
         //$entityManager->transactional(function($entityManager) {
-            $childEntity = $this->get('«appService».«name.formatForDB»_factory')->$createMethod();
+            $childEntity = $this->get('«appService».entity_factory')->$createMethod();
             $entityData = [];
             $entityData[$titleFieldName] = $this->__('New child node');
             if (!empty($descriptionFieldName)) {

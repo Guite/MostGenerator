@@ -132,17 +132,20 @@ class ArchiveHelper {
                 return;
             }
 
+            if (!$this->container->has('«appService».entity_factory')) {
+                return;
+            }
+
             PageUtil::registerVar('«appName»AutomaticArchiving', false, true);
+            $entityFactory = $this->container->get('«appService».entity_factory');
             «FOR entity : getArchivingEntities»
 
-                if ($this->container->has('«appService».«name.formatForDB»_factory')) {
-                    // perform update for «entity.nameMultiple.formatForDisplay» becoming archived
-                    $logArgs = ['app' => '«appName»', 'entity' => '«entity.name.formatForCode»'];
-                    $this->logger->notice('{app}: Automatic archiving for the {entity} entity started.', $logArgs);
-                    $repository = $this->container->get('«appService».«name.formatForDB»_factory')->getRepository('«entity.name.formatForCode»');
-                    $repository->archiveObjects($this->permissionApi, $this->session, $this->translator, $this->workflowHelper«IF !entity.skipHookSubscribers», $this->hookHelper«ENDIF»);
-                    $this->logger->notice('{app}: Automatic archiving for the {entity} entity completed.', $logArgs);
-                }
+                // perform update for «entity.nameMultiple.formatForDisplay» becoming archived
+                $logArgs = ['app' => '«appName»', 'entity' => '«entity.name.formatForCode»'];
+                $this->logger->notice('{app}: Automatic archiving for the {entity} entity started.', $logArgs);
+                $repository = $entityFactory->getRepository('«entity.name.formatForCode»');
+                $repository->archiveObjects($this->permissionApi, $this->session, $this->translator, $this->workflowHelper«IF !entity.skipHookSubscribers», $this->hookHelper«ENDIF»);
+                $this->logger->notice('{app}: Automatic archiving for the {entity} entity completed.', $logArgs);
             «ENDFOR»
 
             PageUtil::setVar('«appName»AutomaticArchiving', false);

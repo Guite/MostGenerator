@@ -208,16 +208,6 @@ class EntityMethods {
                 return true;
             }
 
-            «/* TODO remove this soon
-            val emailFields = getDerivedFields.filter(EmailField)»
-            «IF emailFields.size > 0»
-                // decode possibly encoded mail addresses (#201)
-                «FOR emailField : emailFields»
-                    if (false !== strpos($this['«emailField.name.formatForCode»'], '&#')) {
-                        $this['«emailField.name.formatForCode»'] = html_entity_decode($this['«emailField.name.formatForCode»']);
-                    }
-                «ENDFOR»
-            «ENDIF*/»
             $serviceManager = ServiceUtil::getManager();
 
             $validator = $serviceManager->get('validator');

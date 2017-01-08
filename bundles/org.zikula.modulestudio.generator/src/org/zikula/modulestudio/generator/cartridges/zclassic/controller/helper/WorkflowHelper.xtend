@@ -470,7 +470,7 @@ class WorkflowHelper {
          */
         public function getAmountOfModerationItems($objectType, $state)
         {
-            $repository = $this->container->get('«appService».«name.formatForDB»_factory')->getRepository($objectType);
+            $repository = $this->container->get('«appService».entity_factory')->getRepository($objectType);
 
             $where = 'tbl.workflowState:eq:' . $state;
             $parameters = ['workflowState' => $state];

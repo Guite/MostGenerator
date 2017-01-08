@@ -348,7 +348,7 @@ class ControllerHelper {
             }
 
             $request = $this->container->get('request_stack')->getCurrentRequest();
-            $repository = $this->container->get('«appService».«name.formatForDB»_factory')->getRepository($objectType);
+            $repository = $this->container->get('«appService».entity_factory')->getRepository($objectType);
             $repository->setRequest($request);
 
             // parameter for used sorting field
@@ -527,7 +527,7 @@ class ControllerHelper {
             }
 
             $request = $this->container->get('request_stack')->getCurrentRequest();
-            $repository = $this->container->get('«appService».«name.formatForDB»_factory')->getRepository($objectType);
+            $repository = $this->container->get('«appService».entity_factory')->getRepository($objectType);
             $repository->setRequest($request);
             $entity = $templateParameters[$objectType];
             «IF hasHookSubscribers»
@@ -571,7 +571,7 @@ class ControllerHelper {
             }
 
             $request = $this->container->get('request_stack')->getCurrentRequest();
-            $repository = $this->container->get('«appService».«name.formatForDB»_factory')->getRepository($objectType);
+            $repository = $this->container->get('«appService».entity_factory')->getRepository($objectType);
             $repository->setRequest($request);
 
             «IF hasUploads»
@@ -607,7 +607,7 @@ class ControllerHelper {
             }
 
             $request = $this->container->get('request_stack')->getCurrentRequest();
-            $repository = $this->container->get('«appService».«name.formatForDB»_factory')->getRepository($objectType);
+            $repository = $this->container->get('«appService».entity_factory')->getRepository($objectType);
             $repository->setRequest($request);
 
             «IF hasUploads»

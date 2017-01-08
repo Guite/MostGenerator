@@ -106,7 +106,7 @@ class ServiceDefinitions {
 
     def private servicesEntityFactory(Application it) '''
         # Entity factory class
-        «modPrefix».«name.formatForDB»_factory:
+        «modPrefix».entity_factory:
             class: «appNamespace»\Entity\Factory\«name.formatForCodeCapital»Factory
             arguments:
                 - "@«entityManagerService»"
@@ -262,7 +262,7 @@ class ServiceDefinitions {
                     class: «nsBase»«entity.name.formatForCodeCapital»Type
                     arguments:
                         - "@translator.default"
-                        - "@«modPrefix».«name.formatForCode»_factory"
+                        - "@«modPrefix».entity_factory"
                         «IF entity instanceof Entity && (entity as Entity).hasTranslatableFields»
                             - "@zikula_extensions_module.api.variable"
                             - "@«modPrefix».translatable_helper"

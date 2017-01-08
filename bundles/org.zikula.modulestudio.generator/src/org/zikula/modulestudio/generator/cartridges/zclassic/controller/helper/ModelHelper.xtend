@@ -152,7 +152,7 @@ class ModelHelper {
                 throw new Exception('Error! Invalid object type received.');
             }
 
-            $repository = $this->container->get('«appService».«name.formatForDB»_factory')->getRepository($objectType);
+            $repository = $this->container->get('«appService».entity_factory')->getRepository($objectType);
 
             return $repository->selectCount() > 0;
         }

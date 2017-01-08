@@ -101,7 +101,7 @@ class ExternalController {
             return '';
         }
 
-        $repository = $this->get('«appService».«name.formatForDB»_factory')->getRepository($objectType);
+        $repository = $this->get('«appService».entity_factory')->getRepository($objectType);
         $repository->setRequest($this->get('request_stack')->getCurrentRequest());
         $selectionHelper = $this->get('«appService».selection_helper');
         $idFields = $selectionHelper->getIdFields($objectType);
@@ -194,7 +194,7 @@ class ExternalController {
             return $this->__('Error: Invalid editor context given for external controller action.');
         }
 
-        $repository = $this->get('«appService».«name.formatForDB»_factory')->getRepository($objectType);
+        $repository = $this->get('«appService».entity_factory')->getRepository($objectType);
         $repository->setRequest($request);
         if (empty($sort) || !in_array($sort, $repository->getAllowedSortingFields())) {
             $sort = $repository->getDefaultSortingField();

@@ -68,7 +68,7 @@ class Tag {
                 return;
             }
 
-            $repository = $serviceManager->get('«appService».«name.formatForDB»_factory')->getRepository($objectType);
+            $repository = $serviceManager->get('«appService».entity_factory')->getRepository($objectType);
             $useJoins = false;
 
             «/* TODO support composite identifiers properly at this point */»

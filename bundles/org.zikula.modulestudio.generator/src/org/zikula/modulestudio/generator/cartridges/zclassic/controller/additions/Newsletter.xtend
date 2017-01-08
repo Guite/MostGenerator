@@ -213,7 +213,7 @@ class Newsletter {
         protected function selectPluginData($args, $filtAfterDate = null)
         {
             $objectType = $args['objectType'];
-            $repository = ServiceUtil::get('«appService».«name.formatForDB»_factory')->getRepository($objectType);
+            $repository = ServiceUtil::get('«appService».entity_factory')->getRepository($objectType);
 
             // create query
             $where = isset($args['filter']) ? $args['filter'] : '';
