@@ -360,7 +360,7 @@ class ValidationConstraints {
     '''
 
     def dispatch validationMethods(UserField it) '''
-        /**
+        /**«/** TODO remove this as part of #910 */»
          * Checks whether the «name.formatForCode» field contains a valid user id.
          * This method is used for validation.
          *

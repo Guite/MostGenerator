@@ -114,7 +114,7 @@ class Entities {
             use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
         «ENDIF»
         «IF hasUserFieldsEntity»
-            use UserUtil;
+            use UserUtil;«/** TODO remove this as part of #910 */»
         «ENDIF»
         use «application.appNamespace»\Traits\EntityWorkflowTrait;
     '''
@@ -143,7 +143,7 @@ class Entities {
             use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
         «ENDIF»
         «IF hasUserFieldsEntity»
-            use UserUtil;
+            use UserUtil;«/** TODO remove this as part of #910 */»
         «ENDIF»
         use «application.appNamespace»\Traits\EntityWorkflowTrait;
         «IF geographical»
@@ -159,7 +159,6 @@ class Entities {
 
         «imports»
 
-        use DataUtil;
         use RuntimeException;
         use ServiceUtil;
         use Zikula\Core\Doctrine\EntityAccess;

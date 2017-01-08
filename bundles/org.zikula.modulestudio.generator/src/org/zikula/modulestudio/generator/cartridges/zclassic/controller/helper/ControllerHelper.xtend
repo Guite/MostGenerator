@@ -118,39 +118,39 @@ class ControllerHelper {
             /**
              * @var «name.formatForCodeCapital»Factory
              */
-            private $entityFactory;
+            protected $entityFactory;
             «IF hasViewActions && hasEditActions»
 
                 /**
                  * @var ModelHelper
                  */
-                private $modelHelper;
+                protected $modelHelper;
             «ENDIF»
 
             /**
              * @var SelectionHelper
              */
-            private $selectionHelper;
+            protected $selectionHelper;
             «IF hasUploads»
 
                 /**
                  * @var ImageHelper
                  */
-                private $imageHelper;
+                protected $imageHelper;
             «ENDIF»
             «IF needsFeatureActivationHelper»
 
                 /**
                  * @var FeatureActivationHelper
                  */
-                private $featureActivationHelper;
+                protected $featureActivationHelper;
             «ENDIF»
             «IF hasUploads»
 
                 /**
                  * @var String
                  */
-                private $dataDirectory;
+                protected $dataDirectory;
             «ENDIF»
 
             /**

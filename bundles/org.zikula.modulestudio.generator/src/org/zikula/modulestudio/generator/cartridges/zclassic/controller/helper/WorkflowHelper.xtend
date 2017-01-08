@@ -73,18 +73,18 @@ class WorkflowHelper {
                 /**
                  * @var PermissionApi
                  */
-                private $permissionApi;
+                protected $permissionApi;
 
                 /**
                  * @var «name.formatForCodeCapital»Factory
                  */
-                private $entityFactory;
+                protected $entityFactory;
             «ENDIF»
 
             /**
              * @var ListEntriesHelper
              */
-            private $listEntriesHelper;
+            protected $listEntriesHelper;
 
             /**
              * WorkflowHelper constructor.

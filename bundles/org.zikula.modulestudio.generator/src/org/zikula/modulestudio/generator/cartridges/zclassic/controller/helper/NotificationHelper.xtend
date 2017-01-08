@@ -113,28 +113,28 @@ class NotificationHelper {
          *
          * @var array $recipients
          */
-        private $recipients = [];
+        protected $recipients = [];
 
         /**
          * Which type of recipient is used ("creator", "moderator" or "superModerator").
          *
          * @var string recipientType
          */
-        private $recipientType = '';
+        protected $recipientType = '';
 
         /**
          * The entity which has been changed before.
          *
          * @var EntityAccess entity
          */
-        private $entity = '';
+        protected $entity = '';
 
         /**
          * Name of workflow action which is being performed.
          *
          * @var string action
          */
-        private $action = '';
+        protected $action = '';
 
         /**
          * Name of the application.

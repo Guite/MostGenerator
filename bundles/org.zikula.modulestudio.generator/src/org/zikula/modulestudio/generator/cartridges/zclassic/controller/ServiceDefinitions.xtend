@@ -121,12 +121,28 @@ class ServiceDefinitions {
         # Event subscriber and listener classes
         «modPrefix».entity_lifecycle_listener:
             class: «appNamespace»\Listener\EntityLifecycleListener
+            «IF hasUploads»
+                arguments:
+                    - "@request_stack"
+                    - "@«modPrefix».controller_helper"
+                    - "@«modPrefix».upload_helper"
+            «ENDIF»
             tags:
                 - { name: doctrine.event_subscriber }
 
         «FOR className : getSubscriberNames»
             «modPrefix».«className.toLowerCase»_listener:
                 class: «appNamespace»\Listener\«className»Listener
+                «IF className == 'ThirdParty' && needsApproval && generatePendingContentSupport»
+                    arguments:
+                        - "@«modPrefix».workflow_helper"
+                «ELSEIF className == 'User' && (hasStandardFieldEntities || hasUserFields)»
+                    arguments:
+                        - "@translator.default"
+                        - "@«modPrefix».entity_factory"
+                        - "@zikula_users_module.current_user"
+                        - "@logger"
+                «ENDIF»
                 tags:
                     - { name: kernel.event_subscriber }
 
@@ -269,6 +285,9 @@ class ServiceDefinitions {
                                 - "@zikula_extensions_module.api.variable"
                             «ENDIF»
                             - "@zikula_users_module.current_user"
+                            «IF needsApproval»
+                                - "@zikula_groups_module.group_application_repository"
+                            «ENDIF»
                             - "@«modPrefix».entity_factory"
                             - "@«modPrefix».controller_helper"
                             - "@«modPrefix».model_helper"

@@ -47,7 +47,7 @@ class ModelHelper {
             /**
              * @var «name.formatForCodeCapital»Factory
              */
-            private $entityFactory;
+            protected $entityFactory;
 
             /**
              * ModelHelper constructor.

@@ -7,19 +7,58 @@ import de.guite.modulestudio.metamodel.UserField
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
-import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class User {
+
     extension FormattingExtensions = new FormattingExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension ModelExtensions = new ModelExtensions
-    extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
 
     CommonExample commonExample = new CommonExample()
 
     def generate(Application it, Boolean isBase) '''
+        «IF isBase && (hasStandardFieldEntities || hasUserFields)»
+            /**
+             * @var TranslatorInterface
+             */
+            protected $translator;
+
+            /**
+             * @var «name.formatForCodeCapital»Factory
+             */
+            protected $entityFactory;
+
+            /**
+             * @var CurrentUserApi
+             */
+            protected $currentUserApi;
+
+            /**
+             * @var LoggerInterface
+             */
+            protected $logger;
+
+            /**
+             * UserListener constructor.
+             *
+             * @param TranslatorInterface $translator     Translator service instance
+             * @param «name.formatForCodeCapital»Factory $entityFactory «name.formatForCodeCapital»Factory service instance
+             * @param CurrentUserApi      $currentUserApi CurrentUserApi service instance
+             * @param LoggerInterface     $logger         Logger service instance
+             *
+             * @return void
+             */
+            public function __construct(TranslatorInterface $translator, «name.formatForCodeCapital»Factory $entityFactory, CurrentUserApi $currentUserApi, LoggerInterface $logger)
+            {
+                $this->translator = $translator;
+                $this->entityFactory = $entityFactory;
+                $this->currentUserApi = $currentUserApi;
+                $this->logger = $logger;
+            }
+
+        «ENDIF»
         «IF isBase»
             /**
              * Makes our handlers known to the event system.
@@ -123,7 +162,7 @@ class User {
         /**
          * Listener for the `user.account.delete` event.
          *
-         * Occurs after the deletion of a user account. Subject is $uid.
+         * Occurs after the deletion of a user account. Subject is $userId.
          * This is a storage-level event, not a UI event. It should not be used for UI-level actions such as redirects.
          *
          * @param GenericEvent $event The event instance
@@ -141,13 +180,8 @@ class User {
                 «commonExample.generalEventProperties(it)»
             «ELSE»
                 «IF hasStandardFieldEntities || hasUserFields»
-                    $uid = $event->getSubject();
+                    $userId = $event->getSubject();
 
-                    $serviceManager = ServiceUtil::getManager();
-                    $entityManager = $serviceManager->get('«entityManagerService»');
-                    $translator = $serviceManager->get('translator.default');
-                    $logger = $serviceManager->get('logger');
-                    $currentUserApi = $serviceManager->get('zikula_users_module.current_user');
                     «FOR entity : getAllEntities»«entity.userDelete»«ENDFOR»
                 «ENDIF»
             «ENDIF»
@@ -157,22 +191,22 @@ class User {
     def private userDelete(Entity it) '''
         «IF standardFields || hasUserFieldsEntity»
 
-            $repo = $entityManager->getRepository('«entityClassName('', false)»');
+            $repo = $this->entityFactory->getRepository('«name.formatForCode»');
             «IF standardFields»
                 «IF onAccountDeletionCreator != AccountDeletionHandler.DELETE»
                     // set creator to «onAccountDeletionCreator.adhAsConstant» («onAccountDeletionCreator.adhUid») for all «nameMultiple.formatForDisplay» created by this user
-                    $repo->updateCreator($uid, «onAccountDeletionCreator.adhUid», $translator, $logger, $currentUserApi);
+                    $repo->updateCreator($userId, «onAccountDeletionCreator.adhUid», $this->translator, $this->logger, $this->currentUserApi);
                 «ELSE»
                     // delete all «nameMultiple.formatForDisplay» created by this user
-                    $repo->deleteByCreator($uid, $translator, $logger, $currentUserApi);
+                    $repo->deleteByCreator($userId, $this->translator, $this->logger, $this->currentUserApi);
                 «ENDIF»
 
                 «IF onAccountDeletionLastEditor != AccountDeletionHandler.DELETE»
                     // set last editor to «onAccountDeletionLastEditor.adhAsConstant» («onAccountDeletionLastEditor.adhUid») for all «nameMultiple.formatForDisplay» updated by this user
-                    $repo->updateLastEditor($uid, «onAccountDeletionLastEditor.adhUid», $translator, $logger, $currentUserApi);
+                    $repo->updateLastEditor($userId, «onAccountDeletionLastEditor.adhUid», $this->translator, $this->logger, $this->currentUserApi);
                 «ELSE»
                     // delete all «nameMultiple.formatForDisplay» recently updated by this user
-                    $repo->deleteByLastEditor($uid, $translator, $logger, $currentUserApi);
+                    $repo->deleteByLastEditor($userId, $this->translator, $this->logger, $this->currentUserApi);
                 «ENDIF»
             «ENDIF»
             «IF hasUserFieldsEntity»
@@ -181,8 +215,8 @@ class User {
                 «ENDFOR»
             «ENDIF»
 
-            $logArgs = ['app' => '«application.appName»', 'user' => $serviceManager->get('zikula_users_module.current_user')->get('uname'), 'entities' => '«nameMultiple.formatForDisplay»'];
-            $logger->notice('{app}: User {user} has been deleted, so we deleted/updated corresponding {entities}, too.', $logArgs);
+            $logArgs = ['app' => '«application.appName»', 'user' => $this->currentUserApi->get('uname'), 'entities' => '«nameMultiple.formatForDisplay»'];
+            $this->logger->notice('{app}: User {user} has been deleted, so we deleted/updated corresponding {entities}, too.', $logArgs);
         «ENDIF»
     '''
 
@@ -190,10 +224,10 @@ class User {
         «IF entity instanceof Entity»
             «IF onAccountDeletion != AccountDeletionHandler.DELETE»
                 // set last editor to «onAccountDeletion.adhAsConstant» («onAccountDeletion.adhUid») for all «(entity as Entity).nameMultiple.formatForDisplay» affected by this user
-                $repo->updateUserField('«name.formatForCode»', $uid, «onAccountDeletion.adhUid», $translator, $logger, $currentUserApi);
+                $repo->updateUserField('«name.formatForCode»', $userId, «onAccountDeletion.adhUid», $this->translator, $this->logger, $this->currentUserApi);
             «ELSE»
                 // delete all «(entity as Entity).nameMultiple.formatForDisplay» affected by this user
-                $repo->deleteByUserField('«name.formatForCode»', $uid, $translator, $logger, $currentUserApi);
+                $repo->deleteByUserField('«name.formatForCode»', $userId, $this->translator, $this->logger, $this->currentUserApi);
             «ENDIF»
         «ENDIF»
     '''

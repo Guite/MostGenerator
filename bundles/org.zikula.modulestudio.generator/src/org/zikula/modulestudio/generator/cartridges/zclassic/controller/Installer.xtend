@@ -37,7 +37,6 @@ class Installer {
 
         use Doctrine\DBAL\Connection;
         use RuntimeException;
-        use UserUtil;
         use Zikula\Core\AbstractExtensionInstaller;
         use Zikula_Workflow_Util;
         «IF hasCategorisableEntities»

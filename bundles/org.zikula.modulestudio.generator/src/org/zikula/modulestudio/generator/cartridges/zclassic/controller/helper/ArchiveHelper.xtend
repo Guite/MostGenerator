@@ -57,23 +57,23 @@ class ArchiveHelper {
             /**
              * @var PermissionApi
              */
-            private $permissionApi;
+            protected $permissionApi;
 
             /**
              * @var «name.formatForCodeCapital»Factory
              */
-            private $entityFactory;
+            protected $entityFactory;
 
             /**
              * @var WorkflowHelper
              */
-            private $workflowHelper;
+            protected $workflowHelper;
             «IF hasHookSubscribers»
 
                 /**
                  * @var HookHelper
                  */
-                private $hookHelper;
+                protected $hookHelper;
             «ENDIF»
 
             /**

@@ -19,6 +19,7 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener.View
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
+import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
@@ -27,7 +28,9 @@ import org.zikula.modulestudio.generator.extensions.Utils
 import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
 
 class Listeners {
+
     extension ControllerExtensions = new ControllerExtensions
+    extension FormattingExtensions = new FormattingExtensions
     extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension ModelExtensions = new ModelExtensions
@@ -322,14 +325,24 @@ class Listeners {
             use «appNamespace»\Listener\Base\AbstractUserListener;
         «ELSE»
             «IF hasStandardFieldEntities || hasUserFields»
-                use ServiceUtil;
+                use Psr\Log\LoggerInterface;
+                use Zikula\Common\Translator\TranslatorInterface;
             «ENDIF»
             use Symfony\Component\EventDispatcher\EventSubscriberInterface;
             use Symfony\Component\HttpKernel\HttpKernelInterface;
+            «IF hasStandardFieldEntities || hasUserFields»
+                use Zikula\Common\Translator\TranslatorInterface;
+            «ENDIF»
         «ENDIF»
         use Zikula\Core\Event\GenericEvent;
         «IF isBase»
+            «IF hasStandardFieldEntities || hasUserFields»
+                use Zikula\UsersModule\Api\CurrentUserApi;
+            «ENDIF»
             use Zikula\UsersModule\UserEvents;
+            «IF hasStandardFieldEntities || hasUserFields»
+                use «appNamespace»\Entity\Factory\«name.formatForCodeCapital»Factory;
+            «ENDIF»
         «ENDIF»
 
         /**
@@ -416,8 +429,8 @@ class Listeners {
             use Symfony\Component\EventDispatcher\EventSubscriberInterface;
             use Symfony\Component\HttpKernel\HttpKernelInterface;
             «IF needsApproval && generatePendingContentSupport»
-                use ServiceUtil;
                 use Zikula\Collection\Container;
+                use «appNamespace»\Helper\WorkflowHelper;
             «ENDIF»
         «ENDIF»
         use Zikula\Core\Event\GenericEvent;

@@ -20,6 +20,25 @@ class ThirdParty {
     CommonExample commonExample = new CommonExample()
 
     def generate(Application it, Boolean isBase) '''
+        «IF isBase && (needsApproval && generatePendingContentSupport)»
+            /**
+             * @var WorkflowHelper
+             */
+            protected $workflowHelper;
+
+            /**
+             * ThirdPartyListener constructor.
+             *
+             * @param WorkflowHelper $workflowHelper WorkflowHelper service instance
+             *
+             * @return void
+             */
+            public function __construct(WorkflowHelper $workflowHelper)
+            {
+                $this->workflowHelper = $workflowHelper;
+            }
+
+        «ENDIF»
         «val needsDetailContentType = generateDetailContentType && hasDisplayActions»
         «IF isBase»
             /**
@@ -118,13 +137,11 @@ class ThirdParty {
             // however, we keep this empty stub to prevent errors if the event handler
             // was already registered before
         «ELSE»
-            $workflowHelper = ServiceUtil::get('«appService».workflow_helper');
-
             $modname = '«appName»';
             $useJoins = false;
 
             $collection = new Container($modname);
-            $amounts = $workflowHelper->collectAmountOfModerationItems();
+            $amounts = $this->workflowHelper->collectAmountOfModerationItems();
             if (count($amounts) > 0) {
                 foreach ($amounts as $amountInfo) {
                     $aggregateType = $amountInfo['aggregateType'];

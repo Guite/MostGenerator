@@ -64,17 +64,17 @@ class CategoryHelper {
             /**
              * @var CurrentUserApi
              */
-            private $currentUserApi;
+            protected $currentUserApi;
 
             /**
              * @var CategoryRegistryApi
              */
-            private $categoryRegistryApi;
+            protected $categoryRegistryApi;
 
             /**
              * @var CategoryPermissionApi
              */
-            private $categoryPermissionApi;
+            protected $categoryPermissionApi;
 
             /**
              * CategoryHelper constructor.

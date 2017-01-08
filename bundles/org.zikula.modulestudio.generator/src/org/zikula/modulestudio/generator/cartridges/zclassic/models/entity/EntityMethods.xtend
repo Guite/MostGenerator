@@ -183,12 +183,12 @@ class EntityMethods {
 
     def private formatFieldValue(EntityField it, CharSequence value) {
         switch it {
-            DecimalField: '''DataUtil::format«IF currency»Currency(«value»)«ELSE»Number(«value», 2)«ENDIF»'''
-            FloatField: '''DataUtil::format«IF currency»Currency(«value»)«ELSE»Number(«value», 2)«ENDIF»'''
+            DecimalField: '''\DataUtil::format«IF currency»Currency(«value»)«ELSE»Number(«value», 2)«ENDIF»'''
+            FloatField: '''\DataUtil::format«IF currency»Currency(«value»)«ELSE»Number(«value», 2)«ENDIF»'''
             ListField: '''$listHelper->resolve(«value», '«entity.name.formatForCode»', '«name.formatForCode»')'''
-            DateField: '''DateUtil::formatDatetime(«value», 'datebrief')'''
-            DatetimeField: '''DateUtil::formatDatetime(«value», 'datetimebrief')'''
-            TimeField: '''DateUtil::formatDatetime(«value», 'timebrief')'''
+            DateField: '''\DateUtil::formatDatetime(«value», 'datebrief')'''
+            DatetimeField: '''\DateUtil::formatDatetime(«value», 'datetimebrief')'''
+            TimeField: '''\DateUtil::formatDatetime(«value», 'timebrief')'''
             default: value
         }
     }
@@ -208,13 +208,11 @@ class EntityMethods {
                 return true;
             }
 
-            $serviceManager = ServiceUtil::getManager();
-
-            $validator = $serviceManager->get('validator');
+            $validator = ServiceUtil::get('validator');
             $errors = $validator->validate($this);
 
             if (count($errors) > 0) {
-                $flashBag = $serviceManager->get('session')->getFlashBag();
+                $flashBag = ServiceUtil::get('session')->getFlashBag();
                 foreach ($errors as $error) {
                     $flashBag->add('error', $error->getMessage());
                 }

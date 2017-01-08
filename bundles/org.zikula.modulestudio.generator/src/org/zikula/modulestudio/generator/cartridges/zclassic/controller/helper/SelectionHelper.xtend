@@ -45,7 +45,7 @@ class SelectionHelper {
             /**
              * @var «name.formatForCodeCapital»Factory
              */
-            private $entityFactory;
+            protected $entityFactory;
 
             /**
              * SelectionHelper constructor.

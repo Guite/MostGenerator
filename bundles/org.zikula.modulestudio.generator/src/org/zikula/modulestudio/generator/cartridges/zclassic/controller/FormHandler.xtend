@@ -119,7 +119,6 @@ class FormHandler {
     def private formHandlerCommonBaseImpl(Application it, String actionName) '''
         namespace «appNamespace»\Form\Handler\Common\Base;
 
-        use ModUtil;
         use Psr\Log\LoggerInterface;
         use RuntimeException;
         use Symfony\Component\Form\AbstractType;
@@ -139,6 +138,9 @@ class FormHandler {
         «ENDIF»
         «IF hasTranslatable || needsApproval»
             use Zikula\ExtensionsModule\Api\VariableApi;
+        «ENDIF»
+        «IF needsApproval»
+            use Zikula\GroupsModule\Entity\Repository\GroupApplicationRepository;
         «ENDIF»
         use Zikula\PageLockModule\Api\LockingApi;
         use Zikula\PermissionsModule\Api\PermissionApi;
@@ -326,12 +328,19 @@ class FormHandler {
             /**
              * @var CurrentUserApi
              */
-            private $currentUserApi;
+            protected $currentUserApi;
 
+            «IF needsApproval»
+                /**
+                 * @var GroupApplicationRepository
+                 */
+                protected $groupApplicationRepository;
+
+            «ENDIF»
             /**
              * @var «name.formatForCodeCapital»Factory
              */
-            private $entityFactory;
+            protected $entityFactory;
 
             /**
              * @var ControllerHelper
@@ -409,6 +418,9 @@ class FormHandler {
              * @param VariableApi          $variableApi      VariableApi service instance
              «ENDIF»
              * @param CurrentUserApi       $currentUserApi   CurrentUserApi service instance
+             «IF needsApproval»
+             * @param GroupApplicationRepository $groupApplicationRepository GroupApplicationRepository service instance.
+             «ENDIF»
              * @param «name.formatForCodeCapital»Factory $entityFactory «name.formatForCodeCapital»Factory service instance
              * @param ControllerHelper     $controllerHelper ControllerHelper service instance
              * @param ModelHelper          $modelHelper      ModelHelper service instance
@@ -436,6 +448,9 @@ class FormHandler {
                     VariableApi $variableApi,
                 «ENDIF»
                 CurrentUserApi $currentUserApi,
+                «IF needsApproval»
+                    GroupApplicationRepository $groupApplicationRepository,
+                «ENDIF»
                 «name.formatForCodeCapital»Factory $entityFactory,
                 ControllerHelper $controllerHelper,
                 ModelHelper $modelHelper,
@@ -456,6 +471,9 @@ class FormHandler {
                     $this->variableApi = $variableApi;
                 «ENDIF»
                 $this->currentUserApi = $currentUserApi;
+                «IF needsApproval»
+                    $this->groupApplicationRepository = $groupApplicationRepository;
+                «ENDIF»
                 $this->entityFactory = $entityFactory;
                 $this->controllerHelper = $controllerHelper;
                 $this->modelHelper = $modelHelper;
@@ -1052,19 +1070,18 @@ class FormHandler {
         protected function prepareWorkflowAdditions($enterprise = false)
         {
             $roles = [];
-
             «/* TODO recheck this after https://github.com/zikula/core/issues/2800 has been solved */»
             $isLoggedIn = $this->currentUserApi->isLoggedIn();
-            $uid = $isLoggedIn ? $this->currentUserApi->get('uid') : 1;
+            $userId = $isLoggedIn ? $this->currentUserApi->get('uid') : 1;
             $roles['isCreator'] = $this->templateParameters['mode'] == 'create'
-                || (method_exists($this->entityRef, 'getCreatedBy') && $this->entityRef->getCreatedBy()->getUid() == $uid);
+                || (method_exists($this->entityRef, 'getCreatedBy') && $this->entityRef->getCreatedBy()->getUid() == $userId);
 
-            $groupArgs = ['uid' => $uid, 'gid' => $this->variableApi->get('«appName»', 'moderationGroupFor' . $this->objectTypeCapital, 2)];
-            $roles['isModerator'] = ModUtil::apiFunc('ZikulaGroupsModule', 'user', 'isgroupmember', $groupArgs);
+            $groupApplicationArgs = ['user' => $userId, 'group' => $this->variableApi->get('«appName»', 'moderationGroupFor' . $this->objectTypeCapital, 2)];
+            $roles['isModerator'] = count($this->groupApplicationRepository->findBy($groupApplicationArgs)) > 0;
 
             if (true === $enterprise) {
-                $groupArgs = ['uid' => $uid, 'gid' => $this->variableApi->get('«appName»', 'superModerationGroupFor' . $this->objectTypeCapital, 2)];
-                $roles['isSuperModerator'] = ModUtil::apiFunc('ZikulaGroupsModule', 'user', 'isgroupmember', $groupArgs);
+                $groupApplicationArgs = ['user' => $userId, 'group' => $this->variableApi->get('«appName»', 'superModerationGroupFor' . $this->objectTypeCapital, 2)];
+                $roles['isSuperModerator'] = count($this->groupApplicationRepository->findBy($groupApplicationArgs)) > 0;
             }
 
             return $roles;

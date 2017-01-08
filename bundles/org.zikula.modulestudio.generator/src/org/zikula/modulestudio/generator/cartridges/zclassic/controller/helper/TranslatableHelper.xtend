@@ -84,7 +84,7 @@ class TranslatableHelper {
             /**
              * @var «name.formatForCodeCapital»Factory
              */
-            private $entityFactory;
+            protected $entityFactory;
 
             /**
              * TranslatableHelper constructor.

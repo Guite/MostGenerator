@@ -7,6 +7,7 @@ import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
+import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
 
 class EntityWorkflowTrait {
 
@@ -14,6 +15,7 @@ class EntityWorkflowTrait {
     extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
+    extension WorkflowExtensions = new WorkflowExtensions
 
     FileHelper fh = new FileHelper
 
@@ -100,7 +102,13 @@ class EntityWorkflowTrait {
         $serviceManager = ServiceUtil::getManager();
         $translator = $serviceManager->get('translator.default');
         «IF amountOfExampleRows > 0»
-            $workflowHelper = new \«appNamespace»\Helper\WorkflowHelper($serviceManager, $translator);
+            «IF needsApproval»
+                $logger = $serviceManager->get('logger');
+                $permissionApi = $serviceManager->get('zikula_permissions_module.api.permission');
+                $entityFactory = $serviceManager->get('«appService».entity_factory');
+            «ENDIF»
+            $listEntriesHelper = $serviceManager->get('«appService».listentries_helper');
+            $workflowHelper = new \«appNamespace»\Helper\WorkflowHelper($translator«IF needsApproval», $logger, $permissionApi, $entityFactory«ENDIF», $listEntriesHelper);
         «ELSE»
             $workflowHelper = $serviceManager->get('«appService».workflow_helper');
         «ENDIF»

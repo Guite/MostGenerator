@@ -426,7 +426,7 @@ class Repository {
 
             $parameters = [];
             «IF categorisable»
-                $categoryHelper = \ServiceUtil::get('«app.appService».category_helper');
+                $categoryHelper = ServiceUtil::get('«app.appService».category_helper');
                 $parameters['catIdList'] = $categoryHelper->retrieveCategoriesFromRequest('«name.formatForCode»', 'GET');
             «ENDIF»
             «IF !getBidirectionalIncomingJoinRelationsWithOneSource.empty»
@@ -812,7 +812,7 @@ class Repository {
                         $qb->andWhere('tblCategories.category IN (:categories)')
                            ->setParameter('categories', $v);
                          */
-                        $categoryHelper = \ServiceUtil::get('«app.appService».category_helper');
+                        $categoryHelper = ServiceUtil::get('«app.appService».category_helper');
                         $qb = $categoryHelper->buildFilterClauses($qb, '«name.formatForCode»', $v);
                 «ENDIF»
                 «IF categorisable»} else«ENDIF»if (in_array($k, ['q', 'searchterm'])) {
@@ -875,8 +875,7 @@ class Repository {
                     // per default we show approved «nameMultiple.formatForDisplay» only
                     $onlineStates = ['approved'];
                     «IF ownerPermission»
-                        «/*$serviceManager = ServiceUtil::getManager();
-                        $variableApi = $serviceManager->get('zikula_extensions_module.api.variable');
+                        «/*$variableApi = ServiceUtil::get('zikula_extensions_module.api.variable');
                         $showOnlyOwnEntries = $this->getRequest()->query->getInt('own', $variableApi->get('«app.appName»', 'showOnlyOwnEntries', 0));*/»
                         $showOnlyOwnEntries = $this->getRequest()->query->getInt('own', 0);
                         if ($showOnlyOwnEntries == 1) {
@@ -1205,7 +1204,7 @@ class Repository {
 
                     // add category plugins dynamically for all existing registry properties
                     // we need to create one category plugin instance for each one
-                    $categoryHelper = \ServiceUtil::get('«app.appService».category_helper');
+                    $categoryHelper = ServiceUtil::get('«app.appService».category_helper');
                     $categoryProperties = $categoryHelper->getAllProperties('«name.formatForCode»');
                     foreach ($categoryProperties as $propertyName => $registryId) {
                         $config['plugins'][] = new CategoryFilter('«app.appName»', $propertyName, 'categories' . ucfirst($propertyName));
@@ -1240,15 +1239,14 @@ class Repository {
                     return $qb;
                 }
 
-                «/*$serviceManager = ServiceUtil::getManager();
-                $variableApi = $serviceManager->get('zikula_extensions_module.api.variable');
+                «/*$variableApi = ServiceUtil::get('zikula_extensions_module.api.variable');
                 $showOnlyOwnEntries = $this->getRequest()->query->getInt('own', $variableApi->get('«app.appName»', 'showOnlyOwnEntries', 0));*/»
                 $showOnlyOwnEntries = $this->getRequest()->query->getInt('own', 0);
                 if ($showOnlyOwnEntries == 1) {
-                    «/*$uid = $serviceManager->get('zikula_users_module.current_user')->get('uid');*/»
-                    $uid = $this->getRequest()->getSession()->get('uid');
+                    «/*$userId = ServiceUtil::get('zikula_users_module.current_user')->get('uid');*/»
+                    $userId = $this->getRequest()->getSession()->get('uid');
                     $qb->andWhere('tbl.createdBy = :creator')
-                       ->setParameter('creator', $uid);
+                       ->setParameter('creator', $userId);
                 }
             «ENDIF»
 
@@ -1301,7 +1299,7 @@ class Repository {
             $query = $qb->getQuery();
             «IF hasTranslatableFields»
 
-                $featureActivationHelper = \ServiceUtil::get('«app.appService».feature_activation_helper');
+                $featureActivationHelper = ServiceUtil::get('«app.appService».feature_activation_helper');
                 if ($featureActivationHelper->isEnabled(FeatureActivationHelper::TRANSLATIONS, '«name.formatForCode»')) {
                     // set the translation query hint
                     $query->setHint(
@@ -1461,7 +1459,7 @@ class Repository {
 
                     // Let any hooks know that we have updated an item
                     $urlArgs = $entity->createUrlArgs();
-                    $urlArgs['_locale'] = \ServiceUtil::get('request_stack')->getCurrentRequest()->getLocale();
+                    $urlArgs['_locale'] = $this->request->getLocale();
                     $url = new RouteUrl('«app.appName.formatForDB»_«name.formatForCode»_display', $urlArgs);
                     $hookHelper->callProcessHooks($entity, 'process_edit', $url);
                 «ENDIF»
