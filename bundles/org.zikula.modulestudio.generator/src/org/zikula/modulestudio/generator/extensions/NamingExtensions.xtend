@@ -185,7 +185,7 @@ class NamingExtensions {
      */
     def relativeAppRootPath(Application it) {
         if (systemModule) {
-            'system/' + name.formatForCode + 'Module'
+            'system/' + name.formatForCodeCapital + 'Module'
         } else {
             'modules/' + vendor.formatForCodeCapital + '/' + name.formatForCodeCapital + 'Module'
         }
