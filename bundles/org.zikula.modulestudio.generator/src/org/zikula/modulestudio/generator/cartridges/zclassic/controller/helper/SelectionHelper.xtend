@@ -103,9 +103,9 @@ class SelectionHelper {
                     case '«entity.name.formatForCode»':
                         return «entity.hasCompositeKeys.displayBool»;
                 «ENDFOR»
-                    default:
-                        return false;
             }
+
+            return false;
         }
 
         /**
