@@ -144,18 +144,18 @@ class Newsletter {
         /**
          * Returns data for the Newsletter plugin.
          *
-         * @param datetime $filtAfterDate Optional date filter (items should be newer), format yyyy-mm-dd hh:mm:ss or null if not set
+         * @param \DateTime $filterAfterDate Optional date filter (items should be newer), format yyyy-mm-dd hh:mm:ss or null if not set
          *
          * @return array List of affected content items
          */
-        public function getPluginData($filtAfterDate = null)
+        public function getPluginData($filterAfterDate = null)
         {
             if (!$this->pluginAvailable()) {
                 return [];
             }
 
             // collect data for each activated object type
-            $itemsGrouped = $this->getItemsPerObjectType($filtAfterDate);
+            $itemsGrouped = $this->getItemsPerObjectType($filterAfterDate);
 
             // now flatten for presentation
             $items = [];
@@ -173,11 +173,11 @@ class Newsletter {
         /**
          * Collects newsletter data for each activated object type.
          *
-         * @param datetime $filtAfterDate Optional date filter (items should be newer), format yyyy-mm-dd hh:mm:ss or null if not set
+         * @param \DateTime $filterAfterDate Optional date filter (items should be newer), format yyyy-mm-dd hh:mm:ss or null if not set
          *
          * @return array Data grouped by object type
          */
-        protected function getItemsPerObjectType($filtAfterDate = null)
+        protected function getItemsPerObjectType($filterAfterDate = null)
         {
             $objectTypes = $this->getPluginVar('ObjectTypes', []);
             $args = $this->getPluginVar('Args', []);
@@ -196,7 +196,7 @@ class Newsletter {
                 $otArgs['objectType'] = $objectType;
 
                 // perform the data selection
-                $output[$objectType] = $this->selectPluginData($otArgs, $filtAfterDate);
+                $output[$objectType] = $this->selectPluginData($otArgs, $filterAfterDate);
             }
 
             return $output;
@@ -205,12 +205,12 @@ class Newsletter {
         /**
          * Performs the internal data selection.
          *
-         * @param array    $args          Arguments array (contains object type)
-         * @param datetime $filtAfterDate Optional date filter (items should be newer), format yyyy-mm-dd hh:mm:ss or null if not set
+         * @param array     $args            Arguments array (contains object type)
+         * @param \DateTime $filterAfterDate Optional date filter (items should be newer), format yyyy-mm-dd hh:mm:ss or null if not set
          *
          * @return array List of selected items
          */
-        protected function selectPluginData($args, $filtAfterDate = null)
+        protected function selectPluginData(array $args = [], $filterAfterDate = null)
         {
             $objectType = $args['objectType'];
             $repository = ServiceUtil::get('«appService».entity_factory')->getRepository($objectType);
@@ -220,11 +220,11 @@ class Newsletter {
             $orderBy = $this->getSortParam($args, $repository);
             $qb = $repository->genericBaseQuery($where, $orderBy);
 
-            if ($filtAfterDate) {
+            if ($filterAfterDate) {
                 $startDateFieldName = $repository->getStartDateFieldName();
                 if ($startDateFieldName == 'createdDate') {
                     $qb->andWhere('tbl.createdDate > :afterDate')
-                       ->setParameter('afterDate', $filtAfterDate);
+                       ->setParameter('afterDate', $filterAfterDate);
                 }
             }
 
@@ -242,6 +242,7 @@ class Newsletter {
 
             «IF hasDisplayActions»
                 $hasDisplayPage = in_array($objectType, ['«getAllEntities.filter[hasDisplayAction].map[name.formatForCode].join('\', \'')»']);
+                $router = ServiceUtil::get('router');
             «ENDIF»
             $items = [];
             foreach ($entities as $k => $item) {
@@ -255,7 +256,7 @@ class Newsletter {
                         // Set (full qualified) link of title
                         $urlArgs = $item->createUrlArgs();
                         $urlArgs['lang'] = $this->lang;
-                        $items[$k]['nl_url_title'] = $serviceManager->get('router')->generate('«appName.formatForDB»_' . strtolower($objectType) . '_display', $urlArgs, true);
+                        $items[$k]['nl_url_title'] = $router->generate('«appName.formatForDB»_' . strtolower($objectType) . '_display', $urlArgs, true);
                     } else {
                         $items[$k]['nl_url_title'] = null;
                     }

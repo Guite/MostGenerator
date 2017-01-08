@@ -47,7 +47,7 @@ class User {
         /**
          * Listener for the `user.gettheme` event.
          *
-         * Called during UserUtil::getTheme() and is used to filter the results.
+         * Called during \UserUtil::getTheme() and is used to filter the results.
          * Receives arg['type'] with the type of result to be filtered
          * and the $themeName in the $event->data which can be modified.
          * Must $event->stopPropagation() if handler performs filter.

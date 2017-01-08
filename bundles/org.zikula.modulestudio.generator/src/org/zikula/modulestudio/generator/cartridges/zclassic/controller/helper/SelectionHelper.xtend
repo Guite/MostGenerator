@@ -5,6 +5,7 @@ import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
+import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
@@ -12,6 +13,7 @@ class SelectionHelper {
 
     extension FormattingExtensions = new FormattingExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
+    extension ModelExtensions = new ModelExtensions
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
 
@@ -29,7 +31,6 @@ class SelectionHelper {
         use InvalidArgumentException;
         use Zikula\Common\Translator\TranslatorInterface;
         use «appNamespace»\Entity\Factory\«name.formatForCodeCapital»Factory;
-        use «appNamespace»\Helper\ControllerHelper;
 
         /**
          * Selection helper base class.
@@ -47,22 +48,15 @@ class SelectionHelper {
             private $entityFactory;
 
             /**
-             * @var ControllerHelper
-             */
-            protected $controllerHelper;
-
-            /**
              * SelectionHelper constructor.
              *
              * @param TranslatorInterface $translator       Translator service instance
              * @param «name.formatForCodeCapital»Factory $entityFactory «name.formatForCodeCapital»Factory service instance
-             * @param ControllerHelper    $controllerHelper ControllerHelper service instance
              */
-            public function __construct(TranslatorInterface $translator, «name.formatForCodeCapital»Factory $entityFactory, ControllerHelper $controllerHelper)
+            public function __construct(TranslatorInterface $translator, «name.formatForCodeCapital»Factory $entityFactory)
             {
                 $this->translator = $translator;
                 $this->entityFactory = $entityFactory;
-                $this->controllerHelper = $controllerHelper;
             }
 
             «selectionBaseImpl»
@@ -73,13 +67,15 @@ class SelectionHelper {
         /**
          * Gets the list of identifier fields for a given object type.
          *
-         * @param string $objectType The object type to be treated (optional)
+         * @param string $objectType The object type to be treated
          *
          * @return array List of identifier field names
          */
         public function getIdFields($objectType = '')
         {
-            $objectType = $this->determineObjectType($objectType, 'getIdFields');
+            if (empty($objectType)) {
+                throw new InvalidArgumentException($this->translator->__('Invalid object type received.'));
+            }
             $entityClass = '«vendor.formatForCodeCapital»«name.formatForCodeCapital»Module:' . ucfirst($objectType) . 'Entity';
 
             $meta = $this->entityFactory->getObjectManager()->getClassMetadata($entityClass);
@@ -98,17 +94,24 @@ class SelectionHelper {
          *
          * @param string $objectType The object type to retrieve
          *
-         * @return boolean Whether composite keys are used or not
+         * @return Boolean Whether composite keys are used or not
          */
-        protected function hasCompositeKeys($objectType)
+        public function hasCompositeKeys($objectType)
         {
-            return $this->controllerHelper->hasCompositeKeys($objectType);
+            switch ($objectType) {
+                «FOR entity : entities»
+                    case '«entity.name.formatForCode»':
+                        return «entity.hasCompositeKeys.displayBool»;
+                «ENDFOR»
+                    default:
+                        return false;
+            }
         }
 
         /**
          * Selects a single entity.
          *
-         * @param string $objectType The object type to be treated (optional)
+         * @param string $objectType The object type to be treated
          * @param mixed  $id         The id (or array of ids) to use to retrieve the object (default=null)
          «IF hasSluggable»
          * @param string $slug       Slug to use as selection criteria instead of id (optional) (default=null)
@@ -120,11 +123,13 @@ class SelectionHelper {
          */
         public function getEntity($objectType = '', $id = ''«IF hasSluggable», $slug = ''«ENDIF», $useJoins = true, $slimMode = false)
         {
+            if (empty($objectType)) {
+                throw new InvalidArgumentException($this->translator->__('Invalid object type received.'));
+            }
             if (empty($id)«IF hasSluggable» && empty($slug)«ENDIF») {
                 throw new InvalidArgumentException($this->translator->__('Invalid identifier received.'));
             }
 
-            $objectType = $this->determineObjectType($objectType, 'getEntity');
             $repository = $this->getRepository($objectType);
 
             $useJoins = (bool) $useJoins;
@@ -158,7 +163,9 @@ class SelectionHelper {
          */
         public function getEntities($objectType = '', array $idList = [], $where = '', $orderBy = '', $useJoins = true, $slimMode = false)
         {
-            $objectType = $this->determineObjectType($objectType, 'getEntities');
+            if (empty($objectType)) {
+                throw new InvalidArgumentException($this->translator->__('Invalid object type received.'));
+            }
             $repository = $this->getRepository($objectType);
 
             $useJoins = (bool) $useJoins;
@@ -186,31 +193,15 @@ class SelectionHelper {
          */
         public function getEntitiesPaginated($objectType = '', $where = '', $orderBy = '', $currentPage = 1, $resultsPerPage = 25, $useJoins = true, $slimMode = false)
         {
-            $objectType = $this->determineObjectType($objectType, 'getEntitiesPaginated');
+            if (empty($objectType)) {
+                throw new InvalidArgumentException($this->translator->__('Invalid object type received.'));
+            }
             $repository = $this->getRepository($objectType);
 
             $useJoins = (bool) $useJoins;
             $slimMode = (bool) $slimMode; 
 
             return $repository->selectWherePaginated($where, $orderBy, $currentPage, $resultsPerPage, $useJoins, $slimMode);
-        }
-
-        /**
-         * Determines object type using controller util methods.
-         *
-         * @param string $objectType The object type to be treated (optional)
-         * @param string $methodName Name of calling method
-         *
-         * @return string the object type
-         */
-        protected function determineObjectType($objectType = '', $methodName = '')
-        {
-            $contextArgs = ['helper' => 'selection', 'action' => $methodName];
-            if (!in_array($objectType, $this->controllerHelper->getObjectTypes('helper', $contextArgs))) {
-                $objectType = $this->controllerHelper->getDefaultObjectType('helper', $contextArgs);
-            }
-
-            return $objectType;
         }
 
         /**
@@ -241,7 +232,9 @@ class SelectionHelper {
              */
             public function getTree($objectType = '', $rootId = 0, $useJoins = true)
             {
-                $objectType = $this->determineObjectType($objectType, 'getTree');
+                if (empty($objectType)) {
+                    throw new InvalidArgumentException($this->translator->__('Invalid object type received.'));
+                }
                 $repository = $this->getRepository($objectType);
 
                 $useJoins = (bool) $useJoins;
@@ -259,7 +252,9 @@ class SelectionHelper {
              */
             public function getAllTrees($objectType = '', $useJoins = true)
             {
-                $objectType = $this->determineObjectType($objectType, 'getTree');
+                if (empty($objectType)) {
+                    throw new InvalidArgumentException($this->translator->__('Invalid object type received.'));
+                }
                 $repository = $this->getRepository($objectType);
 
                 $useJoins = (bool) $useJoins;

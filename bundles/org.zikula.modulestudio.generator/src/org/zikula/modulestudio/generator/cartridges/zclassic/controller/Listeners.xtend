@@ -326,7 +326,6 @@ class Listeners {
             «ENDIF»
             use Symfony\Component\EventDispatcher\EventSubscriberInterface;
             use Symfony\Component\HttpKernel\HttpKernelInterface;
-            use UserUtil;
         «ENDIF»
         use Zikula\Core\Event\GenericEvent;
         «IF isBase»

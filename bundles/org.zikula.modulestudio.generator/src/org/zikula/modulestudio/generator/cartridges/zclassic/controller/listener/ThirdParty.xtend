@@ -118,8 +118,7 @@ class ThirdParty {
             // however, we keep this empty stub to prevent errors if the event handler
             // was already registered before
         «ELSE»
-            $serviceManager = ServiceUtil::getManager();
-            $workflowHelper = $serviceManager->get('«appService».workflow_helper');
+            $workflowHelper = ServiceUtil::get('«appService».workflow_helper');
 
             $modname = '«appName»';
             $useJoins = false;

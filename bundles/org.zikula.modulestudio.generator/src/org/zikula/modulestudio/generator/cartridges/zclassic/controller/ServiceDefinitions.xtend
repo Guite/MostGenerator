@@ -481,7 +481,6 @@ class ServiceDefinitions {
             arguments:
                 - "@translator.default"
                 - "@«modPrefix».entity_factory"
-                - "@«modPrefix».controller_helper"
         «IF hasTranslatable»
 
             «modPrefix».translatable_helper:

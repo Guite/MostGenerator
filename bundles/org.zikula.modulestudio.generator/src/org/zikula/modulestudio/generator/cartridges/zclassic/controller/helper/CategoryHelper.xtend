@@ -27,6 +27,7 @@ class CategoryHelper {
         namespace «appNamespace»\Helper\Base;
 
         use Doctrine\ORM\QueryBuilder;
+        use InvalidArgumentException;
         use Psr\Log\LoggerInterface;
         use Symfony\Component\HttpFoundation\RequestStack;
         use Symfony\Component\HttpFoundation\Session\SessionInterface;
@@ -112,7 +113,7 @@ class CategoryHelper {
         /**
          * Retrieves the main/default category of «appName».
          *
-         * @param string $objectType The object type to retrieve (optional)
+         * @param string $objectType The object type to retrieve
          * @param string $registry   Name of category registry to be used (optional)
          * @deprecated Use the methods getAllProperties, getAllPropertiesWithMainCat, getMainCatForProperty and getPrimaryProperty instead
          *
@@ -121,7 +122,7 @@ class CategoryHelper {
         public function getMainCat($objectType = '', $registry = '')
         {
             if (empty($objectType)) {
-                return false;
+                throw new InvalidArgumentException($this->translator->__('Invalid object type received.'));
         	}
             if (empty($registry)) {
                 // default to the primary registry
@@ -139,7 +140,7 @@ class CategoryHelper {
          * or not. Subclass can override this method to apply a custom behaviour
          * to certain category registries for example.
          *
-         * @param string $objectType The object type to retrieve (optional)
+         * @param string $objectType The object type to retrieve
          * @param string $registry   Name of category registry to be used (optional)
          *
          * @return boolean true if multiple selection is allowed, else false
@@ -147,7 +148,7 @@ class CategoryHelper {
         public function hasMultipleSelection($objectType = '', $registry = '')
         {
             if (empty($objectType)) {
-                return false;
+                throw new InvalidArgumentException($this->translator->__('Invalid object type received.'));
         	}
             if (empty($args['registry'])) {
                 // default to the primary registry
@@ -172,7 +173,7 @@ class CategoryHelper {
         /**
          * Retrieves input data from POST for all registries.
          *
-         * @param string $objectType The object type to retrieve (optional)
+         * @param string $objectType The object type to retrieve
          * @param string $source     Where to retrieve the data from (defaults to POST)
          *
          * @return array The fetched data indexed by the registry id
@@ -180,7 +181,7 @@ class CategoryHelper {
         public function retrieveCategoriesFromRequest($objectType = '', $source = 'POST')
         {
             if (empty($objectType)) {
-                return [];
+                throw new InvalidArgumentException($this->translator->__('Invalid object type received.'));
         	}
 
             $dataSource = $source == 'GET' ? $this->request->query : $this->request->request;
@@ -276,14 +277,14 @@ class CategoryHelper {
         /**
          * Returns a list of all registries / properties for a given object type.
          *
-         * @param string $objectType The object type to retrieve (optional)
+         * @param string $objectType The object type to retrieve
          *
          * @return array list of the registries (property name as key, id as value)
          */
         public function getAllProperties($objectType = '')
         {
             if (empty($objectType)) {
-                return [];
+                throw new InvalidArgumentException($this->translator->__('Invalid object type received.'));
         	}
 
             return $this->categoryRegistryApi->getModuleRegistriesIds('«appName»', ucfirst($objectType) . 'Entity');
@@ -292,7 +293,7 @@ class CategoryHelper {
         /**
          * Returns a list of all registries with main category for a given object type.
          *
-         * @param string $objectType The object type to retrieve (optional)
+         * @param string $objectType The object type to retrieve
          * @param string $arrayKey   Key for the result array (optional)
          *
          * @return array list of the registries (registry id as key, main category id as value)
@@ -300,7 +301,7 @@ class CategoryHelper {
         public function getAllPropertiesWithMainCat($objectType = '', $arrayKey = '')
         {
             if (empty($objectType)) {
-                return [];
+                throw new InvalidArgumentException($this->translator->__('Invalid object type received.'));
         	}
 
             return $this->categoryRegistryApi->getModuleCategoryIds('«appName»', ucfirst($objectType) . 'Entity', $arrayKey);
@@ -309,7 +310,7 @@ class CategoryHelper {
         /**
          * Returns the main category id for a given object type and a certain property name.
          *
-         * @param string $objectType The object type to retrieve (optional)
+         * @param string $objectType The object type to retrieve
          * @param string $property   The property name (optional)
          *
          * @return integer The main category id of desired tree
@@ -317,7 +318,7 @@ class CategoryHelper {
         public function getMainCatForProperty($objectType = '', $property = '')
         {
             if (empty($objectType)) {
-                return 0;
+                throw new InvalidArgumentException($this->translator->__('Invalid object type received.'));
         	}
 
             return $this->categoryRegistryApi->getModuleCategoryId('«appName»', ucfirst($objectType) . 'Entity', $property);
@@ -326,7 +327,7 @@ class CategoryHelper {
         /**
          * Returns the name of the primary registry.
          *
-         * @param string $objectType The object type to retrieve (optional)
+         * @param string $objectType The object type to retrieve
          *
          * @return string name of the main registry
          */

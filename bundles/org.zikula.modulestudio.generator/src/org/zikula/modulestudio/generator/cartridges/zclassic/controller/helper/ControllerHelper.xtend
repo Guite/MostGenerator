@@ -259,8 +259,6 @@ class ControllerHelper {
 
             «getDefaultObjectType»
 
-            «hasCompositeKeys»
-
             «retrieveIdentifier»
 
             «isValidIdentifier»
@@ -342,27 +340,6 @@ class ControllerHelper {
         }
     '''
 
-    def private hasCompositeKeys(Application it) '''
-        /**
-         * Checks whether a certain entity type uses composite keys or not.
-         *
-         * @param string $objectType The object type to retrieve
-         *
-         * @return Boolean Whether composite keys are used or not
-         */
-        public function hasCompositeKeys($objectType)
-        {
-            switch ($objectType) {
-                «FOR entity : entities»
-                    case '«entity.name.formatForCode»':
-                        return «entity.hasCompositeKeys.displayBool»;
-                «ENDFOR»
-                    default:
-                        return false;
-            }
-        }
-    '''
-
     def private retrieveIdentifier(Application it) '''
         /**
          * Retrieve identifier parameters for a given object type.
@@ -380,7 +357,7 @@ class ControllerHelper {
             $routeParams = $request->get('_route_params', []);
             foreach ($idFields as $idField) {
                 $defaultValue = isset($args[$idField]) && is_numeric($args[$idField]) ? $args[$idField] : 0;
-                if ($this->hasCompositeKeys($objectType)) {
+                if ($this->selectionHelper->hasCompositeKeys($objectType)) {
                     // composite key may be alphanumeric
                     if (array_key_exists($idField, $routeParams)) {
                         $id = !empty($routeParams[$idField]) ? $routeParams[$idField] : $defaultValue;
