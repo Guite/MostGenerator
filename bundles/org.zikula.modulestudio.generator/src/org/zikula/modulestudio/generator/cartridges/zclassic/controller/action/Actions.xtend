@@ -89,6 +89,11 @@ class Actions {
         ];
         $controllerHelper = $this->get('«app.appService».controller_helper');
         $viewHelper = $this->get('«app.appService».view_helper');
+
+        // parameter for used sort order
+        $sortdir = strtolower($sortdir);
+        $request->query->set('sort', $sort);
+        $request->query->set('sortdir', $sortdir);
         «IF tree != EntityTreeType.NONE»
 
             if ('tree' == $request->query->getAlnum('tpl', '')) {
@@ -98,11 +103,6 @@ class Actions {
                 return $viewHelper->processTemplate($objectType, 'view', $templateParameters);
             }
         «ENDIF»
-
-        // parameter for used sort order
-        $sortdir = strtolower($sortdir);
-        $request->query->set('sort', $sort);
-        $request->query->set('sortdir', $sortdir);
 
         «initSortableColumns»
 
