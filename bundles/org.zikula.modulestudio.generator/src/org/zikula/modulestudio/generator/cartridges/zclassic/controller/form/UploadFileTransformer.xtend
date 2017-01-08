@@ -21,11 +21,10 @@ class UploadFileTransformer {
     def private transformerBaseImpl(Application it) '''
         namespace «appNamespace»\Form\DataTransformer\Base;
 
-        use ServiceUtil;
         use Symfony\Component\Form\DataTransformerInterface;
         use Symfony\Component\HttpFoundation\File\File;
         use Symfony\Component\HttpFoundation\File\UploadedFile;
-        use Symfony\Component\HttpFoundation\Request;
+        use Symfony\Component\HttpFoundation\RequestStack;
         use «appNamespace»\Form\Type\Field\UploadType;
         use «appNamespace»\Helper\ControllerHelper;
         use «appNamespace»\Helper\UploadHelper;
@@ -43,9 +42,9 @@ class UploadFileTransformer {
             protected $formType = '';
 
             /**
-             * @var Request
+             * @var RequestStack
              */
-            protected $request = '';
+            protected $requestStack = '';
 
             /**
              * @var ControllerHelper
@@ -71,11 +70,38 @@ class UploadFileTransformer {
             public function __construct(UploadType $formType, $fieldName)
             {
                 $this->formType = $formType;
-                $this->request = ServiceUtil::get('request_stack')->getCurrentRequest();
-                $this->controllerHelper = ServiceUtil::get('«appService».controller_helper');
-                $this->uploadHelper = ServiceUtil::get('«appService».upload_helper');
                 $this->fieldName = $fieldName;
             }
+
+            /**
+             * Sets the request stack.
+             *
+             * @param RequestStack $requestStack RequestStack service instance
+             */
+            public function setRequestStack($requestStack)
+            {
+                $this->requestStack = $requestStack;
+        	}
+
+            /**
+             * Sets the controller helper.
+             *
+             * @param ControllerHelper $controllerHelper ControllerHelper service instance
+             */
+            public function setControllerHelper($controllerHelper)
+            {
+                $this->controllerHelper = $controllerHelper;
+        	}
+
+            /**
+             * Sets the upload helper.
+             *
+             * @param UploadHelper $uploadHelper UploadHelper service instance
+             */
+            public function setUploadHelper($uploadHelper)
+            {
+                $this->uploadHelper = $uploadHelper;
+        	}
 
             /**
              * Transforms a filename to the corresponding file object.
@@ -130,8 +156,9 @@ class UploadFileTransformer {
                 if (null === $uploadedFile) {
                     // check files array
                     $filesKey = '«appName.toLowerCase»_' . $objectType;
-                    if ($this->request->files->has($filesKey)) {
-                        $files = $this->request->files->get($filesKey);
+                    $request = $this->requestStack->getCurrentRequest();
+                    if ($request->files->has($filesKey)) {
+                        $files = $request->files->get($filesKey);
                         if (isset($files[$fieldName]) && isset($files[$fieldName][$fieldName])) {
                             $uploadedFile = $files[$fieldName][$fieldName];
                         }

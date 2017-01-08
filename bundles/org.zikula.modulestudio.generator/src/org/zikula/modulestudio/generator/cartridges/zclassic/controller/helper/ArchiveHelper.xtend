@@ -28,7 +28,6 @@ class ArchiveHelper {
     def private categoryHelperBaseClass(Application it) '''
         namespace «appNamespace»\Helper\Base;
 
-        use PageUtil;
         use Psr\Log\LoggerInterface;
         use Symfony\Component\HttpFoundation\Session\SessionInterface;
         use Zikula\Common\Translator\TranslatorInterface;
@@ -132,7 +131,7 @@ class ArchiveHelper {
                 return;
             }
 
-            PageUtil::registerVar('«appName»AutomaticArchiving', false, true);
+            $this->session->set('«appName»AutomaticArchiving', true);
             «FOR entity : getArchivingEntities»
 
                 // perform update for «entity.nameMultiple.formatForDisplay» becoming archived
@@ -143,7 +142,7 @@ class ArchiveHelper {
                 $this->logger->notice('{app}: Automatic archiving for the {entity} entity completed.', $logArgs);
             «ENDFOR»
 
-            PageUtil::setVar('«appName»AutomaticArchiving', false);
+            $this->session->del('«appName»AutomaticArchiving');
         }
     '''
 

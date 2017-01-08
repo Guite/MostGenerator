@@ -1399,7 +1399,7 @@ class Repository {
          */
         public function archiveObjects(PermissionApi $permissionApi, SessionInterface $session, TranslatorInterface $translator, WorkflowHelper $workflowHelper«IF !skipHookSubscribers», HookHelper $hookHelper«ENDIF»)
         {
-            if (true !== \PageUtil::getVar('«app.appName»AutomaticArchiving', false) && !$permissionApi->hasPermission('«app.appName»', '.*', ACCESS_EDIT)) {
+            if (true !== $session->get('«app.appName»AutomaticArchiving', false) && !$permissionApi->hasPermission('«app.appName»', '.*', ACCESS_EDIT)) {
                 // current user has no permission for executing the archive workflow action
                 return true;
             }

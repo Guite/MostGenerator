@@ -192,6 +192,13 @@ class ServiceDefinitions {
                     - "@translator.default"
                 tags:
                     - { name: form.type }
+
+            «modPrefix».form.upload_file_transformer:
+                class: «nsBase»Field\DataTransformer\UploadFileTransformer
+                calls:
+                    - [setRequestStack, ["@request_stack"]]
+                    - [setControllerHelper, ["@«modPrefix».controller_helper"]]
+                    - [setUploadHelper, ["@«modPrefix».upload_helper"]]
         «ENDIF»
         «IF hasUserFields»
 
@@ -276,7 +283,7 @@ class ServiceDefinitions {
                                 - "@«modPrefix».feature_activation_helper"
                             «ENDIF»
                         calls:
-                            - [setLockingApi, ['@?zikula_pagelock_module.api.locking']]
+                            - [setLockingApi, ["@?zikula_pagelock_module.api.locking"]]
                         tags:
                             - { name: form.type }
                 «ENDIF»
@@ -452,7 +459,6 @@ class ServiceDefinitions {
             class: «nsBase»ModelHelper
             arguments:
                 - "@«modPrefix».entity_factory"
-                - "@«modPrefix».controller_helper"
         «IF needsApproval»
 
             «modPrefix».notification_helper:

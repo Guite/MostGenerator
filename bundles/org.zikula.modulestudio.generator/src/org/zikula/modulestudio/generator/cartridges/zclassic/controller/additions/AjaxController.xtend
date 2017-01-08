@@ -36,7 +36,6 @@ class AjaxController {
         namespace «appNamespace»\Controller\Base;
 
         «IF !getAllUserFields.empty»
-            use DataUtil;
             use Doctrine\ORM\AbstractQuery;
         «ENDIF»
         use Symfony\Component\HttpFoundation\JsonResponse;

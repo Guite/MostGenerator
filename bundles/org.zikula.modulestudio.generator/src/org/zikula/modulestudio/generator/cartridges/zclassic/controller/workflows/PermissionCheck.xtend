@@ -87,7 +87,7 @@ class PermissionCheck {
         {
             «IF app.hasAutomaticArchiving»
                 // every user is allowed to perform automatic archiving 
-                if (true === \PageUtil::getVar('«app.appName»AutomaticArchiving', false)) {
+                if (true === \SessionUtil::getVar('«app.appName»AutomaticArchiving', false)) {
                     return true;
                 }
 

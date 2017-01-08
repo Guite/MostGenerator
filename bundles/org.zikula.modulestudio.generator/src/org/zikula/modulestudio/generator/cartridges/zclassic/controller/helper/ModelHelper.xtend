@@ -50,20 +50,13 @@ class ModelHelper {
             private $entityFactory;
 
             /**
-             * @var ControllerHelper
-             */
-            private $controllerHelper;
-
-            /**
              * ModelHelper constructor.
              *
              * @param «name.formatForCodeCapital»Factory $entityFactory «name.formatForCodeCapital»Factory service instance
-             * @param ControllerHelper $controllerHelper ControllerHelper service instance
              */
-            public function __construct(«name.formatForCodeCapital»Factory $entityFactory, ControllerHelper $controllerHelper)
+            public function __construct(«name.formatForCodeCapital»Factory $entityFactory)
             {
                 $this->entityFactory = $entityFactory;
-                $this->controllerHelper = $controllerHelper;
             }
 
             «canBeCreated»
@@ -93,10 +86,6 @@ class ModelHelper {
          */
         public function canBeCreated($objectType)
         {
-            if (!in_array($objectType, $this->controllerHelper->getObjectTypes('helper', ['helper' => 'model', 'action' => 'canBeCreated']))) {
-                throw new Exception('Error! Invalid object type received.');
-            }
-
             $result = false;
 
             switch ($objectType) {
@@ -153,11 +142,10 @@ class ModelHelper {
          */
         protected function hasExistingInstances($objectType)
         {
-            if (!in_array($objectType, $this->controllerHelper->getObjectTypes('helper', ['helper' => 'model', 'action' => 'hasExistingInstances']))) {
-                throw new Exception('Error! Invalid object type received.');
-            }
-
             $repository = $this->entityFactory->getRepository($objectType);
+            if (null === $repository) {
+                return false;
+            }
 
             return $repository->selectCount() > 0;
         }

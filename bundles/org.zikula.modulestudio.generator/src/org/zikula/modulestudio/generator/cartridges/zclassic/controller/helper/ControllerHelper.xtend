@@ -38,12 +38,6 @@ class ControllerHelper {
         namespace «appNamespace»\Helper\Base;
 
         use DataUtil;
-        «IF hasUploads»
-            use FileUtil;
-        «ENDIF»
-        «IF hasGeographical»
-            use UserUtil;
-        «ENDIF»
         «IF hasUploads || hasGeographical»
             use Psr\Log\LoggerInterface;
         «ENDIF»

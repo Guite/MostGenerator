@@ -31,8 +31,6 @@ class ItemSelector {
     def private itemSelectorBaseImpl(Application it) '''
         namespace «appNamespace»\Form\Plugin\Base;
 
-        use FormUtil;
-        use PageUtil;
         use ServiceUtil;
         use Zikula_Form_Plugin_TextInput;
         use Zikula_Form_View;
@@ -110,17 +108,22 @@ class ItemSelector {
              */
             public function render(Zikula_Form_View $view)
             {
+                $serviceManager = ServiceUtil::getManager();
+
                 static $firstTime = true;
                 if ($firstTime) {
-                    PageUtil::addVar('javascript', 'jquery');
-                    PageUtil::addVar('javascript', 'web/bootstrap-media-lightbox/bootstrap-media-lightbox.min.js');
-                    PageUtil::addVar('stylesheet', 'web/bootstrap-media-lightbox/bootstrap-media-lightbox.css');
-                    PageUtil::addVar('javascript', '@«appName»/Resources/public/js/«appName».Finder.js');
-                    PageUtil::addVar('stylesheet', '@«appName»/Resources/public/css/style.css');
+                    $assetHelper = $serviceManager->get('zikula_core.common.theme.asset_helper');
+                    $cssAssetBag = $serviceManager->get('zikula_core.common.theme.assets_css');
+                    $jsAssetBag = $serviceManager->get('zikula_core.common.theme.assets_js');
+                    $homePath = $serviceManager->get('router')->generate('home');
+
+                    $jsAssetBag->add($homePath . 'web/bootstrap-media-lightbox/bootstrap-media-lightbox.min.js');
+                    $cssAssetBag->add($homePath . 'web/bootstrap-media-lightbox/bootstrap-media-lightbox.css');
+                    $jsAssetBag->add($assetHelper->resolve('@«appName»:js/«appName».Finder.js'));
+                    $cssAssetBag->add($assetHelper->resolve('@«appName»:css/style.css'));
                 }
                 $firstTime = false;
 
-                $serviceManager = ServiceUtil::getManager();
                 $permissionApi = $serviceManager->get('zikula_permissions_module.api.permission');
 
                 if (!$permissionApi->hasPermission('«appName»:' . ucfirst($this->objectType) . ':', '::', ACCESS_COMMENT)) {
@@ -181,7 +184,7 @@ class ItemSelector {
             public function decode(Zikula_Form_View $view)
             {
                 parent::decode($view);
-                $this->objectType = FormUtil::getPassedValue('«appName»_objecttype', '«getLeadingEntity.name.formatForCode»', 'POST');
+                $this->objectType = ServiceUtil::get('request_stack')->getCurrentRequest()->request->get('«appName»_objecttype', '«getLeadingEntity.name.formatForCode»');
                 $this->selectedItemId = $this->text;
             }
         }
