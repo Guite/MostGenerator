@@ -162,7 +162,7 @@ class EditFunctions {
 
         function «vendorAndName»TriggerFormValidation()
         {
-            «vendorAndName»PerformCustomValidationConstraints(editedObjectType, editedEntityId);
+            «vendorAndName»ExecuteCustomValidationConstraints(editedObjectType, editedEntityId);
 
             if (!editForm.get(0).checkValidity()) {
                 // This does not really submit the form,
@@ -202,7 +202,9 @@ class EditFunctions {
             editedEntityId = entityId;
 
             var allFormFields = editForm.find('input, select, textarea');
-            allFormFields.change(«vendorAndName»ExecuteCustomValidationConstraints);
+            allFormFields.change(function (event) {
+                «vendorAndName»ExecuteCustomValidationConstraints(editedObjectType, editedEntityId);
+            });
 
             formButtons = editForm.find('.form-buttons input');
             editForm.find('.btn-danger').first().bind('click keypress', function (event) {
