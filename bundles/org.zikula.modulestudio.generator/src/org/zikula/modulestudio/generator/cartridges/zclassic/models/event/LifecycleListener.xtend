@@ -57,6 +57,9 @@ class LifecycleListener {
              */
             public function __construct(ContainerInterface $container)
             {
+                if (null === $container) {
+                    $container = \ServiceUtil::getManager();
+                }
                 $this->setContainer($container);
             }
 
