@@ -60,7 +60,7 @@ class Redirect {
                 $codes[] = 'userView';
                 // admin list of «nameMultiple.formatForDisplay»
                 $codes[] = 'adminView';
-                «IF ownerPermission»
+                «IF standardFields»
                     // user list of own «nameMultiple.formatForDisplay»
                     $codes[] = 'userOwnView';
                     // admin list of own «nameMultiple.formatForDisplay»
@@ -82,7 +82,7 @@ class Redirect {
                         $codes[] = 'userView«sourceEntity.nameMultiple.formatForCodeCapital»';
                         // admin list of «sourceEntity.nameMultiple.formatForDisplay»
                         $codes[] = 'adminView«sourceEntity.nameMultiple.formatForCodeCapital»';
-                        «IF sourceEntity.ownerPermission»
+                        «IF sourceEntity.standardFields»
                             // user list of own «sourceEntity.nameMultiple.formatForDisplay»
                             $codes[] = 'userOwnView«sourceEntity.nameMultiple.formatForCodeCapital»';
                             // admin list of own «sourceEntity.nameMultiple.formatForDisplay»
@@ -208,7 +208,7 @@ class Redirect {
                     case 'userView':
                     case 'adminView':
                         return $this->router->generate($routePrefix . 'view');
-                    «IF ownerPermission»
+                    «IF standardFields»
                         case 'userOwnView':
                         case 'adminOwnView':
                             return $this->router->generate($routePrefix . 'view', [ 'own' => 1 ]);
@@ -234,7 +234,7 @@ class Redirect {
                             case 'userView«sourceEntity.nameMultiple.formatForCodeCapital»':
                             case 'adminView«sourceEntity.nameMultiple.formatForCodeCapital»':
                                 return $this->router->generate('«app.appName.formatForDB»_«sourceEntity.name.formatForDB»_' . $routeArea . 'view');
-                            «IF sourceEntity.ownerPermission»
+                            «IF sourceEntity.standardFields»
                                 case 'userOwnView«sourceEntity.nameMultiple.formatForCodeCapital»':
                                 case 'adminOwnView«sourceEntity.nameMultiple.formatForCodeCapital»':
                                     return $this->router->generate('«app.appName.formatForDB»_«sourceEntity.name.formatForDB»_' . $routeArea . 'view', [ 'own' => 1 ]);
