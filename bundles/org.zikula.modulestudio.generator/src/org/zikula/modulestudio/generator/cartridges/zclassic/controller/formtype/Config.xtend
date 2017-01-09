@@ -223,7 +223,7 @@ class Config {
     def private dispatch fieldType(TextVar it) '''«nsSymfonyFormType»Text«IF multiline»area«ENDIF»'''
     def private dispatch additionalAttributes(TextVar it) '''
         «IF maxLength > 0 || !multiline»
-            'max_length' => «IF maxLength > 0»«maxLength»«ELSEIF !multiline»255«ENDIF»
+            'max_length' => «IF maxLength > 0»«maxLength»«ELSEIF !multiline»255«ENDIF»,
         «ENDIF»
     '''
 
