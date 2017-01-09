@@ -81,7 +81,7 @@ class EventAction {
         $workflowHelper->normaliseWorkflowData(«entityVar»);
         $workflow = «entityVar»['__WORKFLOW__'];
         if ($workflow['id'] > 0) {
-            $entityManager = $this->container->get('«entityManagerService»');
+            $entityManager = $this->container->get('«entityManagerService»'); // @todo maybe $args->getObjectManager()
             $result = true;
             try {
                 $workflow = $entityManager->find('Zikula\Core\Doctrine\Entity\WorkflowEntity', $workflow['id']);

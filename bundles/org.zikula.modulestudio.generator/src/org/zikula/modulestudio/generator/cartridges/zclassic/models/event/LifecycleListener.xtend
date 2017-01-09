@@ -35,6 +35,7 @@ class LifecycleListener {
         use Doctrine\ORM\Events;
         use Symfony\Component\DependencyInjection\ContainerAwareInterface;
         use Symfony\Component\DependencyInjection\ContainerAwareTrait;
+        use Symfony\Component\DependencyInjection\ContainerInterface;
         «IF hasUploads»
             use Symfony\Component\HttpFoundation\File\File;
         «ENDIF»
@@ -54,9 +55,9 @@ class LifecycleListener {
             /**
              * EntityLifecycleListener constructor.
              */
-            public function __construct()
+            public function __construct(ContainerInterface $container)
             {
-                $this->setContainer(\ServiceUtil::getManager());
+                $this->setContainer($container);
             }
 
             /**

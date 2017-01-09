@@ -121,6 +121,8 @@ class ServiceDefinitions {
         # Event subscriber and listener classes
         «modPrefix».entity_lifecycle_listener:
             class: «appNamespace»\Listener\EntityLifecycleListener
+            arguments:
+                - "@service_container"
             tags:
                 - { name: doctrine.event_subscriber }
 
