@@ -80,7 +80,7 @@ class ComposerFile {
         },
         "extra": {
             "zikula": {
-                "core-compatibility": ">=1.4.5 <3.0",
+                "core-compatibility": ">=1.4.5",
                 "class": "«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\«appName»",
                 "displayname": "«name.formatForDisplayCapital»",
                 "url": "«name.formatForDB»",
