@@ -60,6 +60,12 @@ class Redirect {
                 $codes[] = 'userView';
                 // admin list of «nameMultiple.formatForDisplay»
                 $codes[] = 'adminView';
+                «IF ownerPermission»
+                    // user list of own «nameMultiple.formatForDisplay»
+                    $codes[] = 'userOwnView';
+                    // admin list of own «nameMultiple.formatForDisplay»
+                    $codes[] = 'adminOwnView';
+                «ENDIF»
             «ENDIF»
             «IF hasDisplayAction»
                 // user detail page of treated «name.formatForDisplay»
@@ -73,9 +79,15 @@ class Redirect {
                 «IF sourceEntity.name != it.name»
                     «IF sourceEntity.hasViewAction»
                         // user list of «sourceEntity.nameMultiple.formatForDisplay»
-                        $codes[] = 'userView«sourceEntity.name.formatForCodeCapital»';
+                        $codes[] = 'userView«sourceEntity.nameMultiple.formatForCodeCapital»';
                         // admin list of «sourceEntity.nameMultiple.formatForDisplay»
-                        $codes[] = 'adminView«sourceEntity.name.formatForCodeCapital»';
+                        $codes[] = 'adminView«sourceEntity.nameMultiple.formatForCodeCapital»';
+                        «IF sourceEntity.ownerPermission»
+                            // user list of own «sourceEntity.nameMultiple.formatForDisplay»
+                            $codes[] = 'userOwnView«sourceEntity.nameMultiple.formatForCodeCapital»';
+                            // admin list of own «sourceEntity.nameMultiple.formatForDisplay»
+                            $codes[] = 'adminOwnView«sourceEntity.nameMultiple.formatForCodeCapital»';
+                        «ENDIF»
                     «ENDIF»
                     «IF sourceEntity.hasDisplayAction»
                         // user detail page of related «sourceEntity.name.formatForDisplay»
@@ -196,6 +208,11 @@ class Redirect {
                     case 'userView':
                     case 'adminView':
                         return $this->router->generate($routePrefix . 'view');
+                    «IF ownerPermission»
+                        case 'userOwnView':
+                        case 'adminOwnView':
+                            return $this->router->generate($routePrefix . 'view', [ 'own' => 1 ]);
+                    «ENDIF»
                 «ENDIF»
                 «IF hasDisplayAction»
                     case 'userDisplay':
@@ -214,9 +231,14 @@ class Redirect {
                     «val sourceEntity = incomingRelation.source as Entity»
                     «IF sourceEntity.name != it.name»
                         «IF sourceEntity.hasViewAction»
-                            case 'userView«sourceEntity.name.formatForCodeCapital»':
-                            case 'adminView«sourceEntity.name.formatForCodeCapital»':
+                            case 'userView«sourceEntity.nameMultiple.formatForCodeCapital»':
+                            case 'adminView«sourceEntity.nameMultiple.formatForCodeCapital»':
                                 return $this->router->generate('«app.appName.formatForDB»_«sourceEntity.name.formatForDB»_' . $routeArea . 'view');
+                            «IF sourceEntity.ownerPermission»
+                                case 'userOwnView«sourceEntity.nameMultiple.formatForCodeCapital»':
+                                case 'adminOwnView«sourceEntity.nameMultiple.formatForCodeCapital»':
+                                    return $this->router->generate('«app.appName.formatForDB»_«sourceEntity.name.formatForDB»_' . $routeArea . 'view', [ 'own' => 1 ]);
+                            «ENDIF»
                         «ENDIF»
                         «IF sourceEntity.hasDisplayAction»
                             case 'userDisplay«sourceEntity.name.formatForCodeCapital»':
