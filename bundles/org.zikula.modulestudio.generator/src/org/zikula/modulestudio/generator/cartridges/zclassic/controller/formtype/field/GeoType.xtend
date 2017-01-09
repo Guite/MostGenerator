@@ -39,9 +39,9 @@ class GeoType {
                 parent::configureOptions($resolver);
 
                 $resolver->setDefaults([
-                    'max_length' => 12,
                     'scale' => 7,
                     'attr' => [
+                        'max_length' => 12,
                         'class' => 'geo-date'
                     ]
                 ]);

@@ -41,8 +41,8 @@ class ColourType {
                 parent::configureOptions($resolver);
 
                 $resolver->setDefaults([
-                    'max_length' => 7,
                     'attr' => [
+                        'max_length' => 7,
                         'class' => 'colour-selector'
                     ]
                 ]);

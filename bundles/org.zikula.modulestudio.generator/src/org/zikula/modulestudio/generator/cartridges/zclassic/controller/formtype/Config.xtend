@@ -176,6 +176,7 @@ class Config {
                 «ENDIF»
             «ENDIF»
             'attr' => [
+                «additionalAttributes»
                 'title' => $this->__('«titleAttribute»')«IF isShrinkDimensionField»,
                 'class' => 'shrinkdimension-«name.formatForCode.toLowerCase»'«ELSEIF name.formatForCode.startsWith('enableShrinkingFor')»,
                 'class' => 'shrink-enabler'«ENDIF»
@@ -185,21 +186,27 @@ class Config {
 
     def private dispatch fieldType(Variable it) '''«nsSymfonyFormType»Text'''
     def private dispatch titleAttribute(Variable it) '''Enter the «name.formatForDisplay».'''
-    def private dispatch additionalOptions(Variable it) '''
-        'max_length' => 255
+    def private dispatch additionalAttributes(Variable it) '''
+        'max_length' => 255,
     '''
+    def private dispatch additionalOptions(Variable it) ''''''
 
     def private dispatch fieldType(IntVar it) '''«IF isUserGroupSelector»Symfony\Bridge\Doctrine\Form\Type\Entity«ELSE»«nsSymfonyFormType»Integer«ENDIF»'''
     def private dispatch titleAttribute(IntVar it) '''«IF isUserGroupSelector»Choose the «name.formatForDisplay».«ELSE»Enter the «name.formatForDisplay». Only digits are allowed.«ENDIF»'''
-    def private dispatch additionalOptions(IntVar it) '''
+    def private dispatch additionalAttributes(IntVar it) '''
         «IF isUserGroupSelector»
             'max_length' => 255,
+        «ELSE»
+            'max_length' => «IF isShrinkDimensionField || isThumbDimensionField»4«ELSE»255«ENDIF»,
+        «ENDIF»
+    '''
+    def private dispatch additionalOptions(IntVar it) '''
+        «IF isUserGroupSelector»
             // Zikula core should provide a form type for this to hide entity details
             'class' => 'ZikulaGroupsModule:GroupEntity',
             'choice_label' => 'name',
             'choice_value' => 'gid'
         «ELSE»
-            'max_length' => «IF isShrinkDimensionField || isThumbDimensionField»4«ELSE»255«ENDIF»,
             'scale' => 0«IF isShrinkDimensionField || isThumbDimensionField»,
             'input_group' => ['right' => $this->__('pixels')]«ENDIF»
         «ENDIF»
@@ -214,7 +221,7 @@ class Config {
     }
 
     def private dispatch fieldType(TextVar it) '''«nsSymfonyFormType»Text«IF multiline»area«ENDIF»'''
-    def private dispatch additionalOptions(TextVar it) '''
+    def private dispatch additionalAttributes(TextVar it) '''
         «IF maxLength > 0 || !multiline»
             'max_length' => «IF maxLength > 0»«maxLength»«ELSEIF !multiline»255«ENDIF»
         «ENDIF»
@@ -222,10 +229,11 @@ class Config {
 
     def private dispatch fieldType(BoolVar it) '''«nsSymfonyFormType»Checkbox'''
     def private dispatch titleAttribute(BoolVar it) '''The «name.formatForDisplay» option.'''
-    def private dispatch additionalOptions(BoolVar it) ''''''
+    def private dispatch additionalAttributes(BoolVar it) ''''''
 
     def private dispatch fieldType(ListVar it) '''«nsSymfonyFormType»Choice'''
     def private dispatch titleAttribute(ListVar it) '''Choose the «name.formatForDisplay».'''
+    def private dispatch additionalAttributes(ListVar it) ''''''
     def private dispatch additionalOptions(ListVar it) '''
         'choices' => [
             «FOR item : items»«item.itemDefinition»«IF item != items.last»,«ENDIF»«ENDFOR»

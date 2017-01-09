@@ -307,7 +307,9 @@ class Finder {
             $builder->add('q', '«nsSymfonyFormType»SearchType', [
                 'label' => $this->__('Search for') . ':',
                 'required' => false,
-                'max_length' => 255
+                'attr' => [
+                    'max_length' => 255
+                ]
             ]);
         }
     '''

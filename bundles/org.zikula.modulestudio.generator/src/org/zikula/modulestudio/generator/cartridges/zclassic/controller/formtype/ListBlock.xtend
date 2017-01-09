@@ -229,11 +229,11 @@ class ListBlock {
             $builder->add('amount', '«nsSymfonyFormType»IntegerType', [
                 'label' => $this->__('Amount') . ':',
                 'attr' => [
+                    'max_length' => 2,
                     'title' => $this->__('The maximum amount of items to be shown. Only digits are allowed.')
                 ],
                 'help' => $this->__('The maximum amount of items to be shown. Only digits are allowed.'),
                 'empty_data' => 5,
-                'max_length' => 2,
                 'scale' => 0
             ]);
         }
@@ -265,10 +265,10 @@ class ListBlock {
                     'label' => $this->__('Custom template') . ':',
                     'required' => false,
                     'attr' => [
+                        'max_length' => 80,
                         'title' => $this->__('Example') . ': itemlist_[objectType]_display.html.twig'
                     ],
-                    'help' => $this->__('Example') . ': <em>itemlist_[objectType]_display.html.twig</em>',
-                    'max_length' => 80
+                    'help' => $this->__('Example') . ': <em>itemlist_[objectType]_display.html.twig</em>'
                 ])
             ;
         }
@@ -286,7 +286,9 @@ class ListBlock {
             $builder->add('filter', '«nsSymfonyFormType»TextType', [
                 'label' => $this->__('Filter (expert option)') . ':',
                 'required' => false,
-                'max_length' => 255
+                'attr' => [
+                    'max_length' => 255
+                ]
             ]);
         }
     '''
