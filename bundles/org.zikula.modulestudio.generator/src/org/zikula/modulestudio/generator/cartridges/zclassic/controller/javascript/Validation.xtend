@@ -268,7 +268,7 @@ class Validation {
         /**
          * Runs special validation rules.
          */
-        function «vendorAndName»ExecuteCustomValidationRules(objectType, currentEntityId)
+        function «vendorAndName»PerformCustomValidationConstraints(objectType, currentEntityId)
         {
             jQuery('.validate-nospace').each( function() {
                 if (!«vendorAndName»ValidateNoSpace(jQuery(this).val())) {
