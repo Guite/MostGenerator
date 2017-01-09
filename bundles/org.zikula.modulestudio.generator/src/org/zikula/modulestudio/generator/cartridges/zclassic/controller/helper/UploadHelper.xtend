@@ -213,7 +213,7 @@ class UploadHelper {
                     $imgInfo = getimagesize($destinationFilePath);
                     if ($imgInfo[0] > $maxWidth || $imgInfo[1] > $maxHeight) {
                         // resize to allowed maximum size
-                        $thumbManager = $serviceManager->get('systemplugin.imagine.manager');
+                        $thumbManager = \ServiceUtil::get('systemplugin.imagine.manager');
                         $preset = new \SystemPlugin_Imagine_Preset('«appName»_Shrinker', [
                             'width' => $maxWidth,
                             'height' => $maxHeight,
