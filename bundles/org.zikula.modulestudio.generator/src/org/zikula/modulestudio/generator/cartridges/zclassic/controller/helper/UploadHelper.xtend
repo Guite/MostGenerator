@@ -552,9 +552,9 @@ class UploadHelper {
                             $basePath .= '«entity.nameMultiple.formatForDB»/«uploadFields.head.subFolderPathSegment»/';
                         «ENDIF»
                         break;
-                    default:
-                        throw new Exception($this->__('Error! Invalid object type received.'));
                 «ENDFOR»
+                default:
+                    throw new Exception($this->__('Error! Invalid object type received.'));
             }
 
             $result = $basePath;
