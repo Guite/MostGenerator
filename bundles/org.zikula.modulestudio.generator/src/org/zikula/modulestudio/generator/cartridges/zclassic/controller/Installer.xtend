@@ -100,12 +100,11 @@ class Installer {
                 $categoryRegistryIdsPerEntity = [];
 
                 // add default entry for category registry (property named Main)
-                $categoryHelper = new \«vendor.formatForCodeCapital»\«name.formatForCodeCapital»Module\Helper\CategoryHelper(
-                    $this->container,
+                $categoryHelper = new \«appNamespace»\Helper\CategoryHelper(
                     $this->container->get('translator.default'),
                     $this->container->get('session'),
-                    $logger,
                     $this->container->get('request_stack'),
+                    $logger,
                     $this->container->get('zikula_users_module.current_user'),
                     $this->container->get('zikula_categories_module.api.category_registry'),
                     $this->container->get('zikula_categories_module.api.category_permission')
