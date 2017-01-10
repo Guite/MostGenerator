@@ -29,7 +29,7 @@ class Custom {
         {% block title %}
             {{ __('«name.formatForDisplayCapital»') }}
         {% endblock %}
-        {% block adminPageIcon %}square{% endblock %}
+        {% block adminPageIcon 'square' %}
         {% block content %}
             <div class="«app.appName.toLowerCase»-«controller.name.formatForDB» «app.appName.toLowerCase»-«name.formatForDB»">
                 <p>Please override this template by moving it from <em>/«app.relativeAppRootPath»/«app.getViewPath»«entity.name.formatForCodeCapital»/«name.formatForCode.toFirstLower».html.twig</em> to either <em>/themes/YourTheme/Resources/«app.appName»/views/«entity.name.formatForCodeCapital»/«name.formatForCode.toFirstLower».html.twig</em> or <em>/app/Resources/«app.appName»/views/«entity.name.formatForCodeCapital»/«name.formatForCode.toFirstLower».html.twig</em>.</p>
