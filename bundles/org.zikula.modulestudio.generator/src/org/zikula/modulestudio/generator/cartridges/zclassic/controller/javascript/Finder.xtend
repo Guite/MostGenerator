@@ -201,7 +201,7 @@ class Finder {
 
             baseId = «name.formatForDB».itemSelector.baseId;
             params = {
-                ot: baseId
+                ot: baseId,
                 sort: jQuery('#' + baseId + 'Sort').val(),
                 sortdir: jQuery('#' + baseId + 'SortDir').val(),
                 q: jQuery('#' + baseId + 'SearchTerm').val()

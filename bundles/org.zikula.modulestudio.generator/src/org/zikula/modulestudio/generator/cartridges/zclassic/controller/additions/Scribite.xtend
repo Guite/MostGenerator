@@ -157,8 +157,8 @@ class Scribite {
 
     def private ckLangDe(Application it) '''
         CKEDITOR.plugins.setLang('«appName.formatForDB»', 'de', {
-            title: '«appName»-Objekt einfügen',
-            alt: '«appName»-Objekt einfügen'
+            title: unescape('«appName»-Objekt einf%FCgen'),
+            alt: unescape('«appName»-Objekt einf%FCgen')
         });
     '''
 
@@ -270,7 +270,7 @@ class Scribite {
 
     def private tinyLangDe(Application it) '''
         tinyMCE.addI18n('de.«name.formatForDB»', {
-            desc: '«appName»-Objekt einfügen'
+            desc: unescape('«appName»-Objekt einf%FCgen')
         });
     '''
 
