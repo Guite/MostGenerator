@@ -15,15 +15,10 @@ class Custom {
     extension Utils = new Utils
 
     def generate(CustomAction it, Application app, Entity entity, IFileSystemAccess fsa) {
-        val templatePath = app.getViewPath + entity.name.formatForDisplayCapital + '/'
-        val templateExtension = '.html.twig'
-        var fileName = name.formatForCode.toFirstLower + templateExtension
-        if (!app.shouldBeSkipped(templatePath + fileName)) {
+        var templateFilePath = templateFile(entity, name.formatForCode)
+        if (!app.shouldBeSkipped(templateFilePath)) {
             println('Generating ' + entity.name.formatForDisplay + ' templates for custom action "' + name.formatForDisplay + '"')
-            if (app.shouldBeMarked(templatePath + fileName)) {
-                fileName = name.formatForCode.toFirstLower + '.generated' + templateExtension
-            }
-            fsa.generateFile(templatePath + fileName, customView(it, app, entity))
+            fsa.generateFile(templateFilePath, customView(it, app, entity))
         }
         ''' '''
     }
@@ -37,7 +32,7 @@ class Custom {
         {% block adminPageIcon %}square{% endblock %}
         {% block content %}
             <div class="«app.appName.toLowerCase»-«name.formatForDB» «app.appName.toLowerCase»-«name.formatForDB»">
-                <p>Please override this template by moving it from <em>/«app.relativeAppRootPath»/«app.getViewPath»«entity.name.formatForDisplayCapital»/«name.formatForCode.toFirstLower».html.twig</em> to either <em>/themes/YourTheme/Resources/«app.appName»/views/«entity.name.formatForDisplayCapital»/«name.formatForCode.toFirstLower».html.twig</em> or <em>/app/Resources/«app.appName»/views/«entity.name.formatForDisplayCapital»/«name.formatForCode.toFirstLower».html.twig</em>.</p>
+                <p>Please override this template by moving it from <em>/«app.relativeAppRootPath»/«app.getViewPath»«entity.name.formatForCodeCapital»/«name.formatForCode.toFirstLower».html.twig</em> to either <em>/themes/YourTheme/Resources/«app.appName»/views/«entity.name.formatForCodeCapital»/«name.formatForCode.toFirstLower».html.twig</em> or <em>/app/Resources/«app.appName»/views/«entity.name.formatForCodeCapital»/«name.formatForCode.toFirstLower».html.twig</em>.</p>
             </div>
         {% endblock %}
     '''
