@@ -387,6 +387,7 @@ class ServiceDefinitions {
                     «IF hasHookSubscribers»
                         - "@«modPrefix».hook_helper"
                     «ENDIF»
+
         «ENDIF»
         «IF hasCategorisableEntities»
             «modPrefix».category_helper:
