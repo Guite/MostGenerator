@@ -127,7 +127,6 @@ class FormHandler {
         use Symfony\Component\HttpFoundation\RedirectResponse;
         use Symfony\Component\HttpFoundation\Request;
         use Symfony\Component\HttpFoundation\RequestStack;
-        use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
         use Symfony\Component\HttpKernel\KernelInterface;
         use Symfony\Component\Routing\RouterInterface;
         use Symfony\Component\Security\Core\Exception\AccessDeniedException;
@@ -529,8 +528,7 @@ class FormHandler {
          *
          * @return boolean False in case of initialisation errors, otherwise true
          *
-         * @throws NotFoundHttpException Thrown if item to be edited isn't found
-         * @throws RuntimeException      Thrown if the workflow actions can not be determined
+         * @throws RuntimeException Thrown if the workflow actions can not be determined
          */
         public function processForm(array $templateParameters)
         {
@@ -575,17 +573,21 @@ class FormHandler {
                 }
 
                 $entity = $this->initEntityForEditing();
-                if (!is_object($entity)) {
-                    return false;
+                if (null !== $entity) {
+                    «locking.addPageLock(it)»
                 }
-
-                «locking.addPageLock(it)»
             } else {
                 if (!$this->permissionApi->hasPermission($this->permissionComponent, '::', ACCESS_EDIT)) {
                     throw new AccessDeniedException();
                 }
 
                 $entity = $this->initEntityForCreation();
+            }
+
+            if (null === $entity) {
+                $this->request->getSession()->getFlashBag()->add('error', $this->__('No such item found.'));
+
+                return new RedirectResponse($this->getRedirectUrl(['commandName' => 'cancel']), 302);
             }
 
             // save entity reference for later reuse
@@ -699,14 +701,12 @@ class FormHandler {
          * Initialise existing entity for editing.
          *
          * @return EntityAccess|null Desired entity instance or null
-         *
-         * @throws NotFoundHttpException Thrown if item to be edited isn't found
          */
         protected function initEntityForEditing()
         {
             $entity = $this->selectionHelper->getEntity($this->objectType, $this->idValues);
             if (null === $entity) {
-                throw new NotFoundHttpException($this->__('No such item.'));
+                return null;
             }
 
             $entity->initWorkflow();
@@ -720,8 +720,6 @@ class FormHandler {
          * Initialise new entity for creation.
          *
          * @return EntityAccess|null Desired entity instance or null
-         *
-         * @throws NotFoundHttpException Thrown if item to be cloned isn't found
          */
         protected function initEntityForCreation()
         {
@@ -743,7 +741,7 @@ class FormHandler {
                     // reuse existing entity
                     $entityT = $this->selectionHelper->getEntity($this->objectType, $templateIdValues);
                     if (null === $entityT) {
-                        throw new NotFoundHttpException($this->__('No such item.'));
+                        return null;
                     }
                     $entity = clone $entityT;
                 }
