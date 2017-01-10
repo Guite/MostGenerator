@@ -27,7 +27,7 @@ class Custom {
         {# purpose of this template: show output of «name.formatForDisplay» action in «entity.name.formatForDisplay» area #}
         {% extends routeArea == 'admin' ? '«app.appName»::adminBase.html.twig' : '«app.appName»::base.html.twig' %}
         {% block title __('«name.formatForDisplayCapital»') %}
-        {% block adminPageIcon 'square' %}
+        {% block admin_page_icon 'square' %}
         {% block content %}
             <div class="«app.appName.toLowerCase»-«controller.name.formatForDB» «app.appName.toLowerCase»-«name.formatForDB»">
                 <p>Please override this template by moving it from <em>/«app.relativeAppRootPath»/«app.getViewPath»«entity.name.formatForCodeCapital»/«name.formatForCode.toFirstLower».html.twig</em> to either <em>/themes/YourTheme/Resources/«app.appName»/views/«entity.name.formatForCodeCapital»/«name.formatForCode.toFirstLower».html.twig</em> or <em>/app/Resources/«app.appName»/views/«entity.name.formatForCodeCapital»/«name.formatForCode.toFirstLower».html.twig</em>.</p>
