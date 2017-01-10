@@ -26,9 +26,7 @@ class Custom {
     def private customView(CustomAction it, Application app, Entity controller) '''
         {# purpose of this template: show output of «name.formatForDisplay» action in «entity.name.formatForDisplay» area #}
         {% extends routeArea == 'admin' ? '«app.appName»::adminBase.html.twig' : '«app.appName»::base.html.twig' %}
-        {% block title %}
-            {{ __('«name.formatForDisplayCapital»') }}
-        {% endblock %}
+        {% block title __('«name.formatForDisplayCapital»') %}
         {% block adminPageIcon 'square' %}
         {% block content %}
             <div class="«app.appName.toLowerCase»-«controller.name.formatForDB» «app.appName.toLowerCase»-«name.formatForDB»">
