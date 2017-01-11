@@ -333,7 +333,7 @@ class PersistenceTransformer {
         val factory = ModuleStudioFactory.eINSTANCE
 
         val varContainer = factory.createVariables => [
-            name = 'List views'
+            name = 'ListViews'
             documentation = 'Here you can configure parameters for list views.'
             sortOrder = newSortNumber
         ]
