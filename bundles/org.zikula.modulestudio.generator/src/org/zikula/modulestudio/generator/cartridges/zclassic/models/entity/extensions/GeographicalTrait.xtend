@@ -33,7 +33,7 @@ class GeographicalTrait {
         /**
          * Geographical trait implementation class.
          */
-        trait StandardFieldsTrait
+        trait GeographicalTrait
         {
             «traitImpl»
         }
