@@ -135,8 +135,8 @@ class LinkContainer {
                 // Create an array of links to return
                 $links = [];
 
-                «IF generateAccountApi»
-                    if (LinkContainerInterface::TYPE_ACCOUNT == $type) {
+                if (LinkContainerInterface::TYPE_ACCOUNT == $type) {
+                    «IF generateAccountApi»
                         $useAccountPage = $this->variableApi->get('«appName»', 'useAccountPage', true);
                         if (false === $useAccountPage) {
                             return $links;
@@ -164,10 +164,10 @@ class LinkContainer {
                             ];
                         }
 
-                        return $links;
-                    }
+                    «ENDIF»
 
-                «ENDIF»
+                    return $links;
+                }
 
                 $routeArea = LinkContainerInterface::TYPE_ADMIN == $type ? 'admin' : '';
                 «val menuLinksHelper = new MenuLinksHelperFunctions»
