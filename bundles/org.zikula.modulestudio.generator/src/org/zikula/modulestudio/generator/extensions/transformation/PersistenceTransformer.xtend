@@ -223,25 +223,6 @@ class PersistenceTransformer {
         variables += varContainer
     }
 
-    def private createVarContainerForWorkflowSettings(Application it) {
-        var lastVarContainerSortNumber = 0
-        if (!variables.empty) {
-            lastVarContainerSortNumber = variables.sortBy[sortOrder].reverseView.head.sortOrder
-        }
-
-        val newSortNumber = lastVarContainerSortNumber + 1
-
-        val factory = ModuleStudioFactory.eINSTANCE
-
-        val varContainer = factory.createVariables => [
-            name = 'Moderation'
-            documentation = 'Here you can assign moderation groups for enhanced workflow actions.'
-            sortOrder = newSortNumber
-        ]
-
-        varContainer
-    }
-
     def private addViewSettings(Application it) {
         val entitiesWithView = getAllEntities.filter[hasViewAction]
         if (entitiesWithView.empty) {
@@ -322,26 +303,34 @@ class PersistenceTransformer {
         variables += varContainer
     }
 
+    def private createVarContainerForWorkflowSettings(Application it) {
+        val newSortNumber = getNextVarContainerSortNumber
+        ModuleStudioFactory.eINSTANCE.createVariables => [
+            name = 'Moderation'
+            documentation = 'Here you can assign moderation groups for enhanced workflow actions.'
+            sortOrder = newSortNumber
+        ]
+    }
+
     def private createVarContainerForViewSettings(Application it) {
-        var lastVarContainerSortNumber = 0
-        if (!variables.empty) {
-            lastVarContainerSortNumber = variables.sortBy[sortOrder].reverseView.head.sortOrder
-        }
-
-        val newSortNumber = lastVarContainerSortNumber + 1
-
-        val factory = ModuleStudioFactory.eINSTANCE
-
-        val varContainer = factory.createVariables => [
+        val newSortNumber = getNextVarContainerSortNumber
+        ModuleStudioFactory.eINSTANCE.createVariables => [
             name = 'ListViews'
             documentation = 'Here you can configure parameters for list views.'
             sortOrder = newSortNumber
         ]
-
-        varContainer
     }
 
     def private createVarContainerForImageSettings(Application it) {
+        val newSortNumber = getNextVarContainerSortNumber
+        ModuleStudioFactory.eINSTANCE.createVariables => [
+            name = 'Images'
+            documentation = 'Here you can define several options for image handling.'
+            sortOrder = newSortNumber
+        ]
+    }
+
+    def private getNextVarContainerSortNumber(Application it) {
         var lastVarContainerSortNumber = 0
         if (!variables.empty) {
             lastVarContainerSortNumber = variables.sortBy[sortOrder].reverseView.head.sortOrder
@@ -349,14 +338,6 @@ class PersistenceTransformer {
 
         val newSortNumber = lastVarContainerSortNumber + 1
 
-        val factory = ModuleStudioFactory.eINSTANCE
-
-        val varContainer = factory.createVariables => [
-            name = 'Images'
-            documentation = 'Here you can define several options for image handling.'
-            sortOrder = newSortNumber
-        ]
-
-        varContainer
+        newSortNumber
     }
 }
