@@ -257,12 +257,11 @@ class TreeFunctions {
             };
 
             if (op !== 'addRootNode') {
-                params[root] = rootId;
-
                 if (!nodeEntityId) {
                     «vendorAndName»SimpleAlert(jQuery('.tree-container'), Translator.__('Error'), Translator.__('Invalid node id'), 'treeInvalidNodeAlert', 'danger');
                     return;
                 }
+                params['root'] = rootId;
                 params[op === 'addChildNode' ? 'pid' : 'id'] = nodeEntityId;
 
                 if (op === 'moveNodeUp') {
