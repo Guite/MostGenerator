@@ -360,7 +360,7 @@ class TreeFunctions {
                 idPrefix = treeContainer.attr('id');
                 objectType = treeContainer.data('object-type');
 
-                «vendorAndName»InitTree(idPrefix, '«name.formatForCode»', treeContainer.data('root-id'), treeContainer.data('has-display'), treeContainer.data('has-edit'));
+                «vendorAndName»InitTree(idPrefix, objectType, treeContainer.data('root-id'), treeContainer.data('has-display'), treeContainer.data('has-edit'));
             }
         });
     '''

@@ -286,16 +286,17 @@ class Display {
         «val objName = name.formatForCode»
         «val pluginPrefix = application.appName.formatForDB»
         {# purpose of this template: show different forms of relatives for a given tree node #}
+        {% import _self as relatives %}
         <h3>{{ __('Related «nameMultiple.formatForDisplay»') }}</h3>
         {% if «objName».lvl > 0 %}
             {% if allParents is not defined or allParents == true %}
                 {% set allParents = «pluginPrefix»_treeSelection(objectType='«objName»', node=«objName», target='allParents') %}
                 {% if allParents is not null and allParents is iterable and allParents|length > 0 %}
                     <h4>{{ __('All parents') }}</h4>
-                    {{ list_relatives(allParents) }}
+                    {{ relatives.list_relatives(allParents) }}
                 {% endif %}
             {% endif %}
-            {% is directParent is not defined or directParent == true %}
+            {% if directParent is not defined or directParent == true %}
                 {% set directParent = «pluginPrefix»_treeSelection(objectType='«objName»', node=«objName», target='directParent') %}
                 {% if directParent is not null %}
                     <h4>{{ __('Direct parent') }}</h4>
@@ -309,14 +310,14 @@ class Display {
             {% set allChildren = «pluginPrefix»_treeSelection(objectType='«objName»', node=«objName», target='allChildren') %}
             {% if allChildren is not null and allChildren is iterable and allChildren|length > 0 %}
                 <h4>{{ __('All children') }}</h4>
-                {{ list_relatives(allChildren) }}
+                {{ relatives.list_relatives(allChildren) }}
             {% endif %}
         {% endif %}
         {% if directChildren is not defined or directChildren == true %}
             {% set directChildren = «pluginPrefix»_treeSelection(objectType='«objName»', node=«objName», target='directChildren') %}
             {% if directChildren is not null and directChildren is iterable and directChildren|length > 0 %}
                 <h4>{{ __('Direct children') }}</h4>
-                {{ list_relatives(directChildren) }}
+                {{ relatives.list_relatives(directChildren) }}
             {% endif %}
         {% endif %}
         {% if «objName».lvl > 0 %}
@@ -324,21 +325,21 @@ class Display {
                 {% set predecessors = «pluginPrefix»_treeSelection('«objName»', node=«objName», target='predecessors') %}
                 {% if predecessors is not null and predecessors is iterable and predecessors|length > 0 %}
                     <h4>{{ __('Predecessors') }}</h4>
-                    {{ list_relatives(predecessors) }}
+                    {{ relatives.list_relatives(predecessors) }}
                 {% endif %}
             {% endif %}
             {% if successors is not defined or successors == true %}
                 {% set successors = «pluginPrefix»_treeSelection(objectType='«objName»', node=«objName», target='successors') %}
                 {% if successors is not null and successors is iterable and successors|length > 0 %}
                     <h4>{{ __('Successors') }}</h4>
-                    {{ list_relatives(successors) }}
+                    {{ relatives.list_relatives(successors) }}
                 {% endif %}
             {% endif %}
             {% if preandsuccessors is not defined or preandsuccessors == true %}
                 {% set preandsuccessors = «pluginPrefix»_treeSelection(objectType='«objName»', node=«objName», target='preandsuccessors') %}
                 {% if preandsuccessors is not null and preandsuccessors is iterable and preandsuccessors|length > 0 %}
                     <h4>{{ __('Siblings') }}</h4>
-                    {{ list_relatives(preandsuccessors) }}
+                    {{ relatives.list_relatives(preandsuccessors) }}
                 {% endif %}
             {% endif %}
         {% endif %}

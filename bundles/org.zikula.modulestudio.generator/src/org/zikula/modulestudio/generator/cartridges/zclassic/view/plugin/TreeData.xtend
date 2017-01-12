@@ -60,6 +60,7 @@ class TreeData {
          * @param boolean $hasEditAction        Whether item editing is possible or not
          *
          * @return string Output markup
+         */
         protected function processTreeItemWithChildren($objectType, $node, $routeArea, $rootId, $descriptionFieldName, $hasEditAction)
         {
             $idPrefix = 'tree' . $rootId . 'node_' . $node->createCompositeIdentifier();
