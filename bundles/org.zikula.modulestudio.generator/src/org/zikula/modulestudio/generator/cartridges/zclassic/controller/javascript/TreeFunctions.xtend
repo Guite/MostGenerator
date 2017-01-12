@@ -162,8 +162,7 @@ class TreeFunctions {
             actions.display = {
                 label: Translator.__('Display'),
                 title: Translator.__('Show detail page'),
-                action: function (node) {
-                    «/* TODO more detailed differentiation of parameters to be provided, e.g. slugs and composite keys */»
+                action: function (node) {«/* TODO more detailed differentiation of parameters to be provided, e.g. slugs and composite keys */»
                     document.location.href = Routing.generate('«appName.formatForDB»_' + objectType.toLowerCase() + '_display', { id: nodeEntityId }, true);
                 },
                 icon: 'fa fa-fw fa-eye'
@@ -173,8 +172,7 @@ class TreeFunctions {
             actions.edit = {
                 label: Translator.__('Edit'),
                 title: Translator.__('Show edit form'),
-                action: function (node) {
-                    «/* TODO more detailed differentiation of parameters to be provided, e.g. slugs and composite keys */»
+                action: function (node) {«/* TODO more detailed differentiation of parameters to be provided, e.g. slugs and composite keys */»
                     document.location.href = Routing.generate('«appName.formatForDB»_' + objectType.toLowerCase() + '_edit', { id: nodeEntityId }, true);
                 },
                 icon: 'fa fa-fw fa-pencil-square-o'
