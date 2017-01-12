@@ -80,7 +80,7 @@ class TreeData {
             if (count($node->getChildren()) > 0) {
                 $treeItem .= '<ul>';
                 foreach ($node->getChildren() as $childNode) {
-                    $treeItem .= $this->processTreeItemWithChildren($objectType, $controller, $childNode, $rootId, $descriptionFieldName, $hasEditAction);
+                    $treeItem .= $this->processTreeItemWithChildren($objectType, $childNode, $routeArea, $rootId, $descriptionFieldName, $hasEditAction);
                 }
                 $treeItem .= '</ul>';
             }
