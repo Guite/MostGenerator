@@ -88,6 +88,13 @@ class AjaxController {
         «IF !userFields.empty»
             «FOR userField : userFields»
 
+                /**
+                 * Retrieves a list of users.
+                 *
+                 * @param Request $request Current request instance
+                 *
+                 * @return JsonResponse
+                 */
                 public function get«userField.entity.name.formatForCodeCapital»«userField.name.formatForCodeCapital»UsersAction(Request $request)
                 {
                     return $this->getCommonUsersListAction($request);
@@ -108,14 +115,14 @@ class AjaxController {
 
     def private getCommonUsersListDocBlock(Application it, Boolean isBase) '''
         /**
-         * Retrieve a general purpose list of users.
+         * Retrieves a general purpose list of users.
          «IF !isBase»
          *
          * @Route("/getCommonUsersList", options={"expose"=true})
          * @Method("GET")
          «ENDIF»
          *
-         * @param string $fragment The search fragment
+         * @param Request $request Current request instance
          *
          * @return JsonResponse
          */ 
@@ -288,11 +295,11 @@ class AjaxController {
     def private getItemListAutoCompletionDocBlock(Application it, Boolean isBase) '''
         /**
          * Searches for entities for auto completion usage.
-        «IF !isBase»
+         «IF !isBase»
          *
          * @Route("/getItemListAutoCompletion", options={"expose"=true})
          * @Method("GET")
-        «ENDIF»
+         «ENDIF»
          *
          * @param Request $request Current request instance
          *
@@ -405,11 +412,11 @@ class AjaxController {
     def private checkForDuplicateDocBlock(Application it, Boolean isBase) '''
         /**
          * Checks whether a field value is a duplicate or not.
-        «IF !isBase»
+         «IF !isBase»
          *
          * @Route("/checkForDuplicate", options={"expose"=true})
          * @Method("POST")
-        «ENDIF»
+         «ENDIF»
          *
          * @param Request $request Current request instance
          *
@@ -517,11 +524,11 @@ class AjaxController {
     def private toggleFlagDocBlock(Application it, Boolean isBase) '''
         /**
          * Changes a given flag (boolean field) by switching between true and false.
-        «IF !isBase»
+         «IF !isBase»
          *
          * @Route("/toggleFlag", options={"expose"=true})
          * @Method("POST")
-        «ENDIF»
+         «ENDIF»
          *
          * @param Request $request Current request instance
          *
@@ -595,18 +602,13 @@ class AjaxController {
     def private handleTreeOperationDocBlock(Application it, Boolean isBase) '''
         /**
          * Performs different operations on tree hierarchies.
-        «IF !isBase»
+         «IF !isBase»
          *
          * @Route("/handleTreeOperation", options={"expose"=true})
          * @Method("POST")
-        «ENDIF»
+         «ENDIF»
          *
-         * @param string $ot        Treated object type
-         * @param string $op        The operation which should be performed (addRootNode, addChildNode, deleteNode, moveNode, moveNodeTo)
-         * @param int    $id        Identifier of treated node (not for addRootNode and addChildNode)
-         * @param int    $pid       Identifier of parent node (only for addChildNode)
-         * @param string $direction The target direction for a move action (only for moveNode [up, down] and moveNodeTo [after, before, bottom])
-         * @param int    $destid    Identifier of destination node for (only for moveNodeTo)
+         * @param Request $request Current request instance
          *
          * @return AjaxResponse
          *
@@ -717,8 +719,8 @@ class AjaxController {
                             $descriptionFieldName = '«textFields.head.name.formatForCode»';
                         «ELSE»
                             «val textStringFields = entity.fields.filter(StringField).filter[mandatory && length >= 50 && !nospace && !country && !htmlcolour && !language && !locale]»
-                            «IF !textStringFields.empty»
-                                $descriptionFieldName = '«textStringFields.head.name.formatForCode»';
+                            «IF textStringFields.length > 1»
+                                $descriptionFieldName = '«textStringFields.get(1).name.formatForCode»';
                             «ENDIF»
                         «ENDIF»
                         break;
@@ -770,8 +772,7 @@ class AjaxController {
             if (!empty($descriptionFieldName)) {
                 $entityData[$descriptionFieldName] = $this->__('This is a new root node');
             }
-            $entity->merge($entityData);
-            «/*IF hasTranslatableFields»
+            $entity->merge($entityData);«/*IF hasTranslatableFields»
                 $entity->setLocale($request->getLocale());
             «ENDIF*/»
 
@@ -922,7 +923,7 @@ class AjaxController {
             «toggleFlagImpl»
         «ENDIF»
         «IF hasTrees»
-        
+
             «handleTreeOperationImpl»
         «ENDIF»
     '''
@@ -933,6 +934,7 @@ class AjaxController {
             «FOR userField : userFields»
 
                 /**
+                 * Retrieves a list of users.
                  *
                  * @Route("/get«userField.entity.name.formatForCodeCapital»«userField.name.formatForCodeCapital»Users", options={"expose"=true})
                  * @Method("GET")
