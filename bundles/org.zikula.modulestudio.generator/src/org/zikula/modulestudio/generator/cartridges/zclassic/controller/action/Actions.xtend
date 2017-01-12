@@ -94,10 +94,12 @@ class Actions {
         $sortdir = strtolower($sortdir);
         $request->query->set('sort', $sort);
         $request->query->set('sortdir', $sortdir);
+
+        $sortableColumns = new SortableColumns($this->get('router'), '«app.appName.formatForDB»_«name.toLowerCase»_' . ($isAdmin ? 'admin' : '') . 'view', 'sort', 'sortdir');
         «IF tree != EntityTreeType.NONE»
 
             if ('tree' == $request->query->getAlnum('tpl', '')) {
-                $templateParameters = $controllerHelper->processViewActionParameters($objectType, null, $templateParameters«IF app.hasHookSubscribers», «(!skipHookSubscribers).displayBool»«ENDIF»);
+                $templateParameters = $controllerHelper->processViewActionParameters($objectType, $sortableColumns, $templateParameters«IF app.hasHookSubscribers», «(!skipHookSubscribers).displayBool»«ENDIF»);
 
                 // fetch and return the appropriate template
                 return $viewHelper->processTemplate($objectType, 'view', $templateParameters);
@@ -124,7 +126,6 @@ class Actions {
     '''
 
     def private initSortableColumns(Entity it) '''
-        $sortableColumns = new SortableColumns($this->get('router'), '«app.appName.formatForDB»_«name.toLowerCase»_' . ($isAdmin ? 'admin' : '') . 'view', 'sort', 'sortdir');
         «val listItemsFields = getSortingFields»
         «val listItemsIn = incoming.filter(OneToManyRelationship).filter[bidirectional && source instanceof Entity]»
         «val listItemsOut = outgoing.filter(OneToOneRelationship).filter[target instanceof Entity]»
