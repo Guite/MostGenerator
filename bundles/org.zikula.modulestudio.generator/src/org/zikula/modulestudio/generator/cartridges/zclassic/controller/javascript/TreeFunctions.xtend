@@ -263,7 +263,7 @@ class TreeFunctions {
                     «vendorAndName»SimpleAlert(jQuery('.tree-container'), Translator.__('Error'), Translator.__('Invalid node id'), 'treeInvalidNodeAlert', 'danger');
                     return;
                 }
-                params[(op === 'addChildNode' ? 'pid' : 'id'] = nodeEntityId;
+                params[op === 'addChildNode' ? 'pid' : 'id'] = nodeEntityId;
 
                 if (op === 'moveNodeUp') {
                     params[direction] = 'up';
