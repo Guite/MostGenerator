@@ -42,7 +42,7 @@ class TreeData {
 
             $result = '';
             foreach ($tree as $node) {
-                if ($node->getLvl() < 1) {
+                if ($node->getLvl() < 1 || $node->createCompositeIdentifier() == $rootId) {
                     $result .= $this->processTreeItemWithChildren($objectType, $node, $routeArea, $rootId, $descriptionFieldName, $hasEditAction);
                 }
             }
