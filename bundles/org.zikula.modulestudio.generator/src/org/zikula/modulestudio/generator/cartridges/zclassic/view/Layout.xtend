@@ -225,7 +225,7 @@ class Layout {
                         {{ «appName.formatForDB»_userAvatar(uid=value, rating='g') }}
                     </span>
                     {% if hasPermission('ZikulaUsersModule::', '::', 'ACCESS_ADMIN') %}
-                        <span class="help-block"><a href="{{ path('zikulausersmodule_admin_modify', { 'userid': value }) }}" title="{{ __('Switch to users administration') }}">{{ __('Manage user') }}</a></span>
+                        <span class="help-block"><a href="{{ path('zikulausersmodule_useradministration_modify', { 'user': value }) }}" title="{{ __('Switch to users administration') }}">{{ __('Manage user') }}</a></span>
                     {% endif %}
                 {% endif %}
             {% endblock %}
