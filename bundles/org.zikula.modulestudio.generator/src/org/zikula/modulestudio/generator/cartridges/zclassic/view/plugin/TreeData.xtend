@@ -1,6 +1,7 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin
 
 import de.guite.modulestudio.metamodel.Application
+import de.guite.modulestudio.metamodel.EntityTreeType
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
@@ -33,7 +34,7 @@ class TreeData {
         public function getTreeData($objectType, $tree, $routeArea = '', $rootId = 1)
         {
             // check whether an edit action is available
-            $hasEditAction = in_array($objectType, ['«getAllEntities.filter[hasEditAction].map[name.formatForCode].join('\', \'')»']);
+            $hasEditAction = in_array($objectType, ['«getAllEntities.filter[tree != EntityTreeType.NONE && hasEditAction].map[name.formatForCode].join('\', \'')»']);
 
             $serviceManager = \ServiceUtil::getManager();
             $repository = $serviceManager->get('«appService».entity_factory')->getRepository($objectType);
