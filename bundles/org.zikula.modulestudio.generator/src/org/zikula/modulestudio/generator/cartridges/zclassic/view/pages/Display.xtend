@@ -131,7 +131,7 @@ class Display {
                     /* <![CDATA[ */
                         ( function($) {
                             $(document).ready(function() {
-                                «application.vendorAndName»InitGeographicalDisplay({{ «objName».latitude|«application.name.formatForDB»_geoData }}, {{ «objName».longitude|«application.name.formatForDB»_geoData }})
+                                «application.vendorAndName»InitGeographicalDisplay({{ «objName».latitude|«application.appName.formatForDB»_geoData }}, {{ «objName».longitude|«application.appName.formatForDB»_geoData }})
                             });
                         })(jQuery);
                     /* ]]> */
