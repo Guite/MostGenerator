@@ -6,12 +6,14 @@ import de.guite.modulestudio.metamodel.AccountDeletionHandler
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.DataObject
 import de.guite.modulestudio.metamodel.Entity
+import de.guite.modulestudio.metamodel.EntityBlameableType
 import de.guite.modulestudio.metamodel.EntityIpTraceableType
 import de.guite.modulestudio.metamodel.EntitySlugStyle
 import de.guite.modulestudio.metamodel.EntityTimestampableType
 import de.guite.modulestudio.metamodel.EntityTreeType
 import de.guite.modulestudio.metamodel.IntegerField
 import de.guite.modulestudio.metamodel.StringField
+import de.guite.modulestudio.metamodel.UserField
 
 /**
  * This class contains model behaviour related extension methods.
@@ -166,6 +168,20 @@ class ModelBehaviourExtensions {
      */
     def getStandardFieldEntities(Application it) {
         getAllEntities.filter[standardFields]
+    }
+
+    /**
+     * Checks whether the entity contains at least one field with the blameable extension enabled.
+     */
+    def hasBlameableFields(Entity it) {
+        !getBlameableFields.empty
+    }
+
+    /**
+     * Returns a list of all derived fields with the blameable extension enabled.
+     */
+    def getBlameableFields(Entity it) {
+        getSelfAndParentDataObjects.map[fields.filter(UserField).filter[blameable != EntityBlameableType.NONE]].flatten
     }
 
     /**

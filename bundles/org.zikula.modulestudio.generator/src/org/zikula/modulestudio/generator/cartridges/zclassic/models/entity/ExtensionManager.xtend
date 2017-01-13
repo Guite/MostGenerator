@@ -6,6 +6,7 @@ import de.guite.modulestudio.metamodel.EntityTreeType
 import java.util.List
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.entity.extensions.Attributes
+import org.zikula.modulestudio.generator.cartridges.zclassic.models.entity.extensions.Blameable
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.entity.extensions.Categories
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.entity.extensions.EntityExtensionInterface
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.entity.extensions.IpTraceable
@@ -29,6 +30,12 @@ class ExtensionManager {
         this.entity = entity
 
         this.extensions = newArrayList()
+        if (entity.hasBlameableFields) {
+            this.extensions += new Blameable
+        }
+        if (entity.hasIpTraceableFields) {
+            this.extensions += new IpTraceable
+        }
         if (entity.loggable) {
             this.extensions += new Loggable
         }
@@ -44,6 +51,9 @@ class ExtensionManager {
         if (entity.hasSortableFields) {
             this.extensions += new Sortable
         }
+        if (entity.hasTimestampableFields) {
+            this.extensions += new Timestampable
+        }
         if (entity.tree != EntityTreeType.NONE) {
             this.extensions += new Tree
         }
@@ -52,12 +62,6 @@ class ExtensionManager {
         }
         if (entity.categorisable) {
             this.extensions += new Categories
-        }
-        if (entity.hasTimestampableFields) {
-            this.extensions += new Timestampable
-        }
-        if (entity.hasIpTraceableFields) {
-            this.extensions += new IpTraceable
         }
     }
 
