@@ -340,6 +340,7 @@ class EditEntity {
                             'isCreator' => false,
                         «ENDIF»
                         'actions' => [],
+                        'currentUserId' => 0,
                         'inlineUsage' => false
                     ])
                     ->setRequired([«IF hasUploadFieldsEntity»'entity', «ENDIF»'mode', 'actions'])
@@ -356,6 +357,7 @@ class EditEntity {
                             'isCreator' => 'bool',
                         «ENDIF»
                         'actions' => 'array',
+                        'currentUserId' => 'int',
                         'inlineUsage' => 'bool'
                     ])
                     ->setAllowedValues([
@@ -898,10 +900,11 @@ class EditEntity {
 
     def private fieldImpl(JoinRelationship it, Boolean outgoing, Boolean autoComplete) '''
         «val aliasName = getRelationAliasName(outgoing)»
+        «val relatedEntity = if (outgoing) target else source»
         $builder->add('«aliasName.formatForCode»', '«formType(autoComplete)»Type', [
             «IF autoComplete»
                 «val uniqueNameForJs = getUniqueRelationNameForJs(app, (if (outgoing) source else target), isManySide(outgoing), (if (!isManyToMany) outgoing else !outgoing), aliasName)»
-                'objectType' => '«(if (outgoing) target else source).name.formatForCode»',
+                'objectType' => '«relatedEntity.name.formatForCode»',
                 'multiple' => «isManySide(outgoing).displayBool»,
                 'uniqueNameForJs' => '«uniqueNameForJs»',
                 «IF outgoing && nullable»
@@ -914,7 +917,15 @@ class EditEntity {
                 'expanded' => «(if (outgoing) expandedTarget else expandedSource).displayBool»,
                 'query_builder' => function(EntityRepository $er) {
                     // select without joins
-                    return $er->getListQueryBuilder('', '', false);
+                    «IF (relatedEntity as Entity).ownerPermission»
+                        $qb = $er->getListQueryBuilder('', '', false);
+                        $qb->andWhere('tbl.createdBy == :currentUserId)')
+                           ->setParameter('currentUserId', $options['currentUserId']);
+
+                        return $qb;
+                    «ELSE»
+                        return $er->getListQueryBuilder('', '', false);
+                    «ENDIF»
                 },
                 «IF /*outgoing && */!nullable»
                     «IF !isManySide(outgoing)»

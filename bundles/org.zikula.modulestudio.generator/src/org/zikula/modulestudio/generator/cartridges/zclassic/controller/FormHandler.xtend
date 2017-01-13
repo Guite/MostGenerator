@@ -1117,7 +1117,7 @@ class FormHandler {
         {
             «processForm»
 
-            «IF ownerPermission && standardFields»
+            «IF ownerPermission»
 
                 «formHandlerBaseInitEntityForEditing»
             «ENDIF»
@@ -1170,17 +1170,17 @@ class FormHandler {
         /**
          * Initialise existing entity for editing.
          *
-         * @return EntityAccess desired entity instance or null
+         * @return EntityAccess Desired entity instance or null
          */
         protected function initEntityForEditing()
         {
             $entity = parent::initEntityForEditing();
 
             // only allow editing for the owner or people with higher permissions
-            if (!method_exists($entity, 'getCreatedBy') || $entity->getCreatedBy()->getUid() != $this->currentUserApi->get('uid')) {
-                if (!$this->permissionApi->hasPermission($this->permissionComponent, $this->createCompositeIdentifier() . '::', ACCESS_ADD)) {
-                    throw new AccessDeniedException();
-                }
+            $currentUserId = $this->currentUserApi->isLoggedIn() ? $this->currentUserApi->get('uid') : 0;
+            $isOwner = $currentUserId > 0 && $currentUserId == $entity->getCreatedBy()->getUid();
+            if (!$isOwner && !$this->permissionApi->hasPermission($this->permissionComponent, $this->createCompositeIdentifier() . '::', ACCESS_ADD)) {
+                throw new AccessDeniedException();
             }
 
             return $entity;
@@ -1254,6 +1254,7 @@ class FormHandler {
                 'mode' => $this->templateParameters['mode'],
                 'actions' => $this->templateParameters['actions'],
                 «IF !incoming.empty || !outgoing.empty»
+                    'currentUserId' => $this->currentUserApi->isLoggedIn() ? $this->currentUserApi->get('uid') : 0,
                     'inlineUsage' => $this->templateParameters['inlineUsage']
                 «ENDIF»
             ];

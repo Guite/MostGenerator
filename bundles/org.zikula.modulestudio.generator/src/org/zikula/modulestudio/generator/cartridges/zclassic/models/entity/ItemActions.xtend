@@ -23,11 +23,17 @@ class ItemActions {
     extension Utils = new Utils
 
     def itemActionsImpl(Application app) '''
+        «IF app.hasEditActions || !app.relations.empty»
+            $currentUserId = $currentUserApi->isLoggedIn() ? $currentUserApi->get('uid') : 0;
+        «ENDIF»
         «FOR entity : app.getAllEntities»
             if ($entity instanceof «entity.name.formatForCodeCapital»Entity) {
                 $component = '«app.appName»:«entity.name.formatForCodeCapital»:';
                 $instance = «entity.idFieldsAsParameterCode('entity')» . '::';
                 $routePrefix = '«app.appName.formatForDB»_«entity.name.formatForDB»_';
+                «IF entity.standardFields»
+                    $isOwner = $currentUserId > 0 && $currentUserId == $entity->getCreatedBy()->getUid();
+                «ENDIF»
 
                 «entity.itemActionsTargetingDisplay(app)»
                 «entity.itemActionsTargetingEdit(app)»
@@ -60,10 +66,9 @@ class ItemActions {
     def private itemActionsTargetingEdit(Entity it, Application app) '''
         «IF hasEditAction»
             if ($permissionApi->hasPermission($component, $instance, ACCESS_EDIT)) {
-                «IF ownerPermission && standardFields»
-                    $uid = $currentUserApi->get('uid');
+                «IF ownerPermission»
                     // only allow editing for the owner or people with higher permissions
-                    if ($entity->getCreatedBy()->getUid() == $uid || $permissionApi->hasPermission($component, $instance, ACCESS_ADD)) {
+                    if ($isOwner || $permissionApi->hasPermission($component, $instance, ACCESS_ADD)) {
                         «itemActionsForEditAction»
                     }
                 «ELSE»
@@ -102,10 +107,9 @@ class ItemActions {
             // more actions for adding new related items
             $authAdmin = $permissionApi->hasPermission($component, $instance, ACCESS_ADMIN);
             «/* TODO review the permission levels and maybe define them for each related entity
-              * ACCESS_ADMIN for admin controllers else: «IF relatedEntity.workflow == EntityWorkflowType::NONE»EDIT«ELSE»COMMENT«ENDIF»
+              * ACCESS_ADMIN for admin controllers else: «IF relatedEntity.ownerPermission»ADD«ELSEIF relatedEntity.workflow == EntityWorkflowType::NONE»EDIT«ELSE»COMMENT«ENDIF»
               */»
-            $uid = $currentUserApi->get('uid');
-            if ($authAdmin || (isset($uid) && method_exists($entity, 'getCreatedBy') && $entity->getCreatedBy()->getUid() == $uid)) {
+            if ($isOwner || $authAdmin) {
                 «FOR elem : refedElems»
 
                     «val useTarget = (elem.source == it)»

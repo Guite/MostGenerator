@@ -792,8 +792,8 @@ class Repository {
                 return $qb;
             }
 
-            $currentFunc = $this->getRequest()->query->getAlpha('func', 'index');
-            if ($currentFunc == 'edit') {«/* fix for #547 */»
+            $routeName = $this->getRequest()->get('_route');
+            if (false !== strpos($routeName, 'edit')) {«/* fix for #547 */»
                 return $qb;
             }
 
@@ -863,7 +863,7 @@ class Repository {
         {
             «IF hasVisibleWorkflow»
                 if (null === $this->getRequest()) {
-                    $this->request = ServiceUtil::get('request');
+                    $this->request = ServiceUtil::get('request_stack')->getCurrentRequest();
                 }
                 $routeName = $this->request->get('_route');
                 $isAdminArea = false !== strpos($routeName, '«app.appName.toLowerCase»_«name.formatForDisplay.toLowerCase»_admin');

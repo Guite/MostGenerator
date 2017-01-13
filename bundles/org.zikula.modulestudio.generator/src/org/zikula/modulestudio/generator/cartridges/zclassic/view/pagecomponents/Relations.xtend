@@ -105,16 +105,13 @@ class Relations {
             «IF !many»
                 {% if «relatedEntity.name.formatForCode».«relationAliasName» is not defined or «relatedEntity.name.formatForCode».«relationAliasName» is null %}
             «ENDIF»
-            {% set permLevel = 'ACCESS_«IF relatedEntity.workflow == EntityWorkflowType::NONE»EDIT«ELSE»COMMENT«ENDIF»' %}
-            {% if routeArea == 'admin' %}
-                {% set permLevel = 'ACCESS_ADMIN' %}
-            {% endif %}
+            {% set permLevel = routeArea == 'admin' ? 'ACCESS_ADMIN' : 'ACCESS_«IF relatedEntity.ownerPermission»ADD«ELSEIF relatedEntity.workflow == EntityWorkflowType::NONE»EDIT«ELSE»COMMENT«ENDIF»' %}
             {% set mayManage = hasPermission('«appName»:«relatedEntity.name.formatForCodeCapital»:', «relatedEntity.idFieldsAsParameterTemplate» ~ '::', permLevel) %}
-            {% if mayManage or (currentUser|default and «relatedEntity.name.formatForCode».createdBy|default and «relatedEntity.name.formatForCode».createdBy.getUid() == currentUser.uid) %}
-            <p class="managelink">
-                {% set createTitle = __('Create «otherEntity.name.formatForDisplay»') %}
-                <a href="{{ path('«appName.formatForDB»_«otherEntity.name.formatForDB»_' ~ routeArea ~ 'edit', { «relationAliasNameParam»: «relatedEntity.idFieldsAsParameterTemplate» }) }}" title="{{ createTitle }}" class="fa fa-plus">{{ createTitle }}</a>
-            </p>
+            {% if mayManage«IF relatedEntity.ownerPermission» or (currentUser|default and «relatedEntity.name.formatForCode».createdBy|default and «relatedEntity.name.formatForCode».createdBy.getUid() == currentUser.uid)«ENDIF» %}
+                <p class="managelink">
+                    {% set createTitle = __('Create «otherEntity.name.formatForDisplay»') %}
+                    <a href="{{ path('«appName.formatForDB»_«otherEntity.name.formatForDB»_' ~ routeArea ~ 'edit', { «relationAliasNameParam»: «relatedEntity.idFieldsAsParameterTemplate» }) }}" title="{{ createTitle|e('html_attr') }}" class="fa fa-plus">{{ createTitle }}</a>
+                </p>
             {% endif %}
             «IF !many»
                 {% endif %}
