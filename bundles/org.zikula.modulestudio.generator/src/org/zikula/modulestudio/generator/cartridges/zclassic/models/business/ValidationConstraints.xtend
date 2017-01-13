@@ -360,7 +360,7 @@ class ValidationConstraints {
     '''
 
     def dispatch validationMethods(UserField it) '''
-        /**«/** TODO remove this as part of #910 */»
+        /**
          * Checks whether the «name.formatForCode» field contains a valid user id.
          * This method is used for validation.
          *
@@ -370,15 +370,7 @@ class ValidationConstraints {
          */
         public function is«name.formatForCodeCapital»UserValid()
         {
-            «IF !mandatory»
-                if ($this['«name.formatForCode»'] < 1) {
-                    return true;
-                }
-            «ENDIF»
-
-            $uname = UserUtil::getVar('uname', $this['«name.formatForCode»']);
-
-            return null !== $uname && !empty($uname);
+            return «IF !mandatory»null === $this['«name.formatForCode»'] || «ENDIF»$this['«name.formatForCode»'] instanceof UserEntity;
         }
     '''
 

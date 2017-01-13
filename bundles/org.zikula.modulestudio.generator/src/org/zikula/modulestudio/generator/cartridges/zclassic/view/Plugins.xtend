@@ -173,9 +173,8 @@ class Plugins {
                     new \Twig_SimpleFunction('«appNameLower»_moderationObjects', [$this, 'getModerationObjects']),
                 «ENDIF»
                 new \Twig_SimpleFunction('«appNameLower»_objectTypeSelector', [$this, 'getObjectTypeSelector']),
-                new \Twig_SimpleFunction('«appNameLower»_templateSelector', [$this, 'getTemplateSelector']),
-                new \Twig_SimpleFunction('«appNameLower»_userVar', [$this, 'getUserVar']),
-                new \Twig_SimpleFunction('«appNameLower»_userAvatar', [$this, 'getUserAvatar'], ['is_safe' => ['html']])
+                new \Twig_SimpleFunction('«appNameLower»_templateSelector', [$this, 'getTemplateSelector'])«IF hasStandardFieldEntities || hasUserFields»,
+                new \Twig_SimpleFunction('«appNameLower»_userAvatar', [$this, 'getUserAvatar'], ['is_safe' => ['html']])«ENDIF»
             ];
         }
 
@@ -207,31 +206,13 @@ class Plugins {
         }
 
         «generateInternal»
+        «IF hasStandardFieldEntities || hasUserFields»
 
-        «twigExtensionCompat»
+            «twigExtensionCompat»
+        «ENDIF»
     '''
 
     def private twigExtensionCompat(Application it) '''
-        /**
-         * Returns the value of a user variable.
-         *
-         * @param string     $name    Name of desired property
-         * @param int        $uid     The user's id
-         * @param string|int $default The default value
-         *
-         * @return string
-         */
-        public function getUserVar($name, $uid = -1, $default = '')
-        {
-            if (!$uid) {
-                $uid = -1;
-            }
-
-            $result = \UserUtil::getVar($name, $uid, $default);
-
-            return $result;
-        }
-
         /**
          * Display the avatar of a user.
          *

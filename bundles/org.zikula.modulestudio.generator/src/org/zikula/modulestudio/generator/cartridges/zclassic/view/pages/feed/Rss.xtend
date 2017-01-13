@@ -34,7 +34,7 @@ class Rss {
             xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
             xmlns:content="http://purl.org/rss/1.0/modules/content/"
             xmlns:atom="http://www.w3.org/2005/Atom">
-        {*<rss version="0.92">*}
+        {#<rss version="0.92">#}
             <channel>
                 <title>{{ __('Latest «nameMultiple.formatForDisplay»') }}</title>
                 <link>{{ app.request.getSchemeAndHttpHost() ~ app.request.getBasePath()|e }}</link>
@@ -50,7 +50,7 @@ class Rss {
                 #}
                 <docs>http://blogs.law.harvard.edu/tech/rss</docs>
                 <copyright>Copyright (c) {{ 'now'|date('Y') }}, {{ app.request.getSchemeAndHttpHost()|e }}</copyright>
-                <webMaster>{{ pageGetVar('adminmail)|e }} ({{ «appName.toLowerCase»_userVar('name', 2, 'admin') }})</webMaster>
+                <webMaster>{{ pageGetVar('adminmail)|e }}</webMaster>
         «val objName = name.formatForCode»
         {% for «objName» in items %}
             {{ block('entry') }}
@@ -67,9 +67,9 @@ class Rss {
             <link>{{ url('«appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ '«defaultAction»'«IF hasDisplayAction»«routeParams(objName, true)»«ENDIF») }}</link>
             <guid>{{ url('«appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ '«defaultAction»'«IF hasDisplayAction»«routeParams(objName, true)»«ENDIF») }}</guid>
             «IF standardFields»
-                {% if «objName».createdBy|default %}
-                    {% set realName = «appName.toLowerCase»_userVar('name', obj.createdBy.getUid()) %}
-                    <author>{{ «objName».createdBy.getEmail() }} ({{ realName|default(obj.createdBy.getUname()) }})</author>
+                {% if «objName».createdBy|default and «objName».createdBy.getUid() > 0 %}
+                    {% set creatorAttributes = «objName».createdBy.getAttributes() %}
+                    <author>{{ «objName».createdBy.getEmail() }} ({{ creatorAttributes.get('name')|default(«objName».createdBy.getUname()) }})</author>
                 {% endif %}
             «ENDIF»
             «IF categorisable»

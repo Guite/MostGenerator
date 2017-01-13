@@ -20,6 +20,7 @@ import de.guite.modulestudio.metamodel.StringField
 import de.guite.modulestudio.metamodel.TextField
 import de.guite.modulestudio.metamodel.UploadField
 import de.guite.modulestudio.metamodel.UrlField
+import de.guite.modulestudio.metamodel.UserField
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.business.ValidationConstraints
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
@@ -98,7 +99,7 @@ class Property {
          * @ORM\Column(«IF null !== dbName && dbName != ''»name="«dbName.formatForCode»", «ENDIF»«persistentPropertyImpl(type.toLowerCase)»«IF unique», unique=true«ENDIF»«IF nullable», nullable=true«ENDIF»)
         «persistentPropertyAdditions»
         «thVal.fieldAnnotations(it)»
-         * @var «IF type == 'bigint' || type == 'smallint'»integer«ELSEIF type == 'datetime'»\DateTime«ELSE»«type»«ENDIF» $«name.formatForCode»
+         * @var «IF it instanceof UserField»UserEntity«ELSEIF type == 'bigint' || type == 'smallint'»integer«ELSEIF type == 'datetime'»\DateTime«ELSE»«type»«ENDIF» $«name.formatForCode»
          */
         «modifier» $«name.formatForCode»«IF init != ''»«init»«ELSE»«IF !(it instanceof AbstractDateField)» = «defaultFieldData»«ENDIF»«ENDIF»;
         «/* this last line is on purpose */»
@@ -129,6 +130,11 @@ class Property {
             IntegerField:
                 if (it.version && entity instanceof Entity && (entity as Entity).hasOptimisticLock) '''
                     «''» * @ORM\Version
+                '''
+            UserField:
+                '''
+                    «' '»* @ORM\ManyToOne(targetEntity="Zikula\UsersModule\Entity\UserEntity")
+                    «' '»* @ORM\JoinColumn(referencedColumnName="uid")
                 '''
             DatetimeField:
                 if (it.version && entity instanceof Entity && (entity as Entity).hasOptimisticLock) '''

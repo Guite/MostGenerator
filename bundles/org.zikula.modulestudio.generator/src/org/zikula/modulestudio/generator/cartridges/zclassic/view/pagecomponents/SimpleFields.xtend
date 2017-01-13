@@ -67,19 +67,19 @@ class SimpleFields {
 
     def dispatch displayField(UserField it, String objName, String page) {
         val realName = objName + '.' + name.formatForCode
-        if (page == 'viewcsv' || page == 'viewxml') '''{{ «entity.application.appName.formatForDB»_userVar('uname', «realName») }}'''
+        if (page == 'viewcsv' || page == 'viewxml') '''«IF !mandatory»{% if «realName»|default and «realName».getUid() > 0 %}«ENDIF»{{ «realName».getUname() }}«IF !mandatory»{% endif %}«ENDIF»'''
         else '''
             «IF !mandatory»
-                {% if «realName» > 0 %}
+                {% if «realName»|default and «realName».getUid() > 0 %}
             «ENDIF»
             «IF page == 'display'»
                   {% if not isQuickView %}
             «ENDIF»
-                {{ «realName»|profileLinkByUserId() }}
-                <span class="avatar">{{ «entity.application.appName.formatForDB»_userAvatar(uid=«realName», rating='g') }}</span>
+                {{ «realName».getUid()|profileLinkByUserId() }}
+                <span class="avatar">{{ «entity.application.appName.formatForDB»_userAvatar(«realName».getUid(), rating='g') }}</span>
             «IF page == 'display'»
                 {% else %}
-                    {{ «entity.application.appName.formatForDB»_userVar('uname', «realName») }}
+                    {{ «realName».getUname() }}
                 {% endif %}
             «ENDIF»
             «IF !mandatory»

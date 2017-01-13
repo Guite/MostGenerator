@@ -30,6 +30,8 @@ class UserType {
         use Symfony\Component\Form\FormInterface;
         use Symfony\Component\Form\FormView;
         use Symfony\Component\OptionsResolver\OptionsResolver;
+        use Symfony\Component\PropertyAccess\PropertyAccess;
+        use Zikula\UsersModule\Entity\UserEntity;
 
         /**
          * User field type base class.
@@ -48,7 +50,11 @@ class UserType {
                         return;
                     }
 
-                    $formData = intval($formData);
+                    if ($formData instanceof UserEntity) {
+                        $formData = $formData->getUid();
+                    } else {
+                        $formData = intval($formData);
+                    }
                     $event->setData($formData);
                 });
             }
@@ -59,6 +65,14 @@ class UserType {
             public function buildView(FormView $view, FormInterface $form, array $options)
             {
                 $view->vars['inlineUsage'] = $options['inlineUsage'];
+
+                $fieldName = $form->getConfig()->getName();
+                $parentData = $form->getParent()->getData();
+                $accessor = PropertyAccess::createPropertyAccessor();
+                $fieldNameGetter = 'get' . ucfirst($fieldName);
+                $user = null !== $parentData ? $accessor->getValue($parentData, $fieldNameGetter) : null;
+
+                $view->vars['userName'] = null !== $user ? $user->getUname() : '';
             }
 
             /**

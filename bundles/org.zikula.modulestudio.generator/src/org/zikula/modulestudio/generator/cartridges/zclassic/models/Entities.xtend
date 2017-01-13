@@ -114,7 +114,7 @@ class Entities {
             use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
         «ENDIF»
         «IF hasUserFieldsEntity»
-            use UserUtil;«/** TODO remove this as part of #910 */»
+            use Zikula\UsersModule\Entity\UserEntity;
         «ENDIF»
         use «application.appNamespace»\Traits\EntityWorkflowTrait;
     '''
@@ -143,7 +143,7 @@ class Entities {
             use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
         «ENDIF»
         «IF hasUserFieldsEntity»
-            use UserUtil;«/** TODO remove this as part of #910 */»
+            use Zikula\UsersModule\Entity\UserEntity;
         «ENDIF»
         use «application.appNamespace»\Traits\EntityWorkflowTrait;
         «IF geographical»

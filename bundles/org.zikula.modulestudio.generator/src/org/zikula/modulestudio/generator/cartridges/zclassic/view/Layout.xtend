@@ -216,7 +216,7 @@ class Layout {
                     <i class="fa fa-search" title="{{ __('Search user') }}"></i>
                     <noscript><p>{{ __('This function requires JavaScript activated!') }}</p></noscript>
                     <input type="hidden" {{ block('widget_attributes') }} value="{{ value }}" />
-                    <input type="text" id="{{ id }}Selector" name="{{ id }}Selector" autocomplete="off" value="{% if value > 0 %}{{ «appName.formatForDB»_userVar('uname', value) }}{% endif %}" title="{{ __('Enter a part of the user name to search') }}" class="user-selector typeahead" />
+                    <input type="text" id="{{ id }}Selector" name="{{ id }}Selector" autocomplete="off" value="{{ userName|e('html_attr') }}" title="{{ __('Enter a part of the user name to search') }}" class="user-selector typeahead" />
                     <i class="fa fa-refresh fa-spin hidden" id="{{ id }}Indicator"></i>
                     <span id="{{ id }}NoResultsHint" class="hidden">{{ __('No results found!') }}</span>
                 </div>

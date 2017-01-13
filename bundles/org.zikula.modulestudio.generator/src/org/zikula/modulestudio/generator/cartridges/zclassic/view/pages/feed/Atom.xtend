@@ -68,11 +68,11 @@ class Atom {
                 {% if «objName».createdDate|default %}
                     <published>{{ «objName».createdDate|date('Y-m-dTH:M:SZ') }}</published>
                 {% endif %}
-                {% if «objName».createdBy|default %}
-                    {% set realName = «appName.toLowerCase»_userVar('name', obj.createdBy.getUid()) %}
+                {% if «objName».createdBy|default and «objName».createdBy.getUid() > 0 %}
+                    {% set creatorAttributes = «objName».createdBy.getAttributes() %}
                     <author>
-                       <name>{{ realName|default(obj.createdBy.getUname()) }}</name>
-                       <uri>{{ «appName.toLowerCase»_userVar('_UYOURHOMEPAGE', «objName».createdBy.getUid(), '-') }}</uri>
+                       <name>{{ creatorAttributes.get('name')|default(«objName».createdBy.getUname()) }}</name>
+                       <uri>{{ creatorAttributes.get('_UYOURHOMEPAGE')|default('-') }}</uri>
                        <email>{{ «objName».createdBy.getEmail() }}</email>
                     </author>
                 {% endif %}

@@ -38,7 +38,7 @@ class StandardFields {
     }
 
     def private standardFieldsViewImpl(Application it) '''
-        {# purpose of this template: reusable display of standard fields #}«/* TODO recheck this after https://github.com/zikula/core/issues/2800 has been solved */»
+        {# purpose of this template: reusable display of standard fields #}
         {% if (obj.createdBy|default and obj.createdBy.getUid() > 0) or (obj.updatedBy|default and obj.updatedBy.getUid() > 0) %}
             {% if panel|default(false) == true %}
                 <div class="panel panel-default">
@@ -77,7 +77,7 @@ class StandardFields {
     '''
 
     def private standardFieldsEditImpl(Application it) '''
-        {# purpose of this template: reusable editing of standard fields #}«/* TODO recheck this after https://github.com/zikula/core/issues/2800 has been solved */»
+        {# purpose of this template: reusable editing of standard fields #}
         {% if (obj.createdBy|default and obj.createdBy.getUid() > 0) or (obj.updatedBy|default and obj.updatedBy.getUid() > 0) %}
             {% if panel|default(false) == true %}
                 <div class="panel panel-default">
