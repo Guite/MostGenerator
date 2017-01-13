@@ -8,10 +8,12 @@ import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.entity.extensions.Attributes
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.entity.extensions.Categories
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.entity.extensions.EntityExtensionInterface
+import org.zikula.modulestudio.generator.cartridges.zclassic.models.entity.extensions.IpTraceable
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.entity.extensions.Loggable
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.entity.extensions.Sluggable
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.entity.extensions.SoftDeleteable
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.entity.extensions.Sortable
+import org.zikula.modulestudio.generator.cartridges.zclassic.models.entity.extensions.Timestampable
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.entity.extensions.Translatable
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.entity.extensions.Tree
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
@@ -50,6 +52,12 @@ class ExtensionManager {
         }
         if (entity.categorisable) {
             this.extensions += new Categories
+        }
+        if (entity.hasTimestampableFields) {
+            this.extensions += new Timestampable
+        }
+        if (entity.hasIpTraceableFields) {
+            this.extensions += new IpTraceable
         }
     }
 

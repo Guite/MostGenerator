@@ -4,6 +4,7 @@ import de.guite.modulestudio.metamodel.Application
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener.Core
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener.Group
+import org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener.IpTrace
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener.Kernel
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener.Mailer
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener.ModuleDispatch
@@ -91,6 +92,9 @@ class Listeners {
 
         if (needsThirdPartyListener) {
             listenerFile('ThirdParty', listenersThirdPartyFile)
+        }
+        if (!getAllEntities.filter[hasIpTraceableFields].empty) {
+            listenerFile('IpTrace', listenersIpTraceFile)
         }
     }
 
@@ -446,6 +450,30 @@ class Listeners {
         «IF isBase»abstract «ENDIF»class «IF isBase»Abstract«ENDIF»ThirdPartyListener«IF !isBase» extends AbstractThirdPartyListener«ELSE» implements EventSubscriberInterface«ENDIF»
         {
             «new ThirdParty().generate(it, isBase)»
+        }
+    '''
+
+    def private listenersIpTraceFile(Application it) '''
+        namespace «appNamespace»\Listener«IF isBase»\Base«ENDIF»;
+
+        «IF !isBase»
+            use «appNamespace»\Listener\Base\AbstractIpTraceListener;
+        «ELSE»
+            use Gedmo\IpTraceable\IpTraceableListener;
+            use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+            use Symfony\Component\HttpFoundation\Request;
+            use Symfony\Component\HttpFoundation\RequestStack;
+            use Symfony\Component\HttpKernel\Event\GetResponseEvent;
+            use Symfony\Component\HttpKernel\KernelEvents;
+        «ENDIF»
+        use Zikula\Core\Event\GenericEvent;
+
+        /**
+         * Event handler implementation class for ip traceable support.
+         */
+        «IF isBase»abstract «ENDIF»class «IF isBase»Abstract«ENDIF»IpTraceListener«IF !isBase» extends AbstractIpTraceListener«ELSE» implements EventSubscriberInterface«ENDIF»
+        {
+            «new IpTrace().generate(it, isBase)»
         }
     '''
 }

@@ -138,11 +138,25 @@ class ServiceDefinitions {
                         - "@«modPrefix».entity_factory"
                         - "@zikula_users_module.current_user"
                         - "@logger"
+                «ELSEIF className == 'IpTrace'»
+                    arguments:
+                        - "@gedmo_doctrine_extensions.listener.ip_traceable"
+                        - "@request_stack"
                 «ENDIF»
                 tags:
                     - { name: kernel.event_subscriber }
 
         «ENDFOR»
+        «IF getSubscriberNames.contains('IpTrace')»
+            gedmo_doctrine_extensions.listener.ip_traceable:
+                class: Gedmo\IpTraceable\IpTraceableListener
+                public: false
+                calls:
+                    - [setAnnotationReader, "@annotation_reader"]
+                tags:
+                    - { name: doctrine.event_subscriber, connection: default }
+
+        «ENDIF»
     '''
 
     def private getSubscriberNames(Application it) {
@@ -153,6 +167,9 @@ class ServiceDefinitions {
         val needsDetailContentType = generateDetailContentType && hasDisplayActions
         if (generatePendingContentSupport || generateListContentType || needsDetailContentType) {
             listeners.add('ThirdParty')
+        }
+        if (!getAllEntities.filter[hasIpTraceableFields].empty) {
+            listeners.add('IpTrace')
         }
 
         listeners

@@ -6,10 +6,12 @@ import de.guite.modulestudio.metamodel.AccountDeletionHandler
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.DataObject
 import de.guite.modulestudio.metamodel.Entity
+import de.guite.modulestudio.metamodel.EntityIpTraceableType
 import de.guite.modulestudio.metamodel.EntitySlugStyle
 import de.guite.modulestudio.metamodel.EntityTimestampableType
 import de.guite.modulestudio.metamodel.EntityTreeType
 import de.guite.modulestudio.metamodel.IntegerField
+import de.guite.modulestudio.metamodel.StringField
 
 /**
  * This class contains model behaviour related extension methods.
@@ -164,6 +166,20 @@ class ModelBehaviourExtensions {
      */
     def getStandardFieldEntities(Application it) {
         getAllEntities.filter[standardFields]
+    }
+
+    /**
+     * Checks whether the entity contains at least one field with the ipTraceable extension enabled.
+     */
+    def hasIpTraceableFields(Entity it) {
+        !getIpTraceableFields.empty
+    }
+
+    /**
+     * Returns a list of all derived fields with the ipTraceable extension enabled.
+     */
+    def getIpTraceableFields(Entity it) {
+        getSelfAndParentDataObjects.map[fields.filter(StringField).filter[ipTraceable != EntityIpTraceableType.NONE]].flatten
     }
 
     /**
