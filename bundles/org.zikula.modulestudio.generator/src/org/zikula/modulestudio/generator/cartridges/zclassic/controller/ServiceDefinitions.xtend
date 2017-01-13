@@ -152,7 +152,7 @@ class ServiceDefinitions {
                 class: Gedmo\IpTraceable\IpTraceableListener
                 public: false
                 calls:
-                    - [setAnnotationReader, "@annotation_reader"]
+                    - [setAnnotationReader, ["@annotation_reader"]]
                 tags:
                     - { name: doctrine.event_subscriber, connection: default }
 
