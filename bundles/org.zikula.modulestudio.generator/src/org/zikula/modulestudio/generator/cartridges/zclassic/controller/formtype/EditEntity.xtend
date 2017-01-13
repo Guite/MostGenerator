@@ -925,8 +925,10 @@ class EditEntity {
                     // select without joins
                     «IF (relatedEntity as Entity).ownerPermission»
                         $qb = $er->getListQueryBuilder('', '', false);
-                        $qb->andWhere('tbl.createdBy == :currentUserId)')
-                           ->setParameter('currentUserId', $options['currentUserId']);
+                        if (true === $options['filterByOwnership']) {
+                            $qb->andWhere('tbl.createdBy == :currentUserId)')
+                               ->setParameter('currentUserId', $options['currentUserId']);
+                        }
 
                         return $qb;
                     «ELSE»
