@@ -340,8 +340,11 @@ class EditEntity {
                             'isCreator' => false,
                         «ENDIF»
                         'actions' => [],
-                        'currentUserId' => 0,
-                        'inlineUsage' => false
+                        «IF !incoming.empty || !outgoing.empty»
+                            'filterByOwnership' => true,
+                            'currentUserId' => 0,
+                            'inlineUsage' => false
+                        «ENDIF»
                     ])
                     ->setRequired([«IF hasUploadFieldsEntity»'entity', «ENDIF»'mode', 'actions'])
                     ->setAllowedTypes([
@@ -357,8 +360,11 @@ class EditEntity {
                             'isCreator' => 'bool',
                         «ENDIF»
                         'actions' => 'array',
-                        'currentUserId' => 'int',
-                        'inlineUsage' => 'bool'
+                        «IF !incoming.empty || !outgoing.empty»
+                            'filterByOwnership' => 'bool',
+                            'currentUserId' => 'int',
+                            'inlineUsage' => 'bool'
+                        «ENDIF»
                     ])
                     ->setAllowedValues([
                         'mode' => ['create', 'edit']

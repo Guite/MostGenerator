@@ -1254,6 +1254,7 @@ class FormHandler {
                 'mode' => $this->templateParameters['mode'],
                 'actions' => $this->templateParameters['actions'],
                 «IF !incoming.empty || !outgoing.empty»
+                    'filterByOwnership' => !$this->permissionApi->hasPermission($this->permissionComponent, $this->createCompositeIdentifier() . '::', ACCESS_ADD),
                     'currentUserId' => $this->currentUserApi->isLoggedIn() ? $this->currentUserApi->get('uid') : 0,
                     'inlineUsage' => $this->templateParameters['inlineUsage']
                 «ENDIF»
