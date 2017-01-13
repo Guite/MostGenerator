@@ -6,14 +6,15 @@ import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class GetFileSize {
+
     extension FormattingExtensions = new FormattingExtensions
     extension Utils = new Utils
 
-    def generate(Application it, IFileSystemAccess fsa) {
-        getFileSizeImpl
+    def generate(Application it, IFileSystemAccess fsa) '''
+        «getFileSizeImpl»
 
-        getReadableFileSize
-    }
+        «getReadableFileSize»
+    '''
 
     def private getFileSizeImpl(Application it) '''
         /**
