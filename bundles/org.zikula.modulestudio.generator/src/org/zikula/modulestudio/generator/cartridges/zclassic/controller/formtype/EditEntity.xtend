@@ -229,6 +229,9 @@ class EditEntity {
                 «IF it instanceof Entity && (it as Entity).workflow != EntityWorkflowType.NONE»
                     $this->addAdditionalNotificationRemarksField($builder, $options);
                 «ENDIF»
+                «IF it instanceof Entity && (it as Entity).standardFields»
+                    $this->addModerationFields($builder, $options);
+                «ENDIF»
                 $this->addReturnControlField($builder, $options);
                 $this->addSubmitButtons($builder, $options);
                 «IF hasUploadFieldsEntity»
@@ -276,6 +279,10 @@ class EditEntity {
             «ENDIF»
             «IF it instanceof Entity && (it as Entity).workflow != EntityWorkflowType.NONE»
                 «addAdditionalNotificationRemarksField(it as Entity)»
+
+            «ENDIF»
+            «IF it instanceof Entity && (it as Entity).standardFields»
+                «addModerationFields(it as Entity)»
 
             «ENDIF»
             «IF it instanceof Entity»
@@ -340,6 +347,9 @@ class EditEntity {
                             'isCreator' => false,
                         «ENDIF»
                         'actions' => [],
+                        «IF it instanceof Entity && (it as Entity).standardFields»
+                            'hasModeratePermission' => false,
+                        «ENDIF»
                         «IF !incoming.empty || !outgoing.empty»
                             'filterByOwnership' => true,
                             'currentUserId' => 0,
@@ -360,6 +370,9 @@ class EditEntity {
                             'isCreator' => 'bool',
                         «ENDIF»
                         'actions' => 'array',
+                        «IF it instanceof Entity && (it as Entity).standardFields»
+                            'hasModeratePermissions' => 'bool',
+                        «ENDIF»
                         «IF !incoming.empty || !outgoing.empty»
                             'filterByOwnership' => 'bool',
                             'currentUserId' => 'int',
@@ -817,7 +830,7 @@ class EditEntity {
                 $builder->add('«geoFieldName»', '«app.appNamespace»\Form\Type\Field\GeoType', [
                     'label' => $this->__('«geoFieldName.toFirstUpper»') . ':',
                     'attr' => [
-                        'class' => 'validate-number',
+                        'class' => 'validate-number'
                     ],
                     'required' => false
                 ]);
@@ -1009,6 +1022,44 @@ class EditEntity {
                 ],
                 'required' => false,
                 'help' => $helpText
+            ]);
+        }
+    '''
+
+    def private addModerationFields(Entity it) '''
+        /**
+         * Adds special fields for moderators.
+         *
+         * @param FormBuilderInterface $builder The form builder
+         * @param array                $options The options
+         */
+        public function addModerationFields(FormBuilderInterface $builder, array $options)
+        {
+            if (!$options['hasModeratePermission']) {
+                return;
+            }
+
+            $builder->add('moderationSpecificCreator', '«app.appNamespace»\Form\Type\Field\UserType', [
+                'label' => $this->__('Creator') . ':',
+                'attr' => [
+                    'max_length' => 11,
+                    'class' => ' validate-digits',
+                    'title' => $this->__('Here you can choose a user which will be set as creator')
+                ],
+                'empty_data' => 0,
+                'required' => false,
+                'help' => $this->__('Here you can choose a user which will be set as creator')
+            ]);
+            $builder->add('moderationSpecificCreationDate', 'Symfony\Component\Form\Extension\Core\Type\DateTimeType', [
+                'label' => $this->__('Creation date') . ':',
+                'attr' => [
+                    'class' => '',
+                    'title' => $this->__('Here you can choose a custom creation date')
+                ],
+                'empty_data' => '',
+                'required' => false,
+                'widget' => 'single_text',
+                'help' => $this->__('Here you can choose a custom creation date')
             ]);
         }
     '''

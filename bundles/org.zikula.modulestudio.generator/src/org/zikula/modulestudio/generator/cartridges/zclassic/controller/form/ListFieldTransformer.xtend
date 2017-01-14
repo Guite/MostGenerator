@@ -7,6 +7,7 @@ import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class ListFieldTransformer {
+
     extension NamingExtensions = new NamingExtensions()
     extension Utils = new Utils()
 
@@ -25,7 +26,7 @@ class ListFieldTransformer {
         use «appNamespace»\Helper\ListEntriesHelper;
 
         /**
-         * List fields transformer base class.
+         * List field transformer base class.
          *
          * This data transformer treats multi-valued list fields.
          */
@@ -86,7 +87,7 @@ class ListFieldTransformer {
         use «appNamespace»\Form\DataTransformer\Base\AbstractListFieldTransformer;
 
         /**
-         * List fields transformer implementation class.
+         * List field transformer implementation class.
          *
          * This data transformer treats multi-valued list fields.
          */

@@ -7,6 +7,7 @@ import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class UploadFileTransformer {
+
     extension NamingExtensions = new NamingExtensions()
     extension Utils = new Utils()
 
@@ -21,12 +22,11 @@ class UploadFileTransformer {
     def private transformerBaseImpl(Application it) '''
         namespace «appNamespace»\Form\DataTransformer\Base;
 
-        use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-        use Symfony\Component\DependencyInjection\ContainerAwareTrait;
         use Symfony\Component\Form\DataTransformerInterface;
         use Symfony\Component\HttpFoundation\File\File;
         use Symfony\Component\HttpFoundation\File\UploadedFile;
         use Symfony\Component\HttpFoundation\Request;
+        use Symfony\Component\HttpFoundation\RequestStack;
         use «appNamespace»\Form\Type\Field\UploadType;
         use «appNamespace»\Helper\UploadHelper;
 
@@ -35,10 +35,8 @@ class UploadFileTransformer {
          *
          * This data transformer treats uploaded files.
          */
-        abstract class AbstractUploadFileTransformer implements DataTransformerInterface, ContainerAwareInterface
+        abstract class AbstractUploadFileTransformer implements DataTransformerInterface
         {
-            use ContainerAwareTrait;
-
             /**
              * @var UploadType
              */
@@ -62,15 +60,16 @@ class UploadFileTransformer {
             /**
              * UploadFileTransformer constructor.
              *
-             * @param UploadType $formType  The form type containing this transformer
-             * @param string     $fieldName The form field name
+             * @param UploadType   $formType     The form type containing this transformer
+             * @param RequestStack $requestStack RequestStack service instance
+             * @param UploadHelper $uploadHelper UploadHelper service instance
+             * @param string       $fieldName    The form field name
              */
-            public function __construct(UploadType $formType, $fieldName)
+            public function __construct(UploadType $formType, RequestStack $requestStack, UploadHelper $uploadHelper, $fieldName = '')
             {
                 $this->formType = $formType;
-                $this->setContainer(\ServiceUtil::getManager());
-                $this->request = $this->container->get('request_stack')->getCurrentRequest();
-                $this->uploadHelper = $this->container->get('«appService».upload_helper');
+                $this->request = $requestStack->getCurrentRequest();
+                $this->uploadHelper = $uploadHelper;
                 $this->fieldName = $fieldName;
             }
 

@@ -30,7 +30,7 @@ class Section {
 
         «ENDIF»
         «additionalRemark»
-
+        «moderationFields»
         «returnControl»
 
         «submitActions»
@@ -106,6 +106,22 @@ class Section {
                 <legend>{{ __('Communication') }}</legend>
                 {{ form_row(form.additionalNotificationRemarks) }}
             </fieldset>
+
+        «ENDIF»
+    '''
+
+    def private moderationFields(Entity it) '''
+        «IF standardFields»
+            {% if form.moderationSpecificCreator is defined %}
+                <fieldset id="moderationFieldsSection">
+                    <legend>{{ __('Moderation') }}</legend>
+                    <div id="moderationFieldsContent">
+                        {{ form_row(form.moderationSpecificCreator) }}
+                        {{ form_row(form.moderationSpecificCreationDate) }}
+                    </div>
+                </fieldset>
+            {% endif %}
+
         «ENDIF»
     '''
 

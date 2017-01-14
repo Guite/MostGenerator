@@ -772,6 +772,7 @@ class ModelExtensions {
     def fieldTypeAsString(DerivedField it) {
         switch it {
             BooleanField: 'boolean'
+            UserField: 'UserEntity'
             AbstractIntegerField: {
                     // choose mapping type depending on length
                     if (it.length < 5) 'smallint'

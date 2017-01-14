@@ -219,7 +219,9 @@ class ServiceDefinitions {
                 class: «nsBase»Field\UploadType
                 arguments:
                     - "@translator.default"
+                    - "@request_stack"
                     - "@«modPrefix».image_helper"
+                    - "@«modPrefix».upload_helper"
                 tags:
                     - { name: form.type }
         «ENDIF»
@@ -227,6 +229,8 @@ class ServiceDefinitions {
 
             «modPrefix».form.type.field.user:
                 class: «nsBase»Field\UserType
+                arguments:
+                    - "@zikula_users_module.user_repository"
                 tags:
                     - { name: form.type }
         «ENDIF»

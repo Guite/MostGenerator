@@ -7,6 +7,7 @@ import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class AutoCompletionRelationTransformer {
+
     extension NamingExtensions = new NamingExtensions()
     extension Utils = new Utils()
 

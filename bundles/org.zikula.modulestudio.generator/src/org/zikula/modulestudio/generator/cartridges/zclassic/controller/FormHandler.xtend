@@ -12,6 +12,7 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.controller.actionha
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.form.AutoCompletionRelationTransformer
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.form.ListFieldTransformer
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.form.UploadFileTransformer
+import org.zikula.modulestudio.generator.cartridges.zclassic.controller.form.UserFieldTransformer
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype.Config
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype.DeleteEntity
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype.EditEntity
@@ -78,8 +79,9 @@ class FormHandler {
                 new UploadType().generate(it, fsa)
                 new UploadFileTransformer().generate(it, fsa)
             }
-            if (hasUserFields) {
+            if (hasUserFields || hasStandardFieldEntities) {
                 new UserType().generate(it, fsa)
+                new UserFieldTransformer().generate(it, fsa)
             }
             if (hasMultiListFields) {
                 new MultiListType().generate(it, fsa)
@@ -1025,6 +1027,17 @@ class FormHandler {
             if ($this->templateParameters['mode'] == 'create' && isset($this->form['repeatCreation']) && $this->form['repeatCreation']->getData() == 1) {
                 $this->repeatCreateAction = true;
             }
+            «IF hasStandardFieldEntities»
+
+                if (method_exists($this->entityRef, 'getCreatedBy')) {
+                    if (isset($this->form['moderationSpecificCreator']) && $this->form['moderationSpecificCreator']->getData() > 0) {
+                        $this->entityRef->setCreatedBy($this->form['moderationSpecificCreationDate']->getData());
+                    }
+                    if (isset($this->form['moderationSpecificCreationDate']) && $this->form['moderationSpecificCreationDate']->getData() != '') {
+                        $this->entityRef->setCreatedDate($this->form['moderationSpecificCreationDate']->getData());
+                    }
+                }
+            «ENDIF»
 
             if (isset($this->form['additionalNotificationRemarks']) && $this->form['additionalNotificationRemarks']->getData() != '') {
                 $this->request->getSession()->set('«appName»AdditionalNotificationRemarks', $this->form['additionalNotificationRemarks']->getData());
@@ -1060,7 +1073,7 @@ class FormHandler {
 
     def private prepareWorkflowAdditions(Application it) '''
         /**
-         * Prepares properties related to advanced workflow.
+         * Prepares properties related to advanced workflows.
          *
          * @param bool $enterprise Whether the enterprise workflow is used instead of the standard workflow
          *
@@ -1069,17 +1082,23 @@ class FormHandler {
         protected function prepareWorkflowAdditions($enterprise = false)
         {
             $roles = [];
-            «/* TODO recheck this after https://github.com/zikula/core/issues/2800 has been solved */»
+            «/* TODO review this after https://github.com/zikula/core/issues/2800 has been solved */»
             $isLoggedIn = $this->currentUserApi->isLoggedIn();
-            $userId = $isLoggedIn ? $this->currentUserApi->get('uid') : 1;
+            $currentUserId = $isLoggedIn ? $this->currentUserApi->get('uid') : 1;
             $roles['isCreator'] = $this->templateParameters['mode'] == 'create'
-                || (method_exists($this->entityRef, 'getCreatedBy') && $this->entityRef->getCreatedBy()->getUid() == $userId);
+                || (method_exists($this->entityRef, 'getCreatedBy') && $this->entityRef->getCreatedBy()->getUid() == $currentUserId);
 
-            $groupApplicationArgs = ['user' => $userId, 'group' => $this->variableApi->get('«appName»', 'moderationGroupFor' . $this->objectTypeCapital, 2)];
+            $groupApplicationArgs = [
+                'user' => $currentUserId,
+                'group' => $this->variableApi->get('«appName»', 'moderationGroupFor' . $this->objectTypeCapital, 2)
+            ];
             $roles['isModerator'] = count($this->groupApplicationRepository->findBy($groupApplicationArgs)) > 0;
 
             if (true === $enterprise) {
-                $groupApplicationArgs = ['user' => $userId, 'group' => $this->variableApi->get('«appName»', 'superModerationGroupFor' . $this->objectTypeCapital, 2)];
+                $groupApplicationArgs = [
+                    'user' => $currentUserId,
+                    'group' => $this->variableApi->get('«appName»', 'superModerationGroupFor' . $this->objectTypeCapital, 2)
+                ];
                 $roles['isSuperModerator'] = count($this->groupApplicationRepository->findBy($groupApplicationArgs)) > 0;
             }
 
@@ -1177,8 +1196,8 @@ class FormHandler {
             $entity = parent::initEntityForEditing();
 
             // only allow editing for the owner or people with higher permissions
-            $currentUserId = $this->currentUserApi->isLoggedIn() ? $this->currentUserApi->get('uid') : 0;
-            $isOwner = $currentUserId > 0 && $currentUserId == $entity->getCreatedBy()->getUid();
+            $currentUserId = $this->currentUserApi->isLoggedIn() ? $this->currentUserApi->get('uid') : 1;
+            $isOwner = $currentUserId == $entity->getCreatedBy()->getUid();
             if (!$isOwner && !$this->permissionApi->hasPermission($this->permissionComponent, $this->createCompositeIdentifier() . '::', ACCESS_ADD)) {
                 throw new AccessDeniedException();
             }
@@ -1253,9 +1272,12 @@ class FormHandler {
                 «ENDIF»
                 'mode' => $this->templateParameters['mode'],
                 'actions' => $this->templateParameters['actions'],
+                «IF standardFields»
+                    'hasModeratePermissions' => $this->permissionApi->hasPermission($this->permissionComponent, $this->createCompositeIdentifier() . '::', ACCESS_MODERATE)
+                «ENDIF»
                 «IF !incoming.empty || !outgoing.empty»
                     'filterByOwnership' => !$this->permissionApi->hasPermission($this->permissionComponent, $this->createCompositeIdentifier() . '::', ACCESS_ADD),
-                    'currentUserId' => $this->currentUserApi->isLoggedIn() ? $this->currentUserApi->get('uid') : 0,
+                    'currentUserId' => $this->currentUserApi->isLoggedIn() ? $this->currentUserApi->get('uid') : 1,
                     'inlineUsage' => $this->templateParameters['inlineUsage']
                 «ENDIF»
             ];

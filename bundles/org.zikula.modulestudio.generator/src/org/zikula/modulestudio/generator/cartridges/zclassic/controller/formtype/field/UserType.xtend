@@ -25,13 +25,13 @@ class UserType {
 
         use Symfony\Component\Form\AbstractType;
         use Symfony\Component\Form\FormBuilderInterface;
-        use Symfony\Component\Form\FormEvent;
-        use Symfony\Component\Form\FormEvents;
         use Symfony\Component\Form\FormInterface;
         use Symfony\Component\Form\FormView;
         use Symfony\Component\OptionsResolver\OptionsResolver;
         use Symfony\Component\PropertyAccess\PropertyAccess;
+        use Zikula\UsersModule\Entity\RepositoryInterface\UserRepositoryInterface;
         use Zikula\UsersModule\Entity\UserEntity;
+        use «appNamespace»\Form\DataTransformer\UserFieldTransformer;
 
         /**
          * User field type base class.
@@ -39,24 +39,27 @@ class UserType {
         abstract class AbstractUserType extends AbstractType
         {
             /**
+             * @var UserRepositoryInterface
+             */
+            protected $userRepository;
+
+            /**
+             * UserType constructor.
+             *
+             * @param UserRepositoryInterface $userRepository UserRepository service instance
+             */
+            public function __construct(UserRepositoryInterface $userRepository)
+            {
+                $this->userRepository = $userRepository;
+            }
+
+            /**
              * {@inheritdoc}
              */
             public function buildForm(FormBuilderInterface $builder, array $options)
             {
-                $builder->addEventListener(FormEvents::PRE_SUBMIT, function(FormEvent $event) {
-                    $formData = $event->getData();
-
-                    if (!$formData) {
-                        return;
-                    }
-
-                    if ($formData instanceof UserEntity) {
-                        $formData = $formData->getUid();
-                    } else {
-                        $formData = intval($formData);
-                    }
-                    $event->setData($formData);
-                });
+                $transformer = new UserFieldTransformer($this->userRepository);
+                $builder->addModelTransformer($transformer);
             }
 
             /**

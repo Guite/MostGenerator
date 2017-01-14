@@ -96,10 +96,12 @@ class Property {
           «ENDIF»
         «ENDIF»
         «extMan.columnAnnotations(it)»
+         «IF !(it instanceof UserField)»«/* user fields are implemented as join to UserEntity, see persistentPropertyAdditions */»
          * @ORM\Column(«IF null !== dbName && dbName != ''»name="«dbName.formatForCode»", «ENDIF»«persistentPropertyImpl(type.toLowerCase)»«IF unique», unique=true«ENDIF»«IF nullable», nullable=true«ENDIF»)
+         «ENDIF»
         «persistentPropertyAdditions»
         «thVal.fieldAnnotations(it)»
-         * @var «IF it instanceof UserField»UserEntity«ELSEIF type == 'bigint' || type == 'smallint'»integer«ELSEIF type == 'datetime'»\DateTime«ELSE»«type»«ENDIF» $«name.formatForCode»
+         * @var «IF type == 'bigint' || type == 'smallint'»integer«ELSEIF type == 'datetime'»\DateTime«ELSE»«type»«ENDIF» $«name.formatForCode»
          */
         «modifier» $«name.formatForCode»«IF init != ''»«init»«ELSE»«IF !(it instanceof AbstractDateField)» = «defaultFieldData»«ENDIF»«ENDIF»;
         «/* this last line is on purpose */»

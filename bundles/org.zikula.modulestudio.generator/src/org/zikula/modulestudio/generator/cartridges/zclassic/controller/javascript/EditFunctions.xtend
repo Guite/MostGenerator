@@ -201,6 +201,13 @@ class EditFunctions {
             editedObjectType = editForm.attr('id').replace('EditForm', '');
             editedEntityId = entityId;
 
+            if (jQuery('#moderationFieldsSection').length > 0) {
+                jQuery('#moderationFieldsContent').addClass('hidden');
+                jQuery('#moderationFieldsSection legend').addClass('pointer').click(function (event) {
+                    jQuery('#moderationFieldsContent').toggleClass('hidden');
+            	});
+            }
+
             var allFormFields = editForm.find('input, select, textarea');
             allFormFields.change(function (event) {
                 «vendorAndName»ExecuteCustomValidationConstraints(editedObjectType, editedEntityId);
@@ -216,6 +223,7 @@ class EditFunctions {
                 triggerValidation = !jQuery(this).attr('formnovalidate');
             });
             editForm.submit(«vendorAndName»HandleFormSubmit);
+
             if (mode != 'create') {
                 «vendorAndName»TriggerFormValidation();
             }

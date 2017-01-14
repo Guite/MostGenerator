@@ -60,7 +60,7 @@ class StandardFields {
     '''
 
     def private viewBody(Application it) '''
-        <dl class="propertylist">«/* TODO recheck this after https://github.com/zikula/core/issues/2800 has been solved */»
+        <dl class="propertylist">«/* TODO review this after https://github.com/zikula/core/issues/2800 has been solved */»
         {% if obj.createdBy|default and obj.createdBy.getUid() > 0 %}
             <dt>{{ __('Creation') }}</dt>
             {% set profileLink = obj.createdBy.getUid()|profileLinkByUserId() %}
