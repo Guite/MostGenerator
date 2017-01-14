@@ -32,7 +32,7 @@ class ItemActions {
                 $instance = «entity.idFieldsAsParameterCode('entity')» . '::';
                 $routePrefix = '«app.appName.formatForDB»_«entity.name.formatForDB»_';
                 «IF entity.standardFields»
-                    $isOwner = $currentUserId > 0 && $currentUserId == $entity->getCreatedBy()->getUid();
+                    $isOwner = $currentUserId > 0 && null !== $entity->getCreatedBy() && $currentUserId == $entity->getCreatedBy()->getUid();
                 «ENDIF»
 
                 «entity.itemActionsTargetingDisplay(app)»

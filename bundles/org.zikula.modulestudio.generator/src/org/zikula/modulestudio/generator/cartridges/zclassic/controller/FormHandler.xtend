@@ -1044,7 +1044,7 @@ class FormHandler {
 
                 if (method_exists($this->entityRef, 'getCreatedBy')) {
                     if (isset($this->form['moderationSpecificCreator']) && null !== $this->form['moderationSpecificCreator']->getData()) {
-                        $this->entityRef->setCreatedBy($this->form['moderationSpecificCreationDate']->getData());
+                        $this->entityRef->setCreatedBy($this->form['moderationSpecificCreator']->getData());
                     }
                     if (isset($this->form['moderationSpecificCreationDate']) && $this->form['moderationSpecificCreationDate']->getData() != '') {
                         $this->entityRef->setCreatedDate($this->form['moderationSpecificCreationDate']->getData());
@@ -1210,7 +1210,7 @@ class FormHandler {
 
             // only allow editing for the owner or people with higher permissions
             $currentUserId = $this->currentUserApi->isLoggedIn() ? $this->currentUserApi->get('uid') : 1;
-            $isOwner = $currentUserId == $entity->getCreatedBy()->getUid();
+            $isOwner = null !== $entity->getCreatedBy() && $currentUserId == $entity->getCreatedBy()->getUid();
             if (!$isOwner && !$this->permissionApi->hasPermission($this->permissionComponent, $this->createCompositeIdentifier() . '::', ACCESS_ADD)) {
                 throw new AccessDeniedException();
             }
