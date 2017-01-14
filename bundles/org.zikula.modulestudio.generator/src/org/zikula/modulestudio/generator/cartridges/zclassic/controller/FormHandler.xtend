@@ -1043,7 +1043,7 @@ class FormHandler {
             «IF hasStandardFieldEntities»
 
                 if (method_exists($this->entityRef, 'getCreatedBy')) {
-                    if (isset($this->form['moderationSpecificCreator']) && $this->form['moderationSpecificCreator']->getData() > 0) {
+                    if (isset($this->form['moderationSpecificCreator']) && null !== $this->form['moderationSpecificCreator']->getData()) {
                         $this->entityRef->setCreatedBy($this->form['moderationSpecificCreationDate']->getData());
                     }
                     if (isset($this->form['moderationSpecificCreationDate']) && $this->form['moderationSpecificCreationDate']->getData() != '') {

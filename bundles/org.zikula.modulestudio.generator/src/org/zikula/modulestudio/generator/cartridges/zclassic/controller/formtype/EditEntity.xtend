@@ -920,6 +920,22 @@ class EditEntity {
     def private fieldImpl(JoinRelationship it, Boolean outgoing, Boolean autoComplete) '''
         «val aliasName = getRelationAliasName(outgoing)»
         «val relatedEntity = if (outgoing) target else source»
+        $queryBuilder = function(EntityRepository $er) {
+            // select without joins
+            return $er->getListQueryBuilder('', '', false);
+        };
+        «IF (relatedEntity as Entity).ownerPermission»
+            if (true === $options['filterByOwnership']) {
+                $queryBuilder = function(EntityRepository $er) {
+                    // select without joins
+                    $qb = $er->getListQueryBuilder('', '', false);
+                    $qb->andWhere('tbl.createdBy == :currentUserId)')
+                       ->setParameter('currentUserId', $options['currentUserId']);
+
+                    return $qb;
+                };
+            }
+        «ENDIF»
         $builder->add('«aliasName.formatForCode»', '«formType(autoComplete)»Type', [
             «IF autoComplete»
                 «val uniqueNameForJs = getUniqueRelationNameForJs(app, (if (outgoing) source else target), isManySide(outgoing), (if (!isManyToMany) outgoing else !outgoing), aliasName)»
@@ -934,20 +950,7 @@ class EditEntity {
                 'choice_label' => 'getTitleFromDisplayPattern',
                 'multiple' => «isManySide(outgoing).displayBool»,
                 'expanded' => «(if (outgoing) expandedTarget else expandedSource).displayBool»,
-                'query_builder' => function(EntityRepository $er) {
-                    // select without joins
-                    «IF (relatedEntity as Entity).ownerPermission»
-                        $qb = $er->getListQueryBuilder('', '', false);
-                        if (true === $options['filterByOwnership']) {
-                            $qb->andWhere('tbl.createdBy == :currentUserId)')
-                               ->setParameter('currentUserId', $options['currentUserId']);
-                        }
-
-                        return $qb;
-                    «ELSE»
-                        return $er->getListQueryBuilder('', '', false);
-                    «ENDIF»
-                },
+                'query_builder' => $queryBuilder,
                 «IF /*outgoing && */!nullable»
                     «IF !isManySide(outgoing)»
                         'placeholder' => $this->__('Please choose an option'),
