@@ -18,6 +18,7 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype.EditEntity
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype.field.AutoCompletionRelationType
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype.field.ColourType
+import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype.field.DateTimeType
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype.field.EntityTreeType
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype.field.GeoType
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype.field.MultiListType
@@ -68,6 +69,9 @@ class FormHandler {
             }
             if (hasColourFields) {
                 new ColourType().generate(it, fsa)
+            }
+            if (needsDatetimeType) {
+                new DateTimeType().generate(it, fsa)
             }
             if (hasGeographical) {
                 new GeoType().generate(it, fsa)

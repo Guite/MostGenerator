@@ -799,7 +799,7 @@ class EditEntity {
         'inlineUsage' => $options['inlineUsage']
     '''
 
-    def private dispatch formType(DatetimeField it) '''«nsSymfonyFormType»DateTime'''
+    def private dispatch formType(DatetimeField it) '''«app.appNamespace»\Form\Type\Field\DateTime'''
     def private dispatch formType(DateField it) '''«nsSymfonyFormType»Date'''
     def private dispatch formType(TimeField it) '''«nsSymfonyFormType»Time'''
     def private dispatch additionalAttributes(AbstractDateField it) ''''''
@@ -1051,7 +1051,7 @@ class EditEntity {
                 'required' => false,
                 'help' => $this->__('Here you can choose a user which will be set as creator')
             ]);
-            $builder->add('moderationSpecificCreationDate', 'Symfony\Component\Form\Extension\Core\Type\DateTimeType', [
+            $builder->add('moderationSpecificCreationDate', '«app.appNamespace»\Form\Type\Field\DateTimeType', [
                 'mapped' => false,
                 'label' => $this->__('Creation date') . ':',
                 'attr' => [

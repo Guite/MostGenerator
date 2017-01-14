@@ -5,6 +5,7 @@ import de.guite.modulestudio.metamodel.AbstractStringField
 import de.guite.modulestudio.metamodel.AccountDeletionHandler
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.DataObject
+import de.guite.modulestudio.metamodel.DatetimeField
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.EntityBlameableType
 import de.guite.modulestudio.metamodel.EntityIpTraceableType
@@ -168,6 +169,13 @@ class ModelBehaviourExtensions {
      */
     def needsUserAutoCompletion(Application it) {
         hasUserFields || hasStandardFieldEntities
+    }
+
+    /**
+     * Checks whether custom datetime field is needed or not.
+     */
+    def needsDatetimeType(Application it) {
+        hasStandardFieldEntities || !getAllEntities.filter[!fields.filter(DatetimeField).empty].empty
     }
 
     /**

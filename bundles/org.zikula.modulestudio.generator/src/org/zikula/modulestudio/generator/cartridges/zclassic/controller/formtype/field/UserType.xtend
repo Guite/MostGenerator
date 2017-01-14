@@ -8,6 +8,7 @@ import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class UserType {
+
     extension FormattingExtensions = new FormattingExtensions()
     extension NamingExtensions = new NamingExtensions()
     extension Utils = new Utils()
