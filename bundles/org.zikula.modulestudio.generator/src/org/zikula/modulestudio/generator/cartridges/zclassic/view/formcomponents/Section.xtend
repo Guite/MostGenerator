@@ -114,7 +114,7 @@ class Section {
         «IF standardFields»
             {% if form.moderationSpecificCreator is defined %}
                 <fieldset id="moderationFieldsSection">
-                    <legend>{{ __('Moderation') }}</legend>
+                    <legend>{{ __('Moderation') }} <i class="fa fa-expand"></i></legend>
                     <div id="moderationFieldsContent">
                         {{ form_row(form.moderationSpecificCreator) }}
                         {{ form_row(form.moderationSpecificCreationDate) }}

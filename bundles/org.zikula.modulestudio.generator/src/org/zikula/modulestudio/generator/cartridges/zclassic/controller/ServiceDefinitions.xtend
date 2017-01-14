@@ -225,7 +225,7 @@ class ServiceDefinitions {
                 tags:
                     - { name: form.type }
         «ENDIF»
-        «IF hasUserFields»
+        «IF needsUserAutoCompletion»
 
             «modPrefix».form.type.field.user:
                 class: «nsBase»Field\UserType

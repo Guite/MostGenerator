@@ -164,6 +164,13 @@ class ModelBehaviourExtensions {
     }
 
     /**
+     * Checks whether dynamic user field functionality is needed or not.
+     */
+    def needsUserAutoCompletion(Application it) {
+        hasUserFields || hasStandardFieldEntities
+    }
+
+    /**
      * Returns a list of all entities with the standard field extension enabled.
      */
     def getStandardFieldEntities(Application it) {

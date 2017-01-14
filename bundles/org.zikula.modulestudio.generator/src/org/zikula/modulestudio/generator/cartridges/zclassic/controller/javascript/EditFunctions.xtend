@@ -4,6 +4,7 @@ import de.guite.modulestudio.metamodel.AbstractDateField
 import de.guite.modulestudio.metamodel.Application
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
+import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
@@ -12,6 +13,7 @@ import org.zikula.modulestudio.generator.extensions.Utils
 class EditFunctions {
 
     extension FormattingExtensions = new FormattingExtensions
+    extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension ModelExtensions = new ModelExtensions
     extension ModelJoinExtensions = new ModelJoinExtensions
     extension NamingExtensions = new NamingExtensions
@@ -54,7 +56,7 @@ class EditFunctions {
     '''
 
     def private initUserField(Application it) '''
-        «IF hasUserFields»
+        «IF needsUserAutoCompletion»
             /**
              * Initialises a user field with auto completion.
              */
@@ -204,8 +206,14 @@ class EditFunctions {
             if (jQuery('#moderationFieldsSection').length > 0) {
                 jQuery('#moderationFieldsContent').addClass('hidden');
                 jQuery('#moderationFieldsSection legend').addClass('pointer').click(function (event) {
-                    jQuery('#moderationFieldsContent').toggleClass('hidden');
-            	});
+                    if (jQuery('#moderationFieldsContent').hasClass('hidden')) {
+                        jQuery('#moderationFieldsContent').removeClass('hidden');
+                        jQuery(this).find('i').removeClass('fa-expand').addClass('fa-compress');
+                    } else {
+                        jQuery('#moderationFieldsContent').addClass('hidden');
+                        jQuery(this).find('i').removeClass('fa-compress').addClass('fa-expand');
+                    }
+                });
             }
 
             var allFormFields = editForm.find('input, select, textarea');

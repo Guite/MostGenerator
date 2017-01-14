@@ -236,12 +236,15 @@ class Forms {
         ( function($) {
             $(document).ready(function() {
                 «val userFields = getUserFieldsEntity»
-                «IF !userFields.empty»
+                «IF !userFields.empty || standardFields»
                     // initialise auto completion for user fields
                     «FOR userField : userFields»
                         «val realName = userField.name.formatForCode»
                         «app.vendorAndName»InitUserField('«app.appName.toLowerCase»_«name.formatForCode.toLowerCase»_«realName»', 'get«name.formatForCodeCapital»«realName.formatForCodeCapital»Users');
                     «ENDFOR»
+                    {% if form.moderationSpecificCreator is defined %}
+                        «app.vendorAndName»InitUserField('«app.appName.toLowerCase»_«name.formatForCode.toLowerCase»_moderationSpecificCreator', 'getCommonUsersList');
+                    {% endif %}
                 «ENDIF»
                 «relationHelper.initJs(it, app, true)»
                 «app.vendorAndName»InitEditForm('{{ mode }}', '{% if mode != 'create' %}{{ «FOR pkField : getPrimaryKeyFields SEPARATOR ' ~ '»«name.formatForDB».«pkField.name.formatForCode»«ENDFOR» }}{% endif %}');

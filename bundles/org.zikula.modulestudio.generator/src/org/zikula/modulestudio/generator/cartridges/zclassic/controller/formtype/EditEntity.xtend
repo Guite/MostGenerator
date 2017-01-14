@@ -371,7 +371,7 @@ class EditEntity {
                         «ENDIF»
                         'actions' => 'array',
                         «IF it instanceof Entity && (it as Entity).standardFields»
-                            'hasModeratePermissions' => 'bool',
+                            'hasModeratePermission' => 'bool',
                         «ENDIF»
                         «IF !incoming.empty || !outgoing.empty»
                             'filterByOwnership' => 'bool',
@@ -1040,6 +1040,7 @@ class EditEntity {
             }
 
             $builder->add('moderationSpecificCreator', '«app.appNamespace»\Form\Type\Field\UserType', [
+                'mapped' => false,
                 'label' => $this->__('Creator') . ':',
                 'attr' => [
                     'max_length' => 11,
@@ -1051,6 +1052,7 @@ class EditEntity {
                 'help' => $this->__('Here you can choose a user which will be set as creator')
             ]);
             $builder->add('moderationSpecificCreationDate', 'Symfony\Component\Form\Extension\Core\Type\DateTimeType', [
+                'mapped' => false,
                 'label' => $this->__('Creation date') . ':',
                 'attr' => [
                     'class' => '',

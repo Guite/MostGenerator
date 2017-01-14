@@ -209,7 +209,7 @@ class Layout {
                 {% endspaceless %}
             {% endblock %}
         «ENDIF»
-        «IF hasUserFields»
+        «IF needsUserAutoCompletion»
 
             {% block «appName.formatForDB»_field_user_widget %}
                 <div id="{{ id }}LiveSearch" class="«appName.toLowerCase»-livesearch-user «appName.toLowerCase»-autocomplete-user hidden">

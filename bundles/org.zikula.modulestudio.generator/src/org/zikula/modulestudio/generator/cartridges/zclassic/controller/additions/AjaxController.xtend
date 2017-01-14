@@ -100,6 +100,8 @@ class AjaxController {
                     return $this->getCommonUsersListAction($request);
                 }
             «ENDFOR»
+        «ENDIF»
+        «IF needsUserAutoCompletion»
 
             «getCommonUsersListBase»
         «ENDIF»
@@ -182,11 +184,11 @@ class AjaxController {
     def private getItemListFinderDocBlock(Application it, Boolean isBase) '''
         /**
          * Retrieve item list for finder selections in Forms, Content type plugin and Scribite.
-        «IF !isBase»
+         «IF !isBase»
          *
          * @Route("/getItemListFinder", options={"expose"=true})
          * @Method("POST")
-        «ENDIF»
+         «ENDIF»
          *
          * @param string $ot      Name of currently used object type
          * @param string $sort    Sorting field
@@ -944,6 +946,8 @@ class AjaxController {
                     return parent::get«userField.entity.name.formatForCodeCapital»«userField.name.formatForCodeCapital»UsersAction($request);
                 }
             «ENDFOR»
+        «ENDIF»
+        «IF needsUserAutoCompletion»
 
             «getCommonUsersListImpl»
         «ENDIF»

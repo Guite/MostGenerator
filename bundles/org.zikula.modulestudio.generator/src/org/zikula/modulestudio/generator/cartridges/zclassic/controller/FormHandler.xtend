@@ -79,7 +79,7 @@ class FormHandler {
                 new UploadType().generate(it, fsa)
                 new UploadFileTransformer().generate(it, fsa)
             }
-            if (hasUserFields || hasStandardFieldEntities) {
+            if (needsUserAutoCompletion) {
                 new UserType().generate(it, fsa)
                 new UserFieldTransformer().generate(it, fsa)
             }
@@ -1282,7 +1282,7 @@ class FormHandler {
                 'mode' => $this->templateParameters['mode'],
                 'actions' => $this->templateParameters['actions'],
                 «IF standardFields»
-                    'hasModeratePermissions' => $this->permissionApi->hasPermission($this->permissionComponent, $this->createCompositeIdentifier() . '::', ACCESS_MODERATE),
+                    'hasModeratePermission' => $this->permissionApi->hasPermission($this->permissionComponent, $this->createCompositeIdentifier() . '::', ACCESS_MODERATE),
                 «ENDIF»
                 «IF !incoming.empty || !outgoing.empty»
                     'filterByOwnership' => !$this->permissionApi->hasPermission($this->permissionComponent, $this->createCompositeIdentifier() . '::', ACCESS_ADD),
