@@ -129,11 +129,16 @@ class FormHandler {
         use Symfony\Component\HttpFoundation\RedirectResponse;
         use Symfony\Component\HttpFoundation\Request;
         use Symfony\Component\HttpFoundation\RequestStack;
-        use Symfony\Component\HttpKernel\KernelInterface;
+        «IF !targets('1.4-dev')»
+            use Symfony\Component\HttpKernel\KernelInterface;
+        «ENDIF»
         use Symfony\Component\Routing\RouterInterface;
         use Symfony\Component\Security\Core\Exception\AccessDeniedException;
         use Zikula\Common\Translator\TranslatorInterface;
         use Zikula\Common\Translator\TranslatorTrait;
+        «IF targets('1.4-dev')»
+            use Zikula\Bundle\CoreBundle\HttpKernel\ZikulaHttpKernelInterface;
+        «ENDIF»
         use Zikula\Core\Doctrine\EntityAccess;
         «IF hasHookSubscribers»
             use Zikula\Core\RouteUrl;
@@ -287,7 +292,7 @@ class FormHandler {
             «ENDIF»
 
             /**
-             * @var KernelInterface
+             * @var «IF targets('1.4-dev')»ZikulaHttpKernelInterface«ELSE»KernelInterface«ENDIF»
              */
             protected $kernel;
 
@@ -409,7 +414,11 @@ class FormHandler {
             /**
              * «actionName.formatForCodeCapital»Handler constructor.
              *
+             «IF targets('1.4-dev')»
+             * @param ZikulaHttpKernelInterface $kernel      Kernel service instance
+             «ELSE»
              * @param KernelInterface      $kernel           Kernel service instance
+             «ENDIF»
              * @param TranslatorInterface  $translator       Translator service instance
              * @param FormFactoryInterface $formFactory      FormFactory service instance
              * @param RequestStack         $requestStack     RequestStack service instance
@@ -439,7 +448,7 @@ class FormHandler {
              «ENDIF»
              */
             public function __construct(
-                KernelInterface $kernel,
+                «IF targets('1.4-dev')»ZikulaHttpKernelInterface«ELSE»KernelInterface«ENDIF» $kernel,
                 TranslatorInterface $translator,
                 FormFactoryInterface $formFactory,
                 RequestStack $requestStack,

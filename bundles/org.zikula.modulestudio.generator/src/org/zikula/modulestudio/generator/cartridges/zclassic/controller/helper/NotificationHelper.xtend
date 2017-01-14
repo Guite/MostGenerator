@@ -34,9 +34,14 @@ class NotificationHelper {
         use Symfony\Component\HttpFoundation\Request;
         use Symfony\Component\HttpFoundation\RequestStack;
         use Symfony\Component\HttpFoundation\Session\SessionInterface;
-        use Symfony\Component\HttpKernel\KernelInterface;
+        «IF !targets('1.4-dev')»
+            use Symfony\Component\HttpKernel\KernelInterface;
+        «ENDIF»
         use Symfony\Component\Routing\RouterInterface;
         use Twig_Environment;
+        «IF targets('1.4-dev')»
+            use Zikula\Bundle\CoreBundle\HttpKernel\ZikulaHttpKernelInterface;
+        «ENDIF»
         use Zikula\Common\Translator\TranslatorInterface;
         use Zikula\Common\Translator\TranslatorTrait;
         use Zikula\Core\Doctrine\EntityAccess;
@@ -69,7 +74,7 @@ class NotificationHelper {
         protected $router;
 
         /**
-         * @var KernelInterface
+         * @var «IF targets('1.4-dev')»ZikulaHttpKernelInterface«ELSE»KernelInterface«ENDIF»
          */
         protected $kernel;
 
@@ -146,7 +151,11 @@ class NotificationHelper {
         /**
          * NotificationHelper constructor.
          *
+         «IF targets('1.4-dev')»
+         * @param ZikulaHttpKernelInterface $kernel         Kernel service instance
+         «ELSE»
          * @param KernelInterface          $kernel          Kernel service instance
+         «ENDIF»
          * @param TranslatorInterface      $translator      Translator service instance
          * @param SessionInterface         $session         Session service instance
          * @param Routerinterface          $router          Router service instance
@@ -159,7 +168,7 @@ class NotificationHelper {
          * @param WorkflowHelper           $workflowHelper  WorkflowHelper service instance
          */
         public function __construct(
-            KernelInterface $kernel,
+            «IF targets('1.4-dev')»ZikulaHttpKernelInterface«ELSE»KernelInterface«ENDIF» $kernel,
             TranslatorInterface $translator,
             SessionInterface $session,
             RouterInterface $router,
