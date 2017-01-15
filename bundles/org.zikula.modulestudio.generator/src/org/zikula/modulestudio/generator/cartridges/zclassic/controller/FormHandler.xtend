@@ -599,6 +599,19 @@ class FormHandler {
                 }
 
                 $entity = $this->initEntityForCreation();
+
+                // set default values from request parameters
+                foreach ($this->request->query->all() as $key => $value) {
+                    if (strlen($key) < 5 || substr($key, 0, 4) != 'set_') {
+                        continue;
+                    }
+                    $fieldName = str_replace('set_', '', $key);
+                    $setterName = 'set' . ucfirst($fieldName);
+                    if (!method_exists($entity, $setterName)) {
+                        continue;
+                    }
+                    $entity[$fieldName] = $value;
+                }
             }
 
             if (null === $entity) {
