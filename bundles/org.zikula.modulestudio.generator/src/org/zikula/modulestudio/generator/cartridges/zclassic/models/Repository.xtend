@@ -180,6 +180,10 @@ class Repository {
 
             «addExclusion»
 
+            «IF standardFields»
+                «addCreatorFilter»
+
+            «ENDIF»
             «selectWhere»
 
             «selectWherePaginated»
@@ -655,6 +659,34 @@ class Repository {
             «ENDIF»
                 $qb->andWhere('tbl.id != :excludeId')
                    ->setParameter('excludeId', $excludeId);
+            }
+
+            return $qb;
+        }
+    '''
+
+    def private addCreatorFilter(Entity it) '''
+        /**
+         * Adds a filter for the createdBy field.
+         *
+         * @param QueryBuilder $qb Query builder to be enhanced
+         * @param integer      $userId The user identifier used for filtering (optional)
+         *
+         * @return QueryBuilder Enriched query builder instance
+         */
+        public function addCreatorFilter(QueryBuilder $qb, $userId = null)
+        {
+            if (null === $userId) {
+                $currentUserApi = ServiceUtil::get('zikula_users_module.current_user');
+                $userId = $currentUserApi->isLoggedIn() ? $currentUserApi->get('uid') : 1;
+            }
+
+            if (is_array($userId)) {
+                $qb->andWhere('tbl.createdBy IN (:userIds)')
+                   ->setParameter('userIds', $userId);
+            } else {
+                $qb->andWhere('tbl.createdBy = :userId')
+                   ->setParameter('userId', $userId);
             }
 
             return $qb;

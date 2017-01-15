@@ -352,7 +352,6 @@ class EditEntity {
                         «ENDIF»
                         «IF !incoming.empty || !outgoing.empty»
                             'filterByOwnership' => true,
-                            'currentUserId' => 0,
                             'inlineUsage' => false
                         «ENDIF»
                     ])
@@ -375,7 +374,6 @@ class EditEntity {
                         «ENDIF»
                         «IF !incoming.empty || !outgoing.empty»
                             'filterByOwnership' => 'bool',
-                            'currentUserId' => 'int',
                             'inlineUsage' => 'bool'
                         «ENDIF»
                     ])
@@ -929,8 +927,7 @@ class EditEntity {
                 $queryBuilder = function(EntityRepository $er) {
                     // select without joins
                     $qb = $er->getListQueryBuilder('', '', false);
-                    $qb->andWhere('tbl.createdBy == :currentUserId)')
-                       ->setParameter('currentUserId', $options['currentUserId']);
+                    $qb = $er->addCreatorFilter($qb);
 
                     return $qb;
                 };

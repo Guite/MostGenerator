@@ -1290,7 +1290,6 @@ class FormHandler {
                 «ENDIF»
                 «IF !incoming.empty || !outgoing.empty»
                     'filterByOwnership' => !$this->permissionApi->hasPermission($this->permissionComponent, $this->createCompositeIdentifier() . '::', ACCESS_ADD),
-                    'currentUserId' => $this->currentUserApi->isLoggedIn() ? $this->currentUserApi->get('uid') : 1,
                     'inlineUsage' => $this->templateParameters['inlineUsage']
                 «ENDIF»
             ];
