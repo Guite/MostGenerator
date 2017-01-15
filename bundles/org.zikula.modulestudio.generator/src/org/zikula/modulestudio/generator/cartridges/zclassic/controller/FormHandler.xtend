@@ -548,7 +548,9 @@ class FormHandler {
         public function processForm(array $templateParameters)
         {
             $this->templateParameters = $templateParameters;
-            $this->templateParameters['inlineUsage'] = $this->request->query->getBoolean('raw', false);
+            «IF app.needsAutoCompletion»
+                $this->templateParameters['inlineUsage'] = $this->request->query->getBoolean('raw', false);
+            «ENDIF»
             «IF !relations.filter(JoinRelationship).empty»
 
                 $this->idPrefix = $this->request->query->getAlnum('idp', '');
@@ -1289,8 +1291,8 @@ class FormHandler {
                     'hasModeratePermission' => $this->permissionApi->hasPermission($this->permissionComponent, $this->createCompositeIdentifier() . '::', ACCESS_MODERATE),
                 «ENDIF»
                 «IF !incoming.empty || !outgoing.empty»
-                    'filterByOwnership' => !$this->permissionApi->hasPermission($this->permissionComponent, $this->createCompositeIdentifier() . '::', ACCESS_ADD),
-                    'inlineUsage' => $this->templateParameters['inlineUsage']
+                    'filterByOwnership' => !$this->permissionApi->hasPermission($this->permissionComponent, $this->createCompositeIdentifier() . '::', ACCESS_ADD)«IF app.needsAutoCompletion»,
+                    'inlineUsage' => $this->templateParameters['inlineUsage']«ENDIF»
                 «ENDIF»
             ];
             «IF attributable»

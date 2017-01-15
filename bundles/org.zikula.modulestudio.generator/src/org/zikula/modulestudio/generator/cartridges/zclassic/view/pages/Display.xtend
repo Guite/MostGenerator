@@ -51,7 +51,8 @@ class Display {
                         + incoming.filter(ManyToManyRelationship).filter[e|e.source instanceof Entity && e.source.application == it.application]»
         «val objName = name.formatForCode»
         {# purpose of this template: «nameMultiple.formatForDisplay» display view #}
-        {% extends routeArea == 'admin' ? '«application.appName»::adminBase.html.twig' : '«application.appName»::base.html.twig' %}
+        {% set baseTemplate = app.request.query.getBoolean('raw', false) ? 'raw' : (routeArea == 'admin' ? 'adminBase' : 'base') %}
+        {% extends '«application.appName»::' ~ baseTemplate ~ '.html.twig' %}
         {% block pageTitle %}{{ «objName».getTitleFromDisplayPattern()|default(__('«name.formatForDisplayCapital»')) }}{% endblock %}
         {% block title %}
             {% set templateTitle = «objName».getTitleFromDisplayPattern()|default(__('«name.formatForDisplayCapital»')) %}

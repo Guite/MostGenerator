@@ -62,33 +62,29 @@ class Layout {
     def baseTemplate(Application it) '''
         {# purpose of this template: general base layout #}
         {% block header %}
-            «/*{{ pageAddAsset('javascript', 'jquery-ui') }}*/»
-            {{ pageAddAsset('stylesheet', asset('jquery-ui/themes/base/jquery-ui.min.css')) }}
-            {{ pageAddAsset('javascript', asset('bootstrap/js/bootstrap.min.js')) }}
+            {#{ pageAddAsset('stylesheet', asset('jquery-ui/themes/base/jquery-ui.min.css')) }#}
             «IF hasImageFields»
                 {{ pageAddAsset('javascript', asset('bootstrap-media-lightbox/bootstrap-media-lightbox.min.js')) }}
                 {{ pageAddAsset('stylesheet', asset('bootstrap-media-lightbox/bootstrap-media-lightbox.css')) }}
             «ENDIF»
             «IF hasViewActions || hasDisplayActions || hasEditActions»
-                {{ pageAddAsset('stylesheet', asset('bootstrap-jqueryui/bootstrap-jqueryui.min.css')) }}
-                {{ pageAddAsset('javascript', asset('bootstrap-jqueryui/bootstrap-jqueryui.min.js')) }}
+                {#{ pageAddAsset('stylesheet', asset('bootstrap-jqueryui/bootstrap-jqueryui.min.css')) }}
+                {{ pageAddAsset('javascript', asset('bootstrap-jqueryui/bootstrap-jqueryui.min.js')) }#}
             «ENDIF»
-            {% if not app.request.query.getBoolean('raw', false) %}
-                {{ pageAddAsset('javascript', zasset('@«appName»:js/«appName».js')) }}
-                «IF hasGeographical»
-                    {{ pageAddAsset('javascript', zasset('@«appName»:js/«appName».Geo.js')) }}
-                «ENDIF»
-                «IF hasEditActions»
+            {{ pageAddAsset('javascript', zasset('@«appName»:js/«appName».js')) }}
+            «IF hasGeographical»
+                {{ pageAddAsset('javascript', zasset('@«appName»:js/«appName».Geo.js')) }}
+            «ENDIF»
+            «IF hasEditActions»
+                {% if 'edit' in app.request.get('_route') %}
                     {{ polyfill([«IF hasGeographical»'geolocation', «ENDIF»'forms', 'forms-ext']) }}
-                «ENDIF»
-            {% endif %}
+                {% endif %}
+            «ENDIF»
         {% endblock %}
 
-        {% if not app.request.query.getBoolean('raw', false) %}
-            {% block appTitle %}
-                {{ moduleHeader('user', '«/* custom title */»', '«/* title link */»', false, true«/* flashes */», false, true«/* image */») }}
-            {% endblock %}
-        {% endif %}
+        {% block appTitle %}
+            {{ moduleHeader('user', '«/* custom title */»', '«/* title link */»', false, true«/* flashes */», false, true«/* image */») }}
+        {% endblock %}
 
         {% block titleArea %}
             <h2>{% block title %}{% endblock %}</h2>
@@ -104,26 +100,9 @@ class Layout {
         {% block content %}{% endblock %}
 
         {% block footer %}
-            {% if not app.request.query.getBoolean('raw', false) %}
-                «IF generatePoweredByBacklinksIntoFooterTemplates»
-                    «new FileHelper().msWeblink(it)»
-                «ENDIF»
-            «IF hasEditActions»
-            {% elseif 'edit' in app.request.get('_route') %}
-                {{ pageAddAsset('stylesheet', 'style/core.css') }}
-                {{ pageAddAsset('stylesheet', zasset('@«appName»:css/style.css')) }}
-                {{ pageAddAsset('stylesheet', zasset('@ZikulaThemeModule:css/form/style.css')) }}
-                {{ pageAddAsset('stylesheet', zasset('@ZikulaAndreas08Theme:css/fluid960gs/reset.css')) }}
-                {% set pageStyles %}
-                <style type="text/css">
-                    body {
-                        font-size: 70%;
-                    }
-                </style>
-                {% endset %}
-                {{ pageAddAsset('header', pageStyles) }}
+            «IF generatePoweredByBacklinksIntoFooterTemplates»
+                «new FileHelper().msWeblink(it)»
             «ENDIF»
-            {% endif %}
         {% endblock %}
     '''
 
@@ -264,6 +243,74 @@ class Layout {
                 </div>
             {% endblock %}
         «ENDIF»
+    '''
+
+    def rawPageFile(Application it) {
+        val templateExtension = '.html.twig'
+        var fileName = 'raw' + templateExtension
+        if (!shouldBeSkipped(getViewPath + fileName)) {
+            if (shouldBeMarked(getViewPath + fileName)) {
+                fileName = 'raw.generated' + templateExtension
+            }
+            fsa.generateFile(getViewPath + fileName, rawPageImpl)
+        }
+    }
+
+    def rawPageImpl(Application it) '''
+        {# purpose of this template: Display pages without the theme #}
+        <!DOCTYPE html>
+        <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="{{ app.request.locale }}" lang="{{ app.request.locale }}">
+        <head>
+            <title>{{ block('pageTitle')|default(block('title')) }}</title>
+            <link rel="stylesheet" type="text/css" href="{{ pagevars.homepath }}style/core.css" />
+            <link rel="stylesheet" type="text/css" href="{{ pagevars.homepath }}«relativeAppRootPath»/«getAppCssPath»style.css" />
+            {% if useFinder|default == true %}
+                <link rel="stylesheet" type="text/css" href="{{ pagevars.homepath }}«relativeAppRootPath»/«getAppCssPath»finder.css" />
+            «IF hasImageFields»
+                {% else %}
+                    <link rel="stylesheet" type="text/css" href="{{ pagevars.homepath }}web/bootstrap-media-lightbox/bootstrap-media-lightbox.css" />
+            «ENDIF»
+            {% endif %}
+            <script type="text/javascript">
+                /* <![CDATA[ */
+                    if (typeof(Zikula) == 'undefined') {var Zikula = {};}
+                    Zikula.Config = {'entrypoint': '{{ getModVar('ZConfig', 'entrypoint', 'index.php') }}', 'baseURL': '{{ app.request.getSchemeAndHttpHost() ~ '/' }}', 'baseURI': '{{ app.request.getBasePath() }}'};
+                /* ]]> */
+            </script>
+            <link rel="stylesheet" type="text/css" href="{{ pagevars.homepath }}web/bootstrap/css/bootstrap.min.css" />
+            <link rel="stylesheet" type="text/css" href="{{ pagevars.homepath }}web/bootstrap/css/bootstrap-theme.min.css" />
+            <script type="text/javascript" src="{{ pagevars.homepath }}web/jquery/jquery.min.js"></script>
+            <script type="text/javascript" src="{{ pagevars.homepath }}web/bootstrap/js/bootstrap.min.js"></script>
+            {% if useFinder|default == true %}
+                <script type="text/javascript" src="{{ pagevars.homepath }}«relativeAppRootPath»/«getAppJsPath»«appName».Finder.js"></script>
+            {% else %}
+                «IF hasImageFields»
+                    <script type="text/javascript" src="{{ pagevars.homepath }}web/bootstrap-media-lightbox/bootstrap-media-lightbox.min.js"></script>
+                «ENDIF»
+                <script type="text/javascript" src="{{ pagevars.homepath }}«relativeAppRootPath»/«getAppJsPath»«appName».js"></script>
+                «IF hasGeographical»
+                    <script type="text/javascript" src="{{ pagevars.homepath }}«relativeAppRootPath»/«getAppJsPath»«appName».Geo.js"></script>
+                «ENDIF»
+            {% endif %}
+        </head>
+        <body>
+            {% if useFinder|default != true %}
+                <h2>{{ block('title') }}</h2>
+            {% endif %}
+            {% block content %}{% endblock %}
+            {% if useFinder|default != true %}
+                <script type="text/javascript">
+                /* <![CDATA[ */
+                    ( function($) {
+                        $(document).ready(function() {
+                            $('.dropdown-toggle').addClass('hidden');
+                        });
+                    })(jQuery);
+                /* ]]> */
+                </script>
+            {% endif %}
+        </body>
+        </html>
     '''
 
     def pdfHeaderFile(Application it) {

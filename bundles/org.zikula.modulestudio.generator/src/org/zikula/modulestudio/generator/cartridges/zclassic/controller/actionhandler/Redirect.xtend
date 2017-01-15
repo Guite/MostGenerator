@@ -165,7 +165,7 @@ class Redirect {
          */
         protected function getRedirectUrl($args)
         {
-            «IF !incoming.empty || !outgoing.empty»
+            «IF app.needsAutoCompletion && (!incoming.empty || !outgoing.empty)»
                 if (true === $this->templateParameters['inlineUsage']) {
                     $urlArgs = [
                         'idPrefix' => $this->idPrefix,

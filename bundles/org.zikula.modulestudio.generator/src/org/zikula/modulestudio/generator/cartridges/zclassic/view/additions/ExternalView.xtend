@@ -164,26 +164,10 @@ class ExternalView {
 
     def private findTemplate(Entity it, Application app) '''
         {# Purpose of this template: Display a popup selector of «nameMultiple.formatForDisplay» for scribite integration #}
-        <!DOCTYPE html>
-        <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="{{ app.request.locale }}" lang="{{ app.request.locale }}">
-        <head>
-            <title>{{ __('Search and select «name.formatForDisplay»') }}</title>
-            <link rel="stylesheet" type="text/css" href="{{ pagevars.homepath }}style/core.css" />
-            <link rel="stylesheet" type="text/css" href="{{ pagevars.homepath }}«app.relativeAppRootPath»/«app.getAppCssPath»style.css" />
-            <link rel="stylesheet" type="text/css" href="{{ pagevars.homepath }}«app.relativeAppRootPath»/«app.getAppCssPath»finder.css" />
-            <script type="text/javascript">
-                /* <![CDATA[ */
-                    if (typeof(Zikula) == 'undefined') {var Zikula = {};}
-                    Zikula.Config = {'entrypoint': '{{ getModVar('ZConfig', 'entrypoint', 'index.php') }}', 'baseURL': '{{ app.request.getSchemeAndHttpHost() ~ '/' }}', 'baseURI': '{{ app.request.getBasePath() }}'};
-                /* ]]> */
-            </script>
-            <link rel="stylesheet" type="text/css" href="{{ pagevars.homepath }}web/bootstrap/css/bootstrap.min.css" />
-            <link rel="stylesheet" type="text/css" href="{{ pagevars.homepath }}web/bootstrap/css/bootstrap-theme.min.css" />
-            <script type="text/javascript" src="{{ pagevars.homepath }}web/jquery/jquery.min.js"></script>
-            <script type="text/javascript" src="{{ pagevars.homepath }}web/bootstrap/js/bootstrap.min.js"></script>
-            <script type="text/javascript" src="{{ pagevars.homepath }}«app.relativeAppRootPath»/«app.getAppJsPath»«app.appName».Finder.js"></script>
-        </head>
-        <body>
+        {% set useFinder = true %}
+        {% extends '«app.appName»::raw.html.twig' %}
+        {% block title __('Search and select «name.formatForDisplay»') %}
+        {% block content %}
             <div class="container">
                 «findTemplateObjectTypeSwitcher(app)»
                 {% form_theme finderForm with [
@@ -224,12 +208,8 @@ class ExternalView {
 
             «findTemplateEditForm(app)»
 
-            {% set customJsInit %}
-                «findTemplateJs(app)»
-            {% endset %}
-            {{ pageAddAsset('footer', customJsInit) }}
-        </body>
-        </html>
+            «findTemplateJs(app)»
+        {% endblock %}
     '''
 
     def private findTemplateObjectTypeSwitcher(Entity it, Application app) '''

@@ -77,7 +77,8 @@ class Forms {
 
     def private formTemplateHeader(Entity it, Application app, String actionName) '''
         {# purpose of this template: build the form to «actionName.formatForDisplay» an instance of «name.formatForDisplay» #}
-        {% extends routeArea == 'admin' ? '«app.appName»::adminBase.html.twig' : '«app.appName»::base.html.twig' %}
+        {% set baseTemplate = app.request.query.getBoolean('raw', false) ? 'raw' : (routeArea == 'admin' ? 'adminBase' : 'base') %}
+        {% extends '«application.appName»::' ~ baseTemplate ~ '.html.twig' %}
 
         {% block header %}
             {{ parent() }}

@@ -80,6 +80,9 @@ class Views {
         if (needsApproval) {
             new Emails().generate(it, fsa)
         }
+        if (generateExternalControllerAndFinder || !joinRelations.empty) {
+            layoutHelper.rawPageFile(it)
+        }
         layoutHelper.pdfHeaderFile(it)
     }
 

@@ -77,8 +77,8 @@ class Finder {
             jQuery('.btn-default').click(«objName».finder.handleCancel);
 
             var selectedItems = jQuery('#«appName.toLowerCase»ItemContainer li a');
-            selectedItems.bind('click keypress', function (e) {
-                e.preventDefault();
+            selectedItems.bind('click keypress', function (event) {
+                event.preventDefault();
                 «objName».finder.selectItem(jQuery(this).data('itemid'));
             });
         };
@@ -92,6 +92,7 @@ class Finder {
         {
             var editor;
 
+            event.preventDefault();
             editor = jQuery("[id$='editor']").first().val();
             if ('tinymce' === editor) {
                 «vendorAndName»ClosePopup();
