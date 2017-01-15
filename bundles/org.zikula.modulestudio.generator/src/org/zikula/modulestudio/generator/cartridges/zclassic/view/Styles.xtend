@@ -242,12 +242,6 @@ class Styles {
             text-align: left;
         }
 
-        .«cssPrefix»-finderform fieldset,
-        .«cssPrefix»-finderform fieldset legend {
-            background-color: #fff;
-            border: none;
-        }
-
         #«cssPrefix»ItemContainer {
             background-color: #eee;
             height: 300px;
@@ -286,6 +280,12 @@ class Styles {
         #«cssPrefix»ItemContainer a:focus img,
         #«cssPrefix»ItemContainer a:active img {
             background-color: #fff;
+        }
+
+        .«cssPrefix»-finderform fieldset,
+        .«cssPrefix»-finderform fieldset legend {
+            background-color: #fff;
+            border: none;
         }
     '''
 }

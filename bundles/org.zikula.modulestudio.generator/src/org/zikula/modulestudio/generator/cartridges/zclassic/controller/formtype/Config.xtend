@@ -187,7 +187,7 @@ class Config {
     def private dispatch fieldType(Variable it) '''«nsSymfonyFormType»Text'''
     def private dispatch titleAttribute(Variable it) '''Enter the «name.formatForDisplay».'''
     def private dispatch additionalAttributes(Variable it) '''
-        'max_length' => 255,
+        'maxlength' => 255,
     '''
     def private dispatch additionalOptions(Variable it) ''''''
 
@@ -195,9 +195,9 @@ class Config {
     def private dispatch titleAttribute(IntVar it) '''«IF isUserGroupSelector»Choose the «name.formatForDisplay».«ELSE»Enter the «name.formatForDisplay». Only digits are allowed.«ENDIF»'''
     def private dispatch additionalAttributes(IntVar it) '''
         «IF isUserGroupSelector»
-            'max_length' => 255,
+            'maxlength' => 255,
         «ELSE»
-            'max_length' => «IF isShrinkDimensionField || isThumbDimensionField»4«ELSE»255«ENDIF»,
+            'maxlength' => «IF isShrinkDimensionField || isThumbDimensionField»4«ELSE»255«ENDIF»,
         «ENDIF»
     '''
     def private dispatch additionalOptions(IntVar it) '''
@@ -223,7 +223,7 @@ class Config {
     def private dispatch fieldType(TextVar it) '''«nsSymfonyFormType»Text«IF multiline»area«ENDIF»'''
     def private dispatch additionalAttributes(TextVar it) '''
         «IF maxLength > 0 || !multiline»
-            'max_length' => «IF maxLength > 0»«maxLength»«ELSEIF !multiline»255«ENDIF»,
+            'maxlength' => «IF maxLength > 0»«maxLength»«ELSEIF !multiline»255«ENDIF»,
         «ENDIF»
     '''
 

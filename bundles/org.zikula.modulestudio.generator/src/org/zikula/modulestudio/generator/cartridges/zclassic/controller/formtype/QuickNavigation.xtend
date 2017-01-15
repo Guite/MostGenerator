@@ -437,7 +437,7 @@ class QuickNavigation {
             $builder->add('q', '«nsSymfonyFormType»SearchType', [
                 'label' => $this->__('Search'),
                 'attr' => [
-                    'max_length' => 255,
+                    'maxlength' => 255,
                     'class' => 'input-sm'
                 ],
                 'required' => false

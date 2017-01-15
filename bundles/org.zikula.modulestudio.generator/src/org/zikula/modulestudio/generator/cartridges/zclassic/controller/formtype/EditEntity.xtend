@@ -466,7 +466,7 @@ class EditEntity {
                     'mapped' => false,
                 «ENDIF»
                 'attr' => [
-                    'max_length' => 255,
+                    'maxlength' => 255,
                     «IF slugUnique»
                         'class' => 'validate-unique',
                     «ENDIF»
@@ -649,7 +649,7 @@ class EditEntity {
     def private dispatch formType(DerivedField it) '''«nsSymfonyFormType»Text'''
     def private dispatch titleAttribute(DerivedField it) '''Enter the «name.formatForDisplay» of the «entity.name.formatForDisplay»'''
     def private dispatch additionalAttributes(DerivedField it) '''
-        'max_length' => 255,
+        'maxlength' => 255,
     '''
     def private dispatch additionalOptions(DerivedField it) '''
         'required' => «mandatory.displayBool»
@@ -665,7 +665,7 @@ class EditEntity {
     def private dispatch formType(IntegerField it) '''«nsSymfonyFormType»«IF percentage»Percent«ELSEIF range»Range«ELSE»Integer«ENDIF»'''
     def private dispatch titleAttribute(IntegerField it) '''Enter the «name.formatForDisplay» of the «entity.name.formatForDisplay». Only digits are allowed.'''
     def private dispatch additionalAttributes(IntegerField it) '''
-        'max_length' => «length»,
+        'maxlength' => «length»,
     '''
     def private dispatch additionalOptions(IntegerField it) '''
         'required' => «mandatory.displayBool»,
@@ -677,7 +677,7 @@ class EditEntity {
 
     def private dispatch formType(DecimalField it) '''«nsSymfonyFormType»«IF percentage»Percent«ELSEIF currency»Money«ELSE»Number«ENDIF»'''
     def private dispatch additionalAttributes(DecimalField it) '''
-        'max_length' => «(length+3+scale)»,
+        'maxlength' => «(length+3+scale)»,
     '''
     def private dispatch additionalOptions(DecimalField it) '''
         'required' => «mandatory.displayBool»,
@@ -693,7 +693,7 @@ class EditEntity {
 
     def private dispatch formType(FloatField it) '''«nsSymfonyFormType»«IF percentage»Percent«ELSEIF currency»Money«ELSE»Number«ENDIF»'''
     def private dispatch additionalAttributes(FloatField it) '''
-        'max_length' => «(length+3+2)»,
+        'maxlength' => «(length+3+2)»,
     '''
     def private dispatch additionalOptions(FloatField it) '''
         'required' => «mandatory.displayBool»,
@@ -710,7 +710,7 @@ class EditEntity {
     def private dispatch formType(StringField it) '''«IF country»«nsSymfonyFormType»Country«ELSEIF language»«nsSymfonyFormType»Language«ELSEIF locale»Zikula\Bundle\FormExtensionBundle\Form\Type\Locale«ELSEIF htmlcolour»«app.appNamespace»\Form\Type\Field\Colour«ELSEIF password»«nsSymfonyFormType»Password«ELSEIF currency»«nsSymfonyFormType»Currency«ELSEIF timezone»«nsSymfonyFormType»Timezone«ELSE»«nsSymfonyFormType»Text«ENDIF»'''
     def private dispatch titleAttribute(StringField it) '''«IF country || language || locale || htmlcolour || currency || timezone»Choose the «name.formatForDisplay» of the «entity.name.formatForDisplay»«ELSE»Enter the «name.formatForDisplay» of the «entity.name.formatForDisplay»«ENDIF»'''
     def private dispatch additionalAttributes(StringField it) '''
-        'max_length' => «length»,
+        'maxlength' => «length»,
         «IF null !== regexp && regexp != ''»
             «IF !regexpOpposite»
                 'pattern' => '«regexp.replace('\'', '')»',
@@ -729,7 +729,7 @@ class EditEntity {
 
     def private dispatch formType(TextField it) '''«nsSymfonyFormType»Textarea'''
     def private dispatch additionalAttributes(TextField it) '''
-        'max_length' => «length»,
+        'maxlength' => «length»,
         «IF null !== regexp && regexp != ''»
             «IF !regexpOpposite»
                 'pattern' => '«regexp.replace('\'', '')»',
@@ -742,7 +742,7 @@ class EditEntity {
 
     def private dispatch formType(EmailField it) '''«nsSymfonyFormType»Email'''
     def private dispatch additionalAttributes(EmailField it) '''
-        'max_length' => «length»,
+        'maxlength' => «length»,
     '''
     def private dispatch additionalOptions(EmailField it) '''
         'required' => «mandatory.displayBool»
@@ -750,7 +750,7 @@ class EditEntity {
 
     def private dispatch formType(UrlField it) '''«nsSymfonyFormType»Url'''
     def private dispatch additionalAttributes(UrlField it) '''
-        'max_length' => «length»,
+        'maxlength' => «length»,
     '''
     def private dispatch additionalOptions(UrlField it) '''
         'required' => «mandatory.displayBool»«/*,
@@ -792,7 +792,7 @@ class EditEntity {
 
     def private dispatch formType(UserField it) '''«app.appNamespace»\Form\Type\Field\User'''
     def private dispatch additionalAttributes(UserField it) '''
-        'max_length' => «length»,
+        'maxlength' => «length»,
     '''
     def private dispatch additionalOptions(UserField it) '''
         'required' => «mandatory.displayBool»,
@@ -814,7 +814,7 @@ class EditEntity {
         'empty_data' => '«defaultValue»',
         'required' => «mandatory.displayBool»,
         'widget' => 'single_text',
-        'max_length' => 8
+        'maxlength' => 8
     '''
 
     def private addGeographicalFields(Entity it) '''
@@ -852,7 +852,7 @@ class EditEntity {
                     'mapped' => false,
                     'label' => $this->__($attributeName),
                     'attr' => [
-                        'max_length' => 255
+                        'maxlength' => 255
                     ],
                     'data' => $attributeValue,
                     'required' => false,
@@ -1046,7 +1046,7 @@ class EditEntity {
                 'mapped' => false,
                 'label' => $this->__('Creator') . ':',
                 'attr' => [
-                    'max_length' => 11,
+                    'maxlength' => 11,
                     'class' => ' validate-digits',
                     'title' => $this->__('Here you can choose a user which will be set as creator')
                 ],

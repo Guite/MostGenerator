@@ -164,22 +164,24 @@ class ExternalView {
 
     def private findTemplate(Entity it, Application app) '''
         {# Purpose of this template: Display a popup selector of «nameMultiple.formatForDisplay» for scribite integration #}
-        <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+        <!DOCTYPE html>
         <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="{{ app.request.locale }}" lang="{{ app.request.locale }}">
         <head>
             <title>{{ __('Search and select «name.formatForDisplay»') }}</title>
-            {{ pageAddAsset('stylesheet', pagevars.homepath ~ 'style/core.css') }}
-            {{ pageAddAsset('stylesheet', zasset('@«app.appName»:css/style.css')) }}
-            {{ pageAddAsset('stylesheet', zasset('@«app.appName»:css/finder.css')) }}
-            <script type="text/javascript">/* <![CDATA[ */
-                if (typeof(Zikula) == 'undefined') {var Zikula = {};}
-                Zikula.Config = {'entrypoint': '{{ getModVar('ZConfig', 'entrypoint', 'index.php') }}', 'baseURL': '{{ app.request.getSchemeAndHttpHost() ~ '/' }}', 'baseURI': '{{ app.request.getBasePath() }}'}; /* ]]> */
+            <link rel="stylesheet" type="text/css" href="{{ pagevars.homepath }}style/core.css" />
+            <link rel="stylesheet" type="text/css" href="{{ pagevars.homepath }}«app.relativeAppRootPath»/«app.getAppCssPath»style.css" />
+            <link rel="stylesheet" type="text/css" href="{{ pagevars.homepath }}«app.relativeAppRootPath»/«app.getAppCssPath»finder.css" />
+            <script type="text/javascript">
+                /* <![CDATA[ */
+                    if (typeof(Zikula) == 'undefined') {var Zikula = {};}
+                    Zikula.Config = {'entrypoint': '{{ getModVar('ZConfig', 'entrypoint', 'index.php') }}', 'baseURL': '{{ app.request.getSchemeAndHttpHost() ~ '/' }}', 'baseURI': '{{ app.request.getBasePath() }}'};
+                /* ]]> */
             </script>
-            {{ pageAddAsset('stylesheet', asset('bootstrap/css/bootstrap.min.css')) }}
-            {{ pageAddAsset('stylesheet', asset('bootstrap/css/bootstrap-theme.min.css')) }}
-            {{ pageAddAsset('javascript', asset('jquery/jquery.min.js')) }}
-            {{ pageAddAsset('javascript', asset('bootstrap/js/bootstrap.min.js')) }}
-            {{ pageAddAsset('javascript', zasset('@«app.appName»:js/«app.appName».Finder.js')) }}
+            <link rel="stylesheet" type="text/css" href="{{ pagevars.homepath }}web/bootstrap/css/bootstrap.min.css" />
+            <link rel="stylesheet" type="text/css" href="{{ pagevars.homepath }}web/bootstrap/css/bootstrap-theme.min.css" />
+            <script type="text/javascript" src="{{ pagevars.homepath }}web/jquery/jquery.min.js"></script>
+            <script type="text/javascript" src="{{ pagevars.homepath }}web/bootstrap/js/bootstrap.min.js"></script>
+            <script type="text/javascript" src="{{ pagevars.homepath }}«app.relativeAppRootPath»/«app.getAppJsPath»«app.appName».Finder.js"></script>
         </head>
         <body>
             <div class="container">
@@ -242,7 +244,7 @@ class ExternalView {
 
     def private findTemplateObjectId(Entity it, Application app) '''
         <div class="form-group">
-            <label for="«app.appName.toFirstLower»ObjectId" class="col-sm-3 control-label">{{ __('«name.formatForDisplayCapital»') }}:</label>
+            <label class="col-sm-3 control-label">{{ __('«name.formatForDisplayCapital»') }}:</label>
             <div class="col-sm-9">
                 <div id="«app.appName.toLowerCase»ItemContainer">
                     <ul>
@@ -268,7 +270,7 @@ class ExternalView {
             {#
             <div class="«app.appName.toLowerCase»-finderform">
                 <fieldset>
-                    {{ render(controller('«app.appName»:Admin:edit')) }}
+                    {{ render(controller('«app.appName»:«name.formatForCodeCapital»:edit')) }}
                 </fieldset>
             </div>
             #}

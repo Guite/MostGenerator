@@ -42,7 +42,7 @@ class GeoType {
                 $resolver->setDefaults([
                     'scale' => 7,
                     'attr' => [
-                        'max_length' => 12,
+                        'maxlength' => 12,
                         'class' => 'geo-date'
                     ]
                 ]);

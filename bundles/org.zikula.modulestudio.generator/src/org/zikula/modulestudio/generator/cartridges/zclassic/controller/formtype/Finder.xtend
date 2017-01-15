@@ -308,7 +308,7 @@ class Finder {
                 'label' => $this->__('Search for') . ':',
                 'required' => false,
                 'attr' => [
-                    'max_length' => 255
+                    'maxlength' => 255
                 ]
             ]);
         }
