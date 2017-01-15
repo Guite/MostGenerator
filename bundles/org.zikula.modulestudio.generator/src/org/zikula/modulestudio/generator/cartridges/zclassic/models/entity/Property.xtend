@@ -66,6 +66,7 @@ class Property {
          * @var string $«name.formatForCode»Url
          */
         protected $«name.formatForCode»Url = '';
+        «/* this last line is on purpose */»
     '''
 
     def dispatch persistentProperty(ArrayField it) {

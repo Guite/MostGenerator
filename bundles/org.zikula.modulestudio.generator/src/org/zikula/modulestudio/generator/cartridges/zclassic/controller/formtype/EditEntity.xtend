@@ -239,9 +239,9 @@ class EditEntity {
                     $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
                         $entity = $event->getData();
                         foreach (['«getUploadFieldsEntity.map[f|f.name.formatForCode].join("', '")»'] as $uploadFieldName) {
-                            if ($entity[$uploadFieldName] instanceof File) {
-                                $entity[$uploadFieldName] = [$uploadFieldName => $entity[$uploadFieldName]->getPathname()];
-                            }
+                            $entity[$uploadFieldName] = [
+                                $uploadFieldName => $entity[$uploadFieldName] instanceof File ? $entity[$uploadFieldName]->getPathname() : null
+                            ];
                         }
                     });
                     $builder->addEventListener(FormEvents::SUBMIT, function (FormEvent $event) {

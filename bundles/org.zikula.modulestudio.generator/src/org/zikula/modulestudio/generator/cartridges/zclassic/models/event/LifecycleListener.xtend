@@ -208,33 +208,13 @@ class LifecycleListener {
                 «IF hasUploads»
 
                     // prepare helper fields for uploaded files
-                    $objectType = $entity->get_objectType();
-                    $uploadFields = $this->getUploadFields($objectType);
-
+                    $uploadFields = $this->getUploadFields($entity->get_objectType());
                     if (count($uploadFields) > 0) {
                         $request = $this->container->get('request_stack')->getCurrentRequest();
                         $baseUrl = $request->getSchemeAndHttpHost() . $request->getBasePath();
                         $uploadHelper = $this->container->get('«appService».upload_helper');
                         foreach ($uploadFields as $fieldName) {
-                            if (empty($entity[$fieldName])) {
-                                continue;
-                            }
-                            $basePath = $uploadHelper->getFileBaseFolder($objectType, $fieldName);
-                            $filePath = $basePath . $entity[$fieldName];
-                            if (file_exists($filePath)) {
-                                $fileName = $entity[$fieldName];
-                                $entity[$fieldName] = new File($filePath);
-                                $entity[$fieldName . 'Url'] = $baseUrl . '/' . $filePath;
-
-                                // determine meta data if it does not exist
-                                if (!is_array($entity[$fieldName . 'Meta']) || !count($entity[$fieldName . 'Meta'])) {
-                                    $entity[$fieldName . 'Meta'] = $uploadHelper->readMetaDataForFile($fileName, $filePath);
-                                }
-                            } else {
-                                $entity[$fieldName] = null;
-                                $entity[$fieldName . 'Url'] = '';
-                                $entity[$fieldName . 'Meta'] = [];
-                            }
+                            $uploadHelper->initialiseUploadField($entity, $fieldName, $baseUrl);
                         }
                     }
                 «ENDIF»

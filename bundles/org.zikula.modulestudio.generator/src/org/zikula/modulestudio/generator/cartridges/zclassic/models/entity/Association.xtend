@@ -72,8 +72,8 @@ class Association {
             «ENDIF»
         «ENDIF»
         «IF !isManySide(false)»
-            «' '»* @Assert\Type(type="«/*\*/»«entityClass»")
-            «' '»* @Assert\Valid()
+            «' '»* @Assert\Type(type="«/*\*/»«entityClass»")«/* disabled due to problems with upload fields
+            «' '»* @Assert\Valid()*/»
         «ENDIF»
          * @var \«entityClass»«IF isManySide(false)»[]«ENDIF» $«sourceName»
          */
@@ -123,8 +123,8 @@ class Association {
             «val aliasName = getRelationAliasName(false).toFirstLower»
             «' '»* @Assert\NotNull(message="Choosing a «aliasName.formatForDisplay» is required.")
         «ENDIF»
-         * @Assert\Type(type="«/*\*/»«entityClass»")
-         * @Assert\Valid()
+         * @Assert\Type(type="«/*\*/»«entityClass»")«/* disabled due to problems with upload fields
+         * @Assert\Valid()*/»
          * @var \«entityClass» $«sourceName»
          */
         protected $«sourceName»;
@@ -175,8 +175,8 @@ class Association {
             «ENDIF»
         «ENDIF»
         «IF !isManySide(true)»
-            «' '»* @Assert\Type(type="«/*\*/»«entityClass»")
-            «' '»* @Assert\Valid()
+            «' '»* @Assert\Type(type="«/*\*/»«entityClass»")«/* disabled due to problems with upload fields
+            «' '»* @Assert\Valid()*/»
         «ENDIF»
          * @var \«entityClass» $«targetName»
          */

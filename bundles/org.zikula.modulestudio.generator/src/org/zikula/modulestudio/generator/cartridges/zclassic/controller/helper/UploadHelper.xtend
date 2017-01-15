@@ -36,6 +36,7 @@ class UploadHelper {
         use Psr\Log\LoggerInterface;
         use Symfony\Component\Filesystem\Exception\IOExceptionInterface;
         use Symfony\Component\Filesystem\Filesystem;
+        use Symfony\Component\HttpFoundation\File\File;
         use Symfony\Component\HttpFoundation\File\UploadedFile;
         use Symfony\Component\HttpFoundation\Session\SessionInterface;
         use Zikula\Common\Translator\TranslatorInterface;
@@ -135,6 +136,8 @@ class UploadHelper {
             «deleteUploadFile»
 
             «getFileBaseFolder»
+
+            «initialiseUploadField»
 
             «checkAndCreateAllUploadFolders»
 
@@ -568,6 +571,38 @@ class UploadHelper {
             }
 
             return $result;
+        }
+    '''
+
+    def private initialiseUploadField(Application it) '''
+        /**
+         * Prepares an upload field by transforming the file name into a File object.
+         *
+         * @param EntityAccess $entity    The entity object
+         * @param string       $fieldName Name of upload field
+         * @param string       $fileName  Field Value
+         * @param string       $baseUrl   The base url to prepend
+         */
+        public function initialiseUploadField($entity, $fieldName, $fileName, $baseUrl)
+        {
+            if (empty($fieldName)) {
+                return;
+            }
+            $fileName = $entity[$fieldName];
+            $filePath = $this->getFileBaseFolder($entity->get_objectType(), $fieldName) . $fileName;
+            if (!empty($fileName) && file_exists($filePath)) {
+                $entity[$fieldName] = new File($filePath);
+                $entity[$fieldName . 'Url'] = $baseUrl . '/' . $filePath;
+
+                // determine meta data if it does not exist
+                if (!is_array($entity[$fieldName . 'Meta']) || !count($entity[$fieldName . 'Meta'])) {
+                    $entity[$fieldName . 'Meta'] = $this->readMetaDataForFile($fileName, $filePath);
+                }
+            } else {
+                $entity[$fieldName] = null;
+                $entity[$fieldName . 'Url'] = '';
+                $entity[$fieldName . 'Meta'] = [];
+            }
         }
     '''
 

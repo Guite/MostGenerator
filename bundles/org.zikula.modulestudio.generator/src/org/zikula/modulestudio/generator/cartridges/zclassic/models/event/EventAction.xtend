@@ -29,9 +29,7 @@ class EventAction {
 
     def prePersist(Application it) '''
         «IF hasUploads»
-            $objectType = $entity->get_objectType();
-            $uploadFields = $this->getUploadFields($objectType);
-
+            $uploadFields = $this->getUploadFields($entity->get_objectType());
             foreach ($uploadFields as $uploadField) {
                 if (empty(«entityVar»[$uploadField])) {
                     continue;
@@ -105,7 +103,6 @@ class EventAction {
         «IF hasUploads»
             $uploadHelper = $this->container->get('«appService».upload_helper');
             $uploadFields = $this->getUploadFields($objectType);
-
             foreach ($uploadFields as $uploadField) {
                 if (empty(«entityVar»[$uploadField])) {
                     continue;
@@ -128,9 +125,7 @@ class EventAction {
 
     def preUpdate(Application it) '''
         «IF hasUploads»
-            $objectType = $entity->get_objectType();
-            $uploadFields = $this->getUploadFields($objectType);
-
+            $uploadFields = $this->getUploadFields($entity->get_objectType());
             foreach ($uploadFields as $uploadField) {
                 if (empty(«entityVar»[$uploadField])) {
                     continue;
