@@ -7,12 +7,15 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelp
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.additions.ExternalView
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
+import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class ExternalController {
+
     extension FormattingExtensions = new FormattingExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
+    extension ModelExtensions = new ModelExtensions
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
 
@@ -217,7 +220,11 @@ class ExternalController {
             'objectType' => $objectType,
             'sort' => $sort,
             'sortdir' => $sdir,
-            'currentPage' => $currentPage
+            'currentPage' => $currentPage«IF hasImageFields»,«ENDIF»
+            «IF hasImageFields»
+                'onlyImages' = false,
+                'imageField' => ''
+            «ENDIF»
         ];
         $searchTerm = '';
 
@@ -227,7 +234,7 @@ class ExternalController {
         ];
         $form = $this->createForm('«appNamespace»\Form\Type\Finder\\' . ucfirst($objectType) . 'FinderType', $templateParameters, $formOptions);
 
-        if ($form->handleRequest($request)->isValid() && $form->get('update')->isClicked()) {
+        if ($form->handleRequest($request)->isValid()) {
             $formData = $form->getData();
             $templateParameters = array_merge($templateParameters, $formData);
             $currentPage = $formData['currentPage'];
@@ -235,10 +242,29 @@ class ExternalController {
             $sort = $formData['sort'];
             $sdir = $formData['sortdir'];
             $searchTerm = $formData['q'];
+            «IF hasImageFields»
+                $templateParameters['onlyImages'] = isset($formData['onlyImages'] ? (bool)$formData['onlyImages'] : false;
+                $templateParameters['imageField'] = isset($formData['imageField'] ? $formData['imageField'] : '';
+            «ENDIF»
         }
 
         $where = '';
         $sortParam = $sort . ' ' . $sdir;
+        «IF hasImageFields»
+
+            if (true === $templateParameters['onlyImages'] && $templateParameters['imageField'] != '') {
+                $searchTerm = '';
+                $imageField = $templateParameters['imageField'];
+
+                $whereParts = [];
+                foreach (['gif', 'jpg', 'jpeg', 'jpe', 'png', 'bmp'] as $imageExtension) {
+                    $whereParts[] = 'tbl.' . $imageField . ':like:%.' . $imageExtension;
+                }
+
+                $where = '(' . implode('*', $whereParts) . ')';
+            }
+        «ENDIF»
+
         if ($searchTerm != '') {
             list($entities, $objectCount) = $repository->selectSearch($searchTerm, [], $sortParam, $currentPage, $resultsPerPage);
         } else {
@@ -261,6 +287,11 @@ class ExternalController {
         $templateParameters['items'] = $entities;
         $templateParameters['finderForm'] = $form->createView();
 
+        «IF hasImageFields»
+            $imageHelper = $this->get('«appService».image_helper');
+            $templateParameters = array_merge($templateParameters, $repository->getAdditionalTemplateParameters($imageHelper, 'controllerAction', ['action' => 'display']));
+
+        «ENDIF»
         «IF needsFeatureActivationHelper»
             $templateParameters['featureActivationHelper'] = $this->get('«appService».feature_activation_helper');
 

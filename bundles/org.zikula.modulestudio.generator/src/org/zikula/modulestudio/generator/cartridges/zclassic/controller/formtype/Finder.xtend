@@ -104,6 +104,9 @@ class Finder {
                         $this->addCategoriesField($builder, $options);
                     }
                 «ENDIF»
+                «IF hasImageFieldsEntity»
+                    $this->addImageFields($builder, $options);
+                «ENDIF»
                 $this->addPasteAsField($builder, $options);
                 $this->addSortingFields($builder, $options);
                 $this->addAmountField($builder, $options);
@@ -130,6 +133,10 @@ class Finder {
 
             «IF categorisable»
                 «addCategoriesField»
+
+            «ENDIF»
+            «IF hasImageFieldsEntity»
+                «addImageFields»
 
             «ENDIF»
             «addPasteAsField»
@@ -197,6 +204,43 @@ class Finder {
         }
     '''
 
+    def private addImageFields(Entity it) '''
+        /**
+         * Adds fields for image insertion options.
+         *
+         * @param FormBuilderInterface $builder The form builder
+         * @param array                $options The options
+         */
+        public function addImageFields(FormBuilderInterface $builder, array $options)
+        {
+            $builder->add('onlyImages', '«nsSymfonyFormType»CheckboxType', [
+                'label' => $this->__('Only images'),
+                'empty_data' => false,
+                'help' => $this->__('Enable this option to insert images'),
+                'required' => false
+            ]);
+            «IF imageFieldsEntity.size > 1»
+                $builder->add('imageField', '«nsSymfonyFormType»ChoiceType', [
+                    'label' => $this->__('Image field'),
+                    'empty_data' => '«imageFieldsEntity.head.name.formatForCode»',
+                    'help' => $this->__('You can switch between different image fields'),
+                    'choices' => [
+                        «FOR imageField : imageFieldsEntity»
+                            $this->__('«imageField.name.formatForDisplayCapital»') => '«imageField.name.formatForCode»'«IF imageField != imageFieldsEntity.last»,«ENDIF»
+                        «ENDFOR»
+                    ],
+                    'choices_as_values' => true,
+                    'multiple' => false,
+                    'expanded' => false
+                ]);
+            «ELSE»
+                $builder->add('imageField', '«nsSymfonyFormType»HiddenType', [
+                    'data' => '«imageFieldsEntity.head.name.formatForCode»'
+                ]);
+            «ENDIF»
+        }
+    '''
+
     def private addPasteAsField(Entity it) '''
         /**
          * Adds a "paste as" field.
@@ -206,12 +250,17 @@ class Finder {
          */
         public function addPasteAsField(FormBuilderInterface $builder, array $options)
         {
-            $builder->add('pasteas', '«nsSymfonyFormType»ChoiceType', [
+            $builder->add('pasteAs', '«nsSymfonyFormType»ChoiceType', [
                 'label' => $this->__('Paste as') . ':',
                 'empty_data' => 1,
                 'choices' => [
                     $this->__('Link to the «name.formatForDisplay»') => 1,
-                    $this->__('ID of «name.formatForDisplay»') => 2
+                    $this->__('ID of «name.formatForDisplay»') => 2«IF hasImageFieldsEntity»,«ENDIF»
+                    «IF hasImageFieldsEntity»
+                        $this->__('Link to the image') => 6,
+                        $this->__('Image') => 7,
+                        $this->__('Image with link to the «name.formatForDisplay»') => 8
+                    «ENDIF»
                 ],
                 'choices_as_values' => true,
                 'multiple' => false,
@@ -242,7 +291,8 @@ class Finder {
                         «IF standardFields»
                             $this->__('Creation date') => 'createdDate',
                             $this->__('Creator') => 'createdBy',
-                            $this->__('Update date') => 'updatedDate'
+                            $this->__('Update date') => 'updatedDate',
+                            $this->__('Updater') => 'updatedBy'
                         «ENDIF»
                     ],
                     'choices_as_values' => true,

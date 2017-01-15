@@ -72,6 +72,21 @@ class Finder {
 
         «objName».finder.onLoad = function (baseId, selectedId)
         {
+            «IF hasImageFields»
+                var imageModeEnabled;
+
+                imageModeEnabled = jQuery("[id$='onlyimages']").prop('checked');
+                if (!imageModeEnabled) {
+                    jQuery("[id$='imagefield'].addClass('hidden');
+                    jQuery("[id$='pasteas'] option[value=6]").addClass('hidden');
+                    jQuery("[id$='pasteas'] option[value=7]").addClass('hidden');
+                    jQuery("[id$='pasteas'] option[value=8]").addClass('hidden');
+                } else {
+                    jQuery("[id$='q']").addClass('hidden');
+                }
+
+                jQuery('input[type="checkbox"]').click(«objName».finder.onParamChanged);
+            «ENDIF»
             jQuery('select').not("[id$='pasteas']").change(«objName».finder.onParamChanged);
             «/*jQuery('.btn-success').addClass('hidden');*/»
             jQuery('.btn-default').click(«objName».finder.handleCancel);
@@ -106,26 +121,51 @@ class Finder {
 
         function «vendorAndName»GetPasteSnippet(mode, itemId)
         {
-            var quoteFinder, itemUrl, itemTitle, itemDescription, pasteMode;
+            var quoteFinder;
+            var itemUrl;
+            var itemTitle;
+            var itemDescription;
+            «IF hasImageFields»
+                var imageUrl;
+            «ENDIF»
+            var pasteMode;
 
             quoteFinder = new RegExp('"', 'g');
             itemUrl = jQuery('#url' + itemId).val().replace(quoteFinder, '');
             itemTitle = jQuery('#title' + itemId).val().replace(quoteFinder, '').trim();
             itemDescription = jQuery('#desc' + itemId).val().replace(quoteFinder, '').trim();
+            «IF hasImageFields»
+                imageUrl = jQuery('#imageUrl' + itemId).val().replace(quoteFinder, '');
+            «ENDIF»
             pasteMode = jQuery("[id$='pasteas']").first().val();
 
-            if (pasteMode === '2' || pasteMode !== '1') {
+            // item ID
+            if (pasteMode === '2') {
                 return '' + itemId;
             }
 
-            // return link to item
-            if (mode === 'url') {
-                // plugin mode
-                return itemUrl;
+            // link to detail page
+            if (pasteMode === '1') {
+                return mode === 'url' ? itemUrl : '<a href="' + itemUrl + '" title="' + itemDescription + '">' + itemTitle + '</a>';
             }
+            «IF hasImageFields»
 
-            // editor mode
-            return '<a href="' + itemUrl + '" title="' + itemDescription + '">' + itemTitle + '</a>';
+                if (pasteMode === '6') {
+                    // link to image file
+                    return mode === 'url' ? imageUrl : '<a href="' + imageUrl + '" title="' + itemDescription + '">' + itemTitle + '</a>';
+                }
+                if (pasteMode === '7') {
+                    // image tag
+                    return '<img src="' + imageUrl + '" alt="' + itemTitle + '" />';
+                }
+                if (pasteMode === '8') {
+                    // image tag with link to detail page
+                    return mode === 'url' ? itemUrl : '<a href="' + itemUrl + '" title="' + itemTitle + '"><img src="' + imageUrl + '" alt="' + itemTitle + '" /></a>';
+                }
+
+            «ENDIF»
+
+            return '';
         }
 
 

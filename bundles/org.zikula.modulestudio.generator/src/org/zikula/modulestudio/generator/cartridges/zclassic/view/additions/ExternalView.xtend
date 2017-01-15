@@ -183,6 +183,10 @@ class ExternalView {
                             {{ form_row(finderForm.categories) }}
                         {% endif %}
                     «ENDIF»
+                    «IF hasImageFieldsEntity»
+                        {{ form_row(finderForm.onlyImages) }}
+                        {{ form_row(finderForm.imageField) }}
+                    «ENDIF»
                     {{ form_row(finderForm.pasteas) }}
                     <br />
                     «findTemplateObjectId(app)»
@@ -227,19 +231,65 @@ class ExternalView {
             <label class="col-sm-3 control-label">{{ __('«name.formatForDisplayCapital»') }}:</label>
             <div class="col-sm-9">
                 <div id="«app.appName.toLowerCase»ItemContainer">
-                    <ul>
+                    «IF hasImageFieldsEntity»
+                        {% if not onlyImages %}
+                            <ul>
+                        {% endif %}
+                    «ELSE»
+                        <ul>
+                    «ENDIF»
                         {% for «name.formatForCode» in items %}
-                            <li>
+                            «IF hasImageFieldsEntity»
+                            {% if attribute(«name.formatForCode», imageField) is not empty and attribute(«name.formatForCode», imageField ~ 'Meta').isImage %}
+                            «ENDIF»
+                            «IF hasImageFieldsEntity»
+                                {% if not onlyImages %}
+                                    <li>
+                                {% endif %}
+                            «ELSE»
+                                <li>
+                            «ENDIF»
                                 {% set itemId = «name.formatForCode».createCompositeIdentifier() %}
-                                <a href="#" data-itemid="{{ itemId }}">{{ «name.formatForCode».getTitleFromDisplayPattern() }}</a>
+                                <a href="#" data-itemid="{{ itemId }}">
+                                    «IF hasImageFieldsEntity»
+                                        {% set thumbOptions = attribute(thumbRuntimeOptions, '«name.formatForCode»' ~ imageField|capitalize) %}
+                                        <img src="{{ attribute(«name.formatForCode», imageField).getPathname()|imagine_filter('zkroot', thumbOptions) }}" alt="{{ «name.formatForCode».getTitleFromDisplayPattern()|e('html_attr') }}" width="{{ thumbOptions.thumbnail.size[0] }}" height="{{ thumbOptions.thumbnail.size[1] }}" class="img-rounded" />
+                                    «ELSE»
+                                        {{ «name.formatForCode».getTitleFromDisplayPattern() }}
+                                    «ENDIF»
+                                </a>
                                 <input type="hidden" id="url{{ itemId }}" value="{{ url('«app.appName.formatForDB»_«name.formatForDB»_display'«routeParams(name.formatForCode, true)») }}" />
                                 <input type="hidden" id="title{{ itemId }}" value="{{ «name.formatForCode».getTitleFromDisplayPattern()|e('html_attr') }}" />
                                 <input type="hidden" id="desc{{ itemId }}" value="{% set description %}«displayDescription('', '')»{% endset %}{{ description|striptags|e('html_attr') }}" />
-                            </li>
+                                «IF hasImageFieldsEntity»
+                                    {% if onlyImages %}
+                                        <input type="hidden" id="imageUrl{{ itemId }}" value="{{ attribute(«name.formatForCode», imageField).getPathname() }}" />
+                                    {% endif %}
+                                «ENDIF»
+                            «IF hasImageFieldsEntity»
+                                {% if not onlyImages %}
+                                    </li>
+                                {% endif %}
+                            «ELSE»
+                                </li>
+                            «ENDIF»
+                            «IF hasImageFieldsEntity»
+                            {% endif %}
+                            «ENDIF»
                         {% else %}
-                            <li>{{ __('No entries found.') }}</li>
+                            «IF hasImageFieldsEntity»
+                                {% if not onlyImages %}<li>{% endif %}{{ __('No «nameMultiple.formatForDisplay» found.') }}{% if not onlyImages %}</li>{% endif %}
+                            «ELSE»
+                                <li>{{ __('No «nameMultiple.formatForDisplay» found.') }}</li>
+                            «ENDIF»
                         {% endfor %}
-                    </ul>
+                    «IF hasImageFieldsEntity»
+                        {% if not onlyImages %}
+                            </ul>
+                        {% endif %}
+                    «ELSE»
+                        </ul>
+                    «ENDIF»
                 </div>
             </div>
         </div>

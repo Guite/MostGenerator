@@ -266,21 +266,23 @@ class Styles {
             color: #900;
             text-decoration: none;
         }
+        «IF hasImageFields»
 
-        #«cssPrefix»ItemContainer a img {
-            border: none;
-        }
+            #«cssPrefix»ItemContainer a img {
+                border: none;
+            }
 
-        #«cssPrefix»ItemContainer a img {
-            border: 1px solid #ccc;
-            background-color: #f5f5f5;
-            padding: 0.5em;
-        }
-        #«cssPrefix»ItemContainer a:hover img,
-        #«cssPrefix»ItemContainer a:focus img,
-        #«cssPrefix»ItemContainer a:active img {
-            background-color: #fff;
-        }
+            #«cssPrefix»ItemContainer a img {
+                border: 1px solid #ccc;
+                background-color: #f5f5f5;
+                padding: 0.5em;
+            }
+            #«cssPrefix»ItemContainer a:hover img,
+            #«cssPrefix»ItemContainer a:focus img,
+            #«cssPrefix»ItemContainer a:active img {
+                background-color: #fff;
+            }
+        «ENDIF»
 
         .«cssPrefix»-finderform fieldset,
         .«cssPrefix»-finderform fieldset legend {
