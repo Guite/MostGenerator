@@ -271,7 +271,7 @@ class QuickNavigation {
 
             $builder->add('categories', 'Zikula\CategoriesModule\Form\Type\CategoriesType', [
                 'label' => $this->__('«IF categorisableMultiSelection»Categories«ELSE»Category«ENDIF»'),
-                'empty_data' => [],
+                'empty_data' => «IF categorisableMultiSelection»[]«ELSE»null«ENDIF»,
                 'attr' => [
                     'class' => 'input-sm category-selector',
                     'title' => $this->__('This is an optional filter.')

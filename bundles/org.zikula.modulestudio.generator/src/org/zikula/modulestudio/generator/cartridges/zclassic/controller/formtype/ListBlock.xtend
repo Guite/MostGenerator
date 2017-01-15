@@ -178,7 +178,7 @@ class ListBlock {
             $hasMultiSelection = $options['categoryHelper']->hasMultipleSelection($options['objectType']);
             $builder->add('categories', 'Zikula\CategoriesModule\Form\Type\CategoriesType', [
                 'label' => ($hasMultiSelection ? $this->__('Categories') : $this->__('Category')) . ':',
-                'empty_data' => [],
+                'empty_data' => $hasMultiSelection ? [] : null,
                 'attr' => [
                     'class' => 'category-selector',
                     'title' => $this->__('This is an optional filter.')
