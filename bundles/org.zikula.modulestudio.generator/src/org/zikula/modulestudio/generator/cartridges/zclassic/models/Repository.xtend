@@ -88,6 +88,25 @@ class Repository {
         }
     }
 
+    def private getDefaultSortingField(Entity it) {
+        if (hasSortableFields) {
+            getSortableFields.head
+        } else if (!getSortingFields.empty) {
+            if (getSortingFields.size > 1 && getSortingFields.head.name.formatForCode == 'workflowState') {
+                getSortingFields.get(1)
+            } else {
+                getSortingFields.head
+            }
+        } else {
+            val stringFields = fields.filter(StringField).filter[!password]
+            if (!stringFields.empty) {
+                stringFields.head
+            } else {
+                getDerivedFields.head
+            }
+        }
+    }
+
     def private modelRepositoryBaseImpl(Entity it) '''
         «imports»
         /**
@@ -105,7 +124,7 @@ class Repository {
             /**
              * @var string The default sorting field/expression
              */
-            protected $defaultSortingField = '«(if (hasSortableFields) getSortableFields.head else if (!getSortingFields.empty) getSortingFields.head else if (!stringFields.empty) stringFields.head else getDerivedFields.head).name.formatForCode»';
+            protected $defaultSortingField = '«getDefaultSortingField.name.formatForCode»';
 
             /**
              * @var Request The request object given by the calling controller
@@ -1311,6 +1330,18 @@ class Repository {
                 if (false === strpos($orderBy, '.')) {
                     $orderBy = 'tbl.' . $orderBy;
                 }
+                «IF standardFields»
+                    if (false !== strpos($orderBy, 'tbl.createdBy')) {
+                        $qb->addSelect('tblCreator')
+                           ->leftJoin('tbl.createdBy', 'tblCreator');
+                        $orderBy = str_replace('tbl.createdBy', 'tblCreator.uname', $orderBy);
+                    }
+                    if (false !== strpos($orderBy, 'tbl.updatedBy')) {
+                        $qb->addSelect('tblUpdater')
+                           ->leftJoin('tbl.updatedBy', 'tblUpdater');
+                        $orderBy = str_replace('tbl.updatedBy', 'tblUpdater.uname', $orderBy);
+                    }
+                «ENDIF»
                 $qb->add('orderBy', $orderBy);
             }
 

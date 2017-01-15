@@ -473,7 +473,7 @@ class QuickNavigation {
                         «ENDIF»
                     ],
                     'choices_as_values' => true,
-                    'required' => false,
+                    'required' => true,
                     'expanded' => false
                 ])
                 ->add('sortdir', '«nsSymfonyFormType»ChoiceType', [
@@ -487,7 +487,7 @@ class QuickNavigation {
                         $this->__('Descending') => 'desc'
                     ],
                     'choices_as_values' => true,
-                    'required' => false,
+                    'required' => true,
                     'expanded' => false
                 ])
             ;
