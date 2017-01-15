@@ -580,10 +580,9 @@ class UploadHelper {
          *
          * @param EntityAccess $entity    The entity object
          * @param string       $fieldName Name of upload field
-         * @param string       $fileName  Field Value
          * @param string       $baseUrl   The base url to prepend
          */
-        public function initialiseUploadField($entity, $fieldName, $fileName, $baseUrl)
+        public function initialiseUploadField($entity, $fieldName, $baseUrl)
         {
             if (empty($fieldName)) {
                 return;
