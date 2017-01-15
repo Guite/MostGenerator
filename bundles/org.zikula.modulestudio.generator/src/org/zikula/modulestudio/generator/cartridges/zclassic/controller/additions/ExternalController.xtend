@@ -222,7 +222,7 @@ class ExternalController {
             'sortdir' => $sdir,
             'currentPage' => $currentPage«IF hasImageFields»,«ENDIF»
             «IF hasImageFields»
-                'onlyImages' = false,
+                'onlyImages' => false,
                 'imageField' => ''
             «ENDIF»
         ];
