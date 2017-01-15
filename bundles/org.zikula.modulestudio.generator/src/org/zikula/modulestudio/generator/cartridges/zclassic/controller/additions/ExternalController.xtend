@@ -243,8 +243,8 @@ class ExternalController {
             $sdir = $formData['sortdir'];
             $searchTerm = $formData['q'];
             «IF hasImageFields»
-                $templateParameters['onlyImages'] = isset($formData['onlyImages'] ? (bool)$formData['onlyImages'] : false;
-                $templateParameters['imageField'] = isset($formData['imageField'] ? $formData['imageField'] : '';
+                $templateParameters['onlyImages'] = isset($formData['onlyImages']) ? (bool)$formData['onlyImages'] : false;
+                $templateParameters['imageField'] = isset($formData['imageField']) ? $formData['imageField'] : '';
             «ENDIF»
         }
 
