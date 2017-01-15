@@ -84,7 +84,7 @@ class Forms {
             {{ parent() }}
             {{ pageAddAsset('javascript', zasset('@«app.appName»:js/«app.appName».Validation.js', 98)) }}
             {{ pageAddAsset('javascript', zasset('@«app.appName»:js/«app.appName».EditFunctions.js', 99)) }}
-            «IF (hasUserFieldsEntity || !getOutgoingJoinRelations.empty || !getIncomingJoinRelations.empty)»
+            «IF (hasUserFieldsEntity || standardFields || !getOutgoingJoinRelations.empty || !getIncomingJoinRelations.empty)»
                 {{ pageAddAsset('javascript', pagevars.homepath ~ 'vendor/twitter/typeahead.js/dist/typeahead.bundle.min.js') }}
             «ENDIF»
         {% endblock %}
