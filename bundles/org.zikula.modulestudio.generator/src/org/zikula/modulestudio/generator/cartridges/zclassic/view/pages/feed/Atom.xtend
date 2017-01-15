@@ -71,7 +71,7 @@ class Atom {
                 {% if «objName».createdBy|default and «objName».createdBy.getUid() > 0 %}
                     {% set creatorAttributes = «objName».createdBy.getAttributes() %}
                     <author>
-                       <name>{{ creatorAttributes.get('name')|default(«objName».createdBy.getUname()) }}</name>
+                       <name>{{ creatorAttributes.get('realname')|default(creatorAttributes.get('name'))|default(«objName».createdBy.getUname()) }}</name>
                        <uri>{{ creatorAttributes.get('_UYOURHOMEPAGE')|default('-') }}</uri>
                        <email>{{ «objName».createdBy.getEmail() }}</email>
                     </author>

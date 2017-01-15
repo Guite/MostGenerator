@@ -137,24 +137,22 @@ class LinkContainer {
 
                 if (LinkContainerInterface::TYPE_ACCOUNT == $type) {
                     «IF generateAccountApi»
-                        $useAccountPage = $this->variableApi->get('«appName»', 'useAccountPage', true);
-                        if (false === $useAccountPage) {
-                            return $links;
-                        }
-
                         if (!$this->permissionApi->hasPermission($this->getBundleName() . '::', '::', ACCESS_OVERVIEW)) {
                             return $links;
                         }
 
-                        «FOR entity : getAllEntities.filter[standardFields && ownerPermission]»
-                            $objectType = '«entity.name.formatForCode»';
-                            if ($this->permissionApi->hasPermission($this->getBundleName() . ':' . ucfirst($objectType) . ':', '::', ACCESS_READ)) {
-                                $links[] = [
-                                    'url' => $this->router->generate('«appName.formatForDB»_' . strtolower($objectType) . '_view', ['own' => 1]),
-                                    'text' => $this->__('My «entity.nameMultiple.formatForDisplay»'),
-                                    'icon' => 'list-alt'
-                                ];
+                        «FOR entity : getAllEntities.filter[hasViewAction && standardFields]»
+                            if (true === $this->variableApi->get('«appName»', 'linkOwn«entity.nameMultiple.formatForCodeCapital»OnAccountPage', true)) {
+                                $objectType = '«entity.name.formatForCode»';
+                                if ($this->permissionApi->hasPermission($this->getBundleName() . ':' . ucfirst($objectType) . ':', '::', ACCESS_READ)) {
+                                    $links[] = [
+                                        'url' => $this->router->generate('«appName.formatForDB»_' . strtolower($objectType) . '_view', ['own' => 1]),
+                                        'text' => $this->__('My «entity.nameMultiple.formatForDisplay»'),
+                                        'icon' => 'list-alt'
+                                    ];
+                                }
                             }
+
                         «ENDFOR»
                         if ($this->permissionApi->hasPermission($this->getBundleName() . '::', '::', ACCESS_ADMIN)) {
                             $links[] = [

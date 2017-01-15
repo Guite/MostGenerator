@@ -238,6 +238,13 @@ class PersistenceTransformer {
                 value = '10'
                 documentation = 'The amount of ' + entity.nameMultiple.formatForDisplay + ' shown per page'
             ]
+            if (entity.standardFields) {
+                varContainer.vars += factory.createBoolVar => [
+                    name = 'linkOwn' + entity.nameMultiple.formatForCodeCapital + 'OnAccountPage'
+                    value = 'true'
+                    documentation = 'Whether to add a link to ' + entity.nameMultiple.formatForDisplay + ' of the current user on his account page'
+                ]
+            }
         }
 
         variables += varContainer

@@ -69,7 +69,7 @@ class Rss {
             «IF standardFields»
                 {% if «objName».createdBy|default and «objName».createdBy.getUid() > 0 %}
                     {% set creatorAttributes = «objName».createdBy.getAttributes() %}
-                    <author>{{ «objName».createdBy.getEmail() }} ({{ creatorAttributes.get('name')|default(«objName».createdBy.getUname()) }})</author>
+                    <author>{{ «objName».createdBy.getEmail() }} ({{ creatorAttributes.get('realname')|default(creatorAttributes.get('name'))|default(«objName».createdBy.getUname()) }})</author>
                 {% endif %}
             «ENDIF»
             «IF categorisable»
