@@ -469,7 +469,8 @@ class QuickNavigation {
                         «IF standardFields»
                             $this->__('Creation date') => 'createdDate',
                             $this->__('Creator') => 'createdBy',
-                            $this->__('Update date') => 'updatedDate'
+                            $this->__('Update date') => 'updatedDate',
+                            $this->__('Updater') => 'updatedBy'
                         «ENDIF»
                     ],
                     'choices_as_values' => true,
