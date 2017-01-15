@@ -75,7 +75,7 @@ class SimpleFields {
             «IF page == 'display'»
                   {% if not isQuickView %}
             «ENDIF»
-                {{ «realName».getUid()|profileLinkByUserId() }}
+                {{ «realName».getUid()|profileLinkByUserId() }}«IF entity.application.targets('1.4-dev')»{% if currentUser.loggedIn %}{% set sendMessageUrl = «realName».getUid()|messageSendLink(urlOnly=true) %}{% if sendMessageUrl != '#' %}<a href="{{ sendMessageUrl }}" title="{{ __f('Send private message to %userName%', { '%userName%': «realName».getUname() }) }}"><i class="fa fa-envelope-o"></i></a>{% endif %}«ENDIF»
                 <span class="avatar">{{ «entity.application.appName.formatForDB»_userAvatar(«realName».getUid(), rating='g') }}</span>
             «IF page == 'display'»
                 {% else %}
