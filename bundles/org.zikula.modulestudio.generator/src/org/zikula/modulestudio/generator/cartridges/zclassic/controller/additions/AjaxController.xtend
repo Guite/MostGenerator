@@ -63,8 +63,7 @@ class AjaxController {
 
             «getItemListFinderBase»
         «ENDIF»
-        «val joinRelations = getJoinRelations»
-        «IF !joinRelations.empty»
+        «IF needsAutoCompletion»
 
             «getItemListAutoCompletionBase»
         «ENDIF»
@@ -910,8 +909,7 @@ class AjaxController {
 
             «getItemListFinderImpl»
         «ENDIF»
-        «val joinRelations = getJoinRelations»
-        «IF !joinRelations.empty»
+        «IF needsAutoCompletion»
 
             «getItemListAutoCompletionImpl»
         «ENDIF»

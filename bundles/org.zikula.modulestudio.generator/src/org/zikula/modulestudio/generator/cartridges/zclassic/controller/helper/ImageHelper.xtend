@@ -4,12 +4,14 @@ import de.guite.modulestudio.metamodel.Application
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
+import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class ImageHelper {
 
     extension ModelExtensions = new ModelExtensions
+    extension ModelJoinExtensions = new ModelJoinExtensions
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
 
@@ -118,11 +120,15 @@ class ImageHelper {
                     $args['action'] = 'index';
                 }
 
-                if ($args['controller'] == 'ajax' && $args['action'] == 'getItemListAutoCompletion') {
-                    $contextName = $this->name . '_ajax_autocomplete';
-                } else {
+                «IF needsAutoCompletion»
+                    if ($args['controller'] == 'ajax' && $args['action'] == 'getItemListAutoCompletion') {
+                        $contextName = $this->name . '_ajax_autocomplete';
+                    } else {
+                        $contextName = $this->name . '_' . $args['controller'] . '_' . $args['action'];
+                    }
+                «ELSE»
                     $contextName = $this->name . '_' . $args['controller'] . '_' . $args['action'];
-                }
+                «ENDIF»
             }
             if (empty($contextName)) {
                 $contextName = $this->name . '_default';
@@ -154,9 +160,14 @@ class ImageHelper {
                 ]
             ];
 
-            if ($contextName == $this->name . '_ajax_autocomplete') {
-                $options['thumbnail']['size'] = [100, 75];
-            } elseif ($contextName == $this->name . '_relateditem') {
+            «IF needsAutoCompletion»
+                if ($contextName == $this->name . '_ajax_autocomplete') {
+                    $options['thumbnail']['size'] = [100, 75];
+
+                    return $options;
+                }
+            «ENDIF»
+            if ($contextName == $this->name . '_relateditem') {
                 $options['thumbnail']['size'] = [100, 75];
             } elseif ($context == 'controllerAction') {
                 if (in_array($args['action'], ['view', 'display', 'edit'])) {
