@@ -330,7 +330,6 @@ class Listeners {
         «ELSE»
             «IF hasStandardFieldEntities || hasUserFields»
                 use Psr\Log\LoggerInterface;
-                use Zikula\Common\Translator\TranslatorInterface as ZkTranslatorInterface;
             «ENDIF»
             use Symfony\Component\EventDispatcher\EventSubscriberInterface;
             use Symfony\Component\HttpKernel\HttpKernelInterface;

@@ -21,7 +21,7 @@ class User {
     def generate(Application it, Boolean isBase) '''
         «IF isBase && (hasStandardFieldEntities || hasUserFields)»
             /**
-             * @var ZkTranslatorInterface
+             * @var TranslatorInterface
              */
             protected $translator;
 
@@ -43,14 +43,14 @@ class User {
             /**
              * UserListener constructor.
              *
-             * @param ZkTranslatorInterface $translator     Translator service instance
+             * @param TranslatorInterface $translator     Translator service instance
              * @param «name.formatForCodeCapital»Factory $entityFactory «name.formatForCodeCapital»Factory service instance
-             * @param CurrentUserApi        $currentUserApi CurrentUserApi service instance
-             * @param LoggerInterface       $logger         Logger service instance
+             * @param CurrentUserApi      $currentUserApi CurrentUserApi service instance
+             * @param LoggerInterface     $logger         Logger service instance
              *
              * @return void
              */
-            public function __construct(ZkTranslatorInterface $translator, «name.formatForCodeCapital»Factory $entityFactory, CurrentUserApi $currentUserApi, LoggerInterface $logger)
+            public function __construct(TranslatorInterface $translator, «name.formatForCodeCapital»Factory $entityFactory, CurrentUserApi $currentUserApi, LoggerInterface $logger)
             {
                 $this->translator = $translator;
                 $this->entityFactory = $entityFactory;
