@@ -61,8 +61,12 @@ class QuickNavigation {
         «ENDIF»
         use Zikula\Common\Translator\TranslatorInterface;
         use Zikula\Common\Translator\TranslatorTrait;
-        «IF hasLocaleFieldsEntity && app.targets('1.4-dev')»
-            use Zikula\SettingsModule\Api\LocaleApi;
+        «IF hasLocaleFieldsEntity»
+            «IF app.targets('1.4-dev')»
+                use Zikula\SettingsModule\Api\LocaleApi;
+            «ELSE»
+                use ZLanguage;
+            «ENDIF»
         «ENDIF»
         «IF app.needsFeatureActivationHelper»
             use «app.appNamespace»\Helper\FeatureActivationHelper;
@@ -557,8 +561,17 @@ class QuickNavigation {
 
     def private dispatch fieldType(StringField it) '''«IF country»Country«ELSEIF language»Language«ELSEIF locale»Locale«ELSEIF currency»Currency«ELSEIF timezone»Timezone«ENDIF»'''
     def private dispatch additionalOptions(StringField it) '''
-        'placeholder' => $this->__('All')«IF locale && app.targets('1.4-dev')»,
-        'choices' => $this->localeApi->getSupportedLocaleNames()«ENDIF»
+        «IF !mandatory && (country || language || locale || currency || timezone)»
+            'placeholder' => $this->__('All')«IF locale»,«ENDIF»
+        «ENDIF»
+        «IF locale»
+            «IF app.targets('1.4-dev')»
+                'choices' => $this->localeApi->getSupportedLocaleNames(),
+            «ELSE»
+                'choices' => array_flip(ZLanguage::getInstalledLanguageNames()),
+            «ENDIF»
+            'choices_as_values' => true
+        «ENDIF»
     '''
 
     def private dispatch additionalOptions(UserField it) '''
