@@ -185,9 +185,11 @@ class ExternalView {
                     «ENDIF»
                     «IF hasImageFieldsEntity»
                         {{ form_row(finderForm.onlyImages) }}
-                        {{ form_row(finderForm.imageField) }}
+                        <div id="imageFieldRow">
+                            {{ form_row(finderForm.imageField) }}
+                        </div>
                     «ENDIF»
-                    {{ form_row(finderForm.pasteas) }}
+                    {{ form_row(finderForm.pasteAs) }}
                     <br />
                     «findTemplateObjectId(app)»
 
@@ -195,7 +197,13 @@ class ExternalView {
                     {{ form_row(finderForm.sortdir) }}
                     {{ form_row(finderForm.num) }}
                     «IF hasAbstractStringFieldsEntity»
-                        {{ form_row(finderForm.q) }}
+                        «IF hasImageFieldsEntity»
+                            <div id="searchTermRow">
+                                {{ form_row(finderForm.q) }}
+                            </div>
+                        «ELSE»
+                            {{ form_row(finderForm.q) }}
+                        «ENDIF»
                     «ENDIF»
                     <div>
                         {{ pager({ display: 'page', rowcount: pager.numitems, limit: pager.itemsperpage, posvar: 'pos', maxpages: 10, route: '«app.appName.formatForDB»_external_finder'}) }}
@@ -240,7 +248,7 @@ class ExternalView {
                     «ENDIF»
                         {% for «name.formatForCode» in items %}
                             «IF hasImageFieldsEntity»
-                            {% if attribute(«name.formatForCode», imageField) is not empty and attribute(«name.formatForCode», imageField ~ 'Meta').isImage %}
+                            {% if not onlyImages or (attribute(«name.formatForCode», imageField) is not empty and attribute(«name.formatForCode», imageField ~ 'Meta').isImage) %}
                             «ENDIF»
                             «IF hasImageFieldsEntity»
                                 {% if not onlyImages %}
@@ -252,8 +260,12 @@ class ExternalView {
                                 {% set itemId = «name.formatForCode».createCompositeIdentifier() %}
                                 <a href="#" data-itemid="{{ itemId }}">
                                     «IF hasImageFieldsEntity»
-                                        {% set thumbOptions = attribute(thumbRuntimeOptions, '«name.formatForCode»' ~ imageField|capitalize) %}
-                                        <img src="{{ attribute(«name.formatForCode», imageField).getPathname()|imagine_filter('zkroot', thumbOptions) }}" alt="{{ «name.formatForCode».getTitleFromDisplayPattern()|e('html_attr') }}" width="{{ thumbOptions.thumbnail.size[0] }}" height="{{ thumbOptions.thumbnail.size[1] }}" class="img-rounded" />
+                                        {% if onlyImages %}
+                                            {% set thumbOptions = attribute(thumbRuntimeOptions, '«name.formatForCode»' ~ imageField[:1]|upper ~ imageField[1:]) %}
+                                            <img src="{{ attribute(«name.formatForCode», imageField).getPathname()|imagine_filter('zkroot', thumbOptions) }}" alt="{{ «name.formatForCode».getTitleFromDisplayPattern()|e('html_attr') }}" width="{{ thumbOptions.thumbnail.size[0] }}" height="{{ thumbOptions.thumbnail.size[1] }}" class="img-rounded" />
+                                        {% else %}
+                                            {{ «name.formatForCode».getTitleFromDisplayPattern() }}
+                                        {% endif %}
                                     «ELSE»
                                         {{ «name.formatForCode».getTitleFromDisplayPattern() }}
                                     «ENDIF»
@@ -263,7 +275,7 @@ class ExternalView {
                                 <input type="hidden" id="desc{{ itemId }}" value="{% set description %}«displayDescription('', '')»{% endset %}{{ description|striptags|e('html_attr') }}" />
                                 «IF hasImageFieldsEntity»
                                     {% if onlyImages %}
-                                        <input type="hidden" id="imageUrl{{ itemId }}" value="{{ attribute(«name.formatForCode», imageField).getPathname() }}" />
+                                        <input type="hidden" id="imageUrl{{ itemId }}" value="/{{ attribute(«name.formatForCode», imageField).getPathname() }}" />
                                     {% endif %}
                                 «ENDIF»
                             «IF hasImageFieldsEntity»

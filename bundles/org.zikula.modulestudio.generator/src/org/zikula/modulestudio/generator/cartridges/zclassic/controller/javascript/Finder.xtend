@@ -75,23 +75,23 @@ class Finder {
             «IF hasImageFields»
                 var imageModeEnabled;
 
-                imageModeEnabled = jQuery("[id$='onlyimages']").prop('checked');
+                imageModeEnabled = jQuery("[id$='onlyImages']").prop('checked');
                 if (!imageModeEnabled) {
-                    jQuery("[id$='imagefield'].addClass('hidden');
-                    jQuery("[id$='pasteas'] option[value=6]").addClass('hidden');
-                    jQuery("[id$='pasteas'] option[value=7]").addClass('hidden');
-                    jQuery("[id$='pasteas'] option[value=8]").addClass('hidden');
+                    jQuery('#imageFieldRow').addClass('hidden');
+                    jQuery("[id$='pasteAs'] option[value=6]").addClass('hidden');
+                    jQuery("[id$='pasteAs'] option[value=7]").addClass('hidden');
+                    jQuery("[id$='pasteAs'] option[value=8]").addClass('hidden');
                 } else {
-                    jQuery("[id$='q']").addClass('hidden');
+                    jQuery('#searchTermRow').addClass('hidden');
                 }
 
                 jQuery('input[type="checkbox"]').click(«objName».finder.onParamChanged);
             «ENDIF»
-            jQuery('select').not("[id$='pasteas']").change(«objName».finder.onParamChanged);
+            jQuery('select').not("[id$='pasteAs']").change(«objName».finder.onParamChanged);
             «/*jQuery('.btn-success').addClass('hidden');*/»
             jQuery('.btn-default').click(«objName».finder.handleCancel);
 
-            var selectedItems = jQuery('#«appName.toLowerCase»ItemContainer li a');
+            var selectedItems = jQuery('#«appName.toLowerCase»ItemContainer a');
             selectedItems.bind('click keypress', function (event) {
                 event.preventDefault();
                 «objName».finder.selectItem(jQuery(this).data('itemid'));
@@ -135,9 +135,9 @@ class Finder {
             itemTitle = jQuery('#title' + itemId).val().replace(quoteFinder, '').trim();
             itemDescription = jQuery('#desc' + itemId).val().replace(quoteFinder, '').trim();
             «IF hasImageFields»
-                imageUrl = jQuery('#imageUrl' + itemId).val().replace(quoteFinder, '');
+                imageUrl = jQuery('#imageUrl' + itemId).length > 0 ? jQuery('#imageUrl' + itemId).val().replace(quoteFinder, '') : '';
             «ENDIF»
-            pasteMode = jQuery("[id$='pasteas']").first().val();
+            pasteMode = jQuery("[id$='pasteAs']").first().val();
 
             // item ID
             if (pasteMode === '2') {
@@ -156,11 +156,11 @@ class Finder {
                 }
                 if (pasteMode === '7') {
                     // image tag
-                    return '<img src="' + imageUrl + '" alt="' + itemTitle + '" />';
+                    return '<img src="' + imageUrl + '" alt="' + itemTitle + '" width="300" />';
                 }
                 if (pasteMode === '8') {
                     // image tag with link to detail page
-                    return mode === 'url' ? itemUrl : '<a href="' + itemUrl + '" title="' + itemTitle + '"><img src="' + imageUrl + '" alt="' + itemTitle + '" /></a>';
+                    return mode === 'url' ? itemUrl : '<a href="' + itemUrl + '" title="' + itemTitle + '"><img src="' + imageUrl + '" alt="' + itemTitle + '" width="300" /></a>';
                 }
 
             «ENDIF»
