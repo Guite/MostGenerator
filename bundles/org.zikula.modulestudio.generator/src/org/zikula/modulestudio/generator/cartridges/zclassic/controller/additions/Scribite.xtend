@@ -220,7 +220,7 @@ class Scribite {
                     ed.addButton('«name.formatForDB»', {
                         title: '«name.formatForDB».desc',
                         cmd: 'mce«appName»',
-                        image: this.path.replace('docs/scribite/plugins/TinyMce/vendor/tinymce/plugins/«appName.formatForDB»', 'public/images') + 'admin.png'
+                        image: this.path.replace('docs/scribite/plugins/TinyMce/vendor/tinymce/plugins/«appName.formatForDB»', 'public/images') + 'admin.png',
                         onPostRender: function() {
                             var ctrl = this;
         
