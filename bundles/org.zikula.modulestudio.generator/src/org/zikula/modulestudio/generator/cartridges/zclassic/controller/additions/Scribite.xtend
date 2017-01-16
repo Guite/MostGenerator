@@ -189,7 +189,7 @@ class Scribite {
 
         (function () {
             // Load plugin specific language pack
-            tinymce.PluginManager.requireLangPack('«name.formatForDB»');
+            tinymce.PluginManager.requireLangPack('«appName.formatForDB»', 'de,en,nl');
 
             tinymce.create('tinymce.plugins.«appName»Plugin', {
                 /**
@@ -217,10 +217,10 @@ class Scribite {
                     });
 
                     // Register «name.formatForDB» button
-                    ed.addButton('«name.formatForDB»', {
-                        title: '«name.formatForDB».desc',
+                    ed.addButton('«appName.formatForDB»', {
+                        title: '«appName.formatForDB».desc',
                         cmd: 'mce«appName»',
-                        image: this.path.replace('docs/scribite/plugins/TinyMce/vendor/tinymce/plugins/«appName.formatForDB»', 'public/images') + 'admin.png',
+                        image: Zikula.Config.baseURL + '«relativeAppRootPath»«getResourcesPath»public/images/admin.png',
                         onPostRender: function() {
                             var ctrl = this;
         
@@ -264,25 +264,25 @@ class Scribite {
             });
 
             // Register plugin
-            tinymce.PluginManager.add('«name.formatForDB»', tinymce.plugins.«appName»Plugin);
+            tinymce.PluginManager.add('«appName.formatForDB»', tinymce.plugins.«appName»Plugin);
         }());
     '''
 
     def private tinyLangDe(Application it) '''
-        tinyMCE.addI18n('de.«name.formatForDB»', {
-            desc: unescape('«appName»-Objekt einf%FCgen')
+        tinymce.addI18n('de', {
+            '«appName.formatForDB».desc': unescape('«appName»-Objekt einf%FCgen')
         });
     '''
 
     def private tinyLangEn(Application it) '''
-        tinyMCE.addI18n('en.«name.formatForDB»', {
-            desc: 'Insert «appName» object'
+        tinymce.addI18n('en', {
+            '«appName.formatForDB».desc': 'Insert «appName» object'
         });
     '''
 
     def private tinyLangNl(Application it) '''
-        tinyMCE.addI18n('nl.«name.formatForDB»', {
-            desc: '«appName» Object invoegen'
+        tinymce.addI18n('nl', {
+            '«appName.formatForDB».desc': '«appName» Object invoegen'
         });
     '''
 }
