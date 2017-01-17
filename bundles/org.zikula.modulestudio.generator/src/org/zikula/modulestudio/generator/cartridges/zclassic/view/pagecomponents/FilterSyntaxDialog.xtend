@@ -2,14 +2,20 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.view.pagecomponent
 
 import de.guite.modulestudio.metamodel.Application
 import org.eclipse.xtext.generator.IFileSystemAccess
+import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 
 class FilterSyntaxDialog {
+
+    extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension NamingExtensions = new NamingExtensions
 
     def generate(Application it, IFileSystemAccess fsa) {
+        if (!generateListBlock && !generateListContentType) {
+            return
+        }
         var fileName = 'includeFilterSyntaxDialog.html.twig'
         if (!shouldBeSkipped(getViewPath + fileName)) {
             println('Generating filter syntax dialog')
