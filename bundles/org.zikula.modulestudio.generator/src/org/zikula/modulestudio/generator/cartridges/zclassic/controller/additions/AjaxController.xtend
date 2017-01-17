@@ -734,9 +734,11 @@ class AjaxController {
         $logger = $this->get('logger');
         $logArgs = ['app' => '«appName»', 'user' => $currentUserApi->get('uname'), 'entity' => $objectType];
         $selectionHelper = $this->get('«appService».selection_helper');
+        «IF hasStandardFieldEntities»
 
-        $currentUserId = $currentUserApi->isLoggedIn() ? $currentUserApi->get('uid') : 1;
-        $currentUser = $this->get('zikula_users_module.user_repository')->find($currentUserId);
+            $currentUserId = $currentUserApi->isLoggedIn() ? $currentUserApi->get('uid') : 1;
+            $currentUser = $this->get('zikula_users_module.user_repository')->find($currentUserId);
+        «ENDIF»
 
         switch ($op) {
             case 'addRootNode':
@@ -778,8 +780,12 @@ class AjaxController {
                 $entityData[$descriptionFieldName] = $this->__('This is a new root node');
             }
             $entity->merge($entityData);
-            $entity->setCreatedBy($currentUser);
-            $entity->setUpdatedBy($currentUser);«/*IF hasTranslatableFields»
+            «IF hasStandardFieldEntities»
+                if (method_exists($entity, 'setCreatedBy')) {
+                    $entity->setCreatedBy($currentUser);
+                    $entity->setUpdatedBy($currentUser);
+                }
+            «ENDIF»«/*IF hasTranslatableFields»
                 $entity->setLocale($request->getLocale());
             «ENDIF*/»
 
@@ -811,8 +817,12 @@ class AjaxController {
                 $entityData[$descriptionFieldName] = $this->__('This is a new child node');
             }
             $childEntity->merge($entityData);
-            $childEntity->setCreatedBy($currentUser);
-            $childEntity->setUpdatedBy($currentUser);
+            «IF hasStandardFieldEntities»
+                if (method_exists($childEntity, 'setCreatedBy')) {
+                    $childEntity->setCreatedBy($currentUser);
+                    $childEntity->setUpdatedBy($currentUser);
+                }
+            «ENDIF»
 
             // save new object
             $action = 'submit';
