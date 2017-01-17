@@ -952,7 +952,7 @@ class FormHandler {
                 $entity = $this->entityRef;
 
                 $entityTransClass = '\\«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Entity\\' . ucfirst($this->objectType) . 'TranslationEntity';
-                $transRepository = $this->entityManager->getRepository($entityTransClass);
+                $transRepository = $this->entityFactory->getObjectManager()->getRepository($entityTransClass);
 
                 // persist translated fields
                 $translations = $this->translatableHelper->processEntityAfterEditing($this->objectType, $entity, $this->form);
@@ -965,7 +965,7 @@ class FormHandler {
                     }
                 }
 
-                $this->entityManager->flush();
+                $this->entityFactory->getObjectManager()->flush();
             }
         «ENDIF»
 
