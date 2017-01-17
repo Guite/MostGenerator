@@ -642,6 +642,7 @@ class AjaxController {
 
         $returnValue = [
             'data'    => [],
+            'result'  => 'success',
             'message' => ''
         ];
 
@@ -652,7 +653,10 @@ class AjaxController {
         if (!in_array($op, ['addRootNode'])) {
             $rootId = $postData->getInt('root', 0);
             if (!$rootId) {
-                throw new FatalResponse($this->__('Error: invalid root node.'));
+                $returnValue['result'] = 'failure';
+                $returnValue['message'] = $this->__('Error: invalid root node.');
+
+                return new AjaxResponse($returnValue);
             }
         }
 
@@ -671,7 +675,10 @@ class AjaxController {
             foreach ($verificationResult as $errorMsg) {
                 $errorMessages[] = $errorMsg;
             }
-            throw new RuntimeException(implode('<br />', $errorMessages));
+            $returnValue['result'] = 'failure';
+            $returnValue['message'] = implode('<br />', $errorMessages);
+
+            return new AjaxResponse($returnValue);
         }
         $repository->recover();
         $entityManager = $this->get('«entityManagerService»');
@@ -694,7 +701,10 @@ class AjaxController {
     def private prepareTreeOperationParameters(Application it) '''
         $op = $postData->getAlpha('op', '');
         if (!in_array($op, ['addRootNode', 'addChildNode', 'deleteNode', 'moveNode', 'moveNodeTo'])) {
-            throw new FatalResponse($this->__('Error: invalid operation.'));
+            $returnValue['result'] = 'failure';
+            $returnValue['message'] = $this->__('Error: invalid operation.');
+
+            return new AjaxResponse($returnValue);
         }
 
         // Get id of treated node
@@ -702,7 +712,10 @@ class AjaxController {
         if (!in_array($op, ['addRootNode', 'addChildNode'])) {
             $id = $postData->getInt('id', 0);
             if (!$id) {
-                throw new FatalResponse($this->__('Error: invalid node.'));
+                $returnValue['result'] = 'failure';
+                $returnValue['message'] = $this->__('Error: invalid node.');
+
+                return new AjaxResponse($returnValue);
             }
         }
     '''
@@ -796,9 +809,15 @@ class AjaxController {
                     // execute the workflow action
                     $workflowHelper = $this->get('«appService».workflow_helper');
                     $success = $workflowHelper->executeAction($entity, $action);
+                    if (!$success) {
+                        $returnValue['result'] = 'failure';
+                	}
                 }
             } catch(\Exception $e) {
-                throw new RuntimeException($this->__f('Sorry, but an error occured during the %s action. Please apply the changes again!', ['%s' => $action]) . '  ' . $e->getMessage());
+                $returnValue['result'] = 'failure';
+                $returnValue['message'] = $this->__f('Sorry, but an error occured during the %s action. Please apply the changes again!', ['%s' => $action]) . '  ' . $e->getMessage();
+
+                return new AjaxResponse($returnValue);
             }
         //});
     '''
@@ -806,7 +825,10 @@ class AjaxController {
     def private treeOperationAddChildNode(Application it) '''
         $parentId = $postData->getInt('pid', 0);
         if (!$parentId) {
-            throw new FatalResponse($this->__('Error: invalid parent node.'));
+            $returnValue['result'] = 'failure';
+            $returnValue['message'] = $this->__('Error: invalid parent node.');
+
+            return new AjaxResponse($returnValue);
         }
 
         //$entityManager->transactional(function($entityManager) {
@@ -831,15 +853,24 @@ class AjaxController {
                     // execute the workflow action
                     $workflowHelper = $this->get('«appService».workflow_helper');
                     $success = $workflowHelper->executeAction($childEntity, $action);
+                    if (!$success) {
+                        $returnValue['result'] = 'failure';
+                	}
                 }
             } catch(\Exception $e) {
-                throw new RuntimeException($this->__f('Sorry, but an error occured during the %s action. Please apply the changes again!', ['%s' => $action]) . '  ' . $e->getMessage());
+                $returnValue['result'] = 'failure';
+                $returnValue['message'] = $this->__f('Sorry, but an error occured during the %s action. Please apply the changes again!', ['%s' => $action]) . '  ' . $e->getMessage();
+
+                return new AjaxResponse($returnValue);
             }
 
             //$childEntity->setParent($parentEntity);
             $parentEntity = $selectionHelper->getEntity($objectType, $parentId«IF hasSluggable», ''«ENDIF», false);
             if (null === $parentEntity) {
-                return new NotFoundResponse($this->__('No such item.'));
+                $returnValue['result'] = 'failure';
+                $returnValue['message'] = $this->__('No such item.');
+
+                return new AjaxResponse($returnValue);
             }
             $repository->persistAsLastChildOf($childEntity, $parentEntity);
         //});
@@ -850,7 +881,10 @@ class AjaxController {
         // remove node from tree and reparent all children
         $entity = $selectionHelper->getEntity($objectType, $id«IF hasSluggable», ''«ENDIF», false);
         if (null === $entity) {
-            return new NotFoundResponse($this->__('No such item.'));
+            $returnValue['result'] = 'failure';
+            $returnValue['message'] = $this->__('No such item.');
+
+            return new AjaxResponse($returnValue);
         }
 
         $entity->initWorkflow();
@@ -862,9 +896,15 @@ class AjaxController {
                 // execute the workflow action
                 $workflowHelper = $this->get('«appService».workflow_helper');
                 $success = $workflowHelper->executeAction($entity, $action);
+                if (!$success) {
+                    $returnValue['result'] = 'failure';
+            	}
             }
         } catch(\Exception $e) {
-            throw new RuntimeException($this->__f('Sorry, but an error occured during the %s action. Please apply the changes again!', ['%s' => $action]) . '  ' . $e->getMessage());
+            $returnValue['result'] = 'failure';
+            $returnValue['message'] = $this->__f('Sorry, but an error occured during the %s action. Please apply the changes again!', ['%s' => $action]) . '  ' . $e->getMessage();
+
+            return new AjaxResponse($returnValue);
         }
 
         $repository->removeFromTree($entity);
@@ -874,12 +914,18 @@ class AjaxController {
     def private treeOperationMoveNode(Application it) '''
         $moveDirection = $postData->getAlpha('direction', '');
         if (!in_array($moveDirection, ['up', 'down'])) {
-            throw new FatalResponse($this->__('Error: invalid direction.'));
+            $returnValue['result'] = 'failure';
+            $returnValue['message'] = $this->__('Error: invalid direction.');
+
+            return new AjaxResponse($returnValue);
         }
 
         $entity = $selectionHelper->getEntity($objectType, $id«IF hasSluggable», ''«ENDIF», false);
         if (null === $entity) {
-            return new NotFoundResponse($this->__('No such item.'));
+            $returnValue['result'] = 'failure';
+            $returnValue['message'] = $this->__('No such item.');
+
+            return new AjaxResponse($returnValue);
         }
 
         if ($moveDirection == 'up') {
@@ -893,19 +939,28 @@ class AjaxController {
     def private treeOperationMoveNodeTo(Application it) '''
         $moveDirection = $postData->getAlpha('direction', '');
         if (!in_array($moveDirection, ['after', 'before', 'bottom'])) {
-            throw new FatalResponse($this->__('Error: invalid direction.'));
+            $returnValue['result'] = 'failure';
+            $returnValue['message'] = $this->__('Error: invalid direction.');
+
+            return new AjaxResponse($returnValue);
         }
 
         $destId = $postData->getInt('destid', 0);
         if (!$destId) {
-            throw new FatalResponse($this->__('Error: invalid destination node.'));
+            $returnValue['result'] = 'failure';
+            $returnValue['message'] = $this->__('Error: invalid destination node.');
+
+            return new AjaxResponse($returnValue);
         }
 
         //$entityManager->transactional(function($entityManager) {
             $entity = $selectionHelper->getEntity($objectType, $id«IF hasSluggable», ''«ENDIF», false);
             $destEntity = $selectionHelper->getEntity($objectType, $destId«IF hasSluggable», ''«ENDIF», false);
             if (null === $entity || null === $destEntity) {
-                return new NotFoundResponse($this->__('No such item.'));
+                $returnValue['result'] = 'failure';
+                $returnValue['message'] = $this->__('No such item.');
+
+                return new AjaxResponse($returnValue);
             }
 
             if ($moveDirection == 'after') {

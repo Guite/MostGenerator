@@ -279,11 +279,13 @@ class TreeFunctions {
 
                 data = res.data;
 
-                /*if (data.message) {
-                    «vendorAndName»SimpleAlert(jQuery('.tree-container'), Translator.__('Success'), data.message, 'treeAjaxDoneAlert', 'success');
-                }*/
+                if (data.result == 'success') {
+                    /*«vendorAndName»SimpleAlert(jQuery('.tree-container'), Translator.__('Success'), data.message, 'treeAjaxDoneAlert', 'success');*/
 
-                window.location.reload();
+                    window.location.reload();
+                } else {
+                    «vendorAndName»SimpleAlert(jQuery('.tree-container'), Translator.__('Error'), data.message != '' ? data.message : Translator.__('Could not persist your change.'), 'treeAjaxFailedAlert', 'danger');
+            	}
             }).fail(function(jqXHR, textStatus) {
                 «vendorAndName»SimpleAlert(jQuery('.tree-container'), Translator.__('Error'), Translator.__('Could not persist your change.'), 'treeAjaxFailedAlert', 'danger');
             });
