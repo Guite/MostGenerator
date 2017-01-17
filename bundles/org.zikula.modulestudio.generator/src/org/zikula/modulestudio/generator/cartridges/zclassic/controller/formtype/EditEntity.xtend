@@ -665,7 +665,7 @@ class EditEntity {
     '''
 
     def private dispatch formType(IntegerField it) '''«nsSymfonyFormType»«IF percentage»Percent«ELSEIF range»Range«ELSE»Integer«ENDIF»'''
-    def private dispatch titleAttribute(IntegerField it) '''Enter the «name.formatForDisplay» of the «entity.name.formatForDisplay». Only digits are allowed.'''
+    def private dispatch titleAttribute(IntegerField it) '''Enter the «name.formatForDisplay» of the «entity.name.formatForDisplay».') . ' ' . $this->__('Only digits are allowed.'''
     def private dispatch additionalAttributes(IntegerField it) '''
         'maxlength' => «length»,
     '''

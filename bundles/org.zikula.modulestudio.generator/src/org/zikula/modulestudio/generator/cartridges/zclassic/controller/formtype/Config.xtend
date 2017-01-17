@@ -192,7 +192,7 @@ class Config {
     def private dispatch additionalOptions(Variable it) ''''''
 
     def private dispatch fieldType(IntVar it) '''«IF isUserGroupSelector»Symfony\Bridge\Doctrine\Form\Type\Entity«ELSE»«nsSymfonyFormType»Integer«ENDIF»'''
-    def private dispatch titleAttribute(IntVar it) '''«IF isUserGroupSelector»Choose the «name.formatForDisplay».«ELSE»Enter the «name.formatForDisplay». Only digits are allowed.«ENDIF»'''
+    def private dispatch titleAttribute(IntVar it) '''«IF isUserGroupSelector»Choose the «name.formatForDisplay».«ELSE»Enter the «name.formatForDisplay».') . ' ' . $this->__('Only digits are allowed.«ENDIF»'''
     def private dispatch additionalAttributes(IntVar it) '''
         «IF isUserGroupSelector»
             'maxlength' => 255,
