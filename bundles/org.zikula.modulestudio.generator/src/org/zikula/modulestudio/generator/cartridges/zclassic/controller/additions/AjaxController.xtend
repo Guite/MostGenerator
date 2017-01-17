@@ -730,9 +730,13 @@ class AjaxController {
     '''
 
     def private treeOperationSwitch(Application it) '''
+        $currentUserApi = $this->get('zikula_users_module.current_user');
         $logger = $this->get('logger');
-        $logArgs = ['app' => '«appName»', 'user' => $this->get('zikula_users_module.current_user')->get('uname'), 'entity' => $objectType];
+        $logArgs = ['app' => '«appName»', 'user' => $currentUserApi->get('uname'), 'entity' => $objectType];
         $selectionHelper = $this->get('«appService».selection_helper');
+
+        $currentUserId = $currentUserApi->isLoggedIn() ? $currentUserApi->get('uid') : 1;
+        $currentUser = $this->get('zikula_users_module.user_repository')->find($currentUserId);
 
         switch ($op) {
             case 'addRootNode':
@@ -773,7 +777,9 @@ class AjaxController {
             if (!empty($descriptionFieldName)) {
                 $entityData[$descriptionFieldName] = $this->__('This is a new root node');
             }
-            $entity->merge($entityData);«/*IF hasTranslatableFields»
+            $entity->merge($entityData);
+            $entity->setCreatedBy($currentUser);
+            $entity->setUpdatedBy($currentUser);«/*IF hasTranslatableFields»
                 $entity->setLocale($request->getLocale());
             «ENDIF*/»
 
@@ -805,6 +811,8 @@ class AjaxController {
                 $entityData[$descriptionFieldName] = $this->__('This is a new child node');
             }
             $childEntity->merge($entityData);
+            $childEntity->setCreatedBy($currentUser);
+            $childEntity->setUpdatedBy($currentUser);
 
             // save new object
             $action = 'submit';
