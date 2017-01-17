@@ -42,6 +42,7 @@ abstract class AbstractExtension implements EntityExtensionInterface {
 
         val entityPath = app.getAppSourceLibPath + 'Entity/'
         val entitySuffix = 'Entity'
+        val repositorySuffix = 'Repository'
         var classPrefix = name.formatForCodeCapital + classType.formatForCodeCapital
         val repositoryPath = entityPath + 'Repository/'
         var fileName = ''
@@ -54,10 +55,10 @@ abstract class AbstractExtension implements EntityExtensionInterface {
                 fsa.generateFile(entityPath + fileName, fh.phpFileContent(app, extensionClassBaseImpl))
             }
 
-            fileName = 'Base/Abstract' + classPrefix + '.php'
+            fileName = 'Base/Abstract' + classPrefix + repositorySuffix + '.php'
             if (classType != 'closure' && !app.shouldBeSkipped(repositoryPath + fileName)) {
                 if (app.shouldBeMarked(repositoryPath + fileName)) {
-                    fileName = 'Base/Abstract' + classPrefix + '.generated.php'
+                    fileName = 'Base/Abstract' + classPrefix + repositorySuffix + '.generated.php'
                 }
                 fsa.generateFile(repositoryPath + fileName, fh.phpFileContent(app, extensionClassRepositoryBaseImpl))
             }
@@ -71,10 +72,10 @@ abstract class AbstractExtension implements EntityExtensionInterface {
                 fsa.generateFile(entityPath + fileName, fh.phpFileContent(app, extensionClassImpl))
             }
 
-            fileName = classPrefix + '.php'
+            fileName = classPrefix + repositorySuffix + '.php'
             if (classType != 'closure' && !app.shouldBeSkipped(repositoryPath + fileName)) {
                 if (app.shouldBeMarked(repositoryPath + fileName)) {
-                    fileName = classPrefix + '.generated.php'
+                    fileName = classPrefix + repositorySuffix + '.generated.php'
                 }
                 fsa.generateFile(repositoryPath + fileName, fh.phpFileContent(app, extensionClassRepositoryImpl))
             }

@@ -114,7 +114,7 @@ class Repository {
          *
          * This is the base repository class for «name.formatForDisplay» entities.
          */
-        abstract class Abstract«name.formatForCodeCapital»Repository extends «IF tree != EntityTreeType.NONE»«tree.literal.toLowerCase.toFirstUpper»TreeRepository«ELSEIF hasTranslatableFields»TranslationRepository«ELSEIF hasSortableFields»SortableRepository«ELSE»EntityRepository«ENDIF»
+        abstract class Abstract«name.formatForCodeCapital»Repository extends «IF tree != EntityTreeType.NONE»«tree.literal.toLowerCase.toFirstUpper»TreeRepository«ELSEIF hasSortableFields»SortableRepository«ELSE»EntityRepository«ENDIF»
         {
             «/*IF tree != EntityTreeType.NONE»
                 use «tree.literal.toLowerCase.toFirstUpper»TreeRepositoryTrait;
@@ -241,8 +241,6 @@ class Repository {
             use Gedmo\Tree\Entity\Repository\«tree.literal.toLowerCase.toFirstUpper»TreeRepository;
             «/* use Gedmo\Tree\Traits\Repository\«tree.literal.toLowerCase.toFirstUpper»TreeRepositoryTrait; */ »
             use Doctrine\ORM\EntityManager;
-        «ELSEIF hasTranslatableFields»
-            use Gedmo\Translatable\Entity\Repository\TranslationRepository;
         «ELSEIF hasSortableFields»
             use Gedmo\Sortable\Entity\Repository\SortableRepository;
         «ELSE»

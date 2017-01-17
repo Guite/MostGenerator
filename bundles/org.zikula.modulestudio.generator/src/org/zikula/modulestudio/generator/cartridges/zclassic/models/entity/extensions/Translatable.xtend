@@ -34,13 +34,13 @@ class Translatable extends AbstractExtension implements EntityExtensionInterface
     override properties(Entity it) '''
 
         /**
-         * Field for storing the locale of this entity.
-         * Overrides the locale set in translationListener (as pointed out in https://github.com/l3pp4rd/DoctrineExtensions/issues/130#issuecomment-1790206 ).
+         * Used locale to override Translation listener's locale.
+         * this is not a mapped field of entity metadata, just a simple property.
          *
          «IF loggable»
              * @Gedmo\Versioned
          «ENDIF»
-         * Assert\Locale()
+         * @Assert\Locale()
          * @Gedmo\Locale«/*the same as @Gedmo\Language*/»
          * @var string $locale
          */
