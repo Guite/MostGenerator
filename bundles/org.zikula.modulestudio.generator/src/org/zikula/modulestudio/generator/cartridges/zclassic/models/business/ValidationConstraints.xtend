@@ -111,7 +111,7 @@ class ValidationConstraints {
         «IF maxValue.toString != '0.0'»
             «' '»* @Assert\LessThanOrEqual(value=«maxValue»)
         «ENDIF»
-        «' '»* @Assert\LessThan(value=«BigInteger.valueOf((10 ** (length + scale)) as long)», message="Length of field value must not be higher than «length».")
+        «' '»* @Assert\LessThan(value=«BigInteger.valueOf((10 ** length) as long)», message="Length of field value must not be higher than «length».")
     '''
     def dispatch fieldAnnotations(FloatField it) '''
         «fieldAnnotationsNumeric»
