@@ -515,13 +515,13 @@ class QuickNavigation {
                     'class' => 'input-sm text-right'
                 ],
                 'choices' => [
-                    5 => 5,
-                    10 => 10,
-                    15 => 15,
-                    20 => 20,
-                    30 => 30,
-                    50 => 50,
-                    100 => 100
+                    $this->__('5') => 5,
+                    $this->__('10') => 10,
+                    $this->__('15') => 15,
+                    $this->__('20') => 20,
+                    $this->__('30') => 30,
+                    $this->__('50') => 50,
+                    $this->__('100') => 100
                 ],
                 'choices_as_values' => true,
                 'required' => false,
