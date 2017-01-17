@@ -17,7 +17,7 @@ class Translatable extends AbstractExtension implements EntityExtensionInterface
      * Generates additional annotations on class level.
      */
     override classAnnotations(Entity it) '''
-         «' '»* @Gedmo\TranslationEntity(class="\«entityClassName('translation', false)»")
+         «' '»* @Gedmo\TranslationEntity(class="«entityClassName('translation', false)»")
     '''
 
     /**
@@ -66,14 +66,14 @@ class Translatable extends AbstractExtension implements EntityExtensionInterface
      * Returns the extension class import statements.
      */
     override extensionClassImports(Entity it) '''
-        use Gedmo\Translatable\Entity\«extensionBaseClass»;
+        use Gedmo\Translatable\Entity\MappedSuperclass\«extensionBaseClass»;
     '''
 
     /**
      * Returns the extension base class.
      */
     override extensionBaseClass(Entity it) {
-        'Translation'
+        'AbstractTranslation'
     }
 
     /**

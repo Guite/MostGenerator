@@ -292,7 +292,7 @@ class Entities {
          «IF it instanceof MappedSuperClass»
           * @ORM\MappedSuperclass
          «ELSEIF it instanceof Entity»
-          * @ORM\Entity(repositoryClass="\«app.appNamespace»\Entity\Repository\«name.formatForCodeCapital»Repository"«IF (it as Entity).readOnly», readOnly=true«ENDIF»)
+          * @ORM\Entity(repositoryClass="«app.appNamespace»\Entity\Repository\«name.formatForCodeCapital»Repository"«IF (it as Entity).readOnly», readOnly=true«ENDIF»)
          «ENDIF»
         «IF it instanceof Entity»
             «entityImplClassDocblockAdditions(app)»
