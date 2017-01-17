@@ -99,8 +99,9 @@ class ValidationConstraints {
                 «' '»* @Assert\GreaterThanOrEqual(value=«minValue»)
             «ELSEIF maxValue.toString != '0'»
                 «' '»* @Assert\LessThanOrEqual(value=«maxValue»)
+            «ELSE»
+                «' '»* @Assert\LessThan(value=«BigInteger.valueOf((10 ** length) as long)»)
             «ENDIF»
-            «' '»* @Assert\LessThan(value=«BigInteger.valueOf((10 ** length) as long)», message="Length of field value must not be higher than «length».")
         «ENDIF»
     '''
     def dispatch fieldAnnotations(DecimalField it) '''
@@ -110,8 +111,9 @@ class ValidationConstraints {
         «ENDIF»
         «IF maxValue.toString != '0.0'»
             «' '»* @Assert\LessThanOrEqual(value=«maxValue»)
+        «ELSE»
+            «' '»* @Assert\LessThan(value=«BigInteger.valueOf((10 ** length) as long)»)
         «ENDIF»
-        «' '»* @Assert\LessThan(value=«BigInteger.valueOf((10 ** length) as long)», message="Length of field value must not be higher than «length».")
     '''
     def dispatch fieldAnnotations(FloatField it) '''
         «fieldAnnotationsNumeric»
@@ -120,8 +122,9 @@ class ValidationConstraints {
         «ENDIF»
         «IF maxValue.toString != '0.0'»
             «' '»* @Assert\LessThanOrEqual(value=«maxValue»)
+        «ELSE»
+            «' '»* @Assert\LessThan(value=«BigInteger.valueOf((10 ** length) as long)»)
         «ENDIF»
-        «' '»* @Assert\LessThan(value=«BigInteger.valueOf((10 ** length) as long)», message="Length of field value must not be higher than «length».")
     '''
     def dispatch fieldAnnotations(UserField it) '''
         «fieldAnnotationsInteger»
