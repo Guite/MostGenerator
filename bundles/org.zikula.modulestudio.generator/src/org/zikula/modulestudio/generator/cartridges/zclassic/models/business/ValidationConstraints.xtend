@@ -27,6 +27,7 @@ import de.guite.modulestudio.metamodel.TimeField
 import de.guite.modulestudio.metamodel.UploadField
 import de.guite.modulestudio.metamodel.UrlField
 import de.guite.modulestudio.metamodel.UserField
+import java.math.BigInteger
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
@@ -99,7 +100,7 @@ class ValidationConstraints {
             «ELSEIF maxValue.toString != '0'»
                 «' '»* @Assert\LessThanOrEqual(value=«maxValue»)
             «ENDIF»
-            «' '»* @Assert\LessThan(value=«(10 ** length) as int», message="Length of field value must not be higher than «length».")
+            «' '»* @Assert\LessThan(value=«BigInteger.valueOf((10 ** length) as long)», message="Length of field value must not be higher than «length».")
         «ENDIF»
     '''
     def dispatch fieldAnnotations(DecimalField it) '''
@@ -110,7 +111,7 @@ class ValidationConstraints {
         «IF maxValue.toString != '0.0'»
             «' '»* @Assert\LessThanOrEqual(value=«maxValue»)
         «ENDIF»
-        «' '»* @Assert\LessThan(value=«(10 ** (length + scale)) as int», message="Length of field value must not be higher than «length».")
+        «' '»* @Assert\LessThan(value=«BigInteger.valueOf((10 ** (length + scale)) as long)», message="Length of field value must not be higher than «length».")
     '''
     def dispatch fieldAnnotations(FloatField it) '''
         «fieldAnnotationsNumeric»
@@ -120,7 +121,7 @@ class ValidationConstraints {
         «IF maxValue.toString != '0.0'»
             «' '»* @Assert\LessThanOrEqual(value=«maxValue»)
         «ENDIF»
-        «' '»* @Assert\LessThan(value=«(10 ** length) as int», message="Length of field value must not be higher than «length».")
+        «' '»* @Assert\LessThan(value=«BigInteger.valueOf((10 ** length) as long)», message="Length of field value must not be higher than «length».")
     '''
     def dispatch fieldAnnotations(UserField it) '''
         «fieldAnnotationsInteger»
