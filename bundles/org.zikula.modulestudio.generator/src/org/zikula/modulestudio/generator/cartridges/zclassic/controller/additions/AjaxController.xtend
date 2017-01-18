@@ -811,7 +811,7 @@ class AjaxController {
                     $success = $workflowHelper->executeAction($entity, $action);
                     if (!$success) {
                         $returnValue['result'] = 'failure';
-                	}
+                    }
                 }
             } catch(\Exception $e) {
                 $returnValue['result'] = 'failure';
@@ -855,7 +855,7 @@ class AjaxController {
                     $success = $workflowHelper->executeAction($childEntity, $action);
                     if (!$success) {
                         $returnValue['result'] = 'failure';
-                	}
+                    }
                 }
             } catch(\Exception $e) {
                 $returnValue['result'] = 'failure';
@@ -898,7 +898,7 @@ class AjaxController {
                 $success = $workflowHelper->executeAction($entity, $action);
                 if (!$success) {
                     $returnValue['result'] = 'failure';
-            	}
+                }
             }
         } catch(\Exception $e) {
             $returnValue['result'] = 'failure';
