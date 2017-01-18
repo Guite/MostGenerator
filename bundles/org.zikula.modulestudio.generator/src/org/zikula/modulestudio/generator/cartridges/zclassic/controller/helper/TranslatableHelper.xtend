@@ -270,11 +270,9 @@ class TranslatableHelper {
                         continue;
                     }
                     $translations[$language] = [];
-                    $translationKey = strtolower($objectType) . $language;
-                    $translationData = isset($form[$translationKey]) && $form[$translationKey]->getData();
                     foreach ($fields as $field) {
-                        $translations[$language][$field['name']] = isset($translationData[$field['name'] . $language]) ? $translationData[$field['name'] . $language] : '';
-                        unset($formData[$field['name'] . $language]);
+                        $translationKey = $field['name'] . $language;
+                        $translations[$language][$field['name']] = isset($form[$translationKey]) ? $form[$translationKey]->getData() : '';
                     }
                 }
             }

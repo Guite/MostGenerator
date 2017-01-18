@@ -1318,6 +1318,13 @@ class FormHandler {
                 $workflowRoles = $this->prepareWorkflowAdditions(«(workflow == EntityWorkflowType.ENTERPRISE).displayBool»);
                 $options = array_merge($options, $workflowRoles);
             «ENDIF»
+            «IF hasTranslatableFields»
+
+                $options['translations'] = [];
+                foreach ($this->templateParameters['supportedLanguages'] as $language) {
+                    $options['translations'][$language] = isset($this->templateParameters[$this->objectTypeLower . $language]) ? $this->templateParameters[$this->objectTypeLower . $language] : [];
+                }
+            «ENDIF»
 
             return $this->formFactory->create('«app.appNamespace»\Form\Type\«name.formatForCodeCapital»Type', $this->entityRef, $options);
         }

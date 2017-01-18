@@ -354,6 +354,9 @@ class EditEntity {
                         «IF it instanceof Entity && (it as Entity).standardFields»
                             'hasModeratePermission' => false,
                         «ENDIF»
+                        «IF it instanceof Entity && (it as Entity).hasTranslatableFields»
+                            'translations' => [],
+                        «ENDIF»
                         «IF !incoming.empty || !outgoing.empty»
                             'filterByOwnership' => true,
                             'inlineUsage' => false
@@ -375,6 +378,9 @@ class EditEntity {
                         'actions' => 'array',
                         «IF it instanceof Entity && (it as Entity).standardFields»
                             'hasModeratePermission' => 'bool',
+                        «ENDIF»
+                        «IF it instanceof Entity && (it as Entity).hasTranslatableFields»
+                            'translations' => 'array',
                         «ENDIF»
                         «IF !incoming.empty || !outgoing.empty»
                             'filterByOwnership' => 'bool',
@@ -417,34 +423,34 @@ class EditEntity {
                     if ($language != $currentLanguage) {
                         continue;
                     }
-                    «translatableFieldSet('', '')»
+                    «translatableFieldSet('')»
                 }
                 foreach ($supportedLanguages as $language) {
                     if ($language == $currentLanguage) {
                         continue;
                     }
-                    «translatableFieldSet('$language', '$language')»
+                    «translatableFieldSet('$language')»
                 }
             }
         }
         if (true === $useOnlyCurrentLanguage) {
             $language = $this->translatableHelper->getCurrentLanguage();
-            «translatableFieldSet('', '')»
+            «translatableFieldSet('')»
         }
     '''
 
     def private fieldAdditions(DataObject it, Boolean isTranslatable) '''
         «IF !isTranslatable || !getEditableNonTranslatableFields.empty»
             «IF isTranslatable»
-                «FOR field : getEditableNonTranslatableFields»«field.fieldImpl('', '')»«ENDFOR»
+                «FOR field : getEditableNonTranslatableFields»«field.fieldImpl('')»«ENDFOR»
             «ELSE»
-                «FOR field : getEditableFields»«field.fieldImpl('', '')»«ENDFOR»
+                «FOR field : getEditableFields»«field.fieldImpl('')»«ENDFOR»
             «ENDIF»
         «ENDIF»
         «IF it instanceof Entity»
             «IF hasSluggableFields && (!isTranslatable || !hasTranslatableSlug)»
 
-                «slugField('', '')»
+                «slugField('')»
             «ENDIF»
             «IF geographical»
                 $this->addGeographicalFields($builder, $options);
@@ -452,18 +458,26 @@ class EditEntity {
         «ENDIF»
     '''
 
-    def private translatableFieldSet(Entity it, String groupSuffix, String idSuffix) '''
-        «FOR field : getEditableTranslatableFields»«field.fieldImpl(groupSuffix, idSuffix)»«ENDFOR»
+    def private translatableFieldSet(Entity it, String idSuffix) '''
+        «IF idSuffix != ''»
+            $translationData = isset($options['translations'][$language]) ? $options['translations'][$language] : [];
+
+        «ENDIF»
+        «FOR field : getEditableTranslatableFields»«field.fieldImpl(idSuffix)»«ENDFOR»
         «IF hasTranslatableSlug»
-            «slugField(groupSuffix, idSuffix)»
+            «slugField(idSuffix)»
         «ENDIF»
     '''
 
-    def private slugField(Entity it, String groupSuffix, String idSuffix) '''
+    def private slugField(Entity it, String idSuffix) '''
         «IF hasSluggableFields && slugUpdatable && application.supportsSlugInputFields»
             $builder->add('slug'«IF idSuffix != ''» . «idSuffix»«ENDIF», '«nsSymfonyFormType»TextType', [
                 'label' => $this->__('Permalink') . ':',
                 'required' => false«/* slugUnique.displayBool */»,
+                «IF idSuffix != ''»
+                    'data' => isset($translationData['slug' . $language]) ? $translationData['slug' . $language] : null,
+                «ENDIF»
+                'empty_data' => '',
                 «IF idSuffix != ''»
                     'mapped' => false,
                 «ENDIF»
@@ -479,7 +493,7 @@ class EditEntity {
         «ENDIF»
     '''
 
-    def private fieldImpl(DerivedField it, String groupSuffix, String idSuffix) '''
+    def private fieldImpl(DerivedField it, String idSuffix) '''
         «/* No input fields for foreign keys, relations are processed further down */»
         «IF entity.getIncomingJoinRelations.filter[e|e.getSourceFields.head == name.formatForDB].empty»
             «IF it instanceof ListField»
@@ -501,6 +515,9 @@ class EditEntity {
                 «ENDIF»
                 «IF readonly»
                     'disabled' => true,
+                «ENDIF»
+                «IF idSuffix != ''»
+                    'data' => isset($translationData['«name.formatForCode»' . $language]) ? $translationData['«name.formatForCode»' . $language] : null,
                 «ENDIF»
                 «IF !(it instanceof BooleanField || it instanceof UploadField)»
                     'empty_data' => '«defaultValue»',
