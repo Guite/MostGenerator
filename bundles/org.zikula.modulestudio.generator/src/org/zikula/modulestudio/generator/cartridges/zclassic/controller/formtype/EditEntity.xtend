@@ -819,8 +819,8 @@ class EditEntity {
         'maxlength' => «length»,
     '''
     def private dispatch additionalOptions(UserField it) '''
-        'required' => «mandatory.displayBool»,
-        'inlineUsage' => $options['inlineUsage']
+        'required' => «mandatory.displayBool»«IF !entity.incoming.empty || !entity.outgoing.empty»,
+        'inlineUsage' => $options['inlineUsage']«ENDIF»
     '''
 
     def private dispatch formType(DatetimeField it) '''«app.appNamespace»\Form\Type\Field\DateTime'''
