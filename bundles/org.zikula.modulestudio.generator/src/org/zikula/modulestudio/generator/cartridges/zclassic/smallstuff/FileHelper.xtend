@@ -148,7 +148,7 @@ class FileHelper {
         «IF !aggregators.empty»
             $diff = abs($this->«name» - $«name»);
         «ENDIF»
-        $this->«name» = «IF it instanceof UserField»$«name»«ELSEIF it instanceof AbstractIntegerField»intval«ELSE»floatval«ENDIF»($«name»);
+        $this->«name» = «IF it instanceof UserField»$«name»;«ELSE»«IF it instanceof AbstractIntegerField»intval«ELSE»floatval«ENDIF»($«name»);«ENDIF»
         «IF !aggregators.empty»
             «FOR aggregator : aggregators»
             $this->«aggregator.sourceAlias.formatForCode»->add«name.formatForCodeCapital»Without«entity.name.formatForCodeCapital»($diff);
