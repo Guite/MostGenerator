@@ -77,7 +77,7 @@ class Factory {
                  */
                 public function create«entity.name.formatForCodeCapital»()
                 {
-                    $entityClass = '«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Entity\\«entity.name.formatForCode»Entity';
+                    $entityClass = '«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Entity\\«entity.name.formatForCodeCapital»Entity';
 
                     return new $entityClass(«/* TODO constructor arguments if required */»);
                 }
