@@ -8,6 +8,7 @@ import de.guite.modulestudio.metamodel.DecimalField
 import de.guite.modulestudio.metamodel.DerivedField
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.FloatField
+import de.guite.modulestudio.metamodel.UserField
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
@@ -147,7 +148,7 @@ class FileHelper {
         «IF !aggregators.empty»
             $diff = abs($this->«name» - $«name»);
         «ENDIF»
-        $this->«name» = «IF it instanceof AbstractIntegerField»intval«ELSE»floatval«ENDIF»($«name»);
+        $this->«name» = «IF it instanceof UserField»$«name»«ELSEIF it instanceof AbstractIntegerField»intval«ELSE»floatval«ENDIF»($«name»);
         «IF !aggregators.empty»
             «FOR aggregator : aggregators»
             $this->«aggregator.sourceAlias.formatForCode»->add«name.formatForCodeCapital»Without«entity.name.formatForCodeCapital»($diff);
