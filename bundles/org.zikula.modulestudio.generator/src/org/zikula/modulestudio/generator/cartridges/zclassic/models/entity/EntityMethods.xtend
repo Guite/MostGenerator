@@ -12,6 +12,7 @@ import de.guite.modulestudio.metamodel.FloatField
 import de.guite.modulestudio.metamodel.ListField
 import de.guite.modulestudio.metamodel.ManyToManyRelationship
 import de.guite.modulestudio.metamodel.TimeField
+import de.guite.modulestudio.metamodel.UserField
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.business.ValidationConstraints
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
@@ -169,7 +170,7 @@ class EntityMethods {
             if (!matchedFields.empty) {
                 // field referencing part
                 formattedPart = formatFieldValue(matchedFields.head, '$this->get' + patternPart.toFirstUpper + '()')
-            } else if (geographical && (patternPart == 'latitude' || patternPart == 'longitude')) {
+            } else if (geographical && #['latitude', 'longitude'].contains(patternPart)) {
                 // geo field referencing part
                 formattedPart = 'number_format($this->get' + patternPart.toFirstUpper + '(), 7, \'.\', \'\')'
             } else {
@@ -185,6 +186,7 @@ class EntityMethods {
         switch it {
             DecimalField: '''\DataUtil::format«IF currency»Currency(«value»)«ELSE»Number(«value», 2)«ENDIF»'''
             FloatField: '''\DataUtil::format«IF currency»Currency(«value»)«ELSE»Number(«value», 2)«ENDIF»'''
+            UserField: '''(«value» ? «value»->get('uname') : '')'''
             ListField: '''$listHelper->resolve(«value», '«entity.name.formatForCode»', '«name.formatForCode»')'''
             DateField: '''\DateUtil::formatDatetime(«value», 'datebrief')'''
             DatetimeField: '''\DateUtil::formatDatetime(«value», 'datetimebrief')'''

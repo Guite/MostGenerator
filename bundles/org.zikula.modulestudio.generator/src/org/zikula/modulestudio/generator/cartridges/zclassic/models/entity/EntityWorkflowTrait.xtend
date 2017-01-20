@@ -99,18 +99,18 @@ class EntityWorkflowTrait {
     '''
 
     def private loadWorkflow(Application it) '''
-        $serviceManager = ServiceUtil::getManager();
-        $translator = $serviceManager->get('translator.default');
+        $container = ServiceUtil::get('service_container');
+        $translator = $container->get('translator.default');
         «IF amountOfExampleRows > 0»
             «IF needsApproval»
-                $logger = $serviceManager->get('logger');
-                $permissionApi = $serviceManager->get('zikula_permissions_module.api.permission');
-                $entityFactory = $serviceManager->get('«appService».entity_factory');
+                $logger = $container->get('logger');
+                $permissionApi = $container->get('zikula_permissions_module.api.permission');
+                $entityFactory = $container->get('«appService».entity_factory');
             «ENDIF»
-            $listEntriesHelper = $serviceManager->get('«appService».listentries_helper');
+            $listEntriesHelper = $container->get('«appService».listentries_helper');
             $workflowHelper = new \«appNamespace»\Helper\WorkflowHelper($translator«IF needsApproval», $logger, $permissionApi, $entityFactory«ENDIF», $listEntriesHelper);
         «ELSE»
-            $workflowHelper = $serviceManager->get('«appService».workflow_helper');
+            $workflowHelper = $container->get('«appService».workflow_helper');
         «ENDIF»
 
         $objectType = $this->get_objectType();
@@ -131,7 +131,7 @@ class EntityWorkflowTrait {
         if (($loadingRequired && !$isReuse) || $forceLoading) {
             $result = Zikula_Workflow_Util::getWorkflowForObject($this, $objectType, $idColumn, '«appName»');
             if (!$result) {
-                $flashBag = $serviceManager->get('session')->getFlashBag();
+                $flashBag = $container->get('session')->getFlashBag();
                 $flashBag->add('error', $translator->__('Error! Could not load the associated workflow.'));
             }
         }

@@ -105,10 +105,10 @@ class Operations {
         }
 
         // get entity manager
-        $serviceManager = \ServiceUtil::getManager();
-        $entityManager = $serviceManager->get('«app.entityManagerService»');
-        $logger = $serviceManager->get('logger');
-        $logArgs = ['app' => '«app.appName»', 'user' => $serviceManager->get('zikula_users_module.current_user')->get('uname')];
+        $container = \ServiceUtil::get('service_container');
+        $entityManager = $container->get('«app.entityManagerService»');
+        $logger = $container->get('logger');
+        $logArgs = ['app' => '«app.appName»', 'user' => $container->get('zikula_users_module.current_user')->get('uname')];
 
         // save entity data
         try {
@@ -132,10 +132,10 @@ class Operations {
         }
 
         // get entity manager
-        $serviceManager = \ServiceUtil::getManager();
-        $entityManager = $serviceManager->get('«app.entityManagerService»');
-        $logger = $serviceManager->get('logger');
-        $logArgs = ['app' => '«app.appName»', 'user' => $serviceManager->get('zikula_users_module.current_user')->get('uname')];
+        $container = \ServiceUtil::get('service_container');
+        $entityManager = $container->get('«app.entityManagerService»');
+        $logger = $container->get('logger');
+        $logArgs = ['app' => '«app.appName»', 'user' => $container->get('zikula_users_module.current_user')->get('uname')];
 
         // delete entity
         try {

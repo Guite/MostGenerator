@@ -36,8 +36,8 @@ class TreeData {
             // check whether an edit action is available
             $hasEditAction = in_array($objectType, ['«getAllEntities.filter[tree != EntityTreeType.NONE && hasEditAction].map[name.formatForCode].join('\', \'')»']);
 
-            $serviceManager = \ServiceUtil::getManager();
-            $repository = $serviceManager->get('«appService».entity_factory')->getRepository($objectType);
+            $container = \ServiceUtil::get('service_container');
+            $repository = $container->get('«appService».entity_factory')->getRepository($objectType);
             $descriptionFieldName = $repository->getDescriptionFieldName();
 
             $result = '';

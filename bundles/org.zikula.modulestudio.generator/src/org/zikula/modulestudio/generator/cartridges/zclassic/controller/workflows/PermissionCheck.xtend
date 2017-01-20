@@ -122,8 +122,8 @@ class PermissionCheck {
         function «app.appName»_workflow_«wfType.textualName»_gettextstrings()
         {
             «val wfDefinition = new Definition»
-            $serviceManager = \ServiceUtil::getManager();
-            $translator = $serviceManager->get('translator.default');
+            $translator = \ServiceUtil::get('translator.default');
+
             return [
                 'title' => «app.gettextCall»('«wfType.textualName.formatForDisplayCapital» workflow («wfType.approvalType.formatForDisplay» approval)'),
                 'description' => «app.gettextCall»('«wfDefinition.workflowDescription(wfType)»'),

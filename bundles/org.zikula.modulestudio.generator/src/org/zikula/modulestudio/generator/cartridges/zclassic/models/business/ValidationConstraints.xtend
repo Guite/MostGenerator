@@ -322,8 +322,8 @@ class ValidationConstraints {
              */
             public static function get«name.formatForCodeCapital»AllowedValues()
             {
-                $serviceManager = ServiceUtil::getManager();
-                $helper = $serviceManager->get('«app.appService».listentries_helper');
+                $container = ServiceUtil::get('service_container');
+                $helper = $container->get('«app.appService».listentries_helper');
                 $listEntries = $helper->get«name.formatForCodeCapital»EntriesFor«entity.name.formatForCodeCapital»();
 
                 $allowedValues = [«IF name == 'workflowState'»'initial'«ELSEIF !mandatory»''«ENDIF»];
@@ -339,8 +339,8 @@ class ValidationConstraints {
              */
             public function is«name.formatForCodeCapital»ValueAllowed(ExecutionContextInterface $context)
             {
-                $serviceManager = ServiceUtil::getManager();
-                $helper = $serviceManager->get('«app.appService».listentries_helper');
+                $container = ServiceUtil::get('service_container');
+                $helper = $container->get('«app.appService».listentries_helper');
                 $listEntries = $helper->get«name.formatForCodeCapital»EntriesFor«entity.name.formatForCodeCapital»();
 
                 $allowedValues = [];
@@ -354,7 +354,7 @@ class ValidationConstraints {
                         continue;
                     }
                     if (!in_array($value, $allowedValues, true)) {
-                        $context->buildViolation($serviceManager->get('translator.default')->__('Invalid value provided'))
+                        $context->buildViolation($container->get('translator.default')->__('Invalid value provided'))
                             ->atPath('«name.formatForCode»')
                             ->addViolation();
                     }
