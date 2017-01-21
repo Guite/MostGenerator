@@ -75,7 +75,9 @@ class ValidationConstraints {
     '''
 
     def private fieldAnnotationsInteger(AbstractIntegerField it) '''
-        «' '»* @Assert\Type(type="integer")
+        «IF !(it instanceof UserField)»
+            «' '»* @Assert\Type(type="integer")
+        «ENDIF»
         «IF mandatory && (!primaryKey || entity.hasCompositeKeys || entity.getVersionField == this)»
             «' '»* @Assert\NotBlank()
             «' '»* @Assert\NotEqualTo(value=0)
