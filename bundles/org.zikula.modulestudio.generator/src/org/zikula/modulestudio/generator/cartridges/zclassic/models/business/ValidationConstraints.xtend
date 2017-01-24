@@ -483,7 +483,16 @@ class ValidationConstraints {
     '''
 
     def private uniqueAnnotation(EntityIndex it) '''
-        «val includesNotNullableField = !entity.getDerivedFields.filter[f|!f.nullable && items.maps[i|i.name].contains(f.name)].empty»
         «' '»* @UniqueEntity(fields={«FOR item : items SEPARATOR ', '»"«item.name.formatForCode»"«ENDFOR»}, ignoreNull="«(!includesNotNullableField).displayBool»")
     '''
+
+    def private includesNotNullableField(EntityIndex it) {
+        val nonNullableFields = entity.getDerivedFields.filter[!nullable]
+        for (item : items) {
+            if (!nonNullableFields.filter[item.name.equals(name)].empty) {
+                return true
+            }
+        }
+        false
+    }
 }
