@@ -17,7 +17,7 @@ class HookBundles {
         «val uiArea = areaPrefix + 'ui_hooks.'»
         «FOR entity : getAllEntities.filter[e|!e.skipHookSubscribers]»
             «/* we register one hook subscriber bundle for each entity type */»«val areaName = entity.nameMultiple.formatForDB»
-            $bundle = new SubscriberBundle('«appName»', 'subscriber.«areaPrefix».ui_hooks.«areaName»', 'ui_hooks', $this->__('«areaPrefix» «entity.nameMultiple.formatForDisplayCapital» Display Hooks'));
+            $bundle = new SubscriberBundle('«appName»', 'subscriber.«uiArea»«areaName»', 'ui_hooks', $this->__('«areaPrefix» «entity.nameMultiple.formatForDisplayCapital» Display Hooks'));
             «/* $bundle->addEvent('hook type', 'event name triggered by *this* module');*/»
             «IF entity.hasViewAction || entity.hasDisplayAction»
                 // Display hook for view/display templates.
@@ -43,7 +43,7 @@ class HookBundles {
             «ENDIF»
             $this->registerHookSubscriberBundle($bundle);
 
-            $bundle = new SubscriberBundle('«appName»', 'subscriber.«areaPrefix».filter_hooks.«areaName»', 'filter_hooks', $this->__('«areaPrefix» «entity.nameMultiple.formatForDisplayCapital» Filter Hooks'));
+            $bundle = new SubscriberBundle('«appName»', 'subscriber.«areaPrefix»filter_hooks.«areaName»', 'filter_hooks', $this->__('«areaPrefix» «entity.nameMultiple.formatForDisplayCapital» Filter Hooks'));
             // A filter applied to the given area.
             $bundle->addEvent('filter', '«areaPrefix»filter_hooks.«areaName».filter');
             $this->registerHookSubscriberBundle($bundle);
