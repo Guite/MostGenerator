@@ -483,13 +483,7 @@ class ValidationConstraints {
     '''
 
     def private uniqueAnnotation(EntityIndex it) '''
-        «var includesNotNullableField = false»
-        «FOR item : items SEPARATOR ', '»
-            «val referencedField = entity.getDerivedFields.filter[name == item.name]?.head»
-            «IF null !== referencedField && !referencedField.nullable»
-                «includesNotNullableField = true»
-            «ENDIF»
-        «ENDFOR»
+        «val includesNotNullableField = !entity.getDerivedFields.filter[f|!f.nullable && items.maps[i|i.name].contains(f.name)].empty»
         «' '»* @UniqueEntity(fields={«FOR item : items SEPARATOR ', '»"«item.name.formatForCode»"«ENDFOR»}, ignoreNull="«(!includesNotNullableField).displayBool»")
     '''
 }
