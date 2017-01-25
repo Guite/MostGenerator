@@ -75,8 +75,8 @@ class Layout {
             «IF hasGeographical»
                 {{ pageAddAsset('javascript', zasset('@«appName»:js/«appName».Geo.js')) }}
             «ENDIF»
-            «IF hasEditActions»
-                {% if 'edit' in app.request.get('_route') %}
+            «IF hasEditActions || needsConfig»
+                {% if «IF hasEditActions»'edit' in app.request.get('_route')«IF needsConfig» or «ENDIF»«ENDIF»«IF needsConfig»'config' in app.request.get('_route')«ENDIF» %}
                     {{ polyfill([«IF hasGeographical»'geolocation', «ENDIF»'forms', 'forms-ext']) }}
                 {% endif %}
             «ENDIF»
