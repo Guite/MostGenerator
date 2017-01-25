@@ -9,6 +9,7 @@ import de.guite.modulestudio.metamodel.StringField
 import de.guite.modulestudio.metamodel.UploadField
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
+import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 
 /**
@@ -20,6 +21,11 @@ class PersistenceTransformer {
      * Extension methods for controllers.
      */
     extension ControllerExtensions = new ControllerExtensions
+
+    /**
+     * Extension methods for generator settings.
+     */
+    extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
 
     /**
      * Extension methods for formatting names.
@@ -238,7 +244,7 @@ class PersistenceTransformer {
                 value = '10'
                 documentation = 'The amount of ' + entity.nameMultiple.formatForDisplay + ' shown per page'
             ]
-            if (entity.standardFields) {
+            if (generateAccountApi && entity.standardFields) {
                 varContainer.vars += factory.createBoolVar => [
                     name = 'linkOwn' + entity.nameMultiple.formatForCodeCapital + 'OnAccountPage'
                     value = 'true'
