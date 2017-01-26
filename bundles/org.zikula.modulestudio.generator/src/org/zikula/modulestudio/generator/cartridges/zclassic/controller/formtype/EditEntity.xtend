@@ -959,6 +959,7 @@ class EditEntity {
                 };
             }
         «ENDIF»
+        «val isExpanded = if (outgoing) expandedTarget else expandedSource»
         $builder->add('«aliasName.formatForCode»', '«formType(autoComplete)»Type', [
             «IF autoComplete»
                 «val uniqueNameForJs = getUniqueRelationNameForJs(app, (if (outgoing) source else target), isManySide(outgoing), (if (!isManyToMany) outgoing else !outgoing), aliasName)»
@@ -972,7 +973,7 @@ class EditEntity {
                 'class' => '«app.appName»:«(if (outgoing) target else source).name.formatForCodeCapital»Entity',
                 'choice_label' => 'getTitleFromDisplayPattern',
                 'multiple' => «isManySide(outgoing).displayBool»,
-                'expanded' => «(if (outgoing) expandedTarget else expandedSource).displayBool»,
+                'expanded' => «isExpanded.displayBool»,
                 'query_builder' => $queryBuilder,
                 «IF /*outgoing && */!nullable»
                     «IF !isManySide(outgoing)»
@@ -982,6 +983,11 @@ class EditEntity {
                 «ENDIF»
             «ENDIF»
             'label' => $this->__('«aliasName.formatForDisplayCapital»'),
+            «IF !autoComplete && isExpanded»
+                'label_attr' => [
+                    'class' => '«IF isManySide(outgoing)»checkbox«ELSE»radio«ENDIF»-inline'
+                ],
+            «ENDIF»
             'attr' => [
                 'title' => $this->__('Choose the «aliasName.formatForDisplay»')
             ]
