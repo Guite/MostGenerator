@@ -19,6 +19,7 @@ import de.guite.modulestudio.metamodel.ManyToManyRelationship
 import de.guite.modulestudio.metamodel.ObjectField
 import de.guite.modulestudio.metamodel.StringField
 import de.guite.modulestudio.metamodel.TextField
+import de.guite.modulestudio.metamodel.UserField
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.repository.Joins
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.repository.LinkTable
@@ -888,8 +889,19 @@ class Repository {
                             $qb->andWhere('tbl.' . $k . ' LIKE :' . $k)
                                ->setParameter($k, '%' . $v . '%');
                         } else {
-                            $qb->andWhere('tbl.' . $k . ' = :' . $k)
-                               ->setParameter($k, $v);
+                            «IF hasUserFieldsEntity»
+                                if (in_array($k, ['«getUserFieldsEntity.map[name.formatForCode].join('\', \'')»'])) {
+                                    $qb->leftJoin('tbl.' . $k, 'tbl' . ucfirst($k))
+                                       ->andWhere('tbl' . ucfirst($k) . '.uid = :' . $k)
+                                       ->setParameter($k, $v);
+                                } else {
+                                    $qb->andWhere('tbl.' . $k . ' = :' . $k)
+                                       ->setParameter($k, $v);
+                                }
+                            «ELSE»
+                                $qb->andWhere('tbl.' . $k . ' = :' . $k)
+                                   ->setParameter($k, $v);
+                            «ENDIF»
                        }
                     }
                 }
