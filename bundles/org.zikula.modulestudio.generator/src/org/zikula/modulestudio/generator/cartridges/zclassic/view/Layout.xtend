@@ -62,14 +62,16 @@ class Layout {
     def baseTemplate(Application it) '''
         {# purpose of this template: general base layout #}
         {% block header %}
-            {#{ pageAddAsset('stylesheet', asset('jquery-ui/themes/base/jquery-ui.min.css')) }#}
+            «IF !relations.empty && (hasViewActions || hasDisplayActions || hasEditActions)»
+                {{ pageAddAsset('stylesheet', asset('jquery-ui/themes/base/jquery-ui.min.css')) }}
+            «ENDIF»
             «IF hasImageFields»
                 {{ pageAddAsset('javascript', asset('bootstrap-media-lightbox/bootstrap-media-lightbox.min.js')) }}
                 {{ pageAddAsset('stylesheet', asset('bootstrap-media-lightbox/bootstrap-media-lightbox.css')) }}
             «ENDIF»
-            «IF hasViewActions || hasDisplayActions || hasEditActions»
-                {#{ pageAddAsset('stylesheet', asset('bootstrap-jqueryui/bootstrap-jqueryui.min.css')) }}
-                {{ pageAddAsset('javascript', asset('bootstrap-jqueryui/bootstrap-jqueryui.min.js')) }#}
+            «IF !relations.empty && (hasViewActions || hasDisplayActions || hasEditActions)»
+                {{ pageAddAsset('stylesheet', asset('bootstrap-jqueryui/bootstrap-jqueryui.min.css')) }}
+                {{ pageAddAsset('javascript', asset('bootstrap-jqueryui/bootstrap-jqueryui.min.js')) }}
             «ENDIF»
             {{ pageAddAsset('javascript', zasset('@«appName»:js/«appName».js')) }}
             «IF hasGeographical»
