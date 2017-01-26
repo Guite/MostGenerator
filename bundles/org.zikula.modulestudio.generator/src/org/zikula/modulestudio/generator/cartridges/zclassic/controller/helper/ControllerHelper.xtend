@@ -65,6 +65,9 @@ class ControllerHelper {
         «IF hasGeographical»
             use Zikula\UsersModule\Api\CurrentUserApi;
         «ENDIF»
+        «IF hasViewActions && hasUserFields»
+            use Zikula\UsersModule\Entity\UserEntity;
+        «ENDIF»
         use «appNamespace»\Entity\Factory\«name.formatForCodeCapital»Factory;
         «IF needsFeatureActivationHelper»
             use «appNamespace»\Helper\FeatureActivationHelper;
@@ -533,6 +536,11 @@ class ControllerHelper {
                         $resultsPerPage = $additionalUrlParameters['num'] = $fieldValue;
                     } else {
                         // set filter as query argument, fetched inside repository
+                        «IF hasUserFields»
+                            if ($fieldValue instanceof UserEntity) {
+                                $fieldValue = $fieldValue->getUid();
+                            }
+                        «ENDIF»
                         $request->query->set($fieldName, $fieldValue);
                     }
                 }
