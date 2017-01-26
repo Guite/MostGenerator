@@ -2,7 +2,6 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff
 
 import de.guite.modulestudio.metamodel.Application
 import org.eclipse.xtext.generator.IFileSystemAccess
-import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.documents.DeveloperHints
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.documents.License_GPL
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.documents.License_LGPL
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
