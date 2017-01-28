@@ -112,6 +112,7 @@ class Annotations {
             if (slugUnique) {
                 return output
             }
+            output = output + ', '
         }
         output = output + getPrimaryKeyFields.map['''"«name.formatForCode»" = "\d+"'''].join(', ')
 
@@ -125,6 +126,7 @@ class Annotations {
             if (slugUnique) {
                 return output
             }
+            output = output + ', '
         }
         output = output + getPrimaryKeyFields.map['''"«name.formatForCode»" = "0"'''].join(', ')
 
