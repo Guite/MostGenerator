@@ -62,8 +62,8 @@ class Property {
          * Full «name.formatForDisplay» path as url.
          *
          * @Assert\Type(type="string")
-         * @Assert\Url()
-         * @var string $«name.formatForCode»Url
+         «/* * @Assert\Url() disabled due to problems with space chars in file names
+         */»* @var string $«name.formatForCode»Url
          */
         protected $«name.formatForCode»Url = '';
         «/* this last line is on purpose */»

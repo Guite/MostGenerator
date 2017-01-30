@@ -591,7 +591,7 @@ class UploadHelper {
             $filePath = $this->getFileBaseFolder($entity->get_objectType(), $fieldName) . $fileName;
             if (!empty($fileName) && file_exists($filePath)) {
                 $entity[$fieldName] = new File($filePath);
-                $entity[$fieldName . 'Url'] = $baseUrl . '/' . urlencode($filePath);
+                $entity[$fieldName . 'Url'] = $baseUrl . '/' . $filePath;
 
                 // determine meta data if it does not exist
                 if (!is_array($entity[$fieldName . 'Meta']) || !count($entity[$fieldName . 'Meta'])) {
