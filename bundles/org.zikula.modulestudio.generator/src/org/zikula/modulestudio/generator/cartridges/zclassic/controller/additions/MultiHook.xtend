@@ -80,7 +80,8 @@ class MultiHook {
                 $cache = [];
             }
 
-            $translator = \ServiceUtil::get('translator.default');
+            $container = \ServiceUtil::get('service_container');
+            $translator = $container->get('translator.default');
 
             if (empty($nid)) {
                 return '<em>' . \DataUtil::formatForDisplay(__('No correct needle id given.')) . '</em>';
@@ -91,8 +92,8 @@ class MultiHook {
                 return $cache[$nid];
             }
 
-            if (!\ServiceUtil::get('kernel')->isBundle('«app.appName»')) {
-                $cache[$nid] = '<em>' . \DataUtil::formatForDisplay($translator->__f('Module %s is not available.', ['%s' => «app.appName»'])) . '</em>';
+            if (!$container->get('kernel')->isBundle('«app.appName»')) {
+                $cache[$nid] = '<em>' . \DataUtil::formatForDisplay($translator->__f('Module %moduleName% is not available.', ['%moduleName%' => «app.appName»'])) . '</em>';
 
                 return $cache[$nid];
             }
@@ -100,7 +101,7 @@ class MultiHook {
             // strip application prefix from needle
             $needleId = str_replace('«app.prefix.toUpperCase»', '', $nid);
 
-            $router = \ServiceUtil::getService('router');
+            $router = $container->getService('router');
 
             «IF hasViewAction»
                 if ($needleId == '«nameMultiple.formatForCode.toUpperCase»') {
@@ -121,7 +122,7 @@ class MultiHook {
                     return $cache[$nid];
                 }
 
-                $permissionApi = \ServiceUtil::get('zikula_permissions_module.api.permission');
+                $permissionApi = $container->get('zikula_permissions_module.api.permission');
                 $entityId = (int)$needleParts[1];
 
                 if (!$permissionApi->hasPermission('«app.appName»:«name.formatForCodeCapital»:', $entityId . '::', ACCESS_READ)) {
@@ -130,10 +131,10 @@ class MultiHook {
                     return $cache[$nid];
                 }
 
-                $selectionHelper = \ServiceUtil::get('«app.appService».selection_helper');
+                $selectionHelper = $container->get('«app.appService».selection_helper');
                 $entity = $selectionHelper->getEntity('«name.formatForCode»', $entityId);
                 if (null === $entity) {
-                    $cache[$nid] = '<em>' . $translator->__f('«name.formatForDisplayCapital» with id %s could not be found', ['%s' => $entityId]) . '</em>';
+                    $cache[$nid] = '<em>' . $translator->__f('«name.formatForDisplayCapital» with id %id% could not be found', ['%id%' => $entityId]) . '</em>';
 
                     return $cache[$nid];
                 }

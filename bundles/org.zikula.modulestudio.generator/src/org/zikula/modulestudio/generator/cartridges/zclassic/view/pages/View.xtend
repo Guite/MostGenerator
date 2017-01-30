@@ -316,7 +316,7 @@ class View {
     '''
 
     def private headerSortingLink(Object it, DataObject entity, String fieldName, String label) '''
-        <a href="{{ sort.«fieldName».url }}" title="{{ __f('Sort by %s', {'%s': '«label.formatForDisplay»'}) }}" class="{{ sort.«fieldName».class }}">{{ __('«label.formatForDisplayCapital»') }}</a>
+        <a href="{{ sort.«fieldName».url }}" title="{{ __f('Sort by %sortField%', {'%sortField%': '«label.formatForDisplay»'}) }}" class="{{ sort.«fieldName».class }}">{{ __('«label.formatForDisplayCapital»') }}</a>
     '''
 
     def private headerTitle(Object it, DataObject entity, String fieldName, String label) '''

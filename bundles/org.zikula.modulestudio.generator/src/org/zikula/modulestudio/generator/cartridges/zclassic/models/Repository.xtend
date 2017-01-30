@@ -1521,7 +1521,7 @@ class Repository {
                     $success = $workflowHelper->executeAction($entity, $action);
                 } catch(\Exception $e) {
                     $flashBag = $session->getFlashBag();
-                    $flashBag->add('error', $translator->__f('Sorry, but an error occured during the %s action. Please apply the changes again!', ['%s' => $action]) . '  ' . $e->getMessage());
+                    $flashBag->add('error', $translator->__f('Sorry, but an error occured during the %action% action. Please apply the changes again!', ['%action%' => $action]) . '  ' . $e->getMessage());
                 }
 
                 if (!$success) {

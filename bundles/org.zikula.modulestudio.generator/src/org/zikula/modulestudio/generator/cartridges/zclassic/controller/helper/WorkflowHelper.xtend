@@ -483,7 +483,7 @@ class WorkflowHelper {
                     'amount' => $amount,
                     'objectType' => $objectType,
                     'state' => $state,
-                    'message' => $this->translator->_fn('One «name.formatForDisplay» is waiting for «requiredAction».', '%s «nameMultiple.formatForDisplay» are waiting for «requiredAction».', $amount, ['%s' => $amount])
+                    'message' => $this->translator->_fn('One «name.formatForDisplay» is waiting for «requiredAction».', '%amount% «nameMultiple.formatForDisplay» are waiting for «requiredAction».', $amount, ['%amount%' => $amount])
                 ];
 
                 $this->logger->info('{app}: There are {amount} {entities} waiting for approval.', ['app' => '«application.appName»', 'amount' => $amount, 'entities' => '«nameMultiple.formatForDisplay»']);

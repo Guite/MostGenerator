@@ -123,7 +123,7 @@ class Installer {
                         $entityManager->persist($registry);
                         $entityManager->flush();
                     } catch (\Exception $e) {
-                        $this->addFlash('error', $this->__f('Error! Could not create a category registry for the %s entity.', ['%s' => '«entity.name.formatForDisplay»']));
+                        $this->addFlash('error', $this->__f('Error! Could not create a category registry for the %entity% entity.', ['%entity%' => '«entity.name.formatForDisplay»']));
                         $logger->error('{app}: User {user} could not create a category registry for {entities} during installation. Error details: {errorMessage}.', ['app' => '«appName»', 'user' => $userName, 'entities' => '«entity.nameMultiple.formatForDisplay»', 'errorMessage' => $e->getMessage()]);
                     }
                     $categoryRegistryIdsPerEntity['«entity.name.formatForCode»'] = $registry->getId();
@@ -229,7 +229,7 @@ class Installer {
             // delete stored object workflows
             $result = Zikula_Workflow_Util::deleteWorkflowsForModule('«appName»');
             if (false === $result) {
-                $this->addFlash('error', $this->__f('An error was encountered while removing stored object workflows for the %s extension.', ['%s' => '«appName»']));
+                $this->addFlash('error', $this->__f('An error was encountered while removing stored object workflows for the %extension% extension.', ['%extension%' => '«appName»']));
                 $logger->error('{app}: Could not remove stored object workflows during uninstallation.', ['app' => '«appName»']);
 
                 return false;
@@ -275,7 +275,7 @@ class Installer {
                 «ENDIF»
                 // remind user about upload folders not being deleted
                 $uploadPath = $this->container->getParameter('datadir') . '/«appName»/';
-                $this->addFlash('status', $this->__f('The upload directories at [%s] can be removed manually.', ['%s' => $uploadPath]));
+                $this->addFlash('status', $this->__f('The upload directories at "%path%" can be removed manually.', ['%path%' => $uploadPath]));
             «ENDIF»
 
             // uninstallation successful
