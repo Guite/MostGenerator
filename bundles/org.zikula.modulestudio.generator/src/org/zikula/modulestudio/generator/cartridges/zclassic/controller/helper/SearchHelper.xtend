@@ -32,8 +32,29 @@ class SearchHelper {
     def private searchHelperBaseClass(Application it) '''
         namespace «appNamespace»\Helper\Base;
 
+        «IF targets('1.4-dev')»
+            use Doctrine\ORM\QueryBuilder;
+            use Doctrine\ORM\Query\Expr\Composite;
+            use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
+            use Symfony\Component\HttpFoundation\Request;
+            use Symfony\Component\HttpFoundation\RequestStack;
+            use Symfony\Component\HttpFoundation\Session\SessionInterface;
+        «ENDIF»
         use Zikula\Core\RouteUrl;
-        use Zikula\SearchModule\AbstractSearchable;
+        «IF targets('1.4-dev')»
+            use Zikula\PermissionsModule\Api\PermissionApi;
+            use Zikula\SearchModule\Entity\SearchResultEntity;
+            use Zikula\SearchModule\SearchableInterface;
+            use «appNamespace»\Entity\Factory\«name.formatForCodeCapital»Factory;
+        «ELSE»
+            use Zikula\SearchModule\AbstractSearchable;
+        «ENDIF»
+        «IF targets('1.4-dev')»
+            «IF hasCategorisableEntities»
+                use «appNamespace»\Helper\CategoryHelper;
+            «ENDIF»
+            use «appNamespace»\Helper\ControllerHelper;
+        «ENDIF»
         «IF hasCategorisableEntities»
             use «appNamespace»\Helper\FeatureActivationHelper;
         «ENDIF»
@@ -41,87 +62,175 @@ class SearchHelper {
         /**
          * Search helper base class.
          */
-        abstract class AbstractSearchHelper extends AbstractSearchable
+        abstract class AbstractSearchHelper «IF targets('1.4-dev')»implements SearchableInterface«ELSE»extends AbstractSearchable«ENDIF»
         {
             «searchHelperBaseImpl»
         }
     '''
 
     def private searchHelperBaseImpl(Application it) '''
+        «IF targets('1.4-dev')»
+            /**
+             * @var PermissionApi
+             */
+            protected $permissionApi;
+
+            /**
+             * @var EngineInterface
+             */
+            private $templateEngine;
+
+            /**
+             * @var SessionInterface
+             */
+            private $session;
+
+            /**
+             * @var Request
+             */
+            private $request;
+
+            /**
+             * @var «name.formatForCodeCapital»Factory
+             */
+            private $entityFactory;
+
+            /**
+             * @var ControllerHelper
+             */
+            private $controllerHelper;
+            «IF hasCategorisableEntities»
+
+                /**
+                 * @var FeatureActivationHelper
+                 */
+                private $featureActivationHelper;
+
+                /**
+                 * @var CategoryHelper
+                 */
+                private $categoryHelper;
+            «ENDIF»
+
+            /**
+             * SearchHelper constructor.
+             *
+             * @param PermissionApi    $permissionApi   PermissionApi service instance
+             * @param EngineInterface  $templateEngine  Template engine service instance
+             * @param SessionInterface $session         Session service instance
+             * @param RequestStack     $requestStack    RequestStack service instance
+             * @param «name.formatForCodeCapital»Factory $entityFactory EntityFactory service instance
+             * @param ControllerHelper $controllerHelper ControllerHelper service instance
+             «IF hasCategorisableEntities»
+             * @param FeatureActivationHelper $featureActivationHelper FeatureActivationHelper service instance
+             * @param CategoryHelper   $categoryHelper CategoryHelper service instance
+             «ENDIF»
+             */
+            public function __construct(
+                PermissionApi $permissionApi,
+                EngineInterface $templateEngine,
+                SessionInterface $session,
+                RequestStack $requestStack,
+                «name.formatForCodeCapital»Factory $entityFactory,
+                ControllerHelper $controllerHelper«IF hasCategorisableEntities»,
+                FeatureActivationHelper $featureActivationHelper,
+                CategoryHelper $categoryHelper
+                «ENDIF»
+            ) {
+                $this->permissionApi = $permissionApi;
+                $this->templateEngine = $templateEngine;
+                $this->session = $session;
+                $this->request = $requestStack->getCurrentRequest();
+                $this->entityFactory = $entityFactory;
+                $this->controllerHelper = $controllerHelper;
+                «IF hasCategorisableEntities»
+                    $this->featureActivationHelper = $featureActivationHelper;
+                    $this->categoryHelper = $categoryHelper;
+                «ENDIF»
+            }
+
+        «ENDIF»
         «getOptions»
 
         «getResults»
+        «IF targets('1.4-dev')»
+
+            «getErrors»
+
+            «formatWhere»
+        «ENDIF»
     '''
 
     def private getOptions(Application it) '''
         «val entitiesWithStrings = entities.filter[hasAbstractStringFieldsEntity]»
         /**
-         * Display the search form.
-         *
-         * @param boolean    $active  if the module should be checked as active
-         * @param array|null $modVars module form vars as previously set
-         *
-         * @return string Template output
+         * {@inheritdoc}
          */
         public function getOptions($active, $modVars = null)
         {
-            $permissionApi = $this->container->get('zikula_permissions_module.api.permission');
+            «IF !targets('1.4-dev')»
+                $permissionApi = $this->container->get('zikula_permissions_module.api.permission');
 
-            if (!$permissionApi->hasPermission($this->name . '::', '::', ACCESS_READ)) {
+            «ENDIF»
+            if (!$«IF targets('1.4-dev')»this->«ENDIF»permissionApi->hasPermission('«appName»::', '::', ACCESS_READ)) {
                 return '';
             }
 
             $templateParameters = [];
 
-            $searchTypes = array(«FOR entity : entitiesWithStrings»'«entity.name.formatForCode»'«IF entity != entitiesWithStrings.last», «ENDIF»«ENDFOR»);
+            $searchTypes = ['«entitiesWithStrings.map[name.formatForCode].join('\', \'')»'];
             foreach ($searchTypes as $searchType) {
-                $templateParameters['active_' . $searchType] = (!isset($args['«appName.toFirstLower»SearchTypes']) || in_array($searchType, $args['«appName.toFirstLower»SearchTypes']));
+                $templateParameters['active_' . $searchType] = !isset($args['«appName.toFirstLower»SearchTypes']) || in_array($searchType, $args['«appName.toFirstLower»SearchTypes']);
             }
 
-            return $this->getContainer()->get('twig')->render('@«appName»/Search/options.html.twig', $templateParameters);
+            «IF targets('1.4-dev')»
+                return $this->templateEngine->renderResponse('@«appName»/Search/options.html.twig', $templateParameters)->getContent();
+            «ELSE»
+                return $this->getContainer()->get('twig')->render('@«appName»/Search/options.html.twig', $templateParameters);
+            «ENDIF»
         }
     '''
 
     def private getResults(Application it) '''
         /**
-         * Returns the search results.
-         *
-         * @param array      $words      Array of words to search for
-         * @param string     $searchType AND|OR|EXACT (defaults to AND)
-         * @param array|null $modVars    Module form vars passed though
-         *
-         * @return array List of fetched results
+         * {@inheritdoc}
          */
         public function getResults(array $words, $searchType = 'AND', $modVars = null)
         {
-            $permissionApi = $this->container->get('zikula_permissions_module.api.permission');
-            «IF hasCategorisableEntities»
-                $featureActivationHelper = $this->container->get('«appService».feature_activation_helper');
-            «ENDIF»
-            $request = $this->container->get('request_stack')->getCurrentRequest();
+            «IF !targets('1.4-dev')»
+                $permissionApi = $this->container->get('zikula_permissions_module.api.permission');
+                «IF hasCategorisableEntities»
+                    $featureActivationHelper = $this->container->get('«appService».feature_activation_helper');
+                «ENDIF»
+                $request = $this->container->get('request_stack')->getCurrentRequest();
 
-            if (!$permissionApi->hasPermission($this->name . '::', '::', ACCESS_READ)) {
+            «ENDIF»
+            if (!$«IF targets('1.4-dev')»this->«ENDIF»permissionApi->hasPermission('«appName»::', '::', ACCESS_READ)) {
                 return [];
             }
+            «IF !targets('1.4-dev')»
 
-            // save session id as it is used when inserting search results below
-            $sessionId = $this->container->get('session')->getId();
+                // save session id as it is used when inserting search results below
+                $sessionId = $this->container->get('session')->getId();
+            «ENDIF»
 
             // initialise array for results
-            $records = [];
+            $results = [];
 
             // retrieve list of activated object types
             $searchTypes = isset($modVars['objectTypes']) ? (array)$modVars['objectTypes'] : [];
             if (!is_array($searchTypes) || !count($searchTypes)) {
-                if ($request->isMethod('GET')) {
-                    $searchTypes = $request->query->get('«appName.toFirstLower»SearchTypes', []);
-                } elseif ($request->isMethod('POST')) {
-                    $searchTypes = $request->request->get('«appName.toFirstLower»SearchTypes', []);
+                if ($«IF targets('1.4-dev')»this->«ENDIF»->isMethod('GET')) {
+                    $searchTypes = $«IF targets('1.4-dev')»this->«ENDIF»->query->get('«appName.toFirstLower»SearchTypes', []);
+                } elseif ($«IF targets('1.4-dev')»this->«ENDIF»->isMethod('POST')) {
+                    $searchTypes = $«IF targets('1.4-dev')»this->«ENDIF»->request->get('«appName.toFirstLower»SearchTypes', []);
                 }
             }
 
-            $controllerHelper = $this->container->get('«appService».controller_helper');
-            $allowedTypes = $controllerHelper->getObjectTypes('helper', ['helper' => 'search', 'action' => 'getResults']);
+            «IF !targets('1.4-dev')»
+                $controllerHelper = $this->container->get('«appService».controller_helper');
+            «ENDIF»
+            $allowedTypes = $«IF targets('1.4-dev')»this->«ENDIF»controllerHelper->getObjectTypes('helper', ['helper' => 'search', 'action' => 'getResults']);
 
             foreach ($searchTypes as $objectType) {
                 if (!in_array($objectType, $allowedTypes)) {
@@ -143,7 +252,7 @@ class SearchHelper {
                     «ENDFOR»
                 }
 
-                $repository = $this->container->get('«appService».entity_factory')->getRepository($objectType);
+                $repository = $this->«IF targets('1.4-dev')»entityFactory«ELSE»container->get('«appService».entity_factory')«ENDIF»->getRepository($objectType);
 
                 // build the search query without any joins
                 $qb = $repository->genericBaseQuery('', '', false);
@@ -175,13 +284,13 @@ class SearchHelper {
 
                     $instanceId = $entity->createCompositeIdentifier();
                     // perform permission check
-                    if (!$permissionApi->hasPermission($this->name . ':' . ucfirst($objectType) . ':', $instanceId . '::', ACCESS_OVERVIEW)) {
+                    if (!$«IF targets('1.4-dev')»this->«ENDIF»permissionApi->hasPermission('«appName»:' . ucfirst($objectType) . ':', $instanceId . '::', ACCESS_OVERVIEW)) {
                         continue;
                     }
                     «IF hasCategorisableEntities»
                         if (in_array($objectType, ['«getCategorisableEntities.map[e|e.name.formatForCode].join('\', \'')»'])) {
-                            if ($featureActivationHelper->isEnabled(FeatureActivationHelper::CATEGORIES, $objectType)) {
-                                if (!$this->container->get('«appService».category_helper')->hasPermission($entity)) {
+                            if ($«IF targets('1.4-dev')»this->«ENDIF»featureActivationHelper->isEnabled(FeatureActivationHelper::CATEGORIES, $objectType)) {
+                                if (!$this->«IF targets('1.4-dev')»categoryHelper«ELSE»container->get('«appService».category_helper')«ENDIF»->hasPermission($entity)) {
                                     continue;
                                 }
                             }
@@ -189,24 +298,81 @@ class SearchHelper {
                     «ENDIF»
 
                     $description = !empty($descriptionField) ? $entity[$descriptionField] : '';
-                    $created = isset($entity['createdDate']) ? $entity['createdDate'] : null;
+                    $created = isset($entity['createdBy']) ? $entity['createdBy'] : null;
 
-                    $urlArgs['_locale'] = (null !== $languageField && !empty($entity[$languageField])) ? $entity[$languageField] : $request->getLocale();
+                    $urlArgs['_locale'] = (null !== $languageField && !empty($entity[$languageField])) ? $entity[$languageField] : $«IF targets('1.4-dev')»this->«ENDIF»->getLocale();
 
                     $displayUrl = $hasDisplayAction ? new RouteUrl('«appName.formatForDB»_' . $objectType . '_display', $urlArgs) : '';
 
-                    $records[] = [
-                        'title' => $entity->getTitleFromDisplayPattern(),
-                        'text' => $description,
-                        'module' => $this->name,
-                        'sesid' => $sessionId,
-                        'created' => $created,
-                        'url' => $displayUrl
-                    ];
+                    «IF targets('1.4-dev')»
+                        $result = new SearchResultEntity();
+                        $result->setTitle($entity->getTitleFromDisplayPattern())
+                            ->setText($description)
+                            ->setModule('«appName»')
+                            ->setCreated($created)
+                            ->setSesid($this->session->getId())
+                            ->setUrl($displayUrl);
+                        $results[] = $result;
+                    «ELSE»
+                        $results[] = [
+                            'title' => $entity->getTitleFromDisplayPattern(),
+                            'text' => $description,
+                            'module' => '«appName»',
+                            'sesid' => $sessionId,
+                            'created' => $created,
+                            'url' => $displayUrl
+                        ];
+                    «ENDIF»
                 }
             }
 
-            return $records;
+            return $results;
+        }
+    '''
+
+    def private getErrors(Application it) '''
+        /**
+         * {@inheritdoc}
+         */
+        public function getErrors()
+        {
+            return [];
+        }
+    '''
+
+    def private formatWhere(Application it) '''
+        /**
+         * Construct a QueryBuilder Where orX|andX Expr instance.
+         *
+         * @param QueryBuilder $qb
+         * @param array $words the words to query for
+         * @param array $fields
+         * @param string $searchtype AND|OR|EXACT
+         *
+         * @return null|Composite
+         */
+        protected function formatWhere(QueryBuilder $qb, array $words, array $fields, $searchtype = 'AND')
+        {
+            if (empty($words) || empty($fields)) {
+                return null;
+            }
+
+            $method = ($searchtype == 'OR') ? 'orX' : 'andX';
+            /** @var $where Composite */
+            $where = $qb->expr()->$method();
+            $i = 1;
+            foreach ($words as $word) {
+                $subWhere = $qb->expr()->orX();
+                foreach ($fields as $field) {
+                    $expr = $qb->expr()->like($field, "?$i");
+                    $subWhere->add($expr);
+                    $qb->setParameter($i, '%' . $word . '%');
+                    $i++;
+                }
+                $where->add($subWhere);
+            }
+
+            return $where;
         }
     '''
 

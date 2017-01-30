@@ -109,7 +109,7 @@ class ComposerFile {
     def private generateCapabilities(Application it) '''
         "user": {"route": "«appName.formatForDB»_«getLeadingEntity.name.formatForDB»_«getLeadingEntity.getPrimaryAction»"},
         "admin": {"route": "«appName.formatForDB»_«getLeadingEntity.name.formatForDB»_admin«getLeadingEntity.getPrimaryAction»"}«IF hasExtraCapabilities»,«ENDIF»
-        «IF generateSearchApi»
+        «IF generateSearchApi && !targets('1.4-dev')»
             "searchable": {"class": "«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Helper\\SearchHelper"},
         «ENDIF»
         «IF hasCategorisableEntities»

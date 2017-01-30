@@ -511,6 +511,24 @@ class ServiceDefinitions {
                     - "@zikula_users_module.user_repository"
                     - "@«modPrefix».workflow_helper"
         «ENDIF»
+        «IF generateSearchApi && targets('1.4-dev')»
+
+            «modPrefix».search_helper:
+                class: «nsBase»SearchHelper
+                arguments:
+                    - "@zikula_permissions_module.api.permission"
+                    - "@templating.engine.twig"
+                    - "@session"
+                    - "@request_stack"
+                    - "@«modPrefix».entity_factory"
+                    - "@«modPrefix».controller_helper"
+                    «IF hasCategorisableEntities»
+                        - "@«modPrefix».feature_activation_helper"
+                        - "@«modPrefix».category_helper"
+                    «ENDIF»
+                tags:
+                    - { name: zikula.searchable_module, bundleName: «appName» }
+        «ENDIF»
 
         «modPrefix».selection_helper:
             class: «nsBase»SelectionHelper
