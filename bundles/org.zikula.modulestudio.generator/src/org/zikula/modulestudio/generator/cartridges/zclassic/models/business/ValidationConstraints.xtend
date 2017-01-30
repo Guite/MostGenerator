@@ -80,7 +80,9 @@ class ValidationConstraints {
         «ENDIF»
         «IF mandatory && (!primaryKey || entity.hasCompositeKeys || entity.getVersionField == this)»
             «' '»* @Assert\NotBlank()
-            «' '»* @Assert\NotEqualTo(value=0)
+            «IF !(it instanceof UserField)»
+                «' '»* @Assert\NotEqualTo(value=0)
+            «ENDIF»
         «ELSEIF !nullable»
             «' '»* @Assert\NotNull()
         «ENDIF»
