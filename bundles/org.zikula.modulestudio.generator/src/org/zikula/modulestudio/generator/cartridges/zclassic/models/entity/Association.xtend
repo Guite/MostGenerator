@@ -140,7 +140,7 @@ class Association {
              *
              * @ORM\ManyToMany(targetEntity="«/*\*/»«entityClass»", mappedBy="«targetName»"«additionalOptions(true)»)
              «IF null !== orderByReverse && orderByReverse != ''»
-              * @ORM\OrderBy({"«orderByReverse»" = "ASC"})
+              * @ORM\OrderBy({«orderByDetails(orderByReverse)»})
              «ENDIF»
             «IF !nullable»
                 «val aliasName = getRelationAliasName(false).toFirstLower»
@@ -215,7 +215,7 @@ class Association {
          «ENDIF»
         «joinDetails(true)»
          «IF null !== orderBy && orderBy != ''»
-          * @ORM\OrderBy({"«orderBy»" = "ASC"})
+          * @ORM\OrderBy({«orderByDetails(orderBy)»})
          «ENDIF»
         «IF !nullable»
             «val aliasName = getRelationAliasName(true).toFirstLower»
@@ -239,7 +239,7 @@ class Association {
          * @ORM\ManyToMany(targetEntity="«/*\*/»«entityClass»"«IF bidirectional», inversedBy="«sourceName»"«ENDIF»«additionalOptions(false)»«outgoingMappingAdditions»)
         «joinDetails(true)»
          «IF null !== orderBy && orderBy != ''»
-          * @ORM\OrderBy({"«orderBy»" = "ASC"})
+          * @ORM\OrderBy({«orderByDetails(orderBy)»})
          «ENDIF»
         «IF !nullable»
             «val aliasName = getRelationAliasName(true).toFirstLower»
@@ -325,6 +325,22 @@ class Association {
         else if (cascadeProperty == CascadeType::ALL) '"all"'
     }
 
+    def private orderByDetails(String orderBy) {
+        val criteria = newArrayList
+        val orderByFields = orderBy.replace(', ', ',').split(',')
+
+        for (orderByField : orderByFields) {
+            var fieldName = orderByField
+            var sorting = 'ASC'
+            if (orderByField.contains(':')) {
+                val criteriaParts = orderByField.split(':')
+                fieldName = criteriaParts.head
+                sorting = criteriaParts.last
+            }
+            criteria.add('"' + fieldName + '" = "' + sorting.toUpperCase + '"')
+        }
+        criteria.join(', ')
+    }
 
     def initCollections(Entity it) '''
         «FOR relation : getOutgoingCollections»«relation.initCollection(true)»«ENDFOR»
