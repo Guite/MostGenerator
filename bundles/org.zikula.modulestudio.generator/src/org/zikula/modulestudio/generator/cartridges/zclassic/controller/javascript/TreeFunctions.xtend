@@ -285,7 +285,7 @@ class TreeFunctions {
                     window.location.reload();
                 } else {
                     «vendorAndName»SimpleAlert(jQuery('.tree-container'), Translator.__('Error'), data.message != '' ? data.message : Translator.__('Could not persist your change.'), 'treeAjaxFailedAlert', 'danger');
-            	}
+                }
             }).fail(function(jqXHR, textStatus) {
                 «vendorAndName»SimpleAlert(jQuery('.tree-container'), Translator.__('Error'), Translator.__('Could not persist your change.'), 'treeAjaxFailedAlert', 'danger');
             });

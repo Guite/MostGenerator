@@ -845,6 +845,14 @@ class AjaxController {
                     $childEntity->setUpdatedBy($currentUser);
                 }
             «ENDIF»
+            $parentEntity = $selectionHelper->getEntity($objectType, $parentId«IF hasSluggable», ''«ENDIF», false);
+            if (null === $parentEntity) {
+                $returnValue['result'] = 'failure';
+                $returnValue['message'] = $this->__('No such item.');
+
+                return new AjaxResponse($returnValue);
+            }
+            $childEntity->setParent($parentEntity);
 
             // save new object
             $action = 'submit';
@@ -863,18 +871,7 @@ class AjaxController {
 
                 return new AjaxResponse($returnValue);
             }
-
-            //$childEntity->setParent($parentEntity);
-            $parentEntity = $selectionHelper->getEntity($objectType, $parentId«IF hasSluggable», ''«ENDIF», false);
-            if (null === $parentEntity) {
-                $returnValue['result'] = 'failure';
-                $returnValue['message'] = $this->__('No such item.');
-
-                return new AjaxResponse($returnValue);
-            }
-            $repository->persistAsLastChildOf($childEntity, $parentEntity);
         //});
-        $entityManager->flush();
     '''
 
     def private treeOperationDeleteNode(Application it) '''
