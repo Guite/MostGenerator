@@ -1,6 +1,7 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.controller.helper
 
 import de.guite.modulestudio.metamodel.Application
+import de.guite.modulestudio.metamodel.EntityWorkflowType
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
@@ -246,10 +247,17 @@ class NotificationHelper {
             $this->recipients = [];
 
             if ($this->recipientType == 'moderator' || $this->recipientType == 'superModerator') {
-                $objectType = $this->entity['_objectType'];
-                $moderatorGroupId = $this->variableApi->get('«appName»', 'moderationGroupFor' . $objectType, 2);
+                «val entitiesWithWorkflow = getAllEntities.filter[workflow != EntityWorkflowType.NONE]»
+                $modVarSuffixes = [
+                    «FOR entity : entitiesWithWorkflow»
+                        '«entity.name.formatForCode»' => '«entity.nameMultiple.formatForCodeCapital»'«IF entity != entitiesWithWorkflow.last»,«ENDIF»
+                    «ENDFOR»
+                ];
+                $modVarSuffix = $modVarSuffixes[$this->entity['_objectType']];
+
+                $moderatorGroupId = $this->variableApi->get('«appName»', 'moderationGroupFor' . $modVarSuffix, 2);
                 if ($this->recipientType == 'superModerator') {
-                    $moderatorGroupId = $this->variableApi->get('«appName»', 'superModerationGroupFor' . $objectType, 2);
+                    $moderatorGroupId = $this->variableApi->get('«appName»', 'superModerationGroupFor' . $modVarSuffix, 2);
                 }
 
                 $moderatorGroup = $this->groupRepository->find($moderatorGroupId);
