@@ -85,7 +85,11 @@ class Forms {
             {{ pageAddAsset('javascript', zasset('@«app.appName»:js/«app.appName».Validation.js', 98)) }}
             {{ pageAddAsset('javascript', zasset('@«app.appName»:js/«app.appName».EditFunctions.js', 99)) }}
             «IF (hasUserFieldsEntity || standardFields || !getOutgoingJoinRelations.empty || !getIncomingJoinRelations.empty)»
-                {{ pageAddAsset('javascript', pagevars.homepath ~ 'vendor/twitter/typeahead.js/dist/typeahead.bundle.min.js') }}
+                «IF app.targets('1.4-dev')»
+                    {{ pageAddAsset('javascript', asset('typeahead/typeahead.bundle.min.js')) }}
+                «ELSE»
+                    {{ pageAddAsset('javascript', app.request.basePath ~ '/vendor/twitter/typeahead.js/dist/typeahead.bundle.min.js') }}
+                «ENDIF»
             «ENDIF»
         {% endblock %}
 
@@ -206,10 +210,10 @@ class Forms {
         «IF geographical»
 
             {% set geoScripts %}
-                <script type="text/javascript" src="https://maps.google.com/maps/api/js?sensor=false"></script>
-                <script type="text/javascript" src="{{ pagevars.homepath }}plugins/Mapstraction/lib/vendor/mxn/mxn.js?(googlev3)"></script>
-                {#<script type="text/javascript" src="{{ pagevars.homepath }}plugins/Mapstraction/lib/vendor/mxn/mxn.geocoder.js"></script>
-                <script type="text/javascript" src="{{ pagevars.homepath }}plugins/Mapstraction/lib/vendor/mxn/mxn.googlev3.geocoder.js"></script>#}
+                {{ pageAddAsset('javascript', 'https://maps.google.com/maps/api/js?sensor=false') }}
+                {{ pageAddAsset('javascript', app.request.basePath ~ '/plugins/Mapstraction/lib/vendor/mxn/mxn.js?(googlev3)') }}
+                {#{ pageAddAsset('javascript', app.request.basePath ~ '/plugins/Mapstraction/lib/vendor/mxn/mxn.geocoder.js') }}
+                {{ pageAddAsset('javascript', app.request.basePath ~ '/plugins/Mapstraction/lib/vendor/mxn/mxn.googlev3.geocoder.js') }#}
                 <script type="text/javascript">
                 /* <![CDATA[ */
                     ( function($) {

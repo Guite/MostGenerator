@@ -264,13 +264,13 @@ class Layout {
         <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="{{ app.request.locale }}" lang="{{ app.request.locale }}">
         <head>
             <title>{{ block('pageTitle')|default(block('title')) }}</title>
-            <link rel="stylesheet" type="text/css" href="{{ pagevars.homepath }}style/core.css" />
-            <link rel="stylesheet" type="text/css" href="{{ pagevars.homepath }}«relativeAppRootPath»/«getAppCssPath»style.css" />
+            <link rel="stylesheet" type="text/css" href="{{ app.request.basePath }}/style/core.css" />
+            <link rel="stylesheet" type="text/css" href="{{ app.request.basePath }}/«relativeAppRootPath»/«getAppCssPath»style.css" />
             {% if useFinder|default == true %}
-                <link rel="stylesheet" type="text/css" href="{{ pagevars.homepath }}«relativeAppRootPath»/«getAppCssPath»finder.css" />
+                <link rel="stylesheet" type="text/css" href="{{ app.request.basePath }}/«relativeAppRootPath»/«getAppCssPath»finder.css" />
             «IF hasImageFields»
                 {% else %}
-                    <link rel="stylesheet" type="text/css" href="{{ pagevars.homepath }}web/bootstrap-media-lightbox/bootstrap-media-lightbox.css" />
+                    <link rel="stylesheet" type="text/css" href="{{ app.request.basePath }}/web/bootstrap-media-lightbox/bootstrap-media-lightbox.css" />
             «ENDIF»
             {% endif %}
             <script type="text/javascript">
@@ -279,19 +279,19 @@ class Layout {
                     Zikula.Config = {'entrypoint': '{{ getModVar('ZConfig', 'entrypoint', 'index.php') }}', 'baseURL': '{{ app.request.getSchemeAndHttpHost() ~ '/' }}', 'baseURI': '{{ app.request.getBasePath() }}'};
                 /* ]]> */
             </script>
-            <link rel="stylesheet" type="text/css" href="{{ pagevars.homepath }}web/bootstrap/css/bootstrap.min.css" />
-            <link rel="stylesheet" type="text/css" href="{{ pagevars.homepath }}web/bootstrap/css/bootstrap-theme.min.css" />
-            <script type="text/javascript" src="{{ pagevars.homepath }}web/jquery/jquery.min.js"></script>
-            <script type="text/javascript" src="{{ pagevars.homepath }}web/bootstrap/js/bootstrap.min.js"></script>
+            <link rel="stylesheet" type="text/css" href="{{ app.request.basePath }}/web/bootstrap/css/bootstrap.min.css" />
+            <link rel="stylesheet" type="text/css" href="{{ app.request.basePath }}/web/bootstrap/css/bootstrap-theme.min.css" />
+            <script type="text/javascript" src="{{ app.request.basePath }}/web/jquery/jquery.min.js"></script>
+            <script type="text/javascript" src="{{ app.request.basePath }}/web/bootstrap/js/bootstrap.min.js"></script>
             {% if useFinder|default == true %}
-                <script type="text/javascript" src="{{ pagevars.homepath }}«relativeAppRootPath»/«getAppJsPath»«appName».Finder.js"></script>
+                <script type="text/javascript" src="{{ app.request.basePath }}/«relativeAppRootPath»/«getAppJsPath»«appName».Finder.js"></script>
             {% else %}
                 «IF hasImageFields»
-                    <script type="text/javascript" src="{{ pagevars.homepath }}web/bootstrap-media-lightbox/bootstrap-media-lightbox.min.js"></script>
+                    <script type="text/javascript" src="{{ app.request.basePath }}/web/bootstrap-media-lightbox/bootstrap-media-lightbox.min.js"></script>
                 «ENDIF»
-                <script type="text/javascript" src="{{ pagevars.homepath }}«relativeAppRootPath»/«getAppJsPath»«appName».js"></script>
+                <script type="text/javascript" src="{{ app.request.basePath }}/«relativeAppRootPath»/«getAppJsPath»«appName».js"></script>
                 «IF hasGeographical»
-                    <script type="text/javascript" src="{{ pagevars.homepath }}«relativeAppRootPath»/«getAppJsPath»«appName».Geo.js"></script>
+                    <script type="text/javascript" src="{{ app.request.basePath }}/«relativeAppRootPath»/«getAppJsPath»«appName».Geo.js"></script>
                 «ENDIF»
             {% endif %}
         </head>

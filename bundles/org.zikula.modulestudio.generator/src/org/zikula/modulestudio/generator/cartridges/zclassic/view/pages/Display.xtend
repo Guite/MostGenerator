@@ -126,7 +126,7 @@ class Display {
             {% block footer %}
                 {{ parent() }}
                 {{ pageAddAsset('javascript', 'https://maps.google.com/maps/api/js?sensor=false') }}
-                {{ pageAddAsset('javascript', pagevars.homepath ~ 'plugins/Mapstraction/lib/vendor/mxn/mxn.js?(googlev3)') }}
+                {{ pageAddAsset('javascript', app.request.basePath ~ '/plugins/Mapstraction/lib/vendor/mxn/mxn.js?(googlev3)') }}
                 {% set geoScripts %}
                     <script type="text/javascript">
                     /* <![CDATA[ */
