@@ -214,14 +214,22 @@ class TreeFunctions {
         }
 
         if (!currentNode.is(':first-child')) { // has previous sibling
+            actions.moveTop = {
+                label: Translator.__('Move to top'),
+                title: Translator.__('Move to top position'),
+                action: function (node) {
+                    «vendorAndName»PerformTreeOperation(objectType, rootId, 'moveNodeTop');
+                },
+                icon: 'fa fa-fw fa-angle-double-up',
+                separator_before: true
+            };
             actions.moveUp = {
                 label: Translator.__('Move up'),
                 title: Translator.__('Move one position up'),
                 action: function (node) {
                     «vendorAndName»PerformTreeOperation(objectType, rootId, 'moveNodeUp');
                 },
-                icon: 'fa fa-fw fa-angle-up',
-                separator_before: true
+                icon: 'fa fa-fw fa-angle-up'
             };
         }
         if (!currentNode.is(':last-child')) { // has next sibling
@@ -233,6 +241,14 @@ class TreeFunctions {
                 },
                 icon: 'fa fa-fw fa-angle-down',
                 separator_before: currentNode.is(':first-child')
+            };
+            actions.moveDown = {
+                label: Translator.__('Move to bottom'),
+                title: Translator.__('Move to bottom position'),
+                action: function (node) {
+                    «vendorAndName»PerformTreeOperation(objectType, rootId, 'moveNodeBottom');
+                },
+                icon: 'fa fa-fw fa-angle-double-down'
             };
         }
 
@@ -248,7 +264,7 @@ class TreeFunctions {
         {
             var opParam, params;
 
-            opParam = ((op === 'moveNodeUp' || op === 'moveNodeDown') ? 'moveNode' : op);
+            opParam = ((op === 'moveNodeTop' || op === 'moveNodeUp' || op === 'moveNodeDown' || op === 'moveNodeBottom') ? 'moveNode' : op);
             params = {
                 ot: objectType,
                 op: opParam
@@ -262,10 +278,14 @@ class TreeFunctions {
                 params['root'] = rootId;
                 params[op === 'addChildNode' ? 'pid' : 'id'] = nodeEntityId;
 
-                if (op === 'moveNodeUp') {
+                if (op === 'moveNodeTop') {
+                    params[direction] = 'top';
+                } else if (op === 'moveNodeUp') {
                     params[direction] = 'up';
                 } else if (op === 'moveNodeDown') {
                     params[direction] = 'down';
+                } else if (op === 'moveNodeBottom') {
+                    params[direction] = 'bottom';
                 }
             }
 

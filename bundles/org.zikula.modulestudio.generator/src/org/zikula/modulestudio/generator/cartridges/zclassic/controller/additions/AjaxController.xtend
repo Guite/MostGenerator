@@ -911,7 +911,7 @@ class AjaxController {
 
     def private treeOperationMoveNode(Application it) '''
         $moveDirection = $postData->getAlpha('direction', '');
-        if (!in_array($moveDirection, ['up', 'down'])) {
+        if (!in_array($moveDirection, ['top', 'up', 'down', 'bottom'])) {
             $returnValue['result'] = 'failure';
             $returnValue['message'] = $this->__('Error: invalid direction.');
 
@@ -926,10 +926,14 @@ class AjaxController {
             return new AjaxResponse($returnValue);
         }
 
-        if ($moveDirection == 'up') {
+        if ($moveDirection == 'top') {
+            $repository->moveUp($entity, true);
+        } elseif ($moveDirection == 'up') {
             $repository->moveUp($entity, 1);
-        } else if ($moveDirection == 'down') {
+        } elseif ($moveDirection == 'down') {
             $repository->moveDown($entity, 1);
+        } elseif ($moveDirection == 'bottom') {
+            $repository->moveDown($entity, true);
         }
         $entityManager->flush();
     '''
