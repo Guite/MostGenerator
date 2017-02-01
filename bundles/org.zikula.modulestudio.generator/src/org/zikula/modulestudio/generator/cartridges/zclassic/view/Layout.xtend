@@ -264,10 +264,10 @@ class Layout {
         <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="{{ app.request.locale }}" lang="{{ app.request.locale }}">
         <head>
             <title>{{ block('pageTitle')|default(block('title')) }}</title>
-            <link rel="stylesheet" type="text/css" href="{{ app.request.basePath }}/web/bootstrap/css/bootstrap.min.css" />
-            <link rel="stylesheet" type="text/css" href="{{ app.request.basePath }}/web/bootstrap/css/bootstrap-theme.min.css" />
+            <link rel="stylesheet" type="text/css" href="{{ asset('bootstrap/css/bootstrap.min.css') }}" />
+            <link rel="stylesheet" type="text/css" href="{{ asset('bootstrap/css/bootstrap-theme.min.css') }}" />
             <link rel="stylesheet" type="text/css" href="{{ app.request.basePath }}/style/core.css" />
-            <link rel="stylesheet" type="text/css" href="{{ app.request.basePath }}/«relativeAppRootPath»/«getAppCssPath»style.css" />
+            <link rel="stylesheet" type="text/css" href="{{ zasset('@«appName»:css/style.css') }}" />
             «IF generateExternalControllerAndFinder»
                 {% if useFinder|default == true %}
                     «rawCssAssets(true)»
@@ -287,8 +287,8 @@ class Layout {
                     Zikula.Config = {'entrypoint': '{{ getModVar('ZConfig', 'entrypoint', 'index.php') }}', 'baseURL': '{{ app.request.getSchemeAndHttpHost() ~ '/' }}', 'baseURI': '{{ app.request.getBasePath() }}'};
                 /* ]]> */
             </script>
-            <script type="text/javascript" src="{{ app.request.basePath }}/web/jquery/jquery.min.js"></script>
-            <script type="text/javascript" src="{{ app.request.basePath }}/web/bootstrap/js/bootstrap.min.js"></script>
+            <script type="text/javascript" src="{{ asset('jquery/jquery.min.js') }}"></script>
+            <script type="text/javascript" src="{{ asset('bootstrap/js/bootstrap.min.js') }}"></script>
             «IF generateExternalControllerAndFinder»
                 {% if useFinder|default == true %}
                     «rawJsAssets(true)»
@@ -321,22 +321,22 @@ class Layout {
 
     def private rawCssAssets(Application it, Boolean forFinder) '''
         «IF forFinder»
-            <link rel="stylesheet" type="text/css" href="{{ app.request.basePath }}/«relativeAppRootPath»/«getAppCssPath»finder.css" />
+            <link rel="stylesheet" type="text/css" href="{{ zasset('@«appName»:css/finder.css') }}" />
         «ELSE»
-            <link rel="stylesheet" type="text/css" href="{{ app.request.basePath }}/web/bootstrap-media-lightbox/bootstrap-media-lightbox.css" />
+            <link rel="stylesheet" type="text/css" href="{{ asset('bootstrap-media-lightbox/bootstrap-media-lightbox.css') }}" />
         «ENDIF»
     '''
 
     def private rawJsAssets(Application it, Boolean forFinder) '''
         «IF forFinder»
-            <script type="text/javascript" src="{{ app.request.basePath }}/«relativeAppRootPath»/«getAppJsPath»«appName».Finder.js"></script>
+            <script type="text/javascript" src="{{ zasset('@«appName»:js/«appName».Finder.js') }}"></script>
         «ELSE»
             «IF hasImageFields»
-                <script type="text/javascript" src="{{ app.request.basePath }}/web/bootstrap-media-lightbox/bootstrap-media-lightbox.min.js"></script>
+                <script type="text/javascript" src="{{ asset('bootstrap-media-lightbox/bootstrap-media-lightbox.min.js') }}"></script>
             «ENDIF»
-            <script type="text/javascript" src="{{ app.request.basePath }}/«relativeAppRootPath»/«getAppJsPath»«appName».js"></script>
+            <script type="text/javascript" src="{{ zasset('@«appName»:js/«appName».js') }}"></script>
             «IF hasGeographical»
-                <script type="text/javascript" src="{{ app.request.basePath }}/«relativeAppRootPath»/«getAppJsPath»«appName».Geo.js"></script>
+                <script type="text/javascript" src="{{ zasset('@«appName»:js/«appName».Geo.js') }}"></script>
             «ENDIF»
         «ENDIF»
     '''
