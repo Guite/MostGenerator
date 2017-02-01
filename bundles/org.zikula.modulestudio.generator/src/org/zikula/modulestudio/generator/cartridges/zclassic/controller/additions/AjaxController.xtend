@@ -668,7 +668,13 @@ class AjaxController {
             $tree = $selectionHelper->getTree($objectType, $rootId);
         }
 
-        // verification and recovery of tree
+        // recover any broken tree nodes
+        $entityManager = $this->get('«entityManagerService»');
+        $repository->recover();
+        // flush recovered nodes
+        $entityManager->flush();
+
+        // verify tree state
         $verificationResult = $repository->verify();
         if (is_array($verificationResult)) {
             $errorMessages = [];
@@ -680,8 +686,6 @@ class AjaxController {
 
             return new AjaxResponse($returnValue);
         }
-        $repository->recover();
-        $entityManager = $this->get('«entityManagerService»');
         $entityManager->clear(); // clear cached nodes
 
         «treeOperationDetermineEntityFields»
@@ -785,14 +789,12 @@ class AjaxController {
     def private treeOperationAddRootNode(Application it) '''
         //$entityManager->transactional(function($entityManager) {
             $entity = $this->get('«appService».entity_factory')->$createMethod();
-            $entityData = [];
             if (!empty($titleFieldName)) {
-                $entityData[$titleFieldName] = $this->__('New root node');
+                $entity[$titleFieldName] = $this->__('New root node');
             }
             if (!empty($descriptionFieldName)) {
-                $entityData[$descriptionFieldName] = $this->__('This is a new root node');
+                $entity[$descriptionFieldName] = $this->__('This is a new root node');
             }
-            $entity->merge($entityData);
             «IF hasStandardFieldEntities»
                 if (method_exists($entity, 'setCreatedBy')) {
                     $entity->setCreatedBy($currentUser);
@@ -833,12 +835,10 @@ class AjaxController {
 
         //$entityManager->transactional(function($entityManager) {
             $childEntity = $this->get('«appService».entity_factory')->$createMethod();
-            $entityData = [];
-            $entityData[$titleFieldName] = $this->__('New child node');
+            $childEntity[$titleFieldName] = $this->__('New child node');
             if (!empty($descriptionFieldName)) {
-                $entityData[$descriptionFieldName] = $this->__('This is a new child node');
+                $childEntity[$descriptionFieldName] = $this->__('This is a new child node');
             }
-            $childEntity->merge($entityData);
             «IF hasStandardFieldEntities»
                 if (method_exists($childEntity, 'setCreatedBy')) {
                     $childEntity->setCreatedBy($currentUser);
