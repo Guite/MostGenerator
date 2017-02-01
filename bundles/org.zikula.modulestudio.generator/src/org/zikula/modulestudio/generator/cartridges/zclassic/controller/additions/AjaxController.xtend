@@ -662,13 +662,14 @@ class AjaxController {
 
         $selectionHelper = $this->get('«appService».selection_helper');
 
+        «/*
         // Select tree
         $tree = null;
         if (!in_array($op, ['addRootNode'])) {
             $tree = $selectionHelper->getTree($objectType, $rootId);
         }
 
-        // recover any broken tree nodes
+        */»// recover any broken tree nodes
         $entityManager = $this->get('«entityManagerService»');
         $repository->recover();
         // flush recovered nodes
