@@ -154,34 +154,29 @@ class Annotations {
 
     // currently called for DisplayAction and DeleteAction
     def private paramConverter(Entity it) '''
-         «' '»* @ParamConverter("«name.formatForCode»", class="«app.appName»:«name.formatForCodeCapital»Entity", options={«paramConverterOptions»})
+         «' '»* @ParamConverter("«name.formatForCode»", class="«app.appName»:«name.formatForCodeCapital»Entity", options = {«paramConverterOptions»})
     '''
 
     def private paramConverterOptions(Entity it) {
-        var output = ''
         if (hasSluggableFields && slugUnique) {
-            output = '"id" = "slug", "repository_method" = "selectBySlug"'
             // since we use the id property selectBySlug receives the slug value directly instead ['slug' => 'my-title']
-            return output
+            return '"id" = "slug", "repository_method" = "selectBySlug"'
         }
         val needsMapping = hasSluggableFields || hasCompositeKeys
         if (!needsMapping) {
-            output = '"id" = "' + getFirstPrimaryKey.name.formatForCode + '", "repository_method" = "selectById"'
             // since we use the id property selectById receives the identifier value directly instead ['id' => 123]
-            return output
+            return '"id" = "' + getFirstPrimaryKey.name.formatForCode + '", "repository_method" = "selectById"'
         }
 
         // we have no single primary key or unique slug so we need to define a mapping hash option
+        var output = '"mapping: {'
         if (hasSluggableFields) {
             output = output + '"slug": "slug", '
         }
 
         output = output + getPrimaryKeyFields.map['"' + name.formatForCode + '": "' + name.formatForCode + '"'].join(', ')
-        output = output + ', "repository_method" = "selectByIdList"'
+        output = output + '}, "repository_method" = "selectByIdList"'
         // selectByIdList receives an array like ['fooid' => 123, 'otherfield' => 456]
-
-        // add mapping hash
-        output = '"mapping": {' + output + '}'
 
         output
     }
