@@ -7,6 +7,7 @@ import de.guite.modulestudio.metamodel.TextField
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
+import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.UrlExtensions
@@ -16,6 +17,7 @@ class ContentTypeListView {
 
     extension ControllerExtensions = new ControllerExtensions
     extension FormattingExtensions = new FormattingExtensions
+    extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension ModelExtensions = new ModelExtensions
     extension NamingExtensions = new NamingExtensions
     extension UrlExtensions = new UrlExtensions
@@ -76,7 +78,9 @@ class ContentTypeListView {
                         {% endif %}
                     «ENDIF»
                 «ENDIF»
-                <dd>«detailLink(app.appName)»</dd>
+                «IF hasDisplayAction»
+                    <dd>«detailLink(app.appName)»</dd>
+                «ENDIF»
             {% else %}
                 <dt>{{ __('No entries found.') }}</dt>
             {% endfor %}
@@ -102,8 +106,10 @@ class ContentTypeListView {
         {* Purpose of this template: edit view of generic item list content type *}
         «editTemplateObjectType»
 
-        «editTemplateCategories»
+        «IF hasCategorisableEntities»
+            «editTemplateCategories»
 
+        «ENDIF»
         «editTemplateSorting»
 
         «editTemplateAmount»
@@ -112,7 +118,13 @@ class ContentTypeListView {
 
         «editTemplateFilter»
 
-        «editTemplateJs»
+        <script type="text/javascript">
+            (function($) {
+            	$('#«appName.toFirstLower»Template').change(function() {
+            	    $('#customTemplateArea').toggleClass('hidden', $(this).val() != 'custom');
+        	    }).trigger('change');
+            })(jQuery)
+        </script>
     '''
 
     def private editTemplateObjectType(Application it) '''
@@ -121,14 +133,14 @@ class ContentTypeListView {
             {formlabel for='«appName.toFirstLower»ObjectType' text=$objectTypeSelectorLabel«editLabelClass»}
             <div class="col-sm-9">
                 {«appName.formatForDB»ObjectTypeSelector assign='allObjectTypes'}
-                {formdropdownlist id='«appName.toFirstLower»OjectType' dataField='objectType' group='data' mandatory=true items=$allObjectTypes«editInputClass»}
+                {formdropdownlist id='«appName.toFirstLower»ObjectType' dataField='objectType' group='data' mandatory=true items=$allObjectTypes«editInputClass»}
                 <span class="help-block">{gt text='If you change this please save the element once to reload the parameters below.' domain='«appName.formatForDB»'}</span>
             </div>
         </div>
     '''
 
     def private editTemplateCategories(Application it) '''
-        {if $featureActivationHelper->isEnabled(const('«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Helper\\FeatureActivationHelper::CATEGORIES', $objectType))}
+        {if $featureActivationHelper->isEnabled(constant('«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Helper\\FeatureActivationHelper::CATEGORIES', $objectType))}
         {formvolatile}
         {if $properties ne null && is_array($properties)}
             {nocache}
@@ -183,7 +195,7 @@ class ContentTypeListView {
             {gt text='Amount' domain='«appName.formatForDB»' assign='amountLabel'}
             {formlabel for='«appName.toFirstLower»Amount' text=$amountLabel«editLabelClass»}
             <div class="col-sm-9">
-                {formintinput id='«appName.toFirstLower»Amount' dataField='amount' group='data' mandatory=true maxLength=2}
+                {formintinput id='«appName.toFirstLower»Amount' dataField='amount' group='data' mandatory=true maxLength=2 cssClass='form-control'}
             </div>
         </div>
     '''
@@ -198,12 +210,12 @@ class ContentTypeListView {
             </div>
         </div>
 
-        <div id="customTemplateArea" class="form-group" data-switch="«appName.toFirstLower»Template" data-switch-value="custom">
+        <div id="customTemplateArea" class="form-group"{* data-switch="«appName.toFirstLower»Template" data-switch-value="custom"*}>
             {gt text='Custom template' domain='«appName.formatForDB»' assign='customTemplateLabel'}
             {formlabel for='«appName.toFirstLower»CustomTemplate' text=$customTemplateLabel«editLabelClass»}
             <div class="col-sm-9">
                 {formtextinput id='«appName.toFirstLower»CustomTemplate' dataField='customTemplate' group='data' mandatory=false maxLength=80«editInputClass»}
-                <span class="help-block">{gt text='Example' domain='«appName.formatForDB»'}: <em>itemlist_[objectType]_display.tpl</em></span>
+                <span class="help-block">{gt text='Example' domain='«appName.formatForDB»'}: <em>itemlist_[objectType]_display.html.twig</em></span>
             </div>
         </div>
     '''
@@ -221,12 +233,6 @@ class ContentTypeListView {
         </div>
 
         {*include file='include_filterSyntaxDialog.tpl'*}
-    '''
-
-    def private editTemplateJs(Application it) '''
-        {pageaddvar name='stylesheet' value='web/bootstrap/css/bootstrap.min.css'}
-        {pageaddvar name='stylesheet' value='web/bootstrap/css/bootstrap-theme.min.css'}
-        {pageaddvar name='javascript' value='web/bootstrap/js/bootstrap.min.js'}
     '''
 
     def private detailLink(Entity it, String appName) '''

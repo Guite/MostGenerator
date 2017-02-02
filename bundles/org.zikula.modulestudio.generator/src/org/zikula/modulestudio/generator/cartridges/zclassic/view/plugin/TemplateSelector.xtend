@@ -43,11 +43,20 @@ class TemplateSelector {
         «IF !generateSmartyPlugin»public «ENDIF»function «IF generateSmartyPlugin»smarty_function_«appName.formatForDB»«ELSE»get«ENDIF»TemplateSelector(«IF generateSmartyPlugin»$params, $view«ENDIF»)
         {
             «val templateExtension = '.html.twig'»
+            «IF generateSmartyPlugin»
+                $dom = ZLanguage::getModuleDomain('«appName»');
+            «ENDIF»
             $result = [];
 
-            $result[] = ['text' => $this->__('Only item titles'), 'value' => 'itemlist_display«templateExtension»'];
-            $result[] = ['text' => $this->__('With description'), 'value' => 'itemlist_display_description«templateExtension»'];
-            $result[] = ['text' => $this->__('Custom template'), 'value' => 'custom'];
+            «IF generateSmartyPlugin»
+                $result[] = ['text' => __('Only item titles', $dom), 'value' => 'itemlist_display«templateExtension»'];
+                $result[] = ['text' => __('With description', $dom), 'value' => 'itemlist_display_description«templateExtension»'];
+                $result[] = ['text' => __('Custom template', $dom), 'value' => 'custom'];
+            «ELSE»
+                $result[] = ['text' => $this->__('Only item titles'), 'value' => 'itemlist_display«templateExtension»'];
+                $result[] = ['text' => $this->__('With description'), 'value' => 'itemlist_display_description«templateExtension»'];
+                $result[] = ['text' => $this->__('Custom template'), 'value' => 'custom'];
+            «ENDIF»
 
             «IF generateSmartyPlugin»
                 if (array_key_exists('assign', $params)) {

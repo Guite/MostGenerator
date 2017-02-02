@@ -18,9 +18,9 @@ class Tree extends AbstractExtension implements EntityExtensionInterface {
      * Generates additional annotations on class level.
      */
     override classAnnotations(Entity it) '''
-        «' '»* @Gedmo\Tree(type="«tree.literal.toLowerCase»")
+        * @Gedmo\Tree(type="«tree.literal.toLowerCase»")
         «IF tree == EntityTreeType.CLOSURE»
-             «' '»* @Gedmo\TreeClosure(class="\«entityClassName('closure', false)»")
+             * @Gedmo\TreeClosure(class="\«entityClassName('closure', false)»")
         «ENDIF»
     '''
 

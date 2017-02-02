@@ -384,14 +384,15 @@ class ExternalView {
         </p>
         <p>
             <label for="{$baseID}Sort"{$leftSide}>{gt text='Sort by'}:</label>
-            <select id="{$baseID}Sort" name="sort"{$rightSide}>
-                «FOR field : getDerivedFields»
+            <select id="{$baseID}Sort" name="sort" class="form-control"{$rightSide}>
+                «FOR field : getSortingFields»
                     <option value="«field.name.formatForCode»"{if $sort eq '«field.name.formatForCode»'} selected="selected"{/if}>{gt text='«field.name.formatForDisplayCapital»'}</option>
                 «ENDFOR»
                 «IF standardFields»
                     <option value="createdDate"{if $sort eq 'createdDate'} selected="selected"{/if}>{gt text='Creation date'}</option>
                     <option value="createdBy"{if $sort eq 'createdBy'} selected="selected"{/if}>{gt text='Creator'}</option>
                     <option value="updatedDate"{if $sort eq 'updatedDate'} selected="selected"{/if}>{gt text='Update date'}</option>
+                    <option value="updatedBy"{if $sort eq 'updatedBy'} selected="selected"{/if}>{gt text='Updater'}</option>
                 «ENDIF»
             </select>
             <select id="{$baseID}SortDir" name="sortdir" class="form-control">

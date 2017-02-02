@@ -10,7 +10,7 @@ class SoftDeleteable extends AbstractExtension implements EntityExtensionInterfa
      * Generates additional annotations on class level.
      */
     override classAnnotations(Entity it) '''
-        «' '»* @Gedmo\SoftDeleteable(fieldName="deletedAt")
+        * @Gedmo\SoftDeleteable(fieldName="deletedAt")
     '''
 
     /**

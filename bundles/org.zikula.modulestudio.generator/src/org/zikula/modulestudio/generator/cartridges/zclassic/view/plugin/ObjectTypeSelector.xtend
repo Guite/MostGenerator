@@ -44,9 +44,12 @@ class ObjectTypeSelector {
          */
         «IF !generateSmartyPlugin»public «ENDIF»function «IF generateSmartyPlugin»smarty_function_«appName.formatForDB»«ELSE»get«ENDIF»ObjectTypeSelector(«IF generateSmartyPlugin»$params, $view«ENDIF»)
         {
+            «IF generateSmartyPlugin»
+                $dom = ZLanguage::getModuleDomain('«appName»');
+            «ENDIF»
             $result = [];
 
-            «entityEntries»
+            «entityEntries(generateSmartyPlugin)»
 
             «IF generateSmartyPlugin»
                 if (array_key_exists('assign', $params)) {
@@ -60,9 +63,13 @@ class ObjectTypeSelector {
         }
     '''
 
-    def private entityEntries(Application it) '''
+    def private entityEntries(Application it, Boolean useLegacy) '''
         «FOR entity : getAllEntities»
-            $result[] = ['text' => $this->__('«entity.nameMultiple.formatForDisplayCapital»'), 'value' => '«entity.name.formatForCode»'];
+            «IF useLegacy»
+                $result[] = ['text' => __('«entity.nameMultiple.formatForDisplayCapital»', $dom), 'value' => '«entity.name.formatForCode»'];
+            «ELSE»
+                $result[] = ['text' => $this->__('«entity.nameMultiple.formatForDisplayCapital»'), 'value' => '«entity.name.formatForCode»'];
+            «ENDIF»
         «ENDFOR»
     '''
 }

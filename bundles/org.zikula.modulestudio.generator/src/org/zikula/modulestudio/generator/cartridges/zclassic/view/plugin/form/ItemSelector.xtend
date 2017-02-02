@@ -166,6 +166,8 @@ class ItemSelector {
                 $view = Zikula_View::getInstance('«appName»', false);
                 $view->assign('objectType', $this->objectType)
                      ->assign('items', $entities)
+                     ->assign('sort', $sort)
+                     ->assign('sortdir', $sdir)
                      ->assign('selectedId', $this->selectedItemId);
                 «IF hasCategorisableEntities»
 

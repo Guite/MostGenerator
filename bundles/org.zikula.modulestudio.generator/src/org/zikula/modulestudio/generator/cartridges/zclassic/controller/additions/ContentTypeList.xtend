@@ -266,7 +266,7 @@ class ContentTypeList {
          */
         public function display()
         {
-            $repository = $this->container->get('«appService».entity_factory')->getRepository($objectType);
+            $repository = $this->container->get('«appService».entity_factory')->getRepository($this->objectType);
             $permissionApi = $this->container->get('zikula_permissions_module.api.permission');
 
             // create query
@@ -301,7 +301,9 @@ class ContentTypeList {
 
             $data = [
                 'objectType' => $this->objectType,
-                'catids' => $this->catIds,
+                «IF hasCategorisableEntities»
+                    'catids' => $this->catIds,
+                «ENDIF»
                 'sorting' => $this->sorting,
                 'amount' => $this->amount,
                 'template' => $this->template,
@@ -325,11 +327,11 @@ class ContentTypeList {
             «IF hasUploads»
                 $imageHelper = $this->container->get('«appService».image_helper');
             «ENDIF»
-            $templateParameters = array_merge($templateData, $repository->getAdditionalTemplateParameters(«IF hasUploads»$imageHelper, «ENDIF»'contentType'));
+            $templateParameters = array_merge($templateParameters, $repository->getAdditionalTemplateParameters(«IF hasUploads»$imageHelper, «ENDIF»'contentType'));
 
             $template = $this->getDisplayTemplate();
 
-            return $this->container->get('twig')->render('@«appName»/' . $template, $templateParameters);
+            return $this->container->get('twig')->render($template, $templateParameters);
         }
 
         /**
@@ -345,14 +347,20 @@ class ContentTypeList {
             }
 
             $templateForObjectType = str_replace('itemlist_', 'itemlist_' . $this->objectType . '_', $templateFile);
+            $templating = $this->container->get('templating');
+
+            $templateOptions = [
+                'ContentType/' . $templateForObjectType,
+                'ContentType/' . $templateFile,
+                'ContentType/itemlist_display.html.twig'
+            ];
 
             $template = '';
-            if ($this->view->template_exists('ContentType/' . $templateForObjectType)) {
-                $template = 'ContentType/' . $templateForObjectType;
-            } elseif ($this->view->template_exists('ContentType/' . $templateFile)) {
-                $template = 'ContentType/' . $templateFile;
-            } else {
-                $template = 'ContentType/itemlist_display.html.twig';
+            foreach ($templateOptions as $templatePath) {
+                if ($templating->exists('@«appName»/' . $templatePath)) {
+                    $template = '@«appName»/' . $templatePath;
+                    break;
+                }
             }
 
             return $template;
