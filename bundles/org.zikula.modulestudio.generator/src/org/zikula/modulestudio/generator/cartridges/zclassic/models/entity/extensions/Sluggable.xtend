@@ -37,7 +37,6 @@ class Sluggable extends AbstractExtension implements EntityExtensionInterface {
          «ENDIF»
          * @Gedmo\Slug(fields={«FOR field : getSluggableFields SEPARATOR ', '»"«field.name.formatForCode»"«ENDFOR»}, updatable=«slugUpdatable.displayBool», unique=«slugUnique.displayBool», separator="«slugSeparator»", style="«slugStyle.slugStyleAsConstant»")
          * @ORM\Column(type="string", length=«slugLength», unique=«slugUnique.displayBool»)
-         * @Assert\NotBlank()
          * @Assert\Length(min="1", max="«slugLength»")
          * @var string $slug
          */
