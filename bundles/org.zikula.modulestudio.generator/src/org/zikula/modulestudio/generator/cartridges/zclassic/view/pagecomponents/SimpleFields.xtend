@@ -151,7 +151,7 @@ class SimpleFields {
                 {% if «realName» is not empty and «realName»Meta|default %}
             «ELSE»{% if «realName»Meta|default %}
             «ENDIF»
-            <a href="{{ «realName»Url }}" title="{{ «objName».getTitleFromDisplayPattern()|e('html_attr') }}"{% if «realName»Meta.isImage %} class="lightbox"{% endif %}>
+            <a href="{{ «realName»Url }}" title="{{ «objName».getTitleFromDisplayPattern()|e('html_attr') }}"{% if «realName»Meta.isImage %} class="«IF entity.application.targets('1.4-dev')»image-link«ELSE»lightbox«ENDIF»"{% endif %}>
             {% if «realName»Meta.isImage %}
                 {% set thumbOptions = attribute(thumbRuntimeOptions, '«entity.name.formatForCode»«name.formatForCodeCapital»') %}
                 <img src="{{ «realName».getPathname()|imagine_filter('zkroot', thumbOptions) }}" alt="{{ «objName».getTitleFromDisplayPattern()|e('html_attr') }}" width="{{ thumbOptions.thumbnail.size[0] }}" height="{{ thumbOptions.thumbnail.size[1] }}" class="img-thumbnail" />

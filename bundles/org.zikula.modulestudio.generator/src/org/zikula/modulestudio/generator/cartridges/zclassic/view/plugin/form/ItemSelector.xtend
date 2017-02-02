@@ -124,10 +124,15 @@ class ItemSelector {
                     $assetHelper = $this->container->get('zikula_core.common.theme.asset_helper');
                     $cssAssetBag = $this->container->get('zikula_core.common.theme.assets_css');
                     $jsAssetBag = $this->container->get('zikula_core.common.theme.assets_js');
-                    $homePath = $this->container->get('router')->generate('home');
+                    $homePath = $this->container->get('request_stack')->getCurrentRequest()->getBasePath();
 
-                    $jsAssetBag->add($homePath . 'web/bootstrap-media-lightbox/bootstrap-media-lightbox.min.js');
-                    $cssAssetBag->add($homePath . 'web/bootstrap-media-lightbox/bootstrap-media-lightbox.css');
+                    «IF targets('1.4-dev')»
+                        $jsAssetBag->add($homePath . '/web/magnific-popup/jquery.magnific-popup.min.js');
+                        $cssAssetBag->add($homePath . '/web/magnific-popup/magnific-popup.css');
+                    «ELSE»
+                        $jsAssetBag->add($homePath . '/web/bootstrap-media-lightbox/bootstrap-media-lightbox.min.js');
+                        $cssAssetBag->add($homePath . '/web/bootstrap-media-lightbox/bootstrap-media-lightbox.css');
+                    «ENDIF»
                     $jsAssetBag->add($assetHelper->resolve('@«appName»:js/«appName».Finder.js'));
                     $cssAssetBag->add($assetHelper->resolve('@«appName»:css/style.css'));
                 }

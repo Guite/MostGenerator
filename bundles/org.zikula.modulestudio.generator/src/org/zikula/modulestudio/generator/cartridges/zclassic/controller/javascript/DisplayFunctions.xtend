@@ -304,7 +304,24 @@ class DisplayFunctions {
             isDisplayPage = jQuery('.«appName.toLowerCase»-display').length > 0;
 
             «IF hasImageFields»
-                jQuery('a.lightbox').lightbox();
+                «IF targets('1.4-dev')»
+                    jQuery('a.image-link').magnificPopup({
+                        type: 'image',
+                        disableOn: 400,
+                        closeOnContentClick: true,
+                        image: {
+                            titleSrc: 'title',
+                            verticalFit: true
+                        },
+                        zoom: {
+                            enabled: true,
+                            duration: 300,
+                            easing: 'ease-in-out'
+                        }
+                    });
+                «ELSE»
+                    jQuery('a.lightbox').lightbox();
+                «ENDIF»
 
             «ENDIF»
             if (isViewPage) {
