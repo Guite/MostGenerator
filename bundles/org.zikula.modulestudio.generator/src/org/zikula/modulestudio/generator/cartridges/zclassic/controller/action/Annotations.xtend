@@ -173,7 +173,7 @@ class Annotations {
 
         // we have no single primary key or unique slug so we need to define a mapping hash option
         if (hasSluggableFields) {
-            output = output + '"slug": "slug"'
+            output = output + '"slug": "slug", '
         }
 
         output = output + getPrimaryKeyFields.map['"' + name.formatForCode + '": "' + name.formatForCode + '"'].join(', ')
