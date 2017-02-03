@@ -307,7 +307,6 @@ class DisplayFunctions {
                 «IF targets('1.4-dev')»
                     jQuery('a.image-link').magnificPopup({
                         type: 'image',
-                        disableOn: 400,
                         closeOnContentClick: true,
                         image: {
                             titleSrc: 'title',
