@@ -169,7 +169,7 @@ class Annotations {
         }
 
         // we have no single primary key or unique slug so we need to define a mapping hash option
-        var output = '"mapping: {'
+        var output = '"mapping": {'
         if (hasSluggableFields) {
             output = output + '"slug": "slug", '
         }
