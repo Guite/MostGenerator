@@ -76,7 +76,7 @@ class UserType {
                 $fieldNameGetter = 'get' . ucfirst($fieldName);
                 $user = null !== $parentData && method_exists($parentData, $fieldNameGetter) ? $accessor->getValue($parentData, $fieldNameGetter) : null;
 
-                $view->vars['userName'] = null !== $user ? $user->getUname() : '';
+                $view->vars['userName'] = null !== $user && is_object($user) ? $user->getUname() : '';
             }
 
             /**
