@@ -132,7 +132,7 @@ class ModelHelper {
 
     def private hasExistingInstances(Application it) '''
         /**
-         * Determines whether there exist at least one instance of a certain object type in the database.
+         * Determines whether there exists at least one instance of a certain object type in the database.
          *
          * @param string $objectType Name of treated entity type
          *

@@ -10,6 +10,7 @@ import de.guite.modulestudio.metamodel.UploadField
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
+import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 
 /**
@@ -33,6 +34,11 @@ class PersistenceTransformer {
     extension FormattingExtensions = new FormattingExtensions
 
     /**
+     * Extension methods related to behavioural model extensions.
+     */
+    extension ModelBehaviourExtensions = new ModelBehaviourExtensions
+
+    /**
      * Extension methods related to the model layer.
      */
     extension ModelExtensions = new ModelExtensions
@@ -52,6 +58,7 @@ class PersistenceTransformer {
         addWorkflowSettings
         addViewSettings
         addImageSettings
+        addGeoSettings
     }
 
     /**
@@ -316,6 +323,31 @@ class PersistenceTransformer {
         variables += varContainer
     }
 
+    def private addGeoSettings(Application it) {
+        if (!hasGeographical) {
+            return
+        }
+
+        val varContainer = createVarContainerForGeoSettings
+        val factory = ModuleStudioFactory.eINSTANCE
+
+        varContainer.vars += factory.createTextVar => [
+            name = 'googleMapsApiKey'
+            value = ''
+            documentation = 'The API key required for Google Maps.'
+        ]
+
+        for (entity : getGeographicalEntities) {
+            varContainer.vars += factory.createBoolVar => [
+                name = 'enable' + entity.name.formatForCodeCapital + 'GeoLocation'
+                value = 'false'
+                documentation = 'Whether to enable geo location functionality for ' + entity.nameMultiple.formatForDisplay + ' or not.'
+            ]
+        }
+
+        variables += varContainer
+    }
+
     def private createVarContainerForWorkflowSettings(Application it) {
         val newSortNumber = getNextVarContainerSortNumber
         ModuleStudioFactory.eINSTANCE.createVariables => [
@@ -339,6 +371,15 @@ class PersistenceTransformer {
         ModuleStudioFactory.eINSTANCE.createVariables => [
             name = 'Images'
             documentation = 'Here you can define several options for image handling.'
+            sortOrder = newSortNumber
+        ]
+    }
+
+    def private createVarContainerForGeoSettings(Application it) {
+        val newSortNumber = getNextVarContainerSortNumber
+        ModuleStudioFactory.eINSTANCE.createVariables => [
+            name = 'Geo'
+            documentation = 'Here you can define settings related to geographical features.'
             sortOrder = newSortNumber
         ]
     }

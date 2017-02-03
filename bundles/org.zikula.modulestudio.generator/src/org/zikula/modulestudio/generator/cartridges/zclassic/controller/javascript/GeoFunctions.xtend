@@ -153,7 +153,7 @@ class GeoFunctions {
         /**
          * Initialises geographical editing features.
          */
-        function «vendorAndName»InitGeographicalEditing(latitude, longitude, mode)
+        function «vendorAndName»InitGeographicalEditing(latitude, longitude, mode, useGeoLocation)
         {
             «vendorAndName»InitGeographicalDisplay(latitude, longitude);
 
@@ -168,15 +168,15 @@ class GeoFunctions {
                 «vendorAndName»NewCoordinatesEventHandler();
             });
 
-            if (mode == 'create') {
+            if (mode == 'create' && true === useGeoLocation) {
                 // derive default coordinates from users position with html5 geolocation feature
-                /*if (navigator.geolocation) {
+                if (navigator.geolocation) {
                     navigator.geolocation.getCurrentPosition(«vendorAndName»SetDefaultCoordinates, «vendorAndName»HandlePositionError, {
                         enableHighAccuracy: true,
                         maximumAge: 10000,
                         timeout: 20000
                     });
-                }*/
+                }
             }
 
             /*

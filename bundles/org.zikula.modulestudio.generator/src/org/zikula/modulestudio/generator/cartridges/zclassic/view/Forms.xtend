@@ -210,15 +210,18 @@ class Forms {
         «IF geographical»
 
             {% set geoScripts %}
-                {{ pageAddAsset('javascript', 'https://maps.google.com/maps/api/js?sensor=false') }}
+                {% set useGeoLocation = getModVar('«app.appName»', 'enable«name.formatForCodeCapital»GeoLocation', false) %}
+                {{ pageAddAsset('javascript', 'https://maps.google.com/maps/api/js?key=' ~ getModVar('«app.appName»', 'googleMapsApiKey', '') ~ '&language=' ~ app.request.locale ~ '&sensor=false') }}
                 {{ pageAddAsset('javascript', app.request.basePath ~ '/plugins/Mapstraction/lib/vendor/mxn/mxn.js?(googlev3)') }}
-                {#{ pageAddAsset('javascript', app.request.basePath ~ '/plugins/Mapstraction/lib/vendor/mxn/mxn.geocoder.js') }}
-                {{ pageAddAsset('javascript', app.request.basePath ~ '/plugins/Mapstraction/lib/vendor/mxn/mxn.googlev3.geocoder.js') }#}
+                {% if useGeoLocation == true %}
+                    {{ pageAddAsset('javascript', app.request.basePath ~ '/plugins/Mapstraction/lib/vendor/mxn/mxn.geocoder.js') }}
+                    {{ pageAddAsset('javascript', app.request.basePath ~ '/plugins/Mapstraction/lib/vendor/mxn/mxn.googlev3.geocoder.js') }}
+                {% endif %}
                 <script type="text/javascript">
                 /* <![CDATA[ */
                     ( function($) {
                         $(document).ready(function() {
-                            «app.vendorAndName»InitGeographicalEditing({{ «name.formatForDB».latitude|«app.appName.formatForDB»_geoData }}, {{ «name.formatForDB».longitude|«app.appName.formatForDB»_geoData }}, mode);
+                            «app.vendorAndName»InitGeographicalEditing({{ «name.formatForDB».latitude|«app.appName.formatForDB»_geoData }}, {{ «name.formatForDB».longitude|«app.appName.formatForDB»_geoData }}, mode, {% if useGeoLocation == true %}true{% else %}false{% endif %});
                         });
                     })(jQuery);
                 /* ]]> */

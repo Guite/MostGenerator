@@ -59,7 +59,7 @@ class ControllerHelper {
         «IF (hasViewActions || hasDisplayActions) && hasHookSubscribers»
             use Zikula\Core\RouteUrl;
         «ENDIF»
-        «IF hasViewActions»
+        «IF hasViewActions || hasGeographical»
             use Zikula\ExtensionsModule\Api\VariableApi;
         «ENDIF»
         «IF hasGeographical»
@@ -113,6 +113,8 @@ class ControllerHelper {
                  * @var FormFactoryInterface
                  */
                 protected $formFactory;
+            «ENDIF»
+            «IF hasViewActions || hasGeographical»
 
                 /**
                  * @var VariableApi
@@ -173,6 +175,8 @@ class ControllerHelper {
              «ENDIF»
              «IF hasViewActions»
              * @param FormFactoryInterface $formFactory    FormFactory service instance
+             «ENDIF»
+             «IF hasViewActions || hasGeographical»
              * @param VariableApi         $variableApi     VariableApi service instance
              «ENDIF»
              «IF hasGeographical»
@@ -203,6 +207,8 @@ class ControllerHelper {
                 «ENDIF»
                 «IF hasViewActions»
                     FormFactoryInterface $formFactory,
+                «ENDIF»
+                «IF hasViewActions || hasGeographical»
                     VariableApi $variableApi,
                 «ENDIF»
                 «IF hasGeographical»
@@ -230,6 +236,8 @@ class ControllerHelper {
                 «ENDIF»
                 «IF hasViewActions»
                     $this->formFactory = $formFactory;
+                «ENDIF»
+                «IF hasViewActions || hasGeographical»
                     $this->variableApi = $variableApi;
                 «ENDIF»
                 «IF hasGeographical»
@@ -722,7 +730,7 @@ class ControllerHelper {
         public function performGeoCoding($address)
         {
             $lang = $this->request->getLocale();
-            $url = 'https://maps.googleapis.com/maps/api/geocode/json?address=' . urlencode($address);
+            $url = 'https://maps.googleapis.com/maps/api/geocode/json?key=' . $this->variableApi->get('«appName»', 'googleMapsApiKey', '') . '&address=' . urlencode($address);
             $url .= '&region=' . $lang . '&language=' . $lang . '&sensor=false';
 
             $json = '';

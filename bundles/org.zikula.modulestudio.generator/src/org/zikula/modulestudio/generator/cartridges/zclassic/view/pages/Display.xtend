@@ -125,14 +125,14 @@ class Display {
         «IF geographical»
             {% block footer %}
                 {{ parent() }}
-                {{ pageAddAsset('javascript', 'https://maps.google.com/maps/api/js?sensor=false') }}
+                {{ pageAddAsset('javascript', 'https://maps.google.com/maps/api/js?key=' ~ getModVar('«appName»', 'googleMapsApiKey', '') ~ '&language=' ~ app.request.locale ~ '&sensor=false') }}
                 {{ pageAddAsset('javascript', app.request.basePath ~ '/plugins/Mapstraction/lib/vendor/mxn/mxn.js?(googlev3)') }}
                 {% set geoScripts %}
                     <script type="text/javascript">
                     /* <![CDATA[ */
                         ( function($) {
                             $(document).ready(function() {
-                                «application.vendorAndName»InitGeographicalDisplay({{ «objName».latitude|«application.appName.formatForDB»_geoData }}, {{ «objName».longitude|«application.appName.formatForDB»_geoData }})
+                                «application.vendorAndName»InitGeographicalDisplay({{ «objName».latitude|«appName.formatForDB»_geoData }}, {{ «objName».longitude|«appName.formatForDB»_geoData }})
                             });
                         })(jQuery);
                     /* ]]> */
