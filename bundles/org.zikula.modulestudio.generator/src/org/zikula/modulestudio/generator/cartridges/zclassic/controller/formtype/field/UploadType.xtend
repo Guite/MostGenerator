@@ -147,6 +147,9 @@ class UploadType {
                     $file = $file[$fieldName];
                 }
                 if (null !== $file && is_string($file)) {
+                    if (false === strpos($file, '/')) {
+                        $file = $this->uploadHelper->getFileBaseFolder($this->entity->get_objectType(), $fieldName) . $file;
+                    }
                     $file = new File($file);
                 }
                 $hasFile = null !== $file;
