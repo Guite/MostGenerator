@@ -834,11 +834,13 @@ class EditEntity {
     '''
     def private dispatch defaultData(DatetimeField it) '''«IF null !== defaultValue && defaultValue != '' && defaultValue != 'now'»'«defaultValue»'«ELSEIF mandatory || !nullable»date('Y-m-d H:i')«ELSE»''«ENDIF»'''
     def private dispatch defaultData(DateField it) '''«IF null !== defaultValue && defaultValue != '' && defaultValue != 'now'»'«defaultValue»'«ELSEIF mandatory || !nullable»date('Y-m-d')«ELSE»''«ENDIF»'''
+    def private dispatch additionalAttributes(TimeField it) '''
+        'maxlength' => 8,
+    '''
     def private dispatch additionalOptions(TimeField it) '''
         'empty_data' => '«defaultValue»',
         'required' => «mandatory.displayBool»,
-        'widget' => 'single_text',
-        'maxlength' => 8
+        'widget' => 'single_text'
     '''
 
     def private addGeographicalFields(Entity it) '''
