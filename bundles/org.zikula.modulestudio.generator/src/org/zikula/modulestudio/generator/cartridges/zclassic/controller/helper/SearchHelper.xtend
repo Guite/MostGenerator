@@ -220,10 +220,10 @@ class SearchHelper {
             // retrieve list of activated object types
             $searchTypes = isset($modVars['objectTypes']) ? (array)$modVars['objectTypes'] : [];
             if (!is_array($searchTypes) || !count($searchTypes)) {
-                if ($«IF targets('1.4-dev')»this->«ENDIF»->isMethod('GET')) {
-                    $searchTypes = $«IF targets('1.4-dev')»this->«ENDIF»->query->get('«appName.toFirstLower»SearchTypes', []);
-                } elseif ($«IF targets('1.4-dev')»this->«ENDIF»->isMethod('POST')) {
-                    $searchTypes = $«IF targets('1.4-dev')»this->«ENDIF»->request->get('«appName.toFirstLower»SearchTypes', []);
+                if ($this->request->isMethod('GET')) {
+                    $searchTypes = $this->request->query->get('«appName.toFirstLower»SearchTypes', []);
+                } elseif ($this->request->isMethod('POST')) {
+                    $searchTypes = $this->request->request->get('«appName.toFirstLower»SearchTypes', []);
                 }
             }
 
@@ -300,7 +300,7 @@ class SearchHelper {
                     $description = !empty($descriptionField) ? $entity[$descriptionField] : '';
                     $created = isset($entity['createdBy']) ? $entity['createdBy'] : null;
 
-                    $urlArgs['_locale'] = (null !== $languageField && !empty($entity[$languageField])) ? $entity[$languageField] : $«IF targets('1.4-dev')»this->«ENDIF»->getLocale();
+                    $urlArgs['_locale'] = (null !== $languageField && !empty($entity[$languageField])) ? $entity[$languageField] : $this->request->getLocale();
 
                     $displayUrl = $hasDisplayAction ? new RouteUrl('«appName.formatForDB»_' . $objectType . '_display', $urlArgs) : '';
 
