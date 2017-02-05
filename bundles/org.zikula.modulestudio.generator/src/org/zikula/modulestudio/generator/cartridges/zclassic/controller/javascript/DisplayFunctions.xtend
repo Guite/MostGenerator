@@ -312,6 +312,14 @@ class DisplayFunctions {
                             titleSrc: 'title',
                             verticalFit: true
                         },
+                        gallery: {
+                            enabled: true,
+                            navigateByImgClick: true,
+                            arrowMarkup: '<button title="%title%" type="button" class="mfp-arrow mfp-arrow-%dir%"></button>',
+                            tPrev: Translator.__('Previous (Left arrow key)'),
+                            tNext: Translator.__('Next (Right arrow key)'),
+                            tCounter: '<span class="mfp-counter">%curr% ' + Translator.__('of') + ' %total%</span>'
+                    	},
                         zoom: {
                             enabled: true,
                             duration: 300,
