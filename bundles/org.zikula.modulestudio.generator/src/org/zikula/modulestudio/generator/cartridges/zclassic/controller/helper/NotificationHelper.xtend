@@ -289,7 +289,13 @@ class NotificationHelper {
         {
             if ($this->usesDesignatedEntityFields()) {
                 $recipientTypeParts = explode('-', $this->recipientType);
+                if (count($recipientTypeParts) != 2) {
+                    return;
+                }
                 $fieldNames = explode('^', $recipientTypeParts[1]);
+                if (count($fieldNames) != 2) {
+                    return;
+                }
 
                 $this->recipients[] = [
                     'name' => $this->entity[$fieldNames[1]],

@@ -303,7 +303,7 @@ class Definition {
             <operation recipientType="creator" action="«id»">notify</operation>
         «ENDIF»
 
-        <!-- example for custom recipient type: -->
+        <!-- example for custom recipient type using designated entity fields: -->
         <!-- operation recipientType="field-email^lastname" action="submit">notify</operation -->
     '''
 }
