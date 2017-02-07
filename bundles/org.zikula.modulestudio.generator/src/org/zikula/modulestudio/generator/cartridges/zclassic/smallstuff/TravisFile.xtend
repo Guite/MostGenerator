@@ -61,9 +61,9 @@ class TravisFile {
             - composer install
             - zip -qr «appName».zip .
             «IF targets('1.4-dev')»
-            - wget http://ci.zikula.org/job/Zikula_Core-1.4.6/106/artifact/build/archive/Zikula_Core-1.4.6.build106.tar.gz
-            - tar -xpzf Zikula_Core-1.4.6.build106.tar.gz
-            - rm Zikula_Core-1.4.6.build106.tar.gz
+            - wget http://ci.zikula.org/job/Zikula_Core-1.4.6/111/artifact/build/archive/Zikula_Core-1.4.6.build111.tar.gz
+            - tar -xpzf Zikula_Core-1.4.6.build111.tar.gz
+            - rm Zikula_Core-1.4.6.build111.tar.gz
             - cd Zikula_Core-1.4.6
             «ELSE»
             - wget http://ci.zikula.org/job/Zikula_Core-1.4.5/106/artifact/build/archive/Zikula_Core-1.4.5.build106.tar.gz

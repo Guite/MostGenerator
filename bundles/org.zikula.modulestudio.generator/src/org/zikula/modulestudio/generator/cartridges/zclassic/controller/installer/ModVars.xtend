@@ -18,7 +18,7 @@ class ModVars {
     def dispatch CharSequence valDirect2Mod(Variable it) {
         switch it {
             BoolVar: '''«IF null !== value && value == 'true'»true«ELSE»false«ENDIF»'''
-            IntVar: '''«IF null !== value && value != ''»«value»«ELSE»0«ENDIF»'''
+            IntVar: '''«IF null !== value && value != ''»'«value»'«ELSE»0«ENDIF»'''
             ListVar: '''«IF it.multiple»[«ENDIF»«FOR item : it.getDefaultItems SEPARATOR ', '»«item.valDirect2Mod»«ENDFOR»«IF it.multiple»]«ELSEIF !it.multiple && it.getDefaultItems.empty»''«ENDIF»'''
             default: '\'' + (if (null !== value) value else '') + '\''
         }
