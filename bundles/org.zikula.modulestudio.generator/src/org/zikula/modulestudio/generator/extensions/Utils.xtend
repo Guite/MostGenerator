@@ -128,8 +128,6 @@ class Utils {
                 !useUnstableCore
             case ZK14DEV:
                 useUnstableCore
-            case ZKPRE14:
-                !useUnstableCore
             default:
                 !useUnstableCore
         }

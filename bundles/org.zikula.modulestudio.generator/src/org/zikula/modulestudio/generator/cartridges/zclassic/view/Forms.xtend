@@ -1,14 +1,10 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.view
 
 import de.guite.modulestudio.metamodel.AbstractDateField
-import de.guite.modulestudio.metamodel.Action
-import de.guite.modulestudio.metamodel.AjaxController
 import de.guite.modulestudio.metamodel.Application
-import de.guite.modulestudio.metamodel.Controller
 import de.guite.modulestudio.metamodel.DateField
 import de.guite.modulestudio.metamodel.DatetimeField
 import de.guite.modulestudio.metamodel.DerivedField
-import de.guite.modulestudio.metamodel.EditAction
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.UploadField
 import org.eclipse.xtext.generator.IFileSystemAccess
@@ -37,27 +33,12 @@ class Forms {
     Relations relationHelper = new Relations
 
     def generate(Application it, IFileSystemAccess fsa) {
-        for (controller : controllers) {
-            if (!(controller instanceof AjaxController)) {
-                for (action : controller.actions.filter(EditAction)) {
-                    action.generate(it, fsa)
-                }
-            }
-        }
-
         for (entity : getAllEntities.filter[hasEditAction]) {
             entity.generate(it, 'edit', fsa)
             if (needsAutoCompletion) {
                 entity.entityInlineRedirectHandlerFile(it, fsa)
             }
         }
-    }
-
-    /**
-     * Entry point for form templates for each edit action in legacy controllers.
-     */
-    def private generate(Action it, Application app, IFileSystemAccess fsa) {
-        controller.inlineRedirectHandlerFile(app, fsa)
     }
 
     /**
@@ -303,18 +284,6 @@ class Forms {
 
     def private entityInlineRedirectHandlerFile(Entity it, Application app, IFileSystemAccess fsa) {
         val templatePath = app.getViewPath + name.formatForCodeCapital + '/'
-        val templateExtension = '.html.twig'
-        var fileName = 'inlineRedirectHandler' + templateExtension
-        if (!app.shouldBeSkipped(templatePath + fileName)) {
-            if (app.shouldBeMarked(templatePath + fileName)) {
-                fileName = 'inlineRedirectHandler.generated' + templateExtension
-            }
-            fsa.generateFile(templatePath + fileName, app.inlineRedirectHandlerImpl)
-        }
-    }
-
-    def private inlineRedirectHandlerFile(Controller it, Application app, IFileSystemAccess fsa) {
-        val templatePath = app.getViewPath + formattedName.toFirstUpper + '/'
         val templateExtension = '.html.twig'
         var fileName = 'inlineRedirectHandler' + templateExtension
         if (!app.shouldBeSkipped(templatePath + fileName)) {

@@ -173,8 +173,8 @@ class Layout {
                         <span class="help-block"><a id="{{ id }}_{{ fieldName }}ResetVal" href="javascript:void(0);" class="hidden">{{ __('Reset to empty value') }}</a></span>
                     {% endif %}
                     <span class="help-block">{{ __('Allowed file extensions') }}: <span id="{{ id }}_{{ fieldName }}FileExtensions">{{ allowed_extensions|default('') }}</span></span>
-                    {% if allowed_size|default is not null and allowed_size > 0 %}
-                        <span class="help-block">{{ __('Allowed file size') }}: {{ allowed_size|«appName.formatForDB»_fileSize('', false, false) }}</span>
+                    {% if allowed_size|default %}
+                        <span class="help-block">{{ __('Allowed file size') }}: {{ allowed_size }}</span>
                     {% endif %}
                     {% if file_path|default %}
                         <span class="help-block">

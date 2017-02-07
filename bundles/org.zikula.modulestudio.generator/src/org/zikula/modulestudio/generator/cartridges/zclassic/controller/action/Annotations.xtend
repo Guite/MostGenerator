@@ -10,7 +10,6 @@ import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.EntityTreeType
 import de.guite.modulestudio.metamodel.MainAction
 import de.guite.modulestudio.metamodel.ViewAction
-import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
@@ -19,7 +18,6 @@ import org.zikula.modulestudio.generator.extensions.ViewExtensions
 
 class Annotations {
 
-    extension ControllerExtensions = new ControllerExtensions
     extension FormattingExtensions = new FormattingExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension ModelExtensions = new ModelExtensions
@@ -67,7 +65,7 @@ class Annotations {
 
     def private dispatch actionRoute(MainAction it, Entity entity, Boolean isAdmin) '''
          «' '»*
-         «' '»* @Route("/«IF null !== entity»«IF isAdmin»admin/«ENDIF»«entity.nameMultiple.formatForCode»«ELSE»«controller.formattedName»«ENDIF»",
+         «' '»* @Route("/«IF isAdmin»admin/«ENDIF»«entity.nameMultiple.formatForCode»",
          «' '»*        methods = {"GET"}
          «' '»* )
     '''
@@ -147,7 +145,7 @@ class Annotations {
 
     def private dispatch actionRoute(CustomAction it, Entity entity, Boolean isAdmin) '''
          «' '»*
-         «' '»* @Route("/«IF null !== entity»«IF isAdmin»admin/«ENDIF»«entity.nameMultiple.formatForCode»«ELSE»«controller.formattedName»«ENDIF»/«name.formatForCode»",
+         «' '»* @Route("/«IF isAdmin»admin/«ENDIF»«entity.nameMultiple.formatForCode»/«name.formatForCode»",
          «' '»*        methods = {"GET", "POST"}
          «' '»* )
     '''

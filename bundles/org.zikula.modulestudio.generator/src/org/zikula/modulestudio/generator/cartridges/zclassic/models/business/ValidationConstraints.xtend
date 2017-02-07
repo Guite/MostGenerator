@@ -216,8 +216,6 @@ class ValidationConstraints {
 
         if (maxSize != '') {
             constraints += '''maxSize = "«maxSize»"'''
-        } else if (allowedFileSize > 0) {
-            constraints += '''"«allowedFileSize»"'''
         }
         if (mimeTypes != '') {
             val mimeTypesList = mimeTypes.replaceAll(', ', ',').split(',')

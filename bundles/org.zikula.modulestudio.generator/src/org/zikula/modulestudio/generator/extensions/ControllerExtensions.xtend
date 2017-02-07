@@ -2,7 +2,6 @@ package org.zikula.modulestudio.generator.extensions
 
 import de.guite.modulestudio.metamodel.Action
 import de.guite.modulestudio.metamodel.Application
-import de.guite.modulestudio.metamodel.Controller
 import de.guite.modulestudio.metamodel.CustomAction
 import de.guite.modulestudio.metamodel.DeleteAction
 import de.guite.modulestudio.metamodel.DisplayAction
@@ -24,19 +23,10 @@ class ControllerExtensions {
     extension Utils = new Utils
 
     /**
-     * Makes a controller name lowercase. 
-     */
-    def formattedName(Controller it) {
-        name.formatForDB
-    }
-
-    /**
-     * Returns name of container (controller or entity). 
+     * Returns name of container (entity). 
      */
     def controllerName(Action it) {
-        if (null !== controller) {
-            controller.formattedName
-        } else if (null !== entity) {
+        if (null !== entity) {
             entity.name.formatForCode
         }
         name.formatForDB

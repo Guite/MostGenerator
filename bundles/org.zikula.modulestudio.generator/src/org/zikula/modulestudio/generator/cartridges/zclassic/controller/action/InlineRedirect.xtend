@@ -1,6 +1,5 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.controller.action
 
-import de.guite.modulestudio.metamodel.Controller
 import de.guite.modulestudio.metamodel.Entity
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
@@ -43,11 +42,6 @@ class InlineRedirect {
     '''
 
     def private handleInlineRedirectBaseImpl(Entity it) '''
-        «IF it instanceof Controller»
-            $id = (int) $this->request->query->filter('id', 0, FILTER_VALIDATE_INT);
-            $idPrefix = $this->request->query->filter('idPrefix', '', FILTER_SANITIZE_STRING);
-            $commandName = $this->request->query->filter('commandName', '', FILTER_SANITIZE_STRING);
-        «ENDIF»
         if (empty($idPrefix)) {
             return false;
         }
