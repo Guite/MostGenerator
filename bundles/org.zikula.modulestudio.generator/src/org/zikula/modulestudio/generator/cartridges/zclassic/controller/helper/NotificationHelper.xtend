@@ -270,6 +270,8 @@ class NotificationHelper {
                 $creatorUid = $this->entity->getCreatedBy()->getUid();
 
                 $this->addRecipient($creatorUid);
+            } elseif ($this->usesDesignatedEntityFields()) {
+                $this->addRecipient($this->recipientType);
             }
 
             if (isset($args['debug']) && $args['debug']) {
@@ -285,6 +287,18 @@ class NotificationHelper {
          */
         protected function addRecipient($userId)
         {
+            if ($this->usesDesignatedEntityFields()) {
+                $recipientTypeParts = explode('-', $this->recipientType);
+                $fieldNames = explode('^', $recipientTypeParts[1]);
+
+                $this->recipients[] = [
+                    'name' => $this->entity[$fieldNames[1]],
+                    'email' => $this->entity[$fieldNames[0]]
+                ];
+
+                return;
+        	}
+
             $user = $this->userRepository->find($userId);
             if (null === $user) {
                 return;
@@ -307,7 +321,12 @@ class NotificationHelper {
             $siteName = $this->variableApi->getSystemVar('sitename');
             $adminMail = $this->variableApi->getSystemVar('adminmail');
 
-            $templateType = $this->recipientType == 'creator' ? 'Creator' : 'Moderator';
+            $templateType = '';
+            if (strpos($this->recipientType,'field-') === 0) {
+                $templateType = $this->recipientType;
+        	} else {
+                $templateType = $this->recipientType == 'creator' ? 'Creator' : 'Moderator';
+            }
             $template = 'Email/notify' . ucfirst($objectType) . $templateType .  '.html.twig';
 
             $mailData = $this->prepareEmailData();
@@ -353,7 +372,7 @@ class NotificationHelper {
         protected function getMailSubject()
         {
             $mailSubject = '';
-            if ($this->recipientType == 'moderator' || $this->recipientType == 'superModerator') {
+            if ($this->recipientType == 'moderator' || $this->recipientType == 'superModerator' || $this->usesDesignatedEntityFields()) {
                 if ($this->action == 'submit') {
                     $mailSubject = $this->__('New content has been submitted');
                 } elseif ($this->action == 'delete') {
@@ -404,6 +423,16 @@ class NotificationHelper {
             ];
 
             return $emailData;
+        }
+
+        /**
+         * Checks whether a special notification type is used or not.
+         *
+         * @return boolean
+         */
+        protected function usesDesignatedEntityFields()
+        {
+            return strpos($this->recipientType, 'field-') === 0;
         }
     '''
 

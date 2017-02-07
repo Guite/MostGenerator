@@ -302,5 +302,8 @@ class Definition {
         «ELSEIF id == 'delete'»
             <operation recipientType="creator" action="«id»">notify</operation>
         «ENDIF»
+
+        <!-- example for custom recipient type: -->
+        <!-- operation recipientType="field-email^lastname" action="submit">notify</operation -->
     '''
 }
