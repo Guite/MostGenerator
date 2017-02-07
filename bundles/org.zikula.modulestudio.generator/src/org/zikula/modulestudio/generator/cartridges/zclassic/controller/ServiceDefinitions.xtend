@@ -510,7 +510,6 @@ class ServiceDefinitions {
                     - "@twig"
                     - "@zikula_mailer_module.api.mailer"
                     - "@zikula_groups_module.group_repository"
-                    - "@zikula_users_module.user_repository"
                     - "@«modPrefix».workflow_helper"
         «ENDIF»
         «IF generateSearchApi && targets('1.4-dev')»

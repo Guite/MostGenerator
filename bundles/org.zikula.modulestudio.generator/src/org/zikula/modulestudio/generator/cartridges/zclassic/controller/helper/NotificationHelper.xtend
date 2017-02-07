@@ -49,7 +49,7 @@ class NotificationHelper {
         use Zikula\ExtensionsModule\Api\VariableApi;
         use Zikula\GroupsModule\Entity\RepositoryInterface\GroupRepositoryInterface;
         use Zikula\MailerModule\Api\MailerApi;
-        use Zikula\UsersModule\Entity\RepositoryInterface\UserRepositoryInterface;
+        use Zikula\UsersModule\Entity\UserEntity;
         use «appNamespace»\Helper\WorkflowHelper;
 
         /**
@@ -103,11 +103,6 @@ class NotificationHelper {
          * @var GroupRepositoryInterface
          */
         protected $groupRepository;
-
-        /**
-         * @var UserRepositoryInterface
-         */
-        protected $userRepository;
 
         /**
          * @var WorkflowHelper
@@ -165,7 +160,6 @@ class NotificationHelper {
          * @param Twig_Environment         $twig            Twig service instance
          * @param MailerApi                $mailerApi       MailerApi service instance
          * @param GroupRepositoryInterface $groupRepository GroupRepository service instance
-         * @param UserRepositoryInterface  $userRepository  UserRepository service instance
          * @param WorkflowHelper           $workflowHelper  WorkflowHelper service instance
          */
         public function __construct(
@@ -178,7 +172,6 @@ class NotificationHelper {
             Twig_Environment $twig,
             MailerApi $mailerApi,
             GroupRepositoryInterface $groupRepository,
-            UserRepositoryInterface $userRepository,
             WorkflowHelper $workflowHelper)
         {
             $this->kernel = $kernel;
@@ -190,7 +183,6 @@ class NotificationHelper {
             $this->templating = $twig;
             $this->mailerApi = $mailerApi;
             $this->groupRepository = $groupRepository;
-            $this->userRepository = $userRepository;
             $this->workflowHelper = $workflowHelper;
             $this->name = '«appName»';
         }
@@ -263,15 +255,13 @@ class NotificationHelper {
                 $moderatorGroup = $this->groupRepository->find($moderatorGroupId);
                 if (null !== $moderatorGroup) {
                     foreach ($moderatorGroup['users'] as $user) {
-                        $this->addRecipient($user->getUid());
+                        $this->addRecipient($user);
                     }
                 }
             } elseif ($this->recipientType == 'creator' && method_exists($this->entity, 'getCreatedBy')) {
-                $creatorUid = $this->entity->getCreatedBy()->getUid();
-
-                $this->addRecipient($creatorUid);
+                $this->addRecipient($this->entity->getCreatedBy());
             } elseif ($this->usesDesignatedEntityFields()) {
-                $this->addRecipient($this->recipientType);
+                $this->addRecipient();
             }
 
             if (isset($args['debug']) && $args['debug']) {
@@ -283,9 +273,9 @@ class NotificationHelper {
         /**
          * Collects data for building the recipients array.
          *
-         * @param $userId Id of treated user
+         * @param UserEntity $user Recipient user record
          */
-        protected function addRecipient($userId)
+        protected function addRecipient(UserEntity $user = null)
         {
             if ($this->usesDesignatedEntityFields()) {
                 $recipientTypeParts = explode('-', $this->recipientType);
@@ -305,7 +295,6 @@ class NotificationHelper {
                 return;
         	}
 
-            $user = $this->userRepository->find($userId);
             if (null === $user) {
                 return;
             }
