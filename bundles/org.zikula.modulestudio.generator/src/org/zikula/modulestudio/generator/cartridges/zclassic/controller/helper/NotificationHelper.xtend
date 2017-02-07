@@ -262,8 +262,8 @@ class NotificationHelper {
 
                 $moderatorGroup = $this->groupRepository->find($moderatorGroupId);
                 if (null !== $moderatorGroup) {
-                    foreach (array_keys($moderatorGroup['members']) as $uid) {
-                        $this->addRecipient($uid);
+                    foreach ($moderatorGroup['users'] as $user) {
+                        $this->addRecipient($user->getUid());
                     }
                 }
             } elseif ($this->recipientType == 'creator' && method_exists($this->entity, 'getCreatedBy')) {
