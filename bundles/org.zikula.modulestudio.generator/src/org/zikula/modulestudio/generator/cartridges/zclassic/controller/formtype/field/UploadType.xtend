@@ -187,12 +187,12 @@ class UploadType {
                             'class' => 'file-selector'
                         ],
                         'allowed_extensions' => '',
-                        'allowed_size' => 0,
+                        'allowed_size' => '',
                         'error_bubbling' => false
                     ])
                     ->setAllowedTypes([
                         'allowed_extensions' => 'string',
-                        'allowed_size' => 'int'
+                        'allowed_size' => 'string'
                     ])
                 ;
             }

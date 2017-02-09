@@ -787,7 +787,7 @@ class EditEntity {
         'required' => «mandatory.displayBool»«IF mandatory» && $options['mode'] == 'create'«ENDIF»,
         'entity' => $options['entity'],
         'allowed_extensions' => '«allowedExtensions»',
-        'allowed_size' => «maxSize»
+        'allowed_size' => '«maxSize»'
     '''
 
     def private fetchListEntries(ListField it) '''
