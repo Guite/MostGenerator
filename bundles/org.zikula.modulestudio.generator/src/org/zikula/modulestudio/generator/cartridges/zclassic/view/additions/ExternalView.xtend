@@ -334,83 +334,89 @@ class ExternalView {
     def private selectTemplate(Entity it, Application app) '''
         {* Purpose of this template: Display a popup selector for Forms and Content integration *}
         {assign var='baseID' value='«name.formatForCode»'}
-        <div id="{$baseID}Preview" style="float: right; width: 300px; border: 1px dotted #a3a3a3; padding: .2em .5em; margin-right: 1em">
-            <p><strong>{gt text='«name.formatForDisplayCapital» information'}</strong></p>
-            {img id='ajax_indicator' modname='core' set='ajax' src='indicator_circle.gif' alt='' class='hidden'}
-            <div id="{$baseID}PreviewContainer">&nbsp;</div>
-        </div>
-        <br />
-        <br />
-        {assign var='leftSide' value=' style="float: left; width: 10em"'}
-        {assign var='rightSide' value=' style="float: left"'}
-        {assign var='break' value=' style="clear: left"'}
-        «IF categorisable»
+        <div class="row">
+            <div class="col-sm-8">
+                «IF categorisable»
 
-            {if $properties ne null && is_array($properties)}
-                {gt text='All' assign='lblDefault'}
-                {nocache}
-                {foreach key='propertyName' item='propertyId' from=$properties}
-                    <p>
-                        {assign var='hasMultiSelection' value=$categoryHelper->hasMultipleSelection('«name.formatForCode»', $propertyName)}
-                        {gt text='Category' assign='categoryLabel'}
-                        {assign var='categorySelectorId' value='catid'}
-                        {assign var='categorySelectorName' value='catid'}
-                        {assign var='categorySelectorSize' value='1'}
-                        {if $hasMultiSelection eq true}
-                            {gt text='Categories' assign='categoryLabel'}
-                            {assign var='categorySelectorName' value='catids'}
-                            {assign var='categorySelectorId' value='catids__'}
-                            {assign var='categorySelectorSize' value='8'}
-                        {/if}
-                        <label for="{$baseID}_{$categorySelectorId}{$propertyName}"{$leftSide}>{$categoryLabel}:</label>
-                        &nbsp;
-                        {selector_category name="`$baseID`_`$categorySelectorName``$propertyName`" field='id' selectedValue=$catIds.$propertyName categoryRegistryModule='«app.appName»' categoryRegistryTable=$objectType categoryRegistryProperty=$propertyName defaultText=$lblDefault editLink=false multipleSize=$categorySelectorSize cssClass='form-control'}
-                        <br{$break} />
-                    </p>
-                {/foreach}
-                {/nocache}
-            {/if}
-        «ENDIF»
-        <p>
-            <label for="{$baseID}Id"{$leftSide}>{gt text='«name.formatForDisplayCapital»'}:</label>
-            <select id="{$baseID}Id" name="id"{$rightSide}>
-                {foreach item='«name.formatForCode»' from=$items}
-                    <option value="{$«name.formatForCode».«getFirstPrimaryKey.name.formatForCode»}"{if $selectedId eq $«name.formatForCode».«getFirstPrimaryKey.name.formatForCode»} selected="selected"{/if}>{$«name.formatForCode»->getTitleFromDisplayPattern()}</option>
-                {foreachelse}
-                    <option value="0">{gt text='No entries found.'}</option>
-                {/foreach}
-            </select>
-            <br{$break} />
-        </p>
-        <p>
-            <label for="{$baseID}Sort"{$leftSide}>{gt text='Sort by'}:</label>
-            <select id="{$baseID}Sort" name="sort" class="form-control"{$rightSide}>
-                «FOR field : getSortingFields»
-                    <option value="«field.name.formatForCode»"{if $sort eq '«field.name.formatForCode»'} selected="selected"{/if}>{gt text='«field.name.formatForDisplayCapital»'}</option>
-                «ENDFOR»
-                «IF standardFields»
-                    <option value="createdDate"{if $sort eq 'createdDate'} selected="selected"{/if}>{gt text='Creation date'}</option>
-                    <option value="createdBy"{if $sort eq 'createdBy'} selected="selected"{/if}>{gt text='Creator'}</option>
-                    <option value="updatedDate"{if $sort eq 'updatedDate'} selected="selected"{/if}>{gt text='Update date'}</option>
-                    <option value="updatedBy"{if $sort eq 'updatedBy'} selected="selected"{/if}>{gt text='Updater'}</option>
+                    {if $properties ne null && is_array($properties)}
+                        {gt text='All' assign='lblDefault'}
+                        {nocache}
+                        {foreach key='propertyName' item='propertyId' from=$properties}
+                            <div class="form-group">
+                                {assign var='hasMultiSelection' value=$categoryHelper->hasMultipleSelection('«name.formatForCode»', $propertyName)}
+                                {gt text='Category' assign='categoryLabel'}
+                                {assign var='categorySelectorId' value='catid'}
+                                {assign var='categorySelectorName' value='catid'}
+                                {assign var='categorySelectorSize' value='1'}
+                                {if $hasMultiSelection eq true}
+                                    {gt text='Categories' assign='categoryLabel'}
+                                    {assign var='categorySelectorName' value='catids'}
+                                    {assign var='categorySelectorId' value='catids__'}
+                                    {assign var='categorySelectorSize' value='8'}
+                                {/if}
+                                <label for="{$baseID}_{$categorySelectorId}{$propertyName}" class="col-sm-3 control-label">{$categoryLabel}:</label>
+                                <div class="col-sm-9">
+                                    {selector_category name="`$baseID`_`$categorySelectorName``$propertyName`" field='id' selectedValue=$catIds.$propertyName categoryRegistryModule='«app.appName»' categoryRegistryTable=$objectType categoryRegistryProperty=$propertyName defaultText=$lblDefault editLink=false multipleSize=$categorySelectorSize cssClass='form-control'}
+                                </div>
+                            </div>
+                        {/foreach}
+                        {/nocache}
+                    {/if}
                 «ENDIF»
-            </select>
-            <select id="{$baseID}SortDir" name="sortdir" class="form-control">
-                <option value="asc"{if $sortdir eq 'asc'} selected="selected"{/if}>{gt text='ascending'}</option>
-                <option value="desc"{if $sortdir eq 'desc'} selected="selected"{/if}>{gt text='descending'}</option>
-            </select>
-            <br{$break} />
-        </p>
-        «IF hasAbstractStringFieldsEntity»
-            <p>
-                <label for="{$baseID}SearchTerm"{$leftSide}>{gt text='Search for'}:</label>
-                <input type="text" id="{$baseID}SearchTerm" name="q" class="form-control"{$rightSide} />
-                <input type="button" id="«app.appName.toFirstLower»SearchGo" name="gosearch" value="{gt text='Filter'}" class="btn btn-default" />
-                <br{$break} />
-            </p>
-        «ENDIF»
-        <br />
-        <br />
+                <div class="form-group">
+                    <label for="{$baseID}Id" class="col-sm-3 control-label">{gt text='«name.formatForDisplayCapital»'}:</label>
+                    <div class="col-sm-9">
+                        <select id="{$baseID}Id" name="id" class="form-control">
+                            {foreach item='«name.formatForCode»' from=$items}
+                                <option value="{$«name.formatForCode».«getFirstPrimaryKey.name.formatForCode»}"{if $selectedId eq $«name.formatForCode».«getFirstPrimaryKey.name.formatForCode»} selected="selected"{/if}>{$«name.formatForCode»->getTitleFromDisplayPattern()}</option>
+                            {foreachelse}
+                                <option value="0">{gt text='No entries found.'}</option>
+                            {/foreach}
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="{$baseID}Sort" class="col-sm-3 control-label">{gt text='Sort by'}:</label>
+                    <div class="col-sm-9">
+                        <select id="{$baseID}Sort" name="sort" class="form-control">
+                            «FOR field : getSortingFields»
+                                <option value="«field.name.formatForCode»"{if $sort eq '«field.name.formatForCode»'} selected="selected"{/if}>{gt text='«field.name.formatForDisplayCapital»'}</option>
+                            «ENDFOR»
+                            «IF standardFields»
+                                <option value="createdDate"{if $sort eq 'createdDate'} selected="selected"{/if}>{gt text='Creation date'}</option>
+                                <option value="createdBy"{if $sort eq 'createdBy'} selected="selected"{/if}>{gt text='Creator'}</option>
+                                <option value="updatedDate"{if $sort eq 'updatedDate'} selected="selected"{/if}>{gt text='Update date'}</option>
+                                <option value="updatedBy"{if $sort eq 'updatedBy'} selected="selected"{/if}>{gt text='Updater'}</option>
+                            «ENDIF»
+                        </select>
+                        <select id="{$baseID}SortDir" name="sortdir" class="form-control">
+                            <option value="asc"{if $sortdir eq 'asc'} selected="selected"{/if}>{gt text='ascending'}</option>
+                            <option value="desc"{if $sortdir eq 'desc'} selected="selected"{/if}>{gt text='descending'}</option>
+                        </select>
+                    </div>
+                </div>
+                «IF hasAbstractStringFieldsEntity»
+                    <div class="form-group">
+                        <label for="{$baseID}SearchTerm" class="col-sm-3 control-label">{gt text='Search for'}:</label>
+                        <div class="col-sm-9">
+                            <div class="input-group">
+                                <input type="text" id="{$baseID}SearchTerm" name="q" class="form-control" />
+                                <span class="input-group-btn">
+                                    <input type="button" id="«app.appName.toFirstLower»SearchGo" name="gosearch" value="{gt text='Filter'}" class="btn btn-default" />
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                «ENDIF»
+            </div>
+            <div class="col-sm-4">
+                <div id="{$baseID}Preview" style="border: 1px dotted #a3a3a3; padding: .2em .5em">
+                    <p><strong>{gt text='«name.formatForDisplayCapital» information'}</strong></p>
+                    {img id='ajax_indicator' modname='core' set='ajax' src='indicator_circle.gif' alt='' class='hidden'}
+                    <div id="{$baseID}PreviewContainer">&nbsp;</div>
+                </div>
+            </div>
+        </div>
 
         <script type="text/javascript">
         /* <![CDATA[ */

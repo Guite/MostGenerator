@@ -133,6 +133,7 @@ class ItemSelector {
                         $jsAssetBag->add($homePath . '/web/bootstrap-media-lightbox/bootstrap-media-lightbox.min.js');
                         $cssAssetBag->add($homePath . '/web/bootstrap-media-lightbox/bootstrap-media-lightbox.css');
                     «ENDIF»
+                    $jsAssetBag->add($assetHelper->resolve('@«appName»:js/«appName».js'));
                     $jsAssetBag->add($assetHelper->resolve('@«appName»:js/«appName».Finder.js'));
                     $cssAssetBag->add($assetHelper->resolve('@«appName»:css/style.css'));
                 }
@@ -198,7 +199,7 @@ class ItemSelector {
              */
             public function decode(Zikula_Form_View $view)
             {
-                parent::decode($view);
+                //parent::decode($view);
                 $this->objectType = $this->container->get('request_stack')->getCurrentRequest()->request->get('«appName»_objecttype', '«getLeadingEntity.name.formatForCode»');
                 $this->selectedItemId = $this->text;
             }

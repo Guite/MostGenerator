@@ -65,6 +65,10 @@ class DisplayFunctions {
 
             «initQuickViewModals»
         «ENDIF»
+        «IF hasImageFields»
+
+            «initImageViewer»
+        «ENDIF»
 
         «onLoad»
     '''
@@ -295,6 +299,40 @@ class DisplayFunctions {
         }
     '''
 
+    def private initImageViewer(Application it) '''
+        /**
+         * Initialises image viewing behaviour.
+         */
+        function «vendorAndName»InitImageViewer()
+        {
+            «IF targets('1.4-dev')»
+                jQuery('a.image-link').magnificPopup({
+                    type: 'image',
+                    closeOnContentClick: true,
+                    image: {
+                        titleSrc: 'title',
+                        verticalFit: true
+                    },
+                    gallery: {
+                        enabled: true,
+                        navigateByImgClick: true,
+                        arrowMarkup: '<button title="%title%" type="button" class="mfp-arrow mfp-arrow-%dir%"></button>',
+                        tPrev: Translator.__('Previous (Left arrow key)'),
+                        tNext: Translator.__('Next (Right arrow key)'),
+                        tCounter: '<span class="mfp-counter">%curr% ' + Translator.__('of') + ' %total%</span>'
+                    },
+                    zoom: {
+                        enabled: true,
+                        duration: 300,
+                        easing: 'ease-in-out'
+                    }
+                });
+            «ELSE»
+                jQuery('a.lightbox').lightbox();
+            «ENDIF»
+        }
+    '''
+
     def private onLoad(Application it) '''
         jQuery(document).ready(function() {
             var isViewPage;
@@ -304,31 +342,7 @@ class DisplayFunctions {
             isDisplayPage = jQuery('.«appName.toLowerCase»-display').length > 0;
 
             «IF hasImageFields»
-                «IF targets('1.4-dev')»
-                    jQuery('a.image-link').magnificPopup({
-                        type: 'image',
-                        closeOnContentClick: true,
-                        image: {
-                            titleSrc: 'title',
-                            verticalFit: true
-                        },
-                        gallery: {
-                            enabled: true,
-                            navigateByImgClick: true,
-                            arrowMarkup: '<button title="%title%" type="button" class="mfp-arrow mfp-arrow-%dir%"></button>',
-                            tPrev: Translator.__('Previous (Left arrow key)'),
-                            tNext: Translator.__('Next (Right arrow key)'),
-                            tCounter: '<span class="mfp-counter">%curr% ' + Translator.__('of') + ' %total%</span>'
-                    	},
-                        zoom: {
-                            enabled: true,
-                            duration: 300,
-                            easing: 'ease-in-out'
-                        }
-                    });
-                «ELSE»
-                    jQuery('a.lightbox').lightbox();
-                «ENDIF»
+                «vendorAndName»InitImageViewer();
 
             «ENDIF»
             if (isViewPage) {

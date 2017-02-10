@@ -434,7 +434,7 @@ class ContentTypeList {
             $this->view->toplevelmodule = '«appName»';
 
             // ensure our custom plugins are loaded
-            array_push($this->view->plugins_dir, '«relativeAppRootPath»/«getViewPath»/plugins');
+            array_push($this->view->plugins_dir, '«relativeAppRootPath»/«getViewPath»plugins');
             «IF hasCategorisableEntities»
 
                 $featureActivationHelper = $this->container->get('«appService».feature_activation_helper');

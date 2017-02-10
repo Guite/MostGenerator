@@ -240,7 +240,7 @@ class Finder {
             var baseId;
             var params;
 
-            baseId = «name.formatForDB».itemSelector.baseId;
+            baseId = «objName».itemSelector.baseId;
             params = {
                 ot: baseId,
                 sort: jQuery('#' + baseId + 'Sort').val(),
@@ -281,7 +281,7 @@ class Finder {
             items = «objName».itemSelector.items[baseId];
             for (i = 0; i < items.length; ++i) {
                 item = items[i];
-                itemSelector.options[i] = new Option(item.title, item.id, false);
+                itemSelector.get(0).options[i] = new Option(item.title, item.id, false);
             }
 
             if («objName».itemSelector.selectedId > 0) {
@@ -316,6 +316,7 @@ class Finder {
                 jQuery('#' + baseId + 'PreviewContainer')
                     .html(window.atob(selectedElement.previewInfo))
                     .removeClass('hidden');
+                «vendorAndName»InitImageViewer();
             }
         };
 
@@ -324,7 +325,7 @@ class Finder {
             var baseId, itemSelector, preview;
 
             baseId = «objName».itemSelector.baseId;
-            itemSelector = jQuery('#' + baseId + 'Id');
+            itemSelector = jQuery('#' + baseId + 'Id').get(0);
             preview = window.atob(«objName».itemSelector.items[baseId][itemSelector.selectedIndex].previewInfo);
 
             jQuery('#' + baseId + 'PreviewContainer').html(preview);
