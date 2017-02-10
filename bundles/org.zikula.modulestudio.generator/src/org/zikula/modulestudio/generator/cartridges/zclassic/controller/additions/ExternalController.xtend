@@ -35,6 +35,7 @@ class ExternalController {
 
         use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
         use Symfony\Component\HttpFoundation\Request;
+        use Symfony\Component\HttpFoundation\Response;
         use Symfony\Component\Security\Core\Exception\AccessDeniedException;
         use Zikula\Core\Controller\AbstractController;
         use Zikula\Core\Response\PlainResponse;
@@ -97,26 +98,24 @@ class ExternalController {
             $objectType = $controllerHelper->getDefaultObjectType('controllerType', $contextArgs);
         }
 
-        $component = $this->name . ':' . ucfirst($objectType) . ':';
+        $component = '«appName»:' . ucfirst($objectType) . ':';
         if (!$this->hasPermission($component, $id . '::', ACCESS_READ)) {
             return '';
         }
 
         $repository = $this->get('«appService».entity_factory')->getRepository($objectType);
         $repository->setRequest($this->get('request_stack')->getCurrentRequest());
-        $selectionHelper = $this->get('«appService».selection_helper');
-        $idFields = $selectionHelper->getIdFields($objectType);
         $idValues = ['id' => $id];«/** TODO consider composite keys properly */»
 
         $hasIdentifier = $controllerHelper->isValidIdentifier($idValues);
         if (!$hasIdentifier) {
-            return $this->__('Error! Invalid identifier received.');
+            return new Response($this->__('Error! Invalid identifier received.'));
         }
 
         // assign object data fetched from the database
         $entity = $repository->selectById($idValues);
-        if ((!is_array($entity) && !is_object($entity)) || !isset($entity[$idFields[0]])) {
-            return $this->__('No such item.');
+        if (null === $entity) {
+            return new Response($this->__('No such item.'));
         }
 
         $entity->initWorkflow();
@@ -129,7 +128,12 @@ class ExternalController {
             $objectType => $entity,
             'displayMode' => $displayMode
         ];
+
+        $contextArgs = ['controller' => $objectType, 'action' => 'display'];
+        $additionalParameters = $repository->getAdditionalTemplateParameters(«IF hasUploads»$this->get('«appService».image_helper'), «ENDIF»'controllerAction', $contextArgs);
+        $templateParameters = array_merge($templateParameters, $additionalParameters);
         «IF needsFeatureActivationHelper»
+
             $templateParameters['featureActivationHelper'] = $this->get('«appService».feature_activation_helper');
         «ENDIF»
 
@@ -192,7 +196,7 @@ class ExternalController {
         }
 
         if (empty($editor) || !in_array($editor, ['ckeditor', 'tinymce'])) {
-            return $this->__('Error: Invalid editor context given for external controller action.');
+            return new Response($this->__('Error: Invalid editor context given for external controller action.'));
         }
 
         $repository = $this->get('«appService».entity_factory')->getRepository($objectType);

@@ -199,9 +199,9 @@ class ItemSelector {
              */
             public function decode(Zikula_Form_View $view)
             {
-                //parent::decode($view);
-                $this->objectType = $this->container->get('request_stack')->getCurrentRequest()->request->get('«appName»_objecttype', '«getLeadingEntity.name.formatForCode»');
-                $this->selectedItemId = $this->text;
+                $request = $this->container->get('request_stack')->getCurrentRequest();
+                $this->objectType = $request->request->get('«appName»_objecttype', '«getLeadingEntity.name.formatForCode»');
+                $this->selectedItemId = $this->text = $request->request->get($this->inputName, 0);
             }
         }
     '''

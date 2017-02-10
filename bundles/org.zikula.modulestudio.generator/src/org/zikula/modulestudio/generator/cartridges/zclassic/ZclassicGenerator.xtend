@@ -156,7 +156,8 @@ class ZclassicGenerator implements IGenerator {
         if (hasEditActions) {
             new EditFunctions().generate(it, fsa)
         }
-        if (generateExternalControllerAndFinder) {
+        val needsDetailContentType = generateDetailContentType && hasDisplayActions
+        if (generateExternalControllerAndFinder || needsDetailContentType) {
             new Finder().generate(it, fsa)
         }
         if (hasGeographical) {

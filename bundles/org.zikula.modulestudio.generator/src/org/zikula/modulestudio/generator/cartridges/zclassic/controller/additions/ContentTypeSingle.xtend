@@ -31,6 +31,7 @@ class ContentTypeSingle {
 
         use Symfony\Component\DependencyInjection\ContainerAwareInterface;
         use Symfony\Component\DependencyInjection\ContainerAwareTrait;
+        use Symfony\Component\HttpKernel\Controller\ControllerReference;
 
         /**
          * Generic single item display content plugin base class.
@@ -141,11 +142,13 @@ class ContentTypeSingle {
          */
         public function display()
         {
-            if (null !== $this->id && !empty($this->displayMode)) {
-                return $this->container->get('router')->generate('«appName.formatForDB»_external_display', $this->getDisplayArguments());
+            if (null === $this->id || empty($this->id) || empty($this->displayMode)) {
+                return '';
             }
 
-            return '';
+            $controllerReference = new ControllerReference('«appName»:External:display', $this->getDisplayArguments());
+
+            return $this->container->get('fragment.handler')->render($controllerReference, 'inline', []);
         }
 
         /**
@@ -153,11 +156,11 @@ class ContentTypeSingle {
          */
         public function displayEditing()
         {
-            if (null !== $this->id && !empty($this->displayMode)) {
-                return $this->container->get('router')->generate('«appName.formatForDB»_external_display', $this->getDisplayArguments());
+            if (null === $this->id || empty($this->id) || empty($this->displayMode)) {
+                return $this->container->get('translator.default')->__('No item selected.');
             }
 
-            return $this->container->get('translator.default')->__('No item selected.');
+            return $this->display();
         }
 
         /**
@@ -169,9 +172,9 @@ class ContentTypeSingle {
         {
             return [
                 'objectType' => $this->objectType,
+                'id' => $this->id,
                 'source' => 'contentType',
-                'displayMode' => $this->displayMode,
-                'id' => $this->id
+                'displayMode' => $this->displayMode
             ];
         }
 
@@ -184,9 +187,9 @@ class ContentTypeSingle {
         {
             return [
                 'objectType' => '«getLeadingEntity.name.formatForCode»',
-                 'id' => null,
-                 'displayMode' => 'embed'
-             ];
+                'id' => null,
+                'displayMode' => 'embed'
+            ];
         }
 
         /**
