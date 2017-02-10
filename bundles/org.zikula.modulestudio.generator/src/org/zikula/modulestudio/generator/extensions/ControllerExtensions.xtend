@@ -11,6 +11,10 @@ import de.guite.modulestudio.metamodel.IntVar
 import de.guite.modulestudio.metamodel.JoinRelationship
 import de.guite.modulestudio.metamodel.MainAction
 import de.guite.modulestudio.metamodel.ManyToManyRelationship
+import de.guite.modulestudio.metamodel.ManyToOneRelationship
+import de.guite.modulestudio.metamodel.OneToManyRelationship
+import de.guite.modulestudio.metamodel.OneToOneRelationship
+import de.guite.modulestudio.metamodel.RelationEditType
 import de.guite.modulestudio.metamodel.ViewAction
 
 /**
@@ -206,6 +210,21 @@ class ControllerExtensions {
             default:
                 if (!incoming) 2 else 3
         }
+    }
+
+    def getEditType(JoinRelationship it) {
+        switch (it) {
+            OneToOneRelationship:
+                return editType
+            OneToManyRelationship:
+                return editType
+            ManyToOneRelationship:
+                return editType
+            ManyToManyRelationship:
+                return editType
+        }
+
+        RelationEditType.ACTIVE_NONE_PASSIVE_CHOOSE
     }
 
     /**
