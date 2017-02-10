@@ -316,7 +316,9 @@ class Finder {
                 jQuery('#' + baseId + 'PreviewContainer')
                     .html(window.atob(selectedElement.previewInfo))
                     .removeClass('hidden');
-                «vendorAndName»InitImageViewer();
+                «IF hasImageFields»
+                    «vendorAndName»InitImageViewer();
+                «ENDIF»
             }
         };
 
@@ -330,6 +332,9 @@ class Finder {
 
             jQuery('#' + baseId + 'PreviewContainer').html(preview);
             «objName».itemSelector.selectedId = jQuery('#' + baseId + 'Id').val();
+            «IF hasImageFields»
+                «vendorAndName»InitImageViewer();
+            «ENDIF»
         };
     '''
 }
