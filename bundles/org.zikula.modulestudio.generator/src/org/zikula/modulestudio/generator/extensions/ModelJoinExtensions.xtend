@@ -76,10 +76,12 @@ class ModelJoinExtensions {
     }
 
     /**
-     * Returns a list of all incoming bidirectional join relations (excluding inheritance).
+     * Returns a list of all incoming bidirectional join relations.
      */
     def getBidirectionalIncomingJoinRelations(DataObject it) {
-        getIncomingJoinRelations.filter[bidirectional]
+        incoming.filter(OneToOneRelationship).filter[bidirectional]
+            + incoming.filter(OneToManyRelationship).filter[bidirectional]
+            + incoming.filter(ManyToManyRelationship).filter[bidirectional]
     }
 
     /**
@@ -100,7 +102,8 @@ class ModelJoinExtensions {
      * Returns a list of all incoming bidirectional join relations which are either one2one or one2many.
      */
     def getBidirectionalIncomingJoinRelationsWithOneSource(DataObject it) {
-        getIncomingJoinRelationsWithOneSource.filter[bidirectional]
+        incoming.filter(OneToOneRelationship).filter[bidirectional]
+            + incoming.filter(OneToManyRelationship).filter[bidirectional]
     }
     
     /**
@@ -161,7 +164,7 @@ class ModelJoinExtensions {
      * Returns a list of all incoming join relations which are either many2one or many2many.
      */
     def getIncomingCollections(DataObject it) {
-        (outgoing.filter(ManyToOneRelationship) + incoming.filter(ManyToManyRelationship)).filter[bidirectional]
+        outgoing.filter(ManyToOneRelationship) + incoming.filter(ManyToManyRelationship).filter[bidirectional]
     }
 
     /**

@@ -550,4 +550,19 @@ class Association {
         }
         «/* this last line is on purpose */»
     '''
+
+    def private isBidirectional(JoinRelationship it) {
+        switch (it) {
+            OneToOneRelationship:
+                return it.bidirectional
+            OneToManyRelationship:
+                return it.bidirectional
+            ManyToOneRelationship:
+                return false
+            ManyToManyRelationship:
+                return it.bidirectional
+        }
+
+        false
+    }
 }
