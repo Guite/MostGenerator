@@ -67,7 +67,11 @@ class View {
         <div class="«appName.toLowerCase»-«name.formatForDB» «appName.toLowerCase»-view">
             «IF null !== documentation && documentation != ''»
 
-                <p class="alert alert-info">{{ __('«documentation.replace('\'', '\\\'')»') }}</p>
+                «IF !documentation.containedTwigVariables.empty»
+                    {{ __f('«documentation.replace('\'', '\\\'').replaceTwigVariablesForTranslation»', { «documentation.containedTwigVariables.map[v|'\'%' + v + '%\': ' + v + '|default'].join(', ')» }) }}
+                «ELSE»
+                    <p class="alert alert-info">{{ __('«documentation.replace('\'', '\\\'')»') }}</p>
+                «ENDIF»
             «ENDIF»
 
             {{ block('page_nav_links') }}

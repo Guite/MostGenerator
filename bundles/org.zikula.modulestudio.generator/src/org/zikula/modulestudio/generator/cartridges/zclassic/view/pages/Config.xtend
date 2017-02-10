@@ -130,7 +130,11 @@ class Config {
             <legend>{{ tabTitle }}</legend>
 
             «IF null !== documentation && documentation != ''»
-                <p class="alert alert-info">{{ __('«documentation.replace("'", "")»')|nl2br }}</p>
+                «IF !documentation.containedTwigVariables.empty»
+                    {{ __f('«documentation.replace('\'', '\\\'').replaceTwigVariablesForTranslation»', { «documentation.containedTwigVariables.map[v|'\'%' + v + '%\': ' + v + '|default'].join(', ')» }) }}
+                «ELSE»
+                    <p class="alert alert-info">{{ __('«documentation.replace('\'', '\\\'')»')|nl2br }}</p>
+                «ENDIF»
             «ELSEIF !app.hasMultipleConfigSections || isPrimaryVarContainer»
                 <p class="alert alert-info">{{ __('Here you can manage all basic settings for this application.') }}</p>
             «ENDIF»
