@@ -213,7 +213,7 @@ class DisplayFunctions {
                 originalTable = jQuery(this);
                 if (originalTable.find('.fixed-column').length > 0) {
                     fixedColumnsTable = originalTable.clone().insertBefore(originalTable).addClass('fixed-columns hidden-xs');
-                    originalTable.find('.dropdown').addClass('hidden');
+                    originalTable.find('.dropdown').toggleClass('hidden', window.innerWidth >= 768);
                     fixedColumnsTable.find('.dropdown').removeClass('hidden');
                     fixedColumnsTable.css('left', originalTable.parent().offset().left);
 
