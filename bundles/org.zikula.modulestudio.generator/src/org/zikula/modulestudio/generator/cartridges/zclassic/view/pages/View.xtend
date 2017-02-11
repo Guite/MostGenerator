@@ -157,10 +157,10 @@ class View {
                     {% if routeArea == 'admin' %}
                         <col id="cSelect" />
                     {% endif %}
+                    <col id="cItemActions" />
                     «FOR field : listItemsFields»«field.columnDef»«ENDFOR»
                     «FOR relation : listItemsIn»«relation.columnDef(false)»«ENDFOR»
                     «FOR relation : listItemsOut»«relation.columnDef(true)»«ENDFOR»
-                    <col id="cItemActions" />
                 </colgroup>
                 <thead>
                 <tr>
@@ -169,10 +169,10 @@ class View {
                             <input type="checkbox" class="«application.vendorAndName.toLowerCase»-mass-toggle" />
                         </th>
                     {% endif %}
+                    <th id="hItemActions" scope="col" class="text-right z-order-unsorted">{{ __('Actions') }}</th>
                     «FOR field : listItemsFields»«field.headerLine»«ENDFOR»
                     «FOR relation : listItemsIn»«relation.headerLine(false)»«ENDFOR»
                     «FOR relation : listItemsOut»«relation.headerLine(true)»«ENDFOR»
-                    <th id="hItemActions" scope="col" class="text-right z-order-unsorted">{{ __('Actions') }}</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -193,10 +193,10 @@ class View {
                         </td>
                     {% endif %}
             «ENDIF»
+                «itemActions(appName)»
                 «FOR field : listItemsFields»«IF field.name == 'workflowState'»{% if routeArea == 'admin' %}«ENDIF»«field.displayEntry(false)»«IF field.name == 'workflowState'»{% endif %}«ENDIF»«ENDFOR»
                 «FOR relation : listItemsIn»«relation.displayEntry(false)»«ENDFOR»
                 «FOR relation : listItemsOut»«relation.displayEntry(true)»«ENDFOR»
-                «itemActions(appName)»
             «IF listType == LIST_TYPE_UL || listType == LIST_TYPE_OL»
                 </ul></li>
             «ELSEIF listType == LIST_TYPE_DL»
@@ -415,7 +415,7 @@ class View {
         «IF listType != LIST_TYPE_TABLE»
             <«listType.asItemTag»>
         «ELSE»
-            <td id="«new ItemActionsView().itemActionContainerViewId(it)»" headers="hItemActions" class="actions text-right nowrap z-w02">
+            <td id="«new ItemActionsView().itemActionContainerViewId(it)»" headers="hItemActions" class="actions nowrap z-w02">
         «ENDIF»
             «new ItemActionsView().generate(it, 'view')»
         </«listType.asItemTag»>

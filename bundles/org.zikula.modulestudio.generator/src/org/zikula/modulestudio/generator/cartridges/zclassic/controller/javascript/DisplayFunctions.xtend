@@ -211,7 +211,7 @@ class DisplayFunctions {
             containerSelector = '';
             if (context == 'view') {
                 containerSelector = '.«appName.toLowerCase»-view';
-                listClasses = 'list-unstyled dropdown-menu dropdown-menu-right';
+                listClasses = 'list-unstyled dropdown-menu';
             } else if (context == 'display') {
                 containerSelector = 'h2, h3';
                 listClasses = 'list-unstyled dropdown-menu';
