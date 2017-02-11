@@ -165,7 +165,7 @@ class View {
                 <thead>
                 <tr>
                     {% if routeArea == 'admin' %}
-                        <th id="hSelect" scope="col" class="fixed-column text-center">
+                        <th id="hSelect" scope="col" class="fixed-column text-center z-w02">
                             <input type="checkbox" class="«application.vendorAndName.toLowerCase»-mass-toggle" />
                         </th>
                     {% endif %}
