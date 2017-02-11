@@ -165,11 +165,11 @@ class View {
                 <thead>
                 <tr>
                     {% if routeArea == 'admin' %}
-                        <th id="hSelect" scope="col" class="text-center">
+                        <th id="hSelect" scope="col" class="fixed-column text-center">
                             <input type="checkbox" class="«application.vendorAndName.toLowerCase»-mass-toggle" />
                         </th>
                     {% endif %}
-                    <th id="hItemActions" scope="col" class="text-right z-order-unsorted">{{ __('Actions') }}</th>
+                    <th id="hItemActions" scope="col" class="fixed-column text-right z-order-unsorted">{{ __('Actions') }}</th>
                     «FOR field : listItemsFields»«field.headerLine»«ENDFOR»
                     «FOR relation : listItemsIn»«relation.headerLine(false)»«ENDFOR»
                     «FOR relation : listItemsOut»«relation.headerLine(true)»«ENDFOR»
@@ -188,7 +188,7 @@ class View {
             «ELSEIF listType == LIST_TYPE_TABLE»
                 <tr>
                     {% if routeArea == 'admin' %}
-                        <td headers="hSelect" class="text-center">
+                        <td headers="hSelect" class="fixed-column text-center">
                             <input type="checkbox" name="items[]" value="{{ «name.formatForCode».«getPrimaryKeyFields.head.name.formatForCode» }}" class="«application.vendorAndName.toLowerCase»-toggle-checkbox" />
                         </td>
                     {% endif %}
@@ -415,7 +415,7 @@ class View {
         «IF listType != LIST_TYPE_TABLE»
             <«listType.asItemTag»>
         «ELSE»
-            <td id="«new ItemActionsView().itemActionContainerViewId(it)»" headers="hItemActions" class="actions nowrap z-w02">
+            <td id="«new ItemActionsView().itemActionContainerViewId(it)»" headers="hItemActions" class="fixed-column actions nowrap z-w02">
         «ENDIF»
             «new ItemActionsView().generate(it, 'view')»
         </«listType.asItemTag»>
