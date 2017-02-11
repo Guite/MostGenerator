@@ -54,6 +54,8 @@ class DisplayFunctions {
         «IF hasViewActions»
 
             «initMassToggle»
+
+            «initFixedColumns»
         «ENDIF»
         «IF hasViewActions || hasDisplayActions»
 
@@ -195,6 +197,33 @@ class DisplayFunctions {
                     jQuery('.«vendorAndName.toLowerCase»-toggle-checkbox').prop('checked', jQuery(this).prop('checked'));
                 });
             }
+        }
+    '''
+
+    def private initFixedColumns(Application it) '''
+        /**
+         * Initialises fixed table columns.
+         */
+        function «vendorAndName»InitFixedColumns()
+        {
+            var originalTable, fixedColumnsTable;
+
+            jQuery('.table.fixed-columns').remove();
+            jQuery('.table').each(function() {
+                originalTable = jQuery(this);
+                if (originalTable.find('.fixed-column').length > 0) {
+                    fixedColumnsTable = originalTable.clone().insertBefore(originalTable).addClass('fixed-columns hidden-xs');
+                    originalTable.find('.dropdown').addClass('hidden');
+                    fixedColumnsTable.find('.dropdown').removeClass('hidden');
+                    fixedColumnsTable.css('left', originalTable.parent().offset().left);
+
+                    fixedColumnsTable.find('th, td').not('.fixed-column').remove();
+
+                    fixedColumnsTable.find('tr').each(function (i, elem) {
+                        jQuery(this).height(originalTable.find('tr:eq(' + i + ')').height());
+                    });
+                }
+            });
         }
     '''
 
@@ -348,6 +377,8 @@ class DisplayFunctions {
             if (isViewPage) {
                 «vendorAndName»InitQuickNavigation();
                 «vendorAndName»InitMassToggle();
+                jQuery(window).resize(«vendorAndName»InitFixedColumns);
+                «vendorAndName»InitFixedColumns();
                 «vendorAndName»InitItemActions('view');
                 «IF hasBooleansWithAjaxToggleInView»
                     «vendorAndName»InitAjaxToggles();

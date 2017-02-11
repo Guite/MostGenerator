@@ -52,17 +52,12 @@ class Styles {
         div#z-maincontent.z-module-«name.formatForDB» table tbody tr td {
             vertical-align: top;
         }
-        .table-responsive > .fixed-column {
+        .table-responsive > .fixed-columns {
             position: absolute;
             display: inline-block;
             width: auto;
             border-right: 1px solid #ddd;
             background-color: #fff;
-        }
-        @media(min-width: 768px) {
-            .table-responsive > .fixed-column {
-                display: none;
-            }
         }
 
         /* display pages */
