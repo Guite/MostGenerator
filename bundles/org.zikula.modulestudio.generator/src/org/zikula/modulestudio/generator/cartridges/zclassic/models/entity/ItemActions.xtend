@@ -3,6 +3,7 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.models.entity
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.EntityTreeType
+import de.guite.modulestudio.metamodel.EntityWorkflowType
 import de.guite.modulestudio.metamodel.ManyToManyRelationship
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
@@ -105,17 +106,15 @@ class ItemActions {
         «IF !refedElems.empty»
 
             // more actions for adding new related items
-            $authAdmin = $permissionApi->hasPermission($component, $instance, ACCESS_ADMIN);
-            «/* TODO review the permission levels and maybe define them for each related entity
-              * ACCESS_ADMIN for admin controllers else: «IF relatedEntity.ownerPermission»ADD«ELSEIF relatedEntity.workflow == EntityWorkflowType::NONE»EDIT«ELSE»COMMENT«ENDIF»
-              */»
-            if ($isOwner || $authAdmin) {
-                «FOR elem : refedElems»
+            «FOR elem : refedElems»
+                «val useTarget = (elem.source == it)»
+                «val relationAliasName = elem.getRelationAliasName(useTarget).formatForCode.toFirstLower»
+                «val relationAliasNameParam = elem.getRelationAliasName(!useTarget).formatForCodeCapital»
+                «val otherEntity = (if (!useTarget) elem.source else elem.target)»
 
-                    «val useTarget = (elem.source == it)»
-                    «val relationAliasName = elem.getRelationAliasName(useTarget).formatForCode.toFirstLower»
-                    «val relationAliasNameParam = elem.getRelationAliasName(!useTarget).formatForCodeCapital»
-                    «val otherEntity = (if (!useTarget) elem.source else elem.target)»
+                $relatedComponent = '«app.appName»:«otherEntity.name.formatForCodeCapital»:';
+                $relatedInstance = «otherEntity.idFieldsAsParameterCode('entity')» . '::';
+                if ($isOwner || $permissionApi->hasPermission($relatedComponent, $relatedInstance, ACCESS_«IF (otherEntity as Entity).ownerPermission»ADD«ELSEIF (otherEntity as Entity).workflow == EntityWorkflowType.NONE»EDIT«ELSE»COMMENT«ENDIF»)) {
                     «val many = elem.isManySideDisplay(useTarget)»
                     «IF !many»
                         if (!isset($entity->«relationAliasName») || null === $entity->«relationAliasName») {

@@ -105,9 +105,9 @@ class Relations {
             «IF !many»
                 {% if «relatedEntity.name.formatForCode».«relationAliasName» is not defined or «relatedEntity.name.formatForCode».«relationAliasName» is null %}
             «ENDIF»
-            {% set permLevel = routeArea == 'admin' ? 'ACCESS_ADMIN' : 'ACCESS_«IF relatedEntity.ownerPermission»ADD«ELSEIF relatedEntity.workflow == EntityWorkflowType::NONE»EDIT«ELSE»COMMENT«ENDIF»' %}
-            {% set mayManage = hasPermission('«appName»:«relatedEntity.name.formatForCodeCapital»:', «relatedEntity.idFieldsAsParameterTemplate» ~ '::', permLevel) %}
-            {% if mayManage«IF relatedEntity.ownerPermission» or (currentUser|default and «relatedEntity.name.formatForCode».createdBy|default and «relatedEntity.name.formatForCode».createdBy.getUid() == currentUser.uid)«ENDIF» %}
+            {% set permLevel = 'ACCESS_«IF otherEntity.ownerPermission»ADD«ELSEIF otherEntity.workflow == EntityWorkflowType::NONE»EDIT«ELSE»COMMENT«ENDIF»' %}
+            {% set mayManage = hasPermission('«appName»:«otherEntity.name.formatForCodeCapital»:', «otherEntity.idFieldsAsParameterTemplate» ~ '::', permLevel) %}
+            {% if mayManage«IF otherEntity.ownerPermission» or (currentUser|default and «otherEntity.name.formatForCode».createdBy|default and «otherEntity.name.formatForCode».createdBy.getUid() == currentUser.uid)«ENDIF» %}
                 <p class="managelink">
                     {% set createTitle = __('Create «otherEntity.name.formatForDisplay»') %}
                     <a href="{{ path('«appName.formatForDB»_«otherEntity.name.formatForDB»_' ~ routeArea ~ 'edit', { «relationAliasNameParam»: «relatedEntity.idFieldsAsParameterTemplate» }) }}" title="{{ createTitle|e('html_attr') }}" class="fa fa-plus">{{ createTitle }}</a>
