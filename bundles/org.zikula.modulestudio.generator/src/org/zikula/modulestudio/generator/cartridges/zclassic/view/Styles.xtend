@@ -48,50 +48,56 @@ class Styles {
     }
 
     def private appStyles(Application it) '''
-        /* view pages */
-        div#z-maincontent.z-module-«name.formatForDB» table tbody tr td {
-            vertical-align: top;
-        }
-        .table-responsive > .fixed-columns {
-            position: absolute;
-            display: inline-block;
-            width: auto;
-            border-right: 1px solid #ddd;
-            background-color: #fff;
-        }
+        «IF hasViewActions»
+            /* view pages */
+            div#z-maincontent.z-module-«name.formatForDB» table tbody tr td {
+                vertical-align: top;
+            }
+            .table-responsive > .fixed-columns {
+                position: absolute;
+                display: inline-block;
+                width: auto;
+                border-right: 1px solid #ddd;
+                background-color: #fff;
+            }
 
-        /* display pages */
-        .«cssPrefix»-display div.col-sm-3 h3 {
-            color: #333;
-            font-weight: 400;
-            border-bottom: 1px solid #ccc;
-            padding-bottom: 8px;
-        }
+        «ENDIF»
+        «IF hasDisplayActions»
+            /* display pages */
+            .«cssPrefix»-display div.col-sm-3 h3 {
+                color: #333;
+                font-weight: 400;
+                border-bottom: 1px solid #ccc;
+                padding-bottom: 8px;
+            }
 
-        .«cssPrefix»-display div.col-sm-3 p.managelink {
-            margin-left: 18px;
-        }
+            .«cssPrefix»-display div.col-sm-3 p.managelink {
+                margin-left: 18px;
+            }
+
+        «ENDIF»
         «IF hasGeographical»
-
             div.«cssPrefix»-mapcontainer {
                 height: 400px;
             }
+
         «ENDIF»
         «IF hasTrees»
-
             .tree-container {
                 border: 1px solid #ccc;
                 width: 400px;
                 float: left;
                 margin-right: 16px;
             }
+
         «ENDIF»
         «IF hasColourFields»
-
             .«cssPrefix»ColourPicker {
                 cursor: pointer;
             }
+
         «ENDIF»
+
         «validationStyles»
         «autoCompletion»
         «viewAdditions»
