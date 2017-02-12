@@ -38,6 +38,13 @@ class ViewQuickNavForm {
                 <h3>{{ __('Quick navigation') }}</h3>
                 «formFields»
                 {{ form_widget(quickNavForm.updateview) }}
+                «IF categorisable»
+                    {% if (categoryFilter is defined and categoryFilter != true) or not categoriesEnabled %}
+                    {% else %}
+                            </div>
+                        </div>
+                    {% endif %}
+                «ENDIF»
             </fieldset>
             {{ form_end(quickNavForm) }}
         {% endif %}
@@ -99,10 +106,16 @@ class ViewQuickNavForm {
         {% set categoriesEnabled = featureActivationHelper.isEnabled(constant('«application.vendor.formatForCodeCapital»\\«application.name.formatForCodeCapital»Module\\Helper\\FeatureActivationHelper::CATEGORIES'), '«name.formatForCode»') %}
         {% if (categoryFilter is defined and categoryFilter != true) or not categoriesEnabled %}
             <div class="hidden">
+        {% else %}
+            <div class="row">
+                <div class="col-sm-3">
         {% endif %}
             {{ form_row(quickNavForm.categories) }}
         {% if (categoryFilter is defined and categoryFilter != true) or not categoriesEnabled %}
             </div>
+        {% else %}
+                </div>
+                <div class="col-sm-9">
         {% endif %}
     '''
 
