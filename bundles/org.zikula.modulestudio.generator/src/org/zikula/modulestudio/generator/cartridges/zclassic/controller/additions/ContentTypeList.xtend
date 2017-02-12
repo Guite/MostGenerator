@@ -472,6 +472,8 @@ class ContentTypeList {
                     $this->view->assign('categories', $categories)
                                ->assign('categoryHelper', $this->container->get('«appService».category_helper'));
                 }
+                $this->view->assign('featureActivationHelper', $featureActivationHelper)
+                           ->assign('objectType', $this->objectType);
             «ENDIF»
         }
 

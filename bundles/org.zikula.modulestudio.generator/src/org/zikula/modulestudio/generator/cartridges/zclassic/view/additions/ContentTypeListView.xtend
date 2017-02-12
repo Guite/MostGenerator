@@ -140,7 +140,7 @@ class ContentTypeListView {
     '''
 
     def private editTemplateCategories(Application it) '''
-        {if $featureActivationHelper->isEnabled(constant('«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Helper\\FeatureActivationHelper::CATEGORIES', $objectType))}
+        {if $featureActivationHelper->isEnabled(constant('«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Helper\\FeatureActivationHelper::CATEGORIES'), $objectType)}
         {formvolatile}
         {if $properties ne null && is_array($properties)}
             {nocache}

@@ -18,8 +18,8 @@ class AjaxController {
 
     extension FormattingExtensions = new FormattingExtensions
     extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
-    extension ModelExtensions = new ModelExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
+    extension ModelExtensions = new ModelExtensions
     extension ModelJoinExtensions = new ModelJoinExtensions
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
@@ -272,7 +272,10 @@ class AjaxController {
         protected function prepareSlimItem($repository, $objectType, $item, $itemId, $descriptionField)
         {
             $previewParameters = [
-                $objectType => $item
+                $objectType => $item«IF hasCategorisableEntities»,«ENDIF»
+                «IF hasCategorisableEntities»
+                    'featureActivationHelper' => $this->get('«appService».feature_activation_helper')
+                «ENDIF»
             ];
             $contextArgs = ['controller' => $objectType, 'action' => 'display'];
             $additionalParameters = $repository->getAdditionalTemplateParameters(«IF hasUploads»$this->get('«appService».image_helper'), «ENDIF»'controllerAction', $contextArgs);

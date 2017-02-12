@@ -149,7 +149,7 @@ class ExternalView {
         <dl class="category-list">
         {% for propName, catMapping in «name.formatForCode».categories %}
             <dt>{{ propName }}</dt>
-            <dd>{{ catMapping.category.display_name[lang] }}</dd>
+            <dd>{{ catMapping.category.display_name[app.request.locale]|default(catMapping.category.name) }}</dd>
         {% endfor %}
         </dl>
     '''
@@ -366,7 +366,7 @@ class ExternalView {
                                 {/if}
                                 <label for="{$baseID}_{$categorySelectorId}{$propertyName}" class="col-sm-3 control-label">{$categoryLabel}:</label>
                                 <div class="col-sm-9">
-                                    {selector_category name="`$baseID`_`$categorySelectorName``$propertyName`" field='id' selectedValue=$catIds.$propertyName categoryRegistryModule='«app.appName»' categoryRegistryTable=$objectType categoryRegistryProperty=$propertyName defaultText=$lblDefault editLink=false multipleSize=$categorySelectorSize cssClass='form-control'}
+                                    {selector_category name="`$baseID`_`$categorySelectorName``$propertyName`" field='id' selectedValue=$catIds.$propertyName|default:null categoryRegistryModule='«app.appName»' categoryRegistryTable=$objectType categoryRegistryProperty=$propertyName defaultText=$lblDefault editLink=false multipleSize=$categorySelectorSize cssClass='form-control'}
                                 </div>
                             </div>
                         {/foreach}
