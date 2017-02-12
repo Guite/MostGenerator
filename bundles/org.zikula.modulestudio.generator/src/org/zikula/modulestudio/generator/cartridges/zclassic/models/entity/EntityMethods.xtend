@@ -1,6 +1,5 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.models.entity
 
-import de.guite.modulestudio.metamodel.AbstractDateField
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.DataObject
 import de.guite.modulestudio.metamodel.DateField
@@ -84,11 +83,11 @@ class EntityMethods {
                 «thVal.validationMethods(userField)»
             «ENDFOR»
         «ENDIF»
-        «val dateTimeFields = fields.filter(AbstractDateField)»
-        «IF !dateTimeFields.empty»
-            «FOR dateField : dateTimeFields»
+        «val timeFields = fields.filter(TimeField)»
+        «IF !timeFields.empty»
+            «FOR timeField : timeFields»
 
-                «thVal.validationMethods(dateField)»
+                «thVal.validationMethods(timeField)»
             «ENDFOR»
         «ENDIF»
     '''
