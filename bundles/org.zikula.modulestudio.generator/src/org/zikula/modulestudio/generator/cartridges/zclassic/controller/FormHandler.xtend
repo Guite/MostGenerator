@@ -133,16 +133,11 @@ class FormHandler {
         use Symfony\Component\HttpFoundation\RedirectResponse;
         use Symfony\Component\HttpFoundation\Request;
         use Symfony\Component\HttpFoundation\RequestStack;
-        «IF !targets('1.4-dev')»
-            use Symfony\Component\HttpKernel\KernelInterface;
-        «ENDIF»
         use Symfony\Component\Routing\RouterInterface;
         use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+        use Zikula\Bundle\CoreBundle\HttpKernel\ZikulaHttpKernelInterface;
         use Zikula\Common\Translator\TranslatorInterface;
         use Zikula\Common\Translator\TranslatorTrait;
-        «IF targets('1.4-dev')»
-            use Zikula\Bundle\CoreBundle\HttpKernel\ZikulaHttpKernelInterface;
-        «ENDIF»
         use Zikula\Core\Doctrine\EntityAccess;
         «IF hasHookSubscribers»
             use Zikula\Core\RouteUrl;
@@ -296,7 +291,7 @@ class FormHandler {
             «ENDIF»
 
             /**
-             * @var «IF targets('1.4-dev')»ZikulaHttpKernelInterface«ELSE»KernelInterface«ENDIF»
+             * @var ZikulaHttpKernelInterface
              */
             protected $kernel;
 
@@ -418,41 +413,37 @@ class FormHandler {
             /**
              * «actionName.formatForCodeCapital»Handler constructor.
              *
-             «IF targets('1.4-dev')»
-             * @param ZikulaHttpKernelInterface $kernel      Kernel service instance
-             «ELSE»
-             * @param KernelInterface      $kernel           Kernel service instance
-             «ENDIF»
-             * @param TranslatorInterface  $translator       Translator service instance
-             * @param FormFactoryInterface $formFactory      FormFactory service instance
-             * @param RequestStack         $requestStack     RequestStack service instance
-             * @param RouterInterface      $router           Router service instance
-             * @param LoggerInterface      $logger           Logger service instance
-             * @param PermissionApi        $permissionApi    PermissionApi service instance
+             * @param ZikulaHttpKernelInterface $kernel           Kernel service instance
+             * @param TranslatorInterface       $translator       Translator service instance
+             * @param FormFactoryInterface      $formFactory      FormFactory service instance
+             * @param RequestStack              $requestStack     RequestStack service instance
+             * @param RouterInterface           $router           Router service instance
+             * @param LoggerInterface           $logger           Logger service instance
+             * @param PermissionApi             $permissionApi    PermissionApi service instance
              «IF hasTranslatable || needsApproval»
-             * @param VariableApi          $variableApi      VariableApi service instance
+             * @param VariableApi               $variableApi      VariableApi service instance
              «ENDIF»
-             * @param CurrentUserApi       $currentUserApi   CurrentUserApi service instance
+             * @param CurrentUserApi            $currentUserApi   CurrentUserApi service instance
              «IF needsApproval»
              * @param GroupApplicationRepository $groupApplicationRepository GroupApplicationRepository service instance.
              «ENDIF»
              * @param «name.formatForCodeCapital»Factory $entityFactory «name.formatForCodeCapital»Factory service instance
-             * @param ControllerHelper     $controllerHelper ControllerHelper service instance
-             * @param ModelHelper          $modelHelper      ModelHelper service instance
-             * @param SelectionHelper      $selectionHelper  SelectionHelper service instance
-             * @param WorkflowHelper       $workflowHelper   WorkflowHelper service instance
+             * @param ControllerHelper          $controllerHelper ControllerHelper service instance
+             * @param ModelHelper               $modelHelper      ModelHelper service instance
+             * @param SelectionHelper           $selectionHelper  SelectionHelper service instance
+             * @param WorkflowHelper            $workflowHelper   WorkflowHelper service instance
              «IF hasHookSubscribers»
-             * @param HookHelper           $hookHelper       HookHelper service instance
+             * @param HookHelper                $hookHelper       HookHelper service instance
              «ENDIF»
              «IF hasTranslatable»
-             * @param TranslatableHelper   $translatableHelper TranslatableHelper service instance
+             * @param TranslatableHelper        $translatableHelper TranslatableHelper service instance
              «ENDIF»
              «IF needsFeatureActivationHelper»
-             * @param FeatureActivationHelper $featureActivationHelper FeatureActivationHelper service instance
+             * @param FeatureActivationHelper   $featureActivationHelper FeatureActivationHelper service instance
              «ENDIF»
              */
             public function __construct(
-                «IF targets('1.4-dev')»ZikulaHttpKernelInterface«ELSE»KernelInterface«ENDIF» $kernel,
+                ZikulaHttpKernelInterface $kernel,
                 TranslatorInterface $translator,
                 FormFactoryInterface $formFactory,
                 RequestStack $requestStack,

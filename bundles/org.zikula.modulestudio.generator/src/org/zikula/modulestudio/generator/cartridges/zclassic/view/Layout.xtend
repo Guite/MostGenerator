@@ -66,13 +66,8 @@ class Layout {
                 {{ pageAddAsset('stylesheet', asset('jquery-ui/themes/base/jquery-ui.min.css')) }}
             «ENDIF»
             «IF hasImageFields»
-                «IF targets('1.4-dev')»
-                    {{ pageAddAsset('javascript', asset('magnific-popup/jquery.magnific-popup.min.js')) }}
-                    {{ pageAddAsset('stylesheet', asset('magnific-popup/magnific-popup.css')) }}
-                «ELSE»
-                    {{ pageAddAsset('javascript', asset('bootstrap-media-lightbox/bootstrap-media-lightbox.min.js')) }}
-                    {{ pageAddAsset('stylesheet', asset('bootstrap-media-lightbox/bootstrap-media-lightbox.css')) }}
-                «ENDIF»
+                {{ pageAddAsset('javascript', asset('magnific-popup/jquery.magnific-popup.min.js')) }}
+                {{ pageAddAsset('stylesheet', asset('magnific-popup/magnific-popup.css')) }}
             «ENDIF»
             «IF !relations.empty && (hasViewActions || hasDisplayActions || hasEditActions)»
                 {{ pageAddAsset('stylesheet', asset('bootstrap-jqueryui/bootstrap-jqueryui.min.css')) }}
@@ -179,7 +174,7 @@ class Layout {
                     {% if file_path|default %}
                         <span class="help-block">
                             {{ __('Current file') }}:
-                            <a href="{{ file_url }}" title="{{ __('Open file') }}"{% if file_meta.isImage %} class="«IF targets('1.4-dev')»image-link«ELSE»lightbox«ENDIF»"{% endif %}>
+                            <a href="{{ file_url }}" title="{{ __('Open file') }}"{% if file_meta.isImage %} class="image-link"{% endif %}>
                             {% if file_meta.isImage %}
                                 <img src="{{ file_path|imagine_filter('zkroot', thumbRuntimeOptions) }}" alt="{{ formattedEntityTitle|e('html_attr') }}" width="{{ thumbRuntimeOptions.thumbnail.size[0] }}" height="{{ thumbRuntimeOptions.thumbnail.size[1] }}" class="img-thumbnail" />
                             {% else %}
@@ -328,11 +323,7 @@ class Layout {
         «IF forFinder»
             <link rel="stylesheet" type="text/css" href="{{ zasset('@«appName»:css/finder.css') }}" />
         «ELSE»
-            «IF targets('1.4-dev')»
-                <link rel="stylesheet" type="text/css" href="{{ asset('magnific-popup/magnific-popup.css') }}" />
-            «ELSE»
-                <link rel="stylesheet" type="text/css" href="{{ asset('bootstrap-media-lightbox/bootstrap-media-lightbox.css') }}" />
-            «ENDIF»
+            <link rel="stylesheet" type="text/css" href="{{ asset('magnific-popup/magnific-popup.css') }}" />
         «ENDIF»
     '''
 
@@ -341,11 +332,7 @@ class Layout {
             <script type="text/javascript" src="{{ zasset('@«appName»:js/«appName».Finder.js') }}"></script>
         «ELSE»
             «IF hasImageFields»
-                «IF targets('1.4-dev')»
-                    <script type="text/javascript" src="{{ asset('magnific-popup/jquery.magnific-popup.min.js') }}"></script>
-                «ELSE»
-                    <script type="text/javascript" src="{{ asset('bootstrap-media-lightbox/bootstrap-media-lightbox.min.js') }}"></script>
-                «ENDIF»
+                <script type="text/javascript" src="{{ asset('magnific-popup/jquery.magnific-popup.min.js') }}"></script>
             «ENDIF»
             <script type="text/javascript" src="{{ zasset('@«appName»:js/«appName».js') }}"></script>
             «IF hasGeographical»

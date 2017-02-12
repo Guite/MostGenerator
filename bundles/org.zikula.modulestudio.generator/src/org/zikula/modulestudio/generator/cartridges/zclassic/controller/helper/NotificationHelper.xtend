@@ -35,14 +35,9 @@ class NotificationHelper {
         use Symfony\Component\HttpFoundation\Request;
         use Symfony\Component\HttpFoundation\RequestStack;
         use Symfony\Component\HttpFoundation\Session\SessionInterface;
-        «IF !targets('1.4-dev')»
-            use Symfony\Component\HttpKernel\KernelInterface;
-        «ENDIF»
         use Symfony\Component\Routing\RouterInterface;
         use Twig_Environment;
-        «IF targets('1.4-dev')»
-            use Zikula\Bundle\CoreBundle\HttpKernel\ZikulaHttpKernelInterface;
-        «ENDIF»
+        use Zikula\Bundle\CoreBundle\HttpKernel\ZikulaHttpKernelInterface;
         use Zikula\Common\Translator\TranslatorInterface;
         use Zikula\Common\Translator\TranslatorTrait;
         use Zikula\Core\Doctrine\EntityAccess;
@@ -75,7 +70,7 @@ class NotificationHelper {
         protected $router;
 
         /**
-         * @var «IF targets('1.4-dev')»ZikulaHttpKernelInterface«ELSE»KernelInterface«ENDIF»
+         * @var ZikulaHttpKernelInterface
          */
         protected $kernel;
 
@@ -147,23 +142,19 @@ class NotificationHelper {
         /**
          * NotificationHelper constructor.
          *
-         «IF targets('1.4-dev')»
-         * @param ZikulaHttpKernelInterface $kernel         Kernel service instance
-         «ELSE»
-         * @param KernelInterface          $kernel          Kernel service instance
-         «ENDIF»
-         * @param TranslatorInterface      $translator      Translator service instance
-         * @param SessionInterface         $session         Session service instance
-         * @param Routerinterface          $router          Router service instance
-         * @param RequestStack             $requestStack    RequestStack service instance
-         * @param VariableApi              $variableApi     VariableApi service instance
-         * @param Twig_Environment         $twig            Twig service instance
-         * @param MailerApi                $mailerApi       MailerApi service instance
-         * @param GroupRepositoryInterface $groupRepository GroupRepository service instance
-         * @param WorkflowHelper           $workflowHelper  WorkflowHelper service instance
+         * @param ZikulaHttpKernelInterface $kernel          Kernel service instance
+         * @param TranslatorInterface       $translator      Translator service instance
+         * @param SessionInterface          $session         Session service instance
+         * @param Routerinterface           $router          Router service instance
+         * @param RequestStack              $requestStack    RequestStack service instance
+         * @param VariableApi               $variableApi     VariableApi service instance
+         * @param Twig_Environment          $twig            Twig service instance
+         * @param MailerApi                 $mailerApi       MailerApi service instance
+         * @param GroupRepositoryInterface  $groupRepository GroupRepository service instance
+         * @param WorkflowHelper            $workflowHelper  WorkflowHelper service instance
          */
         public function __construct(
-            «IF targets('1.4-dev')»ZikulaHttpKernelInterface«ELSE»KernelInterface«ENDIF» $kernel,
+            ZikulaHttpKernelInterface $kernel,
             TranslatorInterface $translator,
             SessionInterface $session,
             RouterInterface $router,

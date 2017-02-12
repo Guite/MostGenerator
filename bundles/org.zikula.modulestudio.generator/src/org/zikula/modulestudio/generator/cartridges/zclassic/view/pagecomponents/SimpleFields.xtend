@@ -75,7 +75,7 @@ class SimpleFields {
             «IF page == 'display'»
                   {% if not isQuickView %}
             «ENDIF»
-                {{ «realName».getUid()|profileLinkByUserId() }}«IF entity.application.targets('1.4-dev')»{% if currentUser.loggedIn %}{% set sendMessageUrl = «realName».getUid()|messageSendLink(urlOnly=true) %}{% if sendMessageUrl != '#' %}<a href="{{ sendMessageUrl }}" title="{{ __f('Send private message to %userName%', { '%userName%': «realName».getUname() }) }}"><i class="fa fa-envelope-o"></i></a>{% endif %}«ENDIF»
+                {{ «realName».getUid()|profileLinkByUserId() }}{% if currentUser.loggedIn %}{% set sendMessageUrl = «realName».getUid()|messageSendLink(urlOnly=true) %}{% if sendMessageUrl != '#' %}<a href="{{ sendMessageUrl }}" title="{{ __f('Send private message to %userName%', { '%userName%': «realName».getUname() }) }}"><i class="fa fa-envelope-o"></i></a>{% endif %}
                 <span class="avatar">{{ «entity.application.appName.formatForDB»_userAvatar(«realName».getUid(), rating='g') }}</span>
             «IF page == 'display'»
                 {% else %}
@@ -151,7 +151,7 @@ class SimpleFields {
                 {% if «realName» is not empty and «realName»Meta|default %}
             «ELSE»{% if «realName»Meta|default %}
             «ENDIF»
-            <a href="{{ «realName»Url }}" title="{{ «objName».getTitleFromDisplayPattern()|e('html_attr') }}"{% if «realName»Meta.isImage %} class="«IF entity.application.targets('1.4-dev')»image-link«ELSE»lightbox«ENDIF»"{% endif %}>
+            <a href="{{ «realName»Url }}" title="{{ «objName».getTitleFromDisplayPattern()|e('html_attr') }}"{% if «realName»Meta.isImage %} class="image-link"{% endif %}>
             {% if «realName»Meta.isImage %}
                 {% set thumbOptions = attribute(thumbRuntimeOptions, '«entity.name.formatForCode»«name.formatForCodeCapital»') %}
                 <img src="{{ «realName».getPathname()|imagine_filter('zkroot', thumbOptions) }}" alt="{{ «objName».getTitleFromDisplayPattern()|e('html_attr') }}" width="{{ thumbOptions.thumbnail.size[0] }}" height="{{ thumbOptions.thumbnail.size[1] }}" class="img-thumbnail" />

@@ -334,31 +334,27 @@ class DisplayFunctions {
          */
         function «vendorAndName»InitImageViewer()
         {
-            «IF targets('1.4-dev')»
-                jQuery('a.image-link').magnificPopup({
-                    type: 'image',
-                    closeOnContentClick: true,
-                    image: {
-                        titleSrc: 'title',
-                        verticalFit: true
-                    },
-                    gallery: {
-                        enabled: true,
-                        navigateByImgClick: true,
-                        arrowMarkup: '<button title="%title%" type="button" class="mfp-arrow mfp-arrow-%dir%"></button>',
-                        tPrev: Translator.__('Previous (Left arrow key)'),
-                        tNext: Translator.__('Next (Right arrow key)'),
-                        tCounter: '<span class="mfp-counter">%curr% ' + Translator.__('of') + ' %total%</span>'
-                    },
-                    zoom: {
-                        enabled: true,
-                        duration: 300,
-                        easing: 'ease-in-out'
-                    }
-                });
-            «ELSE»
-                jQuery('a.lightbox').lightbox();
-            «ENDIF»
+            jQuery('a.image-link').magnificPopup({
+                type: 'image',
+                closeOnContentClick: true,
+                image: {
+                    titleSrc: 'title',
+                    verticalFit: true
+                },
+                gallery: {
+                    enabled: true,
+                    navigateByImgClick: true,
+                    arrowMarkup: '<button title="%title%" type="button" class="mfp-arrow mfp-arrow-%dir%"></button>',
+                    tPrev: Translator.__('Previous (Left arrow key)'),
+                    tNext: Translator.__('Next (Right arrow key)'),
+                    tCounter: '<span class="mfp-counter">%curr% ' + Translator.__('of') + ' %total%</span>'
+                },
+                zoom: {
+                    enabled: true,
+                    duration: 300,
+                    easing: 'ease-in-out'
+                }
+            });
         }
     '''
 

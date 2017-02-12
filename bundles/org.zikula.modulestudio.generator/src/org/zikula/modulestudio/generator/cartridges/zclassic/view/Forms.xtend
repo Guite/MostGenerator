@@ -66,11 +66,7 @@ class Forms {
             {{ pageAddAsset('javascript', zasset('@«app.appName»:js/«app.appName».Validation.js', 98)) }}
             {{ pageAddAsset('javascript', zasset('@«app.appName»:js/«app.appName».EditFunctions.js', 99)) }}
             «IF (hasUserFieldsEntity || standardFields || !getOutgoingJoinRelations.empty || !getIncomingJoinRelations.empty)»
-                «IF app.targets('1.4-dev')»
-                    {{ pageAddAsset('javascript', asset('typeahead/typeahead.bundle.min.js')) }}
-                «ELSE»
-                    {{ pageAddAsset('javascript', app.request.basePath ~ '/vendor/twitter/typeahead.js/dist/typeahead.bundle.min.js') }}
-                «ENDIF»
+                {{ pageAddAsset('javascript', asset('typeahead/typeahead.bundle.min.js')) }}
             «ENDIF»
         {% endblock %}
 

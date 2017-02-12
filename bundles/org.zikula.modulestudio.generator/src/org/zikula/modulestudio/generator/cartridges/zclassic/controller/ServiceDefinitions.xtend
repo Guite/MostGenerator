@@ -274,7 +274,7 @@ class ServiceDefinitions {
                         «IF entity.hasListFieldsEntity»
                             - "@«modPrefix».listentries_helper"
                         «ENDIF»
-                        «IF entity.hasLocaleFieldsEntity && targets('1.4-dev')»
+                        «IF entity.hasLocaleFieldsEntity»
                             - "@zikula_settings_module.locale_api"
                         «ENDIF»
                         «IF needsFeatureActivationHelper»
@@ -337,7 +337,7 @@ class ServiceDefinitions {
                         «IF entity.hasListFieldsEntity»
                             - "@«modPrefix».listentries_helper"
                         «ENDIF»
-                        «IF entity.hasLocaleFieldsEntity && targets('1.4-dev')»
+                        «IF entity.hasLocaleFieldsEntity»
                             - "@zikula_settings_module.locale_api"
                         «ENDIF»
                         «IF needsFeatureActivationHelper»
@@ -512,7 +512,7 @@ class ServiceDefinitions {
                     - "@zikula_groups_module.group_repository"
                     - "@«modPrefix».workflow_helper"
         «ENDIF»
-        «IF generateSearchApi && targets('1.4-dev')»
+        «IF generateSearchApi»
 
             «modPrefix».search_helper:
                 class: «nsBase»SearchHelper
@@ -544,9 +544,7 @@ class ServiceDefinitions {
                     - "@translator.default"
                     - "@request_stack"
                     - "@zikula_extensions_module.api.variable"
-                    «IF targets('1.4-dev')»
-                        - "@zikula_settings_module.locale_api"
-                    «ENDIF»
+                    - "@zikula_settings_module.locale_api"
                     - "@«modPrefix».entity_factory"
         «ENDIF»
         «IF hasUploads»

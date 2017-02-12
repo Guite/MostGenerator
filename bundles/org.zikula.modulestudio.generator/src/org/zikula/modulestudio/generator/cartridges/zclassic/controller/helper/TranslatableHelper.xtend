@@ -47,11 +47,7 @@ class TranslatableHelper {
         use Zikula\Common\Translator\TranslatorInterface;
         use Zikula\Core\Doctrine\EntityAccess;
         use Zikula\ExtensionsModule\Api\VariableApi;
-        «IF targets('1.4-dev')»
-            use Zikula\SettingsModule\Api\LocaleApi;
-        «ELSE»
-            use ZLanguage;
-        «ENDIF»
+        use Zikula\SettingsModule\Api\LocaleApi;
         use «appNamespace»\Entity\Factory\«name.formatForCodeCapital»Factory;
 
         /**
@@ -73,13 +69,11 @@ class TranslatableHelper {
              * @var VariableApi
              */
             protected $variableApi;
-            «IF targets('1.4-dev')»
 
-                /**
-                 * @var LocaleApi
-                 */
-                protected $localeApi;
-            «ENDIF»
+            /**
+             * @var LocaleApi
+             */
+            protected $localeApi;
 
             /**
              * @var «name.formatForCodeCapital»Factory
@@ -92,19 +86,15 @@ class TranslatableHelper {
              * @param TranslatorInterface $translator   Translator service instance
              * @param RequestStack        $requestStack RequestStack service instance
              * @param VariableApi         $variableApi  VariableApi service instance
-             «IF targets('1.4-dev')»
              * @param LocaleApi           $localeApi    LocaleApi service instance
-             «ENDIF»
              * @param «name.formatForCodeCapital»Factory $entityFactory «name.formatForCodeCapital»Factory service instance
              */
-            public function __construct(TranslatorInterface $translator, RequestStack $requestStack, VariableApi $variableApi, «IF targets('1.4-dev')»LocaleApi $localeApi, «ENDIF»«name.formatForCodeCapital»Factory $entityFactory)
+            public function __construct(TranslatorInterface $translator, RequestStack $requestStack, VariableApi $variableApi, LocaleApi $localeApi, «name.formatForCodeCapital»Factory $entityFactory)
             {
                 $this->translator = $translator;
                 $this->request = $requestStack->getCurrentRequest();
                 $this->variableApi = $variableApi;
-                «IF targets('1.4-dev')»
-                    $this->localeApi = $localeApi;
-                «ENDIF»
+                $this->localeApi = $localeApi;
                 $this->entityFactory = $entityFactory;
             }
 
@@ -166,11 +156,7 @@ class TranslatableHelper {
         public function getSupportedLanguages($objectType)
         {
             if ($this->variableApi->getSystemVar('multilingual')) {
-                «IF targets('1.4-dev')»
-                    return $this->localeApi->getSupportedLocales();
-                «ELSE»
-                    return ZLanguage::getInstalledLanguages();
-                «ENDIF»
+                return $this->localeApi->getSupportedLocales();
             }
 
             // if multi language is disabled use only the current language
