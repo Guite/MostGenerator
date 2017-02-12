@@ -289,6 +289,9 @@ class ValidationConstraints {
         «ELSEIF future»
             «' '»* @Assert\GreaterThan("now")
         «ENDIF»
+        «IF endDate && null !== entity.getStartDateField»
+            «' '»* @Assert\Expression("value > this.«entity.getStartDateField.name.formatForCode»")
+        «ENDIF»
         «IF null !== validatorAddition && validatorAddition != ''»
             «' '»* @Assert\«validatorAddition»
         «ENDIF»
@@ -300,6 +303,9 @@ class ValidationConstraints {
             «' '»* @Assert\LessThan("now")
         «ELSEIF future»
             «' '»* @Assert\GreaterThan("now")
+        «ENDIF»
+        «IF endDate && null !== entity.getStartDateField»
+            «' '»* @Assert\Expression("value > this.«entity.getStartDateField.name.formatForCode»")
         «ENDIF»
         «IF null !== validatorAddition && validatorAddition != ''»
             «' '»* @Assert\«validatorAddition»
@@ -378,46 +384,6 @@ class ValidationConstraints {
         {
             return «IF !mandatory»null === $this['«name.formatForCode»'] || «ENDIF»$this['«name.formatForCode»'] instanceof UserEntity;
         }
-    '''
-
-    def dispatch validationMethods(DatetimeField it) '''
-        «IF startDate»
-            «val endDateField = entity.getEndDateField»
-            «IF null !== endDateField»
-                /**
-                 * Checks whether the «name.formatForCode» value is earlier than the «endDateField.name.formatForCode» value.
-                 * This method is used for validation.
-                 *
-                 * @Assert\IsTrue(message="The start date must be before the end date.")
-                 *
-                 * @return boolean True if data is valid else false
-                 */
-                public function is«name.formatForCodeCapital»Before«endDateField.name.formatForCodeCapital»()
-                {
-                    return ($this['«name.formatForCode»'] < $this['«endDateField.name.formatForCode»']);
-                }
-            «ENDIF»
-        «ENDIF»
-    '''
-
-    def dispatch validationMethods(DateField it) '''
-        «IF startDate»
-            «val endDateField = entity.getEndDateField»
-            «IF null !== endDateField»
-                /**
-                 * Checks whether the «name.formatForCode» value is earlier than the «endDateField.name.formatForCode» value.
-                 * This method is used for validation.
-                 *
-                 * @Assert\IsTrue(message="The start date must be before the end date.")
-                 *
-                 * @return boolean True if data is valid else false
-                 */
-                public function is«name.formatForCodeCapital»Before«endDateField.name.formatForCodeCapital»()
-                {
-                    return ($this['«name.formatForCode»'] < $this['«endDateField.name.formatForCode»']);
-                }
-            «ENDIF»
-        «ENDIF»
     '''
 
     def dispatch validationMethods(TimeField it) '''
