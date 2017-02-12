@@ -375,6 +375,7 @@ class DisplayFunctions {
                 «vendorAndName»InitMassToggle();
                 jQuery(window).resize(«vendorAndName»InitFixedColumns);
                 «vendorAndName»InitFixedColumns();
+                window.setTimeout(«vendorAndName»InitFixedColumns, 1000);
                 «vendorAndName»InitItemActions('view');
                 «IF hasBooleansWithAjaxToggleInView»
                     «vendorAndName»InitAjaxToggles();
