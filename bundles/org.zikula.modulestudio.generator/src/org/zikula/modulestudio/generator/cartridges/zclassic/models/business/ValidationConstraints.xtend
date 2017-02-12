@@ -290,7 +290,7 @@ class ValidationConstraints {
             «' '»* @Assert\GreaterThan("now")
         «ENDIF»
         «IF endDate && null !== entity.getStartDateField»
-            «' '»* @Assert\Expression("value > this.«entity.getStartDateField.name.formatForCode»")
+            «' '»* @Assert\Expression("value > this.get«entity.getStartDateField.name.formatForCodeCapital»()")
         «ENDIF»
         «IF null !== validatorAddition && validatorAddition != ''»
             «' '»* @Assert\«validatorAddition»
