@@ -162,7 +162,7 @@ class GeoFunctions {
             jQuery("[id$='longitude']").change(«vendorAndName»NewCoordinatesEventHandler);
 
             mapstraction.click.addHandler(function(eventName, eventSource, eventArgs) {
-        	    var coords = eventArgs.location;
+                var coords = eventArgs.location;
                 jQuery("[id$='latitude']").val(coords.lat.toFixed(7));
                 jQuery("[id$='longitude']").val(coords.lng.toFixed(7));
                 «vendorAndName»NewCoordinatesEventHandler();
