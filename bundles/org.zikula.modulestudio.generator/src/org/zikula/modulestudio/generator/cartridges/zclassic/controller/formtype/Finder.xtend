@@ -254,12 +254,14 @@ class Finder {
                 'label' => $this->__('Paste as') . ':',
                 'empty_data' => 1,
                 'choices' => [
-                    $this->__('Link to the «name.formatForDisplay»') => 1,
-                    $this->__('ID of «name.formatForDisplay»') => 2«IF hasImageFieldsEntity»,«ENDIF»
+                    $this->__('Relative link to the «name.formatForDisplay»') => 1,
+                    $this->__('Absolute url to the «name.formatForDisplay»') => 2,
+                    $this->__('ID of «name.formatForDisplay»') => 3«IF hasImageFieldsEntity»,«ENDIF»
                     «IF hasImageFieldsEntity»
-                        $this->__('Link to the image') => 6,
+                        $this->__('Relative link to the image') => 6,
                         $this->__('Image') => 7,
-                        $this->__('Image with link to the «name.formatForDisplay»') => 8
+                        $this->__('Image with relative link to the «name.formatForDisplay»') => 8,
+                        $this->__('Image with absolute url to the «name.formatForDisplay»') => 9
                     «ENDIF»
                 ],
                 'choices_as_values' => true,

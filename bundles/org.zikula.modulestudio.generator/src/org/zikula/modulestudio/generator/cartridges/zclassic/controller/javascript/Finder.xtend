@@ -81,6 +81,7 @@ class Finder {
                     jQuery("[id$='pasteAs'] option[value=6]").addClass('hidden');
                     jQuery("[id$='pasteAs'] option[value=7]").addClass('hidden');
                     jQuery("[id$='pasteAs'] option[value=8]").addClass('hidden');
+                    jQuery("[id$='pasteAs'] option[value=9]").addClass('hidden');
                 } else {
                     jQuery('#searchTermRow').addClass('hidden');
                 }
@@ -131,36 +132,45 @@ class Finder {
             var pasteMode;
 
             quoteFinder = new RegExp('"', 'g');
+            itemPath = jQuery('#path' + itemId).val().replace(quoteFinder, '');
             itemUrl = jQuery('#url' + itemId).val().replace(quoteFinder, '');
             itemTitle = jQuery('#title' + itemId).val().replace(quoteFinder, '').trim();
             itemDescription = jQuery('#desc' + itemId).val().replace(quoteFinder, '').trim();
             «IF hasImageFields»
-                imageUrl = jQuery('#imageUrl' + itemId).length > 0 ? jQuery('#imageUrl' + itemId).val().replace(quoteFinder, '') : '';
+                imagePath = jQuery('#imagePath' + itemId).length > 0 ? jQuery('#imagePath' + itemId).val().replace(quoteFinder, '') : '';
             «ENDIF»
             pasteMode = jQuery("[id$='pasteAs']").first().val();
 
             // item ID
-            if (pasteMode === '2') {
+            if (pasteMode === '3') {
                 return '' + itemId;
             }
 
-            // link to detail page
+            // relative link to detail page
             if (pasteMode === '1') {
+                return mode === 'url' ? itemPath : '<a href="' + itemPath + '" title="' + itemDescription + '">' + itemTitle + '</a>';
+            }
+            // absolute url to detail page
+            if (pasteMode === '2') {
                 return mode === 'url' ? itemUrl : '<a href="' + itemUrl + '" title="' + itemDescription + '">' + itemTitle + '</a>';
             }
             «IF hasImageFields»
 
                 if (pasteMode === '6') {
-                    // link to image file
-                    return mode === 'url' ? imageUrl : '<a href="' + imageUrl + '" title="' + itemDescription + '">' + itemTitle + '</a>';
+                    // relative link to image file
+                    return mode === 'url' ? imagePath : '<a href="' + imagePath + '" title="' + itemDescription + '">' + itemTitle + '</a>';
                 }
                 if (pasteMode === '7') {
                     // image tag
-                    return '<img src="' + imageUrl + '" alt="' + itemTitle + '" width="300" />';
+                    return '<img src="' + imagePath + '" alt="' + itemTitle + '" width="300" />';
                 }
                 if (pasteMode === '8') {
-                    // image tag with link to detail page
-                    return mode === 'url' ? itemUrl : '<a href="' + itemUrl + '" title="' + itemTitle + '"><img src="' + imageUrl + '" alt="' + itemTitle + '" width="300" /></a>';
+                    // image tag with relative link to detail page
+                    return mode === 'url' ? itemPath : '<a href="' + itemPath + '" title="' + itemTitle + '"><img src="' + imagePath + '" alt="' + itemTitle + '" width="300" /></a>';
+                }
+                if (pasteMode === '9') {
+                    // image tag with absolute url to detail page
+                    return mode === 'url' ? itemUrl : '<a href="' + itemUrl + '" title="' + itemTitle + '"><img src="' + imagePath + '" alt="' + itemTitle + '" width="300" /></a>';
                 }
 
             «ENDIF»

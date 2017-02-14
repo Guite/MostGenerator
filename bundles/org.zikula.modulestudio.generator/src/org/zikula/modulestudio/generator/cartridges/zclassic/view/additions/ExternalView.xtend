@@ -275,12 +275,13 @@ class ExternalView {
                                         {{ «name.formatForCode».getTitleFromDisplayPattern() }}
                                     «ENDIF»
                                 </a>
+                                <input type="hidden" id="path{{ itemId }}" value="{{ path('«app.appName.formatForDB»_«name.formatForDB»_display'«routeParams(name.formatForCode, true)») }}" />
                                 <input type="hidden" id="url{{ itemId }}" value="{{ url('«app.appName.formatForDB»_«name.formatForDB»_display'«routeParams(name.formatForCode, true)») }}" />
                                 <input type="hidden" id="title{{ itemId }}" value="{{ «name.formatForCode».getTitleFromDisplayPattern()|e('html_attr') }}" />
                                 <input type="hidden" id="desc{{ itemId }}" value="{% set description %}«displayDescription('', '')»{% endset %}{{ description|striptags|e('html_attr') }}" />
                                 «IF hasImageFieldsEntity»
                                     {% if onlyImages %}
-                                        <input type="hidden" id="imageUrl{{ itemId }}" value="/{{ attribute(«name.formatForCode», imageField).getPathname() }}" />
+                                        <input type="hidden" id="imagePath{{ itemId }}" value="/{{ attribute(«name.formatForCode», imageField).getPathname() }}" />
                                     {% endif %}
                                 «ENDIF»
                             «IF hasImageFieldsEntity»
