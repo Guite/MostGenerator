@@ -198,7 +198,7 @@ class Forms {
                 /* <![CDATA[ */
                     ( function($) {
                         $(document).ready(function() {
-                            «app.vendorAndName»InitGeographicalEditing({{ «name.formatForDB».latitude|«app.appName.formatForDB»_geoData }}, {{ «name.formatForDB».longitude|«app.appName.formatForDB»_geoData }}, mode, {% if useGeoLocation == true %}true{% else %}false{% endif %});
+                            «app.vendorAndName»InitGeographicalEditing({{ «name.formatForDB».latitude|«app.appName.formatForDB»_geoData }}, {{ «name.formatForDB».longitude|«app.appName.formatForDB»_geoData }}, '{{ mode }}', {% if useGeoLocation == true %}true{% else %}false{% endif %});
                         });
                     })(jQuery);
                 /* ]]> */
