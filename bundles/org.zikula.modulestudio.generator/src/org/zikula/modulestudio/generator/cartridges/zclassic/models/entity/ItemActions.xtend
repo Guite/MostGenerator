@@ -133,8 +133,8 @@ class ItemActions {
                         ])->setAttribute('icon', 'fa fa-plus');
                         $menu[$title]->setLinkAttribute('title', $title);
                     «ENDIF»
-                «ENDFOR»
-            }
+                }
+            «ENDFOR»
         «ENDIF»
     '''
 
