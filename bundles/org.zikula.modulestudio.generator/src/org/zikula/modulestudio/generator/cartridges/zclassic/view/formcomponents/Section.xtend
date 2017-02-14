@@ -51,9 +51,13 @@ class Section {
                 <legend>{{ __('Map') }}</legend>
                 <div id="mapContainer" class="«app.appName.toLowerCase»-mapcontainer">
                 </div>
+            «IF useGroupingPanels('edit')»
                         </div>
                     </div>
                 </div>
+            «ELSE»
+                </fieldset>
+            «ENDIF»
 
         «ENDIF»
         «IF attributable»
