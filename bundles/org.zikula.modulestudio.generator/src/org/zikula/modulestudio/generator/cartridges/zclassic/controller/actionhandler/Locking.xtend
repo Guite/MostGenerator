@@ -75,9 +75,9 @@ class Locking {
     def applyLock(Entity it) '''
         «IF hasOptimisticLock || hasPessimisticWriteLock»
             if ($applyLock) {
-                // assert version
                 «IF hasOptimisticLock»
-                    $this->entityManager->lock($entity, LockMode::OPTIMISTIC, $expectedVersion);
+                    // assert version
+                    $this->entityManager->lock($entity, LockMode::«lockType.lockTypeAsConstant», $expectedVersion);
                 «ELSEIF hasPessimisticWriteLock»
                     $this->entityManager->lock($entity, LockMode::«lockType.lockTypeAsConstant»);
                 «ENDIF»
