@@ -152,7 +152,7 @@ class Property {
             BooleanField:
                 if (it.defaultValue == 'true') 'true' else 'false'
             AbstractIntegerField:
-                if (null !== it.defaultValue && it.defaultValue.length > 0) it.defaultValue else '0'
+                if (it instanceof IntegerField && (it as IntegerField).version) '1' else if (null !== it.defaultValue && it.defaultValue.length > 0) it.defaultValue else '0'
             DecimalField:
                 if (null !== it.defaultValue && it.defaultValue.length > 0) it.defaultValue else '0.00'
             ArrayField: '[]'
