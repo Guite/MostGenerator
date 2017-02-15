@@ -2,6 +2,7 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.view.pages
 
 import de.guite.modulestudio.metamodel.Entity
 import org.eclipse.xtext.generator.IFileSystemAccess
+import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.UrlExtensions
@@ -9,6 +10,7 @@ import org.zikula.modulestudio.generator.extensions.Utils
 
 class History {
 
+    extension ControllerExtensions = new ControllerExtensions
     extension FormattingExtensions = new FormattingExtensions
     extension NamingExtensions = new NamingExtensions
     extension UrlExtensions = new UrlExtensions
@@ -111,13 +113,18 @@ class History {
             {{ block('page_nav_links') }}
         {% endblock %}
         {% block page_nav_links %}
-            <p>
-                {% set linkTitle = __('Back to overview') %}
-                <a href="{{ path('«appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ 'view') }}" title="{{ linkTitle|e('html_attr') }}" class="fa fa-reply">{{ linkTitle }}</a>
-
-                {% set linkTitle = __('Back to detail view') %}
-                <a href="{{ path('«appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ 'display'«routeParams(name.formatForCode, true)») }}" title="{{ linkTitle|e('html_attr') }}" class="fa fa-eye">{{ linkTitle }}</a>
-            </p>
+            «IF hasViewAction || hasDisplayAction»
+                <p>
+                    «IF hasViewAction»
+                        {% set linkTitle = __('Back to overview') %}
+                        <a href="{{ path('«appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ 'view') }}" title="{{ linkTitle|e('html_attr') }}" class="fa fa-reply">{{ linkTitle }}</a>
+                    «ENDIF»
+                    «IF hasDisplayAction»
+                        {% set linkTitle = __('Back to detail view') %}
+                        <a href="{{ path('«appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ 'display'«routeParams(name.formatForCode, true)») }}" title="{{ linkTitle|e('html_attr') }}" class="fa fa-eye">{{ linkTitle }}</a>
+                    «ENDIF»
+                </p>
+            «ENDIF»
         {% endblock %}
     '''
 }
