@@ -51,11 +51,17 @@ class View {
     def generate(Entity it, String appName, Integer listType, IFileSystemAccess fsa) {
         println('Generating view templates for entity "' + name.formatForDisplay + '"')
         this.listType = listType
-        val templateFilePath = templateFile('view')
+        var templateFilePath = templateFile('view')
         if (!application.shouldBeSkipped(templateFilePath)) {
             fsa.generateFile(templateFilePath, viewView(appName))
         }
         new ViewQuickNavForm().generate(it, appName, fsa)
+        if (loggable) {
+            templateFilePath = templateFile('viewDeleted')
+            if (!application.shouldBeSkipped(templateFilePath)) {
+                fsa.generateFile(templateFilePath, viewViewDeleted(appName))
+            }
+        }
     }
 
     def private viewView(Entity it, String appName) '''
@@ -117,6 +123,12 @@ class View {
         «IF tree != EntityTreeType.NONE»
             {% set linkTitle = __('Switch to hierarchy view') %}
             <a href="{{ path('«appName.formatForDB»_«objName.toLowerCase»_' ~ routeArea ~ 'view', { tpl: 'tree' }) }}" title="{{ linkTitle|e('html_attr') }}" class="fa fa-code-fork">{{ linkTitle }}</a>
+        «ENDIF»
+        «IF loggable»
+            {% if hasDeletedEntities and hasPermission('«appName»:«name.formatForCodeCapital»:', '::', 'ACCESS_EDIT') %}
+                {% set linkTitle = __('View deleted «nameMultiple.formatForDisplay»') %}
+                <a href="{{ path('«appName.formatForDB»_«objName.toLowerCase»_' ~ routeArea ~ 'view', { deleted: 1 }) }}" title="{{ linkTitle|e('html_attr') }}" class="fa fa-trash-o">{{ linkTitle }}</a>
+            {% endif %}
         «ENDIF»
     '''
 
@@ -442,4 +454,56 @@ class View {
             default: 'td'
         }
     }
+
+    def private viewViewDeleted(Entity it, String appName) '''
+        {# purpose of this template: list view of deleted «nameMultiple.formatForDisplay» #}
+        {% extends routeArea == 'admin' ? '«application.appName»::adminBase.html.twig' : '«application.appName»::base.html.twig' %}
+        {% block title __('Deleted «nameMultiple.formatForDisplay»') %}
+        {% block admin_page_icon 'trash-o' %}
+        {% block content %}
+        <div class="«appName.toLowerCase»-«name.formatForDB» «appName.toLowerCase»-viewdeleted">
+            {{ block('page_nav_links') }}
+            <div class="table-responsive">
+                <table class="table table-striped table-bordered table-hover{% if routeArea == 'admin' %} table-condensed{% endif %}">
+                    <colgroup>
+                        <col id="cId" />
+                        <col id="cDate" />
+                        <col id="cUser" />
+                        <col id="cActions" />
+                    </colgroup>
+                    <thead>
+                        <th id="hId" scope="col" class="z-order-unsorted z-w02">{{ __('ID') }}</th>
+                        <th id="hDate" scope="col" class="z-order-unsorted">{{ __('Date') }}</th>
+                        <th id="hUser" scope="col" class="z-order-unsorted">{{ __('User') }}</th>
+                        <th id="hActions" scope="col" class="z-order-unsorted">{{ __('Actions') }}</th>
+                    </thead>
+                    <tbody>
+                        {% for logEntry in deletedItems %}
+                            <tr>
+                                <td headers="hVersion" class="text-center">{{ logEntry.objectId }}</td>
+                                <td headers="hDate">{{ logEntry.loggedAt|localizeddate('medium', 'medium') }}</td>
+                                <td headers="hUser">{{ logEntry.username|profileLinkByUserName() }}</td>
+                                <td headers="hActions" class="actions nowrap">
+                                    «IF hasDisplayAction»
+                                        {% set linkTitle = __f('Preview «name.formatForDisplay» %id%', { '%id%': logEntry.objectId }) %}
+                                        <a id="«name.formatForCode»ItemDisplay{{ logEntry.objectId }}" href="{{ path('«appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ 'display', { '«getFirstPrimaryKey.name.formatForCode»': logEntry.objectId, 'deleted': 1, 'raw': 1 }) }}" title="{{ linkTitle|e('html_attr') }}" class="«application.vendorAndName.toLowerCase»-inline-window hidden" data-modal-title="{{ __f('«name.formatForDisplayCapital» %id%', { '%id%': logEntry.objectId }) }}"><span class="fa fa-id-card-o"></span></a>
+                                    «ENDIF»
+                                    {% set linkTitle = __f('Undelete «name.formatForDisplay» %id%', { '%id%': logEntry.objectId }) %}
+                                    <a href="{{ path('«appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ 'loggablehistory', { 'undelete': logEntry.objectId }) }}" title="{{ linkTitle|e('html_attr') }}"><span class="fa fa-history"></span></a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {{ block('page_nav_links') }}
+        </div>
+        {% endblock %}
+        {% block page_nav_links %}
+            <p>
+                {% set linkTitle = __('Back to overview') %}
+                <a href="{{ path('«appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ 'view') }}" title="{{ linkTitle|e('html_attr') }}" class="fa fa-reply">{{ linkTitle }}</a>
+            </p>
+        {% endblock %}
+    '''
 }

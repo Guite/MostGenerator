@@ -105,7 +105,7 @@ class History {
                                     «ENDIF»
                                     {% if not loop.first %}
                                         {% set linkTitle = __f('Revert to version %version%', { '%version%': logEntry.version }) %}
-                                        <a href="{{ path('«appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ 'loggablehistory', { «routePkParams(name.formatForCode, true)»«appendSlug(name.formatForCode, true)», revert: logEntry.version }) }}" title="{{ linkTitle|e('html_attr') }}"><span class="fa fa-history"></span></a>
+                                        <a href="{{ path('«appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ 'loggablehistory', { «routePkParams(name.formatForCode, true)»«appendSlug(name.formatForCode, true)», 'revert': logEntry.version }) }}" title="{{ linkTitle|e('html_attr') }}"><span class="fa fa-history"></span></a>
                                     {% endif %}
                                 </td>
                             </tr>

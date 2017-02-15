@@ -89,6 +89,18 @@ class Actions {
         ];
         $controllerHelper = $this->get('«app.appService».controller_helper');
         $viewHelper = $this->get('«app.appService».view_helper');
+        «IF loggable»
+            $viewDeleted = $request->query->getInt('deleted', 0);
+            if ($viewDeleted == 1 && $this->hasPermission('«application.appName»:«name.formatForCodeCapital»:', '::', ACCESS_EDIT)) {
+                $entityFactory = $this->get('«application.appService».entity_factory');
+                $entityManager = $entityFactory->getObjectManager();
+                $logEntriesRepository = $entityManager->getRepository('«application.appName»:«name.formatForCodeCapital»LogEntryEntity');
+                $deletionLogEntries = $logEntriesRepository->findBy(['action' => 'remove'], ['loggedAt' => 'DESC']);
+                $templateParameters['deletedItems'] = $deletionLogEntries;
+
+                return $viewHelper->processTemplate($objectType, 'viewDeleted', $templateParameters);
+            }
+        «ENDIF»
 
         // parameter for used sort order
         $sortdir = strtolower($sortdir);
@@ -120,6 +132,18 @@ class Actions {
         foreach ($templateParameters['items'] as $k => $entity) {
             $entity->initWorkflow();
         }
+        «IF loggable»
+
+            // check if there are deleted «name.formatForDisplay»
+            $templateParameters['hasDeletedEntities'] = false;
+            if ($this->hasPermission('«application.appName»:«name.formatForCodeCapital»:', '::', ACCESS_EDIT)) {
+                $entityFactory = $this->get('«application.appService».entity_factory');
+                $entityManager = $entityFactory->getObjectManager();
+                $logEntriesRepository = $entityManager->getRepository('«application.appName»:«name.formatForCodeCapital»LogEntryEntity');
+                $deletionLogEntries = $logEntriesRepository->findBy(['action' => 'remove']);
+                $templateParameters['hasDeletedEntities'] = count($deletionLogEntries) > 0;
+            }
+        «ENDIF»
 
         // fetch and return the appropriate template
         return $viewHelper->processTemplate($objectType, 'view', $templateParameters);
@@ -167,11 +191,11 @@ class Actions {
             if ($requestedVersion > 0) {
                 // preview of a specific version is desired
                 $entityManager = $this->get('«application.appService».entity_factory')->getObjectManager();
-                $logEntriesRepo = $entityManager->getRepository('«application.appName»:«name.formatForCodeCapital»LogEntryEntity');
-                $logEntries = $logEntriesRepo->getLogEntries($«name.formatForCode»);
+                $logEntriesRepository = $entityManager->getRepository('«application.appName»:«name.formatForCodeCapital»LogEntryEntity');
+                $logEntries = $logEntriesRepository->getLogEntries($«name.formatForCode»);
                 if (count($logEntries) > 1) {
                     // revert to requested version but detach to avoid persisting it
-                    $logEntriesRepo->revert($«name.formatForCode», $requestedVersion);
+                    $logEntriesRepository->revert($«name.formatForCode», $requestedVersion);
                     $entityManager->detach($«name.formatForCode»);
                 }
             }
