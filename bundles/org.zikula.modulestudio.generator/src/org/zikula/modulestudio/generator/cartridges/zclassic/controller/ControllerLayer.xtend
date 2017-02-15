@@ -232,7 +232,7 @@ class ControllerLayer {
          */
         public function «IF isAdmin»adminD«ELSE»d«ENDIF»isplayDeletedAction(Request $request, $id = 0)
         {
-            $«name.formatForCode» = $this->restoreDeletedEntity($id);
+            list ($«name.formatForCode», $version) = $this->restoreDeletedEntity($id);
 
             $undelete = $request->query->getInt('undelete', 0);
             if ($undelete == 1) {
@@ -243,17 +243,20 @@ class ControllerLayer {
                     $success = $workflowHelper->executeAction($«name.formatForCode», 'submit');
 
                     if ($success) {
-                        $this->addFlash('status', $this->__f('Done! Reverted «name.formatForDisplay» to version %version%.', ['%version%' => $revertToVersion]));
+                        $this->addFlash('status', $this->__('Done! Reinserted «name.formatForDisplay».'));
                     } else {
-                        $this->addFlash('error', $this->__f('Error! Reverting «name.formatForDisplay» to version %version% failed.', ['%version%' => $revertToVersion]));
+                        $this->addFlash('error', $this->__('Error! Reinserting «name.formatForDisplay» failed.'));
                     }
                 } catch(\Exception $e) {
                     $this->addFlash('error', $this->__f('Sorry, but an error occured during the %action% action. Please apply the changes again!', ['%action%' => 'submit']) . '  ' . $e->getMessage());
                 }
 
+                «FOR primaryKeyField : getPrimaryKeyFields»
+                    $request->query->set('«primaryKeyField.name.formatForCode»', $«name.formatForCode»->get«primaryKeyField.name.formatForCodeCapital»());
+                «ENDFOR»
                 $request->query->remove('undelete');
 
-                return $this->redirectToRoute('«application.appName.formatForDB»_«name.formatForDB»_' . $routeArea . 'display', $request->query->all());
+                return $this->redirectToRoute('«application.appName.formatForDB»_«name.formatForDB»_«IF isAdmin»admin«ENDIF»display', $request->query->all());
             }
 
             return parent::«IF isAdmin»adminD«ELSE»d«ENDIF»isplayAction($request, $«name.formatForCode»);
@@ -276,7 +279,7 @@ class ControllerLayer {
 
             $entityFactory = $this->get('«application.appService».entity_factory');
             $«name.formatForCode» = $entityFactory->create«name.formatForCodeCapital»();
-            $«name.formatForCode»->setId($id);
+            $«name.formatForCode»->set«getFirstPrimaryKey.name.formatForCodeCapital»($id);
             $entityManager = $entityFactory->getObjectManager();
             $logEntriesRepository = $entityManager->getRepository('«application.appName»:«name.formatForCodeCapital»LogEntryEntity');
             $logEntries = $logEntriesRepository->getLogEntries($«name.formatForCode»);
