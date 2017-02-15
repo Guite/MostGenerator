@@ -232,7 +232,7 @@ class ControllerLayer {
          */
         public function «IF isAdmin»adminD«ELSE»d«ENDIF»isplayDeletedAction(Request $request, $id = 0)
         {
-            list ($«name.formatForCode», $version) = $this->restoreDeletedEntity($id);
+            $«name.formatForCode» = $this->restoreDeletedEntity($id);
 
             $undelete = $request->query->getInt('undelete', 0);
             if ($undelete == 1) {
