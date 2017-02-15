@@ -50,14 +50,14 @@ class Loggable extends AbstractExtension implements EntityExtensionInterface {
      * Returns the extension class import statements.
      */
     override extensionClassImports(Entity it) '''
-        use Gedmo\Loggable\Entity\«extensionBaseClass»;
+        use Gedmo\Loggable\Entity\MappedSuperclass\«extensionBaseClass»;
     '''
 
     /**
      * Returns the extension base class.
      */
     override extensionBaseClass(Entity it) {
-        'LogEntry'
+        'AbstractLogEntry'
     }
 
     /**
