@@ -13,6 +13,7 @@ class MassHandling {
 
     def generate(Entity it, Boolean isBase) '''
         «handleSelectedObjects(isBase, true)»
+
         «handleSelectedObjects(isBase, false)»
     '''
 

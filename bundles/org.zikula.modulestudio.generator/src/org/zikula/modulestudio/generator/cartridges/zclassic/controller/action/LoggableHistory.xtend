@@ -11,6 +11,7 @@ class LoggableHistory {
 
     def generate(Entity it, Boolean isBase) '''
         «loggableHistory(isBase, true)»
+
         «loggableHistory(isBase, false)»
     '''
 
@@ -19,9 +20,9 @@ class LoggableHistory {
         public function «IF isAdmin»adminL«ELSE»l«ENDIF»oggableHistoryAction(Request $request, $id = 0)
         {
             «IF isBase»
-                return $this->loggableHistoryActionInternal($request, «isAdmin.displayBool»);
+                return $this->loggableHistoryActionInternal($request, $id, «isAdmin.displayBool»);
             «ELSE»
-                return parent::«IF isAdmin»adminL«ELSE»l«ENDIF»oggableHistoryAction($request);
+                return parent::«IF isAdmin»adminL«ELSE»l«ENDIF»oggableHistoryAction($request, $id);
             «ENDIF»
         }
         «IF isBase && !isAdmin»
@@ -30,9 +31,10 @@ class LoggableHistory {
              * This method includes the common implementation code for adminLoggableHistoryAction() and loggableHistoryAction().
              *
              * @param Request $request Current request instance
+             * @param integer $id      Identifier of «name.formatForDisplay»
              * @param Boolean $isAdmin Whether the admin area is used or not
              */
-            protected function loggableHistoryActionInternal(Request $request, $isAdmin = false)
+            protected function loggableHistoryActionInternal(Request $request, $id = 0, $isAdmin = false)
             {
                 «loggableHistoryBaseImpl»
             }

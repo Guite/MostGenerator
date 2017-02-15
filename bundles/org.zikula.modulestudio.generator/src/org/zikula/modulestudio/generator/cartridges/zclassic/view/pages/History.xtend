@@ -26,7 +26,7 @@ class History {
         «val app = application»
         {# purpose of this template: «nameMultiple.formatForDisplay» change history view #}
         {% extends routeArea == 'admin' ? '«app.appName»::adminBase.html.twig' : '«app.appName»::base.html.twig' %}
-        {% block title __f('«name.formatForDisplay» change history for %entityTitle%', { '%entityTitle%': «name.formatForCode».getTitleFromDisplayPattern() }) %}
+        {% block title __f('«name.formatForDisplayCapital» change history for %entityTitle%', { '%entityTitle%': «name.formatForCode».getTitleFromDisplayPattern() }) %}
         {% block admin_page_icon 'history' %}
         {% block content %}
             {{ block('page_nav_links') }}
@@ -52,7 +52,7 @@ class History {
                         {% for logEntry in logEntries %}
                             <tr>
                                 <td headers="hVersion" class="text-center">{{ logEntry.version }}</td>
-                                <td headers="hDate">{{ logEntry.logged_at|localizeddate('medium', 'medium') }}</td>
+                                <td headers="hDate">{{ logEntry.loggedAt|localizeddate('medium', 'medium') }}</td>
                                 <td headers="hUser">{{ logEntry.username|profileLinkByUserName() }}</td>
                                 <td headers="hAction">
                                     {% if logEntry.action == 'create' %}
@@ -71,7 +71,21 @@ class History {
                                         <div id="changes{{ logEntry.version }}" class="collapse">
                                             <ul>
                                                 {% for field, value in logEntry.data %}
-                                                    <li>{{ __f('%field% set to %value%', { '%field%': field, '%value%': value }) }}</li>
+                                                    {% if value is iterable %}
+                                                        {% if value|length > 0 %}
+                                                            <li>{{ __f('%field% set to:', { '%field%': field }) }}
+                                                                <ul>
+                                                                    {% for singleValue in value %}
+                                                                        <li class="italic">{{ singleValue }}</li>
+                                                                    {% endfor %}
+                                                                </ul>
+                                                            </li>
+                                                        {% else %}
+                                                            <li>{{ __f('%field% set to <em>an empty collection</em>', { '%field%': field })|raw }}</li>
+                                                        {% endif %}
+                                                    {% else %}
+                                                        <li>{{ __f('%field% set to <em>%value%</em>', { '%field%': field, '%value%': value|default(__('an empty value')) })|raw }}</li>
+                                                    {% endif %}
                                                 {% endfor %}
                                             </ul>
                                         </div>
