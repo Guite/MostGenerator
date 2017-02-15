@@ -33,6 +33,7 @@ class History {
         {% block content %}
             {{ block('page_nav_links') }}
             <div class="«appName.toLowerCase»-«name.formatForDB» «appName.toLowerCase»-history">
+                <div class="table-responsive">
                 <table class="table table-striped table-bordered table-hover{% if routeArea == 'admin' %} table-condensed{% endif %}">
                     <colgroup>
                         <col id="cVersion" />
@@ -53,7 +54,7 @@ class History {
                     <tbody>
                         {% for logEntry in logEntries %}
                             <tr>
-                                <td headers="hVersion" class="text-center">{{ logEntry.version }}</td>
+                                <td headers="hVersion" class="text-center">{{ logEntry.version }}{% if loop.first %} ({{ __('latest') }}){% endif %}</td>
                                 <td headers="hDate">{{ logEntry.loggedAt|localizeddate('medium', 'medium') }}</td>
                                 <td headers="hUser">{{ logEntry.username|profileLinkByUserName() }}</td>
                                 <td headers="hOperation">
@@ -109,6 +110,7 @@ class History {
                         {% endfor %}
                     </tbody>
                 </table>
+                </div>
             </div>
             {{ block('page_nav_links') }}
         {% endblock %}
