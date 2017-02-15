@@ -104,7 +104,7 @@ class Finder {
             jQuery('#«elemPrefix»SelectorForm').submit();
         };
 
-        «objName».finder.handleCancel = function ()
+        «objName».finder.handleCancel = function (event)
         {
             var editor;
 
@@ -123,11 +123,12 @@ class Finder {
         function «vendorAndName»GetPasteSnippet(mode, itemId)
         {
             var quoteFinder;
+            var itemPath;
             var itemUrl;
             var itemTitle;
             var itemDescription;
             «IF hasImageFields»
-                var imageUrl;
+                var imagePath;
             «ENDIF»
             var pasteMode;
 
