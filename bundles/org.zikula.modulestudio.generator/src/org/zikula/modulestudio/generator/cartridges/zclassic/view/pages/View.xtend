@@ -489,7 +489,7 @@ class View {
                                         <a id="«name.formatForCode»ItemDisplay{{ logEntry.objectId }}" href="{{ path('«appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ 'displaydeleted', { '«getFirstPrimaryKey.name.formatForCode»': logEntry.objectId, 'raw': 1 }) }}" title="{{ linkTitle|e('html_attr') }}" class="«application.vendorAndName.toLowerCase»-inline-window hidden" data-modal-title="{{ __f('«name.formatForDisplayCapital» %id%', { '%id%': logEntry.objectId }) }}"><span class="fa fa-id-card-o"></span></a>
                                     «ENDIF»
                                     {% set linkTitle = __f('Undelete «name.formatForDisplay» %id%', { '%id%': logEntry.objectId }) %}
-                                    <a href="{{ path('«appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ 'loggablehistory', { 'undelete': logEntry.objectId }) }}" title="{{ linkTitle|e('html_attr') }}"><span class="fa fa-history"></span></a>
+                                    <a href="{{ path('«appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ 'displaydeleted', { '«getFirstPrimaryKey.name.formatForCode»': logEntry.objectId, 'undelete': 1 }) }}" title="{{ linkTitle|e('html_attr') }}"><span class="fa fa-history"></span></a>
                                 </td>
                             </tr>
                         {% endfor %}

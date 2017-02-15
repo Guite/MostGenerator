@@ -234,6 +234,28 @@ class ControllerLayer {
         {
             $«name.formatForCode» = $this->restoreDeletedEntity($id);
 
+            $undelete = $request->query->getInt('undelete', 0);
+            if ($undelete == 1) {
+                $actionObject->setWorkflowState('initial');
+                try {
+                    // execute the workflow action
+                    $workflowHelper = $this->get('«application.appService».workflow_helper');
+                    $success = $workflowHelper->executeAction($«name.formatForCode», 'submit');
+
+                    if ($success) {
+                        $this->addFlash('status', $this->__f('Done! Reverted «name.formatForDisplay» to version %version%.', ['%version%' => $revertToVersion]));
+                    } else {
+                        $this->addFlash('error', $this->__f('Error! Reverting «name.formatForDisplay» to version %version% failed.', ['%version%' => $revertToVersion]));
+                    }
+                } catch(\Exception $e) {
+                    $this->addFlash('error', $this->__f('Sorry, but an error occured during the %action% action. Please apply the changes again!', ['%action%' => 'submit']) . '  ' . $e->getMessage());
+                }
+
+                $request->query->remove('undelete');
+
+                return $this->redirectToRoute('«application.appName.formatForDB»_«name.formatForDB»_' . $routeArea . 'display', $request->query->all());
+            }
+
             return parent::«IF isAdmin»adminD«ELSE»d«ENDIF»isplayAction($request, $«name.formatForCode»);
         }
     '''
