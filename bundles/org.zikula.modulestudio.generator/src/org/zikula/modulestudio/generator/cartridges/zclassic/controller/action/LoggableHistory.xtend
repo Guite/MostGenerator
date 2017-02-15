@@ -2,11 +2,13 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.controller.action
 
 import de.guite.modulestudio.metamodel.Entity
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
+import org.zikula.modulestudio.generator.extensions.UrlExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class LoggableHistory {
 
     extension FormattingExtensions = new FormattingExtensions
+    extension UrlExtensions = new UrlExtensions
     extension Utils = new Utils
 
     def generate(Entity it, Boolean isBase) '''
@@ -71,17 +73,38 @@ class LoggableHistory {
         }
 
         $entityFactory = $this->get('«application.appService».entity_factory');
-        $entity = $entityFactory->getRepository('«name.formatForCode»')->selectById($id);
-        if (null === $entity) {
+        $«name.formatForCode» = $entityFactory->getRepository('«name.formatForCode»')->selectById($id);
+        if (null === $«name.formatForCode») {
             throw new NotFoundHttpException($this->__('No such «name.formatForDisplay» found.'));
         }
 
-        $logEntriesRepo = $entityFactory->getObjectManager()->getRepository('«application.appName»:«name.formatForCodeCapital»LogEntryEntity');
-        $logEntries = $logEntriesRepo->getLogEntries($entity);
+        $routeArea = $isAdmin ? 'admin' : '';
+        $entityManager = $entityFactory->getObjectManager();
+        $logEntriesRepo = $entityManager->getRepository('«application.appName»:«name.formatForCodeCapital»LogEntryEntity');
+        $logEntries = $logEntriesRepo->getLogEntries($«name.formatForCode»);
+
+        $revertToVersion = $request->query->getInt('revert', 0);
+        if ($revertToVersion > 0 && count($logEntries) > 1) {
+            // revert to requested version
+            $logEntriesRepo->revert($«name.formatForCode», $revertToVersion);
+
+            $success = true;
+            try {
+                // execute the workflow action
+                $workflowHelper = $this->get('«application.appService».workflow_helper');
+                $success = $workflowHelper->executeAction($«name.formatForCode», 'update');
+
+                $this->addFlash('status', $this->__f('Done! Reverted «name.formatForDisplay» to version %version%', ['%version%' => $revertToVersion]));
+            } catch(\Exception $e) {
+                $this->addFlash('error', $this->__f('Sorry, but an error occured during the %action% action. Please apply the changes again!', ['%action%' => 'update']) . '  ' . $e->getMessage();
+            }
+
+            return $this->redirectToRoute('«application.appName.formatForDB»_«name.formatForDB»_' . $routeArea . 'history', [«routeParams(name.formatForCode, false)»]);
+        }
 
         $templateParameters = [
-            'routeArea' => $isAdmin ? 'admin' : '',
-            '«name.formatForCode»' => $entity,
+            'routeArea' => $routeArea,
+            '«name.formatForCode»' => $«name.formatForCode»,
             'logEntries' => $logEntries
         ];
 
