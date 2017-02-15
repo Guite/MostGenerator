@@ -86,7 +86,9 @@ class View {
         </div>
         {% endblock %}
         {% block page_nav_links %}
-            «pageNavLinks(appName)»
+            <p>
+                «pageNavLinks(appName)»
+            </p>
         {% endblock %}
         «IF !skipHookSubscribers»
             {% block display_hooks %}
