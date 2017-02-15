@@ -315,14 +315,29 @@ class ModelExtensions {
     /**
      * Returns a list of all editable fields of the given entity.
      * At the moment instances of ArrayField and ObjectField are excluded.
+     * Also version fields are excluded as these are incremented automatically.
      */
     def getEditableFields(DataObject it) {
         var fields = getDerivedFields.filter[name != 'workflowState']
         if (it instanceof Entity && (it as Entity).identifierStrategy != EntityIdentifierStrategy.NONE) {
             fields = fields.filter[!primaryKey]
         }
-        val wantedFields = fields.exclude(ArrayField).exclude(ObjectField)
-        wantedFields.toList as List<DerivedField>
+        var filteredFields = fields.filter[!isVersionField].exclude(ArrayField).exclude(ObjectField)
+        filteredFields.toList as List<DerivedField>
+    }
+
+    /**
+     * Checks whether a given field is a version field or not.
+     */
+    def private isVersionField(EntityField it) {
+        if (it instanceof IntegerField) {
+            return it.version
+        }
+        if (it instanceof DatetimeField) {
+            return it.version
+        }
+
+        false
     }
 
     /**
