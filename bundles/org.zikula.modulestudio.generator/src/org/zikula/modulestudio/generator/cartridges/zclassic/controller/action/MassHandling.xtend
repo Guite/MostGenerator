@@ -17,7 +17,7 @@ class MassHandling {
     '''
 
     def private handleSelectedObjects(Entity it, Boolean isBase, Boolean isAdmin) '''
-        «handleSelectedObjectsDocBlock(isBase)»
+        «handleSelectedObjectsDocBlock(isBase, isAdmin)»
         public function «IF isAdmin»adminH«ELSE»h«ENDIF»andleSelectedEntriesAction(Request $request)
         {
             «IF isBase»
@@ -30,6 +30,9 @@ class MassHandling {
 
             /**
              * This method includes the common implementation code for adminHandleSelectedEntriesAction() and handleSelectedEntriesAction().
+             *
+             * @param Request $request Current request instance
+             * @param Boolean $isAdmin Whether the admin area is used or not
              */
             protected function handleSelectedEntriesActionInternal(Request $request, $isAdmin = false)
             {
@@ -38,7 +41,7 @@ class MassHandling {
         «ENDIF»
     '''
 
-    def private handleSelectedObjectsDocBlock(Entity it, Boolean isBase) '''
+    def private handleSelectedObjectsDocBlock(Entity it, Boolean isBase, Boolean isAdmin) '''
         /**
          * Process status changes for multiple items.
          *
@@ -50,6 +53,9 @@ class MassHandling {
          *        methods = {"POST"}
          * )
          «ENDIF»
+        «IF isAdmin»
+            «' '»* @Theme("admin")
+        «ENDIF»
          *
          * @param Request $request Current request instance
          *

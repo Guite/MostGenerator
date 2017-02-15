@@ -10,15 +10,33 @@ class LoggableHistory {
     extension Utils = new Utils
 
     def generate(Entity it, Boolean isBase) '''
+        «loggableHistory(isBase, true)»
+        «loggableHistory(isBase, false)»
+    '''
+
+    def private loggableHistory(Entity it, Boolean isBase, Boolean isAdmin) '''
         «loggableHistoryDocBlock(isBase)»
-        public function loggableHistoryAction(Request $request, $id = 0)
+        public function «IF isAdmin»adminL«ELSE»l«ENDIF»oggableHistoryAction(Request $request, $id = 0)
         {
             «IF isBase»
-                «loggableHistoryBaseImpl»
+                return $this->loggableHistoryActionInternal($request, «isAdmin.displayBool»);
             «ELSE»
-                return parent::loggableHistoryAction($request, $id);
+                return parent::«IF isAdmin»adminL«ELSE»l«ENDIF»oggableHistoryAction($request);
             «ENDIF»
         }
+        «IF isBase && !isAdmin»
+
+            /**
+             * This method includes the common implementation code for adminLoggableHistoryAction() and loggableHistoryAction().
+             *
+             * @param Request $request Current request instance
+             * @param Boolean $isAdmin Whether the admin area is used or not
+             */
+            protected function loggableHistoryActionInternal(Request $request, $isAdmin = false)
+            {
+                «loggableHistoryBaseImpl»
+            }
+        «ENDIF»
     '''
 
     def private loggableHistoryDocBlock(Entity it, Boolean isBase) '''
@@ -57,6 +75,7 @@ class LoggableHistory {
         $logEntries = $logEntriesRepo->getLogEntries($entity);
 
         $templateParameters = [
+            'routeArea' => $isAdmin ? 'admin' : '',
             '«name.formatForCode»' => $entity,
             'logEntries' => $logEntries
         ];

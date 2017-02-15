@@ -81,7 +81,7 @@ class ItemActions {
                         $logEntries = $logEntriesRepo->getLogEntries($entity);
                         if (count($logEntries) > 1) {
                             $menu->addChild($this->__('History'), [
-                                'route' => $routePrefix . $routeArea . 'history',
+                                'route' => $routePrefix . $routeArea . 'loggablehistory',
                                 'routeParameters' => [«routeParams('entity', false)»]
                             ])->setAttribute('icon', 'fa fa-history');
                             $menu[$this->__('History')]->setLinkAttribute('title', $this->__('Watch version history'));

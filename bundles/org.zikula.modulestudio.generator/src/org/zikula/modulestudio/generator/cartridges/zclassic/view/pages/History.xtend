@@ -71,7 +71,7 @@ class History {
                                         <div id="changes{{ logEntry.version }}" class="collapse">
                                             <ul>
                                                 {% for field, value in logEntry.data %}
-                                                    <li>{{ __f('%field% set to %value%, { '%field%': field, '%value%': value }) }}</li>
+                                                    <li>{{ __f('%field% set to %value%', { '%field%': field, '%value%': value }) }}</li>
                                                 {% endfor %}
                                             </ul>
                                         </div>
