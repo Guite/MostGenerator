@@ -486,7 +486,7 @@ class View {
                                 <td headers="hActions" class="actions nowrap">
                                     «IF hasDisplayAction»
                                         {% set linkTitle = __f('Preview «name.formatForDisplay» %id%', { '%id%': logEntry.objectId }) %}
-                                        <a id="«name.formatForCode»ItemDisplay{{ logEntry.objectId }}" href="{{ path('«appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ 'display', { '«getFirstPrimaryKey.name.formatForCode»': logEntry.objectId, 'deleted': 1, 'raw': 1 }) }}" title="{{ linkTitle|e('html_attr') }}" class="«application.vendorAndName.toLowerCase»-inline-window hidden" data-modal-title="{{ __f('«name.formatForDisplayCapital» %id%', { '%id%': logEntry.objectId }) }}"><span class="fa fa-id-card-o"></span></a>
+                                        <a id="«name.formatForCode»ItemDisplay{{ logEntry.objectId }}" href="{{ path('«appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ 'displaydeleted', { '«getFirstPrimaryKey.name.formatForCode»': logEntry.objectId, 'raw': 1 }) }}" title="{{ linkTitle|e('html_attr') }}" class="«application.vendorAndName.toLowerCase»-inline-window hidden" data-modal-title="{{ __f('«name.formatForDisplayCapital» %id%', { '%id%': logEntry.objectId }) }}"><span class="fa fa-id-card-o"></span></a>
                                     «ENDIF»
                                     {% set linkTitle = __f('Undelete «name.formatForDisplay» %id%', { '%id%': logEntry.objectId }) %}
                                     <a href="{{ path('«appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ 'loggablehistory', { 'undelete': logEntry.objectId }) }}" title="{{ linkTitle|e('html_attr') }}"><span class="fa fa-history"></span></a>

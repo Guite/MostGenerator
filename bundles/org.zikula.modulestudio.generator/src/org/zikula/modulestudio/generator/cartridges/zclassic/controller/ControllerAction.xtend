@@ -73,12 +73,12 @@ class ControllerAction {
          *
          * @throws AccessDeniedException Thrown if the user doesn't have required permissions
          «IF it instanceof DisplayAction»
-         * @throws NotFoundHttpException Thrown by param converter if item to be displayed isn't found
+         * @throws NotFoundHttpException Thrown by param converter if «entity.name.formatForDisplay» to be displayed isn't found
          «ELSEIF it instanceof EditAction»
-         * @throws NotFoundHttpException Thrown by form handler if item to be edited isn't found
+         * @throws NotFoundHttpException Thrown by form handler if «entity.name.formatForDisplay» to be edited isn't found
          * @throws RuntimeException      Thrown if another critical error occurs (e.g. workflow actions not available)
          «ELSEIF it instanceof DeleteAction»
-         * @throws NotFoundHttpException Thrown by param converter if item to be deleted isn't found
+         * @throws NotFoundHttpException Thrown by param converter if «entity.name.formatForDisplay» to be deleted isn't found
          * @throws RuntimeException      Thrown if another critical error occurs (e.g. workflow actions not available)
          «ENDIF»
          */
