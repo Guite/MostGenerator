@@ -36,7 +36,7 @@ class History {
                         <col id="cVersion" />
                         <col id="cDate" />
                         <col id="cUser" />
-                        <col id="cAction" />
+                        <col id="cOperation" />
                         <col id="cChanges" />
                         <col id="cActions" />
                     </colgroup>
@@ -44,7 +44,7 @@ class History {
                         <th id="hVersion" scope="col" class="z-order-unsorted z-w02">{{ __('Version') }}</th>
                         <th id="hDate" scope="col" class="z-order-unsorted">{{ __('Date') }}</th>
                         <th id="hUser" scope="col" class="z-order-unsorted">{{ __('User') }}</th>
-                        <th id="hAction" scope="col" class="z-order-unsorted">{{ __('Action') }}</th>
+                        <th id="hOperation" scope="col" class="z-order-unsorted">{{ __('Operation') }}</th>
                         <th id="hChanges" scope="col" class="z-order-unsorted">{{ __('Changes') }}</th>
                         <th id="hActions" scope="col" class="z-order-unsorted">{{ __('Actions') }}</th>
                     </thead>
@@ -54,7 +54,7 @@ class History {
                                 <td headers="hVersion" class="text-center">{{ logEntry.version }}</td>
                                 <td headers="hDate">{{ logEntry.loggedAt|localizeddate('medium', 'medium') }}</td>
                                 <td headers="hUser">{{ logEntry.username|profileLinkByUserName() }}</td>
-                                <td headers="hAction">
+                                <td headers="hOperation">
                                     {% if logEntry.action == 'create' %}
                                         {{ __('Create') }}
                                     {% elseif logEntry.action == 'update' %}
@@ -81,7 +81,7 @@ class History {
                                                                 </ul>
                                                             </li>
                                                         {% else %}
-                                                            <li>{{ __f('%field% set to <em>an empty collection</em>', { '%field%': field })|raw }}</li>
+                                                            <li>{{ __f('%field% set to <em>%value%</em>', { '%field%': field, '%value%': __('an empty collection') })|raw }}</li>
                                                         {% endif %}
                                                     {% else %}
                                                         <li>{{ __f('%field% set to <em>%value%</em>', { '%field%': field, '%value%': value|default(__('an empty value')) })|raw }}</li>
