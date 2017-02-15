@@ -503,7 +503,11 @@ class UploadHelper {
                 return $entity;
             }
 
-            // remove the file
+            «val loggableEntitiesWithUploads = getUploadEntities.filter(Entity).filter[loggable]»
+            // remove the file«IF !loggableEntitiesWithUploads.empty» (but not for loggable entities)«ENDIF»
+            «IF !loggableEntitiesWithUploads.empty»
+                if (!in_array($objectType, ['«loggableEntitiesWithUploads.map[name.formatForCode].join('\', \'')»'])) {
+            «ENDIF»
             if (is_array($entity[$fieldName]) && isset($entity[$fieldName][$fieldName])) {
                 $entity[$fieldName] = $entity[$fieldName][$fieldName];
             }
@@ -513,6 +517,9 @@ class UploadHelper {
                     return false;
                 }
             }
+            «IF !loggableEntitiesWithUploads.empty»
+            }
+            «ENDIF»
 
             $entity[$fieldName] = null;
             $entity[$fieldName . 'Meta'] = [];
