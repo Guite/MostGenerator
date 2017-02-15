@@ -4,6 +4,7 @@ import de.guite.modulestudio.metamodel.Entity
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
+import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.UrlExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
@@ -12,6 +13,7 @@ class History {
 
     extension ControllerExtensions = new ControllerExtensions
     extension FormattingExtensions = new FormattingExtensions
+    extension ModelExtensions = new ModelExtensions
     extension NamingExtensions = new NamingExtensions
     extension UrlExtensions = new UrlExtensions
     extension Utils = new Utils
@@ -97,11 +99,12 @@ class History {
                                     {% endif %}
                                 </td>
                                 <td headers="hActions" class="actions nowrap">
+                                    «IF hasDisplayAction»
+                                        {% set linkTitle = __f('Preview version %version%', { '%version%': logEntry.version }) %}
+                                        <a id="«name.formatForCode»Item«FOR pkField : getPrimaryKeyFields SEPARATOR '_'»{{ item.«pkField.name.formatForCode» }}«ENDFOR»Display{{ logEntry.version }}" href="{{ path('«app.appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ 'display', { «routePkParams('item', true)»«appendSlug('item', true)», 'version': logEntry.version, 'raw': 1 }) }}" title="{{ linkTitle|e('html_attr') }}" class="«application.vendorAndName.toLowerCase»-inline-window hidden" data-modal-title="{{ entity.getTitleFromDisplayPattern()|e('html_attr') ~ ' ' ~ __('version') ~ ' ' ~ logEntry.version }}"><span class="fa fa-id-card-o"></span> {{ linkTitle }}</a>
+                                    «ENDIF»
                                     TODO
                                     {#
-                                    {% set linkTitle = __f('Preview version %version%', { '%version%': logEntry.version }) %}
-                                    <a href="#" title="{{ linkTitle|e('html_attr') }}" class="fa fa-search-plus">{{ linkTitle }}</a>
-
                                     {% set linkTitle = __f('Revert to version %version%', { '%version%': logEntry.version }) %}
                                     <a href="#" title="{{ linkTitle|e('html_attr') }}" class="fa fa-history">{{ linkTitle }}</a>
                                     #}

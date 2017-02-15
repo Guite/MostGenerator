@@ -4,6 +4,7 @@ import de.guite.modulestudio.metamodel.Application
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
+import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
@@ -13,6 +14,7 @@ class DisplayFunctions {
 
     extension ControllerExtensions = new ControllerExtensions
     extension FormattingExtensions = new FormattingExtensions
+    extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension ModelExtensions = new ModelExtensions
     extension ModelJoinExtensions = new ModelJoinExtensions
     extension NamingExtensions = new NamingExtensions
@@ -61,9 +63,9 @@ class DisplayFunctions {
 
             «initItemActions»
         «ENDIF»
-        «IF !getJoinRelations.empty && hasDisplayActions»
+        «IF (!getJoinRelations.empty || hasLoggable) && hasDisplayActions»
 
-            «initRelationWindow»
+            «initInlineWindow»
 
             «initQuickViewModals»
         «ENDIF»
@@ -264,7 +266,7 @@ class DisplayFunctions {
         }
     '''
 
-    def private initRelationWindow(Application it) '''
+    def private initInlineWindow(Application it) '''
         /**
          * Helper function to create new Bootstrap modal window instances.
          */
@@ -386,7 +388,7 @@ class DisplayFunctions {
                     «vendorAndName»InitAjaxToggles();
                 «ENDIF»
             }
-            «IF !getJoinRelations.empty && hasDisplayActions»
+            «IF (!getJoinRelations.empty || hasLoggable) && hasDisplayActions»
 
                 «vendorAndName»InitQuickViewModals();
             «ENDIF»
