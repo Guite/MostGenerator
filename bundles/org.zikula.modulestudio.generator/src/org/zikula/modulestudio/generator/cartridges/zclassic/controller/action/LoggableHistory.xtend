@@ -15,7 +15,7 @@ class LoggableHistory {
     '''
 
     def private loggableHistory(Entity it, Boolean isBase, Boolean isAdmin) '''
-        «loggableHistoryDocBlock(isBase)»
+        «loggableHistoryDocBlock(isBase, isAdmin)»
         public function «IF isAdmin»adminL«ELSE»l«ENDIF»oggableHistoryAction(Request $request, $id = 0)
         {
             «IF isBase»
@@ -39,16 +39,19 @@ class LoggableHistory {
         «ENDIF»
     '''
 
-    def private loggableHistoryDocBlock(Entity it, Boolean isBase) '''
+    def private loggableHistoryDocBlock(Entity it, Boolean isBase, Boolean isAdmin) '''
         /**
          * This method provides a change history for a given «name.formatForDisplay».
          «IF !isBase»
          *
-         * @Route("/«name.formatForCode»/history/{id}",
+         * @Route("/«IF isAdmin»admin/«ENDIF»«name.formatForCode»/history/{id}",
          *        requirements = {"id" = "\d+"},
          *        defaults = {"id" = 0},
          *        methods = {"GET"}
          * )
+         «ENDIF»
+         «IF isAdmin»
+              * @Theme("admin")
          «ENDIF»
          *
          * @param Request $request Current request instance

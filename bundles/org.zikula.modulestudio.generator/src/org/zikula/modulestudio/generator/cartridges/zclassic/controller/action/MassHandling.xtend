@@ -49,13 +49,13 @@ class MassHandling {
          * Multiple items may have their state changed or be deleted.
          «IF !isBase»
          *
-         * @Route("/«nameMultiple.formatForCode»/handleSelectedEntries",
+         * @Route("/«IF isAdmin»admin/«ENDIF»«nameMultiple.formatForCode»/handleSelectedEntries",
          *        methods = {"POST"}
          * )
          «ENDIF»
-        «IF isAdmin»
-            «' '»* @Theme("admin")
-        «ENDIF»
+         «IF isAdmin»
+              * @Theme("admin")
+         «ENDIF»
          *
          * @param Request $request Current request instance
          *
