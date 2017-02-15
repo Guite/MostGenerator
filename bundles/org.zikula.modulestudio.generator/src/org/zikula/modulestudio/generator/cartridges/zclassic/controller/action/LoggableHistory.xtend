@@ -96,10 +96,10 @@ class LoggableHistory {
 
                 $this->addFlash('status', $this->__f('Done! Reverted «name.formatForDisplay» to version %version%', ['%version%' => $revertToVersion]));
             } catch(\Exception $e) {
-                $this->addFlash('error', $this->__f('Sorry, but an error occured during the %action% action. Please apply the changes again!', ['%action%' => 'update']) . '  ' . $e->getMessage();
+                $this->addFlash('error', $this->__f('Sorry, but an error occured during the %action% action. Please apply the changes again!', ['%action%' => 'update']) . '  ' . $e->getMessage());
             }
 
-            return $this->redirectToRoute('«application.appName.formatForDB»_«name.formatForDB»_' . $routeArea . 'history', [«routeParams(name.formatForCode, false)»]);
+            return $this->redirectToRoute('«application.appName.formatForDB»_«name.formatForDB»_' . $routeArea . 'loggablehistory', [«routeParams(name.formatForCode, false)»]);
         }
 
         $templateParameters = [

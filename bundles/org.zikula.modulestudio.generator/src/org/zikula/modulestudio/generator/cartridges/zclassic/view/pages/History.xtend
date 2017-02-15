@@ -103,8 +103,10 @@ class History {
                                         {% set linkTitle = __f('Preview version %version%', { '%version%': logEntry.version }) %}
                                         <a id="«name.formatForCode»Item«FOR pkField : getPrimaryKeyFields SEPARATOR '_'»{{ «name.formatForCode».«pkField.name.formatForCode» }}«ENDFOR»Display{{ logEntry.version }}" href="{{ path('«app.appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ 'display', { «routePkParams(name.formatForCode, true)»«appendSlug(name.formatForCode, true)», 'version': logEntry.version, 'raw': 1 }) }}" title="{{ linkTitle|e('html_attr') }}" class="«application.vendorAndName.toLowerCase»-inline-window hidden" data-modal-title="{{ «name.formatForCode».getTitleFromDisplayPattern()|e('html_attr') ~ ' ' ~ __('version') ~ ' ' ~ logEntry.version }}"><span class="fa fa-id-card-o"></span></a>
                                     «ENDIF»
-                                    {% set linkTitle = __f('Revert to version %version%', { '%version%': logEntry.version }) %}
-                                    <a href="{{ path('«appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ 'history', { «routePkParams(name.formatForCode, true)»«appendSlug(name.formatForCode, true)», revert: logEntry.version }) }}" title="{{ linkTitle|e('html_attr') }}"><span class="fa fa-history"></span></a>
+                                    {% if not loop.first %}
+                                        {% set linkTitle = __f('Revert to version %version%', { '%version%': logEntry.version }) %}
+                                        <a href="{{ path('«appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ 'loggablehistory', { «routePkParams(name.formatForCode, true)»«appendSlug(name.formatForCode, true)», revert: logEntry.version }) }}" title="{{ linkTitle|e('html_attr') }}"><span class="fa fa-history"></span></a>
+                                    {% endif %}
                                 </td>
                             </tr>
                         {% endfor %}
