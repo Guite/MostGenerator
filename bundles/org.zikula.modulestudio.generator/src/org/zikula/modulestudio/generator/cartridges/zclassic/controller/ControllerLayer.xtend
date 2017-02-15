@@ -6,6 +6,7 @@ import de.guite.modulestudio.metamodel.DisplayAction
 import de.guite.modulestudio.metamodel.Entity
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.action.InlineRedirect
+import org.zikula.modulestudio.generator.cartridges.zclassic.controller.action.LoggableHistory
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.action.MassHandling
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.additions.AjaxController
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.additions.ConfigController
@@ -95,6 +96,10 @@ class ControllerLayer {
 
                 «new MassHandling().generate(it, true)»
             «ENDIF»
+            «IF loggable»
+
+                «new LoggableHistory().generate(it, true)»
+            «ENDIF»
             «IF hasEditAction && app.needsAutoCompletion»
 
                 «new InlineRedirect().generate(it, true)»
@@ -176,6 +181,10 @@ class ControllerLayer {
             «IF hasViewAction»
 
                 «new MassHandling().generate(it, false)»
+            «ENDIF»
+            «IF loggable»
+
+                «new LoggableHistory().generate(it, false)»
             «ENDIF»
             «IF hasEditAction && app.needsAutoCompletion»
 

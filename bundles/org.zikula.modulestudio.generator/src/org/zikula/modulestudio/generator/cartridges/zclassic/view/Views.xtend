@@ -16,6 +16,7 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.view.pages.Config
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.pages.Custom
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.pages.Delete
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.pages.Display
+import org.zikula.modulestudio.generator.cartridges.zclassic.view.pages.History
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.pages.Index
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.pages.View
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.pages.ViewHierarchy
@@ -126,6 +127,9 @@ class Views {
         }
         if (entity.hasDeleteAction) {
             new Delete().generate(entity, appName, fsa)
+        }
+        if (entity.loggable) {
+            new History().generate(entity, appName, fsa)
         }
 
         var customHelper = new Custom()

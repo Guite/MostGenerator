@@ -53,7 +53,7 @@ class MassHandling {
          *
          * @param Request $request Current request instance
          *
-         * @return bool true on sucess, false on failure
+         * @return RedirectResponse
          *
          * @throws RuntimeException Thrown if executing the workflow action fails
          */

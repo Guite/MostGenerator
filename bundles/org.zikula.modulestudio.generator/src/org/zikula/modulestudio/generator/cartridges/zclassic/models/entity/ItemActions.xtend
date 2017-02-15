@@ -75,6 +75,19 @@ class ItemActions {
                 «ELSE»
                     «itemActionsForEditAction»
                 «ENDIF»
+                «IF loggable»
+                    if (in_array($context, ['view', 'display'])) {
+                        $logEntriesRepo = $this->container->get('«app.appService».entity_factory')->getObjectManager()->getRepository('«app.appName»:«name.formatForCodeCapital»LogEntryEntity');
+                        $logEntries = $logEntriesRepo->getLogEntries($entity);
+                        if (count($logEntries) > 1) {
+                            $menu->addChild($this->__('History'), [
+                                'route' => $routePrefix . $routeArea . 'history',
+                                'routeParameters' => [«routeParams('entity', false)»]
+                            ])->setAttribute('icon', 'fa fa-history');
+                            $menu[$this->__('History')]->setLinkAttribute('title', $this->__('Watch version history'));
+                        }
+                    }
+                «ENDIF»
             }
         «ENDIF»
         «IF hasDeleteAction»

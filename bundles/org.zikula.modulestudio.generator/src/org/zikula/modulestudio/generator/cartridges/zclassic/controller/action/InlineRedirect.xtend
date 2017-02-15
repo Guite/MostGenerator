@@ -35,9 +35,9 @@ class InlineRedirect {
          *
          * @param string  $idPrefix    Prefix for inline window element identifier
          * @param string  $commandName Name of action to be performed (create or edit)
-         * @param integer $id          Id of created item (used for activating auto completion after closing the modal window)
+         * @param integer $id          Identifier of created «name.formatForDisplay» (used for activating auto completion after closing the modal window)
          *
-         * @return boolean Whether the inline redirect has been performed or not
+         * @return PlainResponse Output
          */
     '''
 
