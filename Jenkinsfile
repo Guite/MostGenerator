@@ -6,7 +6,7 @@ node {
     def projectName = 'MostGenerator'
     def repoUrl = repoBase + projectName + '/'
     def downstreamJobs = ['MOST-1_Prepare-7_WebGen']
-    def artifacts = '**/releng/**/target/repository/**'
+    def artifacts = '**/releng/**/target/repository/**,**/bundles/org.zikula.modulestudio.generator/target/ModuleStudio-generator.jar'
 
     def builder, postProcessor
     stage('Init') {

@@ -6,6 +6,10 @@
     <version>1.0.0-SNAPSHOT</version>
     <packaging>eclipse-plugin</packaging>
 
+    <properties>
+        <dir.lib>${project.build.directory}/lib</dir.lib>
+    </properties>
+
     <parent>
         <groupId>org.zikula.modulestudio.generator</groupId>
         <artifactId>org.zikula.modulestudio.generator.bundles</artifactId>
@@ -29,6 +33,60 @@
                 <groupId>org.eclipse.xtend</groupId>
                 <artifactId>xtend-maven-plugin</artifactId>
                 <version>${xtend-maven-plugin.version}</version>
+            </plugin>
+
+            <!-- build stand-alone jar file -->
+            <plugin>
+                <!-- copy dependencies -->
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>copy-dependencies</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${dir.lib}</outputDirectory>
+                            <excludeTransitive>true</excludeTransitive>
+                            <addParentPoms>false</addParentPoms>
+                            <excludeScope>provided</excludeScope>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>${maven-antrun-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>package-jar-in-jar</id>
+                        <phase>prepare-package</phase>
+                        <configuration>
+                            <target>
+                                <ant antfile="${project.basedir}/../../releng/org.zikula.modulestudio.generator.build/fatjar/fat-jar-in-jar.xml">
+                                    <property name="jar.filename" value="ModuleStudio-generator.jar" />
+                                    <property name="main.class" value="org.zikula.modulestudio.generator.Main" />
+                                </ant>
+                            </target>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>cleanup-copied-dependencies</id>
+                        <phase>prepare-package</phase>
+                        <configuration>
+                            <target>
+                                <delete dir="${dir.lib}" />
+                            </target>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
