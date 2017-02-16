@@ -57,7 +57,29 @@ class History {
             </form>
         {% endblock %}
         {% block diff_view %}
-            <p class="alert alert-danger">TODO</p>
+            <div class="table-responsive">
+                <table class="table table-striped table-bordered table-hover{% if routeArea == 'admin' %} table-condensed{% endif %}">
+                    <colgroup>
+                        <col id="cFieldName" />
+                        <col id="cMinVersion" />
+                        <col id="cMaxVersion" />
+                    </colgroup>
+                    <thead>
+                        <th id="hFieldName" scope="col" class="z-order-unsorted">{{ __('Field name') }}</th>
+                        <th id="hMinVersion" scope="col" class="z-order-unsorted">{{ __f('Version %version%', { '%version%': minVersion }) }}</th>
+                        <th id="hMaxVersion" scope="col" class="z-order-unsorted">{{ __f('Version %version%', { '%version%': maxVersion }) }}</th>
+                    </thead>
+                    <tbody>
+                        {% for fieldName, values in diffValues %}
+                            <tr>
+                                <th headers="hFieldName" id="h{{ fieldName|replace({ ' ': '', '"':'' }) }}" scope="row">{{ fieldName|humanize }}</th>
+                                <td headers="hMinVersion h{{ fieldName|replace({ ' ': '', '"':'' }) }}"{% if values.changed %} class="diff-old"{% endif %}>{{ values.old }}</td>
+                                <td headers="hMaxVersion h{{ fieldName|replace({ ' ': '', '"':'' }) }}"{% if values.changed %} class="diff-new"{% endif %}>{{ values.new }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
         {% endblock %}
         {% block footer %}
             {{ parent() }}

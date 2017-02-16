@@ -135,6 +135,44 @@ class LoggableHistory {
             'isDiffView' => $isDiffView
         ];
 
+        if (true === $isDiffView) {
+            $minVersion = $maxVersion = 0;
+            if ($versions[0] < $versions[1]) {
+                $minVersion = $versions[0];
+                $maxVersion = $versions[1];
+            } else {
+                $minVersion = $versions[1];
+                $maxVersion = $versions[0];
+            }
+            $logEntries = array_reverse($logEntries);
+
+            $diffValues = [];
+            foreach ($logEntries as $logEntry) {
+                foreach ($logEntry->getData() as $field => $value) {
+                    if (!isset($diffValues[$field])) {
+                        $diffValues[$field] = [
+                            'old' => '',
+                            'new' => '',
+                            'changed' => false
+                        ];
+                    }
+                    if (is_array($value)) {
+                        $value = implode(', ', $value);
+                    }
+                    if ($logEntry->getVersion() <= $minVersion) {
+                        $diffValues[$field]['old'] = $value;
+                        $diffValues[$field]['new'] = $value;
+                    } elseif ($logEntry->getVersion() <= $maxVersion) {
+                        $diffValues[$field]['new'] = $value;
+                        $diffValues[$field]['changed'] = $diffValues[$field]['new'] != $diffValues[$field]['old'];
+                    }
+                }
+            }
+            $templateParameters['minVersion'] = $minVersion;
+            $templateParameters['maxVersion'] = $maxVersion;
+            $templateParameters['diffValues'] = $diffValues;
+        }
+
         return $this->render('@«application.appName»/«name.formatForCode.toFirstUpper»/history.html.twig', $templateParameters);
     '''
 }

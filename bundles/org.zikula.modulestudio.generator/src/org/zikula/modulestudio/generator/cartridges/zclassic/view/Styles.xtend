@@ -208,6 +208,7 @@ class Styles {
 
     def private viewAdditions(Application it) '''
         «IF hasViewActions»
+
             /** fix dropdown visibility inside responsive tables */
             div.«cssPrefix»-view .table-responsive {
                 min-height: 300px;
@@ -217,6 +218,15 @@ class Styles {
             div.«cssPrefix»-view .avatar img {
                 width: auto;
                 max-height: 24px;
+            }
+        «ENDIF»
+        «IF hasLoggable»
+
+            div.«cssPrefix»-history .table-responsive .table > tbody > tr > td.diff-old {
+                background-color: #ffecec !important;
+            }
+            div.«cssPrefix»-history .table-responsive .table > tbody > tr > td.diff-new {
+                background-color: #eaffea !important;
             }
         «ENDIF»
     '''
