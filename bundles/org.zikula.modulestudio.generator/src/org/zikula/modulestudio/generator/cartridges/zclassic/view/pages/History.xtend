@@ -65,9 +65,11 @@ class History {
                         <col id="cMaxVersion" />
                     </colgroup>
                     <thead>
-                        <th id="hFieldName" scope="col" class="z-order-unsorted">{{ __('Field name') }}</th>
-                        <th id="hMinVersion" scope="col" class="z-order-unsorted">{{ __f('Version %version%', { '%version%': minVersion }) }}</th>
-                        <th id="hMaxVersion" scope="col" class="z-order-unsorted">{{ __f('Version %version%', { '%version%': maxVersion }) }}</th>
+                        <tr>
+                            <th id="hFieldName" scope="col" class="z-order-unsorted">{{ __('Field name') }}</th>
+                            <th id="hMinVersion" scope="col" class="z-order-unsorted">{{ __f('Version %version%', { '%version%': minVersion }) }}</th>
+                            <th id="hMaxVersion" scope="col" class="z-order-unsorted">{{ __f('Version %version%', { '%version%': maxVersion }) }}</th>
+                        </tr>
                     </thead>
                     <tbody>
                         {% for fieldName, values in diffValues %}
@@ -101,13 +103,15 @@ class History {
                 <col id="cActions" />
             </colgroup>
             <thead>
-                <th id="hSelect" scope="col" class="z-order-unsorted z-w02">{{ __('Select') }}</th>
-                <th id="hVersion" scope="col" class="z-order-unsorted z-w02">{{ __('Version') }}</th>
-                <th id="hDate" scope="col" class="z-order-unsorted">{{ __('Date') }}</th>
-                <th id="hUser" scope="col" class="z-order-unsorted">{{ __('User') }}</th>
-                <th id="hOperation" scope="col" class="z-order-unsorted">{{ __('Operation') }}</th>
-                <th id="hChanges" scope="col" class="z-order-unsorted">{{ __('Changes') }}</th>
-                <th id="hActions" scope="col" class="z-order-unsorted">{{ __('Actions') }}</th>
+                <tr>
+                    <th id="hSelect" scope="col" class="z-order-unsorted z-w02">{{ __('Select') }}</th>
+                    <th id="hVersion" scope="col" class="z-order-unsorted z-w02">{{ __('Version') }}</th>
+                    <th id="hDate" scope="col" class="z-order-unsorted">{{ __('Date') }}</th>
+                    <th id="hUser" scope="col" class="z-order-unsorted">{{ __('User') }}</th>
+                    <th id="hOperation" scope="col" class="z-order-unsorted">{{ __('Operation') }}</th>
+                    <th id="hChanges" scope="col" class="z-order-unsorted">{{ __('Changes') }}</th>
+                    <th id="hActions" scope="col" class="z-order-unsorted">{{ __('Actions') }}</th>
+                </tr>
             </thead>
             <tbody>
                 {% for logEntry in logEntries %}

@@ -472,10 +472,12 @@ class View {
                         <col id="cActions" />
                     </colgroup>
                     <thead>
-                        <th id="hId" scope="col" class="z-order-unsorted z-w02">{{ __('ID') }}</th>
-                        <th id="hDate" scope="col" class="z-order-unsorted">{{ __('Date') }}</th>
-                        <th id="hUser" scope="col" class="z-order-unsorted">{{ __('User') }}</th>
-                        <th id="hActions" scope="col" class="z-order-unsorted">{{ __('Actions') }}</th>
+                        <tr>
+                            <th id="hId" scope="col" class="z-order-unsorted z-w02">{{ __('ID') }}</th>
+                            <th id="hDate" scope="col" class="z-order-unsorted">{{ __('Date') }}</th>
+                            <th id="hUser" scope="col" class="z-order-unsorted">{{ __('User') }}</th>
+                            <th id="hActions" scope="col" class="z-order-unsorted">{{ __('Actions') }}</th>
+                        </tr>
                     </thead>
                     <tbody>
                         {% for logEntry in deletedItems %}
