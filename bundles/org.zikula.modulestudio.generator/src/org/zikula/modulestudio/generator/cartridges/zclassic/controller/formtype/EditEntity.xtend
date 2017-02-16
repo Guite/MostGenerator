@@ -687,7 +687,9 @@ class EditEntity {
         «IF percentage»
             'type' => 'integer',
         «ENDIF»
-        'scale' => 0
+        «IF !range»
+            'scale' => 0
+        «ENDIF»
     '''
 
     def private dispatch formType(DecimalField it) '''«nsSymfonyFormType»«IF percentage»Percent«ELSEIF currency»Money«ELSE»Number«ENDIF»'''
