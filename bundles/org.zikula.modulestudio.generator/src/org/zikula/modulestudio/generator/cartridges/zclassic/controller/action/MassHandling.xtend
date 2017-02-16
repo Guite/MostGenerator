@@ -53,9 +53,9 @@ class MassHandling {
          * @Route("/«IF isAdmin»admin/«ENDIF»«nameMultiple.formatForCode»/handleSelectedEntries",
          *        methods = {"POST"}
          * )
-         «ENDIF»
          «IF isAdmin»
               * @Theme("admin")
+         «ENDIF»
          «ENDIF»
          *
          * @param Request $request Current request instance

@@ -53,9 +53,9 @@ class LoggableHistory {
          *        defaults = {"id" = 0},
          *        methods = {"GET"}
          * )
-         «ENDIF»
          «IF isAdmin»
               * @Theme("admin")
+         «ENDIF»
          «ENDIF»
          *
          * @param Request $request Current request instance
