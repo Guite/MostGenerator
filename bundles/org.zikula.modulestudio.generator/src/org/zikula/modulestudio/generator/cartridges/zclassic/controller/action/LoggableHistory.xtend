@@ -105,10 +105,34 @@ class LoggableHistory {
             return $this->redirectToRoute('«application.appName.formatForDB»_«name.formatForDB»_' . $routeArea . 'loggablehistory', [«routeParams(name.formatForCode, false)»]);
         }
 
+        $isDiffView = false;
+        $versions = $request->query->get('versions', []);
+        if (is_array($versions) && count($versions) == 2) {
+            $isDiffView = true;
+            $allVersionsExist = true;
+            foreach ($versions as $versionNumber) {
+                $versionExists = false;
+                foreach ($logEntries as $logEntry) {
+                    if ($versionNumber == $logEntry->getVersion()) {
+                        $versionExists = true;
+                        break;
+                    }
+                }
+                if (!$versionExists) {
+                    $allVersionsExist = false;
+                    break;
+                }
+            }
+            if (!$allVersionsExist) {
+                $isDiffView = false;
+            }
+        }
+
         $templateParameters = [
             'routeArea' => $routeArea,
             '«name.formatForCode»' => $«name.formatForCode»,
-            'logEntries' => $logEntries
+            'logEntries' => $logEntries,
+            'isDiffView' => $isDiffView
         ];
 
         return $this->render('@«application.appName»/«name.formatForCode.toFirstUpper»/history.html.twig', $templateParameters);

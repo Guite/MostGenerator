@@ -173,7 +173,7 @@ class Plugins {
                     new \Twig_SimpleFunction('«appNameLower»_moderationObjects', [$this, 'getModerationObjects']),
                 «ENDIF»
                 new \Twig_SimpleFunction('«appNameLower»_objectTypeSelector', [$this, 'getObjectTypeSelector']),
-                new \Twig_SimpleFunction('«appNameLower»_templateSelector', [$this, 'getTemplateSelector'])«IF hasStandardFieldEntities || hasUserFields»,
+                new \Twig_SimpleFunction('«appNameLower»_templateSelector', [$this, 'getTemplateSelector'])«IF hasStandardFieldEntities || hasUserFields || hasLoggable»,
                 new \Twig_SimpleFunction('«appNameLower»_userAvatar', [$this, 'getUserAvatar'], ['is_safe' => ['html']])«ENDIF»
             ];
         }
@@ -206,26 +206,29 @@ class Plugins {
         }
 
         «generateInternal»
-        «IF hasStandardFieldEntities || hasUserFields»
+        «IF hasStandardFieldEntities || hasUserFields || hasLoggable»
 
-            «twigExtensionCompat»
+            «getUserAvatar»
         «ENDIF»
     '''
 
-    def private twigExtensionCompat(Application it) '''
+    def private getUserAvatar(Application it) '''
         /**
          * Display the avatar of a user.
          *
-         * @param int    $uid    The user's id
-         * @param int    $width  Image width (optional)
-         * @param int    $height Image height (optional)
-         * @param int    $size   Gravatar size (optional)
-         * @param string $rating Gravatar self-rating [g|pg|r|x] see: http://en.gravatar.com/site/implement/images/ (optional)
+         * @param int|string $uid    The user's id or name
+         * @param int        $width  Image width (optional)
+         * @param int        $height Image height (optional)
+         * @param int        $size   Gravatar size (optional)
+         * @param string     $rating Gravatar self-rating [g|pg|r|x] see: http://en.gravatar.com/site/implement/images/ (optional)
          *
          * @return string
          */
         public function getUserAvatar($uid = 0, $width = 0, $height = 0, $size = 0, $rating = '')
         {
+            if (!is_numeric($uid)) {
+                $uid = \UserUtil::getIdFromName($uid);
+            }
             $params = ['uid' => $uid];
             if ($width > 0) {
                 $params['width'] = $width;
