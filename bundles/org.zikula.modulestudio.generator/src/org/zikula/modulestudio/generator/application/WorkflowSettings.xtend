@@ -61,6 +61,12 @@ class WorkflowSettings {
     IProgressMonitor progressMonitor = null
 
     /**
+     * Whether stand-alone execution (using jar file) is done or not.
+     */
+    @Accessors
+    Boolean isStandalone = false
+
+    /**
      * Sets the output path.
      * 
      * @param path
@@ -78,8 +84,8 @@ class WorkflowSettings {
      */
     def getAdminImageUrl() {
         val bundle = Platform.getBundle(ModuleStudioGeneratorActivator.PLUGIN_ID)
-        var resources = FileLocator.findEntries(bundle, new Path('/src/resources/images/MOST_48.png')) //$NON-NLS-1$
-        val resourcesExported = FileLocator.findEntries(bundle, new Path('/resources/images/MOST_48.png')) //$NON-NLS-1$
+        var resources = FileLocator.findEntries(bundle, new Path('/src' + getAdminImageInputPath)) //$NON-NLS-1$
+        val resourcesExported = FileLocator.findEntries(bundle, new Path(getAdminImageInputPath))
         if (resources.empty) {
             resources = resourcesExported
         }
@@ -91,9 +97,18 @@ class WorkflowSettings {
     }
 
     /**
+     * Returns path to input admin image.
+     *
+     * @return string
+     */
+    def getAdminImageInputPath() {
+        '/resources/images/MOST_48.png' //$NON-NLS-1$
+    }
+
+    /**
      * Returns base path to the module's root folder.
      *
-     * @return module base path
+     * @return string Module base path
      */
     def getPathToModuleRoot() {
         outputPath + File.separator + appVendor.toFirstUpper + File.separator + appName.toFirstUpper + 'Module' + File.separator //$NON-NLS-1$

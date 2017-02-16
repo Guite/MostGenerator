@@ -76,13 +76,18 @@ class ImageCreator {
 
         determineAppText
 
-        val sourceUrl = settings.adminImageUrl
-        if (null === sourceUrl) {
-            throw new IOException('Could not read input image')
+        if (!settings.isStandalone) {
+            val sourceUrl = settings.adminImageUrl
+            if (null === sourceUrl) {
+                throw new IOException('Could not read input image')
+            }
+            val sourceImageUrl = FileLocator.toFileURL(settings.adminImageUrl)
+            val sourceImageFile = new File(sourceImageUrl.getPath)
+            sourceImage = ImageIO.read(new File(sourceImageFile.absolutePath))
+        } else {
+            val inputStream = this.class.getResourceAsStream(settings.getAdminImageInputPath)
+            sourceImage = ImageIO.read(inputStream)
         }
-        val sourceImageUrl = FileLocator.toFileURL(settings.adminImageUrl)
-        val sourceImageFile = new File(sourceImageUrl.getPath)
-        sourceImage = ImageIO.read(new File(sourceImageFile.absolutePath))
 
         for (contextName : #[CONTEXT_ADMIN]) {
             context = contextName

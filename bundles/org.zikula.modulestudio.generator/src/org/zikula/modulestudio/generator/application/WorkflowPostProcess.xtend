@@ -1,7 +1,9 @@
 package org.zikula.modulestudio.generator.application
 
 import java.io.File
+import java.io.FileOutputStream
 import java.io.IOException
+import java.io.OutputStream
 import org.eclipse.core.runtime.FileLocator
 import org.eclipse.core.runtime.IStatus
 import org.eclipse.emf.mwe.utils.FileCopy
@@ -62,24 +64,46 @@ class WorkflowPostProcess {
      * Copies the admin image for the generated application.
      */
     def private copyAdminImage() {
-        val url = settings.adminImageUrl
-        if (null === url) {
+        val targetFolder = settings.getPathToModuleImageAssets
+        if (!targetFolder.exists) {
             return
         }
+        val targetFilePath = targetFolder + File.separator + 'admin.png' //$NON-NLS-1$
 
-        try {
-            val targetFolder = settings.getPathToModuleImageAssets
-            if (targetFolder.exists) {
+        if (!settings.isStandalone) {
+            val url = settings.adminImageUrl
+            if (null === url) {
+                return
+            }
+
+            try {
                 val sourceImageUrl = FileLocator.toFileURL(url)
                 val sourceImageFile = new File(sourceImageUrl.getPath)
 
                 val fileCopy = new FileCopy
                 fileCopy.sourceFile = sourceImageFile.absolutePath
-                fileCopy.targetFile = targetFolder + File.separator + 'admin.png' //$NON-NLS-1$
+                fileCopy.targetFile = targetFilePath
                 fileCopy.invoke(null)
+            } catch (IOException e) {
+                ModuleStudioGeneratorActivator.log(IStatus.ERROR, e.message, e)
             }
-        } catch (IOException e) {
-            ModuleStudioGeneratorActivator.log(IStatus.ERROR, e.message, e)
+        } else {
+            val inputStream = this.class.getResourceAsStream(settings.getAdminImageInputPath)
+            if (null === inputStream) {
+                return
+            }
+            var OutputStream outputStream
+            var int readBytes
+            val buffer = newByteArrayOfSize(4096)
+            try {
+                outputStream = new FileOutputStream(new File(targetFilePath))
+                while ((readBytes = inputStream.read(buffer)) != -1) {
+                    outputStream.write(buffer, 0, readBytes) 
+                }
+                outputStream.close
+            } catch (IOException e1) {
+                e1.printStackTrace();
+            }
         }
     }
 }
