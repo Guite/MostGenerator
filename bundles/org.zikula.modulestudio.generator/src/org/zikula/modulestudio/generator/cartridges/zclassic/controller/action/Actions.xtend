@@ -90,6 +90,8 @@ class Actions {
         $controllerHelper = $this->get('«app.appService».controller_helper');
         $viewHelper = $this->get('«app.appService».view_helper');
         «IF loggable»
+
+            // check if deleted entities should be displayed
             $viewDeleted = $request->query->getInt('deleted', 0);
             if ($viewDeleted == 1 && $this->hasPermission('«application.appName»:«name.formatForCodeCapital»:', '::', ACCESS_EDIT)) {
                 $entityFactory = $this->get('«application.appService».entity_factory');
@@ -134,13 +136,13 @@ class Actions {
         }
         «IF loggable»
 
-            // check if there are deleted «name.formatForDisplay»
+            // check if there exist any deleted «name.formatForDisplay»
             $templateParameters['hasDeletedEntities'] = false;
             if ($this->hasPermission('«application.appName»:«name.formatForCodeCapital»:', '::', ACCESS_EDIT)) {
                 $entityFactory = $this->get('«application.appService».entity_factory');
                 $entityManager = $entityFactory->getObjectManager();
                 $logEntriesRepository = $entityManager->getRepository('«application.appName»:«name.formatForCodeCapital»LogEntryEntity');
-                $deletionLogEntries = $logEntriesRepository->findBy(['action' => 'remove']);
+                $deletionLogEntries = $logEntriesRepository->findBy(['action' => 'remove'], null, 1);
                 $templateParameters['hasDeletedEntities'] = count($deletionLogEntries) > 0;
             }
         «ENDIF»
