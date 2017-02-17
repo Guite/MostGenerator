@@ -12,9 +12,11 @@ class StandardFieldsTrait {
     extension Utils = new Utils
 
     FileHelper fh = new FileHelper
+    Boolean isLoggable
 
-    def generate(Application it, IFileSystemAccess fsa) {
-        val filePath = getAppSourceLibPath + 'Traits/StandardFieldsTrait.php'
+    def generate(Application it, IFileSystemAccess fsa, Boolean loggable) {
+        isLoggable = loggable
+        val filePath = getAppSourceLibPath + 'Traits/' + (if (loggable) 'Loggable' else '') + 'StandardFieldsTrait.php'
         if (!shouldBeSkipped(filePath)) {
             if (shouldBeMarked(filePath)) {
                 fsa.generateFile(filePath.replace('.php', '.generated.php'), fh.phpFileContent(it, traitFile))
@@ -33,9 +35,9 @@ class StandardFieldsTrait {
         use Zikula\UsersModule\Entity\UserEntity;
 
         /**
-         * Standard fields trait implementation class.
+         * «IF isLoggable»Loggable s«ELSE»S«ENDIF»tandard fields trait implementation class.
          */
-        trait StandardFieldsTrait
+        trait «IF isLoggable»Loggable«ENDIF»StandardFieldsTrait
         {
             «traitImpl»
         }
@@ -46,6 +48,9 @@ class StandardFieldsTrait {
          * @Gedmo\Blameable(on="create")
          * @ORM\ManyToOne(targetEntity="Zikula\UsersModule\Entity\UserEntity")
          * @ORM\JoinColumn(referencedColumnName="uid")
+         «IF isLoggable»
+          * @Gedmo\Versioned
+         «ENDIF»
          * @var UserEntity
          */
         protected $createdBy;
@@ -53,6 +58,9 @@ class StandardFieldsTrait {
         /**
          * @ORM\Column(type="datetime")
          * @Gedmo\Timestampable(on="create")
+         «IF isLoggable»
+          * @Gedmo\Versioned
+         «ENDIF»
          * @Assert\DateTime()
          * @var \DateTime $createdDate
          */
@@ -62,6 +70,9 @@ class StandardFieldsTrait {
          * @Gedmo\Blameable(on="update")
          * @ORM\ManyToOne(targetEntity="Zikula\UsersModule\Entity\UserEntity")
          * @ORM\JoinColumn(referencedColumnName="uid")
+         «IF isLoggable»
+          * @Gedmo\Versioned
+         «ENDIF»
          * @var UserEntity
          */
         protected $updatedBy;
@@ -69,6 +80,9 @@ class StandardFieldsTrait {
         /**
          * @ORM\Column(type="datetime")
          * @Gedmo\Timestampable(on="update")
+         «IF isLoggable»
+          * @Gedmo\Versioned
+         «ENDIF»
          * @Assert\DateTime()
          * @var \DateTime $updatedDate
          */

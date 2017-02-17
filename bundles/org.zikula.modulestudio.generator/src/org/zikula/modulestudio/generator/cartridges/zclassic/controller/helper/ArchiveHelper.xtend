@@ -18,7 +18,7 @@ class ArchiveHelper {
     extension Utils = new Utils
 
     def generate(Application it, IFileSystemAccess fsa) {
-        println('Archive helper class for automatic archiving')
+        println('Generating helper class for automatic archiving')
         val fh = new FileHelper
         generateClassPair(fsa, getAppSourceLibPath + 'Helper/ArchiveHelper.php',
             fh.phpFileContent(it, categoryHelperBaseClass), fh.phpFileContent(it, categoryHelperImpl)

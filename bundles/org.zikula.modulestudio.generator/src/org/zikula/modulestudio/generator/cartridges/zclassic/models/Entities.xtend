@@ -54,10 +54,20 @@ class Entities {
         new LifecycleListener().generate(it, fsa)
         new EntityWorkflowTrait().generate(it, fsa)
         if (hasGeographical) {
-            new GeographicalTrait().generate(it, fsa)
+            if (!getGeographicalEntities.filter[loggable].empty) {
+                new GeographicalTrait().generate(it, fsa, true)
+            }
+            if (!getGeographicalEntities.filter[!loggable].empty) {
+                new GeographicalTrait().generate(it, fsa, false)
+            }
         }
         if (hasStandardFieldEntities) {
-            new StandardFieldsTrait().generate(it, fsa)
+            if (!getStandardFieldEntities.filter[loggable].empty) {
+                new StandardFieldsTrait().generate(it, fsa, true)
+            }
+            if (!getStandardFieldEntities.filter[!loggable].empty) {
+                new StandardFieldsTrait().generate(it, fsa, false)
+            }
         }
 
         for (entity : getAllEntities) {
@@ -147,10 +157,10 @@ class Entities {
         «ENDIF»
         use «application.appNamespace»\Traits\EntityWorkflowTrait;
         «IF geographical»
-            use «application.appNamespace»\Traits\GeographicalTrait;
+            use «application.appNamespace»\Traits\«IF loggable»Loggable«ENDIF»GeographicalTrait;
         «ENDIF»
         «IF standardFields»
-            use «application.appNamespace»\Traits\StandardFieldsTrait;
+            use «application.appNamespace»\Traits\«IF loggable»Loggable«ENDIF»StandardFieldsTrait;
         «ENDIF»
     '''
 
@@ -189,14 +199,14 @@ class Entities {
                 /**
                  * Hook geographical behaviour embedding latitude and longitude fields.
                  */
-                use GeographicalTrait;
+                use «IF (it as Entity).loggable»Loggable«ENDIF»GeographicalTrait;
 
             «ENDIF»
             «IF it instanceof Entity && (it as Entity).standardFields»
                 /**
                  * Hook standard fields behaviour embedding createdBy, updatedBy, createdDate, updatedDate fields.
                  */
-                use StandardFieldsTrait;
+                use «IF (it as Entity).loggable»Loggable«ENDIF»StandardFieldsTrait;
 
             «ENDIF»
             «modelEntityBaseImplBody(app)»

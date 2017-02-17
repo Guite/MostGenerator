@@ -12,9 +12,11 @@ class GeographicalTrait {
     extension Utils = new Utils
 
     FileHelper fh = new FileHelper
+    Boolean isLoggable
 
-    def generate(Application it, IFileSystemAccess fsa) {
-        val filePath = getAppSourceLibPath + 'Traits/GeographicalTrait.php'
+    def generate(Application it, IFileSystemAccess fsa, Boolean loggable) {
+        isLoggable = loggable
+        val filePath = getAppSourceLibPath + 'Traits/' + (if (loggable) 'Loggable' else '') + 'GeographicalTrait.php'
         if (!shouldBeSkipped(filePath)) {
             if (shouldBeMarked(filePath)) {
                 fsa.generateFile(filePath.replace('.php', '.generated.php'), fh.phpFileContent(it, traitFile))
@@ -28,12 +30,15 @@ class GeographicalTrait {
         namespace «appNamespace»\Traits;
 
         use Doctrine\ORM\Mapping as ORM;
+        «IF isLoggable»
+            use Gedmo\Mapping\Annotation as Gedmo;
+        «ENDIF»
         use Symfony\Component\Validator\Constraints as Assert;
 
         /**
-         * Geographical trait implementation class.
+         * «IF isLoggable»Loggable g«ELSE»G«ENDIF»eographical trait implementation class.
          */
-        trait GeographicalTrait
+        trait «IF isLoggable»Loggable«ENDIF»GeographicalTrait
         {
             «traitImpl»
         }
@@ -44,6 +49,9 @@ class GeographicalTrait {
          * The coordinate's latitude part.
          *
          * @ORM\Column(type="decimal", precision=12, scale=7)
+         «IF isLoggable»
+          * @Gedmo\Versioned
+         «ENDIF»
          * @Assert\Type(type="float")
          * @var decimal $latitude
          */
@@ -53,6 +61,9 @@ class GeographicalTrait {
          * The coordinate's longitude part.
          *
          * @ORM\Column(type="decimal", precision=12, scale=7)
+         «IF isLoggable»
+          * @Gedmo\Versioned
+         «ENDIF»
          * @Assert\Type(type="float")
          * @var decimal $longitude
          */
