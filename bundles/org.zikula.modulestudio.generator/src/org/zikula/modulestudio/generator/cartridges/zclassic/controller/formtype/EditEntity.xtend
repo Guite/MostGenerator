@@ -340,22 +340,22 @@ class EditEntity {
                             'attributes' => [],
                         «ENDIF»
                         «IF it instanceof Entity && (it as Entity).workflow != EntityWorkflowType.NONE»
-                            'isModerator' => false,
+                            'is_moderator' => false,
                             «IF it instanceof Entity && (it as Entity).workflow == EntityWorkflowType.ENTERPRISE»
-                                'isSuperModerator' => false,
+                                'is_super_moderator' => false,
                             «ENDIF»
-                            'isCreator' => false,
+                            'is_creator' => false,
                         «ENDIF»
                         'actions' => [],
                         «IF it instanceof Entity && (it as Entity).standardFields»
-                            'hasModeratePermission' => false,
+                            'has_moderate_permission' => false,
                         «ENDIF»
                         «IF it instanceof Entity && (it as Entity).hasTranslatableFields»
                             'translations' => [],
                         «ENDIF»
                         «IF !incoming.empty || !outgoing.empty»
-                            'filterByOwnership' => true,
-                            'inlineUsage' => false
+                            'filter_by_ownership' => true,
+                            'inline_usage' => false
                         «ENDIF»
                     ])
                     ->setRequired([«IF hasUploadFieldsEntity»'entity', «ENDIF»'mode', 'actions'])
@@ -365,22 +365,22 @@ class EditEntity {
                             'attributes' => 'array',
                         «ENDIF»
                         «IF it instanceof Entity && (it as Entity).workflow != EntityWorkflowType.NONE»
-                            'isModerator' => 'bool',
+                            'is_moderator' => 'bool',
                             «IF it instanceof Entity && (it as Entity).workflow == EntityWorkflowType.ENTERPRISE»
-                                'isSuperModerator' => 'bool',
+                                'is_super_moderator' => 'bool',
                             «ENDIF»
-                            'isCreator' => 'bool',
+                            'is_creator' => 'bool',
                         «ENDIF»
                         'actions' => 'array',
                         «IF it instanceof Entity && (it as Entity).standardFields»
-                            'hasModeratePermission' => 'bool',
+                            'has_moderate_permission' => 'bool',
                         «ENDIF»
                         «IF it instanceof Entity && (it as Entity).hasTranslatableFields»
                             'translations' => 'array',
                         «ENDIF»
                         «IF !incoming.empty || !outgoing.empty»
-                            'filterByOwnership' => 'bool',
-                            'inlineUsage' => 'bool'
+                            'filter_by_ownership' => 'bool',
+                            'inline_usage' => 'bool'
                         «ENDIF»
                     ])
                     ->setAllowedValues([
@@ -409,44 +409,40 @@ class EditEntity {
     '''
 
     def private translatableFields(Entity it) '''
-        $useOnlyCurrentLanguage = true;
+        «translatableFieldSet»
+
         if ($this->variableApi->getSystemVar('multilingual') && $this->featureActivationHelper->isEnabled(FeatureActivationHelper::TRANSLATIONS, '«name.formatForCode»')) {
             $supportedLanguages = $this->translatableHelper->getSupportedLanguages('«name.formatForCode»');
             if (is_array($supportedLanguages) && count($supportedLanguages) > 1) {
-                $useOnlyCurrentLanguage = false;
                 $currentLanguage = $this->translatableHelper->getCurrentLanguage();
-                foreach ($supportedLanguages as $language) {
-                    if ($language != $currentLanguage) {
-                        continue;
-                    }
-                    «translatableFieldSet('')»
-                }
+                $translatableFields = $this->translatableHelper->getTranslatableFields('«name.formatForCode»');
+                $mandatoryFields = $this->translatableHelper->getMandatoryFields('«name.formatForCode»');
                 foreach ($supportedLanguages as $language) {
                     if ($language == $currentLanguage) {
                         continue;
                     }
-                    «translatableFieldSet('$language')»
+                    $builder->add('translations' . $language, '«application.appNamespace»\Form\Type\Field\TranslationType', [
+                        'fields' => $translatableFields,
+                        'mandatory_fields' => $mandatoryFields[$language],
+                        'values' => isset($options['translations'][$language]) ? $options['translations'][$language] : []
+                    ]);
                 }
             }
-        }
-        if (true === $useOnlyCurrentLanguage) {
-            $language = $this->translatableHelper->getCurrentLanguage();
-            «translatableFieldSet('')»
         }
     '''
 
     def private fieldAdditions(DataObject it, Boolean isTranslatable) '''
         «IF !isTranslatable || !getEditableNonTranslatableFields.empty»
             «IF isTranslatable»
-                «FOR field : getEditableNonTranslatableFields»«field.fieldImpl('')»«ENDFOR»
+                «FOR field : getEditableNonTranslatableFields»«field.fieldImpl»«ENDFOR»
             «ELSE»
-                «FOR field : getEditableFields»«field.fieldImpl('')»«ENDFOR»
+                «FOR field : getEditableFields»«field.fieldImpl»«ENDFOR»
             «ENDIF»
         «ENDIF»
         «IF it instanceof Entity»
             «IF hasSluggableFields && (!isTranslatable || !hasTranslatableSlug)»
 
-                «slugField('')»
+                «slugField»
             «ENDIF»
             «IF geographical»
                 $this->addGeographicalFields($builder, $options);
@@ -454,29 +450,19 @@ class EditEntity {
         «ENDIF»
     '''
 
-    def private translatableFieldSet(Entity it, String idSuffix) '''
-        «IF idSuffix != ''»
-            $translationData = isset($options['translations'][$language]) ? $options['translations'][$language] : [];
-
-        «ENDIF»
-        «FOR field : getEditableTranslatableFields»«field.fieldImpl(idSuffix)»«ENDFOR»
+    def private translatableFieldSet(Entity it) '''
+        «FOR field : getEditableTranslatableFields»«field.fieldImpl»«ENDFOR»
         «IF hasTranslatableSlug»
-            «slugField(idSuffix)»
+            «slugField»
         «ENDIF»
     '''
 
-    def private slugField(Entity it, String idSuffix) '''
+    def private slugField(Entity it) '''
         «IF hasSluggableFields && slugUpdatable && application.supportsSlugInputFields»
-            $builder->add('slug'«IF idSuffix != ''» . «idSuffix»«ENDIF», '«nsSymfonyFormType»TextType', [
+            $builder->add('slug', '«nsSymfonyFormType»TextType', [
                 'label' => $this->__('Permalink') . ':',
                 'required' => false«/* slugUnique.displayBool */»,
-                «IF idSuffix != ''»
-                    'data' => isset($translationData['slug' . $language]) ? $translationData['slug' . $language] : null,
-                «ENDIF»
                 'empty_data' => '',
-                «IF idSuffix != ''»
-                    'mapped' => false,
-                «ENDIF»
                 'attr' => [
                     'maxlength' => 255,
                     «IF slugUnique»
@@ -489,14 +475,14 @@ class EditEntity {
         «ENDIF»
     '''
 
-    def private fieldImpl(DerivedField it, String idSuffix) '''
+    def private fieldImpl(DerivedField it) '''
         «/* No input fields for foreign keys, relations are processed further down */»
         «IF entity.getIncomingJoinRelations.filter[e|e.getSourceFields.head == name.formatForDB].empty»
             «IF it instanceof ListField»
                 «fetchListEntries»
             «ENDIF»
             «val isExpandedListField = it instanceof ListField && (it as ListField).expanded»
-            $builder->add('«name.formatForCode»'«IF idSuffix != ''» . «idSuffix»«ENDIF», '«formType»Type', [
+            $builder->add('«name.formatForCode»', '«formType»Type', [
                 'label' => $this->__('«name.formatForDisplayCapital»') . ':',
                 «IF null !== documentation && documentation != ''»
                     'label_attr' => [
@@ -512,14 +498,8 @@ class EditEntity {
                 «IF readonly»
                     'disabled' => true,
                 «ENDIF»
-                «IF idSuffix != ''»
-                    'data' => isset($translationData['«name.formatForCode»' . $language]) ? $translationData['«name.formatForCode»' . $language] : null,
-                «ENDIF»
                 «IF !(it instanceof BooleanField || it instanceof UploadField)»
                     'empty_data' => '«defaultValue»',
-                «ENDIF»
-                «IF idSuffix != ''»
-                    'mapped' => false,
                 «ENDIF»
                 'attr' => [
                     «additionalAttributes»
@@ -533,7 +513,7 @@ class EditEntity {
                     «ENDIF»
                     'title' => $this->__('«titleAttribute»')
                 ],
-                «requiredOption(idSuffix != '')»,«additionalOptions»
+                «requiredOption»,«additionalOptions»
             ]);
         «ENDIF»
     '''
@@ -667,8 +647,8 @@ class EditEntity {
     def private dispatch additionalAttributes(DerivedField it) '''
         'maxlength' => 255,
     '''
-    def private dispatch requiredOption(DerivedField it, Boolean isTranslation) '''
-        'required' => «IF isTranslation»$this->translatableHelper->isFieldMandatory('«entity.name.formatForCode»', '«name.formatForCode»', $language)«ELSE»«mandatory.displayBool»«ENDIF»
+    def private dispatch requiredOption(DerivedField it) '''
+        'required' => «mandatory.displayBool»
     '''
     def private dispatch additionalOptions(DerivedField it) ''''''
 
@@ -763,8 +743,8 @@ class EditEntity {
 
     def private dispatch formType(UploadField it) '''«app.appNamespace»\Form\Type\Field\Upload'''
     def private dispatch additionalAttributes(UploadField it) ''''''
-    def private dispatch requiredOption(UploadField it, Boolean isTranslation) '''
-        'required' => «IF isTranslation»$this->translatableHelper->isFieldMandatory('«entity.name.formatForCode»', '«name.formatForCode»', $language)«ELSE»«mandatory.displayBool»«ENDIF» && $options['mode'] == 'create'
+    def private dispatch requiredOption(UploadField it) '''
+        'required' => «mandatory.displayBool» && $options['mode'] == 'create'
     '''
     def private dispatch additionalOptions(UploadField it) '''
         'entity' => $options['entity'],
@@ -802,7 +782,7 @@ class EditEntity {
     '''
     def private dispatch additionalOptions(UserField it) '''
         «IF !entity.incoming.empty || !entity.outgoing.empty»,
-            'inlineUsage' => $options['inlineUsage']
+            'inline_usage' => $options['inline_usage']
         «ENDIF»
     '''
 
@@ -932,7 +912,7 @@ class EditEntity {
             return $er->getListQueryBuilder('', '', false);
         };
         «IF (relatedEntity as Entity).ownerPermission»
-            if (true === $options['filterByOwnership']) {
+            if (true === $options['filter_by_ownership']) {
                 $queryBuilder = function(EntityRepository $er) {
                     // select without joins
                     $qb = $er->getListQueryBuilder('', '', false);
@@ -1019,9 +999,9 @@ class EditEntity {
         public function addAdditionalNotificationRemarksField(FormBuilderInterface $builder, array $options)
         {
             $helpText = '';
-            if ($options['isModerator']«IF workflow == EntityWorkflowType.ENTERPRISE» || $options['isSuperModerator']«ENDIF») {
+            if ($options['is_moderator']«IF workflow == EntityWorkflowType.ENTERPRISE» || $options['is_super_moderator']«ENDIF») {
                 $helpText = $this->__('These remarks (like a reason for deny) are not stored, but added to any notification emails send to the creator.');
-            } elseif ($options['isCreator']) {
+            } elseif ($options['is_creator']) {
                 $helpText = $this->__('These remarks (like questions about conformance) are not stored, but added to any notification emails send to our moderators.');
             }
 
@@ -1050,7 +1030,7 @@ class EditEntity {
          */
         public function addModerationFields(FormBuilderInterface $builder, array $options)
         {
-            if (!$options['hasModeratePermission']) {
+            if (!$options['has_moderate_permission']) {
                 return;
             }
 

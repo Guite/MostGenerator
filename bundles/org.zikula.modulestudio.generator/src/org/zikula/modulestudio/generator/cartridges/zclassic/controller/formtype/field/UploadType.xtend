@@ -134,8 +134,8 @@ class UploadType {
                 $fieldName = $form->getConfig()->getName();
 
                 $view->vars['object_type'] = $this->entity->get_objectType();
-                $view->vars['fieldName'] = $fieldName;
-                $view->vars['formattedEntityTitle'] = $this->entity->getTitleFromDisplayPattern();
+                $view->vars['field_name'] = $fieldName;
+                $view->vars['formatted_entity_title'] = $this->entity->getTitleFromDisplayPattern();
 
                 $parentData = $form->getParent()->getData();
                 $accessor = PropertyAccess::createPropertyAccessor();
@@ -167,10 +167,10 @@ class UploadType {
                 // assign other custom options
                 $view->vars['allowed_extensions'] = array_key_exists('allowed_extensions', $options) ? $options['allowed_extensions'] : '';
                 $view->vars['allowed_size'] = array_key_exists('allowed_size', $options) ? $options['allowed_size'] : 0;
-                $view->vars['thumbRuntimeOptions'] = null;
+                $view->vars['thumb_runtime_options'] = null;
 
                 if (true === $fileMeta['isImage']) {
-                    $view->vars['thumbRuntimeOptions'] = $this->imageHelper->getRuntimeOptions($this->entity->get_objectType(), $fieldName, 'controllerAction', ['action' => 'edit']);
+                    $view->vars['thumb_runtime_options'] = $this->imageHelper->getRuntimeOptions($this->entity->get_objectType(), $fieldName, 'controllerAction', ['action' => 'edit']);
                 }
             }
 

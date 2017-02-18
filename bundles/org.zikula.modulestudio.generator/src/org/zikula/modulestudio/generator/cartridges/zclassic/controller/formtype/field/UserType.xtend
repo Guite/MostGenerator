@@ -68,7 +68,7 @@ class UserType {
              */
             public function buildView(FormView $view, FormInterface $form, array $options)
             {
-                $view->vars['inlineUsage'] = $options['inlineUsage'];
+                $view->vars['inline_usage'] = $options['inline_usage'];
 
                 $fieldName = $form->getConfig()->getName();
                 $parentData = $form->getParent()->getData();
@@ -76,7 +76,7 @@ class UserType {
                 $fieldNameGetter = 'get' . ucfirst($fieldName);
                 $user = null !== $parentData && method_exists($parentData, $fieldNameGetter) ? $accessor->getValue($parentData, $fieldNameGetter) : null;
 
-                $view->vars['userName'] = null !== $user && is_object($user) ? $user->getUname() : '';
+                $view->vars['user_name'] = null !== $user && is_object($user) ? $user->getUname() : '';
             }
 
             /**
@@ -88,10 +88,10 @@ class UserType {
 
                 $resolver
                     ->setDefaults([
-                        'inlineUsage' => false
+                        'inline_usage' => false
                     ])
                     ->setAllowedTypes([
-                        'inlineUsage' => 'bool'
+                        'inline_usage' => 'bool'
                     ])
                 ;
             }

@@ -122,7 +122,7 @@ class Forms {
 
     def private translatableFieldDetails(Entity it) '''
         «IF hasTranslatableFields»
-            {% if getModVar('ZConfig', 'multilingual') and supportedLanguages is iterable and supportedLanguages|length > 1 %}
+            {% if translationsEnabled == true %}
                 <ul class="{{ form.vars.id|lower }}-translation-locales nav nav-tabs">
                     {% for language in supportedLanguages %}
                         <li{% if language == app.request.locale %} class="active"{% endif %}>
@@ -130,8 +130,7 @@ class Forms {
                                 {% if not form.vars.valid %}
                                     <span class="label label-danger"><i class="fa fa-warning"></i><span class="sr-only">{{ __('Errors') }}</span></span>
                                 {% endif %}
-                                {# TODO % set hasRequiredFields = language == app.request.locale or translationsFields.vars.required % #}
-                                {% set hasRequiredFields = language == app.request.locale %}
+                                {% set hasRequiredFields = language in localesWithMandatoryFields %}
                                 {% if hasRequiredFields %}<span class="required">{% endif %}{{ language|languageName|safeHtml }}{% if hasRequiredFields %}</span>{% endif %}
                             </a>
                         </li>
@@ -141,10 +140,11 @@ class Forms {
                     {% for language in supportedLanguages %}
                         <div class="{{ form.vars.id|lower }}-translations-fields-{{ language }} tab-pane fade{% if language == app.request.locale %} active in{% endif %}">
                             <fieldset>
+                                <legend>{{ language|languageName|safeHtml }}</legend>
                                 {% if language == app.request.locale %}
-                                    «translatableFieldSet('', '')»
+                                    «fieldSet»
                                 {% else %}
-                                    «translatableFieldSet('', 'language')»
+                                    {{ form_row(attribute(form, 'translations' ~ language)) }}
                                 {% endif %}
                             </fieldset>
                         </div>
@@ -152,31 +152,31 @@ class Forms {
                 </div>
             {% else %}
                 {% set language = app.request.locale %}
-                «translatableFieldSet('', '')»
+                <fieldset>
+                    <legend>{{ language|languageName|safeHtml }}</legend>
+                    «fieldSet»
+                </fieldset>
             {% endif %}
         «ENDIF»
     '''
 
-    def private translatableFieldSet(Entity it, String groupSuffix, String idSuffix) '''
-        <fieldset>
-            <legend>{{ language|languageName|safeHtml }}</legend>
-            «FOR field : getEditableTranslatableFields»«field.fieldWrapper(groupSuffix, idSuffix)»«ENDFOR»
-            «IF hasTranslatableSlug»
-                «slugField(groupSuffix, idSuffix)»
-            «ENDIF»
-        </fieldset>
+    def private fieldSet(Entity it) '''
+        «FOR field : getEditableTranslatableFields»«field.fieldWrapper»«ENDFOR»
+        «IF hasTranslatableSlug»
+            «slugField»
+        «ENDIF»
     '''
 
     def private fieldDetailsFurtherOptions(Entity it, Application app) '''
         <fieldset>
             <legend>{{ __('«IF hasTranslatableFields»Further properties«ELSE»Content«ENDIF»') }}</legend>
             «IF hasTranslatableFields»
-                «FOR field : getEditableNonTranslatableFields»«field.fieldWrapper('', '')»«ENDFOR»
+                «FOR field : getEditableNonTranslatableFields»«field.fieldWrapper»«ENDFOR»
             «ELSE»
-                «FOR field : getEditableFields»«field.fieldWrapper('', '')»«ENDFOR»
+                «FOR field : getEditableFields»«field.fieldWrapper»«ENDFOR»
             «ENDIF»
             «IF !hasTranslatableFields || (hasSluggableFields && !hasTranslatableSlug)»
-                «slugField('', '')»
+                «slugField»
             «ENDIF»
             «IF geographical»
                 «FOR geoFieldName : newArrayList('latitude', 'longitude')»
@@ -186,9 +186,9 @@ class Forms {
         </fieldset>
     '''
 
-    def private slugField(Entity it, String groupSuffix, String idSuffix) '''
+    def private slugField(Entity it) '''
         «IF hasSluggableFields && slugUpdatable && application.supportsSlugInputFields»
-            {{ form_row(form.«IF groupSuffix != ''»«groupSuffix».«ENDIF»slug«idSuffix») }}
+            {{ form_row(form.slug) }}
         «ENDIF»
     '''
 
@@ -251,25 +251,21 @@ class Forms {
         })(jQuery);
     '''
 
-    def private fieldWrapper(DerivedField it, String groupSuffix, String idSuffix) '''
+    def private fieldWrapper(DerivedField it) '''
         «IF entity.getIncomingJoinRelations.filter[e|e.getSourceFields.head == name.formatForDB].empty»«/* No input fields for foreign keys, relations are processed further down */»
             «IF !visible»
                 <div class="hidden">
-                    «formRow(it, groupSuffix, idSuffix)»
+                    «formRow(it)»
                 </div>
             «ELSE»
-                «formRow(it, groupSuffix, idSuffix)»
+                «formRow(it)»
             «ENDIF»
         «ENDIF»
     '''
 
-    def private formRow(DerivedField it, String groupSuffix, String idSuffix) {
-        if (groupSuffix != '' || idSuffix != '') {
-            '''{{ form_row(attribute(form, «IF groupSuffix != ''»«groupSuffix» ~ «ENDIF»'«name.formatForCode»'«IF idSuffix != ''» ~ «idSuffix»«ENDIF»)) }}'''
-        } else {
-            '''{{ form_row(form.«name.formatForCode») }}'''
-        }
-    }
+    def private formRow(DerivedField it) '''
+        {{ form_row(form.«name.formatForCode») }}
+    '''
 
     def private additionalInitScript(DerivedField it) {
         switch it {

@@ -11,6 +11,7 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.controller.actionha
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.actionhandler.RelationPresets
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.form.AutoCompletionRelationTransformer
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.form.ListFieldTransformer
+import org.zikula.modulestudio.generator.cartridges.zclassic.controller.form.TranslationListener
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.form.UploadFileTransformer
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.form.UserFieldTransformer
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype.Config
@@ -22,6 +23,7 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype.field.EntityTreeType
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype.field.GeoType
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype.field.MultiListType
+import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype.field.TranslationType
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype.field.UploadType
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype.field.UserType
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
@@ -94,6 +96,10 @@ class FormHandler {
             if (needsAutoCompletion) {
                 new AutoCompletionRelationType().generate(it, fsa)
                 new AutoCompletionRelationTransformer().generate(it, fsa)
+            }
+            if (hasTranslatable) {
+                new TranslationType().generate(it, fsa)
+                new TranslationListener().generate(it, fsa)
             }
         }
         // additional form types
@@ -690,9 +696,7 @@ class FormHandler {
         «IF hasTranslatable»
 
             if (true === $this->hasTranslatableFields) {
-                if ($this->featureActivationHelper->isEnabled(FeatureActivationHelper::TRANSLATIONS, $this->objectType)) {
-                    $this->initTranslationsForEditing();
-                }
+                $this->initTranslationsForEditing();
             }
         «ENDIF»
     '''
@@ -785,18 +789,44 @@ class FormHandler {
              */
             protected function initTranslationsForEditing()
             {
-                $entity = $this->entityRef;
+                $translationsEnabled = $this->featureActivationHelper->isEnabled(FeatureActivationHelper::TRANSLATIONS, $this->objectType);
+                $this->templateParameters['translationsEnabled'] = $translationsEnabled;
+                if (!$translationsEnabled) {
+                    return;
+                }
 
-                // retrieve translated fields
-                $translations = $this->translatableHelper->prepareEntityForEditing($this->objectType, $entity);
+                if ($this->variableApi->getSystemVar('multilingual') != 1) {
+                    $this->templateParameters['translationsEnabled'] = false;
 
-                // assign translations
+                    return;
+            	}
+                $supportedLanguages = $this->translatableHelper->getSupportedLanguages($this->objectType);
+                if (count($supportedLanguages) < 2) {
+                    $this->templateParameters['translationsEnabled'] = false;
+
+                    return;
+                }
+
+                $mandatoryFieldsPerLocale = $this->translatableHelper->getMandatoryFields($this->objectType);
+                $localesWithMandatoryFields = [];
+                foreach ($mandatoryFieldsPerLocale as $locale => $fields) {
+                    if (count($fields) > 0) {
+                        $localesWithMandatoryFields[] = $locale;
+                    }
+                }
+                if (!in_array($this->translatableHelper->getCurrentLanguage(), $localesWithMandatoryFields)) {
+                    $localesWithMandatoryFields[] = $this->translatableHelper->getCurrentLanguage();
+                }
+                $this->templateParameters['localesWithMandatoryFields'] = $localesWithMandatoryFields;
+
+                // retrieve and assign translated fields
+                $translations = $this->translatableHelper->prepareEntityForEditing($this->entityRef);
                 foreach ($translations as $language => $translationData) {
                     $this->templateParameters[$this->objectTypeLower . $language] = $translationData;
                 }
 
                 // assign list of installed languages for translatable extension
-                $this->templateParameters['supportedLanguages'] = $this->translatableHelper->getSupportedLanguages($this->objectType);
+                $this->templateParameters['supportedLanguages'] = $supportedLanguages;
             }
         «ENDIF»
     '''
@@ -939,24 +969,12 @@ class FormHandler {
              */
             protected function processTranslationsForUpdate()
             {
-                // get treated entity reference from persisted member var
-                $entity = $this->entityRef;
-
-                $entityTransClass = '\\«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Entity\\' . ucfirst($this->objectType) . 'TranslationEntity';
-                $transRepository = $this->entityFactory->getObjectManager()->getRepository($entityTransClass);
-
-                // persist translated fields
-                $translations = $this->translatableHelper->processEntityAfterEditing($this->objectType, $entity, $this->form);
-
-                if ($this->variableApi->getSystemVar('multilingual') == 1) {
-                    foreach ($translations as $locale => $translationFields) {
-                        foreach ($translationFields as $fieldName => $value) {
-                            $transRepository->translate($entity, $fieldName, $locale, $value);
-                        }
-                    }
+                if (!$this->templateParameters['translationsEnabled']) {
+                    return;
                 }
 
-                $this->entityFactory->getObjectManager()->flush();
+                // persist translated fields
+                $this->translatableHelper->processEntityAfterEditing($this->entityRef, $this->form, $this->entityFactory->getObjectManager());
             }
         «ENDIF»
 
@@ -1104,21 +1122,21 @@ class FormHandler {
             «/* TODO review this after https://github.com/zikula/core/issues/2800 has been solved */»
             $isLoggedIn = $this->currentUserApi->isLoggedIn();
             $currentUserId = $isLoggedIn ? $this->currentUserApi->get('uid') : 1;
-            $roles['isCreator'] = $this->templateParameters['mode'] == 'create'
+            $roles['is_creator'] = $this->templateParameters['mode'] == 'create'
                 || (method_exists($this->entityRef, 'getCreatedBy') && $this->entityRef->getCreatedBy()->getUid() == $currentUserId);
 
             $groupApplicationArgs = [
                 'user' => $currentUserId,
                 'group' => $this->variableApi->get('«appName»', 'moderationGroupFor' . $this->objectTypeCapital, 2)
             ];
-            $roles['isModerator'] = count($this->groupApplicationRepository->findBy($groupApplicationArgs)) > 0;
+            $roles['is_moderator'] = count($this->groupApplicationRepository->findBy($groupApplicationArgs)) > 0;
 
             if (true === $enterprise) {
                 $groupApplicationArgs = [
                     'user' => $currentUserId,
                     'group' => $this->variableApi->get('«appName»', 'superModerationGroupFor' . $this->objectTypeCapital, 2)
                 ];
-                $roles['isSuperModerator'] = count($this->groupApplicationRepository->findBy($groupApplicationArgs)) > 0;
+                $roles['is_super_moderator'] = count($this->groupApplicationRepository->findBy($groupApplicationArgs)) > 0;
             }
 
             return $roles;
@@ -1271,7 +1289,7 @@ class FormHandler {
 
             $entityData = $this->entityRef->toArray();
 
-            // assign data to template as array (makes translatable support easier)
+            // assign data to template as array (for additions like standard fields)
             $this->templateParameters[$this->objectTypeLower] = $entityData;
 
             return $result;
@@ -1292,11 +1310,11 @@ class FormHandler {
                 'mode' => $this->templateParameters['mode'],
                 'actions' => $this->templateParameters['actions'],
                 «IF standardFields»
-                    'hasModeratePermission' => $this->permissionApi->hasPermission($this->permissionComponent, $this->createCompositeIdentifier() . '::', ACCESS_MODERATE),
+                    'has_moderate_permission' => $this->permissionApi->hasPermission($this->permissionComponent, $this->createCompositeIdentifier() . '::', ACCESS_MODERATE),
                 «ENDIF»
                 «IF !incoming.empty || !outgoing.empty»
-                    'filterByOwnership' => !$this->permissionApi->hasPermission($this->permissionComponent, $this->createCompositeIdentifier() . '::', ACCESS_ADD)«IF app.needsAutoCompletion»,
-                    'inlineUsage' => $this->templateParameters['inlineUsage']«ENDIF»
+                    'filter_by_ownership' => !$this->permissionApi->hasPermission($this->permissionComponent, $this->createCompositeIdentifier() . '::', ACCESS_ADD)«IF app.needsAutoCompletion»,
+                    'inline_usage' => $this->templateParameters['inlineUsage']«ENDIF»
                 «ENDIF»
             ];
             «IF attributable»

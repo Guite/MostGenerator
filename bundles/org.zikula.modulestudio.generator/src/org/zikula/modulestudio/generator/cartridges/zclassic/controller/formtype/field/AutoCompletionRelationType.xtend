@@ -64,7 +64,7 @@ class AutoCompletionRelationType {
              */
             public function buildForm(FormBuilderInterface $builder, array $options)
             {
-                $transformer = new AutoCompletionRelationTransformer($this->objectManager, $options['objectType'], $options['multiple']);
+                $transformer = new AutoCompletionRelationTransformer($this->objectManager, $options['object_type'], $options['multiple']);
                 $builder->addModelTransformer($transformer);
             }
 
@@ -77,16 +77,16 @@ class AutoCompletionRelationType {
 
                 $resolver
                     ->setDefaults([
-                        'objectType' => '«leadingEntity.name.formatForCode»',
+                        'object_type' => '«leadingEntity.name.formatForCode»',
                         'multiple' => false,
-                        'uniqueNameForJs' => '',
+                        'unique_name_for_js' => '',
                         'attr' => [
                             'class' => 'relation-selector typeahead'
                         ]
                     ])
-                    ->setRequired(['objectType', 'uniqueNameForJs'])
+                    ->setRequired(['object_type', 'unique_name_for_js'])
                     ->setAllowedTypes([
-                        'objectType' => 'string',
+                        'object_type' => 'string',
                         'multiple' => 'bool'
                     ])
                 ;

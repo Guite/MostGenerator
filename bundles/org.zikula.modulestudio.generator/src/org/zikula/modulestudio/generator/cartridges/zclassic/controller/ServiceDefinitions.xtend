@@ -213,6 +213,13 @@ class ServiceDefinitions {
                 tags:
                     - { name: form.type }
         «ENDIF»
+        «IF hasTranslatable»
+
+            «modPrefix».form.type.field.translation:
+                class: «nsBase»Field\TranslationType
+                tags:
+                    - { name: form.type }
+        «ENDIF»
         «IF hasTrees»
 
             «modPrefix».form.type.field.entitytree:

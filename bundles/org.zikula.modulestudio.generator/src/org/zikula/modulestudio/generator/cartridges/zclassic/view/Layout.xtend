@@ -157,17 +157,23 @@ class Layout {
                 {{ block('form_widget_simple') }}
             {%- endblock -%}
         «ENDIF»
+        «IF hasTranslatable»
+
+            {%- block «appName.formatForDB»_field_translation_row -%}
+                {{ block('form_widget_compound') }}
+            {%- endblock -%}
+        «ENDIF»
         «IF hasUploads»
 
             {% block «appName.formatForDB»_field_upload_label %}{% endblock %}
             {% block «appName.formatForDB»_field_upload_row %}
                 {% spaceless %}
-                {{ form_row(attribute(form, fieldName)) }}
+                {{ form_row(attribute(form, field_name)) }}
                 <div class="col-sm-9 col-sm-offset-3">
                     {% if not required %}
-                        <span class="help-block"><a id="{{ id }}_{{ fieldName }}ResetVal" href="javascript:void(0);" class="hidden">{{ __('Reset to empty value') }}</a></span>
+                        <span class="help-block"><a id="{{ id }}_{{ field_name }}ResetVal" href="javascript:void(0);" class="hidden">{{ __('Reset to empty value') }}</a></span>
                     {% endif %}
-                    <span class="help-block">{{ __('Allowed file extensions') }}: <span id="{{ id }}_{{ fieldName }}FileExtensions">{{ allowed_extensions|default('') }}</span></span>
+                    <span class="help-block">{{ __('Allowed file extensions') }}: <span id="{{ id }}_{{ field_name }}FileExtensions">{{ allowed_extensions|default('') }}</span></span>
                     {% if allowed_size|default %}
                         <span class="help-block">{{ __('Allowed file size') }}: {{ allowed_size }}</span>
                     {% endif %}
@@ -176,14 +182,14 @@ class Layout {
                             {{ __('Current file') }}:
                             <a href="{{ file_url }}" title="{{ __('Open file') }}"{% if file_meta.isImage %} class="image-link"{% endif %}>
                             {% if file_meta.isImage %}
-                                <img src="{{ file_path|imagine_filter('zkroot', thumbRuntimeOptions) }}" alt="{{ formattedEntityTitle|e('html_attr') }}" width="{{ thumbRuntimeOptions.thumbnail.size[0] }}" height="{{ thumbRuntimeOptions.thumbnail.size[1] }}" class="img-thumbnail" />
+                                <img src="{{ file_path|imagine_filter('zkroot', thumb_runtime_options) }}" alt="{{ formatted_entity_title|e('html_attr') }}" width="{{ thumb_runtime_options.thumbnail.size[0] }}" height="{{ thumb_runtime_options.thumbnail.size[1] }}" class="img-thumbnail" />
                             {% else %}
                                 {{ __('Download') }} ({{ file_meta.size|«appName.formatForDB»_fileSize(file_path, false, false) }})
                             {% endif %}
                             </a>
                         </span>
                         {% if not required %}
-                            {{ form_row(attribute(form, fieldName ~ 'DeleteFile')) }}
+                            {{ form_row(attribute(form, field_name ~ 'DeleteFile')) }}
                         {% endif %}
                     {% endif %}
                 </div>
@@ -197,11 +203,11 @@ class Layout {
                     <i class="fa fa-search" title="{{ __('Search user') }}"></i>
                     <noscript><p>{{ __('This function requires JavaScript activated!') }}</p></noscript>
                     <input type="hidden" {{ block('widget_attributes') }} value="{{ value }}" />
-                    <input type="text" id="{{ id }}Selector" name="{{ id }}Selector" autocomplete="off" value="{{ userName|e('html_attr') }}" title="{{ __('Enter a part of the user name to search') }}" class="user-selector typeahead" />
+                    <input type="text" id="{{ id }}Selector" name="{{ id }}Selector" autocomplete="off" value="{{ user_name|e('html_attr') }}" title="{{ __('Enter a part of the user name to search') }}" class="user-selector typeahead" />
                     <i class="fa fa-refresh fa-spin hidden" id="{{ id }}Indicator"></i>
                     <span id="{{ id }}NoResultsHint" class="hidden">{{ __('No results found!') }}</span>
                 </div>
-                {% if value and not inlineUsage %}
+                {% if value and not inline_usage %}
                     <span class="help-block avatar">
                         {{ «appName.formatForDB»_userAvatar(uid=value, rating='g') }}
                     </span>
@@ -217,19 +223,19 @@ class Layout {
                 {% set entityNameTranslated = '' %}
                 {% set withImage = false %}
                 «FOR entity : entities»
-                    {% «IF entity != entities.head»else«ENDIF»if objectType == '«entity.name.formatForCode»' %}
+                    {% «IF entity != entities.head»else«ENDIF»if object_type == '«entity.name.formatForCode»' %}
                         {% set entityNameTranslated = __('«entity.name.formatForDisplay»') %}
                         «IF entity.hasImageFieldsEntity»
                             {% set withImage = true %}
                         «ENDIF»
                 «ENDFOR»
                 {% endif %}
-                {% set idPrefix = uniqueNameForJs %}
+                {% set idPrefix = unique_name_for_js %}
                 {% set addLinkText = multiple ? __f('Add %name%', { '%name%': entityNameTranslated }) : __f('Select %name%', { '%entityName%': entityNameTranslated }) %}
-                {% set createLink = createUrl != '' ? '<a id="' ~ uniqueNameForJs ~ 'SelectorDoNew" href="' ~ createUrl ~ '" title="' ~ __f('Create new %name%', { '%name%': entityNameTranslated }) ~ '" class="btn btn-default «appName.toLowerCase»-inline-button">' ~ __('Create') ~ '</a>' : '' %}
+                {% set createLink = createUrl != '' ? '<a id="' ~ idPrefix ~ 'SelectorDoNew" href="' ~ createUrl ~ '" title="' ~ __f('Create new %name%', { '%name%': entityNameTranslated }) ~ '" class="btn btn-default «appName.toLowerCase»-inline-button">' ~ __('Create') ~ '</a>' : '' %}
 
                 <div class="«appName.toLowerCase»-relation-rightside">'
-                    <a id="{{ uniqueNameForJs }}AddLink" href="javascript:void(0);" class="hidden">{{ addLinkText }}</a>
+                    <a id="{{ idPrefix }}AddLink" href="javascript:void(0);" class="hidden">{{ addLinkText }}</a>
                     <div id="{{ idPrefix }}AddFields" class="«appName.toLowerCase»-autocomplete{{ withImage ? '-with-image' : '' }}">
                         <label for="{{ idPrefix }}Selector">{{ __f('Find %name%', { '%name%': entityNameTranslated }) }}</label>
                         <br />

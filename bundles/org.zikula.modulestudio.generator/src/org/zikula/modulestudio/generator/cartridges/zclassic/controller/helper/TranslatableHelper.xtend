@@ -1,18 +1,7 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.controller.helper
 
-import de.guite.modulestudio.metamodel.AbstractDateField
-import de.guite.modulestudio.metamodel.AbstractIntegerField
 import de.guite.modulestudio.metamodel.Application
-import de.guite.modulestudio.metamodel.ArrayField
-import de.guite.modulestudio.metamodel.BooleanField
-import de.guite.modulestudio.metamodel.CalculatedField
-import de.guite.modulestudio.metamodel.DecimalField
-import de.guite.modulestudio.metamodel.DerivedField
 import de.guite.modulestudio.metamodel.Entity
-import de.guite.modulestudio.metamodel.EntityField
-import de.guite.modulestudio.metamodel.FloatField
-import de.guite.modulestudio.metamodel.ObjectField
-import de.guite.modulestudio.metamodel.UploadField
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
@@ -104,7 +93,7 @@ class TranslatableHelper {
 
             «getSupportedLanguages»
 
-            «isFieldMandatory»
+            «getMandatoryFields»
 
             «prepareEntityForEditing»
 
@@ -115,7 +104,7 @@ class TranslatableHelper {
     def private getTranslatableFieldsImpl(Application it) '''
         /**
          * Return list of translatable fields per entity.
-         * These are required to be determined to recognize
+         * These are required to be determined to recognise
          * that they have to be selected from according translation tables.
          *
          * @param string $objectType The currently treated object type
@@ -133,6 +122,12 @@ class TranslatableHelper {
 
             return $fields;
         }
+    '''
+
+    def private translatableFieldList(Entity it) '''
+            case '«name.formatForCode»':
+                $fields = ['«getTranslatableFields.map[name.formatForCode].join('\', \'')»'«IF application.supportsSlugInputFields && hasTranslatableSlug», 'slug'«ENDIF»];
+                break;
     '''
 
     def private getCurrentLanguage(Application it) '''
@@ -166,54 +161,47 @@ class TranslatableHelper {
         }
     '''
 
-    def private isFieldMandatory(Application it) '''
+    def private getMandatoryFields(Application it) '''
         /**
-         * Returns whether a certain field is mandatory for a specific locale.
+         * Returns a list of mandatory fields for each supported language.
          *
          * @param string $objectType The currently treated object type
-         * @param string $fieldName  Name of field
-         * @param string $locale     The locale code
          *
-         * @return boolean True if field is mandatory, false otherwise
+         * @return array
          */
-        public function isFieldMandatory($objectType, $fieldName, $locale)
+        public function getMandatoryFields($objectType)
         {
-            return false;
+            $mandatoryFields = [];
+            foreach ($this->getSupportedLanguages($objectType) as $language) {
+                $mandatoryFields[$language] = [];
+            }
+
+            return $mandatoryFields;
         }
     '''
 
     def private prepareEntityForEditing(Application it) '''
         /**
-         * Post-processing method copying all translations to corresponding arrays.
-         * This ensures easy compatibility to the Forms plugins where it
-         * it is not possible yet to define sub arrays in the group attribute.
+         * Collects translated fields for editing.
          *
-         * @param string       $objectType The currently treated object type
-         * @param EntityAccess $entity     The entity being edited
+         * @param EntityAccess $entity The entity being edited
          *
          * @return array collected translations having the language codes as keys
          */
-        public function prepareEntityForEditing($objectType, $entity)
+        public function prepareEntityForEditing($entity)
         {
             $translations = [];
+            $objectType = $entity->get_objectType();
 
-            // check arguments
-            if (!$objectType || !$entity) {
+            if ($this->variableApi->getSystemVar('multilingual') != 1) {
                 return $translations;
             }
 
-            // check if we have translated fields registered for the given object type
+            // check if there are any translated fields registered for the given object type
             $fields = $this->getTranslatableFields($objectType);
             if (!count($fields)) {
                 return $translations;
             }
-
-            if ($this->variableApi->getSystemVar('multilingual') != 1) {
-                // Translatable extension did already fetch current translation
-                return $translations;
-            }
-
-            // prepare form data to edit multiple translations at once
 
             // get translations
             $repository = $this->entityFactory->getObjectManager()->getRepository('Gedmo\Translatable\Entity\Translation');
@@ -223,12 +211,12 @@ class TranslatableHelper {
             $currentLanguage = $this->getCurrentLanguage();
             foreach ($supportedLanguages as $language) {
                 if ($language == $currentLanguage) {
-                    // Translatable extension did already fetch current translation
+                    // skip current language as this is not treated as translation on controller level
                     continue;
                 }
                 $translationData = [];
-                foreach ($fields as $field) {
-                    $translationData[$field['name'] . $language] = isset($entityTranslations[$language]) ? $entityTranslations[$language][$field['name']] : $field['default'];
+                foreach ($fields as $fieldName) {
+                    $translationData[$fieldName] = isset($entityTranslations[$language][$fieldName]) ? $entityTranslations[$language][$fieldName] : '';
                 }
                 // add data to collected translations
                 $translations[$language] = $translationData;
@@ -240,118 +228,36 @@ class TranslatableHelper {
 
     def private processEntityAfterEditing(Application it) '''
         /**
-         * Post-editing method copying all translated fields back to their subarrays.
+         * Post-editing method persisting translated fields.
          * This ensures easy compatibility to the Forms plugins where it
          * it is not possible yet to define sub arrays in the group attribute.
          *
-         * @param string        $objectType The currently treated object type
-         * @param EntityAccess  $entity     The entity being edited
-         * @param FormInterface $form       Form containing translations
-         *
-         * @return array collected translations having the language codes as keys
+         * @param EntityAccess  $entity        The entity being edited
+         * @param FormInterface $form          Form containing translations
+         * @param EntityManager $entityManager Entity manager
          */
-        public function processEntityAfterEditing($objectType, $entity, $form)
+        public function processEntityAfterEditing($entity, $form, $entityManager)
         {
-            $translations = [];
-            // check arguments
-            if (!$objectType) {
-                return $translations;
-            }
+            $objectType = $entity->get_objectType();
+            $entityTransClass = '\\«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Entity\\' . ucfirst($objectType) . 'TranslationEntity';
+            $repository = $entityManager->getRepository($entityTransClass);
 
-            $fields = $this->getTranslatableFields($objectType);
-            if (!count($fields)) {
-                return $translations;
-            }
-
-            $useOnlyCurrentLanguage = true;
-            if ($this->variableApi->getSystemVar('multilingual') == 1) {
-                $useOnlyCurrentLanguage = false;
-                $supportedLanguages = $this->getSupportedLanguages($objectType);
-                $currentLanguage = $this->getCurrentLanguage();
-                foreach ($supportedLanguages as $language) {
-                    if ($language == $currentLanguage) {
-                        // skip current language as this is not treated as translation on controller level
+            $supportedLanguages = $this->getSupportedLanguages($objectType);
+            foreach ($supportedLanguages as $language) {
+                if (!isset($form['translations' . $language])) {
+                    continue;
+                }
+                $translatedFields = $form['translations' . $language];
+                foreach ($translatedFields as $fieldName => $formField) {
+                    if (!$formField->getData()) {
+                        // avoid persisting unrequired translations
                         continue;
                     }
-                    $translations[$language] = [];
-                    foreach ($fields as $field) {
-                        $translationKey = $field['name'] . $language;
-                        $translations[$language][$field['name']] = isset($form[$translationKey]) ? $form[$translationKey]->getData() : '';
-                    }
+                    $repository->translate($entity, $fieldName, $language, $formField->getData());
                 }
             }
-            if (true === $useOnlyCurrentLanguage) {
-                $language = $this->getCurrentLanguage();
-                $translations[$language] = [];
-                foreach ($fields as $field) {
-                    $translations[$language][$field['name']] = isset($entity[$field['name']]) ? $entity[$field['name']] : '';
-                }
-            }
-
-            return $translations;
         }
     '''
-
-    def private translatableFieldList(Entity it) '''
-            case '«name.formatForCode»':
-                $fields = [
-                    «translatableFieldDefinition»
-                ];
-                break;
-    '''
-
-    def private translatableFieldDefinition(Entity it) '''
-        «FOR field : getTranslatableFields SEPARATOR ', '»«field.translatableFieldDefinition»«ENDFOR»
-        «IF application.supportsSlugInputFields && hasTranslatableSlug»,
-            [
-                'name' => 'slug',
-                'default' => ''
-            ]
-        «ENDIF»
-    '''
-
-    def private translatableFieldDefinition(EntityField it) {
-        switch it {
-            BooleanField: '''
-                    [
-                        'name' => '«name»',
-                        'default' => «IF null !== it.defaultValue && it.defaultValue != ''»«(it.defaultValue == 'true').displayBool»«ELSE»false«ENDIF»
-                    ]'''
-            AbstractIntegerField: translatableFieldDefinitionNumeric
-            DecimalField: translatableFieldDefinitionNumeric
-            FloatField: translatableFieldDefinitionNumeric
-            UploadField: translatableFieldDefinitionNoDefault
-            ArrayField: translatableFieldDefinitionNoDefault
-            ObjectField: translatableFieldDefinitionNoDefault
-            AbstractDateField: '''
-                    [
-                        'name' => '«name»',
-                        'default' => '«IF null !== it.defaultValue && it.defaultValue != ''»«it.defaultValue»«ENDIF»'
-                    ]'''
-            DerivedField: '''
-                    [
-                        'name' => '«name»',
-                        'default' => $this->translator->__('«IF null !== it.defaultValue && it.defaultValue != ''»«it.defaultValue»«ELSE»«name.formatForDisplayCapital»«ENDIF»')
-                    ]'''
-            CalculatedField: '''
-                    [
-                        'name' => '«name»',
-                        'default' => $this->translator->__('«name.formatForDisplayCapital»')
-                    ]'''
-        }
-    }
-
-    def private translatableFieldDefinitionNumeric(DerivedField it) '''
-                    [
-                        'name' => '«name»',
-                        'default' => 0
-                    ]'''
-
-    def private translatableFieldDefinitionNoDefault(DerivedField it) '''
-                    [
-                        'name' => '«name»',
-                        'default' => ''
-                    ]'''
 
     def private translatableFunctionsImpl(Application it) '''
         namespace «appNamespace»\Helper;
