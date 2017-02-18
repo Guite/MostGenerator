@@ -8,6 +8,7 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.controller.installe
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.installer.ModVars
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
+import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
@@ -16,6 +17,7 @@ import org.zikula.modulestudio.generator.extensions.Utils
 class Installer {
 
     extension FormattingExtensions = new FormattingExtensions
+    extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     extension ModelExtensions = new ModelExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension NamingExtensions = new NamingExtensions
@@ -196,22 +198,26 @@ class Installer {
                         return false;
                     }
             }
+            «IF !isSystemModule»
 
-            // Note there are several helpers available for making migrating your extension from Zikula 1.3 to 1.4 easier.
-            // The following convenience methods are each responsible for a single aspect of upgrading to Zikula 1.4.x.
+                // Note there are several helpers available for making migrating your extension from Zikula 1.3 to 1.4 easier.
+                // The following convenience methods are each responsible for a single aspect of upgrading to Zikula 1.4.x.
 
-            // here is a possible usage example
-            // of course 1.2.3 should match the number you used for the last stable 1.3.x module version.
-            /* if ($oldVersion = '1.2.3') {
-                «new MigrationHelper().generateUsageExample(it)»
-            } * /
+                // here is a possible usage example
+                // of course 1.2.3 should match the number you used for the last stable 1.3.x module version.
+                /* if ($oldVersion = '1.2.3') {
+                    «new MigrationHelper().generateUsageExample(it)»
+                } * /
+            «ENDIF»
         */
 
             // update successful
             return true;
         }
+        «IF !isSystemModule»
 
-        «new MigrationHelper().generate(it)»
+            «new MigrationHelper().generate(it)»
+        «ENDIF»
     '''
 
     def private funcDelete(Application it) '''
