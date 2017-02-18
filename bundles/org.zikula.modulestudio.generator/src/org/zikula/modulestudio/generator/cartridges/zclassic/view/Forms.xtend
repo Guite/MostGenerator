@@ -122,24 +122,35 @@ class Forms {
 
     def private translatableFieldDetails(Entity it) '''
         «IF hasTranslatableFields»
-            {% set useOnlyCurrentLanguage = true %}
-            {% if getModVar('ZConfig', 'multilingual') %}
-                {% if supportedLanguages is iterable and supportedLanguages|length > 1 %}
-                    {% set useOnlyCurrentLanguage = false %}
-                    {% set currentLanguage = app.request.locale %}
+            {% if getModVar('ZConfig', 'multilingual') and supportedLanguages is iterable and supportedLanguages|length > 1 %}
+                <ul class="{{ form.vars.id|lower }}-translation-locales nav nav-tabs">
                     {% for language in supportedLanguages %}
-                        {% if language == currentLanguage %}
-                            «translatableFieldSet('', '')»
-                        {% endif %}
+                        <li{% if language == app.request.locale %} class="active"{% endif %}>
+                            <a href="#" data-toggle="tab" data-target=".{{ form.vars.id|lower }}-translations-fields-{{ language }}">
+                                {% if not form.vars.valid %}
+                                    <span class="label label-danger"><i class="fa fa-warning"></i><span class="sr-only">{{ __('Errors') }}</span></span>
+                                {% endif %}
+                                {# TODO % set hasRequiredFields = language == app.request.locale or translationsFields.vars.required % #}
+                                {% set hasRequiredFields = language == app.request.locale %}
+                                {% if hasRequiredFields %}<span class="required">{% endif %}{{ language|languageName|safeHtml }}{% if hasRequiredFields %}</span>{% endif %}
+                            </a>
+                        </li>
                     {% endfor %}
+                </ul>
+                <div class="{{ form.vars.id|lower }}-translation-fields tab-content">
                     {% for language in supportedLanguages %}
-                        {% if language != currentLanguage %}
-                            «translatableFieldSet('', 'language')»
-                        {% endif %}
+                        <div class="{{ form.vars.id|lower }}-translations-fields-{{ language }} tab-pane fade{% if language == app.request.locale %} active in{% endif %}">
+                            <fieldset>
+                                {% if language == app.request.locale %}
+                                    «translatableFieldSet('', '')»
+                                {% else %}
+                                    «translatableFieldSet('', 'language')»
+                                {% endif %}
+                            </fieldset>
+                        </div>
                     {% endfor %}
-                {% endif %}
-            {% endif %}
-            {% if useOnlyCurrentLanguage == true %}
+                </div>
+            {% else %}
                 {% set language = app.request.locale %}
                 «translatableFieldSet('', '')»
             {% endif %}

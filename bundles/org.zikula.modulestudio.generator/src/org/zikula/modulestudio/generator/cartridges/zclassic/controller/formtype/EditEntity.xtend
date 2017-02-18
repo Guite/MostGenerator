@@ -532,7 +532,8 @@ class EditEntity {
                         'max' => «(it as IntegerField).maxValue»,
                     «ENDIF»
                     'title' => $this->__('«titleAttribute»')
-                ],«additionalOptions»
+                ],
+                «requiredOption(idSuffix != '')»,«additionalOptions»
             ]);
         «ENDIF»
     '''
@@ -666,16 +667,14 @@ class EditEntity {
     def private dispatch additionalAttributes(DerivedField it) '''
         'maxlength' => 255,
     '''
-    def private dispatch additionalOptions(DerivedField it) '''
-        'required' => «mandatory.displayBool»
+    def private dispatch requiredOption(DerivedField it, Boolean isTranslation) '''
+        'required' => «IF isTranslation»$this->translatableHelper->isFieldMandatory('«entity.name.formatForCode»', '«name.formatForCode»', $language)«ELSE»«mandatory.displayBool»«ENDIF»
     '''
+    def private dispatch additionalOptions(DerivedField it) ''''''
 
     def private dispatch formType(BooleanField it) '''«nsSymfonyFormType»Checkbox'''
     def private dispatch titleAttribute(BooleanField it) '''«name.formatForDisplay» ?'''
     def private dispatch additionalAttributes(BooleanField it) ''''''
-    def private dispatch additionalOptions(BooleanField it) '''
-        'required' => «mandatory.displayBool»,
-    '''
 
     def private dispatch formType(IntegerField it) '''«nsSymfonyFormType»«IF percentage»Percent«ELSEIF range»Range«ELSE»Integer«ENDIF»'''
     def private dispatch titleAttribute(IntegerField it) '''Enter the «name.formatForDisplay» of the «entity.name.formatForDisplay».') . ' ' . $this->__('Only digits are allowed.'''
@@ -683,7 +682,6 @@ class EditEntity {
         'maxlength' => «length»,
     '''
     def private dispatch additionalOptions(IntegerField it) '''
-        'required' => «mandatory.displayBool»,
         «IF percentage»
             'type' => 'integer',
         «ENDIF»
@@ -697,7 +695,6 @@ class EditEntity {
         'maxlength' => «(length+3+scale)»,
     '''
     def private dispatch additionalOptions(DecimalField it) '''
-        'required' => «mandatory.displayBool»,
         «/* not required since these are the default values IF currency»
             'currency' => 'EUR',
             'divisor' => 1,
@@ -713,7 +710,6 @@ class EditEntity {
         'maxlength' => «(length+3+2)»,
     '''
     def private dispatch additionalOptions(FloatField it) '''
-        'required' => «mandatory.displayBool»,
         «/* not required since these are the default values IF currency»
             'currency' => 'EUR',
             'divisor' => 1,
@@ -735,7 +731,6 @@ class EditEntity {
         «ENDIF»
     '''
     def private dispatch additionalOptions(StringField it) '''
-        'required' => «mandatory.displayBool»,
         «IF !mandatory && (country || language || locale || currency || timezone)»
             'placeholder' => $this->__('All')«IF locale»,«ENDIF»
         «ENDIF»
@@ -754,31 +749,24 @@ class EditEntity {
             «ENDIF»
         «ENDIF»
     '''
-    def private dispatch additionalOptions(TextField it) '''
-        'required' => «mandatory.displayBool»
-    '''
 
     def private dispatch formType(EmailField it) '''«nsSymfonyFormType»Email'''
     def private dispatch additionalAttributes(EmailField it) '''
         'maxlength' => «length»,
-    '''
-    def private dispatch additionalOptions(EmailField it) '''
-        'required' => «mandatory.displayBool»
     '''
 
     def private dispatch formType(UrlField it) '''«nsSymfonyFormType»Url'''
     def private dispatch additionalAttributes(UrlField it) '''
         'maxlength' => «length»,
     '''
-    def private dispatch additionalOptions(UrlField it) '''
-        'required' => «mandatory.displayBool»«/*,
-        'default_protocol' => 'http'*/»
-    '''
+    def private dispatch additionalOptions(UrlField it) '''«/*'default_protocol' => 'http'*/»'''
 
     def private dispatch formType(UploadField it) '''«app.appNamespace»\Form\Type\Field\Upload'''
     def private dispatch additionalAttributes(UploadField it) ''''''
+    def private dispatch requiredOption(UploadField it, Boolean isTranslation) '''
+        'required' => «IF isTranslation»$this->translatableHelper->isFieldMandatory('«entity.name.formatForCode»', '«name.formatForCode»', $language)«ELSE»«mandatory.displayBool»«ENDIF» && $options['mode'] == 'create'
+    '''
     def private dispatch additionalOptions(UploadField it) '''
-        'required' => «mandatory.displayBool»«IF mandatory» && $options['mode'] == 'create'«ENDIF»,
         'entity' => $options['entity'],
         'allowed_extensions' => '«allowedExtensions»',
         'allowed_size' => '«maxSize»'
@@ -813,8 +801,9 @@ class EditEntity {
         'maxlength' => «length»,
     '''
     def private dispatch additionalOptions(UserField it) '''
-        'required' => «mandatory.displayBool»«IF !entity.incoming.empty || !entity.outgoing.empty»,
-        'inlineUsage' => $options['inlineUsage']«ENDIF»
+        «IF !entity.incoming.empty || !entity.outgoing.empty»,
+            'inlineUsage' => $options['inlineUsage']
+        «ENDIF»
     '''
 
     def private dispatch formType(DatetimeField it) '''«app.appNamespace»\Form\Type\Field\DateTime'''
@@ -823,7 +812,6 @@ class EditEntity {
     def private dispatch additionalAttributes(AbstractDateField it) ''''''
     def private dispatch additionalOptions(AbstractDateField it) '''
         'empty_data' => «defaultData»,
-        'required' => «mandatory.displayBool»,
         'widget' => 'single_text'
     '''
     def private dispatch defaultData(DatetimeField it) '''«IF null !== defaultValue && defaultValue != '' && defaultValue != 'now'»'«defaultValue»'«ELSEIF mandatory || !nullable»date('Y-m-d H:i')«ELSE»''«ENDIF»'''
@@ -833,7 +821,6 @@ class EditEntity {
     '''
     def private dispatch additionalOptions(TimeField it) '''
         'empty_data' => '«defaultValue»',
-        'required' => «mandatory.displayBool»,
         'widget' => 'single_text'
     '''
 

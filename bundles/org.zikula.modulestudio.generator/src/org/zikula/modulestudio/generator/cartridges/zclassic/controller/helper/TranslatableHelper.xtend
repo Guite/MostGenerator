@@ -104,6 +104,8 @@ class TranslatableHelper {
 
             «getSupportedLanguages»
 
+            «isFieldMandatory»
+
             «prepareEntityForEditing»
 
             «processEntityAfterEditing»
@@ -161,6 +163,22 @@ class TranslatableHelper {
 
             // if multi language is disabled use only the current language
             return [$this->getCurrentLanguage()];
+        }
+    '''
+
+    def private isFieldMandatory(Application it) '''
+        /**
+         * Returns whether a certain field is mandatory for a specific locale.
+         *
+         * @param string $objectType The currently treated object type
+         * @param string $fieldName  Name of field
+         * @param string $locale     The locale code
+         *
+         * @return boolean True if field is mandatory, false otherwise
+         */
+        public function isFieldMandatory($objectType, $fieldName, $locale)
+        {
+            return false;
         }
     '''
 
@@ -283,7 +301,7 @@ class TranslatableHelper {
     '''
 
     def private translatableFieldDefinition(Entity it) '''
-        «FOR field : getTranslatableFields SEPARATOR ','»«field.translatableFieldDefinition»«ENDFOR»
+        «FOR field : getTranslatableFields SEPARATOR ', '»«field.translatableFieldDefinition»«ENDFOR»
         «IF application.supportsSlugInputFields && hasTranslatableSlug»,
             [
                 'name' => 'slug',
