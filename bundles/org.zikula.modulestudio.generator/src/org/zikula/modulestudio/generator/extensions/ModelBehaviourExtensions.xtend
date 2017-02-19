@@ -81,13 +81,6 @@ class ModelBehaviourExtensions {
     }
 
     /**
-     * Checks whether the application contains at least one entity with the softDeletable extension enabled.
-     */
-    def hasSoftDeleteable(Application it) {
-        getAllEntities.exists[softDeleteable]
-    }
-
-    /**
      * Checks whether the application contains at least one entity with the sortable extension enabled.
      */
     def hasSortable(Application it) {

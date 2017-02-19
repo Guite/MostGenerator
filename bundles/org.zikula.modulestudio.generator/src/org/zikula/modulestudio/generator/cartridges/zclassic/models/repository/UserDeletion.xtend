@@ -268,15 +268,7 @@ class UserDeletion {
     '''
 
     def private initDeleteQueryAdditions(Entity it) '''
-        «IF softDeleteable»
-
-            // set the softdeletable query hint
-            $query->setHint(
-                Query::HINT_CUSTOM_OUTPUT_WALKER,
-                'Gedmo\\SoftDeleteable\\Query\\TreeWalker\\SoftDeleteableWalker'
-            );
-        «ENDIF»
-        «IF hasPessimisticWriteLock»
+         «IF hasPessimisticWriteLock»
 
             $query->setLockMode(LockMode::«lockType.lockTypeAsConstant»);
         «ENDIF»

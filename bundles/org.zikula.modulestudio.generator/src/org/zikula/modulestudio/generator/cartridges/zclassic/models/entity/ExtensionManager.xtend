@@ -12,7 +12,6 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.models.entity.exten
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.entity.extensions.IpTraceable
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.entity.extensions.Loggable
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.entity.extensions.Sluggable
-import org.zikula.modulestudio.generator.cartridges.zclassic.models.entity.extensions.SoftDeleteable
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.entity.extensions.Sortable
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.entity.extensions.Timestampable
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.entity.extensions.Translatable
@@ -38,9 +37,6 @@ class ExtensionManager {
         }
         if (entity.loggable) {
             this.extensions += new Loggable
-        }
-        if (entity.softDeleteable) {
-            this.extensions += new SoftDeleteable
         }
         if (entity.hasSluggableFields) {
             this.extensions += new Sluggable

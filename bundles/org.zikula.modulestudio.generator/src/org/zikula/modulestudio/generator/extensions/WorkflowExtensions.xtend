@@ -158,6 +158,6 @@ class WorkflowExtensions {
      * Determines whether workflow state field should be visible for the given entity or not.
      */
     def hasVisibleWorkflow(Entity it) {
-        workflow != EntityWorkflowType.NONE || ownerPermission || hasTray || hasArchive || softDeleteable
+        workflow != EntityWorkflowType.NONE || ownerPermission || hasTray || hasArchive
     }
 }

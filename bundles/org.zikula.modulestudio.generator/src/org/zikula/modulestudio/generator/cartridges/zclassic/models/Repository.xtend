@@ -521,14 +521,6 @@ class Repository {
             $qb = $this->getEntityManager()->createQueryBuilder();
             $qb->delete('«entityClassName('', false)»', 'tbl');
             $query = $qb->getQuery();
-            «IF softDeleteable»
-
-                // set the softdeletable query hint
-                $query->setHint(
-                    Query::HINT_CUSTOM_OUTPUT_WALKER,
-                    'Gedmo\\SoftDeleteable\\Query\\TreeWalker\\SoftDeleteableWalker'
-                );
-            «ENDIF»
             «IF hasPessimisticWriteLock»
 
                 $query->setLockMode(LockMode::«lockType.lockTypeAsConstant»);
@@ -1439,9 +1431,6 @@ class Repository {
         «IF geographical»
              'latitude',
              'longitude',
-        «ENDIF»
-        «IF softDeleteable»
-             'deletedAt',
         «ENDIF»
         «IF standardFields»
              'createdBy',

@@ -77,9 +77,6 @@ class Xml {
                     <«geoFieldName»>{{ «name.formatForCode».«geoFieldName»|«appName.formatForDB»_geoData }}</«geoFieldName»>
                 «ENDFOR»
             «ENDIF»
-            «IF softDeleteable»
-                <deletedAt>{{ «name.formatForCode».deletedAt|localizeddate('medium', 'short') }}</deletedAt>
-            «ENDIF»
             <workflowState>{{ «name.formatForCode».workflowState|«appName.formatForDB»_objectState(false)|lower }}</workflowState>
             «FOR relation : incoming.filter(OneToManyRelationship).filter[bidirectional]»«relation.displayRelatedEntry(false)»«ENDFOR»
             «FOR relation : outgoing.filter(OneToOneRelationship)»«relation.displayRelatedEntry(true)»«ENDFOR»

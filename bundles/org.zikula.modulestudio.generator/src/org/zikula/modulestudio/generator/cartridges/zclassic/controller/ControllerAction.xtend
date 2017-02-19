@@ -31,14 +31,6 @@ class ControllerAction {
         public function «action.methodName(isAdmin)»Action(«methodArgs(it, action)»)
         {
             «IF isBase»
-                «IF softDeleteable»
-                    «IF isAdmin»
-                        //$this->entityManager->getFilters()->disable('soft-deleteable');
-                    «ELSE»
-                        $this->entityManager->getFilters()->enable('soft-deleteable');
-                    «ENDIF»
-
-                «ENDIF»
                 return $this->«action.methodName(false)»Internal(«methodArgsCall(it, action)», «isAdmin.displayBool»);
             «ELSE»
                 return parent::«action.methodName(isAdmin)»Action(«methodArgsCall(it, action)»);

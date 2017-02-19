@@ -154,12 +154,6 @@ class Display {
                     {% endif %}
                 «ENDFOR»
             «ENDIF»
-            «IF softDeleteable»
-                {% if «name.formatForCode».deletedAt is not empty %}
-                    <dt>{{ __('Deleted at') }}</dt>
-                    <dd>{{ «name.formatForCode».deletedAt|localizeddate('medium', 'short') }}</dd>
-                {% endif %}
-            «ENDIF»
             «FOR relation : incoming.filter(OneToManyRelationship).filter[bidirectional && source instanceof Entity]»«relation.displayEntry(false)»«ENDFOR»
             «/*«FOR relation : outgoing.filter[OneToOneRelationship).filter[target instanceof Entity]»«relation.displayEntry(true)»«ENDFOR»*/»
         </dl>

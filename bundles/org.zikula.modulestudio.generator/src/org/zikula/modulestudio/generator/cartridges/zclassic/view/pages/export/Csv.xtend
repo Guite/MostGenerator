@@ -31,7 +31,7 @@ class Csv {
 
     def private csvView(Entity it, String appName) '''
         {# purpose of this template: «nameMultiple.formatForDisplay» view csv view #}
-        {% spaceless %}«FOR field : getDisplayFields.filter[name != 'workflowState'] SEPARATOR ';'»«field.headerLine»«ENDFOR»«IF geographical»«FOR geoFieldName : newArrayList('latitude', 'longitude')»;"{{ __('«geoFieldName.formatForDisplayCapital»') }}"«ENDFOR»«ENDIF»«IF softDeleteable»;"{{ __('Deleted at') }}"«ENDIF»;"{{ __('Workflow state') }}"
+        {% spaceless %}«FOR field : getDisplayFields.filter[name != 'workflowState'] SEPARATOR ';'»«field.headerLine»«ENDFOR»«IF geographical»«FOR geoFieldName : newArrayList('latitude', 'longitude')»;"{{ __('«geoFieldName.formatForDisplayCapital»') }}"«ENDFOR»«ENDIF»;"{{ __('Workflow state') }}"
         «FOR relation : incoming.filter(OneToManyRelationship).filter[bidirectional]»«relation.headerLineRelation(false)»«ENDFOR»
         «FOR relation : outgoing.filter(OneToOneRelationship)»«relation.headerLineRelation(true)»«ENDFOR»
         «FOR relation : incoming.filter(ManyToManyRelationship).filter[bidirectional]»«relation.headerLineRelation(false)»«ENDFOR»
@@ -40,7 +40,7 @@ class Csv {
         «val objName = name.formatForCode»
         {% for «objName» in items %}
         {% spaceless %}
-            «FOR field : getDisplayFields.filter[e|e.name != 'workflowState'] SEPARATOR ';'»«field.displayEntry»«ENDFOR»«IF geographical»«FOR geoFieldName : newArrayList('latitude', 'longitude')»;"{{ «name.formatForCode».«geoFieldName»|«appName.formatForDB»_geoData }}"«ENDFOR»«ENDIF»«IF softDeleteable»;"{{ «name.formatForCode».deletedAt|localizeddate('medium', 'short') }}"«ENDIF»;"{{ «name.formatForCode».workflowState|«appName.formatForDB»_objectState(false)|lower }}"
+            «FOR field : getDisplayFields.filter[e|e.name != 'workflowState'] SEPARATOR ';'»«field.displayEntry»«ENDFOR»«IF geographical»«FOR geoFieldName : newArrayList('latitude', 'longitude')»;"{{ «name.formatForCode».«geoFieldName»|«appName.formatForDB»_geoData }}"«ENDFOR»«ENDIF»;"{{ «name.formatForCode».workflowState|«appName.formatForDB»_objectState(false)|lower }}"
             «FOR relation : incoming.filter(OneToManyRelationship).filter[bidirectional]»«relation.displayRelatedEntry(false)»«ENDFOR»
             «FOR relation : outgoing.filter(OneToOneRelationship)»«relation.displayRelatedEntry(true)»«ENDFOR»
             «FOR relation : incoming.filter(ManyToManyRelationship).filter[bidirectional]»«relation.displayRelatedEntries(false)»«ENDFOR»

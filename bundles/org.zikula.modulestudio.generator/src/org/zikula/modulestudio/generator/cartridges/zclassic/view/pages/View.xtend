@@ -262,27 +262,23 @@ class View {
             <div class="col-sm-6">
                 <select id="«appName.toFirstLower»Action" name="action" class="form-control input-sm">
                     <option value="">{{ __('Choose action') }}</option>
-                «IF workflow != EntityWorkflowType::NONE»
-                    «IF workflow == EntityWorkflowType::ENTERPRISE»
-                        <option value="accept" title="{{ __('«getWorkflowActionDescription(workflow, 'Accept')»') }}">{{ __('Accept') }}</option>
-                        «IF ownerPermission»
-                            <option value="reject" title="{{ __('«getWorkflowActionDescription(workflow, 'Reject')»') }}">{{ __('Reject') }}</option>
+                    «IF workflow != EntityWorkflowType::NONE»
+                        «IF workflow == EntityWorkflowType::ENTERPRISE»
+                            <option value="accept" title="{{ __('«getWorkflowActionDescription(workflow, 'Accept')»') }}">{{ __('Accept') }}</option>
+                            «IF ownerPermission»
+                                <option value="reject" title="{{ __('«getWorkflowActionDescription(workflow, 'Reject')»') }}">{{ __('Reject') }}</option>
+                            «ENDIF»
+                            <option value="demote" title="{{ __('«getWorkflowActionDescription(workflow, 'Demote')»') }}">{{ __('Demote') }}</option>
                         «ENDIF»
-                        <option value="demote" title="{{ __('«getWorkflowActionDescription(workflow, 'Demote')»') }}">{{ __('Demote') }}</option>
+                        <option value="approve" title="{{ __('«getWorkflowActionDescription(workflow, 'Approve')»') }}">{{ __('Approve') }}</option>
                     «ENDIF»
-                    <option value="approve" title="{{ __('«getWorkflowActionDescription(workflow, 'Approve')»') }}">{{ __('Approve') }}</option>
-                «ENDIF»
-                «IF hasTray»
-                    <option value="unpublish" title="{{ __('«getWorkflowActionDescription(workflow, 'Unpublish')»') }}">{{ __('Unpublish') }}</option>
-                    <option value="publish" title="{{ __('«getWorkflowActionDescription(workflow, 'Publish')»') }}">{{ __('Publish') }}</option>
-                «ENDIF»
-                «IF hasArchive»
-                    <option value="archive" title="{{ __('«getWorkflowActionDescription(workflow, 'Archive')»') }}">{{ __('Archive') }}</option>
-                «ENDIF»
-                «IF softDeleteable»
-                    <option value="trash" title="{{ __('«getWorkflowActionDescription(workflow, 'Trash')»') }}">{{ __('Trash') }}</option>
-                    <option value="recover" title="{{ __('«getWorkflowActionDescription(workflow, 'Recover')»') }}">{{ __('Recover') }}</option>
-                «ENDIF»
+                    «IF hasTray»
+                        <option value="unpublish" title="{{ __('«getWorkflowActionDescription(workflow, 'Unpublish')»') }}">{{ __('Unpublish') }}</option>
+                        <option value="publish" title="{{ __('«getWorkflowActionDescription(workflow, 'Publish')»') }}">{{ __('Publish') }}</option>
+                    «ENDIF»
+                    «IF hasArchive»
+                        <option value="archive" title="{{ __('«getWorkflowActionDescription(workflow, 'Archive')»') }}">{{ __('Archive') }}</option>
+                    «ENDIF»
                     <option value="delete" title="{{ __('«getWorkflowActionDescription(workflow, 'Delete')»') }}">{{ __('Delete') }}</option>
                 </select>
             </div>
