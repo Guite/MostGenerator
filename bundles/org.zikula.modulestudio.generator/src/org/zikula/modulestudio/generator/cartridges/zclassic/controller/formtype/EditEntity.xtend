@@ -781,7 +781,7 @@ class EditEntity {
         'maxlength' => «length»,
     '''
     def private dispatch additionalOptions(UserField it) '''
-        «IF !entity.incoming.empty || !entity.outgoing.empty»,
+        «IF !entity.incoming.empty || !entity.outgoing.empty»
             'inline_usage' => $options['inline_usage']
         «ENDIF»
     '''
