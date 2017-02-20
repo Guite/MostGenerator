@@ -125,7 +125,7 @@ class Display {
         «IF geographical»
             {% block footer %}
                 {{ parent() }}
-                {{ pageAddAsset('javascript', 'https://maps.google.com/maps/api/js?key=' ~ getModVar('«appName»', 'googleMapsApiKey', '') ~ '&language=' ~ app.request.locale ~ '&sensor=false') }}
+                {{ pageAddAsset('javascript', 'https://maps.google.com/maps/api/js?key=' ~ getModVar('«appName»', 'googleMapsApiKey', '') ~ '&amp;language=' ~ app.request.locale ~ '&amp;sensor=false') }}
                 {{ pageAddAsset('javascript', app.request.basePath ~ '/plugins/Mapstraction/lib/vendor/mxn/mxn.js?(googlev3)') }}
                 {% set geoScripts %}
                     <script type="text/javascript">
