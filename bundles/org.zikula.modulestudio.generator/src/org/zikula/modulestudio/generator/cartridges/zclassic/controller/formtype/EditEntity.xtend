@@ -2,6 +2,7 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtyp
 
 import de.guite.modulestudio.metamodel.AbstractDateField
 import de.guite.modulestudio.metamodel.Application
+import de.guite.modulestudio.metamodel.ArrayField
 import de.guite.modulestudio.metamodel.BooleanField
 import de.guite.modulestudio.metamodel.DataObject
 import de.guite.modulestudio.metamodel.DateField
@@ -489,12 +490,12 @@ class EditEntity {
                         'class' => 'tooltips«IF isExpandedListField» «IF (it as ListField).multiple»checkbox«ELSE»radio«ENDIF»-inline«ENDIF»',
                         'title' => $this->__('«documentation.replace("'", '"')»')
                     ],
-                    «helpAttribute»
                 «ELSEIF isExpandedListField»
                     'label_attr' => [
                         'class' => '«IF (it as ListField).multiple»checkbox«ELSE»radio«ENDIF»-inline'
                     ],
                 «ENDIF»
+                «helpAttribute»
                 «IF readonly»
                     'disabled' => true,
                 «ENDIF»
@@ -626,6 +627,14 @@ class EditEntity {
                 messages += '''$this->__f('Note: you must select between %min% and %max% choices.', ['%min%' => «min», '%max%' => «max»])'''
             }
         }
+
+        messages
+    }
+
+    def private dispatch helpMessages(ArrayField it) {
+        val messages = helpDocumentation
+
+        messages += '''$this->__('Enter one entry per line.')'''
 
         messages
     }
@@ -784,6 +793,10 @@ class EditEntity {
         «IF !entity.incoming.empty || !entity.outgoing.empty»
             'inline_usage' => $options['inline_usage']
         «ENDIF»
+    '''
+
+    def private dispatch formType(ArrayField it) '''«app.appNamespace»\Form\Type\Field\Array'''
+    def private dispatch additionalAttributes(ArrayField it) '''
     '''
 
     def private dispatch formType(DatetimeField it) '''«app.appNamespace»\Form\Type\Field\DateTime'''

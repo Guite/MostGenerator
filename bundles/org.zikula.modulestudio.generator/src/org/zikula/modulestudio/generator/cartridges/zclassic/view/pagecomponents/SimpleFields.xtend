@@ -1,5 +1,6 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.view.pagecomponents
 
+import de.guite.modulestudio.metamodel.ArrayField
 import de.guite.modulestudio.metamodel.BooleanField
 import de.guite.modulestudio.metamodel.DateField
 import de.guite.modulestudio.metamodel.DatetimeField
@@ -168,6 +169,16 @@ class SimpleFields {
 
     def dispatch displayField(ListField it, String objName, String page) '''
         {{ «objName».«name.formatForCode»|«entity.application.appName.formatForDB»_listEntry('«entity.name.formatForCode»', '«name.formatForCode»') }}'''
+
+    def dispatch displayField(ArrayField it, String objName, String page) '''
+        {% if «objName».«name.formatForCode» is iterable and «objName».«name.formatForCode»|length > 0 %}
+            <ul>
+            {% for entry in «objName».«name.formatForCode» %}
+                <li>{{ entry }}</li>
+            {% endfor %}
+            </ul>
+        {% endif %}
+    '''
 
     def dispatch displayField(DateField it, String objName, String page) '''
         {{ «objName».«name.formatForCode»|localizeddate('medium', 'none') }}'''

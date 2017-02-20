@@ -1,6 +1,7 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.controller
 
 import de.guite.modulestudio.metamodel.Application
+import de.guite.modulestudio.metamodel.ArrayField
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.MappedSuperClass
 import org.eclipse.xtext.generator.IFileSystemAccess
@@ -183,6 +184,13 @@ class ServiceDefinitions {
     def private formFieldsHelper(Application it) '''
         # Form field types
         «val nsBase = appNamespace + '\\Form\\Type\\'»
+        «IF !entities.filter[e|!e.fields.filter(ArrayField).empty].empty»
+
+            «modPrefix».form.type.field.array:
+                class: «nsBase»Field\ArrayType
+                tags:
+                    - { name: form.type }
+        «ENDIF»
         «IF hasColourFields»
 
             «modPrefix».form.type.field.colour:

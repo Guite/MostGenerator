@@ -322,7 +322,7 @@ class ModelExtensions {
         if (it instanceof Entity && (it as Entity).identifierStrategy != EntityIdentifierStrategy.NONE) {
             fields = fields.filter[!primaryKey]
         }
-        var filteredFields = fields.filter[!isVersionField].exclude(ArrayField).exclude(ObjectField)
+        var filteredFields = fields.filter[!isVersionField].exclude(ObjectField)
         filteredFields.toList as List<DerivedField>
     }
 

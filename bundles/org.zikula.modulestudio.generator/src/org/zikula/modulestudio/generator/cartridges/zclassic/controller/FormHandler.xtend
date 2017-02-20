@@ -1,6 +1,7 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.controller
 
 import de.guite.modulestudio.metamodel.Application
+import de.guite.modulestudio.metamodel.ArrayField
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.EntityWorkflowType
 import de.guite.modulestudio.metamodel.JoinRelationship
@@ -9,6 +10,7 @@ import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.actionhandler.Locking
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.actionhandler.Redirect
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.actionhandler.RelationPresets
+import org.zikula.modulestudio.generator.cartridges.zclassic.controller.form.ArrayFieldTransformer
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.form.AutoCompletionRelationTransformer
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.form.ListFieldTransformer
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.form.TranslationListener
@@ -17,6 +19,7 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.controller.form.Use
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype.Config
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype.DeleteEntity
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype.EditEntity
+import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype.field.ArrayType
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype.field.AutoCompletionRelationType
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype.field.ColourType
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype.field.DateTimeType
@@ -68,6 +71,10 @@ class FormHandler {
             // form types
             for (entity : entities.filter[e|e instanceof MappedSuperClass || (e as Entity).hasEditAction]) {
                 new EditEntity().generate(entity, fsa)
+            }
+            if (!entities.filter[e|!e.fields.filter(ArrayField).empty].empty) {
+                new ArrayType().generate(it, fsa)
+                new ArrayFieldTransformer().generate(it, fsa)
             }
             if (hasColourFields) {
                 new ColourType().generate(it, fsa)
