@@ -15,6 +15,9 @@ class SearchView {
     extension Utils = new Utils
 
     def generate(Application it, IFileSystemAccess fsa) {
+        if (targets('1.4-dev')) {
+            return
+        }
         val templatePath = getViewPath + 'Search/'
         val templateExtension = '.html.twig'
         var fileName = 'options' + templateExtension
@@ -32,10 +35,12 @@ class SearchView {
         «val appLower = appName.toFirstLower»
         «FOR entity : getAllEntities.filter[hasAbstractStringFieldsEntity]»
             «val nameMulti = entity.nameMultiple.formatForCodeCapital»
-            <div>
-                <input type="checkbox" id="active_«appLower»«nameMulti»" name="«appLower»SearchTypes[]" value="«entity.name.formatForCode»"{% if active_«entity.name.formatForCode» %} checked="checked"{% endif %} />
-                <label for="active_«appLower»«nameMulti»">{{ __('«entity.nameMultiple.formatForDisplayCapital»', '«appLower.formatForDB»') }}</label>
-            </div>
+            {% if active_«entity.name.formatForCode» is defined %}
+                <div>
+                    <input type="checkbox" id="active_«appLower»«nameMulti»" name="«appLower»SearchTypes[]" value="«entity.name.formatForCode»"{% if active_«entity.name.formatForCode» %} checked="checked"{% endif %} />
+                    <label for="active_«appLower»«nameMulti»">{{ __('«entity.nameMultiple.formatForDisplayCapital»', '«appLower.formatForDB»') }}</label>
+                </div>
+            {% endif %}
         «ENDFOR»
     '''
 }

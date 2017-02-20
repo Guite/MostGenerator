@@ -532,8 +532,13 @@ class ServiceDefinitions {
             «modPrefix».search_helper:
                 class: «nsBase»SearchHelper
                 arguments:
+                    «IF targets('1.4-dev')»
+                        - "@translator.default"
+                    «ENDIF»
                     - "@zikula_permissions_module.api.permission"
-                    - "@templating.engine.twig"
+                    «IF !targets('1.4-dev')»
+                        - "@templating.engine.twig"
+                    «ENDIF»
                     - "@session"
                     - "@request_stack"
                     - "@«modPrefix».entity_factory"

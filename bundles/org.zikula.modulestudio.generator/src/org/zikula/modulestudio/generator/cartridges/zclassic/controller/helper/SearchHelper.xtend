@@ -34,10 +34,18 @@ class SearchHelper {
 
         use Doctrine\ORM\QueryBuilder;
         use Doctrine\ORM\Query\Expr\Composite;
-        use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
+        «IF targets('1.4-dev')»
+            use Symfony\Component\Form\FormBuilderInterface;
+        «ELSE»
+            use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
+        «ENDIF»
         use Symfony\Component\HttpFoundation\Request;
         use Symfony\Component\HttpFoundation\RequestStack;
         use Symfony\Component\HttpFoundation\Session\SessionInterface;
+        «IF targets('1.4-dev')»
+            use Zikula\Common\Translator\TranslatorInterface;
+            use Zikula\Common\Translator\TranslatorTrait;
+        «ENDIF»
         use Zikula\Core\RouteUrl;
         «IF targets('1.4-dev')»
             use Zikula\PermissionsModule\Api\ApiInterface\PermissionApiInterface;
@@ -65,15 +73,21 @@ class SearchHelper {
     '''
 
     def private searchHelperBaseImpl(Application it) '''
+        «IF targets('1.4-dev')»
+            use TranslatorTrait;
+
+        «ENDIF»
         /**
          * @var PermissionApi«IF targets('1.4-dev')»Interface«ENDIF»
          */
         protected $permissionApi;
+        «IF !targets('1.4-dev')»
 
-        /**
-         * @var EngineInterface
-         */
-        private $templateEngine;
+            /**
+             * @var EngineInterface
+             */
+            private $templateEngine;
+        «ENDIF»
 
         /**
          * @var SessionInterface
@@ -110,8 +124,13 @@ class SearchHelper {
         /**
          * SearchHelper constructor.
          *
+         «IF targets('1.4-dev')»
+         * @param TranslatorInterface $translator   Translator service instance
+         «ENDIF»
          * @param PermissionApi«IF targets('1.4-dev')»Interface«ENDIF»    $permissionApi   PermissionApi service instance
+         «IF !targets('1.4-dev')»
          * @param EngineInterface  $templateEngine  Template engine service instance
+         «ENDIF»
          * @param SessionInterface $session         Session service instance
          * @param RequestStack     $requestStack    RequestStack service instance
          * @param «name.formatForCodeCapital»Factory $entityFactory EntityFactory service instance
@@ -122,8 +141,13 @@ class SearchHelper {
          «ENDIF»
          */
         public function __construct(
+            «IF targets('1.4-dev')»
+                TranslatorInterface $translator,
+            «ENDIF»
             PermissionApi«IF targets('1.4-dev')»Interface«ENDIF» $permissionApi,
-            EngineInterface $templateEngine,
+            «IF !targets('1.4-dev')»
+                EngineInterface $templateEngine,
+            «ENDIF»
             SessionInterface $session,
             RequestStack $requestStack,
             «name.formatForCodeCapital»Factory $entityFactory,
@@ -132,8 +156,13 @@ class SearchHelper {
             CategoryHelper $categoryHelper
             «ENDIF»
         ) {
+            «IF targets('1.4-dev')»
+                $this->setTranslator($translator);
+            «ENDIF»
             $this->permissionApi = $permissionApi;
-            $this->templateEngine = $templateEngine;
+            «IF !targets('1.4-dev')»
+                $this->templateEngine = $templateEngine;
+            «ENDIF»
             $this->session = $session;
             $this->request = $requestStack->getCurrentRequest();
             $this->entityFactory = $entityFactory;
@@ -144,17 +173,78 @@ class SearchHelper {
             «ENDIF»
         }
 
-        «getOptions»
+        «IF targets('1.4-dev')»
+            «setTranslatorMethod»
+
+            «amendForm»
+        «ELSE»
+            «getOptions»
+        «ENDIF»
 
         «getResults»
+
+        «val entitiesWithStrings = getAllEntities.filter[hasAbstractStringFieldsEntity]»
+        /**
+         * Returns list of supported search types.
+         *
+         * @return array
+         */
+        protected function getSearchTypes()
+        {
+            $searchTypes = [
+                «FOR entity : entitiesWithStrings»
+                    '«appName.toFirstLower»«entity.nameMultiple.formatForCodeCapital»' => [
+                        'value' => '«entity.name.formatForCode»',
+                        'label' => $this->__('«entity.nameMultiple.formatForDisplayCapital»')
+                    ]«IF entity != entitiesWithStrings.last»,«ENDIF»
+                «ENDFOR»
+            ];
+
+            $allowedTypes = $this->controllerHelper->getObjectTypes('helper', ['helper' => 'search', 'action' => 'getSearchTypes']);
+            $allowedSearchTypes = [];
+            foreach ($searchTypes as $searchType => $typeInfo) {
+                if (!in_array($typeInfo['value'], $allowedTypes)) {
+                    continue;
+                }
+                $allowedSearchTypes[$searchType] = $typeInfo;
+        	}
+
+            return $allowedSearchTypes;
+        }
 
         «getErrors»
 
         «formatWhere»
     '''
 
+    def private amendForm(Application it) '''
+        /**
+         * {@inheritdoc}
+         */
+        public function amendForm(FormBuilderInterface $form)
+        {
+            if (!$this->permissionApi->hasPermission('«appName»::', '::', ACCESS_READ)) {
+                return '';
+            }
+
+            $builder->add('active', 'Symfony\Component\Form\Extension\Core\Type\HiddenType', [
+                'data' => true
+            ]);
+
+            $searchTypes = $this->getSearchTypes();
+
+            foreach ($searchTypes as $searchType => $typeInfo) {
+                $builder->add('active_' . $searchType, 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', [
+                    'value' => $typeInfo['value'],
+                    'label' => $typeInfo['label'],
+                    'label_attr' => ['class' => 'checkbox-inline'],
+                    'required' => false
+                ]);
+            }
+        }
+    '''
+
     def private getOptions(Application it) '''
-        «val entitiesWithStrings = entities.filter[hasAbstractStringFieldsEntity]»
         /**
          * {@inheritdoc}
          */
@@ -166,9 +256,10 @@ class SearchHelper {
 
             $templateParameters = [];
 
-            $searchTypes = ['«entitiesWithStrings.map[name.formatForCode].join('\', \'')»'];
-            foreach ($searchTypes as $searchType) {
-                $templateParameters['active_' . $searchType] = !isset($args['«appName.toFirstLower»SearchTypes']) || in_array($searchType, $args['«appName.toFirstLower»SearchTypes']);
+            $searchTypes = $this->getSearchTypes();
+
+            foreach ($searchTypes as $searchType => $typeInfo) {
+                $templateParameters['active_' . $searchType] = true;
             }
 
             return $this->templateEngine->renderResponse('@«appName»/Search/options.html.twig', $templateParameters)->getContent();
@@ -189,22 +280,32 @@ class SearchHelper {
             $results = [];
 
             // retrieve list of activated object types
-            $searchTypes = isset($modVars['objectTypes']) ? (array)$modVars['objectTypes'] : [];
-            if (!is_array($searchTypes) || !count($searchTypes)) {
-                if ($this->request->isMethod('GET')) {
-                    $searchTypes = $this->request->query->get('«appName.toFirstLower»SearchTypes', []);
-                } elseif ($this->request->isMethod('POST')) {
-                    $searchTypes = $this->request->request->get('«appName.toFirstLower»SearchTypes', []);
+            «IF targets('1.4-dev')»
+                $searchTypes = $this->getSearchTypes();
+            «ELSE»
+                $searchTypes = isset($modVars['objectTypes']) ? (array)$modVars['objectTypes'] : [];
+                if (!is_array($searchTypes) || !count($searchTypes)) {
+                    if ($this->request->isMethod('GET')) {
+                        $searchTypes = $this->request->query->get('«appName.toFirstLower»SearchTypes', []);
+                    } elseif ($this->request->isMethod('POST')) {
+                        $searchTypes = $this->request->request->get('«appName.toFirstLower»SearchTypes', []);
+                    }
                 }
-            }
+            «ENDIF»
 
-            $allowedTypes = $this->controllerHelper->getObjectTypes('helper', ['helper' => 'search', 'action' => 'getResults']);
-
-            foreach ($searchTypes as $objectType) {
-                if (!in_array($objectType, $allowedTypes)) {
-                    continue;
-                }
-
+            foreach ($searchTypes as «IF targets('1.4-dev')»$searchType => $typeInfo«ELSE»$objectType«ENDIF») {
+                «IF targets('1.4-dev')»
+                    $objectType = $typeInfo['value'];
+                    $isActivated = false;
+                    if ($this->request->isMethod('GET')) {
+                        $isActivated = $this->request->query->get('active_' . $searchType, false);
+                    } elseif ($this->request->isMethod('POST')) {
+                        $isActivated = $this->request->request->get('active_' . $searchType, false);
+                    }
+                    if (!$isActivated) {
+                        continue;
+                    }
+                «ENDIF»
                 $whereArray = [];
                 $languageField = null;
                 switch ($objectType) {
