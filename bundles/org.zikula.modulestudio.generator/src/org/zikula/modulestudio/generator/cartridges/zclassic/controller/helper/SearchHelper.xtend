@@ -293,14 +293,14 @@ class SearchHelper {
                 }
             «ENDIF»
 
-            foreach ($searchTypes as «IF targets('1.4-dev')»$searchType => $typeInfo«ELSE»$objectType«ENDIF») {
+            foreach ($searchTypes as «IF targets('1.4-dev')»$searchTypeCode => $typeInfo«ELSE»$objectType«ENDIF») {
                 «IF targets('1.4-dev')»
                     $objectType = $typeInfo['value'];
                     $isActivated = false;
                     if ($this->request->isMethod('GET')) {
-                        $isActivated = $this->request->query->get('active_' . $searchType, false);
+                        $isActivated = $this->request->query->get('active_' . $searchTypeCode, false);
                     } elseif ($this->request->isMethod('POST')) {
-                        $isActivated = $this->request->request->get('active_' . $searchType, false);
+                        $isActivated = $this->request->request->get('active_' . $searchTypeCode, false);
                     }
                     if (!$isActivated) {
                         continue;
