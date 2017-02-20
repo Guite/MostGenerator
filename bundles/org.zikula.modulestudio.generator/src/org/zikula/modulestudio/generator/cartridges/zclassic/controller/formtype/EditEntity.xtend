@@ -549,7 +549,7 @@ class EditEntity {
             } else if (hasMin) {
                 messages += '''$this->__f('Note: this value must be greater than %minValue%.', ['%minValue%' => «minValue»])'''
             } else if (hasMax) {
-                messages += '''$this->__f('Note: this value must be less than %maxValue%.', ['%maxValue%' => «maxValue»]')'''
+                messages += '''$this->__f('Note: this value must be less than %maxValue%.', ['%maxValue%' => «maxValue»])'''
             }
         }
         messages
@@ -570,7 +570,7 @@ class EditEntity {
             } else if (hasMin) {
                 messages += '''$this->__f('Note: this value must be greater than %minValue%.', ['%minValue%' => «minValue»])'''
             } else if (hasMax) {
-                messages += '''$this->__f('Note: this value must be less than %maxValue%.', ['%maxValue%' => «maxValue»]')'''
+                messages += '''$this->__f('Note: this value must be less than %maxValue%.', ['%maxValue%' => «maxValue»])'''
             }
         }
         messages
@@ -591,7 +591,7 @@ class EditEntity {
             } else if (hasMin) {
                 messages += '''$this->__f('Note: this value must be greater than %minValue%.', ['%minValue%' => «minValue»])'''
             } else if (hasMax) {
-                messages += '''$this->__f('Note: this value must be less than %maxValue%.', ['%maxValue%' => «maxValue»]')'''
+                messages += '''$this->__f('Note: this value must be less than %maxValue%.', ['%maxValue%' => «maxValue»])'''
             }
         }
         messages
