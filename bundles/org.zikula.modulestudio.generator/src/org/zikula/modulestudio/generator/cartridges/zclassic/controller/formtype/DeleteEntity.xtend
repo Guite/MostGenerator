@@ -21,7 +21,7 @@ class DeleteEntity {
      * Entry point for entity deletion form type.
      */
     def generate(Application it, IFileSystemAccess fsa) {
-        if (!hasDeleteActions) {
+        if (!hasDeleteActions || targets('1.4-dev')) {
             return
         }
         generateClassPair(fsa, getAppSourceLibPath + 'Form/DeleteEntityType.php',

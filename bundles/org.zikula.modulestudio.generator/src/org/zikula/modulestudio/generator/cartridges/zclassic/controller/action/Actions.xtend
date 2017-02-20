@@ -293,7 +293,7 @@ class Actions {
             return $this->redirectToRoute($redirectRoute);
         }
 
-        $form = $this->createForm('«app.appNamespace»\Form\DeleteEntityType', $«name.formatForCode»);
+        $form = $this->createForm('«IF app.targets('1.4-dev')»Zikula\Bundle\FormExtensionBundle\Form\Type\DeletionType«ELSE»«app.appNamespace»\Form\DeleteEntityType«ENDIF»', $«name.formatForCode»);
 
         if ($form->handleRequest($request)->isValid()) {
             if ($form->get('delete')->isClicked()) {
