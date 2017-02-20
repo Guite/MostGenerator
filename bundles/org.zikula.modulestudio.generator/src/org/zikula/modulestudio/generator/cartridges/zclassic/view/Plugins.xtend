@@ -204,6 +204,22 @@ class Plugins {
                 new \Twig_SimpleFilter('«appNameLower»_objectState', [$this, 'getObjectState'], ['is_safe' => ['html']])
             ];
         }
+        «IF hasLoggable»
+
+            /**
+             * Returns a list of custom Twig tests.
+             *
+             * @return array
+             */
+            public function getTests()
+            {
+                return [
+                    new \Twig_SimpleTest('«appNameLower»_instanceOf', function ($var, $instance) {
+                        return $var instanceof $instance;
+                    })
+                ];
+            }
+        «ENDIF»
 
         «generateInternal»
         «IF hasStandardFieldEntities || hasUserFields || hasLoggable»
