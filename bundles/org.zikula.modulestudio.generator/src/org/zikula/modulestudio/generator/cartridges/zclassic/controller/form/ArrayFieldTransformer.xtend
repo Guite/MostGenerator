@@ -57,7 +57,7 @@ class ArrayFieldTransformer {
             }
 
             /**
-             Transforms a textual value back to the array.
+             * Transforms a textual value back to the array.
              *
              * @param string $value
              *

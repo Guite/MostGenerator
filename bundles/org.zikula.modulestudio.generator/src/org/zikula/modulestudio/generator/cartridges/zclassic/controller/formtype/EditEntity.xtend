@@ -514,7 +514,8 @@ class EditEntity {
                     «ENDIF»
                     'title' => $this->__('«titleAttribute»')
                 ],
-                «requiredOption»,«additionalOptions»
+                «requiredOption»
+                «additionalOptions»
             ]);
         «ENDIF»
     '''
@@ -657,7 +658,7 @@ class EditEntity {
         'maxlength' => 255,
     '''
     def private dispatch requiredOption(DerivedField it) '''
-        'required' => «mandatory.displayBool»
+        'required' => «mandatory.displayBool»,
     '''
     def private dispatch additionalOptions(DerivedField it) ''''''
 
@@ -753,7 +754,7 @@ class EditEntity {
     def private dispatch formType(UploadField it) '''«app.appNamespace»\Form\Type\Field\Upload'''
     def private dispatch additionalAttributes(UploadField it) ''''''
     def private dispatch requiredOption(UploadField it) '''
-        'required' => «mandatory.displayBool» && $options['mode'] == 'create'
+        'required' => «mandatory.displayBool» && $options['mode'] == 'create',
     '''
     def private dispatch additionalOptions(UploadField it) '''
         'entity' => $options['entity'],
@@ -855,7 +856,7 @@ class EditEntity {
                         'maxlength' => 255
                     ],
                     'data' => $attributeValue,
-                    'required' => false,
+                    'required' => false
                 ]);
             }
         }
