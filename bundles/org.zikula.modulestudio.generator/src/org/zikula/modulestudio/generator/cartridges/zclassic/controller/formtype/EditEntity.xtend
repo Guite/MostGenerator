@@ -97,7 +97,7 @@ class EditEntity {
         use Symfony\Component\OptionsResolver\OptionsResolver;
         use Zikula\Common\Translator\TranslatorInterface;
         use Zikula\Common\Translator\TranslatorTrait;
-        «IF extensions.contains('translatable')»
+        «IF isTranslatable»
             use Zikula\ExtensionsModule\Api\VariableApi;
         «ENDIF»
         «IF hasLocaleFieldsEntity»
@@ -110,7 +110,7 @@ class EditEntity {
         «IF hasListFieldsEntity»
             use «app.appNamespace»\Helper\ListEntriesHelper;
         «ENDIF»
-        «IF extensions.contains('translatable')»
+        «IF isTranslatable»
             use «app.appNamespace»\Helper\TranslatableHelper;
         «ENDIF»
 
@@ -125,7 +125,7 @@ class EditEntity {
              * @var «app.name.formatForCodeCapital»Factory
              */
             protected $entityFactory;
-            «IF extensions.contains('translatable')»
+            «IF isTranslatable»
 
                 /**
                  * @var VariableApi
@@ -162,27 +162,27 @@ class EditEntity {
             /**
              * «name.formatForCodeCapital»Type constructor.
              *
-             * @param TranslatorInterface $translator «IF extensions.contains('translatable')» «ENDIF»   Translator service instance
+             * @param TranslatorInterface $translator «IF isTranslatable» «ENDIF»   Translator service instance
              * @param «app.name.formatForCodeCapital»Factory        $entityFactory Entity factory service instance
-             «IF extensions.contains('translatable')»
+             «IF isTranslatable»
              * @param VariableApi         $variableApi VariableApi service instance
              * @param TranslatableHelper  $translatableHelper TranslatableHelper service instance
              «ENDIF»
              «IF hasListFieldsEntity»
-             * @param ListEntriesHelper   $listHelper    «IF extensions.contains('translatable')» «ENDIF»ListEntriesHelper service instance
+             * @param ListEntriesHelper   $listHelper    «IF isTranslatable» «ENDIF»ListEntriesHelper service instance
              «ENDIF»
              «IF hasLocaleFieldsEntity»
-             * @param LocaleApi           $localeApi     «IF extensions.contains('translatable')» «ENDIF»LocaleApi service instance
+             * @param LocaleApi           $localeApi     «IF isTranslatable» «ENDIF»LocaleApi service instance
              «ENDIF»
              «IF app.needsFeatureActivationHelper»
              * @param FeatureActivationHelper $featureActivationHelper FeatureActivationHelper service instance
              «ENDIF»
              */
-            public function __construct(TranslatorInterface $translator, «app.name.formatForCodeCapital»Factory $entityFactory«IF extensions.contains('translatable')», VariableApi $variableApi, TranslatableHelper $translatableHelper«ENDIF»«IF hasListFieldsEntity», ListEntriesHelper $listHelper«ENDIF»«IF hasLocaleFieldsEntity», LocaleApi $localeApi«ENDIF»«IF app.needsFeatureActivationHelper», FeatureActivationHelper $featureActivationHelper«ENDIF»)
+            public function __construct(TranslatorInterface $translator, «app.name.formatForCodeCapital»Factory $entityFactory«IF isTranslatable», VariableApi $variableApi, TranslatableHelper $translatableHelper«ENDIF»«IF hasListFieldsEntity», ListEntriesHelper $listHelper«ENDIF»«IF hasLocaleFieldsEntity», LocaleApi $localeApi«ENDIF»«IF app.needsFeatureActivationHelper», FeatureActivationHelper $featureActivationHelper«ENDIF»)
             {
                 $this->setTranslator($translator);
                 $this->entityFactory = $entityFactory;
-                «IF extensions.contains('translatable')»
+                «IF isTranslatable»
                     $this->variableApi = $variableApi;
                     $this->translatableHelper = $translatableHelper;
                 «ENDIF»
@@ -401,13 +401,16 @@ class EditEntity {
          */
         public function addEntityFields(FormBuilderInterface $builder, array $options)
         {
-            «val isTranslatable = extensions.contains('translatable')»
             «IF it instanceof Entity && isTranslatable»
                 «translatableFields(it as Entity)»
             «ENDIF»
             «fieldAdditions(isTranslatable)»
         }
     '''
+
+    def private isTranslatable(DataObject it) {
+        extensions.contains('translatable')
+    }
 
     def private translatableFields(Entity it) '''
         «translatableFieldSet»
