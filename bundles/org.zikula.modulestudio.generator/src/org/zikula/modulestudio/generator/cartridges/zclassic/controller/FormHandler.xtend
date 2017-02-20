@@ -155,7 +155,11 @@ class FormHandler {
             use Zikula\GroupsModule\Entity\Repository\GroupApplicationRepository;
         «ENDIF»
         use Zikula\PageLockModule\Api\LockingApi;
-        use Zikula\PermissionsModule\Api\PermissionApi;
+        «IF targets('1.4-dev')»
+            use Zikula\PermissionsModule\Api\ApiInterface\PermissionApiInterface;
+        «ELSE»
+            use Zikula\PermissionsModule\Api\PermissionApi;
+        «ENDIF»
         use Zikula\UsersModule\Api\CurrentUserApi;
         use «appNamespace»\Entity\Factory\«name.formatForCodeCapital»Factory;
         «IF needsFeatureActivationHelper»
@@ -326,7 +330,7 @@ class FormHandler {
             protected $logger;
 
             /**
-             * @var PermissionApi
+             * @var PermissionApi«IF targets('1.4-dev')»Interface«ENDIF»
              */
             protected $permissionApi;
 
@@ -425,7 +429,7 @@ class FormHandler {
              * @param RequestStack              $requestStack     RequestStack service instance
              * @param RouterInterface           $router           Router service instance
              * @param LoggerInterface           $logger           Logger service instance
-             * @param PermissionApi             $permissionApi    PermissionApi service instance
+             * @param PermissionApi«IF targets('1.4-dev')»Interface«ENDIF»             $permissionApi    PermissionApi service instance
              «IF hasTranslatable || needsApproval»
              * @param VariableApi               $variableApi      VariableApi service instance
              «ENDIF»
@@ -455,7 +459,7 @@ class FormHandler {
                 RequestStack $requestStack,
                 RouterInterface $router,
                 LoggerInterface $logger,
-                PermissionApi $permissionApi,
+                PermissionApi«IF targets('1.4-dev')»Interface«ENDIF» $permissionApi,
                 «IF hasTranslatable || needsApproval»
                     VariableApi $variableApi,
                 «ENDIF»

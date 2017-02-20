@@ -39,7 +39,11 @@ class SearchHelper {
         use Symfony\Component\HttpFoundation\RequestStack;
         use Symfony\Component\HttpFoundation\Session\SessionInterface;
         use Zikula\Core\RouteUrl;
-        use Zikula\PermissionsModule\Api\PermissionApi;
+        «IF targets('1.4-dev')»
+            use Zikula\PermissionsModule\Api\ApiInterface\PermissionApiInterface;
+        «ELSE»
+            use Zikula\PermissionsModule\Api\PermissionApi;
+        «ENDIF»
         use Zikula\SearchModule\Entity\SearchResultEntity;
         use Zikula\SearchModule\SearchableInterface;
         use «appNamespace»\Entity\Factory\«name.formatForCodeCapital»Factory;
@@ -62,7 +66,7 @@ class SearchHelper {
 
     def private searchHelperBaseImpl(Application it) '''
         /**
-         * @var PermissionApi
+         * @var PermissionApi«IF targets('1.4-dev')»Interface«ENDIF»
          */
         protected $permissionApi;
 
@@ -106,7 +110,7 @@ class SearchHelper {
         /**
          * SearchHelper constructor.
          *
-         * @param PermissionApi    $permissionApi   PermissionApi service instance
+         * @param PermissionApi«IF targets('1.4-dev')»Interface«ENDIF»    $permissionApi   PermissionApi service instance
          * @param EngineInterface  $templateEngine  Template engine service instance
          * @param SessionInterface $session         Session service instance
          * @param RequestStack     $requestStack    RequestStack service instance
@@ -118,7 +122,7 @@ class SearchHelper {
          «ENDIF»
          */
         public function __construct(
-            PermissionApi $permissionApi,
+            PermissionApi«IF targets('1.4-dev')»Interface«ENDIF» $permissionApi,
             EngineInterface $templateEngine,
             SessionInterface $session,
             RequestStack $requestStack,

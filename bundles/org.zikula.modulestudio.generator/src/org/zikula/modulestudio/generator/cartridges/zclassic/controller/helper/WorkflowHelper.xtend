@@ -40,7 +40,11 @@ class WorkflowHelper {
         use Zikula\Common\Translator\TranslatorInterface;
         use Zikula\Core\Doctrine\EntityAccess;
         «IF needsApproval»
-            use Zikula\PermissionsModule\Api\PermissionApi;
+            «IF targets('1.4-dev')»
+                use Zikula\PermissionsModule\Api\ApiInterface\PermissionApiInterface;
+            «ELSE»
+                use Zikula\PermissionsModule\Api\PermissionApi;
+            «ENDIF»
         «ENDIF»
         use Zikula_Workflow_Util;
         «IF needsApproval»
@@ -72,7 +76,7 @@ class WorkflowHelper {
                 protected $logger;
 
                 /**
-                 * @var PermissionApi
+                 * @var PermissionApi«IF targets('1.4-dev')»Interface«ENDIF»
                  */
                 protected $permissionApi;
 
@@ -93,14 +97,14 @@ class WorkflowHelper {
              * @param TranslatorInterface $translator        Translator service instance
              «IF needsApproval»
              * @param LoggerInterface     $logger            Logger service instance
-             * @param PermissionApi       $permissionApi     PermissionApi service instance
+             * @param PermissionApi«IF targets('1.4-dev')»Interface«ENDIF»       $permissionApi     PermissionApi service instance
              * @param «name.formatForCodeCapital»Factory $entityFactory «name.formatForCodeCapital»Factory service instance
              «ENDIF»
              * @param ListEntriesHelper   $listEntriesHelper ListEntriesHelper service instance
              *
              * @return void
              */
-            public function __construct(TranslatorInterface $translator, «IF needsApproval»LoggerInterface $logger, PermissionApi $permissionApi, «name.formatForCodeCapital»Factory $entityFactory, «ENDIF»ListEntriesHelper $listEntriesHelper)
+            public function __construct(TranslatorInterface $translator, «IF needsApproval»LoggerInterface $logger, PermissionApi«IF targets('1.4-dev')»Interface«ENDIF» $permissionApi, «name.formatForCodeCapital»Factory $entityFactory, «ENDIF»ListEntriesHelper $listEntriesHelper)
             {
                 $this->name = '«appName»';
                 $this->translator = $translator;

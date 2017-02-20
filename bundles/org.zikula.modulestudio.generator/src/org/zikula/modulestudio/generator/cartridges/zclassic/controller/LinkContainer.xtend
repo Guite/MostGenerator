@@ -46,7 +46,11 @@ class LinkContainer {
         «IF generateAccountApi»
             use Zikula\ExtensionsModule\Api\VariableApi;
         «ENDIF»
-        use Zikula\PermissionsModule\Api\PermissionApi;
+        «IF targets('1.4-dev')»
+            use Zikula\PermissionsModule\Api\ApiInterface\PermissionApiInterface;
+        «ELSE»
+            use Zikula\PermissionsModule\Api\PermissionApi;
+        «ENDIF»
         «IF generateAccountApi || hasEditActions»
             use Zikula\UsersModule\Api\CurrentUserApi;
         «ENDIF»
@@ -65,7 +69,7 @@ class LinkContainer {
             protected $router;
 
             /**
-             * @var PermissionApi
+             * @var PermissionApi«IF targets('1.4-dev')»Interface«ENDIF»
              */
             protected $permissionApi;
 
@@ -93,7 +97,7 @@ class LinkContainer {
              *
              * @param TranslatorInterface $translator       Translator service instance
              * @param Routerinterface     $router           Router service instance
-             * @param PermissionApi       $permissionApi    PermissionApi service instance
+             * @param PermissionApi«IF targets('1.4-dev')»Interface«ENDIF»       $permissionApi    PermissionApi service instance
              «IF generateAccountApi»
              * @param VariableApi         $variableApi      VariableApi service instance
              «ENDIF»
@@ -102,7 +106,7 @@ class LinkContainer {
              «ENDIF»
              * @param ControllerHelper    $controllerHelper ControllerHelper service instance
              */
-            public function __construct(TranslatorInterface $translator, RouterInterface $router, PermissionApi $permissionApi«IF generateAccountApi», VariableApi $variableApi«ENDIF»«IF generateAccountApi || hasEditActions», CurrentUserApi $currentUserApi«ENDIF», ControllerHelper $controllerHelper)
+            public function __construct(TranslatorInterface $translator, RouterInterface $router, PermissionApi«IF targets('1.4-dev')»Interface«ENDIF» $permissionApi«IF generateAccountApi», VariableApi $variableApi«ENDIF»«IF generateAccountApi || hasEditActions», CurrentUserApi $currentUserApi«ENDIF», ControllerHelper $controllerHelper)
             {
                 $this->setTranslator($translator);
                 $this->router = $router;

@@ -31,7 +31,11 @@ class ArchiveHelper {
         use Psr\Log\LoggerInterface;
         use Symfony\Component\HttpFoundation\Session\SessionInterface;
         use Zikula\Common\Translator\TranslatorInterface;
-        use Zikula\PermissionsModule\Api\PermissionApi;
+        «IF targets('1.4-dev')»
+            use Zikula\PermissionsModule\Api\ApiInterface\PermissionApiInterface;
+        «ELSE»
+            use Zikula\PermissionsModule\Api\PermissionApi;
+        «ENDIF»
         use «appNamespace»\Entity\Factory\«name.formatForCodeCapital»Factory;
         «IF hasHookSubscribers»
             use «appNamespace»\Helper\HookHelper;
@@ -59,7 +63,7 @@ class ArchiveHelper {
             protected $logger;
 
             /**
-             * @var PermissionApi
+             * @var PermissionApi«IF targets('1.4-dev')»Interface«ENDIF»
              */
             protected $permissionApi;
 
@@ -86,7 +90,7 @@ class ArchiveHelper {
              * @param TranslatorInterface $translator     Translator service instance
              * @param SessionInterface    $session        Session service instance
              * @param LoggerInterface     $logger         Logger service instance
-             * @param PermissionApi       $permissionApi  PermissionApi service instance
+             * @param PermissionApi«IF targets('1.4-dev')»Interface«ENDIF»       $permissionApi  PermissionApi service instance
              * @param «name.formatForCodeCapital»Factory $entityFactory «name.formatForCodeCapital»Factory service instance
              * @param WorkflowHelper      $workflowHelper WorkflowHelper service instance
              «IF hasHookSubscribers»
@@ -97,7 +101,7 @@ class ArchiveHelper {
                 TranslatorInterface $translator,
                 SessionInterface $session,
                 LoggerInterface $logger,
-                PermissionApi $permissionApi,
+                PermissionApi«IF targets('1.4-dev')»Interface«ENDIF» $permissionApi,
                 «name.formatForCodeCapital»Factory $entityFactory,
                 WorkflowHelper $workflowHelper«IF hasHookSubscribers»,
                 HookHelper $hookHelper«ENDIF»)

@@ -33,7 +33,11 @@ class ViewHelper {
         use Symfony\Component\Templating\EngineInterface;
         use Zikula\Core\Response\PlainResponse;
         use Zikula\ExtensionsModule\Api\VariableApi;
-        use Zikula\PermissionsModule\Api\PermissionApi;
+        «IF targets('1.4-dev')»
+            use Zikula\PermissionsModule\Api\ApiInterface\PermissionApiInterface;
+        «ELSE»
+            use Zikula\PermissionsModule\Api\PermissionApi;
+        «ENDIF»
         use «appNamespace»\Helper\ControllerHelper;
 
         /**
@@ -52,7 +56,7 @@ class ViewHelper {
             protected $request;
 
             /**
-             * @var PermissionApi
+             * @var PermissionApi«IF targets('1.4-dev')»Interface«ENDIF»
              */
             protected $permissionApi;
 
@@ -71,13 +75,18 @@ class ViewHelper {
              *
              * @param EngineInterface  $templating       EngineInterface service instance
              * @param RequestStack     $requestStack     RequestStack service instance
-             * @param PermissionApi    $permissionApi    PermissionApi service instance
+             * @param PermissionApi«IF targets('1.4-dev')»Interface«ENDIF»    $permissionApi    PermissionApi service instance
              * @param VariableApi      $variableApi      VariableApi service instance
              * @param ControllerHelper $controllerHelper ControllerHelper service instance
              *
              * @return void
              */
-            public function __construct(EngineInterface $templating, RequestStack $requestStack, PermissionApi $permissionApi, VariableApi $variableApi, ControllerHelper $controllerHelper)
+            public function __construct(
+                EngineInterface $templating,
+                RequestStack $requestStack,
+                PermissionApi«IF targets('1.4-dev')»Interface«ENDIF» $permissionApi,
+                VariableApi $variableApi,
+                ControllerHelper $controllerHelper)
             {
                 $this->templating = $templating;
                 $this->request = $requestStack->getCurrentRequest();
@@ -232,7 +241,7 @@ class ViewHelper {
          * @param string $type Current controller (name of currently treated entity)
          * @param string $func Current function (index, view, ...)
          *
-         * @return array List of allowed template extensions
+         * @return string Template extension
          */
         protected function determineExtension($type, $func)
         {
@@ -330,7 +339,7 @@ class ViewHelper {
             // stream output to browser
             $pdf->stream($fileTitle);
 
-            return new Response(); 
+            return new Response();
         }
     '''
 
