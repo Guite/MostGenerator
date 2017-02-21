@@ -137,7 +137,7 @@ class SelectionHelper {
 
             «IF hasSluggable»
                 $entity = null;
-                if (null !== $slug && method_exists($repository, 'selectBySlug')) {
+                if (null !== $slug && !empty($slug) && method_exists($repository, 'selectBySlug')) {
                     $entity = $repository->selectBySlug($slug, $useJoins, $slimMode);
                 } else {
                     $entity = $repository->selectById($id, $useJoins, $slimMode);
