@@ -203,7 +203,7 @@ class ValidationConstraints {
             «constraint»«IF constraint != getUploadConstraints.last»,«ENDIF»
             «ENDFOR»
         «' '»* )
-        «IF isImageField»
+        «IF isOnlyImageField»
             «' '»* @Assert\Image(
                 «FOR constraint : getUploadImageConstraints»
                 «constraint»«IF constraint != getUploadImageConstraints.last»,«ENDIF»

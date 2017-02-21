@@ -467,6 +467,13 @@ class ModelExtensions {
     }
 
     /**
+     * Checks whether an upload field is an image field without supporting other file types.
+     */
+    def isOnlyImageField(UploadField it) {
+        allowedExtensions.split(', ').filter[it != 'gif' && it != 'jpeg' && it != 'jpg' && it != 'png'].empty
+    }
+
+    /**
      * Checks whether this entity has at least one colour field.
      */
     def hasColourFieldsEntity(DataObject it) {
