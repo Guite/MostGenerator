@@ -118,7 +118,7 @@ class ControllerLayer {
         «IF hasDisplayAction || hasEditAction || hasDeleteAction»
             use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
         «ENDIF»
-        «IF hasIndexAction || hasViewAction || hasDeleteAction»
+        «IF hasIndexAction || hasViewAction || hasEditAction || hasDeleteAction»
             use Symfony\Component\HttpFoundation\RedirectResponse;
         «ENDIF»
         use Sensio\Bundle\FrameworkExtraBundle\Configuration\Cache;
