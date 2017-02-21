@@ -68,7 +68,7 @@ class Bootstrap {
     def private initExtensions(Application it) '''
         «IF hasLoggable»
             // set current user name to loggable listener
-            $loggableListener = $container->get('doctrine_extensions.listener.loggable');
+            $loggableListener = $container->get('stof_doctrine_extensions.listener.loggable');
             $currentUserApi = $container->get('zikula_users_module.current_user');
             $userName = $currentUserApi->isLoggedIn() ? $currentUserApi->get('uname') : __('Guest');
             $loggableListener->setUsername($userName);
