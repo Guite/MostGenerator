@@ -200,13 +200,13 @@ class ValidationConstraints {
         «' '»* @Assert\Length(min="«minLength»", max="«length»")
         «' '»* @Assert\File(
             «FOR constraint : getUploadConstraints»
-            «constraint»«IF constraint != getUploadConstraints.last»,«ENDIF»
+        «' '»*    «constraint»«IF constraint != getUploadConstraints.last»,«ENDIF»
             «ENDFOR»
         «' '»* )
         «IF isOnlyImageField»
             «' '»* @Assert\Image(
                 «FOR constraint : getUploadImageConstraints»
-                «constraint»«IF constraint != getUploadImageConstraints.last»,«ENDIF»
+            «' '»*    «constraint»«IF constraint != getUploadImageConstraints.last»,«ENDIF»
                 «ENDFOR»
             «' '»* )
         «ENDIF»
