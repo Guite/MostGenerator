@@ -200,7 +200,7 @@ class EditEntity {
             «app.setTranslatorMethod»
 
             /**
-             * {@inheritdoc}
+             * @inheritDoc
              */
             public function buildForm(FormBuilderInterface $builder, array $options)
             {
@@ -293,7 +293,7 @@ class EditEntity {
 
             «ENDIF»
             /**
-             * {@inheritdoc}
+             * @inheritDoc
              */
             public function getBlockPrefix()
             {
@@ -301,7 +301,7 @@ class EditEntity {
             }
 
             /**
-             * {@inheritdoc}
+             * @inheritDoc
              */
             public function configureOptions(OptionsResolver $resolver)
             {

@@ -53,7 +53,7 @@ class ControllerAction {
          «IF isBase»
          * «actionDocMethodDescription(isAdmin)»
          «ELSE»
-         * {@inheritdoc}
+         * @inheritDoc
          «ENDIF»
         «IF isBase»«actionDocMethodDocumentation»«ENDIF»
         «new Annotations(app).generate(it, entity, isBase, isAdmin)»

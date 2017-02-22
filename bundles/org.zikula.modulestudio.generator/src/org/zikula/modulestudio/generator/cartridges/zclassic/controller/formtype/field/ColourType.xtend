@@ -35,7 +35,7 @@ class ColourType {
         abstract class AbstractColourType extends AbstractType
         {
             /**
-             * {@inheritdoc}
+             * @inheritDoc
              */
             public function configureOptions(OptionsResolver $resolver)
             {
@@ -50,7 +50,7 @@ class ColourType {
             }
 
             /**
-             * {@inheritdoc}
+             * @inheritDoc
              */
             public function getParent()
             {
@@ -58,7 +58,7 @@ class ColourType {
             }
 
             /**
-             * {@inheritdoc}
+             * @inheritDoc
              */
             public function getBlockPrefix()
             {

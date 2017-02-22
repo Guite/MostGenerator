@@ -13,7 +13,7 @@ class Users {
              */
         «ELSE»
             /**
-             * {@inheritdoc}
+             * @inheritDoc
              */
         «ENDIF»
         public static function getSubscribedEvents()
@@ -40,7 +40,7 @@ class Users {
              */
         «ELSE»
             /**
-             * {@inheritdoc}
+             * @inheritDoc
              */
         «ENDIF»
         public function configUpdated(GenericEvent $event)

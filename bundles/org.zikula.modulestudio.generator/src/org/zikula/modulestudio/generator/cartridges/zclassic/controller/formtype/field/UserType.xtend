@@ -55,7 +55,7 @@ class UserType {
             }
 
             /**
-             * {@inheritdoc}
+             * @inheritDoc
              */
             public function buildForm(FormBuilderInterface $builder, array $options)
             {
@@ -64,7 +64,7 @@ class UserType {
             }
 
             /**
-             * {@inheritdoc}
+             * @inheritDoc
              */
             public function buildView(FormView $view, FormInterface $form, array $options)
             {
@@ -80,7 +80,7 @@ class UserType {
             }
 
             /**
-             * {@inheritdoc}
+             * @inheritDoc
              */
             public function configureOptions(OptionsResolver $resolver)
             {
@@ -97,7 +97,7 @@ class UserType {
             }
 
             /**
-             * {@inheritdoc}
+             * @inheritDoc
              */
             public function getParent()
             {
@@ -105,7 +105,7 @@ class UserType {
             }
 
             /**
-             * {@inheritdoc}
+             * @inheritDoc
              */
             public function getBlockPrefix()
             {

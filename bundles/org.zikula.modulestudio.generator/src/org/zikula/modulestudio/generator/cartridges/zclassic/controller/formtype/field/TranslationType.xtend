@@ -49,7 +49,7 @@ class TranslationType {
             }
 
             /**
-             * {@inheritdoc}
+             * @inheritDoc
              */
             public function buildForm(FormBuilderInterface $builder, array $options)
             {
@@ -57,7 +57,7 @@ class TranslationType {
             }
 
             /**
-             * {@inheritdoc}
+             * @inheritDoc
              */
             public function configureOptions(OptionsResolver $resolver)
             {
@@ -83,7 +83,7 @@ class TranslationType {
             }
 
             /**
-             * {@inheritdoc}
+             * @inheritDoc
              */
             public function getBlockPrefix()
             {

@@ -33,7 +33,7 @@ class GeoType {
         abstract class AbstractGeoType extends AbstractType
         {
             /**
-             * {@inheritdoc}
+             * @inheritDoc
              */
             public function configureOptions(OptionsResolver $resolver)
             {
@@ -49,7 +49,7 @@ class GeoType {
             }
 
             /**
-             * {@inheritdoc}
+             * @inheritDoc
              */
             public function getParent()
             {
@@ -57,7 +57,7 @@ class GeoType {
             }
 
             /**
-             * {@inheritdoc}
+             * @inheritDoc
              */
             public function getBlockPrefix()
             {

@@ -35,7 +35,7 @@ class DateTimeType {
         abstract class AbstractDateTimeType extends AbstractType
         {
             /**
-             * {@inheritdoc}
+             * @inheritDoc
              */
             public function buildView(FormView $view, FormInterface $form, array $options)
             {
@@ -51,7 +51,7 @@ class DateTimeType {
             }
 
             /**
-             * {@inheritdoc}
+             * @inheritDoc
              */
             public function getParent()
             {
@@ -59,7 +59,7 @@ class DateTimeType {
             }
 
             /**
-             * {@inheritdoc}
+             * @inheritDoc
              */
             public function getBlockPrefix()
             {

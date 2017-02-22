@@ -57,7 +57,7 @@ class MultiListType {
             }
 
             /**
-             * {@inheritdoc}
+             * @inheritDoc
              */
             public function buildForm(FormBuilderInterface $builder, array $options)
             {
@@ -66,7 +66,7 @@ class MultiListType {
             }
 
             /**
-             * {@inheritdoc}
+             * @inheritDoc
              */
             public function getParent()
             {
@@ -74,7 +74,7 @@ class MultiListType {
             }
 
             /**
-             * {@inheritdoc}
+             * @inheritDoc
              */
             public function getBlockPrefix()
             {

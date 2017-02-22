@@ -60,7 +60,7 @@ class AutoCompletionRelationType {
             }
 
             /**
-             * {@inheritdoc}
+             * @inheritDoc
              */
             public function buildForm(FormBuilderInterface $builder, array $options)
             {
@@ -69,7 +69,7 @@ class AutoCompletionRelationType {
             }
 
             /**
-             * {@inheritdoc}
+             * @inheritDoc
              */
             public function configureOptions(OptionsResolver $resolver)
             {
@@ -93,7 +93,7 @@ class AutoCompletionRelationType {
             }
 
             /**
-             * {@inheritdoc}
+             * @inheritDoc
              */
             public function getParent()
             {
@@ -101,7 +101,7 @@ class AutoCompletionRelationType {
             }
 
             /**
-             * {@inheritdoc}
+             * @inheritDoc
              */
             public function getBlockPrefix()
             {

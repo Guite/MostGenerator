@@ -13,7 +13,7 @@ class UserRegistration {
              */
         «ELSE»
             /**
-             * {@inheritdoc}
+             * @inheritDoc
              */
         «ENDIF»
         public static function getSubscribedEvents()
@@ -44,7 +44,7 @@ class UserRegistration {
          */
         «ELSE»
             /**
-             * {@inheritdoc}
+             * @inheritDoc
              */
         «ENDIF»
         public function started(GenericEvent $event)
@@ -82,7 +82,7 @@ class UserRegistration {
              */
         «ELSE»
             /**
-             * {@inheritdoc}
+             * @inheritDoc
              */
         «ENDIF»
         public function createVeto(GenericEvent $event)
@@ -151,7 +151,7 @@ class UserRegistration {
          */
         «ELSE»
             /**
-             * {@inheritdoc}
+             * @inheritDoc
              */
         «ENDIF»
         public function succeeded(GenericEvent $event)
@@ -188,7 +188,7 @@ class UserRegistration {
          */
         «ELSE»
             /**
-             * {@inheritdoc}
+             * @inheritDoc
              */
         «ENDIF»
         public function failed(GenericEvent $event)
@@ -215,7 +215,7 @@ class UserRegistration {
          */
         «ELSE»
             /**
-             * {@inheritdoc}
+             * @inheritDoc
              */
         «ENDIF»
         public function create(GenericEvent $event)
@@ -240,7 +240,7 @@ class UserRegistration {
          */
         «ELSE»
             /**
-             * {@inheritdoc}
+             * @inheritDoc
              */
         «ENDIF»
         public function update(GenericEvent $event)
@@ -266,7 +266,7 @@ class UserRegistration {
          */
         «ELSE»
         /**
-         * {@inheritdoc}
+         * @inheritDoc
          */
         «ENDIF»
         public function delete(GenericEvent $event)
@@ -288,7 +288,7 @@ class UserRegistration {
              */
         «ELSE»
             /**
-             * {@inheritdoc}
+             * @inheritDoc
              */
         «ENDIF»
         public function forceApproval(GenericEvent $event)

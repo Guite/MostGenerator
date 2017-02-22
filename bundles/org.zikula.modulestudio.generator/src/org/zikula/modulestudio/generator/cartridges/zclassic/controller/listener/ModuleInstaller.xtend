@@ -13,7 +13,7 @@ class ModuleInstaller {
              */
         «ELSE»
             /**
-             * {@inheritdoc}
+             * @inheritDoc
              */
         «ENDIF»
         public static function getSubscribedEvents()
@@ -44,7 +44,7 @@ class ModuleInstaller {
          */
         «ELSE»
             /**
-             * {@inheritdoc}
+             * @inheritDoc
              */
         «ENDIF»
         public function moduleInstalled(ModuleStateEvent $event)
@@ -67,7 +67,7 @@ class ModuleInstaller {
          */
         «ELSE»
             /**
-             * {@inheritdoc}
+             * @inheritDoc
              */
         «ENDIF»
         public function modulePostInstalled(ModuleStateEvent $event)
@@ -90,7 +90,7 @@ class ModuleInstaller {
          */
         «ELSE»
             /**
-             * {@inheritdoc}
+             * @inheritDoc
              */
         «ENDIF»
         public function moduleUpgraded(ModuleStateEvent $event)
@@ -113,7 +113,7 @@ class ModuleInstaller {
          */
         «ELSE»
             /**
-             * {@inheritdoc}
+             * @inheritDoc
              */
         «ENDIF»
         public function moduleEnabled(ModuleStateEvent $event)
@@ -136,7 +136,7 @@ class ModuleInstaller {
          */
         «ELSE»
             /**
-             * {@inheritdoc}
+             * @inheritDoc
              */
         «ENDIF»
         public function moduleDisabled(ModuleStateEvent $event)
@@ -159,7 +159,7 @@ class ModuleInstaller {
          */
         «ELSE»
             /**
-             * {@inheritdoc}
+             * @inheritDoc
              */
         «ENDIF»
         public function moduleRemoved(ModuleStateEvent $event)
@@ -182,7 +182,7 @@ class ModuleInstaller {
          */
         «ELSE»
             /**
-             * {@inheritdoc}
+             * @inheritDoc
              */
         «ENDIF»
         public function subscriberAreaUninstalled(GenericEvent $event)

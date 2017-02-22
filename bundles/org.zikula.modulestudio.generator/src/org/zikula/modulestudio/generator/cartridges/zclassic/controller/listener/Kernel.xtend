@@ -17,7 +17,7 @@ class Kernel {
              */
         «ELSE»
             /**
-             * {@inheritdoc}
+             * @inheritDoc
              */
         «ENDIF»
         public static function getSubscribedEvents()
@@ -53,7 +53,7 @@ class Kernel {
          */
         «ELSE»
             /**
-             * {@inheritdoc}
+             * @inheritDoc
              */
         «ENDIF»
         public function onRequest(GetResponseEvent $event)
@@ -88,7 +88,7 @@ class Kernel {
          */
         «ELSE»
             /**
-             * {@inheritdoc}
+             * @inheritDoc
              */
         «ENDIF»
         public function onController(FilterControllerEvent $event)
@@ -136,7 +136,7 @@ class Kernel {
          */
         «ELSE»
             /**
-             * {@inheritdoc}
+             * @inheritDoc
              */
         «ENDIF»
         public function onView(GetResponseForControllerResultEvent $event)
@@ -177,7 +177,7 @@ class Kernel {
          */
         «ELSE»
             /**
-             * {@inheritdoc}
+             * @inheritDoc
              */
         «ENDIF»
         public function onResponse(FilterResponseEvent $event)
@@ -209,7 +209,7 @@ class Kernel {
          */
         «ELSE»
             /**
-             * {@inheritdoc}
+             * @inheritDoc
              */
         «ENDIF»
         public function onFinishRequest(FinishRequestEvent $event)
@@ -237,7 +237,7 @@ class Kernel {
          */
         «ELSE»
             /**
-             * {@inheritdoc}
+             * @inheritDoc
              */
         «ENDIF»
         public function onTerminate(PostResponseEvent $event)
@@ -262,7 +262,7 @@ class Kernel {
          */
         «ELSE»
             /**
-             * {@inheritdoc}
+             * @inheritDoc
              */
         «ENDIF»
         public function onException(GetResponseForExceptionEvent $event)

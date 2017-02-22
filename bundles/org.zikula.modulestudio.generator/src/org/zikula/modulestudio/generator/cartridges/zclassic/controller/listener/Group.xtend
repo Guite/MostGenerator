@@ -13,7 +13,7 @@ class Group {
              */
         «ELSE»
             /**
-             * {@inheritdoc}
+             * @inheritDoc
              */
         «ENDIF»
         public static function getSubscribedEvents()
@@ -44,7 +44,7 @@ class Group {
          */
         «ELSE»
             /**
-             * {@inheritdoc}
+             * @inheritDoc
              */
         «ENDIF»
         public function create(GenericEvent $event)
@@ -67,7 +67,7 @@ class Group {
          */
         «ELSE»
             /**
-             * {@inheritdoc}
+             * @inheritDoc
              */
         «ENDIF»
         public function update(GenericEvent $event)
@@ -90,7 +90,7 @@ class Group {
          */
         «ELSE»
             /**
-             * {@inheritdoc}
+             * @inheritDoc
              */
         «ENDIF»
         public function delete(GenericEvent $event)
@@ -114,7 +114,7 @@ class Group {
          */
         «ELSE»
             /**
-             * {@inheritdoc}
+             * @inheritDoc
              */
         «ENDIF»
         public function addUser(GenericEvent $event)
@@ -137,7 +137,7 @@ class Group {
          */
         «ELSE»
             /**
-             * {@inheritdoc}
+             * @inheritDoc
              */
         «ENDIF»
         public function removeUser(GenericEvent $event)
@@ -161,7 +161,7 @@ class Group {
          */
         «ELSE»
             /**
-             * {@inheritdoc}
+             * @inheritDoc
              */
         «ENDIF»
         public function applicationProcessed(GenericEvent $event)
@@ -184,7 +184,7 @@ class Group {
          */
         «ELSE»
             /**
-             * {@inheritdoc}
+             * @inheritDoc
              */
         «ENDIF»
         public function newApplication(GenericEvent $event)

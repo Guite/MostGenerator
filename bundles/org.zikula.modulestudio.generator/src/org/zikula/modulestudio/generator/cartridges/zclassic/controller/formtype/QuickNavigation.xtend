@@ -143,7 +143,7 @@ class QuickNavigation {
             «app.setTranslatorMethod»
 
             /**
-             * {@inheritdoc}
+             * @inheritDoc
              */
             public function buildForm(FormBuilderInterface $builder, array $options)
             {
@@ -249,7 +249,7 @@ class QuickNavigation {
 
             «ENDIF»
             /**
-             * {@inheritdoc}
+             * @inheritDoc
              */
             public function getBlockPrefix()
             {

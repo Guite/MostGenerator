@@ -46,7 +46,7 @@ class ThirdParty {
              */
         «ELSE»
             /**
-             * {@inheritdoc}
+             * @inheritDoc
              */
         «ENDIF»
         public static function getSubscribedEvents()
@@ -114,7 +114,7 @@ class ThirdParty {
          */
         «ELSE»
             /**
-             * {@inheritdoc}
+             * @inheritDoc
              */
         «ENDIF»
         public function pendingContentListener(GenericEvent $event)
@@ -175,7 +175,7 @@ class ThirdParty {
          */
         «ELSE»
             /**
-             * {@inheritdoc}
+             * @inheritDoc
              */
         «ENDIF»
         public function contentGetTypes(\Zikula_Event $event)
@@ -218,7 +218,7 @@ class ThirdParty {
          */
         «ELSE»
             /**
-             * {@inheritdoc}
+             * @inheritDoc
              */
         «ENDIF»
         public function getEditorHelpers(\Zikula_Event $event)
@@ -257,7 +257,7 @@ class ThirdParty {
          */
         «ELSE»
             /**
-             * {@inheritdoc}
+             * @inheritDoc
              */
         «ENDIF»
         public function getTinyMcePlugins(\Zikula_Event $event)
@@ -295,7 +295,7 @@ class ThirdParty {
          */
         «ELSE»
             /**
-             * {@inheritdoc}
+             * @inheritDoc
              */
         «ENDIF»
         public function getCKEditorPlugins(\Zikula_Event $event)

@@ -13,7 +13,7 @@ class UserLogout {
              */
         «ELSE»
             /**
-             * {@inheritdoc}
+             * @inheritDoc
              */
         «ENDIF»
         public static function getSubscribedEvents()
@@ -40,7 +40,7 @@ class UserLogout {
          */
         «ELSE»
             /**
-             * {@inheritdoc}
+             * @inheritDoc
              */
         «ENDIF»
         public function succeeded(GenericEvent $event)

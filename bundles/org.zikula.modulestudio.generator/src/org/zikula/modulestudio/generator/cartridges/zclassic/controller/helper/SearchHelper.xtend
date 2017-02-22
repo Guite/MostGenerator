@@ -219,7 +219,7 @@ class SearchHelper {
 
     def private amendForm(Application it) '''
         /**
-         * {@inheritdoc}
+         * @inheritDoc
          */
         public function amendForm(FormBuilderInterface $form)
         {
@@ -246,7 +246,7 @@ class SearchHelper {
 
     def private getOptions(Application it) '''
         /**
-         * {@inheritdoc}
+         * @inheritDoc
          */
         public function getOptions($active, $modVars = null)
         {
@@ -268,7 +268,7 @@ class SearchHelper {
 
     def private getResults(Application it) '''
         /**
-         * {@inheritdoc}
+         * @inheritDoc
          */
         public function getResults(array $words, $searchType = 'AND', $modVars = null)
         {
@@ -391,7 +391,7 @@ class SearchHelper {
 
     def private getErrors(Application it) '''
         /**
-         * {@inheritdoc}
+         * @inheritDoc
          */
         public function getErrors()
         {

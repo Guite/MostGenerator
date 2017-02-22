@@ -13,7 +13,7 @@ class UserLogin {
              */
         «ELSE»
             /**
-             * {@inheritdoc}
+             * @inheritDoc
              */
         «ENDIF»
         public static function getSubscribedEvents()
@@ -52,7 +52,7 @@ class UserLogin {
          */
         «ELSE»
             /**
-             * {@inheritdoc}
+             * @inheritDoc
              */
         «ENDIF»
         public function started(GenericEvent $event)
@@ -93,7 +93,7 @@ class UserLogin {
          */
         «ELSE»
             /**
-             * {@inheritdoc}
+             * @inheritDoc
              */
         «ENDIF»
         public function veto(GenericEvent $event)
@@ -131,7 +131,7 @@ class UserLogin {
          */
         «ELSE»
             /**
-             * {@inheritdoc}
+             * @inheritDoc
              */
         «ENDIF»
         public function succeeded(GenericEvent $event)
@@ -169,7 +169,7 @@ class UserLogin {
          */
         «ELSE»
             /**
-             * {@inheritdoc}
+             * @inheritDoc
              */
         «ENDIF»
         public function failed(GenericEvent $event)

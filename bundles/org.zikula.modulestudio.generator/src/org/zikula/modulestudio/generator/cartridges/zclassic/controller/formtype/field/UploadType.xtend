@@ -89,7 +89,7 @@ class UploadType {
             }
 
             /**
-             * {@inheritdoc}
+             * @inheritDoc
              */
             public function buildForm(FormBuilderInterface $builder, array $options)
             {
@@ -127,7 +127,7 @@ class UploadType {
             }
 
             /**
-             * {@inheritdoc}
+             * @inheritDoc
              */
             public function buildView(FormView $view, FormInterface $form, array $options)
             {
@@ -175,7 +175,7 @@ class UploadType {
             }
 
             /**
-             * {@inheritdoc}
+             * @inheritDoc
              */
             public function configureOptions(OptionsResolver $resolver)
             {
@@ -200,7 +200,7 @@ class UploadType {
             «new FileHelper().getterMethod(null, 'formBuilder', 'FormBuilderInterface', false)»
             «new FileHelper().getterMethod(null, 'entity', 'object', false)»
             /**
-             * {@inheritdoc}
+             * @inheritDoc
              */
             public function getBlockPrefix()
             {

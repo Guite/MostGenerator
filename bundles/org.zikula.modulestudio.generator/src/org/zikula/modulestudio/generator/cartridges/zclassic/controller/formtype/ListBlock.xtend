@@ -66,7 +66,7 @@ class ListBlock {
             «setTranslatorMethod»
 
             /**
-             * {@inheritdoc}
+             * @inheritDoc
              */
             public function buildForm(FormBuilderInterface $builder, array $options)
             {
@@ -83,7 +83,7 @@ class ListBlock {
             }
 
             /**
-             * {@inheritdoc}
+             * @inheritDoc
              */
             public function buildView(FormView $view, FormInterface $form, array $options)
             {
@@ -105,7 +105,7 @@ class ListBlock {
             «addFilterField»
 
             /**
-             * {@inheritdoc}
+             * @inheritDoc
              */
             public function getBlockPrefix()
             {
@@ -113,7 +113,7 @@ class ListBlock {
             }
 
             /**
-             * {@inheritdoc}
+             * @inheritDoc
              */
             public function configureOptions(OptionsResolver $resolver)
             {

@@ -35,7 +35,7 @@ class EntityTreeType {
         abstract class AbstractEntityTreeType extends AbstractType
         {
             /**
-             * {@inheritdoc}
+             * @inheritDoc
              */
             public function configureOptions(OptionsResolver $resolver)
             {
@@ -142,7 +142,7 @@ class EntityTreeType {
             }
 
             /**
-             * {@inheritdoc}
+             * @inheritDoc
              */
             public function getParent()
             {
@@ -150,7 +150,7 @@ class EntityTreeType {
             }
 
             /**
-             * {@inheritdoc}
+             * @inheritDoc
              */
             public function getBlockPrefix()
             {

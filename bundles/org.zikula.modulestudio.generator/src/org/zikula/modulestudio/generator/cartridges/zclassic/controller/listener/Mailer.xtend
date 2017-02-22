@@ -13,7 +13,7 @@ class Mailer {
              */
         «ELSE»
             /**
-             * {@inheritdoc}
+             * @inheritDoc
              */
         «ENDIF»
         public static function getSubscribedEvents()
@@ -44,7 +44,7 @@ class Mailer {
          */
         «ELSE»
             /**
-             * {@inheritdoc}
+             * @inheritDoc
              */
         «ENDIF»
         public function sendMessageStart(GenericEvent $event)
@@ -70,7 +70,7 @@ class Mailer {
          */
         «ELSE»
             /**
-             * {@inheritdoc}
+             * @inheritDoc
              */
         «ENDIF»
         public function sendMessagePerform(GenericEvent $event)
@@ -93,7 +93,7 @@ class Mailer {
          */
         «ELSE»
             /**
-             * {@inheritdoc}
+             * @inheritDoc
              */
         «ENDIF»
         public function sendMessageSuccess(GenericEvent $event)
@@ -116,7 +116,7 @@ class Mailer {
          */
         «ELSE»
             /**
-             * {@inheritdoc}
+             * @inheritDoc
              */
         «ENDIF»
         public function sendMessageFailure(GenericEvent $event)

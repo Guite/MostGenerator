@@ -34,7 +34,7 @@ class ArrayType {
         abstract class AbstractArrayType extends AbstractType
         {
             /**
-             * {@inheritdoc}
+             * @inheritDoc
              */
             public function buildForm(FormBuilderInterface $builder, array $options)
             {
@@ -43,7 +43,7 @@ class ArrayType {
             }
 
             /**
-             * {@inheritdoc}
+             * @inheritDoc
              */
             public function getParent()
             {
@@ -51,7 +51,7 @@ class ArrayType {
             }
 
             /**
-             * {@inheritdoc}
+             * @inheritDoc
              */
             public function getBlockPrefix()
             {

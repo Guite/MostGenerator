@@ -37,7 +37,7 @@ class ModuleDispatch {
          */
         «ELSE»
             /**
-             * {@inheritdoc}
+             * @inheritDoc
              */
         «ENDIF»
         public function serviceLinks(GenericEvent $event)

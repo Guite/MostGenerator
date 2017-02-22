@@ -40,7 +40,7 @@ class TranslationListener {
 
     def private listenerBaseImplBody(Application it) '''
         /**
-         * {@inheritdoc}
+         * @inheritDoc
          */
         public static function getSubscribedEvents()
         {

@@ -65,7 +65,7 @@ class User {
              */
         «ELSE»
             /**
-             * {@inheritdoc}
+             * @inheritDoc
              */
         «ENDIF»
         public static function getSubscribedEvents()
@@ -95,7 +95,7 @@ class User {
          */
         «ELSE»
             /**
-             * {@inheritdoc}
+             * @inheritDoc
              */
         «ENDIF»
         public function create(GenericEvent $event)
@@ -120,7 +120,7 @@ class User {
          */
         «ELSE»
             /**
-             * {@inheritdoc}
+             * @inheritDoc
              */
         «ENDIF»
         public function update(GenericEvent $event)
@@ -143,7 +143,7 @@ class User {
          */
         «ELSE»
             /**
-             * {@inheritdoc}
+             * @inheritDoc
              */
         «ENDIF»
         public function delete(GenericEvent $event)

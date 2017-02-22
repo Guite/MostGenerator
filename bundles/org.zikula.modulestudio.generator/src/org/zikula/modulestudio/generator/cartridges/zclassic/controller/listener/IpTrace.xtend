@@ -33,7 +33,7 @@ class IpTrace {
              */
         «ELSE»
             /**
-             * {@inheritdoc}
+             * @inheritDoc
              */
         «ENDIF»
         public static function getSubscribedEvents()
@@ -55,7 +55,7 @@ class IpTrace {
              */
         «ELSE»
             /**
-             * {@inheritdoc}
+             * @inheritDoc
              */
         «ENDIF»
         public function onKernelRequest(GetResponseEvent $event)

@@ -85,7 +85,7 @@ class Finder {
             «app.setTranslatorMethod»
 
             /**
-             * {@inheritdoc}
+             * @inheritDoc
              */
             public function buildForm(FormBuilderInterface $builder, array $options)
             {
@@ -148,7 +148,7 @@ class Finder {
             «addSearchField»
 
             /**
-             * {@inheritdoc}
+             * @inheritDoc
              */
             public function getBlockPrefix()
             {
@@ -156,7 +156,7 @@ class Finder {
             }
 
             /**
-             * {@inheritdoc}
+             * @inheritDoc
              */
             public function configureOptions(OptionsResolver $resolver)
             {

@@ -13,7 +13,7 @@ class Theme {
              */
         «ELSE»
             /**
-             * {@inheritdoc}
+             * @inheritDoc
              */
         «ENDIF»
         public static function getSubscribedEvents()
@@ -39,7 +39,7 @@ class Theme {
          */
         «ELSE»
             /**
-             * {@inheritdoc}
+             * @inheritDoc
              */
         «ENDIF»
         public function preRender(TwigPreRenderEvent $event)
@@ -64,7 +64,7 @@ class Theme {
          */
         «ELSE»
             /**
-             * {@inheritdoc}
+             * @inheritDoc
              */
         «ENDIF»
         public function postRender(TwigPostRenderEvent $event)

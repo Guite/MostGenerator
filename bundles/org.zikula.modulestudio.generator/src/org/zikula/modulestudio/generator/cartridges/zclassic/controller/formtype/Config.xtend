@@ -100,7 +100,7 @@ class Config {
             «setTranslatorMethod»
 
             /**
-             * {@inheritdoc}
+             * @inheritDoc
              */
             public function buildForm(FormBuilderInterface $builder, array $options)
             {
@@ -132,7 +132,7 @@ class Config {
 
             «ENDFOR»
             /**
-             * {@inheritdoc}
+             * @inheritDoc
              */
             public function getBlockPrefix()
             {

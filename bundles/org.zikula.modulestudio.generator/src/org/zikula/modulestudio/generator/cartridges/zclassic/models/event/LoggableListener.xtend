@@ -38,7 +38,7 @@ class LoggableListener {
         class AbstractLoggableListener extends GedmoLoggableListener
         {
             /**
-             * {@inheritdoc}
+             * @inheritDoc
              */
             protected function prePersistLogEntry($logEntry, $object)
             {
