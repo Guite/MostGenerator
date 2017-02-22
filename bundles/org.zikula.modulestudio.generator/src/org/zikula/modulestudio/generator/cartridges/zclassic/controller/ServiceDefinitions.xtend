@@ -362,7 +362,7 @@ class ServiceDefinitions {
                         - { name: form.type }
             «ENDFOR»
         «ENDIF»
-        «IF hasDeleteActions»
+        «IF hasDeleteActions && !targets('1.4-dev')»
 
             «modPrefix».form.type.deleteentity:
                 class: «nsBase.replace('Type\\', '')»DeleteEntityType
