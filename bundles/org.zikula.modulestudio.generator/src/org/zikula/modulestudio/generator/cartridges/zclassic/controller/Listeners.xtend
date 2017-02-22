@@ -8,7 +8,6 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener.Mailer
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener.ModuleDispatch
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener.ModuleInstaller
-import org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener.Page
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener.Theme
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener.ThirdParty
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener.User
@@ -77,7 +76,6 @@ class Listeners {
         listenerFile('Installer', listenersInstallerFile)
         listenerFile('ModuleDispatch', listenersModuleDispatchFile)
         listenerFile('Mailer', listenersMailerFile)
-        listenerFile('Page', listenersPageFile)
         listenerFile('Theme', listenersThemeFile)
         listenerFile('UserLogin', listenersUserLoginFile)
         listenerFile('UserLogout', listenersUserLogoutFile)
@@ -191,25 +189,6 @@ class Listeners {
         «IF isBase»abstract «ENDIF»class «IF isBase»Abstract«ENDIF»MailerListener«IF !isBase» extends AbstractMailerListener«ELSE» implements EventSubscriberInterface«ENDIF»
         {
             «new Mailer().generate(it, isBase)»
-        }
-    '''
-
-    def private listenersPageFile(Application it) '''
-        namespace «appNamespace»\Listener«IF isBase»\Base«ENDIF»;
-
-        «IF !isBase»
-            use «appNamespace»\Listener\Base\AbstractPageListener;
-        «ELSE»
-            use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-        «ENDIF»
-        use Zikula\Core\Event\GenericEvent;
-
-        /**
-         * Event handler «IF isBase»base«ELSE»implementation«ENDIF» class for page-related events.
-         */
-        «IF isBase»abstract «ENDIF»class «IF isBase»Abstract«ENDIF»PageListener«IF !isBase» extends AbstractPageListener«ELSE» implements EventSubscriberInterface«ENDIF»
-        {
-            «new Page().generate(it, isBase)»
         }
     '''
 
