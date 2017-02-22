@@ -955,7 +955,7 @@ class EditEntity {
                 'multiple' => «isManySide(outgoing).displayBool»,
                 'expanded' => «isExpanded.displayBool»,
                 'query_builder' => $queryBuilder,
-                «IF /*outgoing && */!nullable»
+                «IF /*outgoing && */nullable»
                     «IF !isManySide(outgoing)»
                         'placeholder' => $this->__('Please choose an option'),
                     «ENDIF»
