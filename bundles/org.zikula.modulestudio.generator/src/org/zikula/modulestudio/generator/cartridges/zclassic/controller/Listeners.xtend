@@ -2,7 +2,6 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.controller
 
 import de.guite.modulestudio.metamodel.Application
 import org.eclipse.xtext.generator.IFileSystemAccess
-import org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener.Core
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener.Group
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener.IpTrace
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener.Kernel
@@ -17,7 +16,6 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener.UserLogout
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener.UserRegistration
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener.Users
-import org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener.View
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
@@ -75,14 +73,12 @@ class Listeners {
     }
 
     def private generateListenerClasses(Application it) {
-        listenerFile('Core', listenersCoreFile)
         listenerFile('Kernel', listenersKernelFile)
         listenerFile('Installer', listenersInstallerFile)
         listenerFile('ModuleDispatch', listenersModuleDispatchFile)
         listenerFile('Mailer', listenersMailerFile)
         listenerFile('Page', listenersPageFile)
         listenerFile('Theme', listenersThemeFile)
-        listenerFile('View', listenersViewFile)
         listenerFile('UserLogin', listenersUserLoginFile)
         listenerFile('UserLogout', listenersUserLogoutFile)
         listenerFile('User', listenersUserFile)
@@ -107,26 +103,6 @@ class Listeners {
             fsa.generateFile(filePath, fh.phpFileContent(app, content))
         }
     }
-
-    def private listenersCoreFile(Application it) '''
-        namespace «appNamespace»\Listener«IF isBase»\Base«ENDIF»;
-
-        «IF !isBase»
-            use «appNamespace»\Listener\Base\AbstractCoreListener;
-        «ELSE»
-            use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-            use Symfony\Component\HttpKernel\HttpKernelInterface;
-        «ENDIF»
-        use Zikula\Core\Event\GenericEvent;
-
-        /**
-         * Event handler «IF isBase»base«ELSE»implementation«ENDIF» class for core events.
-         */
-        «IF isBase»abstract «ENDIF»class «IF isBase»Abstract«ENDIF»CoreListener«IF !isBase» extends AbstractCoreListener«ELSE» implements EventSubscriberInterface«ENDIF»
-        {
-            «new Core().generate(it, isBase)»
-        }
-    '''
 
     def private listenersInstallerFile(Application it) '''
         namespace «appNamespace»\Listener«IF isBase»\Base«ENDIF»;
@@ -256,25 +232,6 @@ class Listeners {
         «IF isBase»abstract «ENDIF»class «IF isBase»Abstract«ENDIF»ThemeListener«IF !isBase» extends AbstractThemeListener«ELSE» implements EventSubscriberInterface«ENDIF»
         {
             «new Theme().generate(it, isBase)»
-        }
-    '''
-
-    def private listenersViewFile(Application it) '''
-        namespace «appNamespace»\Listener«IF isBase»\Base«ENDIF»;
-
-        «IF !isBase»
-            use «appNamespace»\Listener\Base\AbstractViewListener;
-        «ELSE»
-            use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-        «ENDIF»
-        use Zikula\Core\Event\GenericEvent;
-
-        /**
-         * Event handler «IF isBase»base«ELSE»implementation«ENDIF» class for view-related events.
-         */
-        «IF isBase»abstract «ENDIF»class «IF isBase»Abstract«ENDIF»ViewListener«IF !isBase» extends AbstractViewListener«ELSE» implements EventSubscriberInterface«ENDIF»
-        {
-            «new View().generate(it, isBase)»
         }
     '''
 

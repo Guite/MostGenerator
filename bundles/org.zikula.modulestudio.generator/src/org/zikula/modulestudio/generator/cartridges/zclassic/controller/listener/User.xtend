@@ -72,38 +72,12 @@ class User {
         {
             «IF isBase»
                 return [
-                    'user.gettheme'            => ['getTheme', 5],
                     UserEvents::CREATE_ACCOUNT => ['create', 5],
                     UserEvents::UPDATE_ACCOUNT => ['update', 5],
                     UserEvents::DELETE_ACCOUNT => ['delete', 5]
                 ];
             «ELSE»
                 return parent::getSubscribedEvents();
-            «ENDIF»
-        }
-
-        «IF isBase»
-        /**
-         * Listener for the `user.gettheme` event.
-         *
-         * Called during \UserUtil::getTheme() and is used to filter the results.
-         * Receives arg['type'] with the type of result to be filtered
-         * and the $themeName in the $event->data which can be modified.
-         * Must $event->stopPropagation() if handler performs filter.
-         *
-         * @param GenericEvent $event The event instance
-         */
-        «ELSE»
-            /**
-             * {@inheritdoc}
-             */
-        «ENDIF»
-        public function getTheme(GenericEvent $event)
-        {
-            «IF !isBase»
-                parent::getTheme($event);
-
-                «commonExample.generalEventProperties(it)»
             «ENDIF»
         }
 
