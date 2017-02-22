@@ -38,6 +38,7 @@ class ViewHelper {
         «ELSE»
             use Zikula\PermissionsModule\Api\PermissionApi;
         «ENDIF»
+        use Zikula\ThemeModule\Engine\ParameterBag;
         use «appNamespace»\Helper\ControllerHelper;
 
         /**
@@ -66,6 +67,11 @@ class ViewHelper {
             protected $variableApi;
 
             /**
+             * @var ParameterBag
+             */
+            protected $pageVars;
+
+            /**
              * @var ControllerHelper
              */
             protected $controllerHelper;
@@ -77,6 +83,7 @@ class ViewHelper {
              * @param RequestStack     $requestStack     RequestStack service instance
              * @param PermissionApi«IF targets('1.4-dev')»Interface«ENDIF»    $permissionApi    PermissionApi service instance
              * @param VariableApi      $variableApi      VariableApi service instance
+             * @param ParameterBag     $pageVars         ParameterBag for theme page variables
              * @param ControllerHelper $controllerHelper ControllerHelper service instance
              *
              * @return void
@@ -86,12 +93,14 @@ class ViewHelper {
                 RequestStack $requestStack,
                 PermissionApi«IF targets('1.4-dev')»Interface«ENDIF» $permissionApi,
                 VariableApi $variableApi,
+                ParameterBag $pageVars,
                 ControllerHelper $controllerHelper)
             {
                 $this->templating = $templating;
                 $this->request = $requestStack->getCurrentRequest();
                 $this->permissionApi = $permissionApi;
                 $this->variableApi = $variableApi;
+                $this->pageVars = $pageVars;
                 $this->controllerHelper = $controllerHelper;
             }
 
@@ -314,13 +323,13 @@ class ViewHelper {
             // then the surrounding
             $output = $this->templating->render('includePdfHeader.html.twig') . $output . '</body></html>';
 
-            $siteName = $this->variableApi->getSystemVar('sitename');
-
             // create name of the pdf output file
+            $siteName = $this->variableApi->getSystemVar('sitename');
+            $pageTitle = $this->controllerHelper->formatPermalink($this->themePageVars->get('title', ''));
             $fileTitle = $this->controllerHelper->formatPermalink($siteName)
                        . '-'
-                       . $this->controllerHelper->formatPermalink(\PageUtil::getVar('title'))
-                       . '-' . date('Ymd') . '.pdf';
+                       . ($pageTitle != '' ? $pageTitle . '-' : '')
+                       . date('Ymd') . '.pdf';
 
             /*
             if (true === $this->request->query->getBoolean('dbg', false)) {

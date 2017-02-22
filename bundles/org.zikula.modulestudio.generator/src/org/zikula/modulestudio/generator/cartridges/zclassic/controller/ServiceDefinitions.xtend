@@ -587,6 +587,7 @@ class ServiceDefinitions {
                 - "@request_stack"
                 - "@zikula_permissions_module.api.permission"
                 - "@zikula_extensions_module.api.variable"
+                - "@zikula_core.common.theme.pagevars"
                 - "@«modPrefix».controller_helper"
 
         «modPrefix».workflow_helper:
