@@ -43,7 +43,7 @@ class ModuleDispatch {
         public function serviceLinks(GenericEvent $event)
         {
             «IF !isBase»
-                parent::customClassName($event);
+                parent::serviceLinks($event);
 
                 // Inject router and translator services and format data like this:
                 // $event->data[] = [
