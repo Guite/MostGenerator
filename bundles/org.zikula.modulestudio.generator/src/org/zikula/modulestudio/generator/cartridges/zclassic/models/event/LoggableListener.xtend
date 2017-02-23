@@ -44,6 +44,10 @@ class LoggableListener {
             {
                 $data = $logEntry->getData();
                 $filteredData = [];
+                if (!is_array($data)) {
+                    // entity has been deleted
+                    return;
+                }
                 foreach ($data as $key => $value) {
                     $filteredData[$key] = $value;
                     if ($value instanceof File) {
