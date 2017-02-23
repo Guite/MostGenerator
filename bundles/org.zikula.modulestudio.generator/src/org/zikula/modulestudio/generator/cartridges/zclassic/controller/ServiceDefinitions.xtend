@@ -162,7 +162,7 @@ class ServiceDefinitions {
 
     def private getSubscriberNames(Application it) {
         var listeners = newArrayList(
-            'Core', 'Kernel', 'Installer', 'ModuleDispatch', 'Mailer', 'Page', 'Theme', 'View',
+            'Kernel', 'Installer', 'ModuleDispatch', 'Mailer', 'Theme',
             'UserLogin', 'UserLogout', 'User', 'UserRegistration', 'Users', 'Group')
 
         val needsDetailContentType = generateDetailContentType && hasDisplayActions
