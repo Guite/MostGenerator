@@ -295,6 +295,10 @@ class Layout {
             </script>
             <script type="text/javascript" src="{{ asset('jquery/jquery.min.js') }}"></script>
             <script type="text/javascript" src="{{ asset('bootstrap/js/bootstrap.min.js') }}"></script>
+            <script type="text/javascript" src="{{ asset('bundles/fosjsrouting/js/router.js') }}"></script>
+            <script type="text/javascript" src="{{ asset('js/fos_js_routes.js') }}"></script>
+            <script type="text/javascript" src="{{ asset('bundles/bazingajstranslation/js/translator.min.js') }}"></script>
+            <script type="text/javascript" src="{{ asset('bundles/core/js/Zikula.Translator.js') }}"></script>
             «IF generateExternalControllerAndFinder»
                 {% if useFinder|default == true %}
                     «rawJsAssets(true)»
