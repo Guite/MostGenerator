@@ -50,7 +50,7 @@ class Actions {
      * Permission checks in system use cases.
      */
     def private permissionCheck(Action it, String objectTypeVar, String instanceId) '''
-        if (!$this->hasPermission($this->name . ':«objectTypeVar»:', «instanceId»'::', $permLevel)) {
+        if (!$this->hasPermission('«app.appName»:«objectTypeVar»:', «instanceId»'::', $permLevel)) {
             throw new AccessDeniedException();
         }
     '''
