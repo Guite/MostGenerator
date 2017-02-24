@@ -108,7 +108,7 @@ class ModelHelper {
                 * (then a new source object can be created while creating the target object). */»
             «{incomingAndMandatoryRelations = incomingAndMandatoryRelations
                 .filter[!usesAutoCompletion(true)]
-                .filter[editType != RelationEditType.ACTIVE_NONE_PASSIVE_EDIT && editType != RelationEditType.ACTIVE_EDIT_PASSIVE_EDIT]; ''}»
+                .filter[getEditingType != RelationEditType.ACTIVE_NONE_PASSIVE_EDIT && getEditingType != RelationEditType.ACTIVE_EDIT_PASSIVE_EDIT]; ''}»
             «IF incomingAndMandatoryRelations.empty»
                 $result = true;
             «ELSE»«/* corresponding source objects exist already in the system */»

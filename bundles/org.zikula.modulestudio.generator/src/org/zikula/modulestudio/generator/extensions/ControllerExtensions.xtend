@@ -11,9 +11,6 @@ import de.guite.modulestudio.metamodel.IntVar
 import de.guite.modulestudio.metamodel.JoinRelationship
 import de.guite.modulestudio.metamodel.MainAction
 import de.guite.modulestudio.metamodel.ManyToManyRelationship
-import de.guite.modulestudio.metamodel.ManyToOneRelationship
-import de.guite.modulestudio.metamodel.OneToManyRelationship
-import de.guite.modulestudio.metamodel.OneToOneRelationship
 import de.guite.modulestudio.metamodel.RelationEditType
 import de.guite.modulestudio.metamodel.ViewAction
 
@@ -184,6 +181,21 @@ class ControllerExtensions {
         actions.filter(CustomAction)
     }
 
+    def getEditingType(JoinRelationship it) {
+        /*switch (it) {
+            OneToOneRelationship:
+                return editType
+            OneToManyRelationship:
+                return editType
+            ManyToOneRelationship:
+                return editType
+            ManyToManyRelationship:
+                return editType
+        }*/
+
+        RelationEditType.ACTIVE_NONE_PASSIVE_CHOOSE
+    }
+
     /**
      * Retrieves an integer value defining which relation edit type will be implemented.
      * This mapping is done to have a more appropriate logic inside the generator.
@@ -194,37 +206,22 @@ class ControllerExtensions {
      *    3    Combination of 1 and 2
      */
     def dispatch getEditStageCode(JoinRelationship it, Boolean incoming) {
-        switch editType {
+        switch getEditingType {
             case ACTIVE_NONE_PASSIVE_CHOOSE:
                 if (!incoming) 0 else 1
             case ACTIVE_NONE_PASSIVE_EDIT:
                 if (!incoming) 0 else 3
             case ACTIVE_CHOOSE_PASSIVE_NONE:
-                if (!incoming) 2 else 3 // invalid --> default as fallback
+                if (!incoming) 2 else 3 // invalid --> default as fall-back
             case ACTIVE_EDIT_PASSIVE_CHOOSE:
                 if (!incoming) 2 else 1
             case ACTIVE_EDIT_PASSIVE_EDIT:
                 if (!incoming) 2 else 3 // default
             case ACTIVE_EDIT_PASSIVE_NONE:
-                if (!incoming) 2 else 3 // invalid --> default as fallback
+                if (!incoming) 2 else 3 // invalid --> default as fall-back
             default:
                 if (!incoming) 2 else 3
         }
-    }
-
-    def getEditType(JoinRelationship it) {
-        switch (it) {
-            OneToOneRelationship:
-                return editType
-            OneToManyRelationship:
-                return editType
-            ManyToOneRelationship:
-                return editType
-            ManyToManyRelationship:
-                return editType
-        }
-
-        RelationEditType.ACTIVE_NONE_PASSIVE_CHOOSE
     }
 
     /**
