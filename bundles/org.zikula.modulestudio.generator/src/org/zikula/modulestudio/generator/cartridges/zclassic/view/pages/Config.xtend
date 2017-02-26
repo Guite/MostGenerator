@@ -52,7 +52,7 @@ class Config {
                                 «FOR entity : getAllEntities.filter[hasImageFieldsEntity]»
                                     «FOR imageUploadField : entity.imageFieldsEntity»
                                         <li>
-                                            <a id="images«entity.name.formatForCodeCapital»«imageUploadField.name.formatForCodeCapital»Tab" href="#tabImages«entity.name.formatForCodeCapital»«imageUploadField.name.formatForCodeCapital»" role="tab" data-toggle="tab" aria-controls="tabImages«entity.name.formatForCodeCapital»«imageUploadField.name.formatForCodeCapital»">«entity.nameMultiple.formatForDisplayCapital» «imageUploadField.name.formatForDisplay»</a>
+                                            <a id="images«entity.name.formatForCodeCapital»«imageUploadField.name.formatForCodeCapital»Tab" href="#tabImages«entity.name.formatForCodeCapital»«imageUploadField.name.formatForCodeCapital»" role="tab" data-toggle="tab" aria-controls="tabImages«entity.name.formatForCodeCapital»«imageUploadField.name.formatForCodeCapital»">{{ __('«entity.nameMultiple.formatForDisplayCapital» «imageUploadField.name.formatForDisplay»') }}</a>
                                         </li>
                                     «ENDFOR»
                                 «ENDFOR»
