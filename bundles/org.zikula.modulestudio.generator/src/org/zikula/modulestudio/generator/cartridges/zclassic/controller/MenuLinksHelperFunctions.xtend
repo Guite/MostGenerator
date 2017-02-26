@@ -25,8 +25,8 @@ class MenuLinksHelperFunctions {
             if ($routeArea == 'admin' && $this->permissionApi->hasPermission($this->getBundleName() . '::', '::', ACCESS_ADMIN)) {
                 $links[] = [
                     'url' => $this->router->generate('«appName.formatForDB»_config_config'),
-                    'text' => $this->__('Configuration'),
-                    'title' => $this->__('Manage settings for this application'),
+                    'text' => $this->__('Configuration', '«appName.formatForDB»'),
+                    'title' => $this->__('Manage settings for this application', '«appName.formatForDB»'),
                     'icon' => 'wrench'
                 ];
             }
@@ -38,8 +38,8 @@ class MenuLinksHelperFunctions {
             && $this->permissionApi->hasPermission($this->getBundleName() . ':«name.formatForCodeCapital»:', '::', $permLevel)) {
             $links[] = [
                 'url' => $this->router->generate('«application.appName.formatForDB»_«name.formatForDB»_' . $routeArea . 'view'«IF tree != EntityTreeType.NONE», ['tpl' => 'tree']«ENDIF»),
-                'text' => $this->__('«nameMultiple.formatForDisplayCapital»'),
-                'title' => $this->__('«name.formatForDisplayCapital» list')
+                'text' => $this->__('«nameMultiple.formatForDisplayCapital»', '«application.appName.formatForDB»'),
+                'title' => $this->__('«name.formatForDisplayCapital» list, '«application.appName.formatForDB»'')
             ];
         }
     '''
@@ -49,8 +49,8 @@ class MenuLinksHelperFunctions {
             if ($this->permissionApi->hasPermission($this->getBundleName() . '::', '::', ACCESS_READ)) {
                 $links[] = [
                     'url' => $this->router->generate('«appName.formatForDB»_«getLeadingEntity.name.formatForDB»_«getLeadingEntity.getPrimaryAction»'),
-                    'text' => $this->__('Frontend'),
-                    'title' => $this->__('Switch to user area.'),
+                    'text' => $this->__('Frontend', '«appName.formatForDB»'),
+                    'title' => $this->__('Switch to user area.', '«appName.formatForDB»'),
                     'icon' => 'home'
                 ];
             }
@@ -58,8 +58,8 @@ class MenuLinksHelperFunctions {
             if ($this->permissionApi->hasPermission($this->getBundleName() . '::', '::', ACCESS_ADMIN)) {
                 $links[] = [
                     'url' => $this->router->generate('«appName.formatForDB»_«getLeadingEntity.name.formatForDB»_admin«getLeadingEntity.getPrimaryAction»'),
-                    'text' => $this->__('Backend'),
-                    'title' => $this->__('Switch to administration area.'),
+                    'text' => $this->__('Backend', '«appName.formatForDB»'),
+                    'title' => $this->__('Switch to administration area.', '«appName.formatForDB»'),
                     'icon' => 'wrench'
                 ];
             }
