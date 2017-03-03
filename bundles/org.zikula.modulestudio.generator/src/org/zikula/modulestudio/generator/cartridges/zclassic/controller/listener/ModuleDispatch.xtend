@@ -18,7 +18,7 @@ class ModuleDispatch {
         {
             «IF isBase»
                 return [
-                    'module_dispatch.service_links'    => ['serviceLinks', 5]
+                    'module_dispatch.service_links' => ['serviceLinks', 5]
                 ];
             «ELSE»
                 return parent::getSubscribedEvents();
