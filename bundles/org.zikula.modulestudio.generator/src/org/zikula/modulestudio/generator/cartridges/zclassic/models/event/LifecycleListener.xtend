@@ -160,7 +160,7 @@ class LifecycleListener {
              *
              * @see http://docs.doctrine-project.org/projects/doctrine-orm/en/latest/reference/events.html#preupdate
              *
-             * @param LifecycleEventArgs $args Event arguments
+             * @param PreUpdateEventArgs $args Event arguments
              */
             public function preUpdate(PreUpdateEventArgs $args)
             {
