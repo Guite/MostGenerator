@@ -173,13 +173,20 @@ class Events {
             protected $«name.formatForCode»;
 
             /**
+             * @var array Entity change set for preUpdate events.
+             */
+            protected $entityChangeSet = [];
+
+            /**
              * Filter«name.formatForCodeCapital»Event constructor.
              *
              * @param «name.formatForCodeCapital»Entity $«name.formatForCode» Processed entity
+             * @param array $entityChangeSet Change set for preUpdate events
              */
-            public function __construct(«name.formatForCodeCapital»Entity $«name.formatForCode»)
+            public function __construct(«name.formatForCodeCapital»Entity $«name.formatForCode», $entityChangeSet = [])
             {
                 $this->«name.formatForCode» = $«name.formatForCode»;
+                $this->entityChangeSet = $entityChangeSet;
             }
 
             /**
@@ -190,6 +197,16 @@ class Events {
             public function get«name.formatForCodeCapital»()
             {
                 return $this->«name.formatForCode»;
+            }
+
+            /**
+             * Returns the change set.
+             *
+             * @return array
+             */
+            public function getEntityChangeSet()
+            {
+                return $this->entityChangeSet;
             }
         }
     '''

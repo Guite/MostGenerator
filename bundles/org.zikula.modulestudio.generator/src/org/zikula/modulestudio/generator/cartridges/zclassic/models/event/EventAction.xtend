@@ -141,7 +141,7 @@ class EventAction {
 
         // create the filter event and dispatch it
         $filterEventClass = '\\«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Event\\Filter' . ucfirst(«entityVar»->get_objectType()) . 'Event';
-        $event = new $filterEventClass(«entityVar»);
+        $event = new $filterEventClass(«entityVar», $args->getEntityChangeSet());
         $this->container->get('event_dispatcher')->dispatch(constant('\\«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\«name.formatForCodeCapital»Events::' . strtoupper(«entityVar»->get_objectType()) . '_PRE_UPDATE'), $event);
         if ($event->isPropagationStopped()) {
             return false;
