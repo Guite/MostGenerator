@@ -172,11 +172,21 @@ class Events {
              */
             protected $«name.formatForCode»;
 
+            /**
+             * Filter«name.formatForCodeCapital»Event constructor.
+             *
+             * @param «name.formatForCodeCapital»Entity $«name.formatForCode» Processed entity
+             */
             public function __construct(«name.formatForCodeCapital»Entity $«name.formatForCode»)
             {
                 $this->«name.formatForCode» = $«name.formatForCode»;
             }
 
+            /**
+             * Returns the entity.
+             *
+             * @return «name.formatForCodeCapital»Entity
+             */
             public function get«name.formatForCodeCapital»()
             {
                 return $this->«name.formatForCode»;
