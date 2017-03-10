@@ -27,10 +27,11 @@ class ViewHelper {
     def private viewFunctionsBaseImpl(Application it) '''
         namespace «appNamespace»\Helper\Base;
 
+        use Symfony\Bundle\TwigBundle\Loader\FilesystemLoader;
         use Symfony\Component\HttpFoundation\Request;
         use Symfony\Component\HttpFoundation\RequestStack;
         use Symfony\Component\HttpFoundation\Response;
-        use Symfony\Component\Templating\EngineInterface;
+        use Twig_Environment;
         use Zikula\Core\Response\PlainResponse;
         use Zikula\ExtensionsModule\Api\VariableApi;
         «IF targets('1.4-dev')»
@@ -47,9 +48,14 @@ class ViewHelper {
         abstract class AbstractViewHelper
         {
             /**
-             * @var EngineInterface
+             * @var Twig_Environment
              */
-            protected $templating;
+            protected $twig;
+
+            /**
+             * @var FilesystemLoader
+             */
+            protected $twigLoader;
 
             /**
              * @var Request
@@ -79,7 +85,8 @@ class ViewHelper {
             /**
              * ViewHelper constructor.
              *
-             * @param EngineInterface  $templating       EngineInterface service instance
+             * @param Twig_Environment $twig             Twig service instance
+             * @param FilesystemLoader $twigLoader       Twig loader service instance
              * @param RequestStack     $requestStack     RequestStack service instance
              * @param PermissionApi«IF targets('1.4-dev')»Interface«ENDIF»    $permissionApi    PermissionApi service instance
              * @param VariableApi      $variableApi      VariableApi service instance
@@ -89,14 +96,16 @@ class ViewHelper {
              * @return void
              */
             public function __construct(
-                EngineInterface $templating,
+                Twig_Environment $twig,
+                FilesystemLoader $twigLoader,
                 RequestStack $requestStack,
                 PermissionApi«IF targets('1.4-dev')»Interface«ENDIF» $permissionApi,
                 VariableApi $variableApi,
                 ParameterBag $pageVars,
                 ControllerHelper $controllerHelper)
             {
-                $this->templating = $templating;
+                $this->twig = $twig;
+                $this->twigLoader = $twigLoader;
                 $this->request = $requestStack->getCurrentRequest();
                 $this->permissionApi = $permissionApi;
                 $this->variableApi = $variableApi;
@@ -138,7 +147,7 @@ class ViewHelper {
             if (!empty($tpl)) {
                 // check if custom template exists
                 $customTemplate = $template . ucfirst($tpl);
-                if ($this->templating->exists($customTemplate . $templateExtension)) {
+                if ($this->twigLoader->exists($customTemplate . $templateExtension)) {
                     $template = $customTemplate;
                 }
             }
@@ -179,7 +188,7 @@ class ViewHelper {
                 $raw = true;
             }
 
-            $output = $this->templating->render($template, $templateParameters);
+            $output = $this->twig->render($template, $templateParameters);
             «val supportedFormats = getListOfViewFormats + getListOfDisplayFormats»
             $response = null;
             if (true === $raw) {
@@ -312,7 +321,7 @@ class ViewHelper {
         protected function processPdf(array $templateParameters = [], $template)
         {
             // first the content, to set page vars
-            $output = $this->templating->render($template, $templateParameters);
+            $output = $this->twig->render($template, $templateParameters);
 
             // make local images absolute
             $output = str_replace('img src="/', 'img src="' . $this->request->server->get('DOCUMENT_ROOT') . '/', $output);
@@ -321,7 +330,7 @@ class ViewHelper {
             //$output = utf8_decode($output);
 
             // then the surrounding
-            $output = $this->templating->render('includePdfHeader.html.twig') . $output . '</body></html>';
+            $output = $this->twig->render('@«appName»/includePdfHeader.html.twig') . $output . '</body></html>';
 
             // create name of the pdf output file
             $siteName = $this->variableApi->getSystemVar('sitename');

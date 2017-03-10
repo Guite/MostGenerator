@@ -595,7 +595,8 @@ class ServiceDefinitions {
         «modPrefix».view_helper:
             class: «nsBase»ViewHelper
             arguments:
-                - "@templating"«/* this does not use "@twig" on purpose */»
+                - "@twig"
+                - "@twig.loader"
                 - "@request_stack"
                 - "@zikula_permissions_module.api.permission"
                 - "@zikula_extensions_module.api.variable"
