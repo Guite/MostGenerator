@@ -90,7 +90,9 @@ class MassHandling {
             if (null === $entity) {
                 continue;
             }
-            $entity->initWorkflow();
+            «IF !application.targets('1.4-dev')»
+                $entity->initWorkflow();
+            «ENDIF»
 
             // check if $action can be applied to this entity (may depend on it's current workflow state)
             $allowedActions = $workflowHelper->getActionsForObject($entity);

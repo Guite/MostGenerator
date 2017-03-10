@@ -740,14 +740,18 @@ class FormHandler {
          */
         protected function initEntityForEditing()
         {
-            $entity = $this->selectionHelper->getEntity($this->objectType, $this->idValues);
-            if (null === $entity) {
-                return null;
-            }
+            «IF !targets('1.4-dev')»
+                $entity = $this->selectionHelper->getEntity($this->objectType, $this->idValues);
+                if (null === $entity) {
+                    return null;
+                }
 
-            $entity->initWorkflow();
+                $entity->initWorkflow();
 
-            return $entity;
+                return $entity;
+            «ELSE»
+                return $this->selectionHelper->getEntity($this->objectType, $this->idValues);
+            «ENDIF»
         }
     '''
 
@@ -802,6 +806,11 @@ class FormHandler {
             {
                 $translationsEnabled = $this->featureActivationHelper->isEnabled(FeatureActivationHelper::TRANSLATIONS, $this->objectType);
                 $this->templateParameters['translationsEnabled'] = $translationsEnabled;
+
+                $supportedLanguages = $this->translatableHelper->getSupportedLanguages($this->objectType);
+                // assign list of installed languages for translatable extension
+                $this->templateParameters['supportedLanguages'] = $supportedLanguages;
+
                 if (!$translationsEnabled) {
                     return;
                 }
@@ -810,8 +819,7 @@ class FormHandler {
                     $this->templateParameters['translationsEnabled'] = false;
 
                     return;
-            	}
-                $supportedLanguages = $this->translatableHelper->getSupportedLanguages($this->objectType);
+                }
                 if (count($supportedLanguages) < 2) {
                     $this->templateParameters['translationsEnabled'] = false;
 
@@ -835,9 +843,6 @@ class FormHandler {
                 foreach ($translations as $language => $translationData) {
                     $this->templateParameters[$this->objectTypeLower . $language] = $translationData;
                 }
-
-                // assign list of installed languages for translatable extension
-                $this->templateParameters['supportedLanguages'] = $supportedLanguages;
             }
         «ENDIF»
     '''

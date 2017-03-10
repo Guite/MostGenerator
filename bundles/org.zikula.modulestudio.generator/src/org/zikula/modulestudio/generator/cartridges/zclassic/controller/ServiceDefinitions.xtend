@@ -148,6 +148,18 @@ class ServiceDefinitions {
                     - { name: kernel.event_subscriber }
 
         «ENDFOR»
+        «IF targets('1.4-dev')»
+            «modPrefix».workflow_events_listener:
+                class: «appNamespace»\Listener\WorkflowEventsListener
+                arguments:
+                    - "@zikula_permissions_module.api.permission"
+                    «IF needsApproval»
+                        - "@«modPrefix».notification_helper"
+                    «ENDIF»
+                tags:
+                    - { name: kernel.event_subscriber }
+
+        «ENDIF»
         «IF getSubscriberNames.contains('IpTrace')»
             gedmo_doctrine_extensions.listener.ip_traceable:
                 class: Gedmo\IpTraceable\IpTraceableListener
@@ -594,9 +606,15 @@ class ServiceDefinitions {
             class: «nsBase»WorkflowHelper
             arguments:
                 - "@translator.default"
-                «IF needsApproval»
+                «IF targets('1.4-dev')»
+                    - "@workflow.registry"
+                «ENDIF»
+                «IF targets('1.4-dev') || needsApproval»
                     - "@logger"
                     - "@zikula_permissions_module.api.permission"
+                    «IF targets('1.4-dev')»
+                        - "@zikula_users_module.current_user"
+                    «ENDIF»
                     - "@«modPrefix».entity_factory"
                 «ENDIF»
                 - "@«modPrefix».listentries_helper"

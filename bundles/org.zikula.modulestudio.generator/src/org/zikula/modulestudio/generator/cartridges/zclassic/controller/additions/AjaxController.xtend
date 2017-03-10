@@ -895,8 +895,10 @@ class AjaxController {
             return new AjaxResponse($returnValue);
         }
 
-        $entity->initWorkflow();
+        «IF !targets('1.4-dev')»
+            $entity->initWorkflow();
 
+        «ENDIF»
         // delete the object
         $action = 'delete';
         try {

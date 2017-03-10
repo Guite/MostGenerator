@@ -20,6 +20,9 @@ class EntityWorkflowTrait {
     FileHelper fh = new FileHelper
 
     def generate(Application it, IFileSystemAccess fsa) {
+        if (targets('1.4-dev')) {
+            return
+        }
         val filePath = getAppSourceLibPath + 'Traits/EntityWorkflowTrait.php'
         if (!shouldBeSkipped(filePath)) {
             if (shouldBeMarked(filePath)) {

@@ -1495,8 +1495,10 @@ class Repository {
 
             $action = 'archive';
             foreach ($affectedEntities as $entity) {
-                $entity->initWorkflow();
+                «IF !app.targets('1.4-dev')»
+                    $entity->initWorkflow();
 
+                «ENDIF»
                 «IF !skipHookSubscribers»
                     // Let any hooks perform additional validation actions
                     $validationHooksPassed = $hookHelper->callValidationHooks($entity, 'validate_edit');

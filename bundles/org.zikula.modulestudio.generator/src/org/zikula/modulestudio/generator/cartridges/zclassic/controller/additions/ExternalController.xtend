@@ -118,8 +118,10 @@ class ExternalController {
             return new Response($this->__('No such item.'));
         }
 
-        $entity->initWorkflow();
+        «IF !targets('1.4-dev')»
+            $entity->initWorkflow();
 
+        «ENDIF»
         $instance = $entity->createCompositeIdentifier() . '::';
 
         $templateParameters = [
@@ -284,10 +286,12 @@ class ExternalController {
             }
 
         «ENDIF»
-        foreach ($entities as $k => $entity) {
-            $entity->initWorkflow();
-        }
+        «IF !targets('1.4-dev')»
+            foreach ($entities as $k => $entity) {
+                $entity->initWorkflow();
+            }
 
+        «ENDIF»
         $templateParameters['items'] = $entities;
         $templateParameters['finderForm'] = $form->createView();
 

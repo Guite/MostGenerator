@@ -128,7 +128,9 @@ class Entities {
         «IF hasUserFieldsEntity»
             use Zikula\UsersModule\Entity\UserEntity;
         «ENDIF»
-        use «application.appNamespace»\Traits\EntityWorkflowTrait;
+        «IF !application.targets('1.4-dev')»
+            use «application.appNamespace»\Traits\EntityWorkflowTrait;
+        «ENDIF»
     '''
 
     def private dispatch imports(Entity it) '''
@@ -157,7 +159,9 @@ class Entities {
         «IF hasUserFieldsEntity»
             use Zikula\UsersModule\Entity\UserEntity;
         «ENDIF»
-        use «application.appNamespace»\Traits\EntityWorkflowTrait;
+        «IF !application.targets('1.4-dev')»
+            use «application.appNamespace»\Traits\EntityWorkflowTrait;
+        «ENDIF»
         «IF geographical»
             use «application.appNamespace»\Traits\«IF loggable»Loggable«ENDIF»GeographicalTrait;
         «ENDIF»
@@ -192,11 +196,13 @@ class Entities {
          */
         abstract class Abstract«name.formatForCodeCapital»Entity extends EntityAccess«IF it instanceof Entity && ((it as Entity).hasNotifyPolicy || (it as Entity).hasTranslatableFields)» implements«IF (it as Entity).hasNotifyPolicy» NotifyPropertyChanged«ENDIF»«IF (it as Entity).hasTranslatableFields»«IF (it as Entity).hasNotifyPolicy»,«ENDIF» Translatable«ENDIF»«ENDIF»
         {
-            /**
-             * Hook entity workflow field and behaviour.
-             */
-            use EntityWorkflowTrait;
+            «IF !application.targets('1.4-dev')»
+                /**
+                 * Hook entity workflow field and behaviour.
+                 */
+                use EntityWorkflowTrait;
 
+            «ENDIF»
             «IF it instanceof Entity && (it as Entity).geographical»
                 /**
                  * Hook geographical behaviour embedding latitude and longitude fields.

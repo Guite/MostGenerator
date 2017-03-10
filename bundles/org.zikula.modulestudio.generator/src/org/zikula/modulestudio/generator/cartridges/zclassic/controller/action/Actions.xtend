@@ -131,9 +131,11 @@ class Actions {
             }
 
         «ENDIF»
-        foreach ($templateParameters['items'] as $k => $entity) {
-            $entity->initWorkflow();
-        }
+        «IF !app.targets('1.4-dev')»
+            foreach ($templateParameters['items'] as $k => $entity) {
+                $entity->initWorkflow();
+            }
+        «ENDIF»
         «IF loggable»
 
             // check if there exist any deleted «name.formatForDisplay»
@@ -187,7 +189,9 @@ class Actions {
         $instanceId = $«name.formatForCode»->createCompositeIdentifier();
         «action.permissionCheck("' . ucfirst($objectType) . '", "$instanceId . ")»
 
-        $«name.formatForCode»->initWorkflow();
+        «IF !app.targets('1.4-dev')»
+            $«name.formatForCode»->initWorkflow();
+        «ENDIF»
         «IF loggable»
             $requestedVersion = $request->query->getInt('version', 0);
             if ($requestedVersion > 0) {
@@ -262,8 +266,10 @@ class Actions {
         $logger = $this->get('logger');
         $logArgs = ['app' => '«app.appName»', 'user' => $this->get('zikula_users_module.current_user')->get('uname'), 'entity' => '«name.formatForDisplay»', 'id' => $«name.formatForCode»->createCompositeIdentifier()];
 
-        $«name.formatForCode»->initWorkflow();
+        «IF !app.targets('1.4-dev')»
+            $«name.formatForCode»->initWorkflow();
 
+        «ENDIF»
         // determine available workflow actions
         $workflowHelper = $this->get('«app.appService».workflow_helper');
         $actions = $workflowHelper->getActionsForObject($«name.formatForCode»);

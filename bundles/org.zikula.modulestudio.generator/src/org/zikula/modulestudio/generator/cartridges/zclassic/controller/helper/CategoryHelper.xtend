@@ -373,6 +373,10 @@ class CategoryHelper {
             $categoryInfo = [];
             foreach ($categories as $category) {
                 $registryId = $category->getCategoryRegistryId();
+                if (!isset($registries[$registryId])) {
+                    // seems this registry has been deleted
+                    continue;
+                }
                 $registryName = $registries[$registryId];
                 if (!isset($categoryInfo[$registryName])) {
                     $categoryInfo[$registryName] = [];

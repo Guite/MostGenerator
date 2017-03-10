@@ -106,7 +106,17 @@ class LinkContainer {
              «ENDIF»
              * @param ControllerHelper    $controllerHelper ControllerHelper service instance
              */
-            public function __construct(TranslatorInterface $translator, RouterInterface $router, PermissionApi«IF targets('1.4-dev')»Interface«ENDIF» $permissionApi«IF generateAccountApi», VariableApi $variableApi«ENDIF»«IF generateAccountApi || hasEditActions», CurrentUserApi $currentUserApi«ENDIF», ControllerHelper $controllerHelper)
+            public function __construct(
+                TranslatorInterface $translator,
+                RouterInterface $router,
+                PermissionApi«IF targets('1.4-dev')»Interface«ENDIF» $permissionApi,
+                «IF generateAccountApi»
+                    VariableApi $variableApi,
+                «ENDIF»
+                «IF generateAccountApi || hasEditActions»
+                    CurrentUserApi $currentUserApi,
+                «ENDIF»
+                ControllerHelper $controllerHelper)
             {
                 $this->setTranslator($translator);
                 $this->router = $router;

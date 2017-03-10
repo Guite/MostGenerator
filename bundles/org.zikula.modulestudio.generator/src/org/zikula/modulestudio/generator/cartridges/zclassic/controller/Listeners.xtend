@@ -15,6 +15,7 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener.UserLogout
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener.UserRegistration
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener.Users
+import org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener.WorkflowEvents
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
@@ -89,6 +90,9 @@ class Listeners {
         }
         if (!getAllEntities.filter[hasIpTraceableFields].empty) {
             listenerFile('IpTrace', listenersIpTraceFile)
+        }
+        if (targets('1.4-dev')) {
+            listenerFile('WorkflowEvents', listenersWorkflowEventsFile)
         }
     }
 
@@ -409,6 +413,35 @@ class Listeners {
         «IF isBase»abstract «ENDIF»class «IF isBase»Abstract«ENDIF»IpTraceListener«IF !isBase» extends AbstractIpTraceListener«ELSE» implements EventSubscriberInterface«ENDIF»
         {
             «new IpTrace().generate(it, isBase)»
+        }
+    '''
+
+    def private listenersWorkflowEventsFile(Application it) '''
+        namespace «appNamespace»\Listener«IF isBase»\Base«ENDIF»;
+
+        «IF !isBase»
+            use «appNamespace»\Listener\Base\AbstractWorkflowEventsListener;
+            use Symfony\Component\Workflow\Event\Event;
+            use Symfony\Component\Workflow\Event\GuardEvent;
+        «ELSE»
+            use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+            use Symfony\Component\Workflow\Event\Event;
+            use Symfony\Component\Workflow\Event\GuardEvent;
+            use Zikula\Core\Doctrine\EntityAccess;
+            use Zikula\PermissionsModule\Api\ApiInterface\PermissionApiInterface;
+            «IF needsApproval»
+                use «appNamespace»\Helper\NotificationHelper;
+            «ENDIF»
+        «ENDIF»
+
+        /**
+         * Event handler implementation class for workflow events.
+         *
+         * @see /src/docs/Core-2.0/Workflows/WorkflowEvents.md
+         */
+        «IF isBase»abstract «ENDIF»class «IF isBase»Abstract«ENDIF»WorkflowEventsListener«IF !isBase» extends AbstractWorkflowEventsListener«ELSE» implements EventSubscriberInterface«ENDIF»
+        {
+            «new WorkflowEvents().generate(it, isBase)»
         }
     '''
 }

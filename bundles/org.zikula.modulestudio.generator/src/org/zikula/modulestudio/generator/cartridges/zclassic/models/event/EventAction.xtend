@@ -72,28 +72,30 @@ class EventAction {
         if ($event->isPropagationStopped()) {
             return false;
         }
+        «IF !targets('1.4-dev')»
 
-        // delete workflow for this entity
-        $workflowHelper = $this->container->get('«appService».workflow_helper');
-        $workflowHelper->normaliseWorkflowData(«entityVar»);
-        $workflow = «entityVar»['__WORKFLOW__'];
-        if ($workflow['id'] > 0) {
-            $entityManager = $this->container->get('«entityManagerService»'); // @todo maybe $args->getObjectManager()
-            $result = true;
-            try {
-                $workflow = $entityManager->find('Zikula\Core\Doctrine\Entity\WorkflowEntity', $workflow['id']);
-                $entityManager->remove($workflow);
-                $entityManager->flush();
-            } catch (\Exception $e) {
-                $result = false;
-            }
-            if (false === $result) {
-                $flashBag = $this->container->get('session')->getFlashBag();
-                $flashBag->add('error', $this->container->get('translator.default')->__('Error! Could not remove stored workflow. Deletion has been aborted.'));
+            // delete workflow for this entity
+            $workflowHelper = $this->container->get('«appService».workflow_helper');
+            $workflowHelper->normaliseWorkflowData(«entityVar»);
+            $workflow = «entityVar»['__WORKFLOW__'];
+            if ($workflow['id'] > 0) {
+                $entityManager = $this->container->get('«entityManagerService»'); // @todo maybe $args->getObjectManager()
+                $result = true;
+                try {
+                    $workflow = $entityManager->find('Zikula\Core\Doctrine\Entity\WorkflowEntity', $workflow['id']);
+                    $entityManager->remove($workflow);
+                    $entityManager->flush();
+                } catch (\Exception $e) {
+                    $result = false;
+                }
+                if (false === $result) {
+                    $flashBag = $this->container->get('session')->getFlashBag();
+                    $flashBag->add('error', $this->container->get('translator.default')->__('Error! Could not remove stored workflow. Deletion has been aborted.'));
 
-                return false;
+                    return false;
+                }
             }
-        }
+        «ENDIF»
     '''
 
     def postRemove(Application it) '''

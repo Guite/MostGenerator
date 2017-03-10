@@ -384,8 +384,8 @@ class NotificationHelper {
          */
         protected function prepareEmailData()
         {
-            $objectType = $this->entity['_objectType'];
-            $state = $this->entity['workflowState'];
+            $objectType = $this->entity->get_objectType();
+            $state = $this->entity->getWorkflowState();
             $stateInfo = $this->workflowHelper->getStateInfo($state);
 
             $remarks = $this->session->get($this->name . 'AdditionalNotificationRemarks', '');

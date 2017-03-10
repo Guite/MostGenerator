@@ -40,7 +40,9 @@ class Installer {
         use Doctrine\DBAL\Connection;
         use RuntimeException;
         use Zikula\Core\AbstractExtensionInstaller;
-        use Zikula_Workflow_Util;
+        «IF !targets('1.4-dev')»
+            use Zikula_Workflow_Util;
+        «ENDIF»
         «IF hasCategorisableEntities»
             use Zikula\CategoriesModule\Entity\CategoryRegistryEntity;
         «ENDIF»
@@ -231,15 +233,17 @@ class Installer {
         public function uninstall()
         {
             $logger = $this->container->get('logger');
+            «IF !targets('1.4-dev')»
 
-            // delete stored object workflows
-            $result = Zikula_Workflow_Util::deleteWorkflowsForModule('«appName»');
-            if (false === $result) {
-                $this->addFlash('error', $this->__f('An error was encountered while removing stored object workflows for the %extension% extension.', ['%extension%' => '«appName»']));
-                $logger->error('{app}: Could not remove stored object workflows during uninstallation.', ['app' => '«appName»']);
+                // delete stored object workflows
+                $result = Zikula_Workflow_Util::deleteWorkflowsForModule('«appName»');
+                if (false === $result) {
+                    $this->addFlash('error', $this->__f('An error was encountered while removing stored object workflows for the %extension% extension.', ['%extension%' => '«appName»']));
+                    $logger->error('{app}: Could not remove stored object workflows during uninstallation.', ['app' => '«appName»']);
 
-                return false;
-            }
+                    return false;
+                }
+            «ENDIF»
 
             try {
                 $this->schemaTool->drop($this->listEntityClasses());

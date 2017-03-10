@@ -1089,11 +1089,11 @@ class EditEntity {
         {
             foreach ($options['actions'] as $action) {
                 $builder->add($action['id'], '«nsSymfonyFormType»SubmitType', [
-                    'label' => $this->__(/** @Ignore */$action['title']),
+                    'label' => «IF app.targets('1.4-dev')»$action['title']«ELSE»$this->__(/** @Ignore */$action['title'])«ENDIF»,
                     'icon' => ($action['id'] == 'delete' ? 'fa-trash-o' : ''),
                     'attr' => [
-                        'class' => $action['buttonClass'],
-                        'title' => $this->__(/** @Ignore */$action['description'])
+                        'class' => $action['buttonClass']«IF !app.targets('1.4-dev')»,
+                        'title' => $this->__(/** @Ignore */$action['description'])«ENDIF»
                     ]
                 ]);
             }

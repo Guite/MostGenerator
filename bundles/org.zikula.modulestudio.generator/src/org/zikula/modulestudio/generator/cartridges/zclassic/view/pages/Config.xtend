@@ -8,6 +8,7 @@ import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
+import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
 
 class Config {
 
@@ -15,6 +16,7 @@ class Config {
     extension ModelExtensions = new ModelExtensions
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
+    extension WorkflowExtensions = new WorkflowExtensions
 
     def generate(Application it, IFileSystemAccess fsa) {
         val templatePath = getViewPath + 'Config/'
@@ -62,6 +64,12 @@ class Config {
                             «ENDIF»
                         </li>
                     «ENDFOR»
+                    «IF targets('1.4-dev')»
+                        {% set tabTitle = __('Workflows') %}
+                        <li role="presentation">
+                            <a id="workflowsTab" href="#tabWorkflows" title="{{ tabTitle|e('html_attr') }}" role="tab" data-toggle="tab">{{ tabTitle }}</a>
+                        </li>
+                    «ENDIF»
                     </ul>
 
                     {{ form_errors(form) }}
@@ -92,6 +100,21 @@ class Config {
 
     def private configSections(Application it) '''
         «FOR varContainer : getSortedVariableContainers»«varContainer.configSection(it, varContainer == getSortedVariableContainers.head)»«ENDFOR»
+        «IF targets('1.4-dev')»
+            <div role="tabpanel" class="tab-pane fade" id="tabWorkflows" aria-labelledby="workflowsTab">
+                {% set tabTitle = __('Workflows') %}
+                <fieldset>
+                    <legend>{{ tabTitle }}</legend>
+
+                    <p class="alert alert-info">{{ __('Here you can inspect and amend the existing workflows.') }}</p>
+
+                    «FOR entity : getAllEntities»
+                        <h4>{{ __('«entity.nameMultiple.formatForDisplayCapital»') }}</h4>
+                        <p><a href="{{ path('zikula_workflow_editor_index', { 'workflow': '«appName.formatForDB»_«entity.workflow.textualName»' }) }}" title="{{ __('Edit workflow for «entity.nameMultiple.formatForDisplay»') }}" target="_blank"><i class="fa fa-cubes"></i> {{ __('Edit «entity.nameMultiple.formatForDisplay» workflow') }}</a>
+                    «ENDFOR»
+                </fieldset>
+            </div>
+        «ENDIF»
     '''
 
     def private configSection(Variables it, Application app, Boolean isPrimaryVarContainer) '''

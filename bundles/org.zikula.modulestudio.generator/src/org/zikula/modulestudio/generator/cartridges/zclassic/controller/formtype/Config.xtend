@@ -158,7 +158,7 @@ class Config {
 
     def private definition(Variable it) '''
         ->add('«name.formatForCode»', '«fieldType»Type', [
-            'label' => $this->__('«name.formatForDisplayCapital»') . ':',
+            'label' => $this->__('«labelText»') . ':',
             «IF null !== documentation && documentation != ''»
                 'label_attr' => [
                     'class' => 'tooltips',
@@ -178,11 +178,45 @@ class Config {
             'attr' => [
                 «additionalAttributes»
                 'title' => $this->__('«titleAttribute»')«IF isShrinkDimensionField»,
-                'class' => 'shrinkdimension-«name.formatForCode.toLowerCase»'«ELSEIF name.formatForCode.startsWith('enableShrinkingFor')»,
+                'class' => 'shrinkdimension-«name.formatForCode.toLowerCase»'«ELSEIF isShrinkEnableField»,
                 'class' => 'shrink-enabler'«ENDIF»
             ],«additionalOptions»
         ])
     '''
+
+    def private labelText(Variable it) {
+        if (isShrinkEnableField) {
+            return 'Enable shrinking'
+        }
+        if (isShrinkDimensionField) {
+            if (name.startsWith('shrinkWidth')) {
+                return 'Shrink width'
+            }
+            if (name.startsWith('shrinkHeight')) {
+                return 'Shrink height'
+            }
+        }
+        if (isThumbModeField) {
+            return 'Thumbnail mode'
+        }
+        if (isThumbDimensionField) {
+            var suffix = ''
+            if (name.endsWith('View')) {
+                suffix = ' view'
+            } else if (name.endsWith('Display')) {
+                suffix = ' display'
+            } else if (name.endsWith('Edit')) {
+                suffix = ' edit'
+            }
+            if (name.startsWith('thumbnailWidth')) {
+                return 'Thumbnail width' + suffix
+            }
+            if (name.startsWith('thumbnailHeight')) {
+                return 'Thumbnail height' + suffix
+            }
+        }
+        name.formatForDisplayCapital
+    }
 
     def private dispatch fieldType(Variable it) '''«nsSymfonyFormType»Text'''
     def private dispatch titleAttribute(Variable it) '''Enter the «name.formatForDisplay».'''
@@ -192,7 +226,7 @@ class Config {
     def private dispatch additionalOptions(Variable it) ''''''
 
     def private dispatch fieldType(IntVar it) '''«IF isUserGroupSelector»Symfony\Bridge\Doctrine\Form\Type\Entity«ELSE»«nsSymfonyFormType»Integer«ENDIF»'''
-    def private dispatch titleAttribute(IntVar it) '''«IF isUserGroupSelector»Choose the «name.formatForDisplay».«ELSE»Enter the «name.formatForDisplay».') . ' ' . $this->__('Only digits are allowed.«ENDIF»'''
+    def private dispatch titleAttribute(IntVar it) '''«IF isUserGroupSelector»Choose the «name.formatForDisplay».«ELSE»«IF isShrinkDimensionField || isThumbDimensionField»Enter the «labelText.toLowerCase».«ELSE»Enter the «name.formatForDisplay».«ENDIF»') . ' ' . $this->__('Only digits are allowed.«ENDIF»'''
     def private dispatch additionalAttributes(IntVar it) '''
         «IF isUserGroupSelector»
             'maxlength' => 255,
@@ -212,12 +246,20 @@ class Config {
         «ENDIF»
     '''
 
+    def private isShrinkEnableField(Variable it) {
+        it instanceof BoolVar && name.startsWith('enableShrinkingFor')
+    }
+
     def private isShrinkDimensionField(Variable it) {
-        name.formatForCode.startsWith('shrinkWidth') || name.formatForCode.startsWith('shrinkHeight')
+        name.startsWith('shrinkWidth') || name.startsWith('shrinkHeight')
+    }
+
+    def private isThumbModeField(Variable it) {
+        name.startsWith('thumbnailMode')
     }
 
     def private isThumbDimensionField(Variable it) {
-        name.formatForCode.startsWith('thumbnailWidth') || name.formatForCode.startsWith('thumbnailHeight')
+        name.startsWith('thumbnailWidth') || name.startsWith('thumbnailHeight')
     }
 
     def private dispatch fieldType(TextVar it) '''«nsSymfonyFormType»Text«IF multiline»area«ENDIF»'''
@@ -228,11 +270,11 @@ class Config {
     '''
 
     def private dispatch fieldType(BoolVar it) '''«nsSymfonyFormType»Checkbox'''
-    def private dispatch titleAttribute(BoolVar it) '''The «name.formatForDisplay» option.'''
+    def private dispatch titleAttribute(BoolVar it) '''The «IF isShrinkEnableField»enable shrinking«ELSE»«name.formatForDisplay»«ENDIF» option.'''
     def private dispatch additionalAttributes(BoolVar it) ''''''
 
     def private dispatch fieldType(ListVar it) '''«nsSymfonyFormType»Choice'''
-    def private dispatch titleAttribute(ListVar it) '''Choose the «name.formatForDisplay».'''
+    def private dispatch titleAttribute(ListVar it) '''Choose the «IF isThumbModeField»thumbnail mode«ELSE»«name.formatForDisplay»«ENDIF».'''
     def private dispatch additionalAttributes(ListVar it) ''''''
     def private dispatch additionalOptions(ListVar it) '''
         'choices' => [

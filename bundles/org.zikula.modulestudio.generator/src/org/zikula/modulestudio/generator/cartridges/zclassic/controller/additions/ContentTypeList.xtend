@@ -242,6 +242,7 @@ class ContentTypeList {
                                 break;
                             }
                         }
+                        $data['catIds'][$propName] = [];
                         if (isset($data['catids' . $propName])) {
                             $data['catIds'][$propName] = $data['catids' . $propName];
                         }

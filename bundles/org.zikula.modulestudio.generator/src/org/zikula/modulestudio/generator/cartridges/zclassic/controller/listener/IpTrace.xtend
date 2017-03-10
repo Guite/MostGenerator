@@ -51,7 +51,7 @@ class IpTrace {
             /**
              * Set the username from the security context by listening on core.request
              *
-             * @param GetResponseEvent $event
+             * @param GetResponseEvent $event The event instance
              */
         «ELSE»
             /**

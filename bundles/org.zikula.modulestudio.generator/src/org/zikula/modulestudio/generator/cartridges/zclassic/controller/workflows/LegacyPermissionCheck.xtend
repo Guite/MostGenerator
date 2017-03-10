@@ -16,7 +16,7 @@ import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
 /**
  * Workflow permission checks.
  */
-class PermissionCheck {
+class LegacyPermissionCheck {
 
     extension FormattingExtensions = new FormattingExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
@@ -37,6 +37,9 @@ class PermissionCheck {
      * Entry point for workflow permission checks.
      */
     def generate(Application it, IFileSystemAccess fsa) {
+        if (targets('1.4-dev')) {
+            return
+        }
         app = it
         this.fsa = fsa
         outputPath = getAppSourcePath + 'workflows/'
@@ -121,7 +124,7 @@ class PermissionCheck {
          */
         function «app.appName»_workflow_«wfType.textualName»_gettextstrings()
         {
-            «val wfDefinition = new Definition»
+            «val wfDefinition = new LegacyDefinition»
             $translator = \ServiceUtil::get('translator.default');
 
             return [

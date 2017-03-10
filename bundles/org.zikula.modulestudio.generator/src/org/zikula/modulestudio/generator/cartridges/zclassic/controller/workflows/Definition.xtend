@@ -4,34 +4,43 @@ import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.EntityWorkflowType
 import de.guite.modulestudio.metamodel.ListFieldItem
 import java.util.ArrayList
+import java.util.HashMap
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
+import org.zikula.modulestudio.generator.extensions.Utils
 import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
 
 /**
- * Workflow definitions in xml format.
+ * Workflow definitions in YAML format.
  */
 class Definition {
+
     extension FormattingExtensions = new FormattingExtensions
     extension NamingExtensions = new NamingExtensions
+    extension Utils = new Utils
     extension WorkflowExtensions = new WorkflowExtensions
 
     Application app
     EntityWorkflowType wfType
     ArrayList<ListFieldItem> states
+    HashMap<String, ArrayList<String>> transitionsFrom
+    HashMap<String, String> transitionsTo
 
     IFileSystemAccess fsa
     String outputPath
 
     /**
      * Entry point for workflow definitions.
-     * This generates xml files describing the workflows used in the application.
+     * This generates YML files describing the workflows used in the application.
      */
     def generate(Application it, IFileSystemAccess fsa) {
+        if (!targets('1.4-dev')) {
+            return
+        }
         app = it
         this.fsa = fsa
-        outputPath = getAppSourcePath + 'workflows/'
+        outputPath = getResourcesPath + 'workflows/'
 
         generate(EntityWorkflowType.NONE)
         generate(EntityWorkflowType.STANDARD)
@@ -43,72 +52,65 @@ class Definition {
             return
         }
 
+        var fileName = wfType.textualName + '.yml'
+        if (app.shouldBeSkipped(outputPath + fileName)) {
+            return
+        }
+
         this.wfType = wfType
         // generate only those states which are required by any entity using this workflow type
         this.states = getRequiredStateList(app, wfType)
+        this.collectTransitions
 
-        var fileName = wfType.textualName + '.xml'
-        if (!app.shouldBeSkipped(outputPath + fileName)) {
-            if (app.shouldBeMarked(outputPath + fileName)) {
-                fileName = wfType.textualName + '.generated.xml'
-            }
-            fsa.generateFile(outputPath + fileName, xmlSchema)
+        if (app.shouldBeMarked(outputPath + fileName)) {
+            fileName = wfType.textualName + '.generated.yml'
         }
+        fsa.generateFile(outputPath + fileName, workflowDefinition)
     }
 
-    def private xmlSchema() '''
-        <?xml version="1.0" encoding="UTF-8"?>
-        <workflow>
-            «workflowInfo»
-            «statesImpl»
-            «actionsImpl»
-        </workflow>
+    def private workflowDefinition() '''
+        workflow:
+            workflows:
+                «app.appName.formatForDB»_«wfType.textualName.formatForDB»:
+                    type: state_machine
+                    marking_store:
+                        type: single_state
+                        arguments:
+                            - workflowState
+                    supports:
+                        «FOR entity : app.getEntitiesForWorkflow(wfType)»
+                            - «app.appNamespace»\Entity\«entity.name.formatForCodeCapital»Entity
+                        «ENDFOR»
+                    «statesImpl»
+                    «actionsImpl»
     '''
-
-    def private workflowInfo() '''
-        <title>«wfType.textualName.formatForDisplayCapital» workflow («wfType.approvalType.formatForDisplay» approval)</title>
-        <description>«workflowDescription(wfType)»</description>
-    '''
-
-    def workflowDescription(EntityWorkflowType wfType) {
-        switch wfType {
-            case NONE: 'This is like a non-existing workflow. Everything is online immediately after creation.'
-            case STANDARD: 'This is a two staged workflow with stages for untrusted submissions and finally approved publications. It does not allow corrections of non-editors to published pages.'
-            case ENTERPRISE: 'This is a three staged workflow with stages for untrusted submissions, acceptance by editors, and approval control by a superior editor; approved publications are handled by authors staff.'
-        }
-    }
 
     def private statesImpl() '''
-        <!-- define the available states -->
-        <states>
+        places:
             «FOR state : states»
-                «state.stateImpl»
+                - «state.value»
             «ENDFOR»
-        </states>
-    '''
-
-    def private stateImpl(ListFieldItem it) '''
-        <state id="«value»">
-            <title>«name»</title>
-            <description>«documentation»</description>
-        </state>
     '''
 
     def private actionsImpl() '''
-        <!-- define actions and assign their availability to certain states -->
-        <!-- available permissions: overview, read, comment, moderate, edit, add, delete, admin -->
-        <actions>
-            «FOR state : states»
-                <!-- From state: «state.name» -->
-                «state.actionsForStateImpl»
+        transitions:
+            «FOR transitionKey : transitionsFrom.keySet»
+                «transitionKey»:
+                    from: «IF transitionsFrom.get(transitionKey).length > 1»[«transitionsFrom.get(transitionKey).join(', ')»]«ELSE»«transitionsFrom.get(transitionKey).join(', ')»«ENDIF»
+                    to: «transitionsTo.get(transitionKey)»
             «ENDFOR»
-
-            <!-- Actions for destroying objects -->
-            «FOR state : states»
-                «state.actionsForDestructionImpl»
-            «ENDFOR»
-        </actions>
     '''
+
+    def private collectTransitions() {
+        transitionsFrom = new HashMap
+        transitionsTo = new HashMap
+        for (state : states) {
+            state.actionsForStateImpl
+        }
+        for (state : states) {
+            state.actionsForDestructionImpl
+        }
+    }
 
     def private actionsForStateImpl(ListFieldItem it) {
         switch it.value {
@@ -163,72 +165,71 @@ class Definition {
 
     def private deferAction(ListFieldItem it) '''
         «IF app.hasWorkflowState(wfType, 'deferred')»
-            «val permission = if (wfType == EntityWorkflowType.NONE) 'edit' else 'comment'»
-            «actionImpl('defer', 'Defer', permission, it.value, 'deferred')»
+            «addTransition('defer', it.value, 'deferred')»
         «ENDIF»
     '''
 
     def private submitAction(ListFieldItem it) '''
         «IF wfType == EntityWorkflowType.NONE»
-            «actionImpl('submit', 'Submit', 'edit', it.value, 'approved')»
+            «addTransition('submit', it.value, 'approved')»
         «ELSE»
-            «actionImpl('submit', 'Submit', 'comment', it.value, 'waiting')»
+            «addTransition('submit', it.value, 'waiting')»
         «ENDIF»
     '''
 
     def private updateAction(ListFieldItem it) '''
-        «actionImpl('update', 'Update', 'edit', it.value, it.value)»
+        «addTransition('update' + it.value, it.value, it.value)»
     '''
 
     def private rejectAction(ListFieldItem it) '''
         «IF app.hasWorkflowState(wfType, 'deferred')»
-            «actionImpl('reject', 'Reject', 'edit', it.value, 'deferred')»
+            «addTransition('reject', it.value, 'deferred')»
         «ENDIF»
     '''
 
     def private acceptAction(ListFieldItem it) '''
         «IF app.hasWorkflowState(wfType, 'accepted')»
-            «actionImpl('accept', 'Accept', 'edit', it.value, 'accepted')»
+            «addTransition('accept', it.value, 'accepted')»
         «ENDIF»
     '''
 
     def private approveAction(ListFieldItem it) '''
-        «actionImpl('approve', 'Approve', 'add', it.value, 'approved')»
+        «addTransition('approve', it.value, 'approved')»
     '''
 
     def private submitAndAcceptAction(ListFieldItem it) '''
         «IF app.hasWorkflowState(wfType, 'accepted')»
-            «actionImpl('accept', 'Submit and Accept', 'edit', it.value, 'accepted')»
+            «addTransition('accept', it.value, 'accepted')»
         «ENDIF»
     '''
 
     def private submitAndApproveAction(ListFieldItem it) '''
         «IF app.hasWorkflowState(wfType, 'waiting')»
-            «actionImpl('approve', 'Submit and Approve', 'add', it.value, 'approved')»
+            «addTransition('approve', it.value, 'approved')»
         «ENDIF»
     '''
 
     def private demoteAction(ListFieldItem it) '''
         «IF app.hasWorkflowState(wfType, 'accepted')»
-            «actionImpl('demote', 'Demote', 'add', it.value, 'accepted')»
+            «addTransition('demote', it.value, 'accepted')»
         «ENDIF»
     '''
 
     def private suspendAction(ListFieldItem it) '''
         «IF app.hasWorkflowState(wfType, 'suspended')»
-            «actionImpl('unpublish', 'Unpublish', 'edit', it.value, 'suspended')»
+            «addTransition('unpublish', it.value, 'suspended')»
         «ENDIF»
     '''
 
     def private unsuspendAction(ListFieldItem it) '''
         «IF it.value == 'suspended'»
-            «actionImpl('publish', 'Publish', 'edit', it.value, 'approved')»
+            «addTransition('publish', it.value, 'approved')»
         «ENDIF»
     '''
 
     def private archiveAction(ListFieldItem it) '''
         «IF app.hasWorkflowState(wfType, 'archived')»
-            «actionImpl('archive', 'Archive', 'edit', it.value, 'archived')»
+            «addTransition('archive', it.value, 'archived')»
         «ENDIF»
     '''
 
@@ -242,68 +243,27 @@ class Definition {
     '''
 
     def private trashAndRecoverActions(ListFieldItem it) '''
-        «actionImpl('trash', 'Trash', 'edit', it.value, 'trashed')»
-        «actionImpl('recover', 'Recover', 'edit', 'trashed', it.value)»
+        «addTransition('trash', it.value, 'trashed')»
+        «addTransition('recover', 'trashed', it.value)»
     '''
 
     def private deleteAction(ListFieldItem it) '''
-        «actionImpl('delete', 'Delete', 'delete', it.value, 'deleted')»
+        «addTransition('delete', it.value, 'deleted')»
     '''
 
-    def private actionImpl(String id, String title, String permission, String state, String nextState) '''
-        <action id="«id»">
-            <title>«title»</title>
-            <description>«getWorkflowActionDescription(wfType, title)»</description>
-            <permission>«permission»</permission>
-            «IF state != '' && state != 'initial'»
-                <state>«state»</state>
-            «ENDIF»
-            «IF nextState != '' && nextState != state»
-                <nextState>«nextState»</nextState>
-            «ENDIF»
-
-            «IF id == 'delete'»
-                <operation>delete</operation>
-            «ELSE»
-                <operation>update</operation>
-            «ENDIF»
-            «IF wfType != EntityWorkflowType.NONE»
-                «notifyCall(id, nextState)»
-            «ENDIF»
-        </action>
-
-    '''
-
-    def private notifyCall(String id, String state) '''
-        «IF id == 'submit' && state == 'waiting'»
-            <operation recipientType="moderator" action="«id»">notify</operation>
-        «ELSEIF id == 'reject' && state == 'deferred'»
-            <operation recipientType="creator" action="«id»">notify</operation>
-        «ELSEIF id == 'accept' && state == 'accepted'»
-            <operation recipientType="creator" action="«id»">notify</operation>
-            <operation recipientType="superModerator" action="«id»">notify</operation>
-        «ELSEIF id == 'approve' && state == 'approved'»
-            <operation recipientType="creator" action="«id»">notify</operation>
-            «IF wfType == EntityWorkflowType.ENTERPRISE»
-                <operation recipientType="moderator" action="«id»">notify</operation>
-            «ENDIF»
-        «ELSEIF id == 'demote' && state == 'accepted'»
-            <operation recipientType="moderator" action="«id»">notify</operation>
-        «ELSEIF id == 'unpublish' && state == 'suspended'»
-            <operation recipientType="creator" action="«id»">notify</operation>
-        «ELSEIF id == 'publish' && state == 'approved'»
-            <operation recipientType="creator" action="«id»">notify</operation>
-        «ELSEIF id == 'archive' && state == 'archived'»
-            <operation recipientType="creator" action="«id»">notify</operation>
-        «ELSEIF id == 'trash' && state == 'trashed'»
-            <operation recipientType="creator" action="«id»">notify</operation>
-        «ELSEIF id == 'recover'»
-            <operation recipientType="creator" action="«id»">notify</operation>
-        «ELSEIF id == 'delete'»
-            <operation recipientType="creator" action="«id»">notify</operation>
-        «ENDIF»
-
-        <!-- example for custom recipient type using designated entity fields: -->
-        <!-- operation recipientType="field-email^lastname" action="submit">notify</operation -->
-    '''
+    def private addTransition(String id, String state, String nextState) {
+        if (!transitionsFrom.containsKey(id)) {
+            transitionsFrom.put(id, newArrayList)
+        }
+        transitionsFrom.get(id).add(state)
+        if (!transitionsTo.containsKey(id)) {
+            transitionsTo.put(id, nextState)
+        } else if (transitionsTo.get(id) != nextState) {
+            try {
+                throw new Exception('Invalid workflow structure: transition "' + id + '" has two different target states (' + nextState + ', ' + transitionsTo.get(id) + ').')
+            } catch (Exception exc) {
+                throw new RuntimeException('Invalid workflow structure detected: transition "' + id + '" has two different target states (' + nextState + ', ' + transitionsTo.get(id) + ').', exc)
+            }
+        }
+    }
 }
