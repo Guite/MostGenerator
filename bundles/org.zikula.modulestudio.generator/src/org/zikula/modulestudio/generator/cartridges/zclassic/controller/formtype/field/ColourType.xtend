@@ -25,6 +25,9 @@ class ColourType {
         namespace «appNamespace»\Form\Type\Field\Base;
 
         use Symfony\Component\Form\AbstractType;
+        «IF targets('1.4-dev')»
+            use Symfony\Component\Form\Extension\Core\Type\TextType;
+        «ENDIF»
         use Symfony\Component\OptionsResolver\OptionsResolver;
 
         /**
@@ -54,7 +57,7 @@ class ColourType {
              */
             public function getParent()
             {
-                return 'Symfony\Component\Form\Extension\Core\Type\TextType';
+                return «IF targets('1.4-dev')»TextType::class«ELSE»'Symfony\Component\Form\Extension\Core\Type\TextType'«ENDIF»;
             }
 
             /**

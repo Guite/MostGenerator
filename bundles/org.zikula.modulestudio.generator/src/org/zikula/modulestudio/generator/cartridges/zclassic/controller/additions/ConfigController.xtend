@@ -29,6 +29,9 @@ class ConfigController {
         use Symfony\Component\HttpFoundation\Request;
         use Symfony\Component\Security\Core\Exception\AccessDeniedException;
         use Zikula\Core\Controller\AbstractController;
+        «IF targets('1.4-dev')»
+            use «appNamespace»\Form\AppSettingsType;
+        «ENDIF»
 
         /**
          * Config controller base class.
@@ -75,7 +78,7 @@ class ConfigController {
             throw new AccessDeniedException();
         }
 
-        $form = $this->createForm('«appNamespace»\Form\AppSettingsType');
+        $form = $this->createForm(«IF targets('1.4-dev')»AppSettingsType::class«ELSE»'«appNamespace»\Form\AppSettingsType'«ENDIF»);
 
         if ($form->handleRequest($request)->isValid()) {
             if ($form->get('save')->isClicked()) {

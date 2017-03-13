@@ -44,8 +44,20 @@ class Finder {
         namespace «app.appNamespace»\Form\Type\Finder\Base;
 
         use Symfony\Component\Form\AbstractType;
+        «IF app.targets('1.4-dev')»
+            «IF hasImageFieldsEntity»
+                use «nsSymfonyFormType»CheckboxType;
+            «ENDIF»
+            use «nsSymfonyFormType»ChoiceType;
+            use «nsSymfonyFormType»HiddenType;
+            use «nsSymfonyFormType»SearchType;
+            use «nsSymfonyFormType»SubmitType;
+        «ENDIF»
         use Symfony\Component\Form\FormBuilderInterface;
         use Symfony\Component\OptionsResolver\OptionsResolver;
+        «IF app.targets('1.4-dev') && categorisable»
+            use Zikula\CategoriesModule\Form\Type\CategoriesType;
+        «ENDIF»
         use Zikula\Common\Translator\TranslatorInterface;
         use Zikula\Common\Translator\TranslatorTrait;
         «IF app.needsFeatureActivationHelper»
@@ -91,10 +103,10 @@ class Finder {
             {
                 $builder
                     ->setMethod('GET')
-                    ->add('objectType', '«nsSymfonyFormType»HiddenType', [
+                    ->add('objectType', «IF app.targets('1.4-dev')»HiddenType::class«ELSE»'«nsSymfonyFormType»HiddenType'«ENDIF», [
                         'data' => $options['objectType']
                     ])
-                    ->add('editor', '«nsSymfonyFormType»HiddenType', [
+                    ->add('editor', «IF app.targets('1.4-dev')»HiddenType::class«ELSE»'«nsSymfonyFormType»HiddenType'«ENDIF», [
                         'data' => $options['editorName']
                     ])
                 ;
@@ -113,14 +125,14 @@ class Finder {
                 $this->addSearchField($builder, $options);
 
                 $builder
-                    ->add('update', '«nsSymfonyFormType»SubmitType', [
+                    ->add('update', «IF app.targets('1.4-dev')»SubmitType::class«ELSE»'«nsSymfonyFormType»SubmitType'«ENDIF», [
                         'label' => $this->__('Change selection'),
                         'icon' => 'fa-check',
                         'attr' => [
                             'class' => 'btn btn-success'
                         ]
                     ])
-                    ->add('cancel', '«nsSymfonyFormType»SubmitType', [
+                    ->add('cancel', «IF app.targets('1.4-dev')»SubmitType::class«ELSE»'«nsSymfonyFormType»SubmitType'«ENDIF», [
                         'label' => $this->__('Cancel'),
                         'icon' => 'fa-times',
                         'attr' => [
@@ -187,7 +199,7 @@ class Finder {
          */
         public function addCategoriesField(FormBuilderInterface $builder, array $options)
         {
-            $builder->add('categories', 'Zikula\CategoriesModule\Form\Type\CategoriesType', [
+            $builder->add('categories', «IF app.targets('1.4-dev')»CategoriesType::class«ELSE»'Zikula\CategoriesModule\Form\Type\CategoriesType'«ENDIF», [
                 'label' => $this->__('«IF categorisableMultiSelection»Categories«ELSE»Category«ENDIF»') . ':',
                 'empty_data' => «IF categorisableMultiSelection»[]«ELSE»null«ENDIF»,
                 'attr' => [
@@ -213,14 +225,14 @@ class Finder {
          */
         public function addImageFields(FormBuilderInterface $builder, array $options)
         {
-            $builder->add('onlyImages', '«nsSymfonyFormType»CheckboxType', [
+            $builder->add('onlyImages', «IF app.targets('1.4-dev')»CheckboxType::class«ELSE»'«nsSymfonyFormType»CheckboxType'«ENDIF», [
                 'label' => $this->__('Only images'),
                 'empty_data' => false,
                 'help' => $this->__('Enable this option to insert images'),
                 'required' => false
             ]);
             «IF imageFieldsEntity.size > 1»
-                $builder->add('imageField', '«nsSymfonyFormType»ChoiceType', [
+                $builder->add('imageField', «IF app.targets('1.4-dev')»ChoiceType::class«ELSE»'«nsSymfonyFormType»ChoiceType'«ENDIF», [
                     'label' => $this->__('Image field'),
                     'empty_data' => '«imageFieldsEntity.head.name.formatForCode»',
                     'help' => $this->__('You can switch between different image fields'),
@@ -234,7 +246,7 @@ class Finder {
                     'expanded' => false
                 ]);
             «ELSE»
-                $builder->add('imageField', '«nsSymfonyFormType»HiddenType', [
+                $builder->add('imageField', «IF app.targets('1.4-dev')»HiddenType::class«ELSE»'«nsSymfonyFormType»HiddenType'«ENDIF», [
                     'data' => '«imageFieldsEntity.head.name.formatForCode»'
                 ]);
             «ENDIF»
@@ -250,7 +262,7 @@ class Finder {
          */
         public function addPasteAsField(FormBuilderInterface $builder, array $options)
         {
-            $builder->add('pasteAs', '«nsSymfonyFormType»ChoiceType', [
+            $builder->add('pasteAs', «IF app.targets('1.4-dev')»ChoiceType::class«ELSE»'«nsSymfonyFormType»ChoiceType'«ENDIF», [
                 'label' => $this->__('Paste as') . ':',
                 'empty_data' => 1,
                 'choices' => [
@@ -281,7 +293,7 @@ class Finder {
         public function addSortingFields(FormBuilderInterface $builder, array $options)
         {
             $builder
-                ->add('sort', '«nsSymfonyFormType»ChoiceType', [
+                ->add('sort', «IF app.targets('1.4-dev')»ChoiceType::class«ELSE»'«nsSymfonyFormType»ChoiceType'«ENDIF», [
                     'label' => $this->__('Sort by') . ':',
                     'empty_data' => '',
                     'choices' => [
@@ -301,7 +313,7 @@ class Finder {
                     'multiple' => false,
                     'expanded' => false
                 ])
-                ->add('sortdir', '«nsSymfonyFormType»ChoiceType', [
+                ->add('sortdir', «IF app.targets('1.4-dev')»ChoiceType::class«ELSE»'«nsSymfonyFormType»ChoiceType'«ENDIF», [
                     'label' => $this->__('Sort direction') . ':',
                     'empty_data' => 'asc',
                     'choices' => [
@@ -325,7 +337,7 @@ class Finder {
          */
         public function addAmountField(FormBuilderInterface $builder, array $options)
         {
-            $builder->add('num', '«nsSymfonyFormType»ChoiceType', [
+            $builder->add('num', «IF app.targets('1.4-dev')»ChoiceType::class«ELSE»'«nsSymfonyFormType»ChoiceType'«ENDIF», [
                 'label' => $this->__('Page size') . ':',
                 'empty_data' => 20,
                 'attr' => [
@@ -356,7 +368,7 @@ class Finder {
          */
         public function addSearchField(FormBuilderInterface $builder, array $options)
         {
-            $builder->add('q', '«nsSymfonyFormType»SearchType', [
+            $builder->add('q', «IF app.targets('1.4-dev')»SearchType::class«ELSE»'«nsSymfonyFormType»SearchType'«ENDIF», [
                 'label' => $this->__('Search for') . ':',
                 'required' => false,
                 'attr' => [

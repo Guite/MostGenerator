@@ -85,6 +85,64 @@ class EditEntity {
             use Doctrine\ORM\EntityRepository;
         «ENDIF»
         use Symfony\Component\Form\AbstractType;
+        «IF app.targets('1.4-dev')»
+            use «nsSymfonyFormType»CheckboxType;
+            «IF !fields.filter(ListField).filter[!multiple].empty»
+                use «nsSymfonyFormType»ChoiceType;
+            «ENDIF»
+            «IF !fields.filter(StringField).filter[country].empty»
+                use «nsSymfonyFormType»CountryType;
+            «ENDIF»
+            «IF !fields.filter(StringField).filter[currency].empty»
+                use «nsSymfonyFormType»CurrencyType;
+            «ENDIF»
+            «IF !fields.filter(DateField).empty»
+                use «nsSymfonyFormType»DateType;
+            «ENDIF»
+            «IF !fields.filter(EmailField).empty»
+                use «nsSymfonyFormType»EmailType;
+            «ENDIF»
+            «IF !fields.filter(IntegerField).filter[!percentage && !range].empty»
+                use «nsSymfonyFormType»IntegerType;
+            «ENDIF»
+            «IF !fields.filter(StringField).filter[language].empty»
+                use «nsSymfonyFormType»LanguageType;
+            «ENDIF»
+            «IF !fields.filter(DecimalField).filter[currency].empty || !fields.filter(FloatField).filter[currency].empty»
+                use «nsSymfonyFormType»MoneyType;
+            «ENDIF»
+            «IF !fields.filter(DecimalField).filter[!percentage && !currency].empty || !fields.filter(FloatField).filter[!percentage && !currency].empty»
+                use «nsSymfonyFormType»NumberType;
+            «ENDIF»
+            «IF !fields.filter(StringField).filter[password].empty»
+                use «nsSymfonyFormType»PasswordType;
+            «ENDIF»
+            «IF !fields.filter(IntegerField).filter[percentage].empty || !fields.filter(DecimalField).filter[percentage].empty || !fields.filter(FloatField).filter[percentage].empty»
+                use «nsSymfonyFormType»PercentType;
+            «ENDIF»
+            «IF !fields.filter(IntegerField).filter[range].empty»
+                use «nsSymfonyFormType»RangeType;
+            «ENDIF»
+            use «nsSymfonyFormType»ResetType;
+            use «nsSymfonyFormType»SubmitType;
+            «IF !fields.filter(TextField).empty || (it instanceof Entity && (it as Entity).workflow != EntityWorkflowType.NONE)»
+                use «nsSymfonyFormType»TextareaType;
+            «ENDIF»
+            «IF extensions.contains('attributes')
+                || !fields.filter(StringField).filter[!country && !language && !locale && !htmlcolour && !password && !currency && !timezone].empty
+                || (it instanceof Entity && (it as Entity).hasSluggableFields && (it as Entity).slugUpdatable && application.supportsSlugInputFields)»
+                use «nsSymfonyFormType»TextType;
+            «ENDIF»
+            «IF !fields.filter(TimeField).empty»
+                use «nsSymfonyFormType»TimeType;
+            «ENDIF»
+            «IF !fields.filter(StringField).filter[timezone].empty»
+                use «nsSymfonyFormType»TimezoneType;
+            «ENDIF»
+            «IF !fields.filter(UrlField).empty»
+                use «nsSymfonyFormType»UrlType;
+            «ENDIF»
+        «ENDIF»
         «IF hasUploadFieldsEntity»
             use Symfony\Component\Form\FormEvent;
             use Symfony\Component\Form\FormEvents;
@@ -95,6 +153,12 @@ class EditEntity {
             use Symfony\Component\HttpFoundation\File\File;
         «ENDIF»
         use Symfony\Component\OptionsResolver\OptionsResolver;
+        «IF app.targets('1.4-dev') && !fields.filter(StringField).filter[locale].empty»
+            use Zikula\Bundle\FormExtensionBundle\Form\Type\LocaleType;
+        «ENDIF»
+        «IF app.targets('1.4-dev') && extensions.contains('categories')»
+            use Zikula\CategoriesModule\Form\Type\CategoriesType;
+        «ENDIF»
         use Zikula\Common\Translator\TranslatorInterface;
         use Zikula\Common\Translator\TranslatorTrait;
         «IF isTranslatable»
@@ -104,6 +168,35 @@ class EditEntity {
             use Zikula\SettingsModule\Api\LocaleApi;
         «ENDIF»
         use «app.appNamespace»\Entity\Factory\«app.name.formatForCodeCapital»Factory;
+        «IF app.targets('1.4-dev')»
+            «IF !fields.filter(ArrayField).empty»
+                use «app.appNamespace»\Form\Type\Field\ArrayType;
+            «ENDIF»
+            «IF !fields.filter(StringField).filter[htmlcolour].empty»
+                use «app.appNamespace»\Form\Type\Field\ColourType;
+            «ENDIF»
+            «IF !fields.filter(UserField).empty || (it instanceof Entity && (it as Entity).standardFields)»
+                use «app.appNamespace»\Form\Type\Field\DateTimeType;
+            «ENDIF»
+            «IF it instanceof Entity && (it as Entity).geographical»
+                use «app.appNamespace»\Form\Type\Field\GeoType;
+            «ENDIF»
+            «IF !fields.filter(ListField).filter[multiple].empty»
+                use «app.appNamespace»\Form\Type\Field\MultiListType;
+            «ENDIF»
+            «IF it instanceof Entity && isTranslatable»
+                use «app.appNamespace»\Form\Type\Field\TranslationType;
+            «ENDIF»
+            «IF !fields.filter(UploadField).empty»
+                use «app.appNamespace»\Form\Type\Field\UploadType;
+            «ENDIF»
+            «IF !fields.filter(UserField).empty || (it instanceof Entity && (it as Entity).standardFields)»
+                use «app.appNamespace»\Form\Type\Field\UserType;
+            «ENDIF»
+            «IF !getParentDataObjects(#[]).empty»
+                use «app.appNamespace»\Form\Type\«getParentDataObjects(#[]).head.name.formatForCodeCapital»Type;
+            «ENDIF»
+        «ENDIF»
         «IF app.needsFeatureActivationHelper»
             use «app.appNamespace»\Helper\FeatureActivationHelper;
         «ENDIF»
@@ -207,7 +300,7 @@ class EditEntity {
                 $this->addEntityFields($builder, $options);
                 «val parents = getParentDataObjects(#[])»
                 «IF !parents.empty»
-                    $builder->add('parentFields', '«app.appNamespace»\Form\Type\«parents.head.name.formatForCodeCapital»Type', [
+                    $builder->add('parentFields', «IF app.targets('1.4-dev')»«parents.head.name.formatForCodeCapital»Type::class«ELSE»'«app.appNamespace»\Form\Type\«parents.head.name.formatForCodeCapital»Type'«ENDIF», [
                         'data_class' => '«entityClassName('', false)»'
                     ]);
                 «ENDIF»
@@ -425,7 +518,7 @@ class EditEntity {
                     if ($language == $currentLanguage) {
                         continue;
                     }
-                    $builder->add('translations' . $language, '«application.appNamespace»\Form\Type\Field\TranslationType', [
+                    $builder->add('translations' . $language, «IF app.targets('1.4-dev')»TranslationType::class«ELSE»'«app.appNamespace»\Form\Type\Field\TranslationType'«ENDIF», [
                         'fields' => $translatableFields,
                         'mandatory_fields' => $mandatoryFields[$language],
                         'values' => isset($options['translations'][$language]) ? $options['translations'][$language] : []
@@ -463,7 +556,7 @@ class EditEntity {
 
     def private slugField(Entity it) '''
         «IF hasSluggableFields && slugUpdatable && application.supportsSlugInputFields»
-            $builder->add('slug', '«nsSymfonyFormType»TextType', [
+            $builder->add('slug', «IF app.targets('1.4-dev')»TextType::class«ELSE»'«nsSymfonyFormType»TextType'«ENDIF», [
                 'label' => $this->__('Permalink') . ':',
                 'required' => false«/* slugUnique.displayBool */»,
                 'empty_data' => '',
@@ -486,7 +579,7 @@ class EditEntity {
                 «fetchListEntries»
             «ENDIF»
             «val isExpandedListField = it instanceof ListField && (it as ListField).expanded»
-            $builder->add('«name.formatForCode»', '«formType»Type', [
+            $builder->add('«name.formatForCode»', «IF app.targets('1.4-dev')»«formType»::class«ELSE»'«formType»Type'«ENDIF», [
                 'label' => $this->__('«name.formatForDisplayCapital»') . ':',
                 «IF null !== documentation && documentation != ''»
                     'label_attr' => [
@@ -665,11 +758,11 @@ class EditEntity {
     '''
     def private dispatch additionalOptions(DerivedField it) ''''''
 
-    def private dispatch formType(BooleanField it) '''«nsSymfonyFormType»Checkbox'''
+    def private dispatch formType(BooleanField it) '''«IF !app.targets('1.4-dev')»«nsSymfonyFormType»«ENDIF»Checkbox'''
     def private dispatch titleAttribute(BooleanField it) '''«name.formatForDisplay» ?'''
     def private dispatch additionalAttributes(BooleanField it) ''''''
 
-    def private dispatch formType(IntegerField it) '''«nsSymfonyFormType»«IF percentage»Percent«ELSEIF range»Range«ELSE»Integer«ENDIF»'''
+    def private dispatch formType(IntegerField it) '''«IF !app.targets('1.4-dev')»«nsSymfonyFormType»«ENDIF»«IF percentage»Percent«ELSEIF range»Range«ELSE»Integer«ENDIF»'''
     def private dispatch titleAttribute(IntegerField it) '''Enter the «name.formatForDisplay» of the «entity.name.formatForDisplay».') . ' ' . $this->__('Only digits are allowed.'''
     def private dispatch additionalAttributes(IntegerField it) '''
         'maxlength' => «length»,
@@ -683,7 +776,7 @@ class EditEntity {
         «ENDIF»
     '''
 
-    def private dispatch formType(DecimalField it) '''«nsSymfonyFormType»«IF percentage»Percent«ELSEIF currency»Money«ELSE»Number«ENDIF»'''
+    def private dispatch formType(DecimalField it) '''«IF !app.targets('1.4-dev')»«nsSymfonyFormType»«ENDIF»«IF percentage»Percent«ELSEIF currency»Money«ELSE»Number«ENDIF»'''
     def private dispatch additionalAttributes(DecimalField it) '''
         'maxlength' => «(length+3+scale)»,
     '''
@@ -698,7 +791,7 @@ class EditEntity {
         'scale' => «scale»
     '''
 
-    def private dispatch formType(FloatField it) '''«nsSymfonyFormType»«IF percentage»Percent«ELSEIF currency»Money«ELSE»Number«ENDIF»'''
+    def private dispatch formType(FloatField it) '''«IF !app.targets('1.4-dev')»«nsSymfonyFormType»«ENDIF»«IF percentage»Percent«ELSEIF currency»Money«ELSE»Number«ENDIF»'''
     def private dispatch additionalAttributes(FloatField it) '''
         'maxlength' => «(length+3+2)»,
     '''
@@ -713,7 +806,7 @@ class EditEntity {
         'scale' => 2
     '''
 
-    def private dispatch formType(StringField it) '''«IF country»«nsSymfonyFormType»Country«ELSEIF language»«nsSymfonyFormType»Language«ELSEIF locale»Zikula\Bundle\FormExtensionBundle\Form\Type\Locale«ELSEIF htmlcolour»«app.appNamespace»\Form\Type\Field\Colour«ELSEIF password»«nsSymfonyFormType»Password«ELSEIF currency»«nsSymfonyFormType»Currency«ELSEIF timezone»«nsSymfonyFormType»Timezone«ELSE»«nsSymfonyFormType»Text«ENDIF»'''
+    def private dispatch formType(StringField it) '''«IF country»«IF !app.targets('1.4-dev')»«nsSymfonyFormType»«ENDIF»Country«ELSEIF language»«IF !app.targets('1.4-dev')»«nsSymfonyFormType»«ENDIF»Language«ELSEIF locale»«IF !app.targets('1.4-dev')»Zikula\Bundle\FormExtensionBundle\Form\Type\«ENDIF»Locale«ELSEIF htmlcolour»«IF !app.targets('1.4-dev')»«app.appNamespace»\Form\Type\Field\«ENDIF»Colour«ELSEIF password»«IF !app.targets('1.4-dev')»«nsSymfonyFormType»«ENDIF»Password«ELSEIF currency»«IF !app.targets('1.4-dev')»«nsSymfonyFormType»«ENDIF»Currency«ELSEIF timezone»«IF !app.targets('1.4-dev')»«nsSymfonyFormType»«ENDIF»Timezone«ELSE»«IF !app.targets('1.4-dev')»«nsSymfonyFormType»«ENDIF»Text«ENDIF»'''
     def private dispatch titleAttribute(StringField it) '''«IF country || language || locale || htmlcolour || currency || timezone»Choose the «name.formatForDisplay» of the «entity.name.formatForDisplay»«ELSE»Enter the «name.formatForDisplay» of the «entity.name.formatForDisplay»«ENDIF»'''
     def private dispatch additionalAttributes(StringField it) '''
         'maxlength' => «length»,
@@ -733,7 +826,7 @@ class EditEntity {
         «ENDIF»
     '''
 
-    def private dispatch formType(TextField it) '''«nsSymfonyFormType»Textarea'''
+    def private dispatch formType(TextField it) '''«IF !app.targets('1.4-dev')»«nsSymfonyFormType»«ENDIF»Textarea'''
     def private dispatch additionalAttributes(TextField it) '''
         'maxlength' => «length»,
         «IF null !== regexp && regexp != ''»
@@ -743,18 +836,18 @@ class EditEntity {
         «ENDIF»
     '''
 
-    def private dispatch formType(EmailField it) '''«nsSymfonyFormType»Email'''
+    def private dispatch formType(EmailField it) '''«IF !app.targets('1.4-dev')»«nsSymfonyFormType»«ENDIF»Email'''
     def private dispatch additionalAttributes(EmailField it) '''
         'maxlength' => «length»,
     '''
 
-    def private dispatch formType(UrlField it) '''«nsSymfonyFormType»Url'''
+    def private dispatch formType(UrlField it) '''«IF !app.targets('1.4-dev')»«nsSymfonyFormType»«ENDIF»Url'''
     def private dispatch additionalAttributes(UrlField it) '''
         'maxlength' => «length»,
     '''
     def private dispatch additionalOptions(UrlField it) '''«/*'default_protocol' => 'http'*/»'''
 
-    def private dispatch formType(UploadField it) '''«app.appNamespace»\Form\Type\Field\Upload'''
+    def private dispatch formType(UploadField it) '''«IF !app.targets('1.4-dev')»«app.appNamespace»\Form\Type\Field\«ENDIF»Upload'''
     def private dispatch additionalAttributes(UploadField it) ''''''
     def private dispatch requiredOption(UploadField it) '''
         'required' => «mandatory.displayBool» && $options['mode'] == 'create',
@@ -775,7 +868,7 @@ class EditEntity {
         }
     '''
 
-    def private dispatch formType(ListField it) '''«IF multiple»«app.appNamespace»\Form\Type\Field\MultiList«ELSE»«nsSymfonyFormType»Choice«ENDIF»'''
+    def private dispatch formType(ListField it) '''«IF multiple»«IF !app.targets('1.4-dev')»«app.appNamespace»\Form\Type\Field\«ENDIF»MultiList«ELSE»«IF !app.targets('1.4-dev')»«nsSymfonyFormType»«ENDIF»Choice«ENDIF»'''
     def private dispatch titleAttribute(ListField it) '''Choose the «name.formatForDisplay»'''
     def private dispatch additionalAttributes(ListField it) ''''''
     def private dispatch additionalOptions(ListField it) '''
@@ -789,7 +882,7 @@ class EditEntity {
         'expanded' => «expanded.displayBool»
     '''
 
-    def private dispatch formType(UserField it) '''«app.appNamespace»\Form\Type\Field\User'''
+    def private dispatch formType(UserField it) '''«IF !app.targets('1.4-dev')»«app.appNamespace»\Form\Type\Field\«ENDIF»User'''
     def private dispatch additionalAttributes(UserField it) '''
         'maxlength' => «length»,
     '''
@@ -799,13 +892,13 @@ class EditEntity {
         «ENDIF»
     '''
 
-    def private dispatch formType(ArrayField it) '''«app.appNamespace»\Form\Type\Field\Array'''
+    def private dispatch formType(ArrayField it) '''«IF !app.targets('1.4-dev')»«app.appNamespace»\Form\Type\Field\«ENDIF»Array'''
     def private dispatch additionalAttributes(ArrayField it) '''
     '''
 
-    def private dispatch formType(DatetimeField it) '''«app.appNamespace»\Form\Type\Field\DateTime'''
-    def private dispatch formType(DateField it) '''«nsSymfonyFormType»Date'''
-    def private dispatch formType(TimeField it) '''«nsSymfonyFormType»Time'''
+    def private dispatch formType(DatetimeField it) '''«IF !app.targets('1.4-dev')»«app.appNamespace»\Form\Type\Field\DateTime«ENDIF»'''
+    def private dispatch formType(DateField it) '''«IF !app.targets('1.4-dev')»«nsSymfonyFormType»«ENDIF»Date'''
+    def private dispatch formType(TimeField it) '''«IF !app.targets('1.4-dev')»«nsSymfonyFormType»«ENDIF»Time'''
     def private dispatch additionalAttributes(AbstractDateField it) ''''''
     def private dispatch additionalOptions(AbstractDateField it) '''
         'empty_data' => «defaultData»,
@@ -831,7 +924,7 @@ class EditEntity {
         public function addGeographicalFields(FormBuilderInterface $builder, array $options)
         {
             «FOR geoFieldName : newArrayList('latitude', 'longitude')»
-                $builder->add('«geoFieldName»', '«app.appNamespace»\Form\Type\Field\GeoType', [
+                $builder->add('«geoFieldName»', «IF app.targets('1.4-dev')»GeoType::class«ELSE»'«app.appNamespace»\Form\Type\Field\GeoType'«ENDIF», [
                     'label' => $this->__('«geoFieldName.toFirstUpper»') . ':',
                     'attr' => [
                         'class' => 'validate-number'
@@ -852,7 +945,7 @@ class EditEntity {
         public function addAttributeFields(FormBuilderInterface $builder, array $options)
         {
             foreach ($options['attributes'] as $attributeName => $attributeValue) {
-                $builder->add('attributes' . $attributeName, '«nsSymfonyFormType»TextType', [
+                $builder->add('attributes' . $attributeName, «IF app.targets('1.4-dev')»TextType::class«ELSE»'«nsSymfonyFormType»TextType'«ENDIF», [
                     'mapped' => false,
                     'label' => $this->__($attributeName),
                     'attr' => [
@@ -874,7 +967,7 @@ class EditEntity {
          */
         public function addCategoriesField(FormBuilderInterface $builder, array $options)
         {
-            $builder->add('categories', 'Zikula\CategoriesModule\Form\Type\CategoriesType', [
+            $builder->add('categories', «IF app.targets('1.4-dev')»CategoriesType::class«ELSE»'Zikula\CategoriesModule\Form\Type\CategoriesType'«ENDIF», [
                 'label' => $this->__('«IF categorisableMultiSelection»Categories«ELSE»Category«ENDIF»') . ':',
                 'empty_data' => «IF categorisableMultiSelection»[]«ELSE»null«ENDIF»,
                 'attr' => [
@@ -998,7 +1091,7 @@ class EditEntity {
             if ($options['mode'] != 'create') {
                 return;
             }
-            $builder->add('repeatCreation', '«nsSymfonyFormType»CheckboxType', [
+            $builder->add('repeatCreation', «IF app.targets('1.4-dev')»CheckboxType::class«ELSE»'«nsSymfonyFormType»CheckboxType'«ENDIF», [
                 'mapped' => false,
                 'label' => $this->__('Create another item after save'),
                 'required' => false
@@ -1022,7 +1115,7 @@ class EditEntity {
                 $helpText = $this->__('These remarks (like questions about conformance) are not stored, but added to any notification emails send to our moderators.');
             }
 
-            $builder->add('additionalNotificationRemarks', '«nsSymfonyFormType»TextareaType', [
+            $builder->add('additionalNotificationRemarks', «IF app.targets('1.4-dev')»TextareaType::class«ELSE»'«nsSymfonyFormType»TextareaType'«ENDIF», [
                 'mapped' => false,
                 'label' => $this->__('Additional remarks'),
                 'label_attr' => [
@@ -1051,7 +1144,7 @@ class EditEntity {
                 return;
             }
 
-            $builder->add('moderationSpecificCreator', '«app.appNamespace»\Form\Type\Field\UserType', [
+            $builder->add('moderationSpecificCreator', «IF app.targets('1.4-dev')»UserType::class«ELSE»'«app.appNamespace»\Form\Type\Field\UserType'«ENDIF», [
                 'mapped' => false,
                 'label' => $this->__('Creator') . ':',
                 'attr' => [
@@ -1063,7 +1156,7 @@ class EditEntity {
                 'required' => false,
                 'help' => $this->__('Here you can choose a user which will be set as creator')
             ]);
-            $builder->add('moderationSpecificCreationDate', '«app.appNamespace»\Form\Type\Field\DateTimeType', [
+            $builder->add('moderationSpecificCreationDate', «IF app.targets('1.4-dev')»DateTimeType::class«ELSE»'«app.appNamespace»\Form\Type\Field\DateTimeType'«ENDIF», [
                 'mapped' => false,
                 'label' => $this->__('Creation date') . ':',
                 'attr' => [
@@ -1088,7 +1181,7 @@ class EditEntity {
         public function addSubmitButtons(FormBuilderInterface $builder, array $options)
         {
             foreach ($options['actions'] as $action) {
-                $builder->add($action['id'], '«nsSymfonyFormType»SubmitType', [
+                $builder->add($action['id'], «IF app.targets('1.4-dev')»SubmitType::class«ELSE»'«nsSymfonyFormType»SubmitType'«ENDIF», [
                     'label' => «IF app.targets('1.4-dev')»$action['title']«ELSE»$this->__(/** @Ignore */$action['title'])«ENDIF»,
                     'icon' => ($action['id'] == 'delete' ? 'fa-trash-o' : ''),
                     'attr' => [
@@ -1097,7 +1190,7 @@ class EditEntity {
                     ]
                 ]);
             }
-            $builder->add('reset', '«nsSymfonyFormType»ResetType', [
+            $builder->add('reset', «IF app.targets('1.4-dev')»ResetType::class«ELSE»'«nsSymfonyFormType»ResetType'«ENDIF», [
                 'label' => $this->__('Reset'),
                 'icon' => 'fa-refresh',
                 'attr' => [
@@ -1105,7 +1198,7 @@ class EditEntity {
                     'formnovalidate' => 'formnovalidate'
                 ]
             ]);
-            $builder->add('cancel', '«nsSymfonyFormType»SubmitType', [
+            $builder->add('cancel', «IF app.targets('1.4-dev')»SubmitType::class«ELSE»'«nsSymfonyFormType»SubmitType'«ENDIF», [
                 'label' => $this->__('Cancel'),
                 'icon' => 'fa-times',
                 'attr' => [

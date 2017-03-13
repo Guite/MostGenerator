@@ -55,7 +55,7 @@ class DateTimeType {
              */
             public function getParent()
             {
-                return 'Symfony\Component\Form\Extension\Core\Type\DateTimeType';
+                return «IF targets('1.4-dev')»SymfonyDateTimeType::class«ELSE»'Symfony\Component\Form\Extension\Core\Type\DateTimeType'«ENDIF»;
             }
 
             /**

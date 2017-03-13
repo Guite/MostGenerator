@@ -1211,6 +1211,9 @@ class FormHandler {
         namespace «app.appNamespace»\Form\Handler\«name.formatForCodeCapital»\Base;
 
         use «app.appNamespace»\Form\Handler\Common\«actionName.formatForCodeCapital»Handler;
+        «IF app.targets('1.4-dev')»
+            use «app.appNamespace»\Form\Type\«name.formatForCodeCapital»Type;
+        «ENDIF»
 
         «locking.imports(it)»
         use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -1354,7 +1357,7 @@ class FormHandler {
                 }
             «ENDIF»
 
-            return $this->formFactory->create('«app.appNamespace»\Form\Type\«name.formatForCodeCapital»Type', $this->entityRef, $options);
+            return $this->formFactory->create(«IF app.targets('1.4-dev')»«name.formatForCodeCapital»Type::class«ELSE»'«app.appNamespace»\Form\Type\«name.formatForCodeCapital»Type'«ENDIF», $this->entityRef, $options);
         }
     '''
 

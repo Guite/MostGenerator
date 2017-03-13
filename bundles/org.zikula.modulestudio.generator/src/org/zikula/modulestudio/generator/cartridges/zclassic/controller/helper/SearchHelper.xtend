@@ -35,6 +35,8 @@ class SearchHelper {
         use Doctrine\ORM\QueryBuilder;
         use Doctrine\ORM\Query\Expr\Composite;
         «IF targets('1.4-dev')»
+            use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+            use Symfony\Component\Form\Extension\Core\Type\HiddenType;
             use Symfony\Component\Form\FormBuilderInterface;
         «ELSE»
             use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
@@ -227,14 +229,14 @@ class SearchHelper {
                 return '';
             }
 
-            $builder->add('active', 'Symfony\Component\Form\Extension\Core\Type\HiddenType', [
+            $builder->add('active', HiddenType::class, [
                 'data' => true
             ]);
 
             $searchTypes = $this->getSearchTypes();
 
             foreach ($searchTypes as $searchType => $typeInfo) {
-                $builder->add('active_' . $searchType, 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', [
+                $builder->add('active_' . $searchType, CheckboxType::class, [
                     'value' => $typeInfo['value'],
                     'label' => $typeInfo['label'],
                     'label_attr' => ['class' => 'checkbox-inline'],

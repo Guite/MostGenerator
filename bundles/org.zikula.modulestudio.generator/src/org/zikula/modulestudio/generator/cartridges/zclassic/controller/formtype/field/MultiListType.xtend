@@ -32,6 +32,9 @@ class MultiListType {
         namespace «appNamespace»\Form\Type\Field\Base;
 
         use Symfony\Component\Form\AbstractType;
+        «IF targets('1.4-dev')»
+            use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+        «ENDIF»
         use Symfony\Component\Form\FormBuilderInterface;
         use «appNamespace»\Form\DataTransformer\ListFieldTransformer;
         use «app.appNamespace»\Helper\ListEntriesHelper;
@@ -70,7 +73,7 @@ class MultiListType {
              */
             public function getParent()
             {
-                return 'Symfony\Component\Form\Extension\Core\Type\ChoiceType';
+                return «IF targets('1.4-dev')»ChoiceType::class«ELSE»'Symfony\Component\Form\Extension\Core\Type\ChoiceType'«ENDIF»;
             }
 
             /**

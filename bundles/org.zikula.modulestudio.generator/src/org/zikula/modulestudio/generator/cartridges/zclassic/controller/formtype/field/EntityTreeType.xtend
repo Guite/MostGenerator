@@ -25,6 +25,9 @@ class EntityTreeType {
         namespace «appNamespace»\Form\Type\Field\Base;
 
         use Doctrine\ORM\EntityRepository;
+        «IF targets('1.4-dev')»
+            use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+        «ENDIF»
         use Symfony\Component\Form\AbstractType;
         use Symfony\Component\OptionsResolver\Options;
         use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -146,7 +149,7 @@ class EntityTreeType {
              */
             public function getParent()
             {
-                return 'Symfony\Bridge\Doctrine\Form\Type\EntityType';
+                return «IF targets('1.4-dev')»EntityType::class«ELSE»'Symfony\Bridge\Doctrine\Form\Type\EntityType'«ENDIF»;
             }
 
             /**
