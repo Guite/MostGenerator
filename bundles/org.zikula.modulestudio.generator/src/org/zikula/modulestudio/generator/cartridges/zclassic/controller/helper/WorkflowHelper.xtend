@@ -167,7 +167,9 @@ class WorkflowHelper {
 
             «getObjectStates»
             «getStateInfo»
-            «getWorkflowName»
+            «IF !targets('1.4-dev')»
+                «getWorkflowName»
+            «ENDIF»
             «getActionsForObject»
             «executeAction»
             «IF !targets('1.4-dev')»
