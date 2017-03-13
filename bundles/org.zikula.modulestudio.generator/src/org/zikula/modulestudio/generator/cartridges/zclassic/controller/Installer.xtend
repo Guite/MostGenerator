@@ -91,9 +91,11 @@ class Installer {
 
                 return false;
             }
-            «IF !variables.empty»
+            «IF !variables.empty || generateExternalControllerAndFinder»
 
                 // set up all our vars with initial values
+            «ENDIF»
+            «IF !variables.empty»
                 «val modvarHelper = new ModVars()»
                 «FOR modvar : getAllVariables»
                     $this->setVar('«modvar.name.formatForCode»', «modvarHelper.valDirect2Mod(modvar)»);

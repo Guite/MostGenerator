@@ -12,6 +12,7 @@ import org.zikula.modulestudio.generator.extensions.ModelExtensions
  * Utility methods for the installer.
  */
 class ModVars {
+
     extension FormattingExtensions = new FormattingExtensions
     extension ModelExtensions = new ModelExtensions
 

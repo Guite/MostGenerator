@@ -187,10 +187,9 @@ class ExternalController {
         $cssAssetBag = $this->get('zikula_core.common.theme.assets_css');
         $cssAssetBag->add($assetHelper->resolve('@«appName»:css/style.css'));
 
-        $controllerHelper = $this->get('«appService».controller_helper');
-        $contextArgs = ['controller' => 'external', 'action' => 'finder'];
-        if (!in_array($objectType, $controllerHelper->getObjectTypes('controllerAction', $contextArgs))) {
-            $objectType = $controllerHelper->getDefaultObjectType('controllerAction', $contextArgs);
+        $activatedObjectTypes = $this->getVar('enabledFinderTypes', []);
+        if (!in_array($objectType, $activatedObjectTypes)) {
+            throw new AccessDeniedException();
         }
 
         if (!$this->hasPermission('«appName»:' . ucfirst($objectType) . ':', '::', ACCESS_COMMENT)) {

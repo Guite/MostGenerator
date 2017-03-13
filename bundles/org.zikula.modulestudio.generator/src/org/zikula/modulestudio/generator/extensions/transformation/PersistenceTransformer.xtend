@@ -58,6 +58,7 @@ class PersistenceTransformer {
         addWorkflowSettings
         addViewSettings
         addImageSettings
+        addIntegrationSettings
         addGeoSettings
     }
 
@@ -315,6 +316,31 @@ class PersistenceTransformer {
         variables += varContainer
     }
 
+    def private addIntegrationSettings(Application it) {
+        if (!generateExternalControllerAndFinder) {
+            return
+        }
+
+        val varContainer = createVarContainerForIntegrationSettings
+        val factory = ModuleStudioFactory.eINSTANCE
+
+        val listVar = factory.createListVar => [
+            name = 'enabledFinderTypes'
+            value = ''
+            documentation = 'Which sections are supported in the Finder component (used by Scribite plug-ins).'
+            multiple = true
+        ]
+        for (entity : getAllEntities.filter[hasDisplayAction]) {
+            listVar.items += factory.createListVarItem => [
+                name = entity.name.formatForCode
+                ^default = true
+            ]
+        }
+
+        varContainer.vars += listVar
+        variables += varContainer
+    }
+
     def private addGeoSettings(Application it) {
         if (!hasGeographical) {
             return
@@ -363,6 +389,15 @@ class PersistenceTransformer {
         ModuleStudioFactory.eINSTANCE.createVariables => [
             name = 'Images'
             documentation = 'Here you can define several options for image handling.'
+            sortOrder = newSortNumber
+        ]
+    }
+
+    def private createVarContainerForIntegrationSettings(Application it) {
+        val newSortNumber = getNextVarContainerSortNumber
+        ModuleStudioFactory.eINSTANCE.createVariables => [
+            name = 'Integration'
+            documentation = 'These options allow you to configure integration aspects.'
             sortOrder = newSortNumber
         ]
     }
