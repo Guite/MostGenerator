@@ -89,7 +89,7 @@ class Bootstrap {
                 }
             «ELSE»
                 // set current user name to loggable listener
-                $loggableListener = $container->get('stof_doctrine_extensions.listener.loggable');
+                $loggableListener = $container->get('doctrine_extensions.listener.loggable');
                 $loggableListener->setUsername($userName);
             «ENDIF»
         «ENDIF»
