@@ -2,6 +2,7 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.models.entity.exte
 
 import de.guite.modulestudio.metamodel.DerivedField
 import de.guite.modulestudio.metamodel.Entity
+import de.guite.modulestudio.metamodel.ObjectField
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
@@ -23,7 +24,7 @@ class Loggable extends AbstractExtension implements EntityExtensionInterface {
      * Additional field annotations.
      */
     override columnAnnotations(DerivedField it) '''
-        «IF entity instanceof Entity && (entity as Entity).loggable» * @Gedmo\Versioned
+        «IF entity instanceof Entity && (entity as Entity).loggable && !(it instanceof ObjectField)» * @Gedmo\Versioned
         «ENDIF»
     '''
 
