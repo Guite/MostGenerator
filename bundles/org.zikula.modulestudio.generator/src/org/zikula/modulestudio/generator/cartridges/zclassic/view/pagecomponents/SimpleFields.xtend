@@ -57,13 +57,13 @@ class SimpleFields {
         if (percentage) '''
             {{ («objName».«name.formatForCode» * 100)|localizednumber }}%'''
         else '''
-            {{ «objName».«name.formatForCode»|localized«IF currency»currency«ELSE»number«ENDIF» }}'''
+            {{ «objName».«name.formatForCode»|localized«IF currency»currency('EUR')«ELSE»number«ENDIF» }}'''
     }
     def dispatch displayField(FloatField it, String objName, String page) {
         if (percentage) '''
             {{ («objName».«name.formatForCode» * 100)|localizednumber }}%'''
         else '''
-            {{ «objName».«name.formatForCode»|localized«IF currency»currency«ELSE»number«ENDIF» }}'''
+            {{ «objName».«name.formatForCode»|localized«IF currency»currency('EUR')«ELSE»number«ENDIF» }}'''
     }
 
     def dispatch displayField(UserField it, String objName, String page) {
