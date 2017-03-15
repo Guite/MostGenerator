@@ -78,7 +78,7 @@ class Layout {
                 {{ pageAddAsset('javascript', zasset('@«appName»:js/«appName».Geo.js')) }}
             «ENDIF»
             «IF targets('1.5')»
-                «IF hasEditActions»
+                «IF hasGeographical && hasEditActions»
                     {% if 'edit' in app.request.get('_route') %}
                         {{ polyfill(['geolocation']) }}
                     {% endif %}
