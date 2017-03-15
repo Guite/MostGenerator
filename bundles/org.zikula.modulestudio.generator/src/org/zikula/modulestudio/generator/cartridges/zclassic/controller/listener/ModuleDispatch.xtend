@@ -11,9 +11,15 @@ class ModuleDispatch {
     CommonExample commonExample = new CommonExample()
 
     def generate(Application it, Boolean isBase) '''
-        /**
-         * Makes our handlers known to the event system.
-         */
+        «IF isBase»
+            /**
+             * Makes our handlers known to the event system.
+             */
+        «ELSE»
+            /**
+             * @inheritDoc
+             */
+        «ENDIF»
         public static function getSubscribedEvents()
         {
             «IF isBase»
