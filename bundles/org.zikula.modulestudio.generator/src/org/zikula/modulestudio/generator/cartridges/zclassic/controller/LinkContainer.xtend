@@ -161,7 +161,7 @@ class LinkContainer {
                                 if ($this->permissionApi->hasPermission($this->getBundleName() . ':' . ucfirst($objectType) . ':', '::', ACCESS_READ)) {
                                     $links[] = [
                                         'url' => $this->router->generate('«appName.formatForDB»_' . strtolower($objectType) . '_view', ['own' => 1]),
-                                        'text' => $this->__('My «entity.nameMultiple.formatForDisplay»', '«appName.formatForDB»'),
+                                        'text' => $this->__('My «entity.nameMultiple.formatForDisplay»'«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»),
                                         'icon' => 'list-alt'
                                     ];
                                 }
@@ -171,7 +171,7 @@ class LinkContainer {
                         if ($this->permissionApi->hasPermission($this->getBundleName() . '::', '::', ACCESS_ADMIN)) {
                             $links[] = [
                                 'url' => $this->router->generate('«appName.formatForDB»_«getLeadingEntity.name.formatForDB»_admin«getLeadingEntity.getPrimaryAction»'),
-                                'text' => $this->__('«name.formatForDisplayCapital» Backend', '«appName.formatForDB»'),
+                                'text' => $this->__('«name.formatForDisplayCapital» Backend'«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»),
                                 'icon' => 'wrench'
                             ];
                         }
