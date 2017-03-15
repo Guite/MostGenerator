@@ -579,7 +579,7 @@ class EditEntity {
                 «fetchListEntries»
             «ENDIF»
             «val isExpandedListField = it instanceof ListField && (it as ListField).expanded»
-            $builder->add('«name.formatForCode»', «IF app.targets('1.5')»«formType»::class«ELSE»'«formType»Type'«ENDIF», [
+            $builder->add('«name.formatForCode»', «IF app.targets('1.5')»«formType»Type::class«ELSE»'«formType»Type'«ENDIF», [
                 'label' => $this->__('«name.formatForDisplayCapital»') . ':',
                 «IF null !== documentation && documentation != ''»
                     'label_attr' => [
