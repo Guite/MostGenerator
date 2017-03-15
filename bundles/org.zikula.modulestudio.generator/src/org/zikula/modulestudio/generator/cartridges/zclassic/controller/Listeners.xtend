@@ -91,7 +91,7 @@ class Listeners {
         if (!getAllEntities.filter[hasIpTraceableFields].empty) {
             listenerFile('IpTrace', listenersIpTraceFile)
         }
-        if (targets('1.4-dev')) {
+        if (targets('1.5')) {
             listenerFile('WorkflowEvents', listenersWorkflowEventsFile)
         }
     }

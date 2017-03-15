@@ -34,7 +34,7 @@ class SearchHelper {
 
         use Doctrine\ORM\QueryBuilder;
         use Doctrine\ORM\Query\Expr\Composite;
-        «IF targets('1.4-dev')»
+        «IF targets('1.5')»
             use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
             use Symfony\Component\Form\Extension\Core\Type\HiddenType;
             use Symfony\Component\Form\FormBuilderInterface;
@@ -44,12 +44,12 @@ class SearchHelper {
         use Symfony\Component\HttpFoundation\Request;
         use Symfony\Component\HttpFoundation\RequestStack;
         use Symfony\Component\HttpFoundation\Session\SessionInterface;
-        «IF targets('1.4-dev')»
+        «IF targets('1.5')»
             use Zikula\Common\Translator\TranslatorInterface;
             use Zikula\Common\Translator\TranslatorTrait;
         «ENDIF»
         use Zikula\Core\RouteUrl;
-        «IF targets('1.4-dev')»
+        «IF targets('1.5')»
             use Zikula\PermissionsModule\Api\ApiInterface\PermissionApiInterface;
         «ELSE»
             use Zikula\PermissionsModule\Api\PermissionApi;
@@ -75,15 +75,15 @@ class SearchHelper {
     '''
 
     def private searchHelperBaseImpl(Application it) '''
-        «IF targets('1.4-dev')»
+        «IF targets('1.5')»
             use TranslatorTrait;
 
         «ENDIF»
         /**
-         * @var PermissionApi«IF targets('1.4-dev')»Interface«ENDIF»
+         * @var PermissionApi«IF targets('1.5')»Interface«ENDIF»
          */
         protected $permissionApi;
-        «IF !targets('1.4-dev')»
+        «IF !targets('1.5')»
 
             /**
              * @var EngineInterface
@@ -126,11 +126,11 @@ class SearchHelper {
         /**
          * SearchHelper constructor.
          *
-         «IF targets('1.4-dev')»
+         «IF targets('1.5')»
          * @param TranslatorInterface $translator   Translator service instance
          «ENDIF»
-         * @param PermissionApi«IF targets('1.4-dev')»Interface«ENDIF»    $permissionApi   PermissionApi service instance
-         «IF !targets('1.4-dev')»
+         * @param PermissionApi«IF targets('1.5')»Interface«ENDIF»    $permissionApi   PermissionApi service instance
+         «IF !targets('1.5')»
          * @param EngineInterface  $templateEngine  Template engine service instance
          «ENDIF»
          * @param SessionInterface $session         Session service instance
@@ -143,11 +143,11 @@ class SearchHelper {
          «ENDIF»
          */
         public function __construct(
-            «IF targets('1.4-dev')»
+            «IF targets('1.5')»
                 TranslatorInterface $translator,
             «ENDIF»
-            PermissionApi«IF targets('1.4-dev')»Interface«ENDIF» $permissionApi,
-            «IF !targets('1.4-dev')»
+            PermissionApi«IF targets('1.5')»Interface«ENDIF» $permissionApi,
+            «IF !targets('1.5')»
                 EngineInterface $templateEngine,
             «ENDIF»
             SessionInterface $session,
@@ -158,11 +158,11 @@ class SearchHelper {
             CategoryHelper $categoryHelper
             «ENDIF»
         ) {
-            «IF targets('1.4-dev')»
+            «IF targets('1.5')»
                 $this->setTranslator($translator);
             «ENDIF»
             $this->permissionApi = $permissionApi;
-            «IF !targets('1.4-dev')»
+            «IF !targets('1.5')»
                 $this->templateEngine = $templateEngine;
             «ENDIF»
             $this->session = $session;
@@ -175,7 +175,7 @@ class SearchHelper {
             «ENDIF»
         }
 
-        «IF targets('1.4-dev')»
+        «IF targets('1.5')»
             «setTranslatorMethod»
 
             «amendForm»
@@ -282,7 +282,7 @@ class SearchHelper {
             $results = [];
 
             // retrieve list of activated object types
-            «IF targets('1.4-dev')»
+            «IF targets('1.5')»
                 $searchTypes = $this->getSearchTypes();
             «ELSE»
                 $searchTypes = isset($modVars['objectTypes']) ? (array)$modVars['objectTypes'] : [];
@@ -295,8 +295,8 @@ class SearchHelper {
                 }
             «ENDIF»
 
-            foreach ($searchTypes as «IF targets('1.4-dev')»$searchTypeCode => $typeInfo«ELSE»$objectType«ENDIF») {
-                «IF targets('1.4-dev')»
+            foreach ($searchTypes as «IF targets('1.5')»$searchTypeCode => $typeInfo«ELSE»$objectType«ENDIF») {
+                «IF targets('1.5')»
                     $objectType = $typeInfo['value'];
                     $isActivated = false;
                     if ($this->request->isMethod('GET')) {

@@ -135,7 +135,7 @@ class EntityConstructor {
             «ENDFOR»
         «ELSE»
         «ENDIF»
-        «IF !application.targets('1.4-dev')»
+        «IF !application.targets('1.5')»
             $this->initWorkflow();
         «ENDIF»
         «new Association().initCollections(it)»

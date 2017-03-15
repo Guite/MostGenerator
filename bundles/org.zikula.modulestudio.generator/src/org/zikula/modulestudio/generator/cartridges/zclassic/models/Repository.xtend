@@ -272,7 +272,7 @@ class Repository {
         «IF hasArchive && null !== getEndDateField»
             use Symfony\Component\HttpFoundation\Session\SessionInterface;
             use Zikula\Core\RouteUrl;
-            «IF app.targets('1.4-dev')»
+            «IF app.targets('1.5')»
                 use Zikula\PermissionsModule\Api\ApiInterface\PermissionApiInterface;
             «ELSE»
                 use Zikula\PermissionsModule\Api\PermissionApi;
@@ -1450,7 +1450,7 @@ class Repository {
          *
          * @return bool If everything went right or not
          *
-         * @param PermissionApi«IF app.targets('1.4-dev')»Interface«ENDIF»       $permissionApi  PermissionApi service instance
+         * @param PermissionApi«IF app.targets('1.5')»Interface«ENDIF»       $permissionApi  PermissionApi service instance
          * @param Session             $session        Session service instance
          * @param TranslatorInterface $translator     Translator service instance
          * @param WorkflowHelper      $workflowHelper WorkflowHelper service instance
@@ -1460,7 +1460,7 @@ class Repository {
          *
          * @throws RuntimeException Thrown if workflow action execution fails
          */
-        public function archiveObjects(PermissionApi«IF app.targets('1.4-dev')»Interface«ENDIF» $permissionApi, SessionInterface $session, TranslatorInterface $translator, WorkflowHelper $workflowHelper«IF !skipHookSubscribers», HookHelper $hookHelper«ENDIF»)
+        public function archiveObjects(PermissionApi«IF app.targets('1.5')»Interface«ENDIF» $permissionApi, SessionInterface $session, TranslatorInterface $translator, WorkflowHelper $workflowHelper«IF !skipHookSubscribers», HookHelper $hookHelper«ENDIF»)
         {
             if (true !== $session->get('«app.appName»AutomaticArchiving', false) && !$permissionApi->hasPermission('«app.appName»', '.*', ACCESS_EDIT)) {
                 // current user has no permission for executing the archive workflow action
@@ -1495,7 +1495,7 @@ class Repository {
 
             $action = 'archive';
             foreach ($affectedEntities as $entity) {
-                «IF !app.targets('1.4-dev')»
+                «IF !app.targets('1.5')»
                     $entity->initWorkflow();
 
                 «ENDIF»

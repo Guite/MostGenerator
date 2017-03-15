@@ -90,7 +90,7 @@ class MassHandling {
             if (null === $entity) {
                 continue;
             }
-            «IF !application.targets('1.4-dev')»
+            «IF !application.targets('1.5')»
                 $entity->initWorkflow();
             «ENDIF»
 

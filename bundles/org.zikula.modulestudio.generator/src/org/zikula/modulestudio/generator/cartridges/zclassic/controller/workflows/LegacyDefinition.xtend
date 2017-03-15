@@ -32,7 +32,7 @@ class LegacyDefinition {
      * This generates XML files describing the workflows used in the application.
      */
     def generate(Application it, IFileSystemAccess fsa) {
-        if (targets('1.4-dev')) {
+        if (targets('1.5')) {
             return
         }
         app = it

@@ -72,7 +72,7 @@ class EventAction {
         if ($event->isPropagationStopped()) {
             return false;
         }
-        «IF !targets('1.4-dev')»
+        «IF !targets('1.5')»
 
             // delete workflow for this entity
             $workflowHelper = $this->container->get('«appService».workflow_helper');

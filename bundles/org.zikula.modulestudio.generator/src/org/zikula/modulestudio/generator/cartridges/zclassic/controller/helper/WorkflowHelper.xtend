@@ -36,28 +36,28 @@ class WorkflowHelper {
     def private workflowFunctionsBaseImpl(Application it) '''
         namespace «appNamespace»\Helper\Base;
 
-        «IF targets('1.4-dev') || needsApproval»
+        «IF targets('1.5') || needsApproval»
             use Psr\Log\LoggerInterface;
         «ENDIF»
-        «IF targets('1.4-dev')»
+        «IF targets('1.5')»
             use Symfony\Component\Workflow\Registry;
         «ENDIF»
         use Zikula\Common\Translator\TranslatorInterface;
         use Zikula\Core\Doctrine\EntityAccess;
         «IF needsApproval»
-            «IF targets('1.4-dev')»
+            «IF targets('1.5')»
                 use Zikula\PermissionsModule\Api\ApiInterface\PermissionApiInterface;
             «ELSE»
                 use Zikula\PermissionsModule\Api\PermissionApi;
             «ENDIF»
         «ENDIF»
-        «IF targets('1.4-dev')»
+        «IF targets('1.5')»
             use Zikula\UsersModule\Api\CurrentUserApi;
         «ENDIF»
-        «IF !targets('1.4-dev')»
+        «IF !targets('1.5')»
             use Zikula_Workflow_Util;
         «ENDIF»
-        «IF targets('1.4-dev') || needsApproval»
+        «IF targets('1.5') || needsApproval»
             use «appNamespace»\Entity\Factory\«name.formatForCodeCapital»Factory;
         «ENDIF»
         use «appNamespace»\Helper\ListEntriesHelper;
@@ -78,14 +78,14 @@ class WorkflowHelper {
              * @var TranslatorInterface
              */
             protected $translator;
-            «IF targets('1.4-dev')»
+            «IF targets('1.5')»
 
                 /**
                  * @var Registry
                  */
                 protected $workflowRegistry;
             «ENDIF»
-            «IF targets('1.4-dev') || needsApproval»
+            «IF targets('1.5') || needsApproval»
 
                 /**
                  * @var LoggerInterface
@@ -93,10 +93,10 @@ class WorkflowHelper {
                 protected $logger;
 
                 /**
-                 * @var PermissionApi«IF targets('1.4-dev')»Interface«ENDIF»
+                 * @var PermissionApi«IF targets('1.5')»Interface«ENDIF»
                  */
                 protected $permissionApi;
-                «IF targets('1.4-dev')»
+                «IF targets('1.5')»
 
                     /**
                      * @var CurrentUserApi
@@ -119,13 +119,13 @@ class WorkflowHelper {
              * WorkflowHelper constructor.
              *
              * @param TranslatorInterface $translator        Translator service instance
-             «IF targets('1.4-dev')»
+             «IF targets('1.5')»
              * @param Registry            $registry          Workflow registry service instance
              «ENDIF»
-             «IF targets('1.4-dev') || needsApproval»
+             «IF targets('1.5') || needsApproval»
              * @param LoggerInterface     $logger            Logger service instance
-             * @param PermissionApi«IF targets('1.4-dev')»Interface«ENDIF»       $permissionApi     PermissionApi service instance
-             «IF targets('1.4-dev')»
+             * @param PermissionApi«IF targets('1.5')»Interface«ENDIF»       $permissionApi     PermissionApi service instance
+             «IF targets('1.5')»
              * @param CurrentUserApi      $currentUserApi    CurrentUserApi service instance
              «ENDIF»
              * @param «name.formatForCodeCapital»Factory $entityFactory «name.formatForCodeCapital»Factory service instance
@@ -136,13 +136,13 @@ class WorkflowHelper {
              */
             public function __construct(
                 TranslatorInterface $translator,
-                «IF targets('1.4-dev')»
+                «IF targets('1.5')»
                     Registry $registry,
                 «ENDIF»
-                «IF targets('1.4-dev') || needsApproval»
+                «IF targets('1.5') || needsApproval»
                     LoggerInterface $logger,
-                    PermissionApi«IF targets('1.4-dev')»Interface«ENDIF» $permissionApi,
-                    «IF targets('1.4-dev')»
+                    PermissionApi«IF targets('1.5')»Interface«ENDIF» $permissionApi,
+                    «IF targets('1.5')»
                         CurrentUserApi $currentUserApi,
                     «ENDIF»
                     «name.formatForCodeCapital»Factory $entityFactory,
@@ -151,13 +151,13 @@ class WorkflowHelper {
             {
                 $this->name = '«appName»';
                 $this->translator = $translator;
-                «IF targets('1.4-dev')»
+                «IF targets('1.5')»
                     $this->workflowRegistry = $registry;
                 «ENDIF»
-                «IF targets('1.4-dev') || needsApproval»
+                «IF targets('1.5') || needsApproval»
                     $this->logger = $logger;
                     $this->permissionApi = $permissionApi;
-                    «IF targets('1.4-dev')»
+                    «IF targets('1.5')»
                         $this->currentUserApi = $currentUserApi;
                     «ENDIF»
                     $this->entityFactory = $entityFactory;
@@ -167,12 +167,12 @@ class WorkflowHelper {
 
             «getObjectStates»
             «getStateInfo»
-            «IF !targets('1.4-dev')»
+            «IF !targets('1.5')»
                 «getWorkflowName»
             «ENDIF»
             «getActionsForObject»
             «executeAction»
-            «IF !targets('1.4-dev')»
+            «IF !targets('1.5')»
                 «normaliseWorkflowData»
             «ENDIF»
             «collectAmountOfModerationItems»
@@ -285,7 +285,7 @@ class WorkflowHelper {
          */
         public function getActionsForObject($entity)
         {
-            «IF targets('1.4-dev')»
+            «IF targets('1.5')»
                 $workflow = $this->workflowRegistry->get($entity);
                 $wfActions = $workflow->getEnabledTransitions($entity);
                 $currentState = $entity->getWorkflowState();
@@ -300,14 +300,14 @@ class WorkflowHelper {
             «ENDIF»
 
             // as we use the workflows for multiple object types we must maybe filter out some actions
-            $states = $this->listEntriesHelper->getEntries(«IF targets('1.4-dev')»$entity->get_objectType()«ELSE»$objectType«ENDIF», 'workflowState');
+            $states = $this->listEntriesHelper->getEntries(«IF targets('1.5')»$entity->get_objectType()«ELSE»$objectType«ENDIF», 'workflowState');
             $allowedStates = [];
             foreach ($states as $state) {
                 $allowedStates[] = $state['value'];
             }
 
             $actions = [];
-            «IF targets('1.4-dev')»
+            «IF targets('1.5')»
                 foreach ($wfActions as $action) {
                     $actionId = $action->getName();
                     $actions[$actionId] = [
@@ -330,7 +330,7 @@ class WorkflowHelper {
 
             return $actions;
         }
-        «IF targets('1.4-dev')»
+        «IF targets('1.5')»
 
             /**
              * Returns a translatable title for a certain action.
@@ -495,7 +495,7 @@ class WorkflowHelper {
          */
         public function executeAction($entity, $actionId = '', $recursive = false)
         {
-            «IF targets('1.4-dev')»
+            «IF targets('1.5')»
                 $workflow = $this->workflowRegistry->get($entity);
                 if (!$workflow->can($entity, $actionId)) {
                     return false;

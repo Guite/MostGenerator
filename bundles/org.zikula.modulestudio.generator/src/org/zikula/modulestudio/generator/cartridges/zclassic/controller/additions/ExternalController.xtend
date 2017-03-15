@@ -118,7 +118,7 @@ class ExternalController {
             return new Response($this->__('No such item.'));
         }
 
-        «IF !targets('1.4-dev')»
+        «IF !targets('1.5')»
             $entity->initWorkflow();
 
         «ENDIF»
@@ -285,7 +285,7 @@ class ExternalController {
             }
 
         «ENDIF»
-        «IF !targets('1.4-dev')»
+        «IF !targets('1.5')»
             foreach ($entities as $k => $entity) {
                 $entity->initWorkflow();
             }

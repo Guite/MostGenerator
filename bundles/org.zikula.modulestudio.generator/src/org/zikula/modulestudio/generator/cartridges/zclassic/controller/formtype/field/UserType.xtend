@@ -25,7 +25,7 @@ class UserType {
         namespace «appNamespace»\Form\Type\Field\Base;
 
         use Symfony\Component\Form\AbstractType;
-        «IF targets('1.4-dev')»
+        «IF targets('1.5')»
             use Symfony\Component\Form\Extension\Core\Type\TextType;
         «ENDIF»
         use Symfony\Component\Form\FormBuilderInterface;
@@ -104,7 +104,7 @@ class UserType {
              */
             public function getParent()
             {
-                return «IF targets('1.4-dev')»TextType::class«ELSE»'Symfony\Component\Form\Extension\Core\Type\TextType'«ENDIF»;
+                return «IF targets('1.5')»TextType::class«ELSE»'Symfony\Component\Form\Extension\Core\Type\TextType'«ENDIF»;
             }
 
             /**

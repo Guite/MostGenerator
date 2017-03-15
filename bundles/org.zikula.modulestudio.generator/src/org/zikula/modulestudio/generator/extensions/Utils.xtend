@@ -119,17 +119,21 @@ class Utils {
      * @return Boolean The result.
      */
     def Boolean targets(Application it, String version) {
-        val useUnstableCore = (version == '1.4-dev')
+        val useStable14 = !#['1.4-dev', '1.5', '1.5-dev'].contains(version)
 
         switch getCoreVersion {
             case ZK20:
-                version == '2.x'
+                #['1.5', '1.5-dev'].contains(version)
+            case ZK15:
+                version == '1.5'
+            case ZK15DEV:
+                #['1.5', '1.5-dev'].contains(version)
             case ZK14:
-                !useUnstableCore
+                useStable14
             case ZK14DEV:
-                useUnstableCore
+                version == '1.4-dev'
             default:
-                !useUnstableCore
+                useStable14
         }
     }
 

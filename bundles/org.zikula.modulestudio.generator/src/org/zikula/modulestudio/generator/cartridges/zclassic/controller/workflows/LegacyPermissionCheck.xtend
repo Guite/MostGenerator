@@ -37,7 +37,7 @@ class LegacyPermissionCheck {
      * Entry point for workflow permission checks.
      */
     def generate(Application it, IFileSystemAccess fsa) {
-        if (targets('1.4-dev')) {
+        if (targets('1.5')) {
             return
         }
         app = it

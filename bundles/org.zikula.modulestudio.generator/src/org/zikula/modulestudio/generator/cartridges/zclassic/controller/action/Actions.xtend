@@ -131,7 +131,7 @@ class Actions {
             }
 
         «ENDIF»
-        «IF !app.targets('1.4-dev')»
+        «IF !app.targets('1.5')»
             foreach ($templateParameters['items'] as $k => $entity) {
                 $entity->initWorkflow();
             }
@@ -189,7 +189,7 @@ class Actions {
         $instanceId = $«name.formatForCode»->createCompositeIdentifier();
         «action.permissionCheck("' . ucfirst($objectType) . '", "$instanceId . ")»
 
-        «IF !app.targets('1.4-dev')»
+        «IF !app.targets('1.5')»
             $«name.formatForCode»->initWorkflow();
         «ENDIF»
         «IF loggable»
@@ -266,7 +266,7 @@ class Actions {
         $logger = $this->get('logger');
         $logArgs = ['app' => '«app.appName»', 'user' => $this->get('zikula_users_module.current_user')->get('uname'), 'entity' => '«name.formatForDisplay»', 'id' => $«name.formatForCode»->createCompositeIdentifier()];
 
-        «IF !app.targets('1.4-dev')»
+        «IF !app.targets('1.5')»
             $«name.formatForCode»->initWorkflow();
 
         «ENDIF»
@@ -299,7 +299,7 @@ class Actions {
             return $this->redirectToRoute($redirectRoute);
         }
 
-        $form = $this->createForm('«IF app.targets('1.4-dev')»Zikula\Bundle\FormExtensionBundle\Form\Type\DeletionType«ELSE»«app.appNamespace»\Form\DeleteEntityType«ENDIF»', $«name.formatForCode»);
+        $form = $this->createForm('«IF app.targets('1.5')»Zikula\Bundle\FormExtensionBundle\Form\Type\DeletionType«ELSE»«app.appNamespace»\Form\DeleteEntityType«ENDIF»', $«name.formatForCode»);
 
         if ($form->handleRequest($request)->isValid()) {
             if ($form->get('delete')->isClicked()) {

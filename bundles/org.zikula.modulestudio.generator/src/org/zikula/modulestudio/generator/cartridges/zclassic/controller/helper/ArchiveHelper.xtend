@@ -31,7 +31,7 @@ class ArchiveHelper {
         use Psr\Log\LoggerInterface;
         use Symfony\Component\HttpFoundation\Session\SessionInterface;
         use Zikula\Common\Translator\TranslatorInterface;
-        «IF targets('1.4-dev')»
+        «IF targets('1.5')»
             use Zikula\PermissionsModule\Api\ApiInterface\PermissionApiInterface;
         «ELSE»
             use Zikula\PermissionsModule\Api\PermissionApi;
@@ -63,7 +63,7 @@ class ArchiveHelper {
             protected $logger;
 
             /**
-             * @var PermissionApi«IF targets('1.4-dev')»Interface«ENDIF»
+             * @var PermissionApi«IF targets('1.5')»Interface«ENDIF»
              */
             protected $permissionApi;
 
@@ -90,7 +90,7 @@ class ArchiveHelper {
              * @param TranslatorInterface $translator     Translator service instance
              * @param SessionInterface    $session        Session service instance
              * @param LoggerInterface     $logger         Logger service instance
-             * @param PermissionApi«IF targets('1.4-dev')»Interface«ENDIF»       $permissionApi  PermissionApi service instance
+             * @param PermissionApi«IF targets('1.5')»Interface«ENDIF»       $permissionApi  PermissionApi service instance
              * @param «name.formatForCodeCapital»Factory $entityFactory «name.formatForCodeCapital»Factory service instance
              * @param WorkflowHelper      $workflowHelper WorkflowHelper service instance
              «IF hasHookSubscribers»
@@ -101,7 +101,7 @@ class ArchiveHelper {
                 TranslatorInterface $translator,
                 SessionInterface $session,
                 LoggerInterface $logger,
-                PermissionApi«IF targets('1.4-dev')»Interface«ENDIF» $permissionApi,
+                PermissionApi«IF targets('1.5')»Interface«ENDIF» $permissionApi,
                 «name.formatForCodeCapital»Factory $entityFactory,
                 WorkflowHelper $workflowHelper«IF hasHookSubscribers»,
                 HookHelper $hookHelper«ENDIF»)

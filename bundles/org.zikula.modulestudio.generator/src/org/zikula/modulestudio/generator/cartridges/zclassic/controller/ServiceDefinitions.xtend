@@ -148,7 +148,7 @@ class ServiceDefinitions {
                     - { name: kernel.event_subscriber }
 
         «ENDFOR»
-        «IF targets('1.4-dev')»
+        «IF targets('1.5')»
             «modPrefix».workflow_events_listener:
                 class: «appNamespace»\Listener\WorkflowEventsListener
                 arguments:
@@ -374,7 +374,7 @@ class ServiceDefinitions {
                         - { name: form.type }
             «ENDFOR»
         «ENDIF»
-        «IF hasDeleteActions && !targets('1.4-dev')»
+        «IF hasDeleteActions && !targets('1.5')»
 
             «modPrefix».form.type.deleteentity:
                 class: «nsBase.replace('Type\\', '')»DeleteEntityType
@@ -544,11 +544,11 @@ class ServiceDefinitions {
             «modPrefix».search_helper:
                 class: «nsBase»SearchHelper
                 arguments:
-                    «IF targets('1.4-dev')»
+                    «IF targets('1.5')»
                         - "@translator.default"
                     «ENDIF»
                     - "@zikula_permissions_module.api.permission"
-                    «IF !targets('1.4-dev')»
+                    «IF !targets('1.5')»
                         - "@templating.engine.twig"
                     «ENDIF»
                     - "@session"
@@ -607,13 +607,13 @@ class ServiceDefinitions {
             class: «nsBase»WorkflowHelper
             arguments:
                 - "@translator.default"
-                «IF targets('1.4-dev')»
+                «IF targets('1.5')»
                     - "@workflow.registry"
                 «ENDIF»
-                «IF targets('1.4-dev') || needsApproval»
+                «IF targets('1.5') || needsApproval»
                     - "@logger"
                     - "@zikula_permissions_module.api.permission"
-                    «IF targets('1.4-dev')»
+                    «IF targets('1.5')»
                         - "@zikula_users_module.current_user"
                     «ENDIF»
                     - "@«modPrefix».entity_factory"

@@ -895,7 +895,7 @@ class AjaxController {
             return new AjaxResponse($returnValue);
         }
 
-        «IF !targets('1.4-dev')»
+        «IF !targets('1.5')»
             $entity->initWorkflow();
 
         «ENDIF»

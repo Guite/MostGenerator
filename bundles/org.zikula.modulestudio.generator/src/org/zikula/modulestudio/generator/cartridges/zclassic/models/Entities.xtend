@@ -128,7 +128,7 @@ class Entities {
         «IF hasUserFieldsEntity»
             use Zikula\UsersModule\Entity\UserEntity;
         «ENDIF»
-        «IF !application.targets('1.4-dev')»
+        «IF !application.targets('1.5')»
             use «application.appNamespace»\Traits\EntityWorkflowTrait;
         «ENDIF»
     '''
@@ -159,7 +159,7 @@ class Entities {
         «IF hasUserFieldsEntity»
             use Zikula\UsersModule\Entity\UserEntity;
         «ENDIF»
-        «IF !application.targets('1.4-dev')»
+        «IF !application.targets('1.5')»
             use «application.appNamespace»\Traits\EntityWorkflowTrait;
         «ENDIF»
         «IF geographical»
@@ -196,7 +196,7 @@ class Entities {
          */
         abstract class Abstract«name.formatForCodeCapital»Entity extends EntityAccess«IF it instanceof Entity && ((it as Entity).hasNotifyPolicy || (it as Entity).hasTranslatableFields)» implements«IF (it as Entity).hasNotifyPolicy» NotifyPropertyChanged«ENDIF»«IF (it as Entity).hasTranslatableFields»«IF (it as Entity).hasNotifyPolicy»,«ENDIF» Translatable«ENDIF»«ENDIF»
         {
-            «IF !application.targets('1.4-dev')»
+            «IF !application.targets('1.5')»
                 /**
                  * Hook entity workflow field and behaviour.
                  */

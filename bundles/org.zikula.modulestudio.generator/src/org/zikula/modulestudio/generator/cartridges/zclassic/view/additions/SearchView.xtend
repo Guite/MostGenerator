@@ -15,7 +15,7 @@ class SearchView {
     extension Utils = new Utils
 
     def generate(Application it, IFileSystemAccess fsa) {
-        if (targets('1.4-dev')) {
+        if (targets('1.5')) {
             return
         }
         val templatePath = getViewPath + 'Search/'

@@ -46,7 +46,7 @@ class LinkContainer {
         «IF generateAccountApi»
             use Zikula\ExtensionsModule\Api\VariableApi;
         «ENDIF»
-        «IF targets('1.4-dev')»
+        «IF targets('1.5')»
             use Zikula\PermissionsModule\Api\ApiInterface\PermissionApiInterface;
         «ELSE»
             use Zikula\PermissionsModule\Api\PermissionApi;
@@ -69,7 +69,7 @@ class LinkContainer {
             protected $router;
 
             /**
-             * @var PermissionApi«IF targets('1.4-dev')»Interface«ENDIF»
+             * @var PermissionApi«IF targets('1.5')»Interface«ENDIF»
              */
             protected $permissionApi;
 
@@ -97,7 +97,7 @@ class LinkContainer {
              *
              * @param TranslatorInterface $translator       Translator service instance
              * @param Routerinterface     $router           Router service instance
-             * @param PermissionApi«IF targets('1.4-dev')»Interface«ENDIF»       $permissionApi    PermissionApi service instance
+             * @param PermissionApi«IF targets('1.5')»Interface«ENDIF»       $permissionApi    PermissionApi service instance
              «IF generateAccountApi»
              * @param VariableApi         $variableApi      VariableApi service instance
              «ENDIF»
@@ -109,7 +109,7 @@ class LinkContainer {
             public function __construct(
                 TranslatorInterface $translator,
                 RouterInterface $router,
-                PermissionApi«IF targets('1.4-dev')»Interface«ENDIF» $permissionApi,
+                PermissionApi«IF targets('1.5')»Interface«ENDIF» $permissionApi,
                 «IF generateAccountApi»
                     VariableApi $variableApi,
                 «ENDIF»

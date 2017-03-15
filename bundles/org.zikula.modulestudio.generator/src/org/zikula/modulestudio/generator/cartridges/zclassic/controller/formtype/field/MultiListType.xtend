@@ -32,7 +32,7 @@ class MultiListType {
         namespace «appNamespace»\Form\Type\Field\Base;
 
         use Symfony\Component\Form\AbstractType;
-        «IF targets('1.4-dev')»
+        «IF targets('1.5')»
             use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
         «ENDIF»
         use Symfony\Component\Form\FormBuilderInterface;
@@ -73,7 +73,7 @@ class MultiListType {
              */
             public function getParent()
             {
-                return «IF targets('1.4-dev')»ChoiceType::class«ELSE»'Symfony\Component\Form\Extension\Core\Type\ChoiceType'«ENDIF»;
+                return «IF targets('1.5')»ChoiceType::class«ELSE»'Symfony\Component\Form\Extension\Core\Type\ChoiceType'«ENDIF»;
             }
 
             /**

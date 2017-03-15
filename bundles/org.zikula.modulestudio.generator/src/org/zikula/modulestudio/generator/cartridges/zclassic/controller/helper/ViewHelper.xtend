@@ -34,7 +34,7 @@ class ViewHelper {
         use Twig_Environment;
         use Zikula\Core\Response\PlainResponse;
         use Zikula\ExtensionsModule\Api\VariableApi;
-        «IF targets('1.4-dev')»
+        «IF targets('1.5')»
             use Zikula\PermissionsModule\Api\ApiInterface\PermissionApiInterface;
         «ELSE»
             use Zikula\PermissionsModule\Api\PermissionApi;
@@ -63,7 +63,7 @@ class ViewHelper {
             protected $request;
 
             /**
-             * @var PermissionApi«IF targets('1.4-dev')»Interface«ENDIF»
+             * @var PermissionApi«IF targets('1.5')»Interface«ENDIF»
              */
             protected $permissionApi;
 
@@ -88,7 +88,7 @@ class ViewHelper {
              * @param Twig_Environment $twig             Twig service instance
              * @param FilesystemLoader $twigLoader       Twig loader service instance
              * @param RequestStack     $requestStack     RequestStack service instance
-             * @param PermissionApi«IF targets('1.4-dev')»Interface«ENDIF»    $permissionApi    PermissionApi service instance
+             * @param PermissionApi«IF targets('1.5')»Interface«ENDIF»    $permissionApi    PermissionApi service instance
              * @param VariableApi      $variableApi      VariableApi service instance
              * @param ParameterBag     $pageVars         ParameterBag for theme page variables
              * @param ControllerHelper $controllerHelper ControllerHelper service instance
@@ -99,7 +99,7 @@ class ViewHelper {
                 Twig_Environment $twig,
                 FilesystemLoader $twigLoader,
                 RequestStack $requestStack,
-                PermissionApi«IF targets('1.4-dev')»Interface«ENDIF» $permissionApi,
+                PermissionApi«IF targets('1.5')»Interface«ENDIF» $permissionApi,
                 VariableApi $variableApi,
                 ParameterBag $pageVars,
                 ControllerHelper $controllerHelper)

@@ -43,7 +43,7 @@ class Config {
         namespace «appNamespace»\Form\Base;
 
         use Symfony\Component\Form\AbstractType;
-        «IF targets('1.4-dev')»
+        «IF targets('1.5')»
             «IF hasUserGroupSelectors»
                 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
             «ENDIF»
@@ -130,14 +130,14 @@ class Config {
                 «ENDFOR»
 
                 $builder
-                    ->add('save', «IF targets('1.4-dev')»SubmitType::class«ELSE»'«nsSymfonyFormType»SubmitType'«ENDIF», [
+                    ->add('save', «IF targets('1.5')»SubmitType::class«ELSE»'«nsSymfonyFormType»SubmitType'«ENDIF», [
                         'label' => $this->__('Update configuration'),
                         'icon' => 'fa-check',
                         'attr' => [
                             'class' => 'btn btn-success'
                         ]
                     ])
-                    ->add('cancel', «IF targets('1.4-dev')»SubmitType::class«ELSE»'«nsSymfonyFormType»SubmitType'«ENDIF», [
+                    ->add('cancel', «IF targets('1.5')»SubmitType::class«ELSE»'«nsSymfonyFormType»SubmitType'«ENDIF», [
                         'label' => $this->__('Cancel'),
                         'icon' => 'fa-times',
                         'attr' => [
@@ -178,7 +178,7 @@ class Config {
     '''
 
     def private definition(Variable it) '''
-        ->add('«name.formatForCode»', «IF container.application.targets('1.4-dev')»«fieldType»Type::class«ELSE»'«fieldType»Type'«ENDIF», [
+        ->add('«name.formatForCode»', «IF container.application.targets('1.5')»«fieldType»Type::class«ELSE»'«fieldType»Type'«ENDIF», [
             'label' => $this->__('«labelText»') . ':',
             «IF null !== documentation && documentation != ''»
                 'label_attr' => [
@@ -239,14 +239,14 @@ class Config {
         name.formatForDisplayCapital
     }
 
-    def private dispatch fieldType(Variable it) '''«IF !container.application.targets('1.4-dev')»«nsSymfonyFormType»«ENDIF»Text'''
+    def private dispatch fieldType(Variable it) '''«IF !container.application.targets('1.5')»«nsSymfonyFormType»«ENDIF»Text'''
     def private dispatch titleAttribute(Variable it) '''Enter the «name.formatForDisplay».'''
     def private dispatch additionalAttributes(Variable it) '''
         'maxlength' => 255,
     '''
     def private dispatch additionalOptions(Variable it) ''''''
 
-    def private dispatch fieldType(IntVar it) '''«IF isUserGroupSelector»«IF !container.application.targets('1.4-dev')»Symfony\Bridge\Doctrine\Form\Type\«ENDIF»Entity«ELSE»«IF !container.application.targets('1.4-dev')»«nsSymfonyFormType»«ENDIF»Integer«ENDIF»'''
+    def private dispatch fieldType(IntVar it) '''«IF isUserGroupSelector»«IF !container.application.targets('1.5')»Symfony\Bridge\Doctrine\Form\Type\«ENDIF»Entity«ELSE»«IF !container.application.targets('1.5')»«nsSymfonyFormType»«ENDIF»Integer«ENDIF»'''
     def private dispatch titleAttribute(IntVar it) '''«IF isUserGroupSelector»Choose the «name.formatForDisplay».«ELSE»«IF isShrinkDimensionField || isThumbDimensionField»Enter the «labelText.toLowerCase».«ELSE»Enter the «name.formatForDisplay».«ENDIF»') . ' ' . $this->__('Only digits are allowed.«ENDIF»'''
     def private dispatch additionalAttributes(IntVar it) '''
         «IF isUserGroupSelector»
@@ -283,18 +283,18 @@ class Config {
         name.startsWith('thumbnailWidth') || name.startsWith('thumbnailHeight')
     }
 
-    def private dispatch fieldType(TextVar it) '''«IF !container.application.targets('1.4-dev')»«nsSymfonyFormType»«ENDIF»Text«IF multiline»area«ENDIF»'''
+    def private dispatch fieldType(TextVar it) '''«IF !container.application.targets('1.5')»«nsSymfonyFormType»«ENDIF»Text«IF multiline»area«ENDIF»'''
     def private dispatch additionalAttributes(TextVar it) '''
         «IF maxLength > 0 || !multiline»
             'maxlength' => «IF maxLength > 0»«maxLength»«ELSEIF !multiline»255«ENDIF»,
         «ENDIF»
     '''
 
-    def private dispatch fieldType(BoolVar it) '''«IF !container.application.targets('1.4-dev')»«nsSymfonyFormType»«ENDIF»Checkbox'''
+    def private dispatch fieldType(BoolVar it) '''«IF !container.application.targets('1.5')»«nsSymfonyFormType»«ENDIF»Checkbox'''
     def private dispatch titleAttribute(BoolVar it) '''The «IF isShrinkEnableField»enable shrinking«ELSE»«name.formatForDisplay»«ENDIF» option.'''
     def private dispatch additionalAttributes(BoolVar it) ''''''
 
-    def private dispatch fieldType(ListVar it) '''«IF !container.application.targets('1.4-dev')»«nsSymfonyFormType»«ENDIF»Choice'''
+    def private dispatch fieldType(ListVar it) '''«IF !container.application.targets('1.5')»«nsSymfonyFormType»«ENDIF»Choice'''
     def private dispatch titleAttribute(ListVar it) '''Choose the «IF isThumbModeField»thumbnail mode«ELSE»«name.formatForDisplay»«ENDIF».'''
     def private dispatch additionalAttributes(ListVar it) ''''''
     def private dispatch additionalOptions(ListVar it) '''

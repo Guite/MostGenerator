@@ -162,7 +162,7 @@ class FormHandler {
             use Zikula\GroupsModule\Entity\Repository\GroupApplicationRepository;
         «ENDIF»
         use Zikula\PageLockModule\Api\LockingApi;
-        «IF targets('1.4-dev')»
+        «IF targets('1.5')»
             use Zikula\PermissionsModule\Api\ApiInterface\PermissionApiInterface;
         «ELSE»
             use Zikula\PermissionsModule\Api\PermissionApi;
@@ -337,7 +337,7 @@ class FormHandler {
             protected $logger;
 
             /**
-             * @var PermissionApi«IF targets('1.4-dev')»Interface«ENDIF»
+             * @var PermissionApi«IF targets('1.5')»Interface«ENDIF»
              */
             protected $permissionApi;
 
@@ -436,7 +436,7 @@ class FormHandler {
              * @param RequestStack              $requestStack     RequestStack service instance
              * @param RouterInterface           $router           Router service instance
              * @param LoggerInterface           $logger           Logger service instance
-             * @param PermissionApi«IF targets('1.4-dev')»Interface«ENDIF»             $permissionApi    PermissionApi service instance
+             * @param PermissionApi«IF targets('1.5')»Interface«ENDIF»             $permissionApi    PermissionApi service instance
              «IF hasTranslatable || needsApproval»
              * @param VariableApi               $variableApi      VariableApi service instance
              «ENDIF»
@@ -466,7 +466,7 @@ class FormHandler {
                 RequestStack $requestStack,
                 RouterInterface $router,
                 LoggerInterface $logger,
-                PermissionApi«IF targets('1.4-dev')»Interface«ENDIF» $permissionApi,
+                PermissionApi«IF targets('1.5')»Interface«ENDIF» $permissionApi,
                 «IF hasTranslatable || needsApproval»
                     VariableApi $variableApi,
                 «ENDIF»
@@ -740,7 +740,7 @@ class FormHandler {
          */
         protected function initEntityForEditing()
         {
-            «IF !targets('1.4-dev')»
+            «IF !targets('1.5')»
                 $entity = $this->selectionHelper->getEntity($this->objectType, $this->idValues);
                 if (null === $entity) {
                     return null;
@@ -1211,7 +1211,7 @@ class FormHandler {
         namespace «app.appNamespace»\Form\Handler\«name.formatForCodeCapital»\Base;
 
         use «app.appNamespace»\Form\Handler\Common\«actionName.formatForCodeCapital»Handler;
-        «IF app.targets('1.4-dev')»
+        «IF app.targets('1.5')»
             use «app.appNamespace»\Form\Type\«name.formatForCodeCapital»Type;
         «ENDIF»
 
@@ -1357,7 +1357,7 @@ class FormHandler {
                 }
             «ENDIF»
 
-            return $this->formFactory->create(«IF app.targets('1.4-dev')»«name.formatForCodeCapital»Type::class«ELSE»'«app.appNamespace»\Form\Type\«name.formatForCodeCapital»Type'«ENDIF», $this->entityRef, $options);
+            return $this->formFactory->create(«IF app.targets('1.5')»«name.formatForCodeCapital»Type::class«ELSE»'«app.appNamespace»\Form\Type\«name.formatForCodeCapital»Type'«ENDIF», $this->entityRef, $options);
         }
     '''
 

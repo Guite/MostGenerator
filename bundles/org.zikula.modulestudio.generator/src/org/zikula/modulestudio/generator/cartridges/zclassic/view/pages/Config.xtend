@@ -64,7 +64,7 @@ class Config {
                             «ENDIF»
                         </li>
                     «ENDFOR»
-                    «IF targets('1.4-dev')»
+                    «IF targets('1.5')»
                         {% set tabTitle = __('Workflows') %}
                         <li role="presentation">
                             <a id="workflowsTab" href="#tabWorkflows" title="{{ tabTitle|e('html_attr') }}" role="tab" data-toggle="tab">{{ tabTitle }}</a>
@@ -100,7 +100,7 @@ class Config {
 
     def private configSections(Application it) '''
         «FOR varContainer : getSortedVariableContainers»«varContainer.configSection(it, varContainer == getSortedVariableContainers.head)»«ENDFOR»
-        «IF targets('1.4-dev')»
+        «IF targets('1.5')»
             <div role="tabpanel" class="tab-pane fade" id="tabWorkflows" aria-labelledby="workflowsTab">
                 {% set tabTitle = __('Workflows') %}
                 <fieldset>

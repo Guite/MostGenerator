@@ -40,7 +40,7 @@ class Installer {
         use Doctrine\DBAL\Connection;
         use RuntimeException;
         use Zikula\Core\AbstractExtensionInstaller;
-        «IF !targets('1.4-dev')»
+        «IF !targets('1.5')»
             use Zikula_Workflow_Util;
         «ENDIF»
         «IF hasCategorisableEntities»
@@ -233,7 +233,7 @@ class Installer {
         public function uninstall()
         {
             $logger = $this->container->get('logger');
-            «IF !targets('1.4-dev')»
+            «IF !targets('1.5')»
 
                 // delete stored object workflows
                 $result = Zikula_Workflow_Util::deleteWorkflowsForModule('«appName»');
