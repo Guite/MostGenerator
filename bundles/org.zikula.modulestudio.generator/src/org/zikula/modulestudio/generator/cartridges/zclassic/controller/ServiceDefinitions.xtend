@@ -608,7 +608,7 @@ class ServiceDefinitions {
             arguments:
                 - "@translator.default"
                 «IF targets('1.5')»
-                    - "@workflow.registry"
+                    - "@«IF isSystemModule»?«ENDIF»workflow.registry"
                 «ENDIF»
                 «IF targets('1.5') || needsApproval»
                     - "@logger"

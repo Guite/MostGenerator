@@ -7,6 +7,7 @@ import de.guite.modulestudio.metamodel.ListFieldItem
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
+import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
@@ -16,6 +17,7 @@ import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
 class WorkflowHelper {
 
     extension FormattingExtensions = new FormattingExtensions
+    extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension ModelExtensions = new ModelExtensions
     extension NamingExtensions = new NamingExtensions
@@ -44,7 +46,7 @@ class WorkflowHelper {
         «ENDIF»
         use Zikula\Common\Translator\TranslatorInterface;
         use Zikula\Core\Doctrine\EntityAccess;
-        «IF needsApproval»
+        «IF targets('1.5') || needsApproval»
             «IF targets('1.5')»
                 use Zikula\PermissionsModule\Api\ApiInterface\PermissionApiInterface;
             «ELSE»
@@ -137,7 +139,7 @@ class WorkflowHelper {
             public function __construct(
                 TranslatorInterface $translator,
                 «IF targets('1.5')»
-                    Registry $registry,
+                    «IF isSystemModule»/*Registry */«ELSE»Registry «ENDIF»$registry,
                 «ENDIF»
                 «IF targets('1.5') || needsApproval»
                     LoggerInterface $logger,
