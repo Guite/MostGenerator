@@ -76,8 +76,12 @@ class ViewHierarchy {
             <input type="search" id="{{ idPrefix }}SearchTerm" value="" />
         </p>
 
-        <p><a href="#" id="{{ idPrefix }}Expand" title="{{ __('Expand all nodes') }}">{{ __('Expand all') }}</a> | <a href="#" id="{{ idPrefix }}Collapse" title="{{ __('Collapse all nodes') }}">{{ __('Collapse all') }}</a></p>
-
+        <div class="btn-toolbar" role="toolbar" aria-label="category button toolbar">
+            <div class="btn-group btn-group-sm" role="group" aria-label="«name.formatForDB» buttons">
+                <button type="button" id="{{ idPrefix }}Expand" class="btn btn-info" title="{{ __('Expand all nodes') }}"><i class="fa fa-expand"></i> {{ __('Expand all') }}</button>
+                <button type="button" id="{{ idPrefix }}Collapse"class="btn btn-info" title="{{ __('Collapse all nodes') }}"><i class="fa fa-compress"></i> {{ __('Collapse all') }}</button>
+            </div>
+        </div>
         <div id="{{ idPrefix }}" class="tree-container" data-object-type="«name.formatForCode»" data-root-id="{{ rootId|e('html_attr') }}" data-has-display="«hasDisplayAction.displayBool»" data-has-edit="«(hasEditAction && !readOnly).displayBool»">
             {% if hasNodes %}
                 <ul id="itemTree{{ rootId|e('html_attr') }}">
