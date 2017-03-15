@@ -69,13 +69,15 @@ class WorkflowHelper {
          */
         abstract class AbstractWorkflowHelper
         {
-            /**
-             * Name of the application.
-             *
-             * @var string
-             */
-            protected $name;
+            «IF !targets('1.5')»
+                /**
+                 * Name of the application.
+                 *
+                 * @var string
+                 */
+                protected $name;
 
+            «ENDIF»
             /**
              * @var TranslatorInterface
              */
@@ -151,7 +153,9 @@ class WorkflowHelper {
                 «ENDIF»
                 ListEntriesHelper $listEntriesHelper)
             {
-                $this->name = '«appName»';
+                «IF !targets('1.5')»
+                    $this->name = '«appName»';
+                «ENDIF»
                 $this->translator = $translator;
                 «IF targets('1.5')»
                     $this->workflowRegistry = $registry;
