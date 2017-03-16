@@ -11,6 +11,7 @@ import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class Docs {
+
     extension FormattingExtensions = new FormattingExtensions
     extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     extension ModelExtensions = new ModelExtensions
@@ -132,7 +133,11 @@ class Docs {
 
         You can also use multiple locales at once, for example `de fr es`.
 
-        4. Translate the resulting `.po` files in `modules/«vendor.formatForCodeCapital»/«name.formatForCodeCapital»Module/Resources/translations/` using your favourite Gettext tooling.
+        4. Translate the resulting `.po` files in `«relativeAppRootPath»/Resources/translations/` using your favourite Gettext tooling.
+
+        Note you can even include custom views in `app/Resources/«appName»/views/` and JavaScript files in `app/Resources/«appName»/public/js/` like this:
+
+        `php app/console translation:extract en --bundle=«appName» --enable-extractor=jms_i18n_routing --output-format=po«IF generateTagSupport» --exclude-dir=TaggedObjectMeta«ENDIF» --dir=./«relativeAppRootPath» --dir=./app/Resouces/«vendor.formatForCodeCapital»«name.formatForCodeCapital»`
 
         For questions and other remarks visit our homepage «url».
 
