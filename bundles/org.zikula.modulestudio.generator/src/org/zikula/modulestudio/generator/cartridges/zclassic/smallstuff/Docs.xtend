@@ -137,7 +137,7 @@ class Docs {
 
         Note you can even include custom views in `app/Resources/«appName»/views/` and JavaScript files in `app/Resources/«appName»/public/js/` like this:
 
-        `php app/console translation:extract en --bundle=«appName» --enable-extractor=jms_i18n_routing --output-format=po«IF generateTagSupport» --exclude-dir=TaggedObjectMeta«ENDIF» --dir=./«relativeAppRootPath» --dir=./app/Resources/«vendor.formatForCodeCapital»«name.formatForCodeCapital»`
+        `php app/console translation:extract en --bundle=«appName» --enable-extractor=jms_i18n_routing --output-format=po«IF generateTagSupport» --exclude-dir=TaggedObjectMeta«ENDIF» --dir=./«relativeAppRootPath» --dir=./app/Resources/«appName»`
 
         For questions and other remarks visit our homepage «url».
 
