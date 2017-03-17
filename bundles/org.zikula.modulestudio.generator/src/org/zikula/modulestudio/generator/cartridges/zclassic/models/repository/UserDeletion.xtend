@@ -66,7 +66,7 @@ class UserDeletion {
             $qb = $this->getEntityManager()->createQueryBuilder();
             $qb->update('«entityClassName('', false)»', 'tbl')
                ->set('tbl.createdBy', $newUserId)
-               ->where('tbl.createdBy= :creator')
+               ->where('tbl.createdBy = :creator')
                ->setParameter('creator', $userId);
             $query = $qb->getQuery();
             «IF hasPessimisticWriteLock»
