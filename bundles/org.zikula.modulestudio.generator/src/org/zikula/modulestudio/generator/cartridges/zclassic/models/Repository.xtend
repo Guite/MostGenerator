@@ -199,7 +199,7 @@ class Repository {
 
             «addExclusion»
 
-            «IF standardFields»
+            «IF ownerPermission»
                 «addCreatorFilter»
 
             «ENDIF»
