@@ -610,7 +610,7 @@ class Repository {
         
             $results = $query->getResult();
 
-            return (count($results) > 0) ? $results : null;
+            return count($results) > 0 ? $results : null;
         }
     '''
 
@@ -645,7 +645,7 @@ class Repository {
 
             $results = $query->getResult();
 
-            return (count($results) > 0) ? $results[0] : null;
+            return count($results) > 0 ? $results[0] : null;
         }
     '''
 
@@ -1027,12 +1027,12 @@ class Repository {
             $where = '';
             if (!$fragmentIsNumeric) {
                 «FOR field : searchFields»
-                    $where .= ((!empty($where)) ? ' OR ' : '');
+                    $where .= (!empty($where) ? ' OR ' : '');
                     $where .= 'tbl.«field.name.formatForCode» «IF field.isTextSearch»LIKE \'%' . $fragment . '%\''«ELSE»= \'' . $fragment . '\''«ENDIF»;
                 «ENDFOR»
             } else {
                 «FOR field : searchFieldsNumeric»
-                    $where .= ((!empty($where)) ? ' OR ' : '');
+                    $where .= (!empty($where) ? ' OR ' : '');
                     $where .= 'tbl.«field.name.formatForCode» «IF field.isTextSearch»LIKE \'%' . $fragment . '%\''«ELSE»= \'' . $fragment . '\''«ENDIF»;
                 «ENDFOR»
             }

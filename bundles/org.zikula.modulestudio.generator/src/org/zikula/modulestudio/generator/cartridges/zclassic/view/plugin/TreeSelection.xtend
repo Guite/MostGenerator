@@ -53,8 +53,8 @@ class TreeSelection {
                     break;
                 case 'allChildren':
                 case 'directChildren':
-                    $direct = ($target == 'directChildren');
-                    $sortByField = ($titleFieldName != '') ? $titleFieldName : null;
+                    $direct = $target == 'directChildren';
+                    $sortByField = $titleFieldName != '' ? $titleFieldName : null;
                     $sortDirection = 'ASC';
                     $result = $repository->children($node, $direct, $sortByField, $sortDirection);
                     break;

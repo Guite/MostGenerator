@@ -324,7 +324,7 @@ class WorkflowHelper {
                 }
             «ELSE»
                 foreach ($wfActions as $actionId => $action) {
-                    $nextState = (isset($action['nextState']) ? $action['nextState'] : '');
+                    $nextState = isset($action['nextState'] ? $action['nextState'] : '');
                     if (!in_array($nextState, ['', 'deleted']) && !in_array($nextState, $allowedStates)) {
                         continue;
                     }

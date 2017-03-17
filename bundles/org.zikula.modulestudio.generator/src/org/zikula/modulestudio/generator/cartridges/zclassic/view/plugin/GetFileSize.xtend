@@ -90,9 +90,7 @@ class GetFileSize {
             }
 
             // return either only the description or the complete string
-            $result = ($onlydesc) ? $sizeDesc : $size;
-
-            return $result;
+            return $onlydesc ? $sizeDesc : $size;
         }
     '''
 }

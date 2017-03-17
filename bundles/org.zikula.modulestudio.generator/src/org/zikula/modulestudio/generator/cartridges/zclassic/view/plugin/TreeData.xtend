@@ -65,7 +65,7 @@ class TreeData {
         protected function processTreeItemWithChildren($objectType, $node, $routeArea, $rootId, $descriptionFieldName, $hasEditAction)
         {
             $idPrefix = 'tree' . $rootId . 'node_' . $node->createCompositeIdentifier();
-            $title = ($descriptionFieldName != '' ? strip_tags($node[$descriptionFieldName]) : '');
+            $title = $descriptionFieldName != '' ? strip_tags($node[$descriptionFieldName]) : '';
             $liTag = '<li id="' . $idPrefix . '" title="' . str_replace('"', '', $title) . '" class="lvl' . $node->getLvl() . '">';
 
             $liContent = $node->getTitleFromDisplayPattern();
