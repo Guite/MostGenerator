@@ -308,7 +308,7 @@ class ModelExtensions {
      * Returns a list of all fields which may be used for sorting.
      */
     def getSortingFields(DataObject it) {
-        var fields = getDisplayFields.filter[f|f.isSortField].exclude(ArrayField).exclude(ObjectField)
+        var fields = getDisplayFields.filter[f|f.isSortField].exclude(UserField).exclude(ArrayField).exclude(ObjectField)
         fields.toList as List<EntityField>
     }
 

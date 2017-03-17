@@ -209,7 +209,7 @@ class SearchHelper {
                     continue;
                 }
                 $allowedSearchTypes[$searchType] = $typeInfo;
-        	}
+            }
 
             return $allowedSearchTypes;
         }
