@@ -1,24 +1,22 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.models
 
 import de.guite.modulestudio.metamodel.AbstractDateField
-import de.guite.modulestudio.metamodel.AbstractIntegerField
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.ArrayField
 import de.guite.modulestudio.metamodel.BooleanField
 import de.guite.modulestudio.metamodel.CalculatedField
 import de.guite.modulestudio.metamodel.DateField
 import de.guite.modulestudio.metamodel.DatetimeField
-import de.guite.modulestudio.metamodel.DecimalField
 import de.guite.modulestudio.metamodel.DerivedField
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.EntityField
 import de.guite.modulestudio.metamodel.EntityTreeType
-import de.guite.modulestudio.metamodel.FloatField
 import de.guite.modulestudio.metamodel.JoinRelationship
 import de.guite.modulestudio.metamodel.ManyToManyRelationship
 import de.guite.modulestudio.metamodel.ObjectField
 import de.guite.modulestudio.metamodel.StringField
 import de.guite.modulestudio.metamodel.TextField
+import de.guite.modulestudio.metamodel.UserField
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.repository.Joins
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.repository.LinkTable
@@ -1026,26 +1024,17 @@ class Repository {
                 return $qb;
             }
 
-            $fragment = str_replace('\'', '', \DataUtil::formatForStore($fragment));
-            $fragmentIsNumeric = is_numeric($fragment);
+            $filters = [];
+            $parameters = [];
 
-            «val searchFields = getDisplayFields.filter[isContainedInTextualSearch]»
-            «val searchFieldsNumeric = getDisplayFields.filter[isContainedInNumericSearch]»
-            $where = '';
-            if (!$fragmentIsNumeric) {
-                «FOR field : searchFields»
-                    $where .= (!empty($where) ? ' OR ' : '');
-                    $where .= 'tbl.«field.name.formatForCode» «IF field.isTextSearch»LIKE \'%' . $fragment . '%\''«ELSE»= \'' . $fragment . '\''«ENDIF»;
-                «ENDFOR»
-            } else {
-                «FOR field : searchFieldsNumeric»
-                    $where .= (!empty($where) ? ' OR ' : '');
-                    $where .= 'tbl.«field.name.formatForCode» «IF field.isTextSearch»LIKE \'%' . $fragment . '%\''«ELSE»= \'' . $fragment . '\''«ENDIF»;
-                «ENDFOR»
-            }
-            $where = '(' . $where . ')';
+            «val searchFields = getDisplayFields.filter[isContainedInSearch]»
+            «FOR field : searchFields»
+                $filters[] = 'tbl.«field.name.formatForCode» «IF field.isTextSearch»LIKE«ELSE»=«ENDIF» :search«field.name.formatForCodeCapital»';
+                $parameters['search«field.name.formatForCodeCapital»'] = «IF field.isTextSearch»'%' . $fragment . '%'«ELSE»$fragment«ENDIF»;
+            «ENDFOR»
 
-            $qb->andWhere($where);
+            $qb->andWhere('(' . implode(' OR ', $filters) . ')')
+               ->setParameters($parameters);
 
             return $qb;
         }
@@ -1409,24 +1398,13 @@ class Repository {
         }
     }
 
-    def private isContainedInTextualSearch(DerivedField it) {
+    def private isContainedInSearch(DerivedField it) {
         switch it {
             BooleanField: false
-            AbstractIntegerField: false
-            DecimalField: false
-            FloatField: false
+            UserField: false
             ArrayField: false
             ObjectField: false
             default: true
-        }
-    }
-
-    def private isContainedInNumericSearch(DerivedField it) {
-        switch it {
-            AbstractIntegerField: true
-            DecimalField: true
-            FloatField: true
-            default: isContainedInTextualSearch(it)
         }
     }
 
