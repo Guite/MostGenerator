@@ -384,9 +384,11 @@ class EntityMethods {
             «FOR field : primaryKeyFields»
                 $this->set«field.name.formatForCodeCapital»(«thProp.defaultFieldData(field)»);
             «ENDFOR»
+            «IF !app.targets('1.5')»
 
-            // reset workflow
-            $this->resetWorkflow();
+                // reset workflow
+                $this->resetWorkflow();
+            «ENDIF»
             «IF hasUploadFieldsEntity»
 
                 // reset upload fields
