@@ -233,6 +233,11 @@ class Repository {
         }
     '''
 
+    def private hasJoinsToOtherApplicationsTEMP(Entity it, Application app) {
+        !getBidirectionalIncomingJoinRelations.filter[source.application != app].empty
+        || !getOutgoingJoinRelations.filter[target.application != app].empty
+    }
+
     def private imports(Entity it) '''
         namespace «app.appNamespace»\Entity\Repository\Base;
 
@@ -267,7 +272,9 @@ class Repository {
             use Zikula\Component\FilterUtil\Plugin\DatePlugin as DateFilter;
         «ENDIF»
         use Psr\Log\LoggerInterface;
-        use ServiceUtil;
+        «IF categorisable || hasTranslatableFields || ownerPermission || hasVisibleWorkflow || hasJoinsToOtherApplicationsTEMP(app)»
+            use ServiceUtil;
+        «ENDIF»
         use Zikula\Common\Translator\TranslatorInterface;
         «IF hasArchive && null !== getEndDateField»
             use Symfony\Component\HttpFoundation\Session\SessionInterface;
