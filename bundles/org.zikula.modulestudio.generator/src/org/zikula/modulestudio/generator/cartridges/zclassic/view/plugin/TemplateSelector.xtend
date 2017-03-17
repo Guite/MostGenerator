@@ -49,13 +49,31 @@ class TemplateSelector {
             $result = [];
 
             «IF generateSmartyPlugin»
-                $result[] = ['text' => __('Only item titles', $dom), 'value' => 'itemlist_display«templateExtension»'];
-                $result[] = ['text' => __('With description', $dom), 'value' => 'itemlist_display_description«templateExtension»'];
-                $result[] = ['text' => __('Custom template', $dom), 'value' => 'custom'];
+                $result[] = [
+                    'text' => __('Only item titles', $dom),
+                    'value' => 'itemlist_display«templateExtension»'
+                ];
+                $result[] = [
+                    'text' => __('With description', $dom),
+                    'value' => 'itemlist_display_description«templateExtension»'
+                ];
+                $result[] = [
+                    'text' => __('Custom template', $dom),
+                    'value' => 'custom'
+                ];
             «ELSE»
-                $result[] = ['text' => $this->__('Only item titles'), 'value' => 'itemlist_display«templateExtension»'];
-                $result[] = ['text' => $this->__('With description'), 'value' => 'itemlist_display_description«templateExtension»'];
-                $result[] = ['text' => $this->__('Custom template'), 'value' => 'custom'];
+                $result[] = [
+                    'text' => $this->__('Only item titles'),
+                    'value' => 'itemlist_display«templateExtension»'
+                ];
+                $result[] = [
+                    'text' => $this->__('With description'),
+                    'value' => 'itemlist_display_description«templateExtension»'
+                ];
+                $result[] = [
+                    'text' => $this->__('Custom template'),
+                    'value' => 'custom'
+                ];
             «ENDIF»
 
             «IF generateSmartyPlugin»

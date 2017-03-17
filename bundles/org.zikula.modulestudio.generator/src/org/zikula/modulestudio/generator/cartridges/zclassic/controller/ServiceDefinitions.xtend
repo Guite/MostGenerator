@@ -640,6 +640,9 @@ class ServiceDefinitions {
                     - "@request_stack"
                 «ENDIF»
                 - "@zikula_extensions_module.api.variable"
+                «IF needsUserAvatarSupport»
+                    - "@zikula_users_module.user_repository"
+                «ENDIF»
                 - "@«modPrefix».workflow_helper"
                 «IF hasListFields»
                     - "@«modPrefix».listentries_helper"

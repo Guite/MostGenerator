@@ -74,6 +74,9 @@ class Plugins {
         use Zikula\Common\Translator\TranslatorInterface;
         use Zikula\Common\Translator\TranslatorTrait;
         use Zikula\ExtensionsModule\Api\VariableApi;
+        «IF needsUserAvatarSupport»
+            use Zikula\UsersModule\Entity\RepositoryInterface\UserRepositoryInterface;
+        «ENDIF»
         «IF hasListFields»
             use «appNamespace»\Helper\ListEntriesHelper;
         «ENDIF»
@@ -111,6 +114,13 @@ class Plugins {
          */
         protected $variableApi;
 
+        «IF needsUserAvatarSupport»
+            /**
+             * @var UserRepositoryInterface
+             */
+            protected $userRepository;
+
+        «ENDIF»
         /**
          * @var WorkflowHelper
          */
@@ -127,19 +137,31 @@ class Plugins {
          * TwigExtension constructor.
          *
          * @param TranslatorInterface $translator     Translator service instance
-        «IF hasTrees»
-            «' '»* @param Routerinterface     $router         Router service instance
-        «ENDIF»
-        «IF generateIcsTemplates && hasEntitiesWithIcsTemplates»
-            «' '»* @param RequestStack        $requestStack   RequestStack service instance
-        «ENDIF»
+         «IF hasTrees»
+            * @param Routerinterface     $router         Router service instance
+         «ENDIF»
+         «IF generateIcsTemplates && hasEntitiesWithIcsTemplates»
+            * @param RequestStack        $requestStack   RequestStack service instance
+         «ENDIF»
          * @param VariableApi         $variableApi    VariableApi service instance
+         «IF needsUserAvatarSupport»
+            * @param UserRepositoryInterface $userRepository UserRepository service instance
+         «ENDIF»
          * @param WorkflowHelper      $workflowHelper WorkflowHelper service instance
-        «IF hasListFields»
-            «' '»* @param ListEntriesHelper   $listHelper     ListEntriesHelper service instance
-        «ENDIF»
+         «IF hasListFields»
+            * @param ListEntriesHelper   $listHelper     ListEntriesHelper service instance
+         «ENDIF»
          */
-        public function __construct(TranslatorInterface $translator«IF hasTrees», RouterInterface $router«ENDIF»«IF generateIcsTemplates && hasEntitiesWithIcsTemplates», RequestStack $requestStack«ENDIF», VariableApi $variableApi, WorkflowHelper $workflowHelper«IF hasListFields», ListEntriesHelper $listHelper«ENDIF»)
+        public function __construct(
+            TranslatorInterface $translator«IF hasTrees»,
+            RouterInterface $router«ENDIF»«IF generateIcsTemplates && hasEntitiesWithIcsTemplates»,
+            RequestStack $requestStack«ENDIF»,
+            VariableApi $variableApi,
+            «IF needsUserAvatarSupport»
+                UserRepositoryInterface $userRepository,
+            «ENDIF»
+            WorkflowHelper $workflowHelper«IF hasListFields»,
+            ListEntriesHelper $listHelper«ENDIF»)
         {
             $this->setTranslator($translator);
             «IF hasTrees»
@@ -149,6 +171,9 @@ class Plugins {
                 $this->request = $requestStack->getCurrentRequest();
             «ENDIF»
             $this->variableApi = $variableApi;
+            «IF needsUserAvatarSupport»
+                $this->userRepository = $userRepository;
+            «ENDIF»
             $this->workflowHelper = $workflowHelper;
             «IF hasListFields»
                 $this->listHelper = $listHelper;
@@ -173,7 +198,7 @@ class Plugins {
                     new \Twig_SimpleFunction('«appNameLower»_moderationObjects', [$this, 'getModerationObjects']),
                 «ENDIF»
                 new \Twig_SimpleFunction('«appNameLower»_objectTypeSelector', [$this, 'getObjectTypeSelector']),
-                new \Twig_SimpleFunction('«appNameLower»_templateSelector', [$this, 'getTemplateSelector'])«IF hasStandardFieldEntities || hasUserFields || hasLoggable»,
+                new \Twig_SimpleFunction('«appNameLower»_templateSelector', [$this, 'getTemplateSelector'])«IF needsUserAvatarSupport»,
                 new \Twig_SimpleFunction('«appNameLower»_userAvatar', [$this, 'getUserAvatar'], ['is_safe' => ['html']])«ENDIF»
             ];
         }
@@ -222,7 +247,7 @@ class Plugins {
         «ENDIF»
 
         «generateInternal»
-        «IF hasStandardFieldEntities || hasUserFields || hasLoggable»
+        «IF needsUserAvatarSupport»
 
             «getUserAvatar»
         «ENDIF»
@@ -232,7 +257,7 @@ class Plugins {
         /**
          * Display the avatar of a user.
          *
-         * @param int|string $uid    The user's id or name
+         * @param int|string $userId The user's id or name
          * @param int        $width  Image width (optional)
          * @param int        $height Image height (optional)
          * @param int        $size   Gravatar size (optional)
@@ -240,12 +265,21 @@ class Plugins {
          *
          * @return string
          */
-        public function getUserAvatar($uid = 0, $width = 0, $height = 0, $size = 0, $rating = '')
+        public function getUserAvatar($userId = 0, $width = 0, $height = 0, $size = 0, $rating = '')
         {
-            if (!is_numeric($uid)) {
-                $uid = \UserUtil::getIdFromName($uid);
+            if (!is_numeric($userId)) {
+                $limit = 1;
+                $filter = [
+                    'uname' => ['operator' => 'eq', 'operand' => $userId]
+                ];
+                $results = $this->userRepository->query($filter, [], $limit);
+                if (!count($results)) {
+                    return '';
+                }
+
+                $userId = $results[0]->getUname();
             }
-            $params = ['uid' => $uid];
+            $params = ['uid' => $userId];
             if ($width > 0) {
                 $params['width'] = $width;
             }

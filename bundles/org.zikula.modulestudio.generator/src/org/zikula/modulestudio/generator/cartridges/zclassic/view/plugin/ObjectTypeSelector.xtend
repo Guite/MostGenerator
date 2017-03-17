@@ -66,9 +66,15 @@ class ObjectTypeSelector {
     def private entityEntries(Application it, Boolean useLegacy) '''
         «FOR entity : getAllEntities»
             «IF useLegacy»
-                $result[] = ['text' => __('«entity.nameMultiple.formatForDisplayCapital»', $dom), 'value' => '«entity.name.formatForCode»'];
+                $result[] = [
+                    'text' => __('«entity.nameMultiple.formatForDisplayCapital»', $dom),
+                    'value' => '«entity.name.formatForCode»'
+                ];
             «ELSE»
-                $result[] = ['text' => $this->__('«entity.nameMultiple.formatForDisplayCapital»'), 'value' => '«entity.name.formatForCode»'];
+                $result[] = [
+                    'text' => $this->__('«entity.nameMultiple.formatForDisplayCapital»'),
+                    'value' => '«entity.name.formatForCode»'
+                ];
             «ENDIF»
         «ENDFOR»
     '''

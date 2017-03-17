@@ -158,6 +158,13 @@ class ModelBehaviourExtensions {
     }
 
     /**
+     * Checks whether an avatar plugin is required or not.
+     */
+    def needsUserAvatarSupport(Application it) {
+        hasStandardFieldEntities || hasUserFields || hasLoggable
+    }
+
+    /**
      * Checks whether dynamic user field functionality is needed or not.
      */
     def needsUserAutoCompletion(Application it) {
