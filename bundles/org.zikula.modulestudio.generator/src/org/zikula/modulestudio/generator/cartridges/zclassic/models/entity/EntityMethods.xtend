@@ -43,9 +43,7 @@ class EntityMethods {
 
     def dispatch generate(Entity it, Application app, Property thProp) '''
         «propertyChangedListener»
-
         «getTitleFromDisplayPattern(app)»
-
         «validationMethods»
 
         «validate»
@@ -94,7 +92,6 @@ class EntityMethods {
 
     def private propertyChangedListener(Entity it) '''
         «IF hasNotifyPolicy»
-
             /**
              * Adds a property change listener.
              *
@@ -120,6 +117,7 @@ class EntityMethods {
                     }
                 }
             }
+
         «ENDIF»
     '''
 

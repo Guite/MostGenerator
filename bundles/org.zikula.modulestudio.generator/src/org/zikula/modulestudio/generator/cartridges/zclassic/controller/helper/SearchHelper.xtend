@@ -44,10 +44,8 @@ class SearchHelper {
         use Symfony\Component\HttpFoundation\Request;
         use Symfony\Component\HttpFoundation\RequestStack;
         use Symfony\Component\HttpFoundation\Session\SessionInterface;
-        «IF targets('1.5')»
-            use Zikula\Common\Translator\TranslatorInterface;
-            use Zikula\Common\Translator\TranslatorTrait;
-        «ENDIF»
+        use Zikula\Common\Translator\TranslatorInterface;
+        use Zikula\Common\Translator\TranslatorTrait;
         use Zikula\Core\RouteUrl;
         «IF targets('1.5')»
             use Zikula\PermissionsModule\Api\ApiInterface\PermissionApiInterface;
@@ -75,10 +73,8 @@ class SearchHelper {
     '''
 
     def private searchHelperBaseImpl(Application it) '''
-        «IF targets('1.5')»
-            use TranslatorTrait;
+        use TranslatorTrait;
 
-        «ENDIF»
         /**
          * @var PermissionApi«IF targets('1.5')»Interface«ENDIF»
          */
@@ -126,9 +122,7 @@ class SearchHelper {
         /**
          * SearchHelper constructor.
          *
-         «IF targets('1.5')»
          * @param TranslatorInterface $translator   Translator service instance
-         «ENDIF»
          * @param PermissionApi«IF targets('1.5')»Interface«ENDIF»    $permissionApi   PermissionApi service instance
          «IF !targets('1.5')»
          * @param EngineInterface  $templateEngine  Template engine service instance
@@ -143,9 +137,7 @@ class SearchHelper {
          «ENDIF»
          */
         public function __construct(
-            «IF targets('1.5')»
-                TranslatorInterface $translator,
-            «ENDIF»
+            TranslatorInterface $translator,
             PermissionApi«IF targets('1.5')»Interface«ENDIF» $permissionApi,
             «IF !targets('1.5')»
                 EngineInterface $templateEngine,
@@ -158,9 +150,7 @@ class SearchHelper {
             CategoryHelper $categoryHelper
             «ENDIF»
         ) {
-            «IF targets('1.5')»
-                $this->setTranslator($translator);
-            «ENDIF»
+            $this->setTranslator($translator);
             $this->permissionApi = $permissionApi;
             «IF !targets('1.5')»
                 $this->templateEngine = $templateEngine;
@@ -175,9 +165,9 @@ class SearchHelper {
             «ENDIF»
         }
 
-        «IF targets('1.5')»
-            «setTranslatorMethod»
+        «setTranslatorMethod»
 
+        «IF targets('1.5')»
             «amendForm»
         «ELSE»
             «getOptions»

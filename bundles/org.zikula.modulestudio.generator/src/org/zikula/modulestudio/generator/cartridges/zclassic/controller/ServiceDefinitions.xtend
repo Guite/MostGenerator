@@ -544,9 +544,7 @@ class ServiceDefinitions {
             «modPrefix».search_helper:
                 class: «nsBase»SearchHelper
                 arguments:
-                    «IF targets('1.5')»
-                        - "@translator.default"
-                    «ENDIF»
+                    - "@translator.default"
                     - "@zikula_permissions_module.api.permission"
                     «IF !targets('1.5')»
                         - "@templating.engine.twig"
