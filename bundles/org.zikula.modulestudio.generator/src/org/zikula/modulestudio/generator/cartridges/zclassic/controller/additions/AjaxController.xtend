@@ -1,11 +1,13 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.controller.additions
 
 import de.guite.modulestudio.metamodel.Application
+import de.guite.modulestudio.metamodel.EntityTreeType
 import de.guite.modulestudio.metamodel.StringField
 import de.guite.modulestudio.metamodel.TextField
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.ControllerHelperFunctions
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
+import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
@@ -16,6 +18,7 @@ import org.zikula.modulestudio.generator.extensions.Utils
 
 class AjaxController {
 
+    extension ControllerExtensions = new ControllerExtensions
     extension FormattingExtensions = new FormattingExtensions
     extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
@@ -40,6 +43,9 @@ class AjaxController {
         «ENDIF»
         use Symfony\Component\HttpFoundation\JsonResponse;
         use Symfony\Component\HttpFoundation\Request;
+        «IF hasTrees && hasEditActions»
+            use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+        «ENDIF»
         use Symfony\Component\Security\Core\Exception\AccessDeniedException;
         use RuntimeException;
         use Zikula\Core\Controller\AbstractController;
@@ -874,6 +880,12 @@ class AjaxController {
                     $success = $workflowHelper->executeAction($childEntity, $action);
                     if (!$success) {
                         $returnValue['result'] = 'failure';
+                    } else {
+                        «IF hasEditActions»
+                            if (in_array($objectType, ['«getAllEntities.filter[tree != EntityTreeType.NONE && hasEditAction].map[name.formatForCode].join('\', \'')»'])) {
+                                $returnValue['returnUrl'] = $this->get('router')->generate('«appName.formatForDB»_' . strtolower($objectType) . '_edit', $childEntity->createUrlArgs(), UrlGeneratorInterface::ABSOLUTE_URL);
+                            }
+                        «ENDIF»
                     }
                 }
             } catch(\Exception $e) {

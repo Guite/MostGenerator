@@ -302,7 +302,11 @@ class TreeFunctions {
                 if (data.result == 'success') {
                     /*«vendorAndName»SimpleAlert(jQuery('.tree-container'), Translator.__('Success'), data.message, 'treeAjaxDoneAlert', 'success');*/
 
-                    window.location.reload();
+                    if (typeof data.returnUrl != 'undefined') {
+                        window.location = data.returnUrl;
+                    } else {
+                        window.location.reload();
+                    }
                 } else {
                     «vendorAndName»SimpleAlert(jQuery('.tree-container'), Translator.__('Error'), data.message != '' ? data.message : Translator.__('Could not persist your change.'), 'treeAjaxFailedAlert', 'danger');
                 }
