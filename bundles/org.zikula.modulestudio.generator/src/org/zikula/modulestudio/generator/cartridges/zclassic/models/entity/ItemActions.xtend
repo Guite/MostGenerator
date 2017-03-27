@@ -49,7 +49,7 @@ class ItemActions {
             if ($routeArea == 'admin') {
                 $menu->addChild($this->__('Preview'), [
                     'route' => $routePrefix . 'display',
-                    'routeParameters' => [«routeParams('entity', false)»]
+                    'routeParameters' => $entity->createUrlArgs()
                 ])->setAttribute('icon', 'fa fa-search-plus');
                 $menu[$this->__('Preview')]->setLinkAttribute('target', '_blank');
                 $menu[$this->__('Preview')]->setLinkAttribute('title', $this->__('Open preview page'));
@@ -57,7 +57,7 @@ class ItemActions {
             if ($context != 'display') {
                 $menu->addChild($this->__('Details'), [
                     'route' => $routePrefix . $routeArea . 'display',
-                    'routeParameters' => [«routeParams('entity', false)»]
+                    'routeParameters' => $entity->createUrlArgs()
                 ])->setAttribute('icon', 'fa fa-eye');
                 $menu[$this->__('Details')]->setLinkAttribute('title', str_replace('"', '', $entity->getTitleFromDisplayPattern()));
             }
@@ -82,7 +82,7 @@ class ItemActions {
                         if (count($logEntries) > 1) {
                             $menu->addChild($this->__('History'), [
                                 'route' => $routePrefix . $routeArea . 'loggablehistory',
-                                'routeParameters' => [«routeParams('entity', false)»]
+                                'routeParameters' => $entity->createUrlArgs()
                             ])->setAttribute('icon', 'fa fa-history');
                             $menu[$this->__('History')]->setLinkAttribute('title', $this->__('Watch version history'));
                         }
@@ -94,7 +94,7 @@ class ItemActions {
             if ($permissionApi->hasPermission($component, $instance, ACCESS_DELETE)) {
                 $menu->addChild($this->__('Delete'), [
                     'route' => $routePrefix . $routeArea . 'delete',
-                    'routeParameters' => [«routeParams('entity', false)»]
+                    'routeParameters' => $entity->createUrlArgs()
                 ])->setAttribute('icon', 'fa fa-trash-o');
                 $menu[$this->__('Delete')]->setLinkAttribute('title', $this->__('Delete this «name.formatForDisplay»'));
             }
@@ -155,7 +155,7 @@ class ItemActions {
         «IF !readOnly»«/*create is allowed, but editing not*/»
             $menu->addChild($this->__('Edit'), [
                 'route' => $routePrefix . $routeArea . 'edit',
-                'routeParameters' => [«routeParams('entity', false)»]
+                'routeParameters' => $entity->createUrlArgs()
             ])->setAttribute('icon', 'fa fa-pencil-square-o');
             $menu[$this->__('Edit')]->setLinkAttribute('title', $this->__('Edit this «name.formatForDisplay»'));
         «ENDIF»
