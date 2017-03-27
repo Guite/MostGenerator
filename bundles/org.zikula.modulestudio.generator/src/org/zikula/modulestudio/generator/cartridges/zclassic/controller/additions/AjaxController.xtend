@@ -967,6 +967,8 @@ class AjaxController {
             return new AjaxResponse($returnValue);
         }
 
+        $entityManager->clear();
+
         //$entityManager->transactional(function($entityManager) {
             $entity = $selectionHelper->getEntity($objectType, $id«IF hasSluggable», ''«ENDIF», false);
             $destEntity = $selectionHelper->getEntity($objectType, $destId«IF hasSluggable», ''«ENDIF», false);
@@ -977,6 +979,9 @@ class AjaxController {
                 return new AjaxResponse($returnValue);
             }
 
+            $entityManager->persist($destEntity);
+            $entityManager->persist($currentUser);
+
             if ($moveDirection == 'after') {
                 $repository->persistAsNextSiblingOf($entity, $destEntity);
             } elseif ($moveDirection == 'before') {
@@ -984,6 +989,7 @@ class AjaxController {
             } elseif ($moveDirection == 'bottom') {
                 $repository->persistAsLastChildOf($entity, $destEntity);
             }
+
             $entityManager->flush();
         //});
     '''
