@@ -5,6 +5,7 @@ import de.guite.modulestudio.metamodel.Application
 class ControllerHelperFunctions {
 
     def defaultSorting(Application it) '''
+        $sort = $request->query->get('sort', '');
         if (empty($sort) || !in_array($sort, $repository->getAllowedSortingFields())) {
             $sort = $repository->getDefaultSortingField();
             $request->query->set('sort', $sort);

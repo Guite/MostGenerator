@@ -259,19 +259,19 @@ class Repository {
         «ENDIF»
         use Doctrine\ORM\Tools\Pagination\Paginator;
         use InvalidArgumentException;
+        use Psr\Log\LoggerInterface;
+        «IF categorisable || hasTranslatableFields || ownerPermission || hasVisibleWorkflow || hasJoinsToOtherApplicationsTEMP(app)»
+            use ServiceUtil;
+        «ENDIF»
         use Symfony\Component\HttpFoundation\Request;
         use Zikula\Component\FilterUtil\FilterUtil;
         use Zikula\Component\FilterUtil\Config as FilterConfig;
         use Zikula\Component\FilterUtil\PluginManager as FilterPluginManager;
-        «IF categorisable»
-            use Zikula\Core\FilterUtil\CategoryPlugin as CategoryFilter;
-        «ENDIF»
         «IF !fields.filter(AbstractDateField).empty»
             use Zikula\Component\FilterUtil\Plugin\DatePlugin as DateFilter;
         «ENDIF»
-        use Psr\Log\LoggerInterface;
-        «IF categorisable || hasTranslatableFields || ownerPermission || hasVisibleWorkflow || hasJoinsToOtherApplicationsTEMP(app)»
-            use ServiceUtil;
+        «IF categorisable»
+            use Zikula\Core\FilterUtil\CategoryPlugin as CategoryFilter;
         «ENDIF»
         use Zikula\Common\Translator\TranslatorInterface;
         «IF hasArchive && null !== getEndDateField»
@@ -1227,63 +1227,61 @@ class Repository {
          */
         protected function genericBaseQueryAddWhere(QueryBuilder $qb, $where = '')
         {
+            // Use FilterUtil to support generic filtering.
+
+            // Create filter configuration.
+            $filterConfig = new FilterConfig($qb);
+
+            // Define plugins to be used during filtering.
+            $filterPluginManager = new FilterPluginManager(
+                $filterConfig,
+
+                // Array of plugins to load.
+                // If no plugin with default = true given the compare plugin is loaded and used for unconfigured fields.
+                // Multiple objects of the same plugin with different configurations are possible.
+                [
+                    «IF !fields.filter(AbstractDateField).empty»
+                        new DateFilter([«FOR field : fields.filter(AbstractDateField) SEPARATOR ', '»'«field.name.formatForCode»'«ENDFOR»/*, 'tblJoin.someJoinedField'*/])
+                    «ENDIF»
+                ],
+
+                // Allowed operators per field.
+                // Array in the form "field name => operator array".
+                // If a field is not set in this array all operators are allowed.
+                []
+            );
+            «IF categorisable»
+
+                // add category plugins dynamically for all existing registry properties
+                // we need to create one category plugin instance for each one
+                $categoryHelper = ServiceUtil::get('«app.appService».category_helper');
+                $categoryProperties = $categoryHelper->getAllProperties('«name.formatForCode»');
+                foreach ($categoryProperties as $propertyName => $registryId) {
+                    $config['plugins'][] = new CategoryFilter('«app.appName»', $propertyName, 'categories' . ucfirst($propertyName));
+                }
+            «ENDIF»
+
+            // Request object to obtain the filter string (only needed if the filter is set via GET or it reads values from GET).
+            $request = $this->request;
+
+            // Name of filter variable(s) (filterX).
+            $filterKey = 'filter';
+
+            // initialise FilterUtil and assign both query builder and configuration
+            $filterUtil = new FilterUtil($filterPluginManager, $request, $filterKey);
+
+            // set our given filter
             if (!empty($where)) {
-                // Use FilterUtil to support generic filtering.
-                //$qb->where($where);
-
-                // Create filter configuration.
-                $filterConfig = new FilterConfig($qb);
-
-                // Define plugins to be used during filtering.
-                $filterPluginManager = new FilterPluginManager(
-                    $filterConfig,
-
-                    // Array of plugins to load.
-                    // If no plugin with default = true given the compare plugin is loaded and used for unconfigured fields.
-                    // Multiple objects of the same plugin with different configurations are possible.
-                    [
-                        «IF !fields.filter(AbstractDateField).empty»
-                            new DateFilter([«FOR field : fields.filter(AbstractDateField) SEPARATOR ', '»'«field.name.formatForCode»'«ENDFOR»/*, 'tblJoin.someJoinedField'*/])
-                        «ENDIF»
-                    ],
-
-                    // Allowed operators per field.
-                    // Array in the form "field name => operator array".
-                    // If a field is not set in this array all operators are allowed.
-                    []
-                );
-                «IF categorisable»
-
-                    // add category plugins dynamically for all existing registry properties
-                    // we need to create one category plugin instance for each one
-                    $categoryHelper = ServiceUtil::get('«app.appService».category_helper');
-                    $categoryProperties = $categoryHelper->getAllProperties('«name.formatForCode»');
-                    foreach ($categoryProperties as $propertyName => $registryId) {
-                        $config['plugins'][] = new CategoryFilter('«app.appName»', $propertyName, 'categories' . ucfirst($propertyName));
-                    }
-                «ENDIF»
-
-                // Request object to obtain the filter string (only needed if the filter is set via GET or it reads values from GET).
-                // We do this not per default (for now) to prevent problems with explicite filters set by blocks or content types.
-                // TODO readd automatic request processing (basically replacing applyDefaultFilters() and addCommonViewFilters()).
-                $request = null;
-
-                // Name of filter variable(s) (filterX).
-                $filterKey = 'filter';
-
-                // initialise FilterUtil and assign both query builder and configuration
-                $filterUtil = new FilterUtil($filterPluginManager, $request, $filterKey);
-
-                // set our given filter
                 $filterUtil->setFilter($where);
-
-                // you could add explicit filters at this point, something like
-                // $filterUtil->addFilter('foo:eq:something,bar:gt:100');
-                // read more at https://github.com/zikula/core/tree/1.4/src/docs/Core-2.0/FilterUtil
-
-                // now enrich the query builder
-                $filterUtil->enrichQuery();
             }
+
+            // you could add explicit filters at this point, something like
+            // $filterUtil->addFilter('foo:eq:something,bar:gt:100');
+            // read more at https://github.com/zikula/core/tree/1.4/src/docs/Core-2.0/FilterUtil
+
+            // now enrich the query builder
+            $filterUtil->enrichQuery();
+
             «IF standardFields»
 
                 if (null === $this->getRequest()) {

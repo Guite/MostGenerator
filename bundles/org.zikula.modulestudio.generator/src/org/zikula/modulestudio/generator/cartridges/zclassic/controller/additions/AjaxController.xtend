@@ -361,7 +361,6 @@ class AjaxController {
         $exclude = !empty($exclude) ? explode(',', $exclude) : [];
 
         // parameter for used sorting field
-        $sort = $request->query->get('sort', '');
         «new ControllerHelperFunctions().defaultSorting(it)»
         $sortParam = $sort . ' asc';
 
