@@ -103,7 +103,7 @@ class TreeFunctions {
             tree.on('move_node.jstree', function (e, data) {
                 var node = data.node;
                 var parentId = data.parent;
-                var parentNode = $tree.jstree('get_node', parentId, false);
+                var parentNode = tree.jstree('get_node', parentId, false);
 
                 «vendorAndName»TreeSave(node, parentNode, 'bottom');
             });
@@ -242,7 +242,7 @@ class TreeFunctions {
                 icon: 'fa fa-fw fa-angle-down',
                 separator_before: currentNode.is(':first-child')
             };
-            actions.moveDown = {
+            actions.moveBottom = {
                 label: Translator.__('Move to bottom'),
                 title: Translator.__('Move to bottom position'),
                 action: function (node) {
@@ -279,13 +279,13 @@ class TreeFunctions {
                 params[op === 'addChildNode' ? 'pid' : 'id'] = nodeEntityId;
 
                 if (op === 'moveNodeTop') {
-                    params[direction] = 'top';
+                    params['direction'] = 'top';
                 } else if (op === 'moveNodeUp') {
-                    params[direction] = 'up';
+                    params['direction'] = 'up';
                 } else if (op === 'moveNodeDown') {
-                    params[direction] = 'down';
+                    params['direction'] = 'down';
                 } else if (op === 'moveNodeBottom') {
-                    params[direction] = 'bottom';
+                    params['direction'] = 'bottom';
                 }
             }
 
@@ -328,14 +328,14 @@ class TreeFunctions {
             var nodeParts, rootId, nodeId, destId;
 
             // do not allow inserts on root level
-            if (node.parents.find('li').length < 1) {
+            if (node.parents.length < 1) {
                 return false;
             }
 
-            nodeParts = node.attr('id').split('node_');
+            nodeParts = node.id.split('node_');
             rootId = nodeParts[0].replace('tree', '');
             nodeId = nodeParts[1];
-            destId = parentNode.attr('id').replace('tree' + rootId + 'node_', '');
+            destId = parentNode.id.replace('tree' + rootId + 'node_', '');
 
             jQuery.ajax({
                 type: 'POST',
