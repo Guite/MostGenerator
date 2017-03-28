@@ -453,7 +453,11 @@ class ServiceDefinitions {
                     - "@request_stack"
                     - "@logger"
                     - "@zikula_users_module.current_user"
-                    - "@zikula_categories_module.api.category_registry"
+                    «IF targets('1.5')»
+                        - "@zikula_categories_module.category_registry_repository"
+                    «ELSE»
+                        - "@zikula_categories_module.api.category_registry"
+                    «ENDIF»
                     - "@zikula_categories_module.api.category_permission"
 
         «ENDIF»

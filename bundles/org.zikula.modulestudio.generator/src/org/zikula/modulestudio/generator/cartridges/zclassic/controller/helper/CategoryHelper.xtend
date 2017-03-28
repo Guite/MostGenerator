@@ -31,8 +31,13 @@ class CategoryHelper {
         use Psr\Log\LoggerInterface;
         use Symfony\Component\HttpFoundation\RequestStack;
         use Symfony\Component\HttpFoundation\Session\SessionInterface;
-        use Zikula\CategoriesModule\Api\CategoryRegistryApi;
+        «IF !targets('1.5')»
+            use Zikula\CategoriesModule\Api\CategoryRegistryApi;
+        «ENDIF»
         use Zikula\CategoriesModule\Api\CategoryPermissionApi;
+        «IF targets('1.5')»
+            use Zikula\CategoriesModule\Entity\RepositoryInterface\CategoryRegistryRepositoryInterface;
+        «ENDIF»
         use Zikula\Common\Translator\TranslatorInterface;
         use Zikula\UsersModule\Api\CurrentUserApi;
 
@@ -66,10 +71,17 @@ class CategoryHelper {
              */
             protected $currentUserApi;
 
-            /**
-             * @var CategoryRegistryApi
-             */
-            protected $categoryRegistryApi;
+            «IF targets('1.5')»
+                /**
+                 * @var CategoryRegistryRepositoryInterface
+                 */
+                protected $categoryRegistryRepository;
+            «ELSE»
+                /**
+                 * @var CategoryRegistryApi
+                 */
+                protected $categoryRegistryApi;
+            «ENDIF»
 
             /**
              * @var CategoryPermissionApi
@@ -84,7 +96,11 @@ class CategoryHelper {
              * @param RequestStack          $requestStack          RequestStack service instance
              * @param LoggerInterface       $logger                Logger service instance
              * @param CurrentUserApi        $currentUserApi        CurrentUserApi service instance
+             «IF targets('1.5')»
+             * @param CategoryRegistryRepositoryInterface $categoryRegistryRepository CategoryRegistryRepository service instance
+             «ELSE»
              * @param CategoryRegistryApi   $categoryRegistryApi   CategoryRegistryApi service instance
+             «ENDIF»
              * @param CategoryPermissionApi $categoryPermissionApi CategoryPermissionApi service instance
              */
             public function __construct(
@@ -93,7 +109,11 @@ class CategoryHelper {
                 RequestStack $requestStack,
                 LoggerInterface $logger,
                 CurrentUserApi $currentUserApi,
-                CategoryRegistryApi $categoryRegistryApi,
+                «IF targets('1.5')»
+                    CategoryRegistryRepositoryInterface $categoryRegistryRepository,
+                «ELSE»
+                    CategoryRegistryApi $categoryRegistryApi,
+                «ENDIF»
                 CategoryPermissionApi $categoryPermissionApi)
             {
                 $this->translator = $translator;
@@ -101,7 +121,11 @@ class CategoryHelper {
                 $this->request = $requestStack->getCurrentRequest();
                 $this->logger = $logger;
                 $this->currentUserApi = $currentUserApi;
-                $this->categoryRegistryApi = $categoryRegistryApi;
+                «IF targets('1.5')»
+                    $this->categoryRegistryRepository = $categoryRegistryRepository;
+                «ELSE»
+                    $this->categoryRegistryApi = $categoryRegistryApi;
+                «ENDIF»
                 $this->categoryPermissionApi = $categoryPermissionApi;
             }
 
@@ -114,25 +138,35 @@ class CategoryHelper {
          * Retrieves the main/default category of «appName».
          *
          * @param string $objectType The object type to retrieve
-         * @param string $registry   Name of category registry to be used (optional)
+         * @param string $property   Name of category registry property to be used (optional)
          * @deprecated Use the methods getAllProperties, getAllPropertiesWithMainCat, getMainCatForProperty and getPrimaryProperty instead
          *
          * @return mixed Category array on success, false on failure
          */
-        public function getMainCat($objectType = '', $registry = '')
+        public function getMainCat($objectType = '', $property = '')
         {
             if (empty($objectType)) {
                 throw new InvalidArgumentException($this->translator->__('Invalid object type received.'));
         	}
-            if (empty($registry)) {
+            if (empty($property)) {
                 // default to the primary registry
-                $registry = $this->getPrimaryProperty($objectType);
+                $property = $this->getPrimaryProperty($objectType);
             }
 
             $logArgs = ['app' => '«appName»', 'user' => $this->currentUserApi->get('uname')];
             $this->logger->warning('{app}: User {user} called CategoryHelper#getMainCat which is deprecated.', $logArgs);
 
-            return $this->categoryRegistryApi->getModuleCategoryId('«appName»', ucfirst($objectType) . 'Entity', $registry, 32); // 32 == /__System/Modules/Global
+            «IF targets('1.5')»
+                $moduleRegistries = $this->categoryRegistryRepository->findBy([
+                    'modname' => '«appName»',
+                    'entityname' => ucfirst($objectType) . 'Entity',
+                    'property' => $property
+                ]);
+
+                return count($moduleRegistries) > 0 ? $moduleRegistries[0]['category']->getId() : 32; // 32 == /__System/Modules/Global
+            «ELSE»
+                return $this->categoryRegistryApi->getModuleCategoryId('«appName»', ucfirst($objectType) . 'Entity', $property, 32); // 32 == /__System/Modules/Global
+            «ENDIF»
         }
 
         /**
@@ -287,7 +321,21 @@ class CategoryHelper {
                 throw new InvalidArgumentException($this->translator->__('Invalid object type received.'));
         	}
 
-            return $this->categoryRegistryApi->getModuleRegistriesIds('«appName»', ucfirst($objectType) . 'Entity');
+            «IF targets('1.5')»
+                $moduleRegistries = $this->categoryRegistryRepository->findBy([
+                    'modname' => '«appName»',
+                    'entityname' => ucfirst($objectType) . 'Entity'
+                ]);
+
+                $result = [];
+                foreach ($moduleRegistries as $registry) {
+                    $result[$registry['property']] = $registry['id'];
+                }
+
+                return $result;
+            «ELSE»
+                return $this->categoryRegistryApi->getModuleRegistriesIds('«appName»', ucfirst($objectType) . 'Entity');
+            «ENDIF»
         }
 
         /**
@@ -298,13 +346,28 @@ class CategoryHelper {
          *
          * @return array list of the registries (registry id as key, main category id as value)
          */
-        public function getAllPropertiesWithMainCat($objectType = '', $arrayKey = '')
+        public function getAllPropertiesWithMainCat($objectType = '', $arrayKey = 'property')
         {
             if (empty($objectType)) {
                 throw new InvalidArgumentException($this->translator->__('Invalid object type received.'));
         	}
 
-            return $this->categoryRegistryApi->getModuleCategoryIds('«appName»', ucfirst($objectType) . 'Entity', $arrayKey);
+            «IF targets('1.5')»
+                $moduleRegistries = $this->categoryRegistryRepository->findBy([
+                    'modname' => '«appName»',
+                    'entityname' => ucfirst($objectType) . 'Entity'
+                ], ['id' => 'ASC']);
+
+                $result = [];
+                foreach ($moduleRegistries as $registry) {
+                    $registry = $registry->toArray();
+                    $result[$registry[$arrayKey]] = $registry['category']->getId();
+                }
+
+                return $result;
+            «ELSE»
+                return $this->categoryRegistryApi->getModuleCategoryIds('«appName»', ucfirst($objectType) . 'Entity', $arrayKey);
+            «ENDIF»
         }
 
         /**
@@ -321,7 +384,16 @@ class CategoryHelper {
                 throw new InvalidArgumentException($this->translator->__('Invalid object type received.'));
         	}
 
-            return $this->categoryRegistryApi->getModuleCategoryId('«appName»', ucfirst($objectType) . 'Entity', $property);
+            «IF targets('1.5')»
+                $registries = $this->getAllPropertiesWithMainCat($objectType, 'property');
+                if ($registries && isset($registries[$property]) && $registries[$property]) {
+                    return $registries[$property];
+                }
+
+                return null;
+            «ELSE»
+                return $this->categoryRegistryApi->getModuleCategoryId('«appName»', ucfirst($objectType) . 'Entity', $property);
+            «ENDIF»
         }
 
         /**

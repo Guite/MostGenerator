@@ -110,10 +110,18 @@ class Installer {
                     $this->container->get('request_stack'),
                     $logger,
                     $this->container->get('zikula_users_module.current_user'),
-                    $this->container->get('zikula_categories_module.api.category_registry'),
+                    «IF targets('1.5')»
+                        $this->container->get('zikula_categories_module.category_registry_repository'),
+                    «ELSE»
+                        $this->container->get('zikula_categories_module.api.category_registry'),
+                    «ENDIF»
                     $this->container->get('zikula_categories_module.api.category_permission')
                 );
-                $categoryGlobal = $this->container->get('zikula_categories_module.api.category')->getCategoryByPath('/__SYSTEM__/Modules/Global');
+                «IF targets('1.5')»
+                    $categoryGlobal = $this->container->get('zikula_categories_module.category_repository')->findOneByName('Global');
+                «ELSE»
+                    $categoryGlobal = $this->container->get('zikula_categories_module.api.category')->getCategoryByPath('/__SYSTEM__/Modules/Global');
+                «ENDIF»
                 «FOR entity : getCategorisableEntities»
 
                     $registry = new CategoryRegistryEntity();
@@ -267,12 +275,22 @@ class Installer {
                 $this->delVars();
             «ENDIF»
             «IF hasCategorisableEntities»
+
                 // remove category registry entries
-                $categoryRegistryApi = $this->container->get('zikula_categories_module.api.category_registry');
-                // assume that not more than five registries exist
-                for ($i = 1; $i <= 5; $i++) {
-                    $categoryRegistryApi->deleteRegistry('«appName»');
-                }
+                «IF targets('1.5')»
+                    $entityManager = $this->container->get('«entityManagerService»');
+                    $registries = $this->container->get('zikula_categories_module.category_registry_repository')->findBy(['modname' => '«appName»']);
+                    foreach ($registries as $registry) {
+                        $entityManager->remove($registry);
+                    }
+                    $entityManager->flush();
+                «ELSE»
+                    $categoryRegistryApi = $this->container->get('zikula_categories_module.api.category_registry');
+                    // assume that not more than five registries exist
+                    for ($i = 1; $i <= 5; $i++) {
+                        $categoryRegistryApi->deleteRegistry('«appName»');
+                    }
+                «ENDIF»
             «ENDIF»
             «IF hasUploads»
 

@@ -448,7 +448,11 @@ class ContentTypeList {
                     $translator = $this->container->get('translator.default');
                     $locale = $this->container->get('request_stack')->getCurrentRequest()->getLocale();
                     $categories = [];
-                    $categoryApi = $this->container->get('zikula_categories_module.api.category');
+                    «IF targets('1.5')»
+                        $categoryRepository = $this->container->get('zikula_categories_module.category_repository');
+                    «ELSE»
+                        $categoryApi = $this->container->get('zikula_categories_module.api.category');
+                    «ENDIF»
                     foreach ($this->catRegistries as $registryId => $registryCid) {
                         $propName = '';
                         foreach ($this->catProperties as $propertyName => $propertyId) {
@@ -458,14 +462,31 @@ class ContentTypeList {
                             }
                         }
 
-                        //$mainCategory = $categoryApi->getCategoryById($registryCid);
-                        $cats = $categoryApi->getSubCategories($registryCid, true, true, false, true, false, null, '', null, 'sort_value');
+                        «IF targets('1.5')»
+                            $mainCategory = $categoryRepository->find($registryCid);
+                            $queryBuilder = $categoryRepository->getChildrenQueryBuilder($registryCid);
+                            $cats = $queryBuilder->getQuery()->execute();
+                        «ELSE»
+                            //$mainCategory = $categoryApi->getCategoryById($registryCid);
+                            $cats = $categoryApi->getSubCategories($registryCid, true, true, false, true, false, null, '', null, 'sort_value');
+                        «ENDIF»
                         $catsForDropdown = [
-                            ['value' => '', 'text' => $translator->__('All')]
+                            [
+                                'value' => '',
+                                'text' => $translator->__('All')
+                            ]
                         ];
-                        foreach ($cats as $cat) {
-                            $catName = isset($cat['display_name'][$locale]) ? $cat['display_name'][$locale] : $cat['name'];
-                            $catsForDropdown[] = ['value' => $cat['id'], 'text' => $catName];
+                        foreach ($cats as $category) {
+                            «IF targets('1.5')»
+                                $indent = str_repeat('--', $category->getLvl() - $mainCategory()->getLvl() - 1);
+                                $categoryName = (!empty($indent) ? '|' : '') . $indent . $category->getName();
+                            «ELSE»
+                                $categoryName = isset($category['display_name'][$locale]) ? $category['display_name'][$locale] : $category['name'];
+                            «ENDIF»
+                            $catsForDropdown[] = [
+                                'value' => $category->getId(),
+                                'text' => $categoryName
+                            ];
                         }
                         $categories[$propName] = $catsForDropdown;
                     }
