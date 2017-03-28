@@ -34,7 +34,6 @@ class UserType {
         use Symfony\Component\OptionsResolver\OptionsResolver;
         use Symfony\Component\PropertyAccess\PropertyAccess;
         use Zikula\UsersModule\Entity\RepositoryInterface\UserRepositoryInterface;
-        use Zikula\UsersModule\Entity\UserEntity;
         use «appNamespace»\Form\DataTransformer\UserFieldTransformer;
 
         /**

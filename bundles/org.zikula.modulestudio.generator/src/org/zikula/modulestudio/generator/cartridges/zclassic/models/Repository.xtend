@@ -1227,61 +1227,59 @@ class Repository {
          */
         protected function genericBaseQueryAddWhere(QueryBuilder $qb, $where = '')
         {
-            // Use FilterUtil to support generic filtering.
+            if (!empty($where) || null !== $this->getRequest()) {
+                // Use FilterUtil to support generic filtering.
 
-            // Create filter configuration.
-            $filterConfig = new FilterConfig($qb);
+                // Create filter configuration.
+                $filterConfig = new FilterConfig($qb);
 
-            // Define plugins to be used during filtering.
-            $filterPluginManager = new FilterPluginManager(
-                $filterConfig,
+                // Define plugins to be used during filtering.
+                $filterPluginManager = new FilterPluginManager(
+                    $filterConfig,
 
-                // Array of plugins to load.
-                // If no plugin with default = true given the compare plugin is loaded and used for unconfigured fields.
-                // Multiple objects of the same plugin with different configurations are possible.
-                [
-                    «IF !fields.filter(AbstractDateField).empty»
-                        new DateFilter([«FOR field : fields.filter(AbstractDateField) SEPARATOR ', '»'«field.name.formatForCode»'«ENDFOR»/*, 'tblJoin.someJoinedField'*/])
-                    «ENDIF»
-                ],
+                    // Array of plugins to load.
+                    // If no plugin with default = true given the compare plugin is loaded and used for unconfigured fields.
+                    // Multiple objects of the same plugin with different configurations are possible.
+                    [
+                        «IF !fields.filter(AbstractDateField).empty»
+                            new DateFilter([«FOR field : fields.filter(AbstractDateField) SEPARATOR ', '»'«field.name.formatForCode»'«ENDFOR»/*, 'tblJoin.someJoinedField'*/])
+                        «ENDIF»
+                    ],
 
-                // Allowed operators per field.
-                // Array in the form "field name => operator array".
-                // If a field is not set in this array all operators are allowed.
-                []
-            );
-            «IF categorisable»
+                    // Allowed operators per field.
+                    // Array in the form "field name => operator array".
+                    // If a field is not set in this array all operators are allowed.
+                    []
+                );
+                «IF categorisable»
 
-                // add category plugins dynamically for all existing registry properties
-                // we need to create one category plugin instance for each one
-                $categoryHelper = ServiceUtil::get('«app.appService».category_helper');
-                $categoryProperties = $categoryHelper->getAllProperties('«name.formatForCode»');
-                foreach ($categoryProperties as $propertyName => $registryId) {
-                    $config['plugins'][] = new CategoryFilter('«app.appName»', $propertyName, 'categories' . ucfirst($propertyName));
+                    // add category plugins dynamically for all existing registry properties
+                    // we need to create one category plugin instance for each one
+                    $categoryHelper = ServiceUtil::get('«app.appService».category_helper');
+                    $categoryProperties = $categoryHelper->getAllProperties('«name.formatForCode»');
+                    foreach ($categoryProperties as $propertyName => $registryId) {
+                        $config['plugins'][] = new CategoryFilter('«app.appName»', $propertyName, 'categories' . ucfirst($propertyName));
+                    }
+                «ENDIF»
+
+                // Name of filter variable(s) (filterX).
+                $filterKey = 'filter';
+
+                // initialise FilterUtil and assign both query builder and configuration
+                $filterUtil = new FilterUtil($filterPluginManager, $this->getRequest(), $filterKey);
+
+                // set our given filter
+                if (!empty($where)) {
+                    $filterUtil->setFilter($where);
                 }
-            «ENDIF»
 
-            // Request object to obtain the filter string (only needed if the filter is set via GET or it reads values from GET).
-            $request = $this->request;
+                // you could add explicit filters at this point, something like
+                // $filterUtil->addFilter('foo:eq:something,bar:gt:100');
+                // read more at https://github.com/zikula/core/tree/1.4/src/docs/Core-2.0/FilterUtil
 
-            // Name of filter variable(s) (filterX).
-            $filterKey = 'filter';
-
-            // initialise FilterUtil and assign both query builder and configuration
-            $filterUtil = new FilterUtil($filterPluginManager, $request, $filterKey);
-
-            // set our given filter
-            if (!empty($where)) {
-                $filterUtil->setFilter($where);
+                // now enrich the query builder
+                $filterUtil->enrichQuery();
             }
-
-            // you could add explicit filters at this point, something like
-            // $filterUtil->addFilter('foo:eq:something,bar:gt:100');
-            // read more at https://github.com/zikula/core/tree/1.4/src/docs/Core-2.0/FilterUtil
-
-            // now enrich the query builder
-            $filterUtil->enrichQuery();
-
             «IF standardFields»
 
                 if (null === $this->getRequest()) {
