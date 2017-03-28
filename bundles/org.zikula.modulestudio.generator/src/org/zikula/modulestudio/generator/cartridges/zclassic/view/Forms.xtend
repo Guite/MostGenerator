@@ -123,32 +123,34 @@ class Forms {
     def private translatableFieldDetails(Entity it) '''
         «IF hasTranslatableFields»
             {% if translationsEnabled == true %}
-                <ul class="{{ form.vars.id|lower }}-translation-locales nav nav-tabs">
-                    {% for language in supportedLanguages %}
-                        <li{% if language == app.request.locale %} class="active"{% endif %}>
-                            <a href="#" data-toggle="tab" data-target=".{{ form.vars.id|lower }}-translations-fields-{{ language }}">
-                                {% if not form.vars.valid %}
-                                    <span class="label label-danger"><i class="fa fa-warning"></i><span class="sr-only">{{ __('Errors') }}</span></span>
-                                {% endif %}
-                                {% set hasRequiredFields = language in localesWithMandatoryFields %}
-                                {% if hasRequiredFields %}<span class="required">{% endif %}{{ language|languageName|safeHtml }}{% if hasRequiredFields %}</span>{% endif %}
-                            </a>
-                        </li>
-                    {% endfor %}
-                </ul>
-                <div class="{{ form.vars.id|lower }}-translation-fields tab-content">
-                    {% for language in supportedLanguages %}
-                        <div class="{{ form.vars.id|lower }}-translations-fields-{{ language }} tab-pane fade{% if language == app.request.locale %} active in{% endif %}">
-                            <fieldset>
-                                <legend>{{ language|languageName|safeHtml }}</legend>
-                                {% if language == app.request.locale %}
-                                    «fieldSet»
-                                {% else %}
-                                    {{ form_row(attribute(form, 'translations' ~ language)) }}
-                                {% endif %}
-                            </fieldset>
-                        </div>
-                    {% endfor %}
+                <div class="zikula-bootstrap-tab-container">
+                    <ul class="{{ form.vars.id|lower }}-translation-locales nav nav-tabs">
+                        {% for language in supportedLanguages %}
+                            <li{% if language == app.request.locale %} class="active"{% endif %}>
+                                <a href="#" data-toggle="tab" data-target=".{{ form.vars.id|lower }}-translations-fields-{{ language }}">
+                                    {% if not form.vars.valid %}
+                                        <span class="label label-danger"><i class="fa fa-warning"></i><span class="sr-only">{{ __('Errors') }}</span></span>
+                                    {% endif %}
+                                    {% set hasRequiredFields = language in localesWithMandatoryFields %}
+                                    {% if hasRequiredFields %}<span class="required">{% endif %}{{ language|languageName|safeHtml }}{% if hasRequiredFields %}</span>{% endif %}
+                                </a>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                    <div class="{{ form.vars.id|lower }}-translation-fields tab-content">
+                        {% for language in supportedLanguages %}
+                            <div class="{{ form.vars.id|lower }}-translations-fields-{{ language }} tab-pane fade{% if language == app.request.locale %} active in{% endif %}">
+                                <fieldset>
+                                    <legend>{{ language|languageName|safeHtml }}</legend>
+                                    {% if language == app.request.locale %}
+                                        «fieldSet»
+                                    {% else %}
+                                        {{ form_row(attribute(form, 'translations' ~ language)) }}
+                                    {% endif %}
+                                </fieldset>
+                            </div>
+                        {% endfor %}
+                    </div>
                 </div>
             {% else %}
                 {% set language = app.request.locale %}

@@ -44,37 +44,39 @@ class Config {
                 ] %}
                 {{ form_start(form) }}
                 «IF hasMultipleConfigSections || hasImageFields»
-                    <ul class="nav nav-pills">
-                    «FOR varContainer : getSortedVariableContainers»
-                        {% set tabTitle = __('«varContainer.name.formatForDisplayCapital»') %}
-                        <li«IF varContainer == getSortedVariableContainers.head || varContainer.isImageArea» class="«IF varContainer == getSortedVariableContainers.head»active«ENDIF»«IF varContainer.isImageArea» dropdown«ENDIF»"«ENDIF» role="presentation">
-                            «IF varContainer.isImageArea»
-                                <a id="imagesTabDrop" class="dropdown-toggle" href="#" data-toggle="dropdown" aria-controls="imagesTabDropSections" aria-expanded="false">{{ tabTitle }}<span class="caret"></span></a>
-                                <ul id="imagesTabDropSections" class="dropdown-menu" aria-labelledby="imagesTabDrop">
-                                «FOR entity : getAllEntities.filter[hasImageFieldsEntity]»
-                                    «FOR imageUploadField : entity.imageFieldsEntity»
-                                        <li>
-                                            <a id="images«entity.name.formatForCodeCapital»«imageUploadField.name.formatForCodeCapital»Tab" href="#tabImages«entity.name.formatForCodeCapital»«imageUploadField.name.formatForCodeCapital»" role="tab" data-toggle="tab" aria-controls="tabImages«entity.name.formatForCodeCapital»«imageUploadField.name.formatForCodeCapital»">{{ __('«entity.nameMultiple.formatForDisplayCapital» «imageUploadField.name.formatForDisplay»') }}</a>
-                                        </li>
+                    <div class="zikula-bootstrap-tab-container">
+                        <ul class="nav nav-tabs">
+                        «FOR varContainer : getSortedVariableContainers»
+                            {% set tabTitle = __('«varContainer.name.formatForDisplayCapital»') %}
+                            <li«IF varContainer == getSortedVariableContainers.head || varContainer.isImageArea» class="«IF varContainer == getSortedVariableContainers.head»active«ENDIF»«IF varContainer.isImageArea» dropdown«ENDIF»"«ENDIF» role="presentation">
+                                «IF varContainer.isImageArea»
+                                    <a id="imagesTabDrop" class="dropdown-toggle" href="#" data-toggle="dropdown" aria-controls="imagesTabDropSections" aria-expanded="false">{{ tabTitle }}<span class="caret"></span></a>
+                                    <ul id="imagesTabDropSections" class="dropdown-menu" aria-labelledby="imagesTabDrop">
+                                    «FOR entity : getAllEntities.filter[hasImageFieldsEntity]»
+                                        «FOR imageUploadField : entity.imageFieldsEntity»
+                                            <li>
+                                                <a id="images«entity.name.formatForCodeCapital»«imageUploadField.name.formatForCodeCapital»Tab" href="#tabImages«entity.name.formatForCodeCapital»«imageUploadField.name.formatForCodeCapital»" role="tab" data-toggle="tab" aria-controls="tabImages«entity.name.formatForCodeCapital»«imageUploadField.name.formatForCodeCapital»">{{ __('«entity.nameMultiple.formatForDisplayCapital» «imageUploadField.name.formatForDisplay»') }}</a>
+                                            </li>
+                                        «ENDFOR»
                                     «ENDFOR»
-                                «ENDFOR»
-                                </ul>
-                            «ELSE»
-                                <a id="vars«varContainer.sortOrder»Tab" href="#tab«varContainer.sortOrder»" title="{{ tabTitle|e('html_attr') }}" role="tab" data-toggle="tab">{{ tabTitle }}</a>
-                            «ENDIF»
-                        </li>
-                    «ENDFOR»
-                    «IF targets('1.5')»
-                        {% set tabTitle = __('Workflows') %}
-                        <li role="presentation">
-                            <a id="workflowsTab" href="#tabWorkflows" title="{{ tabTitle|e('html_attr') }}" role="tab" data-toggle="tab">{{ tabTitle }}</a>
-                        </li>
-                    «ENDIF»
-                    </ul>
+                                    </ul>
+                                «ELSE»
+                                    <a id="vars«varContainer.sortOrder»Tab" href="#tab«varContainer.sortOrder»" title="{{ tabTitle|e('html_attr') }}" role="tab" data-toggle="tab">{{ tabTitle }}</a>
+                                «ENDIF»
+                            </li>
+                        «ENDFOR»
+                        «IF targets('1.5')»
+                            {% set tabTitle = __('Workflows') %}
+                            <li role="presentation">
+                                <a id="workflowsTab" href="#tabWorkflows" title="{{ tabTitle|e('html_attr') }}" role="tab" data-toggle="tab">{{ tabTitle }}</a>
+                            </li>
+                        «ENDIF»
+                        </ul>
 
-                    {{ form_errors(form) }}
-                    <div class="tab-content">
-                        «configSections»
+                        {{ form_errors(form) }}
+                        <div class="tab-content">
+                            «configSections»
+                        </div>
                     </div>
                 «ELSE»
                     {{ form_errors(form) }}

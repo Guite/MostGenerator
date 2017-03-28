@@ -231,14 +231,16 @@ class ExternalView {
 
     def private findTemplateObjectTypeSwitcher(Entity it, Application app) '''
         «IF app.hasDisplayActions»
-            <ul class="nav nav-tabs">
-            {% set activatedObjectTypes = getModVar('«app.appName»', 'enabledFinderTypes', []) %}
-            «FOR entity : app.getAllEntities.filter[hasDisplayAction]»
-                {% if '«entity.name.formatForCode»' in activatedObjectTypes %}
-                    <li{{ objectType == '«entity.name.formatForCode»' ? ' class="active"' : '' }}><a href="{{ path('«app.appName.formatForDB»_external_finder', {'objectType': '«entity.name.formatForCode»', 'editor': editorName}) }}" title="{{ __('Search and select «entity.name.formatForDisplay»') }}">{{ __('«entity.nameMultiple.formatForDisplayCapital»') }}</a></li>
-                {% endif %}
-            «ENDFOR»
-            </ul>
+            <div class="zikula-bootstrap-tab-container">
+                <ul class="nav nav-tabs">
+                {% set activatedObjectTypes = getModVar('«app.appName»', 'enabledFinderTypes', []) %}
+                «FOR entity : app.getAllEntities.filter[hasDisplayAction]»
+                    {% if '«entity.name.formatForCode»' in activatedObjectTypes %}
+                        <li{{ objectType == '«entity.name.formatForCode»' ? ' class="active"' : '' }}><a href="{{ path('«app.appName.formatForDB»_external_finder', {'objectType': '«entity.name.formatForCode»', 'editor': editorName}) }}" title="{{ __('Search and select «entity.name.formatForDisplay»') }}">{{ __('«entity.nameMultiple.formatForDisplayCapital»') }}</a></li>
+                    {% endif %}
+                «ENDFOR»
+                </ul>
+            </div>
         «ENDIF»
     '''
 
