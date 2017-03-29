@@ -96,6 +96,9 @@ class EditEntity {
             «IF !fields.filter(StringField).filter[currency].empty»
                 use «nsSymfonyFormType»CurrencyType;
             «ENDIF»
+            «IF !fields.filter(UserField).empty || (it instanceof Entity && (it as Entity).standardFields)»
+                use «nsSymfonyFormType»DateTimeType;
+            «ENDIF»
             «IF !fields.filter(DateField).empty»
                 use «nsSymfonyFormType»DateType;
             «ENDIF»
@@ -174,9 +177,6 @@ class EditEntity {
             «ENDIF»
             «IF !fields.filter(StringField).filter[htmlcolour].empty»
                 use «app.appNamespace»\Form\Type\Field\ColourType;
-            «ENDIF»
-            «IF !fields.filter(UserField).empty || (it instanceof Entity && (it as Entity).standardFields)»
-                use «app.appNamespace»\Form\Type\Field\DateTimeType;
             «ENDIF»
             «IF it instanceof Entity && (it as Entity).geographical»
                 use «app.appNamespace»\Form\Type\Field\GeoType;
@@ -896,15 +896,21 @@ class EditEntity {
     def private dispatch additionalAttributes(ArrayField it) '''
     '''
 
-    def private dispatch formType(DatetimeField it) '''«IF !app.targets('1.5')»«app.appNamespace»\Form\Type\Field\DateTime«ENDIF»'''
+    def private dispatch formType(DatetimeField it) '''«IF !app.targets('1.5')»«nsSymfonyFormType»«ENDIF»DateTime'''
     def private dispatch formType(DateField it) '''«IF !app.targets('1.5')»«nsSymfonyFormType»«ENDIF»Date'''
     def private dispatch formType(TimeField it) '''«IF !app.targets('1.5')»«nsSymfonyFormType»«ENDIF»Time'''
     def private dispatch additionalAttributes(AbstractDateField it) ''''''
-    def private dispatch additionalOptions(AbstractDateField it) '''
+    def private dispatch additionalOptions(DatetimeField it) '''
+        'empty_data' => «defaultData»,
+        'with_seconds' => true,
+        'date_widget' => 'single_text',
+        'time_widget' => 'single_text'
+    '''
+    def private dispatch additionalOptions(DateField it) '''
         'empty_data' => «defaultData»,
         'widget' => 'single_text'
     '''
-    def private dispatch defaultData(DatetimeField it) '''«IF null !== defaultValue && defaultValue != '' && defaultValue != 'now'»'«defaultValue»'«ELSEIF mandatory || !nullable»date('Y-m-d H:i')«ELSE»''«ENDIF»'''
+    def private dispatch defaultData(DatetimeField it) '''«IF null !== defaultValue && defaultValue != '' && defaultValue != 'now'»'«defaultValue»'«ELSEIF mandatory || !nullable»date('Y-m-d H:i:s')«ELSE»''«ENDIF»'''
     def private dispatch defaultData(DateField it) '''«IF null !== defaultValue && defaultValue != '' && defaultValue != 'now'»'«defaultValue»'«ELSEIF mandatory || !nullable»date('Y-m-d')«ELSE»''«ENDIF»'''
     def private dispatch additionalAttributes(TimeField it) '''
         'maxlength' => 8,

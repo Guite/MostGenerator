@@ -232,13 +232,6 @@ class ServiceDefinitions {
                 tags:
                     - { name: form.type }
         «ENDIF»
-        «IF needsDatetimeType»
-
-            «modPrefix».form.type.field.datetime:
-                class: «nsBase»Field\DateTimeType
-                tags:
-                    - { name: form.type }
-        «ENDIF»
         «IF hasGeographical»
 
             «modPrefix».form.type.field.geo:
