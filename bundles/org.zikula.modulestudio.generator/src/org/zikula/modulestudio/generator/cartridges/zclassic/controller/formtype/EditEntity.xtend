@@ -1171,7 +1171,9 @@ class EditEntity {
                 ],
                 'empty_data' => '',
                 'required' => false,
-                'widget' => 'single_text',
+                'with_seconds' => true,
+                'date_widget' => 'single_text',
+                'time_widget' => 'single_text',
                 'help' => $this->__('Here you can choose a custom creation date')
             ]);
         }
