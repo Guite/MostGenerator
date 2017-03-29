@@ -197,9 +197,7 @@ class ExampleData {
 
     def private persistEntities(Entity it, Application app) '''
         «FOR number : 1..app.amountOfExampleRows»
-            if ($«name.formatForCode»«number»->validate()) {
-                $success = $workflowHelper->executeAction($«name.formatForCode»«number», $action);
-            }
+            $success = $workflowHelper->executeAction($«name.formatForCode»«number», $action);
         «ENDFOR»
     '''
 

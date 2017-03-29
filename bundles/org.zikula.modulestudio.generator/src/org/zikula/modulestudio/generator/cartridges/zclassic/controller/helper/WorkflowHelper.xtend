@@ -520,12 +520,6 @@ class WorkflowHelper {
                     if ($actionId == 'delete') {
                         $entityManager->remove($entity);
                     } else {
-                        «IF hasAutomaticArchiving»
-                            if ($entity->getWorkflowState() == 'archived') {
-                                // bypass validator (for example an end date could have lost it's "value in future")
-                                $entity->set_bypassValidation(true);
-                            }
-                        «ENDIF»
                         $entityManager->persist($entity);
                     }
                     $entityManager->flush();

@@ -178,9 +178,6 @@ class Entities {
         namespace «app.appNamespace»\Entity\Base;
 
         «imports»
-
-        use RuntimeException;
-        use ServiceUtil;
         use Zikula\Core\Doctrine\EntityAccess;
 
         «modelEntityBaseImplClass(app)»
@@ -242,12 +239,6 @@ class Entities {
          * @var string The tablename this object maps to
          */
         protected $_objectType = '«name.formatForCode»';
-
-        /**
-         * @Assert\Type(type="bool")
-         * @var boolean Option to bypass validation if needed
-         */
-        protected $_bypassValidation = false;
         «IF it instanceof Entity && (it as Entity).hasNotifyPolicy»
 
             /**
@@ -266,7 +257,6 @@ class Entities {
 
     def private accessors(DataObject it) '''
         «fh.getterAndSetterMethods(it, '_objectType', 'string', false, true, false, '', '')»
-        «fh.getterAndSetterMethods(it, '_bypassValidation', 'boolean', false, true, false, '', '')»
 
         «FOR field : getDerivedFields»«thProp.fieldAccessor(field)»«ENDFOR»
         «extMan.additionalAccessors»

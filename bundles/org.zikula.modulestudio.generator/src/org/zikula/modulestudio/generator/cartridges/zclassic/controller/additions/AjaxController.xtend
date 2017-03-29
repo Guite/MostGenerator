@@ -823,13 +823,11 @@ class AjaxController {
             // save new object to set the root id
             $action = 'submit';
             try {
-                if ($entity->validate()) {
-                    // execute the workflow action
-                    $workflowHelper = $this->get('«appService».workflow_helper');
-                    $success = $workflowHelper->executeAction($entity, $action);
-                    if (!$success) {
-                        $returnValue['result'] = 'failure';
-                    }
+                // execute the workflow action
+                $workflowHelper = $this->get('«appService».workflow_helper');
+                $success = $workflowHelper->executeAction($entity, $action);
+                if (!$success) {
+                    $returnValue['result'] = 'failure';
                 }
             } catch(\Exception $e) {
                 $returnValue['result'] = 'failure';
@@ -873,19 +871,17 @@ class AjaxController {
             // save new object
             $action = 'submit';
             try {
-                if ($childEntity->validate()) {
-                    // execute the workflow action
-                    $workflowHelper = $this->get('«appService».workflow_helper');
-                    $success = $workflowHelper->executeAction($childEntity, $action);
-                    if (!$success) {
-                        $returnValue['result'] = 'failure';
-                    } else {
-                        «IF hasEditActions»
-                            if (in_array($objectType, ['«getAllEntities.filter[tree != EntityTreeType.NONE && hasEditAction].map[name.formatForCode].join('\', \'')»'])) {
-                                $returnValue['returnUrl'] = $this->get('router')->generate('«appName.formatForDB»_' . strtolower($objectType) . '_edit', $childEntity->createUrlArgs(), UrlGeneratorInterface::ABSOLUTE_URL);
-                            }
-                        «ENDIF»
-                    }
+                // execute the workflow action
+                $workflowHelper = $this->get('«appService».workflow_helper');
+                $success = $workflowHelper->executeAction($childEntity, $action);
+                if (!$success) {
+                    $returnValue['result'] = 'failure';
+                } else {
+                    «IF hasEditActions»
+                        if (in_array($objectType, ['«getAllEntities.filter[tree != EntityTreeType.NONE && hasEditAction].map[name.formatForCode].join('\', \'')»'])) {
+                            $returnValue['returnUrl'] = $this->get('router')->generate('«appName.formatForDB»_' . strtolower($objectType) . '_edit', $childEntity->createUrlArgs(), UrlGeneratorInterface::ABSOLUTE_URL);
+                        }
+                    «ENDIF»
                 }
             } catch(\Exception $e) {
                 $returnValue['result'] = 'failure';
@@ -913,13 +909,11 @@ class AjaxController {
         // delete the object
         $action = 'delete';
         try {
-            if ($entity->validate()) {
-                // execute the workflow action
-                $workflowHelper = $this->get('«appService».workflow_helper');
-                $success = $workflowHelper->executeAction($entity, $action);
-                if (!$success) {
-                    $returnValue['result'] = 'failure';
-                }
+            // execute the workflow action
+            $workflowHelper = $this->get('«appService».workflow_helper');
+            $success = $workflowHelper->executeAction($entity, $action);
+            if (!$success) {
+                $returnValue['result'] = 'failure';
             }
         } catch(\Exception $e) {
             $returnValue['result'] = 'failure';

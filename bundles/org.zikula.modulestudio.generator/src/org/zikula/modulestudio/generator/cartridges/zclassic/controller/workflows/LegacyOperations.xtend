@@ -5,7 +5,6 @@ import de.guite.modulestudio.metamodel.EntityWorkflowType
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
-import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
@@ -16,7 +15,6 @@ import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
 class LegacyOperations {
 
     extension FormattingExtensions = new FormattingExtensions
-    extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension NamingExtensions = new NamingExtensions
     extension WorkflowExtensions = new WorkflowExtensions
     extension Utils = new Utils
@@ -101,12 +99,6 @@ class LegacyOperations {
         if (isset($params['nextstate']) && !empty($params['nextstate'])) {
             // assign value to the data object
             $entity['workflowState'] = $params['nextstate'];
-            «IF app.hasAutomaticArchiving»
-                if ($params['nextstate'] == 'archived') {
-                    // bypass validator (for example an end date could have lost it's "value in future")
-                    $entity['_bypassValidation'] = true;
-                }
-            «ENDIF»
         }
 
         // get entity manager

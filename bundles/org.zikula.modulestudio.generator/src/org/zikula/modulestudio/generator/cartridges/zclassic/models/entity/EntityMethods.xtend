@@ -32,8 +32,6 @@ class EntityMethods {
     def dispatch generate(DataObject it, Application app, Property thProp) '''
         «validationMethods»
 
-        «validate»
-
         «relatedObjectsImpl(app)»
 
         «toStringImpl(app)»
@@ -45,8 +43,6 @@ class EntityMethods {
         «propertyChangedListener»
         «getTitleFromDisplayPattern(app)»
         «validationMethods»
-
-        «validate»
 
         «toJson»
 
@@ -69,12 +65,6 @@ class EntityMethods {
 
     def validationMethods(DataObject it) '''
         «val thVal = new ValidationConstraints»
-        «IF hasListFieldsEntity»
-            «FOR listField : getListFieldsEntity»
-
-                «thVal.validationMethods(listField)»
-            «ENDFOR»
-        «ENDIF»
         «IF hasUserFieldsEntity»
             «FOR userField : getUserFieldsEntity»
 
@@ -130,8 +120,8 @@ class EntityMethods {
          */
         public function getTitleFromDisplayPattern()
         {
-            «IF hasListFieldsEntity»
-                $listHelper = ServiceUtil::get('«app.appService».listentries_helper');
+            «IF displayPatternContainsListField»
+                $listHelper = \ServiceUtil::get('«app.appService».listentries_helper');
 
             «ENDIF»
             $formattedTitle = «parseDisplayPattern»;
@@ -142,20 +132,8 @@ class EntityMethods {
 
     def private parseDisplayPattern(Entity it) {
         var result = ''
-        var usedDisplayPattern = displayPattern
+        val patternParts = determineDisplayPatternParts
 
-        if (isInheriting && (null === usedDisplayPattern || usedDisplayPattern == '')) {
-            // fetch inherited display pattern from parent entity
-            if (parentType instanceof Entity) {
-                usedDisplayPattern = (parentType as Entity).displayPattern
-            }
-        }
-
-        if (null === usedDisplayPattern || usedDisplayPattern == '') {
-            usedDisplayPattern = name.formatForDisplay
-        }
-
-        val patternParts = usedDisplayPattern.split('#')
         for (patternPart : patternParts) {
             if (result != '') {
                 result = result.concat("\n" + '        . ')
@@ -179,6 +157,41 @@ class EntityMethods {
         result
     }
 
+    def private displayPatternContainsListField(Entity it) {
+        if (!hasListFieldsEntity) {
+            return false
+        }
+
+        val patternParts = determineDisplayPatternParts
+        for (patternPart : patternParts) {
+            var matchedFields = fields.filter[name == patternPart]
+            if (!matchedFields.empty) {
+                if (matchedFields.head instanceof ListField) {
+                    return true
+                }
+            }
+        }
+
+        false
+    }
+
+    def private determineDisplayPatternParts(Entity it) {
+        var usedDisplayPattern = displayPattern
+
+        if (isInheriting && (null === usedDisplayPattern || usedDisplayPattern == '')) {
+            // fetch inherited display pattern from parent entity
+            if (parentType instanceof Entity) {
+                usedDisplayPattern = (parentType as Entity).displayPattern
+            }
+        }
+
+        if (null === usedDisplayPattern || usedDisplayPattern == '') {
+            usedDisplayPattern = name.formatForDisplay
+        }
+
+        usedDisplayPattern.split('#')
+    }
+
     def private formatFieldValue(EntityField it, CharSequence value) {
         switch it {
             DecimalField: '''\DataUtil::format«IF currency»Currency(«value»)«ELSE»Number(«value», 2)«ENDIF»'''
@@ -191,37 +204,6 @@ class EntityMethods {
             default: value
         }
     }
-
-    /**
-     * Performs validation.
-     */
-    def private validate(DataObject it) '''
-        /**
-         * Start validation and raise exception if invalid data is found.
-         *
-         * @return boolean Whether everything is valid or not
-         */
-        public function validate()
-        {
-            if (true === $this->_bypassValidation) {
-                return true;
-            }
-
-            $validator = ServiceUtil::get('validator');
-            $errors = $validator->validate($this);
-
-            if (count($errors) > 0) {
-                $flashBag = ServiceUtil::get('session')->getFlashBag();
-                foreach ($errors as $error) {
-                    $flashBag->add('error', $error->getMessage());
-                }
-
-                return false;
-            }
-
-            return true;
-        }
-    '''
 
     def private toJson(Entity it) '''
         /**
