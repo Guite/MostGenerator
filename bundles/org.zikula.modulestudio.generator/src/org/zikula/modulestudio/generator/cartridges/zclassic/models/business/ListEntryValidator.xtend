@@ -20,16 +20,16 @@ class ListEntryValidator {
      */
     def generate(Application it, IFileSystemAccess fsa) {
         println('Generating list entry constraint and validator classes')
-        generateClassPair(fsa, getAppSourceLibPath + 'Validator/Constraint/ListEntry.php',
+        generateClassPair(fsa, getAppSourceLibPath + 'Validator/Constraints/ListEntry.php',
             fh.phpFileContent(it, constraintBaseImpl), fh.phpFileContent(it, constraintImpl)
         )
-        generateClassPair(fsa, getAppSourceLibPath + 'Validator/Constraint/ListEntryValidator.php',
+        generateClassPair(fsa, getAppSourceLibPath + 'Validator/Constraints/ListEntryValidator.php',
             fh.phpFileContent(it, validatorBaseImpl), fh.phpFileContent(it, validatorImpl)
         )
     }
 
     def private constraintBaseImpl(Application it) '''
-        namespace «appNamespace»\Validator\Constraint\Base;
+        namespace «appNamespace»\Validator\Constraints\Base;
 
         use Symfony\Component\Validator\Constraint;
 
@@ -79,9 +79,9 @@ class ListEntryValidator {
     '''
 
     def private constraintImpl(Application it) '''
-        namespace «appNamespace»\Validator\Constraint;
+        namespace «appNamespace»\Validator\Constraints;
 
-        use «appNamespace»\Validator\Constraint\Base\AbstractListEntry;
+        use «appNamespace»\Validator\Constraints\Base\AbstractListEntry;
 
         /**
          * List entry validation constraint.
@@ -95,7 +95,7 @@ class ListEntryValidator {
     '''
 
     def private validatorBaseImpl(Application it) '''
-        namespace «appNamespace»\Validator\Constraint\Base;
+        namespace «appNamespace»\Validator\Constraints\Base;
 
         use Symfony\Component\Validator\Constraint;
         use Symfony\Component\Validator\ConstraintValidator;
@@ -195,9 +195,9 @@ class ListEntryValidator {
     '''
 
     def private validatorImpl(Application it) '''
-        namespace «appNamespace»\Validator\Constraint;
+        namespace «appNamespace»\Validator\Constraints;
 
-        use «appNamespace»\Validator\Constraint\Base\AbstractListEntryValidator;
+        use «appNamespace»\Validator\Constraints\Base\AbstractListEntryValidator;
 
         /**
          * List entry validator.
