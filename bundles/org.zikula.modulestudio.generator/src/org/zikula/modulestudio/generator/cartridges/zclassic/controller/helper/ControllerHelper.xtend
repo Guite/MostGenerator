@@ -222,8 +222,8 @@ class ControllerHelper {
                 ImageHelper $imageHelper
                 «ENDIF»«IF needsFeatureActivationHelper»,
                 FeatureActivationHelper $featureActivationHelper
-                «ENDIF»)
-            {
+                «ENDIF»
+            ) {
                 «IF hasUploads»
                     $this->setTranslator($translator);
                 «ENDIF»

@@ -262,7 +262,7 @@ class ValidationConstraints {
     }
     def dispatch fieldAnnotations(ListField it) '''
         «fieldAnnotationsMandatory»
-        * @«entity.application.name.formatForCodeCapital»Assert\ListEntry(entityName="«entity.name.formatForCode»", propertyName="«name.formatForCode»", multiple=«multiple.displayBool»«IF multiple»«IF min > 0», min=«min»«ENDIF»«IF max > 0», max=«max»«ENDIF»«ENDIF»)
+        «' '»* @«entity.application.name.formatForCodeCapital»Assert\ListEntry(entityName="«entity.name.formatForCode»", propertyName="«name.formatForCode»", multiple=«multiple.displayBool»«IF multiple»«IF min > 0», min=«min»«ENDIF»«IF max > 0», max=«max»«ENDIF»«ENDIF»)
     '''
     def dispatch fieldAnnotations(ArrayField it) '''
         «fieldAnnotationsMandatory»

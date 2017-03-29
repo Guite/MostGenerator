@@ -102,8 +102,8 @@ class ViewHelper {
                 PermissionApi«IF targets('1.5')»Interface«ENDIF» $permissionApi,
                 VariableApi $variableApi,
                 ParameterBag $pageVars,
-                ControllerHelper $controllerHelper)
-            {
+                ControllerHelper $controllerHelper
+            ) {
                 $this->twig = $twig;
                 $this->twigLoader = $twigLoader;
                 $this->request = $requestStack->getCurrentRequest();

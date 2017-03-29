@@ -116,8 +116,8 @@ class LinkContainer {
                 «IF generateAccountApi || hasEditActions»
                     CurrentUserApi $currentUserApi,
                 «ENDIF»
-                ControllerHelper $controllerHelper)
-            {
+                ControllerHelper $controllerHelper
+            ) {
                 $this->setTranslator($translator);
                 $this->router = $router;
                 $this->permissionApi = $permissionApi;

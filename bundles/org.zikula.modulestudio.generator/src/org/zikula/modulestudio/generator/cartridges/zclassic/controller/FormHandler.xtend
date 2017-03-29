@@ -481,8 +481,8 @@ class FormHandler {
                 WorkflowHelper $workflowHelper«IF hasHookSubscribers»,
                 HookHelper $hookHelper«ENDIF»«IF hasTranslatable»,
                 TranslatableHelper $translatableHelper«ENDIF»«IF needsFeatureActivationHelper»,
-                FeatureActivationHelper $featureActivationHelper«ENDIF»)
-            {
+                FeatureActivationHelper $featureActivationHelper«ENDIF»
+            ) {
                 $this->kernel = $kernel;
                 $this->setTranslator($translator);
                 $this->formFactory = $formFactory;

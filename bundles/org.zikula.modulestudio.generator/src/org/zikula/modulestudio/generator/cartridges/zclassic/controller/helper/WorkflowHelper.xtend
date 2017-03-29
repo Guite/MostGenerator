@@ -8,7 +8,6 @@ import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
-import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
@@ -18,7 +17,6 @@ class WorkflowHelper {
 
     extension FormattingExtensions = new FormattingExtensions
     extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
-    extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension ModelExtensions = new ModelExtensions
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
@@ -151,8 +149,8 @@ class WorkflowHelper {
                     «ENDIF»
                     «name.formatForCodeCapital»Factory $entityFactory,
                 «ENDIF»
-                ListEntriesHelper $listEntriesHelper)
-            {
+                ListEntriesHelper $listEntriesHelper
+            ) {
                 «IF !targets('1.5')»
                     $this->name = '«appName»';
                 «ENDIF»

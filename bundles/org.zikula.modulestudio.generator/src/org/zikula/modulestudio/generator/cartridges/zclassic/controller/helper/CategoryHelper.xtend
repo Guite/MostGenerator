@@ -114,8 +114,8 @@ class CategoryHelper {
                 «ELSE»
                     CategoryRegistryApi $categoryRegistryApi,
                 «ENDIF»
-                CategoryPermissionApi $categoryPermissionApi)
-            {
+                CategoryPermissionApi $categoryPermissionApi
+            ) {
                 $this->translator = $translator;
                 $this->session = $session;
                 $this->request = $requestStack->getCurrentRequest();

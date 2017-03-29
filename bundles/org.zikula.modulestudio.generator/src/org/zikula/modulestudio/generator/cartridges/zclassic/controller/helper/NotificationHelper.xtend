@@ -163,8 +163,8 @@ class NotificationHelper {
             Twig_Environment $twig,
             MailerApi $mailerApi,
             GroupRepositoryInterface $groupRepository,
-            WorkflowHelper $workflowHelper)
-        {
+            WorkflowHelper $workflowHelper
+        ) {
             $this->kernel = $kernel;
             $this->setTranslator($translator);
             $this->session = $session;
