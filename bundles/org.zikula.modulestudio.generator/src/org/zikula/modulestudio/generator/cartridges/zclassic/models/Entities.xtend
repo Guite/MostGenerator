@@ -9,6 +9,7 @@ import de.guite.modulestudio.metamodel.EntityIndexItem
 import de.guite.modulestudio.metamodel.InheritanceRelationship
 import de.guite.modulestudio.metamodel.MappedSuperClass
 import org.eclipse.xtext.generator.IFileSystemAccess
+import org.zikula.modulestudio.generator.cartridges.zclassic.models.business.ListEntryValidator
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.business.ValidationConstraints
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.entity.Association
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.entity.EntityConstructor
@@ -71,6 +72,9 @@ class Entities {
                 new StandardFieldsTrait().generate(it, fsa, false)
             }
         }
+        if (hasListFields) {
+            new ListEntryValidator().generate(it, fsa)
+        }
 
         for (entity : getAllEntities) {
             extMan = new ExtensionManager(entity)
@@ -119,9 +123,6 @@ class Entities {
             use Symfony\Component\HttpFoundation\File\File;
         «ENDIF»
         use Symfony\Component\Validator\Constraints as Assert;
-        «IF !getListFieldsEntity.filter[multiple].empty»
-            use Symfony\Component\Validator\Context\ExecutionContextInterface;
-        «ENDIF»
         «IF !getUniqueDerivedFields.filter[!primaryKey].empty || !getIncomingJoinRelations.filter[unique].empty || !getOutgoingJoinRelations.filter[unique].empty»
             use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
         «ENDIF»
@@ -130,6 +131,9 @@ class Entities {
         «ENDIF»
         «IF !application.targets('1.5')»
             use «application.appNamespace»\Traits\EntityWorkflowTrait;
+        «ENDIF»
+        «IF hasListFieldsEntity»
+            use «application.appNamespace»\Validator\Constraints as «application.name.formatForCodeCapital»Assert;
         «ENDIF»
     '''
 
@@ -150,9 +154,6 @@ class Entities {
             use Symfony\Component\HttpFoundation\File\File;
         «ENDIF»
         use Symfony\Component\Validator\Constraints as Assert;
-        «IF !getListFieldsEntity.filter[multiple].empty»
-            use Symfony\Component\Validator\Context\ExecutionContextInterface;
-        «ENDIF»
         «IF !getUniqueDerivedFields.filter[!primaryKey].empty || (hasSluggableFields && slugUnique) || !getIncomingJoinRelations.filter[unique].empty || !getOutgoingJoinRelations.filter[unique].empty || !getUniqueIndexes.empty»
             use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
         «ENDIF»
@@ -167,6 +168,9 @@ class Entities {
         «ENDIF»
         «IF standardFields»
             use «application.appNamespace»\Traits\«IF loggable»Loggable«ENDIF»StandardFieldsTrait;
+        «ENDIF»
+        «IF hasListFieldsEntity»
+            use «application.appNamespace»\Validator\Constraints as «application.name.formatForCodeCapital»Assert;
         «ENDIF»
     '''
 

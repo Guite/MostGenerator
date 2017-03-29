@@ -53,6 +53,9 @@ class ServiceDefinitions {
         generateServiceFile(fsa, 'linkContainer', linkContainer)
         generateServiceFile(fsa, 'entityFactory', entityFactory)
         generateServiceFile(fsa, 'eventSubscriber', eventSubscriber)
+        if (hasListFields) {
+            generateServiceFile(fsa, 'validators', validators)
+        }
         if (hasEditActions) {
             generateServiceFile(fsa, 'formFields', formFields)
         }
@@ -67,6 +70,9 @@ class ServiceDefinitions {
           - { resource: 'linkContainer.yml' }
           - { resource: 'entityFactory.yml' }
           - { resource: 'eventSubscriber.yml' }
+        «IF hasListFields»
+            «'  '»- { resource: 'validators.yml' }
+        «ENDIF»
         «IF hasEditActions»
             «'  '»- { resource: 'formFields.yml' }
         «ENDIF»
@@ -187,6 +193,22 @@ class ServiceDefinitions {
 
         listeners
     }
+
+    def private validators(Application it) '''
+        services:
+            «validatorServices»
+    '''
+
+    def private validatorServices(Application it) '''
+        # Custom validators
+        «modPrefix».validator.list_entry.validator:
+            class: «appNamespace»\Validator\Constraints\ListEntryValidator
+            arguments:
+                - "@translator.default"
+                - "@«modPrefix».listentries_helper"
+            tags:
+                - { name: validator.constraint_validator, alias: «vendor.formatForDB».«name.formatForDB».listentry.validator }
+    '''
 
     def private formFields(Application it) '''
         services:

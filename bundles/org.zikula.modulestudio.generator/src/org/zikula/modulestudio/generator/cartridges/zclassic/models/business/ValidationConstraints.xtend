@@ -33,7 +33,6 @@ import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
-import org.zikula.modulestudio.generator.extensions.Utils
 
 class ValidationConstraints {
 
@@ -42,7 +41,6 @@ class ValidationConstraints {
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension ModelJoinExtensions = new ModelJoinExtensions
     extension NamingExtensions = new NamingExtensions
-    extension Utils = new Utils
 
     def dispatch fieldAnnotations(DerivedField it) {
     }
@@ -264,9 +262,7 @@ class ValidationConstraints {
     }
     def dispatch fieldAnnotations(ListField it) '''
         «fieldAnnotationsMandatory»
-        «IF !multiple»
-            «' '»* @Assert\Choice(callback="get«name.formatForCodeCapital»AllowedValues", multiple=«multiple.displayBool»«IF multiple»«IF min > 0», min=«min»«ENDIF»«IF max > 0», max=«max»«ENDIF»«ENDIF»)
-        «ENDIF»
+        * @«entity.application.name.formatForCodeCapital»Assert\ListEntry(entityName="«entity.name.formatForCode»", propertyName="«name.formatForCode»", multiple=«multiple.displayBool»«IF multiple»«IF min > 0», min=«min»«ENDIF»«IF max > 0», max=«max»«ENDIF»«ENDIF»)
     '''
     def dispatch fieldAnnotations(ArrayField it) '''
         «fieldAnnotationsMandatory»
@@ -319,61 +315,9 @@ class ValidationConstraints {
         «ENDIF»
     '''
 
-    def dispatch validationMethods(ListField it) '''
-        «val app = entity.application»
-        «IF !multiple»
-            /**
-             * Returns a list of possible choices for the «name.formatForCode» list field.
-             * This method is used for validation.
-             *
-             * @return array List of allowed choices
-             */
-            public static function get«name.formatForCodeCapital»AllowedValues()
-            {
-                $container = ServiceUtil::get('service_container');
-                $helper = $container->get('«app.appService».listentries_helper');
-                $listEntries = $helper->get«name.formatForCodeCapital»EntriesFor«entity.name.formatForCodeCapital»();
-
-                $allowedValues = [«IF name == 'workflowState'»'initial'«ELSEIF !mandatory»''«ENDIF»];
-                foreach ($listEntries as $entry) {
-                    $allowedValues[] = $entry['value'];
-                }
-
-                return $allowedValues;
-            }
-        «ELSE»
-            /**
-             * @Assert\Callback()
-             */
-            public function is«name.formatForCodeCapital»ValueAllowed(ExecutionContextInterface $context)
-            {
-                $container = ServiceUtil::get('service_container');
-                $helper = $container->get('«app.appService».listentries_helper');
-                $listEntries = $helper->get«name.formatForCodeCapital»EntriesFor«entity.name.formatForCodeCapital»();
-
-                $allowedValues = [];
-                foreach ($listEntries as $entry) {
-                    $allowedValues[] = $entry['value'];
-                }
-
-                $selected = explode('###', $this->«name.formatForCode»);
-                foreach ($selected as $value) {
-                    if ($value == '') {
-                        continue;
-                    }
-                    if (!in_array($value, $allowedValues, true)) {
-                        $context->buildViolation($container->get('translator.default')->__('Invalid value provided'))
-                            ->atPath('«name.formatForCode»')
-                            ->addViolation();
-                    }
-                }
-            }
-        «ENDIF»
-    '''
-
     def dispatch validationMethods(UserField it) '''
         /**
-         * Checks whether the «name.formatForCode» field contains a valid user id.
+         * Checks whether the «name.formatForCode» field contains a valid user reference.
          * This method is used for validation.
          *
          * @Assert\IsTrue(message="This value must be a valid user id.")
@@ -400,6 +344,7 @@ class ValidationConstraints {
                 public function is«name.formatForCodeCapital»TimeValidPast()
                 {
                     $format = 'His';
+
                     return $this['«name.formatForCode»']->format($format) < date($format);
                 }
             «ELSEIF future»
@@ -414,6 +359,7 @@ class ValidationConstraints {
                 public function is«name.formatForCodeCapital»TimeValidFuture()
                 {
                     $format = 'His';
+
                     return $this['«name.formatForCode»']->format($format) > date($format);
                 }
             «ENDIF»
