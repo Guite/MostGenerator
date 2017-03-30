@@ -26,6 +26,7 @@ class AutoCompletionRelationType {
     def private relationTypeBaseImpl(Application it) '''
         namespace «appNamespace»\Form\Type\Field\Base;
 
+        use Doctrine\Common\Persistence\ObjectManager;
         use Symfony\Component\Form\AbstractType;
         «IF targets('1.5')»
             use Symfony\Component\Form\Extension\Core\Type\HiddenType;
