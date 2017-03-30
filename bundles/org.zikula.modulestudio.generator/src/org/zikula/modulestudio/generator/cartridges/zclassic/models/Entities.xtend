@@ -113,7 +113,7 @@ class Entities {
         }
     }
 
-    def private dispatch imports(MappedSuperClass it) '''
+    def private dispatch imports(MappedSuperClass it, Boolean isBase) '''
         use Doctrine\ORM\Mapping as ORM;
         «IF hasCollections»
             use Doctrine\Common\Collections\ArrayCollection;
@@ -137,48 +137,52 @@ class Entities {
         «ENDIF»
     '''
 
-    def private dispatch imports(Entity it) '''
+    def private dispatch imports(Entity it, Boolean isBase) '''
         use Doctrine\ORM\Mapping as ORM;
-        «IF hasCollections || attributable || categorisable»
-            use Doctrine\Common\Collections\ArrayCollection;
+        «IF isBase»
+            «IF hasCollections || attributable || categorisable»
+                use Doctrine\Common\Collections\ArrayCollection;
+            «ENDIF»
+            use Gedmo\Mapping\Annotation as Gedmo;
+            «IF hasNotifyPolicy»
+                use Doctrine\Common\NotifyPropertyChanged;
+                use Doctrine\Common\PropertyChangedListener;
+            «ENDIF»
+            «IF hasTranslatableFields»
+                use Gedmo\Translatable\Translatable;
+            «ENDIF»
+            «IF hasUploadFieldsEntity»
+                use Symfony\Component\HttpFoundation\File\File;
+            «ENDIF»
+            use Symfony\Component\Validator\Constraints as Assert;
         «ENDIF»
-        use Gedmo\Mapping\Annotation as Gedmo;
-        «IF hasNotifyPolicy»
-            use Doctrine\Common\NotifyPropertyChanged;
-            use Doctrine\Common\PropertyChangedListener;
-        «ENDIF»
-        «IF hasTranslatableFields»
-            use Gedmo\Translatable\Translatable;
-        «ENDIF»
-        «IF hasUploadFieldsEntity»
-            use Symfony\Component\HttpFoundation\File\File;
-        «ENDIF»
-        use Symfony\Component\Validator\Constraints as Assert;
         «IF !getUniqueDerivedFields.filter[!primaryKey].empty || (hasSluggableFields && slugUnique) || !getIncomingJoinRelations.filter[unique].empty || !getOutgoingJoinRelations.filter[unique].empty || !getUniqueIndexes.empty»
             use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
         «ENDIF»
-        «IF hasUserFieldsEntity»
-            use Zikula\UsersModule\Entity\UserEntity;
-        «ENDIF»
-        «IF !application.targets('1.5')»
-            use «application.appNamespace»\Traits\EntityWorkflowTrait;
-        «ENDIF»
-        «IF geographical»
-            use «application.appNamespace»\Traits\«IF loggable»Loggable«ENDIF»GeographicalTrait;
-        «ENDIF»
-        «IF standardFields»
-            use «application.appNamespace»\Traits\«IF loggable»Loggable«ENDIF»StandardFieldsTrait;
-        «ENDIF»
-        «IF hasListFieldsEntity»
-            use «application.appNamespace»\Validator\Constraints as «application.name.formatForCodeCapital»Assert;
+        «IF isBase»
+            use Zikula\Core\Doctrine\EntityAccess;
+            «IF hasUserFieldsEntity»
+                use Zikula\UsersModule\Entity\UserEntity;
+            «ENDIF»
+            «IF !application.targets('1.5')»
+                use «application.appNamespace»\Traits\EntityWorkflowTrait;
+            «ENDIF»
+            «IF geographical»
+                use «application.appNamespace»\Traits\«IF loggable»Loggable«ENDIF»GeographicalTrait;
+            «ENDIF»
+            «IF standardFields»
+                use «application.appNamespace»\Traits\«IF loggable»Loggable«ENDIF»StandardFieldsTrait;
+            «ENDIF»
+            «IF hasListFieldsEntity»
+                use «application.appNamespace»\Validator\Constraints as «application.name.formatForCodeCapital»Assert;
+            «ENDIF»
         «ENDIF»
     '''
 
     def private modelEntityBaseImpl(DataObject it, Application app) '''
         namespace «app.appNamespace»\Entity\Base;
 
-        «imports»
-        use Zikula\Core\Doctrine\EntityAccess;
+        «imports(true)»
 
         «modelEntityBaseImplClass(app)»
     '''
@@ -270,7 +274,7 @@ class Entities {
 
         use «app.appNamespace»\Entity\«IF isInheriting»«parentType.name.formatForCodeCapital»«ELSE»Base\Abstract«name.formatForCodeCapital»Entity«ENDIF» as BaseEntity;
 
-        «imports»
+        «imports(isInheriting)»
 
         «entityImplClassDocblock(app)»
         class «name.formatForCodeCapital»Entity extends BaseEntity
