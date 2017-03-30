@@ -273,7 +273,6 @@ class Entities {
         namespace «app.appNamespace»\Entity;
 
         use «app.appNamespace»\Entity\«IF isInheriting»«parentType.name.formatForCodeCapital»«ELSE»Base\Abstract«name.formatForCodeCapital»Entity«ENDIF» as BaseEntity;
-
         «imports(isInheriting)»
 
         «entityImplClassDocblock(app)»
