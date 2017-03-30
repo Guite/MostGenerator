@@ -791,8 +791,7 @@ class Repository {
         {
             $qb = $this->genericBaseQuery($where, $orderBy, $useJoins, $slimMode);
 
-            $page = $currentPage;
-            «/* TODO fix buggy session storage of current page
+            $page = $currentPage;«/* TODO fix buggy session storage of current page
 
             // check if we have any filters set
             $parameters = $this->getViewQuickNavParameters('', []);
@@ -1082,11 +1081,10 @@ class Repository {
          * @param boolean $useJoins Whether to include joining related objects (optional) (default=true)
          *
          * @return QueryBuilder Created query builder instance
-         * @TODO fix usage of joins; please remove the first line and test
          */
         protected function getCountQuery($where = '', $useJoins = true)
         {
-            $useJoins = false;
+            $useJoins = false; // joins usage needs to be fixed; please remove the first line and test«/* TODO fix usage of joins in getCountQuery */»
 
             $selection = 'COUNT(tbl.«getFirstPrimaryKey.name.formatForCode») AS num«nameMultiple.formatForCodeCapital»';
             if (true === $useJoins) {

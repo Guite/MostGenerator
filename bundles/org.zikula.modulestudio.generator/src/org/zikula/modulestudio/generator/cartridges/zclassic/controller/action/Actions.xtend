@@ -354,8 +354,7 @@ class Actions {
     '''
 
     def private dispatch actionImplBody(Entity it, CustomAction action) '''
-        /** TODO: custom logic */
-
+        «/* TODO custom logic */»
         $templateParameters = [
             'routeArea' => $isAdmin ? 'admin' : ''
         ];

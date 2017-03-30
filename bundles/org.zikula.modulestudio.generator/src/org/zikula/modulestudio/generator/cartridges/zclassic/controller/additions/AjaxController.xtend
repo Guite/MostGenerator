@@ -394,8 +394,7 @@ class AjaxController {
                     if (!empty($previewFieldName) && !empty($item[$previewFieldName])) {
                         $fullObjectId = $objectType . '-' . $resultItem['id'];
                         $thumbImagePath = $imagineManager->getThumb($item[$previewFieldName], $fullObjectId);
-                        $preview = '<img src="' . $thumbImagePath . '" width="50" height="50" alt="' . $itemTitleStripped . '" />';
-                        $resultItem['image'] = $preview;
+                        $resultItem['image'] = '<img src="' . $thumbImagePath . '" width="50" height="50" alt="' . $itemTitleStripped . '" />';
                     }
                 «ENDIF»
 
@@ -410,8 +409,7 @@ class AjaxController {
         $descriptionFieldName = $repository->getDescriptionFieldName();
         $previewFieldName = $repository->getPreviewFieldName();
         «IF hasImageFields»
-            «/* TODO use custom image helper instead of pure imagine plugin */»
-            //$imageHelper = $this->get('«appService».image_helper');
+            //$imageHelper = $this->get('«appService».image_helper');«/* TODO use custom image helper instead of pure imagine plugin */»
             //$imagineManager = $imageHelper->getManager($objectType, $previewFieldName, 'controllerAction', $contextArgs);
             $imagineManager = $this->get('systemplugin.imagine.manager');
         «ENDIF»

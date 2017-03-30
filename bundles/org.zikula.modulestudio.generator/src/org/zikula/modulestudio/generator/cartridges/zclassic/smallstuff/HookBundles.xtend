@@ -49,7 +49,6 @@ class HookBundles {
             $this->registerHookSubscriberBundle($bundle);
 
         «ENDFOR»
-
         «/* TODO see #15
             Example for name of provider area: provider_area.comments.general
 

@@ -105,7 +105,7 @@ class ExternalController {
 
         $repository = $this->get('«appService».entity_factory')->getRepository($objectType);
         $repository->setRequest($this->get('request_stack')->getCurrentRequest());
-        $idValues = ['id' => $id];«/** TODO consider composite keys properly */»
+        $idValues = ['id' => $id];«/* TODO consider composite keys properly */»
 
         $hasIdentifier = $controllerHelper->isValidIdentifier($idValues);
         if (!$hasIdentifier) {

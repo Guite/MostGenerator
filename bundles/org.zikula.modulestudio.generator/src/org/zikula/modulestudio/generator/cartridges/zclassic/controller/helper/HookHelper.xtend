@@ -140,8 +140,7 @@ class HookHelper {
     def private hookContainerBaseImpl(Application it) '''
         namespace «appNamespace»\Container\Base;
 
-        use Zikula\Bundle\HookBundle\AbstractHookContainer as ZikulaHookContainer;
-        «/* TODO see #15 use Zikula\Bundle\HookBundle\Bundle\ProviderBundle; */»
+        use Zikula\Bundle\HookBundle\AbstractHookContainer as ZikulaHookContainer;«/* TODO see #15 use Zikula\Bundle\HookBundle\Bundle\ProviderBundle; */»
         use Zikula\Bundle\HookBundle\Bundle\SubscriberBundle;
 
         /**

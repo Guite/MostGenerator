@@ -31,9 +31,7 @@ class EntityConstructor {
          *
          * Will not be called by Doctrine and can therefore be used
          * for own implementation purposes. It is also possible to add
-         * arbitrary arguments as with every other class method.
-         *
-         * @param TODO
+         * arbitrary arguments as with every other class method.«/* TODO provide @param elements for constructor arguments */»
          */
         public function __construct(«constructorArguments(true)»)
         {

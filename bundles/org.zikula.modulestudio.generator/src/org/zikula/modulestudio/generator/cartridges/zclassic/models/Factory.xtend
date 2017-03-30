@@ -79,7 +79,7 @@ class Factory {
                 {
                     $entityClass = '«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Entity\\«entity.name.formatForCodeCapital»Entity';
 
-                    return new $entityClass(«/* TODO constructor arguments if required */»);
+                    return new $entityClass(«/* TODO provide entity constructor arguments if required */»);
                 }
             «ENDFOR»
 

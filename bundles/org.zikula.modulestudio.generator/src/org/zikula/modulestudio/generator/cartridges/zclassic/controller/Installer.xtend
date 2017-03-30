@@ -148,8 +148,7 @@ class Installer {
             «IF hasHookSubscribers»
                 // install subscriber hooks
                 $this->hookApi->installSubscriberHooks($this->bundle->getMetaData());
-            «ENDIF»
-            «/*TODO see #15
+            «ENDIF»«/*TODO see #15
             «IF hasHookProviders»
                 // install provider hooks
                 $this->hookApi->installProviderHooks($this->bundle->getMetaData());
@@ -261,10 +260,11 @@ class Installer {
 
                 return false;
             }
+            «IF hasHookSubscribers»
 
-            // uninstall subscriber hooks
-            $this->hookApi->uninstallSubscriberHooks($this->bundle->getMetaData());
-            «/*TODO see #15
+                // uninstall subscriber hooks
+                $this->hookApi->uninstallSubscriberHooks($this->bundle->getMetaData());
+            «ENDIF»«/*TODO see #15
             «IF hasHookProviders»
                 // uninstall provider hooks
                 $this->hookApi->uninstallProviderHooks($this->bundle->getMetaData());

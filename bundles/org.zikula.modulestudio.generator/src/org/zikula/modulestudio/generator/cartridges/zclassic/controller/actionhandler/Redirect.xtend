@@ -116,8 +116,7 @@ class Redirect {
             $objectIsPersisted = $args['commandName'] != 'delete' && !($this->templateParameters['mode'] == 'create' && $args['commandName'] == 'cancel');
 
             if (null !== $this->returnTo) {
-                «/* TODO improve this check considering slugs */»
-                $isDisplayOrEditPage = substr($this->returnTo, -7) == 'display' || substr($this->returnTo, -4) == 'edit';
+                $isDisplayOrEditPage = substr($this->returnTo, -7) == 'display' || substr($this->returnTo, -4) == 'edit';«/* TODO improve this check considering slugs */»
                 if (!$isDisplayOrEditPage || $objectIsPersisted) {
                     // return to referer
                     return $this->returnTo;
@@ -244,7 +243,7 @@ class Redirect {
                             case 'userDisplay«sourceEntity.name.formatForCodeCapital»':
                             case 'adminDisplay«sourceEntity.name.formatForCodeCapital»':
                                 if (!empty($this->relationPresets['«incomingRelation.getRelationAliasName(false)»'])) {
-                                    return $this->router->generate('«app.appName.formatForDB»_«sourceEntity.name.formatForDB»_' . $routeArea . 'display',  ['id' => $this->relationPresets['«incomingRelation.getRelationAliasName(false)»']«IF sourceEntity.hasSluggableFields»«/*, 'slug' => 'TODO'*/»«ENDIF»]);
+                                    return $this->router->generate('«app.appName.formatForDB»_«sourceEntity.name.formatForDB»_' . $routeArea . 'display',  ['id' => $this->relationPresets['«incomingRelation.getRelationAliasName(false)»']«IF sourceEntity.hasSluggableFields»«/*, 'slug' => 'TODO add slug argument for redirect to relation preset'*/»«ENDIF»]);
                                 }
 
                                 return $this->getDefaultReturnUrl($args);

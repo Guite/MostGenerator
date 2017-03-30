@@ -1130,8 +1130,7 @@ class FormHandler {
          */
         protected function prepareWorkflowAdditions($enterprise = false)
         {
-            $roles = [];
-            «/* TODO review this after https://github.com/zikula/core/issues/2800 has been solved */»
+            $roles = [];«/* TODO review this after https://github.com/zikula/core/issues/2800 has been solved */»
             $isLoggedIn = $this->currentUserApi->isLoggedIn();
             $currentUserId = $isLoggedIn ? $this->currentUserApi->get('uid') : 1;
             $roles['is_creator'] = $this->templateParameters['mode'] == 'create'
