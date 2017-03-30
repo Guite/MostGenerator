@@ -78,7 +78,6 @@ class ControllerHelper {
         «IF hasViewActions && hasEditActions»
             use «appNamespace»\Helper\ModelHelper;
         «ENDIF»
-        use «appNamespace»\Helper\SelectionHelper;
 
         /**
          * Helper base class for controller layer methods.
@@ -140,11 +139,6 @@ class ControllerHelper {
                  */
                 protected $modelHelper;
             «ENDIF»
-
-            /**
-             * @var SelectionHelper
-             */
-            protected $selectionHelper;
             «IF hasUploads»
 
                 /**
@@ -186,7 +180,6 @@ class ControllerHelper {
              «IF hasViewActions && hasEditActions»
              * @param ModelHelper         $modelHelper     ModelHelper service instance
              «ENDIF»
-             * @param SelectionHelper     $selectionHelper SelectionHelper service instance
              «IF hasUploads»
              * @param ImageHelper         $imageHelper     ImageHelper service instance
              «ENDIF»
@@ -214,11 +207,8 @@ class ControllerHelper {
                 «IF hasGeographical»
                     CurrentUserApi $currentUserApi,
                 «ENDIF»
-                «name.formatForCodeCapital»Factory $entityFactory,
-                «IF hasViewActions && hasEditActions»
-                    ModelHelper $modelHelper,
-                «ENDIF»
-                SelectionHelper $selectionHelper«IF hasUploads»,
+                «name.formatForCodeCapital»Factory $entityFactory«IF hasViewActions && hasEditActions»,
+                ModelHelper $modelHelper«ENDIF»«IF hasUploads»,
                 ImageHelper $imageHelper«ENDIF»«IF needsFeatureActivationHelper»,
                 FeatureActivationHelper $featureActivationHelper«ENDIF»
             ) {
@@ -245,7 +235,6 @@ class ControllerHelper {
                 «IF hasViewActions && hasEditActions»
                     $this->modelHelper = $modelHelper;
                 «ENDIF»
-                $this->selectionHelper = $selectionHelper;
                 «IF hasUploads»
                     $this->imageHelper = $imageHelper;
                 «ENDIF»
@@ -352,7 +341,7 @@ class ControllerHelper {
             $routeParams = $request->get('_route_params', []);
             foreach ($idFields as $idField) {
                 $defaultValue = isset($args[$idField]) && is_numeric($args[$idField]) ? $args[$idField] : 0;
-                if ($this->selectionHelper->hasCompositeKeys($objectType)) {
+                if ($this->entityFactory->hasCompositeKeys($objectType)) {
                     // composite key may be alphanumeric
                     if (array_key_exists($idField, $routeParams)) {
                         $id = !empty($routeParams[$idField]) ? $routeParams[$idField] : $defaultValue;
@@ -467,7 +456,7 @@ class ControllerHelper {
             «IF hasTrees»
 
                 if ('tree' == $request->query->getAlnum('tpl', '')) {
-                    $templateParameters['trees'] = $this->selectionHelper->getAllTrees($objectType);
+                    $templateParameters['trees'] = $repository->selectAllTrees();
                     $templateParameters = array_merge($templateParameters, $repository->getAdditionalTemplateParameters(«IF hasUploads»$this->imageHelper, «ENDIF»'controllerAction', $contextArgs));
                     «IF needsFeatureActivationHelper»
                         $templateParameters['featureActivationHelper'] = $this->featureActivationHelper;
@@ -561,13 +550,13 @@ class ControllerHelper {
             $where = '';
             if ($showAllEntries == 1) {
                 // retrieve item list without pagination
-                $entities = $this->selectionHelper->getEntities($objectType, [], $where, $sort . ' ' . $sortdir);
+                $entities = $repository->selectWhere($where, $sort . ' ' . $sortdir);
             } else {
                 // the current offset which is used to calculate the pagination
                 $currentPage = $request->query->getInt('pos', 1);
 
                 // retrieve item list with pagination
-                list($entities, $objectCount) = $this->selectionHelper->getEntitiesPaginated($objectType, $where, $sort . ' ' . $sortdir, $currentPage, $resultsPerPage);
+                list($entities, $objectCount) = $repository->selectWherePaginated($where, $sort . ' ' . $sortdir, $currentPage, $resultsPerPage);
 
                 $templateParameters['currentPage'] = $currentPage;
                 $templateParameters['pager'] = [

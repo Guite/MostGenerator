@@ -144,13 +144,7 @@ class AjaxController {
             return true;
         }
 
-        $fragment = '';
-        if ($request->isMethod('POST') && $request->request->has('fragment')) {
-            $fragment = $request->request->get('fragment', '');
-        } elseif ($request->isMethod('GET') && $request->query->has('fragment')) {
-            $fragment = $request->query->get('fragment', '');
-        }
-
+        $fragment = $request->query->get('fragment', '');
         $userRepository = $this->get('zikula_users_module.user_repository');
         $limit = 50;
         $filter = [
@@ -221,8 +215,6 @@ class AjaxController {
 
         $repository = $this->get('«appService».entity_factory')->getRepository($objectType);
         $repository->setRequest($request);
-        $selectionHelper = $this->get('«appService».selection_helper');
-        $idFields = $selectionHelper->getIdFields($objectType);
 
         $descriptionField = $repository->getDescriptionFieldName();
 
@@ -250,10 +242,7 @@ class AjaxController {
         $slimItems = [];
         $component = '«appName»:' . ucfirst($objectType) . ':';
         foreach ($entities as $item) {
-            $itemId = '';
-            foreach ($idFields as $idField) {
-                $itemId .= (!empty($itemId) ? '_' : '') . $item[$idField];
-            }
+            $itemId = $item->createCompositeIdentifier();
             if (!$this->hasPermission($component, $itemId . '::', ACCESS_READ)) {
                 continue;
             }
@@ -333,12 +322,7 @@ class AjaxController {
             return true;
         }
 
-        $objectType = '«getLeadingEntity.name.formatForCode»';
-        if ($request->isMethod('POST') && $request->request->has('ot')) {
-            $objectType = $request->request->getAlnum('ot', '«getLeadingEntity.name.formatForCode»');
-        } elseif ($request->isMethod('GET') && $request->query->has('ot')) {
-            $objectType = $request->query->getAlnum('ot', '«getLeadingEntity.name.formatForCode»');
-        }
+        $objectType = $request->query->getAlnum('ot', '«getLeadingEntity.name.formatForCode»');
         $controllerHelper = $this->get('«appService».controller_helper');
         $contextArgs = ['controller' => 'ajax', 'action' => 'getItemListAutoCompletion'];
         if (!in_array($objectType, $controllerHelper->getObjectTypes('controllerAction', $contextArgs))) {
@@ -346,18 +330,10 @@ class AjaxController {
         }
 
         $repository = $this->get('«appService».entity_factory')->getRepository($objectType);
-        $selectionHelper = $this->get('«appService».selection_helper');
-        $idFields = $selectionHelper->getIdFields($objectType);
+        $repository->setRequest($request);
 
-        $fragment = '';
-        $exclude = '';
-        if ($request->isMethod('POST') && $request->request->has('fragment')) {
-            $fragment = $request->request->get('fragment', '');
-            $exclude = $request->request->get('exclude', '');
-        } elseif ($request->isMethod('GET') && $request->query->has('fragment')) {
-            $fragment = $request->query->get('fragment', '');
-            $exclude = $request->query->get('exclude', '');
-        }
+        $fragment = $request->query->get('fragment', '');
+        $exclude = $request->query->get('exclude', '');
         $exclude = !empty($exclude) ? explode(',', $exclude) : [];
 
         // parameter for used sorting field
@@ -578,8 +554,8 @@ class AjaxController {
         }
 
         // select data from data source
-        $selectionHelper = $this->get('«appService».selection_helper');
-        $entity = $selectionHelper->getEntity($objectType, $id);
+        $repository = $this->get('«appService».entity_factory')->getRepository($objectType);
+        $entity = $repository->selectById($id, false);
         if (null === $entity) {
             return new NotFoundResponse($this->__('No such item.'));
         }
@@ -673,17 +649,19 @@ class AjaxController {
             }
         }
 
-        $selectionHelper = $this->get('«appService».selection_helper');
+        $entityFactory = $this->get('«appService».entity_factory');
+        $repository = $entityFactory->getRepository($objectType);
+        $repository->setRequest($request);
 
         «/*
         // Select tree
         $tree = null;
         if (!in_array($op, ['addRootNode'])) {
-            $tree = $selectionHelper->getTree($objectType, $rootId);
+            $tree = $repository->selectTree($rootId);
         }
 
         */»// recover any broken tree nodes
-        $entityManager = $this->get('«entityManagerService»');
+        $entityManager = $entityFactory->getObjectManager();
         $repository->recover();
         // flush recovered nodes
         $entityManager->flush();
@@ -710,7 +688,7 @@ class AjaxController {
 
         // Renew tree
         /** postponed, for now we do a page reload
-        $returnValue['data'] = $selectionHelper->getTree($objectType, $rootId);
+        $returnValue['data'] = $repository->selectTree($rootId);
         */
 
         return new AjaxResponse($returnValue);
@@ -764,7 +742,6 @@ class AjaxController {
         $currentUserApi = $this->get('zikula_users_module.current_user');
         $logger = $this->get('logger');
         $logArgs = ['app' => '«appName»', 'user' => $currentUserApi->get('uname'), 'entity' => $objectType];
-        $selectionHelper = $this->get('«appService».selection_helper');
         «IF hasStandardFieldEntities»
 
             $currentUserId = $currentUserApi->isLoggedIn() ? $currentUserApi->get('uid') : 1;
@@ -857,7 +834,7 @@ class AjaxController {
                     $childEntity->setUpdatedBy($currentUser);
                 }
             «ENDIF»
-            $parentEntity = $selectionHelper->getEntity($objectType, $parentId«IF hasSluggable», ''«ENDIF», false);
+            $parentEntity = $repository->selectById($parentId, false);
             if (null === $parentEntity) {
                 $returnValue['result'] = 'failure';
                 $returnValue['message'] = $this->__('No such item.');
@@ -892,7 +869,7 @@ class AjaxController {
 
     def private treeOperationDeleteNode(Application it) '''
         // remove node from tree and reparent all children
-        $entity = $selectionHelper->getEntity($objectType, $id«IF hasSluggable», ''«ENDIF», false);
+        $entity = $repository->selectById($id, false);
         if (null === $entity) {
             $returnValue['result'] = 'failure';
             $returnValue['message'] = $this->__('No such item.');
@@ -933,7 +910,7 @@ class AjaxController {
             return new AjaxResponse($returnValue);
         }
 
-        $entity = $selectionHelper->getEntity($objectType, $id«IF hasSluggable», ''«ENDIF», false);
+        $entity = $repository->selectById($id, false);
         if (null === $entity) {
             $returnValue['result'] = 'failure';
             $returnValue['message'] = $this->__('No such item.');
@@ -973,8 +950,8 @@ class AjaxController {
         $entityManager->clear();
 
         //$entityManager->transactional(function($entityManager) {
-            $entity = $selectionHelper->getEntity($objectType, $id«IF hasSluggable», ''«ENDIF», false);
-            $destEntity = $selectionHelper->getEntity($objectType, $destId«IF hasSluggable», ''«ENDIF», false);
+            $entity = $repository->selectById($id, false);
+            $destEntity = $repository->selectById($destId, false);
             if (null === $entity || null === $destEntity) {
                 $returnValue['result'] = 'failure';
                 $returnValue['message'] = $this->__('No such item.');

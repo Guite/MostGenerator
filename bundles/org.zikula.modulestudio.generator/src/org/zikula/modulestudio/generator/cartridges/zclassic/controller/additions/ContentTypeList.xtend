@@ -216,8 +216,8 @@ class ContentTypeList {
                     $this->catRegistries = [];
                     $this->catProperties = [];
                     if (in_array($this->objectType, $this->categorisableObjectTypes)) {
-                        $selectionHelper = $this->container->get('«appService».selection_helper');
-                        $idFields = $selectionHelper->getIdFields($this->objectType);
+                        $entityFactory = $this->container->get('«appService».entity_factory');
+                        $idFields = $entityFactory->getIdFields($this->objectType);
                         $this->catRegistries = $categoryHelper->getAllPropertiesWithMainCat($this->objectType, $idFields[0]);
                         $this->catProperties = $categoryHelper->getAllProperties($this->objectType);
                     }
@@ -382,8 +382,8 @@ class ContentTypeList {
 
             $sortParam = '';
             if ($this->sorting == 'newest') {
-                $selectionHelper = $this->container->get('«appService».selection_helper');
-                $idFields = $selectionHelper->getIdFields($this->objectType);
+                $entityFactory = $this->container->get('«appService».entity_factory');
+                $idFields = $entityFactory->getIdFields($this->objectType);
                 if (count($idFields) == 1) {
                     $sortParam = $idFields[0] . ' DESC';
                 } else {

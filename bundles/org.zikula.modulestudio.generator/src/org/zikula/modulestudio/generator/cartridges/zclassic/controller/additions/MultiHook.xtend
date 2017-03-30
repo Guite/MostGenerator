@@ -131,8 +131,8 @@ class MultiHook {
                     return $cache[$nid];
                 }
 
-                $selectionHelper = $container->get('«app.appService».selection_helper');
-                $entity = $selectionHelper->getEntity('«name.formatForCode»', $entityId);
+                $repository = $container->get('«app.appService».entity_factory')->getRepository('«name.formatForCode»');
+                $entity = $repository->selectById($entityId);
                 if (null === $entity) {
                     $cache[$nid] = '<em>' . $translator->__f('«name.formatForDisplayCapital» with id %id% could not be found', ['%id%' => $entityId]) . '</em>';
 

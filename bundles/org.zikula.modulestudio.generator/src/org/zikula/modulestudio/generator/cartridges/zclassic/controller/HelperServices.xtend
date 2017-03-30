@@ -12,7 +12,6 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.controller.helper.L
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.helper.ModelHelper
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.helper.NotificationHelper
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.helper.SearchHelper
-import org.zikula.modulestudio.generator.cartridges.zclassic.controller.helper.SelectionHelper
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.helper.TranslatableHelper
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.helper.UploadHelper
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.helper.ViewHelper
@@ -58,7 +57,6 @@ class HelperServices {
         if (generateSearchApi && !entities.filter[hasAbstractStringFieldsEntity].empty) {
             new SearchHelper().generate(it, fsa)
         }
-        new SelectionHelper().generate(it, fsa)
         if (hasTranslatable) {
             new TranslatableHelper().generate(it, fsa)
         }

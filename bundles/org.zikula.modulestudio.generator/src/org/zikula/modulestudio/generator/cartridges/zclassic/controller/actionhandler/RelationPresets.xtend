@@ -145,7 +145,7 @@ class RelationPresets {
         «val aliasInverse = getRelationAliasName(!useTarget)»
         «val otherObjectType = (if (useTarget) target else source).name.formatForCode»
         if (!empty($this->relationPresets['«alias»'])) {
-            $relObj = $this->selectionHelper->getEntity('«otherObjectType»', $this->relationPresets['«alias»']);
+            $relObj = $this->entityFactory->getRepository('«otherObjectType»')->selectById($this->relationPresets['«alias»']);
             if (null !== $relObj) {
                 «IF !useTarget && it instanceof ManyToManyRelationship»
                     $entity->«IF isManySide(useTarget)»add«ELSE»set«ENDIF»«alias.toFirstUpper»($relObj);

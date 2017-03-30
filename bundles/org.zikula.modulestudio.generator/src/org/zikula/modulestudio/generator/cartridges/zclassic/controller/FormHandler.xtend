@@ -173,7 +173,6 @@ class FormHandler {
             use «appNamespace»\Helper\HookHelper;
         «ENDIF»
         use «appNamespace»\Helper\ModelHelper;
-        use «appNamespace»\Helper\SelectionHelper;
         «IF hasTranslatable»
             use «appNamespace»\Helper\TranslatableHelper;
         «ENDIF»
@@ -379,11 +378,6 @@ class FormHandler {
             protected $modelHelper;
 
             /**
-             * @var SelectionHelper
-             */
-            protected $selectionHelper;
-
-            /**
              * @var WorkflowHelper
              */
             protected $workflowHelper;
@@ -443,7 +437,6 @@ class FormHandler {
              * @param «name.formatForCodeCapital»Factory $entityFactory «name.formatForCodeCapital»Factory service instance
              * @param ControllerHelper          $controllerHelper ControllerHelper service instance
              * @param ModelHelper               $modelHelper      ModelHelper service instance
-             * @param SelectionHelper           $selectionHelper  SelectionHelper service instance
              * @param WorkflowHelper            $workflowHelper   WorkflowHelper service instance
              «IF hasHookSubscribers»
              * @param HookHelper                $hookHelper       HookHelper service instance
@@ -473,7 +466,6 @@ class FormHandler {
                 «name.formatForCodeCapital»Factory $entityFactory,
                 ControllerHelper $controllerHelper,
                 ModelHelper $modelHelper,
-                SelectionHelper $selectionHelper,
                 WorkflowHelper $workflowHelper«IF hasHookSubscribers»,
                 HookHelper $hookHelper«ENDIF»«IF hasTranslatable»,
                 TranslatableHelper $translatableHelper«ENDIF»«IF needsFeatureActivationHelper»,
@@ -496,7 +488,6 @@ class FormHandler {
                 $this->entityFactory = $entityFactory;
                 $this->controllerHelper = $controllerHelper;
                 $this->modelHelper = $modelHelper;
-                $this->selectionHelper = $selectionHelper;
                 $this->workflowHelper = $workflowHelper;
                 «IF hasHookSubscribers»
                     $this->hookHelper = $hookHelper;
@@ -579,7 +570,7 @@ class FormHandler {
 
             $this->permissionComponent = '«appName»:' . $this->objectTypeCapital . ':';
 
-            $this->idFields = $this->selectionHelper->getIdFields($this->objectType);
+            $this->idFields = $this->entityFactory->getIdFields($this->objectType);
 
             // retrieve identifier of the object we wish to view
             $this->idValues = $this->controllerHelper->retrieveIdentifier($this->request, [], $this->objectType, $this->idFields);
@@ -737,7 +728,7 @@ class FormHandler {
         protected function initEntityForEditing()
         {
             «IF !targets('1.5')»
-                $entity = $this->selectionHelper->getEntity($this->objectType, $this->idValues);
+                $entity = $this->entityFactory->getRepository($this->objectType)->selectById($this->idValues);
                 if (null === $entity) {
                     return null;
                 }
@@ -746,7 +737,7 @@ class FormHandler {
 
                 return $entity;
             «ELSE»
-                return $this->selectionHelper->getEntity($this->objectType, $this->idValues);
+                return $this->entityFactory->getRepository($this->objectType)->selectById($this->idValues);
             «ENDIF»
         }
     '''
@@ -775,7 +766,7 @@ class FormHandler {
                         $i++;
                     }
                     // reuse existing entity
-                    $entityT = $this->selectionHelper->getEntity($this->objectType, $templateIdValues);
+                    $entityT = $this->entityFactory->getRepository($this->objectType)->selectById($templateIdValues);
                     if (null === $entityT) {
                         return null;
                     }

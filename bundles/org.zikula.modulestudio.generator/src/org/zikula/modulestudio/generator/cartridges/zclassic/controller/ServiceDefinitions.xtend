@@ -350,7 +350,6 @@ class ServiceDefinitions {
                             - "@«modPrefix».entity_factory"
                             - "@«modPrefix».controller_helper"
                             - "@«modPrefix».model_helper"
-                            - "@«modPrefix».selection_helper"
                             - "@«modPrefix».workflow_helper"
                             «IF hasHookSubscribers»
                                 - "@«modPrefix».hook_helper"
@@ -502,7 +501,6 @@ class ServiceDefinitions {
                 «IF hasViewActions && hasEditActions»
                     - "@«modPrefix».model_helper"
                 «ENDIF»
-                - "@«modPrefix».selection_helper"
                 «IF hasUploads»
                     - "@«modPrefix».image_helper"
                 «ENDIF»
@@ -579,12 +577,6 @@ class ServiceDefinitions {
                 tags:
                     - { name: zikula.searchable_module, bundleName: «appName» }
         «ENDIF»
-
-        «modPrefix».selection_helper:
-            class: «nsBase»SelectionHelper
-            arguments:
-                - "@translator.default"
-                - "@«modPrefix».entity_factory"
         «IF hasTranslatable»
 
             «modPrefix».translatable_helper:

@@ -2,13 +2,11 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.controller.action
 
 import de.guite.modulestudio.metamodel.Entity
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
-import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class MassHandling {
 
     extension FormattingExtensions = new FormattingExtensions
-    extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension Utils = new Utils
 
     def generate(Entity it, Boolean isBase) '''
@@ -75,7 +73,7 @@ class MassHandling {
 
         $action = strtolower($action);
 
-        $selectionHelper = $this->get('«application.appService».selection_helper');
+        $repository = $this->get('«application.appService».entity_factory')->getRepository($objectType);
         $workflowHelper = $this->get('«application.appService».workflow_helper');
         «IF !skipHookSubscribers»
             $hookHelper = $this->get('«application.appService».hook_helper');
@@ -84,9 +82,9 @@ class MassHandling {
         $userName = $this->get('zikula_users_module.current_user')->get('uname');
 
         // process each item
-        foreach ($items as $itemid) {
+        foreach ($items as $itemId) {
             // check if item exists, and get record instance
-            $entity = $selectionHelper->getEntity($objectType, $itemid«IF application.hasSluggable», ''«ENDIF», false);
+            $entity = $repository->selectById($itemId, false);
             if (null === $entity) {
                 continue;
             }
@@ -117,7 +115,7 @@ class MassHandling {
                 $success = $workflowHelper->executeAction($entity, $action);
             } catch(\Exception $e) {
                 $this->addFlash('error', $this->__f('Sorry, but an error occured during the %action% action.', ['%action%' => $action]) . '  ' . $e->getMessage());
-                $logger->error('{app}: User {user} tried to execute the {action} workflow action for the {entity} with id {id}, but failed. Error details: {errorMessage}.', ['app' => '«application.appName»', 'user' => $userName, 'action' => $action, 'entity' => '«name.formatForDisplay»', 'id' => $itemid, 'errorMessage' => $e->getMessage()]);
+                $logger->error('{app}: User {user} tried to execute the {action} workflow action for the {entity} with id {id}, but failed. Error details: {errorMessage}.', ['app' => '«application.appName»', 'user' => $userName, 'action' => $action, 'entity' => '«name.formatForDisplay»', 'id' => $itemId, 'errorMessage' => $e->getMessage()]);
             }
 
             if (!$success) {
@@ -126,10 +124,10 @@ class MassHandling {
 
             if ($action == 'delete') {
                 $this->addFlash('status', $this->__('Done! Item deleted.'));
-                $logger->notice('{app}: User {user} deleted the {entity} with id {id}.', ['app' => '«application.appName»', 'user' => $userName, 'entity' => '«name.formatForDisplay»', 'id' => $itemid]);
+                $logger->notice('{app}: User {user} deleted the {entity} with id {id}.', ['app' => '«application.appName»', 'user' => $userName, 'entity' => '«name.formatForDisplay»', 'id' => $itemId]);
             } else {
                 $this->addFlash('status', $this->__('Done! Item updated.'));
-                $logger->notice('{app}: User {user} executed the {action} workflow action for the {entity} with id {id}.', ['app' => '«application.appName»', 'user' => $userName, 'action' => $action, 'entity' => '«name.formatForDisplay»', 'id' => $itemid]);
+                $logger->notice('{app}: User {user} executed the {action} workflow action for the {entity} with id {id}.', ['app' => '«application.appName»', 'user' => $userName, 'action' => $action, 'entity' => '«name.formatForDisplay»', 'id' => $itemId]);
             }
             «IF !skipHookSubscribers»
 

@@ -83,7 +83,56 @@ class Factory {
                 }
             «ENDFOR»
 
+            «getIdFields»
+
+            «hasCompositeKeys»
+
             «fh.getterAndSetterMethods(it, 'objectManager', 'ObjectManager', false, true, false, '', '')»
+        }
+    '''
+
+    def private getIdFields(Application it) '''
+        /**
+         * Gets the list of identifier fields for a given object type.
+         *
+         * @param string $objectType The object type to be treated
+         *
+         * @return array List of identifier field names
+         */
+        public function getIdFields($objectType = '')
+        {
+            if (empty($objectType)) {
+                throw new InvalidArgumentException('Invalid object type received.');
+            }
+            $entityClass = '«vendor.formatForCodeCapital»«name.formatForCodeCapital»Module:' . ucfirst($objectType) . 'Entity';
+
+            $meta = $this->entityFactory->getObjectManager()->getClassMetadata($entityClass);
+
+            if ($this->hasCompositeKeys($objectType)) {
+                $idFields = $meta->getIdentifierFieldNames();
+            } else {
+                $idFields = [$meta->getSingleIdentifierFieldName()];
+            }
+
+            return $idFields;
+        }
+    '''
+
+    def private hasCompositeKeys(Application it) '''
+        /**
+         * Checks whether a certain entity type uses composite keys or not.
+         *
+         * @param string $objectType The object type to retrieve
+         *
+         * @return Boolean Whether composite keys are used or not
+         */
+        public function hasCompositeKeys($objectType)
+        {
+            «IF entities.filter[hasCompositeKeys].empty»
+                return false;
+            «ELSE»
+                return in_array($objectType, ['«entities.filter[hasCompositeKeys].map[name.formatForCode].join('\', \'')»']);
+            «ENDIF»
         }
     '''
 

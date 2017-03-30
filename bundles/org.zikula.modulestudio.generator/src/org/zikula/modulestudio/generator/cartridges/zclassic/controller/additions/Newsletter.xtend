@@ -308,8 +308,8 @@ class Newsletter {
 
             $sortParam = '';
             if ($args['sorting'] == 'newest') {
-                $selectionHelper = $this->container->get('«appService».selection_helper');
-                $idFields = $selectionHelper->getIdFields($args['objectType']);
+                $entityFactory = $this->container->get('«appService».entity_factory');
+                $idFields = $entityFactory->getIdFields($args['objectType']);
                 if (count($idFields) == 1) {
                     $sortParam = $idFields[0] . ' DESC';
                 } else {

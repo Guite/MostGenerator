@@ -99,10 +99,9 @@ class Mailz {
             «val leadingEntity = getLeadingEntity»
             $objectType = '«leadingEntity.name.formatForCode»';
 
-            $repository = $this->container->get('«appService».entity_factory')->getRepository($objectType);
-
-            $selectionHelper = $this->container->get('«appService».selection_helper');
-            $idFields = $selectionHelper->getIdFields($objectType);
+            $entityFactory = $this->container->get('«appService».entity_factory');
+            $idFields = $entityFactory->getIdFields($objectType);
+            $repository = $entityFactory->getRepository($objectType);
 
             $sortParam = '';
             if ($args['pluginid'] == 2) {
@@ -124,7 +123,7 @@ class Mailz {
             $resultsPerPage = 3;
 
             // get objects from database
-            list($entities, $objectCount) = $selectionHelper->getEntitiesPaginated($objectType, $where, $orderBy, 1, $resultsPerPage);
+            list($entities, $objectCount) = $repository->selectWherePaginated($where, $orderBy, 1, $resultsPerPage);
 
             $templateType = $args['contenttype'] == 't' ? 'text' : 'html';
 
@@ -139,7 +138,7 @@ class Mailz {
             $templateParameters = array_merge($templateParameters, $repository->getAdditionalTemplateParameters(«IF hasUploads»$imageHelper, «ENDIF»'api', ['name' => 'mailz']));
 
             return $this->container->get('twig')->render(
-                '@«appName»/Mailz/itemlist_«leadingEntity.name.formatForCode».' . $templateType . '.twig',
+                '@«appName»/Mailz/itemlist_' . $objectType . $templateType . '.twig',
                 $templateParameters
             );
         }
