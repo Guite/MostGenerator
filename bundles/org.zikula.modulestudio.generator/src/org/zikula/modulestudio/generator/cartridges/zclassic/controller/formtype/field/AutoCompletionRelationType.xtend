@@ -59,7 +59,7 @@ class AutoCompletionRelationType {
             public function __construct(TranslatorInterface $translator, ObjectManager $objectManager)
             {
                 $this->translator = $translator;
-                $this->objectManager
+                $this->objectManager = $objectManager;
             }
 
             /**
