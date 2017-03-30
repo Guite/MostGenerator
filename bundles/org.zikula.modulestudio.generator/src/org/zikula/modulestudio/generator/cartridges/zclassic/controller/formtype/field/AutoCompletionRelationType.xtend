@@ -121,7 +121,7 @@ class AutoCompletionRelationType {
         /**
          * Auto completion relation field type implementation class.
          */
-        class AutoCompletionRelationType extends AbstractRelationType
+        class AutoCompletionRelationType extends AbstractAutoCompletionRelationType
         {
             // feel free to add your customisation here
         }
