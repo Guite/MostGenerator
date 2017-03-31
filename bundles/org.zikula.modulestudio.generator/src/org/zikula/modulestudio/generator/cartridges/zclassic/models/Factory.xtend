@@ -106,7 +106,7 @@ class Factory {
             }
             $entityClass = '«vendor.formatForCodeCapital»«name.formatForCodeCapital»Module:' . ucfirst($objectType) . 'Entity';
 
-            $meta = $this->entityFactory->getObjectManager()->getClassMetadata($entityClass);
+            $meta = $this->getObjectManager()->getClassMetadata($entityClass);
 
             if ($this->hasCompositeKeys($objectType)) {
                 $idFields = $meta->getIdentifierFieldNames();
