@@ -554,7 +554,8 @@ class AjaxController {
         }
 
         // select data from data source
-        $repository = $this->get('«appService».entity_factory')->getRepository($objectType);
+        $entityFactory = $this->get('«appService».entity_factory');
+        $repository = $entityFactory->getRepository($objectType);
         $entity = $repository->selectById($id, false);
         if (null === $entity) {
             return new NotFoundResponse($this->__('No such item.'));
@@ -564,21 +565,18 @@ class AjaxController {
         $entity[$field] = !$entity[$field];
 
         // save entity back to database
-        $entityManager = $this->get('«entityManagerService»');
-        $entityManager->flush();
-
-        // return response
-        $result = [
-            'id' => $id,
-            'state' => $entity[$field],
-            'message' => $this->__('The setting has been successfully changed.')
-        ];
+        $entityFactory->getObjectManager()->flush();
 
         $logger = $this->get('logger');
         $logArgs = ['app' => '«appName»', 'user' => $this->get('zikula_users_module.current_user')->get('uname'), 'field' => $field, 'entity' => $objectType, 'id' => $id];
         $logger->notice('{app}: User {user} toggled the {field} flag the {entity} with id {id}.', $logArgs);
 
-        return new AjaxResponse($result);
+        // return response
+        return new AjaxResponse([
+            'id' => $id,
+            'state' => $entity[$field],
+            'message' => $this->__('The setting has been successfully changed.')
+        ]);
     '''
 
     def private handleTreeOperationBase(Application it) '''
