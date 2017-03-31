@@ -652,6 +652,9 @@ class ServiceDefinitions {
                 «IF needsUserAvatarSupport»
                     - "@zikula_users_module.user_repository"
                 «ENDIF»
+                «IF hasTrees»
+                    - "@«modPrefix».entity_factory"
+                «ENDIF»
                 - "@«modPrefix».workflow_helper"
                 «IF hasListFields»
                     - "@«modPrefix».listentries_helper"

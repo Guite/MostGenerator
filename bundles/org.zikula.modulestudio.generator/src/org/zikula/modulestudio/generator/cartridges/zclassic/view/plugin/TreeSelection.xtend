@@ -27,8 +27,7 @@ class TreeSelection {
          */
         public function getTreeSelection($objectType, $node, $target, $skipRootNode = true)
         {
-            $container = \ServiceUtil::get('service_container');
-            $repository = $container->get('«appService».entity_factory')->getRepository($objectType);
+            $repository = $this->entityFactory->getRepository($objectType);
             $titleFieldName = $repository->getTitleFieldName();
 
             $result = null;

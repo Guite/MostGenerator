@@ -99,7 +99,6 @@ class Bootstrap {
         «IF hasAutomaticArchiving»
 
             // check if own service exists (which is not true if the module is not installed yet)
-            $container = ServiceUtil::get('service_container');
             if ($container->has('«appService».archive_helper')) {
                 $container->get('«appService».archive_helper')->archiveObjects();
             }

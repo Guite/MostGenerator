@@ -80,11 +80,11 @@ class MultiHook {
                 $cache = [];
             }
 
-            $container = \ServiceUtil::get('service_container');
+            $container = \ServiceUtil::getManager();
             $translator = $container->get('translator.default');
 
             if (empty($nid)) {
-                return '<em>' . \DataUtil::formatForDisplay(__('No correct needle id given.')) . '</em>';
+                return '<em>' . htmlspecialchars(__('No correct needle id given.')) . '</em>';
             }
 
             if (isset($cache[$nid])) {
@@ -93,7 +93,7 @@ class MultiHook {
             }
 
             if (!$container->get('kernel')->isBundle('«app.appName»')) {
-                $cache[$nid] = '<em>' . \DataUtil::formatForDisplay($translator->__f('Module %moduleName% is not available.', ['%moduleName%' => «app.appName»'])) . '</em>';
+                $cache[$nid] = '<em>' . htmlspecialchars($translator->__f('Module "%moduleName%" is not available.', ['%moduleName%' => «app.appName»'])) . '</em>';
 
                 return $cache[$nid];
             }
@@ -101,11 +101,12 @@ class MultiHook {
             // strip application prefix from needle
             $needleId = str_replace('«app.prefix.toUpperCase»', '', $nid);
 
+            $permissionApi = $container->get('zikula_permissions_module.api.permission');
             $router = $container->getService('router');
 
             «IF hasViewAction»
                 if ($needleId == '«nameMultiple.formatForCode.toUpperCase»') {
-                    if (!\SecurityUtil::checkPermission('«app.appName»:«name.formatForCodeCapital»:', '::', ACCESS_READ)) {
+                    if (!$permissionApi->hasPermission('«app.appName»:«name.formatForCodeCapital»:', '::', ACCESS_READ)) {
                         $cache[$nid] = '';
 
                         return $cache[$nid];
@@ -122,7 +123,6 @@ class MultiHook {
                     return $cache[$nid];
                 }
 
-                $permissionApi = $container->get('zikula_permissions_module.api.permission');
                 $entityId = (int)$needleParts[1];
 
                 if (!$permissionApi->hasPermission('«app.appName»:«name.formatForCodeCapital»:', $entityId . '::', ACCESS_READ)) {

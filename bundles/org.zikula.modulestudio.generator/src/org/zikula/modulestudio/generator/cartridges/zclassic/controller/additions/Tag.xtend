@@ -25,6 +25,8 @@ class Tag {
     def private tagBaseClass(Application it) '''
         namespace «appNamespace»\TaggedObjectMeta\Base;
 
+        use DateTime;
+        use IntlDateFormatter;
         use Symfony\Component\DependencyInjection\ContainerAwareInterface;
         use Symfony\Component\DependencyInjection\ContainerAwareTrait;
         use Zikula\Core\UrlInterface;
@@ -110,7 +112,12 @@ class Tag {
          */
         public function setObjectDate($date)
         {
-            $this->date = «/* $date; */»\DateUtil::formatDatetime($date, 'datetimebrief');
+            if ($date instanceof DateTime) {
+                $formatter = new IntlDateFormatter();
+                $this->date = $formatter->format($date->getTimestamp());
+        	} else {
+                $this->date = $date;
+            }
         }
 
         /**

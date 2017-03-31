@@ -15,6 +15,7 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.Templat
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.TreeData
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.TreeSelection
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.form.ItemSelector
+import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
@@ -24,6 +25,7 @@ import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
 
 class Plugins {
 
+    extension FormattingExtensions = new FormattingExtensions
     extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     extension ModelExtensions = new ModelExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
@@ -77,6 +79,9 @@ class Plugins {
         «IF needsUserAvatarSupport»
             use Zikula\UsersModule\Entity\RepositoryInterface\UserRepositoryInterface;
         «ENDIF»
+        «IF hasTrees»
+            use «appNamespace»\Entity\Factory\«name.formatForCodeCapital»Factory;
+        «ENDIF»
         «IF hasListFields»
             use «appNamespace»\Helper\ListEntriesHelper;
         «ENDIF»
@@ -121,6 +126,13 @@ class Plugins {
             protected $userRepository;
 
         «ENDIF»
+        «IF hasTrees»
+            /**
+             * @var «name.formatForCodeCapital»Factory
+             */
+            protected $entityFactory;
+
+        «ENDIF»
         /**
          * @var WorkflowHelper
          */
@@ -147,6 +159,9 @@ class Plugins {
          «IF needsUserAvatarSupport»
             * @param UserRepositoryInterface $userRepository UserRepository service instance
          «ENDIF»
+         «IF hasTrees»
+         * @param «name.formatForCodeCapital»Factory $entityFactory «name.formatForCodeCapital»Factory service instance
+         «ENDIF»
          * @param WorkflowHelper      $workflowHelper WorkflowHelper service instance
          «IF hasListFields»
             * @param ListEntriesHelper   $listHelper     ListEntriesHelper service instance
@@ -159,6 +174,9 @@ class Plugins {
             VariableApi $variableApi,
             «IF needsUserAvatarSupport»
                 UserRepositoryInterface $userRepository,
+            «ENDIF»
+            «IF hasTrees»
+                «name.formatForCodeCapital»Factory $entityFactory,
             «ENDIF»
             WorkflowHelper $workflowHelper«IF hasListFields»,
             ListEntriesHelper $listHelper«ENDIF»)
@@ -173,6 +191,9 @@ class Plugins {
             $this->variableApi = $variableApi;
             «IF needsUserAvatarSupport»
                 $this->userRepository = $userRepository;
+            «ENDIF»
+            «IF hasTrees»
+                $this->entityFactory = $entityFactory;
             «ENDIF»
             $this->workflowHelper = $workflowHelper;
             «IF hasListFields»
