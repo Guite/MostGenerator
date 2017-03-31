@@ -548,7 +548,7 @@ class FormHandler {
             «ENDIF»
             «IF !relations.filter(JoinRelationship).empty»
 
-                $this->idPrefix = $this->request->query->getAlnum('idp', '');
+                $this->idPrefix = $this->request->query->get('idp', '');
             «ENDIF»
 
             // initialise redirect goal

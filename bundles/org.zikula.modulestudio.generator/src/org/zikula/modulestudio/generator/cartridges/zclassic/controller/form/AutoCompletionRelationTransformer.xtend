@@ -176,7 +176,7 @@ class AutoCompletionRelationTransformer {
                        ->setParameter($idField . 'Ids', $idsPerField[$idField]);
                 }
             } else {
-                $many = ($this->selectionMode == 'multiple');
+                $many = $this->selectionMode == 'multiple';
                 $idField = reset($this->idFields);
                 if ($many) {
                     $qb->andWhere('tbl.' . $idField . ' IN (:' . $idField . 'Ids)')

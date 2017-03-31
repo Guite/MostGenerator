@@ -1041,10 +1041,11 @@ class EditEntity {
         «val isExpanded = if (outgoing) expandedTarget else expandedSource»
         $builder->add('«aliasName.formatForCode»', '«formType(autoComplete)»Type', [
             «IF autoComplete»
-                «val uniqueNameForJs = getUniqueRelationNameForJs(app, (if (outgoing) source else target), isManySide(outgoing), (if (!isManyToMany) outgoing else !outgoing), aliasName)»
-                'objectType' => '«relatedEntity.name.formatForCode»',
+                «val uniqueNameForJs = getUniqueRelationNameForJs(app, (if (outgoing) source else target), isManySide(outgoing), (if (!isManyToMany) outgoing else !outgoing), aliasName.formatForCodeCapital)»
+                'object_type' => '«relatedEntity.name.formatForCode»',
                 'multiple' => «isManySide(outgoing).displayBool»,
-                'uniqueNameForJs' => '«uniqueNameForJs»',
+                'unique_name_for_js' => '«uniqueNameForJs»',
+                'allow_editing' => «(getEditStageCode(!outgoing) > 1).displayBool»,
                 «IF outgoing && nullable»
                     'required' => false,
                 «ENDIF»
@@ -1162,7 +1163,7 @@ class EditEntity {
                 'required' => false,
                 'help' => $this->__('Here you can choose a user which will be set as creator')
             ]);
-            $builder->add('moderationSpecificCreationDate', «IF app.targets('1.5')»DateTimeType::class«ELSE»'«app.appNamespace»\Form\Type\Field\DateTimeType'«ENDIF», [
+            $builder->add('moderationSpecificCreationDate', «IF app.targets('1.5')»DateTimeType::class«ELSE»'«nsSymfonyFormType»DateTimeType'«ENDIF», [
                 'mapped' => false,
                 'label' => $this->__('Creation date') . ':',
                 'attr' => [

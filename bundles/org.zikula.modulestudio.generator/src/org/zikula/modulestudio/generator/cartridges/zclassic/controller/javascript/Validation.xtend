@@ -85,7 +85,7 @@ class Validation {
             if (val.substr(2, 1) === '.' && val.substr(5, 1) === '.') {
                 var newVal = val.substr(6, 4) + '-' + val.substr(3, 2) + '-' + val.substr(0, 2);
                 if (true === includeTime) {
-                    newVal += ' ' + val.substr(11, 5);
+                    newVal += ' ' + val.substr(11, 7);
                 }
 
                 return newVal;
@@ -298,19 +298,23 @@ class Validation {
             «IF !datetimeFields.empty»
                 «IF datetimeFields.exists[past]»
                     jQuery('.validate-datetime-past').each( function() {
-                        if (!«vendorAndName»ValidateDatetimePast(jQuery(this).val())) {
-                            document.getElementById(jQuery(this).attr('id')).setCustomValidity(Translator.__('Please select a value in the past.'));
+                        if (!«vendorAndName»ValidateDatetimePast(jQuery(jQuery(this).attr('id') + '_date').val() + ' ' + jQuery(jQuery(this).attr('id') + '_time').val())) {
+                            document.getElementById(jQuery(this).attr('id') + '_date').setCustomValidity(Translator.__('Please select a value in the past.'));
+                            document.getElementById(jQuery(this).attr('id') + '_time').setCustomValidity(Translator.__('Please select a value in the past.'));
                         } else {
-                            document.getElementById(jQuery(this).attr('id')).setCustomValidity('');
+                            document.getElementById(jQuery(this).attr('id') + '_date').setCustomValidity('');
+                            document.getElementById(jQuery(this).attr('id') + '_time').setCustomValidity('');
                         }
                     });
                 «ENDIF»
                 «IF datetimeFields.exists[future]»
                     jQuery('.validate-datetime-future').each( function() {
-                        if (!«vendorAndName»ValidateDatetimeFuture(jQuery(this).val())) {
-                            document.getElementById(jQuery(this).attr('id')).setCustomValidity(Translator.__('Please select a value in the future.'));
+                        if (!«vendorAndName»ValidateDatetimeFuture(jQuery(jQuery(this).attr('id') + '_date').val() + ' ' + jQuery(jQuery(this).attr('id') + '_time').val())) {
+                            document.getElementById(jQuery(this).attr('id') + '_date').setCustomValidity(Translator.__('Please select a value in the future.'));
+                            document.getElementById(jQuery(this).attr('id') + '_time').setCustomValidity(Translator.__('Please select a value in the future.'));
                         } else {
-                            document.getElementById(jQuery(this).attr('id')).setCustomValidity('');
+                            document.getElementById(jQuery(this).attr('id') + '_date').setCustomValidity('');
+                            document.getElementById(jQuery(this).attr('id') + '_time').setCustomValidity('');
                         }
                     });
                 «ENDIF»
@@ -359,11 +363,21 @@ class Validation {
                 «IF null !== entity.startDateField && null !== entity.endDateField»
                     jQuery('.validate-daterange-«entity.name.formatForDB»').each( function() {
                         if (typeof jQuery(this).attr('id') != 'undefined') {
-                        if (!«vendorAndName»ValidateDateRange«entity.name.formatForCodeCapital»(jQuery(this).val())) {
-                            document.getElementById(jQuery(this).attr('id')).setCustomValidity(Translator.__('The start must be before the end.'));
-                        } else {
-                            document.getElementById(jQuery(this).attr('id')).setCustomValidity('');
-                        }
+                            if (jQuery(this).prop('tagName') == 'DIV') {
+                                if (!«vendorAndName»ValidateDateRange«entity.name.formatForCodeCapital»()) {
+                                    document.getElementById(jQuery(this).attr('id') + '_date').setCustomValidity(Translator.__('The start must be before the end.'));
+                                    document.getElementById(jQuery(this).attr('id') + '_time').setCustomValidity(Translator.__('The start must be before the end.'));
+                                } else {
+                                    document.getElementById(jQuery(this).attr('id') + '_date').setCustomValidity('');
+                                    document.getElementById(jQuery(this).attr('id') + '_time').setCustomValidity('');
+                                }
+                        	} else {
+                                if (!«vendorAndName»ValidateDateRange«entity.name.formatForCodeCapital»()) {
+                                    document.getElementById(jQuery(this).attr('id')).setCustomValidity(Translator.__('The start must be before the end.'));
+                                } else {
+                                    document.getElementById(jQuery(this).attr('id')).setCustomValidity('');
+                                }
+                    		}
                         }
                     });
                 «ENDIF»

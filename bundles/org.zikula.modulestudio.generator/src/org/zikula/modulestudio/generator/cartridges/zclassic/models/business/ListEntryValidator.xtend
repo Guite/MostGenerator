@@ -73,7 +73,7 @@ class ListEntryValidator {
              */
             public function validatedBy()
             {
-                return 'zikula_routes_module.validator.list_entry.validator';
+                return '«appService».validator.list_entry.validator';
             }
         }
     '''
@@ -150,7 +150,7 @@ class ListEntryValidator {
                         $this->context->buildViolation(
                             $this->__f('The value "%value%" is not allowed for the "%property%" property.', [
                                 '%value%' => $value,
-                                '%property%' => $contraint->propertyName
+                                '%property%' => $constraint->propertyName
                             ])
                         )->addViolation();
                     }
@@ -168,7 +168,7 @@ class ListEntryValidator {
                         $this->context->buildViolation(
                             $this->__f('The value "%value%" is not allowed for the "%property%" property.', [
                                 '%value%' => $singleValue,
-                                '%property%' => $contraint->propertyName
+                                '%property%' => $constraint->propertyName
                             ])
                         )->addViolation();
                     }

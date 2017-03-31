@@ -3,6 +3,7 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtyp
 import de.guite.modulestudio.metamodel.Application
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
+import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
@@ -10,6 +11,7 @@ import org.zikula.modulestudio.generator.extensions.Utils
 
 class AutoCompletionRelationType {
 
+    extension ControllerExtensions = new ControllerExtensions()
     extension FormattingExtensions = new FormattingExtensions()
     extension ModelExtensions = new ModelExtensions()
     extension NamingExtensions = new NamingExtensions()
@@ -32,8 +34,10 @@ class AutoCompletionRelationType {
             use Symfony\Component\Form\Extension\Core\Type\HiddenType;
         «ENDIF»
         use Symfony\Component\Form\FormBuilderInterface;
+        use Symfony\Component\Form\FormInterface;
+        use Symfony\Component\Form\FormView;
         use Symfony\Component\OptionsResolver\OptionsResolver;
-        use Zikula\Common\Translator\TranslatorInterface;
+        use Symfony\Component\Routing\RouterInterface;
         use «appNamespace»\Form\DataTransformer\AutoCompletionRelationTransformer;
 
         /**
@@ -42,9 +46,9 @@ class AutoCompletionRelationType {
         abstract class AbstractAutoCompletionRelationType extends AbstractType
         {
             /**
-             * @var TranslatorInterface
+             * @var RouterInterface
              */
-            protected $translator;
+            protected $router;
 
             /**
              * @var ObjectManager
@@ -54,12 +58,12 @@ class AutoCompletionRelationType {
             /**
              * AutoCompletionRelationType constructor.
              *
-             * @param TranslatorInterface $translator Translator service instance
-             * @param ObjectManager $objectManager Doctrine object manager
+             * @param Routerinterface $router        Router service instance
+             * @param ObjectManager   $objectManager Doctrine object manager
              */
-            public function __construct(TranslatorInterface $translator, ObjectManager $objectManager)
+            public function __construct(RouterInterface $router, ObjectManager $objectManager)
             {
-                $this->translator = $translator;
+                $this->router = $router;
                 $this->objectManager = $objectManager;
             }
 
@@ -75,6 +79,23 @@ class AutoCompletionRelationType {
             /**
              * @inheritDoc
              */
+            public function buildView(FormView $view, FormInterface $form, array $options)
+            {
+                $view->vars['object_type'] = $options['object_type'];
+                $view->vars['multiple'] = $options['multiple'];
+                $view->vars['unique_name_for_js'] = $options['unique_name_for_js'];
+
+                $view->vars['create_url'] = '';
+                «IF hasEditActions»
+                    if (true === $options['allow_editing'] && in_array($options['object_type'], ['«getAllEntities.filter[hasEditAction].map[name.formatForCode].join('\', \'')»'])) {
+                        $view->vars['create_url'] = $this->router->generate('«appName.formatForDB»_' . strtolower($options['object_type']) . '_edit');
+                    }
+                «ENDIF»
+            }
+
+            /**
+             * @inheritDoc
+             */
             public function configureOptions(OptionsResolver $resolver)
             {
                 parent::configureOptions($resolver);
@@ -84,6 +105,7 @@ class AutoCompletionRelationType {
                         'object_type' => '«leadingEntity.name.formatForCode»',
                         'multiple' => false,
                         'unique_name_for_js' => '',
+                        'allow_editing' => false,
                         'attr' => [
                             'class' => 'relation-selector typeahead'
                         ]
@@ -91,7 +113,9 @@ class AutoCompletionRelationType {
                     ->setRequired(['object_type', 'unique_name_for_js'])
                     ->setAllowedTypes([
                         'object_type' => 'string',
-                        'multiple' => 'bool'
+                        'multiple' => 'bool',
+                        'unique_name_for_js' => 'string',
+                        'allow_editing' => 'bool'
                     ])
                 ;
             }

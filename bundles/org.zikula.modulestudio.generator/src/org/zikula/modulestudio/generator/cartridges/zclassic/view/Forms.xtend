@@ -196,7 +196,7 @@ class Forms {
 
     def private formTemplateJS(Entity it, Application app, String actionName) '''
         {% set editImage = '<span class="fa fa-pencil-square-o"></span>' %}
-        {% set deleteImage = '<span class="fa fa-trash-o"></span>' %}
+        {% set removeImage = '<span class="fa fa-trash-o"></span>' %}
         «IF geographical»
 
             {% set geoScripts %}
@@ -229,7 +229,6 @@ class Forms {
 
     def private jsInitImpl(Entity it, Application app) '''
         «relationHelper.initJs(it, app, false)»
-
 
         ( function($) {
             $(document).ready(function() {
@@ -305,11 +304,8 @@ class Forms {
         <html xml:lang="{{ app.request.locale }}" lang="{{ app.request.locale }}" dir="auto">
             <head>
                 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-                {{ pageAddAsset('stylesheet', asset('bootstrap/css/bootstrap.min.css')) }}
-                {{ pageAddAsset('stylesheet', asset('bootstrap/css/bootstrap-theme.min.css')) }}
-                {{ pageAddAsset('javascript', asset('jquery/jquery.min.js')) }}
-                {{ pageAddAsset('javascript', asset('bootstrap/js/bootstrap.min.js')) }}
-                {{ pageAddAsset('javascript', zasset('@«appName»:js/«appName».EditFunctions.js')) }}
+                <script type="text/javascript" src="{{ asset('jquery/jquery.min.js') }}"></script>
+                <script type="text/javascript" src="{{ zasset('@«appName»:js/«appName».EditFunctions.js') }}"></script>
             </head>
             <body>
                 <script type="text/javascript">

@@ -239,21 +239,23 @@ class Layout {
                 «ENDFOR»
                 {% endif %}
                 {% set idPrefix = unique_name_for_js %}
-                {% set addLinkText = multiple ? __f('Add %name%', { '%name%': entityNameTranslated }) : __f('Select %name%', { '%entityName%': entityNameTranslated }) %}
-                {% set createLink = createUrl != '' ? '<a id="' ~ idPrefix ~ 'SelectorDoNew" href="' ~ createUrl ~ '" title="' ~ __f('Create new %name%', { '%name%': entityNameTranslated }) ~ '" class="btn btn-default «appName.toLowerCase»-inline-button">' ~ __('Create') ~ '</a>' : '' %}
+                {% set addLinkText = multiple ? __f('Add %name%', { '%name%': entityNameTranslated }) : __f('Select %name%', { '%name%': entityNameTranslated }) %}
 
-                <div class="«appName.toLowerCase»-relation-rightside">'
+                <div class="«appName.toLowerCase»-relation-rightside">
                     <a id="{{ idPrefix }}AddLink" href="javascript:void(0);" class="hidden">{{ addLinkText }}</a>
                     <div id="{{ idPrefix }}AddFields" class="«appName.toLowerCase»-autocomplete{{ withImage ? '-with-image' : '' }}">
                         <label for="{{ idPrefix }}Selector">{{ __f('Find %name%', { '%name%': entityNameTranslated }) }}</label>
                         <br />
                         <i class="fa fa-search" title="{{ __f('Search %name%', { '%name%': entityNameTranslated })|e('html_attr') }}"></i>
+                        <input type="hidden" {{ block('widget_attributes') }} value="{{ value }}" />
                         <input type="hidden" name="{{ idPrefix }}Scope" id="{{ idPrefix }}Scope" value="{{ multiple ? '0' : '1' }}" />
-                        <input type="text" id="{{ idPrefix }}Selector" name="{{ idPrefix }}Selector" value="{# value #}" autocomplete="off" {#{ block('widget_attributes') }#} />
+                        <input type="text" id="{{ idPrefix }}Selector" name="{{ idPrefix }}Selector" autocomplete="off" />
                         <i class="fa fa-refresh fa-spin hidden" id="{{ idPrefix }}Indicator"></i>
                         <span id="{{ idPrefix }}NoResultsHint" class="hidden">{{ __('No results found!') }}</span>
                         <input type="button" id="{{ idPrefix }}SelectorDoCancel" name="{{ idPrefix }}SelectorDoCancel" value="{{ __('Cancel') }}" class="btn btn-default «appName.toLowerCase»-inline-button" />
-                        {{ createLink }}
+                        {% if create_url != '' %}
+                            <a id="{{ idPrefix }}SelectorDoNew" href="{{ create_url }}" title="{{ __f('Create new %name%', { '%name%': entityNameTranslated }) }}" class="btn btn-default rkbulletinnewsmodule-inline-button">{{ __('Create') }}</a>
+                        {% endif %}
                         <noscript><p>{{ __('This function requires JavaScript activated!') }}</p></noscript>
                     </div>
                 </div>
@@ -361,6 +363,7 @@ class Layout {
                     {% if 'edit' in app.request.get('_route') %}
                         {{ pageAddAsset('javascript', zasset('@«appName»:js/«appName».Validation.js', 98)) }}
                         {{ pageAddAsset('javascript', zasset('@«appName»:js/«appName».EditFunctions.js', 99)) }}
+                        {{ pageAddAsset('javascript', asset('typeahead/typeahead.bundle.min.js')) }}
                     {% endif %}
                 «ENDIF»
                 {% if «IF hasEditActions»'edit' in app.request.get('_route')«IF needsConfig» or «ENDIF»«ENDIF»«IF needsConfig»'config' in app.request.get('_route')«ENDIF» %}

@@ -125,7 +125,7 @@ class EditFunctions {
         function «vendorAndName»InitUploadField(fieldName)
         {
             jQuery('#' + fieldName + 'ResetVal').click( function (event) {
-                event.stopPropagation();
+                event.preventDefault();
                 «vendorAndName»ResetUploadField(fieldName);
             }).removeClass('hidden');
         }
@@ -149,7 +149,7 @@ class EditFunctions {
         function «vendorAndName»InitDateField(fieldName)
         {
             jQuery('#' + fieldName + 'ResetVal').click( function (event) {
-                event.stopPropagation();
+                event.preventDefault();
                 «vendorAndName»ResetDateField(fieldName);
             }).removeClass('hidden');
         }
@@ -294,8 +294,6 @@ class EditFunctions {
     def private createRelationWindowInstance(Application it) '''
         /**
          * Helper function to create new modal form dialog instances.
-         * For edit forms we use "iframe: true" to ensure file uploads work without problems.
-         * For all other windows we use "iframe: false" because we want the escape key working.
          */
         function «vendorAndName»CreateRelationWindowInstance(containerElem, useIframe)
         {
@@ -304,7 +302,11 @@ class EditFunctions {
             // define the new window instance
             newWindowId = containerElem.attr('id') + 'Dialog';
             jQuery('<div id="' + newWindowId + '"></div>')
-                .append(jQuery('<iframe«/* width="100%" height="100%" marginWidth="0" marginHeight="0" frameBorder="0" scrolling="auto"*/» />').attr('src', containerElem.attr('href')))
+                .append(
+                    jQuery('<iframe />')
+                        .attr('src', containerElem.attr('href'))
+                        .css({ width: '100%', height: '440px' })
+                )
                 .dialog({
                     autoOpen: false,
                     show: {
@@ -339,34 +341,36 @@ class EditFunctions {
             found = false;
 
             // search for the handler
-            relationHandler.each(function (relationHandler) {
+            jQuery.each(relationHandler, function (singleRelationHandler) {
                 // is this the right one
-                if (relationHandler.prefix === containerID) {
+                if (singleRelationHandler.prefix === containerID) {
                     // yes, it is
                     found = true;
                     // look whether there is already a window instance
-                    if (null !== relationHandler.windowInstance) {
+                    if (null !== singleRelationHandler.windowInstanceId) {
                         // unset it
                         jQuery(containerID + 'Dialog').dialog('destroy');
                     }
                     // create and assign the new window instance
-                    relationHandler.windowInstanceId = «vendorAndName»CreateRelationWindowInstance(jQuery('#' + containerID), true);
+                    singleRelationHandler.windowInstanceId = «vendorAndName»CreateRelationWindowInstance(jQuery('#' + containerID), true);
                 }
             });
 
-            // if no handler was found
-            if (false === found) {
-                // create a new one
-                newItem = new Object();
-                newItem.ot = objectType;
-                newItem.alias = '«/* TODO provide alias for relation window instance handler */»';
-                newItem.prefix = containerID;
-                newItem.acInstance = null;
-                newItem.windowInstanceId = «vendorAndName»CreateRelationWindowInstance(jQuery('#' + containerID), true);
-
-                // add it to the list of handlers
-                relationHandler.push(newItem);
+            if (false !== found) {
+                return;
             }
+
+            // if no handler was found create a new one
+            newItem = {
+                ot: objectType,
+                alias: '«/* TODO provide alias for relation window instance handler */»',
+                prefix: containerID,
+                acInstance: null,
+                windowInstanceId: «vendorAndName»CreateRelationWindowInstance(jQuery('#' + containerID), true)
+            };
+
+            // add it to the list of handlers
+            relationHandler.push(newItem);
         }
     '''
 
@@ -412,7 +416,7 @@ class EditFunctions {
 
             var li = jQuery('<li />', { id: elemPrefix, text: newTitle });
             if (true === includeEditing) {
-                var editHref = jQuery('#' + idPrefix + 'SelectorDoNew').attr('href') + '&id=' + newItemId;
+                var editHref = jQuery('#' + idPrefix + 'SelectorDoNew').attr('href') + '?id=' + newItemId;
                 editLink = jQuery('<a />', { id: elemPrefix + 'Edit', href: editHref, text: 'edit' });
                 li.append(editLink);
             }
@@ -429,9 +433,9 @@ class EditFunctions {
             if (true === includeEditing) {
                 editLink.html(' ' + editImage);
 
-                jQuery('#' + elemPrefix + 'Edit').click( function (e) {
+                jQuery('#' + elemPrefix + 'Edit').click( function (event) {
+                    event.preventDefault();
                     «vendorAndName»InitInlineRelationWindow(objectType, idPrefix + 'Reference_' + newItemId + 'Edit');
-                    e.stopPropagation();
                 });
             }
             removeLink.html(' ' + removeImage);
@@ -485,15 +489,6 @@ class EditFunctions {
             };
             acDataSet = {
                 limit: 15,
-                // The data source to query against. Receives the query value in the input field and the process callbacks.
-                source: function (query, syncResults, asyncResults) {
-                    // Retrieve data from server using "query" parameter as it contains the search string entered by the user
-                    jQuery('#' + idPrefix + 'Indicator').removeClass('hidden');
-                    jQuery.getJSON(acUrl, { fragment: query }, function( data ) {
-                        jQuery('#' + idPrefix + 'Indicator').addClass('hidden');
-                        asyncResults(data);
-                    });
-                },
                 templates: {
                     empty: '<div class="empty-message">' + jQuery('#' + idPrefix + 'NoResultsHint').text() + '</div>',
                     suggestion: function(item) {
@@ -512,31 +507,47 @@ class EditFunctions {
                 }
             };
 
-            relationHandler.each(function (key, relationHandler) {
-                if (relationHandler.prefix === (idPrefix + 'SelectorDoNew') && null === relationHandler.acInstance) {
-                    relationHandler.acInstance = 'yes';
+            jQuery.each(relationHandler, function (key, singleRelationHandler) {
+                var acUrlArgs;
 
-                    acUrl = Routing.generate(relationHandler.moduleName.toLowerCase() + '_ajax_getitemlistautocompletion');
-                    acUrl += '&ot=' + objectType;
-                    if (jQuery('#' + idPrefix).length > 0) {
-                        acUrl += '&exclude=' + jQuery('#' + idPrefix).val();
-                    }
-
-                    jQuery('#' + idPrefix + 'Selector')
-                        .typeahead(acOptions, acDataSet)
-                        .bind('typeahead:select', function(ev, item) {
-                            // Called after the user selects an item. Here we can do something with the selection.
-                            «vendorAndName»SelectRelatedItem(objectType, idPrefix, jQuery('#' + idPrefix), item);
-                            jQuery(this).typeahead('val', item.title);
-                        });
-
-                    // Ensure that clearing out the selector is properly reflected into the hidden field
-                    jQuery('#' + idPrefix + 'Selector').blur(function() {
-                        if (jQuery(this).val().length == 0 || jQuery('#' + idPrefix).val() != listItemMap[idPrefix][jQuery(this).val()]) {
-                            jQuery('#' + idPrefix).val('');
-                        }
-                    });
+                if (singleRelationHandler.prefix !== (idPrefix + 'SelectorDoNew') || null !== singleRelationHandler.acInstance) {
+                    return;
                 }
+
+                singleRelationHandler.acInstance = 'yes';
+
+                acUrlArgs = {
+                    ot: objectType
+                };
+                if (jQuery('#' + idPrefix).length > 0) {
+                    acUrlArgs.exclude = jQuery('#' + idPrefix).val();
+                }
+                acUrl = Routing.generate(singleRelationHandler.moduleName.toLowerCase() + '_ajax_getitemlistautocompletion', acUrlArgs);
+
+                // The data source to query against. Receives the query value in the input field and the process callbacks.
+                acDataSet.source = function (query, syncResults, asyncResults) {
+                    // Retrieve data from server using "query" parameter as it contains the search string entered by the user
+                    jQuery('#' + idPrefix + 'Indicator').removeClass('hidden');
+                    jQuery.getJSON(acUrl, { fragment: query }, function( data ) {
+                        jQuery('#' + idPrefix + 'Indicator').addClass('hidden');
+                        asyncResults(data);
+                    });
+                };
+
+                jQuery('#' + idPrefix + 'Selector')
+                    .typeahead(acOptions, acDataSet)
+                    .bind('typeahead:select', function(ev, item) {
+                        // Called after the user selects an item. Here we can do something with the selection.
+                        «vendorAndName»SelectRelatedItem(objectType, idPrefix, jQuery('#' + idPrefix), item);
+                        jQuery(this).typeahead('val', item.title);
+                    });
+
+                // Ensure that clearing out the selector is properly reflected into the hidden field
+                jQuery('#' + idPrefix + 'Selector').blur(function() {
+                    if (jQuery(this).val().length == 0) {
+                        jQuery('#' + idPrefix).val('');
+                    }
+                });
             });
 
             if (!includeEditing || jQuery('#' + idPrefix + 'SelectorDoNew').length < 1) {
@@ -544,23 +555,23 @@ class EditFunctions {
             }
 
             // from here inline editing will be handled
-            jQuery('#' + idPrefix + 'SelectorDoNew').href += '&theme=Printer&idp=' + idPrefix + 'SelectorDoNew';
-            jQuery('#' + idPrefix + 'SelectorDoNew').click( function(e) {
+            jQuery('#' + idPrefix + 'SelectorDoNew').attr('href', jQuery('#' + idPrefix + 'SelectorDoNew').attr('href') + '?raw=1&idp=' + idPrefix + 'SelectorDoNew');
+            jQuery('#' + idPrefix + 'SelectorDoNew').click( function(event) {
+                event.preventDefault();
                 «vendorAndName»InitInlineRelationWindow(objectType, idPrefix + 'SelectorDoNew');
-                e.stopPropagation();
             });
 
             itemIds = jQuery('#' + idPrefix).val();
             itemIdsArr = itemIds.split(',');
-            itemIdsArr.each(function (existingId) {
+            jQuery.each(itemIdsArr, function (key, existingId) {
                 var elemPrefix;
 
                 if (existingId) {
                     elemPrefix = idPrefix + 'Reference_' + existingId + 'Edit';
-                    jQuery('#' + elemPrefix).href += '&theme=Printer&idp=' + elemPrefix;
+                    jQuery('#' + elemPrefix).attr('href', jQuery('#' + elemPrefix).attr('href') + '?raw=1&idp=' + elemPrefix);
                     jQuery('#' + elemPrefix).click( function (event) {
+                        event.preventDefault();
                         «vendorAndName»InitInlineRelationWindow(objectType, elemPrefix);
-                        event.stopPropagation();
                     });
                 }
             });
@@ -579,13 +590,13 @@ class EditFunctions {
             }
 
             // search for the handler of the current window
-            window.parent.relationHandler.each(function (relationHandler) {
+            jQuery.each(window.parent.relationHandler, function (key, singleRelationHandler) {
                 // look if this handler is the right one
-                if (relationHandler['prefix'] === idPrefix) {
+                if (singleRelationHandler.prefix === idPrefix) {
                     // do we have an item created
                     if (itemId > 0) {
                         // look whether there is an auto completion instance
-                        if (null !== relationHandler.acInstance) {
+                        if (null !== singleRelationHandler.acInstance) {
                             // activate it
                             jQuery('#' + idPrefix + 'Selector').lookup();
                             // show a message
@@ -593,9 +604,9 @@ class EditFunctions {
                         }
                     }
                     // look whether there is a windows instance
-                    if (null !== relationHandler.windowInstance) {
+                    if (null !== singleRelationHandler.windowInstanceId) {
                         // close it
-                        relationHandler.windowInstance.closeHandler();
+                        window.parent.jQuery('#' + singleRelationHandler.windowInstanceId).dialog('close');
                     }
                 }
             });

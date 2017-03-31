@@ -207,7 +207,7 @@ class ServiceDefinitions {
                 - "@translator.default"
                 - "@«modPrefix».listentries_helper"
             tags:
-                - { name: validator.constraint_validator, alias: «vendor.formatForDB».«name.formatForDB».listentry.validator }
+                - { name: validator.constraint_validator, alias: «modPrefix».validator.list_entry.validator }
     '''
 
     def private formFields(Application it) '''
@@ -288,7 +288,7 @@ class ServiceDefinitions {
             «modPrefix».form.type.field.autocompletionrelation:
                 class: «nsBase»Field\AutoCompletionRelationType
                 arguments:
-                    - "@translator.default"
+                    - "@router"
                     - "@«entityManagerService»"
                 tags:
                     - { name: form.type }

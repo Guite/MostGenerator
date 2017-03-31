@@ -68,7 +68,7 @@ class Relations {
             val relationAliasReverse = getRelationAliasName(!useTarget).formatForCodeCapital
             val incomingForUniqueRelationName = if (!isManyToMany) useTarget else incoming
             val uniqueNameForJs = getUniqueRelationNameForJs(app, otherEntity, many, incomingForUniqueRelationName, relationAliasName)
-            return includeStatementForEditTemplate(templateName, ownEntity, otherEntity, incoming, relationAliasName, relationAliasReverse, uniqueNameForJs, hasEdit)
+            return includeStatementForEditTemplate(templateName, ownEntity, otherEntity, incoming, relationAliasName, relationAliasReverse, uniqueNameForJs)
         }
 
         // onlyInclude is false here, lets create the templates
@@ -88,6 +88,7 @@ class Relations {
         var templateName = ''
         if (useTarget && !isManyToMany) {
             //templateName = 'includeCreateChildItem'
+            templateName = 'includeSelect' + editSnippet
         } else {
             templateName = 'includeSelect' + editSnippet
         }
@@ -96,10 +97,10 @@ class Relations {
         templateName
     }
 
-    def private includeStatementForEditTemplate(JoinRelationship it, String templateName, Entity ownEntity, Entity linkingEntity, Boolean incoming, String relationAliasName, String relationAliasReverse, String uniqueNameForJs, Boolean hasEdit) '''
+    def private includeStatementForEditTemplate(JoinRelationship it, String templateName, Entity ownEntity, Entity linkingEntity, Boolean incoming, String relationAliasName, String relationAliasReverse, String uniqueNameForJs) '''
         {{ include(
             '@«application.appName»/«ownEntity.name.formatForCodeCapital»/«templateName».html.twig',
-            { group: '«linkingEntity.name.formatForDB»', alias: '«relationAliasName.toFirstLower»', aliasReverse: '«relationAliasReverse.toFirstLower»', mandatory: «(!nullable).displayBool», idPrefix: '«uniqueNameForJs»', linkingItem: «linkingEntity.name.formatForDB»«IF linkingEntity.useGroupingPanels('edit')», panel: true«ENDIF», displayMode: '«IF usesAutoCompletion(incoming)»autocomplete«ELSE»choices«ENDIF»', allowEditing: «hasEdit.displayBool» }
+            { group: '«linkingEntity.name.formatForDB»', alias: '«relationAliasName.toFirstLower»', aliasReverse: '«relationAliasReverse.toFirstLower»', mandatory: «(!nullable).displayBool», idPrefix: '«uniqueNameForJs»', linkingItem: «linkingEntity.name.formatForDB»«IF linkingEntity.useGroupingPanels('edit')», panel: true«ENDIF», displayMode: '«IF usesAutoCompletion(incoming)»autocomplete«ELSE»choices«ENDIF»' }
         ) }}
     '''
 
@@ -108,9 +109,6 @@ class Relations {
         {# purpose of this template: inclusion template for managing related «ownEntityName.formatForDisplay» #}
         {% if displayMode is not defined or displayMode is empty %}
             {% set displayMode = 'choices' %}
-        {% endif %}
-        {% if allowEditing is not defined or allowEditing is empty %}
-            {% set allowEditing = false %}
         {% endif %}
         {% if panel|default(false) == true %}
             <div class="panel panel-default">
@@ -139,9 +137,8 @@ class Relations {
         {% elseif displayMode == 'autocomplete' %}
             «/*IF !isManyToMany && !incoming»
                 «component_ParentEditing(ownEntity, many)»
-            «ELSE*/»{% set createUrl = allowEditing ? path('«app.appName.formatForDB»_«ownEntity.name.formatForDB»_' ~ routeArea ~ 'edit') : '' %}
-                {{ form_row(attribute(form, alias)) }}
-                «component_AutoComplete(app, ownEntity, many, incoming, hasEdit)»«/*ENDIF*/»
+            «ELSE*/»{{ form_row(attribute(form, alias)) }}
+            «component_AutoComplete(app, ownEntity, many, incoming, hasEdit)»«/*ENDIF*/»
         {% endif %}
     '''
 /*
@@ -158,21 +155,17 @@ class Relations {
     def private component_AutoComplete(JoinRelationship it, Application app, Entity targetEntity, Boolean many, Boolean incoming, Boolean includeEditing) '''
         <div class="«app.appName.toLowerCase»-relation-leftside">
             «val includeStatement = component_IncludeStatementForAutoCompleterItemList(targetEntity, many, incoming, includeEditing)»
-            {% if attribute(linkingItem, alias) is defined %}
-                {{ include(
-                    «includeStatement»,
-                    { item«IF many»s«ENDIF»: attribute(linkingItem, alias) }
-                ) }}
-            {% else %}
-                {{ include(«includeStatement») }}
-            {% endif %}
+            {{ include(
+                «includeStatement»,
+                attribute(linkingItem, alias) is defined ? { item«IF many»s«ENDIF»: attribute(linkingItem, alias) } : {}
+            ) }}
         </div>
         <br style="clear: both" />
     '''
 
     def private component_IncludeStatementForAutoCompleterItemList(JoinRelationship it, Entity targetEntity, Boolean many, Boolean incoming, Boolean includeEditing) {
         '''
-            '«targetEntity.name.formatForCodeCapital»/includeSelect«IF includeEditing»Edit«ENDIF»ItemList«IF !many»One«ELSE»Many«ENDIF».html.twig'«''»'''
+            '@«application.appName»/«targetEntity.name.formatForCodeCapital»/includeSelect«IF includeEditing»Edit«ENDIF»ItemList«IF !many»One«ELSE»Many«ENDIF».html.twig'«''»'''
     }
 
     def private component_ItemList(JoinRelationship it, Application app, Entity targetEntity, Boolean many, Boolean incoming, Boolean includeEditing) '''
@@ -247,17 +240,18 @@ class Relations {
         val uniqueNameForJs = getUniqueRelationNameForJs(app, targetEntity, many, incoming, relationAliasName)
         val linkEntity = if (targetEntity == target) source else target
         if (!insideLoader) '''
-            var newItem = new Object();
-            newItem.ot = '«linkEntity.name.formatForCode»';
-            newItem.alias = '«relationAliasName»';
-            newItem.prefix = '«uniqueNameForJs»SelectorDoNew';
-            newItem.moduleName = '«linkEntity.application.appName»';
-            newItem.acInstance = null;
-            newItem.windowInstance = null;
+            var newItem = {
+                ot: '«linkEntity.name.formatForCode»',
+                alias: '«relationAliasName»',
+                prefix: '«uniqueNameForJs»SelectorDoNew',
+                moduleName: '«linkEntity.application.appName»',
+                acInstance: null,
+                windowInstanceId: null
+            };
             relationHandler.push(newItem);
         '''
         else '''
-            «app.prefix()»InitRelationItemsForm('«linkEntity.name.formatForCode»', '«uniqueNameForJs»', «(stageCode > 1).displayBool»);
+            «app.vendorAndName»InitRelationItemsForm('«linkEntity.name.formatForCode»', '«uniqueNameForJs»', «(stageCode > 1).displayBool»);
         '''
     }
 
