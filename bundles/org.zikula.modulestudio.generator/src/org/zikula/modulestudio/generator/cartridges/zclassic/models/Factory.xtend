@@ -32,6 +32,7 @@ class Factory {
 
         use Doctrine\Common\Persistence\ObjectManager;
         use Doctrine\ORM\EntityRepository;
+        use InvalidArgumentException;
 
         /**
          * Factory class used to create entities and receive entity repositories.
