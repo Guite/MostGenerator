@@ -6,6 +6,7 @@ import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.EntityChangeTrackingPolicy
 import de.guite.modulestudio.metamodel.EntityIndex
 import de.guite.modulestudio.metamodel.EntityIndexItem
+import de.guite.modulestudio.metamodel.EntityTreeType
 import de.guite.modulestudio.metamodel.InheritanceRelationship
 import de.guite.modulestudio.metamodel.MappedSuperClass
 import org.eclipse.xtext.generator.IFileSystemAccess
@@ -115,25 +116,31 @@ class Entities {
 
     def private dispatch imports(MappedSuperClass it, Boolean isBase) '''
         use Doctrine\ORM\Mapping as ORM;
-        «IF hasCollections»
+        «IF isBase && hasCollections»
             use Doctrine\Common\Collections\ArrayCollection;
         «ENDIF»
-        use Gedmo\Mapping\Annotation as Gedmo;
-        «IF hasUploadFieldsEntity»
-            use Symfony\Component\HttpFoundation\File\File;
+        «IF isBase/* || loggable || hasTranslatableFields || tree != EntityTreeType.NONE*/»
+            use Gedmo\Mapping\Annotation as Gedmo;
         «ENDIF»
-        use Symfony\Component\Validator\Constraints as Assert;
+        «IF isBase»
+            «IF hasUploadFieldsEntity»
+                use Symfony\Component\HttpFoundation\File\File;
+            «ENDIF»
+            use Symfony\Component\Validator\Constraints as Assert;
+        «ENDIF»
         «IF !getUniqueDerivedFields.filter[!primaryKey].empty || !getIncomingJoinRelations.filter[unique].empty || !getOutgoingJoinRelations.filter[unique].empty»
             use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
         «ENDIF»
-        «IF hasUserFieldsEntity»
-            use Zikula\UsersModule\Entity\UserEntity;
-        «ENDIF»
-        «IF !application.targets('1.5')»
-            use «application.appNamespace»\Traits\EntityWorkflowTrait;
-        «ENDIF»
-        «IF hasListFieldsEntity»
-            use «application.appNamespace»\Validator\Constraints as «application.name.formatForCodeCapital»Assert;
+        «IF isBase»
+            «IF hasUserFieldsEntity»
+                use Zikula\UsersModule\Entity\UserEntity;
+            «ENDIF»
+            «IF !application.targets('1.5')»
+                use «application.appNamespace»\Traits\EntityWorkflowTrait;
+            «ENDIF»
+            «IF hasListFieldsEntity»
+                use «application.appNamespace»\Validator\Constraints as «application.name.formatForCodeCapital»Assert;
+            «ENDIF»
         «ENDIF»
     '''
 
@@ -143,7 +150,11 @@ class Entities {
             «IF hasCollections || attributable || categorisable»
                 use Doctrine\Common\Collections\ArrayCollection;
             «ENDIF»
+        «ENDIF»
+        «IF isBase || loggable || hasTranslatableFields || tree != EntityTreeType.NONE»
             use Gedmo\Mapping\Annotation as Gedmo;
+        «ENDIF»
+        «IF isBase»
             «IF hasNotifyPolicy»
                 use Doctrine\Common\NotifyPropertyChanged;
                 use Doctrine\Common\PropertyChangedListener;
