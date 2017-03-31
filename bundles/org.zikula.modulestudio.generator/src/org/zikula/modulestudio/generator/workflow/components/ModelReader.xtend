@@ -83,7 +83,7 @@ class ModelReader extends WorkflowComponentWithSlot {
         }
 
         if (!this.isStandalone) {
-            // create injector for WebGen
+            // create fallback injector
             val Module runtimeModule = new MostDslRuntimeModule
             this.injector = Guice.createInjector(runtimeModule)
         } else {
