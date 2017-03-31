@@ -5,7 +5,7 @@ node {
     def repoBase = 'https://github.com/Guite/'
     def projectName = 'MostGenerator'
     def repoUrl = repoBase + projectName + '/'
-    def downstreamJobs = ['MOST-5 Deploy-StandaloneGenerator', 'MOST-1_Prepare-7_WebGen']
+    def downstreamJobs = ['MOST-5 Deploy-StandaloneGenerator']
     def artifacts = '**/releng/**/target/repository/**,**/bundles/org.zikula.modulestudio.generator/target/ModuleStudio-generator.jar'
 
     def builder, postProcessor
