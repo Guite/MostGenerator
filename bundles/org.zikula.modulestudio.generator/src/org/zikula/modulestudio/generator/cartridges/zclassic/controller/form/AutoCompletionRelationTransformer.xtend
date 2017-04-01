@@ -156,14 +156,13 @@ class AutoCompletionRelationTransformer {
          */
         protected function buildWhereClause($inputValue, QueryBuilder $qb)
         {
-            if (!$this->mandatory) {
-                // remove empty option if it has been selected
-                foreach ($inputValue as $k => $v) {
-                    if (!$v) {
-                        unset($inputValue[$k]);
-                    }
+            // remove empty option if it has been selected
+            foreach ($inputValue as $k => $v) {
+                if (!$v) {
+                    unset($inputValue[$k]);
                 }
             }
+
             // readd filter value for returning nothing if no real item has been selected
             if (count($inputValue) == 0) {
                 $inputValue[] = 0;
