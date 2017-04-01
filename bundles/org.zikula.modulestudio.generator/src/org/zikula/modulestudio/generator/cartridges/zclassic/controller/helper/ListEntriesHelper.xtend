@@ -229,7 +229,7 @@ class ListEntriesHelper {
         {
             $states = [];
             «IF name == 'workflowState'»
-                «val visibleStates = items.filter[value != 'deleted']»
+                «val visibleStates = items.filter[value != 'initial' && value != 'deleted']»
                 «FOR item : visibleStates»«item.entryInfo(entity.application)»«ENDFOR»
                 «FOR item : visibleStates»«item.entryInfoNegative(entity.application)»«ENDFOR»
             «ELSE»
