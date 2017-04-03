@@ -211,6 +211,11 @@ class TranslatableHelper {
             $currentLanguage = $this->getCurrentLanguage();
             foreach ($supportedLanguages as $language) {
                 if ($language == $currentLanguage) {
+                    foreach ($fields as $fieldName) {«/* fix for #980 */»
+                        if (null === $entity[$fieldName]) {
+                            $entity[$fieldName] = '';
+                        }
+                    }
                     // skip current language as this is not treated as translation on controller level
                     continue;
                 }
