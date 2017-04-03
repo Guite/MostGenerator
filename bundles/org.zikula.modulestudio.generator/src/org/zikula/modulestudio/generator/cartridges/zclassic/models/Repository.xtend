@@ -764,8 +764,6 @@ class Repository {
          */
         public function getSelectWherePaginatedQuery(QueryBuilder $qb, $currentPage = 1, $resultsPerPage = 25)
         {
-            $qb = $this->addCommonViewFilters($qb);
-
             $query = $this->getQueryFromBuilder($qb);
             $offset = ($currentPage-1) * $resultsPerPage;
 
@@ -789,7 +787,7 @@ class Repository {
          */
         public function selectWherePaginated($where = '', $orderBy = '', $currentPage = 1, $resultsPerPage = 25, $useJoins = true, $slimMode = false)
         {
-            $qb = $this->genericBaseQuery($where, $orderBy, $useJoins, $slimMode);
+            $qb = $this->getListQueryBuilder($where, $orderBy, $useJoins, $slimMode);
 
             $page = $currentPage;«/* TODO fix buggy session storage of current page
 
@@ -997,7 +995,7 @@ class Repository {
          */
         public function selectSearch($fragment = '', $exclude = [], $orderBy = '', $currentPage = 1, $resultsPerPage = 25, $useJoins = true)
         {
-            $qb = $this->genericBaseQuery('', $orderBy, $useJoins);
+            $qb = $this->getListQueryBuilder('', $orderBy, $useJoins);
             if (count($exclude) > 0) {
                 $qb = $this->addExclusion($qb, $exclude);
             }

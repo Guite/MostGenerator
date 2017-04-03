@@ -80,7 +80,7 @@ class EntityConstructor {
         «val mandatoryFields = getDerivedFields.filter[mandatory && !primaryKey]»
         «IF !getListFieldsEntity.filter[name != 'workflowState' && (null === defaultValue || defaultValue.length == 0)].empty
         	|| !mandatoryFields.filter(UserField).filter[null === defaultValue || defaultValue == '' || defaultValue == '0'].empty»
-            $container = ServiceUtil::get('service_container');
+            $container = \ServiceUtil::get('service_container');
             «IF !mandatoryFields.filter(UserField).filter[null === defaultValue || defaultValue == '' || defaultValue == '0'].empty»
                 $userRepository = $container->get('zikula_users_module.user_repository');
                 $currentUser = $userRepository->find($container->get('zikula_users_module.current_user')->get('uid'));
