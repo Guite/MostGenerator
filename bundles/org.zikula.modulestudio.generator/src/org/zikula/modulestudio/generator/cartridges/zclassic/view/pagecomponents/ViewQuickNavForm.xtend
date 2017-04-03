@@ -34,18 +34,23 @@ class ViewQuickNavForm {
             ] %}
             {{ form_start(quickNavForm, {attr: {id: '«application.appName.toFirstLower»«name.formatForCodeCapital»QuickNavForm', class: '«application.appName.toLowerCase»-quicknav navbar-form', role: 'navigation'}}) }}
             {{ form_errors(quickNavForm) }}
-            <fieldset>
-                <h3>{{ __('Quick navigation') }}</h3>
-                «formFields»
-                {{ form_widget(quickNavForm.updateview) }}
-                «IF categorisable»
-                    {% if (categoryFilter is defined and categoryFilter != true) or not categoriesEnabled %}
-                    {% else %}
+            <a href="#collapse«name.formatForCodeCapital»QuickNav" role="button" data-toggle="collapse" class="btn btn-default" aria-expanded="false" aria-controls="collapse«name.formatForCodeCapital»QuickNav">
+                <i class="fa fa-filter" aria-hidden="true"></i> {{ __('Filter') }}
+            </a>
+            <div id="collapse«name.formatForCodeCapital»QuickNav" class="collapse">
+                <fieldset>
+                    <h3>{{ __('Quick navigation') }}</h3>
+                    «formFields»
+                    {{ form_widget(quickNavForm.updateview) }}
+                    «IF categorisable»
+                        {% if (categoryFilter is defined and categoryFilter != true) or not categoriesEnabled %}
+                        {% else %}
+                                </div>
                             </div>
-                        </div>
-                    {% endif %}
-                «ENDIF»
-            </fieldset>
+                        {% endif %}
+                    «ENDIF»
+                </fieldset>
+            </div>
             {{ form_end(quickNavForm) }}
         {% endif %}
     '''
