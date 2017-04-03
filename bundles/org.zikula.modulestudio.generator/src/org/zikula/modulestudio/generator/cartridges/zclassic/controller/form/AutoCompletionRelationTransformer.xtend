@@ -3,11 +3,13 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.controller.form
 import de.guite.modulestudio.metamodel.Application
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
+import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class AutoCompletionRelationTransformer {
 
+    extension FormattingExtensions = new FormattingExtensions()
     extension NamingExtensions = new NamingExtensions()
     extension Utils = new Utils()
 
@@ -23,11 +25,11 @@ class AutoCompletionRelationTransformer {
         namespace «appNamespace»\Form\DataTransformer\Base;
 
         use Doctrine\Common\Collections\ArrayCollection;
-        use Doctrine\Common\Persistence\ObjectManager;
         use Doctrine\ORM\QueryBuilder;
         use Symfony\Component\Form\DataTransformerInterface;
         use Symfony\Component\Form\Exception\TransformationFailedException;
         use Zikula\Core\Doctrine\EntityAccess;
+        use «appNamespace»\Entity\Factory\«name.formatForCodeCapital»Factory;
 
         /**
          * Auto completion relation transformer base class.
@@ -37,9 +39,9 @@ class AutoCompletionRelationTransformer {
         abstract class AbstractAutoCompletionRelationTransformer implements DataTransformerInterface
         {
             /**
-             * @var ObjectManager The object manager to be used for determining the repository
+             * @var «name.formatForCodeCapital»Factory
              */
-            protected $objectManager;
+            protected $entityFactory;
 
             /**
              * @var String
@@ -54,13 +56,13 @@ class AutoCompletionRelationTransformer {
             /**
              * AutoCompletionRelationTransformer constructor.
              *
-             * @param ObjectManager $objectManager Doctrine object manager
-             * @param String        $objectType    The type of entities being processed
-             * @param Boolean       $isMultiple    Whether a single object or a collection of object is processed
+             * @param «name.formatForCodeCapital»Factory $entityFactory «name.formatForCodeCapital»Factory service instance
+             * @param String $objectType The type of entities being processed
+             * @param Boolean $isMultiple Whether a single object or a collection of object is processed
              */
-            public function __construct(ObjectManager $objectManager, $objectType, $isMultiple)
+            public function __construct(«name.formatForCodeCapital»Factory $entityFactory, $objectType, $isMultiple)
             {
-                $this->objectManager = $objectManager;
+                $this->entityFactory = $entityFactory;
                 $this->objectType = $objectType;
                 $this->isMultiple = $isMultiple;
             }
@@ -122,7 +124,7 @@ class AutoCompletionRelationTransformer {
                     return $this->isMultiple ? new ArrayCollection() : null;
                 }
 
-                $repository = $this->objectManager->getRepository('«appName»:' . ucfirst($this->objectType) . 'Entity');
+                $repository = $this->entityFactory->getRepository($this->objectType);
 
                 $qb = $repository->genericBaseQuery('', '', false);
                 $qb = $this->buildWhereClause($value, $qb);
@@ -168,16 +170,16 @@ class AutoCompletionRelationTransformer {
                 $inputValue[] = 0;
             }
 
-            if (count($this->idFields) > 1) {
-                $idsPerField = $this->decodeCompositeIdentifier($inputValue);
-                foreach ($this->idFields as $idField) {
+            $idFields = $this->entityFactory->getIdFields($this->objectType);
+            if (count($idFields) > 1) {
+                $idsPerField = $this->decodeCompositeIdentifier($idFields, $inputValue);
+                foreach ($idFields as $idField) {
                     $qb->andWhere('tbl.' . $idField . ' IN (:' . $idField . 'Ids)')
                        ->setParameter($idField . 'Ids', $idsPerField[$idField]);
                 }
             } else {
-                $many = $this->selectionMode == 'multiple';
-                $idField = reset($this->idFields);
-                if ($many) {
+                $idField = reset($idFields);
+                if ($this->isMultiple) {
                     $qb->andWhere('tbl.' . $idField . ' IN (:' . $idField . 'Ids)')
                        ->setParameter($idField . 'Ids', $inputValue);
                 } else {
@@ -190,6 +192,32 @@ class AutoCompletionRelationTransformer {
             }
 
             return $qb;
+        }
+
+        /**
+         * Decodes a list of concatenated identifier strings (for composite keys).
+         *
+         * @param array $idFields List of identifier field names
+         * @param array $itemIds  List of concatenated identifiers
+         *
+         * @return Array with list of single identifiers
+         */
+        protected function decodeCompositeIdentifier(array $idFields = [], array $itemIds = [])
+        {
+            $idValues = [];
+            foreach ($idFields as $idField) {
+                $idValues[$idField] = [];
+            }
+            foreach ($itemIds as $itemId) {
+                $itemIdParts = explode('_', $itemId);
+                $i = 0;
+                foreach ($idFields as $idField) {
+                    $idValues[$idField][] = $itemIdParts[$i];
+                    $i++;
+                }
+            }
+
+            return $idValues;
         }
     '''
 

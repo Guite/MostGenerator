@@ -28,7 +28,6 @@ class AutoCompletionRelationType {
     def private relationTypeBaseImpl(Application it) '''
         namespace «appNamespace»\Form\Type\Field\Base;
 
-        use Doctrine\Common\Persistence\ObjectManager;
         use Symfony\Component\Form\AbstractType;
         «IF targets('1.5')»
             use Symfony\Component\Form\Extension\Core\Type\HiddenType;
@@ -38,6 +37,7 @@ class AutoCompletionRelationType {
         use Symfony\Component\Form\FormView;
         use Symfony\Component\OptionsResolver\OptionsResolver;
         use Symfony\Component\Routing\RouterInterface;
+        use «appNamespace»\Entity\Factory\«name.formatForCodeCapital»Factory;
         use «appNamespace»\Form\DataTransformer\AutoCompletionRelationTransformer;
 
         /**
@@ -51,20 +51,20 @@ class AutoCompletionRelationType {
             protected $router;
 
             /**
-             * @var ObjectManager
+             * @var «name.formatForCodeCapital»Factory
              */
-            protected $objectManager;
+            protected $entityFactory;
 
             /**
              * AutoCompletionRelationType constructor.
              *
-             * @param Routerinterface $router        Router service instance
-             * @param ObjectManager   $objectManager Doctrine object manager
+             * @param Routerinterface $router Router service instance
+             * @param «name.formatForCodeCapital»Factory $entityFactory «name.formatForCodeCapital»Factory service instance
              */
-            public function __construct(RouterInterface $router, ObjectManager $objectManager)
+            public function __construct(RouterInterface $router, «name.formatForCodeCapital»Factory $entityFactory)
             {
                 $this->router = $router;
-                $this->objectManager = $objectManager;
+                $this->entityFactory = $entityFactory;
             }
 
             /**
@@ -72,7 +72,7 @@ class AutoCompletionRelationType {
              */
             public function buildForm(FormBuilderInterface $builder, array $options)
             {
-                $transformer = new AutoCompletionRelationTransformer($this->objectManager, $options['object_type'], $options['multiple']);
+                $transformer = new AutoCompletionRelationTransformer($this->entityFactory, $options['object_type'], $options['multiple']);
                 $builder->addModelTransformer($transformer);
             }
 

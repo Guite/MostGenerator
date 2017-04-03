@@ -289,7 +289,7 @@ class ServiceDefinitions {
                 class: «nsBase»Field\AutoCompletionRelationType
                 arguments:
                     - "@router"
-                    - "@«entityManagerService»"
+                    - "@«modPrefix».entity_factory"
                 tags:
                     - { name: form.type }
         «ENDIF»
