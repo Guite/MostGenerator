@@ -196,7 +196,7 @@ class EntityMethods {
         switch it {
             DecimalField: '''\DataUtil::format«IF currency»Currency(«value»)«ELSE»Number(«value», 2)«ENDIF»'''
             FloatField: '''\DataUtil::format«IF currency»Currency(«value»)«ELSE»Number(«value», 2)«ENDIF»'''
-            UserField: '''(«value» ? «value»->get('uname') : '')'''
+            UserField: '''(«value» ? «value»->getUname() : '')'''
             ListField: '''$listHelper->resolve(«value», '«entity.name.formatForCode»', '«name.formatForCode»')'''
             DateField: '''\DateUtil::formatDatetime(«value», 'datebrief')'''
             DatetimeField: '''\DateUtil::formatDatetime(«value», 'datetimebrief')'''
