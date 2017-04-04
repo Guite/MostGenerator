@@ -139,7 +139,7 @@ class WorkflowHelper {
             public function __construct(
                 TranslatorInterface $translator,
                 «IF targets('1.5')»
-                    «IF isSystemModule»/*Registry */«ELSE»Registry «ENDIF»$registry,
+                    /*Registry */$registry,
                 «ENDIF»
                 «IF targets('1.5') || needsApproval»
                     LoggerInterface $logger,
