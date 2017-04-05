@@ -120,7 +120,7 @@ class Config {
     '''
 
     def private configSection(Variables it, Application app, Boolean isPrimaryVarContainer) '''
-        «IF app.hasMultipleConfigSections || app.hasImageFields»
+        «IF app.hasMultipleConfigSections || app.hasImageFields || app.targets('1.5')»
             «IF isImageArea»
                 «configSectionBodyImages(app, isPrimaryVarContainer)»
             «ELSE»
