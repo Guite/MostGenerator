@@ -50,11 +50,11 @@ class Config {
             «IF !getAllVariables.filter(BoolVar).empty»
                 use «nsSymfonyFormType»CheckboxType;
             «ENDIF»
-            «IF !getAllVariables.filter(IntVar).filter[!isUserGroupSelector].empty»
-                use «nsSymfonyFormType»IntegerType;
-            «ENDIF»
             «IF !getAllVariables.filter(ListVar).empty»
                 use «nsSymfonyFormType»ChoiceType;
+            «ENDIF»
+            «IF !getAllVariables.filter(IntVar).filter[!isUserGroupSelector].empty»
+                use «nsSymfonyFormType»IntegerType;
             «ENDIF»
             «IF !getAllVariables.filter(TextVar).filter[multiline].empty»
                 use «nsSymfonyFormType»TextareaType;
