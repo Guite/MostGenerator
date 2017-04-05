@@ -50,7 +50,7 @@ class Config {
             «IF !getAllVariables.filter(BoolVar).empty»
                 use «nsSymfonyFormType»CheckboxType;
             «ENDIF»
-            «IF !getAllVariables.filter(IntVar).filter[isUserGroupSelector].empty»
+            «IF !getAllVariables.filter(IntVar).filter[!isUserGroupSelector].empty»
                 use «nsSymfonyFormType»IntegerType;
             «ENDIF»
             «IF !getAllVariables.filter(ListVar).empty»
