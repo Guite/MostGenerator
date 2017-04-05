@@ -43,7 +43,7 @@ class Config {
                     'ZikulaFormExtensionBundle:Form:form_div_layout.html.twig'
                 ] %}
                 {{ form_start(form) }}
-                «IF hasMultipleConfigSections || hasImageFields»
+                «IF hasMultipleConfigSections || hasImageFields || targets('1.5')»
                     <div class="zikula-bootstrap-tab-container">
                         <ul class="nav nav-tabs">
                         «FOR varContainer : getSortedVariableContainers»
