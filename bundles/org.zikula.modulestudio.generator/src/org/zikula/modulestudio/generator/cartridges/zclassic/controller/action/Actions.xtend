@@ -108,6 +108,7 @@ class Actions {
         $sortdir = strtolower($sortdir);
         $request->query->set('sort', $sort);
         $request->query->set('sortdir', $sortdir);
+        $request->query->set('pos', $pos);
 
         $sortableColumns = new SortableColumns($this->get('router'), '«app.appName.formatForDB»_«name.toLowerCase»_' . ($isAdmin ? 'admin' : '') . 'view', 'sort', 'sortdir');
         «IF tree != EntityTreeType.NONE»
