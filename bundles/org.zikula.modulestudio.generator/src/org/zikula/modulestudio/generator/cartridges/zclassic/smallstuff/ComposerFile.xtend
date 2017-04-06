@@ -63,7 +63,7 @@ class ComposerFile {
         },
         "require": {
             «var dependencies = referredApplications.filter[e|e.dependencyType == ApplicationDependencyType.REQUIREMENT]»
-            "php": ">=5.4.1"«IF !dependencies.empty»,«ENDIF»
+            "php": ">=«IF targets('1.5')»5.5.9«ELSE»5.4.1«ENDIF»"«IF !dependencies.empty»,«ENDIF»
             «IF !dependencies.empty»
                 «FOR referredApp : dependencies»
                     «dependency(referredApp)»«IF referredApp != dependencies.last»,«ENDIF»
