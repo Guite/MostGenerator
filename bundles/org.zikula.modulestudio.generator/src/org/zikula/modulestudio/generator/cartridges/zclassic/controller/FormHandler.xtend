@@ -954,11 +954,10 @@ class FormHandler {
 
             /**
              * Prepare update of attributes.
-             *
-             * @param EntityAccess $entity Currently treated entity instance
              */
-            protected function processAttributesForUpdate($entity)
+            protected function processAttributesForUpdate()
             {
+                $entity = $this->entityRef;
                 foreach ($this->getAttributeFieldNames() as $fieldName) {
                     $value = $this->form['attributes' . $fieldName]->getData();
                     $entity->setAttribute($fieldName, $value);
@@ -1090,7 +1089,7 @@ class FormHandler {
 
                 if (true === $this->hasAttributes) {
                     if ($this->featureActivationHelper->isEnabled(FeatureActivationHelper::ATTRIBUTES, $this->objectType)) {
-                        $this->processAttributesForUpdate($entity);
+                        $this->processAttributesForUpdate();
                     }
                 }
             «ENDIF»
