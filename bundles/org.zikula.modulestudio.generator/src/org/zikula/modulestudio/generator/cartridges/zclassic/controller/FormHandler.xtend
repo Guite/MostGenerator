@@ -857,7 +857,7 @@ class FormHandler {
                 }
                 $entityData['attributes'] = $attributes;
 
-                $this->templateParameters['attributes'] = $this->getAttributeFieldNames();
+                $this->templateParameters['attributes'] = $attributes;
             }
 
             /**
