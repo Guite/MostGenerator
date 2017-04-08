@@ -128,7 +128,7 @@ class Property {
             ListField:
                 '''«/*type="«type»", */»length=«it.length»'''
             DatetimeField:
-                '''type="«IF entity.application.targets('1.5')»utc«ENDIF»type»"'''
+                '''type="«IF entity.application.targets('1.5')»utc«ENDIF»«type»"'''
             default: '''type="«type»"'''
         }
     }
