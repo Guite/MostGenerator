@@ -5,15 +5,14 @@ import de.guite.modulestudio.metamodel.Application
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.eclipse.xtext.generator.IGenerator
 import org.eclipse.xtext.generator.InMemoryFileSystemAccess
-import org.eclipse.xtext.junit4.util.ParseHelper
-import org.jnario.runner.CreateWith
-import org.zikula.modulestudio.generator.tests.lib.GuiceSpecCreator
+import org.eclipse.xtext.testing.util.ParseHelper
+import org.junit.Test
+import static extension org.junit.Assert.*
 
 /**
  * This class tests certain aspects of the Application meta class.
  */
-@CreateWith(GuiceSpecCreator)
-describe 'Tests for generator application classes' {
+class ApplicationTest {
 
     //@Inject MostGenerator generator
     @Inject IGenerator generator
@@ -25,7 +24,8 @@ describe 'Tests for generator application classes' {
     /**
      * Testing a code generator.
      */
-    fact 'First generator test' {
+    @Test
+    def void testDummyGenerator() {
         val app = '''
             application SimpleNews {
                 documentation 'Simple news extension'
@@ -37,8 +37,6 @@ describe 'Tests for generator application classes' {
                 entities {
                     entity article {
                     }
-                }
-                controller {
                 }
             }
         '''.parse
@@ -55,7 +53,7 @@ describe 'Tests for generator application classes' {
         println('Text files:')
         println(fsa.textFiles)
 
-        fsa.textFiles.size should not be 0
+        fsa.textFiles.size.assertEquals(0)
 
         checkTextFile('bootstrap.php',
             '''
@@ -73,8 +71,8 @@ describe 'Tests for generator application classes' {
 
     def private checkTextFile(String fileName, String content) {
         val filePath = IFileSystemAccess.DEFAULT_OUTPUT + fileName
-        fsa.textFiles.containsKey(filePath) should be true
-        fsa.textFiles.get(filePath).toString should be content
+        fsa.textFiles.containsKey(filePath).assertTrue
+        fsa.textFiles.get(filePath).toString.assertEquals(content)
     }
 
     /**

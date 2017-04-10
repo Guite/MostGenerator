@@ -23,16 +23,14 @@
     <build>
         <plugins>
             <plugin>
-                 <plugin>
-                     <!-- Documentation: https://eclipse.org/tycho/sitedocs/tycho-surefire/tycho-surefire-plugin/plugin-info.html -->
-                     <groupId>org.eclipse.tycho</groupId>
-                     <artifactId>tycho-surefire-plugin</artifactId>
-                     <version>${tycho.version}</version>
-                     <configuration>
-                         <useUIHarness>false</useUIHarness>
-                         <useUIThread>true</useUIThread><!-- only applies to UI test harness -->
-                     </configuration>
-                 </plugin>
+                <!-- Documentation: https://eclipse.org/tycho/sitedocs/tycho-surefire/tycho-surefire-plugin/plugin-info.html -->
+                <groupId>org.eclipse.tycho</groupId>
+                <artifactId>tycho-surefire-plugin</artifactId>
+                <version>${tycho.version}</version>
+                <configuration>
+                    <useUIHarness>false</useUIHarness>
+                    <useUIThread>true</useUIThread><!-- only applies to UI test harness -->
+                </configuration>
             </plugin>
         </plugins>
     </build>
