@@ -77,10 +77,10 @@ class Actions {
 
         «IF hasViewAction»
             return $this->redirectToRoute('«app.appName.formatForDB»_«name.formatForDB»_' . $templateParameters['routeArea'] . 'view');
-
+        «ELSE»
+            // return index template
+            return $this->render('@«app.appName»/«name.formatForCodeCapital»/index.html.twig', $templateParameters);
         «ENDIF»
-        // return index template
-        return $this->render('@«app.appName»/«name.formatForCodeCapital»/index.html.twig', $templateParameters);
     '''
 
     def private dispatch actionImplBody(Entity it, ViewAction action) '''

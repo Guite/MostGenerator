@@ -46,7 +46,8 @@ class Utils {
      */
     def createPlaceholder(Application it, IFileSystemAccess fsa, String path) {
         var fileName = 'README'
-        val fileContent = 'This file is a placeholder.'
+        val fileContent = '''This file is a placeholder.
+        '''
         /*if (!shouldBeSkipped(path + fileName)) {
             if (shouldBeMarked(path + fileName)) {
                 fileName = 'README.generated'
