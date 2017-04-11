@@ -287,8 +287,8 @@ class DisplayFunctions {
             // define name of window
             newWindowId = containerElem.attr('id') + 'Dialog';
 
-            containerElem.unbind('click').click(function(e) {
-                e.preventDefault();
+            containerElem.unbind('click').click(function(event) {
+                event.preventDefault();
 
                 // check if window exists already
                 if (jQuery('#' + newWindowId).length < 1) {
