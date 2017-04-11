@@ -426,5 +426,31 @@ class EntityMethods {
                 «ENDIF»
             «ENDIF»
         }
+        «IF it instanceof Entity && (it as Entity).loggable && hasUploadFieldsEntity»
+
+            /**
+             * Custom serialise method to process File objects during serialisation.
+             */
+            public function __sleep()
+            {
+                $uploadFields = ['«getUploadFieldsEntity.map[name.formatForCode].join('\', \'')»'];
+                foreach ($uploadFields as $uploadField) {
+                    if ($this[$uploadField] instanceof File) {
+                        $this[$uploadField] = $this[$uploadField]->getFilename();
+                    }
+                }
+
+                $ref = new \ReflectionClass(__CLASS__);
+                $props = $ref->getProperties();
+
+                $serializeFields = [];
+
+                foreach ($props as $prop) {
+                    $serializeFields[] = $prop->name;
+                }
+
+                return $serializeFields;
+            }
+        «ENDIF»
     '''
 }

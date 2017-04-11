@@ -21,7 +21,6 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.models.entity.Prope
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.entity.extensions.GeographicalTrait
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.entity.extensions.StandardFieldsTrait
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.event.LifecycleListener
-import org.zikula.modulestudio.generator.cartridges.zclassic.models.event.LoggableListener
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
@@ -55,7 +54,6 @@ class Entities {
         entities.forEach(e|e.generate(it, fsa))
 
         new LifecycleListener().generate(it, fsa)
-        new LoggableListener().generate(it, fsa)
         new EntityWorkflowTrait().generate(it, fsa)
         if (hasGeographical) {
             if (!getGeographicalEntities.filter[loggable].empty) {

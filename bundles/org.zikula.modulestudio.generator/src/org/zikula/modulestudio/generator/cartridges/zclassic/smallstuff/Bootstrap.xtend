@@ -4,7 +4,6 @@ import de.guite.modulestudio.metamodel.Application
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
-import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
@@ -12,7 +11,6 @@ class Bootstrap {
 
     extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
-    extension ModelExtensions = new ModelExtensions
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
 
@@ -72,26 +70,9 @@ class Bootstrap {
             $currentUserApi = $container->get('zikula_users_module.current_user');
             $userName = $currentUserApi->isLoggedIn() ? $currentUserApi->get('uname') : __('Guest');
 
-            «IF !getLoggableEntities.filter[hasUploadFieldsEntity].empty»
-                // instantiate custom loggable listener
-                $loggableListener = new «appNamespace»\Listener\LoggableListener();
-                // set current user name to loggable listener
-                $loggableListener->setUsername($userName);
-                // inject custom loggable listener
-                $doctrineEventManager = $container->get('doctrine.orm.default_entity_manager')->getEventManager();
-                foreach ($doctrineEventManager->getListeners() as $event => $listeners) {
-                    foreach ($listeners as $hash => $listener) {
-                        if ($listener instanceof \Gedmo\Loggable\LoggableListener) {
-                            $doctrineEventManager->removeEventListener($event, $listener);
-                            $doctrineEventManager->addEventListener($event, $loggableListener);
-                        }
-                    }
-                }
-            «ELSE»
-                // set current user name to loggable listener
-                $loggableListener = $container->get('doctrine_extensions.listener.loggable');
-                $loggableListener->setUsername($userName);
-            «ENDIF»
+            // set current user name to loggable listener
+            $loggableListener = $container->get('doctrine_extensions.listener.loggable');
+            $loggableListener->setUsername($userName);
         «ENDIF»
     '''
 
