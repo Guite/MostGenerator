@@ -142,8 +142,9 @@ class Config {
                     {% set tabTitle = __('Image settings for «entity.nameMultiple.formatForDisplay» «imageUploadField.name.formatForDisplay»') %}
                     <fieldset>
                         <legend>{{ tabTitle }}</legend>
+                        «val fieldSuffix = entity.name.formatForCodeCapital + imageUploadField.name.formatForCodeCapital»
 
-                        «FOR modvar : vars.filter[name.contains(entity.name.formatForCodeCapital + imageUploadField.name.formatForCodeCapital)]»«modvar.formRow»«ENDFOR»
+                        «FOR modvar : vars.filter[name.endsWith(fieldSuffix) || name.endsWith(fieldSuffix + 'View') || name.endsWith(fieldSuffix + 'Display') || name.endsWith(fieldSuffix + 'Edit')]»«modvar.formRow»«ENDFOR»
                     </fieldset>
                 </div>
             «ENDFOR»
