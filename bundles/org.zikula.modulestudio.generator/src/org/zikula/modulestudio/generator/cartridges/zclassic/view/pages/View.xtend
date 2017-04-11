@@ -183,7 +183,7 @@ class View {
                             <input type="checkbox" class="«application.vendorAndName.toLowerCase»-mass-toggle" />
                         </th>
                     {% endif %}
-                    <th id="hItemActions" scope="col" class="{% if items|length > 0 %}fixed-column {% endif %}z-order-unsorted">{{ __('Actions') }}</th>
+                    <th id="hItemActions" scope="col" class="{% if items|length > 0 %}fixed-column {% endif %}z-order-unsorted z-w02">{{ __('Actions') }}</th>
                     «FOR field : listItemsFields»«field.headerLine»«ENDFOR»
                     «FOR relation : listItemsIn»«relation.headerLine(false)»«ENDFOR»
                     «FOR relation : listItemsOut»«relation.headerLine(true)»«ENDFOR»
@@ -202,7 +202,7 @@ class View {
             «ELSEIF listType == LIST_TYPE_TABLE»
                 <tr>
                     {% if routeArea == 'admin' %}
-                        <td headers="hSelect" class="fixed-column text-center">
+                        <td headers="hSelect" class="fixed-column text-center z-w02">
                             <input type="checkbox" name="items[]" value="{{ «name.formatForCode».«getPrimaryKeyFields.head.name.formatForCode» }}" class="«application.vendorAndName.toLowerCase»-toggle-checkbox" />
                         </td>
                     {% endif %}

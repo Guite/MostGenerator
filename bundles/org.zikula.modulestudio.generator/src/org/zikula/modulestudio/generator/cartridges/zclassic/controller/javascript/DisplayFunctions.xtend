@@ -208,11 +208,12 @@ class DisplayFunctions {
          */
         function «vendorAndName»InitFixedColumns()
         {
-            var originalTable, fixedColumnsTable;
-
             jQuery('.table.fixed-columns').remove();
             jQuery('.table').each(function() {
+                var originalTable, fixedColumnsTable, fixedTableWidth;
+
                 originalTable = jQuery(this);
+                fixedTableWidth = 0;
                 if (originalTable.find('.fixed-column').length > 0) {
                     fixedColumnsTable = originalTable.clone().insertBefore(originalTable).addClass('fixed-columns');
                     originalTable.find('.dropdown').addClass('hidden');
@@ -220,6 +221,11 @@ class DisplayFunctions {
                     fixedColumnsTable.css('left', originalTable.parent().position().left);
 
                     fixedColumnsTable.find('th, td').not('.fixed-column').remove();
+                    fixedColumnsTable.find('th').each(function (i, elem) {
+                        jQuery(this).css('width', originalTable.find('th').eq(i).css('width'));
+                        fixedTableWidth += originalTable.find('th').eq(i).width();
+                    });
+                    fixedColumnsTable.css('width', fixedTableWidth + 'px');
 
                     fixedColumnsTable.find('tr').each(function (i, elem) {
                         jQuery(this).height(originalTable.find('tr:eq(' + i + ')').height());
