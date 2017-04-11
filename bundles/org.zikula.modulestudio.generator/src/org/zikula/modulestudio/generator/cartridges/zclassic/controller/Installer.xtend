@@ -37,7 +37,9 @@ class Installer {
     def private installerBaseClass(Application it) '''
         namespace «appNamespace»\Base;
 
-        use Doctrine\DBAL\Connection;
+        «IF !isSystemModule»
+            use Doctrine\DBAL\Connection;
+        «ENDIF»
         use RuntimeException;
         use Zikula\Core\AbstractExtensionInstaller;
         «IF !targets('1.5')»

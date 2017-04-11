@@ -113,7 +113,6 @@ class Listeners {
             use «appNamespace»\Listener\Base\AbstractInstallerListener;
         «ELSE»
             use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-            use Symfony\Component\HttpKernel\HttpKernelInterface;
             use Zikula\Core\CoreEvents;
         «ENDIF»
         use Zikula\Core\Event\GenericEvent;
@@ -144,8 +143,6 @@ class Listeners {
         use Symfony\Component\HttpKernel\Event\GetResponseForControllerResultEvent;
         use Symfony\Component\HttpKernel\Event\GetResponseForExceptionEvent;
         use Symfony\Component\HttpKernel\Event\PostResponseEvent;
-        use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
-        use Symfony\Component\HttpFoundation\Response;
 
         /**
          * Event handler «IF isBase»base«ELSE»implementation«ENDIF» class for Symfony kernel events.
@@ -182,7 +179,6 @@ class Listeners {
             use «appNamespace»\Listener\Base\AbstractMailerListener;
         «ELSE»
             use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-            use Symfony\Component\HttpKernel\HttpKernelInterface;
             use Zikula\MailerModule\MailerEvents;
         «ENDIF»
         use Zikula\Core\Event\GenericEvent;
@@ -207,7 +203,6 @@ class Listeners {
         «ENDIF»
         use Zikula\ThemeModule\Bridge\Event\TwigPostRenderEvent;
         use Zikula\ThemeModule\Bridge\Event\TwigPreRenderEvent;
-        use Zikula\Core\Event\GenericEvent;
 
         /**
          * Event handler «IF isBase»base«ELSE»implementation«ENDIF» class for theme-related events.
@@ -272,7 +267,6 @@ class Listeners {
                 use Psr\Log\LoggerInterface;
             «ENDIF»
             use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-            use Symfony\Component\HttpKernel\HttpKernelInterface;
             «IF hasStandardFieldEntities || hasUserFields»
                 use Zikula\Common\Translator\TranslatorInterface;
             «ENDIF»
