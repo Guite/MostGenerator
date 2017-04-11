@@ -331,12 +331,12 @@ class ControllerHelper {
          * @param Request $request    The current request
          * @param array   $args       List of arguments used as fallback if request does not contain a field
          * @param string  $objectType Name of treated entity type
-         * @param array   $idFields   List of identifier field names
          *
          * @return array List of fetched identifiers
          */
-        public function retrieveIdentifier(Request $request, array $args, $objectType = '', array $idFields)
+        public function retrieveIdentifier(Request $request, array $args, $objectType = '')
         {
+            $idFields = $this->entityFactory->getIdFields($objectType);
             $idValues = [];
             $routeParams = $request->get('_route_params', []);
             foreach ($idFields as $idField) {

@@ -362,9 +362,9 @@ class EditFunctions {
 
             // if no handler was found create a new one
             newItem = {
-                ot: objectType,
-                alias: '«/* TODO provide alias for relation window instance handler */»',
+                ot: objectType,«/*alias: '',*/»
                 prefix: containerID,
+                moduleName: '«appName»',
                 acInstance: null,
                 windowInstanceId: «vendorAndName»CreateRelationWindowInstance(jQuery('#' + containerID), true)
             };

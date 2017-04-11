@@ -241,8 +241,7 @@ class Relations {
         val linkEntity = if (targetEntity == target) source else target
         if (!insideLoader) '''
             var newItem = {
-                ot: '«linkEntity.name.formatForCode»',
-                alias: '«relationAliasName»',
+                ot: '«linkEntity.name.formatForCode»',«/*alias: '«relationAliasName»',*/»
                 prefix: '«uniqueNameForJs»SelectorDoNew',
                 moduleName: '«linkEntity.application.appName»',
                 acInstance: null,

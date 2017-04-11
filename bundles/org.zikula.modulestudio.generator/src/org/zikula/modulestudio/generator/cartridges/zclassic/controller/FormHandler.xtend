@@ -572,8 +572,8 @@ class FormHandler {
 
             $this->idFields = $this->entityFactory->getIdFields($this->objectType);
 
-            // retrieve identifier of the object we wish to view
-            $this->idValues = $this->controllerHelper->retrieveIdentifier($this->request, [], $this->objectType, $this->idFields);
+            // retrieve identifier of the object we wish to edit
+            $this->idValues = $this->controllerHelper->retrieveIdentifier($this->request, [], $this->objectType);
             $hasIdentifier = $this->controllerHelper->isValidIdentifier($this->idValues);
 
             $entity = null;

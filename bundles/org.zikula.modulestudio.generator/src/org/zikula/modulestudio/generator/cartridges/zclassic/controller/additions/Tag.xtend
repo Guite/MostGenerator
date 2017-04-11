@@ -74,7 +74,7 @@ class Tag {
             $repository = $this->container->get('«appService».entity_factory')->getRepository($objectType);
             $useJoins = false;
 
-            $entity = $repository->selectById($objectId, $useJoins);«/* TODO support composite identifiers properly at this point */»
+            $entity = $repository->selectById($objectId, $useJoins);
             if (null === $entity) {
                 return;
             }
@@ -108,7 +108,7 @@ class Tag {
         /**
          * Sets the object date.
          *
-         * @param string $date
+         * @param DateTime|string $date
          */
         public function setObjectDate($date)
         {

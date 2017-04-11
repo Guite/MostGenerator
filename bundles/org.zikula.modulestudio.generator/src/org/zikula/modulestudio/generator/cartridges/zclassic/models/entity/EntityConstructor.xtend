@@ -31,7 +31,26 @@ class EntityConstructor {
          *
          * Will not be called by Doctrine and can therefore be used
          * for own implementation purposes. It is also possible to add
-         * arbitrary arguments as with every other class method.«/* TODO provide @param elements for constructor arguments */»
+         * arbitrary arguments as with every other class method.
+         «IF isIndexByTarget || isAggregated || hasCompositeKeys»
+         *
+         «IF isIndexByTarget»
+         * @param string $«getIndexByRelation.getIndexByField.formatForCode» Indexing field
+         * @param string $«getRelationAliasName(getIndexByRelation, false).formatForCode» Indexing relationship
+         «ELSEIF isAggregated»
+            «FOR aggregator : getAggregators SEPARATOR ', '»
+                «FOR relation : aggregator.getAggregatingRelationships SEPARATOR ', '»
+                    @param string $«relation.getRelationAliasName(false)» Aggregating relationship
+                    @param string $«relation.source.getAggregateFields.head.getAggregateTargetField.name.formatForCode» Aggregate target field
+                «ENDFOR»
+            «ENDFOR»
+         «ENDIF»
+         «IF hasCompositeKeys»
+             «FOR pkField : getPrimaryKeyFields SEPARATOR ', '»
+             * @param integer $«pkField.name.formatForCode» Composite primary key
+             «ENDFOR»
+         «ENDIF»
+         «ENDIF»
          */
         public function __construct(«constructorArguments(true)»)
         {
@@ -47,7 +66,7 @@ class EntityConstructor {
 
     def private constructorArguments(Entity it, Boolean withTypeHints) '''
         «IF isIndexByTarget»
-            «val indexRelation = getIncomingJoinRelations.filter[isIndexed].head»
+            «val indexRelation = getIndexByRelation»
             «val sourceAlias = getRelationAliasName(indexRelation, false)»
             «val indexBy = indexRelation.getIndexByField»
             $«indexBy.formatForCode»,«IF withTypeHints» «indexRelation.source.entityClassName('', false)»«ENDIF» $«sourceAlias.formatForCode»«constructorArgumentsDefault(true)»
@@ -63,6 +82,10 @@ class EntityConstructor {
         «ENDIF»
     '''
 
+    def private getIndexByRelation(Entity it) {
+        getIncomingJoinRelations.filter[isIndexed].head
+    }
+
     def private constructorArgumentsAggregate(OneToManyRelationship it) '''
         «val targetField = source.getAggregateFields.head.getAggregateTargetField»
         $«getRelationAliasName(false)», $«targetField.name.formatForCode»
@@ -77,6 +100,38 @@ class EntityConstructor {
                 $this->«pkField.name.formatForCode» = $«pkField.name.formatForCode»;
             «ENDFOR»
         «ENDIF»
+        «defaultValueAssignments»
+        «IF isIndexByTarget»
+
+            «val indexRelation = incoming.filter(JoinRelationship).filter[isIndexed].head»
+            «val sourceAlias = getRelationAliasName(indexRelation, false)»
+            «val targetAlias = getRelationAliasName(indexRelation, true)»
+            «val indexBy = indexRelation.getIndexByField»
+            $this->«indexBy.formatForCode» = $«indexBy.formatForCode»;
+            $this->«sourceAlias.formatForCode» = $«sourceAlias.formatForCode»;
+            $«sourceAlias.formatForCode»->add«targetAlias.formatForCodeCapital»($this);
+        «ELSEIF isAggregated»
+
+            «FOR aggregator : getAggregators»
+                «FOR relation : aggregator.getAggregatingRelationships»
+                    «relation.constructorAssignmentAggregate»
+                «ENDFOR»
+            «ENDFOR»
+        «ELSE»
+        «ENDIF»
+        «IF !application.targets('1.5')»
+            $this->initWorkflow();
+        «ENDIF»
+        «new Association().initCollections(it)»
+    '''
+
+    def private constructorAssignmentAggregate(OneToManyRelationship it) '''
+        «val targetField = source.getAggregateFields.head.getAggregateTargetField»
+        $this->«getRelationAliasName(false)» = $«getRelationAliasName(false)»;
+        $this->«targetField.name.formatForCode» = $«targetField.name.formatForCode»;
+    '''
+
+    def private defaultValueAssignments(Entity it) '''
         «val mandatoryFields = getDerivedFields.filter[mandatory && !primaryKey]»
         «IF !getListFieldsEntity.filter[name != 'workflowState' && (null === defaultValue || defaultValue.length == 0)].empty
         	|| !mandatoryFields.filter(UserField).filter[null === defaultValue || defaultValue == '' || defaultValue == '0'].empty»
@@ -115,34 +170,7 @@ class EntityConstructor {
                 }
                 $this->«listField.name.formatForCode» = implode('###', $items);
             «ENDFOR»
-
         «ENDIF»
-        «IF isIndexByTarget»
-            «val indexRelation = incoming.filter(JoinRelationship).filter[isIndexed].head»
-            «val sourceAlias = getRelationAliasName(indexRelation, false)»
-            «val targetAlias = getRelationAliasName(indexRelation, true)»
-            «val indexBy = indexRelation.getIndexByField»
-            $this->«indexBy.formatForCode» = $«indexBy.formatForCode»;
-            $this->«sourceAlias.formatForCode» = $«sourceAlias.formatForCode»;
-            $«sourceAlias.formatForCode»->add«targetAlias.formatForCodeCapital»($this);
-        «ELSEIF isAggregated»
-            «FOR aggregator : getAggregators»
-                «FOR relation : aggregator.getAggregatingRelationships»
-                    «relation.constructorAssignmentAggregate»
-                «ENDFOR»
-            «ENDFOR»
-        «ELSE»
-        «ENDIF»
-        «IF !application.targets('1.5')»
-            $this->initWorkflow();
-        «ENDIF»
-        «new Association().initCollections(it)»
-    '''
-
-    def private constructorAssignmentAggregate(OneToManyRelationship it) '''
-        «val targetField = source.getAggregateFields.head.getAggregateTargetField»
-        $this->«getRelationAliasName(false)» = $«getRelationAliasName(false)»;
-        $this->«targetField.name.formatForCode» = $«targetField.name.formatForCode»;
     '''
 
     def private defaultAssignment(AbstractDateField it) '''\DateTime::createFromFormat('«defaultFormat»', «IF null === defaultValue || defaultValue == '' || defaultValue.length == 0»date('«defaultFormat»')«ELSE»'«defaultValue»'«ENDIF»)'''

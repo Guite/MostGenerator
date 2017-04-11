@@ -368,8 +368,7 @@ class AjaxController {
 
                     // check for preview image
                     if (!empty($previewFieldName) && !empty($item[$previewFieldName])) {
-                        $fullObjectId = $objectType . '-' . $resultItem['id'];
-                        $thumbImagePath = $imagineManager->getThumb($item[$previewFieldName], $fullObjectId);
+                        $thumbImagePath = $imagineCacheManager->getThumb($item[$previewFieldName]->getPathname(), 'zkroot', $thumbRuntimeOptions);
                         $resultItem['image'] = '<img src="' . $thumbImagePath . '" width="50" height="50" alt="' . $itemTitleStripped . '" />';
                     }
                 «ENDIF»
@@ -385,9 +384,9 @@ class AjaxController {
         $descriptionFieldName = $repository->getDescriptionFieldName();
         $previewFieldName = $repository->getPreviewFieldName();
         «IF hasImageFields»
-            //$imageHelper = $this->get('«appService».image_helper');«/* TODO use custom image helper instead of pure imagine plugin */»
-            //$imagineManager = $imageHelper->getManager($objectType, $previewFieldName, 'controllerAction', $contextArgs);
-            $imagineManager = $this->get('systemplugin.imagine.manager');
+            $imagineCacheManager = $this->get('liip_imagine.cache.manager');
+            $imageHelper = $this->get('«appService».image_helper');
+            $thumbRuntimeOptions = $imageHelper->getRuntimeOptions($objectType, $previewFieldName, 'controllerAction', $contextArgs);
         «ENDIF»
     '''
 

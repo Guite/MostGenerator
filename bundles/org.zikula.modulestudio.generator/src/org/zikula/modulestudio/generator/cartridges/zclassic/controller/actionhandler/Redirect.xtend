@@ -130,11 +130,7 @@ class Redirect {
             «ENDIF»
             «IF hasViewAction»
                 // redirect to the list of «nameMultiple.formatForCode»
-                $viewArgs = [];
-                «IF tree != EntityTreeType.NONE»
-                    $viewArgs['tpl'] = 'tree';
-                «ENDIF»
-                $url = $this->router->generate($routePrefix . 'view', $viewArgs);
+                $url = $this->router->generate($routePrefix . 'view'«IF tree != EntityTreeType.NONE», ['tpl' => 'tree']«ENDIF»);
             «ELSEIF hasIndexAction»
                 // redirect to the index page
                 $url = $this->router->generate($routePrefix . 'index');
@@ -145,8 +141,7 @@ class Redirect {
 
                 if ($objectIsPersisted) {
                     // redirect to the detail page of treated «name.formatForCode»
-                    $displayArgs = [«routeParams('this->idValues', false)»];
-                    $url = $this->router->generate($routePrefix . 'display', $displayArgs);
+                    $url = $this->router->generate($routePrefix . 'display', [«routeParams('this->idValues', false)»]);
                 }
             «ENDIF»
 

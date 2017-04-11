@@ -72,7 +72,7 @@ class ExternalController {
          «IF !isBase»
          *
          * @Route("/display/{objectType}/{id}/{source}/{displayMode}",
-         *        requirements = {"id" = "\d+", "source" = "contentType|scribite", "displayMode" = "link|embed"},
+         *        requirements = {«IF getAllEntities.filter[hasCompositeKeys].empty»"id" = "\d+", «ENDIF»"source" = "contentType|scribite", "displayMode" = "link|embed"},
          *        defaults = {"source" = "contentType", "contentType" = "embed"},
          *        methods = {"GET"}
          * )
@@ -103,9 +103,10 @@ class ExternalController {
             return '';
         }
 
-        $repository = $this->get('«appService».entity_factory')->getRepository($objectType);
+        $entityFactory = $this->get('«appService».entity_factory');
+        $repository = $entityFactory->getRepository($objectType);
         $repository->setRequest($this->get('request_stack')->getCurrentRequest());
-        $idValues = ['id' => $id];«/* TODO consider composite keys properly */»
+        $idValues = $controllerHelper->retrieveIdentifier($request, [], $objectType);
 
         $hasIdentifier = $controllerHelper->isValidIdentifier($idValues);
         if (!$hasIdentifier) {

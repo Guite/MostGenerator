@@ -318,13 +318,7 @@ class Repository {
          */
         public function getTitleFieldName()
         {
-            «IF !stringFields.empty»
-                $fieldName = '«stringFields.head.name.formatForCode»';
-            «ELSE»
-                $fieldName = '';
-            «ENDIF»
-
-            return $fieldName;
+            return '«IF !stringFields.empty»«stringFields.head.name.formatForCode»«ENDIF»';
         }
     '''
 
@@ -338,18 +332,16 @@ class Repository {
         {
             «val textFields = fields.filter(TextField)»
             «IF !textFields.empty»
-                $fieldName = '«textFields.head.name.formatForCode»';
+                return '«textFields.head.name.formatForCode»';
             «ELSEIF !stringFields.empty»
                 «IF stringFields.size > 1»
-                    $fieldName = '«stringFields.get(1).name.formatForCode»';
+                    return '«stringFields.get(1).name.formatForCode»';
                 «ELSE»
-                    $fieldName = '«stringFields.head.name.formatForCode»';
+                    return '«stringFields.head.name.formatForCode»';
                 «ENDIF»
             «ELSE»
-                $fieldName = '';
+                return '';
             «ENDIF»
-
-            return $fieldName;
         }
     '''
 
@@ -361,9 +353,7 @@ class Repository {
          */
         public function getPreviewFieldName()
         {
-            $fieldName = '«IF hasImageFieldsEntity»«getImageFieldsEntity.head.name.formatForCode»«ENDIF»';
-
-            return $fieldName;
+            return '«IF hasImageFieldsEntity»«getImageFieldsEntity.head.name.formatForCode»«ENDIF»';
         }
     '''
 
@@ -788,39 +778,7 @@ class Repository {
         public function selectWherePaginated($where = '', $orderBy = '', $currentPage = 1, $resultsPerPage = 25, $useJoins = true, $slimMode = false)
         {
             $qb = $this->getListQueryBuilder($where, $orderBy, $useJoins, $slimMode);
-
-            $page = $currentPage;«/* TODO fix buggy session storage of current page
-
-            // check if we have any filters set
-            $parameters = $this->getViewQuickNavParameters('', []);
-            $hasFilters = false;
-            foreach ($parameters as $k => $v) {
-                if ((!is_numeric($v) && $v != '') || (is_numeric($v) && $v > 0)) {
-                    $hasFilters = true;
-                    break;
-                }
-            }
-
-            «val sessionVar = app.appName + nameMultiple.formatForCodeCapital + 'CurrentPage'»
-            if (!$hasFilters) {
-                $session = null !== $this->getRequest() ? $this->getRequest()->getSession() : null;
-                if ($page > 1 || isset($_GET['pos'])) {
-                    // store current page in session
-                    if (null !== $session) {
-                        $session->set('«sessionVar»', $page);
-                    }
-                } else {
-                    // restore current page from session
-                    if (null !== $session) {
-                        $page = $session->get('«sessionVar»', 1);
-                        if (null !== $this->getRequest()) {
-                            $this->getRequest()->query->set('pos', $page);
-                        }
-                    }
-                }
-            }
-*/»
-            $query = $this->getSelectWherePaginatedQuery($qb, $page, $resultsPerPage);
+            $query = $this->getSelectWherePaginatedQuery($qb, $currentPage, $resultsPerPage);
 
             return $this->retrieveCollectionResult($query, $orderBy, true);
         }
@@ -1076,14 +1034,12 @@ class Repository {
          * Returns query builder instance for a count query.
          *
          * @param string  $where    The where clause to use when retrieving the object count (optional) (default='')
-         * @param boolean $useJoins Whether to include joining related objects (optional) (default=true)
+         * @param boolean $useJoins Whether to include joining related objects (optional) (default=false)
          *
          * @return QueryBuilder Created query builder instance
          */
-        protected function getCountQuery($where = '', $useJoins = true)
+        protected function getCountQuery($where = '', $useJoins = false)
         {
-            $useJoins = false; // joins usage needs to be fixed; please remove the first line and test«/* TODO fix usage of joins in getCountQuery */»
-
             $selection = 'COUNT(tbl.«getFirstPrimaryKey.name.formatForCode») AS num«nameMultiple.formatForCodeCapital»';
             if (true === $useJoins) {
                 $selection .= $this->addJoinsToSelection();
@@ -1106,12 +1062,12 @@ class Repository {
          * Selects entity count with a given where clause.
          *
          * @param string  $where      The where clause to use when retrieving the object count (optional) (default='')
-         * @param boolean $useJoins   Whether to include joining related objects (optional) (default=true)
+         * @param boolean $useJoins   Whether to include joining related objects (optional) (default=false)
          * @param array   $parameters List of determined filter options
          *
          * @return integer amount of affected records
          */
-        public function selectCount($where = '', $useJoins = true, $parameters = [])
+        public function selectCount($where = '', $useJoins = false, $parameters = [])
         {
             $qb = $this->getCountQuery($where, $useJoins);
 
