@@ -217,7 +217,7 @@ class DisplayFunctions {
                     fixedColumnsTable = originalTable.clone().insertBefore(originalTable).addClass('fixed-columns');
                     originalTable.find('.dropdown').addClass('hidden');
                     fixedColumnsTable.find('.dropdown').removeClass('hidden');
-                    fixedColumnsTable.css('left', originalTable.parent().offset().left);
+                    fixedColumnsTable.css('left', originalTable.parent().position().left);
 
                     fixedColumnsTable.find('th, td').not('.fixed-column').remove();
 
