@@ -47,11 +47,7 @@ class SearchHelper {
         use Zikula\Common\Translator\TranslatorInterface;
         use Zikula\Common\Translator\TranslatorTrait;
         use Zikula\Core\RouteUrl;
-        «IF targets('1.5')»
-            use Zikula\PermissionsModule\Api\ApiInterface\PermissionApiInterface;
-        «ELSE»
-            use Zikula\PermissionsModule\Api\PermissionApi;
-        «ENDIF»
+        use Zikula\PermissionsModule\Api\«IF targets('1.5')»ApiInterface\PermissionApiInterface«ELSE»PermissionApi«ENDIF»;
         use Zikula\SearchModule\Entity\SearchResultEntity;
         use Zikula\SearchModule\SearchableInterface;
         use «appNamespace»\Entity\Factory\«name.formatForCodeCapital»Factory;

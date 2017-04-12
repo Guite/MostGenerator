@@ -34,12 +34,12 @@ class CategoryHelper {
         «IF !targets('1.5')»
             use Zikula\CategoriesModule\Api\CategoryRegistryApi;
         «ENDIF»
-        use Zikula\CategoriesModule\Api\CategoryPermissionApi;
+        use Zikula\CategoriesModule\Api\«IF targets('1.5')»ApiInterface\CategoryPermissionApiInterface«ELSE»CategoryPermissionApi«ENDIF»;
         «IF targets('1.5')»
             use Zikula\CategoriesModule\Entity\RepositoryInterface\CategoryRegistryRepositoryInterface;
         «ENDIF»
         use Zikula\Common\Translator\TranslatorInterface;
-        use Zikula\UsersModule\Api\CurrentUserApi;
+        use Zikula\UsersModule\Api\«IF targets('1.5')»ApiInterface\CurrentUserApiInterface«ELSE»CurrentUserApi«ENDIF»;
 
         /**
          * Category helper base class.
@@ -67,7 +67,7 @@ class CategoryHelper {
             protected $logger;
 
             /**
-             * @var CurrentUserApi
+             * @var CurrentUserApi«IF targets('1.5')»Interface«ENDIF»
              */
             protected $currentUserApi;
 
@@ -84,7 +84,7 @@ class CategoryHelper {
             «ENDIF»
 
             /**
-             * @var CategoryPermissionApi
+             * @var CategoryPermissionApi«IF targets('1.5')»Interface«ENDIF»
              */
             protected $categoryPermissionApi;
 
@@ -95,26 +95,26 @@ class CategoryHelper {
              * @param SessionInterface      $session               Session service instance
              * @param RequestStack          $requestStack          RequestStack service instance
              * @param LoggerInterface       $logger                Logger service instance
-             * @param CurrentUserApi        $currentUserApi        CurrentUserApi service instance
+             * @param CurrentUserApi«IF targets('1.5')»Interface«ELSE»       «ENDIF» $currentUserApi        CurrentUserApi service instance
              «IF targets('1.5')»
              * @param CategoryRegistryRepositoryInterface $categoryRegistryRepository CategoryRegistryRepository service instance
              «ELSE»
              * @param CategoryRegistryApi   $categoryRegistryApi   CategoryRegistryApi service instance
              «ENDIF»
-             * @param CategoryPermissionApi $categoryPermissionApi CategoryPermissionApi service instance
+             * @param CategoryPermissionApi«IF targets('1.5')»Interface«ENDIF» $categoryPermissionApi CategoryPermissionApi service instance
              */
             public function __construct(
                 TranslatorInterface $translator,
                 SessionInterface $session,
                 RequestStack $requestStack,
                 LoggerInterface $logger,
-                CurrentUserApi $currentUserApi,
+                CurrentUserApi«IF targets('1.5')»Interface«ENDIF» $currentUserApi,
                 «IF targets('1.5')»
                     CategoryRegistryRepositoryInterface $categoryRegistryRepository,
                 «ELSE»
                     CategoryRegistryApi $categoryRegistryApi,
                 «ENDIF»
-                CategoryPermissionApi $categoryPermissionApi
+                CategoryPermissionApi«IF targets('1.5')»Interface«ENDIF» $categoryPermissionApi
             ) {
                 $this->translator = $translator;
                 $this->session = $session;
@@ -436,6 +436,9 @@ class CategoryHelper {
          */
         public function hasPermission($entity)
         {
+            «IF targets('1.5')»
+            return $this->categoryPermissionApi->hasCategoryAccess($entity['categories'], ACCESS_OVERVIEW);
+            «ELSE»
             $objectType = $entity->get_objectType();
             $categories = $entity['categories'];
 
@@ -457,6 +460,7 @@ class CategoryHelper {
             }
 
             return $this->categoryPermissionApi->hasCategoryAccess($categoryInfo, ACCESS_OVERVIEW);
+            «ENDIF»
         }
     '''
 

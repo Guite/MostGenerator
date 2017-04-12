@@ -75,7 +75,7 @@ class Plugins {
         use Twig_Extension;
         use Zikula\Common\Translator\TranslatorInterface;
         use Zikula\Common\Translator\TranslatorTrait;
-        use Zikula\ExtensionsModule\Api\VariableApi;
+        use Zikula\ExtensionsModule\Api\«IF targets('1.5')»ApiInterface\VariableApiInterface«ELSE»VariableApi«ENDIF»;
         «IF needsUserAvatarSupport»
             use Zikula\UsersModule\Entity\RepositoryInterface\UserRepositoryInterface;
         «ENDIF»
@@ -115,7 +115,7 @@ class Plugins {
 
         «ENDIF»
         /**
-         * @var VariableApi
+         * @var VariableApi«IF targets('1.5')»Interface«ENDIF»
          */
         protected $variableApi;
 
@@ -155,7 +155,7 @@ class Plugins {
          «IF generateIcsTemplates && hasEntitiesWithIcsTemplates»
             * @param RequestStack        $requestStack   RequestStack service instance
          «ENDIF»
-         * @param VariableApi         $variableApi    VariableApi service instance
+         * @param VariableApi«IF targets('1.5')»Interface«ELSE»        «ENDIF» $variableApi    VariableApi service instance
          «IF needsUserAvatarSupport»
             * @param UserRepositoryInterface $userRepository UserRepository service instance
          «ENDIF»
@@ -171,7 +171,7 @@ class Plugins {
             TranslatorInterface $translator«IF hasTrees»,
             RouterInterface $router«ENDIF»«IF generateIcsTemplates && hasEntitiesWithIcsTemplates»,
             RequestStack $requestStack«ENDIF»,
-            VariableApi $variableApi,
+            VariableApi«IF targets('1.5')»Interface«ENDIF» $variableApi,
             «IF needsUserAvatarSupport»
                 UserRepositoryInterface $userRepository,
             «ENDIF»

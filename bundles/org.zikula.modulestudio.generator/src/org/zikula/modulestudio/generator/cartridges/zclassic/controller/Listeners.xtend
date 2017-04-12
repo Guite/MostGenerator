@@ -274,7 +274,7 @@ class Listeners {
         use Zikula\Core\Event\GenericEvent;
         «IF isBase»
             «IF hasStandardFieldEntities || hasUserFields»
-                use Zikula\UsersModule\Api\CurrentUserApi;
+                use Zikula\UsersModule\Api\«IF targets('1.5')»ApiInterface\CurrentUserApiInterface«ELSE»CurrentUserApi«ENDIF»;
             «ENDIF»
             use Zikula\UsersModule\UserEvents;
             «IF hasStandardFieldEntities || hasUserFields»

@@ -43,14 +43,10 @@ class WorkflowHelper {
         use Zikula\Common\Translator\TranslatorInterface;
         use Zikula\Core\Doctrine\EntityAccess;
         «IF targets('1.5') || needsApproval»
-            «IF targets('1.5')»
-                use Zikula\PermissionsModule\Api\ApiInterface\PermissionApiInterface;
-            «ELSE»
-                use Zikula\PermissionsModule\Api\PermissionApi;
-            «ENDIF»
+            use Zikula\PermissionsModule\Api\«IF targets('1.5')»ApiInterface\PermissionApiInterface«ELSE»PermissionApi«ENDIF»;
         «ENDIF»
         «IF targets('1.5')»
-            use Zikula\UsersModule\Api\CurrentUserApi;
+            use Zikula\UsersModule\Api\ApiInterface\CurrentUserApiInterface;
         «ENDIF»
         «IF !targets('1.5')»
             use Zikula_Workflow_Util;
@@ -99,7 +95,7 @@ class WorkflowHelper {
                 «IF targets('1.5')»
 
                     /**
-                     * @var CurrentUserApi
+                     * @var CurrentUserApiInterface
                      */
                     private $currentUserApi;
                 «ENDIF»
@@ -126,7 +122,7 @@ class WorkflowHelper {
              * @param LoggerInterface     $logger            Logger service instance
              * @param PermissionApi«IF targets('1.5')»Interface«ENDIF»       $permissionApi     PermissionApi service instance
              «IF targets('1.5')»
-             * @param CurrentUserApi      $currentUserApi    CurrentUserApi service instance
+             * @param CurrentUserApiInterface $currentUserApi    CurrentUserApi service instance
              «ENDIF»
              * @param «name.formatForCodeCapital»Factory $entityFactory «name.formatForCodeCapital»Factory service instance
              «ENDIF»
@@ -143,7 +139,7 @@ class WorkflowHelper {
                     LoggerInterface $logger,
                     PermissionApi«IF targets('1.5')»Interface«ENDIF» $permissionApi,
                     «IF targets('1.5')»
-                        CurrentUserApi $currentUserApi,
+                        CurrentUserApiInterface $currentUserApi,
                     «ENDIF»
                     «name.formatForCodeCapital»Factory $entityFactory,
                 «ENDIF»

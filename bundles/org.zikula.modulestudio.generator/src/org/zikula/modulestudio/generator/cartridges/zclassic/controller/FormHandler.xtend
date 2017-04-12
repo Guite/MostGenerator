@@ -152,18 +152,14 @@ class FormHandler {
             use Zikula\Core\RouteUrl;
         «ENDIF»
         «IF hasTranslatable || needsApproval»
-            use Zikula\ExtensionsModule\Api\VariableApi;
+            use Zikula\ExtensionsModule\Api\«IF targets('1.5')»ApiInterface\VariableApiInterface«ELSE»VariableApi«ENDIF»;
         «ENDIF»
         «IF needsApproval»
             use Zikula\GroupsModule\Entity\Repository\GroupApplicationRepository;
         «ENDIF»
-        use Zikula\PageLockModule\Api\LockingApi;
-        «IF targets('1.5')»
-            use Zikula\PermissionsModule\Api\ApiInterface\PermissionApiInterface;
-        «ELSE»
-            use Zikula\PermissionsModule\Api\PermissionApi;
-        «ENDIF»
-        use Zikula\UsersModule\Api\CurrentUserApi;
+        use Zikula\PageLockModule\Api\«IF targets('1.5')»ApiInterface\LockingApiInterface«ELSE»LockingApi«ENDIF»;
+        use Zikula\PermissionsModule\Api\«IF targets('1.5')»ApiInterface\PermissionApiInterface«ELSE»PermissionApi«ENDIF»;
+        use Zikula\UsersModule\Api\«IF targets('1.5')»ApiInterface\CurrentUserApiInterface«ELSE»CurrentUserApi«ENDIF»;
         use «appNamespace»\Entity\Factory\«name.formatForCodeCapital»Factory;
         «IF needsFeatureActivationHelper»
             use «appNamespace»\Helper\FeatureActivationHelper;
@@ -338,13 +334,13 @@ class FormHandler {
 
             «IF hasTranslatable || needsApproval»
                 /**
-                 * @var VariableApi
+                 * @var VariableApi«IF targets('1.5')»Interface«ENDIF»
                  */
                 protected $variableApi;
 
             «ENDIF»
             /**
-             * @var CurrentUserApi
+             * @var CurrentUserApi«IF targets('1.5')»Interface«ENDIF»
              */
             protected $currentUserApi;
 
@@ -399,7 +395,7 @@ class FormHandler {
             /**
              * Reference to optional locking api.
              *
-             * @var LockingApi
+             * @var LockingApi«IF targets('1.5')»Interface«ENDIF»
              */
             protected $lockingApi = null;
 
@@ -428,9 +424,9 @@ class FormHandler {
              * @param LoggerInterface           $logger           Logger service instance
              * @param PermissionApi«IF targets('1.5')»Interface«ENDIF»             $permissionApi    PermissionApi service instance
              «IF hasTranslatable || needsApproval»
-             * @param VariableApi               $variableApi      VariableApi service instance
+             * @param VariableApi«IF targets('1.5')»Interface«ELSE»         «ENDIF»      $variableApi      VariableApi service instance
              «ENDIF»
-             * @param CurrentUserApi            $currentUserApi   CurrentUserApi service instance
+             * @param CurrentUserApi«IF targets('1.5')»Interface«ELSE»         «ENDIF»   $currentUserApi   CurrentUserApi service instance
              «IF needsApproval»
              * @param GroupApplicationRepository $groupApplicationRepository GroupApplicationRepository service instance.
              «ENDIF»
@@ -457,9 +453,9 @@ class FormHandler {
                 LoggerInterface $logger,
                 PermissionApi«IF targets('1.5')»Interface«ENDIF» $permissionApi,
                 «IF hasTranslatable || needsApproval»
-                    VariableApi $variableApi,
+                    VariableApi«IF targets('1.5')»Interface«ENDIF» $variableApi,
                 «ENDIF»
-                CurrentUserApi $currentUserApi,
+                CurrentUserApi«IF targets('1.5')»Interface«ENDIF» $currentUserApi,
                 «IF needsApproval»
                     GroupApplicationRepository $groupApplicationRepository,
                 «ENDIF»
@@ -519,9 +515,9 @@ class FormHandler {
             /**
              * Sets optional locking api reference.
              *
-             * @param LockingApi $lockingApi
+             * @param LockingApi«IF targets('1.5')»Interface«ENDIF» $lockingApi
              */
-            public function setLockingApi(LockingApi $lockingApi)
+            public function setLockingApi(LockingApi«IF targets('1.5')»Interface«ENDIF» $lockingApi)
             {
                 $this->lockingApi = $lockingApi;
             }

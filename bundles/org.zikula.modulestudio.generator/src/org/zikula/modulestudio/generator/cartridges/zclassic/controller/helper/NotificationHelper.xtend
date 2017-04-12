@@ -41,9 +41,9 @@ class NotificationHelper {
         use Zikula\Common\Translator\TranslatorInterface;
         use Zikula\Common\Translator\TranslatorTrait;
         use Zikula\Core\Doctrine\EntityAccess;
-        use Zikula\ExtensionsModule\Api\VariableApi;
+        use Zikula\ExtensionsModule\Api\«IF targets('1.5')»ApiInterface\VariableApiInterface«ELSE»VariableApi«ENDIF»;
         use Zikula\GroupsModule\Entity\RepositoryInterface\GroupRepositoryInterface;
-        use Zikula\MailerModule\Api\MailerApi;
+        use Zikula\MailerModule\Api\«IF targets('1.5')»ApiInterface\MailerApiInterface«ELSE»MailerApi«ENDIF»;
         use Zikula\UsersModule\Entity\UserEntity;
         use «appNamespace»\Helper\WorkflowHelper;
 
@@ -80,7 +80,7 @@ class NotificationHelper {
         protected $request;
 
         /**
-         * @var VariableApi
+         * @var VariableApi«IF targets('1.5')»Interface«ENDIF»
          */
         protected $variableApi;
 
@@ -90,7 +90,7 @@ class NotificationHelper {
         protected $templating;
 
         /**
-         * @var MailerApi
+         * @var MailerApi«IF targets('1.5')»Interface«ENDIF»
          */
         protected $mailer;
 
@@ -147,9 +147,9 @@ class NotificationHelper {
          * @param SessionInterface          $session         Session service instance
          * @param Routerinterface           $router          Router service instance
          * @param RequestStack              $requestStack    RequestStack service instance
-         * @param VariableApi               $variableApi     VariableApi service instance
+         * @param VariableApi«IF targets('1.5')»Interface«ELSE»         «ENDIF»      $variableApi     VariableApi service instance
          * @param Twig_Environment          $twig            Twig service instance
-         * @param MailerApi                 $mailerApi       MailerApi service instance
+         * @param MailerApi«IF targets('1.5')»Interface«ELSE»         «ENDIF»        $mailerApi       MailerApi service instance
          * @param GroupRepositoryInterface  $groupRepository GroupRepository service instance
          * @param WorkflowHelper            $workflowHelper  WorkflowHelper service instance
          */
@@ -159,9 +159,9 @@ class NotificationHelper {
             SessionInterface $session,
             RouterInterface $router,
             RequestStack $requestStack,
-            VariableApi $variableApi,
+            VariableApi«IF targets('1.5')»Interface«ENDIF» $variableApi,
             Twig_Environment $twig,
-            MailerApi $mailerApi,
+            MailerApi«IF targets('1.5')»Interface«ENDIF» $mailerApi,
             GroupRepositoryInterface $groupRepository,
             WorkflowHelper $workflowHelper
         ) {

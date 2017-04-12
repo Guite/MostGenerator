@@ -35,8 +35,8 @@ class TranslatableHelper {
         use Symfony\Component\HttpFoundation\RequestStack;
         use Zikula\Common\Translator\TranslatorInterface;
         use Zikula\Core\Doctrine\EntityAccess;
-        use Zikula\ExtensionsModule\Api\VariableApi;
-        use Zikula\SettingsModule\Api\LocaleApi;
+        use Zikula\ExtensionsModule\Api\«IF targets('1.5')»ApiInterface\VariableApiInterface«ELSE»VariableApi«ENDIF»;
+        use Zikula\SettingsModule\Api\«IF targets('1.5')»ApiInterface\LocaleApiInterface«ELSE»LocaleApi«ENDIF»;
         use «appNamespace»\Entity\Factory\«name.formatForCodeCapital»Factory;
 
         /**
@@ -55,12 +55,12 @@ class TranslatableHelper {
             protected $request;
 
             /**
-             * @var VariableApi
+             * @var VariableApi«IF targets('1.5')»Interface«ENDIF»
              */
             protected $variableApi;
 
             /**
-             * @var LocaleApi
+             * @var LocaleApi«IF targets('1.5')»Interface«ENDIF»
              */
             protected $localeApi;
 
@@ -74,12 +74,17 @@ class TranslatableHelper {
              *
              * @param TranslatorInterface $translator   Translator service instance
              * @param RequestStack        $requestStack RequestStack service instance
-             * @param VariableApi         $variableApi  VariableApi service instance
-             * @param LocaleApi           $localeApi    LocaleApi service instance
+             * @param VariableApi«IF targets('1.5')»Interface«ELSE»        «ENDIF» $variableApi  VariableApi service instance
+             * @param LocaleApi«IF targets('1.5')»Interface«ELSE»         «ENDIF»  $localeApi    LocaleApi service instance
              * @param «name.formatForCodeCapital»Factory $entityFactory «name.formatForCodeCapital»Factory service instance
              */
-            public function __construct(TranslatorInterface $translator, RequestStack $requestStack, VariableApi $variableApi, LocaleApi $localeApi, «name.formatForCodeCapital»Factory $entityFactory)
-            {
+            public function __construct(
+                TranslatorInterface $translator,
+                RequestStack $requestStack,
+                VariableApi«IF targets('1.5')»Interface«ENDIF» $variableApi,
+                LocaleApi«IF targets('1.5')»Interface«ENDIF» $localeApi,
+                «name.formatForCodeCapital»Factory $entityFactory
+            ) {
                 $this->translator = $translator;
                 $this->request = $requestStack->getCurrentRequest();
                 $this->variableApi = $variableApi;

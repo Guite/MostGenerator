@@ -31,7 +31,7 @@ class User {
             protected $entityFactory;
 
             /**
-             * @var CurrentUserApi
+             * @var CurrentUserApi«IF targets('1.5')»Interface«ENDIF»
              */
             protected $currentUserApi;
 
@@ -45,13 +45,17 @@ class User {
              *
              * @param TranslatorInterface $translator     Translator service instance
              * @param «name.formatForCodeCapital»Factory $entityFactory «name.formatForCodeCapital»Factory service instance
-             * @param CurrentUserApi      $currentUserApi CurrentUserApi service instance
+             * @param CurrentUserApi«IF targets('1.5')»Interface«ELSE»     «ENDIF» $currentUserApi CurrentUserApi service instance
              * @param LoggerInterface     $logger         Logger service instance
              *
              * @return void
              */
-            public function __construct(TranslatorInterface $translator, «name.formatForCodeCapital»Factory $entityFactory, CurrentUserApi $currentUserApi, LoggerInterface $logger)
-            {
+            public function __construct(
+                TranslatorInterface $translator,
+                «name.formatForCodeCapital»Factory $entityFactory,
+                CurrentUserApi«IF targets('1.5')»Interface«ENDIF» $currentUserApi,
+                LoggerInterface $logger
+            ) {
                 $this->translator = $translator;
                 $this->entityFactory = $entityFactory;
                 $this->currentUserApi = $currentUserApi;

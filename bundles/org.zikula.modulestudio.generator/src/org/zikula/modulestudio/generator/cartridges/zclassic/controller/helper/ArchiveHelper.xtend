@@ -31,11 +31,7 @@ class ArchiveHelper {
         use Psr\Log\LoggerInterface;
         use Symfony\Component\HttpFoundation\Session\SessionInterface;
         use Zikula\Common\Translator\TranslatorInterface;
-        «IF targets('1.5')»
-            use Zikula\PermissionsModule\Api\ApiInterface\PermissionApiInterface;
-        «ELSE»
-            use Zikula\PermissionsModule\Api\PermissionApi;
-        «ENDIF»
+        use Zikula\PermissionsModule\Api\«IF targets('1.5')»ApiInterface\PermissionApiInterface«ELSE»PermissionApi«ENDIF»;
         use «appNamespace»\Entity\Factory\«name.formatForCodeCapital»Factory;
         «IF hasHookSubscribers»
             use «appNamespace»\Helper\HookHelper;

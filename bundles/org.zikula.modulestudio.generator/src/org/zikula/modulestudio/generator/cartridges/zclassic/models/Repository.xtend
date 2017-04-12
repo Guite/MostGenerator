@@ -277,13 +277,9 @@ class Repository {
         «IF hasArchive && null !== getEndDateField»
             use Symfony\Component\HttpFoundation\Session\SessionInterface;
             use Zikula\Core\RouteUrl;
-            «IF app.targets('1.5')»
-                use Zikula\PermissionsModule\Api\ApiInterface\PermissionApiInterface;
-            «ELSE»
-                use Zikula\PermissionsModule\Api\PermissionApi;
-            «ENDIF»
+            use Zikula\PermissionsModule\Api\«IF app.targets('1.5')»ApiInterface\PermissionApiInterface«ELSE»PermissionApi«ENDIF»;
         «ENDIF»
-        use Zikula\UsersModule\Api\CurrentUserApi;
+        use Zikula\UsersModule\Api\«IF app.targets('1.5')»ApiInterface\CurrentUserApiInterface«ELSE»CurrentUserApi«ENDIF»;
         use «app.appNamespace»\Entity\«name.formatForCodeCapital»Entity;
         «IF hasTranslatableFields»
             use «app.appNamespace»\Helper\FeatureActivationHelper;

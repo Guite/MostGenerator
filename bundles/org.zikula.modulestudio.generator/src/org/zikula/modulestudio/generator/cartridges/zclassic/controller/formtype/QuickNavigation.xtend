@@ -91,7 +91,7 @@ class QuickNavigation {
         use Zikula\Common\Translator\TranslatorInterface;
         use Zikula\Common\Translator\TranslatorTrait;
         «IF hasLocaleFieldsEntity»
-            use Zikula\SettingsModule\Api\LocaleApi;
+            use Zikula\SettingsModule\Api\«IF app.targets('1.5')»ApiInterface\LocaleApiInterface«ELSE»LocaleApi«ENDIF»;
         «ENDIF»
         «IF app.targets('1.5') && !fields.filter(ListField).filter[multiple].empty»
             use «app.appNamespace»\Form\Type\Field\MultiListType;
@@ -126,7 +126,7 @@ class QuickNavigation {
             «IF hasLocaleFieldsEntity»
 
                 /**
-                 * @var LocaleApi
+                 * @var LocaleApi«IF app.targets('1.5')»Interface«ENDIF»
                  */
                 protected $localeApi;
             «ENDIF»
@@ -149,14 +149,19 @@ class QuickNavigation {
                 «' '»* @param ListEntriesHelper   $listHelper   ListEntriesHelper service instance
             «ENDIF»
             «IF hasLocaleFieldsEntity»
-                «' '»* @param LocaleApi           $localeApi    LocaleApi service instance
+                «' '»* @param LocaleApi«IF app.targets('1.5')»Interface«ELSE»         «ENDIF»  $localeApi    LocaleApi service instance
             «ENDIF»
             «IF app.needsFeatureActivationHelper»
                 «' '»* @param FeatureActivationHelper $featureActivationHelper FeatureActivationHelper service instance
             «ENDIF»
              */
-            public function __construct(TranslatorInterface $translator«IF !incomingRelations.empty», RequestStack $requestStack«ENDIF»«IF hasListFieldsEntity», ListEntriesHelper $listHelper«ENDIF»«IF hasLocaleFieldsEntity», LocaleApi $localeApi«ENDIF»«IF app.needsFeatureActivationHelper», FeatureActivationHelper $featureActivationHelper«ENDIF»)
-            {
+            public function __construct(
+                TranslatorInterface $translator«IF !incomingRelations.empty»,
+                RequestStack $requestStack«ENDIF»«IF hasListFieldsEntity»,
+                ListEntriesHelper $listHelper«ENDIF»«IF hasLocaleFieldsEntity»,
+                LocaleApi«IF app.targets('1.5')»Interface«ENDIF» $localeApi«ENDIF»«IF app.needsFeatureActivationHelper»,
+                FeatureActivationHelper $featureActivationHelper«ENDIF»
+            ) {
                 $this->setTranslator($translator);
                 «IF !incomingRelations.empty»
                     $this->request = $requestStack->getCurrentRequest();

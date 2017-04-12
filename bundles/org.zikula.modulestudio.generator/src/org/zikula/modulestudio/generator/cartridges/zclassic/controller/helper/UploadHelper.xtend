@@ -41,8 +41,8 @@ class UploadHelper {
         use Symfony\Component\HttpFoundation\Session\SessionInterface;
         use Zikula\Common\Translator\TranslatorInterface;
         use Zikula\Common\Translator\TranslatorTrait;
-        use Zikula\ExtensionsModule\Api\VariableApi;
-        use Zikula\UsersModule\Api\CurrentUserApi;
+        use Zikula\ExtensionsModule\Api\«IF targets('1.5')»ApiInterface\VariableApiInterface«ELSE»VariableApi«ENDIF»;
+        use Zikula\UsersModule\Api\«IF targets('1.5')»ApiInterface\CurrentUserApiInterface«ELSE»CurrentUserApi«ENDIF»;
 
         /**
          * Helper base class for upload handling.
@@ -62,12 +62,12 @@ class UploadHelper {
             protected $logger;
 
             /**
-             * @var CurrentUserApi
+             * @var CurrentUserApi«IF targets('1.5')»Interface«ENDIF»
              */
             protected $currentUserApi;
 
             /**
-             * @var VariableApi
+             * @var VariableApi«IF targets('1.5')»Interface«ENDIF»
              */
             protected $variableApi;
 
@@ -97,16 +97,16 @@ class UploadHelper {
              * @param TranslatorInterface $translator     Translator service instance
              * @param SessionInterface    $session        Session service instance
              * @param LoggerInterface     $logger         Logger service instance
-             * @param CurrentUserApi      $currentUserApi CurrentUserApi service instance
-             * @param VariableApi         $variableApi    VariableApi service instance
+             * @param CurrentUserApi«IF targets('1.5')»Interface«ELSE»     «ENDIF» $currentUserApi CurrentUserApi service instance
+             * @param VariableApi«IF targets('1.5')»Interface«ELSE»        «ENDIF» $variableApi    VariableApi service instance
              * @param String              $dataDirectory  The data directory name
              */
             public function __construct(
                 TranslatorInterface $translator,
                 SessionInterface $session,
                 LoggerInterface $logger,
-                CurrentUserApi $currentUserApi,
-                VariableApi $variableApi,
+                CurrentUserApi«IF targets('1.5')»Interface«ENDIF» $currentUserApi,
+                VariableApi«IF targets('1.5')»Interface«ENDIF» $variableApi,
                 $dataDirectory
             ) {
                 $this->setTranslator($translator);

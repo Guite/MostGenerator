@@ -36,7 +36,7 @@ class ImageHelper {
 
         use Symfony\Component\HttpFoundation\Session\SessionInterface;
         use Zikula\Common\Translator\TranslatorInterface;
-        use Zikula\ExtensionsModule\Api\VariableApi;
+        use Zikula\ExtensionsModule\Api\«IF targets('1.5')»ApiInterface\VariableApiInterface«ELSE»VariableApi«ENDIF»;
 
         /**
          * Helper base class for image methods.
@@ -54,7 +54,7 @@ class ImageHelper {
             protected $session;
 
             /**
-             * @var VariableApi
+             * @var VariableApi«IF targets('1.5')»Interface«ENDIF»
              */
             protected $variableApi;
 
@@ -70,10 +70,13 @@ class ImageHelper {
              *
              * @param TranslatorInterface $translator  Translator service instance
              * @param SessionInterface    $session     Session service instance
-             * @param VariableApi         $variableApi VariableApi service instance
+             * @param VariableApi«IF targets('1.5')»Interface«ELSE»        «ENDIF» $variableApi VariableApi service instance
              */
-            public function __construct(TranslatorInterface $translator, SessionInterface $session, VariableApi $variableApi)
-            {
+            public function __construct(
+                TranslatorInterface $translator,
+                SessionInterface $session,
+                VariableApi«IF targets('1.5')»Interface«ENDIF» $variableApi
+            ) {
                 $this->translator = $translator;
                 $this->session = $session;
                 $this->variableApi = $variableApi;

@@ -67,7 +67,7 @@ class Config {
         use Symfony\Component\Form\FormBuilderInterface;
         use Zikula\Common\Translator\TranslatorInterface;
         use Zikula\Common\Translator\TranslatorTrait;
-        use Zikula\ExtensionsModule\Api\VariableApi;
+        use Zikula\ExtensionsModule\Api\«IF targets('1.5')»ApiInterface\VariableApiInterface«ELSE»VariableApi«ENDIF»;
         «IF hasUserGroupSelectors»
             use Zikula\GroupsModule\Entity\RepositoryInterface\GroupRepositoryInterface;
         «ENDIF»
@@ -80,7 +80,7 @@ class Config {
             use TranslatorTrait;
 
             /**
-             * @var VariableApi
+             * @var VariableApi«IF targets('1.5')»Interface«ENDIF»
              */
             protected $variableApi;
 
@@ -94,15 +94,18 @@ class Config {
              *
              «IF hasUserGroupSelectors»
              * @param TranslatorInterface      $translator      Translator service instance
-             * @param VariableApi              $variableApi     VariableApi service instance
+             * @param VariableApi«IF targets('1.5')»Interface«ELSE»         «ENDIF»     $variableApi     VariableApi service instance
              * @param GroupRepositoryInterface $groupRepository GroupRepository service instance
              «ELSE»
-             * @param TranslatorInterface $translator  Translator service instance
-             * @param VariableApi         $variableApi VariableApi service instance
+             * @param TranslatorInterface  $translator  Translator service instance
+             * @param VariableApi«IF targets('1.5')»Interface«ELSE»         «ENDIF» $variableApi VariableApi service instance
              «ENDIF»
              */
-            public function __construct(TranslatorInterface $translator, VariableApi $variableApi«IF hasUserGroupSelectors», GroupRepositoryInterface $groupRepository«ENDIF»)
-            {
+            public function __construct(
+                TranslatorInterface $translator,
+                VariableApi«IF targets('1.5')»Interface«ENDIF» $variableApi«IF hasUserGroupSelectors»,
+                GroupRepositoryInterface $groupRepository«ENDIF»
+            ) {
                 $this->setTranslator($translator);
                 $this->variableApi = $variableApi;
                 $this->modVars = $this->variableApi->getAll('«appName»');

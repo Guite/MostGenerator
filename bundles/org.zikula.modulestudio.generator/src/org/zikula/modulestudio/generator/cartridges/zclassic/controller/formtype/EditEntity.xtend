@@ -165,10 +165,10 @@ class EditEntity {
         use Zikula\Common\Translator\TranslatorInterface;
         use Zikula\Common\Translator\TranslatorTrait;
         «IF isTranslatable»
-            use Zikula\ExtensionsModule\Api\VariableApi;
+            use Zikula\ExtensionsModule\Api\«IF app.targets('1.5')»ApiInterface\VariableApiInterface«ELSE»VariableApi«ENDIF»;
         «ENDIF»
         «IF hasLocaleFieldsEntity»
-            use Zikula\SettingsModule\Api\LocaleApi;
+            use Zikula\SettingsModule\Api\«IF app.targets('1.5')»ApiInterface\LocaleApiInterface«ELSE»LocaleApi«ENDIF»;
         «ENDIF»
         use «app.appNamespace»\Entity\Factory\«app.name.formatForCodeCapital»Factory;
         «IF app.targets('1.5')»
@@ -221,7 +221,7 @@ class EditEntity {
             «IF isTranslatable»
 
                 /**
-                 * @var VariableApi
+                 * @var VariableApi«IF app.targets('1.5')»Interface«ENDIF»
                  */
                 protected $variableApi;
 
@@ -240,7 +240,7 @@ class EditEntity {
             «IF hasLocaleFieldsEntity»
 
                 /**
-                 * @var LocaleApi
+                 * @var LocaleApi«IF app.targets('1.5')»Interface«ENDIF»
                  */
                 protected $localeApi;
             «ENDIF»
@@ -258,21 +258,28 @@ class EditEntity {
              * @param TranslatorInterface $translator «IF isTranslatable» «ENDIF»   Translator service instance
              * @param «app.name.formatForCodeCapital»Factory        $entityFactory Entity factory service instance
              «IF isTranslatable»
-             * @param VariableApi         $variableApi VariableApi service instance
+             * @param VariableApi«IF app.targets('1.5')»Interface«ELSE»        «ENDIF» $variableApi VariableApi service instance
              * @param TranslatableHelper  $translatableHelper TranslatableHelper service instance
              «ENDIF»
              «IF hasListFieldsEntity»
              * @param ListEntriesHelper   $listHelper    «IF isTranslatable» «ENDIF»ListEntriesHelper service instance
              «ENDIF»
              «IF hasLocaleFieldsEntity»
-             * @param LocaleApi           $localeApi     «IF isTranslatable» «ENDIF»LocaleApi service instance
+             * @param LocaleApi«IF app.targets('1.5')»Interface«ELSE»         «ENDIF»   $localeApi     «IF isTranslatable» «ENDIF»LocaleApi service instance
              «ENDIF»
              «IF app.needsFeatureActivationHelper»
              * @param FeatureActivationHelper $featureActivationHelper FeatureActivationHelper service instance
              «ENDIF»
              */
-            public function __construct(TranslatorInterface $translator, «app.name.formatForCodeCapital»Factory $entityFactory«IF isTranslatable», VariableApi $variableApi, TranslatableHelper $translatableHelper«ENDIF»«IF hasListFieldsEntity», ListEntriesHelper $listHelper«ENDIF»«IF hasLocaleFieldsEntity», LocaleApi $localeApi«ENDIF»«IF app.needsFeatureActivationHelper», FeatureActivationHelper $featureActivationHelper«ENDIF»)
-            {
+            public function __construct(
+                TranslatorInterface $translator,
+                «app.name.formatForCodeCapital»Factory $entityFactory«IF isTranslatable»,
+                VariableApi«IF app.targets('1.5')»Interface«ENDIF» $variableApi,
+                TranslatableHelper $translatableHelper«ENDIF»«IF hasListFieldsEntity»,
+                ListEntriesHelper $listHelper«ENDIF»«IF hasLocaleFieldsEntity»,
+                LocaleApi«IF app.targets('1.5')»Interface«ENDIF» $localeApi«ENDIF»«IF app.needsFeatureActivationHelper»,
+                FeatureActivationHelper $featureActivationHelper«ENDIF»
+            ) {
                 $this->setTranslator($translator);
                 $this->entityFactory = $entityFactory;
                 «IF isTranslatable»

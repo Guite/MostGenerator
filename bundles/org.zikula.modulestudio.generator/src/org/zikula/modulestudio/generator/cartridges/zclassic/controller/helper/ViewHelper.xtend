@@ -33,12 +33,8 @@ class ViewHelper {
         use Symfony\Component\HttpFoundation\Response;
         use Twig_Environment;
         use Zikula\Core\Response\PlainResponse;
-        use Zikula\ExtensionsModule\Api\VariableApi;
-        «IF targets('1.5')»
-            use Zikula\PermissionsModule\Api\ApiInterface\PermissionApiInterface;
-        «ELSE»
-            use Zikula\PermissionsModule\Api\PermissionApi;
-        «ENDIF»
+        use Zikula\ExtensionsModule\Api\«IF targets('1.5')»ApiInterface\VariableApiInterface«ELSE»VariableApi«ENDIF»;
+        use Zikula\PermissionsModule\Api\«IF targets('1.5')»ApiInterface\PermissionApiInterface«ELSE»PermissionApi«ENDIF»;
         use Zikula\ThemeModule\Engine\ParameterBag;
         use «appNamespace»\Helper\ControllerHelper;
 
@@ -68,7 +64,7 @@ class ViewHelper {
             protected $permissionApi;
 
             /**
-             * @var VariableApi
+             * @var VariableApi«IF targets('1.5')»Interface«ENDIF»
              */
             protected $variableApi;
 
@@ -89,7 +85,7 @@ class ViewHelper {
              * @param FilesystemLoader $twigLoader       Twig loader service instance
              * @param RequestStack     $requestStack     RequestStack service instance
              * @param PermissionApi«IF targets('1.5')»Interface«ENDIF»    $permissionApi    PermissionApi service instance
-             * @param VariableApi      $variableApi      VariableApi service instance
+             * @param VariableApi«IF targets('1.5')»Interface«ELSE»     «ENDIF» $variableApi      VariableApi service instance
              * @param ParameterBag     $pageVars         ParameterBag for theme page variables
              * @param ControllerHelper $controllerHelper ControllerHelper service instance
              *
@@ -100,7 +96,7 @@ class ViewHelper {
                 FilesystemLoader $twigLoader,
                 RequestStack $requestStack,
                 PermissionApi«IF targets('1.5')»Interface«ENDIF» $permissionApi,
-                VariableApi $variableApi,
+                VariableApi«IF targets('1.5')»Interface«ENDIF» $variableApi,
                 ParameterBag $pageVars,
                 ControllerHelper $controllerHelper
             ) {

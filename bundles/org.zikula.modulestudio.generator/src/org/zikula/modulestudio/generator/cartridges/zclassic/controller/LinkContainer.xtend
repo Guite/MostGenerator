@@ -44,15 +44,11 @@ class LinkContainer {
         use Zikula\Core\Doctrine\EntityAccess;
         use Zikula\Core\LinkContainer\LinkContainerInterface;
         «IF generateAccountApi»
-            use Zikula\ExtensionsModule\Api\VariableApi;
+            use Zikula\ExtensionsModule\Api\«IF targets('1.5')»ApiInterface\VariableApiInterface«ELSE»VariableApi«ENDIF»;
         «ENDIF»
-        «IF targets('1.5')»
-            use Zikula\PermissionsModule\Api\ApiInterface\PermissionApiInterface;
-        «ELSE»
-            use Zikula\PermissionsModule\Api\PermissionApi;
-        «ENDIF»
+        use Zikula\PermissionsModule\Api\«IF targets('1.5')»ApiInterface\PermissionApiInterface«ELSE»PermissionApi«ENDIF»;
         «IF generateAccountApi || hasEditActions»
-            use Zikula\UsersModule\Api\CurrentUserApi;
+            use Zikula\UsersModule\Api\«IF targets('1.5')»ApiInterface\CurrentUserApiInterface«ELSE»CurrentUserApi«ENDIF»;
         «ENDIF»
         use «appNamespace»\Helper\ControllerHelper;
 
@@ -82,7 +78,7 @@ class LinkContainer {
             «ENDIF»
             «IF generateAccountApi || hasEditActions»
                 /**
-                 * @var CurrentUserApi
+                 * @var CurrentUserApi«IF targets('1.5')»Interface«ENDIF»
                  */
                 private $currentUserApi;
 
@@ -102,7 +98,7 @@ class LinkContainer {
              * @param VariableApi         $variableApi      VariableApi service instance
              «ENDIF»
              «IF generateAccountApi || hasEditActions»
-             * @param CurrentUserApi      $currentUserApi   CurrentUserApi service instance
+             * @param CurrentUserApi«IF targets('1.5')»Interface«ELSE»     «ENDIF» $currentUserApi   CurrentUserApi service instance
              «ENDIF»
              * @param ControllerHelper    $controllerHelper ControllerHelper service instance
              */
@@ -114,7 +110,7 @@ class LinkContainer {
                     VariableApi $variableApi,
                 «ENDIF»
                 «IF generateAccountApi || hasEditActions»
-                    CurrentUserApi $currentUserApi,
+                    CurrentUserApi«IF targets('1.5')»Interface«ENDIF» $currentUserApi,
                 «ENDIF»
                 ControllerHelper $controllerHelper
             ) {
