@@ -334,7 +334,7 @@ class AjaxController {
 
         $fragment = $request->query->get('fragment', '');
         $exclude = $request->query->get('exclude', '');
-        $exclude = !empty($exclude) ? explode(',', $exclude) : [];
+        $exclude = !empty($exclude) ? explode(',', str_replace(', ', ',', $exclude)) : [];
 
         // parameter for used sorting field
         «new ControllerHelperFunctions().defaultSorting(it)»

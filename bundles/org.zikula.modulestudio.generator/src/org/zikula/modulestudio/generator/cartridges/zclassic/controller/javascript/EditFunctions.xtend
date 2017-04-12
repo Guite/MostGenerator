@@ -341,7 +341,7 @@ class EditFunctions {
             found = false;
 
             // search for the handler
-            jQuery.each(relationHandler, function (singleRelationHandler) {
+            jQuery.each(relationHandler, function (key, singleRelationHandler) {
                 // is this the right one
                 if (singleRelationHandler.prefix === containerID) {
                     // yes, it is
@@ -400,12 +400,22 @@ class EditFunctions {
         /**
          * Adds a related item to selection which has been chosen by auto completion.
          */
-        function «vendorAndName»SelectRelatedItem(objectType, idPrefix, inputField, selectedListItem)
+        function «vendorAndName»SelectRelatedItem(objectType, idPrefix, selectedListItem)
         {
             var newItemId, newTitle, includeEditing, editLink, removeLink, elemPrefix, itemPreview, li, editHref, fldPreview, itemIds, itemIdsArr;
 
+            itemIds = jQuery('#' + idPrefix).val();
+            if (itemIds !== '') {
+                if (jQuery('#' + idPrefix + 'Scope').val() === '0') {
+                    jQuery('#' + idPrefix + 'ReferenceList').text('');
+                    itemIds = '';
+                } else {
+                    itemIds += ',';
+                }
+            }
+
             newItemId = selectedListItem.id;
-            newTitle = jQuery('#' + idPrefix + 'Selector').val();
+            newTitle = selectedListItem.title;
             includeEditing = !!((jQuery('#' + idPrefix + 'Mode').val() == '1'));
             elemPrefix = idPrefix + 'Reference_' + newItemId;
             itemPreview = '';
@@ -440,20 +450,6 @@ class EditFunctions {
             }
             removeLink.html(' ' + removeImage);
 
-            itemIds = jQuery('#' + idPrefix).val();
-            if (itemIds !== '') {
-                if (jQuery('#' + idPrefix + 'Scope').val() === '0') {
-                    itemIdsArr = itemIds.split(',');
-                    itemIdsArr.each(function (existingId) {
-                        if (existingId) {
-                            «vendorAndName»RemoveRelatedItem(idPrefix, existingId);
-                        }
-                    });
-                    itemIds = '';
-                } else {
-                    itemIds += ',';
-                }
-            }
             itemIds += newItemId;
             jQuery('#' + idPrefix).val(itemIds);
 
@@ -508,24 +504,24 @@ class EditFunctions {
             };
 
             jQuery.each(relationHandler, function (key, singleRelationHandler) {
-                var acUrlArgs;
-
                 if (singleRelationHandler.prefix !== (idPrefix + 'SelectorDoNew') || null !== singleRelationHandler.acInstance) {
                     return;
                 }
 
                 singleRelationHandler.acInstance = 'yes';
 
-                acUrlArgs = {
-                    ot: objectType
-                };
-                if (jQuery('#' + idPrefix).length > 0) {
-                    acUrlArgs.exclude = jQuery('#' + idPrefix).val();
-                }
-                acUrl = Routing.generate(singleRelationHandler.moduleName.toLowerCase() + '_ajax_getitemlistautocompletion', acUrlArgs);
-
                 // The data source to query against. Receives the query value in the input field and the process callbacks.
                 acDataSet.source = function (query, syncResults, asyncResults) {
+                    var acUrlArgs;
+
+                    acUrlArgs = {
+                        ot: objectType
+                    };
+                    if (jQuery('#' + idPrefix).length > 0) {
+                        acUrlArgs.exclude = jQuery('#' + idPrefix).val();
+                    }
+                    acUrl = Routing.generate(singleRelationHandler.moduleName.toLowerCase() + '_ajax_getitemlistautocompletion', acUrlArgs);
+
                     // Retrieve data from server using "query" parameter as it contains the search string entered by the user
                     jQuery('#' + idPrefix + 'Indicator').removeClass('hidden');
                     jQuery.getJSON(acUrl, { fragment: query }, function( data ) {
@@ -538,7 +534,7 @@ class EditFunctions {
                     .typeahead(acOptions, acDataSet)
                     .bind('typeahead:select', function(ev, item) {
                         // Called after the user selects an item. Here we can do something with the selection.
-                        «vendorAndName»SelectRelatedItem(objectType, idPrefix, jQuery('#' + idPrefix), item);
+                        «vendorAndName»SelectRelatedItem(objectType, idPrefix, item);
                         jQuery(this).typeahead('val', item.title);
                     });
 

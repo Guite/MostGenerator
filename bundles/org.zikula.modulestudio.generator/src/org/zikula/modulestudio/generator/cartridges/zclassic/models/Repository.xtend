@@ -644,26 +644,27 @@ class Repository {
         /**
          * Adds where clauses excluding desired identifiers from selection.
          *
-         * @param QueryBuilder $qb        Query builder to be enhanced
-         * @param «IF hasCompositeKeys»mixed  «ELSE»integer«ENDIF»      $excludeId The id«IF hasCompositeKeys» (or array of ids)«ENDIF» to be excluded from selection
+         * @param QueryBuilder $qb           Query builder to be enhanced
+         * @param array        $excludesions Array of ids to be excluded from selection
          *
          * @return QueryBuilder Enriched query builder instance
          */
-        protected function addExclusion(QueryBuilder $qb, $excludeId)
+        protected function addExclusion(QueryBuilder $qb, array $exclusions = [])
         {
             «IF hasCompositeKeys»
-                if (is_array($excludeId)) {
-                    foreach ($id as $fieldName => $fieldValue) {
-                        $qb->andWhere('tbl.' . $fieldName . ' != :' . $fieldName)
-                           ->setParameter($fieldName, $fieldValue);
-                    }
-                } elseif ($excludeId > 0) {
+                foreach ($exclusions as $fieldName => $fieldValue) {
+                    $exclusion = is_array($fieldValue) ? $fieldValue : [$fieldValue];
+                    if (count($exclusion) > 0) {
+                        $qb->andWhere('tbl.' . $fieldName . ' NOT IN (:' . $fieldName . ')')
+                           ->setParameter($fieldName, $exclusion);
+                   }
+                }
             «ELSE»
-                if ($excludeId > 0) {
+                if (count($exclusions) > 0) {
+                    $qb->andWhere('tbl.«getFirstPrimaryKey.name.formatForCode» NOT IN (:excludedIdentifiers)')
+                       ->setParameter('excludedIdentifiers', $exclusions);
+                }
             «ENDIF»
-                $qb->andWhere('tbl.id != :excludeId')
-                   ->setParameter('excludeId', $excludeId);
-            }
 
             return $qb;
         }
@@ -984,8 +985,11 @@ class Repository {
                 $parameters['search«field.name.formatForCodeCapital»'] = «IF field.isTextSearch»'%' . $fragment . '%'«ELSE»$fragment«ENDIF»;
             «ENDFOR»
 
-            $qb->andWhere('(' . implode(' OR ', $filters) . ')')
-               ->setParameters($parameters);
+            $qb->andWhere('(' . implode(' OR ', $filters) . ')');
+
+            foreach ($parameters as $parameterName => $parameterValue) {
+                $qb->setParameter($parameterName, $parameterValue);
+            }
 
             return $qb;
         }
@@ -1082,9 +1086,9 @@ class Repository {
         /**
          * Checks for unique values.
          *
-         * @param string $fieldName  The name of the property to be checked
-         * @param string $fieldValue The value of the property to be checked
-         * @param int    $excludeId  Id of «nameMultiple.formatForDisplay» to exclude (optional)
+         * @param string  $fieldName  The name of the property to be checked
+         * @param string  $fieldValue The value of the property to be checked
+         * @param integer $excludeId  Id of «nameMultiple.formatForDisplay» to exclude (optional)
          *
          * @return boolean result of this check, true if the given «name.formatForDisplay» does not already exist
          */
@@ -1094,7 +1098,7 @@ class Repository {
             $qb->andWhere('tbl.' . $fieldName . ' = :' . $fieldName)
                ->setParameter($fieldName, $fieldValue);
 
-            $qb = $this->addExclusion($qb, $excludeId);
+            $qb = $this->addExclusion($qb, [$excludeId]);
 
             $query = $qb->getQuery();
 

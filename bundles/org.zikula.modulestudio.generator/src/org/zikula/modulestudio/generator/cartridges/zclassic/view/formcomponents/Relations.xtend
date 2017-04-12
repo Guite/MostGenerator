@@ -223,8 +223,8 @@ class Relations {
         «val outgoingJoins = getEditableJoinRelations(false).filter[usesAutoCompletion(false)]»
         «IF !incomingJoins.empty || !outgoingJoins.empty»
             «IF !insideLoader»
-                var editImage = '{{ editImage }}';
-                var removeImage = '{{ removeImage }}';
+                var editImage = '{{ editImage|raw }}';
+                var removeImage = '{{ removeImage|raw }}';
                 var relationHandler = new Array();
             «ENDIF»
             «FOR relation : incomingJoins»«relation.initJs(app, it, true, insideLoader)»«ENDFOR»
