@@ -48,9 +48,9 @@ class Config {
                         <ul class="nav nav-tabs">
                         «FOR varContainer : getSortedVariableContainers»
                             {% set tabTitle = __('«varContainer.name.formatForDisplayCapital»') %}
-                            <li«IF varContainer == getSortedVariableContainers.head || varContainer.isImageArea» class="«IF varContainer == getSortedVariableContainers.head»active«ENDIF»«IF varContainer.isImageArea» dropdown«ENDIF»"«ENDIF» role="presentation">
+                            <li role="presentation"«IF varContainer == getSortedVariableContainers.head || varContainer.isImageArea» class="«IF varContainer == getSortedVariableContainers.head»active«ENDIF»«IF varContainer.isImageArea» dropdown«ENDIF»"«ENDIF»>
                                 «IF varContainer.isImageArea»
-                                    <a id="imagesTabDrop" class="dropdown-toggle" href="#" data-toggle="dropdown" aria-controls="imagesTabDropSections" aria-expanded="false">{{ tabTitle }}<span class="caret"></span></a>
+                                    <a id="imagesTabDrop" class="dropdown-toggle" href="#" data-toggle="dropdown" aria-controls="imagesTabDropSections" aria-expanded="false" title="{{ tabTitle|e('html_attr') }}">{{ tabTitle }}<span class="caret"></span></a>
                                     <ul id="imagesTabDropSections" class="dropdown-menu" aria-labelledby="imagesTabDrop">
                                     «FOR entity : getAllEntities.filter[hasImageFieldsEntity]»
                                         «FOR imageUploadField : entity.imageFieldsEntity»

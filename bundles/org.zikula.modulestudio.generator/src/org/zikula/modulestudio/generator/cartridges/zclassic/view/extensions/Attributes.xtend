@@ -38,20 +38,14 @@ class Attributes {
     def private attributesViewImpl(Application it) '''
         {# purpose of this template: reusable display of entity attributes #}
         {% if obj.attributes is defined %}
-            {% if panel|default(false) == true %}
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <h3 class="panel-title"><a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapseAttributes">{{ __('Attributes') }}</a></h3>
-                    </div>
-                    <div id="collapseAttributes" class="panel-collapse collapse in">
-                        <div class="panel-body">
+            {% if tabs|default(false) == true %}
+                <div role="tabpanel" class="tab-pane fade" id="tabAttributes" aria-labelledby="attributesTab">
+                    <h3>{{ __('Attributes') }}</h3>
             {% else %}
                 <h3 class="attributes">{{ __('Attributes') }}</h3>
             {% endif %}
             «viewBody»
-            {% if panel|default(false) == true %}
-                        </div>
-                    </div>
+            {% if tabs|default(false) == true %}
                 </div>
             {% endif %}
         {% endif %}
@@ -68,21 +62,15 @@ class Attributes {
 
     def private attributesEditImpl(Application it) '''
         {# purpose of this template: reusable editing of entity attributes #}
-        {% if panel|default(false) == true %}
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h3 class="panel-title"><a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapseAttributes">{{ __('Attributes') }}</a></h3>
-                </div>
-                <div id="collapseAttributes" class="panel-collapse collapse in">
-                    <div class="panel-body">
+        {% if tabs|default(false) == true %}
+            <div role="tabpanel" class="tab-pane fade" id="tabAttributes" aria-labelledby="attributesTab">
+                <h3>{{ __('Attributes') }}</h3>
         {% else %}
             <fieldset class="attributes">
         {% endif %}
             <legend>{{ __('Attributes') }}</legend>
             «editBody»
-        {% if panel|default(false) == true %}
-                    </div>
-                </div>
+        {% if tabs|default(false) == true %}
             </div>
         {% else %}
             </fieldset>

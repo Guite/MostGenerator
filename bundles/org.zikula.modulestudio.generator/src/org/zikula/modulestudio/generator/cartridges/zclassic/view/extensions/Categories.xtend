@@ -38,20 +38,14 @@ class Categories {
     def private categoriesViewImpl(Application it) '''
         {# purpose of this template: reusable display of entity categories #}
         {% if obj.categories is defined %}
-            {% if panel|default(false) == true %}
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <h3 class="panel-title"><a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapseCategories">{{ __('Categories') }}</a></h3>
-                    </div>
-                    <div id="collapseCategories" class="panel-collapse collapse in">
-                        <div class="panel-body">
+            {% if tabs|default(false) == true %}
+                <div role="tabpanel" class="tab-pane fade" id="tabCategories" aria-labelledby="categoriesTab">
+                    <h3>{{ __('Categories') }}</h3>
             {% else %}
                 <h3 class="categories">{{ __('Categories') }}</h3>
             {% endif %}
             «viewBody»
-            {% if panel|default(false) == true %}
-                        </div>
-                    </div>
+            {% if tabs|default(false) == true %}
                 </div>
             {% endif %}
         {% endif %}
@@ -67,21 +61,15 @@ class Categories {
 
     def private categoriesEditImpl(Application it) '''
         {# purpose of this template: reusable editing of entity categories #}
-        {% if panel|default(false) == true %}
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h3 class="panel-title"><a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapseCategories">{{ __('Categories') }}</a></h3>
-                </div>
-                <div id="collapseCategories" class="panel-collapse collapse in">
-                    <div class="panel-body">
+        {% if tabs|default(false) == true %}
+            <div role="tabpanel" class="tab-pane fade" id="tabCategories" aria-labelledby="categoriesTab">
+                <h3>{{ __('Categories') }}</h3>
         {% else %}
             <fieldset class="categories">
         {% endif %}
             <legend>{{ __('Categories') }}</legend>
             {{ form_row(form.categories) }}
-        {% if panel|default(false) == true %}
-                    </div>
-                </div>
+        {% if tabs|default(false) == true %}
             </div>
         {% else %}
             </fieldset>

@@ -29,8 +29,17 @@ class Relations {
      * This method creates the templates to be included into the edit forms.
      */
     def generateInclusionTemplate(Entity it, Application app, IFileSystemAccess fsa) '''
-        «FOR relation : getEditableJoinRelations(true)»«relation.generate(app, false, true, fsa)»«ENDFOR»
-        «FOR relation : getEditableJoinRelations(false)»«relation.generate(app, false, false, fsa)»«ENDFOR»
+        «FOR relation : getEditableJoinRelations(true)»«relation.generate(app, false, false, true, fsa)»«ENDFOR»
+        «FOR relation : getEditableJoinRelations(false)»«relation.generate(app, false, false, false, fsa)»«ENDFOR»
+    '''
+
+    /**
+     * Entry point for form sections treating related objects.
+     * This method creates the tab titles for included relationship sections on edit pages.
+     */
+    def generateTabTitles(Entity it, Application app, IFileSystemAccess fsa) '''
+        «FOR relation : getEditableJoinRelations(true)»«relation.generate(app, true, false, true, fsa)»«ENDFOR»
+        «FOR relation : getEditableJoinRelations(false)»«relation.generate(app, true, false, false, fsa)»«ENDFOR»
     '''
 
     /**
@@ -38,11 +47,11 @@ class Relations {
      * This method creates the include statement contained in the including template.
      */
     def generateIncludeStatement(Entity it, Application app, IFileSystemAccess fsa) '''
-        «FOR relation : getEditableJoinRelations(true)»«relation.generate(app, true, true, fsa)»«ENDFOR»
-        «FOR relation : getEditableJoinRelations(false)»«relation.generate(app, true, false, fsa)»«ENDFOR»
+        «FOR relation : getEditableJoinRelations(true)»«relation.generate(app, false, true, true, fsa)»«ENDFOR»
+        «FOR relation : getEditableJoinRelations(false)»«relation.generate(app, false, true, false, fsa)»«ENDFOR»
     '''
 
-    def private generate(JoinRelationship it, Application app, Boolean onlyInclude, Boolean incoming, IFileSystemAccess fsa) {
+    def private generate(JoinRelationship it, Application app, Boolean onlyTabTitle, Boolean onlyInclude, Boolean incoming, IFileSystemAccess fsa) {
         val stageCode = getEditStageCode(incoming)
         if (stageCode < 1) {
             return ''''''
@@ -63,6 +72,9 @@ class Relations {
         val otherEntity = (if (!incoming) source else target) as Entity
         val many = isManySide(useTarget)
 
+        if (onlyTabTitle) {
+            return tabTitleForEditTemplate(ownEntity, many)
+        }
         if (onlyInclude) {
             val relationAliasName = getRelationAliasName(useTarget).formatForCodeCapital
             val relationAliasReverse = getRelationAliasName(!useTarget).formatForCodeCapital
@@ -97,10 +109,17 @@ class Relations {
         templateName
     }
 
+    def private tabTitleForEditTemplate(JoinRelationship it, Entity ownEntity, Boolean many) '''
+        «val ownEntityName = ownEntity.getEntityNameSingularPlural(many)»
+        <li role="presentation">
+            <a id="«ownEntityName.formatForCode»Tab" href="#tab«ownEntityName.formatForCodeCapital»" title="{{ __('«ownEntityName.formatForDisplayCapital»') }}" role="tab" data-toggle="tab">{{ __('«ownEntityName.formatForDisplayCapital»') }}</a>
+        </li>
+    '''
+
     def private includeStatementForEditTemplate(JoinRelationship it, String templateName, Entity ownEntity, Entity linkingEntity, Boolean incoming, String relationAliasName, String relationAliasReverse, String uniqueNameForJs) '''
         {{ include(
             '@«application.appName»/«ownEntity.name.formatForCodeCapital»/«templateName».html.twig',
-            { group: '«linkingEntity.name.formatForDB»', alias: '«relationAliasName.toFirstLower»', aliasReverse: '«relationAliasReverse.toFirstLower»', mandatory: «(!nullable).displayBool», idPrefix: '«uniqueNameForJs»', linkingItem: «linkingEntity.name.formatForDB»«IF linkingEntity.useGroupingPanels('edit')», panel: true«ENDIF», displayMode: '«IF usesAutoCompletion(incoming)»autocomplete«ELSE»choices«ENDIF»' }
+            { group: '«linkingEntity.name.formatForDB»', alias: '«relationAliasName.toFirstLower»', aliasReverse: '«relationAliasReverse.toFirstLower»', mandatory: «(!nullable).displayBool», idPrefix: '«uniqueNameForJs»', linkingItem: «linkingEntity.name.formatForDB»«IF linkingEntity.useGroupingTabs('edit')», tabs: true«ENDIF», displayMode: '«IF usesAutoCompletion(incoming)»autocomplete«ELSE»choices«ENDIF»' }
         ) }}
     '''
 
@@ -110,21 +129,15 @@ class Relations {
         {% if displayMode is not defined or displayMode is empty %}
             {% set displayMode = 'choices' %}
         {% endif %}
-        {% if panel|default(false) == true %}
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h3 class="panel-title"><a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapse«ownEntityName.formatForCodeCapital»">{{ __('«ownEntityName.formatForDisplayCapital»') }}</a></h3>
-                </div>
-                <div id="collapse«ownEntityName.formatForCodeCapital»" class="panel-collapse collapse in">
-                    <div class="panel-body">
+        {% if tabs|default(false) == true %}
+            <div role="tabpanel" class="tab-pane fade" id="tab«ownEntityName.formatForCodeCapital»" aria-labelledby="«ownEntityName.formatForCode»Tab">
+                <h3>{{ __('«ownEntityName.formatForDisplayCapital»') }}</h3>
         {% else %}
             <fieldset class="«ownEntityName.formatForDB»">
         {% endif %}
             <legend>{{ __('«ownEntityName.formatForDisplayCapital»') }}</legend>
             «includedEditTemplateBody(app, ownEntity, linkingEntity, incoming, hasEdit, many)»
-        {% if panel|default(false) == true %}
-                    </div>
-                </div>
+        {% if tabs|default(false) == true %}
             </div>
         {% else %}
             </fieldset>

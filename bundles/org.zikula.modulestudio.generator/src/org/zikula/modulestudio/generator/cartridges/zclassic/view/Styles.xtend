@@ -142,8 +142,8 @@ class Styles {
                 }
 
             «ENDIF»
-            /* hide legends if panels are used as both contain the same labels */
-            div.«name.formatForDB»-edit .panel legend {
+            /* hide legends if tabs are used as both contain the same labels */
+            div.«name.formatForDB»-edit .tab-pane legend {
                 display: none;
             }
 

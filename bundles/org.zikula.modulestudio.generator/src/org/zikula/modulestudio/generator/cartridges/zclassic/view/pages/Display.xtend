@@ -64,43 +64,77 @@ class Display {
             {% set isQuickView = app.request.query.getBoolean('raw', false) %}
             <div class="«appName.toLowerCase»-«name.formatForDB» «appName.toLowerCase»-display">
 
-            «IF !refedElems.empty»
-                {% if not isQuickView %}
+            «IF useGroupingTabs('display')»
+                <div class="zikula-bootstrap-tab-container">
+                    <ul class="nav nav-tabs">
+                        <li role="presentation" class="active">
+                            <a id="fieldsTab" href="#tabFields" title="{{ __('Fields') }}" role="tab" data-toggle="tab">{{ __('Fields') }}</a>
+                        </li>
+                        «IF geographical»
+                            <li role="presentation">
+                                <a id="mapTab" href="#tabMap" title="{{ __('Map') }}" role="tab" data-toggle="tab">{{ __('Map') }}</a>
+                            </li>
+                        «ENDIF»
+                        «IF !refedElems.empty»
+                            <li role="presentation">
+                                <a id="relationsTab" href="#tabRelations" title="{{ __('Related data') }}" role="tab" data-toggle="tab">{{ __('Related data') }}</a>
+                            </li>
+                        «ENDIF»
+                        «IF attributable»
+                            {% if featureActivationHelper.isEnabled(constant('«application.vendor.formatForCodeCapital»\\«application.name.formatForCodeCapital»Module\\Helper\\FeatureActivationHelper::ATTRIBUTES'), '«name.formatForCode»') %}
+                                <li role="presentation">
+                                    <a id="attributesTab" href="#tabAttributes" title="{{ __('Attributes') }}" role="tab" data-toggle="tab">{{ __('Attributes') }}</a>
+                                </li>
+                            {% endif %}
+                        «ENDIF»
+                        «IF tree != EntityTreeType.NONE»
+                            {% if featureActivationHelper.isEnabled(constant('«application.vendor.formatForCodeCapital»\\«application.name.formatForCodeCapital»Module\\Helper\\FeatureActivationHelper::TREE_RELATIVES'), '«name.formatForCode»') %}
+                                <li role="presentation">
+                                    <a id="relativesTab" href="#tabRelatives" title="{{ __('Relatives') }}" role="tab" data-toggle="tab">{{ __('Relatives') }}</a>
+                                </li>
+                            {% endif %}
+                        «ENDIF»
+                        «IF categorisable»
+                            {% if featureActivationHelper.isEnabled(constant('«application.vendor.formatForCodeCapital»\\«application.name.formatForCodeCapital»Module\\Helper\\FeatureActivationHelper::CATEGORIES'), '«name.formatForCode»') %}
+                                <li role="presentation">
+                                    <a id="categoriesTab" href="#tabCategories" title="{{ __('Categories') }}" role="tab" data-toggle="tab">{{ __('Categories') }}</a>
+                                </li>
+                            {% endif %}
+                        «ENDIF»
+                        «IF standardFields»
+                            <li role="presentation">
+                                <a id="standardFieldsTab" href="#tabStandardFields" title="{{ __('Creation and update') }}" role="tab" data-toggle="tab">{{ __('Creation and update') }}</a>
+                            </li>
+                        «ENDIF»
+                        «IF !skipHookSubscribers»
+                            <li role="presentation">
+                                <a id="hooksTab" href="#tabHooks" title="{{ __('Hooks') }}" role="tab" data-toggle="tab">{{ __('Hooks') }}</a>
+                            </li>
+                        «ENDIF»
+                    </ul>
+                </div>
+
+                <div class="tab-content">
+                    <div role="tabpanel" class="tab-pane fade in active" id="tabFields" aria-labelledby="fieldsTab">
+                        <h3>{{ __('Fields') }}</h3>
+                        «fieldDetails(appName)»
+                    </div>
+            «ELSE»
+                «IF !refedElems.empty»
                     <div class="row">
                         <div class="col-sm-9">
-                {% endif %}
-            «ENDIF»
-            «IF useGroupingPanels('display')»
-
-                {% if not isQuickView %}
-                    <div class="panel-group" id="accordion">
-                        <div class="panel panel-default">
-                            <div class="panel-heading">
-                                <h3 class="panel-title"><a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapseFields">{{ __('Fields') }}</a></h3>
-                            </div>
-                            <div id="collapseFields" class="panel-collapse collapse in">
-                                <div class="panel-body">
-                {% endif %}
+                «ENDIF»
+                «fieldDetails(appName)»
             «ENDIF»
 
-            «fieldDetails(appName)»
-            «IF useGroupingPanels('display')»
-                {% if not isQuickView %}
-                            </div>
-                        </div>
-                    </div>
-                {% endif %}
-            «ENDIF»
             «displayExtensions(objName)»
 
-            {% if not isQuickView %}
-                «IF !skipHookSubscribers»
-                    {# include display hooks #}
-                    {{ block('display_hooks') }}
-                «ENDIF»
-                «IF useGroupingPanels('display')»
-                    </div>«/* panels */»
-                «ENDIF»
+            «IF !skipHookSubscribers»
+                {{ block('display_hooks') }}
+            «ENDIF»
+            «IF useGroupingTabs('display')»
+                </div>
+            «ELSE»
                 «IF !refedElems.empty»
                         </div>
                         <div class="col-sm-3">
@@ -108,13 +142,20 @@ class Display {
                         </div>
                     </div>
                 «ENDIF»
-            {% endif %}
+            «ENDIF»
         </div>
         {% endblock %}
         «IF !refedElems.empty»
+             «val relationHelper = new Relations»
             {% block related_items %}
-                «val relationHelper = new Relations»
-                «FOR elem : refedElems»«relationHelper.displayRelatedItems(elem, appName, it)»«ENDFOR»
+                «IF useGroupingTabs('display')»
+                    <div role="tabpanel" class="tab-pane fade" id="tabRelations" aria-labelledby="relationsTab">
+                        <h3>{{ __('Related data') }}</h3>
+                        «FOR elem : refedElems»«relationHelper.displayRelatedItems(elem, appName, it)»«ENDFOR»
+                    </div>
+                «ELSE»
+                    «FOR elem : refedElems»«relationHelper.displayRelatedItems(elem, appName, it)»«ENDFOR»
+                «ENDIF»
             {% endblock %}
         «ENDIF»
         «IF !skipHookSubscribers»
@@ -199,43 +240,36 @@ class Display {
 
     def private displayExtensions(Entity it, String objName) '''
         «IF geographical»
-            «IF useGroupingPanels('display')»
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <h3 class="panel-title"><a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapseMap">{{ __('Map') }}</a></h3>
-                    </div>
-                    <div id="collapseMap" class="panel-collapse collapse in">
-                        <div class="panel-body">
+            «IF useGroupingTabs('display')»
+                <div role="tabpanel" class="tab-pane fade" id="tabMap" aria-labelledby="mapTab">
+                    <h3>{{ __('Map') }}</h3>
             «ELSE»
                 <h3 class="«application.appName.toLowerCase»-map">{{ __('Map') }}</h3>
             «ENDIF»
             <div id="mapContainer" class="«application.appName.toLowerCase»-mapcontainer">
             </div>
-            «IF useGroupingPanels('display')»
-                        </div>
-                    </div>
+            «IF useGroupingTabs('display')»
                 </div>
             «ENDIF»
         «ENDIF»
+        «IF useGroupingTabs('display')»
+            {{ block('related_items') }}
+        «ENDIF»
         «IF attributable»
             {% if featureActivationHelper.isEnabled(constant('«application.vendor.formatForCodeCapital»\\«application.name.formatForCodeCapital»Module\\Helper\\FeatureActivationHelper::ATTRIBUTES'), '«name.formatForCode»') %}
-                {{ include('@«application.appName»/Helper/includeAttributesDisplay.html.twig', { obj: «objName»«IF useGroupingPanels('display')», panel: true«ENDIF» }) }}
+                {{ include('@«application.appName»/Helper/includeAttributesDisplay.html.twig', { obj: «objName»«IF useGroupingTabs('display')», tabs: true«ENDIF» }) }}
             {% endif %}
         «ENDIF»
         «IF categorisable»
             {% if featureActivationHelper.isEnabled(constant('«application.vendor.formatForCodeCapital»\\«application.name.formatForCodeCapital»Module\\Helper\\FeatureActivationHelper::CATEGORIES'), '«name.formatForCode»') %}
-                {{ include('@«application.appName»/Helper/includeCategoriesDisplay.html.twig', { obj: «objName»«IF useGroupingPanels('display')», panel: true«ENDIF» }) }}
+                {{ include('@«application.appName»/Helper/includeCategoriesDisplay.html.twig', { obj: «objName»«IF useGroupingTabs('display')», tabs: true«ENDIF» }) }}
             {% endif %}
         «ENDIF»
         «IF tree != EntityTreeType.NONE»
             {% if featureActivationHelper.isEnabled(constant('«application.vendor.formatForCodeCapital»\\«application.name.formatForCodeCapital»Module\\Helper\\FeatureActivationHelper::TREE_RELATIVES'), '«name.formatForCode»') %}
-                «IF useGroupingPanels('display')»
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <h3 class="panel-title"><a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapseRelatives">{{ __('Relatives') }}</a></h3>
-                    </div>
-                    <div id="collapseRelatives" class="panel-collapse collapse in">
-                        <div class="panel-body">
+                «IF useGroupingTabs('display')»
+                <div role="tabpanel" class="tab-pane fade" id="tabRelatives" aria-labelledby="relativesTab">
+                    <h3>{{ __('Relatives') }}</h3>
                 «ELSE»
                 <h3 class="relatives">{{ __('Relatives') }}</h3>
                 «ENDIF»
@@ -243,36 +277,29 @@ class Display {
                         '@«application.appName»/«name.formatForCodeCapital»/displayTreeRelatives.html.twig',
                         { allParents: true, directParent: true, allChildren: true, directChildren: true, predecessors: true, successors: true, preandsuccessors: true }
                     ) }}
-                «IF useGroupingPanels('display')»
-                        </div>
-                    </div>
+                «IF useGroupingTabs('display')»
                 </div>
                 «ENDIF»
             {% endif %}
         «ENDIF»
         «IF standardFields»
-            {{ include('@«application.appName»/Helper/includeStandardFieldsDisplay.html.twig', { obj: «objName»«IF useGroupingPanels('display')», panel: true«ENDIF» }) }}
+            {{ include('@«application.appName»/Helper/includeStandardFieldsDisplay.html.twig', { obj: «objName»«IF useGroupingTabs('display')», tabs: true«ENDIF» }) }}
         «ENDIF»
     '''
 
     def private callDisplayHooks(Entity it, String appName) '''
+        «IF useGroupingTabs('display')»
+            <div role="tabpanel" class="tab-pane fade" id="tabHooks" aria-labelledby="hooksTab">
+                <h3>{{ __('Hooks') }}</h3>
+        «ENDIF»
         {% set hooks = notifyDisplayHooks(eventName='«appName.formatForDB».ui_hooks.«nameMultiple.formatForDB».display_view', id=«displayHookId», urlObject=currentUrlObject) %}
         {% for providerArea, hook in hooks if providerArea != 'provider.scribite.ui_hooks.editor' %}
-            «IF useGroupingPanels('display')»
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <h3 class="panel-title"><a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapseHook{{ loop.index }}">{{ providerArea }}</a></h3>
-                    </div>
-                    <div id="collapseHook{{ loop.index  }}" class="panel-collapse collapse in">
-                        <div class="panel-body">
-                            {{ hook }}
-                        </div>
-                    </div>
-                </div>
-            «ELSE»
-                {{ hook }}
-            «ENDIF»
+            <h4>{{ providerArea }}</h4>
+            {{ hook }}
         {% endfor %}
+        «IF useGroupingTabs('display')»
+            </div>
+        «ENDIF»
     '''
 
     def private displayHookId(Entity it) '''«FOR pkField : getPrimaryKeyFields SEPARATOR ' ~ '»«name.formatForCode».«pkField.name.formatForCode»«ENDFOR»'''

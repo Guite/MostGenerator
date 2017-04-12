@@ -40,20 +40,14 @@ class StandardFields {
     def private standardFieldsViewImpl(Application it) '''
         {# purpose of this template: reusable display of standard fields #}
         {% if (obj.createdBy|default and obj.createdBy.getUid() > 0) or (obj.updatedBy|default and obj.updatedBy.getUid() > 0) %}
-            {% if panel|default(false) == true %}
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <h3 class="panel-title"><a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapseStandardFields">{{ __('Creation and update') }}</a></h3>
-                    </div>
-                    <div id="collapseStandardFields" class="panel-collapse collapse in">
-                        <div class="panel-body">
+            {% if tabs|default(false) == true %}
+                <div role="tabpanel" class="tab-pane fade" id="tabStandardFields" aria-labelledby="standardFieldsTab">
+                    <h3>{{ __('Creation and update') }}</h3>
             {% else %}
                 <h3 class="standard-fields">{{ __('Creation and update') }}</h3>
             {% endif %}
             «viewBody»
-            {% if panel|default(false) == true %}
-                        </div>
-                    </div>
+            {% if tabs|default(false) == true %}
                 </div>
             {% endif %}
         {% endif %}
@@ -79,21 +73,15 @@ class StandardFields {
     def private standardFieldsEditImpl(Application it) '''
         {# purpose of this template: reusable editing of standard fields #}
         {% if (obj.createdBy|default and obj.createdBy.getUid() > 0) or (obj.updatedBy|default and obj.updatedBy.getUid() > 0) %}
-            {% if panel|default(false) == true %}
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <h3 class="panel-title"><a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapseStandardFields">{{ __('Creation and update') }}</a></h3>
-                    </div>
-                    <div id="collapseStandardFields" class="panel-collapse collapse in">
-                        <div class="panel-body">
+            {% if tabs|default(false) == true %}
+                <div role="tabpanel" class="tab-pane fade" id="tabStandardFields" aria-labelledby="standardFieldsTab">
+                    <h3>{{ __('Creation and update') }}</h3>
             {% else %}
                 <fieldset class="standardfields">
             {% endif %}
                 <legend>{{ __('Creation and update') }}</legend>
                 «editBody»
-            {% if panel|default(false) == true %}
-                        </div>
-                    </div>
+            {% if tabs|default(false) == true %}
                 </div>
             {% else %}
                 </fieldset>

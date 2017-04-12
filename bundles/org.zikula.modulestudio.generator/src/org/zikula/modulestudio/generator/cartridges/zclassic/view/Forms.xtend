@@ -49,14 +49,13 @@ class Forms {
         if (!app.shouldBeSkipped(templatePath)) {
             println('Generating edit form templates for entity "' + name.formatForDisplay + '"')
             fsa.generateFile(templatePath, '''
-                «formTemplateHeader(app, actionName)»
-                «formTemplateBody(app, actionName, fsa)»
+                «formTemplate(app, actionName, fsa)»
             ''')
         }
         relationHelper.generateInclusionTemplate(it, app, fsa)
     }
 
-    def private formTemplateHeader(Entity it, Application app, String actionName) '''
+    def private formTemplate(Entity it, Application app, String actionName, IFileSystemAccess fsa) '''
         {# purpose of this template: build the form to «actionName.formatForDisplay» an instance of «name.formatForDisplay» #}
         {% set baseTemplate = app.request.query.getBoolean('raw', false) ? 'raw' : (routeArea == 'admin' ? 'adminBase' : 'base') %}
         {% extends '«application.appName»::' ~ baseTemplate ~ '.html.twig' %}
@@ -69,11 +68,17 @@ class Forms {
                 {{ pageAddAsset('javascript', asset('typeahead/typeahead.bundle.min.js')) }}
             «ENDIF»
         {% endblock %}
-
         {% block title mode == 'create' ? __('Create «name.formatForDisplay»') : __('Edit «name.formatForDisplay»') %}
         {% block admin_page_icon mode == 'create' ? 'plus' : 'pencil-square-o' %}
         {% block content %}
             <div class="«app.appName.toLowerCase»-«name.formatForDB» «app.appName.toLowerCase»-edit">
+                «formTemplateBody(app, actionName, fsa)»
+            </div>
+        {% endblock %}
+        {% block footer %}
+            {{ parent() }}
+            «formTemplateJS(app, actionName)»
+        {% endblock %}
     '''
 
     def private formTemplateBody(Entity it, Application app, String actionName, IFileSystemAccess fsa) '''
@@ -82,33 +87,68 @@ class Forms {
             'ZikulaFormExtensionBundle:Form:form_div_layout.html.twig'
         ] %}
         {{ form_start(form, {attr: {id: '«name.formatForCode»EditForm', class: '«app.vendorAndName.toLowerCase»-edit-form'}}) }}
-        {{ form_errors(form) }}
-        «IF useGroupingPanels('edit')»
-            <div class="panel-group" id="accordion">
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <h3 class="panel-title"><a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapseFields">{{ __('Fields') }}</a></h3>
+        «IF useGroupingTabs('edit')»
+            <div class="zikula-bootstrap-tab-container">
+                <ul class="nav nav-tabs">
+                    <li role="presentation" class="active">
+                        <a id="fieldsTab" href="#tabFields" title="{{ __('Fields') }}" role="tab" data-toggle="tab">{{ __('Fields') }}</a>
+                    </li>
+                    «IF geographical»
+                        <li role="presentation">
+                            <a id="mapTab" href="#tabMap" title="{{ __('Map') }}" role="tab" data-toggle="tab">{{ __('Map') }}</a>
+                        </li>
+                    «ENDIF»
+                    «relationHelper.generateTabTitles(it, app, fsa)»
+                    «IF attributable»
+                        {% if featureActivationHelper.isEnabled(constant('«app.vendor.formatForCodeCapital»\\«app.name.formatForCodeCapital»Module\\Helper\\FeatureActivationHelper::ATTRIBUTES'), '«name.formatForCode»') %}
+                            <li role="presentation">
+                                <a id="attributesTab" href="#tabAttributes" title="{{ __('Attributes') }}" role="tab" data-toggle="tab">{{ __('Attributes') }}</a>
+                            </li>
+                        {% endif %}
+                    «ENDIF»
+                    «IF categorisable»
+                        {% if featureActivationHelper.isEnabled(constant('«app.vendor.formatForCodeCapital»\\«app.name.formatForCodeCapital»Module\\Helper\\FeatureActivationHelper::CATEGORIES'), '«name.formatForCode»') %}
+                            <li role="presentation">
+                                <a id="categoriesTab" href="#tabCategories" title="{{ __('Categories') }}" role="tab" data-toggle="tab">{{ __('Categories') }}</a>
+                            </li>
+                        {% endif %}
+                    «ENDIF»
+                    «IF standardFields»
+                        {% if mode != 'create' %}
+                            <li role="presentation">
+                                <a id="standardFieldsTab" href="#tabStandardFields" title="{{ __('Creation and update') }}" role="tab" data-toggle="tab">{{ __('Creation and update') }}</a>
+                            </li>
+                        {% endif %}
+                    «ENDIF»
+                    «IF !skipHookSubscribers»
+                        <li role="presentation">
+                            <a id="hooksTab" href="#tabHooks" title="{{ __('Hooks') }}" role="tab" data-toggle="tab">{{ __('Hooks') }}</a>
+                        </li>
+                    «ENDIF»
+                    {% if form.moderationSpecificCreator is defined %}
+                        <li role="presentation">
+                            <a id="moderationTab" href="#tabModeration" title="{{ __('Moderation options') }}" role="tab" data-toggle="tab">{{ __('Moderation') }}</a>
+                        </li>
+                    {% endif %}
+                </ul>
+
+                {{ form_errors(form) }}
+                <div class="tab-content">
+                    <div role="tabpanel" class="tab-pane fade in active" id="tabFields" aria-labelledby="fieldsTab">
+                        <h3>{{ __('Fields') }}</h3>
+                        «fieldDetails(app)»
                     </div>
-                    <div id="collapseFields" class="panel-collapse collapse in">
-                        <div class="panel-body">
-                            «fieldDetails(app)»
-                        </div>
-                    </div>
+                    «new Section().generate(it, app, fsa)»
                 </div>
-                «new Section().generate(it, app, fsa)»
             </div>
         «ELSE»
+            {{ form_errors(form) }}
             «fieldDetails(app)»
             «new Section().generate(it, app, fsa)»
         «ENDIF»
-        {{ form_end(form) }}
-        </div>
-        {% endblock %}
-        {% block footer %}
-            {{ parent() }}
 
-            «formTemplateJS(app, actionName)»
-        {% endblock %}
+        «submitActions»
+        {{ form_end(form) }}
     '''
 
     def private fieldDetails(Entity it, Application app) '''
@@ -266,6 +306,23 @@ class Forms {
 
     def private formRow(DerivedField it) '''
         {{ form_row(form.«name.formatForCode») }}
+    '''
+
+    def private submitActions(Entity it) '''
+        {# include possible submit actions #}
+        <div class="form-group form-buttons">
+            <div class="col-sm-offset-3 col-sm-9">
+                «submitActionsImpl»
+            </div>
+        </div>
+    '''
+
+    def private submitActionsImpl(Entity it) '''
+        {% for action in actions %}
+            {{ form_widget(attribute(form, action.id)) }}
+        {% endfor %}
+        {{ form_widget(form.reset) }}
+        {{ form_widget(form.cancel) }}
     '''
 
     def private additionalInitScript(DerivedField it) {

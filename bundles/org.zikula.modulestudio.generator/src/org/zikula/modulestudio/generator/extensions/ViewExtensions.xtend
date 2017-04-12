@@ -13,15 +13,14 @@ class ViewExtensions {
     extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
 
     /**
-     * Determines whether grouping panels with JavaScript for
-     * toggling their visibility state are generated or not.
+     * Determines whether grouping tabs are generated or not.
      *
      * @param it Given {@link Entity} instance.
      * @param page The page template name.
      *
      * @return Boolean The result.
      */
-    def useGroupingPanels(Entity it, String page) {
+    def useGroupingTabs(Entity it, String page) {
         // return false for geographical always until we can redraw the map after panel activation
         (!geographical && panelWeight(page) > 3)
     }
