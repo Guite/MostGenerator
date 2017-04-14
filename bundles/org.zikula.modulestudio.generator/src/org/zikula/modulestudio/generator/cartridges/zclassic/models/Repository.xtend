@@ -409,7 +409,7 @@ class Repository {
                         «ENDFOR»
                         $templateParameters['thumbRuntimeOptions'] = $thumbRuntimeOptions;
                     «ENDIF»
-                    if (in_array($args['action'], ['display', 'view'])) {
+                    if (in_array($args['action'], ['display', 'edit', 'view'])) {
                         // use separate preset for images in related items
                         $templateParameters['relationThumbRuntimeOptions'] = $imageHelper->getCustomRuntimeOptions('', '', '«app.appName»_relateditem', $context, $args);
                     }
