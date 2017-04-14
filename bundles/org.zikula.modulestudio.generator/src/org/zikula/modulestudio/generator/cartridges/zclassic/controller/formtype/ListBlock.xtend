@@ -149,7 +149,7 @@ class ListBlock {
                     ->setAllowedTypes([
                         'objectType' => 'string'«IF hasCategorisableEntities»,
                         'is_categorisable' => 'bool',
-                        'category_helper' =>> 'object',
+                        'category_helper' => 'object',
                         'feature_activation_helper' => 'object'«ENDIF»
                     ])
                 ;
