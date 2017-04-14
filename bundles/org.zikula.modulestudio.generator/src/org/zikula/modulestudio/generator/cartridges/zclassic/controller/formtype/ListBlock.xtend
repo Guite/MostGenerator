@@ -48,14 +48,19 @@ class ListBlock {
             use «nsSymfonyFormType»TextType;
         «ENDIF»
         use Symfony\Component\Form\FormBuilderInterface;
-        use Symfony\Component\Form\FormInterface;
-        use Symfony\Component\Form\FormView;
+        «IF hasCategorisableEntities»
+            use Symfony\Component\Form\FormInterface;
+            use Symfony\Component\Form\FormView;
+        «ENDIF»
         use Symfony\Component\OptionsResolver\OptionsResolver;
         «IF targets('1.5') && hasCategorisableEntities»
             use Zikula\CategoriesModule\Form\Type\CategoriesType;
         «ENDIF»
         use Zikula\Common\Translator\TranslatorInterface;
         use Zikula\Common\Translator\TranslatorTrait;
+        «IF hasCategorisableEntities»
+            use «appNamespace»\Helper\FeatureActivationHelper;
+        «ENDIF»
 
         /**
          * List block form type base class.
@@ -83,7 +88,7 @@ class ListBlock {
             {
                 $this->addObjectTypeField($builder, $options);
                 «IF hasCategorisableEntities»
-                    if ($options['featureActivationHelper']->isEnabled(FeatureActivationHelper::CATEGORIES, $options['objectType'])) {
+                    if ($options['feature_activation_helper']->isEnabled(FeatureActivationHelper::CATEGORIES, $options['object_type'])) {
                         $this->addCategoriesField($builder, $options);
                     }
                 «ENDIF»
@@ -92,14 +97,16 @@ class ListBlock {
                 $this->addTemplateFields($builder, $options);
                 $this->addFilterField($builder, $options);
             }
+            «IF hasCategorisableEntities»
 
-            /**
-             * @inheritDoc
-             */
-            public function buildView(FormView $view, FormInterface $form, array $options)
-            {
-                $view->vars['isCategorisable'] = $options['isCategorisable'];
-            }
+                /**
+                 * @inheritDoc
+                 */
+                public function buildView(FormView $view, FormInterface $form, array $options)
+                {
+                    $view->vars['isCategorisable'] = $options['is_categorisable'];
+                }
+            «ENDIF»
 
             «addObjectTypeField»
 
@@ -130,15 +137,20 @@ class ListBlock {
             {
                 $resolver
                     ->setDefaults([
-                        'objectType' => '«leadingEntity.name.formatForCode»',
-                        'isCategorisable' => false,
-                        'categoryHelper' => null
+                        'object_type' => '«leadingEntity.name.formatForCode»'«IF hasCategorisableEntities»,
+                        'is_categorisable' => false,
+                        'category_helper' => null,
+                        'feature_activation_helper' => null«ENDIF»
                     ])
-                    ->setRequired(['objectType'])
-                    ->setOptional(['isCategorisable', 'categoryHelper'])
+                    ->setRequired(['object_type'])
+                    «IF hasCategorisableEntities»
+                        ->setOptional(['is_categorisable', 'category_helper', 'feature_activation_helper'])
+                    «ENDIF»
                     ->setAllowedTypes([
-                        'objectType' => 'string',
-                        'isCategorisable' => 'bool'
+                        'objectType' => 'string'«IF hasCategorisableEntities»,
+                        'is_categorisable' => 'bool',
+                        'category_helper' =>> 'object',
+                        'feature_activation_helper' => 'object'«ENDIF»
                     ])
                 ;
             }
@@ -182,11 +194,11 @@ class ListBlock {
          */
         public function addCategoriesField(FormBuilderInterface $builder, array $options)
         {
-            if (!$options['isCategorisable'] || null === $options['categoryHelper']) {
+            if (!$options['is_categorisable'] || null === $options['category_helper']) {
                 return;
             }
 
-            $hasMultiSelection = $options['categoryHelper']->hasMultipleSelection($options['objectType']);
+            $hasMultiSelection = $options['category_helper']->hasMultipleSelection($options['object_type']);
             $builder->add('categories', «IF targets('1.5')»CategoriesType::class«ELSE»'Zikula\CategoriesModule\Form\Type\CategoriesType'«ENDIF», [
                 'label' => ($hasMultiSelection ? $this->__('Categories') : $this->__('Category')) . ':',
                 'empty_data' => $hasMultiSelection ? [] : null,
@@ -198,8 +210,8 @@ class ListBlock {
                 'required' => false,
                 'multiple' => $hasMultiSelection,
                 'module' => '«appName»',
-                'entity' => ucfirst($options['objectType']) . 'Entity',
-                'entityCategoryClass' => '«app.appNamespace»\Entity\\' . ucfirst($options['objectType']) . 'CategoryEntity'
+                'entity' => ucfirst($options['object_type']) . 'Entity',
+                'entityCategoryClass' => '«app.appNamespace»\Entity\\' . ucfirst($options['object_type']) . 'CategoryEntity'
             ]);
         }
     '''

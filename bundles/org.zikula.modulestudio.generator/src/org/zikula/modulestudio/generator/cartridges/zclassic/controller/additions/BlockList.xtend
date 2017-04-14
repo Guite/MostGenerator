@@ -329,10 +329,10 @@ class BlockList {
             }
 
             return [
-                'objectType' => $objectType«IF hasCategorisableEntities»,
-                'isCategorisable' => in_array($objectType, $this->categorisableObjectTypes),
-                'categoryHelper' => $this->get('«appService».category_helper'),
-                'featureActivationHelper' => $this->get('«appService».feature_activation_helper')«ENDIF»
+                'object_type' => $objectType«IF hasCategorisableEntities»,
+                'is_categorisable' => in_array($objectType, $this->categorisableObjectTypes),
+                'category_helper' => $this->get('«appService».category_helper'),
+                'feature_activation_helper' => $this->get('«appService».feature_activation_helper')«ENDIF»
             ];
         }
 
