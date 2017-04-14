@@ -95,7 +95,7 @@ class SimpleFields {
     }
 
     def dispatch displayField(TextField it, String objName, String page) '''
-        {{ «objName».«name.formatForCode»|safeHtml }}'''
+        {{ «objName».«name.formatForCode»|safeHtml«IF page == 'view'»|truncate(50)«ENDIF» }}'''
 
     def dispatch displayField(EmailField it, String objName, String page) {
         val realName = objName + '.' + name.formatForCode
