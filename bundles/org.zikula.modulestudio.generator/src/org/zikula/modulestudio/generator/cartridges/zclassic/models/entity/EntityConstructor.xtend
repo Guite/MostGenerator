@@ -1,16 +1,8 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.models.entity
 
-import de.guite.modulestudio.metamodel.AbstractDateField
-import de.guite.modulestudio.metamodel.DateField
-import de.guite.modulestudio.metamodel.DatetimeField
-import de.guite.modulestudio.metamodel.DecimalField
 import de.guite.modulestudio.metamodel.Entity
-import de.guite.modulestudio.metamodel.FloatField
-import de.guite.modulestudio.metamodel.IntegerField
 import de.guite.modulestudio.metamodel.JoinRelationship
 import de.guite.modulestudio.metamodel.OneToManyRelationship
-import de.guite.modulestudio.metamodel.TimeField
-import de.guite.modulestudio.metamodel.UserField
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
@@ -100,7 +92,6 @@ class EntityConstructor {
                 $this->«pkField.name.formatForCode» = $«pkField.name.formatForCode»;
             «ENDFOR»
         «ENDIF»
-        «defaultValueAssignments»
         «IF isIndexByTarget»
 
             «val indexRelation = incoming.filter(JoinRelationship).filter[isIndexed].head»
@@ -130,53 +121,4 @@ class EntityConstructor {
         $this->«getRelationAliasName(false)» = $«getRelationAliasName(false)»;
         $this->«targetField.name.formatForCode» = $«targetField.name.formatForCode»;
     '''
-
-    def private defaultValueAssignments(Entity it) '''
-        «val mandatoryFields = getDerivedFields.filter[mandatory && !primaryKey]»
-        «IF !getListFieldsEntity.filter[name != 'workflowState' && (null === defaultValue || defaultValue.length == 0)].empty
-        	|| !mandatoryFields.filter(UserField).filter[null === defaultValue || defaultValue == '' || defaultValue == '0'].empty»
-            $container = \ServiceUtil::get('service_container');
-            «IF !mandatoryFields.filter(UserField).filter[null === defaultValue || defaultValue == '' || defaultValue == '0'].empty»
-                $userRepository = $container->get('zikula_users_module.user_repository');
-                $currentUser = $userRepository->find($container->get('zikula_users_module.current_user')->get('uid'));
-            «ENDIF»
-    	«ENDIF»
-        «FOR mandatoryField : mandatoryFields.filter(IntegerField).filter[null === defaultValue || defaultValue == '' || defaultValue == '0']»
-            $this->«mandatoryField.name.formatForCode» = 1;
-        «ENDFOR»
-        «FOR mandatoryField : mandatoryFields.filter(UserField).filter[null === defaultValue || defaultValue == '' || defaultValue == '0']»
-            $this->«mandatoryField.name.formatForCode» = $currentUser;
-        «ENDFOR»
-        «FOR mandatoryField : mandatoryFields.filter(DecimalField).filter[null === defaultValue || defaultValue == '' || defaultValue == '0']»
-            $this->«mandatoryField.name.formatForCode» = 1;
-        «ENDFOR»
-        «FOR dateField : getDerivedFields.filter(AbstractDateField)»
-            $this->«dateField.name.formatForCode» = «dateField.defaultAssignment»;
-        «ENDFOR»
-        «FOR mandatoryField : mandatoryFields.filter(FloatField).filter[null === defaultValue || defaultValue == '' || defaultValue == '0']»
-            $this->«mandatoryField.name.formatForCode» = 1;
-        «ENDFOR»
-        «IF !getListFieldsEntity.filter[name != 'workflowState' && (null === defaultValue || defaultValue.length == 0)].empty»
-
-            $listHelper = $container->get('«application.appService».listentries_helper');
-            «FOR listField : getListFieldsEntity.filter[name != 'workflowState' && (null === defaultValue || defaultValue.length == 0)]»
-
-                $items = [];
-                $listEntries = $listHelper->get«listField.name.formatForCodeCapital»EntriesFor«name.formatForCodeCapital»();
-                foreach ($listEntries as $listEntry) {
-                    if (true === $listEntry['default']) {
-                        $items[] = $listEntry['value'];
-                    }
-                }
-                $this->«listField.name.formatForCode» = implode('###', $items);
-            «ENDFOR»
-        «ENDIF»
-    '''
-
-    def private defaultAssignment(AbstractDateField it) '''\DateTime::createFromFormat('«defaultFormat»', «IF null === defaultValue || defaultValue == '' || defaultValue.length == 0»date('«defaultFormat»')«ELSE»'«defaultValue»'«ENDIF»)'''
-    def private dispatch defaultFormat(AbstractDateField it) {
-    }
-    def private dispatch defaultFormat(DatetimeField it) '''Y-m-d H:i:s'''
-    def private dispatch defaultFormat(DateField it) '''Y-m-d'''
-    def private dispatch defaultFormat(TimeField it) '''H:i:s'''
 }

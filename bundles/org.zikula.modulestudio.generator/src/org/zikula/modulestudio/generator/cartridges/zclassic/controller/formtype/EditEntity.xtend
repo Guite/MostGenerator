@@ -917,8 +917,8 @@ class EditEntity {
         'empty_data' => «defaultData»,
         'widget' => 'single_text'
     '''
-    def private dispatch defaultData(DatetimeField it) '''«IF null !== defaultValue && defaultValue != '' && defaultValue != 'now'»'«defaultValue»'«ELSEIF mandatory || !nullable»date('Y-m-d H:i:s')«ELSE»''«ENDIF»'''
-    def private dispatch defaultData(DateField it) '''«IF null !== defaultValue && defaultValue != '' && defaultValue != 'now'»'«defaultValue»'«ELSEIF mandatory || !nullable»date('Y-m-d')«ELSE»''«ENDIF»'''
+    def private dispatch defaultData(DatetimeField it) '''«IF null !== defaultValue && defaultValue != '' && defaultValue != 'now'»'«defaultValue»'«ELSEIF nullable»null«ELSE»date('Y-m-d H:i:s')«ENDIF»'''
+    def private dispatch defaultData(DateField it) '''«IF null !== defaultValue && defaultValue != '' && defaultValue != 'now'»'«defaultValue»'«ELSEIF nullable»null«ELSE»date('Y-m-d')«ENDIF»'''
     def private dispatch additionalAttributes(TimeField it) '''
         'maxlength' => 8,
     '''
