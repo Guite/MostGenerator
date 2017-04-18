@@ -150,7 +150,7 @@ class ListEntryValidator {
 
                 if (!$constraint->multiple) {
                     // single-valued list
-                    if (!in_array($value, $allowedValues, true)) {
+                    if (!in_array($value, $allowedValues)) {
                         $this->context->buildViolation(
                             $this->__f('The value "%value%" is not allowed for the "%property%" property.', [
                                 '%value%' => $value,
@@ -168,7 +168,7 @@ class ListEntryValidator {
                     if ($singleValue == '') {
                         continue;
                     }
-                    if (!in_array($singleValue, $allowedValues, true)) {
+                    if (!in_array($singleValue, $allowedValues)) {
                         $this->context->buildViolation(
                             $this->__f('The value "%value%" is not allowed for the "%property%" property.', [
                                 '%value%' => $singleValue,
