@@ -331,38 +331,36 @@ class ValidationConstraints {
     '''
 
     def dispatch validationMethods(TimeField it) '''
-        «IF mandatory»
-            «IF past»
-                /**
-                 * Checks whether the «name.formatForCode» field value is in the past.
-                 * This method is used for validation.
-                 *
-                 * @Assert\IsTrue(message="This value must be a time in the past.")
-                 *
-                 * @return boolean True if data is valid else false
-                 */
-                public function is«name.formatForCodeCapital»TimeValidPast()
-                {
-                    $format = 'His';
+        «IF past»
+            /**
+             * Checks whether the «name.formatForCode» field value is in the past.
+             * This method is used for validation.
+             *
+             * @Assert\IsTrue(message="This value must be a time in the past.")
+             *
+             * @return boolean True if data is valid else false
+             */
+            public function is«name.formatForCodeCapital»TimeValidPast()
+            {
+                $format = 'His';
 
-                    return $this['«name.formatForCode»']->format($format) < date($format);
-                }
-            «ELSEIF future»
-                /**
-                 * Checks whether the «name.formatForCode» field value is in the future.
-                 * This method is used for validation.
-                 *
-                 * @Assert\IsTrue(message="This value must be a time in the future.")
-                 *
-                 * @return boolean True if data is valid else false
-                 */
-                public function is«name.formatForCodeCapital»TimeValidFuture()
-                {
-                    $format = 'His';
+                return «IF !mandatory»!$this['«name.formatForCode»'] || «ENDIF»$this['«name.formatForCode»']->format($format) < date($format);
+            }
+        «ELSEIF future»
+            /**
+             * Checks whether the «name.formatForCode» field value is in the future.
+             * This method is used for validation.
+             *
+             * @Assert\IsTrue(message="This value must be a time in the future.")
+             *
+             * @return boolean True if data is valid else false
+             */
+            public function is«name.formatForCodeCapital»TimeValidFuture()
+            {
+                $format = 'His';
 
-                    return $this['«name.formatForCode»']->format($format) > date($format);
-                }
-            «ENDIF»
+                return «IF !mandatory»!$this['«name.formatForCode»'] || «ENDIF»$this['«name.formatForCode»']->format($format) > date($format);
+            }
         «ENDIF»
     '''
 
