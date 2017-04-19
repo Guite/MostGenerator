@@ -47,7 +47,7 @@ class GeneratorSettingsExtensions {
      * Determines whether Mailz support should be generated or not.
      */
     def generateMailzApi(Application it) {
-        if (hasSettings) getSettings.generateMailzApi else true
+        if (hasSettings) getSettings.generateMailzApi else false
     }
 
     /**
@@ -82,7 +82,7 @@ class GeneratorSettingsExtensions {
      * Determines whether a Newsletter plugin should be generated or not.
      */
     def generateNewsletterPlugin(Application it) {
-        if (hasSettings) getSettings.generateNewsletterPlugin else true
+        if (hasSettings) getSettings.generateNewsletterPlugin else false
     }
 
     /**
@@ -117,14 +117,14 @@ class GeneratorSettingsExtensions {
      * Determines whether tag support should be generated or not.
      */
     def generateTagSupport(Application it) {
-        if (hasSettings) getSettings.generateTagSupport else true
+        if (hasSettings) getSettings.generateTagSupport else false
     }
 
     /**
      * Determines whether MultiHook needles should be generated or not.
      */
     def generateMultiHookNeedles(Application it) {
-        if (hasSettings) getSettings.generateMultiHookNeedles else true
+        if (hasSettings) getSettings.generateMultiHookNeedles else false
     }
 
     /**
