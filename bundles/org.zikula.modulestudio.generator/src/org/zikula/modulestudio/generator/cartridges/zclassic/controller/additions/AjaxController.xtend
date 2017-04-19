@@ -46,13 +46,25 @@ class AjaxController {
         «IF hasTrees && hasEditActions»
             use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
         «ENDIF»
-        use Symfony\Component\Security\Core\Exception\AccessDeniedException;
-        use RuntimeException;
+        «IF needsDuplicateCheck || hasBooleansWithAjaxToggle || hasTrees»
+            use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+        «ENDIF»
+        «IF hasTrees»
+            use RuntimeException;
+        «ENDIF»
         use Zikula\Core\Controller\AbstractController;
-        use Zikula\Core\Response\Ajax\AjaxResponse;
-        use Zikula\Core\Response\Ajax\BadDataResponse;
-        use Zikula\Core\Response\Ajax\FatalResponse;
-        use Zikula\Core\Response\Ajax\NotFoundResponse;
+        «IF generateExternalControllerAndFinder || needsDuplicateCheck || hasBooleansWithAjaxToggle || hasTrees»
+            use Zikula\Core\Response\Ajax\AjaxResponse;
+        «ENDIF»
+        «IF needsDuplicateCheck || hasBooleansWithAjaxToggle»
+            use Zikula\Core\Response\Ajax\BadDataResponse;
+        «ENDIF»
+        «IF hasTrees»
+            use Zikula\Core\Response\Ajax\FatalResponse;
+        «ENDIF»
+        «IF hasBooleansWithAjaxToggle»
+            use Zikula\Core\Response\Ajax\NotFoundResponse;
+        «ENDIF»
 
         /**
          * Ajax controller base class.
@@ -73,8 +85,7 @@ class AjaxController {
 
             «getItemListAutoCompletionBase»
         «ENDIF»
-        «IF entities.exists[getUniqueDerivedFields.filter[!primaryKey].size > 0]
-        || (hasSluggable && !getAllEntities.filter[hasSluggableFields && slugUnique].empty)»
+        «IF needsDuplicateCheck»
 
             «checkForDuplicateBase»
         «ENDIF»
@@ -983,8 +994,7 @@ class AjaxController {
 
             «getItemListAutoCompletionImpl»
         «ENDIF»
-        «IF entities.exists[getUniqueDerivedFields.filter[!primaryKey].size > 0]
-        || (hasSluggable && !getAllEntities.filter[hasSluggableFields && slugUnique].empty)»
+        «IF needsDuplicateCheck»
 
             «checkForDuplicateImpl»
         «ENDIF»
@@ -1077,12 +1087,24 @@ class AjaxController {
         use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
         use Symfony\Component\HttpFoundation\JsonResponse;
         use Symfony\Component\HttpFoundation\Request;
-        use Symfony\Component\Security\Core\Exception\AccessDeniedException;
-        use RuntimeException;
-        use Zikula\Core\Response\Ajax\AjaxResponse;
-        use Zikula\Core\Response\Ajax\BadDataResponse;
-        use Zikula\Core\Response\Ajax\FatalResponse;
-        use Zikula\Core\Response\Ajax\NotFoundResponse;
+        «IF needsDuplicateCheck || hasBooleansWithAjaxToggle || hasTrees»
+            use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+        «ENDIF»
+        «IF hasTrees»
+            use RuntimeException;
+        «ENDIF»
+        «IF generateExternalControllerAndFinder || needsDuplicateCheck || hasBooleansWithAjaxToggle || hasTrees»
+            use Zikula\Core\Response\Ajax\AjaxResponse;
+        «ENDIF»
+        «IF needsDuplicateCheck || hasBooleansWithAjaxToggle»
+            use Zikula\Core\Response\Ajax\BadDataResponse;
+        «ENDIF»
+        «IF hasTrees»
+            use Zikula\Core\Response\Ajax\FatalResponse;
+        «ENDIF»
+        «IF hasBooleansWithAjaxToggle»
+            use Zikula\Core\Response\Ajax\NotFoundResponse;
+        «ENDIF»
 
         /**
          * Ajax controller implementation class.
@@ -1096,4 +1118,9 @@ class AjaxController {
             // feel free to add your own ajax controller methods here
         }
     '''
+
+    def private needsDuplicateCheck(Application it) {
+        entities.exists[getUniqueDerivedFields.filter[!primaryKey].size > 0]
+        || (hasSluggable && !getAllEntities.filter[hasSluggableFields && slugUnique].empty)
+    }
 }
