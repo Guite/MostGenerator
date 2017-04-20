@@ -361,8 +361,8 @@ class Layout {
             «IF hasEditActions || needsConfig»
                 «IF hasEditActions»
                     {% if 'edit' in app.request.get('_route') %}
-                        {{ pageAddAsset('javascript', zasset('@«appName»:js/«appName».Validation.js', 98)) }}
-                        {{ pageAddAsset('javascript', zasset('@«appName»:js/«appName».EditFunctions.js', 99)) }}
+                        {{ pageAddAsset('javascript', zasset('@«appName»:js/«appName».Validation.js'), 98) }}
+                        {{ pageAddAsset('javascript', zasset('@«appName»:js/«appName».EditFunctions.js'), 99) }}
                         {{ pageAddAsset('javascript', asset('typeahead/typeahead.bundle.min.js')) }}
                     {% endif %}
                 «ENDIF»
