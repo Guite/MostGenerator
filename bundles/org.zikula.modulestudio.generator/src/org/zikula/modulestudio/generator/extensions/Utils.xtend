@@ -124,7 +124,7 @@ class Utils {
 
         switch getCoreVersion {
             case ZK20:
-                #['1.5', '1.5-dev'].contains(version)
+                #['2.0', '1.5', '1.5-dev'].contains(version)
             case ZK15:
                 version == '1.5'
             case ZK15DEV:

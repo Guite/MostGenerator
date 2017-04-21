@@ -33,6 +33,7 @@ import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
+import org.zikula.modulestudio.generator.extensions.Utils
 
 class ValidationConstraints {
 
@@ -41,6 +42,7 @@ class ValidationConstraints {
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension ModelJoinExtensions = new ModelJoinExtensions
     extension NamingExtensions = new NamingExtensions
+    extension Utils = new Utils
 
     def dispatch fieldAnnotations(DerivedField it) {
     }
@@ -253,9 +255,8 @@ class ValidationConstraints {
         if (!allowPortrait) {
             constraints += 'allowPortrait = false'
         }
-        if (detectCorrupted) {
-            //to be enabled for Zikula 2.0 (see #799)
-            //constraints += 'detectCorrupted = true'
+        if (detectCorrupted && entity.application.targets('2.0')) {
+            constraints += 'detectCorrupted = true'
         }
 
         constraints
