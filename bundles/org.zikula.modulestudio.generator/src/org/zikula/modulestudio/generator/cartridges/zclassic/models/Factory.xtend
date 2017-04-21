@@ -171,7 +171,7 @@ class Factory {
         namespace «appNamespace»\Entity\Factory\Base;
 
         «FOR entity : getAllEntities»
-            use «appNamespace»\Entity\«entity.name.formatForCode»Entity;
+            use «appNamespace»\Entity\«entity.name.formatForCodeCapital»Entity;
         «ENDFOR»
         «IF !getAllListFields.filter[name != 'workflowState'].empty»
             use «appNamespace»\Helper\ListEntriesHelper;
@@ -203,11 +203,11 @@ class Factory {
                 /**
                  * Initialises a given «entity.name.formatForCode» instance.
                  *
-                 * @param «entity.name.formatForCode»Entity The newly created entity instance
+                 * @param «entity.name.formatForCodeCapital»Entity $entity The newly created entity instance
                  *
-                 * @return «entity.name.formatForCode»Entity The updated entity instance
+                 * @return «entity.name.formatForCodeCapital»Entity The updated entity instance
                  */
-                public function init«entity.name.formatForCodeCapital»(«entity.name.formatForCode»Entity $entity)
+                public function init«entity.name.formatForCodeCapital»(«entity.name.formatForCodeCapital»Entity $entity)
                 {
                     «IF !entity.getListFieldsEntity.filter[name != 'workflowState'].empty»
                         «FOR listField : entity.getListFieldsEntity.filter[name != 'workflowState']»
