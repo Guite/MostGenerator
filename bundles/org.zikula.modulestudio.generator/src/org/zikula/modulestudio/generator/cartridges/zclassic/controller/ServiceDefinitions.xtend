@@ -603,6 +603,7 @@ class ServiceDefinitions {
                 arguments:
                     - "@translator.default"
                     - "@session"
+                    - "@liip_imagine.cache.manager"
                     - "@logger"
                     - "@zikula_users_module.current_user"
                     - "@zikula_extensions_module.api.variable"
