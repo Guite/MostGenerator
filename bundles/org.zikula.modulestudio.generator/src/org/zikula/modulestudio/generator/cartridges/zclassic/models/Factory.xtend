@@ -25,6 +25,10 @@ class Factory {
         generateClassPair(fsa, getAppSourceLibPath + 'Entity/Factory/' + name.formatForCodeCapital + 'Factory.php',
             fh.phpFileContent(it, modelFactoryBaseImpl), fh.phpFileContent(it, modelFactoryImpl)
         )
+        println('Generating entity initialiser class')
+        generateClassPair(fsa, getAppSourceLibPath + 'Entity/Factory/EntityInitialiser.php',
+            fh.phpFileContent(it, initialiserBaseImpl), fh.phpFileContent(it, initialiserImpl)
+        )
     }
 
     def private modelFactoryBaseImpl(Application it) '''
@@ -33,11 +37,10 @@ class Factory {
         use Doctrine\Common\Persistence\ObjectManager;
         use Doctrine\ORM\EntityRepository;
         use InvalidArgumentException;
+        use «appNamespace»\Entity\Factory\EntityInitialiser;
 
         /**
          * Factory class used to create entities and receive entity repositories.
-         *
-         * This is the base factory class.
          */
         abstract class Abstract«name.formatForCodeCapital»Factory
         {
@@ -47,13 +50,20 @@ class Factory {
             protected $objectManager;
 
             /**
+             * @var EntityInitialiser The entity initialiser for dynamical application of default values
+             */
+            protected $entityInitialiser;
+
+            /**
              * «name.formatForCodeCapital»Factory constructor.
              *
-             * @param ObjectManager $objectManager The object manager to be used for determining the repositories
+             * @param ObjectManager     $objectManager     The object manager to be used for determining the repositories
+             * @param EntityInitialiser $entityInitialiser The entity initialiser for dynamical application of default values
              */
-            public function __construct(ObjectManager $objectManager)
+            public function __construct(ObjectManager $objectManager, EntityInitialiser $entityInitialiser)
             {
                 $this->objectManager = $objectManager;
+                $this->entityInitialiser = $entityInitialiser;
             }
 
             /**
@@ -80,7 +90,11 @@ class Factory {
                 {
                     $entityClass = '«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Entity\\«entity.name.formatForCodeCapital»Entity';
 
-                    return new $entityClass(«/* TODO provide entity constructor arguments if required */»);
+                    $entity = new $entityClass(«/* TODO provide entity constructor arguments if required */»);
+
+                    $this->entityInitialiser->init«entity.name.formatForCodeCapital»($entity);
+
+                    return $entity;
                 }
             «ENDFOR»
 
@@ -89,6 +103,8 @@ class Factory {
             «hasCompositeKeys»
 
             «fh.getterAndSetterMethods(it, 'objectManager', 'ObjectManager', false, true, false, '', '')»
+
+            «fh.getterAndSetterMethods(it, 'entityInitialiser', 'EntityInitialiser', false, true, false, '', '')»
         }
     '''
 
@@ -144,12 +160,99 @@ class Factory {
 
         /**
          * Factory class used to create entities and receive entity repositories.
-         *
-         * This is the concrete factory class.
          */
         class «name.formatForCodeCapital»Factory extends Abstract«name.formatForCodeCapital»Factory
         {
             // feel free to customise the factory
+        }
+    '''
+
+    def private initialiserBaseImpl(Application it) '''
+        namespace «appNamespace»\Entity\Factory\Base;
+
+        «FOR entity : getAllEntities»
+            use «appNamespace»\Entity\«entity.name.formatForCode»Entity;
+        «ENDFOR»
+        «IF hasListFields»
+            use «appNamespace»\Helper\ListEntriesHelper;
+        «ENDIF»
+
+        /**
+         * Entity initialiser class used to dynamically apply default values to newly created entities.
+         */
+        abstract class AbstractEntityInitialiser
+        {
+            «IF hasListFields»
+                /**
+                 * @var ListEntriesHelper Helper service for managing list entries
+                 */
+                protected $listEntriesHelper;
+
+                /**
+                 * EntityInitialiser constructor.
+                 *
+                 * @param ListEntriesHelper $listEntriesHelper Helper service for managing list entries
+                 */
+                public function __construct(ListEntriesHelper $listEntriesHelper)
+                {
+                    $this->listEntriesHelper = $listEntriesHelper;
+                }
+
+            «ENDIF»
+            «FOR entity : getAllEntities»
+                /**
+                 * Initialises a given «entity.name.formatForCode» instance.
+                 *
+                 * @param «entity.name.formatForCode»Entity The newly created entity instance
+                 *
+                 * @return «entity.name.formatForCode»Entity The updated entity instance
+                 */
+                public function init«entity.name.formatForCodeCapital»(«entity.name.formatForCode»Entity $entity)
+                {
+                    «IF entity.hasListFieldsEntity»
+                        «FOR listField : entity.getListFieldsEntity»
+                            $listEntries = $this->listEntriesHelper->get«listField.name.formatForCodeCapital»EntriesFor«entity.name.formatForCodeCapital»();
+                            «IF listField.multiple»
+                                foreach ($listEntries as $listEntry) {
+                                    if (true === $listEntry['default']) {
+                                        $entity->set«listField.name.formatForCodeCapital»($listEntry['value']);
+                                        break;
+                                    }
+                                }
+                            «ELSE»
+                                $items = [];
+                                foreach ($listEntries as $listEntry) {
+                                    if (true === $listEntry['default']) {
+                                        $items[] = $listEntry['value'];
+                                    }
+                                }
+                                $entity->set«listField.name.formatForCodeCapital»('###', $items);
+                            «ENDIF»
+
+                        «ENDFOR»
+
+                    «ENDIF»
+                    return $entity;
+                }
+
+            «ENDFOR»
+            «IF hasListFields»
+                «fh.getterAndSetterMethods(it, 'listEntriesHelper', 'ListEntriesHelper', false, true, false, '', '')»
+            «ENDIF»
+        }
+    '''
+
+    def private initialiserImpl(Application it) '''
+        namespace «appNamespace»\Entity\Factory;
+
+        use «appNamespace»\Entity\Factory\Base\AbstractEntityInitialiser;
+
+        /**
+         * Entity initialiser class used to dynamically apply default values to newly created entities.
+         */
+        class EntityInitialiser extends AbstractEntityInitialiser
+        {
+            // feel free to customise the initialiser
         }
     '''
 }

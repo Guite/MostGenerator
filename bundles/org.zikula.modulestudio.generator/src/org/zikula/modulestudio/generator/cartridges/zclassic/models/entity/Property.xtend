@@ -160,16 +160,7 @@ class Property {
             ArrayField: '[]'
             UploadField: 'null'
             ObjectField: 'null'
-            ListField:
-                if (null !== it.defaultValue && it.defaultValue.length > 0) '\'' + it.defaultValue + '\''
-                else if (!items.filter[^default].empty) {
-                    if (multiple) {
-                        '\'' + items.filter[^default].map[value.formatForCode].join('###') + '\''
-                    } else {
-                        '\'' + items.filter[^default].head.value.formatForCode + '\''
-                    }
-                }
-                else 'null'
+            ListField: if (null !== it.defaultValue && it.defaultValue.length > 0) '\'' + it.defaultValue + '\'' else 'null'
             AbstractStringField: if (null !== it.defaultValue && it.defaultValue.length > 0) '\'' + it.defaultValue + '\'' else '\'\''
             AbstractDateField:
                 if (it.mandatory && null !== it.defaultValue && it.defaultValue.length > 0 && it.defaultValue != 'now') 'new \\DateTime(\'' + it.defaultValue + '\')' else 'null'

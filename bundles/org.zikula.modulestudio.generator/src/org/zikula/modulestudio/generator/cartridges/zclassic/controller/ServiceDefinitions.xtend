@@ -112,11 +112,19 @@ class ServiceDefinitions {
     '''
 
     def private servicesEntityFactory(Application it) '''
-        # Entity factory class
+        # Entity factory
         «modPrefix».entity_factory:
             class: «appNamespace»\Entity\Factory\«name.formatForCodeCapital»Factory
             arguments:
                 - "@«entityManagerService»"
+                - "@«modPrefix».entity_initialiser"
+        # Entity initialiser
+        «modPrefix».entity_initialiser:
+            class: «appNamespace»\Entity\Factory\EntityInitialiser
+            «IF hasListFields»
+                arguments:
+                    - "@«modPrefix».listentries_helper"
+            «ENDIF»
     '''
 
     def private eventSubscriber(Application it) '''
@@ -125,7 +133,7 @@ class ServiceDefinitions {
     '''
 
     def private servicesEventSubscriber(Application it) '''
-        # Event subscriber and listener classes
+        # Event subscribers and listeners
         «modPrefix».entity_lifecycle_listener:
             class: «appNamespace»\Listener\EntityLifecycleListener
             arguments:
@@ -441,7 +449,7 @@ class ServiceDefinitions {
     '''
 
     def private servicesHelper(Application it) '''
-        # Helper classes
+        # Helper services
         «val nsBase = appNamespace + '\\Helper\\'»
         «IF hasAutomaticArchiving»
             «modPrefix».archive_helper:
