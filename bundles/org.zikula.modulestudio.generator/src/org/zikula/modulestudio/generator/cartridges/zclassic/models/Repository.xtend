@@ -231,11 +231,6 @@ class Repository {
         }
     '''
 
-    def private hasJoinsToOtherApplicationsTEMP(Entity it, Application app) {
-        !getBidirectionalIncomingJoinRelations.filter[source.application != app].empty
-        || !getOutgoingJoinRelations.filter[target.application != app].empty
-    }
-
     def private imports(Entity it) '''
         namespace «app.appNamespace»\Entity\Repository\Base;
 
@@ -260,9 +255,6 @@ class Repository {
         use Doctrine\ORM\Tools\Pagination\Paginator;
         use InvalidArgumentException;
         use Psr\Log\LoggerInterface;
-        «IF categorisable || hasTranslatableFields || ownerPermission || hasVisibleWorkflow || hasJoinsToOtherApplicationsTEMP(app)»
-            use ServiceUtil;
-        «ENDIF»
         use Symfony\Component\HttpFoundation\Request;
         use Zikula\Component\FilterUtil\FilterUtil;
         use Zikula\Component\FilterUtil\Config as FilterConfig;
@@ -442,7 +434,7 @@ class Repository {
 
             $parameters = [];
             «IF categorisable»
-                $categoryHelper = ServiceUtil::get('«app.appService».category_helper');
+                $categoryHelper = \ServiceUtil::get('«app.appService».category_helper');
                 $parameters['catIdList'] = $categoryHelper->retrieveCategoriesFromRequest('«name.formatForCode»', 'GET');
             «ENDIF»
             «IF !getBidirectionalIncomingJoinRelationsWithOneSource.empty»
@@ -682,7 +674,7 @@ class Repository {
         public function addCreatorFilter(QueryBuilder $qb, $userId = null)
         {
             if (null === $userId) {
-                $currentUserApi = ServiceUtil::get('zikula_users_module.current_user');
+                $currentUserApi = \ServiceUtil::get('zikula_users_module.current_user');
                 $userId = $currentUserApi->isLoggedIn() ? $currentUserApi->get('uid') : 1;
             }
 
@@ -814,7 +806,7 @@ class Repository {
                         $qb->andWhere('tblCategories.category IN (:categories)')
                            ->setParameter('categories', $v);
                          */
-                        $categoryHelper = ServiceUtil::get('«app.appService».category_helper');
+                        $categoryHelper = \ServiceUtil::get('«app.appService».category_helper');
                         $qb = $categoryHelper->buildFilterClauses($qb, '«name.formatForCode»', $v);
                 «ENDIF»
                 «IF categorisable»} else«ENDIF»if (in_array($k, ['q', 'searchterm'])) {
@@ -876,7 +868,7 @@ class Repository {
         {
             «IF hasVisibleWorkflow»
                 if (null === $this->getRequest()) {
-                    $this->request = ServiceUtil::get('request_stack')->getCurrentRequest();
+                    $this->request = \ServiceUtil::get('request_stack')->getCurrentRequest();
                 }
                 $routeName = $this->request->get('_route');
                 $isAdminArea = false !== strpos($routeName, '«app.appName.toLowerCase»_«name.formatForDisplay.toLowerCase»_admin');
@@ -888,7 +880,7 @@ class Repository {
                     // per default we show approved «nameMultiple.formatForDisplay» only
                     $onlineStates = ['approved'];
                     «IF ownerPermission»
-                        «/*$variableApi = ServiceUtil::get('zikula_extensions_module.api.variable');
+                        «/*$variableApi = \ServiceUtil::get('zikula_extensions_module.api.variable');
                         $showOnlyOwnEntries = $this->getRequest()->query->getInt('own', $variableApi->get('«app.appName»', 'showOnlyOwnEntries', 0));*/»
                         $showOnlyOwnEntries = $this->getRequest()->query->getInt('own', 0);
                         if ($showOnlyOwnEntries == 1) {
@@ -1207,7 +1199,7 @@ class Repository {
 
                     // add category plugins dynamically for all existing registry properties
                     // we need to create one category plugin instance for each one
-                    $categoryHelper = ServiceUtil::get('«app.appService».category_helper');
+                    $categoryHelper = \ServiceUtil::get('«app.appService».category_helper');
                     $categoryProperties = $categoryHelper->getAllProperties('«name.formatForCode»');
                     foreach ($categoryProperties as $propertyName => $registryId) {
                         $config['plugins'][] = new CategoryFilter('«app.appName»', $propertyName, 'categories' . ucfirst($propertyName));
@@ -1239,11 +1231,11 @@ class Repository {
                     return $qb;
                 }
 
-                «/*$variableApi = ServiceUtil::get('zikula_extensions_module.api.variable');
+                «/*$variableApi = \ServiceUtil::get('zikula_extensions_module.api.variable');
                 $showOnlyOwnEntries = $this->getRequest()->query->getInt('own', $variableApi->get('«app.appName»', 'showOnlyOwnEntries', 0));*/»
                 $showOnlyOwnEntries = $this->getRequest()->query->getInt('own', 0);
                 if ($showOnlyOwnEntries == 1) {
-                    «/*$userId = ServiceUtil::get('zikula_users_module.current_user')->get('uid');*/»
+                    «/*$userId = \ServiceUtil::get('zikula_users_module.current_user')->get('uid');*/»
                     $userId = $this->getRequest()->getSession()->get('uid');
                     $qb->andWhere('tbl.createdBy = :creator')
                        ->setParameter('creator', $userId);
@@ -1311,7 +1303,7 @@ class Repository {
             $query = $qb->getQuery();
             «IF hasTranslatableFields»
 
-                $featureActivationHelper = ServiceUtil::get('«app.appService».feature_activation_helper');
+                $featureActivationHelper = \ServiceUtil::get('«app.appService».feature_activation_helper');
                 if ($featureActivationHelper->isEnabled(FeatureActivationHelper::TRANSLATIONS, '«name.formatForCode»')) {
                     // set the translation query hint
                     $query->setHint(

@@ -123,14 +123,7 @@ class ArchiveHelper {
          */
         public function archiveObjects()
         {
-            «/*$currentType = FormUtil::getPassedValue('type', 'user', 'GETPOST', FILTER_SANITIZE_STRING);
-            $currentFunc = FormUtil::getPassedValue('func', 'index', 'GETPOST', FILTER_SANITIZE_STRING);
-            if ($currentType == 'admin' || $currentFunc == 'edit' || $currentFunc == 'install') {
-                return;
-            }
-
-            */»$randProbability = mt_rand(1, 1000);
-
+            $randProbability = mt_rand(1, 1000);
             if ($randProbability < 750) {
                 return;
             }

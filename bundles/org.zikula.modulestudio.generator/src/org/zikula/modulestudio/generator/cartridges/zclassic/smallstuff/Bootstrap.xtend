@@ -57,7 +57,7 @@ class Bootstrap {
     def private bootstrapBaseImpl(Application it) '''
         «bootstrapDocs»
         «IF hasLoggable || hasAutomaticArchiving»
-            $container = ServiceUtil::get('service_container');
+            $container = \ServiceUtil::get('service_container');
 
         «ENDIF»
         «initExtensions»
