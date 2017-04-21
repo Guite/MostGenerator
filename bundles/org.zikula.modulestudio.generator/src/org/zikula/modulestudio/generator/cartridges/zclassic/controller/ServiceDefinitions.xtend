@@ -121,7 +121,7 @@ class ServiceDefinitions {
         # Entity initialiser
         «modPrefix».entity_initialiser:
             class: «appNamespace»\Entity\Factory\EntityInitialiser
-            «IF hasListFields»
+            «IF !getAllListFields.filter[name != 'workflowState'].empty»
                 arguments:
                     - "@«modPrefix».listentries_helper"
             «ENDIF»

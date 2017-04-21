@@ -173,7 +173,7 @@ class Factory {
         «FOR entity : getAllEntities»
             use «appNamespace»\Entity\«entity.name.formatForCode»Entity;
         «ENDFOR»
-        «IF hasListFields»
+        «IF !getAllListFields.filter[name != 'workflowState'].empty»
             use «appNamespace»\Helper\ListEntriesHelper;
         «ENDIF»
 
@@ -182,7 +182,7 @@ class Factory {
          */
         abstract class AbstractEntityInitialiser
         {
-            «IF hasListFields»
+            «IF !getAllListFields.filter[name != 'workflowState'].empty»
                 /**
                  * @var ListEntriesHelper Helper service for managing list entries
                  */
@@ -209,8 +209,8 @@ class Factory {
                  */
                 public function init«entity.name.formatForCodeCapital»(«entity.name.formatForCode»Entity $entity)
                 {
-                    «IF entity.hasListFieldsEntity»
-                        «FOR listField : entity.getListFieldsEntity»
+                    «IF !entity.getListFieldsEntity.filter[name != 'workflowState'].empty»
+                        «FOR listField : entity.getListFieldsEntity.filter[name != 'workflowState']»
                             $listEntries = $this->listEntriesHelper->get«listField.name.formatForCodeCapital»EntriesFor«entity.name.formatForCodeCapital»();
                             «IF listField.multiple»
                                 foreach ($listEntries as $listEntry) {
@@ -236,7 +236,7 @@ class Factory {
                 }
 
             «ENDFOR»
-            «IF hasListFields»
+            «IF !getAllListFields.filter[name != 'workflowState'].empty»
                 «fh.getterAndSetterMethods(it, 'listEntriesHelper', 'ListEntriesHelper', false, true, false, '', '')»
             «ENDIF»
         }
