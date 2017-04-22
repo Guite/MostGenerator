@@ -154,13 +154,13 @@ class Property {
             BooleanField:
                 if (it.defaultValue == 'true') 'true' else 'false'
             AbstractIntegerField:
-                if (it instanceof IntegerField && (it as IntegerField).version) '1' else if (null !== it.defaultValue && it.defaultValue.length > 0) it.defaultValue else '0'
+                if (it instanceof IntegerField && (it as IntegerField).version) '1' else if (null !== it.defaultValue && it.defaultValue.length > 0) it.defaultValue else if (it instanceof UserField) 'null' else '0'
             DecimalField:
                 if (null !== it.defaultValue && it.defaultValue.length > 0) it.defaultValue else '0.00'
             ArrayField: '[]'
             UploadField: 'null'
             ObjectField: 'null'
-            ListField: if (null !== it.defaultValue && it.defaultValue.length > 0) '\'' + it.defaultValue + '\'' else 'null'
+            ListField: if (null !== it.defaultValue && it.defaultValue.length > 0) '\'' + it.defaultValue + '\'' else if (nullable) 'null' else '\'\''
             AbstractStringField: if (null !== it.defaultValue && it.defaultValue.length > 0) '\'' + it.defaultValue + '\'' else '\'\''
             FloatField:
                 if (null !== it.defaultValue && it.defaultValue.length > 0) it.defaultValue else '0'
