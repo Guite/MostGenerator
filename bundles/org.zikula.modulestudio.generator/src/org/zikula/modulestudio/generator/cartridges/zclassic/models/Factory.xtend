@@ -233,7 +233,7 @@ class Factory {
                                         $items[] = $listEntry['value'];
                                     }
                                 }
-                                $entity->set«listField.name.formatForCodeCapital»('###', $items);
+                                $entity->set«listField.name.formatForCodeCapital»(implode('###', $items));
                             «ENDIF»
 
                         «ENDFOR»
