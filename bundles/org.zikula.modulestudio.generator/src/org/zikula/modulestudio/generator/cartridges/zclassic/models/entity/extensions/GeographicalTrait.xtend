@@ -69,7 +69,7 @@ class GeographicalTrait {
          */
         protected $longitude = 0.00;
 
-        «fh.getterAndSetterMethods(it, 'latitude', 'decimal', false, true, false, '', '')»
-        «fh.getterAndSetterMethods(it, 'longitude', 'decimal', false, true, false, '', '')»
+        «fh.getterAndSetterMethods(it, 'latitude', 'float', false, true, false, '', '')»
+        «fh.getterAndSetterMethods(it, 'longitude', 'float', false, true, false, '', '')»
     '''
 }

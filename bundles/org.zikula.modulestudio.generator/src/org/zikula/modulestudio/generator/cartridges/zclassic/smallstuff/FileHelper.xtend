@@ -105,13 +105,23 @@ class FileHelper {
     '''
 
     def private dispatch setterMethodImpl(Object it, String name, String type, Boolean nullable) '''
-        if ($this->«name» != $«name») {
-            «IF nullable»
-                $this->«name» = $«name»;
-            «ELSE»
-                $this->«name» = isset($«name») ? $«name» : '';
-            «ENDIF»
-        }
+        «IF type == 'float'»
+            if ($this->«name» != floatval($«name»)) {
+                «IF nullable»
+                    $this->«name» = floatval($«name»);
+                «ELSE»
+                    $this->«name» = isset($«name») ? floatval($«name») : 0.00;
+                «ENDIF»
+            }
+        «ELSE»
+            if ($this->«name» != $«name») {
+                «IF nullable»
+                    $this->«name» = $«name»;
+                «ELSE»
+                    $this->«name» = isset($«name») ? $«name» : '';
+                «ENDIF»
+            }
+        «ENDIF»
     '''
 
     def triggerPropertyChangeListeners(DerivedField it, String name) '''
