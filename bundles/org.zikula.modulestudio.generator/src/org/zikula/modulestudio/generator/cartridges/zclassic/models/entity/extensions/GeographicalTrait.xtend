@@ -51,9 +51,9 @@ class GeographicalTrait {
          * @ORM\Column(type="decimal", precision=12, scale=7)
          «IF isLoggable»
           * @Gedmo\Versioned
-         «ENDIF»
-         * @Assert\Type(type="float")
-         * @var decimal $latitude
+         «ENDIF»«/* disabled due to https://github.com/doctrine/dbal/issues/1347
+                  * @Assert\Type(type="float") */»
+         * @var float $latitude
          */
         protected $latitude = 0.00;
 
@@ -63,9 +63,9 @@ class GeographicalTrait {
          * @ORM\Column(type="decimal", precision=12, scale=7)
          «IF isLoggable»
           * @Gedmo\Versioned
-         «ENDIF»
-         * @Assert\Type(type="float")
-         * @var decimal $longitude
+         «ENDIF»«/* disabled due to https://github.com/doctrine/dbal/issues/1347
+         * @Assert\Type(type="float") */»
+         * @var float $longitude
          */
         protected $longitude = 0.00;
 

@@ -138,7 +138,7 @@ class FileHelper {
     '''
 
     def private dispatch setterMethodImpl(BooleanField it, String name, String type, Boolean nullable) '''
-        if ($this->«name.formatForCode» !== boolval($«name»)) {
+        if (boolval($this->«name.formatForCode») !== boolval($«name»)) {
             «triggerPropertyChangeListeners(name)»
             «setterAssignment(name, type)»
         }
@@ -170,19 +170,19 @@ class FileHelper {
     '''
 
     def private dispatch setterMethodImpl(IntegerField it, String name, String type, Boolean nullable) '''
-        if ($this->«name.formatForCode» !== intval($«name»)) {
+        if (intval($this->«name.formatForCode») !== intval($«name»)) {
             «triggerPropertyChangeListeners(name)»
             «setterAssignmentNumeric(name, type)»
         }
     '''
     def private dispatch setterMethodImpl(DecimalField it, String name, String type, Boolean nullable) '''
-        if ($this->«name.formatForCode» !== floatval($«name»)) {
+        if (floatval($this->«name.formatForCode») !== floatval($«name»)) {
             «triggerPropertyChangeListeners(name)»
             «setterAssignmentNumeric(name, type)»
         }
     '''
     def private dispatch setterMethodImpl(FloatField it, String name, String type, Boolean nullable) '''
-        if ($this->«name.formatForCode» !== floatval($«name»)) {
+        if (floatval($this->«name.formatForCode») !== floatval($«name»)) {
             «triggerPropertyChangeListeners(name)»
             «setterAssignmentNumeric(name, type)»
         }
