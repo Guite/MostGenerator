@@ -106,7 +106,7 @@ class FileHelper {
 
     def private dispatch setterMethodImpl(Object it, String name, String type, Boolean nullable) '''
         «IF type == 'float'»
-            if ($this->«name» != floatval($«name»)) {
+            if (floatval($this->«name») !== floatval($«name»)) {
                 «IF nullable»
                     $this->«name» = floatval($«name»);
                 «ELSE»
