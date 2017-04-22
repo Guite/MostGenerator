@@ -8,6 +8,7 @@ import de.guite.modulestudio.metamodel.DecimalField
 import de.guite.modulestudio.metamodel.DerivedField
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.FloatField
+import de.guite.modulestudio.metamodel.IntegerField
 import de.guite.modulestudio.metamodel.UserField
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
@@ -112,26 +113,22 @@ class FileHelper {
     '''
 
     def triggerPropertyChangeListeners(DerivedField it, String name) '''
-        «IF entity instanceof Entity && (entity as Entity).hasNotifyPolicy»
+        «IF (entity instanceof Entity && (entity as Entity).hasNotifyPolicy) || entity.getInheritingEntities.exists[hasNotifyPolicy]»
             $this->_onPropertyChanged('«name.formatForCode»', $this->«name.formatForCode», $«name»);
         «ENDIF»
     '''
 
     def private dispatch setterMethodImpl(DerivedField it, String name, String type, Boolean nullable) '''
-        «IF (entity instanceof Entity && (entity as Entity).hasNotifyPolicy) || entity.getInheritingEntities.exists[hasNotifyPolicy]»
-            if ($«name» !== $this->«name.formatForCode») {
-                «triggerPropertyChangeListeners(name)»
-                «setterAssignment(name, type)»
-            }
-        «ELSE»
+        if ($this->«name.formatForCode» !== $«name») {
+            «triggerPropertyChangeListeners(name)»
             «setterAssignment(name, type)»
-        «ENDIF»
+        }
     '''
 
     def private dispatch setterMethodImpl(BooleanField it, String name, String type, Boolean nullable) '''
-        if ($«name» !== $this->«name.formatForCode») {
+        if ($this->«name.formatForCode» !== boolval($«name»)) {
             «triggerPropertyChangeListeners(name)»
-            $this->«name» = (bool)$«name»;
+            «setterAssignment(name, type)»
         }
     '''
 
@@ -141,6 +138,10 @@ class FileHelper {
         «ELSE»
             $this->«name» = isset($«name») ? $«name» : '';
         «ENDIF»
+    '''
+
+    def private dispatch setterAssignment(BooleanField it, String name, String type) '''
+        $this->«name» = boolval($«name»);
     '''
 
     def private setterAssignmentNumeric(DerivedField it, String name, String type) '''
@@ -156,14 +157,23 @@ class FileHelper {
         «ENDIF»
     '''
 
-    def private dispatch setterAssignment(AbstractIntegerField it, String name, String type) '''
-        «setterAssignmentNumeric(name, type)»
+    def private dispatch setterMethodImpl(IntegerField it, String name, String type, Boolean nullable) '''
+        if ($this->«name.formatForCode» !== intval($«name»)) {
+            «triggerPropertyChangeListeners(name)»
+            «setterAssignmentNumeric(name, type)»
+        }
     '''
-    def private dispatch setterAssignment(DecimalField it, String name, String type) '''
-        «setterAssignmentNumeric(name, type)»
+    def private dispatch setterMethodImpl(DecimalField it, String name, String type, Boolean nullable) '''
+        if ($this->«name.formatForCode» !== floatval($«name»)) {
+            «triggerPropertyChangeListeners(name)»
+            «setterAssignmentNumeric(name, type)»
+        }
     '''
-    def private dispatch setterAssignment(FloatField it, String name, String type) '''
-        «setterAssignmentNumeric(name, type)»
+    def private dispatch setterMethodImpl(FloatField it, String name, String type, Boolean nullable) '''
+        if ($this->«name.formatForCode» !== floatval($«name»)) {
+            «triggerPropertyChangeListeners(name)»
+            «setterAssignmentNumeric(name, type)»
+        }
     '''
 
     def private dispatch setterAssignment(AbstractDateField it, String name, String type) '''
