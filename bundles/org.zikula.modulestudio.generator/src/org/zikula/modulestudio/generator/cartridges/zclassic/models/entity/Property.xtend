@@ -162,8 +162,6 @@ class Property {
             ObjectField: 'null'
             ListField: if (null !== it.defaultValue && it.defaultValue.length > 0) '\'' + it.defaultValue + '\'' else 'null'
             AbstractStringField: if (null !== it.defaultValue && it.defaultValue.length > 0) '\'' + it.defaultValue + '\'' else '\'\''
-            AbstractDateField:
-                if (it.mandatory && null !== it.defaultValue && it.defaultValue.length > 0 && it.defaultValue != 'now') 'new \\DateTime(\'' + it.defaultValue + '\')' else 'null'
             FloatField:
                 if (null !== it.defaultValue && it.defaultValue.length > 0) it.defaultValue else '0'
             default: '\'\''

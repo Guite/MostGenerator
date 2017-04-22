@@ -1,6 +1,10 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.models
 
+import de.guite.modulestudio.metamodel.AbstractDateField
 import de.guite.modulestudio.metamodel.Application
+import de.guite.modulestudio.metamodel.DateField
+import de.guite.modulestudio.metamodel.DatetimeField
+import de.guite.modulestudio.metamodel.TimeField
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
@@ -209,6 +213,9 @@ class Factory {
                  */
                 public function init«entity.name.formatForCodeCapital»(«entity.name.formatForCodeCapital»Entity $entity)
                 {
+                    «FOR field : entity.getDerivedFields.filter(AbstractDateField)»
+                        «field.setDefaultValue»
+                    «ENDFOR»
                     «IF !entity.getListFieldsEntity.filter[name != 'workflowState'].empty»
                         «FOR listField : entity.getListFieldsEntity.filter[name != 'workflowState']»
                             $listEntries = $this->listEntriesHelper->get«listField.name.formatForCodeCapital»EntriesFor«entity.name.formatForCodeCapital»();
@@ -241,6 +248,20 @@ class Factory {
             «ENDIF»
         }
     '''
+
+    def private setDefaultValue(AbstractDateField it) {
+        if (it.defaultValue !== null && it.defaultValue != '' && it.defaultValue.length > 0) {
+            if (it.defaultValue != 'now') {
+                '''$entity->set«name.formatForCodeCapital»(new \DateTime('«it.defaultValue»'));'''
+            } else {
+                '''$entity->set«name.formatForCodeCapital»(\DateTime::createFromFormat('«defaultFormat»'));'''
+            }
+        }
+    }
+
+    def private dispatch defaultFormat(DatetimeField it) '''Y-m-d H:i:s'''
+    def private dispatch defaultFormat(DateField it) '''Y-m-d'''
+    def private dispatch defaultFormat(TimeField it) '''H:i:s'''
 
     def private initialiserImpl(Application it) '''
         namespace «appNamespace»\Entity\Factory;
