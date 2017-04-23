@@ -71,7 +71,7 @@ class ExampleData {
         $entityManager = $this->container->get('«entityManagerService»');
         $logger = $this->container->get('logger');
         $request = $this->container->get('request_stack')->getCurrentRequest();
-        «IF hasUserFields || hasStandardFieldEntities»
+        «IF amountOfExampleRows > 0 && (hasUserFields || hasStandardFieldEntities)»
             $adminUser = $this->container->get('zikula_users_module.user_repository')->find(«IF targets('1.5')»UsersConstant::USER_ID_ADMIN«ELSE»2«ENDIF»);
         «ENDIF»
 
