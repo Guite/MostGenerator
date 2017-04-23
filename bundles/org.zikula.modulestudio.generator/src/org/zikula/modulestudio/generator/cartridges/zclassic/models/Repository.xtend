@@ -438,6 +438,7 @@ class Repository {
             $parameters = [];
             «IF categorisable»
                 $categoryHelper = \ServiceUtil::get('«app.appService».category_helper');
+                $parameters['catId'] = $this->getRequest()->query->get('catId', '');
                 $parameters['catIdList'] = $categoryHelper->retrieveCategoriesFromRequest('«name.formatForCode»', 'GET');
             «ENDIF»
             «IF !getBidirectionalIncomingJoinRelationsWithOneSource.empty»

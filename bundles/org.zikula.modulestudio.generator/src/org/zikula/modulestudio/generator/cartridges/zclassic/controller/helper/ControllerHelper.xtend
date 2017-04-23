@@ -540,9 +540,8 @@ class ControllerHelper {
                     }
                 }
             }
-            $sort = $request->query->get('sort');
-            $sortdir = $request->query->get('sortdir');
-            $sortableColumns->setOrderBy($sortableColumns->getColumn($sort), strtoupper($sortdir));
+            $sort = $sortableColumns->getSortColumn()->getName();
+            $sortdir = $sortableColumns->getSortDirection();
             $sortableColumns->setAdditionalUrlParameters($additionalUrlParameters);
             $templateParameters['sort'] = $sort;
             $templateParameters['sortdir'] = $sortdir;
