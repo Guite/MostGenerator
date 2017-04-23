@@ -93,7 +93,7 @@ class MultiHook {
             }
 
             if (!$container->get('kernel')->isBundle('«app.appName»')) {
-                $cache[$nid] = '<em>' . htmlspecialchars($translator->__f('Module "%moduleName%" is not available.', ['%moduleName%' => «app.appName»'])) . '</em>';
+                $cache[$nid] = '<em>' . htmlspecialchars($translator->__f('Module "%moduleName%" is not available.', ['%moduleName%' => '«app.appName»'])) . '</em>';
 
                 return $cache[$nid];
             }
