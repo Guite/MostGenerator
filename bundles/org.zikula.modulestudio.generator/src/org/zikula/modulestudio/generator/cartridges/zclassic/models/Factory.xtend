@@ -254,7 +254,7 @@ class Factory {
             if (it.defaultValue != 'now') {
                 '''$entity->set«name.formatForCodeCapital»(new \DateTime('«it.defaultValue»'));'''
             } else {
-                '''$entity->set«name.formatForCodeCapital»(\DateTime::createFromFormat('«defaultFormat»'));'''
+                '''$entity->set«name.formatForCodeCapital»(\DateTime::createFromFormat('«defaultFormat»', date('«defaultFormat»')));'''
             }
         }
     }
