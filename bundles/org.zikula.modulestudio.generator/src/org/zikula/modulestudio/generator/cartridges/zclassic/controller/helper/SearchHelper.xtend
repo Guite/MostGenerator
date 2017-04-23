@@ -247,7 +247,7 @@ class SearchHelper {
             $searchTypes = $this->getSearchTypes();
 
             foreach ($searchTypes as $searchType => $typeInfo) {
-                $templateParameters['active_' . $searchType] = true;
+                $templateParameters['active_' . $typeInfo['value']] = true;
             }
 
             return $this->templateEngine->renderResponse('@«appName»/Search/options.html.twig', $templateParameters)->getContent();
