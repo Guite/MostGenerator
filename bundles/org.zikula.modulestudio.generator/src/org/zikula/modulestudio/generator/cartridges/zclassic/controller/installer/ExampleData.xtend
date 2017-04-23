@@ -38,6 +38,7 @@ import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class ExampleData {
+
     extension FormattingExtensions = new FormattingExtensions
     extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     extension ModelExtensions = new ModelExtensions
@@ -70,6 +71,9 @@ class ExampleData {
         $entityManager = $this->container->get('«entityManagerService»');
         $logger = $this->container->get('logger');
         $request = $this->container->get('request_stack')->getCurrentRequest();
+        «IF hasUserFields || hasStandardFieldEntities»
+            $adminUser = $this->container->get('zikula_users_module.user_repository')->find(«IF targets('1.5')»UsersConstant::USER_ID_ADMIN«ELSE»2«ENDIF»);
+        «ENDIF»
 
         «FOR entity : getAllEntities.filter[tree == EntityTreeType.NONE]»«entity.truncateTable»«ENDFOR»
         «IF amountOfExampleRows > 0»
@@ -297,7 +301,7 @@ class ExampleData {
             EmailField: '\'' + entity.application.email + '\''
             UrlField: '\'' + entity.application.url + '\''
             UploadField: exampleRowValueText(dataEntity, number)
-            UserField: /* admin */2
+            UserField: '$adminUser'
             ArrayField: exampleRowValueNumber(dataEntity, number)
             ObjectField: exampleRowValueText(dataEntity, number)
             DatetimeField: '''«IF it.past»$dtPast«ELSEIF it.future»$dtFuture«ELSE»$dtNow«ENDIF»'''

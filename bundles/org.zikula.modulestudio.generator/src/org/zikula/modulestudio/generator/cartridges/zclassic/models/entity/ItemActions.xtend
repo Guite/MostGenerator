@@ -25,7 +25,7 @@ class ItemActions {
 
     def itemActionsImpl(Application app) '''
         «IF app.hasEditActions || !app.relations.empty»
-            $currentUserId = $currentUserApi->isLoggedIn() ? $currentUserApi->get('uid') : 1;
+            $currentUserId = $currentUserApi->isLoggedIn() ? $currentUserApi->get('uid') : «IF app.targets('1.5')»UsersConstant::USER_ID_ANONYMOUS«ELSE»1«ENDIF»;
         «ENDIF»
         «FOR entity : app.getAllEntities»
             if ($entity instanceof «entity.name.formatForCodeCapital»Entity) {

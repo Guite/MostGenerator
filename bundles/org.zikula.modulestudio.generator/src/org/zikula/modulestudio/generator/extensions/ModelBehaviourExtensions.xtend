@@ -22,14 +22,16 @@ import de.guite.modulestudio.metamodel.UserField
 class ModelBehaviourExtensions {
 
     /**
+     * Extensions related to generator settings.
+     */
+    extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
+
+    /**
      * Extensions related to the model layer.
      */
     extension ModelExtensions = new ModelExtensions
 
-    /**
-     * Extensions related to generator settings.
-     */
-    extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
+    extension Utils = new Utils
 
     /**
      * Checks whether the feature activation helper class should be generated or not.
@@ -349,12 +351,12 @@ class ModelBehaviourExtensions {
     }
 
     /**
-     * Returns the uid fitting to a certain account deletion handler type.
+     * Returns the user identifier fitting to a certain account deletion handler type.
      */
-    def adhUid(AccountDeletionHandler handler) {
+    def adhUid(Application it, AccountDeletionHandler handler) {
         switch handler {
-            case ADMIN  : 2
-            case GUEST  : 1
+            case ADMIN  : if (targets('1.5')) 'UsersConstant::USER_ID_ADMIN' else 2
+            case GUEST  : if (targets('1.5')) 'UsersConstant::USER_ID_ANONYMOUS' else 1
             case DELETE : 0
             default: 0 
         }

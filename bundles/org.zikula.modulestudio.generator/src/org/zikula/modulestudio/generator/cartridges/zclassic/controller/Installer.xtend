@@ -48,6 +48,9 @@ class Installer {
         «IF hasCategorisableEntities»
             use Zikula\CategoriesModule\Entity\CategoryRegistryEntity;
         «ENDIF»
+        «IF targets('1.5') && amountOfExampleRows > 0»
+            use Zikula\UsersModule\Constant as UsersConstant;
+        «ENDIF»
 
         /**
          * Installer base class.

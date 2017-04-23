@@ -218,6 +218,9 @@ class LinkContainer {
         use Symfony\Component\DependencyInjection\ContainerAwareInterface;
         use Symfony\Component\DependencyInjection\ContainerAwareTrait;
         use Zikula\Common\Translator\TranslatorTrait;
+        «IF targets('1.5') && (hasEditActions || !relations.empty)»
+            use Zikula\UsersModule\Constant as UsersConstant;
+        «ENDIF»
         «FOR entity : getAllEntities»
             use «appNamespace»\Entity\«entity.name.formatForCodeCapital»Entity;
         «ENDFOR»

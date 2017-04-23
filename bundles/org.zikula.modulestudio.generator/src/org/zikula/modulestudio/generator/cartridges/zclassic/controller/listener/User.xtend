@@ -172,16 +172,16 @@ class User {
             $repo = $this->entityFactory->getRepository('«name.formatForCode»');
             «IF standardFields»
                 «IF onAccountDeletionCreator != AccountDeletionHandler.DELETE»
-                    // set creator to «onAccountDeletionCreator.adhAsConstant» («onAccountDeletionCreator.adhUid») for all «nameMultiple.formatForDisplay» created by this user
-                    $repo->updateCreator($userId, «onAccountDeletionCreator.adhUid», $this->translator, $this->logger, $this->currentUserApi);
+                    // set creator to «onAccountDeletionCreator.adhAsConstant» («application.adhUid(onAccountDeletionCreator)») for all «nameMultiple.formatForDisplay» created by this user
+                    $repo->updateCreator($userId, «application.adhUid(onAccountDeletionCreator)», $this->translator, $this->logger, $this->currentUserApi);
                 «ELSE»
                     // delete all «nameMultiple.formatForDisplay» created by this user
                     $repo->deleteByCreator($userId, $this->translator, $this->logger, $this->currentUserApi);
                 «ENDIF»
 
                 «IF onAccountDeletionLastEditor != AccountDeletionHandler.DELETE»
-                    // set last editor to «onAccountDeletionLastEditor.adhAsConstant» («onAccountDeletionLastEditor.adhUid») for all «nameMultiple.formatForDisplay» updated by this user
-                    $repo->updateLastEditor($userId, «onAccountDeletionLastEditor.adhUid», $this->translator, $this->logger, $this->currentUserApi);
+                    // set last editor to «onAccountDeletionLastEditor.adhAsConstant» («application.adhUid(onAccountDeletionLastEditor)») for all «nameMultiple.formatForDisplay» updated by this user
+                    $repo->updateLastEditor($userId, «application.adhUid(onAccountDeletionLastEditor)», $this->translator, $this->logger, $this->currentUserApi);
                 «ELSE»
                     // delete all «nameMultiple.formatForDisplay» recently updated by this user
                     $repo->deleteByLastEditor($userId, $this->translator, $this->logger, $this->currentUserApi);
@@ -201,8 +201,8 @@ class User {
     def private onAccountDeletionHandler(UserField it) '''
         «IF entity instanceof Entity»
             «IF onAccountDeletion != AccountDeletionHandler.DELETE»
-                // set last editor to «onAccountDeletion.adhAsConstant» («onAccountDeletion.adhUid») for all «(entity as Entity).nameMultiple.formatForDisplay» affected by this user
-                $repo->updateUserField('«name.formatForCode»', $userId, «onAccountDeletion.adhUid», $this->translator, $this->logger, $this->currentUserApi);
+                // set last editor to «onAccountDeletion.adhAsConstant» («entity.application.adhUid(onAccountDeletion)») for all «(entity as Entity).nameMultiple.formatForDisplay» affected by this user
+                $repo->updateUserField('«name.formatForCode»', $userId, «entity.application.adhUid(onAccountDeletion)», $this->translator, $this->logger, $this->currentUserApi);
             «ELSE»
                 // delete all «(entity as Entity).nameMultiple.formatForDisplay» affected by this user
                 $repo->deleteByUserField('«name.formatForCode»', $userId, $this->translator, $this->logger, $this->currentUserApi);

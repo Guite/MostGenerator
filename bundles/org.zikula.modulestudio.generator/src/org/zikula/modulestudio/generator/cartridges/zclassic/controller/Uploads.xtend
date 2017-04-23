@@ -38,12 +38,8 @@ class Uploads {
             val subFolderName = entity.nameMultiple.formatForDB + '/'
             createPlaceholder(fsa, uploadPath + subFolderName)
             val uploadFields = entity.getUploadFieldsEntity
-            if (uploadFields.size > 1) {
-                for (uploadField : uploadFields) {
-                    uploadField.uploadFolder(uploadPath, subFolderName + uploadField.subFolderPathSegment)
-                }
-            } else if (uploadFields.size > 0) {
-                uploadFields.head.uploadFolder(uploadPath, subFolderName + uploadFields.head.subFolderPathSegment)
+            for (uploadField : uploadFields) {
+                uploadField.uploadFolder(uploadPath, subFolderName + uploadField.subFolderPathSegment)
             }
         }
         fsa.generateFile(getAppDocPath + 'htaccessTemplate', htAccessTemplate)

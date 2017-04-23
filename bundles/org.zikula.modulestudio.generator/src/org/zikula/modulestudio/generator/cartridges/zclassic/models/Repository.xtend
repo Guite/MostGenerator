@@ -272,6 +272,9 @@ class Repository {
             use Zikula\PermissionsModule\Api\«IF app.targets('1.5')»ApiInterface\PermissionApiInterface«ELSE»PermissionApi«ENDIF»;
         «ENDIF»
         use Zikula\UsersModule\Api\«IF app.targets('1.5')»ApiInterface\CurrentUserApiInterface«ELSE»CurrentUserApi«ENDIF»;
+        «IF ownerPermission && app.targets('1.5')»
+            use Zikula\UsersModule\Constant as UsersConstant;
+        «ENDIF»
         use «app.appNamespace»\Entity\«name.formatForCodeCapital»Entity;
         «IF hasTranslatableFields»
             use «app.appNamespace»\Helper\FeatureActivationHelper;
@@ -675,7 +678,7 @@ class Repository {
         {
             if (null === $userId) {
                 $currentUserApi = \ServiceUtil::get('zikula_users_module.current_user');
-                $userId = $currentUserApi->isLoggedIn() ? $currentUserApi->get('uid') : 1;
+                $userId = $currentUserApi->isLoggedIn() ? $currentUserApi->get('uid') : «IF app.targets('1.5')»UsersConstant::USER_ID_ANONYMOUS«ELSE»1«ENDIF»;
             }
 
             if (is_array($userId)) {
@@ -1219,7 +1222,7 @@ class Repository {
 
                 // you could add explicit filters at this point, something like
                 // $filterUtil->addFilter('foo:eq:something,bar:gt:100');
-                // read more at https://github.com/zikula/core/tree/1.4/src/docs/Core-2.0/FilterUtil
+                // read more at https://github.com/zikula/core/tree/«IF app.targets('1.5')»1.5/src/docs«ELSE»1.4/src/docs/Core-2.0«ENDIF»/FilterUtil
 
                 // now enrich the query builder
                 $filterUtil->enrichQuery();

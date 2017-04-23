@@ -275,6 +275,9 @@ class Listeners {
         «IF isBase»
             «IF hasStandardFieldEntities || hasUserFields»
                 use Zikula\UsersModule\Api\«IF targets('1.5')»ApiInterface\CurrentUserApiInterface«ELSE»CurrentUserApi«ENDIF»;
+                «IF targets('1.5')»
+                    use Zikula\UsersModule\Constant as UsersConstant;
+                «ENDIF»
             «ENDIF»
             use Zikula\UsersModule\UserEvents;
             «IF hasStandardFieldEntities || hasUserFields»

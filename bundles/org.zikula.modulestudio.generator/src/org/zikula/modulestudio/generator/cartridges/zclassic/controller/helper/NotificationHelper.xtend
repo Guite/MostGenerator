@@ -44,6 +44,9 @@ class NotificationHelper {
         use Zikula\ExtensionsModule\Api\«IF targets('1.5')»ApiInterface\VariableApiInterface«ELSE»VariableApi«ENDIF»;
         use Zikula\GroupsModule\Entity\RepositoryInterface\GroupRepositoryInterface;
         use Zikula\MailerModule\Api\«IF targets('1.5')»ApiInterface\MailerApiInterface«ELSE»MailerApi«ENDIF»;
+        «IF targets('1.5')»
+            use Zikula\UsersModule\Constant as UsersConstant;
+        «ENDIF»
         use Zikula\UsersModule\Entity\UserEntity;
         use «appNamespace»\Helper\WorkflowHelper;
 
@@ -257,7 +260,7 @@ class NotificationHelper {
 
             if (isset($args['debug']) && $args['debug']) {
                 // add the admin, too
-                $this->addRecipient(2);
+                $this->addRecipient(«IF targets('1.5')»UsersConstant::USER_ID_ADMIN«ELSE»2«ENDIF»);
             }
         }
 
