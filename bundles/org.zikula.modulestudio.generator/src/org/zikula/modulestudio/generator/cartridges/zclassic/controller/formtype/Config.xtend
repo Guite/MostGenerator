@@ -34,13 +34,13 @@ class Config {
         if (!needsConfig) {
             return
         }
-        generateClassPair(fsa, getAppSourceLibPath + 'Form/AppSettingsType.php',
+        generateClassPair(fsa, getAppSourceLibPath + 'Form/Type/ConfigType.php',
             fh.phpFileContent(it, configTypeBaseImpl), fh.phpFileContent(it, configTypeImpl)
         )
     }
 
     def private configTypeBaseImpl(Application it) '''
-        namespace «appNamespace»\Form\Base;
+        namespace «appNamespace»\Form\Type\Base;
 
         use Symfony\Component\Form\AbstractType;
         «IF targets('1.5')»
@@ -75,7 +75,7 @@ class Config {
         /**
          * Configuration form type base class.
          */
-        abstract class AbstractAppSettingsType extends AbstractType
+        abstract class AbstractConfigType extends AbstractType
         {
             use TranslatorTrait;
 
@@ -90,7 +90,7 @@ class Config {
             protected $modVars;
 
             /**
-             * AppSettingsType constructor.
+             * ConfigType constructor.
              *
              «IF hasUserGroupSelectors»
              * @param TranslatorInterface      $translator      Translator service instance
@@ -160,7 +160,7 @@ class Config {
              */
             public function getBlockPrefix()
             {
-                return '«appName.formatForDB»_appsettings';
+                return '«appName.formatForDB»_config';
             }
         }
     '''
@@ -313,14 +313,14 @@ class Config {
     '''
 
     def private configTypeImpl(Application it) '''
-        namespace «appNamespace»\Form;
+        namespace «appNamespace»\Form\Type;
 
-        use «appNamespace»\Form\Base\AbstractAppSettingsType;
+        use «appNamespace»\Form\Type\Base\AbstractConfigType;
 
         /**
          * Configuration form type implementation class.
          */
-        class AppSettingsType extends AbstractAppSettingsType
+        class ConfigType extends AbstractConfigType
         {
             // feel free to extend the base form type class here
         }

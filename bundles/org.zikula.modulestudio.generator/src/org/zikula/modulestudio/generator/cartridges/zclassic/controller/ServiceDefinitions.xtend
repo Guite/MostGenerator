@@ -430,8 +430,8 @@ class ServiceDefinitions {
         «ENDIF»
         «IF needsConfig»
 
-            «modPrefix».form.type.appsettings:
-                class: «nsBase.replace('Type\\', '')»AppSettingsType
+            «modPrefix».form.type.config:
+                class: «nsBase»ConfigType
                 arguments:
                     - "@translator.default"
                     - "@zikula_extensions_module.api.variable"
