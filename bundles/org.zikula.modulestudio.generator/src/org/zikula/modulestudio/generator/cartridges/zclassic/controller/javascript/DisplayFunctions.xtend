@@ -195,8 +195,13 @@ class DisplayFunctions {
         function «vendorAndName»InitMassToggle()
         {
             if (jQuery('.«vendorAndName.toLowerCase»-mass-toggle').length > 0) {
-                jQuery('.«vendorAndName.toLowerCase»-mass-toggle').click(function (event) {
-                    jQuery('.«vendorAndName.toLowerCase»-toggle-checkbox').prop('checked', jQuery(this).prop('checked'));
+                jQuery('.«vendorAndName.toLowerCase»-mass-toggle').unbind('click').click(function (event) {
+                    if (jQuery('.table.fixed-columns').length > 0) {
+                        jQuery('.«vendorAndName.toLowerCase»-toggle-checkbox').prop('checked', false);
+                        jQuery('.table.fixed-columns .«vendorAndName.toLowerCase»-toggle-checkbox').prop('checked', jQuery(this).prop('checked'));
+                    } else {
+                        jQuery('.«vendorAndName.toLowerCase»-toggle-checkbox').prop('checked', jQuery(this).prop('checked'));
+                    }
                 });
             }
         }
@@ -232,6 +237,7 @@ class DisplayFunctions {
                     });
                 }
             });
+            «vendorAndName»InitMassToggle();
         }
     '''
 
