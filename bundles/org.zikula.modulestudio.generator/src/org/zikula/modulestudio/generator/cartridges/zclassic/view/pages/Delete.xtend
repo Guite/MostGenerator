@@ -30,7 +30,7 @@ class Delete {
         {% block admin_page_icon 'trash-o' %}
         {% block content %}
             <div class="«appName.toLowerCase»-«name.formatForDB» «appName.toLowerCase»-delete">
-                <p class="alert alert-warning">{{ __f('Do you really want to delete this «name.formatForDisplay»: "%name%" ?', {'%name%': «name.formatForCode».getTitleFromDisplayPattern()}) }}</p>
+                <p class="alert alert-warning">{{ __f('Do you really want to delete this «name.formatForDisplay»: "%name%" ?', { '%name%': «name.formatForCode»|«app.appName.formatForDB»_formattedTitle }) }}</p>
 
                 {% form_theme deleteForm with [
                     '@«appName»/Form/bootstrap_3.html.twig',

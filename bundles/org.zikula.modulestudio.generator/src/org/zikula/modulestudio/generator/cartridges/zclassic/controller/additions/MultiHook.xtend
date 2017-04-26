@@ -84,7 +84,7 @@ class MultiHook {
             $translator = $container->get('translator.default');
 
             if (empty($nid)) {
-                return '<em>' . htmlspecialchars(__('No correct needle id given.')) . '</em>';
+                return '<em>' . htmlspecialchars($translator->__('No correct needle id given.')) . '</em>';
             }
 
             if (isset($cache[$nid])) {
@@ -139,7 +139,7 @@ class MultiHook {
                     return $cache[$nid];
                 }
 
-                $title = $entity->getTitleFromDisplayPattern();
+                $title = $container->get('«app.appService».entity_display_helper')->getFormattedTitle($entity);
                 $cache[$nid] = '<a href="' . $router->generate('«app.appName.formatForDB»_«nameMultiple.formatForDB»_display', ['id' => $entityId]) . '" title="' . str_replace('"', '', $title) . '">' . $title . '</a>';
             «ENDIF»
 

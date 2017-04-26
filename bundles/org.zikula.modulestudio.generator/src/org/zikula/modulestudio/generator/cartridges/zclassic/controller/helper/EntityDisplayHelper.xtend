@@ -1,0 +1,244 @@
+package org.zikula.modulestudio.generator.cartridges.zclassic.controller.helper
+
+import de.guite.modulestudio.metamodel.AbstractDateField
+import de.guite.modulestudio.metamodel.Application
+import de.guite.modulestudio.metamodel.DateField
+import de.guite.modulestudio.metamodel.DatetimeField
+import de.guite.modulestudio.metamodel.DecimalField
+import de.guite.modulestudio.metamodel.Entity
+import de.guite.modulestudio.metamodel.EntityField
+import de.guite.modulestudio.metamodel.FloatField
+import de.guite.modulestudio.metamodel.ListField
+import de.guite.modulestudio.metamodel.TimeField
+import de.guite.modulestudio.metamodel.UserField
+import org.eclipse.xtext.generator.IFileSystemAccess
+import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
+import org.zikula.modulestudio.generator.extensions.FormattingExtensions
+import org.zikula.modulestudio.generator.extensions.ModelExtensions
+import org.zikula.modulestudio.generator.extensions.ModelInheritanceExtensions
+import org.zikula.modulestudio.generator.extensions.NamingExtensions
+import org.zikula.modulestudio.generator.extensions.Utils
+
+class EntityDisplayHelper {
+
+    extension FormattingExtensions = new FormattingExtensions
+    extension ModelExtensions = new ModelExtensions
+    extension ModelInheritanceExtensions = new ModelInheritanceExtensions
+    extension NamingExtensions = new NamingExtensions
+    extension Utils = new Utils
+
+    def generate(Application it, IFileSystemAccess fsa) {
+        println('Generating helper class for formatted entity display')
+        val fh = new FileHelper
+        generateClassPair(fsa, getAppSourceLibPath + 'Helper/EntityDisplayHelper.php',
+            fh.phpFileContent(it, entityDisplayHelperBaseClass), fh.phpFileContent(it, entityDisplayHelperImpl)
+        )
+    }
+
+    def private entityDisplayHelperBaseClass(Application it) '''
+        namespace «appNamespace»\Helper\Base;
+
+        «IF hasAbstractDateFields»
+            use IntlDateFormatter;
+        «ENDIF»
+        «IF hasNumberFields»
+            use NumberFormatter;
+        «ENDIF»
+        use Zikula\Common\Translator\TranslatorInterface;
+        «FOR entity : getAllEntities»
+            use «appNamespace»\Entity\«entity.name.formatForCodeCapital»Entity;
+        «ENDFOR»
+        «IF hasListFields»
+            use «appNamespace»\Helper\ListEntriesHelper;
+        «ENDIF»
+
+        /**
+         * Entity display helper base class.
+         */
+        abstract class AbstractEntityDisplayHelper
+        {
+            /**
+             * @var TranslatorInterface
+             */
+            protected $translator;
+            «IF hasListFields»
+
+                /**
+                 * @var ListEntriesHelper Helper service for managing list entries
+                 */
+                protected $listEntriesHelper;
+            «ENDIF»
+            «IF hasAbstractDateFields»
+
+                /**
+                 * @var IntlDateFormatter Formatter for dates
+                 */
+                protected $dateFormatter;
+            «ENDIF»
+            «IF hasNumberFields»
+
+                /**
+                 * @var NumberFormatter Formatter for numbers and currencies
+                 */
+                protected $numberFormatter;
+            «ENDIF»
+
+            /**
+             * EntityDisplayHelper constructor.
+             *
+             * @param TranslatorInterface $translator «IF hasListFields»       «ENDIF»Translator service instance
+             «IF hasListFields»
+             * @param ListEntriesHelper   $listEntriesHelper Helper service for managing list entries
+             «ENDIF»
+             */
+            public function __construct(TranslatorInterface $translator«IF hasListFields», ListEntriesHelper $listEntriesHelper«ENDIF»)
+            {
+                $this->translator = $translator;
+                «IF hasListFields»
+                    $this->listEntriesHelper = $listEntriesHelper;
+                «ENDIF»
+                «IF hasAbstractDateFields»
+                    $this->dateFormatter = new IntlDateFormatter();
+                «ENDIF»
+                «IF hasNumberFields»
+                    $this->numberFormatter = new NumberFormatter();
+                «ENDIF»
+            }
+
+            «entityDisplayHelperBaseImpl»
+        }
+    '''
+
+    def private entityDisplayHelperBaseImpl(Application it) '''
+        /**
+         * Returns the formatted title for a given entity.
+         *
+         * @param object $entity The given entity instance
+         *
+         * @return string The formatted title
+         */
+        public function getFormattedTitle($entity)
+        {
+            «FOR entity : getAllEntities»
+                if ($entity instanceof «entity.name.formatForCodeCapital»Entity) {
+                    return $this->format«entity.name.formatForCodeCapital»($entity);
+                }
+            «ENDFOR»
+
+            return '';
+        }
+        «FOR entity : getAllEntities»
+
+            «entity.formatMethod»
+        «ENDFOR»
+    '''
+
+    def private formatMethod(Entity it) '''
+        /**
+         * Returns the formatted title for a given entity.
+         *
+         * @param «name.formatForCodeCapital»Entity $entity The given entity instance
+         *
+         * @return string The formatted title
+         */
+        protected function format«name.formatForCodeCapital»(«name.formatForCodeCapital»Entity $entity)
+        {
+            «IF displayPatternParts.length < 2»«/* no field references, just pass to translator */»
+                return $this->translator->__('«getUsedDisplayPattern.formatForCodeCapital»');
+            «ELSE»
+                return $this->translator->__f('«getUsedDisplayPattern.replaceAll('#', ':')»', [
+                    «displayPatternArguments»
+                ]);
+            «ENDIF»
+        }
+    '''
+
+    def private displayPatternArguments(Entity it) {
+        var result = ''
+        val patternParts = displayPatternParts
+
+        for (patternPart : patternParts) {
+            if (result != '') {
+                result = result.concat(",\n" + '        ')
+            }
+
+            var CharSequence formattedPart = ''
+            // check if patternPart equals a field name
+            var matchedFields = getSelfAndParentDataObjects.map[fields].flatten.filter[name == patternPart]
+            if (!matchedFields.empty) {
+                // field referencing part
+                formattedPart = '\':' + patternPart + ':\' => '
+                formattedPart = formatFieldValue(matchedFields.head, '$entity->get' + patternPart.toFirstUpper + '()')
+            } else if (geographical && #['latitude', 'longitude'].contains(patternPart)) {
+                // geo field referencing part
+                formattedPart = '\':' + patternPart + ':\' => '
+                formattedPart = 'number_format($entity->get' + patternPart.toFirstUpper + '(), 7, \'.\', \'\')'
+            } else {
+                // static part
+                // formattedPart = '\'' + patternPart.replace('\'', '') + '\''
+            }
+            result = result.concat(formattedPart.toString)
+        }
+        result
+    }
+
+    def private displayPatternParts(Entity it) {
+        getUsedDisplayPattern.split('#')
+    }
+
+    def private getUsedDisplayPattern(Entity it) {
+        var usedDisplayPattern = displayPattern
+
+        if (isInheriting && (null === usedDisplayPattern || usedDisplayPattern == '')) {
+            // fetch inherited display pattern from parent entity
+            if (parentType instanceof Entity) {
+                usedDisplayPattern = (parentType as Entity).displayPattern
+            }
+        }
+
+        if (null === usedDisplayPattern || usedDisplayPattern == '') {
+            usedDisplayPattern = name.formatForDisplay
+        }
+
+        usedDisplayPattern
+    }
+
+    def private formatFieldValue(EntityField it, CharSequence value) {
+        switch it {
+            DecimalField: '''$this->numberFormatter->format«IF currency»Currency(«value», 'EUR')«ELSE»(«value»)«ENDIF»'''
+            FloatField: '''$this->numberFormatter->format«IF currency»Currency(«value», 'EUR')«ELSE»(«value»)«ENDIF»'''
+            UserField: '''(«value» ? «value»->getUname() : '')'''
+            ListField: '''$this->listEntriesHelper->resolve(«value», '«entity.name.formatForCode»', '«name.formatForCode»')'''
+            DatetimeField: '''$this->dateFormatter->formatObject(«value», [IntlDateFormatter::SHORT, IntlDateFormatter::SHORT])'''
+            DateField: '''$this->dateFormatter->formatObject(«value», [IntlDateFormatter::SHORT, IntlDateFormatter::NONE])'''
+            TimeField: '''$this->dateFormatter->formatObject(«value», [IntlDateFormatter::NONE, IntlDateFormatter::NONE])'''
+            default: value
+        }
+    }
+
+    def private hasAbstractDateFields(Application it) {
+        !getAllEntities.filter[!getSelfAndParentDataObjects.map[
+            fields.filter(AbstractDateField)
+        ].flatten.empty].empty
+    }
+
+    def private hasNumberFields(Application it) {
+        !getAllEntities.filter[!getSelfAndParentDataObjects.map[
+            fields.filter[f|f instanceof DecimalField || f instanceof FloatField]
+        ].flatten.empty].empty
+    }
+
+    def private entityDisplayHelperImpl(Application it) '''
+        namespace «appNamespace»\Helper;
+
+        use «appNamespace»\Helper\Base\AbstractEntityDisplayHelper;
+
+        /**
+         * Entity display helper implementation class.
+         */
+        class EntityDisplayHelper extends AbstractEntityDisplayHelper
+        {
+            // feel free to extend the entity display helper here
+        }
+    '''
+}

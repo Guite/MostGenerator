@@ -258,6 +258,9 @@ class LinkContainer {
 
                 $permissionApi = $this->container->get('zikula_permissions_module.api.permission');
                 $currentUserApi = $this->container->get('zikula_users_module.current_user');
+                «IF hasDisplayActions»
+                    $entityDisplayHelper = $this->container->get('«appService».entity_display_helper');
+                «ENDIF»
                 $menu->setChildrenAttribute('class', 'list-inline');
 
                 «new ItemActions().itemActionsImpl(it)»

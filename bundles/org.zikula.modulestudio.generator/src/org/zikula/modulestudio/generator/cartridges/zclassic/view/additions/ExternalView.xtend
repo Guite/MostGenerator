@@ -2,6 +2,7 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.view.additions
 
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.Entity
+import de.guite.modulestudio.metamodel.StringField
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.pagecomponents.SimpleFields
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
@@ -74,9 +75,9 @@ class ExternalView {
         {% if displayMode == 'link' %}
             <p«IF hasDisplayAction» class="«app.appName.toLowerCase»-external-link"«ENDIF»>
             «IF hasDisplayAction»
-                <a href="{{ path('«app.appName.formatForDB»_«name.formatForDB»_display'«routeParams(name.formatForCode, true)») }}" title="{{ «name.formatForCode».getTitleFromDisplayPattern()|e('html_attr') }}">
+                <a href="{{ path('«app.appName.formatForDB»_«name.formatForDB»_display'«routeParams(name.formatForCode, true)») }}" title="{{ «name.formatForCode»|«app.appName.formatForDB»_formattedTitle|e('html_attr') }}">
             «ENDIF»
-            {{ «name.formatForCode».getTitleFromDisplayPattern()«IF !skipHookSubscribers»|notifyFilters('«app.name.formatForDB».filter_hooks.«nameMultiple.formatForDB».filter')«ENDIF» }}
+            {{ «name.formatForCode»|«app.appName.formatForDB»_formattedTitle«IF !skipHookSubscribers»|notifyFilters('«app.name.formatForDB».filter_hooks.«nameMultiple.formatForDB».filter')«ENDIF» }}
             «IF hasDisplayAction»
                 </a>
             «ENDIF»
@@ -86,7 +87,7 @@ class ExternalView {
             {# for normal users without edit permission show only the actual file per default #}
             {% if displayMode == 'embed' %}
                 <p class="«app.appName.toLowerCase»-external-title">
-                    <strong>{{ «name.formatForCode».getTitleFromDisplayPattern()«IF !skipHookSubscribers»|notifyFilters('«app.name.formatForDB».filter_hooks.«nameMultiple.formatForDB».filter')«ENDIF» }}</strong>
+                    <strong>{{ «name.formatForCode»|«app.appName.formatForDB»_formattedTitle«IF !skipHookSubscribers»|notifyFilters('«app.name.formatForDB».filter_hooks.«nameMultiple.formatForDB».filter')«ENDIF» }}</strong>
                 </p>
             {% endif %}
         {% endif %}
@@ -152,7 +153,7 @@ class ExternalView {
     def private itemInfoTemplate(Entity it, Application app) '''
         {# Purpose of this template: Display item information for previewing from other modules #}
         <dl id="«name.formatForCode»{{ «name.formatForCode».«getFirstPrimaryKey.name.formatForCode» }}">
-        <dt>{{ «name.formatForCode».getTitleFromDisplayPattern()«IF !skipHookSubscribers»|notifyFilters('«app.name.formatForDB».filter_hooks.«nameMultiple.formatForDB».filter')«ENDIF» }}</dt>
+        <dt>{{ «name.formatForCode»|«app.appName.formatForDB»_formattedTitle«IF !skipHookSubscribers»|notifyFilters('«app.name.formatForDB».filter_hooks.«nameMultiple.formatForDB».filter')«ENDIF» }}</dt>
         «IF hasImageFieldsEntity»
             <dd>«displaySnippet»</dd>
         «ENDIF»
@@ -272,17 +273,17 @@ class ExternalView {
                                     «IF hasImageFieldsEntity»
                                         {% if onlyImages %}
                                             {% set thumbOptions = attribute(thumbRuntimeOptions, '«name.formatForCode»' ~ imageField[:1]|upper ~ imageField[1:]) %}
-                                            <img src="{{ attribute(«name.formatForCode», imageField).getPathname()|imagine_filter('zkroot', thumbOptions) }}" alt="{{ «name.formatForCode».getTitleFromDisplayPattern()|e('html_attr') }}" width="{{ thumbOptions.thumbnail.size[0] }}" height="{{ thumbOptions.thumbnail.size[1] }}" class="img-rounded" />
+                                            <img src="{{ attribute(«name.formatForCode», imageField).getPathname()|imagine_filter('zkroot', thumbOptions) }}" alt="{{ «name.formatForCode»|«app.appName.formatForDB»_formattedTitle|e('html_attr') }}" width="{{ thumbOptions.thumbnail.size[0] }}" height="{{ thumbOptions.thumbnail.size[1] }}" class="img-rounded" />
                                         {% else %}
-                                            {{ «name.formatForCode».getTitleFromDisplayPattern() }}
+                                            {{ «name.formatForCode»|«app.appName.formatForDB»_formattedTitle }}
                                         {% endif %}
                                     «ELSE»
-                                        {{ «name.formatForCode».getTitleFromDisplayPattern() }}
+                                        {{ «name.formatForCode»|«app.appName.formatForDB»_formattedTitle }}
                                     «ENDIF»
                                 </a>
                                 <input type="hidden" id="path{{ itemId }}" value="{{ path('«app.appName.formatForDB»_«name.formatForDB»_display'«routeParams(name.formatForCode, true)») }}" />
                                 <input type="hidden" id="url{{ itemId }}" value="{{ url('«app.appName.formatForDB»_«name.formatForDB»_display'«routeParams(name.formatForCode, true)») }}" />
-                                <input type="hidden" id="title{{ itemId }}" value="{{ «name.formatForCode».getTitleFromDisplayPattern()|e('html_attr') }}" />
+                                <input type="hidden" id="title{{ itemId }}" value="{{ «name.formatForCode»|«app.appName.formatForDB»_formattedTitle|e('html_attr') }}" />
                                 <input type="hidden" id="desc{{ itemId }}" value="{% set description %}«displayDescription('', '')»{% endset %}{{ description|striptags|e('html_attr') }}" />
                                 «IF hasImageFieldsEntity»
                                     {% if onlyImages %}
@@ -379,7 +380,7 @@ class ExternalView {
                     <div class="col-sm-9">
                         <select id="{$baseID}Id" name="id" class="form-control">
                             {foreach item='«name.formatForCode»' from=$items}
-                                <option value="{$«name.formatForCode».«getFirstPrimaryKey.name.formatForCode»}"{if $selectedId eq $«name.formatForCode».«getFirstPrimaryKey.name.formatForCode»} selected="selected"{/if}>{$«name.formatForCode»->getTitleFromDisplayPattern()}</option>
+                                <option value="{$«name.formatForCode».«getFirstPrimaryKey.name.formatForCode»}"{if $selectedId eq $«name.formatForCode».«getFirstPrimaryKey.name.formatForCode»} selected="selected"{/if}>{$«name.formatForCode»->get«IF !getSelfAndParentDataObjects.map[fields.filter(StringField)].flatten.empty»«getSelfAndParentDataObjects.map[fields.filter(StringField)].flatten.head.name.formatForCodeCapital»«ELSE»«getSelfAndParentDataObjects.map[fields].flatten.head.name.formatForCodeCapital»«ENDIF»()}</option>
                             {foreachelse}
                                 <option value="0">{gt text='No entries found.'}</option>
                             {/foreach}

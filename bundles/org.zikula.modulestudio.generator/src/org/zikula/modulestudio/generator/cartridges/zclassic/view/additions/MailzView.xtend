@@ -46,7 +46,7 @@ class MailzView {
     def private textTemplate(Entity it, Application app) '''
         {# Purpose of this template: Display «nameMultiple.formatForDisplay» in text mailings #}
         {% for «name.formatForCode» in items %}
-        «mailzEntryText(app.appName)»
+        «mailzEntryText»
         -----
         {% else %}
         {{ __('No «nameMultiple.formatForDisplay» found.') }}
@@ -59,7 +59,7 @@ class MailzView {
         <ul>
         {% for «name.formatForCode» in items %}
             <li>
-                «mailzEntryHtml(app)»
+                «mailzEntryHtml»
             </li>
         {% else %}
             <li>{{ __('No «nameMultiple.formatForDisplay» found.') }}</li>
@@ -70,22 +70,22 @@ class MailzView {
         {{ include('@«app.appName»/ContentType/itemlist_«name.formatForCode»_display_description.html.twig') }}«ENDIF»
     '''
 
-    def private mailzEntryText(Entity it, String appName) '''
-        {{ «name.formatForCode».getTitleFromDisplayPattern() }}
-        «mailzEntryHtmlLinkUrl(application)»
+    def private mailzEntryText(Entity it) '''
+        {{ «name.formatForCode»|«application.appName.formatForDB»_formattedTitle }}
+        «mailzEntryHtmlLinkUrl»
     '''
 
-    def private mailzEntryHtml(Entity it, Application app) '''
-        <a href="«mailzEntryHtmlLinkUrl(app)»">{{ «name.formatForCode».getTitleFromDisplayPattern() }}</a>
+    def private mailzEntryHtml(Entity it) '''
+        <a href="«mailzEntryHtmlLinkUrl»">{{ «name.formatForCode»|«application.appName.formatForDB»_formattedTitle }}</a>
     '''
 
-    def private mailzEntryHtmlLinkUrl(Entity it, Application app) '''
+    def private mailzEntryHtmlLinkUrl(Entity it) '''
         «IF hasDisplayAction»
-            {{ url('«app.appName.formatForDB»_«name.formatForDB»_display'«routeParams(name.formatForCode, true)») }}
+            {{ url('«application.appName.formatForDB»_«name.formatForDB»_display'«routeParams(name.formatForCode, true)») }}
         «ELSEIF hasViewAction»
-            {{ url('«app.appName.formatForDB»_«name.formatForDB»_view') }}
+            {{ url('«application.appName.formatForDB»_«name.formatForDB»_view') }}
         «ELSEIF hasIndexAction»
-            {{ url('«app.appName.formatForDB»_«name.formatForDB»_index') }}
+            {{ url('«application.appName.formatForDB»_«name.formatForDB»_index') }}
         «ELSE»
             {{ app.request.getSchemeAndHttpHost() ~ app.request.getBasePath() }}
         «ENDIF»'''

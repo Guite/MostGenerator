@@ -96,6 +96,9 @@ class QuickNavigation {
         «IF app.targets('1.5') && !fields.filter(ListField).filter[multiple].empty»
             use «app.appNamespace»\Form\Type\Field\MultiListType;
         «ENDIF»
+        «IF !incomingRelations.empty»
+            use «app.appNamespace»\Helper\EntityDisplayHelper;
+        «ENDIF»
         «IF app.needsFeatureActivationHelper»
             use «app.appNamespace»\Helper\FeatureActivationHelper;
         «ENDIF»
@@ -115,6 +118,11 @@ class QuickNavigation {
                  * @var Request
                  */
                 protected $request;
+
+                /**
+                 * @var EntityDisplayHelper
+                 */
+                protected $entityDisplayHelper;
             «ENDIF»
             «IF hasListFieldsEntity»
 
@@ -144,6 +152,7 @@ class QuickNavigation {
              * @param TranslatorInterface $translator   Translator service instance
             «IF !incomingRelations.empty»
              * @param RequestStack        $requestStack RequestStack service instance
+             * @param EntityDisplayHelper $entityDisplayHelper EntityDisplayHelper service instance
             «ENDIF»
             «IF hasListFieldsEntity»
                 «' '»* @param ListEntriesHelper   $listHelper   ListEntriesHelper service instance
@@ -157,7 +166,8 @@ class QuickNavigation {
              */
             public function __construct(
                 TranslatorInterface $translator«IF !incomingRelations.empty»,
-                RequestStack $requestStack«ENDIF»«IF hasListFieldsEntity»,
+                RequestStack $requestStack,
+                EntityDisplayHelper $entityDisplayHelper«ENDIF»«IF hasListFieldsEntity»,
                 ListEntriesHelper $listHelper«ENDIF»«IF hasLocaleFieldsEntity»,
                 LocaleApi«IF app.targets('1.5')»Interface«ENDIF» $localeApi«ENDIF»«IF app.needsFeatureActivationHelper»,
                 FeatureActivationHelper $featureActivationHelper«ENDIF»
@@ -165,6 +175,7 @@ class QuickNavigation {
                 $this->setTranslator($translator);
                 «IF !incomingRelations.empty»
                     $this->request = $requestStack->getCurrentRequest();
+                    $this->entityDisplayHelper = $entityDisplayHelper;
                 «ENDIF»
                 «IF hasListFieldsEntity»
                     $this->listHelper = $listHelper;
@@ -632,9 +643,13 @@ class QuickNavigation {
 
     def private dispatch fieldImpl(JoinRelationship it) '''
         «val sourceAliasName = getRelationAliasName(false)»
+        $entityDisplayHelper = $this->entityDisplayHelper;
+        $choiceLabelClosure = function ($entity) use ($entityDisplayHelper) {
+            return $entityDisplayHelper->getFormattedTitle($entity);
+        };
         $builder->add('«sourceAliasName.formatForCode»', «IF app.targets('1.5')»EntityType::class«ELSE»'Symfony\Bridge\Doctrine\Form\Type\EntityType'«ENDIF», [
             'class' => '«app.appName»:«source.name.formatForCodeCapital»Entity',
-            'choice_label' => 'getTitleFromDisplayPattern',
+            'choice_label' => $choiceLabelClosure,
             'placeholder' => $this->__('All'),
             'required' => false,
             'label' => $this->__('«/*(source as Entity).nameMultiple*/sourceAliasName.formatForDisplayCapital»'),

@@ -53,9 +53,9 @@ class Display {
         {# purpose of this template: «nameMultiple.formatForDisplay» display view #}
         {% set baseTemplate = app.request.query.getBoolean('raw', false) ? 'raw' : (routeArea == 'admin' ? 'adminBase' : 'base') %}
         {% extends '«application.appName»::' ~ baseTemplate ~ '.html.twig' %}
-        {% block pageTitle %}{{ «objName».getTitleFromDisplayPattern()|default(__('«name.formatForDisplayCapital»')) }}{% endblock %}
+        {% block pageTitle %}{{ «objName»|«application.appName.formatForDB»_formattedTitle|default(__('«name.formatForDisplayCapital»')) }}{% endblock %}
         {% block title %}
-            {% set templateTitle = «objName».getTitleFromDisplayPattern()|default(__('«name.formatForDisplayCapital»')) %}
+            {% set templateTitle = «objName»|«application.appName.formatForDB»_formattedTitle|default(__('«name.formatForDisplayCapital»')) %}
             «templateHeading(appName)»
             «new ItemActionsView().generate(it, 'display')»
         {% endblock %}
@@ -226,13 +226,13 @@ class Display {
                   «IF linkEntity.hasDisplayAction»
                       <a href="{{ path('«linkEntity.application.appName.formatForDB»_«linkEntity.name.toLowerCase»_' ~ routeArea ~ 'display'«linkEntity.routeParams(relObjName, true)») }}">{% spaceless %}
                   «ENDIF»
-                    {{ «relObjName».getTitleFromDisplayPattern() }}
+                    {{ «relObjName»|«application.appName.formatForDB»_formattedTitle }}
                   «IF linkEntity.hasDisplayAction»
                     {% endspaceless %}</a>
-                    <a id="«linkEntity.name.formatForCode»Item{{ «FOR pkField : linkEntity.getPrimaryKeyFields SEPARATOR ' ~ '»«relObjName».«pkField.name.formatForCode»«ENDFOR» }}Display" href="{{ path('«linkEntity.application.appName.formatForDB»_«linkEntity.name.formatForDB»_' ~ routeArea ~ 'display', { «linkEntity.routePkParams(relObjName, true)»«linkEntity.appendSlug(relObjName, true)», 'raw': 1 }) }}" title="{{ __('Open quick view window')|e('html_attr') }}" class="«application.vendorAndName.toLowerCase»-inline-window hidden" data-modal-title="{{ «relObjName».getTitleFromDisplayPattern()|e('html_attr') }}"><span class="fa fa-id-card-o"></span></a>
+                    <a id="«linkEntity.name.formatForCode»Item{{ «FOR pkField : linkEntity.getPrimaryKeyFields SEPARATOR ' ~ '»«relObjName».«pkField.name.formatForCode»«ENDFOR» }}Display" href="{{ path('«linkEntity.application.appName.formatForDB»_«linkEntity.name.formatForDB»_' ~ routeArea ~ 'display', { «linkEntity.routePkParams(relObjName, true)»«linkEntity.appendSlug(relObjName, true)», 'raw': 1 }) }}" title="{{ __('Open quick view window')|e('html_attr') }}" class="«application.vendorAndName.toLowerCase»-inline-window hidden" data-modal-title="{{ «relObjName»|«application.appName.formatForDB»_formattedTitle|e('html_attr') }}"><span class="fa fa-id-card-o"></span></a>
                   «ENDIF»
               {% else %}
-                  {{ «relObjName».getTitleFromDisplayPattern() }}
+                  {{ «relObjName»|«application.appName.formatForDB»_formattedTitle }}
               {% endif %}
             </dd>
         {% endif %}
@@ -323,7 +323,7 @@ class Display {
                 {% if directParent is not null %}
                     <h4>{{ __('Direct parent') }}</h4>
                     <ul>
-                        <li><a href="{{ path('«appName.formatForDB»_«objName.toLowerCase»_' ~ routeArea ~ 'display'«routeParams('directParent', true)») }}" title="{{ directParent.getTitleFromDisplayPattern()|e('html_attr') }}">{{ directParent.getTitleFromDisplayPattern() }}</a></li>
+                        <li><a href="{{ path('«appName.formatForDB»_«objName.toLowerCase»_' ~ routeArea ~ 'display'«routeParams('directParent', true)») }}" title="{{ directParent|«application.appName.formatForDB»_formattedTitle|e('html_attr') }}">{{ directParent|«application.appName.formatForDB»_formattedTitle }}</a></li>
                     </ul>
                 {% endif %}
             {% endif %}
@@ -374,7 +374,7 @@ class Display {
         «val objName = name.formatForCode»
         <ul>
         {% for node in «collectionName» %}
-            <li><a href="{{ path('«appName.formatForDB»_«objName.toLowerCase»_' ~ routeArea ~ 'display'«routeParams('node', true)») }}" title="{{ node.getTitleFromDisplayPattern()|e('html_attr') }}">{{ node.getTitleFromDisplayPattern() }}</a></li>
+            <li><a href="{{ path('«appName.formatForDB»_«objName.toLowerCase»_' ~ routeArea ~ 'display'«routeParams('node', true)») }}" title="{{ node|«application.appName.formatForDB»_formattedTitle|e('html_attr') }}">{{ node|«application.appName.formatForDB»_formattedTitle }}</a></li>
         {% endfor %}
         </ul>
     '''

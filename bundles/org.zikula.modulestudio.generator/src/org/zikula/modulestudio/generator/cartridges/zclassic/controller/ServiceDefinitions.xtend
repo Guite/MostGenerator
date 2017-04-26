@@ -267,6 +267,8 @@ class ServiceDefinitions {
 
             «modPrefix».form.type.field.entitytree:
                 class: «nsBase»Field\EntityTreeType
+                arguments:
+                    - "@«modPrefix».entity_display_helper"
                 tags:
                     - { name: form.type }
         «ENDIF»
@@ -320,6 +322,7 @@ class ServiceDefinitions {
                         - "@translator.default"
                         «IF !entity.getBidirectionalIncomingJoinRelationsWithOneSource.filter[source instanceof Entity].empty»
                             - "@request_stack"
+                            - "@«modPrefix».entity_display_helper"
                         «ENDIF»
                         «IF entity.hasListFieldsEntity»
                             - "@«modPrefix».listentries_helper"
@@ -379,6 +382,9 @@ class ServiceDefinitions {
                     arguments:
                         - "@translator.default"
                         - "@«modPrefix».entity_factory"
+                        «IF !entity.incoming.empty || !entity.outgoing.empty»
+                            "@«modPrefix».entity_display_helper"
+                        «ENDIF»
                         «IF entity instanceof Entity && (entity as Entity).hasTranslatableFields»
                             - "@zikula_extensions_module.api.variable"
                             - "@«modPrefix».translatable_helper"
@@ -515,6 +521,14 @@ class ServiceDefinitions {
                 «IF needsFeatureActivationHelper»
                     - "@«modPrefix».feature_activation_helper"
                 «ENDIF»
+
+        «modPrefix».entity_display_helper:
+            class: «nsBase»EntityDisplayHelper
+            arguments:
+                - "@translator.default"
+                «IF hasListFields»
+                    - "@«modPrefix».listentries_helper"
+                «ENDIF»
         «IF needsFeatureActivationHelper»
 
             «modPrefix».feature_activation_helper:
@@ -562,6 +576,7 @@ class ServiceDefinitions {
                     - "@twig"
                     - "@zikula_mailer_module.api.mailer"
                     - "@zikula_groups_module.group_repository"
+                    - "@«modPrefix».entity_display_helper"
                     - "@«modPrefix».workflow_helper"
         «ENDIF»
         «IF generateSearchApi»
@@ -578,6 +593,7 @@ class ServiceDefinitions {
                     - "@request_stack"
                     - "@«modPrefix».entity_factory"
                     - "@«modPrefix».controller_helper"
+                    - "@«modPrefix».entity_display_helper"
                     «IF hasCategorisableEntities»
                         - "@«modPrefix».feature_activation_helper"
                         - "@«modPrefix».category_helper"
@@ -664,6 +680,7 @@ class ServiceDefinitions {
                 «IF hasTrees»
                     - "@«modPrefix».entity_factory"
                 «ENDIF»
+                - "@«modPrefix».entity_display_helper"
                 - "@«modPrefix».workflow_helper"
                 «IF hasListFields»
                     - "@«modPrefix».listentries_helper"

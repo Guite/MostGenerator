@@ -2,20 +2,13 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.models.entity
 
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.DataObject
-import de.guite.modulestudio.metamodel.DateField
-import de.guite.modulestudio.metamodel.DatetimeField
-import de.guite.modulestudio.metamodel.DecimalField
 import de.guite.modulestudio.metamodel.Entity
-import de.guite.modulestudio.metamodel.EntityField
-import de.guite.modulestudio.metamodel.FloatField
-import de.guite.modulestudio.metamodel.ListField
 import de.guite.modulestudio.metamodel.ManyToManyRelationship
+import de.guite.modulestudio.metamodel.StringField
 import de.guite.modulestudio.metamodel.TimeField
-import de.guite.modulestudio.metamodel.UserField
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.business.ValidationConstraints
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
-import org.zikula.modulestudio.generator.extensions.ModelInheritanceExtensions
 import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
@@ -24,7 +17,6 @@ class EntityMethods {
 
     extension FormattingExtensions = new FormattingExtensions
     extension ModelExtensions = new ModelExtensions
-    extension ModelInheritanceExtensions = new ModelInheritanceExtensions
     extension ModelJoinExtensions = new ModelJoinExtensions
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
@@ -41,7 +33,6 @@ class EntityMethods {
 
     def dispatch generate(Entity it, Application app, Property thProp) '''
         «propertyChangedListener»
-        «getTitleFromDisplayPattern(app)»
         «validationMethods»
 
         «toJson»
@@ -110,100 +101,6 @@ class EntityMethods {
 
         «ENDIF»
     '''
-
-    def private getTitleFromDisplayPattern(Entity it, Application app) '''
-        /**
-         * Returns the formatted title conforming to the display pattern
-         * specified for this entity.
-         *
-         * @return string The display title
-         */
-        public function getTitleFromDisplayPattern()
-        {
-            «IF displayPatternContainsListField»
-                $listHelper = \ServiceUtil::get('«app.appService».listentries_helper');
-
-            «ENDIF»
-            $formattedTitle = «parseDisplayPattern»;
-
-            return $formattedTitle;
-        }
-    '''
-
-    def private parseDisplayPattern(Entity it) {
-        var result = ''
-        val patternParts = determineDisplayPatternParts
-
-        for (patternPart : patternParts) {
-            if (result != '') {
-                result = result.concat("\n" + '        . ')
-            }
-
-            var CharSequence formattedPart = ''
-            // check if patternPart equals a field name
-            var matchedFields = fields.filter[name == patternPart]
-            if (!matchedFields.empty) {
-                // field referencing part
-                formattedPart = formatFieldValue(matchedFields.head, '$this->get' + patternPart.toFirstUpper + '()')
-            } else if (geographical && #['latitude', 'longitude'].contains(patternPart)) {
-                // geo field referencing part
-                formattedPart = 'number_format($this->get' + patternPart.toFirstUpper + '(), 7, \'.\', \'\')'
-            } else {
-                // static part
-                formattedPart = '\'' + patternPart.replace('\'', '') + '\''
-            }
-            result = result.concat(formattedPart.toString)
-        }
-        result
-    }
-
-    def private displayPatternContainsListField(Entity it) {
-        if (!hasListFieldsEntity) {
-            return false
-        }
-
-        val patternParts = determineDisplayPatternParts
-        for (patternPart : patternParts) {
-            var matchedFields = fields.filter[name == patternPart]
-            if (!matchedFields.empty) {
-                if (matchedFields.head instanceof ListField) {
-                    return true
-                }
-            }
-        }
-
-        false
-    }
-
-    def private determineDisplayPatternParts(Entity it) {
-        var usedDisplayPattern = displayPattern
-
-        if (isInheriting && (null === usedDisplayPattern || usedDisplayPattern == '')) {
-            // fetch inherited display pattern from parent entity
-            if (parentType instanceof Entity) {
-                usedDisplayPattern = (parentType as Entity).displayPattern
-            }
-        }
-
-        if (null === usedDisplayPattern || usedDisplayPattern == '') {
-            usedDisplayPattern = name.formatForDisplay
-        }
-
-        usedDisplayPattern.split('#')
-    }
-
-    def private formatFieldValue(EntityField it, CharSequence value) {
-        switch it {
-            DecimalField: '''\DataUtil::format«IF currency»Currency(«value»)«ELSE»Number(«value», 2)«ENDIF»'''
-            FloatField: '''\DataUtil::format«IF currency»Currency(«value»)«ELSE»Number(«value», 2)«ENDIF»'''
-            UserField: '''(«value» ? «value»->getUname() : '')'''
-            ListField: '''$listHelper->resolve(«value», '«entity.name.formatForCode»', '«name.formatForCode»')'''
-            DateField: '''\DateUtil::formatDatetime(«value», 'datebrief')'''
-            DatetimeField: '''\DateUtil::formatDatetime(«value», 'datetimebrief')'''
-            TimeField: '''\DateUtil::formatDatetime(«value», 'timebrief')'''
-            default: value
-        }
-    }
 
     def private toJson(Entity it) '''
         /**
@@ -298,7 +195,7 @@ class EntityMethods {
          */
         public function __toString()
         {
-            return '«name.formatForDisplayCapital» ' . $this->createCompositeIdentifier() . ': ' . $this->getTitleFromDisplayPattern();
+            return '«name.formatForDisplayCapital» ' . $this->createCompositeIdentifier()«IF !getSelfAndParentDataObjects.map[fields.filter(StringField)].flatten.empty» . ': ' . $this->get«getSelfAndParentDataObjects.map[fields.filter(StringField)].flatten.head.name.formatForCodeCapital»()«ENDIF»;
         }
     '''
 

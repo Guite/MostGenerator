@@ -9,6 +9,7 @@ import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.UrlExtensions
+import org.zikula.modulestudio.generator.extensions.Utils
 
 class Atom {
 
@@ -16,6 +17,7 @@ class Atom {
     extension FormattingExtensions = new FormattingExtensions
     extension NamingExtensions = new NamingExtensions
     extension UrlExtensions = new UrlExtensions
+    extension Utils = new Utils
 
     Application app
 
@@ -57,7 +59,7 @@ class Atom {
             </entry>
         {% endblock %}
         {% block entry_content %}
-            <title type="html">{{ «objName».getTitleFromDisplayPattern()«IF !skipHookSubscribers»|notifyFilters('«appName.formatForDB».filterhook.«nameMultiple.formatForDB»')«ENDIF» }}</title>
+            <title type="html">{{ «objName»|«application.appName.formatForDB»_formattedTitle«IF !skipHookSubscribers»|notifyFilters('«appName.formatForDB».filterhook.«nameMultiple.formatForDB»')«ENDIF» }}</title>
             <link rel="alternate" type="text/html" href="{{ url('«appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ '«defaultAction»'«IF hasDisplayAction»«routeParams(objName, true)»«ENDIF») }}" />
             {% set uniqueID %}tag:{{ app.request.getSchemeAndHttpHost()|replace({ 'http://': '', '/': '' }) }},{{ «IF standardFields»«objName».createdDate«ELSE»'now'«ENDIF»|date('Y-m-d') }}:{{ path('«appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ '«defaultAction»'«IF hasDisplayAction»«routeParams(objName, true)»«ENDIF») }}{% endset %}
             <id>{{ uniqueID }}</id>
@@ -91,7 +93,7 @@ class Atom {
             «ELSEIF !stringFields.empty»
                 {{ «objName».«stringFields.head.name.formatForCode»|truncate(150, true, '&hellip;')|default('-') }}
             «ELSE»
-                {{ «objName».getTitleFromDisplayPattern()|truncate(150, true, '&hellip;')|default('-') }}
+                {{ «objName»|«application.appName.formatForDB»_formattedTitle|truncate(150, true, '&hellip;')|default('-') }}
             «ENDIF»
             ]]>
         </summary>
@@ -104,7 +106,7 @@ class Atom {
             «ELSEIF stringFields.size > 1»
                 {{ «objName».«stringFields.tail.head.name.formatForCode»|replace({ '<br>': '<br />' }) }}
             «ELSE»
-                {{ «objName».getTitleFromDisplayPattern()|replace({ '<br>': '<br />' }) }}
+                {{ «objName»|«application.appName.formatForDB»_formattedTitle|replace({ '<br>': '<br />' }) }}
             «ENDIF»
             ]]>
         </content>

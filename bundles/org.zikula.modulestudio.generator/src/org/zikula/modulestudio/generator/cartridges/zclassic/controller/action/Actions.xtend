@@ -229,9 +229,13 @@ class Actions {
         $response = $this->get('«app.appService».view_helper')->processTemplate($objectType, 'display', $templateParameters);
         «IF app.generateIcsTemplates»
 
-            $format = $request->getRequestFormat();
-            if ($format == 'ics') {
-                $fileName = $objectType . '_' . (property_exists($«name.formatForCode», 'slug') ? $«name.formatForCode»['slug'] : $«name.formatForCode»->getTitleFromDisplayPattern()) . '.ics';
+            if ('ics' == $request->getRequestFormat()) {
+                $fileName = $objectType . '_' .
+                    (property_exists($«name.formatForCode», 'slug')
+                        ? $«name.formatForCode»['slug']
+                        : $this->get('«app.appService».entity_display_helper')->getFormattedTitle($«name.formatForCode»)
+                    ) . '.ics'
+                ;
                 $response->headers->set('Content-Disposition', 'attachment; filename=' . $fileName);
             }
         «ENDIF»

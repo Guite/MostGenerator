@@ -197,6 +197,9 @@ class EditEntity {
                 use «app.appNamespace»\Form\Type\«getParentDataObjects(#[]).head.name.formatForCodeCapital»Type;
             «ENDIF»
         «ENDIF»
+        «IF !incoming.empty || !outgoing.empty»
+            use «app.appNamespace»\Helper\EntityDisplayHelper;
+        «ENDIF»
         «IF app.needsFeatureActivationHelper»
             use «app.appNamespace»\Helper\FeatureActivationHelper;
         «ENDIF»
@@ -218,6 +221,13 @@ class EditEntity {
              * @var «app.name.formatForCodeCapital»Factory
              */
             protected $entityFactory;
+            «IF !incoming.empty || !outgoing.empty»
+
+                /**
+                 * @var EntityDisplayHelper
+                 */
+                protected $entityDisplayHelper;
+            «ENDIF»
             «IF isTranslatable»
 
                 /**
@@ -257,6 +267,9 @@ class EditEntity {
              *
              * @param TranslatorInterface $translator «IF isTranslatable» «ENDIF»   Translator service instance
              * @param «app.name.formatForCodeCapital»Factory        $entityFactory Entity factory service instance
+             «IF !incoming.empty || !outgoing.empty»
+             * @param EntityDisplayHelper $entityDisplayHelper EntityDisplayHelper service instance
+             «ENDIF»
              «IF isTranslatable»
              * @param VariableApi«IF app.targets('1.5')»Interface«ELSE»        «ENDIF» $variableApi VariableApi service instance
              * @param TranslatableHelper  $translatableHelper TranslatableHelper service instance
@@ -273,7 +286,8 @@ class EditEntity {
              */
             public function __construct(
                 TranslatorInterface $translator,
-                «app.name.formatForCodeCapital»Factory $entityFactory«IF isTranslatable»,
+                «app.name.formatForCodeCapital»Factory $entityFactory«IF !incoming.empty || !outgoing.empty»,
+                EntityDisplayHelper $entityDisplayHelper«ENDIF»«IF isTranslatable»,
                 VariableApi«IF app.targets('1.5')»Interface«ENDIF» $variableApi,
                 TranslatableHelper $translatableHelper«ENDIF»«IF hasListFieldsEntity»,
                 ListEntriesHelper $listHelper«ENDIF»«IF hasLocaleFieldsEntity»,
@@ -282,6 +296,9 @@ class EditEntity {
             ) {
                 $this->setTranslator($translator);
                 $this->entityFactory = $entityFactory;
+                «IF !incoming.empty || !outgoing.empty»
+                    $this->entityDisplayHelper = $entityDisplayHelper;
+                «ENDIF»
                 «IF isTranslatable»
                     $this->variableApi = $variableApi;
                     $this->translatableHelper = $translatableHelper;
@@ -1045,6 +1062,12 @@ class EditEntity {
                 };
             }
         «ENDIF»
+        «IF !autoComplete»
+            $entityDisplayHelper = $this->entityDisplayHelper;
+            $choiceLabelClosure = function ($entity) use ($entityDisplayHelper) {
+                return $entityDisplayHelper->getFormattedTitle($entity);
+            };
+        «ENDIF»
         «val isExpanded = if (outgoing) expandedTarget else expandedSource»
         $builder->add('«aliasName.formatForCode»', '«formType(autoComplete)»Type', [
             «IF autoComplete»
@@ -1058,7 +1081,7 @@ class EditEntity {
                 «ENDIF»
             «ELSE»
                 'class' => '«app.appName»:«(if (outgoing) target else source).name.formatForCodeCapital»Entity',
-                'choice_label' => 'getTitleFromDisplayPattern',
+                'choice_label' => $choiceLabelClosure,
                 'multiple' => «isManySide(outgoing).displayBool»,
                 'expanded' => «isExpanded.displayBool»,
                 'query_builder' => $queryBuilder,

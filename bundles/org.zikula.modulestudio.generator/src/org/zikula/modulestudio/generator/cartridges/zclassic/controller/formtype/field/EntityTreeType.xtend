@@ -31,12 +31,28 @@ class EntityTreeType {
         use Symfony\Component\Form\AbstractType;
         use Symfony\Component\OptionsResolver\Options;
         use Symfony\Component\OptionsResolver\OptionsResolver;
+        use «appNamespace»\Helper\EntityDisplayHelper;
 
         /**
          * Entity tree type base class.
          */
         abstract class AbstractEntityTreeType extends AbstractType
         {
+            /**
+             * @var EntityDisplayHelper
+             */
+            protected $entityDisplayHelper;
+
+            /**
+             * EntityTreeType constructor.
+             *
+             * @param EntityDisplayHelper $entityDisplayHelper EntityDisplayHelper service instance
+             */
+            public function __construct(EntityDisplayHelper $entityDisplayHelper)
+            {
+                $this->entityDisplayHelper = $entityDisplayHelper;
+            }
+
             /**
              * @inheritDoc
              */
@@ -139,7 +155,7 @@ class EntityTreeType {
                 }
                 $prefix = str_repeat('- - ', $shownLevel);
 
-                $itemLabel = $prefix . $choice->getTitleFromDisplayPattern();
+                $itemLabel = $prefix . $this->entityDisplayHelper->getFormattedTitle($choice);
 
                 return $itemLabel;
             }

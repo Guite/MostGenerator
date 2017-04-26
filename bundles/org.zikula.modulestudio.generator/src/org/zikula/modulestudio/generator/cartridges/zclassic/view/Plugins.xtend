@@ -85,6 +85,7 @@ class Plugins {
         «IF hasListFields»
             use «appNamespace»\Helper\ListEntriesHelper;
         «ENDIF»
+        use «appNamespace»\Helper\EntityDisplayHelper;
         use «appNamespace»\Helper\WorkflowHelper;
 
         /**
@@ -134,6 +135,11 @@ class Plugins {
 
         «ENDIF»
         /**
+         * @var EntityDisplayHelper
+         */
+        protected $entityDisplayHelper;
+
+        /**
          * @var WorkflowHelper
          */
         protected $workflowHelper;
@@ -162,6 +168,7 @@ class Plugins {
          «IF hasTrees»
          * @param «name.formatForCodeCapital»Factory $entityFactory «name.formatForCodeCapital»Factory service instance
          «ENDIF»
+         * @param EntityDisplayHelper $entityDisplayHelper EntityDisplayHelper service instance
          * @param WorkflowHelper      $workflowHelper WorkflowHelper service instance
          «IF hasListFields»
             * @param ListEntriesHelper   $listHelper     ListEntriesHelper service instance
@@ -178,6 +185,7 @@ class Plugins {
             «IF hasTrees»
                 «name.formatForCodeCapital»Factory $entityFactory,
             «ENDIF»
+            EntityDisplayHelper $entityDisplayHelper,
             WorkflowHelper $workflowHelper«IF hasListFields»,
             ListEntriesHelper $listHelper«ENDIF»)
         {
@@ -195,6 +203,7 @@ class Plugins {
             «IF hasTrees»
                 $this->entityFactory = $entityFactory;
             «ENDIF»
+            $this->entityDisplayHelper = $entityDisplayHelper;
             $this->workflowHelper = $workflowHelper;
             «IF hasListFields»
                 $this->listHelper = $listHelper;
@@ -247,6 +256,7 @@ class Plugins {
                 «IF hasEntitiesWithIcsTemplates»
                     new \Twig_SimpleFilter('«appNameLower»_icalText', [$this, 'formatIcalText']),
                 «ENDIF»
+                new \Twig_SimpleFilter('«appNameLower»_formattedTitle', [$this, 'getFormattedEntityTitle']),
                 new \Twig_SimpleFilter('«appNameLower»_objectState', [$this, 'getObjectState'], ['is_safe' => ['html']])
             ];
         }
@@ -268,6 +278,20 @@ class Plugins {
         «ENDIF»
 
         «generateInternal»
+
+        /**
+         * The «appName.formatForDB»_formattedTitle filter outputs a formatted title for a given entity.
+         * Example:
+         *     {{ myPost|«appName.formatForDB»_formattedTitle }}
+         *
+         * @param object $entity The given entity instance
+         *
+         * @return string The formatted title
+         */
+        public function getFormattedEntityTitle($entity)
+        {
+            return $this->entityDisplayHelper->getFormattedTitle($entity);
+        }
         «IF needsUserAvatarSupport»
 
             «getUserAvatar»
@@ -276,7 +300,7 @@ class Plugins {
 
     def private getUserAvatar(Application it) '''
         /**
-         * Display the avatar of a user.
+         * Displays the avatar of a given user.
          *
          * @param int|string $uid    The user's id or name
          * @param int        $width  Image width (optional)

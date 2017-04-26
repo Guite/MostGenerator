@@ -289,7 +289,7 @@ class AjaxController {
 
             $previewInfo = base64_encode($this->get('twig')->render('@«appName»/External/' . ucfirst($objectType) . '/info.html.twig', $previewParameters));
 
-            $title = $item->getTitleFromDisplayPattern();
+            $title = $this->get('«appService».entity_display_helper')->getFormattedTitle($item);
             $description = $descriptionField != '' ? $item[$descriptionField] : '';
 
             return [
@@ -362,8 +362,10 @@ class AjaxController {
         if ((is_array($entities) || is_object($entities)) && count($entities) > 0) {
             «prepareForAutoCompletionProcessing»
             foreach ($entities as $item) {
-                $itemTitle = $item->getTitleFromDisplayPattern();
-                $itemTitleStripped = str_replace('"', '', $itemTitle);
+                $itemTitle = $entityDisplayHelper->getFormattedTitle($item);
+                «IF hasImageFields»
+                    $itemTitleStripped = str_replace('"', '', $itemTitle);
+                «ENDIF»
                 $itemDescription = isset($item[$descriptionFieldName]) && !empty($item[$descriptionFieldName]) ? $item[$descriptionFieldName] : '';//$this->__('No description yet.')
                 if (!empty($itemDescription)) {
                     $itemDescription = substr($itemDescription, 0, 50) . '&hellip;';
@@ -371,7 +373,7 @@ class AjaxController {
 
                 $resultItem = [
                     'id' => $item->createCompositeIdentifier(),
-                    'title' => $item->getTitleFromDisplayPattern(),
+                    'title' => $itemTitle,
                     'description' => $itemDescription,
                     'image' => ''
                 ];
@@ -399,6 +401,7 @@ class AjaxController {
             $imageHelper = $this->get('«appService».image_helper');
             $thumbRuntimeOptions = $imageHelper->getRuntimeOptions($objectType, $previewFieldName, 'controllerAction', $contextArgs);
         «ENDIF»
+        $entityDisplayHelper = $this->get('«appService».entity_display_helper');
     '''
 
     def private checkForDuplicateBase(Application it) '''

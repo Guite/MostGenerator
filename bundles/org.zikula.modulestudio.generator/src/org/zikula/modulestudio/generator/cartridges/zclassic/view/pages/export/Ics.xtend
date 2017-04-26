@@ -6,12 +6,14 @@ import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
+import org.zikula.modulestudio.generator.extensions.Utils
 
 class Ics {
 
     extension FormattingExtensions = new FormattingExtensions
     extension ModelExtensions = new ModelExtensions
     extension NamingExtensions = new NamingExtensions
+    extension Utils = new Utils
 
     def generate(Entity it, String appName, IFileSystemAccess fsa) {
         println('Generating ics view templates for entity "' + name.formatForDisplay + '"')
@@ -46,7 +48,7 @@ class Ics {
         «IF categorisable»
             CATEGORIES:{% for propName, catMapping in «objName».categories %}{% if not loop.first %},{% endif %}{{ catMapping.category.display_name[lang]|upper %}{% endfor %}
         «ENDIF»
-        SUMMARY{{ «objName».getTitleFromDisplayPattern()|«appName.formatForDB»_icalText }}
+        SUMMARY{{ «objName»|«application.appName.formatForDB»_formattedTitle|«appName.formatForDB»_icalText }}
         «IF hasTextFieldsEntity»
             «val field = getTextFieldsEntity.head»
             {% if «objName».«field.name.formatForCode» is not empty %}DESCRIPTION{{ «objName».«field.name.formatForCode»|«appName.formatForDB»_icalText }}{% endif %}

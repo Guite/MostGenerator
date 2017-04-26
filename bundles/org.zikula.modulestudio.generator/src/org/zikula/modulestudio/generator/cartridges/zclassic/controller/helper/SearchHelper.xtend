@@ -55,6 +55,7 @@ class SearchHelper {
             use «appNamespace»\Helper\CategoryHelper;
         «ENDIF»
         use «appNamespace»\Helper\ControllerHelper;
+        use «appNamespace»\Helper\EntityDisplayHelper;
         «IF hasCategorisableEntities»
             use «appNamespace»\Helper\FeatureActivationHelper;
         «ENDIF»
@@ -102,6 +103,11 @@ class SearchHelper {
          * @var ControllerHelper
          */
         private $controllerHelper;
+
+        /**
+         * @var EntityDisplayHelper
+         */
+        protected $entityDisplayHelper;
         «IF hasCategorisableEntities»
 
             /**
@@ -118,18 +124,19 @@ class SearchHelper {
         /**
          * SearchHelper constructor.
          *
-         * @param TranslatorInterface $translator   Translator service instance
+         * @param TranslatorInterface $translator          Translator service instance
          * @param PermissionApi«IF targets('1.5')»Interface«ENDIF»    $permissionApi   PermissionApi service instance
          «IF !targets('1.5')»
-         * @param EngineInterface  $templateEngine  Template engine service instance
+         * @param EngineInterface     $templateEngine      Template engine service instance
          «ENDIF»
-         * @param SessionInterface $session         Session service instance
-         * @param RequestStack     $requestStack    RequestStack service instance
+         * @param SessionInterface    $session             Session service instance
+         * @param RequestStack        $requestStack        RequestStack service instance
          * @param «name.formatForCodeCapital»Factory $entityFactory EntityFactory service instance
-         * @param ControllerHelper $controllerHelper ControllerHelper service instance
+         * @param ControllerHelper    $controllerHelper    ControllerHelper service instance
+         * @param EntityDisplayHelper $entityDisplayHelper EntityDisplayHelper service instance
          «IF hasCategorisableEntities»
          * @param FeatureActivationHelper $featureActivationHelper FeatureActivationHelper service instance
-         * @param CategoryHelper   $categoryHelper CategoryHelper service instance
+         * @param CategoryHelper      $categoryHelper      CategoryHelper service instance
          «ENDIF»
          */
         public function __construct(
@@ -141,7 +148,8 @@ class SearchHelper {
             SessionInterface $session,
             RequestStack $requestStack,
             «name.formatForCodeCapital»Factory $entityFactory,
-            ControllerHelper $controllerHelper«IF hasCategorisableEntities»,
+            ControllerHelper $controllerHelper,
+            EntityDisplayHelper $entityDisplayHelper«IF hasCategorisableEntities»,
             FeatureActivationHelper $featureActivationHelper,
             CategoryHelper $categoryHelper
             «ENDIF»
@@ -155,6 +163,7 @@ class SearchHelper {
             $this->request = $requestStack->getCurrentRequest();
             $this->entityFactory = $entityFactory;
             $this->controllerHelper = $controllerHelper;
+            $this->entityDisplayHelper = $entityDisplayHelper;
             «IF hasCategorisableEntities»
                 $this->featureActivationHelper = $featureActivationHelper;
                 $this->categoryHelper = $categoryHelper;
@@ -360,10 +369,11 @@ class SearchHelper {
 
                     $urlArgs['_locale'] = (null !== $languageField && !empty($entity[$languageField])) ? $entity[$languageField] : $this->request->getLocale();
 
+                    $formattedTitle = $this->entityDisplayHelper->getFormattedTitle($entity);
                     $displayUrl = $hasDisplayAction ? new RouteUrl('«appName.formatForDB»_' . $objectType . '_display', $urlArgs) : '';
 
                     $result = new SearchResultEntity();
-                    $result->setTitle($entity->getTitleFromDisplayPattern())
+                    $result->setTitle($formattedTitle)
                         ->setText($description)
                         ->setModule('«appName»')
                         ->setCreated($created)

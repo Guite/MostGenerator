@@ -112,7 +112,7 @@ class Xml {
     def private displayRelatedEntry(JoinRelationship it, Boolean useTarget) '''
         «val relationAliasName = getRelationAliasName(useTarget).formatForCode»
         «val relObjName = (if (useTarget) source else target).name.formatForCode + '.' + relationAliasName»
-        <«relationAliasName.toFirstLower»>{% if «relObjName»|default %}{{ «relObjName».getTitleFromDisplayPattern() }}{% endif %}</«relationAliasName.toFirstLower»>
+        <«relationAliasName.toFirstLower»>{% if «relObjName»|default %}{{ «relObjName»|«application.appName.formatForDB»_formattedTitle }}{% endif %}</«relationAliasName.toFirstLower»>
     '''
 
     def private displayRelatedEntries(JoinRelationship it, Boolean useTarget) '''
@@ -122,7 +122,7 @@ class Xml {
         <«relationAliasName.toFirstLower»>
         {% if «relObjName»|default %}
             {% for relatedItem in «relObjName» %}
-            <«linkEntity.name.formatForCode»>{{ relatedItem.getTitleFromDisplayPattern() }}</«linkEntity.name.formatForCode»>
+            <«linkEntity.name.formatForCode»>{{ relatedItem|«application.appName.formatForDB»_formattedTitle }}</«linkEntity.name.formatForCode»>
             {% endfor %}
         {% endif %}
         </«relationAliasName.toFirstLower»>

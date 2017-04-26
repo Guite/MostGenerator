@@ -64,7 +64,7 @@ class ContentTypeListView {
         {# Purpose of this template: Display «nameMultiple.formatForDisplay» within an external context #}
         <dl>
             {% for «name.formatForCode» in items %}
-                <dt>{{ «name.formatForCode».getTitleFromDisplayPattern() }}</dt>
+                <dt>{{ «name.formatForCode»|«app.appName.formatForDB»_formattedTitle }}</dt>
                 «val textFields = fields.filter(TextField)»
                 «IF !textFields.empty»
                     {% if «name.formatForCode».«textFields.head.name.formatForCode» %}
@@ -90,7 +90,7 @@ class ContentTypeListView {
     def private displayTemplate(Entity it, Application app) '''
         {# Purpose of this template: Display «nameMultiple.formatForDisplay» within an external context #}
         {% for «name.formatForCode» in items %}
-            <h3>{{ «name.formatForCode».getTitleFromDisplayPattern() }}</h3>
+            <h3>{{ «name.formatForCode»|«app.appName.formatForDB»_formattedTitle }}</h3>
             «IF hasDisplayAction»
                 <p>«detailLink(app.appName)»</p>
             «ENDIF»

@@ -198,7 +198,7 @@ class Relations {
         «ENDIF»
         {% set idPrefixItem = idPrefix ~ 'Reference_'«FOR pkField : targetEntity.getPrimaryKeyFields» ~ item.«pkField.name.formatForCode»«ENDFOR» %}
         <li id="{{ idPrefixItem }}">
-            {{ item.getTitleFromDisplayPattern() }}
+            {{ item|«app.appName.formatForDB»_formattedTitle }}
             «IF includeEditing»
                 <a id="{{ idPrefixItem }}Edit" href="{{ path('«app.appName.formatForDB»_«targetEntity.name.formatForDB»_' ~ routeArea ~ 'edit'«targetEntity.routeParams('item', true)») }}">{{ editImage|raw }}</a>
             «ENDIF»
@@ -207,7 +207,7 @@ class Relations {
                 <br />
                 «val imageFieldName = targetEntity.getImageFieldsEntity.head.name.formatForCode»
                 {% if item.«imageFieldName» is not empty and item.«imageFieldName»Meta.isImage %}
-                    <img src="{{ item.«imageFieldName».getPathname()|imagine_filter('zkroot', relationThumbRuntimeOptions) }}" alt="{{ item.getTitleFromDisplayPattern()|e('html_attr') }}" width="{{ relationThumbRuntimeOptions.thumbnail.size[0] }}" height="{{ relationThumbRuntimeOptions.thumbnail.size[1] }}" class="img-rounded" />
+                    <img src="{{ item.«imageFieldName».getPathname()|imagine_filter('zkroot', relationThumbRuntimeOptions) }}" alt="{{ item|«app.appName.formatForDB»_formattedTitle|e('html_attr') }}" width="{{ relationThumbRuntimeOptions.thumbnail.size[0] }}" height="{{ relationThumbRuntimeOptions.thumbnail.size[1] }}" class="img-rounded" />
                 {% endif %}
             «ENDIF»
         </li>

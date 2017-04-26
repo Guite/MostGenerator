@@ -79,7 +79,7 @@ class Tag {
                 return;
             }
 
-            $this->setObjectTitle($entity->getTitleFromDisplayPattern());
+            $this->setObjectTitle($this->container->get('«appService».entity_display_helper')->getFormattedTitle($entity));
 
             $dateFieldName = $repository->getStartDateFieldName();
             if ($dateFieldName != '') {

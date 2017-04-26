@@ -8,6 +8,7 @@ import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.UrlExtensions
+import org.zikula.modulestudio.generator.extensions.Utils
 
 class Rss {
 
@@ -15,6 +16,7 @@ class Rss {
     extension FormattingExtensions = new FormattingExtensions
     extension NamingExtensions = new NamingExtensions
     extension UrlExtensions = new UrlExtensions
+    extension Utils = new Utils
 
     def generate(Entity it, String appName, IFileSystemAccess fsa) {
         val templateFilePath = templateFileWithExtension('view', 'rss')
@@ -63,7 +65,7 @@ class Rss {
             </item>
         {% endblock %}
         {% block entry_content %}
-            <title><![CDATA[{% if «objName».updatedDate|default %}{{ «objName».updatedDate|localizeddate('medium', 'short') }} - {% endif %}{{ «objName».getTitleFromDisplayPattern()«IF !skipHookSubscribers»|notifyFilters('«appName.formatForDB».filterhook.«nameMultiple.formatForDB»')«ENDIF» }}]]></title>
+            <title><![CDATA[{% if «objName».updatedDate|default %}{{ «objName».updatedDate|localizeddate('medium', 'short') }} - {% endif %}{{ «objName»|«application.appName.formatForDB»_formattedTitle«IF !skipHookSubscribers»|notifyFilters('«appName.formatForDB».filterhook.«nameMultiple.formatForDB»')«ENDIF» }}]]></title>
             <link>{{ url('«appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ '«defaultAction»'«IF hasDisplayAction»«routeParams(objName, true)»«ENDIF») }}</link>
             <guid>{{ url('«appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ '«defaultAction»'«IF hasDisplayAction»«routeParams(objName, true)»«ENDIF») }}</guid>
             «IF standardFields»
@@ -89,7 +91,7 @@ class Rss {
             «ELSEIF !stringFields.empty»
                 {{ «objName».«stringFields.head.name.formatForCode»|replace({ '<br>': '<br />' }) }}
             «ELSE»
-                {{ «objName».getTitleFromDisplayPattern()|replace({ '<br>': '<br />' }) }}
+                {{ «objName»|«application.appName.formatForDB»_formattedTitle|replace({ '<br>': '<br />' }) }}
             «ENDIF»
             ]]>
         </description>

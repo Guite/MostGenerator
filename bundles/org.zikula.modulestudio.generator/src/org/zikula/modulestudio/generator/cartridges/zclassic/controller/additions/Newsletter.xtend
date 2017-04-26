@@ -251,6 +251,7 @@ class Newsletter {
                 $previewFieldName = $repository->getPreviewFieldName();
             «ENDIF»
 
+            $entityDisplayHelper = $this->container->get('«appService».entity_display_helper');
             «IF hasDisplayActions»
                 $hasDisplayPage = in_array($objectType, ['«getAllEntities.filter[hasDisplayAction].map[name.formatForCode].join('\', \'')»']);
                 $router = $this->container->get('router');
@@ -260,7 +261,7 @@ class Newsletter {
                 $items[$k] = [];
 
                 // Set title of this item.
-                $items[$k]['nl_title'] = $item->getTitleFromDisplayPattern();
+                $items[$k]['nl_title'] = $entityDisplayHelper->getFormattedTitle($item);
 
                 «IF hasDisplayActions»
                     if ($hasDisplayPage) {

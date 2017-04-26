@@ -139,7 +139,7 @@ class UploadType {
 
                 $view->vars['object_type'] = $this->entity->get_objectType();
                 $view->vars['field_name'] = $fieldName;
-                $view->vars['formatted_entity_title'] = $this->entity->getTitleFromDisplayPattern();
+                $view->vars['edited_entity'] = $this->entity;
 
                 $parentData = $form->getParent()->getData();
                 $accessor = PropertyAccess::createPropertyAccessor();

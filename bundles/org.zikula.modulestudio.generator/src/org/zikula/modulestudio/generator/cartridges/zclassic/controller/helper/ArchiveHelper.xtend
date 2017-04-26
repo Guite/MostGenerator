@@ -21,11 +21,11 @@ class ArchiveHelper {
         println('Generating helper class for automatic archiving')
         val fh = new FileHelper
         generateClassPair(fsa, getAppSourceLibPath + 'Helper/ArchiveHelper.php',
-            fh.phpFileContent(it, categoryHelperBaseClass), fh.phpFileContent(it, categoryHelperImpl)
+            fh.phpFileContent(it, archiveHelperBaseClass), fh.phpFileContent(it, archiveHelperImpl)
         )
     }
 
-    def private categoryHelperBaseClass(Application it) '''
+    def private archiveHelperBaseClass(Application it) '''
         namespace «appNamespace»\Helper\Base;
 
         use Psr\Log\LoggerInterface;
@@ -143,7 +143,7 @@ class ArchiveHelper {
         }
     '''
 
-    def private categoryHelperImpl(Application it) '''
+    def private archiveHelperImpl(Application it) '''
         namespace «appNamespace»\Helper;
 
         use «appNamespace»\Helper\Base\AbstractArchiveHelper;

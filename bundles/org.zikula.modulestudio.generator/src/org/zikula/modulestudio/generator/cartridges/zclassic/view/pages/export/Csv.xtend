@@ -12,12 +12,14 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.view.pagecomponents
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
+import org.zikula.modulestudio.generator.extensions.Utils
 
 class Csv {
 
     extension FormattingExtensions = new FormattingExtensions
     extension ModelExtensions = new ModelExtensions
     extension NamingExtensions = new NamingExtensions
+    extension Utils = new Utils
 
     SimpleFields fieldHelper = new SimpleFields
 
@@ -65,7 +67,7 @@ class Csv {
         «val relationAliasName = getRelationAliasName(useTarget).formatForCode»
         «val mainEntity = (if (!useTarget) target else source)»
         «val relObjName = mainEntity.name.formatForCode + '.' + relationAliasName»
-        ;"{% if «relObjName»|default %}{{ «relObjName».getTitleFromDisplayPattern() }}{% endif %}"'''
+        ;"{% if «relObjName»|default %}{{ «relObjName»|«application.appName.formatForDB»_formattedTitle }}{% endif %}"'''
 
     def private displayRelatedEntries(JoinRelationship it, Boolean useTarget) '''
         «val relationAliasName = getRelationAliasName(useTarget).formatForCode»
@@ -74,7 +76,7 @@ class Csv {
         ;"
         {% if «relObjName»|default %}
             {% for relatedItem in «relObjName» %}
-            {{ relatedItem.getTitleFromDisplayPattern() }}{% if not loop.last %}, {% endif %}
+            {{ relatedItem|«application.appName.formatForDB»_formattedTitle }}{% if not loop.last %}, {% endif %}
             {% endfor %}
         {% endif %}
         "'''

@@ -48,6 +48,7 @@ class NotificationHelper {
             use Zikula\UsersModule\Constant as UsersConstant;
         «ENDIF»
         use Zikula\UsersModule\Entity\UserEntity;
+        use «appNamespace»\Helper\EntityDisplayHelper;
         use «appNamespace»\Helper\WorkflowHelper;
 
         /**
@@ -103,6 +104,11 @@ class NotificationHelper {
         protected $groupRepository;
 
         /**
+         * @var EntityDisplayHelper
+         */
+        protected $entityDisplayHelper;
+
+        /**
          * @var WorkflowHelper
          */
         protected $workflowHelper;
@@ -145,16 +151,17 @@ class NotificationHelper {
         /**
          * NotificationHelper constructor.
          *
-         * @param ZikulaHttpKernelInterface $kernel          Kernel service instance
-         * @param TranslatorInterface       $translator      Translator service instance
-         * @param SessionInterface          $session         Session service instance
-         * @param Routerinterface           $router          Router service instance
-         * @param RequestStack              $requestStack    RequestStack service instance
-         * @param VariableApi«IF targets('1.5')»Interface«ELSE»         «ENDIF»      $variableApi     VariableApi service instance
-         * @param Twig_Environment          $twig            Twig service instance
-         * @param MailerApi«IF targets('1.5')»Interface«ELSE»         «ENDIF»        $mailerApi       MailerApi service instance
-         * @param GroupRepositoryInterface  $groupRepository GroupRepository service instance
-         * @param WorkflowHelper            $workflowHelper  WorkflowHelper service instance
+         * @param ZikulaHttpKernelInterface $kernel              Kernel service instance
+         * @param TranslatorInterface       $translator          Translator service instance
+         * @param SessionInterface          $session             Session service instance
+         * @param Routerinterface           $router              Router service instance
+         * @param RequestStack              $requestStack        RequestStack service instance
+         * @param VariableApi«IF targets('1.5')»Interface«ELSE»         «ENDIF»          $variableApi     VariableApi service instance
+         * @param Twig_Environment          $twig                Twig service instance
+         * @param MailerApi«IF targets('1.5')»Interface«ELSE»         «ENDIF»            $mailerApi       MailerApi service instance
+         * @param GroupRepositoryInterface  $groupRepository     GroupRepository service instance
+         * @param EntityDisplayHelper       $entityDisplayHelper EntityDisplayHelper service instance
+         * @param WorkflowHelper            $workflowHelper      WorkflowHelper service instance
          */
         public function __construct(
             ZikulaHttpKernelInterface $kernel,
@@ -166,6 +173,7 @@ class NotificationHelper {
             Twig_Environment $twig,
             MailerApi«IF targets('1.5')»Interface«ENDIF» $mailerApi,
             GroupRepositoryInterface $groupRepository,
+            EntityDisplayHelper $entityDisplayHelper,
             WorkflowHelper $workflowHelper
         ) {
             $this->kernel = $kernel;
@@ -177,6 +185,7 @@ class NotificationHelper {
             $this->templating = $twig;
             $this->mailerApi = $mailerApi;
             $this->groupRepository = $groupRepository;
+            $this->entityDisplayHelper = $entityDisplayHelper;
             $this->workflowHelper = $workflowHelper;
             $this->name = '«appName»';
         }
@@ -404,7 +413,7 @@ class NotificationHelper {
             $editUrl = $hasEditAction ? $this->router->generate($routePrefix . 'edit', $urlArgs, true) : '';
 
             $emailData = [
-                'name' => $this->entity->getTitleFromDisplayPattern(),
+                'name' => $this->entityDisplayHelper->getFormattedTitle($this->entity),
                 'newState' => $stateInfo['text'],
                 'remarks' => $remarks,
                 'displayUrl' => $displayUrl,

@@ -152,10 +152,10 @@ class SimpleFields {
                 {% if «realName» is not empty and «realName»Meta|default %}
             «ELSE»{% if «realName»Meta|default %}
             «ENDIF»
-            <a href="{{ «realName»Url }}" title="{{ «objName».getTitleFromDisplayPattern()|e('html_attr') }}"{% if «realName»Meta.isImage %} class="image-link"{% endif %}>
+            <a href="{{ «realName»Url }}" title="{{ «objName»|«entity.application.appName.formatForDB»_formattedTitle|e('html_attr') }}"{% if «realName»Meta.isImage %} class="image-link"{% endif %}>
             {% if «realName»Meta.isImage %}
                 {% set thumbOptions = attribute(thumbRuntimeOptions, '«entity.name.formatForCode»«name.formatForCodeCapital»') %}
-                <img src="{{ «realName».getPathname()|imagine_filter('zkroot', thumbOptions) }}" alt="{{ «objName».getTitleFromDisplayPattern()|e('html_attr') }}" width="{{ thumbOptions.thumbnail.size[0] }}" height="{{ thumbOptions.thumbnail.size[1] }}" class="img-thumbnail" />
+                <img src="{{ «realName».getPathname()|imagine_filter('zkroot', thumbOptions) }}" alt="{{ «objName»|«entity.application.appName.formatForDB»_formattedTitle|e('html_attr') }}" width="{{ thumbOptions.thumbnail.size[0] }}" height="{{ thumbOptions.thumbnail.size[1] }}" class="img-thumbnail" />
             {% else %}
                 {{ __('Download') }} ({{ «realName»Meta.size|«appNameSmall»_fileSize(«realName».getPathname(), false, false) }})
             {% endif %}
