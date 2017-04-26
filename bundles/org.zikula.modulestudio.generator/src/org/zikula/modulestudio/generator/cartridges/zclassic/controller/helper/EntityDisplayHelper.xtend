@@ -16,7 +16,6 @@ import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
-import org.zikula.modulestudio.generator.extensions.ModelInheritanceExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
@@ -24,7 +23,6 @@ class EntityDisplayHelper {
 
     extension FormattingExtensions = new FormattingExtensions
     extension ModelExtensions = new ModelExtensions
-    extension ModelInheritanceExtensions = new ModelInheritanceExtensions
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
 
@@ -262,9 +260,7 @@ class EntityDisplayHelper {
 
     def private displayPatternArguments(Entity it) {
         var result = ''
-        val patternParts = displayPatternParts
-
-        for (patternPart : patternParts) {
+        for (patternPart : displayPatternParts) {
             if (result != '') {
                 result = result.concat(",\n" + '        ')
             }
@@ -287,27 +283,6 @@ class EntityDisplayHelper {
             result = result.concat(formattedPart.toString)
         }
         result
-    }
-
-    def private displayPatternParts(Entity it) {
-        getUsedDisplayPattern.split('#')
-    }
-
-    def private getUsedDisplayPattern(Entity it) {
-        var usedDisplayPattern = displayPattern
-
-        if (isInheriting && (null === usedDisplayPattern || usedDisplayPattern == '')) {
-            // fetch inherited display pattern from parent entity
-            if (parentType instanceof Entity) {
-                usedDisplayPattern = (parentType as Entity).displayPattern
-            }
-        }
-
-        if (null === usedDisplayPattern || usedDisplayPattern == '') {
-            usedDisplayPattern = name.formatForDisplay
-        }
-
-        usedDisplayPattern
     }
 
     def private formatFieldValue(EntityField it, CharSequence value) {

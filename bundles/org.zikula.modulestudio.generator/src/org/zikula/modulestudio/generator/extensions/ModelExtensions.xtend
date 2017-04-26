@@ -40,6 +40,7 @@ class ModelExtensions {
 
     extension CollectionUtils = new CollectionUtils
     extension FormattingExtensions = new FormattingExtensions
+    extension ModelInheritanceExtensions = new ModelInheritanceExtensions
     extension Utils = new Utils
     extension WorkflowExtensions = new WorkflowExtensions
 
@@ -436,6 +437,33 @@ class ModelExtensions {
             inheritanceRelation.head.target.getParentDataObjects(parents)
         }
         parents
+    }
+
+    /**
+     * Returns the single parts of the display pattern for a given entity.
+     */
+    def displayPatternParts(Entity it) {
+        getUsedDisplayPattern.split('#')
+    }
+
+    /**
+     * Returns the actual display pattern for a given entity.
+     */
+    def getUsedDisplayPattern(Entity it) {
+        var usedDisplayPattern = displayPattern
+
+        if (isInheriting && (null === usedDisplayPattern || usedDisplayPattern == '')) {
+            // fetch inherited display pattern from parent entity
+            if (parentType instanceof Entity) {
+                usedDisplayPattern = (parentType as Entity).displayPattern
+            }
+        }
+
+        if (null === usedDisplayPattern || usedDisplayPattern == '') {
+            usedDisplayPattern = name.formatForDisplay
+        }
+
+        usedDisplayPattern
     }
 
     /**

@@ -334,11 +334,6 @@ class Repository {
                 «ENDIF»
             }
 
-            // in the concrete child class you could do something like
-            // $parameters = parent::getAdditionalTemplateParameters(«IF app.hasUploads»$imageHelper, «ENDIF»$context, $args);
-            // $parameters['myvar'] = 'myvalue';
-            // return $parameters;
-
             return $templateParameters;
         }
     '''
@@ -1077,8 +1072,7 @@ class Repository {
     '''
 
     def private addSelectionPartsForDisplayPattern(Entity it) '''
-        «val patternParts = displayPattern.split('#')»
-        «FOR patternPart : patternParts»
+        «FOR patternPart : displayPatternParts»
             «/* check if patternPart equals a field name */»
             «var matchedFields = fields.filter[name == patternPart]»
             «IF (!matchedFields.empty || (geographical && (patternPart == 'latitude' || patternPart == 'longitude')))»

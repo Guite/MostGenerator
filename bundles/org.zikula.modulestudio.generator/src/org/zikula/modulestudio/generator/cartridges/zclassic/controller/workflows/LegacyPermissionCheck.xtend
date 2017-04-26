@@ -7,7 +7,6 @@ import java.util.ArrayList
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
-import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
@@ -19,7 +18,6 @@ import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
 class LegacyPermissionCheck {
 
     extension FormattingExtensions = new FormattingExtensions
-    extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension ModelExtensions = new ModelExtensions
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
@@ -88,13 +86,6 @@ class LegacyPermissionCheck {
          */
         function «app.appName»_workflow_«wfType.textualName»_permissioncheck($obj, $permLevel, $currentUser, $actionId)
         {
-            «IF app.hasAutomaticArchiving»
-                // every user is allowed to perform automatic archiving 
-                if (true === \SessionUtil::getVar('«app.appName»AutomaticArchiving', false)) {
-                    return true;
-                }
-
-            «ENDIF»
             // calculate the permission component
             $objectType = $obj['_objectType'];
             $component = '«app.appName»:' . ucfirst($objectType) . ':';
