@@ -1044,30 +1044,35 @@ class Repository {
                 // random selection
                 $qb->addSelect('MOD(tbl.«getFirstPrimaryKey.name.formatForCode», ' . mt_rand(2, 15) . ') AS HIDDEN randomIdentifiers')
                    ->add('orderBy', 'randomIdentifiers');
-                $orderBy = '';
-            } elseif (empty($orderBy)) {
+
+                return $qb;
+            }
+
+            if (empty($orderBy)) {
                 $orderBy = $this->defaultSortingField;
             }
 
-            // add order by clause
-            if (!empty($orderBy)) {
-                if (false === strpos($orderBy, '.')) {
-                    $orderBy = 'tbl.' . $orderBy;
-                }
-                «IF standardFields»
-                    if (false !== strpos($orderBy, 'tbl.createdBy')) {
-                        $qb->addSelect('tblCreator')
-                           ->leftJoin('tbl.createdBy', 'tblCreator');
-                        $orderBy = str_replace('tbl.createdBy', 'tblCreator.uname', $orderBy);
-                    }
-                    if (false !== strpos($orderBy, 'tbl.updatedBy')) {
-                        $qb->addSelect('tblUpdater')
-                           ->leftJoin('tbl.updatedBy', 'tblUpdater');
-                        $orderBy = str_replace('tbl.updatedBy', 'tblUpdater.uname', $orderBy);
-                    }
-                «ENDIF»
-                $qb->add('orderBy', $orderBy);
+            if (empty($orderBy)) {
+                return $qb;
             }
+
+            // add order by clause
+            if (false === strpos($orderBy, '.')) {
+                $orderBy = 'tbl.' . $orderBy;
+            }
+            «IF standardFields»
+                if (false !== strpos($orderBy, 'tbl.createdBy')) {
+                    $qb->addSelect('tblCreator')
+                       ->leftJoin('tbl.createdBy', 'tblCreator');
+                    $orderBy = str_replace('tbl.createdBy', 'tblCreator.uname', $orderBy);
+                }
+                if (false !== strpos($orderBy, 'tbl.updatedBy')) {
+                    $qb->addSelect('tblUpdater')
+                       ->leftJoin('tbl.updatedBy', 'tblUpdater');
+                    $orderBy = str_replace('tbl.updatedBy', 'tblUpdater.uname', $orderBy);
+                }
+            «ENDIF»
+            $qb->add('orderBy', $orderBy);
 
             return $qb;
         }
