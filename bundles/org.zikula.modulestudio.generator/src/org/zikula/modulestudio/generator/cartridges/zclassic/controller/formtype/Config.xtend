@@ -67,7 +67,6 @@ class Config {
         use Symfony\Component\Form\FormBuilderInterface;
         use Zikula\Common\Translator\TranslatorInterface;
         use Zikula\Common\Translator\TranslatorTrait;
-        use Zikula\ExtensionsModule\Api\«IF targets('1.5')»ApiInterface\VariableApiInterface«ELSE»VariableApi«ENDIF»;
         «IF hasUserGroupSelectors»
             use Zikula\GroupsModule\Entity\RepositoryInterface\GroupRepositoryInterface;
         «ENDIF»
@@ -80,43 +79,37 @@ class Config {
             use TranslatorTrait;
 
             /**
-             * @var VariableApi«IF targets('1.5')»Interface«ENDIF»
-             */
-            protected $variableApi;
-
-            /**
              * @var array
              */
-            protected $modVars;
+            protected $moduleVars;
 
             /**
              * ConfigType constructor.
              *
              «IF hasUserGroupSelectors»
              * @param TranslatorInterface      $translator      Translator service instance
-             * @param VariableApi«IF targets('1.5')»Interface«ELSE»         «ENDIF»     $variableApi     VariableApi service instance
+             * @param array                    $moduleVars      Existing module vars
              * @param GroupRepositoryInterface $groupRepository GroupRepository service instance
              «ELSE»
              * @param TranslatorInterface  $translator  Translator service instance
-             * @param VariableApi«IF targets('1.5')»Interface«ELSE»         «ENDIF» $variableApi VariableApi service instance
+             * @param array                $moduleVars  Existing module vars
              «ENDIF»
              */
             public function __construct(
                 TranslatorInterface $translator,
-                VariableApi«IF targets('1.5')»Interface«ENDIF» $variableApi«IF hasUserGroupSelectors»,
+                array $moduleVars«IF hasUserGroupSelectors»,
                 GroupRepositoryInterface $groupRepository«ENDIF»
             ) {
                 $this->setTranslator($translator);
-                $this->variableApi = $variableApi;
-                $this->modVars = $this->variableApi->getAll('«appName»');
+                $this->moduleVars = $moduleVars;
                 «IF hasUserGroupSelectors»
 
                     foreach (['«getUserGroupSelectors.map[name.formatForCode].join('\', \'')»'] as $groupFieldName) {
-                        $groupId = intval($this->modVars[$groupFieldName]);
+                        $groupId = intval($this->moduleVars[$groupFieldName]);
                         if ($groupId < 1) {
                             $groupId = 2; // fallback to admin group
                         }
-                        $this->modVars[$groupFieldName] = $groupRepository->find($groupId);
+                        $this->moduleVars[$groupFieldName] = $groupRepository->find($groupId);
                     }
                 «ENDIF»
             }
@@ -193,7 +186,7 @@ class Config {
             «IF !(it instanceof IntVar && (it as IntVar).isUserGroupSelector)»
                 'required' => false,
             «ENDIF»
-            'data' => «IF it instanceof BoolVar»(bool)(«ENDIF»isset($this->modVars['«name.formatForCode»']) ? $this->modVars['«name.formatForCode»'] : «IF it instanceof BoolVar»«(value == 'true').displayBool»)«ELSE»''«ENDIF»,
+            'data' => «IF it instanceof BoolVar»(bool)(«ENDIF»isset($this->moduleVars['«name.formatForCode»']) ? $this->moduleVars['«name.formatForCode»'] : «IF it instanceof BoolVar»«(value == 'true').displayBool»)«ELSE»''«ENDIF»,
             «IF !(it instanceof BoolVar)»
                 «IF !(it instanceof IntVar && (it as IntVar).isUserGroupSelector)»
                     'empty_data' => «IF it instanceof IntVar»intval('«value»')«ELSE»'«value»'«ENDIF»,

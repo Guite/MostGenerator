@@ -71,6 +71,11 @@ class CollectionFilterHelper {
             «ENDIF»
 
             /**
+             * @var bool
+             */
+            protected $showOnlyOwnEntries = false;
+
+            /**
              * CollectionFilterHelper constructor.
              *
              * @param RequestStack «IF hasCategorisableEntities»  «ENDIF»$requestStack «IF hasCategorisableEntities»       «ENDIF»RequestStack service instance
@@ -78,17 +83,22 @@ class CollectionFilterHelper {
              «IF hasCategorisableEntities»
              * @param CategoryHelper $categoryHelper      CategoryHelper service instance
              «ENDIF»
+             * @param bool           $showOnlyOwnEntries  Fallback value to determine whether only own entries should be selected or not
              */
             public function __construct(
                 RequestStack $requestStack,
-                «name.formatForCodeCapital»Factory $entityFactory«IF hasCategorisableEntities»,
-                CategoryHelper $categoryHelper«ENDIF»)
+                «name.formatForCodeCapital»Factory $entityFactory,
+                «IF hasCategorisableEntities»
+                    CategoryHelper $categoryHelper,
+                «ENDIF»
+                $showOnlyOwnEntries)
             {
                 $this->request = $requestStack->getCurrentRequest();
                 $this->entityFactory = $entityFactory;
                 «IF hasCategorisableEntities»
                     $this->categoryHelper = $categoryHelper;
                 «ENDIF»
+                $this->showOnlyOwnEntries = $showOnlyOwnEntries;
             }
 
             «collectionFilterHelperBaseImpl»
@@ -331,9 +341,7 @@ class CollectionFilterHelper {
         protected function applyDefaultFiltersFor«name.formatForCodeCapital»(QueryBuilder $qb, $parameters = [])
         {
             «IF ownerPermission || standardFields»
-                «/*$variableApi = \ServiceUtil::get('zikula_extensions_module.api.variable');
-                $showOnlyOwnEntries = $this->request->query->getInt('own', $variableApi->get('«app.appName»', 'showOnlyOwnEntries', 0));*/»
-                $showOnlyOwnEntries = $this->request->query->getInt('own', 0);
+                $showOnlyOwnEntries = (bool)$this->request->query->getInt('own', $this->showOnlyOwnEntries);
 
             «ENDIF»
             «IF hasVisibleWorkflow»
@@ -347,7 +355,7 @@ class CollectionFilterHelper {
                     // per default we show approved «nameMultiple.formatForDisplay» only
                     $onlineStates = ['approved'];
                     «IF ownerPermission»
-                        if ($showOnlyOwnEntries == 1) {
+                        if ($showOnlyOwnEntries) {
                             // allow the owner to see his deferred «nameMultiple.formatForDisplay»
                             $onlineStates[] = 'deferred';
                         }
@@ -358,7 +366,7 @@ class CollectionFilterHelper {
             «ENDIF»
             «IF standardFields»
 
-                if ($showOnlyOwnEntries == 1) {
+                if ($showOnlyOwnEntries) {
                     $repository = $this->entityFactory->getRepository('«name.formatForCode»');
                     $qb = $repository->addCreatorFilter($qb);
                 }

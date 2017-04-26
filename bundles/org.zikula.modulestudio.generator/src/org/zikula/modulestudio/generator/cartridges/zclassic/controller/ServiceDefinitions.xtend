@@ -440,7 +440,7 @@ class ServiceDefinitions {
                 class: «nsBase»ConfigType
                 arguments:
                     - "@translator.default"
-                    - "@zikula_extensions_module.api.variable"
+                    - "@=service('zikula_extensions_module.api.variable').getAll('«appName»')"
                     «IF hasUserGroupSelectors»
                         - "@zikula_groups_module.group_repository"
                     «ENDIF»
@@ -496,6 +496,7 @@ class ServiceDefinitions {
                 «IF hasCategorisableEntities»
                     - "@«modPrefix».category_helper"
                 «ENDIF»
+                - "@=service('zikula_extensions_module.api.variable').get('«appName»', 'showOnlyOwnEntries', false)"
 
         «modPrefix».controller_helper:
             class: «nsBase»ControllerHelper
