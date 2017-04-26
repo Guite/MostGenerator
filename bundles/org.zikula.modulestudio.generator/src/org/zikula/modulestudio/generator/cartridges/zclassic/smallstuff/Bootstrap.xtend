@@ -81,7 +81,7 @@ class Bootstrap {
 
             // check if own service exists (which is not true if the module is not installed yet)
             if ($container->has('«appService».archive_helper')) {
-                $container->get('«appService».archive_helper')->archiveObjects();
+                $container->get('«appService».archive_helper')->archiveObsoleteObjects();
             }
         «ENDIF»
     '''

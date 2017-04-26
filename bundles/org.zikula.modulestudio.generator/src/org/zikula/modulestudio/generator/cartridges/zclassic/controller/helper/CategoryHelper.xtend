@@ -29,8 +29,8 @@ class CategoryHelper {
         use Doctrine\ORM\QueryBuilder;
         use InvalidArgumentException;
         use Psr\Log\LoggerInterface;
+        use Symfony\Component\HttpFoundation\Request;
         use Symfony\Component\HttpFoundation\RequestStack;
-        use Symfony\Component\HttpFoundation\Session\SessionInterface;
         «IF !targets('1.5')»
             use Zikula\CategoriesModule\Api\CategoryRegistryApi;
         «ENDIF»
@@ -50,11 +50,6 @@ class CategoryHelper {
              * @var TranslatorInterface
              */
             protected $translator;
-
-            /**
-             * @var SessionInterface
-             */
-            protected $session;
 
             /**
              * @var Request
@@ -92,7 +87,6 @@ class CategoryHelper {
              * CategoryHelper constructor.
              *
              * @param TranslatorInterface   $translator            Translator service instance
-             * @param SessionInterface      $session               Session service instance
              * @param RequestStack          $requestStack          RequestStack service instance
              * @param LoggerInterface       $logger                Logger service instance
              * @param CurrentUserApi«IF targets('1.5')»Interface«ELSE»       «ENDIF» $currentUserApi        CurrentUserApi service instance
@@ -105,7 +99,6 @@ class CategoryHelper {
              */
             public function __construct(
                 TranslatorInterface $translator,
-                SessionInterface $session,
                 RequestStack $requestStack,
                 LoggerInterface $logger,
                 CurrentUserApi«IF targets('1.5')»Interface«ENDIF» $currentUserApi,
@@ -117,7 +110,6 @@ class CategoryHelper {
                 CategoryPermissionApi«IF targets('1.5')»Interface«ENDIF» $categoryPermissionApi
             ) {
                 $this->translator = $translator;
-                $this->session = $session;
                 $this->request = $requestStack->getCurrentRequest();
                 $this->logger = $logger;
                 $this->currentUserApi = $currentUserApi;

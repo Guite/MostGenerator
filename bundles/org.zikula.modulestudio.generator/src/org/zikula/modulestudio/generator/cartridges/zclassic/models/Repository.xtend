@@ -218,13 +218,9 @@ class Repository {
 
             «genericBaseQueryOrderBy»
 
-            «intGetQueryFromBuilder»
+            «getQueryFromBuilder»
 
             «new Joins().generate(it, app)»
-            «IF hasArchive && null !== getEndDateField»
-
-                «archiveObjects(it)»
-            «ENDIF»
         }
     '''
 
@@ -263,9 +259,6 @@ class Repository {
             use Zikula\Core\FilterUtil\CategoryPlugin as CategoryFilter;
         «ENDIF»
         use Zikula\Common\Translator\TranslatorInterface;
-        «IF hasArchive && null !== getEndDateField»
-            use Zikula\Core\RouteUrl;
-        «ENDIF»
         use Zikula\UsersModule\Api\«IF app.targets('1.5')»ApiInterface\CurrentUserApiInterface«ELSE»CurrentUserApi«ENDIF»;
         «IF ownerPermission && app.targets('1.5')»
             use Zikula\UsersModule\Constant as UsersConstant;
@@ -274,14 +267,8 @@ class Repository {
         «IF hasTranslatableFields»
             use «app.appNamespace»\Helper\FeatureActivationHelper;
         «ENDIF»
-        «IF hasArchive && null !== getEndDateField && !skipHookSubscribers»
-            use «app.appNamespace»\Helper\HookHelper;
-        «ENDIF»
         «IF app.hasUploads»
             use «app.appNamespace»\Helper\ImageHelper;
-        «ENDIF»
-        «IF hasArchive && null !== getEndDateField»
-            use «app.appNamespace»\Helper\WorkflowHelper;
         «ENDIF»
 
     '''
@@ -1211,7 +1198,7 @@ class Repository {
         }
     '''
 
-    def private intGetQueryFromBuilder(Entity it) '''
+    def private getQueryFromBuilder(Entity it) '''
         /**
          * Retrieves Doctrine query from query builder, applying FilterUtil and other common actions.
          *
@@ -1289,89 +1276,6 @@ class Repository {
              'updatedDate',
         «ENDIF»
     '''
-
-    def private archiveObjects(Entity it) '''
-        /**
-         * Update for «nameMultiple.formatForDisplay» becoming archived.
-         *
-         * @return bool If everything went right or not
-         *
-         * @param TranslatorInterface $translator     Translator service instance
-         * @param WorkflowHelper      $workflowHelper WorkflowHelper service instance
-         «IF !skipHookSubscribers»
-         * @param HookHelper          $hookHelper     HookHelper service instance
-         «ENDIF»
-         *
-         * @throws RuntimeException Thrown if workflow action execution fails
-         */
-        public function archiveObjects(TranslatorInterface $translator, WorkflowHelper $workflowHelper«IF !skipHookSubscribers», HookHelper $hookHelper«ENDIF»)
-        {
-            if (null == $this->getRequest()) {
-                // return as no request is given
-                return true;
-            }
-
-            «val endField = getEndDateField»
-            «IF endField instanceof DatetimeField»
-                $today = date('Y-m-d H:i:s');
-            «ELSEIF endField instanceof DateField»
-                $today = date('Y-m-d') . ' 00:00:00';
-            «ENDIF»
-
-            $qb = $this->genericBaseQuery('', '', false);
-
-            /*$qb->andWhere('tbl.workflowState != :archivedState')
-               ->setParameter('archivedState', 'archived');*/
-            $qb->andWhere('tbl.workflowState = :approvedState')
-               ->setParameter('approvedState', 'approved');
-
-            $qb->andWhere('tbl.«endField.name.formatForCode» < :today')
-               ->setParameter('today', $today);
-
-            $query = $this->getQueryFromBuilder($qb);
-
-            $affectedEntities = $query->getResult();
-
-            $action = 'archive';
-            foreach ($affectedEntities as $entity) {
-                «IF !app.targets('1.5')»
-                    $entity->initWorkflow();
-
-                «ENDIF»
-                «IF !skipHookSubscribers»
-                    // Let any hooks perform additional validation actions
-                    $validationHooksPassed = $hookHelper->callValidationHooks($entity, 'validate_edit');
-                    if (!$validationHooksPassed) {
-                        continue;
-                    }
-
-                «ENDIF»
-                $success = false;
-                try {
-                    // execute the workflow action
-                    $success = $workflowHelper->executeAction($entity, $action);
-                } catch(\Exception $e) {
-                    $flashBag = $this->getRequest()->getSession()->getFlashBag();
-                    $flashBag->add('error', $translator->__f('Sorry, but an error occured during the %action% action. Please apply the changes again!', ['%action%' => $action]) . '  ' . $e->getMessage());
-                }
-
-                if (!$success) {
-                    continue;
-                }
-                «IF !skipHookSubscribers»
-
-                    // Let any hooks know that we have updated an item
-                    $urlArgs = $entity->createUrlArgs();
-                    $urlArgs['_locale'] = $this->request->getLocale();
-                    $url = new RouteUrl('«app.appName.formatForDB»_«name.formatForCode»_display', $urlArgs);
-                    $hookHelper->callProcessHooks($entity, 'process_edit', $url);
-                «ENDIF»
-            }
-
-            return true;
-        }
-    '''
-
 
     def private modelRepositoryImpl(Entity it) '''
         namespace «app.appNamespace»\Entity\Repository;
