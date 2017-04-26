@@ -81,8 +81,6 @@ class BlockList {
 
         «getDisplayTemplate»
 
-        «getSortParam»
-
         «modify»
 
         /**
@@ -166,7 +164,7 @@ class BlockList {
 
             // create query
             $where = $properties['filter'];
-            $orderBy = $this->getSortParam($properties, $repository);
+            $orderBy = $this->get('«appService».model_helper')->resolveSortParameter($objectType, $properties['sorting']);
             $qb = $repository->genericBaseQuery($where, $orderBy);
             «IF hasCategorisableEntities»
 
@@ -255,43 +253,6 @@ class BlockList {
             }
 
             return $template;
-        }
-    '''
-
-    def private getSortParam(Application it) '''
-        /**
-         * Determines the order by parameter for item selection.
-         *
-         * @param array               $properties The block properties array
-         * @param Doctrine_Repository $repository The repository used for data fetching
-         *
-         * @return string the sorting clause
-         */
-        protected function getSortParam(array $properties, $repository)
-        {
-            if ($properties['sorting'] == 'random') {
-                return 'RAND()';
-            }
-
-            $sortParam = '';
-            if ($properties['sorting'] == 'newest') {
-                $entityFactory = $this->get('«appService».entity_factory');
-                $idFields = $entityFactory->getIdFields($properties['objectType']);
-                if (count($idFields) == 1) {
-                    $sortParam = $idFields[0] . ' DESC';
-                } else {
-                    foreach ($idFields as $idField) {
-                        if (!empty($sortParam)) {
-                            $sortParam .= ', ';
-                        }
-                        $sortParam .= $idField . ' DESC';
-                    }
-                }
-            } elseif ($properties['sorting'] == 'default') {
-                $sortParam = $repository->getDefaultSortingField() . ' ASC';
-            }
-
-            return $sortParam;
         }
     '''
 

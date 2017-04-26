@@ -62,6 +62,8 @@ class ModelHelper {
             «canBeCreated»
 
             «hasExistingInstances»
+
+            «resolveSortParameter»
         }
     '''
 
@@ -81,8 +83,6 @@ class ModelHelper {
          * @param string $objectType Name of treated entity type
          *
          * @return boolean Whether a new instance can be created or not
-         *
-         * @throws Exception If an invalid object type is used
          */
         public function canBeCreated($objectType)
         {
@@ -130,6 +130,43 @@ class ModelHelper {
         sourceTypes
     }
 
+    def private resolveSortParameter(Application it) '''
+        /**
+         * Returns a desired sorting criteria for passing it to a repository method.
+         *
+         * @param string $objectType Name of treated entity type
+         * @param string $sorting    The type of sorting (newest, random, default)
+         *
+         * @return string The order by clause
+         */
+        public function resolveSortParameter($objectType = '', $sorting = 'default')
+        {
+            if ($sorting == 'random') {
+                return 'RAND()';
+            }
+
+            $sortParam = '';
+            if ($sorting == 'newest') {
+                $idFields = $this->entityFactory->getIdFields($objectType);
+                if (count($idFields) == 1) {
+                    $sortParam = $idFields[0] . ' DESC';
+                } else {
+                    foreach ($idFields as $idField) {
+                        if (!empty($sortParam)) {
+                            $sortParam .= ', ';
+                        }
+                        $sortParam .= $idField . ' DESC';
+                    }
+                }
+            } elseif ($sorting == 'default') {
+                $repository = $this->entityFactory->getRepository($objectType);
+                $sortParam = $repository->getDefaultSortingField() . ' ASC';
+            }
+
+            return $sortParam;
+        }
+    '''
+
     def private hasExistingInstances(Application it) '''
         /**
          * Determines whether there exists at least one instance of a certain object type in the database.
@@ -137,8 +174,6 @@ class ModelHelper {
          * @param string $objectType Name of treated entity type
          *
          * @return boolean Whether at least one instance exists or not
-         *
-         * @throws Exception If an invalid object type is used
          */
         protected function hasExistingInstances($objectType)
         {

@@ -103,21 +103,13 @@ class Mailz {
             $idFields = $entityFactory->getIdFields($objectType);
             $repository = $entityFactory->getRepository($objectType);
 
-            $sortParam = '';
+            $sorting = 'default';
             if ($args['pluginid'] == 2) {
-                $sortParam = 'RAND()';
+                $sorting = 'random';
             } elseif ($args['pluginid'] == 1) {
-                if (count($idFields) == 1) {
-                    $sortParam = $idFields[0] . ' DESC';
-                } else {
-                    foreach ($idFields as $idField) {
-                        if (!empty($sortParam)) {
-                            $sortParam .= ', ';
-                        }
-                        $sortParam .= $idField . ' ASC';
-                    }
-                }
+                $sorting = 'newest';
             }
+            $sortParam = $this->container->get('«appService».model_helper')->resolveSortParameter($objectType, $sorting);
 
             $where = ''/*$this->filter*/;
             $resultsPerPage = 3;

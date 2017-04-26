@@ -229,7 +229,7 @@ class Newsletter {
 
             // create query
             $where = isset($args['filter']) ? $args['filter'] : '';
-            $orderBy = $this->getSortParam($args, $repository);
+            $orderBy = $this->container->get('«appService».model_helper')->resolveSortParameter($objectType, $args['sorting']);
             $qb = $repository->genericBaseQuery($where, $orderBy);
 
             if ($filterAfterDate) {
@@ -291,41 +291,6 @@ class Newsletter {
             }
 
             return $items;
-        }
-
-        /**
-         * Determines the order by parameter for item selection.
-         *
-         * @param array               $args       List of plugin variables
-         * @param Doctrine_Repository $repository The repository used for data fetching
-         *
-         * @return string the sorting clause
-         */
-        protected function getSortParam($args, $repository)
-        {
-            if ($args['sorting'] == 'random') {
-                return 'RAND()';
-            }
-
-            $sortParam = '';
-            if ($args['sorting'] == 'newest') {
-                $entityFactory = $this->container->get('«appService».entity_factory');
-                $idFields = $entityFactory->getIdFields($args['objectType']);
-                if (count($idFields) == 1) {
-                    $sortParam = $idFields[0] . ' DESC';
-                } else {
-                    foreach ($idFields as $idField) {
-                        if (!empty($sortParam)) {
-                            $sortParam .= ', ';
-                        }
-                        $sortParam .= $idField . ' DESC';
-                    }
-                }
-            } elseif ($args['sorting'] == 'default') {
-                $sortParam = $repository->getDefaultSortingField() . ' ASC';
-            }
-
-            return $sortParam;
         }
     '''
 }

@@ -272,7 +272,7 @@ class ContentTypeList {
 
             // create query
             $where = $this->filter;
-            $orderBy = $this->getSortParam($repository);
+            $orderBy = $this->container->get('«appService».model_helper')->resolveSortParameter($this->objectType, $this->sorting);
             $qb = $repository->genericBaseQuery($where, $orderBy);
             «IF hasCategorisableEntities»
 
@@ -362,40 +362,6 @@ class ContentTypeList {
             }
 
             return $template;
-        }
-
-        /**
-         * Determines the order by parameter for item selection.
-         *
-         * @param Doctrine_Repository $repository The repository used for data fetching
-         *
-         * @return string the sorting clause
-         */
-        protected function getSortParam($repository)
-        {
-            if ($this->sorting == 'random') {
-                return 'RAND()';
-            }
-
-            $sortParam = '';
-            if ($this->sorting == 'newest') {
-                $entityFactory = $this->container->get('«appService».entity_factory');
-                $idFields = $entityFactory->getIdFields($this->objectType);
-                if (count($idFields) == 1) {
-                    $sortParam = $idFields[0] . ' DESC';
-                } else {
-                    foreach ($idFields as $idField) {
-                        if (!empty($sortParam)) {
-                            $sortParam .= ', ';
-                        }
-                        $sortParam .= $idField . ' DESC';
-                    }
-                }
-            } elseif ($this->sorting == 'default') {
-                $sortParam = $repository->getDefaultSortingField() . ' ASC';
-            }
-
-            return $sortParam;
         }
 
         /**
