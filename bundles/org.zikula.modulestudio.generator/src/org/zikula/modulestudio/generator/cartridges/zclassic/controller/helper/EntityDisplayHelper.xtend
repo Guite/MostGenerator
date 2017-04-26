@@ -9,6 +9,7 @@ import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.EntityField
 import de.guite.modulestudio.metamodel.FloatField
 import de.guite.modulestudio.metamodel.ListField
+import de.guite.modulestudio.metamodel.TextField
 import de.guite.modulestudio.metamodel.TimeField
 import de.guite.modulestudio.metamodel.UserField
 import org.eclipse.xtext.generator.IFileSystemAccess
@@ -131,6 +132,8 @@ class EntityDisplayHelper {
 
             «entity.formatMethod»
         «ENDFOR»
+
+        «fieldNameHelpers»
     '''
 
     def private formatMethod(Entity it) '''
@@ -150,6 +153,110 @@ class EntityDisplayHelper {
                     «displayPatternArguments»
                 ]);
             «ENDIF»
+        }
+    '''
+
+    def private fieldNameHelpers(Application it) '''
+        «getTitleFieldName»
+
+        «getDescriptionFieldName»
+        «IF hasImageFields»
+
+            «getPreviewFieldName»
+        «ENDIF»
+
+        «getStartDateFieldName»
+    '''
+
+    def private getTitleFieldName(Application it) '''
+        /**
+         * Returns name of the field used as title / name for entities of this repository.
+         *
+         * @param string $objectType Name of treated entity type
+         *
+         * @return string Name of field to be used as title
+         */
+        public function getTitleFieldName($objectType)
+        {
+            «FOR entity : getAllEntities»
+                if ($objectType == '«entity.name.formatForCode»') {
+                    return '«IF entity.hasDisplayStringFieldsEntity»«entity.getDisplayStringFieldsEntity.head.name.formatForCode»«ENDIF»';
+                }
+            «ENDFOR»
+
+            return '';
+        }
+    '''
+
+    def private getDescriptionFieldName(Application it) '''
+        /**
+         * Returns name of the field used for describing entities of this repository.
+         *
+         * @param string $objectType Name of treated entity type
+         *
+         * @return string Name of field to be used as description
+         */
+        public function getDescriptionFieldName($objectType)
+        {
+            «FOR entity : getAllEntities»
+                if ($objectType == '«entity.name.formatForCode»') {
+                    «val textFields = entity.getSelfAndParentDataObjects.map[fields.filter(TextField)].flatten»
+                    «IF !textFields.empty»
+                        return '«textFields.head.name.formatForCode»';
+                    «ELSEIF entity.hasDisplayStringFieldsEntity»
+                        «IF entity.getDisplayStringFieldsEntity.size > 1»
+                            return '«entity.getDisplayStringFieldsEntity.get(1).name.formatForCode»';
+                        «ELSE»
+                            return '«entity.getDisplayStringFieldsEntity.head.name.formatForCode»';
+                        «ENDIF»
+                    «ELSE»
+                        return '';
+                    «ENDIF»
+                }
+            «ENDFOR»
+
+            return '';
+        }
+    '''
+
+    def private getPreviewFieldName(Application it) '''
+        /**
+         * Returns name of first upload field which is capable for handling images.
+         *
+         * @param string $objectType Name of treated entity type
+         *
+         * @return string Name of field to be used for preview images
+         */
+        public function getPreviewFieldName($objectType)
+        {
+            «FOR entity : getAllEntities.filter[hasImageFieldsEntity]»
+                if ($objectType == '«entity.name.formatForCode»') {
+                    return '«entity.getImageFieldsEntity.head.name.formatForCode»';
+                }
+            «ENDFOR»
+
+            return '';
+        }
+    '''
+
+    def private getStartDateFieldName(Application it) '''
+        /**
+         * Returns name of the date(time) field to be used for representing the start
+         * of this object. Used for providing meta data to the tag module.
+         *
+         * @param string $objectType Name of treated entity type
+         *
+         * @return string Name of field to be used as date
+         */
+        public function getStartDateFieldName($objectType)
+        {
+            «FOR entity : getAllEntities»
+                if ($objectType == '«entity.name.formatForCode»') {
+                    return '«IF null !== entity.getStartDateField»«entity.getStartDateField.name.formatForCode»«ELSEIF entity.standardFields»createdDate«ENDIF»';
+                }
+            «ENDFOR»
+
+            return '';
         }
     '''
 

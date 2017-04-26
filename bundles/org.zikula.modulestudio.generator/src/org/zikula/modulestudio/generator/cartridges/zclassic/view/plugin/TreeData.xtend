@@ -37,7 +37,7 @@ class TreeData {
             $hasEditAction = in_array($objectType, ['«getAllEntities.filter[tree != EntityTreeType.NONE && hasEditAction].map[name.formatForCode].join('\', \'')»']);
 
             $repository = $this->entityFactory->getRepository($objectType);
-            $descriptionFieldName = $repository->getDescriptionFieldName();
+            $descriptionFieldName = $this->entityDisplayHelper->getDescriptionFieldName($objectType);
 
             $result = '';
             foreach ($tree as $node) {

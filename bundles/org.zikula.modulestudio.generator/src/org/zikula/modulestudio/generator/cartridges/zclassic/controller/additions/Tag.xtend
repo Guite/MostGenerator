@@ -79,9 +79,10 @@ class Tag {
                 return;
             }
 
-            $this->setObjectTitle($this->container->get('«appService».entity_display_helper')->getFormattedTitle($entity));
+            $entityDisplayHelper = $this->container->get('«appService».entity_display_helper');
+            $this->setObjectTitle($entityDisplayHelper->getFormattedTitle($entity));
 
-            $dateFieldName = $repository->getStartDateFieldName();
+            $dateFieldName = $entityDisplayHelper->getStartDateFieldName($objectType);
             if ($dateFieldName != '') {
                 $this->setObjectDate($entity[$dateFieldName]);
             } else {

@@ -227,7 +227,8 @@ class AjaxController {
         $repository = $this->get('«appService».entity_factory')->getRepository($objectType);
         $repository->setRequest($request);
 
-        $descriptionField = $repository->getDescriptionFieldName();
+        $entityDisplayHelper = $this->get('«appService».entity_display_helper');
+        $descriptionFieldName = $entityDisplayHelper->getDescriptionFieldName($objectType);
 
         $sort = $request->request->getAlnum('sort', '');
         if (empty($sort) || !in_array($sort, $repository->getAllowedSortingFields())) {
@@ -257,7 +258,7 @@ class AjaxController {
             if (!$this->hasPermission($component, $itemId . '::', ACCESS_READ)) {
                 continue;
             }
-            $slimItems[] = $this->prepareSlimItem($repository, $objectType, $item, $itemId, $descriptionField);
+            $slimItems[] = $this->prepareSlimItem($repository, $objectType, $item, $itemId, $descriptionFieldName);
         }
 
         return new AjaxResponse($slimItems);
@@ -394,14 +395,14 @@ class AjaxController {
     '''
 
     def private prepareForAutoCompletionProcessing(Application it) '''
-        $descriptionFieldName = $repository->getDescriptionFieldName();
-        $previewFieldName = $repository->getPreviewFieldName();
+        $entityDisplayHelper = $this->get('«appService».entity_display_helper');
+        $descriptionFieldName = $entityDisplayHelper->getDescriptionFieldName($objectType);
         «IF hasImageFields»
+            $previewFieldName = $entityDisplayHelper->getPreviewFieldName($objectType);
             $imagineCacheManager = $this->get('liip_imagine.cache.manager');
             $imageHelper = $this->get('«appService».image_helper');
             $thumbRuntimeOptions = $imageHelper->getRuntimeOptions($objectType, $previewFieldName, 'controllerAction', $contextArgs);
         «ENDIF»
-        $entityDisplayHelper = $this->get('«appService».entity_display_helper');
     '''
 
     def private checkForDuplicateBase(Application it) '''

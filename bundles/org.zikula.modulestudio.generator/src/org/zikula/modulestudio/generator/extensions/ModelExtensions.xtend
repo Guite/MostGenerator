@@ -474,6 +474,20 @@ class ModelExtensions {
     }
 
     /**
+     * Checks whether this entity has at least one string field which is not a password.
+     */
+    def hasDisplayStringFieldsEntity(DataObject it) {
+        !getDisplayStringFieldsEntity.empty
+    }
+
+    /**
+     * Returns a list of all string fields of this entity which are not passwords.
+     */
+    def getDisplayStringFieldsEntity(DataObject it) {
+        getSelfAndParentDataObjects.map[fields.filter(StringField).filter[!password]].flatten
+    }
+
+    /**
      * Checks whether this entity has at least one colour field.
      */
     def hasColourFieldsEntity(DataObject it) {

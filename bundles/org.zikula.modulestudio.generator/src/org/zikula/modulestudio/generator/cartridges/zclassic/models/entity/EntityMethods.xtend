@@ -4,7 +4,6 @@ import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.DataObject
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.ManyToManyRelationship
-import de.guite.modulestudio.metamodel.StringField
 import de.guite.modulestudio.metamodel.TimeField
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.business.ValidationConstraints
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
@@ -195,7 +194,7 @@ class EntityMethods {
          */
         public function __toString()
         {
-            return '«name.formatForDisplayCapital» ' . $this->createCompositeIdentifier()«IF !getSelfAndParentDataObjects.map[fields.filter(StringField)].flatten.empty» . ': ' . $this->get«getSelfAndParentDataObjects.map[fields.filter(StringField)].flatten.head.name.formatForCodeCapital»()«ENDIF»;
+            return '«name.formatForDisplayCapital» ' . $this->createCompositeIdentifier()«IF hasDisplayStringFieldsEntity» . ': ' . $this->get«getDisplayStringFieldsEntity.head.name.formatForCodeCapital»()«ENDIF»;
         }
     '''
 

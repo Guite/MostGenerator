@@ -2,7 +2,6 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.view.additions
 
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.Entity
-import de.guite.modulestudio.metamodel.StringField
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.pagecomponents.SimpleFields
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
@@ -380,7 +379,7 @@ class ExternalView {
                     <div class="col-sm-9">
                         <select id="{$baseID}Id" name="id" class="form-control">
                             {foreach item='«name.formatForCode»' from=$items}
-                                <option value="{$«name.formatForCode».«getFirstPrimaryKey.name.formatForCode»}"{if $selectedId eq $«name.formatForCode».«getFirstPrimaryKey.name.formatForCode»} selected="selected"{/if}>{$«name.formatForCode»->get«IF !getSelfAndParentDataObjects.map[fields.filter(StringField)].flatten.empty»«getSelfAndParentDataObjects.map[fields.filter(StringField)].flatten.head.name.formatForCodeCapital»«ELSE»«getSelfAndParentDataObjects.map[fields].flatten.head.name.formatForCodeCapital»«ENDIF»()}</option>
+                                <option value="{$«name.formatForCode».«getFirstPrimaryKey.name.formatForCode»}"{if $selectedId eq $«name.formatForCode».«getFirstPrimaryKey.name.formatForCode»} selected="selected"{/if}>{$«name.formatForCode»->get«IF hasDisplayStringFieldsEntity»«getDisplayStringFieldsEntity.head.name.formatForCodeCapital»«ELSE»«getSelfAndParentDataObjects.map[fields].flatten.head.name.formatForCodeCapital»«ENDIF»()}</option>
                             {foreachelse}
                                 <option value="0">{gt text='No entries found.'}</option>
                             {/foreach}

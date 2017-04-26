@@ -340,7 +340,7 @@ class SearchHelper {
                     continue;
                 }
 
-                $descriptionField = $repository->getDescriptionFieldName();
+                $descriptionFieldName = $this->entityDisplayHelper->getDescriptionFieldName($objectType);
 
                 $entitiesWithDisplayAction = ['«getAllEntities.filter[hasDisplayAction].map[name.formatForCode].join('\', \'')»'];
 
@@ -364,7 +364,7 @@ class SearchHelper {
                         }
                     «ENDIF»
 
-                    $description = !empty($descriptionField) ? $entity[$descriptionField] : '';
+                    $description = !empty($descriptionFieldName) ? $entity[$descriptionFieldName] : '';
                     $created = isset($entity['createdDate']) ? $entity['createdDate'] : null;
 
                     $urlArgs['_locale'] = (null !== $languageField && !empty($entity[$languageField])) ? $entity[$languageField] : $this->request->getLocale();

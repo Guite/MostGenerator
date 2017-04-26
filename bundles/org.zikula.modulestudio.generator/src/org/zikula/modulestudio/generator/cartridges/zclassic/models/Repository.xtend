@@ -118,7 +118,6 @@ class Repository {
                 use «tree.literal.toLowerCase.toFirstUpper»TreeRepositoryTrait;
 
             «ENDIF*/»
-            «val stringFields = fields.filter(StringField).filter[!password]»
             /**
              * @var string The default sorting field/expression
              */
@@ -180,8 +179,6 @@ class Repository {
 
             «fh.getterAndSetterMethods(it, 'defaultSortingField', 'string', false, true, false, '', '')»
             «fh.getterAndSetterMethods(it, 'request', 'Request', false, true, false, '', '')»
-
-            «fieldNameHelpers(stringFields)»
 
             «getAdditionalTemplateParameters»
             «getViewQuickNavParameters»
@@ -267,9 +264,7 @@ class Repository {
         «ENDIF»
         use Zikula\Common\Translator\TranslatorInterface;
         «IF hasArchive && null !== getEndDateField»
-            use Symfony\Component\HttpFoundation\Session\SessionInterface;
             use Zikula\Core\RouteUrl;
-            use Zikula\PermissionsModule\Api\«IF app.targets('1.5')»ApiInterface\PermissionApiInterface«ELSE»PermissionApi«ENDIF»;
         «ENDIF»
         use Zikula\UsersModule\Api\«IF app.targets('1.5')»ApiInterface\CurrentUserApiInterface«ELSE»CurrentUserApi«ENDIF»;
         «IF ownerPermission && app.targets('1.5')»
@@ -289,78 +284,6 @@ class Repository {
             use «app.appNamespace»\Helper\WorkflowHelper;
         «ENDIF»
 
-    '''
-
-    def private fieldNameHelpers(Entity it, Iterable<StringField> stringFields) '''
-        «getTitleFieldName(stringFields)»
-
-        «getDescriptionFieldName(stringFields)»
-
-        «getPreviewFieldName»
-
-        «getStartDateFieldName»
-    '''
-
-    def private getTitleFieldName(Entity it, Iterable<StringField> stringFields) '''
-        /**
-         * Returns name of the field used as title / name for entities of this repository.
-         *
-         * @return string Name of field to be used as title
-         */
-        public function getTitleFieldName()
-        {
-            return '«IF !stringFields.empty»«stringFields.head.name.formatForCode»«ENDIF»';
-        }
-    '''
-
-    def private getDescriptionFieldName(Entity it, Iterable<StringField> stringFields) '''
-        /**
-         * Returns name of the field used for describing entities of this repository.
-         *
-         * @return string Name of field to be used as description
-         */
-        public function getDescriptionFieldName()
-        {
-            «val textFields = fields.filter(TextField)»
-            «IF !textFields.empty»
-                return '«textFields.head.name.formatForCode»';
-            «ELSEIF !stringFields.empty»
-                «IF stringFields.size > 1»
-                    return '«stringFields.get(1).name.formatForCode»';
-                «ELSE»
-                    return '«stringFields.head.name.formatForCode»';
-                «ENDIF»
-            «ELSE»
-                return '';
-            «ENDIF»
-        }
-    '''
-
-    def private getPreviewFieldName(Entity it) '''
-        /**
-         * Returns name of first upload field which is capable for handling images.
-         *
-         * @return string Name of field to be used for preview images
-         */
-        public function getPreviewFieldName()
-        {
-            return '«IF hasImageFieldsEntity»«getImageFieldsEntity.head.name.formatForCode»«ENDIF»';
-        }
-    '''
-
-    def private getStartDateFieldName(Entity it) '''
-        /**
-         * Returns name of the date(time) field to be used for representing the start
-         * of this object. Used for providing meta data to the tag module.
-         *
-         * @return string Name of field to be used as date
-         */
-        public function getStartDateFieldName()
-        {
-            $fieldName = '«IF null !== getStartDateField»«getStartDateField.name.formatForCode»«ELSEIF standardFields»createdDate«ENDIF»';
-
-            return $fieldName;
-        }
     '''
 
     def private getAdditionalTemplateParameters(Entity it) '''
@@ -1379,8 +1302,6 @@ class Repository {
          *
          * @return bool If everything went right or not
          *
-         * @param PermissionApi«IF app.targets('1.5')»Interface«ENDIF»       $permissionApi  PermissionApi service instance
-         * @param Session             $session        Session service instance
          * @param TranslatorInterface $translator     Translator service instance
          * @param WorkflowHelper      $workflowHelper WorkflowHelper service instance
          «IF !skipHookSubscribers»
@@ -1389,13 +1310,8 @@ class Repository {
          *
          * @throws RuntimeException Thrown if workflow action execution fails
          */
-        public function archiveObjects(PermissionApi«IF app.targets('1.5')»Interface«ENDIF» $permissionApi, SessionInterface $session, TranslatorInterface $translator, WorkflowHelper $workflowHelper«IF !skipHookSubscribers», HookHelper $hookHelper«ENDIF»)
+        public function archiveObjects(TranslatorInterface $translator, WorkflowHelper $workflowHelper«IF !skipHookSubscribers», HookHelper $hookHelper«ENDIF»)
         {
-            if (true !== $session->get('«app.appName»AutomaticArchiving', false) && !$permissionApi->hasPermission('«app.appName»', '.*', ACCESS_EDIT)) {
-                // current user has no permission for executing the archive workflow action
-                return true;
-            }
-
             if (null == $this->getRequest()) {
                 // return as no request is given
                 return true;
@@ -1441,7 +1357,7 @@ class Repository {
                     // execute the workflow action
                     $success = $workflowHelper->executeAction($entity, $action);
                 } catch(\Exception $e) {
-                    $flashBag = $session->getFlashBag();
+                    $flashBag = $this->getRequest()->getSession()->getFlashBag();
                     $flashBag->add('error', $translator->__f('Sorry, but an error occured during the %action% action. Please apply the changes again!', ['%action%' => $action]) . '  ' . $e->getMessage());
                 }
 

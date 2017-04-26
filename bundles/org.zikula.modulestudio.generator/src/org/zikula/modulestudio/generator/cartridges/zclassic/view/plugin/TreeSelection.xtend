@@ -28,7 +28,7 @@ class TreeSelection {
         public function getTreeSelection($objectType, $node, $target, $skipRootNode = true)
         {
             $repository = $this->entityFactory->getRepository($objectType);
-            $titleFieldName = $repository->getTitleFieldName();
+            $titleFieldName = $this->entityDisplayHelper->getTitleFieldName($objectType);
 
             $result = null;
 

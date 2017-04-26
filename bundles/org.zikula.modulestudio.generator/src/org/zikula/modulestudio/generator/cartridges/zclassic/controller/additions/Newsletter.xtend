@@ -224,6 +224,7 @@ class Newsletter {
         protected function selectPluginData(array $args = [], $filterAfterDate = null)
         {
             $objectType = $args['objectType'];
+            $entityDisplayHelper = $this->container->get('«appService».entity_display_helper');
             $repository = $this->container->get('«appService».entity_factory')->getRepository($objectType);
 
             // create query
@@ -232,9 +233,9 @@ class Newsletter {
             $qb = $repository->genericBaseQuery($where, $orderBy);
 
             if ($filterAfterDate) {
-                $startDateFieldName = $repository->getStartDateFieldName();
-                if ($startDateFieldName == 'createdDate') {
-                    $qb->andWhere('tbl.createdDate > :afterDate')
+                $startDateFieldName = $entityDisplayHelper->getStartDateFieldName($objectType);
+                if ($startDateFieldName != '') {
+                    $qb->andWhere('tbl.' . $startDateFieldName . ' > :afterDate')
                        ->setParameter('afterDate', $filterAfterDate);
                 }
             }
@@ -246,12 +247,11 @@ class Newsletter {
             list($entities, $objectCount) = $repository->retrieveCollectionResult($query, $orderBy, true);
 
             // post processing
-            $descriptionFieldName = $repository->getDescriptionFieldName();
+            $descriptionFieldName = $entityDisplayHelper->getDescriptionFieldName($objectType);
             «IF hasImageFields»
-                $previewFieldName = $repository->getPreviewFieldName();
+                $previewFieldName = $entityDisplayHelper->getPreviewFieldName($objectType);
             «ENDIF»
 
-            $entityDisplayHelper = $this->container->get('«appService».entity_display_helper');
             «IF hasDisplayActions»
                 $hasDisplayPage = in_array($objectType, ['«getAllEntities.filter[hasDisplayAction].map[name.formatForCode].join('\', \'')»']);
                 $router = $this->container->get('router');

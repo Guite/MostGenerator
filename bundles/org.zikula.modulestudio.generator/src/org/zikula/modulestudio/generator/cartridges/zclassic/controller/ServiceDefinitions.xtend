@@ -462,7 +462,6 @@ class ServiceDefinitions {
                 class: «nsBase»ArchiveHelper
                 arguments:
                     - "@translator.default"
-                    - "@session"
                     - "@logger"
                     - "@zikula_permissions_module.api.permission"
                     - "@«modPrefix».entity_factory"

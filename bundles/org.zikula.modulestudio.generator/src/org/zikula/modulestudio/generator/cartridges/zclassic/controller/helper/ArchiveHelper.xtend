@@ -29,7 +29,6 @@ class ArchiveHelper {
         namespace «appNamespace»\Helper\Base;
 
         use Psr\Log\LoggerInterface;
-        use Symfony\Component\HttpFoundation\Session\SessionInterface;
         use Zikula\Common\Translator\TranslatorInterface;
         use Zikula\PermissionsModule\Api\«IF targets('1.5')»ApiInterface\PermissionApiInterface«ELSE»PermissionApi«ENDIF»;
         use «appNamespace»\Entity\Factory\«name.formatForCodeCapital»Factory;
@@ -47,11 +46,6 @@ class ArchiveHelper {
              * @var TranslatorInterface
              */
             protected $translator;
-
-            /**
-             * @var SessionInterface
-             */
-            protected $session;
 
             /**
              * @var LoggerInterface
@@ -84,7 +78,6 @@ class ArchiveHelper {
              * ArchiveHelper constructor.
              *
              * @param TranslatorInterface $translator     Translator service instance
-             * @param SessionInterface    $session        Session service instance
              * @param LoggerInterface     $logger         Logger service instance
              * @param PermissionApi«IF targets('1.5')»Interface«ENDIF»       $permissionApi  PermissionApi service instance
              * @param «name.formatForCodeCapital»Factory $entityFactory «name.formatForCodeCapital»Factory service instance
@@ -95,7 +88,6 @@ class ArchiveHelper {
              */
             public function __construct(
                 TranslatorInterface $translator,
-                SessionInterface $session,
                 LoggerInterface $logger,
                 PermissionApi«IF targets('1.5')»Interface«ENDIF» $permissionApi,
                 «name.formatForCodeCapital»Factory $entityFactory,
@@ -103,7 +95,6 @@ class ArchiveHelper {
                 HookHelper $hookHelper«ENDIF»)
             {
                 $this->translator = $translator;
-                $this->session = $session;
                 $this->logger = $logger;
                 $this->permissionApi = $permissionApi;
                 $this->entityFactory = $entityFactory;
@@ -128,18 +119,19 @@ class ArchiveHelper {
                 return;
             }
 
-            $this->session->set('«appName»AutomaticArchiving', true);
+            if (!$this->permissionApi->hasPermission('«appName»', '.*', ACCESS_EDIT)) {
+                // abort if current user has no permission for executing the archive workflow action
+                return;
+            }
             «FOR entity : getArchivingEntities»
 
                 // perform update for «entity.nameMultiple.formatForDisplay» becoming archived
                 $logArgs = ['app' => '«appName»', 'entity' => '«entity.name.formatForCode»'];
                 $this->logger->notice('{app}: Automatic archiving for the {entity} entity started.', $logArgs);
                 $repository = $this->entityFactory->getRepository('«entity.name.formatForCode»');
-                $repository->archiveObjects($this->permissionApi, $this->session, $this->translator, $this->workflowHelper«IF !entity.skipHookSubscribers», $this->hookHelper«ENDIF»);
+                $repository->archiveObjects($this->translator, $this->workflowHelper«IF !entity.skipHookSubscribers», $this->hookHelper«ENDIF»);
                 $this->logger->notice('{app}: Automatic archiving for the {entity} entity completed.', $logArgs);
             «ENDFOR»
-
-            $this->session->del('«appName»AutomaticArchiving');
         }
     '''
 
