@@ -384,6 +384,7 @@ class ServiceDefinitions {
                         - "@«modPrefix».entity_factory"
                         «IF !entity.incoming.empty || !entity.outgoing.empty»
                             - "@«modPrefix».entity_display_helper"
+                            - "@zikula_users_module.current_user"
                         «ENDIF»
                         «IF entity instanceof Entity && (entity as Entity).hasTranslatableFields»
                             - "@zikula_extensions_module.api.variable"
@@ -492,6 +493,9 @@ class ServiceDefinitions {
             class: «nsBase»CollectionFilterHelper
             arguments:
                 - "@request_stack"
+                «IF hasStandardFieldEntities»
+                    - "@zikula_users_module.current_user"
+                «ENDIF»
                 - "@«modPrefix».entity_factory"
                 «IF hasCategorisableEntities»
                     - "@«modPrefix».category_helper"

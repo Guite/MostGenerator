@@ -40,6 +40,12 @@ class CollectionFilterHelper {
         use Doctrine\ORM\QueryBuilder;
         use Symfony\Component\HttpFoundation\Request;
         use Symfony\Component\HttpFoundation\RequestStack;
+        «IF hasStandardFieldEntities»
+            use Zikula\UsersModule\Api\«IF targets('1.5')»ApiInterface\CurrentUserApiInterface«ELSE»CurrentUserApi«ENDIF»;
+            «IF targets('1.5')»
+                use Zikula\UsersModule\Constant as UsersConstant;
+            «ENDIF»
+        «ENDIF»
         «FOR entity : getAllEntities»
             use «appNamespace»\Entity\«entity.name.formatForCodeCapital»Entity;
         «ENDFOR»
@@ -57,6 +63,13 @@ class CollectionFilterHelper {
              * @var Request
              */
             protected $request;
+            «IF hasStandardFieldEntities»
+
+                /**
+                 * @var CurrentUserApi«IF targets('1.5')»Interface«ENDIF»
+                 */
+                protected $currentUserApi;
+            «ENDIF»
 
             /**
              * @var «name.formatForCodeCapital»Factory
@@ -79,6 +92,9 @@ class CollectionFilterHelper {
              * CollectionFilterHelper constructor.
              *
              * @param RequestStack «IF hasCategorisableEntities»  «ENDIF»$requestStack «IF hasCategorisableEntities»       «ENDIF»RequestStack service instance
+             «IF hasStandardFieldEntities»
+             * @param CurrentUserApi«IF targets('1.5')»Interface«ELSE»       «ENDIF» $currentUserApi        CurrentUserApi service instance
+             «ENDIF»
              * @param «name.formatForCodeCapital»Factory $entityFactory «name.formatForCodeCapital»Factory service instance
              «IF hasCategorisableEntities»
              * @param CategoryHelper $categoryHelper      CategoryHelper service instance
@@ -87,6 +103,9 @@ class CollectionFilterHelper {
              */
             public function __construct(
                 RequestStack $requestStack,
+                «IF hasStandardFieldEntities»
+                    CurrentUserApi«IF targets('1.5')»Interface«ENDIF» $currentUserApi,
+                «ENDIF»
                 «name.formatForCodeCapital»Factory $entityFactory,
                 «IF hasCategorisableEntities»
                     CategoryHelper $categoryHelper,
@@ -94,6 +113,9 @@ class CollectionFilterHelper {
                 $showOnlyOwnEntries)
             {
                 $this->request = $requestStack->getCurrentRequest();
+                «IF hasStandardFieldEntities»
+                    $this->currentUserApi = $currentUserApi;
+                «ENDIF»
                 $this->entityFactory = $entityFactory;
                 «IF hasCategorisableEntities»
                     $this->categoryHelper = $categoryHelper;
@@ -368,7 +390,8 @@ class CollectionFilterHelper {
 
                 if ($showOnlyOwnEntries) {
                     $repository = $this->entityFactory->getRepository('«name.formatForCode»');
-                    $qb = $repository->addCreatorFilter($qb);
+                    $userId = $this->currentUserApi->isLoggedIn() ? $this->currentUserApi->get('uid') : «IF application.targets('1.5')»UsersConstant::USER_ID_ANONYMOUS«ELSE»1«ENDIF»;
+                    $qb = $repository->addCreatorFilter($qb, $userId);
                 }
             «ENDIF»
             «applyDefaultDateRangeFilter»

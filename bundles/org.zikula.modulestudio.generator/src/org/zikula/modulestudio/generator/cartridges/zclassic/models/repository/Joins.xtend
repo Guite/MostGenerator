@@ -6,14 +6,12 @@ import de.guite.modulestudio.metamodel.JoinRelationship
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
-import org.zikula.modulestudio.generator.extensions.Utils
 
 class Joins {
 
     extension FormattingExtensions = new FormattingExtensions
     extension ModelJoinExtensions = new ModelJoinExtensions
     extension NamingExtensions = new NamingExtensions
-    extension Utils = new Utils
 
     def generate(Entity it, Application app) '''
         /**
@@ -24,7 +22,7 @@ class Joins {
         protected function addJoinsToSelection()
         {
             $selection = '«FOR relation : getBidirectionalIncomingJoinRelations.filter[source.application == app]»«relation.addJoin(false, 'select')»«ENDFOR»«FOR relation : getOutgoingJoinRelations.filter[target.application == app]»«relation.addJoin(true, 'select')»«ENDFOR»';
-            «IF hasJoinsToOtherApplications(app)»
+            «/*IF hasJoinsToOtherApplications(app)»
                 $kernel = \ServiceUtil::get('kernel');
                 «FOR relation : getBidirectionalIncomingJoinRelations.filter[source.application != app]»
                     if ($kernel->isBundle('«relation.source.application.appName»')) {
@@ -35,6 +33,13 @@ class Joins {
                     if ($kernel->isBundle('«relation.target.application.appName»')) {
                         $selection .= '«relation.addJoin(true, 'select')»';
                     }
+                «ENDFOR»
+            «ENDIF*/»«IF hasJoinsToOtherApplications(app)»
+                «FOR relation : getBidirectionalIncomingJoinRelations.filter[source.application != app]»
+                    $selection .= '«relation.addJoin(false, 'select')»';
+                «ENDFOR»
+                «FOR relation : getOutgoingJoinRelations.filter[target.application != app]»
+                    $selection .= '«relation.addJoin(true, 'select')»';
                 «ENDFOR»
             «ENDIF»
             «IF categorisable»
@@ -56,7 +61,7 @@ class Joins {
         {
             «FOR relation : getBidirectionalIncomingJoinRelations.filter[source.application == app]»«relation.addJoin(false, 'from')»«ENDFOR»
             «FOR relation : getOutgoingJoinRelations.filter[target.application == app]»«relation.addJoin(true, 'from')»«ENDFOR»
-            «IF hasJoinsToOtherApplications(app)»
+            «/*IF hasJoinsToOtherApplications(app)»
                 $kernel = \ServiceUtil::get('kernel');
                 «FOR relation : getBidirectionalIncomingJoinRelations.filter[source.application != app]»
                     if ($kernel->isBundle('«relation.source.application.appName»')) {
@@ -67,6 +72,13 @@ class Joins {
                     if ($kernel->isBundle('«relation.target.application.appName»')) {
                         «relation.addJoin(true, 'from')»
                     }
+                «ENDFOR»
+            «ENDIF*/»«IF hasJoinsToOtherApplications(app)»
+                «FOR relation : getBidirectionalIncomingJoinRelations.filter[source.application != app]»
+                    «relation.addJoin(false, 'from')»
+                «ENDFOR»
+                «FOR relation : getOutgoingJoinRelations.filter[target.application != app]»
+                    «relation.addJoin(true, 'from')»
                 «ENDFOR»
             «ENDIF»
             «IF categorisable»

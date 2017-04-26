@@ -79,7 +79,7 @@ class Bootstrap {
     def private archiveObjectsCall(Application it) '''
         «IF hasAutomaticArchiving»
 
-            // check if own service exists (which is not true if the module is not installed yet)
+            // check if own service exists (which is not true if the module is currently being installed)
             if ($container->has('«appService».archive_helper')) {
                 $container->get('«appService».archive_helper')->archiveObsoleteObjects();
             }

@@ -170,6 +170,12 @@ class EditEntity {
         «IF hasLocaleFieldsEntity»
             use Zikula\SettingsModule\Api\«IF app.targets('1.5')»ApiInterface\LocaleApiInterface«ELSE»LocaleApi«ENDIF»;
         «ENDIF»
+        «IF !incoming.empty || !outgoing.empty»
+            use Zikula\UsersModule\Api\«IF app.targets('1.5')»ApiInterface\CurrentUserApiInterface«ELSE»CurrentUserApi«ENDIF»;
+            «IF app.targets('1.5')»
+                use Zikula\UsersModule\Constant as UsersConstant;
+            «ENDIF»
+        «ENDIF»
         use «app.appNamespace»\Entity\Factory\«app.name.formatForCodeCapital»Factory;
         «IF app.targets('1.5')»
             «IF !fields.filter(ArrayField).empty»
@@ -227,6 +233,11 @@ class EditEntity {
                  * @var EntityDisplayHelper
                  */
                 protected $entityDisplayHelper;
+
+                /**
+                 * @var CurrentUserApi«IF app.targets('1.5')»Interface«ENDIF»
+                 */
+                protected $currentUserApi;
             «ENDIF»
             «IF isTranslatable»
 
@@ -269,6 +280,7 @@ class EditEntity {
              * @param «app.name.formatForCodeCapital»Factory        $entityFactory Entity factory service instance
              «IF !incoming.empty || !outgoing.empty»
              * @param EntityDisplayHelper $entityDisplayHelper EntityDisplayHelper service instance
+             * @param CurrentUserApi«IF app.targets('1.5')»Interface«ELSE»       «ENDIF» $currentUserApi        CurrentUserApi service instance
              «ENDIF»
              «IF isTranslatable»
              * @param VariableApi«IF app.targets('1.5')»Interface«ELSE»        «ENDIF» $variableApi VariableApi service instance
@@ -287,7 +299,8 @@ class EditEntity {
             public function __construct(
                 TranslatorInterface $translator,
                 «app.name.formatForCodeCapital»Factory $entityFactory«IF !incoming.empty || !outgoing.empty»,
-                EntityDisplayHelper $entityDisplayHelper«ENDIF»«IF isTranslatable»,
+                EntityDisplayHelper $entityDisplayHelper,
+                CurrentUserApi«IF app.targets('1.5')»Interface«ENDIF» $currentUserApi«ENDIF»«IF isTranslatable»,
                 VariableApi«IF app.targets('1.5')»Interface«ENDIF» $variableApi,
                 TranslatableHelper $translatableHelper«ENDIF»«IF hasListFieldsEntity»,
                 ListEntriesHelper $listHelper«ENDIF»«IF hasLocaleFieldsEntity»,
@@ -298,6 +311,7 @@ class EditEntity {
                 $this->entityFactory = $entityFactory;
                 «IF !incoming.empty || !outgoing.empty»
                     $this->entityDisplayHelper = $entityDisplayHelper;
+                    $this->currentUserApi = $currentUserApi;
                 «ENDIF»
                 «IF isTranslatable»
                     $this->variableApi = $variableApi;
@@ -1053,10 +1067,12 @@ class EditEntity {
         };
         «IF (relatedEntity as Entity).ownerPermission»
             if (true === $options['filter_by_ownership']) {
-                $queryBuilder = function(EntityRepository $er) {
+                $currentUserApi = $this->currentUserApi;
+                $queryBuilder = function(EntityRepository $er) use ($currentUserApi) {
                     // select without joins
                     $qb = $er->getListQueryBuilder('', '', false);
-                    $qb = $er->addCreatorFilter($qb);
+                    $userId = $currentUserApi->isLoggedIn() ? $currentUserApi->get('uid') : «IF app.targets('1.5')»UsersConstant::USER_ID_ANONYMOUS«ELSE»1«ENDIF»;
+                    $qb = $er->addCreatorFilter($qb, $userId);
 
                     return $qb;
                 };

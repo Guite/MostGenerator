@@ -232,9 +232,6 @@ class Repository {
         use Psr\Log\LoggerInterface;
         use Zikula\Common\Translator\TranslatorInterface;
         use Zikula\UsersModule\Api\«IF app.targets('1.5')»ApiInterface\CurrentUserApiInterface«ELSE»CurrentUserApi«ENDIF»;
-        «IF ownerPermission && app.targets('1.5')»
-            use Zikula\UsersModule\Constant as UsersConstant;
-        «ENDIF»
         use «app.appNamespace»\Entity\«name.formatForCodeCapital»Entity;
         «IF hasTranslatableFields»
             use «app.appNamespace»\Helper\FeatureActivationHelper;
@@ -413,16 +410,15 @@ class Repository {
         /**
          * Adds a filter for the createdBy field.
          *
-         * @param QueryBuilder $qb Query builder to be enhanced
-         * @param integer      $userId The user identifier used for filtering (optional)
+         * @param QueryBuilder $qb     Query builder to be enhanced
+         * @param integer      $userId The user identifier used for filtering
          *
          * @return QueryBuilder Enriched query builder instance
          */
         public function addCreatorFilter(QueryBuilder $qb, $userId = null)
         {
             if (null === $userId) {
-                $currentUserApi = \ServiceUtil::get('zikula_users_module.current_user');
-                $userId = $currentUserApi->isLoggedIn() ? $currentUserApi->get('uid') : «IF app.targets('1.5')»UsersConstant::USER_ID_ANONYMOUS«ELSE»1«ENDIF»;
+                return $qb;
             }
 
             if (is_array($userId)) {
