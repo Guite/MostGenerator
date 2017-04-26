@@ -645,7 +645,7 @@ class ControllerHelper {
 
             if ($context == 'controllerAction') {
                 if (!isset($args['action'])) {
-                    $routeName = $request->get('_route');
+                    $routeName = $this->request->get('_route');
                     $routeNameParts = explode('_', $routeName);
                     $args['action'] = end($routeNameParts);
                 }
