@@ -5,14 +5,12 @@ import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
-import org.zikula.modulestudio.generator.extensions.Utils
 
 class Bootstrap {
 
     extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension NamingExtensions = new NamingExtensions
-    extension Utils = new Utils
 
     FileHelper fh = new FileHelper
 
@@ -56,33 +54,15 @@ class Bootstrap {
 
     def private bootstrapBaseImpl(Application it) '''
         «bootstrapDocs»
-        «IF hasLoggable || hasAutomaticArchiving»
+        «IF hasLoggable»«/* TODO move that into Zikula core https://github.com/zikula/core/issues/3570 */»
             $container = \ServiceUtil::get('service_container');
 
-        «ENDIF»
-        «initExtensions»
-        «archiveObjectsCall»
-
-    '''
-
-    def private initExtensions(Application it) '''
-        «IF hasLoggable»
             $currentUserApi = $container->get('zikula_users_module.current_user');
             $userName = $currentUserApi->isLoggedIn() ? $currentUserApi->get('uname') : __('Guest');
 
             // set current user name to loggable listener
             $loggableListener = $container->get('doctrine_extensions.listener.loggable');
             $loggableListener->setUsername($userName);
-        «ENDIF»
-    '''
-
-    def private archiveObjectsCall(Application it) '''
-        «IF hasAutomaticArchiving»
-
-            // check if own service exists (which is not true if the module is currently being installed)
-            if ($container->has('«appService».archive_helper')) {
-                $container->get('«appService».archive_helper')->archiveObsoleteObjects();
-            }
         «ENDIF»
     '''
 

@@ -509,8 +509,8 @@ class ServiceDefinitions {
                     - "@translator.default"
                 «ENDIF»
                 - "@request_stack"
-                «IF hasUploads»
-                    - "@session"
+                «IF hasAutomaticArchiving»
+                    - "@«modPrefix».archive_helper"
                 «ENDIF»
                 «IF hasUploads || hasGeographical»
                     - "@logger"

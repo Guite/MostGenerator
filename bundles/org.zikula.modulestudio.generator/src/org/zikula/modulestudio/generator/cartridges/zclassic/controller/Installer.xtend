@@ -111,7 +111,6 @@ class Installer {
                 // add default entry for category registry (property named Main)
                 $categoryHelper = new \«appNamespace»\Helper\CategoryHelper(
                     $this->container->get('translator.default'),
-                    $this->container->get('session'),
                     $this->container->get('request_stack'),
                     $logger,
                     $this->container->get('zikula_users_module.current_user'),

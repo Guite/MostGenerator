@@ -47,7 +47,6 @@ class ControllerHelper {
         use Symfony\Component\HttpFoundation\Request;
         use Symfony\Component\HttpFoundation\RequestStack;
         «IF hasUploads»
-            use Symfony\Component\HttpFoundation\Session\SessionInterface;
             use Zikula\Common\Translator\TranslatorInterface;
             use Zikula\Common\Translator\TranslatorTrait;
         «ENDIF»
@@ -67,6 +66,9 @@ class ControllerHelper {
             use Zikula\UsersModule\Entity\UserEntity;
         «ENDIF»
         use «appNamespace»\Entity\Factory\«name.formatForCodeCapital»Factory;
+        «IF hasAutomaticArchiving»
+            use «appNamespace»\Helper\ArchiveHelper;
+        «ENDIF»
         use «appNamespace»\Helper\CollectionFilterHelper;
         «IF needsFeatureActivationHelper»
             use «appNamespace»\Helper\FeatureActivationHelper;
@@ -91,13 +93,6 @@ class ControllerHelper {
              * @var Request
              */
             protected $request;
-            «IF hasUploads»
-
-                /**
-                 * @var SessionInterface
-                 */
-                protected $session;
-            «ENDIF»
             «IF hasUploads || hasGeographical»
 
                 /**
@@ -165,8 +160,8 @@ class ControllerHelper {
              * @param TranslatorInterface $translator      Translator service instance
              «ENDIF»
              * @param RequestStack        $requestStack    RequestStack service instance
-             «IF hasUploads»
-             * @param SessionInterface    $session         Session service instance
+             «IF hasAutomaticArchiving»
+             * @param ArchiveHelper       $archiveHelper   ArchiveHelper service instance
              «ENDIF»
              «IF hasUploads || hasGeographical»
              * @param LoggerInterface     $logger          Logger service instance
@@ -197,8 +192,8 @@ class ControllerHelper {
                     TranslatorInterface $translator,
                 «ENDIF»
                 RequestStack $requestStack,
-                «IF hasUploads»
-                    SessionInterface $session,
+                «IF hasAutomaticArchiving»
+                    ArchiveHelper $archiveHelper,
                 «ENDIF»
                 «IF hasUploads || hasGeographical»
                     LoggerInterface $logger,
@@ -222,9 +217,6 @@ class ControllerHelper {
                     $this->setTranslator($translator);
                 «ENDIF»
                 $this->request = $requestStack->getCurrentRequest();
-                «IF hasUploads»
-                    $this->session = $session;
-                «ENDIF»
                 «IF hasUploads || hasGeographical»
                     $this->logger = $logger;
                 «ENDIF»
@@ -247,6 +239,10 @@ class ControllerHelper {
                 «ENDIF»
                 «IF needsFeatureActivationHelper»
                     $this->featureActivationHelper = $featureActivationHelper;
+                «ENDIF»
+                «IF hasAutomaticArchiving»
+
+                    $this->archiveHelper->archiveObsoleteObjects();
                 «ENDIF»
             }
 
