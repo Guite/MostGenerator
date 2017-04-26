@@ -132,7 +132,7 @@ class Installer {
                     $registry->setModname('«appName»');
                     $registry->setEntityname('«entity.name.formatForCodeCapital»Entity');
                     $registry->setProperty($categoryHelper->getPrimaryProperty('«entity.name.formatForCodeCapital»'));
-                    $registry->setCategory_Id($categoryGlobal['id']);
+                    $registry->setCategory($categoryGlobal);
 
                     try {
                         $entityManager = $this->container->get('«entityManagerService»');
