@@ -225,8 +225,6 @@ class AjaxController {
         }
 
         $repository = $this->get('«appService».entity_factory')->getRepository($objectType);
-        $repository->setRequest($request);
-
         $entityDisplayHelper = $this->get('«appService».entity_display_helper');
         $descriptionFieldName = $entityDisplayHelper->getDescriptionFieldName($objectType);
 
@@ -338,8 +336,6 @@ class AjaxController {
         }
 
         $repository = $this->get('«appService».entity_factory')->getRepository($objectType);
-        $repository->setRequest($request);
-
         $fragment = $request->query->get('fragment', '');
         $exclude = $request->query->get('exclude', '');
         $exclude = !empty($exclude) ? explode(',', str_replace(', ', ',', $exclude)) : [];
@@ -659,7 +655,6 @@ class AjaxController {
 
         $entityFactory = $this->get('«appService».entity_factory');
         $repository = $entityFactory->getRepository($objectType);
-        $repository->setRequest($request);
 
         «/*
         // Select tree

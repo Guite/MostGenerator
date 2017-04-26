@@ -455,11 +455,9 @@ class ControllerHelper {
 
             $request = $this->request;
             $repository = $this->entityFactory->getRepository($objectType);
-            $repository->setRequest($request);
 
             // parameter for used sorting field
             «new ControllerHelperFunctions().defaultSorting(it)»
-
             «IF hasTrees»
 
                 if ('tree' == $request->query->getAlnum('tpl', '')) {

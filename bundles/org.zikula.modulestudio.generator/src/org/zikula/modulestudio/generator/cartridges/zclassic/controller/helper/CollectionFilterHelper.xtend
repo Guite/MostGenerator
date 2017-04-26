@@ -1,7 +1,11 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.controller.helper
 
 import de.guite.modulestudio.metamodel.Application
+import de.guite.modulestudio.metamodel.DateField
+import de.guite.modulestudio.metamodel.DatetimeField
+import de.guite.modulestudio.metamodel.DerivedField
 import de.guite.modulestudio.metamodel.Entity
+import de.guite.modulestudio.metamodel.EntityField
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
@@ -10,6 +14,7 @@ import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
+import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
 
 class CollectionFilterHelper {
 
@@ -19,6 +24,7 @@ class CollectionFilterHelper {
     extension ModelJoinExtensions = new ModelJoinExtensions
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
+    extension WorkflowExtensions = new WorkflowExtensions
 
     def generate(Application it, IFileSystemAccess fsa) {
         println('Generating helper class for filtering entity collections')
@@ -31,11 +37,13 @@ class CollectionFilterHelper {
     def private collectionFilterHelperBaseClass(Application it) '''
         namespace «appNamespace»\Helper\Base;
 
+        use Doctrine\ORM\QueryBuilder;
         use Symfony\Component\HttpFoundation\Request;
         use Symfony\Component\HttpFoundation\RequestStack;
         «FOR entity : getAllEntities»
             use «appNamespace»\Entity\«entity.name.formatForCodeCapital»Entity;
         «ENDFOR»
+        use «appNamespace»\Entity\Factory\«name.formatForCodeCapital»Factory;
         «IF hasCategorisableEntities»
             use «appNamespace»\Helper\CategoryHelper;
         «ENDIF»
@@ -49,6 +57,11 @@ class CollectionFilterHelper {
              * @var Request
              */
             protected $request;
+
+            /**
+             * @var «name.formatForCodeCapital»Factory
+             */
+            protected $entityFactory;
             «IF hasCategorisableEntities»
 
                 /**
@@ -61,13 +74,18 @@ class CollectionFilterHelper {
              * CollectionFilterHelper constructor.
              *
              * @param RequestStack «IF hasCategorisableEntities»  «ENDIF»$requestStack «IF hasCategorisableEntities»       «ENDIF»RequestStack service instance
+             * @param «name.formatForCodeCapital»Factory $entityFactory «name.formatForCodeCapital»Factory service instance
              «IF hasCategorisableEntities»
              * @param CategoryHelper $categoryHelper      CategoryHelper service instance
              «ENDIF»
              */
-            public function __construct(RequestStack $requestStack«IF hasCategorisableEntities», CategoryHelper $categoryHelper«ENDIF»)
+            public function __construct(
+                RequestStack $requestStack,
+                «name.formatForCodeCapital»Factory $entityFactory«IF hasCategorisableEntities»,
+                CategoryHelper $categoryHelper«ENDIF»)
             {
                 $this->request = $requestStack->getCurrentRequest();
+                $this->entityFactory = $entityFactory;
                 «IF hasCategorisableEntities»
                     $this->categoryHelper = $categoryHelper;
                 «ENDIF»
@@ -94,16 +112,63 @@ class CollectionFilterHelper {
             }
 
             «FOR entity : getAllEntities»
-                if ($entity instanceof «entity.name.formatForCodeCapital»Entity) {
+                if ($objectType == '«entity.name.formatForCode»') {
                     return $this->getViewQuickNavParametersFor«entity.name.formatForCodeCapital»($context, $args);
                 }
             «ENDFOR»
 
             return [];
         }
+
+        /**
+         * Adds quick navigation related filter options as where clauses.
+         *
+         * @param string       $objectType Name of treated entity type
+         * @param QueryBuilder $qb         Query builder to be enhanced
+         *
+         * @return QueryBuilder Enriched query builder instance
+         */
+        public function addCommonViewFilters($objectType = '', QueryBuilder $qb)
+        {
+            «FOR entity : getAllEntities»
+                if ($objectType == '«entity.name.formatForCode»') {
+                    return $this->addCommonViewFiltersFor«entity.name.formatForCodeCapital»($qb);
+                }
+            «ENDFOR»
+
+            return $qb;
+        }
+
+        /**
+         * Adds default filters as where clauses.
+         *
+         * @param string       $objectType Name of treated entity type
+         * @param QueryBuilder $qb         Query builder to be enhanced
+         * @param array        $parameters List of determined filter options
+         *
+         * @return QueryBuilder Enriched query builder instance
+         */
+        protected function applyDefaultFilters($objectType = '', QueryBuilder $qb, $parameters = [])
+        {
+            «FOR entity : getAllEntities»
+                if ($objectType == '«entity.name.formatForCode»') {
+                    return $this->applyDefaultFiltersFor«entity.name.formatForCodeCapital»($qb, $parameters);
+                }
+            «ENDFOR»
+
+            return $qb;
+        }
         «FOR entity : getAllEntities»
 
             «entity.getViewQuickNavParameters»
+        «ENDFOR»
+        «FOR entity : getAllEntities»
+
+            «entity.addCommonViewFilters»
+        «ENDFOR»
+        «FOR entity : getAllEntities»
+
+            «entity.applyDefaultFilters»
         «ENDFOR»
     '''
 
@@ -173,6 +238,165 @@ class CollectionFilterHelper {
             return $parameters;
         }
     '''
+
+    def private addCommonViewFilters(Entity it) '''
+        /**
+         * Adds quick navigation related filter options as where clauses.
+         *
+         * @param QueryBuilder $qb Query builder to be enhanced
+         *
+         * @return QueryBuilder Enriched query builder instance
+         */
+        protected function addCommonViewFiltersFor«name.formatForCodeCapital»(QueryBuilder $qb)
+        {
+            $routeName = $this->request->get('_route');
+            if (false !== strpos($routeName, 'edit')) {«/* fix for #547 */»
+                return $qb;
+            }
+
+            $parameters = $this->getViewQuickNavParametersFor«name.formatForCodeCapital»();
+            foreach ($parameters as $k => $v) {
+                «IF categorisable»
+                    if ($k == 'catId') {
+                        // single category filter
+                        if ($v > 0) {
+                            $qb->andWhere('tblCategories.category = :category')
+                               ->setParameter('category', $v);
+                        }
+                    } elseif ($k == 'catIdList') {
+                        // multi category filter
+                        /* old
+                        $qb->andWhere('tblCategories.category IN (:categories)')
+                           ->setParameter('categories', $v);
+                         */
+                        $qb = $this->categoryHelper->buildFilterClauses($qb, '«name.formatForCode»', $v);
+                «ENDIF»
+                «IF categorisable»} else«ENDIF»if (in_array($k, ['q', 'searchterm'])) {
+                    // quick search
+                    if (!empty($v)) {
+                        $qb = $this->addSearchFilter($qb, $v);
+                    }
+                «IF hasBooleanFieldsEntity»
+                } elseif (in_array($k, [«FOR field : getBooleanFieldsEntity SEPARATOR ', '»'«field.name.formatForCode»'«ENDFOR»])) {
+                    // boolean filter
+                    if ($v == 'no') {
+                        $qb->andWhere('tbl.' . $k . ' = 0');
+                    } elseif ($v == 'yes' || $v == '1') {
+                        $qb->andWhere('tbl.' . $k . ' = 1');
+                    }
+                «ENDIF»
+                } else if (!is_array($v)) {
+                    // field filter
+                    if ((!is_numeric($v) && $v != '') || (is_numeric($v) && $v > 0)) {
+                        if ($k == 'workflowState' && substr($v, 0, 1) == '!') {
+                            $qb->andWhere('tbl.' . $k . ' != :' . $k)
+                               ->setParameter($k, substr($v, 1, strlen($v)-1));
+                        } elseif (substr($v, 0, 1) == '%') {
+                            $qb->andWhere('tbl.' . $k . ' LIKE :' . $k)
+                               ->setParameter($k, '%' . $v . '%');
+                        } else {
+                            «IF hasUserFieldsEntity»
+                                if (in_array($k, ['«getUserFieldsEntity.map[name.formatForCode].join('\', \'')»'])) {
+                                    $qb->leftJoin('tbl.' . $k, 'tbl' . ucfirst($k))
+                                       ->andWhere('tbl' . ucfirst($k) . '.uid = :' . $k)
+                                       ->setParameter($k, $v);
+                                } else {
+                                    $qb->andWhere('tbl.' . $k . ' = :' . $k)
+                                       ->setParameter($k, $v);
+                                }
+                            «ELSE»
+                                $qb->andWhere('tbl.' . $k . ' = :' . $k)
+                                   ->setParameter($k, $v);
+                            «ENDIF»
+                       }
+                    }
+                }
+            }
+
+            $qb = $this->applyDefaultFiltersFor«name.formatForCodeCapital»($qb, $parameters);
+
+            return $qb;
+        }
+    '''
+
+    def private applyDefaultFilters(Entity it) '''
+        /**
+         * Adds default filters as where clauses.
+         *
+         * @param QueryBuilder $qb         Query builder to be enhanced
+         * @param array        $parameters List of determined filter options
+         *
+         * @return QueryBuilder Enriched query builder instance
+         */
+        protected function applyDefaultFiltersFor«name.formatForCodeCapital»(QueryBuilder $qb, $parameters = [])
+        {
+            «IF ownerPermission || standardFields»
+                «/*$variableApi = \ServiceUtil::get('zikula_extensions_module.api.variable');
+                $showOnlyOwnEntries = $this->request->query->getInt('own', $variableApi->get('«app.appName»', 'showOnlyOwnEntries', 0));*/»
+                $showOnlyOwnEntries = $this->request->query->getInt('own', 0);
+
+            «ENDIF»
+            «IF hasVisibleWorkflow»
+                $routeName = $this->request->get('_route');
+                $isAdminArea = false !== strpos($routeName, '«application.appName.toLowerCase»_«name.formatForDisplay.toLowerCase»_admin');
+                if ($isAdminArea) {
+                    return $qb;
+                }
+
+                if (!in_array('workflowState', array_keys($parameters)) || empty($parameters['workflowState'])) {
+                    // per default we show approved «nameMultiple.formatForDisplay» only
+                    $onlineStates = ['approved'];
+                    «IF ownerPermission»
+                        if ($showOnlyOwnEntries == 1) {
+                            // allow the owner to see his deferred «nameMultiple.formatForDisplay»
+                            $onlineStates[] = 'deferred';
+                        }
+                    «ENDIF»
+                    $qb->andWhere('tbl.workflowState IN (:onlineStates)')
+                       ->setParameter('onlineStates', $onlineStates);
+                }
+            «ENDIF»
+            «IF standardFields»
+
+                if ($showOnlyOwnEntries == 1) {
+                    $repository = $this->entityFactory->getRepository('«name.formatForCode»');
+                    $qb = $repository->addCreatorFilter($qb);
+                }
+            «ENDIF»
+            «applyDefaultDateRangeFilter»
+
+            return $qb;
+        }
+    '''
+
+    def private applyDefaultDateRangeFilter(Entity it) '''
+        «val startDateField = getStartDateField»
+        «val endDateField = getEndDateField»
+        «IF null !== startDateField»
+            $startDate = $this->request->query->get('«startDateField.name.formatForCode»', «startDateField.defaultValueForNow»);
+            $qb->andWhere('«whereClauseForDateRangeFilter('<=', startDateField, 'startDate')»')
+               ->setParameter('startDate', $startDate);
+        «ENDIF»
+        «IF null !== endDateField»
+            $endDate = $this->request->query->get('«endDateField.name.formatForCode»', «endDateField.defaultValueForNow»);
+            $qb->andWhere('«whereClauseForDateRangeFilter('>=', endDateField, 'endDate')»')
+               ->setParameter('endDate', $endDate);
+        «ENDIF»
+    '''
+
+    def private dispatch defaultValueForNow(EntityField it) '''""'''
+
+    def private dispatch defaultValueForNow(DatetimeField it) '''date('Y-m-d H:i:s')'''
+
+    def private dispatch defaultValueForNow(DateField it) '''date('Y-m-d')'''
+
+    def private whereClauseForDateRangeFilter(Entity it, String operator, DerivedField dateField, String paramName) {
+        val dateFieldName = dateField.name.formatForCode
+        if (dateField.mandatory)
+            '''tbl.«dateFieldName» «operator» :«paramName»'''
+        else
+            '''(tbl.«dateFieldName» «operator» :«paramName» OR tbl.«dateFieldName» IS NULL)'''
+    }
 
     def private collectionFilterHelperImpl(Application it) '''
         namespace «appNamespace»\Helper;

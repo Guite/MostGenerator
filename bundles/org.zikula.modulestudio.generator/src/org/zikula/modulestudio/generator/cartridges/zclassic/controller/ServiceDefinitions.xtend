@@ -492,6 +492,7 @@ class ServiceDefinitions {
             class: «nsBase»CollectionFilterHelper
             arguments:
                 - "@request_stack"
+                - "@«modPrefix».entity_factory"
                 «IF hasCategorisableEntities»
                     - "@«modPrefix».category_helper"
                 «ENDIF»

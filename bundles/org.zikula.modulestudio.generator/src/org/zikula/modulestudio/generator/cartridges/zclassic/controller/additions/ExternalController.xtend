@@ -105,7 +105,6 @@ class ExternalController {
 
         $entityFactory = $this->get('«appService».entity_factory');
         $repository = $entityFactory->getRepository($objectType);
-        $repository->setRequest($this->get('request_stack')->getCurrentRequest());
         $idValues = $controllerHelper->retrieveIdentifier($request, [], $objectType);
 
         $hasIdentifier = $controllerHelper->isValidIdentifier($idValues);
@@ -197,7 +196,6 @@ class ExternalController {
         }
 
         $repository = $this->get('«appService».entity_factory')->getRepository($objectType);
-        $repository->setRequest($request);
         if (empty($sort) || !in_array($sort, $repository->getAllowedSortingFields())) {
             $sort = $repository->getDefaultSortingField();
         }

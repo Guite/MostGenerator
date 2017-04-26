@@ -4,8 +4,6 @@ import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.ArrayField
 import de.guite.modulestudio.metamodel.BooleanField
 import de.guite.modulestudio.metamodel.CalculatedField
-import de.guite.modulestudio.metamodel.DateField
-import de.guite.modulestudio.metamodel.DatetimeField
 import de.guite.modulestudio.metamodel.DerivedField
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.EntityField
@@ -30,7 +28,6 @@ import org.zikula.modulestudio.generator.extensions.ModelInheritanceExtensions
 import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
-import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
 
 class Repository {
 
@@ -42,7 +39,6 @@ class Repository {
     extension ModelInheritanceExtensions = new ModelInheritanceExtensions
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
-    extension WorkflowExtensions = new WorkflowExtensions
 
     IFileSystemAccess fsa
     FileHelper fh = new FileHelper
@@ -119,12 +115,7 @@ class Repository {
             «ENDIF*/»/**
              * @var string The default sorting field/expression
              */
-            protected $defaultSortingField = '«getDefaultSortingField.name.formatForCode»';
-
-            /**
-             * @var Request The request object given by the calling controller
-             */
-            protected $request;«/*IF tree != EntityTreeType.NONE»
+            protected $defaultSortingField = '«getDefaultSortingField.name.formatForCode»';«/*IF tree != EntityTreeType.NONE»
 
                 /**
                  * «name.formatForCodeCapital»Repository constructor.
@@ -175,7 +166,6 @@ class Repository {
             }
 
             «fh.getterAndSetterMethods(it, 'defaultSortingField', 'string', false, true, false, '', '')»
-            «fh.getterAndSetterMethods(it, 'request', 'Request', false, true, false, '', '')»
 
             «truncateTable»
             «new UserDeletion().generate(it)»
@@ -207,8 +197,6 @@ class Repository {
             «detectUniqueState»
 
             «genericBaseQuery»
-
-            «genericBaseQueryWhere»
 
             «genericBaseQueryOrderBy»
 
@@ -242,7 +230,6 @@ class Repository {
         use Doctrine\ORM\Tools\Pagination\Paginator;
         use InvalidArgumentException;
         use Psr\Log\LoggerInterface;
-        use Symfony\Component\HttpFoundation\Request;
         use Zikula\Common\Translator\TranslatorInterface;
         use Zikula\UsersModule\Api\«IF app.targets('1.5')»ApiInterface\CurrentUserApiInterface«ELSE»CurrentUserApi«ENDIF»;
         «IF ownerPermission && app.targets('1.5')»
@@ -465,7 +452,7 @@ class Repository {
         {
             $qb = $this->genericBaseQuery($where, $orderBy, $useJoins, $slimMode);
             if (!$useJoins || !$slimMode) {
-                $qb = $this->addCommonViewFilters($qb);
+                $qb = \ServiceUtil::get('«app.appService».collection_filter_helper')->addCommonViewFilters('«name.formatForCode»', $qb);
             }
 
             return $qb;
@@ -531,161 +518,7 @@ class Repository {
 
             return $this->retrieveCollectionResult($query, $orderBy, true);
         }
-
-        /**
-         * Adds quick navigation related filter options as where clauses.
-         *
-         * @param QueryBuilder $qb Query builder to be enhanced
-         *
-         * @return QueryBuilder Enriched query builder instance
-         */
-        public function addCommonViewFilters(QueryBuilder $qb)
-        {
-            if (null === $this->getRequest()) {
-                // if no request is set we return (#433)
-                return $qb;
-            }
-
-            $routeName = $this->getRequest()->get('_route');
-            if (false !== strpos($routeName, 'edit')) {«/* fix for #547 */»
-                return $qb;
-            }
-
-            $parameters = \ServiceUtil::get('«app.appService».collection_filter_helper')->getViewQuickNavParameters('«name.formatForCode»', '', []);
-            foreach ($parameters as $k => $v) {
-                «IF categorisable»
-                    if ($k == 'catId') {
-                        // single category filter
-                        if ($v > 0) {
-                            $qb->andWhere('tblCategories.category = :category')
-                               ->setParameter('category', $v);
-                        }
-                    } elseif ($k == 'catIdList') {
-                        // multi category filter
-                        /* old
-                        $qb->andWhere('tblCategories.category IN (:categories)')
-                           ->setParameter('categories', $v);
-                         */
-                        $categoryHelper = \ServiceUtil::get('«app.appService».category_helper');
-                        $qb = $categoryHelper->buildFilterClauses($qb, '«name.formatForCode»', $v);
-                «ENDIF»
-                «IF categorisable»} else«ENDIF»if (in_array($k, ['q', 'searchterm'])) {
-                    // quick search
-                    if (!empty($v)) {
-                        $qb = $this->addSearchFilter($qb, $v);
-                    }
-                «IF hasBooleanFieldsEntity»
-                } elseif (in_array($k, [«FOR field : getBooleanFieldsEntity SEPARATOR ', '»'«field.name.formatForCode»'«ENDFOR»])) {
-                    // boolean filter
-                    if ($v == 'no') {
-                        $qb->andWhere('tbl.' . $k . ' = 0');
-                    } elseif ($v == 'yes' || $v == '1') {
-                        $qb->andWhere('tbl.' . $k . ' = 1');
-                    }
-                «ENDIF»
-                } else if (!is_array($v)) {
-                    // field filter
-                    if ((!is_numeric($v) && $v != '') || (is_numeric($v) && $v > 0)) {
-                        if ($k == 'workflowState' && substr($v, 0, 1) == '!') {
-                            $qb->andWhere('tbl.' . $k . ' != :' . $k)
-                               ->setParameter($k, substr($v, 1, strlen($v)-1));
-                        } elseif (substr($v, 0, 1) == '%') {
-                            $qb->andWhere('tbl.' . $k . ' LIKE :' . $k)
-                               ->setParameter($k, '%' . $v . '%');
-                        } else {
-                            «IF hasUserFieldsEntity»
-                                if (in_array($k, ['«getUserFieldsEntity.map[name.formatForCode].join('\', \'')»'])) {
-                                    $qb->leftJoin('tbl.' . $k, 'tbl' . ucfirst($k))
-                                       ->andWhere('tbl' . ucfirst($k) . '.uid = :' . $k)
-                                       ->setParameter($k, $v);
-                                } else {
-                                    $qb->andWhere('tbl.' . $k . ' = :' . $k)
-                                       ->setParameter($k, $v);
-                                }
-                            «ELSE»
-                                $qb->andWhere('tbl.' . $k . ' = :' . $k)
-                                   ->setParameter($k, $v);
-                            «ENDIF»
-                       }
-                    }
-                }
-            }
-
-            $qb = $this->applyDefaultFilters($qb, $parameters);
-
-            return $qb;
-        }
-
-        /**
-         * Adds default filters as where clauses.
-         *
-         * @param QueryBuilder $qb         Query builder to be enhanced
-         * @param array        $parameters List of determined filter options
-         *
-         * @return QueryBuilder Enriched query builder instance
-         */
-        protected function applyDefaultFilters(QueryBuilder $qb, $parameters = [])
-        {
-            «IF hasVisibleWorkflow»
-                if (null === $this->getRequest()) {
-                    $this->request = \ServiceUtil::get('request_stack')->getCurrentRequest();
-                }
-                $routeName = $this->request->get('_route');
-                $isAdminArea = false !== strpos($routeName, '«app.appName.toLowerCase»_«name.formatForDisplay.toLowerCase»_admin');
-                if ($isAdminArea) {
-                    return $qb;
-                }
-
-                if (!in_array('workflowState', array_keys($parameters)) || empty($parameters['workflowState'])) {
-                    // per default we show approved «nameMultiple.formatForDisplay» only
-                    $onlineStates = ['approved'];
-                    «IF ownerPermission»
-                        «/*$variableApi = \ServiceUtil::get('zikula_extensions_module.api.variable');
-                        $showOnlyOwnEntries = $this->getRequest()->query->getInt('own', $variableApi->get('«app.appName»', 'showOnlyOwnEntries', 0));*/»
-                        $showOnlyOwnEntries = $this->getRequest()->query->getInt('own', 0);
-                        if ($showOnlyOwnEntries == 1) {
-                            // allow the owner to see his deferred «nameMultiple.formatForDisplay»
-                            $onlineStates[] = 'deferred';
-                        }
-                    «ENDIF»
-                    $qb->andWhere('tbl.workflowState IN (:onlineStates)')
-                       ->setParameter('onlineStates', $onlineStates);
-                }
-            «ENDIF»
-            «applyDefaultDateRangeFilter»
-
-            return $qb;
-        }
     '''
-
-    def private applyDefaultDateRangeFilter(Entity it) '''
-        «val startDateField = getStartDateField»
-        «val endDateField = getEndDateField»
-        «IF null !== startDateField»
-            $startDate = null !== $this->getRequest() ? $this->getRequest()->query->get('«startDateField.name.formatForCode»', «startDateField.defaultValueForNow») : «startDateField.defaultValueForNow»;
-            $qb->andWhere('«whereClauseForDateRangeFilter('<=', startDateField, 'startDate')»')
-               ->setParameter('startDate', $startDate);
-        «ENDIF»
-        «IF null !== endDateField»
-            $endDate = null !== $this->getRequest() ? $this->getRequest()->query->get('«endDateField.name.formatForCode»', «endDateField.defaultValueForNow») : «endDateField.defaultValueForNow»;
-            $qb->andWhere('«whereClauseForDateRangeFilter('>=', endDateField, 'endDate')»')
-               ->setParameter('endDate', $endDate);
-        «ENDIF»
-    '''
-
-    def private dispatch defaultValueForNow(EntityField it) '''""'''
-
-    def private dispatch defaultValueForNow(DatetimeField it) '''date('Y-m-d H:i:s')'''
-
-    def private dispatch defaultValueForNow(DateField it) '''date('Y-m-d')'''
-
-    def private whereClauseForDateRangeFilter(Entity it, String operator, DerivedField dateField, String paramName) {
-        val dateFieldName = dateField.name.formatForCode
-        if (dateField.mandatory)
-            '''tbl.«dateFieldName» «operator» :«paramName»'''
-        else
-            '''(tbl.«dateFieldName» «operator» :«paramName» OR tbl.«dateFieldName» IS NULL)'''
-    }
 
     def private selectSearch(Entity it) '''
         /**
@@ -805,8 +638,6 @@ class Repository {
                 $this->addJoinsToFrom($qb);
             }
 
-            $this->genericBaseQueryAddWhere($qb, $where);
-
             return $qb;
         }
 
@@ -823,7 +654,7 @@ class Repository {
         {
             $qb = $this->getCountQuery($where, $useJoins);
 
-            $qb = $this->applyDefaultFilters($qb, $parameters);
+            $qb = \ServiceUtil::get('«app.appService».collection_filter_helper')->applyDefaultFilters('«name.formatForCode»', $qb, $parameters);
 
             $query = $qb->getQuery();
             «IF hasPessimisticReadLock»
@@ -902,7 +733,6 @@ class Repository {
                 $this->addJoinsToFrom($qb);
             }
 
-            $this->genericBaseQueryAddWhere($qb, $where);
             $this->genericBaseQueryAddOrderBy($qb, $orderBy);
 
             return $qb;
@@ -917,36 +747,6 @@ class Repository {
                 $selection .= ', tbl.«patternPart.formatForCode»';
             «ENDIF»
         «ENDFOR»
-    '''
-
-    def private genericBaseQueryWhere(Entity it) '''
-        /**
-         * Adds WHERE clause to given query builder.
-         *
-         * @param QueryBuilder $qb    Given query builder instance
-         * @param string       $where The where clause to use when retrieving the collection (optional) (default='')
-         *
-         * @return QueryBuilder Query builder instance to be further processed
-         */
-        protected function genericBaseQueryAddWhere(QueryBuilder $qb, $where = '')
-        {
-            «IF standardFields»
-
-                if (null === $this->getRequest()) {
-                    // if no request is set we return (#783)
-                    return $qb;
-                }
-
-                «/*$variableApi = \ServiceUtil::get('zikula_extensions_module.api.variable');
-                $showOnlyOwnEntries = $this->getRequest()->query->getInt('own', $variableApi->get('«app.appName»', 'showOnlyOwnEntries', 0));*/»
-                $showOnlyOwnEntries = $this->getRequest()->query->getInt('own', 0);
-                if ($showOnlyOwnEntries == 1) {
-                    $qb = $this->addCreatorFilter($qb);
-                }
-            «ENDIF»
-
-            return $qb;
-        }
     '''
 
     def private genericBaseQueryOrderBy(Entity it) '''

@@ -46,6 +46,7 @@ class HelperServices {
         if (needsFeatureActivationHelper) {
             new FeatureActivationHelper().generate(it, fsa)
         }
+        new HookHelper().generate(it, fsa)
         if (hasUploads) {
             new ImageHelper().generate(it, fsa)
             new UploadHelper().generate(it, fsa)
@@ -53,7 +54,6 @@ class HelperServices {
         if (hasListFields) {
             new ListEntriesHelper().generate(it, fsa)
         }
-        new HookHelper().generate(it, fsa)
         new ModelHelper().generate(it, fsa)
         if (needsApproval) {
             new NotificationHelper().generate(it, fsa)
