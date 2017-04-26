@@ -240,7 +240,7 @@ class Repository {
         «ENDIF*/»
         use Doctrine\ORM\Query;
         use Doctrine\ORM\QueryBuilder;
-        «IF hasOptimisticLock || hasPessimisticReadLock || hasPessimisticWriteLock»
+        «IF hasPessimisticReadLock || hasPessimisticWriteLock»
             use Doctrine\DBAL\LockMode;
         «ENDIF»
         use Doctrine\ORM\Tools\Pagination\Paginator;
