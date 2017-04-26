@@ -4,7 +4,9 @@ import de.guite.modulestudio.metamodel.Application
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.helper.ArchiveHelper
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.helper.CategoryHelper
+import org.zikula.modulestudio.generator.cartridges.zclassic.controller.helper.CollectionFilterHelper
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.helper.ControllerHelper
+import org.zikula.modulestudio.generator.cartridges.zclassic.controller.helper.EntityDisplayHelper
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.helper.FeatureActivationHelper
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.helper.HookHelper
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.helper.ImageHelper
@@ -38,7 +40,9 @@ class HelperServices {
         if (hasCategorisableEntities) {
             new CategoryHelper().generate(it, fsa)
         }
+        new CollectionFilterHelper().generate(it, fsa)
         new ControllerHelper().generate(it, fsa)
+        new EntityDisplayHelper().generate(it, fsa)
         if (needsFeatureActivationHelper) {
             new FeatureActivationHelper().generate(it, fsa)
         }

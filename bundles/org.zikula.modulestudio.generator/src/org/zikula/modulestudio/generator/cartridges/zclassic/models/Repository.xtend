@@ -116,8 +116,7 @@ class Repository {
             «/*IF tree != EntityTreeType.NONE»
                 use «tree.literal.toLowerCase.toFirstUpper»TreeRepositoryTrait;
 
-            «ENDIF*/»
-            /**
+            «ENDIF*/»/**
              * @var string The default sorting field/expression
              */
             protected $defaultSortingField = '«getDefaultSortingField.name.formatForCode»';
@@ -125,8 +124,7 @@ class Repository {
             /**
              * @var Request The request object given by the calling controller
              */
-            protected $request;
-            «/*IF tree != EntityTreeType.NONE»
+            protected $request;«/*IF tree != EntityTreeType.NONE»
 
                 /**
                  * «name.formatForCodeCapital»Repository constructor.
@@ -190,7 +188,7 @@ class Repository {
 
             «addExclusion»
 
-            «IF ownerPermission»
+            «IF ownerPermission || standardFields»
                 «addCreatorFilter»
 
             «ENDIF»
@@ -943,10 +941,7 @@ class Repository {
                 $showOnlyOwnEntries = $this->getRequest()->query->getInt('own', $variableApi->get('«app.appName»', 'showOnlyOwnEntries', 0));*/»
                 $showOnlyOwnEntries = $this->getRequest()->query->getInt('own', 0);
                 if ($showOnlyOwnEntries == 1) {
-                    «/*$userId = \ServiceUtil::get('zikula_users_module.current_user')->get('uid');*/»
-                    $userId = $this->getRequest()->getSession()->get('uid');
-                    $qb->andWhere('tbl.createdBy = :creator')
-                       ->setParameter('creator', $userId);
+                    $qb = $this->addCreatorFilter($qb);
                 }
             «ENDIF»
 

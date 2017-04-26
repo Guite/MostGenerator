@@ -128,7 +128,6 @@ class AutoCompletionRelationTransformer {
 
                 $qb = $repository->genericBaseQuery('', '', false);
                 $qb = $this->buildWhereClause($value, $qb);
-                //$qb = $repository->addCommonViewFilters($qb);
 
                 $query = $repository->getQueryFromBuilder($qb);
 
