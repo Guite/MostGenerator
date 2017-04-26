@@ -6,6 +6,7 @@ import de.guite.modulestudio.metamodel.DatetimeField
 import de.guite.modulestudio.metamodel.Entity
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
+import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
@@ -14,6 +15,7 @@ import org.zikula.modulestudio.generator.extensions.Utils
 
 class ArchiveHelper {
 
+    extension ControllerExtensions = new ControllerExtensions
     extension FormattingExtensions = new FormattingExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension ModelExtensions = new ModelExtensions
@@ -31,6 +33,7 @@ class ArchiveHelper {
     def private archiveHelperBaseClass(Application it) '''
         namespace «appNamespace»\Helper\Base;
 
+        use Doctrine\ORM\QueryBuilder;
         use Psr\Log\LoggerInterface;
         use Symfony\Component\HttpFoundation\RequestStack;
         use Zikula\Common\Translator\TranslatorInterface;
@@ -149,6 +152,8 @@ class ArchiveHelper {
 
             «entity.archiveObjects»
         «ENDFOR»
+
+        «helperMethods»
     '''
 
     def private archiveObjects(Entity it) '''
@@ -157,7 +162,7 @@ class ArchiveHelper {
          *
          * @throws RuntimeException Thrown if workflow action execution fails
          */
-        public function archive«nameMultiple.formatForCodeCapital»()
+        protected function archive«nameMultiple.formatForCodeCapital»()
         {
             «val endField = getEndDateField»
             «IF endField instanceof DatetimeField»
@@ -166,7 +171,26 @@ class ArchiveHelper {
                 $today = date('Y-m-d') . ' 00:00:00';
             «ENDIF»
 
-            $repository = $this->entityFactory->getRepository('«name.formatForCode»');
+            $affectedEntities = $this->getObjectsToBeArchived('«name.formatForCode»', '«endField.name.formatForCode»', $today);
+            foreach ($affectedEntities as $entity) {
+                $this->archiveSingleObject($entity);
+            }
+        }
+    '''
+
+    def private helperMethods(Application it) '''
+        /**
+         * Returns the list of entities which should be archived.
+         *
+         * @param string $objectType Name of treated entity type
+         * @param string $endField   Name of field storing the end date
+         * @param mixed  $endDate    Datetime or date string for the threshold date
+         *
+         * @return array List of affected entities
+         */
+        protected function getObjectsToBeArchived($objectType = '', $endField = '', $endDate = '')
+        {
+            $repository = $this->entityFactory->getRepository($objectType);
             $qb = $repository->genericBaseQuery('', '', false);
 
             /*$qb->andWhere('tbl.workflowState != :archivedState')
@@ -174,48 +198,65 @@ class ArchiveHelper {
             $qb->andWhere('tbl.workflowState = :approvedState')
                ->setParameter('approvedState', 'approved');
 
-            $qb->andWhere('tbl.«endField.name.formatForCode» < :today')
+            $qb->andWhere('tbl.' . $endField . ' < :today')
                ->setParameter('today', $today);
 
             $query = $repository->getQueryFromBuilder($qb);
 
-            $affectedEntities = $query->getResult();
+            return $query->getResult();
+        }
 
-            $action = 'archive';
-            foreach ($affectedEntities as $entity) {
-                «IF !application.targets('1.5')»
-                    $entity->initWorkflow();
+        /**
+         * Archives a single entity.
+         *
+         * @param object $entity The given entity instance
+         *
+         * @return bool True if everything worked successfully, false otherwise
+         */
+        protected function archiveSingleObject($entity)
+        {
+            «IF !targets('1.5')»
+                $entity->initWorkflow();
 
-                «ENDIF»
-                «IF !skipHookSubscribers»
+            «ENDIF»
+            «IF hasHookSubscribers»
+                if ($entity->supportsHookSubscribers())
                     // Let any hooks perform additional validation actions
                     $validationHooksPassed = $this->hookHelper->callValidationHooks($entity, 'validate_edit');
                     if (!$validationHooksPassed) {
-                        continue;
+                        return false;
                     }
-
-                «ENDIF»
-                $success = false;
-                try {
-                    // execute the workflow action
-                    $success = $this->workflowHelper->executeAction($entity, $action);
-                } catch(\Exception $exception) {
-                    $flashBag = $this->request->getSession()->getFlashBag();
-                    $flashBag->add('error', $this->translator->__f('Sorry, but an error occured during the %action% action. Please apply the changes again!', ['%action%' => $action]) . '  ' . $exception->getMessage());
                 }
 
-                if (!$success) {
-                    continue;
-                }
-                «IF !skipHookSubscribers»
-
-                    // Let any hooks know that we have updated an item
-                    $urlArgs = $entity->createUrlArgs();
-                    $urlArgs['_locale'] = $this->request->getLocale();
-                    $url = new RouteUrl('«application.appName.formatForDB»_«name.formatForCode»_display', $urlArgs);
-                    $this->hookHelper->callProcessHooks($entity, 'process_edit', $url);
-                «ENDIF»
+            «ENDIF»
+            $success = false;
+            try {
+                // execute the workflow action
+                $success = $this->workflowHelper->executeAction($entity, 'archive');
+            } catch(\Exception $exception) {
+                $flashBag = $this->request->getSession()->getFlashBag();
+                $flashBag->add('error', $this->translator->__f('Sorry, but an error occured during the %action% action. Please apply the changes again!', ['%action%' => $action]) . '  ' . $exception->getMessage());
             }
+
+            if (!$success) {
+                return false;
+            }
+            «IF hasHookSubscribers»
+
+                if ($entity->supportsHookSubscribers())
+                    // Let any hooks know that we have updated an item
+                    $objectType = $entity->get_objectType();
+                    $url = null;
+
+                    $hasDisplayPage = in_array($objectType, ['«getAllEntities.filter[hasDisplayAction].map[name.formatForCode].join('\', \'')»']);
+                    if ($hasDisplayPage) {
+                        $urlArgs = $entity->createUrlArgs();
+                        $urlArgs['_locale'] = $this->request->getLocale();
+                        $url = new RouteUrl('«appName.formatForDB»_' . strtolower($objectType) . '_display', $urlArgs);
+                	}
+                    $this->hookHelper->callProcessHooks($entity, 'process_edit', $url);
+                }
+            «ENDIF»
         }
     '''
 
