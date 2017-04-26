@@ -179,8 +179,6 @@ class Repository {
             «fh.getterAndSetterMethods(it, 'defaultSortingField', 'string', false, true, false, '', '')»
             «fh.getterAndSetterMethods(it, 'request', 'Request', false, true, false, '', '')»
 
-            «getViewQuickNavParameters»
-
             «truncateTable»
             «new UserDeletion().generate(it)»
 
@@ -260,79 +258,6 @@ class Repository {
             use «app.appNamespace»\Helper\ImageHelper;
         «ENDIF»
 
-    '''
-
-    def private getViewQuickNavParameters(Entity it) '''
-        /**
-         * Returns an array of additional template variables for view quick navigation forms.
-         *
-         * @param string $context Usage context (allowed values: controllerAction, api, actionHandler, block, contentType)
-         * @param array  $args    Additional arguments
-         *
-         * @return array List of template variables to be assigned
-         */
-        public function getViewQuickNavParameters($context = '', $args = [])
-        {
-            if (!in_array($context, ['controllerAction', 'api', 'actionHandler', 'block', 'contentType'])) {
-                $context = 'controllerAction';
-            }
-
-            $parameters = [];
-            «IF categorisable»
-                $categoryHelper = \ServiceUtil::get('«app.appService».category_helper');
-                $parameters['catId'] = $this->getRequest()->query->get('catId', '');
-                $parameters['catIdList'] = $categoryHelper->retrieveCategoriesFromRequest('«name.formatForCode»', 'GET');
-            «ENDIF»
-            «IF !getBidirectionalIncomingJoinRelationsWithOneSource.empty»
-                «FOR relation: getBidirectionalIncomingJoinRelationsWithOneSource»
-                    «val sourceAliasName = relation.getRelationAliasName(false)»
-                    $parameters['«sourceAliasName»'] = $this->getRequest()->query->get('«sourceAliasName»', 0);
-                «ENDFOR»
-            «ENDIF»
-            «IF hasListFieldsEntity»
-                «FOR field : getListFieldsEntity»
-                    «val fieldName = field.name.formatForCode»
-                    $parameters['«fieldName»'] = $this->getRequest()->query->get('«fieldName»', '');
-                «ENDFOR»
-            «ENDIF»
-            «IF hasUserFieldsEntity»
-                «FOR field : getUserFieldsEntity»
-                    «val fieldName = field.name.formatForCode»
-                    $parameters['«fieldName»'] = (int) $this->getRequest()->query->get('«fieldName»', 0);
-                «ENDFOR»
-            «ENDIF»
-            «IF hasCountryFieldsEntity»
-                «FOR field : getCountryFieldsEntity»
-                    «val fieldName = field.name.formatForCode»
-                    $parameters['«fieldName»'] = $this->getRequest()->query->get('«fieldName»', '');
-                «ENDFOR»
-            «ENDIF»
-            «IF hasLanguageFieldsEntity»
-                «FOR field : getLanguageFieldsEntity»
-                    «val fieldName = field.name.formatForCode»
-                    $parameters['«fieldName»'] = $this->getRequest()->query->get('«fieldName»', '');
-                «ENDFOR»
-            «ENDIF»
-            «IF hasLocaleFieldsEntity»
-                «FOR field : getLocaleFieldsEntity»
-                    «val fieldName = field.name.formatForCode»
-                    $parameters['«fieldName»'] = $this->getRequest()->query->get('«fieldName»', '');
-                «ENDFOR»
-            «ENDIF»
-            «IF hasAbstractStringFieldsEntity»
-                $parameters['q'] = $this->getRequest()->query->get('q', '');
-            «ENDIF»
-            «/* not needed as already handled in the controller
-            $parameters['pageSize'] = (int) $this->getRequest()->query->get('pageSize', $pageSize);*/»
-            «IF hasBooleanFieldsEntity»
-                «FOR field : getBooleanFieldsEntity»
-                    «val fieldName = field.name.formatForCode»
-                    $parameters['«fieldName»'] = $this->getRequest()->query->get('«fieldName»', '');
-                «ENDFOR»
-            «ENDIF»
-
-            return $parameters;
-        }
     '''
 
     def private truncateTable(Entity it) '''
@@ -628,7 +553,7 @@ class Repository {
                 return $qb;
             }
 
-            $parameters = $this->getViewQuickNavParameters('', []);
+            $parameters = \ServiceUtil::get('«app.appService».collection_filter_helper')->getViewQuickNavParameters('«name.formatForCode»', '', []);
             foreach ($parameters as $k => $v) {
                 «IF categorisable»
                     if ($k == 'catId') {

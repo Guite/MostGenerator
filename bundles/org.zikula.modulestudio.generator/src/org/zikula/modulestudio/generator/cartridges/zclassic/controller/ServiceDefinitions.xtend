@@ -383,7 +383,7 @@ class ServiceDefinitions {
                         - "@translator.default"
                         - "@«modPrefix».entity_factory"
                         «IF !entity.incoming.empty || !entity.outgoing.empty»
-                            "@«modPrefix».entity_display_helper"
+                            - "@«modPrefix».entity_display_helper"
                         «ENDIF»
                         «IF entity instanceof Entity && (entity as Entity).hasTranslatableFields»
                             - "@zikula_extensions_module.api.variable"
@@ -488,6 +488,14 @@ class ServiceDefinitions {
                     - "@zikula_categories_module.api.category_permission"
 
         «ENDIF»
+        «modPrefix».collection_filter_helper:
+            class: «nsBase»CollectionFilterHelper
+            arguments:
+                - "@request_stack"
+                «IF hasCategorisableEntities»
+                    - "@«modPrefix».category_helper"
+                «ENDIF»
+
         «modPrefix».controller_helper:
             class: «nsBase»ControllerHelper
             arguments:
@@ -511,6 +519,7 @@ class ServiceDefinitions {
                     - "@zikula_users_module.current_user"
                 «ENDIF»
                 - "@«modPrefix».entity_factory"
+                - "@«modPrefix».collection_filter_helper"
                 «IF hasViewActions && hasEditActions»
                     - "@«modPrefix».model_helper"
                 «ENDIF»

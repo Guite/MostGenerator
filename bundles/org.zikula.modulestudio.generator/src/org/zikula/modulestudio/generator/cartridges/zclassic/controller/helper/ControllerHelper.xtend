@@ -67,6 +67,7 @@ class ControllerHelper {
             use Zikula\UsersModule\Entity\UserEntity;
         «ENDIF»
         use «appNamespace»\Entity\Factory\«name.formatForCodeCapital»Factory;
+        use «appNamespace»\Helper\CollectionFilterHelper;
         «IF needsFeatureActivationHelper»
             use «appNamespace»\Helper\FeatureActivationHelper;
         «ENDIF»
@@ -130,6 +131,11 @@ class ControllerHelper {
              * @var «name.formatForCodeCapital»Factory
              */
             protected $entityFactory;
+
+            /**
+             * @var CollectionFilterHelper
+             */
+            protected $collectionFilterHelper;
             «IF hasViewActions && hasEditActions»
 
                 /**
@@ -175,6 +181,7 @@ class ControllerHelper {
              * @param CurrentUserApi«IF targets('1.5')»Interface«ELSE»     «ENDIF» $currentUserApi  CurrentUserApi service instance
              «ENDIF»
              * @param «name.formatForCodeCapital»Factory $entityFactory «name.formatForCodeCapital»Factory service instance
+             * @param CollectionFilterHelper $collectionFilterHelper CollectionFilterHelper service instance
              «IF hasViewActions && hasEditActions»
              * @param ModelHelper         $modelHelper     ModelHelper service instance
              «ENDIF»
@@ -205,7 +212,8 @@ class ControllerHelper {
                 «IF hasGeographical»
                     CurrentUserApi«IF targets('1.5')»Interface«ENDIF» $currentUserApi,
                 «ENDIF»
-                «name.formatForCodeCapital»Factory $entityFactory«IF hasViewActions && hasEditActions»,
+                «name.formatForCodeCapital»Factory $entityFactory,
+                CollectionFilterHelper $collectionFilterHelper«IF hasViewActions && hasEditActions»,
                 ModelHelper $modelHelper«ENDIF»«IF hasUploads»,
                 ImageHelper $imageHelper«ENDIF»«IF needsFeatureActivationHelper»,
                 FeatureActivationHelper $featureActivationHelper«ENDIF»
@@ -230,6 +238,7 @@ class ControllerHelper {
                     $this->currentUserApi = $currentUserApi;
                 «ENDIF»
                 $this->entityFactory = $entityFactory;
+                $this->collectionFilterHelper = $collectionFilterHelper;
                 «IF hasViewActions && hasEditActions»
                     $this->modelHelper = $modelHelper;
                 «ENDIF»
@@ -650,8 +659,7 @@ class ControllerHelper {
                     $args['action'] = end($routeNameParts);
                 }
                 if (in_array($args['action'], ['index', 'view'])) {
-                    $repository = $this->entityFactory->getRepository($objectType); 
-                    $parameters = array_merge($parameters, $repository->getViewQuickNavParameters($context, $args));
+                    $parameters = array_merge($parameters, $this->collectionFilterHelper->getViewQuickNavParameters($objectType, $context, $args));
                 }
                 «IF hasUploads»
 

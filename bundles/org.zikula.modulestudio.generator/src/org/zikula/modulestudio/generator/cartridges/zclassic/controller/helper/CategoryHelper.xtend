@@ -254,7 +254,7 @@ class CategoryHelper {
          * Adds a list of where clauses for a certain list of categories to a given query builder.
          *
          * @param QueryBuilder $queryBuilder Query builder instance to be enhanced
-         * @param string       $objectType   The object type to be treated (optional)
+         * @param string       $objectType   The treated object type (optional)
          * @param array        $catIds       Category ids grouped by property name
          *
          * @return QueryBuilder The enriched query builder instance

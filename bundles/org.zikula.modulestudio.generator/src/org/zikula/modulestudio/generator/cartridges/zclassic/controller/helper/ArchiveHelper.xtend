@@ -35,6 +35,7 @@ class ArchiveHelper {
 
         use Doctrine\ORM\QueryBuilder;
         use Psr\Log\LoggerInterface;
+        use Symfony\Component\HttpFoundation\Request;
         use Symfony\Component\HttpFoundation\RequestStack;
         use Zikula\Common\Translator\TranslatorInterface;
         use Zikula\Core\RouteUrl;
