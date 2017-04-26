@@ -163,9 +163,8 @@ class BlockList {
             $repository = $this->get('«appService».entity_factory')->getRepository($objectType);
 
             // create query
-            $where = $properties['filter'];
             $orderBy = $this->get('«appService».model_helper')->resolveSortParameter($objectType, $properties['sorting']);
-            $qb = $repository->genericBaseQuery($where, $orderBy);
+            $qb = $repository->genericBaseQuery($properties['filter'], $orderBy);
             «IF hasCategorisableEntities»
 
                 // fetch category registries

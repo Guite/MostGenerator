@@ -43,12 +43,6 @@ class NewsletterView {
         {foreachelse}
             <p class="alert alert-warning">{gt text='No object types found.'}</p>
         {/foreach}
-«/*
-
-            {include file='includeFilterSyntaxDialog.tpl'}
-
-        «editTemplateJs»
-*/»
     '''
 
     def private editTemplateObjectTypes(Application it) '''
@@ -112,17 +106,7 @@ class NewsletterView {
             <label for="«appName.toFirstLower»Args_{$objectType}_filter" class="col-sm-3 control-label">{gt text='Filter (expert option)'}:</label>
             <div class="col-sm-9">
                 <input type="text" id="«appName.toFirstLower»Args_{$objectType}_filter" name="«appName»Args[{$objectType}][filter]" value="{$pageArgs.$objectType.filter|default:''}" size="40" class="form-control" />
-                {*<span class="help-block">
-                    <a class="fa fa-filter" data-toggle="modal" data-target="#filterSyntaxModal">{gt text='Show syntax examples'}</a>
-                </span>*}
             </div>
         </div>
     '''
-/*
-    def private editTemplateJs(Application it) '''
-        {pageaddvar name='stylesheet' value='web/bootstrap/css/bootstrap.min.css'}
-        {pageaddvar name='stylesheet' value='web/bootstrap/css/bootstrap-theme.min.css'}
-        {pageaddvar name='javascript' value='web/bootstrap/js/bootstrap.min.js'}
-    '''
-*/
 }

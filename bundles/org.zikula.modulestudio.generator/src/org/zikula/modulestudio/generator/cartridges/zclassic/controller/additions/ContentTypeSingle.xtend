@@ -124,15 +124,8 @@ class ContentTypeSingle {
 
             $this->objectType = $data['objectType'];
 
-            if (!isset($data['id'])) {
-                $data['id'] = null;
-            }
-            if (!isset($data['displayMode'])) {
-                $data['displayMode'] = 'embed';
-            }
-
-            $this->id = $data['id'];
-            $this->displayMode = $data['displayMode'];
+            $this->id = isset($data['id']) ? $data['id'] : null;
+            $this->displayMode = isset($data['displayMode']) ? $data['displayMode'] : 'embed';
         }
 
         /**

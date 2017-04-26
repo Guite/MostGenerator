@@ -226,13 +226,8 @@ class ContentTypeListView {
             {formlabel for='«appName.toFirstLower»Filter' text=$filterLabel«editLabelClass»}
             <div class="col-sm-9">
                 {formtextinput id='«appName.toFirstLower»Filter' dataField='filter' group='data' mandatory=false maxLength=255«editInputClass»}
-                {*<span class="help-block">
-                    <a class="fa fa-filter" data-toggle="modal" data-target="#filterSyntaxModal">{gt text='Show syntax examples' domain='«appName.formatForDB»'}</a>
-                </span>*}
             </div>
         </div>
-
-        {*include file='include_filterSyntaxDialog.tpl'*}
     '''
 
     def private detailLink(Entity it, String appName) '''

@@ -185,27 +185,11 @@ class ContentTypeList {
 
             $this->objectType = $data['objectType'];
 
-            if (!isset($data['sorting'])) {
-                $data['sorting'] = 'default';
-            }
-            if (!isset($data['amount'])) {
-                $data['amount'] = 1;
-            }
-            if (!isset($data['template'])) {
-                $data['template'] = 'itemlist_' . $this->objectType . '_display.html.twig';
-            }
-            if (!isset($data['customTemplate'])) {
-                $data['customTemplate'] = '';
-            }
-            if (!isset($data['filter'])) {
-                $data['filter'] = '';
-            }
-
-            $this->sorting = $data['sorting'];
-            $this->amount = $data['amount'];
-            $this->template = $data['template'];
-            $this->customTemplate = $data['customTemplate'];
-            $this->filter = $data['filter'];
+            $this->sorting = isset($data['sorting']) ? $data['sorting'] : 'default';
+            $this->amount = isset($data['amount']) ? $data['amount'] : 1;
+            $this->template = isset($data['template']) ? $data['template'] : 'itemlist_' . $this->objectType . '_display.html.twig';
+            $this->customTemplate = isset($data['customTemplate']) ? $data['customTemplate'] : '';
+            $this->filter = isset($data['filter']) ? $data['filter'] : '';
             «IF hasCategorisableEntities»
                 $featureActivationHelper = $this->container->get('«appService».feature_activation_helper');
                 if ($featureActivationHelper->isEnabled(FeatureActivationHelper::CATEGORIES, $this->objectType)) {
@@ -271,9 +255,8 @@ class ContentTypeList {
             $permissionApi = $this->container->get('zikula_permissions_module.api.permission');
 
             // create query
-            $where = $this->filter;
             $orderBy = $this->container->get('«appService».model_helper')->resolveSortParameter($this->objectType, $this->sorting);
-            $qb = $repository->genericBaseQuery($where, $orderBy);
+            $qb = $repository->genericBaseQuery($this->filter, $orderBy);
             «IF hasCategorisableEntities»
 
                 $featureActivationHelper = $this->container->get('«appService».feature_activation_helper');

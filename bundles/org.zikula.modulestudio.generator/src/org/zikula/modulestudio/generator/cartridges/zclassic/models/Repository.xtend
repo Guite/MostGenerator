@@ -1,6 +1,5 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.models
 
-import de.guite.modulestudio.metamodel.AbstractDateField
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.ArrayField
 import de.guite.modulestudio.metamodel.BooleanField
@@ -248,15 +247,6 @@ class Repository {
         use InvalidArgumentException;
         use Psr\Log\LoggerInterface;
         use Symfony\Component\HttpFoundation\Request;
-        use Zikula\Component\FilterUtil\FilterUtil;
-        use Zikula\Component\FilterUtil\Config as FilterConfig;
-        use Zikula\Component\FilterUtil\PluginManager as FilterPluginManager;
-        «IF !fields.filter(AbstractDateField).empty»
-            use Zikula\Component\FilterUtil\Plugin\DatePlugin as DateFilter;
-        «ENDIF»
-        «IF categorisable»
-            use Zikula\Core\FilterUtil\CategoryPlugin as CategoryFilter;
-        «ENDIF»
         use Zikula\Common\Translator\TranslatorInterface;
         use Zikula\UsersModule\Api\«IF app.targets('1.5')»ApiInterface\CurrentUserApiInterface«ELSE»CurrentUserApi«ENDIF»;
         «IF ownerPermission && app.targets('1.5')»
@@ -1019,59 +1009,6 @@ class Repository {
          */
         protected function genericBaseQueryAddWhere(QueryBuilder $qb, $where = '')
         {
-            if (!empty($where) || null !== $this->getRequest()) {
-                // Use FilterUtil to support generic filtering.
-
-                // Create filter configuration.
-                $filterConfig = new FilterConfig($qb);
-
-                // Define plugins to be used during filtering.
-                $filterPluginManager = new FilterPluginManager(
-                    $filterConfig,
-
-                    // Array of plugins to load.
-                    // If no plugin with default = true given the compare plugin is loaded and used for unconfigured fields.
-                    // Multiple objects of the same plugin with different configurations are possible.
-                    [
-                        «IF !fields.filter(AbstractDateField).empty»
-                            new DateFilter([«FOR field : fields.filter(AbstractDateField) SEPARATOR ', '»'«field.name.formatForCode»'«ENDFOR»/*, 'tblJoin.someJoinedField'*/])
-                        «ENDIF»
-                    ],
-
-                    // Allowed operators per field.
-                    // Array in the form "field name => operator array".
-                    // If a field is not set in this array all operators are allowed.
-                    []
-                );
-                «IF categorisable»
-
-                    // add category plugins dynamically for all existing registry properties
-                    // we need to create one category plugin instance for each one
-                    $categoryHelper = \ServiceUtil::get('«app.appService».category_helper');
-                    $categoryProperties = $categoryHelper->getAllProperties('«name.formatForCode»');
-                    foreach ($categoryProperties as $propertyName => $registryId) {
-                        $config['plugins'][] = new CategoryFilter('«app.appName»', $propertyName, 'categories' . ucfirst($propertyName));
-                    }
-                «ENDIF»
-
-                // Name of filter variable(s) (filterX).
-                $filterKey = 'filter';
-
-                // initialise FilterUtil and assign both query builder and configuration
-                $filterUtil = new FilterUtil($filterPluginManager, $this->getRequest(), $filterKey);
-
-                // set our given filter
-                if (!empty($where)) {
-                    $filterUtil->setFilter($where);
-                }
-
-                // you could add explicit filters at this point, something like
-                // $filterUtil->addFilter('foo:eq:something,bar:gt:100');
-                // read more at https://github.com/zikula/core/tree/«IF app.targets('1.5')»1.5/src/docs«ELSE»1.4/src/docs/Core-2.0«ENDIF»/FilterUtil
-
-                // now enrich the query builder
-                $filterUtil->enrichQuery();
-            }
             «IF standardFields»
 
                 if (null === $this->getRequest()) {
@@ -1140,7 +1077,7 @@ class Repository {
 
     def private getQueryFromBuilder(Entity it) '''
         /**
-         * Retrieves Doctrine query from query builder, applying FilterUtil and other common actions.
+         * Retrieves Doctrine query from query builder.
          *
          * @param QueryBuilder $qb Query builder instance
          *

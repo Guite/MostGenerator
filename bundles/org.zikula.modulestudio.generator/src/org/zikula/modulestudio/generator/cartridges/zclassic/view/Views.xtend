@@ -10,7 +10,6 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.view.extensions.Att
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.extensions.Categories
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.extensions.ModerationPanel
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.extensions.StandardFields
-import org.zikula.modulestudio.generator.cartridges.zclassic.view.pagecomponents.FilterSyntaxDialog
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.pagecomponents.Relations
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.pages.Config
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.pages.Custom
@@ -74,7 +73,6 @@ class Views {
         }
 
         layoutHelper.baseTemplates(it)
-        new FilterSyntaxDialog().generate(it, fsa)
         if (needsConfig) {
             new Config().generate(it, fsa)
         }
