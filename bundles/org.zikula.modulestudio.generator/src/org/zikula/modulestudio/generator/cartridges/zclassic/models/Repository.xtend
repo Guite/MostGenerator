@@ -180,7 +180,6 @@ class Repository {
             «fh.getterAndSetterMethods(it, 'defaultSortingField', 'string', false, true, false, '', '')»
             «fh.getterAndSetterMethods(it, 'request', 'Request', false, true, false, '', '')»
 
-            «getAdditionalTemplateParameters»
             «getViewQuickNavParameters»
 
             «truncateTable»
@@ -273,58 +272,6 @@ class Repository {
 
     '''
 
-    def private getAdditionalTemplateParameters(Entity it) '''
-        /**
-         * Returns an array of additional template variables which are specific to the object type treated by this repository.
-         *
-         «IF app.hasUploads»
-         * @param string $context Usage context (allowed values: controllerAction, api, actionHandler, block, contentType)
-         * @param array  $args    Additional arguments
-         «ELSE»
-         * @param ImageHelper $imageHelper ImageHelper service instance
-         * @param string      $context     Usage context (allowed values: controllerAction, api, actionHandler, block, contentType)
-         * @param array       $args        Additional arguments
-         «ENDIF»
-         *
-         * @return array List of template variables to be assigned
-         */
-        public function getAdditionalTemplateParameters(«IF app.hasUploads»ImageHelper $imageHelper, «ENDIF»$context = '', $args = [])
-        {
-            if (!in_array($context, ['controllerAction', 'api', 'actionHandler', 'block', 'contentType'])) {
-                $context = 'controllerAction';
-            }
-
-            $templateParameters = [];
-
-            if ($context == 'controllerAction') {
-                if (!isset($args['action'])) {
-                    $args['action'] = $this->getRequest()->query->getAlpha('func', 'index');
-                }
-                if (in_array($args['action'], ['index', 'view'])) {
-                    $templateParameters = $this->getViewQuickNavParameters($context, $args);
-                }
-                «IF app.hasUploads»
-
-                    // initialise Imagine runtime options
-                    «IF hasUploadFieldsEntity»
-                        $objectType = '«name.formatForCode»';
-                        $thumbRuntimeOptions = [];
-                        «FOR uploadField : getUploadFieldsEntity»
-                            $thumbRuntimeOptions[$objectType . '«uploadField.name.formatForCodeCapital»'] = $imageHelper->getRuntimeOptions($objectType, '«uploadField.name.formatForCode»', $context, $args);
-                        «ENDFOR»
-                        $templateParameters['thumbRuntimeOptions'] = $thumbRuntimeOptions;
-                    «ENDIF»
-                    if (in_array($args['action'], ['display', 'edit', 'view'])) {
-                        // use separate preset for images in related items
-                        $templateParameters['relationThumbRuntimeOptions'] = $imageHelper->getCustomRuntimeOptions('', '', '«app.appName»_relateditem', $context, $args);
-                    }
-                «ENDIF»
-            }
-
-            return $templateParameters;
-        }
-    '''
-
     def private getViewQuickNavParameters(Entity it) '''
         /**
          * Returns an array of additional template variables for view quick navigation forms.
@@ -334,7 +281,7 @@ class Repository {
          *
          * @return array List of template variables to be assigned
          */
-        protected function getViewQuickNavParameters($context = '', $args = [])
+        public function getViewQuickNavParameters($context = '', $args = [])
         {
             if (!in_array($context, ['controllerAction', 'api', 'actionHandler', 'block', 'contentType'])) {
                 $context = 'controllerAction';
@@ -394,11 +341,6 @@ class Repository {
                 «ENDFOR»
             «ENDIF»
 
-            // in the concrete child class you could do something like
-            // $parameters = parent::getViewQuickNavParameters($context, $args);
-            // $parameters['myvar'] = 'myvalue';
-            // return $parameters;
-
             return $parameters;
         }
     '''
@@ -437,6 +379,8 @@ class Repository {
          * @param QueryBuilder $qb     Query builder to be enhanced
          *
          * @return QueryBuilder Enriched query builder instance
+         *
+         * @throws InvalidArgumentException Thrown if invalid parameters are received
          */
         protected function addIdListFilter($idList, QueryBuilder $qb)
         {
@@ -472,8 +416,6 @@ class Repository {
          * @param boolean $slimMode If activated only some basic fields are selected without using any joins (optional) (default=false)
          *
          * @return array|«name.formatForCode»Entity retrieved data array or «name.formatForCode»Entity instance
-         *
-         * @throws InvalidArgumentException Thrown if invalid parameters are received
          */
         public function selectById($id = 0, $useJoins = true, $slimMode = false)
         {
@@ -490,8 +432,6 @@ class Repository {
          * @param boolean $slimMode If activated only some basic fields are selected without using any joins (optional) (default=false)
          *
          * @return ArrayCollection collection containing retrieved «name.formatForCode»Entity instances
-         *
-         * @throws InvalidArgumentException Thrown if invalid parameters are received
          */
         public function selectByIdList($idList = [0], $useJoins = true, $slimMode = false)
         {

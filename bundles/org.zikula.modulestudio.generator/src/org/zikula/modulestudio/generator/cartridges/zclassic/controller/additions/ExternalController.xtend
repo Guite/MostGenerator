@@ -132,13 +132,8 @@ class ExternalController {
             'displayMode' => $displayMode
         ];
 
-        $contextArgs = ['controller' => $objectType, 'action' => 'display'];
-        $additionalParameters = $repository->getAdditionalTemplateParameters(«IF hasUploads»$this->get('«appService».image_helper'), «ENDIF»'controllerAction', $contextArgs);
-        $templateParameters = array_merge($templateParameters, $additionalParameters);
-        «IF needsFeatureActivationHelper»
-
-            $templateParameters['featureActivationHelper'] = $this->get('«appService».feature_activation_helper');
-        «ENDIF»
+        $contextArgs = ['controller' => 'external', 'action' => 'display'];
+        $templateParameters = $this->get('«appService».controller_helper')->addTemplateParameters($objectType, $templateParameters, 'controllerAction', $contextArgs);
 
         return $this->render('@«appName»/External/' . ucfirst($objectType) . '/display.html.twig', $templateParameters);
     '''
@@ -295,15 +290,9 @@ class ExternalController {
         $templateParameters['items'] = $entities;
         $templateParameters['finderForm'] = $form->createView();
 
-        «IF hasImageFields»
-            $imageHelper = $this->get('«appService».image_helper');
-            $templateParameters = array_merge($templateParameters, $repository->getAdditionalTemplateParameters($imageHelper, 'controllerAction', ['action' => 'display']));
+        $contextArgs = ['controller' => 'external', 'action' => 'display'];
+        $templateParameters = $this->get('«appService».controller_helper')->addTemplateParameters($objectType, $templateParameters, 'controllerAction', $contextArgs);
 
-        «ENDIF»
-        «IF needsFeatureActivationHelper»
-            $templateParameters['featureActivationHelper'] = $this->get('«appService».feature_activation_helper');
-
-        «ENDIF»
         $templateParameters['pager'] = [
             'numitems' => $objectCount,
             'itemsperpage' => $resultsPerPage

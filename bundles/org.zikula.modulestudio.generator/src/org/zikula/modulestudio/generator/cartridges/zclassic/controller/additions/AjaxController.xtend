@@ -279,14 +279,10 @@ class AjaxController {
         protected function prepareSlimItem($repository, $objectType, $item, $itemId, $descriptionField)
         {
             $previewParameters = [
-                $objectType => $item«IF hasCategorisableEntities»,«ENDIF»
-                «IF hasCategorisableEntities»
-                    'featureActivationHelper' => $this->get('«appService».feature_activation_helper')
-                «ENDIF»
+                $objectType => $item
             ];
             $contextArgs = ['controller' => $objectType, 'action' => 'display'];
-            $additionalParameters = $repository->getAdditionalTemplateParameters(«IF hasUploads»$this->get('«appService».image_helper'), «ENDIF»'controllerAction', $contextArgs);
-            $previewParameters = array_merge($previewParameters, $additionalParameters);
+            $previewParameters = $this->get('«appService».controller_helper')->addTemplateParameters($objectType, $previewParameters, 'controllerAction', $contextArgs);
 
             $previewInfo = base64_encode($this->get('twig')->render('@«appName»/External/' . ucfirst($objectType) . '/info.html.twig', $previewParameters));
 

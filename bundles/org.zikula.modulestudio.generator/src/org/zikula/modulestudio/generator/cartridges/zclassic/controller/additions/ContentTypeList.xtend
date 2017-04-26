@@ -325,10 +325,7 @@ class ContentTypeList {
                 }
             «ENDIF»
 
-            «IF hasUploads»
-                $imageHelper = $this->container->get('«appService».image_helper');
-            «ENDIF»
-            $templateParameters = array_merge($templateParameters, $repository->getAdditionalTemplateParameters(«IF hasUploads»$imageHelper, «ENDIF»'contentType'));
+            $templateParameters = $this->container->get('«appService».controller_helper')->addTemplateParameters($this->objectType, $templateParameters, 'contentType', []);
 
             $template = $this->getDisplayTemplate();
 

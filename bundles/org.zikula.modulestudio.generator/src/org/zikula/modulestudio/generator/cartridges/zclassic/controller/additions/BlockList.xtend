@@ -213,10 +213,8 @@ class BlockList {
                     $templateParameters['properties'] = $properties;
                 }
             «ENDIF»
-            «IF hasUploads»
-                $imageHelper = $this->get('«appService».image_helper');
-            «ENDIF»
-            $templateParameters = array_merge($templateParameters, $repository->getAdditionalTemplateParameters(«IF hasUploads»$imageHelper, «ENDIF»'block'));
+
+            $templateParameters = $this->get('«appService».controller_helper')->addTemplateParameters($properties['objectType'], $templateParameters, 'block', []);
 
             return $this->renderView($template, $templateParameters);
         }

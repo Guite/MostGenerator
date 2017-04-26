@@ -113,7 +113,7 @@ class View {
                 {% endif %}
             {% endif %}
         «ENDIF»
-        {% if showAllEntries == 1 %}
+        {% if all == 1 %}
             {% set linkTitle = __('Back to paginated view') %}
             <a href="{{ path('«appName.formatForDB»_«objName.toLowerCase»_' ~ routeArea ~ 'view') }}" title="{{ linkTitle|e('html_attr') }}" class="fa fa-table">{{ linkTitle }}</a>
         {% else %}
@@ -251,7 +251,7 @@ class View {
 
     def private pagerCall(Entity it, String appName) '''
 
-        {% if showAllEntries != 1 and pager|default %}
+        {% if all != 1 and pager|default %}
             {{ pager({ rowcount: pager.amountOfItems, limit: pager.itemsPerPage, display: 'page', route: '«appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ 'view'}) }}
         {% endif %}
     '''

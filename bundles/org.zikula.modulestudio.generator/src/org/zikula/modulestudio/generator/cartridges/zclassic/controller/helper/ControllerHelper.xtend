@@ -6,7 +6,6 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.controller.Controll
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
-import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
@@ -16,7 +15,6 @@ class ControllerHelper {
 
     extension ControllerExtensions = new ControllerExtensions
     extension FormattingExtensions = new FormattingExtensions
-    extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     extension ModelExtensions = new ModelExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension NamingExtensions = new NamingExtensions
@@ -272,6 +270,8 @@ class ControllerHelper {
 
                 «processDeleteActionParameters»
             «ENDIF»
+
+            «addTemplateParameters»
             «IF hasGeographical»
 
                 «performGeoCoding»
@@ -288,7 +288,7 @@ class ControllerHelper {
          *
          * @return array List of allowed object types
          */
-        public function getObjectTypes($context = '', $args = [])
+        public function getObjectTypes($context = '', array $args = [])
         {
             if (!in_array($context, ['controllerAction', 'api', 'helper', 'actionHandler', 'block', 'contentType', 'util'])) {
                 $context = 'controllerAction';
@@ -312,15 +312,13 @@ class ControllerHelper {
          *
          * @return string The name of the default object type
          */
-        public function getDefaultObjectType($context = '', $args = [])
+        public function getDefaultObjectType($context = '', array $args = [])
         {
             if (!in_array($context, ['controllerAction', 'api', 'helper', 'actionHandler', 'block', 'contentType', 'util'])) {
                 $context = 'controllerAction';
             }
 
-            $defaultObjectType = '«getLeadingEntity.name.formatForCode»';
-
-            return $defaultObjectType;
+            return '«getLeadingEntity.name.formatForCode»';
         }
     '''
 
@@ -457,64 +455,26 @@ class ControllerHelper {
 
                 if ('tree' == $request->query->getAlnum('tpl', '')) {
                     $templateParameters['trees'] = $repository->selectAllTrees();
-                    $templateParameters = array_merge($templateParameters, $repository->getAdditionalTemplateParameters(«IF hasUploads»$this->imageHelper, «ENDIF»'controllerAction', $contextArgs));
-                    «IF needsFeatureActivationHelper»
-                        $templateParameters['featureActivationHelper'] = $this->featureActivationHelper;
-                    «ENDIF»
 
-                    return $templateParameters;
+                    return $this->addTemplateParameters($objectType, $templateParameters, 'controllerAction', $contextArgs);
                 }
             «ENDIF»
 
-            $showOwnEntries = $request->query->getInt('own', $this->variableApi->get('«appName»', 'showOnlyOwnEntries', 0));
-            $showAllEntries = $request->query->getInt('all', 0);
+            $templateParameters['all'] = 'csv' == $request->getRequestFormat() ? 1 : $request->query->getInt('all', 0);
+            $templateParameters['own'] = $request->query->getInt('own', $this->variableApi->get('«appName»', 'showOnlyOwnEntries', 0));
 
-            «IF generateCsvTemplates»
-                if (!$showAllEntries && $request->getRequestFormat() == 'csv') {
-                    $showAllEntries = 1;
-                }
-
-            «ENDIF»
-
-            «IF hasHookSubscribers»
-                if (true === $supportsHooks) {
-                    $currentUrlArgs = [];
-                    if ($showAllEntries == 1) {
-                        $currentUrlArgs['all'] = 1;
-                    }
-                    if ($showOwnEntries == 1) {
-                        $currentUrlArgs['own'] = 1;
-                    }
-                }
-
-            «ENDIF»
             $resultsPerPage = 0;
-            if ($showAllEntries != 1) {
+            if ($templateParameters['all'] != 1) {
                 // the number of items displayed on a page for pagination
                 $resultsPerPage = $request->query->getInt('num', 0);
                 if (in_array($resultsPerPage, [0, 10])) {
                     $resultsPerPage = $this->variableApi->get('«appName»', $objectType . 'EntriesPerPage', 10);
                 }
             }
-
-            $additionalParameters = $repository->getAdditionalTemplateParameters(«IF hasUploads»$this->imageHelper, «ENDIF»'controllerAction', $contextArgs);
-
-            $additionalUrlParameters = [
-                'all' => $showAllEntries,
-                'own' => $showOwnEntries,
-                'num' => $resultsPerPage
-            ];
-            foreach ($additionalParameters as $parameterName => $parameterValue) {
-                if (false !== stripos($parameterName, 'thumbRuntimeOptions')) {
-                    continue;
-                }
-                $additionalUrlParameters[$parameterName] = $parameterValue;
-            }
-
-            $templateParameters['all'] = $showAllEntries;
-            $templateParameters['own'] = $showOwnEntries;
             $templateParameters['num'] = $resultsPerPage;
             $templateParameters['tpl'] = $request->query->getAlnum('tpl', '');
+
+            $templateParameters = $this->addTemplateParameters($objectType, $templateParameters, 'controllerAction', $contextArgs);
 
             $quickNavForm = $this->formFactory->create('«appNamespace»\Form\Type\QuickNavigation\\' . ucfirst($objectType) . 'QuickNavType', $templateParameters);
             if ($quickNavForm->handleRequest($request) && $quickNavForm->isSubmitted()) {
@@ -523,12 +483,8 @@ class ControllerHelper {
                     if ($fieldName == 'routeArea') {
                         continue;
                     }
-                    if ($fieldName == 'all') {
-                        $showAllEntries = $additionalUrlParameters['all'] = $templateParameters['all'] = $fieldValue;
-                    } elseif ($fieldName == 'own') {
-                        $showOwnEntries = $additionalUrlParameters['own'] = $templateParameters['own'] = $fieldValue;
-                    } elseif ($fieldName == 'num') {
-                        $resultsPerPage = $additionalUrlParameters['num'] = $fieldValue;
+                    if (in_array($fieldName, ['all', 'own', 'num'])) {
+                        $templateParameters[$fieldName] = $fieldValue;
                     } else {
                         // set filter as query argument, fetched inside repository
                         «IF hasUserFields»
@@ -540,14 +496,20 @@ class ControllerHelper {
                     }
                 }
             }
+
+            $urlParameters = $templateParameters;
+            foreach ($urlParameters as $parameterName => $parameterValue) {
+                if (false !== stripos($parameterName, 'thumbRuntimeOptions')) {
+                    unset($urlParameters[$parameterName]);
+                }
+            }
+
             $sort = $sortableColumns->getSortColumn()->getName();
             $sortdir = $sortableColumns->getSortDirection();
-            $sortableColumns->setAdditionalUrlParameters($additionalUrlParameters);
-            $templateParameters['sort'] = $sort;
-            $templateParameters['sortdir'] = $sortdir;
+            $sortableColumns->setAdditionalUrlParameters($urlParameters);
 
             $where = '';
-            if ($showAllEntries == 1) {
+            if ($templateParameters['all'] == 1) {
                 // retrieve item list without pagination
                 $entities = $repository->selectWhere($where, $sort . ' ' . $sortdir);
             } else {
@@ -564,35 +526,23 @@ class ControllerHelper {
                 ];
             }
 
-            «IF hasHookSubscribers»
-                if (true === $supportsHooks) {
-                    // build RouteUrl instance for display hooks
-                    $currentUrlArgs['_locale'] = $request->getLocale();
-                    $currentUrlObject = new RouteUrl('«appName.formatForDB»_' . $objectType . '_' . /*$templateParameters['routeArea'] . */'view', $currentUrlArgs);
-                }
-
-            «ENDIF»
-            $templateParameters['items'] = $entities;
             $templateParameters['sort'] = $sort;
             $templateParameters['sortdir'] = $sortdir;
-            $templateParameters['num'] = $resultsPerPage;
+            $templateParameters['items'] = $entities;
+
             «IF hasHookSubscribers»
+
                 if (true === $supportsHooks) {
-                    $templateParameters['currentUrlObject'] = $currentUrlObject;
+                    // build RouteUrl instance for display hooks
+                    $urlParameters['_locale'] = $request->getLocale();
+                    $templateParameters['currentUrlObject'] = new RouteUrl('«appName.formatForDB»_' . $objectType . '_' . /*$templateParameters['routeArea'] . */'view', $urlParameters);
                 }
             «ENDIF»
-            $templateParameters = array_merge($templateParameters, $additionalParameters);
 
             $templateParameters['sort'] = $sortableColumns->generateSortableColumns();
             $templateParameters['quickNavForm'] = $quickNavForm->createView();
-
-            $templateParameters['showAllEntries'] = $templateParameters['all'];
-            $templateParameters['showOwnEntries'] = $templateParameters['own'];
-
-            «IF needsFeatureActivationHelper»
-                $templateParameters['featureActivationHelper'] = $this->featureActivationHelper;
-            «ENDIF»
             «IF hasEditActions»
+
                 $templateParameters['canBeCreated'] = $this->modelHelper->canBeCreated($objectType);
             «ENDIF»
 
@@ -618,28 +568,18 @@ class ControllerHelper {
             if (!in_array($objectType, $this->getObjectTypes('controllerAction', $contextArgs))) {
                 throw new Exception($this->__('Error! Invalid object type received.'));
             }
-
-            $repository = $this->entityFactory->getRepository($objectType);
-            $repository->setRequest($this->request);
-            $entity = $templateParameters[$objectType];
             «IF hasHookSubscribers»
 
                 if (true === $supportsHooks) {
                     // build RouteUrl instance for display hooks
-                    $currentUrlArgs = $entity->createUrlArgs();
-                    $currentUrlArgs['_locale'] = $this->request->getLocale();
-                    $currentUrlObject = new RouteUrl('«appName.formatForDB»_' . $objectType . '_' . /*$templateParameters['routeArea'] . */'display', $currentUrlArgs);
-                    $templateParameters['currentUrlObject'] = $currentUrlObject;
+                    $entity = $templateParameters[$objectType];
+                    $urlParameters = $entity->createUrlArgs();
+                    $urlParameters['_locale'] = $this->request->getLocale();
+                    $templateParameters['currentUrlObject'] = new RouteUrl('«appName.formatForDB»_' . $objectType . '_' . /*$templateParameters['routeArea'] . */'display', $urlParameters);
                 }
             «ENDIF»
 
-            $additionalParameters = $repository->getAdditionalTemplateParameters(«IF hasUploads»$this->imageHelper, «ENDIF»'controllerAction', $contextArgs);
-            $templateParameters = array_merge($templateParameters, $additionalParameters);
-            «IF needsFeatureActivationHelper»
-                $templateParameters['featureActivationHelper'] = $this->featureActivationHelper;
-            «ENDIF»
-
-            return $templateParameters;
+            return $this->addTemplateParameters($objectType, $templateParameters, 'controllerAction', $contextArgs);
         }
     '''
 
@@ -659,16 +599,7 @@ class ControllerHelper {
                 throw new Exception($this->__('Error! Invalid object type received.'));
             }
 
-            $repository = $this->entityFactory->getRepository($objectType);
-            $repository->setRequest($this->request);
-
-            $additionalParameters = $repository->getAdditionalTemplateParameters(«IF hasUploads»$this->imageHelper, «ENDIF»'controllerAction', $contextArgs);
-            $templateParameters = array_merge($templateParameters, $additionalParameters);
-            «IF needsFeatureActivationHelper»
-                $templateParameters['featureActivationHelper'] = $this->featureActivationHelper;
-            «ENDIF»
-
-            return $templateParameters;
+            return $this->addTemplateParameters($objectType, $templateParameters, 'controllerAction', $contextArgs);
         }
     '''
 
@@ -691,13 +622,61 @@ class ControllerHelper {
                 throw new Exception($this->__('Error! Invalid object type received.'));
             }
 
-            $repository = $this->entityFactory->getRepository($objectType);
-            $repository->setRequest($this->request);
+            return $this->addTemplateParameters($objectType, $templateParameters, 'controllerAction', $contextArgs);
+        }
+    '''
 
-            $additionalParameters = $repository->getAdditionalTemplateParameters(«IF hasUploads»$this->imageHelper, «ENDIF»'controllerAction', $contextArgs);
-            $templateParameters = array_merge($templateParameters, $additionalParameters);
+    def private addTemplateParameters(Application it) '''
+        /**
+         * Returns an array of additional template variables which are specific to the object type treated by this repository.
+         *
+         * @param string $objectType Name of treated entity type
+         * @param array  $parameters Given parameters to enrich
+         * @param string $context    Usage context (allowed values: controllerAction, api, actionHandler, block, contentType)
+         * @param array  $args       Additional arguments
+         *
+         * @return array List of template variables to be assigned
+         */
+        public function addTemplateParameters($objectType = '', array $parameters = [], $context = '', array $args = [])
+        {
+            if (!in_array($context, ['controllerAction', 'api', 'actionHandler', 'block', 'contentType', 'mailz'])) {
+                $context = 'controllerAction';
+            }
 
-            return $templateParameters;
+            if ($context == 'controllerAction') {
+                if (!isset($args['action'])) {
+                    $routeName = $request->get('_route');
+                    $routeNameParts = explode('_', $routeName);
+                    $args['action'] = end($routeNameParts);
+                }
+                if (in_array($args['action'], ['index', 'view'])) {
+                    $repository = $this->entityFactory->getRepository($objectType); 
+                    $parameters = array_merge($parameters, $repository->getViewQuickNavParameters($context, $args));
+                }
+                «IF hasUploads»
+
+                    // initialise Imagine runtime options
+                    «FOR entity : getUploadEntities»
+                        if ($objectType == '«entity.name.formatForCode»') {
+                            $thumbRuntimeOptions = [];
+                            «FOR uploadField : entity.getUploadFieldsEntity»
+                                $thumbRuntimeOptions[$objectType . '«uploadField.name.formatForCodeCapital»'] = $this->imageHelper->getRuntimeOptions($objectType, '«uploadField.name.formatForCode»', $context, $args);
+                            «ENDFOR»
+                            $parameters['thumbRuntimeOptions'] = $thumbRuntimeOptions;
+                        }
+                    «ENDFOR»
+                    if (in_array($args['action'], ['display', 'edit', 'view'])) {
+                        // use separate preset for images in related items
+                        $parameters['relationThumbRuntimeOptions'] = $this->imageHelper->getCustomRuntimeOptions('', '', '«appName»_relateditem', $context, $args);
+                    }
+                «ENDIF»
+            }
+            «IF needsFeatureActivationHelper»
+
+                $parameters['featureActivationHelper'] = $this->featureActivationHelper;
+            «ENDIF»
+
+            return $parameters;
         }
     '''
 

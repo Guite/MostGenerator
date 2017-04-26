@@ -132,10 +132,8 @@ class Mailz {
                 'objectType' => $objectType,
                 'items' => $entities
             ];
-            «IF hasUploads»
-                $imageHelper = $this->container->get('«appService».image_helper');
-            «ENDIF»
-            $templateParameters = array_merge($templateParameters, $repository->getAdditionalTemplateParameters(«IF hasUploads»$imageHelper, «ENDIF»'api', ['name' => 'mailz']));
+
+            $templateParameters = $this->container->get('«appService».controller_helper')->addTemplateParameters($objectType, $templateParameters, 'mailz', []);
 
             return $this->container->get('twig')->render(
                 '@«appName»/Mailz/itemlist_' . $objectType . $templateType . '.twig',
