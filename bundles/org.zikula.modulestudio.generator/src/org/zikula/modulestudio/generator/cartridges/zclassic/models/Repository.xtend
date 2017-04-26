@@ -341,8 +341,6 @@ class Repository {
          * Used during installation when inserting default data.
          *
          * @param LoggerInterface $logger Logger service instance
-         *
-         * @return void
          */
         public function truncateTable(LoggerInterface $logger)
         {
@@ -405,7 +403,7 @@ class Repository {
          * @param boolean $useJoins Whether to include joining related objects (optional) (default=true)
          * @param boolean $slimMode If activated only some basic fields are selected without using any joins (optional) (default=false)
          *
-         * @return array|«name.formatForCode»Entity retrieved data array or «name.formatForCode»Entity instance
+         * @return array|«name.formatForCode»Entity Retrieved data array or «name.formatForCode»Entity instance
          */
         public function selectById($id = 0, $useJoins = true, $slimMode = false)
         {
@@ -421,7 +419,7 @@ class Repository {
          * @param boolean $useJoins Whether to include joining related objects (optional) (default=true)
          * @param boolean $slimMode If activated only some basic fields are selected without using any joins (optional) (default=false)
          *
-         * @return ArrayCollection collection containing retrieved «name.formatForCode»Entity instances
+         * @return ArrayCollection Collection containing retrieved «name.formatForCode»Entity instances
          */
         public function selectByIdList($idList = [0], $useJoins = true, $slimMode = false)
         {
@@ -445,7 +443,7 @@ class Repository {
          * @param boolean $slimMode If activated only some basic fields are selected without using any joins (optional) (default=false)
          * @param integer $excludeId Optional id to be excluded (used for unique validation)
          *
-         * @return «entityClassName('', false)» retrieved instance of «entityClassName('', false)»
+         * @return «entityClassName('', false)» Retrieved instance of «entityClassName('', false)»
          *
          * @throws InvalidArgumentException Thrown if invalid parameters are received
          */
@@ -538,7 +536,7 @@ class Repository {
          * @param boolean $useJoins Whether to include joining related objects (optional) (default=true)
          * @param boolean $slimMode If activated only some basic fields are selected without using any joins (optional) (default=false)
          *
-         * @return QueryBuilder query builder for the given arguments
+         * @return QueryBuilder Query builder for the given arguments
          */
         public function getListQueryBuilder($where = '', $orderBy = '', $useJoins = true, $slimMode = false)
         {
@@ -558,7 +556,7 @@ class Repository {
          * @param boolean $useJoins Whether to include joining related objects (optional) (default=true)
          * @param boolean $slimMode If activated only some basic fields are selected without using any joins (optional) (default=false)
          *
-         * @return ArrayCollection collection containing retrieved «name.formatForCode»Entity instances
+         * @return ArrayCollection Collection containing retrieved «name.formatForCode»Entity instances
          */
         public function selectWhere($where = '', $orderBy = '', $useJoins = true, $slimMode = false)
         {
@@ -601,7 +599,7 @@ class Repository {
          * @param boolean $useJoins       Whether to include joining related objects (optional) (default=true)
          * @param boolean $slimMode       If activated only some basic fields are selected without using any joins (optional) (default=false)
          *
-         * @return array with retrieved collection and amount of total records affected by this query
+         * @return array Retrieved collection and amount of total records affected by this query
          */
         public function selectWherePaginated($where = '', $orderBy = '', $currentPage = 1, $resultsPerPage = 25, $useJoins = true, $slimMode = false)
         {
@@ -777,7 +775,7 @@ class Repository {
          * @param integer $resultsPerPage Amount of items to select
          * @param boolean $useJoins       Whether to include joining related objects (optional) (default=true)
          *
-         * @return array with retrieved collection and amount of total records affected by this query
+         * @return array Retrieved collection and amount of total records affected by this query
          */
         public function selectSearch($fragment = '', $exclude = [], $orderBy = '', $currentPage = 1, $resultsPerPage = 25, $useJoins = true)
         {
@@ -834,7 +832,7 @@ class Repository {
          * @param string  $orderBy     The order-by clause to use when retrieving the collection (optional) (default='')
          * @param boolean $isPaginated Whether the given query uses a paginator or not (optional) (default=false)
          *
-         * @return array with retrieved collection and (for paginated queries) the amount of total records affected
+         * @return array Retrieved collection and (for paginated queries) the amount of total records affected
          */
         public function retrieveCollectionResult(Query $query, $orderBy = '', $isPaginated = false)
         {
@@ -896,7 +894,7 @@ class Repository {
          * @param boolean $useJoins   Whether to include joining related objects (optional) (default=false)
          * @param array   $parameters List of determined filter options
          *
-         * @return integer amount of affected records
+         * @return integer Amount of affected records
          */
         public function selectCount($where = '', $useJoins = false, $parameters = [])
         {
@@ -921,7 +919,7 @@ class Repository {
          * @param string  $fieldValue The value of the property to be checked
          * @param integer $excludeId  Id of «nameMultiple.formatForDisplay» to exclude (optional)
          *
-         * @return boolean result of this check, true if the given «name.formatForDisplay» does not already exist
+         * @return boolean Result of this check, true if the given «name.formatForDisplay» does not already exist
          */
         public function detectUniqueState($fieldName, $fieldValue, $excludeId = 0)
         {
@@ -951,7 +949,7 @@ class Repository {
          * @param boolean $useJoins Whether to include joining related objects (optional) (default=true)
          * @param boolean $slimMode If activated only some basic fields are selected without using any joins (optional) (default=false)
          *
-         * @return QueryBuilder query builder instance to be further processed
+         * @return QueryBuilder Query builder instance to be further processed
          */
         public function genericBaseQuery($where = '', $orderBy = '', $useJoins = true, $slimMode = false)
         {
@@ -1005,7 +1003,7 @@ class Repository {
          * @param QueryBuilder $qb    Given query builder instance
          * @param string       $where The where clause to use when retrieving the collection (optional) (default='')
          *
-         * @return QueryBuilder query builder instance to be further processed
+         * @return QueryBuilder Query builder instance to be further processed
          */
         protected function genericBaseQueryAddWhere(QueryBuilder $qb, $where = '')
         {
@@ -1038,7 +1036,7 @@ class Repository {
          * @param QueryBuilder $qb      Given query builder instance
          * @param string       $orderBy The order-by clause to use when retrieving the collection (optional) (default='')
          *
-         * @return QueryBuilder query builder instance to be further processed
+         * @return QueryBuilder Query builder instance to be further processed
          */
         protected function genericBaseQueryAddOrderBy(QueryBuilder $qb, $orderBy = '')
         {
@@ -1081,7 +1079,7 @@ class Repository {
          *
          * @param QueryBuilder $qb Query builder instance
          *
-         * @return Query query instance to be further processed
+         * @return Query Query instance to be further processed
          */
         public function getQueryFromBuilder(QueryBuilder $qb)
         {
