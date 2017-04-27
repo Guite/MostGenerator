@@ -278,10 +278,6 @@ class EntityDisplayHelper {
     def private displayPatternArguments(Entity it) {
         var result = ''
         for (patternPart : displayPatternParts) {
-            if (result != '') {
-                result = result.concat(",\n" + '        ')
-            }
-
             var CharSequence formattedPart = ''
             // check if patternPart equals a field name
             var matchedFields = getSelfAndParentDataObjects.map[fields].flatten.filter[name == patternPart]
@@ -294,6 +290,9 @@ class EntityDisplayHelper {
             } else {
                 // static part
                 // formattedPart = '\'' + patternPart.replace('\'', '') + '\''
+            }
+            if (formattedPart != '' && result != '') {
+                result = result.concat(",\n")
             }
             result = result.concat(formattedPart.toString)
         }
