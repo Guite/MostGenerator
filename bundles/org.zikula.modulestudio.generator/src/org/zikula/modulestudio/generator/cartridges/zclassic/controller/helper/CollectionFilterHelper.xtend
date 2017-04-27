@@ -180,7 +180,7 @@ class CollectionFilterHelper {
          *
          * @return QueryBuilder Enriched query builder instance
          */
-        protected function applyDefaultFilters($objectType = '', QueryBuilder $qb, $parameters = [])
+        public function applyDefaultFilters($objectType = '', QueryBuilder $qb, $parameters = [])
         {
             «FOR entity : getAllEntities»
                 if ($objectType == '«entity.name.formatForCode»') {
