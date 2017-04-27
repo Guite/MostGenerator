@@ -221,7 +221,7 @@ class ArchiveHelper {
 
             «ENDIF»
             «IF hasHookSubscribers»
-                if ($entity->supportsHookSubscribers())
+                if ($entity->supportsHookSubscribers()) {
                     // Let any hooks perform additional validation actions
                     $validationHooksPassed = $this->hookHelper->callValidationHooks($entity, 'validate_edit');
                     if (!$validationHooksPassed) {
@@ -244,7 +244,7 @@ class ArchiveHelper {
             }
             «IF hasHookSubscribers»
 
-                if ($entity->supportsHookSubscribers())
+                if ($entity->supportsHookSubscribers()) {
                     // Let any hooks know that we have updated an item
                     $objectType = $entity->get_objectType();
                     $url = null;
