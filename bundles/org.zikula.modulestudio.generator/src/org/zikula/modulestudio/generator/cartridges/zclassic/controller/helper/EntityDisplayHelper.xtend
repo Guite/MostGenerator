@@ -110,7 +110,7 @@ class EntityDisplayHelper {
                     $this->listEntriesHelper = $listEntriesHelper;
                 «ENDIF»
                 «IF hasAbstractDateFields || hasDecimalOrFloatNumberFields»
-                    $locale = $requestStack->getCurrentRequest()->getLocale();
+                    $locale = null !== $requestStack->getCurrentRequest() ? $requestStack->getCurrentRequest()->getLocale() : null;
                 «ENDIF»
                 «IF hasAbstractDateFields»
                     $this->dateFormatter = new IntlDateFormatter($locale, null, null);
