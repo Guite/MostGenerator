@@ -142,10 +142,19 @@ class ServiceDefinitions {
         «modPrefix».entity_lifecycle_listener:
             class: «appNamespace»\Listener\EntityLifecycleListener
             arguments:
-                - "@service_container"
                 - "@event_dispatcher"
                 - "@zikula_users_module.current_user"
                 - "@logger"
+                «IF hasUploads»
+                    - "@request_stack"
+                    - "@«modPrefix».upload_helper"
+                «ENDIF»
+                «IF !targets('1.5')»
+                    - "@translator.default"
+                    - "@session"
+                    - "@«entityManagerService»"
+                    - "@«modPrefix».workflow_helper"
+                «ENDIF»
             tags:
                 - { name: doctrine.event_subscriber }
 

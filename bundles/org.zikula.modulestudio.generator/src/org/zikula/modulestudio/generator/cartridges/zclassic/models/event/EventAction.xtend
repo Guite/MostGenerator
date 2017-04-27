@@ -3,14 +3,12 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.models.event
 import de.guite.modulestudio.metamodel.Application
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
-import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class EventAction {
 
     extension FormattingExtensions = new FormattingExtensions
     extension ModelExtensions = new ModelExtensions
-    extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
 
     String entityVar
@@ -70,22 +68,19 @@ class EventAction {
         «IF !targets('1.5')»
 
             // delete workflow for this entity
-            $workflowHelper = $this->container->get('«appService».workflow_helper');
-            $workflowHelper->normaliseWorkflowData(«entityVar»);
+            $this->workflowHelper->normaliseWorkflowData(«entityVar»);
             $workflow = «entityVar»['__WORKFLOW__'];
             if ($workflow['id'] > 0) {
-                $entityManager = $this->container->get('«entityManagerService»');
                 $result = true;
                 try {
-                    $workflow = $entityManager->find('Zikula\Core\Doctrine\Entity\WorkflowEntity', $workflow['id']);
-                    $entityManager->remove($workflow);
-                    $entityManager->flush();
+                    $workflow = $this->objectManager->find('Zikula\Core\Doctrine\Entity\WorkflowEntity', $workflow['id']);
+                    $this->objectManager->remove($workflow);
+                    $this->objectManager->flush();
                 } catch (\Exception $e) {
                     $result = false;
                 }
                 if (false === $result) {
-                    $flashBag = $this->container->get('session')->getFlashBag();
-                    $flashBag->add('error', $this->container->get('translator.default')->__('Error! Could not remove stored workflow. Deletion has been aborted.'));
+                    $this->session->getFlashBag()->add('error', $this->translator->__('Error! Could not remove stored workflow. Deletion has been aborted.'));
 
                     return false;
                 }
@@ -98,7 +93,6 @@ class EventAction {
         $objectId = «entityVar»->createCompositeIdentifier();
 
         «IF hasUploads»
-            $uploadHelper = $this->container->get('«appService».upload_helper');
             $uploadFields = $this->getUploadFields($objectType);
             foreach ($uploadFields as $uploadField) {
                 if (empty(«entityVar»[$uploadField])) {
@@ -106,7 +100,7 @@ class EventAction {
                 }
 
                 // remove upload file
-                $uploadHelper->deleteUploadFile(«entityVar», $uploadField);
+                $this->uploadHelper->deleteUploadFile(«entityVar», $uploadField);
             }
         «ENDIF»
 

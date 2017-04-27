@@ -30,17 +30,23 @@ class LifecycleListener {
         namespace «appNamespace»\Listener\Base;
 
         use Doctrine\Common\EventSubscriber;
+        «IF !targets('1.5')»
+            use Doctrine\Common\Persistence\ObjectManager;
+        «ENDIF»
         use Doctrine\Common\Persistence\Event\LifecycleEventArgs;
         use Doctrine\ORM\Event\PreUpdateEventArgs;
         use Doctrine\ORM\Events;
         use Psr\Log\LoggerInterface;
-        use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-        use Symfony\Component\DependencyInjection\ContainerAwareTrait;
-        use Symfony\Component\DependencyInjection\ContainerInterface;
         use Symfony\Component\EventDispatcher\Event;
         use Symfony\Component\EventDispatcher\EventDispatcher;
         «IF hasUploads»
             use Symfony\Component\HttpFoundation\File\File;
+            use Symfony\Component\HttpFoundation\Request;
+            use Symfony\Component\HttpFoundation\RequestStack;
+        «ENDIF»
+        «IF !targets('1.5')»
+            use Symfony\Component\HttpFoundation\Session\SessionInterface;
+            use Zikula\Common\Translator\TranslatorInterface;
         «ENDIF»
         use Zikula\Core\Doctrine\EntityAccess;
         use Zikula\UsersModule\Api\«IF targets('1.5')»ApiInterface\CurrentUserApiInterface«ELSE»CurrentUserApi«ENDIF»;
@@ -48,14 +54,18 @@ class LifecycleListener {
         «FOR entity : getAllEntities»
             use «appNamespace»\Event\Filter«entity.name.formatForCodeCapital»Event;
         «ENDFOR»
+        «IF hasUploads»
+            use «appNamespace»\Helper\UploadHelper;
+        «ENDIF»
+        «IF !targets('1.5')»
+            use «appNamespace»\Helper\WorkflowHelper;
+        «ENDIF»
 
         /**
          * Event subscriber base class for entity lifecycle events.
          */
-        abstract class AbstractEntityLifecycleListener implements EventSubscriber, ContainerAwareInterface
+        abstract class AbstractEntityLifecycleListener implements EventSubscriber
         {
-            use ContainerAwareTrait;
-
             /**
              * @var EventDispatcher
              */
@@ -70,28 +80,82 @@ class LifecycleListener {
              * @var LoggerInterface
              */
             protected $logger;
+            «IF hasUploads»
+
+                /**
+                 * @var Request
+                 */
+                protected $request;
+
+                /**
+                 * @var UploadHelper
+                 */
+                protected $uploadHelper;
+            «ENDIF»
+            «IF !targets('1.5')»
+
+                /**
+                 * @var TranslatorInterface
+                 */
+                protected $translator;
+
+                /**
+                 * @var SessionInterface
+                 */
+                protected $session;
+
+                /**
+                 * @var ObjectManager
+                 */
+                protected $objectManager;
+
+                /**
+                 * @var WorkflowHelper
+                 */
+                protected $workflowHelper;
+            «ENDIF»
 
             /**
              * EntityLifecycleListener constructor.
              *
-             * @param ContainerInterface $container
-             * @param EventDispatcher    $eventDispatcher
-             * @param CurrentUserApi«IF targets('1.5')»Interface«ENDIF» $currentUserApi
+             * @param EventDispatcher    $eventDispatcher EventDispatcher service instance
+             * @param CurrentUserApi«IF targets('1.5')»Interface«ENDIF» $currentUserApi CurrentUserApi service instance
              * @param LoggerInterface    $logger
+             «IF hasUploads»
+             * @param RequestStack       $requestStack    RequestStack service instance
+             * @param UploadHelper       $uploadHelper    UploadHelper service instance
+             «ENDIF»
+             «IF !targets('1.5')»
+             * @param TranslatorInterface $translator     Translator service instance
+             * @param SessionInterface   $session         Session service instance
+             * @param ObjectManager      $objectManager   Doctrine object manager
+             * @param WorkflowHelper     $workflowHelper  WorkflowHelper service instance
+             «ENDIF»
              */
             public function __construct(
-                ContainerInterface $container,
                 EventDispatcher $eventDispatcher,
                 CurrentUserApi«IF targets('1.5')»Interface«ENDIF» $currentUserApi,
-                LoggerInterface $logger)
+                LoggerInterface $logger«IF hasUploads»,
+                RequestStack $requestStack,
+                UploadHelper $uploadHelper«ENDIF»«IF !targets('1.5')»,
+                TranslatorInterface $translator,
+                SessionInterface $session,
+                ObjectManager $objectManager,
+                WorkflowHelper $workflowHelper«ENDIF»)
             {
-                if (null === $container) {
-                    $container = \ServiceUtil::getManager();
-                }
-                $this->setContainer($container);
                 $this->eventDispatcher = $eventDispatcher;
                 $this->currentUserApi = $currentUserApi;
                 $this->logger = $logger;
+                «IF hasUploads»
+                    $this->request = $requestStack->getCurrentRequest();
+                    $this->uploadHelper = $uploadHelper;
+                «ENDIF»
+                «IF !targets('1.5')»,
+                    $this->translator = $translator;
+                    $this->session = $session;
+                    $this->objectManager = $objectManager;
+                    $this->workflowHelper = $workflowHelper;
+                «ENDIF»
             }
 
             /**
@@ -241,11 +305,9 @@ class LifecycleListener {
                     // prepare helper fields for uploaded files
                     $uploadFields = $this->getUploadFields($entity->get_objectType());
                     if (count($uploadFields) > 0) {
-                        $request = $this->container->get('request_stack')->getCurrentRequest();
-                        $baseUrl = $request->getSchemeAndHttpHost() . $request->getBasePath();
-                        $uploadHelper = $this->container->get('«appService».upload_helper');
+                        $baseUrl = $this->request->getSchemeAndHttpHost() . $this->request->getBasePath();
                         foreach ($uploadFields as $fieldName) {
-                            $uploadHelper->initialiseUploadField($entity, $fieldName, $baseUrl);
+                            $this->uploadHelper->initialiseUploadField($entity, $fieldName, $baseUrl);
                         }
                     }
                 «ENDIF»
