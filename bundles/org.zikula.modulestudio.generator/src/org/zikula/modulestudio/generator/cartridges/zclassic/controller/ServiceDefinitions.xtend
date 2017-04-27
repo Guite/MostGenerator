@@ -143,7 +143,6 @@ class ServiceDefinitions {
             class: «appNamespace»\Listener\EntityLifecycleListener
             arguments:
                 - "@event_dispatcher"
-                - "@zikula_users_module.current_user"
                 - "@logger"
                 «IF hasUploads»
                     - "@request_stack"
@@ -151,7 +150,6 @@ class ServiceDefinitions {
                 «ENDIF»
                 «IF !targets('1.5')»
                     - "@translator.default"
-                    - "@session"
                     - "@«entityManagerService»"
                     - "@«modPrefix».workflow_helper"
                 «ENDIF»

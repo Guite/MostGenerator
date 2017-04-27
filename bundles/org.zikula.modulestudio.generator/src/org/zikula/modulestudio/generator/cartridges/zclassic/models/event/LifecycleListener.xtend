@@ -45,11 +45,9 @@ class LifecycleListener {
             use Symfony\Component\HttpFoundation\RequestStack;
         «ENDIF»
         «IF !targets('1.5')»
-            use Symfony\Component\HttpFoundation\Session\SessionInterface;
             use Zikula\Common\Translator\TranslatorInterface;
         «ENDIF»
         use Zikula\Core\Doctrine\EntityAccess;
-        use Zikula\UsersModule\Api\«IF targets('1.5')»ApiInterface\CurrentUserApiInterface«ELSE»CurrentUserApi«ENDIF»;
         use «appNamespace»\«name.formatForCodeCapital»Events;
         «FOR entity : getAllEntities»
             use «appNamespace»\Event\Filter«entity.name.formatForCodeCapital»Event;
@@ -70,11 +68,6 @@ class LifecycleListener {
              * @var EventDispatcher
              */
             protected $eventDispatcher;
-
-            /**
-             * @var CurrentUserApi«IF targets('1.5')»Interface«ENDIF»
-             */
-            protected $currentUserApi;
 
             /**
              * @var LoggerInterface
@@ -100,11 +93,6 @@ class LifecycleListener {
                 protected $translator;
 
                 /**
-                 * @var SessionInterface
-                 */
-                protected $session;
-
-                /**
                  * @var ObjectManager
                  */
                 protected $objectManager;
@@ -119,7 +107,6 @@ class LifecycleListener {
              * EntityLifecycleListener constructor.
              *
              * @param EventDispatcher    $eventDispatcher EventDispatcher service instance
-             * @param CurrentUserApi«IF targets('1.5')»Interface«ENDIF» $currentUserApi CurrentUserApi service instance
              * @param LoggerInterface    $logger
              «IF hasUploads»
              * @param RequestStack       $requestStack    RequestStack service instance
@@ -127,24 +114,20 @@ class LifecycleListener {
              «ENDIF»
              «IF !targets('1.5')»
              * @param TranslatorInterface $translator     Translator service instance
-             * @param SessionInterface   $session         Session service instance
              * @param ObjectManager      $objectManager   Doctrine object manager
              * @param WorkflowHelper     $workflowHelper  WorkflowHelper service instance
              «ENDIF»
              */
             public function __construct(
                 EventDispatcher $eventDispatcher,
-                CurrentUserApi«IF targets('1.5')»Interface«ENDIF» $currentUserApi,
                 LoggerInterface $logger«IF hasUploads»,
                 RequestStack $requestStack,
                 UploadHelper $uploadHelper«ENDIF»«IF !targets('1.5')»,
                 TranslatorInterface $translator,
-                SessionInterface $session,
                 ObjectManager $objectManager,
                 WorkflowHelper $workflowHelper«ENDIF»)
             {
                 $this->eventDispatcher = $eventDispatcher;
-                $this->currentUserApi = $currentUserApi;
                 $this->logger = $logger;
                 «IF hasUploads»
                     $this->request = $requestStack->getCurrentRequest();
@@ -152,7 +135,6 @@ class LifecycleListener {
                 «ENDIF»
                 «IF !targets('1.5')»
                     $this->translator = $translator;
-                    $this->session = $session;
                     $this->objectManager = $objectManager;
                     $this->workflowHelper = $workflowHelper;
                 «ENDIF»

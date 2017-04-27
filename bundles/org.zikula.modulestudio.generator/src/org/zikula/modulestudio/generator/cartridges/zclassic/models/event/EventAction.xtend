@@ -50,8 +50,8 @@ class EventAction {
 
     def postPersist(Application it) '''
         $objectId = «entityVar»->createCompositeIdentifier();
-        $logArgs = ['app' => '«appName»', 'user' => $this->currentUserApi->get('uname'), 'entity' => «entityVar»->get_objectType(), 'id' => $objectId];
-        $this->logger->debug('{app}: User {user} created the {entity} with id {id}.', $logArgs);
+        $logArgs = ['app' => '«appName»', 'entity' => «entityVar»->get_objectType(), 'id' => $objectId];
+        $this->logger->debug('{app}: An {entity} with id {id} has been created.', $logArgs);
 
         // create the filter event and dispatch it
         $event = $this->createFilterEvent(«entityVar»);
@@ -80,8 +80,6 @@ class EventAction {
                     $result = false;
                 }
                 if (false === $result) {
-                    $this->session->getFlashBag()->add('error', $this->translator->__('Error! Could not remove stored workflow. Deletion has been aborted.'));
-
                     return false;
                 }
             }
@@ -104,8 +102,8 @@ class EventAction {
             }
         «ENDIF»
 
-        $logArgs = ['app' => '«appName»', 'user' => $this->currentUserApi->get('uname'), 'entity' => $objectType, 'id' => $objectId];
-        $this->logger->debug('{app}: User {user} removed the {entity} with id {id}.', $logArgs);
+        $logArgs = ['app' => '«appName»', 'entity' => $objectType, 'id' => $objectId];
+        $this->logger->debug('{app}: An {entity} with id {id} has been removed.', $logArgs);
 
         // create the filter event and dispatch it
         $event = $this->createFilterEvent(«entityVar»);
@@ -138,8 +136,8 @@ class EventAction {
 
     def postUpdate(Application it) '''
         $objectId = «entityVar»->createCompositeIdentifier();
-        $logArgs = ['app' => '«appName»', 'user' => $this->currentUserApi->get('uname'), 'entity' => «entityVar»->get_objectType(), 'id' => $objectId];
-        $this->logger->debug('{app}: User {user} updated the {entity} with id {id}.', $logArgs);
+        $logArgs = ['app' => '«appName»', 'entity' => «entityVar»->get_objectType(), 'id' => $objectId];
+        $this->logger->debug('{app}: An {entity} with id {id} has been updated.', $logArgs);
 
         // create the filter event and dispatch it
         $event = $this->createFilterEvent(«entityVar»);
