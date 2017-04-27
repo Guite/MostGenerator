@@ -71,7 +71,7 @@ class LinkContainer {
 
             «IF generateAccountApi»
                 /**
-                 * @var VariableApi
+                 * @var VariableApi«IF targets('1.5')»Interface«ENDIF»
                  */
                 protected $variableApi;
 
@@ -95,7 +95,7 @@ class LinkContainer {
              * @param Routerinterface     $router           Router service instance
              * @param PermissionApi«IF targets('1.5')»Interface«ENDIF»       $permissionApi    PermissionApi service instance
              «IF generateAccountApi»
-             * @param VariableApi         $variableApi      VariableApi service instance
+             * @param VariableApi«IF targets('1.5')»Interface«ENDIF»         $variableApi      VariableApi service instance
              «ENDIF»
              «IF generateAccountApi || hasEditActions»
              * @param CurrentUserApi«IF targets('1.5')»Interface«ELSE»     «ENDIF» $currentUserApi   CurrentUserApi service instance
@@ -107,7 +107,7 @@ class LinkContainer {
                 RouterInterface $router,
                 PermissionApi«IF targets('1.5')»Interface«ENDIF» $permissionApi,
                 «IF generateAccountApi»
-                    VariableApi $variableApi,
+                    VariableApi«IF targets('1.5')»Interface«ENDIF» $variableApi,
                 «ENDIF»
                 «IF generateAccountApi || hasEditActions»
                     CurrentUserApi«IF targets('1.5')»Interface«ENDIF» $currentUserApi,
