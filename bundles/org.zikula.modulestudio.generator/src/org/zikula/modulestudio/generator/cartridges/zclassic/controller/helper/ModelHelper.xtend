@@ -38,6 +38,7 @@ class ModelHelper {
         namespace «appNamespace»\Helper\Base;
 
         use «appNamespace»\Entity\Factory\«name.formatForCodeCapital»Factory;
+        use «appNamespace»\Helper\CollectionFilterHelper;
 
         /**
          * Helper base class for model layer methods.
@@ -50,13 +51,20 @@ class ModelHelper {
             protected $entityFactory;
 
             /**
+             * @var CollectionFilterHelper
+             */
+            protected $collectionFilterHelper;
+
+            /**
              * ModelHelper constructor.
              *
              * @param «name.formatForCodeCapital»Factory $entityFactory «name.formatForCodeCapital»Factory service instance
+             * @param CollectionFilterHelper $collectionFilterHelper CollectionFilterHelper service instance
              */
-            public function __construct(«name.formatForCodeCapital»Factory $entityFactory)
+            public function __construct(«name.formatForCodeCapital»Factory $entityFactory, CollectionFilterHelper $collectionFilterHelper)
             {
                 $this->entityFactory = $entityFactory;
+                $this->collectionFilterHelper = $collectionFilterHelper;
             }
 
             «canBeCreated»
@@ -182,7 +190,11 @@ class ModelHelper {
                 return false;
             }
 
-            return $repository->selectCount() > 0;
+            $qb = $repository->getCountQuery();
+            $qb = $this->collectionFilterHelper->applyDefaultFilters($objectType, $qb);
+            $query = $repository->getQueryFromBuilder($qb);
+
+            return $query->getSingleScalarResult() > 0;
         }
     '''
 

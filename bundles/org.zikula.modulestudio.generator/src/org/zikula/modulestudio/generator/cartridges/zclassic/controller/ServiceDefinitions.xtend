@@ -583,6 +583,7 @@ class ServiceDefinitions {
             class: «nsBase»ModelHelper
             arguments:
                 - "@«modPrefix».entity_factory"
+                - "@«modPrefix».collection_filter_helper"
         «IF needsApproval»
 
             «modPrefix».notification_helper:
@@ -672,6 +673,9 @@ class ServiceDefinitions {
                         - "@zikula_users_module.current_user"
                     «ENDIF»
                     - "@«modPrefix».entity_factory"
+                    «IF needsApproval»
+                        - "@«modPrefix».collection_filter_helper"
+                    «ENDIF»
                 «ENDIF»
                 - "@«modPrefix».listentries_helper"
     '''

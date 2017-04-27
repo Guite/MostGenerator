@@ -200,7 +200,7 @@ class Repository {
 
             «retrieveCollectionResult»
 
-            «selectCount»
+            «getCountQuery»
 
             «new Tree().generate(it, app)»
 
@@ -619,7 +619,7 @@ class Repository {
         }
     '''
 
-    def private selectCount(Entity it) '''
+    def private getCountQuery(Entity it) '''
         /**
          * Returns query builder instance for a count query.
          *
@@ -628,7 +628,7 @@ class Repository {
          *
          * @return QueryBuilder Created query builder instance
          */
-        protected function getCountQuery($where = '', $useJoins = false)
+        public function getCountQuery($where = '', $useJoins = false)
         {
             $selection = 'COUNT(tbl.«getFirstPrimaryKey.name.formatForCode») AS num«nameMultiple.formatForCodeCapital»';
             if (true === $useJoins) {
@@ -648,29 +648,6 @@ class Repository {
             }
 
             return $qb;
-        }
-
-        /**
-         * Selects entity count with a given where clause.
-         *
-         * @param string  $where      The where clause to use when retrieving the object count (optional) (default='')
-         * @param boolean $useJoins   Whether to include joining related objects (optional) (default=false)
-         * @param array   $parameters List of determined filter options
-         *
-         * @return integer Amount of affected records
-         */
-        public function selectCount($where = '', $useJoins = false, $parameters = [])
-        {
-            $qb = $this->getCountQuery($where, $useJoins);
-
-            $qb = \ServiceUtil::get('«app.appService».collection_filter_helper')->applyDefaultFilters('«name.formatForCode»', $qb, $parameters);
-
-            $query = $qb->getQuery();
-            «IF hasPessimisticReadLock»
-                $query->setLockMode(LockMode::«lockType.lockTypeAsConstant»);
-            «ENDIF»
-
-            return $query->getSingleScalarResult();
         }
     '''
 
