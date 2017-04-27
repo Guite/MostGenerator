@@ -49,7 +49,11 @@ class SearchHelper {
         use Zikula\Core\RouteUrl;
         use Zikula\PermissionsModule\Api\«IF targets('1.5')»ApiInterface\PermissionApiInterface«ELSE»PermissionApi«ENDIF»;
         use Zikula\SearchModule\Entity\SearchResultEntity;
-        use Zikula\SearchModule\SearchableInterface;
+        «IF targets('1.5')»
+            use Zikula\SearchModule\SearchableInterface;
+        «ELSE»
+            use Zikula\SearchModule\AbstractSearchable;
+        «ENDIF»
         use «appNamespace»\Entity\Factory\«name.formatForCodeCapital»Factory;
         «IF hasCategorisableEntities»
             use «appNamespace»\Helper\CategoryHelper;
@@ -63,7 +67,7 @@ class SearchHelper {
         /**
          * Search helper base class.
          */
-        abstract class AbstractSearchHelper implements SearchableInterface
+        abstract class AbstractSearchHelper«IF targets('1.5')» implements SearchableInterface«ELSE»extends AbstractSearchable«ENDIF»
         {
             «searchHelperBaseImpl»
         }
@@ -218,7 +222,7 @@ class SearchHelper {
         /**
          * @inheritDoc
          */
-        public function amendForm(FormBuilderInterface $form)
+        public function amendForm(FormBuilderInterface $builder)
         {
             if (!$this->permissionApi->hasPermission('«appName»::', '::', ACCESS_READ)) {
                 return '';
