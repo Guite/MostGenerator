@@ -106,16 +106,16 @@ class LifecycleListener {
             /**
              * EntityLifecycleListener constructor.
              *
-             * @param EventDispatcher    $eventDispatcher EventDispatcher service instance
-             * @param LoggerInterface    $logger
+             * @param EventDispatcher $eventDispatcher EventDispatcher service instance
+             * @param LoggerInterface $logger          Logger service instance
              «IF hasUploads»
-             * @param RequestStack       $requestStack    RequestStack service instance
-             * @param UploadHelper       $uploadHelper    UploadHelper service instance
+             * @param RequestStack    $requestStack    RequestStack service instance
+             * @param UploadHelper    $uploadHelper    UploadHelper service instance
              «ENDIF»
              «IF !targets('1.5')»
              * @param TranslatorInterface $translator     Translator service instance
-             * @param ObjectManager      $objectManager   Doctrine object manager
-             * @param WorkflowHelper     $workflowHelper  WorkflowHelper service instance
+             * @param ObjectManager   $objectManager   Doctrine object manager
+             * @param WorkflowHelper  $workflowHelper  WorkflowHelper service instance
              «ENDIF»
              */
             public function __construct(

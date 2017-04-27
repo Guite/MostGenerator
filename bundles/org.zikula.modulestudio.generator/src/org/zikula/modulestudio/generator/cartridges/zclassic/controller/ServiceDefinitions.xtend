@@ -649,7 +649,6 @@ class ServiceDefinitions {
                 class: «nsBase»UploadHelper
                 arguments:
                     - "@translator.default"
-                    - "@session"
                     - "@liip_imagine.cache.manager"
                     - "@logger"
                     - "@zikula_users_module.current_user"
