@@ -394,7 +394,7 @@ class CategoryHelper {
         public function hasPermission($entity)
         {
             «IF targets('1.5')»
-            return $this->categoryPermissionApi->hasCategoryAccess($entity['categories'], ACCESS_OVERVIEW);
+            return $this->categoryPermissionApi->hasCategoryAccess($entity->getCategories()->toArray(), ACCESS_OVERVIEW);
             «ELSE»
             $objectType = $entity->get_objectType();
             $categories = $entity['categories'];
