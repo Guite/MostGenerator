@@ -150,7 +150,7 @@ class LifecycleListener {
                     $this->request = $requestStack->getCurrentRequest();
                     $this->uploadHelper = $uploadHelper;
                 «ENDIF»
-                «IF !targets('1.5')»,
+                «IF !targets('1.5')»
                     $this->translator = $translator;
                     $this->session = $session;
                     $this->objectManager = $objectManager;
