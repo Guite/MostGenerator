@@ -114,7 +114,7 @@ class ServiceDefinitions {
     def private servicesEntityFactory(Application it) '''
         # Entity factory
         «modPrefix».entity_factory:
-            class: «appNamespace»\Entity\Factory\«name.formatForCodeCapital»Factory
+            class: «appNamespace»\Entity\Factory\EntityFactory
             arguments:
                 - "@«entityManagerService»"
                 - "@«modPrefix».entity_initialiser"
