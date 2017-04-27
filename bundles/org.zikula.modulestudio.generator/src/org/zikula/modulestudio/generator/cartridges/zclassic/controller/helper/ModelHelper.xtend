@@ -37,7 +37,7 @@ class ModelHelper {
     def private modelFunctionsBaseImpl(Application it) '''
         namespace «appNamespace»\Helper\Base;
 
-        use «appNamespace»\Entity\Factory\«name.formatForCodeCapital»Factory;
+        use «appNamespace»\Entity\Factory\EntityFactory;
 
         /**
          * Helper base class for model layer methods.
@@ -45,16 +45,16 @@ class ModelHelper {
         abstract class AbstractModelHelper
         {
             /**
-             * @var «name.formatForCodeCapital»Factory
+             * @var EntityFactory
              */
             protected $entityFactory;
 
             /**
              * ModelHelper constructor.
              *
-             * @param «name.formatForCodeCapital»Factory $entityFactory «name.formatForCodeCapital»Factory service instance
+             * @param EntityFactory $entityFactory EntityFactory service instance
              */
-            public function __construct(«name.formatForCodeCapital»Factory $entityFactory)
+            public function __construct(EntityFactory $entityFactory)
             {
                 $this->entityFactory = $entityFactory;
             }

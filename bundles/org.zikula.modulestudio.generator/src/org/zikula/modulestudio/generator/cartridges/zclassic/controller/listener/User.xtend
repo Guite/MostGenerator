@@ -26,7 +26,7 @@ class User {
             protected $translator;
 
             /**
-             * @var «name.formatForCodeCapital»Factory
+             * @var EntityFactory
              */
             protected $entityFactory;
 
@@ -43,16 +43,16 @@ class User {
             /**
              * UserListener constructor.
              *
-             * @param TranslatorInterface $translator     Translator service instance
-             * @param «name.formatForCodeCapital»Factory $entityFactory «name.formatForCodeCapital»Factory service instance
+             * @param TranslatorInterface $translator    Translator service instance
+             * @param EntityFactory       $entityFactory EntityFactory service instance
              * @param CurrentUserApi«IF targets('1.5')»Interface«ELSE»     «ENDIF» $currentUserApi CurrentUserApi service instance
-             * @param LoggerInterface     $logger         Logger service instance
+             * @param LoggerInterface     $logger        Logger service instance
              *
              * @return void
              */
             public function __construct(
                 TranslatorInterface $translator,
-                «name.formatForCodeCapital»Factory $entityFactory,
+                EntityFactory $entityFactory,
                 CurrentUserApi«IF targets('1.5')»Interface«ENDIF» $currentUserApi,
                 LoggerInterface $logger
             ) {

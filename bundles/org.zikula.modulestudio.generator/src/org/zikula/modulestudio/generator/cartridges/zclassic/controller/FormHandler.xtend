@@ -160,7 +160,7 @@ class FormHandler {
         use Zikula\PageLockModule\Api\«IF targets('1.5')»ApiInterface\LockingApiInterface«ELSE»LockingApi«ENDIF»;
         use Zikula\PermissionsModule\Api\«IF targets('1.5')»ApiInterface\PermissionApiInterface«ELSE»PermissionApi«ENDIF»;
         use Zikula\UsersModule\Api\«IF targets('1.5')»ApiInterface\CurrentUserApiInterface«ELSE»CurrentUserApi«ENDIF»;
-        use «appNamespace»\Entity\Factory\«name.formatForCodeCapital»Factory;
+        use «appNamespace»\Entity\Factory\EntityFactory;
         «IF needsFeatureActivationHelper»
             use «appNamespace»\Helper\FeatureActivationHelper;
         «ENDIF»
@@ -352,7 +352,7 @@ class FormHandler {
 
             «ENDIF»
             /**
-             * @var «name.formatForCodeCapital»Factory
+             * @var EntityFactory
              */
             protected $entityFactory;
 
@@ -430,7 +430,7 @@ class FormHandler {
              «IF needsApproval»
              * @param GroupApplicationRepository $groupApplicationRepository GroupApplicationRepository service instance.
              «ENDIF»
-             * @param «name.formatForCodeCapital»Factory $entityFactory «name.formatForCodeCapital»Factory service instance
+             * @param EntityFactory             $entityFactory    EntityFactory service instance
              * @param ControllerHelper          $controllerHelper ControllerHelper service instance
              * @param ModelHelper               $modelHelper      ModelHelper service instance
              * @param WorkflowHelper            $workflowHelper   WorkflowHelper service instance
@@ -459,7 +459,7 @@ class FormHandler {
                 «IF needsApproval»
                     GroupApplicationRepository $groupApplicationRepository,
                 «ENDIF»
-                «name.formatForCodeCapital»Factory $entityFactory,
+                EntityFactory $entityFactory,
                 ControllerHelper $controllerHelper,
                 ModelHelper $modelHelper,
                 WorkflowHelper $workflowHelper«IF hasHookSubscribers»,

@@ -54,7 +54,7 @@ class SearchHelper {
         «ELSE»
             use Zikula\SearchModule\AbstractSearchable;
         «ENDIF»
-        use «appNamespace»\Entity\Factory\«name.formatForCodeCapital»Factory;
+        use «appNamespace»\Entity\Factory\EntityFactory;
         «IF hasCategorisableEntities»
             use «appNamespace»\Helper\CategoryHelper;
         «ENDIF»
@@ -99,7 +99,7 @@ class SearchHelper {
         private $request;
 
         /**
-         * @var «name.formatForCodeCapital»Factory
+         * @var EntityFactory
          */
         private $entityFactory;
 
@@ -135,7 +135,7 @@ class SearchHelper {
          «ENDIF»
          * @param SessionInterface    $session             Session service instance
          * @param RequestStack        $requestStack        RequestStack service instance
-         * @param «name.formatForCodeCapital»Factory $entityFactory EntityFactory service instance
+         * @param EntityFactory       $entityFactory       EntityFactory service instance
          * @param ControllerHelper    $controllerHelper    ControllerHelper service instance
          * @param EntityDisplayHelper $entityDisplayHelper EntityDisplayHelper service instance
          «IF hasCategorisableEntities»
@@ -151,7 +151,7 @@ class SearchHelper {
             «ENDIF»
             SessionInterface $session,
             RequestStack $requestStack,
-            «name.formatForCodeCapital»Factory $entityFactory,
+            EntityFactory $entityFactory,
             ControllerHelper $controllerHelper,
             EntityDisplayHelper $entityDisplayHelper«IF hasCategorisableEntities»,
             FeatureActivationHelper $featureActivationHelper,

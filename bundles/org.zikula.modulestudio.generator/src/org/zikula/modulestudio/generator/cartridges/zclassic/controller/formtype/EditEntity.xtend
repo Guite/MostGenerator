@@ -170,13 +170,7 @@ class EditEntity {
         «IF hasLocaleFieldsEntity»
             use Zikula\SettingsModule\Api\«IF app.targets('1.5')»ApiInterface\LocaleApiInterface«ELSE»LocaleApi«ENDIF»;
         «ENDIF»
-        «IF !incoming.empty || !outgoing.empty»
-            use Zikula\UsersModule\Api\«IF app.targets('1.5')»ApiInterface\CurrentUserApiInterface«ELSE»CurrentUserApi«ENDIF»;
-            «IF app.targets('1.5')»
-                use Zikula\UsersModule\Constant as UsersConstant;
-            «ENDIF»
-        «ENDIF»
-        use «app.appNamespace»\Entity\Factory\«app.name.formatForCodeCapital»Factory;
+        use «app.appNamespace»\Entity\Factory\EntityFactory;
         «IF app.targets('1.5')»
             «IF !fields.filter(ArrayField).empty»
                 use «app.appNamespace»\Form\Type\Field\ArrayType;
@@ -204,6 +198,7 @@ class EditEntity {
             «ENDIF»
         «ENDIF»
         «IF !incoming.empty || !outgoing.empty»
+            use «app.appNamespace»\Helper\CollectionFilterHelper;
             use «app.appNamespace»\Helper\EntityDisplayHelper;
         «ENDIF»
         «IF app.needsFeatureActivationHelper»
@@ -224,20 +219,20 @@ class EditEntity {
             use TranslatorTrait;
 
             /**
-             * @var «app.name.formatForCodeCapital»Factory
+             * @var EntityFactory
              */
             protected $entityFactory;
             «IF !incoming.empty || !outgoing.empty»
 
                 /**
+                 * @var CollectionFilterHelper
+                 */
+                protected $collectionFilterHelper;
+
+                /**
                  * @var EntityDisplayHelper
                  */
                 protected $entityDisplayHelper;
-
-                /**
-                 * @var CurrentUserApi«IF app.targets('1.5')»Interface«ENDIF»
-                 */
-                protected $currentUserApi;
             «ENDIF»
             «IF isTranslatable»
 
@@ -277,10 +272,10 @@ class EditEntity {
              * «name.formatForCodeCapital»Type constructor.
              *
              * @param TranslatorInterface $translator «IF isTranslatable» «ENDIF»   Translator service instance
-             * @param «app.name.formatForCodeCapital»Factory        $entityFactory Entity factory service instance
+             * @param EntityFactory       $entityFactory EntityFactory service instance
              «IF !incoming.empty || !outgoing.empty»
+             * @param CollectionFilterHelper $collectionFilterHelper CollectionFilterHelper service instance
              * @param EntityDisplayHelper $entityDisplayHelper EntityDisplayHelper service instance
-             * @param CurrentUserApi«IF app.targets('1.5')»Interface«ELSE»       «ENDIF» $currentUserApi        CurrentUserApi service instance
              «ENDIF»
              «IF isTranslatable»
              * @param VariableApi«IF app.targets('1.5')»Interface«ELSE»        «ENDIF» $variableApi VariableApi service instance
@@ -298,9 +293,9 @@ class EditEntity {
              */
             public function __construct(
                 TranslatorInterface $translator,
-                «app.name.formatForCodeCapital»Factory $entityFactory«IF !incoming.empty || !outgoing.empty»,
-                EntityDisplayHelper $entityDisplayHelper,
-                CurrentUserApi«IF app.targets('1.5')»Interface«ENDIF» $currentUserApi«ENDIF»«IF isTranslatable»,
+                EntityFactory $entityFactory«IF !incoming.empty || !outgoing.empty»,
+                CollectionFilterHelper $collectionFilterHelper,
+                EntityDisplayHelper $entityDisplayHelper«ENDIF»«IF isTranslatable»,
                 VariableApi«IF app.targets('1.5')»Interface«ENDIF» $variableApi,
                 TranslatableHelper $translatableHelper«ENDIF»«IF hasListFieldsEntity»,
                 ListEntriesHelper $listHelper«ENDIF»«IF hasLocaleFieldsEntity»,
@@ -310,8 +305,8 @@ class EditEntity {
                 $this->setTranslator($translator);
                 $this->entityFactory = $entityFactory;
                 «IF !incoming.empty || !outgoing.empty»
+                    $this->collectionFilterHelper = $collectionFilterHelper;
                     $this->entityDisplayHelper = $entityDisplayHelper;
-                    $this->currentUserApi = $currentUserApi;
                 «ENDIF»
                 «IF isTranslatable»
                     $this->variableApi = $variableApi;
@@ -1067,12 +1062,11 @@ class EditEntity {
         };
         «IF (relatedEntity as Entity).ownerPermission»
             if (true === $options['filter_by_ownership']) {
-                $currentUserApi = $this->currentUserApi;
-                $queryBuilder = function(EntityRepository $er) use ($currentUserApi) {
+                $collectionFilterHelper = $this->collectionFilterHelper;
+                $queryBuilder = function(EntityRepository $er) use ($collectionFilterHelper) {
                     // select without joins
                     $qb = $er->getListQueryBuilder('', '', false);
-                    $userId = $currentUserApi->isLoggedIn() ? $currentUserApi->get('uid') : «IF app.targets('1.5')»UsersConstant::USER_ID_ANONYMOUS«ELSE»1«ENDIF»;
-                    $qb = $er->addCreatorFilter($qb, $userId);
+                    $qb = $collectionFilterHelper->addCreatorFilter($qb);
 
                     return $qb;
                 };

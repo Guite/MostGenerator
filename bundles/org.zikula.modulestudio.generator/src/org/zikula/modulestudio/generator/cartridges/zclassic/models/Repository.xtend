@@ -1,8 +1,6 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.models
 
 import de.guite.modulestudio.metamodel.Application
-import de.guite.modulestudio.metamodel.ArrayField
-import de.guite.modulestudio.metamodel.BooleanField
 import de.guite.modulestudio.metamodel.CalculatedField
 import de.guite.modulestudio.metamodel.DerivedField
 import de.guite.modulestudio.metamodel.Entity
@@ -10,10 +8,7 @@ import de.guite.modulestudio.metamodel.EntityField
 import de.guite.modulestudio.metamodel.EntityTreeType
 import de.guite.modulestudio.metamodel.JoinRelationship
 import de.guite.modulestudio.metamodel.ManyToManyRelationship
-import de.guite.modulestudio.metamodel.ObjectField
 import de.guite.modulestudio.metamodel.StringField
-import de.guite.modulestudio.metamodel.TextField
-import de.guite.modulestudio.metamodel.UserField
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.repository.Joins
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.repository.LinkTable
@@ -194,10 +189,6 @@ class Repository {
 
             «addExclusion»
 
-            «IF ownerPermission || standardFields»
-                «addCreatorFilter»
-
-            «ENDIF»
             «selectWhere»
 
             «selectWherePaginated»
@@ -419,33 +410,6 @@ class Repository {
         }
     '''
 
-    def private addCreatorFilter(Entity it) '''
-        /**
-         * Adds a filter for the createdBy field.
-         *
-         * @param QueryBuilder $qb     Query builder to be enhanced
-         * @param integer      $userId The user identifier used for filtering
-         *
-         * @return QueryBuilder Enriched query builder instance
-         */
-        public function addCreatorFilter(QueryBuilder $qb, $userId = null)
-        {
-            if (null === $userId) {
-                return $qb;
-            }
-
-            if (is_array($userId)) {
-                $qb->andWhere('tbl.createdBy IN (:userIds)')
-                   ->setParameter('userIds', $userId);
-            } else {
-                $qb->andWhere('tbl.createdBy = :userId')
-                   ->setParameter('userId', $userId);
-            }
-
-            return $qb;
-        }
-    '''
-
     def private selectWhere(Entity it) '''
         /**
          * Returns query builder for selecting a list of objects with a given where clause.
@@ -549,43 +513,13 @@ class Repository {
                 $qb = $this->addExclusion($qb, $exclude);
             }
 
-            $qb = $this->addSearchFilter($qb, $fragment);
+            if (null !== $this->collectionFilterHelper) {
+                $qb = $this->addSearchFilter($qb, $fragment);
+            }
 
             $query = $this->getSelectWherePaginatedQuery($qb, $currentPage, $resultsPerPage);
 
             return $this->retrieveCollectionResult($query, true);
-        }
-
-        /**
-         * Adds where clause for search query.
-         *
-         * @param QueryBuilder $qb       Query builder to be enhanced
-         * @param string       $fragment The fragment to search for
-         *
-         * @return QueryBuilder Enriched query builder instance
-         */
-        public function addSearchFilter(QueryBuilder $qb, $fragment = '')
-        {
-            if ($fragment == '') {
-                return $qb;
-            }
-
-            $filters = [];
-            $parameters = [];
-
-            «val searchFields = getDisplayFields.filter[isContainedInSearch]»
-            «FOR field : searchFields»
-                $filters[] = 'tbl.«field.name.formatForCode» «IF field.isTextSearch»LIKE«ELSE»=«ENDIF» :search«field.name.formatForCodeCapital»';
-                $parameters['search«field.name.formatForCodeCapital»'] = «IF field.isTextSearch»'%' . $fragment . '%'«ELSE»$fragment«ENDIF»;
-            «ENDFOR»
-
-            $qb->andWhere('(' . implode(' OR ', $filters) . ')');
-
-            foreach ($parameters as $parameterName => $parameterValue) {
-                $qb->setParameter($parameterName, $parameterValue);
-            }
-
-            return $qb;
         }
     '''
 
@@ -862,24 +796,6 @@ class Repository {
             CalculatedField: '''
                      '«name.formatForCode»',
                      '''
-        }
-    }
-
-    def private isContainedInSearch(DerivedField it) {
-        switch it {
-            BooleanField: false
-            UserField: false
-            ArrayField: false
-            ObjectField: false
-            default: true
-        }
-    }
-
-    def private isTextSearch(DerivedField it) {
-        switch it {
-            StringField: true
-            TextField: true
-            default: false
         }
     }
 

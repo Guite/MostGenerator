@@ -40,7 +40,7 @@ class ArchiveHelper {
         use Zikula\Common\Translator\TranslatorInterface;
         use Zikula\Core\RouteUrl;
         use Zikula\PermissionsModule\Api\«IF targets('1.5')»ApiInterface\PermissionApiInterface«ELSE»PermissionApi«ENDIF»;
-        use «appNamespace»\Entity\Factory\«name.formatForCodeCapital»Factory;
+        use «appNamespace»\Entity\Factory\EntityFactory;
         «IF hasHookSubscribers»
             use «appNamespace»\Helper\HookHelper;
         «ENDIF»
@@ -72,7 +72,7 @@ class ArchiveHelper {
             protected $permissionApi;
 
             /**
-             * @var «name.formatForCodeCapital»Factory
+             * @var EntityFactory
              */
             protected $entityFactory;
 
@@ -95,7 +95,7 @@ class ArchiveHelper {
              * @param RequestStack        $requestStack   RequestStack service instance
              * @param LoggerInterface     $logger         Logger service instance
              * @param PermissionApi«IF targets('1.5')»Interface«ENDIF»       $permissionApi  PermissionApi service instance
-             * @param «name.formatForCodeCapital»Factory $entityFactory «name.formatForCodeCapital»Factory service instance
+             * @param EntityFactory       $entityFactory  EntityFactory service instance
              * @param WorkflowHelper      $workflowHelper WorkflowHelper service instance
              «IF hasHookSubscribers»
              * @param HookHelper          $hookHelper     HookHelper service instance
@@ -106,7 +106,7 @@ class ArchiveHelper {
                 RequestStack $requestStack,
                 LoggerInterface $logger,
                 PermissionApi«IF targets('1.5')»Interface«ENDIF» $permissionApi,
-                «name.formatForCodeCapital»Factory $entityFactory,
+                EntityFactory $entityFactory,
                 WorkflowHelper $workflowHelper«IF hasHookSubscribers»,
                 HookHelper $hookHelper«ENDIF»)
             {

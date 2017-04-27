@@ -24,7 +24,7 @@ class Factory {
      */
     def generate(Application it, IFileSystemAccess fsa) {
         println('Generating entity factory class')
-        generateClassPair(fsa, getAppSourceLibPath + 'Entity/Factory/' + name.formatForCodeCapital + 'Factory.php',
+        generateClassPair(fsa, getAppSourceLibPath + 'Entity/Factory/EntityFactory.php',
             fh.phpFileContent(it, modelFactoryBaseImpl), fh.phpFileContent(it, modelFactoryImpl)
         )
         new EntityInitialiser().generate(it, fsa)
@@ -45,7 +45,7 @@ class Factory {
         /**
          * Factory class used to create entities and receive entity repositories.
          */
-        abstract class Abstract«name.formatForCodeCapital»Factory
+        abstract class AbstractEntityFactory
         {
             /**
              * @var ObjectManager The object manager to be used for determining the repository
@@ -70,7 +70,7 @@ class Factory {
             «ENDIF»
 
             /**
-             * «name.formatForCodeCapital»Factory constructor.
+             * EntityFactory constructor.
              *
              * @param ObjectManager          $objectManager          The object manager to be used for determining the repositories
              * @param EntityInitialiser      $entityInitialiser      The entity initialiser for dynamical application of default values
@@ -192,12 +192,12 @@ class Factory {
     def private modelFactoryImpl(Application it) '''
         namespace «appNamespace»\Entity\Factory;
 
-        use «appNamespace»\Entity\Factory\Base\Abstract«name.formatForCodeCapital»Factory;
+        use «appNamespace»\Entity\Factory\Base\AbstractEntityFactory;
 
         /**
          * Factory class used to create entities and receive entity repositories.
          */
-        class «name.formatForCodeCapital»Factory extends Abstract«name.formatForCodeCapital»Factory
+        class EntityFactory extends AbstractEntityFactory
         {
             // feel free to customise the factory
         }

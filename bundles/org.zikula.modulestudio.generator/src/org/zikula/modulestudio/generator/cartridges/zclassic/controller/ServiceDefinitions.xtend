@@ -391,8 +391,8 @@ class ServiceDefinitions {
                         - "@translator.default"
                         - "@«modPrefix».entity_factory"
                         «IF !entity.incoming.empty || !entity.outgoing.empty»
+                            - "@«modPrefix».collection_filter_helper"
                             - "@«modPrefix».entity_display_helper"
-                            - "@zikula_users_module.current_user"
                         «ENDIF»
                         «IF entity instanceof Entity && (entity as Entity).hasTranslatableFields»
                             - "@zikula_extensions_module.api.variable"
@@ -504,7 +504,6 @@ class ServiceDefinitions {
                 «IF hasStandardFieldEntities»
                     - "@zikula_users_module.current_user"
                 «ENDIF»
-                - "@«modPrefix».entity_factory"
                 «IF hasCategorisableEntities»
                     - "@«modPrefix».category_helper"
                 «ENDIF»

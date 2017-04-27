@@ -37,7 +37,7 @@ class AutoCompletionRelationType {
         use Symfony\Component\Form\FormView;
         use Symfony\Component\OptionsResolver\OptionsResolver;
         use Symfony\Component\Routing\RouterInterface;
-        use «appNamespace»\Entity\Factory\«name.formatForCodeCapital»Factory;
+        use «appNamespace»\Entity\Factory\EntityFactory;
         use «appNamespace»\Form\DataTransformer\AutoCompletionRelationTransformer;
 
         /**
@@ -51,17 +51,17 @@ class AutoCompletionRelationType {
             protected $router;
 
             /**
-             * @var «name.formatForCodeCapital»Factory
+             * @var EntityFactory
              */
             protected $entityFactory;
 
             /**
              * AutoCompletionRelationType constructor.
              *
-             * @param Routerinterface $router Router service instance
-             * @param «name.formatForCodeCapital»Factory $entityFactory «name.formatForCodeCapital»Factory service instance
+             * @param Routerinterface $router        Router service instance
+             * @param EntityFactory   $entityFactory EntityFactory service instance
              */
-            public function __construct(RouterInterface $router, «name.formatForCodeCapital»Factory $entityFactory)
+            public function __construct(RouterInterface $router, EntityFactory $entityFactory)
             {
                 $this->router = $router;
                 $this->entityFactory = $entityFactory;

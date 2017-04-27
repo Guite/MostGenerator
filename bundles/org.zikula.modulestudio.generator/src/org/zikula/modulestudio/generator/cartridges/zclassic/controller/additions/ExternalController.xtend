@@ -272,7 +272,7 @@ class ExternalController {
         «ENDIF»
 
         if ($searchTerm != '') {
-            $qb = $repository->addSearchFilter($qb, $searchTerm);
+            $qb = $this->get('«appService».collection_filter_helper')->addSearchFilter($objectType, $qb, $searchTerm);
         }
         $query = $repository->getQueryFromBuilder($qb);
 

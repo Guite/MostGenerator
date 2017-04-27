@@ -80,7 +80,7 @@ class Plugins {
             use Zikula\UsersModule\Entity\RepositoryInterface\UserRepositoryInterface;
         «ENDIF»
         «IF hasTrees»
-            use «appNamespace»\Entity\Factory\«name.formatForCodeCapital»Factory;
+            use «appNamespace»\Entity\Factory\EntityFactory;
         «ENDIF»
         «IF hasListFields»
             use «appNamespace»\Helper\ListEntriesHelper;
@@ -129,7 +129,7 @@ class Plugins {
         «ENDIF»
         «IF hasTrees»
             /**
-             * @var «name.formatForCodeCapital»Factory
+             * @var EntityFactory
              */
             protected $entityFactory;
 
@@ -166,7 +166,7 @@ class Plugins {
             * @param UserRepositoryInterface $userRepository UserRepository service instance
          «ENDIF»
          «IF hasTrees»
-         * @param «name.formatForCodeCapital»Factory $entityFactory «name.formatForCodeCapital»Factory service instance
+         * @param EntityFactory       $entityFactory     EntityFactory service instance
          «ENDIF»
          * @param EntityDisplayHelper $entityDisplayHelper EntityDisplayHelper service instance
          * @param WorkflowHelper      $workflowHelper WorkflowHelper service instance
@@ -183,7 +183,7 @@ class Plugins {
                 UserRepositoryInterface $userRepository,
             «ENDIF»
             «IF hasTrees»
-                «name.formatForCodeCapital»Factory $entityFactory,
+                EntityFactory $entityFactory,
             «ENDIF»
             EntityDisplayHelper $entityDisplayHelper,
             WorkflowHelper $workflowHelper«IF hasListFields»,

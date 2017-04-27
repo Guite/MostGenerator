@@ -37,7 +37,7 @@ class TranslatableHelper {
         use Zikula\Core\Doctrine\EntityAccess;
         use Zikula\ExtensionsModule\Api\«IF targets('1.5')»ApiInterface\VariableApiInterface«ELSE»VariableApi«ENDIF»;
         use Zikula\SettingsModule\Api\«IF targets('1.5')»ApiInterface\LocaleApiInterface«ELSE»LocaleApi«ENDIF»;
-        use «appNamespace»\Entity\Factory\«name.formatForCodeCapital»Factory;
+        use «appNamespace»\Entity\Factory\EntityFactory;
 
         /**
          * Helper base class for translatable methods.
@@ -65,25 +65,25 @@ class TranslatableHelper {
             protected $localeApi;
 
             /**
-             * @var «name.formatForCodeCapital»Factory
+             * @var EntityFactory
              */
             protected $entityFactory;
 
             /**
              * TranslatableHelper constructor.
              *
-             * @param TranslatorInterface $translator   Translator service instance
-             * @param RequestStack        $requestStack RequestStack service instance
-             * @param VariableApi«IF targets('1.5')»Interface«ELSE»        «ENDIF» $variableApi  VariableApi service instance
-             * @param LocaleApi«IF targets('1.5')»Interface«ELSE»         «ENDIF»  $localeApi    LocaleApi service instance
-             * @param «name.formatForCodeCapital»Factory $entityFactory «name.formatForCodeCapital»Factory service instance
+             * @param TranslatorInterface $translator    Translator service instance
+             * @param RequestStack        $requestStack  RequestStack service instance
+             * @param VariableApi«IF targets('1.5')»Interface«ELSE»        «ENDIF»  $variableApi  VariableApi service instance
+             * @param LocaleApi«IF targets('1.5')»Interface«ELSE»         «ENDIF»   $localeApi    LocaleApi service instance
+             * @param EntityFactory       $entityFactory EntityFactory service instance
              */
             public function __construct(
                 TranslatorInterface $translator,
                 RequestStack $requestStack,
                 VariableApi«IF targets('1.5')»Interface«ENDIF» $variableApi,
                 LocaleApi«IF targets('1.5')»Interface«ENDIF» $localeApi,
-                «name.formatForCodeCapital»Factory $entityFactory
+                EntityFactory $entityFactory
             ) {
                 $this->translator = $translator;
                 $this->request = $requestStack->getCurrentRequest();

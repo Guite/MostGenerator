@@ -1,11 +1,17 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.controller.helper
 
 import de.guite.modulestudio.metamodel.Application
+import de.guite.modulestudio.metamodel.ArrayField
+import de.guite.modulestudio.metamodel.BooleanField
 import de.guite.modulestudio.metamodel.DateField
 import de.guite.modulestudio.metamodel.DatetimeField
 import de.guite.modulestudio.metamodel.DerivedField
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.EntityField
+import de.guite.modulestudio.metamodel.ObjectField
+import de.guite.modulestudio.metamodel.StringField
+import de.guite.modulestudio.metamodel.TextField
+import de.guite.modulestudio.metamodel.UserField
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
@@ -70,11 +76,6 @@ class CollectionFilterHelper {
                  */
                 protected $currentUserApi;
             «ENDIF»
-
-            /**
-             * @var «name.formatForCodeCapital»Factory
-             */
-            protected $entityFactory;
             «IF hasCategorisableEntities»
 
                 /**
@@ -95,7 +96,6 @@ class CollectionFilterHelper {
              «IF hasStandardFieldEntities»
              * @param CurrentUserApi«IF targets('1.5')»Interface«ELSE»       «ENDIF» $currentUserApi        CurrentUserApi service instance
              «ENDIF»
-             * @param «name.formatForCodeCapital»Factory $entityFactory «name.formatForCodeCapital»Factory service instance
              «IF hasCategorisableEntities»
              * @param CategoryHelper $categoryHelper      CategoryHelper service instance
              «ENDIF»
@@ -106,7 +106,6 @@ class CollectionFilterHelper {
                 «IF hasStandardFieldEntities»
                     CurrentUserApi«IF targets('1.5')»Interface«ENDIF» $currentUserApi,
                 «ENDIF»
-                «name.formatForCodeCapital»Factory $entityFactory,
                 «IF hasCategorisableEntities»
                     CategoryHelper $categoryHelper,
                 «ENDIF»
@@ -116,7 +115,6 @@ class CollectionFilterHelper {
                 «IF hasStandardFieldEntities»
                     $this->currentUserApi = $currentUserApi;
                 «ENDIF»
-                $this->entityFactory = $entityFactory;
                 «IF hasCategorisableEntities»
                     $this->categoryHelper = $categoryHelper;
                 «ENDIF»
@@ -160,7 +158,7 @@ class CollectionFilterHelper {
          *
          * @return QueryBuilder Enriched query builder instance
          */
-        public function addCommonViewFilters($objectType = '', QueryBuilder $qb)
+        public function addCommonViewFilters($objectType, QueryBuilder $qb)
         {
             «FOR entity : getAllEntities»
                 if ($objectType == '«entity.name.formatForCode»') {
@@ -180,7 +178,7 @@ class CollectionFilterHelper {
          *
          * @return QueryBuilder Enriched query builder instance
          */
-        public function applyDefaultFilters($objectType = '', QueryBuilder $qb, $parameters = [])
+        public function applyDefaultFilters($objectType, QueryBuilder $qb, $parameters = [])
         {
             «FOR entity : getAllEntities»
                 if ($objectType == '«entity.name.formatForCode»') {
@@ -202,6 +200,12 @@ class CollectionFilterHelper {
 
             «entity.applyDefaultFilters»
         «ENDFOR»
+
+        «addSearchFilter»
+        «IF hasStandardFieldEntities»
+
+            «addCreatorFilter»
+        «ENDIF»
     '''
 
     def private getViewQuickNavParameters(Entity it) '''
@@ -390,9 +394,7 @@ class CollectionFilterHelper {
             «IF standardFields»
 
                 if ($showOnlyOwnEntries) {
-                    $repository = $this->entityFactory->getRepository('«name.formatForCode»');
-                    $userId = $this->currentUserApi->isLoggedIn() ? $this->currentUserApi->get('uid') : «IF application.targets('1.5')»UsersConstant::USER_ID_ANONYMOUS«ELSE»1«ENDIF»;
-                    $qb = $repository->addCreatorFilter($qb, $userId);
+                    $qb = $this->addCreatorFilter($qb);
                 }
             «ENDIF»
             «applyDefaultDateRangeFilter»
@@ -416,6 +418,72 @@ class CollectionFilterHelper {
         «ENDIF»
     '''
 
+    def private addSearchFilter(Application it) '''
+        /**
+         * Adds a where clause for search query.
+         *
+         * @param string       $objectType Name of treated entity type
+         * @param QueryBuilder $qb         Query builder to be enhanced
+         * @param string       $fragment   The fragment to search for
+         *
+         * @return QueryBuilder Enriched query builder instance
+         */
+        public function addSearchFilter($objectType, QueryBuilder $qb, $fragment = '')
+        {
+            if ($fragment == '') {
+                return $qb;
+            }
+
+            $filters = [];
+            $parameters = [];
+
+            «FOR entity : getAllEntities»
+                if ($objectType == '«entity.name.formatForCode»') {
+                    «val searchFields = entity.getDisplayFields.filter[isContainedInSearch]»
+                    «FOR field : searchFields»
+                        $filters[] = 'tbl.«field.name.formatForCode» «IF field.isTextSearch»LIKE«ELSE»=«ENDIF» :search«field.name.formatForCodeCapital»';
+                        $parameters['search«field.name.formatForCodeCapital»'] = «IF field.isTextSearch»'%' . $fragment . '%'«ELSE»$fragment«ENDIF»;
+                    «ENDFOR»
+                }
+            «ENDFOR»
+
+            $qb->andWhere('(' . implode(' OR ', $filters) . ')');
+
+            foreach ($parameters as $parameterName => $parameterValue) {
+                $qb->setParameter($parameterName, $parameterValue);
+            }
+
+            return $qb;
+        }
+    '''
+
+    def private addCreatorFilter(Application it) '''
+        /**
+         * Adds a filter for the createdBy field.
+         *
+         * @param QueryBuilder $qb     Query builder to be enhanced
+         * @param integer      $userId The user identifier used for filtering
+         *
+         * @return QueryBuilder Enriched query builder instance
+         */
+        public function addCreatorFilter(QueryBuilder $qb, $userId = null)
+        {
+            if (null === $userId) {
+                $userId = $this->currentUserApi->isLoggedIn() ? $this->currentUserApi->get('uid') : «IF targets('1.5')»UsersConstant::USER_ID_ANONYMOUS«ELSE»1«ENDIF»;
+            }
+
+            if (is_array($userId)) {
+                $qb->andWhere('tbl.createdBy IN (:userIds)')
+                   ->setParameter('userIds', $userId);
+            } else {
+                $qb->andWhere('tbl.createdBy = :userId')
+                   ->setParameter('userId', $userId);
+            }
+
+            return $qb;
+        }
+    '''
+
     def private dispatch defaultValueForNow(EntityField it) '''""'''
 
     def private dispatch defaultValueForNow(DatetimeField it) '''date('Y-m-d H:i:s')'''
@@ -428,6 +496,24 @@ class CollectionFilterHelper {
             '''tbl.«dateFieldName» «operator» :«paramName»'''
         else
             '''(tbl.«dateFieldName» «operator» :«paramName» OR tbl.«dateFieldName» IS NULL)'''
+    }
+
+    def private isContainedInSearch(DerivedField it) {
+        switch it {
+            BooleanField: false
+            UserField: false
+            ArrayField: false
+            ObjectField: false
+            default: true
+        }
+    }
+
+    def private isTextSearch(DerivedField it) {
+        switch it {
+            StringField: true
+            TextField: true
+            default: false
+        }
     }
 
     def private collectionFilterHelperImpl(Application it) '''

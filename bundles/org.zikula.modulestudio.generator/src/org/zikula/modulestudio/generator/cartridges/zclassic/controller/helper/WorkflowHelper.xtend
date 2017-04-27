@@ -52,7 +52,7 @@ class WorkflowHelper {
             use Zikula_Workflow_Util;
         «ENDIF»
         «IF targets('1.5') || needsApproval»
-            use «appNamespace»\Entity\Factory\«name.formatForCodeCapital»Factory;
+            use «appNamespace»\Entity\Factory\EntityFactory;
         «ENDIF»
         use «appNamespace»\Helper\ListEntriesHelper;
 
@@ -101,7 +101,7 @@ class WorkflowHelper {
                 «ENDIF»
 
                 /**
-                 * @var «name.formatForCodeCapital»Factory
+                 * @var EntityFactory
                  */
                 protected $entityFactory;
             «ENDIF»
@@ -124,7 +124,7 @@ class WorkflowHelper {
              «IF targets('1.5')»
              * @param CurrentUserApiInterface $currentUserApi    CurrentUserApi service instance
              «ENDIF»
-             * @param «name.formatForCodeCapital»Factory $entityFactory «name.formatForCodeCapital»Factory service instance
+             * @param EntityFactory       $entityFactory     EntityFactory service instance
              «ENDIF»
              * @param ListEntriesHelper   $listEntriesHelper ListEntriesHelper service instance
              *
@@ -141,7 +141,7 @@ class WorkflowHelper {
                     «IF targets('1.5')»
                         CurrentUserApiInterface $currentUserApi,
                     «ENDIF»
-                    «name.formatForCodeCapital»Factory $entityFactory,
+                    EntityFactory $entityFactory,
                 «ENDIF»
                 ListEntriesHelper $listEntriesHelper
             ) {

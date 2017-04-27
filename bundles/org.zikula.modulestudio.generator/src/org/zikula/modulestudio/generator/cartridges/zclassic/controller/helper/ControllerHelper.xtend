@@ -65,7 +65,7 @@ class ControllerHelper {
         «IF hasViewActions && hasUserFields»
             use Zikula\UsersModule\Entity\UserEntity;
         «ENDIF»
-        use «appNamespace»\Entity\Factory\«name.formatForCodeCapital»Factory;
+        use «appNamespace»\Entity\Factory\EntityFactory;
         «IF hasAutomaticArchiving»
             use «appNamespace»\Helper\ArchiveHelper;
         «ENDIF»
@@ -123,7 +123,7 @@ class ControllerHelper {
             «ENDIF»
 
             /**
-             * @var «name.formatForCodeCapital»Factory
+             * @var EntityFactory
              */
             protected $entityFactory;
 
@@ -175,7 +175,7 @@ class ControllerHelper {
              «IF hasGeographical»
              * @param CurrentUserApi«IF targets('1.5')»Interface«ELSE»     «ENDIF» $currentUserApi  CurrentUserApi service instance
              «ENDIF»
-             * @param «name.formatForCodeCapital»Factory $entityFactory «name.formatForCodeCapital»Factory service instance
+             * @param EntityFactory       $entityFactory   EntityFactory service instance
              * @param CollectionFilterHelper $collectionFilterHelper CollectionFilterHelper service instance
              «IF hasViewActions && hasEditActions»
              * @param ModelHelper         $modelHelper     ModelHelper service instance
@@ -207,7 +207,7 @@ class ControllerHelper {
                 «IF hasGeographical»
                     CurrentUserApi«IF targets('1.5')»Interface«ENDIF» $currentUserApi,
                 «ENDIF»
-                «name.formatForCodeCapital»Factory $entityFactory,
+                EntityFactory $entityFactory,
                 CollectionFilterHelper $collectionFilterHelper«IF hasViewActions && hasEditActions»,
                 ModelHelper $modelHelper«ENDIF»«IF hasUploads»,
                 ImageHelper $imageHelper«ENDIF»«IF needsFeatureActivationHelper»,
