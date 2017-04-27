@@ -33,15 +33,19 @@ class LifecycleListener {
         use Doctrine\Common\Persistence\Event\LifecycleEventArgs;
         use Doctrine\ORM\Event\PreUpdateEventArgs;
         use Doctrine\ORM\Events;
+        use Psr\Log\LoggerInterface;
         use Symfony\Component\DependencyInjection\ContainerAwareInterface;
         use Symfony\Component\DependencyInjection\ContainerAwareTrait;
         use Symfony\Component\DependencyInjection\ContainerInterface;
+        use Symfony\Component\EventDispatcher\Event;
+        use Symfony\Component\EventDispatcher\EventDispatcher;
         «IF hasUploads»
             use Symfony\Component\HttpFoundation\File\File;
         «ENDIF»
         use Zikula\Core\Doctrine\EntityAccess;
+        use Zikula\UsersModule\Api\«IF targets('1.5')»ApiInterface\CurrentUserApiInterface«ELSE»CurrentUserApi«ENDIF»;
         use «appNamespace»\«name.formatForCodeCapital»Events;
-        «FOR entity : entities»
+        «FOR entity : getAllEntities»
             use «appNamespace»\Event\Filter«entity.name.formatForCodeCapital»Event;
         «ENDFOR»
 
@@ -53,14 +57,41 @@ class LifecycleListener {
             use ContainerAwareTrait;
 
             /**
-             * EntityLifecycleListener constructor.
+             * @var EventDispatcher
              */
-            public function __construct(ContainerInterface $container)
+            protected $eventDispatcher;
+
+            /**
+             * @var CurrentUserApi«IF targets('1.5')»Interface«ENDIF»
+             */
+            protected $currentUserApi;
+
+            /**
+             * @var LoggerInterface
+             */
+            protected $logger;
+
+            /**
+             * EntityLifecycleListener constructor.
+             *
+             * @param ContainerInterface $container
+             * @param EventDispatcher    $eventDispatcher
+             * @param CurrentUserApi«IF targets('1.5')»Interface«ENDIF» $currentUserApi
+             * @param LoggerInterface    $logger
+             */
+            public function __construct(
+                ContainerInterface $container,
+                EventDispatcher $eventDispatcher,
+                CurrentUserApi«IF targets('1.5')»Interface«ENDIF» $currentUserApi,
+                LoggerInterface $logger)
             {
                 if (null === $container) {
                     $container = \ServiceUtil::getManager();
                 }
                 $this->setContainer($container);
+                $this->eventDispatcher = $eventDispatcher;
+                $this->currentUserApi = $currentUserApi;
+                $this->logger = $logger;
             }
 
             /**
@@ -239,6 +270,21 @@ class LifecycleListener {
 
                 return ($entityClassParts[0] == '«vendor.formatForCodeCapital»' && $entityClassParts[1] == '«name.formatForCodeCapital»Module');
             }
+
+            /**
+             * Returns a filter event instance for the given entity.
+             *
+             * @param EntityAccess $entity The given entity
+             *
+             * @return Event The created event instance
+             */
+            protected function createFilterEvent($entity)
+            {
+                $filterEventClass = '\\«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Event\\Filter' . ucfirst($entity->get_objectType()) . 'Event';
+                $event = new $filterEventClass($entity);
+
+                return $event;
+            }
             «IF hasUploads»
 
                 /**
@@ -248,11 +294,11 @@ class LifecycleListener {
                  *
                  * @return array List of upload fields
                  */
-                protected function getUploadFields($objectType)
+                protected function getUploadFields($objectType = '')
                 {
                     $uploadFields = [];
                     switch ($objectType) {
-                        «FOR entity : entities.filter[e|e.hasUploadFieldsEntity]»
+                        «FOR entity : getUploadEntities»
                             case '«entity.name.formatForCode»':
                                 $uploadFields = ['«entity.getUploadFieldsEntity.map[name.formatForCode].join('\', \'')»'];
                                 break;

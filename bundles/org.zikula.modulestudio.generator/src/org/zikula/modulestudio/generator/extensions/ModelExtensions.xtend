@@ -77,21 +77,21 @@ class ModelExtensions {
      * Checks whether the application contains at least one entity with at least one image field.
      */
     def hasImageFields(Application it) {
-        entities.exists[hasImageFieldsEntity]
+        getAllEntities.exists[hasImageFieldsEntity]
     }
 
     /**
      * Checks whether the application contains at least one entity with at least one colour field.
      */
     def hasColourFields(Application it) {
-        entities.exists[hasColourFieldsEntity]
+        getAllEntities.exists[hasColourFieldsEntity]
     }
 
     /**
      * Checks whether the application contains at least one entity with at least one country field.
      */
     def hasCountryFields(Application it) {
-        entities.exists[hasCountryFieldsEntity]
+        getAllEntities.exists[hasCountryFieldsEntity]
     }
 
     /**
@@ -105,7 +105,7 @@ class ModelExtensions {
      * Returns a list of all entities with at least one upload field.
      */
     def getUploadEntities(Application it) {
-        entities.filter[hasUploadFieldsEntity]
+        getAllEntities.filter[hasUploadFieldsEntity]
     }
 
     /**
@@ -147,9 +147,8 @@ class ModelExtensions {
      * Returns a list of all entities with at least one list field.
      */
     def getListEntities(Application it) {
-        entities.filter[hasListFieldsEntity]
+        getAllEntities.filter[hasListFieldsEntity]
     }
-
 
     /**
      * Checks whether the application contains at least one entity with at least one boolean field having ajax toggle enabled.
@@ -176,7 +175,7 @@ class ModelExtensions {
      * Returns a list of all entities with at least one boolean field having ajax toggle enabled.
      */
     def getEntitiesWithAjaxToggle(Application it) {
-        entities.filter[hasBooleansWithAjaxToggleEntity('')]
+        getAllEntities.filter[hasBooleansWithAjaxToggleEntity('')]
     }
 
     /**

@@ -143,6 +143,9 @@ class ServiceDefinitions {
             class: «appNamespace»\Listener\EntityLifecycleListener
             arguments:
                 - "@service_container"
+                - "@event_dispatcher"
+                - "@zikula_users_module.current_user"
+                - "@logger"
             tags:
                 - { name: doctrine.event_subscriber }
 

@@ -22,9 +22,8 @@ class EventAction {
     def postLoad(Application it) '''
 
         // create the filter event and dispatch it
-        $filterEventClass = '\\«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Event\\Filter' . ucfirst(«entityVar»->get_objectType()) . 'Event';
-        $event = new $filterEventClass(«entityVar»);
-        $this->container->get('event_dispatcher')->dispatch(constant('\\«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\«name.formatForCodeCapital»Events::' . strtoupper(«entityVar»->get_objectType()) . '_POST_LOAD'), $event);
+        $event = $this->createFilterEvent(«entityVar»);
+        $this->eventDispatcher->dispatch(constant('\\«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\«name.formatForCodeCapital»Events::' . strtoupper(«entityVar»->get_objectType()) . '_POST_LOAD'), $event);
     '''
 
     def prePersist(Application it) '''
@@ -44,9 +43,8 @@ class EventAction {
         «ENDIF»
 
         // create the filter event and dispatch it
-        $filterEventClass = '\\«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Event\\Filter' . ucfirst(«entityVar»->get_objectType()) . 'Event';
-        $event = new $filterEventClass(«entityVar»);
-        $this->container->get('event_dispatcher')->dispatch(constant('\\«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\«name.formatForCodeCapital»Events::' . strtoupper(«entityVar»->get_objectType()) . '_PRE_PERSIST'), $event);
+        $event = $this->createFilterEvent(«entityVar»);
+        $this->eventDispatcher->dispatch(constant('\\«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\«name.formatForCodeCapital»Events::' . strtoupper(«entityVar»->get_objectType()) . '_PRE_PERSIST'), $event);
         if ($event->isPropagationStopped()) {
             return false;
         }
@@ -54,21 +52,18 @@ class EventAction {
 
     def postPersist(Application it) '''
         $objectId = «entityVar»->createCompositeIdentifier();
-        $logger = $this->container->get('logger');
-        $logArgs = ['app' => '«appName»', 'user' => $this->container->get('zikula_users_module.current_user')->get('uname'), 'entity' => «entityVar»->get_objectType(), 'id' => $objectId];
-        $logger->debug('{app}: User {user} created the {entity} with id {id}.', $logArgs);
+        $logArgs = ['app' => '«appName»', 'user' => $this->currentUserApi->get('uname'), 'entity' => «entityVar»->get_objectType(), 'id' => $objectId];
+        $this->logger->debug('{app}: User {user} created the {entity} with id {id}.', $logArgs);
 
         // create the filter event and dispatch it
-        $filterEventClass = '\\«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Event\\Filter' . ucfirst(«entityVar»->get_objectType()) . 'Event';
-        $event = new $filterEventClass(«entityVar»);
-        $this->container->get('event_dispatcher')->dispatch(constant('\\«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\«name.formatForCodeCapital»Events::' . strtoupper(«entityVar»->get_objectType()) . '_POST_PERSIST'), $event);
+        $event = $this->createFilterEvent(«entityVar»);
+        $this->eventDispatcher->dispatch(constant('\\«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\«name.formatForCodeCapital»Events::' . strtoupper(«entityVar»->get_objectType()) . '_POST_PERSIST'), $event);
     '''
 
     def preRemove(Application it) '''
         // create the filter event and dispatch it
-        $filterEventClass = '\\«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Event\\Filter' . ucfirst(«entityVar»->get_objectType()) . 'Event';
-        $event = new $filterEventClass(«entityVar»);
-        $this->container->get('event_dispatcher')->dispatch(constant('\\«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\«name.formatForCodeCapital»Events::' . strtoupper(«entityVar»->get_objectType()) . '_PRE_REMOVE'), $event);
+        $event = $this->createFilterEvent(«entityVar»);
+        $this->eventDispatcher->dispatch(constant('\\«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\«name.formatForCodeCapital»Events::' . strtoupper(«entityVar»->get_objectType()) . '_PRE_REMOVE'), $event);
         if ($event->isPropagationStopped()) {
             return false;
         }
@@ -115,14 +110,12 @@ class EventAction {
             }
         «ENDIF»
 
-        $logger = $this->container->get('logger');
-        $logArgs = ['app' => '«appName»', 'user' => $this->container->get('zikula_users_module.current_user')->get('uname'), 'entity' => $objectType, 'id' => $objectId];
-        $logger->debug('{app}: User {user} removed the {entity} with id {id}.', $logArgs);
+        $logArgs = ['app' => '«appName»', 'user' => $this->currentUserApi->get('uname'), 'entity' => $objectType, 'id' => $objectId];
+        $this->logger->debug('{app}: User {user} removed the {entity} with id {id}.', $logArgs);
 
         // create the filter event and dispatch it
-        $filterEventClass = '\\«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Event\\Filter' . ucfirst($objectType) . 'Event';
-        $event = new $filterEventClass(«entityVar»);
-        $this->container->get('event_dispatcher')->dispatch(constant('\\«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\«name.formatForCodeCapital»Events::' . strtoupper($objectType) . '_POST_REMOVE'), $event);
+        $event = $this->createFilterEvent(«entityVar»);
+        $this->eventDispatcher->dispatch(constant('\\«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\«name.formatForCodeCapital»Events::' . strtoupper($objectType) . '_POST_REMOVE'), $event);
     '''
 
     def preUpdate(Application it) '''
@@ -142,9 +135,8 @@ class EventAction {
         «ENDIF»
 
         // create the filter event and dispatch it
-        $filterEventClass = '\\«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Event\\Filter' . ucfirst(«entityVar»->get_objectType()) . 'Event';
-        $event = new $filterEventClass(«entityVar», $args->getEntityChangeSet());
-        $this->container->get('event_dispatcher')->dispatch(constant('\\«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\«name.formatForCodeCapital»Events::' . strtoupper(«entityVar»->get_objectType()) . '_PRE_UPDATE'), $event);
+        $event = $this->createFilterEvent(«entityVar»);
+        $this->eventDispatcher->dispatch(constant('\\«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\«name.formatForCodeCapital»Events::' . strtoupper(«entityVar»->get_objectType()) . '_PRE_UPDATE'), $event);
         if ($event->isPropagationStopped()) {
             return false;
         }
@@ -152,13 +144,11 @@ class EventAction {
 
     def postUpdate(Application it) '''
         $objectId = «entityVar»->createCompositeIdentifier();
-        $logger = $this->container->get('logger');
-        $logArgs = ['app' => '«appName»', 'user' => $this->container->get('zikula_users_module.current_user')->get('uname'), 'entity' => «entityVar»->get_objectType(), 'id' => $objectId];
-        $logger->debug('{app}: User {user} updated the {entity} with id {id}.', $logArgs);
+        $logArgs = ['app' => '«appName»', 'user' => $this->currentUserApi->get('uname'), 'entity' => «entityVar»->get_objectType(), 'id' => $objectId];
+        $this->logger->debug('{app}: User {user} updated the {entity} with id {id}.', $logArgs);
 
         // create the filter event and dispatch it
-        $filterEventClass = '\\«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Event\\Filter' . ucfirst(«entityVar»->get_objectType()) . 'Event';
-        $event = new $filterEventClass(«entityVar»);
-        $this->container->get('event_dispatcher')->dispatch(constant('\\«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\«name.formatForCodeCapital»Events::' . strtoupper(«entityVar»->get_objectType()) . '_POST_UPDATE'), $event);
+        $event = $this->createFilterEvent(«entityVar»);
+        $this->eventDispatcher->dispatch(constant('\\«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\«name.formatForCodeCapital»Events::' . strtoupper(«entityVar»->get_objectType()) . '_POST_UPDATE'), $event);
     '''
 }
