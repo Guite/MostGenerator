@@ -670,7 +670,7 @@ class WorkflowHelper {
         {
             $repository = $this->entityFactory->getRepository($objectType);
 
-            $where = 'tbl.workflowState:eq:' . $state;
+            $where = 'tbl.workflowState = \'' . $state . '\'';
             $parameters = ['workflowState' => $state];
 
             return $repository->selectCount($where, false, $parameters);
