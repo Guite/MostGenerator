@@ -514,7 +514,7 @@ class Repository {
             }
 
             if (null !== $this->collectionFilterHelper) {
-                $qb = $this->addSearchFilter($qb, $fragment);
+                $qb = $this->collectionFilterHelper->addSearchFilter($qb, $fragment);
             }
 
             $query = $this->getSelectWherePaginatedQuery($qb, $currentPage, $resultsPerPage);
@@ -603,7 +603,7 @@ class Repository {
             $qb = $this->getCountQuery($where, $useJoins);
 
             if (null !== $this->collectionFilterHelper) {
-                $qb = $this->collectionFilterHelper')->applyDefaultFilters('«name.formatForCode»', $qb, $parameters);
+                $qb = $this->collectionFilterHelper->applyDefaultFilters('«name.formatForCode»', $qb, $parameters);
             }
 
             $query = $qb->getQuery();
