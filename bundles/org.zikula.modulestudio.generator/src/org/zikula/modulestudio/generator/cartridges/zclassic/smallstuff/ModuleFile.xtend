@@ -2,12 +2,14 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff
 
 import de.guite.modulestudio.metamodel.Application
 import org.eclipse.xtext.generator.IFileSystemAccess
+import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class ModuleFile {
 
+    extension ControllerExtensions = new ControllerExtensions
     extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
@@ -21,7 +23,7 @@ class ModuleFile {
     }
 
     def private moduleBaseClass(Application it) '''
-        «IF generateListContentType || generateDetailContentType»
+        «IF generateListContentType || (generateDetailContentType && hasDisplayActions)»
             namespace «appNamespace»\Base {
 
                 «moduleBaseImpl»
@@ -42,7 +44,7 @@ class ModuleFile {
                     class «appName»_ContentType_ItemList extends \«appNamespace»\ContentType\ItemList {
                     }
                 «ENDIF»
-                «IF generateDetailContentType»
+                «IF generateDetailContentType && hasDisplayActions»
                     class «appName»_ContentType_Item extends \«appNamespace»\ContentType\Item {
                     }
                 «ENDIF»
