@@ -131,9 +131,6 @@ class ComposerFile {
     '''
 
     def private hasExtraCapabilities(Application it) {
-        if (generateSearchApi) {
-            return true
-        }
         if (hasCategorisableEntities) {
             return true
         }
