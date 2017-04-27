@@ -4,6 +4,7 @@ import de.guite.modulestudio.metamodel.Application
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
+import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
@@ -11,6 +12,7 @@ import org.zikula.modulestudio.generator.extensions.Utils
 class Factory {
 
     extension FormattingExtensions = new FormattingExtensions
+    extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension ModelExtensions = new ModelExtensions
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
@@ -35,6 +37,9 @@ class Factory {
         use Doctrine\ORM\EntityRepository;
         use InvalidArgumentException;
         use «appNamespace»\Entity\Factory\EntityInitialiser;
+        «IF hasTranslatable»
+            use «appNamespace»\Helper\FeatureActivationHelper;
+        «ENDIF»
 
         /**
          * Factory class used to create entities and receive entity repositories.
@@ -50,17 +55,30 @@ class Factory {
              * @var EntityInitialiser The entity initialiser for dynamical application of default values
              */
             protected $entityInitialiser;
+            «IF hasTranslatable»
+
+                /**
+                 * @var FeatureActivationHelper
+                 */
+                protected $featureActivationHelper;
+            «ENDIF»
 
             /**
              * «name.formatForCodeCapital»Factory constructor.
              *
              * @param ObjectManager     $objectManager     The object manager to be used for determining the repositories
              * @param EntityInitialiser $entityInitialiser The entity initialiser for dynamical application of default values
+             «IF hasTranslatable»
+             * @param FeatureActivationHelper $featureActivationHelper FeatureActivationHelper service instance
+             «ENDIF»
              */
-            public function __construct(ObjectManager $objectManager, EntityInitialiser $entityInitialiser)
+            public function __construct(ObjectManager $objectManager, EntityInitialiser $entityInitialiser«IF hasTranslatable», FeatureActivationHelper $featureActivationHelper«ENDIF»)
             {
                 $this->objectManager = $objectManager;
                 $this->entityInitialiser = $entityInitialiser;
+                «IF hasTranslatable»
+                    $this->featureActivationHelper = $featureActivationHelper;
+                «ENDIF»
             }
 
             /**
@@ -74,7 +92,17 @@ class Factory {
             {
                 $entityClass = '«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Entity\\' . ucfirst($objectType) . 'Entity';
 
-                return $this->objectManager->getRepository($entityClass);
+                «IF hasTranslatable»
+                    $repository = $this->objectManager->getRepository($entityClass);
+
+                    if (in_array($objectType, ['«getTranslatableEntities.map[name.formatForCode].join('\', \'')»'])) {
+                        $repository->setTranslationsEnabled($this->featureActivationHelper->isEnabled(FeatureActivationHelper::TRANSLATIONS, $objectType));
+                    }
+
+                    return $repository;
+                «ELSE»
+                    return $this->objectManager->getRepository($entityClass);
+                «ENDIF»
             }
             «FOR entity : getAllEntities»
 

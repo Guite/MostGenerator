@@ -115,7 +115,14 @@ class Repository {
             «ENDIF*/»/**
              * @var string The default sorting field/expression
              */
-            protected $defaultSortingField = '«getDefaultSortingField.name.formatForCode»';«/*IF tree != EntityTreeType.NONE»
+            protected $defaultSortingField = '«getDefaultSortingField.name.formatForCode»';
+            «IF hasTranslatableFields»
+
+                /**
+                 * @var bool Whether translations are enabled or not
+                 */
+                protected $translationsEnabled = true;
+            «ENDIF»«/*IF tree != EntityTreeType.NONE»
 
                 /**
                  * «name.formatForCodeCapital»Repository constructor.
@@ -166,6 +173,9 @@ class Repository {
             }
 
             «fh.getterAndSetterMethods(it, 'defaultSortingField', 'string', false, true, false, '', '')»
+            «IF hasTranslatableFields»
+                «fh.getterAndSetterMethods(it, 'translationsEnabled', 'bool', false, false, false, '', '')»
+            «ENDIF»
 
             «truncateTable»
             «new UserDeletion().generate(it)»
@@ -806,8 +816,7 @@ class Repository {
             $query = $qb->getQuery();
             «IF hasTranslatableFields»
 
-                $featureActivationHelper = \ServiceUtil::get('«app.appService».feature_activation_helper');
-                if ($featureActivationHelper->isEnabled(FeatureActivationHelper::TRANSLATIONS, '«name.formatForCode»')) {
+                if (true === $this->translationsEnabled) {
                     // set the translation query hint
                     $query->setHint(
                         Query::HINT_CUSTOM_OUTPUT_WALKER,

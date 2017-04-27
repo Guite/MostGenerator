@@ -118,6 +118,10 @@ class ServiceDefinitions {
             arguments:
                 - "@«entityManagerService»"
                 - "@«modPrefix».entity_initialiser"
+                «IF hasTranslatable»
+                    - "@«modPrefix».feature_activation_helper"
+                «ENDIF»
+
         # Entity initialiser
         «modPrefix».entity_initialiser:
             class: «appNamespace»\Entity\Factory\EntityInitialiser

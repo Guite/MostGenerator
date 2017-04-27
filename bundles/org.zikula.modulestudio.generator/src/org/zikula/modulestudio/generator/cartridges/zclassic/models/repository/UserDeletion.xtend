@@ -69,9 +69,7 @@ class UserDeletion {
                ->where('tbl.createdBy = :creator')
                ->setParameter('creator', $userId);
             $query = $qb->getQuery();
-            «IF hasPessimisticWriteLock»
-                $query->setLockMode(LockMode::«lockType.lockTypeAsConstant»);
-            «ENDIF»
+            «initQueryAdditions»
             $query->execute();
 
             $logArgs = ['app' => '«application.appName»', 'user' => $currentUserApi->get('uname'), 'entities' => '«nameMultiple.formatForDisplay»', 'userid' => $userId];
@@ -107,9 +105,7 @@ class UserDeletion {
                ->where('tbl.updatedBy = :editor')
                ->setParameter('editor', $userId);
             $query = $qb->getQuery();
-            «IF hasPessimisticWriteLock»
-                $query->setLockMode(LockMode::«lockType.lockTypeAsConstant»);
-            «ENDIF»
+            «initQueryAdditions»
             $query->execute();
 
             $logArgs = ['app' => '«application.appName»', 'user' => $currentUserApi->get('uname'), 'entities' => '«nameMultiple.formatForDisplay»', 'userid' => $userId];
@@ -142,8 +138,7 @@ class UserDeletion {
                ->where('tbl.createdBy = :creator')
                ->setParameter('creator', $userId);
             $query = $qb->getQuery();
-            «initDeleteQueryAdditions»
-
+            «initQueryAdditions»
             $query->execute();
 
             $logArgs = ['app' => '«application.appName»', 'user' => $currentUserApi->get('uname'), 'entities' => '«nameMultiple.formatForDisplay»', 'userid' => $userId];
@@ -176,8 +171,7 @@ class UserDeletion {
                ->where('tbl.updatedBy = :editor')
                ->setParameter('editor', $userId);
             $query = $qb->getQuery();
-            «initDeleteQueryAdditions»
-
+            «initQueryAdditions»
             $query->execute();
 
             $logArgs = ['app' => '«application.appName»', 'user' => $currentUserApi->get('uname'), 'entities' => '«nameMultiple.formatForDisplay»', 'userid' => $userId];
@@ -218,9 +212,7 @@ class UserDeletion {
                ->where('tbl.' . $userFieldName . ' = :user')
                ->setParameter('user', $userId);
             $query = $qb->getQuery();
-            «IF hasPessimisticWriteLock»
-                $query->setLockMode(LockMode::«lockType.lockTypeAsConstant»);
-            «ENDIF»
+            «initQueryAdditions»
             $query->execute();
 
             $logArgs = ['app' => '«application.appName»', 'user' => $currentUserApi->get('uname'), 'entities' => '«nameMultiple.formatForDisplay»', 'field' => $userFieldName, 'userid' => $userId, 'newuserid' => $newUserId];
@@ -258,8 +250,7 @@ class UserDeletion {
                ->where('tbl.' . $userFieldName . ' = :user')
                ->setParameter('user', $userId);
             $query = $qb->getQuery();
-            «initDeleteQueryAdditions»
-
+            «initQueryAdditions»
             $query->execute();
 
             $logArgs = ['app' => '«application.appName»', 'user' => $currentUserApi->get('uname'), 'entities' => '«nameMultiple.formatForDisplay»', 'field' => $userFieldName, 'userid' => $userId];
@@ -267,9 +258,8 @@ class UserDeletion {
         }
     '''
 
-    def private initDeleteQueryAdditions(Entity it) '''
+    def private initQueryAdditions(Entity it) '''
          «IF hasPessimisticWriteLock»
-
             $query->setLockMode(LockMode::«lockType.lockTypeAsConstant»);
         «ENDIF»
     '''
