@@ -147,7 +147,7 @@ class EntityDisplayHelper {
             «IF displayPatternParts.length < 2»«/* no field references, just pass to translator */»
                 return $this->translator->__('«getUsedDisplayPattern.formatForCodeCapital»');
             «ELSE»
-                return $this->translator->__f('«getUsedDisplayPattern.replaceAll('#', ':')»', [
+                return $this->translator->__f('«getUsedDisplayPattern.replaceAll('#', '%')»', [
                     «displayPatternArguments»
                 ]);
             «ENDIF»
@@ -270,12 +270,10 @@ class EntityDisplayHelper {
             var matchedFields = getSelfAndParentDataObjects.map[fields].flatten.filter[name == patternPart]
             if (!matchedFields.empty) {
                 // field referencing part
-                formattedPart = '\':' + patternPart + ':\' => '
-                formattedPart = formatFieldValue(matchedFields.head, '$entity->get' + patternPart.toFirstUpper + '()')
+                formattedPart = '\'%' + patternPart + '%\' => ' + formatFieldValue(matchedFields.head, '$entity->get' + patternPart.toFirstUpper + '()')
             } else if (geographical && #['latitude', 'longitude'].contains(patternPart)) {
                 // geo field referencing part
-                formattedPart = '\':' + patternPart + ':\' => '
-                formattedPart = 'number_format($entity->get' + patternPart.toFirstUpper + '(), 7, \'.\', \'\')'
+                formattedPart = '\'%' + patternPart + '%\' => ' + 'number_format($entity->get' + patternPart.toFirstUpper + '(), 7, \'.\', \'\')'
             } else {
                 // static part
                 // formattedPart = '\'' + patternPart.replace('\'', '') + '\''

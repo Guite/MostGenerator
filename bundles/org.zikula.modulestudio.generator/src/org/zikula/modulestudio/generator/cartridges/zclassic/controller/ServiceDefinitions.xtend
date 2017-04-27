@@ -422,7 +422,7 @@ class ServiceDefinitions {
                     - { name: form.type }
         «ENDIF»
         «IF generateExternalControllerAndFinder»
-            «FOR entity : getAllEntities»
+            «FOR entity : getAllEntities.filter[hasDisplayAction]»
 
                 «modPrefix».form.type.«entity.name.formatForDB»finder:
                     class: «nsBase»Finder\«entity.name.formatForCodeCapital»FinderType

@@ -5,7 +5,9 @@ import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype.Finder
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.additions.ExternalView
+import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
+import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
@@ -13,7 +15,9 @@ import org.zikula.modulestudio.generator.extensions.Utils
 
 class ExternalController {
 
+    extension ControllerExtensions = new ControllerExtensions
     extension FormattingExtensions = new FormattingExtensions
+    extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension ModelExtensions = new ModelExtensions
     extension NamingExtensions = new NamingExtensions
@@ -22,6 +26,9 @@ class ExternalController {
     FileHelper fh = new FileHelper()
 
     def generate(Application it, IFileSystemAccess fsa) {
+        if (!generateExternalControllerAndFinder || !hasDisplayActions) {
+            return
+        }
         println('Generating external controller')
         generateClassPair(fsa, getAppSourceLibPath + 'Controller/ExternalController.php',
             fh.phpFileContent(it, externalBaseClass), fh.phpFileContent(it, externalImpl)
@@ -248,27 +255,28 @@ class ExternalController {
         }
 
         $where = '';
-        $sortParam = $sort . ' ' . $sdir;
+        $orderBy = $sort . ' ' . $sdir;
+
+        $qb = $repository->getListQueryBuilder($where, $orderBy);
         «IF hasImageFields»
 
             if (true === $templateParameters['onlyImages'] && $templateParameters['imageField'] != '') {
-                $searchTerm = '';
                 $imageField = $templateParameters['imageField'];
-
-                $whereParts = [];
+                $orX = $qb->expr()->orX();
                 foreach (['gif', 'jpg', 'jpeg', 'jpe', 'png', 'bmp'] as $imageExtension) {
-                    $whereParts[] = 'tbl.' . $imageField . ':like:%.' . $imageExtension;
+                    $orX->add($qb->expr()->like('tbl.' . $imageField, '%.' . $imageExtension));
                 }
 
-                $where = '(' . implode('*', $whereParts) . ')';
+                $qb->andWhere($orX);
             }
         «ENDIF»
 
         if ($searchTerm != '') {
-            list($entities, $objectCount) = $repository->selectSearch($searchTerm, [], $sortParam, $currentPage, $resultsPerPage);
-        } else {
-            list($entities, $objectCount) = $repository->selectWherePaginated($where, $sortParam, $currentPage, $resultsPerPage);
+            $qb = $repository->addSearchFilter($qb, $searchTerm);
         }
+        $query = $repository->getQueryFromBuilder($qb);
+
+        list($entities, $objectCount) = $repository->retrieveCollectionResult($query, true);
 
         «IF hasCategorisableEntities»
             if (in_array($objectType, ['«getCategorisableEntities.map[e|e.name.formatForCode].join('\', \'')»'])) {

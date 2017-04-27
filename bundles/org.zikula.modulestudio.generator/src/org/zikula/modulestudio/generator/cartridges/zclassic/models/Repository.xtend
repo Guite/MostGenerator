@@ -470,7 +470,7 @@ class Repository {
 
             $query = $this->getQueryFromBuilder($qb);
 
-            return $this->retrieveCollectionResult($query, $orderBy, false);
+            return $this->retrieveCollectionResult($query, false);
         }
     '''
 
@@ -512,7 +512,7 @@ class Repository {
             $qb = $this->getListQueryBuilder($where, $orderBy, $useJoins, $slimMode);
             $query = $this->getSelectWherePaginatedQuery($qb, $currentPage, $resultsPerPage);
 
-            return $this->retrieveCollectionResult($query, $orderBy, true);
+            return $this->retrieveCollectionResult($query, true);
         }
     '''
 
@@ -540,7 +540,7 @@ class Repository {
 
             $query = $this->getSelectWherePaginatedQuery($qb, $currentPage, $resultsPerPage);
 
-            return $this->retrieveCollectionResult($query, $orderBy, true);
+            return $this->retrieveCollectionResult($query, true);
         }
 
         /**
@@ -551,7 +551,7 @@ class Repository {
          *
          * @return QueryBuilder Enriched query builder instance
          */
-        protected function addSearchFilter(QueryBuilder $qb, $fragment = '')
+        public function addSearchFilter(QueryBuilder $qb, $fragment = '')
         {
             if ($fragment == '') {
                 return $qb;
@@ -581,12 +581,11 @@ class Repository {
          * Performs a given database selection and post-processed the results.
          *
          * @param Query   $query       The Query instance to be executed
-         * @param string  $orderBy     The order-by clause to use when retrieving the collection (optional) (default='')
          * @param boolean $isPaginated Whether the given query uses a paginator or not (optional) (default=false)
          *
          * @return array Retrieved collection and (for paginated queries) the amount of total records affected
          */
-        public function retrieveCollectionResult(Query $query, $orderBy = '', $isPaginated = false)
+        public function retrieveCollectionResult(Query $query, $isPaginated = false)
         {
             $count = 0;
             if (!$isPaginated) {

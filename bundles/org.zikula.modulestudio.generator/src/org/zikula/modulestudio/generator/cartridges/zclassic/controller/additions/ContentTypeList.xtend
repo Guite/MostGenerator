@@ -275,7 +275,7 @@ class ContentTypeList {
             $currentPage = 1;
             $resultsPerPage = isset($this->amount) ? $this->amount : 1;
             $query = $repository->getSelectWherePaginatedQuery($qb, $currentPage, $resultsPerPage);
-            list($entities, $objectCount) = $repository->retrieveCollectionResult($query, $orderBy, true);
+            list($entities, $objectCount) = $repository->retrieveCollectionResult($query, true);
             «IF hasCategorisableEntities»
 
                 if ($featureActivationHelper->isEnabled(FeatureActivationHelper::CATEGORIES, $this->objectType)) {
