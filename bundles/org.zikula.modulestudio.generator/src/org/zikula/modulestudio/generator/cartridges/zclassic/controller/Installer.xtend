@@ -122,7 +122,7 @@ class Installer {
                     $this->container->get('zikula_categories_module.api.category_permission')
                 );
                 «IF targets('1.5')»
-                    $categoryGlobal = $this->container->get('zikula_categories_module.category_repository')->findOneByName('Global');
+                    $categoryGlobal = $this->container->get('zikula_categories_module.category_repository')->findOneBy(['name' => 'Global']);
                 «ELSE»
                     $categoryGlobal = $this->container->get('zikula_categories_module.api.category')->getCategoryByPath('/__SYSTEM__/Modules/Global');
                 «ENDIF»

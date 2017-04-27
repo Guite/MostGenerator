@@ -127,41 +127,6 @@ class CategoryHelper {
 
     def private categoryBaseImpl(Application it) '''
         /**
-         * Retrieves the main/default category of «appName».
-         *
-         * @param string $objectType The object type to retrieve
-         * @param string $property   Name of category registry property to be used (optional)
-         * @deprecated Use the methods getAllProperties, getAllPropertiesWithMainCat, getMainCatForProperty and getPrimaryProperty instead
-         *
-         * @return mixed Category array on success, false on failure
-         */
-        public function getMainCat($objectType = '', $property = '')
-        {
-            if (empty($objectType)) {
-                throw new InvalidArgumentException($this->translator->__('Invalid object type received.'));
-        	}
-            if (empty($property)) {
-                // default to the primary registry
-                $property = $this->getPrimaryProperty($objectType);
-            }
-
-            $logArgs = ['app' => '«appName»', 'user' => $this->currentUserApi->get('uname')];
-            $this->logger->warning('{app}: User {user} called CategoryHelper#getMainCat which is deprecated.', $logArgs);
-
-            «IF targets('1.5')»
-                $moduleRegistries = $this->categoryRegistryRepository->findBy([
-                    'modname' => '«appName»',
-                    'entityname' => ucfirst($objectType) . 'Entity',
-                    'property' => $property
-                ]);
-
-                return count($moduleRegistries) > 0 ? $moduleRegistries[0]['category']->getId() : 32; // 32 == /__System/Modules/Global
-            «ELSE»
-                return $this->categoryRegistryApi->getModuleCategoryId('«appName»', ucfirst($objectType) . 'Entity', $property, 32); // 32 == /__System/Modules/Global
-            «ENDIF»
-        }
-
-        /**
          * Defines whether multiple selection is enabled for a given object type
          * or not. Subclass can override this method to apply a custom behaviour
          * to certain category registries for example.
