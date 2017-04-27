@@ -37,6 +37,7 @@ class Factory {
         use Doctrine\ORM\EntityRepository;
         use InvalidArgumentException;
         use «appNamespace»\Entity\Factory\EntityInitialiser;
+        use «appNamespace»\Helper\CollectionFilterHelper;
         «IF hasTranslatable»
             use «appNamespace»\Helper\FeatureActivationHelper;
         «ENDIF»
@@ -55,6 +56,11 @@ class Factory {
              * @var EntityInitialiser The entity initialiser for dynamical application of default values
              */
             protected $entityInitialiser;
+
+            /**
+             * @var CollectionFilterHelper
+             */
+            protected $collectionFilterHelper;
             «IF hasTranslatable»
 
                 /**
@@ -66,16 +72,22 @@ class Factory {
             /**
              * «name.formatForCodeCapital»Factory constructor.
              *
-             * @param ObjectManager     $objectManager     The object manager to be used for determining the repositories
-             * @param EntityInitialiser $entityInitialiser The entity initialiser for dynamical application of default values
+             * @param ObjectManager          $objectManager          The object manager to be used for determining the repositories
+             * @param EntityInitialiser      $entityInitialiser      The entity initialiser for dynamical application of default values
+             * @param CollectionFilterHelper $collectionFilterHelper CollectionFilterHelper service instance
              «IF hasTranslatable»
              * @param FeatureActivationHelper $featureActivationHelper FeatureActivationHelper service instance
              «ENDIF»
              */
-            public function __construct(ObjectManager $objectManager, EntityInitialiser $entityInitialiser«IF hasTranslatable», FeatureActivationHelper $featureActivationHelper«ENDIF»)
+            public function __construct(
+                ObjectManager $objectManager,
+                EntityInitialiser $entityInitialiser,
+                CollectionFilterHelper $collectionFilterHelper«IF hasTranslatable»,
+                FeatureActivationHelper $featureActivationHelper«ENDIF»)
             {
                 $this->objectManager = $objectManager;
                 $this->entityInitialiser = $entityInitialiser;
+                $this->collectionFilterHelper = $collectionFilterHelper;
                 «IF hasTranslatable»
                     $this->featureActivationHelper = $featureActivationHelper;
                 «ENDIF»
@@ -92,17 +104,16 @@ class Factory {
             {
                 $entityClass = '«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Entity\\' . ucfirst($objectType) . 'Entity';
 
+                $repository = $this->objectManager->getRepository($entityClass);
+                $repository->setCollectionFilterHelper($this->collectionFilterHelper);
                 «IF hasTranslatable»
-                    $repository = $this->objectManager->getRepository($entityClass);
 
                     if (in_array($objectType, ['«getTranslatableEntities.map[name.formatForCode].join('\', \'')»'])) {
                         $repository->setTranslationsEnabled($this->featureActivationHelper->isEnabled(FeatureActivationHelper::TRANSLATIONS, $objectType));
                     }
-
-                    return $repository;
-                «ELSE»
-                    return $this->objectManager->getRepository($entityClass);
                 «ENDIF»
+
+                return $repository;
             }
             «FOR entity : getAllEntities»
 

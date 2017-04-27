@@ -54,9 +54,6 @@ class WorkflowHelper {
         «IF targets('1.5') || needsApproval»
             use «appNamespace»\Entity\Factory\«name.formatForCodeCapital»Factory;
         «ENDIF»
-        «IF needsApproval»
-            use «appNamespace»\Helper\CollectionFilterHelper;
-        «ENDIF»
         use «appNamespace»\Helper\ListEntriesHelper;
 
         /**
@@ -107,13 +104,6 @@ class WorkflowHelper {
                  * @var «name.formatForCodeCapital»Factory
                  */
                 protected $entityFactory;
-                «IF needsApproval»
-
-                    /**
-                     * @var CollectionFilterHelper
-                     */
-                    protected $collectionFilterHelper;
-                «ENDIF»
             «ENDIF»
 
             /**
@@ -135,9 +125,6 @@ class WorkflowHelper {
              * @param CurrentUserApiInterface $currentUserApi    CurrentUserApi service instance
              «ENDIF»
              * @param «name.formatForCodeCapital»Factory $entityFactory «name.formatForCodeCapital»Factory service instance
-             «IF needsApproval»
-             * @param CollectionFilterHelper $collectionFilterHelper CollectionFilterHelper service instance
-             «ENDIF»
              «ENDIF»
              * @param ListEntriesHelper   $listEntriesHelper ListEntriesHelper service instance
              *
@@ -155,9 +142,6 @@ class WorkflowHelper {
                         CurrentUserApiInterface $currentUserApi,
                     «ENDIF»
                     «name.formatForCodeCapital»Factory $entityFactory,
-                    «IF needsApproval»
-                        CollectionFilterHelper $collectionFilterHelper
-                    «ENDIF»
                 «ENDIF»
                 ListEntriesHelper $listEntriesHelper
             ) {
@@ -175,9 +159,6 @@ class WorkflowHelper {
                         $this->currentUserApi = $currentUserApi;
                     «ENDIF»
                     $this->entityFactory = $entityFactory;
-                    «IF needsApproval»
-                        $this->collectionFilterHelper = $collectionFilterHelper;
-                    «ENDIF»
                 «ENDIF»
                 $this->listEntriesHelper = $listEntriesHelper;
             }
@@ -691,13 +672,10 @@ class WorkflowHelper {
         {
             $repository = $this->entityFactory->getRepository($objectType);
 
-            $qb = $repository->getCountQuery();
-            $qb->andWhere('tbl.workflowState = :state')
-               ->setParameter(':state', $state);
-            $qb = $this->collectionFilterHelper->applyDefaultFilters($objectType, $qb, ['workflowState' => $state]);
-            $query = $repository->getQueryFromBuilder($qb);
+            $where = 'tbl.workflowState = \'' . $state . '\'';
+            $parameters = ['workflowState' => $state];
 
-            return $query->getSingleScalarResult();
+            return $repository->selectCount($where, false, $parameters);
         }
     '''
 

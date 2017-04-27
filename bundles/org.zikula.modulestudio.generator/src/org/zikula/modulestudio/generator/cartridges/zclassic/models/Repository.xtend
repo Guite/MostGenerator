@@ -116,6 +116,11 @@ class Repository {
              * @var string The default sorting field/expression
              */
             protected $defaultSortingField = '«getDefaultSortingField.name.formatForCode»';
+
+            /**
+             * @var CollectionFilterHelper
+             */
+            protected $collectionFilterHelper = null;
             «IF hasTranslatableFields»
 
                 /**
@@ -173,6 +178,7 @@ class Repository {
             }
 
             «fh.getterAndSetterMethods(it, 'defaultSortingField', 'string', false, true, false, '', '')»
+            «fh.getterAndSetterMethods(it, 'collectionFilterHelper', 'CollectionFilterHelper', false, true, true, '', '')»
             «IF hasTranslatableFields»
                 «fh.getterAndSetterMethods(it, 'translationsEnabled', 'bool', false, false, false, '', '')»
             «ENDIF»
@@ -201,6 +207,8 @@ class Repository {
             «retrieveCollectionResult»
 
             «getCountQuery»
+
+            «selectCount»
 
             «new Tree().generate(it, app)»
 
@@ -243,12 +251,7 @@ class Repository {
         use Zikula\Common\Translator\TranslatorInterface;
         use Zikula\UsersModule\Api\«IF app.targets('1.5')»ApiInterface\CurrentUserApiInterface«ELSE»CurrentUserApi«ENDIF»;
         use «app.appNamespace»\Entity\«name.formatForCodeCapital»Entity;
-        «IF hasTranslatableFields»
-            use «app.appNamespace»\Helper\FeatureActivationHelper;
-        «ENDIF»
-        «IF app.hasUploads»
-            use «app.appNamespace»\Helper\ImageHelper;
-        «ENDIF»
+        use «app.appNamespace»\Helper\CollectionFilterHelper;
 
     '''
 
@@ -457,8 +460,8 @@ class Repository {
         public function getListQueryBuilder($where = '', $orderBy = '', $useJoins = true, $slimMode = false)
         {
             $qb = $this->genericBaseQuery($where, $orderBy, $useJoins, $slimMode);
-            if (!$useJoins || !$slimMode) {
-                $qb = \ServiceUtil::get('«app.appService».collection_filter_helper')->addCommonViewFilters('«name.formatForCode»', $qb);
+            if ((!$useJoins || !$slimMode) && null !== $this->collectionFilterHelper) {
+                $qb = $this->collectionFilterHelper->addCommonViewFilters('«name.formatForCode»', $qb);
             }
 
             return $qb;
@@ -648,6 +651,33 @@ class Repository {
             }
 
             return $qb;
+        }
+    '''
+
+    def private selectCount(Entity it) '''
+        /**
+         * Selects entity count with a given where clause.
+         *
+         * @param string  $where      The where clause to use when retrieving the object count (optional) (default='')
+         * @param boolean $useJoins   Whether to include joining related objects (optional) (default=false)
+         * @param array   $parameters List of determined filter options
+         *
+         * @return integer Amount of affected records
+         */
+        public function selectCount($where = '', $useJoins = false, $parameters = [])
+        {
+            $qb = $this->getCountQuery($where, $useJoins);
+
+            if (null !== $this->collectionFilterHelper) {
+                $qb = $this->collectionFilterHelper')->applyDefaultFilters('«name.formatForCode»', $qb, $parameters);
+            }
+
+            $query = $qb->getQuery();
+            «IF hasPessimisticReadLock»
+                $query->setLockMode(LockMode::«lockType.lockTypeAsConstant»);
+            «ENDIF»
+
+            return $query->getSingleScalarResult();
         }
     '''
 
