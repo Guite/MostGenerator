@@ -114,7 +114,8 @@ class Tag {
         public function setObjectDate($date)
         {
             if ($date instanceof DateTime) {
-                $formatter = new IntlDateFormatter();
+                $locale = $this->container->get('request_stack')->getCurrentRequest()->getLocale();
+                $formatter = new IntlDateFormatter($locale, null, null);
                 $this->date = $formatter->format($date->getTimestamp());
         	} else {
                 $this->date = $date;

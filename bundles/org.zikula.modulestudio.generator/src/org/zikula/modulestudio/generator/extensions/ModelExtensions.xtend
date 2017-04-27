@@ -1,5 +1,6 @@
 package org.zikula.modulestudio.generator.extensions
 
+import de.guite.modulestudio.metamodel.AbstractDateField
 import de.guite.modulestudio.metamodel.AbstractIntegerField
 import de.guite.modulestudio.metamodel.AbstractStringField
 import de.guite.modulestudio.metamodel.Application
@@ -471,6 +472,31 @@ class ModelExtensions {
      */
     def getSelfAndParentDataObjects(DataObject it) {
         getParentDataObjects(#[]) + #[it]
+    }
+
+    /**
+     * Returns whether any date or time fields exist or not.
+     */
+    def hasAbstractDateFields(Application it) {
+        !getAllEntities.filter[!getSelfAndParentDataObjects.map[
+            fields.filter(AbstractDateField)
+        ].flatten.empty].empty
+    }
+
+    /**
+     * Returns whether any decimal or float fields exist or not.
+     */
+    def hasDecimalOrFloatNumberFields(Application it) {
+        !getDecimalOrFloatNumberFields.empty
+    }
+
+    /**
+     * Returns any decimal or float fields.
+     */
+    def getDecimalOrFloatNumberFields(Application it) {
+        getAllEntities.map[getSelfAndParentDataObjects.map[
+            fields.filter[f|f instanceof DecimalField || f instanceof FloatField]
+        ].flatten].flatten
     }
 
     /**

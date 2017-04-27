@@ -88,16 +88,16 @@ class Config {
              *
              «IF hasUserGroupSelectors»
              * @param TranslatorInterface      $translator      Translator service instance
-             * @param array                    $moduleVars      Existing module vars
+             * @param object                   $moduleVars      Existing module vars
              * @param GroupRepositoryInterface $groupRepository GroupRepository service instance
              «ELSE»
-             * @param TranslatorInterface  $translator  Translator service instance
-             * @param array                $moduleVars  Existing module vars
+             * @param TranslatorInterface $translator  Translator service instance
+             * @param object              $moduleVars  Existing module vars
              «ENDIF»
              */
             public function __construct(
                 TranslatorInterface $translator,
-                array $moduleVars«IF hasUserGroupSelectors»,
+                $moduleVars«IF hasUserGroupSelectors»,
                 GroupRepositoryInterface $groupRepository«ENDIF»
             ) {
                 $this->setTranslator($translator);

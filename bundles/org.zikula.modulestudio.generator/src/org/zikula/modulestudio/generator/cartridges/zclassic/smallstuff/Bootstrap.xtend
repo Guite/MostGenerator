@@ -5,12 +5,14 @@ import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
+import org.zikula.modulestudio.generator.extensions.Utils
 
 class Bootstrap {
 
     extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension NamingExtensions = new NamingExtensions
+    extension Utils = new Utils
 
     FileHelper fh = new FileHelper
 
@@ -54,7 +56,7 @@ class Bootstrap {
 
     def private bootstrapBaseImpl(Application it) '''
         «bootstrapDocs»
-        «IF hasLoggable»«/* TODO move that into Zikula core https://github.com/zikula/core/issues/3570 */»
+        «IF hasLoggable && !targets('1.5')»
             $container = \ServiceUtil::get('service_container');
 
             $currentUserApi = $container->get('zikula_users_module.current_user');
