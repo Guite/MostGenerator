@@ -67,7 +67,7 @@ class SearchHelper {
         /**
          * Search helper base class.
          */
-        abstract class AbstractSearchHelper«IF targets('1.5')» implements SearchableInterface«ELSE»extends AbstractSearchable«ENDIF»
+        abstract class AbstractSearchHelper «IF targets('1.5')»implements SearchableInterface«ELSE»extends AbstractSearchable«ENDIF»
         {
             «searchHelperBaseImpl»
         }
