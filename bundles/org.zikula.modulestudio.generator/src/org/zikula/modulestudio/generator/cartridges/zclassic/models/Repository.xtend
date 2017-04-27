@@ -639,6 +639,10 @@ class Repository {
             $qb->select($selection)
                ->from('«entityClassName('', false)»', 'tbl');
 
+            if (!empty($where)) {
+                $qb->andWhere($where);
+            }
+
             if (true === $useJoins) {
                 $this->addJoinsToFrom($qb);
             }
@@ -736,6 +740,10 @@ class Repository {
 
             if (true === $useJoins) {
                 $this->addJoinsToFrom($qb);
+            }
+
+            if (!empty($where)) {
+                $qb->andWhere($where);
             }
 
             $this->genericBaseQueryAddOrderBy($qb, $orderBy);
