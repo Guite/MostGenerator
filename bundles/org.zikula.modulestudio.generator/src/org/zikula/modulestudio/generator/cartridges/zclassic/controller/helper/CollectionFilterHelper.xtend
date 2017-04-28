@@ -85,9 +85,16 @@ class CollectionFilterHelper {
             «ENDIF»
 
             /**
-             * @var bool
+             * @var bool Fallback value to determine whether only own entries should be selected or not
              */
             protected $showOnlyOwnEntries = false;
+            «IF supportLocaleFilter»
+
+                /**
+                 * @var bool Whether to apply a locale-based filter or not
+                 */
+                protected $filterDataByLocale = false;
+            «ENDIF»
 
             /**
              * CollectionFilterHelper constructor.
@@ -100,6 +107,9 @@ class CollectionFilterHelper {
              * @param CategoryHelper $categoryHelper      CategoryHelper service instance
              «ENDIF»
              * @param bool           $showOnlyOwnEntries  Fallback value to determine whether only own entries should be selected or not
+             «IF supportLocaleFilter»
+             * @param bool           $filterDataByLocale  Whether to apply a locale-based filter or not
+             «ENDIF»
              */
             public function __construct(
                 RequestStack $requestStack,
@@ -367,16 +377,16 @@ class CollectionFilterHelper {
          */
         protected function applyDefaultFiltersFor«name.formatForCodeCapital»(QueryBuilder $qb, $parameters = [])
         {
+            $routeName = $this->request->get('_route');
+            $isAdminArea = false !== strpos($routeName, '«application.appName.toLowerCase»_«name.formatForDisplay.toLowerCase»_admin');
+            if ($isAdminArea) {
+                return $qb;
+            }
             «IF ownerPermission || standardFields»
-                $showOnlyOwnEntries = (bool)$this->request->query->getInt('own', $this->showOnlyOwnEntries);
 
+                $showOnlyOwnEntries = (bool)$this->request->query->getInt('own', $this->showOnlyOwnEntries);
             «ENDIF»
             «IF hasVisibleWorkflow»
-                $routeName = $this->request->get('_route');
-                $isAdminArea = false !== strpos($routeName, '«application.appName.toLowerCase»_«name.formatForDisplay.toLowerCase»_admin');
-                if ($isAdminArea) {
-                    return $qb;
-                }
 
                 if (!in_array('workflowState', array_keys($parameters)) || empty($parameters['workflowState'])) {
                     // per default we show approved «nameMultiple.formatForDisplay» only
@@ -397,6 +407,26 @@ class CollectionFilterHelper {
                     $qb = $this->addCreatorFilter($qb);
                 }
             «ENDIF»
+            «IF hasLanguageFieldsEntity || hasLocaleFieldsEntity»
+
+                if (true === (bool)$this->filterDataByLocale) {
+                    $allowedLocales = ['', $this->request->getLocale()];
+                    «FOR field : getLanguageFieldsEntity»
+                        «val fieldName = field.name.formatForCode»
+                        if (!in_array('«fieldName»', array_keys($parameters)) || empty($parameters['«fieldName»'])) {
+                            $qb->andWhere('tbl.«fieldName» IN (:current«fieldName.toFirstUpper»)')
+                               ->setParameter('current«fieldName.toFirstUpper»', $allowedLocales);
+                        }
+                    «ENDFOR»
+                    «FOR field : getLocaleFieldsEntity»
+                        «val fieldName = field.name.formatForCode»
+                        if (!in_array('«fieldName»', array_keys($parameters)) || empty($parameters['«fieldName»'])) {
+                            $qb->andWhere('tbl.«fieldName» IN (:current«fieldName.toFirstUpper»)')
+                               ->setParameter('current«fieldName.toFirstUpper»', $allowedLocales);
+                        }
+                    «ENDFOR»
+                }
+            «ENDIF»
             «applyDefaultDateRangeFilter»
 
             return $qb;
@@ -407,11 +437,13 @@ class CollectionFilterHelper {
         «val startDateField = getStartDateField»
         «val endDateField = getEndDateField»
         «IF null !== startDateField»
+
             $startDate = $this->request->query->get('«startDateField.name.formatForCode»', «startDateField.defaultValueForNow»);
             $qb->andWhere('«whereClauseForDateRangeFilter('<=', startDateField, 'startDate')»')
                ->setParameter('startDate', $startDate);
         «ENDIF»
         «IF null !== endDateField»
+
             $endDate = $this->request->query->get('«endDateField.name.formatForCode»', «endDateField.defaultValueForNow»);
             $qb->andWhere('«whereClauseForDateRangeFilter('>=', endDateField, 'endDate')»')
                ->setParameter('endDate', $endDate);

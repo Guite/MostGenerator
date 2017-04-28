@@ -252,6 +252,13 @@ class PersistenceTransformer {
                 ]
             }
         }
+        if (supportLocaleFilter) {
+            varContainer.vars += factory.createBoolVar => [
+                name = 'filterDataByLocale'
+                value = 'false'
+                documentation = 'Whether automatically filter data in the frontend based on the current locale or not'
+            ]
+        }
 
         variables += varContainer
     }

@@ -516,6 +516,9 @@ class ServiceDefinitions {
                     - "@«modPrefix».category_helper"
                 «ENDIF»
                 - "@=service('zikula_extensions_module.api.variable').get('«appName»', 'showOnlyOwnEntries', false)"
+                «IF supportLocaleFilter»
+                    - "@=service('zikula_extensions_module.api.variable').get('«appName»', 'filterDataByLocale', false)"
+                «ENDIF»
 
         «modPrefix».controller_helper:
             class: «nsBase»ControllerHelper

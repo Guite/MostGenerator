@@ -569,6 +569,13 @@ class ModelExtensions {
     }
 
     /**
+     * Checks whether locale-based filtering is possible or not.
+     */
+    def supportLocaleFilter(Application it) {
+        !getAllEntities.filter[hasLanguageFieldsEntity || hasLocaleFieldsEntity].empty
+    }
+
+    /**
      * Checks whether this entity has at least one language field.
      */
     def hasLanguageFieldsEntity(DataObject it) {
