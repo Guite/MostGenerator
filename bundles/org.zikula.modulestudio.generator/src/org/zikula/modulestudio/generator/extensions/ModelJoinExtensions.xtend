@@ -130,6 +130,14 @@ class ModelJoinExtensions {
     }
 
     /**
+     * Returns a list of all outgoing join relations which do not have a delete cascade.
+     */
+    def getOutgoingJoinRelationsWithoutDeleteCascade(DataObject it) {
+        val excludedCascadeTypes = #[CascadeType.REMOVE, CascadeType.PERSIST_REMOVE, CascadeType.REMOVE_MERGE, CascadeType.REMOVE_DETACH, CascadeType.PERSIST_REMOVE_MERGE, CascadeType.PERSIST_REMOVE_DETACH, CascadeType.ALL]
+        getOutgoingJoinRelations.filter[!excludedCascadeTypes.contains(cascade)]
+    }
+
+    /**
      * Returns a list of all relationships for a given data object which should be included into editing.
      */
     def getEditableJoinRelations(DataObject it, Boolean incoming) {

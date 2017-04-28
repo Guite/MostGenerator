@@ -4,6 +4,7 @@ import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.EntityWorkflowType
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
+import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
 
@@ -11,6 +12,7 @@ class WorkflowEvents {
 
     extension FormattingExtensions = new FormattingExtensions
     extension ModelExtensions = new ModelExtensions
+    extension ModelJoinExtensions = new ModelJoinExtensions
     extension Utils = new Utils
     extension WorkflowExtensions = new WorkflowExtensions
 
@@ -93,13 +95,14 @@ class WorkflowEvents {
                     return;
                 }
 
+                $objectType = $entity->get_objectType();
                 $permissionLevel = ACCESS_READ;
                 $transitionName = $event->getTransition()->getName();
                 if (substr($transitionName, 0, 6) == 'update') {
                     $transitionName = 'update';
                 }
                 $targetState = $event->getTransition()->getTos()[0];
-                $hasApproval = «IF needsApproval»in_array($entity->get_objectType(), ['«getAllEntities.filter[workflow != EntityWorkflowType.NONE].map[name.formatForCode].join('\', \'')»'])«ELSE»false«ENDIF»;
+                $hasApproval = «IF needsApproval»in_array($objectType, ['«getAllEntities.filter[workflow != EntityWorkflowType.NONE].map[name.formatForCode].join('\', \'')»'])«ELSE»false«ENDIF»;
 
                 switch ($transitionName) {
                     case 'defer':
@@ -125,12 +128,38 @@ class WorkflowEvents {
                         break;
                 }
 
-
                 $instanceId = $entity->createCompositeIdentifier();
-                if (!$this->permissionApi->hasPermission('«appName»:' . ucfirst($entity->get_objectType()) . ':', $instanceId . '::', $permissionLevel)) {
+                if (!$this->permissionApi->hasPermission('«appName»:' . ucfirst($objectType) . ':', $instanceId . '::', $permissionLevel)) {
                     // no permission for this transition, so disallow it
                     $event->setBlocked(true);
+
+                    return;
                 }
+                «IF !getJoinRelations.empty»
+
+                    if ($transitionName == 'delete') {
+                        // check if deleting the entity would break related child entities
+                        «FOR entity : getAllEntities»
+                            «IF !entity.getOutgoingJoinRelationsWithoutDeleteCascade.empty»
+                                if ($objectType == '«entity.name.formatForCode»') {
+                                    $isBlocked = false;
+                                    «FOR relation : entity.getOutgoingJoinRelationsWithoutDeleteCascade»
+                                        «IF relation.isManySide(true)»
+                                            if (count($entity->get«relation.targetAlias.formatForCodeCapital»()) > 0) {
+                                                $isBlocked = true;
+                                            }
+                                        «ELSE»
+                                            if (null !== $entity->get«relation.targetAlias.formatForCodeCapital»()) {
+                                                $isBlocked = true;
+                                            }
+                                        «ENDIF»
+                                    «ENDFOR»
+                                    $event->setBlocked($isBlocked);
+                                }
+                            «ENDIF»
+                        «ENDFOR»
+                    }
+                «ENDIF»
             «ELSE»
                 parent::onGuard($event);
 
