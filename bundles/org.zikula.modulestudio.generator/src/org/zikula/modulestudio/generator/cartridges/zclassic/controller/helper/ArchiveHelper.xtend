@@ -199,8 +199,8 @@ class ArchiveHelper {
             $qb->andWhere('tbl.workflowState = :approvedState')
                ->setParameter('approvedState', 'approved');
 
-            $qb->andWhere('tbl.' . $endField . ' < :today')
-               ->setParameter('today', $today);
+            $qb->andWhere('tbl.' . $endField . ' < :endThreshold')
+               ->setParameter('endThreshold', $endDate);
 
             $query = $repository->getQueryFromBuilder($qb);
 
