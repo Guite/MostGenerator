@@ -119,7 +119,9 @@ class CollectionFilterHelper {
                 «IF hasCategorisableEntities»
                     CategoryHelper $categoryHelper,
                 «ENDIF»
-                $showOnlyOwnEntries)
+                $showOnlyOwnEntries«IF supportLocaleFilter»,
+                $filterDataByLocale
+                «ENDIF»)
             {
                 $this->request = $requestStack->getCurrentRequest();
                 «IF hasStandardFieldEntities»
@@ -129,6 +131,9 @@ class CollectionFilterHelper {
                     $this->categoryHelper = $categoryHelper;
                 «ENDIF»
                 $this->showOnlyOwnEntries = $showOnlyOwnEntries;
+                «IF supportLocaleFilter»
+                    $this->filterDataByLocale = $filterDataByLocale;
+                «ENDIF»
             }
 
             «collectionFilterHelperBaseImpl»
