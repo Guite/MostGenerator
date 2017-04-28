@@ -24,7 +24,8 @@ class EventAction {
             $uploadFields = $this->getUploadFields($entity->get_objectType());
             if (count($uploadFields) > 0) {
                 $uploadHelper = $this->container->get('«appService».upload_helper');
-                $baseUrl = $this->request->getSchemeAndHttpHost() . $this->request->getBasePath();
+                $request = $this->container->get('request_stack')->getCurrentRequest();
+                $baseUrl = $request->getSchemeAndHttpHost() . $request->getBasePath();
                 foreach ($uploadFields as $fieldName) {
                     $uploadHelper->initialiseUploadField($entity, $fieldName, $baseUrl);
                 }
@@ -88,9 +89,10 @@ class EventAction {
             if ($workflow['id'] > 0) {
                 $result = true;
                 try {
-                    $workflow = $this->objectManager->find('Zikula\Core\Doctrine\Entity\WorkflowEntity', $workflow['id']);
-                    $this->objectManager->remove($workflow);
-                    $this->objectManager->flush();
+                    $entityManager = $args->getEntityManager();
+                    $workflow = $entityManager->find('Zikula\Core\Doctrine\Entity\WorkflowEntity', $workflow['id']);
+                    $entityManager->remove($workflow);
+                    $entityManager->flush();
                 } catch (\Exception $e) {
                     $result = false;
                 }

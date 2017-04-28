@@ -145,9 +145,6 @@ class ServiceDefinitions {
                 - "@service_container"
                 - "@event_dispatcher"
                 - "@logger"
-                «IF hasUploads»
-                    - "@request_stack"
-                «ENDIF»
                 «IF !targets('1.5')»
                     - "@translator.default"
                     - "@«entityManagerService»"

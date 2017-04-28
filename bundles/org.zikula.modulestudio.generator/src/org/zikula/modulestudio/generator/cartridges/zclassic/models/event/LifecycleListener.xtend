@@ -30,9 +30,6 @@ class LifecycleListener {
         namespace «appNamespace»\Listener\Base;
 
         use Doctrine\Common\EventSubscriber;
-        «IF !targets('1.5')»
-            use Doctrine\Common\Persistence\ObjectManager;
-        «ENDIF»
         use Doctrine\Common\Persistence\Event\LifecycleEventArgs;
         use Doctrine\ORM\Event\PreUpdateEventArgs;
         use Doctrine\ORM\Events;
@@ -44,8 +41,6 @@ class LifecycleListener {
         use Symfony\Component\EventDispatcher\EventDispatcherInterface;
         «IF hasUploads»
             use Symfony\Component\HttpFoundation\File\File;
-            use Symfony\Component\HttpFoundation\Request;
-            use Symfony\Component\HttpFoundation\RequestStack;
         «ENDIF»
         «IF !targets('1.5')»
             use Zikula\Common\Translator\TranslatorInterface;
@@ -75,24 +70,12 @@ class LifecycleListener {
              * @var LoggerInterface
              */
             protected $logger;
-            «IF hasUploads»
-
-                /**
-                 * @var Request
-                 */
-                protected $request;
-            «ENDIF»
             «IF !targets('1.5')»
 
                 /**
                  * @var TranslatorInterface
                  */
                 protected $translator;
-
-                /**
-                 * @var ObjectManager
-                 */
-                protected $objectManager;
 
                 /**
                  * @var WorkflowHelper
@@ -106,33 +89,23 @@ class LifecycleListener {
              * @param ContainerInterface       $container
              * @param EventDispatcherInterface $eventDispatcher EventDispatcher service instance
              * @param LoggerInterface          $logger          Logger service instance
-             «IF hasUploads»
-             * @param RequestStack             $requestStack    RequestStack service instance
-             «ENDIF»
              «IF !targets('1.5')»
              * @param TranslatorInterface      $translator      Translator service instance
-             * @param ObjectManager            $objectManager   Doctrine object manager
              * @param WorkflowHelper           $workflowHelper  WorkflowHelper service instance
              «ENDIF»
              */
             public function __construct(
                 ContainerInterface $container,
                 EventDispatcherInterface $eventDispatcher,
-                LoggerInterface $logger«IF hasUploads»,
-                RequestStack $requestStack«ENDIF»«IF !targets('1.5')»,
+                LoggerInterface $logger«IF !targets('1.5')»,
                 TranslatorInterface $translator,
-                ObjectManager $objectManager,
                 WorkflowHelper $workflowHelper«ENDIF»)
             {
                 $this->setContainer($container);
                 $this->eventDispatcher = $eventDispatcher;
                 $this->logger = $logger;
-                «IF hasUploads»
-                    $this->request = $requestStack->getCurrentRequest();
-                «ENDIF»
                 «IF !targets('1.5')»
                     $this->translator = $translator;
-                    $this->objectManager = $objectManager;
                     $this->workflowHelper = $workflowHelper;
                 «ENDIF»
             }
