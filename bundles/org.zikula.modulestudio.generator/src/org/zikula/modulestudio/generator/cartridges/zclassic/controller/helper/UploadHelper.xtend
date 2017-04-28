@@ -213,10 +213,10 @@ class UploadHelper {
             if ($isImage) {
                 // check if shrinking functionality is enabled
                 $fieldSuffix = ucfirst($objectType) . ucfirst($fieldName);
-                if (true === $this->variableApi->get('«appName»', 'enableShrinkingFor' . $fieldSuffix, false)) {
+                if (isset($this->moduleVars['enableShrinkingFor' . $fieldSuffix]) && true === (bool)$this->moduleVars['enableShrinkingFor' . $fieldSuffix]) {
                     // check for maximum size
-                    $maxWidth = $this->variableApi->get('«appName»', 'shrinkWidth' . $fieldSuffix, 800);
-                    $maxHeight = $this->variableApi->get('«appName»', 'shrinkHeight' . $fieldSuffix, 600);
+                    $maxWidth = isset($this->moduleVars['shrinkWidth' . $fieldSuffix]) ? $this->moduleVars['shrinkWidth' . $fieldSuffix] : 800;
+                    $maxHeight = isset($this->moduleVars['shrinkHeight' . $fieldSuffix]) ? $this->moduleVars['shrinkHeight' . $fieldSuffix] : 600;
 
                     $imgInfo = getimagesize($destinationFilePath);
                     if ($imgInfo[0] > $maxWidth || $imgInfo[1] > $maxHeight) {
