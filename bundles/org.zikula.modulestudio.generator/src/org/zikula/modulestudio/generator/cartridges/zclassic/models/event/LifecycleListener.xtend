@@ -48,18 +48,13 @@ class LifecycleListener {
             use Symfony\Component\HttpFoundation\RequestStack;
         «ENDIF»
         «IF !targets('1.5')»
-            use Symfony\Component\HttpFoundation\Session\SessionInterface;
             use Zikula\Common\Translator\TranslatorInterface;
         «ENDIF»
         use Zikula\Core\Doctrine\EntityAccess;
-        use Zikula\UsersModule\Api\«IF targets('1.5')»ApiInterface\CurrentUserApiInterface«ELSE»CurrentUserApi«ENDIF»;
         use «appNamespace»\«name.formatForCodeCapital»Events;
         «FOR entity : getAllEntities»
             use «appNamespace»\Event\Filter«entity.name.formatForCodeCapital»Event;
         «ENDFOR»
-        «IF hasUploads»
-            use «appNamespace»\Helper\UploadHelper;
-        «ENDIF»
         «IF !targets('1.5')»
             use «appNamespace»\Helper\WorkflowHelper;
         «ENDIF»
@@ -77,11 +72,6 @@ class LifecycleListener {
             protected $eventDispatcher;
 
             /**
-             * @var CurrentUserApi«IF targets('1.5')»Interface«ENDIF»
-             */
-            protected $currentUserApi;
-
-            /**
              * @var LoggerInterface
              */
             protected $logger;
@@ -91,11 +81,6 @@ class LifecycleListener {
                  * @var Request
                  */
                 protected $request;
-
-                /**
-                 * @var UploadHelper
-                 */
-                protected $uploadHelper;
             «ENDIF»
             «IF !targets('1.5')»
 
@@ -103,11 +88,6 @@ class LifecycleListener {
                  * @var TranslatorInterface
                  */
                 protected $translator;
-
-                /**
-                 * @var SessionInterface
-                 */
-                protected $session;
 
                 /**
                  * @var ObjectManager
@@ -158,20 +138,6 @@ class LifecycleListener {
             }
 
             /**
-             * Assigns dependencies which were not set in the constructor.
-             */
-            protected function setAdditionalDependencies()
-            {
-                $this->currentUserApi = $this->container->get('zikula_users_module.current_user');
-                «IF hasUploads»
-                    $this->uploadHelper = $this->container->get('«appService».upload_helper');
-                «ENDIF»
-                «IF !targets('1.5')»
-                    $this->session = $this->container->get('session');
-                «ENDIF»
-            }
-
-            /**
              * Returns list of events to subscribe.
              *
              * @return array list of events
@@ -201,7 +167,6 @@ class LifecycleListener {
                 if (!$this->isEntityManagedByThisBundle($entity) || !method_exists($entity, 'get_objectType')) {
                     return;
                 }
-
                 «eventAction.preRemove(app)»
             }
 
@@ -221,7 +186,6 @@ class LifecycleListener {
                 if (!$this->isEntityManagedByThisBundle($entity) || !method_exists($entity, 'get_objectType')) {
                     return;
                 }
-
                 «eventAction.postRemove(app)»
             }
 
@@ -241,7 +205,6 @@ class LifecycleListener {
                 if (!$this->isEntityManagedByThisBundle($entity) || !method_exists($entity, 'get_objectType')) {
                     return;
                 }
-
                 «eventAction.prePersist(app)»
             }
 
@@ -258,7 +221,6 @@ class LifecycleListener {
                 if (!$this->isEntityManagedByThisBundle($entity) || !method_exists($entity, 'get_objectType')) {
                     return;
                 }
-
                 «eventAction.postPersist(app)»
             }
 
@@ -276,7 +238,6 @@ class LifecycleListener {
                 if (!$this->isEntityManagedByThisBundle($entity) || !method_exists($entity, 'get_objectType')) {
                     return;
                 }
-
                 «eventAction.preUpdate(app)»
             }
 
@@ -292,7 +253,6 @@ class LifecycleListener {
                 if (!$this->isEntityManagedByThisBundle($entity) || !method_exists($entity, 'get_objectType')) {
                     return;
                 }
-
                 «eventAction.postUpdate(app)»
             }
 
@@ -313,18 +273,6 @@ class LifecycleListener {
                 if (!$this->isEntityManagedByThisBundle($entity) || !method_exists($entity, 'get_objectType')) {
                     return;
                 }
-                «IF hasUploads»
-
-                    // prepare helper fields for uploaded files
-                    $uploadFields = $this->getUploadFields($entity->get_objectType());
-                    if (count($uploadFields) > 0) {
-                        $baseUrl = $this->request->getSchemeAndHttpHost() . $this->request->getBasePath();
-                        foreach ($uploadFields as $fieldName) {
-                            $this->uploadHelper->initialiseUploadField($entity, $fieldName, $baseUrl);
-                        }
-                    }
-                «ENDIF»
-
                 «eventAction.postLoad(app)»
             }
 

@@ -18,6 +18,18 @@ class EventAction {
     }
 
     def postLoad(Application it) '''
+        «IF hasUploads»
+
+            // prepare helper fields for uploaded files
+            $uploadFields = $this->getUploadFields($entity->get_objectType());
+            if (count($uploadFields) > 0) {
+                $uploadHelper = $this->container->get('«appService».upload_helper');
+                $baseUrl = $this->request->getSchemeAndHttpHost() . $this->request->getBasePath();
+                foreach ($uploadFields as $fieldName) {
+                    $uploadHelper->initialiseUploadField($entity, $fieldName, $baseUrl);
+                }
+            }
+        «ENDIF»
 
         // create the filter event and dispatch it
         $event = $this->createFilterEvent(«entityVar»);
@@ -26,6 +38,7 @@ class EventAction {
 
     def prePersist(Application it) '''
         «IF hasUploads»
+
             $uploadFields = $this->getUploadFields($entity->get_objectType());
             foreach ($uploadFields as $uploadField) {
                 if (empty(«entityVar»[$uploadField])) {
@@ -37,7 +50,6 @@ class EventAction {
                 }
                 «entityVar»[$uploadField] = «entityVar»[$uploadField]->getFilename();
             }
-
         «ENDIF»
 
         // create the filter event and dispatch it
@@ -49,8 +61,10 @@ class EventAction {
     '''
 
     def postPersist(Application it) '''
+
         $objectId = «entityVar»->createCompositeIdentifier();
-        $logArgs = ['app' => '«appName»', 'user' => $this->currentUserApi->get('uname'), 'entity' => «entityVar»->get_objectType(), 'id' => $objectId];
+        $currentUserApi = $this->container->get('zikula_users_module.current_user');
+        $logArgs = ['app' => '«appName»', 'user' => $currentUserApi->get('uname'), 'entity' => «entityVar»->get_objectType(), 'id' => $objectId];
         $this->logger->debug('{app}: User {user} created the {entity} with id {id}.', $logArgs);
 
         // create the filter event and dispatch it
@@ -59,6 +73,7 @@ class EventAction {
     '''
 
     def preRemove(Application it) '''
+
         // create the filter event and dispatch it
         $event = $this->createFilterEvent(«entityVar»);
         $this->eventDispatcher->dispatch(constant('\\«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\«name.formatForCodeCapital»Events::' . strtoupper(«entityVar»->get_objectType()) . '_PRE_REMOVE'), $event);
@@ -80,7 +95,8 @@ class EventAction {
                     $result = false;
                 }
                 if (false === $result) {
-                    $this->session->getFlashBag()->add('error', $this->translator->__('Error! Could not remove stored workflow. Deletion has been aborted.'));
+                    $session = $this->container->get('session');
+                    $session->getFlashBag()->add('error', $this->translator->__('Error! Could not remove stored workflow. Deletion has been aborted.'));
 
                     return false;
                 }
@@ -89,22 +105,27 @@ class EventAction {
     '''
 
     def postRemove(Application it) '''
+
         $objectType = «entityVar»->get_objectType();
         $objectId = «entityVar»->createCompositeIdentifier();
 
         «IF hasUploads»
             $uploadFields = $this->getUploadFields($objectType);
-            foreach ($uploadFields as $uploadField) {
-                if (empty(«entityVar»[$uploadField])) {
-                    continue;
-                }
+            if (count($uploadFields) > 0) {
+                $uploadHelper = $this->container->get('«appService».upload_helper');
+                foreach ($uploadFields as $uploadField) {
+                    if (empty(«entityVar»[$uploadField])) {
+                        continue;
+                    }
 
-                // remove upload file
-                $this->uploadHelper->deleteUploadFile(«entityVar», $uploadField);
+                    // remove upload file
+                    $uploadHelper->deleteUploadFile(«entityVar», $uploadField);
+                }
             }
         «ENDIF»
 
-        $logArgs = ['app' => '«appName»', 'user' => $this->currentUserApi->get('uname'), 'entity' => $objectType, 'id' => $objectId];
+        $currentUserApi = $this->container->get('zikula_users_module.current_user');
+        $logArgs = ['app' => '«appName»', 'user' => $currentUserApi->get('uname'), 'entity' => $objectType, 'id' => $objectId];
         $this->logger->debug('{app}: User {user} removed the {entity} with id {id}.', $logArgs);
 
         // create the filter event and dispatch it
@@ -114,6 +135,7 @@ class EventAction {
 
     def preUpdate(Application it) '''
         «IF hasUploads»
+
             $uploadFields = $this->getUploadFields($entity->get_objectType());
             foreach ($uploadFields as $uploadField) {
                 if (empty(«entityVar»[$uploadField])) {
@@ -125,7 +147,6 @@ class EventAction {
                 }
                 «entityVar»[$uploadField] = «entityVar»[$uploadField]->getFilename();
             }
-
         «ENDIF»
 
         // create the filter event and dispatch it
@@ -137,8 +158,10 @@ class EventAction {
     '''
 
     def postUpdate(Application it) '''
+
         $objectId = «entityVar»->createCompositeIdentifier();
-        $logArgs = ['app' => '«appName»', 'user' => $this->currentUserApi->get('uname'), 'entity' => «entityVar»->get_objectType(), 'id' => $objectId];
+        $currentUserApi = $this->container->get('zikula_users_module.current_user');
+        $logArgs = ['app' => '«appName»', 'user' => $currentUserApi->get('uname'), 'entity' => «entityVar»->get_objectType(), 'id' => $objectId];
         $this->logger->debug('{app}: User {user} updated the {entity} with id {id}.', $logArgs);
 
         // create the filter event and dispatch it
