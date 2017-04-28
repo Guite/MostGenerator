@@ -147,8 +147,6 @@ class ServiceDefinitions {
                 - "@logger"
                 «IF !targets('1.5')»
                     - "@translator.default"
-                    - "@«entityManagerService»"
-                    - "@«modPrefix».workflow_helper"
                 «ENDIF»
             tags:
                 - { name: doctrine.event_subscriber }

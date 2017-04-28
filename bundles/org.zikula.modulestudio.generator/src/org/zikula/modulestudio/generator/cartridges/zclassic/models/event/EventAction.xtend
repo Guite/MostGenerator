@@ -84,7 +84,8 @@ class EventAction {
         «IF !targets('1.5')»
 
             // delete workflow for this entity
-            $this->workflowHelper->normaliseWorkflowData(«entityVar»);
+            $workflowHelper = $this->container->get('«appService».workflow_helper');
+            $workflowHelper->normaliseWorkflowData(«entityVar»);
             $workflow = «entityVar»['__WORKFLOW__'];
             if ($workflow['id'] > 0) {
                 $result = true;

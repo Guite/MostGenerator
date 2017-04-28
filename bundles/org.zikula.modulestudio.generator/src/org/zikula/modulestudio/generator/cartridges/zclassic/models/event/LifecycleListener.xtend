@@ -50,9 +50,6 @@ class LifecycleListener {
         «FOR entity : getAllEntities»
             use «appNamespace»\Event\Filter«entity.name.formatForCodeCapital»Event;
         «ENDFOR»
-        «IF !targets('1.5')»
-            use «appNamespace»\Helper\WorkflowHelper;
-        «ENDIF»
 
         /**
          * Event subscriber base class for entity lifecycle events.
@@ -76,11 +73,6 @@ class LifecycleListener {
                  * @var TranslatorInterface
                  */
                 protected $translator;
-
-                /**
-                 * @var WorkflowHelper
-                 */
-                protected $workflowHelper;
             «ENDIF»
 
             /**
@@ -91,22 +83,19 @@ class LifecycleListener {
              * @param LoggerInterface          $logger          Logger service instance
              «IF !targets('1.5')»
              * @param TranslatorInterface      $translator      Translator service instance
-             * @param WorkflowHelper           $workflowHelper  WorkflowHelper service instance
              «ENDIF»
              */
             public function __construct(
                 ContainerInterface $container,
                 EventDispatcherInterface $eventDispatcher,
                 LoggerInterface $logger«IF !targets('1.5')»,
-                TranslatorInterface $translator,
-                WorkflowHelper $workflowHelper«ENDIF»)
+                TranslatorInterface $translator«ENDIF»)
             {
                 $this->setContainer($container);
                 $this->eventDispatcher = $eventDispatcher;
                 $this->logger = $logger;
                 «IF !targets('1.5')»
                     $this->translator = $translator;
-                    $this->workflowHelper = $workflowHelper;
                 «ENDIF»
             }
 
