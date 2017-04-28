@@ -38,7 +38,7 @@ class LifecycleListener {
         use Doctrine\ORM\Events;
         use Psr\Log\LoggerInterface;
         use Symfony\Component\EventDispatcher\Event;
-        use Symfony\Component\EventDispatcher\EventDispatcher;
+        use Symfony\Component\EventDispatcher\EventDispatcherInterface;
         «IF hasUploads»
             use Symfony\Component\HttpFoundation\File\File;
             use Symfony\Component\HttpFoundation\Request;
@@ -65,7 +65,7 @@ class LifecycleListener {
         abstract class AbstractEntityLifecycleListener implements EventSubscriber
         {
             /**
-             * @var EventDispatcher
+             * @var EventDispatcherInterface
              */
             protected $eventDispatcher;
 
@@ -106,16 +106,16 @@ class LifecycleListener {
             /**
              * EntityLifecycleListener constructor.
              *
-             * @param EventDispatcher $eventDispatcher EventDispatcher service instance
-             * @param LoggerInterface $logger          Logger service instance
+             * @param EventDispatcherInterface $eventDispatcher EventDispatcher service instance
+             * @param LoggerInterface          $logger          Logger service instance
              «IF hasUploads»
-             * @param RequestStack    $requestStack    RequestStack service instance
-             * @param UploadHelper    $uploadHelper    UploadHelper service instance
+             * @param RequestStack             $requestStack    RequestStack service instance
+             * @param UploadHelper             $uploadHelper    UploadHelper service instance
              «ENDIF»
              «IF !targets('1.5')»
-             * @param TranslatorInterface $translator     Translator service instance
-             * @param ObjectManager   $objectManager   Doctrine object manager
-             * @param WorkflowHelper  $workflowHelper  WorkflowHelper service instance
+             * @param TranslatorInterface      $translator      Translator service instance
+             * @param ObjectManager            $objectManager   Doctrine object manager
+             * @param WorkflowHelper           $workflowHelper  WorkflowHelper service instance
              «ENDIF»
              */
             public function __construct(
