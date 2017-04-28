@@ -39,9 +39,9 @@ class UploadHelper {
         use Symfony\Component\Filesystem\Filesystem;
         use Symfony\Component\HttpFoundation\File\File;
         use Symfony\Component\HttpFoundation\File\UploadedFile;
+        use Symfony\Component\HttpFoundation\Session\SessionInterface;
         use Zikula\Common\Translator\TranslatorInterface;
         use Zikula\Common\Translator\TranslatorTrait;
-        use Zikula\ExtensionsModule\Api\«IF targets('1.5')»ApiInterface\VariableApiInterface«ELSE»VariableApi«ENDIF»;
         use Zikula\UsersModule\Api\«IF targets('1.5')»ApiInterface\CurrentUserApiInterface«ELSE»CurrentUserApi«ENDIF»;
 
         /**
@@ -50,6 +50,11 @@ class UploadHelper {
         abstract class AbstractUploadHelper
         {
             use TranslatorTrait;
+
+            /**
+             * @var SessionInterface
+             */
+            protected $session;
 
             /**
              * @var CacheManager
@@ -67,9 +72,9 @@ class UploadHelper {
             protected $currentUserApi;
 
             /**
-             * @var VariableApi«IF targets('1.5')»Interface«ENDIF»
+             * @var array
              */
-            protected $variableApi;
+            protected $moduleVars;
 
             /**
              * @var String
@@ -95,25 +100,28 @@ class UploadHelper {
              * UploadHelper constructor.
              *
              * @param TranslatorInterface $translator        Translator service instance
+             * @param SessionInterface    $session           Session service instance
              * @param CacheManager        $thumbCacheManager Imagine thumb cache manager
              * @param LoggerInterface     $logger            Logger service instance
              * @param CurrentUserApi«IF targets('1.5')»Interface«ELSE»     «ENDIF» $currentUserApi    CurrentUserApi service instance
-             * @param VariableApi«IF targets('1.5')»Interface«ELSE»        «ENDIF» $variableApi       VariableApi service instance
+             * @param object              $moduleVars        Existing module vars
              * @param String              $dataDirectory     The data directory name
              */
             public function __construct(
                 TranslatorInterface $translator,
+                SessionInterface $session,
                 CacheManager $thumbCacheManager,
                 LoggerInterface $logger,
                 CurrentUserApi«IF targets('1.5')»Interface«ENDIF» $currentUserApi,
-                VariableApi«IF targets('1.5')»Interface«ENDIF» $variableApi,
+                $moduleVars,
                 $dataDirectory
             ) {
                 $this->setTranslator($translator);
+                $this->session = $session;
                 $this->thumbCacheManager = $thumbCacheManager;
                 $this->logger = $logger;
                 $this->currentUserApi = $currentUserApi;
-                $this->variableApi = $variableApi;
+                $this->moduleVars = $moduleVars;
                 $this->dataDirectory = $dataDirectory;
 
                 $this->allowedObjectTypes = [«FOR entity : getUploadEntities SEPARATOR ', '»'«entity.name.formatForCode»'«ENDFOR»];
@@ -159,8 +167,7 @@ class UploadHelper {
         {
             $result = [
                 'fileName' => '',
-                'metaData' => [],
-                'errorMessage' => ''
+                'metaData' => []
             ];
 
             // check whether uploads are allowed for the given object type
@@ -169,10 +176,7 @@ class UploadHelper {
             }
 
             // perform validation
-            $validateResult = $this->validateFileUpload($objectType, $file, $fieldName);
-            if (true !== $validateResult) {
-                $result['errorMessage'] = $validateResult;
-
+            if (!$this->validateFileUpload($objectType, $file, $fieldName)) {
                 return $result;
             }
 
@@ -187,12 +191,14 @@ class UploadHelper {
             $fileNameParts[count($fileNameParts) - 1] = $extension;
             $fileName = implode('.', $fileNameParts);
 
+            $flashBag = $this->session->getFlashBag();
+
             // retrieve the final file name
             try {
                 $basePath = $this->getFileBaseFolder($objectType, $fieldName);
             } catch (\Exception $exception) {
-                $result['errorMessage'] = $exception->getMessage();
-                $this->logger->error('{app}: User {user} could not detect upload destination path for entity {entity} and field {field}. ' . $e->getMessage(), ['app' => '«appName»', 'user' => $this->currentUserApi->get('uname'), 'entity' => $objectType, 'field' => $fieldName]);
+                $flashBag->add('error', $exception->getMessage());
+                $this->logger->error('{app}: User {user} could not detect upload destination path for entity {entity} and field {field}. ' . $exception->getMessage(), ['app' => '«appName»', 'user' => $this->currentUserApi->get('uname'), 'entity' => $objectType, 'field' => $fieldName]);
 
                 return $result;
             }
@@ -248,15 +254,18 @@ class UploadHelper {
          * @param UploadedFile $file       Reference to data of uploaded file
          * @param string       $fieldName  Name of upload field
          *
-         * @return bool|string true if file is valid else the error message
+         * @return boolean true if file is valid else false
          */
         protected function validateFileUpload($objectType, $file, $fieldName)
         {
+            $flashBag = $this->session->getFlashBag();
+
             // check if a file has been uploaded properly without errors
             if ($file->getError() != UPLOAD_ERR_OK) {
+                $flashBag->add('error', $file->getErrorMessage());
                 $this->logger->error('{app}: User {user} tried to upload a file with errors: ' . $file->getErrorMessage(), ['app' => '«appName»', 'user' => $this->currentUserApi->get('uname')]);
 
-                return $file->getErrorMessage();
+                return false;
             }
 
             // extract file extension
@@ -271,9 +280,10 @@ class UploadHelper {
             // validate extension
             $isValidExtension = $this->isAllowedFileExtension($objectType, $fieldName, $extension);
             if (false === $isValidExtension) {
+                $flashBag->add('error', $this->__('Error! This file type is not allowed. Please choose another file format.'));
                 $this->logger->error('{app}: User {user} tried to upload a file with a forbidden extension ("{extension}").', ['app' => '«appName»', 'user' => $this->currentUserApi->get('uname'), 'extension' => $extension]);
 
-                return $this->__('Error! This file type is not allowed. Please choose another file format.');
+                return false;
             }
 
             return true;
@@ -286,10 +296,10 @@ class UploadHelper {
         if ($isImage) {
             $imgInfo = getimagesize(«fileVar»);
             if (!is_array($imgInfo) || !$imgInfo[0] || !$imgInfo[1]) {
-                $result['errorMessage'] = $this->__('Error! This file type seems not to be a valid image.');
+                $flashBag->add('error', $this->__('Error! This file type seems not to be a valid image.'));
                 $this->logger->error('{app}: User {user} tried to upload a file which is seems not to be a valid image.', ['app' => '«appName»', 'user' => $this->currentUserApi->get('uname')]);
 
-                return $result;
+                return false;
             }
         }
     '''
@@ -612,18 +622,15 @@ class UploadHelper {
          */
         public function checkAndCreateAllUploadFolders()
         {
-            $errorMessages = [];
+            $result = true;
             «FOR uploadEntity : getUploadEntities»
 
                 «FOR uploadField : uploadEntity.getUploadFieldsEntity»
-                    $result = $this->checkAndCreateUploadFolder('«uploadField.entity.name.formatForCode»', '«uploadField.name.formatForCode»', '«uploadField.allowedExtensions»');
-                    if (true !== $result) {
-                        $errorMessages[] = $result;
-                    }
+                    $result &= $this->checkAndCreateUploadFolder('«uploadField.entity.name.formatForCode»', '«uploadField.name.formatForCode»', '«uploadField.allowedExtensions»');
                 «ENDFOR»
             «ENDFOR»
 
-            return $errorMessages;
+            return $result;
         }
     '''
 
@@ -635,22 +642,24 @@ class UploadHelper {
          * @param string $fieldName         Name of upload field
          * @param string $allowedExtensions String with list of allowed file extensions (separated by ", ")
          *
-         * @return bool|string true if file is valid else the error message
+         * @return Boolean Whether everything went okay or not
          */
         protected function checkAndCreateUploadFolder($objectType, $fieldName, $allowedExtensions = '')
         {
             $uploadPath = $this->getFileBaseFolder($objectType, $fieldName, true);
 
             $fs = new Filesystem();
+            $flashBag = $this->session->getFlashBag();
 
             // Check if directory exist and try to create it if needed
             if (!$fs->exists($uploadPath)) {
                 try {
                     $fs->mkdir($uploadPath, 0777);
-                } catch (IOExceptionInterface $e) {
+                } catch (IOExceptionInterface $exception) {
+                    $flashBag->add('error', $this->__f('The upload directory "%path%" does not exist and could not be created. Try to create it yourself and make sure that this folder is accessible via the web and writable by the webserver.', ['%path%' => $exception->getPath()]));
                     $this->logger->error('{app}: The upload directory {directory} does not exist and could not be created.', ['app' => '«appName»', 'directory' => $uploadPath]);
 
-                    return $this->__f('The upload directory "%path%" does not exist and could not be created. Try to create it yourself and make sure that this folder is accessible via the web and writable by the webserver.', ['%path%' => $e->getPath()]);
+                    return false;
                 }
             }
 
@@ -658,10 +667,11 @@ class UploadHelper {
             if (!is_writable($uploadPath)) {
                 try {
                     $fs->chmod($uploadPath, 0777);
-                } catch (IOExceptionInterface $e) {
+                } catch (IOExceptionInterface $exception) {
+                    $flashBag->add('warning', $this->__f('Warning! The upload directory at "%path%" exists but is not writable by the webserver.', ['%path%' => $exception->getPath()]));
                     $this->logger->error('{app}: The upload directory {directory} exists but is not writable by the webserver.', ['app' => '«appName»', 'directory' => $uploadPath]);
 
-                    return $this->__f('Warning! The upload directory at "%path%" exists but is not writable by the webserver.', ['%path%' => $e->getPath()]);
+                    return false;
                 }
             }
 
@@ -673,10 +683,12 @@ class UploadHelper {
                     $extensions = str_replace(',', '|', str_replace(' ', '', $allowedExtensions));
                     $htaccessContent = str_replace('__EXTENSIONS__', $extensions, file_get_contents($htaccessFileTemplate, false));
                     $fs->dumpFile($htaccessFilePath, $htaccessContent);
-                } catch (IOExceptionInterface $e) {
+                } catch (IOExceptionInterface $exception) {
+                    $flashBag->add('error', $this->__f('An error occured during creation of the .htaccess file in directory "%path%".', ['%path%' => $exception->getPath()]));
+
                     $this->logger->error('{app}: An error occured during creation of the .htaccess file in directory {directory}.', ['app' => '«appName»', 'directory' => $uploadPath]);
 
-                    return $this->__f('An error occured during creation of the .htaccess file in directory "%path%".', ['%path%' => $e->getPath()]);
+                    return false;
                 }
             }
 

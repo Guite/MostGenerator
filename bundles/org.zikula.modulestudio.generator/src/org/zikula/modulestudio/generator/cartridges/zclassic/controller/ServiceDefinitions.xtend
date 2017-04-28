@@ -142,11 +142,11 @@ class ServiceDefinitions {
         «modPrefix».entity_lifecycle_listener:
             class: «appNamespace»\Listener\EntityLifecycleListener
             arguments:
+                - "@service_container"
                 - "@event_dispatcher"
                 - "@logger"
                 «IF hasUploads»
                     - "@request_stack"
-                    - "@«modPrefix».upload_helper"
                 «ENDIF»
                 «IF !targets('1.5')»
                     - "@translator.default"
@@ -649,10 +649,11 @@ class ServiceDefinitions {
                 class: «nsBase»UploadHelper
                 arguments:
                     - "@translator.default"
+                    - "@session"
                     - "@liip_imagine.cache.manager"
                     - "@logger"
                     - "@zikula_users_module.current_user"
-                    - "@zikula_extensions_module.api.variable"
+                    - "@=service('zikula_extensions_module.api.variable').getAll('«appName»')"
                     - "%datadir%"
         «ENDIF»
 

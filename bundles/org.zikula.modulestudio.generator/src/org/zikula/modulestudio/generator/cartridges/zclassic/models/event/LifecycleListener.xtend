@@ -37,6 +37,9 @@ class LifecycleListener {
         use Doctrine\ORM\Event\PreUpdateEventArgs;
         use Doctrine\ORM\Events;
         use Psr\Log\LoggerInterface;
+        use Symfony\Component\DependencyInjection\ContainerAwareInterface;
+        use Symfony\Component\DependencyInjection\ContainerAwareTrait;
+        use Symfony\Component\DependencyInjection\ContainerInterface;
         use Symfony\Component\EventDispatcher\Event;
         use Symfony\Component\EventDispatcher\EventDispatcherInterface;
         «IF hasUploads»
@@ -45,9 +48,11 @@ class LifecycleListener {
             use Symfony\Component\HttpFoundation\RequestStack;
         «ENDIF»
         «IF !targets('1.5')»
+            use Symfony\Component\HttpFoundation\Session\SessionInterface;
             use Zikula\Common\Translator\TranslatorInterface;
         «ENDIF»
         use Zikula\Core\Doctrine\EntityAccess;
+        use Zikula\UsersModule\Api\«IF targets('1.5')»ApiInterface\CurrentUserApiInterface«ELSE»CurrentUserApi«ENDIF»;
         use «appNamespace»\«name.formatForCodeCapital»Events;
         «FOR entity : getAllEntities»
             use «appNamespace»\Event\Filter«entity.name.formatForCodeCapital»Event;
@@ -62,12 +67,19 @@ class LifecycleListener {
         /**
          * Event subscriber base class for entity lifecycle events.
          */
-        abstract class AbstractEntityLifecycleListener implements EventSubscriber
+        abstract class AbstractEntityLifecycleListener implements EventSubscriber, ContainerAwareInterface
         {
+            use ContainerAwareTrait;
+
             /**
              * @var EventDispatcherInterface
              */
             protected $eventDispatcher;
+
+            /**
+             * @var CurrentUserApi«IF targets('1.5')»Interface«ENDIF»
+             */
+            protected $currentUserApi;
 
             /**
              * @var LoggerInterface
@@ -93,6 +105,11 @@ class LifecycleListener {
                 protected $translator;
 
                 /**
+                 * @var SessionInterface
+                 */
+                protected $session;
+
+                /**
                  * @var ObjectManager
                  */
                 protected $objectManager;
@@ -106,11 +123,11 @@ class LifecycleListener {
             /**
              * EntityLifecycleListener constructor.
              *
+             * @param ContainerInterface       $container
              * @param EventDispatcherInterface $eventDispatcher EventDispatcher service instance
              * @param LoggerInterface          $logger          Logger service instance
              «IF hasUploads»
              * @param RequestStack             $requestStack    RequestStack service instance
-             * @param UploadHelper             $uploadHelper    UploadHelper service instance
              «ENDIF»
              «IF !targets('1.5')»
              * @param TranslatorInterface      $translator      Translator service instance
@@ -119,24 +136,38 @@ class LifecycleListener {
              «ENDIF»
              */
             public function __construct(
+                ContainerInterface $container,
                 EventDispatcherInterface $eventDispatcher,
                 LoggerInterface $logger«IF hasUploads»,
-                RequestStack $requestStack,
-                UploadHelper $uploadHelper«ENDIF»«IF !targets('1.5')»,
+                RequestStack $requestStack«ENDIF»«IF !targets('1.5')»,
                 TranslatorInterface $translator,
                 ObjectManager $objectManager,
                 WorkflowHelper $workflowHelper«ENDIF»)
             {
+                $this->setContainer($container);
                 $this->eventDispatcher = $eventDispatcher;
                 $this->logger = $logger;
                 «IF hasUploads»
                     $this->request = $requestStack->getCurrentRequest();
-                    $this->uploadHelper = $uploadHelper;
                 «ENDIF»
                 «IF !targets('1.5')»
                     $this->translator = $translator;
                     $this->objectManager = $objectManager;
                     $this->workflowHelper = $workflowHelper;
+                «ENDIF»
+            }
+
+            /**
+             * Assigns dependencies which were not set in the constructor.
+             */
+            protected function setAdditionalDependencies()
+            {
+                $this->currentUserApi = $this->container->get('zikula_users_module.current_user');
+                «IF hasUploads»
+                    $this->uploadHelper = $this->container->get('«appService».upload_helper');
+                «ENDIF»
+                «IF !targets('1.5')»
+                    $this->session = $this->container->get('session');
                 «ENDIF»
             }
 

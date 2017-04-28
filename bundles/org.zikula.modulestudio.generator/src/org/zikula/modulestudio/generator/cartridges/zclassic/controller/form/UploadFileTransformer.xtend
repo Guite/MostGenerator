@@ -164,9 +164,7 @@ class UploadFileTransformer {
 
                 $result = null;
                 $metaData = [];
-                if ($uploadResult['errorMessage'] != '') {
-                    $this->request->getSession()->getFlashBag()->add('error', $uploadResult['errorMessage']);
-                } elseif ($uploadResult['fileName'] != '') {
+                if ($uploadResult['fileName'] != '') {
                     $result = $this->uploadHelper->getFileBaseFolder($this->formType->getEntity()->get_objectType(), $fieldName) . $uploadResult['fileName'];
                     $metaData = $uploadResult['metaData'];
                 }
