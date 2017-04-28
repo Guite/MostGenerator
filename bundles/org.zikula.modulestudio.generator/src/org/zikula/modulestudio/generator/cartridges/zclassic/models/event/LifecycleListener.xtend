@@ -119,7 +119,7 @@ class LifecycleListener {
              «ENDIF»
              */
             public function __construct(
-                EventDispatcher $eventDispatcher,
+                EventDispatcherInterface $eventDispatcher,
                 LoggerInterface $logger«IF hasUploads»,
                 RequestStack $requestStack,
                 UploadHelper $uploadHelper«ENDIF»«IF !targets('1.5')»,
