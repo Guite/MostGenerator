@@ -202,47 +202,49 @@ class ViewHelper {
                 // normal output
                 $response = new Response($output);
             }
+            «IF !supportedFormats.empty»
 
-            // check if we need to set any custom headers
-            switch ($templateExtension) {
-                «IF supportedFormats.exists[e|e == 'csv']»
-                    case 'csv.twig':
-                        $response->headers->set('Content-Encoding', 'UTF-8');
-                        $response->headers->set('Content-Type', 'text/csv; charset=UTF-8');
-                        $response->headers->set('Content-Disposition', 'attachment; filename=' . $type . '-list.csv');
-                        break;
-                «ENDIF»
-                «IF supportedFormats.exists[e|e == 'ics']»
-                    case 'ics.twig':
-                        $response->headers->set('Content-Type', 'text/calendar; charset=utf-8');
-                        break;
-                «ENDIF»
-                «IF supportedFormats.exists[e|e == 'json']»
-                    case 'json.twig':
-                        $response->headers->set('Content-Type', 'application/json');
-                        break;
-                «ENDIF»
-                «IF supportedFormats.exists[e|e == 'kml']»
-                    case 'kml.twig':
-                        $response->headers->set('Content-Type', 'application/vnd.google-earth.kml+xml');
-                        break;
-                «ENDIF»
-                «IF supportedFormats.exists[e|e == 'xml']»
-                    case 'xml.twig':
-                        $response->headers->set('Content-Type', 'text/xml');
-                        break;
-                «ENDIF»
-                «IF supportedFormats.exists[e|e == 'atom']»
-                    case 'atom.twig':
-                        $response->headers->set('Content-Type', 'application/atom+xml');
-                        break;
-                «ENDIF»
-                «IF supportedFormats.exists[e|e == 'rss']»
-                    case 'rss.twig':
-                        $response->headers->set('Content-Type', 'application/rss+xml');
-                        break;
-                «ENDIF»
-            }
+                // check if we need to set any custom headers
+                switch ($templateExtension) {
+                    «IF supportedFormats.exists[e|e == 'csv']»
+                        case 'csv.twig':
+                            $response->headers->set('Content-Encoding', 'UTF-8');
+                            $response->headers->set('Content-Type', 'text/csv; charset=UTF-8');
+                            $response->headers->set('Content-Disposition', 'attachment; filename=' . $type . '-list.csv');
+                            break;
+                    «ENDIF»
+                    «IF supportedFormats.exists[e|e == 'ics']»
+                        case 'ics.twig':
+                            $response->headers->set('Content-Type', 'text/calendar; charset=utf-8');
+                            break;
+                    «ENDIF»
+                    «IF supportedFormats.exists[e|e == 'json']»
+                        case 'json.twig':
+                            $response->headers->set('Content-Type', 'application/json');
+                            break;
+                    «ENDIF»
+                    «IF supportedFormats.exists[e|e == 'kml']»
+                        case 'kml.twig':
+                            $response->headers->set('Content-Type', 'application/vnd.google-earth.kml+xml');
+                            break;
+                    «ENDIF»
+                    «IF supportedFormats.exists[e|e == 'xml']»
+                        case 'xml.twig':
+                            $response->headers->set('Content-Type', 'text/xml');
+                            break;
+                    «ENDIF»
+                    «IF supportedFormats.exists[e|e == 'atom']»
+                        case 'atom.twig':
+                            $response->headers->set('Content-Type', 'application/atom+xml');
+                            break;
+                    «ENDIF»
+                    «IF supportedFormats.exists[e|e == 'rss']»
+                        case 'rss.twig':
+                            $response->headers->set('Content-Type', 'application/rss+xml');
+                            break;
+                    «ENDIF»
+                }
+            «ENDIF»
 
             return $response;
         }

@@ -11,6 +11,8 @@ class ViewExtensions {
 
     extension ControllerExtensions = new ControllerExtensions
     extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
+    extension ModelBehaviourExtensions = new ModelBehaviourExtensions
+    extension ModelExtensions = new ModelExtensions
 
     /**
      * Determines whether grouping tabs are generated or not.
@@ -67,6 +69,9 @@ class ViewExtensions {
      */
     def getListOfViewFormats(Application it) {
         var formats = newArrayList
+        if (!hasViewActions) {
+            return formats
+        }
         if (generateCsvTemplates) {
             formats.add('csv')
         }
@@ -82,7 +87,7 @@ class ViewExtensions {
         if (generateJsonTemplates) {
             formats.add('json')
         }
-        if (generateKmlTemplates) {
+        if (generateKmlTemplates && hasGeographical) {
             formats.add('kml')
         }
         /*if (generatePdfTemplates) {
@@ -96,16 +101,19 @@ class ViewExtensions {
      */
     def getListOfDisplayFormats(Application it) {
         var formats = newArrayList
+        if (!hasDisplayActions) {
+            return formats
+        }
         if (generateXmlTemplates) {
             formats.add('xml')
         }
         if (generateJsonTemplates) {
             formats.add('json')
         }
-        if (generateKmlTemplates) {
+        if (generateKmlTemplates && hasGeographical) {
             formats.add('kml')
         }
-        if (generateIcsTemplates) {
+        if (generateIcsTemplates && hasDisplayActions && !getAllEntities.filter[hasDisplayAction && null !== startDateField && null !== endDateField].empty) {
             formats.add('ics')
         }
         /*if (generatePdfTemplates) {

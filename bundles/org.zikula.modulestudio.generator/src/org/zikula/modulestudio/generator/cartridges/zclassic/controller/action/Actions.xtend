@@ -227,7 +227,7 @@ class Actions {
     def private processDisplayOutput(Entity it) '''
         // fetch and return the appropriate template
         $response = $this->get('«app.appService».view_helper')->processTemplate($objectType, 'display', $templateParameters);
-        «IF app.generateIcsTemplates»
+        «IF app.generateIcsTemplates && app.hasDisplayActions && !app.getAllEntities.filter[hasDisplayAction && null !== startDateField && null !== endDateField].empty»
 
             if ('ics' == $request->getRequestFormat()) {
                 $fileName = $objectType . '_' .
