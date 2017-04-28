@@ -45,7 +45,7 @@ class GeoFunctions {
                 mapstraction.removeMarker(marker);
                 marker = new mxn.Marker(location);
                 mapstraction.addMarker(marker, true);
-                mapstraction.setCenterAndZoom(location, 18);
+                mapstraction.setCenterAndZoom(location, defaultZoomLevel);
             }
 
             «initGeoCoding»
@@ -59,12 +59,15 @@ class GeoFunctions {
     def private initGeoDisplay(Application it) '''
         var mapstraction;
         var marker;
+        var defaultZoomLevel;
 
         /**
          * Initialises geographical display features.
          */
-        function «vendorAndName»InitGeographicalDisplay(latitude, longitude)
+        function «vendorAndName»InitGeographicalDisplay(latitude, longitude, mapType, zoomLevel)
         {
+            defaultZoomLevel = zoomLevel;
+
             mapstraction = new mxn.Mapstraction('mapContainer', 'googlev3');
             mapstraction.addControls({
                 pan: true,
@@ -72,10 +75,21 @@ class GeoFunctions {
                 map_type: true
             });
 
-            var latlon = new mxn.LatLonPoint(latitude, longitude);
+            var location = new mxn.LatLonPoint(latitude, longitude);
 
-            mapstraction.setMapType(mxn.Mapstraction.SATELLITE);
-            mapstraction.setCenterAndZoom(latlon, 18);
+            if (mapType == 'roadmap') {
+                mapstraction.setMapType(mxn.Mapstraction.ROAD);
+            } else if (mapType == 'satellite') {
+                mapstraction.setMapType(mxn.Mapstraction.SATELLITE);
+            } else if (mapType == 'hybrid') {
+                mapstraction.setMapType(mxn.Mapstraction.HYBRID);
+            } else if (mapType == 'physical') {
+                mapstraction.setMapType(mxn.Mapstraction.PHYSICAL);
+            } else {
+                mapstraction.setMapType(mxn.Mapstraction.SATELLITE);
+            }
+
+            mapstraction.setCenterAndZoom(location, defaultZoomLevel);
             mapstraction.mousePosition('position');
 
             // add a marker
@@ -153,9 +167,9 @@ class GeoFunctions {
         /**
          * Initialises geographical editing features.
          */
-        function «vendorAndName»InitGeographicalEditing(latitude, longitude, mode, useGeoLocation)
+        function «vendorAndName»InitGeographicalEditing(latitude, longitude, mapType, zoomLevel, mode, useGeoLocation)
         {
-            «vendorAndName»InitGeographicalDisplay(latitude, longitude);
+            «vendorAndName»InitGeographicalDisplay(latitude, longitude, mapType, zoomLevel);
 
             // init event handler
             jQuery("[id$='latitude']").change(«vendorAndName»NewCoordinatesEventHandler);

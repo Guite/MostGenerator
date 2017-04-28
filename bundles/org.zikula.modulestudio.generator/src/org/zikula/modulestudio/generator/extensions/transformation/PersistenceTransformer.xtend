@@ -354,6 +354,42 @@ class PersistenceTransformer {
             value = ''
             documentation = 'The API key required for Google Maps.'
         ]
+        varContainer.vars += factory.createTextVar => [
+            name = 'defaultLatitude'
+            value = '0.00'
+            documentation = 'The default latitude.'
+        ]
+        varContainer.vars += factory.createTextVar => [
+            name = 'defaultLongitude'
+            value = '0.00'
+            documentation = 'The default longitude.'
+        ]
+        val mapTypeVar = factory.createListVar => [
+            name = 'defaultMapType'
+            value = 'roadmap'
+            documentation = 'The default map type.'
+        ]
+        mapTypeVar.items += factory.createListVarItem => [
+            name = 'Roadmap'
+            ^default = true
+        ]
+        mapTypeVar.items += factory.createListVarItem => [
+            name = 'Satellite'
+            ^default = false
+        ]
+        mapTypeVar.items += factory.createListVarItem => [
+            name = 'Hybrid'
+            ^default = false
+        ]
+        mapTypeVar.items += factory.createListVarItem => [
+            name = 'Physical'
+            ^default = false
+        ]
+        varContainer.vars += factory.createIntVar => [
+            name = 'defaultZoomLevel'
+            value = '18'
+            documentation = 'The default zoom level.'
+        ]
 
         for (entity : getGeographicalEntities) {
             varContainer.vars += factory.createBoolVar => [

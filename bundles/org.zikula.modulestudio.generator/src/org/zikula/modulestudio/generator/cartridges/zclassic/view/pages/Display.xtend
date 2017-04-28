@@ -173,7 +173,7 @@ class Display {
                     /* <![CDATA[ */
                         ( function($) {
                             $(document).ready(function() {
-                                «application.vendorAndName»InitGeographicalDisplay({{ «objName».latitude|«appName.formatForDB»_geoData }}, {{ «objName».longitude|«appName.formatForDB»_geoData }})
+                                «application.vendorAndName»InitGeographicalDisplay({{ «objName».latitude|«appName.formatForDB»_geoData }}, {{ «objName».longitude|«appName.formatForDB»_geoData }}, '{{ getModVar('«appName»', 'defaultMapType', 'roadmap') }}', {{ getModVar('«appName»', 'defaultZoomLevel', 18) }})
                             });
                         })(jQuery);
                     /* ]]> */

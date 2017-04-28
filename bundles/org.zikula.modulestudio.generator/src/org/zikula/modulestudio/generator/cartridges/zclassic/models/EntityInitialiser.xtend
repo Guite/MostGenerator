@@ -8,6 +8,7 @@ import de.guite.modulestudio.metamodel.TimeField
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
+import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
@@ -15,6 +16,7 @@ import org.zikula.modulestudio.generator.extensions.Utils
 class EntityInitialiser {
 
     extension FormattingExtensions = new FormattingExtensions
+    extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension ModelExtensions = new ModelExtensions
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
@@ -37,7 +39,7 @@ class EntityInitialiser {
         «FOR entity : getAllEntities»
             use «appNamespace»\Entity\«entity.name.formatForCodeCapital»Entity;
         «ENDFOR»
-        «IF !getAllListFields.filter[name != 'workflowState'].empty»
+        «IF hasListFieldsExceptWorkflowState»
             use «appNamespace»\Helper\ListEntriesHelper;
         «ENDIF»
 
@@ -46,20 +48,46 @@ class EntityInitialiser {
          */
         abstract class AbstractEntityInitialiser
         {
-            «IF !getAllListFields.filter[name != 'workflowState'].empty»
+            «IF hasListFieldsExceptWorkflowState»
                 /**
                  * @var ListEntriesHelper Helper service for managing list entries
                  */
                 protected $listEntriesHelper;
 
+            «ENDIF»
+            «IF hasGeographical»
+                /**
+                 * @var float Default latitude for geographical entities
+                 */
+                protected $defaultLatitude;
+
+                /**
+                 * @var float Default longitude for geographical entities
+                 */
+                protected $defaultLongitude;
+
+            «ENDIF»
+            «IF hasListFieldsExceptWorkflowState || hasGeographical»
                 /**
                  * EntityInitialiser constructor.
                  *
+                 «IF hasListFieldsExceptWorkflowState»
                  * @param ListEntriesHelper $listEntriesHelper Helper service for managing list entries
+                 «ENDIF»
+                 «IF hasGeographical»
+                 * @param float $defaultLatitude Default latitude for geographical entities
+                 * @param float $defaultLongitude Default longitude for geographical entities
+                 «ENDIF»
                  */
-                public function __construct(ListEntriesHelper $listEntriesHelper)
+                public function __construct(«IF hasListFieldsExceptWorkflowState»ListEntriesHelper $listEntriesHelper«IF hasGeographical», «ENDIF»«ENDIF»«IF hasGeographical»$defaultLatitude, $defaultLongitude«ENDIF»)
                 {
-                    $this->listEntriesHelper = $listEntriesHelper;
+                    «IF hasListFieldsExceptWorkflowState»
+                        $this->listEntriesHelper = $listEntriesHelper;
+                    «ENDIF»
+                    «IF hasGeographical»
+                        $this->defaultLatitude = $defaultLatitude;
+                        $this->defaultLongitude = $defaultLongitude;
+                    «ENDIF»
                 }
 
             «ENDIF»
@@ -97,13 +125,18 @@ class EntityInitialiser {
                             «ENDIF»
 
                         «ENDFOR»
-
                     «ENDIF»
+                    «IF entity.geographical»
+
+                        $entity->setLatitude($this->defaultLatitude);
+                        $entity->setLongitude($this->defaultLongitude);
+                    «ENDIF»
+
                     return $entity;
                 }
 
             «ENDFOR»
-            «IF !getAllListFields.filter[name != 'workflowState'].empty»
+            «IF hasListFieldsExceptWorkflowState»
                 «fh.getterAndSetterMethods(it, 'listEntriesHelper', 'ListEntriesHelper', false, true, false, '', '')»
             «ENDIF»
         }
@@ -122,6 +155,10 @@ class EntityInitialiser {
     def private dispatch defaultFormat(DatetimeField it) '''Y-m-d H:i:s'''
     def private dispatch defaultFormat(DateField it) '''Y-m-d'''
     def private dispatch defaultFormat(TimeField it) '''H:i:s'''
+
+    def private hasListFieldsExceptWorkflowState(Application it) {
+        !getAllListFields.filter[name != 'workflowState'].empty
+    }
 
     def private initialiserImpl(Application it) '''
         namespace «appNamespace»\Entity\Factory;
