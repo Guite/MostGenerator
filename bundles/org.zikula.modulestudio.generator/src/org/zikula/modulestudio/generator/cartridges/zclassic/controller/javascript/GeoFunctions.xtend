@@ -86,7 +86,7 @@ class GeoFunctions {
             } else if (mapType == 'physical') {
                 mapstraction.setMapType(mxn.Mapstraction.PHYSICAL);
             } else {
-                mapstraction.setMapType(mxn.Mapstraction.SATELLITE);
+                mapstraction.setMapType(mxn.Mapstraction.ROAD);
             }
 
             mapstraction.setCenterAndZoom(location, defaultZoomLevel);
