@@ -93,7 +93,7 @@ class GeoFunctions {
             mapstraction.mousePosition('position');
 
             // add a marker
-            marker = new mxn.Marker(latlon);
+            marker = new mxn.Marker(location);
             mapstraction.addMarker(marker, true);
 
             jQuery('#collapseMap').on('hidden.bs.collapse', function () {
