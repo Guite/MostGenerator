@@ -392,6 +392,7 @@ class PersistenceTransformer {
             name = 'Physical'
             ^default = false
         ]
+        varContainer.vars += mapTypeVar
         varContainer.vars += factory.createIntVar => [
             name = 'defaultZoomLevel'
             value = '18'
