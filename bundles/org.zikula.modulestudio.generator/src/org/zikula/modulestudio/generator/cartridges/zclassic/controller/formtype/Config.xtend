@@ -186,7 +186,11 @@ class Config {
             «IF !(it instanceof IntVar && (it as IntVar).isUserGroupSelector)»
                 'required' => false,
             «ENDIF»
-            'data' => «IF it instanceof BoolVar»(bool)(«ENDIF»isset($this->moduleVars['«name.formatForCode»']) ? $this->moduleVars['«name.formatForCode»'] : «IF it instanceof BoolVar»«(value == 'true').displayBool»)«ELSE»''«ENDIF»,
+            «IF it instanceof IntVar»
+                'data' => isset($this->moduleVars['«name.formatForCode»']) ? intval($this->moduleVars['«name.formatForCode»']) : intval(«value»),
+            «ELSE»
+                'data' => «IF it instanceof BoolVar»(bool)(«ENDIF»isset($this->moduleVars['«name.formatForCode»']) ? $this->moduleVars['«name.formatForCode»'] : «IF it instanceof BoolVar»«(value == 'true').displayBool»)«ELSE»''«ENDIF»,
+            «ENDIF»
             «IF !(it instanceof BoolVar)»
                 «IF !(it instanceof IntVar && (it as IntVar).isUserGroupSelector)»
                     'empty_data' => «IF it instanceof IntVar»intval('«value»')«ELSE»'«value»'«ENDIF»,
