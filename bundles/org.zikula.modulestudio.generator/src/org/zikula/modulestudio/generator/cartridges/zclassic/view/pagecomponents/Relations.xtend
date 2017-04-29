@@ -45,8 +45,8 @@ class Relations {
             {% set hasEditPermission = hasPermission('«app.appName»:«name.formatForCodeCapital»:', '::', 'ACCESS_«IF workflow == EntityWorkflowType::NONE»EDIT«ELSE»COMMENT«ENDIF»') %}
         «ENDIF»
         «IF hasDisplayAction»
-            {% if nolink is not defined %}
-                {% set nolink = false %}
+            {% if noLink is not defined %}
+                {% set noLink = false %}
             {% endif %}
         «ENDIF»
         «IF many»
@@ -59,13 +59,13 @@ class Relations {
         <h4«IF many» class="list-group-item-heading"«ENDIF»>
         «IF hasDisplayAction»
             {% spaceless %}
-            {% if not nolink %}
+            {% if not noLink %}
                 <a href="{{ path('«app.appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ 'display'«routeParams('item', true)») }}" title="{{ item|«app.appName.formatForDB»_formattedTitle|e('html_attr') }}">
             {% endif %}
         «ENDIF»
             {{ item|«app.appName.formatForDB»_formattedTitle }}
         «IF hasDisplayAction»
-            {% if not nolink %}
+            {% if not noLink %}
                 </a>
                 <a id="«name.formatForCode»Item«FOR pkField : getPrimaryKeyFields SEPARATOR '_'»{{ item.«pkField.name.formatForCode» }}«ENDFOR»Display" href="{{ path('«app.appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ 'display', { «routePkParams('item', true)»«appendSlug('item', true)», 'raw': 1 }) }}" title="{{ __('Open quick view window') }}" class="«application.vendorAndName.toLowerCase»-inline-window hidden" data-modal-title="{{ item|«app.appName.formatForDB»_formattedTitle|e('html_attr') }}"><span class="fa fa-id-card-o"></span></a>
             {% endif %}
@@ -104,12 +104,12 @@ class Relations {
 
         {% if «relatedEntity.name.formatForCode».«relationAliasName»|default %}
             {{ include(
-                '@«application.appName»/«otherEntity.name.formatForCodeCapital»/«IF isAdmin»Admin/«ENDIF»includeDisplayItemList«IF many»Many«ELSE»One«ENDIF».html.twig',
+                '@«application.appName»/«otherEntity.name.formatForCodeCapital»/«IF isAdmin»Admin/«ENDIF»includeDisplayItemList«getTargetMultiplicity(useTarget)».html.twig',
                 { item«IF many»s«ENDIF»: «relatedEntity.name.formatForCode».«relationAliasName» }
             ) }}
         {% endif %}
-
         «IF otherEntity.hasEditAction»
+
             «IF !many»
                 {% if «relatedEntity.name.formatForCode».«relationAliasName» is not defined or «relatedEntity.name.formatForCode».«relationAliasName» is null %}
             «ENDIF»

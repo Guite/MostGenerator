@@ -16,8 +16,6 @@ class Section {
     extension ViewExtensions = new ViewExtensions
     extension Utils = new Utils
 
-    Relations relationHelper = new Relations
-
     /**
      * Entry point for edit sections beside the actual fields.
      */
@@ -52,7 +50,7 @@ class Section {
             «ENDIF»
 
         «ENDIF»
-        «relationHelper.generateIncludeStatement(it, app, fsa, isAdmin)»
+        «new Relations(fsa, app, isAdmin).generateIncludeStatement(it)»
         «IF attributable»
             {% if featureActivationHelper.isEnabled(constant('«app.vendor.formatForCodeCapital»\\«app.name.formatForCodeCapital»Module\\Helper\\FeatureActivationHelper::ATTRIBUTES'), '«name.formatForCode»') %}
                 {{ include('@«app.appName»/Helper/includeAttributesEdit.html.twig', { obj: «name.formatForDB»«IF useGroupingTabs('edit')», tabs: true«ENDIF» }) }}

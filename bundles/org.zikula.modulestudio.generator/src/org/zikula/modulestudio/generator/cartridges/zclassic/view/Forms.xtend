@@ -32,13 +32,17 @@ class Forms {
     extension Utils = new Utils
     extension ViewExtensions = new ViewExtensions
 
-    Relations relationHelper = new Relations
+    IFileSystemAccess fsa
+    Application app
+    Boolean isSeparateAdminTemplate
 
     def generate(Application it, IFileSystemAccess fsa) {
+        this.fsa = fsa
+        this.app = it
         for (entity : getAllEntities.filter[hasEditAction]) {
-            entity.generate(it, 'edit', fsa)
+            entity.generate('edit')
             if (needsAutoCompletion) {
-                entity.entityInlineRedirectHandlerFile(it, fsa)
+                entity.entityInlineRedirectHandlerFile
             }
         }
     }
@@ -46,28 +50,31 @@ class Forms {
     /**
      * Entry point for form templates for each entity.
      */
-    def private generate(Entity it, Application app, String actionName, IFileSystemAccess fsa) {
+    def private generate(Entity it, String actionName) {
         println('Generating edit form templates for entity "' + name.formatForDisplay + '"')
+        isSeparateAdminTemplate = false
         var templatePath = editTemplateFile(actionName)
         if (!app.shouldBeSkipped(templatePath)) {
-            fsa.generateFile(templatePath, formTemplate(app, actionName, fsa, false))
+            fsa.generateFile(templatePath, formTemplate(actionName))
         }
         if (application.generateSeparateAdminTemplates) {
+            isSeparateAdminTemplate = true
             templatePath = editTemplateFile('Admin/' + actionName)
             if (!app.shouldBeSkipped(templatePath)) {
-                fsa.generateFile(templatePath, formTemplate(app, actionName, fsa, true))
+                fsa.generateFile(templatePath, formTemplate(actionName))
             }
         }
-        relationHelper.generateInclusionTemplate(it, app, fsa, false)
+
+        new Relations(fsa, app, false).generateInclusionTemplate(it)
         if (application.generateSeparateAdminTemplates) {
-            relationHelper.generateInclusionTemplate(it, app, fsa, true)
+            new Relations(fsa, app, true).generateInclusionTemplate(it)
         }
     }
 
-    def private formTemplate(Entity it, Application app, String actionName, IFileSystemAccess fsa, Boolean isAdmin) '''
+    def private formTemplate(Entity it, String actionName) '''
         «IF application.generateSeparateAdminTemplates»
-            {# purpose of this template: build the «IF isAdmin»admin«ELSE»user«ENDIF» form to «actionName.formatForDisplay» an instance of «name.formatForDisplay» #}
-            {% set baseTemplate = app.request.query.getBoolean('raw', false) ? 'raw' : «IF isAdmin»'adminBase'«ELSE»'base'«ENDIF» %}
+            {# purpose of this template: build the «IF isSeparateAdminTemplate»admin«ELSE»user«ENDIF» form to «actionName.formatForDisplay» an instance of «name.formatForDisplay» #}
+            {% set baseTemplate = app.request.query.getBoolean('raw', false) ? 'raw' : «IF isSeparateAdminTemplate»'adminBase'«ELSE»'base'«ENDIF» %}
         «ELSE»
             {# purpose of this template: build the form to «actionName.formatForDisplay» an instance of «name.formatForDisplay» #}
             {% set baseTemplate = app.request.query.getBoolean('raw', false) ? 'raw' : (routeArea == 'admin' ? 'adminBase' : 'base') %}
@@ -83,21 +90,21 @@ class Forms {
             «ENDIF»
         {% endblock %}
         {% block title mode == 'create' ? __('Create «name.formatForDisplay»') : __('Edit «name.formatForDisplay»') %}
-        «IF !application.generateSeparateAdminTemplates || isAdmin»
+        «IF !application.generateSeparateAdminTemplates || isSeparateAdminTemplate»
             {% block admin_page_icon mode == 'create' ? 'plus' : 'pencil-square-o' %}
         «ENDIF»
         {% block content %}
             <div class="«app.appName.toLowerCase»-«name.formatForDB» «app.appName.toLowerCase»-edit">
-                «formTemplateBody(app, actionName, fsa, isAdmin)»
+                «formTemplateBody(actionName)»
             </div>
         {% endblock %}
         {% block footer %}
             {{ parent() }}
-            «formTemplateJS(app, actionName)»
+            «formTemplateJS(actionName)»
         {% endblock %}
     '''
 
-    def private formTemplateBody(Entity it, Application app, String actionName, IFileSystemAccess fsa, Boolean isAdmin) '''
+    def private formTemplateBody(Entity it, String actionName) '''
         {% form_theme form with [
             '@«application.appName»/Form/bootstrap_3.html.twig',
             'ZikulaFormExtensionBundle:Form:form_div_layout.html.twig'
@@ -114,7 +121,7 @@ class Forms {
                             <a id="mapTab" href="#tabMap" title="{{ __('Map') }}" role="tab" data-toggle="tab">{{ __('Map') }}</a>
                         </li>
                     «ENDIF»
-                    «relationHelper.generateTabTitles(it, app, fsa, isAdmin)»
+                    «new Relations(fsa, app, isSeparateAdminTemplate).generateTabTitles(it)»
                     «IF attributable»
                         {% if featureActivationHelper.isEnabled(constant('«app.vendor.formatForCodeCapital»\\«app.name.formatForCodeCapital»Module\\Helper\\FeatureActivationHelper::ATTRIBUTES'), '«name.formatForCode»') %}
                             <li role="presentation">
@@ -152,27 +159,27 @@ class Forms {
                 <div class="tab-content">
                     <div role="tabpanel" class="tab-pane fade in active" id="tabFields" aria-labelledby="fieldsTab">
                         <h3>{{ __('Fields') }}</h3>
-                        «fieldDetails(app)»
+                        «fieldDetails»
                     </div>
-                    «new Section().generate(it, app, fsa, isAdmin)»
+                    «new Section().generate(it, app, fsa, isSeparateAdminTemplate)»
                 </div>
             </div>
         «ELSE»
             {{ form_errors(form) }}
-            «fieldDetails(app)»
-            «new Section().generate(it, app, fsa, isAdmin)»
+            «fieldDetails»
+            «new Section().generate(it, app, fsa, isSeparateAdminTemplate)»
         «ENDIF»
 
         «submitActions»
         {{ form_end(form) }}
     '''
 
-    def private fieldDetails(Entity it, Application app) '''
+    def private fieldDetails(Entity it) '''
         «translatableFieldDetails»
         «IF !hasTranslatableFields
           || (hasTranslatableFields && (!getEditableNonTranslatableFields.empty || (hasSluggableFields && !hasTranslatableSlug)))
           || geographical»
-            «fieldDetailsFurtherOptions(app)»
+            «fieldDetailsFurtherOptions»
         «ENDIF»
     '''
 
@@ -225,7 +232,7 @@ class Forms {
         «ENDIF»
     '''
 
-    def private fieldDetailsFurtherOptions(Entity it, Application app) '''
+    def private fieldDetailsFurtherOptions(Entity it) '''
         <fieldset>
             <legend>{{ __('«IF hasTranslatableFields»Further properties«ELSE»Content«ENDIF»') }}</legend>
             «IF hasTranslatableFields»
@@ -250,7 +257,7 @@ class Forms {
         «ENDIF»
     '''
 
-    def private formTemplateJS(Entity it, Application app, String actionName) '''
+    def private formTemplateJS(Entity it, String actionName) '''
         {% set editImage = '<span class="fa fa-pencil-square-o"></span>' %}
         {% set removeImage = '<span class="fa fa-trash-o"></span>' %}
         «IF geographical»
@@ -278,13 +285,13 @@ class Forms {
 
         <script type="text/javascript">
         /* <![CDATA[ */
-            «jsInitImpl(app)»
+            «jsInitImpl»
         /* ]]> */
         </script>
     '''
 
-    def private jsInitImpl(Entity it, Application app) '''
-        «relationHelper.initJs(it, app, false)»
+    def private jsInitImpl(Entity it) '''
+        «new Relations(fsa, app, false).initJs(it, false)»
 
         ( function($) {
             $(document).ready(function() {
@@ -301,7 +308,7 @@ class Forms {
                         {% endif %}
                     «ENDIF»
                 «ENDIF»
-                «relationHelper.initJs(it, app, true)»
+                «new Relations(fsa, app, false).initJs(it, true)»
                 «app.vendorAndName»InitEditForm('{{ mode }}', '{% if mode != 'create' %}{{ «FOR pkField : getPrimaryKeyFields SEPARATOR ' ~ '»«name.formatForDB».«pkField.name.formatForCode»«ENDFOR» }}{% endif %}');
                 «FOR field : getDerivedFields»«field.additionalInitScript»«ENDFOR»
             });
@@ -359,7 +366,7 @@ class Forms {
         «ENDIF»
     '''
 
-    def private entityInlineRedirectHandlerFile(Entity it, Application app, IFileSystemAccess fsa) {
+    def private entityInlineRedirectHandlerFile(Entity it) {
         val templatePath = app.getViewPath + name.formatForCodeCapital + '/'
         val templateExtension = '.html.twig'
         var fileName = 'inlineRedirectHandler' + templateExtension
