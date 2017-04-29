@@ -3,12 +3,14 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.controller.helper
 import de.guite.modulestudio.metamodel.Application
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
+import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 import org.zikula.modulestudio.generator.extensions.ViewExtensions
 
 class ViewHelper {
 
+    extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
     extension ViewExtensions = new ViewExtensions
@@ -125,15 +127,21 @@ class ViewHelper {
         /**
          * Determines the view template for a certain method with given parameters.
          *
+         «IF generateSeparateAdminTemplates»
+         * @param string  $type    Current controller (name of currently treated entity)
+         * @param string  $func    Current function (index, view, ...)
+         * @param boolean $isAdmin Whether an admin template is desired or not
+         «ELSE»
          * @param string $type Current controller (name of currently treated entity)
          * @param string $func Current function (index, view, ...)
+         «ENDIF»
          *
          * @return string name of template file
          */
-        public function getViewTemplate($type, $func)
+        public function getViewTemplate($type, $func«IF generateSeparateAdminTemplates», $isAdmin = false«ENDIF»)
         {
             // create the base template name
-            $template = '@«appName»/' . ucfirst($type) . '/' . $func;
+            $template = '@«appName»/' . ucfirst($type) . '/' . «IF generateSeparateAdminTemplates»($isAdmin ? 'Admin/' : '') . «ENDIF»$func;
 
             // check for template extension
             $templateExtension = '.' . $this->determineExtension($type, $func);
@@ -169,7 +177,10 @@ class ViewHelper {
         {
             $templateExtension = $this->determineExtension($type, $func);
             if (empty($template)) {
-                $template = $this->getViewTemplate($type, $func);
+                «IF generateSeparateAdminTemplates»
+                    $isAdmin = isset($templateParameters['routeArea']) && $templateParameters['routeArea'] == 'admin';
+                «ENDIF»
+                $template = $this->getViewTemplate($type, $func«IF generateSeparateAdminTemplates», $isAdmin«ENDIF»);
             }
 
             if ($templateExtension == 'pdf.twig') {

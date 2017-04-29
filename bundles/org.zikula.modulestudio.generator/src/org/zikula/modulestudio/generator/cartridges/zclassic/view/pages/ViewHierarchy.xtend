@@ -5,32 +5,53 @@ import de.guite.modulestudio.metamodel.EntityWorkflowType
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
+import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 
 class ViewHierarchy {
 
     extension ControllerExtensions = new ControllerExtensions
     extension FormattingExtensions = new FormattingExtensions
+    extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     extension NamingExtensions = new NamingExtensions
 
     def generate(Entity it, String appName, IFileSystemAccess fsa) {
         println('Generating tree view templates for entity "' + name.formatForDisplay + '"')
         var templateFilePath = templateFile('viewTree')
         if (!application.shouldBeSkipped(templateFilePath)) {
-            fsa.generateFile(templateFilePath, hierarchyView(appName))
+            fsa.generateFile(templateFilePath, hierarchyView(appName, false))
+        }
+        if (application.generateSeparateAdminTemplates) {
+            templateFilePath = templateFile('Admin/viewTree')
+            if (!application.shouldBeSkipped(templateFilePath)) {
+                fsa.generateFile(templateFilePath, hierarchyView(appName, true))
+            }
         }
         templateFilePath = templateFile('viewTreeItems')
         if (!application.shouldBeSkipped(templateFilePath)) {
-            fsa.generateFile(templateFilePath, hierarchyItemsView(appName))
+            fsa.generateFile(templateFilePath, hierarchyItemsView(appName, false))
+        }
+        if (application.generateSeparateAdminTemplates) {
+            templateFilePath = templateFile('Admin/viewTreeItems')
+            if (!application.shouldBeSkipped(templateFilePath)) {
+                fsa.generateFile(templateFilePath, hierarchyItemsView(appName, true))
+            }
         }
     }
 
-    def private hierarchyView(Entity it, String appName) '''
+    def private hierarchyView(Entity it, String appName, Boolean isAdmin) '''
         «val objName = name.formatForCode»
-        {# purpose of this template: «nameMultiple.formatForDisplay» tree view #}
-        {% extends routeArea == 'admin' ? '«appName»::adminBase.html.twig' : '«appName»::base.html.twig' %}
+        «IF application.generateSeparateAdminTemplates»
+            {# purpose of this template: «nameMultiple.formatForDisplay» «IF isAdmin»admin«ELSE»user«ENDIF» tree view #}
+            {% extends «IF isAdmin»'«appName»::adminBase.html.twig'«ELSE»'«appName»::base.html.twig'«ENDIF» %}
+        «ELSE»
+            {# purpose of this template: «nameMultiple.formatForDisplay» tree view #}
+            {% extends routeArea == 'admin' ? '«appName»::adminBase.html.twig' : '«appName»::base.html.twig' %}
+        «ENDIF»
         {% block title __('«name.formatForDisplayCapital» hierarchy') %}
-        {% block adminPageIcon 'list-alt' %}
+        «IF !application.generateSeparateAdminTemplates || isAdmin»
+            {% block adminPageIcon 'list-alt' %}
+        «ENDIF»
         {% block content %}
             <div class="«appName.toLowerCase»-«name.formatForDB» «appName.toLowerCase»-viewhierarchy">
                 «IF null !== documentation && documentation != ''»
@@ -50,9 +71,9 @@ class ViewHierarchy {
                 </p>
 
                 {% for rootId, treeNodes in trees %}
-                    {{ include('@«appName»/«name.formatForCodeCapital»/viewTreeItems.html.twig', { rootId: rootId, items: treeNodes }) }}
+                    {{ include('@«appName»/«name.formatForCodeCapital»/«IF isAdmin»Admin/«ENDIF»viewTreeItems.html.twig', { rootId: rootId, items: treeNodes }) }}
                 {% else %}
-                    {{ include('@«appName»/«name.formatForCodeCapital»/viewTreeItems.html.twig', { rootId: 1, items: null }) }}
+                    {{ include('@«appName»/«name.formatForCodeCapital»/«IF isAdmin»Admin/«ENDIF»viewTreeItems.html.twig', { rootId: 1, items: null }) }}
                 {% endfor %}
 
                 <br style="clear: left" />
@@ -66,8 +87,12 @@ class ViewHierarchy {
         {% endblock %}
     '''
 
-    def private hierarchyItemsView(Entity it, String appName) '''
-        {# purpose of this template: «nameMultiple.formatForDisplay» tree items #}
+    def private hierarchyItemsView(Entity it, String appName, Boolean isAdmin) '''
+        «IF application.generateSeparateAdminTemplates»
+            {# purpose of this template: «nameMultiple.formatForDisplay» «IF isAdmin»admin«ELSE»user«ENDIF» tree items #}
+        «ELSE»
+            {# purpose of this template: «nameMultiple.formatForDisplay» tree items #}
+        «ENDIF»
         {% set hasNodes = items|default and items is iterable and items|length > 0 %}
         {% set idPrefix = '«name.formatForCode.toFirstLower»Tree' ~ rootId %}
 

@@ -5,6 +5,7 @@ import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.JoinRelationship
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
+import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
@@ -13,16 +14,23 @@ import org.zikula.modulestudio.generator.extensions.Utils
 class ViewQuickNavForm {
 
     extension FormattingExtensions = new FormattingExtensions
+    extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     extension ModelExtensions = new ModelExtensions
     extension ModelJoinExtensions = new ModelJoinExtensions
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
 
     def generate(Entity it, String appName, IFileSystemAccess fsa) {
-        val templatePath = templateFile('viewQuickNav')
+        println('Generating view filter form templates for entity "' + name.formatForDisplay + '"')
+        var templatePath = templateFile('viewQuickNav')
         if (!application.shouldBeSkipped(templatePath)) {
-            println('Generating view filter form templates for entity "' + name.formatForDisplay + '"')
             fsa.generateFile(templatePath, quickNavForm)
+        }
+        if (application.generateSeparateAdminTemplates) {
+            templatePath = templateFile('Admin/viewQuickNav')
+            if (!application.shouldBeSkipped(templatePath)) {
+                fsa.generateFile(templatePath, quickNavForm)
+            }
         }
     }
 

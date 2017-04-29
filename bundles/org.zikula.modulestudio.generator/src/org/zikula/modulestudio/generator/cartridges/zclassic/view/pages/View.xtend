@@ -23,6 +23,7 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.view.pagecomponents
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.pagecomponents.ViewQuickNavForm
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
+import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.UrlExtensions
@@ -33,6 +34,7 @@ class View {
 
     extension ControllerExtensions = new ControllerExtensions
     extension FormattingExtensions = new FormattingExtensions
+    extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     extension ModelExtensions = new ModelExtensions
     extension NamingExtensions = new NamingExtensions
     extension UrlExtensions = new UrlExtensions
@@ -53,22 +55,41 @@ class View {
         this.listType = listType
         var templateFilePath = templateFile('view')
         if (!application.shouldBeSkipped(templateFilePath)) {
-            fsa.generateFile(templateFilePath, viewView(appName))
+            fsa.generateFile(templateFilePath, viewView(appName, false))
+        }
+        if (application.generateSeparateAdminTemplates) {
+            templateFilePath = templateFile('Admin/view')
+            if (!application.shouldBeSkipped(templateFilePath)) {
+                fsa.generateFile(templateFilePath, viewView(appName, true))
+            }
         }
         new ViewQuickNavForm().generate(it, appName, fsa)
         if (loggable) {
             templateFilePath = templateFile('viewDeleted')
             if (!application.shouldBeSkipped(templateFilePath)) {
-                fsa.generateFile(templateFilePath, viewViewDeleted(appName))
+                fsa.generateFile(templateFilePath, viewViewDeleted(appName, false))
+            }
+            if (application.generateSeparateAdminTemplates) {
+                templateFilePath = templateFile('Admin/viewDeleted')
+                if (!application.shouldBeSkipped(templateFilePath)) {
+                    fsa.generateFile(templateFilePath, viewViewDeleted(appName, true))
+                }
             }
         }
     }
 
-    def private viewView(Entity it, String appName) '''
-        {# purpose of this template: «nameMultiple.formatForDisplay» list view #}
-        {% extends routeArea == 'admin' ? '«application.appName»::adminBase.html.twig' : '«application.appName»::base.html.twig' %}
+    def private viewView(Entity it, String appName, Boolean isAdmin) '''
+        «IF application.generateSeparateAdminTemplates»
+            {# purpose of this template: «nameMultiple.formatForDisplay» «IF isAdmin»admin«ELSE»user«ENDIF» list view #}
+            {% extends «IF isAdmin»'«application.appName»::adminBase.html.twig'«ELSE»'«application.appName»::base.html.twig'«ENDIF» %}
+        «ELSE»
+            {# purpose of this template: «nameMultiple.formatForDisplay» list view #}
+            {% extends routeArea == 'admin' ? '«application.appName»::adminBase.html.twig' : '«application.appName»::base.html.twig' %}
+        «ENDIF»
         {% block title own ? __('My «nameMultiple.formatForDisplay»') : __('«name.formatForDisplayCapital» list') %}
-        {% block admin_page_icon 'list-alt' %}
+        «IF !application.generateSeparateAdminTemplates || isAdmin»
+            {% block admin_page_icon 'list-alt' %}
+        «ENDIF»
         {% block content %}
         <div class="«appName.toLowerCase»-«name.formatForDB» «appName.toLowerCase»-view">
             «IF null !== documentation && documentation != ''»
@@ -82,7 +103,7 @@ class View {
 
             {{ block('page_nav_links') }}
 
-            {{ include('@«application.appName»/«name.formatForCodeCapital»/viewQuickNav.html.twig'«IF !hasVisibleWorkflow», { workflowStateFilter: false }«ENDIF») }}{# see template file for available options #}
+            {{ include('@«application.appName»/«name.formatForCodeCapital»/«IF isAdmin»Admin/«ENDIF»viewQuickNav.html.twig'«IF !hasVisibleWorkflow», { workflowStateFilter: false }«ENDIF») }}{# see template file for available options #}
 
             «viewForm(appName)»
             «IF !skipHookSubscribers»
@@ -451,11 +472,18 @@ class View {
         }
     }
 
-    def private viewViewDeleted(Entity it, String appName) '''
-        {# purpose of this template: list view of deleted «nameMultiple.formatForDisplay» #}
-        {% extends routeArea == 'admin' ? '«application.appName»::adminBase.html.twig' : '«application.appName»::base.html.twig' %}
+    def private viewViewDeleted(Entity it, String appName, Boolean isAdmin) '''
+        «IF application.generateSeparateAdminTemplates»
+            {# purpose of this template: «IF isAdmin»admin«ELSE»user«ENDIF» list view of deleted «nameMultiple.formatForDisplay» #}
+            {% extends «IF isAdmin»'«application.appName»::adminBase.html.twig'«ELSE»'«application.appName»::base.html.twig'«ENDIF» %}
+        «ELSE»
+            {# purpose of this template: list view of deleted «nameMultiple.formatForDisplay» #}
+            {% extends routeArea == 'admin' ? '«application.appName»::adminBase.html.twig' : '«application.appName»::base.html.twig' %}
+        «ENDIF»
         {% block title __('Deleted «nameMultiple.formatForDisplay»') %}
-        {% block admin_page_icon 'trash-o' %}
+        «IF !application.generateSeparateAdminTemplates || isAdmin»
+            {% block admin_page_icon 'trash-o' %}
+        «ENDIF»
         {% block content %}
         <div class="«appName.toLowerCase»-«name.formatForDB» «appName.toLowerCase»-viewdeleted">
             {{ block('page_nav_links') }}

@@ -21,9 +21,9 @@ class Section {
     /**
      * Entry point for edit sections beside the actual fields.
      */
-    def generate(Entity it, Application app, IFileSystemAccess fsa) '''
+    def generate(Entity it, Application app, IFileSystemAccess fsa, Boolean isAdmin) '''
 
-        «extensionsAndRelations(app, fsa)»
+        «extensionsAndRelations(app, fsa, isAdmin)»
 
         «IF !skipHookSubscribers»
             «displayHooks(app)»
@@ -34,7 +34,7 @@ class Section {
         «returnControl»
     '''
 
-    def private extensionsAndRelations(Entity it, Application app, IFileSystemAccess fsa) '''
+    def private extensionsAndRelations(Entity it, Application app, IFileSystemAccess fsa, Boolean isAdmin) '''
         «IF geographical»
             «IF useGroupingTabs('edit')»
                 <div role="tabpanel" class="tab-pane fade" id="tabMap" aria-labelledby="mapTab">
@@ -52,7 +52,7 @@ class Section {
             «ENDIF»
 
         «ENDIF»
-        «relationHelper.generateIncludeStatement(it, app, fsa)»
+        «relationHelper.generateIncludeStatement(it, app, fsa, isAdmin)»
         «IF attributable»
             {% if featureActivationHelper.isEnabled(constant('«app.vendor.formatForCodeCapital»\\«app.name.formatForCodeCapital»Module\\Helper\\FeatureActivationHelper::ATTRIBUTES'), '«name.formatForCode»') %}
                 {{ include('@«app.appName»/Helper/includeAttributesEdit.html.twig', { obj: «name.formatForDB»«IF useGroupingTabs('edit')», tabs: true«ENDIF» }) }}

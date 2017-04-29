@@ -7,6 +7,7 @@ import de.guite.modulestudio.metamodel.JoinRelationship
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
+import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
@@ -17,6 +18,7 @@ class Relations {
 
     extension ControllerExtensions = new ControllerExtensions
     extension FormattingExtensions = new FormattingExtensions
+    extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     extension ModelExtensions = new ModelExtensions
     extension ModelJoinExtensions = new ModelJoinExtensions
     extension NamingExtensions = new NamingExtensions
@@ -24,9 +26,15 @@ class Relations {
     extension Utils = new Utils
 
     def displayItemList(Entity it, Application app, Boolean many, IFileSystemAccess fsa) {
-        val templatePath = templateFile('includeDisplayItemList' + (if (many) 'Many' else 'One'))
+        var templatePath = templateFile('includeDisplayItemList' + (if (many) 'Many' else 'One'))
         if (!app.shouldBeSkipped(templatePath)) {
             fsa.generateFile(templatePath, inclusionTemplate(app, many))
+        }
+        if (application.generateSeparateAdminTemplates) {
+            templatePath = templateFile('Admin/includeDisplayItemList' + (if (many) 'Many' else 'One'))
+            if (!app.shouldBeSkipped(templatePath)) {
+                fsa.generateFile(templatePath, inclusionTemplate(app, many))
+            }
         }
     }
 
@@ -81,7 +89,7 @@ class Relations {
         «ENDIF»
     '''
 
-    def displayRelatedItems(JoinRelationship it, String appName, Entity relatedEntity) '''
+    def displayRelatedItems(JoinRelationship it, String appName, Entity relatedEntity, Boolean isAdmin) '''
         «val incoming = (if (target == relatedEntity && source != relatedEntity) true else false)»«/* use outgoing mode for self relations #547 */»
         «val useTarget = !incoming»
         «val relationAliasName = getRelationAliasName(useTarget).formatForCode.toFirstLower»
@@ -96,7 +104,7 @@ class Relations {
 
         {% if «relatedEntity.name.formatForCode».«relationAliasName»|default %}
             {{ include(
-                '@«application.appName»/«otherEntity.name.formatForCodeCapital»/includeDisplayItemList«IF many»Many«ELSE»One«ENDIF».html.twig',
+                '@«application.appName»/«otherEntity.name.formatForCodeCapital»/«IF isAdmin»Admin/«ENDIF»includeDisplayItemList«IF many»Many«ELSE»One«ENDIF».html.twig',
                 { item«IF many»s«ENDIF»: «relatedEntity.name.formatForCode».«relationAliasName» }
             ) }}
         {% endif %}

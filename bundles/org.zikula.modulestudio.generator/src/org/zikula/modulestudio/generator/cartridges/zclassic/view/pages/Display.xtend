@@ -12,6 +12,7 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.view.pagecomponents
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.pagecomponents.SimpleFields
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
+import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
@@ -24,6 +25,7 @@ class Display {
 
     extension ControllerExtensions = new ControllerExtensions
     extension FormattingExtensions = new FormattingExtensions
+    extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     extension ModelExtensions = new ModelExtensions
     extension ModelJoinExtensions = new ModelJoinExtensions
     extension NamingExtensions = new NamingExtensions
@@ -36,22 +38,39 @@ class Display {
         println('Generating display templates for entity "' + name.formatForDisplay + '"')
         var templateFilePath = templateFile('display')
         if (!application.shouldBeSkipped(templateFilePath)) {
-            fsa.generateFile(templateFilePath, displayView(appName))
+            fsa.generateFile(templateFilePath, displayView(appName, false))
+        }
+        if (application.generateSeparateAdminTemplates) {
+            templateFilePath = templateFile('Admin/display')
+            if (!application.shouldBeSkipped(templateFilePath)) {
+                fsa.generateFile(templateFilePath, displayView(appName, true))
+            }
         }
         if (tree != EntityTreeType.NONE) {
             templateFilePath = templateFile('displayTreeRelatives')
             if (!application.shouldBeSkipped(templateFilePath)) {
-                fsa.generateFile(templateFilePath, treeRelatives(appName))
+                fsa.generateFile(templateFilePath, treeRelatives(appName, false))
+            }
+            if (application.generateSeparateAdminTemplates) {
+                templateFilePath = templateFile('Admin/displayTreeRelatives')
+                if (!application.shouldBeSkipped(templateFilePath)) {
+                    fsa.generateFile(templateFilePath, treeRelatives(appName, true))
+                }
             }
         }
     }
 
-    def private displayView(Entity it, String appName) '''
+    def private displayView(Entity it, String appName, Boolean isAdmin) '''
         «val refedElems = getOutgoingJoinRelations.filter[e|e.target instanceof Entity && e.target.application == it.application]
                         + incoming.filter(ManyToManyRelationship).filter[e|e.source instanceof Entity && e.source.application == it.application]»
         «val objName = name.formatForCode»
-        {# purpose of this template: «nameMultiple.formatForDisplay» display view #}
-        {% set baseTemplate = app.request.query.getBoolean('raw', false) ? 'raw' : (routeArea == 'admin' ? 'adminBase' : 'base') %}
+        «IF application.generateSeparateAdminTemplates»
+            {# purpose of this template: «nameMultiple.formatForDisplay» «IF isAdmin»admin«ELSE»user«ENDIF» display view #}
+            {% set baseTemplate = app.request.query.getBoolean('raw', false) ? 'raw' : «IF isAdmin»'adminBase'«ELSE»'base'«ENDIF» %}
+        «ELSE»
+            {# purpose of this template: «nameMultiple.formatForDisplay» display view #}
+            {% set baseTemplate = app.request.query.getBoolean('raw', false) ? 'raw' : (routeArea == 'admin' ? 'adminBase' : 'base') %}
+        «ENDIF»
         {% extends '«application.appName»::' ~ baseTemplate ~ '.html.twig' %}
         {% block pageTitle %}{{ «objName»|«application.appName.formatForDB»_formattedTitle|default(__('«name.formatForDisplayCapital»')) }}{% endblock %}
         {% block title %}
@@ -59,7 +78,9 @@ class Display {
             «templateHeading(appName)»
             «new ItemActionsView().generate(it, 'display')»
         {% endblock %}
-        {% block admin_page_icon 'eye' %}
+        «IF !application.generateSeparateAdminTemplates || isAdmin»
+            {% block admin_page_icon 'eye' %}
+        «ENDIF»
         {% block content %}
             {% set isQuickView = app.request.query.getBoolean('raw', false) %}
             <div class="«appName.toLowerCase»-«name.formatForDB» «appName.toLowerCase»-display">
@@ -127,7 +148,7 @@ class Display {
                 «fieldDetails(appName)»
             «ENDIF»
 
-            «displayExtensions(objName)»
+            «displayExtensions(objName, isAdmin)»
 
             «IF !skipHookSubscribers»
                 {{ block('display_hooks') }}
@@ -146,15 +167,15 @@ class Display {
         </div>
         {% endblock %}
         «IF !refedElems.empty»
-             «val relationHelper = new Relations»
+            «val relationHelper = new Relations»
             {% block related_items %}
                 «IF useGroupingTabs('display')»
                     <div role="tabpanel" class="tab-pane fade" id="tabRelations" aria-labelledby="relationsTab">
                         <h3>{{ __('Related data') }}</h3>
-                        «FOR elem : refedElems»«relationHelper.displayRelatedItems(elem, appName, it)»«ENDFOR»
+                        «FOR elem : refedElems»«relationHelper.displayRelatedItems(elem, appName, it, isAdmin)»«ENDFOR»
                     </div>
                 «ELSE»
-                    «FOR elem : refedElems»«relationHelper.displayRelatedItems(elem, appName, it)»«ENDFOR»
+                    «FOR elem : refedElems»«relationHelper.displayRelatedItems(elem, appName, it, isAdmin)»«ENDFOR»
                 «ENDIF»
             {% endblock %}
         «ENDIF»
@@ -238,7 +259,7 @@ class Display {
         {% endif %}
     '''
 
-    def private displayExtensions(Entity it, String objName) '''
+    def private displayExtensions(Entity it, String objName, Boolean isAdmin) '''
         «IF geographical»
             «IF useGroupingTabs('display')»
                 <div role="tabpanel" class="tab-pane fade" id="tabMap" aria-labelledby="mapTab">
@@ -274,7 +295,7 @@ class Display {
                 <h3 class="relatives">{{ __('Relatives') }}</h3>
                 «ENDIF»
                     {{ include(
-                        '@«application.appName»/«name.formatForCodeCapital»/displayTreeRelatives.html.twig',
+                        '@«application.appName»/«name.formatForCodeCapital»/«IF isAdmin»Admin/«ENDIF»displayTreeRelatives.html.twig',
                         { allParents: true, directParent: true, allChildren: true, directChildren: true, predecessors: true, successors: true, preandsuccessors: true }
                     ) }}
                 «IF useGroupingTabs('display')»
@@ -304,10 +325,14 @@ class Display {
 
     def private displayHookId(Entity it) '''«FOR pkField : getPrimaryKeyFields SEPARATOR ' ~ '»«name.formatForCode».«pkField.name.formatForCode»«ENDFOR»'''
 
-    def private treeRelatives(Entity it, String appName) '''
+    def private treeRelatives(Entity it, String appName, Boolean isAdmin) '''
         «val objName = name.formatForCode»
         «val pluginPrefix = application.appName.formatForDB»
-        {# purpose of this template: show different forms of relatives for a given tree node #}
+        «IF application.generateSeparateAdminTemplates»
+            {# purpose of this template: show different forms of relatives for a given tree node in «IF isAdmin»admin«ELSE»user«ENDIF» area #}
+        «ELSE»
+            {# purpose of this template: show different forms of relatives for a given tree node #}
+        «ENDIF»
         {% import _self as relatives %}
         <h3>{{ __('Related «nameMultiple.formatForDisplay»') }}</h3>
         {% if «objName».lvl > 0 %}

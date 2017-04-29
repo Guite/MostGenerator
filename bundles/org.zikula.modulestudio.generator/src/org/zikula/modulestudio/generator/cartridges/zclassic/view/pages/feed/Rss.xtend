@@ -6,6 +6,7 @@ import de.guite.modulestudio.metamodel.TextField
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
+import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.UrlExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
@@ -14,15 +15,25 @@ class Rss {
 
     extension ControllerExtensions = new ControllerExtensions
     extension FormattingExtensions = new FormattingExtensions
+    extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     extension NamingExtensions = new NamingExtensions
     extension UrlExtensions = new UrlExtensions
     extension Utils = new Utils
 
     def generate(Entity it, String appName, IFileSystemAccess fsa) {
-        val templateFilePath = templateFileWithExtension('view', 'rss')
+        if (!hasViewAction) {
+            return
+        }
+        println('Generating rss view templates for entity "' + name.formatForDisplay + '"')
+        var templateFilePath = templateFileWithExtension('view', 'rss')
         if (!application.shouldBeSkipped(templateFilePath)) {
-            println('Generating rss view templates for entity "' + name.formatForDisplay + '"')
             fsa.generateFile(templateFilePath, rssView(appName))
+        }
+        if (application.generateSeparateAdminTemplates) {
+            templateFilePath = templateFileWithExtension('Admin/view', 'rss')
+            if (!application.shouldBeSkipped(templateFilePath)) {
+                fsa.generateFile(templateFilePath, rssView(appName))
+            }
         }
     }
 

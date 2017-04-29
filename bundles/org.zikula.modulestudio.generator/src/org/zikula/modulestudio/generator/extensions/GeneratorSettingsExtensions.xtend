@@ -233,6 +233,13 @@ class GeneratorSettingsExtensions {
     }
 
     /**
+     * Determines whether independent admin templates should be generated.
+     */
+    def generateSeparateAdminTemplates(Application it) {
+        if (hasSettings) getSettings.separateAdminTemplates else false
+    }
+
+    /**
      * Determines whether generated footer templates should contain backlinks
      * to the ModuleStudio homepage.
      */

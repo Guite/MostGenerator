@@ -3,23 +3,36 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.view.pages.export
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.UrlField
 import org.eclipse.xtext.generator.IFileSystemAccess
+import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
+import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class Ics {
 
+    extension ControllerExtensions = new ControllerExtensions
     extension FormattingExtensions = new FormattingExtensions
+    extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     extension ModelExtensions = new ModelExtensions
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
 
     def generate(Entity it, String appName, IFileSystemAccess fsa) {
+        if (!hasDisplayAction) {
+            return
+        }
         println('Generating ics view templates for entity "' + name.formatForDisplay + '"')
-        val templateFilePath = templateFileWithExtension('display', 'ics')
+        var templateFilePath = templateFileWithExtension('display', 'ics')
         if (!application.shouldBeSkipped(templateFilePath)) {
             fsa.generateFile(templateFilePath, icsDisplay(appName))
+        }
+        if (application.generateSeparateAdminTemplates) {
+            templateFilePath = templateFileWithExtension('Admin/display', 'ics')
+            if (!application.shouldBeSkipped(templateFilePath)) {
+                fsa.generateFile(templateFilePath, icsDisplay(appName))
+            }
         }
     }
 

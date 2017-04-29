@@ -1,12 +1,12 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.view.pages.feed
 
-import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.StringField
 import de.guite.modulestudio.metamodel.TextField
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
+import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.UrlExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
@@ -15,18 +15,25 @@ class Atom {
 
     extension ControllerExtensions = new ControllerExtensions
     extension FormattingExtensions = new FormattingExtensions
+    extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     extension NamingExtensions = new NamingExtensions
     extension UrlExtensions = new UrlExtensions
     extension Utils = new Utils
 
-    Application app
-
     def generate(Entity it, String appName, IFileSystemAccess fsa) {
-        app = application
-        val templateFilePath = templateFileWithExtension('view', 'atom')
-        if (!app.shouldBeSkipped(templateFilePath)) {
-            println('Generating atom view templates for entity "' + name.formatForDisplay + '"')
+        if (!hasViewAction) {
+            return
+        }
+        println('Generating atom view templates for entity "' + name.formatForDisplay + '"')
+        var templateFilePath = templateFileWithExtension('view', 'atom')
+        if (!application.shouldBeSkipped(templateFilePath)) {
             fsa.generateFile(templateFilePath, atomView(appName))
+        }
+        if (application.generateSeparateAdminTemplates) {
+            templateFilePath = templateFileWithExtension('Admin/view', 'atom')
+            if (!application.shouldBeSkipped(templateFilePath)) {
+                fsa.generateFile(templateFilePath, atomView(appName))
+            }
         }
     }
 

@@ -4,6 +4,7 @@ import de.guite.modulestudio.metamodel.Entity
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
+import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.UrlExtensions
@@ -13,28 +14,42 @@ class History {
 
     extension ControllerExtensions = new ControllerExtensions
     extension FormattingExtensions = new FormattingExtensions
+    extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     extension ModelExtensions = new ModelExtensions
     extension NamingExtensions = new NamingExtensions
     extension UrlExtensions = new UrlExtensions
     extension Utils = new Utils
 
     def generate(Entity it, String appName, IFileSystemAccess fsa) {
-        val templateFilePath = templateFile('history')
+        println('Generating history templates for entity "' + name.formatForDisplay + '"')
+        var templateFilePath = templateFile('history')
         if (!application.shouldBeSkipped(templateFilePath)) {
-            println('Generating history templates for entity "' + name.formatForDisplay + '"')
-            fsa.generateFile(templateFilePath, historyView(appName))
+            fsa.generateFile(templateFilePath, historyView(false))
+        }
+        if (application.generateSeparateAdminTemplates) {
+            templateFilePath = templateFile('Admin/history')
+            if (!application.shouldBeSkipped(templateFilePath)) {
+                fsa.generateFile(templateFilePath, historyView(true))
+            }
         }
     }
 
-    def private historyView(Entity it, String appName) '''
+    def private historyView(Entity it, Boolean isAdmin) '''
         «val app = application»
-        {# purpose of this template: «nameMultiple.formatForDisplay» change history view #}
-        {% extends routeArea == 'admin' ? '«app.appName»::adminBase.html.twig' : '«app.appName»::base.html.twig' %}
+        «IF application.generateSeparateAdminTemplates»
+            {# purpose of this template: «nameMultiple.formatForDisplay» «IF isAdmin»admin«ELSE»user«ENDIF» change history view #}
+            {% extends «IF isAdmin»'«application.appName»::adminBase.html.twig'«ELSE»'«application.appName»::base.html.twig'«ENDIF» %}
+        «ELSE»
+            {# purpose of this template: «nameMultiple.formatForDisplay» change history view #}
+            {% extends routeArea == 'admin' ? '«app.appName»::adminBase.html.twig' : '«app.appName»::base.html.twig' %}
+        «ENDIF»
         {% block title isDiffView == true ? __f('Compare versions of %entityTitle%', { '%entityTitle%': «name.formatForCode»|«app.appName.formatForDB»_formattedTitle }) : __f('«name.formatForDisplayCapital» change history for %entityTitle%', { '%entityTitle%': «name.formatForCode»|«application.appName.formatForDB»_formattedTitle }) %}
-        {% block admin_page_icon isDiffView == true ? 'arrows-h' : 'history' %}
+        «IF !application.generateSeparateAdminTemplates || isAdmin»
+            {% block admin_page_icon isDiffView == true ? 'arrows-h' : 'history' %}
+        «ENDIF»
         {% block content %}
             {{ block('page_nav_links') }}
-            <div class="«appName.toLowerCase»-«name.formatForDB» «appName.toLowerCase»-history">
+            <div class="«app.appName.toLowerCase»-«name.formatForDB» «app.appName.toLowerCase»-history">
                 {% if isDiffView == true %}
                     {{ block('diff_view') }}
                 {% else %}
@@ -44,12 +59,12 @@ class History {
             {{ block('page_nav_links') }}
         {% endblock %}
         {% block page_nav_links %}
-            «pageNavLinks(appName)»
+            «pageNavLinks(app.appName)»
         {% endblock %}
         {% block history_table %}
-            <form action="{{ path('«appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ 'loggablehistory', { id: «name.formatForCode».«getFirstPrimaryKey.name.formatForCode» }) }}" method="get" class="form-horizontal" role="form">
+            <form action="{{ path('«app.appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ 'loggablehistory', { id: «name.formatForCode».«getFirstPrimaryKey.name.formatForCode» }) }}" method="get" class="form-horizontal" role="form">
                 <div class="table-responsive">
-                    «historyTable(appName)»
+                    «historyTable(app.appName)»
                 </div>
                 <p>
                     <button id="compareButton" type="submit" value="compare" class="btn btn-primary" disabled="disabled"><span class="fa fa-arrows-h"></span> {{ __('Compare selected versions') }}</button>
@@ -75,8 +90,8 @@ class History {
                         {% for fieldName, values in diffValues %}
                             <tr>
                                 <th headers="hFieldName" id="h{{ fieldName|replace({ ' ': '', '"':'' }) }}" scope="row">{{ fieldName|humanize }}</th>
-                                <td headers="hMinVersion h{{ fieldName|replace({ ' ': '', '"':'' }) }}"{% if values.changed %} class="diff-old"{% endif %}>{{ values.old is «appName.toLowerCase»_instanceOf('DateTime') ? values.old|localizeddate('long', 'medium') : values.old }}</td>
-                                <td headers="hMaxVersion h{{ fieldName|replace({ ' ': '', '"':'' }) }}"{% if values.changed %} class="diff-new"{% endif %}>{{ values.new is «appName.toLowerCase»_instanceOf('DateTime') ? values.new|localizeddate('long', 'medium') : values.new }}</td>
+                                <td headers="hMinVersion h{{ fieldName|replace({ ' ': '', '"':'' }) }}"{% if values.changed %} class="diff-old"{% endif %}>{{ values.old is «app.appName.toLowerCase»_instanceOf('DateTime') ? values.old|localizeddate('long', 'medium') : values.old }}</td>
+                                <td headers="hMaxVersion h{{ fieldName|replace({ ' ': '', '"':'' }) }}"{% if values.changed %} class="diff-new"{% endif %}>{{ values.new is «app.appName.toLowerCase»_instanceOf('DateTime') ? values.new|localizeddate('long', 'medium') : values.new }}</td>
                             </tr>
                         {% endfor %}
                     </tbody>

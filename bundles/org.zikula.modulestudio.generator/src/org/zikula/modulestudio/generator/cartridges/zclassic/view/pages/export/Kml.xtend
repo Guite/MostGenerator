@@ -6,6 +6,7 @@ import de.guite.modulestudio.metamodel.TextField
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
+import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.UrlExtensions
 
@@ -13,10 +14,14 @@ class Kml {
 
     extension ControllerExtensions = new ControllerExtensions
     extension FormattingExtensions = new FormattingExtensions
+    extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     extension NamingExtensions = new NamingExtensions
     extension UrlExtensions = new UrlExtensions
 
     def generate(Entity it, String appName, IFileSystemAccess fsa) {
+        if (!(hasViewAction || hasDisplayAction)) {
+            return
+        }
         println('Generating kml view templates for entity "' + name.formatForDisplay + '"')
         var templateFilePath = ''
         if (hasViewAction) {
@@ -24,11 +29,23 @@ class Kml {
             if (!application.shouldBeSkipped(templateFilePath)) {
                 fsa.generateFile(templateFilePath, kmlView(appName))
             }
+            if (application.generateSeparateAdminTemplates) {
+                templateFilePath = templateFileWithExtension('Admin/view', 'kml')
+                if (!application.shouldBeSkipped(templateFilePath)) {
+                    fsa.generateFile(templateFilePath, kmlView(appName))
+                }
+            }
         }
         if (hasDisplayAction) {
             templateFilePath = templateFileWithExtension('display', 'kml')
             if (!application.shouldBeSkipped(templateFilePath)) {
                 fsa.generateFile(templateFilePath, kmlDisplay(appName))
+            }
+            if (application.generateSeparateAdminTemplates) {
+                templateFilePath = templateFileWithExtension('Admin/display', 'kml')
+                if (!application.shouldBeSkipped(templateFilePath)) {
+                    fsa.generateFile(templateFilePath, kmlDisplay(appName))
+                }
             }
         }
     }

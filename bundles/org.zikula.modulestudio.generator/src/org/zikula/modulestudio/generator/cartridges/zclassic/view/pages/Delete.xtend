@@ -3,6 +3,7 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.view.pages
 import de.guite.modulestudio.metamodel.Entity
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
+import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
@@ -10,30 +11,44 @@ import org.zikula.modulestudio.generator.extensions.Utils
 class Delete {
 
     extension FormattingExtensions = new FormattingExtensions
+    extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     extension ModelExtensions = new ModelExtensions
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
 
     def generate(Entity it, String appName, IFileSystemAccess fsa) {
-        val templateFilePath = templateFile('delete')
+        println('Generating delete templates for entity "' + name.formatForDisplay + '"')
+        var templateFilePath = templateFile('delete')
         if (!application.shouldBeSkipped(templateFilePath)) {
-            println('Generating delete templates for entity "' + name.formatForDisplay + '"')
-            fsa.generateFile(templateFilePath, deleteView(appName))
+            fsa.generateFile(templateFilePath, deleteView(false))
+        }
+        if (application.generateSeparateAdminTemplates) {
+            templateFilePath = templateFile('Admin/delete')
+            if (!application.shouldBeSkipped(templateFilePath)) {
+                fsa.generateFile(templateFilePath, deleteView(true))
+            }
         }
     }
 
-    def private deleteView(Entity it, String appName) '''
+    def private deleteView(Entity it, Boolean isAdmin) '''
         «val app = application»
-        {# purpose of this template: «nameMultiple.formatForDisplay» delete confirmation view #}
-        {% extends routeArea == 'admin' ? '«app.appName»::adminBase.html.twig' : '«app.appName»::base.html.twig' %}
+        «IF application.generateSeparateAdminTemplates»
+            {# purpose of this template: «nameMultiple.formatForDisplay» «IF isAdmin»admin«ELSE»user«ENDIF» delete confirmation view #}
+            {% extends «IF isAdmin»'«application.appName»::adminBase.html.twig'«ELSE»'«application.appName»::base.html.twig'«ENDIF» %}
+        «ELSE»
+            {# purpose of this template: «nameMultiple.formatForDisplay» delete confirmation view #}
+            {% extends routeArea == 'admin' ? '«app.appName»::adminBase.html.twig' : '«app.appName»::base.html.twig' %}
+        «ENDIF»
         {% block title __('Delete «name.formatForDisplay»') %}
-        {% block admin_page_icon 'trash-o' %}
+        «IF !application.generateSeparateAdminTemplates || isAdmin»
+            {% block admin_page_icon 'trash-o' %}
+        «ENDIF»
         {% block content %}
-            <div class="«appName.toLowerCase»-«name.formatForDB» «appName.toLowerCase»-delete">
+            <div class="«app.appName.toLowerCase»-«name.formatForDB» «app.appName.toLowerCase»-delete">
                 <p class="alert alert-warning">{{ __f('Do you really want to delete this «name.formatForDisplay»: "%name%" ?', { '%name%': «name.formatForCode»|«app.appName.formatForDB»_formattedTitle }) }}</p>
 
                 {% form_theme deleteForm with [
-                    '@«appName»/Form/bootstrap_3.html.twig',
+                    '@«app.appName»/Form/bootstrap_3.html.twig',
                     'ZikulaFormExtensionBundle:Form:form_div_layout.html.twig'
                 ] %}
                 {{ form_start(deleteForm) }}
@@ -57,7 +72,7 @@ class Delete {
         {% endblock %}
         «IF !skipHookSubscribers»
             {% block display_hooks %}
-                «callDisplayHooks(appName)»
+                «callDisplayHooks(app.appName)»
             {% endblock %}
         «ENDIF»
     '''

@@ -9,14 +9,18 @@ import de.guite.modulestudio.metamodel.OneToManyRelationship
 import de.guite.modulestudio.metamodel.OneToOneRelationship
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.pagecomponents.SimpleFields
+import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
+import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class Csv {
 
+    extension ControllerExtensions = new ControllerExtensions
     extension FormattingExtensions = new FormattingExtensions
+    extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     extension ModelExtensions = new ModelExtensions
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
@@ -24,10 +28,19 @@ class Csv {
     SimpleFields fieldHelper = new SimpleFields
 
     def generate(Entity it, String appName, IFileSystemAccess fsa) {
-        val templateFilePath = templateFileWithExtension('view', 'csv')
+        if (!hasViewAction) {
+            return
+        }
+        println('Generating csv view templates for entity "' + name.formatForDisplay + '"')
+        var templateFilePath = templateFileWithExtension('view', 'csv')
         if (!application.shouldBeSkipped(templateFilePath)) {
-            println('Generating csv view templates for entity "' + name.formatForDisplay + '"')
             fsa.generateFile(templateFilePath, csvView(appName))
+        }
+        if (application.generateSeparateAdminTemplates) {
+            templateFilePath = templateFileWithExtension('Admin/view', 'csv')
+            if (!application.shouldBeSkipped(templateFilePath)) {
+                fsa.generateFile(templateFilePath, csvView(appName))
+            }
         }
     }
 

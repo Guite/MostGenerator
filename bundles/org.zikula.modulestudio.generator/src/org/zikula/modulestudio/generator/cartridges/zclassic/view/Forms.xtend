@@ -12,6 +12,7 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.view.formcomponents
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.formcomponents.Section
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
+import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
@@ -23,6 +24,7 @@ class Forms {
 
     extension ControllerExtensions = new ControllerExtensions
     extension FormattingExtensions = new FormattingExtensions
+    extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     extension ModelExtensions = new ModelExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension ModelJoinExtensions = new ModelJoinExtensions
@@ -45,19 +47,31 @@ class Forms {
      * Entry point for form templates for each entity.
      */
     def private generate(Entity it, Application app, String actionName, IFileSystemAccess fsa) {
-        val templatePath = editTemplateFile(actionName)
+        println('Generating edit form templates for entity "' + name.formatForDisplay + '"')
+        var templatePath = editTemplateFile(actionName)
         if (!app.shouldBeSkipped(templatePath)) {
-            println('Generating edit form templates for entity "' + name.formatForDisplay + '"')
-            fsa.generateFile(templatePath, '''
-                «formTemplate(app, actionName, fsa)»
-            ''')
+            fsa.generateFile(templatePath, formTemplate(app, actionName, fsa, false))
         }
-        relationHelper.generateInclusionTemplate(it, app, fsa)
+        if (application.generateSeparateAdminTemplates) {
+            templatePath = editTemplateFile('Admin/' + actionName)
+            if (!app.shouldBeSkipped(templatePath)) {
+                fsa.generateFile(templatePath, formTemplate(app, actionName, fsa, true))
+            }
+        }
+        relationHelper.generateInclusionTemplate(it, app, fsa, false)
+        if (application.generateSeparateAdminTemplates) {
+            relationHelper.generateInclusionTemplate(it, app, fsa, true)
+        }
     }
 
-    def private formTemplate(Entity it, Application app, String actionName, IFileSystemAccess fsa) '''
-        {# purpose of this template: build the form to «actionName.formatForDisplay» an instance of «name.formatForDisplay» #}
-        {% set baseTemplate = app.request.query.getBoolean('raw', false) ? 'raw' : (routeArea == 'admin' ? 'adminBase' : 'base') %}
+    def private formTemplate(Entity it, Application app, String actionName, IFileSystemAccess fsa, Boolean isAdmin) '''
+        «IF application.generateSeparateAdminTemplates»
+            {# purpose of this template: build the «IF isAdmin»admin«ELSE»user«ENDIF» form to «actionName.formatForDisplay» an instance of «name.formatForDisplay» #}
+            {% set baseTemplate = app.request.query.getBoolean('raw', false) ? 'raw' : «IF isAdmin»'adminBase'«ELSE»'base'«ENDIF» %}
+        «ELSE»
+            {# purpose of this template: build the form to «actionName.formatForDisplay» an instance of «name.formatForDisplay» #}
+            {% set baseTemplate = app.request.query.getBoolean('raw', false) ? 'raw' : (routeArea == 'admin' ? 'adminBase' : 'base') %}
+        «ENDIF»
         {% extends '«application.appName»::' ~ baseTemplate ~ '.html.twig' %}
 
         {% block header %}
@@ -69,10 +83,12 @@ class Forms {
             «ENDIF»
         {% endblock %}
         {% block title mode == 'create' ? __('Create «name.formatForDisplay»') : __('Edit «name.formatForDisplay»') %}
-        {% block admin_page_icon mode == 'create' ? 'plus' : 'pencil-square-o' %}
+        «IF !application.generateSeparateAdminTemplates || isAdmin»
+            {% block admin_page_icon mode == 'create' ? 'plus' : 'pencil-square-o' %}
+        «ENDIF»
         {% block content %}
             <div class="«app.appName.toLowerCase»-«name.formatForDB» «app.appName.toLowerCase»-edit">
-                «formTemplateBody(app, actionName, fsa)»
+                «formTemplateBody(app, actionName, fsa, isAdmin)»
             </div>
         {% endblock %}
         {% block footer %}
@@ -81,7 +97,7 @@ class Forms {
         {% endblock %}
     '''
 
-    def private formTemplateBody(Entity it, Application app, String actionName, IFileSystemAccess fsa) '''
+    def private formTemplateBody(Entity it, Application app, String actionName, IFileSystemAccess fsa, Boolean isAdmin) '''
         {% form_theme form with [
             '@«application.appName»/Form/bootstrap_3.html.twig',
             'ZikulaFormExtensionBundle:Form:form_div_layout.html.twig'
@@ -98,7 +114,7 @@ class Forms {
                             <a id="mapTab" href="#tabMap" title="{{ __('Map') }}" role="tab" data-toggle="tab">{{ __('Map') }}</a>
                         </li>
                     «ENDIF»
-                    «relationHelper.generateTabTitles(it, app, fsa)»
+                    «relationHelper.generateTabTitles(it, app, fsa, isAdmin)»
                     «IF attributable»
                         {% if featureActivationHelper.isEnabled(constant('«app.vendor.formatForCodeCapital»\\«app.name.formatForCodeCapital»Module\\Helper\\FeatureActivationHelper::ATTRIBUTES'), '«name.formatForCode»') %}
                             <li role="presentation">
@@ -138,13 +154,13 @@ class Forms {
                         <h3>{{ __('Fields') }}</h3>
                         «fieldDetails(app)»
                     </div>
-                    «new Section().generate(it, app, fsa)»
+                    «new Section().generate(it, app, fsa, isAdmin)»
                 </div>
             </div>
         «ELSE»
             {{ form_errors(form) }}
             «fieldDetails(app)»
-            «new Section().generate(it, app, fsa)»
+            «new Section().generate(it, app, fsa, isAdmin)»
         «ENDIF»
 
         «submitActions»

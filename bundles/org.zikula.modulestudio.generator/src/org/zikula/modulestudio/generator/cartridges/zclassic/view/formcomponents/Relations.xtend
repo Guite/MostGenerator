@@ -28,30 +28,30 @@ class Relations {
     /**
      * This method creates the templates to be included into the edit forms.
      */
-    def generateInclusionTemplate(Entity it, Application app, IFileSystemAccess fsa) '''
-        «FOR relation : getEditableJoinRelations(true)»«relation.generate(app, false, false, true, fsa)»«ENDFOR»
-        «FOR relation : getEditableJoinRelations(false)»«relation.generate(app, false, false, false, fsa)»«ENDFOR»
+    def generateInclusionTemplate(Entity it, Application app, IFileSystemAccess fsa, Boolean isAdmin) '''
+        «FOR relation : getEditableJoinRelations(true)»«relation.generate(app, false, false, true, fsa, isAdmin)»«ENDFOR»
+        «FOR relation : getEditableJoinRelations(false)»«relation.generate(app, false, false, false, fsa, isAdmin)»«ENDFOR»
     '''
 
     /**
      * Entry point for form sections treating related objects.
      * This method creates the tab titles for included relationship sections on edit pages.
      */
-    def generateTabTitles(Entity it, Application app, IFileSystemAccess fsa) '''
-        «FOR relation : getEditableJoinRelations(true)»«relation.generate(app, true, false, true, fsa)»«ENDFOR»
-        «FOR relation : getEditableJoinRelations(false)»«relation.generate(app, true, false, false, fsa)»«ENDFOR»
+    def generateTabTitles(Entity it, Application app, IFileSystemAccess fsa, Boolean isAdmin) '''
+        «FOR relation : getEditableJoinRelations(true)»«relation.generate(app, true, false, true, fsa, isAdmin)»«ENDFOR»
+        «FOR relation : getEditableJoinRelations(false)»«relation.generate(app, true, false, false, fsa, isAdmin)»«ENDFOR»
     '''
 
     /**
      * Entry point for form sections treating related objects.
      * This method creates the include statement contained in the including template.
      */
-    def generateIncludeStatement(Entity it, Application app, IFileSystemAccess fsa) '''
-        «FOR relation : getEditableJoinRelations(true)»«relation.generate(app, false, true, true, fsa)»«ENDFOR»
-        «FOR relation : getEditableJoinRelations(false)»«relation.generate(app, false, true, false, fsa)»«ENDFOR»
+    def generateIncludeStatement(Entity it, Application app, IFileSystemAccess fsa, Boolean isAdmin) '''
+        «FOR relation : getEditableJoinRelations(true)»«relation.generate(app, false, true, true, fsa, isAdmin)»«ENDFOR»
+        «FOR relation : getEditableJoinRelations(false)»«relation.generate(app, false, true, false, fsa, isAdmin)»«ENDFOR»
     '''
 
-    def private generate(JoinRelationship it, Application app, Boolean onlyTabTitle, Boolean onlyInclude, Boolean incoming, IFileSystemAccess fsa) {
+    def private generate(JoinRelationship it, Application app, Boolean onlyTabTitle, Boolean onlyInclude, Boolean incoming, IFileSystemAccess fsa, Boolean isAdmin) {
         val stageCode = getEditStageCode(incoming)
         if (stageCode < 1) {
             return ''''''
@@ -80,7 +80,7 @@ class Relations {
             val relationAliasReverse = getRelationAliasName(!useTarget).formatForCodeCapital
             val incomingForUniqueRelationName = if (!isManyToMany) useTarget else incoming
             val uniqueNameForJs = getUniqueRelationNameForJs(app, otherEntity, many, incomingForUniqueRelationName, relationAliasName)
-            return includeStatementForEditTemplate(templateName, ownEntity, otherEntity, incoming, relationAliasName, relationAliasReverse, uniqueNameForJs)
+            return includeStatementForEditTemplate(templateName, isAdmin, ownEntity, otherEntity, incoming, relationAliasName, relationAliasReverse, uniqueNameForJs)
         }
 
         // onlyInclude is false here, lets create the templates
@@ -89,7 +89,7 @@ class Relations {
         val templateFileName = templateFile(ownEntity, templateName)
         val templateFileNameItemList = templateFile(ownEntity, templateNameItemList)
         if (!app.shouldBeSkipped(templateFileName)) {
-            fsa.generateFile(templateFileName, includedEditTemplate(app, ownEntity, otherEntity, incoming, hasEdit, many))
+            fsa.generateFile(templateFileName, includedEditTemplate(app, ownEntity, otherEntity, incoming, hasEdit, many, isAdmin))
         }
         if (!app.shouldBeSkipped(templateFileNameItemList)) {
             fsa.generateFile(templateFileNameItemList, component_ItemList(app, ownEntity, many, incoming, hasEdit))
@@ -116,14 +116,14 @@ class Relations {
         </li>
     '''
 
-    def private includeStatementForEditTemplate(JoinRelationship it, String templateName, Entity ownEntity, Entity linkingEntity, Boolean incoming, String relationAliasName, String relationAliasReverse, String uniqueNameForJs) '''
+    def private includeStatementForEditTemplate(JoinRelationship it, String templateName, Boolean isAdmin, Entity ownEntity, Entity linkingEntity, Boolean incoming, String relationAliasName, String relationAliasReverse, String uniqueNameForJs) '''
         {{ include(
-            '@«application.appName»/«ownEntity.name.formatForCodeCapital»/«templateName».html.twig',
+            '@«application.appName»/«ownEntity.name.formatForCodeCapital»/«IF isAdmin»Admin/«ENDIF»«templateName».html.twig',
             { group: '«linkingEntity.name.formatForDB»', alias: '«relationAliasName.toFirstLower»', aliasReverse: '«relationAliasReverse.toFirstLower»', mandatory: «(!nullable).displayBool», idPrefix: '«uniqueNameForJs»', linkingItem: «linkingEntity.name.formatForDB»«IF linkingEntity.useGroupingTabs('edit')», tabs: true«ENDIF», displayMode: '«IF usesAutoCompletion(incoming)»autocomplete«ELSE»choices«ENDIF»' }
         ) }}
     '''
 
-    def private includedEditTemplate(JoinRelationship it, Application app, Entity ownEntity, Entity linkingEntity, Boolean incoming, Boolean hasEdit, Boolean many) '''
+    def private includedEditTemplate(JoinRelationship it, Application app, Entity ownEntity, Entity linkingEntity, Boolean incoming, Boolean hasEdit, Boolean many, Boolean isAdmin) '''
         «val ownEntityName = ownEntity.getEntityNameSingularPlural(many)»
         {# purpose of this template: inclusion template for managing related «ownEntityName.formatForDisplay» #}
         {% if displayMode is not defined or displayMode is empty %}
@@ -136,7 +136,7 @@ class Relations {
             <fieldset class="«ownEntityName.formatForDB»">
         {% endif %}
             <legend>{{ __('«ownEntityName.formatForDisplayCapital»') }}</legend>
-            «includedEditTemplateBody(app, ownEntity, linkingEntity, incoming, hasEdit, many)»
+            «includedEditTemplateBody(app, ownEntity, linkingEntity, incoming, hasEdit, many, isAdmin)»
         {% if tabs|default(false) == true %}
             </div>
         {% else %}
@@ -144,14 +144,14 @@ class Relations {
         {% endif %}
     '''
 
-    def private includedEditTemplateBody(JoinRelationship it, Application app, Entity ownEntity, Entity linkingEntity, Boolean incoming, Boolean hasEdit, Boolean many) '''
+    def private includedEditTemplateBody(JoinRelationship it, Application app, Entity ownEntity, Entity linkingEntity, Boolean incoming, Boolean hasEdit, Boolean many, Boolean isAdmin) '''
         {% if displayMode == 'choices' %}
             {{ form_row(attribute(form, alias)) }}
         {% elseif displayMode == 'autocomplete' %}
             «/*IF !isManyToMany && !incoming»
                 «component_ParentEditing(ownEntity, many)»
             «ELSE*/»{{ form_row(attribute(form, alias)) }}
-            «component_AutoComplete(app, ownEntity, many, incoming, hasEdit)»«/*ENDIF*/»
+            «component_AutoComplete(app, ownEntity, many, incoming, hasEdit, isAdmin)»«/*ENDIF*/»
         {% endif %}
     '''
 /*
@@ -165,9 +165,9 @@ class Relations {
         * /»
     '''
 */
-    def private component_AutoComplete(JoinRelationship it, Application app, Entity targetEntity, Boolean many, Boolean incoming, Boolean includeEditing) '''
+    def private component_AutoComplete(JoinRelationship it, Application app, Entity targetEntity, Boolean many, Boolean incoming, Boolean includeEditing, Boolean isAdmin) '''
         <div class="«app.appName.toLowerCase»-relation-leftside">
-            «val includeStatement = component_IncludeStatementForAutoCompleterItemList(targetEntity, many, incoming, includeEditing)»
+            «val includeStatement = component_IncludeStatementForAutoCompleterItemList(targetEntity, many, incoming, includeEditing, isAdmin)»
             {{ include(
                 «includeStatement»,
                 attribute(linkingItem, alias) is defined ? { item«IF many»s«ENDIF»: attribute(linkingItem, alias) } : {}
@@ -176,9 +176,9 @@ class Relations {
         <br style="clear: both" />
     '''
 
-    def private component_IncludeStatementForAutoCompleterItemList(JoinRelationship it, Entity targetEntity, Boolean many, Boolean incoming, Boolean includeEditing) {
+    def private component_IncludeStatementForAutoCompleterItemList(JoinRelationship it, Entity targetEntity, Boolean many, Boolean incoming, Boolean includeEditing, Boolean isAdmin) {
         '''
-            '@«application.appName»/«targetEntity.name.formatForCodeCapital»/includeSelect«IF includeEditing»Edit«ENDIF»ItemList«IF !many»One«ELSE»Many«ENDIF».html.twig'«''»'''
+            '@«application.appName»/«targetEntity.name.formatForCodeCapital»/«IF isAdmin»Admin/«ENDIF»includeSelect«IF includeEditing»Edit«ENDIF»ItemList«IF !many»One«ELSE»Many«ENDIF».html.twig'«''»'''
     }
 
     def private component_ItemList(JoinRelationship it, Application app, Entity targetEntity, Boolean many, Boolean incoming, Boolean includeEditing) '''
