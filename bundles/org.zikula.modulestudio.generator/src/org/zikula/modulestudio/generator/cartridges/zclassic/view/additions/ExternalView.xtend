@@ -76,7 +76,7 @@ class ExternalView {
             «IF hasDisplayAction»
                 <a href="{{ path('«app.appName.formatForDB»_«name.formatForDB»_display'«routeParams(name.formatForCode, true)») }}" title="{{ «name.formatForCode»|«app.appName.formatForDB»_formattedTitle|e('html_attr') }}">
             «ENDIF»
-            {{ «name.formatForCode»|«app.appName.formatForDB»_formattedTitle«IF !skipHookSubscribers»|notifyFilters('«app.name.formatForDB».filter_hooks.«nameMultiple.formatForDB».filter')«ENDIF» }}
+            {{ «name.formatForCode»|«app.appName.formatForDB»_formattedTitle«IF !skipHookSubscribers»|notifyFilters('«app.name.formatForDB».filter_hooks.«nameMultiple.formatForDB».filter')|safeHtml«ENDIF» }}
             «IF hasDisplayAction»
                 </a>
             «ENDIF»
@@ -86,7 +86,7 @@ class ExternalView {
             {# for normal users without edit permission show only the actual file per default #}
             {% if displayMode == 'embed' %}
                 <p class="«app.appName.toLowerCase»-external-title">
-                    <strong>{{ «name.formatForCode»|«app.appName.formatForDB»_formattedTitle«IF !skipHookSubscribers»|notifyFilters('«app.name.formatForDB».filter_hooks.«nameMultiple.formatForDB».filter')«ENDIF» }}</strong>
+                    <strong>{{ «name.formatForCode»|«app.appName.formatForDB»_formattedTitle«IF !skipHookSubscribers»|notifyFilters('«app.name.formatForDB».filter_hooks.«nameMultiple.formatForDB».filter')|safeHtml«ENDIF» }}</strong>
                 </p>
             {% endif %}
         {% endif %}
@@ -152,7 +152,7 @@ class ExternalView {
     def private itemInfoTemplate(Entity it, Application app) '''
         {# Purpose of this template: Display item information for previewing from other modules #}
         <dl id="«name.formatForCode»{{ «name.formatForCode».«getFirstPrimaryKey.name.formatForCode» }}">
-        <dt>{{ «name.formatForCode»|«app.appName.formatForDB»_formattedTitle«IF !skipHookSubscribers»|notifyFilters('«app.name.formatForDB».filter_hooks.«nameMultiple.formatForDB».filter')«ENDIF» }}</dt>
+        <dt>{{ «name.formatForCode»|«app.appName.formatForDB»_formattedTitle«IF !skipHookSubscribers»|notifyFilters('«app.name.formatForDB».filter_hooks.«nameMultiple.formatForDB».filter')|safeHtml«ENDIF» }}</dt>
         «IF hasImageFieldsEntity»
             <dd>«displaySnippet»</dd>
         «ENDIF»
