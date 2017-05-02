@@ -564,11 +564,11 @@ class FormHandler {
             // retrieve identifier of the object we wish to edit
             $routeParams = $this->request->get('_route_params', []);
             if (array_key_exists($this->idField, $routeParams)) {
-                $this->idValue = (int) !empty($routeParams[$this->idField]) ? $routeParams[$this->idField] : $defaultValue;
+                $this->idValue = (int) !empty($routeParams[$this->idField]) ? $routeParams[$this->idField] : 0;
             } elseif ($this->request->query->has($this->idField)) {
-                $this->idValue = $this->request->query->getInt($this->idField, $defaultValue);
+                $this->idValue = $this->request->query->getInt($this->idField, 0);
             } else {
-                $this->idValue = $defaultValue;
+                $this->idValue = 0;
             }
 
             $entity = null;
