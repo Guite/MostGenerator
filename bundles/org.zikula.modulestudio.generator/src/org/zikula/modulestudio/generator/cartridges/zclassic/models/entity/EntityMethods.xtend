@@ -138,7 +138,7 @@ class EntityMethods {
         /**
          * Returns the primary key.
          *
-         * @return integer identifier
+         * @return integer The identifier
          */
         public function getKey()
         {

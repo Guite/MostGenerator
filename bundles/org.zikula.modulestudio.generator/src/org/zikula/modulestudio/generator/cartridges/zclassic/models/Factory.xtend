@@ -144,7 +144,7 @@ class Factory {
 
     def private getIdField(Application it) '''
         /**
-         * Gets name identifier field for a given object type.
+         * Returns the identifier field's name for a given object type.
          *
          * @param string $objectType The object type to be treated
          *
