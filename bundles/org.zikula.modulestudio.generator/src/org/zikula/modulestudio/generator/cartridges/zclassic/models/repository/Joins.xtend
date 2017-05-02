@@ -21,27 +21,7 @@ class Joins {
          */
         protected function addJoinsToSelection()
         {
-            $selection = '«FOR relation : getBidirectionalIncomingJoinRelations.filter[source.application == app]»«relation.addJoin(false, 'select')»«ENDFOR»«FOR relation : getOutgoingJoinRelations.filter[target.application == app]»«relation.addJoin(true, 'select')»«ENDFOR»';
-            «/*IF hasJoinsToOtherApplications(app)»
-                $kernel = \ServiceUtil::get('kernel');
-                «FOR relation : getBidirectionalIncomingJoinRelations.filter[source.application != app]»
-                    if ($kernel->isBundle('«relation.source.application.appName»')) {
-                        $selection .= '«relation.addJoin(false, 'select')»';
-                    }
-                «ENDFOR»
-                «FOR relation : getOutgoingJoinRelations.filter[target.application != app]»
-                    if ($kernel->isBundle('«relation.target.application.appName»')) {
-                        $selection .= '«relation.addJoin(true, 'select')»';
-                    }
-                «ENDFOR»
-            «ENDIF*/»«IF hasJoinsToOtherApplications(app)»
-                «FOR relation : getBidirectionalIncomingJoinRelations.filter[source.application != app]»
-                    $selection .= '«relation.addJoin(false, 'select')»';
-                «ENDFOR»
-                «FOR relation : getOutgoingJoinRelations.filter[target.application != app]»
-                    $selection .= '«relation.addJoin(true, 'select')»';
-                «ENDFOR»
-            «ENDIF»
+            $selection = '«FOR relation : getBidirectionalIncomingJoinRelations»«relation.addJoin(false, 'select')»«ENDFOR»«FOR relation : getOutgoingJoinRelations»«relation.addJoin(true, 'select')»«ENDFOR»';
             «IF categorisable»
 
                 $selection = ', tblCategories';
@@ -59,28 +39,8 @@ class Joins {
          */
         protected function addJoinsToFrom(QueryBuilder $qb)
         {
-            «FOR relation : getBidirectionalIncomingJoinRelations.filter[source.application == app]»«relation.addJoin(false, 'from')»«ENDFOR»
-            «FOR relation : getOutgoingJoinRelations.filter[target.application == app]»«relation.addJoin(true, 'from')»«ENDFOR»
-            «/*IF hasJoinsToOtherApplications(app)»
-                $kernel = \ServiceUtil::get('kernel');
-                «FOR relation : getBidirectionalIncomingJoinRelations.filter[source.application != app]»
-                    if ($kernel->isBundle('«relation.source.application.appName»')) {
-                        «relation.addJoin(false, 'from')»
-                    }
-                «ENDFOR»
-                «FOR relation : getOutgoingJoinRelations.filter[target.application != app]»
-                    if ($kernel->isBundle('«relation.target.application.appName»')) {
-                        «relation.addJoin(true, 'from')»
-                    }
-                «ENDFOR»
-            «ENDIF*/»«IF hasJoinsToOtherApplications(app)»
-                «FOR relation : getBidirectionalIncomingJoinRelations.filter[source.application != app]»
-                    «relation.addJoin(false, 'from')»
-                «ENDFOR»
-                «FOR relation : getOutgoingJoinRelations.filter[target.application != app]»
-                    «relation.addJoin(true, 'from')»
-                «ENDFOR»
-            «ENDIF»
+            «FOR relation : getBidirectionalIncomingJoinRelations»«relation.addJoin(false, 'from')»«ENDFOR»
+            «FOR relation : getOutgoingJoinRelations»«relation.addJoin(true, 'from')»«ENDFOR»
             «IF categorisable»
 
                 $qb->leftJoin('tbl.categories', 'tblCategories');
@@ -89,11 +49,6 @@ class Joins {
             return $qb;
         }
     '''
-
-    def private hasJoinsToOtherApplications(Entity it, Application app) {
-        !getBidirectionalIncomingJoinRelations.filter[source.application != app].empty
-        || !getOutgoingJoinRelations.filter[target.application != app].empty
-    }
 
     def private addJoin(JoinRelationship it, Boolean incoming, String target) {
         val relationAliasName = getRelationAliasName(incoming).formatForCodeCapital
