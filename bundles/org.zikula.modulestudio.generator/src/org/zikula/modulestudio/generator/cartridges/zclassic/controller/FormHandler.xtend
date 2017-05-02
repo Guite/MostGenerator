@@ -1411,9 +1411,7 @@ class FormHandler {
 
             if ($success && $this->templateParameters['mode'] == 'create') {
                 // store new identifier
-                foreach ($this->idFields as $idField) {
-                    $this->idValues[$idField] = $entity[$idField];
-                }
+                $this->idValue = $entity->getKey();
             }
             «IF !incoming.empty || !outgoing.empty»
                 «relationPresetsHelper.saveNonEditablePresets(it, app)»
