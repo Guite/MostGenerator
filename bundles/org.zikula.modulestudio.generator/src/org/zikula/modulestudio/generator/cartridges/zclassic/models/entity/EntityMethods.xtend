@@ -38,7 +38,7 @@ class EntityMethods {
 
         «createUrlArgs»
 
-        «createCompositeIdentifier»
+        «getKey»
 
         «supportsHookSubscribers»
 
@@ -122,42 +122,27 @@ class EntityMethods {
          */
         public function createUrlArgs()
         {
-            $args = [];
-
-            «IF hasCompositeKeys»
-                «FOR pkField : getPrimaryKeyFields»
-                    $args['«pkField.name.formatForCode»'] = $this['«pkField.name.formatForCode»'];
-                «ENDFOR»
-            «ELSE»
-                $args['«getFirstPrimaryKey.name.formatForCode»'] = $this['«getFirstPrimaryKey.name.formatForCode»'];
-            «ENDIF»
+            $args = [
+                '«getPrimaryKey.name.formatForCode»' => $this->get«getPrimaryKey.name.formatForCodeCapital»()
+            ];
 
             if (property_exists($this, 'slug')) {
-                $args['slug'] = $this['slug'];
+                $args['slug'] = $this->getSlug();
             }
 
             return $args;
         }
     '''
 
-    def private createCompositeIdentifier(Entity it) '''
+    def private getKey(Entity it) '''
         /**
-         * Create concatenated identifier string (for composite keys).
+         * Returns the primary key.
          *
-         * @return String concatenated identifiers
+         * @return integer identifier
          */
-        public function createCompositeIdentifier()
+        public function getKey()
         {
-            «IF hasCompositeKeys»
-                $itemId = '';
-                «FOR pkField : getPrimaryKeyFields»
-                    $itemId .= ((!empty($itemId)) ? '_' : '') . $this['«pkField.name.formatForCode»'];
-                «ENDFOR»
-            «ELSE»
-                $itemId = $this['«getFirstPrimaryKey.name.formatForCode»'];
-            «ENDIF»
-
-            return $itemId;
+            return $this->get«getPrimaryKey.name.formatForCodeCapital»();
         }
     '''
 
@@ -194,7 +179,7 @@ class EntityMethods {
          */
         public function __toString()
         {
-            return '«name.formatForDisplayCapital» ' . $this->createCompositeIdentifier()«IF hasDisplayStringFieldsEntity» . ': ' . $this->get«getDisplayStringFieldsEntity.head.name.formatForCodeCapital»()«ENDIF»;
+            return '«name.formatForDisplayCapital» ' . $this->getKey()«IF hasDisplayStringFieldsEntity» . ': ' . $this->get«getDisplayStringFieldsEntity.head.name.formatForCodeCapital»()«ENDIF»;
         }
     '''
 
@@ -250,16 +235,14 @@ class EntityMethods {
         public function __clone()
         {
             // if the entity has no identity do nothing, do NOT throw an exception
-            if (!(«FOR field : primaryKeyFields SEPARATOR ' && '»$this->«field.name.formatForCode»«ENDFOR»)) {
+            if (!$this->«getPrimaryKey.name.formatForCode») {
                 return;
             }
 
             // otherwise proceed
 
             // unset identifiers
-            «FOR field : primaryKeyFields»
-                $this->set«field.name.formatForCodeCapital»(«thProp.defaultFieldData(field)»);
-            «ENDFOR»
+            $this->set«getPrimaryKey.name.formatForCodeCapital»(«thProp.defaultFieldData(getPrimaryKey)»);
             «IF !app.targets('1.5')»
 
                 // reset workflow

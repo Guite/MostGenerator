@@ -83,7 +83,7 @@ class Tree extends AbstractExtension implements EntityExtensionInterface {
          *
          * @Gedmo\TreeParent
          * @ORM\ManyToOne(targetEntity="\«entityClassName('', false)»", inversedBy="children")
-         * @ORM\JoinColumn(name="parent_id", referencedColumnName="«getPrimaryKeyFields.head.name.formatForDisplay»", onDelete="SET NULL")
+         * @ORM\JoinColumn(name="parent_id", referencedColumnName="«getPrimaryKey.name.formatForDisplay»", onDelete="SET NULL")
          * @var \«entityClassName('', false)» $parent
          */
         protected $parent;

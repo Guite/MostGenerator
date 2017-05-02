@@ -128,8 +128,7 @@ class WorkflowEvents {
                         break;
                 }
 
-                $instanceId = $entity->createCompositeIdentifier();
-                if (!$this->permissionApi->hasPermission('«appName»:' . ucfirst($objectType) . ':', $instanceId . '::', $permissionLevel)) {
+                if (!$this->permissionApi->hasPermission('«appName»:' . ucfirst($objectType) . ':', $entity->getKey() . '::', $permissionLevel)) {
                     // no permission for this transition, so disallow it
                     $event->setBlocked(true);
 

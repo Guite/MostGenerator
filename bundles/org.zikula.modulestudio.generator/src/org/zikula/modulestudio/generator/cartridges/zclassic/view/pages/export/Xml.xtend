@@ -92,7 +92,7 @@ class Xml {
 
     def private xmlInclude(Entity it, String appName) '''
         {# purpose of this template: «nameMultiple.formatForDisplay» xml inclusion template #}
-        <«name.formatForDB»«FOR pkField : getPrimaryKeyFields» «pkField.name.formatForCode»="{{ «name.formatForCode».«pkField.name.formatForCode» }}"«ENDFOR»«IF standardFields» createdon="{{ «name.formatForCode».createdDate|localizeddate('medium', 'short') }}" updatedon="{{ «name.formatForCode».updatedDate|localizeddate('medium', 'short') }}"«ENDIF»>
+        <«name.formatForDB» «getPrimaryKey.name.formatForCode»="{{ «name.formatForCode».get«getPrimaryKey.name.formatForCodeCapital»() }}"«IF standardFields» createdon="{{ «name.formatForCode».createdDate|localizeddate('medium', 'short') }}" updatedon="{{ «name.formatForCode».updatedDate|localizeddate('medium', 'short') }}"«ENDIF»>
             «FOR field : getDerivedFields.filter[primaryKey]»«field.displayEntry»«ENDFOR»
             «FOR field : getDerivedFields.filter[!primaryKey && name != 'workflowState']»«field.displayEntry»«ENDFOR»
             «IF geographical»

@@ -88,15 +88,11 @@ class Property {
           * «documentation»
          «ENDIF»
          «IF primaryKey»
-             «IF !entity.hasCompositeKeys»«/* || entity.identifierStrategy == EntityIdentifierStrategy::ASSIGNED-»*/»
-              * @ORM\Id
-              «IF entity instanceof Entity && (entity as Entity).identifierStrategy != EntityIdentifierStrategy::NONE»
-               * @ORM\GeneratedValue(strategy="«(entity as Entity).identifierStrategy.literal»")
-              «ENDIF»
-            «ELSE»
-              * @ORM\Id
-          «ENDIF»
-        «ENDIF»
+             * @ORM\Id
+             «IF entity instanceof Entity && (entity as Entity).identifierStrategy != EntityIdentifierStrategy::NONE»
+                 * @ORM\GeneratedValue(strategy="«(entity as Entity).identifierStrategy.literal»")
+             «ENDIF»
+         «ENDIF»
         «extMan.columnAnnotations(it)»
          «IF !(it instanceof UserField)»«/* user fields are implemented as join to UserEntity, see persistentPropertyAdditions */»
          * @ORM\Column(«IF null !== dbName && dbName != ''»name="«dbName.formatForCode»", «ENDIF»«persistentPropertyImpl(type.toLowerCase)»«IF unique», unique=true«ENDIF»«IF nullable», nullable=true«ENDIF»)

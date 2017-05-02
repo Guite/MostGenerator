@@ -5,14 +5,12 @@ import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.EntityWorkflowType
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
-import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 import org.zikula.modulestudio.generator.extensions.ViewExtensions
 
 class Section {
 
     extension FormattingExtensions = new FormattingExtensions
-    extension ModelExtensions = new ModelExtensions
     extension ViewExtensions = new ViewExtensions
     extension Utils = new Utils
 
@@ -73,7 +71,7 @@ class Section {
             <div role="tabpanel" class="tab-pane fade" id="tabHooks" aria-labelledby="hooksTab">
                 <h3>{{ __('Hooks') }}</h3>
         «ENDIF»
-        {% set hookId = mode != 'create' ? «FOR pkField : getPrimaryKeyFields SEPARATOR ' ~ '»«name.formatForDB».«pkField.name.formatForCode»«ENDFOR» : null %}
+        {% set hookId = mode != 'create' ? «name.formatForDB».getKey() : null %}
         {% set hooks = notifyDisplayHooks(eventName='«app.appName.formatForDB».ui_hooks.«nameMultiple.formatForDB».form_edit', id=hookId) %}
         {% if hooks is iterable and hooks|length > 0 %}
             {% for providerArea, hook in hooks if providerArea != 'provider.scribite.ui_hooks.editor' %}

@@ -28,12 +28,12 @@ class SimpleFields {
 
     def dispatch displayField(BooleanField it, String objName, String page) {
         if (ajaxTogglability && (page == 'view' || page == 'display')) '''
-            {% set itemid = «objName».createCompositeIdentifier() %}
-            <a id="toggle«name.formatForCodeCapital»{{ itemid }}" href="javascript:void(0);" class="«entity.application.vendorAndName.toLowerCase»-ajax-toggle hidden" data-object-type="«entity.name.formatForCode»" data-field-name="«name.formatForCode»" data-item-id="{{ itemid }}">
-                <i class="fa fa-check{% if not «objName».«name.formatForCode» %} hidden{% endif %}" id="yes«name.formatForCodeCapital»{{ itemid }}" title="{{ __('This setting is enabled. Click here to disable it.') }}"></i>
-                <i class="fa fa-times{% if «objName».«name.formatForCode» %} hidden{% endif %}" id="no«name.formatForCodeCapital»{{ itemid }}" title="{{ __('This setting is disabled. Click here to enable it.') }}"></i>
+            {% set itemId = «objName».getKey() %}
+            <a id="toggle«name.formatForCodeCapital»{{ itemId }}" href="javascript:void(0);" class="«entity.application.vendorAndName.toLowerCase»-ajax-toggle hidden" data-object-type="«entity.name.formatForCode»" data-field-name="«name.formatForCode»" data-item-id="{{ itemId }}">
+                <i class="fa fa-check{% if not «objName».«name.formatForCode» %} hidden{% endif %}" id="yes«name.formatForCodeCapital»{{ itemId }}" title="{{ __('This setting is enabled. Click here to disable it.') }}"></i>
+                <i class="fa fa-times{% if «objName».«name.formatForCode» %} hidden{% endif %}" id="no«name.formatForCodeCapital»{{ itemId }}" title="{{ __('This setting is disabled. Click here to enable it.') }}"></i>
             </a>
-            <noscript><div id="noscript«name.formatForCodeCapital»{{ itemid }}">
+            <noscript><div id="noscript«name.formatForCodeCapital»{{ itemId }}">
                 {% if «objName».«name.formatForCode» %}
                     <i class="fa fa-check" title="{{ __('Yes') }}"></i>
                 {% else %}

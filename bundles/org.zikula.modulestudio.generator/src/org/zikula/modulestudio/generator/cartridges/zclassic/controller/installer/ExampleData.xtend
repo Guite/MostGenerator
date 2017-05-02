@@ -205,25 +205,17 @@ class ExampleData {
         «ENDFOR»
     '''
 
-    def private exampleRowsConstructorArgumentsDefault(Entity it, Boolean hasPreviousArgs, Integer number) '''
-        «IF hasCompositeKeys»
-            «IF hasPreviousArgs», «ENDIF»«FOR pkField : getPrimaryKeyFields SEPARATOR ', '»$«pkField.name.formatForCode»«ENDFOR»
-        «ENDIF»
-    '''
-
     def private exampleRowsConstructorArguments(Entity it, Integer number) '''
         «IF isIndexByTarget»
             «val indexRelation = incoming.filter(JoinRelationship).filter[isIndexed].head»
             «val sourceAlias = getRelationAliasName(indexRelation, false)»
             «val indexBy = indexRelation.getIndexByField»
             «val indexByField = getDerivedFields.findFirst[name == indexBy]»
-            «indexByField.exampleRowsConstructorArgument(number)», $«sourceAlias.formatForCode»«number»«exampleRowsConstructorArgumentsDefault(true, number)»
+            «indexByField.exampleRowsConstructorArgument(number)», $«sourceAlias.formatForCode»«number»
         «ELSEIF isAggregated»
             «FOR aggregator : getAggregators SEPARATOR ', '»
-                «FOR relation : aggregator.getAggregatingRelationships SEPARATOR ', '»«relation.exampleRowsConstructorArgumentsAggregate(number)»«ENDFOR»«exampleRowsConstructorArgumentsDefault(true, number)»
+                «FOR relation : aggregator.getAggregatingRelationships SEPARATOR ', '»«relation.exampleRowsConstructorArgumentsAggregate(number)»«ENDFOR»
             «ENDFOR»
-        «ELSE»
-            «exampleRowsConstructorArgumentsDefault(false, number)»
         «ENDIF»
     '''
 

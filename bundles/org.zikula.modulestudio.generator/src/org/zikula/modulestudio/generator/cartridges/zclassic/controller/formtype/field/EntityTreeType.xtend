@@ -107,7 +107,7 @@ class EntityTreeType {
                         continue;
                     }
 
-                    $choices[$this->createChoiceLabel($node)] = $node->createCompositeIdentifier();
+                    $choices[$this->createChoiceLabel($node)] = $node->getKey();
                 }
 
                 return $choices;

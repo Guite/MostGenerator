@@ -99,9 +99,7 @@ class Mailz {
             «val leadingEntity = getLeadingEntity»
             $objectType = '«leadingEntity.name.formatForCode»';
 
-            $entityFactory = $this->container->get('«appService».entity_factory');
-            $idFields = $entityFactory->getIdFields($objectType);
-            $repository = $entityFactory->getRepository($objectType);
+            $repository = $this->container->get('«appService».entity_factory')->getRepository($objectType);
 
             $sorting = 'default';
             if ($args['pluginid'] == 2) {

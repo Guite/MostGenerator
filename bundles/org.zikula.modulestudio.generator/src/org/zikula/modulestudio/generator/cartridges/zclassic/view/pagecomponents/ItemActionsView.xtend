@@ -2,13 +2,11 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.view.pagecomponent
 
 import de.guite.modulestudio.metamodel.Entity
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
-import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class ItemActionsView {
 
     extension FormattingExtensions = new FormattingExtensions
-    extension ModelExtensions = new ModelExtensions
     extension Utils = new Utils
 
     def generate(Entity it, String context) '''
@@ -24,5 +22,5 @@ class ItemActionsView {
     '''
 
     def itemActionContainerViewId(Entity it) '''
-        itemActions«FOR pkField : getPrimaryKeyFields SEPARATOR '_'»{{ «name.formatForCode».«pkField.name.formatForCode» }}«ENDFOR»'''
+        itemActions{{ «name.formatForCode».getKey() }}'''
 }

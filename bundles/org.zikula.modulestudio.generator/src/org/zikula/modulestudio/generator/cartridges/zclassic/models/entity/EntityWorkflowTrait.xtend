@@ -66,7 +66,6 @@ class EntityWorkflowTrait {
     def private getWorkflowIdColumn(Application it) '''
         /**
          * Returns the name of the primary identifier field.
-         * For entities with composite keys the first identifier field is used.
          *
          * @return string Identifier field name
          */

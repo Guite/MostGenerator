@@ -277,14 +277,14 @@ class Association {
         «IF (joinColumnsForeign.size > 1)»«joinColumnsMultiple(useTarget, joinedEntityLocal, joinColumnsLocal)»
         «ELSE»«joinColumnsSingle(useTarget, joinedEntityLocal, joinColumnsLocal)»
         «ENDIF»
-        «IF (joinColumnsForeign.size > 1)» *      inverseJoinColumns={«FOR joinColumnForeign : joinColumnsForeign SEPARATOR ', '»«joinColumn(joinColumnForeign, joinedEntityForeign.getFirstPrimaryKey.name.formatForDB, useTarget)»«ENDFOR»}
-        «ELSE» *      inverseJoinColumns={«joinColumn(joinColumnsForeign.head, joinedEntityForeign.getFirstPrimaryKey.name.formatForDB, useTarget)»}
+        «IF (joinColumnsForeign.size > 1)» *      inverseJoinColumns={«FOR joinColumnForeign : joinColumnsForeign SEPARATOR ', '»«joinColumn(joinColumnForeign, joinedEntityForeign.getPrimaryKey.name.formatForDB, useTarget)»«ENDFOR»}
+        «ELSE» *      inverseJoinColumns={«joinColumn(joinColumnsForeign.head, joinedEntityForeign.getPrimaryKey.name.formatForDB, useTarget)»}
         «ENDIF»
     '''
 
-    def private joinColumnsMultiple(JoinRelationship it, Boolean useTarget, DataObject joinedEntityLocal, String[] joinColumnsLocal) ''' *      joinColumns={«FOR joinColumnLocal : joinColumnsLocal SEPARATOR ', '»«joinColumn(joinColumnLocal, joinedEntityLocal.getFirstPrimaryKey.name.formatForDB, !useTarget)»«ENDFOR»},'''
+    def private joinColumnsMultiple(JoinRelationship it, Boolean useTarget, DataObject joinedEntityLocal, String[] joinColumnsLocal) ''' *      joinColumns={«FOR joinColumnLocal : joinColumnsLocal SEPARATOR ', '»«joinColumn(joinColumnLocal, joinedEntityLocal.getPrimaryKey.name.formatForDB, !useTarget)»«ENDFOR»},'''
 
-    def private joinColumnsSingle(JoinRelationship it, Boolean useTarget, DataObject joinedEntityLocal, String[] joinColumnsLocal) ''' *      joinColumns={«joinColumn(joinColumnsLocal.head, joinedEntityLocal.getFirstPrimaryKey.name.formatForDB, !useTarget)»},'''
+    def private joinColumnsSingle(JoinRelationship it, Boolean useTarget, DataObject joinedEntityLocal, String[] joinColumnsLocal) ''' *      joinColumns={«joinColumn(joinColumnsLocal.head, joinedEntityLocal.getPrimaryKey.name.formatForDB, !useTarget)»},'''
 
     def private joinColumn(JoinRelationship it, String columnName, String referencedColumnName, Boolean useTarget) '''
         @ORM\JoinColumn(name="«joinColumnName(columnName, useTarget)»", referencedColumnName="«referencedColumnName»" «IF unique», unique=true«ENDIF»«IF !nullable», nullable=false«ENDIF»«IF onDelete != ''», onDelete="«onDelete»"«ENDIF»)'''

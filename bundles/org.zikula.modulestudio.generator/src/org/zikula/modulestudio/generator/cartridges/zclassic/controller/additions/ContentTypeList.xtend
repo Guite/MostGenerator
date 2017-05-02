@@ -201,8 +201,8 @@ class ContentTypeList {
                     $this->catProperties = [];
                     if (in_array($this->objectType, $this->categorisableObjectTypes)) {
                         $entityFactory = $this->container->get('«appService».entity_factory');
-                        $idFields = $entityFactory->getIdFields($this->objectType);
-                        $this->catRegistries = $categoryHelper->getAllPropertiesWithMainCat($this->objectType, $idFields[0]);
+                        $idField = $entityFactory->getIdField($this->objectType);
+                        $this->catRegistries = $categoryHelper->getAllPropertiesWithMainCat($this->objectType, $idField);
                         $this->catProperties = $categoryHelper->getAllProperties($this->objectType);
                     }
 

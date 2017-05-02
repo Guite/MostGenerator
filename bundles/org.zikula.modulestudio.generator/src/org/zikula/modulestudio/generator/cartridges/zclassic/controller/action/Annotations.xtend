@@ -47,7 +47,7 @@ class Annotations {
                     «' '»* @Cache(expires="+2 hours", public=false)
                 «ELSEIF !(it instanceof CustomAction)»
                     «IF entity.standardFields»
-                        «' '»* @Cache(lastModified="«entity.name.formatForCode».getUpdatedDate()", ETag="'«entity.name.formatForCodeCapital»' ~ «entity.getPrimaryKeyFields.map[entity.name.formatForCode + '.get' + name.formatForCode + '()'].join(' ~ ')» ~ «entity.name.formatForCode».getUpdatedDate().format('U')")
+                        «' '»* @Cache(lastModified="«entity.name.formatForCode».getUpdatedDate()", ETag="'«entity.name.formatForCodeCapital»' ~ «entity.name.formatForCode + '.get' + entity.getPrimaryKey.name.formatForCode + '()'» ~ «entity.name.formatForCode».getUpdatedDate().format('U')")
                     «ELSE»
                         «IF it instanceof EditAction»
                             «' '»* @Cache(expires="+30 minutes", public=false)
@@ -98,7 +98,7 @@ class Annotations {
             }
             output = output + '.'
         }
-        output = output + getPrimaryKeyFields.map['{' + name.formatForCode + '}'].join('_')
+        output = output + '{' + getPrimaryKey.name.formatForCode + '}'
 
         output
     }
@@ -112,7 +112,7 @@ class Annotations {
             }
             output = output + ', '
         }
-        output = output + getPrimaryKeyFields.map['''"«name.formatForCode»" = "\d+"'''].join(', ')
+        output = output + '''"«getPrimaryKey.name.formatForCode»" = "\d+"'''
 
         output
     }
@@ -126,7 +126,7 @@ class Annotations {
             }
             output = output + ', '
         }
-        output = output + getPrimaryKeyFields.map['''"«name.formatForCode»" = "0"'''].join(', ')
+        output = output + '''"«getPrimaryKey.name.formatForCode»" = "0"'''
 
         output
     }
@@ -160,10 +160,10 @@ class Annotations {
             // since we use the id property selectBySlug receives the slug value directly instead ['slug' => 'my-title']
             return '"id" = "slug", "repository_method" = "selectBySlug"'
         }
-        val needsMapping = hasSluggableFields || hasCompositeKeys
+        val needsMapping = hasSluggableFields
         if (!needsMapping) {
             // since we use the id property selectById receives the identifier value directly instead ['id' => 123]
-            return '"id" = "' + getFirstPrimaryKey.name.formatForCode + '", "repository_method" = "selectById"'
+            return '"id" = "' + getPrimaryKey.name.formatForCode + '", "repository_method" = "selectById"'
         }
 
         // we have no single primary key or unique slug so we need to define a mapping hash option
@@ -172,7 +172,7 @@ class Annotations {
             output = output + '"slug": "slug", '
         }
 
-        output = output + getPrimaryKeyFields.map['"' + name.formatForCode + '": "' + name.formatForCode + '"'].join(', ')
+        output = output + '"' + getPrimaryKey.name.formatForCode + '": "' + getPrimaryKey.name.formatForCode + '"'
         output = output + '}, "repository_method" = "selectByIdList"'
         // selectByIdList receives an array like ['fooid' => 123, 'otherfield' => 456]
 

@@ -224,7 +224,7 @@ class View {
                 <tr>
                     {% if routeArea == 'admin' %}
                         <td headers="hSelect" class="fixed-column text-center z-w02">
-                            <input type="checkbox" name="items[]" value="{{ «name.formatForCode».«getPrimaryKeyFields.head.name.formatForCode» }}" class="«application.vendorAndName.toLowerCase»-toggle-checkbox" />
+                            <input type="checkbox" name="items[]" value="{{ «name.formatForCode».getKey() }}" class="«application.vendorAndName.toLowerCase»-toggle-checkbox" />
                         </td>
                     {% endif %}
             «ENDIF»
@@ -411,7 +411,7 @@ class View {
               {{ «relObjName»|«application.appName.formatForDB»_formattedTitle }}
             «IF linkEntity.hasDisplayAction»
                 {% endspaceless %}</a>
-                <a id="«linkEntity.name.formatForCode»Item«FOR pkField : mainEntity.getPrimaryKeyFields SEPARATOR '_'»{{ «mainEntity.name.formatForCode».«pkField.name.formatForCode» }}«ENDFOR»_rel_«FOR pkField : linkEntity.getPrimaryKeyFields SEPARATOR '_'»{{ «relObjName».«pkField.name.formatForCode» }}«ENDFOR»Display" href="{{ path('«application.appName.formatForDB»_«linkEntity.name.formatForDB»_' ~ routeArea ~ 'display', {«linkEntity.routePkParams(relObjName, true)»«linkEntity.appendSlug(relObjName, true)», 'raw': 1 }) }}" title="{{ __('Open quick view window')|e('html_attr') }}" class="«application.vendorAndName.toLowerCase»-inline-window hidden" data-modal-title="{{ «relObjName»|«application.appName.formatForDB»_formattedTitle|e('html_attr') }}"><span class="fa fa-id-card-o"></span></a>
+                <a id="«linkEntity.name.formatForCode»Item{{ «mainEntity.name.formatForCode».getKey() }}_rel_{{ «relObjName».getKey() }}Display" href="{{ path('«application.appName.formatForDB»_«linkEntity.name.formatForDB»_' ~ routeArea ~ 'display', {«linkEntity.routePkParams(relObjName, true)»«linkEntity.appendSlug(relObjName, true)», 'raw': 1 }) }}" title="{{ __('Open quick view window')|e('html_attr') }}" class="«application.vendorAndName.toLowerCase»-inline-window hidden" data-modal-title="{{ «relObjName»|«application.appName.formatForDB»_formattedTitle|e('html_attr') }}"><span class="fa fa-id-card-o"></span></a>
             «ENDIF»
         {% else %}
             {{ __('Not set.') }}
@@ -512,10 +512,10 @@ class View {
                                 <td headers="hActions" class="actions nowrap">
                                     «IF hasDisplayAction»
                                         {% set linkTitle = __f('Preview «name.formatForDisplay» %id%', { '%id%': logEntry.objectId }) %}
-                                        <a id="«name.formatForCode»ItemDisplay{{ logEntry.objectId }}" href="{{ path('«appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ 'displaydeleted', { '«getFirstPrimaryKey.name.formatForCode»': logEntry.objectId, 'raw': 1 }) }}" title="{{ linkTitle|e('html_attr') }}" class="«application.vendorAndName.toLowerCase»-inline-window hidden" data-modal-title="{{ __f('«name.formatForDisplayCapital» %id%', { '%id%': logEntry.objectId }) }}"><span class="fa fa-id-card-o"></span></a>
+                                        <a id="«name.formatForCode»ItemDisplay{{ logEntry.objectId }}" href="{{ path('«appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ 'displaydeleted', { '«getPrimaryKey.name.formatForCode»': logEntry.objectId, 'raw': 1 }) }}" title="{{ linkTitle|e('html_attr') }}" class="«application.vendorAndName.toLowerCase»-inline-window hidden" data-modal-title="{{ __f('«name.formatForDisplayCapital» %id%', { '%id%': logEntry.objectId }) }}"><span class="fa fa-id-card-o"></span></a>
                                     «ENDIF»
                                     {% set linkTitle = __f('Undelete «name.formatForDisplay» %id%', { '%id%': logEntry.objectId }) %}
-                                    <a href="{{ path('«appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ 'displaydeleted', { '«getFirstPrimaryKey.name.formatForCode»': logEntry.objectId, 'undelete': 1 }) }}" title="{{ linkTitle|e('html_attr') }}"><span class="fa fa-history"></span></a>
+                                    <a href="{{ path('«appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ 'displaydeleted', { '«getPrimaryKey.name.formatForCode»': logEntry.objectId, 'undelete': 1 }) }}" title="{{ linkTitle|e('html_attr') }}"><span class="fa fa-history"></span></a>
                                 </td>
                             </tr>
                         {% endfor %}

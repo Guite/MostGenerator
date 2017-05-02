@@ -86,15 +86,8 @@ class LegacyPermissionCheck {
          */
         function «app.appName»_workflow_«wfType.textualName»_permissioncheck($obj, $permLevel, $currentUser, $actionId)
         {
-            // calculate the permission component
-            $objectType = $obj['_objectType'];
-            $component = '«app.appName»:' . ucfirst($objectType) . ':';
-
-            // calculate the permission instance
-            $instance = $obj->createCompositeIdentifier() . '::';
-
-            // now perform the permission check
-            $result = SecurityUtil::checkPermission($component, $instance, $permLevel, $currentUser);
+            // perform the permission check
+            $result = SecurityUtil::checkPermission('«app.appName»:' . ucfirst($obj->get_objectType()) . ':', $obj->getKey() . '::', $permLevel, $currentUser);
             «val entitiesWithOwnerPermission = app.getAllEntities.filter[standardFields && ownerPermission]»
             «IF !entitiesWithOwnerPermission.empty»
 

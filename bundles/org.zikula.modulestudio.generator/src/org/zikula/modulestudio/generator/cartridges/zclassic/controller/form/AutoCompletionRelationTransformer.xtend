@@ -90,7 +90,7 @@ class AutoCompletionRelationTransformer {
                     if ($result != '') {
                         $result .= ',';
                     }
-                    $result .= $entity->createCompositeIdentifier();
+                    $result .= $entity->getKey();
                 }
 
                 return $result;
@@ -169,54 +169,20 @@ class AutoCompletionRelationTransformer {
                 $inputValue[] = 0;
             }
 
-            $idFields = $this->entityFactory->getIdFields($this->objectType);
-            if (count($idFields) > 1) {
-                $idsPerField = $this->decodeCompositeIdentifier($idFields, $inputValue);
-                foreach ($idFields as $idField) {
-                    $qb->andWhere('tbl.' . $idField . ' IN (:' . $idField . 'Ids)')
-                       ->setParameter($idField . 'Ids', $idsPerField[$idField]);
-                }
+            $idField = $this->entityFactory->getIdField($this->objectType);
+            if ($this->isMultiple) {
+                $qb->andWhere('tbl.' . $idField . ' IN (:' . $idField . 'Ids)')
+                   ->setParameter($idField . 'Ids', $inputValue);
             } else {
-                $idField = reset($idFields);
-                if ($this->isMultiple) {
-                    $qb->andWhere('tbl.' . $idField . ' IN (:' . $idField . 'Ids)')
-                       ->setParameter($idField . 'Ids', $inputValue);
-                } else {
-                    $qb->andWhere('tbl.' . $idField . ' = :' . $idField)
-                       ->setParameter($idField, $inputValue);
-                }
+                $qb->andWhere('tbl.' . $idField . ' = :' . $idField)
+                   ->setParameter($idField, $inputValue);
             }
+
             if (!empty($this->where)) {
                 $qb->andWhere($this->where);
             }
 
             return $qb;
-        }
-
-        /**
-         * Decodes a list of concatenated identifier strings (for composite keys).
-         *
-         * @param array $idFields List of identifier field names
-         * @param array $itemIds  List of concatenated identifiers
-         *
-         * @return Array with list of single identifiers
-         */
-        protected function decodeCompositeIdentifier(array $idFields = [], array $itemIds = [])
-        {
-            $idValues = [];
-            foreach ($idFields as $idField) {
-                $idValues[$idField] = [];
-            }
-            foreach ($itemIds as $itemId) {
-                $itemIdParts = explode('_', $itemId);
-                $i = 0;
-                foreach ($idFields as $idField) {
-                    $idValues[$idField][] = $itemIdParts[$i];
-                    $i++;
-                }
-            }
-
-            return $idValues;
         }
     '''
 

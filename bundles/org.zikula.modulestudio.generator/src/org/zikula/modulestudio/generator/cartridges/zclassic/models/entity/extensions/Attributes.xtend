@@ -103,7 +103,7 @@ class Attributes extends AbstractExtension implements EntityExtensionInterface {
     override extensionClassBaseAnnotations(Entity it) '''
         /**
          * @ORM\ManyToOne(targetEntity="\«entityClassName('', false)»", inversedBy="attributes")
-         * @ORM\JoinColumn(name="entityId", referencedColumnName="«getPrimaryKeyFields.head.name.formatForCode»")
+         * @ORM\JoinColumn(name="entityId", referencedColumnName="«getPrimaryKey.name.formatForCode»")
          * @var \«entityClassName('', false)»
          */
         protected $entity;

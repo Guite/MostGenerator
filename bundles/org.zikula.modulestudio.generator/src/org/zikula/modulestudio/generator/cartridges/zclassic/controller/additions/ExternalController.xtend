@@ -79,7 +79,7 @@ class ExternalController {
          «IF !isBase»
          *
          * @Route("/display/{objectType}/{id}/{source}/{displayMode}",
-         *        requirements = {«IF getAllEntities.filter[hasCompositeKeys].empty»"id" = "\d+", «ENDIF»"source" = "contentType|scribite", "displayMode" = "link|embed"},
+         *        requirements = {"id" = "\d+", "source" = "contentType|scribite", "displayMode" = "link|embed"},
          *        defaults = {"source" = "contentType", "contentType" = "embed"},
          *        methods = {"GET"}
          * )
@@ -112,15 +112,9 @@ class ExternalController {
 
         $entityFactory = $this->get('«appService».entity_factory');
         $repository = $entityFactory->getRepository($objectType);
-        $idValues = $controllerHelper->retrieveIdentifier($request, [], $objectType);
-
-        $hasIdentifier = $controllerHelper->isValidIdentifier($idValues);
-        if (!$hasIdentifier) {
-            return new Response($this->__('Error! Invalid identifier received.'));
-        }
 
         // assign object data fetched from the database
-        $entity = $repository->selectById($idValues);
+        $entity = $repository->selectById($id);
         if (null === $entity) {
             return new Response($this->__('No such item.'));
         }
@@ -129,8 +123,6 @@ class ExternalController {
             $entity->initWorkflow();
 
         «ENDIF»
-        $instance = $entity->createCompositeIdentifier() . '::';
-
         $templateParameters = [
             'objectType' => $objectType,
             'source' => $source,

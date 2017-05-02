@@ -70,7 +70,7 @@ class ExternalView {
             {{ pageAddAsset('stylesheet', asset('magnific-popup/magnific-popup.css')) }}
             {{ pageAddAsset('javascript', zasset('@«app.appName»:js/«app.appName».js')) }}
         «ENDIF»
-        <div id="«name.formatForCode»{$«name.formatForCode».«getFirstPrimaryKey.name.formatForCode»}" class="«app.appName.toLowerCase»-external-«name.formatForDB»">
+        <div id="«name.formatForCode»{$«name.formatForCode»->getKey()}" class="«app.appName.toLowerCase»-external-«name.formatForDB»">
         {% if displayMode == 'link' %}
             <p«IF hasDisplayAction» class="«app.appName.toLowerCase»-external-link"«ENDIF»>
             «IF hasDisplayAction»
@@ -151,7 +151,7 @@ class ExternalView {
 
     def private itemInfoTemplate(Entity it, Application app) '''
         {# Purpose of this template: Display item information for previewing from other modules #}
-        <dl id="«name.formatForCode»{{ «name.formatForCode».«getFirstPrimaryKey.name.formatForCode» }}">
+        <dl id="«name.formatForCode»{{ «name.formatForCode».getKey() }}">
         <dt>{{ «name.formatForCode»|«app.appName.formatForDB»_formattedTitle«IF !skipHookSubscribers»|notifyFilters('«app.name.formatForDB».filter_hooks.«nameMultiple.formatForDB».filter')|safeHtml«ENDIF» }}</dt>
         «IF hasImageFieldsEntity»
             <dd>«displaySnippet»</dd>
@@ -267,7 +267,7 @@ class ExternalView {
                             «ELSE»
                                 <li>
                             «ENDIF»
-                                {% set itemId = «name.formatForCode».createCompositeIdentifier() %}
+                                {% set itemId = «name.formatForCode».getKey() %}
                                 <a href="#" data-itemid="{{ itemId }}">
                                     «IF hasImageFieldsEntity»
                                         {% if onlyImages %}
@@ -379,7 +379,7 @@ class ExternalView {
                     <div class="col-sm-9">
                         <select id="{$baseID}Id" name="id" class="form-control">
                             {foreach item='«name.formatForCode»' from=$items}
-                                <option value="{$«name.formatForCode».«getFirstPrimaryKey.name.formatForCode»}"{if $selectedId eq $«name.formatForCode».«getFirstPrimaryKey.name.formatForCode»} selected="selected"{/if}>{$«name.formatForCode»->get«IF hasDisplayStringFieldsEntity»«getDisplayStringFieldsEntity.head.name.formatForCodeCapital»«ELSE»«getSelfAndParentDataObjects.map[fields].flatten.head.name.formatForCodeCapital»«ENDIF»()}</option>
+                                <option value="{$«name.formatForCode»->getKey()}"{if $selectedId eq $«name.formatForCode»->getKey()} selected="selected"{/if}>{$«name.formatForCode»->get«IF hasDisplayStringFieldsEntity»«getDisplayStringFieldsEntity.head.name.formatForCodeCapital»«ELSE»«getSelfAndParentDataObjects.map[fields].flatten.head.name.formatForCodeCapital»«ENDIF»()}</option>
                             {foreachelse}
                                 <option value="0">{gt text='No entries found.'}</option>
                             {/foreach}

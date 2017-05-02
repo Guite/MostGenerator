@@ -41,7 +41,7 @@ class TreeData {
 
             $result = '';
             foreach ($tree as $node) {
-                if ($node->getLvl() < 1 || $node->createCompositeIdentifier() == $rootId) {
+                if ($node->getLvl() < 1 || $node->getKey() == $rootId) {
                     $result .= $this->processTreeItemWithChildren($objectType, $node, $routeArea, $rootId, $descriptionFieldName, $hasEditAction);
                 }
             }
@@ -63,7 +63,7 @@ class TreeData {
          */
         protected function processTreeItemWithChildren($objectType, $node, $routeArea, $rootId, $descriptionFieldName, $hasEditAction)
         {
-            $idPrefix = 'tree' . $rootId . 'node_' . $node->createCompositeIdentifier();
+            $idPrefix = 'tree' . $rootId . 'node_' . $node->getKey();
             $title = $descriptionFieldName != '' ? strip_tags($node[$descriptionFieldName]) : '';
             $liTag = '<li id="' . $idPrefix . '" title="' . str_replace('"', '', $title) . '" class="lvl' . $node->getLvl() . '">';
 

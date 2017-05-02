@@ -252,7 +252,7 @@ class AjaxController {
         $slimItems = [];
         $component = '«appName»:' . ucfirst($objectType) . ':';
         foreach ($entities as $item) {
-            $itemId = $item->createCompositeIdentifier();
+            $itemId = $item->getKey();
             if (!$this->hasPermission($component, $itemId . '::', ACCESS_READ)) {
                 continue;
             }
@@ -365,7 +365,7 @@ class AjaxController {
                 }
 
                 $resultItem = [
-                    'id' => $item->createCompositeIdentifier(),
+                    'id' => $item->getKey(),
                     'title' => $itemTitle,
                     'description' => $itemDescription,
                     'image' => ''
@@ -447,7 +447,7 @@ class AjaxController {
                     switch ($fieldName) {
                     «FOR uniqueField : uniqueFields»
                         case '«uniqueField.name.formatForCode»':
-                                $result = $repository->detectUniqueState('«uniqueField.name.formatForCode»', $value, $exclude«IF !entities.filter[hasCompositeKeys].empty»[0]«ENDIF»);
+                                $result = $repository->detectUniqueState('«uniqueField.name.formatForCode»', $value, $exclude);
                                 break;
                     «ENDFOR»
                     «IF entity.hasSluggableFields && entity.slugUnique»
@@ -502,11 +502,6 @@ class AjaxController {
         }
 
         $exclude = $postData->get('ex', '');
-        «IF !entities.filter[hasCompositeKeys].empty»
-            if (false !== strpos($exclude, '_')) {
-                $exclude = explode('_', $exclude);
-            }
-        «ENDIF» 
     '''
 
     def private toggleFlagBase(Application it) '''

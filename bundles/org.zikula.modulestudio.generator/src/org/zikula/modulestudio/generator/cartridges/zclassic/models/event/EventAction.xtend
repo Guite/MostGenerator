@@ -63,9 +63,8 @@ class EventAction {
 
     def postPersist(Application it) '''
 
-        $objectId = «entityVar»->createCompositeIdentifier();
         $currentUserApi = $this->container->get('zikula_users_module.current_user');
-        $logArgs = ['app' => '«appName»', 'user' => $currentUserApi->get('uname'), 'entity' => «entityVar»->get_objectType(), 'id' => $objectId];
+        $logArgs = ['app' => '«appName»', 'user' => $currentUserApi->get('uname'), 'entity' => «entityVar»->get_objectType(), 'id' => «entityVar»->getKey()];
         $this->logger->debug('{app}: User {user} created the {entity} with id {id}.', $logArgs);
 
         // create the filter event and dispatch it
@@ -110,9 +109,8 @@ class EventAction {
     def postRemove(Application it) '''
 
         $objectType = «entityVar»->get_objectType();
-        $objectId = «entityVar»->createCompositeIdentifier();
-
         «IF hasUploads»
+
             $uploadFields = $this->getUploadFields($objectType);
             if (count($uploadFields) > 0) {
                 $uploadHelper = $this->container->get('«appService».upload_helper');
@@ -128,7 +126,7 @@ class EventAction {
         «ENDIF»
 
         $currentUserApi = $this->container->get('zikula_users_module.current_user');
-        $logArgs = ['app' => '«appName»', 'user' => $currentUserApi->get('uname'), 'entity' => $objectType, 'id' => $objectId];
+        $logArgs = ['app' => '«appName»', 'user' => $currentUserApi->get('uname'), 'entity' => $objectType, 'id' => «entityVar»->getKey()];
         $this->logger->debug('{app}: User {user} removed the {entity} with id {id}.', $logArgs);
 
         // create the filter event and dispatch it
@@ -162,9 +160,8 @@ class EventAction {
 
     def postUpdate(Application it) '''
 
-        $objectId = «entityVar»->createCompositeIdentifier();
         $currentUserApi = $this->container->get('zikula_users_module.current_user');
-        $logArgs = ['app' => '«appName»', 'user' => $currentUserApi->get('uname'), 'entity' => «entityVar»->get_objectType(), 'id' => $objectId];
+        $logArgs = ['app' => '«appName»', 'user' => $currentUserApi->get('uname'), 'entity' => «entityVar»->get_objectType(), 'id' => «entityVar»->getKey()];
         $this->logger->debug('{app}: User {user} updated the {entity} with id {id}.', $logArgs);
 
         // create the filter event and dispatch it

@@ -30,7 +30,7 @@ class ItemActions {
         «FOR entity : app.getAllEntities»
             if ($entity instanceof «entity.name.formatForCodeCapital»Entity) {
                 $component = '«app.appName»:«entity.name.formatForCodeCapital»:';
-                $instance = «entity.idFieldsAsParameterCode('entity')» . '::';
+                $instance = $entity->getKey() . '::';
                 $routePrefix = '«app.appName.formatForDB»_«entity.name.formatForDB»_';
                 «IF entity.standardFields»
                     $isOwner = $currentUserId > 0 && null !== $entity->getCreatedBy() && $currentUserId == $entity->getCreatedBy()->getUid();
@@ -126,7 +126,7 @@ class ItemActions {
                 «val otherEntity = (if (!useTarget) elem.source else elem.target)»
 
                 $relatedComponent = '«app.appName»:«otherEntity.name.formatForCodeCapital»:';
-                $relatedInstance = «otherEntity.idFieldsAsParameterCode('entity')» . '::';
+                $relatedInstance = $entity->getKey() . '::';
                 if ($isOwner || $permissionApi->hasPermission($relatedComponent, $relatedInstance, ACCESS_«IF (otherEntity as Entity).ownerPermission»ADD«ELSEIF (otherEntity as Entity).workflow == EntityWorkflowType.NONE»EDIT«ELSE»COMMENT«ENDIF»)) {
                     «val many = elem.isManySideDisplay(useTarget)»
                     «IF !many»
@@ -134,7 +134,7 @@ class ItemActions {
                             $title = $this->__('Create «otherEntity.name.formatForDisplay»');
                             $menu->addChild($title, [
                                 'route' => '«app.appName.formatForDB»_«otherEntity.name.formatForDB»_' . $routeArea . 'edit',
-                                'routeParameters' => ['«relationAliasNameParam.formatForDB»' => «idFieldsAsParameterCode('entity')»]
+                                'routeParameters' => ['«relationAliasNameParam.formatForDB»' => $entity->getKey()]
                             ])->setAttribute('icon', 'fa fa-plus');
                             $menu[$title]->setLinkAttribute('title', $title);
                         }
@@ -142,7 +142,7 @@ class ItemActions {
                         $title = $this->__('Create «otherEntity.name.formatForDisplay»');
                         $menu->addChild($title, [
                             'route' => '«app.appName.formatForDB»_«otherEntity.name.formatForDB»_' . $routeArea . 'edit',
-                            'routeParameters' => ['«relationAliasNameParam.formatForDB»' => «idFieldsAsParameterCode('entity')»]
+                            'routeParameters' => ['«relationAliasNameParam.formatForDB»' => $entity->getKey()]
                         ])->setAttribute('icon', 'fa fa-plus');
                         $menu[$title]->setLinkAttribute('title', $title);
                     «ENDIF»

@@ -163,11 +163,9 @@ class Redirect {
                 if (true === $this->templateParameters['inlineUsage']) {
                     $urlArgs = [
                         'idPrefix' => $this->idPrefix,
-                        'commandName' => $args['commandName']
+                        'commandName' => $args['commandName'],
+                        $this->idField => $this->idValue
                     ];
-                    foreach ($this->idFields as $idField) {
-                        $urlArgs[$idField] = $this->idValues[$idField];
-                    }
 
                     // inline usage, return to special function for closing the modal window instance
                     return $this->router->generate('«app.appName.formatForDB»_' . $this->objectTypeLower . '_handleinlineredirect', $urlArgs);
@@ -212,9 +210,7 @@ class Redirect {
                     case 'userDisplay':
                     case 'adminDisplay':
                         if ($args['commandName'] != 'delete' && !($this->templateParameters['mode'] == 'create' && $args['commandName'] == 'cancel')) {
-                            foreach ($this->idFields as $idField) {
-                                $urlArgs[$idField] = $this->idValues[$idField];
-                            }
+                            $urlArgs[$this->idField] = $this->idValue;
 
                             return $this->router->generate($routePrefix . 'display', $urlArgs);
                         }

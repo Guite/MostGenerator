@@ -184,7 +184,7 @@ class Actions {
 
     def private dispatch actionImplBody(Entity it, DisplayAction action) '''
         // create identifier for permission check
-        $instanceId = $«name.formatForCode»->createCompositeIdentifier();
+        $instanceId = $«name.formatForCode»->getKey();
         «action.permissionCheck("' . ucfirst($objectType) . '", "$instanceId . ")»
 
         «IF !app.targets('1.5')»
@@ -266,7 +266,7 @@ class Actions {
 
     def private dispatch actionImplBody(Entity it, DeleteAction action) '''
         $logger = $this->get('logger');
-        $logArgs = ['app' => '«app.appName»', 'user' => $this->get('zikula_users_module.current_user')->get('uname'), 'entity' => '«name.formatForDisplay»', 'id' => $«name.formatForCode»->createCompositeIdentifier()];
+        $logArgs = ['app' => '«app.appName»', 'user' => $this->get('zikula_users_module.current_user')->get('uname'), 'entity' => '«name.formatForDisplay»', 'id' => $«name.formatForCode»->getKey()];
 
         «IF !app.targets('1.5')»
             $«name.formatForCode»->initWorkflow();

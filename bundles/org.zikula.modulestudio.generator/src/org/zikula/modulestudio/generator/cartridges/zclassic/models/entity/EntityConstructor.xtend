@@ -24,7 +24,7 @@ class EntityConstructor {
          * Will not be called by Doctrine and can therefore be used
          * for own implementation purposes. It is also possible to add
          * arbitrary arguments as with every other class method.
-         «IF isIndexByTarget || isAggregated || hasCompositeKeys»
+         «IF isIndexByTarget || isAggregated»
          *
          «IF isIndexByTarget»
          * @param string $«getIndexByRelation.getIndexByField.formatForCode» Indexing field
@@ -37,11 +37,6 @@ class EntityConstructor {
                 «ENDFOR»
             «ENDFOR»
          «ENDIF»
-         «IF hasCompositeKeys»
-             «FOR pkField : getPrimaryKeyFields SEPARATOR ', '»
-             * @param integer $«pkField.name.formatForCode» Composite primary key
-             «ENDFOR»
-         «ENDIF»
          «ENDIF»
          */
         public function __construct(«constructorArguments(true)»)
@@ -50,27 +45,18 @@ class EntityConstructor {
         }
     '''
 
-    def private constructorArgumentsDefault(Entity it, Boolean hasPreviousArgs) '''
-        «IF hasCompositeKeys»
-            «IF hasPreviousArgs», «ENDIF»«FOR pkField : getPrimaryKeyFields SEPARATOR ', '»$«pkField.name.formatForCode»«ENDFOR»
-        «ENDIF»
-    '''
-
     def private constructorArguments(Entity it, Boolean withTypeHints) '''
         «IF isIndexByTarget»
             «val indexRelation = getIndexByRelation»
             «val sourceAlias = getRelationAliasName(indexRelation, false)»
             «val indexBy = indexRelation.getIndexByField»
-            $«indexBy.formatForCode»,«IF withTypeHints» «indexRelation.source.entityClassName('', false)»«ENDIF» $«sourceAlias.formatForCode»«constructorArgumentsDefault(true)»
+            $«indexBy.formatForCode»,«IF withTypeHints» «indexRelation.source.entityClassName('', false)»«ENDIF» $«sourceAlias.formatForCode»
         «ELSEIF isAggregated»
             «FOR aggregator : getAggregators SEPARATOR ', '»
                 «FOR relation : aggregator.getAggregatingRelationships SEPARATOR ', '»
                     «relation.constructorArgumentsAggregate»
                 «ENDFOR»
             «ENDFOR»
-            «constructorArgumentsDefault(true)»
-        «ELSE»
-            «constructorArgumentsDefault(false)»
         «ENDIF»
     '''
 
@@ -86,11 +72,6 @@ class EntityConstructor {
     def private constructorImpl(Entity it, Boolean isInheriting) '''
         «IF isInheriting»
             parent::__construct(«constructorArguments(false)»);
-        «ENDIF»
-        «IF hasCompositeKeys»
-            «FOR pkField : getPrimaryKeyFields»
-                $this->«pkField.name.formatForCode» = $«pkField.name.formatForCode»;
-            «ENDFOR»
         «ENDIF»
         «IF isIndexByTarget»
 

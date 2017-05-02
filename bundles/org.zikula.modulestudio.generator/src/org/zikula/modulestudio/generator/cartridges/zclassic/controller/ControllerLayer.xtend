@@ -251,9 +251,7 @@ class ControllerLayer {
                     $this->addFlash('error', $this->__f('Sorry, but an error occured during the %action% action. Please apply the changes again!', ['%action%' => 'submit']) . '  ' . $e->getMessage());
                 }
 
-                «FOR primaryKeyField : getPrimaryKeyFields»
-                    $request->query->set('«primaryKeyField.name.formatForCode»', $«name.formatForCode»->get«primaryKeyField.name.formatForCodeCapital»());
-                «ENDFOR»
+                $request->query->set('«getPrimaryKey.name.formatForCode»', $«name.formatForCode»->get«getPrimaryKey.name.formatForCodeCapital»());
                 $request->query->remove('undelete');
 
                 return $this->redirectToRoute('«application.appName.formatForDB»_«name.formatForDB»_«IF isAdmin»admin«ENDIF»display', $request->query->all());
@@ -279,7 +277,7 @@ class ControllerLayer {
 
             $entityFactory = $this->get('«application.appService».entity_factory');
             $«name.formatForCode» = $entityFactory->create«name.formatForCodeCapital»();
-            $«name.formatForCode»->set«getFirstPrimaryKey.name.formatForCodeCapital»($id);
+            $«name.formatForCode»->set«getPrimaryKey.name.formatForCodeCapital»($id);
             $entityManager = $entityFactory->getObjectManager();
             $logEntriesRepository = $entityManager->getRepository('«application.appName»:«name.formatForCodeCapital»LogEntryEntity');
             $logEntries = $logEntriesRepository->getLogEntries($«name.formatForCode»);

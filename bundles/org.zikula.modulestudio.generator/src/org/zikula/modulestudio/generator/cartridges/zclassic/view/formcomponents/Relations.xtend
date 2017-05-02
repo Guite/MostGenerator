@@ -202,21 +202,21 @@ class Relations {
         «ENDIF»
         {% set removeImage = '<span class="fa fa-trash-o"></span>' %}
 
-        <input type="hidden" id="{{ idPrefix }}" name="{{ idPrefix }}" value="{% if item«IF many»s«ENDIF» is defined«IF many» and items is iterable«ELSE»«FOR pkField : targetEntity.getPrimaryKeyFields» and item.«pkField.name.formatForCode» is defined«ENDFOR»«ENDIF» %}«IF many»{% for item in items %}«ENDIF»«FOR pkField : targetEntity.getPrimaryKeyFields SEPARATOR '_'»{{ item.«pkField.name.formatForCode» }}«ENDFOR»«IF many»{% if not loop.last %},{% endif %}{% endfor %}«ENDIF»{% endif %}" />
+        <input type="hidden" id="{{ idPrefix }}" name="{{ idPrefix }}" value="{% if item«IF many»s«ENDIF» is defined«IF many» and items is iterable«ELSE» and item.getKey()|default«ENDIF» %}«IF many»{% for item in items %}«ENDIF»{{ item.getKey() }}«IF many»{% if not loop.last %},{% endif %}{% endfor %}«ENDIF»{% endif %}" />
         <input type="hidden" id="{{ idPrefix }}Mode" name="{{ idPrefix }}Mode" value="«IF includeEditing»1«ELSE»0«ENDIF»" />
 
         <ul id="{{ idPrefix }}ReferenceList">
-        {% if item«IF many»s«ENDIF» is defined«IF many» and items is iterable«ELSE»«FOR pkField : targetEntity.getPrimaryKeyFields» and item.«pkField.name.formatForCode» is defined«ENDFOR»«ENDIF» %}
+        {% if item«IF many»s«ENDIF» is defined«IF many» and items is iterable«ELSE» and item.getKey()|default«ENDIF» %}
         «IF many»
             {% for item in items %}
         «ENDIF»
-        {% set idPrefixItem = idPrefix ~ 'Reference_'«FOR pkField : targetEntity.getPrimaryKeyFields» ~ item.«pkField.name.formatForCode»«ENDFOR» %}
+        {% set idPrefixItem = idPrefix ~ 'Reference_' ~ item.getKey() %}
         <li id="{{ idPrefixItem }}">
             {{ item|«app.appName.formatForDB»_formattedTitle }}
             «IF includeEditing»
                 <a id="{{ idPrefixItem }}Edit" href="{{ path('«app.appName.formatForDB»_«targetEntity.name.formatForDB»_' ~ routeArea ~ 'edit'«targetEntity.routeParams('item', true)») }}">{{ editImage|raw }}</a>
             «ENDIF»
-             <a id="{{ idPrefixItem }}Remove" href="javascript:«app.vendorAndName»RemoveRelatedItem('{{ idPrefix }}', '«FOR pkField : targetEntity.getPrimaryKeyFields SEPARATOR '_'»{{ item.«pkField.name.formatForCode» }}«ENDFOR»');">{{ removeImage|raw }}</a>
+             <a id="{{ idPrefixItem }}Remove" href="javascript:«app.vendorAndName»RemoveRelatedItem('{{ idPrefix }}', '{{ item.getKey() }}');">{{ removeImage|raw }}</a>
             «IF targetEntity.hasImageFieldsEntity»
                 <br />
                 «val imageFieldName = targetEntity.getImageFieldsEntity.head.name.formatForCode»

@@ -242,37 +242,11 @@ class ModelExtensions {
     }
 
     /**
-     * Returns a list of all derived and primary key fields of the given entity.
+     * Returns the primary key field of the given entity.
      */
-    def getPrimaryKeyFields(DataObject it) {
-        getDerivedFields.filter[primaryKey]
-    }
-
-    /**
-     * Returns the first derived and primary key field of the given entity.
-     */
-    def getFirstPrimaryKey(DataObject it) {
+    def getPrimaryKey(DataObject it) {
         getDerivedFields.findFirst[primaryKey]
     }
-
-    /**
-     * Checks whether the entity has more than one primary key fields.
-     */
-    def hasCompositeKeys(DataObject it) {
-        getPrimaryKeyFields.size > 1
-    }
-
-    /**
-     * Concatenates all id strings using underscore as delimiter.
-     * Used for generating some controller classes. 
-     */
-    def idFieldsAsParameterCode(DataObject it, String objVar) '''«IF hasCompositeKeys»«FOR pkField : getPrimaryKeyFields SEPARATOR ' . \'_\' . '»$«objVar»['«pkField.name.formatForCode»']«ENDFOR»«ELSE»$«objVar»['«getFirstPrimaryKey.name.formatForCode»']«ENDIF»'''
-
-    /**
-     * Concatenates all id strings using underscore as delimiter.
-     * Used for generating some view templates. 
-     */
-    def idFieldsAsParameterTemplate(DataObject it) '''«FOR pkField : getPrimaryKeyFields SEPARATOR ' ~ \'_\' ~ '»«name.formatForCode».«pkField.name.formatForCode»«ENDFOR»'''
 
     /**
      * Returns a list of all fields which should be displayed on the view page.

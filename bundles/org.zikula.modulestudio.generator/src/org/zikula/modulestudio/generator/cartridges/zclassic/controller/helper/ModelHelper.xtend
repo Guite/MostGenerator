@@ -147,17 +147,7 @@ class ModelHelper {
 
             $sortParam = '';
             if ($sorting == 'newest') {
-                $idFields = $this->entityFactory->getIdFields($objectType);
-                if (count($idFields) == 1) {
-                    $sortParam = $idFields[0] . ' DESC';
-                } else {
-                    foreach ($idFields as $idField) {
-                        if (!empty($sortParam)) {
-                            $sortParam .= ', ';
-                        }
-                        $sortParam .= $idField . ' DESC';
-                    }
-                }
+                $sortParam = $this->entityFactory->getIdField($objectType) . ' DESC';
             } elseif ($sorting == 'default') {
                 $repository = $this->entityFactory->getRepository($objectType);
                 $sortParam = $repository->getDefaultSortingField() . ' ASC';

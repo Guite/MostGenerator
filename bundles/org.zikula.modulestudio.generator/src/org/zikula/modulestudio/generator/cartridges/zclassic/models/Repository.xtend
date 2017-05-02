@@ -274,7 +274,7 @@ class Repository {
         /**
          * Adds an array of id filters to given query instance.
          *
-         * @param mixed        $idList The array of ids to use to retrieve the object
+         * @param array        $idList The array of ids to use to retrieve the object
          * @param QueryBuilder $qb     Query builder to be enhanced
          *
          * @return QueryBuilder Enriched query builder instance
@@ -291,15 +291,7 @@ class Repository {
                     throw new InvalidArgumentException('Invalid identifier received.');
                 }
 
-                if (is_array($id)) {
-                    $andX = $qb->expr()->andX();
-                    foreach ($id as $fieldName => $fieldValue) {
-                        $andX->add($qb->expr()->eq('tbl.' . $fieldName, $fieldValue));
-                    }
-                    $orX->add($andX);
-                } else {
-                    $orX->add($qb->expr()->eq('tbl.«getFirstPrimaryKey.name.formatForCode»', $id));
-                }
+                $orX->add($qb->expr()->eq('tbl.«getPrimaryKey.name.formatForCode»', $id));
             }
 
             $qb->andWhere($orX);
@@ -391,20 +383,10 @@ class Repository {
          */
         protected function addExclusion(QueryBuilder $qb, array $exclusions = [])
         {
-            «IF hasCompositeKeys»
-                foreach ($exclusions as $fieldName => $fieldValue) {
-                    $exclusion = is_array($fieldValue) ? $fieldValue : [$fieldValue];
-                    if (count($exclusion) > 0) {
-                        $qb->andWhere('tbl.' . $fieldName . ' NOT IN (:' . $fieldName . ')')
-                           ->setParameter($fieldName, $exclusion);
-                   }
-                }
-            «ELSE»
-                if (count($exclusions) > 0) {
-                    $qb->andWhere('tbl.«getFirstPrimaryKey.name.formatForCode» NOT IN (:excludedIdentifiers)')
-                       ->setParameter('excludedIdentifiers', $exclusions);
-                }
-            «ENDIF»
+            if (count($exclusions) > 0) {
+                $qb->andWhere('tbl.«getPrimaryKey.name.formatForCode» NOT IN (:excludedIdentifiers)')
+                   ->setParameter('excludedIdentifiers', $exclusions);
+            }
 
             return $qb;
         }
@@ -567,7 +549,7 @@ class Repository {
          */
         public function getCountQuery($where = '', $useJoins = false)
         {
-            $selection = 'COUNT(tbl.«getFirstPrimaryKey.name.formatForCode») AS num«nameMultiple.formatForCodeCapital»';
+            $selection = 'COUNT(tbl.«getPrimaryKey.name.formatForCode») AS num«nameMultiple.formatForCodeCapital»';
             if (true === $useJoins) {
                 $selection .= $this->addJoinsToSelection();
             }
@@ -663,7 +645,7 @@ class Repository {
             if (true === $slimMode) {
                 // but for the slim version we select only the basic fields, and no joins
 
-                $selection = '«FOR pkField : getPrimaryKeyFields SEPARATOR ', '»tbl.«pkField.name.formatForCode»«ENDFOR»';
+                $selection = 'tbl.«getPrimaryKey.name.formatForCode»';
                 «addSelectionPartsForDisplayPattern»
                 «IF hasSluggableFields»
                     $selection .= ', tbl.slug';
@@ -716,7 +698,7 @@ class Repository {
         {
             if ($orderBy == 'RAND()') {
                 // random selection
-                $qb->addSelect('MOD(tbl.«getFirstPrimaryKey.name.formatForCode», ' . mt_rand(2, 15) . ') AS HIDDEN randomIdentifiers')
+                $qb->addSelect('MOD(tbl.«getPrimaryKey.name.formatForCode», ' . mt_rand(2, 15) . ') AS HIDDEN randomIdentifiers')
                    ->add('orderBy', 'randomIdentifiers');
 
                 return $qb;

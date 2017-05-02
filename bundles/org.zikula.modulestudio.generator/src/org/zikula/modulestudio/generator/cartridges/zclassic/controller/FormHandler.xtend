@@ -218,18 +218,18 @@ class FormHandler {
             protected $entityRef = null;
 
             /**
-             * List of identifier names.
+             * Name of primary identifier field.
              *
-             * @var array
+             * @var string
              */
-            protected $idFields = [];
+            protected $idField = null;
 
             /**
-             * List of identifiers of treated entity.
+             * Identifier of treated entity.
              *
-             * @var array
+             * @var integer
              */
-            protected $idValues = [];
+            protected $idValue = '';
 
             /**
              * Code defining the redirect goal after command handling.
@@ -261,13 +261,6 @@ class FormHandler {
                  */
                 protected $idPrefix = '';
             «ENDIF»
-
-            /**
-             * Whether an existing item is used as template for a new one.
-             *
-             * @var boolean
-             */
-            protected $hasTemplateId = false;
 
             «locking.memberVars»
             «IF hasAttributableEntities»
@@ -566,17 +559,23 @@ class FormHandler {
 
             $this->permissionComponent = '«appName»:' . $this->objectTypeCapital . ':';
 
-            $this->idFields = $this->entityFactory->getIdFields($this->objectType);
+            $this->idField = $this->entityFactory->getIdField($this->objectType);
 
             // retrieve identifier of the object we wish to edit
-            $this->idValues = $this->controllerHelper->retrieveIdentifier($this->request, [], $this->objectType);
-            $hasIdentifier = $this->controllerHelper->isValidIdentifier($this->idValues);
+            $routeParams = $this->request->get('_route_params', []);
+            if (array_key_exists($this->idField, $routeParams)) {
+                $this->idValue = (int) !empty($routeParams[$this->idField]) ? $routeParams[$this->idField] : $defaultValue;
+            } elseif ($this->request->query->has($this->idField)) {
+                $this->idValue = $this->request->query->getInt($this->idField, $defaultValue);
+            } else {
+                $this->idValue = $defaultValue;
+            }
 
             $entity = null;
-            $this->templateParameters['mode'] = $hasIdentifier ? 'edit' : 'create';
+            $this->templateParameters['mode'] = $this->idValue != '' ? 'edit' : 'create';
 
             if ($this->templateParameters['mode'] == 'edit') {
-                if (!$this->permissionApi->hasPermission($this->permissionComponent, $this->createCompositeIdentifier() . '::', ACCESS_EDIT)) {
+                if (!$this->permissionApi->hasPermission($this->permissionComponent, $this->idValue . '::', ACCESS_EDIT)) {
                     throw new AccessDeniedException();
                 }
 
@@ -622,7 +621,7 @@ class FormHandler {
             $actions = $this->workflowHelper->getActionsForObject($entity);
             if (false === $actions || !is_array($actions)) {
                 $this->request->getSession()->getFlashBag()->add('error', $this->__('Error! Could not determine workflow actions.'));
-                $logArgs = ['app' => '«appName»', 'user' => $this->currentUserApi->get('uname'), 'entity' => $this->objectType, 'id' => $entity->createCompositeIdentifier()];
+                $logArgs = ['app' => '«appName»', 'user' => $this->currentUserApi->get('uname'), 'entity' => $this->objectType, 'id' => $entity->getKey()];
                 $this->logger->error('{app}: User {user} tried to edit the {entity} with id {id}, but failed to determine available workflow actions.', $logArgs);
                 throw new \RuntimeException($this->__('Error! Could not determine workflow actions.'));
             }
@@ -669,7 +668,6 @@ class FormHandler {
         «ENDIF»
         
         «fh.getterMethod(it, 'templateParameters', 'array', true)»
-        «createCompositeIdentifier»
 
         «initEntityForEditing»
 
@@ -695,30 +693,6 @@ class FormHandler {
         «ENDIF»
     '''
 
-    def private createCompositeIdentifier(Application it) '''
-        /**
-         * Create concatenated identifier string (for composite keys).
-         *
-         * @return String concatenated identifiers
-         */
-        protected function createCompositeIdentifier()
-        {
-            $itemId = '';
-            if ($this->templateParameters['mode'] == 'create') {
-                return $itemId;
-            }
-
-            foreach ($this->idFields as $idField) {
-                if (!empty($itemId)) {
-                    $itemId .= '_';
-                }
-                $itemId .= $this->idValues[$idField];
-            }
-
-            return $itemId;
-        }
-    '''
-
     def private initEntityForEditing(Application it) '''
         /**
          * Initialise existing entity for editing.
@@ -728,7 +702,7 @@ class FormHandler {
         protected function initEntityForEditing()
         {
             «IF !targets('1.5')»
-                $entity = $this->entityFactory->getRepository($this->objectType)->selectById($this->idValues);
+                $entity = $this->entityFactory->getRepository($this->objectType)->selectById($this->idValue);
                 if (null === $entity) {
                     return null;
                 }
@@ -737,7 +711,7 @@ class FormHandler {
 
                 return $entity;
             «ELSE»
-                return $this->entityFactory->getRepository($this->objectType)->selectById($this->idValues);
+                return $this->entityFactory->getRepository($this->objectType)->selectById($this->idValue);
             «ENDIF»
         }
     '''
@@ -750,28 +724,16 @@ class FormHandler {
          */
         protected function initEntityForCreation()
         {
-            $this->hasTemplateId = false;
             $templateId = $this->request->query->get('astemplate', '');
             $entity = null;
 
             if (!empty($templateId)) {
-                $templateIdValueParts = explode('_', $templateId);
-                $this->hasTemplateId = count($templateIdValueParts) == count($this->idFields);
-
-                if (true === $this->hasTemplateId) {
-                    $templateIdValues = [];
-                    $i = 0;
-                    foreach ($this->idFields as $idField) {
-                        $templateIdValues[$idField] = $templateIdValueParts[$i];
-                        $i++;
-                    }
-                    // reuse existing entity
-                    $entityT = $this->entityFactory->getRepository($this->objectType)->selectById($templateIdValues);
-                    if (null === $entityT) {
-                        return null;
-                    }
-                    $entity = clone $entityT;
+                // reuse existing entity
+                $entityT = $this->entityFactory->getRepository($this->objectType)->selectById($templateId);
+                if (null === $entityT) {
+                    return null;
                 }
+                $entity = clone $entityT;
             }
 
             if (null === $entity) {
@@ -1035,7 +997,7 @@ class FormHandler {
 
             $flashType = true === $success ? 'status' : 'error';
             $this->request->getSession()->getFlashBag()->add($flashType, $message);
-            $logArgs = ['app' => '«appName»', 'user' => $this->currentUserApi->get('uname'), 'entity' => $this->objectType, 'id' => $this->entityRef->createCompositeIdentifier()];
+            $logArgs = ['app' => '«appName»', 'user' => $this->currentUserApi->get('uname'), 'entity' => $this->objectType, 'id' => $this->entityRef->getKey()];
             if (true === $success) {
                 $this->logger->notice('{app}: User {user} updated the {entity} with id {id}.', $logArgs);
             } else {
@@ -1239,7 +1201,7 @@ class FormHandler {
             // only allow editing for the owner or people with higher permissions
             $currentUserId = $this->currentUserApi->isLoggedIn() ? $this->currentUserApi->get('uid') : 1;
             $isOwner = null !== $entity->getCreatedBy() && $currentUserId == $entity->getCreatedBy()->getUid();
-            if (!$isOwner && !$this->permissionApi->hasPermission($this->permissionComponent, $this->createCompositeIdentifier() . '::', ACCESS_ADD)) {
+            if (!$isOwner && !$this->permissionApi->hasPermission($this->permissionComponent, $this->idValue . '::', ACCESS_ADD)) {
                 throw new AccessDeniedException();
             }
 
@@ -1317,10 +1279,10 @@ class FormHandler {
                 'mode' => $this->templateParameters['mode'],
                 'actions' => $this->templateParameters['actions'],
                 «IF standardFields»
-                    'has_moderate_permission' => $this->permissionApi->hasPermission($this->permissionComponent, $this->createCompositeIdentifier() . '::', ACCESS_MODERATE),
+                    'has_moderate_permission' => $this->permissionApi->hasPermission($this->permissionComponent, $this->idValue . '::', ACCESS_MODERATE),
                 «ENDIF»
                 «IF !incoming.empty || !outgoing.empty»
-                    'filter_by_ownership' => !$this->permissionApi->hasPermission($this->permissionComponent, $this->createCompositeIdentifier() . '::', ACCESS_ADD)«IF app.needsAutoCompletion»,
+                    'filter_by_ownership' => !$this->permissionApi->hasPermission($this->permissionComponent, $this->idValue . '::', ACCESS_ADD)«IF app.needsAutoCompletion»,
                     'inline_usage' => $this->templateParameters['inlineUsage']«ENDIF»
                 «ENDIF»
             ];
@@ -1439,9 +1401,9 @@ class FormHandler {
                 // execute the workflow action
                 $success = $this->workflowHelper->executeAction($entity, $action);
             «locking.catchException(it)»
-            } catch(\Exception $e) {
-                $flashBag->add('error', $this->__f('Sorry, but an error occured during the %action% action. Please apply the changes again!', ['%action%' => $action]) . ' ' . $e->getMessage());
-                $logArgs = ['app' => '«app.appName»', 'user' => $this->currentUserApi->get('uname'), 'entity' => '«name.formatForDisplay»', 'id' => $entity->createCompositeIdentifier(), 'errorMessage' => $e->getMessage()];
+            } catch(\Exception $exception) {
+                $flashBag->add('error', $this->__f('Sorry, but an error occured during the %action% action. Please apply the changes again!', ['%action%' => $action]) . ' ' . $exception->getMessage());
+                $logArgs = ['app' => '«app.appName»', 'user' => $this->currentUserApi->get('uname'), 'entity' => '«name.formatForDisplay»', 'id' => $entity->getKey(), 'errorMessage' => $exception->getMessage()];
                 $this->logger->error('{app}: User {user} tried to edit the {entity} with id {id}, but failed. Error details: {errorMessage}.', $logArgs);
             }
 

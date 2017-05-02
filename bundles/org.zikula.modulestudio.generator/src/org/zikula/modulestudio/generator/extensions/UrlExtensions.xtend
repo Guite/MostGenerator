@@ -57,9 +57,9 @@ class UrlExtensions {
      */
     def routePkParams(Entity it, String objName, Boolean template) {
         if (template)
-            routeParamsForTemplate(getPrimaryKeyFields, objName)
+            routeParamsForTemplate(getPrimaryKey, objName)
         else
-            routeParamsForCode(getPrimaryKeyFields, objName).toString.substring(2)
+            routeParamsForCode(getPrimaryKey, objName).toString.substring(2)
     }
 
     /**
@@ -74,9 +74,9 @@ class UrlExtensions {
      */
     def private routePkParams(Entity it, String objName, Boolean template, String customVarName) {
         if (template)
-            routeParamsForTemplate(getPrimaryKeyFields, objName, customVarName)
+            routeParamsForTemplate(getPrimaryKey, objName, customVarName)
         else
-            routeParamsForCode(getPrimaryKeyFields, objName, customVarName).substring(2)
+            routeParamsForCode(getPrimaryKey, objName, customVarName).substring(2)
     }
 
     /**
@@ -100,60 +100,46 @@ class UrlExtensions {
     /**
      * Returns a parameter pair for each given field for a route in a source code file.
      *
-     * @param it An {@link Iterable} of primary key fields to be linked to
+     * @param it Primary key field to be linked to
      * @param objName The name of the object variable carrying the entity object in the output
      * @return String collected url parameter string.
      */
-    def private CharSequence routeParamsForCode(Iterable<DerivedField> it, String objName) {
-        if (size == 0) ''
-        else ", '" + head.name.formatForCode + "' => $" + objName + "['" + head.name.formatForCode + "']"
-         + routeParamsForCode(tail, objName)
+    def private CharSequence routeParamsForCode(DerivedField it, String objName) {
+        ", '" + name.formatForCode + "' => $" + objName + '->get' + name.formatForCodeCapital + '()'
     }
 
     /**
      * Returns a parameter pair for each given field for a route in a template file.
      *
-     * @param it An {@link Iterable} of primary key fields to be linked to
+     * @param it Primary key field to be linked to
      * @param objName The name of the object variable carrying the entity object in the output
      * @return String collected url parameter string.
      */
-    def private CharSequence routeParamsForTemplate(Iterable<DerivedField> it, String objName) {
-        if (size == 0) ''
-        else {
-            '\'' + head.name.formatForCode + '\': ' + objName + '.' + head.name.formatForCode
-                + (if (size > 1) ', ' else '')
-                + tail.routeParamsForTemplate(objName)
-        }
+    def private CharSequence routeParamsForTemplate(DerivedField it, String objName) {
+        '\'' + name.formatForCode + '\': ' + objName + '.get' + name.formatForCodeCapital + '()'
     }
 
     /**
      * Returns a single parameter pair for a route in a source code file.
      *
-     * @param it An {@link Iterable} of primary key fields to be linked to
+     * @param it Primary key field to be linked to
      * @param objName The name of the object variable carrying the entity object in the output
      * @param customVarName Custom name for using another field name as url parameter
      * @return String collected url parameter string.
      */
-    def private routeParamsForCode(Iterable<DerivedField> it, String objName, String customVarName) {
-        if (size == 0) ''
-        else ", '" + customVarName + "' => $" + objName + "['" + head.name.formatForDB + "']"
-         + routeParamsForCode(tail, objName)
+    def private routeParamsForCode(DerivedField it, String objName, String customVarName) {
+        ", '" + customVarName + "' => $" + objName + '->get' + name.formatForCodeCapital + '()'
     }
 
     /**
      * Returns a single parameter pair for a route in a template file.
      *
-     * @param it An {@link Iterable} of primary key fields to be linked to
+     * @param it Primary key field to be linked to
      * @param objName The name of the object variable carrying the entity object in the output
      * @param customVarName Custom name for using another field name as url parameter
      * @return String collected url parameter string.
      */
-    def private routeParamsForTemplate(Iterable<DerivedField> it, String objName, String customVarName) {
-        if (size == 0) ''
-        else {
-            '\'' + customVarName + '\': ' + objName + '.' + head.name.formatForCode
-                + (if (!empty) ', ' else '')
-                + tail.routeParamsForTemplate(objName)
-        }
+    def private routeParamsForTemplate(DerivedField it, String objName, String customVarName) {
+        '\'' + customVarName + '\': ' + objName + '.get' + name.formatForCodeCapital + '()'
     }
 }

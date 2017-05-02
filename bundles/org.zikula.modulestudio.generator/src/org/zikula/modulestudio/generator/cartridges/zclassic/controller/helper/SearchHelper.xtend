@@ -352,9 +352,8 @@ class SearchHelper {
                     $urlArgs = $entity->createUrlArgs();
                     $hasDisplayAction = in_array($objectType, $entitiesWithDisplayAction);
 
-                    $instanceId = $entity->createCompositeIdentifier();
                     // perform permission check
-                    if (!$this->permissionApi->hasPermission('«appName»:' . ucfirst($objectType) . ':', $instanceId . '::', ACCESS_OVERVIEW)) {
+                    if (!$this->permissionApi->hasPermission('«appName»:' . ucfirst($objectType) . ':', $entity->getKey() . '::', ACCESS_OVERVIEW)) {
                         continue;
                     }
                     «IF hasCategorisableEntities»

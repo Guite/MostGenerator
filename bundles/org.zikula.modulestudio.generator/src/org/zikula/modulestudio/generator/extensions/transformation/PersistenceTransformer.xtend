@@ -70,7 +70,7 @@ class PersistenceTransformer {
     def private void handleEntity(Entity it) {
         //println('Transforming entity ' + name)
         //println('Field size before: ' + fields.size + ' fields')
-        if (getPrimaryKeyFields.empty) {
+        if (getDerivedFields.filter[primaryKey].empty) {
             addPrimaryKey
         }
         //println('Added primary key, field size now: ' + fields.size + ' fields')

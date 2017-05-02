@@ -78,7 +78,7 @@ class ValidationConstraints {
         «IF !(it instanceof UserField)»
             «' '»* @Assert\Type(type="integer")
         «ENDIF»
-        «IF mandatory && (!primaryKey || entity.hasCompositeKeys || entity.getVersionField == this)»
+        «IF mandatory && (!primaryKey || entity.getVersionField == this)»
             «' '»* @Assert\NotBlank()
             «IF !(it instanceof UserField)»
                 «' '»* @Assert\NotEqualTo(value=0)
