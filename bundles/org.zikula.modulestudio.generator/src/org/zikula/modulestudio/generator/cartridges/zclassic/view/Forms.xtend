@@ -309,7 +309,7 @@ class Forms {
                     «ENDIF»
                 «ENDIF»
                 «new Relations(fsa, app, false).initJs(it, true)»
-                «app.vendorAndName»InitEditForm('{{ mode }}', '{% if mode != 'create' %}{{ «name.formatForDB».getKey() }}{% endif %}');
+                «app.vendorAndName»InitEditForm('{{ mode }}', '{% if mode != 'create' %}{{ «name.formatForDB».«primaryKey.name.formatForCode» }}{% endif %}');
                 «FOR field : getDerivedFields»«field.additionalInitScript»«ENDFOR»
             });
         })(jQuery);
