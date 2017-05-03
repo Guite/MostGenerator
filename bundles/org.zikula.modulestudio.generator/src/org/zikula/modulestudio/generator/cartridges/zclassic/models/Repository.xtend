@@ -496,7 +496,7 @@ class Repository {
             }
 
             if (null !== $this->collectionFilterHelper) {
-                $qb = $this->collectionFilterHelper->addSearchFilter($qb, $fragment);
+                $qb = $this->collectionFilterHelper->addSearchFilter('«name.formatForCode»', $qb, $fragment);
             }
 
             $query = $this->getSelectWherePaginatedQuery($qb, $currentPage, $resultsPerPage);

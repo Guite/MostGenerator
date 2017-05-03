@@ -426,7 +426,7 @@ class EditFunctions {
 
             var li = jQuery('<li />', { id: elemPrefix, text: newTitle });
             if (true === includeEditing) {
-                var editHref = jQuery('#' + idPrefix + 'SelectorDoNew').attr('href') + '?id=' + newItemId;
+                var editHref = jQuery('#' + idPrefix + 'SelectorDoNew').attr('href') + '&id=' + newItemId;
                 editLink = jQuery('<a />', { id: elemPrefix + 'Edit', href: editHref, text: 'edit' });
                 li.append(editLink);
             }
@@ -587,16 +587,22 @@ class EditFunctions {
 
             // search for the handler of the current window
             jQuery.each(window.parent.relationHandler, function (key, singleRelationHandler) {
+                var selector, searchTerm;
+
                 // look if this handler is the right one
                 if (singleRelationHandler.prefix === idPrefix) {
-                    // do we have an item created
+                    // show a message
+                    window.parent.«vendorAndName»SimpleAlert(window.parent.jQuery('.«vendorAndName.toLowerCase»-edit-form').first(), window.parent.Translator.__('Information'), window.parent.Translator.__('Action has been completed.'), 'actionDoneAlert', 'success');
+
+                    // check if a new item has been created
                     if (itemId > 0) {
                         // look whether there is an auto completion instance
                         if (null !== singleRelationHandler.acInstance) {
                             // activate it
-                            jQuery('#' + idPrefix + 'Selector').lookup();
-                            // show a message
-                            «vendorAndName»SimpleAlert(jQuery('.«appName.toLowerCase»-form'), Translator.__('Information'), Translator.__('Action has been completed.'), 'actionDoneAlert', 'success');
+                            selector = window.parent.jQuery('#' + idPrefix.replace('DoNew', '')).first();
+                            searchTerm = selector.val();
+                            selector.typeahead('val', '');
+                            selector.focus().typeahead('val', searchTerm).focus();
                         }
                     }
                     // look whether there is a windows instance

@@ -233,8 +233,8 @@ class Relations {
     '''
 
     def initJs(Entity it, Boolean insideLoader) '''
-        «val incomingJoins = getEditableJoinRelations(true).filter[usesAutoCompletion(true)]»
-        «val outgoingJoins = getEditableJoinRelations(false).filter[usesAutoCompletion(false)]»
+        «val incomingJoins = getEditableJoinRelations(true).filter[usesAutoCompletion(false)]»
+        «val outgoingJoins = getEditableJoinRelations(false).filter[usesAutoCompletion(true)]»
         «IF !incomingJoins.empty || !outgoingJoins.empty»
             «IF !insideLoader»
                 var editImage = '{{ editImage|raw }}';
@@ -258,7 +258,7 @@ class Relations {
             return ''''''
         }*/
 
-        if (!usesAutoCompletion(incoming)) {
+        if (!usesAutoCompletion(useTarget)) {
             return ''''''
         }
 

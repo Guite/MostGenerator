@@ -229,7 +229,7 @@ class FormHandler {
              *
              * @var integer
              */
-            protected $idValue = '';
+            protected $idValue = 0;
 
             /**
              * Code defining the redirect goal after command handling.
@@ -565,14 +565,16 @@ class FormHandler {
             $routeParams = $this->request->get('_route_params', []);
             if (array_key_exists($this->idField, $routeParams)) {
                 $this->idValue = (int) !empty($routeParams[$this->idField]) ? $routeParams[$this->idField] : 0;
-            } elseif ($this->request->query->has($this->idField)) {
+            }
+            if (0 === $this->idValue) {
                 $this->idValue = $this->request->query->getInt($this->idField, 0);
-            } else {
-                $this->idValue = 0;
+            }
+            if (0 === $this->idValue && $this->idField != 'id') {
+                $this->idValue = $this->request->query->getInt('id', 0);
             }
 
             $entity = null;
-            $this->templateParameters['mode'] = $this->idValue != '' ? 'edit' : 'create';
+            $this->templateParameters['mode'] = $this->idValue > 0 ? 'edit' : 'create';
 
             if ($this->templateParameters['mode'] == 'edit') {
                 if (!$this->permissionApi->hasPermission($this->permissionComponent, $this->idValue . '::', ACCESS_EDIT)) {

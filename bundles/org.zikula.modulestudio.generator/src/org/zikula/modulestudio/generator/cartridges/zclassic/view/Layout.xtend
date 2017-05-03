@@ -247,7 +247,7 @@ class Layout {
                         <label for="{{ idPrefix }}Selector">{{ __f('Find %name%', { '%name%': entityNameTranslated }) }}</label>
                         <br />
                         <i class="fa fa-search" title="{{ __f('Search %name%', { '%name%': entityNameTranslated })|e('html_attr') }}"></i>
-                        <input type="hidden" {{ block('widget_attributes') }} value="{{ value }}" />
+                        <input type="hidden" id="{{ idPrefix }}" {{ block('widget_attributes') }} value="{{ value }}" />
                         <input type="hidden" name="{{ idPrefix }}Scope" id="{{ idPrefix }}Scope" value="{{ multiple ? '1' : '0' }}" />
                         <input type="text" id="{{ idPrefix }}Selector" name="{{ idPrefix }}Selector" autocomplete="off" />
                         <i class="fa fa-refresh fa-spin hidden" id="{{ idPrefix }}Indicator"></i>

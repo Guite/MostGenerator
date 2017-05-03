@@ -3,13 +3,11 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.controller.form
 import de.guite.modulestudio.metamodel.Application
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
-import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class AutoCompletionRelationTransformer {
 
-    extension FormattingExtensions = new FormattingExtensions()
     extension NamingExtensions = new NamingExtensions()
     extension Utils = new Utils()
 
@@ -29,7 +27,7 @@ class AutoCompletionRelationTransformer {
         use Symfony\Component\Form\DataTransformerInterface;
         use Symfony\Component\Form\Exception\TransformationFailedException;
         use Zikula\Core\Doctrine\EntityAccess;
-        use «appNamespace»\Entity\Factory\«name.formatForCodeCapital»Factory;
+        use «appNamespace»\Entity\Factory\EntityFactory;
 
         /**
          * Auto completion relation transformer base class.
@@ -39,7 +37,7 @@ class AutoCompletionRelationTransformer {
         abstract class AbstractAutoCompletionRelationTransformer implements DataTransformerInterface
         {
             /**
-             * @var «name.formatForCodeCapital»Factory
+             * @var EntityFactory
              */
             protected $entityFactory;
 
@@ -56,11 +54,11 @@ class AutoCompletionRelationTransformer {
             /**
              * AutoCompletionRelationTransformer constructor.
              *
-             * @param «name.formatForCodeCapital»Factory $entityFactory «name.formatForCodeCapital»Factory service instance
-             * @param String $objectType The type of entities being processed
-             * @param Boolean $isMultiple Whether a single object or a collection of object is processed
+             * @param EntityFactory $entityFactory EntityFactory service instance
+             * @param String        $objectType    The type of entities being processed
+             * @param Boolean       $isMultiple    Whether a single object or a collection of object is processed
              */
-            public function __construct(«name.formatForCodeCapital»Factory $entityFactory, $objectType, $isMultiple)
+            public function __construct(EntityFactory $entityFactory, $objectType, $isMultiple)
             {
                 $this->entityFactory = $entityFactory;
                 $this->objectType = $objectType;

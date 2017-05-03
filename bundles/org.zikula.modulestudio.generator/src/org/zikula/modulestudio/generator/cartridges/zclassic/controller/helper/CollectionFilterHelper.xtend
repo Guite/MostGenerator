@@ -326,7 +326,7 @@ class CollectionFilterHelper {
                     // quick search
                     if (!empty($v)) {
                         $repository = $this->entityFactory->getRepository('«name.formatForCode»');
-                        $qb = $repository->addSearchFilter($qb, $v);
+                        $qb = $repository->addSearchFilter('«name.formatForCode»', $qb, $v);
                     }
                 «IF hasBooleanFieldsEntity»
                 } elseif (in_array($k, [«FOR field : getBooleanFieldsEntity SEPARATOR ', '»'«field.name.formatForCode»'«ENDFOR»])) {
