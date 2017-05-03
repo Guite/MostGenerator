@@ -41,6 +41,7 @@ class Scribite {
     }
 
     def private pluginAloha(Application it) {
+        // blocked by https://github.com/zikula-modules/Scribite/issues/158
         //createPlaceholder(fsa, docPath + 'Aloha/vendor/aloha/')
     }
 
