@@ -241,12 +241,14 @@ class EntityMethods {
 
             // otherwise proceed
 
-            // unset identifiers
+            // unset identifier
             $this->set«getPrimaryKey.name.formatForCodeCapital»(«thProp.defaultFieldData(getPrimaryKey)»);
-            «IF !app.targets('1.5')»
 
-                // reset workflow
+            // reset workflow
+            «IF !app.targets('1.5')»
                 $this->resetWorkflow();
+            «ELSE»
+                $this->setWorkflowState('initial');
             «ENDIF»
             «IF hasUploadFieldsEntity»
 
