@@ -1,6 +1,7 @@
 package org.zikula.modulestudio.generator.extensions
 
 import de.guite.modulestudio.metamodel.Application
+import de.guite.modulestudio.metamodel.AuthMethodType
 import de.guite.modulestudio.metamodel.CoreVersion
 
 /**
@@ -174,6 +175,13 @@ class GeneratorSettingsExtensions {
      */
     def generateIcsTemplates(Application it) {
         if (hasSettings) getSettings.generateIcsTemplates else true
+    }
+
+    /**
+     * Determines whether and which type of authentication method should be provided.
+     */
+    def authenticationMethod(Application it) {
+        if (hasSettings) getSettings.authenticationMethod else AuthMethodType.NONE
     }
 
     /**

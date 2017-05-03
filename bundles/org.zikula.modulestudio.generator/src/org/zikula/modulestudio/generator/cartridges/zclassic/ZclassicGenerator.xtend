@@ -1,6 +1,7 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic
 
 import de.guite.modulestudio.metamodel.Application
+import de.guite.modulestudio.metamodel.AuthMethodType
 import org.eclipse.core.runtime.IProgressMonitor
 import org.eclipse.emf.ecore.resource.Resource
 import org.eclipse.xtext.generator.IFileSystemAccess
@@ -14,6 +15,7 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.controller.Listener
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.ServiceDefinitions
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.Uploads
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.Workflow
+import org.zikula.modulestudio.generator.cartridges.zclassic.controller.additions.AuthenticationMethod
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.additions.BlockList
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.additions.BlockModeration
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.additions.ContentTypeList
@@ -191,6 +193,9 @@ class ZclassicGenerator implements IGenerator {
         generateIntegrationBlocks
         generateIntegrationContentTypes
         generateIntegrationThirdParty
+        if (authenticationMethod != AuthMethodType.NONE) {
+            new AuthenticationMethod().generate(it, fsa)
+        }
     }
 
     def private generateIntegrationBlocks(Application it) {

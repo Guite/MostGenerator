@@ -2,6 +2,7 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.controller
 
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.ArrayField
+import de.guite.modulestudio.metamodel.AuthMethodType
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.MappedSuperClass
 import org.eclipse.xtext.generator.IFileSystemAccess
@@ -50,6 +51,7 @@ class ServiceDefinitions {
         modPrefix = appService
 
         generateServiceFile(fsa, 'services', mainServiceFile)
+        generateServiceFile(fsa, 'authentication', authentication)
         generateServiceFile(fsa, 'linkContainer', linkContainer)
         generateServiceFile(fsa, 'entityFactory', entityFactory)
         generateServiceFile(fsa, 'eventSubscriber', eventSubscriber)
@@ -67,6 +69,9 @@ class ServiceDefinitions {
 
     def private mainServiceFile(Application it) '''
         imports:
+          «IF authenticationMethod != AuthMethodType.NONE»
+              - { resource: 'authentication.yml' }
+          «ENDIF»
           - { resource: 'linkContainer.yml' }
           - { resource: 'entityFactory.yml' }
           - { resource: 'eventSubscriber.yml' }
@@ -85,6 +90,24 @@ class ServiceDefinitions {
         parameters:
             liip_imagine.cache.signer.class: «appNamespace»\Imagine\Cache\DummySigner
         «ENDIF»
+    '''
+
+    def private authentication(Application it) '''
+        services:
+            «modPrefix».authentication_method.«name.formatForDB»_authentication
+            class: «appNamespace»\AuthenticationMethod\«name.formatForCodeCapital»AuthenticationMethod
+            arguments:
+                - "@translator.default"
+                - "@session"
+                «IF authenticationMethod == AuthMethodType.REMOTE»
+                    - '@request_stack'
+                    - "@router"
+                «ENDIF»
+                - "@«modPrefix».entity_factory"
+                - "@zikula_extensions_module.api.variable"
+                - "@zikula_zauth_module.api.password"
+            tags:
+                - { name: zikula.authentication_method, alias: '«name.formatForDB»_authentication' }
     '''
 
     def private linkContainer(Application it) '''
