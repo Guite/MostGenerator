@@ -404,6 +404,8 @@ class Listeners {
 
         /**
          * Event handler implementation class for ip traceable support.
+         *
+         * Can be removed after https://github.com/stof/StofDoctrineExtensionsBundle/pull/233 has been merged.
          */
         «IF isBase»abstract «ENDIF»class «IF isBase»Abstract«ENDIF»IpTraceListener«IF !isBase» extends AbstractIpTraceListener«ELSE» implements EventSubscriberInterface«ENDIF»
         {
