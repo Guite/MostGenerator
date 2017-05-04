@@ -223,6 +223,16 @@ class ServiceDefinitions {
                     - { name: doctrine.event_subscriber, connection: default }
 
         «ENDIF»
+        «IF hasSluggable»
+            stof_doctrine_extensions.listener.sluggable:
+                class: '%stof_doctrine_extensions.listener.sluggable.class%'
+                tags:
+                    - { name: doctrine.event_subscriber, connection: default }
+                calls:
+                    - [ setAnnotationReader, ["@annotation_reader"] ]
+                    - [ setTransliterator, [[«appNamespace»\Helper\SlugTransliterator, 'transliterate']]]
+
+        «ENDIF»
     '''
 
     def private getSubscriberNames(Application it) {

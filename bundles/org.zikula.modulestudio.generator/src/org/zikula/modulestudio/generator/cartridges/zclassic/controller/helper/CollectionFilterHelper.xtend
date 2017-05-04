@@ -235,6 +235,9 @@ class CollectionFilterHelper {
         protected function getViewQuickNavParametersFor«name.formatForCodeCapital»($context = '', $args = [])
         {
             $parameters = [];
+            if (!is_object($this->request)) {
+                return $parameters;
+            }
 
             «IF categorisable»
                 $parameters['catId'] = $this->request->query->get('catId', '');

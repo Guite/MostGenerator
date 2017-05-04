@@ -25,35 +25,35 @@ class UrlExtensions {
 
     /**
      * Collects parameters for a route relating a given entity,
-     * either for a Twig template or for php source code.
+     * either for a Twig template or for PHP source code.
      *
      * @param it The {@link Entity} to be linked to
      * @param objName The name of the object variable carrying the entity object in the output
      * @param template Whether to create the syntax for a template (true) or for source code (false)
-     * @return String collected url parameter string.
+     * @return String collected URL parameter string.
      */
-    def routeParams(Entity it, String objName, Boolean template) '''«IF template», { «ENDIF»«routePkParams(objName, template)»«appendSlug(objName, template)»«IF template» }«ENDIF»'''
+    def routeParams(Entity it, String objName, Boolean template) '''«IF template», { «ENDIF»«IF !slugUnique»«routePkParams(objName, template)»«ENDIF»«appendSlug(objName, template)»«IF template» }«ENDIF»'''
 
     /**
      * Collects parameters for a route relating a given entity,
-     * either for a Twig template or for php source code.
+     * either for a Twig template or for PHP source code.
      *
      * @param it The {@link Entity} to be linked to
      * @param objName The name of the object variable carrying the entity object in the output
      * @param template Whether to create the syntax for a template (true) or for source code (false)
-     * @param customVarName Custom name for using another field name as url parameter
-     * @return String collected url parameter string.
+     * @param customVarName Custom name for using another field name as URL parameter
+     * @return String collected URL parameter string.
      */
-    def routeParams(Entity it, String objName, Boolean template, String customVarName) '''«IF template», { «ENDIF»«routePkParams(objName, template, customVarName)»«appendSlug(objName, template)»«IF template» }«ENDIF»'''
+    def routeParams(Entity it, String objName, Boolean template, String customVarName) '''«IF template», { «ENDIF»«IF !slugUnique»«routePkParams(objName, template, customVarName)»«ENDIF»«appendSlug(objName, template)»«IF template» }«ENDIF»'''
 
     /**
      * Collects primary key parameters for a route relating a given entity,
-     * either for a Twig template or for php source code.
+     * either for a Twig template or for PHP source code.
      *
      * @param it The {@link Entity} to be linked to
      * @param objName The name of the object variable carrying the entity object in the output
      * @param template Whether to create the syntax for a template (true) or for source code (false)
-     * @return String collected url parameter string.
+     * @return String collected URL parameter string.
      */
     def routePkParams(Entity it, String objName, Boolean template) {
         if (template)
@@ -64,13 +64,13 @@ class UrlExtensions {
 
     /**
      * Collects primary key parameters for a route relating a given entity,
-     * either for a Twig template or for php source code.
+     * either for a Twig template or for PHP source code.
      *
      * @param it The {@link Entity} to be linked to
      * @param objName The name of the object variable carrying the entity object in the output
      * @param template Whether to create the syntax for a template (true) or for source code (false)
-     * @param customVarName Custom name for using another field name as url parameter
-     * @return String collected url parameter string.
+     * @param customVarName Custom name for using another field name as URL parameter
+     * @return String collected URL parameter string.
      */
     def private routePkParams(Entity it, String objName, Boolean template, String customVarName) {
         if (template)
@@ -80,7 +80,7 @@ class UrlExtensions {
     }
 
     /**
-     * Appends the slug parameter (if available) to url arguments for display, edit and delete pages.
+     * Appends the slug parameter (if available) to URL arguments for display, edit and delete pages.
      *
      * @param it The {@link Entity} to be linked to
      * @param objName The name of the object variable carrying the entity object in the output
@@ -90,9 +90,9 @@ class UrlExtensions {
     def appendSlug(Entity it, String objName, Boolean template) {
         if (hasSluggableFields) {
             if (template) {
-                ''', 'slug': «objName».slug'''
+                '''«IF !slugUnique», «ENDIF»'slug': «objName».slug'''
             } else {
-                ''', 'slug' => $«objName»['slug']'''
+                '''«IF !slugUnique», «ENDIF»'slug' => $«objName»['slug']'''
             }
         } else ''
     }
@@ -102,7 +102,7 @@ class UrlExtensions {
      *
      * @param it Primary key field to be linked to
      * @param objName The name of the object variable carrying the entity object in the output
-     * @return String collected url parameter string.
+     * @return String collected URL parameter string.
      */
     def private CharSequence routeParamsForCode(DerivedField it, String objName) {
         ", '" + name.formatForCode + "' => $" + objName + '->get' + name.formatForCodeCapital + '()'
@@ -113,7 +113,7 @@ class UrlExtensions {
      *
      * @param it Primary key field to be linked to
      * @param objName The name of the object variable carrying the entity object in the output
-     * @return String collected url parameter string.
+     * @return String collected URL parameter string.
      */
     def private CharSequence routeParamsForTemplate(DerivedField it, String objName) {
         '\'' + name.formatForCode + '\': ' + objName + '.get' + name.formatForCodeCapital + '()'
@@ -124,8 +124,8 @@ class UrlExtensions {
      *
      * @param it Primary key field to be linked to
      * @param objName The name of the object variable carrying the entity object in the output
-     * @param customVarName Custom name for using another field name as url parameter
-     * @return String collected url parameter string.
+     * @param customVarName Custom name for using another field name as URL parameter
+     * @return String collected URL parameter string.
      */
     def private routeParamsForCode(DerivedField it, String objName, String customVarName) {
         ", '" + customVarName + "' => $" + objName + '->get' + name.formatForCodeCapital + '()'
@@ -136,8 +136,8 @@ class UrlExtensions {
      *
      * @param it Primary key field to be linked to
      * @param objName The name of the object variable carrying the entity object in the output
-     * @param customVarName Custom name for using another field name as url parameter
-     * @return String collected url parameter string.
+     * @param customVarName Custom name for using another field name as URL parameter
+     * @return String collected URL parameter string.
      */
     def private routeParamsForTemplate(DerivedField it, String objName, String customVarName) {
         '\'' + customVarName + '\': ' + objName + '.get' + name.formatForCodeCapital + '()'
