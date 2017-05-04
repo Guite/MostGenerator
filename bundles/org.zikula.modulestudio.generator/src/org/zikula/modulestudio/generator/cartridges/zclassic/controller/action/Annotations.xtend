@@ -157,25 +157,9 @@ class Annotations {
 
     def private paramConverterOptions(Entity it) {
         if (hasSluggableFields && slugUnique) {
-            // since we use the id property selectBySlug receives the slug value directly instead ['slug' => 'my-title']
-            return '"id" = "slug", "repository_method" = "selectBySlug"'
-        }
-        val needsMapping = hasSluggableFields
-        if (!needsMapping) {
-            // since we use the id property selectById receives the identifier value directly instead ['id' => 123]
-            return '"id" = "' + getPrimaryKey.name.formatForCode + '", "repository_method" = "selectById"'
+            return '"repository_method" = "selectBySlug", "mapping": {"slug": "slugTitle"}, "map_method_signature" = true'
         }
 
-        // we have no single primary key or unique slug so we need to define a mapping hash option
-        var output = '"mapping": {'
-        if (hasSluggableFields) {
-            output = output + '"slug": "slug", '
-        }
-
-        output = output + '"' + getPrimaryKey.name.formatForCode + '": "' + getPrimaryKey.name.formatForCode + '"'
-        output = output + '}, "repository_method" = "selectByIdList"'
-        // selectByIdList receives an array like ['fooid' => 123, 'otherfield' => 456]
-
-        output
+        return '"repository_method" = "selectById", "mapping": {"id": "' + getPrimaryKey.name.formatForCode + '"}, "map_method_signature" = true'
     }
 }

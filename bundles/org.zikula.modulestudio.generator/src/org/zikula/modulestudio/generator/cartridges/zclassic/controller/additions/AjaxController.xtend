@@ -501,7 +501,7 @@ class AjaxController {
             return new BadDataResponse($this->__('Error: invalid input.'));
         }
 
-        $exclude = $postData->get('ex', '');
+        $exclude = $postData->getInt('ex', '');
     '''
 
     def private toggleFlagBase(Application it) '''
