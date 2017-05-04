@@ -362,7 +362,9 @@ class Repository {
             $qb->andWhere('tbl.slug = :slug')
                ->setParameter('slug', $slugTitle);
 
-            $qb = $this->addExclusion($qb, $excludeId);
+            if ($excludeId > 0) {
+                $qb = $this->addExclusion($qb, [$excludeId]);
+            }
 
             $query = $this->getQueryFromBuilder($qb);
 
@@ -613,7 +615,9 @@ class Repository {
             $qb->andWhere('tbl.' . $fieldName . ' = :' . $fieldName)
                ->setParameter($fieldName, $fieldValue);
 
-            $qb = $this->addExclusion($qb, [$excludeId]);
+            if ($excludeId > 0) {
+                $qb = $this->addExclusion($qb, [$excludeId]);
+            }
 
             $query = $qb->getQuery();
 
