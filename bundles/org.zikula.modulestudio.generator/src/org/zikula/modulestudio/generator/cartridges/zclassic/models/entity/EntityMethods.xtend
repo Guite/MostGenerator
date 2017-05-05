@@ -7,6 +7,7 @@ import de.guite.modulestudio.metamodel.ManyToManyRelationship
 import de.guite.modulestudio.metamodel.TimeField
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.business.ValidationConstraints
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
+import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
@@ -15,6 +16,7 @@ import org.zikula.modulestudio.generator.extensions.Utils
 class EntityMethods {
 
     extension FormattingExtensions = new FormattingExtensions
+    extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension ModelExtensions = new ModelExtensions
     extension ModelJoinExtensions = new ModelJoinExtensions
     extension NamingExtensions = new NamingExtensions
@@ -122,15 +124,16 @@ class EntityMethods {
          */
         public function createUrlArgs()
         {
-            $args = [
-                '«getPrimaryKey.name.formatForCode»' => $this->get«getPrimaryKey.name.formatForCodeCapital»()
-            ];
-
-            if (property_exists($this, 'slug')) {
-                $args['slug'] = $this->getSlug();
-            }
-
-            return $args;
+            «IF hasSluggableFields && slugUnique»
+                return [
+                    'slug' => $this->getSlug()
+                ];
+            «ELSE»
+                return [
+                    '«getPrimaryKey.name.formatForCode»' => $this->get«getPrimaryKey.name.formatForCodeCapital»()«IF hasSluggableFields»,
+                    'slug' => $this->getSlug()«ENDIF»
+                ];
+            «ENDIF»
         }
     '''
 

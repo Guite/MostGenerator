@@ -116,11 +116,26 @@ class Redirect {
             $objectIsPersisted = $args['commandName'] != 'delete' && !($this->templateParameters['mode'] == 'create' && $args['commandName'] == 'cancel');
 
             if (null !== $this->returnTo) {
-                $isDisplayOrEditPage = substr($this->returnTo, -7) == 'display' || substr($this->returnTo, -4) == 'edit';«/* TODO improve this check considering slugs */»
-                if (!$isDisplayOrEditPage || $objectIsPersisted) {
-                    // return to referer
-                    return $this->returnTo;
-                }
+                «IF hasSluggableFields && slugUnique»
+                    $refererParts = explode('/', $this->returnTo);
+                    $isDisplayPage = $refererParts[count($refererParts)-2] == '«name.formatForCode»';
+                    if ($isDisplayPage) {
+                        // update slug for proper redirect to display page
+                        $refererParts[count($refererParts)-1] = $this->entityRef->getSlug();
+                        $this->returnTo = implode('/', $refererParts);
+                    }
+                    $isDisplayOrEditPage = $isDisplayPage || substr($this->returnTo, -4) == 'edit';
+                    if (!$isDisplayOrEditPage || $objectIsPersisted) {
+                        // return to referer
+                        return $this->returnTo;
+                    }
+                «ELSE»
+                    $isDisplayOrEditPage = substr($this->returnTo, -7) == 'display' || substr($this->returnTo, -4) == 'edit';
+                    if (!$isDisplayOrEditPage || $objectIsPersisted) {
+                        // return to referer
+                        return $this->returnTo;
+                    }
+                «ENDIF»
             }
 
             «IF hasIndexAction || hasViewAction || hasDisplayAction && tree != EntityTreeType.NONE»
@@ -210,9 +225,7 @@ class Redirect {
                     case 'userDisplay':
                     case 'adminDisplay':
                         if ($args['commandName'] != 'delete' && !($this->templateParameters['mode'] == 'create' && $args['commandName'] == 'cancel')) {
-                            $urlArgs[$this->idField] = $this->idValue;
-
-                            return $this->router->generate($routePrefix . 'display', $urlArgs);
+                            return $this->router->generate($routePrefix . 'display', $this->entityRef->createUrlArgs());
                         }
 
                         return $this->getDefaultReturnUrl($args);
@@ -227,7 +240,7 @@ class Redirect {
                             «IF sourceEntity.standardFields»
                                 case 'userOwnView«sourceEntity.nameMultiple.formatForCodeCapital»':
                                 case 'adminOwnView«sourceEntity.nameMultiple.formatForCodeCapital»':
-                                    return $this->router->generate('«app.appName.formatForDB»_«sourceEntity.name.formatForDB»_' . $routeArea . 'view', [ 'own' => 1 ]);
+                                    return $this->router->generate('«app.appName.formatForDB»_«sourceEntity.name.formatForDB»_' . $routeArea . 'view', ['own' => 1]);
                             «ENDIF»
                         «ENDIF»
                         «IF sourceEntity.hasDisplayAction»
