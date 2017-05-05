@@ -96,6 +96,9 @@ class EditEntity {
             «IF !fields.filter(StringField).filter[currency].empty»
                 use «nsSymfonyFormType»CurrencyType;
             «ENDIF»
+            «IF app.targets('2.0') && !fields.filter(StringField).filter[dateInterval].empty»
+                use «nsSymfonyFormType»DateIntervalType;
+            «ENDIF»
             «IF !fields.filter(UserField).empty || (it instanceof Entity && (it as Entity).standardFields)»
                 use «nsSymfonyFormType»DateTimeType;
             «ENDIF»
@@ -839,8 +842,8 @@ class EditEntity {
         'scale' => 2
     '''
 
-    def private dispatch formType(StringField it) '''«IF country»«IF !app.targets('1.5')»«nsSymfonyFormType»«ENDIF»Country«ELSEIF language»«IF !app.targets('1.5')»«nsSymfonyFormType»«ENDIF»Language«ELSEIF locale»«IF !app.targets('1.5')»Zikula\Bundle\FormExtensionBundle\Form\Type\«ENDIF»Locale«ELSEIF htmlcolour»«IF !app.targets('1.5')»«app.appNamespace»\Form\Type\Field\«ENDIF»Colour«ELSEIF password»«IF !app.targets('1.5')»«nsSymfonyFormType»«ENDIF»Password«ELSEIF currency»«IF !app.targets('1.5')»«nsSymfonyFormType»«ENDIF»Currency«ELSEIF timezone»«IF !app.targets('1.5')»«nsSymfonyFormType»«ENDIF»Timezone«ELSE»«IF !app.targets('1.5')»«nsSymfonyFormType»«ENDIF»Text«ENDIF»'''
-    def private dispatch titleAttribute(StringField it) '''«IF country || language || locale || htmlcolour || currency || timezone»Choose the «name.formatForDisplay» of the «entity.name.formatForDisplay»«ELSE»Enter the «name.formatForDisplay» of the «entity.name.formatForDisplay»«ENDIF»'''
+    def private dispatch formType(StringField it) '''«IF country»«IF !app.targets('1.5')»«nsSymfonyFormType»«ENDIF»Country«ELSEIF language»«IF !app.targets('1.5')»«nsSymfonyFormType»«ENDIF»Language«ELSEIF locale»«IF !app.targets('1.5')»Zikula\Bundle\FormExtensionBundle\Form\Type\«ENDIF»Locale«ELSEIF htmlcolour»«IF !app.targets('1.5')»«app.appNamespace»\Form\Type\Field\«ENDIF»Colour«ELSEIF password»«IF !app.targets('1.5')»«nsSymfonyFormType»«ENDIF»Password«ELSEIF currency»«IF !app.targets('1.5')»«nsSymfonyFormType»«ENDIF»Currency«ELSEIF dateInterval && app.targets('2.0')»DateInterval«ELSEIF timezone»«IF !app.targets('1.5')»«nsSymfonyFormType»«ENDIF»Timezone«ELSE»«IF !app.targets('1.5')»«nsSymfonyFormType»«ENDIF»Text«ENDIF»'''
+    def private dispatch titleAttribute(StringField it) '''«IF country || (dateInterval && app.targets('2.0')) || language || locale || htmlcolour || currency || timezone»Choose the «name.formatForDisplay» of the «entity.name.formatForDisplay»«ELSE»Enter the «name.formatForDisplay» of the «entity.name.formatForDisplay»«ENDIF»'''
     def private dispatch additionalAttributes(StringField it) '''
         'maxlength' => «length»,
         «IF null !== regexp && regexp != ''»
@@ -856,6 +859,28 @@ class EditEntity {
         «IF locale»
             'choices' => $this->localeApi->getSupportedLocaleNames(),
             'choices_as_values' => true
+        «ENDIF»
+        «IF dateInterval && app.targets('2.0')»
+            «IF !mandatory»
+                'placeholder' => [
+                    'years' => $this->__('Years'),
+                    'months' => $this->__('Months'),
+                    'days' => $this->__('Days'),
+                    'hours' => $this->__('Hours'),
+                    'minutes' => $this->__('Minutes'),
+                    'seconds' => $this->__('Seconds')
+                ],
+            «ENDIF»
+            'input' => 'string',
+            'widget' => 'choice',
+            'with_years' => true,
+            'with_months' => true,
+            'with_weeks' => false,
+            'with_days' => true,
+            'with_hours' => true,
+            'with_minutes' => true,
+            'with_seconds' => true,
+            'with_invert' => true
         «ENDIF»
     '''
 

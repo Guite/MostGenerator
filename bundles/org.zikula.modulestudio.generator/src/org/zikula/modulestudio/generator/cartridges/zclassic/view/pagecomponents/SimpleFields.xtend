@@ -90,7 +90,10 @@ class SimpleFields {
     }
 
     def dispatch displayField(StringField it, String objName, String page) {
-        if (!password) '''
+        if (password) return ''
+        if (entity.application.targets('2.0') && dateInterval) '''
+            {{ «objName».«name.formatForCode»|«entity.application.appName.formatForDB»_dateInterval }}'''
+        else '''
             {{ «objName».«name.formatForCode»«IF country»|«entity.application.appName.formatForDB»_countryName«ELSEIF language || locale»|languageName«ENDIF» }}'''
     }
 

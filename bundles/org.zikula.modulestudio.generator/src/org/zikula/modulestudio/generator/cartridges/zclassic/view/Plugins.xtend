@@ -1,6 +1,7 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.view
 
 import de.guite.modulestudio.metamodel.Application
+import de.guite.modulestudio.metamodel.StringField
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.FormatGeoData
@@ -65,6 +66,9 @@ class Plugins {
     def private twigExtensionBaseImpl(Application it) '''
         namespace «appNamespace»\Twig\Base;
 
+        «IF targets('2.0') && !getAllEntities.filter[!fields.filter(StringField).filter[dateInterval].empty].empty»
+            use DateInterval;
+        «ENDIF»
         «IF generateIcsTemplates && hasEntitiesWithIcsTemplates»
             use Symfony\Component\HttpFoundation\Request;
             use Symfony\Component\HttpFoundation\RequestStack;
@@ -244,6 +248,9 @@ class Plugins {
                 «IF hasCountryFields»
                     new \Twig_SimpleFilter('«appNameLower»_countryName', [$this, 'getCountryName']),
                 «ENDIF»
+                «IF targets('2.0') && !getAllEntities.filter[!fields.filter(StringField).filter[dateInterval].empty].empty»
+                    new \Twig_SimpleFilter('«appNameLower»_dateInterval', [$this, 'getFormattedDateInterval']),
+                «ENDIF»
                 «IF hasUploads»
                     new \Twig_SimpleFilter('«appNameLower»_fileSize', [$this, 'getFileSize'], ['is_safe' => ['html']]),
                 «ENDIF»
@@ -278,6 +285,58 @@ class Plugins {
         «ENDIF»
 
         «generateInternal»
+        «IF targets('2.0') && !getAllEntities.filter[!fields.filter(StringField).filter[dateInterval].empty].empty»
+
+            /**
+             * The «appName.formatForDB»_dateInterval filter outputs a formatted description for a given date interval (duration string).
+             * Example:
+             *     {{ myDateIntervalString|«appName.formatForDB»_dateInterval }}
+             *
+             * @see http://php.net/manual/en/dateinterval.format.php
+             *
+             * @param object $duration The given duration string
+             *
+             * @return string The formatted title
+             */
+            public function getFormattedDateInterval($duration)
+            {
+                $interval = new DateInterval($duration);
+
+                $description = $interval->invert == 1 ? '- ' : '';
+
+                $amount = $interval->y;
+                if ($amount > 0) {
+                    $description .= $this->_fn('%amount year', '%amount years', $amount, ['%amount' => $amount]);
+                }
+
+                $amount = $interval->m;
+                if ($amount > 0) {
+                    $description .= ', ' . $this->_fn('%amount month', '%amount months', $amount, ['%amount' => $amount]);
+                }
+
+                $amount = $interval->d;
+                if ($amount > 0) {
+                    $description .= ', ' . $this->_fn('%amount day', '%amount days', $amount, ['%amount' => $amount]);
+                }
+
+                $amount = $interval->h;
+                if ($amount > 0) {
+                    $description .= ', ' . $this->_fn('%amount hour', '%amount hours', $amount, ['%amount' => $amount]);
+                }
+
+                $amount = $interval->i;
+                if ($amount > 0) {
+                    $description .= ', ' . $this->_fn('%amount minute', '%amount minutes', $amount, ['%amount' => $amount]);
+                }
+
+                $amount = $interval->s;
+                if ($amount > 0) {
+                    $description .= ', ' . $this->_fn('%amount second', '%amount seconds', $amount, ['%amount' => $amount]);
+                }
+
+                return $description;
+            }
+        «ENDIF»
 
         /**
          * The «appName.formatForDB»_formattedTitle filter outputs a formatted title for a given entity.
