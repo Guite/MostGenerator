@@ -241,7 +241,7 @@ class Finder {
 
         «objName».itemSelector.onParamChanged = function ()
         {
-            jQuery('#ajax_indicator').removeClass('hidden');
+            jQuery('#ajaxIndicator').removeClass('hidden');
 
             «objName».itemSelector.getItemList();
         };
@@ -264,21 +264,15 @@ class Finder {
                 params[catidsMain] = jQuery('#' + baseId + '_catidsMain').val();
             }
 
-            jQuery.ajax({
-                type: 'POST',
-                url: Routing.generate('«appName.formatForDB»_ajax_getitemlistfinder'),
-                data: params
-            }).done(function(res) {
-                // get data returned by the ajax response
+            jQuery.getJSON(Routing.generate('«appName.formatForDB»_ajax_getitemlistfinder'), params, function( data ) {
                 var baseId;
+
                 baseId = «objName».itemSelector.baseId;
-                «objName».itemSelector.items[baseId] = res.data;
-                jQuery('#ajax_indicator').addClass('hidden');
+                «objName».itemSelector.items[baseId] = data;
+                jQuery('#ajaxIndicator').addClass('hidden');
                 «objName».itemSelector.updateItemDropdownEntries();
                 «objName».itemSelector.updatePreview();
-            })«/*.fail(function(jqXHR, textStatus) {
-                // nothing to do yet
-            })*/»;
+            });
         };
 
         «objName».itemSelector.updateItemDropdownEntries = function ()

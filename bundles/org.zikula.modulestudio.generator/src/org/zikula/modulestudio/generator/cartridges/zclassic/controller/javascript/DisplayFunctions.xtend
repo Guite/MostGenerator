@@ -112,34 +112,33 @@ class DisplayFunctions {
         function «vendorAndName»ToggleFlag(objectType, fieldName, itemId)
         {
             jQuery.ajax({
-                type: 'POST',
+                method: 'POST',
                 url: Routing.generate('«appName.formatForDB»_ajax_toggleflag'),
                 data: {
                     ot: objectType,
                     field: fieldName,
                     id: itemId
-                }
-            }).done(function(res) {
-                // get data returned by the ajax response
-                var idSuffix;
-                var toggleLink;
-                var data;
+                },
+                success: function(data) {
+                    var idSuffix;
+                    var toggleLink;
 
-                idSuffix = «vendorAndName»CapitaliseFirstLetter(fieldName) + itemId;
-                toggleLink = jQuery('#toggle' + idSuffix);
-                data = res.data;
+                    idSuffix = «vendorAndName»CapitaliseFirstLetter(fieldName) + itemId;
+                    toggleLink = jQuery('#toggle' + idSuffix);
 
-                if (data.message) {
-                    «vendorAndName»SimpleAlert(toggleLink, Translator.__('Success'), data.message, 'toggle' + idSuffix + 'DoneAlert', 'success');
-                }
+                    if (data.message) {
+                        «vendorAndName»SimpleAlert(toggleLink, Translator.__('Success'), data.message, 'toggle' + idSuffix + 'DoneAlert', 'success');
+                    }
 
-                toggleLink.find('.fa-check').toggleClass('hidden', true !== data.state);
-                toggleLink.find('.fa-times').toggleClass('hidden', true === data.state);
-            })«/*.fail(function(jqXHR, textStatus) {
-                // nothing to do yet
-                var idSuffix = fieldName + '_' + itemId;
-                «vendorAndName»SimpleAlert(jQuery('#toggle' + idSuffix), Translator.__('Error'), Translator.__('Could not persist your change.'), 'toggle' + idSuffix + 'FailedAlert', 'danger');
-            })*/»;
+                    toggleLink.find('.fa-check').toggleClass('hidden', true !== data.state);
+                    toggleLink.find('.fa-times').toggleClass('hidden', true === data.state);
+                }«/*,
+                error: function(jqXHR, textStatus, thrownError) {
+                    // nothing to do yet
+                    var idSuffix = fieldName + '_' + itemId;
+                    «vendorAndName»SimpleAlert(jQuery('#toggle' + idSuffix), Translator.__('Error'), Translator.__('Could not persist your change.'), 'toggle' + idSuffix + 'FailedAlert', 'danger');
+                }*/»
+            });
         }
     '''
 

@@ -423,7 +423,7 @@ class ExternalView {
             <div class="col-sm-4">
                 <div id="{$baseID}Preview" style="border: 1px dotted #a3a3a3; padding: .2em .5em">
                     <p><strong>{gt text='«name.formatForDisplayCapital» information'}</strong></p>
-                    {img id='ajax_indicator' modname='core' set='ajax' src='indicator_circle.gif' alt='' class='hidden'}
+                    {img id='ajaxIndicator' modname='core' set='ajax' src='indicator_circle.gif' alt='' class='hidden'}
                     <div id="{$baseID}PreviewContainer">&nbsp;</div>
                 </div>
             </div>

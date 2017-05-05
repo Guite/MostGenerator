@@ -290,7 +290,7 @@ class TreeFunctions {
             }
 
             jQuery.ajax({
-                type: 'POST',
+                method: 'POST',
                 url: Routing.generate('«appName.formatForDB»_ajax_handletreeoperation'),
                 data: params
             }).done(function(res) {
@@ -342,7 +342,7 @@ class TreeFunctions {
             destId = parentNode.id.replace('tree' + rootId + 'node_', '');
 
             jQuery.ajax({
-                type: 'POST',
+                method: 'POST',
                 url: Routing.generate('«appName.formatForDB»_ajax_handletreeoperation'),
                 data: {
                     op: 'moveNodeTo',

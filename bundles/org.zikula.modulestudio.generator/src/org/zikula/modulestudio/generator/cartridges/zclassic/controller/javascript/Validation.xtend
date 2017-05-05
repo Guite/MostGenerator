@@ -104,31 +104,33 @@ class Validation {
              */
             function «vendorAndName»UniqueCheck(ucOt, val, elem, ucEx)
             {
+                var result, params;
+
                 if (elem.val() == window['last' + «vendorAndName»CapitaliseFirstLetter(ucOt) + «vendorAndName»CapitaliseFirstLetter(elem.attr('id')) ]) {
                     return true;
                 }
 
                 window['last' + «vendorAndName»CapitaliseFirstLetter(ucOt) + «vendorAndName»CapitaliseFirstLetter(elem.attr('id')) ] = elem.val();
 
-                var result = true;
+                result = true;
+                params = {
+                    ot: ucOt,
+                    fn: encodeURIComponent(elem.attr('id')),
+                    v: encodeURIComponent(val),
+                    ex: ucEx
+                };
 
                 jQuery.ajax({
-                    type: 'POST',
                     url: Routing.generate('«appName.formatForDB»_ajax_checkforduplicate'),
-                    data: {
-                        ot: ucOt,
-                        fn: encodeURIComponent(elem.attr('id')),
-                        v: encodeURIComponent(val),
-                        ex: ucEx
-                    },
-                    async: false
-                }).done(function(res) {
-                    if (null == res.data || true === res.data.isDuplicate) {
-                        result = false;
+                    datatype: 'json',
+                    async: false,
+                    data: params,
+                    success: function(data) {
+                        if (null == data || true === data.isDuplicate) {
+                            result = false;
+                        }
                     }
-                })«/*.fail(function(jqXHR, textStatus) {
-                    // nothing to do yet
-                })*/»;
+                });
 
                 return result;
             }

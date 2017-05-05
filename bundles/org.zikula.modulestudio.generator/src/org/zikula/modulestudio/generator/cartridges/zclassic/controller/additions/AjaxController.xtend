@@ -49,22 +49,7 @@ class AjaxController {
         «IF needsDuplicateCheck || hasBooleansWithAjaxToggle || hasTrees»
             use Symfony\Component\Security\Core\Exception\AccessDeniedException;
         «ENDIF»
-        «IF hasTrees»
-            use RuntimeException;
-        «ENDIF»
         use Zikula\Core\Controller\AbstractController;
-        «IF generateExternalControllerAndFinder || needsDuplicateCheck || hasBooleansWithAjaxToggle || hasTrees»
-            use Zikula\Core\Response\Ajax\AjaxResponse;
-        «ENDIF»
-        «IF needsDuplicateCheck || hasBooleansWithAjaxToggle»
-            use Zikula\Core\Response\Ajax\BadDataResponse;
-        «ENDIF»
-        «IF hasTrees»
-            use Zikula\Core\Response\Ajax\FatalResponse;
-        «ENDIF»
-        «IF hasBooleansWithAjaxToggle»
-            use Zikula\Core\Response\Ajax\NotFoundResponse;
-        «ENDIF»
 
         /**
          * Ajax controller base class.
@@ -178,7 +163,8 @@ class AjaxController {
             }
         }
 
-        return new JsonResponse($resultItems);
+        // return response
+        return «IF targets('2.0')»$this->json«ELSE»new JsonResponse«ENDIF»($resultItems);
     '''
 
     def private getItemListFinderBase(Application it) '''
@@ -197,14 +183,14 @@ class AjaxController {
          «IF !isBase»
          *
          * @Route("/getItemListFinder", options={"expose"=true})
-         * @Method("POST")
+         * @Method("GET")
          «ENDIF»
          *
          * @param string $ot      Name of currently used object type
          * @param string $sort    Sorting field
          * @param string $sortdir Sorting direction
          *
-         * @return AjaxResponse
+         * @return JsonResponse
          */
     '''
 
@@ -217,7 +203,7 @@ class AjaxController {
             return true;
         }
 
-        $objectType = $request->request->getAlnum('ot', '«getLeadingEntity.name.formatForCode»');
+        $objectType = $request->query->getAlnum('ot', '«getLeadingEntity.name.formatForCode»');
         $controllerHelper = $this->get('«appService».controller_helper');
         $contextArgs = ['controller' => 'ajax', 'action' => 'getItemListFinder'];
         if (!in_array($objectType, $controllerHelper->getObjectTypes('controllerAction', $contextArgs))) {
@@ -228,18 +214,18 @@ class AjaxController {
         $entityDisplayHelper = $this->get('«appService».entity_display_helper');
         $descriptionFieldName = $entityDisplayHelper->getDescriptionFieldName($objectType);
 
-        $sort = $request->request->getAlnum('sort', '');
+        $sort = $request->query->getAlnum('sort', '');
         if (empty($sort) || !in_array($sort, $repository->getAllowedSortingFields())) {
             $sort = $repository->getDefaultSortingField();
         }
 
-        $sdir = strtolower($request->request->getAlpha('sortdir', ''));
+        $sdir = strtolower($request->query->getAlpha('sortdir', ''));
         if ($sdir != 'asc' && $sdir != 'desc') {
             $sdir = 'asc';
         }
 
         $where = ''; // filters are processed inside the repository class
-        $searchTerm = $request->request->get('q', '');
+        $searchTerm = $request->query->get('q', '');
         $sortParam = $sort . ' ' . $sdir;
 
         $entities = [];
@@ -259,7 +245,8 @@ class AjaxController {
             $slimItems[] = $this->prepareSlimItem($repository, $objectType, $item, $itemId, $descriptionFieldName);
         }
 
-        return new AjaxResponse($slimItems);
+        // return response
+        return «IF targets('2.0')»$this->json«ELSE»new JsonResponse«ENDIF»($slimItems);
     '''
 
     def private getItemListFinderPrepareSlimItem(Application it) '''
@@ -383,7 +370,7 @@ class AjaxController {
             }
         }
 
-        return new JsonResponse($resultItems);
+        return «IF targets('2.0')»$this->json«ELSE»new JsonResponse«ENDIF»($resultItems);
     '''
 
     def private prepareForAutoCompletionProcessing(Application it) '''
@@ -411,12 +398,12 @@ class AjaxController {
          «IF !isBase»
          *
          * @Route("/checkForDuplicate", options={"expose"=true})
-         * @Method("POST")
+         * @Method("GET")
          «ENDIF»
          *
          * @param Request $request Current request instance
          *
-         * @return AjaxResponse
+         * @return JsonResponse
          *
          * @throws AccessDeniedException Thrown if the user doesn't have required permissions
          */
@@ -432,10 +419,6 @@ class AjaxController {
         }
 
         «prepareDuplicateCheckParameters»
-        /* can probably be removed
-         * $createMethod = 'create' . ucfirst($objectType);
-         * $object = $repository = $this->get('«appService».entity_factory')->$createMethod();
-         */
 
         $result = false;
         switch ($objectType) {
@@ -463,26 +446,22 @@ class AjaxController {
         }
 
         // return response
-        $result = ['isDuplicate' => $result];
-
-        return new AjaxResponse($result);
+        return «IF targets('2.0')»$this->json«ELSE»new JsonResponse«ENDIF»(['isDuplicate' => $result]);
     '''
 
     def private prepareDuplicateCheckParameters(Application it) '''
-        $postData = $request->request;
-
-        $objectType = $postData->getAlnum('ot', '«getLeadingEntity.name.formatForCode»');
+        $objectType = $request->query->getAlnum('ot', '«getLeadingEntity.name.formatForCode»');
         $controllerHelper = $this->get('«appService».controller_helper');
         $contextArgs = ['controller' => 'ajax', 'action' => 'checkForDuplicate'];
         if (!in_array($objectType, $controllerHelper->getObjectTypes('controllerAction', $contextArgs))) {
             $objectType = $controllerHelper->getDefaultObjectType('controllerAction', $contextArgs);
         }
 
-        $fieldName = $postData->getAlnum('fn', '');
-        $value = $postData->get('v', '');
+        $fieldName = $request->query->getAlnum('fn', '');
+        $value = $request->query->get('v', '');
 
         if (empty($fieldName) || empty($value)) {
-            return new BadDataResponse($this->__('Error: invalid input.'));
+            return «IF targets('2.0')»$this->json«ELSE»new JsonResponse«ENDIF»($this->__('Error: invalid input.'), JsonResponse::HTTP_BAD_REQUEST);
         }
 
         // check if the given field is existing and unique
@@ -498,10 +477,10 @@ class AjaxController {
             «ENDFOR»
         }
         if (!count($uniqueFields) || !in_array($fieldName, $uniqueFields)) {
-            return new BadDataResponse($this->__('Error: invalid input.'));
+            return «IF targets('2.0')»$this->json«ELSE»new JsonResponse«ENDIF»($this->__('Error: invalid input.'), JsonResponse::HTTP_BAD_REQUEST);
         }
 
-        $exclude = $postData->getInt('ex', '');
+        $exclude = $request->query->getInt('ex', '');
     '''
 
     def private toggleFlagBase(Application it) '''
@@ -523,7 +502,7 @@ class AjaxController {
          *
          * @param Request $request Current request instance
          *
-         * @return AjaxResponse
+         * @return JsonResponse
          *
          * @throws AccessDeniedException Thrown if the user doesn't have required permissions
          */
@@ -538,11 +517,9 @@ class AjaxController {
             throw new AccessDeniedException();
         }
 
-        $postData = $request->request;
-
-        $objectType = $postData->getAlnum('ot', '«getLeadingEntity.name.formatForCode»');
-        $field = $postData->getAlnum('field', '');
-        $id = $postData->getInt('id', 0);
+        $objectType = $request->request->getAlnum('ot', '«getLeadingEntity.name.formatForCode»');
+        $field = $request->request->getAlnum('field', '');
+        $id = $request->request->getInt('id', 0);
 
         «val entities = getEntitiesWithAjaxToggle»
         if ($id == 0
@@ -551,7 +528,7 @@ class AjaxController {
             || ($objectType == '«entity.name.formatForCode»' && !in_array($field, [«FOR field : entity.getBooleansWithAjaxToggleEntity('') SEPARATOR ', '»'«field.name.formatForCode»'«ENDFOR»]))
         «ENDFOR»
         ) {
-            return new BadDataResponse($this->__('Error: invalid input.'));
+            return «IF targets('2.0')»$this->json«ELSE»new JsonResponse«ENDIF»($this->__('Error: invalid input.'), JsonResponse::HTTP_BAD_REQUEST);
         }
 
         // select data from data source
@@ -559,7 +536,7 @@ class AjaxController {
         $repository = $entityFactory->getRepository($objectType);
         $entity = $repository->selectById($id, false);
         if (null === $entity) {
-            return new NotFoundResponse($this->__('No such item.'));
+            return «IF targets('2.0')»$this->json«ELSE»new JsonResponse«ENDIF»($this->__('No such item.'), JsonResponse::HTTP_NOT_FOUND);
         }
 
         // toggle the flag
@@ -573,7 +550,7 @@ class AjaxController {
         $logger->notice('{app}: User {user} toggled the {field} flag the {entity} with id {id}.', $logArgs);
 
         // return response
-        return new AjaxResponse([
+        return «IF targets('2.0')»$this->json«ELSE»new JsonResponse«ENDIF»([
             'id' => $id,
             'state' => $entity[$field],
             'message' => $this->__('The setting has been successfully changed.')
@@ -599,11 +576,9 @@ class AjaxController {
          *
          * @param Request $request Current request instance
          *
-         * @return AjaxResponse
+         * @return JsonResponse
          *
          * @throws AccessDeniedException Thrown if the user doesn't have required permissions
-         * @throws FatalResponse
-         * @throws RuntimeException Thrown if tree verification or executing the workflow action fails
          */
     '''
 
@@ -616,11 +591,9 @@ class AjaxController {
             throw new AccessDeniedException();
         }
 
-        $postData = $request->request;
-
         «val treeEntities = getTreeEntities»
         // parameter specifying which type of objects we are treating
-        $objectType = $postData->getAlnum('ot', '«treeEntities.head.name.formatForCode»');
+        $objectType = $request->request->getAlnum('ot', '«treeEntities.head.name.formatForCode»');
         // ensure that we use only object types with tree extension enabled
         if (!in_array($objectType, [«FOR treeEntity : treeEntities SEPARATOR ", "»'«treeEntity.name.formatForCode»'«ENDFOR»])) {
             $objectType = '«treeEntities.head.name.formatForCode»';
@@ -639,12 +612,12 @@ class AjaxController {
 
         $rootId = 1;
         if (!in_array($op, ['addRootNode'])) {
-            $rootId = $postData->getInt('root', 0);
+            $rootId = $request->request->getInt('root', 0);
             if (!$rootId) {
                 $returnValue['result'] = 'failure';
                 $returnValue['message'] = $this->__('Error: invalid root node.');
 
-                return new AjaxResponse($returnValue);
+                return «IF targets('2.0')»$this->json«ELSE»new JsonResponse«ENDIF»($returnValue);
             }
         }
 
@@ -674,7 +647,7 @@ class AjaxController {
             $returnValue['result'] = 'failure';
             $returnValue['message'] = implode('<br />', $errorMessages);
 
-            return new AjaxResponse($returnValue);
+            return «IF targets('2.0')»$this->json«ELSE»new JsonResponse«ENDIF»($returnValue);
         }
         $entityManager->clear(); // clear cached nodes
 
@@ -689,27 +662,27 @@ class AjaxController {
         $returnValue['data'] = $repository->selectTree($rootId);
         */
 
-        return new AjaxResponse($returnValue);
+        return «IF targets('2.0')»$this->json«ELSE»new JsonResponse«ENDIF»($returnValue);
     '''
 
     def private prepareTreeOperationParameters(Application it) '''
-        $op = $postData->getAlpha('op', '');
+        $op = $request->request->getAlpha('op', '');
         if (!in_array($op, ['addRootNode', 'addChildNode', 'deleteNode', 'moveNode', 'moveNodeTo'])) {
             $returnValue['result'] = 'failure';
             $returnValue['message'] = $this->__('Error: invalid operation.');
 
-            return new AjaxResponse($returnValue);
+            return «IF targets('2.0')»$this->json«ELSE»new JsonResponse«ENDIF»($returnValue);
         }
 
         // Get id of treated node
         $id = 0;
         if (!in_array($op, ['addRootNode', 'addChildNode'])) {
-            $id = $postData->getInt('id', 0);
+            $id = $request->request->getInt('id', 0);
             if (!$id) {
                 $returnValue['result'] = 'failure';
                 $returnValue['message'] = $this->__('Error: invalid node.');
 
-                return new AjaxResponse($returnValue);
+                return «IF targets('2.0')»$this->json«ELSE»new JsonResponse«ENDIF»($returnValue);
             }
         }
     '''
@@ -806,18 +779,18 @@ class AjaxController {
                 $returnValue['result'] = 'failure';
                 $returnValue['message'] = $this->__f('Sorry, but an error occured during the %action% action. Please apply the changes again!', ['%action%' => $action]) . '  ' . $e->getMessage();
 
-                return new AjaxResponse($returnValue);
+                return «IF targets('2.0')»$this->json«ELSE»new JsonResponse«ENDIF»($returnValue);
             }
         //});
     '''
 
     def private treeOperationAddChildNode(Application it) '''
-        $parentId = $postData->getInt('pid', 0);
+        $parentId = $request->request->getInt('pid', 0);
         if (!$parentId) {
             $returnValue['result'] = 'failure';
             $returnValue['message'] = $this->__('Error: invalid parent node.');
 
-            return new AjaxResponse($returnValue);
+            return «IF targets('2.0')»$this->json«ELSE»new JsonResponse«ENDIF»($returnValue);
         }
 
         //$entityManager->transactional(function($entityManager) {
@@ -837,7 +810,7 @@ class AjaxController {
                 $returnValue['result'] = 'failure';
                 $returnValue['message'] = $this->__('No such item.');
 
-                return new AjaxResponse($returnValue);
+                return «IF targets('2.0')»$this->json«ELSE»new JsonResponse«ENDIF»($returnValue);
             }
             $childEntity->setParent($parentEntity);
 
@@ -860,7 +833,7 @@ class AjaxController {
                 $returnValue['result'] = 'failure';
                 $returnValue['message'] = $this->__f('Sorry, but an error occured during the %action% action. Please apply the changes again!', ['%action%' => $action]) . '  ' . $e->getMessage();
 
-                return new AjaxResponse($returnValue);
+                return «IF targets('2.0')»$this->json«ELSE»new JsonResponse«ENDIF»($returnValue);
             }
         //});
     '''
@@ -872,7 +845,7 @@ class AjaxController {
             $returnValue['result'] = 'failure';
             $returnValue['message'] = $this->__('No such item.');
 
-            return new AjaxResponse($returnValue);
+            return «IF targets('2.0')»$this->json«ELSE»new JsonResponse«ENDIF»($returnValue);
         }
 
         «IF !targets('1.5')»
@@ -892,7 +865,7 @@ class AjaxController {
             $returnValue['result'] = 'failure';
             $returnValue['message'] = $this->__f('Sorry, but an error occured during the %action% action. Please apply the changes again!', ['%action%' => $action]) . '  ' . $e->getMessage();
 
-            return new AjaxResponse($returnValue);
+            return «IF targets('2.0')»$this->json«ELSE»new JsonResponse«ENDIF»($returnValue);
         }
 
         $repository->removeFromTree($entity);
@@ -900,12 +873,12 @@ class AjaxController {
     '''
 
     def private treeOperationMoveNode(Application it) '''
-        $moveDirection = $postData->getAlpha('direction', '');
+        $moveDirection = $request->request->getAlpha('direction', '');
         if (!in_array($moveDirection, ['top', 'up', 'down', 'bottom'])) {
             $returnValue['result'] = 'failure';
             $returnValue['message'] = $this->__('Error: invalid direction.');
 
-            return new AjaxResponse($returnValue);
+            return «IF targets('2.0')»$this->json«ELSE»new JsonResponse«ENDIF»($returnValue);
         }
 
         $entity = $repository->selectById($id, false);
@@ -913,7 +886,7 @@ class AjaxController {
             $returnValue['result'] = 'failure';
             $returnValue['message'] = $this->__('No such item.');
 
-            return new AjaxResponse($returnValue);
+            return «IF targets('2.0')»$this->json«ELSE»new JsonResponse«ENDIF»($returnValue);
         }
 
         if ($moveDirection == 'top') {
@@ -929,20 +902,20 @@ class AjaxController {
     '''
 
     def private treeOperationMoveNodeTo(Application it) '''
-        $moveDirection = $postData->getAlpha('direction', '');
+        $moveDirection = $request->request->getAlpha('direction', '');
         if (!in_array($moveDirection, ['after', 'before', 'bottom'])) {
             $returnValue['result'] = 'failure';
             $returnValue['message'] = $this->__('Error: invalid direction.');
 
-            return new AjaxResponse($returnValue);
+            return «IF targets('2.0')»$this->json«ELSE»new JsonResponse«ENDIF»($returnValue);
         }
 
-        $destId = $postData->getInt('destid', 0);
+        $destId = $request->request->getInt('destid', 0);
         if (!$destId) {
             $returnValue['result'] = 'failure';
             $returnValue['message'] = $this->__('Error: invalid destination node.');
 
-            return new AjaxResponse($returnValue);
+            return «IF targets('2.0')»$this->json«ELSE»new JsonResponse«ENDIF»($returnValue);
         }
 
         $entityManager->clear();
@@ -954,7 +927,7 @@ class AjaxController {
                 $returnValue['result'] = 'failure';
                 $returnValue['message'] = $this->__('No such item.');
 
-                return new AjaxResponse($returnValue);
+                return «IF targets('2.0')»$this->json«ELSE»new JsonResponse«ENDIF»($returnValue);
             }
 
             $entityManager->persist($destEntity);
@@ -1079,21 +1052,6 @@ class AjaxController {
         use Symfony\Component\HttpFoundation\Request;
         «IF needsDuplicateCheck || hasBooleansWithAjaxToggle || hasTrees»
             use Symfony\Component\Security\Core\Exception\AccessDeniedException;
-        «ENDIF»
-        «IF hasTrees»
-            use RuntimeException;
-        «ENDIF»
-        «IF generateExternalControllerAndFinder || needsDuplicateCheck || hasBooleansWithAjaxToggle || hasTrees»
-            use Zikula\Core\Response\Ajax\AjaxResponse;
-        «ENDIF»
-        «IF needsDuplicateCheck || hasBooleansWithAjaxToggle»
-            use Zikula\Core\Response\Ajax\BadDataResponse;
-        «ENDIF»
-        «IF hasTrees»
-            use Zikula\Core\Response\Ajax\FatalResponse;
-        «ENDIF»
-        «IF hasBooleansWithAjaxToggle»
-            use Zikula\Core\Response\Ajax\NotFoundResponse;
         «ENDIF»
 
         /**
