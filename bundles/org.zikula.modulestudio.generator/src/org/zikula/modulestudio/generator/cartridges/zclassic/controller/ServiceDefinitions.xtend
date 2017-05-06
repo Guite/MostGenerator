@@ -51,7 +51,9 @@ class ServiceDefinitions {
         modPrefix = appService
 
         generateServiceFile(fsa, 'services', mainServiceFile)
-        generateServiceFile(fsa, 'authentication', authentication)
+        if (authenticationMethod != AuthMethodType.NONE) {
+            generateServiceFile(fsa, 'authentication', authentication)
+        }
         generateServiceFile(fsa, 'linkContainer', linkContainer)
         generateServiceFile(fsa, 'entityFactory', entityFactory)
         generateServiceFile(fsa, 'eventSubscriber', eventSubscriber)
