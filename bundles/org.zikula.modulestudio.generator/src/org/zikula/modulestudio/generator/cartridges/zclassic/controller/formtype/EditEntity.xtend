@@ -690,6 +690,7 @@ class EditEntity {
                 messages += '''$this->__f('Note: this value must be less than %maxValue%.', ['%maxValue%' => «maxValue»])'''
             }
         }
+
         messages
     }
 
@@ -1262,8 +1263,7 @@ class EditEntity {
                     'class' => '«IF isManySide(outgoing)»checkbox«ELSE»radio«ENDIF»-inline'
                 ],
             «ENDIF»
-            «IF !relationHelpMessages(outgoing).empty»'help' => «relationHelpMessages(outgoing)»,«ENDIF»
-            «relationHelpMessages(outgoing)»
+            «val helpMessage = relationHelpMessages(outgoing)»«IF !helpMessage.empty»'help' => «IF helpMessage.length > 1»[«ENDIF»«helpMessage.join(', ')»«IF helpMessage.length > 1»]«ENDIF»,«ENDIF»
             'attr' => [
                 'title' => $this->__('Choose the «aliasName.formatForDisplay»')
             ]
@@ -1271,7 +1271,9 @@ class EditEntity {
     '''
 
     def private dispatch ArrayList<String> relationHelpMessages(JoinRelationship it, Boolean outgoing) {
-        newArrayList
+        val messages = newArrayList
+
+        messages
     }
     def private dispatch relationHelpMessages(OneToManyRelationship it, Boolean outgoing) {
         val messages = newArrayList
