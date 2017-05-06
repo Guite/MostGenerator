@@ -277,7 +277,7 @@ class AuthenticationMethod {
          */
         public function authenticate(array $data = [])
         {
-            // TODO replace by your own authentication logic
+            // @todo replace by your own authentication logic
             return parent::authenticate($data);
         }
 
@@ -293,7 +293,7 @@ class AuthenticationMethod {
          */
         public function register(array $data = [])
         {
-            // TODO replace by your own registration logic
+            // @todo replace by your own registration logic
             return parent::register($data);
         }
     '''
@@ -306,7 +306,7 @@ class AuthenticationMethod {
          */
         public function getId()
         {
-            // TODO replace by your own logic
+            // @todo replace by your own logic
             return parent::getId();
         }
 
@@ -317,7 +317,7 @@ class AuthenticationMethod {
          */
         public function getEmail()
         {
-            // TODO replace by your own logic
+            // @todo replace by your own logic
             return parent::getEmail();
         }
 
@@ -328,7 +328,7 @@ class AuthenticationMethod {
          */
         public function getUname()
         {
-            // TODO replace by your own logic
+            // @todo replace by your own logic
             return parent::getUname();
         }
     '''
@@ -341,7 +341,7 @@ class AuthenticationMethod {
          */
         public function getLoginFormClassName()
         {
-            // TODO replace by your own form type
+            // @todo replace by your own form type
             return parent::getLoginFormClassName();
         }
 
@@ -355,7 +355,7 @@ class AuthenticationMethod {
          */
         public function getLoginTemplateName($type = 'page', $position = 'left')
         {
-            // TODO replace by your own template
+            // @todo replace by your own template
             return parent::getLoginTemplateName($type, $position);
         }
 
@@ -366,7 +366,7 @@ class AuthenticationMethod {
          */
         public function getRegistrationFormClassName()
         {
-            // TODO replace by your own form type
+            // @todo replace by your own form type
             return parent::getRegistrationFormClassName();
         }
 
@@ -377,7 +377,7 @@ class AuthenticationMethod {
          */
         public function getRegistrationTemplateName()
         {
-            // TODO replace by your own template
+            // @todo replace by your own template
             return parent::getRegistrationTemplateName();
         }
     '''
