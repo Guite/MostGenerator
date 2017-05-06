@@ -15,18 +15,23 @@ import de.guite.modulestudio.metamodel.EntityWorkflowType
 import de.guite.modulestudio.metamodel.FloatField
 import de.guite.modulestudio.metamodel.InheritanceRelationship
 import de.guite.modulestudio.metamodel.IntegerField
+import de.guite.modulestudio.metamodel.IpAddressScope
 import de.guite.modulestudio.metamodel.JoinRelationship
 import de.guite.modulestudio.metamodel.ListField
 import de.guite.modulestudio.metamodel.ManyToManyRelationship
 import de.guite.modulestudio.metamodel.MappedSuperClass
+import de.guite.modulestudio.metamodel.OneToManyRelationship
 import de.guite.modulestudio.metamodel.RelationAutoCompletionUsage
 import de.guite.modulestudio.metamodel.StringField
+import de.guite.modulestudio.metamodel.StringIsbnStyle
+import de.guite.modulestudio.metamodel.StringIssnStyle
 import de.guite.modulestudio.metamodel.TextField
 import de.guite.modulestudio.metamodel.TimeField
 import de.guite.modulestudio.metamodel.UploadField
 import de.guite.modulestudio.metamodel.UrlField
 import de.guite.modulestudio.metamodel.UserField
 import java.math.BigInteger
+import java.util.ArrayList
 import java.util.List
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
@@ -691,58 +696,153 @@ class EditEntity {
     def private dispatch helpMessages(DecimalField it) {
         val messages = helpDocumentation
 
-        val hasMin = minValue > 0
-        val hasMax = maxValue > 0
-        if (hasMin || hasMax) {
-            if (hasMin && hasMax) {
-                if (minValue == maxValue) {
-                    messages += '''$this->__f('Note: this value must exactly be %value%.', ['%value%' => «minValue»])'''
-                } else {
-                    messages += '''$this->__f('Note: this value must be between %minValue% and %maxValue%.', ['%minValue%' => «minValue», '%maxValue%' => «maxValue»])'''
-                }
-            } else if (hasMin) {
-                messages += '''$this->__f('Note: this value must be greater than %minValue%.', ['%minValue%' => «minValue»])'''
-            } else if (hasMax) {
-                messages += '''$this->__f('Note: this value must be less than %maxValue%.', ['%maxValue%' => «maxValue»])'''
+        if (minValue > 0 && maxValue > 0) {
+            if (minValue == maxValue) {
+                messages += '''$this->__f('Note: this value must exactly be %value%.', ['%value%' => «minValue»])'''
+            } else {
+                messages += '''$this->__f('Note: this value must be between %minValue% and %maxValue%.', ['%minValue%' => «minValue», '%maxValue%' => «maxValue»])'''
             }
+        } else if (minValue > 0) {
+            messages += '''$this->__f('Note: this value must be greater than %minValue%.', ['%minValue%' => «minValue»])'''
+        } else if (maxValue > 0) {
+            messages += '''$this->__f('Note: this value must be less than %maxValue%.', ['%maxValue%' => «maxValue»])'''
         }
+
         messages
     }
 
     def private dispatch helpMessages(FloatField it) {
         val messages = helpDocumentation
 
-        val hasMin = minValue > 0
-        val hasMax = maxValue > 0
-        if (hasMin || hasMax) {
-            if (hasMin && hasMax) {
-                if (minValue == maxValue) {
-                    messages += '''$this->__f('Note: this value must exactly be %value%.', ['%value%' => «minValue»])'''
-                } else {
-                    messages += '''$this->__f('Note: this value must be between %minValue% and %maxValue%.', ['%minValue%' => «minValue», '%maxValue%' => «maxValue»])'''
-                }
-            } else if (hasMin) {
-                messages += '''$this->__f('Note: this value must be greater than %minValue%.', ['%minValue%' => «minValue»])'''
-            } else if (hasMax) {
-                messages += '''$this->__f('Note: this value must be less than %maxValue%.', ['%maxValue%' => «maxValue»])'''
+        if (minValue > 0 && maxValue > 0) {
+            if (minValue == maxValue) {
+                messages += '''$this->__f('Note: this value must exactly be %value%.', ['%value%' => «minValue»])'''
+            } else {
+                messages += '''$this->__f('Note: this value must be between %minValue% and %maxValue%.', ['%minValue%' => «minValue», '%maxValue%' => «maxValue»])'''
             }
+        } else if (minValue > 0) {
+            messages += '''$this->__f('Note: this value must be greater than %minValue%.', ['%minValue%' => «minValue»])'''
+        } else if (maxValue > 0) {
+            messages += '''$this->__f('Note: this value must be less than %maxValue%.', ['%maxValue%' => «maxValue»])'''
         }
+
         messages
     }
 
     def private dispatch helpMessages(StringField it) {
         val messages = helpDocumentation
+        val isSelector = country || currency || language || locale || htmlcolour || timezone
 
+        if (!isSelector) {
+            if (true === fixed) {
+                messages += '''$this->__f('Note: this value must have a length of %amount% characters.', ['%amount%' => «length»])'''
+            }
+            if (minLength > 0) {
+                messages += '''$this->__f('Note: this value must have a minimum length of %amount% characters.', ['%amount%' => «minLength»])'''
+            }
+            if (true === nospace) {
+                messages += '''$this->__('Note: this value must not contain spaces.')'''
+            }
+        }
         if (null !== regexp && regexp != '') {
             messages += '''$this->__f('Note: this value must«IF regexpOpposite» not«ENDIF» conform to the regular expression "%pattern%".', ['%pattern%' => '«regexp.replace('\'', '')»'])'''
+        }
+        if (bic) {
+            messages += '''$this->__('Note: this value must be a valid BIC (Business Identifier Code).')'''
+        }
+        if (creditCard) {
+            messages += '''$this->__('Note: this value must be a valid credit card number.')'''
+        }
+        if (iban) {
+            messages += '''$this->__('Note: this value must be a valid IBAN (International Bank Account Number).')'''
+        }
+        if (isbn != StringIsbnStyle.NONE) {
+            messages += '''$this->__('Note: this value must be a valid ISBN (International Standard Book Number).«isbn.isbnMessage»')'''
+        }
+        if (issn != StringIssnStyle.NONE) {
+            messages += '''$this->__('Note: this value must be a valid ISSN (International Standard Serial Number.«issn.issnMessage»')'''
+        }
+        if (ipAddress != IpAddressScope.NONE) {
+            messages += '''$this->__('Note: this value must be a valid IP address.«ipAddress.scopeMessage»')'''
+        }
+        if (uuid) {
+            messages += '''$this->__('Note: this value must be a valid UUID (Universally Unique Identifier).')'''
         }
 
         messages
     }
 
+    def private isbnMessage(StringIsbnStyle it) {
+        switch (it) {
+            case NONE:
+                ''
+            case ISBN10:
+                ' It needs to be an ISBN-10 code.'
+            case ISBN13:
+                ' It needs to be an ISBN-13 code.'
+            case ALL:
+                ' It needs to be either an ISBN-10 or an ISBN-13 code.'
+        }
+    }
+
+    def private issnMessage(StringIssnStyle it) {
+        switch (it) {
+            case NONE:
+                ''
+            case NORMAL:
+                ''
+            case CASE_SENSITIVE:
+                ' The X at the end needs to be upper case.'
+            case REQUIRE_HYPHEN:
+                ' The value needs to be hyphenated.'
+            case STRICT:
+                ' The value needs to be hyphenated and the X at the end needs to be upper case.'
+        }
+    }
+
+    def private scopeMessage(IpAddressScope it) {
+        switch (it) {
+            case NONE:
+                ''
+            case IP4:
+                ' Allowed are IPv4 addresses in all ranges.'
+            case IP6:
+                ' Allowed are IPv6 addresses in all ranges.'
+            case ALL:
+                ' Allowed IPv4 and IPv6 addresses in all ranges.'
+            case IP4_NO_PRIV:
+                ' Allowed are IPv4 addresses without private ranges.'
+            case IP6_NO_PRIV:
+                ' Allowed are IPv6 addresses without private ranges.'
+            case ALL_NO_PRIV:
+                ' Allowed IPv4 and IPv6 addresses without private ranges.'
+            case IP4_NO_RES:
+                ' Allowed are IPv4 addresses without reserved ranges.'
+            case IP6_NO_RES:
+                ' Allowed are IPv6 addresses without reserved ranges.'
+            case ALL_NO_RES:
+                ' Allowed IPv4 and IPv6 addresses without reserved ranges.'
+            case IP4_PUBLIC:
+                ' Allowed are IPv4 addresses using only public ranges (without private and reserved ranges).'
+            case IP6_PUBLIC:
+                ' Allowed are IPv6 addresses using only public ranges (without private and reserved ranges).'
+            case ALL_PUBLIC:
+                ' Allowed IPv4 and IPv6 addresses using only public ranges (without private and reserved ranges).'
+        }
+    }
+
     def private dispatch helpMessages(TextField it) {
         val messages = helpDocumentation
 
+        if (true === fixed) {
+            messages += '''$this->__f('Note: this value must have a length of %amount% characters.', ['%amount%' => «length»])'''
+        }
+        if (minLength > 0) {
+            messages += '''$this->__f('Note: this value must have a minimum length of %amount% characters.', ['%amount%' => «minLength»])'''
+        }
+        if (true === nospace) {
+            messages += '''$this->__('Note: this value must not contain spaces.')'''
+        }
         if (null !== regexp && regexp != '') {
             messages += '''$this->__f('Note: this value must«IF regexpOpposite» not«ENDIF» conform to the regular expression "%pattern%".', ['%pattern%' => '«regexp.replace('\'', '')»'])'''
         }
@@ -753,12 +853,29 @@ class EditEntity {
     def private dispatch helpMessages(ListField it) {
         val messages = helpDocumentation
 
-        if (multiple && min > 0 && max > 0) {
+        if (true === fixed) {
+            messages += '''$this->__f('Note: this value must have a length of %amount% characters.', ['%amount%' => «length»])'''
+        }
+        if (minLength > 0) {
+            messages += '''$this->__f('Note: this value must have a minimum length of %amount% characters.', ['%amount%' => «minLength»])'''
+        }
+        if (true === nospace) {
+            messages += '''$this->__('Note: this value must not contain spaces.')'''
+        }
+
+        if (!multiple) {
+            return messages
+        }
+        if (min > 0 && max > 0) {
             if (min == max) {
-                messages += '''$this->__f('Note: you must select exactly %min% choices.', ['%min%' => «min»])'''
+                messages += '''$this->__f('Note: you must select exactly %amount% choices.', ['%amount%' => «min»])'''
             } else {
                 messages += '''$this->__f('Note: you must select between %min% and %max% choices.', ['%min%' => «min», '%max%' => «max»])'''
             }
+        } else if (min > 0) {
+            messages += '''$this->__f('Note: you must select at least %min% choices.', ['%min%' => «min»])'''
+        } else if (max > 0) {
+            messages += '''$this->__f('Note: you must not select more than %max% choices.', ['%max%' => «max»])'''
         }
 
         messages
@@ -768,6 +885,18 @@ class EditEntity {
         val messages = helpDocumentation
 
         messages += '''$this->__('Enter one entry per line.')'''
+
+        if (min > 0 && max > 0) {
+            if (min == max) {
+                messages += '''$this->__f('Note: you must specify exactly %amount% values.', ['%amount%' => «min»])'''
+            } else {
+                messages += '''$this->__f('Note: you must specify between %min% and %max% values.', ['%min%' => «min», '%max%' => «max»])'''
+            }
+        } else if (min > 0) {
+            messages += '''$this->__f('Note: you must specify at least %min% values.', ['%min%' => «min»])'''
+        } else if (max > 0) {
+            messages += '''$this->__f('Note: you must not specify more than %max% values.', ['%max%' => «max»])'''
+        }
 
         messages
     }
@@ -1133,11 +1262,69 @@ class EditEntity {
                     'class' => '«IF isManySide(outgoing)»checkbox«ELSE»radio«ENDIF»-inline'
                 ],
             «ENDIF»
+            «IF !relationHelpMessages(outgoing).empty»'help' => «relationHelpMessages(outgoing)»,«ENDIF»
+            «relationHelpMessages(outgoing)»
             'attr' => [
                 'title' => $this->__('Choose the «aliasName.formatForDisplay»')
             ]
         ]);
     '''
+
+    def private dispatch ArrayList<String> relationHelpMessages(JoinRelationship it, Boolean outgoing) {
+        newArrayList
+    }
+    def private dispatch relationHelpMessages(OneToManyRelationship it, Boolean outgoing) {
+        val messages = newArrayList
+
+        if (!outgoing) {
+            return messages
+        }
+
+        if (minTarget > 0 && maxTarget > 0) {
+            if (minTarget == maxTarget) {
+                messages += '''$this->__f('Note: you must select exactly %amount% choices.', ['%amount%' => «minTarget»])'''
+            } else {
+                messages += '''$this->__f('Note: you must select between %min% and %max% choices.', ['%min%' => «minTarget», '%max%' => «maxTarget»])'''
+            }
+        } else if (minTarget > 0) {
+            messages += '''$this->__f('Note: you must select at least %min% choices.', ['%min%' => «minTarget»])'''
+        } else if (maxTarget > 0) {
+            messages += '''$this->__f('Note: you must not select more than %max% choices.', ['%max%' => «maxTarget»])'''
+        }
+
+        messages
+    }
+    def private dispatch relationHelpMessages(ManyToManyRelationship it, Boolean outgoing) {
+        val messages = newArrayList
+
+        if (!outgoing) {
+            if (minSource > 0 && maxSource > 0) {
+                if (minSource == maxSource) {
+                    messages += '''$this->__f('Note: you must select exactly %amount% choices.', ['%amount%' => «minSource»])'''
+                } else {
+                    messages += '''$this->__f('Note: you must select between %min% and %max% choices.', ['%min%' => «minSource», '%max%' => «maxSource»])'''
+                }
+            } else if (minSource > 0) {
+                messages += '''$this->__f('Note: you must select at least %min% choices.', ['%min%' => «minSource»])'''
+            } else if (maxSource > 0) {
+                messages += '''$this->__f('Note: you must not select more than %max% choices.', ['%max%' => «maxSource»])'''
+            }
+    	} else {
+            if (minTarget > 0 && maxTarget > 0) {
+                if (minTarget == maxTarget) {
+                    messages += '''$this->__f('Note: you must select exactly %amount% choices.', ['%amount%' => «minTarget»])'''
+                } else {
+                    messages += '''$this->__f('Note: you must select between %min% and %max% choices.', ['%min%' => «minTarget», '%max%' => «maxTarget»])'''
+                }
+            } else if (minTarget > 0) {
+                messages += '''$this->__f('Note: you must select at least %min% choices.', ['%min%' => «minTarget»])'''
+            } else if (maxTarget > 0) {
+                messages += '''$this->__f('Note: you must not select more than %max% choices.', ['%max%' => «maxTarget»])'''
+            }
+        }
+
+        messages
+    }
 
     def private formType(JoinRelationship it, Boolean autoComplete) {
         if (autoComplete) '''«app.appNamespace»\Form\Type\Field\AutoCompletionRelation'''
