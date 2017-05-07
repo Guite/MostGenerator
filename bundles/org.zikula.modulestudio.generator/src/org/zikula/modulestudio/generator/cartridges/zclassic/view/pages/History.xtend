@@ -5,6 +5,7 @@ import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
+import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.UrlExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
@@ -14,6 +15,7 @@ class History {
     extension ControllerExtensions = new ControllerExtensions
     extension FormattingExtensions = new FormattingExtensions
     extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
+    extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension NamingExtensions = new NamingExtensions
     extension UrlExtensions = new UrlExtensions
     extension Utils = new Utils
@@ -177,11 +179,11 @@ class History {
                         <td headers="hActions" class="actions nowrap">
                             «IF hasDisplayAction»
                                 {% set linkTitle = __f('Preview version %version%', { '%version%': logEntry.version }) %}
-                                <a id="«name.formatForCode»Item{{ «name.formatForCode».getKey() }}Display{{ logEntry.version }}" href="{{ path('«appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ 'display', { «routePkParams(name.formatForCode, true)»«appendSlug(name.formatForCode, true)», 'version': logEntry.version, 'raw': 1 }) }}" title="{{ linkTitle|e('html_attr') }}" class="«application.vendorAndName.toLowerCase»-inline-window hidden" data-modal-title="{{ «name.formatForCode»|«application.appName.formatForDB»_formattedTitle|e('html_attr') ~ ' ' ~ __('version') ~ ' ' ~ logEntry.version }}"><span class="fa fa-id-card-o"></span></a>
+                                <a id="«name.formatForCode»Item{{ «name.formatForCode».getKey() }}Display{{ logEntry.version }}" href="{{ path('«appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ 'display', { «IF !hasSluggableFields || !slugUnique»«routePkParams(name.formatForCode, true)»«ENDIF»«appendSlug(name.formatForCode, true)», 'version': logEntry.version, 'raw': 1 }) }}" title="{{ linkTitle|e('html_attr') }}" class="«application.vendorAndName.toLowerCase»-inline-window hidden" data-modal-title="{{ «name.formatForCode»|«application.appName.formatForDB»_formattedTitle|e('html_attr') ~ ' ' ~ __('version') ~ ' ' ~ logEntry.version }}"><span class="fa fa-id-card-o"></span></a>
                             «ENDIF»
                             {% if not loop.first %}
                                 {% set linkTitle = __f('Revert to version %version%', { '%version%': logEntry.version }) %}
-                                <a href="{{ path('«appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ 'loggablehistory', { «routePkParams(name.formatForCode, true)»«appendSlug(name.formatForCode, true)», 'revert': logEntry.version }) }}" title="{{ linkTitle|e('html_attr') }}"><span class="fa fa-history"></span></a>
+                                <a href="{{ path('«appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ 'loggablehistory', { «IF !hasSluggableFields || !slugUnique»«routePkParams(name.formatForCode, true)»«ENDIF»«appendSlug(name.formatForCode, true)», 'revert': logEntry.version }) }}" title="{{ linkTitle|e('html_attr') }}"><span class="fa fa-history"></span></a>
                             {% endif %}
                         </td>
                     </tr>
