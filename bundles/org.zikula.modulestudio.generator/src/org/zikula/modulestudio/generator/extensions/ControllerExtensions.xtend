@@ -214,8 +214,10 @@ class ControllerExtensions {
                 if (!incoming) 0 else 1
             case ACTIVE_NONE_PASSIVE_EDIT:
                 if (!incoming) 0 else 3
+            case ACTIVE_CHOOSE_PASSIVE_CHOOSE:
+                if (!incoming) 1 else 1
             case ACTIVE_CHOOSE_PASSIVE_NONE:
-                if (!incoming) 2 else 3 // invalid --> default as fall-back
+                if (!incoming) 1 else 3 // invalid --> default as fall-back
             case ACTIVE_EDIT_PASSIVE_CHOOSE:
                 if (!incoming) 2 else 1
             case ACTIVE_EDIT_PASSIVE_EDIT:
