@@ -225,11 +225,19 @@ class FormHandler {
             protected $idField = null;
 
             /**
-             * Identifier of treated entity.
+             * Identifier«IF getAllEntities.exists[hasSluggableFields && slugUnique]» or slug«ENDIF» of treated entity.
              *
-             * @var integer
+             * @var integer«IF getAllEntities.exists[hasSluggableFields && slugUnique]»|string«ENDIF»
              */
             protected $idValue = 0;
+            «IF getAllEntities.exists[hasSluggableFields && slugUnique]»
+
+                
+                /**
+                 * List of object types with unique slugs.
+                 */
+                protected $entitiesWithUniqueSlugs = ['«getAllEntities.filter[hasSluggableFields && slugUnique].map[name.formatForCode].join('\', \'')»'];
+            «ENDIF»
 
             /**
              * Code defining the redirect goal after command handling.
@@ -559,22 +567,47 @@ class FormHandler {
 
             $this->permissionComponent = '«appName»:' . $this->objectTypeCapital . ':';
 
-            $this->idField = $this->entityFactory->getIdField($this->objectType);
+            «IF getAllEntities.exists[hasSluggableFields && slugUnique]»
+                $this->idField = in_array($this->objectType, $this->entitiesWithUniqueSlugs) ? 'slug' : $this->entityFactory->getIdField($this->objectType);
+        	«ELSE»
+                $this->idField = $this->entityFactory->getIdField($this->objectType);
+            «ENDIF»
 
             // retrieve identifier of the object we wish to edit
             $routeParams = $this->request->get('_route_params', []);
-            if (array_key_exists($this->idField, $routeParams)) {
-                $this->idValue = (int) !empty($routeParams[$this->idField]) ? $routeParams[$this->idField] : 0;
-            }
-            if (0 === $this->idValue) {
-                $this->idValue = $this->request->query->getInt($this->idField, 0);
-            }
-            if (0 === $this->idValue && $this->idField != 'id') {
-                $this->idValue = $this->request->query->getInt('id', 0);
-            }
+            «IF getAllEntities.exists[hasSluggableFields && slugUnique]»
+                if ($this->idField == 'slug') {
+                    if (array_key_exists($this->idField, $routeParams)) {
+                        $this->idValue = !empty($routeParams[$this->idField]) ? $routeParams[$this->idField] : '';
+                    }
+                    if (empty($this->idValue)) {
+                        $this->idValue = $this->request->query->get($this->idField, '');
+                    }
+                } else {
+                    if (array_key_exists($this->idField, $routeParams)) {
+                        $this->idValue = (int) !empty($routeParams[$this->idField]) ? $routeParams[$this->idField] : 0;
+                    }
+                    if (empty($this->idValue)) {
+                        $this->idValue = $this->request->query->getInt($this->idField, 0);
+                    }
+                    if (0 === $this->idValue && $this->idField != 'id') {
+                        $this->idValue = $this->request->query->getInt('id', 0);
+                    }
+                }
+            «ELSE»
+                if (array_key_exists($this->idField, $routeParams)) {
+                    $this->idValue = (int) !empty($routeParams[$this->idField]) ? $routeParams[$this->idField] : 0;
+                }
+                if (0 === $this->idValue) {
+                    $this->idValue = $this->request->query->getInt($this->idField, 0);
+                }
+                if (0 === $this->idValue && $this->idField != 'id') {
+                    $this->idValue = $this->request->query->getInt('id', 0);
+                }
+            «ENDIF»
 
             $entity = null;
-            $this->templateParameters['mode'] = $this->idValue > 0 ? 'edit' : 'create';
+            $this->templateParameters['mode'] = !empty($this->idValue) ? 'edit' : 'create';
 
             if ($this->templateParameters['mode'] == 'edit') {
                 if (!$this->permissionApi->hasPermission($this->permissionComponent, $this->idValue . '::', ACCESS_EDIT)) {
@@ -704,7 +737,15 @@ class FormHandler {
         protected function initEntityForEditing()
         {
             «IF !targets('1.5')»
-                $entity = $this->entityFactory->getRepository($this->objectType)->selectById($this->idValue);
+                «IF getAllEntities.exists[hasSluggableFields && slugUnique]»
+                    if (in_array($this->objectType, $this->entitiesWithUniqueSlugs)) {
+                        $entity = $this->entityFactory->getRepository($this->objectType)->selectBySlug($this->idValue);
+                    } else {
+                        $entity = $this->entityFactory->getRepository($this->objectType)->selectById($this->idValue);
+                    }
+                «ELSE»
+                    $entity = $this->entityFactory->getRepository($this->objectType)->selectById($this->idValue);
+                «ENDIF»
                 if (null === $entity) {
                     return null;
                 }
@@ -713,6 +754,12 @@ class FormHandler {
 
                 return $entity;
             «ELSE»
+                «IF getAllEntities.exists[hasSluggableFields && slugUnique]»
+                    if (in_array($this->objectType, $this->entitiesWithUniqueSlugs)) {
+                        return $this->entityFactory->getRepository($this->objectType)->selectBySlug($this->idValue);
+                    }
+
+                «ENDIF»
                 return $this->entityFactory->getRepository($this->objectType)->selectById($this->idValue);
             «ENDIF»
         }
@@ -726,7 +773,7 @@ class FormHandler {
          */
         protected function initEntityForCreation()
         {
-            $templateId = $this->request->query->get('astemplate', '');
+            $templateId = $this->request->query->getInt('astemplate', '');
             $entity = null;
 
             if (!empty($templateId)) {
