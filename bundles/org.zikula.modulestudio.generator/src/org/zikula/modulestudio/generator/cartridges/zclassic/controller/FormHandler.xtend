@@ -232,7 +232,6 @@ class FormHandler {
             protected $idValue = 0;
             «IF getAllEntities.exists[hasSluggableFields && slugUnique]»
 
-                
                 /**
                  * List of object types with unique slugs.
                  */
