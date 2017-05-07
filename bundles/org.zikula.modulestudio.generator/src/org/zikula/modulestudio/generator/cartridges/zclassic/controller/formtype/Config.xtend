@@ -104,6 +104,7 @@ class Config {
                 $this->moduleVars = $moduleVars;
                 «IF hasUserGroupSelectors»
 
+                    // prepare group selector values
                     foreach (['«getUserGroupSelectors.map[name.formatForCode].join('\', \'')»'] as $groupFieldName) {
                         $groupId = intval($this->moduleVars[$groupFieldName]);
                         if ($groupId < 1) {
@@ -111,6 +112,17 @@ class Config {
                         }
                         $this->moduleVars[$groupFieldName] = $groupRepository->find($groupId);
                     }
+                «ENDIF»
+                «IF !variables.filter[composite].empty»
+
+                    // prepare composite variables
+                    «FOR varContainer : variables.filter[composite]»
+                        $«varContainer.name.formatForCode» = $this->moduleVars['«varContainer.name.formatForCode»'];
+                        «FOR modvar : varContainer.vars»
+                            $this->moduleVars['«modvar.name.formatForCode»' = $«varContainer.name.formatForCode»['«modvar.name.formatForCode»'];
+                        «ENDFOR»
+                        unset($this->moduleVars['«varContainer.name.formatForCode»']);
+                    «ENDFOR»
                 «ENDIF»
             }
 

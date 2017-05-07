@@ -99,10 +99,7 @@ class Installer {
             «IF !variables.empty»
 
                 // set up all our vars with initial values
-                «val modvarHelper = new ModVars()»
-                «FOR modvar : getAllVariables»
-                    $this->setVar('«modvar.name.formatForCode»', «modvarHelper.valDirect2Mod(modvar)»);
-                «ENDFOR»
+                «new ModVars().init(it)»
             «ENDIF»
             «IF hasCategorisableEntities»
 
@@ -277,7 +274,7 @@ class Installer {
                 // uninstall provider hooks
                 $this->hookApi->uninstallProviderHooks($this->bundle->getMetaData());
             «ENDIF»*/»
-            «IF !getAllVariables.empty»
+            «IF !variables.empty»
 
                 // remove all module vars
                 $this->delVars();

@@ -82,15 +82,27 @@ class ConfigController {
 
         if ($form->handleRequest($request)->isValid()) {
             if ($form->get('save')->isClicked()) {
+                $formData = $form->getData();
                 «IF hasUserGroupSelectors»
-                    $formData = $form->getData();
+                    // normalise group selector values
                     foreach (['«getUserGroupSelectors.map[name.formatForCode].join('\', \'')»'] as $groupFieldName) {
                         $formData[$groupFieldName] = is_object($formData[$groupFieldName]) ? $formData[$groupFieldName]->getGid() : $formData[$groupFieldName];
                     }
-                    $this->setVars($formData);
-                «ELSE»
-                    $this->setVars($form->getData());
+
                 «ENDIF»
+                «IF !variables.filter[composite].empty»
+                    // normalise composite variables
+                    «FOR varContainer : variables.filter[composite]»
+                        $«varContainer.name.formatForCode» = [];
+                        «FOR modvar : varContainer.vars»
+                            $«varContainer.name.formatForCode»['«modvar.name.formatForCode»'] => $formData['«modvar.name.formatForCode»'];
+                            unset($formData['«modvar.name.formatForCode»']);
+                        «ENDFOR»
+                        $formData['«varContainer.name.formatForCode»'] = $«varContainer.name.formatForCode»;
+                    «ENDFOR»
+
+                «ENDIF»
+                $this->setVars($formData);
 
                 $this->addFlash('status', $this->__('Done! Module configuration updated.'));
                 $userName = $this->get('zikula_users_module.current_user')->get('uname');
