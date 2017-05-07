@@ -568,7 +568,7 @@ class FormHandler {
 
             «IF getAllEntities.exists[hasSluggableFields && slugUnique]»
                 $this->idField = in_array($this->objectType, $this->entitiesWithUniqueSlugs) ? 'slug' : $this->entityFactory->getIdField($this->objectType);
-        	«ELSE»
+            «ELSE»
                 $this->idField = $this->entityFactory->getIdField($this->objectType);
             «ENDIF»
 
