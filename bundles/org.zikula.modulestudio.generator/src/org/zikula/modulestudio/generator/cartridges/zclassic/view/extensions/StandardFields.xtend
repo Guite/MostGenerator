@@ -54,18 +54,34 @@ class StandardFields {
     '''
 
     def private viewBody(Application it) '''
-        <dl class="propertylist">«/* TODO review this after https://github.com/zikula/core/issues/2800 has been solved */»
+        <dl class="propertylist">
         {% if obj.createdBy|default and obj.createdBy.getUid() > 0 %}
             <dt>{{ __('Creation') }}</dt>
             {% set profileLink = obj.createdBy.getUid()|profileLinkByUserId() %}
             <dd class="avatar">{{ «appName.toLowerCase»_userAvatar(uid=obj.createdBy.getUid(), rating='g') }}</dd>
-            <dd>{{ __f('Created by %user on %date', {'%user': profileLink, '%date': obj.createdDate|localizeddate('medium', 'short')})|raw }}{% if currentUser.loggedIn %}{% set sendMessageUrl = obj.createdBy.getUid()|messageSendLink(urlOnly=true) %}{% if sendMessageUrl != '#' %}<a href="{{ sendMessageUrl }}" title="{{ __f('Send private message to %userName%', { '%userName%': obj.createdBy.getUname() }) }}"><i class="fa fa-envelope-o"></i></a>{% endif %}{% endif %}</dd>
+            <dd>
+                {{ __f('Created by %user on %date', {'%user': profileLink, '%date': obj.createdDate|localizeddate('medium', 'short')})|raw }}
+                {% if currentUser.loggedIn %}
+                    {% set sendMessageUrl = obj.createdBy.getUid()|messageSendLink(urlOnly=true) %}
+                    {% if sendMessageUrl != '#' %}
+                        <a href="{{ sendMessageUrl }}" title="{{ __f('Send private message to %userName%', { '%userName%': obj.createdBy.getUname() }) }}"><i class="fa fa-envelope-o"></i></a>
+                    {% endif %}
+                {% endif %}
+            </dd>
         {% endif %}
         {% if obj.updatedBy|default and obj.updatedBy.getUid() > 0 %}
             <dt>{{ __('Last update') }}</dt>
             {% set profileLink = obj.updatedBy.getUid()|profileLinkByUserId() %}
             <dd class="avatar">{{ «appName.toLowerCase»_userAvatar(uid=obj.updatedBy.getUid(), rating='g') }}</dd>
-            <dd>{{ __f('Updated by %user on %date', {'%user': profileLink, '%date': obj.updatedDate|localizeddate('medium', 'short')})|raw }}{% if currentUser.loggedIn %}{% set sendMessageUrl = obj.updatedBy.getUid()|messageSendLink(urlOnly=true) %}{% if sendMessageUrl != '#' %}<a href="{{ sendMessageUrl }}" title="{{ __f('Send private message to %userName%', { '%userName%': obj.updatedBy.getUname() }) }}"><i class="fa fa-envelope-o"></i></a>{% endif %}{% endif %}</dd>
+            <dd>
+                {{ __f('Updated by %user on %date', {'%user': profileLink, '%date': obj.updatedDate|localizeddate('medium', 'short')})|raw }}
+                {% if currentUser.loggedIn %}
+                    {% set sendMessageUrl = obj.updatedBy.getUid()|messageSendLink(urlOnly=true) %}
+                    {% if sendMessageUrl != '#' %}
+                        <a href="{{ sendMessageUrl }}" title="{{ __f('Send private message to %userName%', { '%userName%': obj.updatedBy.getUname() }) }}"><i class="fa fa-envelope-o"></i></a>
+                    {% endif %}
+                {% endif %}
+            </dd>
         {% endif %}
         </dl>
     '''

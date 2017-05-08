@@ -155,11 +155,17 @@ class FormHandler {
             use Zikula\ExtensionsModule\Api\«IF targets('1.5')»ApiInterface\VariableApiInterface«ELSE»VariableApi«ENDIF»;
         «ENDIF»
         «IF needsApproval»
+            «IF targets('1.5')»
+                use Zikula\GroupsModule\Constant as GroupsConstant;
+            «ENDIF»
             use Zikula\GroupsModule\Entity\Repository\GroupApplicationRepository;
         «ENDIF»
         use Zikula\PageLockModule\Api\«IF targets('1.5')»ApiInterface\LockingApiInterface«ELSE»LockingApi«ENDIF»;
         use Zikula\PermissionsModule\Api\«IF targets('1.5')»ApiInterface\PermissionApiInterface«ELSE»PermissionApi«ENDIF»;
         use Zikula\UsersModule\Api\«IF targets('1.5')»ApiInterface\CurrentUserApiInterface«ELSE»CurrentUserApi«ENDIF»;
+        «IF needsApproval && targets('1.5')»
+            use Zikula\UsersModule\Constant as UsersConstant;
+        «ENDIF»
         use «appNamespace»\Entity\Factory\EntityFactory;
         «IF needsFeatureActivationHelper»
             use «appNamespace»\Helper\FeatureActivationHelper;
@@ -1130,22 +1136,21 @@ class FormHandler {
          */
         protected function prepareWorkflowAdditions($enterprise = false)
         {
-            $roles = [];«/* TODO review this after https://github.com/zikula/core/issues/2800 has been solved */»
-            $isLoggedIn = $this->currentUserApi->isLoggedIn();
-            $currentUserId = $isLoggedIn ? $this->currentUserApi->get('uid') : 1;
+            $roles = [];
+            $currentUserId = $this->currentUserApi->isLoggedIn() ? $this->currentUserApi->get('uid') : «IF targets('1.5')»UsersConstant::USER_ID_ANONYMOUS«ELSE»1«ENDIF»;
             $roles['is_creator'] = $this->templateParameters['mode'] == 'create'
                 || (method_exists($this->entityRef, 'getCreatedBy') && $this->entityRef->getCreatedBy()->getUid() == $currentUserId);
 
             $groupApplicationArgs = [
                 'user' => $currentUserId,
-                'group' => $this->variableApi->get('«appName»', 'moderationGroupFor' . $this->objectTypeCapital, 2)
+                'group' => $this->variableApi->get('«appName»', 'moderationGroupFor' . $this->objectTypeCapital, «IF targets('1.5')»GroupsConstant::GROUP_ID_ADMIN«ELSE»2«ENDIF»)
             ];
             $roles['is_moderator'] = count($this->groupApplicationRepository->findBy($groupApplicationArgs)) > 0;
 
             if (true === $enterprise) {
                 $groupApplicationArgs = [
                     'user' => $currentUserId,
-                    'group' => $this->variableApi->get('«appName»', 'superModerationGroupFor' . $this->objectTypeCapital, 2)
+                    'group' => $this->variableApi->get('«appName»', 'superModerationGroupFor' . $this->objectTypeCapital, «IF targets('1.5')»GroupsConstant::GROUP_ID_ADMIN«ELSE»2«ENDIF»)
                 ];
                 $roles['is_super_moderator'] = count($this->groupApplicationRepository->findBy($groupApplicationArgs)) > 0;
             }

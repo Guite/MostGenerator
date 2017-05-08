@@ -42,6 +42,9 @@ class NotificationHelper {
         use Zikula\Common\Translator\TranslatorTrait;
         use Zikula\Core\Doctrine\EntityAccess;
         use Zikula\ExtensionsModule\Api\«IF targets('1.5')»ApiInterface\VariableApiInterface«ELSE»VariableApi«ENDIF»;
+        «IF targets('1.5')»
+            use Zikula\GroupsModule\Constant as GroupsConstant;
+        «ENDIF»
         use Zikula\GroupsModule\Entity\RepositoryInterface\GroupRepositoryInterface;
         use Zikula\MailerModule\Api\«IF targets('1.5')»ApiInterface\MailerApiInterface«ELSE»MailerApi«ENDIF»;
         «IF targets('1.5')»
@@ -250,9 +253,9 @@ class NotificationHelper {
                 ];
                 $modVarSuffix = $modVarSuffixes[$this->entity['_objectType']];
 
-                $moderatorGroupId = $this->variableApi->get('«appName»', 'moderationGroupFor' . $modVarSuffix, 2);
+                $moderatorGroupId = $this->variableApi->get('«appName»', 'moderationGroupFor' . $modVarSuffix, «IF targets('1.5')»GroupsConstant::GROUP_ID_ADMIN«ELSE»2«ENDIF»);
                 if ($this->recipientType == 'superModerator') {
-                    $moderatorGroupId = $this->variableApi->get('«appName»', 'superModerationGroupFor' . $modVarSuffix, 2);
+                    $moderatorGroupId = $this->variableApi->get('«appName»', 'superModerationGroupFor' . $modVarSuffix, «IF targets('1.5')»GroupsConstant::GROUP_ID_ADMIN«ELSE»2«ENDIF»);
                 }
 
                 $moderatorGroup = $this->groupRepository->find($moderatorGroupId);
@@ -340,12 +343,10 @@ class NotificationHelper {
                     continue;
                 }
 
-                $templateParameters = [
+                $body = $this->templating->render('@«appName»/' . $template, [
                     'recipient' => $recipient,
                     'mailData' => $mailData
-                ];
-
-                $body = $this->templating->render('@«appName»/' . $template, $templateParameters);
+                ]);
                 $altBody = '';
                 $html = true;
 

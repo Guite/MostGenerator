@@ -68,6 +68,9 @@ class Config {
         use Zikula\Common\Translator\TranslatorInterface;
         use Zikula\Common\Translator\TranslatorTrait;
         «IF hasUserGroupSelectors»
+            «IF targets('1.5')»
+                use Zikula\GroupsModule\Constant as GroupsConstant;
+            «ENDIF»
             use Zikula\GroupsModule\Entity\RepositoryInterface\GroupRepositoryInterface;
         «ENDIF»
 
@@ -108,7 +111,8 @@ class Config {
                     foreach (['«getUserGroupSelectors.map[name.formatForCode].join('\', \'')»'] as $groupFieldName) {
                         $groupId = intval($this->moduleVars[$groupFieldName]);
                         if ($groupId < 1) {
-                            $groupId = 2; // fallback to admin group
+                            // fallback to admin group
+                            $groupId = «IF targets('1.5')»GroupsConstant::GROUP_ID_ADMIN«ELSE»2«ENDIF»;
                         }
                         $this->moduleVars[$groupFieldName] = $groupRepository->find($groupId);
                     }
