@@ -355,7 +355,7 @@ class ViewHelper {
             // instantiate pdf object
             $pdf = new \Dompdf\Dompdf();
             // define page properties
-            $pdf->setPaper('A4');
+            $pdf->setPaper('A4', 'portrait');
             // load html input data
             $pdf->loadHtml($output);
             // create the actual pdf file
