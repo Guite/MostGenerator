@@ -67,41 +67,37 @@ class EditFunctions {
                 }
                 jQuery('#' + fieldName + 'LiveSearch').removeClass('hidden');
 
-                jQuery('#' + fieldName + 'Selector').typeahead({
-                    highlight: true,
-                    hint: true,
-                    minLength: 2
-                }, {
-                    limit: 15,
-                    // The data source to query against. Receives the query value in the input field and the process callbacks.
-                    source: function (query, syncResults, asyncResults) {
-                        // Retrieve data from server using "query" parameter as it contains the search string entered by the user
-                        jQuery('#' + fieldName + 'Indicator').removeClass('hidden');
-                        jQuery.getJSON(Routing.generate('«appName.formatForDB»_ajax_' + getterName.toLowerCase(), { fragment: query }), function( data ) {
-                            jQuery('#' + fieldName + 'Indicator').addClass('hidden');
-                            asyncResults(data);
+                jQuery('#' + fieldName + 'Selector').autocomplete({
+                    minLength: 1,
+                    source: function (request, response) {
+                        jQuery.getJSON(Routing.generate('«appName.formatForDB»_ajax_' + getterName.toLowerCase(), { fragment: request.term }), function(data) {
+                            response(data);
                         });
                     },
-                    templates: {
-                        empty: '<div class="empty-message">' + jQuery('#' + fieldName + 'NoResultsHint').text() + '</div>',
-                        suggestion: function(user) {
-                            var html;
-
-                            html = '<div class="typeahead">';
-                            html += '<div class="media"><a class="pull-left" href="javascript:void(0)">' + user.avatar + '</a>';
-                            html += '<div class="media-body">';
-                            html += '<p class="media-heading">' + user.uname + '</p>';
-                            html += '</div>';
-                            html += '</div>';
-
-                            return html;
+                    response: function(event, ui) {
+                        if (ui.content.length === 0) {
+                            jQuery('#' + fieldName + 'LiveSearch').append('<div class="empty-message">' + Translator.__('No results found!') + '</div>');
+                        } else {
+                            jQuery('#' + fieldName + 'LiveSearch .empty-message').remove();
                         }
+                    },
+                    focus: function(event, ui) {
+                        jQuery('#' + fieldName + 'Selector').val(ui.item.uname);
+
+                        return false;
+                    },
+                    select: function(event, ui) {
+                        jQuery('#' + fieldName).val(ui.item.uid);
+                        jQuery('#' + fieldName + 'Avatar').html(ui.item.avatar);
+
+                        return false;
                     }
-                }).bind('typeahead:select', function(ev, user) {
-                    // Called after the user selects an item. Here we can do something with the selection.
-                    jQuery('#' + fieldName).val(user.uid);
-                    jQuery(this).typeahead('val', user.uname);
-                });
+                })
+                .autocomplete('instance')._renderItem = function(ul, item) {
+                    return jQuery('<div class="suggestion">')
+                        .append('<div class="media"><div class="media-left"><a href="javascript:void(0)">' + item.avatar + '</a></div><div class="media-body"><p class="media-heading">' + item.uname + '</p></div></div>')
+                        .appendTo(ul);
+                };
             }
 
         «ENDIF»
@@ -466,42 +462,17 @@ class EditFunctions {
             var acOptions, acDataSet, itemIds, itemIdsArr, acUrl;
 
             // add handling for the toggle link if existing
-            jQuery('#' + idPrefix + 'AddLink').click( function (e) {
+            jQuery('#' + idPrefix + 'AddLink').click( function (event) {
                 «vendorAndName»ToggleRelatedItemForm(idPrefix);
             });
 
             // add handling for the cancel button
-            jQuery('#' + idPrefix + 'SelectorDoCancel').click( function (e) {
+            jQuery('#' + idPrefix + 'SelectorDoCancel').click( function (event) {
                 «vendorAndName»ResetRelatedItemForm(idPrefix);
             });
 
             // clear values and ensure starting state
             «vendorAndName»ResetRelatedItemForm(idPrefix);
-
-            acOptions = {
-                highlight: true,
-                hint: true,
-                minLength: 2,
-            };
-            acDataSet = {
-                limit: 15,
-                templates: {
-                    empty: '<div class="empty-message">' + jQuery('#' + idPrefix + 'NoResultsHint').text() + '</div>',
-                    suggestion: function(item) {
-                        var html;
-
-                        html = '<div class="typeahead">';
-                        html += '<div class="media"><a class="pull-left" href="javascript:void(0)">' + item.image + '</a>';
-                        html += '<div class="media-body">';
-                        html += '<p class="media-heading">' + item.title + '</p>';
-                        html += item.description;
-                        html += '</div>';
-                        html += '</div>';
-
-                        return html;
-                    }
-                }
-            };
 
             jQuery.each(relationHandler, function (key, singleRelationHandler) {
                 if (singleRelationHandler.prefix !== (idPrefix + 'SelectorDoNew') || null !== singleRelationHandler.acInstance) {
@@ -510,33 +481,46 @@ class EditFunctions {
 
                 singleRelationHandler.acInstance = 'yes';
 
-                // The data source to query against. Receives the query value in the input field and the process callbacks.
-                acDataSet.source = function (query, syncResults, asyncResults) {
-                    var acUrlArgs;
+                jQuery('#' + idPrefix + 'Selector').autocomplete({
+                    minLength: 1,
+                    source: function (request, response) {
+                        var acUrlArgs;
 
-                    acUrlArgs = {
-                        ot: objectType
-                    };
-                    if (jQuery('#' + idPrefix).length > 0) {
-                        acUrlArgs.exclude = jQuery('#' + idPrefix).val();
+                        acUrlArgs = {
+                            ot: objectType,
+                            fragment: request.term
+                        };
+                        if (jQuery('#' + idPrefix).length > 0) {
+                            acUrlArgs.exclude = jQuery('#' + idPrefix).val();
+                        }
+
+                        jQuery.getJSON(Routing.generate(singleRelationHandler.moduleName.toLowerCase() + '_ajax_getitemlistautocompletion', acUrlArgs), function(data) {
+                            response(data);
+                        });
+                    },
+                    response: function(event, ui) {
+                        if (ui.content.length === 0) {
+                            jQuery('#' + idPrefix + 'LiveSearch').append('<div class="empty-message">' + Translator.__('No results found!') + '</div>');
+                        } else {
+                            jQuery('#' + idPrefix + 'LiveSearch .empty-message').remove();
+                        }
+                    },
+                    focus: function(event, ui) {
+                        jQuery('#' + idPrefix + 'Selector').val(ui.item.title);
+
+                        return false;
+                    },
+                    select: function(event, ui) {
+                        «vendorAndName»SelectRelatedItem(objectType, idPrefix, ui.item);
+
+                        return false;
                     }
-                    acUrl = Routing.generate(singleRelationHandler.moduleName.toLowerCase() + '_ajax_getitemlistautocompletion', acUrlArgs);
-
-                    // Retrieve data from server using "query" parameter as it contains the search string entered by the user
-                    jQuery('#' + idPrefix + 'Indicator').removeClass('hidden');
-                    jQuery.getJSON(acUrl, { fragment: query }, function( data ) {
-                        jQuery('#' + idPrefix + 'Indicator').addClass('hidden');
-                        asyncResults(data);
-                    });
+                })
+                .autocomplete('instance')._renderItem = function(ul, item) {
+                    return jQuery('<div class="suggestion">')
+                        .append('<div class="media"><div class="media-left"><a href="javascript:void(0)">' + item.image + '</a></div><div class="media-body"><p class="media-heading">' + item.title + '</p>' + item.description + '</div></div>')
+                        .appendTo(ul);
                 };
-
-                jQuery('#' + idPrefix + 'Selector')
-                    .typeahead(acOptions, acDataSet)
-                    .bind('typeahead:select', function(ev, item) {
-                        // Called after the user selects an item. Here we can do something with the selection.
-                        «vendorAndName»SelectRelatedItem(objectType, idPrefix, item);
-                        jQuery(this).typeahead('val', item.title);
-                    });
 
                 // Ensure that clearing out the selector is properly reflected into the hidden field
                 jQuery('#' + idPrefix + 'Selector').blur(function() {
@@ -601,8 +585,7 @@ class EditFunctions {
                             // activate it
                             selector = window.parent.jQuery('#' + idPrefix.replace('DoNew', '')).first();
                             searchTerm = selector.val();
-                            selector.typeahead('val', '');
-                            selector.focus().typeahead('val', searchTerm).focus();
+                            selector.autocomplete('search', searchTerm);
                         }
                     }
                     // look whether there is a windows instance

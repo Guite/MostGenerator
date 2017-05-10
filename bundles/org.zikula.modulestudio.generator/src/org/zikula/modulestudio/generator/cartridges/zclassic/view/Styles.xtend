@@ -104,6 +104,11 @@ class Styles {
         «ENDIF»
 
         «validationStyles»
+
+        /* hide legends if tabs are used as both contain the same labels */
+        div.«name.formatForDB»-edit .tab-pane legend {
+            display: none;
+        }
         «autoCompletion»
         «viewAdditions»
         «IF hasTrees»
@@ -129,7 +134,7 @@ class Styles {
     '''
 
     def private autoCompletion(Application it) '''
-        «val hasUserFields = hasUserFields»
+        «val hasUserFields = hasUserFields || hasStandardFieldEntities»
         «val hasImageFields = hasImageFields»
         «val joinRelations = getJoinRelations»
         «IF !joinRelations.empty || hasUserFields»
@@ -147,17 +152,21 @@ class Styles {
                 }
 
             «ENDIF»
-            /* hide legends if tabs are used as both contain the same labels */
-            div.«name.formatForDB»-edit .tab-pane legend {
-                display: none;
-            }
-
-            .tt-menu {
+            .ui-autocomplete {
                 max-height: 150px;
                 overflow-y: auto;
+                overflow-x: hidden;
             }
 
-            .tt-menu .tt-suggestion {
+            * html .ui-autocomplete {
+                height: 150px;
+            }
+
+            .ui-autocomplete-loading {
+                background: white url("../../../../../../images/ajax/indicator_arrows.gif") right center no-repeat;
+            }
+
+            .ui-autocomplete .suggestion {
                 margin: 0;
                 padding: 0.2em 0 0.2em 20px;
                 list-style-type: none;
@@ -168,46 +177,37 @@ class Styles {
                 background-repeat: no-repeat;
                 background-color: #fff;
             }
-            .tt-menu .empty-message {
-                background-color: #fff;
-            }
 
-            div.«cssPrefix»-autocomplete .tt-menu .tt-suggestion {
+            div.«cssPrefix»-autocomplete .ui-autocomplete .suggestion {
                 background-image: url("../../../../../../images/icons/extrasmall/tab_right.png");
             }
             «IF hasUserFields»
-                div.«cssPrefix»-autocomplete-user .tt-menu .tt-suggestion {
+                div.«cssPrefix»-autocomplete-user .ui-autocomplete .suggestion {
                     background-image: url("../../../../../../images/icons/extrasmall/user.png");
                 }
             «ENDIF»
             «IF hasImageFields»
-                div.«cssPrefix»-autocomplete-with-image .tt-menu .tt-suggestion {
+                div.«cssPrefix»-autocomplete-with-image .ui-autocomplete .suggestion {
                     background-image: url("../../../../../../images/icons/extrasmall/agt_Multimedia.png");
                 }
             «ENDIF»
-            .tt-menu .tt-suggestion img {
+            .ui-autocomplete .suggestion img {
                 max-width: 20px;
                 max-height: 20px;
             }
 
-            .tt-menu .tt-suggestion.tt-cursor {
+            .ui-autocomplete .suggestion .ui-state-active {
                 background-color: #ffb;
             }
 
-            .tt-menu .empty-message {
-                padding: 5px 10px;
-                text-align: center;
-            }
-
-            .tt-menu .tt-suggestion .media-body {
+            .ui-autocomplete .suggestion .media-body {
                 font-size: 10px;
                 color: #888;
             }
-            .tt-menu .tt-suggestion .media-body .media-heading {
+            .ui-autocomplete .suggestion .media-body .media-heading {
                 font-size: 12px;
                 line-height: 1.2em;
             }
-
         «ENDIF»
     '''
 

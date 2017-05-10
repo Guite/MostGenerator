@@ -107,7 +107,7 @@ class AutoCompletionRelationType {
                         'unique_name_for_js' => '',
                         'allow_editing' => false,
                         'attr' => [
-                            'class' => 'relation-selector typeahead'
+                            'class' => 'relation-selector'
                         ]
                     ])
                     ->setRequired(['object_type', 'unique_name_for_js'])

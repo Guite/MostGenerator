@@ -126,7 +126,7 @@ class ViewExtensions {
      * Returns whether jQuery UI is needed or not.
      */
     def needsJQueryUI(Application it) {
-        hasUserFields
+        hasUserFields || hasStandardFieldEntities
         || (hasSortable && hasViewActions)
         || (!relations.empty && (hasViewActions || hasDisplayActions || hasEditActions))
     }

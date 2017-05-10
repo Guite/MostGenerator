@@ -396,9 +396,6 @@ class DisplayFunctions {
                 },
                 stop: function(event, ui) {
                     ui.item.removeClass('active-item-shadow');
-
-                    //ui.item.children('td').effect('highlight', {}, 1000);
-
                     «vendorAndName»InitFixedColumns();
                 },
                 update: function(event, ui) {

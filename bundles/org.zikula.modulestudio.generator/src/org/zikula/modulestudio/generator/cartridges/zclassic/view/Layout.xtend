@@ -66,14 +66,13 @@ class Layout {
         {% block header %}
             «IF needsJQueryUI»
                 {{ pageAddAsset('stylesheet', asset('jquery-ui/themes/base/jquery-ui.min.css')) }}
+                {{ pageAddAsset('stylesheet', asset('bootstrap-jqueryui/bootstrap-jqueryui.min.css')) }}
+                {{ pageAddAsset('javascript', asset('jquery-ui/jquery-ui.min.js')) }}
+                {{ pageAddAsset('javascript', asset('bootstrap-jqueryui/bootstrap-jqueryui.min.js')) }}
             «ENDIF»
             «IF hasImageFields»
                 {{ pageAddAsset('javascript', asset('magnific-popup/jquery.magnific-popup.min.js')) }}
                 {{ pageAddAsset('stylesheet', asset('magnific-popup/magnific-popup.css')) }}
-            «ENDIF»
-            «IF needsJQueryUI»
-                {{ pageAddAsset('stylesheet', asset('bootstrap-jqueryui/bootstrap-jqueryui.min.css')) }}
-                {{ pageAddAsset('javascript', asset('bootstrap-jqueryui/bootstrap-jqueryui.min.js')) }}
             «ENDIF»
             {{ pageAddAsset('javascript', zasset('@«appName»:js/«appName».js')) }}
             «IF hasGeographical»
@@ -209,18 +208,18 @@ class Layout {
         «IF needsUserAutoCompletion»
 
             {% block «appName.formatForDB»_field_user_widget %}
-                <div id="{{ id }}LiveSearch" class="«appName.toLowerCase»-livesearch-user «appName.toLowerCase»-autocomplete-user hidden">
+                <div id="{{ id }}LiveSearch" class="«appName.toLowerCase»-autocomplete-user hidden">
                     <i class="fa fa-search" title="{{ __('Search user') }}"></i>
                     <noscript><p>{{ __('This function requires JavaScript activated!') }}</p></noscript>
                     <input type="hidden" {{ block('widget_attributes') }} value="{{ value }}" />
-                    <input type="text" id="{{ id }}Selector" name="{{ id }}Selector" autocomplete="off" value="{{ user_name|e('html_attr') }}" title="{{ __('Enter a part of the user name to search') }}" class="user-selector typeahead" />
-                    <i class="fa fa-refresh fa-spin hidden" id="{{ id }}Indicator"></i>
-                    <span id="{{ id }}NoResultsHint" class="hidden">{{ __('No results found!') }}</span>
+                    <input type="text" id="{{ id }}Selector" name="{{ id }}Selector" autocomplete="off" value="{{ user_name|e('html_attr') }}" title="{{ __('Enter a part of the user name to search') }}" class="user-selector" />
                 </div>
-                {% if value and not inline_usage %}
-                    <span class="help-block avatar">
+                <span id="{{ id }}Avatar" class="help-block avatar">
+                    {% if value and not inline_usage %}
                         {{ «appName.formatForDB»_userAvatar(uid=value, rating='g') }}
-                    </span>
+                    {% endif %}
+                </span>
+                {% if value and not inline_usage %}
                     {% if hasPermission('ZikulaUsersModule::', '::', 'ACCESS_ADMIN') %}
                         <span class="help-block"><a href="{{ path('zikulausersmodule_useradministration_modify', { 'user': value }) }}" title="{{ __('Switch to users administration') }}">{{ __('Manage user') }}</a></span>
                     {% endif %}
@@ -243,7 +242,7 @@ class Layout {
                 {% set idPrefix = unique_name_for_js %}
                 {% set addLinkText = multiple ? __f('Add %name%', { '%name%': entityNameTranslated }) : __f('Select %name%', { '%name%': entityNameTranslated }) %}
 
-                <div class="«appName.toLowerCase»-relation-rightside">
+                <div id="{{ idPrefix }}LiveSearch" class="«appName.toLowerCase»-relation-rightside">
                     <a id="{{ idPrefix }}AddLink" href="javascript:void(0);" class="hidden">{{ addLinkText }}</a>
                     <div id="{{ idPrefix }}AddFields" class="«appName.toLowerCase»-autocomplete{{ withImage ? '-with-image' : '' }}">
                         <label for="{{ idPrefix }}Selector">{{ __f('Find %name%', { '%name%': entityNameTranslated }) }}</label>
@@ -252,8 +251,6 @@ class Layout {
                         <input type="hidden" id="{{ idPrefix }}" {{ block('widget_attributes') }} value="{{ value }}" />
                         <input type="hidden" name="{{ idPrefix }}Scope" id="{{ idPrefix }}Scope" value="{{ multiple ? '1' : '0' }}" />
                         <input type="text" id="{{ idPrefix }}Selector" name="{{ idPrefix }}Selector" autocomplete="off" />
-                        <i class="fa fa-refresh fa-spin hidden" id="{{ idPrefix }}Indicator"></i>
-                        <span id="{{ idPrefix }}NoResultsHint" class="hidden">{{ __('No results found!') }}</span>
                         <input type="button" id="{{ idPrefix }}SelectorDoCancel" name="{{ idPrefix }}SelectorDoCancel" value="{{ __('Cancel') }}" class="btn btn-default «appName.toLowerCase»-inline-button" />
                         {% if create_url != '' %}
                             <a id="{{ idPrefix }}SelectorDoNew" href="{{ create_url }}" title="{{ __f('Create new %name%', { '%name%': entityNameTranslated }) }}" class="btn btn-default rkbulletinnewsmodule-inline-button">{{ __('Create') }}</a>
@@ -284,7 +281,15 @@ class Layout {
             <title>{{ block('pageTitle')|default(block('title')) }}</title>
             <link rel="stylesheet" type="text/css" href="{{ asset('bootstrap/css/bootstrap.min.css') }}" />
             <link rel="stylesheet" type="text/css" href="{{ asset('bootstrap/css/bootstrap-theme.min.css') }}" />
-            <link rel="stylesheet" type="text/css" href="{{ app.request.basePath }}/style/core.css" />
+            «IF needsJQueryUI»
+                <link rel="stylesheet" type="text/css" href="{{ asset('jquery-ui/themes/base/jquery-ui.min.css') }}" />
+                <link rel="stylesheet" type="text/css" href="{{ asset('bootstrap-jqueryui/bootstrap-jqueryui.min.css') }}" />
+            «ENDIF»
+            «IF targets('1.5')»
+                <link rel="stylesheet" type="text/css" href="{{ asset('bundles/core/css/core.css') }}" />
+            «ELSE»
+                <link rel="stylesheet" type="text/css" href="{{ app.request.basePath }}/style/core.css" />
+            «ENDIF»
             <link rel="stylesheet" type="text/css" href="{{ zasset('@«appName»:css/style.css') }}" />
             «IF generateExternalControllerAndFinder»
                 {% if useFinder|default == true %}
@@ -307,6 +312,10 @@ class Layout {
             </script>
             <script type="text/javascript" src="{{ asset('jquery/jquery.min.js') }}"></script>
             <script type="text/javascript" src="{{ asset('bootstrap/js/bootstrap.min.js') }}"></script>
+            «IF needsJQueryUI»
+                <script type="text/javascript" src="{{ asset('jquery-ui/jquery-ui.min.js') }}"></script>
+                <script type="text/javascript" src="{{ asset('bootstrap-jqueryui/bootstrap-jqueryui.min.js') }}"></script>
+            «ENDIF»
             <script type="text/javascript" src="{{ asset('bundles/fosjsrouting/js/router.js') }}"></script>
             <script type="text/javascript" src="{{ asset('js/fos_js_routes.js') }}"></script>
             <script type="text/javascript" src="{{ asset('bundles/bazingajstranslation/js/translator.min.js') }}"></script>
@@ -365,7 +374,6 @@ class Layout {
                     {% if 'edit' in app.request.get('_route') %}
                         {{ pageAddAsset('javascript', zasset('@«appName»:js/«appName».Validation.js'), 98) }}
                         {{ pageAddAsset('javascript', zasset('@«appName»:js/«appName».EditFunctions.js'), 99) }}
-                        {{ pageAddAsset('javascript', asset('typeahead/typeahead.bundle.min.js')) }}
                     {% endif %}
                 «ENDIF»
                 {% if «IF hasEditActions»'edit' in app.request.get('_route')«IF needsConfig» or «ENDIF»«ENDIF»«IF needsConfig»'config' in app.request.get('_route')«ENDIF» %}
