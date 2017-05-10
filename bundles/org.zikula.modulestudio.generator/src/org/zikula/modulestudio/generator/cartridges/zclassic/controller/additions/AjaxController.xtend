@@ -82,6 +82,10 @@ class AjaxController {
         
             «handleTreeOperationBase»
         «ENDIF»
+        «IF hasSortable»
+
+            «updateSortPositionsBase»
+        «ENDIF»
     '''
 
     def private userSelectorsBase(Application it) '''
@@ -945,6 +949,78 @@ class AjaxController {
         //});
     '''
 
+    def private updateSortPositionsBase(Application it) '''
+        «updateSortPositionsDocBlock(true)»
+        «updateSortPositionsSignature»
+        {
+            «updateSortPositionsBaseImpl»
+        }
+    '''
+
+    def private updateSortPositionsDocBlock(Application it, Boolean isBase) '''
+        /**
+         * Updates the sort positions for a given list of entities.
+         «IF !isBase»
+         *
+         * @Route("/updateSortPositions", options={"expose"=true})
+         * @Method("POST")
+         «ENDIF»
+         *
+         * @param Request $request Current request instance
+         *
+         * @return JsonResponse
+         *
+         * @throws AccessDeniedException Thrown if the user doesn't have required permissions
+         */
+    '''
+
+    def private updateSortPositionsSignature(Application it) '''
+        public function updateSortPositionsAction(Request $request)
+    '''
+
+    def private updateSortPositionsBaseImpl(Application it) '''
+        if (!$this->hasPermission('«appName»::Ajax', '::', ACCESS_EDIT)) {
+            throw new AccessDeniedException();
+        }
+
+        $objectType = $request->request->getAlnum('ot', '«getLeadingEntity.name.formatForCode»');
+        $itemIds = $request->request->get('identifiers', []);
+        $min = $request->request->getInt('min', 0);
+        $max = $request->request->getInt('max', 0);
+
+        if (!is_array($itemIds) || count($itemIds) < 2 || $max < 1 || $max <= $min) {
+            return «IF targets('2.0')»$this->json«ELSE»new JsonResponse«ENDIF»($this->__('Error: invalid input.'), JsonResponse::HTTP_BAD_REQUEST);
+        }
+
+        $entityFactory = $this->get('«appService».entity_factory');
+        $workflowHelper = $this->get('«appService».workflow_helper');
+        $repository = $entityFactory->getRepository($objectType);
+        $sortableFieldMap = [
+            «FOR entity : getAllEntities.filter[hasSortableFields]»
+                '«entity.name.formatForCode»' => '«entity.getSortableFields.head.name.formatForCode»'«IF entity != getAllEntities.filter[hasSortableFields].last»,«ENDIF»
+            «ENDFOR»
+        ];
+
+        $sortFieldSetter = 'set' . ucfirst($sortableFieldMap[$objectType]);
+        $sortCounter = $min;
+        foreach ($itemIds as $itemId) {
+            if (empty($itemId) || !is_numeric($itemId)) {
+                continue;
+            }
+            $entity = $repository->selectById($itemId);
+            $entity->$sortFieldSetter($sortCounter);
+            $sortCounter++;
+        }
+
+        // save entities back to database
+        $entityFactory->getObjectManager()->flush();
+
+        // return response
+        return «IF targets('2.0')»$this->json«ELSE»new JsonResponse«ENDIF»([
+            'message' => $this->__('The setting has been successfully changed.')
+        ]);
+    '''
+
 
 
     def additionalAjaxFunctions(Application it) '''
@@ -968,6 +1044,10 @@ class AjaxController {
         «IF hasTrees»
 
             «handleTreeOperationImpl»
+        «ENDIF»
+        «IF hasSortable»
+
+            «updateSortPositionsImpl»
         «ENDIF»
     '''
 
@@ -1039,6 +1119,14 @@ class AjaxController {
         «handleTreeOperationSignature»
         {
             return parent::handleTreeOperationAction($request);
+        }
+    '''
+
+    def private updateSortPositionsImpl(Application it) '''
+        «updateSortPositionsDocBlock(false)»
+        «updateSortPositionsSignature»
+        {
+            return parent::updateSortPositionsAction($request);
         }
     '''
 

@@ -13,6 +13,7 @@ import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
+import org.zikula.modulestudio.generator.extensions.ViewExtensions
 import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
 
 class Layout {
@@ -25,6 +26,7 @@ class Layout {
     extension ModelExtensions = new ModelExtensions
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
+    extension ViewExtensions = new ViewExtensions
     extension WorkflowExtensions = new WorkflowExtensions
 
     IFileSystemAccess fsa
@@ -62,14 +64,14 @@ class Layout {
     def baseTemplate(Application it) '''
         {# purpose of this template: general base layout #}
         {% block header %}
-            «IF !relations.empty && (hasViewActions || hasDisplayActions || hasEditActions)»
+            «IF needsJQueryUI»
                 {{ pageAddAsset('stylesheet', asset('jquery-ui/themes/base/jquery-ui.min.css')) }}
             «ENDIF»
             «IF hasImageFields»
                 {{ pageAddAsset('javascript', asset('magnific-popup/jquery.magnific-popup.min.js')) }}
                 {{ pageAddAsset('stylesheet', asset('magnific-popup/magnific-popup.css')) }}
             «ENDIF»
-            «IF !relations.empty && (hasViewActions || hasDisplayActions || hasEditActions)»
+            «IF needsJQueryUI»
                 {{ pageAddAsset('stylesheet', asset('bootstrap-jqueryui/bootstrap-jqueryui.min.css')) }}
                 {{ pageAddAsset('javascript', asset('bootstrap-jqueryui/bootstrap-jqueryui.min.js')) }}
             «ENDIF»

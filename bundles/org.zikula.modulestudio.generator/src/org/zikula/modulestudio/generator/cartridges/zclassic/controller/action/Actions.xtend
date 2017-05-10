@@ -118,7 +118,6 @@ class Actions {
         «ENDIF»
 
         «initSortableColumns»
-        $sortableColumns->setOrderBy($sortableColumns->getColumn($sort), strtoupper($sortdir));
 
         $templateParameters = $controllerHelper->processViewActionParameters($objectType, $sortableColumns, $templateParameters«IF app.hasHookSubscribers», «(!skipHookSubscribers).displayBool»«ENDIF»);
 

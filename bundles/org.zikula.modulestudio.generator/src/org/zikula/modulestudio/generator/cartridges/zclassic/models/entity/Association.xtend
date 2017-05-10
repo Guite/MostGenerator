@@ -174,6 +174,9 @@ class Association {
                 «' '»* @Assert\NotNull(message="Choosing at least one of the «aliasName.formatForDisplay» is required.")
             «ENDIF»
         «ENDIF»
+        «IF it instanceof ManyToOneRelationship && (it as ManyToOneRelationship).sortableGroup»
+            «' '»* @Gedmo\SortableGroup
+        «ENDIF»
         «IF !isManySide(true)»
             «' '»* @Assert\Type(type="«/*\*/»«entityClass»")«/* disabled due to problems with upload fields
             «' '»* @Assert\Valid()*/»

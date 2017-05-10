@@ -120,9 +120,8 @@ class CollectionFilterHelper {
                     CategoryHelper $categoryHelper,
                 «ENDIF»
                 $showOnlyOwnEntries«IF supportLocaleFilter»,
-                $filterDataByLocale
-                «ENDIF»)
-            {
+                $filterDataByLocale«ENDIF»
+            ) {
                 $this->request = $requestStack->getCurrentRequest();
                 «IF hasStandardFieldEntities»
                     $this->currentUserApi = $currentUserApi;

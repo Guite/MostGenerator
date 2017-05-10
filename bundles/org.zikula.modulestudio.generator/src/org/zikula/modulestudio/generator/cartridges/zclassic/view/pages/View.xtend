@@ -188,13 +188,21 @@ class View {
         «IF listType != LIST_TYPE_TABLE»
             <«listType.asListTag»>
         «ELSE»
+            «IF hasSortableFields»
+                {% set activateSortable = routeArea == 'admin' and sort.«getSortableFields.head.name.formatForCode».class == 'z-order-asc' %}
+            «ENDIF»
             <div class="table-responsive">
-            <table class="table table-striped table-bordered table-hover«IF (listItemsFields.size + listItemsIn.size + listItemsOut.size + 1) > 7» table-condensed«ELSE»{% if routeArea == 'admin' %} table-condensed{% endif %}«ENDIF»">
+            <table«IF hasSortableFields»{% if activateSortable and items|length > 1 %} id="sortableTable" data-object-type="«name.formatForCode»" data-min="{{ items|first.«getSortableFields.head.name.formatForCode» }}" data-max="{{ items|last.«getSortableFields.head.name.formatForCode» }}"{% endif %}«ENDIF» class="table table-striped table-bordered table-hover«IF (listItemsFields.size + listItemsIn.size + listItemsOut.size + 1) > 7» table-condensed«ELSE»{% if routeArea == 'admin' %} table-condensed{% endif %}«ENDIF»">
                 <colgroup>
                     {% if routeArea == 'admin' %}
                         <col id="cSelect" />
                     {% endif %}
                     <col id="cItemActions" />
+                    «IF hasSortableFields»
+                        {% if activateSortable %}
+                            <col id="cSortable" />
+                        {% endif %}
+                    «ENDIF»
                     «FOR field : listItemsFields»«field.columnDef»«ENDFOR»
                     «FOR relation : listItemsIn»«relation.columnDef(false)»«ENDFOR»
                     «FOR relation : listItemsOut»«relation.columnDef(true)»«ENDFOR»
@@ -207,6 +215,11 @@ class View {
                         </th>
                     {% endif %}
                     <th id="hItemActions" scope="col" class="{% if items|length > 0 %}fixed-column {% endif %}z-order-unsorted z-w02">{{ __('Actions') }}</th>
+                    «IF hasSortableFields»
+                        {% if activateSortable %}
+                            <th id="hSortable" scope="col" class="z-order-unsorted z-w02">{{ __('Sorting') }}</th>
+                        {% endif %}
+                    «ENDIF»
                     «FOR field : listItemsFields»«field.headerLine»«ENDFOR»
                     «FOR relation : listItemsIn»«relation.headerLine(false)»«ENDFOR»
                     «FOR relation : listItemsOut»«relation.headerLine(true)»«ENDFOR»
@@ -223,7 +236,7 @@ class View {
             «ELSEIF listType == LIST_TYPE_DL»
                 <dt>
             «ELSEIF listType == LIST_TYPE_TABLE»
-                <tr>
+                <tr«IF hasSortableFields»{% if activateSortable %} data-item-id="{{ «name.formatForCode».getKey() }}" class="sort-item"{% endif %}«ENDIF»>
                     {% if routeArea == 'admin' %}
                         <td headers="hSelect" class="fixed-column text-center z-w02">
                             <input type="checkbox" name="items[]" value="{{ «name.formatForCode».getKey() }}" class="«application.vendorAndName.toLowerCase»-toggle-checkbox" />
@@ -231,6 +244,13 @@ class View {
                     {% endif %}
             «ENDIF»
                 «itemActions(appName)»
+                «IF hasSortableFields»
+                    {% if activateSortable %}
+                        <td headers="hSortable" class="text-center z-w02">
+                            <i class="fa fa-arrows sort-handle pointer" title="{{ __('Drag to reorder') }}"></i>
+                        </td>
+                    {% endif %}
+                «ENDIF»
                 «FOR field : listItemsFields»«IF field.name == 'workflowState'»{% if routeArea == 'admin' %}«ENDIF»«field.displayEntry(false)»«IF field.name == 'workflowState'»{% endif %}«ENDIF»«ENDFOR»
                 «FOR relation : listItemsIn»«relation.displayEntry(false)»«ENDFOR»
                 «FOR relation : listItemsOut»«relation.displayEntry(true)»«ENDFOR»

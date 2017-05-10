@@ -60,6 +60,11 @@ class Styles {
                 border-right: 1px solid #ddd;
                 background-color: #fff;
             }
+            «IF hasSortable»
+                .ui-state-highlight {
+                    height: 40px;
+                }
+            «ENDIF»
 
         «ENDIF»
         «IF hasDisplayActions»

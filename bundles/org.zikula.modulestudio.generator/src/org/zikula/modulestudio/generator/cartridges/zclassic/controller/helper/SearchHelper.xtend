@@ -155,8 +155,7 @@ class SearchHelper {
             ControllerHelper $controllerHelper,
             EntityDisplayHelper $entityDisplayHelper«IF hasCategorisableEntities»,
             FeatureActivationHelper $featureActivationHelper,
-            CategoryHelper $categoryHelper
-            «ENDIF»
+            CategoryHelper $categoryHelper«ENDIF»
         ) {
             $this->setTranslator($translator);
             $this->permissionApi = $permissionApi;

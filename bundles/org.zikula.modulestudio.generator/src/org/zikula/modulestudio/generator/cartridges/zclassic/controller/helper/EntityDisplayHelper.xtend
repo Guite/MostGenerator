@@ -103,8 +103,8 @@ class EntityDisplayHelper {
             public function __construct(
                 TranslatorInterface $translator«IF hasAbstractDateFields || hasDecimalOrFloatNumberFields»,
                 RequestStack $requestStack«ENDIF»«IF hasListFields»,
-                ListEntriesHelper $listEntriesHelper«ENDIF»)
-            {
+                ListEntriesHelper $listEntriesHelper«ENDIF»
+            ) {
                 $this->translator = $translator;
                 «IF hasListFields»
                     $this->listEntriesHelper = $listEntriesHelper;

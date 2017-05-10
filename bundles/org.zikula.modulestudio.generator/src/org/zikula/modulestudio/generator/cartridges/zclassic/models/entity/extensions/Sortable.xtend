@@ -16,7 +16,8 @@ class Sortable extends AbstractExtension implements EntityExtensionInterface {
      * Additional field annotations.
      */
     override columnAnnotations(DerivedField it) '''
-        «IF sortableGroup» * @Gedmo\SortableGroup
+        «IF sortableGroup»
+            «' '»* @Gedmo\SortableGroup
         «ENDIF»
         «IF it instanceof AbstractIntegerField && (it as AbstractIntegerField).sortablePosition»
             «' '»* @Gedmo\SortablePosition

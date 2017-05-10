@@ -73,6 +73,10 @@ class DisplayFunctions {
 
             «initImageViewer»
         «ENDIF»
+        «IF hasSortable && hasViewActions»
+
+            «initSortable»
+        «ENDIF»
 
         «onLoad»
     '''
@@ -219,7 +223,7 @@ class DisplayFunctions {
                 originalTable = jQuery(this);
                 fixedTableWidth = 0;
                 if (originalTable.find('.fixed-column').length > 0) {
-                    fixedColumnsTable = originalTable.clone().insertBefore(originalTable).addClass('fixed-columns');
+                    fixedColumnsTable = originalTable.clone().insertBefore(originalTable).addClass('fixed-columns').removeAttr('id');
                     originalTable.find('.dropdown').addClass('hidden');
                     fixedColumnsTable.find('.dropdown').removeClass('hidden');
                     fixedColumnsTable.css('left', originalTable.parent().position().left);
@@ -371,6 +375,54 @@ class DisplayFunctions {
         }
     '''
 
+    def private initSortable(Application it) '''
+        /**
+         * Initialises reordering view entries using drag n drop.
+         */
+        function «vendorAndName»InitSortable()
+        {
+            if (jQuery('#sortableTable').length < 1) {
+                return;
+            }
+
+            jQuery('#sortableTable > tbody').sortable({
+                cursor: 'move',
+                handle: '.sort-handle',
+                items: '.sort-item',
+                placeholder: 'ui-state-highlight',
+                tolerance: 'pointer',
+                sort: function(event, ui) {
+                    ui.item.addClass('active-item-shadow');
+                },
+                stop: function(event, ui) {
+                    ui.item.removeClass('active-item-shadow');
+
+                    //ui.item.children('td').effect('highlight', {}, 1000);
+
+                    «vendorAndName»InitFixedColumns();
+                },
+                update: function(event, ui) {
+                    jQuery.ajax({
+                        method: 'POST',
+                        url: Routing.generate('«appName.formatForDB»_ajax_updatesortpositions'),
+                        data: {
+                            ot: jQuery('#sortableTable').data('object-type'),
+                            identifiers: jQuery(this).sortable('toArray', { attribute: 'data-item-id' }),
+                            min: jQuery('#sortableTable').data('min'),
+                            max: jQuery('#sortableTable').data('max')
+                        }/*,
+                        success: function(data) {
+                            if (data.message) {
+                                «vendorAndName»SimpleAlert(jQuery('#sortableTable'), Translator.__('Success'), data.message, 'sortingDoneAlert', 'success');
+                            }
+                    	}*/
+                    });
+                }
+            });
+            jQuery('#sortableTable').disableSelection();
+        }
+    '''
+
     def private onLoad(Application it) '''
         jQuery(document).ready(function() {
             var isViewPage;
@@ -392,6 +444,9 @@ class DisplayFunctions {
                 «vendorAndName»InitItemActions('view');
                 «IF hasBooleansWithAjaxToggleInView»
                     «vendorAndName»InitAjaxToggles();
+                «ENDIF»
+                «IF hasSortable»
+                    «vendorAndName»InitSortable();
                 «ENDIF»
             } else if (isDisplayPage) {
                 «vendorAndName»InitItemActions('display');

@@ -108,8 +108,8 @@ class ArchiveHelper {
                 PermissionApi«IF targets('1.5')»Interface«ENDIF» $permissionApi,
                 EntityFactory $entityFactory,
                 WorkflowHelper $workflowHelper«IF hasHookSubscribers»,
-                HookHelper $hookHelper«ENDIF»)
-            {
+                HookHelper $hookHelper«ENDIF»
+            ) {
                 $this->translator = $translator;
                 $this->request = $requestStack->getCurrentRequest();
                 $this->logger = $logger;
