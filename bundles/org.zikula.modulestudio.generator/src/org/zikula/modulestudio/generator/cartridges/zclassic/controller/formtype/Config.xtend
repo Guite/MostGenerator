@@ -4,7 +4,6 @@ import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.BoolVar
 import de.guite.modulestudio.metamodel.IntVar
 import de.guite.modulestudio.metamodel.ListVar
-import de.guite.modulestudio.metamodel.ListVarItem
 import de.guite.modulestudio.metamodel.TextVar
 import de.guite.modulestudio.metamodel.Variable
 import de.guite.modulestudio.metamodel.Variables
@@ -199,7 +198,7 @@ class Config {
                 ],
                 'help' => $this->__('«documentation.replace("'", '"')»'),
             «ENDIF»
-            «IF !(it instanceof IntVar && (it as IntVar).isUserGroupSelector)»
+            «IF !(it instanceof IntVar && (it as IntVar).isUserGroupSelector) && !(it instanceof ListVar)»
                 'required' => false,
             «ENDIF»
             «IF it instanceof IntVar && !(it as IntVar).isUserGroupSelector»
@@ -315,14 +314,12 @@ class Config {
     def private dispatch additionalAttributes(ListVar it) ''''''
     def private dispatch additionalOptions(ListVar it) '''
         'choices' => [
-            «FOR item : items»«item.itemDefinition»«IF item != items.last»,«ENDIF»«ENDFOR»
+            «FOR item : items»
+                $this->__('«item.name.formatForDisplayCapital»') => '«item.name.formatForCode»'«IF item != items.last»,«ENDIF»
+            «ENDFOR»
         ],
         'choices_as_values' => true,
         'multiple' => «multiple.displayBool»
-    '''
-
-    def private itemDefinition(ListVarItem it) '''
-        $this->__('«name.formatForDisplayCapital»') => '«name.formatForCode»'
     '''
 
     def private configTypeImpl(Application it) '''
