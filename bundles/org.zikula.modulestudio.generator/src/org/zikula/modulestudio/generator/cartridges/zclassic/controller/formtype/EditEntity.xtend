@@ -837,6 +837,8 @@ class EditEntity {
 
         if (true === fixed) {
             messages += '''$this->__f('Note: this value must have a length of %amount% characters.', ['%amount%' => «length»])'''
+        } else {
+            messages += '''$this->__f('Note: this value must not exceed %amount% characters.', ['%amount%' => «length»])'''
         }
         if (minLength > 0) {
             messages += '''$this->__f('Note: this value must have a minimum length of %amount% characters.', ['%amount%' => «minLength»])'''
