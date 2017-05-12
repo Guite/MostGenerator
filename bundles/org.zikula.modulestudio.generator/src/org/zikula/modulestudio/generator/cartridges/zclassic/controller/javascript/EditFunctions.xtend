@@ -36,8 +36,10 @@ class EditFunctions {
     def private generate(Application it) '''
         'use strict';
 
-        «initUserField»
+        «IF hasUserFields»
+            «initUserField»
 
+        «ENDIF»
         «IF hasUploads»
             «resetUploadField»
 
@@ -45,8 +47,6 @@ class EditFunctions {
 
         «ENDIF»
         «IF !entities.filter[!getDerivedFields.filter(AbstractDateField).empty].empty»
-            «resetDateField»
-
             «initDateField»
 
         «ENDIF»
@@ -62,6 +62,12 @@ class EditFunctions {
              */
             function «vendorAndName»InitUserField(fieldName, getterName)
             {
+                jQuery('#' + fieldName + 'ResetVal').click( function (event) {
+                    event.preventDefault();
+                    jQuery('#' + fieldName).val('');
+                    jQuery('#' + fieldName + 'Selector').val('');
+                }).removeClass('hidden');
+
                 if (jQuery('#' + fieldName + 'LiveSearch').length < 1) {
                     return;
                 }
@@ -127,17 +133,6 @@ class EditFunctions {
         }
     '''
 
-    def private resetDateField(Application it) '''
-        /**
-         * Resets the value of a date or datetime input field.
-         */
-        function «vendorAndName»ResetDateField(fieldName)
-        {
-            jQuery('#' + fieldName).val('');
-            jQuery('#' + fieldName + 'cal').html(Translator.__('No date set.'));
-        }
-    '''
-
     def private initDateField(Application it) '''
         /**
          * Initialises the reset button for a certain date input.
@@ -146,7 +141,7 @@ class EditFunctions {
         {
             jQuery('#' + fieldName + 'ResetVal').click( function (event) {
                 event.preventDefault();
-                «vendorAndName»ResetDateField(fieldName);
+                jQuery('#' + fieldName).val('');
             }).removeClass('hidden');
         }
     '''
