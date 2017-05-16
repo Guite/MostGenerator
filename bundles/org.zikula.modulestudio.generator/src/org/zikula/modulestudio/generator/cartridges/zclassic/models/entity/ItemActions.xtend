@@ -125,7 +125,7 @@ class ItemActions {
 
                 $relatedComponent = '«app.appName»:«otherEntity.name.formatForCodeCapital»:';
                 $relatedInstance = $entity->getKey() . '::';
-                if ($isOwner || $permissionApi->hasPermission($relatedComponent, $relatedInstance, ACCESS_«IF (otherEntity as Entity).ownerPermission»ADD«ELSEIF (otherEntity as Entity).workflow == EntityWorkflowType.NONE»EDIT«ELSE»COMMENT«ENDIF»)) {
+                if («IF standardFields»$isOwner || «ENDIF»$permissionApi->hasPermission($relatedComponent, $relatedInstance, ACCESS_«IF (otherEntity as Entity).ownerPermission»ADD«ELSEIF (otherEntity as Entity).workflow == EntityWorkflowType.NONE»EDIT«ELSE»COMMENT«ENDIF»)) {
                     «val many = elem.isManySideDisplay(useTarget)»
                     «IF !many»
                         if (!isset($entity->«relationAliasName») || null === $entity->«relationAliasName») {
