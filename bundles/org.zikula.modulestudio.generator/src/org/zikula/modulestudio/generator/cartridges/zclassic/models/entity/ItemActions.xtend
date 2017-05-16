@@ -10,7 +10,6 @@ import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
-import org.zikula.modulestudio.generator.extensions.UrlExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class ItemActions {
@@ -20,7 +19,6 @@ class ItemActions {
     extension ModelExtensions = new ModelExtensions
     extension ModelJoinExtensions = new ModelJoinExtensions
     extension NamingExtensions = new NamingExtensions
-    extension UrlExtensions = new UrlExtensions
     extension Utils = new Utils
 
     def itemActionsImpl(Application app) '''
@@ -162,7 +160,7 @@ class ItemActions {
         «IF tree == EntityTreeType.NONE»
             $menu->addChild($this->__('Reuse'), [
                 'route' => $routePrefix . $routeArea . 'edit',
-                'routeParameters' => [«routeParams('entity', false, 'astemplate')»]
+                'routeParameters' => ['astemplate' => $entity->getKey()]
             ])->setAttribute('icon', 'fa fa-files-o');
             $menu[$this->__('Reuse')]->setLinkAttribute('title', $this->__('Reuse for new «name.formatForDisplay»'));
         «ENDIF»
