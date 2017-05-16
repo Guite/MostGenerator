@@ -588,18 +588,15 @@ class FormHandler {
                     if (empty($this->idValue)) {
                         $this->idValue = $this->request->query->get($this->idField, '');
                     }
-                } else {
-                    if (array_key_exists($this->idField, $routeParams)) {
-                        $this->idValue = (int) !empty($routeParams[$this->idField]) ? $routeParams[$this->idField] : 0;
-                    }
-                    if (empty($this->idValue)) {
-                        $this->idValue = $this->request->query->getInt($this->idField, 0);
-                    }
-                    if (0 === $this->idValue && $this->idField != 'id') {
-                        $this->idValue = $this->request->query->getInt('id', 0);
-                    }
                 }
-            «ELSE»
+            «ENDIF»
+            if (empty($this->idValue)) {
+                «IF getAllEntities.exists[hasSluggableFields && slugUnique]»
+                    if ($this->idField == 'slug') {
+                        $this->idField = 'id';
+                    }
+
+                «ENDIF»
                 if (array_key_exists($this->idField, $routeParams)) {
                     $this->idValue = (int) !empty($routeParams[$this->idField]) ? $routeParams[$this->idField] : 0;
                 }
@@ -609,7 +606,7 @@ class FormHandler {
                 if (0 === $this->idValue && $this->idField != 'id') {
                     $this->idValue = $this->request->query->getInt('id', 0);
                 }
-            «ENDIF»
+            }
 
             $entity = null;
             $this->templateParameters['mode'] = !empty($this->idValue) ? 'edit' : 'create';
@@ -743,7 +740,7 @@ class FormHandler {
         {
             «IF !targets('1.5')»
                 «IF getAllEntities.exists[hasSluggableFields && slugUnique]»
-                    if (in_array($this->objectType, $this->entitiesWithUniqueSlugs)) {
+                    if (in_array($this->objectType, $this->entitiesWithUniqueSlugs) && $this->idField == 'slug') {
                         $entity = $this->entityFactory->getRepository($this->objectType)->selectBySlug($this->idValue);
                     } else {
                         $entity = $this->entityFactory->getRepository($this->objectType)->selectById($this->idValue);

@@ -80,7 +80,7 @@ class AutoCompletionRelationTransformer {
                     return $result;
                 }
 
-                if (!is_array($entities)) {
+                if (!(is_array($entities) || $entities instanceof ArrayCollection)) {
                     $entities = [$entities];
                 }
 
