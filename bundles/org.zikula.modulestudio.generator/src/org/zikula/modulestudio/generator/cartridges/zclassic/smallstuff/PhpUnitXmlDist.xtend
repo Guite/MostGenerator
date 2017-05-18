@@ -34,7 +34,7 @@ class PhpUnitXmlDist {
             syntaxCheck="true"
         >
             <testsuites>
-                <testsuite name="«appName» Module Test Suite">
+                <testsuite name="«appName» Test Suite">
                     <directory>./Tests</directory>
                     <exclude>./Tests/Entity/*/Repository</exclude>
                     <exclude>./vendor</exclude>

@@ -36,7 +36,7 @@ class EditFunctions {
     def private generate(Application it) '''
         'use strict';
 
-        «IF hasUserFields»
+        «IF hasUserFields || hasStandardFieldEntities»
             «initUserField»
 
         «ENDIF»
