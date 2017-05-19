@@ -1240,7 +1240,9 @@ class EditEntity {
             «IF autoComplete»
                 «val uniqueNameForJs = getUniqueRelationNameForJs(app, (if (outgoing) source else target), isManySide(outgoing), (if (!isManyToMany) outgoing else !outgoing), aliasName.formatForCodeCapital)»
                 'object_type' => '«relatedEntity.name.formatForCode»',
-                'by_reference' => false,
+                «IF isManySide(outgoing)»
+                    'by_reference' => false,
+                «ENDIF»
                 'multiple' => «isManySide(outgoing).displayBool»,
                 'unique_name_for_js' => '«uniqueNameForJs»',
                 'allow_editing' => «(getEditStageCode(!outgoing) > 1).displayBool»,
@@ -1250,7 +1252,9 @@ class EditEntity {
             «ELSE»
                 'class' => '«app.appName»:«(if (outgoing) target else source).name.formatForCodeCapital»Entity',
                 'choice_label' => $choiceLabelClosure,
-                'by_reference' => false,
+                «IF isManySide(outgoing)»
+                    'by_reference' => false,
+                «ENDIF»
                 'multiple' => «isManySide(outgoing).displayBool»,
                 'expanded' => «isExpanded.displayBool»,
                 'query_builder' => $queryBuilder,
