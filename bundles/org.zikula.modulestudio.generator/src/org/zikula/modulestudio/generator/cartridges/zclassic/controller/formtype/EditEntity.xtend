@@ -201,8 +201,8 @@ class EditEntity {
             «IF !fields.filter(UserField).empty || (it instanceof Entity && (it as Entity).standardFields)»
                 use «app.appNamespace»\Form\Type\Field\UserType;
             «ENDIF»
-            «IF !getParentDataObjects(#[]).empty»
-                use «app.appNamespace»\Form\Type\«getParentDataObjects(#[]).head.name.formatForCodeCapital»Type;
+            «IF !getParentDataObjects(newArrayList).empty»
+                use «app.appNamespace»\Form\Type\«getParentDataObjects(newArrayList).head.name.formatForCodeCapital»Type;
             «ENDIF»
         «ENDIF»
         «IF !incoming.empty || !outgoing.empty»
@@ -339,7 +339,7 @@ class EditEntity {
             public function buildForm(FormBuilderInterface $builder, array $options)
             {
                 $this->addEntityFields($builder, $options);
-                «val parents = getParentDataObjects(#[])»
+                «val parents = getParentDataObjects(newArrayList)»
                 «IF !parents.empty»
                     $builder->add('parentFields', «IF app.targets('1.5')»«parents.head.name.formatForCodeCapital»Type::class«ELSE»'«app.appNamespace»\Form\Type\«parents.head.name.formatForCodeCapital»Type'«ENDIF», [
                         'data_class' => '«entityClassName('', false)»'

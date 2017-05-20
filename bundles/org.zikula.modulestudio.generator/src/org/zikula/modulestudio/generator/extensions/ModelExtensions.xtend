@@ -444,7 +444,7 @@ class ModelExtensions {
      * Returns a list of an object and it's inheriting data objects.
      */
     def getSelfAndParentDataObjects(DataObject it) {
-        getParentDataObjects(#[]) + #[it]
+        getParentDataObjects(newArrayList) + newArrayList(it)
     }
 
     /**
