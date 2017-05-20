@@ -397,7 +397,7 @@ class EditFunctions {
 
             itemIds = jQuery('#' + idPrefix).val();
             if (itemIds !== '') {
-                if (jQuery('#' + idPrefix + 'Scope').val() === '0') {
+                if (jQuery('#' + idPrefix + 'Multiple').val() === '0') {
                     jQuery('#' + idPrefix + 'ReferenceList').text('');
                     itemIds = '';
                 } else {
@@ -455,6 +455,9 @@ class EditFunctions {
         function «vendorAndName»InitRelationItemsForm(objectType, idPrefix, includeEditing)
         {
             var acOptions, acDataSet, itemIds, itemIdsArr, acUrl;
+
+            // update identifier of hidden field for easier usage in JS
+            jQuery('#' + idPrefix + 'Multiple').prev().attr('id', idPrefix);
 
             // add handling for the toggle link if existing
             jQuery('#' + idPrefix + 'AddLink').click( function (event) {
@@ -516,13 +519,6 @@ class EditFunctions {
                         .append('<div class="media"><div class="media-left"><a href="javascript:void(0)">' + item.image + '</a></div><div class="media-body"><p class="media-heading">' + item.title + '</p>' + item.description + '</div></div>')
                         .appendTo(ul);
                 };
-
-                // Ensure that clearing out the selector is properly reflected into the hidden field
-                jQuery('#' + idPrefix + 'Selector').blur(function() {
-                    if (jQuery(this).val().length == 0) {
-                        jQuery('#' + idPrefix).val('');
-                    }
-                });
             });
 
             if (!includeEditing || jQuery('#' + idPrefix + 'SelectorDoNew').length < 1) {

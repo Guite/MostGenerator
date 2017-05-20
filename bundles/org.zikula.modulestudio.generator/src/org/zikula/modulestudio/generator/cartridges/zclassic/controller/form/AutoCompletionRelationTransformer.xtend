@@ -23,6 +23,7 @@ class AutoCompletionRelationTransformer {
         namespace «appNamespace»\Form\DataTransformer\Base;
 
         use Doctrine\Common\Collections\ArrayCollection;
+        use Doctrine\Common\Collections\Selectable;
         use Doctrine\ORM\QueryBuilder;
         use Symfony\Component\Form\DataTransformerInterface;
         use Symfony\Component\Form\Exception\TransformationFailedException;
@@ -68,7 +69,7 @@ class AutoCompletionRelationTransformer {
             /**
              * Transforms a single object or a list of objects to a string with identifiers.
              *
-             * @param EntityAccess|ArrayCollection $entities
+             * @param EntityAccess|Selectable $entities
              *
              * @return string
              */
@@ -80,7 +81,7 @@ class AutoCompletionRelationTransformer {
                     return $result;
                 }
 
-                if (!(is_array($entities) || $entities instanceof ArrayCollection)) {
+                if (!(is_array($entities) || $entities instanceof Selectable)) {
                     $entities = [$entities];
                 }
 
@@ -148,36 +149,32 @@ class AutoCompletionRelationTransformer {
         /**
          * Builds the where clause for selecting matches for the current search.
          *
-         * @param string       $inputValue The input string
-         * @param QueryBuilder $qb         The query builder to be enriched
+         * @param array        $inputValues The identifier list
+         * @param QueryBuilder $qb          The query builder to be enriched
          *
          * @return Querybuilder The enriched query builder
          */
-        protected function buildWhereClause($inputValue, QueryBuilder $qb)
+        protected function buildWhereClause(array $inputValues = [], QueryBuilder $qb)
         {
             // remove empty option if it has been selected
-            foreach ($inputValue as $k => $v) {
+            foreach ($inputValues as $k => $v) {
                 if (!$v) {
-                    unset($inputValue[$k]);
+                    unset($inputValues[$k]);
                 }
             }
 
             // readd filter value for returning nothing if no real item has been selected
-            if (count($inputValue) == 0) {
-                $inputValue[] = 0;
+            if (count($inputValues) == 0) {
+                $inputValues[] = 0;
             }
 
             $idField = $this->entityFactory->getIdField($this->objectType);
             if ($this->isMultiple) {
                 $qb->andWhere('tbl.' . $idField . ' IN (:' . $idField . 'Ids)')
-                   ->setParameter($idField . 'Ids', $inputValue);
+                   ->setParameter($idField . 'Ids', $inputValues);
             } else {
                 $qb->andWhere('tbl.' . $idField . ' = :' . $idField)
-                   ->setParameter($idField, $inputValue);
-            }
-
-            if (!empty($this->where)) {
-                $qb->andWhere($this->where);
+                   ->setParameter($idField, $inputValues[0]);
             }
 
             return $qb;
