@@ -396,8 +396,10 @@ class Association {
             $this->«aliasName.formatForCode» = $«aliasName»;
             «val generateInverseCalls = bidirectional && ((!isManyToMany && useTarget) || (isManyToMany && !useTarget))»
             «IF generateInverseCalls»
-                «val ownAliasName = getRelationAliasName(!useTarget).toFirstUpper»
-                $«aliasName»->set«ownAliasName»($this);
+                if (null !== $«aliasName») {
+                    «val ownAliasName = getRelationAliasName(!useTarget).toFirstUpper»
+                    $«aliasName»->set«ownAliasName»($this);
+                }
             «ENDIF»
         «ENDIF»
     '''
