@@ -389,6 +389,9 @@ class Association {
         «val otherIsMany = isManySide(useTarget)»
         «IF otherIsMany»
             «val nameSingle = { (if (useTarget) target else source).name + 'Single' }»
+            foreach ($this->«aliasName» as $«nameSingle») {
+                $this->remove«aliasName.toFirstUpper»($«nameSingle»);
+            }
             foreach ($«aliasName» as $«nameSingle») {
                 $this->add«aliasName.toFirstUpper»($«nameSingle»);
             }
