@@ -345,7 +345,7 @@ class Entities {
          «IF isTopSuperClass»
          «' '»* @ORM\InheritanceType("«getChildRelations.head.strategy.literal»")
          «' '»* @ORM\DiscriminatorColumn(name="«getChildRelations.head.discriminatorColumn.formatForCode»"«/*, type="string"*/»)
-         «' '»* @ORM\DiscriminatorMap[{"«name.formatForCode»" = "«entityClassName('', false)»"«FOR relation : getChildRelations»«relation.discriminatorInfo»«ENDFOR»}]
+         «' '»* @ORM\DiscriminatorMap({"«name.formatForCode»" = "«entityClassName('', false)»"«FOR relation : getChildRelations»«relation.discriminatorInfo»«ENDFOR»})
          «ENDIF»
          «IF changeTrackingPolicy != EntityChangeTrackingPolicy::DEFERRED_IMPLICIT»
          «' '»* @ORM\ChangeTrackingPolicy("«changeTrackingPolicy.literal»")
