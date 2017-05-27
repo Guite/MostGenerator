@@ -281,7 +281,7 @@ class Entities {
     def private modelEntityImpl(DataObject it, Application app) '''
         namespace «app.appNamespace»\Entity;
 
-        use «app.appNamespace»\Entity\«IF isInheriting»«parentType.name.formatForCodeCapital»«ELSE»Base\Abstract«name.formatForCodeCapital»Entity«ENDIF» as BaseEntity;
+        use «app.appNamespace»\Entity\«IF isInheriting»«parentType.name.formatForCodeCapital»«ELSE»Base\Abstract«name.formatForCodeCapital»«ENDIF»Entity as BaseEntity;
         «imports(isInheriting)»
 
         «entityImplClassDocblock(app)»
