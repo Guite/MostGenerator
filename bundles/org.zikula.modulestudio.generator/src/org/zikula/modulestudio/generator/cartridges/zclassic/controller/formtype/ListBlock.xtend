@@ -172,7 +172,7 @@ class ListBlock {
                 'attr' => [
                     'title' => $this->__('If you change this please save the block once to reload the parameters below.')
                 ],
-                'help' => $this->__('If you change this please save the block once to reload the parameters below.'),
+                'help' => $this->__('If you change this please save the block once to reload the parameters below.')«IF getAllEntities.size > 1»,
                 'choices' => [
                     «FOR entity : getAllEntities»
                         $this->__('«entity.nameMultiple.formatForDisplayCapital»') => '«entity.name.formatForCode»'«IF entity != getAllEntities.last»,«ENDIF»
@@ -181,6 +181,7 @@ class ListBlock {
                 'choices_as_values' => true,
                 'multiple' => false,
                 'expanded' => false
+                «ENDIF»
             ]);
         }
     '''
