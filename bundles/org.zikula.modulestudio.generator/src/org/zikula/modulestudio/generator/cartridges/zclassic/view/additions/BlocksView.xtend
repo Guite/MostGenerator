@@ -38,7 +38,7 @@ class BlocksView {
         {# Purpose of this template: Edit block for generic item list #}
         {{ form_row(form.objectType) }}
         «IF hasCategorisableEntities»
-            {% if is_categorisable %}
+            {% if isCategorisable %}
                 {{ form_row(form.categories) }}
             {% endif %}
         «ENDIF»
