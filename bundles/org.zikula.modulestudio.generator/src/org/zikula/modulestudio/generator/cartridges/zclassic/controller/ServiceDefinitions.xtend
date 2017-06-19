@@ -127,8 +127,12 @@ class ServiceDefinitions {
                         - "@zikula_users_module.current_user"
                     «ENDIF»
                     - "@«modPrefix».controller_helper"
-                tags:
-                    - { name: zikula.link_container }
+                «IF targets('2.0')»
+                    tags: ['zikula.link_container']
+                «ELSE»
+                    tags:
+                        - { name: zikula.link_container }
+                «ENDIF»
     '''
 
     def private entityFactory(Application it) '''
@@ -179,8 +183,12 @@ class ServiceDefinitions {
                 «IF !targets('1.5')»
                     - "@translator.default"
                 «ENDIF»
-            tags:
-                - { name: doctrine.event_subscriber }
+            «IF targets('2.0')»
+                tags: ['doctrine.event_subscriber']
+            «ELSE»
+                tags:
+                    - { name: doctrine.event_subscriber }
+            «ENDIF»
 
         «FOR className : getSubscriberNames»
             «modPrefix».«className.toLowerCase»_listener:
@@ -199,8 +207,12 @@ class ServiceDefinitions {
                         - "@gedmo_doctrine_extensions.listener.ip_traceable"
                         - "@request_stack"
                 «ENDIF»
-                tags:
-                    - { name: kernel.event_subscriber }
+                «IF targets('2.0')»
+                    tags: ['kernel.event_subscriber']
+                «ELSE»
+                    tags:
+                        - { name: kernel.event_subscriber }
+                «ENDIF»
 
         «ENDFOR»
         «IF targets('1.5')»
@@ -211,8 +223,12 @@ class ServiceDefinitions {
                     «IF needsApproval»
                         - "@«modPrefix».notification_helper"
                     «ENDIF»
-                tags:
-                    - { name: kernel.event_subscriber }
+                «IF targets('2.0')»
+                    tags: ['kernel.event_subscriber']
+                «ELSE»
+                    tags:
+                        - { name: kernel.event_subscriber }
+                «ENDIF»
 
         «ENDIF»
         «IF getSubscriberNames.contains('IpTrace')»
@@ -281,22 +297,34 @@ class ServiceDefinitions {
 
             «modPrefix».form.type.field.array:
                 class: «nsBase»Field\ArrayType
-                tags:
-                    - { name: form.type }
+                «IF targets('2.0')»
+                    tags: ['form.type']
+                «ELSE»
+                    tags:
+                        - { name: form.type }
+                «ENDIF»
         «ENDIF»
         «IF hasColourFields»
 
             «modPrefix».form.type.field.colour:
                 class: «nsBase»Field\ColourType
-                tags:
-                    - { name: form.type }
+                «IF targets('2.0')»
+                    tags: ['form.type']
+                «ELSE»
+                    tags:
+                        - { name: form.type }
+                «ENDIF»
         «ENDIF»
         «IF hasGeographical»
 
             «modPrefix».form.type.field.geo:
                 class: «nsBase»Field\GeoType
-                tags:
-                    - { name: form.type }
+                «IF targets('2.0')»
+                    tags: ['form.type']
+                «ELSE»
+                    tags:
+                        - { name: form.type }
+                «ENDIF»
         «ENDIF»
         «IF hasMultiListFields»
 
@@ -304,15 +332,23 @@ class ServiceDefinitions {
                 class: «nsBase»Field\MultiListType
                 arguments:
                     - "@«modPrefix».listentries_helper"
-                tags:
-                    - { name: form.type }
+                «IF targets('2.0')»
+                    tags: ['form.type']
+                «ELSE»
+                    tags:
+                        - { name: form.type }
+                «ENDIF»
         «ENDIF»
         «IF hasTranslatable»
 
             «modPrefix».form.type.field.translation:
                 class: «nsBase»Field\TranslationType
-                tags:
-                    - { name: form.type }
+                «IF targets('2.0')»
+                    tags: ['form.type']
+                «ELSE»
+                    tags:
+                        - { name: form.type }
+                «ENDIF»
         «ENDIF»
         «IF hasTrees»
 
@@ -320,8 +356,12 @@ class ServiceDefinitions {
                 class: «nsBase»Field\EntityTreeType
                 arguments:
                     - "@«modPrefix».entity_display_helper"
-                tags:
-                    - { name: form.type }
+                «IF targets('2.0')»
+                    tags: ['form.type']
+                «ELSE»
+                    tags:
+                        - { name: form.type }
+                «ENDIF»
         «ENDIF»
         «IF hasUploads»
 
@@ -332,8 +372,12 @@ class ServiceDefinitions {
                     - "@request_stack"
                     - "@«modPrefix».image_helper"
                     - "@«modPrefix».upload_helper"
-                tags:
-                    - { name: form.type }
+                «IF targets('2.0')»
+                    tags: ['form.type']
+                «ELSE»
+                    tags:
+                        - { name: form.type }
+                «ENDIF»
         «ENDIF»
         «IF needsUserAutoCompletion»
 
@@ -341,8 +385,12 @@ class ServiceDefinitions {
                 class: «nsBase»Field\UserType
                 arguments:
                     - "@zikula_users_module.user_repository"
-                tags:
-                    - { name: form.type }
+                «IF targets('2.0')»
+                    tags: ['form.type']
+                «ELSE»
+                    tags:
+                        - { name: form.type }
+                «ENDIF»
         «ENDIF»
         «IF needsAutoCompletion»
 
@@ -351,8 +399,12 @@ class ServiceDefinitions {
                 arguments:
                     - "@router"
                     - "@«modPrefix».entity_factory"
-                tags:
-                    - { name: form.type }
+                «IF targets('2.0')»
+                    tags: ['form.type']
+                «ELSE»
+                    tags:
+                        - { name: form.type }
+                «ENDIF»
         «ENDIF»
     '''
 
@@ -384,8 +436,12 @@ class ServiceDefinitions {
                         «IF needsFeatureActivationHelper»
                             - "@«modPrefix».feature_activation_helper"
                         «ENDIF»
-                    tags:
-                        - { name: form.type }
+                    «IF targets('2.0')»
+                        tags: ['form.type']
+                    «ELSE»
+                        tags:
+                            - { name: form.type }
+                    «ENDIF»
             «ENDFOR»
         «ENDIF»
         «IF hasEditActions»
@@ -424,8 +480,12 @@ class ServiceDefinitions {
                             «ENDIF»
                         calls:
                             - [setLockingApi, ["@?zikula_pagelock_module.api.locking"]]
-                        tags:
-                            - { name: form.type }
+                        «IF targets('2.0')»
+                            tags: ['form.type']
+                        «ELSE»
+                            tags:
+                                - { name: form.type }
+                        «ENDIF»
                 «ENDIF»
 
                 «modPrefix».form.type.«entity.name.formatForDB»:
@@ -450,8 +510,12 @@ class ServiceDefinitions {
                         «IF needsFeatureActivationHelper»
                             - "@«modPrefix».feature_activation_helper"
                         «ENDIF»
-                    tags:
-                        - { name: form.type }
+                    «IF targets('2.0')»
+                        tags: ['form.type']
+                    «ELSE»
+                        tags:
+                            - { name: form.type }
+                    «ENDIF»
             «ENDFOR»
         «ENDIF»
         «IF hasDeleteActions && !targets('1.5')»
@@ -460,8 +524,12 @@ class ServiceDefinitions {
                 class: «nsBase.replace('Type\\', '')»DeleteEntityType
                 arguments:
                     - "@translator.default"
-                tags:
-                    - { name: form.type }
+                «IF targets('2.0')»
+                    tags: ['form.type']
+                «ELSE»
+                    tags:
+                        - { name: form.type }
+                «ENDIF»
         «ENDIF»
         «IF generateListBlock»
 
@@ -469,8 +537,12 @@ class ServiceDefinitions {
                 class: «nsBase.replace('Form\\Type\\', '')»Block\Form\Type\ItemListBlockType
                 arguments:
                     - "@translator.default"
-                tags:
-                    - { name: form.type }
+                «IF targets('2.0')»
+                    tags: ['form.type']
+                «ELSE»
+                    tags:
+                        - { name: form.type }
+                «ENDIF»
         «ENDIF»
         «IF generateExternalControllerAndFinder»
             «FOR entity : getAllEntities.filter[hasDisplayAction]»
@@ -482,8 +554,12 @@ class ServiceDefinitions {
                         «IF needsFeatureActivationHelper»
                             - "@«modPrefix».feature_activation_helper"
                         «ENDIF»
-                    tags:
-                        - { name: form.type }
+                    «IF targets('2.0')»
+                        tags: ['form.type']
+                    «ELSE»
+                        tags:
+                            - { name: form.type }
+                    «ENDIF»
             «ENDFOR»
         «ENDIF»
         «IF needsConfig»
@@ -496,8 +572,12 @@ class ServiceDefinitions {
                     «IF hasUserGroupSelectors»
                         - "@zikula_groups_module.group_repository"
                     «ENDIF»
-                tags:
-                    - { name: form.type }
+                «IF targets('2.0')»
+                    tags: ['form.type']
+                «ELSE»
+                    tags:
+                        - { name: form.type }
+                «ENDIF»
         «ENDIF»
     '''
 
@@ -756,8 +836,12 @@ class ServiceDefinitions {
                     - "@«modPrefix».listentries_helper"
                 «ENDIF»
             public: false
-            tags:
-                - { name: twig.extension }
+            «IF targets('2.0')»
+                tags: ['twig.extension']
+            «ELSE»
+                tags:
+                    - { name: twig.extension }
+            «ENDIF»
     '''
 
     def private logger(Application it) '''
@@ -769,7 +853,11 @@ class ServiceDefinitions {
         # Log processor
         «modPrefix».log.processor:
             class: Monolog\Processor\PsrLogMessageProcessor
-            tags:
-                - { name: monolog.processor }
+            «IF targets('2.0')»
+                tags: ['monolog.processor']
+            «ELSE»
+                tags:
+                    - { name: monolog.processor }
+            «ENDIF»
     '''
 }
