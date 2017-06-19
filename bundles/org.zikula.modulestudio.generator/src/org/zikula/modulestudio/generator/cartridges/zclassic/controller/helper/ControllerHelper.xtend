@@ -253,8 +253,6 @@ class ControllerHelper {
             «getObjectTypes»
 
             «getDefaultObjectType»
-
-            «formatPermalink»
             «IF hasViewActions»
 
                 «processViewActionParameters»
@@ -320,28 +318,6 @@ class ControllerHelper {
             }
 
             return '«getLeadingEntity.name.formatForCode»';
-        }
-    '''
-
-    def private formatPermalink(Application it) '''
-        /**
-         * Create nice permalinks.
-         *
-         * @param string $name The given object title
-         *
-         * @return string processed permalink
-         * @deprecated made obsolete by Doctrine extensions
-         */
-        public function formatPermalink($name)
-        {
-            $name = str_replace(
-                ['ä', 'ö', 'ü', 'Ä', 'Ö', 'Ü', 'ß', '.', '?', '"', '/', ':', 'é', 'è', 'â'],
-                ['ae', 'oe', 'ue', 'Ae', 'Oe', 'Ue', 'ss', '', '', '', '-', '-', 'e', 'e', 'a'],
-                $name
-            );
-            $name = preg_replace("#(\s*\/\s*|\s*\+\s*|\s+)#", '-', strtolower($name));
-
-            return $name;
         }
     '''
 
