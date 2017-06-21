@@ -257,7 +257,7 @@ class CollectionFilterHelper {
             «IF hasUserFieldsEntity»
                 «FOR field : getUserFieldsEntity»
                     «val fieldName = field.name.formatForCode»
-                    $parameters['«fieldName»'] = (int) $this->request->query->get('«fieldName»', 0);
+                    $parameters['«fieldName»'] = $this->request->query->getInt('«fieldName»', 0);
                 «ENDFOR»
             «ENDIF»
             «IF hasCountryFieldsEntity»
