@@ -205,7 +205,7 @@ class Layout {
                 {% endspaceless %}
             {% endblock %}
         «ENDIF»
-        «IF needsUserAutoCompletion»
+        «IF needsUserAutoCompletion && !targets('1.5')»
 
             {% block «appName.formatForDB»_field_user_widget %}
                 <div id="{{ id }}LiveSearch" class="«appName.toLowerCase»-autocomplete-user hidden">

@@ -88,7 +88,7 @@ class FormHandler {
                 new UploadType().generate(it, fsa)
                 new UploadFileTransformer().generate(it, fsa)
             }
-            if (needsUserAutoCompletion) {
+            if (needsUserAutoCompletion && !targets('1.5')) {
                 new UserType().generate(it, fsa)
                 new UserFieldTransformer().generate(it, fsa)
             }

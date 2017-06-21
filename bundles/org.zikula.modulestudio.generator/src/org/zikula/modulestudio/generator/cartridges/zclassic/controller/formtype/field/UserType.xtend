@@ -16,6 +16,9 @@ class UserType {
     FileHelper fh = new FileHelper()
 
     def generate(Application it, IFileSystemAccess fsa) {
+        if (targets('1.5')) {
+            return
+        }
         generateClassPair(fsa, getAppSourceLibPath + 'Form/Type/Field/UserType.php',
             fh.phpFileContent(it, userTypeBaseImpl), fh.phpFileContent(it, userTypeImpl)
         )

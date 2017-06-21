@@ -13,6 +13,7 @@ class ViewExtensions {
     extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension ModelExtensions = new ModelExtensions
+    extension Utils = new Utils
 
     /**
      * Determines whether grouping tabs are generated or not.
@@ -126,7 +127,7 @@ class ViewExtensions {
      * Returns whether jQuery UI is needed or not.
      */
     def needsJQueryUI(Application it) {
-        hasUserFields || hasStandardFieldEntities
+        ((hasUserFields || hasStandardFieldEntities) && !targets('1.5'))
         || (hasSortable && hasViewActions)
         || (!relations.empty && (hasViewActions || hasDisplayActions || hasEditActions))
     }

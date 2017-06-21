@@ -14,6 +14,9 @@ class UserFieldTransformer {
     FileHelper fh = new FileHelper()
 
     def generate(Application it, IFileSystemAccess fsa) {
+        if (targets('1.5')) {
+            return
+        }
         generateClassPair(fsa, getAppSourceLibPath + 'Form/DataTransformer/UserFieldTransformer.php',
             fh.phpFileContent(it, transformerBaseImpl), fh.phpFileContent(it, transformerImpl)
         )

@@ -56,11 +56,11 @@ class EditFunctions {
     '''
 
     def private initUserField(Application it) '''
-        «IF needsUserAutoCompletion»
+        «IF needsUserAutoCompletion && !targets('1.5')»
             /**
              * Initialises a user field with auto completion.
              */
-            function «vendorAndName»InitUserField(fieldName, getterName)
+            function «vendorAndName»InitUserField(fieldName)
             {
                 jQuery('#' + fieldName + 'ResetVal').click( function (event) {
                     event.preventDefault();
@@ -76,7 +76,7 @@ class EditFunctions {
                 jQuery('#' + fieldName + 'Selector').autocomplete({
                     minLength: 1,
                     source: function (request, response) {
-                        jQuery.getJSON(Routing.generate('«appName.formatForDB»_ajax_' + getterName.toLowerCase(), { fragment: request.term }), function(data) {
+                        jQuery.getJSON(Routing.generate('«appName.formatForDB»_ajax_searchusers', { fragment: request.term }), function(data) {
                             response(data);
                         });
                     },

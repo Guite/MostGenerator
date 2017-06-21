@@ -81,6 +81,7 @@ class Plugins {
         use Zikula\Common\Translator\TranslatorTrait;
         use Zikula\ExtensionsModule\Api\«IF targets('1.5')»ApiInterface\VariableApiInterface«ELSE»VariableApi«ENDIF»;
         «IF needsUserAvatarSupport»
+            use Zikula\UsersModule\Constant as UsersConstant;
             use Zikula\UsersModule\Entity\RepositoryInterface\UserRepositoryInterface;
         «ENDIF»
         «IF hasTrees»
@@ -374,6 +375,10 @@ class Plugins {
             if (!is_numeric($uid)) {
                 $limit = 1;
                 $filter = [
+                    'activated' => ['operator' => 'notIn', 'operand' => [
+                        UsersConstant::ACTIVATED_PENDING_REG,
+                        UsersConstant::ACTIVATED_PENDING_DELETE
+                    ]],
                     'uname' => ['operator' => '=', 'operand' => $uid]
                 ];
                 $results = $this->userRepository->query($filter, [], $limit);
@@ -397,9 +402,10 @@ class Plugins {
                 $params['rating'] = $rating;
             }
 
+            // load avatar plugin
             include_once 'lib/legacy/viewplugins/function.useravatar.php';
 
-            $view = \Zikula_View::getInstance('«appName»');
+            $view = \Zikula_View::getInstance('«appName»', false);
             $result = smarty_function_useravatar($params, $view);
 
             return $result;

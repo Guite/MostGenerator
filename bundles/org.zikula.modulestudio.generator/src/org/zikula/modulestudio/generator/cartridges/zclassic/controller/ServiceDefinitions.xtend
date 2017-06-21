@@ -383,7 +383,7 @@ class ServiceDefinitions {
                         - { name: form.type }
                 «ENDIF»
         «ENDIF»
-        «IF needsUserAutoCompletion»
+        «IF needsUserAutoCompletion && !targets('1.5')»
 
             «modPrefix».form.type.field.user:
                 class: «nsBase»Field\UserType

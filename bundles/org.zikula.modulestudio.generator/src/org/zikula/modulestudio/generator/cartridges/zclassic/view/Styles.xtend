@@ -137,7 +137,7 @@ class Styles {
         «val hasUserFields = hasUserFields || hasStandardFieldEntities»
         «val hasImageFields = hasImageFields»
         «val joinRelations = getJoinRelations»
-        «IF !joinRelations.empty || hasUserFields»
+        «IF !joinRelations.empty || (hasUserFields && !targets('1.5'))»
 
             /* edit pages */
             «IF !joinRelations.empty»
@@ -181,7 +181,7 @@ class Styles {
             div.«cssPrefix»-autocomplete .ui-autocomplete .suggestion {
                 background-image: url("../../../../../../images/icons/extrasmall/tab_right.png");
             }
-            «IF hasUserFields»
+            «IF hasUserFields && !targets('1.5')»
                 div.«cssPrefix»-autocomplete-user .ui-autocomplete .suggestion {
                     background-image: url("../../../../../../images/icons/extrasmall/user.png");
                 }

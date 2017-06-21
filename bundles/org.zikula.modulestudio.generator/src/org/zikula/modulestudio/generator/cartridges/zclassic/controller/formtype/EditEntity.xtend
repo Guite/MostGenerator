@@ -104,7 +104,7 @@ class EditEntity {
             «IF app.targets('2.0') && !fields.filter(StringField).filter[dateInterval].empty»
                 use «nsSymfonyFormType»DateIntervalType;
             «ENDIF»
-            «IF !fields.filter(UserField).empty || (it instanceof Entity && (it as Entity).standardFields)»
+            «IF !fields.filter(DatetimeField).empty || (it instanceof Entity && (it as Entity).standardFields)»
                 use «nsSymfonyFormType»DateTimeType;
             «ENDIF»
             «IF !fields.filter(DateField).empty»
@@ -199,7 +199,11 @@ class EditEntity {
                 use «app.appNamespace»\Form\Type\Field\UploadType;
             «ENDIF»
             «IF !fields.filter(UserField).empty || (it instanceof Entity && (it as Entity).standardFields)»
-                use «app.appNamespace»\Form\Type\Field\UserType;
+                «IF app.targets('1.5')»
+                    use Zikula\UsersModule\Form\Type\UserLiveSearchType;
+                «ELSE»
+                    use «app.appNamespace»\Form\Type\Field\UserType;
+                «ENDIF»
             «ENDIF»
             «IF !getParentDataObjects(newArrayList).empty»
                 use «app.appNamespace»\Form\Type\«getParentDataObjects(newArrayList).head.name.formatForCodeCapital»Type;
@@ -1072,7 +1076,7 @@ class EditEntity {
         'expanded' => «expanded.displayBool»
     '''
 
-    def private dispatch formType(UserField it) '''«IF !app.targets('1.5')»«app.appNamespace»\Form\Type\Field\«ENDIF»User'''
+    def private dispatch formType(UserField it) '''«IF !app.targets('1.5')»«app.appNamespace»\Form\Type\Field\User«ELSE»UserLiveSearch«ENDIF»'''
     def private dispatch additionalAttributes(UserField it) '''
         'maxlength' => «length»,
     '''

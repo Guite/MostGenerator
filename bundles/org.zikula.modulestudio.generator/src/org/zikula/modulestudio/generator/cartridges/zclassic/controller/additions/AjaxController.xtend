@@ -50,6 +50,9 @@ class AjaxController {
             use Symfony\Component\Security\Core\Exception\AccessDeniedException;
         «ENDIF»
         use Zikula\Core\Controller\AbstractController;
+        «IF needsUserAutoCompletion»
+            use Zikula\UsersModule\Constant as UsersConstant;
+        «ENDIF»
 
         /**
          * Ajax controller base class.
@@ -89,57 +92,40 @@ class AjaxController {
     '''
 
     def private userSelectorsBase(Application it) '''
-        «val userFields = getAllUserFields»
-        «IF !userFields.empty»
-            «FOR userField : userFields»
-
-                /**
-                 * Retrieves a list of users.
-                 *
-                 * @param Request $request Current request instance
-                 *
-                 * @return JsonResponse
-                 */
-                public function get«userField.entity.name.formatForCodeCapital»«userField.name.formatForCodeCapital»UsersAction(Request $request)
-                {
-                    return $this->getCommonUsersListAction($request);
-                }
-            «ENDFOR»
-        «ENDIF»
         «IF needsUserAutoCompletion»
 
-            «getCommonUsersListBase»
+            «searchUsersBase»
         «ENDIF»
     '''
 
-    def private getCommonUsersListBase(Application it) '''
-        «getCommonUsersListDocBlock(true)»
-        «getCommonUsersListSignature»
+    def private searchUsersBase(Application it) '''
+        «searchUsersDocBlock(true)»
+        «searchUsersSignature»
         {
-            «getCommonUsersListBaseImpl»
+            «searchUsersBaseImpl»
         }
     '''
 
-    def private getCommonUsersListDocBlock(Application it, Boolean isBase) '''
+    def private searchUsersDocBlock(Application it, Boolean isBase) '''
         /**
          * Retrieves a general purpose list of users.
          «IF !isBase»
          *
-         * @Route("/getCommonUsersList", options={"expose"=true})
+         * @Route("/searchUsers", options={"expose"=true})
          * @Method("GET")
          «ENDIF»
          *
          * @param Request $request Current request instance
          *
          * @return JsonResponse
-         */ 
+         */
     '''
 
-    def private getCommonUsersListSignature(Application it) '''
-        public function getCommonUsersListAction(Request $request)
+    def private searchUsersSignature(Application it) '''
+        public function searchUsersAction(Request $request)
     '''
 
-    def private getCommonUsersListBaseImpl(Application it) '''
+    def private searchUsersBaseImpl(Application it) '''
         if (!$this->hasPermission('«appName»::Ajax', '::', ACCESS_EDIT)) {
             return true;
         }
@@ -148,6 +134,10 @@ class AjaxController {
         $userRepository = $this->get('zikula_users_module.user_repository');
         $limit = 50;
         $filter = [
+            'activated' => ['operator' => 'notIn', 'operand' => [
+                UsersConstant::ACTIVATED_PENDING_REG,
+                UsersConstant::ACTIVATED_PENDING_DELETE
+            ]],
             'uname' => ['operator' => 'like', 'operand' => '%' . $fragment . '%']
         ];
         $results = $userRepository->query($filter, ['uname' => 'asc'], $limit);
@@ -1052,33 +1042,17 @@ class AjaxController {
     '''
 
     def private userSelectorsImpl(Application it) '''
-        «val userFields = getAllUserFields»
-        «IF !userFields.empty»
-            «FOR userField : userFields»
-
-                /**
-                 * Retrieves a list of users.
-                 *
-                 * @Route("/get«userField.entity.name.formatForCodeCapital»«userField.name.formatForCodeCapital»Users", options={"expose"=true})
-                 * @Method("GET")
-                 */
-                public function get«userField.entity.name.formatForCodeCapital»«userField.name.formatForCodeCapital»UsersAction(Request $request)
-                {
-                    return parent::get«userField.entity.name.formatForCodeCapital»«userField.name.formatForCodeCapital»UsersAction($request);
-                }
-            «ENDFOR»
-        «ENDIF»
         «IF needsUserAutoCompletion»
 
-            «getCommonUsersListImpl»
+            «searchUsersImpl»
         «ENDIF»
     '''
 
-    def private getCommonUsersListImpl(Application it) '''
-        «getCommonUsersListDocBlock(false)»
-        «getCommonUsersListSignature»
+    def private searchUsersImpl(Application it) '''
+        «searchUsersDocBlock(false)»
+        «searchUsersSignature»
         {
-            return parent::getCommonUsersListAction($request);
+            return parent::searchUsersAction($request);
         }
     '''
 
