@@ -1417,7 +1417,7 @@ class EditEntity {
                 return;
             }
 
-            $builder->add('moderationSpecificCreator', «IF app.targets('1.5')»UserType::class«ELSE»'«app.appNamespace»\Form\Type\Field\UserType'«ENDIF», [
+            $builder->add('moderationSpecificCreator', «IF app.targets('1.5')»UserLiveSearchType::class«ELSE»'«app.appNamespace»\Form\Type\Field\UserType'«ENDIF», [
                 'mapped' => false,
                 'label' => $this->__('Creator') . ':',
                 'attr' => [
