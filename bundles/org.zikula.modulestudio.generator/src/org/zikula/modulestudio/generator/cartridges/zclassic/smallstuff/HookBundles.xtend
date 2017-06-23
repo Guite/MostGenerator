@@ -53,7 +53,7 @@ class HookBundles {
             Example for name of provider area: provider_area.comments.general
 
             $bundle = new ProviderBundle('«appName»', 'provider.ratings.ui_hooks.rating', «IF targets('1.5')»UiHooksCategory::NAME«ELSE»'ui_hooks'«ENDIF», $this->__('Ratings Hook Providers'));
-            $bundle->addServiceHandler('display_view', 'Ratings_Hooks', 'uiView', 'ratings.service');
+            $bundle->addServiceHandler(«IF targets('1.5')»UiHooksCategory::TYPE_DISPLAY_VIEW«ELSE»'display_view'«ENDIF», 'Ratings_Hooks', 'uiView', 'ratings.service');
             // add other hooks as needed
             $this->registerHookProviderBundle($bundle);
 
