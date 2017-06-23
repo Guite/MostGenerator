@@ -73,12 +73,10 @@ class EntityTreeType {
                         },*/»
                         'choices_as_values' => true
                     ])
-                    ->setAllowedTypes([
-                        'root' => 'int',
-                        'includeLeafNodes' => 'bool',
-                        'includeRootNode' => 'bool',
-                        'useJoins' => 'bool'
-                    ])
+                    ->setAllowedTypes('root', 'int')
+                    ->setAllowedTypes('includeLeafNodes', 'bool')
+                    ->setAllowedTypes('includeRootNode', 'bool')
+                    ->setAllowedTypes('useJoins', 'bool')
                 ;
                 $resolver->setNormalizer('choices', function (Options $options, $choices) {
                     if (empty($choices)) {

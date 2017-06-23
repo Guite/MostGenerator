@@ -194,10 +194,8 @@ class UploadType {
                         'allowed_size' => '',
                         'error_bubbling' => false
                     ])
-                    ->setAllowedTypes([
-                        'allowed_extensions' => 'string',
-                        'allowed_size' => 'string'
-                    ])
+                    ->setAllowedTypes('allowed_extensions', 'string')
+                    ->setAllowedTypes('allowed_size', 'string')
                 ;
             }
 

@@ -498,33 +498,29 @@ class EditEntity {
                         «ENDIF»
                     ])
                     ->setRequired([«IF hasUploadFieldsEntity»'entity', «ENDIF»'mode', 'actions'])
-                    ->setAllowedTypes([
-                        'mode' => 'string',
-                        «IF extensions.contains('attributes')»
-                            'attributes' => 'array',
+                    ->setAllowedTypes('mode', 'string')
+                    «IF extensions.contains('attributes')»
+                        ->setAllowedTypes('attributes', 'array')
+                    «ENDIF»
+                    «IF it instanceof Entity && (it as Entity).workflow != EntityWorkflowType.NONE»
+                        ->setAllowedTypes('is_moderator', 'bool')
+                        «IF it instanceof Entity && (it as Entity).workflow == EntityWorkflowType.ENTERPRISE»
+                            ->setAllowedTypes('is_super_moderator', 'bool')
                         «ENDIF»
-                        «IF it instanceof Entity && (it as Entity).workflow != EntityWorkflowType.NONE»
-                            'is_moderator' => 'bool',
-                            «IF it instanceof Entity && (it as Entity).workflow == EntityWorkflowType.ENTERPRISE»
-                                'is_super_moderator' => 'bool',
-                            «ENDIF»
-                            'is_creator' => 'bool',
-                        «ENDIF»
-                        'actions' => 'array',
-                        «IF it instanceof Entity && (it as Entity).standardFields»
-                            'has_moderate_permission' => 'bool',
-                        «ENDIF»
-                        «IF it instanceof Entity && (it as Entity).hasTranslatableFields»
-                            'translations' => 'array',
-                        «ENDIF»
-                        «IF !incoming.empty || !outgoing.empty»
-                            'filter_by_ownership' => 'bool',
-                            'inline_usage' => 'bool'
-                        «ENDIF»
-                    ])
-                    ->setAllowedValues([
-                        'mode' => ['create', 'edit']
-                    ])
+                        ->setAllowedTypes('is_creator', 'bool')
+                    «ENDIF»
+                    ->setAllowedTypes('actions', 'array')
+                    «IF it instanceof Entity && (it as Entity).standardFields»
+                        ->setAllowedTypes('has_moderate_permission', 'bool')
+                    «ENDIF»
+                    «IF it instanceof Entity && (it as Entity).hasTranslatableFields»
+                        ->setAllowedTypes('translations', 'array')
+                    «ENDIF»
+                    «IF !incoming.empty || !outgoing.empty»
+                        ->setAllowedTypes('filter_by_ownership', 'bool')
+                        ->setAllowedTypes('inline_usage', 'bool')
+                    «ENDIF»
+                    ->setAllowedValues('mode', ['create', 'edit'])
                 ;
             }
         }

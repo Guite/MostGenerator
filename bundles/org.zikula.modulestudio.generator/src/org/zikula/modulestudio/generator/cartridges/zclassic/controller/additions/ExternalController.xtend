@@ -227,8 +227,8 @@ class ExternalController {
         $searchTerm = '';
 
         $formOptions = [
-            'objectType' => $objectType,
-            'editorName' => $editor
+            'object_type' => $objectType,
+            'editor_name' => $editor
         ];
         $form = $this->createForm('«appNamespace»\Form\Type\Finder\\' . ucfirst($objectType) . 'FinderType', $templateParameters, $formOptions);
 

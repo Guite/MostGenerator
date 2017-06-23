@@ -111,12 +111,10 @@ class AutoCompletionRelationType {
                         ]
                     ])
                     ->setRequired(['object_type', 'unique_name_for_js'])
-                    ->setAllowedTypes([
-                        'object_type' => 'string',
-                        'multiple' => 'bool',
-                        'unique_name_for_js' => 'string',
-                        'allow_editing' => 'bool'
-                    ])
+                    ->setAllowedTypes('object_type', 'string')
+                    ->setAllowedTypes('multiple', 'bool')
+                    ->setAllowedTypes('unique_name_for_js', 'string')
+                    ->setAllowedTypes('allow_editing', 'bool')
                 ;
             }
 

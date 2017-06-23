@@ -146,12 +146,12 @@ class ListBlock {
                     «IF hasCategorisableEntities»
                         ->setOptional(['is_categorisable', 'category_helper', 'feature_activation_helper'])
                     «ENDIF»
-                    ->setAllowedTypes([
-                        'object_type' => 'string'«IF hasCategorisableEntities»,
-                        'is_categorisable' => 'bool',
-                        'category_helper' => 'object',
-                        'feature_activation_helper' => 'object'«ENDIF»
-                    ])
+                    ->setAllowedTypes('object_type', 'string')
+                    «IF hasCategorisableEntities»
+                        ->setAllowedTypes('is_categorisable', 'bool')
+                        ->setAllowedTypes('category_helper', 'object')
+                        ->setAllowedTypes('feature_activation_helper', 'object')
+                    «ENDIF»
                 ;
             }
         }

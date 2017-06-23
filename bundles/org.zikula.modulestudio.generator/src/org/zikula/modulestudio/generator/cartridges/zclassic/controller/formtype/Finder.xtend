@@ -106,15 +106,15 @@ class Finder {
                 $builder
                     ->setMethod('GET')
                     ->add('objectType', «IF app.targets('1.5')»HiddenType::class«ELSE»'«nsSymfonyFormType»HiddenType'«ENDIF», [
-                        'data' => $options['objectType']
+                        'data' => $options['object_type']
                     ])
                     ->add('editor', «IF app.targets('1.5')»HiddenType::class«ELSE»'«nsSymfonyFormType»HiddenType'«ENDIF», [
-                        'data' => $options['editorName']
+                        'data' => $options['editor_name']
                     ])
                 ;
 
                 «IF categorisable»
-                    if ($this->featureActivationHelper->isEnabled(FeatureActivationHelper::CATEGORIES, $options['objectType'])) {
+                    if ($this->featureActivationHelper->isEnabled(FeatureActivationHelper::CATEGORIES, $options['object_type'])) {
                         $this->addCategoriesField($builder, $options);
                     }
                 «ENDIF»
@@ -176,17 +176,13 @@ class Finder {
             {
                 $resolver
                     ->setDefaults([
-                        'objectType' => '«app.leadingEntity.name.formatForCode»',
-                        'editorName' => 'ckeditor'
+                        'object_type' => '«app.leadingEntity.name.formatForCode»',
+                        'editor_name' => 'ckeditor'
                     ])
-                    ->setRequired(['objectType', 'editorName'])
-                    ->setAllowedTypes([
-                        'objectType' => 'string',
-                        'editorName' => 'string'
-                    ])
-                    ->setAllowedValues([
-                        'editorName' => ['tinymce', 'ckeditor']
-                    ])
+                    ->setRequired(['object_type', 'editor_name'])
+                    ->setAllowedTypes('object_type', 'string')
+                    ->setAllowedTypes('editor_name', 'string')
+                    ->setAllowedValues('editor_name', ['tinymce', 'ckeditor'])
                 ;
             }
         }
@@ -212,8 +208,8 @@ class Finder {
                 'required' => false,
                 'multiple' => «categorisableMultiSelection.displayBool»,
                 'module' => '«app.appName»',
-                'entity' => ucfirst($options['objectType']) . 'Entity',
-                'entityCategoryClass' => '«app.appNamespace»\Entity\\' . ucfirst($options['objectType']) . 'CategoryEntity'
+                'entity' => ucfirst($options['object_type']) . 'Entity',
+                'entityCategoryClass' => '«app.appNamespace»\Entity\\' . ucfirst($options['object_type']) . 'CategoryEntity'
             ]);
         }
     '''
