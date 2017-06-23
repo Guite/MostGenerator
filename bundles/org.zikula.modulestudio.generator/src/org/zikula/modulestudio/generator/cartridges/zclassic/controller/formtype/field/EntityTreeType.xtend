@@ -63,20 +63,20 @@ class EntityTreeType {
                 $resolver
                     ->setDefaults([
                         'root' => 1,
-                        'includeLeafNodes' => true,
-                        'includeRootNode' => false,
-                        'useJoins' => true,
+                        'include_leaf_nodes' => true,
+                        'include_root_node' => false,
+                        'use_joins' => true,
                         'attr' => [
                             'class' => 'entity-tree'
                         ],«/*'query_builder' => function (EntityRepository $er) {
-                            return $er->selectTree($options['root'], $options['useJoins']);
+                            return $er->selectTree($options['root'], $options['use_joins']);
                         },*/»
                         'choices_as_values' => true
                     ])
                     ->setAllowedTypes('root', 'int')
-                    ->setAllowedTypes('includeLeafNodes', 'bool')
-                    ->setAllowedTypes('includeRootNode', 'bool')
-                    ->setAllowedTypes('useJoins', 'bool')
+                    ->setAllowedTypes('include_leaf_nodes', 'bool')
+                    ->setAllowedTypes('include_root_node', 'bool')
+                    ->setAllowedTypes('use_joins', 'bool')
                 ;
                 $resolver->setNormalizer('choices', function (Options $options, $choices) {
                     if (empty($choices)) {
@@ -97,15 +97,15 @@ class EntityTreeType {
             protected function loadChoices(array $options)
             {
                 $repository = $options['em']->getRepository($options['class']);
-                $treeNodes = $repository->selectTree($options['root'], $options['useJoins']);
+                $treeNodes = $repository->selectTree($options['root'], $options['use_joins']);
 
                 $choices = [];
                 foreach ($treeNodes as $node) {
-                    if (!$this->isIncluded($node, $repository)) {
+                    if (!$this->isIncluded($node, $repository, $options)) {
                         continue;
                     }
 
-                    $choices[$this->createChoiceLabel($node)] = $node->getKey();
+                    $choices[$this->createChoiceLabel($node, $options['include_root_node'])] = $node->getKey();
                 }
 
                 return $choices;
@@ -117,19 +117,20 @@ class EntityTreeType {
              *
              * @param object           $item       The treated entity
              * @param EntityRepository $repository The entity repository
+             * @param array            $options    The options
              *
              * @return boolean Whether this entity should be included into the list
              */
-            protected function isIncluded($item, EntityRepository $repository)
+            protected function isIncluded($item, EntityRepository $repository, array $options)
             {
                 $nodeLevel = $item->getLvl();
 
-                if (!$this->includeRootNode && $nodeLevel == 0) {
+                if (!$options['include_root_node'] && $nodeLevel == 0) {
                     // if we do not include the root node skip it
                     return false;
                 }
 
-                if (!$this->includeLeafNodes && $repository->childCount($item) == 0) {
+                if (!$options['include_leaf_nodes'] && $repository->childCount($item) == 0) {
                     // if we do not include leaf nodes skip them
                     return false;
                 }
@@ -140,15 +141,16 @@ class EntityTreeType {
             /**
              * Creates the label for a choice.
              *
-             * @param object $choice The object
+             * @param object  $choice          The object
+             * @param boolean $includeRootNode Whether the root node should be included or not
              *
              * @return string The string representation of the object
              */
-            public function createChoiceLabel($choice)
+            public function createChoiceLabel($choice, $includeRootNode = false)
             {
                 // determine current list hierarchy level depending on root node inclusion
                 $shownLevel = $choice->getLvl();
-                if (!$options['includeRootNode']) {
+                if (!$includeRootNode) {
                     $shownLevel--;
                 }
                 $prefix = str_repeat('- - ', $shownLevel);
