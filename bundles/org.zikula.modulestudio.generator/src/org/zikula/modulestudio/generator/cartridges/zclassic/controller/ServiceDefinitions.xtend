@@ -773,7 +773,6 @@ class ServiceDefinitions {
                 arguments:
                     - "@translator.default"
                     - "@session"
-                    - "@liip_imagine.cache.manager"
                     - "@logger"
                     - "@zikula_users_module.current_user"
                     - "@=service('zikula_extensions_module.api.variable').getAll('«appName»')"
