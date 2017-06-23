@@ -142,6 +142,10 @@ class HookHelper {
 
         use Zikula\Bundle\HookBundle\AbstractHookContainer as ZikulaHookContainer;«/* TODO see #15 use Zikula\Bundle\HookBundle\Bundle\ProviderBundle; */»
         use Zikula\Bundle\HookBundle\Bundle\SubscriberBundle;
+        «IF targets('1.5')»
+            use Zikula\Bundle\HookBundle\Category\FilterHooksCategory;
+            use Zikula\Bundle\HookBundle\Category\UiHooksCategory;
+        «ENDIF»
 
         /**
          * Base class for hook container methods.
