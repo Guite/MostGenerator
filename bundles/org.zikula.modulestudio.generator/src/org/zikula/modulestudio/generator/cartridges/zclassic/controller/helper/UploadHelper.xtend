@@ -33,6 +33,8 @@ class UploadHelper {
     def private uploadFunctionsBaseImpl(Application it) '''
         namespace «appNamespace»\Helper\Base;
 
+        use Imagine\Gd\Imagine;
+        use Imagine\Image\Box;
         use Psr\Log\LoggerInterface;
         use Symfony\Component\Filesystem\Exception\IOExceptionInterface;
         use Symfony\Component\Filesystem\Filesystem;
@@ -212,9 +214,9 @@ class UploadHelper {
                     $imgInfo = getimagesize($destinationFilePath);
                     if ($imgInfo[0] > $maxWidth || $imgInfo[1] > $maxHeight) {
                         // resize to allowed maximum size
-                        $imagine = new \Imagine\Gd\Imagine();
+                        $imagine = new Imagine();
                         $image = $imagine->open($destinationFilePath);
-                        $image->resize(new \Imagine\Image\Box($maxWidth, $maxHeight))
+                        $image->resize(new Box($maxWidth, $maxHeight))
                               ->save($destinationFilePath);
                     }
                 }
