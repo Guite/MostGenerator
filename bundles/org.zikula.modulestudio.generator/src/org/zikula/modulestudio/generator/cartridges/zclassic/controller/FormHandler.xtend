@@ -1071,7 +1071,7 @@ class FormHandler {
 
                 if ($args['commandName'] != 'cancel') {
                     if (true === $this->hasSlugUpdatableField && isset($entityData['slug'])) {
-                        $entityData['slug'] = iconv('ISO-8859-1', 'ASCII//TRANSLIT', $entityData['slug']);
+                        $entityData['slug'] = iconv('UTF-8', 'ASCII//TRANSLIT', $entityData['slug']);
                     }
                 }
             «ENDIF»

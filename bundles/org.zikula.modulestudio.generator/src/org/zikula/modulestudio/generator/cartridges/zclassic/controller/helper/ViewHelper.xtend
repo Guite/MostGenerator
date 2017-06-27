@@ -340,11 +340,12 @@ class ViewHelper {
 
             // create name of the pdf output file
             $siteName = $this->variableApi->getSystemVar('sitename');
-            $pageTitle = iconv('ISO-8859-1', 'ASCII//TRANSLIT', $this->pageVars->get('title', ''));
-            $fileTitle = iconv('ISO-8859-1', 'ASCII//TRANSLIT', $siteName)
+            $pageTitle = iconv('UTF-8', 'ASCII//TRANSLIT', $this->pageVars->get('title', ''));
+            $fileTitle = iconv('UTF-8', 'ASCII//TRANSLIT', $siteName)
                        . '-'
                        . ($pageTitle != '' ? $pageTitle . '-' : '')
                        . date('Ymd') . '.pdf';
+           $fileTitle = str_replace(' ', '_', $fileTitle);
 
             /*
             if (true === $this->request->query->getBoolean('dbg', false)) {
