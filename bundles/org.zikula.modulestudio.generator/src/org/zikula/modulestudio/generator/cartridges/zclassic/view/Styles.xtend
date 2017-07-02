@@ -225,6 +225,15 @@ class Styles {
                 max-height: 24px;
             }
         «ENDIF»
+        «IF hasCategorisableEntities»
+
+            @media (max-width: 767px) {
+                div.form-group div.category-selector {
+                    height: auto;
+                    padding: 0;
+                }
+            }
+        «ENDIF»
         «IF hasLoggable»
 
             div.«cssPrefix»-history .table-responsive .table > tbody > tr > td.diff-old {
