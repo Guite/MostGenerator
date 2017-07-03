@@ -433,7 +433,7 @@ class ControllerHelper {
                 if (true === $supportsHooks) {
                     // build RouteUrl instance for display hooks
                     $urlParameters['_locale'] = $request->getLocale();
-                    $templateParameters['currentUrlObject'] = new RouteUrl('«appName.formatForDB»_' . $objectType . '_' . /*$templateParameters['routeArea'] . */'view', $urlParameters);
+                    $templateParameters['currentUrlObject'] = new RouteUrl('«appName.formatForDB»_' . strtolower($objectType) . '_view', $urlParameters);
                 }
             «ENDIF»
 
@@ -473,7 +473,7 @@ class ControllerHelper {
                     $entity = $templateParameters[$objectType];
                     $urlParameters = $entity->createUrlArgs();
                     $urlParameters['_locale'] = $this->request->getLocale();
-                    $templateParameters['currentUrlObject'] = new RouteUrl('«appName.formatForDB»_' . $objectType . '_' . /*$templateParameters['routeArea'] . */'display', $urlParameters);
+                    $templateParameters['currentUrlObject'] = new RouteUrl('«appName.formatForDB»_' . strtolower($objectType) . '_display', $urlParameters);
                 }
             «ENDIF»
 

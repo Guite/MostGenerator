@@ -948,7 +948,7 @@ class FormHandler {
                         if ($action != 'delete') {
                             $urlArgs = $entity->createUrlArgs();
                             $urlArgs['_locale'] = $this->request->getLocale();
-                            $url = new RouteUrl('«appName.formatForDB»_' . $this->objectType . '_display', $urlArgs);
+                            $url = new RouteUrl('«appName.formatForDB»_' . $this->objectTypeLower . '_display', $urlArgs);
                         }
                         $this->hookHelper->callProcessHooks($entity, $hookType, $url);
                     }

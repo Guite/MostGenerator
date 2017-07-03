@@ -137,7 +137,7 @@ class MassHandling {
                 if ($action != 'delete') {
                     $urlArgs = $entity->createUrlArgs();
                     $urlArgs['_locale'] = $request->getLocale();
-                    $url = new RouteUrl('«application.appName.formatForDB»_«name.formatForCode»_' . /*($isAdmin ? 'admin' : '') . */'display', $urlArgs);
+                    $url = new RouteUrl('«application.appName.formatForDB»_«name.formatForDB»_display', $urlArgs);
                 }
                 $hookHelper->callProcessHooks($entity, $hookType, $url);
             «ENDIF»
