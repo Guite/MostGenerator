@@ -162,7 +162,7 @@ class ModelBehaviourExtensions {
      * Checks whether an avatar plugin is required or not.
      */
     def needsUserAvatarSupport(Application it) {
-        hasStandardFieldEntities || hasUserFields || hasLoggable && !targets('1.5')
+        (hasStandardFieldEntities || hasUserFields || hasLoggable) && !targets('1.5')
     }
 
     /**
