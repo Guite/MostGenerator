@@ -386,7 +386,7 @@ class Plugins {
                     return '';
                 }
 
-                $uid = $results->getIterator()->getArrayCopy()[0]->getUname();
+                $uid = $results->getIterator()->getArrayCopy()[0]->getUid();
             }
             $params = ['uid' => $uid];
             if ($width > 0) {
