@@ -58,7 +58,11 @@ class StandardFields {
         {% if obj.createdBy|default and obj.createdBy.getUid() > 0 %}
             <dt>{{ __('Creation') }}</dt>
             {% set profileLink = obj.createdBy.getUid()|profileLinkByUserId() %}
-            <dd class="avatar">{{ «appName.toLowerCase»_userAvatar(uid=obj.createdBy.getUid(), rating='g') }}</dd>
+            «IF targets('1.5')»
+                <dd class="avatar">{{ userAvatar(obj.createdBy.getUid(), { rating: 'g' }) }}</dd>
+            «ELSE»
+                <dd class="avatar">{{ «appName.toLowerCase»_userAvatar(uid=obj.createdBy.getUid(), rating='g') }}</dd>
+            «ENDIF»
             <dd>
                 {{ __f('Created by %user on %date', {'%user': profileLink, '%date': obj.createdDate|localizeddate('medium', 'short')})|raw }}
                 {% if currentUser.loggedIn %}
@@ -72,7 +76,11 @@ class StandardFields {
         {% if obj.updatedBy|default and obj.updatedBy.getUid() > 0 %}
             <dt>{{ __('Last update') }}</dt>
             {% set profileLink = obj.updatedBy.getUid()|profileLinkByUserId() %}
-            <dd class="avatar">{{ «appName.toLowerCase»_userAvatar(uid=obj.updatedBy.getUid(), rating='g') }}</dd>
+            «IF targets('1.5')»
+                <dd class="avatar">{{ userAvatar(obj.updatedBy.getUid(), { rating: 'g' }) }}</dd>
+            «ELSE»
+                <dd class="avatar">{{ «appName.toLowerCase»_userAvatar(uid=obj.updatedBy.getUid(), rating='g') }}</dd>
+            «ENDIF»
             <dd>
                 {{ __f('Updated by %user on %date', {'%user': profileLink, '%date': obj.updatedDate|localizeddate('medium', 'short')})|raw }}
                 {% if currentUser.loggedIn %}

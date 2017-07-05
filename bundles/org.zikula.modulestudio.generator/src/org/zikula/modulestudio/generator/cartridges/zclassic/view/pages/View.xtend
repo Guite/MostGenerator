@@ -530,7 +530,11 @@ class View {
                             <tr>
                                 <td headers="hVersion" class="text-center">{{ logEntry.objectId }}</td>
                                 <td headers="hDate">{{ logEntry.loggedAt|localizeddate('long', 'medium') }}</td>
-                                <td headers="hUser">{{ «appName.toLowerCase»_userAvatar(uid=logEntry.username, size=20, rating='g') }} {{ logEntry.username|profileLinkByUserName() }}</td>
+                                «IF application.targets('1.5')»
+                                    <td headers="hUser">{{ userAvatar(logEntry.username, { size: 20, rating: 'g' }) }} {{ logEntry.username|profileLinkByUserName() }}</td>
+                                «ELSE»
+                                    <td headers="hUser">{{ «appName.toLowerCase»_userAvatar(uid=logEntry.username, size=20, rating='g') }} {{ logEntry.username|profileLinkByUserName() }}</td>
+                                «ENDIF»
                                 <td headers="hActions" class="actions nowrap">
                                     «IF hasDisplayAction»
                                         {% set linkTitle = __f('Preview «name.formatForDisplay» %id%', { '%id%': logEntry.objectId }) %}

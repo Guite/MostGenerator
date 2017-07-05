@@ -50,7 +50,7 @@ class AjaxController {
             use Symfony\Component\Security\Core\Exception\AccessDeniedException;
         «ENDIF»
         use Zikula\Core\Controller\AbstractController;
-        «IF needsUserAutoCompletion»
+        «IF needsUserAutoCompletion && !targets('1.5')»
             use Zikula\UsersModule\Constant as UsersConstant;
         «ENDIF»
 
@@ -132,19 +132,24 @@ class AjaxController {
 
         $fragment = $request->query->get('fragment', '');
         $userRepository = $this->get('zikula_users_module.user_repository');
-        $limit = 50;
-        $filter = [
-            'activated' => ['operator' => 'notIn', 'operand' => [
-                UsersConstant::ACTIVATED_PENDING_REG,
-                UsersConstant::ACTIVATED_PENDING_DELETE
-            ]],
-            'uname' => ['operator' => 'like', 'operand' => '%' . $fragment . '%']
-        ];
-        $results = $userRepository->query($filter, ['uname' => 'asc'], $limit);
+        «IF targets('1.5')»
+            $results = $userRepository->searchActiveUser(['operator' => 'like', 'operand' => '%' . $fragment . '%'], 50);
+            $profileModule = $this->get('zikula_users_module.internal.profile_module_collector')->getSelected();
+        «ELSE»
+            $limit = 50;
+            $filter = [
+                'activated' => ['operator' => 'notIn', 'operand' => [
+                    UsersConstant::ACTIVATED_PENDING_REG,
+                    UsersConstant::ACTIVATED_PENDING_DELETE
+                ]],
+                'uname' => ['operator' => 'like', 'operand' => '%' . $fragment . '%']
+            ];
+            $results = $userRepository->query($filter, ['uname' => 'asc'], $limit);
 
-        // load avatar plugin
-        include_once 'lib/legacy/viewplugins/function.useravatar.php';
-        $view = \Zikula_View::getInstance('«appName»', false);
+            // load avatar plugin
+            include_once 'lib/legacy/viewplugins/function.useravatar.php';
+            $view = \Zikula_View::getInstance('«appName»', false);
+        «ENDIF»
 
         $resultItems = [];
         if (count($results) > 0) {
@@ -152,7 +157,7 @@ class AjaxController {
                 $resultItems[] = [
                     'uid' => $result->getUid(),
                     'uname' => $result->getUname(),
-                    'avatar' => smarty_function_useravatar(['uid' => $result->getUid(), 'rating' => 'g'], $view)
+                    'avatar' => «IF targets('1.5')»smarty_function_useravatar(['uid' => $result->getUid(), 'rating' => 'g'], $view)«ELSE»$profileModule->getAvatar(['uid' => $result->getUid(), ['rating' => 'g']])«ENDIF»
                 ];
             }
         }

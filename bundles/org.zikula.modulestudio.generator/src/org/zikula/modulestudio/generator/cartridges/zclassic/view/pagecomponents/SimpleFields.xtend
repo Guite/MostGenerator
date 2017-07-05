@@ -77,7 +77,11 @@ class SimpleFields {
                   {% if not isQuickView %}
             «ENDIF»
                 {{ «realName».getUid()|profileLinkByUserId() }}{% if currentUser.loggedIn %}{% set sendMessageUrl = «realName».getUid()|messageSendLink(urlOnly=true) %}{% if sendMessageUrl != '#' %}<a href="{{ sendMessageUrl }}" title="{{ __f('Send private message to %userName%', { '%userName%': «realName».getUname() }) }}"><i class="fa fa-envelope-o"></i></a>{% endif %}{% endif %}
-                <span class="avatar">{{ «entity.application.appName.formatForDB»_userAvatar(«realName».getUid(), rating='g') }}</span>
+                «IF entity.application.targets('1.5')»
+                    <span class="avatar">{{ userAvatar(«realName».getUid(), { rating: 'g' }) }}</span>
+                «ELSE»
+                    <span class="avatar">{{ «entity.application.appName.formatForDB»_userAvatar(«realName».getUid(), rating='g') }}</span>
+                «ENDIF»
             «IF page == 'display'»
                 {% else %}
                     {{ «realName».getUname() }}

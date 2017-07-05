@@ -216,7 +216,11 @@ class Layout {
                 </div>
                 <span id="{{ id }}Avatar" class="help-block avatar">
                     {% if value and not inline_usage %}
-                        {{ «appName.formatForDB»_userAvatar(uid=value, rating='g') }}
+                        «IF targets('1.5')»
+                            {{ userAvatar(value, { rating: 'g' }) }}
+                        «ELSE»
+                            {{ «appName.formatForDB»_userAvatar(uid=value, rating='g') }}
+                        «ENDIF»
                     {% endif %}
                 </span>
                 {% if not required %}
