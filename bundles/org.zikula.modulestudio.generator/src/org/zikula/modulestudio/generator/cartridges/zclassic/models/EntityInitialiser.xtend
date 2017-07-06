@@ -106,7 +106,7 @@ class EntityInitialiser {
                     «ENDFOR»
                     «IF !entity.getListFieldsEntity.filter[name != 'workflowState'].empty»
                         «FOR listField : entity.getListFieldsEntity.filter[name != 'workflowState']»
-                            $listEntries = $this->listEntriesHelper->get«listField.name.formatForCodeCapital»EntriesFor«entity.name.formatForCodeCapital»();
+                            $listEntries = $this->listEntriesHelper->getEntries('«entity.name.formatForCode»', '«listField.name.formatForCode»');
                             «IF listField.multiple»
                                 foreach ($listEntries as $listEntry) {
                                     if (true === $listEntry['default']) {

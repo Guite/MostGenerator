@@ -677,7 +677,7 @@ class FormHandler {
 
                 if ($entity->supportsHookSubscribers()) {
                     // Call form aware display hooks
-                    $formHook = $this->hookHelper->callFormDisplayHooks($form, $entity, FormAwareCategory::TYPE_EDIT);
+                    $formHook = $this->hookHelper->callFormDisplayHooks($this->form, $entity, FormAwareCategory::TYPE_EDIT);
                     $this->templateParameters['formHookTemplates'] = $formHook->getTemplates();
                 }
             «ENDIF»
@@ -968,7 +968,7 @@ class FormHandler {
                         «IF targets('1.5')»
                             // Call form aware processing hooks
                             $hookType = $action == 'delete' ? FormAwareCategory::TYPE_PROCESS_DELETE : FormAwareCategory::TYPE_PROCESS_EDIT;
-                            $this->hookHelper->callFormProcessHooks($form, $entity, $hookType, $routeUrl);
+                            $this->hookHelper->callFormProcessHooks($this->form, $entity, $hookType, $routeUrl);
 
                         «ENDIF»
                         // Let any ui hooks know that we have created, updated or deleted an item

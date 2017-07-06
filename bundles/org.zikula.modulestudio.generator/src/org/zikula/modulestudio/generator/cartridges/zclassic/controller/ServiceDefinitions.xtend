@@ -91,6 +91,9 @@ class ServiceDefinitions {
         «ENDIF»
           - { resource: 'forms.yml' }
           - { resource: 'helpers.yml' }
+        «IF targets('1.5') && hasHookSubscribers»
+            «'  '»- { resource: 'hooks.yml' }
+        «ENDIF»
           - { resource: 'twig.yml' }
           - { resource: 'logger.yml' }
         «ENDIF»
@@ -127,7 +130,7 @@ class ServiceDefinitions {
                     arguments:
                         - '@translator.default'
                     tags:
-                        - { name: zikula.hook_subscriber, areaName: 'subscriber.«vendor.formatForDB»«name.formatForDB».filter_hooks.«entity.nameMultiple.formatForDB»' }
+                        - { name: zikula.hook_subscriber, areaName: 'subscriber.«appName.formatForDB».filter_hooks.«entity.nameMultiple.formatForDB»' }
 
                 «IF entity.hasEditAction || entity.hasDeleteAction»
                     «modPrefix».hook_subscriber.form_aware.«entity.nameMultiple.formatForDB»:
@@ -135,7 +138,7 @@ class ServiceDefinitions {
                         arguments:
                             - '@translator.default'
                         tags:
-                            - { name: zikula.hook_subscriber, areaName: 'subscriber.«vendor.formatForDB»«name.formatForDB».form_aware_hook.«entity.nameMultiple.formatForDB»' }
+                            - { name: zikula.hook_subscriber, areaName: 'subscriber.«appName.formatForDB».form_aware_hook.«entity.nameMultiple.formatForDB»' }
 
                 «ENDIF»
                 «IF entity.hasViewAction || entity.hasDisplayAction || entity.hasEditAction || entity.hasDeleteAction»
@@ -144,7 +147,7 @@ class ServiceDefinitions {
                         arguments:
                             - '@translator.default'
                         tags:
-                            - { name: zikula.hook_subscriber, areaName: 'subscriber.«vendor.formatForDB»«name.formatForDB».ui_hooks.«entity.nameMultiple.formatForDB»' }
+                            - { name: zikula.hook_subscriber, areaName: 'subscriber.«appName.formatForDB».ui_hooks.«entity.nameMultiple.formatForDB»' }
 
                 «ENDIF»
             «ENDFOR»

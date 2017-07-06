@@ -4,6 +4,7 @@ import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.EntityWorkflowType
 import de.guite.modulestudio.metamodel.IpAddressScope
+import de.guite.modulestudio.metamodel.MappedSuperClass
 import de.guite.modulestudio.metamodel.ModuleStudioFactory
 import de.guite.modulestudio.metamodel.StringField
 import de.guite.modulestudio.metamodel.UploadField
@@ -12,6 +13,7 @@ import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
+import org.zikula.modulestudio.generator.extensions.ModelInheritanceExtensions
 
 /**
  * This class adds primary key fields to all entities of an application.
@@ -42,6 +44,11 @@ class PersistenceTransformer {
      * Extension methods related to the model layer.
      */
     extension ModelExtensions = new ModelExtensions
+
+    /**
+     * Extension methods related to inheritance.
+     */
+    extension ModelInheritanceExtensions = new ModelInheritanceExtensions
 
     /**
      * Transformation entry point consuming the application instance.
@@ -75,7 +82,9 @@ class PersistenceTransformer {
         }
         //println('Added primary key, field size now: ' + fields.size + ' fields')
 
-        addWorkflowState
+        if (!inheriting || !(parentType instanceof MappedSuperClass)) {
+            addWorkflowState
+        }
 
         // make optional upload fields nullable, too
         for (field : fields.filter(UploadField).filter[f|!f.mandatory]) {

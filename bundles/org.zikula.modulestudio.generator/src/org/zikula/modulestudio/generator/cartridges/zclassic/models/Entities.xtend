@@ -315,6 +315,11 @@ class Entities {
          «extMan.classAnnotations»
          «IF it instanceof MappedSuperClass»
           * @ORM\MappedSuperclass
+         «IF isTopSuperClass»
+         «' '»* @ORM\InheritanceType("«getChildRelations.head.strategy.literal»")
+         «' '»* @ORM\DiscriminatorColumn(name="«getChildRelations.head.discriminatorColumn.formatForCode»"«/*, type="string"*/»)
+         «' '»* @ORM\DiscriminatorMap({«FOR relation : getChildRelations»«relation.discriminatorInfo»«ENDFOR»})
+         «ENDIF»
          «ELSEIF it instanceof Entity»
           * @ORM\Entity(repositoryClass="«app.appNamespace»\Entity\Repository\«name.formatForCodeCapital»Repository"«IF (it as Entity).readOnly», readOnly=true«ENDIF»)
          «ENDIF»
@@ -345,7 +350,7 @@ class Entities {
          «IF isTopSuperClass»
          «' '»* @ORM\InheritanceType("«getChildRelations.head.strategy.literal»")
          «' '»* @ORM\DiscriminatorColumn(name="«getChildRelations.head.discriminatorColumn.formatForCode»"«/*, type="string"*/»)
-         «' '»* @ORM\DiscriminatorMap({"«name.formatForCode»" = "«entityClassName('', false)»"«FOR relation : getChildRelations»«relation.discriminatorInfo»«ENDFOR»})
+         «' '»* @ORM\DiscriminatorMap({"«name.formatForCode»" = "«entityClassName('', false)»"«FOR relation : getChildRelations», «relation.discriminatorInfo»«ENDFOR»})
          «ENDIF»
          «IF changeTrackingPolicy != EntityChangeTrackingPolicy::DEFERRED_IMPLICIT»
          «' '»* @ORM\ChangeTrackingPolicy("«changeTrackingPolicy.literal»")
@@ -358,6 +363,6 @@ class Entities {
     def private indexField(EntityIndexItem it) '''"«name.formatForCode»"'''
 
     def private discriminatorInfo(InheritanceRelationship it) '''
-        , "«source.name.formatForCode»" = "«source.entityClassName('', false)»"
+        "«source.name.formatForCode»" = "«source.entityClassName('', false)»"
     '''
 }

@@ -471,7 +471,7 @@ class EditEntity {
                                 'is«startDateField.name.formatForCodeCapital»Before«endDateField.name.formatForCodeCapital»' => '«startDateField.name.formatForCode»',
                             «ENDIF»
                         ],
-                        «IF !incoming.filter(InheritanceRelationship).empty»
+                        «IF !outgoing.filter(InheritanceRelationship).empty»
                             'inherit_data' => true,
                         «ENDIF»
                         'mode' => 'create',

@@ -353,7 +353,7 @@ class HookHelper {
                         «ENDIF»
                         «IF hasViewAction || hasEditAction || hasDeleteAction»
                             // Validate input from an item to be deleted.
-                            «category»Category::TYPE_VALIDATE_DELETE => «application.appName.formatForDB».ui_hooks.«nameMultiple.formatForDB».validate_delete',
+                            «category»Category::TYPE_VALIDATE_DELETE => '«application.appName.formatForDB».ui_hooks.«nameMultiple.formatForDB».validate_delete',
                             // Perform the final delete actions for a deleted item.
                             «category»Category::TYPE_PROCESS_DELETE => '«application.appName.formatForDB».ui_hooks.«nameMultiple.formatForDB».process_delete'
                         «ENDIF»
