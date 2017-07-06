@@ -8,6 +8,7 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelp
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
+import org.zikula.modulestudio.generator.extensions.ModelInheritanceExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
@@ -16,6 +17,7 @@ class ListEntriesHelper {
     extension FormattingExtensions = new FormattingExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension ModelExtensions = new ModelExtensions
+    extension ModelInheritanceExtensions = new ModelInheritanceExtensions
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
 
@@ -200,7 +202,11 @@ class ListEntriesHelper {
                         switch ($fieldName) {
                             «FOR listField : entity.getListFieldsEntity»
                                 case '«listField.name.formatForCode»':
-                                    $entries = $this->get«listField.name.formatForCodeCapital»EntriesFor«entity.name.formatForCodeCapital»();
+                                    «IF entity.isInheriting»
+                                        $entries = $this->get«listField.name.formatForCodeCapital»EntriesFor«listField.entity.name.formatForCodeCapital»();
+                                    «ELSE»
+                                        $entries = $this->get«listField.name.formatForCodeCapital»EntriesFor«entity.name.formatForCodeCapital»();
+                                    «ENDIF»
                                     break;
                             «ENDFOR»
                         }
