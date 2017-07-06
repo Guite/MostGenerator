@@ -157,7 +157,7 @@ class AjaxController {
                 $resultItems[] = [
                     'uid' => $result->getUid(),
                     'uname' => $result->getUname(),
-                    'avatar' => «IF targets('1.5')»smarty_function_useravatar(['uid' => $result->getUid(), 'rating' => 'g'], $view)«ELSE»$profileModule->getAvatar(['uid' => $result->getUid(), ['rating' => 'g']])«ENDIF»
+                    'avatar' => «IF targets('1.5')»$profileModule->getAvatar(['uid' => $result->getUid(), ['rating' => 'g']])«ELSE»smarty_function_useravatar(['uid' => $result->getUid(), 'rating' => 'g'], $view)«ENDIF»
                 ];
             }
         }
