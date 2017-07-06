@@ -24,6 +24,7 @@ class ControllerExtensions {
 
     extension FormattingExtensions = new FormattingExtensions
     extension ModelExtensions = new ModelExtensions
+    extension ModelInheritanceExtensions = new ModelInheritanceExtensions
     extension Utils = new Utils
 
     /**
@@ -39,43 +40,50 @@ class ControllerExtensions {
     /**
      * Checks whether an entity owns an index action.
      */
-    def hasIndexAction(Entity it) {
-        !actions.filter(MainAction).empty
+    def Boolean hasIndexAction(Entity it) {
+        !actions.filter(MainAction).empty || (isInheriting && parentType instanceof Entity && (parentType as Entity).hasIndexAction)
     }
 
     /**
      * Checks whether an entity owns a view action.
      */
-    def hasViewAction(Entity it) {
-        !actions.filter(ViewAction).empty
+    def Boolean hasViewAction(Entity it) {
+        !actions.filter(ViewAction).empty || (isInheriting && parentType instanceof Entity && (parentType as Entity).hasViewAction)
     }
 
     /**
      * Checks whether an entity owns a display action.
      */
-    def hasDisplayAction(Entity it) {
-        !actions.filter(DisplayAction).empty
+    def Boolean hasDisplayAction(Entity it) {
+        !actions.filter(DisplayAction).empty || (isInheriting && parentType instanceof Entity && (parentType as Entity).hasDisplayAction)
     }
 
     /**
      * Checks whether an entity owns an edit action.
      */
-    def hasEditAction(Entity it) {
-        !actions.filter(EditAction).empty
+    def Boolean hasEditAction(Entity it) {
+        !actions.filter(EditAction).empty || (isInheriting && parentType instanceof Entity && (parentType as Entity).hasEditAction)
     }
 
     /**
      * Checks whether an entity owns a delete action.
      */
-    def hasDeleteAction(Entity it) {
-        !actions.filter(DeleteAction).empty
+    def Boolean hasDeleteAction(Entity it) {
+        !actions.filter(DeleteAction).empty || (isInheriting && parentType instanceof Entity && (parentType as Entity).hasDeleteAction)
     }
 
     /**
      * Checks whether an entity owns a custom action.
      */
-    def hasCustomAction(Entity it) {
-        !actions.filter(CustomAction).empty
+    def Boolean hasCustomAction(Entity it) {
+        !actions.filter(CustomAction).empty || (isInheriting && parentType instanceof Entity && (parentType as Entity).hasCustomAction)
+    }
+
+    /**
+     * Returns all actions for a given entity.
+     */
+    def getAllEntityActions(Entity it) {
+        getSelfAndParentDataObjects.filter(Entity).map[actions].flatten
     }
 
     /**

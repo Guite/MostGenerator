@@ -89,7 +89,7 @@ class ControllerLayer {
          */
         abstract class Abstract«name.formatForCodeCapital»Controller extends AbstractController
         {
-            «FOR action : actions»
+            «FOR action : getAllEntityActions»
                 «adminAndUserImpl(action, true)»
             «ENDFOR»
             «IF hasViewAction»
@@ -173,20 +173,20 @@ class ControllerLayer {
         class «name.formatForCodeCapital»Controller extends Abstract«name.formatForCodeCapital»Controller
         {
             «IF hasSluggableFields»«/* put display method at the end to avoid conflict between delete/edit and display for slugs */»
-                «FOR action : actions.exclude(DisplayAction)»
+                «FOR action : getAllEntityActions.exclude(DisplayAction)»
                     «adminAndUserImpl(action as Action, false)»
                 «ENDFOR»
                 «IF loggable && hasDisplayAction»
                     «displayDeletedAction»
                 «ENDIF»
-                «FOR action : actions.filter(DisplayAction)»
+                «FOR action : getAllEntityActions.filter(DisplayAction)»
                     «adminAndUserImpl(action, false)»
                 «ENDFOR»
             «ELSE»
                 «IF loggable && hasDisplayAction»
                     «displayDeletedAction»
                 «ENDIF»
-                «FOR action : actions»
+                «FOR action : getAllEntityActions»
                     «adminAndUserImpl(action, false)»
                 «ENDFOR»
             «ENDIF»

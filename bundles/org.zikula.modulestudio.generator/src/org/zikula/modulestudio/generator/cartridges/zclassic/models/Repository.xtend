@@ -60,11 +60,12 @@ class Repository {
         var fileSuffix = 'Repository'
 
         var fileName = 'Base/Abstract' + name.formatForCodeCapital + fileSuffix + '.php'
-        if (!isInheriting && !app.shouldBeSkipped(repositoryPath + fileName)) {
+        if (!app.shouldBeSkipped(repositoryPath + fileName)) {
             if (app.shouldBeMarked(repositoryPath + fileName)) {
                 fileName = 'Base/' + name.formatForCodeCapital + fileSuffix + '.generated.php'
             }
-            fsa.generateFile(repositoryPath + fileName, fh.phpFileContent(app, modelRepositoryBaseImpl))
+            val content = if (!isInheriting) modelRepositoryBaseImpl else modelChildRepositoryBaseImpl
+            fsa.generateFile(repositoryPath + fileName, fh.phpFileContent(app, content))
         }
 
         fileName = name.formatForCodeCapital + fileSuffix + '.php'
@@ -108,6 +109,11 @@ class Repository {
                 use «tree.literal.toLowerCase.toFirstUpper»TreeRepositoryTrait;
 
             «ENDIF*/»/**
+             * @var string The main entity class
+             */
+            protected $mainEntityClass = '«entityClassName('', false)»';
+
+            /**
              * @var string The default sorting field/expression
              */
             protected $defaultSortingField = '«getDefaultSortingField.name.formatForCode»';
@@ -215,6 +221,49 @@ class Repository {
         }
     '''
 
+    def private modelChildRepositoryBaseImpl(Entity it) '''
+        namespace «app.appNamespace»\Entity\Repository\Base;
+
+        «IF !incoming.empty || !outgoing.empty»
+            use Doctrine\ORM\QueryBuilder;
+        «ENDIF»
+        use «app.appNamespace»\Entity\Repository\«parentType.name.formatForCodeCapital»Repository;
+
+        /**
+         * Repository class used to implement own convenience methods for performing certain DQL queries.
+         *
+         * This is the base repository class for «name.formatForDisplay» entities.
+         */
+        abstract class Abstract«name.formatForCodeCapital»Repository extends «parentType.name.formatForCodeCapital»Repository
+        {
+            /**
+             * @var string The main entity class
+             */
+            protected $mainEntityClass = '«entityClassName('', false)»';
+
+            /**
+             * Retrieves an array with all fields which can be used for sorting instances.
+             *
+             * @return array Sorting fields array
+             */
+            public function getAllowedSortingFields()
+            {
+                $parentFields = parent::getAllowedSortingFields();
+
+                $additionalFields = [
+                    «FOR field : getSortingFields»«field.singleSortingField»«ENDFOR»
+                    «extensionSortingFields»
+                ];
+
+                return array_unique(array_merge($parentFields, $additionalFields));
+            }
+            «IF !incoming.empty || !outgoing.empty»
+
+                «new Joins().generate(it, app)»
+            «ENDIF»
+        }
+    '''
+
     def private imports(Entity it) '''
         namespace «app.appNamespace»\Entity\Repository\Base;
 
@@ -256,7 +305,7 @@ class Repository {
         public function truncateTable(LoggerInterface $logger)
         {
             $qb = $this->getEntityManager()->createQueryBuilder();
-            $qb->delete('«entityClassName('', false)»', 'tbl');
+            $qb->delete($this->mainEntityClass, 'tbl');
             $query = $qb->getQuery();
             «IF hasPessimisticWriteLock»
 
@@ -558,7 +607,7 @@ class Repository {
 
             $qb = $this->getEntityManager()->createQueryBuilder();
             $qb->select($selection)
-               ->from('«entityClassName('', false)»', 'tbl');
+               ->from($this->mainEntityClass, 'tbl');
 
             if (!empty($where)) {
                 $qb->andWhere($where);
@@ -663,7 +712,7 @@ class Repository {
 
             $qb = $this->getEntityManager()->createQueryBuilder();
             $qb->select($selection)
-               ->from('«entityClassName('', false)»', 'tbl');
+               ->from($this->mainEntityClass, 'tbl');
 
             if (true === $useJoins) {
                 $this->addJoinsToFrom($qb);
@@ -681,8 +730,7 @@ class Repository {
 
     def private addSelectionPartsForDisplayPattern(Entity it) '''
         «FOR patternPart : displayPatternParts»
-            «/* check if patternPart equals a field name */»
-            «var matchedFields = fields.filter[name == patternPart]»
+            «/* check if patternPart equals a field name */»«var matchedFields = fields.filter[name == patternPart]»
             «IF (!matchedFields.empty || (geographical && (patternPart == 'latitude' || patternPart == 'longitude')))»
                 $selection .= ', tbl.«patternPart.formatForCode»';
             «ENDIF»
@@ -801,14 +849,14 @@ class Repository {
     def private modelRepositoryImpl(Entity it) '''
         namespace «app.appNamespace»\Entity\Repository;
 
-        use «app.appNamespace»\Entity\Repository\«IF isInheriting»«parentType.name.formatForCodeCapital»«ELSE»Base\Abstract«name.formatForCodeCapital»«ENDIF»Repository;
+        use «app.appNamespace»\Entity\Repository\Base\Abstract«name.formatForCodeCapital»Repository;
 
         /**
          * Repository class used to implement own convenience methods for performing certain DQL queries.
          *
          * This is the concrete repository class for «name.formatForDisplay» entities.
          */
-        class «name.formatForCodeCapital»Repository extends «IF isInheriting»«parentType.name.formatForCodeCapital»«ELSE»Abstract«name.formatForCodeCapital»«ENDIF»Repository
+        class «name.formatForCodeCapital»Repository extends Abstract«name.formatForCodeCapital»Repository
         {
             // feel free to add your own methods here, like for example reusable DQL queries
         }

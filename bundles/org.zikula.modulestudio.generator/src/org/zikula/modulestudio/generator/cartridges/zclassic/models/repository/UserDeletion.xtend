@@ -3,14 +3,12 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.models.repository
 import de.guite.modulestudio.metamodel.Entity
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
-import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class UserDeletion {
 
     extension FormattingExtensions = new FormattingExtensions
     extension ModelExtensions = new ModelExtensions
-    extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
 
     def generate(Entity it) '''
@@ -64,7 +62,7 @@ class UserDeletion {
             }
 
             $qb = $this->getEntityManager()->createQueryBuilder();
-            $qb->update('«entityClassName('', false)»', 'tbl')
+            $qb->update($this->mainEntityClass, 'tbl')
                ->set('tbl.createdBy', $newUserId)
                ->where('tbl.createdBy = :creator')
                ->setParameter('creator', $userId);
@@ -100,7 +98,7 @@ class UserDeletion {
             }
 
             $qb = $this->getEntityManager()->createQueryBuilder();
-            $qb->update('«entityClassName('', false)»', 'tbl')
+            $qb->update($this->mainEntityClass, 'tbl')
                ->set('tbl.updatedBy', $newUserId)
                ->where('tbl.updatedBy = :editor')
                ->setParameter('editor', $userId);
@@ -134,7 +132,7 @@ class UserDeletion {
             }
 
             $qb = $this->getEntityManager()->createQueryBuilder();
-            $qb->delete('«entityClassName('', false)»', 'tbl')
+            $qb->delete($this->mainEntityClass, 'tbl')
                ->where('tbl.createdBy = :creator')
                ->setParameter('creator', $userId);
             $query = $qb->getQuery();
@@ -167,7 +165,7 @@ class UserDeletion {
             }
 
             $qb = $this->getEntityManager()->createQueryBuilder();
-            $qb->delete('«entityClassName('', false)»', 'tbl')
+            $qb->delete($this->mainEntityClass, 'tbl')
                ->where('tbl.updatedBy = :editor')
                ->setParameter('editor', $userId);
             $query = $qb->getQuery();
@@ -207,7 +205,7 @@ class UserDeletion {
             }
 
             $qb = $this->getEntityManager()->createQueryBuilder();
-            $qb->update('«entityClassName('', false)»', 'tbl')
+            $qb->update($this->mainEntityClass, 'tbl')
                ->set('tbl.' . $userFieldName, $newUserId)
                ->where('tbl.' . $userFieldName . ' = :user')
                ->setParameter('user', $userId);
@@ -246,7 +244,7 @@ class UserDeletion {
             }
 
             $qb = $this->getEntityManager()->createQueryBuilder();
-            $qb->delete('«entityClassName('', false)»', 'tbl')
+            $qb->delete($this->mainEntityClass, 'tbl')
                ->where('tbl.' . $userFieldName . ' = :user')
                ->setParameter('user', $userId);
             $query = $qb->getQuery();

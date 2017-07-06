@@ -278,7 +278,7 @@ class ModelExtensions {
      * Returns a list of all fields which should be displayed.
      */
     def getDisplayFields(DataObject it) {
-        var fields = getDerivedFields
+        var fields = getSelfAndParentDataObjects.map[getDerivedFields].flatten
         if (it instanceof Entity) {
             if (it.identifierStrategy != EntityIdentifierStrategy.NONE) {
                 fields = fields.filter[!primaryKey]

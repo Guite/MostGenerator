@@ -348,7 +348,6 @@ class ControllerHelper {
             // parameter for used sorting field
             «new ControllerHelperFunctions().defaultSorting(it)»
             $sortdir = $request->query->get('sortdir', 'ASC');
-            $sortableColumns->setOrderBy($sortableColumns->getColumn($sort), strtoupper($sortdir));
             «IF hasTrees»
 
                 if ('tree' == $request->query->getAlnum('tpl', '')) {
@@ -383,6 +382,10 @@ class ControllerHelper {
                     }
                     if (in_array($fieldName, ['all', 'own', 'num'])) {
                         $templateParameters[$fieldName] = $fieldValue;
+                    } elseif ($fieldName == 'sort' && !empty($fieldValue)) {
+                        $sort = $fieldValue;
+                    } elseif ($fieldName == 'sortdir' && !empty($fieldValue)) {
+                        $sortdir = $fieldValue;
                     } else {
                         // set filter as query argument, fetched inside repository
                         «IF hasUserFields»
@@ -394,6 +397,7 @@ class ControllerHelper {
                     }
                 }
             }
+            $sortableColumns->setOrderBy($sortableColumns->getColumn($sort), strtoupper($sortdir));
 
             $urlParameters = $templateParameters;
             foreach ($urlParameters as $parameterName => $parameterValue) {

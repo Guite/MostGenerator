@@ -13,7 +13,6 @@ import de.guite.modulestudio.metamodel.EmailField
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.EntityWorkflowType
 import de.guite.modulestudio.metamodel.FloatField
-import de.guite.modulestudio.metamodel.InheritanceRelationship
 import de.guite.modulestudio.metamodel.IntegerField
 import de.guite.modulestudio.metamodel.IpAddressScope
 import de.guite.modulestudio.metamodel.JoinRelationship
@@ -40,6 +39,7 @@ import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
+import org.zikula.modulestudio.generator.extensions.ModelInheritanceExtensions
 import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
@@ -50,6 +50,7 @@ class EditEntity {
     extension FormattingExtensions = new FormattingExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension ModelExtensions = new ModelExtensions
+    extension ModelInheritanceExtensions = new ModelInheritanceExtensions
     extension ModelJoinExtensions = new ModelJoinExtensions
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
@@ -205,7 +206,7 @@ class EditEntity {
                     use «app.appNamespace»\Form\Type\Field\UserType;
                 «ENDIF»
             «ENDIF»
-            «IF !getParentDataObjects(newArrayList).empty»
+            «IF isInheriting»
                 use «app.appNamespace»\Form\Type\«getParentDataObjects(newArrayList).head.name.formatForCodeCapital»Type;
             «ENDIF»
         «ENDIF»
@@ -343,9 +344,11 @@ class EditEntity {
             public function buildForm(FormBuilderInterface $builder, array $options)
             {
                 $this->addEntityFields($builder, $options);
-                «val parents = getParentDataObjects(newArrayList)»
-                «IF !parents.empty»
+                «IF isInheriting»
+                    «val parents = getParentDataObjects(newArrayList)»
                     $builder->add('parentFields', «IF app.targets('1.5')»«parents.head.name.formatForCodeCapital»Type::class«ELSE»'«app.appNamespace»\Form\Type\«parents.head.name.formatForCodeCapital»Type'«ENDIF», [
+                        'label' => $this->__('«parents.head.name.formatForDisplayCapital» data'),
+                        'inherit_data' => true,
                         'data_class' => '«entityClassName('', false)»'
                     ]);
                 «ENDIF»
@@ -368,11 +371,21 @@ class EditEntity {
                 «IF it instanceof Entity && (it as Entity).workflow != EntityWorkflowType.NONE»
                     $this->addAdditionalNotificationRemarksField($builder, $options);
                 «ENDIF»
-                «IF it instanceof Entity && (it as Entity).standardFields»
-                    $this->addModerationFields($builder, $options);
+                «IF isInheriter»
+                    if (!$options['inherit_data']) {
+                        «IF it instanceof Entity && (it as Entity).standardFields»
+                            $this->addModerationFields($builder, $options);
+                        «ENDIF»
+                        $this->addReturnControlField($builder, $options);
+                        $this->addSubmitButtons($builder, $options);
+                    }
+                «ELSE»
+                    «IF it instanceof Entity && (it as Entity).standardFields»
+                        $this->addModerationFields($builder, $options);
+                    «ENDIF»
+                    $this->addReturnControlField($builder, $options);
+                    $this->addSubmitButtons($builder, $options);
                 «ENDIF»
-                $this->addReturnControlField($builder, $options);
-                $this->addSubmitButtons($builder, $options);
                 «IF hasUploadFieldsEntity»
 
                     $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
@@ -471,9 +484,6 @@ class EditEntity {
                                 'is«startDateField.name.formatForCodeCapital»Before«endDateField.name.formatForCodeCapital»' => '«startDateField.name.formatForCode»',
                             «ENDIF»
                         ],
-                        «IF !outgoing.filter(InheritanceRelationship).empty»
-                            'inherit_data' => true,
-                        «ENDIF»
                         'mode' => 'create',
                         «IF extensions.contains('attributes')»
                             'attributes' => [],

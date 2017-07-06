@@ -4,7 +4,6 @@ import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.EntityWorkflowType
 import de.guite.modulestudio.metamodel.IpAddressScope
-import de.guite.modulestudio.metamodel.MappedSuperClass
 import de.guite.modulestudio.metamodel.ModuleStudioFactory
 import de.guite.modulestudio.metamodel.StringField
 import de.guite.modulestudio.metamodel.UploadField
@@ -82,7 +81,7 @@ class PersistenceTransformer {
         }
         //println('Added primary key, field size now: ' + fields.size + ' fields')
 
-        if (!inheriting || !(parentType instanceof MappedSuperClass)) {
+        if (!inheriting) {
             addWorkflowState
         }
 

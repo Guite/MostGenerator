@@ -3,7 +3,6 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.controller
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.EntityTreeType
 import org.eclipse.xtext.generator.IFileSystemAccess
-import org.zikula.modulestudio.generator.cartridges.zclassic.controller.installer.ExampleData
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.installer.MigrationHelper
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.installer.ModVars
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
@@ -48,9 +47,6 @@ class Installer {
         «IF hasCategorisableEntities»
             use Zikula\CategoriesModule\Entity\CategoryRegistryEntity;
         «ENDIF»
-        «IF targets('1.5') && amountOfExampleRows > 0»
-            use Zikula\UsersModule\Constant as UsersConstant;
-        «ENDIF»
 
         /**
          * Installer base class.
@@ -69,8 +65,6 @@ class Installer {
         «funcDelete»
 
         «funcListEntityClasses»
-
-        «new ExampleData().generate(it)»
     '''
 
     def private funcInit(Application it) '''
@@ -146,9 +140,6 @@ class Installer {
                     $categoryRegistryIdsPerEntity['«entity.name.formatForCode»'] = $registry->getId();
                 «ENDFOR»
             «ENDIF»
-
-            // create the default data
-            $this->createDefaultData(«IF hasCategorisableEntities»$categoryRegistryIdsPerEntity«ENDIF»);
             «IF !targets('1.5')»
 
                 «IF hasHookSubscribers»
@@ -225,14 +216,6 @@ class Installer {
                     «new MigrationHelper().generateUsageExample(it)»
                 } * /
             «ENDIF»
-        */
-
-            // update successful
-            return true;
-        }
-        «IF !isSystemModule»
-
-            «new MigrationHelper().generate(it)»
             «IF targets('1.5') && !targets('2.0') && (hasHookSubscribers/* || hasHookProviders*/)»
 
                 // remove obsolete persisted hooks from the database
@@ -243,6 +226,14 @@ class Installer {
                     //$this->hookApi->uninstallProviderHooks($this->bundle->getMetaData());
                 «ENDIF»*/»
             «ENDIF»
+        */
+
+            // update successful
+            return true;
+        }
+        «IF !isSystemModule»
+
+            «new MigrationHelper().generate(it)»
         «ENDIF»
     '''
 

@@ -3,10 +3,12 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.controller.workflo
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.EntityWorkflowType
 import de.guite.modulestudio.metamodel.ListFieldItem
+import de.guite.modulestudio.metamodel.MappedSuperClass
 import java.util.ArrayList
 import java.util.HashMap
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
+import org.zikula.modulestudio.generator.extensions.ModelInheritanceExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
@@ -17,6 +19,7 @@ import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
 class Definition {
 
     extension FormattingExtensions = new FormattingExtensions
+    extension ModelInheritanceExtensions = new ModelInheritanceExtensions
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
     extension WorkflowExtensions = new WorkflowExtensions
@@ -79,7 +82,9 @@ class Definition {
                             - workflowState
                     supports:
                         «FOR entity : app.getEntitiesForWorkflow(wfType)»
-                            - «app.appNamespace»\Entity\«entity.name.formatForCodeCapital»Entity
+                            «IF !entity.isInheriting || entity.parentType instanceof MappedSuperClass»
+                                - «app.appNamespace»\Entity\«entity.name.formatForCodeCapital»Entity
+                            «ENDIF»
                         «ENDFOR»
                     «statesImpl»
                     «actionsImpl»

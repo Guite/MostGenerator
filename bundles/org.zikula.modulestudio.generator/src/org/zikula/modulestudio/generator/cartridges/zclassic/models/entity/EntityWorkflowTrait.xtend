@@ -4,18 +4,14 @@ import de.guite.modulestudio.metamodel.Application
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
-import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
-import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
 
 class EntityWorkflowTrait {
 
     extension FormattingExtensions = new FormattingExtensions
-    extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
-    extension WorkflowExtensions = new WorkflowExtensions
 
     FileHelper fh = new FileHelper
 
@@ -103,17 +99,7 @@ class EntityWorkflowTrait {
     def private loadWorkflow(Application it) '''
         $container = ServiceUtil::get('service_container');
         $translator = $container->get('translator.default');
-        «IF amountOfExampleRows > 0»
-            «IF needsApproval»
-                $logger = $container->get('logger');
-                $permissionApi = $container->get('zikula_permissions_module.api.permission');
-                $entityFactory = $container->get('«appService».entity_factory');
-            «ENDIF»
-            $listEntriesHelper = $container->get('«appService».listentries_helper');
-            $workflowHelper = new \«appNamespace»\Helper\WorkflowHelper($translator«IF needsApproval», $logger, $permissionApi, $entityFactory«ENDIF», $listEntriesHelper);
-        «ELSE»
-            $workflowHelper = $container->get('«appService».workflow_helper');
-        «ENDIF»
+        $workflowHelper = $container->get('«appService».workflow_helper');
 
         $objectType = $this->get_objectType();
         $idColumn = $this->getWorkflowIdColumn();
