@@ -184,7 +184,6 @@ class Repository {
                 «fh.getterAndSetterMethods(it, 'translationsEnabled', 'bool', false, false, false, '', '')»
             «ENDIF»
 
-            «truncateTable»
             «new UserDeletion().generate(it)»
 
             «selectById»
@@ -293,30 +292,6 @@ class Repository {
         use «app.appNamespace»\Entity\«name.formatForCodeCapital»Entity;
         use «app.appNamespace»\Helper\CollectionFilterHelper;
 
-    '''
-
-    def private truncateTable(Entity it) '''
-        /**
-         * Helper method for truncating the table.
-         * Used during installation when inserting default data.
-         *
-         * @param LoggerInterface $logger Logger service instance
-         */
-        public function truncateTable(LoggerInterface $logger)
-        {
-            $qb = $this->getEntityManager()->createQueryBuilder();
-            $qb->delete($this->mainEntityClass, 'tbl');
-            $query = $qb->getQuery();
-            «IF hasPessimisticWriteLock»
-
-                $query->setLockMode(LockMode::«lockType.lockTypeAsConstant»);
-            «ENDIF»
-
-            $query->execute();
-
-            $logArgs = ['app' => '«application.appName»', 'entity' => '«name.formatForDisplay»'];
-            $logger->debug('{app}: Truncated the {entity} entity table.', $logArgs);
-        }
     '''
 
     def private selectById(Entity it) '''

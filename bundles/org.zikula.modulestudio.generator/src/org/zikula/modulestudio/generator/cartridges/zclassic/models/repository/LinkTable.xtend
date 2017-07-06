@@ -38,21 +38,6 @@ class LinkTable {
          */
         class Abstract«refClass.formatForCodeCapital»Repository extends EntityRepository
         {
-            /**
-             * Deletes all items in this table.
-             *
-             * @param LoggerInterface $logger Logger service instance
-             */
-            public function truncateTable(LoggerInterface $logger)
-            {
-                $qb = $this->getEntityManager()->createQueryBuilder();
-                $qb->delete('\\«app.vendor.formatForCodeCapital»\\«app.name.formatForCodeCapital»Module\\Entity\\«refClass.formatForCodeCapital»', 'tbl');
-                $query = $qb->getQuery();
-                $query->execute();
-
-                $logArgs = ['app' => '«app.appName»', 'entity' => '«refClass.formatForDisplay»'];
-                $logger->debug('{app}: Truncated the {entity} entity table.', $logArgs);
-            }
         }
     '''
 
