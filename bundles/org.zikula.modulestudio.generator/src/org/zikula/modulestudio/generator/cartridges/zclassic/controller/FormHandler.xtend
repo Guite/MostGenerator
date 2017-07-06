@@ -673,7 +673,7 @@ class FormHandler {
             if (!is_object($this->form)) {
                 return false;
             }
-            «IF targets('1.5')»
+            «IF targets('1.5') && hasHookSubscribers»
 
                 if ($entity->supportsHookSubscribers()) {
                     // Call form aware display hooks
