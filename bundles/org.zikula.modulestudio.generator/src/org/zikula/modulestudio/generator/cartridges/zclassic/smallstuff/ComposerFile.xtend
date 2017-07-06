@@ -139,7 +139,7 @@ class ComposerFile {
         if (null !== capabilities && capabilities != '') {
             return true
         }
-        if (hasHookSubscribers) {
+        if (hasHookSubscribers && !targets('1.5')) {
             return true
         }
         false
