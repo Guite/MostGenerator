@@ -149,15 +149,17 @@ class Installer {
 
             // create the default data
             $this->createDefaultData(«IF hasCategorisableEntities»$categoryRegistryIdsPerEntity«ENDIF»);
+            «IF !targets('1.5')»
 
-            «IF hasHookSubscribers»
-                // install subscriber hooks
-                $this->hookApi->installSubscriberHooks($this->bundle->getMetaData());
-            «ENDIF»«/*TODO see #15
-            «IF hasHookProviders»
-                // install provider hooks
-                $this->hookApi->installProviderHooks($this->bundle->getMetaData());
-            «ENDIF»*/»
+                «IF hasHookSubscribers»
+                    // install subscriber hooks
+                    $this->hookApi->installSubscriberHooks($this->bundle->getMetaData());
+                «ENDIF»«/*TODO see #15
+                «IF hasHookProviders»
+                    // install provider hooks
+                    $this->hookApi->installProviderHooks($this->bundle->getMetaData());
+                «ENDIF»*/»
+            «ENDIF»
 
             // initialisation successful
             return true;
@@ -231,6 +233,16 @@ class Installer {
         «IF !isSystemModule»
 
             «new MigrationHelper().generate(it)»
+            «IF targets('1.5') && !targets('2.0') && (hasHookSubscribers/* || hasHookProviders*/)»
+
+                // remove obsolete persisted hooks from the database
+                «IF hasHookSubscribers»
+                    //$this->hookApi->uninstallSubscriberHooks($this->bundle->getMetaData());
+                «ENDIF»«/*TODO see #15
+                «IF hasHookProviders»
+                    //$this->hookApi->uninstallProviderHooks($this->bundle->getMetaData());
+                «ENDIF»*/»
+            «ENDIF»
         «ENDIF»
     '''
 
@@ -265,15 +277,17 @@ class Installer {
 
                 return false;
             }
-            «IF hasHookSubscribers»
+            «IF !targets('1.5')»
+                «IF hasHookSubscribers»
 
-                // uninstall subscriber hooks
-                $this->hookApi->uninstallSubscriberHooks($this->bundle->getMetaData());
-            «ENDIF»«/*TODO see #15
-            «IF hasHookProviders»
-                // uninstall provider hooks
-                $this->hookApi->uninstallProviderHooks($this->bundle->getMetaData());
-            «ENDIF»*/»
+                    // uninstall subscriber hooks
+                    $this->hookApi->uninstallSubscriberHooks($this->bundle->getMetaData());
+                «ENDIF»«/*TODO see #15
+                «IF hasHookProviders»
+                    // uninstall provider hooks
+                    $this->hookApi->uninstallProviderHooks($this->bundle->getMetaData());
+                «ENDIF»*/»
+            «ENDIF»
             «IF !variables.empty»
 
                 // remove all module vars

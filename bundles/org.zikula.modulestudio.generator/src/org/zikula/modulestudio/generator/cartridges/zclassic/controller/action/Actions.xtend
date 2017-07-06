@@ -301,6 +301,14 @@ class Actions {
         }
 
         $form = $this->createForm('«IF app.targets('1.5')»Zikula\Bundle\FormExtensionBundle\Form\Type\DeletionType«ELSE»«app.appNamespace»\Form\DeleteEntityType«ENDIF»', $«name.formatForCode»);
+        «IF !skipHookSubscribers»
+            $hookHelper = $this->get('«app.appService».hook_helper');
+        «ENDIF»
+        «IF app.targets('1.5') && !skipHookSubscribers»
+
+            // Call form aware display hooks
+            $formHook = $hookHelper->callFormDisplayHooks($form, $«name.formatForCode», FormAwareCategory::TYPE_DELETE);
+        «ENDIF»
 
         if ($form->handleRequest($request)->isValid()) {
             if ($form->get('delete')->isClicked()) {
@@ -315,7 +323,8 @@ class Actions {
         $templateParameters = [
             'routeArea' => $isAdmin ? 'admin' : '',
             'deleteForm' => $form->createView(),
-            $objectType => $«name.formatForCode»
+            $objectType => $«name.formatForCode»«IF app.targets('1.5') && !skipHookSubscribers»
+            'formHookTemplates' => $formHook->getTemplates()«ENDIF»
         ];
 
         $controllerHelper = $this->get('«app.appService».controller_helper');
@@ -327,9 +336,8 @@ class Actions {
 
     def private deletionProcess(Entity it, DeleteAction action) '''
         «IF !skipHookSubscribers»
-            $hookHelper = $this->get('«app.appService».hook_helper');
-            // Let any hooks perform additional validation actions
-            $validationHooksPassed = $hookHelper->callValidationHooks($«name.formatForCode», 'validate_delete');
+            // Let any ui hooks perform additional validation actions
+            $validationHooksPassed = $hookHelper->callValidationHooks($«name.formatForCode», «IF app.targets('1.5')»UiHooksCategory::TYPE_VALIDATE_DELETE«ELSE»'validate_delete'«ENDIF»);
             if ($validationHooksPassed) {
                 «performDeletionAndRedirect(action)»
             }
@@ -346,9 +354,14 @@ class Actions {
             $logger->notice('{app}: User {user} deleted the {entity} with id {id}.', $logArgs);
         }
         «IF !skipHookSubscribers»
+            «IF app.targets('1.5')»
 
-            // Let any hooks know that we have deleted the «name.formatForDisplay»
-            $hookHelper->callProcessHooks($«name.formatForCode», 'process_delete', null);
+                // Call form aware processing hooks
+                $hookHelper->callFormProcessHooks($form, $«name.formatForCode», FormAwareCategory::TYPE_PROCESS_DELETE);
+            «ENDIF»
+
+            // Let any ui hooks know that we have deleted the «name.formatForDisplay»
+            $hookHelper->callProcessHooks($«name.formatForCode», «IF app.targets('1.5')»UiHooksCategory::TYPE_PROCESS_DELETE«ELSE»'process_delete'«ENDIF»);
         «ENDIF»
 
         return $this->redirectToRoute($redirectRoute);

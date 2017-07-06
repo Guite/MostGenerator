@@ -116,18 +116,20 @@ class ComposerFile {
                         "«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Entity\\«entity.name.formatForCodeCapital»Entity"«IF entity != getCategorisableEntities.last»,«ENDIF»
                     «ENDFOR»
                 ]
-            }«IF (null !== capabilities && capabilities != '') || hasHookSubscribers»,«ENDIF»
+            }«IF (null !== capabilities && capabilities != '') || (hasHookSubscribers && !targets('1.5'))»,«ENDIF»
         «ENDIF»
         «IF null !== capabilities && capabilities != ''»
             «val capabilitiesArray = capabilities.replaceAll(', ', '').split(',')»
             «FOR capability : capabilitiesArray»
-                "«capability.formatForDisplay»": {"version": "1.0"}«IF capability != capabilitiesArray.last || hasHookSubscribers»,«ENDIF»
+                "«capability.formatForDisplay»": {"version": "1.0"}«IF capability != capabilitiesArray.last || (hasHookSubscribers && !targets('1.5'))»,«ENDIF»
             «ENDFOR»
         «ENDIF»
-        «IF hasHookSubscribers»
-            "hook_subscriber": {"class": "«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Container\\HookContainer"}
-        «ENDIF»«/* TODO see #15 ,
-        "hook_provider": {"class": "«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Container\\HookContainer"} */»
+        «IF !targets('1.5')»
+            «IF hasHookSubscribers»
+                "hook_subscriber": {"class": "«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Container\\HookContainer"}
+            «ENDIF»«/* TODO see #15 ,
+            "hook_provider": {"class": "«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Container\\HookContainer"} */»
+        «ENDIF»
     '''
 
     def private hasExtraCapabilities(Application it) {

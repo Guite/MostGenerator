@@ -74,6 +74,17 @@ class ModelExtensions {
     }
 
     /**
+     * Returns a hash map with supported hook subscriber types.
+     */
+    def getHookSubscriberTypes(Application it) {
+        newHashMap(
+            'FilterHooks' -> 'FilterHooks',
+            'FormAware' -> 'FormAwareHook',
+            'UiHooks' -> 'UiHooks'
+        )
+    }
+
+    /**
      * Checks whether the application contains at least one entity with at least one image field.
      */
     def hasImageFields(Application it) {

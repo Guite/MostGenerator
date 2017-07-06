@@ -101,8 +101,12 @@ class MassHandling {
             }
 
             «IF !skipHookSubscribers»
-                // Let any hooks perform additional validation actions
-                $hookType = $action == 'delete' ? 'validate_delete' : 'validate_edit';
+                // Let any ui hooks perform additional validation actions
+                «IF application.targets('1.5')»
+                    $hookType = $action == 'delete' ? UiHooksCategory::TYPE_VALIDATE_DELETE : UiHooksCategory::TYPE_VALIDATE_EDIT;
+                «ELSE»
+                    $hookType = $action == 'delete' ? 'validate_delete' : 'validate_edit';
+                «ENDIF»
                 $validationHooksPassed = $hookHelper->callValidationHooks($entity, $hookType);
                 if (!$validationHooksPassed) {
                     continue;
@@ -131,8 +135,12 @@ class MassHandling {
             }
             «IF !skipHookSubscribers»
 
-                // Let any hooks know that we have updated or deleted an item
-                $hookType = $action == 'delete' ? 'process_delete' : 'process_edit';
+                // Let any ui hooks know that we have updated or deleted an item
+                «IF application.targets('1.5')»
+                    $hookType = $action == 'delete' ? UiHooksCategory::TYPE_PROCESS_DELETE : UiHooksCategory::TYPE_PROCESS_EDIT;
+                «ELSE»
+                    $hookType = $action == 'delete' ? 'process_delete' : 'process_edit';
+                «ENDIF»
                 $url = null;
                 if ($action != 'delete') {
                     $urlArgs = $entity->createUrlArgs();

@@ -145,6 +145,10 @@ class FormHandler {
         use Symfony\Component\Routing\RouterInterface;
         use Symfony\Component\Security\Core\Exception\AccessDeniedException;
         use Zikula\Bundle\CoreBundle\HttpKernel\ZikulaHttpKernelInterface;
+        «IF hasHookSubscribers && targets('1.5')»
+            use Zikula\Bundle\HookBundle\Category\FormAwareCategory;
+            use Zikula\Bundle\HookBundle\Category\UiHooksCategory;
+        «ENDIF»
         use Zikula\Common\Translator\TranslatorInterface;
         use Zikula\Common\Translator\TranslatorTrait;
         use Zikula\Core\Doctrine\EntityAccess;
@@ -669,6 +673,14 @@ class FormHandler {
             if (!is_object($this->form)) {
                 return false;
             }
+            «IF targets('1.5')»
+
+                if ($entity->supportsHookSubscribers()) {
+                    // Call form aware display hooks
+                    $formHook = $this->hookHelper->callFormDisplayHooks($form, $entity, FormAwareCategory::TYPE_EDIT);
+                    $this->templateParameters['formHookTemplates'] = $formHook->getTemplates();
+                }
+            «ENDIF»
 
             // handle form request and check validity constraints of edited entity
             if ($this->form->handleRequest($this->request) && $this->form->isSubmitted()) {
@@ -916,8 +928,12 @@ class FormHandler {
             «IF hasHookSubscribers»
 
                 if ($entity->supportsHookSubscribers() && $action != 'cancel') {
-                    // Let any hooks perform additional validation actions
-                    $hookType = $action == 'delete' ? 'validate_delete' : 'validate_edit';
+                    // Let any ui hooks perform additional validation actions
+                    «IF targets('1.5')»
+                        $hookType = $action == 'delete' ? UiHooksCategory::TYPE_VALIDATE_DELETE : UiHooksCategory::TYPE_VALIDATE_EDIT;
+                    «ELSE»
+                        $hookType = $action == 'delete' ? 'validate_delete' : 'validate_edit';
+                    «ENDIF»
                     $validationHooksPassed = $this->hookHelper->callValidationHooks($entity, $hookType);
                     if (!$validationHooksPassed) {
                         return false;
@@ -942,15 +958,26 @@ class FormHandler {
                 «IF hasHookSubscribers»
 
                     if ($entity->supportsHookSubscribers()) {
-                        // Let any hooks know that we have created, updated or deleted an item
-                        $hookType = $action == 'delete' ? 'process_delete' : 'process_edit';
-                        $url = null;
+                        $routeUrl = null;
                         if ($action != 'delete') {
                             $urlArgs = $entity->createUrlArgs();
                             $urlArgs['_locale'] = $this->request->getLocale();
-                            $url = new RouteUrl('«appName.formatForDB»_' . $this->objectTypeLower . '_display', $urlArgs);
+                            $routeUrl = new RouteUrl('«appName.formatForDB»_' . $this->objectTypeLower . '_display', $urlArgs);
                         }
-                        $this->hookHelper->callProcessHooks($entity, $hookType, $url);
+
+                        «IF targets('1.5')»
+                            // Call form aware processing hooks
+                            $hookType = $action == 'delete' ? FormAwareCategory::TYPE_PROCESS_DELETE : FormAwareCategory::TYPE_PROCESS_EDIT;
+                            $this->hookHelper->callFormProcessHooks($form, $entity, $hookType, $routeUrl);
+
+                        «ENDIF»
+                        // Let any ui hooks know that we have created, updated or deleted an item
+                        «IF targets('1.5')»
+                            $hookType = $action == 'delete' ? UiHooksCategory::TYPE_PROCESS_DELETE : UiHooksCategory::TYPE_PROCESS_EDIT;
+                        «ELSE»
+                            $hookType = $action == 'delete' ? 'process_delete' : 'process_edit';
+                        «ENDIF»
+                        $this->hookHelper->callProcessHooks($entity, $hookType, $routeUrl);
                     }
                 «ENDIF»
             }

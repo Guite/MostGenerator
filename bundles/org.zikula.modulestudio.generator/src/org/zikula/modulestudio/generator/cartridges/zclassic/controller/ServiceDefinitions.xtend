@@ -54,6 +54,9 @@ class ServiceDefinitions {
         if (authenticationMethod != AuthMethodType.NONE) {
             generateServiceFile(fsa, 'authentication', authentication)
         }
+        if (targets('1.5') && hasHookSubscribers) {
+            generateServiceFile(fsa, 'hooks', hooks)
+        }
         generateServiceFile(fsa, 'linkContainer', linkContainer)
         generateServiceFile(fsa, 'entityFactory', entityFactory)
         generateServiceFile(fsa, 'eventSubscriber', eventSubscriber)
@@ -114,6 +117,37 @@ class ServiceDefinitions {
                 - "@zikula_zauth_module.api.password"
             tags:
                 - { name: zikula.authentication_method, alias: '«name.formatForDB»_authentication' }
+    '''
+
+    def private hooks(Application it) '''
+        services:
+            «FOR entity : getAllEntities.filter[e|!e.skipHookSubscribers]»
+                «modPrefix».hook_subscriber.filter.«entity.nameMultiple.formatForDB»:
+                    class: «appNamespace»\HookSubscriber\«entity.name.formatForCodeCapital»FilterHooksSubscriber
+                    arguments:
+                        - '@translator.default'
+                    tags:
+                        - { name: zikula.hook_subscriber, areaName: 'subscriber.«vendor.formatForDB»«name.formatForDB».filter_hooks.«entity.nameMultiple.formatForDB»' }
+
+                «IF entity.hasEditAction || entity.hasDeleteAction»
+                    «modPrefix».hook_subscriber.form_aware.«entity.nameMultiple.formatForDB»:
+                        class: «appNamespace»\HookSubscriber\«entity.name.formatForCodeCapital»FormAwareHookSubscriber
+                        arguments:
+                            - '@translator.default'
+                        tags:
+                            - { name: zikula.hook_subscriber, areaName: 'subscriber.«vendor.formatForDB»«name.formatForDB».form_aware_hook.«entity.nameMultiple.formatForDB»' }
+
+                «ENDIF»
+                «IF entity.hasViewAction || entity.hasDisplayAction || entity.hasEditAction || entity.hasDeleteAction»
+                    «modPrefix».hook_subscriber.ui.«entity.nameMultiple.formatForDB»:
+                        class: «appNamespace»\HookSubscriber\«entity.name.formatForCodeCapital»UiHooksSubscriber
+                        arguments:
+                            - '@translator.default'
+                        tags:
+                            - { name: zikula.hook_subscriber, areaName: 'subscriber.«vendor.formatForDB»«name.formatForDB».ui_hooks.«entity.nameMultiple.formatForDB»' }
+
+                «ENDIF»
+            «ENDFOR»
     '''
 
     def private linkContainer(Application it) '''

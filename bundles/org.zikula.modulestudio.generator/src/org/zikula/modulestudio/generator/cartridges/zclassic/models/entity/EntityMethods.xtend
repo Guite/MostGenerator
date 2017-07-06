@@ -42,11 +42,13 @@ class EntityMethods {
 
         «getKey»
 
-        «supportsHookSubscribers»
+        «IF app.hasHookSubscribers»
+            «supportsHookSubscribers»
 
-        «IF !skipHookSubscribers»
-            «getHookAreaPrefix»
+            «IF !skipHookSubscribers»
+                «getHookAreaPrefix»
 
+            «ENDIF»
         «ENDIF»
         «relatedObjectsImpl(app)»
 

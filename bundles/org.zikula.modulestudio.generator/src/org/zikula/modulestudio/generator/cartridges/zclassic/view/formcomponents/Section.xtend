@@ -5,14 +5,12 @@ import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.EntityWorkflowType
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
-import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 import org.zikula.modulestudio.generator.extensions.ViewExtensions
 
 class Section {
 
     extension FormattingExtensions = new FormattingExtensions
-    extension ModelExtensions = new ModelExtensions
     extension ViewExtensions = new ViewExtensions
     extension Utils = new Utils
 
@@ -23,8 +21,14 @@ class Section {
 
         «extensionsAndRelations(app, fsa, isAdmin)»
 
-        «IF !skipHookSubscribers»
-            «displayHooks(app)»
+        «IF !skipHookSubscribers && app.targets('1.5')»
+            {% if formHookTemplates|length > 0 %}
+                <fieldset>
+                    {% for hookTemplate in formHookTemplates %}
+                        {{ include(hookTemplate.0, hookTemplate.1, ignore_missing = true) }}
+                    {% endfor %}
+                </fieldset>
+            {% endif %}
 
         «ENDIF»
         «additionalRemark»
@@ -65,31 +69,6 @@ class Section {
             {% if mode != 'create' %}
                 {{ include('@«app.appName»/Helper/includeStandardFieldsEdit.html.twig', { obj: «name.formatForDB»«IF useGroupingTabs('edit')», tabs: true«ENDIF» }) }}
             {% endif %}
-        «ENDIF»
-    '''
-
-    def private displayHooks(Entity it, Application app) '''
-        «IF useGroupingTabs('edit')»
-            <div role="tabpanel" class="tab-pane fade" id="tabHooks" aria-labelledby="hooksTab">
-                <h3>{{ __('Hooks') }}</h3>
-        «ENDIF»
-        {% set hookId = mode != 'create' ? «name.formatForDB».«primaryKey.name.formatForCode» : null %}
-        {% set hooks = notifyDisplayHooks(eventName='«app.appName.formatForDB».ui_hooks.«nameMultiple.formatForDB».form_edit', id=hookId) %}
-        {% if hooks is iterable and hooks|length > 0 %}
-            {% for providerArea, hook in hooks if providerArea != 'provider.scribite.ui_hooks.editor' %}
-                «IF useGroupingTabs('edit')»
-                    <h4>{{ providerArea }}</h4>
-                    {{ hook }}
-                «ELSE»
-                    <fieldset>
-                        <legend>{{ providerArea }}</legend>
-                        {{ hook }}
-                    </fieldset>
-                «ENDIF»
-            {% endfor %}
-        {% endif %}
-        «IF useGroupingTabs('edit')»
-            </div>
         «ENDIF»
     '''
 

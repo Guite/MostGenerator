@@ -169,6 +169,10 @@ class Forms {
 
         «submitActions»
         {{ form_end(form) }}
+        «IF !skipHookSubscribers»
+            «displayHooks(app)»
+
+        «ENDIF»
     '''
 
     def private fieldDetails(Entity it) '''
@@ -343,6 +347,31 @@ class Forms {
         {% endfor %}
         {{ form_widget(form.reset) }}
         {{ form_widget(form.cancel) }}
+    '''
+
+    def private displayHooks(Entity it, Application app) '''
+        «IF useGroupingTabs('edit')»
+            <div role="tabpanel" class="tab-pane fade" id="tabHooks" aria-labelledby="hooksTab">
+                <h3>{{ __('Hooks') }}</h3>
+        «ENDIF»
+        {% set hookId = mode != 'create' ? «name.formatForDB».«primaryKey.name.formatForCode» : null %}
+        {% set hooks = notifyDisplayHooks(eventName='«app.appName.formatForDB».ui_hooks.«nameMultiple.formatForDB».form_edit', id=hookId) %}
+        {% if hooks is iterable and hooks|length > 0 %}
+            {% for providerArea, hook in hooks if providerArea != 'provider.scribite.ui_hooks.editor' %}
+                «IF useGroupingTabs('edit')»
+                    <h4>{{ providerArea }}</h4>
+                    {{ hook }}
+                «ELSE»
+                    <fieldset>
+                        <legend>{{ providerArea }}</legend>
+                        {{ hook }}
+                    </fieldset>
+                «ENDIF»
+            {% endfor %}
+        {% endif %}
+        «IF useGroupingTabs('edit')»
+            </div>
+        «ENDIF»
     '''
 
     def private additionalInitScript(DerivedField it) {

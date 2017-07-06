@@ -37,6 +37,9 @@ class ArchiveHelper {
         use Psr\Log\LoggerInterface;
         use Symfony\Component\HttpFoundation\Request;
         use Symfony\Component\HttpFoundation\RequestStack;
+        «IF hasHookSubscribers && targets('1.5')»
+            use Zikula\Bundle\HookBundle\Category\UiHooksCategory;
+        «ENDIF»
         use Zikula\Common\Translator\TranslatorInterface;
         use Zikula\Core\RouteUrl;
         use Zikula\PermissionsModule\Api\«IF targets('1.5')»ApiInterface\PermissionApiInterface«ELSE»PermissionApi«ENDIF»;
@@ -223,7 +226,7 @@ class ArchiveHelper {
             «IF hasHookSubscribers»
                 if ($entity->supportsHookSubscribers()) {
                     // Let any hooks perform additional validation actions
-                    $validationHooksPassed = $this->hookHelper->callValidationHooks($entity, 'validate_edit');
+                    $validationHooksPassed = $this->hookHelper->callValidationHooks($entity, «IF targets('1.5')»UiHooksCategory::TYPE_VALIDATE_EDIT«ELSE»'validate_edit'«ENDIF»);
                     if (!$validationHooksPassed) {
                         return false;
                     }
@@ -255,7 +258,7 @@ class ArchiveHelper {
                         $urlArgs['_locale'] = $this->request->getLocale();
                         $url = new RouteUrl('«appName.formatForDB»_' . strtolower($objectType) . '_display', $urlArgs);
                 	}
-                    $this->hookHelper->callProcessHooks($entity, 'process_edit', $url);
+                    $this->hookHelper->callProcessHooks($entity, «IF targets('1.5')»UiHooksCategory::TYPE_PROCESS_EDIT«ELSE»'process_edit'«ENDIF», $url);
                 }
             «ENDIF»
         }

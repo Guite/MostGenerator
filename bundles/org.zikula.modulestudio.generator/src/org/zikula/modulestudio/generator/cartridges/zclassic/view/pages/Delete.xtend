@@ -52,6 +52,15 @@ class Delete {
                 {{ form_start(deleteForm) }}
                 {{ form_errors(deleteForm) }}
 
+                «IF !skipHookSubscribers && app.targets('1.5')»
+                    {% if formHookTemplates|length > 0 %}
+                        <fieldset>
+                            {% for hookTemplate in formHookTemplates %}
+                                {{ include(hookTemplate.0, hookTemplate.1, ignore_missing = true) }}
+                            {% endfor %}
+                        </fieldset>
+                    {% endif %}
+                «ENDIF»
                 <fieldset>
                     <legend>{{ __('Confirmation prompt') }}</legend>
                     <div class="form-group">
@@ -61,11 +70,11 @@ class Delete {
                         </div>
                     </div>
                 </fieldset>
+                {{ form_end(deleteForm) }}
                 «IF !skipHookSubscribers»
 
                     {{ block('display_hooks') }}
                 «ENDIF»
-                {{ form_end(deleteForm) }}
             </div>
         {% endblock %}
         «IF !skipHookSubscribers»
