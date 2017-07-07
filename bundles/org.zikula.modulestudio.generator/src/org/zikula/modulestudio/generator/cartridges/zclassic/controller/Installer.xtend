@@ -304,13 +304,6 @@ class Installer {
             «ENDIF»
             «IF hasUploads»
 
-                «IF hasImageFields»
-                    // remove all thumbnails
-                    $manager = $this->container->get('systemplugin.imagine.manager');
-                    $manager->setModule('«appName»');
-                    $manager->cleanupModuleThumbs();
-
-                «ENDIF»
                 // remind user about upload folders not being deleted
                 $uploadPath = $this->container->getParameter('datadir') . '/«appName»/';
                 $this->addFlash('status', $this->__f('The upload directories at "%path%" can be removed manually.', ['%path%' => $uploadPath]));
