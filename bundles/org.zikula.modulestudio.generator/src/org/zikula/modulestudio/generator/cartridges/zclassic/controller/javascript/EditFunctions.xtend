@@ -587,15 +587,17 @@ class EditFunctions {
                             if (searchTerm == '') {
                                 searchTerm = selector.val();
                             }
-                            selector.autocomplete('option', 'autoFocus', true);
-                            selector.autocomplete('search', searchTerm);
-                            window.setTimeout(function() {
-                                var suggestions = selector.autocomplete('widget')[0].children;
-                                if (suggestions.length === 1) {
-                                    window.parent.jQuery(suggestions[0]).click();
-                                }
-                                selector.autocomplete('option', 'autoFocus', false);
-                            }, 1000);
+                            if (searchTerm != '') {
+                                selector.autocomplete('option', 'autoFocus', true);
+                                selector.autocomplete('search', searchTerm);
+                                window.setTimeout(function() {
+                                    var suggestions = selector.autocomplete('widget')[0].children;
+                                    if (suggestions.length === 1) {
+                                        window.parent.jQuery(suggestions[0]).click();
+                                    }
+                                    selector.autocomplete('option', 'autoFocus', false);
+                                }, 1000);
+                            }
                         }
                     }
 
