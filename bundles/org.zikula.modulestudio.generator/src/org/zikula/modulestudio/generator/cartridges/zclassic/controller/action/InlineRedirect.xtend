@@ -2,11 +2,15 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.controller.action
 
 import de.guite.modulestudio.metamodel.Entity
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
+import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
+import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class InlineRedirect {
 
     extension FormattingExtensions = new FormattingExtensions
+    extension ModelBehaviourExtensions = new ModelBehaviourExtensions
+    extension ModelExtensions = new ModelExtensions
     extension Utils = new Utils
 
     def generate(Entity it, Boolean isBase) '''
@@ -46,8 +50,30 @@ class InlineRedirect {
             return false;
         }
 
+        $searchTerm = '';
+        «IF hasAbstractStringFieldsEntity»
+            if (!empty($id)) {
+                $repository = $this->get('«application.appService».entity_factory')->getRepository('«name.formatForCode»');
+                «IF hasSluggableFields && slugUnique»
+                    $«name.formatForCode» = null;
+                    if (!is_numeric($id)) {
+                        $«name.formatForCode» = $repository->selectBySlug($id);
+                    }
+                    if (null === $«name.formatForCode» && is_numeric($id)) {
+                        $«name.formatForCode» = $repository->selectById($id);
+                    }
+                «ELSE»
+                    $«name.formatForCode» = $repository->selectById($id);
+                «ENDIF»
+                if (null !== $«name.formatForCode») {
+                    $searchTerm = $«name.formatForCode»->get«getAbstractStringFieldsEntity.head.name.formatForCodeCapital»();
+                }
+            }
+        «ENDIF»
+
         $templateParameters = [
             'itemId' => $id,
+            'searchTerm' => $searchTerm,
             'idPrefix' => $idPrefix,
             'commandName' => $commandName
         ];

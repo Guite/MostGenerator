@@ -561,7 +561,7 @@ class EditFunctions {
         /**
          * Closes an iframe from the document displayed in it.
          */
-        function «vendorAndName»CloseWindowFromInside(idPrefix, itemId)
+        function «vendorAndName»CloseWindowFromInside(idPrefix, itemId, searchTerm)
         {
             // if there is no parent window do nothing
             if (window.parent === '') {
@@ -570,24 +570,36 @@ class EditFunctions {
 
             // search for the handler of the current window
             jQuery.each(window.parent.relationHandler, function (key, singleRelationHandler) {
-                var selector, searchTerm;
+                var selector;
 
                 // look if this handler is the right one
                 if (singleRelationHandler.prefix === idPrefix) {
-                    // show a message
-                    window.parent.«vendorAndName»SimpleAlert(window.parent.jQuery('.«vendorAndName.toLowerCase»-edit-form').first(), window.parent.Translator.__('Information'), window.parent.Translator.__('Action has been completed.'), 'actionDoneAlert', 'success');
+                    // look whether there is an auto completion instance
+                    if (null !== singleRelationHandler.acInstance) {
+                        selector = window.parent.jQuery('#' + idPrefix.replace('DoNew', '')).first();
 
-                    // check if a new item has been created
-                    if (itemId > 0) {
-                        // look whether there is an auto completion instance
-                        if (null !== singleRelationHandler.acInstance) {
-                            // activate it
-                            selector = window.parent.jQuery('#' + idPrefix.replace('DoNew', '')).first();
-                            searchTerm = selector.val();
+                        // show a message
+                        window.parent.«vendorAndName»SimpleAlert(selector, window.parent.Translator.__('Information'), window.parent.Translator.__('Action has been completed.'), 'actionDoneAlert', 'success');
+
+                        // check if a new item has been created
+                        if (itemId > 0) {
+                            // activate auto completion
+                            if (searchTerm == '') {
+                                searchTerm = selector.val();
+                            }
+                            selector.autocomplete('option', 'autoFocus', true);
                             selector.autocomplete('search', searchTerm);
+                            window.setTimeout(function() {
+                                var suggestions = selector.autocomplete('widget')[0].children;
+                                if (suggestions.length === 1) {
+                                    window.parent.jQuery(suggestions[0]).click();
+                                }
+                                selector.autocomplete('option', 'autoFocus', false);
+                            }, 1000);
                         }
                     }
-                    // look whether there is a windows instance
+
+                    // look whether there is a window instance
                     if (null !== singleRelationHandler.windowInstanceId) {
                         // close it
                         window.parent.jQuery('#' + singleRelationHandler.windowInstanceId).dialog('close');

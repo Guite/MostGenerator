@@ -176,10 +176,11 @@ class Redirect {
         {
             «IF app.needsAutoCompletion && (!incoming.empty || !outgoing.empty)»
                 if (true === $this->templateParameters['inlineUsage']) {
+                    $commandName = substr($args['commandName'], 0, 6) == 'submit' ? 'create' : $args['commandName'];
                     $urlArgs = [
                         'idPrefix' => $this->idPrefix,
-                        'commandName' => $args['commandName'],
-                        $this->idField => $this->idValue
+                        'commandName' => $commandName,
+                        'id' => $this->idValue
                     ];
 
                     // inline usage, return to special function for closing the modal window instance
