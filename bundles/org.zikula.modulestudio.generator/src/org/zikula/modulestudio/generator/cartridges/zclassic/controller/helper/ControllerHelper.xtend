@@ -348,6 +348,8 @@ class ControllerHelper {
             // parameter for used sorting field
             «new ControllerHelperFunctions().defaultSorting(it)»
             $sortdir = $request->query->get('sortdir', 'ASC');
+            $templateParameters['sort'] = $sort;
+            $templateParameters['sortdir'] = strtolower($sortdir);
             «IF hasTrees»
 
                 if ('tree' == $request->query->getAlnum('tpl', '')) {
