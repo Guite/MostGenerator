@@ -75,16 +75,20 @@ class EditFunctions {
 
                 jQuery('#' + fieldName + 'Selector').autocomplete({
                     minLength: 1,
+                    open: function(event, ui) {
+                        jQuery(this).autocomplete('widget').css({
+                            width: (jQuery(this).outerWidth() + 'px')
+                        });
+                    },
                     source: function (request, response) {
                         jQuery.getJSON(Routing.generate('«appName.formatForDB»_ajax_searchusers', { fragment: request.term }), function(data) {
                             response(data);
                         });
                     },
                     response: function(event, ui) {
+                        jQuery('#' + fieldName + 'LiveSearch .empty-message').remove();
                         if (ui.content.length === 0) {
                             jQuery('#' + fieldName + 'LiveSearch').append('<div class="empty-message">' + Translator.__('No results found!') + '</div>');
-                        } else {
-                            jQuery('#' + fieldName + 'LiveSearch .empty-message').remove();
                         }
                     },
                     focus: function(event, ui) {
@@ -481,6 +485,11 @@ class EditFunctions {
 
                 jQuery('#' + idPrefix + 'Selector').autocomplete({
                     minLength: 1,
+                    open: function(event, ui) {
+                        jQuery(this).autocomplete('widget').css({
+                            width: (jQuery(this).outerWidth() + 'px')
+                        });
+                    },
                     source: function (request, response) {
                         var acUrlArgs;
 
@@ -497,10 +506,9 @@ class EditFunctions {
                         });
                     },
                     response: function(event, ui) {
+                        jQuery('#' + idPrefix + 'LiveSearch .empty-message').remove();
                         if (ui.content.length === 0) {
                             jQuery('#' + idPrefix + 'LiveSearch').append('<div class="empty-message">' + Translator.__('No results found!') + '</div>');
-                        } else {
-                            jQuery('#' + idPrefix + 'LiveSearch .empty-message').remove();
                         }
                     },
                     focus: function(event, ui) {
