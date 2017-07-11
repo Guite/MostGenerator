@@ -46,7 +46,7 @@ class AjaxController {
         «IF hasTrees && hasEditActions»
             use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
         «ENDIF»
-        «IF needsDuplicateCheck || hasBooleansWithAjaxToggle || hasTrees»
+        «IF needsDuplicateCheck || hasBooleansWithAjaxToggle || hasTrees || hasSortable»
             use Symfony\Component\Security\Core\Exception\AccessDeniedException;
         «ENDIF»
         use Zikula\Core\Controller\AbstractController;

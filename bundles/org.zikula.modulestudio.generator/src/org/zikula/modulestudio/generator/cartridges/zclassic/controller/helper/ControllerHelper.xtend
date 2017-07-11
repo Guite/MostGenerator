@@ -339,7 +339,7 @@ class ControllerHelper {
         {
             $contextArgs = ['controller' => $objectType, 'action' => 'view'];
             if (!in_array($objectType, $this->getObjectTypes('controllerAction', $contextArgs))) {
-                throw new Exception($this->__('Error! Invalid object type received.'));
+                throw new \Exception($this->__('Error! Invalid object type received.'));
             }
 
             $request = $this->request;
@@ -470,7 +470,7 @@ class ControllerHelper {
         {
             $contextArgs = ['controller' => $objectType, 'action' => 'display'];
             if (!in_array($objectType, $this->getObjectTypes('controllerAction', $contextArgs))) {
-                throw new Exception($this->__('Error! Invalid object type received.'));
+                throw new \Exception($this->__('Error! Invalid object type received.'));
             }
             «IF hasHookSubscribers»
 
@@ -500,7 +500,7 @@ class ControllerHelper {
         {
             $contextArgs = ['controller' => $objectType, 'action' => 'edit'];
             if (!in_array($objectType, $this->getObjectTypes('controllerAction', $contextArgs))) {
-                throw new Exception($this->__('Error! Invalid object type received.'));
+                throw new \Exception($this->__('Error! Invalid object type received.'));
             }
 
             return $this->addTemplateParameters($objectType, $templateParameters, 'controllerAction', $contextArgs);
@@ -523,7 +523,7 @@ class ControllerHelper {
         {
             $contextArgs = ['controller' => $objectType, 'action' => 'delete'];
             if (!in_array($objectType, $this->getObjectTypes('controllerAction', $contextArgs))) {
-                throw new Exception($this->__('Error! Invalid object type received.'));
+                throw new \Exception($this->__('Error! Invalid object type received.'));
             }
 
             return $this->addTemplateParameters($objectType, $templateParameters, 'controllerAction', $contextArgs);
