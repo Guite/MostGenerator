@@ -283,7 +283,7 @@ class WorkflowHelper {
          *
          * @return array List of available workflow actions
          */
-        public function getActionsForObject($entity)
+        public function getActionsForObject(EntityAccess $entity)
         {
             «IF targets('1.5')»
                 $workflow = $this->workflowRegistry->get($entity);
@@ -493,7 +493,7 @@ class WorkflowHelper {
          *
          * @return bool False on error or true if everything worked well
          */
-        public function executeAction($entity, $actionId = '', $recursive = false)
+        public function executeAction(EntityAccess $entity, $actionId = '', $recursive = false)
         {
             «IF targets('1.5')»
                 $workflow = $this->workflowRegistry->get($entity);
