@@ -240,7 +240,7 @@ class WorkflowEvents {
 
     def private exampleCode(Application it) '''
         «new CommonExample().generalEventProperties(it)»
-
+        *
         * Access the entity: `$entity = $event->getSubject();`
         * Access the marking: `$marking = $event->getMarking();`
         * Access the transition: `$transition = $event->getTransition();`
