@@ -71,8 +71,8 @@ class Listeners {
     }
 
     def private generateListenerClasses(Application it) {
-        listenerFile('Kernel', listenersKernelFile)
         listenerFile('Installer', listenersInstallerFile)
+        listenerFile('Kernel', listenersKernelFile)
         listenerFile('ModuleDispatch', listenersModuleDispatchFile)
         listenerFile('Mailer', listenersMailerFile)
         listenerFile('Theme', listenersThemeFile)
@@ -112,16 +112,20 @@ class Listeners {
         «ELSE»
             use Symfony\Component\EventDispatcher\EventSubscriberInterface;
             use Zikula\Core\CoreEvents;
+            use Zikula\Core\Event\GenericEvent;
+            use Zikula\Core\Event\ModuleStateEvent;
         «ENDIF»
-        use Zikula\Core\Event\GenericEvent;
-        use Zikula\Core\Event\ModuleStateEvent;
 
         /**
          * Event handler «IF isBase»base«ELSE»implementation«ENDIF» class for module installer events.
          */
         «IF isBase»abstract «ENDIF»class «IF isBase»Abstract«ENDIF»InstallerListener«IF !isBase» extends AbstractInstallerListener«ELSE» implements EventSubscriberInterface«ENDIF»
         {
-            «new ModuleInstaller().generate(it, isBase)»
+            «IF isBase»
+                «new ModuleInstaller().generate(it)»
+            «ELSE»
+                // feel free to enhance the parent methods
+            «ENDIF»
         }
     '''
 
@@ -132,22 +136,26 @@ class Listeners {
             use «appNamespace»\Listener\Base\AbstractKernelListener;
         «ELSE»
             use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+            use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
+            use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
+            use Symfony\Component\HttpKernel\Event\FinishRequestEvent;
+            use Symfony\Component\HttpKernel\Event\GetResponseEvent;
+            use Symfony\Component\HttpKernel\Event\GetResponseForControllerResultEvent;
+            use Symfony\Component\HttpKernel\Event\GetResponseForExceptionEvent;
+            use Symfony\Component\HttpKernel\Event\PostResponseEvent;
             use Symfony\Component\HttpKernel\KernelEvents;
         «ENDIF»
-        use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
-        use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
-        use Symfony\Component\HttpKernel\Event\FinishRequestEvent;
-        use Symfony\Component\HttpKernel\Event\GetResponseEvent;
-        use Symfony\Component\HttpKernel\Event\GetResponseForControllerResultEvent;
-        use Symfony\Component\HttpKernel\Event\GetResponseForExceptionEvent;
-        use Symfony\Component\HttpKernel\Event\PostResponseEvent;
 
         /**
          * Event handler «IF isBase»base«ELSE»implementation«ENDIF» class for Symfony kernel events.
          */
         «IF isBase»abstract «ENDIF»class «IF isBase»Abstract«ENDIF»KernelListener«IF !isBase» extends AbstractKernelListener«ELSE» implements EventSubscriberInterface«ENDIF»
         {
-            «new Kernel().generate(it, isBase)»
+            «IF isBase»
+                «new Kernel().generate(it)»
+            «ELSE»
+                // feel free to enhance the parent methods
+            «ENDIF»
         }
     '''
 
@@ -158,15 +166,19 @@ class Listeners {
             use «appNamespace»\Listener\Base\AbstractModuleDispatchListener;
         «ELSE»
             use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+            use Zikula\Core\Event\GenericEvent;
         «ENDIF»
-        use Zikula\Core\Event\GenericEvent;
 
         /**
          * Event handler «IF isBase»base«ELSE»implementation«ENDIF» class for dispatching modules.
          */
         «IF isBase»abstract «ENDIF»class «IF isBase»Abstract«ENDIF»ModuleDispatchListener«IF !isBase» extends AbstractModuleDispatchListener«ELSE» implements EventSubscriberInterface«ENDIF»
         {
-            «new ModuleDispatch().generate(it, isBase)»
+            «IF isBase»
+                «new ModuleDispatch().generate(it)»
+            «ELSE»
+                // feel free to enhance the parent methods
+            «ENDIF»
         }
     '''
 
@@ -177,16 +189,20 @@ class Listeners {
             use «appNamespace»\Listener\Base\AbstractMailerListener;
         «ELSE»
             use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+            use Zikula\Core\Event\GenericEvent;
             use Zikula\MailerModule\MailerEvents;
         «ENDIF»
-        use Zikula\Core\Event\GenericEvent;
 
         /**
          * Event handler «IF isBase»base«ELSE»implementation«ENDIF» class for mailing events.
          */
         «IF isBase»abstract «ENDIF»class «IF isBase»Abstract«ENDIF»MailerListener«IF !isBase» extends AbstractMailerListener«ELSE» implements EventSubscriberInterface«ENDIF»
         {
-            «new Mailer().generate(it, isBase)»
+            «IF isBase»
+                «new Mailer().generate(it)»
+            «ELSE»
+                // feel free to enhance the parent methods
+            «ENDIF»
         }
     '''
 
@@ -197,17 +213,21 @@ class Listeners {
             use «appNamespace»\Listener\Base\AbstractThemeListener;
         «ELSE»
             use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+            use Zikula\ThemeModule\Bridge\Event\TwigPostRenderEvent;
+            use Zikula\ThemeModule\Bridge\Event\TwigPreRenderEvent;
             use Zikula\ThemeModule\ThemeEvents;
         «ENDIF»
-        use Zikula\ThemeModule\Bridge\Event\TwigPostRenderEvent;
-        use Zikula\ThemeModule\Bridge\Event\TwigPreRenderEvent;
 
         /**
          * Event handler «IF isBase»base«ELSE»implementation«ENDIF» class for theme-related events.
          */
         «IF isBase»abstract «ENDIF»class «IF isBase»Abstract«ENDIF»ThemeListener«IF !isBase» extends AbstractThemeListener«ELSE» implements EventSubscriberInterface«ENDIF»
         {
-            «new Theme().generate(it, isBase)»
+            «IF isBase»
+                «new Theme().generate(it)»
+            «ELSE»
+                // feel free to enhance the parent methods
+            «ENDIF»
         }
     '''
 
@@ -218,9 +238,7 @@ class Listeners {
             use «appNamespace»\Listener\Base\AbstractUserLoginListener;
         «ELSE»
             use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-        «ENDIF»
-        use Zikula\Core\Event\GenericEvent;
-        «IF isBase»
+            use Zikula\Core\Event\GenericEvent;
             use Zikula\UsersModule\AccessEvents;
         «ENDIF»
 
@@ -229,7 +247,11 @@ class Listeners {
          */
         «IF isBase»abstract «ENDIF»class «IF isBase»Abstract«ENDIF»UserLoginListener«IF !isBase» extends AbstractUserLoginListener«ELSE» implements EventSubscriberInterface«ENDIF»
         {
-            «new UserLogin().generate(it, isBase)»
+            «IF isBase»
+                «new UserLogin().generate(it)»
+            «ELSE»
+                // feel free to enhance the parent methods
+            «ENDIF»
         }
     '''
 
@@ -240,9 +262,7 @@ class Listeners {
             use «appNamespace»\Listener\Base\AbstractUserLogoutListener;
         «ELSE»
             use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-        «ENDIF»
-        use Zikula\Core\Event\GenericEvent;
-        «IF isBase»
+            use Zikula\Core\Event\GenericEvent;
             use Zikula\UsersModule\AccessEvents;
         «ENDIF»
 
@@ -251,7 +271,11 @@ class Listeners {
          */
         «IF isBase»abstract «ENDIF»class «IF isBase»Abstract«ENDIF»UserLogoutListener«IF !isBase» extends AbstractUserLogoutListener«ELSE» implements EventSubscriberInterface«ENDIF»
         {
-            «new UserLogout().generate(it, isBase)»
+            «IF isBase»
+                «new UserLogout().generate(it)»
+            «ELSE»
+                // feel free to enhance the parent methods
+            «ENDIF»
         }
     '''
 
@@ -268,9 +292,7 @@ class Listeners {
             «IF hasStandardFieldEntities || hasUserFields»
                 use Zikula\Common\Translator\TranslatorInterface;
             «ENDIF»
-        «ENDIF»
-        use Zikula\Core\Event\GenericEvent;
-        «IF isBase»
+            use Zikula\Core\Event\GenericEvent;
             «IF hasStandardFieldEntities || hasUserFields»
                 use Zikula\UsersModule\Api\«IF targets('1.5')»ApiInterface\CurrentUserApiInterface«ELSE»CurrentUserApi«ENDIF»;
                 «IF targets('1.5')»
@@ -288,7 +310,11 @@ class Listeners {
          */
         «IF isBase»abstract «ENDIF»class «IF isBase»Abstract«ENDIF»UserListener«IF !isBase» extends AbstractUserListener«ELSE» implements EventSubscriberInterface«ENDIF»
         {
-            «new User().generate(it, isBase)»
+            «IF isBase»
+                «new User().generate(it)»
+            «ELSE»
+                // feel free to enhance the parent methods
+            «ENDIF»
         }
     '''
 
@@ -299,9 +325,7 @@ class Listeners {
             use «appNamespace»\Listener\Base\AbstractUserRegistrationListener;
         «ELSE»
             use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-        «ENDIF»
-        use Zikula\Core\Event\GenericEvent;
-        «IF isBase»
+            use Zikula\Core\Event\GenericEvent;
             use Zikula\UsersModule\RegistrationEvents;
         «ENDIF»
 
@@ -310,7 +334,11 @@ class Listeners {
          */
         «IF isBase»abstract «ENDIF»class «IF isBase»Abstract«ENDIF»UserRegistrationListener«IF !isBase» extends AbstractUserRegistrationListener«ELSE» implements EventSubscriberInterface«ENDIF»
         {
-            «new UserRegistration().generate(it, isBase)»
+            «IF isBase»
+                «new UserRegistration().generate(it)»
+            «ELSE»
+                // feel free to enhance the parent methods
+            «ENDIF»
         }
     '''
 
@@ -321,9 +349,7 @@ class Listeners {
             use «appNamespace»\Listener\Base\AbstractUsersListener;
         «ELSE»
             use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-        «ENDIF»
-        use Zikula\Core\Event\GenericEvent;
-        «IF isBase»
+            use Zikula\Core\Event\GenericEvent;
             use Zikula\UsersModule\UserEvents;
         «ENDIF»
 
@@ -332,7 +358,11 @@ class Listeners {
          */
         «IF isBase»abstract «ENDIF»class «IF isBase»Abstract«ENDIF»UsersListener«IF !isBase» extends AbstractUsersListener«ELSE» implements EventSubscriberInterface«ENDIF»
         {
-            «new Users().generate(it, isBase)»
+            «IF isBase»
+                «new Users().generate(it)»
+            «ELSE»
+                // feel free to enhance the parent methods
+            «ENDIF»
         }
     '''
 
@@ -343,9 +373,7 @@ class Listeners {
             use «appNamespace»\Listener\Base\AbstractGroupListener;
         «ELSE»
             use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-        «ENDIF»
-        use Zikula\Core\Event\GenericEvent;
-        «IF isBase»
+            use Zikula\Core\Event\GenericEvent;
             use Zikula\GroupsModule\GroupEvents;
         «ENDIF»
 
@@ -354,7 +382,11 @@ class Listeners {
          */
         «IF isBase»abstract «ENDIF»class «IF isBase»Abstract«ENDIF»GroupListener«IF !isBase» extends AbstractGroupListener«ELSE» implements EventSubscriberInterface«ENDIF»
         {
-            «new Group().generate(it, isBase)»
+            «IF isBase»
+                «new Group().generate(it)»
+            «ELSE»
+                // feel free to enhance the parent methods
+            «ENDIF»
         }
     '''
 
@@ -368,13 +400,11 @@ class Listeners {
             use Symfony\Component\HttpKernel\HttpKernelInterface;
             «IF needsApproval && generatePendingContentSupport»
                 use Zikula\Collection\Container;
-                use «appNamespace»\Helper\WorkflowHelper;
             «ENDIF»
-        «ENDIF»
-        use Zikula\Core\Event\GenericEvent;
-        «IF isBase»
+            use Zikula\Core\Event\GenericEvent;
             «IF needsApproval && generatePendingContentSupport»
                 use Zikula\Provider\AggregateItem;
+                use «appNamespace»\Helper\WorkflowHelper;
             «ENDIF»
         «ENDIF»
 
@@ -383,7 +413,11 @@ class Listeners {
          */
         «IF isBase»abstract «ENDIF»class «IF isBase»Abstract«ENDIF»ThirdPartyListener«IF !isBase» extends AbstractThirdPartyListener«ELSE» implements EventSubscriberInterface«ENDIF»
         {
-            «new ThirdParty().generate(it, isBase)»
+            «IF isBase»
+                «new ThirdParty().generate(it)»
+            «ELSE»
+                // feel free to enhance the parent methods
+            «ENDIF»
         }
     '''
 
@@ -399,8 +433,8 @@ class Listeners {
             use Symfony\Component\HttpFoundation\RequestStack;
             use Symfony\Component\HttpKernel\Event\GetResponseEvent;
             use Symfony\Component\HttpKernel\KernelEvents;
+            use Zikula\Core\Event\GenericEvent;
         «ENDIF»
-        use Zikula\Core\Event\GenericEvent;
 
         /**
          * Event handler implementation class for ip traceable support.
@@ -409,7 +443,11 @@ class Listeners {
          */
         «IF isBase»abstract «ENDIF»class «IF isBase»Abstract«ENDIF»IpTraceListener«IF !isBase» extends AbstractIpTraceListener«ELSE» implements EventSubscriberInterface«ENDIF»
         {
-            «new IpTrace().generate(it, isBase)»
+            «IF isBase»
+                «new IpTrace().generate(it)»
+            «ELSE»
+                // feel free to enhance the parent methods
+            «ENDIF»
         }
     '''
 
@@ -418,8 +456,6 @@ class Listeners {
 
         «IF !isBase»
             use «appNamespace»\Listener\Base\AbstractWorkflowEventsListener;
-            use Symfony\Component\Workflow\Event\Event;
-            use Symfony\Component\Workflow\Event\GuardEvent;
         «ELSE»
             use Symfony\Component\EventDispatcher\EventSubscriberInterface;
             use Symfony\Component\Workflow\Event\Event;
@@ -434,11 +470,15 @@ class Listeners {
         /**
          * Event handler implementation class for workflow events.
          *
-         * @see /src/docs/Core-2.0/Workflows/WorkflowEvents.md
+         * @see /src/docs/Workflows/WorkflowEvents.md
          */
         «IF isBase»abstract «ENDIF»class «IF isBase»Abstract«ENDIF»WorkflowEventsListener«IF !isBase» extends AbstractWorkflowEventsListener«ELSE» implements EventSubscriberInterface«ENDIF»
         {
-            «new WorkflowEvents().generate(it, isBase)»
+            «IF isBase»
+                «new WorkflowEvents().generate(it)»
+            «ELSE»
+                // feel free to enhance the parent methods
+            «ENDIF»
         }
     '''
 }

@@ -19,8 +19,8 @@ class ThirdParty {
 
     CommonExample commonExample = new CommonExample()
 
-    def generate(Application it, Boolean isBase) '''
-        «IF isBase && (needsApproval && generatePendingContentSupport)»
+    def generate(Application it) '''
+        «IF needsApproval && generatePendingContentSupport»
             /**
              * @var WorkflowHelper
              */
@@ -40,57 +40,46 @@ class ThirdParty {
 
         «ENDIF»
         «val needsDetailContentType = generateDetailContentType && hasDisplayActions»
-        «IF isBase»
-            /**
-             * Makes our handlers known to the event system.
-             */
-        «ELSE»
-            /**
-             * @inheritDoc
-             */
-        «ENDIF»
+        /**
+         * Makes our handlers known to the event system.
+         */
         public static function getSubscribedEvents()
         {
-            «IF isBase»
-                return [
-                    «IF needsApproval && generatePendingContentSupport»
-                        'get.pending_content'                   => ['pendingContentListener', 5],
-                    «ENDIF»
-                    «IF generateListContentType || needsDetailContentType»
-                        'module.content.gettypes'               => ['contentGetTypes', 5],
-                    «ENDIF»
-                    «IF generateScribitePlugins»
-                        'module.scribite.editorhelpers'         => ['getEditorHelpers', 5],
-                        'moduleplugin.tinymce.externalplugins'  => ['getTinyMcePlugins', 5],
-                        'moduleplugin.ckeditor.externalplugins' => ['getCKEditorPlugins', 5]
-                    «ENDIF»
-                ];
-            «ELSE»
-                return parent::getSubscribedEvents();
-            «ENDIF»
+            return [
+                «IF needsApproval && generatePendingContentSupport»
+                    'get.pending_content'                   => ['pendingContentListener', 5],
+                «ENDIF»
+                «IF generateListContentType || needsDetailContentType»
+                    'module.content.gettypes'               => ['contentGetTypes', 5],
+                «ENDIF»
+                «IF generateScribitePlugins»
+                    'module.scribite.editorhelpers'         => ['getEditorHelpers', 5],
+                    'moduleplugin.tinymce.externalplugins'  => ['getTinyMcePlugins', 5],
+                    'moduleplugin.ckeditor.externalplugins' => ['getCKEditorPlugins', 5]
+                «ENDIF»
+            ];
         }
 
         «IF needsApproval && generatePendingContentSupport»
-            «pendingContentListener(isBase)»
+            «pendingContentListener»
         «ENDIF»
         «IF generateListContentType || needsDetailContentType»
 
-            «contentGetTypes(isBase)»
+            «contentGetTypes»
         «ENDIF»
         «IF generateScribitePlugins»
 
-            «getEditorHelpers(isBase)»
+            «getEditorHelpers»
 
-            «getTinyMcePlugins(isBase)»
+            «getTinyMcePlugins»
 
-            «getCKEditorPlugins(isBase)»
+            «getCKEditorPlugins»
         «ENDIF»
     '''
 
-    def private pendingContentListener(Application it, Boolean isBase) '''
-        «IF isBase»
+    def private pendingContentListener(Application it) '''
         /**
-         * Listener for the 'get.pending_content' event with registration requests and
+         * Listener for the `get.pending_content` event with registration requests and
          * other submitted data pending approval.
          *
          * When a 'get.pending_content' event is fired, the Users module will respond with the
@@ -110,22 +99,13 @@ class ThirdParty {
          * assemped as a {@link Zikula_Provider_AggregateItem} and added to the event
          * subject's collection.
          *
+         «commonExample.generalEventProperties(it)»
+         *
          * @param GenericEvent $event The event instance
          */
-        «ELSE»
-            /**
-             * @inheritDoc
-             */
-        «ENDIF»
         public function pendingContentListener(GenericEvent $event)
         {
-            «IF !isBase»
-                parent::pendingContentListener($event);
-
-                «commonExample.generalEventProperties(it)»
-            «ELSE»
-                «pendingContentListenerImpl»
-            «ENDIF»
+            «pendingContentListenerImpl»
         }
     '''
 
@@ -162,8 +142,7 @@ class ThirdParty {
         «ENDIF»
     '''
 
-    def private contentGetTypes(Application it, Boolean isBase) '''
-        «IF isBase»
+    def private contentGetTypes(Application it) '''
         /**
          * Listener for the `module.content.gettypes` event.
          *
@@ -171,22 +150,13 @@ class ThirdParty {
          * The subject is an instance of Content_Types.
          * You can register custom content types as well as custom layout types.
          *
+         «commonExample.generalEventProperties(it)»
+         *
          * @param \Zikula_Event $event The event instance
          */
-        «ELSE»
-            /**
-             * @inheritDoc
-             */
-        «ENDIF»
         public function contentGetTypes(\Zikula_Event $event)
         {
-            «IF !isBase»
-                parent::contentGetTypes($event);
-
-                «commonExample.generalEventProperties(it)»
-            «ELSE»
-                «contentGetTypesImpl»
-            «ENDIF»
+            «contentGetTypesImpl»
         }
     '''
 
@@ -206,30 +176,20 @@ class ThirdParty {
         «ENDIF»
     '''
 
-    def private getEditorHelpers(Application it, Boolean isBase) '''
-        «IF isBase»
+    def private getEditorHelpers(Application it) '''
         /**
          * Listener for the `module.scribite.editorhelpers` event.
          *
          * This occurs when Scribite adds pagevars to the editor page.
          * «appName» will use this to add a javascript helper to add custom items.
          *
+         «commonExample.generalEventProperties(it)»
+         *
          * @param \Zikula_Event $event The event instance
          */
-        «ELSE»
-            /**
-             * @inheritDoc
-             */
-        «ENDIF»
         public function getEditorHelpers(\Zikula_Event $event)
         {
-            «IF !isBase»
-                parent::getEditorHelpers($event);
-
-                «commonExample.generalEventProperties(it)»
-            «ELSE»
-                «getEditorHelpersImpl»
-            «ENDIF»
+            «getEditorHelpersImpl»
         }
     '''
 
@@ -246,29 +206,19 @@ class ThirdParty {
         );
     '''
 
-    def private getTinyMcePlugins(Application it, Boolean isBase) '''
-        «IF isBase»
+    def private getTinyMcePlugins(Application it) '''
         /**
          * Listener for the `moduleplugin.tinymce.externalplugins` event.
          *
          * Adds external plugin to TinyMCE.
          *
+         «commonExample.generalEventProperties(it)»
+         *
          * @param \Zikula_Event $event The event instance
          */
-        «ELSE»
-            /**
-             * @inheritDoc
-             */
-        «ENDIF»
         public function getTinyMcePlugins(\Zikula_Event $event)
         {
-            «IF !isBase»
-                parent::getTinyMcePlugins($event);
-
-                «commonExample.generalEventProperties(it)»
-            «ELSE»
-                «getTinyMcePluginsImpl»
-            «ENDIF»
+            «getTinyMcePluginsImpl»
         }
     '''
 
@@ -284,29 +234,19 @@ class ThirdParty {
         );
     '''
 
-    def private getCKEditorPlugins(Application it, Boolean isBase) '''
-        «IF isBase»
+    def private getCKEditorPlugins(Application it) '''
         /**
          * Listener for the `moduleplugin.ckeditor.externalplugins` event.
          *
          * Adds external plugin to CKEditor.
          *
+         «commonExample.generalEventProperties(it)»
+         *
          * @param \Zikula_Event $event The event instance
          */
-        «ELSE»
-            /**
-             * @inheritDoc
-             */
-        «ENDIF»
         public function getCKEditorPlugins(\Zikula_Event $event)
         {
-            «IF !isBase»
-                parent::getCKEditorPlugins($event);
-
-                «commonExample.generalEventProperties(it)»
-            «ELSE»
-                «getCKEditorPluginsImpl»
-            «ENDIF»
+            «getCKEditorPluginsImpl»
         }
     '''
 

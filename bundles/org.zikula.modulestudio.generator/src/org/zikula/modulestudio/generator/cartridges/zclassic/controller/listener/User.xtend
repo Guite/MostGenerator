@@ -18,8 +18,8 @@ class User {
 
     CommonExample commonExample = new CommonExample()
 
-    def generate(Application it, Boolean isBase) '''
-        «IF isBase && (hasStandardFieldEntities || hasUserFields)»
+    def generate(Application it) '''
+        «IF hasStandardFieldEntities || hasUserFields»
             /**
              * @var TranslatorInterface
              */
@@ -63,29 +63,18 @@ class User {
             }
 
         «ENDIF»
-        «IF isBase»
-            /**
-             * Makes our handlers known to the event system.
-             */
-        «ELSE»
-            /**
-             * @inheritDoc
-             */
-        «ENDIF»
+        /**
+         * Makes our handlers known to the event system.
+         */
         public static function getSubscribedEvents()
         {
-            «IF isBase»
-                return [
-                    UserEvents::CREATE_ACCOUNT => ['create', 5],
-                    UserEvents::UPDATE_ACCOUNT => ['update', 5],
-                    UserEvents::DELETE_ACCOUNT => ['delete', 5]
-                ];
-            «ELSE»
-                return parent::getSubscribedEvents();
-            «ENDIF»
+            return [
+                UserEvents::CREATE_ACCOUNT => ['create', 5],
+                UserEvents::UPDATE_ACCOUNT => ['update', 5],
+                UserEvents::DELETE_ACCOUNT => ['delete', 5]
+            ];
         }
 
-        «IF isBase»
         /**
          * Listener for the `user.account.create` event.
          *
@@ -95,23 +84,14 @@ class User {
          * This is a storage-level event, not a UI event. It should not be used for UI-level actions such as redirects.
          * The subject of the event is set to the user record that was created.
          *
+         «commonExample.generalEventProperties(it)»
+         *
          * @param GenericEvent $event The event instance
          */
-        «ELSE»
-            /**
-             * @inheritDoc
-             */
-        «ENDIF»
         public function create(GenericEvent $event)
         {
-            «IF !isBase»
-                parent::create($event);
-
-                «commonExample.generalEventProperties(it)»
-            «ENDIF»
         }
 
-        «IF isBase»
         /**
          * Listener for the `user.account.update` event.
          *
@@ -120,48 +100,30 @@ class User {
          * This is a storage-level event, not a UI event. It should not be used for UI-level actions such as redirects.
          * The subject of the event is set to the user record, with the updated values.
          *
+         «commonExample.generalEventProperties(it)»
+         *
          * @param GenericEvent $event The event instance
          */
-        «ELSE»
-            /**
-             * @inheritDoc
-             */
-        «ENDIF»
         public function update(GenericEvent $event)
         {
-            «IF !isBase»
-                parent::update($event);
-
-                «commonExample.generalEventProperties(it)»
-            «ENDIF»
         }
 
-        «IF isBase»
         /**
          * Listener for the `user.account.delete` event.
          *
          * Occurs after the deletion of a user account. Subject is $userId.
          * This is a storage-level event, not a UI event. It should not be used for UI-level actions such as redirects.
          *
+         «commonExample.generalEventProperties(it)»
+         *
          * @param GenericEvent $event The event instance
          */
-        «ELSE»
-            /**
-             * @inheritDoc
-             */
-        «ENDIF»
         public function delete(GenericEvent $event)
         {
-            «IF !isBase»
-                parent::delete($event);
+            «IF hasStandardFieldEntities || hasUserFields»
+                $userId = $event->getSubject();
 
-                «commonExample.generalEventProperties(it)»
-            «ELSE»
-                «IF hasStandardFieldEntities || hasUserFields»
-                    $userId = $event->getSubject();
-
-                    «FOR entity : getAllEntities»«entity.userDelete»«ENDFOR»
-                «ENDIF»
+                «FOR entity : getAllEntities»«entity.userDelete»«ENDFOR»
             «ENDIF»
         }
     '''

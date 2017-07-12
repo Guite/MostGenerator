@@ -6,50 +6,31 @@ class Users {
 
     CommonExample commonExample = new CommonExample()
 
-    def generate(Application it, Boolean isBase) '''
-        «IF isBase»
-            /**
-             * Makes our handlers known to the event system.
-             */
-        «ELSE»
-            /**
-             * @inheritDoc
-             */
-        «ENDIF»
+    def generate(Application it) '''
+        /**
+         * Makes our handlers known to the event system.
+         */
         public static function getSubscribedEvents()
         {
-            «IF isBase»
-                return [
-                    UserEvents::CONFIG_UPDATED => ['configUpdated', 5]
-                ];
-            «ELSE»
-                return parent::getSubscribedEvents();
-            «ENDIF»
+            return [
+                UserEvents::CONFIG_UPDATED => ['configUpdated', 5]
+            ];
         }
 
-        «IF isBase»
-            /**
-             * Listener for the `module.users.config.updated` event.
-             *
-             * Occurs after the Users module configuration has been
-             * updated via the administration interface.
-             *
-             * Event data is populated by the new values.
-             *
-             * @param GenericEvent $event The event instance
-             */
-        «ELSE»
-            /**
-             * @inheritDoc
-             */
-        «ENDIF»
+        /**
+         * Listener for the `module.users.config.updated` event.
+         *
+         * Occurs after the Users module configuration has been
+         * updated via the administration interface.
+         *
+         * Event data is populated by the new values.
+         *
+         «commonExample.generalEventProperties(it)»
+         *
+         * @param GenericEvent $event The event instance
+         */
         public function configUpdated(GenericEvent $event)
         {
-            «IF !isBase»
-                parent::configUpdated($event);
-
-                «commonExample.generalEventProperties(it)»
-            «ENDIF»
         }
     '''
 }

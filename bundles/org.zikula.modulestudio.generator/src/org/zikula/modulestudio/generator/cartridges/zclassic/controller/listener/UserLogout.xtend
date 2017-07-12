@@ -6,28 +6,17 @@ class UserLogout {
 
     CommonExample commonExample = new CommonExample()
 
-    def generate(Application it, Boolean isBase) '''
-        «IF isBase»
-            /**
-             * Makes our handlers known to the event system.
-             */
-        «ELSE»
-            /**
-             * @inheritDoc
-             */
-        «ENDIF»
+    def generate(Application it) '''
+        /**
+         * Makes our handlers known to the event system.
+         */
         public static function getSubscribedEvents()
         {
-            «IF isBase»
-                return [
-                    AccessEvents::LOGOUT_SUCCESS => ['succeeded', 5]
-                ];
-            «ELSE»
-                return parent::getSubscribedEvents();
-            «ENDIF»
+            return [
+                AccessEvents::LOGOUT_SUCCESS => ['succeeded', 5]
+            ];
         }
 
-        «IF isBase»
         /**
          * Listener for the `module.users.ui.logout.succeeded` event.
          *
@@ -36,20 +25,12 @@ class UserLogout {
          * Args contain array of `['authentication_method' => $authenticationMethod,
          *                         'uid'                   => $uid];`
          *
+         «commonExample.generalEventProperties(it)»
+         *
          * @param GenericEvent $event The event instance
          */
-        «ELSE»
-            /**
-             * @inheritDoc
-             */
-        «ENDIF»
         public function succeeded(GenericEvent $event)
         {
-            «IF !isBase»
-                parent::succeeded($event);
-
-                «commonExample.generalEventProperties(it)»
-            «ENDIF»
         }
     '''
 }

@@ -16,295 +16,237 @@ class WorkflowEvents {
     extension Utils = new Utils
     extension WorkflowExtensions = new WorkflowExtensions
 
-    def generate(Application it, Boolean isBase) '''
-        «IF isBase»
-            /**
-             * @var PermissionApiInterface
-             */
-            protected $permissionApi;
-            «IF needsApproval»
-
-                /**
-                 * @var NotificationHelper
-                 */
-                protected $notificationHelper;
-            «ENDIF»
+    def generate(Application it) '''
+        /**
+         * @var PermissionApiInterface
+         */
+        protected $permissionApi;
+        «IF needsApproval»
 
             /**
-             * WorkflowEventsListener constructor.
-             *
-             * @param PermissionApiInterface $permissionApi «IF needsApproval»     «ENDIF»PermissionApi service instance
-             «IF needsApproval»
-             * @param NotificationHelper     $notificationHelper NotificationHelper service instance
-             «ENDIF»
+             * @var NotificationHelper
              */
-            public function __construct(PermissionApiInterface $permissionApi«IF needsApproval», NotificationHelper $notificationHelper«ENDIF»)
-            {
-                $this->permissionApi = $permissionApi;
-                «IF needsApproval»
-                    $this->notificationHelper = $notificationHelper;
-                «ENDIF»
-            }
-
-            /**
-             * Makes our handlers known to the event system.
-             */
-        «ELSE»
-            /**
-             * @inheritDoc
-             */
+            protected $notificationHelper;
         «ENDIF»
+
+        /**
+         * WorkflowEventsListener constructor.
+         *
+         * @param PermissionApiInterface $permissionApi «IF needsApproval»     «ENDIF»PermissionApi service instance
+         «IF needsApproval»
+         * @param NotificationHelper     $notificationHelper NotificationHelper service instance
+         «ENDIF»
+         */
+        public function __construct(PermissionApiInterface $permissionApi«IF needsApproval», NotificationHelper $notificationHelper«ENDIF»)
+        {
+            $this->permissionApi = $permissionApi;
+            «IF needsApproval»
+                $this->notificationHelper = $notificationHelper;
+            «ENDIF»
+        }
+
+        /**
+         * Makes our handlers known to the event system.
+         */
         public static function getSubscribedEvents()
         {
-            «IF isBase»
-                return [
-                    'workflow.guard' => ['onGuard', 5],
-                    'workflow.leave' => ['onLeave', 5],
-                    'workflow.transition' => ['onTransition', 5],
-                    'workflow.enter' => ['onEnter', 5]«/* Starting from Symfony 3.3.0 there is also 'workflow.entered' available which is fired after the marking has been set */»
-                ];
-            «ELSE»
-                return parent::getSubscribedEvents();
-            «ENDIF»
+            return [
+                'workflow.guard' => ['onGuard', 5],
+                'workflow.leave' => ['onLeave', 5],
+                'workflow.transition' => ['onTransition', 5],
+                'workflow.enter' => ['onEnter', 5]
+            ];
         }
 
-        «IF isBase»
-            /**
-             * Listener for the `workflow.guard` event.
-             *
-             * Occurs just before a transition is started and when testing which transitions are available.
-             * Allows to define that the transition is not allowed by calling `$event->setBlocked(true);`.
-             *
-             * This event is also triggered for each workflow individually, so you can react only to the events
-             * of a specific workflow by listening to `workflow.<workflow_name>.guard` instead.
-             * You can even listen to some specific transitions or states for a specific workflow
-             * using `workflow.<workflow_name>.guard.<transition_name>`.
-             *
-             * @param GuardEvent $event The event instance
-             */
-        «ELSE»
-            /**
-             * @inheritDoc
-             */
-        «ENDIF»
+        /**
+         * Listener for the `workflow.guard` event.
+         *
+         * Occurs just before a transition is started and when testing which transitions are available.
+         * Allows to define that the transition is not allowed by calling `$event->setBlocked(true);`.
+         *
+         * This event is also triggered for each workflow individually, so you can react only to the events
+         * of a specific workflow by listening to `workflow.<workflow_name>.guard` instead.
+         * You can even listen to some specific transitions or states for a specific workflow
+         * using `workflow.<workflow_name>.guard.<transition_name>`.
+         *
+         «exampleCode»
+         * Example for preventing a transition:
+         *     `if (!$event->isBlocked()) {
+         *         $event->setBlocked(true);
+         *     }`
+         *
+         * @param GuardEvent $event The event instance
+         */
         public function onGuard(GuardEvent $event)
         {
-            «IF isBase»
-                $entity = $event->getSubject();
-                if (!$this->isEntityManagedByThisBundle($entity) || !method_exists($entity, 'get_objectType')) {
-                    return;
+            $entity = $event->getSubject();
+            if (!$this->isEntityManagedByThisBundle($entity) || !method_exists($entity, 'get_objectType')) {
+                return;
+            }
+
+            $objectType = $entity->get_objectType();
+            $permissionLevel = ACCESS_READ;
+            $transitionName = $event->getTransition()->getName();
+            if (substr($transitionName, 0, 6) == 'update') {
+                $transitionName = 'update';
+            }
+            $targetState = $event->getTransition()->getTos()[0];
+            $hasApproval = «IF needsApproval»in_array($objectType, ['«getAllEntities.filter[workflow != EntityWorkflowType.NONE].map[name.formatForCode].join('\', \'')»'])«ELSE»false«ENDIF»;
+
+            switch ($transitionName) {
+                case 'defer':
+                case 'submit':
+                    $permissionLevel = $hasApproval ? ACCESS_COMMENT : ACCESS_EDIT;
+                    break;
+                case 'update':
+                case 'reject':
+                case 'accept':
+                case 'publish':
+                case 'unpublish':
+                case 'archive':
+                case 'trash':
+                case 'recover':
+                    $permissionLevel = ACCESS_EDIT;
+                    break;
+                case 'approve':
+                case 'demote':
+                    $permissionLevel = ACCESS_ADD;
+                    break;
+                case 'delete':
+                    $permissionLevel = ACCESS_DELETE;
+                    break;
+            }
+
+            if (!$this->permissionApi->hasPermission('«appName»:' . ucfirst($objectType) . ':', $entity->getKey() . '::', $permissionLevel)) {
+                // no permission for this transition, so disallow it
+                $event->setBlocked(true);
+
+                return;
+            }
+            «IF !getJoinRelations.empty»
+
+                if ($transitionName == 'delete') {
+                    // check if deleting the entity would break related child entities
+                    «FOR entity : getAllEntities»
+                        «IF !entity.getOutgoingJoinRelationsWithoutDeleteCascade.empty»
+                            if ($objectType == '«entity.name.formatForCode»') {
+                                $isBlocked = false;
+                                «FOR relation : entity.getOutgoingJoinRelationsWithoutDeleteCascade»
+                                    «IF relation.isManySide(true)»
+                                        if (count($entity->get«relation.targetAlias.formatForCodeCapital»()) > 0) {
+                                            $isBlocked = true;
+                                        }
+                                    «ELSE»
+                                        if (null !== $entity->get«relation.targetAlias.formatForCodeCapital»()) {
+                                            $isBlocked = true;
+                                        }
+                                    «ENDIF»
+                                «ENDFOR»
+                                $event->setBlocked($isBlocked);
+                            }
+                        «ENDIF»
+                    «ENDFOR»
                 }
-
-                $objectType = $entity->get_objectType();
-                $permissionLevel = ACCESS_READ;
-                $transitionName = $event->getTransition()->getName();
-                if (substr($transitionName, 0, 6) == 'update') {
-                    $transitionName = 'update';
-                }
-                $targetState = $event->getTransition()->getTos()[0];
-                $hasApproval = «IF needsApproval»in_array($objectType, ['«getAllEntities.filter[workflow != EntityWorkflowType.NONE].map[name.formatForCode].join('\', \'')»'])«ELSE»false«ENDIF»;
-
-                switch ($transitionName) {
-                    case 'defer':
-                    case 'submit':
-                        $permissionLevel = $hasApproval ? ACCESS_COMMENT : ACCESS_EDIT;
-                        break;
-                    case 'update':
-                    case 'reject':
-                    case 'accept':
-                    case 'publish':
-                    case 'unpublish':
-                    case 'archive':
-                    case 'trash':
-                    case 'recover':
-                        $permissionLevel = ACCESS_EDIT;
-                        break;
-                    case 'approve':
-                    case 'demote':
-                        $permissionLevel = ACCESS_ADD;
-                        break;
-                    case 'delete':
-                        $permissionLevel = ACCESS_DELETE;
-                        break;
-                }
-
-                if (!$this->permissionApi->hasPermission('«appName»:' . ucfirst($objectType) . ':', $entity->getKey() . '::', $permissionLevel)) {
-                    // no permission for this transition, so disallow it
-                    $event->setBlocked(true);
-
-                    return;
-                }
-                «IF !getJoinRelations.empty»
-
-                    if ($transitionName == 'delete') {
-                        // check if deleting the entity would break related child entities
-                        «FOR entity : getAllEntities»
-                            «IF !entity.getOutgoingJoinRelationsWithoutDeleteCascade.empty»
-                                if ($objectType == '«entity.name.formatForCode»') {
-                                    $isBlocked = false;
-                                    «FOR relation : entity.getOutgoingJoinRelationsWithoutDeleteCascade»
-                                        «IF relation.isManySide(true)»
-                                            if (count($entity->get«relation.targetAlias.formatForCodeCapital»()) > 0) {
-                                                $isBlocked = true;
-                                            }
-                                        «ELSE»
-                                            if (null !== $entity->get«relation.targetAlias.formatForCodeCapital»()) {
-                                                $isBlocked = true;
-                                            }
-                                        «ENDIF»
-                                    «ENDFOR»
-                                    $event->setBlocked($isBlocked);
-                                }
-                            «ENDIF»
-                        «ENDFOR»
-                    }
-                «ENDIF»
-            «ELSE»
-                parent::onGuard($event);
-
-                «exampleCode»
-
-                // example for preventing a transition
-                // if (!$event->isBlocked()) {
-                //     $event->setBlocked(true);
-                // }
             «ENDIF»
         }
 
-        «IF isBase»
-            /**
-             * Listener for the `workflow.leave` event.
-             *
-             * Occurs just after an object has left it's current state.
-             * Carries the marking with the initial places.
-             *
-             * This event is also triggered for each workflow individually, so you can react only to the events
-             * of a specific workflow by listening to `workflow.<workflow_name>.leave` instead.
-             * You can even listen to some specific transitions or states for a specific workflow
-             * using `workflow.<workflow_name>.leave.<state_name>`.
-             *
-             * @param Event $event The event instance
-             */
-        «ELSE»
-            /**
-             * @inheritDoc
-             */
-        «ENDIF»
+        /**
+         * Listener for the `workflow.leave` event.
+         *
+         * Occurs just after an object has left it's current state.
+         * Carries the marking with the initial places.
+         *
+         * This event is also triggered for each workflow individually, so you can react only to the events
+         * of a specific workflow by listening to `workflow.<workflow_name>.leave` instead.
+         * You can even listen to some specific transitions or states for a specific workflow
+         * using `workflow.<workflow_name>.leave.<state_name>`.
+         *
+         «exampleCode»
+         *
+         * @param Event $event The event instance
+         */
         public function onLeave(Event $event)
         {
-            «IF isBase»
-                $entity = $event->getSubject();
-                if (!$this->isEntityManagedByThisBundle($entity) || !method_exists($entity, 'get_objectType')) {
-                    return;
-                }
-            «ELSE»
-                parent::onLeave($event);
-
-                «exampleCode»
-            «ENDIF»
+            $entity = $event->getSubject();
+            if (!$this->isEntityManagedByThisBundle($entity) || !method_exists($entity, 'get_objectType')) {
+                return;
+            }
         }
 
-        «IF isBase»
-            /**
-             * Listener for the `workflow.transition` event.
-             *
-             * Occurs just before starting to transition to the new state.
-             * Carries the marking with the current places.
-             *
-             * This event is also triggered for each workflow individually, so you can react only to the events
-             * of a specific workflow by listening to `workflow.<workflow_name>.transition` instead.
-             * You can even listen to some specific transitions or states for a specific workflow
-             * using `workflow.<workflow_name>.transition.<transition_name>`.
-             *
-             * @param Event $event The event instance
-             */
-        «ELSE»
-            /**
-             * @inheritDoc
-             */
-        «ENDIF»
+        /**
+         * Listener for the `workflow.transition` event.
+         *
+         * Occurs just before starting to transition to the new state.
+         * Carries the marking with the current places.
+         *
+         * This event is also triggered for each workflow individually, so you can react only to the events
+         * of a specific workflow by listening to `workflow.<workflow_name>.transition` instead.
+         * You can even listen to some specific transitions or states for a specific workflow
+         * using `workflow.<workflow_name>.transition.<transition_name>`.
+         *
+         «exampleCode»
+         *
+         * @param Event $event The event instance
+         */
         public function onTransition(Event $event)
         {
-            «IF isBase»
-                $entity = $event->getSubject();
-                if (!$this->isEntityManagedByThisBundle($entity) || !method_exists($entity, 'get_objectType')) {
-                    return;
-                }
-            «ELSE»
-                parent::onTransition($event);
-
-                «exampleCode»
-            «ENDIF»
+            $entity = $event->getSubject();
+            if (!$this->isEntityManagedByThisBundle($entity) || !method_exists($entity, 'get_objectType')) {
+                return;
+            }
         }
 
-        «IF isBase»
-            /**
-             * Listener for the `workflow.enter` event.
-             *
-             * Occurs just after the object has entered into the new state.
-             * Carries the marking with the new places.
-             *
-             * This event is also triggered for each workflow individually, so you can react only to the events
-             * of a specific workflow by listening to `workflow.<workflow_name>.enter` instead.
-             * You can even listen to some specific transitions or states for a specific workflow
-             * using `workflow.<workflow_name>.enter.<state_name>`.
-             *
-             * @param Event $event The event instance
-             */
-        «ELSE»
-            /**
-             * @inheritDoc
-             */
-        «ENDIF»
+        /**
+         * Listener for the `workflow.enter` event.
+         *
+         * Occurs just after the object has entered into the new state.
+         * Carries the marking with the new places.
+         *
+         * This event is also triggered for each workflow individually, so you can react only to the events
+         * of a specific workflow by listening to `workflow.<workflow_name>.enter` instead.
+         * You can even listen to some specific transitions or states for a specific workflow
+         * using `workflow.<workflow_name>.enter.<state_name>`.
+         *
+         «exampleCode»
+         *
+         * @param Event $event The event instance
+         */
         public function onEnter(Event $event)
         {
-            «IF isBase»
-                $entity = $event->getSubject();
-                if (!$this->isEntityManagedByThisBundle($entity) || !method_exists($entity, 'get_objectType')) {
-                    return;
-                }
-                «IF needsApproval»
-
-                    $workflowShortName = 'none';
-                    if (in_array($entity->get_objectType(), ['«getAllEntities.filter[workflow == EntityWorkflowType.STANDARD].map[name.formatForCode].join('\', \'')»'])) {
-                        $workflowShortName = 'standard';
-                    } elseif (in_array($entity->get_objectType(), ['«getAllEntities.filter[workflow == EntityWorkflowType.ENTERPRISE].map[name.formatForCode].join('\', \'')»'])) {
-                        $workflowShortName = 'enterprise';
-                    }
-                    if ($workflowShortName != 'none') {
-                        $this->sendNotifications($entity, $event->getTransition()->getName(), $workflowShortName);
-                    }
-                «ENDIF»
-            «ELSE»
-                parent::onEnter($event);
-
-                «exampleCode»
-            «ENDIF»
-        }
-        «IF isBase»
-
-            «isEntityManagedByThisBundle»
+            $entity = $event->getSubject();
+            if (!$this->isEntityManagedByThisBundle($entity) || !method_exists($entity, 'get_objectType')) {
+                return;
+            }
             «IF needsApproval»
 
-                «sendNotifications»
+                $workflowShortName = 'none';
+                if (in_array($entity->get_objectType(), ['«getAllEntities.filter[workflow == EntityWorkflowType.STANDARD].map[name.formatForCode].join('\', \'')»'])) {
+                    $workflowShortName = 'standard';
+                } elseif (in_array($entity->get_objectType(), ['«getAllEntities.filter[workflow == EntityWorkflowType.ENTERPRISE].map[name.formatForCode].join('\', \'')»'])) {
+                    $workflowShortName = 'enterprise';
+                }
+                if ($workflowShortName != 'none') {
+                    $this->sendNotifications($entity, $event->getTransition()->getName(), $workflowShortName);
+                }
             «ENDIF»
+        }
+
+        «isEntityManagedByThisBundle»
+        «IF needsApproval»
+
+            «sendNotifications»
         «ENDIF»
     '''
 
     def private exampleCode(Application it) '''
         «new CommonExample().generalEventProperties(it)»
 
-        // access the entity
-        // $entity = $event->getSubject();
-
-        // access the marking
-        // $marking = $event->getMarking();
-
-        // access the transition
-        // $transition = $event->getTransition();
-
-        // starting from Symfony 3.3.0 you can also access the workflow name
-        // $workflowName = $event->getWorkflowName();
+        * Access the entity: `$entity = $event->getSubject();`
+        * Access the marking: `$marking = $event->getMarking();`
+        * Access the transition: `$transition = $event->getTransition();`
+        «IF targets('2.0')»
+            * Access the workflow name: `$workflowName = $event->getWorkflowName();`
+        «ENDIF»
     '''
 
     def private isEntityManagedByThisBundle(Application it) '''

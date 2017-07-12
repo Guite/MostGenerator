@@ -6,31 +6,20 @@ class UserLogin {
 
     CommonExample commonExample = new CommonExample()
 
-    def generate(Application it, Boolean isBase) '''
-        «IF isBase»
-            /**
-             * Makes our handlers known to the event system.
-             */
-        «ELSE»
-            /**
-             * @inheritDoc
-             */
-        «ENDIF»
+    def generate(Application it) '''
+        /**
+         * Makes our handlers known to the event system.
+         */
         public static function getSubscribedEvents()
         {
-            «IF isBase»
-                return [
-                    AccessEvents::LOGIN_STARTED => ['started', 5],
-                    AccessEvents::LOGIN_VETO    => ['veto', 5],
-                    AccessEvents::LOGIN_SUCCESS => ['succeeded', 5],
-                    AccessEvents::LOGIN_FAILED  => ['failed', 5]
-                ];
-            «ELSE»
-                return parent::getSubscribedEvents();
-            «ENDIF»
+            return [
+                AccessEvents::LOGIN_STARTED => ['started', 5],
+                AccessEvents::LOGIN_VETO    => ['veto', 5],
+                AccessEvents::LOGIN_SUCCESS => ['succeeded', 5],
+                AccessEvents::LOGIN_FAILED  => ['failed', 5]
+            ];
         }
 
-        «IF isBase»
         /**
          * Listener for the `module.users.ui.login.started` event.
          *
@@ -48,23 +37,14 @@ class UserLogin {
          *
          * This event does not have any subject, arguments, or data.
          *
+         «commonExample.generalEventProperties(it)»
+         *
          * @param GenericEvent $event The event instance
          */
-        «ELSE»
-            /**
-             * @inheritDoc
-             */
-        «ENDIF»
         public function started(GenericEvent $event)
         {
-            «IF !isBase»
-                parent::started($event);
-
-                «commonExample.generalEventProperties(it)»
-            «ENDIF»
         }
 
-        «IF isBase»
         /**
          * Listener for the `module.users.ui.login.veto` event.
          *
@@ -89,23 +69,14 @@ class UserLogin {
          * The arguments of the event are:
          *     `'authentication_method'` will contain the name of the module and the name of the method that was used to authenticated the user.
          *
+         «commonExample.generalEventProperties(it)»
+         *
          * @param GenericEvent $event The event instance
          */
-        «ELSE»
-            /**
-             * @inheritDoc
-             */
-        «ENDIF»
         public function veto(GenericEvent $event)
         {
-            «IF !isBase»
-                parent::veto($event);
-
-                «commonExample.generalEventProperties(it)»
-            «ENDIF»
         }
 
-        «IF isBase»
         /**
          * Listener for the `module.users.ui.login.succeeded` event.
          *
@@ -127,23 +98,14 @@ class UserLogin {
          * Finally, this event only fires in the event of a "normal" UI-oriented log-in attempt. A module attempting to log in
          * programmatically by directly calling the core functions will not see this event fired.
          *
+         «commonExample.generalEventProperties(it)»
+         *
          * @param GenericEvent $event The event instance
          */
-        «ELSE»
-            /**
-             * @inheritDoc
-             */
-        «ENDIF»
         public function succeeded(GenericEvent $event)
         {
-            «IF !isBase»
-                parent::succeeded($event);
-
-                «commonExample.generalEventProperties(it)»
-            «ENDIF»
         }
 
-        «IF isBase»
         /**
          * Listener for the `module.users.ui.login.failed` event.
          *
@@ -165,20 +127,12 @@ class UserLogin {
          * Finally, this event only fires in the event of a "normal" UI-oriented log-in attempt. A module attempting to log in
          * programmatically by directly calling core functions will not see this event fired.
          *
+         «commonExample.generalEventProperties(it)»
+         *
          * @param GenericEvent $event The event instance
          */
-        «ELSE»
-            /**
-             * @inheritDoc
-             */
-        «ENDIF»
         public function failed(GenericEvent $event)
         {
-            «IF !isBase»
-                parent::failed($event);
-
-                «commonExample.generalEventProperties(it)»
-            «ENDIF»
         }
     '''
 }

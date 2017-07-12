@@ -6,52 +6,32 @@ class Theme {
 
     CommonExample commonExample = new CommonExample()
 
-    def generate(Application it, Boolean isBase) '''
-        «IF isBase»
-            /**
-             * Makes our handlers known to the event system.
-             */
-        «ELSE»
-            /**
-             * @inheritDoc
-             */
-        «ENDIF»
+    def generate(Application it) '''
+        /**
+         * Makes our handlers known to the event system.
+         */
         public static function getSubscribedEvents()
         {
-            «IF isBase»
-                return [
-                    ThemeEvents::PRE_RENDER  => ['preRender', 5],
-                    ThemeEvents::POST_RENDER => ['postRender', 5]
-                ];
-            «ELSE»
-                return parent::getSubscribedEvents();
-            «ENDIF»
+            return [
+                ThemeEvents::PRE_RENDER  => ['preRender', 5],
+                ThemeEvents::POST_RENDER => ['postRender', 5]
+            ];
         }
 
-        «IF isBase»
         /**
          * Listener for the `theme.pre_render` event.
          *
          * Occurs immediately before twig theme engine renders a template.
          * The event subject is \Zikula\ThemeModule\Bridge\Event\TwigPreRenderEvent.
          *
+         «commonExample.generalEventProperties(it)»
+         *
          * @param TwigPreRenderEvent $event The event instance
          */
-        «ELSE»
-            /**
-             * @inheritDoc
-             */
-        «ENDIF»
         public function preRender(TwigPreRenderEvent $event)
         {
-            «IF !isBase»
-                parent::preRender($event);
-
-                «commonExample.generalEventProperties(it)»
-            «ENDIF»
         }
 
-        «IF isBase»
         /**
          * Listener for the `theme.post_render` event.
          *
@@ -60,20 +40,12 @@ class Theme {
          *
          * An example for implementing this event is \Zikula\ThemeModule\EventListener\TemplateNameExposeListener.
          *
+         «commonExample.generalEventProperties(it)»
+         *
          * @param TwigPostRenderEvent $event The event instance
          */
-        «ELSE»
-            /**
-             * @inheritDoc
-             */
-        «ENDIF»
         public function postRender(TwigPostRenderEvent $event)
         {
-            «IF !isBase»
-                parent::postRender($event);
-
-                «commonExample.generalEventProperties(it)»
-            «ENDIF»
         }
     '''
 }

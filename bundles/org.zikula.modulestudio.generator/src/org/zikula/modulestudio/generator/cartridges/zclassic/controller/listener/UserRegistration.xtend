@@ -6,95 +6,66 @@ class UserRegistration {
 
     CommonExample commonExample = new CommonExample()
 
-    def generate(Application it, Boolean isBase) '''
-        «IF isBase»
-            /**
-             * Makes our handlers known to the event system.
-             */
-        «ELSE»
-            /**
-             * @inheritDoc
-             */
-        «ENDIF»
+    def generate(Application it) '''
+        /**
+         * Makes our handlers known to the event system.
+         */
         public static function getSubscribedEvents()
         {
-            «IF isBase»
-                return [
-                    RegistrationEvents::REGISTRATION_STARTED        => ['started', 5],
-                    RegistrationEvents::FULL_USER_CREATE_VETO       => ['createVeto', 5],
-                    RegistrationEvents::REGISTRATION_SUCCEEDED      => ['succeeded', 5],
-                    RegistrationEvents::REGISTRATION_FAILED         => ['failed', 5],
-                    RegistrationEvents::CREATE_REGISTRATION         => ['create', 5],
-                    RegistrationEvents::UPDATE_REGISTRATION         => ['update', 5],
-                    RegistrationEvents::DELETE_REGISTRATION         => ['delete', 5],
-                    RegistrationEvents::FORCE_REGISTRATION_APPROVAL => ['forceApproval', 5]
-                ];
-            «ELSE»
-                return parent::getSubscribedEvents();
-            «ENDIF»
+            return [
+                RegistrationEvents::REGISTRATION_STARTED        => ['started', 5],
+                RegistrationEvents::FULL_USER_CREATE_VETO       => ['createVeto', 5],
+                RegistrationEvents::REGISTRATION_SUCCEEDED      => ['succeeded', 5],
+                RegistrationEvents::REGISTRATION_FAILED         => ['failed', 5],
+                RegistrationEvents::CREATE_REGISTRATION         => ['create', 5],
+                RegistrationEvents::UPDATE_REGISTRATION         => ['update', 5],
+                RegistrationEvents::DELETE_REGISTRATION         => ['delete', 5],
+                RegistrationEvents::FORCE_REGISTRATION_APPROVAL => ['forceApproval', 5]
+            ];
         }
 
-        «IF isBase»
         /**
          * Listener for the `module.users.ui.registration.started` event.
          *
          * Occurs at the beginning of the registration process, before the registration form is displayed to the user.
          *
+         «commonExample.generalEventProperties(it)»
+         *
          * @param GenericEvent $event The event instance
          */
-        «ELSE»
-            /**
-             * @inheritDoc
-             */
-        «ENDIF»
         public function started(GenericEvent $event)
         {
-            «IF !isBase»
-                parent::started($event);
-
-                «commonExample.generalEventProperties(it)»
-            «ENDIF»
         }
 
-        «IF isBase»
-            /**
-             * Listener for the `full.user.create.veto` event.
-             *
-             * Occurs when the Registration process is determining whether to create a 'registration' or a 'full user'.
-             *
-             * The subject of the event is the UserEntity. There are no arguments or data. If the User hasn't been persisted, then
-             * there will be no Uid.
-             *
-             * A handler that needs to veto a registration should call `stopPropagation()`. This will prevent other handlers
-             * from receiving the event, will return to the registration process, and will prevent the registration from
-             * creating a 'full user' record.
-             *
-             * For example an authentication method may veto a registration attempt if it requires a user to verify some
-             * registration data by email.
-             *
-             * It is assumed that the authentication method will have notified the user of required steps to prevent future
-             * vetoes. And provide the methods to correct the issue and process the steps.
-             *
-             * Because this event will not necessarily notify ALL listeners (if propagation is stopped) it CANNOT be relied upon
-             * to effect change of any kind with regard to the entity.
-             *
-             * @param GenericEvent $event The event instance
-             */
-        «ELSE»
-            /**
-             * @inheritDoc
-             */
-        «ENDIF»
+        /**
+         * Listener for the `full.user.create.veto` event.
+         *
+         * Occurs when the Registration process is determining whether to create a 'registration' or a 'full user'.
+         *
+         * The subject of the event is the UserEntity. There are no arguments or data. If the User hasn't been persisted, then
+         * there will be no Uid.
+         *
+         * A handler that needs to veto a registration should call `stopPropagation()`. This will prevent other handlers
+         * from receiving the event, will return to the registration process, and will prevent the registration from
+         * creating a 'full user' record.
+         *
+         * For example an authentication method may veto a registration attempt if it requires a user to verify some
+         * registration data by email.
+         *
+         * It is assumed that the authentication method will have notified the user of required steps to prevent future
+         * vetoes. And provide the methods to correct the issue and process the steps.
+         *
+         * Because this event will not necessarily notify ALL listeners (if propagation is stopped) it CANNOT be relied upon
+         * to effect change of any kind with regard to the entity.
+         *
+         «commonExample.generalEventProperties(it)»
+         *
+         * @param GenericEvent $event The event instance
+         */
         public function createVeto(GenericEvent $event)
         {
-            «IF !isBase»
-                parent::createVeto($event);
-
-                «commonExample.generalEventProperties(it)»
-            «ENDIF»
         }
 
-        «IF isBase»
         /**
          * Listener for the `module.users.ui.registration.succeeded` event.
          *
@@ -147,23 +118,14 @@ class UserRegistration {
          * be expecting to return to the log-in screen . Being redirected to a different page might be disorienting to the user. Second, 
          * an event handler that was notified prior to the current handler may already have changed the `'redirectUrl'`.
          *
+         «commonExample.generalEventProperties(it)»
+         *
          * @param GenericEvent $event The event instance
          */
-        «ELSE»
-            /**
-             * @inheritDoc
-             */
-        «ENDIF»
         public function succeeded(GenericEvent $event)
         {
-            «IF !isBase»
-                parent::succeeded($event);
-
-                «commonExample.generalEventProperties(it)»
-            «ENDIF»
         }
 
-        «IF isBase»
         /**
          * Listener for the `module.users.ui.registration.failed` event.
          *
@@ -184,23 +146,14 @@ class UserRegistration {
          * Being redirected to a different page might be disorienting to the user. Second, an event handler that was notified
          * prior to the current handler may already have changed the `'redirectUrl'`.
          *
+         «commonExample.generalEventProperties(it)»
+         *
          * @param GenericEvent $event The event instance
          */
-        «ELSE»
-            /**
-             * @inheritDoc
-             */
-        «ENDIF»
         public function failed(GenericEvent $event)
         {
-            «IF !isBase»
-                parent::failed($event);
-
-                «commonExample.generalEventProperties(it)»
-            «ENDIF»
         }
 
-        «IF isBase»
         /**
          * Listener for the `user.registration.create` event.
          *
@@ -211,23 +164,14 @@ class UserRegistration {
          * The subject of the event is set to the UserEntity that was created.
          * This event occurs before the $authenticationMethod->register() method is called.
          *
+         «commonExample.generalEventProperties(it)»
+         *
          * @param GenericEvent $event The event instance
          */
-        «ELSE»
-            /**
-             * @inheritDoc
-             */
-        «ENDIF»
         public function create(GenericEvent $event)
         {
-            «IF !isBase»
-                parent::create($event);
-
-                «commonExample.generalEventProperties(it)»
-            «ENDIF»
         }
 
-        «IF isBase»
         /**
          * Listener for the `user.registration.update` event.
          *
@@ -236,23 +180,14 @@ class UserRegistration {
          * The subject of the event is set to the UserEntity, with the updated values. The event data contains the
          * original UserEntity in an array `['oldValue' => $originalUser]`.
          *
+         «commonExample.generalEventProperties(it)»
+         *
          * @param GenericEvent $event The event instance
          */
-        «ELSE»
-            /**
-             * @inheritDoc
-             */
-        «ENDIF»
         public function update(GenericEvent $event)
         {
-            «IF !isBase»
-                parent::update($event);
-
-                «commonExample.generalEventProperties(it)»
-            «ENDIF»
         }
 
-        «IF isBase»
         /**
          * Listener for the `user.registration.delete` event.
          *
@@ -262,42 +197,25 @@ class UserRegistration {
          * event will fire. This is a storage-level event, not a UI event. It should not be used for UI-level actions such as redirects.
          * The subject of the event is set to the Uid being deleted.
          *
+         «commonExample.generalEventProperties(it)»
+         *
          * @param GenericEvent $event The event instance
          */
-        «ELSE»
-        /**
-         * @inheritDoc
-         */
-        «ENDIF»
         public function delete(GenericEvent $event)
         {
-            «IF !isBase»
-                parent::delete($event);
-
-                «commonExample.generalEventProperties(it)»
-            «ENDIF»
         }
 
-        «IF isBase»
-            /**
-             * Listener for the `force.registration.approval` event.
-             *
-             * Occurs when an administrator approves a registration. The UserEntity is the subject.
-             *
-             * @param GenericEvent $event The event instance
-             */
-        «ELSE»
-            /**
-             * @inheritDoc
-             */
-        «ENDIF»
+        /**
+         * Listener for the `force.registration.approval` event.
+         *
+         * Occurs when an administrator approves a registration. The UserEntity is the subject.
+         *
+         «commonExample.generalEventProperties(it)»
+         *
+         * @param GenericEvent $event The event instance
+         */
         public function forceApproval(GenericEvent $event)
         {
-            «IF !isBase»
-                parent::forceApproval($event);
-
-                «commonExample.generalEventProperties(it)»
-            «ENDIF»
         }
     '''
 }
