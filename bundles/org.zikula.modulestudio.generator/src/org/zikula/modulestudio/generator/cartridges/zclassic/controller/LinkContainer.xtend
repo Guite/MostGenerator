@@ -47,9 +47,6 @@ class LinkContainer {
             use Zikula\ExtensionsModule\Api\«IF targets('1.5')»ApiInterface\VariableApiInterface«ELSE»VariableApi«ENDIF»;
         «ENDIF»
         use Zikula\PermissionsModule\Api\«IF targets('1.5')»ApiInterface\PermissionApiInterface«ELSE»PermissionApi«ENDIF»;
-        «IF generateAccountApi || hasEditActions»
-            use Zikula\UsersModule\Api\«IF targets('1.5')»ApiInterface\CurrentUserApiInterface«ELSE»CurrentUserApi«ENDIF»;
-        «ENDIF»
         use «appNamespace»\Helper\ControllerHelper;
 
         /**
@@ -76,13 +73,6 @@ class LinkContainer {
                 protected $variableApi;
 
             «ENDIF»
-            «IF generateAccountApi || hasEditActions»
-                /**
-                 * @var CurrentUserApi«IF targets('1.5')»Interface«ENDIF»
-                 */
-                private $currentUserApi;
-
-            «ENDIF»
             /**
              * @var ControllerHelper
              */
@@ -97,9 +87,6 @@ class LinkContainer {
              «IF generateAccountApi»
              * @param VariableApi«IF targets('1.5')»Interface«ENDIF»         $variableApi      VariableApi service instance
              «ENDIF»
-             «IF generateAccountApi || hasEditActions»
-             * @param CurrentUserApi«IF targets('1.5')»Interface«ELSE»     «ENDIF» $currentUserApi   CurrentUserApi service instance
-             «ENDIF»
              * @param ControllerHelper    $controllerHelper ControllerHelper service instance
              */
             public function __construct(
@@ -109,9 +96,6 @@ class LinkContainer {
                 «IF generateAccountApi»
                     VariableApi«IF targets('1.5')»Interface«ENDIF» $variableApi,
                 «ENDIF»
-                «IF generateAccountApi || hasEditActions»
-                    CurrentUserApi«IF targets('1.5')»Interface«ENDIF» $currentUserApi,
-                «ENDIF»
                 ControllerHelper $controllerHelper
             ) {
                 $this->setTranslator($translator);
@@ -119,9 +103,6 @@ class LinkContainer {
                 $this->permissionApi = $permissionApi;
                 «IF generateAccountApi»
                     $this->variableApi = $variableApi;
-                «ENDIF»
-                «IF generateAccountApi || hasEditActions»
-                    $this->currentUserApi = $currentUserApi;
                 «ENDIF»
                 $this->controllerHelper = $controllerHelper;
             }

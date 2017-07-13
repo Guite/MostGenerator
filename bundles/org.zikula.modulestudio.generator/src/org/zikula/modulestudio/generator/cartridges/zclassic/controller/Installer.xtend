@@ -78,7 +78,9 @@ class Installer {
         public function install()
         {
             $logger = $this->container->get('logger');
-            $userName = $this->container->get('zikula_users_module.current_user')->get('uname');
+            «IF hasUploads || hasCategorisableEntities»
+                $userName = $this->container->get('zikula_users_module.current_user')->get('uname');
+            «ENDIF»
 
             «processUploadFolders»
             // create all tables from according entity definitions

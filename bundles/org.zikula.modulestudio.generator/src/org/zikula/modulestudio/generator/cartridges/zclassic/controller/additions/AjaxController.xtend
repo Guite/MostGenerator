@@ -988,7 +988,6 @@ class AjaxController {
         }
 
         $entityFactory = $this->get('«appService».entity_factory');
-        $workflowHelper = $this->get('«appService».workflow_helper');
         $repository = $entityFactory->getRepository($objectType);
         $sortableFieldMap = [
             «FOR entity : getAllEntities.filter[hasSortableFields]»

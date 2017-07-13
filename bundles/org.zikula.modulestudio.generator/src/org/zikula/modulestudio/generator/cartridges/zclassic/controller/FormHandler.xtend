@@ -904,7 +904,7 @@ class FormHandler {
          *
          * @return mixed Redirect or false on errors
          */
-        public function handleCommand($args = [])
+        public function handleCommand(array $args = [])
         {
             // build $args for BC (e.g. used by redirect handling)
             foreach ($this->templateParameters['actions'] as $action) {
@@ -920,12 +920,12 @@ class FormHandler {
             $isRegularAction = !in_array($action, ['delete', 'cancel']);
 
             if ($isRegularAction || $action == 'delete') {
-                $this->fetchInputData($args);
+                $this->fetchInputData(«IF hasSluggable && !getAllEntities.filter[slugUpdatable].empty»$args«ENDIF»);
             }
-
-            // get treated entity reference from persisted member var
-            $entity = $this->entityRef;
             «IF hasHookSubscribers»
+
+                // get treated entity reference from persisted member var
+                $entity = $this->entityRef;
 
                 if ($entity->supportsHookSubscribers() && $action != 'cancel') {
                     // Let any ui hooks perform additional validation actions
@@ -1028,7 +1028,7 @@ class FormHandler {
          *
          * @return String desired status or error message
          */
-        protected function getDefaultMessage($args, $success = false)
+        protected function getDefaultMessage(array $args = [], $success = false)
         {
             $message = '';
             switch ($args['commandName']) {
@@ -1066,7 +1066,7 @@ class FormHandler {
          *
          * @throws RuntimeException Thrown if executing the workflow action fails
          */
-        protected function addDefaultMessage($args, $success = false)
+        protected function addDefaultMessage(array $args = [], $success = false)
         {
             $message = $this->getDefaultMessage($args, $success);
             if (empty($message)) {
@@ -1087,10 +1087,12 @@ class FormHandler {
     def private fetchInputData(Application it) '''
         /**
          * Input data processing called by handleCommand method.
+         «IF hasSluggable && !getAllEntities.filter[slugUpdatable].empty»
          *
          * @param array $args Additional arguments
+         «ENDIF»
          */
-        public function fetchInputData($args)
+        public function fetchInputData(«IF hasSluggable && !getAllEntities.filter[slugUpdatable].empty»array $args = []«ENDIF»)
         {
             // fetch posted data input values as an associative array
             $formData = $this->form->getData();
@@ -1395,7 +1397,7 @@ class FormHandler {
          *
          * @return mixed Redirect or false on errors
          */
-        public function handleCommand($args = [])
+        public function handleCommand(array $args = [])
         {
             $result = parent::handleCommand($args);
             if (false === $result) {
@@ -1423,7 +1425,7 @@ class FormHandler {
          *
          * @return String desired status or error message
          */
-        protected function getDefaultMessage($args, $success = false)
+        protected function getDefaultMessage(array $args = [], $success = false)
         {
             if (false === $success) {
                 return parent::getDefaultMessage($args, $success);

@@ -90,7 +90,7 @@ class WorkflowEvents {
             if (substr($transitionName, 0, 6) == 'update') {
                 $transitionName = 'update';
             }
-            $targetState = $event->getTransition()->getTos()[0];
+            «/*not used atm $targetState = $event->getTransition()->getTos()[0];*/»
             $hasApproval = «IF needsApproval»in_array($objectType, ['«getAllEntities.filter[workflow != EntityWorkflowType.NONE].map[name.formatForCode].join('\', \'')»'])«ELSE»false«ENDIF»;
 
             switch ($transitionName) {

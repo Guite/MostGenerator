@@ -164,9 +164,6 @@ class ServiceDefinitions {
                     «IF generateAccountApi»
                         - "@zikula_extensions_module.api.variable"
                     «ENDIF»
-                    «IF generateAccountApi || hasEditActions»
-                        - "@zikula_users_module.current_user"
-                    «ENDIF»
                     - "@«modPrefix».controller_helper"
                 «IF targets('2.0')»
                     tags: ['zikula.link_container']

@@ -30,7 +30,7 @@ class ItemActions {
                 $component = '«app.appName»:«entity.name.formatForCodeCapital»:';
                 $instance = $entity->getKey() . '::';
                 $routePrefix = '«app.appName.formatForDB»_«entity.name.formatForDB»_';
-                «IF entity.standardFields»
+                «IF (entity.hasEditAction && entity.ownerPermission) || (entity.standardFields && !app.relations.empty)»
                     $isOwner = $currentUserId > 0 && null !== $entity->getCreatedBy() && $currentUserId == $entity->getCreatedBy()->getUid();
                 «ENDIF»
 

@@ -297,14 +297,14 @@ class WorkflowHelper {
 
                 $idColumn = $entity['__WORKFLOW__']['obj_idcolumn'];
                 $wfActions = Zikula_Workflow_Util::getActionsForObject($entity, $objectType, $idColumn, $this->name);
-            «ENDIF»
 
-            // as we use the workflows for multiple object types we must maybe filter out some actions
-            $states = $this->listEntriesHelper->getEntries(«IF targets('1.5')»$entity->get_objectType()«ELSE»$objectType«ENDIF», 'workflowState');
-            $allowedStates = [];
-            foreach ($states as $state) {
-                $allowedStates[] = $state['value'];
-            }
+                // as we use the workflows for multiple object types we must maybe filter out some actions
+                $states = $this->listEntriesHelper->getEntries(«IF targets('1.5')»$entity->get_objectType()«ELSE»$objectType«ENDIF», 'workflowState');
+                $allowedStates = [];
+                foreach ($states as $state) {
+                    $allowedStates[] = $state['value'];
+                }
+            «ENDIF»
 
             $actions = [];
             «IF targets('1.5')»
