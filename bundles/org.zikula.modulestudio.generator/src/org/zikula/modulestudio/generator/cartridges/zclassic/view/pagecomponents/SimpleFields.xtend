@@ -96,7 +96,7 @@ class SimpleFields {
     def dispatch displayField(StringField it, String objName, String page) {
         if (password) return ''
         if (htmlcolour) '''
-            <span class="label label-default" style="background-color: {{ «objName».«name.formatForCode»|e('html_attr') }}">{{ «objName».«name.formatForCode» }}</label>'''
+            <span class="label label-default" style="background-color: {{ «objName».«name.formatForCode»|e('html_attr') }}">{{ «objName».«name.formatForCode» }}</span>'''
         else if (entity.application.targets('2.0') && dateInterval) '''
             {{ «objName».«name.formatForCode»|«entity.application.appName.formatForDB»_dateInterval }}'''
         else '''
