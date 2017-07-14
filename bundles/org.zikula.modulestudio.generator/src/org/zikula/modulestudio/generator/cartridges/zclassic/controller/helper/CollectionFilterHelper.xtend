@@ -55,7 +55,6 @@ class CollectionFilterHelper {
         «FOR entity : getAllEntities»
             use «appNamespace»\Entity\«entity.name.formatForCodeCapital»Entity;
         «ENDFOR»
-        use «appNamespace»\Entity\Factory\«name.formatForCodeCapital»Factory;
         «IF hasCategorisableEntities»
             use «appNamespace»\Helper\CategoryHelper;
         «ENDIF»
