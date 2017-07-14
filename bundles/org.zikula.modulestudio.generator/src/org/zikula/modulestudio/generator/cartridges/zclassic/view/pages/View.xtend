@@ -88,7 +88,7 @@ class View {
             {# purpose of this template: «nameMultiple.formatForDisplay» list view #}
             {% extends routeArea == 'admin' ? '«application.appName»::adminBase.html.twig' : '«application.appName»::base.html.twig' %}
         «ENDIF»
-        {% block title own ? __('My «nameMultiple.formatForDisplay»') : __('«name.formatForDisplayCapital» list') %}
+        {% block title own ? __('My «nameMultiple.formatForDisplay»') : __('«nameMultiple.formatForDisplayCapital» list') %}
         «IF !application.generateSeparateAdminTemplates || isAdmin»
             {% block admin_page_icon 'list-alt' %}
         «ENDIF»
