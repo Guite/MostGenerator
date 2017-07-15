@@ -27,7 +27,7 @@ class Redirect {
         /**
          * Get list of allowed redirect codes.
          *
-         * @return array list of possible redirect codes
+         * @return string[] list of possible redirect codes
          */
         protected function getRedirectCodes()
         {
@@ -43,7 +43,7 @@ class Redirect {
         /**
          * Get list of allowed redirect codes.
          *
-         * @return array list of possible redirect codes
+         * @return string[] list of possible redirect codes
          */
         protected function getRedirectCodes()
         {

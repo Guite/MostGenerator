@@ -220,7 +220,7 @@ class Plugins {
         /**
          * Returns a list of custom Twig functions.
          *
-         * @return array
+         * @return \Twig_SimpleFunction[]
          */
         public function getFunctions()
         {
@@ -241,7 +241,7 @@ class Plugins {
         /**
          * Returns a list of custom Twig filters.
          *
-         * @return array
+         * @return \Twig_SimpleFilter[]
          */
         public function getFilters()
         {

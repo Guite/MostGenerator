@@ -233,7 +233,7 @@ class CollectionFilterHelper {
         protected function getViewQuickNavParametersFor«name.formatForCodeCapital»($context = '', $args = [])
         {
             $parameters = [];
-            if (!is_object($this->request)) {
+            if (null === $this->request) {
                 return $parameters;
             }
 
@@ -301,6 +301,9 @@ class CollectionFilterHelper {
          */
         protected function addCommonViewFiltersFor«name.formatForCodeCapital»(QueryBuilder $qb)
         {
+            if (null === $this->request) {
+                return $qb;
+            }
             $routeName = $this->request->get('_route');
             if (false !== strpos($routeName, 'edit')) {«/* fix for #547 */»
                 return $qb;
@@ -382,6 +385,9 @@ class CollectionFilterHelper {
          */
         protected function applyDefaultFiltersFor«name.formatForCodeCapital»(QueryBuilder $qb, $parameters = [])
         {
+            if (null === $this->request) {
+                return $qb;
+            }
             $routeName = $this->request->get('_route');
             $isAdminArea = false !== strpos($routeName, '«application.appName.toLowerCase»_«name.formatForDisplay.toLowerCase»_admin');
             if ($isAdminArea) {
