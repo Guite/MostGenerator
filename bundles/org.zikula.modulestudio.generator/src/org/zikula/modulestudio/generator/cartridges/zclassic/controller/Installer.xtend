@@ -128,7 +128,11 @@ class Installer {
                     «IF targets('1.5')»
                         $registry->setCategory($categoryGlobal);
                     «ELSE»
-                        $registry->setCategory_Id($categoryGlobal['id']);
+                        if (method_exists($registry, 'setCategory')) { // Core 1.5
+                            $registry->setCategory($categoryGlobal);
+                        } else { // Core 1.4
+                            $registry->setCategory_Id($categoryGlobal['id']);
+                        }
                     «ENDIF»
 
                     try {
