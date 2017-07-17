@@ -74,9 +74,6 @@ class ServiceDefinitions {
 
     def private mainServiceFile(Application it) '''
         imports:
-        «IF targets('2.0')»
-          - { resource: "*.yml" }
-        «ELSE»
           «IF authenticationMethod != AuthMethodType.NONE»
               - { resource: 'authentication.yml' }
           «ENDIF»
@@ -96,7 +93,6 @@ class ServiceDefinitions {
         «ENDIF»
           - { resource: 'twig.yml' }
           - { resource: 'logger.yml' }
-        «ENDIF»
         «IF hasImageFields»
 
         parameters:
