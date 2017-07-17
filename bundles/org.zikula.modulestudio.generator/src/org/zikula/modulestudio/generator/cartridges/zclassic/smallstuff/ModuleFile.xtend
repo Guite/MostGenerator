@@ -23,7 +23,7 @@ class ModuleFile {
     }
 
     def private moduleBaseClass(Application it) '''
-        «IF generateListContentType || (generateDetailContentType && hasDisplayActions)»
+        «IF (generateListContentType || (generateDetailContentType && hasDisplayActions)) && !targets('2.0')»
             namespace «appNamespace»\Base {
 
                 «moduleBaseImpl»
