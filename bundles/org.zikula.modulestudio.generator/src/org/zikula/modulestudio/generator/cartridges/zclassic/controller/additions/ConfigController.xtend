@@ -27,6 +27,7 @@ class ConfigController {
         namespace «appNamespace»\Controller\Base;
 
         use Symfony\Component\HttpFoundation\Request;
+        use Symfony\Component\HttpFoundation\Response;
         use Symfony\Component\Security\Core\Exception\AccessDeniedException;
         use Zikula\Core\Controller\AbstractController;
         «IF targets('1.5')»
@@ -67,7 +68,7 @@ class ConfigController {
          *
          * @param Request $request Current request instance
          *
-         * @return string Output
+         * @return Response Output
          *
          * @throws AccessDeniedException Thrown if the user doesn't have required permissions
          */
