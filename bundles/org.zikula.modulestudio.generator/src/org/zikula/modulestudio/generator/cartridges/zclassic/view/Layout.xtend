@@ -146,7 +146,7 @@ class Layout {
             {%- block date_widget -%}
                 {{- parent() -}}
                 {%- if not required -%}
-                    <span class="help-block"><a id="{{ id }}ResetVal" href="javascript:void(0);" class="hidden">{{ __('Reset to empty value') }}</a></span>
+                    <em class="help-block small"><a id="{{ id }}ResetVal" href="javascript:void(0);" class="hidden">{{ __('Reset to empty value') }}</a></em>
                 {%- endif -%}
             {%- endblock -%}
         «ENDIF»
@@ -155,7 +155,7 @@ class Layout {
             {%- block datetime_widget -%}
                 {{- parent() -}}
                 {%- if not required -%}
-                    <span class="help-block"><a id="reset{{ id }}ResetVal" href="javascript:void(0);" class="hidden">{{ __('Reset to empty value') }}</a></span>
+                    <em class="help-block small"><a id="reset{{ id }}ResetVal" href="javascript:void(0);" class="hidden">{{ __('Reset to empty value') }}</a></em>
                 {%- endif -%}
             {%- endblock -%}
         «ENDIF»
@@ -178,13 +178,13 @@ class Layout {
             {% block «appName.formatForDB»_field_upload_row %}
                 {% spaceless %}
                 {{ form_row(attribute(form, field_name)) }}
-                <div class="col-sm-9 col-sm-offset-3">
+                <div class="col-sm-9 col-sm-offset-3" style="margin-top: -20px; padding-left: 8px">
                     {% if not required %}
-                        <span class="help-block"><a id="{{ id }}_{{ field_name }}ResetVal" href="javascript:void(0);" class="hidden">{{ __('Reset to empty value') }}</a></span>
+                        <em class="help-block small"><a id="{{ id }}_{{ field_name }}ResetVal" href="javascript:void(0);" class="hidden">{{ __('Reset to empty value') }}</a></em>
                     {% endif %}
-                    <span class="help-block">{{ __('Allowed file extensions') }}: <span id="{{ id }}_{{ field_name }}FileExtensions">{{ allowed_extensions|default('') }}</span></span>
+                    <em class="help-block small">{{ __('Allowed file extensions') }}: <span id="{{ id }}_{{ field_name }}FileExtensions">{{ allowed_extensions|default('') }}</span></em>
                     {% if allowed_size|default %}
-                        <span class="help-block">{{ __('Allowed file size') }}: {{ allowed_size }}</span>
+                        <em class="help-block small">{{ __('Allowed file size') }}: {{ allowed_size }}</em>
                     {% endif %}
                     {% if file_path|default %}
                         <span class="help-block">
@@ -224,11 +224,11 @@ class Layout {
                     {% endif %}
                 </span>
                 {% if not required %}
-                    <span class="help-block"><a id="{{ id }}ResetVal" href="javascript:void(0);" class="hidden">{{ __('Reset to empty value') }}</a></span>
+                    <em class="help-block small"><a id="{{ id }}ResetVal" href="javascript:void(0);" class="hidden">{{ __('Reset to empty value') }}</a></em>
                 {% endif %}
                 {% if value and not inline_usage %}
                     {% if hasPermission('ZikulaUsersModule::', '::', 'ACCESS_ADMIN') %}
-                        <span class="help-block"><a href="{{ path('zikulausersmodule_useradministration_modify', { 'user': value }) }}" title="{{ __('Switch to users administration') }}">{{ __('Manage user') }}</a></span>
+                        <em class="help-block small"><a href="{{ path('zikulausersmodule_useradministration_modify', { 'user': value }) }}" title="{{ __('Switch to users administration') }}">{{ __('Manage user') }}</a></em>
                     {% endif %}
                 {% endif %}
             {% endblock %}

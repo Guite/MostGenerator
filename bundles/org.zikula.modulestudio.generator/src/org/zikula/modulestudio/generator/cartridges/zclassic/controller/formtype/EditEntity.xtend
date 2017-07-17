@@ -894,6 +894,64 @@ class EditEntity {
         messages
     }
 
+    def private dispatch helpMessages(UploadField it) {
+        val messages = helpDocumentation
+
+        if (minWidth > 0 && maxWidth > 0) {
+            if (minWidth == maxWidth) {
+                messages += '''$this->__f('Note: the image must have a width of %amount% pixels.', ['%amount%' => «minWidth»])'''
+            } else {
+                messages += '''$this->__f('Note: the image must have a width between %min% and %max% pixels.', ['%min%' => «minWidth», '%max%' => «maxWidth»])'''
+            }
+        } else if (minWidth > 0) {
+            messages += '''$this->__f('Note: the image must have a width of at least %min% pixels.', ['%min%' => «minWidth»])'''
+        } else if (maxWidth > 0) {
+            messages += '''$this->__f('Note: the image must have a width of at most %max% pixels.', ['%max%' => «maxWidth»])'''
+        }
+
+        if (minHeight > 0 && maxHeight > 0) {
+            if (minHeight == maxHeight) {
+                messages += '''$this->__f('Note: the image must have a height of %amount% pixels.', ['%amount%' => «minHeight»])'''
+            } else {
+                messages += '''$this->__f('Note: the image must have a height between %min% and %max% pixels.', ['%min%' => «minHeight», '%max%' => «maxHeight»])'''
+            }
+        } else if (minHeight > 0) {
+            messages += '''$this->__f('Note: the image must have a height of at least %min% pixels.', ['%min%' => «minHeight»])'''
+        } else if (maxHeight > 0) {
+            messages += '''$this->__f('Note: the image must have a height of at most %max% pixels.', ['%max%' => «maxHeight»])'''
+        }
+
+        if (minRatio > 0 && maxRatio > 0) {
+            if (minRatio == maxRatio) {
+                messages += '''$this->__f('Note: the image aspect ratio (width / height) must be %amount%.', ['%amount%' => «minRatio»])'''
+            } else {
+                messages += '''$this->__f('Note: the image aspect ratio (width / height) must be between %min% and %max%.', ['%min%' => «minRatio», '%max%' => «maxRatio»])'''
+            }
+        } else if (minRatio > 0) {
+            messages += '''$this->__f('Note: the image aspect ratio (width / height) must be at least %min%.', ['%min%' => «minRatio»])'''
+        } else if (maxRatio > 0) {
+            messages += '''$this->__f('Note: the image aspect ratio (width / height) must be at most %max%.', ['%max%' => «maxRatio»])'''
+        }
+
+        if (!(allowSquare && allowLandscape && allowPortrait)) {
+            if (allowSquare && !allowLandscape && !allowPortrait) {
+                messages += '''$this->__('Note: only square dimension (no portrait or landscape) is allowed.')'''
+            } else if (!allowSquare && allowLandscape && !allowPortrait) {
+                messages += '''$this->__('Note: only landscape dimension (no square or portrait) is allowed.')'''
+            } else if (!allowSquare && !allowLandscape && allowPortrait) {
+                messages += '''$this->__('Note: only portrait dimension (no square or landscape) is allowed.')'''
+            } else if (allowSquare && allowLandscape && !allowPortrait) {
+                messages += '''$this->__('Note: only square or landscape dimension (no portrait) is allowed.')'''
+            } else if (allowSquare && !allowLandscape && allowPortrait) {
+                messages += '''$this->__('Note: only square or portrait dimension (no landscape) is allowed.')'''
+            } else if (!allowSquare && allowLandscape && allowPortrait) {
+                messages += '''$this->__('Note: only landscape or portrait dimension (no square) is allowed.')'''
+            }
+        }
+
+        messages
+    }
+
     def private dispatch helpMessages(ArrayField it) {
         val messages = helpDocumentation
 
