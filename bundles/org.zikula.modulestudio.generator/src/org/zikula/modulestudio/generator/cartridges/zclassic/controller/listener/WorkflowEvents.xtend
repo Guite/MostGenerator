@@ -57,8 +57,9 @@ class WorkflowEvents {
                     'workflow.entered' => ['onEntered', 5],
                 «ENDIF»
                 'workflow.transition' => ['onTransition', 5],
-                'workflow.enter' => ['onEnter', 5]«IF targets('2.0')»,
-                    'workflow.announce' => ['onAnnounce', 5],
+                'workflow.enter' => ['onEnter', 5]«IF targets('2.0')»,«ENDIF»
+                «IF targets('2.0')»
+                    'workflow.announce' => ['onAnnounce', 5]
                 «ENDIF»
             ];
         }
