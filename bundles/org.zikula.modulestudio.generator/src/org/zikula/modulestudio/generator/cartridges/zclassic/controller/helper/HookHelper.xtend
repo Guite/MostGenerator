@@ -65,16 +65,28 @@ class HookHelper {
 
         «IF targets('1.5')»
             use Symfony\Component\Form\Form;
+            «IF targets('2.0')»
+                use Zikula\Bundle\HookBundle\Dispatcher\HookDispatcher;
+            «ENDIF»
             use Zikula\Bundle\HookBundle\FormAwareHook\FormAwareHook;
             use Zikula\Bundle\HookBundle\FormAwareHook\FormAwareResponse;
         «ENDIF»
-        use Zikula\Component\HookDispatcher\Hook;
-        use Zikula\Component\HookDispatcher\HookDispatcher;
+        «IF targets('2.0')»
+            use Zikula\Bundle\HookBundle\Hook\Hook;
+            use Zikula\Bundle\HookBundle\Hook\ProcessHook;
+            use Zikula\Bundle\HookBundle\Hook\ValidationHook;
+            use Zikula\Bundle\HookBundle\Hook\ValidationProviders;
+        «ELSE»
+            use Zikula\Component\HookDispatcher\Hook;
+            use Zikula\Component\HookDispatcher\HookDispatcher;
+        «ENDIF»
         use Zikula\Core\Doctrine\EntityAccess;
-        use Zikula\Core\Hook\ProcessHook;
-        use Zikula\Core\Hook\ValidationHook;
-        use Zikula\Core\Hook\ValidationProviders;
-        use Zikula\Core\RouteUrl;
+        «IF !targets('2.0')»
+            use Zikula\Core\Hook\ProcessHook;
+            use Zikula\Core\Hook\ValidationHook;
+            use Zikula\Core\Hook\ValidationProviders;
+        «ENDIF»
+        use Zikula\Core\UrlInterface;
 
         /**
          * Helper base class for hook related methods.
@@ -136,9 +148,9 @@ class HookHelper {
          *
          * @param EntityAccess $entity   The currently processed entity
          * @param string       $hookType Name of hook type to be called
-         * @param RouteUrl     $routeUrl The route url object
+         * @param UrlInterface $routeUrl The route url object
          */
-        public function callProcessHooks($entity, $hookType, $routeUrl = null)
+        public function callProcessHooks($entity, $hookType, UrlInterface $routeUrl = null)
         {
             $hookAreaPrefix = $entity->getHookAreaPrefix();
 
@@ -162,7 +174,7 @@ class HookHelper {
             $hookAreaPrefix = $entity->getHookAreaPrefix();
 
             $hook = new FormAwareHook($form);
-            $this->hookDispatcher->dispatch($hookAreaPrefix . '.' . $hookType, $hook);
+            $this->dispatchHooks($hookAreaPrefix . '.' . $hookType, $hook);
 
             return $hook;
         }
@@ -175,14 +187,14 @@ class HookHelper {
          * @param Form         $form     The form instance
          * @param EntityAccess $entity   The currently processed entity
          * @param string       $hookType Name of hook type to be called
-         * @param RouteUrl     $routeUrl The route url object
+         * @param UrlInterface $routeUrl The route url object
          */
-        public function callFormProcessHooks(Form $form, $entity, $hookType, $routeUrl = null)
+        public function callFormProcessHooks(Form $form, $entity, $hookType, UrlInterface $routeUrl = null)
         {
             $formResponse = new FormAwareResponse($form, $entity, $routeUrl);
             $hookAreaPrefix = $entity->getHookAreaPrefix();
 
-            $this->hookDispatcher->dispatch($hookAreaPrefix . '.' . $hookType, $formResponse);
+            $this->dispatchHooks($hookAreaPrefix . '.' . $hookType, $formResponse);
         }
     '''
 

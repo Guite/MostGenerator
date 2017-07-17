@@ -232,7 +232,7 @@ class NotificationHelper {
 
             $result = $this->sendMails();
 
-            $this->session->del($this->name . 'AdditionalNotificationRemarks');
+            $this->session->remove($this->name . 'AdditionalNotificationRemarks');
 
             return $result;
         }

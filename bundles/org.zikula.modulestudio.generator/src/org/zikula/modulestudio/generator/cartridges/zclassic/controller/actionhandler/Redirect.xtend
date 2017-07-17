@@ -193,7 +193,7 @@ class Redirect {
             }
 
             if ($this->request->getSession()->has('«app.appName.formatForDB»' . $this->objectTypeCapital . 'Referer')) {
-                $this->request->getSession()->del('«app.appName.formatForDB»' . $this->objectTypeCapital . 'Referer');
+                $this->request->getSession()->remove('«app.appName.formatForDB»' . $this->objectTypeCapital . 'Referer');
             }
 
             // normal usage, compute return url from given redirect code
