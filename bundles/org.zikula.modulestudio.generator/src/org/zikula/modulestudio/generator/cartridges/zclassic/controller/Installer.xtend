@@ -211,7 +211,7 @@ class Installer {
                         return false;
                     }
             }
-            «IF !isSystemModule»
+            «IF !isSystemModule && !targets('2.0')»
 
                 // Note there are several helpers available for making migrating your extension from Zikula 1.3 to 1.4 easier.
                 // The following convenience methods are each responsible for a single aspect of upgrading to Zikula 1.4.x.
@@ -237,7 +237,7 @@ class Installer {
             // update successful
             return true;
         }
-        «IF !isSystemModule»
+        «IF !isSystemModule && !targets('2.0')»
 
             «new MigrationHelper().generate(it)»
         «ENDIF»

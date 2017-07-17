@@ -54,6 +54,7 @@ import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
+import org.zikula.modulestudio.generator.extensions.Utils
 import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
 
 class ZclassicGenerator implements IGenerator {
@@ -62,6 +63,7 @@ class ZclassicGenerator implements IGenerator {
     extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension ModelExtensions = new ModelExtensions
+    extension Utils = new Utils
     extension WorkflowExtensions = new WorkflowExtensions
 
     IFileSystemAccess fsa
@@ -214,7 +216,7 @@ class ZclassicGenerator implements IGenerator {
 
     def private generateIntegrationContentTypes(Application it) {
         val needsDetailContentType = generateDetailContentType && hasDisplayActions
-        if (generateListContentType || needsDetailContentType) {
+        if ((generateListContentType || needsDetailContentType) && !targets('2.0')) {
             pm?.subTask('Integration: Content types')
             println('Generating content types')
             if (generateListContentType) {
@@ -227,22 +229,22 @@ class ZclassicGenerator implements IGenerator {
     }
 
     def private generateIntegrationThirdParty(Application it) {
-        if (generateNewsletterPlugin) {
+        if (generateNewsletterPlugin && !targets('2.0')) {
             pm?.subTask('Integration: Newsletter plugin')
             println('Generating newsletter plugin')
             new Newsletter().generate(it, fsa)
         }
-        if (generateMailzApi) {
+        if (generateMailzApi && !targets('2.0')) {
             pm?.subTask('Integration: Mailz api')
             println('Generating mailz api')
             new Mailz().generate(it, fsa)
         }
-        if (generateMultiHookNeedles) {
+        if (generateMultiHookNeedles && !targets('2.0')) {
             pm?.subTask('Integration: MultiHook needles')
             println('Generating MultiHook needles')
             new MultiHook().generate(it, fsa)
         }
-        if (generateTagSupport && hasDisplayActions) {
+        if (generateTagSupport && hasDisplayActions && !targets('2.0')) {
             pm?.subTask('Integration: Tag support')
             println('Generating tag support')
             new Tag().generate(it, fsa)

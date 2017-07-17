@@ -49,15 +49,17 @@ class Plugins {
     def generateInternal(Application it) {
         val result = newArrayList
         result += viewPlugins
-        // content type editing is not ready for Twig yet
-        if (generateListContentType || generateDetailContentType) {
-            new ObjectTypeSelector().generate(it, fsa, true)
-        }
-        if (generateListContentType) {
-            new TemplateSelector().generate(it, fsa, true)
-        }
-        if (generateDetailContentType) {
-            new ItemSelector().generate(it, fsa)
+        if (!targets('2.0')) {
+            // content type editing is not ready for Twig yet
+            if (generateListContentType || generateDetailContentType) {
+                new ObjectTypeSelector().generate(it, fsa, true)
+            }
+            if (generateListContentType) {
+                new TemplateSelector().generate(it, fsa, true)
+            }
+            if (generateDetailContentType) {
+                new ItemSelector().generate(it, fsa)
+            }
         }
         result += otherPlugins
         result.join("\n\n")
@@ -456,7 +458,7 @@ class Plugins {
 
     def private otherPlugins(Application it) {
         val result = newArrayList
-        if (generateDetailContentType) {
+        if (generateDetailContentType && !targets('2.0')) {
             new ItemSelector().generate(it, fsa)
         }
         result += new ObjectTypeSelector().generate(it, fsa, false)
