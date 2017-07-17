@@ -396,6 +396,13 @@ class CategoryHelper {
             «IF targets('1.5')»
             return $this->categoryPermissionApi->hasCategoryAccess($entity->getCategories()->toArray(), ACCESS_OVERVIEW);
             «ELSE»
+            // running 1.4 module on 1.5+?
+            $coreVersion = \ServiceUtil::get('service_container')->getParameter(\Zikula\Bundle\CoreBundle\HttpKernel\ZikulaKernel::CORE_INSTALLED_VERSION_PARAM);
+            $is14 = version_compare($coreVersion, '1.5.0', '<');
+            if (!$is14) {
+                return $this->categoryPermissionApi->hasCategoryAccess($entity->getCategories()->toArray(), ACCESS_OVERVIEW);
+            }
+
             $objectType = $entity->get_objectType();
             $categories = $entity['categories'];
 
