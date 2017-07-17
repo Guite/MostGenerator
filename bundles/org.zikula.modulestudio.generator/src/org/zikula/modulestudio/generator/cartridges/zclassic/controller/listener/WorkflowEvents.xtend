@@ -53,8 +53,13 @@ class WorkflowEvents {
             return [
                 'workflow.guard' => ['onGuard', 5],
                 'workflow.leave' => ['onLeave', 5],
+                «IF targets('2.0')»
+                    'workflow.entered' => ['onEntered', 5],
+                «ENDIF»
                 'workflow.transition' => ['onTransition', 5],
-                'workflow.enter' => ['onEnter', 5]
+                'workflow.enter' => ['onEnter', 5]«IF targets('2.0')»,
+                    'workflow.announce' => ['onAnnounce', 5],
+                «ENDIF»
             ];
         }
 
@@ -172,6 +177,32 @@ class WorkflowEvents {
                 return;
             }
         }
+        «IF targets('2.0')»
+
+            /**
+             * Listener for the `workflow.entered` event.
+             *
+             * Occurs just before the object enters into the new state.
+             * Carries the marking with the new places.
+             * This is a good place to flush data in Doctrine based on the entity not being updated yet.
+             *
+             * This event is also triggered for each workflow individually, so you can react only to the events
+             * of a specific workflow by listening to `workflow.<workflow_name>.entered` instead.
+             * You can even listen to some specific transitions or states for a specific workflow
+             * using `workflow.<workflow_name>.entered.<state_name>`.
+             *
+             «exampleCode»
+             *
+             * @param Event $event The event instance
+             */
+            public function onEntered(Event $event)
+            {
+                $entity = $event->getSubject();
+                if (!$this->isEntityManagedByThisBundle($entity) || !method_exists($entity, 'get_objectType')) {
+                    return;
+                }
+            }
+        «ENDIF»
 
         /**
          * Listener for the `workflow.transition` event.
@@ -230,6 +261,30 @@ class WorkflowEvents {
                 }
             «ENDIF»
         }
+        «IF targets('2.0')»
+
+            /**
+             * Listener for the `workflow.announce` event.
+             *
+             * Triggered for each place that now is available for the object.
+             *
+             * This event is also triggered for each workflow individually, so you can react only to the events
+             * of a specific workflow by listening to `workflow.<workflow_name>.announce` instead.
+             * You can even listen to some specific transitions or states for a specific workflow
+             * using `workflow.<workflow_name>.announce.<state_name>`.
+             *
+             «exampleCode»
+             *
+             * @param Event $event The event instance
+             */
+            public function onAnnounce(Event $event)
+            {
+                $entity = $event->getSubject();
+                if (!$this->isEntityManagedByThisBundle($entity) || !method_exists($entity, 'get_objectType')) {
+                    return;
+                }
+            }
+        «ENDIF»
 
         «isEntityManagedByThisBundle»
         «IF needsApproval»
