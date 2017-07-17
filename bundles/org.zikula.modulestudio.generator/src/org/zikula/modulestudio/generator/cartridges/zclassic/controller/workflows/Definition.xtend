@@ -72,7 +72,7 @@ class Definition {
     }
 
     def private workflowDefinition() '''
-        workflow:
+        «IF app.targets('2.0')»framework«ELSE»workflow«ENDIF»:
             workflows:
                 «app.appName.formatForDB»_«wfType.textualName.formatForDB»:
                     type: state_machine
