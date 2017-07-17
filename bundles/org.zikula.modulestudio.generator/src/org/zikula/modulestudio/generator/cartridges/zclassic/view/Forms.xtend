@@ -283,12 +283,14 @@ class Forms {
             {% endset %}
             {{ pageAddAsset('footer', geoScripts) }}
         «ENDIF»
-
-        <script type="text/javascript">
-        /* <![CDATA[ */
-            «jsInitImpl»
-        /* ]]> */
-        </script>
+        {% set formInitScript %}
+            <script type="text/javascript">
+            /* <![CDATA[ */
+                «jsInitImpl»
+            /* ]]> */
+            </script>
+        {% endset %}
+        {{ pageAddAsset('footer', formInitScript) }}
     '''
 
     def private jsInitImpl(Entity it) '''
