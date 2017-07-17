@@ -162,7 +162,7 @@ class HookHelper {
             $hookAreaPrefix = $entity->getHookAreaPrefix();
 
             $hook = new FormAwareHook($form);
-            $this->dispatchHooks($hookAreaPrefix . '.' . $hookType, $hook);
+            $this->hookDispatcher->dispatch($hookAreaPrefix . '.' . $hookType, $hook);
 
             return $hook;
         }
@@ -182,7 +182,7 @@ class HookHelper {
             $formResponse = new FormAwareResponse($form, $entity, $routeUrl);
             $hookAreaPrefix = $entity->getHookAreaPrefix();
 
-            $this->dispatchHooks($hookAreaPrefix . '.' . $hookType, $formResponse);
+            $this->hookDispatcher->dispatch($hookAreaPrefix . '.' . $hookType, $formResponse);
         }
     '''
 
