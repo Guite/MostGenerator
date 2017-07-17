@@ -142,11 +142,6 @@ class Forms {
                             </li>
                         {% endif %}
                     «ENDIF»
-                    «IF !skipHookSubscribers»
-                        <li role="presentation">
-                            <a id="hooksTab" href="#tabHooks" title="{{ __('Hooks') }}" role="tab" data-toggle="tab">{{ __('Hooks') }}</a>
-                        </li>
-                    «ENDIF»
                     {% if form.moderationSpecificCreator is defined %}
                         <li role="presentation">
                             <a id="moderationTab" href="#tabModeration" title="{{ __('Moderation options') }}" role="tab" data-toggle="tab">{{ __('Moderation') }}</a>
@@ -355,28 +350,15 @@ class Forms {
     '''
 
     def private displayHooks(Entity it, Application app) '''
-        «IF useGroupingTabs('edit')»
-            <div role="tabpanel" class="tab-pane fade" id="tabHooks" aria-labelledby="hooksTab">
-                <h3>{{ __('Hooks') }}</h3>
-        «ENDIF»
         {% set hookId = mode != 'create' ? «name.formatForDB».«primaryKey.name.formatForCode» : null %}
         {% set hooks = notifyDisplayHooks(eventName='«app.appName.formatForDB».ui_hooks.«nameMultiple.formatForDB».form_edit', id=hookId) %}
         {% if hooks is iterable and hooks|length > 0 %}
+            <h3>{{ __('Hooks') }}</h3>
             {% for providerArea, hook in hooks if providerArea != 'provider.scribite.ui_hooks.editor' %}
-                «IF useGroupingTabs('edit')»
-                    <h4>{{ providerArea }}</h4>
-                    {{ hook }}
-                «ELSE»
-                    <fieldset>
-                        <legend>{{ providerArea }}</legend>
-                        {{ hook }}
-                    </fieldset>
-                «ENDIF»
+                <h4>{{ providerArea }}</h4>
+                {{ hook }}
             {% endfor %}
         {% endif %}
-        «IF useGroupingTabs('edit')»
-            </div>
-        «ENDIF»
     '''
 
     def private additionalInitScript(DerivedField it) {
