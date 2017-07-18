@@ -168,7 +168,7 @@ class HookHelper {
          * @param EntityAccess $entity   The currently processed entity
          * @param string       $hookType Name of hook type to be called
          *
-         * @return boolean Whether validation is passed or not
+         * @return string[] List of error messages returned by validators
          */
         public function callValidationHooks($entity, $hookType)
         {
@@ -177,7 +177,7 @@ class HookHelper {
             $hook = new ValidationHook(new ValidationProviders());
             $validators = $this->dispatchHooks($hookAreaPrefix . '.' . $hookType, $hook)->getValidators();
 
-            return !$validators->hasErrors();
+            return $validators->getErrors();
         }
     '''
 
@@ -664,6 +664,7 @@ class HookHelper {
                  */
                 public function view(DisplayHook $hook)
                 {
+                    // $hook->getAreaId(), $hook->getId(), $hook->getUrl() [UrlInterface]
                     $hook->setResponse(new DisplayHookResponse($this->getAreaName(), 'This is the «name.formatForCodeCapital» Display Hook Response.'));
                 }
 
@@ -674,6 +675,7 @@ class HookHelper {
                  */
                 public function edit(DisplayHook $hook)
                 {
+                    // $hook->getAreaId(), $hook->getId(), $hook->getUrl() [UrlInterface]
                     $hook->setResponse(new DisplayHookResponse($this->getAreaName(), '<div>«name.formatForCodeCapital» content hooked.</div><input name="«application.appName.formatForDB»[name]" value="zikula" type="hidden">'));
                 }
 
@@ -703,6 +705,7 @@ class HookHelper {
                  */
                 public function processEdit(ProcessHook $hook)
                 {
+                    // $hook->getAreaId(), $hook->getId(), $hook->getUrl() [UrlInterface]
                     $this->requestStack->getCurrentRequest()->getSession()->getFlashBag()->add('success', 'Ui hook properly processed!');
                 }
 
@@ -713,6 +716,7 @@ class HookHelper {
                  */
                 public function delete(DisplayHook $hook)
                 {
+                    // $hook->getAreaId(), $hook->getId(), $hook->getUrl() [UrlInterface]
                     $hook->setResponse(new DisplayHookResponse($this->getAreaName(), '<div>«name.formatForCodeCapital» content hooked.</div><input name="«application.appName.formatForDB»[name]" value="zikula" type="hidden">'));
                 }
 
@@ -742,6 +746,7 @@ class HookHelper {
                  */
                 public function processDelete(ProcessHook $hook)
                 {
+                    // $hook->getAreaId(), $hook->getId(), $hook->getUrl() [UrlInterface]
                     $this->requestStack->getCurrentRequest()->getSession()->getFlashBag()->add('success', 'Ui hook properly processed!');
                 }
 

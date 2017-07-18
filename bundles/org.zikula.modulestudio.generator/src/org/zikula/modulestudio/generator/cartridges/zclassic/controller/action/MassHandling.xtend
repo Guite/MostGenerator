@@ -107,8 +107,11 @@ class MassHandling {
                 «ELSE»
                     $hookType = $action == 'delete' ? 'validate_delete' : 'validate_edit';
                 «ENDIF»
-                $validationHooksPassed = $hookHelper->callValidationHooks($entity, $hookType);
-                if (!$validationHooksPassed) {
+                $validationErrors = $hookHelper->callValidationHooks($entity, $hookType);
+                if (count($validationErrors) > 0) {
+                    foreach ($validationErrors as $message) {
+                        $this->addFlash('error', $message);
+                    }
                     continue;
                 }
 

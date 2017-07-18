@@ -934,8 +934,13 @@ class FormHandler {
                     «ELSE»
                         $hookType = $action == 'delete' ? 'validate_delete' : 'validate_edit';
                     «ENDIF»
-                    $validationHooksPassed = $this->hookHelper->callValidationHooks($entity, $hookType);
-                    if (!$validationHooksPassed) {
+                    $validationErrors = $this->hookHelper->callValidationHooks($entity, $hookType);
+                    if (count($validationErrors) > 0) {
+                        $flashBag = $this->request->getSession()->getFlashBag();
+                        foreach ($validationErrors as $message) {
+                            $flashBag->add('error', $message);
+                        }
+
                         return false;
                     }
                 }

@@ -226,8 +226,13 @@ class ArchiveHelper {
             «IF hasHookSubscribers»
                 if ($entity->supportsHookSubscribers()) {
                     // Let any hooks perform additional validation actions
-                    $validationHooksPassed = $this->hookHelper->callValidationHooks($entity, «IF targets('1.5')»UiHooksCategory::TYPE_VALIDATE_EDIT«ELSE»'validate_edit'«ENDIF»);
-                    if (!$validationHooksPassed) {
+                    $validationErrors = $this->hookHelper->callValidationHooks($entity, «IF targets('1.5')»UiHooksCategory::TYPE_VALIDATE_EDIT«ELSE»'validate_edit'«ENDIF»);
+                    if (count($validationErrors) > 0) {
+                        $flashBag = $this->request->getSession()->getFlashBag();
+                        foreach ($validationErrors as $message) {
+                            $flashBag->add('error', $message);
+                        }
+
                         return false;
                     }
                 }

@@ -339,8 +339,12 @@ class Actions {
     def private deletionProcess(Entity it, DeleteAction action) '''
         «IF !skipHookSubscribers»
             // Let any ui hooks perform additional validation actions
-            $validationHooksPassed = $hookHelper->callValidationHooks($«name.formatForCode», «IF app.targets('1.5')»UiHooksCategory::TYPE_VALIDATE_DELETE«ELSE»'validate_delete'«ENDIF»);
-            if ($validationHooksPassed) {
+            $validationErrors = $hookHelper->callValidationHooks($«name.formatForCode», «IF app.targets('1.5')»UiHooksCategory::TYPE_VALIDATE_DELETE«ELSE»'validate_delete'«ENDIF»);
+            if (count($validationErrors) > 0) {
+                foreach ($validationErrors as $message) {
+                    $this->addFlash('error', $message);
+                }
+            } else {
                 «performDeletionAndRedirect(action)»
             }
         «ELSE»
