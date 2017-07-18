@@ -325,7 +325,7 @@ class Actions {
         $templateParameters = [
             'routeArea' => $isAdmin ? 'admin' : '',
             'deleteForm' => $form->createView(),
-            $objectType => $«name.formatForCode»«IF app.targets('1.5') && !skipHookSubscribers»
+            $objectType => $«name.formatForCode»«IF app.targets('1.5') && !skipHookSubscribers»,
             'formHookTemplates' => $formHook->getTemplates()«ENDIF»
         ];
 
