@@ -52,15 +52,5 @@ class HookBundlesLegacy {
             $this->registerHookSubscriberBundle($bundle);
 
         «ENDFOR»
-        «/* TODO see #15
-            Example for name of provider area: provider_area.comments.general
-
-            $bundle = new ProviderBundle('«appName»', 'provider.ratings.ui_hooks.rating', 'ui_hooks', $this->__('Ratings Hook Providers'));
-            $bundle->addServiceHandler('display_view', 'Ratings_Hooks', 'uiView', 'ratings.service');
-            // add other hooks as needed
-            $this->registerHookProviderBundle($bundle);
-
-            //... repeat as many times as necessary
-        */»
     '''
 }

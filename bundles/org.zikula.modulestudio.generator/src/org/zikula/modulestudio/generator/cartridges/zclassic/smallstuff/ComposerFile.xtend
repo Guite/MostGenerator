@@ -124,11 +124,8 @@ class ComposerFile {
                 "«capability.formatForDisplay»": {"version": "1.0"}«IF capability != capabilitiesArray.last || (hasHookSubscribers && !targets('1.5'))»,«ENDIF»
             «ENDFOR»
         «ENDIF»
-        «IF !targets('1.5')»
-            «IF hasHookSubscribers»
-                "hook_subscriber": {"class": "«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Container\\HookContainer"}
-            «ENDIF»«/* TODO see #15 ,
-            "hook_provider": {"class": "«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Container\\HookContainer"} */»
+        «IF !targets('1.5') && hasHookSubscribers»
+            "hook_subscriber": {"class": "«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Container\\HookContainer"}
         «ENDIF»
     '''
 
