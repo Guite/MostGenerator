@@ -3,6 +3,7 @@ package org.zikula.modulestudio.generator.extensions
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.AuthMethodType
 import de.guite.modulestudio.metamodel.CoreVersion
+import de.guite.modulestudio.metamodel.HookProviderMode
 
 /**
  * This class contains several helper functions for accessing and using generator settings.
@@ -182,6 +183,13 @@ class GeneratorSettingsExtensions {
      */
     def authenticationMethod(Application it) {
         if (hasSettings) getSettings.authenticationMethod else AuthMethodType.NONE
+    }
+
+    /**
+     * Determines whether and which kind of filter hook provider should be generated.
+     */
+    def filterHookProvider(Application it) {
+        if (hasSettings) getSettings.filterHookProvider else HookProviderMode.DISABLED
     }
 
     /**

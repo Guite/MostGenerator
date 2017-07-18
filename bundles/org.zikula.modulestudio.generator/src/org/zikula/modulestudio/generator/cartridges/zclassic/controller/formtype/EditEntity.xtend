@@ -1058,7 +1058,9 @@ class EditEntity {
         «ENDIF»
         «IF locale»
             'choices' => $this->localeApi->getSupportedLocaleNames(),
-            'choices_as_values' => true
+            «IF !app.targets('2.0')»
+                'choices_as_values' => true
+            «ENDIF»
         «ENDIF»
         «IF dateInterval && app.targets('2.0')»
             «IF !mandatory»
@@ -1134,7 +1136,9 @@ class EditEntity {
             'placeholder' => $this->__('Choose an option'),
         «ENDIF»
         'choices' => $choices,
-        'choices_as_values' => true,
+        «IF !app.targets('2.0')»
+            'choices_as_values' => true,
+        «ENDIF»
         'choice_attr' => $choiceAttributes,
         'multiple' => «multiple.displayBool»,
         'expanded' => «expanded.displayBool»

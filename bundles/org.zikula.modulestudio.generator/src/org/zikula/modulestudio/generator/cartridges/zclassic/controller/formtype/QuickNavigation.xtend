@@ -521,7 +521,9 @@ class QuickNavigation {
                             $this->__('Updater') => 'updatedBy'
                         «ENDIF»
                     ],
-                    'choices_as_values' => true,
+                    «IF !app.targets('2.0')»
+                        'choices_as_values' => true,
+                    «ENDIF»
                     'required' => true,
                     'expanded' => false
                 ])
@@ -535,7 +537,9 @@ class QuickNavigation {
                         $this->__('Ascending') => 'asc',
                         $this->__('Descending') => 'desc'
                     ],
-                    'choices_as_values' => true,
+                    «IF !app.targets('2.0')»
+                        'choices_as_values' => true,
+                    «ENDIF»
                     'required' => true,
                     'expanded' => false
                 ])
@@ -567,7 +571,9 @@ class QuickNavigation {
                     $this->__('50') => 50,
                     $this->__('100') => 100
                 ],
-                'choices_as_values' => true,
+                «IF !app.targets('2.0')»
+                    'choices_as_values' => true,
+                «ENDIF»
                 'required' => false,
                 'expanded' => false
             ]);
@@ -609,8 +615,10 @@ class QuickNavigation {
             'placeholder' => $this->__('All')«IF locale»,«ENDIF»
         «ENDIF»
         «IF locale»
-            'choices' => $this->localeApi->getSupportedLocaleNames(),
-            'choices_as_values' => true
+            'choices' => $this->localeApi->getSupportedLocaleNames()«IF !app.targets('2.0')»,«ENDIF»
+            «IF !app.targets('2.0')»
+                'choices_as_values' => true
+            «ENDIF»
         «ENDIF»
     '''
 
@@ -625,7 +633,9 @@ class QuickNavigation {
     def private dispatch additionalOptions(ListField it) '''
         'placeholder' => $this->__('All'),
         'choices' => $choices,
-        'choices_as_values' => true,
+        «IF !app.targets('2.0')»
+            'choices_as_values' => true,
+        «ENDIF»
         'choice_attr' => $choiceAttributes,
         'multiple' => «multiple.displayBool»,
         'expanded' => false
@@ -637,8 +647,10 @@ class QuickNavigation {
         'choices' => [
             $this->__('No') => 'no',
             $this->__('Yes') => 'yes'
-        ],
-        'choices_as_values' => true
+        ]«IF !app.targets('2.0')»,«ENDIF»
+        «IF !app.targets('2.0')»
+            'choices_as_values' => true
+        «ENDIF»
     '''
 
     def private dispatch fieldImpl(JoinRelationship it) '''

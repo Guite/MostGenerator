@@ -318,7 +318,9 @@ class Config {
                 $this->__('«item.name.formatForDisplayCapital»') => '«item.name.formatForCode»'«IF item != items.last»,«ENDIF»
             «ENDFOR»
         ],
-        'choices_as_values' => true,
+        «IF !container.application.targets('2.0')»
+            'choices_as_values' => true,
+        «ENDIF»
         'multiple' => «multiple.displayBool»
     '''
 

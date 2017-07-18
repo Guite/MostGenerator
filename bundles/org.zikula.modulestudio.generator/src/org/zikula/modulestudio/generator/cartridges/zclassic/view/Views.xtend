@@ -6,6 +6,7 @@ import de.guite.modulestudio.metamodel.EntityTreeType
 import de.guite.modulestudio.metamodel.ManyToManyRelationship
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.additions.Emails
+import org.zikula.modulestudio.generator.cartridges.zclassic.view.additions.HookProviderView
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.extensions.Attributes
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.extensions.Categories
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.extensions.ModerationPanel
@@ -78,6 +79,11 @@ class Views {
         }
         if (needsApproval) {
             new Emails().generate(it, fsa)
+        }
+        if (targets('1.5')) {
+            if (hasFormAwareHookProviders || hasUiHooksProviders) {
+                new HookProviderView().generate(it, fsa)
+            }
         }
         if (generateExternalControllerAndFinder || !joinRelations.empty) {
             layoutHelper.rawPageFile(it)

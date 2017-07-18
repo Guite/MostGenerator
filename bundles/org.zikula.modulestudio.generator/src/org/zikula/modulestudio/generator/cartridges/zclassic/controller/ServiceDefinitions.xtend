@@ -4,6 +4,7 @@ import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.ArrayField
 import de.guite.modulestudio.metamodel.AuthMethodType
 import de.guite.modulestudio.metamodel.Entity
+import de.guite.modulestudio.metamodel.HookProviderMode
 import de.guite.modulestudio.metamodel.MappedSuperClass
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
@@ -54,7 +55,7 @@ class ServiceDefinitions {
         if (authenticationMethod != AuthMethodType.NONE) {
             generateServiceFile(fsa, 'authentication', authentication)
         }
-        if (targets('1.5') && hasHookSubscribers) {
+        if (targets('1.5') && (hasHookSubscribers || hasHookProviders)) {
             generateServiceFile(fsa, 'hooks', hooks)
         }
         generateServiceFile(fsa, 'linkContainer', linkContainer)
@@ -108,7 +109,7 @@ class ServiceDefinitions {
                 - "@translator.default"
                 - "@session"
                 «IF authenticationMethod == AuthMethodType.REMOTE»
-                    - '@request_stack'
+                    - "@request_stack"
                     - "@router"
                 «ENDIF»
                 - "@«modPrefix».entity_factory"
@@ -120,33 +121,71 @@ class ServiceDefinitions {
 
     def private hooks(Application it) '''
         services:
-            «FOR entity : getAllEntities.filter[e|!e.skipHookSubscribers]»
-                «modPrefix».hook_subscriber.filter.«entity.nameMultiple.formatForDB»:
-                    class: «appNamespace»\HookSubscriber\«entity.name.formatForCodeCapital»FilterHooksSubscriber
-                    arguments:
-                        - '@translator.default'
-                    tags:
-                        - { name: zikula.hook_subscriber, areaName: 'subscriber.«appName.formatForDB».filter_hooks.«entity.nameMultiple.formatForDB»' }
-
-                «IF entity.hasEditAction || entity.hasDeleteAction»
-                    «modPrefix».hook_subscriber.form_aware.«entity.nameMultiple.formatForDB»:
-                        class: «appNamespace»\HookSubscriber\«entity.name.formatForCodeCapital»FormAwareHookSubscriber
+            «IF hasHookSubscribers»
+                «FOR entity : getAllEntities.filter[e|!e.skipHookSubscribers]»
+                    «modPrefix».hook_subscriber.filter_hooks.«entity.nameMultiple.formatForDB»:
+                        class: «appNamespace»\HookSubscriber\«entity.name.formatForCodeCapital»FilterHooksSubscriber
                         arguments:
-                            - '@translator.default'
+                            - "@translator.default"
                         tags:
-                            - { name: zikula.hook_subscriber, areaName: 'subscriber.«appName.formatForDB».form_aware_hook.«entity.nameMultiple.formatForDB»' }
+                            - { name: zikula.hook_subscriber, areaName: 'subscriber.«appName.formatForDB».filter_hooks.«entity.nameMultiple.formatForDB»' }
+
+                    «IF entity.hasEditAction || entity.hasDeleteAction»
+                        «modPrefix».hook_subscriber.form_aware_hook.«entity.nameMultiple.formatForDB»:
+                            class: «appNamespace»\HookSubscriber\«entity.name.formatForCodeCapital»FormAwareHookSubscriber
+                            arguments:
+                                - "@translator.default"
+                            tags:
+                                - { name: zikula.hook_subscriber, areaName: 'subscriber.«appName.formatForDB».form_aware_hook.«entity.nameMultiple.formatForDB»' }
+
+                    «ENDIF»
+                    «IF entity.hasViewAction || entity.hasDisplayAction || entity.hasEditAction || entity.hasDeleteAction»
+                        «modPrefix».hook_subscriber.ui_hooks.«entity.nameMultiple.formatForDB»:
+                            class: «appNamespace»\HookSubscriber\«entity.name.formatForCodeCapital»UiHooksSubscriber
+                            arguments:
+                                - "@translator.default"
+                            tags:
+                                - { name: zikula.hook_subscriber, areaName: 'subscriber.«appName.formatForDB».ui_hooks.«entity.nameMultiple.formatForDB»' }
+
+                    «ENDIF»
+                «ENDFOR»
+            «ENDIF»
+            «IF hasHookProviders»
+                «IF hasFilterHookProvider»
+                    «modPrefix».hook_provider.filter_hooks.provider:
+                        class: «appNamespace»\HookProvider\FilterHooksProvider
+                        arguments:
+                            - "@translator.default"
+                        tags:
+                            - { name: zikula.hook_provider, areaName: 'provider.«appName.formatForDB».filter_hooks.«name.formatForDB»' }
 
                 «ENDIF»
-                «IF entity.hasViewAction || entity.hasDisplayAction || entity.hasEditAction || entity.hasDeleteAction»
-                    «modPrefix».hook_subscriber.ui.«entity.nameMultiple.formatForDB»:
-                        class: «appNamespace»\HookSubscriber\«entity.name.formatForCodeCapital»UiHooksSubscriber
-                        arguments:
-                            - '@translator.default'
-                        tags:
-                            - { name: zikula.hook_subscriber, areaName: 'subscriber.«appName.formatForDB».ui_hooks.«entity.nameMultiple.formatForDB»' }
+                «IF hasFormAwareHookProviders || hasUiHooksProviders»
+                    «FOR entity : getAllEntities»
+                        «IF entity.formAwareHookProvider != HookProviderMode.DISABLED»
+                            «modPrefix».hook_provider.form_aware_hook.«entity.nameMultiple.formatForDB»:
+                                class: «appNamespace»\HookProvider\«entity.name.formatForCodeCapital»FormAwareHookProvider
+                                arguments:
+                                    - "@translator.default"
+                                    - "@session"
+                                    - "@form.factory"
+                                tags:
+                                    - { name: zikula.hook_provider, areaName: 'provider.«appName.formatForDB».form_aware_hook.«entity.nameMultiple.formatForDB»' }
 
+                        «ENDIF»
+                        «IF entity.uiHooksProvider != HookProviderMode.DISABLED»
+                            «modPrefix».hook_provider.ui_hooks.«entity.nameMultiple.formatForDB»:
+                                class: «appNamespace»\HookProvider\«entity.name.formatForCodeCapital»UiHooksProvider
+                                arguments:
+                                    - "@translator.default"
+                                    - "@request_stack"
+                                tags:
+                                    - { name: zikula.hook_provider, areaName: 'provider.«appName.formatForDB».ui_hooks.«entity.nameMultiple.formatForDB»' }
+
+                        «ENDIF»
+                    «ENDFOR»
                 «ENDIF»
-            «ENDFOR»
+            «ENDIF»
     '''
 
     def private linkContainer(Application it) '''

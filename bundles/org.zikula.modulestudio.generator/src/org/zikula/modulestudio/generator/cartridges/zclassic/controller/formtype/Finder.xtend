@@ -239,7 +239,9 @@ class Finder {
                             $this->__('«imageField.name.formatForDisplayCapital»') => '«imageField.name.formatForCode»'«IF imageField != imageFieldsEntity.last»,«ENDIF»
                         «ENDFOR»
                     ],
-                    'choices_as_values' => true,
+                    «IF !app.targets('2.0')»
+                        'choices_as_values' => true,
+                    «ENDIF»
                     'multiple' => false,
                     'expanded' => false
                 ]);
@@ -274,7 +276,9 @@ class Finder {
                         $this->__('Image with absolute url to the «name.formatForDisplay»') => 9
                     «ENDIF»
                 ],
-                'choices_as_values' => true,
+                «IF !app.targets('2.0')»
+                    'choices_as_values' => true,
+                «ENDIF»
                 'multiple' => false,
                 'expanded' => false
             ]);
@@ -307,7 +311,9 @@ class Finder {
                             $this->__('Updater') => 'updatedBy'
                         «ENDIF»
                     ],
-                    'choices_as_values' => true,
+                    «IF !app.targets('2.0')»
+                        'choices_as_values' => true,
+                    «ENDIF»
                     'multiple' => false,
                     'expanded' => false
                 ])
@@ -318,7 +324,9 @@ class Finder {
                         $this->__('Ascending') => 'asc',
                         $this->__('Descending') => 'desc'
                     ],
-                    'choices_as_values' => true,
+                    «IF !app.targets('2.0')»
+                        'choices_as_values' => true,
+                    «ENDIF»
                     'multiple' => false,
                     'expanded' => false
                 ])
@@ -350,7 +358,9 @@ class Finder {
                     $this->__('50') => 50,
                     $this->__('100') => 100
                 ],
-                'choices_as_values' => true,
+                «IF !app.targets('2.0')»
+                    'choices_as_values' => true,
+                «ENDIF»
                 'multiple' => false,
                 'expanded' => false
             ]);

@@ -112,7 +112,6 @@ class Listeners {
         «ELSE»
             use Symfony\Component\EventDispatcher\EventSubscriberInterface;
             use Zikula\Core\CoreEvents;
-            use Zikula\Core\Event\GenericEvent;
             use Zikula\Core\Event\ModuleStateEvent;
             «IF amountOfExampleRows > 0»
                 use «appNamespace»\Helper\ExampleDataHelper;

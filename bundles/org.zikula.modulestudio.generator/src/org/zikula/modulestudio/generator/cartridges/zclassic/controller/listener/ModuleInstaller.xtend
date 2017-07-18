@@ -39,8 +39,7 @@ class ModuleInstaller {
                 CoreEvents::MODULE_UPGRADE             => ['moduleUpgraded', 5],
                 CoreEvents::MODULE_ENABLE              => ['moduleEnabled', 5],
                 CoreEvents::MODULE_DISABLE             => ['moduleDisabled', 5],
-                CoreEvents::MODULE_REMOVE              => ['moduleRemoved', 5],
-                'installer.subscriberarea.uninstalled' => ['subscriberAreaUninstalled', 5]
+                CoreEvents::MODULE_REMOVE              => ['moduleRemoved', 5]
             ];
         }
 
@@ -141,20 +140,6 @@ class ModuleInstaller {
          * @param ModuleStateEvent $event The event instance
          */
         public function moduleRemoved(ModuleStateEvent $event)
-        {
-        }
-
-        /**
-         * Listener for the `installer.subscriberarea.uninstalled` event.
-         *
-         * Called after a hook subscriber area has been unregistered.
-         * Receives args['areaid'] as the areaId. Use this to remove orphan data associated with this area.
-         *
-         «commonExample.generalEventProperties(it)»
-         *
-         * @param GenericEvent $event The event instance
-         */
-        public function subscriberAreaUninstalled(GenericEvent $event)
         {
         }
     '''
