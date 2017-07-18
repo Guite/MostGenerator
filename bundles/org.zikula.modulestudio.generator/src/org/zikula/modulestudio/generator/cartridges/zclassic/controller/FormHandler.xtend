@@ -1480,7 +1480,7 @@ class FormHandler {
                 // execute the workflow action
                 $success = $this->workflowHelper->executeAction($entity, $action);
             «locking.catchException(it)»
-            } catch(\Exception $exception) {
+            } catch (\Exception $exception) {
                 $flashBag->add('error', $this->__f('Sorry, but an error occured during the %action% action. Please apply the changes again!', ['%action%' => $action]) . ' ' . $exception->getMessage());
                 $logArgs = ['app' => '«app.appName»', 'user' => $this->currentUserApi->get('uname'), 'entity' => '«name.formatForDisplay»', 'id' => $entity->getKey(), 'errorMessage' => $exception->getMessage()];
                 $this->logger->error('{app}: User {user} tried to edit the {entity} with id {id}, but failed. Error details: {errorMessage}.', $logArgs);

@@ -774,7 +774,7 @@ class AjaxController {
                 if (!$success) {
                     $returnValue['result'] = 'failure';
                 }
-            } catch(\Exception $exception) {
+            } catch (\Exception $exception) {
                 $returnValue['result'] = 'failure';
                 $returnValue['message'] = $this->__f('Sorry, but an error occured during the %action% action. Please apply the changes again!', ['%action%' => $action]) . '  ' . $exception->getMessage();
 
@@ -828,7 +828,7 @@ class AjaxController {
                         }
                     «ENDIF»
                 }
-            } catch(\Exception $exception) {
+            } catch (\Exception $exception) {
                 $returnValue['result'] = 'failure';
                 $returnValue['message'] = $this->__f('Sorry, but an error occured during the %action% action. Please apply the changes again!', ['%action%' => $action]) . '  ' . $exception->getMessage();
 
@@ -860,7 +860,7 @@ class AjaxController {
             if (!$success) {
                 $returnValue['result'] = 'failure';
             }
-        } catch(\Exception $exception) {
+        } catch (\Exception $exception) {
             $returnValue['result'] = 'failure';
             $returnValue['message'] = $this->__f('Sorry, but an error occured during the %action% action. Please apply the changes again!', ['%action%' => $action]) . '  ' . $exception->getMessage();
 

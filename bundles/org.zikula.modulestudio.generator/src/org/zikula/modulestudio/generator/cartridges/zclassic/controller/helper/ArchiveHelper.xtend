@@ -237,7 +237,7 @@ class ArchiveHelper {
             try {
                 // execute the workflow action
                 $success = $this->workflowHelper->executeAction($entity, 'archive');
-            } catch(\Exception $exception) {
+            } catch (\Exception $exception) {
                 $flashBag = $this->request->getSession()->getFlashBag();
                 $flashBag->add('error', $this->translator->__f('Sorry, but an error occured during the %action% action. Please apply the changes again!', ['%action%' => $action]) . '  ' . $exception->getMessage());
             }

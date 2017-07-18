@@ -273,7 +273,7 @@ class ExampleDataHelper {
         $action = 'submit';
         try {
             «FOR entity : getAllEntities»«entity.persistEntities(it)»«ENDFOR»
-        } catch(\Exception $exception) {
+        } catch (\Exception $exception) {
             $this->request->getSession()->getFlashBag()->add('error', $this->__('Exception during example data creation') . ': ' . $exception->getMessage());
             $this->logger->error('{app}: Could not completely create example data during installation. Error details: {errorMessage}.', ['app' => '«appName»', 'errorMessage' => $exception->getMessage()]);
 

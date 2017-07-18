@@ -100,7 +100,7 @@ class LoggableHistory {
                 } else {
                     $this->addFlash('error', $this->__f('Error! Reverting «name.formatForDisplay» to version %version% failed.', ['%version%' => $revertToVersion]));
                 }
-            } catch(\Exception $exception) {
+            } catch (\Exception $exception) {
                 $this->addFlash('error', $this->__f('Sorry, but an error occured during the %action% action. Please apply the changes again!', ['%action%' => 'update']) . '  ' . $exception->getMessage());
             }
 

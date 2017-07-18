@@ -253,7 +253,7 @@ class ControllerLayer {
                     } else {
                         $this->addFlash('error', $this->__('Error! Reinserting «name.formatForDisplay» failed.'));
                     }
-                } catch(\Exception $exception) {
+                } catch (\Exception $exception) {
                     $this->addFlash('error', $this->__f('Sorry, but an error occured during the %action% action. Please apply the changes again!', ['%action%' => 'submit']) . '  ' . $exception->getMessage());
                 }
 
