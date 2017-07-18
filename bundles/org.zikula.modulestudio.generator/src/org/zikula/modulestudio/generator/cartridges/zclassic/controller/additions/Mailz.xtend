@@ -114,7 +114,12 @@ class Mailz {
             $resultsPerPage = 3;
 
             // get objects from database
-            list($entities, $objectCount) = $repository->selectWherePaginated($where, $orderBy, 1, $resultsPerPage);
+            try {
+                list($entities, $objectCount) = $repository->selectWherePaginated($where, $orderBy, 1, $resultsPerPage);
+            } catch (\Exception $exception) {
+                $entities = [];
+                $objectCount = 0;
+            }
 
             $templateType = $args['contenttype'] == 't' ? 'text' : 'html';
 

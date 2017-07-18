@@ -91,7 +91,7 @@ class BlockList {
          */
         protected function getDefaults()
         {
-            $defaults = [
+            return [
                 'objectType' => '«getLeadingEntity.name.formatForCode»',
                 'sorting' => 'default',
                 'amount' => 5,
@@ -99,8 +99,6 @@ class BlockList {
                 'customTemplate' => '',
                 'filter' => ''
             ];
-
-            return $defaults;
         }
 
         «IF hasCategorisableEntities»
@@ -186,7 +184,12 @@ class BlockList {
             $currentPage = 1;
             $resultsPerPage = $properties['amount'];
             $query = $repository->getSelectWherePaginatedQuery($qb, $currentPage, $resultsPerPage);
-            list($entities, $objectCount) = $repository->retrieveCollectionResult($query, true);
+            try {
+                list($entities, $objectCount) = $repository->retrieveCollectionResult($query, true);
+            } catch (\Exception $exception) {
+                $entities = [];
+                $objectCount = 0;
+            }
             «IF hasCategorisableEntities»
 
                 if ($featureActivationHelper->isEnabled(FeatureActivationHelper::CATEGORIES, $objectType)) {
@@ -279,10 +282,13 @@ class BlockList {
             $request = $this->get('request_stack')->getCurrentRequest();
             if ($request->attributes->has('blockEntity')) {
                 $blockEntity = $request->attributes->get('blockEntity');
-                if (is_object($blockEntity) && method_exists($blockEntity, 'getContent')) {
-                    $blockProperties = $blockEntity->getContent();
+                if (is_object($blockEntity) && method_exists($blockEntity, 'getProperties')) {
+                    $blockProperties = $blockEntity->getProperties();
                     if (isset($blockProperties['objectType'])) {
                         $objectType = $blockProperties['objectType'];
+                    } else {
+                        // set default options for new block creation
+                        $blockEntity->setProperties($this->getDefaults());
                     }
                 }
             }
