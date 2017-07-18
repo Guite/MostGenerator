@@ -117,9 +117,9 @@ class MassHandling {
             try {
                 // execute the workflow action
                 $success = $workflowHelper->executeAction($entity, $action);
-            } catch(\Exception $e) {
-                $this->addFlash('error', $this->__f('Sorry, but an error occured during the %action% action.', ['%action%' => $action]) . '  ' . $e->getMessage());
-                $logger->error('{app}: User {user} tried to execute the {action} workflow action for the {entity} with id {id}, but failed. Error details: {errorMessage}.', ['app' => '«application.appName»', 'user' => $userName, 'action' => $action, 'entity' => '«name.formatForDisplay»', 'id' => $itemId, 'errorMessage' => $e->getMessage()]);
+            } catch(\Exception $exception) {
+                $this->addFlash('error', $this->__f('Sorry, but an error occured during the %action% action.', ['%action%' => $action]) . '  ' . $exception->getMessage());
+                $logger->error('{app}: User {user} tried to execute the {action} workflow action for the {entity} with id {id}, but failed. Error details: {errorMessage}.', ['app' => '«application.appName»', 'user' => $userName, 'action' => $action, 'entity' => '«name.formatForDisplay»', 'id' => $itemId, 'errorMessage' => $exception->getMessage()]);
             }
 
             if (!$success) {

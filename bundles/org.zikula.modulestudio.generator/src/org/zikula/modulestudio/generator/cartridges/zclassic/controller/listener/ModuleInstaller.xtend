@@ -1,12 +1,33 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener
 
 import de.guite.modulestudio.metamodel.Application
+import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
+import org.zikula.modulestudio.generator.extensions.Utils
 
 class ModuleInstaller {
+
+    extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
+    extension Utils = new Utils
 
     CommonExample commonExample = new CommonExample()
 
     def generate(Application it) '''
+        «IF amountOfExampleRows > 0»
+            /**
+             * @var ExampleDataHelper
+             */
+            protected $exampleDataHelper
+
+            /**
+             * InstallerListener constructor.
+             *
+             * @param ExampleDataHelper $exampleDataHelper Example data helper service instance
+             */
+            public function __construct(ExampleDataHelper $exampleDataHelper) {
+                $this->exampleDataHelper = $exampleDataHelper;
+            }
+
+        «ENDIF»
         /**
          * Makes our handlers known to the event system.
          */
@@ -51,6 +72,16 @@ class ModuleInstaller {
          */
         public function modulePostInstalled(ModuleStateEvent $event)
         {
+            «IF amountOfExampleRows > 0»
+                $module = $event->getModule();
+                if (null === $module) {
+                    return;
+                }
+
+                if ($module->getName() === '«appName»') {
+                    $this->exampleDataHelper->createDefaultData();
+                }
+            «ENDIF»
         }
 
         /**

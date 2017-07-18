@@ -774,9 +774,9 @@ class AjaxController {
                 if (!$success) {
                     $returnValue['result'] = 'failure';
                 }
-            } catch(\Exception $e) {
+            } catch(\Exception $exception) {
                 $returnValue['result'] = 'failure';
-                $returnValue['message'] = $this->__f('Sorry, but an error occured during the %action% action. Please apply the changes again!', ['%action%' => $action]) . '  ' . $e->getMessage();
+                $returnValue['message'] = $this->__f('Sorry, but an error occured during the %action% action. Please apply the changes again!', ['%action%' => $action]) . '  ' . $exception->getMessage();
 
                 return «IF targets('2.0')»$this->json«ELSE»new JsonResponse«ENDIF»($returnValue);
             }
@@ -828,9 +828,9 @@ class AjaxController {
                         }
                     «ENDIF»
                 }
-            } catch(\Exception $e) {
+            } catch(\Exception $exception) {
                 $returnValue['result'] = 'failure';
-                $returnValue['message'] = $this->__f('Sorry, but an error occured during the %action% action. Please apply the changes again!', ['%action%' => $action]) . '  ' . $e->getMessage();
+                $returnValue['message'] = $this->__f('Sorry, but an error occured during the %action% action. Please apply the changes again!', ['%action%' => $action]) . '  ' . $exception->getMessage();
 
                 return «IF targets('2.0')»$this->json«ELSE»new JsonResponse«ENDIF»($returnValue);
             }
@@ -860,9 +860,9 @@ class AjaxController {
             if (!$success) {
                 $returnValue['result'] = 'failure';
             }
-        } catch(\Exception $e) {
+        } catch(\Exception $exception) {
             $returnValue['result'] = 'failure';
-            $returnValue['message'] = $this->__f('Sorry, but an error occured during the %action% action. Please apply the changes again!', ['%action%' => $action]) . '  ' . $e->getMessage();
+            $returnValue['message'] = $this->__f('Sorry, but an error occured during the %action% action. Please apply the changes again!', ['%action%' => $action]) . '  ' . $exception->getMessage();
 
             return «IF targets('2.0')»$this->json«ELSE»new JsonResponse«ENDIF»($returnValue);
         }

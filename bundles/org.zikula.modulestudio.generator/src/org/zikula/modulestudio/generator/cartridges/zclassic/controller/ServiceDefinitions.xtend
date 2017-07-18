@@ -227,7 +227,10 @@ class ServiceDefinitions {
         «FOR className : getSubscriberNames»
             «modPrefix».«className.toLowerCase»_listener:
                 class: «appNamespace»\Listener\«className»Listener
-                «IF className == 'ThirdParty' && needsApproval && generatePendingContentSupport»
+                «IF className == 'Installer' && amountOfExampleRows > 0»
+                    arguments:
+                        - "@«modPrefix».example_data_helper"
+                «ELSEIF className == 'ThirdParty' && needsApproval && generatePendingContentSupport»
                     arguments:
                         - "@«modPrefix».workflow_helper"
                 «ELSEIF className == 'User' && (hasStandardFieldEntities || hasUserFields)»
@@ -713,6 +716,19 @@ class ServiceDefinitions {
                 «IF hasListFields»
                     - "@«modPrefix».listentries_helper"
                 «ENDIF»
+        «IF amountOfExampleRows > 0»
+
+            «modPrefix».example_data_helper:
+                class: «nsBase»ExampleDataHelper
+                arguments:
+                    - "@request_stack"
+                    - "@logger"
+                    - "@«modPrefix».entity_factory"
+                    - "@«modPrefix».workflow_helper"
+                    «IF hasUserFields || hasStandardFieldEntities»
+                        - "@zikula_users_module.user_repository"
+                    «ENDIF»
+        «ENDIF»
         «IF needsFeatureActivationHelper»
 
             «modPrefix».feature_activation_helper:

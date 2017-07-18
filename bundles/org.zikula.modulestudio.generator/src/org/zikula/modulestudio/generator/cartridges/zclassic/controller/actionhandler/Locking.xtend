@@ -88,7 +88,7 @@ class Locking {
 
     def catchException(Entity it) '''
         «IF hasOptimisticLock»
-            } catch(OptimisticLockException $e) {
+            } catch(OptimisticLockException $exception) {
                 $flashBag->add('error', $this->__('Sorry, but someone else has already changed this record. Please apply the changes again!'));
                 $logArgs = ['app' => '«application.appName»', 'user' => $this->currentUserApi->get('uname'), 'entity' => '«name.formatForDisplay»', 'id' => $entity->getKey()];
                 $this->logger->error('{app}: User {user} tried to edit the {entity} with id {id}, but failed as someone else has already changed it.', $logArgs);

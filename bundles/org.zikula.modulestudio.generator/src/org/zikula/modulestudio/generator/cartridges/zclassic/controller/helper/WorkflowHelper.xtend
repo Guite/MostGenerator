@@ -524,13 +524,13 @@ class WorkflowHelper {
                     } else {
                         $this->logger->notice('{app}: User {user} updated an entity.', $logArgs);
                     }
-                } catch (\Exception $e) {
+                } catch (\Exception $exception) {
                     if ($actionId == 'delete') {
                         $this->logger->error('{app}: User {user} tried to delete an entity, but failed.', $logArgs);
                     } else {
                         $this->logger->error('{app}: User {user} tried to update an entity, but failed.', $logArgs);
                     }
-                    throw new \RuntimeException($e->getMessage());
+                    throw new \RuntimeException($exception->getMessage());
                 }
             «ELSE»
                 $objectType = $entity['_objectType'];

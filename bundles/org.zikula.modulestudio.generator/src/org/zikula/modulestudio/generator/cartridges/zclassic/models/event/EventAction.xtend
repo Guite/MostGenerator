@@ -93,7 +93,7 @@ class EventAction {
                     $workflow = $entityManager->find('Zikula\Core\Doctrine\Entity\WorkflowEntity', $workflow['id']);
                     $entityManager->remove($workflow);
                     $entityManager->flush();
-                } catch (\Exception $e) {
+                } catch (\Exception $exception) {
                     $result = false;
                 }
                 if (false === $result) {

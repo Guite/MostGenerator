@@ -24,6 +24,13 @@ class GeneratorSettingsExtensions {
     }
 
     /**
+     * Returns the desired amount of example rows created during installation.
+     */
+    def int amountOfExampleRows(Application it) {
+        if (hasSettings) getSettings.amountOfExampleRows else 0
+    }
+
+    /**
      * Determines whether account panel integration should be generated or not.
      */
     def generateAccountApi(Application it) {

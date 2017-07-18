@@ -7,6 +7,7 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.controller.helper.C
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.helper.CollectionFilterHelper
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.helper.ControllerHelper
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.helper.EntityDisplayHelper
+import org.zikula.modulestudio.generator.cartridges.zclassic.controller.helper.ExampleDataHelper
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.helper.FeatureActivationHelper
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.helper.HookHelper
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.helper.ImageHelper
@@ -44,6 +45,9 @@ class HelperServices {
         new CollectionFilterHelper().generate(it, fsa)
         new ControllerHelper().generate(it, fsa)
         new EntityDisplayHelper().generate(it, fsa)
+        if (amountOfExampleRows > 0) {
+            new ExampleDataHelper().generate(it, fsa)
+        }
         if (needsFeatureActivationHelper) {
             new FeatureActivationHelper().generate(it, fsa)
         }

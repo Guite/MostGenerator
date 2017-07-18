@@ -115,9 +115,9 @@ class LegacyOperations {
             //});
             $result = true;
             $logger->notice('{app}: User {user} updated an entity.', $logArgs);
-        } catch (\Exception $e) {
+        } catch (\Exception $exception) {
             $logger->error('{app}: User {user} tried to update an entity, but failed.', $logArgs);
-            throw new \RuntimeException($e->getMessage());
+            throw new \RuntimeException($exception->getMessage());
         }
     '''
 
@@ -140,9 +140,9 @@ class LegacyOperations {
             $entityManager->flush();
             $result = true;
             $logger->notice('{app}: User {user} deleted an entity.', $logArgs);
-        } catch (\Exception $e) {
+        } catch (\Exception $exception) {
             $logger->error('{app}: User {user} tried to delete an entity, but failed.', $logArgs);
-            throw new \RuntimeException($e->getMessage());
+            throw new \RuntimeException($exception->getMessage());
         }
     '''
 
