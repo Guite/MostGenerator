@@ -504,7 +504,6 @@ class HookHelper {
             use Zikula\Bundle\HookBundle\Hook\DisplayHookResponse;
             use Zikula\Bundle\HookBundle\Hook\ProcessHook;
             use Zikula\Bundle\HookBundle\Hook\ValidationHook;
-            use Zikula\Bundle\HookBundle\Hook\ValidationResponse;
         «ENDIF»
         use Zikula\Bundle\HookBundle\«providerInterface(if (category == 'FormAware') formAwareHookProvider else if (category == 'UiHooks') uiHooksProvider else HookProviderMode.ENABLED)»
         use Zikula\Bundle\HookBundle\ServiceIdTrait;
@@ -588,10 +587,10 @@ class HookHelper {
                         «category»Category::TYPE_PROCESS_DELETE => 'processDelete'
                     «ELSEIF category == 'UiHooks'»
                         «category»Category::TYPE_DISPLAY_VIEW => 'view',«/*['view', 'display', 'display_more']*/»
-                        «category»Category::TYPE_FORM_EDIT => 'edit',
+                        «category»Category::TYPE_FORM_EDIT => 'displayEdit',
                         «category»Category::TYPE_VALIDATE_EDIT => 'validateEdit',
                         «category»Category::TYPE_PROCESS_EDIT => 'processEdit',
-                        «category»Category::TYPE_FORM_DELETE => 'delete',
+                        «category»Category::TYPE_FORM_DELETE => 'displayDelete',
                         «category»Category::TYPE_VALIDATE_DELETE => 'validateDelete',
                         «category»Category::TYPE_PROCESS_DELETE => 'processDelete'
                     «ENDIF»
@@ -664,7 +663,9 @@ class HookHelper {
                  */
                 public function view(DisplayHook $hook)
                 {
-                    // $hook->getAreaId(), $hook->getId(), $hook->getUrl() [UrlInterface]
+                    // TODO: data selection, list with message "Assigned foos:"
+                    // TODO: mean for adding new assignments (auto completion and inline creation)
+                    // $hook->getCaller() [modname], $hook->getAreaId(), $hook->getId(), $hook->getUrl() [UrlInterface]
                     $hook->setResponse(new DisplayHookResponse($this->getAreaName(), 'This is the «name.formatForCodeCapital» Display Hook Response.'));
                 }
 
@@ -673,9 +674,10 @@ class HookHelper {
                  *
                  * @param DisplayHook $hook
                  */
-                public function edit(DisplayHook $hook)
+                public function displayEdit(DisplayHook $hook)
                 {
-                    // $hook->getAreaId(), $hook->getId(), $hook->getUrl() [UrlInterface]
+                    // TODO: data selection, simple list with message "Assigned foos:"
+                    // $hook->getCaller() [modname], $hook->getAreaId(), $hook->getId(), $hook->getUrl() [UrlInterface]
                     $hook->setResponse(new DisplayHookResponse($this->getAreaName(), '<div>«name.formatForCodeCapital» content hooked.</div><input name="«application.appName.formatForDB»[name]" value="zikula" type="hidden">'));
                 }
 
@@ -686,16 +688,7 @@ class HookHelper {
                  */
                 public function validateEdit(ValidationHook $hook)
                 {
-                    $request = $this->requestStack->getCurrentRequest();
-                    $post = $request->request->all();
-                    if ($request->request->has('«application.appName.formatForDB»') && $post['«application.appName.formatForDB»']['name'] == 'zikula') {
-                        return true;
-                    }
-                    $response = new ValidationResponse('mykey', $post['«application.appName.formatForDB»']);
-                    $response->addError('name', sprintf('Name must be zikula but was %s', $post['«application.appName.formatForDB»']['name']));
-                    $hook->setValidator($this->getAreaName(), $response);
-
-                    return false;
+                    return true;
                 }
 
                 /**
@@ -705,7 +698,8 @@ class HookHelper {
                  */
                 public function processEdit(ProcessHook $hook)
                 {
-                    // $hook->getAreaId(), $hook->getId(), $hook->getUrl() [UrlInterface]
+                    // TODO update assignments (UPDATE url for context)
+                    // $hook->getCaller() [modname], $hook->getAreaId(), $hook->getId(), $hook->getUrl() [UrlInterface]
                     $this->requestStack->getCurrentRequest()->getSession()->getFlashBag()->add('success', 'Ui hook properly processed!');
                 }
 
@@ -714,9 +708,10 @@ class HookHelper {
                  *
                  * @param DisplayHook $hook
                  */
-                public function delete(DisplayHook $hook)
+                public function displayDelete(DisplayHook $hook)
                 {
-                    // $hook->getAreaId(), $hook->getId(), $hook->getUrl() [UrlInterface]
+                    // TODO: data selection, simple list with message "Assigned foos:"
+                    // $hook->getCaller() [modname], $hook->getAreaId(), $hook->getId(), $hook->getUrl() [UrlInterface]
                     $hook->setResponse(new DisplayHookResponse($this->getAreaName(), '<div>«name.formatForCodeCapital» content hooked.</div><input name="«application.appName.formatForDB»[name]" value="zikula" type="hidden">'));
                 }
 
@@ -727,16 +722,7 @@ class HookHelper {
                  */
                 public function validateDelete(ValidationHook $hook)
                 {
-                    $request = $this->requestStack->getCurrentRequest();
-                    $post = $request->request->all();
-                    if ($request->request->has('«application.appName.formatForDB»') && $post['«application.appName.formatForDB»']['name'] == 'zikula') {
-                        return true;
-                    }
-                    $response = new ValidationResponse('mykey', $post['«application.appName.formatForDB»']);
-                    $response->addError('name', sprintf('Name must be zikula but was %s', $post['«application.appName.formatForDB»']['name']));
-                    $hook->setValidator($this->getAreaName(), $response);
-
-                    return false;
+                    return true;
                 }
 
                 /**
@@ -746,7 +732,8 @@ class HookHelper {
                  */
                 public function processDelete(ProcessHook $hook)
                 {
-                    // $hook->getAreaId(), $hook->getId(), $hook->getUrl() [UrlInterface]
+                    // TODO delete assignments
+                    // $hook->getCaller() [modname], $hook->getAreaId(), $hook->getId(), $hook->getUrl() [UrlInterface]
                     $this->requestStack->getCurrentRequest()->getSession()->getFlashBag()->add('success', 'Ui hook properly processed!');
                 }
 

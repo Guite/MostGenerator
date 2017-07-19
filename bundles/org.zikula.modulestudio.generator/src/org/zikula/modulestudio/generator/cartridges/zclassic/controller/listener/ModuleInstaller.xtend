@@ -2,11 +2,13 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.controller.listene
 
 import de.guite.modulestudio.metamodel.Application
 import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
+import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class ModuleInstaller {
 
     extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
+    extension ModelExtensions = new ModelExtensions
     extension Utils = new Utils
 
     CommonExample commonExample = new CommonExample()
@@ -141,6 +143,9 @@ class ModuleInstaller {
          */
         public function moduleRemoved(ModuleStateEvent $event)
         {
+            «IF hasUiHooksProviders»
+                // TODO: remove hook assignment data for removed module
+            «ENDIF»
         }
     '''
 }

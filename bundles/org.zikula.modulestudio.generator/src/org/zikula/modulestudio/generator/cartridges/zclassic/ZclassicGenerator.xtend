@@ -33,6 +33,7 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.controller.javascri
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.javascript.Validation
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.Entities
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.Factory
+import org.zikula.modulestudio.generator.cartridges.zclassic.models.HookAssignmentEntity
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.Repository
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.Bootstrap
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.ComposerFile
@@ -116,6 +117,10 @@ class ZclassicGenerator implements IGenerator {
         pm?.subTask('Model: Factory class')
         println('Generating factory class')
         new Factory().generate(it, fsa)
+
+        if (hasUiHooksProviders && targets('1.5')) {
+            new HookAssignmentEntity().generate(it, fsa)
+        }
     }
 
     def private generateController(Application it) {
