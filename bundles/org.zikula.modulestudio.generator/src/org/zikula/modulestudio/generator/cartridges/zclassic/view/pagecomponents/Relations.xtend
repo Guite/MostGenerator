@@ -97,7 +97,7 @@ class Relations {
         «ENDIF»
         «IF many»
             «IF uiHooksProvider != HookProviderMode.DISABLED && app.targets('1.5')»
-                {% if context == 'hookDisplayView' %}
+                {% if context == 'hookDisplayView' && hasEditPermission %}
                     {% set assignmentId = '' %}
                     {% for assignment in assignments if assignment.getAssignedId() == item.getKey() %}
                         {% set assignmentId = assignment.getId() %}
@@ -113,7 +113,7 @@ class Relations {
             </ul>
             {% endif %}
             «IF uiHooksProvider != HookProviderMode.DISABLED && app.targets('1.5')»
-                {% if context == 'hookDisplayView' %}
+                {% if context == 'hookDisplayView' && hasEditPermission %}
                     <p>
                         <a href="javascript:void(0);" title="{{ __('Attach «name.formatForDisplay»')|e('html_attr') }}" class="attach-«app.appName.formatForDB»-object hidden"><i class="fa fa-link"></i> {{ __('Attach «name.formatForDisplay»') }}</a>
                     </p>
