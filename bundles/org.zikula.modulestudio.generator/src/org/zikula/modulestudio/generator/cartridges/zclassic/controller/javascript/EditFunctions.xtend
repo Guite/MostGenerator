@@ -49,6 +49,7 @@ class EditFunctions {
 
         «ENDIF»
         «initEditForm»
+
     '''
 
     def private initUserField(Application it) '''

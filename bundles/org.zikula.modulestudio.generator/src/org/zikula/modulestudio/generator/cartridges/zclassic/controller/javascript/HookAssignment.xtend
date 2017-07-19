@@ -47,7 +47,21 @@ class HookAssignment {
          */
         function «vendorAndName»AttachHookObject(elem)
         {
-            // TODO
+            jQuery.ajax({
+                method: 'POST',
+                url: Routing.generate('«appName.formatForDB»_ajax_attachhookobject'),
+                data: {
+                    owner: jQuery(elem).data('owner'),
+                    areaId: jQuery(elem).data('area-id'),
+                    objectId: jQuery(elem).data('object-id'),
+                    url: jQuery(elem).data('url'),
+                    assignedEntity: jQuery(elem).data('assigned-entity'),
+                    assignedId: jQuery('#assignedEntityId').text()
+                },
+                success: function(data) {
+                    window.location.reload();
+                }
+            });
         }
     '''
 
@@ -72,14 +86,12 @@ class HookAssignment {
 
     def private onLoad(Application it) '''
         jQuery(document).ready(function() {
-            jQuery('.attach-«appName.formatForDB»-object').each(function (index) {
-                jQuery(this).click(«vendorAndName»AttachHookObject);
-                jQuery(this).removeClass('hidden');
-            });
-            jQuery('.detach-«appName.formatForDB»-object').each(function (index) {
-                jQuery(this).click(«vendorAndName»DetachHookObject);
-                jQuery(this).removeClass('hidden');
-            });
+            jQuery('.attach-«appName.formatForDB»-object')
+                .click(«vendorAndName»AttachHookObject)
+                .removeClass('hidden');
+            jQuery('.detach-«appName.formatForDB»-object')
+                .click(«vendorAndName»DetachHookObject)
+                .removeClass('hidden');
         });
     '''
 }

@@ -91,6 +91,8 @@ class AjaxController {
         «ENDIF»
         «IF hasUiHooksProviders && targets('1.5')»
 
+            «attachHookObjectBase»
+
             «detachHookObjectBase»
         «ENDIF»
     '''
@@ -1019,12 +1021,37 @@ class AjaxController {
         ]);
     '''
 
+    def private attachHookObjectBase(Application it) '''
+        «attachHookObjectDocBlock(true)»
+        «attachHookObjectSignature»
+        {
+            «attachHookObjectBaseImpl»
+        }
+    '''
+
     def private detachHookObjectBase(Application it) '''
         «detachHookObjectDocBlock(true)»
         «detachHookObjectSignature»
         {
             «detachHookObjectBaseImpl»
         }
+    '''
+
+    def private attachHookObjectDocBlock(Application it, Boolean isBase) '''
+        /**
+         * Attachs a given hook assignment by creating the corresponding assignment data record.
+         «IF !isBase»
+         *
+         * @Route("/attachHookObject", options={"expose"=true})
+         * @Method("POST")
+         «ENDIF»
+         *
+         * @param Request $request Current request instance
+         *
+         * @return JsonResponse
+         *
+         * @throws AccessDeniedException Thrown if the user doesn't have required permissions
+         */
     '''
 
     def private detachHookObjectDocBlock(Application it, Boolean isBase) '''
@@ -1044,8 +1071,49 @@ class AjaxController {
          */
     '''
 
+    def private attachHookObjectSignature(Application it) '''
+        public function attachHookObjectAction(Request $request)
+    '''
+
     def private detachHookObjectSignature(Application it) '''
         public function detachHookObjectAction(Request $request)
+    '''
+
+    def private attachHookObjectBaseImpl(Application it) '''
+        if (!$this->hasPermission('«appName»::Ajax', '::', ACCESS_EDIT)) {
+            throw new AccessDeniedException();
+        }
+
+        $subscriberOwner = $request->request->get('owner', '');
+        $subscriberAreaId = $request->request->getInt('areaId', 0);
+        $subscriberObjectId = $request->request->getInt('objectId', 0);
+        $subscriberUrl = $request->request->get('url', '');
+        $assignedEntity = $request->request->get('assignedEntity', '');
+        $assignedId = $request->request->getInt('assignedId', 0);
+
+        if (!$subscriberOwner || !$subscriberAreaId || !$subscriberObjectId || !$assignedEntity || !$assignedId) {
+            return «IF targets('2.0')»$this->json«ELSE»new JsonResponse«ENDIF»($this->__('Error: invalid input.'), JsonResponse::HTTP_BAD_REQUEST);
+        }
+
+        $subscriberUrl = !empty($subscriberUrl) ? unserialize($subscriberUrl) : [];
+
+        $assignment = new \«appNamespace»\Entity\HookAssignmentEntity();
+        $assignment->setSubscriberOwner($subscriberOwner);
+        $assignment->setSubscriberAreaId($subscriberAreaId);
+        $assignment->setSubscriberObjectId($subscriberObjectId);
+        $assignment->setSubscriberUrl($subscriberUrl);
+        $assignment->setAssignedEntity($assignedEntity);
+        $assignment->setAssignedId($assignedId);
+        $assignment->setUpdatedDate(new \DateTime());
+
+        $entityManager = $this->get('«appService».entity_factory')->getObjectManager();
+        $qb = $entityManager->persist($assignment);
+        $qb = $entityManager->flush();
+
+        // return response
+        return «IF targets('2.0')»$this->json«ELSE»new JsonResponse«ENDIF»([
+            'id' => $assignment->getId()
+        ]);
     '''
 
     def private detachHookObjectBaseImpl(Application it) '''
@@ -1054,12 +1122,10 @@ class AjaxController {
         }
 
         $id = $request->request->getInt('id', 0);
-
-        if ($id == 0) {
+        if (!$id) {
             return «IF targets('2.0')»$this->json«ELSE»new JsonResponse«ENDIF»($this->__('Error: invalid input.'), JsonResponse::HTTP_BAD_REQUEST);
         }
 
-        // select data from data source
         $entityFactory = $this->get('«appService».entity_factory');
         $qb = $entityFactory->getObjectManager()->createQueryBuilder();
         $qb->delete('«vendor.formatForCodeCapital + '\\' + name.formatForCodeCapital + 'Module\\Entity\\HookAssignmentEntity'»', 'tbl')
@@ -1104,6 +1170,8 @@ class AjaxController {
             «updateSortPositionsImpl»
         «ENDIF»
         «IF hasUiHooksProviders && targets('1.5')»
+
+            «attachHookObjectImpl»
 
             «detachHookObjectImpl»
         «ENDIF»
@@ -1169,6 +1237,14 @@ class AjaxController {
         «updateSortPositionsSignature»
         {
             return parent::updateSortPositionsAction($request);
+        }
+    '''
+
+    def private attachHookObjectImpl(Application it) '''
+        «attachHookObjectDocBlock(false)»
+        «attachHookObjectSignature»
+        {
+            return parent::attachHookObjectAction($request);
         }
     '''
 

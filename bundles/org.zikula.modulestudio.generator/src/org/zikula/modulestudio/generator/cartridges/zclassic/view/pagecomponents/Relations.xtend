@@ -103,7 +103,7 @@ class Relations {
                         {% set assignmentId = assignment.getId() %}
                     {% endfor %}
                     <p class="list-group-item-text">
-                        <a href="javascript:void(0);" title="{{ __('Detach this «name.formatForDisplay»')|e('html_attr') }}" class="detach-«app.appName.formatForDB»-object hidden" data-assignment-id="{{ assignmentId }}"><i class="fa fa-chain-broken"></i> {{ __('Detach «name.formatForDisplay»') }}</a>
+                        <a href="javascript:void(0);" title="{{ __('Detach this «name.formatForDisplay»')|e('html_attr') }}" class="detach-«app.appName.formatForDB»-object hidden" data-assignment-id="{{ assignmentId|e('html_attr') }}"><i class="fa fa-chain-broken"></i> {{ __('Detach «name.formatForDisplay»') }}</a>
                     </p>
                 {% endif %}
             «ENDIF»
@@ -115,7 +115,9 @@ class Relations {
             «IF uiHooksProvider != HookProviderMode.DISABLED && app.targets('1.5')»
                 {% if context == 'hookDisplayView' && hasEditPermission %}
                     <p>
-                        <a href="javascript:void(0);" title="{{ __('Attach «name.formatForDisplay»')|e('html_attr') }}" class="attach-«app.appName.formatForDB»-object hidden"><i class="fa fa-link"></i> {{ __('Attach «name.formatForDisplay»') }}</a>
+                        <span id="assignedEntityId" class="hidden"></span>
+                        <span id="excludedIds" class="hidden">{% for assignment in assignments %}{% if not loop.first %},{% endif %}{{ assignment.getAssignedId() }}{% endfor %}</span>
+                        <a href="javascript:void(0);" title="{{ __('Attach «name.formatForDisplay»')|e('html_attr') }}" class="attach-«app.appName.formatForDB»-object hidden" data-owner="{{ subscriberOwner|e('html_attr') }}" data-area-id="{{ subscriberAreaId|e('html_attr') }}" data-object-id="{{ subscriberObjectId|e('html_attr') }}" data-url="{{ subscriberUrl|e('html_attr') }}" data-assigned-entity="«name.formatForCode»"><i class="fa fa-link"></i> {{ __('Attach «name.formatForDisplay»') }}</a>
                     </p>
                 {% endif %}
             «ENDIF»

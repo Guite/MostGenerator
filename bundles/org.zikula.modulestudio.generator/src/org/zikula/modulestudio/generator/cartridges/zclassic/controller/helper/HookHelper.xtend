@@ -876,6 +876,11 @@ class HookHelper {
                         // add context information to template parameters in order to provide means
                         // for adding new assignments and removing existing assignments
                         $templateParameters['assignments'] = $assignments;
+                        $templateParameters['subscriberOwner'] = $hook->getCaller();
+                        $templateParameters['subscriberAreaId'] = $hook->getAreaId();
+                        $templateParameters['subscriberObjectId'] = $hook->getId();
+                        $url = $hook->getUrl();
+                        $templateParameters['subscriberUrl'] = (null !== $url && is_object($url)) ? $url->serialize() : serialize([]);
                     }
 
                     $output = $this->templating->render($template, $templateParameters);

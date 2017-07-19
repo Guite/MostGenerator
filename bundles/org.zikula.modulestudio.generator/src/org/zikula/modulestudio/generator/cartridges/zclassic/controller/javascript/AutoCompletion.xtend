@@ -47,6 +47,7 @@ class AutoCompletion {
         «initRelatedItemsForm»
 
         «closeWindowFromInside»
+
     '''
 
     def private toggleRelatedItemForm(Application it) '''
