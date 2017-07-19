@@ -21,7 +21,7 @@ class HookProviderView {
             return
         }
 
-        val templatePath = getViewPath + 'Email/'
+        val templatePath = getViewPath + 'Hook/'
         val templateExtension = '.html.twig'
 
         for (entity : getAllEntities) {
@@ -42,7 +42,7 @@ class HookProviderView {
                 }
             }
             if (entity.uiHooksProvider != HookProviderMode.DISABLED) {
-                // TODO
+                // nothing yet, because includeDisplayItemListMany.html.twig is reused
             }
         }
     }

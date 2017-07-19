@@ -3,6 +3,7 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.view.pagecomponent
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.EntityWorkflowType
+import de.guite.modulestudio.metamodel.HookProviderMode
 import de.guite.modulestudio.metamodel.JoinRelationship
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
@@ -41,7 +42,19 @@ class Relations {
     }
 
     def private inclusionTemplate(Entity it, Application app, Boolean many) '''
-        {# purpose of this template: inclusion template for display of related «nameMultiple.formatForDisplay» #}
+        {# purpose of this template: inclusion template for display of related «nameMultiple.formatForDisplay»«IF uiHooksProvider != HookProviderMode.DISABLED» or hook assignments«ENDIF» #}
+        «IF uiHooksProvider != HookProviderMode.DISABLED»
+            {#
+                You can use the context variable to check for the context of this list:
+                    - 'display': list of related «nameMultiple.formatForDisplay» included in a display template
+                    - 'hookDisplayView': list of «nameMultiple.formatForDisplay» assigned using an UI hook (display/view template)
+                    - 'hookDisplayEdit': list of «nameMultiple.formatForDisplay» assigned using an UI hook (edit template)
+                    - 'hookDisplayDelete': list of «nameMultiple.formatForDisplay» assigned using an UI hook (delete template)
+            #}
+            {% if context != 'display' %}
+                <h3>{{ __('Assigned «nameMultiple.formatForDisplay»') }}</h3>
+            {% endif %}
+        «ENDIF»
         {% set hasAdminPermission = hasPermission('«app.appName»:«name.formatForCodeCapital»:', '::', 'ACCESS_«IF workflow == EntityWorkflowType::NONE»EDIT«ELSE»COMMENT«ENDIF»') %}
         «IF ownerPermission»
             {% set hasEditPermission = hasPermission('«app.appName»:«name.formatForCodeCapital»:', '::', 'ACCESS_«IF workflow == EntityWorkflowType::NONE»EDIT«ELSE»COMMENT«ENDIF»') %}
@@ -107,7 +120,7 @@ class Relations {
         {% if «relatedEntity.name.formatForCode».«relationAliasName»|default %}
             {{ include(
                 '@«application.appName»/«otherEntity.name.formatForCodeCapital»/«IF isAdmin»Admin/«ENDIF»includeDisplayItemList«getTargetMultiplicity(useTarget)».html.twig',
-                { item«IF many»s«ENDIF»: «relatedEntity.name.formatForCode».«relationAliasName» }
+                { item«IF many»s«ENDIF»: «relatedEntity.name.formatForCode».«relationAliasName»«IF relatedEntity.uiHooksProvider != HookProviderMode.DISABLED», context: 'display'«ENDIF» }
             ) }}
         {% endif %}
         «IF otherEntity.hasEditAction»

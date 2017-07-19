@@ -495,6 +495,7 @@ class HookHelper {
         «ELSEIF category == 'UiHooks'»
             use Doctrine\ORM\QueryBuilder;
             use Symfony\Component\HttpFoundation\RequestStack;
+            use Twig_Environment;
         «ENDIF»
         use Zikula\Bundle\HookBundle\Category\«category»Category;
         «IF category == 'FormAware'»
@@ -548,6 +549,11 @@ class HookHelper {
                  * @var EntityFactory
                  */
                 protected $entityFactory;
+
+                /**
+                 * @var Twig_Environment
+                 */
+                protected $templating;
             «ENDIF»
 
             /**
@@ -561,7 +567,7 @@ class HookHelper {
              * @param TranslatorInterface $translator
              * @param RequestStack        $requestStack
              * @param EntityFactory       $entityFactory
-             «/*TODO*/»
+             * @param Twig_Environment    $twig
              «ENDIF»
              */
             public function __construct(
@@ -571,7 +577,8 @@ class HookHelper {
                     FormFactoryInterface $formFactory
                 «ELSEIF category == 'UiHooks'»
                     RequestStack $requestStack,
-                    EntityFactory $entityFactory
+                    EntityFactory $entityFactory,
+                    Twig_Environment $twig
                 «ENDIF»
             ) {
                 $this->translator = $translator;
@@ -581,6 +588,7 @@ class HookHelper {
                 «ELSEIF category == 'UiHooks'»
                     $this->requestStack = $requestStack;
                     $this->entityFactory = $entityFactory;
+                    $this->templating = $twig;
                 «ENDIF»
             }
 
@@ -675,10 +683,10 @@ class HookHelper {
                  */
                 public function view(DisplayHook $hook)
                 {
-                    // TODO: data selection, list with message "Assigned foos:"
+                    $assignedEntities = $this->selectAssignedEntities($hook);
                     // TODO: mean for adding new assignments (auto completion and inline creation)
-                    // $hook->getCaller() [modname], $hook->getAreaId(), $hook->getId(), $hook->getUrl() [UrlInterface]
-                    $hook->setResponse(new DisplayHookResponse($this->getAreaName(), 'This is the «name.formatForCodeCapital» Display Hook Response.'));
+                    $response = $this->renderDisplayHookResponse($assignedEntities, 'hookDisplayView');
+                    $hook->setResponse($response);
                 }
 
                 /**
@@ -688,9 +696,9 @@ class HookHelper {
                  */
                 public function displayEdit(DisplayHook $hook)
                 {
-                    // TODO: data selection, simple list with message "Assigned foos:"
-                    // $hook->getCaller() [modname], $hook->getAreaId(), $hook->getId(), $hook->getUrl() [UrlInterface]
-                    $hook->setResponse(new DisplayHookResponse($this->getAreaName(), '<div>«name.formatForCodeCapital» content hooked.</div><input name="«application.appName.formatForDB»[name]" value="zikula" type="hidden">'));
+                    $assignedEntities = $this->selectAssignedEntities($hook);
+                    $response = $this->renderDisplayHookResponse($assignedEntities, 'hookDisplayEdit');
+                    $hook->setResponse($response);
                 }
 
                 /**
@@ -732,9 +740,9 @@ class HookHelper {
                  */
                 public function displayDelete(DisplayHook $hook)
                 {
-                    // TODO: data selection, simple list with message "Assigned foos:"
-                    // $hook->getCaller() [modname], $hook->getAreaId(), $hook->getId(), $hook->getUrl() [UrlInterface]
-                    $hook->setResponse(new DisplayHookResponse($this->getAreaName(), '<div>«name.formatForCodeCapital» content hooked.</div><input name="«application.appName.formatForDB»[name]" value="zikula" type="hidden">'));
+                    $assignedEntities = $this->selectAssignedEntities($hook);
+                    $response = $this->renderDisplayHookResponse($assignedEntities, 'hookDisplayDelete');
+                    $hook->setResponse($response);
                 }
 
                 /**
@@ -798,9 +806,74 @@ class HookHelper {
                        ->andWhere('tbl.subscriberAreaId = :areaId')
                        ->setParameter('areaId', $hook->getAreaId())
                        ->andWhere('tbl.subscriberObjectId = :objectId')
-                       ->setParameter('objectId', $hook->getId());
+                       ->setParameter('objectId', $hook->getId())
+                       ->andWhere('tbl.assignedEntity = :objectType')
+                       ->setParameter('objectType', '«name.formatForCode»');
 
                     return $qb;
+                }
+
+                /**
+                 * Returns a list of assigned entities for a given hook context.
+                 *
+                 * @param Hook $hook
+                 *
+                 * @return array
+                 */
+                protected function selectAssignedEntities(Hook $hook)
+                {
+                    $assignedIds = $this->selectAssignedIds($hook);
+                    if (!count($assignedIds)) {
+                        return [];
+                    }
+
+                    return $this->entityFactory->getRepository('«name.formatForCode»')->selectByIdList($assignedIds);
+                }
+
+                /**
+                 * Returns a list of assigned entity identifiers for a given hook context.
+                 *
+                 * @param Hook $hook
+                 *
+                 * @return integer[]
+                 */
+                protected function selectAssignedIds(Hook $hook)
+                {
+                    $qb = $this->entityFactory->getObjectManager()->createQueryBuilder();
+                    $qb->select($selection)
+                       ->from($this->getHookAssignmentEntity(), 'tbl');
+                    $qb = $this->addContextFilters($qb, $hook);
+                    $qb->add('orderBy', 'tbl.updatedDate DESC');
+
+                    $query = $qb->getQuery();
+                    $assignments = $query->getResult();
+
+                    $assignedIds = [];
+                    foreach ($assignments as $assignment) {
+                        $assignedIds[] = $assignment->getAssignedId();
+                    }
+
+                    return $assignedIds;
+                }
+
+                /**
+                 * Returns the response for a display hook of a given context.
+                 *
+                 * @param array $assignedEntities
+                 * @param string $context
+                 *
+                 * @return DisplayHookResponse
+                 */
+                protected function renderDisplayHookResponse($assignedEntities, $context)
+                {
+                    $template = '@«application.appName»/«name.formatForCodeCapital»/includeDisplayItemListMany.html.twig';
+
+                    $output = $this->templating->render($template, [
+                        'items' => $assignedEntities,
+                        'context' => $context
+                    ]);
+
+                    return new DisplayHookResponse($this->getAreaName(), $output);
                 }
             «ENDIF»
         }

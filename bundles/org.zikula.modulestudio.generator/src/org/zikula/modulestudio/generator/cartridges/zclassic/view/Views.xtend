@@ -3,6 +3,7 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.view
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.EntityTreeType
+import de.guite.modulestudio.metamodel.HookProviderMode
 import de.guite.modulestudio.metamodel.ManyToManyRelationship
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.additions.Emails
@@ -144,7 +145,7 @@ class Views {
         // reverse logic like in the display template because we are treating the included template here
         val refedElems = entity.outgoing.filter(ManyToManyRelationship).filter[e|e.target instanceof Entity && e.target.application == entity.application]
                        + entity.getIncomingJoinRelations.filter[e|e.source instanceof Entity && e.source.application == entity.application]
-        if (!refedElems.empty) {
+        if (!refedElems.empty || (targets('1.5') && entity.uiHooksProvider != HookProviderMode.DISABLED)) {
             relationHelper.displayItemList(entity, it, false, fsa)
             relationHelper.displayItemList(entity, it, true, fsa)
         }

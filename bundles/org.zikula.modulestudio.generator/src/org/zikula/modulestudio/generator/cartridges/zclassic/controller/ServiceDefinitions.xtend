@@ -180,6 +180,7 @@ class ServiceDefinitions {
                                     - "@translator.default"
                                     - "@request_stack"
                                     - "@«modPrefix».entity_factory"
+                                    - "@twig"
                                 tags:
                                     - { name: zikula.hook_provider, areaName: 'provider.«appName.formatForDB».ui_hooks.«entity.nameMultiple.formatForDB»' }
 
