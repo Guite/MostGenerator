@@ -200,7 +200,7 @@ class ViewHelper {
             $response = null;
             if (true === $raw) {
                 // standalone output
-                «IF supportedFormats.exists[e|e == 'csv']»
+                «IF supportedFormats.exists[it == 'csv']»
                     if ($templateExtension == 'csv.twig') {
                         // convert to UTF-16 for improved excel compatibility
                         // see http://stackoverflow.com/questions/4348802/how-can-i-output-a-utf-8-csv-in-php-that-excel-will-read-properly
@@ -217,39 +217,39 @@ class ViewHelper {
 
                 // check if we need to set any custom headers
                 switch ($templateExtension) {
-                    «IF supportedFormats.exists[e|e == 'csv']»
+                    «IF supportedFormats.exists[it == 'csv']»
                         case 'csv.twig':
                             $response->headers->set('Content-Encoding', 'UTF-8');
                             $response->headers->set('Content-Type', 'text/csv; charset=UTF-8');
                             $response->headers->set('Content-Disposition', 'attachment; filename=' . $type . '-list.csv');
                             break;
                     «ENDIF»
-                    «IF supportedFormats.exists[e|e == 'ics']»
+                    «IF supportedFormats.exists[it == 'ics']»
                         case 'ics.twig':
                             $response->headers->set('Content-Type', 'text/calendar; charset=utf-8');
                             break;
                     «ENDIF»
-                    «IF supportedFormats.exists[e|e == 'json']»
+                    «IF supportedFormats.exists[it == 'json']»
                         case 'json.twig':
                             $response->headers->set('Content-Type', 'application/json');
                             break;
                     «ENDIF»
-                    «IF supportedFormats.exists[e|e == 'kml']»
+                    «IF supportedFormats.exists[it == 'kml']»
                         case 'kml.twig':
                             $response->headers->set('Content-Type', 'application/vnd.google-earth.kml+xml');
                             break;
                     «ENDIF»
-                    «IF supportedFormats.exists[e|e == 'xml']»
+                    «IF supportedFormats.exists[it == 'xml']»
                         case 'xml.twig':
                             $response->headers->set('Content-Type', 'text/xml');
                             break;
                     «ENDIF»
-                    «IF supportedFormats.exists[e|e == 'atom']»
+                    «IF supportedFormats.exists[it == 'atom']»
                         case 'atom.twig':
                             $response->headers->set('Content-Type', 'application/atom+xml');
                             break;
                     «ENDIF»
-                    «IF supportedFormats.exists[e|e == 'rss']»
+                    «IF supportedFormats.exists[it == 'rss']»
                         case 'rss.twig':
                             $response->headers->set('Content-Type', 'application/rss+xml');
                             break;

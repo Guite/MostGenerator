@@ -840,7 +840,7 @@ class HookHelper {
                 protected function selectAssignedIds(Hook $hook)
                 {
                     $qb = $this->entityFactory->getObjectManager()->createQueryBuilder();
-                    $qb->select($selection)
+                    $qb->select('tbl')
                        ->from($this->getHookAssignmentEntity(), 'tbl');
                     $qb = $this->addContextFilters($qb, $hook);
                     $qb->add('orderBy', 'tbl.updatedDate DESC');

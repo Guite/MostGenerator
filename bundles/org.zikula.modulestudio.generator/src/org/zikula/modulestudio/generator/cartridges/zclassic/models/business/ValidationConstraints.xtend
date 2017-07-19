@@ -88,14 +88,14 @@ class ValidationConstraints {
         «ENDIF»
     '''
     def dispatch fieldAnnotations(AbstractIntegerField it) '''
-        «IF entity.incoming.filter(JoinRelationship).filter[e|e.targetField == name].empty
-         && entity.outgoing.filter(JoinRelationship).filter[e|e.sourceField == name].empty»
+        «IF entity.incoming.filter(JoinRelationship).filter[r|r.targetField == name].empty
+         && entity.outgoing.filter(JoinRelationship).filter[r|r.sourceField == name].empty»
             «fieldAnnotationsInteger»
         «ENDIF»
     '''
     def dispatch fieldAnnotations(IntegerField it) '''
-        «IF entity.incoming.filter(JoinRelationship).filter[e|e.targetField == name].empty
-         && entity.outgoing.filter(JoinRelationship).filter[e|e.sourceField == name].empty»
+        «IF entity.incoming.filter(JoinRelationship).filter[r|r.targetField == name].empty
+         && entity.outgoing.filter(JoinRelationship).filter[r|r.sourceField == name].empty»
             «fieldAnnotationsInteger»
             «IF minValue.toString != '0' && maxValue.toString != '0'»
                 «' '»* @Assert\Range(min=«minValue», max=«maxValue»)

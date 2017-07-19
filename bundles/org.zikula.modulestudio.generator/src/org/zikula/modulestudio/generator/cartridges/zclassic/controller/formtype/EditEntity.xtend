@@ -625,7 +625,7 @@ class EditEntity {
 
     def private fieldImpl(DerivedField it) '''
         «/* No input fields for foreign keys, relations are processed further down */»
-        «IF entity.getIncomingJoinRelations.filter[e|e.getSourceFields.head == name.formatForDB].empty»
+        «IF entity.getIncomingJoinRelations.filter[r|r.getSourceFields.head == name.formatForDB].empty»
             «IF it instanceof ListField»
                 «fetchListEntries»
             «ENDIF»

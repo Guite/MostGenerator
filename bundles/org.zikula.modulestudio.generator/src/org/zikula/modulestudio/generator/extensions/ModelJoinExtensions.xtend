@@ -307,7 +307,7 @@ class ModelJoinExtensions {
      * That is true if at least one incoming relation of it's entity has an indexBy field set to it's name. 
      */
     def isIndexByField(DerivedField it) {
-        !entity.incoming.filter[e|e.getIndexByField == name].empty
+        !entity.incoming.filter[r|r.getIndexByField == name].empty
     }
 
     /**

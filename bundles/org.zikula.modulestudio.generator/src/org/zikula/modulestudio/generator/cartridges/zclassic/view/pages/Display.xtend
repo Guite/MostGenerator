@@ -3,6 +3,7 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.view.pages
 import de.guite.modulestudio.metamodel.DerivedField
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.EntityTreeType
+import de.guite.modulestudio.metamodel.HookProviderMode
 import de.guite.modulestudio.metamodel.JoinRelationship
 import de.guite.modulestudio.metamodel.ManyToManyRelationship
 import de.guite.modulestudio.metamodel.OneToManyRelationship
@@ -63,8 +64,8 @@ class Display {
     }
 
     def private displayView(Entity it, String appName, Boolean isAdmin) '''
-        «val refedElems = getOutgoingJoinRelations.filter[e|e.target instanceof Entity && e.target.application == it.application]
-                        + incoming.filter(ManyToManyRelationship).filter[e|e.source instanceof Entity && e.source.application == it.application]»
+        «val refedElems = getOutgoingJoinRelations.filter[r|r.target instanceof Entity && r.target.application == it.application]
+                        + incoming.filter(ManyToManyRelationship).filter[r|r.source instanceof Entity && r.source.application == it.application]»
         «val objName = name.formatForCode»
         «IF application.generateSeparateAdminTemplates»
             {# purpose of this template: «nameMultiple.formatForDisplay» «IF isAdmin»admin«ELSE»user«ENDIF» display view #}
@@ -110,6 +111,13 @@ class Display {
                                 </li>
                             {% endif %}
                         «ENDIF»
+                        «IF categorisable»
+                            {% if featureActivationHelper.isEnabled(constant('«application.vendor.formatForCodeCapital»\\«application.name.formatForCodeCapital»Module\\Helper\\FeatureActivationHelper::CATEGORIES'), '«name.formatForCode»') %}
+                                <li role="presentation">
+                                    <a id="categoriesTab" href="#tabCategories" title="{{ __('Categories') }}" role="tab" data-toggle="tab">{{ __('Categories') }}</a>
+                                </li>
+                            {% endif %}
+                        «ENDIF»
                         «IF tree != EntityTreeType.NONE»
                             {% if featureActivationHelper.isEnabled(constant('«application.vendor.formatForCodeCapital»\\«application.name.formatForCodeCapital»Module\\Helper\\FeatureActivationHelper::TREE_RELATIVES'), '«name.formatForCode»') %}
                                 <li role="presentation">
@@ -117,12 +125,10 @@ class Display {
                                 </li>
                             {% endif %}
                         «ENDIF»
-                        «IF categorisable»
-                            {% if featureActivationHelper.isEnabled(constant('«application.vendor.formatForCodeCapital»\\«application.name.formatForCodeCapital»Module\\Helper\\FeatureActivationHelper::CATEGORIES'), '«name.formatForCode»') %}
-                                <li role="presentation">
-                                    <a id="categoriesTab" href="#tabCategories" title="{{ __('Categories') }}" role="tab" data-toggle="tab">{{ __('Categories') }}</a>
-                                </li>
-                            {% endif %}
+                        «IF uiHooksProvider != HookProviderMode.DISABLED»
+                            <li role="presentation">
+                                <a id="assignmentsTab" href="#tabAssignments" title="{{ __('Hook assignments') }}" role="tab" data-toggle="tab">{{ __('Hook assignments') }}</a>
+                            </li>
                         «ENDIF»
                         «IF standardFields»
                             <li role="presentation">
@@ -304,6 +310,27 @@ class Display {
                 </div>
                 «ENDIF»
             {% endif %}
+        «ENDIF»
+        «IF uiHooksProvider != HookProviderMode.DISABLED»
+            «IF useGroupingTabs('display')»
+            <div role="tabpanel" class="tab-pane fade" id="tabAssignments" aria-labelledby="assignmentsTab">
+                <h3>{{ __('Hook assignments') }}</h3>
+            «ELSE»
+            <h3 class="hook-assignments">{{ __('Hook assignments') }}</h3>
+            «ENDIF»
+                {% if hookAssignments|length > 0 %}
+                    <p>{{ __('This «name.formatForDisplay» is assigned to the following data objects:') }}</p>
+                    <ul>
+                    {% for assignment in hookAssignments %}
+                    	<li><a href="{{ assignment.url|e('html_attr') }}" title="{{ __('View this object')|e('html_attr') }}">{{ assignment.date|localizeddate('medium', 'short') }} - {{ assignment.text }}</a></li>
+                    {% endfor %}
+                    </ul>
+                {% else %}
+                    <p>{{ __('This «name.formatForDisplay» is not assigned to any data objects yet.') }}</p>
+                {% endif %}
+            «IF useGroupingTabs('display')»
+            </div>
+            «ENDIF»
         «ENDIF»
         «IF standardFields»
             {{ include('@«application.appName»/Helper/includeStandardFieldsDisplay.html.twig', { obj: «objName»«IF useGroupingTabs('display')», tabs: true«ENDIF» }) }}

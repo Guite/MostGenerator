@@ -271,7 +271,7 @@ class ExternalController {
         list($entities, $objectCount) = $repository->retrieveCollectionResult($query, true);
 
         «IF hasCategorisableEntities»
-            if (in_array($objectType, ['«getCategorisableEntities.map[e|e.name.formatForCode].join('\', \'')»'])) {
+            if (in_array($objectType, ['«getCategorisableEntities.map[name.formatForCode].join('\', \'')»'])) {
                 $featureActivationHelper = $this->get('«appService».feature_activation_helper');
                 if ($featureActivationHelper->isEnabled(FeatureActivationHelper::CATEGORIES, $objectType)) {
                     $entities = $this->get('«appService».category_helper')->filterEntitiesByPermission($entities);

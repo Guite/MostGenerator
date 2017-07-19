@@ -62,7 +62,7 @@ class ComposerFile {
             "psr-4": { "«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\": "" }
         },
         "require": {
-            «var dependencies = referredApplications.filter[e|e.dependencyType == ApplicationDependencyType.REQUIREMENT]»
+            «var dependencies = referredApplications.filter[dependencyType == ApplicationDependencyType.REQUIREMENT]»
             "php": ">=«IF targets('1.5')»5.5.9«ELSE»5.4.1«ENDIF»"«IF !dependencies.empty»,«ENDIF»
             «IF !dependencies.empty»
                 «FOR referredApp : dependencies»
@@ -71,7 +71,7 @@ class ComposerFile {
             «ENDIF»
         },
         "suggest": {
-            «{ dependencies = referredApplications.filter[e|e.dependencyType == ApplicationDependencyType.RECOMMENDATION]; '' }»
+            «{ dependencies = referredApplications.filter[dependencyType == ApplicationDependencyType.RECOMMENDATION]; '' }»
             «IF !dependencies.empty»
                 «FOR referredApp : dependencies»
                     «dependency(referredApp)»«IF referredApp != dependencies.last»,«ENDIF»
@@ -144,7 +144,7 @@ class ComposerFile {
 
     def private permissionSchema(Entity it, String appName) '''
         "«appName»:«name.formatForCodeCapital»:": "«name.formatForCodeCapital» ID::",
-        «val incomingRelations = getIncomingJoinRelations/*.filter[e|e.source.container == it.container]*/»
+        «val incomingRelations = getIncomingJoinRelations/*.filter[r|r.source.container == it.container]*/»
         «IF !incomingRelations.empty»
             «FOR relation : incomingRelations»«relation.permissionSchema(appName)»«ENDFOR»
         «ENDIF»

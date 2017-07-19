@@ -88,7 +88,7 @@ class FeatureActivationHelper {
                         return $this->$method($objectType);
                     }
 
-                    return in_array($objectType, ['«getCategorisableEntities.map[e|e.name.formatForCode].join('\', \'')»']);
+                    return in_array($objectType, ['«getCategorisableEntities.map[name.formatForCode].join('\', \'')»']);
                 }
             «ENDIF»
             «IF hasAttributableEntities»
@@ -98,7 +98,7 @@ class FeatureActivationHelper {
                         return $this->$method($objectType);
                     }
 
-                    return in_array($objectType, ['«getAttributableEntities.map[e|e.name.formatForCode].join('\', \'')»']);
+                    return in_array($objectType, ['«getAttributableEntities.map[name.formatForCode].join('\', \'')»']);
                 }
             «ENDIF»
             «IF hasTranslatable»
@@ -108,7 +108,7 @@ class FeatureActivationHelper {
                         return $this->$method($objectType);
                     }
 
-                    return in_array($objectType, ['«getTranslatableEntities.map[e|e.name.formatForCode].join('\', \'')»']);
+                    return in_array($objectType, ['«getTranslatableEntities.map[name.formatForCode].join('\', \'')»']);
                 }
             «ENDIF»
             «IF hasTrees»
@@ -118,7 +118,7 @@ class FeatureActivationHelper {
                         return $this->$method($objectType);
                     }
 
-                    return in_array($objectType, ['«getTreeEntities.map[e|e.name.formatForCode].join('\', \'')»']);
+                    return in_array($objectType, ['«getTreeEntities.map[name.formatForCode].join('\', \'')»']);
                 }
             «ENDIF»
 

@@ -528,7 +528,7 @@ class ServiceDefinitions {
             «ENDFOR»
         «ENDIF»
         «IF hasEditActions»
-            «FOR entity : entities.filter[e|e instanceof MappedSuperClass || (e as Entity).hasEditAction]»
+            «FOR entity : entities.filter[it instanceof MappedSuperClass || (it as Entity).hasEditAction]»
                 «IF entity instanceof Entity»
 
                     «modPrefix».form.handler.«entity.name.formatForDB»:
@@ -730,6 +730,9 @@ class ServiceDefinitions {
                 «ENDIF»
                 «IF hasUploads || hasGeographical»
                     - "@logger"
+                «ENDIF»
+                «IF hasUiHooksProviders»
+                    - "@router"
                 «ENDIF»
                 «IF hasViewActions»
                     - "@form.factory"

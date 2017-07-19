@@ -28,7 +28,7 @@ class FormAwareProviderInnerForms {
             return
         }
         app = it
-        for (entity : getAllEntities.filter[e|e.formAwareHookProvider != HookProviderMode.DISABLED]) {
+        for (entity : getAllEntities.filter[formAwareHookProvider != HookProviderMode.DISABLED]) {
             generateClassPair(fsa, getAppSourceLibPath + 'Form/Type/Hook/Edit' + entity.name.formatForCodeCapital + 'Type.php',
                 fh.phpFileContent(it, entity.innerFormTypeBaseImpl('edit')), fh.phpFileContent(it, entity.innerFormTypeImpl('edit'))
             )

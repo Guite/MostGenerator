@@ -1,6 +1,7 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.controller.helper
 
 import de.guite.modulestudio.metamodel.Application
+import de.guite.modulestudio.metamodel.HookProviderMode
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.ControllerHelperFunctions
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
@@ -46,6 +47,9 @@ class ControllerHelper {
         «ENDIF»
         use Symfony\Component\HttpFoundation\Request;
         use Symfony\Component\HttpFoundation\RequestStack;
+        «IF hasUiHooksProviders»
+            use Symfony\Component\Routing\RouterInterface;
+        «ENDIF»
         «IF hasUploads»
             use Zikula\Common\Translator\TranslatorInterface;
             use Zikula\Common\Translator\TranslatorTrait;
@@ -99,6 +103,13 @@ class ControllerHelper {
                  * @var LoggerInterface
                  */
                 protected $logger;
+            «ENDIF»
+            «IF hasUiHooksProviders»
+
+                /**
+                 * @var RouterInterface
+                 */
+                protected $router;
             «ENDIF»
             «IF hasViewActions»
 
@@ -166,6 +177,9 @@ class ControllerHelper {
              «IF hasUploads || hasGeographical»
              * @param LoggerInterface     $logger          Logger service instance
              «ENDIF»
+             «IF hasUiHooksProviders»
+             * @param Routerinterface     $router          Router service instance
+             «ENDIF»
              «IF hasViewActions»
              * @param FormFactoryInterface $formFactory    FormFactory service instance
              «ENDIF»
@@ -198,6 +212,9 @@ class ControllerHelper {
                 «IF hasUploads || hasGeographical»
                     LoggerInterface $logger,
                 «ENDIF»
+                «IF hasUiHooksProviders»
+                    RouterInterface $router,
+                «ENDIF»
                 «IF hasViewActions»
                     FormFactoryInterface $formFactory,
                 «ENDIF»
@@ -219,6 +236,9 @@ class ControllerHelper {
                 $this->request = $requestStack->getCurrentRequest();
                 «IF hasUploads || hasGeographical»
                     $this->logger = $logger;
+                «ENDIF»
+                «IF hasUiHooksProviders»
+                    $this->router = $router;
                 «ENDIF»
                 «IF hasViewActions»
                     $this->formFactory = $formFactory;
@@ -330,12 +350,12 @@ class ControllerHelper {
          * @param SortableColumns $sortableColumns    Used SortableColumns instance
          * @param array           $templateParameters Template data
          «IF hasHookSubscribers»
-         * @param boolean         $supportsHooks      Whether hooks are supported or not
+         * @param boolean         $hasHookSubscriber  Whether hook subscribers are supported or not
          «ENDIF»
          *
          * @return array Enriched template parameters used for creating the response
          */
-        public function processViewActionParameters($objectType, SortableColumns $sortableColumns, array $templateParameters = []«IF hasHookSubscribers», $supportsHooks = false«ENDIF»)
+        public function processViewActionParameters($objectType, SortableColumns $sortableColumns, array $templateParameters = []«IF hasHookSubscribers», $hasHookSubscriber = false«ENDIF»)
         {
             $contextArgs = ['controller' => $objectType, 'action' => 'view'];
             if (!in_array($objectType, $this->getObjectTypes('controllerAction', $contextArgs))) {
@@ -436,7 +456,7 @@ class ControllerHelper {
 
             «IF hasHookSubscribers»
 
-                if (true === $supportsHooks) {
+                if (true === $hasHookSubscriber) {
                     // build RouteUrl instance for display hooks
                     $urlParameters['_locale'] = $request->getLocale();
                     $templateParameters['currentUrlObject'] = new RouteUrl('«appName.formatForDB»_' . strtolower($objectType) . '_view', $urlParameters);
@@ -461,12 +481,12 @@ class ControllerHelper {
          * @param string  $objectType         Name of treated entity type
          * @param array   $templateParameters Template data
          «IF hasHookSubscribers»
-         * @param boolean $supportsHooks      Whether hooks are supported or not
+         * @param boolean $hasHookSubscriber  Whether hook subscribers are supported or not
          «ENDIF»
          *
          * @return array Enriched template parameters used for creating the response
          */
-        public function processDisplayActionParameters($objectType, array $templateParameters = []«IF hasHookSubscribers», $supportsHooks = false«ENDIF»)
+        public function processDisplayActionParameters($objectType, array $templateParameters = []«IF hasHookSubscribers», $hasHookSubscriber = false«ENDIF»)
         {
             $contextArgs = ['controller' => $objectType, 'action' => 'display'];
             if (!in_array($objectType, $this->getObjectTypes('controllerAction', $contextArgs))) {
@@ -474,12 +494,50 @@ class ControllerHelper {
             }
             «IF hasHookSubscribers»
 
-                if (true === $supportsHooks) {
+                if (true === $hasHookSubscriber) {
                     // build RouteUrl instance for display hooks
                     $entity = $templateParameters[$objectType];
                     $urlParameters = $entity->createUrlArgs();
                     $urlParameters['_locale'] = $this->request->getLocale();
                     $templateParameters['currentUrlObject'] = new RouteUrl('«appName.formatForDB»_' . strtolower($objectType) . '_display', $urlParameters);
+                }
+            «ENDIF»
+            «IF hasUiHooksProviders»
+
+                if (in_array($objectType, ['«getAllEntities.filter[uiHooksProvider != HookProviderMode.DISABLED].map[name.formatForCode].join('\', \'')»'])) {
+                    $qb = $this->entityFactory->getObjectManager()->createQueryBuilder();
+                    $qb->select('tbl')
+                       ->from($this->getHookAssignmentEntity(), 'tbl');
+                       ->where('tbl.assignedEntity = :objectType')
+                       ->setParameter('objectType', $objectType)
+                       ->andWhere('tbl.assignedId = :entityId')
+                       ->setParameter('entityId', $entity->getKey());
+                       ->add('orderBy', 'tbl.updatedDate DESC');
+
+                    $query = $qb->getQuery();
+                    $hookAssignments = $query->getResult();
+
+                    $assignments = [];
+                    foreach ($hookAssignments as $assignment) {
+                        $url = 'javascript:void(0);';
+                        $subscriberUrl = $assignment->getSubscriberUrl();
+                        if (null !== $subscriberUrl) {
+                            $url = $this->router->generate($subscriberUrl->getRoute(), $subscriberUrl->getArgs());
+                            $fragment = $subscriberUrl->getFragment();
+                            if (!empty($fragment)) {
+                                if ($fragment[0] != '#') {
+                                    $fragment = '#' . $fragment;
+                            	}
+                                $url .= $fragment;
+                            }
+                        }
+                        $assignments[] = [
+                            'url' => $url,
+                            'text' => $assignment->getSubscriberOwner(),
+                            'date' => $assignment->getUpdatedDate()
+                        ];
+                    }
+                    $templateParameters['hookAssignments'] = $assignments;
                 }
             «ENDIF»
 
@@ -514,12 +572,12 @@ class ControllerHelper {
          * @param string  $objectType         Name of treated entity type
          * @param array   $templateParameters Template data
          «IF hasHookSubscribers»
-         * @param boolean $supportsHooks      Whether hooks are supported or not
+         * @param boolean $hasHookSubscriber  Whether hook subscribers are supported or not
          «ENDIF»
          *
          * @return array Enriched template parameters used for creating the response
          */
-        public function processDeleteActionParameters($objectType, array $templateParameters = []«IF hasHookSubscribers», $supportsHooks = false«ENDIF»)
+        public function processDeleteActionParameters($objectType, array $templateParameters = []«IF hasHookSubscribers», $hasHookSubscriber = false«ENDIF»)
         {
             $contextArgs = ['controller' => $objectType, 'action' => 'delete'];
             if (!in_array($objectType, $this->getObjectTypes('controllerAction', $contextArgs))) {
@@ -532,7 +590,7 @@ class ControllerHelper {
 
     def private addTemplateParameters(Application it) '''
         /**
-         * Returns an array of additional template variables which are specific to the object type treated by this repository.
+         * Returns an array of additional template variables which are specific to the object type.
          *
          * @param string $objectType Name of treated entity type
          * @param array  $parameters Given parameters to enrich

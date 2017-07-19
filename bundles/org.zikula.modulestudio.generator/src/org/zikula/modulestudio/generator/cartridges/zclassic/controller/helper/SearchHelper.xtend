@@ -357,7 +357,7 @@ class SearchHelper {
                     }
                     «IF hasCategorisableEntities»
 
-                        if (in_array($objectType, ['«getCategorisableEntities.map[e|e.name.formatForCode].join('\', \'')»'])) {
+                        if (in_array($objectType, ['«getCategorisableEntities.map[name.formatForCode].join('\', \'')»'])) {
                             if ($this->featureActivationHelper->isEnabled(FeatureActivationHelper::CATEGORIES, $objectType)) {
                                 if (!$this->categoryHelper->hasPermission($entity)) {
                                     continue;
