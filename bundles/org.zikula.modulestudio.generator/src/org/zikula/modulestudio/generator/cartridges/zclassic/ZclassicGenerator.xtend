@@ -30,6 +30,7 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.controller.javascri
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.javascript.EditFunctions
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.javascript.Finder
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.javascript.GeoFunctions
+import org.zikula.modulestudio.generator.cartridges.zclassic.controller.javascript.HookAssignment
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.javascript.TreeFunctions
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.javascript.Validation
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.Entities
@@ -177,6 +178,9 @@ class ZclassicGenerator implements IGenerator {
         }
         if (hasGeographical) {
             new GeoFunctions().generate(it, fsa)
+        }
+        if (hasUiHooksProviders) {
+            new HookAssignment().generate(it, fsa)
         }
         if (hasTrees) {
             new TreeFunctions().generate(it, fsa)

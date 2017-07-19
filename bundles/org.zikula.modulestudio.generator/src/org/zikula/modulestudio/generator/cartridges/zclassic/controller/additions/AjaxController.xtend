@@ -46,7 +46,7 @@ class AjaxController {
         «IF hasTrees && hasEditActions»
             use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
         «ENDIF»
-        «IF needsDuplicateCheck || hasBooleansWithAjaxToggle || hasTrees || hasSortable»
+        «IF needsDuplicateCheck || hasBooleansWithAjaxToggle || hasTrees || hasSortable || (hasUiHooksProviders && targets('1.5'))»
             use Symfony\Component\Security\Core\Exception\AccessDeniedException;
         «ENDIF»
         use Zikula\Core\Controller\AbstractController;
@@ -88,6 +88,10 @@ class AjaxController {
         «IF hasSortable»
 
             «updateSortPositionsBase»
+        «ENDIF»
+        «IF hasUiHooksProviders && targets('1.5')»
+
+            «detachHookObjectBase»
         «ENDIF»
     '''
 
@@ -1015,6 +1019,62 @@ class AjaxController {
         ]);
     '''
 
+    def private detachHookObjectBase(Application it) '''
+        «detachHookObjectDocBlock(true)»
+        «detachHookObjectSignature»
+        {
+            «detachHookObjectBaseImpl»
+        }
+    '''
+
+    def private detachHookObjectDocBlock(Application it, Boolean isBase) '''
+        /**
+         * Detachs a given hook assignment by removing the corresponding assignment data record.
+         «IF !isBase»
+         *
+         * @Route("/detachHookObject", options={"expose"=true})
+         * @Method("POST")
+         «ENDIF»
+         *
+         * @param Request $request Current request instance
+         *
+         * @return JsonResponse
+         *
+         * @throws AccessDeniedException Thrown if the user doesn't have required permissions
+         */
+    '''
+
+    def private detachHookObjectSignature(Application it) '''
+        public function detachHookObjectAction(Request $request)
+    '''
+
+    def private detachHookObjectBaseImpl(Application it) '''
+        if (!$this->hasPermission('«appName»::Ajax', '::', ACCESS_EDIT)) {
+            throw new AccessDeniedException();
+        }
+
+        $id = $request->request->getInt('id', 0);
+
+        if ($id == 0) {
+            return «IF targets('2.0')»$this->json«ELSE»new JsonResponse«ENDIF»($this->__('Error: invalid input.'), JsonResponse::HTTP_BAD_REQUEST);
+        }
+
+        // select data from data source
+        $entityFactory = $this->get('«appService».entity_factory');
+        $qb = $entityFactory->getObjectManager()->createQueryBuilder();
+        $qb->delete('«vendor.formatForCodeCapital + '\\' + name.formatForCodeCapital + 'Module\\Entity\\HookAssignmentEntity'»', 'tbl')
+           ->where('tbl.id = :identifier')
+           ->setParameter('identifier', $id);
+        
+        $query = $qb->getQuery();
+        $query->execute();
+
+        // return response
+        return «IF targets('2.0')»$this->json«ELSE»new JsonResponse«ENDIF»([
+            'id' => $id
+        ]);
+    '''
+
 
 
     def additionalAjaxFunctions(Application it) '''
@@ -1042,6 +1102,10 @@ class AjaxController {
         «IF hasSortable»
 
             «updateSortPositionsImpl»
+        «ENDIF»
+        «IF hasUiHooksProviders && targets('1.5')»
+
+            «detachHookObjectImpl»
         «ENDIF»
     '''
 
@@ -1108,6 +1172,14 @@ class AjaxController {
         }
     '''
 
+    def private detachHookObjectImpl(Application it) '''
+        «detachHookObjectDocBlock(false)»
+        «detachHookObjectSignature»
+        {
+            return parent::detachHookObjectAction($request);
+        }
+    '''
+
     def private ajaxControllerImpl(Application it) '''
         namespace «appNamespace»\Controller;
 
@@ -1116,7 +1188,7 @@ class AjaxController {
         use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
         use Symfony\Component\HttpFoundation\JsonResponse;
         use Symfony\Component\HttpFoundation\Request;
-        «IF needsDuplicateCheck || hasBooleansWithAjaxToggle || hasTrees»
+        «IF needsDuplicateCheck || hasBooleansWithAjaxToggle || hasTrees || (hasUiHooksProviders && targets('1.5'))»
             use Symfony\Component\Security\Core\Exception\AccessDeniedException;
         «ENDIF»
 

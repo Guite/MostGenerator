@@ -683,9 +683,7 @@ class HookHelper {
                  */
                 public function view(DisplayHook $hook)
                 {
-                    $assignedEntities = $this->selectAssignedEntities($hook);
-                    // TODO: mean for adding new assignments (auto completion and inline creation)
-                    $response = $this->renderDisplayHookResponse($assignedEntities, 'hookDisplayView');
+                    $response = $this->renderDisplayHookResponse($hook, 'hookDisplayView');
                     $hook->setResponse($response);
                 }
 
@@ -696,8 +694,7 @@ class HookHelper {
                  */
                 public function displayEdit(DisplayHook $hook)
                 {
-                    $assignedEntities = $this->selectAssignedEntities($hook);
-                    $response = $this->renderDisplayHookResponse($assignedEntities, 'hookDisplayEdit');
+                    $response = $this->renderDisplayHookResponse($hook, 'hookDisplayEdit');
                     $hook->setResponse($response);
                 }
 
@@ -740,8 +737,7 @@ class HookHelper {
                  */
                 public function displayDelete(DisplayHook $hook)
                 {
-                    $assignedEntities = $this->selectAssignedEntities($hook);
-                    $response = $this->renderDisplayHookResponse($assignedEntities, 'hookDisplayDelete');
+                    $response = $this->renderDisplayHookResponse($hook, 'hookDisplayDelete');
                     $hook->setResponse($response);
                 }
 
@@ -822,12 +818,14 @@ class HookHelper {
                  */
                 protected function selectAssignedEntities(Hook $hook)
                 {
-                    $assignedIds = $this->selectAssignedIds($hook);
+                    list ($assignments, $assignedIds) = $this->selectAssignedIds($hook);
                     if (!count($assignedIds)) {
                         return [];
                     }
 
-                    return $this->entityFactory->getRepository('«name.formatForCode»')->selectByIdList($assignedIds);
+                    $entities = $this->entityFactory->getRepository('«name.formatForCode»')->selectByIdList($assignedIds);
+
+                    return [$assignments, $entities];
                 }
 
                 /**
@@ -835,7 +833,7 @@ class HookHelper {
                  *
                  * @param Hook $hook
                  *
-                 * @return integer[]
+                 * @return array
                  */
                 protected function selectAssignedIds(Hook $hook)
                 {
@@ -853,25 +851,34 @@ class HookHelper {
                         $assignedIds[] = $assignment->getAssignedId();
                     }
 
-                    return $assignedIds;
+                    return [$assignments, $assignedIds];
                 }
 
                 /**
                  * Returns the response for a display hook of a given context.
                  *
-                 * @param array $assignedEntities
+                 * @param Hook   $hook
                  * @param string $context
                  *
                  * @return DisplayHookResponse
                  */
-                protected function renderDisplayHookResponse($assignedEntities, $context)
+                protected function renderDisplayHookResponse(Hook $hook, $context)
                 {
+                    list ($assignments, $assignedEntities) = $this->selectAssignedEntities($hook);
                     $template = '@«application.appName»/«name.formatForCodeCapital»/includeDisplayItemListMany.html.twig';
 
-                    $output = $this->templating->render($template, [
+                    $templateParameters = [
                         'items' => $assignedEntities,
                         'context' => $context
-                    ]);
+                    ];
+
+                    if ($context == 'hookDisplayView') {
+                        // add context information to template parameters in order to provide means
+                        // for adding new assignments and removing existing assignments
+                        $templateParameters['assignments'] = $assignments;
+                    }
+
+                    $output = $this->templating->render($template, $templateParameters);
 
                     return new DisplayHookResponse($this->getAreaName(), $output);
                 }

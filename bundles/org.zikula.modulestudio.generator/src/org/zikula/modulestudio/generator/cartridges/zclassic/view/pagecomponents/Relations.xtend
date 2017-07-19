@@ -43,7 +43,7 @@ class Relations {
 
     def private inclusionTemplate(Entity it, Application app, Boolean many) '''
         {# purpose of this template: inclusion template for display of related «nameMultiple.formatForDisplay»«IF uiHooksProvider != HookProviderMode.DISABLED» or hook assignments«ENDIF» #}
-        «IF uiHooksProvider != HookProviderMode.DISABLED»
+        «IF many && uiHooksProvider != HookProviderMode.DISABLED»
             {#
                 You can use the context variable to check for the context of this list:
                     - 'display': list of related «nameMultiple.formatForDisplay» included in a display template
@@ -96,11 +96,29 @@ class Relations {
             {% endif %}
         «ENDIF»
         «IF many»
+            «IF uiHooksProvider != HookProviderMode.DISABLED»
+                {% if context == 'hookDisplayView' %}
+                    {% set assignmentId = '' %}
+                    {% for assignment in assignments if assignment.getAssignedId() == item.getKey() %}
+                        {% set assignmentId = assignment.getId() %}
+                    {% endfor %}
+                    <p class="list-group-item-text">
+                        <a href="javascript:void(0);" title="{{ __('Detach this «name.formatForDisplay»')|e('html_attr') }}" class="detach-«app.appName.formatForDB»-object hidden" data-assignment-id="{{ assignmentId }}"><i class="fa fa-chain-broken"></i> {{ __('Detach «name.formatForDisplay»') }}</a>
+                    </p>
+                {% endif %}
+            «ENDIF»
                 </li>
                 {% endif %}
             {% endfor %}
             </ul>
             {% endif %}
+            «IF uiHooksProvider != HookProviderMode.DISABLED»
+                {% if context == 'hookDisplayView' %}
+                    <p>
+                        <a href="javascript:void(0);" title="{{ __('Attach «name.formatForDisplay»')|e('html_attr') }}" class="attach-«app.appName.formatForDB»-object hidden"><i class="fa fa-link"></i> {{ __('Attach «name.formatForDisplay»') }}</a>
+                    </p>
+                {% endif %}
+            «ENDIF»
         «ENDIF»
     '''
 
