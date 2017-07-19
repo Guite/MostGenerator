@@ -493,6 +493,7 @@ class HookHelper {
             use Symfony\Component\Form\FormFactoryInterface;
             use Symfony\Component\HttpFoundation\Session\SessionInterface;
         «ELSEIF category == 'UiHooks'»
+            use Doctrine\ORM\QueryBuilder;
             use Symfony\Component\HttpFoundation\RequestStack;
         «ENDIF»
         use Zikula\Bundle\HookBundle\Category\«category»Category;
@@ -716,14 +717,9 @@ class HookHelper {
 
                     // update url information for assignments of updated data object
                     $qb = $this->entityFactory->getObjectManager()->createQueryBuilder();
-                    $qb->update('«application.vendor.formatForCodeCapital + '\\' + application.name.formatForCodeCapital + 'Module\\Entity\\HookAssignmentEntity'»', 'tbl')
-                       ->set('tbl.subscriberUrl', $url->toArray())
-                       ->where('tbl.subscriberOwner = :moduleName')
-                       ->setParameter('moduleName', $hook->getCaller())
-                       ->andWhere('tbl.subscriberAreaId = :areaId')
-                       ->setParameter('areaId', $hook->getAreaId())
-                       ->andWhere('tbl.subscriberObjectId = :objectId')
-                       ->setParameter('objectId', $hook->getId());
+                    $qb->update($this->getHookAssignmentEntity(), 'tbl')
+                       ->set('tbl.subscriberUrl', $url->toArray());
+                    $qb = $this->addContextFilters($qb, $hook);
 
                     $query = $qb->getQuery();
                     $query->execute();
@@ -760,13 +756,8 @@ class HookHelper {
                 {
                     // delete assignments of removed data object
                     $qb = $this->entityFactory->getObjectManager()->createQueryBuilder();
-                    $qb->delete('«application.vendor.formatForCodeCapital + '\\' + application.name.formatForCodeCapital + 'Module\\Entity\\HookAssignmentEntity'»', 'tbl')
-                       ->where('tbl.subscriberOwner = :moduleName')
-                       ->setParameter('moduleName', $hook->getCaller())
-                       ->andWhere('tbl.subscriberAreaId = :areaId')
-                       ->setParameter('areaId', $hook->getAreaId())
-                       ->andWhere('tbl.subscriberObjectId = :objectId')
-                       ->setParameter('objectId', $hook->getId());
+                    $qb->delete($this->getHookAssignmentEntity(), 'tbl');
+                    $qb = $this->addContextFilters($qb, $hook);
 
                     $query = $qb->getQuery();
                     $query->execute();
@@ -780,6 +771,36 @@ class HookHelper {
                 protected function getAreaName()
                 {
                     return 'provider.«application.appName.formatForDB».ui_hooks.«nameMultiple.formatForDB»';
+                }
+
+                /**
+                 * Returns the entity for hook assignment data.
+                 *
+                 * @return string
+                 */
+                protected function getHookAssignmentEntity()
+                {
+                    return '«application.vendor.formatForCodeCapital + '\\' + application.name.formatForCodeCapital + 'Module\\Entity\\HookAssignmentEntity'»';
+                }
+
+                /**
+                 * Adds common hook-based filters to a given query builder.
+                 *
+                 * @param QueryBuilder $qb
+                 * @param Hook $hook
+                 *
+                 * @return QueryBuilder
+                 */
+                protected function addContextFilters(QueryBuilder $qb, Hook $hook)
+                {
+                    $qb->where('tbl.subscriberOwner = :moduleName')
+                       ->setParameter('moduleName', $hook->getCaller())
+                       ->andWhere('tbl.subscriberAreaId = :areaId')
+                       ->setParameter('areaId', $hook->getAreaId())
+                       ->andWhere('tbl.subscriberObjectId = :objectId')
+                       ->setParameter('objectId', $hook->getId());
+
+                    return $qb;
                 }
             «ENDIF»
         }
