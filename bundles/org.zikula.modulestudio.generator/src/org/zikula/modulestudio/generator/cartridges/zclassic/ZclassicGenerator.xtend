@@ -24,6 +24,7 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.controller.addition
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.additions.MultiHook
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.additions.Newsletter
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.additions.Tag
+import org.zikula.modulestudio.generator.cartridges.zclassic.controller.javascript.AutoCompletion
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.javascript.ConfigFunctions
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.javascript.DisplayFunctions
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.javascript.EditFunctions
@@ -55,6 +56,7 @@ import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
+import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
 
@@ -64,6 +66,7 @@ class ZclassicGenerator implements IGenerator {
     extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension ModelExtensions = new ModelExtensions
+    extension ModelJoinExtensions = new ModelJoinExtensions
     extension Utils = new Utils
     extension WorkflowExtensions = new WorkflowExtensions
 
@@ -164,6 +167,9 @@ class ZclassicGenerator implements IGenerator {
         new DisplayFunctions().generate(it, fsa)
         if (hasEditActions) {
             new EditFunctions().generate(it, fsa)
+        }
+        if (needsAutoCompletion) {
+            new AutoCompletion().generate(it, fsa)
         }
         val needsDetailContentType = generateDetailContentType && hasDisplayActions
         if (generateExternalControllerAndFinder || needsDetailContentType) {

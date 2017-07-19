@@ -381,6 +381,9 @@ class Layout {
                     {% if 'edit' in app.request.get('_route') %}
                         {{ pageAddAsset('javascript', zasset('@«appName»:js/«appName».Validation.js'), 98) }}
                         {{ pageAddAsset('javascript', zasset('@«appName»:js/«appName».EditFunctions.js'), 99) }}
+                        «IF needsAutoCompletion»
+                            {{ pageAddAsset('javascript', zasset('@«appName»:js/«appName».AutoCompletion.js'), 99) }}
+                        «ENDIF»
                     {% endif %}
                 «ENDIF»
                 {% if «IF hasEditActions»'edit' in app.request.get('_route')«IF needsConfig» or «ENDIF»«ENDIF»«IF needsConfig»'config' in app.request.get('_route')«ENDIF» %}

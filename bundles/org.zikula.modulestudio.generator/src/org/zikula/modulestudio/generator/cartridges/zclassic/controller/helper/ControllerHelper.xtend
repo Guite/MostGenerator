@@ -647,7 +647,7 @@ class ControllerHelper {
          * To use this please customise it to your needs in the concrete subclass.
          * Also you have to call this method in a PrePersist-Handler of the
          * corresponding entity class.
-         * There is also a method on JS level available in «getAppJsPath»«appName».EditFunctions.js.
+         * There is also a method on JS level available in «getAppJsPath»«appName».Geo.js.
          *
          * @param string $address The address input string
          *
