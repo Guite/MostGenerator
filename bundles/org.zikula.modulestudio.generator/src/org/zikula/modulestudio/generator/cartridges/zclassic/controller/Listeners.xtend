@@ -113,6 +113,9 @@ class Listeners {
             use Symfony\Component\EventDispatcher\EventSubscriberInterface;
             use Zikula\Core\CoreEvents;
             use Zikula\Core\Event\ModuleStateEvent;
+            «IF hasUiHooksProviders»
+                use «appNamespace»\Entity\Factory\EntityFactory;
+            «ENDIF»
             «IF amountOfExampleRows > 0»
                 use «appNamespace»\Helper\ExampleDataHelper;
             «ENDIF»

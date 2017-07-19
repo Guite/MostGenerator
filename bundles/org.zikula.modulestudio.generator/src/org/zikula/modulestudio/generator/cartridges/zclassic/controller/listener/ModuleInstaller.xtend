@@ -1,12 +1,14 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener
 
 import de.guite.modulestudio.metamodel.Application
+import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class ModuleInstaller {
 
+    extension FormattingExtensions = new FormattingExtensions
     extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     extension ModelExtensions = new ModelExtensions
     extension Utils = new Utils
@@ -20,13 +22,39 @@ class ModuleInstaller {
              */
             protected $exampleDataHelper
 
+        «ENDIF»
+        «IF hasUiHooksProviders»
+            /**
+             * @var EntityFactory
+             */
+            protected $entityFactory;
+
+        «ENDIF»
+        «IF amountOfExampleRows > 0 || hasUiHooksProviders»
             /**
              * InstallerListener constructor.
              *
+             «IF amountOfExampleRows > 0»
              * @param ExampleDataHelper $exampleDataHelper Example data helper service instance
+             «ENDIF»
+             «IF hasUiHooksProviders»
+             * @param EntityFactory $entityFactory EntityFactory service instance
+             «ENDIF»
              */
-            public function __construct(ExampleDataHelper $exampleDataHelper) {
-                $this->exampleDataHelper = $exampleDataHelper;
+            public function __construct(
+                «IF amountOfExampleRows > 0»
+                    ExampleDataHelper $exampleDataHelper«IF hasUiHooksProviders»,«ENDIF»
+                «ENDIF»
+                «IF hasUiHooksProviders»
+                    EntityFactory $entityFactory
+                «ENDIF»
+            ) {
+                «IF amountOfExampleRows > 0»
+                    $this->exampleDataHelper = $exampleDataHelper;
+                «ENDIF»
+                «IF hasUiHooksProviders»
+                    $this->entityFactory = $entityFactory;
+                «ENDIF»
             }
 
         «ENDIF»
@@ -144,7 +172,19 @@ class ModuleInstaller {
         public function moduleRemoved(ModuleStateEvent $event)
         {
             «IF hasUiHooksProviders»
-                // TODO: remove hook assignment data for removed module
+                $module = $event->getModule();
+                if (null === $module) {
+                    return;
+                }
+
+                // delete any existing hook assignments for the removed module
+                $qb = $this->entityFactory->getObjectManager()->createQueryBuilder();
+                $qb->delete('«vendor.formatForCodeCapital + '\\' + name.formatForCodeCapital + 'Module\\Entity\\HookAssignmentEntity'»', 'tbl')
+                   ->where('tbl.subscriberOwner = :moduleName')
+                   ->setParameter('moduleName', $module->getName());
+
+                $query = $qb->getQuery();
+                $query->execute();
             «ENDIF»
         }
     '''

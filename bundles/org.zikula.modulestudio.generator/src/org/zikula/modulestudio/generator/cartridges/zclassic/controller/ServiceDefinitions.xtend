@@ -266,9 +266,14 @@ class ServiceDefinitions {
         «FOR className : getSubscriberNames»
             «modPrefix».«className.toLowerCase»_listener:
                 class: «appNamespace»\Listener\«className»Listener
-                «IF className == 'Installer' && amountOfExampleRows > 0»
+                «IF className == 'Installer' && (amountOfExampleRows > 0 || hasUiHooksProviders)»
                     arguments:
-                        - "@«modPrefix».example_data_helper"
+                        «IF amountOfExampleRows > 0»
+                            - "@«modPrefix».example_data_helper"
+                        «ENDIF»
+                        «IF hasUiHooksProviders»
+                            - "@«modPrefix».entity_factory"
+                        «ENDIF»
                 «ELSEIF className == 'ThirdParty' && needsApproval && generatePendingContentSupport»
                     arguments:
                         - "@«modPrefix».workflow_helper"
