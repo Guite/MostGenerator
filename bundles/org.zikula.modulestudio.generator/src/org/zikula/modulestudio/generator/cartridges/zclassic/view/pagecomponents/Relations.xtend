@@ -42,8 +42,8 @@ class Relations {
     }
 
     def private inclusionTemplate(Entity it, Application app, Boolean many) '''
-        {# purpose of this template: inclusion template for display of related «nameMultiple.formatForDisplay»«IF uiHooksProvider != HookProviderMode.DISABLED» or hook assignments«ENDIF» #}
-        «IF many && uiHooksProvider != HookProviderMode.DISABLED»
+        {# purpose of this template: inclusion template for display of related «nameMultiple.formatForDisplay»«IF uiHooksProvider != HookProviderMode.DISABLED && app.targets('1.5')» or hook assignments«ENDIF» #}
+        «IF many && uiHooksProvider != HookProviderMode.DISABLED && app.targets('1.5')»
             {#
                 You can use the context variable to check for the context of this list:
                     - 'display': list of related «nameMultiple.formatForDisplay» included in a display template
@@ -96,7 +96,7 @@ class Relations {
             {% endif %}
         «ENDIF»
         «IF many»
-            «IF uiHooksProvider != HookProviderMode.DISABLED»
+            «IF uiHooksProvider != HookProviderMode.DISABLED && app.targets('1.5')»
                 {% if context == 'hookDisplayView' %}
                     {% set assignmentId = '' %}
                     {% for assignment in assignments if assignment.getAssignedId() == item.getKey() %}
@@ -112,7 +112,7 @@ class Relations {
             {% endfor %}
             </ul>
             {% endif %}
-            «IF uiHooksProvider != HookProviderMode.DISABLED»
+            «IF uiHooksProvider != HookProviderMode.DISABLED && app.targets('1.5')»
                 {% if context == 'hookDisplayView' %}
                     <p>
                         <a href="javascript:void(0);" title="{{ __('Attach «name.formatForDisplay»')|e('html_attr') }}" class="attach-«app.appName.formatForDB»-object hidden"><i class="fa fa-link"></i> {{ __('Attach «name.formatForDisplay»') }}</a>
