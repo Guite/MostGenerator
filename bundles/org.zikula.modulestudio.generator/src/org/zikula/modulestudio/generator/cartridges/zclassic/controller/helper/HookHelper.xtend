@@ -709,9 +709,24 @@ class HookHelper {
                  */
                 public function processEdit(ProcessHook $hook)
                 {
-                    // TODO update assignments (UPDATE url for context)
-                    // $hook->getCaller() [modname], $hook->getAreaId(), $hook->getId(), $hook->getUrl() [UrlInterface]
-                    $this->requestStack->getCurrentRequest()->getSession()->getFlashBag()->add('success', 'Ui hook properly processed!');
+                    $url = $hook->getUrl();
+                    if (null === $url || !is_object($url)) {
+                        return;
+                    }
+
+                    // update url information for assignments of updated data object
+                    $qb = $this->entityFactory->getObjectManager()->createQueryBuilder();
+                    $qb->update('«application.vendor.formatForCodeCapital + '\\' + application.name.formatForCodeCapital + 'Module\\Entity\\HookAssignmentEntity'»', 'tbl')
+                       ->set('tbl.subscriberUrl', $url->toArray())
+                       ->where('tbl.subscriberOwner = :moduleName')
+                       ->setParameter('moduleName', $hook->getCaller())
+                       ->andWhere('tbl.subscriberAreaId = :areaId')
+                       ->setParameter('areaId', $hook->getAreaId())
+                       ->andWhere('tbl.subscriberObjectId = :objectId')
+                       ->setParameter('objectId', $hook->getId());
+
+                    $query = $qb->getQuery();
+                    $query->execute();
                 }
 
                 /**
