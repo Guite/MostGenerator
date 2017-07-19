@@ -511,6 +511,8 @@ class HookHelper {
         «IF category == 'FormAware'»
             use «application.appNamespace»\Form\Type\Hook\Delete«name.formatForCodeCapital»Type;
             use «application.appNamespace»\Form\Type\Hook\Edit«name.formatForCodeCapital»Type;
+        «ELSEIF category == 'UiHooks'»
+            use «application.appNamespace»\Entity\Factory\EntityFactory;
         «ENDIF»
 
         /**
@@ -540,6 +542,11 @@ class HookHelper {
                  * @var RequestStack
                  */
                 private $requestStack;
+
+                /**
+                 * @var EntityFactory
+                 */
+                protected $entityFactory;
             «ENDIF»
 
             /**
@@ -551,6 +558,8 @@ class HookHelper {
              * @param FormFactoryInterface $formFactory
              «ELSEIF category == 'UiHooks'»
              * @param TranslatorInterface $translator
+             * @param RequestStack        $requestStack
+             * @param EntityFactory       $entityFactory
              «/*TODO*/»
              «ENDIF»
              */
@@ -560,7 +569,8 @@ class HookHelper {
                     SessionInterface $session,
                     FormFactoryInterface $formFactory
                 «ELSEIF category == 'UiHooks'»
-                    RequestStack $requestStack
+                    RequestStack $requestStack,
+                    EntityFactory $entityFactory
                 «ENDIF»
             ) {
                 $this->translator = $translator;
@@ -569,6 +579,7 @@ class HookHelper {
                     $this->formFactory = $formFactory;
                 «ELSEIF category == 'UiHooks'»
                     $this->requestStack = $requestStack;
+                    $this->entityFactory = $entityFactory;
                 «ENDIF»
             }
 
@@ -732,9 +743,18 @@ class HookHelper {
                  */
                 public function processDelete(ProcessHook $hook)
                 {
-                    // TODO delete assignments
-                    // $hook->getCaller() [modname], $hook->getAreaId(), $hook->getId(), $hook->getUrl() [UrlInterface]
-                    $this->requestStack->getCurrentRequest()->getSession()->getFlashBag()->add('success', 'Ui hook properly processed!');
+                    // delete assignments of removed data object
+                    $qb = $this->entityFactory->getObjectManager()->createQueryBuilder();
+                    $qb->delete('«application.vendor.formatForCodeCapital + '\\' + application.name.formatForCodeCapital + 'Module\\Entity\\HookAssignmentEntity'»', 'tbl')
+                       ->where('tbl.subscriberOwner = :moduleName')
+                       ->setParameter('moduleName', $hook->getCaller())
+                       ->andWhere('tbl.subscriberAreaId = :areaId')
+                       ->setParameter('areaId', $hook->getAreaId())
+                       ->andWhere('tbl.subscriberObjectId = :objectId')
+                       ->setParameter('objectId', $hook->getId());
+
+                    $query = $qb->getQuery();
+                    $query->execute();
                 }
 
                 /**
