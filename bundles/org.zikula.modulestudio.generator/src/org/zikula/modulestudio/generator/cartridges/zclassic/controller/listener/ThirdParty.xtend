@@ -229,7 +229,7 @@ class ThirdParty {
         $plugins->add(
             [
                 'name' => '«appName.formatForDB»',
-                'path' => '«relativeAppRootPath»/«getResourcesPath»Scribite/TinyMce/«appName.formatForDB»/plugin.js'
+                'path' => '«relativeAppRootPath»/«getResourcesPath»scribite/TinyMce/«appName.formatForDB»/plugin.js'
             ]
         );
     '''
@@ -257,7 +257,7 @@ class ThirdParty {
         $plugins->add(
             [
                 'name' => '«appName.formatForDB»',
-                'path' => '«relativeAppRootPath»/«getResourcesPath»Scribite/CKEditor/«appName.formatForDB»/',
+                'path' => '«relativeAppRootPath»/«getResourcesPath»scribite/CKEditor/«appName.formatForDB»/',
                 'file' => 'plugin.js',
                 'img'  => 'ed_«appName.formatForDB».gif'
             ]

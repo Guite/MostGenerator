@@ -24,7 +24,7 @@ class Scribite {
         println('Generating Scribite support')
         this.fsa = fsa
 
-        docPath = getResourcesPath + 'Scribite/'
+        docPath = getResourcesPath + 'scribite/'
         var fileName = 'integration.md'
         if (!shouldBeSkipped(docPath + fileName)) {
             if (shouldBeMarked(docPath + fileName)) {
