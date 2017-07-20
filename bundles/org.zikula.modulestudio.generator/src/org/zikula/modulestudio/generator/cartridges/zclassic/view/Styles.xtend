@@ -137,7 +137,7 @@ class Styles {
         «val hasUserFields = hasUserFields || hasStandardFieldEntities»
         «val hasImageFields = hasImageFields»
         «val joinRelations = getJoinRelations»
-        «IF !joinRelations.empty || (hasUserFields && !targets('1.5'))»
+        «IF !joinRelations.empty || (hasUserFields && !targets('1.5')) || (hasUiHooksProviders && targets('1.5'))»
 
             /* edit pages */
             «IF !joinRelations.empty»

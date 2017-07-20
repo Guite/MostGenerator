@@ -112,7 +112,7 @@ class GeoFunctions {
          */
         function «vendorAndName»InitGeoCoding(addressCallback)
         {
-            jQuery('#linkGetCoordinates').click( function (evt) {
+            jQuery('#linkGetCoordinates').click(function (event) {
                 «vendorAndName»DoGeoCoding(addressCallback);
             });
         }

@@ -45,18 +45,18 @@ class HookAssignment {
         /**
          * Adds a hook assignment for a certain object.
          */
-        function «vendorAndName»AttachHookObject(elem)
+        function «vendorAndName»AttachHookObject(attachLink, entityId)
         {
             jQuery.ajax({
                 method: 'POST',
                 url: Routing.generate('«appName.formatForDB»_ajax_attachhookobject'),
                 data: {
-                    owner: jQuery(elem).data('owner'),
-                    areaId: jQuery(elem).data('area-id'),
-                    objectId: jQuery(elem).data('object-id'),
-                    url: jQuery(elem).data('url'),
-                    assignedEntity: jQuery(elem).data('assigned-entity'),
-                    assignedId: jQuery('#assignedEntityId').text()
+                    owner: attachLink.data('owner'),
+                    areaId: attachLink.data('area-id'),
+                    objectId: attachLink.data('object-id'),
+                    url: attachLink.data('url'),
+                    assignedEntity: attachLink.data('assigned-entity'),
+                    assignedId: entityId
                 },
                 success: function(data) {
                     window.location.reload();
@@ -69,13 +69,13 @@ class HookAssignment {
         /**
          * Removes a hook assignment for a certain object.
          */
-        function «vendorAndName»DetachHookObject(elem)
+        function «vendorAndName»DetachHookObject()
         {
             jQuery.ajax({
                 method: 'POST',
                 url: Routing.generate('«appName.formatForDB»_ajax_detachhookobject'),
                 data: {
-                    id: jQuery(elem).data('assignment-id')
+                    id: jQuery(this).data('assignment-id')
                 },
                 success: function(data) {
                     window.location.reload();
@@ -86,9 +86,6 @@ class HookAssignment {
 
     def private onLoad(Application it) '''
         jQuery(document).ready(function() {
-            jQuery('.attach-«appName.formatForDB»-object')
-                .click(«vendorAndName»AttachHookObject)
-                .removeClass('hidden');
             jQuery('.detach-«appName.formatForDB»-object')
                 .click(«vendorAndName»DetachHookObject)
                 .removeClass('hidden');

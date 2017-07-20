@@ -368,7 +368,7 @@ class TreeFunctions {
     def private onLoad(Application it) '''
         jQuery(document).ready(function() {
             if (jQuery('#treeAddRoot').length > 0) {
-                jQuery('#treeAddRoot').click( function(event) {
+                jQuery('#treeAddRoot').click(function (event) {
                     event.preventDefault();
                     «vendorAndName»PerformTreeOperation(jQuery(this).data('object-type'), 1, 'addRootNode');
                 }).removeClass('hidden');

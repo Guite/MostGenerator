@@ -2,12 +2,14 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.controller.javascr
 
 import de.guite.modulestudio.metamodel.Application
 import org.eclipse.xtext.generator.IFileSystemAccess
+import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class AutoCompletion {
 
+    extension ModelExtensions = new ModelExtensions
     extension ModelJoinExtensions = new ModelJoinExtensions
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
@@ -43,6 +45,10 @@ class AutoCompletion {
         «removeRelatedItem»
 
         «selectRelatedItem»
+        «IF hasUiHooksProviders && targets('1.5')»
+
+            «selectHookItem»
+        «ENDIF»
 
         «initRelatedItemsForm»
 
@@ -123,7 +129,7 @@ class AutoCompletion {
 
     def private initInlineRelationWindow(Application it) '''
         /**
-         * Observe a link for opening an inline window
+         * Observe a link for opening an inline window.
          */
         function «vendorAndName»InitInlineRelationWindow(objectType, containerID)
         {
@@ -194,7 +200,7 @@ class AutoCompletion {
          */
         function «vendorAndName»SelectRelatedItem(objectType, idPrefix, selectedListItem)
         {
-            var newItemId, newTitle, includeEditing, editLink, removeLink, elemPrefix, itemPreview, li, editHref, fldPreview, itemIds, itemIdsArr;
+            var newItemId, newTitle, includeEditing, editLink, removeLink, elemPrefix, itemPreview, li, editHref, fldPreview, itemIds;
 
             itemIds = jQuery('#' + idPrefix).val();
             if (itemIds !== '') {
@@ -216,36 +222,49 @@ class AutoCompletion {
                 itemPreview = selectedListItem.image;
             }
 
-            var li = jQuery('<li />', { id: elemPrefix, text: newTitle });
+            li = jQuery('<li />', { id: elemPrefix, text: newTitle });
             if (true === includeEditing) {
                 var editHref = jQuery('#' + idPrefix + 'SelectorDoNew').attr('href') + '&id=' + newItemId;
                 editLink = jQuery('<a />', { id: elemPrefix + 'Edit', href: editHref, text: 'edit' });
                 li.append(editLink);
+                editLink.html(' ' + editImage);
             }
+
             removeLink = jQuery('<a />', { id: elemPrefix + 'Remove', href: 'javascript:«vendorAndName»RemoveRelatedItem(\'' + idPrefix + '\', ' + newItemId + ');', text: 'remove' });
             li.append(removeLink);
+            removeLink.html(' ' + removeImage);
+
             if (itemPreview !== '') {
                 fldPreview = jQuery('<div>', { id: elemPrefix + 'preview', name: idPrefix + 'preview' });
                 fldPreview.html(itemPreview);
                 li.append(fldPreview);
                 itemPreview = '';
             }
+
             jQuery('#' + idPrefix + 'ReferenceList').append(li);
 
             if (true === includeEditing) {
-                editLink.html(' ' + editImage);
-
-                jQuery('#' + elemPrefix + 'Edit').click( function (event) {
+                jQuery('#' + elemPrefix + 'Edit').click(function (event) {
                     event.preventDefault();
                     «vendorAndName»InitInlineRelationWindow(objectType, idPrefix + 'Reference_' + newItemId + 'Edit');
                 });
             }
-            removeLink.html(' ' + removeImage);
 
             itemIds += newItemId;
             jQuery('#' + idPrefix).val(itemIds);
 
             «vendorAndName»ResetRelatedItemForm(idPrefix);
+        }
+    '''
+
+    def private selectHookItem(Application it) '''
+        /**
+         * Adds a hook assignment item to selection which has been chosen by auto completion.
+         */
+        function «vendorAndName»SelectHookItem(objectType, idPrefix, selectedListItem)
+        {
+            «vendorAndName»ResetRelatedItemForm(idPrefix);
+            «vendorAndName»AttachHookObject(jQuery(idPrefix + 'AddLink'), selectedListItem.id);
         }
     '''
 
@@ -255,24 +274,28 @@ class AutoCompletion {
          */
         function «vendorAndName»InitRelationItemsForm(objectType, idPrefix, includeEditing)
         {
-            var acOptions, acDataSet, itemIds, itemIdsArr, acUrl;
+            var acOptions, acDataSet, itemIds, itemIdsArr, acUrl«IF hasUiHooksProviders && targets('1.5')», isHookAttacher«ENDIF»;
 
             // update identifier of hidden field for easier usage in JS
             jQuery('#' + idPrefix + 'Multiple').prev().attr('id', idPrefix);
 
             // add handling for the toggle link if existing
-            jQuery('#' + idPrefix + 'AddLink').click( function (event) {
+            jQuery('#' + idPrefix + 'AddLink').click(function (event) {
                 «vendorAndName»ToggleRelatedItemForm(idPrefix);
             });
 
             // add handling for the cancel button
-            jQuery('#' + idPrefix + 'SelectorDoCancel').click( function (event) {
+            jQuery('#' + idPrefix + 'SelectorDoCancel').click(function (event) {
                 «vendorAndName»ResetRelatedItemForm(idPrefix);
             });
 
             // clear values and ensure starting state
             «vendorAndName»ResetRelatedItemForm(idPrefix);
 
+            «IF hasUiHooksProviders && targets('1.5')»
+
+                isHookAttacher = idPrefix.startsWith('hookAssignment');
+            «ENDIF»
             jQuery.each(relationHandler, function (key, singleRelationHandler) {
                 if (singleRelationHandler.prefix !== (idPrefix + 'SelectorDoNew') || null !== singleRelationHandler.acInstance) {
                     return;
@@ -295,7 +318,15 @@ class AutoCompletion {
                             fragment: request.term
                         };
                         if (jQuery('#' + idPrefix).length > 0) {
-                            acUrlArgs.exclude = jQuery('#' + idPrefix).val();
+                            «IF hasUiHooksProviders && targets('1.5')»
+                                if (true === isHookAttacher) {
+                                    acUrlArgs.exclude = jQuery('#' + idPrefix + 'ExcludedIds').val();
+                                } else {
+                                    acUrlArgs.exclude = jQuery('#' + idPrefix).val();
+                                }
+                            «ELSE»
+                                acUrlArgs.exclude = jQuery('#' + idPrefix).val();
+                            «ENDIF»
                         }
 
                         jQuery.getJSON(Routing.generate(singleRelationHandler.moduleName.toLowerCase() + '_ajax_getitemlistautocompletion', acUrlArgs), function(data) {
@@ -314,7 +345,15 @@ class AutoCompletion {
                         return false;
                     },
                     select: function(event, ui) {
-                        «vendorAndName»SelectRelatedItem(objectType, idPrefix, ui.item);
+                        «IF hasUiHooksProviders && targets('1.5')»
+                            if (true === isHookAttacher) {
+                                «vendorAndName»SelectHookItem(objectType, idPrefix, ui.item);
+                            } else {
+                                «vendorAndName»SelectRelatedItem(objectType, idPrefix, ui.item);
+                            }
+                        «ELSE»
+                            «vendorAndName»SelectRelatedItem(objectType, idPrefix, ui.item);
+                        «ENDIF»
 
                         return false;
                     }
@@ -332,7 +371,7 @@ class AutoCompletion {
 
             // from here inline editing will be handled
             jQuery('#' + idPrefix + 'SelectorDoNew').attr('href', jQuery('#' + idPrefix + 'SelectorDoNew').attr('href') + '?raw=1&idp=' + idPrefix + 'SelectorDoNew');
-            jQuery('#' + idPrefix + 'SelectorDoNew').click( function(event) {
+            jQuery('#' + idPrefix + 'SelectorDoNew').click(function (event) {
                 event.preventDefault();
                 «vendorAndName»InitInlineRelationWindow(objectType, idPrefix + 'SelectorDoNew');
             });
@@ -345,7 +384,7 @@ class AutoCompletion {
                 if (existingId) {
                     elemPrefix = idPrefix + 'Reference_' + existingId + 'Edit';
                     jQuery('#' + elemPrefix).attr('href', jQuery('#' + elemPrefix).attr('href') + '?raw=1&idp=' + elemPrefix);
-                    jQuery('#' + elemPrefix).click( function (event) {
+                    jQuery('#' + elemPrefix).click(function (event) {
                         event.preventDefault();
                         «vendorAndName»InitInlineRelationWindow(objectType, elemPrefix);
                     });

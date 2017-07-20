@@ -59,7 +59,7 @@ class EditFunctions {
              */
             function «vendorAndName»InitUserField(fieldName)
             {
-                jQuery('#' + fieldName + 'ResetVal').click( function (event) {
+                jQuery('#' + fieldName + 'ResetVal').click(function (event) {
                     event.preventDefault();
                     jQuery('#' + fieldName).val('');
                     jQuery('#' + fieldName + 'Selector').val('');
@@ -127,7 +127,7 @@ class EditFunctions {
          */
         function «vendorAndName»InitUploadField(fieldName)
         {
-            jQuery('#' + fieldName + 'ResetVal').click( function (event) {
+            jQuery('#' + fieldName + 'ResetVal').click(function (event) {
                 event.preventDefault();
                 «vendorAndName»ResetUploadField(fieldName);
             }).removeClass('hidden');
@@ -140,7 +140,7 @@ class EditFunctions {
          */
         function «vendorAndName»InitDateField(fieldName)
         {
-            jQuery('#' + fieldName + 'ResetVal').click( function (event) {
+            jQuery('#' + fieldName + 'ResetVal').click(function (event) {
                 event.preventDefault();
                 jQuery('#' + fieldName).val('');
             }).removeClass('hidden');

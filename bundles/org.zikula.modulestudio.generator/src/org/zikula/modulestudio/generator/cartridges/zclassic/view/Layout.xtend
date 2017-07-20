@@ -260,7 +260,7 @@ class Layout {
                         <input type="text" id="{{ idPrefix }}Selector" name="{{ idPrefix }}Selector" autocomplete="off" />
                         <input type="button" id="{{ idPrefix }}SelectorDoCancel" name="{{ idPrefix }}SelectorDoCancel" value="{{ __('Cancel') }}" class="btn btn-default «appName.toLowerCase»-inline-button" />
                         {% if create_url != '' %}
-                            <a id="{{ idPrefix }}SelectorDoNew" href="{{ create_url }}" title="{{ __f('Create new %name%', { '%name%': entityNameTranslated }) }}" class="btn btn-default rkbulletinnewsmodule-inline-button">{{ __('Create') }}</a>
+                            <a id="{{ idPrefix }}SelectorDoNew" href="{{ create_url }}" title="{{ __f('Create new %name%', { '%name%': entityNameTranslated }) }}" class="btn btn-default «appName.toLowerCase»-inline-button">{{ __('Create') }}</a>
                         {% endif %}
                         <noscript><p>{{ __('This function requires JavaScript activated!') }}</p></noscript>
                     </div>

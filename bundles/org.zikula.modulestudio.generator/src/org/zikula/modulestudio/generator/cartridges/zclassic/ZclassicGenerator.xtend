@@ -169,7 +169,7 @@ class ZclassicGenerator implements IGenerator {
         if (hasEditActions) {
             new EditFunctions().generate(it, fsa)
         }
-        if (needsAutoCompletion) {
+        if (needsAutoCompletion || (hasUiHooksProviders && targets('1.5'))) {
             new AutoCompletion().generate(it, fsa)
         }
         val needsDetailContentType = generateDetailContentType && hasDisplayActions

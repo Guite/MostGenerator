@@ -53,6 +53,11 @@ class Relations {
             #}
             {% if context != 'display' %}
                 <h3>{{ __('Assigned «nameMultiple.formatForDisplay»') }}</h3>
+                {% if context == 'hookDisplayView' && hasEditPermission %}
+                    {% set entityNameTranslated = __('«name.formatForDisplay»') %}
+                    {{ pageAddAsset('javascript', zasset('@«app.appName»:js/«app.appName».HookAssignment.js'), 99) }}
+                    {{ pageAddAsset('javascript', zasset('@«app.appName»:js/«app.appName».AutoCompletion.js'), 99) }}
+                {% endif %}
             {% endif %}
         «ENDIF»
         {% set hasAdminPermission = hasPermission('«app.appName»:«name.formatForCodeCapital»:', '::', 'ACCESS_«IF workflow == EntityWorkflowType::NONE»EDIT«ELSE»COMMENT«ENDIF»') %}
@@ -103,7 +108,7 @@ class Relations {
                         {% set assignmentId = assignment.getId() %}
                     {% endfor %}
                     <p class="list-group-item-text">
-                        <a href="javascript:void(0);" title="{{ __('Detach this «name.formatForDisplay»')|e('html_attr') }}" class="detach-«app.appName.formatForDB»-object hidden" data-assignment-id="{{ assignmentId|e('html_attr') }}"><i class="fa fa-chain-broken"></i> {{ __('Detach «name.formatForDisplay»') }}</a>
+                        <a href="javascript:void(0);" title="{{ __f('Detach this %name%', { '%name%': entityNameTranslated })|e('html_attr') }}" class="detach-«app.appName.formatForDB»-object hidden" data-assignment-id="{{ assignmentId|e('html_attr') }}"><i class="fa fa-chain-broken"></i> {{ __f('Detach %name%', { '%name%': entityNameTranslated }) }}</a>
                     </p>
                 {% endif %}
             «ENDIF»
@@ -114,11 +119,45 @@ class Relations {
             {% endif %}
             «IF uiHooksProvider != HookProviderMode.DISABLED && app.targets('1.5')»
                 {% if context == 'hookDisplayView' && hasEditPermission %}
-                    <p>
-                        <span id="assignedEntityId" class="hidden"></span>
-                        <span id="excludedIds" class="hidden">{% for assignment in assignments %}{% if not loop.first %},{% endif %}{{ assignment.getAssignedId() }}{% endfor %}</span>
-                        <a href="javascript:void(0);" title="{{ __('Attach «name.formatForDisplay»')|e('html_attr') }}" class="attach-«app.appName.formatForDB»-object hidden" data-owner="{{ subscriberOwner|e('html_attr') }}" data-area-id="{{ subscriberAreaId|e('html_attr') }}" data-object-id="{{ subscriberObjectId|e('html_attr') }}" data-url="{{ subscriberUrl|e('html_attr') }}" data-assigned-entity="«name.formatForCode»"><i class="fa fa-link"></i> {{ __('Attach «name.formatForDisplay»') }}</a>
-                    </p>
+                    {% set withImage = «hasImageFieldsEntity.displayBool» %}
+                    {% set idPrefix = 'hookAssignment«name.formatForCodeCapital»' %}
+                    {% set addLinkText = __f('Attach %name%', { '%name%': entityNameTranslated }) %}
+                    <div id="{{ idPrefix }}LiveSearch" class="«app.appName.toLowerCase»-add-hook-assignment">
+                        <a id="{{ idPrefix }}AddLink" href="javascript:void(0);" title="{{ addLinkText|e('html_attr') }}" class="attach-«app.appName.formatForDB»-object hidden" data-owner="{{ subscriberOwner|e('html_attr') }}" data-area-id="{{ subscriberAreaId|e('html_attr') }}" data-object-id="{{ subscriberObjectId|e('html_attr') }}" data-url="{{ subscriberUrl|e('html_attr') }}" data-assigned-entity="«name.formatForCode»"><i class="fa fa-link"></i> {{ addLinkText }}
+                        <div id="{{ idPrefix }}AddFields" class="«app.appName.toLowerCase»-autocomplete{{ withImage ? '-with-image' : '' }}">
+                            <label for="{{ idPrefix }}Selector">{{ __f('Find %name%', { '%name%': entityNameTranslated }) }}</label>
+                            <br />
+                            <i class="fa fa-search" title="{{ __f('Search %name%', { '%name%': entityNameTranslated })|e('html_attr') }}"></i>
+                            <input type="hidden" name="{{ idPrefix }} id="{{ idPrefix }}" value="{{ value }}" />
+                            <input type="hidden" name="{{ idPrefix }}Multiple" id="{{ idPrefix }}Multiple" value="0" />
+                            <input type="hidden" name="{{ idPrefix }}Mode" id="{{ idPrefix }}Mode" value="0" />
+                            <input type="hidden" name="{{ idPrefix }}ExcludedIds" id="{{ idPrefix }}ExcludedIds" value="{% for assignment in assignments %}{% if not loop.first %},{% endif %}{{ assignment.getAssignedId() }}{% endfor %}" />
+                            <input type="text" id="{{ idPrefix }}Selector" name="{{ idPrefix }}Selector" autocomplete="off" />
+                            <input type="button" id="{{ idPrefix }}SelectorDoCancel" name="{{ idPrefix }}SelectorDoCancel" value="{{ __('Cancel') }}" class="btn btn-default «app.appName.toLowerCase»-inline-button" />
+                            «IF hasEditAction»
+                                <a id="{{ idPrefix }}SelectorDoNew" href="{{ path('«app.appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ 'edit') }}" title="{{ __f('Create new %name%', { '%name%': entityNameTranslated }) }}" class="btn btn-default «app.appName.toLowerCase»-inline-button">{{ __('Create') }}</a>
+                            «ENDIF»
+                            <noscript><p>{{ __('This function requires JavaScript activated!') }}</p></noscript>
+                        </div>
+                    </div>
+                    {% set assignmentInitScript %}
+                        <script type="text/javascript">
+                        /* <![CDATA[ */
+                            var relationHandler = new Array();
+                            var newItem = {
+                                ot: '«name.formatForCode»',
+                                prefix: '{{ idPrefix }}SelectorDoNew',
+                                moduleName: '«app.appName»',
+                                acInstance: null,
+                                windowInstanceId: null
+                            };
+                            relationHandler.push(newItem);
+
+                            «app.vendorAndName»InitRelationItemsForm('«name.formatForCode»', '{{ idPrefix }}', true);
+                        /* ]]> */
+                        </script>
+                    {% endset %}
+                    {{ pageAddAsset('footer', assignmentInitScript) }}
                 {% endif %}
             «ENDIF»
         «ENDIF»
