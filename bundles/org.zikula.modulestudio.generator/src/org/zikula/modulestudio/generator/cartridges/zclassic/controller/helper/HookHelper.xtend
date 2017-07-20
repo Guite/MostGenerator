@@ -114,16 +114,20 @@ class HookHelper {
 
         «IF targets('1.5')»
             use Symfony\Component\Form\Form;
-        «ENDIF»
-        use Zikula\Bundle\HookBundle\Dispatcher\HookDispatcher;
-        «IF targets('1.5')»
+            use Zikula\Bundle\HookBundle\Dispatcher\HookDispatcher;
             use Zikula\Bundle\HookBundle\FormAwareHook\FormAwareHook;
             use Zikula\Bundle\HookBundle\FormAwareHook\FormAwareResponse;
+            use Zikula\Bundle\HookBundle\Hook\Hook;
+            use Zikula\Bundle\HookBundle\Hook\ProcessHook;
+            use Zikula\Bundle\HookBundle\Hook\ValidationHook;
+            use Zikula\Bundle\HookBundle\Hook\ValidationProviders;
+        «ELSE»
+            use Zikula\Component\HookDispatcher\Hook;
+            use Zikula\Component\HookDispatcher\HookDispatcher;
+            use Zikula\Core\Hook\ProcessHook;
+            use Zikula\Core\Hook\ValidationHook;
+            use Zikula\Core\Hook\ValidationProviders;
         «ENDIF»
-        use Zikula\Bundle\HookBundle\Hook\Hook;
-        use Zikula\Bundle\HookBundle\Hook\ProcessHook;
-        use Zikula\Bundle\HookBundle\Hook\ValidationHook;
-        use Zikula\Bundle\HookBundle\Hook\ValidationProviders;
         use Zikula\Core\Doctrine\EntityAccess;
         use Zikula\Core\UrlInterface;
 
