@@ -34,7 +34,7 @@ class Utils {
      * @return String The website url.
      */
     def msUrl() {
-        'http://modulestudio.de'
+        'https://modulestudio.de'
     }
 
     /**
