@@ -33,14 +33,8 @@ class Scribite {
             fsa.generateFile(docPath + fileName, integration)
         }
 
-        pluginAloha
         pluginCk
         pluginTinyMce
-    }
-
-    def private pluginAloha(Application it) {
-        // blocked by https://github.com/zikula-modules/Scribite/issues/158
-        //createPlaceholder(fsa, docPath + 'Aloha/vendor/aloha/')
     }
 
     def private pluginCk(Application it) {
