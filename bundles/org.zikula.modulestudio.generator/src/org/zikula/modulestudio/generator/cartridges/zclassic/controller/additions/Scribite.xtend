@@ -24,7 +24,7 @@ class Scribite {
         println('Generating Scribite support')
         this.fsa = fsa
 
-        docPath = getAppDocPath + 'scribite/'
+        docPath = getResourcesPath + 'Scribite/'
         var fileName = 'integration.md'
         if (!shouldBeSkipped(docPath + fileName)) {
             if (shouldBeMarked(docPath + fileName)) {
@@ -32,8 +32,6 @@ class Scribite {
             }
             fsa.generateFile(docPath + fileName, integration)
         }
-
-        docPath = docPath + 'plugins/'
 
         pluginAloha
         pluginCk
@@ -46,7 +44,7 @@ class Scribite {
     }
 
     def private pluginCk(Application it) {
-        val pluginPath = docPath + 'CKEditor/vendor/ckeditor/plugins/' + appName.formatForDB + '/'
+        val pluginPath = docPath + 'CKEditor/' + appName.formatForDB + '/'
 
         var fileName = 'plugin.js'
         if (!shouldBeSkipped(pluginPath + fileName)) {
@@ -80,7 +78,7 @@ class Scribite {
     }
 
     def private pluginTinyMce(Application it) {
-        var pluginPath = docPath + 'TinyMce/vendor/tinymce/plugins/' + appName.formatForDB + '/'
+        var pluginPath = docPath + 'TinyMce/' + appName.formatForDB + '/'
 
         var fileName = 'plugin.js'
         if (!shouldBeSkipped(pluginPath + fileName)) {
@@ -129,10 +127,6 @@ class Scribite {
 
         To activate the popup for the editor of your choice (currently supported: CKEditor, TinyMCE)
         you only need to add the plugin to the list of extra plugins in the editor configuration.
-
-        If such a configuration is not available for an editor check if the plugins for
-        «appName» are in Scribite/plugins/EDITOR/vendor/plugins. If not then copy the directories from
-            «relativeAppRootPath»/«getAppDocPath»/scribite/plugins into modules/Scribite/plugins.
     '''
 
     def private ckPlugin(Application it) '''
@@ -150,7 +144,7 @@ class Scribite {
                 editor.ui.addButton('«appName.formatForDB»', {
                     label: editor.lang.«appName.formatForDB».title,
                     command: 'insert«appName»',
-                    icon: this.path.replace('docs/scribite/plugins/CKEditor/vendor/ckeditor/plugins/«appName.formatForDB»', 'public/images') + 'admin.png'
+                    icon: this.path.replace('Scribite/CKEditor/«appName.formatForDB»', 'public/images') + 'admin.png'
                 });
             }
         });
