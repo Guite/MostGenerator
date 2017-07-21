@@ -256,7 +256,7 @@ class ExternalController {
                 $imageField = $templateParameters['imageField'];
                 $orX = $qb->expr()->orX();
                 foreach (['gif', 'jpg', 'jpeg', 'jpe', 'png', 'bmp'] as $imageExtension) {
-                    $orX->add($qb->expr()->like('tbl.' . $imageField, '%.' . $imageExtension));
+                    $orX->add($qb->expr()->like('tbl.' . $imageField, $qb->expr()->literal('%.' . $imageExtension)));
                 }
 
                 $qb->andWhere($orX);
