@@ -248,7 +248,7 @@ class Redirect {
                             case 'userDisplay«sourceEntity.name.formatForCodeCapital»':
                             case 'adminDisplay«sourceEntity.name.formatForCodeCapital»':
                                 if (!empty($this->relationPresets['«incomingRelation.getRelationAliasName(false)»'])) {
-                                    return $this->router->generate('«app.appName.formatForDB»_«sourceEntity.name.formatForDB»_' . $routeArea . 'display',  ['id' => $this->relationPresets['«incomingRelation.getRelationAliasName(false)»']«IF sourceEntity.hasSluggableFields»«/*, 'slug' => 'TODO add slug argument for redirect to relation preset'*/»«ENDIF»]);
+                                    return $this->router->generate('«app.appName.formatForDB»_«sourceEntity.name.formatForDB»_' . $routeArea . 'display',  ['id' => $this->relationPresets['«incomingRelation.getRelationAliasName(false)»']]);
                                 }
 
                                 return $this->getDefaultReturnUrl($args);

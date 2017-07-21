@@ -7,6 +7,7 @@ import de.guite.modulestudio.metamodel.EntityWorkflowType
 import de.guite.modulestudio.metamodel.ManyToManyRelationship
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
+import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
@@ -16,6 +17,7 @@ class ItemActions {
 
     extension ControllerExtensions = new ControllerExtensions
     extension FormattingExtensions = new FormattingExtensions
+    extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension ModelExtensions = new ModelExtensions
     extension ModelJoinExtensions = new ModelJoinExtensions
     extension NamingExtensions = new NamingExtensions
@@ -132,7 +134,7 @@ class ItemActions {
                             $title = $this->__('Create «otherEntity.name.formatForDisplay»');
                             $menu->addChild($title, [
                                 'route' => '«app.appName.formatForDB»_«otherEntity.name.formatForDB»_' . $routeArea . 'edit',
-                                'routeParameters' => ['«relationAliasNameParam.formatForDB»' => $entity->getKey()]
+                                'routeParameters' => ['«relationAliasNameParam.formatForDB»' => $entity->«IF hasSluggableFields && slugUnique»getSlug()«ELSE»getKey()«ENDIF»]
                             ])->setAttribute('icon', 'fa fa-plus');
                             $menu[$title]->setLinkAttribute('title', $title);
                         }
