@@ -138,7 +138,7 @@ class Scribite {
                 editor.ui.addButton('«appName.formatForDB»', {
                     label: editor.lang.«appName.formatForDB».title,
                     command: 'insert«appName»',
-                    icon: this.path.replace('Scribite/CKEditor/«appName.formatForDB»', 'public/images') + 'admin.png'
+                    icon: this.path.replace('scribite/CKEditor/«appName.formatForDB»', 'public/images') + 'admin.png'
                 });
             }
         });
