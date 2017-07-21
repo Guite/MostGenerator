@@ -643,18 +643,12 @@ class EditEntity {
                     ],
                 «ENDIF»
                 «helpAttribute»
-                «IF readonly»
-                    'disabled' => true,
-                «ENDIF»
                 «IF !(it instanceof BooleanField || it instanceof UploadField)»
                     'empty_data' => '«defaultValue»',
                 «ENDIF»
                 'attr' => [
                     «additionalAttributes»
                     'class' => '«validationHelper.fieldValidationCssClass(it)»',
-                    «IF readonly»
-                        'readonly' => 'readonly',
-                    «ENDIF»
                     «IF it instanceof IntegerField && (it as IntegerField).range»
                         'min' => «(it as IntegerField).minValue»,
                         'max' => «(it as IntegerField).maxValue»,
