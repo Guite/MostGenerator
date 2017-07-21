@@ -243,7 +243,7 @@ class Scribite {
                  */
                 getInfo: function () {
                     return {
-                        longname: '«appName» for tinymce',
+                        longname: '«appName» for TinyMCE',
                         author: '«author»',
                         authorurl: '«url»',
                         infourl: '«url»',
