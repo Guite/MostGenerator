@@ -330,7 +330,7 @@ class HookHelper {
             /**
              * @var TranslatorInterface
              */
-            private $translator;
+            protected $translator;
 
             /**
              * «name.formatForCodeCapital»«subscriberType»Subscriber constructor.
@@ -430,7 +430,7 @@ class HookHelper {
             /**
              * @var TranslatorInterface
              */
-            private $translator;
+            protected $translator;
 
             /**
              * FilterHooksProvider constructor.
@@ -531,23 +531,23 @@ class HookHelper {
             /**
              * @var TranslatorInterface
              */
-            private $translator;
+            protected $translator;
 
             «IF category == 'FormAware'»
                 /**
                  * @var SessionInterface
                  */
-                private $session;
+                protected $session;
 
                 /**
                  * @var FormFactoryInterface
                  */
-                private $formFactory;
+                protected $formFactory;
             «ELSEIF category == 'UiHooks'»
                 /**
                  * @var RequestStack
                  */
-                private $requestStack;
+                protected $requestStack;
 
                 /**
                  * @var EntityFactory
