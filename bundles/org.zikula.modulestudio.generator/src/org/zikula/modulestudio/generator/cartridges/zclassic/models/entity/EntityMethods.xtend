@@ -36,8 +36,6 @@ class EntityMethods {
         «propertyChangedListener»
         «validationMethods»
 
-        «toJson»
-
         «createUrlArgs»
 
         «getKey»
@@ -104,19 +102,6 @@ class EntityMethods {
 
         «ENDIF»
     '''
-
-    def private toJson(Entity it) '''
-        /**
-         * Return entity data in JSON format.
-         *
-         * @return string JSON-encoded data
-         */
-        public function toJson()
-        {
-            return json_encode($this->toArray());
-        }
-    '''
-
 
     def private createUrlArgs(Entity it) '''
         /**

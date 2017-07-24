@@ -52,7 +52,7 @@ class Json {
         [
         {% for «objName» in items %}
             {% if not loop.first %},{% endif %}
-            {{ «objName».toJson() }}
+            {{ «objName».toArray()|json_encode() }}
         {% endfor %}
         ]
     '''
@@ -60,6 +60,6 @@ class Json {
     def private jsonDisplay(Entity it, String appName) '''
         «val objName = name.formatForCode»
         {# purpose of this template: «nameMultiple.formatForDisplay» display json view #}
-        {{ «objName».toJson() }}
+        {{ «objName».toArray()|json_encode() }}
     '''
 }
