@@ -112,7 +112,7 @@ class Config {
 
                     «FOR entity : getAllEntities»
                         <h4>{{ __('«entity.nameMultiple.formatForDisplayCapital»') }}</h4>
-                        <p><a href="{{ path('zikula_workflow_editor_index', { 'workflow': '«appName.formatForDB»_«entity.workflow.textualName»' }) }}" title="{{ __('Edit workflow for «entity.nameMultiple.formatForDisplay»') }}" target="_blank"><i class="fa fa-cubes"></i> {{ __('Edit «entity.nameMultiple.formatForDisplay» workflow') }}</a>
+                        <p><a href="{{ path('zikula_workflow_editor_index', {workflow: '«appName.formatForDB»_«entity.workflow.textualName»'}) }}" title="{{ __('Edit workflow for «entity.nameMultiple.formatForDisplay»') }}" target="_blank"><i class="fa fa-cubes"></i> {{ __('Edit «entity.nameMultiple.formatForDisplay» workflow') }}</a>
                     «ENDFOR»
                 </fieldset>
             </div>
@@ -157,7 +157,7 @@ class Config {
 
             «IF null !== documentation && documentation != ''»
                 «IF !documentation.containedTwigVariables.empty»
-                    {{ __f('«documentation.replace('\'', '\\\'').replaceTwigVariablesForTranslation»', { «documentation.containedTwigVariables.map[v|'\'%' + v + '%\': ' + v + '|default'].join(', ')» }) }}
+                    {{ __f('«documentation.replace('\'', '\\\'').replaceTwigVariablesForTranslation»', {«documentation.containedTwigVariables.map[v|'\'%' + v + '%\': ' + v + '|default'].join(', ')»}) }}
                 «ELSE»
                     <p class="alert alert-info">{{ __('«documentation.replace('\'', '\\\'')»')|nl2br }}</p>
                 «ENDIF»

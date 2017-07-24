@@ -59,7 +59,7 @@ class StandardFields {
             <dt>{{ __('Creation') }}</dt>
             {% set profileLink = obj.createdBy.getUid()|profileLinkByUserId() %}
             «IF targets('1.5')»
-                <dd class="avatar">{{ userAvatar(obj.createdBy.getUid(), { rating: 'g' }) }}</dd>
+                <dd class="avatar">{{ userAvatar(obj.createdBy.getUid(), {rating: 'g'}) }}</dd>
             «ELSE»
                 <dd class="avatar">{{ «appName.toLowerCase»_userAvatar(uid=obj.createdBy.getUid(), rating='g') }}</dd>
             «ENDIF»
@@ -68,7 +68,7 @@ class StandardFields {
                 {% if currentUser.loggedIn %}
                     {% set sendMessageUrl = obj.createdBy.getUid()|messageSendLink(urlOnly=true) %}
                     {% if sendMessageUrl != '#' %}
-                        <a href="{{ sendMessageUrl }}" title="{{ __f('Send private message to %userName%', { '%userName%': obj.createdBy.getUname() }) }}"><i class="fa fa-envelope-o"></i></a>
+                        <a href="{{ sendMessageUrl }}" title="{{ __f('Send private message to %userName%', {'%userName%': obj.createdBy.getUname()}) }}"><i class="fa fa-envelope-o"></i></a>
                     {% endif %}
                 {% endif %}
             </dd>
@@ -77,7 +77,7 @@ class StandardFields {
             <dt>{{ __('Last update') }}</dt>
             {% set profileLink = obj.updatedBy.getUid()|profileLinkByUserId() %}
             «IF targets('1.5')»
-                <dd class="avatar">{{ userAvatar(obj.updatedBy.getUid(), { rating: 'g' }) }}</dd>
+                <dd class="avatar">{{ userAvatar(obj.updatedBy.getUid(), {rating: 'g'}) }}</dd>
             «ELSE»
                 <dd class="avatar">{{ «appName.toLowerCase»_userAvatar(uid=obj.updatedBy.getUid(), rating='g') }}</dd>
             «ENDIF»
@@ -86,7 +86,7 @@ class StandardFields {
                 {% if currentUser.loggedIn %}
                     {% set sendMessageUrl = obj.updatedBy.getUid()|messageSendLink(urlOnly=true) %}
                     {% if sendMessageUrl != '#' %}
-                        <a href="{{ sendMessageUrl }}" title="{{ __f('Send private message to %userName%', { '%userName%': obj.updatedBy.getUname() }) }}"><i class="fa fa-envelope-o"></i></a>
+                        <a href="{{ sendMessageUrl }}" title="{{ __f('Send private message to %userName%', {'%userName%': obj.updatedBy.getUname()}) }}"><i class="fa fa-envelope-o"></i></a>
                     {% endif %}
                 {% endif %}
             </dd>

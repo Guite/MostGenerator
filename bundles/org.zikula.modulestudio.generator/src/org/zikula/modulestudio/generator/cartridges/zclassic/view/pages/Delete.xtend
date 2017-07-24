@@ -43,7 +43,7 @@ class Delete {
         «ENDIF»
         {% block content %}
             <div class="«app.appName.toLowerCase»-«name.formatForDB» «app.appName.toLowerCase»-delete">
-                <p class="alert alert-warning">{{ __f('Do you really want to delete this «name.formatForDisplay»: "%name%" ?', { '%name%': «name.formatForCode»|«app.appName.formatForDB»_formattedTitle }) }}</p>
+                <p class="alert alert-warning">{{ __f('Do you really want to delete this «name.formatForDisplay»: "%name%" ?', {'%name%': «name.formatForCode»|«app.appName.formatForDB»_formattedTitle}) }}</p>
 
                 {% form_theme deleteForm with [
                     '@«app.appName»/Form/bootstrap_3.html.twig',

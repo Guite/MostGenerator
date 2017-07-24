@@ -43,7 +43,7 @@ class History {
             {# purpose of this template: «nameMultiple.formatForDisplay» change history view #}
             {% extends routeArea == 'admin' ? '«app.appName»::adminBase.html.twig' : '«app.appName»::base.html.twig' %}
         «ENDIF»
-        {% block title isDiffView == true ? __f('Compare versions of %entityTitle%', { '%entityTitle%': «name.formatForCode»|«app.appName.formatForDB»_formattedTitle }) : __f('«name.formatForDisplayCapital» change history for %entityTitle%', { '%entityTitle%': «name.formatForCode»|«application.appName.formatForDB»_formattedTitle }) %}
+        {% block title isDiffView == true ? __f('Compare versions of %entityTitle%', {'%entityTitle%': «name.formatForCode»|«app.appName.formatForDB»_formattedTitle}) : __f('«name.formatForDisplayCapital» change history for %entityTitle%', {'%entityTitle%': «name.formatForCode»|«application.appName.formatForDB»_formattedTitle}) %}
         «IF !application.generateSeparateAdminTemplates || isAdmin»
             {% block admin_page_icon isDiffView == true ? 'arrows-h' : 'history' %}
         «ENDIF»
@@ -62,7 +62,7 @@ class History {
             «pageNavLinks(app.appName)»
         {% endblock %}
         {% block history_table %}
-            <form action="{{ path('«app.appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ 'loggablehistory', { id: «name.formatForCode».getKey() }) }}" method="get" class="form-horizontal" role="form">
+            <form action="{{ path('«app.appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ 'loggablehistory', {id: «name.formatForCode».getKey()}) }}" method="get" class="form-horizontal" role="form">
                 <div class="table-responsive">
                     «historyTable(app.appName)»
                 </div>
@@ -82,16 +82,16 @@ class History {
                     <thead>
                         <tr>
                             <th id="hFieldName" scope="col" class="z-order-unsorted">{{ __('Field name') }}</th>
-                            <th id="hMinVersion" scope="col" class="z-order-unsorted">{{ __f('Version %version%', { '%version%': minVersion }) }}</th>
-                            <th id="hMaxVersion" scope="col" class="z-order-unsorted">{{ __f('Version %version%', { '%version%': maxVersion }) }}</th>
+                            <th id="hMinVersion" scope="col" class="z-order-unsorted">{{ __f('Version %version%', {'%version%': minVersion}) }}</th>
+                            <th id="hMaxVersion" scope="col" class="z-order-unsorted">{{ __f('Version %version%', {'%version%': maxVersion}) }}</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for fieldName, values in diffValues %}
                             <tr>
-                                <th headers="hFieldName" id="h{{ fieldName|replace({ ' ': '', '"':'' }) }}" scope="row">{{ fieldName|humanize }}</th>
-                                <td headers="hMinVersion h{{ fieldName|replace({ ' ': '', '"':'' }) }}"{% if values.changed %} class="diff-old"{% endif %}>{{ values.old is «app.appName.toLowerCase»_instanceOf('DateTime') ? values.old|localizeddate('long', 'medium') : values.old }}</td>
-                                <td headers="hMaxVersion h{{ fieldName|replace({ ' ': '', '"':'' }) }}"{% if values.changed %} class="diff-new"{% endif %}>{{ values.new is «app.appName.toLowerCase»_instanceOf('DateTime') ? values.new|localizeddate('long', 'medium') : values.new }}</td>
+                                <th headers="hFieldName" id="h{{ fieldName|replace({' ': '', '"':''}) }}" scope="row">{{ fieldName|humanize }}</th>
+                                <td headers="hMinVersion h{{ fieldName|replace({' ': '', '"':''}) }}"{% if values.changed %} class="diff-old"{% endif %}>{{ values.old is «app.appName.toLowerCase»_instanceOf('DateTime') ? values.old|localizeddate('long', 'medium') : values.old }}</td>
+                                <td headers="hMaxVersion h{{ fieldName|replace({' ': '', '"':''}) }}"{% if values.changed %} class="diff-new"{% endif %}>{{ values.new is «app.appName.toLowerCase»_instanceOf('DateTime') ? values.new|localizeddate('long', 'medium') : values.new }}</td>
                             </tr>
                         {% endfor %}
                     </tbody>
@@ -137,7 +137,7 @@ class History {
                         <td headers="hVersion" class="text-center">{{ logEntry.version }}{% if loop.first %} ({{ __('latest') }}){% endif %}</td>
                         <td headers="hDate">{{ logEntry.loggedAt|localizeddate('long', 'medium') }}</td>
                         «IF application.targets('1.5')»
-                            <td headers="hUser">{{ userAvatar(logEntry.username, { size: 20, rating: 'g' }) }} {{ logEntry.username|profileLinkByUserName() }}</td>
+                            <td headers="hUser">{{ userAvatar(logEntry.username, {size: 20, rating: 'g'}) }} {{ logEntry.username|profileLinkByUserName() }}</td>
                         «ELSE»
                             <td headers="hUser">{{ «appName.toLowerCase»_userAvatar(uid=logEntry.username, size=20, rating='g') }} {{ logEntry.username|profileLinkByUserName() }}</td>
                         «ENDIF»
@@ -153,14 +153,14 @@ class History {
                         <td headers="hChanges">
                             {% if logEntry.data is not empty %}
                                 <a role="button" data-toggle="collapse" href="#changes{{ logEntry.version }}" aria-expanded="false" aria-controls="changes{{ logEntry.version }}">
-                                    {{ _fn('One field updated', '%amount% fields updated', logEntry.data|length, { '%amount%': logEntry.data|length }) }}
+                                    {{ _fn('One field updated', '%amount% fields updated', logEntry.data|length, {'%amount%': logEntry.data|length}) }}
                                 </a>
                                 <div id="changes{{ logEntry.version }}" class="collapse">
                                     <ul>
                                         {% for field, value in logEntry.data %}
                                             {% if value is iterable %}
                                                 {% if value|length > 0 %}
-                                                    <li>{{ __f('%field% set to:', { '%field%': field }) }}
+                                                    <li>{{ __f('%field% set to:', {'%field%': field}) }}
                                                         <ul>
                                                             {% for singleValue in value %}
                                                                 <li class="italic">{{ singleValue }}</li>
@@ -168,10 +168,10 @@ class History {
                                                         </ul>
                                                     </li>
                                                 {% else %}
-                                                    <li>{{ __f('%field% set to <em>%value%</em>', { '%field%': field, '%value%': __('an empty collection') })|raw }}</li>
+                                                    <li>{{ __f('%field% set to <em>%value%</em>', {'%field%': field, '%value%': __('an empty collection')})|raw }}</li>
                                                 {% endif %}
                                             {% else %}
-                                                <li>{{ __f('%field% set to <em>%value%</em>', { '%field%': field, '%value%': value is «appName.toLowerCase»_instanceOf('DateTime') ? value|localizeddate('long', 'medium') : value|default(__('an empty value')) })|raw }}</li>
+                                                <li>{{ __f('%field% set to <em>%value%</em>', {'%field%': field, '%value%': value is «appName.toLowerCase»_instanceOf('DateTime') ? value|localizeddate('long', 'medium') : value|default(__('an empty value'))})|raw }}</li>
                                             {% endif %}
                                         {% endfor %}
                                     </ul>
@@ -182,12 +182,12 @@ class History {
                         </td>
                         <td headers="hActions" class="actions nowrap">
                             «IF hasDisplayAction»
-                                {% set linkTitle = __f('Preview version %version%', { '%version%': logEntry.version }) %}
-                                <a id="«name.formatForCode»Item{{ «name.formatForCode».getKey() }}Display{{ logEntry.version }}" href="{{ path('«appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ 'display', { «IF !hasSluggableFields || !slugUnique»«routePkParams(name.formatForCode, true)»«ENDIF»«appendSlug(name.formatForCode, true)», 'version': logEntry.version, 'raw': 1 }) }}" title="{{ linkTitle|e('html_attr') }}" class="«application.vendorAndName.toLowerCase»-inline-window hidden" data-modal-title="{{ «name.formatForCode»|«application.appName.formatForDB»_formattedTitle|e('html_attr') ~ ' ' ~ __('version') ~ ' ' ~ logEntry.version }}"><span class="fa fa-id-card-o"></span></a>
+                                {% set linkTitle = __f('Preview version %version%', {'%version%': logEntry.version}) %}
+                                <a id="«name.formatForCode»Item{{ «name.formatForCode».getKey() }}Display{{ logEntry.version }}" href="{{ path('«appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ 'display', {«IF !hasSluggableFields || !slugUnique»«routePkParams(name.formatForCode, true)»«ENDIF»«appendSlug(name.formatForCode, true)», version: logEntry.version, raw: 1}) }}" title="{{ linkTitle|e('html_attr') }}" class="«application.vendorAndName.toLowerCase»-inline-window hidden" data-modal-title="{{ «name.formatForCode»|«application.appName.formatForDB»_formattedTitle|e('html_attr') ~ ' ' ~ __('version') ~ ' ' ~ logEntry.version }}"><span class="fa fa-id-card-o"></span></a>
                             «ENDIF»
                             {% if not loop.first %}
                                 {% set linkTitle = __f('Revert to version %version%', { '%version%': logEntry.version }) %}
-                                <a href="{{ path('«appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ 'loggablehistory', { «IF !hasSluggableFields || !slugUnique»«routePkParams(name.formatForCode, true)»«ENDIF»«appendSlug(name.formatForCode, true)», 'revert': logEntry.version }) }}" title="{{ linkTitle|e('html_attr') }}"><span class="fa fa-history"></span></a>
+                                <a href="{{ path('«appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ 'loggablehistory', {«IF !hasSluggableFields || !slugUnique»«routePkParams(name.formatForCode, true)»«ENDIF»«appendSlug(name.formatForCode, true)», revert: logEntry.version}) }}" title="{{ linkTitle|e('html_attr') }}"><span class="fa fa-history"></span></a>
                             {% endif %}
                         </td>
                     </tr>
@@ -201,7 +201,7 @@ class History {
             <p>
                 {% if isDiffView == true %}
                     {% set linkTitle = __('Back to history') %}
-                    <a href="{{ path('«appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ 'loggablehistory', { id: «name.formatForCode».getKey() }) }}" title="{{ linkTitle|e('html_attr') }}" class="fa fa-history">{{ linkTitle }}</a>
+                    <a href="{{ path('«appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ 'loggablehistory', {id: «name.formatForCode».getKey()}) }}" title="{{ linkTitle|e('html_attr') }}" class="fa fa-history">{{ linkTitle }}</a>
                 {% else %}
                     «IF hasViewAction»
                         {% set linkTitle = __('Back to overview') %}

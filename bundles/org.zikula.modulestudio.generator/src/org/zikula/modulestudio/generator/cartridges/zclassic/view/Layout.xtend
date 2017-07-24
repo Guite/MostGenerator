@@ -217,7 +217,7 @@ class Layout {
                 <span id="{{ id }}Avatar" class="help-block avatar">
                     {% if value and not inline_usage %}
                         «IF targets('1.5')»
-                            {{ userAvatar(value, { rating: 'g' }) }}
+                            {{ userAvatar(value, {rating: 'g'}) }}
                         «ELSE»
                             {{ «appName.formatForDB»_userAvatar(uid=value, rating='g') }}
                         «ENDIF»
@@ -228,7 +228,7 @@ class Layout {
                 {% endif %}
                 {% if value and not inline_usage %}
                     {% if hasPermission('ZikulaUsersModule::', '::', 'ACCESS_ADMIN') %}
-                        <em class="help-block small"><a href="{{ path('zikulausersmodule_useradministration_modify', { 'user': value }) }}" title="{{ __('Switch to users administration') }}">{{ __('Manage user') }}</a></em>
+                        <em class="help-block small"><a href="{{ path('zikulausersmodule_useradministration_modify', {user: value}) }}" title="{{ __('Switch to users administration') }}">{{ __('Manage user') }}</a></em>
                     {% endif %}
                 {% endif %}
             {% endblock %}
@@ -247,20 +247,20 @@ class Layout {
                 «ENDFOR»
                 {% endif %}
                 {% set idPrefix = unique_name_for_js %}
-                {% set addLinkText = multiple ? __f('Add %name%', { '%name%': entityNameTranslated }) : __f('Select %name%', { '%name%': entityNameTranslated }) %}
+                {% set addLinkText = multiple ? __f('Add %name%', {'%name%': entityNameTranslated}) : __f('Select %name%', {'%name%': entityNameTranslated}) %}
 
                 <div id="{{ idPrefix }}LiveSearch" class="«appName.toLowerCase»-relation-rightside">
                     <a id="{{ idPrefix }}AddLink" href="javascript:void(0);" class="hidden">{{ addLinkText }}</a>
                     <div id="{{ idPrefix }}AddFields" class="«appName.toLowerCase»-autocomplete{{ withImage ? '-with-image' : '' }}">
-                        <label for="{{ idPrefix }}Selector">{{ __f('Find %name%', { '%name%': entityNameTranslated }) }}</label>
+                        <label for="{{ idPrefix }}Selector">{{ __f('Find %name%', {'%name%': entityNameTranslated}) }}</label>
                         <br />
-                        <i class="fa fa-search" title="{{ __f('Search %name%', { '%name%': entityNameTranslated })|e('html_attr') }}"></i>
+                        <i class="fa fa-search" title="{{ __f('Search %name%', {'%name%': entityNameTranslated})|e('html_attr') }}"></i>
                         <input type="hidden" {{ block('widget_attributes') }} value="{{ value }}" />
                         <input type="hidden" name="{{ idPrefix }}Multiple" id="{{ idPrefix }}Multiple" value="{{ multiple ? '1' : '0' }}" />
                         <input type="text" id="{{ idPrefix }}Selector" name="{{ idPrefix }}Selector" autocomplete="off" />
                         <input type="button" id="{{ idPrefix }}SelectorDoCancel" name="{{ idPrefix }}SelectorDoCancel" value="{{ __('Cancel') }}" class="btn btn-default «appName.toLowerCase»-inline-button" />
                         {% if create_url != '' %}
-                            <a id="{{ idPrefix }}SelectorDoNew" href="{{ create_url }}" title="{{ __f('Create new %name%', { '%name%': entityNameTranslated }) }}" class="btn btn-default «appName.toLowerCase»-inline-button">{{ __('Create') }}</a>
+                            <a id="{{ idPrefix }}SelectorDoNew" href="{{ create_url }}" title="{{ __f('Create new %name%', {'%name%': entityNameTranslated}) }}" class="btn btn-default «appName.toLowerCase»-inline-button">{{ __('Create') }}</a>
                         {% endif %}
                         <noscript><p>{{ __('This function requires JavaScript activated!') }}</p></noscript>
                     </div>

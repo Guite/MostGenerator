@@ -70,7 +70,7 @@ class ExternalView {
             {{ pageAddAsset('stylesheet', asset('magnific-popup/magnific-popup.css')) }}
             {{ pageAddAsset('javascript', zasset('@«app.appName»:js/«app.appName».js')) }}
         «ENDIF»
-        <div id="«name.formatForCode»{$«name.formatForCode»->getKey()}" class="«app.appName.toLowerCase»-external-«name.formatForDB»">
+        <div id="«name.formatForCode»{{ «name.formatForCode».getKey() }}" class="«app.appName.toLowerCase»-external-«name.formatForDB»">
         {% if displayMode == 'link' %}
             <p«IF hasDisplayAction» class="«app.appName.toLowerCase»-external-link"«ENDIF»>
             «IF hasDisplayAction»
@@ -179,7 +179,7 @@ class ExternalView {
                     '@«app.appName»/Form/bootstrap_3.html.twig',
                     'ZikulaFormExtensionBundle:Form:form_div_layout.html.twig'
                 ] %}
-                {{ form_start(finderForm, {attr: { id: '«app.appName.toFirstLower»SelectorForm' }}) }}
+                {{ form_start(finderForm, {attr: {id: '«app.appName.toFirstLower»SelectorForm'}}) }}
                 {{ form_errors(finderForm) }}
                 <fieldset>
                     <legend>{{ __('Search and select «name.formatForDisplay»') }}</legend>
@@ -211,7 +211,7 @@ class ExternalView {
                         «ENDIF»
                     «ENDIF»
                     <div>
-                        {{ pager({ display: 'page', rowcount: pager.numitems, limit: pager.itemsperpage, posvar: 'pos', maxpages: 10, route: '«app.appName.formatForDB»_external_finder'}) }}
+                        {{ pager({display: 'page', rowcount: pager.numitems, limit: pager.itemsperpage, posvar: 'pos', maxpages: 10, route: '«app.appName.formatForDB»_external_finder'}) }}
                     </div>
                     <div class="form-group">
                         <div class="col-sm-offset-3 col-sm-9">
@@ -236,7 +236,7 @@ class ExternalView {
                 {% set activatedObjectTypes = getModVar('«app.appName»', 'enabledFinderTypes', []) %}
                 «FOR entity : app.getAllEntities.filter[hasDisplayAction]»
                     {% if '«entity.name.formatForCode»' in activatedObjectTypes %}
-                        <li{{ objectType == '«entity.name.formatForCode»' ? ' class="active"' : '' }}><a href="{{ path('«app.appName.formatForDB»_external_finder', {'objectType': '«entity.name.formatForCode»', 'editor': editorName}) }}" title="{{ __('Search and select «entity.name.formatForDisplay»') }}">{{ __('«entity.nameMultiple.formatForDisplayCapital»') }}</a></li>
+                        <li{{ objectType == '«entity.name.formatForCode»' ? ' class="active"' : '' }}><a href="{{ path('«app.appName.formatForDB»_external_finder', {objectType: '«entity.name.formatForCode»', editor: editorName}) }}" title="{{ __('Search and select «entity.name.formatForDisplay»') }}">{{ __('«entity.nameMultiple.formatForDisplayCapital»') }}</a></li>
                     {% endif %}
                 «ENDFOR»
                 </ul>

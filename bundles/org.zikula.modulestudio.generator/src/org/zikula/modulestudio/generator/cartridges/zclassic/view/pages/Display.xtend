@@ -258,7 +258,7 @@ class Display {
                     {{ «relObjName»|«application.appName.formatForDB»_formattedTitle }}
                   «IF linkEntity.hasDisplayAction»
                     {% endspaceless %}</a>
-                    <a id="«linkEntity.name.formatForCode»Item{{ «relObjName».getKey() }}Display" href="{{ path('«linkEntity.application.appName.formatForDB»_«linkEntity.name.formatForDB»_' ~ routeArea ~ 'display', { «IF !linkEntity.hasSluggableFields || !linkEntity.slugUnique»«linkEntity.routePkParams(relObjName, true)»«ENDIF»«linkEntity.appendSlug(relObjName, true)», 'raw': 1 }) }}" title="{{ __('Open quick view window')|e('html_attr') }}" class="«application.vendorAndName.toLowerCase»-inline-window hidden" data-modal-title="{{ «relObjName»|«application.appName.formatForDB»_formattedTitle|e('html_attr') }}"><span class="fa fa-id-card-o"></span></a>
+                    <a id="«linkEntity.name.formatForCode»Item{{ «relObjName».getKey() }}Display" href="{{ path('«linkEntity.application.appName.formatForDB»_«linkEntity.name.formatForDB»_' ~ routeArea ~ 'display', {«IF !linkEntity.hasSluggableFields || !linkEntity.slugUnique»«linkEntity.routePkParams(relObjName, true)»«ENDIF»«linkEntity.appendSlug(relObjName, true)», raw: 1}) }}" title="{{ __('Open quick view window')|e('html_attr') }}" class="«application.vendorAndName.toLowerCase»-inline-window hidden" data-modal-title="{{ «relObjName»|«application.appName.formatForDB»_formattedTitle|e('html_attr') }}"><span class="fa fa-id-card-o"></span></a>
                   «ENDIF»
               {% else %}
                   {{ «relObjName»|«application.appName.formatForDB»_formattedTitle }}
@@ -286,12 +286,12 @@ class Display {
         «ENDIF»
         «IF attributable»
             {% if featureActivationHelper.isEnabled(constant('«application.vendor.formatForCodeCapital»\\«application.name.formatForCodeCapital»Module\\Helper\\FeatureActivationHelper::ATTRIBUTES'), '«name.formatForCode»') %}
-                {{ include('@«application.appName»/Helper/includeAttributesDisplay.html.twig', { obj: «objName»«IF useGroupingTabs('display')», tabs: true«ENDIF» }) }}
+                {{ include('@«application.appName»/Helper/includeAttributesDisplay.html.twig', {obj: «objName»«IF useGroupingTabs('display')», tabs: true«ENDIF»}) }}
             {% endif %}
         «ENDIF»
         «IF categorisable»
             {% if featureActivationHelper.isEnabled(constant('«application.vendor.formatForCodeCapital»\\«application.name.formatForCodeCapital»Module\\Helper\\FeatureActivationHelper::CATEGORIES'), '«name.formatForCode»') %}
-                {{ include('@«application.appName»/Helper/includeCategoriesDisplay.html.twig', { obj: «objName»«IF useGroupingTabs('display')», tabs: true«ENDIF» }) }}
+                {{ include('@«application.appName»/Helper/includeCategoriesDisplay.html.twig', {obj: «objName»«IF useGroupingTabs('display')», tabs: true«ENDIF»}) }}
             {% endif %}
         «ENDIF»
         «IF tree != EntityTreeType.NONE»
@@ -304,7 +304,7 @@ class Display {
                 «ENDIF»
                     {{ include(
                         '@«application.appName»/«name.formatForCodeCapital»/«IF isAdmin»Admin/«ENDIF»displayTreeRelatives.html.twig',
-                        { allParents: true, directParent: true, allChildren: true, directChildren: true, predecessors: true, successors: true, preandsuccessors: true }
+                        {allParents: true, directParent: true, allChildren: true, directChildren: true, predecessors: true, successors: true, preandsuccessors: true}
                     ) }}
                 «IF useGroupingTabs('display')»
                 </div>
@@ -333,7 +333,7 @@ class Display {
             «ENDIF»
         «ENDIF»
         «IF standardFields»
-            {{ include('@«application.appName»/Helper/includeStandardFieldsDisplay.html.twig', { obj: «objName»«IF useGroupingTabs('display')», tabs: true«ENDIF» }) }}
+            {{ include('@«application.appName»/Helper/includeStandardFieldsDisplay.html.twig', {obj: «objName»«IF useGroupingTabs('display')», tabs: true«ENDIF»}) }}
         «ENDIF»
     '''
 

@@ -87,7 +87,7 @@ class Relations {
         «IF hasDisplayAction»
             {% if not noLink %}
                 </a>
-                <a id="«name.formatForCode»Item{{ item.getKey() }}Display" href="{{ path('«app.appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ 'display', { «IF !hasSluggableFields || !slugUnique»«routePkParams('item', true)»«ENDIF»«appendSlug('item', true)», 'raw': 1 }) }}" title="{{ __('Open quick view window') }}" class="«application.vendorAndName.toLowerCase»-inline-window hidden" data-modal-title="{{ item|«app.appName.formatForDB»_formattedTitle|e('html_attr') }}"><span class="fa fa-id-card-o"></span></a>
+                <a id="«name.formatForCode»Item{{ item.getKey() }}Display" href="{{ path('«app.appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ 'display', {«IF !hasSluggableFields || !slugUnique»«routePkParams('item', true)»«ENDIF»«appendSlug('item', true)», raw: 1}) }}" title="{{ __('Open quick view window') }}" class="«application.vendorAndName.toLowerCase»-inline-window hidden" data-modal-title="{{ item|«app.appName.formatForDB»_formattedTitle|e('html_attr') }}"><span class="fa fa-id-card-o"></span></a>
             {% endif %}
             {% endspaceless %}
         «ENDIF»
@@ -108,7 +108,7 @@ class Relations {
                         {% set assignmentId = assignment.getId() %}
                     {% endfor %}
                     <p class="list-group-item-text">
-                        <a href="javascript:void(0);" title="{{ __f('Detach this %name%', { '%name%': entityNameTranslated })|e('html_attr') }}" class="detach-«app.appName.formatForDB»-object hidden" data-assignment-id="{{ assignmentId|e('html_attr') }}"><i class="fa fa-chain-broken"></i> {{ __f('Detach %name%', { '%name%': entityNameTranslated }) }}</a>
+                        <a href="javascript:void(0);" title="{{ __f('Detach this %name%', {'%name%': entityNameTranslated})|e('html_attr') }}" class="detach-«app.appName.formatForDB»-object hidden" data-assignment-id="{{ assignmentId|e('html_attr') }}"><i class="fa fa-chain-broken"></i> {{ __f('Detach %name%', {'%name%': entityNameTranslated}) }}</a>
                     </p>
                 {% endif %}
             «ENDIF»
@@ -121,13 +121,13 @@ class Relations {
                 {% if context == 'hookDisplayView' && hasEditPermission %}
                     {% set withImage = «hasImageFieldsEntity.displayBool» %}
                     {% set idPrefix = 'hookAssignment«name.formatForCodeCapital»' %}
-                    {% set addLinkText = __f('Attach %name%', { '%name%': entityNameTranslated }) %}
+                    {% set addLinkText = __f('Attach %name%', {'%name%': entityNameTranslated}) %}
                     <div id="{{ idPrefix }}LiveSearch" class="«app.appName.toLowerCase»-add-hook-assignment">
                         <a id="{{ idPrefix }}AddLink" href="javascript:void(0);" title="{{ addLinkText|e('html_attr') }}" class="attach-«app.appName.formatForDB»-object hidden" data-owner="{{ subscriberOwner|e('html_attr') }}" data-area-id="{{ subscriberAreaId|e('html_attr') }}" data-object-id="{{ subscriberObjectId|e('html_attr') }}" data-url="{{ subscriberUrl|e('html_attr') }}" data-assigned-entity="«name.formatForCode»"><i class="fa fa-link"></i> {{ addLinkText }}
                         <div id="{{ idPrefix }}AddFields" class="«app.appName.toLowerCase»-autocomplete{{ withImage ? '-with-image' : '' }}">
-                            <label for="{{ idPrefix }}Selector">{{ __f('Find %name%', { '%name%': entityNameTranslated }) }}</label>
+                            <label for="{{ idPrefix }}Selector">{{ __f('Find %name%', {'%name%': entityNameTranslated}) }}</label>
                             <br />
-                            <i class="fa fa-search" title="{{ __f('Search %name%', { '%name%': entityNameTranslated })|e('html_attr') }}"></i>
+                            <i class="fa fa-search" title="{{ __f('Search %name%', {'%name%': entityNameTranslated})|e('html_attr') }}"></i>
                             <input type="hidden" name="{{ idPrefix }} id="{{ idPrefix }}" value="{{ value }}" />
                             <input type="hidden" name="{{ idPrefix }}Multiple" id="{{ idPrefix }}Multiple" value="0" />
                             <input type="hidden" name="{{ idPrefix }}Mode" id="{{ idPrefix }}Mode" value="0" />
@@ -135,7 +135,7 @@ class Relations {
                             <input type="text" id="{{ idPrefix }}Selector" name="{{ idPrefix }}Selector" autocomplete="off" />
                             <input type="button" id="{{ idPrefix }}SelectorDoCancel" name="{{ idPrefix }}SelectorDoCancel" value="{{ __('Cancel') }}" class="btn btn-default «app.appName.toLowerCase»-inline-button" />
                             «IF hasEditAction»
-                                <a id="{{ idPrefix }}SelectorDoNew" href="{{ path('«app.appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ 'edit') }}" title="{{ __f('Create new %name%', { '%name%': entityNameTranslated }) }}" class="btn btn-default «app.appName.toLowerCase»-inline-button">{{ __('Create') }}</a>
+                                <a id="{{ idPrefix }}SelectorDoNew" href="{{ path('«app.appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ 'edit') }}" title="{{ __f('Create new %name%', {'%name%': entityNameTranslated}) }}" class="btn btn-default «app.appName.toLowerCase»-inline-button">{{ __('Create') }}</a>
                             «ENDIF»
                             <noscript><p>{{ __('This function requires JavaScript activated!') }}</p></noscript>
                         </div>
@@ -179,7 +179,7 @@ class Relations {
         {% if «relatedEntity.name.formatForCode».«relationAliasName»|default %}
             {{ include(
                 '@«application.appName»/«otherEntity.name.formatForCodeCapital»/«IF isAdmin»Admin/«ENDIF»includeDisplayItemList«getTargetMultiplicity(useTarget)».html.twig',
-                { item«IF many»s«ENDIF»: «relatedEntity.name.formatForCode».«relationAliasName»«IF relatedEntity.uiHooksProvider != HookProviderMode.DISABLED», context: 'display'«ENDIF» }
+                {item«IF many»s«ENDIF»: «relatedEntity.name.formatForCode».«relationAliasName»«IF relatedEntity.uiHooksProvider != HookProviderMode.DISABLED», context: 'display'«ENDIF»}
             ) }}
         {% endif %}
         «IF otherEntity.hasEditAction»
@@ -191,7 +191,7 @@ class Relations {
             {% if mayManage«IF otherEntity.ownerPermission» or (currentUser|default and «relatedEntity.name.formatForCode».createdBy|default and «relatedEntity.name.formatForCode».createdBy.getUid() == currentUser.uid)«ENDIF» %}
                 <p class="managelink">
                     {% set createTitle = __('Create «otherEntity.name.formatForDisplay»') %}
-                    <a href="{{ path('«appName.formatForDB»_«otherEntity.name.formatForDB»_' ~ routeArea ~ 'edit', { «relationAliasNameParam»: «relatedEntity.name.formatForCode».getKey() }) }}" title="{{ createTitle|e('html_attr') }}" class="fa fa-plus">{{ createTitle }}</a>
+                    <a href="{{ path('«appName.formatForDB»_«otherEntity.name.formatForDB»_' ~ routeArea ~ 'edit', {«relationAliasNameParam»: «relatedEntity.name.formatForCode».getKey()}) }}" title="{{ createTitle|e('html_attr') }}" class="fa fa-plus">{{ createTitle }}</a>
                 </p>
             {% endif %}
             «IF !many»

@@ -48,7 +48,7 @@ class Atom {
             </author>
         {% set amountOfItems = items|length %}
         {% if amountOfItems > 0 %}
-        {% set uniqueID %}tag:{{ app.request.getSchemeAndHttpHost()|replace({ 'http://': '', '/': '' }) }},{{ «IF standardFields»items.first.createdDate«ELSE»'now'«ENDIF»|date('Y-m-d') }}:{{ path('«appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ '«defaultAction»'«IF hasDisplayAction»«routeParams('items.first', true)»«ENDIF») }}{% endset %}
+        {% set uniqueID %}tag:{{ app.request.getSchemeAndHttpHost()|replace({'http://': '', '/': ''}) }},{{ «IF standardFields»items.first.createdDate«ELSE»'now'«ENDIF»|date('Y-m-d') }}:{{ path('«appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ '«defaultAction»'«IF hasDisplayAction»«routeParams('items.first', true)»«ENDIF») }}{% endset %}
             <id>{{ uniqueID }}</id>
             <updated>{{ «IF standardFields»items[0].updatedDate«ELSE»'now'«ENDIF»|date('Y-m-dTH:M:SZ') }}</updated>
         {% endif %}

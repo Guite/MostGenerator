@@ -98,11 +98,11 @@ class Rss {
         <description>
             <![CDATA[
             «IF !textFields.empty»
-                {{ «objName».«textFields.head.name.formatForCode»|replace({ '<br>': '<br />' }) }}
+                {{ «objName».«textFields.head.name.formatForCode»|replace({'<br>': '<br />'}) }}
             «ELSEIF !stringFields.empty»
-                {{ «objName».«stringFields.head.name.formatForCode»|replace({ '<br>': '<br />' }) }}
+                {{ «objName».«stringFields.head.name.formatForCode»|replace({'<br>': '<br />'}) }}
             «ELSE»
-                {{ «objName»|«application.appName.formatForDB»_formattedTitle|replace({ '<br>': '<br />' }) }}
+                {{ «objName»|«application.appName.formatForDB»_formattedTitle|replace({'<br>': '<br />'}) }}
             «ENDIF»
             ]]>
         </description>
