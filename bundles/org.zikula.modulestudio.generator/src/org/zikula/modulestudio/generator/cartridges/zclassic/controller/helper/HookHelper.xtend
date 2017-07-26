@@ -122,11 +122,11 @@ class HookHelper {
             use Zikula\Bundle\HookBundle\Hook\ValidationHook;
             use Zikula\Bundle\HookBundle\Hook\ValidationProviders;
         «ELSE»
-            use Zikula\Component\HookDispatcher\Hook;
-            use Zikula\Component\HookDispatcher\HookDispatcher;
-            use Zikula\Core\Hook\ProcessHook;
-            use Zikula\Core\Hook\ValidationHook;
-            use Zikula\Core\Hook\ValidationProviders;
+            use Zikula\Bundle\HookBundle\Dispatcher\HookDispatcher;
+            use Zikula\Bundle\HookBundle\Hook\Hook;
+            use Zikula\Bundle\HookBundle\Hook\ProcessHook;
+            use Zikula\Bundle\HookBundle\Hook\ValidationHook;
+            use Zikula\Bundle\HookBundle\Hook\ValidationProviders;
         «ENDIF»
         use Zikula\Core\Doctrine\EntityAccess;
         use Zikula\Core\UrlInterface;
