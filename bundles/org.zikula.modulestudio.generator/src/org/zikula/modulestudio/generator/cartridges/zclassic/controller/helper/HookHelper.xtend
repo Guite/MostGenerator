@@ -114,7 +114,7 @@ class HookHelper {
 
         «IF targets('1.5')»
             use Symfony\Component\Form\Form;
-            use Zikula\Bundle\HookBundle\Dispatcher\HookDispatcher;
+            use Zikula\Bundle\HookBundle\Dispatcher\HookDispatcherInterface;
             use Zikula\Bundle\HookBundle\FormAwareHook\FormAwareHook;
             use Zikula\Bundle\HookBundle\FormAwareHook\FormAwareResponse;
             use Zikula\Bundle\HookBundle\Hook\Hook;
@@ -122,7 +122,7 @@ class HookHelper {
             use Zikula\Bundle\HookBundle\Hook\ValidationHook;
             use Zikula\Bundle\HookBundle\Hook\ValidationProviders;
         «ELSE»
-            use Zikula\Bundle\HookBundle\Dispatcher\HookDispatcher;
+            use Zikula\Bundle\HookBundle\Dispatcher\HookDispatcherInterface;
             use Zikula\Bundle\HookBundle\Hook\Hook;
             use Zikula\Bundle\HookBundle\Hook\ProcessHook;
             use Zikula\Bundle\HookBundle\Hook\ValidationHook;
@@ -137,14 +137,14 @@ class HookHelper {
         abstract class AbstractHookHelper
         {
             /**
-             * @var HookDispatcher
+             * @var HookDispatcherInterface
              */
             protected $hookDispatcher;
 
             /**
              * HookHelper constructor.
              *
-             * @param HookDispatcher $hookDispatcher Hook dispatcher service instance
+             * @param HookDispatcherInterface $hookDispatcher Hook dispatcher service instance
              */
             public function __construct($hookDispatcher)
             {
