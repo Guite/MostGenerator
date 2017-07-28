@@ -126,10 +126,12 @@ class ItemSelector {
                     $jsAssetBag = $this->container->get('zikula_core.common.theme.assets_js');
                     $homePath = $this->container->get('request_stack')->getCurrentRequest()->getBasePath();
 
-                    $jsAssetBag->add($homePath . '/web/magnific-popup/jquery.magnific-popup.min.js');
-                    $cssAssetBag->add($homePath . '/web/magnific-popup/magnific-popup.css');
+                    «IF hasImageFields»
+                        $jsAssetBag->add($homePath . '/web/magnific-popup/jquery.magnific-popup.min.js');
+                        $cssAssetBag->add($homePath . '/web/magnific-popup/magnific-popup.css');
+                    «ENDIF»
                     $jsAssetBag->add($assetHelper->resolve('@«appName»:js/«appName».js'));
-                    $jsAssetBag->add($assetHelper->resolve('@«appName»:js/«appName».Finder.js'));
+                    $jsAssetBag->add($assetHelper->resolve('@«appName»:js/«appName».ItemSelector.js'));
                     $cssAssetBag->add($assetHelper->resolve('@«appName»:css/style.css'));
                 }
                 $firstTime = false;
@@ -145,7 +147,7 @@ class ItemSelector {
                     $catIds = [];
                     if (in_array($this->objectType, $categorisableObjectTypes)) {
                         // fetch selected categories to reselect them in the output
-                        // the actual filtering is done inside the repository class
+                        // the actual filtering is done inside the collection filter helper class
                         $categoryHelper = $this->container->get('«appService».category_helper');
                         $catIds = $categoryHelper->retrieveCategoriesFromRequest($this->objectType);
                     }

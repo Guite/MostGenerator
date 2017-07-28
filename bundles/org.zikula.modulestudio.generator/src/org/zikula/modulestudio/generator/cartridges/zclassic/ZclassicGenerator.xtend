@@ -24,12 +24,6 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.controller.addition
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.additions.MultiHook
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.additions.Newsletter
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.additions.Tag
-import org.zikula.modulestudio.generator.cartridges.zclassic.controller.javascript.AutoCompletion
-import org.zikula.modulestudio.generator.cartridges.zclassic.controller.javascript.ConfigFunctions
-import org.zikula.modulestudio.generator.cartridges.zclassic.controller.javascript.DisplayFunctions
-import org.zikula.modulestudio.generator.cartridges.zclassic.controller.javascript.EditFunctions
-import org.zikula.modulestudio.generator.cartridges.zclassic.controller.javascript.Finder
-import org.zikula.modulestudio.generator.cartridges.zclassic.controller.javascript.GeoFunctions
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.javascript.HookAssignment
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.javascript.TreeFunctions
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.javascript.Validation
@@ -57,7 +51,6 @@ import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
-import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
 
@@ -67,7 +60,6 @@ class ZclassicGenerator implements IGenerator {
     extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension ModelExtensions = new ModelExtensions
-    extension ModelJoinExtensions = new ModelJoinExtensions
     extension Utils = new Utils
     extension WorkflowExtensions = new WorkflowExtensions
 
@@ -162,23 +154,7 @@ class ZclassicGenerator implements IGenerator {
         }
         pm?.subTask('Controller: JavaScript files')
         println('Generating JavaScript files')
-        if (hasImageFields) {
-            new ConfigFunctions().generate(it, fsa)
-        }
-        new DisplayFunctions().generate(it, fsa)
-        if (hasEditActions) {
-            new EditFunctions().generate(it, fsa)
-        }
-        if (needsAutoCompletion || (hasUiHooksProviders && targets('1.5'))) {
-            new AutoCompletion().generate(it, fsa)
-        }
-        val needsDetailContentType = generateDetailContentType && hasDisplayActions
-        if (generateExternalControllerAndFinder || needsDetailContentType) {
-            new Finder().generate(it, fsa)
-        }
-        if (hasGeographical) {
-            new GeoFunctions().generate(it, fsa)
-        }
+        new JavaScriptFiles().generate(it, fsa)
         if (hasUiHooksProviders) {
             new HookAssignment().generate(it, fsa)
         }

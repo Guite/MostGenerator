@@ -224,8 +224,6 @@ class ExternalView {
             </div>
 
             «findTemplateEditForm(app)»
-
-            «findTemplateJs(app)»
         {% endblock %}
     '''
 
@@ -330,21 +328,10 @@ class ExternalView {
         «ENDIF»
     '''
 
-    def private findTemplateJs(Entity it, Application app) '''
-        <script type="text/javascript">
-        /* <![CDATA[ */
-            ( function($) {
-                $(document).ready(function() {
-                    «app.appName.toFirstLower».finder.onLoad();
-                });
-            })(jQuery);
-        /* ]]> */
-        </script>
-    '''
-
     def private selectTemplate(Entity it, Application app) '''
         {* Purpose of this template: Display a popup selector for Forms and Content integration *}
         {assign var='baseID' value='«name.formatForCode»'}
+        <div id="itemSelectorInfo" class="hidden" data-base-id="{$baseID}" data-selected-id="{$selectedId|default:0}"></div>
         <div class="row">
             <div class="col-sm-8">
                 «IF categorisable»
@@ -428,15 +415,5 @@ class ExternalView {
                 </div>
             </div>
         </div>
-
-        <script type="text/javascript">
-        /* <![CDATA[ */
-            ( function($) {
-                $(document).ready(function() {
-                    «app.appName.toFirstLower».itemSelector.onLoad('{{$baseID}}', {{$selectedId|default:0}});
-                });
-            })(jQuery);
-        /* ]]> */
-        </script>
     '''
 }

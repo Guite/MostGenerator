@@ -54,6 +54,21 @@ class GeoFunctions {
 
             «initGeoEditing»
         «ENDIF»
+
+        jQuery(document).ready(function() {
+            var infoElem;
+
+            infoElem = jQuery('#geographicalInfo');
+            if (infoElem.length == 0) {
+                return;
+            }
+
+            if (infoElem.data('context') == 'display') {
+                «vendorAndName»InitGeographicalDisplay(infoElem.data('latitude'), infoElem.data('longitude'), infoElem.data('map-type'), infoElem.data('zoom-level'));
+            } else if (infoElem.data('context') == 'edit') {
+                «vendorAndName»InitGeographicalEditing(infoElem.data('latitude'), infoElem.data('longitude'), infoElem.data('map-type'), infoElem.data('zoom-level'), infoElem.data('use-geolocation'));
+            }
+        });
     '''
 
     def private initGeoDisplay(Application it) '''
@@ -167,7 +182,7 @@ class GeoFunctions {
         /**
          * Initialises geographical editing features.
          */
-        function «vendorAndName»InitGeographicalEditing(latitude, longitude, mapType, zoomLevel, mode, useGeoLocation)
+        function «vendorAndName»InitGeographicalEditing(latitude, longitude, mapType, zoomLevel, useGeoLocation)
         {
             «vendorAndName»InitGeographicalDisplay(latitude, longitude, mapType, zoomLevel);
 
@@ -182,7 +197,7 @@ class GeoFunctions {
                 «vendorAndName»NewCoordinatesEventHandler();
             });
 
-            if (mode == 'create' && true === useGeoLocation) {
+            if (true === useGeoLocation) {
                 // derive default coordinates from users position with html5 geolocation feature
                 if (navigator.geolocation) {
                     navigator.geolocation.getCurrentPosition(«vendorAndName»SetDefaultCoordinates, «vendorAndName»HandlePositionError, {

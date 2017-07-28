@@ -48,6 +48,9 @@ class History {
             {% block admin_page_icon isDiffView == true ? 'arrows-h' : 'history' %}
         «ENDIF»
         {% block content %}
+            {% if isDiffView != true %}
+                {{ pageAddAsset('javascript', zasset('@«app.appName»:js/«app.appName».VersionHistory.js')) }}
+            {% endif %}
             {{ block('page_nav_links') }}
             <div class="«app.appName.toLowerCase»-«name.formatForDB» «app.appName.toLowerCase»-history">
                 {% if isDiffView == true %}
@@ -97,12 +100,6 @@ class History {
                     </tbody>
                 </table>
             </div>
-        {% endblock %}
-        {% block footer %}
-            {{ parent() }}
-            {% if isDiffView != true %}
-                «customJavaScript»
-            {% endif %}
         {% endblock %}
     '''
 
@@ -214,29 +211,5 @@ class History {
                 {% endif %}
             </p>
         «ENDIF»
-    '''
-
-    def private customJavaScript(Entity it) '''
-        <script type="text/javascript">
-            /* <![CDATA[ */
-                ( function($) {
-                    function updateVersionSelectionState() {
-                        var amountOfSelectedVersions;
-
-                        amountOfSelectedVersions = $('.«application.vendorAndName.toLowerCase»-toggle-checkbox:checked').length;
-                        if (amountOfSelectedVersions > 2) {
-                            $(this).prop('checked', false);
-                            amountOfSelectedVersions--;
-                        }
-                        $('#compareButton').prop('disabled', amountOfSelectedVersions != 2);
-                    }
-
-                    $(document).ready(function() {
-                        $('.«application.vendorAndName.toLowerCase»-toggle-checkbox').click(updateVersionSelectionState);
-                        updateVersionSelectionState();
-                    });
-                })(jQuery);
-            /* ]]> */
-        </script>
     '''
 }

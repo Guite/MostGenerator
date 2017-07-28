@@ -361,7 +361,9 @@ class Layout {
         «IF forFinder»
             <link rel="stylesheet" type="text/css" href="{{ zasset('@«appName»:css/finder.css') }}" />
         «ELSE»
-            <link rel="stylesheet" type="text/css" href="{{ asset('magnific-popup/magnific-popup.css') }}" />
+            «IF hasImageFields»
+                <link rel="stylesheet" type="text/css" href="{{ asset('magnific-popup/magnific-popup.css') }}" />
+            «ENDIF»
         «ENDIF»
     '''
 

@@ -262,29 +262,22 @@ class Forms {
     '''
 
     def private formTemplateJS(Entity it, String actionName) '''
-        {% set editImage = '<span class="fa fa-pencil-square-o"></span>' %}
-        {% set removeImage = '<span class="fa fa-trash-o"></span>' %}
-        «IF geographical»
+        «IF !incoming.empty || !outgoing.empty»
+            {% set editImage = '<span class="fa fa-pencil-square-o"></span>' %}
+            {% set removeImage = '<span class="fa fa-trash-o"></span>' %}
+            «IF geographical»
 
-            {% set geoScripts %}
-                {% set useGeoLocation = getModVar('«app.appName»', 'enable«name.formatForCodeCapital»GeoLocation', false) %}
-                {{ pageAddAsset('javascript', 'https://maps.google.com/maps/api/js?key=' ~ getModVar('«app.appName»', 'googleMapsApiKey', '') ~ '&amp;language=' ~ app.request.locale ~ '&amp;sensor=false') }}
-                {{ pageAddAsset('javascript', app.request.basePath ~ '/plugins/Mapstraction/lib/vendor/mxn/mxn.js?(googlev3)') }}
-                {% if useGeoLocation == true %}
-                    {{ pageAddAsset('javascript', app.request.basePath ~ '/plugins/Mapstraction/lib/vendor/mxn/mxn.geocoder.js') }}
-                    {{ pageAddAsset('javascript', app.request.basePath ~ '/plugins/Mapstraction/lib/vendor/mxn/mxn.googlev3.geocoder.js') }}
-                {% endif %}
-                <script type="text/javascript">
-                /* <![CDATA[ */
-                    ( function($) {
-                        $(document).ready(function() {
-                            «app.vendorAndName»InitGeographicalEditing({{ «name.formatForDB».latitude|«app.appName.formatForDB»_geoData }}, {{ «name.formatForDB».longitude|«app.appName.formatForDB»_geoData }}, '{{ getModVar('«app.appName»', 'defaultMapType', 'roadmap') }}', {{ getModVar('«app.appName»', 'defaultZoomLevel', 18) }}, '{{ mode }}', {% if useGeoLocation == true %}true{% else %}false{% endif %});
-                        });
-                    })(jQuery);
-                /* ]]> */
-                </script>
-            {% endset %}
-            {{ pageAddAsset('footer', geoScripts) }}
+            «ENDIF»
+        «ENDIF»
+        «IF geographical»
+            {% set useGeoLocation = getModVar('«app.appName»', 'enable«name.formatForCodeCapital»GeoLocation', false) %}
+            {{ pageAddAsset('javascript', 'https://maps.google.com/maps/api/js?key=' ~ getModVar('«app.appName»', 'googleMapsApiKey', '') ~ '&amp;language=' ~ app.request.locale ~ '&amp;sensor=false') }}
+            {{ pageAddAsset('javascript', app.request.basePath ~ '/plugins/Mapstraction/lib/vendor/mxn/mxn.js?(googlev3)') }}
+            {% if useGeoLocation == true %}
+                {{ pageAddAsset('javascript', app.request.basePath ~ '/plugins/Mapstraction/lib/vendor/mxn/mxn.geocoder.js') }}
+                {{ pageAddAsset('javascript', app.request.basePath ~ '/plugins/Mapstraction/lib/vendor/mxn/mxn.googlev3.geocoder.js') }}
+            {% endif %}
+            <div id="geographicalInfo" class="hidden" data-context="edit" data-latitude="{{ «name.formatForDB».latitude|«app.appName.formatForDB»_geoData }}" data-longitude="{{ «name.formatForDB».longitude|«app.appName.formatForDB»_geoData }}" data-map-type="{{ getModVar('«app.appName»', 'defaultMapType', 'roadmap') }}" data-zoom-level="{{ getModVar('«app.appName»', 'defaultZoomLevel', 18) }}" data-use-geolocation="{% if mode == 'create' and useGeoLocation == true %}true{% else %}false{% endif %}"></div>
         «ENDIF»
         {% set formInitScript %}
             <script type="text/javascript">
