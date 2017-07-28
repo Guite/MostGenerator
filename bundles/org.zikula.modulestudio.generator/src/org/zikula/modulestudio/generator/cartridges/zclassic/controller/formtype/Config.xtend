@@ -122,7 +122,7 @@ class Config {
                     «FOR varContainer : variables.filter[composite]»
                         $«varContainer.name.formatForCode» = $this->moduleVars['«varContainer.name.formatForCode»'];
                         «FOR modvar : varContainer.vars»
-                            $this->moduleVars['«modvar.name.formatForCode»' = $«varContainer.name.formatForCode»['«modvar.name.formatForCode»'];
+                            $this->moduleVars['«modvar.name.formatForCode»'] = $«varContainer.name.formatForCode»['«modvar.name.formatForCode»'];
                         «ENDFOR»
                         unset($this->moduleVars['«varContainer.name.formatForCode»']);
                     «ENDFOR»

@@ -96,7 +96,7 @@ class ConfigController {
                     «FOR varContainer : variables.filter[composite]»
                         $«varContainer.name.formatForCode» = [];
                         «FOR modvar : varContainer.vars»
-                            $«varContainer.name.formatForCode»['«modvar.name.formatForCode»'] => $formData['«modvar.name.formatForCode»'];
+                            $«varContainer.name.formatForCode»['«modvar.name.formatForCode»'] = $formData['«modvar.name.formatForCode»'];
                             unset($formData['«modvar.name.formatForCode»']);
                         «ENDFOR»
                         $formData['«varContainer.name.formatForCode»'] = $«varContainer.name.formatForCode»;
