@@ -1523,7 +1523,7 @@ class EditEntity {
                     'icon' => ($action['id'] == 'delete' ? 'fa-trash-o' : ''),
                     'attr' => [
                         'class' => $action['buttonClass']«IF !app.targets('1.5')»,
-                        'title' => $this->__(/** @Ignore */$action['description'])«ENDIF»
+                        'title' => isset($action['description']) ? $this->__(/** @Ignore */$action['description']) : ''«ENDIF»
                     ]
                 ]);
             }
