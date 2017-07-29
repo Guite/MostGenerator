@@ -9,6 +9,7 @@ import de.guite.modulestudio.metamodel.EntityTreeType
 import de.guite.modulestudio.metamodel.JoinRelationship
 import de.guite.modulestudio.metamodel.ManyToManyRelationship
 import de.guite.modulestudio.metamodel.StringField
+import de.guite.modulestudio.metamodel.StringRole
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.repository.Joins
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.repository.LinkTable
@@ -87,7 +88,7 @@ class Repository {
                 getSortingFields.head
             }
         } else {
-            val stringFields = fields.filter(StringField).filter[!password]
+            val stringFields = fields.filter(StringField).filter[role != StringRole.PASSWORD]
             if (!stringFields.empty) {
                 stringFields.head
             } else {

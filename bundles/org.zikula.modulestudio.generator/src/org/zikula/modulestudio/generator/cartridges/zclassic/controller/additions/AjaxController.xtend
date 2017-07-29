@@ -3,6 +3,7 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.controller.additio
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.EntityTreeType
 import de.guite.modulestudio.metamodel.StringField
+import de.guite.modulestudio.metamodel.StringRole
 import de.guite.modulestudio.metamodel.TextField
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.ControllerHelperFunctions
@@ -698,13 +699,13 @@ class AjaxController {
         switch ($objectType) {
             «FOR entity : getTreeEntities»
                 case '«entity.name.formatForCode»':
-                    «val stringFields = entity.fields.filter(StringField).filter[length >= 20 && !nospace && !country && !htmlcolour && !language && !locale]»
+                    «val stringFields = entity.fields.filter(StringField).filter[length >= 20 && !nospace && !#[StringRole.COLOUR, StringRole.COUNTRY, StringRole.LANGUAGE, StringRole.LOCALE].contains(role)]»
                         $titleFieldName = '«IF !stringFields.empty»«stringFields.head.name.formatForCode»«ENDIF»';
                         «val textFields = entity.fields.filter(TextField).filter[mandatory && length >= 50]»
                         «IF !textFields.empty»
                             $descriptionFieldName = '«textFields.head.name.formatForCode»';
                         «ELSE»
-                            «val textStringFields = entity.fields.filter(StringField).filter[mandatory && length >= 50 && !nospace && !country && !htmlcolour && !language && !locale]»
+                            «val textStringFields = entity.fields.filter(StringField).filter[mandatory && length >= 50 && !nospace && !#[StringRole.COLOUR, StringRole.COUNTRY, StringRole.LANGUAGE, StringRole.LOCALE].contains(role)]»
                             «IF textStringFields.length > 1»
                                 $descriptionFieldName = '«textStringFields.get(1).name.formatForCode»';
                             «ENDIF»

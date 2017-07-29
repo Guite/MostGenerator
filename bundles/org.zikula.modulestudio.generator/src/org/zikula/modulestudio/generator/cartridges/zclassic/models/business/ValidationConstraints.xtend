@@ -22,6 +22,7 @@ import de.guite.modulestudio.metamodel.ObjectField
 import de.guite.modulestudio.metamodel.StringField
 import de.guite.modulestudio.metamodel.StringIsbnStyle
 import de.guite.modulestudio.metamodel.StringIssnStyle
+import de.guite.modulestudio.metamodel.StringRole
 import de.guite.modulestudio.metamodel.TextField
 import de.guite.modulestudio.metamodel.TimeField
 import de.guite.modulestudio.metamodel.UploadField
@@ -152,30 +153,30 @@ class ValidationConstraints {
         «IF fixed»
             «' '»@Assert\Length(min="«length»", max="«length»")
         «ENDIF»
-        «IF bic»
+        «IF role == StringRole.BIC»
             «' '»* @Assert\Bic()
-        «ELSEIF country»
+        «ELSEIF role == StringRole.COLOUR»
+            «' '»* @Assert\Regex(pattern="/^#?(([a-fA-F0-9]{3}){1,2})$/", message="This value must be a valid html colour code [#123 or #123456].")
+        «ELSEIF role == StringRole.COUNTRY»
             «' '»* @Assert\Country()
-        «ELSEIF creditCard»
+        «ELSEIF role == StringRole.CREDIT_CARD»
             «' '»* @Assert\Luhn(message="Please check your credit card number.")
             «' '»* @Assert\CardScheme(schemes={"AMEX", "CHINA_UNIONPAY", "DINERS", "DISCOVER", "INSTAPAYMENT", "JCB", "LASER", "MAESTRO", "MASTERCARD", "VISA"})
-        «ELSEIF currency»
+        «ELSEIF role == StringRole.CURRENCY»
             «' '»* @Assert\Currency()
-        «ELSEIF language»
-            «' '»* @Assert\Language()
-        «ELSEIF locale»
-            «' '»* @Assert\Locale()
-        «ELSEIF htmlcolour»
-            «' '»* @Assert\Regex(pattern="/^#?(([a-fA-F0-9]{3}){1,2})$/", message="This value must be a valid html colour code [#123 or #123456].")
-        «ELSEIF iban»
+        «ELSEIF role == StringRole.IBAN»
             «' '»* @Assert\Iban()
+        «ELSEIF role == StringRole.LANGUAGE»
+            «' '»* @Assert\Language()
+        «ELSEIF role == StringRole.LOCALE»
+            «' '»* @Assert\Locale()
         «ELSEIF isbn != StringIsbnStyle.NONE»
             «' '»* @Assert\Isbn(isbn10=«(isbn == StringIsbnStyle.ISBN10 || isbn == StringIsbnStyle.ALL).displayBool», isbn13=«(isbn == StringIsbnStyle.ISBN13 || isbn == StringIsbnStyle.ALL).displayBool»)
         «ELSEIF issn != StringIssnStyle.NONE»
             «' '»* @Assert\Issn(caseSensitive=«(issn == StringIssnStyle.CASE_SENSITIVE || issn == StringIssnStyle.STRICT).displayBool», requireHyphen=«(issn == StringIssnStyle.REQUIRE_HYPHEN || issn == StringIssnStyle.STRICT).displayBool»)
         «ELSEIF ipAddress != IpAddressScope.NONE»
             «' '»* @Assert\Ip(version="«ipAddress.ipScopeAsConstant»")
-        «ELSEIF uuid»
+        «ELSEIF role == StringRole.UUID»
             «' '»* @Assert\Uuid(strict=true)
         «ENDIF»
     '''

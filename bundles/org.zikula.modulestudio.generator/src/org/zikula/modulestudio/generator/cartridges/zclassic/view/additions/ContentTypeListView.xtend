@@ -3,6 +3,7 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.view.additions
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.StringField
+import de.guite.modulestudio.metamodel.StringRole
 import de.guite.modulestudio.metamodel.TextField
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
@@ -71,7 +72,7 @@ class ContentTypeListView {
                         <dd>{{ «name.formatForCode».«textFields.head.name.formatForCode»|striptags|truncate(200, true, '&hellip;') }}</dd>
                     {% endif %}
                 «ELSE»
-                    «val stringFields = fields.filter(StringField).filter[!password]»
+                    «val stringFields = fields.filter(StringField).filter[role != StringRole.PASSWORD]»
                     «IF !stringFields.empty»
                         {% if «name.formatForCode».«stringFields.head.name.formatForCode» %}
                             <dd>{{ «name.formatForCode».«stringFields.head.name.formatForCode»|striptags|truncate(200, true, '&hellip;') }}</dd>

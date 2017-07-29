@@ -6,6 +6,7 @@ import de.guite.modulestudio.metamodel.EntityWorkflowType
 import de.guite.modulestudio.metamodel.IpAddressScope
 import de.guite.modulestudio.metamodel.ModuleStudioFactory
 import de.guite.modulestudio.metamodel.StringField
+import de.guite.modulestudio.metamodel.StringRole
 import de.guite.modulestudio.metamodel.UploadField
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
@@ -92,7 +93,9 @@ class PersistenceTransformer {
 
         // add nospace constraint if required
         for (field : fields.filter(StringField)) {
-            if (field.bic || field.country || field.currency || field.language || field.locale || field.ipAddress != IpAddressScope.NONE || field.htmlcolour || field.uuid) {
+            if (field.role == StringRole.BIC || field.role == StringRole.COLOUR || field.role == StringRole.COUNTRY || field.role == StringRole.CURRENCY
+                || field.role == StringRole.LANGUAGE || field.role == StringRole.LOCALE || field.ipAddress != IpAddressScope.NONE || field.role == StringRole.UUID
+            ) {
                 field.nospace = true
             }
         }

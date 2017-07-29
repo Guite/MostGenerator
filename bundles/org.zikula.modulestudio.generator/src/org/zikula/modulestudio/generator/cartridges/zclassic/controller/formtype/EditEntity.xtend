@@ -24,6 +24,7 @@ import de.guite.modulestudio.metamodel.RelationAutoCompletionUsage
 import de.guite.modulestudio.metamodel.StringField
 import de.guite.modulestudio.metamodel.StringIsbnStyle
 import de.guite.modulestudio.metamodel.StringIssnStyle
+import de.guite.modulestudio.metamodel.StringRole
 import de.guite.modulestudio.metamodel.TextField
 import de.guite.modulestudio.metamodel.TimeField
 import de.guite.modulestudio.metamodel.UploadField
@@ -96,13 +97,13 @@ class EditEntity {
             «IF !fields.filter(ListField).filter[!multiple].empty»
                 use «nsSymfonyFormType»ChoiceType;
             «ENDIF»
-            «IF !fields.filter(StringField).filter[country].empty»
+            «IF !fields.filter(StringField).filter[role == StringRole.COUNTRY].empty»
                 use «nsSymfonyFormType»CountryType;
             «ENDIF»
-            «IF !fields.filter(StringField).filter[currency].empty»
+            «IF !fields.filter(StringField).filter[role == StringRole.CURRENCY].empty»
                 use «nsSymfonyFormType»CurrencyType;
             «ENDIF»
-            «IF app.targets('2.0') && !fields.filter(StringField).filter[dateInterval].empty»
+            «IF app.targets('2.0') && !fields.filter(StringField).filter[role == StringRole.DATE_INTERVAL].empty»
                 use «nsSymfonyFormType»DateIntervalType;
             «ENDIF»
             «IF !fields.filter(DatetimeField).empty || (it instanceof Entity && (it as Entity).standardFields)»
@@ -117,7 +118,7 @@ class EditEntity {
             «IF !fields.filter(IntegerField).filter[!percentage && !range].empty»
                 use «nsSymfonyFormType»IntegerType;
             «ENDIF»
-            «IF !fields.filter(StringField).filter[language].empty»
+            «IF !fields.filter(StringField).filter[role == StringRole.LANGUAGE].empty»
                 use «nsSymfonyFormType»LanguageType;
             «ENDIF»
             «IF !fields.filter(DecimalField).filter[currency].empty || !fields.filter(FloatField).filter[currency].empty»
@@ -126,7 +127,7 @@ class EditEntity {
             «IF !fields.filter(DecimalField).filter[!percentage && !currency].empty || !fields.filter(FloatField).filter[!percentage && !currency].empty»
                 use «nsSymfonyFormType»NumberType;
             «ENDIF»
-            «IF !fields.filter(StringField).filter[password].empty»
+            «IF !fields.filter(StringField).filter[role == StringRole.PASSWORD].empty»
                 use «nsSymfonyFormType»PasswordType;
             «ENDIF»
             «IF !fields.filter(IntegerField).filter[percentage].empty || !fields.filter(DecimalField).filter[percentage].empty || !fields.filter(FloatField).filter[percentage].empty»
@@ -141,14 +142,14 @@ class EditEntity {
                 use «nsSymfonyFormType»TextareaType;
             «ENDIF»
             «IF extensions.contains('attributes')
-                || !fields.filter(StringField).filter[!country && !language && !locale && !htmlcolour && !password && !currency && !timezone].empty
+                || !fields.filter(StringField).filter[!#[StringRole.COLOUR, StringRole.COUNTRY, StringRole.CURRENCY, StringRole.LANGUAGE, StringRole.LOCALE, StringRole.PASSWORD, StringRole.TIME_ZONE].contains(role)].empty
                 || (it instanceof Entity && (it as Entity).hasSluggableFields && (it as Entity).slugUpdatable && application.supportsSlugInputFields)»
                 use «nsSymfonyFormType»TextType;
             «ENDIF»
             «IF !fields.filter(TimeField).empty»
                 use «nsSymfonyFormType»TimeType;
             «ENDIF»
-            «IF !fields.filter(StringField).filter[timezone].empty»
+            «IF !fields.filter(StringField).filter[role == StringRole.TIME_ZONE].empty»
                 use «nsSymfonyFormType»TimezoneType;
             «ENDIF»
             «IF !fields.filter(UrlField).empty»
@@ -165,7 +166,7 @@ class EditEntity {
             use Symfony\Component\HttpFoundation\File\File;
         «ENDIF»
         use Symfony\Component\OptionsResolver\OptionsResolver;
-        «IF app.targets('1.5') && !fields.filter(StringField).filter[locale].empty»
+        «IF app.targets('1.5') && !fields.filter(StringField).filter[role == StringRole.LOCALE].empty»
             use Zikula\Bundle\FormExtensionBundle\Form\Type\LocaleType;
         «ENDIF»
         «IF app.targets('1.5') && extensions.contains('categories')»
@@ -184,7 +185,7 @@ class EditEntity {
             «IF !fields.filter(ArrayField).empty»
                 use «app.appNamespace»\Form\Type\Field\ArrayType;
             «ENDIF»
-            «IF !fields.filter(StringField).filter[htmlcolour].empty»
+            «IF !fields.filter(StringField).filter[role == StringRole.COLOUR].empty»
                 use «app.appNamespace»\Form\Type\Field\ColourType;
             «ENDIF»
             «IF it instanceof Entity && (it as Entity).geographical»
@@ -736,7 +737,7 @@ class EditEntity {
 
     def private dispatch helpMessages(StringField it) {
         val messages = helpDocumentation
-        val isSelector = country || currency || language || locale || htmlcolour || timezone
+        val isSelector = #[StringRole.COLOUR, StringRole.COUNTRY, StringRole.CURRENCY, StringRole.LANGUAGE, StringRole.LOCALE, StringRole.TIME_ZONE].contains(role)
 
         if (!isSelector) {
             if (true === fixed) {
@@ -752,25 +753,19 @@ class EditEntity {
         if (null !== regexp && regexp != '') {
             messages += '''$this->__f('Note: this value must«IF regexpOpposite» not«ENDIF» conform to the regular expression "%pattern%".', ['%pattern%' => '«regexp.replace('\'', '')»'])'''
         }
-        if (bic) {
+        if (role == StringRole.BIC) {
             messages += '''$this->__('Note: this value must be a valid BIC (Business Identifier Code).')'''
-        }
-        if (creditCard) {
+        } else if (role == StringRole.CREDIT_CARD) {
             messages += '''$this->__('Note: this value must be a valid credit card number.')'''
-        }
-        if (iban) {
+        } else if (role == StringRole.IBAN) {
             messages += '''$this->__('Note: this value must be a valid IBAN (International Bank Account Number).')'''
-        }
-        if (isbn != StringIsbnStyle.NONE) {
+        } else if (isbn != StringIsbnStyle.NONE) {
             messages += '''$this->__('Note: this value must be a valid ISBN (International Standard Book Number).«isbn.isbnMessage»')'''
-        }
-        if (issn != StringIssnStyle.NONE) {
+        } else if (issn != StringIssnStyle.NONE) {
             messages += '''$this->__('Note: this value must be a valid ISSN (International Standard Serial Number.«issn.issnMessage»')'''
-        }
-        if (ipAddress != IpAddressScope.NONE) {
+        } else if (ipAddress != IpAddressScope.NONE) {
             messages += '''$this->__('Note: this value must be a valid IP address.«ipAddress.scopeMessage»')'''
-        }
-        if (uuid) {
+        } else if (role == StringRole.UUID) {
             messages += '''$this->__('Note: this value must be a valid UUID (Universally Unique Identifier).')'''
         }
 
@@ -1036,8 +1031,8 @@ class EditEntity {
         'scale' => 2
     '''
 
-    def private dispatch formType(StringField it) '''«IF country»«IF !app.targets('1.5')»«nsSymfonyFormType»«ENDIF»Country«ELSEIF language»«IF !app.targets('1.5')»«nsSymfonyFormType»«ENDIF»Language«ELSEIF locale»«IF !app.targets('1.5')»Zikula\Bundle\FormExtensionBundle\Form\Type\«ENDIF»Locale«ELSEIF htmlcolour»«IF !app.targets('1.5')»«app.appNamespace»\Form\Type\Field\«ENDIF»Colour«ELSEIF password»«IF !app.targets('1.5')»«nsSymfonyFormType»«ENDIF»Password«ELSEIF currency»«IF !app.targets('1.5')»«nsSymfonyFormType»«ENDIF»Currency«ELSEIF dateInterval && app.targets('2.0')»DateInterval«ELSEIF timezone»«IF !app.targets('1.5')»«nsSymfonyFormType»«ENDIF»Timezone«ELSE»«IF !app.targets('1.5')»«nsSymfonyFormType»«ENDIF»Text«ENDIF»'''
-    def private dispatch titleAttribute(StringField it) '''«IF country || (dateInterval && app.targets('2.0')) || language || locale || htmlcolour || currency || timezone»Choose the «name.formatForDisplay» of the «entity.name.formatForDisplay»«ELSE»Enter the «name.formatForDisplay» of the «entity.name.formatForDisplay»«ENDIF»'''
+    def private dispatch formType(StringField it) '''«IF role == StringRole.COLOUR»«IF !app.targets('1.5')»«app.appNamespace»\Form\Type\Field\«ENDIF»Colour«ELSEIF role == StringRole.COUNTRY»«IF !app.targets('1.5')»«nsSymfonyFormType»«ENDIF»Country«ELSEIF role == StringRole.CURRENCY»«IF !app.targets('1.5')»«nsSymfonyFormType»«ENDIF»Currency«ELSEIF role == StringRole.LANGUAGE»«IF !app.targets('1.5')»«nsSymfonyFormType»«ENDIF»Language«ELSEIF role == StringRole.LOCALE»«IF !app.targets('1.5')»Zikula\Bundle\FormExtensionBundle\Form\Type\«ENDIF»Locale«ELSEIF role == StringRole.PASSWORD»«IF !app.targets('1.5')»«nsSymfonyFormType»«ENDIF»Password«ELSEIF role == StringRole.DATE_INTERVAL && app.targets('2.0')»DateInterval«ELSEIF role == StringRole.TIME_ZONE»«IF !app.targets('1.5')»«nsSymfonyFormType»«ENDIF»Timezone«ELSE»«IF !app.targets('1.5')»«nsSymfonyFormType»«ENDIF»Text«ENDIF»'''
+    def private dispatch titleAttribute(StringField it) '''«IF role == StringRole.COLOUR || role == StringRole.COUNTRY || role == StringRole.CURRENCY || (role == StringRole.DATE_INTERVAL && app.targets('2.0')) || role == StringRole.LANGUAGE || role == StringRole.LOCALE || role == StringRole.TIME_ZONE»Choose the «name.formatForDisplay» of the «entity.name.formatForDisplay»«ELSE»Enter the «name.formatForDisplay» of the «entity.name.formatForDisplay»«ENDIF»'''
     def private dispatch additionalAttributes(StringField it) '''
         'maxlength' => «length»,
         «IF null !== regexp && regexp != ''»
@@ -1047,16 +1042,16 @@ class EditEntity {
         «ENDIF»
     '''
     def private dispatch additionalOptions(StringField it) '''
-        «IF !mandatory && (country || language || locale || currency || timezone)»
-            'placeholder' => $this->__('All')«IF locale»,«ENDIF»
+        «IF !mandatory && #[StringRole.COUNTRY, StringRole.CURRENCY, StringRole.LANGUAGE, StringRole.LOCALE, StringRole.TIME_ZONE].contains(role)»
+            'placeholder' => $this->__('All')«IF role == StringRole.LOCALE»,«ENDIF»
         «ENDIF»
-        «IF locale»
+        «IF role == StringRole.LOCALE»
             'choices' => $this->localeApi->getSupportedLocaleNames(),
             «IF !app.targets('2.0')»
                 'choices_as_values' => true
             «ENDIF»
         «ENDIF»
-        «IF dateInterval && app.targets('2.0')»
+        «IF role == StringRole.DATE_INTERVAL && app.targets('2.0')»
             «IF !mandatory»
                 'placeholder' => [
                     'years' => $this->__('Years'),

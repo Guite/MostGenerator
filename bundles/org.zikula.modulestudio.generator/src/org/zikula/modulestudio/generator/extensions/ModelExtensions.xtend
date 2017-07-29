@@ -28,6 +28,7 @@ import de.guite.modulestudio.metamodel.ListField
 import de.guite.modulestudio.metamodel.ListVar
 import de.guite.modulestudio.metamodel.ObjectField
 import de.guite.modulestudio.metamodel.StringField
+import de.guite.modulestudio.metamodel.StringRole
 import de.guite.modulestudio.metamodel.TextField
 import de.guite.modulestudio.metamodel.TimeField
 import de.guite.modulestudio.metamodel.UploadField
@@ -565,7 +566,7 @@ class ModelExtensions {
      * Returns a list of all string fields of this entity which are not passwords.
      */
     def getDisplayStringFieldsEntity(DataObject it) {
-        getSelfAndParentDataObjects.map[fields.filter(StringField).filter[!password]].flatten
+        getSelfAndParentDataObjects.map[fields.filter(StringField).filter[role != StringRole.PASSWORD]].flatten
     }
 
     /**
@@ -579,7 +580,7 @@ class ModelExtensions {
      * Returns a list of all colour fields of this entity.
      */
     def getColourFieldsEntity(DataObject it) {
-        getSelfAndParentDataObjects.map[fields.filter(StringField).filter[htmlcolour]].flatten
+        getSelfAndParentDataObjects.map[fields.filter(StringField).filter[role == StringRole.COLOUR]].flatten
     }
 
     /**
@@ -593,7 +594,7 @@ class ModelExtensions {
      * Returns a list of all country fields of this entity.
      */
     def getCountryFieldsEntity(DataObject it) {
-        getSelfAndParentDataObjects.map[fields.filter(StringField).filter[country]].flatten
+        getSelfAndParentDataObjects.map[fields.filter(StringField).filter[role == StringRole.COUNTRY]].flatten
     }
 
     /**
@@ -614,7 +615,7 @@ class ModelExtensions {
      * Returns a list of all language fields of this entity.
      */
     def getLanguageFieldsEntity(DataObject it) {
-        getSelfAndParentDataObjects.map[fields.filter(StringField).filter[language]].flatten
+        getSelfAndParentDataObjects.map[fields.filter(StringField).filter[role == StringRole.LANGUAGE]].flatten
     }
 
     /**
@@ -628,7 +629,7 @@ class ModelExtensions {
      * Returns a list of all locale fields of this entity.
      */
     def getLocaleFieldsEntity(DataObject it) {
-        getSelfAndParentDataObjects.map[fields.filter(StringField).filter[locale]].flatten
+        getSelfAndParentDataObjects.map[fields.filter(StringField).filter[role == StringRole.LOCALE]].flatten
     }
 
     /**
@@ -642,7 +643,7 @@ class ModelExtensions {
      * Returns a list of all time zone fields of this entity.
      */
     def getTimezoneFieldsEntity(DataObject it) {
-        getSelfAndParentDataObjects.map[fields.filter(StringField).filter[timezone]].flatten
+        getSelfAndParentDataObjects.map[fields.filter(StringField).filter[role == StringRole.TIME_ZONE]].flatten
     }
 
     /**
@@ -656,7 +657,7 @@ class ModelExtensions {
      * Returns a list of all currency fields of this entity.
      */
     def getCurrencyFieldsEntity(DataObject it) {
-        getSelfAndParentDataObjects.map[fields.filter(StringField).filter[currency]].flatten
+        getSelfAndParentDataObjects.map[fields.filter(StringField).filter[role == StringRole.CURRENCY]].flatten
     }
 
     /**

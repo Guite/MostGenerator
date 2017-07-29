@@ -11,6 +11,7 @@ import de.guite.modulestudio.metamodel.FloatField
 import de.guite.modulestudio.metamodel.IntegerField
 import de.guite.modulestudio.metamodel.ListField
 import de.guite.modulestudio.metamodel.StringField
+import de.guite.modulestudio.metamodel.StringRole
 import de.guite.modulestudio.metamodel.TextField
 import de.guite.modulestudio.metamodel.TimeField
 import de.guite.modulestudio.metamodel.UploadField
@@ -94,13 +95,13 @@ class SimpleFields {
     }
 
     def dispatch displayField(StringField it, String objName, String page) {
-        if (password) return ''
-        if (htmlcolour) '''
+        if (role == StringRole.PASSWORD) return ''
+        if (role == StringRole.COLOUR) '''
             <span class="label label-default" style="background-color: {{ «objName».«name.formatForCode»|e('html_attr') }}">{{ «objName».«name.formatForCode» }}</span>'''
-        else if (entity.application.targets('2.0') && dateInterval) '''
+        else if (entity.application.targets('2.0') && role == StringRole.DATE_INTERVAL) '''
             {{ «objName».«name.formatForCode»|«entity.application.appName.formatForDB»_dateInterval }}'''
         else '''
-            {{ «objName».«name.formatForCode»«IF country»|«entity.application.appName.formatForDB»_countryName«ELSEIF language || locale»|languageName«ENDIF» }}'''
+            {{ «objName».«name.formatForCode»«IF role == StringRole.COUNTRY»|«entity.application.appName.formatForDB»_countryName«ELSEIF role == StringRole.LANGUAGE || role == StringRole.LOCALE»|languageName«ENDIF» }}'''
     }
 
     def dispatch displayField(TextField it, String objName, String page) '''

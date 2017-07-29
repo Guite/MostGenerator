@@ -8,6 +8,7 @@ import de.guite.modulestudio.metamodel.EntityWorkflowType
 import de.guite.modulestudio.metamodel.JoinRelationship
 import de.guite.modulestudio.metamodel.ListField
 import de.guite.modulestudio.metamodel.StringField
+import de.guite.modulestudio.metamodel.StringRole
 import de.guite.modulestudio.metamodel.UserField
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
@@ -596,7 +597,7 @@ class QuickNavigation {
     '''
 
     def private dispatch fieldImpl(DerivedField it) '''
-        $builder->add('«name.formatForCode»', «IF app.targets('1.5')»«IF it instanceof StringField && (it as StringField).locale»Locale«ELSEIF it instanceof ListField && (it as ListField).multiple»MultiList«ELSEIF it instanceof UserField»Entity«ELSE»«fieldType»«ENDIF»Type::class«ELSE»'«IF it instanceof StringField && (it as StringField).locale»Zikula\Bundle\FormExtensionBundle\Form\Type\Locale«ELSEIF it instanceof ListField && (it as ListField).multiple»«app.appNamespace»\Form\Type\Field\MultiList«ELSEIF it instanceof UserField»Symfony\Bridge\Doctrine\Form\Type\Entity«ELSE»«nsSymfonyFormType»«fieldType»«ENDIF»Type'«ENDIF», [
+        $builder->add('«name.formatForCode»', «IF app.targets('1.5')»«IF it instanceof StringField && (it as StringField).role == StringRole.LOCALE»Locale«ELSEIF it instanceof ListField && (it as ListField).multiple»MultiList«ELSEIF it instanceof UserField»Entity«ELSE»«fieldType»«ENDIF»Type::class«ELSE»'«IF it instanceof StringField && (it as StringField).role == StringRole.LOCALE»Zikula\Bundle\FormExtensionBundle\Form\Type\Locale«ELSEIF it instanceof ListField && (it as ListField).multiple»«app.appNamespace»\Form\Type\Field\MultiList«ELSEIF it instanceof UserField»Symfony\Bridge\Doctrine\Form\Type\Entity«ELSE»«nsSymfonyFormType»«fieldType»«ENDIF»Type'«ENDIF», [
             'label' => $this->__('«IF name == 'workflowState'»State«ELSE»«name.formatForDisplayCapital»«ENDIF»'),
             'attr' => [
                 'class' => 'input-sm'
@@ -609,12 +610,12 @@ class QuickNavigation {
     def private dispatch fieldType(DerivedField it) ''''''
     def private dispatch additionalOptions(DerivedField it) ''''''
 
-    def private dispatch fieldType(StringField it) '''«IF country»Country«ELSEIF language»Language«ELSEIF locale»Locale«ELSEIF currency»Currency«ELSEIF timezone»Timezone«ENDIF»'''
+    def private dispatch fieldType(StringField it) '''«IF role == StringRole.COUNTRY»Country«ELSEIF role == StringRole.CURRENCY»Currency«ELSEIF role == StringRole.LANGUAGE»Language«ELSEIF role == StringRole.LOCALE»Locale«ELSEIF role == StringRole.TIME_ZONE»Timezone«ENDIF»'''
     def private dispatch additionalOptions(StringField it) '''
-        «IF !mandatory && (country || language || locale || currency || timezone)»
-            'placeholder' => $this->__('All')«IF locale»,«ENDIF»
+        «IF !mandatory && #[StringRole.COUNTRY, StringRole.CURRENCY, StringRole.LANGUAGE, StringRole.LOCALE, StringRole.TIME_ZONE].contains(role)»
+            'placeholder' => $this->__('All')«IF role == StringRole.LOCALE»,«ENDIF»
         «ENDIF»
-        «IF locale»
+        «IF role == StringRole.LOCALE»
             'choices' => $this->localeApi->getSupportedLocaleNames()«IF !app.targets('2.0')»,«ENDIF»
             «IF !app.targets('2.0')»
                 'choices_as_values' => true

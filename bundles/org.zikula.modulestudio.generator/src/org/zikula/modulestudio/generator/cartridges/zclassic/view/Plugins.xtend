@@ -2,6 +2,7 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.view
 
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.StringField
+import de.guite.modulestudio.metamodel.StringRole
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.FormatGeoData
@@ -68,7 +69,7 @@ class Plugins {
     def private twigExtensionBaseImpl(Application it) '''
         namespace «appNamespace»\Twig\Base;
 
-        «IF targets('2.0') && !getAllEntities.filter[!fields.filter(StringField).filter[dateInterval].empty].empty»
+        «IF targets('2.0') && !getAllEntities.filter[!fields.filter(StringField).filter[role == StringRole.DATE_INTERVAL].empty].empty»
             use DateInterval;
         «ENDIF»
         «IF generateIcsTemplates && hasEntitiesWithIcsTemplates»
@@ -251,7 +252,7 @@ class Plugins {
                 «IF hasCountryFields»
                     new \Twig_SimpleFilter('«appNameLower»_countryName', [$this, 'getCountryName']),
                 «ENDIF»
-                «IF targets('2.0') && !getAllEntities.filter[!fields.filter(StringField).filter[dateInterval].empty].empty»
+                «IF targets('2.0') && !getAllEntities.filter[!fields.filter(StringField).filter[role == StringRole.DATE_INTERVAL].empty].empty»
                     new \Twig_SimpleFilter('«appNameLower»_dateInterval', [$this, 'getFormattedDateInterval']),
                 «ENDIF»
                 «IF hasUploads»
@@ -288,7 +289,7 @@ class Plugins {
         «ENDIF»
 
         «generateInternal»
-        «IF targets('2.0') && !getAllEntities.filter[!fields.filter(StringField).filter[dateInterval].empty].empty»
+        «IF targets('2.0') && !getAllEntities.filter[!fields.filter(StringField).filter[role == StringRole.DATE_INTERVAL].empty].empty»
 
             /**
              * The «appName.formatForDB»_dateInterval filter outputs a formatted description for a given date interval (duration string).

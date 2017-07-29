@@ -10,6 +10,7 @@ import de.guite.modulestudio.metamodel.EmailField
 import de.guite.modulestudio.metamodel.FloatField
 import de.guite.modulestudio.metamodel.ListField
 import de.guite.modulestudio.metamodel.StringField
+import de.guite.modulestudio.metamodel.StringRole
 import de.guite.modulestudio.metamodel.TextField
 import de.guite.modulestudio.metamodel.TimeField
 import de.guite.modulestudio.metamodel.UploadField
@@ -30,7 +31,7 @@ class Validation {
             AbstractIntegerField: ' validate-digits'
             DecimalField: ' validate-number'
             FloatField: ' validate-number'
-            StringField case it.htmlcolour: ' validate-nospace validate-htmlcolour ' + entity.application.appName.formatForDB + 'ColourPicker'
+            StringField case it.role == StringRole.COLOUR: ' validate-nospace validate-htmlcolour ' + entity.application.appName.formatForDB + 'ColourPicker'
             StringField case it.nospace: ' validate-nospace'
             TextField case it.nospace: ' validate-nospace'
             EmailField case it.nospace: ' validate-nospace validate-email'
