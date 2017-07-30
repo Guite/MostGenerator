@@ -57,6 +57,11 @@ class PersistenceTransformer {
      */
     def modify(Application it) {
         println('Starting model transformation')
+
+        name = name.replaceUmlauts
+        vendor = vendor.replaceUmlauts
+        author = author.replaceUmlauts
+
         // handle all entities
         for (entity : getAllEntities) {
             entity.handleEntity
@@ -67,6 +72,26 @@ class PersistenceTransformer {
         addImageSettings
         addIntegrationSettings
         addGeoSettings
+    }
+
+    /**
+     * Replace umlauts by equivalent characters.
+     *
+     * @param it Given string
+     * @return string Replaced string
+     */
+    def private replaceUmlauts(String it) {
+        var output = it
+
+        output = output.replaceAll('Ä', 'Ae')
+        output = output.replaceAll('Ö', 'Oe')
+        output = output.replaceAll('Ü', 'Ue')
+        output = output.replaceAll('ä', 'ae')
+        output = output.replaceAll('ö', 'oe')
+        output = output.replaceAll('ü', 'ue')
+        output = output.replaceAll('ß', 'ss')
+
+        output
     }
 
     /**
