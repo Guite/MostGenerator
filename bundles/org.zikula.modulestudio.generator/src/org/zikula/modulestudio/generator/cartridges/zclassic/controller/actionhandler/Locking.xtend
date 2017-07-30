@@ -24,7 +24,7 @@ class Locking {
     def addPageLock(Application it) '''
         if (true === $this->hasPageLockSupport && $this->kernel->isBundle('ZikulaPageLockModule') && null !== $this->lockingApi) {
             // try to guarantee that only one person at a time can be editing this entity
-            $lockName = '«appName»' . $this->objectTypeCapital . $this->entityRef->getKey();
+            $lockName = '«appName»' . $this->objectTypeCapital . $entity->getKey();
             $this->lockingApi->addLock($lockName, $this->getRedirectUrl(null));
             «IF hasUploads»
                 // reload entity as the addLock call above has triggered the preUpdate event
@@ -35,7 +35,7 @@ class Locking {
 
     def releasePageLock(Application it) '''
         if (true === $this->hasPageLockSupport && $this->templateParameters['mode'] == 'edit' && $this->kernel->isBundle('ZikulaPageLockModule') && null !== $this->lockingApi) {
-            $lockName = '«appName»' . $this->objectTypeCapital . $this->entityRef->getKey();
+            $lockName = '«appName»' . $this->objectTypeCapital . $entity->getKey();
             $this->lockingApi->releaseLock($lockName);
         }
     '''
