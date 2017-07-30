@@ -75,6 +75,10 @@ class Finder {
             «IF hasImageFields»
                 var imageModeEnabled;
 
+                if (jQuery('#«elemPrefix»SelectorForm').length < 1) {
+                    return;
+                }
+
                 imageModeEnabled = jQuery("[id$='onlyImages']").prop('checked');
                 if (!imageModeEnabled) {
                     jQuery('#imageFieldRow').addClass('hidden');
@@ -87,6 +91,10 @@ class Finder {
                 }
 
                 jQuery('input[type="checkbox"]').click(«objName».finder.onParamChanged);
+            «ELSE»
+                if (jQuery('#«elemPrefix»SelectorForm').length < 1) {
+                    return;
+                }
             «ENDIF»
             jQuery('select').not("[id$='pasteAs']").change(«objName».finder.onParamChanged);
             «/*jQuery('.btn-success').addClass('hidden');*/»
