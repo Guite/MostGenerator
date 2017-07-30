@@ -41,6 +41,7 @@ class ExternalController {
         namespace «appNamespace»\Controller\Base;
 
         use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+        use Symfony\Component\HttpFoundation\RedirectResponse;
         use Symfony\Component\HttpFoundation\Request;
         use Symfony\Component\HttpFoundation\Response;
         use Symfony\Component\Security\Core\Exception\AccessDeniedException;
@@ -183,7 +184,14 @@ class ExternalController {
 
         $activatedObjectTypes = $this->getVar('enabledFinderTypes', []);
         if (!in_array($objectType, $activatedObjectTypes)) {
-            throw new AccessDeniedException();
+            if (!count($activatedObjectTypes)) {
+                throw new AccessDeniedException();
+            }
+
+            // redirect to first valid object type
+            $redirectUrl = $this->get('router')->generate('«appName.formatForDB»_external_finder', ['objectType' => array_shift($activatedObjectTypes), 'editor' => $editor]);
+
+            return new RedirectResponse($redirectUrl);
         }
 
         if (!$this->hasPermission('«appName»:' . ucfirst($objectType) . ':', '::', ACCESS_COMMENT)) {
