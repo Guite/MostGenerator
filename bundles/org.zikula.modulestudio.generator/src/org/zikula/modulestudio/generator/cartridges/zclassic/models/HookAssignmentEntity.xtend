@@ -34,11 +34,15 @@ class HookAssignmentEntity {
         generateClassPair(fsa, getAppSourceLibPath + 'Entity/HookAssignmentEntity.php',
             fh.phpFileContent(it, entityBaseImpl), fh.phpFileContent(it, entityImpl)
         )
+        entities -= entity
     }
 
     def private createEntity(Application it) {
         val factory = ModuleStudioFactory.eINSTANCE
-        entity = factory.createEntity
+        entity = factory.createEntity => [
+            name = 'hookAssignment'
+            nameMultiple = 'hookAssignments'
+        ]
         entity.fields += factory.createIntegerField => [
             name = 'id'
             length = 9
@@ -69,6 +73,7 @@ class HookAssignmentEntity {
         ]
 
         entity.standardFields = false
+        entities += entity
         extMan = new ExtensionManager(entity)
         thProp = new Property(extMan)
     }
