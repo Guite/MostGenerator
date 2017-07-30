@@ -274,7 +274,13 @@ class DisplayFunctions {
 
             containers.find('.dropdown > ul').removeClass('list-inline').addClass(listClasses);
             containers.find('.dropdown > ul a').each(function (index) {
-                jQuery(this).html(jQuery(this).html() + jQuery(this).find('i').first().attr('title'));
+                var title;
+
+                title = jQuery(this).find('i').first().attr('title');
+                if (title == '') {
+                    title = jQuery(this).find('i').first().data('original-title');
+                }
+                jQuery(this).html(jQuery(this).html() + title);
             });
             containers.find('.dropdown > ul a i').addClass('fa-fw');
             containers.find('.dropdown-toggle').removeClass('hidden').dropdown();
