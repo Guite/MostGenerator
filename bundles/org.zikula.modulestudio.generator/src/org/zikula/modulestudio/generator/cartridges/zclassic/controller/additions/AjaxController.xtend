@@ -436,7 +436,7 @@ class AjaxController {
                     switch ($fieldName) {
                     «FOR uniqueField : uniqueFields»
                         case '«uniqueField.name.formatForCode»':
-                                $result = $repository->detectUniqueState('«uniqueField.name.formatForCode»', $value, $exclude);
+                                $result = !$repository->detectUniqueState('«uniqueField.name.formatForCode»', $value, $exclude);
                                 break;
                     «ENDFOR»
                     «IF entity.hasSluggableFields && entity.slugUnique»

@@ -102,27 +102,31 @@ class Validation {
             /**
              * Performs a duplicate check for unique fields
              */
-            function «vendorAndName»UniqueCheck(ucOt, val, elem, ucEx)
+            function «vendorAndName»UniqueCheck(elem, excludeId)
             {
-                var result, params;
+                var objectType, fieldName, fieldValue, result, params;
 
-                if (elem.val() == window['last' + «vendorAndName»CapitaliseFirstLetter(ucOt) + «vendorAndName»CapitaliseFirstLetter(elem.attr('id')) ]) {
+                objectType = elem.attr('id').split('_')[1];
+                fieldName = elem.attr('id').split('_')[2];
+                fieldValue = elem.val();
+                if (fieldValue == window['last' + «vendorAndName»CapitaliseFirstLetter(objectType) + «vendorAndName»CapitaliseFirstLetter(fieldName) ]) {
                     return true;
                 }
 
-                window['last' + «vendorAndName»CapitaliseFirstLetter(ucOt) + «vendorAndName»CapitaliseFirstLetter(elem.attr('id')) ] = elem.val();
+                window['last' + «vendorAndName»CapitaliseFirstLetter(objectType) + «vendorAndName»CapitaliseFirstLetter(fieldName) ] = fieldValue;
 
                 result = true;
                 params = {
-                    ot: ucOt,
-                    fn: encodeURIComponent(elem.attr('id')),
-                    v: encodeURIComponent(val),
-                    ex: ucEx
+                    ot: encodeURIComponent(objectType),
+                    fn: encodeURIComponent(fieldName),
+                    v: encodeURIComponent(fieldValue),
+                    ex: excludeId
                 };
 
                 jQuery.ajax({
                     url: Routing.generate('«appName.formatForDB»_ajax_checkforduplicate'),
-                    datatype: 'json',
+                    method: 'GET',
+                    dataType: 'json',
                     async: false,
                     data: params,
                     success: function(data) {
@@ -386,7 +390,7 @@ class Validation {
             «ENDFOR»
             «IF entities.exists[getUniqueDerivedFields.filter[!primaryKey].size > 0]»
                 jQuery('.validate-unique').each( function() {
-                    if (!«vendorAndName»UniqueCheck(jQuery(this).attr('id'), jQuery(this).val(), jQuery(this), currentEntityId)) {
+                    if (!«vendorAndName»UniqueCheck(jQuery(this), currentEntityId)) {
                         document.getElementById(jQuery(this).attr('id')).setCustomValidity(Translator.__('This value is already assigned, but must be unique. Please change it.'));
                     } else {
                         document.getElementById(jQuery(this).attr('id')).setCustomValidity('');
