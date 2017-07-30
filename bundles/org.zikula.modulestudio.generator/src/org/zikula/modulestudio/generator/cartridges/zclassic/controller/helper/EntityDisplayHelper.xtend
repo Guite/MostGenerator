@@ -10,6 +10,7 @@ import de.guite.modulestudio.metamodel.FloatField
 import de.guite.modulestudio.metamodel.ListField
 import de.guite.modulestudio.metamodel.TextField
 import de.guite.modulestudio.metamodel.TimeField
+import de.guite.modulestudio.metamodel.UploadField
 import de.guite.modulestudio.metamodel.UserField
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
@@ -283,7 +284,11 @@ class EntityDisplayHelper {
             var matchedFields = getSelfAndParentDataObjects.map[fields].flatten.filter[name == patternPart]
             if (!matchedFields.empty) {
                 // field referencing part
-                formattedPart = '\'%' + patternPart + '%\' => ' + formatFieldValue(matchedFields.head, '$entity->get' + patternPart.toFirstUpper + '()')
+                if (matchedFields.head instanceof UploadField) {
+                    formattedPart = '\'%' + patternPart + '%\' => ' + 'is_array($entity->get' + patternPart.toFirstUpper + '()) ? $entity->get' + patternPart.toFirstUpper + '()[\'' + patternPart + '\'] : $entity->get' + patternPart.toFirstUpper + '()'
+                } else {
+                    formattedPart = '\'%' + patternPart + '%\' => ' + formatFieldValue(matchedFields.head, '$entity->get' + patternPart.toFirstUpper + '()')
+                }
             } else if (geographical && #['latitude', 'longitude'].contains(patternPart)) {
                 // geo field referencing part
                 formattedPart = '\'%' + patternPart + '%\' => ' + 'number_format($entity->get' + patternPart.toFirstUpper + '(), 7, \'.\', \'\')'
