@@ -93,7 +93,7 @@ class LoggableHistory {
             try {
                 // execute the workflow action
                 $workflowHelper = $this->get('«application.appService».workflow_helper');
-                $success = $workflowHelper->executeAction($«name.formatForCode», 'update'«IF application.targets('1.5')» . $«name.formatForCode»->getWorkflowState()«ENDIF»);
+                $success = $workflowHelper->executeAction($«name.formatForCode», 'update' . $«name.formatForCode»->getWorkflowState());
 
                 if ($success) {
                     $this->addFlash('status', $this->__f('Done! Reverted «name.formatForDisplay» to version %version%.', ['%version%' => $revertToVersion]));

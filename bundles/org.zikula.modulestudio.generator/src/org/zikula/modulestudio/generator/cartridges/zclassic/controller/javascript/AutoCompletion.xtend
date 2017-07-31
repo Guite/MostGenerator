@@ -45,7 +45,7 @@ class AutoCompletion {
         «removeRelatedItem»
 
         «selectRelatedItem»
-        «IF hasUiHooksProviders && targets('1.5')»
+        «IF hasUiHooksProviders»
 
             «selectHookItem»
         «ENDIF»
@@ -274,7 +274,7 @@ class AutoCompletion {
          */
         function «vendorAndName»InitRelationItemsForm(objectType, idPrefix, includeEditing)
         {
-            var acOptions, acDataSet, itemIds, itemIdsArr, acUrl«IF hasUiHooksProviders && targets('1.5')», isHookAttacher«ENDIF»;
+            var acOptions, acDataSet, itemIds, itemIdsArr, acUrl«IF hasUiHooksProviders», isHookAttacher«ENDIF»;
 
             // update identifier of hidden field for easier usage in JS
             jQuery('#' + idPrefix + 'Multiple').prev().attr('id', idPrefix);
@@ -292,7 +292,7 @@ class AutoCompletion {
             // clear values and ensure starting state
             «vendorAndName»ResetRelatedItemForm(idPrefix);
 
-            «IF hasUiHooksProviders && targets('1.5')»
+            «IF hasUiHooksProviders»
 
                 isHookAttacher = idPrefix.startsWith('hookAssignment');
             «ENDIF»
@@ -318,7 +318,7 @@ class AutoCompletion {
                             fragment: request.term
                         };
                         if (jQuery('#' + idPrefix).length > 0) {
-                            «IF hasUiHooksProviders && targets('1.5')»
+                            «IF hasUiHooksProviders»
                                 if (true === isHookAttacher) {
                                     acUrlArgs.exclude = jQuery('#' + idPrefix + 'ExcludedIds').val();
                                 } else {
@@ -345,7 +345,7 @@ class AutoCompletion {
                         return false;
                     },
                     select: function(event, ui) {
-                        «IF hasUiHooksProviders && targets('1.5')»
+                        «IF hasUiHooksProviders»
                             if (true === isHookAttacher) {
                                 «vendorAndName»SelectHookItem(objectType, idPrefix, ui.item);
                             } else {

@@ -44,9 +44,9 @@ class LinkContainer {
         use Zikula\Core\Doctrine\EntityAccess;
         use Zikula\Core\LinkContainer\LinkContainerInterface;
         «IF generateAccountApi»
-            use Zikula\ExtensionsModule\Api\«IF targets('1.5')»ApiInterface\VariableApiInterface«ELSE»VariableApi«ENDIF»;
+            use Zikula\ExtensionsModule\Api\ApiInterface\VariableApiInterface;
         «ENDIF»
-        use Zikula\PermissionsModule\Api\«IF targets('1.5')»ApiInterface\PermissionApiInterface«ELSE»PermissionApi«ENDIF»;
+        use Zikula\PermissionsModule\Api\ApiInterface\PermissionApiInterface;
         use «appNamespace»\Helper\ControllerHelper;
 
         /**
@@ -62,13 +62,13 @@ class LinkContainer {
             protected $router;
 
             /**
-             * @var PermissionApi«IF targets('1.5')»Interface«ENDIF»
+             * @var PermissionApiInterface
              */
             protected $permissionApi;
 
             «IF generateAccountApi»
                 /**
-                 * @var VariableApi«IF targets('1.5')»Interface«ENDIF»
+                 * @var VariableApiInterface
                  */
                 protected $variableApi;
 
@@ -81,20 +81,20 @@ class LinkContainer {
             /**
              * LinkContainer constructor.
              *
-             * @param TranslatorInterface $translator       Translator service instance
-             * @param Routerinterface     $router           Router service instance
-             * @param PermissionApi«IF targets('1.5')»Interface«ENDIF»       $permissionApi    PermissionApi service instance
+             * @param TranslatorInterface    $translator       Translator service instance
+             * @param Routerinterface        $router           Router service instance
+             * @param PermissionApiInterface $permissionApi    PermissionApi service instance
              «IF generateAccountApi»
-             * @param VariableApi«IF targets('1.5')»Interface«ENDIF»         $variableApi      VariableApi service instance
+             * @param VariableApiInterface   $variableApi      VariableApi service instance
              «ENDIF»
-             * @param ControllerHelper    $controllerHelper ControllerHelper service instance
+             * @param ControllerHelper       $controllerHelper ControllerHelper service instance
              */
             public function __construct(
                 TranslatorInterface $translator,
                 RouterInterface $router,
-                PermissionApi«IF targets('1.5')»Interface«ENDIF» $permissionApi,
+                PermissionApiInterface $permissionApi,
                 «IF generateAccountApi»
-                    VariableApi«IF targets('1.5')»Interface«ENDIF» $variableApi,
+                    VariableApiInterface $variableApi,
                 «ENDIF»
                 ControllerHelper $controllerHelper
             ) {
@@ -199,7 +199,7 @@ class LinkContainer {
         use Symfony\Component\DependencyInjection\ContainerAwareInterface;
         use Symfony\Component\DependencyInjection\ContainerAwareTrait;
         use Zikula\Common\Translator\TranslatorTrait;
-        «IF targets('1.5') && (hasEditActions || !relations.empty)»
+        «IF hasEditActions || !relations.empty»
             use Zikula\UsersModule\Constant as UsersConstant;
         «ENDIF»
         «FOR entity : getAllEntities»

@@ -41,9 +41,6 @@ class Installer {
         «ENDIF»
         use RuntimeException;
         use Zikula\Core\AbstractExtensionInstaller;
-        «IF !targets('1.5')»
-            use Zikula_Workflow_Util;
-        «ENDIF»
         «IF hasCategorisableEntities»
             use Zikula\CategoriesModule\Entity\CategoryRegistryEntity;
         «ENDIF»
@@ -107,33 +104,17 @@ class Installer {
                     $this->container->get('request_stack'),
                     $logger,
                     $this->container->get('zikula_users_module.current_user'),
-                    «IF targets('1.5')»
-                        $this->container->get('zikula_categories_module.category_registry_repository'),
-                    «ELSE»
-                        $this->container->get('zikula_categories_module.api.category_registry'),
-                    «ENDIF»
+                    $this->container->get('zikula_categories_module.category_registry_repository'),
                     $this->container->get('zikula_categories_module.api.category_permission')
                 );
-                «IF targets('1.5')»
-                    $categoryGlobal = $this->container->get('zikula_categories_module.category_repository')->findOneBy(['name' => 'Global']);
-                «ELSE»
-                    $categoryGlobal = $this->container->get('zikula_categories_module.api.category')->getCategoryByPath('/__SYSTEM__/Modules/Global');
-                «ENDIF»
+                $categoryGlobal = $this->container->get('zikula_categories_module.category_repository')->findOneBy(['name' => 'Global']);
                 «FOR entity : getCategorisableEntities»
 
                     $registry = new CategoryRegistryEntity();
                     $registry->setModname('«appName»');
                     $registry->setEntityname('«entity.name.formatForCodeCapital»Entity');
                     $registry->setProperty($categoryHelper->getPrimaryProperty('«entity.name.formatForCodeCapital»'));
-                    «IF targets('1.5')»
-                        $registry->setCategory($categoryGlobal);
-                    «ELSE»
-                        if (method_exists($registry, 'setCategory')) { // Core 1.5
-                            $registry->setCategory($categoryGlobal);
-                        } else { // Core 1.4
-                            $registry->setCategory_Id($categoryGlobal['id']);
-                        }
-                    «ENDIF»
+                    $registry->setCategory($categoryGlobal);
 
                     try {
                         $entityManager = $this->container->get('«entityManagerService»');
@@ -145,11 +126,6 @@ class Installer {
                     }
                     $categoryRegistryIdsPerEntity['«entity.name.formatForCode»'] = $registry->getId();
                 «ENDFOR»
-            «ENDIF»
-            «IF !targets('1.5') && hasHookSubscribers»
-
-                // install subscriber hooks
-                $this->hookApi->installSubscriberHooks($this->bundle->getMetaData());
             «ENDIF»
 
             // initialisation successful
@@ -216,7 +192,7 @@ class Installer {
                     «new MigrationHelper().generateUsageExample(it)»
                 } * /
             «ENDIF»
-            «IF targets('1.5') && !targets('2.0') && hasHookSubscribers»
+            «IF !targets('2.0') && hasHookSubscribers»
 
                 // remove obsolete persisted hooks from the database
                 //$this->hookApi->uninstallSubscriberHooks($this->bundle->getMetaData());
@@ -243,17 +219,6 @@ class Installer {
         public function uninstall()
         {
             $logger = $this->container->get('logger');
-            «IF !targets('1.5')»
-
-                // delete stored object workflows
-                $result = Zikula_Workflow_Util::deleteWorkflowsForModule('«appName»');
-                if (false === $result) {
-                    $this->addFlash('error', $this->__f('An error was encountered while removing stored object workflows for the %extension% extension.', ['%extension%' => '«appName»']));
-                    $logger->error('{app}: Could not remove stored object workflows during uninstallation.', ['app' => '«appName»']);
-
-                    return false;
-                }
-            «ENDIF»
 
             try {
                 $this->schemaTool->drop($this->listEntityClasses());
@@ -263,11 +228,6 @@ class Installer {
 
                 return false;
             }
-            «IF !targets('1.5') && hasHookSubscribers»
-
-                // uninstall subscriber hooks
-                $this->hookApi->uninstallSubscriberHooks($this->bundle->getMetaData());
-            «ENDIF»
             «IF !variables.empty»
 
                 // remove all module vars
@@ -276,20 +236,12 @@ class Installer {
             «IF hasCategorisableEntities»
 
                 // remove category registry entries
-                «IF targets('1.5')»
-                    $entityManager = $this->container->get('«entityManagerService»');
-                    $registries = $this->container->get('zikula_categories_module.category_registry_repository')->findBy(['modname' => '«appName»']);
-                    foreach ($registries as $registry) {
-                        $entityManager->remove($registry);
-                    }
-                    $entityManager->flush();
-                «ELSE»
-                    $categoryRegistryApi = $this->container->get('zikula_categories_module.api.category_registry');
-                    // assume that not more than five registries exist
-                    for ($i = 1; $i <= 5; $i++) {
-                        $categoryRegistryApi->deleteRegistry('«appName»');
-                    }
-                «ENDIF»
+                $entityManager = $this->container->get('«entityManagerService»');
+                $registries = $this->container->get('zikula_categories_module.category_registry_repository')->findBy(['modname' => '«appName»']);
+                foreach ($registries as $registry) {
+                    $entityManager->remove($registry);
+                }
+                $entityManager->flush();
             «ENDIF»
             «IF hasUploads»
 

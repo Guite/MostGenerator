@@ -39,21 +39,19 @@ class ListBlock {
         namespace «appNamespace»\Block\Form\Type\Base;
 
         use Symfony\Component\Form\AbstractType;
-        «IF targets('1.5')»
-            use «nsSymfonyFormType»ChoiceType;
-            «IF getAllEntities.size == 1»
-                use «nsSymfonyFormType»HiddenType;
-            «ENDIF»
-            use «nsSymfonyFormType»IntegerType;
-            use «nsSymfonyFormType»TextType;
+        use «nsSymfonyFormType»ChoiceType;
+        «IF getAllEntities.size == 1»
+            use «nsSymfonyFormType»HiddenType;
         «ENDIF»
+        use «nsSymfonyFormType»IntegerType;
+        use «nsSymfonyFormType»TextType;
         use Symfony\Component\Form\FormBuilderInterface;
         «IF hasCategorisableEntities»
             use Symfony\Component\Form\FormInterface;
             use Symfony\Component\Form\FormView;
         «ENDIF»
         use Symfony\Component\OptionsResolver\OptionsResolver;
-        «IF targets('1.5') && hasCategorisableEntities»
+        «IF hasCategorisableEntities»
             use Zikula\CategoriesModule\Form\Type\CategoriesType;
         «ENDIF»
         use Zikula\Common\Translator\TranslatorInterface;
@@ -166,7 +164,7 @@ class ListBlock {
          */
         public function addObjectTypeField(FormBuilderInterface $builder, array $options)
         {
-            $builder->add('objectType', «IF targets('1.5')»«IF getAllEntities.size == 1»Hidden«ELSE»Choice«ENDIF»Type::class«ELSE»'«nsSymfonyFormType»«IF getAllEntities.size == 1»Hidden«ELSE»Choice«ENDIF»Type'«ENDIF», [
+            $builder->add('objectType', «IF getAllEntities.size == 1»Hidden«ELSE»Choice«ENDIF»Type::class, [
                 'label' => $this->__('Object type') . ':',
                 'empty_data' => '«app.leadingEntity.name.formatForCode»',
                 'attr' => [
@@ -202,7 +200,7 @@ class ListBlock {
             }
 
             $hasMultiSelection = $options['category_helper']->hasMultipleSelection($options['object_type']);
-            $builder->add('categories', «IF targets('1.5')»CategoriesType::class«ELSE»'Zikula\CategoriesModule\Form\Type\CategoriesType'«ENDIF», [
+            $builder->add('categories', CategoriesType::class, [
                 'label' => ($hasMultiSelection ? $this->__('Categories') : $this->__('Category')) . ':',
                 'empty_data' => $hasMultiSelection ? [] : null,
                 'attr' => [
@@ -228,7 +226,7 @@ class ListBlock {
          */
         public function addSortingField(FormBuilderInterface $builder, array $options)
         {
-            $builder->add('sorting', «IF targets('1.5')»ChoiceType::class«ELSE»'«nsSymfonyFormType»ChoiceType'«ENDIF», [
+            $builder->add('sorting', ChoiceType::class, [
                 'label' => $this->__('Sorting') . ':',
                 'empty_data' => 'default',
                 'choices' => [
@@ -254,7 +252,7 @@ class ListBlock {
          */
         public function addAmountField(FormBuilderInterface $builder, array $options)
         {
-            $builder->add('amount', «IF targets('1.5')»IntegerType::class«ELSE»'«nsSymfonyFormType»IntegerType'«ENDIF», [
+            $builder->add('amount', IntegerType::class, [
                 'label' => $this->__('Amount') . ':',
                 'attr' => [
                     'maxlength' => 2,
@@ -277,7 +275,7 @@ class ListBlock {
         public function addTemplateFields(FormBuilderInterface $builder, array $options)
         {
             $builder
-                ->add('template', «IF targets('1.5')»ChoiceType::class«ELSE»'«nsSymfonyFormType»ChoiceType'«ENDIF», [
+                ->add('template', ChoiceType::class, [
                     'label' => $this->__('Template') . ':',
                     'empty_data' => 'itemlist_display.html.twig',
                     'choices' => [
@@ -291,7 +289,7 @@ class ListBlock {
                     'multiple' => false,
                     'expanded' => false
                 ])
-                ->add('customTemplate', «IF targets('1.5')»TextType::class«ELSE»'«nsSymfonyFormType»TextType'«ENDIF», [
+                ->add('customTemplate', TextType::class, [
                     'label' => $this->__('Custom template') . ':',
                     'required' => false,
                     'attr' => [
@@ -313,7 +311,7 @@ class ListBlock {
          */
         public function addFilterField(FormBuilderInterface $builder, array $options)
         {
-            $builder->add('filter', «IF targets('1.5')»TextType::class«ELSE»'«nsSymfonyFormType»TextType'«ENDIF», [
+            $builder->add('filter', TextType::class, [
                 'label' => $this->__('Filter (expert option)') . ':',
                 'required' => false,
                 'attr' => [

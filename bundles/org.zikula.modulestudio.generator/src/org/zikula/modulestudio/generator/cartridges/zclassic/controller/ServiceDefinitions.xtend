@@ -55,7 +55,7 @@ class ServiceDefinitions {
         if (authenticationMethod != AuthMethodType.NONE) {
             generateServiceFile(fsa, 'authentication', authentication)
         }
-        if (targets('1.5') && (hasHookSubscribers || hasHookProviders)) {
+        if (hasHookSubscribers || hasHookProviders) {
             generateServiceFile(fsa, 'hooks', hooks)
         }
         generateServiceFile(fsa, 'linkContainer', linkContainer)
@@ -89,7 +89,7 @@ class ServiceDefinitions {
         «ENDIF»
           - { resource: 'forms.yml' }
           - { resource: 'helpers.yml' }
-        «IF targets('1.5') && hasHookSubscribers»
+        «IF hasHookSubscribers || hasHookProviders»
             «'  '»- { resource: 'hooks.yml' }
         «ENDIF»
           - { resource: 'twig.yml' }
@@ -255,9 +255,6 @@ class ServiceDefinitions {
                 - "@service_container"
                 - "@event_dispatcher"
                 - "@logger"
-                «IF !targets('1.5')»
-                    - "@translator.default"
-                «ENDIF»
             «IF targets('2.0')»
                 tags: ['doctrine.event_subscriber']
             «ELSE»
@@ -298,22 +295,20 @@ class ServiceDefinitions {
                 «ENDIF»
 
         «ENDFOR»
-        «IF targets('1.5')»
-            «modPrefix».workflow_events_listener:
-                class: «appNamespace»\Listener\WorkflowEventsListener
-                arguments:
-                    - "@zikula_permissions_module.api.permission"
-                    «IF needsApproval»
-                        - "@«modPrefix».notification_helper"
-                    «ENDIF»
-                «IF targets('2.0')»
-                    tags: ['kernel.event_subscriber']
-                «ELSE»
-                    tags:
-                        - { name: kernel.event_subscriber }
+        «modPrefix».workflow_events_listener:
+            class: «appNamespace»\Listener\WorkflowEventsListener
+            arguments:
+                - "@zikula_permissions_module.api.permission"
+                «IF needsApproval»
+                    - "@«modPrefix».notification_helper"
                 «ENDIF»
+            «IF targets('2.0')»
+                tags: ['kernel.event_subscriber']
+            «ELSE»
+                tags:
+                    - { name: kernel.event_subscriber }
+            «ENDIF»
 
-        «ENDIF»
         «IF getSubscriberNames.contains('IpTrace')»
             gedmo_doctrine_extensions.listener.ip_traceable:
                 class: Gedmo\IpTraceable\IpTraceableListener
@@ -462,19 +457,6 @@ class ServiceDefinitions {
                         - { name: form.type }
                 «ENDIF»
         «ENDIF»
-        «IF needsUserAutoCompletion && !targets('1.5')»
-
-            «modPrefix».form.type.field.user:
-                class: «nsBase»Field\UserType
-                arguments:
-                    - "@zikula_users_module.user_repository"
-                «IF targets('2.0')»
-                    tags: ['form.type']
-                «ELSE»
-                    tags:
-                        - { name: form.type }
-                «ENDIF»
-        «ENDIF»
         «IF needsAutoCompletion»
 
             «modPrefix».form.type.field.autocompletionrelation:
@@ -601,19 +583,6 @@ class ServiceDefinitions {
                     «ENDIF»
             «ENDFOR»
         «ENDIF»
-        «IF hasDeleteActions && !targets('1.5')»
-
-            «modPrefix».form.type.deleteentity:
-                class: «nsBase.replace('Type\\', '')»DeleteEntityType
-                arguments:
-                    - "@translator.default"
-                «IF targets('2.0')»
-                    tags: ['form.type']
-                «ELSE»
-                    tags:
-                        - { name: form.type }
-                «ENDIF»
-        «ENDIF»
         «IF generateListBlock»
 
             «modPrefix».form.type.block.itemlist:
@@ -695,11 +664,7 @@ class ServiceDefinitions {
                     - "@request_stack"
                     - "@logger"
                     - "@zikula_users_module.current_user"
-                    «IF targets('1.5')»
-                        - "@zikula_categories_module.category_registry_repository"
-                    «ELSE»
-                        - "@zikula_categories_module.api.category_registry"
-                    «ENDIF»
+                    - "@zikula_categories_module.category_registry_repository"
                     - "@zikula_categories_module.api.category_permission"
 
         «ENDIF»
@@ -835,9 +800,6 @@ class ServiceDefinitions {
                 arguments:
                     - "@translator.default"
                     - "@zikula_permissions_module.api.permission"
-                    «IF !targets('1.5')»
-                        - "@templating.engine.twig"
-                    «ENDIF»
                     - "@session"
                     - "@request_stack"
                     - "@«modPrefix».entity_factory"
@@ -889,17 +851,11 @@ class ServiceDefinitions {
             class: «nsBase»WorkflowHelper
             arguments:
                 - "@translator.default"
-                «IF targets('1.5')»
-                    - "@workflow.registry"
-                «ENDIF»
-                «IF targets('1.5') || needsApproval»
-                    - "@logger"
-                    - "@zikula_permissions_module.api.permission"
-                    «IF targets('1.5')»
-                        - "@zikula_users_module.current_user"
-                    «ENDIF»
-                    - "@«modPrefix».entity_factory"
-                «ENDIF»
+                - "@workflow.registry"
+                - "@logger"
+                - "@zikula_permissions_module.api.permission"
+                - "@zikula_users_module.current_user"
+                - "@«modPrefix».entity_factory"
                 - "@«modPrefix».listentries_helper"
     '''
 
@@ -922,9 +878,6 @@ class ServiceDefinitions {
                     - "@request_stack"
                 «ENDIF»
                 - "@zikula_extensions_module.api.variable"
-                «IF needsUserAvatarSupport»
-                    - "@zikula_users_module.user_repository"
-                «ENDIF»
                 «IF hasTrees»
                     - "@«modPrefix».entity_factory"
                 «ENDIF»

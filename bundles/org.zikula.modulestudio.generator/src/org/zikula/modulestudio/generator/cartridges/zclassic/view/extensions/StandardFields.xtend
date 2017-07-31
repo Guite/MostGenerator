@@ -4,13 +4,11 @@ import de.guite.modulestudio.metamodel.Application
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
-import org.zikula.modulestudio.generator.extensions.Utils
 
 class StandardFields {
 
     extension ControllerExtensions = new ControllerExtensions
     extension NamingExtensions = new NamingExtensions
-    extension Utils = new Utils
 
     def generate (Application it, IFileSystemAccess fsa) {
         val templatePath = getViewPath + 'Helper/'
@@ -58,11 +56,7 @@ class StandardFields {
         {% if obj.createdBy|default and obj.createdBy.getUid() > 0 %}
             <dt>{{ __('Creation') }}</dt>
             {% set profileLink = obj.createdBy.getUid()|profileLinkByUserId() %}
-            «IF targets('1.5')»
-                <dd class="avatar">{{ userAvatar(obj.createdBy.getUid(), {rating: 'g'}) }}</dd>
-            «ELSE»
-                <dd class="avatar">{{ «appName.toLowerCase»_userAvatar(uid=obj.createdBy.getUid(), rating='g') }}</dd>
-            «ENDIF»
+            <dd class="avatar">{{ userAvatar(obj.createdBy.getUid(), {rating: 'g'}) }}</dd>
             <dd>
                 {{ __f('Created by %user on %date', {'%user': profileLink, '%date': obj.createdDate|localizeddate('medium', 'short')})|raw }}
                 {% if currentUser.loggedIn %}
@@ -76,11 +70,7 @@ class StandardFields {
         {% if obj.updatedBy|default and obj.updatedBy.getUid() > 0 %}
             <dt>{{ __('Last update') }}</dt>
             {% set profileLink = obj.updatedBy.getUid()|profileLinkByUserId() %}
-            «IF targets('1.5')»
-                <dd class="avatar">{{ userAvatar(obj.updatedBy.getUid(), {rating: 'g'}) }}</dd>
-            «ELSE»
-                <dd class="avatar">{{ «appName.toLowerCase»_userAvatar(uid=obj.updatedBy.getUid(), rating='g') }}</dd>
-            «ENDIF»
+            <dd class="avatar">{{ userAvatar(obj.updatedBy.getUid(), {rating: 'g'}) }}</dd>
             <dd>
                 {{ __f('Updated by %user on %date', {'%user': profileLink, '%date': obj.updatedDate|localizeddate('medium', 'short')})|raw }}
                 {% if currentUser.loggedIn %}

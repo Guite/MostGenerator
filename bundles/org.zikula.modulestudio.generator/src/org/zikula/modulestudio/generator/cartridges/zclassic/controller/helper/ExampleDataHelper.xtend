@@ -69,9 +69,7 @@ class ExampleDataHelper {
         use Symfony\Component\HttpFoundation\Request;
         use Symfony\Component\HttpFoundation\RequestStack;
         «IF hasUserFields || hasStandardFieldEntities»
-            «IF targets('1.5')»
-                use Zikula\UsersModule\Constant as UsersConstant;
-            «ENDIF»
+            use Zikula\UsersModule\Constant as UsersConstant;
             use Zikula\UsersModule\Entity\RepositoryInterface\UserRepositoryInterface;
         «ENDIF»
         use «appNamespace»\Entity\Factory\EntityFactory;
@@ -149,7 +147,7 @@ class ExampleDataHelper {
         public function createDefaultData()
         {
             «IF hasUserFields || hasStandardFieldEntities»
-                $adminUser = $this->userRepository->find(«IF targets('1.5')»UsersConstant::USER_ID_ADMIN«ELSE»2«ENDIF»);
+                $adminUser = $this->userRepository->find(UsersConstant::USER_ID_ADMIN);
             «ENDIF»
             «IF !getAllEntities.filter[tree != EntityTreeType.NONE].empty»
                 $treeCounterRoot = 1;

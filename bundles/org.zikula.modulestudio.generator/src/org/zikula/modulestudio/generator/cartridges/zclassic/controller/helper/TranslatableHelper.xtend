@@ -35,8 +35,8 @@ class TranslatableHelper {
         use Symfony\Component\HttpFoundation\RequestStack;
         use Zikula\Common\Translator\TranslatorInterface;
         use Zikula\Core\Doctrine\EntityAccess;
-        use Zikula\ExtensionsModule\Api\«IF targets('1.5')»ApiInterface\VariableApiInterface«ELSE»VariableApi«ENDIF»;
-        use Zikula\SettingsModule\Api\«IF targets('1.5')»ApiInterface\LocaleApiInterface«ELSE»LocaleApi«ENDIF»;
+        use Zikula\ExtensionsModule\Api\ApiInterface\VariableApiInterface;
+        use Zikula\SettingsModule\Api\ApiInterface\LocaleApiInterface;
         use «appNamespace»\Entity\Factory\EntityFactory;
 
         /**
@@ -55,12 +55,12 @@ class TranslatableHelper {
             protected $request;
 
             /**
-             * @var VariableApi«IF targets('1.5')»Interface«ENDIF»
+             * @var VariableApiInterface
              */
             protected $variableApi;
 
             /**
-             * @var LocaleApi«IF targets('1.5')»Interface«ENDIF»
+             * @var LocaleApiInterface
              */
             protected $localeApi;
 
@@ -72,17 +72,17 @@ class TranslatableHelper {
             /**
              * TranslatableHelper constructor.
              *
-             * @param TranslatorInterface $translator    Translator service instance
-             * @param RequestStack        $requestStack  RequestStack service instance
-             * @param VariableApi«IF targets('1.5')»Interface«ELSE»        «ENDIF»  $variableApi  VariableApi service instance
-             * @param LocaleApi«IF targets('1.5')»Interface«ELSE»         «ENDIF»   $localeApi    LocaleApi service instance
-             * @param EntityFactory       $entityFactory EntityFactory service instance
+             * @param TranslatorInterface  $translator    Translator service instance
+             * @param RequestStack         $requestStack  RequestStack service instance
+             * @param VariableApiInterface $variableApi   VariableApi service instance
+             * @param LocaleApiInterface   $localeApi     LocaleApi service instance
+             * @param EntityFactory        $entityFactory EntityFactory service instance
              */
             public function __construct(
                 TranslatorInterface $translator,
                 RequestStack $requestStack,
-                VariableApi«IF targets('1.5')»Interface«ENDIF» $variableApi,
-                LocaleApi«IF targets('1.5')»Interface«ENDIF» $localeApi,
+                VariableApiInterface $variableApi,
+                LocaleApiInterface $localeApi,
                 EntityFactory $entityFactory
             ) {
                 $this->translator = $translator;

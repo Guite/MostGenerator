@@ -89,9 +89,7 @@ class Listeners {
         if (!getAllEntities.filter[hasIpTraceableFields].empty) {
             listenerFile('IpTrace', listenersIpTraceFile)
         }
-        if (targets('1.5')) {
-            listenerFile('WorkflowEvents', listenersWorkflowEventsFile)
-        }
+        listenerFile('WorkflowEvents', listenersWorkflowEventsFile)
     }
 
     def private listenerFile(String name, CharSequence content) {
@@ -299,10 +297,8 @@ class Listeners {
             «ENDIF»
             use Zikula\Core\Event\GenericEvent;
             «IF hasStandardFieldEntities || hasUserFields»
-                use Zikula\UsersModule\Api\«IF targets('1.5')»ApiInterface\CurrentUserApiInterface«ELSE»CurrentUserApi«ENDIF»;
-                «IF targets('1.5')»
-                    use Zikula\UsersModule\Constant as UsersConstant;
-                «ENDIF»
+                use Zikula\UsersModule\Api\ApiInterface\CurrentUserApiInterface;
+                use Zikula\UsersModule\Constant as UsersConstant;
             «ENDIF»
             use Zikula\UsersModule\UserEvents;
             «IF hasStandardFieldEntities || hasUserFields»

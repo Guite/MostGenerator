@@ -43,7 +43,7 @@ class UploadHelper {
         use Symfony\Component\HttpFoundation\Session\SessionInterface;
         use Zikula\Common\Translator\TranslatorInterface;
         use Zikula\Common\Translator\TranslatorTrait;
-        use Zikula\UsersModule\Api\«IF targets('1.5')»ApiInterface\CurrentUserApiInterface«ELSE»CurrentUserApi«ENDIF»;
+        use Zikula\UsersModule\Api\ApiInterface\CurrentUserApiInterface;
 
         /**
          * Helper base class for upload handling.
@@ -63,7 +63,7 @@ class UploadHelper {
             protected $logger;
 
             /**
-             * @var CurrentUserApi«IF targets('1.5')»Interface«ENDIF»
+             * @var CurrentUserApiInterface
              */
             protected $currentUserApi;
 
@@ -95,18 +95,18 @@ class UploadHelper {
             /**
              * UploadHelper constructor.
              *
-             * @param TranslatorInterface $translator     Translator service instance
-             * @param SessionInterface    $session        Session service instance
-             * @param LoggerInterface     $logger         Logger service instance
-             * @param CurrentUserApi«IF targets('1.5')»Interface«ELSE»     «ENDIF» $currentUserApi CurrentUserApi service instance
-             * @param object              $moduleVars     Existing module vars
-             * @param String              $dataDirectory  The data directory name
+             * @param TranslatorInterface     $translator     Translator service instance
+             * @param SessionInterface        $session        Session service instance
+             * @param LoggerInterface         $logger         Logger service instance
+             * @param CurrentUserApiInterface $currentUserApi CurrentUserApi service instance
+             * @param object                  $moduleVars     Existing module vars
+             * @param String                  $dataDirectory  The data directory name
              */
             public function __construct(
                 TranslatorInterface $translator,
                 SessionInterface $session,
                 LoggerInterface $logger,
-                CurrentUserApi«IF targets('1.5')»Interface«ENDIF» $currentUserApi,
+                CurrentUserApiInterface $currentUserApi,
                 $moduleVars,
                 $dataDirectory
             ) {

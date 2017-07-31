@@ -37,12 +37,12 @@ class ArchiveHelper {
         use Psr\Log\LoggerInterface;
         use Symfony\Component\HttpFoundation\Request;
         use Symfony\Component\HttpFoundation\RequestStack;
-        «IF hasHookSubscribers && targets('1.5')»
+        «IF hasHookSubscribers»
             use Zikula\Bundle\HookBundle\Category\UiHooksCategory;
         «ENDIF»
         use Zikula\Common\Translator\TranslatorInterface;
         use Zikula\Core\RouteUrl;
-        use Zikula\PermissionsModule\Api\«IF targets('1.5')»ApiInterface\PermissionApiInterface«ELSE»PermissionApi«ENDIF»;
+        use Zikula\PermissionsModule\Api\ApiInterface\PermissionApiInterface;
         use «appNamespace»\Entity\Factory\EntityFactory;
         «IF hasHookSubscribers»
             use «appNamespace»\Helper\HookHelper;
@@ -70,7 +70,7 @@ class ArchiveHelper {
             protected $logger;
 
             /**
-             * @var PermissionApi«IF targets('1.5')»Interface«ENDIF»
+             * @var PermissionApiInterface
              */
             protected $permissionApi;
 
@@ -94,21 +94,21 @@ class ArchiveHelper {
             /**
              * ArchiveHelper constructor.
              *
-             * @param TranslatorInterface $translator     Translator service instance
-             * @param RequestStack        $requestStack   RequestStack service instance
-             * @param LoggerInterface     $logger         Logger service instance
-             * @param PermissionApi«IF targets('1.5')»Interface«ENDIF»       $permissionApi  PermissionApi service instance
-             * @param EntityFactory       $entityFactory  EntityFactory service instance
-             * @param WorkflowHelper      $workflowHelper WorkflowHelper service instance
+             * @param TranslatorInterface    $translator     Translator service instance
+             * @param RequestStack           $requestStack   RequestStack service instance
+             * @param LoggerInterface        $logger         Logger service instance
+             * @param PermissionApiInterface $permissionApi  PermissionApi service instance
+             * @param EntityFactory          $entityFactory  EntityFactory service instance
+             * @param WorkflowHelper         $workflowHelper WorkflowHelper service instance
              «IF hasHookSubscribers»
-             * @param HookHelper          $hookHelper     HookHelper service instance
+             * @param HookHelper             $hookHelper     HookHelper service instance
              «ENDIF»
              */
             public function __construct(
                 TranslatorInterface $translator,
                 RequestStack $requestStack,
                 LoggerInterface $logger,
-                PermissionApi«IF targets('1.5')»Interface«ENDIF» $permissionApi,
+                PermissionApiInterface $permissionApi,
                 EntityFactory $entityFactory,
                 WorkflowHelper $workflowHelper«IF hasHookSubscribers»,
                 HookHelper $hookHelper«ENDIF»
@@ -219,14 +219,10 @@ class ArchiveHelper {
          */
         protected function archiveSingleObject($entity)
         {
-            «IF !targets('1.5')»
-                $entity->initWorkflow();
-
-            «ENDIF»
             «IF hasHookSubscribers»
                 if ($entity->supportsHookSubscribers()) {
                     // Let any hooks perform additional validation actions
-                    $validationErrors = $this->hookHelper->callValidationHooks($entity, «IF targets('1.5')»UiHooksCategory::TYPE_VALIDATE_EDIT«ELSE»'validate_edit'«ENDIF»);
+                    $validationErrors = $this->hookHelper->callValidationHooks($entity, UiHooksCategory::TYPE_VALIDATE_EDIT);
                     if (count($validationErrors) > 0) {
                         $flashBag = $this->request->getSession()->getFlashBag();
                         foreach ($validationErrors as $message) {
@@ -263,7 +259,7 @@ class ArchiveHelper {
                         $urlArgs['_locale'] = $this->request->getLocale();
                         $url = new RouteUrl('«appName.formatForDB»_' . strtolower($objectType) . '_display', $urlArgs);
                 	}
-                    $this->hookHelper->callProcessHooks($entity, «IF targets('1.5')»UiHooksCategory::TYPE_PROCESS_EDIT«ELSE»'process_edit'«ENDIF», $url);
+                    $this->hookHelper->callProcessHooks($entity, UiHooksCategory::TYPE_PROCESS_EDIT, $url);
                 }
             «ENDIF»
         }

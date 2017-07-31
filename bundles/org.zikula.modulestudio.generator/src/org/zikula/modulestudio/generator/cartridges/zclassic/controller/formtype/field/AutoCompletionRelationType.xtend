@@ -29,9 +29,7 @@ class AutoCompletionRelationType {
         namespace «appNamespace»\Form\Type\Field\Base;
 
         use Symfony\Component\Form\AbstractType;
-        «IF targets('1.5')»
-            use Symfony\Component\Form\Extension\Core\Type\HiddenType;
-        «ENDIF»
+        use Symfony\Component\Form\Extension\Core\Type\HiddenType;
         use Symfony\Component\Form\FormBuilderInterface;
         use Symfony\Component\Form\FormInterface;
         use Symfony\Component\Form\FormView;
@@ -123,7 +121,7 @@ class AutoCompletionRelationType {
              */
             public function getParent()
             {
-                return «IF targets('1.5')»HiddenType::class«ELSE»'Symfony\Component\Form\Extension\Core\Type\HiddenType'«ENDIF»;
+                return HiddenType::class;
             }
 
             /**

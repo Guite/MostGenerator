@@ -126,7 +126,7 @@ class ControllerLayer {
             use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
         «ENDIF»
         use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-        «IF (hasViewAction || hasDeleteAction) && !skipHookSubscribers && app.targets('1.5')»
+        «IF (hasViewAction || hasDeleteAction) && !skipHookSubscribers»
             «IF hasDeleteAction»
                 use Zikula\Bundle\HookBundle\Category\FormAwareCategory;
             «ENDIF»

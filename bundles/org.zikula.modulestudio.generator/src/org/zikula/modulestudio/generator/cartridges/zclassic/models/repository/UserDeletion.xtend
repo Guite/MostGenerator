@@ -43,17 +43,17 @@ class UserDeletion {
         /**
          * Updates the creator of all objects created by a certain user.
          *
-         * @param integer             $userId         The userid of the creator to be replaced
-         * @param integer             $newUserId      The new userid of the creator as replacement
-         * @param TranslatorInterface $translator     Translator service instance
-         * @param LoggerInterface     $logger         Logger service instance
-         * @param CurrentUserApi«IF application.targets('1.5')»Interface«ELSE»     «ENDIF» $currentUserApi CurrentUserApi service instance
+         * @param integer                 $userId         The userid of the creator to be replaced
+         * @param integer                 $newUserId      The new userid of the creator as replacement
+         * @param TranslatorInterface     $translator     Translator service instance
+         * @param LoggerInterface         $logger         Logger service instance
+         * @param CurrentUserApiInterface $currentUserApi CurrentUserApi service instance
          *
          * @return void
          *
          * @throws InvalidArgumentException Thrown if invalid parameters are received
          */
-        public function updateCreator($userId, $newUserId, TranslatorInterface $translator, LoggerInterface $logger, CurrentUserApi«IF application.targets('1.5')»Interface«ENDIF» $currentUserApi)
+        public function updateCreator($userId, $newUserId, TranslatorInterface $translator, LoggerInterface $logger, CurrentUserApiInterface $currentUserApi)
         {
             // check id parameter
             if ($userId == 0 || !is_numeric($userId)
@@ -79,17 +79,17 @@ class UserDeletion {
         /**
          * Updates the last editor of all objects updated by a certain user.
          *
-         * @param integer             $userId         The userid of the last editor to be replaced
-         * @param integer             $newUserId      The new userid of the last editor as replacement
-         * @param TranslatorInterface $translator     Translator service instance
-         * @param LoggerInterface     $logger         Logger service instance
-         * @param CurrentUserApi«IF application.targets('1.5')»Interface«ELSE»     «ENDIF» $currentUserApi CurrentUserApi service instance
+         * @param integer                 $userId         The userid of the last editor to be replaced
+         * @param integer                 $newUserId      The new userid of the last editor as replacement
+         * @param TranslatorInterface     $translator     Translator service instance
+         * @param LoggerInterface         $logger         Logger service instance
+         * @param CurrentUserApiInterface $currentUserApi CurrentUserApi service instance
          *
          * @return void
          *
          * @throws InvalidArgumentException Thrown if invalid parameters are received
          */
-        public function updateLastEditor($userId, $newUserId, TranslatorInterface $translator, LoggerInterface $logger, CurrentUserApi«IF application.targets('1.5')»Interface«ENDIF» $currentUserApi)
+        public function updateLastEditor($userId, $newUserId, TranslatorInterface $translator, LoggerInterface $logger, CurrentUserApiInterface $currentUserApi)
         {
             // check id parameter
             if ($userId == 0 || !is_numeric($userId)
@@ -115,16 +115,16 @@ class UserDeletion {
         /**
          * Deletes all objects created by a certain user.
          *
-         * @param integer             $userId         The userid of the creator to be removed
-         * @param TranslatorInterface $translator     Translator service instance
-         * @param LoggerInterface     $logger         Logger service instance
-         * @param CurrentUserApi«IF application.targets('1.5')»Interface«ELSE»     «ENDIF» $currentUserApi CurrentUserApi service instance
+         * @param integer                 $userId         The userid of the creator to be removed
+         * @param TranslatorInterface     $translator     Translator service instance
+         * @param LoggerInterface         $logger         Logger service instance
+         * @param CurrentUserApiInterface $currentUserApi CurrentUserApi service instance
          *
          * @return void
          *
          * @throws InvalidArgumentException Thrown if invalid parameters are received
          */
-        public function deleteByCreator($userId, TranslatorInterface $translator, LoggerInterface $logger, CurrentUserApi«IF application.targets('1.5')»Interface«ENDIF» $currentUserApi)
+        public function deleteByCreator($userId, TranslatorInterface $translator, LoggerInterface $logger, CurrentUserApiInterface $currentUserApi)
         {
             // check id parameter
             if ($userId == 0 || !is_numeric($userId)) {
@@ -148,16 +148,16 @@ class UserDeletion {
         /**
          * Deletes all objects updated by a certain user.
          *
-         * @param integer             $userId         The userid of the last editor to be removed
-         * @param TranslatorInterface $translator     Translator service instance
-         * @param LoggerInterface     $logger         Logger service instance
-         * @param CurrentUserApi«IF application.targets('1.5')»Interface«ELSE»     «ENDIF» $currentUserApi CurrentUserApi service instance
+         * @param integer                 $userId         The userid of the last editor to be removed
+         * @param TranslatorInterface     $translator     Translator service instance
+         * @param LoggerInterface         $logger         Logger service instance
+         * @param CurrentUserApiInterface $currentUserApi CurrentUserApi service instance
          *
          * @return void
          *
          * @throws InvalidArgumentException Thrown if invalid parameters are received
          */
-        public function deleteByLastEditor($userId, TranslatorInterface $translator, LoggerInterface $logger, CurrentUserApi«IF application.targets('1.5')»Interface«ENDIF» $currentUserApi)
+        public function deleteByLastEditor($userId, TranslatorInterface $translator, LoggerInterface $logger, CurrentUserApiInterface $currentUserApi)
         {
             // check id parameter
             if ($userId == 0 || !is_numeric($userId)) {
@@ -181,18 +181,18 @@ class UserDeletion {
         /**
          * Updates a user field value of all objects affected by a certain user.
          *
-         * @param string              $fieldName      The name of the user field
-         * @param integer             $userId         The userid to be replaced
-         * @param integer             $newUserId      The new userid as replacement
-         * @param TranslatorInterface $translator     Translator service instance
-         * @param LoggerInterface     $logger         Logger service instance
-         * @param CurrentUserApi«IF application.targets('1.5')»Interface«ELSE»     «ENDIF» $currentUserApi CurrentUserApi service instance
+         * @param string                  $fieldName      The name of the user field
+         * @param integer                 $userId         The userid to be replaced
+         * @param integer                 $newUserId      The new userid as replacement
+         * @param TranslatorInterface     $translator     Translator service instance
+         * @param LoggerInterface         $logger         Logger service instance
+         * @param CurrentUserApiInterface $currentUserApi CurrentUserApi service instance
          *
          * @return void
          *
          * @throws InvalidArgumentException Thrown if invalid parameters are received
          */
-        public function updateUserField($userFieldName, $userId, $newUserId, TranslatorInterface $translator, LoggerInterface $logger, CurrentUserApi«IF application.targets('1.5')»Interface«ENDIF» $currentUserApi)
+        public function updateUserField($userFieldName, $userId, $newUserId, TranslatorInterface $translator, LoggerInterface $logger, CurrentUserApiInterface $currentUserApi)
         {
             // check field parameter
             if (empty($userFieldName) || !in_array($userFieldName, [«FOR field : getUserFieldsEntity SEPARATOR ', '»'«field.name.formatForCode»'«ENDFOR»])) {
@@ -222,17 +222,17 @@ class UserDeletion {
         /**
          * Deletes all objects updated by a certain user.
          *
-         * @param string              $fieldName      The name of the user field
-         * @param integer             $userId         The userid to be removed
-         * @param TranslatorInterface $translator     Translator service instance
-         * @param LoggerInterface     $logger         Logger service instance
-         * @param CurrentUserApi«IF application.targets('1.5')»Interface«ELSE»     «ENDIF» $currentUserApi CurrentUserApi service instance
+         * @param string                  $fieldName      The name of the user field
+         * @param integer                 $userId         The userid to be removed
+         * @param TranslatorInterface     $translator     Translator service instance
+         * @param LoggerInterface         $logger         Logger service instance
+         * @param CurrentUserApiInterface $currentUserApi CurrentUserApi service instance
          *
          * @return void
          *
          * @throws InvalidArgumentException Thrown if invalid parameters are received
          */
-        public function deleteByUserField($userFieldName, $userId, TranslatorInterface $translator, LoggerInterface $logger, CurrentUserApi«IF application.targets('1.5')»Interface«ENDIF» $currentUserApi)
+        public function deleteByUserField($userFieldName, $userId, TranslatorInterface $translator, LoggerInterface $logger, CurrentUserApiInterface $currentUserApi)
         {
             // check field parameter
             if (empty($userFieldName) || !in_array($userFieldName, [«FOR field : getUserFieldsEntity SEPARATOR ', '»'«field.name.formatForCode»'«ENDFOR»])) {

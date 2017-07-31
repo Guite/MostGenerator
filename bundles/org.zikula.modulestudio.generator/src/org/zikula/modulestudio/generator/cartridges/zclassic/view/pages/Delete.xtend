@@ -52,7 +52,7 @@ class Delete {
                 {{ form_start(deleteForm) }}
                 {{ form_errors(deleteForm) }}
 
-                «IF !skipHookSubscribers && app.targets('1.5')»
+                «IF !skipHookSubscribers»
                     {% if formHookTemplates|length > 0 %}
                         <fieldset>
                             {% for hookTemplate in formHookTemplates %}

@@ -54,47 +54,45 @@ class QuickNavigation {
     def private quickNavTypeBaseImpl(Entity it) '''
         namespace «app.appNamespace»\Form\Type\QuickNavigation\Base;
 
-        «IF app.targets('1.5') && (!incomingRelations.empty || !fields.filter(UserField).empty)»
+        «IF !incomingRelations.empty || !fields.filter(UserField).empty»
             use Symfony\Bridge\Doctrine\Form\Type\EntityType;
         «ENDIF»
         use Symfony\Component\Form\AbstractType;
-        «IF app.targets('1.5')»
-            use «nsSymfonyFormType»ChoiceType;
-            «IF hasCountryFieldsEntity»
-                use «nsSymfonyFormType»CountryType;
-            «ENDIF»
-            «IF hasCurrencyFieldsEntity»
-                use «nsSymfonyFormType»CurrencyType;
-            «ENDIF»
-            use «nsSymfonyFormType»HiddenType;
-            «IF hasLanguageFieldsEntity»
-                use «nsSymfonyFormType»LanguageType;
-            «ENDIF»
-            «IF hasAbstractStringFieldsEntity»
-                use «nsSymfonyFormType»SearchType;
-            «ENDIF»
-            use «nsSymfonyFormType»SubmitType;
-            «IF hasTimezoneFieldsEntity»
-                use «nsSymfonyFormType»TimezoneType;
-            «ENDIF»
+        use «nsSymfonyFormType»ChoiceType;
+        «IF hasCountryFieldsEntity»
+            use «nsSymfonyFormType»CountryType;
+        «ENDIF»
+        «IF hasCurrencyFieldsEntity»
+            use «nsSymfonyFormType»CurrencyType;
+        «ENDIF»
+        use «nsSymfonyFormType»HiddenType;
+        «IF hasLanguageFieldsEntity»
+            use «nsSymfonyFormType»LanguageType;
+        «ENDIF»
+        «IF hasAbstractStringFieldsEntity»
+            use «nsSymfonyFormType»SearchType;
+        «ENDIF»
+        use «nsSymfonyFormType»SubmitType;
+        «IF hasTimezoneFieldsEntity»
+            use «nsSymfonyFormType»TimezoneType;
         «ENDIF»
         use Symfony\Component\Form\FormBuilderInterface;
         «IF !incomingRelations.empty»
             use Symfony\Component\HttpFoundation\Request;
             use Symfony\Component\HttpFoundation\RequestStack;
         «ENDIF»
-        «IF app.targets('1.5') && hasLocaleFieldsEntity»
+        «IF hasLocaleFieldsEntity»
             use Zikula\Bundle\FormExtensionBundle\Form\Type\LocaleType;
         «ENDIF»
-        «IF app.targets('1.5') && categorisable»
+        «IF categorisable»
             use Zikula\CategoriesModule\Form\Type\CategoriesType;
         «ENDIF»
         use Zikula\Common\Translator\TranslatorInterface;
         use Zikula\Common\Translator\TranslatorTrait;
         «IF hasLocaleFieldsEntity»
-            use Zikula\SettingsModule\Api\«IF app.targets('1.5')»ApiInterface\LocaleApiInterface«ELSE»LocaleApi«ENDIF»;
+            use Zikula\SettingsModule\Api\ApiInterface\LocaleApiInterface;
         «ENDIF»
-        «IF app.targets('1.5') && !fields.filter(ListField).filter[multiple].empty»
+        «IF !fields.filter(ListField).filter[multiple].empty»
             use «app.appNamespace»\Form\Type\Field\MultiListType;
         «ENDIF»
         «IF !incomingRelations.empty»
@@ -135,7 +133,7 @@ class QuickNavigation {
             «IF hasLocaleFieldsEntity»
 
                 /**
-                 * @var LocaleApi«IF app.targets('1.5')»Interface«ENDIF»
+                 * @var LocaleApiInterface
                  */
                 protected $localeApi;
             «ENDIF»
@@ -159,7 +157,7 @@ class QuickNavigation {
                 «' '»* @param ListEntriesHelper   $listHelper   ListEntriesHelper service instance
             «ENDIF»
             «IF hasLocaleFieldsEntity»
-                «' '»* @param LocaleApi«IF app.targets('1.5')»Interface«ELSE»         «ENDIF»  $localeApi    LocaleApi service instance
+                «' '»* @param LocaleApiInterface  $localeApi    LocaleApi service instance
             «ENDIF»
             «IF app.needsFeatureActivationHelper»
                 «' '»* @param FeatureActivationHelper $featureActivationHelper FeatureActivationHelper service instance
@@ -170,7 +168,7 @@ class QuickNavigation {
                 RequestStack $requestStack,
                 EntityDisplayHelper $entityDisplayHelper«ENDIF»«IF hasListFieldsEntity»,
                 ListEntriesHelper $listHelper«ENDIF»«IF hasLocaleFieldsEntity»,
-                LocaleApi«IF app.targets('1.5')»Interface«ENDIF» $localeApi«ENDIF»«IF app.needsFeatureActivationHelper»,
+                LocaleApiInterface $localeApi«ENDIF»«IF app.needsFeatureActivationHelper»,
                 FeatureActivationHelper $featureActivationHelper«ENDIF»
             ) {
                 $this->setTranslator($translator);
@@ -198,9 +196,9 @@ class QuickNavigation {
             {
                 $builder
                     ->setMethod('GET')
-                    ->add('all', «IF app.targets('1.5')»HiddenType::class«ELSE»'«nsSymfonyFormType»HiddenType'«ENDIF»)
-                    ->add('own', «IF app.targets('1.5')»HiddenType::class«ELSE»'«nsSymfonyFormType»HiddenType'«ENDIF»)
-                    ->add('tpl', «IF app.targets('1.5')»HiddenType::class«ELSE»'«nsSymfonyFormType»HiddenType'«ENDIF»)
+                    ->add('all', HiddenType::class)
+                    ->add('own', HiddenType::class)
+                    ->add('tpl', HiddenType::class)
                 ;
 
                 «IF categorisable»
@@ -240,7 +238,7 @@ class QuickNavigation {
                 «IF hasBooleanFieldsEntity»
                     $this->addBooleanFields($builder, $options);
                 «ENDIF»
-                $builder->add('updateview', «IF app.targets('1.5')»SubmitType::class«ELSE»'«nsSymfonyFormType»SubmitType'«ENDIF», [
+                $builder->add('updateview', SubmitType::class, [
                     'label' => $this->__('OK'),
                     'attr' => [
                         'class' => 'btn btn-default btn-sm'
@@ -318,7 +316,7 @@ class QuickNavigation {
         {
             $objectType = '«name.formatForCode»';
 
-            $builder->add('categories', «IF app.targets('1.5')»CategoriesType::class«ELSE»'Zikula\CategoriesModule\Form\Type\CategoriesType'«ENDIF», [
+            $builder->add('categories', CategoriesType::class, [
                 'label' => $this->__('«IF categorisableMultiSelection»Categories«ELSE»Category«ENDIF»'),
                 'empty_data' => «IF categorisableMultiSelection»[]«ELSE»null«ENDIF»,
                 'attr' => [
@@ -483,7 +481,7 @@ class QuickNavigation {
          */
         public function addSearchField(FormBuilderInterface $builder, array $options)
         {
-            $builder->add('q', «IF app.targets('1.5')»SearchType::class«ELSE»'«nsSymfonyFormType»SearchType'«ENDIF», [
+            $builder->add('q', SearchType::class, [
                 'label' => $this->__('Search'),
                 'attr' => [
                     'maxlength' => 255,
@@ -504,7 +502,7 @@ class QuickNavigation {
         public function addSortingFields(FormBuilderInterface $builder, array $options)
         {
             $builder
-                ->add('sort', «IF app.targets('1.5')»ChoiceType::class«ELSE»'«nsSymfonyFormType»ChoiceType'«ENDIF», [
+                ->add('sort', ChoiceType::class, [
                     'label' => $this->__('Sort by'),
                     'attr' => [
                         'class' => 'input-sm'
@@ -528,7 +526,7 @@ class QuickNavigation {
                     'required' => true,
                     'expanded' => false
                 ])
-                ->add('sortdir', «IF app.targets('1.5')»ChoiceType::class«ELSE»'«nsSymfonyFormType»ChoiceType'«ENDIF», [
+                ->add('sortdir', ChoiceType::class, [
                     'label' => $this->__('Sort direction'),
                     'empty_data' => 'asc',
                     'attr' => [
@@ -557,7 +555,7 @@ class QuickNavigation {
          */
         public function addAmountField(FormBuilderInterface $builder, array $options)
         {
-            $builder->add('num', «IF app.targets('1.5')»ChoiceType::class«ELSE»'«nsSymfonyFormType»ChoiceType'«ENDIF», [
+            $builder->add('num', ChoiceType::class, [
                 'label' => $this->__('Page size'),
                 'empty_data' => 20,
                 'attr' => [
@@ -597,7 +595,7 @@ class QuickNavigation {
     '''
 
     def private dispatch fieldImpl(DerivedField it) '''
-        $builder->add('«name.formatForCode»', «IF app.targets('1.5')»«IF it instanceof StringField && (it as StringField).role == StringRole.LOCALE»Locale«ELSEIF it instanceof ListField && (it as ListField).multiple»MultiList«ELSEIF it instanceof UserField»Entity«ELSE»«fieldType»«ENDIF»Type::class«ELSE»'«IF it instanceof StringField && (it as StringField).role == StringRole.LOCALE»Zikula\Bundle\FormExtensionBundle\Form\Type\Locale«ELSEIF it instanceof ListField && (it as ListField).multiple»«app.appNamespace»\Form\Type\Field\MultiList«ELSEIF it instanceof UserField»Symfony\Bridge\Doctrine\Form\Type\Entity«ELSE»«nsSymfonyFormType»«fieldType»«ENDIF»Type'«ENDIF», [
+        $builder->add('«name.formatForCode»', «IF it instanceof StringField && (it as StringField).role == StringRole.LOCALE»Locale«ELSEIF it instanceof ListField && (it as ListField).multiple»MultiList«ELSEIF it instanceof UserField»Entity«ELSE»«fieldType»«ENDIF»Type::class, [
             'label' => $this->__('«IF name == 'workflowState'»State«ELSE»«name.formatForDisplayCapital»«ENDIF»'),
             'attr' => [
                 'class' => 'input-sm'
@@ -660,7 +658,7 @@ class QuickNavigation {
         $choiceLabelClosure = function ($entity) use ($entityDisplayHelper) {
             return $entityDisplayHelper->getFormattedTitle($entity);
         };
-        $builder->add('«sourceAliasName.formatForCode»', «IF app.targets('1.5')»EntityType::class«ELSE»'Symfony\Bridge\Doctrine\Form\Type\EntityType'«ENDIF», [
+        $builder->add('«sourceAliasName.formatForCode»', EntityType::class, [
             'class' => '«app.appName»:«source.name.formatForCodeCapital»Entity',
             'choice_label' => $choiceLabelClosure,
             'placeholder' => $this->__('All'),

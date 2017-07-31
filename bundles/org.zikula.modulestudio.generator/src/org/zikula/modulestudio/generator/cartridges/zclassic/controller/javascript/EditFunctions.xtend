@@ -3,16 +3,12 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.controller.javascr
 import de.guite.modulestudio.metamodel.AbstractDateField
 import de.guite.modulestudio.metamodel.Application
 import org.eclipse.xtext.generator.IFileSystemAccess
-import org.zikula.modulestudio.generator.extensions.FormattingExtensions
-import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class EditFunctions {
 
-    extension FormattingExtensions = new FormattingExtensions
-    extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension ModelExtensions = new ModelExtensions
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
@@ -34,10 +30,6 @@ class EditFunctions {
     def private generate(Application it) '''
         'use strict';
 
-        «IF hasUserFields || hasStandardFieldEntities»
-            «initUserField»
-
-        «ENDIF»
         «IF hasUploads»
             «resetUploadField»
 
@@ -50,64 +42,6 @@ class EditFunctions {
         «ENDIF»
         «initEditForm»
 
-    '''
-
-    def private initUserField(Application it) '''
-        «IF needsUserAutoCompletion && !targets('1.5')»
-            /**
-             * Initialises a user field with auto completion.
-             */
-            function «vendorAndName»InitUserField(fieldName)
-            {
-                jQuery('#' + fieldName + 'ResetVal').click(function (event) {
-                    event.preventDefault();
-                    jQuery('#' + fieldName).val('');
-                    jQuery('#' + fieldName + 'Selector').val('');
-                }).removeClass('hidden');
-
-                if (jQuery('#' + fieldName + 'LiveSearch').length < 1) {
-                    return;
-                }
-                jQuery('#' + fieldName + 'LiveSearch').removeClass('hidden');
-
-                jQuery('#' + fieldName + 'Selector').autocomplete({
-                    minLength: 1,
-                    open: function(event, ui) {
-                        jQuery(this).autocomplete('widget').css({
-                            width: (jQuery(this).outerWidth() + 'px')
-                        });
-                    },
-                    source: function (request, response) {
-                        jQuery.getJSON(Routing.generate('«appName.formatForDB»_ajax_searchusers', { fragment: request.term }), function(data) {
-                            response(data);
-                        });
-                    },
-                    response: function(event, ui) {
-                        jQuery('#' + fieldName + 'LiveSearch .empty-message').remove();
-                        if (ui.content.length === 0) {
-                            jQuery('#' + fieldName + 'LiveSearch').append('<div class="empty-message">' + Translator.__('No results found!') + '</div>');
-                        }
-                    },
-                    focus: function(event, ui) {
-                        jQuery('#' + fieldName + 'Selector').val(ui.item.uname);
-
-                        return false;
-                    },
-                    select: function(event, ui) {
-                        jQuery('#' + fieldName).val(ui.item.uid);
-                        jQuery('#' + fieldName + 'Avatar').html(ui.item.avatar);
-
-                        return false;
-                    }
-                })
-                .autocomplete('instance')._renderItem = function(ul, item) {
-                    return jQuery('<div class="suggestion">')
-                        .append('<div class="media"><div class="media-left"><a href="javascript:void(0)">' + item.avatar + '</a></div><div class="media-body"><p class="media-heading">' + item.uname + '</p></div></div>')
-                        .appendTo(ul);
-                };
-            }
-
-        «ENDIF»
     '''
 
     def private resetUploadField(Application it) '''

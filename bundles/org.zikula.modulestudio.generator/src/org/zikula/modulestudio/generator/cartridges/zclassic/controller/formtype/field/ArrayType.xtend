@@ -25,9 +25,7 @@ class ArrayType {
         namespace «appNamespace»\Form\Type\Field\Base;
 
         use Symfony\Component\Form\AbstractType;
-        «IF targets('1.5')»
-            use Symfony\Component\Form\Extension\Core\Type\TextareaType;
-        «ENDIF»
+        use Symfony\Component\Form\Extension\Core\Type\TextareaType;
         use Symfony\Component\Form\FormBuilderInterface;
         use «appNamespace»\Form\DataTransformer\ArrayFieldTransformer;
 
@@ -50,7 +48,7 @@ class ArrayType {
              */
             public function getParent()
             {
-                return «IF targets('1.5')»TextareaType::class«ELSE»'Symfony\Component\Form\Extension\Core\Type\TextareaType'«ENDIF»;
+                return TextareaType::class;
             }
 
             /**

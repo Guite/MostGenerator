@@ -39,9 +39,9 @@ class AuthenticationMethod {
             use Symfony\Component\Routing\RouterInterface;
         «ENDIF»
         use Zikula\Common\Translator\TranslatorInterface;
-        use Zikula\ExtensionsModule\Api\Api«IF targets('1.5')»Interface\VariableApiInterface«ELSE»\VariableApi«ENDIF»;
+        use Zikula\ExtensionsModule\Api\ApiInterface\VariableApiInterface;
         use Zikula\UsersModule\AuthenticationMethodInterface\«IF authenticationMethod == AuthMethodType.LOCAL»Non«ENDIF»ReEntrantAuthenticationMethodInterface;
-        use Zikula\ZAuthModule\Api\Api«IF targets('1.5')»Interface\PasswordApiInterface«ELSE»\PasswordApi«ENDIF»;
+        use Zikula\ZAuthModule\Api\ApiInterface\PasswordApiInterface;
         use «appNamespace»\Entity\Factory\EntityFactory;
 
         /**
@@ -77,27 +77,29 @@ class AuthenticationMethod {
             protected $entityFactory;
 
             /**
-             * @var VariableApi«IF targets('1.5')»Interface«ENDIF»
+             * @var VariableApiInterface
              */
             private $variableApi;
 
             /**
-             * @var PasswordApi«IF targets('1.5')»Interface«ENDIF»
+             * @var PasswordApiInterface
              */
             private $passwordApi;
 
             /**
              * «name.formatForCodeCapital»AuthenticationMethod constructor.
              *
-             * @param TranslatorInterface $translator    Translator service instance
-             * @param SessionInterface    $session       Session service instance
              «IF authenticationMethod == AuthMethodType.REMOTE»
-             * @param RequestStack        $requestStack  RequestStack service instance
-             * @param RouterInterface     $router        Router service instance
+             * @param TranslatorInterface $translator   Translator service instance
+             * @param SessionInterface    $session      Session service instance
+             * @param RequestStack        $requestStack RequestStack service instance
+             * @param RouterInterface     $router       Router service instance
              «ENDIF»
-             * @param EntityFactory       $entityFactory EntityFactory service instance
-             * @param VariableApi«IF targets('1.5')»Interface«ENDIF» $variableApi VariableApi service instance
-             * @param PasswordApi«IF targets('1.5')»Interface«ENDIF» $passwordApi PasswordApi service instance
+             * @param TranslatorInterface  $translator    Translator service instance
+             * @param SessionInterface     $session       Session service instance
+             * @param EntityFactory        $entityFactory EntityFactory service instance
+             * @param VariableApiInterface $variableApi   VariableApi service instance
+             * @param PasswordApiInterface $passwordApi   PasswordApi service instance
              */
             public function __construct(
                 TranslatorInterface $translator,
@@ -107,8 +109,8 @@ class AuthenticationMethod {
                     RouterInterface $router,
                 «ENDIF»
                 EntityFactory $entityFactory,
-                VariableApi«IF targets('1.5')»Interface«ENDIF» $variableApi,
-                PasswordApi«IF targets('1.5')»Interface«ENDIF» $passwordApi)
+                VariableApiInterface $variableApi,
+                PasswordApiInterface $passwordApi)
             {
                 $this->translator = $translator;
                 $this->session = $session;

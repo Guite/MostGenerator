@@ -43,9 +43,8 @@ class Config {
                     'ZikulaFormExtensionBundle:Form:form_div_layout.html.twig'
                 ] %}
                 {{ form_start(form) }}
-                «IF hasMultipleConfigSections || hasImageFields || targets('1.5')»
-                    <div class="zikula-bootstrap-tab-container">
-                        <ul class="nav nav-tabs">
+                <div class="zikula-bootstrap-tab-container">
+                    <ul class="nav nav-tabs">
                         «FOR varContainer : getSortedVariableContainers»
                             {% set tabTitle = __('«varContainer.name.formatForDisplayCapital»') %}
                             <li role="presentation"«IF varContainer == getSortedVariableContainers.head || varContainer.isImageArea» class="«IF varContainer == getSortedVariableContainers.head»active«ENDIF»«IF varContainer.isImageArea» dropdown«ENDIF»"«ENDIF»>
@@ -65,23 +64,17 @@ class Config {
                                 «ENDIF»
                             </li>
                         «ENDFOR»
-                        «IF targets('1.5')»
-                            {% set tabTitle = __('Workflows') %}
-                            <li role="presentation">
-                                <a id="workflowsTab" href="#tabWorkflows" title="{{ tabTitle|e('html_attr') }}" role="tab" data-toggle="tab">{{ tabTitle }}</a>
-                            </li>
-                        «ENDIF»
-                        </ul>
+                        {% set tabTitle = __('Workflows') %}
+                        <li role="presentation">
+                            <a id="workflowsTab" href="#tabWorkflows" title="{{ tabTitle|e('html_attr') }}" role="tab" data-toggle="tab">{{ tabTitle }}</a>
+                        </li>
+                    </ul>
 
-                        {{ form_errors(form) }}
-                        <div class="tab-content">
-                            «configSections»
-                        </div>
-                    </div>
-                «ELSE»
                     {{ form_errors(form) }}
-                    «configSections»
-                «ENDIF»
+                    <div class="tab-content">
+                        «configSections»
+                    </div>
+                </div>
 
                 <div class="form-group">
                     <div class="col-sm-offset-3 col-sm-9">
@@ -102,36 +95,29 @@ class Config {
 
     def private configSections(Application it) '''
         «FOR varContainer : getSortedVariableContainers»«varContainer.configSection(it, varContainer == getSortedVariableContainers.head)»«ENDFOR»
-        «IF targets('1.5')»
-            <div role="tabpanel" class="tab-pane fade" id="tabWorkflows" aria-labelledby="workflowsTab">
-                {% set tabTitle = __('Workflows') %}
-                <fieldset>
-                    <legend>{{ tabTitle }}</legend>
+        <div role="tabpanel" class="tab-pane fade" id="tabWorkflows" aria-labelledby="workflowsTab">
+            {% set tabTitle = __('Workflows') %}
+            <fieldset>
+                <legend>{{ tabTitle }}</legend>
 
-                    <p class="alert alert-info">{{ __('Here you can inspect and amend the existing workflows.') }}</p>
+                <p class="alert alert-info">{{ __('Here you can inspect and amend the existing workflows.') }}</p>
 
-                    «FOR entity : getAllEntities»
-                        <h4>{{ __('«entity.nameMultiple.formatForDisplayCapital»') }}</h4>
-                        <p><a href="{{ path('zikula_workflow_editor_index', {workflow: '«appName.formatForDB»_«entity.workflow.textualName»'}) }}" title="{{ __('Edit workflow for «entity.nameMultiple.formatForDisplay»') }}" target="_blank"><i class="fa fa-cubes"></i> {{ __('Edit «entity.nameMultiple.formatForDisplay» workflow') }}</a>
-                    «ENDFOR»
-                </fieldset>
-            </div>
-        «ENDIF»
+                «FOR entity : getAllEntities»
+                    <h4>{{ __('«entity.nameMultiple.formatForDisplayCapital»') }}</h4>
+                    <p><a href="{{ path('zikula_workflow_editor_index', {workflow: '«appName.formatForDB»_«entity.workflow.textualName»'}) }}" title="{{ __('Edit workflow for «entity.nameMultiple.formatForDisplay»') }}" target="_blank"><i class="fa fa-cubes"></i> {{ __('Edit «entity.nameMultiple.formatForDisplay» workflow') }}</a>
+                «ENDFOR»
+            </fieldset>
+        </div>
     '''
 
     def private configSection(Variables it, Application app, Boolean isPrimaryVarContainer) '''
-        «IF app.hasMultipleConfigSections || app.hasImageFields || app.targets('1.5')»
-            «IF isImageArea»
-                «configSectionBodyImages(app, isPrimaryVarContainer)»
-            «ELSE»
-                <div role="tabpanel" class="tab-pane fade«IF isPrimaryVarContainer» in active«ENDIF»" id="tab«sortOrder»" aria-labelledby="vars«sortOrder»Tab">
-                    {% set tabTitle = __('«name.formatForDisplayCapital»') %}
-                    «configSectionBody(app, isPrimaryVarContainer)»
-                </div>
-            «ENDIF»
+        «IF isImageArea»
+            «configSectionBodyImages(app, isPrimaryVarContainer)»
         «ELSE»
-            {% set tabTitle = __('«name.formatForDisplayCapital»') %}
-            «configSectionBody(app, isPrimaryVarContainer)»
+            <div role="tabpanel" class="tab-pane fade«IF isPrimaryVarContainer» in active«ENDIF»" id="tab«sortOrder»" aria-labelledby="vars«sortOrder»Tab">
+                {% set tabTitle = __('«name.formatForDisplayCapital»') %}
+                «configSectionBody(app, isPrimaryVarContainer)»
+            </div>
         «ENDIF»
     '''
 

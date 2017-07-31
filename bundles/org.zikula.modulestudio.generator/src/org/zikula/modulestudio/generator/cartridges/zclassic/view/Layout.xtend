@@ -78,18 +78,10 @@ class Layout {
             «IF hasGeographical»
                 {{ pageAddAsset('javascript', zasset('@«appName»:js/«appName».Geo.js')) }}
             «ENDIF»
-            «IF targets('1.5')»
-                «IF hasGeographical && hasEditActions»
-                    {% if 'edit' in app.request.get('_route') %}
-                        {{ polyfill(['geolocation']) }}
-                    {% endif %}
-                «ENDIF»
-            «ELSE»
-                «IF hasEditActions || needsConfig»
-                    {% if «IF hasEditActions»'edit' in app.request.get('_route')«IF needsConfig» or «ENDIF»«ENDIF»«IF needsConfig»'config' in app.request.get('_route')«ENDIF» %}
-                        {{ polyfill([«IF hasGeographical»'geolocation', «ENDIF»'forms', 'forms-ext']) }}
-                    {% endif %}
-                «ENDIF»
+            «IF hasGeographical && hasEditActions»
+                {% if 'edit' in app.request.get('_route') %}
+                    {{ polyfill(['geolocation']) }}
+                {% endif %}
             «ENDIF»
         {% endblock %}
 
@@ -205,34 +197,6 @@ class Layout {
                 {% endspaceless %}
             {% endblock %}
         «ENDIF»
-        «IF needsUserAutoCompletion && !targets('1.5')»
-
-            {% block «appName.formatForDB»_field_user_widget %}
-                <div id="{{ id }}LiveSearch" class="«appName.toLowerCase»-autocomplete-user hidden">
-                    <i class="fa fa-search" title="{{ __('Search user') }}"></i>
-                    <noscript><p>{{ __('This function requires JavaScript activated!') }}</p></noscript>
-                    <input type="hidden" {{ block('widget_attributes') }} value="{{ value }}" />
-                    <input type="text" id="{{ id }}Selector" name="{{ id }}Selector" autocomplete="off" value="{{ user_name|e('html_attr') }}" title="{{ __('Enter a part of the user name to search') }}" class="user-selector" />
-                </div>
-                <span id="{{ id }}Avatar" class="help-block avatar">
-                    {% if value and not inline_usage %}
-                        «IF targets('1.5')»
-                            {{ userAvatar(value, {rating: 'g'}) }}
-                        «ELSE»
-                            {{ «appName.formatForDB»_userAvatar(uid=value, rating='g') }}
-                        «ENDIF»
-                    {% endif %}
-                </span>
-                {% if not required %}
-                    <em class="help-block small"><a id="{{ id }}ResetVal" href="javascript:void(0);" class="hidden">{{ __('Reset to empty value') }}</a></em>
-                {% endif %}
-                {% if value and not inline_usage %}
-                    {% if hasPermission('ZikulaUsersModule::', '::', 'ACCESS_ADMIN') %}
-                        <em class="help-block small"><a href="{{ path('zikulausersmodule_useradministration_modify', {user: value}) }}" title="{{ __('Switch to users administration') }}">{{ __('Manage user') }}</a></em>
-                    {% endif %}
-                {% endif %}
-            {% endblock %}
-        «ENDIF»
         «IF needsAutoCompletion»
 
             {% block «appName.formatForDB»_field_autocompletionrelation_widget %}
@@ -292,11 +256,7 @@ class Layout {
                 <link rel="stylesheet" type="text/css" href="{{ asset('jquery-ui/themes/base/jquery-ui.min.css') }}" />
                 <link rel="stylesheet" type="text/css" href="{{ asset('bootstrap-jqueryui/bootstrap-jqueryui.min.css') }}" />
             «ENDIF»
-            «IF targets('1.5')»
-                <link rel="stylesheet" type="text/css" href="{{ asset('bundles/core/css/core.css') }}" />
-            «ELSE»
-                <link rel="stylesheet" type="text/css" href="{{ app.request.basePath }}/style/core.css" />
-            «ENDIF»
+            <link rel="stylesheet" type="text/css" href="{{ asset('bundles/core/css/core.css') }}" />
             <link rel="stylesheet" type="text/css" href="{{ zasset('@«appName»:css/style.css') }}" />
             «IF generateExternalControllerAndFinder»
                 {% if useFinder|default == true %}

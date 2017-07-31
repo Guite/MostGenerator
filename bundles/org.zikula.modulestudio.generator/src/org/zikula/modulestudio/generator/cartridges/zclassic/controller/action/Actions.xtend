@@ -130,11 +130,6 @@ class Actions {
             }
 
         «ENDIF»
-        «IF !app.targets('1.5')»
-            foreach ($templateParameters['items'] as $k => $entity) {
-                $entity->initWorkflow();
-            }
-        «ENDIF»
         «IF loggable»
 
             // check if there exist any deleted «name.formatForDisplay»
@@ -188,9 +183,6 @@ class Actions {
         $instanceId = $«name.formatForCode»->getKey();
         «action.permissionCheck("' . ucfirst($objectType) . '", "$instanceId . ")»
 
-        «IF !app.targets('1.5')»
-            $«name.formatForCode»->initWorkflow();
-        «ENDIF»
         «IF loggable»
             $requestedVersion = $request->query->getInt('version', 0);
             if ($requestedVersion > 0) {
@@ -269,10 +261,6 @@ class Actions {
         $logger = $this->get('logger');
         $logArgs = ['app' => '«app.appName»', 'user' => $this->get('zikula_users_module.current_user')->get('uname'), 'entity' => '«name.formatForDisplay»', 'id' => $«name.formatForCode»->getKey()];
 
-        «IF !app.targets('1.5')»
-            $«name.formatForCode»->initWorkflow();
-
-        «ENDIF»
         // determine available workflow actions
         $workflowHelper = $this->get('«app.appService».workflow_helper');
         $actions = $workflowHelper->getActionsForObject($«name.formatForCode»);
@@ -302,11 +290,9 @@ class Actions {
             return $this->redirectToRoute($redirectRoute);
         }
 
-        $form = $this->createForm('«IF app.targets('1.5')»Zikula\Bundle\FormExtensionBundle\Form\Type\DeletionType«ELSE»«app.appNamespace»\Form\DeleteEntityType«ENDIF»', $«name.formatForCode»);
+        $form = $this->createForm('Zikula\Bundle\FormExtensionBundle\Form\Type\DeletionType', $«name.formatForCode»);
         «IF !skipHookSubscribers»
             $hookHelper = $this->get('«app.appService».hook_helper');
-        «ENDIF»
-        «IF app.targets('1.5') && !skipHookSubscribers»
 
             // Call form aware display hooks
             $formHook = $hookHelper->callFormDisplayHooks($form, $«name.formatForCode», FormAwareCategory::TYPE_DELETE);
@@ -325,7 +311,7 @@ class Actions {
         $templateParameters = [
             'routeArea' => $isAdmin ? 'admin' : '',
             'deleteForm' => $form->createView(),
-            $objectType => $«name.formatForCode»«IF app.targets('1.5') && !skipHookSubscribers»,
+            $objectType => $«name.formatForCode»«IF !skipHookSubscribers»,
             'formHookTemplates' => $formHook->getTemplates()«ENDIF»
         ];
 
@@ -339,7 +325,7 @@ class Actions {
     def private deletionProcess(Entity it, DeleteAction action) '''
         «IF !skipHookSubscribers»
             // Let any ui hooks perform additional validation actions
-            $validationErrors = $hookHelper->callValidationHooks($«name.formatForCode», «IF app.targets('1.5')»UiHooksCategory::TYPE_VALIDATE_DELETE«ELSE»'validate_delete'«ENDIF»);
+            $validationErrors = $hookHelper->callValidationHooks($«name.formatForCode», UiHooksCategory::TYPE_VALIDATE_DELETE);
             if (count($validationErrors) > 0) {
                 foreach ($validationErrors as $message) {
                     $this->addFlash('error', $message);
@@ -360,14 +346,12 @@ class Actions {
             $logger->notice('{app}: User {user} deleted the {entity} with id {id}.', $logArgs);
         }
         «IF !skipHookSubscribers»
-            «IF app.targets('1.5')»
 
-                // Call form aware processing hooks
-                $hookHelper->callFormProcessHooks($form, $«name.formatForCode», FormAwareCategory::TYPE_PROCESS_DELETE);
-            «ENDIF»
+            // Call form aware processing hooks
+            $hookHelper->callFormProcessHooks($form, $«name.formatForCode», FormAwareCategory::TYPE_PROCESS_DELETE);
 
             // Let any ui hooks know that we have deleted the «name.formatForDisplay»
-            $hookHelper->callProcessHooks($«name.formatForCode», «IF app.targets('1.5')»UiHooksCategory::TYPE_PROCESS_DELETE«ELSE»'process_delete'«ENDIF»);
+            $hookHelper->callProcessHooks($«name.formatForCode», UiHooksCategory::TYPE_PROCESS_DELETE);
         «ENDIF»
 
         return $this->redirectToRoute($redirectRoute);

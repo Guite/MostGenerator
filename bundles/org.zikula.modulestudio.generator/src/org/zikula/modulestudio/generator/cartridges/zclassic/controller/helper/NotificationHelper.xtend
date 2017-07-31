@@ -41,15 +41,11 @@ class NotificationHelper {
         use Zikula\Common\Translator\TranslatorInterface;
         use Zikula\Common\Translator\TranslatorTrait;
         use Zikula\Core\Doctrine\EntityAccess;
-        use Zikula\ExtensionsModule\Api\«IF targets('1.5')»ApiInterface\VariableApiInterface«ELSE»VariableApi«ENDIF»;
-        «IF targets('1.5')»
-            use Zikula\GroupsModule\Constant as GroupsConstant;
-        «ENDIF»
+        use Zikula\ExtensionsModule\Api\ApiInterface\VariableApiInterface;
+        use Zikula\GroupsModule\Constant as GroupsConstant;
         use Zikula\GroupsModule\Entity\RepositoryInterface\GroupRepositoryInterface;
-        use Zikula\MailerModule\Api\«IF targets('1.5')»ApiInterface\MailerApiInterface«ELSE»MailerApi«ENDIF»;
-        «IF targets('1.5')»
-            use Zikula\UsersModule\Constant as UsersConstant;
-        «ENDIF»
+        use Zikula\MailerModule\Api\ApiInterface\MailerApiInterface;
+        use Zikula\UsersModule\Constant as UsersConstant;
         use Zikula\UsersModule\Entity\UserEntity;
         use «appNamespace»\Helper\EntityDisplayHelper;
         use «appNamespace»\Helper\WorkflowHelper;
@@ -87,7 +83,7 @@ class NotificationHelper {
         protected $request;
 
         /**
-         * @var VariableApi«IF targets('1.5')»Interface«ENDIF»
+         * @var VariableApiInterface
          */
         protected $variableApi;
 
@@ -97,7 +93,7 @@ class NotificationHelper {
         protected $templating;
 
         /**
-         * @var MailerApi«IF targets('1.5')»Interface«ENDIF»
+         * @var MailerApiInterface
          */
         protected $mailer;
 
@@ -159,9 +155,9 @@ class NotificationHelper {
          * @param SessionInterface          $session             Session service instance
          * @param Routerinterface           $router              Router service instance
          * @param RequestStack              $requestStack        RequestStack service instance
-         * @param VariableApi«IF targets('1.5')»Interface«ELSE»         «ENDIF»          $variableApi     VariableApi service instance
+         * @param VariableApiInterface      $variableApi         VariableApi service instance
          * @param Twig_Environment          $twig                Twig service instance
-         * @param MailerApi«IF targets('1.5')»Interface«ELSE»         «ENDIF»            $mailerApi       MailerApi service instance
+         * @param MailerApiInterface        $mailerApi           MailerApi service instance
          * @param GroupRepositoryInterface  $groupRepository     GroupRepository service instance
          * @param EntityDisplayHelper       $entityDisplayHelper EntityDisplayHelper service instance
          * @param WorkflowHelper            $workflowHelper      WorkflowHelper service instance
@@ -172,9 +168,9 @@ class NotificationHelper {
             SessionInterface $session,
             RouterInterface $router,
             RequestStack $requestStack,
-            VariableApi«IF targets('1.5')»Interface«ENDIF» $variableApi,
+            VariableApiInterface $variableApi,
             Twig_Environment $twig,
-            MailerApi«IF targets('1.5')»Interface«ENDIF» $mailerApi,
+            MailerApiInterface $mailerApi,
             GroupRepositoryInterface $groupRepository,
             EntityDisplayHelper $entityDisplayHelper,
             WorkflowHelper $workflowHelper
@@ -218,7 +214,8 @@ class NotificationHelper {
             $this->action = $args['action'];
             $this->entity = $args['entity'];
 
-            $this->collectRecipients();
+            $debug = isset($args['debug']) && $args['debug'];
+            $this->collectRecipients($debug);
 
             if (!count($this->recipients)) {
                 return true;
@@ -239,8 +236,10 @@ class NotificationHelper {
 
         /**
          * Collects the recipients.
+         *
+         * @param boolean $debug Whether to add the admin or not
          */
-        protected function collectRecipients()
+        protected function collectRecipients($debug = false)
         {
             $this->recipients = [];
 
@@ -253,9 +252,9 @@ class NotificationHelper {
                 ];
                 $modVarSuffix = $modVarSuffixes[$this->entity['_objectType']];
 
-                $moderatorGroupId = $this->variableApi->get('«appName»', 'moderationGroupFor' . $modVarSuffix, «IF targets('1.5')»GroupsConstant::GROUP_ID_ADMIN«ELSE»2«ENDIF»);
+                $moderatorGroupId = $this->variableApi->get('«appName»', 'moderationGroupFor' . $modVarSuffix, GroupsConstant::GROUP_ID_ADMIN);
                 if ($this->recipientType == 'superModerator') {
-                    $moderatorGroupId = $this->variableApi->get('«appName»', 'superModerationGroupFor' . $modVarSuffix, «IF targets('1.5')»GroupsConstant::GROUP_ID_ADMIN«ELSE»2«ENDIF»);
+                    $moderatorGroupId = $this->variableApi->get('«appName»', 'superModerationGroupFor' . $modVarSuffix, GroupsConstant::GROUP_ID_ADMIN);
                 }
 
                 $moderatorGroup = $this->groupRepository->find($moderatorGroupId);
@@ -270,9 +269,9 @@ class NotificationHelper {
                 $this->addRecipient();
             }
 
-            if (isset($args['debug']) && $args['debug']) {
+            if ($debug) {
                 // add the admin, too
-                $this->addRecipient(«IF targets('1.5')»UsersConstant::USER_ID_ADMIN«ELSE»2«ENDIF»);
+                $this->addRecipient(UsersConstant::USER_ID_ADMIN);
             }
         }
 

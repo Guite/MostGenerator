@@ -82,11 +82,7 @@ class Plugins {
         use Twig_Extension;
         use Zikula\Common\Translator\TranslatorInterface;
         use Zikula\Common\Translator\TranslatorTrait;
-        use Zikula\ExtensionsModule\Api\«IF targets('1.5')»ApiInterface\VariableApiInterface«ELSE»VariableApi«ENDIF»;
-        «IF needsUserAvatarSupport»
-            use Zikula\UsersModule\Constant as UsersConstant;
-            use Zikula\UsersModule\Entity\RepositoryInterface\UserRepositoryInterface;
-        «ENDIF»
+        use Zikula\ExtensionsModule\Api\ApiInterface\VariableApiInterface;
         «IF hasTrees»
             use «appNamespace»\Entity\Factory\EntityFactory;
         «ENDIF»
@@ -124,17 +120,10 @@ class Plugins {
 
         «ENDIF»
         /**
-         * @var VariableApi«IF targets('1.5')»Interface«ENDIF»
+         * @var VariableApiInterface
          */
         protected $variableApi;
 
-        «IF needsUserAvatarSupport»
-            /**
-             * @var UserRepositoryInterface
-             */
-            protected $userRepository;
-
-        «ENDIF»
         «IF hasTrees»
             /**
              * @var EntityFactory
@@ -169,10 +158,7 @@ class Plugins {
          «IF generateIcsTemplates && hasEntitiesWithIcsTemplates»
             * @param RequestStack        $requestStack   RequestStack service instance
          «ENDIF»
-         * @param VariableApi«IF targets('1.5')»Interface«ELSE»        «ENDIF» $variableApi    VariableApi service instance
-         «IF needsUserAvatarSupport»
-            * @param UserRepositoryInterface $userRepository UserRepository service instance
-         «ENDIF»
+         * @param VariableApiInterface   $variableApi    VariableApi service instance
          «IF hasTrees»
          * @param EntityFactory       $entityFactory     EntityFactory service instance
          «ENDIF»
@@ -186,10 +172,7 @@ class Plugins {
             TranslatorInterface $translator«IF hasTrees»,
             RouterInterface $router«ENDIF»«IF generateIcsTemplates && hasEntitiesWithIcsTemplates»,
             RequestStack $requestStack«ENDIF»,
-            VariableApi«IF targets('1.5')»Interface«ENDIF» $variableApi,
-            «IF needsUserAvatarSupport»
-                UserRepositoryInterface $userRepository,
-            «ENDIF»
+            VariableApiInterface $variableApi,
             «IF hasTrees»
                 EntityFactory $entityFactory,
             «ENDIF»
@@ -205,9 +188,6 @@ class Plugins {
                 $this->request = $requestStack->getCurrentRequest();
             «ENDIF»
             $this->variableApi = $variableApi;
-            «IF needsUserAvatarSupport»
-                $this->userRepository = $userRepository;
-            «ENDIF»
             «IF hasTrees»
                 $this->entityFactory = $entityFactory;
             «ENDIF»
@@ -236,8 +216,7 @@ class Plugins {
                     new \Twig_SimpleFunction('«appNameLower»_moderationObjects', [$this, 'getModerationObjects']),
                 «ENDIF»
                 new \Twig_SimpleFunction('«appNameLower»_objectTypeSelector', [$this, 'getObjectTypeSelector']),
-                new \Twig_SimpleFunction('«appNameLower»_templateSelector', [$this, 'getTemplateSelector'])«IF needsUserAvatarSupport»,
-                new \Twig_SimpleFunction('«appNameLower»_userAvatar', [$this, 'getUserAvatar'], ['is_safe' => ['html']])«ENDIF»
+                new \Twig_SimpleFunction('«appNameLower»_templateSelector', [$this, 'getTemplateSelector'])
             ];
         }
 
@@ -354,64 +333,6 @@ class Plugins {
         public function getFormattedEntityTitle($entity)
         {
             return $this->entityDisplayHelper->getFormattedTitle($entity);
-        }
-        «IF needsUserAvatarSupport»
-
-            «getUserAvatar»
-        «ENDIF»
-    '''
-
-    def private getUserAvatar(Application it) '''
-        /**
-         * Displays the avatar of a given user.
-         *
-         * @param int|string $uid    The user's id or name
-         * @param int        $width  Image width (optional)
-         * @param int        $height Image height (optional)
-         * @param int        $size   Gravatar size (optional)
-         * @param string     $rating Gravatar self-rating [g|pg|r|x] see: http://en.gravatar.com/site/implement/images/ (optional)
-         *
-         * @return string
-         */
-        public function getUserAvatar($uid = 0, $width = 0, $height = 0, $size = 0, $rating = '')
-        {
-            if (!is_numeric($uid)) {
-                $limit = 1;
-                $filter = [
-                    'activated' => ['operator' => 'notIn', 'operand' => [
-                        UsersConstant::ACTIVATED_PENDING_REG,
-                        UsersConstant::ACTIVATED_PENDING_DELETE
-                    ]],
-                    'uname' => ['operator' => '=', 'operand' => $uid]
-                ];
-                $results = $this->userRepository->query($filter, [], $limit);
-                if (!count($results)) {
-                    return '';
-                }
-
-                $uid = $results->getIterator()->getArrayCopy()[0]->getUid();
-            }
-            $params = ['uid' => $uid];
-            if ($width > 0) {
-                $params['width'] = $width;
-            }
-            if ($height > 0) {
-                $params['height'] = $height;
-            }
-            if ($size > 0) {
-                $params['size'] = $size;
-            }
-            if ($rating != '') {
-                $params['rating'] = $rating;
-            }
-
-            // load avatar plugin
-            include_once 'lib/legacy/viewplugins/function.useravatar.php';
-
-            $view = \Zikula_View::getInstance('«appName»', false);
-            $result = smarty_function_useravatar($params, $view);
-
-            return $result;
         }
     '''
 

@@ -399,11 +399,7 @@ class ContentTypeList {
                     $translator = $this->container->get('translator.default');
                     $locale = $this->container->get('request_stack')->getCurrentRequest()->getLocale();
                     $categories = [];
-                    «IF targets('1.5')»
-                        $categoryRepository = $this->container->get('zikula_categories_module.category_repository');
-                    «ELSE»
-                        $categoryApi = $this->container->get('zikula_categories_module.api.category');
-                    «ENDIF»
+                    $categoryRepository = $this->container->get('zikula_categories_module.category_repository');
                     foreach ($this->catRegistries as $registryId => $registryCid) {
                         $propName = '';
                         foreach ($this->catProperties as $propertyName => $propertyId) {
@@ -413,14 +409,9 @@ class ContentTypeList {
                             }
                         }
 
-                        «IF targets('1.5')»
-                            $mainCategory = $categoryRepository->find($registryCid);
-                            $queryBuilder = $categoryRepository->getChildrenQueryBuilder($registryCid);
-                            $cats = $queryBuilder->getQuery()->execute();
-                        «ELSE»
-                            //$mainCategory = $categoryApi->getCategoryById($registryCid);
-                            $cats = $categoryApi->getSubCategories($registryCid, true, true, false, true, false, null, '', null, 'sort_value');
-                        «ENDIF»
+                        $mainCategory = $categoryRepository->find($registryCid);
+                        $queryBuilder = $categoryRepository->getChildrenQueryBuilder($registryCid);
+                        $cats = $queryBuilder->getQuery()->execute();
                         $catsForDropdown = [
                             [
                                 'value' => '',
@@ -428,12 +419,8 @@ class ContentTypeList {
                             ]
                         ];
                         foreach ($cats as $category) {
-                            «IF targets('1.5')»
-                                $indent = str_repeat('--', $category->getLvl() - $mainCategory()->getLvl() - 1);
-                                $categoryName = (!empty($indent) ? '|' : '') . $indent . $category->getName();
-                            «ELSE»
-                                $categoryName = isset($category['display_name'][$locale]) ? $category['display_name'][$locale] : $category['name'];
-                            «ENDIF»
+                            $indent = str_repeat('--', $category->getLvl() - $mainCategory()->getLvl() - 1);
+                            $categoryName = (!empty($indent) ? '|' : '') . $indent . $category->getName();
                             $catsForDropdown[] = [
                                 'value' => $category->getId(),
                                 'text' => $categoryName

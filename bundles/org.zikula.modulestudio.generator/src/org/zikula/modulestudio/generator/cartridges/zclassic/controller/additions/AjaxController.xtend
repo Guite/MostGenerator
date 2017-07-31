@@ -47,13 +47,10 @@ class AjaxController {
         «IF hasTrees && hasEditActions»
             use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
         «ENDIF»
-        «IF needsDuplicateCheck || hasBooleansWithAjaxToggle || hasTrees || hasSortable || (hasUiHooksProviders && targets('1.5'))»
+        «IF needsDuplicateCheck || hasBooleansWithAjaxToggle || hasTrees || hasSortable || hasUiHooksProviders»
             use Symfony\Component\Security\Core\Exception\AccessDeniedException;
         «ENDIF»
         use Zikula\Core\Controller\AbstractController;
-        «IF needsUserAutoCompletion && !targets('1.5')»
-            use Zikula\UsersModule\Constant as UsersConstant;
-        «ENDIF»
 
         /**
          * Ajax controller base class.
@@ -65,7 +62,6 @@ class AjaxController {
     '''
 
     def additionalAjaxFunctionsBase(Application it) '''
-        «userSelectorsBase»
         «IF generateExternalControllerAndFinder»
 
             «getItemListFinderBase»
@@ -90,87 +86,12 @@ class AjaxController {
 
             «updateSortPositionsBase»
         «ENDIF»
-        «IF hasUiHooksProviders && targets('1.5')»
+        «IF hasUiHooksProviders»
 
             «attachHookObjectBase»
 
             «detachHookObjectBase»
         «ENDIF»
-    '''
-
-    def private userSelectorsBase(Application it) '''
-        «IF needsUserAutoCompletion»
-
-            «searchUsersBase»
-        «ENDIF»
-    '''
-
-    def private searchUsersBase(Application it) '''
-        «searchUsersDocBlock(true)»
-        «searchUsersSignature»
-        {
-            «searchUsersBaseImpl»
-        }
-    '''
-
-    def private searchUsersDocBlock(Application it, Boolean isBase) '''
-        /**
-         * Retrieves a general purpose list of users.
-         «IF !isBase»
-         *
-         * @Route("/searchUsers", options={"expose"=true})
-         * @Method("GET")
-         «ENDIF»
-         *
-         * @param Request $request Current request instance
-         *
-         * @return JsonResponse
-         */
-    '''
-
-    def private searchUsersSignature(Application it) '''
-        public function searchUsersAction(Request $request)
-    '''
-
-    def private searchUsersBaseImpl(Application it) '''
-        if (!$this->hasPermission('«appName»::Ajax', '::', ACCESS_EDIT)) {
-            return true;
-        }
-
-        $fragment = $request->query->get('fragment', '');
-        $userRepository = $this->get('zikula_users_module.user_repository');
-        «IF targets('1.5')»
-            $results = $userRepository->searchActiveUser(['operator' => 'like', 'operand' => '%' . $fragment . '%'], 50);
-            $profileModule = $this->get('zikula_users_module.internal.profile_module_collector')->getSelected();
-        «ELSE»
-            $limit = 50;
-            $filter = [
-                'activated' => ['operator' => 'notIn', 'operand' => [
-                    UsersConstant::ACTIVATED_PENDING_REG,
-                    UsersConstant::ACTIVATED_PENDING_DELETE
-                ]],
-                'uname' => ['operator' => 'like', 'operand' => '%' . $fragment . '%']
-            ];
-            $results = $userRepository->query($filter, ['uname' => 'asc'], $limit);
-
-            // load avatar plugin
-            include_once 'lib/legacy/viewplugins/function.useravatar.php';
-            $view = \Zikula_View::getInstance('«appName»', false);
-        «ENDIF»
-
-        $resultItems = [];
-        if (count($results) > 0) {
-            foreach ($results as $result) {
-                $resultItems[] = [
-                    'uid' => $result->getUid(),
-                    'uname' => $result->getUname(),
-                    'avatar' => «IF targets('1.5')»$profileModule->getAvatar(['uid' => $result->getUid(), ['rating' => 'g']])«ELSE»smarty_function_useravatar(['uid' => $result->getUid(), 'rating' => 'g'], $view)«ENDIF»
-                ];
-            }
-        }
-
-        // return response
-        return «IF targets('2.0')»$this->json«ELSE»new JsonResponse«ENDIF»($resultItems);
     '''
 
     def private getItemListFinderBase(Application it) '''
@@ -854,10 +775,6 @@ class AjaxController {
             return «IF targets('2.0')»$this->json«ELSE»new JsonResponse«ENDIF»($returnValue);
         }
 
-        «IF !targets('1.5')»
-            $entity->initWorkflow();
-
-        «ENDIF»
         // delete the object
         $action = 'delete';
         try {
@@ -1145,7 +1062,6 @@ class AjaxController {
 
 
     def additionalAjaxFunctions(Application it) '''
-        «userSelectorsImpl»
         «IF generateExternalControllerAndFinder»
 
             «getItemListFinderImpl»
@@ -1170,27 +1086,12 @@ class AjaxController {
 
             «updateSortPositionsImpl»
         «ENDIF»
-        «IF hasUiHooksProviders && targets('1.5')»
+        «IF hasUiHooksProviders»
 
             «attachHookObjectImpl»
 
             «detachHookObjectImpl»
         «ENDIF»
-    '''
-
-    def private userSelectorsImpl(Application it) '''
-        «IF needsUserAutoCompletion»
-
-            «searchUsersImpl»
-        «ENDIF»
-    '''
-
-    def private searchUsersImpl(Application it) '''
-        «searchUsersDocBlock(false)»
-        «searchUsersSignature»
-        {
-            return parent::searchUsersAction($request);
-        }
     '''
 
     def private getItemListFinderImpl(Application it) '''
@@ -1265,7 +1166,7 @@ class AjaxController {
         use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
         use Symfony\Component\HttpFoundation\JsonResponse;
         use Symfony\Component\HttpFoundation\Request;
-        «IF needsDuplicateCheck || hasBooleansWithAjaxToggle || hasTrees || (hasUiHooksProviders && targets('1.5'))»
+        «IF needsDuplicateCheck || hasBooleansWithAjaxToggle || hasTrees || hasUiHooksProviders»
             use Symfony\Component\Security\Core\Exception\AccessDeniedException;
         «ENDIF»
 

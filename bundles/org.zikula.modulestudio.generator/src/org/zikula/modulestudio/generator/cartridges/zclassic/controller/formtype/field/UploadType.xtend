@@ -25,10 +25,8 @@ class UploadType {
         namespace «appNamespace»\Form\Type\Field\Base;
 
         use Symfony\Component\Form\AbstractType;
-        «IF targets('1.5')»
-            use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
-            use Symfony\Component\Form\Extension\Core\Type\FileType;
-        «ENDIF»
+        use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+        use Symfony\Component\Form\Extension\Core\Type\FileType;
         use Symfony\Component\Form\FormBuilderInterface;
         use Symfony\Component\Form\FormInterface;
         use Symfony\Component\Form\FormView;
@@ -112,7 +110,7 @@ class UploadType {
                 }
                 $fileOptions['attr']['class'] = 'validate-upload';
 
-                $builder->add($fieldName, «IF targets('1.5')»FileType::class«ELSE»'Symfony\Component\Form\Extension\Core\Type\FileType'«ENDIF», $fileOptions);
+                $builder->add($fieldName, FileType::class, $fileOptions);
                 $uploadFileTransformer = new UploadFileTransformer($this, $this->requestStack, $this->uploadHelper, $fieldName);
                 $builder->get($fieldName)->addModelTransformer($uploadFileTransformer);
 
@@ -120,7 +118,7 @@ class UploadType {
                     return;
                 }
 
-                $builder->add($fieldName . 'DeleteFile', «IF targets('1.5')»CheckboxType::class«ELSE»'Symfony\Component\Form\Extension\Core\Type\CheckboxType'«ENDIF», [
+                $builder->add($fieldName . 'DeleteFile', CheckboxType::class, [
                     'mapped' => false,
                     'label' => $this->translator->__('Delete existing file'),
                     'required' => false,

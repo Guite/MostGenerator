@@ -31,7 +31,7 @@ class User {
             protected $entityFactory;
 
             /**
-             * @var CurrentUserApi«IF targets('1.5')»Interface«ENDIF»
+             * @var CurrentUserApiInterface
              */
             protected $currentUserApi;
 
@@ -43,17 +43,17 @@ class User {
             /**
              * UserListener constructor.
              *
-             * @param TranslatorInterface $translator    Translator service instance
-             * @param EntityFactory       $entityFactory EntityFactory service instance
-             * @param CurrentUserApi«IF targets('1.5')»Interface«ELSE»     «ENDIF» $currentUserApi CurrentUserApi service instance
-             * @param LoggerInterface     $logger        Logger service instance
+             * @param TranslatorInterface     $translator     Translator service instance
+             * @param EntityFactory           $entityFactory  EntityFactory service instance
+             * @param CurrentUserApiInterface $currentUserApi CurrentUserApi service instance
+             * @param LoggerInterface         $logger         Logger service instance
              *
              * @return void
              */
             public function __construct(
                 TranslatorInterface $translator,
                 EntityFactory $entityFactory,
-                CurrentUserApi«IF targets('1.5')»Interface«ENDIF» $currentUserApi,
+                CurrentUserApiInterface $currentUserApi,
                 LoggerInterface $logger
             ) {
                 $this->translator = $translator;

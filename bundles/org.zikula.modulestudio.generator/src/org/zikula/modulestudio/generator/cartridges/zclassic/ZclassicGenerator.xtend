@@ -114,7 +114,7 @@ class ZclassicGenerator implements IGenerator {
         println('Generating factory class')
         new Factory().generate(it, fsa)
 
-        if (hasUiHooksProviders && targets('1.5')) {
+        if (hasUiHooksProviders) {
             new HookAssignmentEntity().generate(it, fsa)
         }
     }

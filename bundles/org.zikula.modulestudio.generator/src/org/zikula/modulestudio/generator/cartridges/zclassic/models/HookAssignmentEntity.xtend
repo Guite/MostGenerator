@@ -26,9 +26,6 @@ class HookAssignmentEntity {
      * Creates an entity class for storing hook object assignments.
      */
     def generate(Application it, IFileSystemAccess fsa) {
-        if (!targets('1.5')) {
-            return
-        }
         createEntity
         println('Generating hook assignments entity class')
         generateClassPair(fsa, getAppSourceLibPath + 'Entity/HookAssignmentEntity.php',

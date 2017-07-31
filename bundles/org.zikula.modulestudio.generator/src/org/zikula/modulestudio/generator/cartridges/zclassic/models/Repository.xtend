@@ -289,7 +289,7 @@ class Repository {
         use InvalidArgumentException;
         use Psr\Log\LoggerInterface;
         use Zikula\Common\Translator\TranslatorInterface;
-        use Zikula\UsersModule\Api\«IF app.targets('1.5')»ApiInterface\CurrentUserApiInterface«ELSE»CurrentUserApi«ENDIF»;
+        use Zikula\UsersModule\Api\ApiInterface\CurrentUserApiInterface;
         use «app.appNamespace»\Entity\«name.formatForCodeCapital»Entity;
         use «app.appNamespace»\Helper\CollectionFilterHelper;
 

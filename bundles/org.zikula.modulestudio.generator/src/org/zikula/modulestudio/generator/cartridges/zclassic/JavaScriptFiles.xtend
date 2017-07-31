@@ -15,7 +15,6 @@ import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
-import org.zikula.modulestudio.generator.extensions.Utils
 
 class JavaScriptFiles {
 
@@ -24,7 +23,6 @@ class JavaScriptFiles {
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension ModelJoinExtensions = new ModelJoinExtensions
     extension ModelExtensions = new ModelExtensions
-    extension Utils = new Utils
 
     /**
      * Entry point for generating JavaScript files.
@@ -37,7 +35,7 @@ class JavaScriptFiles {
         if (hasEditActions) {
             new EditFunctions().generate(it, fsa)
         }
-        if (needsAutoCompletion || (hasUiHooksProviders && targets('1.5'))) {
+        if (needsAutoCompletion || hasUiHooksProviders) {
             new AutoCompletion().generate(it, fsa)
         }
         if (generateExternalControllerAndFinder) {

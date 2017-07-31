@@ -25,7 +25,7 @@ class Utils {
      * @return String The version number.
      */
     def msVersion() {
-        '0.7.5'
+        '1.0.0'
     }
 
     /**
@@ -120,23 +120,19 @@ class Utils {
      * @return Boolean The result.
      */
     def Boolean targets(Application it, String version) {
-        val useStable14 = !#['1.4-dev', '1.5', '1.5-dev', '2.0', '2.0-dev'].contains(version)
+        val useStable15 = !#['1.5-dev', '2.0', '2.0-dev'].contains(version)
 
         switch getCoreVersion {
             case ZK2DEV:
-                #['2.0-dev', '2.0', '1.5', '1.5-dev'].contains(version)
+                #['2.0-dev', '2.0', '1.5-dev'].contains(version)
             case ZK20:
-                #['2.0', '1.5', '1.5-dev'].contains(version)
+                #['2.0', '1.5-dev'].contains(version)
             case ZK15:
-                version == '1.5'
+                useStable15
             case ZK15DEV:
-                #['1.5', '1.5-dev'].contains(version)
-            case ZK14:
-                useStable14
-            case ZK14DEV:
-                version == '1.4-dev'
+                version == '1.5-dev'
             default:
-                useStable14
+                useStable15
         }
     }
 

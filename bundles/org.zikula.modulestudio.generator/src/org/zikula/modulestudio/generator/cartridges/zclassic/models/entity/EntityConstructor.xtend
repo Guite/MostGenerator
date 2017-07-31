@@ -7,7 +7,6 @@ import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
-import org.zikula.modulestudio.generator.extensions.Utils
 
 class EntityConstructor {
 
@@ -15,7 +14,6 @@ class EntityConstructor {
     extension ModelExtensions = new ModelExtensions
     extension ModelJoinExtensions = new ModelJoinExtensions
     extension NamingExtensions = new NamingExtensions
-    extension Utils = new Utils
 
     def constructor(Entity it, Boolean isInheriting) '''
         /**
@@ -90,9 +88,6 @@ class EntityConstructor {
                 «ENDFOR»
             «ENDFOR»
         «ELSE»
-        «ENDIF»
-        «IF !application.targets('1.5')»
-            $this->initWorkflow();
         «ENDIF»
         «new Association().initCollections(it)»
     '''

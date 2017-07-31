@@ -25,9 +25,7 @@ class GeoType {
         namespace «appNamespace»\Form\Type\Field\Base;
 
         use Symfony\Component\Form\AbstractType;
-        «IF targets('1.5')»
-            use Symfony\Component\Form\Extension\Core\Type\NumberType;
-        «ENDIF»
+        use Symfony\Component\Form\Extension\Core\Type\NumberType;
         use Symfony\Component\OptionsResolver\OptionsResolver;
 
         /**
@@ -56,7 +54,7 @@ class GeoType {
              */
             public function getParent()
             {
-                return «IF targets('1.5')»NumberType::class«ELSE»'Symfony\Component\Form\Extension\Core\Type\NumberType'«ENDIF»;
+                return NumberType::class;
             }
 
             /**

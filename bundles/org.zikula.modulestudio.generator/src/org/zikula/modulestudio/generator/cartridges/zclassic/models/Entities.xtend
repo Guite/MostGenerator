@@ -15,7 +15,6 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.models.business.Val
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.entity.Association
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.entity.EntityConstructor
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.entity.EntityMethods
-import org.zikula.modulestudio.generator.cartridges.zclassic.models.entity.EntityWorkflowTrait
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.entity.ExtensionManager
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.entity.Property
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.entity.extensions.GeographicalTrait
@@ -54,7 +53,6 @@ class Entities {
         entities.forEach(e|e.generate(it, fsa))
 
         new LifecycleListener().generate(it, fsa)
-        new EntityWorkflowTrait().generate(it, fsa)
         if (hasGeographical) {
             if (!getGeographicalEntities.filter[loggable].empty) {
                 new GeographicalTrait().generate(it, fsa, true)
@@ -133,9 +131,6 @@ class Entities {
             «IF hasUserFieldsEntity»
                 use Zikula\UsersModule\Entity\UserEntity;
             «ENDIF»
-            «IF !application.targets('1.5')»
-                use «application.appNamespace»\Traits\EntityWorkflowTrait;
-            «ENDIF»
             «IF hasListFieldsEntity»
                 use «application.appNamespace»\Validator\Constraints as «application.name.formatForCodeCapital»Assert;
             «ENDIF»
@@ -173,9 +168,6 @@ class Entities {
             «IF hasUserFieldsEntity»
                 use Zikula\UsersModule\Entity\UserEntity;
             «ENDIF»
-            «IF !application.targets('1.5')»
-                use «application.appNamespace»\Traits\EntityWorkflowTrait;
-            «ENDIF»
             «IF geographical»
                 use «application.appNamespace»\Traits\«IF loggable»Loggable«ENDIF»GeographicalTrait;
             «ENDIF»
@@ -208,13 +200,6 @@ class Entities {
          */
         abstract class Abstract«name.formatForCodeCapital»Entity extends EntityAccess«IF it instanceof Entity && ((it as Entity).hasNotifyPolicy || (it as Entity).hasTranslatableFields)» implements«IF (it as Entity).hasNotifyPolicy» NotifyPropertyChanged«ENDIF»«IF (it as Entity).hasTranslatableFields»«IF (it as Entity).hasNotifyPolicy»,«ENDIF» Translatable«ENDIF»«ENDIF»
         {
-            «IF !application.targets('1.5')»
-                /**
-                 * Hook entity workflow field and behaviour.
-                 */
-                use EntityWorkflowTrait;
-
-            «ENDIF»
             «IF it instanceof Entity && (it as Entity).geographical»
                 /**
                  * Hook geographical behaviour embedding latitude and longitude fields.

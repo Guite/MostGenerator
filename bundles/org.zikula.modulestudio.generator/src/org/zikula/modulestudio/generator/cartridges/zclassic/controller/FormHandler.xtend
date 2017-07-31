@@ -15,9 +15,7 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.controller.form.Aut
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.form.ListFieldTransformer
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.form.TranslationListener
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.form.UploadFileTransformer
-import org.zikula.modulestudio.generator.cartridges.zclassic.controller.form.UserFieldTransformer
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype.Config
-import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype.DeleteEntity
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype.EditEntity
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype.field.ArrayType
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype.field.AutoCompletionRelationType
@@ -27,7 +25,6 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype.field.MultiListType
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype.field.TranslationType
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype.field.UploadType
-import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype.field.UserType
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
@@ -88,10 +85,6 @@ class FormHandler {
                 new UploadType().generate(it, fsa)
                 new UploadFileTransformer().generate(it, fsa)
             }
-            if (needsUserAutoCompletion && !targets('1.5')) {
-                new UserType().generate(it, fsa)
-                new UserFieldTransformer().generate(it, fsa)
-            }
             if (hasMultiListFields) {
                 new MultiListType().generate(it, fsa)
                 new ListFieldTransformer().generate(it, fsa)
@@ -106,7 +99,6 @@ class FormHandler {
             }
         }
         // additional form types
-        new DeleteEntity().generate(it, fsa)
         new Config().generate(it, fsa)
     }
 
@@ -145,7 +137,7 @@ class FormHandler {
         use Symfony\Component\Routing\RouterInterface;
         use Symfony\Component\Security\Core\Exception\AccessDeniedException;
         use Zikula\Bundle\CoreBundle\HttpKernel\ZikulaHttpKernelInterface;
-        «IF hasHookSubscribers && targets('1.5')»
+        «IF hasHookSubscribers»
             use Zikula\Bundle\HookBundle\Category\FormAwareCategory;
             use Zikula\Bundle\HookBundle\Category\UiHooksCategory;
         «ENDIF»
@@ -156,18 +148,16 @@ class FormHandler {
             use Zikula\Core\RouteUrl;
         «ENDIF»
         «IF hasTranslatable || needsApproval»
-            use Zikula\ExtensionsModule\Api\«IF targets('1.5')»ApiInterface\VariableApiInterface«ELSE»VariableApi«ENDIF»;
+            use Zikula\ExtensionsModule\Api\ApiInterface\VariableApiInterface;
         «ENDIF»
         «IF needsApproval»
-            «IF targets('1.5')»
-                use Zikula\GroupsModule\Constant as GroupsConstant;
-            «ENDIF»
+            use Zikula\GroupsModule\Constant as GroupsConstant;
             use Zikula\GroupsModule\Entity\Repository\GroupApplicationRepository;
         «ENDIF»
-        use Zikula\PageLockModule\Api\«IF targets('1.5')»ApiInterface\LockingApiInterface«ELSE»LockingApi«ENDIF»;
-        use Zikula\PermissionsModule\Api\«IF targets('1.5')»ApiInterface\PermissionApiInterface«ELSE»PermissionApi«ENDIF»;
-        use Zikula\UsersModule\Api\«IF targets('1.5')»ApiInterface\CurrentUserApiInterface«ELSE»CurrentUserApi«ENDIF»;
-        «IF needsApproval && targets('1.5')»
+        use Zikula\PageLockModule\Api\ApiInterface\LockingApiInterface;
+        use Zikula\PermissionsModule\Api\ApiInterface\PermissionApiInterface;
+        use Zikula\UsersModule\Api\ApiInterface\CurrentUserApiInterface;
+        «IF needsApproval»
             use Zikula\UsersModule\Constant as UsersConstant;
         «ENDIF»
         use «appNamespace»\Entity\Factory\EntityFactory;
@@ -338,19 +328,19 @@ class FormHandler {
             protected $logger;
 
             /**
-             * @var PermissionApi«IF targets('1.5')»Interface«ENDIF»
+             * @var PermissionApiInterface
              */
             protected $permissionApi;
 
             «IF hasTranslatable || needsApproval»
                 /**
-                 * @var VariableApi«IF targets('1.5')»Interface«ENDIF»
+                 * @var VariableApiInterface
                  */
                 protected $variableApi;
 
             «ENDIF»
             /**
-             * @var CurrentUserApi«IF targets('1.5')»Interface«ENDIF»
+             * @var CurrentUserApiInterface
              */
             protected $currentUserApi;
 
@@ -405,7 +395,7 @@ class FormHandler {
             /**
              * Reference to optional locking api.
              *
-             * @var LockingApi«IF targets('1.5')»Interface«ENDIF»
+             * @var LockingApiInterface
              */
             protected $lockingApi = null;
 
@@ -432,11 +422,11 @@ class FormHandler {
              * @param RequestStack              $requestStack     RequestStack service instance
              * @param RouterInterface           $router           Router service instance
              * @param LoggerInterface           $logger           Logger service instance
-             * @param PermissionApi«IF targets('1.5')»Interface«ENDIF»             $permissionApi    PermissionApi service instance
+             * @param PermissionApiInterface    $permissionApi    PermissionApi service instance
              «IF hasTranslatable || needsApproval»
-             * @param VariableApi«IF targets('1.5')»Interface«ELSE»         «ENDIF»      $variableApi      VariableApi service instance
+             * @param VariableApiInterface      $variableApi      VariableApi service instance
              «ENDIF»
-             * @param CurrentUserApi«IF targets('1.5')»Interface«ELSE»         «ENDIF»   $currentUserApi   CurrentUserApi service instance
+             * @param CurrentUserApiInterface   $currentUserApi   CurrentUserApi service instance
              «IF needsApproval»
              * @param GroupApplicationRepository $groupApplicationRepository GroupApplicationRepository service instance.
              «ENDIF»
@@ -461,11 +451,11 @@ class FormHandler {
                 RequestStack $requestStack,
                 RouterInterface $router,
                 LoggerInterface $logger,
-                PermissionApi«IF targets('1.5')»Interface«ENDIF» $permissionApi,
+                PermissionApiInterface $permissionApi,
                 «IF hasTranslatable || needsApproval»
-                    VariableApi«IF targets('1.5')»Interface«ENDIF» $variableApi,
+                    VariableApiInterface $variableApi,
                 «ENDIF»
-                CurrentUserApi«IF targets('1.5')»Interface«ENDIF» $currentUserApi,
+                CurrentUserApiInterface $currentUserApi,
                 «IF needsApproval»
                     GroupApplicationRepository $groupApplicationRepository,
                 «ENDIF»
@@ -525,9 +515,9 @@ class FormHandler {
             /**
              * Sets optional locking api reference.
              *
-             * @param LockingApi«IF targets('1.5')»Interface«ENDIF» $lockingApi
+             * @param LockingApiInterface $lockingApi
              */
-            public function setLockingApi(LockingApi«IF targets('1.5')»Interface«ENDIF» $lockingApi)
+            public function setLockingApi(LockingApiInterface $lockingApi)
             {
                 $this->lockingApi = $lockingApi;
             }
@@ -673,7 +663,7 @@ class FormHandler {
             if (!is_object($this->form)) {
                 return false;
             }
-            «IF targets('1.5') && hasHookSubscribers»
+            «IF hasHookSubscribers»
 
                 if ($entity->supportsHookSubscribers()) {
                     // Call form aware display hooks
@@ -750,32 +740,13 @@ class FormHandler {
          */
         protected function initEntityForEditing()
         {
-            «IF !targets('1.5')»
-                «IF getAllEntities.exists[hasSluggableFields && slugUnique]»
-                    if (in_array($this->objectType, $this->entitiesWithUniqueSlugs) && $this->idField == 'slug') {
-                        $entity = $this->entityFactory->getRepository($this->objectType)->selectBySlug($this->idValue);
-                    } else {
-                        $entity = $this->entityFactory->getRepository($this->objectType)->selectById($this->idValue);
-                    }
-                «ELSE»
-                    $entity = $this->entityFactory->getRepository($this->objectType)->selectById($this->idValue);
-                «ENDIF»
-                if (null === $entity) {
-                    return null;
+            «IF getAllEntities.exists[hasSluggableFields && slugUnique]»
+                if (in_array($this->objectType, $this->entitiesWithUniqueSlugs)) {
+                    return $this->entityFactory->getRepository($this->objectType)->selectBySlug($this->idValue);
                 }
 
-                $entity->initWorkflow();
-
-                return $entity;
-            «ELSE»
-                «IF getAllEntities.exists[hasSluggableFields && slugUnique]»
-                    if (in_array($this->objectType, $this->entitiesWithUniqueSlugs)) {
-                        return $this->entityFactory->getRepository($this->objectType)->selectBySlug($this->idValue);
-                    }
-
-                «ENDIF»
-                return $this->entityFactory->getRepository($this->objectType)->selectById($this->idValue);
             «ENDIF»
+            return $this->entityFactory->getRepository($this->objectType)->selectById($this->idValue);
         }
     '''
 
@@ -929,11 +900,7 @@ class FormHandler {
 
                 if ($entity->supportsHookSubscribers() && $action != 'cancel') {
                     // Let any ui hooks perform additional validation actions
-                    «IF targets('1.5')»
-                        $hookType = $action == 'delete' ? UiHooksCategory::TYPE_VALIDATE_DELETE : UiHooksCategory::TYPE_VALIDATE_EDIT;
-                    «ELSE»
-                        $hookType = $action == 'delete' ? 'validate_delete' : 'validate_edit';
-                    «ENDIF»
+                    $hookType = $action == 'delete' ? UiHooksCategory::TYPE_VALIDATE_DELETE : UiHooksCategory::TYPE_VALIDATE_EDIT;
                     $validationErrors = $this->hookHelper->callValidationHooks($entity, $hookType);
                     if (count($validationErrors) > 0) {
                         $flashBag = $this->request->getSession()->getFlashBag();
@@ -970,18 +937,12 @@ class FormHandler {
                             $routeUrl = new RouteUrl('«appName.formatForDB»_' . $this->objectTypeLower . '_display', $urlArgs);
                         }
 
-                        «IF targets('1.5')»
-                            // Call form aware processing hooks
-                            $hookType = $action == 'delete' ? FormAwareCategory::TYPE_PROCESS_DELETE : FormAwareCategory::TYPE_PROCESS_EDIT;
-                            $this->hookHelper->callFormProcessHooks($this->form, $entity, $hookType, $routeUrl);
+                        // Call form aware processing hooks
+                        $hookType = $action == 'delete' ? FormAwareCategory::TYPE_PROCESS_DELETE : FormAwareCategory::TYPE_PROCESS_EDIT;
+                        $this->hookHelper->callFormProcessHooks($this->form, $entity, $hookType, $routeUrl);
 
-                        «ENDIF»
                         // Let any ui hooks know that we have created, updated or deleted an item
-                        «IF targets('1.5')»
-                            $hookType = $action == 'delete' ? UiHooksCategory::TYPE_PROCESS_DELETE : UiHooksCategory::TYPE_PROCESS_EDIT;
-                        «ELSE»
-                            $hookType = $action == 'delete' ? 'process_delete' : 'process_edit';
-                        «ENDIF»
+                        $hookType = $action == 'delete' ? UiHooksCategory::TYPE_PROCESS_DELETE : UiHooksCategory::TYPE_PROCESS_EDIT;
                         $this->hookHelper->callProcessHooks($entity, $hookType, $routeUrl);
                     }
                 «ENDIF»
@@ -1168,20 +1129,20 @@ class FormHandler {
         protected function prepareWorkflowAdditions($enterprise = false)
         {
             $roles = [];
-            $currentUserId = $this->currentUserApi->isLoggedIn() ? $this->currentUserApi->get('uid') : «IF targets('1.5')»UsersConstant::USER_ID_ANONYMOUS«ELSE»1«ENDIF»;
+            $currentUserId = $this->currentUserApi->isLoggedIn() ? $this->currentUserApi->get('uid') : UsersConstant::USER_ID_ANONYMOUS;
             $roles['is_creator'] = $this->templateParameters['mode'] == 'create'
                 || (method_exists($this->entityRef, 'getCreatedBy') && $this->entityRef->getCreatedBy()->getUid() == $currentUserId);
 
             $groupApplicationArgs = [
                 'user' => $currentUserId,
-                'group' => $this->variableApi->get('«appName»', 'moderationGroupFor' . $this->objectTypeCapital, «IF targets('1.5')»GroupsConstant::GROUP_ID_ADMIN«ELSE»2«ENDIF»)
+                'group' => $this->variableApi->get('«appName»', 'moderationGroupFor' . $this->objectTypeCapital, GroupsConstant::GROUP_ID_ADMIN)
             ];
             $roles['is_moderator'] = count($this->groupApplicationRepository->findBy($groupApplicationArgs)) > 0;
 
             if (true === $enterprise) {
                 $groupApplicationArgs = [
                     'user' => $currentUserId,
-                    'group' => $this->variableApi->get('«appName»', 'superModerationGroupFor' . $this->objectTypeCapital, «IF targets('1.5')»GroupsConstant::GROUP_ID_ADMIN«ELSE»2«ENDIF»)
+                    'group' => $this->variableApi->get('«appName»', 'superModerationGroupFor' . $this->objectTypeCapital, GroupsConstant::GROUP_ID_ADMIN)
                 ];
                 $roles['is_super_moderator'] = count($this->groupApplicationRepository->findBy($groupApplicationArgs)) > 0;
             }
@@ -1242,9 +1203,7 @@ class FormHandler {
         namespace «app.appNamespace»\Form\Handler\«name.formatForCodeCapital»\Base;
 
         use «app.appNamespace»\Form\Handler\Common\«actionName.formatForCodeCapital»Handler;
-        «IF app.targets('1.5')»
-            use «app.appNamespace»\Form\Type\«name.formatForCodeCapital»Type;
-        «ENDIF»
+        use «app.appNamespace»\Form\Type\«name.formatForCodeCapital»Type;
 
         «locking.imports(it)»
         use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -1388,7 +1347,7 @@ class FormHandler {
                 }
             «ENDIF»
 
-            return $this->formFactory->create(«IF app.targets('1.5')»«name.formatForCodeCapital»Type::class«ELSE»'«app.appNamespace»\Form\Type\«name.formatForCodeCapital»Type'«ENDIF», $this->entityRef, $options);
+            return $this->formFactory->create(«name.formatForCodeCapital»Type::class, $this->entityRef, $options);
         }
     '''
 

@@ -81,10 +81,8 @@ class Views {
         if (needsApproval) {
             new Emails().generate(it, fsa)
         }
-        if (targets('1.5')) {
-            if (hasFormAwareHookProviders || hasUiHooksProviders) {
-                new HookProviderView().generate(it, fsa)
-            }
+        if (hasFormAwareHookProviders || hasUiHooksProviders) {
+            new HookProviderView().generate(it, fsa)
         }
         if (generateExternalControllerAndFinder || !joinRelations.empty) {
             layoutHelper.rawPageFile(it)
@@ -145,7 +143,7 @@ class Views {
         // reverse logic like in the display template because we are treating the included template here
         val refedElems = entity.outgoing.filter(ManyToManyRelationship).filter[r|r.target instanceof Entity && r.target.application == entity.application]
                        + entity.getIncomingJoinRelations.filter[r|r.source instanceof Entity && r.source.application == entity.application]
-        if (!refedElems.empty || (targets('1.5') && entity.uiHooksProvider != HookProviderMode.DISABLED)) {
+        if (!refedElems.empty || entity.uiHooksProvider != HookProviderMode.DISABLED) {
             relationHelper.displayItemList(entity, it, false, fsa)
             relationHelper.displayItemList(entity, it, true, fsa)
         }

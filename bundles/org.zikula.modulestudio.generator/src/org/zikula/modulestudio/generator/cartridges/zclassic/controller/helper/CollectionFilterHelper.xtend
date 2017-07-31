@@ -47,10 +47,8 @@ class CollectionFilterHelper {
         use Symfony\Component\HttpFoundation\Request;
         use Symfony\Component\HttpFoundation\RequestStack;
         «IF hasStandardFieldEntities»
-            use Zikula\UsersModule\Api\«IF targets('1.5')»ApiInterface\CurrentUserApiInterface«ELSE»CurrentUserApi«ENDIF»;
-            «IF targets('1.5')»
-                use Zikula\UsersModule\Constant as UsersConstant;
-            «ENDIF»
+            use Zikula\UsersModule\Api\ApiInterface\CurrentUserApiInterface;
+            use Zikula\UsersModule\Constant as UsersConstant;
         «ENDIF»
         «FOR entity : getAllEntities»
             use «appNamespace»\Entity\«entity.name.formatForCodeCapital»Entity;
@@ -71,7 +69,7 @@ class CollectionFilterHelper {
             «IF hasStandardFieldEntities»
 
                 /**
-                 * @var CurrentUserApi«IF targets('1.5')»Interface«ENDIF»
+                 * @var CurrentUserApiInterface
                  */
                 protected $currentUserApi;
             «ENDIF»
@@ -100,7 +98,7 @@ class CollectionFilterHelper {
              *
              * @param RequestStack «IF hasCategorisableEntities»  «ENDIF»$requestStack «IF hasCategorisableEntities»       «ENDIF»RequestStack service instance
              «IF hasStandardFieldEntities»
-             * @param CurrentUserApi«IF targets('1.5')»Interface«ELSE»       «ENDIF» $currentUserApi        CurrentUserApi service instance
+             * @param CurrentUserApiInterface $currentUserApi CurrentUserApi service instance
              «ENDIF»
              «IF hasCategorisableEntities»
              * @param CategoryHelper $categoryHelper      CategoryHelper service instance
@@ -113,7 +111,7 @@ class CollectionFilterHelper {
             public function __construct(
                 RequestStack $requestStack,
                 «IF hasStandardFieldEntities»
-                    CurrentUserApi«IF targets('1.5')»Interface«ENDIF» $currentUserApi,
+                    CurrentUserApiInterface $currentUserApi,
                 «ENDIF»
                 «IF hasCategorisableEntities»
                     CategoryHelper $categoryHelper,
@@ -512,7 +510,7 @@ class CollectionFilterHelper {
         public function addCreatorFilter(QueryBuilder $qb, $userId = null)
         {
             if (null === $userId) {
-                $userId = $this->currentUserApi->isLoggedIn() ? $this->currentUserApi->get('uid') : «IF targets('1.5')»UsersConstant::USER_ID_ANONYMOUS«ELSE»1«ENDIF»;
+                $userId = $this->currentUserApi->isLoggedIn() ? $this->currentUserApi->get('uid') : UsersConstant::USER_ID_ANONYMOUS;
             }
 
             if (is_array($userId)) {

@@ -7,7 +7,6 @@ import de.guite.modulestudio.metamodel.ListFieldItem
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
-import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
@@ -15,7 +14,6 @@ import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
 class WorkflowHelper {
 
     extension FormattingExtensions = new FormattingExtensions
-    extension ModelExtensions = new ModelExtensions
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
     extension WorkflowExtensions = new WorkflowExtensions
@@ -34,26 +32,13 @@ class WorkflowHelper {
     def private workflowFunctionsBaseImpl(Application it) '''
         namespace «appNamespace»\Helper\Base;
 
-        «IF targets('1.5') || needsApproval»
-            use Psr\Log\LoggerInterface;
-        «ENDIF»
-        «IF targets('1.5')»
-            use Symfony\Component\Workflow\Registry;
-        «ENDIF»
+        use Psr\Log\LoggerInterface;
+        use Symfony\Component\Workflow\Registry;
         use Zikula\Common\Translator\TranslatorInterface;
         use Zikula\Core\Doctrine\EntityAccess;
-        «IF targets('1.5') || needsApproval»
-            use Zikula\PermissionsModule\Api\«IF targets('1.5')»ApiInterface\PermissionApiInterface«ELSE»PermissionApi«ENDIF»;
-        «ENDIF»
-        «IF targets('1.5')»
-            use Zikula\UsersModule\Api\ApiInterface\CurrentUserApiInterface;
-        «ENDIF»
-        «IF !targets('1.5')»
-            use Zikula_Workflow_Util;
-        «ENDIF»
-        «IF targets('1.5') || needsApproval»
-            use «appNamespace»\Entity\Factory\EntityFactory;
-        «ENDIF»
+        use Zikula\PermissionsModule\Api\ApiInterface\PermissionApiInterface;
+        use Zikula\UsersModule\Api\ApiInterface\CurrentUserApiInterface;
+        use «appNamespace»\Entity\Factory\EntityFactory;
         use «appNamespace»\Helper\ListEntriesHelper;
 
         /**
@@ -61,50 +46,35 @@ class WorkflowHelper {
          */
         abstract class AbstractWorkflowHelper
         {
-            «IF !targets('1.5')»
-                /**
-                 * Name of the application.
-                 *
-                 * @var string
-                 */
-                protected $name;
-
-            «ENDIF»
             /**
              * @var TranslatorInterface
              */
             protected $translator;
-            «IF targets('1.5')»
 
-                /**
-                 * @var Registry
-                 */
-                protected $workflowRegistry;
-            «ENDIF»
-            «IF targets('1.5') || needsApproval»
+            /**
+             * @var Registry
+             */
+            protected $workflowRegistry;
 
-                /**
-                 * @var LoggerInterface
-                 */
-                protected $logger;
+            /**
+             * @var LoggerInterface
+             */
+            protected $logger;
 
-                /**
-                 * @var PermissionApi«IF targets('1.5')»Interface«ENDIF»
-                 */
-                protected $permissionApi;
-                «IF targets('1.5')»
+            /**
+             * @var PermissionApiInterface
+             */
+            protected $permissionApi;
 
-                    /**
-                     * @var CurrentUserApiInterface
-                     */
-                    private $currentUserApi;
-                «ENDIF»
+            /**
+             * @var CurrentUserApiInterface
+             */
+            private $currentUserApi;
 
-                /**
-                 * @var EntityFactory
-                 */
-                protected $entityFactory;
-            «ENDIF»
+            /**
+             * @var EntityFactory
+             */
+            protected $entityFactory;
 
             /**
              * @var ListEntriesHelper
@@ -114,65 +84,38 @@ class WorkflowHelper {
             /**
              * WorkflowHelper constructor.
              *
-             * @param TranslatorInterface $translator        Translator service instance
-             «IF targets('1.5')»
-             * @param Registry            $registry          Workflow registry service instance
-             «ENDIF»
-             «IF targets('1.5') || needsApproval»
-             * @param LoggerInterface     $logger            Logger service instance
-             * @param PermissionApi«IF targets('1.5')»Interface«ENDIF»       $permissionApi     PermissionApi service instance
-             «IF targets('1.5')»
+             * @param TranslatorInterface     $translator        Translator service instance
+             * @param Registry                $registry          Workflow registry service instance
+             * @param LoggerInterface         $logger            Logger service instance
+             * @param PermissionApiInterface  $permissionApi     PermissionApi service instance
              * @param CurrentUserApiInterface $currentUserApi    CurrentUserApi service instance
-             «ENDIF»
-             * @param EntityFactory       $entityFactory     EntityFactory service instance
-             «ENDIF»
-             * @param ListEntriesHelper   $listEntriesHelper ListEntriesHelper service instance
+             * @param EntityFactory           $entityFactory     EntityFactory service instance
+             * @param ListEntriesHelper       $listEntriesHelper ListEntriesHelper service instance
              *
              * @return void
              */
             public function __construct(
                 TranslatorInterface $translator,
-                «IF targets('1.5')»
-                    Registry $registry,
-                «ENDIF»
-                «IF targets('1.5') || needsApproval»
-                    LoggerInterface $logger,
-                    PermissionApi«IF targets('1.5')»Interface«ENDIF» $permissionApi,
-                    «IF targets('1.5')»
-                        CurrentUserApiInterface $currentUserApi,
-                    «ENDIF»
-                    EntityFactory $entityFactory,
-                «ENDIF»
+                Registry $registry,
+                LoggerInterface $logger,
+                PermissionApiInterface $permissionApi,
+                CurrentUserApiInterface $currentUserApi,
+                EntityFactory $entityFactory,
                 ListEntriesHelper $listEntriesHelper
             ) {
-                «IF !targets('1.5')»
-                    $this->name = '«appName»';
-                «ENDIF»
                 $this->translator = $translator;
-                «IF targets('1.5')»
-                    $this->workflowRegistry = $registry;
-                «ENDIF»
-                «IF targets('1.5') || needsApproval»
-                    $this->logger = $logger;
-                    $this->permissionApi = $permissionApi;
-                    «IF targets('1.5')»
-                        $this->currentUserApi = $currentUserApi;
-                    «ENDIF»
-                    $this->entityFactory = $entityFactory;
-                «ENDIF»
+                $this->workflowRegistry = $registry;
+                $this->logger = $logger;
+                $this->permissionApi = $permissionApi;
+                $this->currentUserApi = $currentUserApi;
+                $this->entityFactory = $entityFactory;
                 $this->listEntriesHelper = $listEntriesHelper;
             }
 
             «getObjectStates»
             «getStateInfo»
-            «IF !targets('1.5')»
-                «getWorkflowName»
-            «ENDIF»
             «getActionsForObject»
             «executeAction»
-            «IF !targets('1.5')»
-                «normaliseWorkflowData»
-            «ENDIF»
             «IF needsApproval»
                 «collectAmountOfModerationItems»
                 «getAmountOfModerationItems»
@@ -251,30 +194,6 @@ class WorkflowHelper {
 
     '''
 
-    def private getWorkflowName(Application it) '''
-        /**
-         * This method returns the workflow name for a certain object type.
-         *
-         * @param string $objectType Name of treated object type
-         *
-         * @return string Name of the corresponding workflow
-         */
-        public function getWorkflowName($objectType = '')
-        {
-            $result = '';
-            switch ($objectType) {
-                «FOR entity: getAllEntities»
-                    case '«entity.name.formatForCode»':
-                        $result = '«entity.workflow.textualName»';
-                        break;
-                «ENDFOR»
-            }
-
-            return $result;
-        }
-
-    '''
-
     def private getActionsForObject(Application it) '''
         /**
          * Retrieve the available actions for a given entity object.
@@ -285,126 +204,95 @@ class WorkflowHelper {
          */
         public function getActionsForObject(EntityAccess $entity)
         {
-            «IF targets('1.5')»
-                $workflow = $this->workflowRegistry->get($entity);
-                $wfActions = $workflow->getEnabledTransitions($entity);
-                $currentState = $entity->getWorkflowState();
-            «ELSE»
-                // get possible actions for this object in it's current workflow state
-                $objectType = $entity['_objectType'];
-
-                $this->normaliseWorkflowData($entity);
-
-                $idColumn = $entity['__WORKFLOW__']['obj_idcolumn'];
-                $wfActions = Zikula_Workflow_Util::getActionsForObject($entity, $objectType, $idColumn, $this->name);
-
-                // as we use the workflows for multiple object types we must maybe filter out some actions
-                $states = $this->listEntriesHelper->getEntries(«IF targets('1.5')»$entity->get_objectType()«ELSE»$objectType«ENDIF», 'workflowState');
-                $allowedStates = [];
-                foreach ($states as $state) {
-                    $allowedStates[] = $state['value'];
-                }
-            «ENDIF»
+            $workflow = $this->workflowRegistry->get($entity);
+            $wfActions = $workflow->getEnabledTransitions($entity);
+            $currentState = $entity->getWorkflowState();
 
             $actions = [];
-            «IF targets('1.5')»
-                foreach ($wfActions as $action) {
-                    $actionId = $action->getName();
-                    $actions[$actionId] = [
-                        'id' => $actionId,
-                        'title' => $this->getTitleForAction($currentState, $actionId),
-                        'buttonClass' => $this->getButtonClassForAction($actionId)
-                    ];
-                }
-            «ELSE»
-                foreach ($wfActions as $actionId => $action) {
-                    $nextState = isset($action['nextState']) ? $action['nextState'] : '';
-                    if (!in_array($nextState, ['', 'deleted']) && !in_array($nextState, $allowedStates)) {
-                        continue;
-                    }
-
-                    $actions[$actionId] = $action;
-                    $actions[$actionId]['buttonClass'] = $this->getButtonClassForAction($actionId);
-                }
-            «ENDIF»
+            foreach ($wfActions as $action) {
+                $actionId = $action->getName();
+                $actions[$actionId] = [
+                    'id' => $actionId,
+                    'title' => $this->getTitleForAction($currentState, $actionId),
+                    'buttonClass' => $this->getButtonClassForAction($actionId)
+                ];
+            }
 
             return $actions;
         }
-        «IF targets('1.5')»
 
-            /**
-             * Returns a translatable title for a certain action.
-             *
-             * @param string $currentState Current state of the entity
-             * @param string $actionId     Id of the treated action
-             *
-             * @return string The action title
-             */
-            protected function getTitleForAction($currentState, $actionId)
-            {
-                $title = '';
-                switch ($actionId) {
-                    «IF hasWorkflowState('deferred')»
-                        case 'defer':
-                            $title = $this->translator->__('Defer');
-                            break;
-                    «ENDIF»
-                    case 'submit':
-                        $title = $this->translator->__('Submit');
+        /**
+         * Returns a translatable title for a certain action.
+         *
+         * @param string $currentState Current state of the entity
+         * @param string $actionId     Id of the treated action
+         *
+         * @return string The action title
+         */
+        protected function getTitleForAction($currentState, $actionId)
+        {
+            $title = '';
+            switch ($actionId) {
+                «IF hasWorkflowState('deferred')»
+                    case 'defer':
+                        $title = $this->translator->__('Defer');
                         break;
-                    «IF hasWorkflowState('deferred')»
-                        case 'reject':
-                            $title = $this->translator->__('Reject');
-                            break;
-                    «ENDIF»
-                    «IF hasWorkflowState('accepted')»
-                        case 'accept':
-                            $title = $currentState == 'initial' ? $this->translator->__('Submit and accept') : $this->translator->__('Accept');
-                            break;
-                    «ENDIF»
-                    «IF hasWorkflow(EntityWorkflowType::STANDARD) || hasWorkflow(EntityWorkflowType::ENTERPRISE)»
-                        case 'approve':
-                            $title = $currentState == 'initial' ? $this->translator->__('Submit and approve') : $this->translator->__('Approve');
-                            break;
-                    «ENDIF»
-                    «IF hasWorkflowState('accepted')»
-                        case 'demote':
-                            $title = $this->translator->__('Demote');
-                            break;
-                    «ENDIF»
-                    «IF hasWorkflowState('suspended')»
-                        case 'unpublish':
-                            $title = $this->translator->__('Unpublish');
-                            break;
-                        case 'publish':
-                            $title = $this->translator->__('Publish');
-                            break;
-                    «ENDIF»
-                    «IF hasWorkflowState('archived')»
-                        case 'archive':
-                            $title = $this->translator->__('Archive');
-                            break;
-                    «ENDIF»
-                    «IF hasWorkflowState('trashed')»
-                        case 'trash':
-                            $title = $this->translator->__('Trash');
-                            break;
-                        case 'recover':
-                            $title = $this->translator->__('Recover');
-                            break;
-                    «ENDIF»
-                    case 'delete':
-                        $title = $this->translator->__('Delete');
+                «ENDIF»
+                case 'submit':
+                    $title = $this->translator->__('Submit');
+                    break;
+                «IF hasWorkflowState('deferred')»
+                    case 'reject':
+                        $title = $this->translator->__('Reject');
                         break;
-                }
-
-                if ($title == '' && substr($actionId, 0, 6) == 'update') {
-                    $title = $this->translator->__('Update');
-                }
-
-                return $title;
+                «ENDIF»
+                «IF hasWorkflowState('accepted')»
+                    case 'accept':
+                        $title = $currentState == 'initial' ? $this->translator->__('Submit and accept') : $this->translator->__('Accept');
+                        break;
+                «ENDIF»
+                «IF hasWorkflow(EntityWorkflowType::STANDARD) || hasWorkflow(EntityWorkflowType::ENTERPRISE)»
+                    case 'approve':
+                        $title = $currentState == 'initial' ? $this->translator->__('Submit and approve') : $this->translator->__('Approve');
+                        break;
+                «ENDIF»
+                «IF hasWorkflowState('accepted')»
+                    case 'demote':
+                        $title = $this->translator->__('Demote');
+                        break;
+                «ENDIF»
+                «IF hasWorkflowState('suspended')»
+                    case 'unpublish':
+                        $title = $this->translator->__('Unpublish');
+                        break;
+                    case 'publish':
+                        $title = $this->translator->__('Publish');
+                        break;
+                «ENDIF»
+                «IF hasWorkflowState('archived')»
+                    case 'archive':
+                        $title = $this->translator->__('Archive');
+                        break;
+                «ENDIF»
+                «IF hasWorkflowState('trashed')»
+                    case 'trash':
+                        $title = $this->translator->__('Trash');
+                        break;
+                    case 'recover':
+                        $title = $this->translator->__('Recover');
+                        break;
+                «ENDIF»
+                case 'delete':
+                    $title = $this->translator->__('Delete');
+                    break;
             }
-        «ENDIF»
+
+            if ($title == '' && substr($actionId, 0, 6) == 'update') {
+                $title = $this->translator->__('Update');
+            }
+
+            return $title;
+        }
 
         /**
          * Returns a button class for a certain action.
@@ -495,54 +383,42 @@ class WorkflowHelper {
          */
         public function executeAction(EntityAccess $entity, $actionId = '', $recursive = false)
         {
-            «IF targets('1.5')»
-                $workflow = $this->workflowRegistry->get($entity);
-                if (!$workflow->can($entity, $actionId)) {
-                    return false;
+            $workflow = $this->workflowRegistry->get($entity);
+            if (!$workflow->can($entity, $actionId)) {
+                return false;
+            }
+
+            // get entity manager
+            $entityManager = $this->entityFactory->getObjectManager();
+            $logArgs = ['app' => '«appName»', 'user' => $this->currentUserApi->get('uname')];
+
+            $result = false;
+
+            try {
+                $workflow->apply($entity, $actionId);
+
+                //$entityManager->transactional(function($entityManager) {
+                if ($actionId == 'delete') {
+                    $entityManager->remove($entity);
+                } else {
+                    $entityManager->persist($entity);
                 }
-
-                // get entity manager
-                $entityManager = $this->entityFactory->getObjectManager();
-                $logArgs = ['app' => '«appName»', 'user' => $this->currentUserApi->get('uname')];
-
-                $result = false;
-
-                try {
-                    $workflow->apply($entity, $actionId);
-
-                    //$entityManager->transactional(function($entityManager) {
-                    if ($actionId == 'delete') {
-                        $entityManager->remove($entity);
-                    } else {
-                        $entityManager->persist($entity);
-                    }
-                    $entityManager->flush();
-                    //});
-                    $result = true;
-                    if ($actionId == 'delete') {
-                        $this->logger->notice('{app}: User {user} deleted an entity.', $logArgs);
-                    } else {
-                        $this->logger->notice('{app}: User {user} updated an entity.', $logArgs);
-                    }
-                } catch (\Exception $exception) {
-                    if ($actionId == 'delete') {
-                        $this->logger->error('{app}: User {user} tried to delete an entity, but failed.', $logArgs);
-                    } else {
-                        $this->logger->error('{app}: User {user} tried to update an entity, but failed.', $logArgs);
-                    }
-                    throw new \RuntimeException($exception->getMessage());
+                $entityManager->flush();
+                //});
+                $result = true;
+                if ($actionId == 'delete') {
+                    $this->logger->notice('{app}: User {user} deleted an entity.', $logArgs);
+                } else {
+                    $this->logger->notice('{app}: User {user} updated an entity.', $logArgs);
                 }
-            «ELSE»
-                $objectType = $entity['_objectType'];
-                $schemaName = $this->getWorkflowName($objectType);
-
-                $entity->initWorkflow(true);
-                $idColumn = $entity['__WORKFLOW__']['obj_idcolumn'];
-
-                $this->normaliseWorkflowData($entity);
-
-                $result = Zikula_Workflow_Util::executeAction($schemaName, $entity, $actionId, $objectType, '«appName»', $idColumn);
-            «ENDIF»
+            } catch (\Exception $exception) {
+                if ($actionId == 'delete') {
+                    $this->logger->error('{app}: User {user} tried to delete an entity, but failed.', $logArgs);
+                } else {
+                    $this->logger->error('{app}: User {user} tried to update an entity, but failed.', $logArgs);
+                }
+                throw new \RuntimeException($exception->getMessage());
+            }
 
             if (false !== $result && !$recursive) {
                 $entities = $entity->getRelatedObjectsToPersist();
@@ -554,47 +430,6 @@ class WorkflowHelper {
             }
 
             return (false !== $result);
-        }
-
-    '''
-
-    def private normaliseWorkflowData(Application it) '''
-        /**
-         * Performs a conversion of the workflow object back to an array.
-         *
-         * @param EntityAccess $entity The given entity instance (excplicitly assigned by reference as form handlers use arrays)
-         *
-         * @return bool False on error or true if everything worked well
-         */
-        public function normaliseWorkflowData(&$entity)
-        {
-            $workflow = $entity['__WORKFLOW__'];
-            if (!isset($workflow[0]) && isset($workflow['module'])) {
-                return true;
-            }
-
-            if (isset($workflow[0])) {
-                $workflow = $workflow[0];
-            }
-
-            if (!is_object($workflow)) {
-                $workflow['module'] = '«appName»';
-                $entity['__WORKFLOW__'] = $workflow;
-
-                return true;
-            }
-
-            $entity['__WORKFLOW__'] = [
-                'module'        => '«appName»',
-                'id'            => $workflow->getId(),
-                'state'         => $workflow->getState(),
-                'obj_table'     => $workflow->getObjTable(),
-                'obj_idcolumn'  => $workflow->getObjIdcolumn(),
-                'obj_id'        => $workflow->getObjId(),
-                'schemaname'    => $workflow->getSchemaname()
-            ];
-
-            return true;
         }
 
     '''

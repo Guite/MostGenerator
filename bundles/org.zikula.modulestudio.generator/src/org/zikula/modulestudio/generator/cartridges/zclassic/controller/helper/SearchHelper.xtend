@@ -3,7 +3,6 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.controller.helper
 import de.guite.modulestudio.metamodel.Application
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
-import org.zikula.modulestudio.generator.cartridges.zclassic.view.additions.SearchView
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
@@ -26,7 +25,6 @@ class SearchHelper {
         generateClassPair(fsa, getAppSourceLibPath + 'Helper/SearchHelper.php',
             fh.phpFileContent(it, searchHelperBaseClass), fh.phpFileContent(it, searchHelperImpl)
         )
-        new SearchView().generate(it, fsa)
     }
 
     def private searchHelperBaseClass(Application it) '''
@@ -34,26 +32,18 @@ class SearchHelper {
 
         use Doctrine\ORM\QueryBuilder;
         use Doctrine\ORM\Query\Expr\Composite;
-        «IF targets('1.5')»
-            use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
-            use Symfony\Component\Form\Extension\Core\Type\HiddenType;
-            use Symfony\Component\Form\FormBuilderInterface;
-        «ELSE»
-            use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
-        «ENDIF»
+        use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+        use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+        use Symfony\Component\Form\FormBuilderInterface;
         use Symfony\Component\HttpFoundation\Request;
         use Symfony\Component\HttpFoundation\RequestStack;
         use Symfony\Component\HttpFoundation\Session\SessionInterface;
         use Zikula\Common\Translator\TranslatorInterface;
         use Zikula\Common\Translator\TranslatorTrait;
         use Zikula\Core\RouteUrl;
-        use Zikula\PermissionsModule\Api\«IF targets('1.5')»ApiInterface\PermissionApiInterface«ELSE»PermissionApi«ENDIF»;
+        use Zikula\PermissionsModule\Api\ApiInterface\PermissionApiInterface;
         use Zikula\SearchModule\Entity\SearchResultEntity;
-        «IF targets('1.5')»
-            use Zikula\SearchModule\SearchableInterface;
-        «ELSE»
-            use Zikula\SearchModule\AbstractSearchable;
-        «ENDIF»
+        use Zikula\SearchModule\SearchableInterface;
         use «appNamespace»\Entity\Factory\EntityFactory;
         «IF hasCategorisableEntities»
             use «appNamespace»\Helper\CategoryHelper;
@@ -67,7 +57,7 @@ class SearchHelper {
         /**
          * Search helper base class.
          */
-        abstract class AbstractSearchHelper «IF targets('1.5')»implements SearchableInterface«ELSE»extends AbstractSearchable«ENDIF»
+        abstract class AbstractSearchHelper implements SearchableInterface
         {
             «searchHelperBaseImpl»
         }
@@ -77,16 +67,9 @@ class SearchHelper {
         use TranslatorTrait;
 
         /**
-         * @var PermissionApi«IF targets('1.5')»Interface«ENDIF»
+         * @var PermissionApiInterface
          */
         protected $permissionApi;
-        «IF !targets('1.5')»
-
-            /**
-             * @var EngineInterface
-             */
-            private $templateEngine;
-        «ENDIF»
 
         /**
          * @var SessionInterface
@@ -129,10 +112,7 @@ class SearchHelper {
          * SearchHelper constructor.
          *
          * @param TranslatorInterface $translator          Translator service instance
-         * @param PermissionApi«IF targets('1.5')»Interface«ENDIF»    $permissionApi   PermissionApi service instance
-         «IF !targets('1.5')»
-         * @param EngineInterface     $templateEngine      Template engine service instance
-         «ENDIF»
+         * @param PermissionApiInterface $permissionApi    PermissionApi service instance
          * @param SessionInterface    $session             Session service instance
          * @param RequestStack        $requestStack        RequestStack service instance
          * @param EntityFactory       $entityFactory       EntityFactory service instance
@@ -145,10 +125,7 @@ class SearchHelper {
          */
         public function __construct(
             TranslatorInterface $translator,
-            PermissionApi«IF targets('1.5')»Interface«ENDIF» $permissionApi,
-            «IF !targets('1.5')»
-                EngineInterface $templateEngine,
-            «ENDIF»
+            PermissionApiInterface $permissionApi,
             SessionInterface $session,
             RequestStack $requestStack,
             EntityFactory $entityFactory,
@@ -159,9 +136,6 @@ class SearchHelper {
         ) {
             $this->setTranslator($translator);
             $this->permissionApi = $permissionApi;
-            «IF !targets('1.5')»
-                $this->templateEngine = $templateEngine;
-            «ENDIF»
             $this->session = $session;
             $this->request = $requestStack->getCurrentRequest();
             $this->entityFactory = $entityFactory;
@@ -175,11 +149,7 @@ class SearchHelper {
 
         «setTranslatorMethod»
 
-        «IF targets('1.5')»
-            «amendForm»
-        «ELSE»
-            «getOptions»
-        «ENDIF»
+        «amendForm»
 
         «getResults»
 
@@ -244,28 +214,6 @@ class SearchHelper {
         }
     '''
 
-    def private getOptions(Application it) '''
-        /**
-         * @inheritDoc
-         */
-        public function getOptions($active, $modVars = null)
-        {
-            if (!$this->permissionApi->hasPermission('«appName»::', '::', ACCESS_READ)) {
-                return '';
-            }
-
-            $templateParameters = [];
-
-            $searchTypes = $this->getSearchTypes();
-
-            foreach ($searchTypes as $searchType => $typeInfo) {
-                $templateParameters['active_' . $typeInfo['value']] = true;
-            }
-
-            return $this->templateEngine->renderResponse('@«appName»/Search/options.html.twig', $templateParameters)->getContent();
-        }
-    '''
-
     def private getResults(Application it) '''
         /**
          * @inheritDoc
@@ -280,32 +228,19 @@ class SearchHelper {
             $results = [];
 
             // retrieve list of activated object types
-            «IF targets('1.5')»
-                $searchTypes = $this->getSearchTypes();
-            «ELSE»
-                $searchTypes = isset($modVars['objectTypes']) ? (array)$modVars['objectTypes'] : [];
-                if (!is_array($searchTypes) || !count($searchTypes)) {
-                    if ($this->request->isMethod('GET')) {
-                        $searchTypes = $this->request->query->get('«appName.toFirstLower»SearchTypes', []);
-                    } elseif ($this->request->isMethod('POST')) {
-                        $searchTypes = $this->request->request->get('«appName.toFirstLower»SearchTypes', []);
-                    }
-                }
-            «ENDIF»
+            $searchTypes = $this->getSearchTypes();
 
-            foreach ($searchTypes as «IF targets('1.5')»$searchTypeCode => $typeInfo«ELSE»$objectType«ENDIF») {
-                «IF targets('1.5')»
-                    $objectType = $typeInfo['value'];
-                    $isActivated = false;
-                    if ($this->request->isMethod('GET')) {
-                        $isActivated = $this->request->query->get('active_' . $searchTypeCode, false);
-                    } elseif ($this->request->isMethod('POST')) {
-                        $isActivated = $this->request->request->get('active_' . $searchTypeCode, false);
-                    }
-                    if (!$isActivated) {
-                        continue;
-                    }
-                «ENDIF»
+            foreach ($searchTypes as $searchTypeCode => $typeInfo) {
+                $objectType = $typeInfo['value'];
+                $isActivated = false;
+                if ($this->request->isMethod('GET')) {
+                    $isActivated = $this->request->query->get('active_' . $searchTypeCode, false);
+                } elseif ($this->request->isMethod('POST')) {
+                    $isActivated = $this->request->request->get('active_' . $searchTypeCode, false);
+                }
+                if (!$isActivated) {
+                    continue;
+                }
                 $whereArray = [];
                 $languageField = null;
                 switch ($objectType) {

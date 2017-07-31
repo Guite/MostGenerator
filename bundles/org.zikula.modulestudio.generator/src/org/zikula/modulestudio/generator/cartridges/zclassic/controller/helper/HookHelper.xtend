@@ -6,7 +6,6 @@ import de.guite.modulestudio.metamodel.HookProviderMode
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype.FormAwareProviderInnerForms
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
-import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.HookBundlesLegacy
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
@@ -30,7 +29,7 @@ class HookHelper {
         if (hasHookSubscribers) {
             generateHookSubscribers(fsa)
         }
-        if (hasHookProviders && targets('1.5')) {
+        if (hasHookProviders) {
             generateHookProviders(fsa)
         }
     }
@@ -44,13 +43,6 @@ class HookHelper {
         generateClassPair(fsa, getAppSourceLibPath + 'Helper/HookHelper.php',
             fh.phpFileContent(it, hookFunctionsBaseImpl), fh.phpFileContent(it, hookFunctionsImpl)
         )
-        if (!targets('1.5')) {
-            println('Generating helper class for hook bundles')
-            generateClassPair(fsa, getAppSourceLibPath + 'Container/HookContainer.php',
-                fh.phpFileContent(it, legacyHookContainerBaseImpl), fh.phpFileContent(it, legacyHookContainerImpl)
-            )
-            return
-        }
         println('Generating hook subscriber classes')
         for (entity : getAllEntities.filter[e|!e.skipHookSubscribers]) {
             for (hookType : getHookTypes.entrySet) {
@@ -112,22 +104,14 @@ class HookHelper {
     def private hookFunctionsBaseImpl(Application it) '''
         namespace «appNamespace»\Helper\Base;
 
-        «IF targets('1.5')»
-            use Symfony\Component\Form\Form;
-            use Zikula\Bundle\HookBundle\Dispatcher\HookDispatcherInterface;
-            use Zikula\Bundle\HookBundle\FormAwareHook\FormAwareHook;
-            use Zikula\Bundle\HookBundle\FormAwareHook\FormAwareResponse;
-            use Zikula\Bundle\HookBundle\Hook\Hook;
-            use Zikula\Bundle\HookBundle\Hook\ProcessHook;
-            use Zikula\Bundle\HookBundle\Hook\ValidationHook;
-            use Zikula\Bundle\HookBundle\Hook\ValidationProviders;
-        «ELSE»
-            use Zikula\Bundle\HookBundle\Dispatcher\HookDispatcherInterface;
-            use Zikula\Bundle\HookBundle\Hook\Hook;
-            use Zikula\Bundle\HookBundle\Hook\ProcessHook;
-            use Zikula\Bundle\HookBundle\Hook\ValidationHook;
-            use Zikula\Bundle\HookBundle\Hook\ValidationProviders;
-        «ENDIF»
+        use Symfony\Component\Form\Form;
+        use Zikula\Bundle\HookBundle\Dispatcher\HookDispatcherInterface;
+        use Zikula\Bundle\HookBundle\FormAwareHook\FormAwareHook;
+        use Zikula\Bundle\HookBundle\FormAwareHook\FormAwareResponse;
+        use Zikula\Bundle\HookBundle\Hook\Hook;
+        use Zikula\Bundle\HookBundle\Hook\ProcessHook;
+        use Zikula\Bundle\HookBundle\Hook\ValidationHook;
+        use Zikula\Bundle\HookBundle\Hook\ValidationProviders;
         use Zikula\Core\Doctrine\EntityAccess;
         use Zikula\Core\UrlInterface;
 
@@ -155,12 +139,10 @@ class HookHelper {
 
             «callProcessHooks»
 
-            «IF targets('1.5')»
-                «callFormDisplayHooks»
+            «callFormDisplayHooks»
 
-                «callFormProcessingHooks»
+            «callFormProcessingHooks»
 
-            «ENDIF»
             «dispatchHooks»
         }
     '''
@@ -270,51 +252,6 @@ class HookHelper {
         }
     '''
 
-    // 1.4 only
-    def private legacyHookContainerBaseImpl(Application it) '''
-        namespace «appNamespace»\Container\Base;
-
-        use Zikula\Bundle\HookBundle\AbstractHookContainer as ZikulaHookContainer;
-        use Zikula\Bundle\HookBundle\Bundle\SubscriberBundle;
-
-        /**
-         * Base class for hook container methods.
-         */
-        abstract class AbstractHookContainer extends ZikulaHookContainer
-        {
-            «setup»
-        }
-    '''
-
-    def private setup(Application it) '''
-        /**
-         * Define the hook bundles supported by this module.
-         *
-         * @return void
-         */
-        protected function setupHookBundles()
-        {
-            «val hookHelper = new HookBundlesLegacy()»
-            «hookHelper.setup(it)»
-        }
-    '''
-
-    // 1.4 only
-    def private legacyHookContainerImpl(Application it) '''
-        namespace «appNamespace»\Container;
-
-        use «appNamespace»\Container\Base\AbstractHookContainer;
-
-        /**
-         * Implementation class for hook container methods.
-         */
-        class HookContainer extends AbstractHookContainer
-        {
-            // feel free to add your own convenience methods here
-        }
-    '''
-
-    // 1.5+ only
     def private hookSubscriberBaseImpl(Entity it, String category, String subscriberType) '''
         namespace «application.appNamespace»\HookSubscriber\Base;
 
@@ -410,7 +347,6 @@ class HookHelper {
         }
     '''
 
-    // 1.5+ only
     def private filterHooksProviderBaseImpl(Application it) '''
         namespace «appNamespace»\HookProvider\Base;
 

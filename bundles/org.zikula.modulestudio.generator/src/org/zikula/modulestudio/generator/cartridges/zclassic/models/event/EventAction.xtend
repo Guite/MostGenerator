@@ -80,30 +80,6 @@ class EventAction {
         if ($event->isPropagationStopped()) {
             return false;
         }
-        «IF !targets('1.5')»
-
-            // delete workflow for this entity
-            $workflowHelper = $this->container->get('«appService».workflow_helper');
-            $workflowHelper->normaliseWorkflowData(«entityVar»);
-            $workflow = «entityVar»['__WORKFLOW__'];
-            if ($workflow['id'] > 0) {
-                $result = true;
-                try {
-                    $entityManager = $args->getEntityManager();
-                    $workflow = $entityManager->find('Zikula\Core\Doctrine\Entity\WorkflowEntity', $workflow['id']);
-                    $entityManager->remove($workflow);
-                    $entityManager->flush();
-                } catch (\Exception $exception) {
-                    $result = false;
-                }
-                if (false === $result) {
-                    $session = $this->container->get('session');
-                    $session->getFlashBag()->add('error', $this->translator->__('Error! Could not remove stored workflow. Deletion has been aborted.'));
-
-                    return false;
-                }
-            }
-        «ENDIF»
     '''
 
     def postRemove(Application it) '''

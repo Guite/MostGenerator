@@ -133,11 +133,7 @@ class History {
                         </td>
                         <td headers="hVersion" class="text-center">{{ logEntry.version }}{% if loop.first %} ({{ __('latest') }}){% endif %}</td>
                         <td headers="hDate">{{ logEntry.loggedAt|localizeddate('long', 'medium') }}</td>
-                        «IF application.targets('1.5')»
-                            <td headers="hUser">{{ userAvatar(logEntry.username, {size: 20, rating: 'g'}) }} {{ logEntry.username|profileLinkByUserName() }}</td>
-                        «ELSE»
-                            <td headers="hUser">{{ «appName.toLowerCase»_userAvatar(uid=logEntry.username, size=20, rating='g') }} {{ logEntry.username|profileLinkByUserName() }}</td>
-                        «ENDIF»
+                        <td headers="hUser">{{ userAvatar(logEntry.username, {size: 20, rating: 'g'}) }} {{ logEntry.username|profileLinkByUserName() }}</td>
                         <td headers="hOperation">
                             {% if logEntry.action == 'create' %}
                                 {{ __('Create') }}

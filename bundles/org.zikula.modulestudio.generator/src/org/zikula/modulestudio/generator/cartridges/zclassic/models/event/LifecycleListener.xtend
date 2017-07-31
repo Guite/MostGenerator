@@ -42,9 +42,6 @@ class LifecycleListener {
         «IF hasUploads»
             use Symfony\Component\HttpFoundation\File\File;
         «ENDIF»
-        «IF !targets('1.5')»
-            use Zikula\Common\Translator\TranslatorInterface;
-        «ENDIF»
         use Zikula\Core\Doctrine\EntityAccess;
         use «appNamespace»\«name.formatForCodeCapital»Events;
         «FOR entity : getAllEntities»
@@ -67,13 +64,6 @@ class LifecycleListener {
              * @var LoggerInterface
              */
             protected $logger;
-            «IF !targets('1.5')»
-
-                /**
-                 * @var TranslatorInterface
-                 */
-                protected $translator;
-            «ENDIF»
 
             /**
              * EntityLifecycleListener constructor.
@@ -81,22 +71,15 @@ class LifecycleListener {
              * @param ContainerInterface       $container
              * @param EventDispatcherInterface $eventDispatcher EventDispatcher service instance
              * @param LoggerInterface          $logger          Logger service instance
-             «IF !targets('1.5')»
-             * @param TranslatorInterface      $translator      Translator service instance
-             «ENDIF»
              */
             public function __construct(
                 ContainerInterface $container,
                 EventDispatcherInterface $eventDispatcher,
-                LoggerInterface $logger«IF !targets('1.5')»,
-                TranslatorInterface $translator«ENDIF»)
-            {
+                LoggerInterface $logger
+            ) {
                 $this->setContainer($container);
                 $this->eventDispatcher = $eventDispatcher;
                 $this->logger = $logger;
-                «IF !targets('1.5')»
-                    $this->translator = $translator;
-                «ENDIF»
             }
 
             /**

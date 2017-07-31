@@ -299,11 +299,11 @@ class Forms {
                     // initialise auto completion for user fields
                     «FOR userField : userFields»
                         «val realName = userField.name.formatForCode»
-                        «IF app.targets('1.5')»initUserLiveSearch«ELSE»«app.vendorAndName»InitUserField«ENDIF»('«app.appName.toLowerCase»_«name.formatForCode.toLowerCase»_«realName»');
+                        initUserLiveSearch('«app.appName.toLowerCase»_«name.formatForCode.toLowerCase»_«realName»');
                     «ENDFOR»
                     «IF standardFields»
                         {% if form.moderationSpecificCreator is defined %}
-                            «IF app.targets('1.5')»initUserLiveSearch«ELSE»«app.vendorAndName»InitUserField«ENDIF»('«app.appName.toLowerCase»_«name.formatForCode.toLowerCase»_moderationSpecificCreator');
+                            initUserLiveSearch('«app.appName.toLowerCase»_«name.formatForCode.toLowerCase»_moderationSpecificCreator');
                         {% endif %}
                     «ENDIF»
                 «ENDIF»

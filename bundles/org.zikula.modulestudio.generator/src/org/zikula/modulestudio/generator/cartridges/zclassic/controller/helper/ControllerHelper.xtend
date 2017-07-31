@@ -61,10 +61,10 @@ class ControllerHelper {
             use Zikula\Core\RouteUrl;
         «ENDIF»
         «IF hasViewActions || hasGeographical»
-            use Zikula\ExtensionsModule\Api\«IF targets('1.5')»ApiInterface\VariableApiInterface«ELSE»VariableApi«ENDIF»;
+            use Zikula\ExtensionsModule\Api\ApiInterface\VariableApiInterface;
         «ENDIF»
         «IF hasGeographical»
-            use Zikula\UsersModule\Api\«IF targets('1.5')»ApiInterface\CurrentUserApiInterface«ELSE»CurrentUserApi«ENDIF»;
+            use Zikula\UsersModule\Api\ApiInterface\CurrentUserApiInterface;
         «ENDIF»
         «IF hasViewActions && hasUserFields»
             use Zikula\UsersModule\Entity\UserEntity;
@@ -121,14 +121,14 @@ class ControllerHelper {
             «IF hasViewActions || hasGeographical»
 
                 /**
-                 * @var VariableApi«IF targets('1.5')»Interface«ENDIF»
+                 * @var VariableApiInterface
                  */
                 protected $variableApi;
             «ENDIF»
             «IF hasGeographical»
 
                 /**
-                 * @var CurrentUserApi«IF targets('1.5')»Interface«ENDIF»
+                 * @var CurrentUserApiInterface
                  */
                 protected $currentUserApi;
             «ENDIF»
@@ -184,10 +184,10 @@ class ControllerHelper {
              * @param FormFactoryInterface $formFactory    FormFactory service instance
              «ENDIF»
              «IF hasViewActions || hasGeographical»
-             * @param VariableApi«IF targets('1.5')»Interface«ELSE»        «ENDIF» $variableApi     VariableApi service instance
+             * @param VariableApiInterface $variableApi     VariableApi service instance
              «ENDIF»
              «IF hasGeographical»
-             * @param CurrentUserApi«IF targets('1.5')»Interface«ELSE»     «ENDIF» $currentUserApi  CurrentUserApi service instance
+             * @param CurrentUserApiInterface $currentUserApi  CurrentUserApi service instance
              «ENDIF»
              * @param EntityFactory       $entityFactory   EntityFactory service instance
              * @param CollectionFilterHelper $collectionFilterHelper CollectionFilterHelper service instance
@@ -219,10 +219,10 @@ class ControllerHelper {
                     FormFactoryInterface $formFactory,
                 «ENDIF»
                 «IF hasViewActions || hasGeographical»
-                    VariableApi«IF targets('1.5')»Interface«ENDIF» $variableApi,
+                    VariableApiInterface $variableApi,
                 «ENDIF»
                 «IF hasGeographical»
-                    CurrentUserApi«IF targets('1.5')»Interface«ENDIF» $currentUserApi,
+                    CurrentUserApiInterface $currentUserApi,
                 «ENDIF»
                 EntityFactory $entityFactory,
                 CollectionFilterHelper $collectionFilterHelper«IF hasViewActions && hasEditActions»,

@@ -21,7 +21,7 @@ class Section {
 
         «extensionsAndRelations(app, fsa, isAdmin)»
 
-        «IF !skipHookSubscribers && app.targets('1.5')»
+        «IF !skipHookSubscribers»
             {% if formHookTemplates|length > 0 %}
                 <fieldset>
                     {% for hookTemplate in formHookTemplates %}

@@ -39,9 +39,7 @@ class BlockList {
         «IF hasCategorisableEntities»
             use «appNamespace»\Helper\FeatureActivationHelper;
         «ENDIF»
-        «IF targets('1.5')»
-            use «appNamespace»\Block\Form\Type\ItemListBlockType;
-        «ENDIF»
+        use «appNamespace»\Block\Form\Type\ItemListBlockType;
 
         /**
          * Generic item list block base class.
@@ -267,7 +265,7 @@ class BlockList {
          */
         public function getFormClassName()
         {
-            return «IF targets('1.5')»ItemListBlockType::class«ELSE»'«appNamespace»\Block\Form\Type\ItemListBlockType'«ENDIF»;
+            return ItemListBlockType::class;
         }
 
         /**

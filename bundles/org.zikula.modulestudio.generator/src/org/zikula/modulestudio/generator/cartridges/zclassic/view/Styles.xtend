@@ -134,10 +134,9 @@ class Styles {
     '''
 
     def private autoCompletion(Application it) '''
-        «val hasUserFields = hasUserFields || hasStandardFieldEntities»
         «val hasImageFields = hasImageFields»
         «val joinRelations = getJoinRelations»
-        «IF !joinRelations.empty || (hasUserFields && !targets('1.5')) || (hasUiHooksProviders && targets('1.5'))»
+        «IF !joinRelations.empty || hasUiHooksProviders»
 
             /* edit pages */
             «IF !joinRelations.empty»
@@ -181,11 +180,6 @@ class Styles {
             div.«cssPrefix»-autocomplete .ui-autocomplete .suggestion {
                 background-image: url("../../../../../../images/icons/extrasmall/tab_right.png");
             }
-            «IF hasUserFields && !targets('1.5')»
-                div.«cssPrefix»-autocomplete-user .ui-autocomplete .suggestion {
-                    background-image: url("../../../../../../images/icons/extrasmall/user.png");
-                }
-            «ENDIF»
             «IF hasImageFields»
                 div.«cssPrefix»-autocomplete-with-image .ui-autocomplete .suggestion {
                     background-image: url("../../../../../../images/icons/extrasmall/agt_Multimedia.png");

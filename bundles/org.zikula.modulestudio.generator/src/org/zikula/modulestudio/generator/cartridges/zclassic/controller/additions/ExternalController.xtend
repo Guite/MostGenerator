@@ -120,10 +120,6 @@ class ExternalController {
             return new Response($this->__('No such item.'));
         }
 
-        «IF !targets('1.5')»
-            $entity->initWorkflow();
-
-        «ENDIF»
         $templateParameters = [
             'objectType' => $objectType,
             'source' => $source,
@@ -284,12 +280,6 @@ class ExternalController {
                 if ($featureActivationHelper->isEnabled(FeatureActivationHelper::CATEGORIES, $objectType)) {
                     $entities = $this->get('«appService».category_helper')->filterEntitiesByPermission($entities);
                 }
-            }
-
-        «ENDIF»
-        «IF !targets('1.5')»
-            foreach ($entities as $k => $entity) {
-                $entity->initWorkflow();
             }
 
         «ENDIF»

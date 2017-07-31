@@ -30,8 +30,6 @@ class ModelBehaviourExtensions {
      */
     extension ModelExtensions = new ModelExtensions
 
-    extension Utils = new Utils
-
     /**
      * Checks whether the feature activation helper class should be generated or not.
      */
@@ -156,20 +154,6 @@ class ModelBehaviourExtensions {
      */
     def hasStandardFieldEntities(Application it) {
         !getStandardFieldEntities.empty
-    }
-
-    /**
-     * Checks whether an avatar plugin is required or not.
-     */
-    def needsUserAvatarSupport(Application it) {
-        (hasStandardFieldEntities || hasUserFields || hasLoggable) && !targets('1.5')
-    }
-
-    /**
-     * Checks whether dynamic user field functionality is needed or not.
-     */
-    def needsUserAutoCompletion(Application it) {
-        (hasUserFields || hasStandardFieldEntities) && !targets('1.5')
     }
 
     /**
@@ -347,8 +331,8 @@ class ModelBehaviourExtensions {
      */
     def adhUid(Application it, AccountDeletionHandler handler) {
         switch handler {
-            case ADMIN  : if (targets('1.5')) 'UsersConstant::USER_ID_ADMIN' else 2
-            case GUEST  : if (targets('1.5')) 'UsersConstant::USER_ID_ANONYMOUS' else 1
+            case ADMIN  : 'UsersConstant::USER_ID_ADMIN'
+            case GUEST  : 'UsersConstant::USER_ID_ANONYMOUS'
             case DELETE : 0
             default: 0 
         }

@@ -31,15 +31,10 @@ class CategoryHelper {
         use Psr\Log\LoggerInterface;
         use Symfony\Component\HttpFoundation\Request;
         use Symfony\Component\HttpFoundation\RequestStack;
-        «IF !targets('1.5')»
-            use Zikula\CategoriesModule\Api\CategoryRegistryApi;
-        «ENDIF»
-        use Zikula\CategoriesModule\Api\«IF targets('1.5')»ApiInterface\CategoryPermissionApiInterface«ELSE»CategoryPermissionApi«ENDIF»;
-        «IF targets('1.5')»
-            use Zikula\CategoriesModule\Entity\RepositoryInterface\CategoryRegistryRepositoryInterface;
-        «ENDIF»
+        use Zikula\CategoriesModule\Api\ApiInterface\CategoryPermissionApiInterface;
+        use Zikula\CategoriesModule\Entity\RepositoryInterface\CategoryRegistryRepositoryInterface;
         use Zikula\Common\Translator\TranslatorInterface;
-        use Zikula\UsersModule\Api\«IF targets('1.5')»ApiInterface\CurrentUserApiInterface«ELSE»CurrentUserApi«ENDIF»;
+        use Zikula\UsersModule\Api\ApiInterface\CurrentUserApiInterface;
 
         /**
          * Category helper base class.
@@ -62,62 +57,43 @@ class CategoryHelper {
             protected $logger;
 
             /**
-             * @var CurrentUserApi«IF targets('1.5')»Interface«ENDIF»
+             * @var CurrentUserApiInterface
              */
             protected $currentUserApi;
 
-            «IF targets('1.5')»
-                /**
-                 * @var CategoryRegistryRepositoryInterface
-                 */
-                protected $categoryRegistryRepository;
-            «ELSE»
-                /**
-                 * @var CategoryRegistryApi
-                 */
-                protected $categoryRegistryApi;
-            «ENDIF»
+            /**
+             * @var CategoryRegistryRepositoryInterface
+             */
+            protected $categoryRegistryRepository;
 
             /**
-             * @var CategoryPermissionApi«IF targets('1.5')»Interface«ENDIF»
+             * @var CategoryPermissionApiInterface
              */
             protected $categoryPermissionApi;
 
             /**
              * CategoryHelper constructor.
              *
-             * @param TranslatorInterface   $translator            Translator service instance
-             * @param RequestStack          $requestStack          RequestStack service instance
-             * @param LoggerInterface       $logger                Logger service instance
-             * @param CurrentUserApi«IF targets('1.5')»Interface«ELSE»       «ENDIF» $currentUserApi        CurrentUserApi service instance
-             «IF targets('1.5')»
+             * @param TranslatorInterface                 $translator                 Translator service instance
+             * @param RequestStack                        $requestStack               RequestStack service instance
+             * @param LoggerInterface                     $logger                     Logger service instance
+             * @param CurrentUserApiInterface             $currentUserApi             CurrentUserApi service instance
              * @param CategoryRegistryRepositoryInterface $categoryRegistryRepository CategoryRegistryRepository service instance
-             «ELSE»
-             * @param CategoryRegistryApi   $categoryRegistryApi   CategoryRegistryApi service instance
-             «ENDIF»
-             * @param CategoryPermissionApi«IF targets('1.5')»Interface«ENDIF» $categoryPermissionApi CategoryPermissionApi service instance
+             * @param CategoryPermissionApiInterface      $categoryPermissionApi      CategoryPermissionApi service instance
              */
             public function __construct(
                 TranslatorInterface $translator,
                 RequestStack $requestStack,
                 LoggerInterface $logger,
-                CurrentUserApi«IF targets('1.5')»Interface«ENDIF» $currentUserApi,
-                «IF targets('1.5')»
-                    CategoryRegistryRepositoryInterface $categoryRegistryRepository,
-                «ELSE»
-                    CategoryRegistryApi $categoryRegistryApi,
-                «ENDIF»
-                CategoryPermissionApi«IF targets('1.5')»Interface«ENDIF» $categoryPermissionApi
+                CurrentUserApiInterface $currentUserApi,
+                CategoryRegistryRepositoryInterface $categoryRegistryRepository,
+                CategoryPermissionApiInterface $categoryPermissionApi
             ) {
                 $this->translator = $translator;
                 $this->request = $requestStack->getCurrentRequest();
                 $this->logger = $logger;
                 $this->currentUserApi = $currentUserApi;
-                «IF targets('1.5')»
-                    $this->categoryRegistryRepository = $categoryRegistryRepository;
-                «ELSE»
-                    $this->categoryRegistryApi = $categoryRegistryApi;
-                «ENDIF»
+                $this->categoryRegistryRepository = $categoryRegistryRepository;
                 $this->categoryPermissionApi = $categoryPermissionApi;
             }
 
@@ -278,21 +254,17 @@ class CategoryHelper {
                 throw new InvalidArgumentException($this->translator->__('Invalid object type received.'));
         	}
 
-            «IF targets('1.5')»
-                $moduleRegistries = $this->categoryRegistryRepository->findBy([
-                    'modname' => '«appName»',
-                    'entityname' => ucfirst($objectType) . 'Entity'
-                ]);
+            $moduleRegistries = $this->categoryRegistryRepository->findBy([
+                'modname' => '«appName»',
+                'entityname' => ucfirst($objectType) . 'Entity'
+            ]);
 
-                $result = [];
-                foreach ($moduleRegistries as $registry) {
-                    $result[$registry['property']] = $registry['id'];
-                }
+            $result = [];
+            foreach ($moduleRegistries as $registry) {
+                $result[$registry['property']] = $registry['id'];
+            }
 
-                return $result;
-            «ELSE»
-                return $this->categoryRegistryApi->getModuleRegistriesIds('«appName»', ucfirst($objectType) . 'Entity');
-            «ENDIF»
+            return $result;
         }
 
         /**
@@ -309,22 +281,18 @@ class CategoryHelper {
                 throw new InvalidArgumentException($this->translator->__('Invalid object type received.'));
         	}
 
-            «IF targets('1.5')»
-                $moduleRegistries = $this->categoryRegistryRepository->findBy([
-                    'modname' => '«appName»',
-                    'entityname' => ucfirst($objectType) . 'Entity'
-                ], ['id' => 'ASC']);
+            $moduleRegistries = $this->categoryRegistryRepository->findBy([
+                'modname' => '«appName»',
+                'entityname' => ucfirst($objectType) . 'Entity'
+            ], ['id' => 'ASC']);
 
-                $result = [];
-                foreach ($moduleRegistries as $registry) {
-                    $registry = $registry->toArray();
-                    $result[$registry[$arrayKey]] = $registry['category']->getId();
-                }
+            $result = [];
+            foreach ($moduleRegistries as $registry) {
+                $registry = $registry->toArray();
+                $result[$registry[$arrayKey]] = $registry['category']->getId();
+            }
 
-                return $result;
-            «ELSE»
-                return $this->categoryRegistryApi->getModuleCategoryIds('«appName»', ucfirst($objectType) . 'Entity', $arrayKey);
-            «ENDIF»
+            return $result;
         }
 
         /**
@@ -341,16 +309,12 @@ class CategoryHelper {
                 throw new InvalidArgumentException($this->translator->__('Invalid object type received.'));
         	}
 
-            «IF targets('1.5')»
-                $registries = $this->getAllPropertiesWithMainCat($objectType, 'property');
-                if ($registries && isset($registries[$property]) && $registries[$property]) {
-                    return $registries[$property];
-                }
+            $registries = $this->getAllPropertiesWithMainCat($objectType, 'property');
+            if ($registries && isset($registries[$property]) && $registries[$property]) {
+                return $registries[$property];
+            }
 
-                return null;
-            «ELSE»
-                return $this->categoryRegistryApi->getModuleCategoryId('«appName»', ucfirst($objectType) . 'Entity', $property);
-            «ENDIF»
+            return null;
         }
 
         /**
@@ -393,38 +357,7 @@ class CategoryHelper {
          */
         public function hasPermission($entity)
         {
-            «IF targets('1.5')»
             return $this->categoryPermissionApi->hasCategoryAccess($entity->getCategories()->toArray(), ACCESS_OVERVIEW);
-            «ELSE»
-            // running 1.4 module on 1.5+?
-            $coreVersion = \ServiceUtil::get('service_container')->getParameter(\Zikula\Bundle\CoreBundle\HttpKernel\ZikulaKernel::CORE_INSTALLED_VERSION_PARAM);
-            $is14 = version_compare($coreVersion, '1.5.0', '<');
-            if (!$is14) {
-                return $this->categoryPermissionApi->hasCategoryAccess($entity->getCategories()->toArray(), ACCESS_OVERVIEW);
-            }
-
-            $objectType = $entity->get_objectType();
-            $categories = $entity['categories'];
-
-            $registries = $this->getAllProperties($objectType);
-            $registries = array_flip($registries);
-
-            $categoryInfo = [];
-            foreach ($categories as $category) {
-                $registryId = $category->getCategoryRegistryId();
-                if (!isset($registries[$registryId])) {
-                    // seems this registry has been deleted
-                    continue;
-                }
-                $registryName = $registries[$registryId];
-                if (!isset($categoryInfo[$registryName])) {
-                    $categoryInfo[$registryName] = [];
-                }
-                $categoryInfo[$registryName][] = $category->getCategory()->toArray();
-            }
-
-            return $this->categoryPermissionApi->hasCategoryAccess($categoryInfo, ACCESS_OVERVIEW);
-            «ENDIF»
         }
     '''
 

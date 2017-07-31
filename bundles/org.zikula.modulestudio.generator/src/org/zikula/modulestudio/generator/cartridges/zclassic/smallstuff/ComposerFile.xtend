@@ -63,7 +63,7 @@ class ComposerFile {
         },
         "require": {
             «var dependencies = referredApplications.filter[dependencyType == ApplicationDependencyType.REQUIREMENT]»
-            "php": ">=«IF targets('1.5')»5.5.9«ELSE»5.4.1«ENDIF»"«IF !dependencies.empty»,«ENDIF»
+            "php": ">=5.5.9"«IF !dependencies.empty»,«ENDIF»
             «IF !dependencies.empty»
                 «FOR referredApp : dependencies»
                     «dependency(referredApp)»«IF referredApp != dependencies.last»,«ENDIF»
@@ -80,7 +80,7 @@ class ComposerFile {
         },
         "extra": {
             "zikula": {
-                "core-compatibility": ">=«IF targets('2.0')»2.0.0«ELSEIF targets('1.5')»1.5.0«ELSE»1.4.6«ENDIF» <3.0",
+                "core-compatibility": ">=«IF targets('2.0')»2.0.0«ELSE»1.5.0«ENDIF» <3.0",
                 "class": "«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\«appName»",
                 "displayname": "«name.formatForDisplayCapital»",
                 "url": "«name.formatForDB»",
@@ -116,16 +116,13 @@ class ComposerFile {
                         "«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Entity\\«entity.name.formatForCodeCapital»Entity"«IF entity != getCategorisableEntities.last»,«ENDIF»
                     «ENDFOR»
                 ]
-            }«IF (null !== capabilities && capabilities != '') || (hasHookSubscribers && !targets('1.5'))»,«ENDIF»
+            }«IF null !== capabilities && capabilities != ''»,«ENDIF»
         «ENDIF»
         «IF null !== capabilities && capabilities != ''»
             «val capabilitiesArray = capabilities.replaceAll(', ', '').split(',')»
             «FOR capability : capabilitiesArray»
-                "«capability.formatForDisplay»": {"version": "1.0"}«IF capability != capabilitiesArray.last || (hasHookSubscribers && !targets('1.5'))»,«ENDIF»
+                "«capability.formatForDisplay»": {"version": "1.0"}«IF capability != capabilitiesArray.last»,«ENDIF»
             «ENDFOR»
-        «ENDIF»
-        «IF !targets('1.5') && hasHookSubscribers»
-            "hook_subscriber": {"class": "«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Container\\HookContainer"}
         «ENDIF»
     '''
 
@@ -134,9 +131,6 @@ class ComposerFile {
             return true
         }
         if (null !== capabilities && capabilities != '') {
-            return true
-        }
-        if (hasHookSubscribers && !targets('1.5')) {
             return true
         }
         false
