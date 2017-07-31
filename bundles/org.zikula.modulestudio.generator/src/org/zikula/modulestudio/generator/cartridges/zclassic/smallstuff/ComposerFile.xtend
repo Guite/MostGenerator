@@ -71,6 +71,7 @@ class ComposerFile {
             «ENDIF»
         },
         "require-dev": {
+            "jakub-onderka/php-parallel-lint": "*",
             "phploc/phploc": "*",
             "pdepend/pdepend": "2.*",
             "squizlabs/php_codesniffer": "1.*",
