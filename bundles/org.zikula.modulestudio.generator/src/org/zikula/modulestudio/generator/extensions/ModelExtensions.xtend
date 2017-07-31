@@ -283,13 +283,6 @@ class ModelExtensions {
     }
 
     /**
-     * Returns a list of all derived fields (excluding calculated fields) of the given entity.
-     */
-    def getDerivedFields(DataObject it) {
-        fields.filter(DerivedField)
-    }
-
-    /**
      * Returns a list of all derived and unique fields of the given entity
      */
     def getUniqueDerivedFields(DataObject it) {
