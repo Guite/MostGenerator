@@ -70,6 +70,15 @@ class ComposerFile {
                 «ENDFOR»
             «ENDIF»
         },
+        "require-dev": {
+            "phploc/phploc": "*",
+            "pdepend/pdepend": "2.*",
+            "squizlabs/php_codesniffer": "1.*",
+            "phpunit/phpunit": "6.*",
+            "theseer/phpdox": "*",
+            "phpmd/phpmd": "2.*",
+            "sebastian/phpcpd": "*"
+        },
         "suggest": {
             «{ dependencies = referredApplications.filter[dependencyType == ApplicationDependencyType.RECOMMENDATION]; '' }»
             «IF !dependencies.empty»
