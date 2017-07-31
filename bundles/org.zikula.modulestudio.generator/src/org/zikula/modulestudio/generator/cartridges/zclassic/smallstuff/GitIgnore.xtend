@@ -15,6 +15,5 @@ class GitIgnore {
 
     def private gitIgnoreContent(Application it) '''
         vendor/
-        phpunit.xml
     '''
 }
