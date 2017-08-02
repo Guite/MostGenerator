@@ -70,24 +70,26 @@ class ComposerFile {
                 «ENDFOR»
             «ENDIF»
         },
-        "require-dev": {
-            "jakub-onderka/php-parallel-lint": "*",
-            "phploc/phploc": "*",
-            "pdepend/pdepend": "2.*",
-            "squizlabs/php_codesniffer": "1.*",
-            "phpunit/phpunit": "4.*",
-            "theseer/phpdox": "*",
-            "phpmd/phpmd": "2.*",
-            "sebastian/phpcpd": "*"
-        },
-        "suggest": {
-            «{ dependencies = referredApplications.filter[dependencyType == ApplicationDependencyType.RECOMMENDATION]; '' }»
-            «IF !dependencies.empty»
+        «IF !isSystemModule»
+            "require-dev": {
+                "jakub-onderka/php-parallel-lint": "*",
+                "phploc/phploc": "*",
+                "pdepend/pdepend": "2.*",
+                "squizlabs/php_codesniffer": "1.*",
+                "phpunit/phpunit": "4.*",
+                "theseer/phpdox": "*",
+                "phpmd/phpmd": "2.*",
+                "sebastian/phpcpd": "*"
+            },
+        «ENDIF»
+        «{ dependencies = referredApplications.filter[dependencyType == ApplicationDependencyType.RECOMMENDATION]; '' }»
+        «IF !dependencies.empty»
+            "suggest": {
                 «FOR referredApp : dependencies»
                     «dependency(referredApp)»«IF referredApp != dependencies.last»,«ENDIF»
                 «ENDFOR»
-            «ENDIF»
-        },
+            },
+        «ENDIF»
         "extra": {
             "zikula": {
                 "core-compatibility": ">=«targetSemVer» <3.0",
