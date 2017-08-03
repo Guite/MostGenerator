@@ -102,6 +102,7 @@ class HookAssignmentEntity {
         namespace «appNamespace»\Entity;
 
         use «appNamespace»\Entity\Base\AbstractHookAssignmentEntity;
+        use Doctrine\ORM\Mapping as ORM;
 
         /**
          * Entity implementation class for hooked object assignments.
