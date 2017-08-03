@@ -107,6 +107,7 @@ class HookAssignmentEntity {
         /**
          * Entity implementation class for hooked object assignments.
          *
+         * @ORM\Entity()
          * @ORM\Table(name="«entity.fullEntityTableName»")
          */
         class HookAssignmentEntity extends AbstractHookAssignmentEntity
