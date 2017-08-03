@@ -507,7 +507,7 @@ class ControllerHelper {
                 if (in_array($objectType, ['«getAllEntities.filter[uiHooksProvider != HookProviderMode.DISABLED].map[name.formatForCode].join('\', \'')»'])) {
                     $qb = $this->entityFactory->getObjectManager()->createQueryBuilder();
                     $qb->select('tbl')
-                       ->from($this->getHookAssignmentEntity(), 'tbl')
+                       ->from('«vendor.formatForCodeCapital + '\\' + name.formatForCodeCapital + 'Module\\Entity\\HookAssignmentEntity'»', 'tbl')
                        ->where('tbl.assignedEntity = :objectType')
                        ->setParameter('objectType', $objectType)
                        ->andWhere('tbl.assignedId = :entityId')
