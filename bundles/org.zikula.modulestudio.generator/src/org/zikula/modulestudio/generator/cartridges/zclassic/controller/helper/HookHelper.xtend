@@ -352,7 +352,7 @@ class HookHelper {
 
         use Zikula\Bundle\HookBundle\Category\FilterHooksCategory;
         use Zikula\Bundle\HookBundle\Hook\FilterHook;
-        use Zikula\Bundle\HookBundle\«providerInterface(filterHookProvider)»
+        use Zikula\Bundle\HookBundle\«providerInterface(filterHookProvider)»;
         use Zikula\Bundle\HookBundle\ServiceIdTrait;
         use Zikula\Common\Translator\TranslatorInterface;
 

@@ -507,11 +507,11 @@ class ControllerHelper {
                 if (in_array($objectType, ['«getAllEntities.filter[uiHooksProvider != HookProviderMode.DISABLED].map[name.formatForCode].join('\', \'')»'])) {
                     $qb = $this->entityFactory->getObjectManager()->createQueryBuilder();
                     $qb->select('tbl')
-                       ->from($this->getHookAssignmentEntity(), 'tbl');
+                       ->from($this->getHookAssignmentEntity(), 'tbl')
                        ->where('tbl.assignedEntity = :objectType')
                        ->setParameter('objectType', $objectType)
                        ->andWhere('tbl.assignedId = :entityId')
-                       ->setParameter('entityId', $entity->getKey());
+                       ->setParameter('entityId', $entity->getKey())
                        ->add('orderBy', 'tbl.updatedDate DESC');
 
                     $query = $qb->getQuery();
