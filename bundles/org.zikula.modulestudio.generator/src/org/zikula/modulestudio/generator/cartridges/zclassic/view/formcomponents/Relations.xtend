@@ -111,8 +111,8 @@ class Relations {
             fsa.generateFile(templateFileNameItemList, component_ItemList(ownEntity, many, hasEdit))
         }
         if (app.generateSeparateAdminTemplates) {
-            templateFileName = 'Admin/' + templateFileName
-            templateFileNameItemList = 'Admin/' + templateFileNameItemList
+            templateFileName = templateFile(ownEntity, 'Admin/' + templateName)
+            templateFileNameItemList = templateFile(ownEntity, 'Admin/' + templateNameItemList)
             if (!app.shouldBeSkipped(templateFileName)) {
                 fsa.generateFile(templateFileName, includedEditTemplate(ownEntity, otherEntity, hasEdit, many))
             }
