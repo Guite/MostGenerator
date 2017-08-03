@@ -447,7 +447,7 @@ class HookHelper {
             use Zikula\Bundle\HookBundle\Hook\ProcessHook;
             use Zikula\Bundle\HookBundle\Hook\ValidationHook;
         «ENDIF»
-        use Zikula\Bundle\HookBundle\«providerInterface(if (category == 'FormAware') formAwareHookProvider else if (category == 'UiHooks') uiHooksProvider else HookProviderMode.ENABLED)»
+        use Zikula\Bundle\HookBundle\«providerInterface(if (category == 'FormAware') formAwareHookProvider else if (category == 'UiHooks') uiHooksProvider else HookProviderMode.ENABLED)»;
         use Zikula\Bundle\HookBundle\ServiceIdTrait;
         use Zikula\Common\Translator\TranslatorInterface;
         «IF category == 'FormAware'»
