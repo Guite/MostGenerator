@@ -444,6 +444,7 @@ class HookHelper {
         «ELSEIF category == 'UiHooks'»
             use Zikula\Bundle\HookBundle\Hook\DisplayHook;
             use Zikula\Bundle\HookBundle\Hook\DisplayHookResponse;
+            use Zikula\Bundle\HookBundle\Hook\Hook;
             use Zikula\Bundle\HookBundle\Hook\ProcessHook;
             use Zikula\Bundle\HookBundle\Hook\ValidationHook;
         «ENDIF»
