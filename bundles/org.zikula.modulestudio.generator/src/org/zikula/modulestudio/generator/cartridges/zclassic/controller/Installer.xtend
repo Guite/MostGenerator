@@ -282,6 +282,9 @@ class Installer {
                     $classNames[] = '«entity.entityClassName('category', false)»';
                 «ENDIF»
             «ENDFOR»
+            «IF hasUiHooksProviders»
+                $classNames[] = '«vendor.formatForCodeCapital + '\\' + name.formatForCodeCapital + 'Module\\Entity\\HookAssignmentEntity'»';
+            «ENDIF»
 
             return $classNames;
         }
