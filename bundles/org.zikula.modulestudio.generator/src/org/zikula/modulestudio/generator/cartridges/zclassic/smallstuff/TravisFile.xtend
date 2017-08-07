@@ -64,10 +64,27 @@ class TravisFile {
         install:
             - composer install
             - zip -qr «appName».zip .
-            - wget http://ci.zikula.org/job/Zikula_Core-«targetSemVer»/lastSuccessfulBuild/artifact/build/archive/Zikula_Core-«targetSemVer».tar.gz
+            «IF targets('2.0-dev')»
+            - wget http://ci.zikula.org/job/Zikula/job/2.0/lastSuccessfulBuild/artifact/build_work/archive/2.0.tar.gz
+            - tar -xpzf 2.0.tar.gz
+            - rm 2.0.tar.gz
+            - cd 2.0
+            «ELSEIF targets('2.0')»
+            - wget https://github.com/zikula/core/releases/download/«targetSemVer»/Zikula_Core-«targetSemVer».tar.gz
             - tar -xpzf Zikula_Core-«targetSemVer».tar.gz
             - rm Zikula_Core-«targetSemVer».tar.gz
             - cd Zikula_Core-«targetSemVer»
+            «ELSEIF targets('1.5-dev')»
+            - wget http://ci.zikula.org/job/Zikula/job/1.5/lastSuccessfulBuild/artifact/build_work/archive/1.5.tar.gz
+            - tar -xpzf 1.5.tar.gz
+            - rm 1.5.tar.gz
+            - cd 1.5
+            «ELSE»
+            - wget https://github.com/zikula/core/releases/download/«targetSemVer»/Zikula_Core-«targetSemVer».tar.gz
+            - tar -xpzf Zikula_Core-«targetSemVer».tar.gz
+            - rm Zikula_Core-«targetSemVer».tar.gz
+            - cd Zikula_Core-«targetSemVer»
+            «ENDIF»
             - php app/console zikula:install:start -n --database_user=root --database_name=zk_test --password=12345678 --email=admin@example.com --router:request_context:host=localhost
             - php app/console zikula:install:finish
             «IF isSystemModule»
