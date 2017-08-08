@@ -3,12 +3,14 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.controller.action
 import de.guite.modulestudio.metamodel.Entity
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
+import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.UrlExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class LoggableHistory {
 
     extension FormattingExtensions = new FormattingExtensions
+    extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     extension UrlExtensions = new UrlExtensions
     extension Utils = new Utils
@@ -21,12 +23,12 @@ class LoggableHistory {
 
     def private loggableHistory(Entity it, Boolean isBase, Boolean isAdmin) '''
         «loggableHistoryDocBlock(isBase, isAdmin)»
-        public function «IF isAdmin»adminL«ELSE»l«ENDIF»oggableHistoryAction(Request $request, $id = 0)
+        public function «IF isAdmin»adminL«ELSE»l«ENDIF»oggableHistoryAction(Request $request, «IF hasSluggableFields && slugUnique»$slug = ''«ELSE»$id = 0«ENDIF»)
         {
             «IF isBase»
-                return $this->loggableHistoryActionInternal($request, $id, «isAdmin.displayBool»);
+                return $this->loggableHistoryActionInternal($request, «IF hasSluggableFields && slugUnique»$slug«ELSE»$id«ENDIF», «isAdmin.displayBool»);
             «ELSE»
-                return parent::«IF isAdmin»adminL«ELSE»l«ENDIF»oggableHistoryAction($request, $id);
+                return parent::«IF isAdmin»adminL«ELSE»l«ENDIF»oggableHistoryAction($request, «IF hasSluggableFields && slugUnique»$slug«ELSE»$id«ENDIF»);
             «ENDIF»
         }
         «IF isBase && !isAdmin»
@@ -35,7 +37,11 @@ class LoggableHistory {
              * This method includes the common implementation code for adminLoggableHistoryAction() and loggableHistoryAction().
              *
              * @param Request $request Current request instance
+             «IF hasSluggableFields && slugUnique»
+             * @param string  $slug    Identifier of «name.formatForDisplay»
+             «ELSE»
              * @param integer $id      Identifier of «name.formatForDisplay»
+             «ENDIF»
              * @param Boolean $isAdmin Whether the admin area is used or not
              */
             protected function loggableHistoryActionInternal(Request $request, $id = 0, $isAdmin = false)
@@ -50,9 +56,13 @@ class LoggableHistory {
          * This method provides a change history for a given «name.formatForDisplay».
          «IF !isBase»
          *
-         * @Route("/«IF isAdmin»admin/«ENDIF»«name.formatForCode»/history/{id}",
+         * @Route("/«IF isAdmin»admin/«ENDIF»«name.formatForCode»/history/{«IF hasSluggableFields && slugUnique»slug«ELSE»id«ENDIF»}",
+         «IF hasSluggableFields && slugUnique»
+         *        requirements = {"slug" = "[^/.]+"},
+         «ELSE»
          *        requirements = {"id" = "\d+"},
          *        defaults = {"id" = 0},
+         «ENDIF»
          *        methods = {"GET"}
          * )
          «IF isAdmin»
@@ -61,7 +71,7 @@ class LoggableHistory {
          «ENDIF»
          *
          * @param Request $request Current request instance
-         * @param integer $id      Identifier of «name.formatForDisplay»
+         * @param integer «IF hasSluggableFields && slugUnique»$slug«ELSE»$id  «ENDIF»    Identifier of «name.formatForDisplay»
          *
          * @return Response Output
          *
@@ -70,12 +80,12 @@ class LoggableHistory {
     '''
 
     def private loggableHistoryBaseImpl(Entity it) '''
-        if (empty($id)) {
+        if (empty(«IF hasSluggableFields && slugUnique»$slug«ELSE»$id«ENDIF»)) {
             throw new NotFoundHttpException($this->__('No such «name.formatForDisplay» found.'));
         }
 
         $entityFactory = $this->get('«application.appService».entity_factory');
-        $«name.formatForCode» = $entityFactory->getRepository('«name.formatForCode»')->selectById($id);
+        $«name.formatForCode» = $entityFactory->getRepository('«name.formatForCode»')->selectBy«IF hasSluggableFields && slugUnique»Slug($slug)«ELSE»Id($id)«ENDIF»;
         if (null === $«name.formatForCode») {
             throw new NotFoundHttpException($this->__('No such «name.formatForDisplay» found.'));
         }

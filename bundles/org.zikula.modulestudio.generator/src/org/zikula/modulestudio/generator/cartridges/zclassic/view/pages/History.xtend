@@ -65,7 +65,7 @@ class History {
             «pageNavLinks(app.appName)»
         {% endblock %}
         {% block history_table %}
-            <form action="{{ path('«app.appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ 'loggablehistory', {id: «name.formatForCode».getKey()}) }}" method="get" class="form-horizontal" role="form">
+            <form action="{{ path('«app.appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ 'loggablehistory', {«IF hasSluggableFields && slugUnique»slug«ELSE»id«ENDIF»: «name.formatForCode».get«IF hasSluggableFields && slugUnique»Slug«ELSE»Key«ENDIF»()}) }}" method="get" class="form-horizontal" role="form">
                 <div class="table-responsive">
                     «historyTable»
                 </div>
@@ -195,7 +195,7 @@ class History {
             <p>
                 {% if isDiffView == true %}
                     {% set linkTitle = __('Back to history') %}
-                    <a href="{{ path('«appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ 'loggablehistory', {id: «name.formatForCode».getKey()}) }}" title="{{ linkTitle|e('html_attr') }}" class="fa fa-history">{{ linkTitle }}</a>
+                    <a href="{{ path('«appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ 'loggablehistory', {«IF hasSluggableFields && slugUnique»slug«ELSE»id«ENDIF»: «name.formatForCode».get«IF hasSluggableFields && slugUnique»Slug«ELSE»Key«ENDIF»()}) }}" title="{{ linkTitle|e('html_attr') }}" class="fa fa-history">{{ linkTitle }}</a>
                 {% else %}
                     «IF hasViewAction»
                         {% set linkTitle = __('Back to overview') %}
