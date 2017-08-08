@@ -67,7 +67,7 @@ class History {
         {% block history_table %}
             <form action="{{ path('«app.appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ 'loggablehistory', {id: «name.formatForCode».getKey()}) }}" method="get" class="form-horizontal" role="form">
                 <div class="table-responsive">
-                    «historyTable(app.appName)»
+                    «historyTable»
                 </div>
                 <p>
                     <button id="compareButton" type="submit" value="compare" class="btn btn-primary" disabled="disabled"><span class="fa fa-arrows-h"></span> {{ __('Compare selected versions') }}</button>
@@ -84,9 +84,9 @@ class History {
                     </colgroup>
                     <thead>
                         <tr>
-                            <th id="hFieldName" scope="col" class="z-order-unsorted">{{ __('Field name') }}</th>
-                            <th id="hMinVersion" scope="col" class="z-order-unsorted">{{ __f('Version %version%', {'%version%': minVersion}) }}</th>
-                            <th id="hMaxVersion" scope="col" class="z-order-unsorted">{{ __f('Version %version%', {'%version%': maxVersion}) }}</th>
+                            <th id="hFieldName" scope="col" class="«IF !app.targets('2.0-dev')»z-order-«ENDIF»unsorted">{{ __('Field name') }}</th>
+                            <th id="hMinVersion" scope="col" class="«IF !app.targets('2.0-dev')»z-order-«ENDIF»unsorted">{{ __f('Version %version%', {'%version%': minVersion}) }}</th>
+                            <th id="hMaxVersion" scope="col" class="«IF !app.targets('2.0-dev')»z-order-«ENDIF»unsorted">{{ __f('Version %version%', {'%version%': maxVersion}) }}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -103,7 +103,8 @@ class History {
         {% endblock %}
     '''
 
-    def private historyTable(Entity it, String appName) '''
+    def private historyTable(Entity it) '''
+        «val app = application»
         <table class="table table-striped table-bordered table-hover{% if routeArea == 'admin' %} table-condensed{% endif %}">
             <colgroup>
                 <col id="cSelect" />
@@ -116,13 +117,13 @@ class History {
             </colgroup>
             <thead>
                 <tr>
-                    <th id="hSelect" scope="col" class="z-order-unsorted z-w02">{{ __('Select') }}</th>
-                    <th id="hVersion" scope="col" class="z-order-unsorted z-w02">{{ __('Version') }}</th>
-                    <th id="hDate" scope="col" class="z-order-unsorted">{{ __('Date') }}</th>
-                    <th id="hUser" scope="col" class="z-order-unsorted">{{ __('User') }}</th>
-                    <th id="hOperation" scope="col" class="z-order-unsorted">{{ __('Operation') }}</th>
-                    <th id="hChanges" scope="col" class="z-order-unsorted">{{ __('Changes') }}</th>
-                    <th id="hActions" scope="col" class="z-order-unsorted">{{ __('Actions') }}</th>
+                    <th id="hSelect" scope="col" class="«IF !app.targets('2.0-dev')»z-order-«ENDIF»unsorted z-w02">{{ __('Select') }}</th>
+                    <th id="hVersion" scope="col" class="«IF !app.targets('2.0-dev')»z-order-«ENDIF»unsorted z-w02">{{ __('Version') }}</th>
+                    <th id="hDate" scope="col" class="«IF !app.targets('2.0-dev')»z-order-«ENDIF»unsorted">{{ __('Date') }}</th>
+                    <th id="hUser" scope="col" class="«IF !app.targets('2.0-dev')»z-order-«ENDIF»unsorted">{{ __('User') }}</th>
+                    <th id="hOperation" scope="col" class="«IF !app.targets('2.0-dev')»z-order-«ENDIF»unsorted">{{ __('Operation') }}</th>
+                    <th id="hChanges" scope="col" class="«IF !app.targets('2.0-dev')»z-order-«ENDIF»unsorted">{{ __('Changes') }}</th>
+                    <th id="hActions" scope="col" class="«IF !app.targets('2.0-dev')»z-order-«ENDIF»unsorted">{{ __('Actions') }}</th>
                 </tr>
             </thead>
             <tbody>
@@ -164,7 +165,7 @@ class History {
                                                     <li>{{ __f('%field% set to <em>%value%</em>', {'%field%': field, '%value%': __('an empty collection')})|raw }}</li>
                                                 {% endif %}
                                             {% else %}
-                                                <li>{{ __f('%field% set to <em>%value%</em>', {'%field%': field, '%value%': value is «appName.toLowerCase»_instanceOf('DateTime') ? value|localizeddate('long', 'medium') : value|default(__('an empty value'))})|raw }}</li>
+                                                <li>{{ __f('%field% set to <em>%value%</em>', {'%field%': field, '%value%': value is «app.appName.toLowerCase»_instanceOf('DateTime') ? value|localizeddate('long', 'medium') : value|default(__('an empty value'))})|raw }}</li>
                                             {% endif %}
                                         {% endfor %}
                                     </ul>
@@ -176,11 +177,11 @@ class History {
                         <td headers="hActions" class="actions nowrap">
                             «IF hasDisplayAction»
                                 {% set linkTitle = __f('Preview version %version%', {'%version%': logEntry.version}) %}
-                                <a id="«name.formatForCode»Item{{ «name.formatForCode».getKey() }}Display{{ logEntry.version }}" href="{{ path('«appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ 'display', {«IF !hasSluggableFields || !slugUnique»«routePkParams(name.formatForCode, true)»«ENDIF»«appendSlug(name.formatForCode, true)», version: logEntry.version, raw: 1}) }}" title="{{ linkTitle|e('html_attr') }}" class="«application.vendorAndName.toLowerCase»-inline-window hidden" data-modal-title="{{ «name.formatForCode»|«application.appName.formatForDB»_formattedTitle|e('html_attr') ~ ' ' ~ __('version') ~ ' ' ~ logEntry.version }}"><span class="fa fa-id-card-o"></span></a>
+                                <a id="«name.formatForCode»Item{{ «name.formatForCode».getKey() }}Display{{ logEntry.version }}" href="{{ path('«app.appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ 'display', {«IF !hasSluggableFields || !slugUnique»«routePkParams(name.formatForCode, true)»«ENDIF»«appendSlug(name.formatForCode, true)», version: logEntry.version, raw: 1}) }}" title="{{ linkTitle|e('html_attr') }}" class="«application.vendorAndName.toLowerCase»-inline-window hidden" data-modal-title="{{ «name.formatForCode»|«application.appName.formatForDB»_formattedTitle|e('html_attr') ~ ' ' ~ __('version') ~ ' ' ~ logEntry.version }}"><span class="fa fa-id-card-o"></span></a>
                             «ENDIF»
                             {% if not loop.first %}
                                 {% set linkTitle = __f('Revert to version %version%', { '%version%': logEntry.version }) %}
-                                <a href="{{ path('«appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ 'loggablehistory', {«IF !hasSluggableFields || !slugUnique»«routePkParams(name.formatForCode, true)»«ENDIF»«appendSlug(name.formatForCode, true)», revert: logEntry.version}) }}" title="{{ linkTitle|e('html_attr') }}"><span class="fa fa-history"></span></a>
+                                <a href="{{ path('«app.appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ 'loggablehistory', {«IF !hasSluggableFields || !slugUnique»«routePkParams(name.formatForCode, true)»«ENDIF»«appendSlug(name.formatForCode, true)», revert: logEntry.version}) }}" title="{{ linkTitle|e('html_attr') }}"><span class="fa fa-history"></span></a>
                             {% endif %}
                         </td>
                     </tr>

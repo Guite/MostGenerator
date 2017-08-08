@@ -44,8 +44,8 @@ class View {
     extension WorkflowExtensions = new WorkflowExtensions
 
     SimpleFields fieldHelper = new SimpleFields
-
     Integer listType
+    String appName
 
     static val LIST_TYPE_UL = 0
     static val LIST_TYPE_OL = 1
@@ -55,32 +55,33 @@ class View {
     def generate(Entity it, String appName, Integer listType, IFileSystemAccess fsa) {
         println('Generating view templates for entity "' + name.formatForDisplay + '"')
         this.listType = listType
+        this.appName = appName
         var templateFilePath = templateFile('view')
         if (!application.shouldBeSkipped(templateFilePath)) {
-            fsa.generateFile(templateFilePath, viewView(appName, false))
+            fsa.generateFile(templateFilePath, viewView(false))
         }
         if (application.generateSeparateAdminTemplates) {
             templateFilePath = templateFile('Admin/view')
             if (!application.shouldBeSkipped(templateFilePath)) {
-                fsa.generateFile(templateFilePath, viewView(appName, true))
+                fsa.generateFile(templateFilePath, viewView(true))
             }
         }
         new ViewQuickNavForm().generate(it, appName, fsa)
         if (loggable) {
             templateFilePath = templateFile('viewDeleted')
             if (!application.shouldBeSkipped(templateFilePath)) {
-                fsa.generateFile(templateFilePath, viewViewDeleted(appName, false))
+                fsa.generateFile(templateFilePath, viewViewDeleted(false))
             }
             if (application.generateSeparateAdminTemplates) {
                 templateFilePath = templateFile('Admin/viewDeleted')
                 if (!application.shouldBeSkipped(templateFilePath)) {
-                    fsa.generateFile(templateFilePath, viewViewDeleted(appName, true))
+                    fsa.generateFile(templateFilePath, viewViewDeleted(true))
                 }
             }
         }
     }
 
-    def private viewView(Entity it, String appName, Boolean isAdmin) '''
+    def private viewView(Entity it, Boolean isAdmin) '''
         «IF application.generateSeparateAdminTemplates»
             {# purpose of this template: «nameMultiple.formatForDisplay» «IF isAdmin»admin«ELSE»user«ENDIF» list view #}
             {% extends «IF isAdmin»'«application.appName»::adminBase.html.twig'«ELSE»'«application.appName»::base.html.twig'«ENDIF» %}
@@ -107,7 +108,7 @@ class View {
 
             {{ include('@«application.appName»/«name.formatForCodeCapital»/«IF isAdmin»Admin/«ENDIF»viewQuickNav.html.twig'«IF !hasVisibleWorkflow», {workflowStateFilter: false}«ENDIF») }}{# see template file for available options #}
 
-            «viewForm(appName)»
+            «viewForm»
             «IF !skipHookSubscribers»
 
                 {{ block('display_hooks') }}
@@ -116,17 +117,17 @@ class View {
         {% endblock %}
         {% block page_nav_links %}
             <p>
-                «pageNavLinks(appName)»
+                «pageNavLinks»
             </p>
         {% endblock %}
         «IF !skipHookSubscribers»
             {% block display_hooks %}
-                «callDisplayHooks(appName)»
+                «callDisplayHooks»
             {% endblock %}
         «ENDIF»
     '''
 
-    def private pageNavLinks(Entity it, String appName) '''
+    def private pageNavLinks(Entity it) '''
         «val objName = name.formatForCode»
         «IF hasEditAction»
             {% if canBeCreated %}
@@ -155,41 +156,42 @@ class View {
         «ENDIF»
     '''
 
-    def private viewForm(Entity it, String appName) '''
+    def private viewForm(Entity it) '''
         «IF listType == LIST_TYPE_TABLE»
             {% if routeArea == 'admin' %}
             <form action="{{ path('«appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ 'handleselectedentries') }}" method="post" id="«nameMultiple.formatForCode»ViewForm" class="form-horizontal" role="form">
                 <div>
             {% endif %}
         «ENDIF»
-            «viewItemList(appName)»
-            «pagerCall(appName)»
+            «viewItemList»
+            «pagerCall»
         «IF listType == LIST_TYPE_TABLE»
             {% if routeArea == 'admin' %}
-                    «massActionFields(appName)»
+                    «massActionFields»
                 </div>
             </form>
             {% endif %}
         «ENDIF»
     '''
 
-    def private viewItemList(Entity it, String appName) '''
+    def private viewItemList(Entity it) '''
         «val listItemsFields = getFieldsForViewPage»
         «val listItemsIn = incoming.filter(OneToManyRelationship).filter[bidirectional && source instanceof Entity]»
         «val listItemsOut = outgoing.filter(OneToOneRelationship).filter[target instanceof Entity]»
-        «viewItemListHeader(appName, listItemsFields, listItemsIn, listItemsOut)»
+        «viewItemListHeader(listItemsFields, listItemsIn, listItemsOut)»
 
-        «viewItemListBody(appName, listItemsFields, listItemsIn, listItemsOut)»
+        «viewItemListBody(listItemsFields, listItemsIn, listItemsOut)»
 
         «viewItemListFooter»
     '''
 
-    def private viewItemListHeader(Entity it, String appName, List<DerivedField> listItemsFields, Iterable<OneToManyRelationship> listItemsIn, Iterable<OneToOneRelationship> listItemsOut) '''
+    def private viewItemListHeader(Entity it, List<DerivedField> listItemsFields, Iterable<OneToManyRelationship> listItemsIn, Iterable<OneToOneRelationship> listItemsOut) '''
+        «val app = application»
         «IF listType != LIST_TYPE_TABLE»
             <«listType.asListTag»>
         «ELSE»
             «IF hasSortableFields»
-                {% set activateSortable = routeArea == 'admin' and sort.«getSortableFields.head.name.formatForCode».class == 'z-order-asc' %}
+                {% set activateSortable = routeArea == 'admin' and sort.«getSortableFields.head.name.formatForCode».class == '«IF app.targets('2.0-dev')»sorted-«ELSE»z-order-«ENDIF»asc' %}
             «ENDIF»
             <div class="table-responsive">
             <table«IF hasSortableFields»{% if activateSortable and items|length > 1 %} id="sortableTable" data-object-type="«name.formatForCode»" data-min="{{ items|first.«getSortableFields.head.name.formatForCode» }}" data-max="{{ items|last.«getSortableFields.head.name.formatForCode» }}"{% endif %}«ENDIF» class="table table-striped table-bordered table-hover«IF (listItemsFields.size + listItemsIn.size + listItemsOut.size + 1) > 7» table-condensed«ELSE»{% if routeArea == 'admin' %} table-condensed{% endif %}«ENDIF»">
@@ -214,10 +216,10 @@ class View {
                             <input type="checkbox" class="«application.vendorAndName.toLowerCase»-mass-toggle" />
                         </th>
                     {% endif %}
-                    <th id="hItemActions" scope="col" class="{% if items|length > 0 %}fixed-column {% endif %}z-order-unsorted z-w02">{{ __('Actions') }}</th>
+                    <th id="hItemActions" scope="col" class="{% if items|length > 0 %}fixed-column {% endif %}«IF !app.targets('2.0-dev')»z-order-«ENDIF»unsorted z-w02">{{ __('Actions') }}</th>
                     «IF hasSortableFields»
                         {% if activateSortable %}
-                            <th id="hSortable" scope="col" class="z-order-unsorted z-w02">{{ __('Sorting') }}</th>
+                            <th id="hSortable" scope="col" class="«IF !app.targets('2.0-dev')»z-order-«ENDIF»unsorted z-w02">{{ __('Sorting') }}</th>
                         {% endif %}
                     «ENDIF»
                     «FOR field : listItemsFields»«field.headerLine»«ENDFOR»
@@ -229,7 +231,7 @@ class View {
         «ENDIF»
     '''
 
-    def private viewItemListBody(Entity it, String appName, List<DerivedField> listItemsFields, Iterable<OneToManyRelationship> listItemsIn, Iterable<OneToOneRelationship> listItemsOut) '''
+    def private viewItemListBody(Entity it, List<DerivedField> listItemsFields, Iterable<OneToManyRelationship> listItemsIn, Iterable<OneToOneRelationship> listItemsOut) '''
         {% for «name.formatForCode» in items %}
             «IF listType == LIST_TYPE_UL || listType == LIST_TYPE_OL»
                 <li><ul>
@@ -243,7 +245,7 @@ class View {
                         </td>
                     {% endif %}
             «ENDIF»
-                «itemActions(appName)»
+                «itemActions»
                 «IF hasSortableFields»
                     {% if activateSortable %}
                         <td headers="hSortable" class="text-center z-w02">
@@ -292,14 +294,14 @@ class View {
         «ENDIF»
     '''
 
-    def private pagerCall(Entity it, String appName) '''
+    def private pagerCall(Entity it) '''
 
         {% if all != 1 and pager|default %}
             {{ pager({rowcount: pager.amountOfItems, limit: pager.itemsPerPage, display: 'page', route: '«appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ 'view'}) }}
         {% endif %}
     '''
 
-    def private massActionFields(Entity it, String appName) '''
+    def private massActionFields(Entity it) '''
         <fieldset>
             <label for="«appName.toFirstLower»Action" class="col-sm-3 control-label">{{ __('With selected «nameMultiple.formatForDisplay»') }}</label>
             <div class="col-sm-6">
@@ -331,7 +333,7 @@ class View {
         </fieldset>
     '''
 
-    def private callDisplayHooks(Entity it, String appName) '''
+    def private callDisplayHooks(Entity it) '''
 
         {# here you can activate calling display hooks for the view page if you need it #}
         {# % if routeArea != 'admin' %}
@@ -354,7 +356,7 @@ class View {
 
     def private headerLine(DerivedField it) '''
         «IF name == 'workflowState'»{% if routeArea == 'admin' %}«ENDIF»
-        <th id="h«markupIdCode(false)»" scope="col" class="text-«alignment»«IF !entity.getSortingFields.contains(it)» z-order-unsorted«ENDIF»">
+        <th id="h«markupIdCode(false)»" scope="col" class="text-«alignment»«IF !entity.getSortingFields.contains(it)» «IF !entity.application.targets('2.0-dev')»z-order-«ENDIF»unsorted«ENDIF»">
             «val fieldLabel = if (name == 'workflowState') 'state' else name»
             «IF entity.getSortingFields.contains(it)»
                 «headerSortingLink(entity, name.formatForCode, fieldLabel)»
@@ -464,7 +466,7 @@ class View {
         }
     }
 
-    def private itemActions(Entity it, String appName) '''
+    def private itemActions(Entity it) '''
         «IF listType != LIST_TYPE_TABLE»
             <«listType.asItemTag»>
         «ELSE»
@@ -494,7 +496,7 @@ class View {
         }
     }
 
-    def private viewViewDeleted(Entity it, String appName, Boolean isAdmin) '''
+    def private viewViewDeleted(Entity it, Boolean isAdmin) '''
         «IF application.generateSeparateAdminTemplates»
             {# purpose of this template: «IF isAdmin»admin«ELSE»user«ENDIF» list view of deleted «nameMultiple.formatForDisplay» #}
             {% extends «IF isAdmin»'«application.appName»::adminBase.html.twig'«ELSE»'«application.appName»::base.html.twig'«ENDIF» %}
@@ -519,10 +521,10 @@ class View {
                     </colgroup>
                     <thead>
                         <tr>
-                            <th id="hId" scope="col" class="z-order-unsorted z-w02">{{ __('ID') }}</th>
-                            <th id="hDate" scope="col" class="z-order-unsorted">{{ __('Date') }}</th>
-                            <th id="hUser" scope="col" class="z-order-unsorted">{{ __('User') }}</th>
-                            <th id="hActions" scope="col" class="z-order-unsorted">{{ __('Actions') }}</th>
+                            <th id="hId" scope="col" class="«IF !application.targets('2.0-dev')»z-order-«ENDIF»unsorted z-w02">{{ __('ID') }}</th>
+                            <th id="hDate" scope="col" class="«IF !application.targets('2.0-dev')»z-order-«ENDIF»unsorted">{{ __('Date') }}</th>
+                            <th id="hUser" scope="col" class="«IF !application.targets('2.0-dev')»z-order-«ENDIF»unsorted">{{ __('User') }}</th>
+                            <th id="hActions" scope="col" class="«IF !application.targets('2.0-dev')»z-order-«ENDIF»unsorted">{{ __('Actions') }}</th>
                         </tr>
                     </thead>
                     <tbody>
