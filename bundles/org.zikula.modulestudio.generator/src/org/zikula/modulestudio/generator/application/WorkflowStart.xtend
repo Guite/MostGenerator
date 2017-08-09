@@ -160,14 +160,11 @@ class WorkflowStart {
         settings.appVersion = if (null !== app.version) app.version else '1.0.0' //$NON-NLS-1$
 
         // compute destination path for model files
-        if (!app.generatorSettings.isEmpty) {
-            val genSettings = app.generatorSettings.head
-            if (genSettings.writeModelToDocs) {
-                //modelDestinationPath = File.separator + 'zclassic' + File.separator + settings.appName + File.separator
-                var modelDestinationPath = settings.getPathToModuleRoot
-                modelDestinationPath += 'Resources' + File.separator + 'docs' + File.separator + 'model' + File.separator //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-                settings.modelDestinationPath = modelDestinationPath
-            }
+        if (app.generatorSettings.isEmpty || app.generatorSettings.head.writeModelToDocs) {
+            //modelDestinationPath = File.separator + 'zclassic' + File.separator + settings.appName + File.separator
+            var modelDestinationPath = settings.getPathToModuleRoot
+            modelDestinationPath += 'Resources' + File.separator + 'docs' + File.separator + 'model' + File.separator //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+            settings.modelDestinationPath = modelDestinationPath
         }
 
         return
