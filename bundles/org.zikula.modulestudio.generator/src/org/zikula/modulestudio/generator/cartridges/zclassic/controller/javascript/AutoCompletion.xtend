@@ -18,7 +18,7 @@ class AutoCompletion {
      * Entry point for the JavaScript file with auto completion functionality.
      */
     def generate(Application it, IFileSystemAccess fsa) {
-        if (!needsAutoCompletion) {
+        if (!needsAutoCompletion && !hasUiHooksProviders) {
             return
         }
         var fileName = appName + '.AutoCompletion.js'
