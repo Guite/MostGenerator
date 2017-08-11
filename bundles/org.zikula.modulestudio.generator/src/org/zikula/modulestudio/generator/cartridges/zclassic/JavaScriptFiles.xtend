@@ -35,7 +35,7 @@ class JavaScriptFiles {
         if (hasEditActions) {
             new EditFunctions().generate(it, fsa)
         }
-        if (needsAutoCompletion || hasUiHooksProviders) {
+        if (needsAutoCompletion) {
             new AutoCompletion().generate(it, fsa)
         }
         if (generateExternalControllerAndFinder) {

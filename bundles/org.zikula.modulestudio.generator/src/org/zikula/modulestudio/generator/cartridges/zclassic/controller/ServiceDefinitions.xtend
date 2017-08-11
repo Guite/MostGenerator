@@ -457,7 +457,7 @@ class ServiceDefinitions {
                         - { name: form.type }
                 «ENDIF»
         «ENDIF»
-        «IF needsAutoCompletion»
+        «IF hasAutoCompletionRelation»
 
             «modPrefix».form.type.field.autocompletionrelation:
                 class: «nsBase»Field\AutoCompletionRelationType

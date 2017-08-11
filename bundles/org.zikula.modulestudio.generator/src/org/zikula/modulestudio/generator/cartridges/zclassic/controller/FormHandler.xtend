@@ -89,7 +89,7 @@ class FormHandler {
                 new MultiListType().generate(it, fsa)
                 new ListFieldTransformer().generate(it, fsa)
             }
-            if (needsAutoCompletion) {
+            if (hasAutoCompletionRelation) {
                 new AutoCompletionRelationType().generate(it, fsa)
                 new AutoCompletionRelationTransformer().generate(it, fsa)
             }
@@ -539,7 +539,7 @@ class FormHandler {
         public function processForm(array $templateParameters)
         {
             $this->templateParameters = $templateParameters;
-            «IF app.needsAutoCompletion»
+            «IF app.hasAutoCompletionRelation»
                 $this->templateParameters['inlineUsage'] = $this->request->query->getBoolean('raw', false);
             «ENDIF»
             «IF !relations.filter(JoinRelationship).empty»
@@ -1325,7 +1325,7 @@ class FormHandler {
                     'has_moderate_permission' => $this->permissionApi->hasPermission($this->permissionComponent, $this->idValue . '::', ACCESS_MODERATE),
                 «ENDIF»
                 «IF !incoming.empty || !outgoing.empty»
-                    'filter_by_ownership' => !$this->permissionApi->hasPermission($this->permissionComponent, $this->idValue . '::', ACCESS_ADD)«IF app.needsAutoCompletion»,
+                    'filter_by_ownership' => !$this->permissionApi->hasPermission($this->permissionComponent, $this->idValue . '::', ACCESS_ADD)«IF app.hasAutoCompletionRelation»,
                     'inline_usage' => $this->templateParameters['inlineUsage']«ENDIF»
                 «ENDIF»
             ];

@@ -69,9 +69,16 @@ class ModelJoinExtensions {
     }
 
     /**
-     * Whether the application contains any relationships using auto completion.
+     * Whether the application requires auto completion components.
      */
     def needsAutoCompletion(Application it) {
+        hasAutoCompletionRelation || hasUiHooksProviders
+    }
+
+    /**
+     * Whether the application contains any relationships using auto completion.
+     */
+    def hasAutoCompletionRelation(Application it) {
         !relations.filter(JoinRelationship).filter[useAutoCompletion != RelationAutoCompletionUsage.NONE].empty
     }
 

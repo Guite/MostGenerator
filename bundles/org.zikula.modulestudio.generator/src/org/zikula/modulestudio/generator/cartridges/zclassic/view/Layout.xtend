@@ -197,7 +197,7 @@ class Layout {
                 {% endspaceless %}
             {% endblock %}
         «ENDIF»
-        «IF needsAutoCompletion»
+        «IF hasAutoCompletionRelation»
 
             {% block «appName.formatForDB»_field_autocompletionrelation_widget %}
                 {% set entityNameTranslated = '' %}
