@@ -51,6 +51,12 @@ class Relations {
                     - 'hookDisplayEdit': list of «nameMultiple.formatForDisplay» assigned using an UI hook (edit template)
                     - 'hookDisplayDelete': list of «nameMultiple.formatForDisplay» assigned using an UI hook (delete template)
             #}
+        «ENDIF»
+        {% set hasAdminPermission = hasPermission('«app.appName»:«name.formatForCodeCapital»:', '::', 'ACCESS_«IF workflow == EntityWorkflowType::NONE»EDIT«ELSE»COMMENT«ENDIF»') %}
+        «IF ownerPermission || uiHooksProvider != HookProviderMode.DISABLED»
+            {% set hasEditPermission = hasPermission('«app.appName»:«name.formatForCodeCapital»:', '::', 'ACCESS_«IF workflow == EntityWorkflowType::NONE»EDIT«ELSE»COMMENT«ENDIF»') %}
+        «ENDIF»
+        «IF many && uiHooksProvider != HookProviderMode.DISABLED»
             {% if context != 'display' %}
                 <h3>{{ __('Assigned «nameMultiple.formatForDisplay»') }}</h3>
                 {% if context == 'hookDisplayView' and hasEditPermission %}
@@ -59,10 +65,6 @@ class Relations {
                     {{ pageAddAsset('javascript', zasset('@«app.appName»:js/«app.appName».AutoCompletion.js'), 99) }}
                 {% endif %}
             {% endif %}
-        «ENDIF»
-        {% set hasAdminPermission = hasPermission('«app.appName»:«name.formatForCodeCapital»:', '::', 'ACCESS_«IF workflow == EntityWorkflowType::NONE»EDIT«ELSE»COMMENT«ENDIF»') %}
-        «IF ownerPermission || uiHooksProvider != HookProviderMode.DISABLED»
-            {% set hasEditPermission = hasPermission('«app.appName»:«name.formatForCodeCapital»:', '::', 'ACCESS_«IF workflow == EntityWorkflowType::NONE»EDIT«ELSE»COMMENT«ENDIF»') %}
         «ENDIF»
         «IF hasDisplayAction»
             {% if noLink is not defined %}
