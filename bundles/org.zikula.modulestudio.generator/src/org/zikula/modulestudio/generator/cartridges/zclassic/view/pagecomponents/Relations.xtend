@@ -53,7 +53,7 @@ class Relations {
             #}
             {% if context != 'display' %}
                 <h3>{{ __('Assigned «nameMultiple.formatForDisplay»') }}</h3>
-                {% if context == 'hookDisplayView' && hasEditPermission %}
+                {% if context == 'hookDisplayView' and hasEditPermission %}
                     {% set entityNameTranslated = __('«name.formatForDisplay»') %}
                     {{ pageAddAsset('javascript', zasset('@«app.appName»:js/«app.appName».HookAssignment.js'), 99) }}
                     {{ pageAddAsset('javascript', zasset('@«app.appName»:js/«app.appName».AutoCompletion.js'), 99) }}
@@ -61,7 +61,7 @@ class Relations {
             {% endif %}
         «ENDIF»
         {% set hasAdminPermission = hasPermission('«app.appName»:«name.formatForCodeCapital»:', '::', 'ACCESS_«IF workflow == EntityWorkflowType::NONE»EDIT«ELSE»COMMENT«ENDIF»') %}
-        «IF ownerPermission»
+        «IF ownerPermission || uiHooksProvider != HookProviderMode.DISABLED»
             {% set hasEditPermission = hasPermission('«app.appName»:«name.formatForCodeCapital»:', '::', 'ACCESS_«IF workflow == EntityWorkflowType::NONE»EDIT«ELSE»COMMENT«ENDIF»') %}
         «ENDIF»
         «IF hasDisplayAction»
@@ -102,7 +102,7 @@ class Relations {
         «ENDIF»
         «IF many»
             «IF uiHooksProvider != HookProviderMode.DISABLED»
-                {% if context == 'hookDisplayView' && hasEditPermission %}
+                {% if context == 'hookDisplayView' and hasEditPermission %}
                     {% set assignmentId = '' %}
                     {% for assignment in assignments if assignment.getAssignedId() == item.getKey() %}
                         {% set assignmentId = assignment.getId() %}
@@ -118,7 +118,7 @@ class Relations {
             </ul>
             {% endif %}
             «IF uiHooksProvider != HookProviderMode.DISABLED»
-                {% if context == 'hookDisplayView' && hasEditPermission %}
+                {% if context == 'hookDisplayView' and hasEditPermission %}
                     {% set withImage = «hasImageFieldsEntity.displayBool» %}
                     {% set idPrefix = 'hookAssignment«name.formatForCodeCapital»' %}
                     {% set addLinkText = __f('Attach %name%', {'%name%': entityNameTranslated}) %}
