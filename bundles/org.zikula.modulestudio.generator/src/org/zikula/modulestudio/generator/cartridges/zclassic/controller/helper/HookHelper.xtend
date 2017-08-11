@@ -810,7 +810,8 @@ class HookHelper {
 
                     $templateParameters = [
                         'items' => $assignedEntities,
-                        'context' => $context
+                        'context' => $context,
+                        'routeArea' => ''
                     ];
 
                     if ($context == 'hookDisplayView') {
