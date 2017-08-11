@@ -761,7 +761,7 @@ class HookHelper {
                 {
                     list ($assignments, $assignedIds) = $this->selectAssignedIds($hook);
                     if (!count($assignedIds)) {
-                        return [];
+                        return [[], []];
                     }
 
                     $entities = $this->entityFactory->getRepository('«name.formatForCode»')->selectByIdList($assignedIds);
