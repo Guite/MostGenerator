@@ -73,6 +73,12 @@ class ExampleDataHelper {
             use Zikula\UsersModule\Entity\RepositoryInterface\UserRepositoryInterface;
         «ENDIF»
         use «appNamespace»\Entity\Factory\EntityFactory;
+        «FOR entity : getAllEntities»
+            use «appNamespace»\Entity\«name.formatForCodeCapital»Entity;
+            «IF entity.categorisable»
+                use «appNamespace»\Entity\«name.formatForCodeCapital»CategoryEntity;
+            «ENDIF»
+        «ENDFOR»
         use «appNamespace»\Helper\WorkflowHelper;
 
         /**
@@ -215,7 +221,7 @@ class ExampleDataHelper {
 
     def private initExampleObjects(Entity it, Application app) '''
         «FOR number : 1..app.amountOfExampleRows»
-            $«name.formatForCode»«number» = new \«app.vendor.formatForCodeCapital»\«app.name.formatForCodeCapital»Module\Entity\«name.formatForCodeCapital»Entity(«exampleRowsConstructorArguments(number)»);
+            $«name.formatForCode»«number» = new «name.formatForCodeCapital»Entity(«exampleRowsConstructorArguments(number)»);
         «ENDFOR»
         «/* this last line is on purpose */»
     '''
@@ -252,7 +258,7 @@ class ExampleDataHelper {
             «FOR relation : incoming.filter(OneToManyRelationship).filter[bidirectional].filter[source.application == app]»«relation.exampleRowAssignmentIncoming(entityName, number)»«ENDFOR»
             «IF categorisable»
                 // create category assignment
-                $«entityName»«number»->getCategories()->add(new \«app.vendor.formatForCodeCapital»\«app.name.formatForCodeCapital»Module\Entity\«name.formatForCodeCapital»CategoryEntity($categoryRegistry, $category, $«entityName»«number»));
+                $«entityName»«number»->getCategories()->add(new «name.formatForCodeCapital»CategoryEntity($categoryRegistry, $category, $«entityName»«number»));
             «ENDIF»
             «IF attributable»
                 // create example attributes
@@ -274,7 +280,7 @@ class ExampleDataHelper {
             «FOR entity : getAllEntities»«entity.persistEntities(it)»«ENDFOR»
         } catch (\Exception $exception) {
             $this->request->getSession()->getFlashBag()->add('error', $this->__('Exception during example data creation') . ': ' . $exception->getMessage());
-            $this->logger->error('{app}: Could not completely create example data during installation. Error details: {errorMessage}.', ['app' => '«appName»', 'errorMessage' => $exception->getMessage()]);
+            $this->logger->error('{app}: Could not completely create example data after installation. Error details: {errorMessage}.', ['app' => '«appName»', 'errorMessage' => $exception->getMessage()]);
 
             return false;
         }
