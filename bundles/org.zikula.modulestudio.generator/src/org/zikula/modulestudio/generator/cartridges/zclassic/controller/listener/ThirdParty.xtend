@@ -49,13 +49,15 @@ class ThirdParty {
                 «IF needsApproval && generatePendingContentSupport»
                     'get.pending_content'                   => ['pendingContentListener', 5],
                 «ENDIF»
-                «IF generateListContentType || needsDetailContentType»
-                    'module.content.gettypes'               => ['contentGetTypes', 5],
-                «ENDIF»
-                «IF generateScribitePlugins»
-                    'module.scribite.editorhelpers'         => ['getEditorHelpers', 5],
-                    'moduleplugin.tinymce.externalplugins'  => ['getTinyMcePlugins', 5],
-                    'moduleplugin.ckeditor.externalplugins' => ['getCKEditorPlugins', 5]
+                «IF !targets('2.0')»
+                    «IF generateListContentType || needsDetailContentType»
+                        'module.content.gettypes'               => ['contentGetTypes', 5],
+                    «ENDIF»
+                    «IF generateScribitePlugins»
+                        'module.scribite.editorhelpers'         => ['getEditorHelpers', 5],
+                        'moduleplugin.tinymce.externalplugins'  => ['getTinyMcePlugins', 5],
+                        'moduleplugin.ckeditor.externalplugins' => ['getCKEditorPlugins', 5]
+                    «ENDIF»
                 «ENDIF»
             ];
         }
@@ -63,17 +65,19 @@ class ThirdParty {
         «IF needsApproval && generatePendingContentSupport»
             «pendingContentListener»
         «ENDIF»
-        «IF generateListContentType || needsDetailContentType»
+        «IF !targets('2.0')»
+            «IF generateListContentType || needsDetailContentType»
 
-            «contentGetTypes»
-        «ENDIF»
-        «IF generateScribitePlugins»
+                «contentGetTypes»
+            «ENDIF»
+            «IF generateScribitePlugins»
 
-            «getEditorHelpers»
+                «getEditorHelpers»
 
-            «getTinyMcePlugins»
+                «getTinyMcePlugins»
 
-            «getCKEditorPlugins»
+                «getCKEditorPlugins»
+            «ENDIF»
         «ENDIF»
     '''
 
