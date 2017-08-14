@@ -510,47 +510,46 @@ class ServiceDefinitions {
             «ENDFOR»
         «ENDIF»
         «IF hasEditActions»
+
+            «modPrefix».form.handler.common
+                abstract: true
+                arguments:
+                    - "@kernel"
+                    - "@translator.default"
+                    - "@form.factory"
+                    - "@request_stack"
+                    - "@router"
+                    - "@logger"
+                    - "@zikula_permissions_module.api.permission"
+                    «IF hasTranslatable || needsApproval»
+                        - "@zikula_extensions_module.api.variable"
+                    «ENDIF»
+                    - "@zikula_users_module.current_user"
+                    «IF needsApproval»
+                        - "@zikula_groups_module.group_application_repository"
+                    «ENDIF»
+                    - "@«modPrefix».entity_factory"
+                    - "@«modPrefix».controller_helper"
+                    - "@«modPrefix».model_helper"
+                    - "@«modPrefix».workflow_helper"
+                    «IF hasHookSubscribers»
+                        - "@«modPrefix».hook_helper"
+                    «ENDIF»
+                    «IF hasTranslatable»
+                        - "@«modPrefix».translatable_helper"
+                    «ENDIF»
+                    «IF needsFeatureActivationHelper»
+                        - "@«modPrefix».feature_activation_helper"
+                    «ENDIF»
+                calls:
+                    - [setLockingApi, ["@?zikula_pagelock_module.api.locking"]]
+
             «FOR entity : entities.filter[it instanceof MappedSuperClass || (it as Entity).hasEditAction]»
                 «IF entity instanceof Entity»
 
                     «modPrefix».form.handler.«entity.name.formatForDB»:
                         class: «nsBase.replace('Type\\', '')»Handler\«entity.name.formatForCodeCapital»\EditHandler
-                        arguments:
-                            - "@kernel"
-                            - "@translator.default"
-                            - "@form.factory"
-                            - "@request_stack"
-                            - "@router"
-                            - "@logger"
-                            - "@zikula_permissions_module.api.permission"
-                            «IF hasTranslatable || needsApproval»
-                                - "@zikula_extensions_module.api.variable"
-                            «ENDIF»
-                            - "@zikula_users_module.current_user"
-                            «IF needsApproval»
-                                - "@zikula_groups_module.group_application_repository"
-                            «ENDIF»
-                            - "@«modPrefix».entity_factory"
-                            - "@«modPrefix».controller_helper"
-                            - "@«modPrefix».model_helper"
-                            - "@«modPrefix».workflow_helper"
-                            «IF hasHookSubscribers»
-                                - "@«modPrefix».hook_helper"
-                            «ENDIF»
-                            «IF hasTranslatable»
-                                - "@«modPrefix».translatable_helper"
-                            «ENDIF»
-                            «IF needsFeatureActivationHelper»
-                                - "@«modPrefix».feature_activation_helper"
-                            «ENDIF»
-                        calls:
-                            - [setLockingApi, ["@?zikula_pagelock_module.api.locking"]]
-                        «IF targets('2.0')»
-                            tags: ['form.type']
-                        «ELSE»
-                            tags:
-                                - { name: form.type }
-                        «ENDIF»
+                        parent: «modPrefix».form.handler.common
                 «ENDIF»
 
                 «modPrefix».form.type.«entity.name.formatForDB»:
