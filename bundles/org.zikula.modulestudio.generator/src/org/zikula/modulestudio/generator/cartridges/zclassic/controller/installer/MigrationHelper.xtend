@@ -81,14 +81,8 @@ class MigrationHelper {
          */
         protected function updateModVarsTo14()
         {
-            $dbName = $this->getDbName();
             $conn = $this->getConnection();
-
-            $conn->executeQuery("
-                UPDATE $dbName.module_vars
-                SET modname = '«appName»'
-                WHERE modname = '«name.formatForCodeCapital»';
-            ");
+            $conn->update('module_vars', ['modname' => '«appName»'], ['modname' => '«name.formatForCodeCapital»']);
         }
     '''
 
@@ -99,14 +93,7 @@ class MigrationHelper {
         protected function updateExtensionInfoFor14()
         {
             $conn = $this->getConnection();
-            $dbName = $this->getDbName();
-
-            $conn->executeQuery("
-                UPDATE $dbName.modules
-                SET name = '«appName»',
-                    directory = '«vendor.formatForCodeCapital»/«name.formatForCodeCapital»Module'
-                WHERE name = '«name.formatForCodeCapital»';
-            ");
+            $conn->update('modules', ['name' => '«appName»', 'directory' => '«vendor.formatForCodeCapital»/«name.formatForCodeCapital»Module'], ['name' => '«name.formatForCodeCapital»']);
         }
     '''
 
@@ -117,12 +104,10 @@ class MigrationHelper {
         protected function renamePermissionsFor14()
         {
             $conn = $this->getConnection();
-            $dbName = $this->getDbName();
-
             $componentLength = strlen('«name.formatForCodeCapital»') + 1;
 
             $conn->executeQuery("
-                UPDATE $dbName.group_perms
+                UPDATE group_perms
                 SET component = CONCAT('«appName»', SUBSTRING(component, $componentLength))
                 WHERE component LIKE '«name.formatForCodeCapital»%';
             ");
@@ -136,12 +121,10 @@ class MigrationHelper {
         protected function renameCategoryRegistriesFor14()
         {
             $conn = $this->getConnection();
-            $dbName = $this->getDbName();
-
             $componentLength = strlen('«name.formatForCodeCapital»') + 1;
 
             $conn->executeQuery("
-                UPDATE $dbName.categories_registry
+                UPDATE categories_registry
                 SET modname = CONCAT('«appName»', SUBSTRING(modname, $componentLength))
                 WHERE modname LIKE '«name.formatForCodeCapital»%';
             ");
@@ -155,7 +138,6 @@ class MigrationHelper {
         protected function renameTablesFor14()
         {
             $conn = $this->getConnection();
-            $dbName = $this->getDbName();
 
             $oldPrefix = '«prefix()»_';
             $oldPrefixLength = strlen($oldPrefix);
@@ -172,8 +154,8 @@ class MigrationHelper {
                 $newTableName = str_replace($oldPrefix, $newPrefix, $tableName);
 
                 $conn->executeQuery("
-                    RENAME TABLE $dbName.$tableName
-                    TO $dbName.$newTableName;
+                    RENAME TABLE $tableName
+                    TO $newTableName;
                 ");
             }
         }
@@ -196,49 +178,32 @@ class MigrationHelper {
         protected function updateHookNamesFor14()
         {
             $conn = $this->getConnection();
-            $dbName = $this->getDbName();
 
-            $conn->executeQuery("
-                UPDATE $dbName.hook_area
-                SET owner = '«appName»'
-                WHERE owner = '«name.formatForCodeCapital»';
-            ");
+            $conn->update('hook_area', ['owner' => '«appName»'], ['owner' => '«name.formatForCodeCapital»'];
 
             $componentLength = strlen('subscriber.«name.formatForDB»') + 1;
             $conn->executeQuery("
-                UPDATE $dbName.hook_area
+                UPDATE hook_area
                 SET areaname = CONCAT('subscriber.«appName.formatForDB»', SUBSTRING(areaname, $componentLength))
                 WHERE areaname LIKE 'subscriber.«name.formatForDB»%';
             ");
 
-            $conn->executeQuery("
-                UPDATE $dbName.hook_binding
-                SET sowner = '«appName»'
-                WHERE sowner = '«name.formatForCodeCapital»';
-            ");
+            $conn->update('hook_binding', ['sowner' => '«appName»'], ['sowner' => '«name.formatForCodeCapital»']);
 
-            $conn->executeQuery("
-                UPDATE $dbName.hook_runtime
-                SET sowner = '«appName»'
-                WHERE sowner = '«name.formatForCodeCapital»';
-            ");
+            $conn->update('hook_runtime', ['sowner' => '«appName»'], ['sowner' => '«name.formatForCodeCapital»']);
 
             $componentLength = strlen('«name.formatForDB»') + 1;
             $conn->executeQuery("
-                UPDATE $dbName.hook_runtime
+                UPDATE hook_runtime
                 SET eventname = CONCAT('«appName.formatForDB»', SUBSTRING(eventname, $componentLength))
                 WHERE eventname LIKE '«name.formatForDB»%';
             ");
 
-            $conn->executeQuery("
-                UPDATE $dbName.hook_subscriber
-                SET owner = '«appName»'
-                WHERE owner = '«name.formatForCodeCapital»';
-            ");
+            $conn->update('hook_subscriber', ['owner' => '«appName»'], ['owner' => '«name.formatForCodeCapital»'];
 
             $componentLength = strlen('«name.formatForDB»') + 1;
             $conn->executeQuery("
-                UPDATE $dbName.hook_subscriber
+                UPDATE hook_subscriber
                 SET eventname = CONCAT('«appName.formatForDB»', SUBSTRING(eventname, $componentLength))
                 WHERE eventname LIKE '«name.formatForDB»%';
             ");
@@ -252,13 +217,10 @@ class MigrationHelper {
         protected function updateWorkflowsFor14()
         {
             $conn = $this->getConnection();
-            $dbName = $this->getDbName();
-
-            $conn->executeQuery("
-                UPDATE $dbName.workflows
-                SET module = '«appName»'
-                WHERE module = '«name.formatForCodeCapital»';
-            ");
+            $conn->update('workflows', ['module' => '«appName»'], ['module' => '«name.formatForCodeCapital»']);
+            «FOR entity : getAllEntities»
+                $conn->update('workflows', ['obj_table' => '«entity.name.formatForCodeCapital»Entity'], ['module' => '«appName»', 'obj_table' => '«entity.name.formatForCode»']);
+            «ENDFOR»
         }
     '''
 
