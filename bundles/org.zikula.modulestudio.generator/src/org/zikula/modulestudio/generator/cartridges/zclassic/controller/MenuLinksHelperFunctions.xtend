@@ -41,7 +41,7 @@ class MenuLinksHelperFunctions {
             $links[] = [
                 'url' => $this->router->generate('«application.appName.formatForDB»_«name.formatForDB»_' . $routeArea . 'view'«IF tree != EntityTreeType.NONE», ['tpl' => 'tree']«ENDIF»),
                 'text' => «application.translate(nameMultiple.formatForDisplayCapital)»,
-                'title' => «application.translate(name.formatForDisplayCapital + ' list')»
+                'title' => «application.translate(nameMultiple.formatForDisplayCapital + ' list')»
             ];
         }
     '''

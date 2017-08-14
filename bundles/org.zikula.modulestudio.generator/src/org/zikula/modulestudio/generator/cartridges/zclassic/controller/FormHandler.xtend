@@ -1259,7 +1259,7 @@ class FormHandler {
         use «app.appNamespace»\Form\Handler\«name.formatForCodeCapital»\Base\Abstract«actionName.formatForCodeCapital»Handler;
 
         /**
-         * This handler class handles the page events of the Form called by the «formatForCode(app.appName + '_' + name + '_' + actionName)»() function.
+         * This handler class handles the page events of editing forms.
          * It aims on the «name.formatForDisplay» object type.
          */
         class «actionName.formatForCodeCapital»Handler extends Abstract«actionName.formatForCodeCapital»Handler
