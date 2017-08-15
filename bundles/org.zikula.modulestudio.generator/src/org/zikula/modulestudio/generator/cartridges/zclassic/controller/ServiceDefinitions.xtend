@@ -511,7 +511,7 @@ class ServiceDefinitions {
         «ENDIF»
         «IF hasEditActions»
 
-            «modPrefix».form.handler.common
+            «modPrefix».form.handler.common:
                 abstract: true
                 arguments:
                     - "@kernel"
