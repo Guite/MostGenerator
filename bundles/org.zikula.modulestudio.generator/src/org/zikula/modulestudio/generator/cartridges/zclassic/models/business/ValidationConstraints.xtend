@@ -171,7 +171,7 @@ class ValidationConstraints {
         «ELSEIF role == StringRole.LOCALE»
             «' '»* @Assert\Locale()
         «ELSEIF isbn != StringIsbnStyle.NONE»
-            «' '»* @Assert\Isbn(isbn10=«(isbn == StringIsbnStyle.ISBN10 || isbn == StringIsbnStyle.ALL).displayBool», isbn13=«(isbn == StringIsbnStyle.ISBN13 || isbn == StringIsbnStyle.ALL).displayBool»)
+            «' '»* @Assert\Isbn(«IF isbn != StringIsbnStyle.ALL»type="«IF isbn == StringIsbnStyle.ISBN10»isbn10«ELSEIF isbn == StringIsbnStyle.ISBN13»isbn13«ENDIF»"«ENDIF»)
         «ELSEIF issn != StringIssnStyle.NONE»
             «' '»* @Assert\Issn(caseSensitive=«(issn == StringIssnStyle.CASE_SENSITIVE || issn == StringIssnStyle.STRICT).displayBool», requireHyphen=«(issn == StringIssnStyle.REQUIRE_HYPHEN || issn == StringIssnStyle.STRICT).displayBool»)
         «ELSEIF ipAddress != IpAddressScope.NONE»
