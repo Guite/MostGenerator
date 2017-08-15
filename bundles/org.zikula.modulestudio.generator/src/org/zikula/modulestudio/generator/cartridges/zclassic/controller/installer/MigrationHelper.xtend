@@ -179,7 +179,7 @@ class MigrationHelper {
         {
             $conn = $this->getConnection();
 
-            $conn->update('hook_area', ['owner' => '«appName»'], ['owner' => '«name.formatForCodeCapital»'];
+            $conn->update('hook_area', ['owner' => '«appName»'], ['owner' => '«name.formatForCodeCapital»']);
 
             $componentLength = strlen('subscriber.«name.formatForDB»') + 1;
             $conn->executeQuery("
@@ -199,7 +199,7 @@ class MigrationHelper {
                 WHERE eventname LIKE '«name.formatForDB»%';
             ");
 
-            $conn->update('hook_subscriber', ['owner' => '«appName»'], ['owner' => '«name.formatForCodeCapital»'];
+            $conn->update('hook_subscriber', ['owner' => '«appName»'], ['owner' => '«name.formatForCodeCapital»']);
 
             $componentLength = strlen('«name.formatForDB»') + 1;
             $conn->executeQuery("
