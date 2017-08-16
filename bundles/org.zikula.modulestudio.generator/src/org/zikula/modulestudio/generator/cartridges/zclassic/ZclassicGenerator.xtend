@@ -38,6 +38,7 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.Docs
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.GitIgnore
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.ModuleFile
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.PhpUnitXmlDist
+import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.StyleCI
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.Translations
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.TravisFile
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.ZikulaManifest
@@ -99,6 +100,7 @@ class ZclassicGenerator implements IGenerator {
         new GitIgnore().generate(it, fsa)
         new TravisFile().generate(it, fsa)
         new PhpUnitXmlDist().generate(it, fsa)
+        new StyleCI().generate(it, fsa)
     }
 
     def private generateModel(Application it) {
