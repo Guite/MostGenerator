@@ -73,7 +73,7 @@ class TranslationType {
                         'values' => []
                     ])
                     ->setRequired(['fields'])
-                    ->setOptional(['mandatory_fields', 'values'])
+                    ->setDefined(['mandatory_fields', 'values'])
                     ->setAllowedTypes('fields', 'array')
                     ->setAllowedTypes('mandatory_fields', 'array')
                     ->setAllowedTypes('values', 'array')

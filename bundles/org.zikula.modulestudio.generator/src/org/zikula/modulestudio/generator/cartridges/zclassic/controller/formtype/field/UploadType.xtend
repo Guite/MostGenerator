@@ -183,7 +183,7 @@ class UploadType {
             {
                 $resolver
                     ->setRequired(['entity'])
-                    ->setOptional(['allowed_extensions', 'allowed_size'])
+                    ->setDefined(['allowed_extensions', 'allowed_size'])
                     ->setDefaults([
                         'attr' => [
                             'class' => 'file-selector'

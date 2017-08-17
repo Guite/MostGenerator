@@ -142,7 +142,7 @@ class ListBlock {
                     ])
                     ->setRequired(['object_type'])
                     «IF hasCategorisableEntities»
-                        ->setOptional(['is_categorisable', 'category_helper', 'feature_activation_helper'])
+                        ->setDefined(['is_categorisable', 'category_helper', 'feature_activation_helper'])
                     «ENDIF»
                     ->setAllowedTypes('object_type', 'string')
                     «IF hasCategorisableEntities»
