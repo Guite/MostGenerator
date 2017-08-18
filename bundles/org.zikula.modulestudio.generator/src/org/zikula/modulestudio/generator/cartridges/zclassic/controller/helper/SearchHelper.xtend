@@ -238,8 +238,8 @@ class SearchHelper {
                 } elseif ($this->request->isMethod('POST')) {
                     $searchSettings = $this->request->request->get('zikulasearchmodule_search', []);
                     $moduleActivationInfo = $searchSettings['modules'];
-                    if (isset($moduleActivationInfo['MUTestAppModule'])) {
-                        $moduleActivationInfo = $moduleActivationInfo['MUTestAppModule'];
+                    if (isset($moduleActivationInfo['«appName»'])) {
+                        $moduleActivationInfo = $moduleActivationInfo['«appName»'];
                         $isActivated = isset($moduleActivationInfo['active_' . $searchTypeCode]);
                     }
                 }
