@@ -71,8 +71,6 @@ class MigrationHelper {
         «updateWorkflowsFor14»
 
         «getConnection»
-
-        «getDbName»
     '''
 
     def private updateModVarsTo14(Application it) '''
@@ -236,18 +234,6 @@ class MigrationHelper {
             $connection = $entityManager->getConnection();
 
             return $connection;
-        }
-    '''
-
-    def private getDbName(Application it) '''
-        /**
-         * Returns the name of the default system database.
-         *
-         * @return string the database name
-         */
-        protected function getDbName()
-        {
-            return $this->container->getParameter('database_name');
         }
     '''
 }
