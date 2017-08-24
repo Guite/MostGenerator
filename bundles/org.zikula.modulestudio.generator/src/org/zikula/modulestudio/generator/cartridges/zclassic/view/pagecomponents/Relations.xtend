@@ -129,12 +129,12 @@ class Relations {
                     {% set idPrefix = 'hookAssignment«name.formatForCodeCapital»' %}
                     {% set addLinkText = __f('Attach %name%', {'%name%': entityNameTranslated}) %}
                     <div id="{{ idPrefix }}LiveSearch" class="«app.appName.toLowerCase»-add-hook-assignment">
-                        <a id="{{ idPrefix }}AddLink" href="javascript:void(0);" title="{{ addLinkText|e('html_attr') }}" class="attach-«app.appName.formatForDB»-object hidden" data-owner="{{ subscriberOwner|e('html_attr') }}" data-area-id="{{ subscriberAreaId|e('html_attr') }}" data-object-id="{{ subscriberObjectId|e('html_attr') }}" data-url="{{ subscriberUrl|e('html_attr') }}" data-assigned-entity="«name.formatForCode»"><i class="fa fa-link"></i> {{ addLinkText }}
+                        <a id="{{ idPrefix }}AddLink" href="javascript:void(0);" title="{{ addLinkText|e('html_attr') }}" class="attach-«app.appName.formatForDB»-object hidden" data-owner="{{ subscriberOwner|e('html_attr') }}" data-area-id="{{ subscriberAreaId|e('html_attr') }}" data-object-id="{{ subscriberObjectId|e('html_attr') }}" data-url="{{ subscriberUrl|e('html_attr') }}" data-assigned-entity="«name.formatForCode»"><i class="fa fa-link"></i> {{ addLinkText }}</a>
                         <div id="{{ idPrefix }}AddFields" class="«app.appName.toLowerCase»-autocomplete{{ withImage ? '-with-image' : '' }}">
                             <label for="{{ idPrefix }}Selector">{{ __f('Find %name%', {'%name%': entityNameTranslated}) }}</label>
                             <br />
                             <i class="fa fa-search" title="{{ __f('Search %name%', {'%name%': entityNameTranslated})|e('html_attr') }}"></i>
-                            <input type="hidden" name="{{ idPrefix }} id="{{ idPrefix }}" value="" />
+                            <input type="hidden" name="{{ idPrefix }}" id="{{ idPrefix }}" value="" />
                             <input type="hidden" name="{{ idPrefix }}Multiple" id="{{ idPrefix }}Multiple" value="0" />
                             <input type="hidden" name="{{ idPrefix }}Mode" id="{{ idPrefix }}Mode" value="0" />
                             <input type="hidden" name="{{ idPrefix }}ExcludedIds" id="{{ idPrefix }}ExcludedIds" value="{% for assignment in assignments %}{% if not loop.first %},{% endif %}{{ assignment.getAssignedId() }}{% endfor %}" />
