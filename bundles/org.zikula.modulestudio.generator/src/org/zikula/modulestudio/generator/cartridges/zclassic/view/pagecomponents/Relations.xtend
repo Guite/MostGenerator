@@ -185,7 +185,7 @@ class Relations {
         {% if «relatedEntity.name.formatForCode».«relationAliasName»|default %}
             {{ include(
                 '@«application.appName»/«otherEntity.name.formatForCodeCapital»/«IF isAdmin»Admin/«ENDIF»includeDisplayItemList«getTargetMultiplicity(useTarget)».html.twig',
-                {item«IF many»s«ENDIF»: «relatedEntity.name.formatForCode».«relationAliasName»«IF relatedEntity.uiHooksProvider != HookProviderMode.DISABLED», context: 'display'«ENDIF»}
+                {item«IF many»s«ENDIF»: «relatedEntity.name.formatForCode».«relationAliasName»«IF otherEntity.uiHooksProvider != HookProviderMode.DISABLED», context: 'display'«ENDIF»}
             ) }}
         {% endif %}
         «IF otherEntity.hasEditAction»

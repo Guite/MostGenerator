@@ -231,9 +231,8 @@ class MigrationHelper {
         protected function getConnection()
         {
             $entityManager = $this->container->get('«entityManagerService»');
-            $connection = $entityManager->getConnection();
 
-            return $connection;
+            return $entityManager->getConnection();
         }
     '''
 }
