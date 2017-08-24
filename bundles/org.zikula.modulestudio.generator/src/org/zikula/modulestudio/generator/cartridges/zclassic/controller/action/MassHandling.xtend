@@ -1,11 +1,13 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.controller.action
 
 import de.guite.modulestudio.metamodel.Entity
+import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class MassHandling {
 
+    extension ControllerExtensions = new ControllerExtensions
     extension FormattingExtensions = new FormattingExtensions
     extension Utils = new Utils
 
@@ -143,6 +145,6 @@ class MassHandling {
             «ENDIF»
         }
 
-        return $this->redirectToRoute('«application.appName.formatForDB»_«name.formatForDB»_' . ($isAdmin ? 'admin' : '') . 'index');
+        return $this->redirectToRoute('«application.appName.formatForDB»_«name.formatForDB»_' . ($isAdmin ? 'admin' : '') . '«getPrimaryAction»');
     '''
 }
