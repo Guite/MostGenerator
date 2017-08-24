@@ -264,7 +264,7 @@ class AutoCompletion {
         function «vendorAndName»SelectHookItem(objectType, idPrefix, selectedListItem)
         {
             «vendorAndName»ResetRelatedItemForm(idPrefix);
-            «vendorAndName»AttachHookObject(jQuery(idPrefix + 'AddLink'), selectedListItem.id);
+            «vendorAndName»AttachHookObject(jQuery('#' + idPrefix + 'AddLink'), selectedListItem.id);
         }
     '''
 

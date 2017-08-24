@@ -49,7 +49,7 @@ class HookAssignmentEntity {
         entity.fields += factory.createStringField => [
             name = 'subscriberOwner'
         ]
-        entity.fields += factory.createIntegerField => [
+        entity.fields += factory.createStringField => [
             name = 'subscriberAreaId'
         ]
         entity.fields += factory.createIntegerField => [

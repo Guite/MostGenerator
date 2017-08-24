@@ -521,9 +521,9 @@ class ControllerHelper {
                     foreach ($hookAssignments as $assignment) {
                         $url = 'javascript:void(0);';
                         $subscriberUrl = $assignment->getSubscriberUrl();
-                        if (null !== $subscriberUrl) {
-                            $url = $this->router->generate($subscriberUrl->getRoute(), $subscriberUrl->getArgs());
-                            $fragment = $subscriberUrl->getFragment();
+                        if (null !== $subscriberUrl && !empty($subscriberUrl)) {
+                            $url = $this->router->generate($subscriberUrl['route'], $subscriberUrl['args']);
+                            $fragment = $subscriberUrl['fragment'];
                             if (!empty($fragment)) {
                                 if ($fragment[0] != '#') {
                                     $fragment = '#' . $fragment;
