@@ -191,7 +191,7 @@ class View {
             <«listType.asListTag»>
         «ELSE»
             «IF hasSortableFields»
-                {% set activateSortable = routeArea == 'admin' and sort.«getSortableFields.head.name.formatForCode».class == '«IF app.targets('2.0-dev')»sorted-«ELSE»z-order-«ENDIF»asc' %}
+                {% set activateSortable = routeArea == 'admin' and sort.«getSortableFields.head.name.formatForCode».class == '«IF app.targets('2.0')»sorted-«ELSE»z-order-«ENDIF»asc' %}
             «ENDIF»
             <div class="table-responsive">
             <table«IF hasSortableFields»{% if activateSortable and items|length > 1 %} id="sortableTable" data-object-type="«name.formatForCode»" data-min="{{ items|first.«getSortableFields.head.name.formatForCode» }}" data-max="{{ items|last.«getSortableFields.head.name.formatForCode» }}"{% endif %}«ENDIF» class="table table-striped table-bordered table-hover«IF (listItemsFields.size + listItemsIn.size + listItemsOut.size + 1) > 7» table-condensed«ELSE»{% if routeArea == 'admin' %} table-condensed{% endif %}«ENDIF»">
@@ -216,10 +216,10 @@ class View {
                             <input type="checkbox" class="«application.vendorAndName.toLowerCase»-mass-toggle" />
                         </th>
                     {% endif %}
-                    <th id="hItemActions" scope="col" class="{% if items|length > 0 %}fixed-column {% endif %}«IF !app.targets('2.0-dev')»z-order-«ENDIF»unsorted z-w02">{{ __('Actions') }}</th>
+                    <th id="hItemActions" scope="col" class="{% if items|length > 0 %}fixed-column {% endif %}«IF !app.targets('2.0')»z-order-«ENDIF»unsorted z-w02">{{ __('Actions') }}</th>
                     «IF hasSortableFields»
                         {% if activateSortable %}
-                            <th id="hSortable" scope="col" class="«IF !app.targets('2.0-dev')»z-order-«ENDIF»unsorted z-w02">{{ __('Sorting') }}</th>
+                            <th id="hSortable" scope="col" class="«IF !app.targets('2.0')»z-order-«ENDIF»unsorted z-w02">{{ __('Sorting') }}</th>
                         {% endif %}
                     «ENDIF»
                     «FOR field : listItemsFields»«field.headerLine»«ENDFOR»
@@ -356,7 +356,7 @@ class View {
 
     def private headerLine(DerivedField it) '''
         «IF name == 'workflowState'»{% if routeArea == 'admin' %}«ENDIF»
-        <th id="h«markupIdCode(false)»" scope="col" class="text-«alignment»«IF !entity.getSortingFields.contains(it)» «IF !entity.application.targets('2.0-dev')»z-order-«ENDIF»unsorted«ENDIF»">
+        <th id="h«markupIdCode(false)»" scope="col" class="text-«alignment»«IF !entity.getSortingFields.contains(it)» «IF !entity.application.targets('2.0')»z-order-«ENDIF»unsorted«ENDIF»">
             «val fieldLabel = if (name == 'workflowState') 'state' else name»
             «IF entity.getSortingFields.contains(it)»
                 «headerSortingLink(entity, name.formatForCode, fieldLabel)»
@@ -521,10 +521,10 @@ class View {
                     </colgroup>
                     <thead>
                         <tr>
-                            <th id="hId" scope="col" class="«IF !application.targets('2.0-dev')»z-order-«ENDIF»unsorted z-w02">{{ __('ID') }}</th>
-                            <th id="hDate" scope="col" class="«IF !application.targets('2.0-dev')»z-order-«ENDIF»unsorted">{{ __('Date') }}</th>
-                            <th id="hUser" scope="col" class="«IF !application.targets('2.0-dev')»z-order-«ENDIF»unsorted">{{ __('User') }}</th>
-                            <th id="hActions" scope="col" class="«IF !application.targets('2.0-dev')»z-order-«ENDIF»unsorted">{{ __('Actions') }}</th>
+                            <th id="hId" scope="col" class="«IF !application.targets('2.0')»z-order-«ENDIF»unsorted z-w02">{{ __('ID') }}</th>
+                            <th id="hDate" scope="col" class="«IF !application.targets('2.0')»z-order-«ENDIF»unsorted">{{ __('Date') }}</th>
+                            <th id="hUser" scope="col" class="«IF !application.targets('2.0')»z-order-«ENDIF»unsorted">{{ __('User') }}</th>
+                            <th id="hActions" scope="col" class="«IF !application.targets('2.0')»z-order-«ENDIF»unsorted">{{ __('Actions') }}</th>
                         </tr>
                     </thead>
                     <tbody>
