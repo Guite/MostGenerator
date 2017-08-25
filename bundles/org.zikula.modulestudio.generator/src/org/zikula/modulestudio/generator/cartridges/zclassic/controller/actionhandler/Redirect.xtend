@@ -174,7 +174,7 @@ class Redirect {
          */
         protected function getRedirectUrl($args)
         {
-            «IF app.hasAutoCompletionRelation && (!incoming.empty || !outgoing.empty)»
+            «IF app.needsAutoCompletion || !incoming.empty || !outgoing.empty»
                 if (true === $this->templateParameters['inlineUsage']) {
                     $commandName = substr($args['commandName'], 0, 6) == 'submit' ? 'create' : $args['commandName'];
                     $urlArgs = [

@@ -260,6 +260,8 @@ class FormHandler {
             protected $repeatReturnUrl = null;
             «IF !relations.filter(JoinRelationship).empty»
                 «relationPresetsHelper.memberFields(it)»
+            «ENDIF»
+            «IF !relations.filter(JoinRelationship).empty || needsAutoCompletion»
 
                 /**
                  * Full prefix for related items.
@@ -539,10 +541,10 @@ class FormHandler {
         public function processForm(array $templateParameters)
         {
             $this->templateParameters = $templateParameters;
-            «IF app.hasAutoCompletionRelation»
+            «IF app.needsAutoCompletion»
                 $this->templateParameters['inlineUsage'] = $this->request->query->getBoolean('raw', false);
             «ENDIF»
-            «IF !relations.filter(JoinRelationship).empty»
+            «IF !relations.filter(JoinRelationship).empty || app.needsAutoCompletion»
 
                 $this->idPrefix = $this->request->query->get('idp', '');
             «ENDIF»
@@ -1325,8 +1327,10 @@ class FormHandler {
                     'has_moderate_permission' => $this->permissionApi->hasPermission($this->permissionComponent, $this->idValue . '::', ACCESS_MODERATE),
                 «ENDIF»
                 «IF !incoming.empty || !outgoing.empty»
-                    'filter_by_ownership' => !$this->permissionApi->hasPermission($this->permissionComponent, $this->idValue . '::', ACCESS_ADD)«IF app.hasAutoCompletionRelation»,
-                    'inline_usage' => $this->templateParameters['inlineUsage']«ENDIF»
+                    'filter_by_ownership' => !$this->permissionApi->hasPermission($this->permissionComponent, $this->idValue . '::', ACCESS_ADD)«IF app.needsAutoCompletion»,«ENDIF»
+                «ENDIF»
+                «IF app.needsAutoCompletion»
+                    'inline_usage' => $this->templateParameters['inlineUsage']
                 «ENDIF»
             ];
             «IF attributable»
