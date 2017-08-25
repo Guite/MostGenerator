@@ -404,7 +404,7 @@ class Forms {
                     // close window from parent document
                     ( function($) {
                         $(document).ready(function() {
-                            «vendorAndName»CloseWindowFromInside('{{ idPrefix|e('js') }}', {% if commandName == 'create' %}{{ itemId }}, '{{ searchTerm|default('') }}'{% else %}0, ''{% endif %});«/*itemId > 0 causes the auto completion being activated*/»
+                            «vendorAndName»CloseWindowFromInside('{{ idPrefix|e('js') }}', {% if commandName in ['submit', 'create', 'approve'] %}{{ itemId }}, '{{ searchTerm|default('') }}'{% else %}0, ''{% endif %});«/*itemId > 0 causes the auto completion being activated*/»
                         });
                     })(jQuery);
                 /* ]]> */

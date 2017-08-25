@@ -51,7 +51,7 @@ class InlineRedirect {
         }
 
         $searchTerm = '';
-        «IF hasAbstractStringFieldsEntity»
+        «IF hasStringFieldsEntity»
             if (!empty($id)) {
                 $repository = $this->get('«application.appService».entity_factory')->getRepository('«name.formatForCode»');
                 «IF hasSluggableFields && slugUnique»
@@ -66,7 +66,7 @@ class InlineRedirect {
                     $«name.formatForCode» = $repository->selectById($id);
                 «ENDIF»
                 if (null !== $«name.formatForCode») {
-                    $searchTerm = $«name.formatForCode»->get«getAbstractStringFieldsEntity.head.name.formatForCodeCapital»();
+                    $searchTerm = $«name.formatForCode»->get«getStringFieldsEntity.head.name.formatForCodeCapital»();
                 }
             }
         «ENDIF»
