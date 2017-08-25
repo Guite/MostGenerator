@@ -59,14 +59,14 @@ class Relations {
         «IF many && uiHooksProvider != HookProviderMode.DISABLED»
             {% if context != 'display' %}
                 <h3>{{ __('Assigned «nameMultiple.formatForDisplay»') }}</h3>
+                {{ pageAddAsset('stylesheet', zasset('@«app.appName»:css/style.css')) }}
+                {{ pageAddAsset('stylesheet', asset('jquery-ui/themes/base/jquery-ui.min.css')) }}
+                {{ pageAddAsset('stylesheet', asset('bootstrap-jqueryui/bootstrap-jqueryui.min.css')) }}
+                {{ pageAddAsset('javascript', asset('jquery-ui/jquery-ui.min.js')) }}
+                {{ pageAddAsset('javascript', asset('bootstrap-jqueryui/bootstrap-jqueryui.min.js')) }}
+                {{ pageAddAsset('javascript', zasset('@«app.appName»:js/«app.appName».js'), 99) }}
                 {% if context == 'hookDisplayView' and hasEditPermission %}
                     {% set entityNameTranslated = __('«name.formatForDisplay»') %}
-                    {{ pageAddAsset('stylesheet', zasset('@«app.appName»:css/style.css')) }}
-                    {{ pageAddAsset('stylesheet', asset('jquery-ui/themes/base/jquery-ui.min.css')) }}
-                    {{ pageAddAsset('stylesheet', asset('bootstrap-jqueryui/bootstrap-jqueryui.min.css')) }}
-                    {{ pageAddAsset('javascript', asset('jquery-ui/jquery-ui.min.js')) }}
-                    {{ pageAddAsset('javascript', asset('bootstrap-jqueryui/bootstrap-jqueryui.min.js')) }}
-                    {{ pageAddAsset('javascript', zasset('@«app.appName»:js/«app.appName».js'), 99) }}
                     {{ pageAddAsset('javascript', zasset('@«app.appName»:js/«app.appName».HookAssignment.js'), 99) }}
                     {{ pageAddAsset('javascript', zasset('@«app.appName»:js/«app.appName».AutoCompletion.js'), 99) }}
                 {% endif %}
