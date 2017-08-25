@@ -85,14 +85,6 @@ class Delete {
     '''
 
     def private callDisplayHooks(Entity it, String appName) '''
-        {% set hooks = notifyDisplayHooks(eventName='«appName.formatForDB».ui_hooks.«nameMultiple.formatForDB».form_delete', id=«name.formatForCode».getKey()) %}
-        {% if hooks is iterable and hooks|length > 0 %}
-            {% for providerArea, hook in hooks %}
-                <fieldset>
-                    {# <legend>{{ hookName }}</legend> #}
-                    {{ hook }}
-                </fieldset>
-            {% endfor %}
-        {% endif %}
+        {{ notifyDisplayHooks(eventName='«appName.formatForDB».ui_hooks.«nameMultiple.formatForDB».form_delete', id=«name.formatForCode».getKey()) }}
     '''
 }

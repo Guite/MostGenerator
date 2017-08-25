@@ -331,11 +331,7 @@ class Display {
             <div role="tabpanel" class="tab-pane fade" id="tabHooks" aria-labelledby="hooksTab">
                 <h3>{{ __('Hooks') }}</h3>
         «ENDIF»
-        {% set hooks = notifyDisplayHooks(eventName='«appName.formatForDB».ui_hooks.«nameMultiple.formatForDB».display_view', id=«name.formatForCode».getKey(), urlObject=currentUrlObject) %}
-        {% for providerArea, hook in hooks if providerArea != 'provider.scribite.ui_hooks.editor' %}
-            <h4>{{ providerArea }}</h4>
-            {{ hook }}
-        {% endfor %}
+        {{ notifyDisplayHooks(eventName='«appName.formatForDB».ui_hooks.«nameMultiple.formatForDB».display_view', id=«name.formatForCode».getKey(), urlObject=currentUrlObject) }}
         «IF useGroupingTabs('display')»
             </div>
         «ENDIF»

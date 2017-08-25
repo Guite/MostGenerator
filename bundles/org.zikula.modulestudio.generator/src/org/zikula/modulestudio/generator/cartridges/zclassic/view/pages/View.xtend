@@ -337,10 +337,7 @@ class View {
 
         {# here you can activate calling display hooks for the view page if you need it #}
         {# % if routeArea != 'admin' %}
-            {% set hooks = notifyDisplayHooks(eventName='«appName.formatForDB».ui_hooks.«nameMultiple.formatForDB».display_view', urlObject=currentUrlObject) %}
-            {% for providerArea, hook in hooks %}
-                {{ hook }}
-            {% endfor %}
+            {{ notifyDisplayHooks(eventName='«appName.formatForDB».ui_hooks.«nameMultiple.formatForDB».display_view', urlObject=currentUrlObject) }}
         {% endif % #}
     '''
 
