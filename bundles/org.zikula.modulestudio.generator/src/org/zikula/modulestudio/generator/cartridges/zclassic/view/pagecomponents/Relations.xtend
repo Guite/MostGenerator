@@ -61,6 +61,7 @@ class Relations {
                 <h3>{{ __('Assigned «nameMultiple.formatForDisplay»') }}</h3>
                 {% if context == 'hookDisplayView' and hasEditPermission %}
                     {% set entityNameTranslated = __('«name.formatForDisplay»') %}
+                    {{ pageAddAsset('javascript', zasset('@«app.appName»:css/style.css')) }}
                     {{ pageAddAsset('stylesheet', asset('jquery-ui/themes/base/jquery-ui.min.css')) }}
                     {{ pageAddAsset('stylesheet', asset('bootstrap-jqueryui/bootstrap-jqueryui.min.css')) }}
                     {{ pageAddAsset('javascript', asset('jquery-ui/jquery-ui.min.js')) }}
