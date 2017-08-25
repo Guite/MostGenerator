@@ -636,7 +636,7 @@ class EditEntity {
                     ],
                 «ENDIF»
                 «helpAttribute»
-                «IF !(it instanceof BooleanField || it instanceof UploadField)»
+                «IF !(it instanceof BooleanField || it instanceof UploadField || it instanceof AbstractDateField)»
                     'empty_data' => '«defaultValue»',
                 «ENDIF»
                 'attr' => [
@@ -1153,8 +1153,8 @@ class EditEntity {
         'empty_data' => «defaultData»,
         'widget' => 'single_text'
     '''
-    def private dispatch defaultData(DatetimeField it) '''«IF null !== defaultValue && defaultValue != '' && defaultValue != 'now'»'«defaultValue»'«ELSEIF nullable»null«ELSE»date('Y-m-d H:i:s')«ENDIF»'''
-    def private dispatch defaultData(DateField it) '''«IF null !== defaultValue && defaultValue != '' && defaultValue != 'now'»'«defaultValue»'«ELSEIF nullable»null«ELSE»date('Y-m-d')«ENDIF»'''
+    def private dispatch defaultData(DatetimeField it) '''«IF null !== defaultValue && defaultValue != '' && defaultValue != 'now'»'«defaultValue»'«ELSEIF nullable»''«ELSE»date('Y-m-d H:i:s')«ENDIF»'''
+    def private dispatch defaultData(DateField it) '''«IF null !== defaultValue && defaultValue != '' && defaultValue != 'now'»'«defaultValue»'«ELSEIF nullable»''«ELSE»date('Y-m-d')«ENDIF»'''
     def private dispatch additionalAttributes(TimeField it) '''
         'maxlength' => 8,
     '''

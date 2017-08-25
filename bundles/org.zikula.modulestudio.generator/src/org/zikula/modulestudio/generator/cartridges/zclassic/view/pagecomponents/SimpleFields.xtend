@@ -186,11 +186,25 @@ class SimpleFields {
         {% endif %}
     '''
 
-    def dispatch displayField(DateField it, String objName, String page) '''
-        {{ «objName».«name.formatForCode»|localizeddate('medium', 'none') }}'''
+    def dispatch displayField(DateField it, String objName, String page) {
+        if (!mandatory && nullable) { '''
+            {% if «objName».«name.formatForCode» is not empty %}
+                {{ «objName».«name.formatForCode»|localizeddate('medium', 'none') }}
+            {% endif %}'''
+        } else { '''
+            {{ «objName».«name.formatForCode»|localizeddate('medium', 'none') }}'''
+        }
+    }
 
-    def dispatch displayField(DatetimeField it, String objName, String page) '''
-        {{ «objName».«name.formatForCode»|localizeddate('medium', 'short') }}'''
+    def dispatch displayField(DatetimeField it, String objName, String page) {
+        if (!mandatory && nullable) { '''
+            {% if «objName».«name.formatForCode» is not empty %}
+                {{ «objName».«name.formatForCode»|localizeddate('medium', 'short') }}
+            {% endif %}'''
+        } else { '''
+            {{ «objName».«name.formatForCode»|localizeddate('medium', 'short') }}'''
+        }
+    }
 
     def dispatch displayField(TimeField it, String objName, String page) '''
         {{ «objName».«name.formatForCode»|localizeddate('none', 'short') }}'''
