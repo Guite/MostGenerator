@@ -108,7 +108,7 @@ class Rss {
         </description>
         «IF standardFields»
             {% if «objName».createdDate|default %}
-                <pubDate>{{ «objName».createdDate|date('a, d b Y T +0100') }}</pubDate>
+                <pubDate>{{ «objName».createdDate|date('r') }}</pubDate>
             {% endif %}
         «ENDIF»
     '''
