@@ -290,7 +290,7 @@ class Newsletter {
 
                 // A picture to display in Newsletter next to the item
                 «IF hasImageFields»
-                    $items[$k]['nl_picture'] = $previewFieldName != '' && !empty($item[$previewFieldName) ? $item[$previewFieldName]->getPathname() : '';
+                    $items[$k]['nl_picture'] = $previewFieldName != '' && !empty($item[$previewFieldName]) ? $item[$previewFieldName]->getPathname() : '';
                 «ELSE»
                     $items[$k]['nl_picture'] = '';
                 «ENDIF»
