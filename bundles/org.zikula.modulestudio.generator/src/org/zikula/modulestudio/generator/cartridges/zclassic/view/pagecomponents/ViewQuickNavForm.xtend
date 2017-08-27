@@ -51,10 +51,12 @@ class ViewQuickNavForm {
                     «formFields»
                     {{ form_widget(quickNavForm.updateview) }}
                     «IF categorisable»
-                        {% if (categoryFilter is defined and categoryFilter != true) or not categoriesEnabled %}
-                        {% else %}
+                        {% if categoriesEnabled %}
+                            {% if categoryFilter is defined and categoryFilter != true %}
+                            {% else %}
+                                    </div>
                                 </div>
-                            </div>
+                            {% endif %}
                         {% endif %}
                     «ENDIF»
                 </fieldset>
@@ -117,18 +119,20 @@ class ViewQuickNavForm {
 
     def private categoriesFields(Entity it) '''
         {% set categoriesEnabled = featureActivationHelper.isEnabled(constant('«application.vendor.formatForCodeCapital»\\«application.name.formatForCodeCapital»Module\\Helper\\FeatureActivationHelper::CATEGORIES'), '«name.formatForCode»') %}
-        {% if (categoryFilter is defined and categoryFilter != true) or not categoriesEnabled %}
-            <div class="hidden">
-        {% else %}
-            <div class="row">
-                <div class="col-sm-3">
-        {% endif %}
-            {{ form_row(quickNavForm.categories) }}
-        {% if (categoryFilter is defined and categoryFilter != true) or not categoriesEnabled %}
-            </div>
-        {% else %}
+        {% if categoriesEnabled %}
+            {% if (categoryFilter is defined and categoryFilter != true) %}
+                <div class="hidden">
+            {% else %}
+                <div class="row">
+                    <div class="col-sm-3">
+            {% endif %}
+                {{ form_row(quickNavForm.categories) }}
+            {% if (categoryFilter is defined and categoryFilter != true) %}
                 </div>
-                <div class="col-sm-9">
+            {% else %}
+                    </div>
+                    <div class="col-sm-9">
+            {% endif %}
         {% endif %}
     '''
 
