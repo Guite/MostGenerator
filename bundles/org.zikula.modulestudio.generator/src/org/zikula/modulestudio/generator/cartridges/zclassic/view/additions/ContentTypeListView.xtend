@@ -227,6 +227,7 @@ class ContentTypeListView {
             {formlabel for='«appName.toFirstLower»Filter' text=$filterLabel«editLabelClass»}
             <div class="col-sm-9">
                 {formtextinput id='«appName.toFirstLower»Filter' dataField='filter' group='data' mandatory=false maxLength=255«editInputClass»}
+                <span class="help-block">{gt text='Example' domain='«appName.formatForDB»'}: <em>tbl.age >= 18</em></span>
             </div>
         </div>
     '''
