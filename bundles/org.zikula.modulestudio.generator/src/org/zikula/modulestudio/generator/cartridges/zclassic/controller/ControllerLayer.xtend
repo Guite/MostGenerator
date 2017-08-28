@@ -121,11 +121,6 @@ class ControllerLayer {
         «IF hasIndexAction || hasViewAction || hasEditAction || hasDeleteAction»
             use Symfony\Component\HttpFoundation\RedirectResponse;
         «ENDIF»
-        use Sensio\Bundle\FrameworkExtraBundle\Configuration\Cache;
-        «IF hasDisplayAction || hasDeleteAction»
-            use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
-        «ENDIF»
-        use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
         «IF (hasViewAction || hasDeleteAction) && !skipHookSubscribers»
             «IF hasDeleteAction»
                 use Zikula\Bundle\HookBundle\Category\FormAwareCategory;
@@ -157,6 +152,10 @@ class ControllerLayer {
 
         «IF hasEditAction || hasDeleteAction»
             use RuntimeException;
+        «ENDIF»
+        use Sensio\Bundle\FrameworkExtraBundle\Configuration\Cache;
+        «IF hasDisplayAction || hasDeleteAction»
+            use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
         «ENDIF»
         use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
         use Symfony\Component\HttpFoundation\Request;

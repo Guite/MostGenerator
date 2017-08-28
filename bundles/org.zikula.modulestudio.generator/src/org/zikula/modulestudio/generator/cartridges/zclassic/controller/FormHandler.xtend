@@ -914,14 +914,6 @@ class FormHandler {
                     }
                 }
             «ENDIF»
-            «IF hasTranslatable»
-
-                if ($isRegularAction && true === $this->hasTranslatableFields) {
-                    if ($this->featureActivationHelper->isEnabled(FeatureActivationHelper::TRANSLATIONS, $this->objectType)) {
-                        $this->processTranslationsForUpdate();
-                    }
-                }
-            «ENDIF»
 
             if ($isRegularAction || $action == 'delete') {
                 $success = $this->applyAction($args);
@@ -929,6 +921,14 @@ class FormHandler {
                     // the workflow operation failed
                     return false;
                 }
+                «IF hasTranslatable»
+
+                    if ($isRegularAction && true === $this->hasTranslatableFields) {
+                        if ($this->featureActivationHelper->isEnabled(FeatureActivationHelper::TRANSLATIONS, $this->objectType)) {
+                            $this->processTranslationsForUpdate();
+                        }
+                    }
+                «ENDIF»
                 «IF hasHookSubscribers»
 
                     if ($entity->supportsHookSubscribers()) {

@@ -30,33 +30,30 @@ class Annotations {
         this.app = app
     }
 
-    def generate(Action it, Entity entity, Boolean isBase, Boolean isAdmin) '''
-        «IF !isBase»
-            «actionRoute(entity, isAdmin)»
-            «IF isAdmin»
-                «' '»* @Theme("admin")
+    def generate(Action it, Entity entity, Boolean isAdmin) '''
+        «actionRoute(entity, isAdmin)»
+        «IF null !== entity»
+            «IF it instanceof DisplayAction || it instanceof DeleteAction»
+                «paramConverter(entity)»
             «ENDIF»
-        «ELSE»
-            «IF null !== entity»
-                «IF it instanceof DisplayAction || it instanceof DeleteAction»
-                    «paramConverter(entity)»
-                «ENDIF»
-                «IF it instanceof MainAction»
-                    «' '»* @Cache(expires="+7 days", public=true)
-                «ELSEIF it instanceof ViewAction»
-                    «' '»* @Cache(expires="+2 hours", public=false)
-                «ELSEIF !(it instanceof CustomAction)»
-                    «IF entity.standardFields»
-                        «' '»* @Cache(lastModified="«entity.name.formatForCode».getUpdatedDate()", ETag="'«entity.name.formatForCodeCapital»' ~ «entity.name.formatForCode + '.get' + entity.getPrimaryKey.name.formatForCode + '()'» ~ «entity.name.formatForCode».getUpdatedDate().format('U')")
+            «IF it instanceof MainAction»
+                «' '»* @Cache(expires="+7 days", public=true)
+            «ELSEIF it instanceof ViewAction»
+                «' '»* @Cache(expires="+2 hours", public=false)
+            «ELSEIF !(it instanceof CustomAction)»
+                «IF entity.standardFields»
+                    «' '»* @Cache(lastModified="«entity.name.formatForCode».getUpdatedDate()", ETag="'«entity.name.formatForCodeCapital»' ~ «entity.name.formatForCode + '.get' + entity.getPrimaryKey.name.formatForCode + '()'» ~ «entity.name.formatForCode».getUpdatedDate().format('U')")
+                «ELSE»
+                    «IF it instanceof EditAction»
+                        «' '»* @Cache(expires="+30 minutes", public=false)
                     «ELSE»
-                        «IF it instanceof EditAction»
-                            «' '»* @Cache(expires="+30 minutes", public=false)
-                        «ELSE»
-                            «' '»* @Cache(expires="+12 hours", public=false)
-                        «ENDIF»
+                        «' '»* @Cache(expires="+12 hours", public=false)
                     «ENDIF»
                 «ENDIF»
             «ENDIF»
+        «ENDIF»
+        «IF isAdmin»
+            «' '»* @Theme("admin")
         «ENDIF»
     '''
 
