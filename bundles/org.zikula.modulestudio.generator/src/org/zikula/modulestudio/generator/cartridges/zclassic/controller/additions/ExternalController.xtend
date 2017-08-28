@@ -86,17 +86,18 @@ class ExternalController {
          * )
          «ENDIF»
          *
-         * @param string $objectType  The currently treated object type
-         * @param int    $id          Identifier of the entity to be shown
-         * @param string $source      Source of this call (contentType or scribite)
-         * @param string $displayMode Display mode (link or embed)
+         * @param Request $request     The current request
+         * @param string  $objectType  The currently treated object type
+         * @param int     $id          Identifier of the entity to be shown
+         * @param string  $source      Source of this call (contentType or scribite)
+         * @param string  $displayMode Display mode (link or embed)
          *
          * @return string Desired data output
          */
     '''
 
     def private displaySignature(Application it) '''
-        public function displayAction($objectType, $id, $source, $displayMode)
+        public function displayAction(Request $request, $objectType, $id, $source, $displayMode)
     '''
 
     def private displayBaseImpl(Application it) '''
@@ -120,6 +121,11 @@ class ExternalController {
             return new Response($this->__('No such item.'));
         }
 
+        $template = $request->query->has('template') ? $request->query->get('template', '') : '';
+        if (empty($template)) {
+            $template = 'display.html.twig';
+        }
+
         $templateParameters = [
             'objectType' => $objectType,
             'source' => $source,
@@ -130,7 +136,7 @@ class ExternalController {
         $contextArgs = ['controller' => 'external', 'action' => 'display'];
         $templateParameters = $this->get('«appService».controller_helper')->addTemplateParameters($objectType, $templateParameters, 'controllerAction', $contextArgs);
 
-        return $this->render('@«appName»/External/' . ucfirst($objectType) . '/display.html.twig', $templateParameters);
+        return $this->render('@«appName»/External/' . ucfirst($objectType) . '/' . $template, $templateParameters);
     '''
 
     def private finderBase(Application it) '''

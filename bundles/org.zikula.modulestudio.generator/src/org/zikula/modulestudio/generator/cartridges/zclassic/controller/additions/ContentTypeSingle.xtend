@@ -61,6 +61,11 @@ class ContentTypeSingle {
         protected $displayMode;
 
         /**
+         * @var string
+         */
+        protected $customTemplate;
+
+        /**
          * Item constructor.
          */
         public function __construct()
@@ -126,6 +131,7 @@ class ContentTypeSingle {
 
             $this->id = isset($data['id']) ? $data['id'] : null;
             $this->displayMode = isset($data['displayMode']) ? $data['displayMode'] : 'embed';
+            $this->customTemplate = isset($data['customTemplate']) ? $data['customTemplate'] : null;
         }
 
         /**
@@ -139,7 +145,7 @@ class ContentTypeSingle {
                 return '';
             }
 
-            $controllerReference = new ControllerReference('«appName»:External:display', $this->getDisplayArguments());
+            $controllerReference = new ControllerReference('«appName»:External:display', $this->getDisplayArguments(), ['template' => $this->customTemplate]);
 
             return $this->container->get('fragment.handler')->render($controllerReference, 'inline', []);
         }
@@ -181,7 +187,8 @@ class ContentTypeSingle {
             return [
                 'objectType' => '«getLeadingEntity.name.formatForCode»',
                 'id' => null,
-                'displayMode' => 'embed'
+                'displayMode' => 'embed',
+                'customTemplate' => null
             ];
         }
 
