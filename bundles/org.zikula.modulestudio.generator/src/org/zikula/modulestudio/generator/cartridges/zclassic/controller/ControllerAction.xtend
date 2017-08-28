@@ -55,8 +55,10 @@ class ControllerAction {
          «ELSE»
          * @inheritDoc
          «ENDIF»
-        «IF isBase»«actionDocMethodDocumentation»«ENDIF»
+        «IF isBase»«actionDocMethodDocumentation»
+        «ELSE»
         «new Annotations(app).generate(it, entity, isAdmin)»
+        «ENDIF»
          *
          * @param Request $request Current request instance
         «actionDocMethodParams(entity, it)»
