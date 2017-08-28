@@ -273,6 +273,9 @@ class WorkflowHelper {
                     case 'archive':
                         $title = $this->translator->__('Archive');
                         break;
+                    case 'unarchive':
+                        $title = $this->translator->__('Unarchive');
+                        break;
                 «ENDIF»
                 «IF hasWorkflowState('trashed')»
                     case 'trash':
@@ -346,6 +349,9 @@ class WorkflowHelper {
                 «ENDIF»
                 «IF hasWorkflowState('archived')»
                     case 'archive':
+                        $buttonClass = '';
+                        break;
+                    case 'unarchive':
                         $buttonClass = '';
                         break;
                 «ENDIF»

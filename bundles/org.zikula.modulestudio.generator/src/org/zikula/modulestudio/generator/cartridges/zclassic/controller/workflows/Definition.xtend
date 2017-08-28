@@ -122,7 +122,7 @@ class Definition {
             case 'accepted' : actionsForAccepted
             case 'approved' : actionsForApproved
             case 'suspended' : actionsForSuspended
-            case 'archived' : updateAction
+            case 'archived' : actionsForArchived
             case 'trashed' : ''
             case 'deleted' : ''
         }
@@ -163,6 +163,11 @@ class Definition {
         «updateAction»
         «unsuspendAction»
         «archiveAction»
+    '''
+
+    def private actionsForArchived(ListFieldItem it) '''
+        «updateAction»
+        «unarchiveAction»
     '''
 
     def private deferAction(ListFieldItem it) '''
@@ -232,6 +237,12 @@ class Definition {
     def private archiveAction(ListFieldItem it) '''
         «IF app.hasWorkflowState(wfType, 'archived')»
             «addTransition('archive', it.value, 'archived')»
+        «ENDIF»
+    '''
+
+    def private unarchiveAction(ListFieldItem it) '''
+        «IF app.hasWorkflowState(wfType, 'archived')»
+            «addTransition('unarchive', it.value, 'approved')»
         «ENDIF»
     '''
 

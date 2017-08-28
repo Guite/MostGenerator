@@ -323,6 +323,7 @@ class View {
                     «ENDIF»
                     «IF hasArchive»
                         <option value="archive" title="{{ __('«getWorkflowActionDescription(workflow, 'Archive')»') }}">{{ __('Archive') }}</option>
+                        <option value="unarchive" title="{{ __('«getWorkflowActionDescription(workflow, 'Unarchive')»') }}">{{ __('Unarchive') }}</option>
                     «ENDIF»
                     <option value="delete" title="{{ __('«getWorkflowActionDescription(workflow, 'Delete')»') }}">{{ __('Delete') }}</option>
                 </select>
