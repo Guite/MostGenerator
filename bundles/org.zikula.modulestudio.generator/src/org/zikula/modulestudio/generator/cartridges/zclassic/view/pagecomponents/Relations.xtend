@@ -68,6 +68,7 @@ class Relations {
                 {% if context == 'hookDisplayView' and hasEditPermission %}
                     {% set entityNameTranslated = __('«name.formatForDisplay»') %}
                     {{ pageAddAsset('javascript', zasset('@«app.appName»:js/«app.appName».HookAssignment.js'), 99) }}
+                    {{ pageAddAsset('javascript', zasset('@«app.appName»:js/«app.appName».InlineEditing.js'), 99) }}
                     {{ pageAddAsset('javascript', zasset('@«app.appName»:js/«app.appName».AutoCompletion.js'), 99) }}
                 {% endif %}
             {% endif %}
@@ -151,17 +152,17 @@ class Relations {
                     {% set assignmentInitScript %}
                         <script type="text/javascript">
                         /* <![CDATA[ */
-                            var relationHandler = new Array();
-                            var newItem = {
+                            var inlineEditHandlers = new Array();
+                            var editHandler = {
                                 ot: '«name.formatForCode»',
                                 prefix: '{{ idPrefix }}SelectorDoNew',
                                 moduleName: '«app.appName»',
                                 acInstance: null,
                                 windowInstanceId: null
                             };
-                            relationHandler.push(newItem);
+                            inlineEditHandlers.push(editHandler);
 
-                            «app.vendorAndName»InitRelationItemsForm('«name.formatForCode»', '{{ idPrefix }}', true);
+                            «app.vendorAndName»InitRelationItemsForm('«name.formatForCode»', '{{ idPrefix }}', «hasEditAction.displayBool»);
                         /* ]]> */
                         </script>
                     {% endset %}

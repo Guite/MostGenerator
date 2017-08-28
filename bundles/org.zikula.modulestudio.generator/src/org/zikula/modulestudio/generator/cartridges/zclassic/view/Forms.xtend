@@ -88,6 +88,7 @@ class Forms {
             {{ pageAddAsset('javascript', zasset('@«app.appName»:js/«app.appName».Validation.js'), 98) }}
             {{ pageAddAsset('javascript', zasset('@«app.appName»:js/«app.appName».EditFunctions.js'), 99) }}
             «IF app.needsAutoCompletion»
+                {{ pageAddAsset('javascript', zasset('@«app.appName»:js/«app.appName».InlineEditing.js'), 99) }}
                 {{ pageAddAsset('javascript', zasset('@«app.appName»:js/«app.appName».AutoCompletion.js'), 99) }}
             «ENDIF»
         {% endblock %}
@@ -389,7 +390,7 @@ class Forms {
             <head>
                 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
                 <script type="text/javascript" src="{{ asset('jquery/jquery.min.js') }}"></script>
-                <script type="text/javascript" src="{{ zasset('@«appName»:js/«appName».AutoCompletion.js') }}"></script>
+                <script type="text/javascript" src="{{ zasset('@«appName»:js/«appName».InlineEditing.js') }}"></script>
             </head>
             <body>
                 <script type="text/javascript">

@@ -34,17 +34,13 @@ class AutoCompletion {
     def private generate(Application it) '''
         'use strict';
 
-        «toggleRelatedItemForm»
+        «toggleAutoCompletionFields»
 
-        «resetRelatedItemForm»
-
-        «createRelationWindowInstance»
-
-        «initInlineRelationWindow»
+        «resetAutoCompletion»
 
         «removeRelatedItem»
 
-        «selectRelatedItem»
+        «selectResultItem»
         «IF hasUiHooksProviders»
 
             «selectHookItem»
@@ -52,15 +48,13 @@ class AutoCompletion {
 
         «initRelatedItemsForm»
 
-        «closeWindowFromInside»
-
     '''
 
-    def private toggleRelatedItemForm(Application it) '''
+    def private toggleAutoCompletionFields(Application it) '''
         /**
          * Toggles the fields of an auto completion field.
          */
-        function «vendorAndName»ToggleRelatedItemForm(idPrefix)
+        function «vendorAndName»ToggleAutoCompletionFields(idPrefix)
         {
             // if we don't have a toggle link do nothing
             if (jQuery('#' + idPrefix + 'AddLink').length < 1) {
@@ -75,100 +69,17 @@ class AutoCompletion {
         }
     '''
 
-    def private resetRelatedItemForm(Application it) '''
+    def private resetAutoCompletion(Application it) '''
         /**
          * Resets an auto completion field.
          */
-        function «vendorAndName»ResetRelatedItemForm(idPrefix)
+        function «vendorAndName»ResetAutoCompletion(idPrefix)
         {
             // hide the sub form
-            «vendorAndName»ToggleRelatedItemForm(idPrefix);
+            «vendorAndName»ToggleAutoCompletionFields(idPrefix);
 
             // reset value of the auto completion field
             jQuery('#' + idPrefix + 'Selector').val('');
-        }
-    '''
-
-    def private createRelationWindowInstance(Application it) '''
-        /**
-         * Helper function to create new modal form dialog instances.
-         */
-        function «vendorAndName»CreateRelationWindowInstance(containerElem, useIframe)
-        {
-            var newWindowId;
-
-            // define the new window instance
-            newWindowId = containerElem.attr('id') + 'Dialog';
-            jQuery('<div id="' + newWindowId + '"></div>')
-                .append(
-                    jQuery('<iframe />')
-                        .attr('src', containerElem.attr('href'))
-                        .css({ width: '100%', height: '440px' })
-                )
-                .dialog({
-                    autoOpen: false,
-                    show: {
-                        effect: 'blind',
-                        duration: 1000
-                    },
-                    hide: {
-                        effect: 'explode',
-                        duration: 1000
-                    },
-                    //title: containerElem.title,
-                    width: 600,
-                    height: 500,
-                    modal: false
-                })
-                .dialog('open');
-
-            // return the instance
-            return newWindowId;
-        }
-    '''
-
-    def private initInlineRelationWindow(Application it) '''
-        /**
-         * Observe a link for opening an inline window.
-         */
-        function «vendorAndName»InitInlineRelationWindow(objectType, containerID)
-        {
-            var found, newItem;
-
-            // whether the handler has been found
-            found = false;
-
-            // search for the handler
-            jQuery.each(relationHandler, function (key, singleRelationHandler) {
-                // is this the right one
-                if (singleRelationHandler.prefix === containerID) {
-                    // yes, it is
-                    found = true;
-                    // look whether there is already a window instance
-                    if (null !== singleRelationHandler.windowInstanceId) {
-                        // unset it
-                        jQuery(containerID + 'Dialog').dialog('destroy');
-                    }
-                    // create and assign the new window instance
-                    singleRelationHandler.windowInstanceId = «vendorAndName»CreateRelationWindowInstance(jQuery('#' + containerID), true);
-                }
-            });
-
-            if (false !== found) {
-                return;
-            }
-
-            // if no handler was found create a new one
-            newItem = {
-                ot: objectType,«/*alias: '',*/»
-                prefix: containerID,
-                moduleName: '«appName»',
-                acInstance: null,
-                windowInstanceId: «vendorAndName»CreateRelationWindowInstance(jQuery('#' + containerID), true)
-            };
-
-            // add it to the list of handlers
-            relationHandler.push(newItem);
         }
     '''
 
@@ -194,13 +105,13 @@ class AutoCompletion {
         }
     '''
 
-    def private selectRelatedItem(Application it) '''
+    def private selectResultItem(Application it) '''
         /**
-         * Adds a related item to selection which has been chosen by auto completion.
+         * Adds an item to the current selection which has been chosen by auto completion.
          */
-        function «vendorAndName»SelectRelatedItem(objectType, idPrefix, selectedListItem)
+        function «vendorAndName»SelectResultItem(objectType, idPrefix, selectedListItem)
         {
-            var newItemId, newTitle, includeEditing, editLink, removeLink, elemPrefix, itemPreview, li, editHref, fldPreview, itemIds;
+            var newItemId, newTitle, includeEditing, removeLink, elemPrefix, li, itemIds;
 
             itemIds = jQuery('#' + idPrefix).val();
             if (itemIds !== '') {
@@ -216,44 +127,30 @@ class AutoCompletion {
             newTitle = selectedListItem.title;
             includeEditing = !!((jQuery('#' + idPrefix + 'Mode').val() == '1'));
             elemPrefix = idPrefix + 'Reference_' + newItemId;
-            itemPreview = '';
-
-            if (selectedListItem.image != '') {
-                itemPreview = selectedListItem.image;
-            }
 
             li = jQuery('<li />', { id: elemPrefix, text: newTitle });
             if (true === includeEditing) {
-                var editHref = jQuery('#' + idPrefix + 'SelectorDoNew').attr('href') + '&id=' + newItemId;
-                editLink = jQuery('<a />', { id: elemPrefix + 'Edit', href: editHref, text: 'edit' });
-                li.append(editLink);
-                editLink.html(' ' + editImage);
+                li.append(«vendorAndName»CreateInlineEditLink(objectType, idPrefix, elemPrefix, newItemId));
             }
 
             removeLink = jQuery('<a />', { id: elemPrefix + 'Remove', href: 'javascript:«vendorAndName»RemoveRelatedItem(\'' + idPrefix + '\', ' + newItemId + ');', text: 'remove' });
             li.append(removeLink);
             removeLink.html(' ' + removeImage);
 
-            if (itemPreview !== '') {
-                fldPreview = jQuery('<div>', { id: elemPrefix + 'preview', name: idPrefix + 'preview' });
-                fldPreview.html(itemPreview);
-                li.append(fldPreview);
-                itemPreview = '';
+            if (selectedListItem.image !== '') {
+                li.append(jQuery('<div>', { id: elemPrefix + 'Preview', name: idPrefix + 'Preview' }).html(selectedListItem.image));
             }
 
             jQuery('#' + idPrefix + 'ReferenceList').append(li);
 
             if (true === includeEditing) {
-                jQuery('#' + elemPrefix + 'Edit').click(function (event) {
-                    event.preventDefault();
-                    «vendorAndName»InitInlineRelationWindow(objectType, idPrefix + 'Reference_' + newItemId + 'Edit');
-                });
+                «vendorAndName»InitInlineEditLink(objectType, idPrefix, elemPrefix, newItemId);
             }
 
             itemIds += newItemId;
             jQuery('#' + idPrefix).val(itemIds);
 
-            «vendorAndName»ResetRelatedItemForm(idPrefix);
+            «vendorAndName»ResetAutoCompletion(idPrefix);
         }
     '''
 
@@ -263,7 +160,7 @@ class AutoCompletion {
          */
         function «vendorAndName»SelectHookItem(objectType, idPrefix, selectedListItem)
         {
-            «vendorAndName»ResetRelatedItemForm(idPrefix);
+            «vendorAndName»ResetAutoCompletion(idPrefix);
             «vendorAndName»AttachHookObject(jQuery('#' + idPrefix + 'AddLink'), selectedListItem.id);
         }
     '''
@@ -274,34 +171,34 @@ class AutoCompletion {
          */
         function «vendorAndName»InitRelationItemsForm(objectType, idPrefix, includeEditing)
         {
-            var acOptions, acDataSet, itemIds, itemIdsArr, acUrl«IF hasUiHooksProviders», isHookAttacher«ENDIF»;
+            var acOptions, acDataSet, acUrl«IF hasUiHooksProviders», isHookAttacher«ENDIF»;
 
             // update identifier of hidden field for easier usage in JS
             jQuery('#' + idPrefix + 'Multiple').prev().attr('id', idPrefix);
 
             // add handling for the toggle link if existing
             jQuery('#' + idPrefix + 'AddLink').click(function (event) {
-                «vendorAndName»ToggleRelatedItemForm(idPrefix);
+                «vendorAndName»ToggleAutoCompletionFields(idPrefix);
             });
 
             // add handling for the cancel button
             jQuery('#' + idPrefix + 'SelectorDoCancel').click(function (event) {
-                «vendorAndName»ResetRelatedItemForm(idPrefix);
+                «vendorAndName»ResetAutoCompletion(idPrefix);
             });
 
             // clear values and ensure starting state
-            «vendorAndName»ResetRelatedItemForm(idPrefix);
+            «vendorAndName»ResetAutoCompletion(idPrefix);
 
             «IF hasUiHooksProviders»
 
                 isHookAttacher = idPrefix.startsWith('hookAssignment');
             «ENDIF»
-            jQuery.each(relationHandler, function (key, singleRelationHandler) {
-                if (singleRelationHandler.prefix !== (idPrefix + 'SelectorDoNew') || null !== singleRelationHandler.acInstance) {
+            jQuery.each(inlineEditHandlers, function (key, editHandler) {
+                if (editHandler.prefix !== (idPrefix + 'SelectorDoNew') || null !== editHandler.acInstance) {
                     return;
                 }
 
-                singleRelationHandler.acInstance = 'yes';
+                editHandler.acInstance = 'yes';
 
                 jQuery('#' + idPrefix + 'Selector').autocomplete({
                     minLength: 1,
@@ -329,7 +226,7 @@ class AutoCompletion {
                             «ENDIF»
                         }
 
-                        jQuery.getJSON(Routing.generate(singleRelationHandler.moduleName.toLowerCase() + '_ajax_getitemlistautocompletion', acUrlArgs), function(data) {
+                        jQuery.getJSON(Routing.generate(editHandler.moduleName.toLowerCase() + '_ajax_getitemlistautocompletion', acUrlArgs), function(data) {
                             response(data);
                         });
                     },
@@ -349,10 +246,10 @@ class AutoCompletion {
                             if (true === isHookAttacher) {
                                 «vendorAndName»SelectHookItem(objectType, idPrefix, ui.item);
                             } else {
-                                «vendorAndName»SelectRelatedItem(objectType, idPrefix, ui.item);
+                                «vendorAndName»SelectResultItem(objectType, idPrefix, ui.item);
                             }
                         «ELSE»
-                            «vendorAndName»SelectRelatedItem(objectType, idPrefix, ui.item);
+                            «vendorAndName»SelectResultItem(objectType, idPrefix, ui.item);
                         «ENDIF»
 
                         return false;
@@ -365,85 +262,7 @@ class AutoCompletion {
                 };
             });
 
-            if (!includeEditing || jQuery('#' + idPrefix + 'SelectorDoNew').length < 1) {
-                return;
-            }
-
-            // from here inline editing will be handled
-            jQuery('#' + idPrefix + 'SelectorDoNew').attr('href', jQuery('#' + idPrefix + 'SelectorDoNew').attr('href') + '?raw=1&idp=' + idPrefix + 'SelectorDoNew');
-            jQuery('#' + idPrefix + 'SelectorDoNew').click(function (event) {
-                event.preventDefault();
-                «vendorAndName»InitInlineRelationWindow(objectType, idPrefix + 'SelectorDoNew');
-            });
-
-            itemIds = jQuery('#' + idPrefix).val();
-            itemIdsArr = itemIds.split(',');
-            jQuery.each(itemIdsArr, function (key, existingId) {
-                var elemPrefix;
-
-                if (existingId) {
-                    elemPrefix = idPrefix + 'Reference_' + existingId + 'Edit';
-                    jQuery('#' + elemPrefix).attr('href', jQuery('#' + elemPrefix).attr('href') + '?raw=1&idp=' + elemPrefix);
-                    jQuery('#' + elemPrefix).click(function (event) {
-                        event.preventDefault();
-                        «vendorAndName»InitInlineRelationWindow(objectType, elemPrefix);
-                    });
-                }
-            });
-        }
-    '''
-
-    def private closeWindowFromInside(Application it) '''
-        /**
-         * Closes an iframe from the document displayed in it.
-         */
-        function «vendorAndName»CloseWindowFromInside(idPrefix, itemId, searchTerm)
-        {
-            // if there is no parent window do nothing
-            if (window.parent === '') {
-                return;
-            }
-
-            // search for the handler of the current window
-            jQuery.each(window.parent.relationHandler, function (key, singleRelationHandler) {
-                var selector;
-
-                // look if this handler is the right one
-                if (singleRelationHandler.prefix === idPrefix) {
-                    // look whether there is an auto completion instance
-                    if (null !== singleRelationHandler.acInstance) {
-                        selector = window.parent.jQuery('#' + idPrefix.replace('DoNew', '')).first();
-
-                        // show a message
-                        window.parent.«vendorAndName»SimpleAlert(selector, window.parent.Translator.__('Information'), window.parent.Translator.__('Action has been completed.'), 'actionDoneAlert', 'success');
-
-                        // check if a new item has been created
-                        if (itemId > 0) {
-                            // activate auto completion
-                            if (searchTerm == '') {
-                                searchTerm = selector.val();
-                            }
-                            if (searchTerm != '') {
-                                selector.autocomplete('option', 'autoFocus', true);
-                                selector.autocomplete('search', searchTerm);
-                                window.setTimeout(function() {
-                                    var suggestions = selector.autocomplete('widget')[0].children;
-                                    if (suggestions.length === 1) {
-                                        window.parent.jQuery(suggestions[0]).click();
-                                    }
-                                    selector.autocomplete('option', 'autoFocus', false);
-                                }, 1000);
-                            }
-                        }
-                    }
-
-                    // look whether there is a window instance
-                    if (null !== singleRelationHandler.windowInstanceId) {
-                        // close it
-                        window.parent.jQuery('#' + singleRelationHandler.windowInstanceId).dialog('close');
-                    }
-                }
-            });
+            «vendorAndName»InitInlineEditingButtons(objectType, idPrefix, includeEditing);
         }
     '''
 }

@@ -250,7 +250,7 @@ class Relations {
             «IF !insideLoader»
                 var editImage = '{{ editImage|raw }}';
                 var removeImage = '{{ removeImage|raw }}';
-                var relationHandler = new Array();
+                var inlineEditHandlers = new Array();
             «ENDIF»
             «FOR relation : incomingJoins»«relation.initJs(it, true, insideLoader)»«ENDFOR»
             «FOR relation : outgoingJoins»«relation.initJs(it, false, insideLoader)»«ENDFOR»
@@ -278,14 +278,14 @@ class Relations {
         val uniqueNameForJs = getUniqueRelationNameForJs(app, targetEntity, many, incoming, relationAliasName)
         val linkEntity = if (targetEntity == target) source else target
         if (!insideLoader) '''
-            var newItem = {
+            var editHandler = {
                 ot: '«linkEntity.name.formatForCode»',«/*alias: '«relationAliasName»',*/»
                 prefix: '«uniqueNameForJs»SelectorDoNew',
                 moduleName: '«linkEntity.application.appName»',
                 acInstance: null,
                 windowInstanceId: null
             };
-            relationHandler.push(newItem);
+            inlineEditHandlers.push(editHandler);
         '''
         else '''
             «app.vendorAndName»InitRelationItemsForm('«linkEntity.name.formatForCode»', '«uniqueNameForJs»', «(stageCode > 1).displayBool»);

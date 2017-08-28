@@ -344,6 +344,7 @@ class Layout {
                         {{ pageAddAsset('javascript', zasset('@«appName»:js/«appName».Validation.js'), 98) }}
                         {{ pageAddAsset('javascript', zasset('@«appName»:js/«appName».EditFunctions.js'), 99) }}
                         «IF needsAutoCompletion»
+                            {{ pageAddAsset('javascript', zasset('@«appName»:js/«appName».InlineEditing.js'), 99) }}
                             {{ pageAddAsset('javascript', zasset('@«appName»:js/«appName».AutoCompletion.js'), 99) }}
                         «ENDIF»
                     {% endif %}

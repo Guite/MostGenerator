@@ -9,6 +9,7 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.controller.javascri
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.javascript.Finder
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.javascript.GeoFunctions
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.javascript.HistoryFunctions
+import org.zikula.modulestudio.generator.cartridges.zclassic.controller.javascript.InlineEditing
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.javascript.ItemSelector
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
@@ -36,6 +37,7 @@ class JavaScriptFiles {
             new EditFunctions().generate(it, fsa)
         }
         if (needsAutoCompletion) {
+            new InlineEditing().generate(it, fsa)
             new AutoCompletion().generate(it, fsa)
         }
         if (generateExternalControllerAndFinder) {
