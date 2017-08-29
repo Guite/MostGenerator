@@ -38,7 +38,7 @@ class Annotations {
             «ENDIF»
             «IF it instanceof MainAction»
                 «' '»* @Cache(expires="+7 days", public=true)
-            «ELSEIF it instanceof ViewAction»
+            «ELSEIF it instanceof ViewAction || it instanceof DeleteAction»
                 «' '»* @Cache(expires="+2 hours", public=false)
             «ELSEIF it instanceof EditAction»
                 «' '»* @Cache(expires="+30 minutes", public=false)
