@@ -16,6 +16,7 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.controller.ServiceD
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.Uploads
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.Workflow
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.additions.AuthenticationMethod
+import org.zikula.modulestudio.generator.cartridges.zclassic.controller.additions.BlockDetail
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.additions.BlockList
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.additions.BlockModeration
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.additions.ContentTypeList
@@ -200,6 +201,9 @@ class ZclassicGenerator implements IGenerator {
             println('Generating blocks')
             if (generateListBlock) {
                 new BlockList().generate(it, fsa)
+            }
+            if (generateDetailBlock && hasDisplayActions) {
+                new BlockDetail().generate(it, fsa)
             }
             if (needsModerationBlock) {
                 new BlockModeration().generate(it, fsa)

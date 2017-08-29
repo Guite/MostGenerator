@@ -188,7 +188,7 @@ class ContentTypeList {
             $this->sorting = isset($data['sorting']) ? $data['sorting'] : 'default';
             $this->amount = isset($data['amount']) ? $data['amount'] : 1;
             $this->template = isset($data['template']) ? $data['template'] : 'itemlist_' . $this->objectType . '_display.html.twig';
-            $this->customTemplate = isset($data['customTemplate']) ? $data['customTemplate'] : '';
+            $this->customTemplate = isset($data['customTemplate']) ? $data['customTemplate'] : null;
             $this->filter = isset($data['filter']) ? $data['filter'] : '';
             «IF hasCategorisableEntities»
                 $featureActivationHelper = $this->container->get('«appService».feature_activation_helper');
@@ -328,7 +328,7 @@ class ContentTypeList {
         protected function getDisplayTemplate()
         {
             $templateFile = $this->template;
-            if ($templateFile == 'custom') {
+            if ($templateFile == 'custom' && null !== $this->customTemplate && $this->customTemplate != '') {
                 $templateFile = $this->customTemplate;
             }
 
@@ -372,7 +372,7 @@ class ContentTypeList {
                 'sorting' => 'default',
                 'amount' => 1,
                 'template' => 'itemlist_display.html.twig',
-                'customTemplate' => '',
+                'customTemplate' => null,
                 'filter' => ''
             ];
         }

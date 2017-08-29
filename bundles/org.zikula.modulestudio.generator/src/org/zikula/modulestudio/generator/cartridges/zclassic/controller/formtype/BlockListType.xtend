@@ -10,7 +10,8 @@ import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
-class ListBlock {
+class BlockListType {
+
     extension FormattingExtensions = new FormattingExtensions
     extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
@@ -19,7 +20,6 @@ class ListBlock {
     extension Utils = new Utils
 
     FileHelper fh = new FileHelper
-    Application app
     String nsSymfonyFormType = 'Symfony\\Component\\Form\\Extension\\Core\\Type\\'
 
     /**
@@ -29,7 +29,6 @@ class ListBlock {
         if (!generateListBlock) {
             return
         }
-        app = it
         generateClassPair(fsa, getAppSourceLibPath + 'Block/Form/Type/ItemListBlockType.php',
             fh.phpFileContent(it, listBlockTypeBaseImpl), fh.phpFileContent(it, listBlockTypeImpl)
         )
@@ -166,7 +165,7 @@ class ListBlock {
         {
             $builder->add('objectType', «IF getAllEntities.size == 1»Hidden«ELSE»Choice«ENDIF»Type::class, [
                 'label' => $this->__('Object type') . ':',
-                'empty_data' => '«app.leadingEntity.name.formatForCode»',
+                'empty_data' => '«leadingEntity.name.formatForCode»',
                 'attr' => [
                     'title' => $this->__('If you change this please save the block once to reload the parameters below.')
                 ],
@@ -212,7 +211,7 @@ class ListBlock {
                 'multiple' => $hasMultiSelection,
                 'module' => '«appName»',
                 'entity' => ucfirst($options['object_type']) . 'Entity',
-                'entityCategoryClass' => '«app.appNamespace»\Entity\\' . ucfirst($options['object_type']) . 'CategoryEntity'
+                'entityCategoryClass' => '«appNamespace»\Entity\\' . ucfirst($options['object_type']) . 'CategoryEntity'
             ]);
         }
     '''

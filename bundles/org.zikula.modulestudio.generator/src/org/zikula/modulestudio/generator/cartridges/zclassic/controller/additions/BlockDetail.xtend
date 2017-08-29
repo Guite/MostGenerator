@@ -1,0 +1,187 @@
+package org.zikula.modulestudio.generator.cartridges.zclassic.controller.additions
+
+import de.guite.modulestudio.metamodel.Application
+import org.eclipse.xtext.generator.IFileSystemAccess
+import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype.BlockDetailType
+import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
+import org.zikula.modulestudio.generator.cartridges.zclassic.view.additions.BlockDetailView
+import org.zikula.modulestudio.generator.extensions.FormattingExtensions
+import org.zikula.modulestudio.generator.extensions.ModelExtensions
+import org.zikula.modulestudio.generator.extensions.NamingExtensions
+import org.zikula.modulestudio.generator.extensions.Utils
+
+class BlockDetail {
+
+    extension FormattingExtensions = new FormattingExtensions
+    extension ModelExtensions = new ModelExtensions
+    extension NamingExtensions = new NamingExtensions
+    extension Utils = new Utils
+
+    FileHelper fh = new FileHelper
+
+    def generate(Application it, IFileSystemAccess fsa) {
+        println('Generating block for single objects')
+        generateClassPair(fsa, getAppSourceLibPath + 'Block/ItemBlock.php',
+            fh.phpFileContent(it, detailBlockBaseClass), fh.phpFileContent(it, detailBlockImpl)
+        )
+        new BlockDetailType().generate(it, fsa)
+        new BlockDetailView().generate(it, fsa)
+    }
+
+    def private detailBlockBaseClass(Application it) '''
+        namespace «appNamespace»\Block\Base;
+
+        use Symfony\Component\HttpKernel\Controller\ControllerReference;
+        use Zikula\BlocksModule\AbstractBlockHandler;
+        use «appNamespace»\Block\Form\Type\ItemBlockType;
+
+        /**
+         * Generic item detail block base class.
+         */
+        abstract class AbstractItemBlock extends AbstractBlockHandler
+        {
+            «detailBlockBaseImpl»
+        }
+    '''
+
+    def private detailBlockBaseImpl(Application it) '''
+        «display»
+
+        «getDisplayArguments»
+
+        «modify»
+
+        /**
+         * Returns default settings for this block.
+         *
+         * @return array The default settings
+         */
+        protected function getDefaults()
+        {
+            return [
+                'objectType' => '«getLeadingEntity.name.formatForCode»',
+                'id' => null,
+                'template' => 'item_display.html.twig',
+                'customTemplate' => null
+            ];
+        }
+    '''
+
+    def private display(Application it) '''
+        /**
+         * Display the block content.
+         *
+         * @param array $properties The block properties array
+         *
+         * @return array|string
+         */
+        public function display(array $properties)
+        {
+            // only show block content if the user has the required permissions
+            if (!$this->hasPermission('«appName»:ItemBlock:', "$properties[title]::", ACCESS_OVERVIEW)) {
+                return false;
+            }
+
+            // set default values for all params which are not properly set
+            $defaults = $this->getDefaults();
+            $properties = array_merge($defaults, $properties);
+
+            if (null === $properties['id'] || empty($properties['id'])) {
+                return '';
+            }
+
+            $controllerHelper = $this->get('«appService».controller_helper');
+            $contextArgs = ['name' => 'detail'];
+            if (!isset($properties['objectType']) || !in_array($properties['objectType'], $controllerHelper->getObjectTypes('block', $contextArgs))) {
+                $properties['objectType'] = $controllerHelper->getDefaultObjectType('block', $contextArgs);
+            }
+
+            $controllerReference = new ControllerReference('«appName»:External:display', $this->getDisplayArguments($properties), ['template' => $properties['customTemplate']]);
+
+            return $this->container->get('fragment.handler')->render($controllerReference, 'inline', []);
+        }
+    '''
+
+    def private getDisplayArguments(Application it) '''
+        /**
+         * Returns common arguments for displaying the selected object using the external controller.
+         *
+         * @param array $properties The block properties array
+         *
+         * @return array Display arguments
+         */
+        protected function getDisplayArguments(array $properties)
+        {
+            return [
+                'objectType' => $properties['objectType'],
+                'id' => $properties['id'],
+                'source' => 'block',
+                'displayMode' => 'embed'
+            ];
+        }
+    '''
+
+    def private modify(Application it) '''
+        /**
+         * Returns the fully qualified class name of the block's form class.
+         *
+         * @return string Template path
+         */
+        public function getFormClassName()
+        {
+            return ItemBlockType::class;
+        }
+
+        /**
+         * Returns any array of form options.
+         *
+         * @return array Options array
+         */
+        public function getFormOptions()
+        {
+            $objectType = '«leadingEntity.name.formatForCode»';
+
+            $request = $this->get('request_stack')->getCurrentRequest();
+            if ($request->attributes->has('blockEntity')) {
+                $blockEntity = $request->attributes->get('blockEntity');
+                if (is_object($blockEntity) && method_exists($blockEntity, 'getProperties')) {
+                    $blockProperties = $blockEntity->getProperties();
+                    if (isset($blockProperties['objectType'])) {
+                        $objectType = $blockProperties['objectType'];
+                    } else {
+                        // set default options for new block creation
+                        $blockEntity->setProperties($this->getDefaults());
+                    }
+                }
+            }
+
+            return [
+                'object_type' => $objectType
+            ];
+        }
+
+        /**
+         * Returns the template used for rendering the editing form.
+         *
+         * @return string Template path
+         */
+        public function getFormTemplate()
+        {
+            return '@«appName»/Block/item_modify.html.twig';
+        }
+    '''
+
+    def private detailBlockImpl(Application it) '''
+        namespace «appNamespace»\Block;
+
+        use «appNamespace»\Block\Base\AbstractItemBlock;
+
+        /**
+         * Generic item detail block implementation class.
+         */
+        class ItemBlock extends AbstractItemBlock
+        {
+            // feel free to extend the item detail block here
+        }
+    '''
+}

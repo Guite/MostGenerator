@@ -595,6 +595,21 @@ class ServiceDefinitions {
                         - { name: form.type }
                 «ENDIF»
         «ENDIF»
+        «IF generateDetailBlock»
+
+            «modPrefix».form.type.block.item:
+                class: «nsBase.replace('Form\\Type\\', '')»Block\Form\Type\ItemBlockType
+                arguments:
+                    - "@translator.default"
+                    - "@«modPrefix».entity_factory"
+                    - "@«modPrefix».entity_display_helper"
+                «IF targets('2.0')»
+                    tags: ['form.type']
+                «ELSE»
+                    tags:
+                        - { name: form.type }
+                «ENDIF»
+        «ENDIF»
         «IF generateExternalControllerAndFinder»
             «FOR entity : getAllEntities.filter[hasDisplayAction]»
 

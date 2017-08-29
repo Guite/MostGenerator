@@ -2,7 +2,6 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.controller.additio
 
 import de.guite.modulestudio.metamodel.Application
 import org.eclipse.xtext.generator.IFileSystemAccess
-import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype.Finder
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.additions.ExternalView
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
@@ -12,6 +11,7 @@ import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
+import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype.FinderType
 
 class ExternalController {
 
@@ -33,7 +33,7 @@ class ExternalController {
         generateClassPair(fsa, getAppSourceLibPath + 'Controller/ExternalController.php',
             fh.phpFileContent(it, externalBaseClass), fh.phpFileContent(it, externalImpl)
         )
-        new Finder().generate(it, fsa)
+        new FinderType().generate(it, fsa)
         new ExternalView().generate(it, fsa)
     }
 
@@ -121,8 +121,8 @@ class ExternalController {
             return new Response($this->__('No such item.'));
         }
 
-        $template = $request->query->has('template') ? $request->query->get('template', '') : '';
-        if (empty($template)) {
+        $template = $request->query->has('template') ? $request->query->get('template', null) : null;
+        if (null === $template || $template == '') {
             $template = 'display.html.twig';
         }
 

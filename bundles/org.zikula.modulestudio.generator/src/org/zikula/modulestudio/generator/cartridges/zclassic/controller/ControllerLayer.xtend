@@ -13,7 +13,6 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.controller.addition
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.additions.ExternalController
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.additions.Routing
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.additions.Scribite
-import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype.QuickNavigation
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.extensions.CollectionUtils
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
@@ -24,6 +23,7 @@ import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
+import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype.QuickNavigationType
 
 class ControllerLayer {
 
@@ -58,7 +58,7 @@ class ControllerLayer {
         new LinkContainer().generate(it, fsa)
         new Routing().generate(it, fsa)
         if (hasViewActions) {
-            new QuickNavigation().generate(it, fsa)
+            new QuickNavigationType().generate(it, fsa)
         }
 
         if (generateExternalControllerAndFinder) {

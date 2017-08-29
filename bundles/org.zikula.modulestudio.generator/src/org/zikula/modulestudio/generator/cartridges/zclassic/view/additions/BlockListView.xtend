@@ -7,7 +7,7 @@ import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
-class BlocksView {
+class BlockListView {
 
     extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
@@ -42,7 +42,7 @@ class BlocksView {
     '''
 
     def private editTemplate(Application it) '''
-        {# Purpose of this template: Edit block for generic item list #}
+        {# Purpose of this template: Edit block for generic item list view #}
         {{ form_row(form.objectType) }}
         «IF hasCategorisableEntities»
             {% if isCategorisable %}

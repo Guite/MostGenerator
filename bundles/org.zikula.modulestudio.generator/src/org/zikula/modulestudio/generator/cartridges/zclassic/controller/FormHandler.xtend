@@ -15,8 +15,6 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.controller.form.Aut
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.form.ListFieldTransformer
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.form.TranslationListener
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.form.UploadFileTransformer
-import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype.Config
-import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype.EditEntity
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype.field.ArrayType
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype.field.AutoCompletionRelationType
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype.field.ColourType
@@ -34,6 +32,8 @@ import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
+import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype.ConfigType
+import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype.EditEntityType
 
 class FormHandler {
 
@@ -66,7 +66,7 @@ class FormHandler {
             }
             // form types
             for (entity : entities.filter[it instanceof MappedSuperClass || (it as Entity).hasEditAction]) {
-                new EditEntity().generate(entity, fsa)
+                new EditEntityType().generate(entity, fsa)
             }
             if (!entities.filter[e|!e.fields.filter(ArrayField).empty].empty) {
                 new ArrayType().generate(it, fsa)
@@ -99,7 +99,7 @@ class FormHandler {
             }
         }
         // additional form types
-        new Config().generate(it, fsa)
+        new ConfigType().generate(it, fsa)
     }
 
     /**

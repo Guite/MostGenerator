@@ -60,6 +60,13 @@ class GeneratorSettingsExtensions {
     }
 
     /**
+     * Determines whether a generic detail view block should be generated or not.
+     */
+    def generateDetailBlock(Application it) {
+        if (hasSettings) getSettings.generateDetailBlock else true
+    }
+
+    /**
      * Determines whether a moderation block should be generated or not.
      */
     def generateModerationBlock(Application it) {

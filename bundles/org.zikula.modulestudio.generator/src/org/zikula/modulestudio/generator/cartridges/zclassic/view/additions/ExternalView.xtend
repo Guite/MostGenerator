@@ -98,8 +98,10 @@ class ExternalView {
             </div>
 
             {# you can distinguish the context like this: #}
-            {# % if source == 'contentType' %}
-                ...
+            {# % if source == 'block' %}
+                ... detail block
+            {% elseif source == 'contentType' %}
+                ... detail content type
             {% elseif source == 'scribite' %}
                 ...
             {% endif % #}

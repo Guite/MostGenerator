@@ -2,18 +2,20 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.controller.additio
 
 import de.guite.modulestudio.metamodel.Application
 import org.eclipse.xtext.generator.IFileSystemAccess
-import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype.ListBlock
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
-import org.zikula.modulestudio.generator.cartridges.zclassic.view.additions.BlocksView
+import org.zikula.modulestudio.generator.cartridges.zclassic.view.additions.BlockListView
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
+import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
+import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype.BlockListType
 
 class BlockList {
 
     extension FormattingExtensions = new FormattingExtensions
+    extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension ModelExtensions = new ModelExtensions
     extension NamingExtensions = new NamingExtensions
@@ -26,9 +28,8 @@ class BlockList {
         generateClassPair(fsa, getAppSourceLibPath + 'Block/ItemListBlock.php',
             fh.phpFileContent(it, listBlockBaseClass), fh.phpFileContent(it, listBlockImpl)
         )
-        new BlocksView().generate(it, fsa)
-        // form type class
-        new ListBlock().generate(it, fsa)
+        new BlockListType().generate(it, fsa)
+        new BlockListView().generate(it, fsa)
     }
 
     def private listBlockBaseClass(Application it) '''
@@ -59,8 +60,6 @@ class BlockList {
              */
             protected $categorisableObjectTypes;
 
-        «ENDIF»
-        «IF hasCategorisableEntities»
             /**
              * ItemListBlock constructor.
              *
@@ -94,11 +93,10 @@ class BlockList {
                 'sorting' => 'default',
                 'amount' => 5,
                 'template' => 'itemlist_display.html.twig',
-                'customTemplate' => '',
+                'customTemplate' => null,
                 'filter' => ''
             ];
         }
-
         «IF hasCategorisableEntities»
 
             /**
@@ -230,7 +228,7 @@ class BlockList {
         protected function getDisplayTemplate(array $properties)
         {
             $templateFile = $properties['template'];
-            if ($templateFile == 'custom') {
+            if ($templateFile == 'custom' && null !== $properties['customTemplate'] && $properties['customTemplate'] != '') {
                 $templateFile = $properties['customTemplate'];
             }
 
@@ -238,9 +236,13 @@ class BlockList {
             $templating = $this->get('templating');
 
             $templateOptions = [
-                'ContentType/' . $templateForObjectType,
+                «IF generateListContentType && !targets('2.0')»
+                    'ContentType/' . $templateForObjectType,
+                «ENDIF»
                 'Block/' . $templateForObjectType,
-                'ContentType/' . $templateFile,
+                «IF generateListContentType && !targets('2.0')»
+                    'ContentType/' . $templateFile,
+                «ENDIF»
                 'Block/' . $templateFile,
                 'Block/itemlist.html.twig'
             ];
