@@ -38,11 +38,11 @@ class Annotations {
             «ENDIF»
             «IF it instanceof MainAction»
                 «' '»* @Cache(expires="+7 days", public=true)
-            «ELSEIF it instanceof ViewAction || it instanceof DeleteAction»
+            «ELSEIF it instanceof ViewAction»
                 «' '»* @Cache(expires="+2 hours", public=false)
             «ELSEIF it instanceof EditAction»
                 «' '»* @Cache(expires="+30 minutes", public=false)
-            «ELSEIF it instanceof DisplayAction»
+            «ELSEIF it instanceof DisplayAction || it instanceof DeleteAction»
                 «IF entity.standardFields»
                     «' '»* @Cache(lastModified="«entity.name.formatForCode».getUpdatedDate()", ETag="'«entity.name.formatForCodeCapital»' ~ «entity.name.formatForCode + '.get' + entity.getPrimaryKey.name.formatForCode + '()'» ~ «entity.name.formatForCode».getUpdatedDate().format('U')")
                 «ELSE»
