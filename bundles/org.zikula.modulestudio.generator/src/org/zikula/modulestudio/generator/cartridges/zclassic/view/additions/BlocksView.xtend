@@ -2,16 +2,23 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.view.additions
 
 import de.guite.modulestudio.metamodel.Application
 import org.eclipse.xtext.generator.IFileSystemAccess
+import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
+import org.zikula.modulestudio.generator.extensions.Utils
 
 class BlocksView {
 
+    extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension NamingExtensions = new NamingExtensions
+    extension Utils = new Utils
 
     def generate(Application it, IFileSystemAccess fsa) {
         val templatePath = getViewPath + 'Block/'
+        if (!generateListContentType || targets('2.0')) {
+            new CommonIntegrationTemplates().generate(it, fsa, templatePath)
+        }
         val templateExtension = '.html.twig'
         var fileName = 'itemlist' + templateExtension
         if (!shouldBeSkipped(templatePath + fileName)) {
