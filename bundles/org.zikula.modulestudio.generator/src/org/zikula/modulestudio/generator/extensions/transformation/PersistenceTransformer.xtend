@@ -393,11 +393,6 @@ class PersistenceTransformer {
         val factory = ModuleStudioFactory.eINSTANCE
 
         varContainer.vars += factory.createTextVar => [
-            name = 'googleMapsApiKey'
-            value = ''
-            documentation = 'The API key required for Google Maps.'
-        ]
-        varContainer.vars += factory.createTextVar => [
             name = 'defaultLatitude'
             value = '0.00'
             documentation = 'The default latitude.'
@@ -407,32 +402,20 @@ class PersistenceTransformer {
             value = '0.00'
             documentation = 'The default longitude.'
         ]
-        val mapTypeVar = factory.createListVar => [
-            name = 'defaultMapType'
-            value = 'roadmap'
-            documentation = 'The default map type.'
-        ]
-        mapTypeVar.items += factory.createListVarItem => [
-            name = 'Roadmap'
-            ^default = true
-        ]
-        mapTypeVar.items += factory.createListVarItem => [
-            name = 'Satellite'
-            ^default = false
-        ]
-        mapTypeVar.items += factory.createListVarItem => [
-            name = 'Hybrid'
-            ^default = false
-        ]
-        mapTypeVar.items += factory.createListVarItem => [
-            name = 'Physical'
-            ^default = false
-        ]
-        varContainer.vars += mapTypeVar
         varContainer.vars += factory.createIntVar => [
             name = 'defaultZoomLevel'
             value = '18'
             documentation = 'The default zoom level.'
+        ]
+        varContainer.vars += factory.createTextVar => [
+            name = 'tileLayerUrl'
+            value = 'https://{s}.tile.osm.org/{z}/{x}/{y}.png'
+            documentation = 'URL of tile layer to use. See http://leaflet-extras.github.io/leaflet-providers/preview/ for examples.'
+        ]
+        varContainer.vars += factory.createTextVar => [
+            name = 'tileLayerAttribution'
+            value = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            documentation = 'Attribution for tile layer to use.'
         ]
 
         for (entity : getGeographicalEntities) {

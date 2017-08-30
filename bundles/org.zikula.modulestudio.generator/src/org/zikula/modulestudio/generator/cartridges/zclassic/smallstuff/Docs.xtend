@@ -6,6 +6,7 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.document
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.documents.License_LGPL
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
+import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
@@ -14,6 +15,7 @@ class Docs {
 
     extension FormattingExtensions = new FormattingExtensions
     extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
+    extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension ModelExtensions = new ModelExtensions
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
@@ -103,6 +105,9 @@ class Docs {
     def private Install(Application it) '''
         # INSTALLATION INSTRUCTIONS
 
+        «IF needsComposerInstall»
+            0. If the application's root folder does not contain a `vendor/` folder yet, run `composer install --no-dev` to install dependencies.
+        «ENDIF»
         «IF isSystemModule»
             1. Copy «appName» into your `system` directory. Afterwards you should have a folder named `«relativeAppRootPath»/Resources`.
         «ELSE»

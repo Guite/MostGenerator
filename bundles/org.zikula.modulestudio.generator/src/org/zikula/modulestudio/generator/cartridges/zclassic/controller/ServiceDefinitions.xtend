@@ -716,7 +716,7 @@ class ServiceDefinitions {
                 «IF hasViewActions»
                     - "@form.factory"
                 «ENDIF»
-                «IF hasViewActions || hasGeographical»
+                «IF hasViewActions»
                     - "@zikula_extensions_module.api.variable"
                 «ENDIF»
                 «IF hasGeographical»

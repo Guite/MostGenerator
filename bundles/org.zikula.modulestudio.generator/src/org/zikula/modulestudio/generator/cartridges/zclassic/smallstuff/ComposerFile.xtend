@@ -63,7 +63,10 @@ class ComposerFile {
         },
         "require": {
             «var dependencies = referredApplications.filter[dependencyType == ApplicationDependencyType.REQUIREMENT]»
-            "php": ">=5.5.9"«IF !dependencies.empty»,«ENDIF»
+            "php": ">=5.5.9"«IF hasGeographical || !dependencies.empty»,«ENDIF»
+            «IF hasGeographical»
+                "drmonty/leaflet": "*"«IF !dependencies.empty»,«ENDIF»
+            «ENDIF»
             «IF !dependencies.empty»
                 «FOR referredApp : dependencies»
                     «dependency(referredApp)»«IF referredApp != dependencies.last»,«ENDIF»
@@ -110,6 +113,14 @@ class ComposerFile {
                     «FOR entity : getAllEntities»«entity.permissionSchema(appName)»«ENDFOR»
                     "«appName»::Ajax": "::"
                 }
+            }
+        },
+        "config": {
+            "vendor-dir": "vendor",
+            "preferred-install": "dist",
+            "optimize-autoloader": true,
+            "platform": {
+                "php": "5.5.9"
             }
         }
     '''

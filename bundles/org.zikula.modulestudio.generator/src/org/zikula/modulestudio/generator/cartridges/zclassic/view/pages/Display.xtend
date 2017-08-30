@@ -195,9 +195,7 @@ class Display {
         «IF geographical»
             {% block footer %}
                 {{ parent() }}
-                {{ pageAddAsset('javascript', 'https://maps.google.com/maps/api/js?key=' ~ getModVar('«appName»', 'googleMapsApiKey', '') ~ '&amp;language=' ~ app.request.locale ~ '&amp;sensor=false') }}
-                {{ pageAddAsset('javascript', app.request.basePath ~ '/plugins/Mapstraction/lib/vendor/mxn/mxn.js?(googlev3)') }}
-                <div id="geographicalInfo" class="hidden" data-context="display" data-latitude="{{ «objName».latitude|«appName.formatForDB»_geoData }}" data-longitude="{{ «objName».longitude|«appName.formatForDB»_geoData }}" data-map-type="{{ getModVar('«appName»', 'defaultMapType', 'roadmap') }}" data-zoom-level="{{ getModVar('«appName»', 'defaultZoomLevel', 18) }}"></div>
+                «application.includeLeaflet('display', objName)»
             {% endblock %}
         «ENDIF»
     '''

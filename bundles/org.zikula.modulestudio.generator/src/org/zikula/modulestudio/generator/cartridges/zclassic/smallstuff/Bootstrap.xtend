@@ -3,11 +3,13 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff
 import de.guite.modulestudio.metamodel.Application
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
+import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 
 class Bootstrap {
 
     extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
+    extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension NamingExtensions = new NamingExtensions
 
     FileHelper fh = new FileHelper
@@ -52,6 +54,10 @@ class Bootstrap {
 
     def private bootstrapBaseImpl(Application it) '''
         «bootstrapDocs»
+        «IF needsComposerInstall»
+
+            require_once __DIR__ . '/vendor/autoload.php';
+        «ENDIF»
     '''
 
     def private bootstrapImpl(Application it) '''

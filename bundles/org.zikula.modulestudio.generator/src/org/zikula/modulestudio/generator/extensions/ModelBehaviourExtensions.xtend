@@ -349,4 +349,11 @@ class ModelBehaviourExtensions {
             $this->translator = $translator;
         }
     '''
+
+    /**
+     * Checks whether a composer execution is required before installing the application.
+     */
+    def needsComposerInstall(Application it) {
+        hasGeographical
+    }
 }

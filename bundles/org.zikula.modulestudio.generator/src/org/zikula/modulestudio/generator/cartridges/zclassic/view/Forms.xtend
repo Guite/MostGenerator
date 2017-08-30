@@ -105,7 +105,7 @@ class Forms {
         {% endblock %}
         {% block footer %}
             {{ parent() }}
-            «formTemplateJS(actionName)»
+            «formTemplateJS»
         {% endblock %}
     '''
 
@@ -264,16 +264,9 @@ class Forms {
         «ENDIF»
     '''
 
-    def private formTemplateJS(Entity it, String actionName) '''
+    def private formTemplateJS(Entity it) '''
         «IF geographical»
-            {% set useGeoLocation = getModVar('«app.appName»', 'enable«name.formatForCodeCapital»GeoLocation', false) %}
-            {{ pageAddAsset('javascript', 'https://maps.google.com/maps/api/js?key=' ~ getModVar('«app.appName»', 'googleMapsApiKey', '') ~ '&amp;language=' ~ app.request.locale ~ '&amp;sensor=false') }}
-            {{ pageAddAsset('javascript', app.request.basePath ~ '/plugins/Mapstraction/lib/vendor/mxn/mxn.js?(googlev3)') }}
-            {% if useGeoLocation == true %}
-                {{ pageAddAsset('javascript', app.request.basePath ~ '/plugins/Mapstraction/lib/vendor/mxn/mxn.geocoder.js') }}
-                {{ pageAddAsset('javascript', app.request.basePath ~ '/plugins/Mapstraction/lib/vendor/mxn/mxn.googlev3.geocoder.js') }}
-            {% endif %}
-            <div id="geographicalInfo" class="hidden" data-context="edit" data-latitude="{{ «name.formatForDB».latitude|«app.appName.formatForDB»_geoData }}" data-longitude="{{ «name.formatForDB».longitude|«app.appName.formatForDB»_geoData }}" data-map-type="{{ getModVar('«app.appName»', 'defaultMapType', 'roadmap') }}" data-zoom-level="{{ getModVar('«app.appName»', 'defaultZoomLevel', 18) }}" data-use-geolocation="{% if mode == 'create' and useGeoLocation == true %}true{% else %}false{% endif %}"></div>
+            «app.includeLeaflet('edit', name.formatForDB)»
         «ENDIF»
         {% set formInitScript %}
             <script type="text/javascript">
