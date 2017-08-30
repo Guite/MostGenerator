@@ -13,6 +13,7 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.controller.addition
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.additions.ExternalController
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.additions.Routing
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.additions.Scribite
+import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype.QuickNavigationType
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.extensions.CollectionUtils
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
@@ -20,10 +21,8 @@ import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
-import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
-import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype.QuickNavigationType
 
 class ControllerLayer {
 
@@ -32,7 +31,6 @@ class ControllerLayer {
     extension FormattingExtensions = new FormattingExtensions
     extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     extension ModelExtensions = new ModelExtensions
-    extension ModelJoinExtensions = new ModelJoinExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
@@ -100,7 +98,7 @@ class ControllerLayer {
 
                 «new LoggableHistory().generate(it, true)»
             «ENDIF»
-            «IF hasEditAction && app.needsAutoCompletion»
+            «IF hasEditAction && app.needsInlineEditing»
 
                 «new InlineRedirect().generate(it, true)»
             «ENDIF»
@@ -132,7 +130,7 @@ class ControllerLayer {
             use Zikula\Component\SortableColumns\SortableColumns;
         «ENDIF»
         use Zikula\Core\Controller\AbstractController;
-        «IF hasEditAction && app.needsAutoCompletion»
+        «IF hasEditAction && app.needsInlineEditing»
             use Zikula\Core\Response\PlainResponse;
         «ENDIF»
         «IF !skipHookSubscribers»
@@ -197,7 +195,7 @@ class ControllerLayer {
 
                 «new LoggableHistory().generate(it, false)»
             «ENDIF»
-            «IF hasEditAction && app.needsAutoCompletion»
+            «IF hasEditAction && app.needsInlineEditing»
 
                 «new InlineRedirect().generate(it, false)»
             «ENDIF»

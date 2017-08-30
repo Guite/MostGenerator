@@ -24,6 +24,7 @@ class ControllerExtensions {
 
     extension FormattingExtensions = new FormattingExtensions
     extension ModelExtensions = new ModelExtensions
+    extension ModelJoinExtensions = new ModelJoinExtensions
     extension ModelInheritanceExtensions = new ModelInheritanceExtensions
     extension Utils = new Utils
 
@@ -185,13 +186,6 @@ class ControllerExtensions {
         false
     }
 
-    /**
-     * Returns a list of all custom actions contained by a given entity.
-     */
-    def getCustomActions(Entity it) {
-        actions.filter(CustomAction)
-    }
-
     def getEditingType(JoinRelationship it) {
         switch (it) {
             OneToOneRelationship:
@@ -212,56 +206,65 @@ class ControllerExtensions {
      * This mapping is done to have a more appropriate logic inside the generator.
      * Possible values are:
      *    0    Nothing is being done
-     *    1    Select related object
-     *    2    Create and edit related object
-     *    3    Combination of 1 and 2
+     *    1    Select related objects
+     *    2    Select, create and edit related objects
      */
-    def dispatch getEditStageCode(JoinRelationship it, Boolean incoming) {
+    def getEditStageCode(JoinRelationship it, Boolean incoming) {
         switch getEditingType {
             case ACTIVE_NONE_PASSIVE_CHOOSE:
                 if (!incoming) 0 else 1
             case ACTIVE_NONE_PASSIVE_EDIT:
-                if (!incoming) 0 else 3
+                if (!incoming) 0 else 2
             case ACTIVE_CHOOSE_PASSIVE_CHOOSE:
                 if (!incoming) 1 else 1
             case ACTIVE_CHOOSE_PASSIVE_NONE:
-                if (!incoming) 1 else 3 // invalid --> default as fall-back
+                if (!incoming) 1 else 0
             case ACTIVE_EDIT_PASSIVE_CHOOSE:
                 if (!incoming) 2 else 1
             case ACTIVE_EDIT_PASSIVE_EDIT:
-                if (!incoming) 2 else 3 // default
+                if (!incoming) 2 else 2
             case ACTIVE_EDIT_PASSIVE_NONE:
-                if (!incoming) 2 else 3 // invalid --> default as fall-back
+                if (!incoming) 2 else 0
             default:
-                if (!incoming) 2 else 3
+                if (!incoming) 2 else 2
         }
     }
 
     /**
-     * Retrieves an integer value defining which relation edit type will be implemented.
-     * This mapping is done to have a more appropriate logic inside the generator.
-     * Possible values are:
-     *    0    Nothing is being done
-     *    1    Select related object
-     *    2    Create and edit related object
-     *    3    Combination of 1 and 2
+     * Checks for whether a certain relationship side uses auto completion or not.
      */
-    def dispatch getEditStageCode(ManyToManyRelationship it, Boolean incoming) {
-        switch editType {
-            case ACTIVE_NONE_PASSIVE_CHOOSE:
-                if (!incoming) 0 else 1
-            case ACTIVE_NONE_PASSIVE_EDIT:
-                if (!incoming) 0 else 3
-            case ACTIVE_CHOOSE_PASSIVE_NONE:
-                if (!incoming) 1 else 0
-            case ACTIVE_EDIT_PASSIVE_CHOOSE:
-                if (!incoming) 3 else 1
-            case ACTIVE_EDIT_PASSIVE_EDIT:
-                if (!incoming) 3 else 3 // default
-            case ACTIVE_EDIT_PASSIVE_NONE:
-                if (!incoming) 3 else 0
-            default:
-                if (!incoming) 3 else 3
+    def usesAutoCompletion(JoinRelationship it, boolean useTarget) {
+        switch it.useAutoCompletion {
+            case NONE: false
+            case ONLY_SOURCE_SIDE: !useTarget
+            case ONLY_TARGET_SIDE: useTarget
+            case BOTH_SIDES: true
+            default: false
         }
+    }
+
+    /**
+     * Returns an internal name for the field type used for a relationship side
+     * with in-line editing enabled.
+     */
+    def getFieldTypeForInlineEditing(JoinRelationship it, Boolean incoming) {
+        if (usesAutoCompletion(!incoming)) {
+            return 'autocomplete'
+        }
+        val isMultiValued = isManySide(!incoming)
+        if ((incoming && !expandedSource) || (!incoming && !expandedTarget)) {
+            return 'select-' + (if (isMultiValued) 'multi' else 'single')
+        }
+        if (isMultiValued) {
+            return 'checkbox'
+        }
+        return 'radio'
+    }
+
+    /**
+     * Checks whether inline editing is required or not.
+     */
+    def needsInlineEditing(Application it) {
+        hasUiHooksProviders || !getJoinRelations.filter[getEditStageCode(false) > 1 || getEditStageCode(true) > 1].empty
     }
 }

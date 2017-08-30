@@ -50,6 +50,7 @@ class InlineRedirect {
             return false;
         }
 
+        $formattedTitle = '';
         $searchTerm = '';
         «IF hasStringFieldsEntity»
             if (!empty($id)) {
@@ -66,6 +67,7 @@ class InlineRedirect {
                     $«name.formatForCode» = $repository->selectById($id);
                 «ENDIF»
                 if (null !== $«name.formatForCode») {
+                    $formattedTitle = $this->get('«application.appService».entity_display_helper')->getFormattedTitle($«name.formatForCode»);
                     $searchTerm = $«name.formatForCode»->get«getStringFieldsEntity.head.name.formatForCodeCapital»();
                 }
             }
@@ -73,6 +75,7 @@ class InlineRedirect {
 
         $templateParameters = [
             'itemId' => $id,
+            'formattedTitle' => $formattedTitle,
             'searchTerm' => $searchTerm,
             'idPrefix' => $idPrefix,
             'commandName' => $commandName

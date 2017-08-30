@@ -1175,9 +1175,6 @@ class EditEntityType {
             «FOR geoFieldName : newArrayList('latitude', 'longitude')»
                 $builder->add('«geoFieldName»', GeoType::class, [
                     'label' => $this->__('«geoFieldName.toFirstUpper»') . ':',
-                    'attr' => [
-                        'class' => 'validate-number'
-                    ],
                     'required' => false
                 ]);
             «ENDFOR»
@@ -1291,7 +1288,7 @@ class EditEntityType {
         «val isExpanded = if (outgoing) expandedTarget else expandedSource»
         $builder->add('«aliasName.formatForCode»', '«formType(autoComplete)»Type', [
             «IF autoComplete»
-                «val uniqueNameForJs = getUniqueRelationNameForJs(app, (if (outgoing) source else target), isManySide(outgoing), (if (!isManyToMany) outgoing else !outgoing), aliasName.formatForCodeCapital)»
+                «val uniqueNameForJs = getUniqueRelationNameForJs((if (outgoing) source else target), isManySide(outgoing), (if (!isManyToMany) outgoing else !outgoing), aliasName.formatForCodeCapital)»
                 'object_type' => '«relatedEntity.name.formatForCode»',
                 «IF isManySide(outgoing)»
                     'by_reference' => false,
@@ -1465,13 +1462,17 @@ class EditEntityType {
             if (!$options['has_moderate_permission']) {
                 return;
             }
+            «IF !incoming.empty || !outgoing.empty»
+                if ($options['inline_usage']) {
+                    return;
+                }
+            «ENDIF»
 
             $builder->add('moderationSpecificCreator', UserLiveSearchType::class, [
                 'mapped' => false,
                 'label' => $this->__('Creator') . ':',
                 'attr' => [
                     'maxlength' => 11,
-                    'class' => ' validate-digits',
                     'title' => $this->__('Here you can choose a user which will be set as creator')
                 ],
                 'empty_data' => 0,

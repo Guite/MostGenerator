@@ -46,7 +46,7 @@ class AutoCompletion {
             «selectHookItem»
         «ENDIF»
 
-        «initRelatedItemsForm»
+        «initAutoCompletion»
 
     '''
 
@@ -109,9 +109,9 @@ class AutoCompletion {
         /**
          * Adds an item to the current selection which has been chosen by auto completion.
          */
-        function «vendorAndName»SelectResultItem(objectType, idPrefix, selectedListItem)
+        function «vendorAndName»SelectResultItem(objectType, idPrefix, selectedListItem, includeEditing)
         {
-            var newItemId, newTitle, includeEditing, removeLink, elemPrefix, li, itemIds;
+            var newItemId, newTitle, elemPrefix, li, itemIds;
 
             itemIds = jQuery('#' + idPrefix).val();
             if (itemIds !== '') {
@@ -125,26 +125,35 @@ class AutoCompletion {
 
             newItemId = selectedListItem.id;
             newTitle = selectedListItem.title;
-            includeEditing = !!((jQuery('#' + idPrefix + 'Mode').val() == '1'));
             elemPrefix = idPrefix + 'Reference_' + newItemId;
 
-            li = jQuery('<li />', { id: elemPrefix, text: newTitle });
+            li = jQuery('<li />', {
+                id: elemPrefix,
+                text: newTitle
+            });
             if (true === includeEditing) {
                 li.append(«vendorAndName»CreateInlineEditLink(objectType, idPrefix, elemPrefix, newItemId));
             }
 
-            removeLink = jQuery('<a />', { id: elemPrefix + 'Remove', href: 'javascript:«vendorAndName»RemoveRelatedItem(\'' + idPrefix + '\', ' + newItemId + ');', text: 'remove' });
-            li.append(removeLink);
-            removeLink.html(' ' + removeImage);
+            li.append(
+                jQuery('<a />', {
+                    id: elemPrefix + 'Remove',
+                    href: 'javascript:«vendorAndName»RemoveRelatedItem(\'' + idPrefix + '\', ' + newItemId + ');',
+                    text: 'remove'
+                }).append('<span />', { class: 'fa fa-trash-o' })
+            );
 
             if (selectedListItem.image !== '') {
-                li.append(jQuery('<div>', { id: elemPrefix + 'Preview', name: idPrefix + 'Preview' }).html(selectedListItem.image));
+                li.append(jQuery('<div />', {
+                    id: elemPrefix + 'Preview',
+                    name: idPrefix + 'Preview'
+                }).html(selectedListItem.image));
             }
 
             jQuery('#' + idPrefix + 'ReferenceList').append(li);
 
             if (true === includeEditing) {
-                «vendorAndName»InitInlineEditLink(objectType, idPrefix, elemPrefix, newItemId);
+                «vendorAndName»InitInlineEditLink(objectType, idPrefix, elemPrefix, newItemId, 'autocomplete');
             }
 
             itemIds += newItemId;
@@ -165,11 +174,11 @@ class AutoCompletion {
         }
     '''
 
-    def private initRelatedItemsForm(Application it) '''
+    def private initAutoCompletion(Application it) '''
         /**
-         * Initialises a relation field section with autocompletion and optional edit capabilities.
+         * Initialises auto completion for a relation field.
          */
-        function «vendorAndName»InitRelationItemsForm(objectType, idPrefix, includeEditing)
+        function «vendorAndName»InitAutoCompletion(objectType, idPrefix, includeEditing)
         {
             var acOptions, acDataSet, acUrl«IF hasUiHooksProviders», isHookAttacher«ENDIF»;
 
@@ -193,12 +202,10 @@ class AutoCompletion {
 
                 isHookAttacher = idPrefix.startsWith('hookAssignment');
             «ENDIF»
-            jQuery.each(inlineEditHandlers, function (key, editHandler) {
-                if (editHandler.prefix !== (idPrefix + 'SelectorDoNew') || null !== editHandler.acInstance) {
+            jQuery.each(«vendorAndName»InlineEditHandlers, function (key, editHandler) {
+                if (editHandler.prefix !== (idPrefix + 'SelectorDoNew') || editHandler.inputType !== 'autocomplete') {
                     return;
                 }
-
-                editHandler.acInstance = 'yes';
 
                 jQuery('#' + idPrefix + 'Selector').autocomplete({
                     minLength: 1,
@@ -215,15 +222,7 @@ class AutoCompletion {
                             fragment: request.term
                         };
                         if (jQuery('#' + idPrefix).length > 0) {
-                            «IF hasUiHooksProviders»
-                                if (true === isHookAttacher) {
-                                    acUrlArgs.exclude = jQuery('#' + idPrefix + 'ExcludedIds').val();
-                                } else {
-                                    acUrlArgs.exclude = jQuery('#' + idPrefix).val();
-                                }
-                            «ELSE»
-                                acUrlArgs.exclude = jQuery('#' + idPrefix).val();
-                            «ENDIF»
+                            acUrlArgs.exclude = jQuery('#' + idPrefix).val();
                         }
 
                         jQuery.getJSON(Routing.generate(editHandler.moduleName.toLowerCase() + '_ajax_getitemlistautocompletion', acUrlArgs), function(data) {
@@ -246,23 +245,21 @@ class AutoCompletion {
                             if (true === isHookAttacher) {
                                 «vendorAndName»SelectHookItem(objectType, idPrefix, ui.item);
                             } else {
-                                «vendorAndName»SelectResultItem(objectType, idPrefix, ui.item);
+                                «vendorAndName»SelectResultItem(objectType, idPrefix, ui.item, includeEditing);
                             }
                         «ELSE»
-                            «vendorAndName»SelectResultItem(objectType, idPrefix, ui.item);
+                            «vendorAndName»SelectResultItem(objectType, idPrefix, ui.item, includeEditing);
                         «ENDIF»
 
                         return false;
                     }
                 })
                 .autocomplete('instance')._renderItem = function(ul, item) {
-                    return jQuery('<div class="suggestion">')
+                    return jQuery('<div />', { class: 'suggestion' })
                         .append('<div class="media"><div class="media-left"><a href="javascript:void(0)">' + item.image + '</a></div><div class="media-body"><p class="media-heading">' + item.title + '</p>' + item.description + '</div></div>')
                         .appendTo(ul);
                 };
             });
-
-            «vendorAndName»InitInlineEditingButtons(objectType, idPrefix, includeEditing);
         }
     '''
 }

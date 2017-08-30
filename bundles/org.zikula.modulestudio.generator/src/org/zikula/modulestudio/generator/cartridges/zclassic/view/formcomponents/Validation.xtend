@@ -1,13 +1,10 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.view.formcomponents
 
 import de.guite.modulestudio.metamodel.AbstractDateField
-import de.guite.modulestudio.metamodel.AbstractIntegerField
 import de.guite.modulestudio.metamodel.DateField
 import de.guite.modulestudio.metamodel.DatetimeField
-import de.guite.modulestudio.metamodel.DecimalField
 import de.guite.modulestudio.metamodel.DerivedField
 import de.guite.modulestudio.metamodel.EmailField
-import de.guite.modulestudio.metamodel.FloatField
 import de.guite.modulestudio.metamodel.ListField
 import de.guite.modulestudio.metamodel.StringField
 import de.guite.modulestudio.metamodel.StringRole
@@ -26,24 +23,20 @@ class Validation {
 
     def fieldValidationCssClass(DerivedField it) '''«IF unique»validate-unique«ENDIF»«IF null !== cssClass && !cssClass.equals('')» «cssClass»«ENDIF»«fieldValidationCssClassAdditions»'''
     def fieldValidationCssClassOptional(UploadField it)'''«IF unique»validate-unique«ENDIF»«IF null !== cssClass && !cssClass.equals('')» «cssClass»«ENDIF»«fieldValidationCssClassAdditions»'''
+
     def private fieldValidationCssClassAdditions(DerivedField it) {
         switch it {
-            AbstractIntegerField: ' validate-digits'
-            DecimalField: ' validate-number'
-            FloatField: ' validate-number'
-            StringField case it.role == StringRole.COLOUR: ' validate-nospace validate-htmlcolour ' + entity.application.appName.formatForDB + 'ColourPicker'
+            StringField case it.role == StringRole.COLOUR: ' validate-nospace validate-colour ' + entity.application.appName.formatForDB + '-colour-picker'
             StringField case it.nospace: ' validate-nospace'
             TextField case it.nospace: ' validate-nospace'
-            EmailField case it.nospace: ' validate-nospace validate-email'
-            EmailField: ' validate-email'
-            UrlField case it.nospace: ' validate-nospace validate-url'
-            UrlField: ' validate-url'
+            EmailField case it.nospace: ' validate-nospace'
+            UrlField case it.nospace: ' validate-nospace'
             UploadField case it.nospace: ' validate-nospace validate-upload'
             UploadField: ' validate-upload'
             ListField case it.nospace: ' validate-nospace'
-            ListField: ''
             TimeField: fieldValidationCssClassAdditionsDefault
             AbstractDateField: '''«fieldValidationCssClassAdditionsDefault»«fieldValidationCssClassDateRange»'''
+            default: ''
         }
     }
 

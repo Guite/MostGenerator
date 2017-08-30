@@ -72,11 +72,6 @@ class Relations {
             return ''''''
         }
 
-        /*if (useTarget && !isManyToMany) {
-            /* Exclude parent view for 1:1 and 1:n for now - see https://github.com/Guite/MostGenerator/issues/10 * /
-            return ''''''
-        }*/
-
         val hasEdit = (stageCode > 1)
         val editSnippet = if (hasEdit) 'Edit' else ''
 
@@ -95,7 +90,7 @@ class Relations {
             val relationAliasName = getRelationAliasName(useTarget).formatForCodeCapital
             val relationAliasReverse = getRelationAliasName(!useTarget).formatForCodeCapital
             val incomingForUniqueRelationName = if (!isManyToMany) useTarget else !useTarget
-            val uniqueNameForJs = getUniqueRelationNameForJs(app, otherEntity, many, incomingForUniqueRelationName, relationAliasName)
+            val uniqueNameForJs = getUniqueRelationNameForJs(otherEntity, many, incomingForUniqueRelationName, relationAliasName)
             return includeStatementForEditTemplate(templateName, ownEntity, otherEntity, useTarget, relationAliasName, relationAliasReverse, uniqueNameForJs)
         }
 
@@ -209,13 +204,6 @@ class Relations {
 
     def private component_ItemList(JoinRelationship it, Entity targetEntity, Boolean many, Boolean includeEditing) '''
         {# purpose of this template: inclusion template for display of related «targetEntity.getEntityNameSingularPlural(many).formatForDisplay» #}
-        «IF includeEditing»
-            {% set editImage = '<span class="fa fa-pencil-square-o"></span>' %}
-        «ENDIF»
-        {% set removeImage = '<span class="fa fa-trash-o"></span>' %}
-
-        <input type="hidden" id="{{ idPrefix }}Mode" name="{{ idPrefix }}Mode" value="«IF includeEditing»1«ELSE»0«ENDIF»" />
-
         <ul id="{{ idPrefix }}ReferenceList">
         {% if item«IF many»s«ENDIF» is defined«IF many» and items is iterable«ELSE» and item.getKey()|default«ENDIF» %}
         «IF many»
@@ -225,9 +213,9 @@ class Relations {
         <li id="{{ idPrefixItem }}">
             {{ item|«app.appName.formatForDB»_formattedTitle }}
             «IF includeEditing»
-                <a id="{{ idPrefixItem }}Edit" href="{{ path('«app.appName.formatForDB»_«targetEntity.name.formatForDB»_' ~ routeArea ~ 'edit'«targetEntity.routeParams('item', true)») }}">{{ editImage|raw }}</a>
+                <a id="{{ idPrefixItem }}Edit" href="{{ path('«app.appName.formatForDB»_«targetEntity.name.formatForDB»_' ~ routeArea ~ 'edit'«targetEntity.routeParams('item', true)») }}"><span class="fa fa-pencil-square-o"></span></a>
             «ENDIF»
-             <a id="{{ idPrefixItem }}Remove" href="javascript:«app.vendorAndName»RemoveRelatedItem('{{ idPrefix }}', '{{ item.getKey() }}');">{{ removeImage|raw }}</a>
+             <a id="{{ idPrefixItem }}Remove" href="javascript:«app.vendorAndName»RemoveRelatedItem('{{ idPrefix }}', '{{ item.getKey() }}');"><span class="fa fa-trash-o"></span></a>
             «IF targetEntity.hasImageFieldsEntity»
                 <br />
                 «val imageFieldName = targetEntity.getImageFieldsEntity.head.name.formatForCode»
@@ -244,13 +232,12 @@ class Relations {
     '''
 
     def initJs(Entity it, Boolean insideLoader) '''
-        «val incomingJoins = getEditableJoinRelations(true).filter[usesAutoCompletion(false)]»
-        «val outgoingJoins = getEditableJoinRelations(false).filter[usesAutoCompletion(true)]»
+        «val incomingJoins = getEditableJoinRelations(true).filter[getEditStageCode(true) > 0]»
+        «val outgoingJoins = getEditableJoinRelations(false).filter[getEditStageCode(false) > 0]»
         «IF !incomingJoins.empty || !outgoingJoins.empty»
             «IF !insideLoader»
-                var editImage = '{{ editImage|raw }}';
-                var removeImage = '{{ removeImage|raw }}';
-                var inlineEditHandlers = new Array();
+                var «app.vendorAndName»InlineEditHandlers = [];
+                var «app.vendorAndName»EditHandler = null;
             «ENDIF»
             «FOR relation : incomingJoins»«relation.initJs(it, true, insideLoader)»«ENDFOR»
             «FOR relation : outgoingJoins»«relation.initJs(it, false, insideLoader)»«ENDFOR»
@@ -258,37 +245,29 @@ class Relations {
     '''
 
     def private initJs(JoinRelationship it, Entity targetEntity, Boolean incoming, Boolean insideLoader) {
-        val stageCode = getEditStageCode(incoming)
-        if (stageCode < 1) {
-            return ''''''
-        }
-
         val useTarget = !incoming
-        /*if (useTarget && !isManyToMany) {
-            /* Exclude parent view for 1:1 and 1:n for now - see https://github.com/Guite/MostGenerator/issues/10 * /
-            return ''''''
-        }*/
-
-        if (!usesAutoCompletion(useTarget)) {
+        val stageCode = getEditStageCode(incoming)
+        if (stageCode < 1 || (!usesAutoCompletion(useTarget) && stageCode < 2)) {
             return ''''''
         }
 
         val relationAliasName = getRelationAliasName(!incoming).formatForCodeCapital
         val many = isManySide(useTarget)
-        val uniqueNameForJs = getUniqueRelationNameForJs(app, targetEntity, many, incoming, relationAliasName)
+        val uniqueNameForJs = getUniqueRelationNameForJs(targetEntity, many, incoming, relationAliasName)
         val linkEntity = if (targetEntity == target) source else target
         if (!insideLoader) '''
-            var editHandler = {
-                ot: '«linkEntity.name.formatForCode»',«/*alias: '«relationAliasName»',*/»
+            «app.vendorAndName»EditHandler = {
+                alias: '«relationAliasName.toFirstLower»',
                 prefix: '«uniqueNameForJs»SelectorDoNew',
                 moduleName: '«linkEntity.application.appName»',
-                acInstance: null,
+                objectType: '«linkEntity.name.formatForCode»',
+                inputType: '«getFieldTypeForInlineEditing(incoming)»',
                 windowInstanceId: null
             };
-            inlineEditHandlers.push(editHandler);
+            «app.vendorAndName»InlineEditHandlers.push(«app.vendorAndName»EditHandler);
         '''
         else '''
-            «app.vendorAndName»InitRelationItemsForm('«linkEntity.name.formatForCode»', '«uniqueNameForJs»', «(stageCode > 1).displayBool»);
+            «app.vendorAndName»InitRelationHandling('«linkEntity.name.formatForCode»', '«relationAliasName.toFirstLower»', '«uniqueNameForJs»', «(stageCode > 1).displayBool», '«getFieldTypeForInlineEditing(incoming)»');
         '''
     }
 

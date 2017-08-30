@@ -3,13 +3,19 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.controller.javascr
 import de.guite.modulestudio.metamodel.AbstractDateField
 import de.guite.modulestudio.metamodel.Application
 import org.eclipse.xtext.generator.IFileSystemAccess
+import org.zikula.modulestudio.generator.extensions.ControllerExtensions
+import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
+import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class EditFunctions {
 
+    extension ControllerExtensions = new ControllerExtensions
+    extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension ModelExtensions = new ModelExtensions
+    extension ModelJoinExtensions = new ModelJoinExtensions
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
 
@@ -41,6 +47,10 @@ class EditFunctions {
 
         «ENDIF»
         «initEditForm»
+        «IF needsInlineEditing || needsAutoCompletion»
+
+            «initRelationHandling»
+        «ENDIF»
 
     '''
 
@@ -128,19 +138,21 @@ class EditFunctions {
             editForm = jQuery('.«vendorAndName.toLowerCase»-edit-form').first();
             editedObjectType = editForm.attr('id').replace('EditForm', '');
             editedEntityId = entityId;
+            «IF hasStandardFieldEntities»
 
-            if (jQuery('#moderationFieldsSection').length > 0) {
-                jQuery('#moderationFieldsContent').addClass('hidden');
-                jQuery('#moderationFieldsSection legend').addClass('pointer').click(function (event) {
-                    if (jQuery('#moderationFieldsContent').hasClass('hidden')) {
-                        jQuery('#moderationFieldsContent').removeClass('hidden');
-                        jQuery(this).find('i').removeClass('fa-expand').addClass('fa-compress');
-                    } else {
-                        jQuery('#moderationFieldsContent').addClass('hidden');
-                        jQuery(this).find('i').removeClass('fa-compress').addClass('fa-expand');
-                    }
-                });
-            }
+                if (jQuery('#moderationFieldsSection').length > 0) {
+                    jQuery('#moderationFieldsContent').addClass('hidden');
+                    jQuery('#moderationFieldsSection legend').addClass('pointer').click(function (event) {
+                        if (jQuery('#moderationFieldsContent').hasClass('hidden')) {
+                            jQuery('#moderationFieldsContent').removeClass('hidden');
+                            jQuery(this).find('i').removeClass('fa-expand').addClass('fa-compress');
+                        } else {
+                            jQuery('#moderationFieldsContent').addClass('hidden');
+                            jQuery(this).find('i').removeClass('fa-compress').addClass('fa-expand');
+                        }
+                    });
+                }
+            «ENDIF»
 
             var allFormFields = editForm.find('input, select, textarea');
             allFormFields.change(function (event) {
@@ -154,7 +166,7 @@ class EditFunctions {
                 }
             });
             editForm.find('button[type=submit]').bind('click keypress', function (event) {
-                triggerValidation = !jQuery(this).attr('formnovalidate');
+                triggerValidation = !jQuery(this).prop('formnovalidate');
             });
             editForm.submit(«vendorAndName»HandleFormSubmit);
 
@@ -163,4 +175,23 @@ class EditFunctions {
             }
         }
     '''
+
+    def private initRelationHandling(Application it) '''
+        /**
+         * Initialises a relation field section with «IF needsAutoCompletion»autocompletion «ENDIF»«IF needsInlineEditing»«IF needsAutoCompletion»and «ENDIF»optional edit capabilities«ENDIF».
+         */
+        function «vendorAndName»InitRelationHandling(objectType, alias, idPrefix, includeEditing, inputType)
+        {
+            «IF needsAutoCompletion»
+                if (inputType == 'autocomplete') {
+                    «vendorAndName»InitAutoCompletion(objectType, idPrefix, includeEditing);
+                }
+            «ENDIF»
+            «IF needsInlineEditing»
+                if (includeEditing) {
+                    «vendorAndName»InitInlineEditingButtons(objectType, alias, idPrefix, inputType);
+                }
+            «ENDIF»
+        }
+	'''
 }

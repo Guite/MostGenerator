@@ -224,7 +224,7 @@ class Layout {
                         <input type="text" id="{{ idPrefix }}Selector" name="{{ idPrefix }}Selector" autocomplete="off" />
                         <input type="button" id="{{ idPrefix }}SelectorDoCancel" name="{{ idPrefix }}SelectorDoCancel" value="{{ __('Cancel') }}" class="btn btn-default «appName.toLowerCase»-inline-button" />
                         {% if create_url != '' %}
-                            <a id="{{ idPrefix }}SelectorDoNew" href="{{ create_url }}" title="{{ __f('Create new %name%', {'%name%': entityNameTranslated}) }}" class="btn btn-default «appName.toLowerCase»-inline-button">{{ __('Create') }}</a>
+                            <a id="{{ idPrefix }}SelectorDoNew" href="{{ create_url }}" title="{{ __f('Create new %name%', {'%name%': entityNameTranslated}) }}" class="btn btn-default «appName.toLowerCase»-inline-button"><i class="fa fa-plus"></i> {{ __('Create') }}</a>
                         {% endif %}
                         <noscript><p>{{ __('This function requires JavaScript activated!') }}</p></noscript>
                     </div>
@@ -343,8 +343,10 @@ class Layout {
                     {% if 'edit' in app.request.get('_route') %}
                         {{ pageAddAsset('javascript', zasset('@«appName»:js/«appName».Validation.js'), 98) }}
                         {{ pageAddAsset('javascript', zasset('@«appName»:js/«appName».EditFunctions.js'), 99) }}
-                        «IF needsAutoCompletion»
+                        «IF needsInlineEditing»
                             {{ pageAddAsset('javascript', zasset('@«appName»:js/«appName».InlineEditing.js'), 99) }}
+                        «ENDIF»
+                        «IF needsAutoCompletion»
                             {{ pageAddAsset('javascript', zasset('@«appName»:js/«appName».AutoCompletion.js'), 99) }}
                         «ENDIF»
                     {% endif %}

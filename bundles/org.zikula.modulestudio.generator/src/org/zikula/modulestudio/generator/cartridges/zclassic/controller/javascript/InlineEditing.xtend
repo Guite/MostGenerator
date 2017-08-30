@@ -2,12 +2,14 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.controller.javascr
 
 import de.guite.modulestudio.metamodel.Application
 import org.eclipse.xtext.generator.IFileSystemAccess
+import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class InlineEditing {
 
+    extension FormattingExtensions = new FormattingExtensions
     extension ModelJoinExtensions = new ModelJoinExtensions
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
@@ -40,6 +42,8 @@ class InlineEditing {
 
         «initInlineEditLink»
 
+        «determineInputReference»
+
         «initInlineEditingButtons»
 
         «closeWindowFromInside»
@@ -50,16 +54,15 @@ class InlineEditing {
         /**
          * Helper function to create new modal form dialog instances.
          */
-        function «vendorAndName»CreateInlineEditingWindowInstance(containerElem, useIframe)
+        function «vendorAndName»CreateInlineEditingWindowInstance(containerElem)
         {
             var newWindowId;
 
             // define the new window instance
             newWindowId = containerElem.attr('id') + 'Dialog';
-            jQuery('<div id="' + newWindowId + '"></div>')
+            jQuery('<div />', { id: newWindowId })
                 .append(
-                    jQuery('<iframe />')
-                        .attr('src', containerElem.attr('href'))
+                    jQuery('<iframe />', { src: containerElem.attr('href') })
                         .css({ width: '100%', height: '440px' })
                 )
                 .dialog({
@@ -88,7 +91,7 @@ class InlineEditing {
         /**
          * Observe a link for opening an inline window.
          */
-        function «vendorAndName»InitInlineEditingWindow(objectType, containerId)
+        function «vendorAndName»InitInlineEditingWindow(objectType, idPrefix, containerId, inputType)
         {
             var found, newEditHandler;
 
@@ -96,19 +99,21 @@ class InlineEditing {
             found = false;
 
             // search for the handler
-            jQuery.each(inlineEditHandlers, function (key, editHandler) {
+            jQuery.each(«vendorAndName»InlineEditHandlers, function (key, editHandler) {
                 // is this the right one
-                if (editHandler.prefix === containerId) {
-                    // yes, it is
-                    found = true;
-                    // look whether there is already a window instance
-                    if (null !== editHandler.windowInstanceId) {
-                        // unset it
-                        jQuery(containerId + 'Dialog').dialog('destroy');
-                    }
-                    // create and assign the new window instance
-                    editHandler.windowInstanceId = «vendorAndName»CreateInlineEditingWindowInstance(jQuery('#' + containerId), true);
+                if (editHandler.prefix !== containerId) {
+                    return;
                 }
+
+                // yes, it is
+                found = true;
+                // look whether there is already a window instance
+                if (null !== editHandler.windowInstanceId) {
+                    // unset it
+                    jQuery('#' + editHandler.windowInstanceId).dialog('destroy');
+                }
+                // create and assign the new window instance
+                editHandler.windowInstanceId = «vendorAndName»CreateInlineEditingWindowInstance(jQuery('#' + containerId));
             });
 
             if (false !== found) {
@@ -117,15 +122,16 @@ class InlineEditing {
 
             // if no inline editing handler was found create a new one
             newEditHandler = {
-                ot: objectType,«/*alias: '',*/»
+                alias: idPrefix,
                 prefix: containerId,
                 moduleName: '«appName»',
-                acInstance: null,
-                windowInstanceId: «vendorAndName»CreateInlineEditingWindowInstance(jQuery('#' + containerId), true)
+                objectType: objectType,
+                inputType: inputType,
+                windowInstanceId: «vendorAndName»CreateInlineEditingWindowInstance(jQuery('#' + containerId))
             };
 
             // add it to the list of edit handlers
-            inlineEditHandlers.push(newEditHandler);
+            «vendorAndName»InlineEditHandlers.push(newEditHandler);
         }
     '''
 
@@ -138,8 +144,11 @@ class InlineEditing {
             var editHref, editLink;
 
             editHref = jQuery('#' + idPrefix + 'SelectorDoNew').attr('href') + '&id=' + itemId;
-            editLink = jQuery('<a />', { id: elemPrefix + 'Edit', href: editHref, text: 'edit' });
-            editLink.html(' ' + editImage);
+            editLink = jQuery('<a />', {
+                id: elemPrefix + 'Edit',
+                href: editHref,
+                text: 'edit'
+            }).append('<span />', { class: 'fa fa-pencil-square-o' });
 
             return editLink;
         }
@@ -149,12 +158,47 @@ class InlineEditing {
         /**
          * Initialises behaviour for an inline editing link.
          */
-        function «vendorAndName»InitInlineEditLink(objectType, idPrefix, elemPrefix, itemId)
+        function «vendorAndName»InitInlineEditLink(objectType, idPrefix, elemPrefix, itemId, inputType)
         {
             jQuery('#' + elemPrefix + 'Edit').click(function (event) {
                 event.preventDefault();
-                «vendorAndName»InitInlineEditingWindow(objectType, idPrefix + 'Reference_' + itemId + 'Edit');
+                «vendorAndName»InitInlineEditingWindow(objectType, idPrefix, idPrefix + 'Reference_' + itemId + 'Edit');
             });
+        }
+    '''
+
+    def private determineInputReference(Application it) '''
+        /**
+         * Returns the input field reference for a given context
+         */
+        function «vendorAndName»DetermineInputReference(moduleName, objectType, alias, idPrefix, inputType, targetWindow)
+        {
+            var inputPrefix, inputIdentifier, inputField;
+
+            // determine reference to input element
+            inputPrefix = (moduleName + '_' + objectType).toLowerCase();
+            inputField = null;
+            if (inputType === 'autocomplete') {
+                inputIdentifier = idPrefix.replace('DoNew', '');
+                inputField = targetWindow.jQuery('#' + inputIdentifier).first();
+            } else if (inputType === 'select-single' || inputType === 'select-multi') {
+                inputIdentifier = inputPrefix + '_' + alias;
+                inputField = targetWindow.jQuery('#' + inputIdentifier).first();
+            } else if (inputType === 'checkbox' || inputType === 'radio') {
+                // points to the containing div element in this case
+                inputIdentifier = inputPrefix + '_' + alias;
+                if (targetWindow.jQuery('#' + inputIdentifier + '_0').length > 0) {
+                    inputField = targetWindow.jQuery('#' + inputIdentifier + '_0').parent();
+                } else if (targetWindow.jQuery('#' + inputIdentifier + '_placeholder').length > 0) {
+                    inputField = targetWindow.jQuery('#' + inputIdentifier + '_placeholder').parent();
+            	}
+            }
+
+            return {
+                prefix: inputPrefix,
+                identifier: inputIdentifier,
+                field: inputField
+            ];
         }
     '''
 
@@ -162,31 +206,79 @@ class InlineEditing {
         /**
          * Initialises inline editing capability for a certain form section.
          */
-        function «vendorAndName»InitInlineEditingButtons(objectType, idPrefix, includeEditing)
+        function «vendorAndName»InitInlineEditingButtons(objectType, alias, idPrefix, inputType)
         {
-            var itemIds, itemIdsArr;
+            var inputReference, createButtonId, createButton, itemIds, itemIdsArr;
 
-            if (!includeEditing || jQuery('#' + idPrefix + 'SelectorDoNew').length < 1) {
+            inputReference = «vendorAndName»DetermineInputReference('«appName», objectType, alias, idPrefix, inputType, window);
+        	if (null === inputReference) {
+        	    return;
+            }
+
+            createButtonId = idPrefix + 'SelectorDoNew';
+
+            if (jQuery('#' + createButtonId).length < 1) {
+                if (inputType === 'autocomplete') {
+                    return;
+                }
+                // dynamically add create button
+                createButton = jQuery('<a />', {
+                    id: createButtonId,
+                    href: Routing.generate('«appName.formatForDB»_' + objectType.toLowerCase() + '_edit'),
+                    title: Translator.__('Create new entry'),
+                    class: 'btn btn-default «appName.toLowerCase»-inline-button'
+                }).append('<i />', { class: 'fa fa-plus' }).append(' ' + Translator.__('Create'));
+
+                inputReference.parent().append(createButton);
+            }
+
+            createButton = jQuery('#' + createButtonId);
+            createButton.attr('href', createButton.attr('href') + '?raw=1&idp=' + createButtonId);
+            createButton.click(function (event) {
+                event.preventDefault();
+                «vendorAndName»InitInlineEditingWindow(objectType, idPrefix, createButtonId, inputType);
+            });
+
+            if (inputType === 'select-single' || inputType === 'select-multi') {
+                // no edit buttons for select options
                 return;
             }
 
-            jQuery('#' + idPrefix + 'SelectorDoNew').attr('href', jQuery('#' + idPrefix + 'SelectorDoNew').attr('href') + '?raw=1&idp=' + idPrefix + 'SelectorDoNew');
-            jQuery('#' + idPrefix + 'SelectorDoNew').click(function (event) {
-                event.preventDefault();
-                «vendorAndName»InitInlineEditingWindow(objectType, idPrefix + 'SelectorDoNew');
-            });
-
             itemIds = jQuery('#' + idPrefix).val();
-            itemIdsArr = itemIds.split(',');
+            if (inputType === 'autocomplete') {
+                itemIdsArr = itemIds.split(',');
+            } else if (inputType === 'checkbox' || inputType === 'radio') {
+                itemIdsArr = [];
+                inputReference.field.find('input').each(function (index) {
+                    var existingId, elemPrefix;
+
+                    existingId = jQuery(this).attr('value');
+                    itemIdsArr.push(existingId);
+
+                    elemPrefix = idPrefix + 'Reference_' + existingId + 'Edit';
+                    if (jQuery('#' + elemPrefix) < 1) {
+                        jQuery(this).parent().append(
+                            jQuery('<a />', {
+                                id: elemPrefix,
+                                href: Routing.generate('«appName.formatForDB»_' + objectType.toLowerCase() + '_edit'),
+                                title: Translator.__('Edit this entry')
+                            }).append('<span />', { class: 'fa fa-pencil-square-o' })
+                        );
+                    }
+                });
+            }
             jQuery.each(itemIdsArr, function (key, existingId) {
                 var elemPrefix;
 
                 if (existingId) {
                     elemPrefix = idPrefix + 'Reference_' + existingId + 'Edit';
+                    if (jQuery('#' + elemPrefix) < 1) {
+                        return;
+                    }
                     jQuery('#' + elemPrefix).attr('href', jQuery('#' + elemPrefix).attr('href') + '?raw=1&idp=' + elemPrefix);
                     jQuery('#' + elemPrefix).click(function (event) {
                         event.preventDefault();
-                        «vendorAndName»InitInlineEditingWindow(objectType, elemPrefix);
+                        «vendorAndName»InitInlineEditingWindow(objectType, idPrefix, elemPrefix, inputType);
                     });
                 }
             });
@@ -197,7 +289,7 @@ class InlineEditing {
         /**
          * Closes an iframe from the document displayed in it.
          */
-        function «vendorAndName»CloseWindowFromInside(idPrefix, itemId, searchTerm)
+        function «vendorAndName»CloseWindowFromInside(idPrefix, itemId, formattedTitle, searchTerm)
         {
             // if there is no parent window do nothing
             if (window.parent === '') {
@@ -205,43 +297,92 @@ class InlineEditing {
             }
 
             // search for the handler of the current window
-            jQuery.each(window.parent.inlineEditHandlers, function (key, editHandler) {
-                var selector;
+            jQuery.each(window.parent.«vendorAndName»InlineEditHandlers, function (key, editHandler) {
+                var inputType, inputReference, newElement, nextInputSuffix;
 
                 // look if this handler is the right one
-                if (editHandler.prefix === idPrefix) {
-                    // look whether there is an auto completion instance
-                    if (null !== editHandler.acInstance) {
-                        selector = window.parent.jQuery('#' + idPrefix.replace('DoNew', '')).first();
+                if (editHandler.prefix !== idPrefix) {
+                    return;
+                }
 
-                        // show a message
-                        window.parent.«vendorAndName»SimpleAlert(selector, window.parent.Translator.__('Information'), window.parent.Translator.__('Action has been completed.'), 'actionDoneAlert', 'success');
+                // determine reference to input element
+                inputType = editHandler.inputType;
+                inputReference = «vendorAndName»DetermineInputReference(editHandler.moduleName, editHandler.objectType, editHandler.alias, idPrefix, inputType, window.parent);
+            	if (null === inputReference) {
+            	    return;
+                }
 
-                        // check if a new item has been created
-                        if (itemId > 0) {
-                            // activate auto completion
-                            if (searchTerm == '') {
-                                searchTerm = selector.val();
-                            }
-                            if (searchTerm != '') {
-                                selector.autocomplete('option', 'autoFocus', true);
-                                selector.autocomplete('search', searchTerm);
-                                window.setTimeout(function() {
-                                    var suggestions = selector.autocomplete('widget')[0].children;
-                                    if (suggestions.length === 1) {
-                                        window.parent.jQuery(suggestions[0]).click();
-                                    }
-                                    selector.autocomplete('option', 'autoFocus', false);
-                                }, 1000);
+                // show a message
+                window.parent.«vendorAndName»SimpleAlert(inputReference.field, window.parent.Translator.__('Information'), window.parent.Translator.__('Action has been completed.'), 'actionDoneAlert', 'success');
+
+                // check if a new item has been created
+                if (itemId > 0) {
+                    newElement = '';
+                    if (inputType === 'autocomplete') {
+                        // activate auto completion
+                        if (searchTerm == '') {
+                            searchTerm = inputReference.field.val();
+                        }
+                        if (searchTerm != '') {
+                            inputReference.field.autocomplete('option', 'autoFocus', true);
+                            inputReference.field.autocomplete('search', searchTerm);
+                            window.setTimeout(function() {
+                                var suggestions = inputReference.field.autocomplete('widget')[0].children;
+                                if (suggestions.length === 1) {
+                                    window.parent.jQuery(suggestions[0]).click();
+                                }
+                                inputReference.field.autocomplete('option', 'autoFocus', false);
+                            }, 1000);
+                        }
+                    } else if (inputType === 'select-single' || inputType === 'select-multi') {
+                        newElement = jQuery('<option />', {
+                            value: itemId,
+                            selected: 'selected'
+                        }).text(formattedTitle);
+                    } else if (inputType === 'checkbox' || inputType === 'radio') {
+                        nextInputSuffix = 0;
+                        if (inputReference.field.find('input').length > 0) {
+                            nextInputSuffix = inputReference.field.find('input').last().attr('id').replace(inputReference.identifier + '_', '');
+                            if (nextInputSuffix == 'placeholder') {
+                                nextInputSuffix = 0;
+                            } else {
+                                nextInputSuffix = parseInt(nextInputSuffix) + 1;
                             }
                         }
-                    }
 
-                    // look whether there is a window instance
-                    if (null !== editHandler.windowInstanceId) {
-                        // close it
-                        window.parent.jQuery('#' + editHandler.windowInstanceId).dialog('close');
+                        if (inputType === 'checkbox') {
+                            newElement = jQuery('<label />', {
+                                class: 'checkbox-inline'
+                            }).append(
+                                jQuery('<input />', {
+                                    type: 'checkbox',
+                                    id: inputReference.identifier + '_' + nextInputSuffix,
+                                    name: inputReference.prefix + '[' + editHandler.alias + '][]',
+                                    value: itemId,
+                                    checked: 'checked'
+                                })
+                            ).append(' ' + formattedTitle);
+                        } else if (inputType === 'radio') {
+                            newElement = jQuery('<label />', {
+                                class: 'radio-inline'
+                            }).append(
+                                jQuery('<input />', {
+                                    type: 'radio',
+                                    id: inputReference.identifier + '_' + nextInputSuffix,
+                                    name: inputReference.prefix + '[' + editHandler.alias + ']',
+                                    value: itemId,
+                                    checked: 'checked'
+                                })
+                            ).append(' ' + formattedTitle);
+                        }
                     }
+                    inputReference.field.append(newElement);
+                }
+
+                // look whether there is a window instance
+                if (null !== editHandler.windowInstanceId) {
+                    // close it
+                    window.parent.jQuery('#' + editHandler.windowInstanceId).dialog('close');
                 }
             });
         }

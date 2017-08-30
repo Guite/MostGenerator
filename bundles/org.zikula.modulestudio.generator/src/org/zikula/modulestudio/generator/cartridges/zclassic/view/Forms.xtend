@@ -43,7 +43,7 @@ class Forms {
         this.app = it
         for (entity : getAllEntities.filter[hasEditAction]) {
             entity.generate('edit')
-            if (needsAutoCompletion) {
+            if (needsInlineEditing) {
                 entity.entityInlineRedirectHandlerFile
             }
         }
@@ -87,8 +87,10 @@ class Forms {
             {{ parent() }}
             {{ pageAddAsset('javascript', zasset('@«app.appName»:js/«app.appName».Validation.js'), 98) }}
             {{ pageAddAsset('javascript', zasset('@«app.appName»:js/«app.appName».EditFunctions.js'), 99) }}
-            «IF app.needsAutoCompletion»
+            «IF app.needsInlineEditing»
                 {{ pageAddAsset('javascript', zasset('@«app.appName»:js/«app.appName».InlineEditing.js'), 99) }}
+            «ENDIF»
+            «IF app.needsAutoCompletion»
                 {{ pageAddAsset('javascript', zasset('@«app.appName»:js/«app.appName».AutoCompletion.js'), 99) }}
             «ENDIF»
         {% endblock %}
@@ -263,13 +265,6 @@ class Forms {
     '''
 
     def private formTemplateJS(Entity it, String actionName) '''
-        «IF !incoming.empty || !outgoing.empty»
-            {% set editImage = '<span class="fa fa-pencil-square-o"></span>' %}
-            {% set removeImage = '<span class="fa fa-trash-o"></span>' %}
-            «IF geographical»
-
-            «ENDIF»
-        «ENDIF»
         «IF geographical»
             {% set useGeoLocation = getModVar('«app.appName»', 'enable«name.formatForCodeCapital»GeoLocation', false) %}
             {{ pageAddAsset('javascript', 'https://maps.google.com/maps/api/js?key=' ~ getModVar('«app.appName»', 'googleMapsApiKey', '') ~ '&amp;language=' ~ app.request.locale ~ '&amp;sensor=false') }}
@@ -390,7 +385,9 @@ class Forms {
             <head>
                 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
                 <script type="text/javascript" src="{{ asset('jquery/jquery.min.js') }}"></script>
-                <script type="text/javascript" src="{{ zasset('@«appName»:js/«appName».InlineEditing.js') }}"></script>
+                «IF needsInlineEditing»
+                    <script type="text/javascript" src="{{ zasset('@«appName»:js/«appName».InlineEditing.js') }}"></script>
+                «ENDIF»
             </head>
             <body>
                 <script type="text/javascript">
@@ -398,7 +395,7 @@ class Forms {
                     // close window from parent document
                     ( function($) {
                         $(document).ready(function() {
-                            «vendorAndName»CloseWindowFromInside('{{ idPrefix|e('js') }}', {% if commandName in ['submit', 'create', 'approve'] %}{{ itemId }}, '{{ searchTerm|default('') }}'{% else %}0, ''{% endif %});«/*itemId > 0 causes the auto completion being activated*/»
+                            «vendorAndName»CloseWindowFromInside('{{ idPrefix|e('js') }}', {% if commandName in ['submit', 'create', 'approve'] %}{{ itemId }}, '{{ formattedTitle|default('')|e('js') }}', '{{ searchTerm|default('')|e('js') }}'{% else %}0, '', ''{% endif %});
                         });
                     })(jQuery);
                 /* ]]> */

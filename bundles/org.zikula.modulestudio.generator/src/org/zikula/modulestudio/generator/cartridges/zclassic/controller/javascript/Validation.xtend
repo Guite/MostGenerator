@@ -284,7 +284,7 @@ class Validation {
                 }
             });
             «IF hasColourFields»
-                jQuery('.validate-htmlcolour').each( function() {
+                jQuery('.validate-colour').each( function() {
                     if (!«vendorAndName»ValidateHtmlColour(jQuery(this).val())) {
                         document.getElementById(jQuery(this).attr('id')).setCustomValidity(Translator.__('Please select a valid html colour code.'));
                     } else {

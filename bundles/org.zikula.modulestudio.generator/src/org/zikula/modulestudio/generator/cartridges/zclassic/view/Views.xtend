@@ -1,6 +1,7 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.view
 
 import de.guite.modulestudio.metamodel.Application
+import de.guite.modulestudio.metamodel.CustomAction
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.EntityTreeType
 import de.guite.modulestudio.metamodel.HookProviderMode
@@ -136,7 +137,7 @@ class Views {
         }
 
         var customHelper = new Custom()
-        for (action : entity.getCustomActions) {
+        for (action : entity.actions.filter(CustomAction)) {
             customHelper.generate(action, it, entity, fsa)
         }
 

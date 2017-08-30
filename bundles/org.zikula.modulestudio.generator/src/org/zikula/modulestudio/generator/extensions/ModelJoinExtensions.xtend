@@ -269,8 +269,8 @@ class ModelJoinExtensions {
      * Returns a unique name for a relationship used by JavaScript during editing entities with auto completion fields.
      * The name is concatenated from the edited entity as well as the relation alias name.
      */
-    def getUniqueRelationNameForJs(JoinRelationship it, Application app, DataObject targetEntity, Boolean many, Boolean incoming, String relationAliasName) {
-        app.prefix
+    def getUniqueRelationNameForJs(JoinRelationship it, DataObject targetEntity, Boolean many, Boolean incoming, String relationAliasName) {
+        application.prefix
         + targetEntity.name.formatForCodeCapital
         + '_'
         + relationAliasName
@@ -285,19 +285,6 @@ class ModelJoinExtensions {
             OneToManyRelationship: if (!useTarget) 'One' else 'Many'
             ManyToOneRelationship: if (!useTarget) 'Many' else 'One'
             default: 'Many' // ManyToMany
-        }
-    }
-
-    /**
-     * Checks for whether a certain relationship side has a multiplicity of one or many.
-     */
-    def usesAutoCompletion(JoinRelationship it, boolean useTarget) {
-        switch it.useAutoCompletion {
-            case NONE: false
-            case ONLY_SOURCE_SIDE: !useTarget
-            case ONLY_TARGET_SIDE: useTarget
-            case BOTH_SIDES: true
-            default: false
         }
     }
 

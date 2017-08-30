@@ -4,7 +4,6 @@ import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.ArrayField
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.EntityWorkflowType
-import de.guite.modulestudio.metamodel.JoinRelationship
 import de.guite.modulestudio.metamodel.MappedSuperClass
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.actionhandler.Locking
@@ -15,6 +14,8 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.controller.form.Aut
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.form.ListFieldTransformer
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.form.TranslationListener
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.form.UploadFileTransformer
+import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype.ConfigType
+import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype.EditEntityType
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype.field.ArrayType
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype.field.AutoCompletionRelationType
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype.field.ColourType
@@ -32,8 +33,6 @@ import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
-import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype.ConfigType
-import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype.EditEntityType
 
 class FormHandler {
 
@@ -258,10 +257,10 @@ class FormHandler {
              * @var string
              */
             protected $repeatReturnUrl = null;
-            «IF !relations.filter(JoinRelationship).empty»
+            «IF !getJoinRelations.empty»
                 «relationPresetsHelper.memberFields(it)»
             «ENDIF»
-            «IF !relations.filter(JoinRelationship).empty || needsAutoCompletion»
+            «IF !getJoinRelations.empty || needsAutoCompletion»
 
                 /**
                  * Full prefix for related items.
@@ -544,7 +543,7 @@ class FormHandler {
             «IF app.needsAutoCompletion»
                 $this->templateParameters['inlineUsage'] = $this->request->query->getBoolean('raw', false);
             «ENDIF»
-            «IF !relations.filter(JoinRelationship).empty || app.needsAutoCompletion»
+            «IF !getJoinRelations.empty || app.needsAutoCompletion»
 
                 $this->idPrefix = $this->request->query->get('idp', '');
             «ENDIF»
@@ -647,7 +646,7 @@ class FormHandler {
             $this->entityRef = $entity;
 
             «initialiseExtensions»
-            «IF !relations.filter(JoinRelationship).empty»
+            «IF !getJoinRelations.empty»
                 «relationPresetsHelper.callBaseMethod(it)»
             «ENDIF»
 
@@ -703,7 +702,7 @@ class FormHandler {
             // to be customised in sub classes
             return null;
         }
-        «IF !relations.filter(JoinRelationship).empty»
+        «IF !getJoinRelations.empty»
 
             «relationPresetsHelper.baseMethod(it)»
         «ENDIF»

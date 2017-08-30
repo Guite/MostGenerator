@@ -128,23 +128,20 @@ class Relations {
             {% endif %}
             «IF uiHooksProvider != HookProviderMode.DISABLED»
                 {% if context == 'hookDisplayView' and hasEditPermission %}
-                    {% set withImage = «hasImageFieldsEntity.displayBool» %}
                     {% set idPrefix = 'hookAssignment«name.formatForCodeCapital»' %}
                     {% set addLinkText = __f('Attach %name%', {'%name%': entityNameTranslated}) %}
                     <div id="{{ idPrefix }}LiveSearch" class="«app.appName.toLowerCase»-add-hook-assignment">
                         <a id="{{ idPrefix }}AddLink" href="javascript:void(0);" title="{{ addLinkText|e('html_attr') }}" class="attach-«app.appName.formatForDB»-object hidden" data-owner="{{ subscriberOwner|e('html_attr') }}" data-area-id="{{ subscriberAreaId|e('html_attr') }}" data-object-id="{{ subscriberObjectId|e('html_attr') }}" data-url="{{ subscriberUrl|e('html_attr') }}" data-assigned-entity="«name.formatForCode»"><i class="fa fa-link"></i> {{ addLinkText }}</a>
-                        <div id="{{ idPrefix }}AddFields" class="«app.appName.toLowerCase»-autocomplete{{ withImage ? '-with-image' : '' }}">
+                        <div id="{{ idPrefix }}AddFields" class="«app.appName.toLowerCase»-autocomplete«IF hasImageFieldsEntity»-with-image«ENDIF»">
                             <label for="{{ idPrefix }}Selector">{{ __f('Find %name%', {'%name%': entityNameTranslated}) }}</label>
                             <br />
                             <i class="fa fa-search" title="{{ __f('Search %name%', {'%name%': entityNameTranslated})|e('html_attr') }}"></i>
-                            <input type="hidden" name="{{ idPrefix }}" id="{{ idPrefix }}" value="" />
+                            <input type="hidden" name="{{ idPrefix }}" id="{{ idPrefix }}" value="{% for assignment in assignments %}{% if not loop.first %},{% endif %}{{ assignment.getAssignedId() }}{% endfor %}" />
                             <input type="hidden" name="{{ idPrefix }}Multiple" id="{{ idPrefix }}Multiple" value="0" />
-                            <input type="hidden" name="{{ idPrefix }}Mode" id="{{ idPrefix }}Mode" value="0" />
-                            <input type="hidden" name="{{ idPrefix }}ExcludedIds" id="{{ idPrefix }}ExcludedIds" value="{% for assignment in assignments %}{% if not loop.first %},{% endif %}{{ assignment.getAssignedId() }}{% endfor %}" />
                             <input type="text" id="{{ idPrefix }}Selector" name="{{ idPrefix }}Selector" autocomplete="off" />
                             <input type="button" id="{{ idPrefix }}SelectorDoCancel" name="{{ idPrefix }}SelectorDoCancel" value="{{ __('Cancel') }}" class="btn btn-default «app.appName.toLowerCase»-inline-button" />
                             «IF hasEditAction»
-                                <a id="{{ idPrefix }}SelectorDoNew" href="{{ path('«app.appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ 'edit') }}" title="{{ __f('Create new %name%', {'%name%': entityNameTranslated}) }}" class="btn btn-default «app.appName.toLowerCase»-inline-button">{{ __('Create') }}</a>
+                                <a id="{{ idPrefix }}SelectorDoNew" href="{{ path('«app.appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ 'edit') }}" title="{{ __f('Create new %name%', {'%name%': entityNameTranslated}) }}" class="btn btn-default «app.appName.toLowerCase»-inline-button"><i class="fa fa-plus"></i> {{ __('Create') }}</a>
                             «ENDIF»
                             <noscript><p>{{ __('This function requires JavaScript activated!') }}</p></noscript>
                         </div>
@@ -152,17 +149,18 @@ class Relations {
                     {% set assignmentInitScript %}
                         <script type="text/javascript">
                         /* <![CDATA[ */
-                            var inlineEditHandlers = new Array();
-                            var editHandler = {
-                                ot: '«name.formatForCode»',
+                            var «app.vendorAndName»InlineEditHandlers = [];
+                            var «app.vendorAndName»EditHandler = {
+                                alias: '{{ idPrefix }}',
                                 prefix: '{{ idPrefix }}SelectorDoNew',
                                 moduleName: '«app.appName»',
-                                acInstance: null,
+                                objectType: '«name.formatForCode»',
+                                inputType: 'autocomplete',
                                 windowInstanceId: null
                             };
-                            inlineEditHandlers.push(editHandler);
+                            «app.vendorAndName»InlineEditHandlers.push(«app.vendorAndName»EditHandler);
 
-                            «app.vendorAndName»InitRelationItemsForm('«name.formatForCode»', '{{ idPrefix }}', «hasEditAction.displayBool»);
+                            «app.vendorAndName»InitRelationHandling('«name.formatForCode»', '{{ idPrefix }}', '{{ idPrefix }}SelectorDoNew', «hasEditAction.displayBool», 'autocomplete');
                         /* ]]> */
                         </script>
                     {% endset %}

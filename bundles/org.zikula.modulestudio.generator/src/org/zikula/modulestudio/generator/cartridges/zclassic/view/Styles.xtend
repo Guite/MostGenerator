@@ -97,7 +97,7 @@ class Styles {
 
         «ENDIF»
         «IF hasColourFields»
-            .«cssPrefix»ColourPicker {
+            .«cssPrefix»-colour-picker {
                 cursor: pointer;
             }
 

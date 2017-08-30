@@ -69,13 +69,13 @@ class RelationPresets {
 
             // assign identifiers of predefined incoming relationships
             «FOR relation : owningAssociations»
-                «IF !relation.isEditable(false)»
+                «IF !relation.isShownInForm(true)»
                     // non-editable relation, we store the id and assign it in handleCommand
                 «ELSE»
                     // editable relation, we store the id and assign it now to show it in UI
                 «ENDIF»
                 «relation.initSinglePreset(false)»
-                «IF relation.isEditable(false)»
+                «IF relation.isShownInForm(true)»
                     «relation.saveSinglePreset(false)»
                 «ENDIF»
             «ENDFOR»
@@ -84,13 +84,13 @@ class RelationPresets {
 
             // assign identifiers of predefined outgoing many to many relationships
             «FOR relation : ownedMMAssociations»
-                «IF !relation.isEditable(true)»
+                «IF !relation.isShownInForm(false)»
                     // non-editable relation, we store the id and assign it in handleCommand
                 «ELSE»
                     // editable relation, we store the id and assign it now to show it in UI
                 «ENDIF»
                 «relation.initSinglePreset(true)»
-                «IF relation.isEditable(true)»
+                «IF relation.isShownInForm(false)»
                     «relation.saveSinglePreset(true)»
                 «ENDIF»
             «ENDFOR»
@@ -113,13 +113,13 @@ class RelationPresets {
             .filter[source.application == refApp]
     }
 
-    def private isEditable(JoinRelationship it, Boolean useTarget) {
-        getEditStageCode(!useTarget) > 0
+    def private isShownInForm(JoinRelationship it, Boolean incoming) {
+        getEditStageCode(incoming) > 0
     }
 
     def saveNonEditablePresets(Entity it, Application app) '''
-        «val owningAssociationsNonEditable = getOwningAssociations(app).filter[!isEditable(false)]»
-        «val ownedMMAssociationsNonEditable = getOwnedMMAssociations(app).filter[!isEditable(true)]»
+        «val owningAssociationsNonEditable = getOwningAssociations(app).filter[!isShownInForm(true)]»
+        «val ownedMMAssociationsNonEditable = getOwnedMMAssociations(app).filter[!isShownInForm(false)]»
         «IF !owningAssociationsNonEditable.empty || !ownedMMAssociationsNonEditable.empty»
 
             if ($args['commandName'] == 'create') {
