@@ -306,7 +306,7 @@ class InlineEditing {
 
             // search for the handler of the current window
             jQuery.each(window.parent.«vendorAndName»InlineEditHandlers, function (key, editHandler) {
-                var inputType, inputReference, newElement;
+                var inputType, inputReference, newElement, anchorElement;
 
                 // look if this handler is the right one
                 if (editHandler.prefix !== idPrefix) {
@@ -321,7 +321,8 @@ class InlineEditing {
                 }
 
                 // show a message
-                window.parent.«vendorAndName»SimpleAlert(inputReference.field.parents('.form-group').first(), window.parent.Translator.__('Information'), window.parent.Translator.__('Action has been completed.'), 'actionDoneAlert', 'success');
+                anchorElement = (inputType === 'autocomplete') ? inputReference.field : inputReference.field.parents('.form-group').first();
+                window.parent.«vendorAndName»SimpleAlert(anchorElement, window.parent.Translator.__('Information'), window.parent.Translator.__('Action has been completed.'), 'actionDoneAlert', 'success');
 
                 // check if a new item has been created
                 if (itemId > 0) {
