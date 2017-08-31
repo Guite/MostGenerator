@@ -409,7 +409,7 @@ class PersistenceTransformer {
         ]
         varContainer.vars += factory.createTextVar => [
             name = 'tileLayerUrl'
-            value = 'https://{s}.tile.osm.org/{z}/{x}/{y}.png'
+            value = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
             documentation = 'URL of tile layer to use. See http://leaflet-extras.github.io/leaflet-providers/preview/ for examples.'
         ]
         varContainer.vars += factory.createTextVar => [
