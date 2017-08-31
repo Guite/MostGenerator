@@ -112,7 +112,19 @@ class UploadFileTransformer {
                     foreach ($children as $child) {
                         $childForm = $child->getForm();
                         if (false !== strpos($childForm->getName(), 'DeleteFile')) {
-                            $deleteFile = $childForm->getData();
+                            //$deleteFile = $childForm->getData();
+                            foreach ($_POST as $k => $v) {
+                                if (!is_array($v)) {
+                                    continue;
+                                }
+                                foreach ($v as $field => $value) {
+                                    if ($field != str_replace('DeleteFile', '', $childForm->getName())) {
+                                        continue;
+                                    }
+                                    $deleteFile = isset($value[$childForm->getName()]) && $value[$childForm->getName()] == '1';
+                                    break 2;
+                                }
+                            }
                         } elseif ($childForm->getData() instanceof UploadedFile) {
                             $uploadedFile = $childForm->getData();
                         }
@@ -141,11 +153,9 @@ class UploadFileTransformer {
 
                 // check if an existing file must be deleted
                 $hasOldFile = !empty($oldFile);
-                $hasBeenDeleted = !$hasOldFile;
                 if ($hasOldFile && true === $deleteFile) {
                     // remove old upload file
                     $entity = $this->uploadHelper->deleteUploadFile($entity, $fieldName);
-                    $hasBeenDeleted = true;
                 }
 
                 if (null === $uploadedFile) {
@@ -154,7 +164,7 @@ class UploadFileTransformer {
                 }
 
                 // new file has been uploaded; check if there is an old one to be deleted
-                if ($hasOldFile && true !== $hasBeenDeleted) {
+                if ($hasOldFile && true !== $deleteFile) {
                     // remove old upload file (and image thumbnails)
                     $entity = $this->uploadHelper->deleteUploadFile($entity, $fieldName);
                 }

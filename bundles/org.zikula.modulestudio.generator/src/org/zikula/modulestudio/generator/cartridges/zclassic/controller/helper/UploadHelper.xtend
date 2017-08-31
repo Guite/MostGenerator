@@ -502,6 +502,10 @@ class UploadHelper {
                 if (file_exists($filePath) && !unlink($filePath)) {
                     return false;
                 }
+            } elseif (!empty($entity[$fieldName]) && file_exists($entity[$fieldName])) {
+                if (!unlink($entity[$fieldName])) {
+                    return false;
+                }
             }
             «IF !loggableEntitiesWithUploads.empty»
             }

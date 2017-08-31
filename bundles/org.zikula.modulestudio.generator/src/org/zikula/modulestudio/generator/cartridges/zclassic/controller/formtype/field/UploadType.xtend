@@ -152,7 +152,7 @@ class UploadType {
                     if (false === strpos($file, '/')) {
                         $file = $this->uploadHelper->getFileBaseFolder($this->entity->get_objectType(), $fieldName) . $file;
                     }
-                    $file = new File($file);
+                    $file = file_exists($file) ? new File($file) : null;
                 }
                 $hasFile = null !== $file;
                 $fileMeta = $hasFile ? $accessor->getValue($parentData, $fieldNameGetter . 'Meta') : [];

@@ -404,7 +404,7 @@ class View {
     }
 
     def private dispatch displayEntryInner(DerivedField it, Boolean useTarget) '''
-        «IF newArrayList('name', 'title').contains(name)»
+        «IF #['name', 'title'].contains(name)»
             «IF entity instanceof Entity && (entity as Entity).hasDisplayAction»
                 <a href="{{ path('«entity.application.appName.formatForDB»_«entity.name.formatForDB»_' ~ routeArea ~ 'display'«(entity as Entity).routeParams(entity.name.formatForCode, true)») }}" title="{{ __('View detail page')|e('html_attr') }}">«displayLeadingEntry»</a>
             «ELSE»
