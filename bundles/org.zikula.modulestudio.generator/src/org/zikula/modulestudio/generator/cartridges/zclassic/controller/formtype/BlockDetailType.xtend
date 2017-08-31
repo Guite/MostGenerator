@@ -182,7 +182,7 @@ class BlockDetailType {
                 'expanded' => false,
                 'choices' => $choices,
                 «IF !targets('2.0')»
-                    'choices_as_values' => true
+                    'choices_as_values' => true,
                 «ENDIF»
                 'required' => true,
                 'label' => $this->__('Entry to display') . ':'
