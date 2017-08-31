@@ -136,7 +136,7 @@ class ViewExtensions {
      * Returns the code used for including Leaflet.
      */
     def includeLeaflet(Application it, String actionName, String objName) '''
-        {% set pathToLeaflet = zasset('@«appName»:css/style.css')|replace({'Resources/public/css/style.css', ''}) ~ 'vendor/drmonty/leaflet/' %}
+        {% set pathToLeaflet = zasset('@«appName»:css/style.css')|replace({'Resources/public/css/style.css': ''}) ~ 'vendor/drmonty/leaflet/' %}
         {{ pageAddAsset('stylesheet', pathToLeaflet ~ 'css/leaflet.css') }}
         {{ pageAddAsset('javascript', pathToLeaflet ~ 'js/leaflet' ~ (app.environment == 'dev' ? '' : '.min') ~ '.js') }}
         <div id="geographicalInfo" class="hidden" data-context="«actionName»" data-latitude="{{ «objName».latitude|«appName.formatForDB»_geoData }}" data-longitude="{{ «objName».longitude|«appName.formatForDB»_geoData }}" data-zoom-level="{{ getModVar('«appName»', 'defaultZoomLevel', 18) }}" data-tile-layer-url="{{ getModVar('«appName»', 'tileLayerUrl') }}" data-tile-layer-attribution="{{ getModVar('«appName»', 'tileLayerAttribution') }}"«IF actionName == 'edit'» data-use-geolocation="{% if mode == 'create' and useGeoLocation == true %}true{% else %}false{% endif %}"«ENDIF»></div>
