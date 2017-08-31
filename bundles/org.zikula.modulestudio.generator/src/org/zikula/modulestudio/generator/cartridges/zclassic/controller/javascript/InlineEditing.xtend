@@ -2,14 +2,12 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.controller.javascr
 
 import de.guite.modulestudio.metamodel.Application
 import org.eclipse.xtext.generator.IFileSystemAccess
-import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class InlineEditing {
 
-    extension FormattingExtensions = new FormattingExtensions
     extension ModelJoinExtensions = new ModelJoinExtensions
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
@@ -148,7 +146,9 @@ class InlineEditing {
                 id: elemPrefix + 'Edit',
                 href: editHref,
                 text: 'edit'
-            }).append('<span />', { class: 'fa fa-pencil-square-o' });
+            }).append(
+                jQuery('<span />', { class: 'fa fa-pencil-square-o' })
+            );
 
             return editLink;
         }
@@ -171,12 +171,12 @@ class InlineEditing {
         /**
          * Returns the input field reference for a given context
          */
-        function «vendorAndName»DetermineInputReference(moduleName, objectType, alias, idPrefix, inputType, targetWindow)
+        function «vendorAndName»DetermineInputReference(objectType, alias, idPrefix, inputType, targetWindow)
         {
             var inputPrefix, inputIdentifier, inputField;
 
             // determine reference to input element
-            inputPrefix = (moduleName + '_' + objectType).toLowerCase();
+            inputPrefix = targetWindow.jQuery('.«vendorAndName.toLowerCase»-edit-form').first().attr('name');
             inputField = null;
             if (inputType === 'autocomplete') {
                 inputIdentifier = idPrefix.replace('DoNew', '');
@@ -188,17 +188,17 @@ class InlineEditing {
                 // points to the containing div element in this case
                 inputIdentifier = inputPrefix + '_' + alias;
                 if (targetWindow.jQuery('#' + inputIdentifier + '_0').length > 0) {
-                    inputField = targetWindow.jQuery('#' + inputIdentifier + '_0').parent();
+                    inputField = targetWindow.jQuery('#' + inputIdentifier + '_0').parent().parent();
                 } else if (targetWindow.jQuery('#' + inputIdentifier + '_placeholder').length > 0) {
-                    inputField = targetWindow.jQuery('#' + inputIdentifier + '_placeholder').parent();
-            	}
+                    inputField = targetWindow.jQuery('#' + inputIdentifier + '_placeholder').parent().parent();
+                }
             }
 
             return {
                 prefix: inputPrefix,
                 identifier: inputIdentifier,
                 field: inputField
-            ];
+            };
         }
     '''
 
@@ -206,13 +206,13 @@ class InlineEditing {
         /**
          * Initialises inline editing capability for a certain form section.
          */
-        function «vendorAndName»InitInlineEditingButtons(objectType, alias, idPrefix, inputType)
+        function «vendorAndName»InitInlineEditingButtons(objectType, alias, idPrefix, inputType, createUrl)
         {
             var inputReference, createButtonId, createButton, itemIds, itemIdsArr;
 
-            inputReference = «vendorAndName»DetermineInputReference('«appName», objectType, alias, idPrefix, inputType, window);
-        	if (null === inputReference) {
-        	    return;
+            inputReference = «vendorAndName»DetermineInputReference(objectType, alias, idPrefix, inputType, window);
+            if (null === inputReference || null === inputReference.field) {
+                return;
             }
 
             createButtonId = idPrefix + 'SelectorDoNew';
@@ -224,12 +224,18 @@ class InlineEditing {
                 // dynamically add create button
                 createButton = jQuery('<a />', {
                     id: createButtonId,
-                    href: Routing.generate('«appName.formatForDB»_' + objectType.toLowerCase() + '_edit'),
+                    href: createUrl,
                     title: Translator.__('Create new entry'),
                     class: 'btn btn-default «appName.toLowerCase»-inline-button'
-                }).append('<i />', { class: 'fa fa-plus' }).append(' ' + Translator.__('Create'));
+                }).append(
+                    jQuery('<i />', { class: 'fa fa-plus' })
+                ).append(' ' + Translator.__('Create'));
 
-                inputReference.parent().append(createButton);
+                if (inputType === 'select-single' || inputType === 'select-multi') {
+                    inputReference.field.parent().append(createButton);
+                } else if (inputType === 'checkbox' || inputType === 'radio') {
+                    inputReference.field.append(createButton);
+                }
             }
 
             createButton = jQuery('#' + createButtonId);
@@ -244,8 +250,8 @@ class InlineEditing {
                 return;
             }
 
-            itemIds = jQuery('#' + idPrefix).val();
             if (inputType === 'autocomplete') {
+                itemIds = jQuery('#' + idPrefix).val();
                 itemIdsArr = itemIds.split(',');
             } else if (inputType === 'checkbox' || inputType === 'radio') {
                 itemIdsArr = [];
@@ -256,13 +262,15 @@ class InlineEditing {
                     itemIdsArr.push(existingId);
 
                     elemPrefix = idPrefix + 'Reference_' + existingId + 'Edit';
-                    if (jQuery('#' + elemPrefix) < 1) {
-                        jQuery(this).parent().append(
+                    if (jQuery('#' + elemPrefix).length < 1) {
+                        jQuery(this).parent().append(' ').append(
                             jQuery('<a />', {
                                 id: elemPrefix,
-                                href: Routing.generate('«appName.formatForDB»_' + objectType.toLowerCase() + '_edit'),
+                                href: createUrl,
                                 title: Translator.__('Edit this entry')
-                            }).append('<span />', { class: 'fa fa-pencil-square-o' })
+                            }).append(
+                                jQuery('<span />', { class: 'fa fa-pencil-square-o' })
+                            )
                         );
                     }
                 });
@@ -298,7 +306,7 @@ class InlineEditing {
 
             // search for the handler of the current window
             jQuery.each(window.parent.«vendorAndName»InlineEditHandlers, function (key, editHandler) {
-                var inputType, inputReference, newElement, nextInputSuffix;
+                var inputType, inputReference, newElement;
 
                 // look if this handler is the right one
                 if (editHandler.prefix !== idPrefix) {
@@ -307,13 +315,13 @@ class InlineEditing {
 
                 // determine reference to input element
                 inputType = editHandler.inputType;
-                inputReference = «vendorAndName»DetermineInputReference(editHandler.moduleName, editHandler.objectType, editHandler.alias, idPrefix, inputType, window.parent);
-            	if (null === inputReference) {
-            	    return;
+                inputReference = «vendorAndName»DetermineInputReference(editHandler.objectType, editHandler.alias, idPrefix, inputType, window.parent);
+                if (null === inputReference || null === inputReference.field) {
+                    return;
                 }
 
                 // show a message
-                window.parent.«vendorAndName»SimpleAlert(inputReference.field, window.parent.Translator.__('Information'), window.parent.Translator.__('Action has been completed.'), 'actionDoneAlert', 'success');
+                window.parent.«vendorAndName»SimpleAlert(inputReference.field.parents('.form-group').first(), window.parent.Translator.__('Information'), window.parent.Translator.__('Action has been completed.'), 'actionDoneAlert', 'success');
 
                 // check if a new item has been created
                 if (itemId > 0) {
@@ -340,23 +348,13 @@ class InlineEditing {
                             selected: 'selected'
                         }).text(formattedTitle);
                     } else if (inputType === 'checkbox' || inputType === 'radio') {
-                        nextInputSuffix = 0;
-                        if (inputReference.field.find('input').length > 0) {
-                            nextInputSuffix = inputReference.field.find('input').last().attr('id').replace(inputReference.identifier + '_', '');
-                            if (nextInputSuffix == 'placeholder') {
-                                nextInputSuffix = 0;
-                            } else {
-                                nextInputSuffix = parseInt(nextInputSuffix) + 1;
-                            }
-                        }
-
                         if (inputType === 'checkbox') {
                             newElement = jQuery('<label />', {
                                 class: 'checkbox-inline'
                             }).append(
                                 jQuery('<input />', {
                                     type: 'checkbox',
-                                    id: inputReference.identifier + '_' + nextInputSuffix,
+                                    id: inputReference.identifier + '_' + itemId,
                                     name: inputReference.prefix + '[' + editHandler.alias + '][]',
                                     value: itemId,
                                     checked: 'checked'
@@ -368,7 +366,7 @@ class InlineEditing {
                             }).append(
                                 jQuery('<input />', {
                                     type: 'radio',
-                                    id: inputReference.identifier + '_' + nextInputSuffix,
+                                    id: inputReference.identifier + '_' + itemId,
                                     name: inputReference.prefix + '[' + editHandler.alias + ']',
                                     value: itemId,
                                     checked: 'checked'

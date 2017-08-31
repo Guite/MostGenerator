@@ -1410,6 +1410,11 @@ class EditEntityType {
             if ($options['mode'] != 'create') {
                 return;
             }
+            «IF !incoming.empty || !outgoing.empty»
+                if ($options['inline_usage']) {
+                    return;
+                }
+            «ENDIF»
             $builder->add('repeatCreation', CheckboxType::class, [
                 'mapped' => false,
                 'label' => $this->__('Create another item after save'),

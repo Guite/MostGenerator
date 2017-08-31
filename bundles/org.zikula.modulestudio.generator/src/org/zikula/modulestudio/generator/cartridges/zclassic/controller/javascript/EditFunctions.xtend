@@ -180,7 +180,7 @@ class EditFunctions {
         /**
          * Initialises a relation field section with «IF needsAutoCompletion»autocompletion «ENDIF»«IF needsInlineEditing»«IF needsAutoCompletion»and «ENDIF»optional edit capabilities«ENDIF».
          */
-        function «vendorAndName»InitRelationHandling(objectType, alias, idPrefix, includeEditing, inputType)
+        function «vendorAndName»InitRelationHandling(objectType, alias, idPrefix, includeEditing, inputType, createUrl)
         {
             «IF needsAutoCompletion»
                 if (inputType == 'autocomplete') {
@@ -189,7 +189,7 @@ class EditFunctions {
             «ENDIF»
             «IF needsInlineEditing»
                 if (includeEditing) {
-                    «vendorAndName»InitInlineEditingButtons(objectType, alias, idPrefix, inputType);
+                    «vendorAndName»InitInlineEditingButtons(objectType, alias, idPrefix, inputType, createUrl);
                 }
             «ENDIF»
         }

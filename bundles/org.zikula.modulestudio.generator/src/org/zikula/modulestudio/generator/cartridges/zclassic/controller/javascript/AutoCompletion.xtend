@@ -140,14 +140,18 @@ class AutoCompletion {
                     id: elemPrefix + 'Remove',
                     href: 'javascript:«vendorAndName»RemoveRelatedItem(\'' + idPrefix + '\', ' + newItemId + ');',
                     text: 'remove'
-                }).append('<span />', { class: 'fa fa-trash-o' })
+                }).append(
+                    jQuery('<span />', { class: 'fa fa-trash-o' })
+                )
             );
 
             if (selectedListItem.image !== '') {
-                li.append(jQuery('<div />', {
-                    id: elemPrefix + 'Preview',
-                    name: idPrefix + 'Preview'
-                }).html(selectedListItem.image));
+                li.append(
+                    jQuery('<div />', {
+                        id: elemPrefix + 'Preview',
+                        name: idPrefix + 'Preview'
+                    }).html(selectedListItem.image)
+                );
             }
 
             jQuery('#' + idPrefix + 'ReferenceList').append(li);
@@ -232,7 +236,9 @@ class AutoCompletion {
                     response: function(event, ui) {
                         jQuery('#' + idPrefix + 'LiveSearch .empty-message').remove();
                         if (ui.content.length === 0) {
-                            jQuery('#' + idPrefix + 'LiveSearch').append('<div class="empty-message">' + Translator.__('No results found!') + '</div>');
+                            jQuery('#' + idPrefix + 'LiveSearch').append(
+                                jQuery('<div />', { class: 'empty-message' }).text(Translator.__('No results found!'))
+                            );
                         }
                     },
                     focus: function(event, ui) {

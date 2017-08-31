@@ -107,7 +107,7 @@ class Section {
 
     def private returnControl(Entity it) '''
         {# include return control #}
-        {% if mode == 'create' %}
+        {% if mode == 'create'«IF !incoming.empty || !outgoing.empty» and form.repeatCreation is defined«ENDIF» %}
             <fieldset>
                 <legend>{{ __('Return control') }}</legend>
                 {{ form_row(form.repeatCreation) }}

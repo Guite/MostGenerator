@@ -160,7 +160,7 @@ class Relations {
                             };
                             «app.vendorAndName»InlineEditHandlers.push(«app.vendorAndName»EditHandler);
 
-                            «app.vendorAndName»InitRelationHandling('«name.formatForCode»', '{{ idPrefix }}', '{{ idPrefix }}SelectorDoNew', «hasEditAction.displayBool», 'autocomplete');
+                            «app.vendorAndName»InitRelationHandling('«name.formatForCode»', '{{ idPrefix }}', '{{ idPrefix }}SelectorDoNew', «hasEditAction.displayBool», 'autocomplete', '«IF hasEditAction»{{ path('«app.appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ 'edit') }}«ENDIF»');
                         /* ]]> */
                         </script>
                     {% endset %}
@@ -178,9 +178,9 @@ class Relations {
         «val otherEntity = (if (!useTarget) source else target) as Entity»
         «val many = isManySideDisplay(useTarget)»
         {% if routeArea == 'admin' %}
-            <h4>{{ __('«otherEntity.getEntityNameSingularPlural(many).formatForDisplayCapital»') }}</h4>
+            <h4>{{ __('«getRelationAliasName(useTarget).formatForDisplayCapital»') }}</h4>
         {% else %}
-            <h3>{{ __('«otherEntity.getEntityNameSingularPlural(many).formatForDisplayCapital»') }}</h3>
+            <h3>{{ __('«getRelationAliasName(useTarget).formatForDisplayCapital»') }}</h3>
         {% endif %}
 
         {% if «relatedEntity.name.formatForCode».«relationAliasName»|default %}

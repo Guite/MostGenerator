@@ -287,8 +287,7 @@ class Forms {
                 «IF !userFields.empty || standardFields»
                     // initialise auto completion for user fields
                     «FOR userField : userFields»
-                        «val realName = userField.name.formatForCode»
-                        initUserLiveSearch('«app.appName.toLowerCase»_«name.formatForCode.toLowerCase»_«realName»');
+                        initUserLiveSearch('«app.appName.toLowerCase»_«name.formatForCode.toLowerCase»_«userField.name.formatForCode»');
                     «ENDFOR»
                     «IF standardFields»
                         {% if form.moderationSpecificCreator is defined %}

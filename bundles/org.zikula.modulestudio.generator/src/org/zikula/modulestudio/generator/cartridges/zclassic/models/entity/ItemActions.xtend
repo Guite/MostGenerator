@@ -131,7 +131,7 @@ class ItemActions {
                     «val many = elem.isManySideDisplay(useTarget)»
                     «IF !many»
                         if (!isset($entity->«relationAliasName») || null === $entity->«relationAliasName») {
-                            $title = $this->__('Create «otherEntity.name.formatForDisplay»');
+                            $title = $this->__('Create «elem.getRelationAliasName(useTarget).formatForDisplay»');
                             $menu->addChild($title, [
                                 'route' => '«app.appName.formatForDB»_«otherEntity.name.formatForDB»_' . $routeArea . 'edit',
                                 'routeParameters' => ['«relationAliasNameParam.formatForDB»' => $entity->«IF hasSluggableFields && slugUnique»getSlug()«ELSE»getKey()«ENDIF»]
@@ -139,7 +139,7 @@ class ItemActions {
                             $menu[$title]->setLinkAttribute('title', $title);
                         }
                     «ELSE»
-                        $title = $this->__('Create «otherEntity.name.formatForDisplay»');
+                        $title = $this->__('Create «elem.getRelationAliasName(useTarget).formatForDisplay»');
                         $menu->addChild($title, [
                             'route' => '«app.appName.formatForDB»_«otherEntity.name.formatForDB»_' . $routeArea . 'edit',
                             'routeParameters' => ['«relationAliasNameParam.formatForDB»' => $entity->getKey()]

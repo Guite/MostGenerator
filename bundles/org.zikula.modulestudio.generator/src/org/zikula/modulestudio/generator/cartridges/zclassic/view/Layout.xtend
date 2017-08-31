@@ -222,7 +222,7 @@ class Layout {
                         <input type="hidden" {{ block('widget_attributes') }} value="{{ value }}" />
                         <input type="hidden" name="{{ idPrefix }}Multiple" id="{{ idPrefix }}Multiple" value="{{ multiple ? '1' : '0' }}" />
                         <input type="text" id="{{ idPrefix }}Selector" name="{{ idPrefix }}Selector" autocomplete="off" />
-                        <input type="button" id="{{ idPrefix }}SelectorDoCancel" name="{{ idPrefix }}SelectorDoCancel" value="{{ __('Cancel') }}" class="btn btn-default «appName.toLowerCase»-inline-button" />
+                        <button type="button" id="{{ idPrefix }}SelectorDoCancel" name="{{ idPrefix }}SelectorDoCancel" class="btn btn-default «appName.toLowerCase»-inline-button"><i class="fa fa-times"></i> {{ __('Cancel') }}</button>
                         {% if create_url != '' %}
                             <a id="{{ idPrefix }}SelectorDoNew" href="{{ create_url }}" title="{{ __f('Create new %name%', {'%name%': entityNameTranslated}) }}" class="btn btn-default «appName.toLowerCase»-inline-button"><i class="fa fa-plus"></i> {{ __('Create') }}</a>
                         {% endif %}
