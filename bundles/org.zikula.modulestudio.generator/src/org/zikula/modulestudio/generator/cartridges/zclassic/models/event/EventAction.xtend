@@ -40,14 +40,20 @@ class EventAction {
     def prePersist(Application it) '''
         «IF hasUploads»
 
-            $uploadFields = $this->getUploadFields($entity->get_objectType());
+            $uploadHelper = $this->container->get('«appService».upload_helper');
+            $request = $this->container->get('request_stack')->getCurrentRequest();
+            $baseUrl = $request->getSchemeAndHttpHost() . $request->getBasePath();
+            $uploadFields = $this->getUploadFields(«entityVar»->get_objectType());
             foreach ($uploadFields as $uploadField) {
                 if (empty(«entityVar»[$uploadField])) {
                     continue;
                 }
 
-                if (!($entity[$uploadField] instanceof File)) {
-                    $entity[$uploadField] = new File($entity[$uploadField]);
+                if (!(«entityVar»[$uploadField] instanceof File)) {
+                    if (false === strpos(«entityVar»[$uploadField], '/')) {
+                        «entityVar»[$uploadField] = $uploadHelper->getFileBaseFolder(«entityVar»->get_objectType(), $uploadField) . «entityVar»[$uploadField];
+                    }
+                    «entityVar»[$uploadField] = new File(«entityVar»[$uploadField]);
                 }
                 «entityVar»[$uploadField] = «entityVar»[$uploadField]->getFilename();
             }
@@ -113,14 +119,20 @@ class EventAction {
     def preUpdate(Application it) '''
         «IF hasUploads»
 
-            $uploadFields = $this->getUploadFields($entity->get_objectType());
+            $uploadHelper = $this->container->get('«appService».upload_helper');
+            $request = $this->container->get('request_stack')->getCurrentRequest();
+            $baseUrl = $request->getSchemeAndHttpHost() . $request->getBasePath();
+            $uploadFields = $this->getUploadFields(«entityVar»->get_objectType());
             foreach ($uploadFields as $uploadField) {
                 if (empty(«entityVar»[$uploadField])) {
                     continue;
                 }
 
-                if (!($entity[$uploadField] instanceof File)) {
-                    $entity[$uploadField] = new File($entity[$uploadField]);
+                if (!(«entityVar»[$uploadField] instanceof File)) {
+                    if (false === strpos(«entityVar»[$uploadField], '/')) {
+                        «entityVar»[$uploadField] = $uploadHelper->getFileBaseFolder(«entityVar»->get_objectType(), $uploadField) . «entityVar»[$uploadField];
+                    }
+                    «entityVar»[$uploadField] = new File(«entityVar»[$uploadField]);
                 }
                 «entityVar»[$uploadField] = «entityVar»[$uploadField]->getFilename();
             }
