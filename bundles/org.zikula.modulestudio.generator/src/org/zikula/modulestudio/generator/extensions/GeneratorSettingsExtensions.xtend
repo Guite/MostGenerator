@@ -186,6 +186,13 @@ class GeneratorSettingsExtensions {
     }
 
     /**
+     * Determines whether pdf support should be generated or not.
+     */
+    def generatePdfSupport(Application it) {
+        if (hasSettings) getSettings.generatePdfSupport else false
+    }
+
+    /**
      * Determines whether and which type of authentication method should be provided.
      */
     def authenticationMethod(Application it) {

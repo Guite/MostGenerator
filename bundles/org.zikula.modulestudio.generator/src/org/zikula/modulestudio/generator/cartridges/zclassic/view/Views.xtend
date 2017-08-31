@@ -88,7 +88,9 @@ class Views {
         if (generateExternalControllerAndFinder || !joinRelations.empty) {
             layoutHelper.rawPageFile(it)
         }
-        layoutHelper.pdfHeaderFile(it)
+        if (generatePdfSupport) {
+            layoutHelper.pdfHeaderFile(it)
+        }
     }
 
     def private generateViews(Application it, Entity entity) {

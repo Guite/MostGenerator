@@ -354,6 +354,6 @@ class ModelBehaviourExtensions {
      * Checks whether a composer execution is required before installing the application.
      */
     def needsComposerInstall(Application it) {
-        hasGeographical
+        hasGeographical || generatePdfSupport
     }
 }

@@ -68,7 +68,7 @@ class Annotations {
     def private dispatch actionRoute(ViewAction it, Entity entity, Boolean isAdmin) '''
          «' '»*
          «' '»* @Route("/«IF isAdmin»admin/«ENDIF»«entity.nameMultiple.formatForCode»/view/{sort}/{sortdir}/{pos}/{num}.{_format}",
-         «' '»*        requirements = {"sortdir" = "asc|desc|ASC|DESC", "pos" = "\d+", "num" = "\d+", "_format" = "html«IF app.getListOfViewFormats.size > 0»|«FOR format : app.getListOfViewFormats SEPARATOR '|'»«format»«ENDFOR»«ENDIF»"},
+         «' '»*        requirements = {"sortdir" = "asc|desc|ASC|DESC", "pos" = "\d+", "num" = "\d+", "_format" = "html«IF app.getListOfViewFormats.size > 0»|«app.getListOfViewFormats.join('|')»«ENDIF»"},
          «' '»*        defaults = {"sort" = "", "sortdir" = "asc", "pos" = 1, "num" = 10, "_format" = "html"},
          «' '»*        methods = {"GET"}
          «' '»* )
@@ -77,7 +77,7 @@ class Annotations {
     def private actionRouteForSingleEntity(Entity it, Action action, Boolean isAdmin) '''
          «' '»*
          «' '»* @Route("/«IF isAdmin»admin/«ENDIF»«name.formatForCode»/«IF !(action instanceof DisplayAction)»«action.name.formatForCode»/«ENDIF»«actionRouteParamsForSingleEntity(action)».{_format}",
-         «' '»*        requirements = {«actionRouteRequirementsForSingleEntity(action)», "_format" = "html«IF action instanceof DisplayAction && app.getListOfDisplayFormats.size > 0»|«FOR format : app.getListOfDisplayFormats SEPARATOR '|'»«format»«ENDFOR»«ENDIF»"},
+         «' '»*        requirements = {«actionRouteRequirementsForSingleEntity(action)», "_format" = "html«IF action instanceof DisplayAction && app.getListOfDisplayFormats.size > 0»|«app.getListOfDisplayFormats.join('|')»«ENDIF»"},
          «' '»*        defaults = {«IF action instanceof EditAction»«actionRouteDefaultsForSingleEntity(action)», «ENDIF»"_format" = "html"},
          «' '»*        methods = {"GET"«IF action instanceof EditAction || action instanceof DeleteAction», "POST"«ENDIF»}«IF tree != EntityTreeType.NONE»,
          «' '»*        options={"expose"=true}«ENDIF»

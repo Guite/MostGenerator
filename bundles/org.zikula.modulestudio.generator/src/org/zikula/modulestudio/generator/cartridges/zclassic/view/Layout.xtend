@@ -371,6 +371,9 @@ class Layout {
     '''
 
     def pdfHeaderFile(Application it) {
+        if (!generatePdfSupport) {
+            return
+        }
         val templateExtension = '.html.twig'
         var fileName = 'includePdfHeader' + templateExtension
         if (!shouldBeSkipped(getViewPath + fileName)) {

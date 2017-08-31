@@ -92,9 +92,9 @@ class ViewExtensions {
         if (generateKmlTemplates && hasGeographical) {
             formats.add('kml')
         }
-        /*if (generatePdfTemplates) {
+        if (generatePdfSupport) {
             formats.add('pdf')
-        }*/
+        }
         formats
     }
 
@@ -118,9 +118,9 @@ class ViewExtensions {
         if (generateIcsTemplates && hasDisplayActions && !getAllEntities.filter[hasDisplayAction && null !== startDateField && null !== endDateField].empty) {
             formats.add('ics')
         }
-        /*if (generatePdfTemplates) {
+        if (generatePdfSupport) {
             formats.add('pdf')
-        }*/
+        }
         formats
     }
 

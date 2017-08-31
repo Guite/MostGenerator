@@ -118,8 +118,10 @@ class ViewHelper {
             «determineExtension»
 
             «availableExtensions»
+            «IF generatePdfSupport»
 
-            «processPdf»
+                «processPdf»
+            «ENDIF»
         }
     '''
 
@@ -182,12 +184,14 @@ class ViewHelper {
                 «ENDIF»
                 $template = $this->getViewTemplate($type, $func«IF generateSeparateAdminTemplates», $isAdmin«ENDIF»);
             }
+            «IF generatePdfSupport»
 
-            if ($templateExtension == 'pdf.twig') {
-                $template = str_replace('.pdf', '.html', $template);
+                if ($templateExtension == 'pdf.twig') {
+                    $template = str_replace('.pdf', '.html', $template);
 
-                return $this->processPdf($templateParameters, $template);
-            }
+                    return $this->processPdf($templateParameters, $template);
+                }
+            «ENDIF»
 
             // look whether we need output with or without the theme
             $raw = $this->request->query->getBoolean('raw', false);
@@ -304,13 +308,13 @@ class ViewHelper {
                 if ($hasAdminAccess) {
                     $extensions = [«FOR format : getListOfViewFormats SEPARATOR ', '»'«format»'«ENDFOR»];
                 } else {
-                    $extensions = [«FOR format : getListOfViewFormats.filter[it == 'rss' || it == 'atom' || it == 'pdf'] SEPARATOR ', '»'«format»'«ENDFOR»];
+                    $extensions = [«FOR format : getListOfViewFormats.filter[#['rss', 'atom', 'pdf'].contains(it)] SEPARATOR ', '»'«format»'«ENDFOR»];
                 }
             } elseif ($func == 'display') {
                 if ($hasAdminAccess) {
                     $extensions = [«FOR format : getListOfDisplayFormats SEPARATOR ', '»'«format»'«ENDFOR»];
                 } else {
-                    $extensions = [«FOR format : getListOfDisplayFormats.filter[it == 'ics' || it == 'pdf'] SEPARATOR ', '»'«format»'«ENDFOR»];
+                    $extensions = [«FOR format : getListOfDisplayFormats.filter[#['ics', 'pdf'].contains(it)] SEPARATOR ', '»'«format»'«ENDFOR»];
                 }
             }
 
