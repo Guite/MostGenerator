@@ -50,7 +50,7 @@ class BlockDetailType {
         use Zikula\Common\Translator\TranslatorInterface;
         use Zikula\Common\Translator\TranslatorTrait;
         use «appNamespace»\Entity\Factory\EntityFactory;
-        use «appNamespace»\Entity\Helper\EntityDisplayHelper;
+        use «appNamespace»\Helper\EntityDisplayHelper;
 
         /**
          * Detail block form type base class.
