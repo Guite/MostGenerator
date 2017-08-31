@@ -96,7 +96,7 @@ class GeoFunctions {
 
             // add tile layer
             L.tileLayer(parameters.tileLayerUrl, {
-                attribution: parameters.tileLayerAttribution)
+                attribution: parameters.tileLayerAttribution
             }).addTo(map);
 
             // add a marker
