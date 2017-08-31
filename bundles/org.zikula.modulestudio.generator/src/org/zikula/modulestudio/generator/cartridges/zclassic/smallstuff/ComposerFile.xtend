@@ -78,7 +78,7 @@ class ComposerFile {
                 "jakub-onderka/php-parallel-lint": "*",
                 "phploc/phploc": "*",
                 "pdepend/pdepend": "2.*",
-                "squizlabs/php_codesniffer": "1.*",
+                "squizlabs/php_codesniffer": "*",
                 "phpunit/phpunit": "4.*",
                 "theseer/phpdox": "*",
                 "phpmd/phpmd": "2.*",
