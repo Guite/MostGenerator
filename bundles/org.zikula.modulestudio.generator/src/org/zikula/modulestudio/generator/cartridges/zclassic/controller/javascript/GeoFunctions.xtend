@@ -42,7 +42,7 @@ class GeoFunctions {
 
                 position = new L.LatLng(jQuery("[id$='latitude']").val(), jQuery("[id$='longitude']").val());
                 marker.setLatLng(position);
-                map.setView(position, defaultZoomLevel);
+                map.setView(position, map.getZoom());
             }
 
             «initGeoLocation»
@@ -79,7 +79,6 @@ class GeoFunctions {
     def private initGeoDisplay(Application it) '''
         var map;
         var marker;
-        var defaultZoomLevel;
 
         /**
          * Initialises geographical display features.
@@ -88,7 +87,6 @@ class GeoFunctions {
         {
             var centerLocation;
 
-            defaultZoomLevel = parameters.zoomLevel;
             centerLocation = new L.LatLng(parameters.latitude, parameters.longitude);
 
             // create map and center to given coordinates
@@ -148,7 +146,7 @@ class GeoFunctions {
                 «vendorAndName»NewCoordinatesEventHandler();
             });
             marker.on('dragend', function (event) {
-                var coords = event.latlng;
+                var coords = event.target.getLatLng();
                 jQuery("[id$='latitude']").val(coords.lat.toFixed(7));
                 jQuery("[id$='longitude']").val(coords.lng.toFixed(7));
                 «vendorAndName»NewCoordinatesEventHandler();

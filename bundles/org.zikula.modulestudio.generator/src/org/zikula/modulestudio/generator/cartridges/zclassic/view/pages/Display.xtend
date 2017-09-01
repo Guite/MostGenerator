@@ -195,7 +195,7 @@ class Display {
         «IF geographical»
             {% block footer %}
                 {{ parent() }}
-                «application.includeLeaflet('display', objName)»
+                «includeLeaflet('display', objName)»
             {% endblock %}
         «ENDIF»
     '''

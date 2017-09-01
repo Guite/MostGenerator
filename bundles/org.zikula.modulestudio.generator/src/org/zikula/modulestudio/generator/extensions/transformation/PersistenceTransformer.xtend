@@ -404,7 +404,7 @@ class PersistenceTransformer {
         ]
         varContainer.vars += factory.createIntVar => [
             name = 'defaultZoomLevel'
-            value = '18'
+            value = '5'
             documentation = 'The default zoom level.'
         ]
         varContainer.vars += factory.createTextVar => [

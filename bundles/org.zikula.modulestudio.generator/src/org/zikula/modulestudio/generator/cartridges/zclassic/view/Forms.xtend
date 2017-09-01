@@ -266,7 +266,7 @@ class Forms {
 
     def private formTemplateJS(Entity it) '''
         «IF geographical»
-            «app.includeLeaflet('edit', name.formatForDB)»
+            «includeLeaflet('edit', name.formatForDB)»
         «ENDIF»
         {% set formInitScript %}
             <script type="text/javascript">
