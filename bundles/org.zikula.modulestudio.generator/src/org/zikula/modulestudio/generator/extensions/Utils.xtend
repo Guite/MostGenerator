@@ -140,21 +140,22 @@ class Utils {
      * Returns the core version as semantic version number.
      *
      * @param it The {@link Application} instance
+     * @param withPoint Whether to include the last part or not
      *
      * @return String the formatted version number
      */
-    def targetSemVer(Application it) {
+    def targetSemVer(Application it, Boolean withPoint) {
         switch getCoreVersion {
             case ZK2DEV:
-                '2.0.1'
+                if (!withPoint) '2.0' else '2.0.2'
             case ZK20:
-                '2.0.0'
+                if (!withPoint) '2.0' else '2.0.1'
             case ZK15:
-                '1.5.0'
+                if (!withPoint) '1.5' else '1.5.1'
             case ZK15DEV:
-                '1.5.1'
+                if (!withPoint) '1.5' else '1.5.2'
             default:
-                '1.5.0'
+                if (!withPoint) '1.5' else '1.5.1'
         }
     }
 

@@ -84,9 +84,9 @@ class History {
                     </colgroup>
                     <thead>
                         <tr>
-                            <th id="hFieldName" scope="col" class="«IF !app.targets('2.0-dev')»z-order-«ENDIF»unsorted">{{ __('Field name') }}</th>
-                            <th id="hMinVersion" scope="col" class="«IF !app.targets('2.0-dev')»z-order-«ENDIF»unsorted">{{ __f('Version %version%', {'%version%': minVersion}) }}</th>
-                            <th id="hMaxVersion" scope="col" class="«IF !app.targets('2.0-dev')»z-order-«ENDIF»unsorted">{{ __f('Version %version%', {'%version%': maxVersion}) }}</th>
+                            <th id="hFieldName" scope="col" class="«IF !app.targets('2.0')»z-order-«ENDIF»unsorted">{{ __('Field name') }}</th>
+                            <th id="hMinVersion" scope="col" class="«IF !app.targets('2.0')»z-order-«ENDIF»unsorted">{{ __f('Version %version%', {'%version%': minVersion}) }}</th>
+                            <th id="hMaxVersion" scope="col" class="«IF !app.targets('2.0')»z-order-«ENDIF»unsorted">{{ __f('Version %version%', {'%version%': maxVersion}) }}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -117,13 +117,13 @@ class History {
             </colgroup>
             <thead>
                 <tr>
-                    <th id="hSelect" scope="col" class="«IF !app.targets('2.0-dev')»z-order-«ENDIF»unsorted z-w02">{{ __('Select') }}</th>
-                    <th id="hVersion" scope="col" class="«IF !app.targets('2.0-dev')»z-order-«ENDIF»unsorted z-w02">{{ __('Version') }}</th>
-                    <th id="hDate" scope="col" class="«IF !app.targets('2.0-dev')»z-order-«ENDIF»unsorted">{{ __('Date') }}</th>
-                    <th id="hUser" scope="col" class="«IF !app.targets('2.0-dev')»z-order-«ENDIF»unsorted">{{ __('User') }}</th>
-                    <th id="hOperation" scope="col" class="«IF !app.targets('2.0-dev')»z-order-«ENDIF»unsorted">{{ __('Operation') }}</th>
-                    <th id="hChanges" scope="col" class="«IF !app.targets('2.0-dev')»z-order-«ENDIF»unsorted">{{ __('Changes') }}</th>
-                    <th id="hActions" scope="col" class="«IF !app.targets('2.0-dev')»z-order-«ENDIF»unsorted">{{ __('Actions') }}</th>
+                    <th id="hSelect" scope="col" class="«IF !app.targets('2.0')»z-order-«ENDIF»unsorted z-w02">{{ __('Select') }}</th>
+                    <th id="hVersion" scope="col" class="«IF !app.targets('2.0')»z-order-«ENDIF»unsorted z-w02">{{ __('Version') }}</th>
+                    <th id="hDate" scope="col" class="«IF !app.targets('2.0')»z-order-«ENDIF»unsorted">{{ __('Date') }}</th>
+                    <th id="hUser" scope="col" class="«IF !app.targets('2.0')»z-order-«ENDIF»unsorted">{{ __('User') }}</th>
+                    <th id="hOperation" scope="col" class="«IF !app.targets('2.0')»z-order-«ENDIF»unsorted">{{ __('Operation') }}</th>
+                    <th id="hChanges" scope="col" class="«IF !app.targets('2.0')»z-order-«ENDIF»unsorted">{{ __('Changes') }}</th>
+                    <th id="hActions" scope="col" class="«IF !app.targets('2.0')»z-order-«ENDIF»unsorted">{{ __('Actions') }}</th>
                 </tr>
             </thead>
             <tbody>
