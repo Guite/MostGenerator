@@ -316,9 +316,6 @@ class WorkflowHelper {
                 case 'submit':
                     $buttonClass = 'success';
                     break;
-                case 'update':
-                    $buttonClass = 'success';
-                    break;
                 «IF hasWorkflowState('deferred')»
                     case 'reject':
                         $buttonClass = '';
@@ -367,6 +364,10 @@ class WorkflowHelper {
                     $buttonClass = 'danger';
                     break;
             }
+
+            if ($buttonClass == '' && substr($actionId, 0, 6) == 'update') {
+                $buttonClass = 'success';
+        	}
 
             if (empty($buttonClass)) {
                 $buttonClass = 'default';
