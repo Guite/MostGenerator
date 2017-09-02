@@ -616,7 +616,8 @@ class FormHandler {
                     «locking.addPageLock(it)»
                 }
             } else {
-                if (!$this->permissionApi->hasPermission($this->permissionComponent, '::', ACCESS_EDIT)) {
+                $permissionLevel = «IF needsApproval»in_array($objectType, ['«getAllEntities.filter[workflow != EntityWorkflowType.NONE].map[name.formatForCode].join('\', \'')»']) ? ACCESS_COMMENT : ACCESS_EDIT«ELSE»ACCESS_EDIT«ENDIF»;
+                if (!$this->permissionApi->hasPermission($this->permissionComponent, '::', $permissionLevel)) {
                     throw new AccessDeniedException();
                 }
 

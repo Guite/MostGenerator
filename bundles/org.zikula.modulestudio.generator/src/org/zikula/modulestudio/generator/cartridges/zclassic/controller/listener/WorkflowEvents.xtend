@@ -129,28 +129,26 @@ class WorkflowEvents {
 
                 return;
             }
-            «IF !getJoinRelations.empty»
+            «IF !getJoinRelations.empty && !getAllEntities.filter[!getOutgoingJoinRelationsWithoutDeleteCascade.empty].empty»
 
                 if ($transitionName == 'delete') {
                     // check if deleting the entity would break related child entities
-                    «FOR entity : getAllEntities»
-                        «IF !entity.getOutgoingJoinRelationsWithoutDeleteCascade.empty»
-                            if ($objectType == '«entity.name.formatForCode»') {
-                                $isBlocked = false;
-                                «FOR relation : entity.getOutgoingJoinRelationsWithoutDeleteCascade»
-                                    «IF relation.isManySide(true)»
-                                        if (count($entity->get«relation.targetAlias.formatForCodeCapital»()) > 0) {
-                                            $isBlocked = true;
-                                        }
-                                    «ELSE»
-                                        if (null !== $entity->get«relation.targetAlias.formatForCodeCapital»()) {
-                                            $isBlocked = true;
-                                        }
-                                    «ENDIF»
-                                «ENDFOR»
-                                $event->setBlocked($isBlocked);
-                            }
-                        «ENDIF»
+                    «FOR entity : getAllEntities.filter[!getOutgoingJoinRelationsWithoutDeleteCascade.empty]»
+                        if ($objectType == '«entity.name.formatForCode»') {
+                            $isBlocked = false;
+                            «FOR relation : entity.getOutgoingJoinRelationsWithoutDeleteCascade»
+                                «IF relation.isManySide(true)»
+                                    if (count($entity->get«relation.targetAlias.formatForCodeCapital»()) > 0) {
+                                        $isBlocked = true;
+                                    }
+                                «ELSE»
+                                    if (null !== $entity->get«relation.targetAlias.formatForCodeCapital»()) {
+                                        $isBlocked = true;
+                                    }
+                                «ENDIF»
+                            «ENDFOR»
+                            $event->setBlocked($isBlocked);
+                        }
                     «ENDFOR»
                 }
             «ENDIF»
