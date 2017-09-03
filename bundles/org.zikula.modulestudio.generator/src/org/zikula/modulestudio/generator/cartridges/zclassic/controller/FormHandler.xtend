@@ -540,7 +540,7 @@ class FormHandler {
         public function processForm(array $templateParameters)
         {
             $this->templateParameters = $templateParameters;
-            «IF app.needsAutoCompletion»
+            «IF !getJoinRelations.empty»
                 $this->templateParameters['inlineUsage'] = $this->request->query->getBoolean('raw', false);
             «ENDIF»
             «IF !getJoinRelations.empty || app.needsAutoCompletion»
@@ -1327,9 +1327,9 @@ class FormHandler {
                     'has_moderate_permission' => $this->permissionApi->hasPermission($this->permissionComponent, $this->idValue . '::', ACCESS_MODERATE),
                 «ENDIF»
                 «IF !incoming.empty || !outgoing.empty»
-                    'filter_by_ownership' => !$this->permissionApi->hasPermission($this->permissionComponent, $this->idValue . '::', ACCESS_ADD)«IF app.needsAutoCompletion»,«ENDIF»
+                    'filter_by_ownership' => !$this->permissionApi->hasPermission($this->permissionComponent, $this->idValue . '::', ACCESS_ADD)«IF !incoming.empty || !outgoing.empty»,«ENDIF»
                 «ENDIF»
-                «IF app.needsAutoCompletion»
+                «IF !incoming.empty || !outgoing.empty»
                     'inline_usage' => $this->templateParameters['inlineUsage']
                 «ENDIF»
             ];
