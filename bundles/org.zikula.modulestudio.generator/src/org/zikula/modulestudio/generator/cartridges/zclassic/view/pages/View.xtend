@@ -342,7 +342,7 @@ class View {
                 {% set hooks = notifyDisplayHooks(eventName='«appName.formatForDB».ui_hooks.«nameMultiple.formatForDB».display_view', urlObject=currentUrlObject, true) %}
                 {% if hooks is iterable and hooks|length > 0 %}
                     {% for area, hook in hooks %}
-                        <div class="z-displayhook my-special-hook-class" data-area="{{ area|e('html_attr') }}">{{ hook }}</div>
+                        <div class="z-displayhook" data-area="{{ area|e('html_attr') }}">{{ hook }}</div>
                     {% endfor %}
                 {% endif %}
             «ELSE»
