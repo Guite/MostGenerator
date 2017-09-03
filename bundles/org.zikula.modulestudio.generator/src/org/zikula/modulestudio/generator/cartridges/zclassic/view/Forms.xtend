@@ -337,7 +337,16 @@ class Forms {
 
     def private displayHooks(Entity it, Application app) '''
         {% set hookId = mode != 'create' ? «name.formatForDB».«primaryKey.name.formatForCode» : null %}
-        {{ notifyDisplayHooks(eventName='«app.appName.formatForDB».ui_hooks.«nameMultiple.formatForDB».form_edit', id=hookId) }}
+        «IF application.targets('2.0-dev') || (application.targets('1.5-dev') && !application.targets('2.0'))»
+            {% set hooks = notifyDisplayHooks(eventName='«app.appName.formatForDB».ui_hooks.«nameMultiple.formatForDB».form_edit', id=hookId, true) %}
+            {% if hooks is iterable and hooks|length > 0 %}
+                {% for area, hook in hooks %}
+                    <div class="z-displayhook my-special-hook-class" data-area="{{ area|e('html_attr') }}">{{ hook }}</div>
+                {% endfor %}
+            {% endif %}
+        «ELSE»
+            {{ notifyDisplayHooks(eventName='«app.appName.formatForDB».ui_hooks.«nameMultiple.formatForDB».form_edit', id=hookId) }}
+        «ENDIF»
     '''
 
     def private additionalInitScript(DerivedField it) {

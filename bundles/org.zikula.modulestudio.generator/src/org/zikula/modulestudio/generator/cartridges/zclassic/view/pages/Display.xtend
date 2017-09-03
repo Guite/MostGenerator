@@ -329,7 +329,16 @@ class Display {
             <div role="tabpanel" class="tab-pane fade" id="tabHooks" aria-labelledby="hooksTab">
                 <h3>{{ __('Hooks') }}</h3>
         «ENDIF»
-        {{ notifyDisplayHooks(eventName='«appName.formatForDB».ui_hooks.«nameMultiple.formatForDB».display_view', id=«name.formatForCode».getKey(), urlObject=currentUrlObject) }}
+        «IF application.targets('2.0-dev') || (application.targets('1.5-dev') && !application.targets('2.0'))»
+            {% set hooks = notifyDisplayHooks(eventName='«appName.formatForDB».ui_hooks.«nameMultiple.formatForDB».display_view', id=«name.formatForCode».getKey(), urlObject=currentUrlObject, true) %}
+            {% if hooks is iterable and hooks|length > 0 %}
+                {% for area, hook in hooks %}
+                    <div class="z-displayhook my-special-hook-class" data-area="{{ area|e('html_attr') }}">{{ hook }}</div>
+                {% endfor %}
+            {% endif %}
+        «ELSE»
+            {{ notifyDisplayHooks(eventName='«appName.formatForDB».ui_hooks.«nameMultiple.formatForDB».display_view', id=«name.formatForCode».getKey(), urlObject=currentUrlObject) }}
+        «ENDIF»
         «IF useGroupingTabs('display')»
             </div>
         «ENDIF»

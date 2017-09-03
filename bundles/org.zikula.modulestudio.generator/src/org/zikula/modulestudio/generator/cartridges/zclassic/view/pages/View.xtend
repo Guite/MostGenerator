@@ -338,7 +338,16 @@ class View {
 
         {# here you can activate calling display hooks for the view page if you need it #}
         {# % if routeArea != 'admin' %}
-            {{ notifyDisplayHooks(eventName='«appName.formatForDB».ui_hooks.«nameMultiple.formatForDB».display_view', urlObject=currentUrlObject) }}
+            «IF application.targets('2.0-dev') || (application.targets('1.5-dev') && !application.targets('2.0'))»
+                {% set hooks = notifyDisplayHooks(eventName='«appName.formatForDB».ui_hooks.«nameMultiple.formatForDB».display_view', urlObject=currentUrlObject, true) %}
+                {% if hooks is iterable and hooks|length > 0 %}
+                    {% for area, hook in hooks %}
+                        <div class="z-displayhook my-special-hook-class" data-area="{{ area|e('html_attr') }}">{{ hook }}</div>
+                    {% endfor %}
+                {% endif %}
+            «ELSE»
+                {{ notifyDisplayHooks(eventName='«appName.formatForDB».ui_hooks.«nameMultiple.formatForDB».display_view', urlObject=currentUrlObject) }}
+            «ENDIF»
         {% endif % #}
     '''
 

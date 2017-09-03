@@ -85,6 +85,15 @@ class Delete {
     '''
 
     def private callDisplayHooks(Entity it, String appName) '''
-        {{ notifyDisplayHooks(eventName='«appName.formatForDB».ui_hooks.«nameMultiple.formatForDB».form_delete', id=«name.formatForCode».getKey()) }}
+        «IF application.targets('2.0-dev') || (application.targets('1.5-dev') && !application.targets('2.0'))»
+            {% set hooks = notifyDisplayHooks(eventName='«appName.formatForDB».ui_hooks.«nameMultiple.formatForDB».form_delete', id=«name.formatForCode».getKey(), true) %}
+            {% if hooks is iterable and hooks|length > 0 %}
+                {% for area, hook in hooks %}
+                    <div class="z-displayhook my-special-hook-class" data-area="{{ area|e('html_attr') }}">{{ hook }}</div>
+                {% endfor %}
+            {% endif %}
+        «ELSE»
+            {{ notifyDisplayHooks(eventName='«appName.formatForDB».ui_hooks.«nameMultiple.formatForDB».form_delete', id=«name.formatForCode».getKey()) }}
+        «ENDIF»
     '''
 }
