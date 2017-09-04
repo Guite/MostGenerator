@@ -286,7 +286,7 @@ class ExternalView {
                                 <input type="hidden" id="desc{{ itemId }}" value="{% set description %}«displayDescription('', '')»{% endset %}{{ description|striptags|e('html_attr') }}" />
                                 «IF hasImageFieldsEntity»
                                     {% if onlyImages %}
-                                        <input type="hidden" id="imagePath{{ itemId }}" value="/{{ attribute(«name.formatForCode», imageField).getPathname() }}" />
+                                        <input type="hidden" id="imagePath{{ itemId }}" value="{{ app.request.basePath }}/{{ attribute(«name.formatForCode», imageField).getPathname() }}" />
                                     {% endif %}
                                 «ENDIF»
                             «IF hasImageFieldsEntity»

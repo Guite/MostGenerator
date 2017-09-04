@@ -398,6 +398,12 @@ class Listeners {
             use «appNamespace»\Listener\Base\AbstractThirdPartyListener;
         «ELSE»
             use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+            «IF generateScribitePlugins»
+                use Symfony\Component\Filesystem\Filesystem;
+                use Symfony\Component\Finder\Finder;
+                use Symfony\Component\HttpFoundation\Request;
+                use Symfony\Component\HttpFoundation\RequestStack;
+            «ENDIF»
             use Symfony\Component\HttpKernel\HttpKernelInterface;
             «IF needsApproval && generatePendingContentSupport»
                 use Zikula\Collection\Container;
@@ -406,6 +412,9 @@ class Listeners {
             «IF needsApproval && generatePendingContentSupport»
                 use Zikula\Provider\AggregateItem;
                 use «appNamespace»\Helper\WorkflowHelper;
+            «ENDIF»
+            «IF generateScribitePlugins»
+                use Zikula\ScribiteModule\Event\EditorHelperEvent;
             «ENDIF»
         «ENDIF»
 

@@ -273,9 +273,15 @@ class ServiceDefinitions {
                         «IF hasUiHooksProviders»
                             - "@«modPrefix».entity_factory"
                         «ENDIF»
-                «ELSEIF className == 'ThirdParty' && needsApproval && generatePendingContentSupport»
+                «ELSEIF className == 'ThirdParty' && (generateScribitePlugins || (needsApproval && generatePendingContentSupport))»
                     arguments:
-                        - "@«modPrefix».workflow_helper"
+                        «IF generateScribitePlugins»
+                            - "@filesystem"
+                            - "@request_stack"
+                        «ENDIF»
+                        «IF needsApproval && generatePendingContentSupport»
+                            - "@«modPrefix».workflow_helper"
+                        «ENDIF»
                 «ELSEIF className == 'User' && (hasStandardFieldEntities || hasUserFields)»
                     arguments:
                         - "@translator.default"
@@ -700,15 +706,10 @@ class ServiceDefinitions {
         «modPrefix».controller_helper:
             class: «nsBase»ControllerHelper
             arguments:
-                «IF hasUploads»
-                    - "@translator.default"
-                «ENDIF»
+                - "@translator.default"
                 - "@request_stack"
                 «IF hasAutomaticArchiving»
                     - "@«modPrefix».archive_helper"
-                «ENDIF»
-                «IF hasUploads || hasGeographical»
-                    - "@logger"
                 «ENDIF»
                 «IF hasUiHooksProviders»
                     - "@router"
@@ -720,6 +721,7 @@ class ServiceDefinitions {
                     - "@zikula_extensions_module.api.variable"
                 «ENDIF»
                 «IF hasGeographical»
+                    - "@logger"
                     - "@zikula_users_module.current_user"
                 «ENDIF»
                 - "@«modPrefix».entity_factory"
@@ -843,6 +845,7 @@ class ServiceDefinitions {
                 class: «nsBase»UploadHelper
                 arguments:
                     - "@translator.default"
+                    - "@filesystem"
                     - "@session"
                     - "@logger"
                     - "@zikula_users_module.current_user"

@@ -20,22 +20,48 @@ class ThirdParty {
     CommonExample commonExample = new CommonExample()
 
     def generate(Application it) '''
+        «IF generateScribitePlugins»
+            /**
+             * @var Filesystem
+             */
+            protected $filesystem;
+
+            /**
+             * @var Request
+             */
+            protected $request;
+
+        «ENDIF»
         «IF needsApproval && generatePendingContentSupport»
             /**
              * @var WorkflowHelper
              */
             protected $workflowHelper;
 
+        «ENDIF»
+        «IF generateScribitePlugins || (needsApproval && generatePendingContentSupport)»
             /**
              * ThirdPartyListener constructor.
              *
+             «IF generateScribitePlugins»
+             * @param Filesystem   $filesystem   Filesystem service instance
+             * @param RequestStack $requestStack RequestStack service instance
+             «ENDIF»
+             «IF needsApproval && generatePendingContentSupport»
              * @param WorkflowHelper $workflowHelper WorkflowHelper service instance
+             «ENDIF»
              *
              * @return void
              */
-            public function __construct(WorkflowHelper $workflowHelper)
+            public function __construct(«IF generateScribitePlugins»Filesystem $filesystem, RequestStack $requestStack«ENDIF»«IF needsApproval && generatePendingContentSupport»«IF generateScribitePlugins», «ENDIF»WorkflowHelper $workflowHelper«ENDIF»)
             {
-                $this->workflowHelper = $workflowHelper;
+                «IF generateScribitePlugins»
+                    $this->filesystem = $filesystem;
+                    $this->request = $requestStack->getCurrentRequest();
+                «ENDIF»
+                «IF needsApproval && generatePendingContentSupport»
+                    $this->workflowHelper = $workflowHelper;
+                «ENDIF»
             }
 
         «ENDIF»
@@ -47,17 +73,17 @@ class ThirdParty {
         {
             return [
                 «IF needsApproval && generatePendingContentSupport»
-                    'get.pending_content'                   => ['pendingContentListener', 5],
+                    'get.pending_content'                     => ['pendingContentListener', 5],
                 «ENDIF»
-                «IF !targets('2.0')»
-                    «IF generateListContentType || needsDetailContentType»
-                        'module.content.gettypes'               => ['contentGetTypes', 5],
-                    «ENDIF»
-                    «IF generateScribitePlugins»
-                        'module.scribite.editorhelpers'         => ['getEditorHelpers', 5],
-                        'moduleplugin.tinymce.externalplugins'  => ['getTinyMcePlugins', 5],
-                        'moduleplugin.ckeditor.externalplugins' => ['getCKEditorPlugins', 5]
-                    «ENDIF»
+                «IF !targets('2.0') && (generateListContentType || needsDetailContentType)»
+                    'module.content.gettypes'                 => ['contentGetTypes', 5],
+                «ENDIF»
+                «IF generateScribitePlugins»
+                    'module.scribite.editorhelpers'           => ['getEditorHelpers', 5],
+                    'moduleplugin.ckeditor.externalplugins'   => ['getCKEditorPlugins', 5],
+                    'moduleplugin.quill.externalplugins'      => ['getQuillPlugins', 5],
+                    'moduleplugin.summernote.externalplugins' => ['getSummernotePlugins', 5],
+                    'moduleplugin.tinymce.externalplugins'    => ['getTinyMcePlugins', 5]
                 «ENDIF»
             ];
         }
@@ -74,9 +100,13 @@ class ThirdParty {
 
                 «getEditorHelpers»
 
-                «getTinyMcePlugins»
-
                 «getCKEditorPlugins»
+
+                «getCommonEditorPlugins('Quill')»
+
+                «getCommonEditorPlugins('Summernote')»
+
+                «getCommonEditorPlugins('TinyMce')»
             «ENDIF»
         «ENDIF»
     '''
@@ -189,53 +219,33 @@ class ThirdParty {
          *
          «commonExample.generalEventProperties(it)»
          *
-         * @param \Zikula_Event $event The event instance
+         * @param EditorHelperEvent $event The event instance
          */
-        public function getEditorHelpers(\Zikula_Event $event)
+        public function getEditorHelpers(EditorHelperEvent $event)
         {
-            «getEditorHelpersImpl»
+            // install assets for Scribite plugins
+            $targetDir = 'web/modules/«vendorAndName.toLowerCase»';
+            $finder = new Finder();
+            if (!$this->filesystem->exists($targetDir)) {
+                $this->filesystem->mkdir($targetDir, 0777);
+                if (is_dir($originDir = '«relativeAppRootPath»/Resources/public')) {
+                    $this->filesystem->mirror($originDir, $targetDir, Finder::create()->in($originDir));
+                }
+                if (is_dir($originDir = '«relativeAppRootPath»/Resources/scribite')) {
+                    $targetDir .= '/scribite';
+                    $this->filesystem->mkdir($targetDir, 0777);
+                    $this->filesystem->mirror($originDir, $targetDir, Finder::create()->in($originDir));
+                }
+            }
+
+            $event->getHelperCollection()->add(
+                [
+                    'module' => '«appName»',
+                    'type' => 'javascript',
+                    'path' => $this->request->getBasePath() . '/web/modules/«vendorAndName.toLowerCase»/js/«appName».Finder.js'
+                ]
+            );
         }
-    '''
-
-    def private getEditorHelpersImpl(Application it) '''
-        // intended is using the add() method to add a helper like below
-        $helpers = $event->getSubject();
-
-        $helpers->add(
-            [
-                'module' => '«appName»',
-                'type'   => 'javascript',
-                'path'   => '«relativeAppRootPath»/«getAppJsPath»«appName».Finder.js'
-            ]
-        );
-    '''
-
-    def private getTinyMcePlugins(Application it) '''
-        /**
-         * Listener for the `moduleplugin.tinymce.externalplugins` event.
-         *
-         * Adds external plugin to TinyMCE.
-         *
-         «commonExample.generalEventProperties(it)»
-         *
-         * @param \Zikula_Event $event The event instance
-         */
-        public function getTinyMcePlugins(\Zikula_Event $event)
-        {
-            «getTinyMcePluginsImpl»
-        }
-    '''
-
-    def private getTinyMcePluginsImpl(Application it) '''
-        // intended is using the add() method to add a plugin like below
-        $plugins = $event->getSubject();
-
-        $plugins->add(
-            [
-                'name' => '«appName.formatForDB»',
-                'path' => '«relativeAppRootPath»/«getResourcesPath»scribite/TinyMce/«appName.formatForDB»/plugin.js'
-            ]
-        );
     '''
 
     def private getCKEditorPlugins(Application it) '''
@@ -246,25 +256,35 @@ class ThirdParty {
          *
          «commonExample.generalEventProperties(it)»
          *
-         * @param \Zikula_Event $event The event instance
+         * @param GenericEvent $event The event instance
          */
-        public function getCKEditorPlugins(\Zikula_Event $event)
+        public function getCKEditorPlugins(GenericEvent $event)
         {
-            «getCKEditorPluginsImpl»
+            $event->getSubject()->add([
+                'name' => '«appName.formatForDB»',
+                'path' => $this->request->getBasePath() . '/web/modules/«vendorAndName.toLowerCase»/scribite/CKEditor/«appName.formatForDB»/',
+                'file' => 'plugin.js'
+                'img' => 'ed_«appName.formatForDB».gif',
+            ]);
         }
     '''
 
-    def private getCKEditorPluginsImpl(Application it) '''
-        // intended is using the add() method to add a plugin like below
-        $plugins = $event->getSubject();
-
-        $plugins->add(
-            [
+    def private getCommonEditorPlugins(Application it, String editorName) '''
+        /**
+         * Listener for the `moduleplugin.«editorName.toLowerCase».externalplugins` event.
+         *
+         * Adds external plugin to «editorName».
+         *
+         «commonExample.generalEventProperties(it)»
+         *
+         * @param GenericEvent $event The event instance
+         */
+        public function get«editorName»Plugins(GenericEvent $event)
+        {
+            $event->getSubject()->add([
                 'name' => '«appName.formatForDB»',
-                'path' => '«relativeAppRootPath»/«getResourcesPath»scribite/CKEditor/«appName.formatForDB»/',
-                'file' => 'plugin.js',
-                'img'  => 'ed_«appName.formatForDB».gif'
-            ]
-        );
+                'path' => $this->request->getBasePath() . '/web/modules/«vendorAndName.toLowerCase»/scribite/«editorName»/«appName.formatForDB»/plugin.js'
+            ]);
+        }
     '''
 }

@@ -45,22 +45,26 @@ class Finder {
             pWidth = screen.width * 0.75;
             pHeight = screen.height * 0.66;
 
-            return 'width=' + pWidth + ',height=' + pHeight + ',scrollbars,resizable';
+            return 'width=' + pWidth + ',height=' + pHeight + ',location=no,menubar=no,toolbar=no,dependent=yes,minimizable=no,modal=yes,alwaysRaised=yes,resizable=yes,scrollbars=yes';
         }
 
         /**
-         * Open a popup window with the finder triggered by a CKEditor button.
+         * Open a popup window with the finder triggered by an editor button.
          */
-        function «appName»FinderCKEditor(editor, «prefix()»Url)
+        function «appName»FinderOpenPopup(editor, editorName)
         {
+            var popupUrl;
+
             // Save editor for access in selector window
             current«appName»Editor = editor;
 
-            editor.popup(
-                Routing.generate('«appName.formatForDB»_external_finder', { objectType: '«getLeadingEntity.name.formatForCode»', editor: 'ckeditor' }),
-                /*width*/ '80%', /*height*/ '70%',
-                'location=no,menubar=no,toolbar=no,dependent=yes,minimizable=no,modal=yes,alwaysRaised=yes,resizable=yes,scrollbars=yes'
-            );
+            popupUrl = Routing.generate('«appName.formatForDB»_external_finder', { objectType: '«getLeadingEntity.name.formatForCode»', editor: editorName });
+
+            if (editorName == 'ckeditor') {
+                editor.popup(popupUrl, /*width*/ '80%', /*height*/ '70%', get«appName»PopupAttributes());
+            } else {
+                window.open(popupUrl, '_blank', get«appName»PopupAttributes());
+            }
         }
 
 
@@ -118,9 +122,13 @@ class Finder {
 
             event.preventDefault();
             editor = jQuery("[id$='editor']").first().val();
-            if ('tinymce' === editor) {
+            if ('ckeditor' === editor) {
                 «vendorAndName»ClosePopup();
-            } else if ('ckeditor' === editor) {
+            } else if ('quill' === editor) {
+                «vendorAndName»ClosePopup();
+            } else if ('summernote' === editor) {
+                «vendorAndName»ClosePopup();
+            } else if ('tinymce' === editor) {
                 «vendorAndName»ClosePopup();
             } else {
                 alert('Close Editor: ' + editor);
@@ -193,17 +201,23 @@ class Finder {
         {
             var editor, html;
 
+            html = «vendorAndName»GetPasteSnippet('html', itemId);
             editor = jQuery("[id$='editor']").first().val();
-            if ('tinymce' === editor) {
-                html = «vendorAndName»GetPasteSnippet('html', itemId);
-                tinyMCE.activeEditor.execCommand('mceInsertContent', false, html);
-                // other tinymce commands: mceImage, mceInsertLink, mceReplaceContent, see http://www.tinymce.com/wiki.php/Command_identifiers
-            } else if ('ckeditor' === editor) {
+            if ('ckeditor' === editor) {
                 if (null !== window.opener.current«appName»Editor) {
-                    html = «vendorAndName»GetPasteSnippet('html', itemId);
-
                     window.opener.current«appName»Editor.insertHtml(html);
                 }
+            } else if ('quill' === editor) {
+                if (null !== window.opener.current«appName»Editor) {
+                    window.opener.current«appName»Editor.clipboard.dangerouslyPasteHTML(window.opener.current«appName»Editor.getLength(), html);
+                }
+            } else if ('summernote' === editor) {
+                if (null !== window.opener.current«appName»Editor) {
+                    html = jQuery(html).get(0);
+                    window.opener.current«appName»Editor.invoke('insertNode', html);
+                }
+            } else if ('tinymce' === editor) {
+                window.opener.current«appName»Editor.insertContent(html);
             } else {
                 alert('Insert into Editor: ' + editor);
             }

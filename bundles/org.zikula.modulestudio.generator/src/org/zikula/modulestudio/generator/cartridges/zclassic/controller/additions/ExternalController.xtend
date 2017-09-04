@@ -154,7 +154,7 @@ class ExternalController {
          «IF !isBase»
          *
          * @Route("/finder/{objectType}/{editor}/{sort}/{sortdir}/{pos}/{num}",
-         *        requirements = {"editor" = "ckeditor|tinymce", "sortdir" = "asc|desc", "pos" = "\d+", "num" = "\d+"},
+         *        requirements = {"editor" = "ckeditor|quill|summernote|tinymce", "sortdir" = "asc|desc", "pos" = "\d+", "num" = "\d+"},
          *        defaults = {"sort" = "", "sortdir" = "asc", "pos" = 1, "num" = 0},
          *        methods = {"GET"},
          *        options={"expose"=true}
@@ -200,7 +200,7 @@ class ExternalController {
             throw new AccessDeniedException();
         }
 
-        if (empty($editor) || !in_array($editor, ['ckeditor', 'tinymce'])) {
+        if (empty($editor) || !in_array($editor, ['ckeditor', 'quill', 'summernote', 'tinymce'])) {
             return new Response($this->__('Error: Invalid editor context given for external controller action.'));
         }
 

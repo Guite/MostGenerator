@@ -63,7 +63,7 @@ class ControllerLayer {
             // controller for external calls
             new ExternalController().generate(it, fsa)
 
-            if (generateScribitePlugins && !targets('2.0')) {
+            if (generateScribitePlugins) {
                 // Scribite integration
                 new Scribite().generate(it, fsa)
             }

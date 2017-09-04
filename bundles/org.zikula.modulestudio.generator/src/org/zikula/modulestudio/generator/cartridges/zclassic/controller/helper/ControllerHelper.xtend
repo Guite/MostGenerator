@@ -35,12 +35,8 @@ class ControllerHelper {
     def private controllerFunctionsBaseImpl(Application it) '''
         namespace «appNamespace»\Helper\Base;
 
-        «IF hasUploads || hasGeographical»
+        «IF hasGeographical»
             use Psr\Log\LoggerInterface;
-        «ENDIF»
-        «IF hasUploads»
-            use Symfony\Component\Filesystem\Exception\IOExceptionInterface;
-            use Symfony\Component\Filesystem\Filesystem;
         «ENDIF»
         «IF hasViewActions»
             use Symfony\Component\Form\FormFactoryInterface;
@@ -50,10 +46,8 @@ class ControllerHelper {
         «IF hasUiHooksProviders»
             use Symfony\Component\Routing\RouterInterface;
         «ENDIF»
-        «IF hasUploads»
-            use Zikula\Common\Translator\TranslatorInterface;
-            use Zikula\Common\Translator\TranslatorTrait;
-        «ENDIF»
+        use Zikula\Common\Translator\TranslatorInterface;
+        use Zikula\Common\Translator\TranslatorTrait;
         «IF hasViewActions»
             use Zikula\Component\SortableColumns\SortableColumns;
         «ENDIF»
@@ -89,21 +83,12 @@ class ControllerHelper {
          */
         abstract class AbstractControllerHelper
         {
-            «IF hasUploads»
-                use TranslatorTrait;
+            use TranslatorTrait;
 
-            «ENDIF»
             /**
              * @var Request
              */
             protected $request;
-            «IF hasUploads || hasGeographical»
-
-                /**
-                 * @var LoggerInterface
-                 */
-                protected $logger;
-            «ENDIF»
             «IF hasUiHooksProviders»
 
                 /**
@@ -126,6 +111,11 @@ class ControllerHelper {
                 protected $variableApi;
             «ENDIF»
             «IF hasGeographical»
+
+                /**
+                 * @var LoggerInterface
+                 */
+                protected $logger;
 
                 /**
                  * @var CurrentUserApiInterface
@@ -167,15 +157,10 @@ class ControllerHelper {
             /**
              * ControllerHelper constructor.
              *
-             «IF hasUploads»
              * @param TranslatorInterface $translator      Translator service instance
-             «ENDIF»
              * @param RequestStack        $requestStack    RequestStack service instance
              «IF hasAutomaticArchiving»
              * @param ArchiveHelper       $archiveHelper   ArchiveHelper service instance
-             «ENDIF»
-             «IF hasUploads || hasGeographical»
-             * @param LoggerInterface     $logger          Logger service instance
              «ENDIF»
              «IF hasUiHooksProviders»
              * @param Routerinterface     $router          Router service instance
@@ -187,6 +172,7 @@ class ControllerHelper {
              * @param VariableApiInterface $variableApi     VariableApi service instance
              «ENDIF»
              «IF hasGeographical»
+             * @param LoggerInterface     $logger          Logger service instance
              * @param CurrentUserApiInterface $currentUserApi  CurrentUserApi service instance
              «ENDIF»
              * @param EntityFactory       $entityFactory   EntityFactory service instance
@@ -202,15 +188,10 @@ class ControllerHelper {
              «ENDIF»
              */
             public function __construct(
-                «IF hasUploads»
-                    TranslatorInterface $translator,
-                «ENDIF»
+                TranslatorInterface $translator,
                 RequestStack $requestStack,
                 «IF hasAutomaticArchiving»
                     ArchiveHelper $archiveHelper,
-                «ENDIF»
-                «IF hasUploads || hasGeographical»
-                    LoggerInterface $logger,
                 «ENDIF»
                 «IF hasUiHooksProviders»
                     RouterInterface $router,
@@ -222,6 +203,7 @@ class ControllerHelper {
                     VariableApiInterface $variableApi,
                 «ENDIF»
                 «IF hasGeographical»
+                    LoggerInterface $logger,
                     CurrentUserApiInterface $currentUserApi,
                 «ENDIF»
                 EntityFactory $entityFactory,
@@ -230,13 +212,8 @@ class ControllerHelper {
                 ImageHelper $imageHelper«ENDIF»«IF needsFeatureActivationHelper»,
                 FeatureActivationHelper $featureActivationHelper«ENDIF»
             ) {
-                «IF hasUploads»
-                    $this->setTranslator($translator);
-                «ENDIF»
+                $this->setTranslator($translator);
                 $this->request = $requestStack->getCurrentRequest();
-                «IF hasUploads || hasGeographical»
-                    $this->logger = $logger;
-                «ENDIF»
                 «IF hasUiHooksProviders»
                     $this->router = $router;
                 «ENDIF»
@@ -247,6 +224,7 @@ class ControllerHelper {
                     $this->variableApi = $variableApi;
                 «ENDIF»
                 «IF hasGeographical»
+                    $this->logger = $logger;
                     $this->currentUserApi = $currentUserApi;
                 «ENDIF»
                 $this->entityFactory = $entityFactory;
@@ -266,10 +244,8 @@ class ControllerHelper {
                 «ENDIF»
             }
 
-            «IF hasUploads»
-                «setTranslatorMethod»
+            «setTranslatorMethod»
 
-            «ENDIF»
             «getObjectTypes»
 
             «getDefaultObjectType»
