@@ -263,8 +263,8 @@ class ThirdParty {
             $event->getSubject()->add([
                 'name' => '«appName.formatForDB»',
                 'path' => $this->request->getBasePath() . '/web/modules/«vendorAndName.toLowerCase»/scribite/CKEditor/«appName.formatForDB»/',
-                'file' => 'plugin.js'
-                'img' => 'ed_«appName.formatForDB».gif',
+                'file' => 'plugin.js',
+                'img' => 'ed_«appName.formatForDB».gif'
             ]);
         }
     '''
