@@ -50,20 +50,20 @@ class Rss {
         {#<rss version="0.92">#}
             <channel>
                 <title>{{ __('Latest «nameMultiple.formatForDisplay»') }}</title>
-                <link>{{ app.request.getSchemeAndHttpHost() ~ app.request.getBasePath()|e }}</link>
-                <atom:link href="{{ app.request.getSchemeAndHttpHost() ~ app.request.getPathInfo() }}" rel="self" type="application/rss+xml" />
+                <link>{{ app.request.schemeAndHttpHost ~ app.request.basePath }}</link>
+                <atom:link href="{{ app.request.schemeAndHttpHost ~ app.request.basePath ~ app.request.pathInfo }}" rel="self" type="application/rss+xml" />
                 <description>{{ __('A direct feed showing the list of «nameMultiple.formatForDisplay»') }} - {{ getModVar('ZConfig', 'slogan') }}</description>
                 <language>{{ app.request.locale }}</language>
                 {# commented out as imagepath is not defined and we can't know whether this logo exists or not
                 <image>
                     <title>{{ getModVar('ZConfig', 'sitename') }}</title>
-                    <url>{{ app.request.getSchemeAndHttpHost() ~ app.request.getBasePath()|e }}{{ imagepath }}/logo.jpg</url>
-                    <link>{{ app.request.getSchemeAndHttpHost() ~ app.request.getBasePath()|e }}</link>
+                    <url>{{ app.request.schemeAndHttpHost ~ app.request.basePath }}{{ imagepath }}/logo.jpg</url>
+                    <link>{{ app.request.schemeAndHttpHost ~ app.request.basePath }}</link>
                 </image>
                 #}
                 <docs>http://blogs.law.harvard.edu/tech/rss</docs>
-                <copyright>Copyright (c) {{ 'now'|date('Y') }}, {{ app.request.getSchemeAndHttpHost()|e }}</copyright>
-                <webMaster>{{ pageGetVar('adminmail)|e }}</webMaster>
+                <copyright>Copyright (c) {{ 'now'|date('Y') }}, {{ app.request.schemeAndHttpHost }}</copyright>
+                <webMaster>{{ pageGetVar('adminmail) }}</webMaster>
         «val objName = name.formatForCode»
         {% for «objName» in items %}
             {{ block('entry') }}
@@ -86,7 +86,7 @@ class Rss {
                 {% endif %}
             «ENDIF»
             «IF categorisable»
-                <category><![CDATA[{{ __('Categories') }}: {% for propName, catMapping in «objName».categories %}{{ catMapping.category.display_name[lang] }}{% if not loop.last %}, {% endif %}{% endfor %}]]></category>
+                <category><![CDATA[{{ __('Categories') }}: {% for catMapping in «objName».categories %}{{ catMapping.category.display_name[app.request.locale]|default(catMapping.category.name) }}{% if not loop.last %}, {% endif %}{% endfor %}]]></category>
             «ENDIF»
             «description(objName)»
         {% endblock %}
