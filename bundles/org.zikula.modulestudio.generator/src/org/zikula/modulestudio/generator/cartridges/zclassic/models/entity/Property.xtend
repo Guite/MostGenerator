@@ -136,7 +136,7 @@ class Property {
             UserField:
                 '''
                     «' '»* @ORM\ManyToOne(targetEntity="Zikula\UsersModule\Entity\UserEntity")
-                    «' '»* @ORM\JoinColumn(referencedColumnName="uid")
+                    «' '»* @ORM\JoinColumn(referencedColumnName="uid"«IF nullable», nullable=true«ENDIF»)
                 '''
             DatetimeField:
                 if (it.version && entity instanceof Entity && (entity as Entity).hasOptimisticLock) '''
