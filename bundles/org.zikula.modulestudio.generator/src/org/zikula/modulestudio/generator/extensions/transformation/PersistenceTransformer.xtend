@@ -239,15 +239,15 @@ class PersistenceTransformer {
     }
 
     def private addWorkflowSettings(Application it) {
-        val entitiesWithWorkflow = getAllEntities.filter[workflow != EntityWorkflowType.NONE]
-        if (entitiesWithWorkflow.empty) {
+        val entitiesWithApproval = getAllEntities.filter[workflow != EntityWorkflowType.NONE]
+        if (entitiesWithApproval.empty) {
             return
         }
 
         val varContainer = createVarContainerForWorkflowSettings
         val factory = ModuleStudioFactory.eINSTANCE
 
-        for (entity : entitiesWithWorkflow) {
+        for (entity : entitiesWithApproval) {
             varContainer.vars += factory.createIntVar => [
                 name = 'moderationGroupFor' + entity.nameMultiple.formatForCodeCapital
                 value = '2' // use admin group (gid=2) as fallback

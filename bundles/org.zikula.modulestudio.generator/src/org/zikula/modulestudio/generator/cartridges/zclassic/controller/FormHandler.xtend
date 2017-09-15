@@ -1073,7 +1073,8 @@ class FormHandler {
                 }
             «ENDIF»
 
-            if ($this->templateParameters['mode'] == 'create' && isset($this->form['repeatCreation']) && $this->form['repeatCreation']->getData() == 1) {
+            if ($args['commandName'] == 'submitrepeat') {
+                $args['commandName'] = 'submit';
                 $this->repeatCreateAction = true;
             }
             «IF hasStandardFieldEntities»

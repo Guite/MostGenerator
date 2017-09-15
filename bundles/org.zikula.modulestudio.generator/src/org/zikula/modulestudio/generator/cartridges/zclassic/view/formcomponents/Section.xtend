@@ -33,7 +33,6 @@ class Section {
         «ENDIF»
         «additionalRemark»
         «moderationFields»
-        «returnControl»
     '''
 
     def private extensionsAndRelations(Entity it, Application app, IFileSystemAccess fsa, Boolean isAdmin) '''
@@ -103,15 +102,5 @@ class Section {
             {% endif %}
 
         «ENDIF»
-    '''
-
-    def private returnControl(Entity it) '''
-        {# include return control #}
-        {% if mode == 'create'«IF !incoming.empty || !outgoing.empty» and form.repeatCreation is defined«ENDIF» %}
-            <fieldset>
-                <legend>{{ __('Return control') }}</legend>
-                {{ form_row(form.repeatCreation) }}
-            </fieldset>
-        {% endif %}
     '''
 }
