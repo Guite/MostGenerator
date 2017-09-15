@@ -35,7 +35,6 @@ class ArchiveHelper {
 
         use Doctrine\ORM\QueryBuilder;
         use Psr\Log\LoggerInterface;
-        use Symfony\Component\HttpFoundation\Request;
         use Symfony\Component\HttpFoundation\RequestStack;
         «IF hasHookSubscribers»
             use Zikula\Bundle\HookBundle\Category\UiHooksCategory;
@@ -60,9 +59,9 @@ class ArchiveHelper {
             protected $translator;
 
             /**
-             * @var Request
+             * @var RequestStack
              */
-            protected $request;
+            protected $requestStack;
 
             /**
              * @var LoggerInterface
@@ -114,7 +113,7 @@ class ArchiveHelper {
                 HookHelper $hookHelper«ENDIF»
             ) {
                 $this->translator = $translator;
-                $this->request = $requestStack->getCurrentRequest();
+                $this->requestStack = $requestStack;
                 $this->logger = $logger;
                 $this->permissionApi = $permissionApi;
                 $this->entityFactory = $entityFactory;
@@ -219,14 +218,17 @@ class ArchiveHelper {
          */
         protected function archiveSingleObject($entity)
         {
+            $request = $this->requestStack->getCurrentRequest();
             «IF hasHookSubscribers»
                 if ($entity->supportsHookSubscribers()) {
                     // Let any hooks perform additional validation actions
                     $validationErrors = $this->hookHelper->callValidationHooks($entity, UiHooksCategory::TYPE_VALIDATE_EDIT);
                     if (count($validationErrors) > 0) {
-                        $flashBag = $this->request->getSession()->getFlashBag();
-                        foreach ($validationErrors as $message) {
-                            $flashBag->add('error', $message);
+                        if (null !== $request) {
+                            $flashBag = $request->getSession()->getFlashBag();
+                            foreach ($validationErrors as $message) {
+                                $flashBag->add('error', $message);
+                            }
                         }
 
                         return false;
@@ -239,8 +241,10 @@ class ArchiveHelper {
                 // execute the workflow action
                 $success = $this->workflowHelper->executeAction($entity, 'archive');
             } catch (\Exception $exception) {
-                $flashBag = $this->request->getSession()->getFlashBag();
-                $flashBag->add('error', $this->translator->__f('Sorry, but an error occured during the %action% action. Please apply the changes again!', ['%action%' => $action]) . '  ' . $exception->getMessage());
+                if (null !== $request) {
+                    $flashBag = $request->getSession()->getFlashBag();
+                    $flashBag->add('error', $this->translator->__f('Sorry, but an error occured during the %action% action. Please apply the changes again!', ['%action%' => $action]) . '  ' . $exception->getMessage());
+                }
             }
 
             if (!$success) {
@@ -256,7 +260,9 @@ class ArchiveHelper {
                     $hasDisplayPage = in_array($objectType, ['«getAllEntities.filter[hasDisplayAction].map[name.formatForCode].join('\', \'')»']);
                     if ($hasDisplayPage) {
                         $urlArgs = $entity->createUrlArgs();
-                        $urlArgs['_locale'] = $this->request->getLocale();
+                        if (null !== $request) {
+                            $urlArgs['_locale'] = $request->getLocale();
+                        }
                         $url = new RouteUrl('«appName.formatForDB»_' . strtolower($objectType) . '_display', $urlArgs);
                 	}
                     $this->hookHelper->callProcessHooks($entity, UiHooksCategory::TYPE_PROCESS_EDIT, $url);
