@@ -295,7 +295,7 @@ class TreeFunctions {
                 data: params
             }).done(function(response) {
                 if (response.result == 'success') {
-                    /*«vendorAndName»SimpleAlert(jQuery('.tree-container'), Translator.__('Success'), data.message, 'treeAjaxDoneAlert', 'success');*/
+                    /*«vendorAndName»SimpleAlert(jQuery('.tree-container'), Translator.__('Success'), response.message, 'treeAjaxDoneAlert', 'success');*/
 
                     if (typeof response.returnUrl != 'undefined') {
                         window.location = response.returnUrl;
