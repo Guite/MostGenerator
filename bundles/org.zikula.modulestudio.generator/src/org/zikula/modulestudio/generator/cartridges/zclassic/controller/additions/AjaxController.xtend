@@ -526,16 +526,17 @@ class AjaxController {
             $objectType = '«treeEntities.head.name.formatForCode»';
         }
 
-        «prepareTreeOperationParameters»
-
         $returnValue = [
             'data'    => [],
             'result'  => 'success',
             'message' => ''
         ];
 
+        «prepareTreeOperationParameters»
+
         $createMethod = 'create' . ucfirst($objectType);
-        $repository = $this->get('«appService».entity_factory')->getRepository($objectType);
+        $entityFactory = $this->get('«appService».entity_factory');
+        $repository = $entityFactory->getRepository($objectType);
 
         $rootId = 1;
         if (!in_array($op, ['addRootNode'])) {
@@ -547,9 +548,6 @@ class AjaxController {
                 return «IF targets('2.0')»$this->json«ELSE»new JsonResponse«ENDIF»($returnValue);
             }
         }
-
-        $entityFactory = $this->get('«appService».entity_factory');
-        $repository = $entityFactory->getRepository($objectType);
 
         «/*
         // Select tree
