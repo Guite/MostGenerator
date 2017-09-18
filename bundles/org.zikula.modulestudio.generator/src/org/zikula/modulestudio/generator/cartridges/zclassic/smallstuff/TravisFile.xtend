@@ -68,13 +68,12 @@ class TravisFile {
             - wget http://ci.zikula.org/job/Zikula/job/«targetSemVer(false)»/lastSuccessfulBuild/artifact/build_work/archive/«targetSemVer(false)».tar.gz
             - tar -xpzf «targetSemVer(false)».tar.gz
             - rm «targetSemVer(false)».tar.gz
-            - cd «targetSemVer(false)»
             «ELSEIF targets('2.0') || !targets('1.5-dev')»
             - wget https://github.com/zikula/core/releases/download/«targetSemVer(true)»/Zikula_Core-«targetSemVer(true)».tar.gz
             - tar -xpzf Zikula_Core-«targetSemVer(true)».tar.gz
             - rm Zikula_Core-«targetSemVer(true)».tar.gz
-            - cd Zikula_Core-«targetSemVer(true)»
             «ENDIF»
+            - cd «targetSemVer(false)»
             - php app/console zikula:install:start -n --database_user=root --database_name=zk_test --password=12345678 --email=admin@example.com --router:request_context:host=localhost
             - php app/console zikula:install:finish
             «IF isSystemModule»
