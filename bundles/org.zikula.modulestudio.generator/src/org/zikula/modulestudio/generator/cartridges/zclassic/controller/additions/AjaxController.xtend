@@ -556,7 +556,7 @@ class AjaxController {
             $tree = $repository->selectTree($rootId);
         }
 
-        */»// recover any broken tree nodes
+        */»«/*// recover any broken tree nodes
         $entityManager = $entityFactory->getObjectManager();
         $repository->recover();
         // flush recovered nodes
@@ -575,7 +575,7 @@ class AjaxController {
             return «IF targets('2.0')»$this->json«ELSE»new JsonResponse«ENDIF»($returnValue);
         }
         $entityManager->clear(); // clear cached nodes
-
+*/»
         «treeOperationDetermineEntityFields»
 
         «treeOperationSwitch»
