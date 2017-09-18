@@ -556,8 +556,8 @@ class AjaxController {
             $tree = $repository->selectTree($rootId);
         }
 
-        */»«/*// recover any broken tree nodes
-        $entityManager = $entityFactory->getObjectManager();
+        */»
+        $entityManager = $entityFactory->getObjectManager();«/*// recover any broken tree nodes
         $repository->recover();
         // flush recovered nodes
         $entityManager->flush();
