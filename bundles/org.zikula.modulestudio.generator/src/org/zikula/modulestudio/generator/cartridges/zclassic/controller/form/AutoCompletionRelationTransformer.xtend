@@ -98,11 +98,11 @@ class AutoCompletionRelationTransformer {
             /**
              * Transforms a string (identifier list) to an object or object collection.
              *
-             * @param string $value
+             * @param string $value Identifier(s)
              *
              * @return EntityAccess|ArrayCollection
              *
-             * @throws TransformationFailedException if object (issue) is not found
+             * @throws TransformationFailedException if entity is not found
              */
             public function reverseTransform($value)
             {
