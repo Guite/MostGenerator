@@ -293,22 +293,17 @@ class TreeFunctions {
                 method: 'POST',
                 url: Routing.generate('«appName.formatForDB»_ajax_handletreeoperation'),
                 data: params
-            }).done(function(res) {
-                // get data returned by the ajax response
-                var data;
-
-                data = res.data;
-
-                if (data.result == 'success') {
+            }).done(function(response) {
+                if (response.result == 'success') {
                     /*«vendorAndName»SimpleAlert(jQuery('.tree-container'), Translator.__('Success'), data.message, 'treeAjaxDoneAlert', 'success');*/
 
-                    if (typeof data.returnUrl != 'undefined') {
-                        window.location = data.returnUrl;
+                    if (typeof response.returnUrl != 'undefined') {
+                        window.location = response.returnUrl;
                     } else {
                         window.location.reload();
                     }
                 } else {
-                    «vendorAndName»SimpleAlert(jQuery('.tree-container'), Translator.__('Error'), data.message != '' ? data.message : Translator.__('Could not persist your change.'), 'treeAjaxFailedAlert', 'danger');
+                    «vendorAndName»SimpleAlert(jQuery('.tree-container'), Translator.__('Error'), response.message != '' ? response.message : Translator.__('Could not persist your change.'), 'treeAjaxFailedAlert', 'danger');
                 }
             }).fail(function(jqXHR, textStatus) {
                 «vendorAndName»SimpleAlert(jQuery('.tree-container'), Translator.__('Error'), Translator.__('Could not persist your change.'), 'treeAjaxFailedAlert', 'danger');
