@@ -231,7 +231,7 @@ class SearchHelper {
             $searchTypes = $this->getSearchTypes();
 
             foreach ($searchTypes as $searchTypeCode => $typeInfo) {
-                $objectType = $typeInfo['value'];
+                $isActivated = false;
                 $searchSettings = $this->request->query->get('zikulasearchmodule_search', []);
                 $moduleActivationInfo = $searchSettings['modules'];
                 if (isset($moduleActivationInfo['«appName»'])) {
@@ -241,6 +241,8 @@ class SearchHelper {
                 if (!$isActivated) {
                     continue;
                 }
+
+                $objectType = $typeInfo['value'];
                 $whereArray = [];
                 $languageField = null;
                 switch ($objectType) {
