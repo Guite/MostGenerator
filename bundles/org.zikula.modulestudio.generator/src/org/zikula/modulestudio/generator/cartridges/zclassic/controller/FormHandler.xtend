@@ -885,6 +885,10 @@ class FormHandler {
                     $args['commandName'] = $action['id'];
                 }
             }
+            if ($this->templateParameters['mode'] == 'create' && $this->form->get('submitrepeat')->isClicked()) {
+                $args['commandName'] = 'submit';
+                $this->repeatCreateAction = true;
+            }
             if ($this->form->get('cancel')->isClicked()) {
                 $args['commandName'] = 'cancel';
             }
@@ -1072,11 +1076,6 @@ class FormHandler {
                     }
                 }
             «ENDIF»
-
-            if ($args['commandName'] == 'submitrepeat') {
-                $args['commandName'] = 'submit';
-                $this->repeatCreateAction = true;
-            }
             «IF hasStandardFieldEntities»
 
                 if (method_exists($this->entityRef, 'getCreatedBy')) {
@@ -1378,6 +1377,10 @@ class FormHandler {
                 if ($this->form->get($action['id'])->isClicked()) {
                     $args['commandName'] = $action['id'];
                 }
+            }
+            if ($this->templateParameters['mode'] == 'create' && $this->form->get('submitrepeat')->isClicked()) {
+                $args['commandName'] = 'submit';
+                $this->repeatCreateAction = true;
             }
             if ($this->form->get('cancel')->isClicked()) {
                 $args['commandName'] = 'cancel';
