@@ -229,6 +229,7 @@ class SearchHelper {
 
             // retrieve list of activated object types
             $searchTypes = $this->getSearchTypes();
+            $entitiesWithDisplayAction = ['«getAllEntities.filter[hasDisplayAction].map[name.formatForCode].join('\', \'')»'];
 
             foreach ($searchTypes as $searchTypeCode => $typeInfo) {
                 $isActivated = false;
@@ -281,13 +282,9 @@ class SearchHelper {
                 }
 
                 $descriptionFieldName = $this->entityDisplayHelper->getDescriptionFieldName($objectType);
-
-                $entitiesWithDisplayAction = ['«getAllEntities.filter[hasDisplayAction].map[name.formatForCode].join('\', \'')»'];
+                $hasDisplayAction = in_array($objectType, $entitiesWithDisplayAction);
 
                 foreach ($entities as $entity) {
-                    $urlArgs = $entity->createUrlArgs();
-                    $hasDisplayAction = in_array($objectType, $entitiesWithDisplayAction);
-
                     // perform permission check
                     if (!$this->permissionApi->hasPermission('«appName»:' . ucfirst($objectType) . ':', $entity->getKey() . '::', ACCESS_OVERVIEW)) {
                         continue;
@@ -306,10 +303,13 @@ class SearchHelper {
                     $description = !empty($descriptionFieldName) ? $entity[$descriptionFieldName] : '';
                     $created = isset($entity['createdDate']) ? $entity['createdDate'] : null;
 
-                    $urlArgs['_locale'] = (null !== $languageField && !empty($entity[$languageField])) ? $entity[$languageField] : $this->request->getLocale();
-
                     $formattedTitle = $this->entityDisplayHelper->getFormattedTitle($entity);
-                    $displayUrl = $hasDisplayAction ? new RouteUrl('«appName.formatForDB»_' . strtolower($objectType) . '_display', $urlArgs) : '';
+                    $displayUrl = '';
+                    if ($hasDisplayAction) {
+                        $urlArgs = $entity->createUrlArgs();
+                        $urlArgs['_locale'] = (null !== $languageField && !empty($entity[$languageField])) ? $entity[$languageField] : $this->request->getLocale();
+                        $displayUrl = new RouteUrl('«appName.formatForDB»_' . strtolower($objectType) . '_display', $urlArgs);
+                    }
 
                     $result = new SearchResultEntity();
                     $result->setTitle($formattedTitle)
