@@ -232,16 +232,11 @@ class SearchHelper {
 
             foreach ($searchTypes as $searchTypeCode => $typeInfo) {
                 $objectType = $typeInfo['value'];
-                $isActivated = false;
-                if ($this->request->isMethod('GET')) {
-                    $isActivated = $this->request->query->get('active_' . $searchTypeCode, false);
-                } elseif ($this->request->isMethod('POST')) {
-                    $searchSettings = $this->request->request->get('zikulasearchmodule_search', []);
-                    $moduleActivationInfo = $searchSettings['modules'];
-                    if (isset($moduleActivationInfo['«appName»'])) {
-                        $moduleActivationInfo = $moduleActivationInfo['«appName»'];
-                        $isActivated = isset($moduleActivationInfo['active_' . $searchTypeCode]);
-                    }
+                $searchSettings = $this->request->query->get('zikulasearchmodule_search', []);
+                $moduleActivationInfo = $searchSettings['modules'];
+                if (isset($moduleActivationInfo['«appName»'])) {
+                    $moduleActivationInfo = $moduleActivationInfo['«appName»'];
+                    $isActivated = isset($moduleActivationInfo['active_' . $searchTypeCode]);
                 }
                 if (!$isActivated) {
                     continue;
