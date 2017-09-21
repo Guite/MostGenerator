@@ -1246,7 +1246,7 @@ class FormHandler {
 
             // only allow editing for the owner or people with higher permissions
             $currentUserId = $this->currentUserApi->isLoggedIn() ? $this->currentUserApi->get('uid') : 1;
-            $isOwner = null !== $entity->getCreatedBy() && $currentUserId == $entity->getCreatedBy()->getUid();
+            $isOwner = null !== $entity && null !== $entity->getCreatedBy() && $currentUserId == $entity->getCreatedBy()->getUid();
             if (!$isOwner && !$this->permissionApi->hasPermission($this->permissionComponent, $this->idValue . '::', ACCESS_ADD)) {
                 throw new AccessDeniedException();
             }
