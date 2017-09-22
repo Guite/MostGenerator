@@ -108,22 +108,17 @@ class Installer {
                     $this->container->get('zikula_categories_module.api.category_permission')
                 );
                 $categoryGlobal = $this->container->get('zikula_categories_module.category_repository')->findOneBy(['name' => 'Global']);
+                $entityManager = $this->container->get('«entityManagerService»');
                 «FOR entity : getCategorisableEntities»
 
                     $registry = new CategoryRegistryEntity();
-                    $registry->setModname('«appName»');
-                    $registry->setEntityname('«entity.name.formatForCodeCapital»Entity');
-                    $registry->setProperty($categoryHelper->getPrimaryProperty('«entity.name.formatForCodeCapital»'));
-                    $registry->setCategory($categoryGlobal);
-
-                    try {
-                        $entityManager = $this->container->get('«entityManagerService»');
+                    $entityManager->transactional(function($entityManager) use($registry, $categoryHelper, $categoryGlobal) {
+                        $registry->setModname('«appName»');
+                        $registry->setEntityname('«entity.name.formatForCodeCapital»Entity');
+                        $registry->setProperty($categoryHelper->getPrimaryProperty('«entity.name.formatForCodeCapital»'));
+                        $registry->setCategory($categoryGlobal);
                         $entityManager->persist($registry);
-                        $entityManager->flush();
-                    } catch (\Exception $exception) {
-                        $this->addFlash('error', $this->__f('Error! Could not create a category registry for the %entity% entity.', ['%entity%' => '«entity.name.formatForDisplay»']));
-                        $logger->error('{app}: User {user} could not create a category registry for {entities} during installation. Error details: {errorMessage}.', ['app' => '«appName»', 'user' => $userName, 'entities' => '«entity.nameMultiple.formatForDisplay»', 'errorMessage' => $exception->getMessage()]);
-                    }
+                    });
                     $categoryRegistryIdsPerEntity['«entity.name.formatForCode»'] = $registry->getId();
                 «ENDFOR»
             «ENDIF»
@@ -244,12 +239,13 @@ class Installer {
             «IF hasCategorisableEntities»
 
                 // remove category registry entries
-                $entityManager = $this->container->get('«entityManagerService»');
                 $registries = $this->container->get('zikula_categories_module.category_registry_repository')->findBy(['modname' => '«appName»']);
-                foreach ($registries as $registry) {
-                    $entityManager->remove($registry);
-                }
-                $entityManager->flush();
+                $entityManager = $this->container->get('«entityManagerService»');
+                $entityManager->transactional(function($entityManager) use($registries) {
+                    foreach ($registries as $registry) {
+                        $entityManager->remove($registry);
+                    }
+                });
             «ENDIF»
             «IF hasUploads»
 

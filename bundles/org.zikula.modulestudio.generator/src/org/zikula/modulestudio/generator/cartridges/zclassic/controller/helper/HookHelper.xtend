@@ -662,9 +662,12 @@ class HookHelper {
                     if (null === $url || !is_object($url)) {
                         return;
                     }
+                    $url = $url->toArray();
+
+                    $entityManager = $this->entityFactory->getObjectManager();
 
                     // update url information for assignments of updated data object
-                    $qb = $this->entityFactory->getObjectManager()->createQueryBuilder();
+                    $qb = $entityManager->createQueryBuilder();
                     $qb->select('tbl')
                        ->from($this->getHookAssignmentEntity(), 'tbl');
                     $qb = $this->addContextFilters($qb, $hook);
@@ -672,11 +675,11 @@ class HookHelper {
                     $query = $qb->getQuery();
                     $assignments = $query->getResult();
 
-                    foreach ($assignments as $assignment) {
-                        $assignment->setSubscriberUrl($url->toArray());
-                    }
-
-                    $this->entityFactory->getObjectManager()->flush();
+                    $entityManager->transactional(function($entityManager) use($assignments, $url) {
+                        foreach ($assignments as $assignment) {
+                            $assignment->setSubscriberUrl($url);
+                        }
+                    });
                 }
 
                 /**

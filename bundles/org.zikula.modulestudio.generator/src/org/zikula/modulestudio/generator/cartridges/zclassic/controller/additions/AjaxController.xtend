@@ -466,11 +466,10 @@ class AjaxController {
             return «IF targets('2.0')»$this->json«ELSE»new JsonResponse«ENDIF»($this->__('No such item.'), JsonResponse::HTTP_NOT_FOUND);
         }
 
-        // toggle the flag
-        $entity[$field] = !$entity[$field];
-
-        // save entity back to database
-        $entityFactory->getObjectManager()->flush();
+        $entityFactory->getObjectManager()->transactional(function($entityManager) use($entity) {
+            // toggle the flag
+            $entity[$field] = !$entity[$field];
+        });
 
         $logger = $this->get('logger');
         $logArgs = ['app' => '«appName»', 'user' => $this->get('zikula_users_module.current_user')->get('uname'), 'field' => $field, 'entity' => $objectType, 'id' => $id];
@@ -549,33 +548,7 @@ class AjaxController {
             }
         }
 
-        «/*
-        // Select tree
-        $tree = null;
-        if (!in_array($op, ['addRootNode'])) {
-            $tree = $repository->selectTree($rootId);
-        }
-
-        */»
-        $entityManager = $entityFactory->getObjectManager();«/*// recover any broken tree nodes
-        $repository->recover();
-        // flush recovered nodes
-        $entityManager->flush();
-
-        // verify tree state
-        $verificationResult = $repository->verify();
-        if (is_array($verificationResult)) {
-            $errorMessages = [];
-            foreach ($verificationResult as $errorMsg) {
-                $errorMessages[] = $errorMsg;
-            }
-            $returnValue['result'] = 'failure';
-            $returnValue['message'] = implode('<br />', $errorMessages);
-
-            return «IF targets('2.0')»$this->json«ELSE»new JsonResponse«ENDIF»($returnValue);
-        }
-        $entityManager->clear(); // clear cached nodes
-*/»
+        $entityManager = $entityFactory->getObjectManager();
         «treeOperationDetermineEntityFields»
 
         «treeOperationSwitch»
@@ -674,39 +647,36 @@ class AjaxController {
     '''
 
     def private treeOperationAddRootNode(Application it) '''
-        //$entityManager->transactional(function($entityManager) {
-            $entity = $this->get('«appService».entity_factory')->$createMethod();
-            if (!empty($titleFieldName)) {
-                $entity[$titleFieldName] = $this->__('New root node');
+        if (!empty($titleFieldName)) {
+            $entity[$titleFieldName] = $this->__('New root node');
+        }
+        if (!empty($descriptionFieldName)) {
+            $entity[$descriptionFieldName] = $this->__('This is a new root node');
+        }
+        «IF hasStandardFieldEntities»
+            if (method_exists($entity, 'setCreatedBy')) {
+                $entity->setCreatedBy($currentUser);
+                $entity->setUpdatedBy($currentUser);
             }
-            if (!empty($descriptionFieldName)) {
-                $entity[$descriptionFieldName] = $this->__('This is a new root node');
-            }
-            «IF hasStandardFieldEntities»
-                if (method_exists($entity, 'setCreatedBy')) {
-                    $entity->setCreatedBy($currentUser);
-                    $entity->setUpdatedBy($currentUser);
-                }
-            «ENDIF»«/*IF hasTranslatableFields»
-                $entity->setLocale($request->getLocale());
-            «ENDIF*/»
+        «ENDIF»«/*IF hasTranslatableFields»
+            $entity->setLocale($request->getLocale());
+        «ENDIF*/»
 
-            // save new object to set the root id
-            $action = 'submit';
-            try {
-                // execute the workflow action
-                $workflowHelper = $this->get('«appService».workflow_helper');
-                $success = $workflowHelper->executeAction($entity, $action);
-                if (!$success) {
-                    $returnValue['result'] = 'failure';
-                }
-            } catch (\Exception $exception) {
+        // save new object to set the root id
+        $action = 'submit';
+        try {
+            // execute the workflow action
+            $workflowHelper = $this->get('«appService».workflow_helper');
+            $success = $workflowHelper->executeAction($entity, $action);
+            if (!$success) {
                 $returnValue['result'] = 'failure';
-                $returnValue['message'] = $this->__f('Sorry, but an error occured during the %action% action. Please apply the changes again!', ['%action%' => $action]) . '  ' . $exception->getMessage();
-
-                return «IF targets('2.0')»$this->json«ELSE»new JsonResponse«ENDIF»($returnValue);
             }
-        //});
+        } catch (\Exception $exception) {
+            $returnValue['result'] = 'failure';
+            $returnValue['message'] = $this->__f('Sorry, but an error occured during the %action% action. Please apply the changes again!', ['%action%' => $action]) . '  ' . $exception->getMessage();
+
+            return «IF targets('2.0')»$this->json«ELSE»new JsonResponse«ENDIF»($returnValue);
+        }
     '''
 
     def private treeOperationAddChildNode(Application it) '''
@@ -718,49 +688,47 @@ class AjaxController {
             return «IF targets('2.0')»$this->json«ELSE»new JsonResponse«ENDIF»($returnValue);
         }
 
-        //$entityManager->transactional(function($entityManager) {
-            $childEntity = $this->get('«appService».entity_factory')->$createMethod();
-            $childEntity[$titleFieldName] = $this->__('New child node');
-            if (!empty($descriptionFieldName)) {
-                $childEntity[$descriptionFieldName] = $this->__('This is a new child node');
+        $childEntity = $this->get('«appService».entity_factory')->$createMethod();
+        $childEntity[$titleFieldName] = $this->__('New child node');
+        if (!empty($descriptionFieldName)) {
+            $childEntity[$descriptionFieldName] = $this->__('This is a new child node');
+        }
+        «IF hasStandardFieldEntities»
+            if (method_exists($childEntity, 'setCreatedBy')) {
+                $childEntity->setCreatedBy($currentUser);
+                $childEntity->setUpdatedBy($currentUser);
             }
-            «IF hasStandardFieldEntities»
-                if (method_exists($childEntity, 'setCreatedBy')) {
-                    $childEntity->setCreatedBy($currentUser);
-                    $childEntity->setUpdatedBy($currentUser);
-                }
-            «ENDIF»
-            $parentEntity = $repository->selectById($parentId, false);
-            if (null === $parentEntity) {
+        «ENDIF»
+        $parentEntity = $repository->selectById($parentId, false);
+        if (null === $parentEntity) {
+            $returnValue['result'] = 'failure';
+            $returnValue['message'] = $this->__('No such item.');
+
+            return «IF targets('2.0')»$this->json«ELSE»new JsonResponse«ENDIF»($returnValue);
+        }
+        $childEntity->setParent($parentEntity);
+
+        // save new object
+        $action = 'submit';
+        try {
+            // execute the workflow action
+            $workflowHelper = $this->get('«appService».workflow_helper');
+            $success = $workflowHelper->executeAction($childEntity, $action);
+            if (!$success) {
                 $returnValue['result'] = 'failure';
-                $returnValue['message'] = $this->__('No such item.');
-
-                return «IF targets('2.0')»$this->json«ELSE»new JsonResponse«ENDIF»($returnValue);
+            } else {
+                «IF hasEditActions»
+                    if (in_array($objectType, ['«getAllEntities.filter[tree != EntityTreeType.NONE && hasEditAction].map[name.formatForCode].join('\', \'')»'])) {
+                        $returnValue['returnUrl'] = $this->get('router')->generate('«appName.formatForDB»_' . strtolower($objectType) . '_edit', $childEntity->createUrlArgs(), UrlGeneratorInterface::ABSOLUTE_URL);
+                    }
+                «ENDIF»
             }
-            $childEntity->setParent($parentEntity);
+        } catch (\Exception $exception) {
+            $returnValue['result'] = 'failure';
+            $returnValue['message'] = $this->__f('Sorry, but an error occured during the %action% action. Please apply the changes again!', ['%action%' => $action]) . '  ' . $exception->getMessage();
 
-            // save new object
-            $action = 'submit';
-            try {
-                // execute the workflow action
-                $workflowHelper = $this->get('«appService».workflow_helper');
-                $success = $workflowHelper->executeAction($childEntity, $action);
-                if (!$success) {
-                    $returnValue['result'] = 'failure';
-                } else {
-                    «IF hasEditActions»
-                        if (in_array($objectType, ['«getAllEntities.filter[tree != EntityTreeType.NONE && hasEditAction].map[name.formatForCode].join('\', \'')»'])) {
-                            $returnValue['returnUrl'] = $this->get('router')->generate('«appName.formatForDB»_' . strtolower($objectType) . '_edit', $childEntity->createUrlArgs(), UrlGeneratorInterface::ABSOLUTE_URL);
-                        }
-                    «ENDIF»
-                }
-            } catch (\Exception $exception) {
-                $returnValue['result'] = 'failure';
-                $returnValue['message'] = $this->__f('Sorry, but an error occured during the %action% action. Please apply the changes again!', ['%action%' => $action]) . '  ' . $exception->getMessage();
-
-                return «IF targets('2.0')»$this->json«ELSE»new JsonResponse«ENDIF»($returnValue);
-            }
-        //});
+            return «IF targets('2.0')»$this->json«ELSE»new JsonResponse«ENDIF»($returnValue);
+        }
     '''
 
     def private treeOperationDeleteNode(Application it) '''
@@ -810,16 +778,17 @@ class AjaxController {
             return «IF targets('2.0')»$this->json«ELSE»new JsonResponse«ENDIF»($returnValue);
         }
 
-        if ($moveDirection == 'top') {
-            $repository->moveUp($entity, true);
-        } elseif ($moveDirection == 'up') {
-            $repository->moveUp($entity, 1);
-        } elseif ($moveDirection == 'down') {
-            $repository->moveDown($entity, 1);
-        } elseif ($moveDirection == 'bottom') {
-            $repository->moveDown($entity, true);
-        }
-        $entityManager->flush();
+        $entityManager->transactional(function($entityManager) use($repository, $entity, $moveDirection) {
+            if ($moveDirection == 'top') {
+                $repository->moveUp($entity, true);
+            } elseif ($moveDirection == 'up') {
+                $repository->moveUp($entity, 1);
+            } elseif ($moveDirection == 'down') {
+                $repository->moveDown($entity, 1);
+            } elseif ($moveDirection == 'bottom') {
+                $repository->moveDown($entity, true);
+            }
+        });
     '''
 
     def private treeOperationMoveNodeTo(Application it) '''
@@ -841,18 +810,20 @@ class AjaxController {
 
         $entityManager->clear();
 
-        //$entityManager->transactional(function($entityManager) {
-            $entity = $repository->selectById($id, false);
-            $destEntity = $repository->selectById($destId, false);
-            if (null === $entity || null === $destEntity) {
-                $returnValue['result'] = 'failure';
-                $returnValue['message'] = $this->__('No such item.');
+        $entity = $repository->selectById($id, false);
+        $destEntity = $repository->selectById($destId, false);
+        if (null === $entity || null === $destEntity) {
+            $returnValue['result'] = 'failure';
+            $returnValue['message'] = $this->__('No such item.');
 
-                return «IF targets('2.0')»$this->json«ELSE»new JsonResponse«ENDIF»($returnValue);
-            }
+            return «IF targets('2.0')»$this->json«ELSE»new JsonResponse«ENDIF»($returnValue);
+        }
 
+        $entityManager->transactional(function($entityManager) use($entity, $destEntity, $repository«IF hasStandardFieldEntities», $currentUser«ENDIF») {
             $entityManager->persist($destEntity);
-            $entityManager->persist($currentUser);
+            «IF hasStandardFieldEntities»
+                $entityManager->persist($currentUser);
+            «ENDIF»
 
             if ($moveDirection == 'after') {
                 $repository->persistAsNextSiblingOf($entity, $destEntity);
@@ -861,9 +832,7 @@ class AjaxController {
             } elseif ($moveDirection == 'bottom') {
                 $repository->persistAsLastChildOf($entity, $destEntity);
             }
-
-            $entityManager->flush();
-        //});
+        });
     '''
 
     def private updateSortPositionsBase(Application it) '''
@@ -919,17 +888,16 @@ class AjaxController {
 
         $sortFieldSetter = 'set' . ucfirst($sortableFieldMap[$objectType]);
         $sortCounter = $min;
-        foreach ($itemIds as $itemId) {
-            if (empty($itemId) || !is_numeric($itemId)) {
-                continue;
+        $entityFactory->getObjectManager()->transactional(function($entityManager) use($itemIds, $repository, $sortFieldSetter, $sortCounter) {
+            foreach ($itemIds as $itemId) {
+                if (empty($itemId) || !is_numeric($itemId)) {
+                    continue;
+                }
+                $entity = $repository->selectById($itemId);
+                $entity->$sortFieldSetter($sortCounter);
+                $sortCounter++;
             }
-            $entity = $repository->selectById($itemId);
-            $entity->$sortFieldSetter($sortCounter);
-            $sortCounter++;
-        }
-
-        // save entities back to database
-        $entityFactory->getObjectManager()->flush();
+        });
 
         // return response
         return «IF targets('2.0')»$this->json«ELSE»new JsonResponse«ENDIF»([
@@ -1023,8 +991,9 @@ class AjaxController {
         $assignment->setUpdatedDate(new \DateTime());
 
         $entityManager = $this->get('«appService».entity_factory')->getObjectManager();
-        $qb = $entityManager->persist($assignment);
-        $qb = $entityManager->flush();
+        $entityManager->transactional(function($entityManager) use($assignment) {
+            $entityManager->persist($assignment);
+        });
 
         // return response
         return «IF targets('2.0')»$this->json«ELSE»new JsonResponse«ENDIF»([
