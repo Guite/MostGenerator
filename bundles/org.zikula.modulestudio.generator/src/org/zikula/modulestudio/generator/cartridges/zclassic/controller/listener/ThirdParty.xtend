@@ -96,18 +96,18 @@ class ThirdParty {
 
                 «contentGetTypes»
             «ENDIF»
-            «IF generateScribitePlugins»
+        «ENDIF»
+        «IF generateScribitePlugins»
 
-                «getEditorHelpers»
+            «getEditorHelpers»
 
-                «getCKEditorPlugins»
+            «getCKEditorPlugins»
 
-                «getCommonEditorPlugins('Quill')»
+            «getCommonEditorPlugins('Quill')»
 
-                «getCommonEditorPlugins('Summernote')»
+            «getCommonEditorPlugins('Summernote')»
 
-                «getCommonEditorPlugins('TinyMce')»
-            «ENDIF»
+            «getCommonEditorPlugins('TinyMce')»
         «ENDIF»
     '''
 
