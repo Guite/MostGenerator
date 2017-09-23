@@ -155,7 +155,7 @@ class Utils {
             case ZK15DEV:
                 if (!withPoint) '1.5' else '1.5.2'
             default:
-                if (!withPoint) '1.5' else '1.5.1'
+                if (!withPoint) '1.5' else '2.0.1'
         }
     }
 
