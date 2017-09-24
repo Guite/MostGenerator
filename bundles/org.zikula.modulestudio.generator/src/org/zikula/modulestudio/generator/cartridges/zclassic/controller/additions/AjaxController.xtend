@@ -466,10 +466,11 @@ class AjaxController {
             return «IF targets('2.0')»$this->json«ELSE»new JsonResponse«ENDIF»($this->__('No such item.'), JsonResponse::HTTP_NOT_FOUND);
         }
 
-        $entityFactory->getObjectManager()->transactional(function($entityManager) use($entity) {
-            // toggle the flag
-            $entity[$field] = !$entity[$field];
-        });
+        // toggle the flag
+        $entity[$field] = !$entity[$field];
+
+        // save entity back to database
+        $entityFactory->getObjectManager()->flush();
 
         $logger = $this->get('logger');
         $logArgs = ['app' => '«appName»', 'user' => $this->get('zikula_users_module.current_user')->get('uname'), 'field' => $field, 'entity' => $objectType, 'id' => $id];
@@ -778,17 +779,16 @@ class AjaxController {
             return «IF targets('2.0')»$this->json«ELSE»new JsonResponse«ENDIF»($returnValue);
         }
 
-        $entityManager->transactional(function($entityManager) use($repository, $entity, $moveDirection) {
-            if ($moveDirection == 'top') {
-                $repository->moveUp($entity, true);
-            } elseif ($moveDirection == 'up') {
-                $repository->moveUp($entity, 1);
-            } elseif ($moveDirection == 'down') {
-                $repository->moveDown($entity, 1);
-            } elseif ($moveDirection == 'bottom') {
-                $repository->moveDown($entity, true);
-            }
-        });
+        if ($moveDirection == 'top') {
+            $repository->moveUp($entity, true);
+        } elseif ($moveDirection == 'up') {
+            $repository->moveUp($entity, 1);
+        } elseif ($moveDirection == 'down') {
+            $repository->moveDown($entity, 1);
+        } elseif ($moveDirection == 'bottom') {
+            $repository->moveDown($entity, true);
+        }
+        $entityManager->flush();
     '''
 
     def private treeOperationMoveNodeTo(Application it) '''
@@ -819,20 +819,20 @@ class AjaxController {
             return «IF targets('2.0')»$this->json«ELSE»new JsonResponse«ENDIF»($returnValue);
         }
 
-        $entityManager->transactional(function($entityManager) use($entity, $destEntity, $repository«IF hasStandardFieldEntities», $currentUser«ENDIF») {
-            $entityManager->persist($destEntity);
-            «IF hasStandardFieldEntities»
-                $entityManager->persist($currentUser);
-            «ENDIF»
+        $entityManager->persist($destEntity);
+        «IF hasStandardFieldEntities»
+            $entityManager->persist($currentUser);
+        «ENDIF»
 
-            if ($moveDirection == 'after') {
-                $repository->persistAsNextSiblingOf($entity, $destEntity);
-            } elseif ($moveDirection == 'before') {
-                $repository->persistAsPrevSiblingOf($entity, $destEntity);
-            } elseif ($moveDirection == 'bottom') {
-                $repository->persistAsLastChildOf($entity, $destEntity);
-            }
-        });
+        if ($moveDirection == 'after') {
+            $repository->persistAsNextSiblingOf($entity, $destEntity);
+        } elseif ($moveDirection == 'before') {
+            $repository->persistAsPrevSiblingOf($entity, $destEntity);
+        } elseif ($moveDirection == 'bottom') {
+            $repository->persistAsLastChildOf($entity, $destEntity);
+        }
+
+        $entityManager->flush();
     '''
 
     def private updateSortPositionsBase(Application it) '''
@@ -888,16 +888,19 @@ class AjaxController {
 
         $sortFieldSetter = 'set' . ucfirst($sortableFieldMap[$objectType]);
         $sortCounter = $min;
-        $entityFactory->getObjectManager()->transactional(function($entityManager) use($itemIds, $repository, $sortFieldSetter, $sortCounter) {
-            foreach ($itemIds as $itemId) {
-                if (empty($itemId) || !is_numeric($itemId)) {
-                    continue;
-                }
-                $entity = $repository->selectById($itemId);
-                $entity->$sortFieldSetter($sortCounter);
-                $sortCounter++;
+
+        // update sort values
+        foreach ($itemIds as $itemId) {
+            if (empty($itemId) || !is_numeric($itemId)) {
+                continue;
             }
-        });
+            $entity = $repository->selectById($itemId);
+            $entity->$sortFieldSetter($sortCounter);
+            $sortCounter++;
+        }
+
+        // save entities back to database
+        $entityFactory->getObjectManager()->flush();
 
         // return response
         return «IF targets('2.0')»$this->json«ELSE»new JsonResponse«ENDIF»([
@@ -991,9 +994,8 @@ class AjaxController {
         $assignment->setUpdatedDate(new \DateTime());
 
         $entityManager = $this->get('«appService».entity_factory')->getObjectManager();
-        $entityManager->transactional(function($entityManager) use($assignment) {
-            $entityManager->persist($assignment);
-        });
+        $entityManager->persist($assignment);
+        $entityManager->flush();
 
         // return response
         return «IF targets('2.0')»$this->json«ELSE»new JsonResponse«ENDIF»([

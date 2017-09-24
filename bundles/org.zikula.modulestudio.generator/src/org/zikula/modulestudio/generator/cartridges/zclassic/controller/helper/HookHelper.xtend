@@ -675,11 +675,11 @@ class HookHelper {
                     $query = $qb->getQuery();
                     $assignments = $query->getResult();
 
-                    $entityManager->transactional(function($entityManager) use($assignments, $url) {
-                        foreach ($assignments as $assignment) {
-                            $assignment->setSubscriberUrl($url);
-                        }
-                    });
+                    foreach ($assignments as $assignment) {
+                        $assignment->setSubscriberUrl($url);
+                    }
+
+                    $entityManager->flush();
                 }
 
                 /**
