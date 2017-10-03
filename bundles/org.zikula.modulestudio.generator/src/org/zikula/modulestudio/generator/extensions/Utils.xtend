@@ -25,7 +25,7 @@ class Utils {
      * @return String The version number
      */
     def msVersion() {
-        '1.0.2'
+        '1.1.0'
     }
 
     /**
