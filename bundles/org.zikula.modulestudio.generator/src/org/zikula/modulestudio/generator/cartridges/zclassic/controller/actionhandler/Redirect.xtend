@@ -118,7 +118,7 @@ class Redirect {
             if (null !== $this->returnTo) {
                 $refererParts = explode('/', $this->returnTo);
                 «IF hasSluggableFields && slugUnique»
-                    $isDisplayPage = $refererParts[count($refererParts)-2] == '«name.formatForCode»';
+                    $isDisplayOrEditPage = $refererParts[count($refererParts)-2] == '«name.formatForCode»';
                     if ($isDisplayOrEditPage) {
                         // update slug for proper redirect to display/edit page
                         $refererParts[count($refererParts)-1] = $this->entityRef->getSlug();
