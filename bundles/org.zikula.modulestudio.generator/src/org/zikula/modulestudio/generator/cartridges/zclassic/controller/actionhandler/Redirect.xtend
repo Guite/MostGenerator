@@ -116,21 +116,20 @@ class Redirect {
             $objectIsPersisted = $args['commandName'] != 'delete' && !($this->templateParameters['mode'] == 'create' && $args['commandName'] == 'cancel');
 
             if (null !== $this->returnTo) {
+                $refererParts = explode('/', $this->returnTo);
                 «IF hasSluggableFields && slugUnique»
-                    $refererParts = explode('/', $this->returnTo);
                     $isDisplayPage = $refererParts[count($refererParts)-2] == '«name.formatForCode»';
-                    if ($isDisplayPage) {
-                        // update slug for proper redirect to display page
+                    if ($isDisplayOrEditPage) {
+                        // update slug for proper redirect to display/edit page
                         $refererParts[count($refererParts)-1] = $this->entityRef->getSlug();
                         $this->returnTo = implode('/', $refererParts);
                     }
-                    $isDisplayOrEditPage = $isDisplayPage || substr($this->returnTo, -4) == 'edit';
                     if (!$isDisplayOrEditPage || $objectIsPersisted) {
                         // return to referer
                         return $this->returnTo;
                     }
                 «ELSE»
-                    $isDisplayOrEditPage = substr($this->returnTo, -7) == 'display' || substr($this->returnTo, -4) == 'edit';
+                    $isDisplayOrEditPage = $refererParts[count($refererParts)-1] == $this->idValue;
                     if (!$isDisplayOrEditPage || $objectIsPersisted) {
                         // return to referer
                         return $this->returnTo;
@@ -156,7 +155,7 @@ class Redirect {
 
                 if ($objectIsPersisted) {
                     // redirect to the detail page of treated «name.formatForCode»
-                    $url = $this->router->generate($routePrefix . 'display', [«routeParams('this->idValues', false)»]);
+                    $url = $this->router->generate($routePrefix . 'display', [«routeParams('this->idValue', false)»]);
                 }
             «ENDIF»
 
