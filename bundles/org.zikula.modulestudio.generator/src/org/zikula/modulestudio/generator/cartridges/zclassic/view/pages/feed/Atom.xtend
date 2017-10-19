@@ -57,37 +57,31 @@ class Atom {
             <rights>Copyright (c) {{ 'now'|date('Y') }}, {{ app.request.schemeAndHttpHost }}</rights>
         «val objName = name.formatForCode»
         {% for «objName» in items %}
-            {{ block('entry') }}
+            <entry>
+                <title type="html">{{ «objName»|«application.appName.formatForDB»_formattedTitle«IF !skipHookSubscribers»|notifyFilters('«appName.formatForDB».filterhook.«nameMultiple.formatForDB»')|safeHtml«ENDIF» }}</title>
+                <link rel="alternate" type="text/html" href="{{ url('«appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ '«defaultAction»'«IF hasDisplayAction»«routeParams(objName, true)»«ENDIF») }}" />
+                {% set uniqueID %}tag:{{ app.request.schemeAndHttpHost|replace({ 'http://': '', '/': '' }) }},{{ «IF standardFields»«objName».createdDate«ELSE»'now'«ENDIF»|date('Y-m-d') }}:{{ path('«appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ '«defaultAction»'«IF hasDisplayAction»«routeParams(objName, true)»«ENDIF») }}{% endset %}
+                <id>{{ uniqueID }}</id>
+                «IF standardFields»
+                    {% if «objName».updatedDate|default %}
+                        <updated>{{ «objName».updatedDate|date('Y-m-dTH:M:SZ') }}</updated>
+                    {% endif %}
+                    {% if «objName».createdDate|default %}
+                        <published>{{ «objName».createdDate|date('Y-m-dTH:M:SZ') }}</published>
+                    {% endif %}
+                    {% if «objName».createdBy|default and «objName».createdBy.getUid() > 0 %}
+                        {% set creatorAttributes = «objName».createdBy.getAttributes() %}
+                        <author>
+                           <name>{{ creatorAttributes.get('realname')|default(creatorAttributes.get('name'))|default(«objName».createdBy.getUname()) }}</name>
+                           <uri>{{ creatorAttributes.get('_UYOURHOMEPAGE')|default('-') }}</uri>
+                           <email>{{ «objName».createdBy.getEmail() }}</email>
+                        </author>
+                    {% endif %}
+                «ENDIF»
+                «description(objName)»
+            </entry>
         {% endfor %}
         </feed>
-        {% block entry %}
-            <entry>
-                {{ block('entry_content') }}
-            </entry>
-        {% endblock %}
-        {% block entry_content %}
-            <title type="html">{{ «objName»|«application.appName.formatForDB»_formattedTitle«IF !skipHookSubscribers»|notifyFilters('«appName.formatForDB».filterhook.«nameMultiple.formatForDB»')|safeHtml«ENDIF» }}</title>
-            <link rel="alternate" type="text/html" href="{{ url('«appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ '«defaultAction»'«IF hasDisplayAction»«routeParams(objName, true)»«ENDIF») }}" />
-            {% set uniqueID %}tag:{{ app.request.schemeAndHttpHost|replace({ 'http://': '', '/': '' }) }},{{ «IF standardFields»«objName».createdDate«ELSE»'now'«ENDIF»|date('Y-m-d') }}:{{ path('«appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ '«defaultAction»'«IF hasDisplayAction»«routeParams(objName, true)»«ENDIF») }}{% endset %}
-            <id>{{ uniqueID }}</id>
-            «IF standardFields»
-                {% if «objName».updatedDate|default %}
-                    <updated>{{ «objName».updatedDate|date('Y-m-dTH:M:SZ') }}</updated>
-                {% endif %}
-                {% if «objName».createdDate|default %}
-                    <published>{{ «objName».createdDate|date('Y-m-dTH:M:SZ') }}</published>
-                {% endif %}
-                {% if «objName».createdBy|default and «objName».createdBy.getUid() > 0 %}
-                    {% set creatorAttributes = «objName».createdBy.getAttributes() %}
-                    <author>
-                       <name>{{ creatorAttributes.get('realname')|default(creatorAttributes.get('name'))|default(«objName».createdBy.getUname()) }}</name>
-                       <uri>{{ creatorAttributes.get('_UYOURHOMEPAGE')|default('-') }}</uri>
-                       <email>{{ «objName».createdBy.getEmail() }}</email>
-                    </author>
-                {% endif %}
-            «ENDIF»
-            «description(objName)»
-        {% endblock %}
     '''
 
     def private description(Entity it, String objName) '''

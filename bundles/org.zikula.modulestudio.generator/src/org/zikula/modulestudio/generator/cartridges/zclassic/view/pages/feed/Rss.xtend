@@ -63,33 +63,27 @@ class Rss {
                 #}
                 <docs>http://blogs.law.harvard.edu/tech/rss</docs>
                 <copyright>Copyright (c) {{ 'now'|date('Y') }}, {{ app.request.schemeAndHttpHost }}</copyright>
-                <webMaster>{{ pageGetVar('adminmail) }}</webMaster>
+                <webMaster>{{ pageGetVar('adminmail') }}</webMaster>
         «val objName = name.formatForCode»
         {% for «objName» in items %}
-            {{ block('entry') }}
+            <item>
+                <title><![CDATA[{% if «objName».updatedDate|default %}{{ «objName».updatedDate|localizeddate('medium', 'short') }} - {% endif %}{{ «objName»|«application.appName.formatForDB»_formattedTitle«IF !skipHookSubscribers»|notifyFilters('«appName.formatForDB».filterhook.«nameMultiple.formatForDB»')|safeHtml«ENDIF» }}]]></title>
+                <link>{{ url('«appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ '«defaultAction»'«IF hasDisplayAction»«routeParams(objName, true)»«ENDIF») }}</link>
+                <guid>{{ url('«appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ '«defaultAction»'«IF hasDisplayAction»«routeParams(objName, true)»«ENDIF») }}</guid>
+                «IF standardFields»
+                    {% if «objName».createdBy|default and «objName».createdBy.getUid() > 0 %}
+                        {% set creatorAttributes = «objName».createdBy.getAttributes() %}
+                        <author>{{ «objName».createdBy.getEmail() }} ({{ creatorAttributes.get('realname')|default(creatorAttributes.get('name'))|default(«objName».createdBy.getUname()) }})</author>
+                    {% endif %}
+                «ENDIF»
+                «IF categorisable»
+                    <category><![CDATA[{{ __('Categories') }}: {% for catMapping in «objName».categories %}{{ catMapping.category.display_name[app.request.locale]|default(catMapping.category.name) }}{% if not loop.last %}, {% endif %}{% endfor %}]]></category>
+                «ENDIF»
+                «description(objName)»
+            </item>
         {% endfor %}
             </channel>
         </rss>
-        {% block entry %}
-            <item>
-                {{ block('entry_content') }}
-            </item>
-        {% endblock %}
-        {% block entry_content %}
-            <title><![CDATA[{% if «objName».updatedDate|default %}{{ «objName».updatedDate|localizeddate('medium', 'short') }} - {% endif %}{{ «objName»|«application.appName.formatForDB»_formattedTitle«IF !skipHookSubscribers»|notifyFilters('«appName.formatForDB».filterhook.«nameMultiple.formatForDB»')|safeHtml«ENDIF» }}]]></title>
-            <link>{{ url('«appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ '«defaultAction»'«IF hasDisplayAction»«routeParams(objName, true)»«ENDIF») }}</link>
-            <guid>{{ url('«appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ '«defaultAction»'«IF hasDisplayAction»«routeParams(objName, true)»«ENDIF») }}</guid>
-            «IF standardFields»
-                {% if «objName».createdBy|default and «objName».createdBy.getUid() > 0 %}
-                    {% set creatorAttributes = «objName».createdBy.getAttributes() %}
-                    <author>{{ «objName».createdBy.getEmail() }} ({{ creatorAttributes.get('realname')|default(creatorAttributes.get('name'))|default(«objName».createdBy.getUname()) }})</author>
-                {% endif %}
-            «ENDIF»
-            «IF categorisable»
-                <category><![CDATA[{{ __('Categories') }}: {% for catMapping in «objName».categories %}{{ catMapping.category.display_name[app.request.locale]|default(catMapping.category.name) }}{% if not loop.last %}, {% endif %}{% endfor %}]]></category>
-            «ENDIF»
-            «description(objName)»
-        {% endblock %}
     '''
 
     def private description(Entity it, String objName) '''
