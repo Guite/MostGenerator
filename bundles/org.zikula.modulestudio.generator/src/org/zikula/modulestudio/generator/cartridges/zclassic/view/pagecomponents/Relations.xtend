@@ -96,7 +96,7 @@ class Relations {
         «IF hasDisplayAction»
             {% if not noLink %}
                 </a>
-                <a id="«name.formatForCode»Item{{ item.getKey() }}Display" href="{{ path('«app.appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ 'display', {«IF !hasSluggableFields || !slugUnique»«routePkParams('item', true)»«ENDIF»«appendSlug('item', true)», raw: 1}) }}" title="{{ __('Open quick view window') }}" class="«application.vendorAndName.toLowerCase»-inline-window hidden" data-modal-title="{{ item|«app.appName.formatForDB»_formattedTitle|e('html_attr') }}"><span class="fa fa-id-card-o"></span></a>
+                <a id="«name.formatForCode»Item{{ item.getKey() }}Display" href="{{ path('«app.appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ 'display', {«IF !hasSluggableFields || !slugUnique»«routePkParams('item', true)»«ENDIF»«appendSlug('item', true)», raw: 1}) }}" title="{{ __('Open quick view window') }}" class="«application.vendorAndName.toLowerCase»-inline-window hidden" data-modal-title="{{ item|«app.appName.formatForDB»_formattedTitle|e('html_attr') }}"><i class="fa fa-id-card-o"></i></a>
             {% endif %}
             {% endspaceless %}
         «ENDIF»
@@ -198,7 +198,7 @@ class Relations {
             {% if mayManage«IF otherEntity.ownerPermission» or (currentUser|default and «relatedEntity.name.formatForCode».createdBy|default and «relatedEntity.name.formatForCode».createdBy.getUid() == currentUser.uid)«ENDIF» %}
                 <p class="managelink">
                     {% set createTitle = __('Create «otherEntity.name.formatForDisplay»') %}
-                    <a href="{{ path('«appName.formatForDB»_«otherEntity.name.formatForDB»_' ~ routeArea ~ 'edit', {«relationAliasNameParam»: «relatedEntity.name.formatForCode».getKey()}) }}" title="{{ createTitle|e('html_attr') }}" class="fa fa-plus">{{ createTitle }}</a>
+                    <a href="{{ path('«appName.formatForDB»_«otherEntity.name.formatForDB»_' ~ routeArea ~ 'edit', {«relationAliasNameParam»: «relatedEntity.name.formatForCode».getKey()}) }}" title="{{ createTitle|e('html_attr') }}"><i class="fa fa-plus"></i> {{ createTitle }}</a>
                 </p>
             {% endif %}
             «IF !many»

@@ -63,11 +63,11 @@ class ViewHierarchy {
                     «IF hasEditAction»
                     {% if hasPermission('«appName»:«name.formatForCodeCapital»:', '::', 'ACCESS_«IF workflow == EntityWorkflowType::NONE»EDIT«ELSE»COMMENT«ENDIF»') %}
                         {% set addRootTitle = __('Add root node') %}
-                        <a id="treeAddRoot" href="javascript:void(0)" title="{{ addRootTitle|e('html_attr') }}" class="fa fa-plus hidden" data-object-type="«objName»">{{ addRootTitle }}</a>
+                        <a id="treeAddRoot" href="javascript:void(0)" title="{{ addRootTitle|e('html_attr') }}" class="hidden" data-object-type="«objName»"><i class="fa fa-plus"></i> {{ addRootTitle }}</a>
                     {% endif %}
                     «ENDIF»
                     {% set switchTitle = __('Switch to table view') %}
-                    <a href="{{ path('«appName.formatForDB»_«objName.toLowerCase»_' ~ routeArea ~ 'view') }}" title="{{ switchTitle|e('html_attr') }}" class="fa fa-table">{{ switchTitle }}</a>
+                    <a href="{{ path('«appName.formatForDB»_«objName.toLowerCase»_' ~ routeArea ~ 'view') }}" title="{{ switchTitle|e('html_attr') }}"><i class="fa fa-table"></i> {{ switchTitle }}</a>
                 </p>
 
                 {% for rootId, treeNodes in trees %}

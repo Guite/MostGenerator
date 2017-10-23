@@ -133,25 +133,25 @@ class View {
             {% if canBeCreated %}
                 {% if hasPermission('«appName»:«name.formatForCodeCapital»:', '::', 'ACCESS_«IF workflow == EntityWorkflowType::NONE»EDIT«ELSE»COMMENT«ENDIF»') %}
                     {% set createTitle = __('Create «name.formatForDisplay»') %}
-                    <a href="{{ path('«appName.formatForDB»_«objName.toLowerCase»_' ~ routeArea ~ 'edit') }}" title="{{ createTitle|e('html_attr') }}" class="fa fa-plus">{{ createTitle }}</a>
+                    <a href="{{ path('«appName.formatForDB»_«objName.toLowerCase»_' ~ routeArea ~ 'edit') }}" title="{{ createTitle|e('html_attr') }}"><i class="fa fa-plus"></i> {{ createTitle }}</a>
                 {% endif %}
             {% endif %}
         «ENDIF»
         {% if all == 1 %}
             {% set linkTitle = __('Back to paginated view') %}
-            <a href="{{ path('«appName.formatForDB»_«objName.toLowerCase»_' ~ routeArea ~ 'view') }}" title="{{ linkTitle|e('html_attr') }}" class="fa fa-table">{{ linkTitle }}</a>
+            <a href="{{ path('«appName.formatForDB»_«objName.toLowerCase»_' ~ routeArea ~ 'view') }}" title="{{ linkTitle|e('html_attr') }}"><i class="fa fa-table"></i> {{ linkTitle }}</a>
         {% else %}
             {% set linkTitle = __('Show all entries') %}
-            <a href="{{ path('«appName.formatForDB»_«objName.toLowerCase»_' ~ routeArea ~ 'view', {all: 1}) }}" title="{{ linkTitle|e('html_attr') }}" class="fa fa-table">{{ linkTitle }}</a>
+            <a href="{{ path('«appName.formatForDB»_«objName.toLowerCase»_' ~ routeArea ~ 'view', {all: 1}) }}" title="{{ linkTitle|e('html_attr') }}"><i class="fa fa-table"></i> {{ linkTitle }}</a>
         {% endif %}
         «IF tree != EntityTreeType.NONE»
             {% set linkTitle = __('Switch to hierarchy view') %}
-            <a href="{{ path('«appName.formatForDB»_«objName.toLowerCase»_' ~ routeArea ~ 'view', {tpl: 'tree'}) }}" title="{{ linkTitle|e('html_attr') }}" class="fa fa-code-fork">{{ linkTitle }}</a>
+            <a href="{{ path('«appName.formatForDB»_«objName.toLowerCase»_' ~ routeArea ~ 'view', {tpl: 'tree'}) }}" title="{{ linkTitle|e('html_attr') }}"><i class="fa fa-code-fork"></i> {{ linkTitle }}</a>
         «ENDIF»
         «IF loggable»
             {% if hasDeletedEntities and hasPermission('«appName»:«name.formatForCodeCapital»:', '::', 'ACCESS_EDIT') %}
                 {% set linkTitle = __('View deleted «nameMultiple.formatForDisplay»') %}
-                <a href="{{ path('«appName.formatForDB»_«objName.toLowerCase»_' ~ routeArea ~ 'view', {deleted: 1}) }}" title="{{ linkTitle|e('html_attr') }}" class="fa fa-trash-o">{{ linkTitle }}</a>
+                <a href="{{ path('«appName.formatForDB»_«objName.toLowerCase»_' ~ routeArea ~ 'view', {deleted: 1}) }}" title="{{ linkTitle|e('html_attr') }}"><i class="fa fa-trash-o"></i> {{ linkTitle }}</a>
             {% endif %}
         «ENDIF»
     '''
@@ -438,7 +438,7 @@ class View {
               {{ «relObjName»|«application.appName.formatForDB»_formattedTitle }}
             «IF linkEntity.hasDisplayAction»
                 {% endspaceless %}</a>
-                <a id="«linkEntity.name.formatForCode»Item{{ «mainEntity.name.formatForCode».getKey() }}_rel_{{ «relObjName».getKey() }}Display" href="{{ path('«application.appName.formatForDB»_«linkEntity.name.formatForDB»_' ~ routeArea ~ 'display', {«IF !linkEntity.hasSluggableFields || !linkEntity.slugUnique»«linkEntity.routePkParams(relObjName, true)»«ENDIF»«linkEntity.appendSlug(relObjName, true)», raw: 1}) }}" title="{{ __('Open quick view window')|e('html_attr') }}" class="«application.vendorAndName.toLowerCase»-inline-window hidden" data-modal-title="{{ «relObjName»|«application.appName.formatForDB»_formattedTitle|e('html_attr') }}"><span class="fa fa-id-card-o"></span></a>
+                <a id="«linkEntity.name.formatForCode»Item{{ «mainEntity.name.formatForCode».getKey() }}_rel_{{ «relObjName».getKey() }}Display" href="{{ path('«application.appName.formatForDB»_«linkEntity.name.formatForDB»_' ~ routeArea ~ 'display', {«IF !linkEntity.hasSluggableFields || !linkEntity.slugUnique»«linkEntity.routePkParams(relObjName, true)»«ENDIF»«linkEntity.appendSlug(relObjName, true)», raw: 1}) }}" title="{{ __('Open quick view window')|e('html_attr') }}" class="«application.vendorAndName.toLowerCase»-inline-window hidden" data-modal-title="{{ «relObjName»|«application.appName.formatForDB»_formattedTitle|e('html_attr') }}"><i class="fa fa-id-card-o"></i></a>
             «ENDIF»
         {% else %}
             {{ __('Not set.') }}
@@ -539,10 +539,10 @@ class View {
                                 <td headers="hActions" class="actions nowrap">
                                     «IF hasDisplayAction»
                                         {% set linkTitle = __f('Preview «name.formatForDisplay» %id%', {'%id%': logEntry.objectId}) %}
-                                        <a id="«name.formatForCode»ItemDisplay{{ logEntry.objectId }}" href="{{ path('«appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ 'displaydeleted', {'«getPrimaryKey.name.formatForCode»': logEntry.objectId, raw: 1}) }}" title="{{ linkTitle|e('html_attr') }}" class="«application.vendorAndName.toLowerCase»-inline-window hidden" data-modal-title="{{ __f('«name.formatForDisplayCapital» %id%', {'%id%': logEntry.objectId}) }}"><span class="fa fa-id-card-o"></span></a>
+                                        <a id="«name.formatForCode»ItemDisplay{{ logEntry.objectId }}" href="{{ path('«appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ 'displaydeleted', {'«getPrimaryKey.name.formatForCode»': logEntry.objectId, raw: 1}) }}" title="{{ linkTitle|e('html_attr') }}" class="«application.vendorAndName.toLowerCase»-inline-window hidden" data-modal-title="{{ __f('«name.formatForDisplayCapital» %id%', {'%id%': logEntry.objectId}) }}"><i class="fa fa-id-card-o"></i></a>
                                     «ENDIF»
                                     {% set linkTitle = __f('Undelete «name.formatForDisplay» %id%', {'%id%': logEntry.objectId}) %}
-                                    <a href="{{ path('«appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ 'displaydeleted', {'«getPrimaryKey.name.formatForCode»': logEntry.objectId, undelete: 1}) }}" title="{{ linkTitle|e('html_attr') }}"><span class="fa fa-history"></span></a>
+                                    <a href="{{ path('«appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ 'displaydeleted', {'«getPrimaryKey.name.formatForCode»': logEntry.objectId, undelete: 1}) }}" title="{{ linkTitle|e('html_attr') }}"><i class="fa fa-history"></i></a>
                                 </td>
                             </tr>
                         {% endfor %}
@@ -555,7 +555,7 @@ class View {
         {% block page_nav_links %}
             <p>
                 {% set linkTitle = __('Back to overview') %}
-                <a href="{{ path('«appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ 'view') }}" title="{{ linkTitle|e('html_attr') }}" class="fa fa-reply">{{ linkTitle }}</a>
+                <a href="{{ path('«appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ 'view') }}" title="{{ linkTitle|e('html_attr') }}"><i class="fa fa-reply"></i> {{ linkTitle }}</a>
             </p>
         {% endblock %}
     '''

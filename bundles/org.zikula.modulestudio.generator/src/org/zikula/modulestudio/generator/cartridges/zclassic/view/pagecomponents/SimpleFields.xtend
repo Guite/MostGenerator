@@ -113,7 +113,7 @@ class SimpleFields {
             «IF page == 'display'»
                   {% if not isQuickView %}
             «ENDIF»
-            <a href="mailto:{{ «realName»|protectMail }}" title="{{ __('Send an email') }}" class="fa fa-envelope"></a>
+            <a href="mailto:{{ «realName»|protectMail }}" title="{{ __('Send an email') }}"><i class="fa fa-envelope"></i></a>
             «IF page == 'display'»
                 {% else %}
                     {{ «realName»|protectMail }}
@@ -135,7 +135,7 @@ class SimpleFields {
             «IF page == 'display'»
                   {% if not isQuickView %}
             «ENDIF»
-            <a href="{{ «realName» }}" title="{{ __('Visit this page') }}" class="fa fa-external-link-square"></a>
+            <a href="{{ «realName» }}" title="{{ __('Visit this page') }}"><i class="fa fa-external-link-square"></i></a>
             «IF page == 'display'»
                 {% else %}
                     {{ «realName» }}
