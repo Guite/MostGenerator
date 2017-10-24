@@ -239,8 +239,6 @@ class TranslatableHelper {
     def private processEntityAfterEditing(Application it) '''
         /**
          * Post-editing method persisting translated fields.
-         * This ensures easy compatibility to the Forms plugins where it
-         * it is not possible yet to define sub arrays in the group attribute.
          *
          * @param EntityAccess  $entity        The entity being edited
          * @param FormInterface $form          Form containing translations
