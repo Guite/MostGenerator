@@ -249,9 +249,6 @@ class TranslatableHelper {
         public function processEntityAfterEditing($entity, $form, $entityManager)
         {
             $objectType = $entity->get_objectType();
-            $entityTransClass = '\\«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Entity\\' . ucfirst($objectType) . 'TranslationEntity';
-            $repository = $entityManager->getRepository($entityTransClass);
-
             $supportedLanguages = $this->getSupportedLanguages($objectType);
             foreach ($supportedLanguages as $language) {
                 if (!isset($form['translations' . $language])) {
