@@ -1,4 +1,5 @@
 .version=1
+ValidatorConfiguration.is_project_specific=true
 autobuilding=true
 blank.line.around.expressions=0
 blank.lines.after.imports=1
@@ -34,7 +35,7 @@ org.eclipse.xtext.xbase.validation.IssueCodes.forbidden_reference=error
 org.eclipse.xtext.xbase.validation.IssueCodes.import_unsued=error
 org.eclipse.xtext.xbase.validation.IssueCodes.import_wildcard_deprecated=error
 org.eclipse.xtext.xbase.validation.IssueCodes.null_safe_feature_call_on_primitive_valued_feature=error
-org.eclipse.xtext.xbase.validation.IssueCodes.obsolete_cast=error
+org.eclipse.xtext.xbase.validation.IssueCodes.obsolete_cast=warning
 org.eclipse.xtext.xbase.validation.IssueCodes.obsolete_instanceof=error
 org.eclipse.xtext.xbase.validation.IssueCodes.unhandled_exception=error
 org.eclipse.xtext.xbase.validation.IssueCodes.unused_local_variable=error

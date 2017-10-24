@@ -304,7 +304,7 @@ class Entities {
          «' '»* @ORM\DiscriminatorMap({«FOR relation : getChildRelations»«relation.discriminatorInfo»«ENDFOR»})
          «ENDIF»
          «ELSEIF it instanceof Entity»
-          * @ORM\Entity(repositoryClass="«app.appNamespace»\Entity\Repository\«name.formatForCodeCapital»Repository"«IF readOnly», readOnly=true«ENDIF»)
+          * @ORM\Entity(repositoryClass="«app.appNamespace»\Entity\Repository\«name.formatForCodeCapital»Repository"«IF (it as Entity).readOnly», readOnly=true«ENDIF»)
          «ENDIF»
         «IF it instanceof Entity»
             «entityImplClassDocblockAdditions(app)»
