@@ -601,7 +601,7 @@ class ServiceDefinitions {
                         - { name: form.type }
                 «ENDIF»
         «ENDIF»
-        «IF generateDetailBlock»
+        «IF generateDetailBlock && hasDisplayActions»
 
             «modPrefix».form.type.block.item:
                 class: «nsBase.replace('Form\\Type\\', '')»Block\Form\Type\ItemBlockType

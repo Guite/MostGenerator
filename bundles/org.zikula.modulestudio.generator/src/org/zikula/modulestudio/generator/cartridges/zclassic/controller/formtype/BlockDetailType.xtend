@@ -28,7 +28,7 @@ class BlockDetailType {
      * Entry point for list block form type.
      */
     def generate(Application it, IFileSystemAccess fsa) {
-        if (!generateDetailBlock) {
+        if (!generateDetailBlock || !hasDisplayActions) {
             return
         }
         generateClassPair(fsa, getAppSourceLibPath + 'Block/Form/Type/ItemBlockType.php',
