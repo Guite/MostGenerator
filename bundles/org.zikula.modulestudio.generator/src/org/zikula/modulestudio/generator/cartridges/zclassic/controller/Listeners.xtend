@@ -53,7 +53,7 @@ class Listeners {
         listenerSuffix = 'Listener.php'
 
         val needsDetailContentType = generateDetailContentType && hasDisplayActions
-        needsThirdPartyListener = (generatePendingContentSupport || ((generateListContentType || needsDetailContentType || generateScribitePlugins) && !targets('2.0')))
+        needsThirdPartyListener = (generatePendingContentSupport || ((generateListContentType || needsDetailContentType) && !targets('2.0')) || generateScribitePlugins)
 
         println('Generating event listener base classes')
         listenerPath = getAppSourceLibPath + 'Listener/Base/'
