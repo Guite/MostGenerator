@@ -343,7 +343,7 @@ class ServiceDefinitions {
             'UserLogin', 'UserLogout', 'User', 'UserRegistration', 'Users', 'Group')
 
         val needsDetailContentType = generateDetailContentType && hasDisplayActions
-        if (generatePendingContentSupport || generateListContentType || needsDetailContentType) {
+        if ((needsApproval && generatePendingContentSupport) || ((generateListContentType || needsDetailContentType) && !targets('2.0')) || generateScribitePlugins) {
             listeners.add('ThirdParty')
         }
         if (!getAllEntities.filter[hasIpTraceableFields].empty) {
