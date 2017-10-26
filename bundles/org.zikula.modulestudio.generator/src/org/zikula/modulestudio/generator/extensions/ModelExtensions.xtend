@@ -26,7 +26,9 @@ import de.guite.modulestudio.metamodel.IntegerField
 import de.guite.modulestudio.metamodel.IpAddressScope
 import de.guite.modulestudio.metamodel.ListField
 import de.guite.modulestudio.metamodel.ListVar
+import de.guite.modulestudio.metamodel.ManyToOneRelationship
 import de.guite.modulestudio.metamodel.ObjectField
+import de.guite.modulestudio.metamodel.OneToOneRelationship
 import de.guite.modulestudio.metamodel.StringField
 import de.guite.modulestudio.metamodel.StringRole
 import de.guite.modulestudio.metamodel.TextField
@@ -292,8 +294,17 @@ class ModelExtensions {
     /**
      * Returns the primary key field of the given entity.
      */
-    def getPrimaryKey(DataObject it) {
-        getDerivedFields.findFirst[primaryKey]
+    def DerivedField getPrimaryKey(DataObject it) {
+        if (!getDerivedFields.filter[primaryKey].empty) {
+            return getDerivedFields.findFirst[primaryKey]
+        }
+        if (!outgoing.filter(OneToOneRelationship).filter[primaryKey].empty) {
+            return outgoing.filter(OneToOneRelationship).findFirst[primaryKey].source.getPrimaryKey
+        }
+        if (!outgoing.filter(ManyToOneRelationship).filter[primaryKey].empty) {
+            return outgoing.filter(ManyToOneRelationship).findFirst[primaryKey].source.getPrimaryKey
+        }
+        null
     }
 
     /**

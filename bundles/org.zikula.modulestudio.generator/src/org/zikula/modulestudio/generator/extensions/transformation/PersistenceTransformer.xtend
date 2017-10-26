@@ -4,7 +4,9 @@ import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.EntityWorkflowType
 import de.guite.modulestudio.metamodel.IpAddressScope
+import de.guite.modulestudio.metamodel.ManyToOneRelationship
 import de.guite.modulestudio.metamodel.ModuleStudioFactory
+import de.guite.modulestudio.metamodel.OneToOneRelationship
 import de.guite.modulestudio.metamodel.StringField
 import de.guite.modulestudio.metamodel.StringRole
 import de.guite.modulestudio.metamodel.UploadField
@@ -102,7 +104,10 @@ class PersistenceTransformer {
     def private void handleEntity(Entity it) {
         //println('Transforming entity ' + name)
         //println('Field size before: ' + fields.size + ' fields')
-        if (getDerivedFields.filter[primaryKey].empty) {
+        if (getDerivedFields.filter[primaryKey].empty
+             && outgoing.filter(OneToOneRelationship).filter[primaryKey].empty
+             && outgoing.filter(ManyToOneRelationship).filter[primaryKey].empty
+        ) {
             addPrimaryKey
         }
         //println('Added primary key, field size now: ' + fields.size + ' fields')
