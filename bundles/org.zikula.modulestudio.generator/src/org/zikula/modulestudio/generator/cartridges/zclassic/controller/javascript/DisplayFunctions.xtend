@@ -413,12 +413,13 @@ class DisplayFunctions {
                             identifiers: jQuery(this).sortable('toArray', { attribute: 'data-item-id' }),
                             min: jQuery('#sortableTable').data('min'),
                             max: jQuery('#sortableTable').data('max')
-                        }/*,
+                        },
                         success: function(data) {
-                            if (data.message) {
+                            /*if (data.message) {
                                 «vendorAndName»SimpleAlert(jQuery('#sortableTable'), Translator.__('Success'), data.message, 'sortingDoneAlert', 'success');
-                            }
-                    	}*/
+                            }*/
+                            window.location.reload();
+                    	}
                     });
                 }
             });
