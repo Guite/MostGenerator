@@ -122,7 +122,7 @@ class ItemActions {
             «FOR elem : refedElems»
                 «val useTarget = (elem.source == it)»
                 «val relationAliasName = elem.getRelationAliasName(useTarget).formatForCode.toFirstLower»
-                «val relationAliasNameParam = elem.getRelationAliasName(!useTarget).formatForCodeCapital»
+                «val relationAliasNameParam = elem.getRelationAliasName(!useTarget)»
                 «val otherEntity = (if (!useTarget) elem.source else elem.target)»
 
                 $relatedComponent = '«app.appName»:«otherEntity.name.formatForCodeCapital»:';
@@ -134,7 +134,7 @@ class ItemActions {
                             $title = $this->__('Create «elem.getRelationAliasName(useTarget).formatForDisplay»');
                             $menu->addChild($title, [
                                 'route' => '«app.appName.formatForDB»_«otherEntity.name.formatForDB»_' . $routeArea . 'edit',
-                                'routeParameters' => ['«relationAliasNameParam.formatForDB»' => $entity->«IF hasSluggableFields && slugUnique»getSlug()«ELSE»getKey()«ENDIF»]
+                                'routeParameters' => ['«relationAliasNameParam»' => $entity->«IF hasSluggableFields && slugUnique»getSlug()«ELSE»getKey()«ENDIF»]
                             ])->setAttribute('icon', 'fa fa-plus');
                             $menu[$title]->setLinkAttribute('title', $title);
                         }
@@ -142,7 +142,7 @@ class ItemActions {
                         $title = $this->__('Create «elem.getRelationAliasName(useTarget).formatForDisplay»');
                         $menu->addChild($title, [
                             'route' => '«app.appName.formatForDB»_«otherEntity.name.formatForDB»_' . $routeArea . 'edit',
-                            'routeParameters' => ['«relationAliasNameParam.formatForDB»' => $entity->getKey()]
+                            'routeParameters' => ['«relationAliasNameParam»' => $entity->getKey()]
                         ])->setAttribute('icon', 'fa fa-plus');
                         $menu[$title]->setLinkAttribute('title', $title);
                     «ENDIF»
