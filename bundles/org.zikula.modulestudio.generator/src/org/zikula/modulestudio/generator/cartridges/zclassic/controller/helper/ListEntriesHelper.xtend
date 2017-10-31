@@ -249,7 +249,7 @@ class ListEntriesHelper {
     def private entryInfo(ListFieldItem it, Application app) '''
         $states[] = [
             'value'   => '«IF null !== value»«value.replace("'", "")»«ELSE»«name.formatForCode.replace("'", "")»«ENDIF»',
-            'text'    => $this->__('«name.formatForDisplayCapital.replace("'", "")»'),
+            'text'    => $this->__('«name.toFirstUpper.replace("'", "")»'),
             'title'   => «IF null !== documentation && documentation != ''»$this->__('«documentation.replace("'", "")»')«ELSE»''«ENDIF»,
             'image'   => '«IF null !== image && image != ''»«image».png«ENDIF»',
             'default' => «^default.displayBool»
@@ -259,7 +259,7 @@ class ListEntriesHelper {
     def private entryInfoNegative(ListFieldItem it, Application app) '''
         $states[] = [
             'value'   => '!«IF null !== value»«value.replace("'", "")»«ELSE»«name.formatForCode.replace("'", "")»«ENDIF»',
-            'text'    => $this->__('All except «name.formatForDisplay.replace("'", "")»'),
+            'text'    => $this->__('All except «name.toFirstLower.replace("'", "")»'),
             'title'   => $this->__('Shows all items except these which are «name.formatForDisplay.replace("'", "")»'),
             'image'   => '',
             'default' => false
