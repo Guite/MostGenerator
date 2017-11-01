@@ -104,7 +104,7 @@ class ConfigType {
 
                     // prepare group selector values
                     foreach (['«getUserGroupSelectors.map[name.formatForCode].join('\', \'')»'] as $groupFieldName) {
-                        $groupId = intval($this->moduleVars[$groupFieldName]);
+                        $groupId = isset($this->moduleVars[$groupFieldName]) ? intval($this->moduleVars[$groupFieldName]) : 0;
                         if ($groupId < 1) {
                             // fallback to admin group
                             $groupId = GroupsConstant::GROUP_ID_ADMIN;
