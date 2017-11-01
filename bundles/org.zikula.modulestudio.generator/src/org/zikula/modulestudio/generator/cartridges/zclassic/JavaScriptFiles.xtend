@@ -36,8 +36,10 @@ class JavaScriptFiles {
         if (hasEditActions) {
             new EditFunctions().generate(it, fsa)
         }
-        if (needsAutoCompletion) {
+        if (needsInlineEditing) {
             new InlineEditing().generate(it, fsa)
+        }
+        if (needsAutoCompletion) {
             new AutoCompletion().generate(it, fsa)
         }
         if (generateExternalControllerAndFinder) {
