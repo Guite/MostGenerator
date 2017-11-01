@@ -36,7 +36,7 @@ class Annotations {
             «IF it instanceof DisplayAction || it instanceof DeleteAction»
                 «paramConverter(entity)»
             «ENDIF»
-            «IF it instanceof MainAction»
+            «/*IF it instanceof MainAction»
                 «' '»* @Cache(expires="+7 days", public=true)
             «ELSEIF it instanceof ViewAction»
                 «' '»* @Cache(expires="+2 hours", public=false)
@@ -48,7 +48,7 @@ class Annotations {
                 «ELSE»
                     «' '»* @Cache(expires="+12 hours", public=false)
                 «ENDIF»
-            «ENDIF»
+            «ENDIF*/»
         «ENDIF»
         «IF isAdmin»
             «' '»* @Theme("admin")

@@ -151,7 +151,7 @@ class ControllerLayer {
         «IF hasEditAction || hasDeleteAction»
             use RuntimeException;
         «ENDIF»
-        use Sensio\Bundle\FrameworkExtraBundle\Configuration\Cache;
+        «/*use Sensio\Bundle\FrameworkExtraBundle\Configuration\Cache;*/»
         «IF hasDisplayAction || hasDeleteAction»
             use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
         «ENDIF»
