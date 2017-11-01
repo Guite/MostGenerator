@@ -2,13 +2,13 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.controller.javascr
 
 import de.guite.modulestudio.metamodel.Application
 import org.eclipse.xtext.generator.IFileSystemAccess
-import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
+import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class InlineEditing {
 
-    extension ModelJoinExtensions = new ModelJoinExtensions
+    extension ControllerExtensions = new ControllerExtensions
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
 
@@ -16,7 +16,7 @@ class InlineEditing {
      * Entry point for the JavaScript file with inline editing functionality.
      */
     def generate(Application it, IFileSystemAccess fsa) {
-        if (!needsAutoCompletion) {
+        if (!needsInlineEditing) {
             return
         }
         var fileName = appName + '.InlineEditing.js'
