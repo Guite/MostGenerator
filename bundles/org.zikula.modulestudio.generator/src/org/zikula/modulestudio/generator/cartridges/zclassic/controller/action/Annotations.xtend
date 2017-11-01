@@ -35,8 +35,7 @@ class Annotations {
         «IF null !== entity»
             «IF it instanceof DisplayAction || it instanceof DeleteAction»
                 «paramConverter(entity)»
-            «ENDIF»
-            «/*IF it instanceof MainAction»
+            «ENDIF»«/*IF it instanceof MainAction»
                 «' '»* @Cache(expires="+7 days", public=true)
             «ELSEIF it instanceof ViewAction»
                 «' '»* @Cache(expires="+2 hours", public=false)
