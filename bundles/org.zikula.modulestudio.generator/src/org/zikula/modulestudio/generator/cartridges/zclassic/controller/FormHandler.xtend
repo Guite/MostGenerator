@@ -1087,10 +1087,12 @@ class FormHandler {
                     }
                 }
             «ENDIF»
+            «IF needsApproval»
 
-            if (isset($this->form['additionalNotificationRemarks']) && $this->form['additionalNotificationRemarks']->getData() != '') {
-                $this->request->getSession()->set('«appName»AdditionalNotificationRemarks', $this->form['additionalNotificationRemarks']->getData());
-            }
+                if (isset($this->form['additionalNotificationRemarks']) && $this->form['additionalNotificationRemarks']->getData() != '') {
+                    $this->request->getSession()->set('«appName»AdditionalNotificationRemarks', $this->form['additionalNotificationRemarks']->getData());
+                }
+            «ENDIF»
             «IF hasAttributableEntities»
 
                 if (true === $this->hasAttributes) {
