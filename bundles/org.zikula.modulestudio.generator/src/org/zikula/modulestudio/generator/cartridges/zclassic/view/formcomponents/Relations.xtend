@@ -156,7 +156,13 @@ class Relations {
             <fieldset class="«ownEntityName.formatForDB»">
         {% endif %}
             <legend>{{ heading|default ? heading : __('«ownEntityName.formatForDisplayCapital»') }}</legend>
-            «includedEditTemplateBody(ownEntity, linkingEntity, hasEdit, many)»
+            «IF app.needsInlineEditing»
+                <div id="{{ alias }}InlineEditingContainer">
+                    «includedEditTemplateBody(ownEntity, linkingEntity, hasEdit, many)»
+                </div>
+            «ELSE»
+                «includedEditTemplateBody(ownEntity, linkingEntity, hasEdit, many)»
+            «ENDIF»
         {% if tabs|default(false) == true %}
             </div>
         {% else %}

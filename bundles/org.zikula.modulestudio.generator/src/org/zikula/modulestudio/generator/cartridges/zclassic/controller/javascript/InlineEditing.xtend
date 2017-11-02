@@ -187,11 +187,7 @@ class InlineEditing {
             } else if (inputType === 'checkbox' || inputType === 'radio') {
                 // points to the containing div element in this case
                 inputIdentifier = inputPrefix + '_' + alias;
-                if (targetWindow.jQuery('#' + inputIdentifier + '_0').length > 0) {
-                    inputField = targetWindow.jQuery('#' + inputIdentifier + '_0').parent().parent();
-                } else if (targetWindow.jQuery('#' + inputIdentifier + '_placeholder').length > 0) {
-                    inputField = targetWindow.jQuery('#' + inputIdentifier + '_placeholder').parent().parent();
-                }
+                inputField = targetWindow.jQuery('#' + alias + 'InlineEditingContainer').find('.form-group').first();
             }
 
             return {
