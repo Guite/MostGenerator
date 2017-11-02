@@ -71,7 +71,7 @@ class TranslationListener {
                 $fieldOptions['required'] = $fieldOptions['required'] && in_array($fieldName, $formOptions['mandatory_fields']);
                 $fieldOptions['data'] = isset($formOptions['values'][$fieldName]) ? $formOptions['values'][$fieldName] : null;
 
-                $form->add($fieldName, $originalFieldConfig->getType()->getInnerType(), $fieldOptions);
+                $form->add($fieldName, get_class($originalFieldConfig->getType()->getInnerType()), $fieldOptions);
             }
         }
 
