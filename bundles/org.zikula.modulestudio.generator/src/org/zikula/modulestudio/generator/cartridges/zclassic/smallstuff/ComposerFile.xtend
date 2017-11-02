@@ -110,7 +110,10 @@ class ComposerFile {
                     «IF generateListBlock»
                         "«appName»:ItemListBlock:": "Block title::",
                     «ENDIF»
-                    «IF needsApproval»
+                    «IF hasDisplayActions && generateDetailBlock»
+                        "«appName»:ItemListBlock:": "Block title::",
+                    «ENDIF»
+                    «IF needsApproval && generateModerationBlock»
                         "«appName»:ModerationBlock:": "Block title::",
                     «ENDIF»
                     «FOR entity : getAllEntities»«entity.permissionSchema(appName)»«ENDFOR»
