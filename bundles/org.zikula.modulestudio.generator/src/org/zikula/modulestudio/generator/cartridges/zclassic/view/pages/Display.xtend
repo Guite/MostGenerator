@@ -332,7 +332,7 @@ class Display {
         {% set hooks = notifyDisplayHooks(eventName='«appName.formatForDB».ui_hooks.«nameMultiple.formatForDB».display_view', id=«name.formatForCode».getKey(), urlObject=currentUrlObject, outputAsArray=true) %}
         {% if hooks is iterable and hooks|length > 0 %}
             {% for area, hook in hooks %}
-                <div class="z-displayhook" data-area="{{ area|e('html_attr') }}">{{ hook }}</div>
+                <div class="z-displayhook" data-area="{{ area|e('html_attr') }}">{{ hook|raw }}</div>
             {% endfor %}
         {% endif %}
         «IF useGroupingTabs('display')»

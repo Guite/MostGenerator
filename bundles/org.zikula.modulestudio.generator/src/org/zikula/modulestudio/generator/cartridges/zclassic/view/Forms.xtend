@@ -343,7 +343,7 @@ class Forms {
         {% set hooks = notifyDisplayHooks(eventName='«app.appName.formatForDB».ui_hooks.«nameMultiple.formatForDB».form_edit', id=hookId, outputAsArray=true) %}
         {% if hooks is iterable and hooks|length > 0 %}
             {% for area, hook in hooks %}
-                <div class="z-displayhook" data-area="{{ area|e('html_attr') }}">{{ hook }}</div>
+                <div class="z-displayhook" data-area="{{ area|e('html_attr') }}">{{ hook|raw }}</div>
             {% endfor %}
         {% endif %}
     '''
