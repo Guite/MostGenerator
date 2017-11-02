@@ -111,7 +111,7 @@ class ComposerFile {
                         "«appName»:ItemListBlock:": "Block title::",
                     «ENDIF»
                     «IF hasDisplayActions && generateDetailBlock»
-                        "«appName»:ItemListBlock:": "Block title::",
+                        "«appName»:ItemBlock:": "Block title::",
                     «ENDIF»
                     «IF needsApproval && generateModerationBlock»
                         "«appName»:ModerationBlock:": "Block title::",
