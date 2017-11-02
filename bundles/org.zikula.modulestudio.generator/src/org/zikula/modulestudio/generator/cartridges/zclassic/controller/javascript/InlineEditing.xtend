@@ -187,7 +187,7 @@ class InlineEditing {
             } else if (inputType === 'checkbox' || inputType === 'radio') {
                 // points to the containing div element in this case
                 inputIdentifier = inputPrefix + '_' + alias;
-                inputField = targetWindow.jQuery('#' + alias + 'InlineEditingContainer').find('.form-group').first();
+                inputField = targetWindow.jQuery('#' + alias + 'InlineEditingContainer').find('.form-group').first().find('div').first();
             }
 
             return {

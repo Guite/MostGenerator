@@ -330,7 +330,7 @@ class Forms {
     def private submitActionsImpl(Entity it) '''
         {% for action in actions %}
             {{ form_widget(attribute(form, action.id)) }}
-            {% if mode == 'create' and action.id == 'submit' %}
+            {% if mode == 'create' and action.id == 'submit' and form.submitrepeat is defined %}
                 {{ form_widget(attribute(form, 'submitrepeat')) }}
             {% endif %}
         {% endfor %}
