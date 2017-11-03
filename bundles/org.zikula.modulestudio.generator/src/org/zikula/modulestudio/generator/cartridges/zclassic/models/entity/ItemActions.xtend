@@ -47,19 +47,21 @@ class ItemActions {
     def private itemActionsTargetingDisplay(Entity it, Application app) '''
         «IF hasDisplayAction»
             if ($routeArea == 'admin') {
-                $menu->addChild($this->__('Preview'), [
+                $title = $this->__('Preview', '«app.appName.formatForDB»');
+                $menu->addChild($title, [
                     'route' => $routePrefix . 'display',
                     'routeParameters' => $entity->createUrlArgs()
                 ])->setAttribute('icon', 'fa fa-search-plus');
-                $menu[$this->__('Preview')]->setLinkAttribute('target', '_blank');
-                $menu[$this->__('Preview')]->setLinkAttribute('title', $this->__('Open preview page'));
+                $menu[$title]->setLinkAttribute('target', '_blank');
+                $menu[$title]->setLinkAttribute('title', $this->__('Open preview page', '«app.appName.formatForDB»'));
             }
             if ($context != 'display') {
-                $menu->addChild($this->__('Details'), [
+                $title = $this->__('Details', '«app.appName.formatForDB»');
+                $menu->addChild($title, [
                     'route' => $routePrefix . $routeArea . 'display',
                     'routeParameters' => $entity->createUrlArgs()
                 ])->setAttribute('icon', 'fa fa-eye');
-                $menu[$this->__('Details')]->setLinkAttribute('title', str_replace('"', '', $entityDisplayHelper->getFormattedTitle($entity)));
+                $menu[$title]->setLinkAttribute('title', str_replace('"', '', $entityDisplayHelper->getFormattedTitle($entity)));
             }
         «ENDIF»
     '''
@@ -80,11 +82,12 @@ class ItemActions {
                         $logEntriesRepo = $this->container->get('«app.appService».entity_factory')->getObjectManager()->getRepository('«app.appName»:«name.formatForCodeCapital»LogEntryEntity');
                         $logEntries = $logEntriesRepo->getLogEntries($entity);
                         if (count($logEntries) > 1) {
-                            $menu->addChild($this->__('History'), [
+                            $title = $this->__('History', '«app.appName.formatForDB»');
+                            $menu->addChild($title, [
                                 'route' => $routePrefix . $routeArea . 'loggablehistory',
                                 'routeParameters' => $entity->createUrlArgs()
                             ])->setAttribute('icon', 'fa fa-history');
-                            $menu[$this->__('History')]->setLinkAttribute('title', $this->__('Watch version history'));
+                            $menu[$title]->setLinkAttribute('title', $this->__('Watch version history', '«app.appName.formatForDB»'));
                         }
                     }
                 «ENDIF»
@@ -92,11 +95,12 @@ class ItemActions {
         «ENDIF»
         «IF hasDeleteAction»
             if ($permissionApi->hasPermission($component, $instance, ACCESS_DELETE)) {
-                $menu->addChild($this->__('Delete'), [
+                $title = $this->__('Delete', '«app.appName.formatForDB»');
+                $menu->addChild($title, [
                     'route' => $routePrefix . $routeArea . 'delete',
                     'routeParameters' => $entity->createUrlArgs()
                 ])->setAttribute('icon', 'fa fa-trash-o');
-                $menu[$this->__('Delete')]->setLinkAttribute('title', $this->__('Delete this «name.formatForDisplay»'));
+                $menu[$title]->setLinkAttribute('title', $this->__('Delete this «name.formatForDisplay»', '«app.appName.formatForDB»'));
             }
         «ENDIF»
     '''
@@ -104,7 +108,7 @@ class ItemActions {
     def private itemActionsTargetingView(Entity it, Application app) '''
         «IF hasDisplayAction && hasViewAction»
             if ($context == 'display') {
-                $title = $this->__('Back to overview');
+                $title = $this->__('Back to overview', '«app.appName.formatForDB»');
                 $menu->addChild($title, [
                     'route' => $routePrefix . $routeArea . 'view'
                 ])->setAttribute('icon', 'fa fa-reply');
@@ -131,7 +135,7 @@ class ItemActions {
                     «val many = elem.isManySideDisplay(useTarget)»
                     «IF !many»
                         if (!isset($entity->«relationAliasName») || null === $entity->«relationAliasName») {
-                            $title = $this->__('Create «elem.getRelationAliasName(useTarget).formatForDisplay»');
+                            $title = $this->__('Create «elem.getRelationAliasName(useTarget).formatForDisplay»', '«app.appName.formatForDB»');
                             $menu->addChild($title, [
                                 'route' => '«app.appName.formatForDB»_«otherEntity.name.formatForDB»_' . $routeArea . 'edit',
                                 'routeParameters' => ['«relationAliasNameParam»' => $entity->«IF hasSluggableFields && slugUnique»getSlug()«ELSE»getKey()«ENDIF»]
@@ -139,7 +143,7 @@ class ItemActions {
                             $menu[$title]->setLinkAttribute('title', $title);
                         }
                     «ELSE»
-                        $title = $this->__('Create «elem.getRelationAliasName(useTarget).formatForDisplay»');
+                        $title = $this->__('Create «elem.getRelationAliasName(useTarget).formatForDisplay»', '«app.appName.formatForDB»');
                         $menu->addChild($title, [
                             'route' => '«app.appName.formatForDB»_«otherEntity.name.formatForDB»_' . $routeArea . 'edit',
                             'routeParameters' => ['«relationAliasNameParam»' => $entity->getKey()]
@@ -153,18 +157,20 @@ class ItemActions {
 
     def private itemActionsForEditAction(Entity it) '''
         «IF !readOnly»«/*create is allowed, but editing not*/»
-            $menu->addChild($this->__('Edit'), [
+            $title = $this->__('Edit', '«application.appName.formatForDB»');
+            $menu->addChild($title, [
                 'route' => $routePrefix . $routeArea . 'edit',
                 'routeParameters' => $entity->createUrlArgs()
             ])->setAttribute('icon', 'fa fa-pencil-square-o');
-            $menu[$this->__('Edit')]->setLinkAttribute('title', $this->__('Edit this «name.formatForDisplay»'));
+            $menu[$title]->setLinkAttribute('title', $this->__('Edit this «name.formatForDisplay»', '«application.appName.formatForDB»'));
         «ENDIF»
         «IF tree == EntityTreeType.NONE»
-            $menu->addChild($this->__('Reuse'), [
+            $title = $this->__('Reuse', '«application.appName.formatForDB»');
+            $menu->addChild($title, [
                 'route' => $routePrefix . $routeArea . 'edit',
                 'routeParameters' => ['astemplate' => $entity->getKey()]
             ])->setAttribute('icon', 'fa fa-files-o');
-            $menu[$this->__('Reuse')]->setLinkAttribute('title', $this->__('Reuse for new «name.formatForDisplay»'));
+            $menu[$title]->setLinkAttribute('title', $this->__('Reuse for new «name.formatForDisplay»', '«application.appName.formatForDB»'));
         «ENDIF»
     '''
 }
