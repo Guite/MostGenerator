@@ -397,6 +397,7 @@ class ControllerHelper {
             }
             $sortableColumns->setOrderBy($sortableColumns->getColumn($sort), strtoupper($sortdir));
             $resultsPerPage = $templateParameters['num'];
+            $request->query->set('own', $templateParameters['own']);
 
             $urlParameters = $templateParameters;
             foreach ($urlParameters as $parameterName => $parameterValue) {
