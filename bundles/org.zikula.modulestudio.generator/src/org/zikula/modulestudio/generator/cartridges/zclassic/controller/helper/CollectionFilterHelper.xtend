@@ -387,7 +387,7 @@ class CollectionFilterHelper {
                 return $qb;
             }
             $routeName = $this->request->get('_route');
-            $isAdminArea = false !== strpos($routeName, '«application.appName.toLowerCase»_«name.formatForDisplay.toLowerCase»_admin');
+            $isAdminArea = false !== strpos($routeName, '«application.appName.toLowerCase»_«name.formatForDB»_admin');
             if ($isAdminArea) {
                 return $qb;
             }
