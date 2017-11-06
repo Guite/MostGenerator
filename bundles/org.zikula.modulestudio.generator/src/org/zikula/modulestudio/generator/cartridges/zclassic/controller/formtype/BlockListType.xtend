@@ -94,16 +94,6 @@ class BlockListType {
                 $this->addTemplateFields($builder, $options);
                 $this->addFilterField($builder, $options);
             }
-            «IF hasCategorisableEntities»
-
-                /**
-                 * @inheritDoc
-                 */
-                public function buildView(FormView $view, FormInterface $form, array $options)
-                {
-                    $view->vars['isCategorisable'] = $options['is_categorisable'];
-                }
-            «ENDIF»
 
             «addObjectTypeField»
 
