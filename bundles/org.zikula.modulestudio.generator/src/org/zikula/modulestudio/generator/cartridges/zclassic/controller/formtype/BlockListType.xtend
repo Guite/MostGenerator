@@ -45,10 +45,6 @@ class BlockListType {
         use «nsSymfonyFormType»IntegerType;
         use «nsSymfonyFormType»TextType;
         use Symfony\Component\Form\FormBuilderInterface;
-        «IF hasCategorisableEntities»
-            use Symfony\Component\Form\FormInterface;
-            use Symfony\Component\Form\FormView;
-        «ENDIF»
         use Symfony\Component\OptionsResolver\OptionsResolver;
         «IF hasCategorisableEntities»
             use Zikula\CategoriesModule\Form\Type\CategoriesType;
