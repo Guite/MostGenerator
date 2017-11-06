@@ -58,8 +58,8 @@ class Joins {
         }
     '''
 
-    def private addJoin(JoinRelationship it, Boolean incoming, String target) {
-        val relationAliasName = getRelationAliasName(incoming).formatForCodeCapital
+    def private addJoin(JoinRelationship it, Boolean useTarget, String target) {
+        val relationAliasName = getRelationAliasName(useTarget).formatForCodeCapital
         if (target == 'select') ''', tbl«relationAliasName»'''
         else if (target == 'from') '''
             $qb->leftJoin('tbl.«relationAliasName.toFirstLower»', 'tbl«relationAliasName»');

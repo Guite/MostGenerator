@@ -256,7 +256,7 @@ class ContentTypeList {
 
             // create query
             $orderBy = $this->container->get('«appService».model_helper')->resolveSortParameter($this->objectType, $this->sorting);
-            $qb = $repository->genericBaseQuery($this->filter, $orderBy);
+            $qb = $repository->getListQueryBuilder($this->filter, $orderBy);
             «IF hasCategorisableEntities»
 
                 $featureActivationHelper = $this->container->get('«appService».feature_activation_helper');

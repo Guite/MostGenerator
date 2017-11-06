@@ -8,6 +8,7 @@ import de.guite.modulestudio.metamodel.DatetimeField
 import de.guite.modulestudio.metamodel.DerivedField
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.EntityField
+import de.guite.modulestudio.metamodel.JoinRelationship
 import de.guite.modulestudio.metamodel.ObjectField
 import de.guite.modulestudio.metamodel.StringField
 import de.guite.modulestudio.metamodel.TextField
@@ -210,6 +211,10 @@ class CollectionFilterHelper {
         «FOR entity : getAllEntities»
 
             «entity.applyDefaultFilters»
+        «ENDFOR»
+        «FOR entity : getAllEntities.filter[hasStartOrEndDateFilter]»
+
+            «entity.applyDateRangeFilter»
         «ENDFOR»
 
         «addSearchFilter»
@@ -436,28 +441,67 @@ class CollectionFilterHelper {
                     «ENDFOR»
                 }
             «ENDIF»
-            «applyDefaultDateRangeFilter»
+            «IF hasStartOrEndDateFilter»
+
+                $qb = $this->applyDateRangeFilterFor«name.formatForCodeCapital»($qb);
+            «ENDIF»
+            «FOR relation : getBidirectionalIncomingJoinRelations»«relation.addDateRangeFilterForJoin(false)»«ENDFOR»
+            «FOR relation : getOutgoingJoinRelations»«relation.addDateRangeFilterForJoin(true)»«ENDFOR»
 
             return $qb;
         }
     '''
 
-    def private applyDefaultDateRangeFilter(Entity it) '''
-        «val startDateField = getStartDateField»
-        «val endDateField = getEndDateField»
-        «IF null !== startDateField»
+    def addDateRangeFilterForJoin(JoinRelationship it, Boolean useTarget) {
+        val relatedEntity = if (useTarget) target else source
+        if (relatedEntity instanceof Entity && (relatedEntity as Entity).hasStartOrEndDateFilter) {
+            val aliasName = 'tbl' + getRelationAliasName(useTarget).formatForCodeCapital
+            '''
+                if (in_array('«aliasName»', $qb->getAllAliases())) {
+                    $qb = $this->applyDateRangeFilterFor«relatedEntity.name.formatForCodeCapital»($qb, '«aliasName»');
+                }
+            '''
+        }
+    }
 
-            $startDate = $this->request->query->get('«startDateField.name.formatForCode»', «startDateField.defaultValueForNow»);
-            $qb->andWhere('«whereClauseForDateRangeFilter('<=', startDateField, 'startDate')»')
-               ->setParameter('startDate', $startDate);
-        «ENDIF»
-        «IF null !== endDateField»
+    def private applyDateRangeFilter(Entity it) '''
+        /**
+         * Applies «IF hasStartDateFilter»start «IF hasEndDateFilter»and «ENDIF»«ENDIF»«IF hasEndDateFilter»end «ENDIF»date filters for selecting «nameMultiple.formatForDisplay».
+         *
+         * @param QueryBuilder $qb    Query builder to be enhanced
+         * @param string       $alias Table alias
+         *
+         * @return QueryBuilder Enriched query builder instance
+         */
+        protected function applyDateRangeFilterFor«name.formatForCodeCapital»(QueryBuilder $qb, $alias = 'tbl')
+        {
+            «val startDateField = getStartDateField»
+            «val endDateField = getEndDateField»
+            «IF null !== startDateField»
+                $startDate = $this->request->query->get('«startDateField.name.formatForCode»', «startDateField.defaultValueForNow»);
+                $qb->andWhere(«startDateField.whereClauseForDateRangeFilter('<=', 'startDate')»)
+                   ->setParameter('startDate', $startDate);
+                «IF null !== endDateField»
 
-            $endDate = $this->request->query->get('«endDateField.name.formatForCode»', «endDateField.defaultValueForNow»);
-            $qb->andWhere('«whereClauseForDateRangeFilter('>=', endDateField, 'endDate')»')
-               ->setParameter('endDate', $endDate);
-        «ENDIF»
+                «ENDIF»
+            «ENDIF»
+            «IF null !== endDateField»
+                $endDate = $this->request->query->get('«endDateField.name.formatForCode»', «endDateField.defaultValueForNow»);
+                $qb->andWhere(«endDateField.whereClauseForDateRangeFilter('>=', 'endDate')»)
+                   ->setParameter('endDate', $endDate);
+            «ENDIF»
+        }
     '''
+
+    def private hasStartOrEndDateFilter(Entity it) {
+        hasStartDateFilter || hasEndDateFilter
+    }
+    def private hasStartDateFilter(Entity it) {
+        null !== getStartDateField
+    }
+    def private hasEndDateFilter(Entity it) {
+        null !== getEndDateField
+    }
 
     def private addSearchFilter(Application it) '''
         /**
@@ -531,12 +575,12 @@ class CollectionFilterHelper {
 
     def private dispatch defaultValueForNow(DateField it) '''date('Y-m-d')'''
 
-    def private whereClauseForDateRangeFilter(Entity it, String operator, DerivedField dateField, String paramName) {
-        val dateFieldName = dateField.name.formatForCode
-        if (dateField.mandatory)
-            '''tbl.«dateFieldName» «operator» :«paramName»'''
+    def private whereClauseForDateRangeFilter(DerivedField it, String operator, String paramName) {
+        val fieldName = name.formatForCode
+        if (mandatory)
+            '''$alias . '.«fieldName» «operator» :«paramName»'«''»'''
         else
-            '''(tbl.«dateFieldName» «operator» :«paramName» OR tbl.«dateFieldName» IS NULL)'''
+            '''«''»'(' . $alias . '.«fieldName» «operator» :«paramName» OR ' . $alias . '.«fieldName» IS NULL)'«''»'''
     }
 
     def private isContainedInSearch(DerivedField it) {
