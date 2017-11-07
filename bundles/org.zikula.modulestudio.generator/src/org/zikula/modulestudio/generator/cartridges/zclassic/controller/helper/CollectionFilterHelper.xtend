@@ -490,6 +490,8 @@ class CollectionFilterHelper {
                 $qb->andWhere(«endDateField.whereClauseForDateRangeFilter('>=', 'endDate')»)
                    ->setParameter('endDate', $endDate);
             «ENDIF»
+
+            return $qb;
         }
     '''
 
