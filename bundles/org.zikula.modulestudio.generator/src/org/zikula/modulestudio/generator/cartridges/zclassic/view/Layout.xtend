@@ -134,21 +134,21 @@ class Layout {
     def formBaseTemplate(Application it) '''
         {# purpose of this template: apply some general form extensions #}
         {% extends 'ZikulaFormExtensionBundle:Form:bootstrap_3_zikula_admin_layout.html.twig' %}
-        «IF !getAllEntities.filter[e|!e.hasDirectDateFields].empty»
-
-            {%- block date_widget -%}
-                {{- parent() -}}
-                {%- if not required -%}
-                    <em class="help-block small"><a id="{{ id }}ResetVal" href="javascript:void(0);" class="hidden">{{ __('Reset to empty value') }}</a></em>
-                {%- endif -%}
-            {%- endblock -%}
-        «ENDIF»
-        «IF !getAllEntities.filter[e|!e.fields.filter(DatetimeField).empty].empty»
+        «IF !getAllEntities.filter[e|!e.hasDirectDateTimeFields].empty || !variables.map[fields].filter(DatetimeField).filter[isDateTimeField].empty»
 
             {%- block datetime_widget -%}
                 {{- parent() -}}
                 {%- if not required -%}
                     <em class="help-block small"><a id="reset{{ id }}ResetVal" href="javascript:void(0);" class="hidden">{{ __('Reset to empty value') }}</a></em>
+                {%- endif -%}
+            {%- endblock -%}
+        «ENDIF»
+        «IF !getAllEntities.filter[e|!e.hasDirectDateFields].empty || !variables.map[fields].filter(DatetimeField).filter[isDateField].empty»
+
+            {%- block date_widget -%}
+                {{- parent() -}}
+                {%- if not required -%}
+                    <em class="help-block small"><a id="{{ id }}ResetVal" href="javascript:void(0);" class="hidden">{{ __('Reset to empty value') }}</a></em>
                 {%- endif -%}
             {%- endblock -%}
         «ENDIF»
