@@ -38,8 +38,7 @@ class Finder {
          * Returns the attributes used for the popup window. 
          * @return {String}
          */
-        function get«appName»PopupAttributes()
-        {
+        function get«appName»PopupAttributes() {
             var pWidth, pHeight;
 
             pWidth = screen.width * 0.75;
@@ -51,8 +50,7 @@ class Finder {
         /**
          * Open a popup window with the finder triggered by an editor button.
          */
-        function «appName»FinderOpenPopup(editor, editorName)
-        {
+        function «appName»FinderOpenPopup(editor, editorName) {
             var popupUrl;
 
             // Save editor for access in selector window
@@ -74,8 +72,7 @@ class Finder {
 
         «objName».finder = {};
 
-        «objName».finder.onLoad = function (baseId, selectedId)
-        {
+        «objName».finder.onLoad = function (baseId, selectedId) {
             «IF hasImageFields»
                 var imageModeEnabled;
 
@@ -111,13 +108,11 @@ class Finder {
             });
         };
 
-        «objName».finder.onParamChanged = function ()
-        {
+        «objName».finder.onParamChanged = function () {
             jQuery('#«elemPrefix»SelectorForm').submit();
         };
 
-        «objName».finder.handleCancel = function (event)
-        {
+        «objName».finder.handleCancel = function (event) {
             var editor;
 
             event.preventDefault();
@@ -136,8 +131,7 @@ class Finder {
         };
 
 
-        function «vendorAndName»GetPasteSnippet(mode, itemId)
-        {
+        function «vendorAndName»GetPasteSnippet(mode, itemId) {
             var quoteFinder;
             var itemPath;
             var itemUrl;
@@ -197,8 +191,7 @@ class Finder {
 
 
         // User clicks on "select item" button
-        «objName».finder.selectItem = function (itemId)
-        {
+        «objName».finder.selectItem = function (itemId) {
             var editor, html;
 
             html = «vendorAndName»GetPasteSnippet('html', itemId);
@@ -224,13 +217,12 @@ class Finder {
             «vendorAndName»ClosePopup();
         };
 
-        function «vendorAndName»ClosePopup()
-        {
+        function «vendorAndName»ClosePopup() {
             window.opener.focus();
             window.close();
         }
 
-        jQuery(document).ready(function() {
+        jQuery(document).ready(function () {
             «objName».finder.onLoad();
         });
     '''

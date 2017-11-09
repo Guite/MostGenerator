@@ -1,11 +1,11 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.view
 
 import de.guite.modulestudio.metamodel.Application
-import de.guite.modulestudio.metamodel.DateField
 import de.guite.modulestudio.metamodel.DatetimeField
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
+import org.zikula.modulestudio.generator.extensions.DateTimeExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
@@ -19,6 +19,7 @@ import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
 class Layout {
 
     extension ControllerExtensions = new ControllerExtensions
+    extension DateTimeExtensions = new DateTimeExtensions
     extension FormattingExtensions = new FormattingExtensions
     extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
@@ -64,20 +65,6 @@ class Layout {
     def baseTemplate(Application it) '''
         {# purpose of this template: general base layout #}
         {% block header %}
-            «IF needsJQueryUI»
-                {{ pageAddAsset('stylesheet', asset('jquery-ui/themes/base/jquery-ui.min.css')) }}
-                {{ pageAddAsset('stylesheet', asset('bootstrap-jqueryui/bootstrap-jqueryui.min.css')) }}
-                {{ pageAddAsset('javascript', asset('jquery-ui/jquery-ui.min.js')) }}
-                {{ pageAddAsset('javascript', asset('bootstrap-jqueryui/bootstrap-jqueryui.min.js')) }}
-            «ENDIF»
-            «IF hasImageFields»
-                {{ pageAddAsset('javascript', asset('magnific-popup/jquery.magnific-popup.min.js')) }}
-                {{ pageAddAsset('stylesheet', asset('magnific-popup/magnific-popup.css')) }}
-            «ENDIF»
-            {{ pageAddAsset('javascript', zasset('@«appName»:js/«appName».js')) }}
-            «IF hasGeographical»
-                {{ pageAddAsset('javascript', zasset('@«appName»:js/«appName».Geo.js')) }}
-            «ENDIF»
             «IF hasGeographical && hasEditActions»
                 {% if 'edit' in app.request.get('_route') %}
                     {{ polyfill(['geolocation']) }}
@@ -106,6 +93,20 @@ class Layout {
             «IF generatePoweredByBacklinksIntoFooterTemplates»
                 «new FileHelper().msWeblink(it)»
             «ENDIF»
+            «IF needsJQueryUI»
+                {{ pageAddAsset('stylesheet', asset('jquery-ui/themes/base/jquery-ui.min.css')) }}
+                {{ pageAddAsset('stylesheet', asset('bootstrap-jqueryui/bootstrap-jqueryui.min.css')) }}
+                {{ pageAddAsset('javascript', asset('jquery-ui/jquery-ui.min.js')) }}
+                {{ pageAddAsset('javascript', asset('bootstrap-jqueryui/bootstrap-jqueryui.min.js')) }}
+            «ENDIF»
+            «IF hasImageFields»
+                {{ pageAddAsset('javascript', asset('magnific-popup/jquery.magnific-popup.min.js')) }}
+                {{ pageAddAsset('stylesheet', asset('magnific-popup/magnific-popup.css')) }}
+            «ENDIF»
+            {{ pageAddAsset('javascript', zasset('@«appName»:js/«appName».js')) }}
+            «IF hasGeographical»
+                {{ pageAddAsset('javascript', zasset('@«appName»:js/«appName».Geo.js')) }}
+            «ENDIF»
         {% endblock %}
     '''
 
@@ -133,7 +134,7 @@ class Layout {
     def formBaseTemplate(Application it) '''
         {# purpose of this template: apply some general form extensions #}
         {% extends 'ZikulaFormExtensionBundle:Form:bootstrap_3_zikula_admin_layout.html.twig' %}
-        «IF !getAllEntities.filter[e|!e.fields.filter(DateField).empty].empty»
+        «IF !getAllEntities.filter[e|!e.hasDirectDateFields].empty»
 
             {%- block date_widget -%}
                 {{- parent() -}}
@@ -250,14 +251,14 @@ class Layout {
         <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="{{ app.request.locale }}" lang="{{ app.request.locale }}">
         <head>
             <title>{{ block('pageTitle')|default(block('title')) }}</title>
-            <link rel="stylesheet" type="text/css" href="{{ asset('bootstrap/css/bootstrap.min.css') }}" />
-            <link rel="stylesheet" type="text/css" href="{{ asset('bootstrap/css/bootstrap-theme.min.css') }}" />
+            <link rel="stylesheet" href="{{ asset('bootstrap/css/bootstrap.min.css') }}" />
+            <link rel="stylesheet" href="{{ asset('bootstrap/css/bootstrap-theme.min.css') }}" />
             «IF needsJQueryUI»
-                <link rel="stylesheet" type="text/css" href="{{ asset('jquery-ui/themes/base/jquery-ui.min.css') }}" />
-                <link rel="stylesheet" type="text/css" href="{{ asset('bootstrap-jqueryui/bootstrap-jqueryui.min.css') }}" />
+                <link rel="stylesheet" href="{{ asset('jquery-ui/themes/base/jquery-ui.min.css') }}" />
+                <link rel="stylesheet" href="{{ asset('bootstrap-jqueryui/bootstrap-jqueryui.min.css') }}" />
             «ENDIF»
-            <link rel="stylesheet" type="text/css" href="{{ asset('bundles/core/css/core.css') }}" />
-            <link rel="stylesheet" type="text/css" href="{{ zasset('@«appName»:css/style.css') }}" />
+            <link rel="stylesheet" href="{{ asset('bundles/core/css/core.css') }}" />
+            <link rel="stylesheet" href="{{ zasset('@«appName»:css/style.css') }}" />
             «IF generateExternalControllerAndFinder»
                 {% if useFinder|default == true %}
                     «rawCssAssets(true)»
@@ -271,31 +272,6 @@ class Layout {
                     «rawCssAssets(false)»
                 «ENDIF»
             «ENDIF»
-            <script type="text/javascript">
-                /* <![CDATA[ */
-                    if (typeof(Zikula) == 'undefined') {var Zikula = {};}
-                    Zikula.Config = {'entrypoint': '{{ getModVar('ZConfig', 'entrypoint', 'index.php') }}', 'baseURL': '{{ app.request.getSchemeAndHttpHost() ~ '/' }}', 'baseURI': '{{ app.request.getBasePath() }}'};
-                /* ]]> */
-            </script>
-            <script type="text/javascript" src="{{ asset('jquery/jquery.min.js') }}"></script>
-            <script type="text/javascript" src="{{ asset('bootstrap/js/bootstrap.min.js') }}"></script>
-            «IF needsJQueryUI»
-                <script type="text/javascript" src="{{ asset('jquery-ui/jquery-ui.min.js') }}"></script>
-                <script type="text/javascript" src="{{ asset('bootstrap-jqueryui/bootstrap-jqueryui.min.js') }}"></script>
-            «ENDIF»
-            <script type="text/javascript" src="{{ asset('bundles/fosjsrouting/js/router.js') }}"></script>
-            <script type="text/javascript" src="{{ asset('js/fos_js_routes.js') }}"></script>
-            <script type="text/javascript" src="{{ asset('bundles/bazingajstranslation/js/translator.min.js') }}"></script>
-            <script type="text/javascript" src="{{ asset('bundles/core/js/Zikula.Translator.js') }}"></script>
-            «IF generateExternalControllerAndFinder»
-                {% if useFinder|default == true %}
-                    «rawJsAssets(true)»
-                {% else %}
-                    «rawJsAssets(false)»
-                {% endif %}
-            «ELSE»
-                «rawJsAssets(false)»
-            «ENDIF»
         </head>
         <body>
             «IF generateExternalControllerAndFinder»
@@ -306,6 +282,31 @@ class Layout {
                 <h2>{{ block('title') }}</h2>
             «ENDIF»
             {% block content %}{% endblock %}
+            <script>
+                /* <![CDATA[ */
+                    if (typeof(Zikula) == 'undefined') {var Zikula = {};}
+                    Zikula.Config = {'entrypoint': '{{ getModVar('ZConfig', 'entrypoint', 'index.php') }}', 'baseURL': '{{ app.request.getSchemeAndHttpHost() ~ '/' }}', 'baseURI': '{{ app.request.getBasePath() }}'};
+                /* ]]> */
+            </script>
+            <script src="{{ asset('jquery/jquery.min.js') }}"></script>
+            <script src="{{ asset('bootstrap/js/bootstrap.min.js') }}"></script>
+            «IF needsJQueryUI»
+                <script src="{{ asset('jquery-ui/jquery-ui.min.js') }}"></script>
+                <script src="{{ asset('bootstrap-jqueryui/bootstrap-jqueryui.min.js') }}"></script>
+            «ENDIF»
+            <script src="{{ asset('bundles/fosjsrouting/js/router.js') }}"></script>
+            <script src="{{ asset('js/fos_js_routes.js') }}"></script>
+            <script src="{{ asset('bundles/bazingajstranslation/js/translator.min.js') }}"></script>
+            <script src="{{ asset('bundles/core/js/Zikula.Translator.js') }}"></script>
+            «IF generateExternalControllerAndFinder»
+                {% if useFinder|default == true %}
+                    «rawJsAssets(true)»
+                {% else %}
+                    «rawJsAssets(false)»
+                {% endif %}
+            «ELSE»
+                «rawJsAssets(false)»
+            «ENDIF»
             «IF generateExternalControllerAndFinder»
                 {% if useFinder|default != true %}
                     «rawJsInit»
@@ -319,24 +320,24 @@ class Layout {
 
     def private rawCssAssets(Application it, Boolean forFinder) '''
         «IF forFinder»
-            <link rel="stylesheet" type="text/css" href="{{ zasset('@«appName»:css/finder.css') }}" />
+            <link rel="stylesheet" href="{{ zasset('@«appName»:css/finder.css') }}" />
         «ELSE»
             «IF hasImageFields»
-                <link rel="stylesheet" type="text/css" href="{{ asset('magnific-popup/magnific-popup.css') }}" />
+                <link rel="stylesheet" href="{{ asset('magnific-popup/magnific-popup.css') }}" />
             «ENDIF»
         «ENDIF»
     '''
 
     def private rawJsAssets(Application it, Boolean forFinder) '''
         «IF forFinder»
-            <script type="text/javascript" src="{{ zasset('@«appName»:js/«appName».Finder.js') }}"></script>
+            <script src="{{ zasset('@«appName»:js/«appName».Finder.js') }}"></script>
         «ELSE»
             «IF hasImageFields»
-                <script type="text/javascript" src="{{ asset('magnific-popup/jquery.magnific-popup.min.js') }}"></script>
+                <script src="{{ asset('magnific-popup/jquery.magnific-popup.min.js') }}"></script>
             «ENDIF»
-            <script type="text/javascript" src="{{ zasset('@«appName»:js/«appName».js') }}"></script>
+            <script src="{{ zasset('@«appName»:js/«appName».js') }}"></script>
             «IF hasGeographical»
-                <script type="text/javascript" src="{{ zasset('@«appName»:js/«appName».Geo.js') }}"></script>
+                <script src="{{ zasset('@«appName»:js/«appName».Geo.js') }}"></script>
             «ENDIF»
             «IF hasEditActions || needsConfig»
                 «IF hasEditActions»
@@ -359,7 +360,7 @@ class Layout {
     '''
 
     def private rawJsInit(Application it) '''
-        <script type="text/javascript">
+        <script>
         /* <![CDATA[ */
             ( function($) {
                 $(document).ready(function() {

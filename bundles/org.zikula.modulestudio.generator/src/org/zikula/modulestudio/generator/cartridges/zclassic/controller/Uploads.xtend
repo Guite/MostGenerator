@@ -46,12 +46,12 @@ class Uploads {
     }
 
     def private uploadFolder(UploadField it, String basePath, String folder) {
-        entity.application.createPlaceholder(fsa, basePath + folder + '/')
-        fsa.generateFile(getAppUploadPath(entity.application) + folder + '/.htaccess', htAccess)
+        application.createPlaceholder(fsa, basePath + folder + '/')
+        fsa.generateFile(getAppUploadPath(application) + folder + '/.htaccess', htAccess)
     }
 
     def private htAccess(UploadField it) '''
-        # «fh.generatedBy(entity.application, entity.application.timestampAllGeneratedFiles, entity.application.versionAllGeneratedFiles)»
+        # «fh.generatedBy(application, application.timestampAllGeneratedFiles, application.versionAllGeneratedFiles)»
         # ------------------------------------------------------------
         # Purpose of file: block any web access to unallowed files
         # stored in this directory

@@ -1,6 +1,6 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.models.entity.extensions
 
-import de.guite.modulestudio.metamodel.AbstractDateField
+import de.guite.modulestudio.metamodel.DatetimeField
 import de.guite.modulestudio.metamodel.DerivedField
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.EntityTimestampableType
@@ -20,12 +20,12 @@ class Timestampable extends AbstractExtension implements EntityExtensionInterfac
      * Additional field annotations.
      */
     override columnAnnotations(DerivedField it) '''
-        «IF it instanceof AbstractDateField && (it as AbstractDateField).timestampable != EntityTimestampableType.NONE»
-            «' '»* @Gedmo\Timestampable(on="«(it as AbstractDateField).timestampable.literal.toLowerCase»"«(it as AbstractDateField).timestampableDetails»)
+        «IF it instanceof DatetimeField && (it as DatetimeField).timestampable != EntityTimestampableType.NONE»
+            «' '»* @Gedmo\Timestampable(on="«(it as DatetimeField).timestampable.literal.toLowerCase»"«(it as DatetimeField).timestampableDetails»)
         «ENDIF»
     '''
 
-    def private timestampableDetails(AbstractDateField it) '''«IF timestampable == EntityTimestampableType.CHANGE», field="«timestampableChangeTriggerField.formatForCode»"«IF null !== timestampableChangeTriggerValue && timestampableChangeTriggerValue != ''», value="«timestampableChangeTriggerValue.formatForCode»"«ENDIF»«ENDIF»'''
+    def private timestampableDetails(DatetimeField it) '''«IF timestampable == EntityTimestampableType.CHANGE», field="«timestampableChangeTriggerField.formatForCode»"«IF null !== timestampableChangeTriggerValue && timestampableChangeTriggerValue != ''», value="«timestampableChangeTriggerValue.formatForCode»"«ENDIF»«ENDIF»'''
 
     /**
      * Generates additional entity properties.

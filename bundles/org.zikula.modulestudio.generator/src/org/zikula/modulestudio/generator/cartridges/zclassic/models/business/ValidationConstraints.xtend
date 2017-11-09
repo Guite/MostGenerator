@@ -1,12 +1,10 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.models.business
 
-import de.guite.modulestudio.metamodel.AbstractDateField
 import de.guite.modulestudio.metamodel.AbstractIntegerField
 import de.guite.modulestudio.metamodel.AbstractStringField
 import de.guite.modulestudio.metamodel.ArrayField
 import de.guite.modulestudio.metamodel.BooleanField
 import de.guite.modulestudio.metamodel.DataObject
-import de.guite.modulestudio.metamodel.DateField
 import de.guite.modulestudio.metamodel.DatetimeField
 import de.guite.modulestudio.metamodel.DecimalField
 import de.guite.modulestudio.metamodel.DerivedField
@@ -24,11 +22,11 @@ import de.guite.modulestudio.metamodel.StringIsbnStyle
 import de.guite.modulestudio.metamodel.StringIssnStyle
 import de.guite.modulestudio.metamodel.StringRole
 import de.guite.modulestudio.metamodel.TextField
-import de.guite.modulestudio.metamodel.TimeField
 import de.guite.modulestudio.metamodel.UploadField
 import de.guite.modulestudio.metamodel.UrlField
 import de.guite.modulestudio.metamodel.UserField
 import java.math.BigInteger
+import org.zikula.modulestudio.generator.extensions.DateTimeExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
@@ -38,6 +36,7 @@ import org.zikula.modulestudio.generator.extensions.Utils
 
 class ValidationConstraints {
 
+    extension DateTimeExtensions = new DateTimeExtensions
     extension FormattingExtensions = new FormattingExtensions
     extension ModelExtensions = new ModelExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
@@ -79,7 +78,7 @@ class ValidationConstraints {
         «IF !(it instanceof UserField)»
             «' '»* @Assert\Type(type="integer")
         «ENDIF»
-        «IF mandatory && (!primaryKey || entity.getVersionField == this)»
+        «IF mandatory && (!primaryKey || (null !== entity && entity.getVersionField == this))»
             «' '»* @Assert\NotBlank()
             «IF !(it instanceof UserField)»
                 «' '»* @Assert\NotEqualTo(value=0)
@@ -89,14 +88,20 @@ class ValidationConstraints {
         «ENDIF»
     '''
     def dispatch fieldAnnotations(AbstractIntegerField it) '''
-        «IF entity.incoming.filter(JoinRelationship).filter[r|r.targetField == name].empty
-         && entity.outgoing.filter(JoinRelationship).filter[r|r.sourceField == name].empty»
+        «IF null === entity
+         || (
+            entity.incoming.filter(JoinRelationship).filter[r|r.targetField == name].empty
+             && entity.outgoing.filter(JoinRelationship).filter[r|r.sourceField == name].empty
+         )»
             «fieldAnnotationsInteger»
         «ENDIF»
     '''
     def dispatch fieldAnnotations(IntegerField it) '''
-        «IF entity.incoming.filter(JoinRelationship).filter[r|r.targetField == name].empty
-         && entity.outgoing.filter(JoinRelationship).filter[r|r.sourceField == name].empty»
+        «IF null === entity
+         || (
+            entity.incoming.filter(JoinRelationship).filter[r|r.targetField == name].empty
+             && entity.outgoing.filter(JoinRelationship).filter[r|r.sourceField == name].empty
+         )»
             «fieldAnnotationsInteger»
             «IF minValue.toString != '0' && maxValue.toString != '0'»
                 «' '»* @Assert\Range(min=«minValue», max=«maxValue»)
@@ -256,7 +261,7 @@ class ValidationConstraints {
         if (!allowPortrait) {
             constraints += 'allowPortrait = false'
         }
-        if (detectCorrupted && entity.application.targets('2.0')) {
+        if (detectCorrupted && application.targets('2.0')) {
             constraints += 'detectCorrupted = true'
         }
 
@@ -264,7 +269,7 @@ class ValidationConstraints {
     }
     def dispatch fieldAnnotations(ListField it) '''
         «fieldAnnotationsMandatory»
-        «' '»* @«entity.application.name.formatForCodeCapital»Assert\ListEntry(entityName="«entity.name.formatForCode»", propertyName="«name.formatForCode»", multiple=«multiple.displayBool»«IF multiple»«IF min > 0», min=«min»«ENDIF»«IF max > 0», max=«max»«ENDIF»«ENDIF»)
+        «' '»* @«application.name.formatForCodeCapital»Assert\ListEntry(entityName="«IF null !== entity»«entity.name.formatForCode»«ELSE»appSettings«ENDIF»", propertyName="«name.formatForCode»", multiple=«multiple.displayBool»«IF multiple»«IF min > 0», min=«min»«ENDIF»«IF max > 0», max=«max»«ENDIF»«ENDIF»)
     '''
     def dispatch fieldAnnotations(ArrayField it) '''
         «fieldAnnotationsMandatory»
@@ -276,42 +281,27 @@ class ValidationConstraints {
     def dispatch fieldAnnotations(ObjectField it) '''
         «fieldAnnotationsMandatory»
     '''
-    def dispatch fieldAnnotations(AbstractDateField it) '''
-        «fieldAnnotationsMandatory»
-    '''
     def dispatch fieldAnnotations(DatetimeField it) '''
         «fieldAnnotationsMandatory»
-        «' '»* @Assert\DateTime()
-        «IF past»
-            «' '»* @Assert\LessThan("now")
-        «ELSEIF future»
-            «' '»* @Assert\GreaterThan("now")
+        «IF isDateTimeField || isDateField»
+            «IF isDateTimeField»
+                «' '»* @Assert\DateTime()
+            «ELSEIF isDateField»
+                «' '»* @Assert\Date()
+            «ENDIF»
+            «IF past»
+                «' '»* @Assert\LessThan("now")
+            «ELSEIF future»
+                «' '»* @Assert\GreaterThan("now")
+            «ENDIF»
+            «IF endDate && (null !== entity && entity.hasStartDateField)»
+                «' '»* @Assert\Expression("«IF !mandatory»!value or «ENDIF»value > this.get«entity.getStartDateField.name.formatForCodeCapital»()")
+            «ELSEIF endDate && (null !== varContainer && varContainer.hasStartDateField)»
+                «' '»* @Assert\Expression("«IF !mandatory»!value or «ENDIF»value > this.get«varContainer.getStartDateField.name.formatForCodeCapital»()")
+            «ENDIF»
+        «ELSEIF isTimeField»
+            «' '»* @Assert\Time()
         «ENDIF»
-        «IF endDate && null !== entity.getStartDateField»
-            «' '»* @Assert\Expression("«IF !mandatory»!value or «ENDIF»value > this.get«entity.getStartDateField.name.formatForCodeCapital»()")
-        «ENDIF»
-        «IF null !== validatorAddition && validatorAddition != ''»
-            «' '»* @Assert\«validatorAddition»
-        «ENDIF»
-    '''
-    def dispatch fieldAnnotations(DateField it) '''
-        «fieldAnnotationsMandatory»
-        «' '»* @Assert\Date()
-        «IF past»
-            «' '»* @Assert\LessThan("now")
-        «ELSEIF future»
-            «' '»* @Assert\GreaterThan("now")
-        «ENDIF»
-        «IF endDate && null !== entity.getStartDateField»
-            «' '»* @Assert\Expression("«IF !mandatory»!value or «ENDIF»value > this.get«entity.getStartDateField.name.formatForCodeCapital»()")
-        «ENDIF»
-        «IF null !== validatorAddition && validatorAddition != ''»
-            «' '»* @Assert\«validatorAddition»
-        «ENDIF»
-    '''
-    def dispatch fieldAnnotations(TimeField it) '''
-        «fieldAnnotationsMandatory»
-        «' '»* @Assert\Time()
         «IF null !== validatorAddition && validatorAddition != ''»
             «' '»* @Assert\«validatorAddition»
         «ENDIF»
@@ -332,7 +322,8 @@ class ValidationConstraints {
         }
     '''
 
-    def dispatch validationMethods(TimeField it) '''
+    def dispatch validationMethods(DatetimeField it) '''
+        «IF isTimeField»
         «IF past»
             /**
              * Checks whether the «name.formatForCode» field value is in the past.
@@ -363,6 +354,7 @@ class ValidationConstraints {
 
                 return «IF !mandatory»!$this['«name.formatForCode»'] || «ENDIF»$this['«name.formatForCode»']->format($format) > date($format);
             }
+        «ENDIF»
         «ENDIF»
     '''
 

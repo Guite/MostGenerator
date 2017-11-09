@@ -173,6 +173,17 @@ class ListEntriesHelper {
                         }
                         break;
                 «ENDFOR»
+                «IF !variables.map[fields].filter(ListField).empty»
+                    case 'appSettings':
+                        switch ($fieldName) {
+                            «FOR listField : variables.map[fields].filter(ListField)»
+                                case '«listField.name.formatForCode»':
+                                    $result = «listField.multiple.displayBool»;
+                                    break;
+                            «ENDFOR»
+                        }
+                        break;
+                «ENDIF»
             }
 
             return $result;
@@ -212,6 +223,17 @@ class ListEntriesHelper {
                         }
                         break;
                 «ENDFOR»
+                «IF !variables.map[fields].filter(ListField).empty»
+                    case 'appSettings':
+                        switch ($fieldName) {
+                            «FOR listField : variables.map[fields].filter(ListField)»
+                                case '«listField.name.formatForCode»':
+                                    $entries = $this->get«listField.name.formatForCodeCapital»EntriesForAppSettings();
+                                    break;
+                            «ENDFOR»
+                        }
+                        break;
+                «ENDIF»
             }
 
             return $entries;
@@ -223,6 +245,10 @@ class ListEntriesHelper {
 
             «listField.getItemsImpl»
         «ENDFOR»
+        «FOR listField : variables.map[fields].filter(ListField)»
+
+            «listField.getItemsImpl»
+        «ENDFOR»
     '''
 
     def private getItemsImpl(ListField it) '''
@@ -231,15 +257,15 @@ class ListEntriesHelper {
          *
          * @return array Array with desired list entries
          */
-        public function get«name.formatForCodeCapital»EntriesFor«entity.name.formatForCodeCapital»()
+        public function get«name.formatForCodeCapital»EntriesFor«IF null !== entity»«entity.name.formatForCodeCapital»«ELSE»AppSettings«ENDIF»()
         {
             $states = [];
             «IF name == 'workflowState'»
                 «val visibleStates = items.filter[value != 'initial' && value != 'deleted']»
-                «FOR item : visibleStates»«item.entryInfo(entity.application)»«ENDFOR»
-                «FOR item : visibleStates»«item.entryInfoNegative(entity.application)»«ENDFOR»
+                «FOR item : visibleStates»«item.entryInfo(application)»«ENDFOR»
+                «FOR item : visibleStates»«item.entryInfoNegative(application)»«ENDFOR»
             «ELSE»
-                «FOR item : items»«item.entryInfo(entity.application)»«ENDFOR»
+                «FOR item : items»«item.entryInfo(application)»«ENDFOR»
             «ENDIF»
 
             return $states;

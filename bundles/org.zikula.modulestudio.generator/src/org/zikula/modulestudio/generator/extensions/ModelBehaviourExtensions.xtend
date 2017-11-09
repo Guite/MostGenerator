@@ -1,10 +1,10 @@
 package org.zikula.modulestudio.generator.extensions
 
-import de.guite.modulestudio.metamodel.AbstractDateField
 import de.guite.modulestudio.metamodel.AbstractStringField
 import de.guite.modulestudio.metamodel.AccountDeletionHandler
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.DataObject
+import de.guite.modulestudio.metamodel.DatetimeField
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.EntityBlameableType
 import de.guite.modulestudio.metamodel.EntityIpTraceableType
@@ -21,6 +21,11 @@ import de.guite.modulestudio.metamodel.UserField
 class ModelBehaviourExtensions {
 
     /**
+     * Extensions related to date and time.
+     */
+    extension DateTimeExtensions = new DateTimeExtensions
+
+    /**
      * Extensions related to generator settings.
      */
     extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
@@ -29,6 +34,11 @@ class ModelBehaviourExtensions {
      * Extensions related to the model layer.
      */
     extension ModelExtensions = new ModelExtensions
+
+    /**
+     * Extensions related to inheritance relationships.
+     */
+    extension ModelInheritanceExtensions = new ModelInheritanceExtensions
 
     /**
      * Checks whether the feature activation helper class should be generated or not.
@@ -202,7 +212,7 @@ class ModelBehaviourExtensions {
      * Returns a list of all entities supporting automatic archiving.
      */
     def getArchivingEntities(Application it) {
-        getAllEntities.filter[hasArchive && null !== getEndDateField]
+        getAllEntities.filter[hasArchive && hasEndDateField]
     }
 
 
@@ -211,7 +221,7 @@ class ModelBehaviourExtensions {
      * Checks whether the entity supports ics templates.
      */
     def supportsIcsTemplates(Entity it) {
-        null !== startDateField && null !== endDateField
+        hasStartAndEndDateField
     }
 
     /**
@@ -260,7 +270,7 @@ class ModelBehaviourExtensions {
      * Returns a list of all derived fields with the timestampable extension enabled.
      */
     def getTimestampableFields(Entity it) {
-        getSelfAndParentDataObjects.map[fields.filter(AbstractDateField).filter[timestampable != EntityTimestampableType.NONE]].flatten
+        getSelfAndParentDataObjects.map[fields.filter(DatetimeField).filter[timestampable != EntityTimestampableType.NONE]].flatten
     }
 
     /**

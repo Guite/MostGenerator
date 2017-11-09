@@ -1,15 +1,12 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.view
 
-import de.guite.modulestudio.metamodel.AbstractDateField
 import de.guite.modulestudio.metamodel.Application
-import de.guite.modulestudio.metamodel.DateField
-import de.guite.modulestudio.metamodel.DatetimeField
 import de.guite.modulestudio.metamodel.DerivedField
 import de.guite.modulestudio.metamodel.Entity
-import de.guite.modulestudio.metamodel.UploadField
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.formcomponents.Relations
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.formcomponents.Section
+import org.zikula.modulestudio.generator.cartridges.zclassic.view.formcomponents.SharedFormElements
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
@@ -31,6 +28,7 @@ class Forms {
     extension ModelInheritanceExtensions = new ModelInheritanceExtensions
     extension ModelJoinExtensions = new ModelJoinExtensions
     extension NamingExtensions = new NamingExtensions
+    extension SharedFormElements = new SharedFormElements
     extension Utils = new Utils
     extension ViewExtensions = new ViewExtensions
 
@@ -83,17 +81,6 @@ class Forms {
         «ENDIF»
         {% extends '«application.appName»::' ~ baseTemplate ~ '.html.twig' %}
 
-        {% block header %}
-            {{ parent() }}
-            {{ pageAddAsset('javascript', zasset('@«app.appName»:js/«app.appName».Validation.js'), 98) }}
-            {{ pageAddAsset('javascript', zasset('@«app.appName»:js/«app.appName».EditFunctions.js'), 99) }}
-            «IF app.needsInlineEditing»
-                {{ pageAddAsset('javascript', zasset('@«app.appName»:js/«app.appName».InlineEditing.js'), 99) }}
-            «ENDIF»
-            «IF app.needsAutoCompletion»
-                {{ pageAddAsset('javascript', zasset('@«app.appName»:js/«app.appName».AutoCompletion.js'), 99) }}
-            «ENDIF»
-        {% endblock %}
         {% block title mode == 'create' ? __('Create «name.formatForDisplay»') : __('Edit «name.formatForDisplay»') %}
         «IF !application.generateSeparateAdminTemplates || isSeparateAdminTemplate»
             {% block admin_page_icon mode == 'create' ? 'plus' : 'pencil-square-o' %}
@@ -105,6 +92,14 @@ class Forms {
         {% endblock %}
         {% block footer %}
             {{ parent() }}
+            {{ pageAddAsset('javascript', zasset('@«app.appName»:js/«app.appName».Validation.js'), 98) }}
+            {{ pageAddAsset('javascript', zasset('@«app.appName»:js/«app.appName».EditFunctions.js'), 99) }}
+            «IF app.needsInlineEditing»
+                {{ pageAddAsset('javascript', zasset('@«app.appName»:js/«app.appName».InlineEditing.js'), 99) }}
+            «ENDIF»
+            «IF app.needsAutoCompletion»
+                {{ pageAddAsset('javascript', zasset('@«app.appName»:js/«app.appName».AutoCompletion.js'), 99) }}
+            «ENDIF»
             «formTemplateJS»
         {% endblock %}
     '''
@@ -269,7 +264,7 @@ class Forms {
             «includeLeaflet('edit', name.formatForDB)»
         «ENDIF»
         {% set formInitScript %}
-            <script type="text/javascript">
+            <script>
             /* <![CDATA[ */
                 «jsInitImpl»
             /* ]]> */
@@ -283,39 +278,22 @@ class Forms {
 
         ( function($) {
             $(document).ready(function() {
-                «val userFields = getUserFieldsEntity»
-                «IF !userFields.empty || standardFields»
-                    // initialise auto completion for user fields
-                    «FOR userField : userFields»
-                        initUserLiveSearch('«app.appName.toLowerCase»_«name.formatForCode.toLowerCase»_«userField.name.formatForCode»');
-                    «ENDFOR»
-                    «IF standardFields»
-                        {% if form.moderationSpecificCreator is defined %}
-                            initUserLiveSearch('«app.appName.toLowerCase»_«name.formatForCode.toLowerCase»_moderationSpecificCreator');
-                        {% endif %}
-                    «ENDIF»
-                «ENDIF»
                 «new Relations(fsa, app, false).initJs(it, true)»
                 «app.vendorAndName»InitEditForm('{{ mode }}', '{% if mode != 'create' %}{{ «name.formatForDB».«primaryKey.name.formatForCode» }}{% endif %}');
                 «FOR field : getDerivedFields»«field.additionalInitScript»«ENDFOR»
+                «IF standardFields»
+                    {% if form.moderationSpecificCreator is defined %}
+                        initUserLiveSearch('«app.appName.toLowerCase»_«name.formatForCode.toLowerCase»_moderationSpecificCreator');
+                    {% endif %}
+                «ENDIF»
             });
         })(jQuery);
     '''
 
     def private fieldWrapper(DerivedField it) '''
         «IF entity.getIncomingJoinRelations.filter[r|r.getSourceFields.head == name.formatForDB].empty»«/* No input fields for foreign keys, relations are processed further down */»
-            «IF !visible»
-                <div class="hidden">
-                    «formRow(it)»
-                </div>
-            «ELSE»
-                «formRow(it)»
-            «ENDIF»
+            «fieldFormRow»
         «ENDIF»
-    '''
-
-    def private formRow(DerivedField it) '''
-        {{ form_row(form.«name.formatForCode») }}
     '''
 
     def private submitActions(Entity it) '''
@@ -348,24 +326,6 @@ class Forms {
         {% endif %}
     '''
 
-    def private additionalInitScript(DerivedField it) {
-        switch it {
-            UploadField: additionalInitScriptUpload
-            DatetimeField: additionalInitScriptCalendar
-            DateField: additionalInitScriptCalendar
-        }
-    }
-
-    def private additionalInitScriptUpload(UploadField it) '''
-        «entity.application.vendorAndName»InitUploadField('«entity.application.appName.toLowerCase»_«entity.name.formatForCode.toLowerCase»_«name.formatForCode»_«name.formatForCode»');
-    '''
-
-    def private additionalInitScriptCalendar(AbstractDateField it) '''
-        «IF !mandatory»
-            «entity.application.vendorAndName»InitDateField('«entity.application.appName.toLowerCase»_«entity.name.formatForCode.toLowerCase»_«name.formatForCode»');
-        «ENDIF»
-    '''
-
     def private entityInlineRedirectHandlerFile(Entity it) {
         val templatePath = app.getViewPath + name.formatForCodeCapital + '/'
         val templateExtension = '.html.twig'
@@ -384,13 +344,13 @@ class Forms {
         <html xml:lang="{{ app.request.locale }}" lang="{{ app.request.locale }}" dir="auto">
             <head>
                 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-                <script type="text/javascript" src="{{ asset('jquery/jquery.min.js') }}"></script>
+                <script src="{{ asset('jquery/jquery.min.js') }}"></script>
                 «IF needsInlineEditing»
-                    <script type="text/javascript" src="{{ zasset('@«appName»:js/«appName».InlineEditing.js') }}"></script>
+                    <script src="{{ zasset('@«appName»:js/«appName».InlineEditing.js') }}"></script>
                 «ENDIF»
             </head>
             <body>
-                <script type="text/javascript">
+                <script>
                 /* <![CDATA[ */
                     // close window from parent document
                     ( function($) {

@@ -1,15 +1,16 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff
 
-import de.guite.modulestudio.metamodel.AbstractDateField
 import de.guite.modulestudio.metamodel.AbstractIntegerField
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.BooleanField
+import de.guite.modulestudio.metamodel.DatetimeField
 import de.guite.modulestudio.metamodel.DecimalField
 import de.guite.modulestudio.metamodel.DerivedField
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.FloatField
 import de.guite.modulestudio.metamodel.IntegerField
 import de.guite.modulestudio.metamodel.UserField
+import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
@@ -19,6 +20,7 @@ import org.zikula.modulestudio.generator.extensions.Utils
 
 class FileHelper {
 
+    extension ControllerExtensions = new ControllerExtensions
     extension FormattingExtensions = new FormattingExtensions
     extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     extension ModelExtensions = new ModelExtensions
@@ -125,7 +127,7 @@ class FileHelper {
     '''
 
     def triggerPropertyChangeListeners(DerivedField it, String name) '''
-        «IF (entity instanceof Entity && (entity as Entity).hasNotifyPolicy) || entity.getInheritingEntities.exists[hasNotifyPolicy]»
+        «IF null !== entity && ((entity instanceof Entity && (entity as Entity).hasNotifyPolicy) || entity.getInheritingEntities.exists[hasNotifyPolicy])»
             $this->_onPropertyChanged('«name.formatForCode»', $this->«name.formatForCode», $«name»);
         «ENDIF»
     '''
@@ -161,7 +163,7 @@ class FileHelper {
         «IF !aggregators.empty»
             $diff = abs($this->«name» - $«name»);
         «ENDIF»
-        $this->«name» = «IF it instanceof UserField»$«name»;«ELSE»«IF it instanceof AbstractIntegerField»intval«ELSE»floatval«ENDIF»($«name»);«ENDIF»
+        $this->«name» = «IF it instanceof UserField || (it instanceof IntegerField && (it as IntegerField).isUserGroupSelector)»$«name»;«ELSE»«IF it instanceof AbstractIntegerField»intval«ELSE»floatval«ENDIF»($«name»);«ENDIF»
         «IF !aggregators.empty»
             «FOR aggregator : aggregators»
             $this->«aggregator.sourceAlias.formatForCode»->add«name.formatForCodeCapital»Without«entity.name.formatForCodeCapital»($diff);
@@ -188,7 +190,7 @@ class FileHelper {
         }
     '''
 
-    def private dispatch setterAssignment(AbstractDateField it, String name, String type) '''
+    def private dispatch setterAssignment(DatetimeField it, String name, String type) '''
         if (is_object($«name») && $«name» instanceOf \DateTime) {
             $this->«name» = $«name»;
         «IF nullable»

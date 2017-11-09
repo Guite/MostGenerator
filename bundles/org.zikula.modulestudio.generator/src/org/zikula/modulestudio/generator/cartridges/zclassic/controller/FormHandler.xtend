@@ -67,7 +67,7 @@ class FormHandler {
             for (entity : entities.filter[it instanceof MappedSuperClass || (it as Entity).hasEditAction]) {
                 new EditEntityType().generate(entity, fsa)
             }
-            if (!entities.filter[e|!e.fields.filter(ArrayField).empty].empty) {
+            if (!entities.filter[e|!e.fields.filter(ArrayField).empty].empty || !variables.map[fields].flatten.filter(ArrayField).empty) {
                 new ArrayType().generate(it, fsa)
                 new ArrayFieldTransformer().generate(it, fsa)
             }

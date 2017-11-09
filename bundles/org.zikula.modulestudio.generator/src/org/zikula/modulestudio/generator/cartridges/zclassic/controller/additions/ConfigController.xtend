@@ -3,14 +3,12 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.controller.additio
 import de.guite.modulestudio.metamodel.Application
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
-import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class ConfigController {
 
-    extension ControllerExtensions = new ControllerExtensions
     extension FormattingExtensions = new FormattingExtensions
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
@@ -81,27 +79,8 @@ class ConfigController {
 
         if ($form->handleRequest($request)->isValid()) {
             if ($form->get('save')->isClicked()) {
-                $formData = $form->getData();
-                «IF hasUserGroupSelectors»
-                    // normalise group selector values
-                    foreach (['«getUserGroupSelectors.map[name.formatForCode].join('\', \'')»'] as $groupFieldName) {
-                        $formData[$groupFieldName] = is_object($formData[$groupFieldName]) ? $formData[$groupFieldName]->getGid() : $formData[$groupFieldName];
-                    }
-
-                «ENDIF»
-                «IF !variables.filter[composite].empty»
-                    // normalise composite variables
-                    «FOR varContainer : variables.filter[composite]»
-                        $«varContainer.name.formatForCode» = [];
-                        «FOR modvar : varContainer.vars»
-                            $«varContainer.name.formatForCode»['«modvar.name.formatForCode»'] = $formData['«modvar.name.formatForCode»'];
-                            unset($formData['«modvar.name.formatForCode»']);
-                        «ENDFOR»
-                        $formData['«varContainer.name.formatForCode»'] = $«varContainer.name.formatForCode»;
-                    «ENDFOR»
-
-                «ENDIF»
-                $this->setVars($formData);
+                $appSettings = $form->getData();
+                $appSettings->save();
 
                 $this->addFlash('status', $this->__('Done! Module configuration updated.'));
                 $userName = $this->get('zikula_users_module.current_user')->get('uname');

@@ -28,10 +28,12 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.controller.addition
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.javascript.HookAssignment
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.javascript.TreeFunctions
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.javascript.Validation
+import org.zikula.modulestudio.generator.cartridges.zclassic.models.AppSettings
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.Entities
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.Factory
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.HookAssignmentEntity
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.Repository
+import org.zikula.modulestudio.generator.cartridges.zclassic.models.business.ListEntryValidator
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.Bootstrap
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.ComposerFile
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.DependencyInjection
@@ -116,6 +118,16 @@ class ZclassicGenerator implements IGenerator {
         pm?.subTask('Model: Factory class')
         println('Generating factory class')
         new Factory().generate(it, fsa)
+
+        if (!variables.empty) {
+            pm?.subTask('Model: Application settings class')
+            println('Generating application settings class')
+            new AppSettings().generate(it, fsa)
+        }
+
+        if (hasListFields) {
+            new ListEntryValidator().generate(it, fsa)
+        }
 
         if (hasUiHooksProviders) {
             new HookAssignmentEntity().generate(it, fsa)

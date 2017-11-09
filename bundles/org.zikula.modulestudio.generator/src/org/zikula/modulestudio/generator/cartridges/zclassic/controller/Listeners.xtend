@@ -296,8 +296,13 @@ class Listeners {
                 use Zikula\Common\Translator\TranslatorInterface;
             «ENDIF»
             use Zikula\Core\Event\GenericEvent;
+            «IF hasUserVariables»
+                use Zikula\ExtensionsModule\Api\ApiInterface\VariableApiInterface;
+            «ENDIF»
             «IF hasStandardFieldEntities || hasUserFields»
                 use Zikula\UsersModule\Api\ApiInterface\CurrentUserApiInterface;
+            «ENDIF»
+            «IF hasStandardFieldEntities || hasUserFields || hasUserVariables»
                 use Zikula\UsersModule\Constant as UsersConstant;
             «ENDIF»
             use Zikula\UsersModule\UserEvents;

@@ -50,7 +50,7 @@ class GeoFunctions {
             «initGeoEditing»
         «ENDIF»
 
-        jQuery(document).ready(function() {
+        jQuery(document).ready(function () {
             var infoElem, parameters;
 
             infoElem = jQuery('#geographicalInfo');
@@ -83,8 +83,7 @@ class GeoFunctions {
         /**
          * Initialises geographical display features.
          */
-        function «vendorAndName»InitGeographicalDisplay(parameters, isEditMode)
-        {
+        function «vendorAndName»InitGeographicalDisplay(parameters, isEditMode) {
             var centerLocation;
 
             centerLocation = new L.LatLng(parameters.latitude, parameters.longitude);
@@ -116,13 +115,13 @@ class GeoFunctions {
         /**
          * Callback method for geolocation functionality.
          */
-        function «vendorAndName»SetDefaultCoordinates(position) {
+        function «vendorAndName»SetDefaultCoordinates (position) {
             jQuery("[id$='latitude']").val(position.coords.latitude.toFixed(7));
             jQuery("[id$='longitude']").val(position.coords.longitude.toFixed(7));
             «vendorAndName»NewCoordinatesEventHandler();
         }
 
-        function «vendorAndName»HandlePositionError(event) {
+        function «vendorAndName»HandlePositionError (event) {
             «vendorAndName»SimpleAlert(jQuery('#mapContainer'), Translator.__('Error during geolocation'), event.message, 'geoLocationAlert', 'danger');
         }
     '''
@@ -131,15 +130,14 @@ class GeoFunctions {
         /**
          * Initialises geographical editing features.
          */
-        function «vendorAndName»InitGeographicalEditing(parameters)
-        {
+        function «vendorAndName»InitGeographicalEditing(parameters) {
             «vendorAndName»InitGeographicalDisplay(parameters, true);
 
             // init event handler
             jQuery("[id$='latitude']").change(«vendorAndName»NewCoordinatesEventHandler);
             jQuery("[id$='longitude']").change(«vendorAndName»NewCoordinatesEventHandler);
 
-            map.on('click', function(event) {
+            map.on('click', function (event) {
                 var coords = event.latlng;
                 jQuery("[id$='latitude']").val(coords.lat.toFixed(7));
                 jQuery("[id$='longitude']").val(coords.lng.toFixed(7));

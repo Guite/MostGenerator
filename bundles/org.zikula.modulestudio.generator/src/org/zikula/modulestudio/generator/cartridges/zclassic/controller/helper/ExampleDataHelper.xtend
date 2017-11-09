@@ -1,11 +1,9 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.controller.helper
 
-import de.guite.modulestudio.metamodel.AbstractDateField
 import de.guite.modulestudio.metamodel.AbstractStringField
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.ArrayField
 import de.guite.modulestudio.metamodel.BooleanField
-import de.guite.modulestudio.metamodel.DateField
 import de.guite.modulestudio.metamodel.DatetimeField
 import de.guite.modulestudio.metamodel.DecimalField
 import de.guite.modulestudio.metamodel.DerivedField
@@ -25,12 +23,12 @@ import de.guite.modulestudio.metamodel.OneToOneRelationship
 import de.guite.modulestudio.metamodel.StringField
 import de.guite.modulestudio.metamodel.StringRole
 import de.guite.modulestudio.metamodel.TextField
-import de.guite.modulestudio.metamodel.TimeField
 import de.guite.modulestudio.metamodel.UploadField
 import de.guite.modulestudio.metamodel.UrlField
 import de.guite.modulestudio.metamodel.UserField
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
+import org.zikula.modulestudio.generator.extensions.DateTimeExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
@@ -42,6 +40,7 @@ import org.zikula.modulestudio.generator.extensions.Utils
 
 class ExampleDataHelper {
 
+    extension DateTimeExtensions = new DateTimeExtensions
     extension FormattingExtensions = new FormattingExtensions
     extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     extension ModelExtensions = new ModelExtensions
@@ -181,7 +180,7 @@ class ExampleDataHelper {
     '''
 
     def private initDateValues(Application it) '''
-        «val fields = getAllEntityFields.filter(AbstractDateField)»
+        «val fields = getAllEntityFields.filter(DatetimeField)»
         «IF !fields.filter[past].empty»
             $lastMonth = mktime(date('s'), date('H'), date('i'), date('m')-1, date('d'), date('Y'));
             $lastHour = mktime(date('s'), date('H')-1, date('i'), date('m'), date('d'), date('Y'));
@@ -190,30 +189,30 @@ class ExampleDataHelper {
             $nextMonth = mktime(date('s'), date('H'), date('i'), date('m')+1, date('d'), date('Y'));
             $nextHour = mktime(date('s'), date('H')+1, date('i'), date('m'), date('d'), date('Y'));
         «ENDIF»
-        «IF !fields.filter(DatetimeField).empty»
+        «IF !fields.filter[isDateTimeField].empty»
             $dtNow = date('Y-m-d H:i:s');
-            «IF !fields.filter(DatetimeField).filter[past].empty»
+            «IF !fields.filter[isDateTimeField].filter[past].empty»
                 $dtPast = date('Y-m-d H:i:s', $lastMonth);
             «ENDIF»
-            «IF !fields.filter(DatetimeField).filter[future].empty»
+            «IF !fields.filter[isDateTimeField].filter[future].empty»
                 $dtFuture = date('Y-m-d H:i:s', $nextMonth);
             «ENDIF»
         «ENDIF»
-        «IF !fields.filter(DateField).empty»
+        «IF !fields.filter[isDateField].empty»
             $dNow = date('Y-m-d');
-            «IF !fields.filter(DateField).filter[past].empty»
+            «IF !fields.filter[isDateField].filter[past].empty»
                 $dPast = date('Y-m-d', $lastMonth);
             «ENDIF»
-            «IF !fields.filter(DateField).filter[future].empty»
+            «IF !fields.filter[isDateField].filter[future].empty»
                 $dFuture = date('Y-m-d', $nextMonth);
             «ENDIF»
         «ENDIF»
-        «IF !fields.filter(TimeField).empty»
+        «IF !fields.filter[isTimeField].empty»
             $tNow = date('H:i:s');
-            «IF !fields.filter(TimeField).filter[past].empty»
+            «IF !fields.filter[isTimeField].filter[past].empty»
                 $tPast = date('H:i:s', $lastHour);
             «ENDIF»
-            «IF !fields.filter(TimeField).filter[future].empty»
+            «IF !fields.filter[isTimeField].filter[future].empty»
                 $tFuture = date('H:i:s', $nextHour);
             «ENDIF»
         «ENDIF»
@@ -377,15 +376,13 @@ class ExampleDataHelper {
             DecimalField: exampleRowValueNumber(dataEntity, number)
             StringField: if (#[StringRole.COUNTRY, StringRole.LANGUAGE, StringRole.LOCALE].contains(role)) '''$this->request->getLocale()''' else if (it.role == StringRole.CURRENCY) 'EUR' else if (it.role == StringRole.COLOUR) '\'#ff6600\'' else exampleRowValueText(dataEntity, number)
             TextField: exampleRowValueText(dataEntity, number)
-            EmailField: '\'' + entity.application.email + '\''
-            UrlField: '\'' + entity.application.url + '\''
+            EmailField: '\'' + application.email + '\''
+            UrlField: '\'' + application.url + '\''
             UploadField: exampleRowValueText(dataEntity, number)
             UserField: '$adminUser'
             ArrayField: exampleRowValueNumber(dataEntity, number)
             ObjectField: exampleRowValueText(dataEntity, number)
-            DatetimeField: '''«IF it.past»$dtPast«ELSEIF it.future»$dtFuture«ELSE»$dtNow«ENDIF»'''
-            DateField: '''«IF it.past»$dPast«ELSEIF it.future»$dFuture«ELSE»$dNow«ENDIF»'''
-            TimeField: '''«IF it.past»$tPast«ELSEIF it.future»$tFuture«ELSE»$tNow«ENDIF»'''
+            DatetimeField: '''«IF isDateTimeField»«IF it.past»$dtPast«ELSEIF it.future»$dtFuture«ELSE»$dtNow«ENDIF»«ELSEIF isDateField»«IF it.past»$dPast«ELSEIF it.future»$dFuture«ELSE»$dNow«ENDIF»«ELSEIF isTimeField»«IF it.past»$tPast«ELSEIF it.future»$tFuture«ELSE»$tNow«ENDIF»«ENDIF»'''
             FloatField: exampleRowValueNumber(dataEntity, number)
             ListField: ''''«IF it.multiple»###«FOR item : getDefaultItems SEPARATOR '###'»«item.exampleRowValue»«ENDFOR»###«ELSE»«FOR item : getDefaultItems»«item.exampleRowValue»«ENDFOR»«ENDIF»'«/**/»'''
             default: ''

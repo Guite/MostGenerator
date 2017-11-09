@@ -10,7 +10,6 @@ import de.guite.modulestudio.metamodel.EntityTreeType
 import de.guite.modulestudio.metamodel.InheritanceRelationship
 import de.guite.modulestudio.metamodel.MappedSuperClass
 import org.eclipse.xtext.generator.IFileSystemAccess
-import org.zikula.modulestudio.generator.cartridges.zclassic.models.business.ListEntryValidator
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.business.ValidationConstraints
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.entity.Association
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.entity.EntityConstructor
@@ -68,9 +67,6 @@ class Entities {
             if (!getStandardFieldEntities.filter[!loggable].empty) {
                 new StandardFieldsTrait().generate(it, fsa, false)
             }
-        }
-        if (hasListFields) {
-            new ListEntryValidator().generate(it, fsa)
         }
 
         for (entity : getAllEntities) {

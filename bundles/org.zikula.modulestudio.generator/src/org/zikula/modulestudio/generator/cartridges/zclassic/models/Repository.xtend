@@ -4,8 +4,8 @@ import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.CalculatedField
 import de.guite.modulestudio.metamodel.DerivedField
 import de.guite.modulestudio.metamodel.Entity
-import de.guite.modulestudio.metamodel.EntityField
 import de.guite.modulestudio.metamodel.EntityTreeType
+import de.guite.modulestudio.metamodel.Field
 import de.guite.modulestudio.metamodel.JoinRelationship
 import de.guite.modulestudio.metamodel.ManyToManyRelationship
 import de.guite.modulestudio.metamodel.StringField
@@ -792,10 +792,10 @@ class Repository {
         }
     '''
 
-    def private singleSortingField(EntityField it) {
+    def private singleSortingField(Field it) {
         switch it {
             DerivedField : {
-                val joins = entity.incoming.filter(JoinRelationship).filter[e|formatForDB(e.getSourceFields.head) == name.formatForDB]
+                val joins = if (null !== entity) entity.incoming.filter(JoinRelationship).filter[e|formatForDB(e.getSourceFields.head) == name.formatForDB] else #[]
                 if (!joins.empty) '''
                      '«joins.head.source.name.formatForCode»',
                      '''

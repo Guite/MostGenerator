@@ -54,8 +54,7 @@ class AutoCompletion {
         /**
          * Toggles the fields of an auto completion field.
          */
-        function «vendorAndName»ToggleAutoCompletionFields(idPrefix)
-        {
+        function «vendorAndName»ToggleAutoCompletionFields(idPrefix) {
             // if we don't have a toggle link do nothing
             if (jQuery('#' + idPrefix + 'AddLink').length < 1) {
                 return;
@@ -73,8 +72,7 @@ class AutoCompletion {
         /**
          * Resets an auto completion field.
          */
-        function «vendorAndName»ResetAutoCompletion(idPrefix)
-        {
+        function «vendorAndName»ResetAutoCompletion(idPrefix) {
             // hide the sub form
             «vendorAndName»ToggleAutoCompletionFields(idPrefix);
 
@@ -87,14 +85,13 @@ class AutoCompletion {
         /**
          * Removes a related item from the list of selected ones.
          */
-        function «vendorAndName»RemoveRelatedItem(idPrefix, removeId)
-        {
+        function «vendorAndName»RemoveRelatedItem(idPrefix, removeId) {
             var itemIds, itemIdsArr;
 
             itemIds = jQuery('#' + idPrefix).val();
             itemIdsArr = itemIds.split(',');
 
-            itemIdsArr = jQuery.grep(itemIdsArr, function(value) {
+            itemIdsArr = jQuery.grep(itemIdsArr, function (value) {
                 return value != removeId;
             });
 
@@ -109,8 +106,7 @@ class AutoCompletion {
         /**
          * Adds an item to the current selection which has been chosen by auto completion.
          */
-        function «vendorAndName»SelectResultItem(objectType, idPrefix, selectedListItem, includeEditing)
-        {
+        function «vendorAndName»SelectResultItem(objectType, idPrefix, selectedListItem, includeEditing) {
             var newItemId, newTitle, elemPrefix, li, itemIds;
 
             itemIds = jQuery('#' + idPrefix).val();
@@ -171,8 +167,7 @@ class AutoCompletion {
         /**
          * Adds a hook assignment item to selection which has been chosen by auto completion.
          */
-        function «vendorAndName»SelectHookItem(objectType, idPrefix, selectedListItem)
-        {
+        function «vendorAndName»SelectHookItem(objectType, idPrefix, selectedListItem) {
             «vendorAndName»ResetAutoCompletion(idPrefix);
             «vendorAndName»AttachHookObject(jQuery('#' + idPrefix + 'AddLink'), selectedListItem.id);
         }
@@ -182,8 +177,7 @@ class AutoCompletion {
         /**
          * Initialises auto completion for a relation field.
          */
-        function «vendorAndName»InitAutoCompletion(objectType, idPrefix, includeEditing)
-        {
+        function «vendorAndName»InitAutoCompletion(objectType, idPrefix, includeEditing) {
             var acOptions, acDataSet, acUrl«IF hasUiHooksProviders», isHookAttacher«ENDIF»;
 
             // update identifier of hidden field for easier usage in JS
@@ -213,7 +207,7 @@ class AutoCompletion {
 
                 jQuery('#' + idPrefix + 'Selector').autocomplete({
                     minLength: 1,
-                    open: function(event, ui) {
+                    open: function (event, ui) {
                         jQuery(this).autocomplete('widget').css({
                             width: (jQuery(this).outerWidth() + 'px')
                         });
@@ -229,11 +223,11 @@ class AutoCompletion {
                             acUrlArgs.exclude = jQuery('#' + idPrefix).val();
                         }
 
-                        jQuery.getJSON(Routing.generate(editHandler.moduleName.toLowerCase() + '_ajax_getitemlistautocompletion', acUrlArgs), function(data) {
+                        jQuery.getJSON(Routing.generate(editHandler.moduleName.toLowerCase() + '_ajax_getitemlistautocompletion', acUrlArgs), function (data) {
                             response(data);
                         });
                     },
-                    response: function(event, ui) {
+                    response: function (event, ui) {
                         jQuery('#' + idPrefix + 'LiveSearch .empty-message').remove();
                         if (ui.content.length === 0) {
                             jQuery('#' + idPrefix + 'LiveSearch').append(
@@ -241,12 +235,12 @@ class AutoCompletion {
                             );
                         }
                     },
-                    focus: function(event, ui) {
+                    focus: function (event, ui) {
                         jQuery('#' + idPrefix + 'Selector').val(ui.item.title);
 
                         return false;
                     },
-                    select: function(event, ui) {
+                    select: function (event, ui) {
                         «IF hasUiHooksProviders»
                             if (true === isHookAttacher) {
                                 «vendorAndName»SelectHookItem(objectType, idPrefix, ui.item);
@@ -260,7 +254,7 @@ class AutoCompletion {
                         return false;
                     }
                 })
-                .autocomplete('instance')._renderItem = function(ul, item) {
+                .autocomplete('instance')._renderItem = function (ul, item) {
                     return jQuery('<div />', { class: 'suggestion' })
                         .append('<div class="media"><div class="media-left"><a href="javascript:void(0)">' + item.image + '</a></div><div class="media-body"><p class="media-heading">' + item.title + '</p>' + item.description + '</div></div>')
                         .appendTo(ul);

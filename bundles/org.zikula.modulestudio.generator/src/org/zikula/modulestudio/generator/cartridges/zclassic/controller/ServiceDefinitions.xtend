@@ -6,8 +6,10 @@ import de.guite.modulestudio.metamodel.AuthMethodType
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.HookProviderMode
 import de.guite.modulestudio.metamodel.MappedSuperClass
+import de.guite.modulestudio.metamodel.UploadField
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
+import org.zikula.modulestudio.generator.extensions.DateTimeExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
@@ -23,6 +25,7 @@ import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
 class ServiceDefinitions {
 
     extension ControllerExtensions = new ControllerExtensions
+    extension DateTimeExtensions = new DateTimeExtensions
     extension FormattingExtensions = new FormattingExtensions
     extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
@@ -55,6 +58,9 @@ class ServiceDefinitions {
         if (authenticationMethod != AuthMethodType.NONE) {
             generateServiceFile(fsa, 'authentication', authentication)
         }
+        if (!variables.empty) {
+            generateServiceFile(fsa, 'appSettings', appSettings)
+        }
         if (hasHookSubscribers || hasHookProviders) {
             generateServiceFile(fsa, 'hooks', hooks)
         }
@@ -78,6 +84,9 @@ class ServiceDefinitions {
           «IF authenticationMethod != AuthMethodType.NONE»
               - { resource: 'authentication.yml' }
           «ENDIF»
+          «IF !variables.empty»
+              - { resource: 'appSettings.yml' }
+          «ENDIF»
           - { resource: 'linkContainer.yml' }
           - { resource: 'entityFactory.yml' }
           - { resource: 'eventSubscriber.yml' }
@@ -94,7 +103,7 @@ class ServiceDefinitions {
         «ENDIF»
           - { resource: 'twig.yml' }
           - { resource: 'logger.yml' }
-        «IF hasImageFields»
+        «IF hasImageFields || !variables.map[fields].filter(UploadField).filter[isImageField].empty»
 
         parameters:
             liip_imagine.cache.signer.class: «appNamespace»\Imagine\Cache\DummySigner
@@ -117,6 +126,20 @@ class ServiceDefinitions {
                 - "@zikula_zauth_module.api.password"
             tags:
                 - { name: zikula.authentication_method, alias: '«name.formatForDB»_authentication' }
+    '''
+
+    def private appSettings(Application it) '''
+        services:
+            «modPrefix».app_settings:
+                class: «appNamespace»\AppSettings
+                arguments:
+                    - "@zikula_extensions_module.api.variable"
+                    «IF hasUserVariables»
+                        - "@zikula_users_module.user_repository"
+                    «ENDIF»
+                    «IF hasUserGroupSelectors»
+                        - "@zikula_groups_module.group_repository"
+                    «ENDIF»
     '''
 
     def private hooks(Application it) '''
@@ -282,12 +305,17 @@ class ServiceDefinitions {
                         «IF needsApproval && generatePendingContentSupport»
                             - "@«modPrefix».workflow_helper"
                         «ENDIF»
-                «ELSEIF className == 'User' && (hasStandardFieldEntities || hasUserFields)»
+                «ELSEIF className == 'User' && (hasStandardFieldEntities || hasUserFields || hasUserVariables)»
                     arguments:
+                        «IF hasStandardFieldEntities || hasUserFields»
                         - "@translator.default"
                         - "@«modPrefix».entity_factory"
                         - "@zikula_users_module.current_user"
                         - "@logger"
+                        «ENDIF»
+                        «IF hasUserVariables»
+                        - "@zikula_extensions_module.api.variable"
+                        «ENDIF»
                 «ELSEIF className == 'IpTrace'»
                     arguments:
                         - "@gedmo_doctrine_extensions.listener.ip_traceable"
@@ -640,10 +668,6 @@ class ServiceDefinitions {
                 class: «nsBase»ConfigType
                 arguments:
                     - "@translator.default"
-                    - "@=service('zikula_extensions_module.api.variable').getAll('«appName»')"
-                    «IF hasUserGroupSelectors»
-                        - "@zikula_groups_module.group_repository"
-                    «ENDIF»
                 «IF targets('2.0')»
                     tags: ['form.type']
                 «ELSE»
@@ -729,7 +753,7 @@ class ServiceDefinitions {
                 «IF hasViewActions && hasEditActions»
                     - "@«modPrefix».model_helper"
                 «ENDIF»
-                «IF hasUploads»
+                «IF !getUploadEntities.empty»
                     - "@«modPrefix».image_helper"
                 «ENDIF»
                 «IF needsFeatureActivationHelper»
@@ -740,7 +764,7 @@ class ServiceDefinitions {
             class: «nsBase»EntityDisplayHelper
             arguments:
                 - "@translator.default"
-                «IF hasAbstractDateFields || hasDecimalOrFloatNumberFields»
+                «IF hasAnyDateTimeFields || hasDecimalOrFloatNumberFields»
                     - "@request_stack"
                 «ENDIF»
                 «IF hasListFields»

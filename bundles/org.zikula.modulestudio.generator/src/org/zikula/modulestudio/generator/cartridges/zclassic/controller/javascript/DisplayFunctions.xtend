@@ -37,8 +37,7 @@ class DisplayFunctions {
     def private generate(Application it) '''
         'use strict';
 
-        function «vendorAndName»CapitaliseFirstLetter(string)
-        {
+        function «vendorAndName»CapitaliseFirstLetter(string) {
             return string.charAt(0).toUpperCase() + string.substring(1);
         }
         «IF hasViewActions»
@@ -85,8 +84,7 @@ class DisplayFunctions {
         /**
          * Initialise the quick navigation form in list views.
          */
-        function «vendorAndName»InitQuickNavigation()
-        {
+        function «vendorAndName»InitQuickNavigation() {
             var quickNavForm;
             var objectType;
 
@@ -113,8 +111,7 @@ class DisplayFunctions {
         /**
          * Toggles a certain flag for a given item.
          */
-        function «vendorAndName»ToggleFlag(objectType, fieldName, itemId)
-        {
+        function «vendorAndName»ToggleFlag(objectType, fieldName, itemId) {
             jQuery.ajax({
                 method: 'POST',
                 url: Routing.generate('«appName.formatForDB»_ajax_toggleflag'),
@@ -123,7 +120,7 @@ class DisplayFunctions {
                     field: fieldName,
                     id: itemId
                 },
-                success: function(data) {
+                success: function (data) {
                     var idSuffix;
                     var toggleLink;
 
@@ -137,7 +134,7 @@ class DisplayFunctions {
                     toggleLink.find('.fa-check').toggleClass('hidden', true !== data.state);
                     toggleLink.find('.fa-times').toggleClass('hidden', true === data.state);
                 }«/*,
-                error: function(jqXHR, textStatus, thrownError) {
+                error: function (jqXHR, textStatus, thrownError) {
                     // nothing to do yet
                     var idSuffix = fieldName + '_' + itemId;
                     «vendorAndName»SimpleAlert(jQuery('#toggle' + idSuffix), Translator.__('Error'), Translator.__('Could not persist your change.'), 'toggle' + idSuffix + 'FailedAlert', 'danger');
@@ -150,8 +147,7 @@ class DisplayFunctions {
         /**
          * Initialise ajax-based toggle for all affected boolean fields on the current page.
          */
-        function «vendorAndName»InitAjaxToggles()
-        {
+        function «vendorAndName»InitAjaxToggles() {
             jQuery('.«vendorAndName.toLowerCase»-ajax-toggle').click(function (event) {
                 var objectType;
                 var fieldName;
@@ -171,8 +167,7 @@ class DisplayFunctions {
         /**
          * Simulates a simple alert using bootstrap.
          */
-        function «vendorAndName»SimpleAlert(anchorElement, title, content, alertId, cssClass)
-        {
+        function «vendorAndName»SimpleAlert(anchorElement, title, content, alertId, cssClass) {
             var alertBox;
 
             alertBox = ' \
@@ -195,8 +190,7 @@ class DisplayFunctions {
         /**
          * Initialises the mass toggle functionality for admin view pages.
          */
-        function «vendorAndName»InitMassToggle()
-        {
+        function «vendorAndName»InitMassToggle() {
             if (jQuery('.«vendorAndName.toLowerCase»-mass-toggle').length > 0) {
                 jQuery('.«vendorAndName.toLowerCase»-mass-toggle').unbind('click').click(function (event) {
                     if (jQuery('.table.fixed-columns').length > 0) {
@@ -214,10 +208,9 @@ class DisplayFunctions {
         /**
          * Initialises fixed table columns.
          */
-        function «vendorAndName»InitFixedColumns()
-        {
+        function «vendorAndName»InitFixedColumns() {
             jQuery('.table.fixed-columns').remove();
-            jQuery('.table').each(function() {
+            jQuery('.table').each(function () {
                 var originalTable, fixedColumnsTable, fixedTableWidth;
 
                 originalTable = jQuery(this);
@@ -248,8 +241,7 @@ class DisplayFunctions {
         /**
          * Creates a dropdown menu for the item actions.
          */
-        function «vendorAndName»InitItemActions(context)
-        {
+        function «vendorAndName»InitItemActions(context) {
             var containerSelector;
             var containers;
             var listClasses;
@@ -291,8 +283,7 @@ class DisplayFunctions {
         /**
          * Helper function to create new Bootstrap modal window instances.
          */
-        function «vendorAndName»InitInlineWindow(containerElem)
-        {
+        function «vendorAndName»InitInlineWindow(containerElem) {
             var newWindowId;
             var modalTitle;
 
@@ -302,7 +293,7 @@ class DisplayFunctions {
             // define name of window
             newWindowId = containerElem.attr('id') + 'Dialog';
 
-            containerElem.unbind('click').click(function(event) {
+            containerElem.unbind('click').click(function (event) {
                 event.preventDefault();
 
                 // check if window exists already
@@ -343,8 +334,7 @@ class DisplayFunctions {
         /**
          * Initialises modals for inline display of related items.
          */
-        function «vendorAndName»InitQuickViewModals()
-        {
+        function «vendorAndName»InitQuickViewModals() {
             jQuery('.«vendorAndName.toLowerCase»-inline-window').each(function (index) {
                 «vendorAndName»InitInlineWindow(jQuery(this));
             });
@@ -355,8 +345,7 @@ class DisplayFunctions {
         /**
          * Initialises image viewing behaviour.
          */
-        function «vendorAndName»InitImageViewer()
-        {
+        function «vendorAndName»InitImageViewer() {
             jQuery('a.image-link').magnificPopup({
                 type: 'image',
                 closeOnContentClick: true,
@@ -385,8 +374,7 @@ class DisplayFunctions {
         /**
          * Initialises reordering view entries using drag n drop.
          */
-        function «vendorAndName»InitSortable()
-        {
+        function «vendorAndName»InitSortable() {
             if (jQuery('#sortableTable').length < 1) {
                 return;
             }
@@ -397,14 +385,14 @@ class DisplayFunctions {
                 items: '.sort-item',
                 placeholder: 'ui-state-highlight',
                 tolerance: 'pointer',
-                sort: function(event, ui) {
+                sort: function (event, ui) {
                     ui.item.addClass('active-item-shadow');
                 },
-                stop: function(event, ui) {
+                stop: function (event, ui) {
                     ui.item.removeClass('active-item-shadow');
                     «vendorAndName»InitFixedColumns();
                 },
-                update: function(event, ui) {
+                update: function (event, ui) {
                     jQuery.ajax({
                         method: 'POST',
                         url: Routing.generate('«appName.formatForDB»_ajax_updatesortpositions'),
@@ -414,7 +402,7 @@ class DisplayFunctions {
                             min: jQuery('#sortableTable').data('min'),
                             max: jQuery('#sortableTable').data('max')
                         },
-                        success: function(data) {
+                        success: function (data) {
                             /*if (data.message) {
                                 «vendorAndName»SimpleAlert(jQuery('#sortableTable'), Translator.__('Success'), data.message, 'sortingDoneAlert', 'success');
                             }*/
@@ -428,7 +416,7 @@ class DisplayFunctions {
     '''
 
     def private onLoad(Application it) '''
-        jQuery(document).ready(function() {
+        jQuery(document).ready(function () {
             var isViewPage;
             var isDisplayPage;
 

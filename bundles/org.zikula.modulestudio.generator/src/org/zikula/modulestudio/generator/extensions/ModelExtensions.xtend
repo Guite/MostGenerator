@@ -1,38 +1,34 @@
 package org.zikula.modulestudio.generator.extensions
 
-import de.guite.modulestudio.metamodel.AbstractDateField
 import de.guite.modulestudio.metamodel.AbstractIntegerField
 import de.guite.modulestudio.metamodel.AbstractStringField
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.ArrayField
 import de.guite.modulestudio.metamodel.BooleanField
 import de.guite.modulestudio.metamodel.DataObject
-import de.guite.modulestudio.metamodel.DateField
+import de.guite.modulestudio.metamodel.DateTimeComponents
 import de.guite.modulestudio.metamodel.DatetimeField
 import de.guite.modulestudio.metamodel.DecimalField
 import de.guite.modulestudio.metamodel.DerivedField
 import de.guite.modulestudio.metamodel.EmailField
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.EntityChangeTrackingPolicy
-import de.guite.modulestudio.metamodel.EntityField
-import de.guite.modulestudio.metamodel.EntityFieldDisplayType
 import de.guite.modulestudio.metamodel.EntityIdentifierStrategy
 import de.guite.modulestudio.metamodel.EntityIndexType
 import de.guite.modulestudio.metamodel.EntityLockType
+import de.guite.modulestudio.metamodel.Field
+import de.guite.modulestudio.metamodel.FieldDisplayType
 import de.guite.modulestudio.metamodel.FloatField
 import de.guite.modulestudio.metamodel.HookProviderMode
-import de.guite.modulestudio.metamodel.InheritanceRelationship
 import de.guite.modulestudio.metamodel.IntegerField
 import de.guite.modulestudio.metamodel.IpAddressScope
 import de.guite.modulestudio.metamodel.ListField
-import de.guite.modulestudio.metamodel.ListVar
 import de.guite.modulestudio.metamodel.ManyToOneRelationship
 import de.guite.modulestudio.metamodel.ObjectField
 import de.guite.modulestudio.metamodel.OneToOneRelationship
 import de.guite.modulestudio.metamodel.StringField
 import de.guite.modulestudio.metamodel.StringRole
 import de.guite.modulestudio.metamodel.TextField
-import de.guite.modulestudio.metamodel.TimeField
 import de.guite.modulestudio.metamodel.UploadField
 import de.guite.modulestudio.metamodel.UrlField
 import de.guite.modulestudio.metamodel.UserField
@@ -141,7 +137,7 @@ class ModelExtensions {
      * Checks whether the application contains at least one entity with at least one colour field.
      */
     def hasColourFields(Application it) {
-        getAllEntities.exists[hasColourFieldsEntity]
+        getAllEntities.exists[hasColourFieldsEntity] || !variables.map[fields].filter(StringField).filter[role == StringRole.COLOUR].empty
     }
 
     /**
@@ -155,7 +151,7 @@ class ModelExtensions {
      * Checks whether the application contains at least one entity with at least one upload field.
      */
     def hasUploads(Application it) {
-        !getUploadEntities.empty
+        !getUploadEntities.empty || !variables.map[fields].filter(UploadField).empty
     }
 
     /**
@@ -166,17 +162,17 @@ class ModelExtensions {
     }
 
     /**
-     * Returns a list of all user fields in this application.
-     */
-    def getAllUserFields(Application it) {
-        getAllEntityFields.filter(UserField)
-    }
-
-    /**
      * Checks whether the application contains at least one user field.
      */
     def hasUserFields(Application it) {
-        !getAllUserFields.empty
+        !getAllEntityFields.filter(UserField).empty
+    }
+
+    /**
+     * Checks whether the application contains at least one user variable.
+     */
+    def hasUserVariables(Application it) {
+        !variables.map[fields].filter(UserField).empty
     }
 
     /**
@@ -190,7 +186,7 @@ class ModelExtensions {
      * Checks whether the application contains at least one list field.
      */
     def hasListFields(Application it) {
-        !getAllListFields.empty
+        !getAllListFields.empty || !variables.map[fields].flatten.filter(ListField).empty
     }
 
     /**
@@ -233,6 +229,19 @@ class ModelExtensions {
      */
     def getEntitiesWithAjaxToggle(Application it) {
         getAllEntities.filter[hasBooleansWithAjaxToggleEntity('')]
+    }
+
+    /**
+     * Returns an application based on a given field.
+     */
+    def getApplication(Field it) {
+        if (null !== entity) {
+            return entity.application
+        }
+        if (null !== varContainer) {
+            return varContainer.application
+        }
+        null
     }
 
     /**
@@ -343,7 +352,7 @@ class ModelExtensions {
      */
     def getSortingFields(DataObject it) {
         var fields = getDisplayFields.filter[f|f.isSortField].exclude(UserField).exclude(ArrayField).exclude(ObjectField)
-        fields.toList as List<EntityField>
+        fields.toList as List<Field>
     }
 
     /**
@@ -363,11 +372,8 @@ class ModelExtensions {
     /**
      * Checks whether a given field is a version field or not.
      */
-    def private isVersionField(EntityField it) {
+    def private isVersionField(Field it) {
         if (it instanceof IntegerField) {
-            return it.version
-        }
-        if (it instanceof DatetimeField) {
             return it.version
         }
 
@@ -428,22 +434,22 @@ class ModelExtensions {
     /**
      * Returns whether this field is visible on the view page.
      */
-    def isVisibleOnViewPage(EntityField it) {
-        #[EntityFieldDisplayType.VIEW, EntityFieldDisplayType.VIEW_SORTING, EntityFieldDisplayType.VIEW_DISPLAY, EntityFieldDisplayType.ALL].contains(displayType)
+    def isVisibleOnViewPage(Field it) {
+        #[FieldDisplayType.VIEW, FieldDisplayType.VIEW_SORTING, FieldDisplayType.VIEW_DISPLAY, FieldDisplayType.ALL].contains(displayType)
     }
 
     /**
      * Returns whether this field is visible on the display page.
      */
-    def isVisibleOnDisplayPage(EntityField it) {
-        #[EntityFieldDisplayType.DISPLAY, EntityFieldDisplayType.DISPLAY_SORTING, EntityFieldDisplayType.VIEW_DISPLAY, EntityFieldDisplayType.ALL].contains(displayType)
+    def isVisibleOnDisplayPage(Field it) {
+        #[FieldDisplayType.DISPLAY, FieldDisplayType.DISPLAY_SORTING, FieldDisplayType.VIEW_DISPLAY, FieldDisplayType.ALL].contains(displayType)
     }
 
     /**
      * Returns whether this field maybe used for sorting.
      */
-    def isSortField(EntityField it) {
-        #[EntityFieldDisplayType.SORTING, EntityFieldDisplayType.VIEW_SORTING, EntityFieldDisplayType.DISPLAY_SORTING, EntityFieldDisplayType.ALL].contains(displayType)
+    def isSortField(Field it) {
+        #[FieldDisplayType.SORTING, FieldDisplayType.VIEW_SORTING, FieldDisplayType.DISPLAY_SORTING, FieldDisplayType.ALL].contains(displayType)
     }
 
     /**
@@ -451,25 +457,6 @@ class ModelExtensions {
      */
     def getDefaultItems(ListField it) {
         items.filter[^default]
-    }
-
-    /**
-     * Returns a list of all default items of this list.
-     */
-    def getDefaultItems(ListVar it) {
-        items.filter[^default]
-    }
-
-    /**
-     * Returns a list of inheriting data objects.
-     */
-    def List<DataObject> getParentDataObjects(DataObject it, List<DataObject> parents) {
-        val inheritanceRelation = outgoing.filter(InheritanceRelationship).filter[null !== target]
-        if (!inheritanceRelation.empty) {
-            parents.add(inheritanceRelation.head.target)
-            inheritanceRelation.head.target.getParentDataObjects(parents)
-        }
-        parents
     }
 
     /**
@@ -497,22 +484,6 @@ class ModelExtensions {
         }
 
         usedDisplayPattern
-    }
-
-    /**
-     * Returns a list of an object and it's inheriting data objects.
-     */
-    def getSelfAndParentDataObjects(DataObject it) {
-        getParentDataObjects(newArrayList) + newArrayList(it)
-    }
-
-    /**
-     * Returns whether any date or time fields exist or not.
-     */
-    def hasAbstractDateFields(Application it) {
-        !getAllEntities.filter[!getSelfAndParentDataObjects.map[
-            fields.filter(AbstractDateField)
-        ].flatten.empty].empty
     }
 
     /**
@@ -815,11 +786,6 @@ class ModelExtensions {
         if (!intVersions.empty) {
             return intVersions.head
         }
-
-        val datetimeVersions = getSelfAndParentDataObjects.map[fields.filter(DatetimeField).filter[version]].flatten
-        if (!datetimeVersions.empty) {
-            datetimeVersions.head
-        }
     }
 
     /**
@@ -841,36 +807,6 @@ class ModelExtensions {
      */
     def boolean containsDefaultIdField(Iterable<String> l, DataObject dataObject) {
         isDefaultIdFieldName(dataObject, l.head) || (l.size > 1 && containsDefaultIdField(l.tail, dataObject))
-    }
-
-    /**
-     * Determines the start date field of a data object if there is one.
-     */
-    def getStartDateField(DataObject it) {
-        val datetimeFields = getSelfAndParentDataObjects.map[fields.filter(DatetimeField).filter[startDate]].flatten
-        if (!datetimeFields.empty) {
-            return datetimeFields.head
-        }
-
-        val dateFields = getSelfAndParentDataObjects.map[fields.filter(DateField).filter[startDate]].flatten
-        if (!dateFields.empty) {
-            dateFields.head
-        }
-    }
-
-    /**
-     * Determines the end date field of a data object if there is one.
-     */
-    def getEndDateField(DataObject it) {
-        val datetimeFields = getSelfAndParentDataObjects.map[fields.filter(DatetimeField).filter[endDate]].flatten
-        if (!datetimeFields.empty) {
-            return datetimeFields.head
-        }
-
-        val dateFields = getSelfAndParentDataObjects.map[fields.filter(DateField).filter[endDate]].flatten
-        if (!dateFields.empty) {
-            dateFields.head
-        }
     }
 
     /**
@@ -917,11 +853,22 @@ class ModelExtensions {
             ListField: 'string'
             ArrayField: 'array'
             ObjectField: 'object'
-            DatetimeField: 'DateTime'
-            DateField: 'date'
-            TimeField: 'time'
+            DatetimeField: dateTimeFieldTypeAsString
             FloatField: 'float'
             default: ''
         }
+    }
+
+    /**
+     * Prints an output string describing the type of the given date time field.
+     */
+    def dateTimeFieldTypeAsString(DatetimeField it) {
+        if (components == DateTimeComponents.DATE_TIME) {
+            return 'DateTime'
+        }
+        if (components == DateTimeComponents.DATE) {
+            return 'date'
+        }
+        'time'
     }
 }

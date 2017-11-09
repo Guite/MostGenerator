@@ -147,7 +147,7 @@ class Relations {
                         </div>
                     </div>
                     {% set assignmentInitScript %}
-                        <script type="text/javascript">
+                        <script>
                         /* <![CDATA[ */
                             var «app.vendorAndName»InlineEditHandlers = [];
                             var «app.vendorAndName»EditHandler = {

@@ -45,7 +45,7 @@ class ContentTypeListView {
 
         «editTemplateFilter»
 
-        <script type="text/javascript">
+        <script>
             (function($) {
             	$('#«appName.toFirstLower»Template').change(function() {
             	    $('#customTemplateArea').toggleClass('hidden', $(this).val() != 'custom');

@@ -45,8 +45,7 @@ class HookAssignment {
         /**
          * Adds a hook assignment for a certain object.
          */
-        function «vendorAndName»AttachHookObject(attachLink, entityId)
-        {
+        function «vendorAndName»AttachHookObject(attachLink, entityId) {
             jQuery.ajax({
                 method: 'POST',
                 url: Routing.generate('«appName.formatForDB»_ajax_attachhookobject'),
@@ -58,7 +57,7 @@ class HookAssignment {
                     assignedEntity: attachLink.data('assigned-entity'),
                     assignedId: entityId
                 },
-                success: function(data) {
+                success: function (data) {
                     window.location.reload();
                 }
             });
@@ -69,15 +68,14 @@ class HookAssignment {
         /**
          * Removes a hook assignment for a certain object.
          */
-        function «vendorAndName»DetachHookObject()
-        {
+        function «vendorAndName»DetachHookObject() {
             jQuery.ajax({
                 method: 'POST',
                 url: Routing.generate('«appName.formatForDB»_ajax_detachhookobject'),
                 data: {
                     id: jQuery(this).data('assignment-id')
                 },
-                success: function(data) {
+                success: function (data) {
                     window.location.reload();
                 }
             });
@@ -85,7 +83,7 @@ class HookAssignment {
     '''
 
     def private onLoad(Application it) '''
-        jQuery(document).ready(function() {
+        jQuery(document).ready(function () {
             jQuery('.detach-«appName.formatForDB»-object')
                 .click(«vendorAndName»DetachHookObject)
                 .removeClass('hidden');

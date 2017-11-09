@@ -38,7 +38,7 @@ class HistoryFunctions {
             jQuery('#compareButton').prop('disabled', amountOfSelectedVersions != 2);
         }
 
-        jQuery(document).ready(function() {
+        jQuery(document).ready(function () {
             jQuery('.«vendorAndName.toLowerCase»-toggle-checkbox').click(updateVersionSelectionState);
             updateVersionSelectionState();
         });

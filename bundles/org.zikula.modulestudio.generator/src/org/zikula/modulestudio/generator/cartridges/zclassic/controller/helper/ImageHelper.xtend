@@ -1,6 +1,7 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.controller.helper
 
 import de.guite.modulestudio.metamodel.Application
+import de.guite.modulestudio.metamodel.UploadField
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
@@ -24,7 +25,7 @@ class ImageHelper {
         generateClassPair(fsa, getAppSourceLibPath + 'Helper/ImageHelper.php',
             fh.phpFileContent(it, imageFunctionsBaseImpl), fh.phpFileContent(it, imageFunctionsImpl)
         )
-        if (hasImageFields) {
+        if (hasImageFields || !variables.map[fields].filter(UploadField).filter[isImageField].empty) {
             generateClassPair(fsa, getAppSourceLibPath + 'Imagine/Cache/DummySigner.php',
                 fh.phpFileContent(it, dummySignerBaseImpl), fh.phpFileContent(it, dummySignerImpl)
             )
@@ -86,7 +87,7 @@ class ImageHelper {
             «getRuntimeOptions»
 
             «getCustomRuntimeOptions»
-            «IF hasImageFields»
+            «IF hasImageFields || !variables.map[fields].filter(UploadField).filter[isImageField].empty»
 
                 «checkIfImagineCacheDirectoryExists»
             «ENDIF»
@@ -106,7 +107,7 @@ class ImageHelper {
          */
         public function getRuntimeOptions($objectType = '', $fieldName = '', $context = '', $args = [])
         {
-            «IF hasImageFields»
+            «IF hasImageFields || !variables.map[fields].filter(UploadField).filter[isImageField].empty»
                 $this->checkIfImagineCacheDirectoryExists();
 
             «ENDIF»

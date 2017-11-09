@@ -71,7 +71,7 @@ class ControllerHelper {
         «IF needsFeatureActivationHelper»
             use «appNamespace»\Helper\FeatureActivationHelper;
         «ENDIF»
-        «IF hasUploads»
+        «IF !getUploadEntities.empty»
             use «appNamespace»\Helper\ImageHelper;
         «ENDIF»
         «IF hasViewActions && hasEditActions»
@@ -139,7 +139,7 @@ class ControllerHelper {
                  */
                 protected $modelHelper;
             «ENDIF»
-            «IF hasUploads»
+            «IF !getUploadEntities.empty»
 
                 /**
                  * @var ImageHelper
@@ -180,7 +180,7 @@ class ControllerHelper {
              «IF hasViewActions && hasEditActions»
              * @param ModelHelper         $modelHelper     ModelHelper service instance
              «ENDIF»
-             «IF hasUploads»
+             «IF !getUploadEntities.empty»
              * @param ImageHelper         $imageHelper     ImageHelper service instance
              «ENDIF»
              «IF needsFeatureActivationHelper»
@@ -208,7 +208,7 @@ class ControllerHelper {
                 «ENDIF»
                 EntityFactory $entityFactory,
                 CollectionFilterHelper $collectionFilterHelper«IF hasViewActions && hasEditActions»,
-                ModelHelper $modelHelper«ENDIF»«IF hasUploads»,
+                ModelHelper $modelHelper«ENDIF»«IF !getUploadEntities.empty»,
                 ImageHelper $imageHelper«ENDIF»«IF needsFeatureActivationHelper»,
                 FeatureActivationHelper $featureActivationHelper«ENDIF»
             ) {
@@ -232,7 +232,7 @@ class ControllerHelper {
                 «IF hasViewActions && hasEditActions»
                     $this->modelHelper = $modelHelper;
                 «ENDIF»
-                «IF hasUploads»
+                «IF !getUploadEntities.empty»
                     $this->imageHelper = $imageHelper;
                 «ENDIF»
                 «IF needsFeatureActivationHelper»
@@ -593,7 +593,7 @@ class ControllerHelper {
                 if (in_array($args['action'], ['index', 'view'])) {
                     $parameters = array_merge($parameters, $this->collectionFilterHelper->getViewQuickNavParameters($objectType, $context, $args));
                 }
-                «IF hasUploads»
+                «IF !getUploadEntities.empty»
 
                     // initialise Imagine runtime options
                     «FOR entity : getUploadEntities»

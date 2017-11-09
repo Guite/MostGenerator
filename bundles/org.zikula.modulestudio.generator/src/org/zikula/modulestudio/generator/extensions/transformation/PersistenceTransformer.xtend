@@ -253,15 +253,15 @@ class PersistenceTransformer {
         val factory = ModuleStudioFactory.eINSTANCE
 
         for (entity : entitiesWithApproval) {
-            varContainer.vars += factory.createIntVar => [
+            varContainer.fields += factory.createIntegerField => [
                 name = 'moderationGroupFor' + entity.nameMultiple.formatForCodeCapital
-                value = '2' // use admin group (gid=2) as fallback
+                defaultValue = '2' // use admin group (gid=2) as fallback
                 documentation = 'Used to determine moderator user accounts for sending email notifications.'
             ]
             if (entity.workflow == EntityWorkflowType.ENTERPRISE) {
-                varContainer.vars += factory.createIntVar => [
+                varContainer.fields += factory.createIntegerField => [
                     name = 'superModerationGroupFor' + entity.nameMultiple.formatForCodeCapital
-                    value = '2' // use admin group (gid=2) as fallback
+                    defaultValue = '2' // use admin group (gid=2) as fallback
                     documentation = 'Used to determine moderator user accounts for sending email notifications.'
                 ]
             }
@@ -280,23 +280,23 @@ class PersistenceTransformer {
         val factory = ModuleStudioFactory.eINSTANCE
 
         for (entity : entitiesWithView) {
-            varContainer.vars += factory.createIntVar => [
+            varContainer.fields += factory.createIntegerField => [
                 name = entity.name.formatForCode + 'EntriesPerPage'
-                value = '10'
+                defaultValue = '10'
                 documentation = 'The amount of ' + entity.nameMultiple.formatForDisplay + ' shown per page'
             ]
             if (generateAccountApi && entity.standardFields) {
-                varContainer.vars += factory.createBoolVar => [
+                varContainer.fields += factory.createBooleanField => [
                     name = 'linkOwn' + entity.nameMultiple.formatForCodeCapital + 'OnAccountPage'
-                    value = 'true'
+                    defaultValue = 'true'
                     documentation = 'Whether to add a link to ' + entity.nameMultiple.formatForDisplay + ' of the current user on his account page'
                 ]
             }
         }
         if (supportLocaleFilter) {
-            varContainer.vars += factory.createBoolVar => [
+            varContainer.fields += factory.createBooleanField => [
                 name = 'filterDataByLocale'
-                value = 'false'
+                defaultValue = 'false'
                 documentation = 'Whether automatically filter data in the frontend based on the current locale or not'
             ]
         }
@@ -316,44 +316,46 @@ class PersistenceTransformer {
         for (entity : entitiesWithImageUploads) {
             for (imageUploadField : entity.imageFieldsEntity) {
                 val fieldSuffix = entity.name.formatForCodeCapital + imageUploadField.name.formatForCodeCapital
-                varContainer.vars += factory.createBoolVar => [
+                varContainer.fields += factory.createBooleanField => [
                     name = 'enableShrinkingFor' + fieldSuffix
-                    value = 'false'
+                    defaultValue = 'false'
                     documentation = 'Whether to enable shrinking huge images to maximum dimensions. Stores downscaled version of the original image.'
                 ]
-                varContainer.vars += factory.createIntVar => [
+                varContainer.fields += factory.createIntegerField => [
                     name = 'shrinkWidth' + fieldSuffix
-                    value = '800'
+                    defaultValue = '800'
                     documentation = 'The maximum image width in pixels.'
                 ]
-                varContainer.vars += factory.createIntVar => [
+                varContainer.fields += factory.createIntegerField => [
                     name = 'shrinkHeight' + fieldSuffix
-                    value = '600'
+                    defaultValue = '600'
                     documentation = 'The maximum image height in pixels.'
                 ]
-                val thumbModeVar = factory.createListVar => [
+                val thumbModeField = factory.createListField => [
                     name = 'thumbnailMode' + fieldSuffix
-                    value = 'inset'
+                    defaultValue = 'inset'
                     documentation = 'Thumbnail mode (inset or outbound).'
                 ]
-                thumbModeVar.items += factory.createListVarItem => [
+                thumbModeField.items += factory.createListFieldItem => [
                     name = 'Inset'
+                    value = 'inset'
                     ^default = true
                 ]
-                thumbModeVar.items += factory.createListVarItem => [
+                thumbModeField.items += factory.createListFieldItem => [
                     name = 'Outbound'
+                    value = 'outbound'
                 ]
-                varContainer.vars += thumbModeVar
+                varContainer.fields += thumbModeField
                 for (action : #['view', 'display', 'edit']) {
                     if ((action == 'view' && entity.hasViewAction) || (action == 'display' && entity.hasDisplayAction) || (action == 'edit' && entity.hasEditAction)) {
-                        varContainer.vars += factory.createIntVar => [
+                        varContainer.fields += factory.createIntegerField => [
                             name = 'thumbnailWidth' + fieldSuffix + action.toFirstUpper
-                            value = if (action == 'view') '32' else '240'
+                            defaultValue = if (action == 'view') '32' else '240'
                             documentation = 'Thumbnail width on ' + action + ' pages in pixels.'
                         ]
-                        varContainer.vars += factory.createIntVar => [
+                        varContainer.fields += factory.createIntegerField => [
                             name = 'thumbnailHeight' + fieldSuffix + action.toFirstUpper
-                            value = if (action == 'view') '24' else '180'
+                            defaultValue = if (action == 'view') '24' else '180'
                             documentation = 'Thumbnail height on ' + action + ' pages in pixels.'
                         ]
                     }
@@ -372,20 +374,21 @@ class PersistenceTransformer {
         val varContainer = createVarContainerForIntegrationSettings
         val factory = ModuleStudioFactory.eINSTANCE
 
-        val listVar = factory.createListVar => [
+        val listField = factory.createListField => [
             name = 'enabledFinderTypes'
-            value = ''
+            defaultValue = ''
             documentation = 'Which sections are supported in the Finder component (used by Scribite plug-ins).'
             multiple = true
         ]
         for (entity : getAllEntities.filter[hasDisplayAction]) {
-            listVar.items += factory.createListVarItem => [
-                name = entity.name.formatForCode
+            listField.items += factory.createListFieldItem => [
+                name = entity.name.formatForDisplayCapital
+                value = entity.name.formatForCode
                 ^default = true
             ]
         }
 
-        varContainer.vars += listVar
+        varContainer.fields += listField
         variables += varContainer
     }
 
@@ -397,36 +400,36 @@ class PersistenceTransformer {
         val varContainer = createVarContainerForGeoSettings
         val factory = ModuleStudioFactory.eINSTANCE
 
-        varContainer.vars += factory.createTextVar => [
+        varContainer.fields += factory.createFloatField => [
             name = 'defaultLatitude'
-            value = '0.00'
+            defaultValue = '0.00'
             documentation = 'The default latitude.'
         ]
-        varContainer.vars += factory.createTextVar => [
+        varContainer.fields += factory.createFloatField => [
             name = 'defaultLongitude'
-            value = '0.00'
+            defaultValue = '0.00'
             documentation = 'The default longitude.'
         ]
-        varContainer.vars += factory.createIntVar => [
+        varContainer.fields += factory.createIntegerField => [
             name = 'defaultZoomLevel'
-            value = '5'
+            defaultValue = '5'
             documentation = 'The default zoom level.'
         ]
-        varContainer.vars += factory.createTextVar => [
+        varContainer.fields += factory.createStringField => [
             name = 'tileLayerUrl'
-            value = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
+            defaultValue = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
             documentation = 'URL of tile layer to use. See http://leaflet-extras.github.io/leaflet-providers/preview/ for examples.'
         ]
-        varContainer.vars += factory.createTextVar => [
+        varContainer.fields += factory.createStringField => [
             name = 'tileLayerAttribution'
-            value = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            defaultValue = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
             documentation = 'Attribution for tile layer to use.'
         ]
 
         for (entity : getGeographicalEntities) {
-            varContainer.vars += factory.createBoolVar => [
+            varContainer.fields += factory.createBooleanField => [
                 name = 'enable' + entity.name.formatForCodeCapital + 'GeoLocation'
-                value = 'false'
+                defaultValue = 'false'
                 documentation = 'Whether to enable geo location functionality for ' + entity.nameMultiple.formatForDisplay + ' or not.'
             ]
         }

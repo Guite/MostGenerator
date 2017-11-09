@@ -39,9 +39,6 @@ class AjaxController {
     def private ajaxControllerBaseClass(Application it) '''
         namespace «appNamespace»\Controller\Base;
 
-        «IF !getAllUserFields.empty»
-            use Doctrine\ORM\AbstractQuery;
-        «ENDIF»
         use Symfony\Component\HttpFoundation\JsonResponse;
         use Symfony\Component\HttpFoundation\Request;
         «IF hasTrees && hasEditActions»

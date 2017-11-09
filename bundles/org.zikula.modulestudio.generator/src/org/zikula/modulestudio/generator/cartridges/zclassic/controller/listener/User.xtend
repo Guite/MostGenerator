@@ -40,26 +40,50 @@ class User {
              */
             protected $logger;
 
+        «ENDIF»
+        «IF hasUserVariables»
+            /**
+             * @var VariableApiInterface
+             */
+            protected $variableApi;
+
+        «ENDIF»
+        «IF hasStandardFieldEntities || hasUserFields || hasUserVariables»
             /**
              * UserListener constructor.
              *
+             «IF hasStandardFieldEntities || hasUserFields»
              * @param TranslatorInterface     $translator     Translator service instance
              * @param EntityFactory           $entityFactory  EntityFactory service instance
              * @param CurrentUserApiInterface $currentUserApi CurrentUserApi service instance
              * @param LoggerInterface         $logger         Logger service instance
+             «ENDIF»
+             «IF hasUserVariables»
+             * @param VariableApiInterface    $variableApi    VariableApi service instance
+             «ENDIF»
              *
              * @return void
              */
             public function __construct(
-                TranslatorInterface $translator,
-                EntityFactory $entityFactory,
-                CurrentUserApiInterface $currentUserApi,
-                LoggerInterface $logger
+                «IF hasStandardFieldEntities || hasUserFields»
+                    TranslatorInterface $translator,
+                    EntityFactory $entityFactory,
+                    CurrentUserApiInterface $currentUserApi,
+                    LoggerInterface $logger«IF hasUserVariables»,«ENDIF»
+                «ENDIF»
+                «IF hasUserVariables»
+                    VariableApiInterface $variableApi
+                «ENDIF»
             ) {
-                $this->translator = $translator;
-                $this->entityFactory = $entityFactory;
-                $this->currentUserApi = $currentUserApi;
-                $this->logger = $logger;
+                «IF hasStandardFieldEntities || hasUserFields»
+                    $this->translator = $translator;
+                    $this->entityFactory = $entityFactory;
+                    $this->currentUserApi = $currentUserApi;
+                    $this->logger = $logger;
+                «ENDIF»
+                «IF hasUserVariables»
+                    $this->variableApi = $variableApi;
+                «ENDIF»
             }
 
         «ENDIF»
@@ -120,10 +144,17 @@ class User {
          */
         public function delete(GenericEvent $event)
         {
-            «IF hasStandardFieldEntities || hasUserFields»
+            «IF hasStandardFieldEntities || hasUserFields || hasUserVariables»
                 $userId = $event->getSubject();
 
-                «FOR entity : getAllEntities»«entity.userDelete»«ENDFOR»
+                «IF hasStandardFieldEntities || hasUserFields»
+                    «FOR entity : getAllEntities»«entity.userDelete»«ENDFOR»
+                «ENDIF»
+                «IF hasUserVariables»
+                    «FOR userField : variables.map[fields].filter(UserField)»
+                        «userField.onAccountDeletionHandler»
+                    «ENDFOR»
+                «ENDIF»
             «ENDIF»
         }
     '''
@@ -150,7 +181,7 @@ class User {
                 «ENDIF»
             «ENDIF»
             «IF hasUserFieldsEntity»
-                «FOR userField: getUserFieldsEntity»
+                «FOR userField : getUserFieldsEntity»
                     «userField.onAccountDeletionHandler»
                 «ENDFOR»
             «ENDIF»
@@ -161,13 +192,26 @@ class User {
     '''
 
     def private onAccountDeletionHandler(UserField it) '''
-        «IF entity instanceof Entity»
+        «IF null !== entity && entity instanceof Entity»
             «IF onAccountDeletion != AccountDeletionHandler.DELETE»
-                // set last editor to «onAccountDeletion.adhAsConstant» («entity.application.adhUid(onAccountDeletion)») for all «(entity as Entity).nameMultiple.formatForDisplay» affected by this user
-                $repo->updateUserField('«name.formatForCode»', $userId, «entity.application.adhUid(onAccountDeletion)», $this->translator, $this->logger, $this->currentUserApi);
+                // set «name.formatForDisplay» to «onAccountDeletion.adhAsConstant» («application.adhUid(onAccountDeletion)») for all «(entity as Entity).nameMultiple.formatForDisplay» affected by this user
+                $repo->updateUserField('«name.formatForCode»', $userId, «application.adhUid(onAccountDeletion)», $this->translator, $this->logger, $this->currentUserApi);
             «ELSE»
                 // delete all «(entity as Entity).nameMultiple.formatForDisplay» affected by this user
                 $repo->deleteByUserField('«name.formatForCode»', $userId, $this->translator, $this->logger, $this->currentUserApi);
+            «ENDIF»
+        «ELSEIF null !== varContainer»
+            // set «name.formatForDisplay» variable to «IF onAccountDeletion != AccountDeletionHandler.DELETE»«onAccountDeletion.adhAsConstant» («application.adhUid(onAccountDeletion)»)«ELSE»admin (UsersConstant::USER_ID_ADMIN)«ENDIF» if it is affected
+            «IF varContainer.composite»
+                $«varContainer.name.formatForCode» = $this->variableApi->get('«application.appName»', '«varContainer.name.formatForCode»');
+                if (isset($«varContainer.name.formatForCode»['«name.formatForCode»']) && $userId == $«varContainer.name.formatForCode»['«name.formatForCode»']) {
+                    $«varContainer.name.formatForCode»['«name.formatForCode»'] = «IF onAccountDeletion != AccountDeletionHandler.DELETE»«application.adhUid(onAccountDeletion)»«ELSE»UsersConstant::USER_ID_ADMIN«ENDIF»;
+                    $this->variableApi->set('«application.appName»', '«varContainer.name.formatForCode»', $«varContainer.name.formatForCode»);
+                }
+            «ELSE»
+                if ($userId == $this->variableApi->get('«application.appName»', '«name.formatForCode»')) {
+                    $this->variableApi->set('«application.appName»', '«name.formatForCode»', «IF onAccountDeletion != AccountDeletionHandler.DELETE»«application.adhUid(onAccountDeletion)»«ELSE»UsersConstant::USER_ID_ADMIN«ENDIF»);
+                }
             «ENDIF»
         «ENDIF»
     '''

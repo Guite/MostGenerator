@@ -4,6 +4,7 @@ import de.guite.modulestudio.metamodel.DataObject
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.InheritanceRelationship
 import java.util.ArrayList
+import java.util.List
 
 /**
  * This class contains model inheritance related extension methods.
@@ -67,5 +68,24 @@ class ModelInheritanceExtensions {
         }
 
         children
+    }
+
+    /**
+     * Returns a list of inheriting data objects.
+     */
+    def List<DataObject> getParentDataObjects(DataObject it, List<DataObject> parents) {
+        val inheritanceRelation = outgoing.filter(InheritanceRelationship).filter[null !== target]
+        if (!inheritanceRelation.empty) {
+            parents.add(inheritanceRelation.head.target)
+            inheritanceRelation.head.target.getParentDataObjects(parents)
+        }
+        parents
+    }
+
+    /**
+     * Returns a list of an object and it's inheriting data objects.
+     */
+    def getSelfAndParentDataObjects(DataObject it) {
+        getParentDataObjects(newArrayList) + newArrayList(it)
     }
 }

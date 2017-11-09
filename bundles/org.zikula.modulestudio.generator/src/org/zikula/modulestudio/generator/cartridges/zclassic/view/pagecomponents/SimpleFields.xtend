@@ -2,35 +2,38 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.view.pagecomponent
 
 import de.guite.modulestudio.metamodel.ArrayField
 import de.guite.modulestudio.metamodel.BooleanField
-import de.guite.modulestudio.metamodel.DateField
 import de.guite.modulestudio.metamodel.DatetimeField
 import de.guite.modulestudio.metamodel.DecimalField
 import de.guite.modulestudio.metamodel.EmailField
-import de.guite.modulestudio.metamodel.EntityField
+import de.guite.modulestudio.metamodel.Field
 import de.guite.modulestudio.metamodel.FloatField
 import de.guite.modulestudio.metamodel.IntegerField
 import de.guite.modulestudio.metamodel.ListField
 import de.guite.modulestudio.metamodel.StringField
 import de.guite.modulestudio.metamodel.StringRole
 import de.guite.modulestudio.metamodel.TextField
-import de.guite.modulestudio.metamodel.TimeField
 import de.guite.modulestudio.metamodel.UploadField
 import de.guite.modulestudio.metamodel.UrlField
 import de.guite.modulestudio.metamodel.UserField
+import org.zikula.modulestudio.generator.extensions.DateTimeExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
+import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class SimpleFields {
+
+    extension DateTimeExtensions = new DateTimeExtensions
     extension FormattingExtensions = new FormattingExtensions
+    extension ModelExtensions = new ModelExtensions
     extension Utils = new Utils
 
-    def dispatch displayField(EntityField it, String objName, String page) '''
+    def dispatch displayField(Field it, String objName, String page) '''
         {{ «objName».«name.formatForCode» }}'''
 
     def dispatch displayField(BooleanField it, String objName, String page) {
         if (ajaxTogglability && (page == 'view' || page == 'display')) '''
             {% set itemId = «objName».getKey() %}
-            <a id="toggle«name.formatForCodeCapital»{{ itemId }}" href="javascript:void(0);" class="«entity.application.vendorAndName.toLowerCase»-ajax-toggle hidden" data-object-type="«entity.name.formatForCode»" data-field-name="«name.formatForCode»" data-item-id="{{ itemId }}">
+            <a id="toggle«name.formatForCodeCapital»{{ itemId }}" href="javascript:void(0);" class="«application.vendorAndName.toLowerCase»-ajax-toggle hidden" data-object-type="«entity.name.formatForCode»" data-field-name="«name.formatForCode»" data-item-id="{{ itemId }}">
                 <i class="fa fa-check{% if not «objName».«name.formatForCode» %} hidden{% endif %}" id="yes«name.formatForCodeCapital»{{ itemId }}" title="{{ __('This setting is enabled. Click here to disable it.') }}"></i>
                 <i class="fa fa-times{% if «objName».«name.formatForCode» %} hidden{% endif %}" id="no«name.formatForCodeCapital»{{ itemId }}" title="{{ __('This setting is disabled. Click here to enable it.') }}"></i>
             </a>
@@ -94,10 +97,10 @@ class SimpleFields {
         if (role == StringRole.PASSWORD) return ''
         if (role == StringRole.COLOUR) '''
             <span class="label label-default" style="background-color: {{ «objName».«name.formatForCode»|e('html_attr') }}">{{ «objName».«name.formatForCode» }}</span>'''
-        else if (entity.application.targets('2.0') && role == StringRole.DATE_INTERVAL) '''
-            {{ «objName».«name.formatForCode»|«entity.application.appName.formatForDB»_dateInterval }}'''
+        else if (application.targets('2.0') && role == StringRole.DATE_INTERVAL) '''
+            {{ «objName».«name.formatForCode»|«application.appName.formatForDB»_dateInterval }}'''
         else '''
-            {{ «objName».«name.formatForCode»«IF role == StringRole.COUNTRY»|«entity.application.appName.formatForDB»_countryName«ELSEIF role == StringRole.LANGUAGE || role == StringRole.LOCALE»|languageName«ENDIF» }}'''
+            {{ «objName».«name.formatForCode»«IF role == StringRole.COUNTRY»|«application.appName.formatForDB»_countryName«ELSEIF role == StringRole.LANGUAGE || role == StringRole.LOCALE»|languageName«ENDIF» }}'''
     }
 
     def dispatch displayField(TextField it, String objName, String page) '''
@@ -148,7 +151,7 @@ class SimpleFields {
     }
 
     def dispatch displayField(UploadField it, String objName, String page) {
-        val appNameSmall = entity.application.appName.formatForDB
+        val appNameSmall = application.appName.formatForDB
         val realName = objName + '.' + name.formatForCode
         if (page == 'viewcsv') '''{{ «realName» }}'''
         else if (page == 'viewxml') '''
@@ -158,10 +161,10 @@ class SimpleFields {
                 {% if «realName» is not empty and «realName»Meta|default %}
             «ELSE»{% if «realName»Meta|default %}
             «ENDIF»
-            <a href="{{ «realName»Url }}" title="{{ «objName»|«entity.application.appName.formatForDB»_formattedTitle|e('html_attr') }}"{% if «realName»Meta.isImage %} class="image-link"{% endif %}>
+            <a href="{{ «realName»Url }}" title="{{ «objName»|«application.appName.formatForDB»_formattedTitle|e('html_attr') }}"{% if «realName»Meta.isImage %} class="image-link"{% endif %}>
             {% if «realName»Meta.isImage %}
                 {% set thumbOptions = attribute(thumbRuntimeOptions, '«entity.name.formatForCode»«name.formatForCodeCapital»') %}
-                <img src="{{ «realName».getPathname()|imagine_filter('zkroot', thumbOptions) }}" alt="{{ «objName»|«entity.application.appName.formatForDB»_formattedTitle|e('html_attr') }}" width="{{ thumbOptions.thumbnail.size[0] }}" height="{{ thumbOptions.thumbnail.size[1] }}" class="img-thumbnail" />
+                <img src="{{ «realName».getPathname()|imagine_filter('zkroot', thumbOptions) }}" alt="{{ «objName»|«application.appName.formatForDB»_formattedTitle|e('html_attr') }}" width="{{ thumbOptions.thumbnail.size[0] }}" height="{{ thumbOptions.thumbnail.size[1] }}" class="img-thumbnail" />
             {% else %}
                 {{ __('Download') }} ({{ «realName»Meta.size|«appNameSmall»_fileSize(«realName».getPathname(), false, false) }})
             {% endif %}
@@ -174,7 +177,7 @@ class SimpleFields {
     }
 
     def dispatch displayField(ListField it, String objName, String page) '''
-        {{ «objName».«name.formatForCode»|«entity.application.appName.formatForDB»_listEntry('«entity.name.formatForCode»', '«name.formatForCode»') }}'''
+        {{ «objName».«name.formatForCode»|«application.appName.formatForDB»_listEntry('«entity.name.formatForCode»', '«name.formatForCode»') }}'''
 
     def dispatch displayField(ArrayField it, String objName, String page) '''
         {% if «objName».«name.formatForCode» is iterable and «objName».«name.formatForCode»|length > 0 %}
@@ -186,26 +189,25 @@ class SimpleFields {
         {% endif %}
     '''
 
-    def dispatch displayField(DateField it, String objName, String page) {
-        if (!mandatory && nullable) { '''
-            {% if «objName».«name.formatForCode» is not empty %}
-                {{ «objName».«name.formatForCode»|localizeddate('medium', 'none') }}
-            {% endif %}'''
-        } else { '''
-            {{ «objName».«name.formatForCode»|localizeddate('medium', 'none') }}'''
-        }
-    }
-
     def dispatch displayField(DatetimeField it, String objName, String page) {
-        if (!mandatory && nullable) { '''
-            {% if «objName».«name.formatForCode» is not empty %}
-                {{ «objName».«name.formatForCode»|localizeddate('medium', 'short') }}
-            {% endif %}'''
-        } else { '''
-            {{ «objName».«name.formatForCode»|localizeddate('medium', 'short') }}'''
+        if (isDateTimeField) {
+            if (!mandatory && nullable) { '''
+                {% if «objName».«name.formatForCode» is not empty %}
+                    {{ «objName».«name.formatForCode»|localizeddate('medium', 'short') }}
+                {% endif %}'''
+            } else { '''
+                {{ «objName».«name.formatForCode»|localizeddate('medium', 'short') }}'''
+            }
+        } else if (isDateField) {
+            if (!mandatory && nullable) { '''
+                {% if «objName».«name.formatForCode» is not empty %}
+                    {{ «objName».«name.formatForCode»|localizeddate('medium', 'none') }}
+                {% endif %}'''
+            } else { '''
+                {{ «objName».«name.formatForCode»|localizeddate('medium', 'none') }}'''
+            }
+        } else if (isTimeField) { '''
+            {{ «objName».«name.formatForCode»|localizeddate('none', 'short') }}'''
         }
     }
-
-    def dispatch displayField(TimeField it, String objName, String page) '''
-        {{ «objName».«name.formatForCode»|localizeddate('none', 'short') }}'''
 }

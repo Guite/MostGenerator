@@ -4,8 +4,8 @@ import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.DataObject
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.ManyToManyRelationship
-import de.guite.modulestudio.metamodel.TimeField
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.business.ValidationConstraints
+import org.zikula.modulestudio.generator.extensions.DateTimeExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
@@ -15,6 +15,7 @@ import org.zikula.modulestudio.generator.extensions.Utils
 
 class EntityMethods {
 
+    extension DateTimeExtensions = new DateTimeExtensions
     extension FormattingExtensions = new FormattingExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension ModelExtensions = new ModelExtensions
@@ -63,9 +64,8 @@ class EntityMethods {
                 «thVal.validationMethods(userField)»
             «ENDFOR»
         «ENDIF»
-        «val timeFields = fields.filter(TimeField)»
-        «IF !timeFields.empty»
-            «FOR timeField : timeFields»
+        «IF hasDirectTimeFields»
+            «FOR timeField : getDirectTimeFields»
 
                 «thVal.validationMethods(timeField)»
             «ENDFOR»
@@ -232,7 +232,7 @@ class EntityMethods {
             // otherwise proceed
 
             // unset identifier
-            $this->set«getPrimaryKey.name.formatForCodeCapital»(«thProp.defaultFieldData(getPrimaryKey)»);
+            $this->set«getPrimaryKey.name.formatForCodeCapital»(«/* thProp.defaultFieldData(getPrimaryKey) */Property.defaultFieldData(getPrimaryKey)»);
 
             // reset workflow
             $this->setWorkflowState('initial');

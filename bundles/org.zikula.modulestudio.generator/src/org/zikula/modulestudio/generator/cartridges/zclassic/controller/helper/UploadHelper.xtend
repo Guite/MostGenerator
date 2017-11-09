@@ -361,6 +361,9 @@ class UploadHelper {
             $allowedExtensions = [];
             switch ($objectType) {
                 «FOR entity : getUploadEntities.filter(Entity)»«entity.isAllowedFileExtensionEntityCase»«ENDFOR»
+                «IF !variables.map[fields].filter(UploadField).empty»
+                    «isAllowedFileExtensionEntityCase»
+                «ENDIF»
             }
 
             if (count($allowedExtensions) > 0) {
@@ -377,9 +380,23 @@ class UploadHelper {
         }
     '''
 
-    def private isAllowedFileExtensionEntityCase(Entity it) '''
+    def private dispatch isAllowedFileExtensionEntityCase(Entity it) '''
         «val uploadFields = getUploadFieldsEntity»
         case '«name.formatForCode»':
+            «IF uploadFields.size > 1»
+                switch ($fieldName) {
+                    «FOR uploadField : uploadFields»«uploadField.isAllowedFileExtensionFieldCase»«ENDFOR»
+                }
+            «ELSE»
+                $allowedExtensions = ['«uploadFields.head.allowedExtensions.replace(', ', "', '")»'];
+            «ENDIF»
+                break;
+    '''
+
+
+    def private dispatch isAllowedFileExtensionEntityCase(Application it) '''
+        «val uploadFields = variables.map[fields].filter(UploadField)»
+        case 'appSettings':
             «IF uploadFields.size > 1»
                 switch ($fieldName) {
                     «FOR uploadField : uploadFields»«uploadField.isAllowedFileExtensionFieldCase»«ENDFOR»
@@ -418,6 +435,9 @@ class UploadHelper {
 
             switch ($objectType) {
                 «FOR entity : getUploadEntities.filter(Entity)»«entity.determineFileNameEntityCase»«ENDFOR»
+                «IF !variables.map[fields].filter(UploadField).empty»
+                    «determineFileNameEntityCase»
+                «ENDIF»
             }
 
 
@@ -457,9 +477,22 @@ class UploadHelper {
         }
     '''
 
-    def private determineFileNameEntityCase(Entity it) '''
+    def private dispatch determineFileNameEntityCase(Entity it) '''
         «val uploadFields = getUploadFieldsEntity»
         case '«name.formatForCode»':
+            «IF uploadFields.size > 1»
+                switch ($fieldName) {
+                    «FOR uploadField : uploadFields»«uploadField.determineFileNameFieldCase»«ENDFOR»
+                }
+            «ELSE»
+                $namingScheme = «uploadFields.head.namingScheme.value»;
+            «ENDIF»
+                break;
+    '''
+
+    def private dispatch determineFileNameEntityCase(Application it) '''
+        «val uploadFields = variables.map[fields].filter(UploadField)»
+        case 'appSettings':
             «IF uploadFields.size > 1»
                 switch ($fieldName) {
                     «FOR uploadField : uploadFields»«uploadField.determineFileNameFieldCase»«ENDFOR»
@@ -561,6 +594,23 @@ class UploadHelper {
                         «ENDIF»
                         break;
                 «ENDFOR»
+                «IF !variables.map[fields].filter(UploadField).empty»
+                    «val uploadFields = variables.map[fields].filter(UploadField)»
+                    case 'appSettings':
+                        «IF uploadFields.size > 1»
+                            $basePath .= 'appSettings/';
+                            switch ($fieldName) {
+                                «FOR uploadField : uploadFields»
+                                    case '«uploadField.name.formatForCode»':
+                                        $basePath .= '«uploadField.subFolderPathSegment»/';
+                                        break;
+                                «ENDFOR»
+                            }
+                        «ELSE»
+                            $basePath .= 'appSettings/«uploadFields.head.subFolderPathSegment»/';
+                        «ENDIF»
+                        break;
+                «ENDIF»
                 default:
                     throw new Exception($this->__('Error! Invalid object type received.'));
             }
@@ -624,6 +674,9 @@ class UploadHelper {
                 «FOR uploadField : uploadEntity.getUploadFieldsEntity»
                     $result &= $this->checkAndCreateUploadFolder('«uploadField.entity.name.formatForCode»', '«uploadField.name.formatForCode»', '«uploadField.allowedExtensions»');
                 «ENDFOR»
+            «ENDFOR»
+            «FOR uploadField : variables.map[fields].filter(UploadField)»
+                $result &= $this->checkAndCreateUploadFolder('appSettings', '«uploadField.name.formatForCode»', '«uploadField.allowedExtensions»');
             «ENDFOR»
 
             return $result;

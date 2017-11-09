@@ -30,6 +30,7 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.view.pages.export.X
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.pages.feed.Atom
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.pages.feed.Rss
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
+import org.zikula.modulestudio.generator.extensions.DateTimeExtensions
 import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
@@ -40,6 +41,7 @@ import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
 class Views {
 
     extension ControllerExtensions = new ControllerExtensions
+    extension DateTimeExtensions = new DateTimeExtensions
     extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     extension ModelExtensions = new ModelExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions

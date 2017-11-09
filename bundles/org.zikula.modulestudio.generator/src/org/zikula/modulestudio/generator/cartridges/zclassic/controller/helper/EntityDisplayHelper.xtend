@@ -1,28 +1,30 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.controller.helper
 
 import de.guite.modulestudio.metamodel.Application
-import de.guite.modulestudio.metamodel.DateField
 import de.guite.modulestudio.metamodel.DatetimeField
 import de.guite.modulestudio.metamodel.DecimalField
 import de.guite.modulestudio.metamodel.Entity
-import de.guite.modulestudio.metamodel.EntityField
+import de.guite.modulestudio.metamodel.Field
 import de.guite.modulestudio.metamodel.FloatField
 import de.guite.modulestudio.metamodel.ListField
 import de.guite.modulestudio.metamodel.TextField
-import de.guite.modulestudio.metamodel.TimeField
 import de.guite.modulestudio.metamodel.UploadField
 import de.guite.modulestudio.metamodel.UserField
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
+import org.zikula.modulestudio.generator.extensions.DateTimeExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
+import org.zikula.modulestudio.generator.extensions.ModelInheritanceExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class EntityDisplayHelper {
 
+    extension DateTimeExtensions = new DateTimeExtensions
     extension FormattingExtensions = new FormattingExtensions
     extension ModelExtensions = new ModelExtensions
+    extension ModelInheritanceExtensions = new ModelInheritanceExtensions
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
 
@@ -37,13 +39,13 @@ class EntityDisplayHelper {
     def private entityDisplayHelperBaseClass(Application it) '''
         namespace «appNamespace»\Helper\Base;
 
-        «IF hasAbstractDateFields»
+        «IF hasAnyDateTimeFields»
             use IntlDateFormatter;
         «ENDIF»
         «IF hasDecimalOrFloatNumberFields»
             use NumberFormatter;
         «ENDIF»
-        «IF hasAbstractDateFields || hasDecimalOrFloatNumberFields»
+        «IF hasAnyDateTimeFields || hasDecimalOrFloatNumberFields»
             use Symfony\Component\HttpFoundation\RequestStack;
         «ENDIF»
         use Zikula\Common\Translator\TranslatorInterface;
@@ -70,7 +72,7 @@ class EntityDisplayHelper {
                  */
                 protected $listEntriesHelper;
             «ENDIF»
-            «IF hasAbstractDateFields»
+            «IF hasAnyDateTimeFields»
 
                 /**
                  * @var IntlDateFormatter Formatter for dates
@@ -94,7 +96,7 @@ class EntityDisplayHelper {
              * EntityDisplayHelper constructor.
              *
              * @param TranslatorInterface $translator «IF hasListFields»       «ENDIF»Translator service instance
-             «IF hasAbstractDateFields || hasDecimalOrFloatNumberFields»
+             «IF hasAnyDateTimeFields || hasDecimalOrFloatNumberFields»
              * @param RequestStack        $requestStack      RequestStack service instance
              «ENDIF»
              «IF hasListFields»
@@ -102,7 +104,7 @@ class EntityDisplayHelper {
              «ENDIF»
              */
             public function __construct(
-                TranslatorInterface $translator«IF hasAbstractDateFields || hasDecimalOrFloatNumberFields»,
+                TranslatorInterface $translator«IF hasAnyDateTimeFields || hasDecimalOrFloatNumberFields»,
                 RequestStack $requestStack«ENDIF»«IF hasListFields»,
                 ListEntriesHelper $listEntriesHelper«ENDIF»
             ) {
@@ -110,10 +112,10 @@ class EntityDisplayHelper {
                 «IF hasListFields»
                     $this->listEntriesHelper = $listEntriesHelper;
                 «ENDIF»
-                «IF hasAbstractDateFields || hasDecimalOrFloatNumberFields»
+                «IF hasAnyDateTimeFields || hasDecimalOrFloatNumberFields»
                     $locale = null !== $requestStack->getCurrentRequest() ? $requestStack->getCurrentRequest()->getLocale() : null;
                 «ENDIF»
-                «IF hasAbstractDateFields»
+                «IF hasAnyDateTimeFields»
                     $this->dateFormatter = new IntlDateFormatter($locale, null, null);
                 «ENDIF»
                 «IF hasDecimalOrFloatNumberFields»
@@ -304,15 +306,13 @@ class EntityDisplayHelper {
         result
     }
 
-    def private formatFieldValue(EntityField it, CharSequence value) {
+    def private formatFieldValue(Field it, CharSequence value) {
         switch it {
             DecimalField: '''$this->«IF currency»currencyFormatter->formatCurrency(«value», 'EUR')«ELSE»numberFormatter->format(«value»)«ENDIF»'''
             FloatField: '''$this->«IF currency»currencyFormatter->formatCurrency(«value», 'EUR')«ELSE»numberFormatter->format(«value»)«ENDIF»'''
             UserField: '''(«value» ? «value»->getUname() : '')'''
-            ListField: '''$this->listEntriesHelper->resolve(«value», '«entity.name.formatForCode»', '«name.formatForCode»')'''
-            DatetimeField: '''$this->dateFormatter->formatObject(«value», [IntlDateFormatter::SHORT, IntlDateFormatter::SHORT])'''
-            DateField: '''$this->dateFormatter->formatObject(«value», [IntlDateFormatter::SHORT, IntlDateFormatter::NONE])'''
-            TimeField: '''$this->dateFormatter->formatObject(«value», [IntlDateFormatter::NONE, IntlDateFormatter::NONE])'''
+            ListField: '''«IF null !== entity»$this->listEntriesHelper->resolve(«value», '«entity.name.formatForCode»', '«name.formatForCode»')«ELSE»«value»«ENDIF»'''
+            DatetimeField: '''$this->dateFormatter->formatObject(«value», [«IF isDateTimeField»IntlDateFormatter::SHORT, IntlDateFormatter::SHORT«ELSEIF isDateField»IntlDateFormatter::SHORT, IntlDateFormatter::NONE«ELSEIF isTimeField»IntlDateFormatter::NONE, IntlDateFormatter::NONE«ENDIF»])'''
             default: value
         }
     }

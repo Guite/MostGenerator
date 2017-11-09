@@ -1,6 +1,5 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.models.entity
 
-import de.guite.modulestudio.metamodel.AbstractDateField
 import de.guite.modulestudio.metamodel.AbstractIntegerField
 import de.guite.modulestudio.metamodel.AbstractStringField
 import de.guite.modulestudio.metamodel.ArrayField
@@ -10,8 +9,8 @@ import de.guite.modulestudio.metamodel.DecimalField
 import de.guite.modulestudio.metamodel.DerivedField
 import de.guite.modulestudio.metamodel.EmailField
 import de.guite.modulestudio.metamodel.Entity
-import de.guite.modulestudio.metamodel.EntityField
 import de.guite.modulestudio.metamodel.EntityIdentifierStrategy
+import de.guite.modulestudio.metamodel.Field
 import de.guite.modulestudio.metamodel.FloatField
 import de.guite.modulestudio.metamodel.IntegerField
 import de.guite.modulestudio.metamodel.ListField
@@ -49,9 +48,11 @@ class Property {
         /**
          * «name.formatForDisplayCapital» meta data array.
          *
+         «IF null !== entity»
          * @ORM\Column(type="array")
          «IF translatable»
           * @Gedmo\Translatable
+         «ENDIF»
          «ENDIF»
          * @Assert\Type(type="array")
          * @var array $«name.formatForCode»Meta
@@ -87,21 +88,23 @@ class Property {
          «IF null !== documentation && documentation != ''»
           * «documentation»
          «ENDIF»
-         «IF primaryKey»
-             * @ORM\Id
-             «IF entity instanceof Entity && (entity as Entity).identifierStrategy != EntityIdentifierStrategy::NONE»
-                 * @ORM\GeneratedValue(strategy="«(entity as Entity).identifierStrategy.literal»")
+        «IF null !== entity»
+             «IF primaryKey»
+                 * @ORM\Id
+                 «IF entity instanceof Entity && (entity as Entity).identifierStrategy != EntityIdentifierStrategy::NONE»
+                     * @ORM\GeneratedValue(strategy="«(entity as Entity).identifierStrategy.literal»")
+                 «ENDIF»
              «ENDIF»
-         «ENDIF»
-        «extMan.columnAnnotations(it)»
-         «IF !(it instanceof UserField)»«/* user fields are implemented as join to UserEntity, see persistentPropertyAdditions */»
-         * @ORM\Column(«IF null !== dbName && dbName != ''»name="«dbName.formatForCode»", «ENDIF»«persistentPropertyImpl(type.toLowerCase)»«IF unique», unique=true«ENDIF»«IF nullable», nullable=true«ENDIF»)
-         «ENDIF»
-        «persistentPropertyAdditions»
+            «IF null !== extMan»«extMan.columnAnnotations(it)»«ENDIF»
+             «IF !(it instanceof UserField)»«/* user fields are implemented as join to UserEntity, see persistentPropertyAdditions */»
+             * @ORM\Column(«IF null !== dbName && dbName != ''»name="«dbName.formatForCode»", «ENDIF»«persistentPropertyImpl(type.toLowerCase)»«IF unique», unique=true«ENDIF»«IF nullable», nullable=true«ENDIF»)
+             «ENDIF»
+            «persistentPropertyAdditions»
+        «ENDIF»
         «thVal.fieldAnnotations(it)»
          * @var «IF type == 'bigint' || type == 'smallint'»integer«ELSEIF type == 'datetime'»\DateTime«ELSE»«type»«ENDIF» $«name.formatForCode»
          */
-        «modifier» $«name.formatForCode»«IF init != ''»«init»«ELSE»«IF !(it instanceof AbstractDateField)» = «defaultFieldData»«ENDIF»«ENDIF»;
+        «modifier» $«name.formatForCode»«IF init != ''»«init»«ELSE»«IF !(it instanceof DatetimeField)» = «defaultFieldData»«ENDIF»«ENDIF»;
         «/* this last line is on purpose */»
     '''
 
@@ -138,14 +141,10 @@ class Property {
                     «' '»* @ORM\ManyToOne(targetEntity="Zikula\UsersModule\Entity\UserEntity")
                     «' '»* @ORM\JoinColumn(referencedColumnName="uid"«IF nullable», nullable=true«ENDIF»)
                 '''
-            DatetimeField:
-                if (it.version && entity instanceof Entity && (entity as Entity).hasOptimisticLock) '''
-                    «''» * @ORM\Version
-                '''
         }
     }
 
-    def defaultFieldData(EntityField it) {
+    def static defaultFieldData(Field it) {
         switch it {
             BooleanField:
                 if (it.defaultValue == 'true') 'true' else 'false'

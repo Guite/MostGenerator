@@ -1,7 +1,7 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.controller.javascript
 
-import de.guite.modulestudio.metamodel.AbstractDateField
 import de.guite.modulestudio.metamodel.Application
+import de.guite.modulestudio.metamodel.DatetimeField
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
@@ -42,7 +42,7 @@ class EditFunctions {
             «initUploadField»
 
         «ENDIF»
-        «IF !entities.filter[!getDerivedFields.filter(AbstractDateField).empty].empty»
+        «IF !entities.filter[!getDerivedFields.filter(DatetimeField).empty].empty || !variables.map[fields].filter(DatetimeField).empty»
             «initDateField»
 
         «ENDIF»
@@ -58,8 +58,7 @@ class EditFunctions {
         /**
          * Resets the value of an upload / file input field.
          */
-        function «vendorAndName»ResetUploadField(fieldName)
-        {
+        function «vendorAndName»ResetUploadField(fieldName) {
             jQuery('#' + fieldName).attr('type', 'input');
             jQuery('#' + fieldName).attr('type', 'file');
         }
@@ -69,8 +68,7 @@ class EditFunctions {
         /**
          * Initialises the reset button for a certain upload input.
          */
-        function «vendorAndName»InitUploadField(fieldName)
-        {
+        function «vendorAndName»InitUploadField(fieldName) {
             jQuery('#' + fieldName + 'ResetVal').click(function (event) {
                 event.preventDefault();
                 «vendorAndName»ResetUploadField(fieldName);
@@ -82,8 +80,7 @@ class EditFunctions {
         /**
          * Initialises the reset button for a certain date input.
          */
-        function «vendorAndName»InitDateField(fieldName)
-        {
+        function «vendorAndName»InitDateField(fieldName) {
             jQuery('#' + fieldName + 'ResetVal').click(function (event) {
                 event.preventDefault();
                 jQuery('#' + fieldName).val('');
@@ -98,8 +95,7 @@ class EditFunctions {
         var formButtons;
         var triggerValidation = true;
 
-        function «vendorAndName»TriggerFormValidation()
-        {
+        function «vendorAndName»TriggerFormValidation() {
             «vendorAndName»ExecuteCustomValidationConstraints(editedObjectType, editedEntityId);
 
             if (!editForm.get(0).checkValidity()) {
@@ -129,8 +125,7 @@ class EditFunctions {
         /**
          * Initialises an entity edit form.
          */
-        function «vendorAndName»InitEditForm(mode, entityId)
-        {
+        function «vendorAndName»InitEditForm(mode, entityId) {
             if (jQuery('.«vendorAndName.toLowerCase»-edit-form').length < 1) {
                 return;
             }
@@ -160,11 +155,13 @@ class EditFunctions {
             });
 
             formButtons = editForm.find('.form-buttons input');
-            editForm.find('.btn-danger').first().bind('click keypress', function (event) {
-                if (!window.confirm(Translator.__('Do you really want to delete this entry?'))) {
-                    event.preventDefault();
-                }
-            });
+            if (editForm.find('.btn-danger').length > 0) {
+                editForm.find('.btn-danger').first().bind('click keypress', function (event) {
+                    if (!window.confirm(Translator.__('Do you really want to delete this entry?'))) {
+                        event.preventDefault();
+                    }
+                });
+            }
             editForm.find('button[type=submit]').bind('click keypress', function (event) {
                 triggerValidation = !jQuery(this).prop('formnovalidate');
             });
@@ -180,8 +177,7 @@ class EditFunctions {
         /**
          * Initialises a relation field section with «IF needsAutoCompletion»autocompletion «ENDIF»«IF needsInlineEditing»«IF needsAutoCompletion»and «ENDIF»optional edit capabilities«ENDIF».
          */
-        function «vendorAndName»InitRelationHandling(objectType, alias, idPrefix, includeEditing, inputType, createUrl)
-        {
+        function «vendorAndName»InitRelationHandling(objectType, alias, idPrefix, includeEditing, inputType, createUrl) {
             «IF needsAutoCompletion»
                 if (inputType == 'autocomplete') {
                     «vendorAndName»InitAutoCompletion(objectType, idPrefix, includeEditing);

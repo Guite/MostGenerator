@@ -7,7 +7,7 @@ import de.guite.modulestudio.metamodel.DeleteAction
 import de.guite.modulestudio.metamodel.DisplayAction
 import de.guite.modulestudio.metamodel.EditAction
 import de.guite.modulestudio.metamodel.Entity
-import de.guite.modulestudio.metamodel.IntVar
+import de.guite.modulestudio.metamodel.IntegerField
 import de.guite.modulestudio.metamodel.JoinRelationship
 import de.guite.modulestudio.metamodel.MainAction
 import de.guite.modulestudio.metamodel.ManyToManyRelationship
@@ -170,14 +170,17 @@ class ControllerExtensions {
      * Returns all variables acting as user group selectors.
      */
     def getUserGroupSelectors(Application it) {
-        getAllVariables.filter(IntVar).filter[isUserGroupSelector]
+        getAllVariables.filter(IntegerField).filter[isUserGroupSelector]
     }
 
     /**
-     * Determines whether the given integer variable instance represents a user group
-     * selector for moderation purposes.
+     * Determines whether the given integer field instance represents a user group
+     * selector variable for moderation purposes.
      */
-    def isUserGroupSelector(IntVar it) {
+    def isUserGroupSelector(IntegerField it) {
+        if (null !== entity) {
+            return false
+        }
         if (name.contains('moderationGroupFor')
             || name.contains('superModerationGroupFor')) {
                 return true

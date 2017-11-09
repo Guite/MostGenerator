@@ -134,7 +134,6 @@ class Styles {
     '''
 
     def private autoCompletion(Application it) '''
-        «val hasImageFields = hasImageFields»
         «val joinRelations = getJoinRelations»
         «IF !joinRelations.empty || hasUiHooksProviders»
 

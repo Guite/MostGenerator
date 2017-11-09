@@ -39,7 +39,7 @@ class LifecycleListener {
         use Symfony\Component\DependencyInjection\ContainerInterface;
         use Symfony\Component\EventDispatcher\Event;
         use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-        «IF hasUploads»
+        «IF !getUploadEntities.empty»
             use Symfony\Component\HttpFoundation\File\File;
         «ENDIF»
         use Zikula\Core\Doctrine\EntityAccess;
@@ -253,7 +253,7 @@ class LifecycleListener {
 
                 return $event;
             }
-            «IF hasUploads»
+            «IF !getUploadEntities.empty»
 
                 /**
                  * Returns list of upload fields for the given object type.

@@ -40,8 +40,7 @@ class ItemSelector {
         «objName».itemSelector.baseId = 0;
         «objName».itemSelector.selectedId = 0;
 
-        «objName».itemSelector.onLoad = function (baseId, selectedId)
-        {
+        «objName».itemSelector.onLoad = function (baseId, selectedId) {
             «objName».itemSelector.baseId = baseId;
             «objName».itemSelector.selectedId = selectedId;
 
@@ -59,15 +58,13 @@ class ItemSelector {
             «objName».itemSelector.getItemList();
         };
 
-        «objName».itemSelector.onParamChanged = function ()
-        {
+        «objName».itemSelector.onParamChanged = function () {
             jQuery('#ajaxIndicator').removeClass('hidden');
 
             «objName».itemSelector.getItemList();
         };
 
-        «objName».itemSelector.getItemList = function ()
-        {
+        «objName».itemSelector.getItemList = function () {
             var baseId;
             var params;
 
@@ -84,7 +81,7 @@ class ItemSelector {
                 params[catidsMain] = jQuery('#' + baseId + '_catidsMain').val();
             }
 
-            jQuery.getJSON(Routing.generate('«appName.formatForDB»_ajax_getitemlistfinder'), params, function( data ) {
+            jQuery.getJSON(Routing.generate('«appName.formatForDB»_ajax_getitemlistfinder'), params, function (data) {
                 var baseId;
 
                 baseId = «objName».itemSelector.baseId;
@@ -95,8 +92,7 @@ class ItemSelector {
             });
         };
 
-        «objName».itemSelector.updateItemDropdownEntries = function ()
-        {
+        «objName».itemSelector.updateItemDropdownEntries = function () {
             var baseId, itemSelector, items, i, item;
 
             baseId = «objName».itemSelector.baseId;
@@ -114,8 +110,7 @@ class ItemSelector {
             }
         };
 
-        «objName».itemSelector.updatePreview = function ()
-        {
+        «objName».itemSelector.updatePreview = function () {
             var baseId, items, selectedElement, i;
 
             baseId = «objName».itemSelector.baseId;
@@ -147,8 +142,7 @@ class ItemSelector {
             }
         };
 
-        «objName».itemSelector.onItemChanged = function ()
-        {
+        «objName».itemSelector.onItemChanged = function () {
             var baseId, itemSelector, preview;
 
             baseId = «objName».itemSelector.baseId;
@@ -162,7 +156,7 @@ class ItemSelector {
             «ENDIF»
         };
 
-        jQuery(document).ready(function() {
+        jQuery(document).ready(function () {
             var infoElem;
 
             infoElem = jQuery('#itemSelectorInfo');

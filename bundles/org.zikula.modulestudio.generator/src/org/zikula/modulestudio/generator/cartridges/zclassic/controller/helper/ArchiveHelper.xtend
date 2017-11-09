@@ -1,12 +1,11 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.controller.helper
 
 import de.guite.modulestudio.metamodel.Application
-import de.guite.modulestudio.metamodel.DateField
-import de.guite.modulestudio.metamodel.DatetimeField
 import de.guite.modulestudio.metamodel.Entity
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
+import org.zikula.modulestudio.generator.extensions.DateTimeExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
@@ -16,6 +15,7 @@ import org.zikula.modulestudio.generator.extensions.Utils
 class ArchiveHelper {
 
     extension ControllerExtensions = new ControllerExtensions
+    extension DateTimeExtensions = new DateTimeExtensions
     extension FormattingExtensions = new FormattingExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension ModelExtensions = new ModelExtensions
@@ -168,10 +168,10 @@ class ArchiveHelper {
         protected function archive«nameMultiple.formatForCodeCapital»()
         {
             «val endField = getEndDateField»
-            «IF endField instanceof DatetimeField»
-                $today = date('Y-m-d H:i:s');
-            «ELSEIF endField instanceof DateField»
-                $today = date('Y-m-d') . ' 00:00:00';
+            «IF endField.isDateTimeField»
+                $today = «endField.defaultValueForNow»;
+            «ELSEIF endField.isDateField»
+                $today = «endField.defaultValueForNow» . ' 00:00:00';
             «ENDIF»
 
             $affectedEntities = $this->getObjectsToBeArchived('«name.formatForCode»', '«endField.name.formatForCode»', $today);

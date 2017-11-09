@@ -52,8 +52,7 @@ class TreeFunctions {
         /**
          * Initialise a tree.
          */
-        function «vendorAndName»InitTree(idPrefix, theObjectType, theRootId, hasDisplayAction, hasEditAction)
-        {
+        function «vendorAndName»InitTree(idPrefix, theObjectType, theRootId, hasDisplayAction, hasEditAction) {
             objectType = theObjectType;
             rootId = theRootId;
             hasDisplay = hasDisplayAction;
@@ -69,7 +68,7 @@ class TreeFunctions {
                 },
                 'dnd': {
                     'copy': false,
-                    'is_draggable': function(node) {
+                    'is_draggable': function (node) {
                         // disable drag and drop for root category
                         return !jQuery(node).hasClass('lvl0');
                     }
@@ -80,7 +79,7 @@ class TreeFunctions {
                 'plugins': [ 'contextmenu', 'dnd', 'search', 'state', 'wholerow'«/*, 'types' */» ]
             });
             «/*
-            tree.on('open_node.jstree', function(e, data) {
+            tree.on('open_node.jstree', function (event, data) {
                 if (data.instance.is_leaf(data.node)) {
                     return;
                 }
@@ -91,7 +90,7 @@ class TreeFunctions {
                     .find('i.jstree-icon.jstree-themeicon').first()
                         .removeClass('fa-folder').addClass('fa-folder-open');
             });
-            tree.on('close_node.jstree', function(e, data) {
+            tree.on('close_node.jstree', function (event, data) {
                 if (data.instance.is_leaf(data.node)) {
                     return;
                 }
@@ -100,7 +99,7 @@ class TreeFunctions {
             });*/»
 
             // Drag n drop
-            tree.on('move_node.jstree', function (e, data) {
+            tree.on('move_node.jstree', function (event, data) {
                 var node = data.node;
                 var parentId = data.parent;
                 var parentNode = tree.jstree('get_node', parentId, false);
@@ -109,11 +108,11 @@ class TreeFunctions {
             });
 
             // Expand and collapse
-            jQuery('#' + idPrefix + 'Expand').click(function(event) {
+            jQuery('#' + idPrefix + 'Expand').click(function (event) {
                 event.preventDefault();
                 tree.jstree(true).open_all(null, 500);
             });
-            jQuery('#' + idPrefix + 'Collapse').click(function(event) {
+            jQuery('#' + idPrefix + 'Collapse').click(function (event) {
                 event.preventDefault();
                 tree.jstree(true).close_all(null, 500);
             });
@@ -131,7 +130,7 @@ class TreeFunctions {
             });
 
             // allow redirecting if a link has been clicked
-            tree.find('ul').on('click', 'li.jstree-node a', function(e) {
+            tree.find('ul').on('click', 'li.jstree-node a', function (event) {
                 tree.jstree('save_state');
                 document.location.href = jQuery(this).attr('href');
             });
@@ -142,8 +141,7 @@ class TreeFunctions {
         /**
          * Initialise context menu actions for a given tree node.
          */
-        function «vendorAndName»TreeContextMenuActions(theNode)
-        {
+        function «vendorAndName»TreeContextMenuActions(theNode) {
             «initTreeNodesImpl»
         }
     '''
@@ -260,8 +258,7 @@ class TreeFunctions {
          * Helper function to start several different ajax actions
          * performing tree related amendments and operations.
          */
-        function «vendorAndName»PerformTreeOperation(objectType, rootId, op)
-        {
+        function «vendorAndName»PerformTreeOperation(objectType, rootId, op) {
             var opParam, params;
 
             opParam = ((op === 'moveNodeTop' || op === 'moveNodeUp' || op === 'moveNodeDown' || op === 'moveNodeBottom') ? 'moveNode' : op);
@@ -293,7 +290,7 @@ class TreeFunctions {
                 method: 'POST',
                 url: Routing.generate('«appName.formatForDB»_ajax_handletreeoperation'),
                 data: params
-            }).done(function(response) {
+            }).done(function (response) {
                 if (response.result == 'success') {
                     /*«vendorAndName»SimpleAlert(jQuery('.tree-container'), Translator.__('Success'), response.message, 'treeAjaxDoneAlert', 'success');*/
 
@@ -305,7 +302,7 @@ class TreeFunctions {
                 } else {
                     «vendorAndName»SimpleAlert(jQuery('.tree-container'), Translator.__('Error'), response.message != '' ? response.message : Translator.__('Could not persist your change.'), 'treeAjaxFailedAlert', 'danger');
                 }
-            }).fail(function(jqXHR, textStatus) {
+            }).fail(function (jqXHR, textStatus) {
                 «vendorAndName»SimpleAlert(jQuery('.tree-container'), Translator.__('Error'), Translator.__('Could not persist your change.'), 'treeAjaxFailedAlert', 'danger');
             });
         }
@@ -322,8 +319,7 @@ class TreeFunctions {
          *
          * @return true on success, otherwise the change will be reverted
          */
-        function «vendorAndName»TreeSave(node, parentNode, position)
-        {
+        function «vendorAndName»TreeSave(node, parentNode, position) {
             var nodeParts, rootId, nodeId, destId;
 
             // do not allow inserts on root level
@@ -346,9 +342,9 @@ class TreeFunctions {
                     id: nodeId,
                     destid: destId
                 }
-            }).done(function(res) {
+            }).done(function (res) {
                 return true;
-            }).fail(function(jqXHR, textStatus) {
+            }).fail(function (jqXHR, textStatus) {
                 var treeName = 'itemTree' + rootId;
                 «vendorAndName»SimpleAlert(jQuery('.tree-container'), Translator.__('Error'), Translator.__('Could not persist your change.'), 'treeAjaxFailedAlert', 'danger');
 
@@ -361,7 +357,7 @@ class TreeFunctions {
     '''
 
     def private onLoad(Application it) '''
-        jQuery(document).ready(function() {
+        jQuery(document).ready(function () {
             if (jQuery('#treeAddRoot').length > 0) {
                 jQuery('#treeAddRoot').click(function (event) {
                     event.preventDefault();

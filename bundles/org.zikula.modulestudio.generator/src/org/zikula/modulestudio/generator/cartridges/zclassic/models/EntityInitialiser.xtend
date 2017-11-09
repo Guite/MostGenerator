@@ -1,12 +1,10 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.models
 
-import de.guite.modulestudio.metamodel.AbstractDateField
 import de.guite.modulestudio.metamodel.Application
-import de.guite.modulestudio.metamodel.DateField
 import de.guite.modulestudio.metamodel.DatetimeField
-import de.guite.modulestudio.metamodel.TimeField
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
+import org.zikula.modulestudio.generator.extensions.DateTimeExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
@@ -15,6 +13,7 @@ import org.zikula.modulestudio.generator.extensions.Utils
 
 class EntityInitialiser {
 
+    extension DateTimeExtensions = new DateTimeExtensions
     extension FormattingExtensions = new FormattingExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension ModelExtensions = new ModelExtensions
@@ -101,7 +100,7 @@ class EntityInitialiser {
                  */
                 public function init«entity.name.formatForCodeCapital»(«entity.name.formatForCodeCapital»Entity $entity)
                 {
-                    «FOR field : entity.getDerivedFields.filter(AbstractDateField)»
+                    «FOR field : entity.getDerivedFields.filter(DatetimeField)»
                         «field.setDefaultValue»
                     «ENDFOR»
                     «IF !entity.getListFieldsEntity.filter[name != 'workflowState'].empty»
@@ -142,19 +141,15 @@ class EntityInitialiser {
         }
     '''
 
-    def private setDefaultValue(AbstractDateField it) {
+    def private setDefaultValue(DatetimeField it) {
         if (it.defaultValue !== null && it.defaultValue != '' && it.defaultValue.length > 0) {
             if (it.defaultValue != 'now') {
                 '''$entity->set«name.formatForCodeCapital»(new \DateTime('«it.defaultValue»'));'''
             } else {
-                '''$entity->set«name.formatForCodeCapital»(\DateTime::createFromFormat('«defaultFormat»', date('«defaultFormat»')));'''
+                '''$entity->set«name.formatForCodeCapital»(\DateTime::createFromFormat('«defaultFormat»', «defaultValueForNow»));'''
             }
         }
     }
-
-    def private dispatch defaultFormat(DatetimeField it) '''Y-m-d H:i:s'''
-    def private dispatch defaultFormat(DateField it) '''Y-m-d'''
-    def private dispatch defaultFormat(TimeField it) '''H:i:s'''
 
     def private hasListFieldsExceptWorkflowState(Application it) {
         !getAllListFields.filter[name != 'workflowState'].empty

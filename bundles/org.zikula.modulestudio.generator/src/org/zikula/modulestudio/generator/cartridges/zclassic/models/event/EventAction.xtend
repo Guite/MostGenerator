@@ -18,7 +18,7 @@ class EventAction {
     }
 
     def postLoad(Application it) '''
-        «IF hasUploads»
+        «IF !getUploadEntities.empty»
 
             // prepare helper fields for uploaded files
             $uploadFields = $this->getUploadFields($entity->get_objectType());
@@ -38,7 +38,7 @@ class EventAction {
     '''
 
     def prePersist(Application it) '''
-        «IF hasUploads»
+        «IF !getUploadEntities.empty»
 
             $uploadFields = $this->getUploadFields(«entityVar»->get_objectType());
             foreach ($uploadFields as $uploadField) {
@@ -87,7 +87,7 @@ class EventAction {
     def postRemove(Application it) '''
 
         $objectType = «entityVar»->get_objectType();
-        «IF hasUploads»
+        «IF !getUploadEntities.empty»
 
             $uploadFields = $this->getUploadFields($objectType);
             if (count($uploadFields) > 0) {
@@ -113,7 +113,7 @@ class EventAction {
     '''
 
     def preUpdate(Application it) '''
-        «IF hasUploads»
+        «IF !getUploadEntities.empty»
 
             $uploadFields = $this->getUploadFields(«entityVar»->get_objectType());
             foreach ($uploadFields as $uploadField) {

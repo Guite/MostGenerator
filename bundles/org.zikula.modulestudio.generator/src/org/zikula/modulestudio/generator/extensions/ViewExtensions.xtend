@@ -10,6 +10,7 @@ import de.guite.modulestudio.metamodel.JoinRelationship
 class ViewExtensions {
 
     extension ControllerExtensions = new ControllerExtensions
+    extension DateTimeExtensions = new DateTimeExtensions
     extension FormattingExtensions = new FormattingExtensions
     extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
@@ -115,7 +116,7 @@ class ViewExtensions {
         if (generateKmlTemplates && hasGeographical) {
             formats.add('kml')
         }
-        if (generateIcsTemplates && hasDisplayActions && !getAllEntities.filter[hasDisplayAction && null !== startDateField && null !== endDateField].empty) {
+        if (generateIcsTemplates && hasDisplayActions && !getAllEntities.filter[hasDisplayAction && hasStartAndEndDateField].empty) {
             formats.add('ics')
         }
         if (generatePdfSupport) {

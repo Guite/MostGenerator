@@ -361,7 +361,7 @@ class View {
 
     def private headerLine(DerivedField it) '''
         «IF name == 'workflowState'»{% if routeArea == 'admin' %}«ENDIF»
-        <th id="h«markupIdCode(false)»" scope="col" class="text-«alignment»«IF !entity.getSortingFields.contains(it)» «IF !entity.application.targets('2.0')»z-order-«ENDIF»unsorted«ENDIF»">
+        <th id="h«markupIdCode(false)»" scope="col" class="text-«alignment»«IF !entity.getSortingFields.contains(it)» «IF !application.targets('2.0')»z-order-«ENDIF»unsorted«ENDIF»">
             «val fieldLabel = if (name == 'workflowState') 'state' else name»
             «IF entity.getSortingFields.contains(it)»
                 «headerSortingLink(entity, name.formatForCode, fieldLabel)»
@@ -413,19 +413,19 @@ class View {
     def private dispatch displayEntryInner(DerivedField it, Boolean useTarget) '''
         «IF #['name', 'title'].contains(name)»
             «IF entity instanceof Entity && (entity as Entity).hasDisplayAction»
-                <a href="{{ path('«entity.application.appName.formatForDB»_«entity.name.formatForDB»_' ~ routeArea ~ 'display'«(entity as Entity).routeParams(entity.name.formatForCode, true)») }}" title="{{ __('View detail page')|e('html_attr') }}">«displayLeadingEntry»</a>
+                <a href="{{ path('«application.appName.formatForDB»_«entity.name.formatForDB»_' ~ routeArea ~ 'display'«(entity as Entity).routeParams(entity.name.formatForCode, true)») }}" title="{{ __('View detail page')|e('html_attr') }}">«displayLeadingEntry»</a>
             «ELSE»
                 «displayLeadingEntry»
             «ENDIF»
         «ELSEIF name == 'workflowState'»
-            {{ «entity.name.formatForCode».workflowState|«entity.application.appName.formatForDB»_objectState }}
+            {{ «entity.name.formatForCode».workflowState|«application.appName.formatForDB»_objectState }}
         «ELSE»
             «fieldHelper.displayField(it, entity.name.formatForCode, 'view')»
         «ENDIF»
     '''
 
     def private displayLeadingEntry(DerivedField it) {
-        '''{{ «entity.name.formatForCode».«name.formatForCode»«IF entity instanceof Entity && !((entity as Entity).skipHookSubscribers)»|notifyFilters('«entity.application.appName.formatForDB».filterhook.«(entity as Entity).nameMultiple.formatForDB»')|safeHtml«ENDIF» }}'''
+        '''{{ «entity.name.formatForCode».«name.formatForCode»«IF entity instanceof Entity && !((entity as Entity).skipHookSubscribers)»|notifyFilters('«application.appName.formatForDB».filterhook.«(entity as Entity).nameMultiple.formatForDB»')|safeHtml«ENDIF» }}'''
     }
 
     def private dispatch displayEntryInner(JoinRelationship it, Boolean useTarget) '''

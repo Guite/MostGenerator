@@ -8,11 +8,13 @@ import de.guite.modulestudio.metamodel.DisplayAction
 import de.guite.modulestudio.metamodel.EditAction
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.EntityTreeType
+import de.guite.modulestudio.metamodel.EntityWorkflowType
 import de.guite.modulestudio.metamodel.MainAction
 import de.guite.modulestudio.metamodel.OneToManyRelationship
 import de.guite.modulestudio.metamodel.OneToOneRelationship
 import de.guite.modulestudio.metamodel.ViewAction
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
+import org.zikula.modulestudio.generator.extensions.DateTimeExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
@@ -22,6 +24,7 @@ import org.zikula.modulestudio.generator.extensions.Utils
 class Actions {
 
     extension ControllerExtensions = new ControllerExtensions
+    extension DateTimeExtensions = new DateTimeExtensions
     extension FormattingExtensions = new FormattingExtensions
     extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     extension ModelExtensions = new ModelExtensions
@@ -182,6 +185,12 @@ class Actions {
         // create identifier for permission check
         $instanceId = $«name.formatForCode»->getKey();
         «action.permissionCheck("' . ucfirst($objectType) . '", "$instanceId . ")»
+        «IF workflow != EntityWorkflowType.NONE»
+
+            if ($«name.formatForCode»['workflowState'] != 'approved' && !$this->hasPermission('«app.appName»:' . ucfirst($objectType) . ':', $instanceId . '::', ACCESS_ADMIN)) {
+                throw new AccessDeniedException();
+            }
+        «ENDIF»
 
         «IF loggable»
             $requestedVersion = $request->query->getInt('version', 0);
@@ -220,7 +229,7 @@ class Actions {
     def private processDisplayOutput(Entity it) '''
         // fetch and return the appropriate template
         $response = $this->get('«app.appService».view_helper')->processTemplate($objectType, 'display', $templateParameters);
-        «IF app.generateIcsTemplates && app.hasDisplayActions && !app.getAllEntities.filter[hasDisplayAction && null !== startDateField && null !== endDateField].empty»
+        «IF app.generateIcsTemplates && app.hasDisplayActions && !app.getAllEntities.filter[hasDisplayAction && hasStartAndEndDateField].empty»
 
             if ('ics' == $request->getRequestFormat()) {
                 $fileName = $objectType . '_' .

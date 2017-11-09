@@ -1,9 +1,10 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.view.pages
 
 import de.guite.modulestudio.metamodel.Application
-import de.guite.modulestudio.metamodel.Variable
+import de.guite.modulestudio.metamodel.DerivedField
 import de.guite.modulestudio.metamodel.Variables
 import org.eclipse.xtext.generator.IFileSystemAccess
+import org.zikula.modulestudio.generator.cartridges.zclassic.view.formcomponents.SharedFormElements
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
@@ -15,6 +16,7 @@ class Config {
     extension FormattingExtensions = new FormattingExtensions
     extension ModelExtensions = new ModelExtensions
     extension NamingExtensions = new NamingExtensions
+    extension SharedFormElements = new SharedFormElements
     extension Utils = new Utils
     extension WorkflowExtensions = new WorkflowExtensions
 
@@ -76,7 +78,7 @@ class Config {
                     </div>
                 </div>
 
-                <div class="form-group">
+                <div class="form-group form-buttons">
                     <div class="col-sm-offset-3 col-sm-9">
                         {{ form_widget(form.save) }}
                         {{ form_widget(form.cancel) }}
@@ -85,12 +87,15 @@ class Config {
                 {{ form_end(form) }}
             </div>
         {% endblock %}
-        «IF hasImageFields»
-            {% block footer %}
-                {{ parent() }}
+        {% block footer %}
+            {{ parent() }}
+            «IF hasImageFields»
                 {{ pageAddAsset('javascript', zasset('@«appName»:js/«appName».Config.js')) }}
-            {% endblock %}
-        «ENDIF»
+            «ENDIF»
+            {{ pageAddAsset('javascript', zasset('@«appName»:js/«appName».Validation.js'), 98) }}
+            {{ pageAddAsset('javascript', zasset('@«appName»:js/«appName».EditFunctions.js'), 99) }}
+            «formTemplateJS»
+        {% endblock %}
     '''
 
     def private configSections(Application it) '''
@@ -130,7 +135,7 @@ class Config {
                         <legend>{{ tabTitle }}</legend>
                         «val fieldSuffix = entity.name.formatForCodeCapital + imageUploadField.name.formatForCodeCapital»
 
-                        «FOR modvar : vars.filter[name.endsWith(fieldSuffix) || name.endsWith(fieldSuffix + 'View') || name.endsWith(fieldSuffix + 'Display') || name.endsWith(fieldSuffix + 'Edit')]»«modvar.formRow»«ENDFOR»
+                        «FOR field : fields.filter(DerivedField).filter[name.endsWith(fieldSuffix) || name.endsWith(fieldSuffix + 'View') || name.endsWith(fieldSuffix + 'Display') || name.endsWith(fieldSuffix + 'Edit')]»«field.fieldWrapper»«ENDFOR»
                     </fieldset>
                 </div>
             «ENDFOR»
@@ -151,19 +156,41 @@ class Config {
                 <p class="alert alert-info">{{ __('Here you can manage all basic settings for this application.') }}</p>
             «ENDIF»
 
-            «FOR modvar : vars»«modvar.formRow»«ENDFOR»
+            «FOR field : fields.filter(DerivedField)»«field.fieldWrapper»«ENDFOR»
         </fieldset>
     '''
 
+    def private formTemplateJS(Application it) '''
+        {% set formInitScript %}
+            <script>
+            /* <![CDATA[ */
+                «jsInitImpl»
+            /* ]]> */
+            </script>
+        {% endset %}
+        {{ pageAddAsset('footer', formInitScript) }}
+    '''
+
+    def private jsInitImpl(Application it) '''
+        ( function($) {
+            $(document).ready(function() {
+                «vendorAndName»InitEditForm('edit', '1');
+                «FOR varContainer : getSortedVariableContainers»
+                    «FOR field : varContainer.fields»«field.additionalInitScript»«ENDFOR»
+                «ENDFOR»
+            });
+        })(jQuery);
+    '''
+
     def private isImageArea(Variables it) {
-        it.name == 'Images' && !it.vars.filter[name.formatForCode.startsWith('shrinkWidth')].empty
+        it.name == 'Images' && !it.fields.filter[name.formatForCode.startsWith('shrinkWidth')].empty
     }
 
-    def private formRow(Variable it) '''
+    def private fieldWrapper(DerivedField it) '''
         «IF name.formatForCode.startsWith('shrinkWidth')»
             <div id="shrinkDetails«name.formatForCode.replace('shrinkWidth', '').formatForCodeCapital»">
         «ENDIF»
-        {{ form_row(form.«name.formatForCode») }}
+        «fieldFormRow»
         «IF name.formatForCode.startsWith('shrinkHeight')»
             </div>
         «ENDIF»

@@ -52,8 +52,7 @@ class InlineEditing {
         /**
          * Helper function to create new modal form dialog instances.
          */
-        function «vendorAndName»CreateInlineEditingWindowInstance(containerElem)
-        {
+        function «vendorAndName»CreateInlineEditingWindowInstance(containerElem) {
             var newWindowId;
 
             // define the new window instance
@@ -89,8 +88,7 @@ class InlineEditing {
         /**
          * Observe a link for opening an inline window.
          */
-        function «vendorAndName»InitInlineEditingWindow(objectType, idPrefix, containerId, inputType)
-        {
+        function «vendorAndName»InitInlineEditingWindow(objectType, idPrefix, containerId, inputType) {
             var found, newEditHandler;
 
             // whether the handler has been found
@@ -137,8 +135,7 @@ class InlineEditing {
         /**
          * Creates a link for editing an existing item using inline editing.
          */
-        function «vendorAndName»CreateInlineEditLink(objectType, idPrefix, elemPrefix, itemId)
-        {
+        function «vendorAndName»CreateInlineEditLink(objectType, idPrefix, elemPrefix, itemId) {
             var editHref, editLink;
 
             editHref = jQuery('#' + idPrefix + 'SelectorDoNew').attr('href') + '&id=' + itemId;
@@ -158,8 +155,7 @@ class InlineEditing {
         /**
          * Initialises behaviour for an inline editing link.
          */
-        function «vendorAndName»InitInlineEditLink(objectType, idPrefix, elemPrefix, itemId, inputType)
-        {
+        function «vendorAndName»InitInlineEditLink(objectType, idPrefix, elemPrefix, itemId, inputType) {
             jQuery('#' + elemPrefix + 'Edit').click(function (event) {
                 event.preventDefault();
                 «vendorAndName»InitInlineEditingWindow(objectType, idPrefix, idPrefix + 'Reference_' + itemId + 'Edit');
@@ -171,8 +167,7 @@ class InlineEditing {
         /**
          * Returns the input field reference for a given context
          */
-        function «vendorAndName»DetermineInputReference(objectType, alias, idPrefix, inputType, targetWindow)
-        {
+        function «vendorAndName»DetermineInputReference(objectType, alias, idPrefix, inputType, targetWindow) {
             var inputPrefix, inputIdentifier, inputField;
 
             // determine reference to input element
@@ -202,8 +197,7 @@ class InlineEditing {
         /**
          * Initialises inline editing capability for a certain form section.
          */
-        function «vendorAndName»InitInlineEditingButtons(objectType, alias, idPrefix, inputType, createUrl)
-        {
+        function «vendorAndName»InitInlineEditingButtons(objectType, alias, idPrefix, inputType, createUrl) {
             var inputReference, createButtonId, createButton, itemIds, itemIdsArr;
 
             inputReference = «vendorAndName»DetermineInputReference(objectType, alias, idPrefix, inputType, window);
@@ -293,8 +287,7 @@ class InlineEditing {
         /**
          * Closes an iframe from the document displayed in it.
          */
-        function «vendorAndName»CloseWindowFromInside(idPrefix, itemId, formattedTitle, searchTerm)
-        {
+        function «vendorAndName»CloseWindowFromInside(idPrefix, itemId, formattedTitle, searchTerm) {
             // if there is no parent window do nothing
             if (window.parent === '') {
                 return;
@@ -331,7 +324,7 @@ class InlineEditing {
                         if (searchTerm != '') {
                             inputReference.field.autocomplete('option', 'autoFocus', true);
                             inputReference.field.autocomplete('search', searchTerm);
-                            window.setTimeout(function() {
+                            window.setTimeout(function () {
                                 var suggestions = inputReference.field.autocomplete('widget')[0].children;
                                 if (suggestions.length === 1) {
                                     window.parent.jQuery(suggestions[0]).click();

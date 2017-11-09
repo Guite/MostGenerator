@@ -200,7 +200,7 @@ class Utils {
      * @return List<Variable> The selected list
      */
     def getAllVariables(Application it) {
-        variables.map[vars].flatten.toList
+        variables.map[fields].flatten.toList
     }
 
     /**
