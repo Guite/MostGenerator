@@ -6,7 +6,6 @@ import de.guite.modulestudio.metamodel.AuthMethodType
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.HookProviderMode
 import de.guite.modulestudio.metamodel.MappedSuperClass
-import de.guite.modulestudio.metamodel.UploadField
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.DateTimeExtensions
@@ -103,11 +102,6 @@ class ServiceDefinitions {
         «ENDIF»
           - { resource: 'twig.yml' }
           - { resource: 'logger.yml' }
-        «IF hasImageFields || !variables.map[fields].filter(UploadField).filter[isImageField].empty»
-
-        parameters:
-            liip_imagine.cache.signer.class: «appNamespace»\Imagine\Cache\DummySigner
-        «ENDIF»
     '''
 
     def private authentication(Application it) '''
