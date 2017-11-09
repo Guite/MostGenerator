@@ -147,7 +147,7 @@ class AppSettings {
          * @param GroupRepositoryInterface $groupRepository GroupRepository service instance
          «ENDIF»
          */
-        protected function __construct(
+        public function __construct(
             VariableApiInterface $variableApi«IF hasUserVariables»,
             UserRepositoryInterface $userRepository«ENDIF»«IF hasUserGroupSelectors»,
             GroupRepositoryInterface $groupRepository«ENDIF»
