@@ -5,7 +5,10 @@ import de.guite.modulestudio.metamodel.ArrayField
 import de.guite.modulestudio.metamodel.AuthMethodType
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.HookProviderMode
+import de.guite.modulestudio.metamodel.ListField
 import de.guite.modulestudio.metamodel.MappedSuperClass
+import de.guite.modulestudio.metamodel.StringField
+import de.guite.modulestudio.metamodel.StringRole
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.DateTimeExtensions
@@ -662,6 +665,12 @@ class ServiceDefinitions {
                 class: «nsBase»ConfigType
                 arguments:
                     - "@translator.default"
+                   «IF !getAllVariables.filter(ListField).empty»
+                       - "@«modPrefix».listentries_helper"
+                   «ENDIF»
+                   «IF !getAllVariables.filter(StringField).filter[role == StringRole.LOCALE].empty»
+                       - "@zikula_settings_module.locale_api"
+                   «ENDIF»
                 «IF targets('2.0')»
                     tags: ['form.type']
                 «ELSE»
