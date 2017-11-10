@@ -13,6 +13,7 @@ import de.guite.modulestudio.metamodel.OneToManyRelationship
 import de.guite.modulestudio.metamodel.OneToOneRelationship
 import de.guite.modulestudio.metamodel.RelationAutoCompletionUsage
 import de.guite.modulestudio.metamodel.Relationship
+import de.guite.modulestudio.metamodel.ManyToManyPermissionInheritanceType
 
 /**
  * This class contains model join relationship related extension methods.
@@ -89,6 +90,15 @@ class ModelJoinExtensions {
         incoming.filter(OneToOneRelationship).filter[bidirectional]
             + incoming.filter(OneToManyRelationship).filter[bidirectional]
             + incoming.filter(ManyToManyRelationship).filter[bidirectional]
+    }
+
+    /**
+     * Returns a list of all incoming bidirectional join relations which inherit permissions.
+     */
+    def getBidirectionalIncomingPermissionInheriters(DataObject it) {
+        incoming.filter(OneToOneRelationship).filter[bidirectional && inheritPermissions]
+            + incoming.filter(OneToManyRelationship).filter[bidirectional && inheritPermissions]
+            + incoming.filter(ManyToManyRelationship).filter[bidirectional && inheritPermissions != ManyToManyPermissionInheritanceType.NONE]
     }
 
     /**

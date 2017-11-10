@@ -350,9 +350,10 @@ class CategoryHelper {
         {
             $filteredEntities = [];
             foreach ($entities as $entity) {
-                if ($this->hasPermission($entity)) {
-                    $filteredEntities[] = $entity;
+                if (!$this->hasPermission($entity)) {
+                    continue;
                 }
+                $filteredEntities[] = $entity;
             }
 
             return $filteredEntities;

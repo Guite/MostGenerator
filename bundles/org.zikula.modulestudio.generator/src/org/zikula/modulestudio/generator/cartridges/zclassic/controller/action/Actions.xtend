@@ -10,6 +10,7 @@ import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.EntityTreeType
 import de.guite.modulestudio.metamodel.EntityWorkflowType
 import de.guite.modulestudio.metamodel.MainAction
+import de.guite.modulestudio.metamodel.ManyToManyRelationship
 import de.guite.modulestudio.metamodel.OneToManyRelationship
 import de.guite.modulestudio.metamodel.OneToOneRelationship
 import de.guite.modulestudio.metamodel.ViewAction
@@ -18,8 +19,10 @@ import org.zikula.modulestudio.generator.extensions.DateTimeExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
+import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
+import de.guite.modulestudio.metamodel.ManyToManyPermissionInheritanceType
 
 class Actions {
 
@@ -28,6 +31,7 @@ class Actions {
     extension FormattingExtensions = new FormattingExtensions
     extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     extension ModelExtensions = new ModelExtensions
+    extension ModelJoinExtensions = new ModelJoinExtensions
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
 
@@ -126,12 +130,59 @@ class Actions {
 
         $templateParameters = $controllerHelper->processViewActionParameters($objectType, $sortableColumns, $templateParameters«IF app.hasHookSubscribers», «(!skipHookSubscribers).displayBool»«ENDIF»);
 
+        // filter by permissions
+        $filteredEntities = [];
+        foreach ($templateParameters['items'] as $«name.formatForCode») {
+            if (!$this->hasPermission('«app.appName»:' . ucfirst($objectType) . ':', $«name.formatForCode»->getKey() . '::', $permLevel)) {
+                continue;
+            }
+            $filteredEntities[] = $«name.formatForCode»;
+        }
+        $templateParameters['items'] = $filteredEntities;
         «IF categorisable»
+
+            // filter by category permissions
             $featureActivationHelper = $this->get('«app.appService».feature_activation_helper');
             if ($featureActivationHelper->isEnabled(FeatureActivationHelper::CATEGORIES, $objectType)) {
                 $templateParameters['items'] = $this->get('«app.appService».category_helper')->filterEntitiesByPermission($templateParameters['items']);
             }
+        «ENDIF»
+        «IF !getBidirectionalIncomingPermissionInheriters.empty»
 
+            // filter by inherited permissions
+            $filteredEntities = [];
+            foreach ($templateParameters['items'] as $«name.formatForCode») {
+                «FOR relation : getBidirectionalIncomingPermissionInheriters»
+                    «IF relation instanceof OneToOneRelationship || relation instanceof OneToManyRelationship»
+                        if (null !== $«name.formatForCode»->get«relation.getRelationAliasName(false).formatForCodeCapital»()) {
+                            $parent = $«name.formatForCode»->get«relation.getRelationAliasName(false).formatForCodeCapital»();
+                            if (!$this->hasPermission('«app.appName»:' . ucfirst($parent->get_objectType()) . ':', $parent->getKey() . '::', $permLevel)) {
+                                continue;
+                            }
+                        }
+                    «ELSEIF relation instanceof ManyToManyRelationship»
+                        $parentAccess = «(relation.inheritPermissions == ManyToManyPermissionInheritanceType.UNANIMOUS).displayBool»;
+                        foreach ($«name.formatForCode»->get«relation.getRelationAliasName(false).formatForCodeCapital»() as $parent) {
+                            «IF relation.inheritPermissions == ManyToManyPermissionInheritanceType.AFFIRMATIVE»
+                                if ($this->hasPermission('«app.appName»:' . ucfirst($parent->get_objectType()) . ':', $parent->getKey() . '::', $permLevel)) {
+                                    $parentAccess = true;
+                                    break;
+                                }
+                            «ELSEIF relation.inheritPermissions == ManyToManyPermissionInheritanceType.UNANIMOUS»
+                                if (!$this->hasPermission('«app.appName»:' . ucfirst($parent->get_objectType()) . ':', $parent->getKey() . '::', $permLevel)) {
+                                    $parentAccess = false;
+                                    break;
+                                }
+                            «ENDIF»
+                        }
+                        if (true !== $parentAccess) {
+                            continue;
+                        }
+                    «ENDIF»
+                «ENDFOR»
+                $filteredEntities[] = $«name.formatForCode»;
+            }
+            $templateParameters['items'] = $filteredEntities;
         «ENDIF»
         «IF loggable»
 
@@ -187,12 +238,52 @@ class Actions {
         «action.permissionCheck("' . ucfirst($objectType) . '", "$instanceId . ")»
         «IF workflow != EntityWorkflowType.NONE»
 
-            if ($«name.formatForCode»['workflowState'] != 'approved' && !$this->hasPermission('«app.appName»:' . ucfirst($objectType) . ':', $instanceId . '::', ACCESS_ADMIN)) {
+            if ($«name.formatForCode»->getWorkflowState() != 'approved' && !$this->hasPermission('«app.appName»:' . ucfirst($objectType) . ':', $instanceId . '::', ACCESS_ADMIN)) {
                 throw new AccessDeniedException();
             }
         «ENDIF»
+        «IF categorisable»
 
+            $featureActivationHelper = $this->get('«app.appService».feature_activation_helper');
+            if ($featureActivationHelper->isEnabled(FeatureActivationHelper::CATEGORIES, $objectType)) {
+                if (!$this->get('«app.appService».category_helper')->hasPermission($«name.formatForCode»)) {
+                    throw new AccessDeniedException();
+                }
+            }
+        «ENDIF»
+        «IF !getBidirectionalIncomingPermissionInheriters.empty»
+
+            // check inherited permissions
+            «FOR relation : getBidirectionalIncomingPermissionInheriters»
+                «IF relation instanceof OneToOneRelationship || relation instanceof OneToManyRelationship»
+                    if (null !== $«name.formatForCode»->get«relation.getRelationAliasName(false).formatForCodeCapital»()) {
+                        $parent = $«name.formatForCode»->get«relation.getRelationAliasName(false).formatForCodeCapital»();
+                        «action.permissionCheck("' . ucfirst($parent->get_objectType()) . '", "$parent->getKey() . ")»
+                    }
+                «ELSEIF relation instanceof ManyToManyRelationship»
+                    «IF relation.inheritPermissions == ManyToManyPermissionInheritanceType.AFFIRMATIVE»
+                        $parentAccess = false;
+                    «ENDIF»
+                    foreach ($«name.formatForCode»->get«relation.getRelationAliasName(false).formatForCodeCapital»() as $parent) {
+                        «IF relation.inheritPermissions == ManyToManyPermissionInheritanceType.AFFIRMATIVE»
+                            if ($this->hasPermission('«app.appName»:' . ucfirst($parent->get_objectType()) . ':', $parent->getKey() . '::', $permLevel)) {
+                                $parentAccess = true;
+                                break;
+                            }
+                        «ELSEIF relation.inheritPermissions == ManyToManyPermissionInheritanceType.UNANIMOUS»
+                            «action.permissionCheck("' . ucfirst($parent->get_objectType()) . '", "$parent->getKey() . ")»
+                        «ENDIF»
+                    }
+                    «IF relation.inheritPermissions == ManyToManyPermissionInheritanceType.AFFIRMATIVE»
+                        if (true !== $parentAccess) {
+                            throw new AccessDeniedException();
+                        }
+                    «ENDIF»
+                «ENDIF»
+            «ENDFOR»
+        «ENDIF»
         «IF loggable»
+
             $requestedVersion = $request->query->getInt('version', 0);
             if ($requestedVersion > 0) {
                 // preview of a specific version is desired
@@ -206,19 +297,11 @@ class Actions {
                 }
             }
         «ENDIF»
+
         $templateParameters = [
             'routeArea' => $isAdmin ? 'admin' : '',
             $objectType => $«name.formatForCode»
         ];
-        «IF categorisable»
-
-            $featureActivationHelper = $this->get('«app.appService».feature_activation_helper');
-            if ($featureActivationHelper->isEnabled(FeatureActivationHelper::CATEGORIES, $objectType)) {
-                if (!$this->get('«app.appService».category_helper')->hasPermission($«name.formatForCode»)) {
-                    throw new AccessDeniedException();
-                }
-            }
-        «ENDIF»
 
         $controllerHelper = $this->get('«app.appService».controller_helper');
         $templateParameters = $controllerHelper->processDisplayActionParameters($objectType, $templateParameters«IF app.hasHookSubscribers», «(!skipHookSubscribers).displayBool»«ENDIF»);

@@ -432,7 +432,6 @@ class ControllerHelper {
             $templateParameters['sort'] = $sort;
             $templateParameters['sortdir'] = $sortdir;
             $templateParameters['items'] = $entities;
-
             «IF hasHookSubscribers»
 
                 if (true === $hasHookSubscriber) {
