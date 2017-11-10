@@ -30,6 +30,7 @@ import de.guite.modulestudio.metamodel.StringField
 import de.guite.modulestudio.metamodel.StringRole
 import de.guite.modulestudio.metamodel.TextField
 import de.guite.modulestudio.metamodel.UploadField
+import de.guite.modulestudio.metamodel.UploadNamingScheme
 import de.guite.modulestudio.metamodel.UrlField
 import de.guite.modulestudio.metamodel.UserField
 import java.util.List
@@ -152,6 +153,15 @@ class ModelExtensions {
      */
     def hasUploads(Application it) {
         !getUploadEntities.empty || !variables.map[fields].filter(UploadField).empty
+    }
+
+    /**
+     * Checks whether an upload field with a certain upload naming scheme exists or not.
+     */
+    def hasUploadNamingScheme(Application it, UploadNamingScheme scheme) {
+        !entities.map[fields].filter(UploadField).filter[namingScheme == scheme].empty
+        ||
+        !variables.map[fields].filter(UploadField).filter[namingScheme == scheme].empty
     }
 
     /**

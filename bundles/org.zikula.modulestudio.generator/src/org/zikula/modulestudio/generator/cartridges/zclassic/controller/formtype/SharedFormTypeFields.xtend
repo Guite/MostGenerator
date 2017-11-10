@@ -20,6 +20,7 @@ import de.guite.modulestudio.metamodel.StringIssnStyle
 import de.guite.modulestudio.metamodel.StringRole
 import de.guite.modulestudio.metamodel.TextField
 import de.guite.modulestudio.metamodel.UploadField
+import de.guite.modulestudio.metamodel.UploadNamingScheme
 import de.guite.modulestudio.metamodel.UrlField
 import de.guite.modulestudio.metamodel.UserField
 import java.math.BigInteger
@@ -642,7 +643,8 @@ class SharedFormTypeFields {
     def private dispatch additionalOptions(UploadField it) '''
         'entity' => $options['entity'],
         'allowed_extensions' => '«allowedExtensions»',
-        'allowed_size' => '«maxSize»'
+        'allowed_size' => '«maxSize»'«IF namingScheme == UploadNamingScheme.USERDEFINEDWITHCOUNTER»,
+        'custom_filename' => true«ENDIF»
     '''
 
     def private fetchListEntries(ListField it) '''

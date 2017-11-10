@@ -3,6 +3,7 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.controller.helper
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.UploadField
+import de.guite.modulestudio.metamodel.UploadNamingScheme
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
@@ -161,10 +162,13 @@ class UploadHelper {
          * @param string       $objectType Currently treated entity type
          * @param UploadedFile $file       The uploaded file
          * @param string       $fieldName  Name of upload field
+         «IF hasUploadNamingScheme(UploadNamingScheme.USERDEFINEDWITHCOUNTER)»
+         * @param string       $customName Optional custom file name
+         «ENDIF»
          *
          * @return array Resulting file name and collected meta data
          */
-        public function performFileUpload($objectType, $file, $fieldName)
+        public function performFileUpload($objectType, $file, $fieldName«IF hasUploadNamingScheme(UploadNamingScheme.USERDEFINEDWITHCOUNTER)», $customName«ENDIF»)
         {
             $result = [
                 'fileName' => '',
@@ -190,7 +194,11 @@ class UploadHelper {
             }
             $extension = str_replace('jpeg', 'jpg', $extension);
             $fileNameParts[count($fileNameParts) - 1] = $extension;
-            $fileName = implode('.', $fileNameParts);
+            «IF hasUploadNamingScheme(UploadNamingScheme.USERDEFINEDWITHCOUNTER)»
+                $fileName = !empty($customName) ? $customName . '.' . $extension : implode('.', $fileNameParts);
+            «ELSE»
+                $fileName = implode('.', $fileNameParts);
+            «ENDIF»
 
             $flashBag = $this->session->getFlashBag();
 
@@ -429,10 +437,7 @@ class UploadHelper {
          */
         protected function determineFileName($objectType, $fieldName, $basePath, $fileName, $extension)
         {
-            $backupFileName = $fileName;
-
             $namingScheme = 0;
-
             switch ($objectType) {
                 «FOR entity : getUploadEntities.filter(Entity)»«entity.determineFileNameEntityCase»«ENDFOR»
                 «IF !variables.map[fields].filter(UploadField).empty»
@@ -440,22 +445,25 @@ class UploadHelper {
                 «ENDIF»
             }
 
+            if ($namingScheme == 0 || $namingScheme == 3) {
+                // clean the given file name
+                $fileNameCharCount = strlen($fileName);
+                for ($y = 0; $y < $fileNameCharCount; $y++) {
+                    if (preg_match('/[^0-9A-Za-z_\.]/', $fileName[$y])) {
+                        $fileName[$y] = '_';
+                    }
+                }
+            }
+            $backupFileName = $fileName;
 
             $iterIndex = -1;
             do {
-                if ($namingScheme == 0) {
-                    // original file name
-                    $fileNameCharCount = strlen($fileName);
-                    for ($y = 0; $y < $fileNameCharCount; $y++) {
-                        if (preg_match('/[^0-9A-Za-z_\.]/', $fileName[$y])) {
-                            $fileName[$y] = '_';
-                        }
-                    }
-                    // append incremented number
+                if ($namingScheme == 0 || $namingScheme == 3) {
+                    // original (0) or user defined (3) file name with counter
                     if ($iterIndex > 0) {
                         // strip off extension
                         $fileName = str_replace('.' . $extension, '', $backupFileName);
-                        // add iterated number
+                        // append incremented number
                         $fileName .= (string) ++$iterIndex;
                         // readd extension
                         $fileName .= '.' . $extension;
@@ -464,7 +472,7 @@ class UploadHelper {
                     }
                 } elseif ($namingScheme == 1) {
                     // md5 name
-                    $fileName = md5(uniqid(mt_rand(), TRUE)) . '.' . $extension;
+                    $fileName = md5(uniqid(mt_rand(), true)) . '.' . $extension;
                 } elseif ($namingScheme == 2) {
                     // prefix with random number
                     $fileName = $fieldName . mt_rand(1, 999999) . '.' . $extension;
@@ -472,7 +480,7 @@ class UploadHelper {
             }
             while (file_exists($basePath . $fileName)); // repeat until we have a new name
 
-            // return the new file name
+            // return the final file name
             return $fileName;
         }
     '''

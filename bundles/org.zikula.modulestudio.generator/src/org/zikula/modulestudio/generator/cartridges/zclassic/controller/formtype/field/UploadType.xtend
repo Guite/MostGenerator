@@ -1,19 +1,22 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype.field
 
 import de.guite.modulestudio.metamodel.Application
+import de.guite.modulestudio.metamodel.UploadNamingScheme
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
+import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class UploadType {
 
-    extension FormattingExtensions = new FormattingExtensions()
-    extension NamingExtensions = new NamingExtensions()
-    extension Utils = new Utils()
+    extension FormattingExtensions = new FormattingExtensions
+    extension ModelExtensions = new ModelExtensions
+    extension NamingExtensions = new NamingExtensions
+    extension Utils = new Utils
 
-    FileHelper fh = new FileHelper()
+    FileHelper fh = new FileHelper
 
     def generate(Application it, IFileSystemAccess fsa) {
         generateClassPair(fsa, getAppSourceLibPath + 'Form/Type/Field/UploadType.php',
@@ -27,6 +30,9 @@ class UploadType {
         use Symfony\Component\Form\AbstractType;
         use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
         use Symfony\Component\Form\Extension\Core\Type\FileType;
+        «IF hasUploadNamingScheme(UploadNamingScheme.USERDEFINEDWITHCOUNTER)»
+            use Symfony\Component\Form\Extension\Core\Type\TextType;
+        «ENDIF»
         use Symfony\Component\Form\FormBuilderInterface;
         use Symfony\Component\Form\FormInterface;
         use Symfony\Component\Form\FormView;
@@ -111,21 +117,33 @@ class UploadType {
                 $fileOptions['attr']['class'] = 'validate-upload';
 
                 $builder->add($fieldName, FileType::class, $fileOptions);
-                $uploadFileTransformer = new UploadFileTransformer($this, $this->requestStack, $this->uploadHelper, $fieldName);
+                $uploadFileTransformer = new UploadFileTransformer($this, $this->requestStack, $this->uploadHelper, $fieldName«IF hasUploadNamingScheme(UploadNamingScheme.USERDEFINEDWITHCOUNTER)», $options['custom_filename']«ENDIF»);
                 $builder->get($fieldName)->addModelTransformer($uploadFileTransformer);
 
-                if ($options['required']) {
-                    return;
+                if (!$options['required']) {
+                    $builder->add($fieldName . 'DeleteFile', CheckboxType::class, [
+                        'mapped' => false,
+                        'label' => $this->translator->__('Delete existing file'),
+                        'required' => false,
+                        'attr' => [
+                            'title' => $this->translator->__('Delete this file ?')
+                        ]
+                    ]);
                 }
+                «IF hasUploadNamingScheme(UploadNamingScheme.USERDEFINEDWITHCOUNTER)»
 
-                $builder->add($fieldName . 'DeleteFile', CheckboxType::class, [
-                    'mapped' => false,
-                    'label' => $this->translator->__('Delete existing file'),
-                    'required' => false,
-                    'attr' => [
-                        'title' => $this->translator->__('Delete this file ?')
-                    ]
-                ]);
+                    if (true === $options['custom_filename']) {
+                        $builder->add($fieldName . 'CustomFileName', TextType::class, [
+                            'mapped' => false,
+                            'label' => $this->translator->__('Custom file name'),
+                            'required' => false,
+                            'attr' => [
+                                'title' => $this->translator->__('Optionally enter a custom file name (without extension)')
+                            ],
+                            'help' => $this->translator->__('Optionally enter a custom file name (without extension)')
+                        ]);
+                    }
+                «ENDIF»
             }
 
             /**
@@ -174,6 +192,10 @@ class UploadType {
                 if (true === $fileMeta['isImage']) {
                     $view->vars['thumb_runtime_options'] = $this->imageHelper->getRuntimeOptions($this->entity->get_objectType(), $fieldName, 'controllerAction', ['action' => 'edit']);
                 }
+                «IF hasUploadNamingScheme(UploadNamingScheme.USERDEFINEDWITHCOUNTER)»
+
+                    $view->vars['has_custom_filename'] = $options['custom_filename'];
+                «ENDIF»
             }
 
             /**
@@ -183,17 +205,23 @@ class UploadType {
             {
                 $resolver
                     ->setRequired(['entity'])
-                    ->setDefined(['allowed_extensions', 'allowed_size'])
+                    ->setDefined(['allowed_extensions', 'allowed_size'«IF hasUploadNamingScheme(UploadNamingScheme.USERDEFINEDWITHCOUNTER)», 'custom_filename'«ENDIF»])
                     ->setDefaults([
                         'attr' => [
                             'class' => 'file-selector'
                         ],
                         'allowed_extensions' => '',
                         'allowed_size' => '',
+                        «IF hasUploadNamingScheme(UploadNamingScheme.USERDEFINEDWITHCOUNTER)»
+                            'custom_filename' => false,
+                        «ENDIF»
                         'error_bubbling' => false
                     ])
                     ->setAllowedTypes('allowed_extensions', 'string')
                     ->setAllowedTypes('allowed_size', 'string')
+                    «IF hasUploadNamingScheme(UploadNamingScheme.USERDEFINEDWITHCOUNTER)»
+                        ->setAllowedTypes('custom_filename', 'bool')
+                    «ENDIF»
                 ;
             }
 

@@ -1,17 +1,20 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.controller.form
 
 import de.guite.modulestudio.metamodel.Application
+import de.guite.modulestudio.metamodel.UploadNamingScheme
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
+import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class UploadFileTransformer {
 
-    extension NamingExtensions = new NamingExtensions()
-    extension Utils = new Utils()
+    extension ModelExtensions = new ModelExtensions
+    extension NamingExtensions = new NamingExtensions
+    extension Utils = new Utils
 
-    FileHelper fh = new FileHelper()
+    FileHelper fh = new FileHelper
 
     def generate(Application it, IFileSystemAccess fsa) {
         generateClassPair(fsa, getAppSourceLibPath + 'Form/DataTransformer/UploadFileTransformer.php',
@@ -56,6 +59,13 @@ class UploadFileTransformer {
              * @var string
              */
             protected $fieldName = '';
+            «IF hasUploadNamingScheme(UploadNamingScheme.USERDEFINEDWITHCOUNTER)»
+
+                /**
+                 * @var boolean
+                 */
+                protected $supportCustomFileName = false;
+            «ENDIF»
 
             /**
              * UploadFileTransformer constructor.
@@ -64,13 +74,19 @@ class UploadFileTransformer {
              * @param RequestStack $requestStack RequestStack service instance
              * @param UploadHelper $uploadHelper UploadHelper service instance
              * @param string       $fieldName    The form field name
+             «IF hasUploadNamingScheme(UploadNamingScheme.USERDEFINEDWITHCOUNTER)»
+             * @param boolean      $customName   Whether a custom file name is supported or not
+             «ENDIF»
              */
-            public function __construct(UploadType $formType, RequestStack $requestStack, UploadHelper $uploadHelper, $fieldName = '')
+            public function __construct(UploadType $formType, RequestStack $requestStack, UploadHelper $uploadHelper, $fieldName = ''«IF hasUploadNamingScheme(UploadNamingScheme.USERDEFINEDWITHCOUNTER)», $customName = false«ENDIF»)
             {
                 $this->formType = $formType;
                 $this->request = $requestStack->getCurrentRequest();
                 $this->uploadHelper = $uploadHelper;
                 $this->fieldName = $fieldName;
+                «IF hasUploadNamingScheme(UploadNamingScheme.USERDEFINEDWITHCOUNTER)»
+                    $this->supportCustomFileName = $customName;
+                «ENDIF»
             }
 
             /**
@@ -103,6 +119,9 @@ class UploadFileTransformer {
             {
                 $deleteFile = false;
                 $uploadedFile = null;
+                «IF hasUploadNamingScheme(UploadNamingScheme.USERDEFINEDWITHCOUNTER)»
+                    $customFileName = '';
+                «ENDIF»
 
                 if ($data instanceof UploadedFile) {
                     // no file deletion checkbox has been provided
@@ -111,6 +130,12 @@ class UploadFileTransformer {
                     $children = $this->formType->getFormBuilder()->all();
                     foreach ($children as $child) {
                         $childForm = $child->getForm();
+                        «IF hasUploadNamingScheme(UploadNamingScheme.USERDEFINEDWITHCOUNTER)»
+                            if (true === $this->supportCustomFileName && false !== strpos($childForm->getName(), 'CustomFileName')) {
+                                $customFileName = $childForm->getData();
+                                continue;
+                            }
+                        «ENDIF»
                         if (false !== strpos($childForm->getName(), 'DeleteFile')) {
                             //$deleteFile = $childForm->getData();
                             foreach ($_POST as $k => $v) {
@@ -170,7 +195,7 @@ class UploadFileTransformer {
                 }
 
                 // do the actual upload (includes validation, physical file processing and reading meta data)
-                $uploadResult = $this->uploadHelper->performFileUpload($objectType, $uploadedFile, $fieldName);
+                $uploadResult = $this->uploadHelper->performFileUpload($objectType, $uploadedFile, $fieldName«IF hasUploadNamingScheme(UploadNamingScheme.USERDEFINEDWITHCOUNTER)», $customFileName«ENDIF»);
 
                 $result = null;
                 $metaData = [];

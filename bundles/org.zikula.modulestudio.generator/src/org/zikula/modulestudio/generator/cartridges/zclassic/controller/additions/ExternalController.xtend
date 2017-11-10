@@ -23,7 +23,7 @@ class ExternalController {
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
 
-    FileHelper fh = new FileHelper()
+    FileHelper fh = new FileHelper
 
     def generate(Application it, IFileSystemAccess fsa) {
         if (!generateExternalControllerAndFinder || !hasDisplayActions) {

@@ -2,6 +2,7 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.view
 
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.DatetimeField
+import de.guite.modulestudio.metamodel.UploadNamingScheme
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
@@ -179,6 +180,11 @@ class Layout {
                     {% if allowed_size|default %}
                         <em class="help-block small">{{ __('Allowed file size') }}: {{ allowed_size }}</em>
                     {% endif %}
+                    «IF hasUploadNamingScheme(UploadNamingScheme.USERDEFINEDWITHCOUNTER)»
+                        {% if has_custom_filename %}
+                            {{ form_row(attribute(form, field_name ~ 'CustomFileName')) }}
+                        {% endif %}
+                    «ENDIF»
                     {% if file_path|default %}
                         <span class="help-block">
                             {{ __('Current file') }}:

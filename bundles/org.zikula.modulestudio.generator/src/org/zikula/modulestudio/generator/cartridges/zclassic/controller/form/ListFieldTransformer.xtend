@@ -8,10 +8,10 @@ import org.zikula.modulestudio.generator.extensions.Utils
 
 class ListFieldTransformer {
 
-    extension NamingExtensions = new NamingExtensions()
-    extension Utils = new Utils()
+    extension NamingExtensions = new NamingExtensions
+    extension Utils = new Utils
 
-    FileHelper fh = new FileHelper()
+    FileHelper fh = new FileHelper
 
     def generate(Application it, IFileSystemAccess fsa) {
         generateClassPair(fsa, getAppSourceLibPath + 'Form/DataTransformer/ListFieldTransformer.php',

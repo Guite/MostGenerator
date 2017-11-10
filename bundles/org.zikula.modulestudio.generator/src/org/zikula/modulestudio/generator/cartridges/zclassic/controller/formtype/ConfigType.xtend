@@ -5,6 +5,7 @@ import de.guite.modulestudio.metamodel.DerivedField
 import de.guite.modulestudio.metamodel.ListField
 import de.guite.modulestudio.metamodel.StringField
 import de.guite.modulestudio.metamodel.StringRole
+import de.guite.modulestudio.metamodel.UploadField
 import de.guite.modulestudio.metamodel.Variables
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
@@ -102,6 +103,25 @@ class ConfigType {
                 «ENDFOR»
 
                 $this->addSubmitButtons($builder, $options);
+                «IF !getAllVariables.filter(UploadField).empty»
+
+                    $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
+                        $data = $event->getData();
+                        foreach (['«getAllVariables.filter(UploadField).map[f|f.name.formatForCode].join("', '")»'] as $uploadFieldName) {
+                            $data[$uploadFieldName] = [
+                                $uploadFieldName => $data[$uploadFieldName] instanceof File ? $data[$uploadFieldName]->getPathname() : null
+                            ];
+                        }
+                    });
+                    $builder->addEventListener(FormEvents::SUBMIT, function (FormEvent $event) {
+                        $data = $event->getData();
+                        foreach (['«getAllVariables.filter(UploadField).map[f|f.name.formatForCode].join("', '")»'] as $uploadFieldName) {
+                            if (is_array($data[$uploadFieldName])) {
+                                $data[$uploadFieldName] = $data[$uploadFieldName][$uploadFieldName];
+                            }
+                        }
+                    });
+                «ENDIF»
             }
 
             «FOR varContainer : getSortedVariableContainers»

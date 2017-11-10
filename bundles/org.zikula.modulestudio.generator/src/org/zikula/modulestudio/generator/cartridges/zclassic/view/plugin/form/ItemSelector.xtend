@@ -11,13 +11,13 @@ import org.zikula.modulestudio.generator.extensions.Utils
 
 class ItemSelector {
 
-    extension FormattingExtensions = new FormattingExtensions()
-    extension ModelExtensions = new ModelExtensions()
-    extension ModelBehaviourExtensions = new ModelBehaviourExtensions()
-    extension NamingExtensions = new NamingExtensions()
-    extension Utils = new Utils()
+    extension FormattingExtensions = new FormattingExtensions
+    extension ModelExtensions = new ModelExtensions
+    extension ModelBehaviourExtensions = new ModelBehaviourExtensions
+    extension NamingExtensions = new NamingExtensions
+    extension Utils = new Utils
 
-    FileHelper fh = new FileHelper()
+    FileHelper fh = new FileHelper
 
     def generate(Application it, IFileSystemAccess fsa) {
         generateClassPair(fsa, getAppSourceLibPath + 'Form/Plugin/ItemSelector.php',
