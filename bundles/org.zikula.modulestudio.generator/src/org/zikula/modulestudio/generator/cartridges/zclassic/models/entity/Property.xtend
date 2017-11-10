@@ -5,15 +5,15 @@ import de.guite.modulestudio.metamodel.AbstractStringField
 import de.guite.modulestudio.metamodel.ArrayField
 import de.guite.modulestudio.metamodel.BooleanField
 import de.guite.modulestudio.metamodel.DatetimeField
-import de.guite.modulestudio.metamodel.DecimalField
 import de.guite.modulestudio.metamodel.DerivedField
 import de.guite.modulestudio.metamodel.EmailField
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.EntityIdentifierStrategy
 import de.guite.modulestudio.metamodel.Field
-import de.guite.modulestudio.metamodel.FloatField
 import de.guite.modulestudio.metamodel.IntegerField
 import de.guite.modulestudio.metamodel.ListField
+import de.guite.modulestudio.metamodel.NumberField
+import de.guite.modulestudio.metamodel.NumberFieldType
 import de.guite.modulestudio.metamodel.ObjectField
 import de.guite.modulestudio.metamodel.StringField
 import de.guite.modulestudio.metamodel.TextField
@@ -110,7 +110,7 @@ class Property {
 
     def private persistentPropertyImpl(DerivedField it, String type) {
         switch it {
-            DecimalField: '''type="«type»", precision=«it.length», scale=«it.scale»'''
+            NumberField: '''type="«type»"«IF numberType == NumberFieldType.DECIMAL», precision=«it.length», scale=«it.scale»«ENDIF»'''
             TextField: '''type="«type»", length=«it.length»'''
             StringField:
                 '''«/*type="«type»", */»length=«it.length»'''
@@ -150,15 +150,13 @@ class Property {
                 if (it.defaultValue == 'true') 'true' else 'false'
             AbstractIntegerField:
                 if (it instanceof IntegerField && (it as IntegerField).version) '1' else if (null !== it.defaultValue && it.defaultValue.length > 0) it.defaultValue else if (it instanceof UserField) 'null' else '0'
-            DecimalField:
+            NumberField:
                 if (null !== it.defaultValue && it.defaultValue.length > 0) it.defaultValue else '0.00'
             ArrayField: '[]'
             UploadField: 'null'
             ObjectField: 'null'
             ListField: if (null !== it.defaultValue && it.defaultValue.length > 0) '\'' + it.defaultValue + '\'' else if (nullable) 'null' else '\'\''
             AbstractStringField: if (null !== it.defaultValue && it.defaultValue.length > 0) '\'' + it.defaultValue + '\'' else '\'\''
-            FloatField:
-                if (null !== it.defaultValue && it.defaultValue.length > 0) it.defaultValue else '0'
             default: '\'\''
         }
     }

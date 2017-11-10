@@ -758,7 +758,7 @@ class ServiceDefinitions {
             class: «nsBase»EntityDisplayHelper
             arguments:
                 - "@translator.default"
-                «IF hasAnyDateTimeFields || hasDecimalOrFloatNumberFields»
+                «IF hasAnyDateTimeFields || hasNumberFields»
                     - "@request_stack"
                 «ENDIF»
                 «IF hasListFields»

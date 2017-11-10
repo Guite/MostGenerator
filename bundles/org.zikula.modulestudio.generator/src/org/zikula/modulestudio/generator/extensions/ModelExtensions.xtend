@@ -8,7 +8,6 @@ import de.guite.modulestudio.metamodel.BooleanField
 import de.guite.modulestudio.metamodel.DataObject
 import de.guite.modulestudio.metamodel.DateTimeComponents
 import de.guite.modulestudio.metamodel.DatetimeField
-import de.guite.modulestudio.metamodel.DecimalField
 import de.guite.modulestudio.metamodel.DerivedField
 import de.guite.modulestudio.metamodel.EmailField
 import de.guite.modulestudio.metamodel.Entity
@@ -18,12 +17,13 @@ import de.guite.modulestudio.metamodel.EntityIndexType
 import de.guite.modulestudio.metamodel.EntityLockType
 import de.guite.modulestudio.metamodel.Field
 import de.guite.modulestudio.metamodel.FieldDisplayType
-import de.guite.modulestudio.metamodel.FloatField
 import de.guite.modulestudio.metamodel.HookProviderMode
 import de.guite.modulestudio.metamodel.IntegerField
 import de.guite.modulestudio.metamodel.IpAddressScope
 import de.guite.modulestudio.metamodel.ListField
 import de.guite.modulestudio.metamodel.ManyToOneRelationship
+import de.guite.modulestudio.metamodel.NumberField
+import de.guite.modulestudio.metamodel.NumberFieldType
 import de.guite.modulestudio.metamodel.ObjectField
 import de.guite.modulestudio.metamodel.OneToOneRelationship
 import de.guite.modulestudio.metamodel.StringField
@@ -487,18 +487,18 @@ class ModelExtensions {
     }
 
     /**
-     * Returns whether any decimal or float fields exist or not.
+     * Returns whether any number fields exist or not.
      */
-    def hasDecimalOrFloatNumberFields(Application it) {
-        !getDecimalOrFloatNumberFields.empty
+    def hasNumberFields(Application it) {
+        !getNumberFields.empty
     }
 
     /**
      * Returns any decimal or float fields.
      */
-    def getDecimalOrFloatNumberFields(Application it) {
+    def getNumberFields(Application it) {
         getAllEntities.map[getSelfAndParentDataObjects.map[
-            fields.filter[f|f instanceof DecimalField || f instanceof FloatField]
+            fields.filter(NumberField)
         ].flatten].flatten
     }
 
@@ -844,7 +844,7 @@ class ModelExtensions {
                     else if (it.length < 12) 'integer'
                     else 'bigint'
             }
-            DecimalField: 'decimal'
+            NumberField: if (numberType == NumberFieldType.DECIMAL) 'decimal' else 'float'
             StringField: 'string'
             TextField: 'text'
             EmailField: 'string'
@@ -854,7 +854,6 @@ class ModelExtensions {
             ArrayField: 'array'
             ObjectField: 'object'
             DatetimeField: dateTimeFieldTypeAsString
-            FloatField: 'float'
             default: ''
         }
     }

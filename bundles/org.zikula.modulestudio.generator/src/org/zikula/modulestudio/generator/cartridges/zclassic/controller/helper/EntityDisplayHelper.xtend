@@ -2,11 +2,10 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.controller.helper
 
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.DatetimeField
-import de.guite.modulestudio.metamodel.DecimalField
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.Field
-import de.guite.modulestudio.metamodel.FloatField
 import de.guite.modulestudio.metamodel.ListField
+import de.guite.modulestudio.metamodel.NumberField
 import de.guite.modulestudio.metamodel.TextField
 import de.guite.modulestudio.metamodel.UploadField
 import de.guite.modulestudio.metamodel.UserField
@@ -42,10 +41,10 @@ class EntityDisplayHelper {
         «IF hasAnyDateTimeFields»
             use IntlDateFormatter;
         «ENDIF»
-        «IF hasDecimalOrFloatNumberFields»
+        «IF hasNumberFields»
             use NumberFormatter;
         «ENDIF»
-        «IF hasAnyDateTimeFields || hasDecimalOrFloatNumberFields»
+        «IF hasAnyDateTimeFields || hasNumberFields»
             use Symfony\Component\HttpFoundation\RequestStack;
         «ENDIF»
         use Zikula\Common\Translator\TranslatorInterface;
@@ -79,7 +78,7 @@ class EntityDisplayHelper {
                  */
                 protected $dateFormatter;
             «ENDIF»
-            «IF hasDecimalOrFloatNumberFields»
+            «IF hasNumberFields»
 
                 /**
                  * @var NumberFormatter Formatter for numbers
@@ -96,7 +95,7 @@ class EntityDisplayHelper {
              * EntityDisplayHelper constructor.
              *
              * @param TranslatorInterface $translator «IF hasListFields»       «ENDIF»Translator service instance
-             «IF hasAnyDateTimeFields || hasDecimalOrFloatNumberFields»
+             «IF hasAnyDateTimeFields || hasNumberFields»
              * @param RequestStack        $requestStack      RequestStack service instance
              «ENDIF»
              «IF hasListFields»
@@ -104,7 +103,7 @@ class EntityDisplayHelper {
              «ENDIF»
              */
             public function __construct(
-                TranslatorInterface $translator«IF hasAnyDateTimeFields || hasDecimalOrFloatNumberFields»,
+                TranslatorInterface $translator«IF hasAnyDateTimeFields || hasNumberFields»,
                 RequestStack $requestStack«ENDIF»«IF hasListFields»,
                 ListEntriesHelper $listEntriesHelper«ENDIF»
             ) {
@@ -112,13 +111,13 @@ class EntityDisplayHelper {
                 «IF hasListFields»
                     $this->listEntriesHelper = $listEntriesHelper;
                 «ENDIF»
-                «IF hasAnyDateTimeFields || hasDecimalOrFloatNumberFields»
+                «IF hasAnyDateTimeFields || hasNumberFields»
                     $locale = null !== $requestStack->getCurrentRequest() ? $requestStack->getCurrentRequest()->getLocale() : null;
                 «ENDIF»
                 «IF hasAnyDateTimeFields»
                     $this->dateFormatter = new IntlDateFormatter($locale, null, null);
                 «ENDIF»
-                «IF hasDecimalOrFloatNumberFields»
+                «IF hasNumberFields»
                     $this->numberFormatter = new NumberFormatter($locale, NumberFormatter::DECIMAL);
                     $this->currencyFormatter = new NumberFormatter($locale, NumberFormatter::CURRENCY);
                 «ENDIF»
@@ -308,8 +307,7 @@ class EntityDisplayHelper {
 
     def private formatFieldValue(Field it, CharSequence value) {
         switch it {
-            DecimalField: '''$this->«IF currency»currencyFormatter->formatCurrency(«value», 'EUR')«ELSE»numberFormatter->format(«value»)«ENDIF»'''
-            FloatField: '''$this->«IF currency»currencyFormatter->formatCurrency(«value», 'EUR')«ELSE»numberFormatter->format(«value»)«ENDIF»'''
+            NumberField: '''$this->«IF currency»currencyFormatter->formatCurrency(«value», 'EUR')«ELSE»numberFormatter->format(«value»)«ENDIF»'''
             UserField: '''(«value» ? «value»->getUname() : '')'''
             ListField: '''«IF null !== entity»$this->listEntriesHelper->resolve(«value», '«entity.name.formatForCode»', '«name.formatForCode»')«ELSE»«value»«ENDIF»'''
             DatetimeField: '''$this->dateFormatter->formatObject(«value», [«IF isDateTimeField»IntlDateFormatter::SHORT, IntlDateFormatter::SHORT«ELSEIF isDateField»IntlDateFormatter::SHORT, IntlDateFormatter::NONE«ELSEIF isTimeField»IntlDateFormatter::NONE, IntlDateFormatter::NONE«ENDIF»])'''

@@ -6,6 +6,7 @@ import de.guite.modulestudio.metamodel.EntityWorkflowType
 import de.guite.modulestudio.metamodel.IpAddressScope
 import de.guite.modulestudio.metamodel.ManyToOneRelationship
 import de.guite.modulestudio.metamodel.ModuleStudioFactory
+import de.guite.modulestudio.metamodel.NumberFieldType
 import de.guite.modulestudio.metamodel.OneToOneRelationship
 import de.guite.modulestudio.metamodel.StringField
 import de.guite.modulestudio.metamodel.StringRole
@@ -400,15 +401,17 @@ class PersistenceTransformer {
         val varContainer = createVarContainerForGeoSettings
         val factory = ModuleStudioFactory.eINSTANCE
 
-        varContainer.fields += factory.createFloatField => [
+        varContainer.fields += factory.createNumberField => [
             name = 'defaultLatitude'
             defaultValue = '0.00'
             documentation = 'The default latitude.'
+            numberType = NumberFieldType.FLOAT
         ]
-        varContainer.fields += factory.createFloatField => [
+        varContainer.fields += factory.createNumberField => [
             name = 'defaultLongitude'
             defaultValue = '0.00'
             documentation = 'The default longitude.'
+            numberType = NumberFieldType.FLOAT
         ]
         varContainer.fields += factory.createIntegerField => [
             name = 'defaultZoomLevel'

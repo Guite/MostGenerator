@@ -6,16 +6,15 @@ import de.guite.modulestudio.metamodel.ArrayField
 import de.guite.modulestudio.metamodel.BooleanField
 import de.guite.modulestudio.metamodel.DataObject
 import de.guite.modulestudio.metamodel.DatetimeField
-import de.guite.modulestudio.metamodel.DecimalField
 import de.guite.modulestudio.metamodel.DerivedField
 import de.guite.modulestudio.metamodel.EmailField
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.EntityIndex
-import de.guite.modulestudio.metamodel.FloatField
 import de.guite.modulestudio.metamodel.IntegerField
 import de.guite.modulestudio.metamodel.IpAddressScope
 import de.guite.modulestudio.metamodel.JoinRelationship
 import de.guite.modulestudio.metamodel.ListField
+import de.guite.modulestudio.metamodel.NumberField
 import de.guite.modulestudio.metamodel.ObjectField
 import de.guite.modulestudio.metamodel.StringField
 import de.guite.modulestudio.metamodel.StringIsbnStyle
@@ -114,18 +113,7 @@ class ValidationConstraints {
             «ENDIF»
         «ENDIF»
     '''
-    def dispatch fieldAnnotations(DecimalField it) '''
-        «fieldAnnotationsNumeric»
-        «IF minValue.toString != '0.0'»
-            «' '»* @Assert\GreaterThanOrEqual(value=«minValue»)
-        «ENDIF»
-        «IF maxValue.toString != '0.0'»
-            «' '»* @Assert\LessThanOrEqual(value=«maxValue»)
-        «ELSE»
-            «' '»* @Assert\LessThan(value=«BigInteger.valueOf((10 ** length) as long)»)
-        «ENDIF»
-    '''
-    def dispatch fieldAnnotations(FloatField it) '''
+    def dispatch fieldAnnotations(NumberField it) '''
         «fieldAnnotationsNumeric»
         «IF minValue.toString != '0.0'»
             «' '»* @Assert\GreaterThanOrEqual(value=«minValue»)

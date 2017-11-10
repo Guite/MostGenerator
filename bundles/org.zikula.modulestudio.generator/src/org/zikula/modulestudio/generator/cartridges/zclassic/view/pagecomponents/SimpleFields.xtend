@@ -3,12 +3,11 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.view.pagecomponent
 import de.guite.modulestudio.metamodel.ArrayField
 import de.guite.modulestudio.metamodel.BooleanField
 import de.guite.modulestudio.metamodel.DatetimeField
-import de.guite.modulestudio.metamodel.DecimalField
 import de.guite.modulestudio.metamodel.EmailField
 import de.guite.modulestudio.metamodel.Field
-import de.guite.modulestudio.metamodel.FloatField
 import de.guite.modulestudio.metamodel.IntegerField
 import de.guite.modulestudio.metamodel.ListField
+import de.guite.modulestudio.metamodel.NumberField
 import de.guite.modulestudio.metamodel.StringField
 import de.guite.modulestudio.metamodel.StringRole
 import de.guite.modulestudio.metamodel.TextField
@@ -57,13 +56,7 @@ class SimpleFields {
     def dispatch displayField(IntegerField it, String objName, String page) '''
         {{ «objName».«name.formatForCode» }}«IF percentage»%«ENDIF»'''
 
-    def dispatch displayField(DecimalField it, String objName, String page) {
-        if (percentage) '''
-            {{ («objName».«name.formatForCode» * 100)|localizednumber }}%'''
-        else '''
-            {{ «objName».«name.formatForCode»|localized«IF currency»currency('EUR')«ELSE»number«ENDIF» }}'''
-    }
-    def dispatch displayField(FloatField it, String objName, String page) {
+    def dispatch displayField(NumberField it, String objName, String page) {
         if (percentage) '''
             {{ («objName».«name.formatForCode» * 100)|localizednumber }}%'''
         else '''

@@ -5,18 +5,17 @@ import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.ArrayField
 import de.guite.modulestudio.metamodel.BooleanField
 import de.guite.modulestudio.metamodel.DatetimeField
-import de.guite.modulestudio.metamodel.DecimalField
 import de.guite.modulestudio.metamodel.DerivedField
 import de.guite.modulestudio.metamodel.EmailField
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.EntityTreeType
-import de.guite.modulestudio.metamodel.FloatField
 import de.guite.modulestudio.metamodel.IntegerField
 import de.guite.modulestudio.metamodel.JoinRelationship
 import de.guite.modulestudio.metamodel.ListField
 import de.guite.modulestudio.metamodel.ListFieldItem
 import de.guite.modulestudio.metamodel.ManyToManyRelationship
 import de.guite.modulestudio.metamodel.ManyToOneRelationship
+import de.guite.modulestudio.metamodel.NumberField
 import de.guite.modulestudio.metamodel.ObjectField
 import de.guite.modulestudio.metamodel.OneToManyRelationship
 import de.guite.modulestudio.metamodel.OneToOneRelationship
@@ -373,7 +372,7 @@ class ExampleDataHelper {
         switch it {
             BooleanField: if (defaultValue == 'true') 'true' else 'false'
             IntegerField: exampleRowValueNumber(dataEntity, number)
-            DecimalField: exampleRowValueNumber(dataEntity, number)
+            NumberField: exampleRowValueNumber(dataEntity, number)
             StringField: if (#[StringRole.COUNTRY, StringRole.LANGUAGE, StringRole.LOCALE].contains(role)) '''$this->request->getLocale()''' else if (it.role == StringRole.CURRENCY) 'EUR' else if (it.role == StringRole.COLOUR) '\'#ff6600\'' else exampleRowValueText(dataEntity, number)
             TextField: exampleRowValueText(dataEntity, number)
             EmailField: '\'' + application.email + '\''
@@ -383,7 +382,6 @@ class ExampleDataHelper {
             ArrayField: exampleRowValueNumber(dataEntity, number)
             ObjectField: exampleRowValueText(dataEntity, number)
             DatetimeField: '''«IF isDateTimeField»«IF it.past»$dtPast«ELSEIF it.future»$dtFuture«ELSE»$dtNow«ENDIF»«ELSEIF isDateField»«IF it.past»$dPast«ELSEIF it.future»$dFuture«ELSE»$dNow«ENDIF»«ELSEIF isTimeField»«IF it.past»$tPast«ELSEIF it.future»$tFuture«ELSE»$tNow«ENDIF»«ENDIF»'''
-            FloatField: exampleRowValueNumber(dataEntity, number)
             ListField: ''''«IF it.multiple»###«FOR item : getDefaultItems SEPARATOR '###'»«item.exampleRowValue»«ENDFOR»###«ELSE»«FOR item : getDefaultItems»«item.exampleRowValue»«ENDFOR»«ENDIF»'«/**/»'''
             default: ''
         }

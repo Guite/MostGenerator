@@ -5,16 +5,15 @@ import de.guite.modulestudio.metamodel.ArrayField
 import de.guite.modulestudio.metamodel.BooleanField
 import de.guite.modulestudio.metamodel.DataObject
 import de.guite.modulestudio.metamodel.DatetimeField
-import de.guite.modulestudio.metamodel.DecimalField
 import de.guite.modulestudio.metamodel.DerivedField
 import de.guite.modulestudio.metamodel.EmailField
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.EntityWorkflowType
 import de.guite.modulestudio.metamodel.Field
-import de.guite.modulestudio.metamodel.FloatField
 import de.guite.modulestudio.metamodel.IntegerField
 import de.guite.modulestudio.metamodel.IpAddressScope
 import de.guite.modulestudio.metamodel.ListField
+import de.guite.modulestudio.metamodel.NumberField
 import de.guite.modulestudio.metamodel.StringField
 import de.guite.modulestudio.metamodel.StringIsbnStyle
 import de.guite.modulestudio.metamodel.StringIssnStyle
@@ -88,16 +87,16 @@ class SharedFormTypeFields {
         «IF !fields.filter(StringField).filter[role == StringRole.LANGUAGE].empty»
             use «nsSymfonyFormType»LanguageType;
         «ENDIF»
-        «IF !fields.filter(DecimalField).filter[currency].empty || !fields.filter(FloatField).filter[currency].empty»
+        «IF !fields.filter(NumberField).filter[currency].empty»
             use «nsSymfonyFormType»MoneyType;
         «ENDIF»
-        «IF !fields.filter(DecimalField).filter[!percentage && !currency].empty || !fields.filter(FloatField).filter[!percentage && !currency].empty»
+        «IF !fields.filter(NumberField).filter[!percentage && !currency].empty»
             use «nsSymfonyFormType»NumberType;
         «ENDIF»
         «IF !fields.filter(StringField).filter[role == StringRole.PASSWORD].empty»
             use «nsSymfonyFormType»PasswordType;
         «ENDIF»
-        «IF !fields.filter(IntegerField).filter[percentage].empty || !fields.filter(DecimalField).filter[percentage].empty || !fields.filter(FloatField).filter[percentage].empty»
+        «IF !fields.filter(IntegerField).filter[percentage].empty || !fields.filter(NumberField).filter[percentage].empty»
             use «nsSymfonyFormType»PercentType;
         «ENDIF»
         «IF !fields.filter(IntegerField).filter[range].empty»
@@ -258,25 +257,7 @@ class SharedFormTypeFields {
         messages
     }
 
-    def private dispatch helpMessages(DecimalField it) {
-        val messages = helpDocumentation
-
-        if (minValue > 0 && maxValue > 0) {
-            if (minValue == maxValue) {
-                messages += '''$this->__f('Note: this value must exactly be %value%.', ['%value%' => «minValue»])'''
-            } else {
-                messages += '''$this->__f('Note: this value must be between %minValue% and %maxValue%.', ['%minValue%' => «minValue», '%maxValue%' => «maxValue»])'''
-            }
-        } else if (minValue > 0) {
-            messages += '''$this->__f('Note: this value must be greater than %minValue%.', ['%minValue%' => «minValue»])'''
-        } else if (maxValue > 0) {
-            messages += '''$this->__f('Note: this value must be less than %maxValue%.', ['%maxValue%' => «maxValue»])'''
-        }
-
-        messages
-    }
-
-    def private dispatch helpMessages(FloatField it) {
+    def private dispatch helpMessages(NumberField it) {
         val messages = helpDocumentation
 
         if (minValue > 0 && maxValue > 0) {
@@ -573,11 +554,11 @@ class SharedFormTypeFields {
         «ENDIF»
     '''
 
-    def private dispatch formType(DecimalField it) '''«IF percentage»Percent«ELSEIF currency»Money«ELSE»Number«ENDIF»'''
-    def private dispatch additionalAttributes(DecimalField it) '''
+    def private dispatch formType(NumberField it) '''«IF percentage»Percent«ELSEIF currency»Money«ELSE»Number«ENDIF»'''
+    def private dispatch additionalAttributes(NumberField it) '''
         'maxlength' => «(length+3+scale)»,
     '''
-    def private dispatch additionalOptions(DecimalField it) '''
+    def private dispatch additionalOptions(NumberField it) '''
         «/* not required since these are the default values IF currency»
             'currency' => 'EUR',
             'divisor' => 1,
@@ -586,21 +567,6 @@ class SharedFormTypeFields {
             'type' => 'fractional',
         «ENDIF*/»
         'scale' => «scale»
-    '''
-
-    def private dispatch formType(FloatField it) '''«IF percentage»Percent«ELSEIF currency»Money«ELSE»Number«ENDIF»'''
-    def private dispatch additionalAttributes(FloatField it) '''
-        'maxlength' => «(length+3+2)»,
-    '''
-    def private dispatch additionalOptions(FloatField it) '''
-        «/* not required since these are the default values IF currency»
-            'currency' => 'EUR',
-            'divisor' => 1,
-        «ENDIF*/»
-        «/* not required since these are the default values IF percentage»
-            'type' => 'fractional',
-        «ENDIF*/»
-        'scale' => 2
     '''
 
     def private dispatch formType(StringField it) '''«IF role == StringRole.COLOUR»Colour«ELSEIF role == StringRole.COUNTRY»Country«ELSEIF role == StringRole.CURRENCY»Currency«ELSEIF role == StringRole.LANGUAGE»Language«ELSEIF role == StringRole.LOCALE»Locale«ELSEIF role == StringRole.PASSWORD»Password«ELSEIF role == StringRole.DATE_INTERVAL && application.targets('2.0')»DateInterval«ELSEIF role == StringRole.TIME_ZONE»Timezone«ELSE»Text«ENDIF»'''

@@ -4,11 +4,10 @@ import de.guite.modulestudio.metamodel.AbstractIntegerField
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.BooleanField
 import de.guite.modulestudio.metamodel.DatetimeField
-import de.guite.modulestudio.metamodel.DecimalField
 import de.guite.modulestudio.metamodel.DerivedField
 import de.guite.modulestudio.metamodel.Entity
-import de.guite.modulestudio.metamodel.FloatField
 import de.guite.modulestudio.metamodel.IntegerField
+import de.guite.modulestudio.metamodel.NumberField
 import de.guite.modulestudio.metamodel.UserField
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
@@ -177,13 +176,7 @@ class FileHelper {
             «setterAssignmentNumeric(name, type)»
         }
     '''
-    def private dispatch setterMethodImpl(DecimalField it, String name, String type, Boolean nullable) '''
-        if (floatval($this->«name.formatForCode») !== floatval($«name»)) {
-            «triggerPropertyChangeListeners(name)»
-            «setterAssignmentNumeric(name, type)»
-        }
-    '''
-    def private dispatch setterMethodImpl(FloatField it, String name, String type, Boolean nullable) '''
+    def private dispatch setterMethodImpl(NumberField it, String name, String type, Boolean nullable) '''
         if (floatval($this->«name.formatForCode») !== floatval($«name»)) {
             «triggerPropertyChangeListeners(name)»
             «setterAssignmentNumeric(name, type)»
