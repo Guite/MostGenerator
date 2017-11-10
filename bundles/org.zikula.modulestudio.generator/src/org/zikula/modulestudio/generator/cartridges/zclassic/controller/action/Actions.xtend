@@ -161,14 +161,14 @@ class Actions {
                             }
                         }
                     «ELSEIF relation instanceof ManyToManyRelationship»
-                        $parentAccess = «(relation.inheritPermissions == ManyToManyPermissionInheritanceType.UNANIMOUS).displayBool»;
+                        $parentAccess = «((relation as ManyToManyRelationship).inheritPermissions == ManyToManyPermissionInheritanceType.UNANIMOUS).displayBool»;
                         foreach ($«name.formatForCode»->get«relation.getRelationAliasName(false).formatForCodeCapital»() as $parent) {
-                            «IF relation.inheritPermissions == ManyToManyPermissionInheritanceType.AFFIRMATIVE»
+                            «IF (relation as ManyToManyRelationship).inheritPermissions == ManyToManyPermissionInheritanceType.AFFIRMATIVE»
                                 if ($this->hasPermission('«app.appName»:' . ucfirst($parent->get_objectType()) . ':', $parent->getKey() . '::', $permLevel)) {
                                     $parentAccess = true;
                                     break;
                                 }
-                            «ELSEIF relation.inheritPermissions == ManyToManyPermissionInheritanceType.UNANIMOUS»
+                            «ELSEIF (relation as ManyToManyRelationship).inheritPermissions == ManyToManyPermissionInheritanceType.UNANIMOUS»
                                 if (!$this->hasPermission('«app.appName»:' . ucfirst($parent->get_objectType()) . ':', $parent->getKey() . '::', $permLevel)) {
                                     $parentAccess = false;
                                     break;
@@ -261,20 +261,20 @@ class Actions {
                         «action.permissionCheck("' . ucfirst($parent->get_objectType()) . '", "$parent->getKey() . ")»
                     }
                 «ELSEIF relation instanceof ManyToManyRelationship»
-                    «IF relation.inheritPermissions == ManyToManyPermissionInheritanceType.AFFIRMATIVE»
+                    «IF (relation as ManyToManyRelationship).inheritPermissions == ManyToManyPermissionInheritanceType.AFFIRMATIVE»
                         $parentAccess = false;
                     «ENDIF»
                     foreach ($«name.formatForCode»->get«relation.getRelationAliasName(false).formatForCodeCapital»() as $parent) {
-                        «IF relation.inheritPermissions == ManyToManyPermissionInheritanceType.AFFIRMATIVE»
+                        «IF (relation as ManyToManyRelationship).inheritPermissions == ManyToManyPermissionInheritanceType.AFFIRMATIVE»
                             if ($this->hasPermission('«app.appName»:' . ucfirst($parent->get_objectType()) . ':', $parent->getKey() . '::', $permLevel)) {
                                 $parentAccess = true;
                                 break;
                             }
-                        «ELSEIF relation.inheritPermissions == ManyToManyPermissionInheritanceType.UNANIMOUS»
+                        «ELSEIF (relation as ManyToManyRelationship).inheritPermissions == ManyToManyPermissionInheritanceType.UNANIMOUS»
                             «action.permissionCheck("' . ucfirst($parent->get_objectType()) . '", "$parent->getKey() . ")»
                         «ENDIF»
                     }
-                    «IF relation.inheritPermissions == ManyToManyPermissionInheritanceType.AFFIRMATIVE»
+                    «IF (relation as ManyToManyRelationship).inheritPermissions == ManyToManyPermissionInheritanceType.AFFIRMATIVE»
                         if (true !== $parentAccess) {
                             throw new AccessDeniedException();
                         }
