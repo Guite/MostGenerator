@@ -545,7 +545,8 @@ class EditEntityType {
                 'multiple' => «categorisableMultiSelection.displayBool»,
                 'module' => '«app.appName»',
                 'entity' => '«name.formatForCodeCapital»Entity',
-                'entityCategoryClass' => '«app.appNamespace»\Entity\«name.formatForCodeCapital»CategoryEntity'
+                'entityCategoryClass' => '«app.appNamespace»\Entity\«name.formatForCodeCapital»CategoryEntity'«IF app.targets('2.0-dev') || (!app.targets('2.0') && app.targets('1.5-dev'))»,
+                'showRegistryLabels' => true«ENDIF»
             ]);
         }
     '''

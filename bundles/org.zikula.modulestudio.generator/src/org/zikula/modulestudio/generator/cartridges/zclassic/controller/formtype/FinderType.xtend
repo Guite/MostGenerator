@@ -207,7 +207,8 @@ class FinderType {
                 'multiple' => «categorisableMultiSelection.displayBool»,
                 'module' => '«app.appName»',
                 'entity' => ucfirst($options['object_type']) . 'Entity',
-                'entityCategoryClass' => '«app.appNamespace»\Entity\\' . ucfirst($options['object_type']) . 'CategoryEntity'
+                'entityCategoryClass' => '«app.appNamespace»\Entity\\' . ucfirst($options['object_type']) . 'CategoryEntity'«IF app.targets('2.0-dev') || (!app.targets('2.0') && app.targets('1.5-dev'))»,
+                'showRegistryLabels' => true«ENDIF»
             ]);
         }
     '''
