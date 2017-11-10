@@ -1326,7 +1326,7 @@ class FormHandler {
                 'mode' => $this->templateParameters['mode'],
                 'actions' => $this->templateParameters['actions'],
                 «IF standardFields»
-                    'has_moderate_permission' => $this->permissionApi->hasPermission($this->permissionComponent, $this->idValue . '::', ACCESS_MODERATE),
+                    'has_moderate_permission' => $this->permissionApi->hasPermission($this->permissionComponent, $this->idValue . '::', ACCESS_ADMIN),
                 «ENDIF»
                 «IF !incoming.empty || !outgoing.empty»
                     'filter_by_ownership' => !$this->permissionApi->hasPermission($this->permissionComponent, $this->idValue . '::', ACCESS_ADD)«IF !incoming.empty || !outgoing.empty»,«ENDIF»
