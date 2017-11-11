@@ -80,8 +80,8 @@ class ExternalController {
          «IF !isBase»
          *
          * @Route("/display/{objectType}/{id}/{source}/{displayMode}",
-         *        requirements = {"id" = "\d+", "source" = "contentType|scribite", "displayMode" = "link|embed"},
-         *        defaults = {"source" = "contentType", "contentType" = "embed"},
+         *        requirements = {"id" = "\d+", "source" = "block|contentType|scribite", "displayMode" = "link|embed"},
+         *        defaults = {"source" = "contentType", "displayMode" = "embed"},
          *        methods = {"GET"}
          * )
          «ENDIF»
