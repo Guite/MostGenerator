@@ -12,8 +12,13 @@ import de.guite.modulestudio.metamodel.EntitySlugStyle
 import de.guite.modulestudio.metamodel.EntityTimestampableType
 import de.guite.modulestudio.metamodel.EntityTreeType
 import de.guite.modulestudio.metamodel.IntegerField
+import de.guite.modulestudio.metamodel.JoinRelationship
+import de.guite.modulestudio.metamodel.ManyToOneRelationship
+import de.guite.modulestudio.metamodel.OneToManyRelationship
+import de.guite.modulestudio.metamodel.OneToOneRelationship
 import de.guite.modulestudio.metamodel.StringField
 import de.guite.modulestudio.metamodel.UserField
+import java.util.List
 
 /**
  * This class contains model behaviour related extension methods.
@@ -235,7 +240,32 @@ class ModelBehaviourExtensions {
      * Returns a list of all string type fields with the sluggable extension enabled.
      */
     def getSluggableFields(Entity it) {
-        getDerivedFields.filter(AbstractStringField).filter[sluggablePosition > 0].sortBy[sluggablePosition]
+        getSelfAndParentDataObjects.map[fields.filter(AbstractStringField).filter[sluggablePosition > 0]].flatten.sortBy[sluggablePosition]
+    }
+
+    /**
+     * Returns a list of all relationships connecting two sluggable entities.
+     * The list is filtered to have unique source-target entity combinations.
+     */
+    def getSlugRelations(Application it) {
+        val allSlugRelations = relations
+            .filter(JoinRelationship)
+            .filter[r|r instanceof OneToOneRelationship || r instanceof OneToManyRelationship || r instanceof ManyToOneRelationship]
+            .filter[r|r.source instanceof Entity && (r.source as Entity).hasSluggableFields && r.target instanceof Entity && (r.target as Entity).hasSluggableFields]
+        val List<JoinRelationship> uniqueSlugRelations = #[]
+        for (relation : allSlugRelations) {
+            var isRedundant = false
+            for (uniqueRelation : uniqueSlugRelations) {
+                if (uniqueRelation.source == relation.source && uniqueRelation.target == relation.target) {
+                    isRedundant = true
+                }
+            }
+            if (!isRedundant) {
+                uniqueSlugRelations += relation
+            }
+        }
+
+        uniqueSlugRelations
     }
 
     /**
