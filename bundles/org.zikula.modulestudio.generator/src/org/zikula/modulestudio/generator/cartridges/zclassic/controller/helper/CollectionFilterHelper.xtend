@@ -374,7 +374,7 @@ class CollectionFilterHelper {
                             $qb->andWhere('tbl.' . $k . ' = :' . $k)
                                ->setParameter($k, $v);
                         «ENDIF»
-                   }
+                    }
                 }
             }
 
