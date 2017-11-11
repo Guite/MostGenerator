@@ -342,31 +342,39 @@ class CollectionFilterHelper {
                         $qb->andWhere('tbl.' . $k . ' = 1');
                     }
                 «ENDIF»
-                } else if (!is_array($v)) {
-                    // field filter
-                    if ((!is_numeric($v) && $v != '') || (is_numeric($v) && $v > 0)) {
-                        if ($k == 'workflowState' && substr($v, 0, 1) == '!') {
-                            $qb->andWhere('tbl.' . $k . ' != :' . $k)
-                               ->setParameter($k, substr($v, 1, strlen($v)-1));
-                        } elseif (substr($v, 0, 1) == '%') {
+                } else if (is_array($v)) {
+                    continue;
+                }
+
+                // field filter
+                if ((!is_numeric($v) && $v != '') || (is_numeric($v) && $v > 0)) {
+                    if ($k == 'workflowState' && substr($v, 0, 1) == '!') {
+                        $qb->andWhere('tbl.' . $k . ' != :' . $k)
+                           ->setParameter($k, substr($v, 1, strlen($v)-1));
+                    } elseif (substr($v, 0, 1) == '%') {
+                        $qb->andWhere('tbl.' . $k . ' LIKE :' . $k)
+                           ->setParameter($k, '%' . substr($v, 1) . '%');
+                    «IF !getListFieldsEntity.filter[multiple].empty»
+                        } elseif (in_array($k, [«FOR field : getListFieldsEntity.filter[multiple] SEPARATOR ', '»'«field.name.formatForCode»'«ENDFOR»])) {
+                            // multi list filter
                             $qb->andWhere('tbl.' . $k . ' LIKE :' . $k)
                                ->setParameter($k, '%' . $v . '%');
-                        } else {
-                            «IF hasUserFieldsEntity»
-                                if (in_array($k, ['«getUserFieldsEntity.map[name.formatForCode].join('\', \'')»'])) {
-                                    $qb->leftJoin('tbl.' . $k, 'tbl' . ucfirst($k))
-                                       ->andWhere('tbl' . ucfirst($k) . '.uid = :' . $k)
-                                       ->setParameter($k, $v);
-                                } else {
-                                    $qb->andWhere('tbl.' . $k . ' = :' . $k)
-                                       ->setParameter($k, $v);
-                                }
-                            «ELSE»
+                    «ENDIF»
+                    } else {
+                        «IF hasUserFieldsEntity»
+                            if (in_array($k, ['«getUserFieldsEntity.map[name.formatForCode].join('\', \'')»'])) {
+                                $qb->leftJoin('tbl.' . $k, 'tbl' . ucfirst($k))
+                                   ->andWhere('tbl' . ucfirst($k) . '.uid = :' . $k)
+                                   ->setParameter($k, $v);
+                            } else {
                                 $qb->andWhere('tbl.' . $k . ' = :' . $k)
                                    ->setParameter($k, $v);
-                            «ENDIF»
-                       }
-                    }
+                            }
+                        «ELSE»
+                            $qb->andWhere('tbl.' . $k . ' = :' . $k)
+                               ->setParameter($k, $v);
+                        «ENDIF»
+                   }
                 }
             }
 
