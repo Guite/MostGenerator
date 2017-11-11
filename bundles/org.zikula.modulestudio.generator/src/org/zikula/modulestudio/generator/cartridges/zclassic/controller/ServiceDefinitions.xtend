@@ -665,12 +665,12 @@ class ServiceDefinitions {
                 class: «nsBase»ConfigType
                 arguments:
                     - "@translator.default"
-                   «IF !getAllVariables.filter(ListField).empty»
-                       - "@«modPrefix».listentries_helper"
-                   «ENDIF»
-                   «IF !getAllVariables.filter(StringField).filter[role == StringRole.LOCALE].empty»
-                       - "@zikula_settings_module.locale_api"
-                   «ENDIF»
+                    «IF !getAllVariables.filter(ListField).empty»
+                        - "@«modPrefix».listentries_helper"
+                    «ENDIF»
+                    «IF !getAllVariables.filter(StringField).filter[role == StringRole.LOCALE].empty»
+                        - "@zikula_settings_module.locale_api"
+                    «ENDIF»
                 «IF targets('2.0')»
                     tags: ['form.type']
                 «ELSE»
