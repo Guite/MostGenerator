@@ -89,7 +89,7 @@ class ExternalController {
          * @param Request $request     The current request
          * @param string  $objectType  The currently treated object type
          * @param int     $id          Identifier of the entity to be shown
-         * @param string  $source      Source of this call (contentType or scribite)
+         * @param string  $source      Source of this call (block, contentType, scribite)
          * @param string  $displayMode Display mode (link or embed)
          *
          * @return string Desired data output
@@ -332,7 +332,7 @@ class ExternalController {
         «displayDocBlock(false)»
         «displaySignature»
         {
-            return parent::displayAction($objectType, $id, $source, $displayMode);
+            return parent::displayAction($request, $objectType, $id, $source, $displayMode);
         }
     '''
 
