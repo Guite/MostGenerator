@@ -179,7 +179,6 @@ class BlockDetailType {
             ksort($choices);
 
             $builder->add('id', ChoiceType::class, [
-                'choice_label' => $choiceLabelClosure,
                 'multiple' => false,
                 'expanded' => false,
                 'choices' => $choices,
