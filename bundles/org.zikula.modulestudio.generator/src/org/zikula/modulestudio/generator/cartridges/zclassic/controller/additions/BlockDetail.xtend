@@ -98,7 +98,7 @@ class BlockDetail {
 
             $controllerReference = new ControllerReference('«appName»:External:display', $this->getDisplayArguments($properties), ['template' => $properties['customTemplate']]);
 
-            return $this->container->get('fragment.handler')->render($controllerReference, 'inline', []);
+            return $this->get('fragment.handler')->render($controllerReference, 'inline', []);
         }
     '''
 
