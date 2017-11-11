@@ -82,6 +82,8 @@ class BlockDetailType {
                 EntityDisplayHelper $entityDisplayHelper
             ) {
                 $this->setTranslator($translator);
+                $this->entityFactory = $entityFactory;
+                $this->entityDisplayHelper = $entityDisplayHelper;
             }
 
             «setTranslatorMethod»
