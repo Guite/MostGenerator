@@ -58,6 +58,24 @@ class FormHandler {
      */
     def generate(Application it, IFileSystemAccess fsa) {
         app = it
+
+        // common form types (shared by entities and variables)
+        if (!entities.filter[e|!e.fields.filter(ArrayField).empty].empty || !variables.map[fields].flatten.filter(ArrayField).empty) {
+            new ArrayType().generate(it, fsa)
+            new ArrayFieldTransformer().generate(it, fsa)
+        }
+        if (hasColourFields) {
+            new ColourType().generate(it, fsa)
+        }
+        if (hasUploads) {
+            new UploadType().generate(it, fsa)
+            new UploadFileTransformer().generate(it, fsa)
+        }
+        if (hasMultiListFields || !variables.map[fields].flatten.filter(ListField).filter[multiple].empty) {
+            new MultiListType().generate(it, fsa)
+            new ListFieldTransformer().generate(it, fsa)
+        }
+
         if (hasEditActions()) {
             // form handlers
             generateCommon('edit', fsa)
@@ -68,26 +86,11 @@ class FormHandler {
             for (entity : entities.filter[it instanceof MappedSuperClass || (it as Entity).hasEditAction]) {
                 new EditEntityType().generate(entity, fsa)
             }
-            if (!entities.filter[e|!e.fields.filter(ArrayField).empty].empty || !variables.map[fields].flatten.filter(ArrayField).empty) {
-                new ArrayType().generate(it, fsa)
-                new ArrayFieldTransformer().generate(it, fsa)
-            }
-            if (hasColourFields) {
-                new ColourType().generate(it, fsa)
-            }
             if (hasGeographical) {
                 new GeoType().generate(it, fsa)
             }
             if (hasTrees) {
                 new EntityTreeType().generate(it, fsa)
-            }
-            if (hasUploads) {
-                new UploadType().generate(it, fsa)
-                new UploadFileTransformer().generate(it, fsa)
-            }
-            if (hasMultiListFields || !variables.map[fields].flatten.filter(ListField).filter[multiple].empty) {
-                new MultiListType().generate(it, fsa)
-                new ListFieldTransformer().generate(it, fsa)
             }
             if (hasAutoCompletionRelation) {
                 new AutoCompletionRelationType().generate(it, fsa)
