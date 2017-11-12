@@ -10,6 +10,7 @@ import de.guite.modulestudio.metamodel.ManyToManyRelationship
 import de.guite.modulestudio.metamodel.MappedSuperClass
 import de.guite.modulestudio.metamodel.OneToManyRelationship
 import de.guite.modulestudio.metamodel.RelationAutoCompletionUsage
+import de.guite.modulestudio.metamodel.RelationEditMode
 import de.guite.modulestudio.metamodel.UploadField
 import de.guite.modulestudio.metamodel.UserField
 import java.util.ArrayList
@@ -586,69 +587,87 @@ class EditEntityType {
     def private relationDefinition(JoinRelationship it, Boolean outgoing, Boolean autoComplete) '''
         «val aliasName = getRelationAliasName(outgoing)»
         «val relatedEntity = if (outgoing) target else source»
-        $queryBuilder = function(EntityRepository $er) {
-            // select without joins
-            return $er->getListQueryBuilder('', '', false);
-        };
-        «IF (relatedEntity as Entity).ownerPermission»
-            if (true === $options['filter_by_ownership']) {
-                $collectionFilterHelper = $this->collectionFilterHelper;
-                $queryBuilder = function(EntityRepository $er) use ($collectionFilterHelper) {
-                    // select without joins
-                    $qb = $er->getListQueryBuilder('', '', false);
-                    $qb = $collectionFilterHelper->addCreatorFilter($qb);
-
-                    return $qb;
-                };
-            }
-        «ENDIF»
-        «IF !autoComplete»
-            $entityDisplayHelper = $this->entityDisplayHelper;
-            $choiceLabelClosure = function ($entity) use ($entityDisplayHelper) {
-                return $entityDisplayHelper->getFormattedTitle($entity);
-            };
-        «ENDIF»
-        «val isExpanded = if (outgoing) expandedTarget else expandedSource»
-        $builder->add('«aliasName.formatForCode»', '«formType(autoComplete)»Type', [
-            «IF autoComplete»
-                «val uniqueNameForJs = getUniqueRelationNameForJs((if (outgoing) source else target), isManySide(outgoing), (if (!isManyToMany) outgoing else !outgoing), aliasName.formatForCodeCapital)»
-                'object_type' => '«relatedEntity.name.formatForCode»',
+        «val editMode = if (outgoing) getTargetEditMode else getSourceEditMode»
+        «IF editMode == RelationEditMode.EMBEDDED»
+            $builder->add('«aliasName.formatForCode»', '«app.appNamespace»\Form\Type\«relatedEntity.name.formatForCodeCapital»Type', [
                 «IF isManySide(outgoing)»
                     'by_reference' => false,
                 «ENDIF»
-                'multiple' => «isManySide(outgoing).displayBool»,
-                'unique_name_for_js' => '«uniqueNameForJs»',
-                'allow_editing' => «(getEditStageCode(!outgoing) > 1).displayBool»,
-                «IF outgoing && nullable»
-                    'required' => false,
-                «ENDIF»
-            «ELSE»
-                'class' => '«app.appName»:«(if (outgoing) target else source).name.formatForCodeCapital»Entity',
-                'choice_label' => $choiceLabelClosure,
-                «IF isManySide(outgoing)»
-                    'by_reference' => false,
-                «ENDIF»
-                'multiple' => «isManySide(outgoing).displayBool»,
-                'expanded' => «isExpanded.displayBool»,
-                'query_builder' => $queryBuilder,
                 «IF /*outgoing && */nullable»
-                    «IF !isManySide(outgoing)»
-                        'placeholder' => $this->__('Please choose an option'),
-                    «ENDIF»
                     'required' => false,
                 «ENDIF»
+                'inline_usage' => true,
+                'label' => $this->__('«aliasName.formatForDisplayCapital»'),
+                «val helpMessage = relationHelpMessages(outgoing)»«IF !helpMessage.empty»'help' => «IF helpMessage.length > 1»[«ENDIF»«helpMessage.join(', ')»«IF helpMessage.length > 1»]«ENDIF»,«ENDIF»
+                'attr' => [
+                    'title' => $this->__('Choose the «aliasName.formatForDisplay»')
+                ]
+            ]);
+        «ELSE»
+            $queryBuilder = function(EntityRepository $er) {
+                // select without joins
+                return $er->getListQueryBuilder('', '', false);
+            };
+            «IF (relatedEntity as Entity).ownerPermission»
+                if (true === $options['filter_by_ownership']) {
+                    $collectionFilterHelper = $this->collectionFilterHelper;
+                    $queryBuilder = function(EntityRepository $er) use ($collectionFilterHelper) {
+                        // select without joins
+                        $qb = $er->getListQueryBuilder('', '', false);
+                        $qb = $collectionFilterHelper->addCreatorFilter($qb);
+
+                        return $qb;
+                    };
+                }
             «ENDIF»
-            'label' => $this->__('«aliasName.formatForDisplayCapital»'),
-            «IF !autoComplete && isExpanded»
-                'label_attr' => [
-                    'class' => '«IF isManySide(outgoing)»checkbox«ELSE»radio«ENDIF»-inline'
-                ],
+            «IF !autoComplete»
+                $entityDisplayHelper = $this->entityDisplayHelper;
+                $choiceLabelClosure = function ($entity) use ($entityDisplayHelper) {
+                    return $entityDisplayHelper->getFormattedTitle($entity);
+                };
             «ENDIF»
-            «val helpMessage = relationHelpMessages(outgoing)»«IF !helpMessage.empty»'help' => «IF helpMessage.length > 1»[«ENDIF»«helpMessage.join(', ')»«IF helpMessage.length > 1»]«ENDIF»,«ENDIF»
-            'attr' => [
-                'title' => $this->__('Choose the «aliasName.formatForDisplay»')
-            ]
-        ]);
+            «val isExpanded = if (outgoing) expandedTarget else expandedSource»
+            $builder->add('«aliasName.formatForCode»', '«formType(autoComplete)»Type', [
+                «IF autoComplete»
+                    «val uniqueNameForJs = getUniqueRelationNameForJs((if (outgoing) source else target), isManySide(outgoing), (if (!isManyToMany) outgoing else !outgoing), aliasName.formatForCodeCapital)»
+                    'object_type' => '«relatedEntity.name.formatForCode»',
+                    «IF isManySide(outgoing)»
+                        'by_reference' => false,
+                    «ENDIF»
+                    'multiple' => «isManySide(outgoing).displayBool»,
+                    'unique_name_for_js' => '«uniqueNameForJs»',
+                    'allow_editing' => «(getEditStageCode(!outgoing) > 1).displayBool»,
+                    «IF outgoing && nullable»
+                        'required' => false,
+                    «ENDIF»
+                «ELSE»
+                    'class' => '«app.appName»:«relatedEntity.name.formatForCodeCapital»Entity',
+                    'choice_label' => $choiceLabelClosure,
+                    «IF isManySide(outgoing)»
+                        'by_reference' => false,
+                    «ENDIF»
+                    'multiple' => «isManySide(outgoing).displayBool»,
+                    'expanded' => «isExpanded.displayBool»,
+                    'query_builder' => $queryBuilder,
+                    «IF /*outgoing && */nullable»
+                        «IF !isManySide(outgoing)»
+                            'placeholder' => $this->__('Please choose an option'),
+                        «ENDIF»
+                        'required' => false,
+                    «ENDIF»
+                «ENDIF»
+                'label' => $this->__('«aliasName.formatForDisplayCapital»'),
+                «IF !autoComplete && isExpanded»
+                    'label_attr' => [
+                        'class' => '«IF isManySide(outgoing)»checkbox«ELSE»radio«ENDIF»-inline'
+                    ],
+                «ENDIF»
+                «val helpMessage = relationHelpMessages(outgoing)»«IF !helpMessage.empty»'help' => «IF helpMessage.length > 1»[«ENDIF»«helpMessage.join(', ')»«IF helpMessage.length > 1»]«ENDIF»,«ENDIF»
+                'attr' => [
+                    'title' => $this->__('Choose the «aliasName.formatForDisplay»')
+                ]
+            ]);
+        «ENDIF»
     '''
 
     def private dispatch ArrayList<String> relationHelpMessages(JoinRelationship it, Boolean outgoing) {

@@ -190,7 +190,7 @@ class Config {
         «IF name.formatForCode.startsWith('shrinkWidth')»
             <div id="shrinkDetails«name.formatForCode.replace('shrinkWidth', '').formatForCodeCapital»">
         «ENDIF»
-        «fieldFormRow»
+        «fieldFormRow('')»
         «IF name.formatForCode.startsWith('shrinkHeight')»
             </div>
         «ENDIF»

@@ -14,7 +14,7 @@ import de.guite.modulestudio.metamodel.ManyToManyRelationship
 import de.guite.modulestudio.metamodel.ManyToOneRelationship
 import de.guite.modulestudio.metamodel.OneToManyRelationship
 import de.guite.modulestudio.metamodel.OneToOneRelationship
-import de.guite.modulestudio.metamodel.RelationEditType
+import de.guite.modulestudio.metamodel.RelationEditMode
 import de.guite.modulestudio.metamodel.ViewAction
 
 /**
@@ -189,19 +189,32 @@ class ControllerExtensions {
         false
     }
 
-    def getEditingType(JoinRelationship it) {
+    def getSourceEditMode(JoinRelationship it) {
         switch (it) {
             OneToOneRelationship:
-                return editType
+                return sourceEditing
             OneToManyRelationship:
-                return editType
+                return sourceEditing
             ManyToOneRelationship:
-                return editType
+                return sourceEditing
             ManyToManyRelationship:
-                return editType
+                return sourceEditing
         }
 
-        RelationEditType.ACTIVE_NONE_PASSIVE_CHOOSE
+        RelationEditMode.NONE
+    }
+
+    def getTargetEditMode(JoinRelationship it) {
+        switch (it) {
+            OneToOneRelationship:
+                return targetEditing
+            OneToManyRelationship:
+                return targetEditing
+            ManyToManyRelationship:
+                return targetEditing
+        }
+
+        RelationEditMode.NONE
     }
 
     /**
@@ -210,26 +223,21 @@ class ControllerExtensions {
      * Possible values are:
      *    0    Nothing is being done
      *    1    Select related objects
-     *    2    Select, create and edit related objects
+     *    2    Select related objects including inline creation and editing
+     *    3    Embedded editing
      */
     def getEditStageCode(JoinRelationship it, Boolean incoming) {
-        switch getEditingType {
-            case ACTIVE_NONE_PASSIVE_CHOOSE:
-                if (!incoming) 0 else 1
-            case ACTIVE_NONE_PASSIVE_EDIT:
-                if (!incoming) 0 else 2
-            case ACTIVE_CHOOSE_PASSIVE_CHOOSE:
-                if (!incoming) 1 else 1
-            case ACTIVE_CHOOSE_PASSIVE_NONE:
-                if (!incoming) 1 else 0
-            case ACTIVE_EDIT_PASSIVE_CHOOSE:
-                if (!incoming) 2 else 1
-            case ACTIVE_EDIT_PASSIVE_EDIT:
-                if (!incoming) 2 else 2
-            case ACTIVE_EDIT_PASSIVE_NONE:
-                if (!incoming) 2 else 0
+        switch (if (incoming) getTargetEditMode else getSourceEditMode) {
+            case NONE:
+                0
+            case CHOOSE:
+                1
+            case INLINE:
+                2
+            case EMBEDDED:
+                3
             default:
-                if (!incoming) 2 else 2
+                0
         }
     }
 
@@ -268,6 +276,6 @@ class ControllerExtensions {
      * Checks whether inline editing is required or not.
      */
     def needsInlineEditing(Application it) {
-        hasUiHooksProviders || !getJoinRelations.filter[getEditStageCode(false) > 1 || getEditStageCode(true) > 1].empty
+        hasUiHooksProviders || !getJoinRelations.filter[getEditStageCode(false) == 2 || getEditStageCode(true) == 2].empty
     }
 }

@@ -15,18 +15,22 @@ class SharedFormElements {
     extension ModelExtensions = new ModelExtensions
     extension Utils = new Utils
 
-    def fieldFormRow(DerivedField it) '''
+    def fieldFormRow(DerivedField it, String subElem) '''
         «IF !visible»
             <div class="hidden">
-                «formRow(it)»
+                «formRow(it, subElem)»
             </div>
         «ELSE»
-            «formRow(it)»
+            «formRow(it, subElem)»
         «ENDIF»
     '''
 
-    def private formRow(Field it) '''
-        {{ form_row(form.«name.formatForCode») }}
+    def private formRow(Field it, String subElem) '''
+        «IF subElem != ''»
+            {{ form_row(attribute(«subElem», '«name.formatForCode»')) }}
+        «ELSE»
+            {{ form_row(form.«name.formatForCode») }}
+        «ENDIF»
     '''
 
     def additionalInitScript(Field it) {

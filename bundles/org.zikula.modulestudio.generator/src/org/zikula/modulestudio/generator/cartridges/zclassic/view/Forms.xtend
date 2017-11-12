@@ -154,14 +154,14 @@ class Forms {
                 <div class="tab-content">
                     <div role="tabpanel" class="tab-pane fade in active" id="tabFields" aria-labelledby="fieldsTab">
                         <h3>{{ __('Fields') }}</h3>
-                        «fieldDetails»
+                        «fieldDetails('')»
                     </div>
                     «new Section().generate(it, app, fsa, isSeparateAdminTemplate)»
                 </div>
             </div>
         «ELSE»
             {{ form_errors(form) }}
-            «fieldDetails»
+            «fieldDetails('')»
             «new Section().generate(it, app, fsa, isSeparateAdminTemplate)»
         «ENDIF»
 
@@ -173,16 +173,16 @@ class Forms {
         «ENDIF»
     '''
 
-    def private fieldDetails(Entity it) '''
-        «translatableFieldDetails»
+    def fieldDetails(Entity it, String subElem) '''
+        «translatableFieldDetails(subElem)»
         «IF !hasTranslatableFields
           || (hasTranslatableFields && (!getEditableNonTranslatableFields.empty || (hasSluggableFields && !hasTranslatableSlug)))
           || geographical»
-            «fieldDetailsFurtherOptions»
+            «fieldDetailsFurtherOptions(subElem)»
         «ENDIF»
     '''
 
-    def private translatableFieldDetails(Entity it) '''
+    def private translatableFieldDetails(Entity it, String subElem) '''
         «IF hasTranslatableFields»
             {% if translationsEnabled == true %}
                 <div class="zikula-bootstrap-tab-container">
@@ -205,7 +205,7 @@ class Forms {
                                 <fieldset>
                                     <legend>{{ language|languageName|safeHtml }}</legend>
                                     {% if language == app.request.locale %}
-                                        «fieldSet»
+                                        «fieldSet(subElem)»
                                     {% else %}
                                         {{ form_row(attribute(form, 'translations' ~ language)) }}
                                     {% endif %}
@@ -218,44 +218,56 @@ class Forms {
                 {% set language = app.request.locale %}
                 <fieldset>
                     <legend>{{ language|languageName|safeHtml }}</legend>
-                    «fieldSet»
+                    «fieldSet(subElem)»
                 </fieldset>
             {% endif %}
         «ENDIF»
     '''
 
-    def private fieldSet(Entity it) '''
-        «FOR field : getEditableTranslatableFields»«field.fieldWrapper»«ENDFOR»
+    def private fieldSet(Entity it, String subElem) '''
+        «FOR field : getEditableTranslatableFields»«field.fieldWrapper(subElem)»«ENDFOR»
         «IF hasTranslatableSlug»
-            «slugField»
+            «slugField(subElem)»
         «ENDIF»
     '''
 
-    def private fieldDetailsFurtherOptions(Entity it) '''
+    def private fieldDetailsFurtherOptions(Entity it, String subElem) '''
         <fieldset>
             <legend>{{ __('«IF hasTranslatableFields»Further properties«ELSE»Content«ENDIF»') }}</legend>
             «IF hasTranslatableFields»
-                «FOR field : getEditableNonTranslatableFields»«field.fieldWrapper»«ENDFOR»
+                «FOR field : getEditableNonTranslatableFields»«field.fieldWrapper(subElem)»«ENDFOR»
             «ELSE»
-                «FOR field : getEditableFields»«field.fieldWrapper»«ENDFOR»
+                «FOR field : getEditableFields»«field.fieldWrapper(subElem)»«ENDFOR»
             «ENDIF»
             «IF !hasTranslatableFields || (hasSluggableFields && !hasTranslatableSlug)»
-                «slugField»
+                «slugField(subElem)»
             «ENDIF»
             «IF geographical»
                 «FOR geoFieldName : newArrayList('latitude', 'longitude')»
-                    {{ form_row(form.«geoFieldName») }}
+                    «IF subElem != ''»
+                        {{ form_row(attribute(«subElem», '«geoFieldName»')) }}
+                    «ELSE»
+                        {{ form_row(form.«geoFieldName») }}
+                    «ENDIF»
                 «ENDFOR»
             «ENDIF»
             «IF isInheriting»
-                {{ form_row(form.parentFields) }}
+                «IF subElem != ''»
+                    {{ form_row(attribute(«subElem», 'parentFields')) }}
+                «ELSE»
+                    {{ form_row(form.parentFields) }}
+                «ENDIF»
             «ENDIF»
         </fieldset>
     '''
 
-    def private slugField(Entity it) '''
+    def private slugField(Entity it, String subElem) '''
         «IF hasSluggableFields && slugUpdatable && application.supportsSlugInputFields»
-            {{ form_row(form.slug) }}
+            «IF subElem != ''»
+                {{ form_row(attribute(«subElem», 'slug')) }}
+            «ELSE»
+                {{ form_row(form.slug) }}
+            «ENDIF»
         «ENDIF»
     '''
 
@@ -290,9 +302,9 @@ class Forms {
         })(jQuery);
     '''
 
-    def private fieldWrapper(DerivedField it) '''
+    def private fieldWrapper(DerivedField it, String subElem) '''
         «IF entity.getIncomingJoinRelations.filter[r|r.getSourceFields.head == name.formatForDB].empty»«/* No input fields for foreign keys, relations are processed further down */»
-            «fieldFormRow»
+            «fieldFormRow(subElem)»
         «ENDIF»
     '''
 

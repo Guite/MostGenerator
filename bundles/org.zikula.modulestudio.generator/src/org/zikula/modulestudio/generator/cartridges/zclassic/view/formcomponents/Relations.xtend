@@ -4,7 +4,9 @@ import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.JoinRelationship
 import de.guite.modulestudio.metamodel.ManyToManyRelationship
+import de.guite.modulestudio.metamodel.RelationEditMode
 import org.eclipse.xtext.generator.IFileSystemAccess
+import org.zikula.modulestudio.generator.cartridges.zclassic.view.Forms
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
@@ -136,10 +138,14 @@ class Relations {
         </li>
     '''
 
+    def private isEmbedded(JoinRelationship it, Boolean useTarget) {
+        (if (useTarget) getTargetEditMode else getSourceEditMode) == RelationEditMode.EMBEDDED
+    }
+
     def private includeStatementForEditTemplate(JoinRelationship it, String templateName, Entity ownEntity, Entity linkingEntity, Boolean useTarget, String relationAliasName, String uniqueNameForJs) '''
         {{ include(
             '@«application.appName»/«ownEntity.name.formatForCodeCapital»/«IF isSeparateAdminTemplate»Admin/«ENDIF»«templateName».html.twig',
-            {group: '«linkingEntity.name.formatForDB»', heading: __('«getRelationAliasName(useTarget).formatForDisplayCapital»'), alias: '«relationAliasName.toFirstLower»', mandatory: «(!nullable).displayBool», idPrefix: '«uniqueNameForJs»', linkingItem: «linkingEntity.name.formatForDB»«IF linkingEntity.useGroupingTabs('edit')», tabs: true«ENDIF», displayMode: '«IF usesAutoCompletion(useTarget)»autocomplete«ELSE»choices«ENDIF»'}
+            {group: '«linkingEntity.name.formatForDB»', heading: __('«getRelationAliasName(useTarget).formatForDisplayCapital»'), alias: '«relationAliasName.toFirstLower»', mandatory: «(!nullable).displayBool», idPrefix: '«uniqueNameForJs»', linkingItem: «linkingEntity.name.formatForDB»«IF linkingEntity.useGroupingTabs('edit')», tabs: true«ENDIF», displayMode: '«IF isEmbedded(useTarget)»embedded«ELSEIF usesAutoCompletion(useTarget)»autocomplete«ELSE»choices«ENDIF»'}
         ) }}
     '''
 
@@ -171,26 +177,17 @@ class Relations {
     '''
 
     def private includedEditTemplateBody(JoinRelationship it, Entity ownEntity, Entity linkingEntity, Boolean hasEdit, Boolean many) '''
-        {% if displayMode == 'choices' %}
+        {% if displayMode == 'embedded' %}
+            {% set subFields = attribute(form, alias) %}
+            «new Forms().fieldDetails(ownEntity, 'subFields')»
+        {% elseif displayMode == 'choices' %}
             {{ form_row(attribute(form, alias)) }}
         {% elseif displayMode == 'autocomplete' %}
-            «/*IF !isManyToMany && !incoming»
-                «component_ParentEditing(ownEntity, many)»
-            «ELSE*/»{{ form_row(attribute(form, alias)) }}
+            {{ form_row(attribute(form, alias)) }}
             «component_AutoComplete(ownEntity, many, hasEdit)»«/*ENDIF*/»
         {% endif %}
     '''
-/*
-    def private component_ParentEditing(JoinRelationship it, Entity targetEntity, Boolean many) '''
-        «/* just a reminder for the parent view which is not tested yet (see #10)
-            Example: create children (e.g. an address) while creating a parent (e.g. a new customer).
-            Problem: address must know the customerid.
-            To do only for $mode != create: 
-                <p>ADD: button to create «targetEntity.getEntityNameSingularPlural(many).formatForDisplay» with inline editing (form dialog)</p>
-                <p>EDIT: display of related «targetEntity.getEntityNameSingularPlural(many).formatForDisplay» with inline editing (form dialog)</p>
-        * /»
-    '''
-*/
+
     def private component_AutoComplete(JoinRelationship it, Entity targetEntity, Boolean many, Boolean includeEditing) '''
         <div class="«app.appName.toLowerCase»-relation-leftside">
             «val includeStatement = component_IncludeStatementForAutoCompleterItemList(targetEntity, many, includeEditing)»
@@ -237,8 +234,8 @@ class Relations {
     '''
 
     def initJs(Entity it, Boolean insideLoader) '''
-        «val incomingJoins = getEditableJoinRelations(true).filter[getEditStageCode(true) > 0]»
-        «val outgoingJoins = getEditableJoinRelations(false).filter[getEditStageCode(false) > 0]»
+        «val incomingJoins = getEditableJoinRelations(true).filter[getEditStageCode(true) > 0 && getEditStageCode(true) < 3]»
+        «val outgoingJoins = getEditableJoinRelations(false).filter[getEditStageCode(false) > 0 && getEditStageCode(false) < 3]»
         «IF !incomingJoins.empty || !outgoingJoins.empty»
             «IF !insideLoader»
                 var «app.vendorAndName»InlineEditHandlers = [];

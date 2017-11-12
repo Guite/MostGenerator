@@ -4,7 +4,7 @@ import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.EntityTreeType
 import de.guite.modulestudio.metamodel.JoinRelationship
-import de.guite.modulestudio.metamodel.RelationEditType
+import de.guite.modulestudio.metamodel.RelationEditMode
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
@@ -104,11 +104,11 @@ class ModelHelper {
         «var incomingAndMandatoryRelations = getBidirectionalIncomingAndMandatoryJoinRelations»
         «IF incomingAndMandatoryRelations.empty»«/* has no incoming bidirectional non-nullable relationships */»
             $result = true;
-        «ELSE»«/* we can leave out those relations which have PASSIVE_EDIT as edit type and use auto completion on the target side
+        «ELSE»«/* we can leave out those relations which have INLINE OR EMBEDDED as target edit type and use auto completion on the target side
                 * (then a new source object can be created while creating the target object). */»
             «{incomingAndMandatoryRelations = incomingAndMandatoryRelations
                 .filter[!usesAutoCompletion(true)]
-                .filter[getEditingType != RelationEditType.ACTIVE_NONE_PASSIVE_EDIT && getEditingType != RelationEditType.ACTIVE_EDIT_PASSIVE_EDIT]; ''}»
+                .filter[!#[RelationEditMode.INLINE, RelationEditMode.EMBEDDED].contains(getTargetEditMode)]; ''}»
             «IF incomingAndMandatoryRelations.empty»
                 $result = true;
             «ELSE»«/* corresponding source objects exist already in the system */»
