@@ -242,6 +242,15 @@ class LinkContainer {
                 «IF hasDisplayActions»
                     $entityDisplayHelper = $this->container->get('«appService».entity_display_helper');
                 «ENDIF»
+                «IF hasLoggable»
+
+                    // return empty menu for preview of deleted items
+                    $request = $this->container->get('request');
+                    $routeName = $request->get('_route');
+                    if (stristr($routeName, 'displaydeleted')) {
+                        return $menu;
+                    }
+                «ENDIF»
                 $menu->setChildrenAttribute('class', 'list-inline');
 
                 «new ItemActions().itemActionsImpl(it)»
