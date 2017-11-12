@@ -1,6 +1,7 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype.field
 
 import de.guite.modulestudio.metamodel.Application
+import de.guite.modulestudio.metamodel.ListField
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
@@ -19,7 +20,7 @@ class MultiListType {
     Application app
 
     def generate(Application it, IFileSystemAccess fsa) {
-        if (!hasMultiListFields) {
+        if (!hasMultiListFields && variables.map[fields].flatten.filter(ListField).filter[multiple].empty) {
             return
         }
         app = it
