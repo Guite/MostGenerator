@@ -70,7 +70,7 @@ class ListFieldTransformer {
              *
              * @return string Resulting string
              */
-            public function reverseTransform(array $values = [])
+            public function reverseTransform($values)
             {
                 if (!$values) {
                     return '';
