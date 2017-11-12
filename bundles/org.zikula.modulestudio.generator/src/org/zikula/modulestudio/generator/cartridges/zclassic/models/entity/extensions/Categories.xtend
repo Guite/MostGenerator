@@ -49,7 +49,7 @@ class Categories extends AbstractExtension implements EntityExtensionInterface {
         /**
          * Sets the categories.
          *
-         * @param ArrayCollection $categories
+         * @param ArrayCollection $categories List of categories
          *
          * @return void
          */
@@ -70,8 +70,8 @@ class Categories extends AbstractExtension implements EntityExtensionInterface {
         /**
          * Checks if a collection contains an element based only on two criteria (categoryRegistryId, category).
          *
-         * @param ArrayCollection $collection
-         * @param \«entityClassName('category', false)» $element
+         * @param ArrayCollection $collection Given collection
+         * @param \«entityClassName('category', false)» $element Element to search for
          *
          * @return bool|int
          */

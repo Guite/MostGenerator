@@ -81,13 +81,13 @@ class ItemSelector {
              * Create event handler.
              *
              * @param Zikula_Form_View $view    Reference to Zikula_Form_View object
-             * @param array            &$params Parameters passed from the Smarty plugin function
+             * @param array            &$params List of parameters passed from the Smarty plugin function
              *
              * @see    Zikula_Form_AbstractPlugin
              *
              * @return void
              */
-            public function create(Zikula_Form_View $view, &$params)
+            public function create(Zikula_Form_View $view, array &$params = [])
             {
                 $params['maxLength'] = 11;
                 /*$params['width'] = '8em';*/

@@ -312,7 +312,7 @@ class QuickNavigationType {
          * @param FormBuilderInterface $builder The form builder
          * @param array                $options The options
          */
-        public function addCategoriesField(FormBuilderInterface $builder, array $options)
+        public function addCategoriesField(FormBuilderInterface $builder, array $options = [])
         {
             $objectType = '«name.formatForCode»';
 
@@ -341,7 +341,7 @@ class QuickNavigationType {
          * @param FormBuilderInterface $builder The form builder
          * @param array                $options The options
          */
-        public function addIncomingRelationshipFields(FormBuilderInterface $builder, array $options)
+        public function addIncomingRelationshipFields(FormBuilderInterface $builder, array $options = [])
         {
             $mainSearchTerm = '';
             if ($this->request->query->has('q')) {
@@ -368,7 +368,7 @@ class QuickNavigationType {
          * @param FormBuilderInterface $builder The form builder
          * @param array                $options The options
          */
-        public function addListFields(FormBuilderInterface $builder, array $options)
+        public function addListFields(FormBuilderInterface $builder, array $options = [])
         {
             «FOR field : getListFieldsEntity»
                 $listEntries = $this->listHelper->getEntries('«name.formatForCode»', '«field.name.formatForCode»');
@@ -390,7 +390,7 @@ class QuickNavigationType {
          * @param FormBuilderInterface $builder The form builder
          * @param array                $options The options
          */
-        public function addUserFields(FormBuilderInterface $builder, array $options)
+        public function addUserFields(FormBuilderInterface $builder, array $options = [])
         {
             «FOR field : getUserFieldsEntity»
                 «field.fieldImpl»
@@ -405,7 +405,7 @@ class QuickNavigationType {
          * @param FormBuilderInterface $builder The form builder
          * @param array                $options The options
          */
-        public function addCountryFields(FormBuilderInterface $builder, array $options)
+        public function addCountryFields(FormBuilderInterface $builder, array $options = [])
         {
             «FOR field : getCountryFieldsEntity»
                 «field.fieldImpl»
@@ -420,7 +420,7 @@ class QuickNavigationType {
          * @param FormBuilderInterface $builder The form builder
          * @param array                $options The options
          */
-        public function addLanguageFields(FormBuilderInterface $builder, array $options)
+        public function addLanguageFields(FormBuilderInterface $builder, array $options = [])
         {
             «FOR field : getLanguageFieldsEntity»
                 «field.fieldImpl»
@@ -435,7 +435,7 @@ class QuickNavigationType {
          * @param FormBuilderInterface $builder The form builder
          * @param array                $options The options
          */
-        public function addLocaleFields(FormBuilderInterface $builder, array $options)
+        public function addLocaleFields(FormBuilderInterface $builder, array $options = [])
         {
             «FOR field : getLocaleFieldsEntity»
                 «field.fieldImpl»
@@ -450,7 +450,7 @@ class QuickNavigationType {
          * @param FormBuilderInterface $builder The form builder
          * @param array                $options The options
          */
-        public function addCurrencyFields(FormBuilderInterface $builder, array $options)
+        public function addCurrencyFields(FormBuilderInterface $builder, array $options = [])
         {
             «FOR field : getCurrencyFieldsEntity»
                 «field.fieldImpl»
@@ -465,7 +465,7 @@ class QuickNavigationType {
          * @param FormBuilderInterface $builder The form builder
          * @param array                $options The options
          */
-        public function addTimezoneFields(FormBuilderInterface $builder, array $options)
+        public function addTimezoneFields(FormBuilderInterface $builder, array $options = [])
         {
             «FOR field : getTimezoneFieldsEntity»
                 «field.fieldImpl»
@@ -480,7 +480,7 @@ class QuickNavigationType {
          * @param FormBuilderInterface $builder The form builder
          * @param array                $options The options
          */
-        public function addSearchField(FormBuilderInterface $builder, array $options)
+        public function addSearchField(FormBuilderInterface $builder, array $options = [])
         {
             $builder->add('q', SearchType::class, [
                 'label' => $this->__('Search'),
@@ -500,7 +500,7 @@ class QuickNavigationType {
          * @param FormBuilderInterface $builder The form builder
          * @param array                $options The options
          */
-        public function addSortingFields(FormBuilderInterface $builder, array $options)
+        public function addSortingFields(FormBuilderInterface $builder, array $options = [])
         {
             $builder
                 ->add('sort', ChoiceType::class, [
@@ -554,7 +554,7 @@ class QuickNavigationType {
          * @param FormBuilderInterface $builder The form builder
          * @param array                $options The options
          */
-        public function addAmountField(FormBuilderInterface $builder, array $options)
+        public function addAmountField(FormBuilderInterface $builder, array $options = [])
         {
             $builder->add('num', ChoiceType::class, [
                 'label' => $this->__('Page size'),
@@ -587,7 +587,7 @@ class QuickNavigationType {
          * @param FormBuilderInterface $builder The form builder
          * @param array                $options The options
          */
-        public function addBooleanFields(FormBuilderInterface $builder, array $options)
+        public function addBooleanFields(FormBuilderInterface $builder, array $options = [])
         {
             «FOR field : getBooleanFieldsEntity»
                 «field.fieldImpl»

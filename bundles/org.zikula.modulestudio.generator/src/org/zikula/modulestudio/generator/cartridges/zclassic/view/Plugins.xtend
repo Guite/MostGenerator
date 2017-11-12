@@ -203,7 +203,7 @@ class Plugins {
         /**
          * Returns a list of custom Twig functions.
          *
-         * @return \Twig_SimpleFunction[]
+         * @return \Twig_SimpleFunction[] List of functions
          */
         public function getFunctions()
         {
@@ -223,7 +223,7 @@ class Plugins {
         /**
          * Returns a list of custom Twig filters.
          *
-         * @return \Twig_SimpleFilter[]
+         * @return \Twig_SimpleFilter[] List of filters
          */
         public function getFilters()
         {
@@ -255,7 +255,7 @@ class Plugins {
             /**
              * Returns a list of custom Twig tests.
              *
-             * @return array
+             * @return \Twig_SimpleTest[] List of tests
              */
             public function getTests()
             {

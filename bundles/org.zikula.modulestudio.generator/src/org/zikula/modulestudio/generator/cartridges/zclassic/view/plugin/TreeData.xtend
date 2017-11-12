@@ -31,7 +31,7 @@ class TreeData {
          *
          * @return string Output markup
          */
-        public function getTreeData($objectType, $tree, $routeArea = '', $rootId = 1)
+        public function getTreeData($objectType, $tree = [], $routeArea = '', $rootId = 1)
         {
             // check whether an edit action is available
             $hasEditAction = in_array($objectType, ['«getAllEntities.filter[tree != EntityTreeType.NONE && hasEditAction].map[name.formatForCode].join('\', \'')»']);

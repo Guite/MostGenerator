@@ -102,11 +102,11 @@ class BlockList {
             /**
              * Resolves category filter ids.
              *
-             * @param array $properties The block properties array
+             * @param array $properties The block properties
              *
              * @return array The updated block properties
              */
-            protected function resolveCategoryIds(array $properties)
+            protected function resolveCategoryIds(array $properties = [])
             {
                 if (!isset($properties['catIds'])) {
                     $categoryHelper = $this->get('«appService».category_helper');
@@ -125,15 +125,15 @@ class BlockList {
         /**
          * Display the block content.
          *
-         * @param array $properties The block properties array
+         * @param array $properties The block properties
          *
-         * @return array|string
+         * @return string
          */
-        public function display(array $properties)
+        public function display(array $properties = [])
         {
             // only show block content if the user has the required permissions
             if (!$this->hasPermission('«appName»:ItemListBlock:', "$properties[title]::", ACCESS_OVERVIEW)) {
-                return false;
+                return '';
             }
 
             // set default values for all params which are not properly set
@@ -221,11 +221,11 @@ class BlockList {
         /**
          * Returns the template used for output.
          *
-         * @param array $properties The block properties array
+         * @param array $properties The block properties
          *
          * @return string the template path
          */
-        protected function getDisplayTemplate(array $properties)
+        protected function getDisplayTemplate(array $properties = [])
         {
             $templateFile = $properties['template'];
             if ($templateFile == 'custom' && null !== $properties['customTemplate'] && $properties['customTemplate'] != '') {

@@ -183,7 +183,7 @@ class Events {
              * @param «name.formatForCodeCapital»Entity $«name.formatForCode» Processed entity
              * @param array $entityChangeSet Change set for preUpdate events
              */
-            public function __construct(«name.formatForCodeCapital»Entity $«name.formatForCode», $entityChangeSet = [])
+            public function __construct(«name.formatForCodeCapital»Entity $«name.formatForCode», array $entityChangeSet = [])
             {
                 $this->«name.formatForCode» = $«name.formatForCode»;
                 $this->entityChangeSet = $entityChangeSet;
@@ -202,7 +202,7 @@ class Events {
             /**
              * Returns the change set.
              *
-             * @return array
+             * @return array Entity change set
              */
             public function getEntityChangeSet()
             {

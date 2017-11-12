@@ -46,20 +46,20 @@ class BlockModeration {
         /**
          * Display the block content.
          *
-         * @param array $properties The block properties array
+         * @param array $properties The block properties
          *
-         * @return array|string
+         * @return string
          */
-        public function display(array $properties)
+        public function display(array $properties = [])
         {
             // only show block content if the user has the required permissions
             if (!$this->hasPermission('«appName»:ModerationBlock:', "$properties[title]::", ACCESS_OVERVIEW)) {
-                return false;
+                return '';
             }
 
             $currentUserApi = $this->get('zikula_users_module.current_user');
             if (!$currentUserApi->isLoggedIn()) {
-                return false;
+                return '';
             }
 
             $template = $this->getDisplayTemplate();

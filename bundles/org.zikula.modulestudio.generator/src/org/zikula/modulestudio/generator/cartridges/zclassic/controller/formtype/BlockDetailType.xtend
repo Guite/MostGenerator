@@ -135,7 +135,7 @@ class BlockDetailType {
          * @param FormBuilderInterface $builder The form builder
          * @param array                $options The options
          */
-        public function addObjectTypeField(FormBuilderInterface $builder, array $options)
+        public function addObjectTypeField(FormBuilderInterface $builder, array $options = [])
         {
             $builder->add('objectType', «IF getAllEntities.filter[hasDisplayAction].size == 1»Hidden«ELSE»Choice«ENDIF»Type::class, [
                 'label' => $this->__('Object type') . ':',
@@ -166,7 +166,7 @@ class BlockDetailType {
          * @param FormBuilderInterface $builder The form builder
          * @param array                $options The options
          */
-        public function addIdField(FormBuilderInterface $builder, array $options)
+        public function addIdField(FormBuilderInterface $builder, array $options = [])
         {
             $repository = $this->entityFactory->getRepository($options['object_type']);
             // select without joins
@@ -198,7 +198,7 @@ class BlockDetailType {
          * @param FormBuilderInterface $builder The form builder
          * @param array                $options The options
          */
-        public function addTemplateField(FormBuilderInterface $builder, array $options)
+        public function addTemplateField(FormBuilderInterface $builder, array $options = [])
         {
             $builder
                 ->add('customTemplate', TextType::class, [

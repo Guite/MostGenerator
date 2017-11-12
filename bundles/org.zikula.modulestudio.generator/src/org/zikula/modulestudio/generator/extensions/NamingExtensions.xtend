@@ -111,8 +111,7 @@ class NamingExtensions {
      * Returns the class name for a certain entity class.
      */
     def entityClassName(DataObject it, String suffix, Boolean isBase) {
-        val app = application
-        app.vendor.formatForCodeCapital + '\\' + app.name.formatForCodeCapital + 'Module\\Entity\\' + (if (isBase) 'Base\\Abstract' else '') + name.formatForCodeCapital + suffix.formatForCodeCapital + 'Entity'
+        application.appNamespace + '\\Entity\\' + (if (isBase) 'Base\\Abstract' else '') + name.formatForCodeCapital + suffix.formatForCodeCapital + 'Entity'
     }
 
     /**

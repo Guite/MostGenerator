@@ -66,16 +66,16 @@ class Mailz {
             «val itemDesc = getLeadingEntity.nameMultiple.formatForDisplay»
             $plugins = [];
             $plugins[] = [
-                'pluginid'      => 1,
-                'module'        => '«appName»',
-                'title'         => $translator->__('3 newest «itemDesc»'),
-                'description'   => $translator->__('A list of the three newest «itemDesc».')
+                'pluginid'    => 1,
+                'module'      => '«appName»',
+                'title'       => $translator->__('3 newest «itemDesc»'),
+                'description' => $translator->__('A list of the three newest «itemDesc».')
             ];
             $plugins[] = [
-                'pluginid'      => 2,
-                'module'        => '«appName»',
-                'title'         => $translator->__('3 random «itemDesc»'),
-                'description'   => $translator->__('A list of three random «itemDesc».')
+                'pluginid'    => 2,
+                'module'      => '«appName»',
+                'title'       => $translator->__('3 random «itemDesc»'),
+                'description' => $translator->__('A list of three random «itemDesc».')
             ];
 
             return $plugins;

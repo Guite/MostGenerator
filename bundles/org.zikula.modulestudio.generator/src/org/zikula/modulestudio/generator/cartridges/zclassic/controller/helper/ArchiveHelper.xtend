@@ -214,7 +214,7 @@ class ArchiveHelper {
          *
          * @param object $entity The given entity instance
          *
-         * @return bool True if everything worked successfully, false otherwise
+         * @return boolean True if everything worked successfully, false otherwise
          */
         protected function archiveSingleObject($entity)
         {

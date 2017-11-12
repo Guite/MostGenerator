@@ -111,7 +111,7 @@ class Redirect {
          *
          * @return string The default redirect url
          */
-        protected function getDefaultReturnUrl($args)
+        protected function getDefaultReturnUrl(array $args = [])
         {
             $objectIsPersisted = $args['commandName'] != 'delete' && !($this->templateParameters['mode'] == 'create' && $args['commandName'] == 'cancel');
 
@@ -171,7 +171,7 @@ class Redirect {
          *
          * @return string The redirect url
          */
-        protected function getRedirectUrl($args)
+        protected function getRedirectUrl(array $args = [])
         {
             «IF app.needsAutoCompletion»
                 if (true === $this->templateParameters['inlineUsage']) {

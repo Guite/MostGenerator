@@ -267,7 +267,7 @@ class Installer {
         /**
          * Build array with all entity classes for «appName».
          *
-         * @return array list of class names
+         * @return string[] List of class names
          */
         protected function listEntityClasses()
         {

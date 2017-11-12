@@ -32,9 +32,9 @@ class ArrayFieldTransformer {
             /**
              * Transforms the object array to the normalised value.
              *
-             * @param array|null $values
+             * @param array|null $values The object array
              *
-             * @return string
+             * @return string Normalised value
              */
             public function transform($values)
             {
@@ -58,9 +58,9 @@ class ArrayFieldTransformer {
             /**
              * Transforms a textual value back to the array.
              *
-             * @param string $value
+             * @param string $value The textual value
              *
-             * @return array
+             * @return array Resulting array
              */
             public function reverseTransform($value)
             {
@@ -80,7 +80,7 @@ class ArrayFieldTransformer {
              *
              * @return array The cleaned array.
              */
-            protected function removeEmptyEntries($array)
+            protected function removeEmptyEntries(array $array = [])
             {
                 $items = $array;
         

@@ -271,7 +271,7 @@ class AuthenticationMethod {
         /**
          * Authenticate the user from the provided data and return the associated native uid.
          *
-         * @param array $data
+         * @param array $data Authentication data
          *
          * @return integer|null
          *
@@ -287,7 +287,7 @@ class AuthenticationMethod {
          * Register a new user from the provided data and map authorization to a Zikula UID.
          * MUST return boolean TRUE on success.
          *
-         * @param array $data
+         * @param array $data Authentication data
          *
          * @return boolean
          *

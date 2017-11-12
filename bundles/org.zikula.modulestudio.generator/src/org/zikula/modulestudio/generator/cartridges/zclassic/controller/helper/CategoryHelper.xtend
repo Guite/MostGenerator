@@ -200,7 +200,7 @@ class CategoryHelper {
          *
          * @return QueryBuilder The enriched query builder instance
          */
-        public function buildFilterClauses(QueryBuilder $queryBuilder, $objectType = '', $catIds = [])
+        public function buildFilterClauses(QueryBuilder $queryBuilder, $objectType = '', array $catIds = [])
         {
             $qb = $queryBuilder;
 
@@ -342,7 +342,7 @@ class CategoryHelper {
         /**
          * Filters a given list of entities to these the current user has permissions for.
          *
-         * @param array $entities The given list of entities
+         * @param array|ArrayCollection $entities The given list of entities
          *
          * @return array The filtered list of entities
          */

@@ -311,7 +311,7 @@ class UploadHelper {
          * @param string $fileName  Name of file to be processed
          * @param string $filePath  Path to file to be processed
          *
-         * @return array collected meta data
+         * @return array Collected meta data
          */
         public function readMetaDataForFile($fileName, $filePath)
         {
@@ -361,7 +361,7 @@ class UploadHelper {
          * @param string $fieldName  Name of upload field
          * @param string $extension  Input file extension
          *
-         * @return array the list of allowed file extensions
+         * @return string[] List of allowed file extensions
          */
         protected function isAllowedFileExtension($objectType, $fieldName, $extension)
         {

@@ -34,11 +34,7 @@ class DependencyInjection {
         abstract class Abstract«vendor.formatForCodeCapital»«name.formatForCodeCapital»Extension extends Extension
         {
             /**
-             * Loads service definition file containing persistent event handlers.
-             * Responds to the app.config configuration parameter.
-             *
-             * @param array            $configs
-             * @param ContainerBuilder $container
+             * @inheritDoc
              */
             public function load(array $configs, ContainerBuilder $container)
             {

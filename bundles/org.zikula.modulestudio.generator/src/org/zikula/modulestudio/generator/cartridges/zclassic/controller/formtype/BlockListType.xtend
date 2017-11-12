@@ -147,7 +147,7 @@ class BlockListType {
          * @param FormBuilderInterface $builder The form builder
          * @param array                $options The options
          */
-        public function addObjectTypeField(FormBuilderInterface $builder, array $options)
+        public function addObjectTypeField(FormBuilderInterface $builder, array $options = [])
         {
             $builder->add('objectType', «IF getAllEntities.size == 1»Hidden«ELSE»Choice«ENDIF»Type::class, [
                 'label' => $this->__('Object type') . ':',
@@ -178,7 +178,7 @@ class BlockListType {
          * @param FormBuilderInterface $builder The form builder
          * @param array                $options The options
          */
-        public function addCategoriesField(FormBuilderInterface $builder, array $options)
+        public function addCategoriesField(FormBuilderInterface $builder, array $options = [])
         {
             if (!$options['is_categorisable'] || null === $options['category_helper']) {
                 return;
@@ -210,7 +210,7 @@ class BlockListType {
          * @param FormBuilderInterface $builder The form builder
          * @param array                $options The options
          */
-        public function addSortingField(FormBuilderInterface $builder, array $options)
+        public function addSortingField(FormBuilderInterface $builder, array $options = [])
         {
             $builder->add('sorting', ChoiceType::class, [
                 'label' => $this->__('Sorting') . ':',
@@ -236,7 +236,7 @@ class BlockListType {
          * @param FormBuilderInterface $builder The form builder
          * @param array                $options The options
          */
-        public function addAmountField(FormBuilderInterface $builder, array $options)
+        public function addAmountField(FormBuilderInterface $builder, array $options = [])
         {
             $builder->add('amount', IntegerType::class, [
                 'label' => $this->__('Amount') . ':',
@@ -258,7 +258,7 @@ class BlockListType {
          * @param FormBuilderInterface $builder The form builder
          * @param array                $options The options
          */
-        public function addTemplateFields(FormBuilderInterface $builder, array $options)
+        public function addTemplateFields(FormBuilderInterface $builder, array $options = [])
         {
             $builder
                 ->add('template', ChoiceType::class, [
@@ -295,7 +295,7 @@ class BlockListType {
          * @param FormBuilderInterface $builder The form builder
          * @param array                $options The options
          */
-        public function addFilterField(FormBuilderInterface $builder, array $options)
+        public function addFilterField(FormBuilderInterface $builder, array $options = [])
         {
             $builder->add('filter', TextType::class, [
                 'label' => $this->__('Filter (expert option)') . ':',

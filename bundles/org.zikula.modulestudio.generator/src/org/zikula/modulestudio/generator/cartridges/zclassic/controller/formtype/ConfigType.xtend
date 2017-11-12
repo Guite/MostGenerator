@@ -159,7 +159,7 @@ class ConfigType {
          * @param FormBuilderInterface $builder The form builder
          * @param array                $options The options
          */
-        public function add«name.formatForCodeCapital»Fields(FormBuilderInterface $builder, array $options)
+        public function add«name.formatForCodeCapital»Fields(FormBuilderInterface $builder, array $options = [])
         {
             «FOR field : fields.filter(DerivedField)»
                 «field.definition»
@@ -174,7 +174,7 @@ class ConfigType {
          * @param FormBuilderInterface $builder The form builder
          * @param array                $options The options
          */
-        public function addSubmitButtons(FormBuilderInterface $builder, array $options)
+        public function addSubmitButtons(FormBuilderInterface $builder, array $options = [])
         {
             $builder->add('save', SubmitType::class, [
                 'label' => $this->__('Update configuration'),

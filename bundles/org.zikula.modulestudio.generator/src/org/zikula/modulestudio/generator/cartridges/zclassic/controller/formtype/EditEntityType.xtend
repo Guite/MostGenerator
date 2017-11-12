@@ -405,7 +405,7 @@ class EditEntityType {
          * @param FormBuilderInterface $builder The form builder
          * @param array                $options The options
          */
-        public function addEntityFields(FormBuilderInterface $builder, array $options)
+        public function addEntityFields(FormBuilderInterface $builder, array $options = [])
         {
             «IF it instanceof Entity && isTranslatable»
                 «translatableFields(it as Entity)»
@@ -492,7 +492,7 @@ class EditEntityType {
          * @param FormBuilderInterface $builder The form builder
          * @param array                $options The options
          */
-        public function addGeographicalFields(FormBuilderInterface $builder, array $options)
+        public function addGeographicalFields(FormBuilderInterface $builder, array $options = [])
         {
             «FOR geoFieldName : newArrayList('latitude', 'longitude')»
                 $builder->add('«geoFieldName»', GeoType::class, [
@@ -510,7 +510,7 @@ class EditEntityType {
          * @param FormBuilderInterface $builder The form builder
          * @param array                $options The options
          */
-        public function addAttributeFields(FormBuilderInterface $builder, array $options)
+        public function addAttributeFields(FormBuilderInterface $builder, array $options = [])
         {
             foreach ($options['attributes'] as $attributeName => $attributeValue) {
                 $builder->add('attributes' . $attributeName, TextType::class, [
@@ -533,7 +533,7 @@ class EditEntityType {
          * @param FormBuilderInterface $builder The form builder
          * @param array                $options The options
          */
-        public function addCategoriesField(FormBuilderInterface $builder, array $options)
+        public function addCategoriesField(FormBuilderInterface $builder, array $options = [])
         {
             $builder->add('categories', CategoriesType::class, [
                 'label' => $this->__('«IF categorisableMultiSelection»Categories«ELSE»Category«ENDIF»') . ':',
@@ -558,7 +558,7 @@ class EditEntityType {
          * @param FormBuilderInterface $builder The form builder
          * @param array                $options The options
          */
-        public function addIncomingRelationshipFields(FormBuilderInterface $builder, array $options)
+        public function addIncomingRelationshipFields(FormBuilderInterface $builder, array $options = [])
         {
             «FOR relation : incomingRelations»
                 «val autoComplete = relation.useAutoCompletion != RelationAutoCompletionUsage.NONE && relation.useAutoCompletion != RelationAutoCompletionUsage.ONLY_TARGET_SIDE»
@@ -574,7 +574,7 @@ class EditEntityType {
          * @param FormBuilderInterface $builder The form builder
          * @param array                $options The options
          */
-        public function addOutgoingRelationshipFields(FormBuilderInterface $builder, array $options)
+        public function addOutgoingRelationshipFields(FormBuilderInterface $builder, array $options = [])
         {
             «FOR relation : outgoingRelations»
                 «val autoComplete = relation.useAutoCompletion != RelationAutoCompletionUsage.NONE && relation.useAutoCompletion != RelationAutoCompletionUsage.ONLY_SOURCE_SIDE»
@@ -728,7 +728,7 @@ class EditEntityType {
          * @param FormBuilderInterface $builder The form builder
          * @param array                $options The options
          */
-        public function addAdditionalNotificationRemarksField(FormBuilderInterface $builder, array $options)
+        public function addAdditionalNotificationRemarksField(FormBuilderInterface $builder, array $options = [])
         {
             $helpText = '';
             if ($options['is_moderator']«IF workflow == EntityWorkflowType.ENTERPRISE» || $options['is_super_moderator']«ENDIF») {
@@ -760,7 +760,7 @@ class EditEntityType {
          * @param FormBuilderInterface $builder The form builder
          * @param array                $options The options
          */
-        public function addModerationFields(FormBuilderInterface $builder, array $options)
+        public function addModerationFields(FormBuilderInterface $builder, array $options = [])
         {
             if (!$options['has_moderate_permission']) {
                 return;
@@ -806,7 +806,7 @@ class EditEntityType {
          * @param FormBuilderInterface $builder The form builder
          * @param array                $options The options
          */
-        public function addSubmitButtons(FormBuilderInterface $builder, array $options)
+        public function addSubmitButtons(FormBuilderInterface $builder, array $options = [])
         {
             foreach ($options['actions'] as $action) {
                 $builder->add($action['id'], SubmitType::class, [

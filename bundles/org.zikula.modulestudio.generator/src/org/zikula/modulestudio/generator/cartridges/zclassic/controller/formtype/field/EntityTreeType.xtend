@@ -94,7 +94,7 @@ class EntityTreeType {
              *
              * @return array List of selected objects
              */
-            protected function loadChoices(array $options)
+            protected function loadChoices(array $options = [])
             {
                 $repository = $options['em']->getRepository($options['class']);
                 $treeNodes = $repository->selectTree($options['root'], $options['use_joins']);
@@ -121,7 +121,7 @@ class EntityTreeType {
              *
              * @return boolean Whether this entity should be included into the list
              */
-            protected function isIncluded($item, EntityRepository $repository, array $options)
+            protected function isIncluded($item, EntityRepository $repository, array $options = [])
             {
                 $nodeLevel = $item->getLvl();
 

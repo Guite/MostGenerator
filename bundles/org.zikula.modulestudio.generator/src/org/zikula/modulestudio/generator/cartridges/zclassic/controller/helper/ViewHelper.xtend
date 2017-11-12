@@ -168,10 +168,10 @@ class ViewHelper {
         /**
          * Helper method for managing view templates.
          *
-         * @param string  $type               Current controller (name of currently treated entity)
-         * @param string  $func               Current function (index, view, ...)
-         * @param array   $templateParameters Template data
-         * @param string  $template           Optional assignment of precalculated template file
+         * @param string $type               Current controller (name of currently treated entity)
+         * @param string $func               Current function (index, view, ...)
+         * @param array  $templateParameters Template data
+         * @param string $template           Optional assignment of precalculated template file
          *
          * @return mixed Output
          */
@@ -298,7 +298,7 @@ class ViewHelper {
          * @param string $type Current controller (name of currently treated entity)
          * @param string $func Current function (index, view, ...)
          *
-         * @return array List of allowed template extensions
+         * @return string[] List of allowed template extensions
          */
         public function availableExtensions($type, $func)
         {
@@ -331,7 +331,7 @@ class ViewHelper {
          *
          * @return mixed Output
          */
-        protected function processPdf(array $templateParameters = [], $template)
+        protected function processPdf(array $templateParameters = [], $template = '')
         {
             // first the content, to set page vars
             $output = $this->twig->render($template, $templateParameters);

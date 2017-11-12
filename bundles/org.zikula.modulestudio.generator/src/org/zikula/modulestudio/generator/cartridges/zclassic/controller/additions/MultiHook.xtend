@@ -69,7 +69,7 @@ class MultiHook {
          *
          * @return string Replaced value for the needle
          */
-        function «app.appName»_needleapi_«name.formatForDB»_base($args)
+        function «app.appName»_needleapi_«name.formatForDB»_base(array $args = [])
         {
             // Get arguments from argument array
             $nid = $args['nid'];
@@ -175,7 +175,7 @@ class MultiHook {
          *
          * @return string Replaced value for the needle
          */
-        function «app.appName»_needleapi_«name.formatForDB»($args)
+        function «app.appName»_needleapi_«name.formatForDB»(array $args = [])
         {
             return «app.appName»_needleapi_«name.formatForDB»_base($args);
         }

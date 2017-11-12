@@ -537,7 +537,7 @@ class FormHandler {
          *
          * @throws RuntimeException Thrown if the workflow actions can not be determined
          */
-        public function processForm(array $templateParameters)
+        public function processForm(array $templateParameters = [])
         {
             $this->templateParameters = $templateParameters;
             «IF !getJoinRelations.empty»
@@ -858,7 +858,7 @@ class FormHandler {
              * Return list of attribute field names.
              * To be customised in sub classes as needed.
              *
-             * @return array list of attribute names
+             * @return string[] List of attribute names
              */
             protected function getAttributeFieldNames()
             {
@@ -995,8 +995,8 @@ class FormHandler {
         /**
          * Get success or error message for default operations.
          *
-         * @param array   $args    arguments from handleCommand method
-         * @param Boolean $success true if this is a success, false for default error
+         * @param array   $args    List of arguments from handleCommand method
+         * @param boolean $success Becomes true if this is a success, false for default error
          *
          * @return String desired status or error message
          */
@@ -1033,8 +1033,8 @@ class FormHandler {
         /**
          * Add success or error message to session.
          *
-         * @param array   $args    arguments from handleCommand method
-         * @param Boolean $success true if this is a success, false for default error
+         * @param array   $args    List of arguments from handleCommand method
+         * @param boolean $success Becomes true if this is a success, false for default error
          *
          * @throws RuntimeException Thrown if executing the workflow action fails
          */
@@ -1061,7 +1061,7 @@ class FormHandler {
          * Input data processing called by handleCommand method.
          «IF hasSluggable && !getAllEntities.filter[slugUpdatable].empty»
          *
-         * @param array $args Additional arguments
+         * @param array $args List of additional arguments
          «ENDIF»
          */
         public function fetchInputData(«IF hasSluggable && !getAllEntities.filter[slugUpdatable].empty»array $args = []«ENDIF»)
@@ -1111,9 +1111,9 @@ class FormHandler {
         /**
          * This method executes a certain workflow action.
          *
-         * @param array $args Arguments from handleCommand method
+         * @param array $args List of arguments from handleCommand method
          *
-         * @return bool Whether everything worked well or not
+         * @return boolean Whether everything worked well or not
          */
         public function applyAction(array $args = [])
         {
@@ -1126,7 +1126,7 @@ class FormHandler {
         /**
          * Prepares properties related to advanced workflows.
          *
-         * @param bool $enterprise Whether the enterprise workflow is used instead of the standard workflow
+         * @param boolean $enterprise Whether the enterprise workflow is used instead of the standard workflow
          *
          * @return array List of additional form options
          */
@@ -1283,7 +1283,7 @@ class FormHandler {
          *
          * @return boolean False in case of initialisation errors, otherwise true
          */
-        public function processForm(array $templateParameters)
+        public function processForm(array $templateParameters = [])
         {
             «memberVarAssignments»
 
@@ -1394,8 +1394,8 @@ class FormHandler {
         /**
          * Get success or error message for default operations.
          *
-         * @param array   $args    Arguments from handleCommand method
-         * @param Boolean $success Becomes true if this is a success, false for default error
+         * @param array   $args    List of arguments from handleCommand method
+         * @param boolean $success Becomes true if this is a success, false for default error
          *
          * @return String desired status or error message
          */
@@ -1433,9 +1433,9 @@ class FormHandler {
         /**
          * This method executes a certain workflow action.
          *
-         * @param array $args Arguments from handleCommand method
+         * @param array $args List of arguments from handleCommand method
          *
-         * @return bool Whether everything worked well or not
+         * @return boolean Whether everything worked well or not
          *
          * @throws RuntimeException Thrown if concurrent editing is recognised or another error occurs
          */

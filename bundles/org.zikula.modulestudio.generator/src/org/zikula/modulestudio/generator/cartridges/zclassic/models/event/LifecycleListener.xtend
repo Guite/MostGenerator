@@ -85,7 +85,7 @@ class LifecycleListener {
             /**
              * Returns list of events to subscribe.
              *
-             * @return array list of events
+             * @return string[] List of events
              */
             public function getSubscribedEvents()
             {
@@ -260,7 +260,7 @@ class LifecycleListener {
                  *
                  * @param string $objectType The object type
                  *
-                 * @return array List of upload fields
+                 * @return string[] List of upload field names
                  */
                 protected function getUploadFields($objectType = '')
                 {

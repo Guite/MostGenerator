@@ -24,7 +24,7 @@ class Tree {
          * @param integer $rootId   Optional id of root node to use as a branch, defaults to 0 which corresponds to the whole tree
          * @param boolean $useJoins Whether to include joining related objects (optional) (default=true)
          *
-         * @return array|ArrayCollection retrieved data array or tree node objects
+         * @return array|ArrayCollection Retrieved data array or tree node objects
          */
         public function selectTree($rootId = 0, $useJoins = true)
         {
@@ -53,7 +53,7 @@ class Tree {
          *
          * @param boolean $useJoins Whether to include joining related objects (optional) (default=true)
          *
-         * @return array|ArrayCollection retrieved data array or tree node objects
+         * @return array|ArrayCollection Retrieved data array or tree node objects
          */
         public function selectAllTrees($useJoins = true)
         {
