@@ -4,6 +4,7 @@ import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.ArrayField
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.EntityWorkflowType
+import de.guite.modulestudio.metamodel.ListField
 import de.guite.modulestudio.metamodel.MappedSuperClass
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.actionhandler.Locking
@@ -84,7 +85,7 @@ class FormHandler {
                 new UploadType().generate(it, fsa)
                 new UploadFileTransformer().generate(it, fsa)
             }
-            if (hasMultiListFields) {
+            if (hasMultiListFields || !variables.map[fields].flatten.filter(ListField).filter[multiple].empty) {
                 new MultiListType().generate(it, fsa)
                 new ListFieldTransformer().generate(it, fsa)
             }
