@@ -435,7 +435,7 @@ class ServiceDefinitions {
                         - { name: form.type }
                 «ENDIF»
         «ENDIF»
-        «IF hasMultiListFields»
+        «IF hasMultiListFields || !variables.map[fields].flatten.filter(ListField).filter[multiple].empty»
 
             «modPrefix».form.type.field.multilist:
                 class: «nsBase»Field\MultiListType
