@@ -196,7 +196,7 @@ class ModelExtensions {
      * Checks whether the application contains at least one list field.
      */
     def hasListFields(Application it) {
-        !getAllListFields.empty || !variables.map[fields].flatten.filter(ListField).empty
+        !getAllListFields.empty || !getAllVariables.filter(ListField).empty
     }
 
     /**

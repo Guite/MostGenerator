@@ -60,7 +60,7 @@ class FormHandler {
         app = it
 
         // common form types (shared by entities and variables)
-        if (!entities.filter[e|!e.fields.filter(ArrayField).empty].empty || !variables.map[fields].flatten.filter(ArrayField).empty) {
+        if (!entities.filter[e|!e.fields.filter(ArrayField).empty].empty || !getAllVariables.filter(ArrayField).empty) {
             new ArrayType().generate(it, fsa)
             new ArrayFieldTransformer().generate(it, fsa)
         }
@@ -71,7 +71,7 @@ class FormHandler {
             new UploadType().generate(it, fsa)
             new UploadFileTransformer().generate(it, fsa)
         }
-        if (hasMultiListFields || !variables.map[fields].flatten.filter(ListField).filter[multiple].empty) {
+        if (hasMultiListFields || !getAllVariables.filter(ListField).filter[multiple].empty) {
             new MultiListType().generate(it, fsa)
             new ListFieldTransformer().generate(it, fsa)
         }

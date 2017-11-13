@@ -53,7 +53,7 @@ class AppSettings {
     }
 
     def private imports(Application it) '''
-        «IF !variables.map[fields].flatten.filter(UploadField).empty»
+        «IF !getAllVariables.filter(UploadField).empty»
             use Symfony\Component\HttpFoundation\File\File;
         «ENDIF»
         use Symfony\Component\Validator\Constraints as Assert;
@@ -66,10 +66,10 @@ class AppSettings {
             use Zikula\GroupsModule\Constant as GroupsConstant;
             use Zikula\GroupsModule\Entity\RepositoryInterface\GroupRepositoryInterface;
         «ENDIF»
-        «IF !variables.map[fields].flatten.filter(UserField).empty»
+        «IF !getAllVariables.filter(UserField).empty»
             use Zikula\UsersModule\Entity\UserEntity;
         «ENDIF»
-        «IF !variables.map[fields].flatten.filter(ListField).empty»
+        «IF !getAllVariables.filter(ListField).empty»
             use «appNamespace»\Validator\Constraints as «name.formatForCodeCapital»Assert;
         «ENDIF»
     '''

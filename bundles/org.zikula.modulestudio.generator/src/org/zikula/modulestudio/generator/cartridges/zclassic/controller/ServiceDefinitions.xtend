@@ -72,7 +72,7 @@ class ServiceDefinitions {
         if (hasListFields) {
             generateServiceFile(fsa, 'validators', validators)
         }
-        if (hasEditActions) {
+        if (hasEditActions || needsConfig) {
             generateServiceFile(fsa, 'formFields', formFields)
         }
         generateServiceFile(fsa, 'forms', forms)
@@ -402,7 +402,7 @@ class ServiceDefinitions {
     def private formFieldsHelper(Application it) '''
         # Form field types
         «val nsBase = appNamespace + '\\Form\\Type\\'»
-        «IF !entities.filter[e|!e.fields.filter(ArrayField).empty].empty»
+        «IF !entities.filter[e|!e.fields.filter(ArrayField).empty].empty || !getAllVariables.filter(ArrayField).empty»
 
             «modPrefix».form.type.field.array:
                 class: «nsBase»Field\ArrayType
@@ -435,7 +435,7 @@ class ServiceDefinitions {
                         - { name: form.type }
                 «ENDIF»
         «ENDIF»
-        «IF hasMultiListFields || !variables.map[fields].flatten.filter(ListField).filter[multiple].empty»
+        «IF hasMultiListFields || !getAllVariables.filter(ListField).filter[multiple].empty»
 
             «modPrefix».form.type.field.multilist:
                 class: «nsBase»Field\MultiListType

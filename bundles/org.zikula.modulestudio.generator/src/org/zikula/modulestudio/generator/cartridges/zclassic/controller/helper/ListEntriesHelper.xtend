@@ -173,10 +173,10 @@ class ListEntriesHelper {
                         }
                         break;
                 «ENDFOR»
-                «IF !variables.map[fields].filter(ListField).empty»
+                «IF !getAllVariables.filter(ListField).empty»
                     case 'appSettings':
                         switch ($fieldName) {
-                            «FOR listField : variables.map[fields].filter(ListField)»
+                            «FOR listField : getAllVariables.filter(ListField)»
                                 case '«listField.name.formatForCode»':
                                     $result = «listField.multiple.displayBool»;
                                     break;
@@ -223,10 +223,10 @@ class ListEntriesHelper {
                         }
                         break;
                 «ENDFOR»
-                «IF !variables.map[fields].filter(ListField).empty»
+                «IF !getAllVariables.filter(ListField).empty»
                     case 'appSettings':
                         switch ($fieldName) {
-                            «FOR listField : variables.map[fields].filter(ListField)»
+                            «FOR listField : getAllVariables.filter(ListField)»
                                 case '«listField.name.formatForCode»':
                                     $entries = $this->get«listField.name.formatForCodeCapital»EntriesForAppSettings();
                                     break;
@@ -245,7 +245,7 @@ class ListEntriesHelper {
 
             «listField.getItemsImpl»
         «ENDFOR»
-        «FOR listField : variables.map[fields].filter(ListField)»
+        «FOR listField : getAllVariables.filter(ListField)»
 
             «listField.getItemsImpl»
         «ENDFOR»
