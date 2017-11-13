@@ -9,7 +9,9 @@ import de.guite.modulestudio.metamodel.EditAction
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.EntityTreeType
 import de.guite.modulestudio.metamodel.EntityWorkflowType
+import de.guite.modulestudio.metamodel.JoinRelationship
 import de.guite.modulestudio.metamodel.MainAction
+import de.guite.modulestudio.metamodel.ManyToManyPermissionInheritanceType
 import de.guite.modulestudio.metamodel.ManyToManyRelationship
 import de.guite.modulestudio.metamodel.OneToManyRelationship
 import de.guite.modulestudio.metamodel.OneToOneRelationship
@@ -22,7 +24,6 @@ import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
-import de.guite.modulestudio.metamodel.ManyToManyPermissionInheritanceType
 
 class Actions {
 
@@ -153,32 +154,7 @@ class Actions {
             $filteredEntities = [];
             foreach ($templateParameters['items'] as $«name.formatForCode») {
                 «FOR relation : getBidirectionalIncomingPermissionInheriters»
-                    «IF relation instanceof OneToOneRelationship || relation instanceof OneToManyRelationship»
-                        if (null !== $«name.formatForCode»->get«relation.getRelationAliasName(false).formatForCodeCapital»()) {
-                            $parent = $«name.formatForCode»->get«relation.getRelationAliasName(false).formatForCodeCapital»();
-                            if (!$this->hasPermission('«app.appName»:' . ucfirst($parent->get_objectType()) . ':', $parent->getKey() . '::', $permLevel)) {
-                                continue;
-                            }
-                        }
-                    «ELSEIF relation instanceof ManyToManyRelationship»
-                        $parentAccess = «((relation as ManyToManyRelationship).inheritPermissions == ManyToManyPermissionInheritanceType.UNANIMOUS).displayBool»;
-                        foreach ($«name.formatForCode»->get«relation.getRelationAliasName(false).formatForCodeCapital»() as $parent) {
-                            «IF (relation as ManyToManyRelationship).inheritPermissions == ManyToManyPermissionInheritanceType.AFFIRMATIVE»
-                                if ($this->hasPermission('«app.appName»:' . ucfirst($parent->get_objectType()) . ':', $parent->getKey() . '::', $permLevel)) {
-                                    $parentAccess = true;
-                                    break;
-                                }
-                            «ELSEIF (relation as ManyToManyRelationship).inheritPermissions == ManyToManyPermissionInheritanceType.UNANIMOUS»
-                                if (!$this->hasPermission('«app.appName»:' . ucfirst($parent->get_objectType()) . ':', $parent->getKey() . '::', $permLevel)) {
-                                    $parentAccess = false;
-                                    break;
-                                }
-                            «ENDIF»
-                        }
-                        if (true !== $parentAccess) {
-                            continue;
-                        }
-                    «ENDIF»
+                    «inheritedPermissionFilter(relation)»
                 «ENDFOR»
                 $filteredEntities[] = $«name.formatForCode»;
             }
@@ -199,6 +175,35 @@ class Actions {
 
         // fetch and return the appropriate template
         return $viewHelper->processTemplate($objectType, 'view', $templateParameters);
+    '''
+
+    def dispatch private inheritedPermissionFilter(Entity it, JoinRelationship relation) '''
+        if (null !== $«name.formatForCode»->get«relation.getRelationAliasName(false).formatForCodeCapital»()) {
+            $parent = $«name.formatForCode»->get«relation.getRelationAliasName(false).formatForCodeCapital»();
+            if (!$this->hasPermission('«app.appName»:' . ucfirst($parent->get_objectType()) . ':', $parent->getKey() . '::', $permLevel)) {
+                continue;
+            }
+        }
+    '''
+
+    def dispatch private inheritedPermissionFilter(Entity it, ManyToManyRelationship relation) '''
+        $parentAccess = «(relation.inheritPermissions == ManyToManyPermissionInheritanceType.UNANIMOUS).displayBool»;
+        foreach ($«name.formatForCode»->get«relation.getRelationAliasName(false).formatForCodeCapital»() as $parent) {
+            «IF relation.inheritPermissions == ManyToManyPermissionInheritanceType.AFFIRMATIVE»
+                if ($this->hasPermission('«app.appName»:' . ucfirst($parent->get_objectType()) . ':', $parent->getKey() . '::', $permLevel)) {
+                    $parentAccess = true;
+                    break;
+                }
+            «ELSEIF relation.inheritPermissions == ManyToManyPermissionInheritanceType.UNANIMOUS»
+                if (!$this->hasPermission('«app.appName»:' . ucfirst($parent->get_objectType()) . ':', $parent->getKey() . '::', $permLevel)) {
+                    $parentAccess = false;
+                    break;
+                }
+            «ENDIF»
+        }
+        if (true !== $parentAccess) {
+            continue;
+        }
     '''
 
     def private initSortableColumns(Entity it) '''
@@ -255,31 +260,7 @@ class Actions {
 
             // check inherited permissions
             «FOR relation : getBidirectionalIncomingPermissionInheriters»
-                «IF relation instanceof OneToOneRelationship || relation instanceof OneToManyRelationship»
-                    if (null !== $«name.formatForCode»->get«relation.getRelationAliasName(false).formatForCodeCapital»()) {
-                        $parent = $«name.formatForCode»->get«relation.getRelationAliasName(false).formatForCodeCapital»();
-                        «action.permissionCheck("' . ucfirst($parent->get_objectType()) . '", "$parent->getKey() . ")»
-                    }
-                «ELSEIF relation instanceof ManyToManyRelationship»
-                    «IF (relation as ManyToManyRelationship).inheritPermissions == ManyToManyPermissionInheritanceType.AFFIRMATIVE»
-                        $parentAccess = false;
-                    «ENDIF»
-                    foreach ($«name.formatForCode»->get«relation.getRelationAliasName(false).formatForCodeCapital»() as $parent) {
-                        «IF (relation as ManyToManyRelationship).inheritPermissions == ManyToManyPermissionInheritanceType.AFFIRMATIVE»
-                            if ($this->hasPermission('«app.appName»:' . ucfirst($parent->get_objectType()) . ':', $parent->getKey() . '::', $permLevel)) {
-                                $parentAccess = true;
-                                break;
-                            }
-                        «ELSEIF (relation as ManyToManyRelationship).inheritPermissions == ManyToManyPermissionInheritanceType.UNANIMOUS»
-                            «action.permissionCheck("' . ucfirst($parent->get_objectType()) . '", "$parent->getKey() . ")»
-                        «ENDIF»
-                    }
-                    «IF (relation as ManyToManyRelationship).inheritPermissions == ManyToManyPermissionInheritanceType.AFFIRMATIVE»
-                        if (true !== $parentAccess) {
-                            throw new AccessDeniedException();
-                        }
-                    «ENDIF»
-                «ENDIF»
+                «inheritedPermissionCheck(action, relation)»
             «ENDFOR»
         «ENDIF»
         «IF loggable»
@@ -307,6 +288,34 @@ class Actions {
         $templateParameters = $controllerHelper->processDisplayActionParameters($objectType, $templateParameters«IF app.hasHookSubscribers», «(!skipHookSubscribers).displayBool»«ENDIF»);
 
         «processDisplayOutput»
+    '''
+
+    def dispatch private inheritedPermissionCheck(Entity it, Action action, JoinRelationship relation) '''
+        if (null !== $«name.formatForCode»->get«relation.getRelationAliasName(false).formatForCodeCapital»()) {
+            $parent = $«name.formatForCode»->get«relation.getRelationAliasName(false).formatForCodeCapital»();
+            «action.permissionCheck("' . ucfirst($parent->get_objectType()) . '", "$parent->getKey() . ")»
+        }
+    '''
+
+    def dispatch private inheritedPermissionCheck(Entity it, Action action, ManyToManyRelationship relation) '''
+        «IF relation.inheritPermissions == ManyToManyPermissionInheritanceType.AFFIRMATIVE»
+            $parentAccess = false;
+        «ENDIF»
+        foreach ($«name.formatForCode»->get«relation.getRelationAliasName(false).formatForCodeCapital»() as $parent) {
+            «IF relation.inheritPermissions == ManyToManyPermissionInheritanceType.AFFIRMATIVE»
+                if ($this->hasPermission('«app.appName»:' . ucfirst($parent->get_objectType()) . ':', $parent->getKey() . '::', $permLevel)) {
+                    $parentAccess = true;
+                    break;
+                }
+            «ELSEIF relation.inheritPermissions == ManyToManyPermissionInheritanceType.UNANIMOUS»
+                «action.permissionCheck("' . ucfirst($parent->get_objectType()) . '", "$parent->getKey() . ")»
+            «ENDIF»
+        }
+        «IF relation.inheritPermissions == ManyToManyPermissionInheritanceType.AFFIRMATIVE»
+            if (true !== $parentAccess) {
+                throw new AccessDeniedException();
+            }
+        «ENDIF»
     '''
 
     def private processDisplayOutput(Entity it) '''

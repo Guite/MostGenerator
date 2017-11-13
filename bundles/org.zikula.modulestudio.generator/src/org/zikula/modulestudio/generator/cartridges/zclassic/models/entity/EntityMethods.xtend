@@ -181,7 +181,7 @@ class EntityMethods {
          * 
          * @return array List of entity objects
          */
-        public function getRelatedObjectsToPersist(&$objects = []) 
+        public function getRelatedObjectsToPersist(&$objects = [])
         {
             «val joinsIn = incomingJoinRelationsForCloning.filter[!(it instanceof ManyToManyRelationship)]»
             «val joinsOut = outgoingJoinRelationsForCloning.filter[!(it instanceof ManyToManyRelationship)]»

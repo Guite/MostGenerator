@@ -292,21 +292,28 @@ class Entities {
          *
          * This is the concrete entity class for «name.formatForDisplay» entities.
          «extMan.classAnnotations»
-         «IF it instanceof MappedSuperClass»
-          * @ORM\MappedSuperclass
-         «IF isTopSuperClass»
-         «' '»* @ORM\InheritanceType("«getChildRelations.head.strategy.literal»")
-         «' '»* @ORM\DiscriminatorColumn(name="«getChildRelations.head.discriminatorColumn.formatForCode»"«/*, type="string"*/»)
-         «' '»* @ORM\DiscriminatorMap({«FOR relation : getChildRelations»«relation.discriminatorInfo»«ENDFOR»})
-         «ENDIF»
-         «ELSEIF it instanceof Entity»
-          * @ORM\Entity(repositoryClass="«app.appNamespace»\Entity\Repository\«name.formatForCodeCapital»Repository"«IF (it as Entity).readOnly», readOnly=true«ENDIF»)
-         «ENDIF»
+        «classAnnotation»
         «IF it instanceof Entity»
             «entityImplClassDocblockAdditions(app)»
         «ENDIF»
         «new ValidationConstraints().classAnnotations(it)»
          */
+    '''
+
+    def dispatch private classAnnotation(DataObject it) '''
+    '''
+
+    def dispatch private classAnnotation(MappedSuperClass it) '''
+        «' '»* @ORM\MappedSuperclass
+        «IF isTopSuperClass»
+        «' '»* @ORM\InheritanceType("«getChildRelations.head.strategy.literal»")
+        «' '»* @ORM\DiscriminatorColumn(name="«getChildRelations.head.discriminatorColumn.formatForCode»"«/*, type="string"*/»)
+        «' '»* @ORM\DiscriminatorMap({«FOR relation : getChildRelations»«relation.discriminatorInfo»«ENDFOR»})
+        «ENDIF»
+    '''
+
+    def dispatch private classAnnotation(Entity it) '''
+        «' '»* @ORM\Entity(repositoryClass="«application.appNamespace»\Entity\Repository\«name.formatForCodeCapital»Repository"«IF readOnly», readOnly=true«ENDIF»)
     '''
 
     def private entityImplClassDocblockAdditions(Entity it, Application app) '''
