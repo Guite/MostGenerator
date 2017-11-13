@@ -221,7 +221,7 @@ class AppSettings {
         /**
          * Saves module variables into the database.
          */
-        protected function save()
+        public function save()
         {
             «IF hasUserVariables»
                 // normalise user selector values

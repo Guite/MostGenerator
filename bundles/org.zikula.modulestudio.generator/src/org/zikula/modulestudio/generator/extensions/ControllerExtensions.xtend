@@ -4,6 +4,7 @@ import de.guite.modulestudio.metamodel.Action
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.CustomAction
 import de.guite.modulestudio.metamodel.DeleteAction
+import de.guite.modulestudio.metamodel.DerivedField
 import de.guite.modulestudio.metamodel.DisplayAction
 import de.guite.modulestudio.metamodel.EditAction
 import de.guite.modulestudio.metamodel.Entity
@@ -15,6 +16,7 @@ import de.guite.modulestudio.metamodel.ManyToOneRelationship
 import de.guite.modulestudio.metamodel.OneToManyRelationship
 import de.guite.modulestudio.metamodel.OneToOneRelationship
 import de.guite.modulestudio.metamodel.RelationEditMode
+import de.guite.modulestudio.metamodel.UserField
 import de.guite.modulestudio.metamodel.ViewAction
 
 /**
@@ -171,6 +173,14 @@ class ControllerExtensions {
      */
     def getUserGroupSelectors(Application it) {
         getAllVariables.filter(IntegerField).filter[isUserGroupSelector]
+    }
+
+    /**
+     * Checks if the given field is a special case where an integer field
+     * may not only contain integers.
+     */
+    def notOnlyNumericInteger(DerivedField it) {
+        it instanceof UserField || (it instanceof IntegerField && (it as IntegerField).isUserGroupSelector)
     }
 
     /**

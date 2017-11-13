@@ -170,7 +170,6 @@ class PersistenceTransformer {
             name = 'workflowState'
             documentation = 'the current workflow state'
             length = 20
-            defaultValue = 'initial'
             multiple = false
         ]
         listField.items += factory.createListFieldItem => [
@@ -291,6 +290,7 @@ class PersistenceTransformer {
                     name = 'linkOwn' + entity.nameMultiple.formatForCodeCapital + 'OnAccountPage'
                     defaultValue = 'true'
                     documentation = 'Whether to add a link to ' + entity.nameMultiple.formatForDisplay + ' of the current user on his account page'
+                    mandatory = false
                 ]
             }
         }
@@ -299,6 +299,7 @@ class PersistenceTransformer {
                 name = 'filterDataByLocale'
                 defaultValue = 'false'
                 documentation = 'Whether automatically filter data in the frontend based on the current locale or not'
+                mandatory = false
             ]
         }
 
@@ -321,6 +322,7 @@ class PersistenceTransformer {
                     name = 'enableShrinkingFor' + fieldSuffix
                     defaultValue = 'false'
                     documentation = 'Whether to enable shrinking huge images to maximum dimensions. Stores downscaled version of the original image.'
+                    mandatory = false
                 ]
                 varContainer.fields += factory.createIntegerField => [
                     name = 'shrinkWidth' + fieldSuffix
@@ -334,7 +336,6 @@ class PersistenceTransformer {
                 ]
                 val thumbModeField = factory.createListField => [
                     name = 'thumbnailMode' + fieldSuffix
-                    defaultValue = 'inset'
                     documentation = 'Thumbnail mode (inset or outbound).'
                 ]
                 thumbModeField.items += factory.createListFieldItem => [
@@ -377,8 +378,8 @@ class PersistenceTransformer {
 
         val listField = factory.createListField => [
             name = 'enabledFinderTypes'
-            defaultValue = ''
             documentation = 'Which sections are supported in the Finder component (used by Scribite plug-ins).'
+            mandatory = false
             multiple = true
         ]
         for (entity : getAllEntities.filter[hasDisplayAction]) {
@@ -434,6 +435,7 @@ class PersistenceTransformer {
                 name = 'enable' + entity.name.formatForCodeCapital + 'GeoLocation'
                 defaultValue = 'false'
                 documentation = 'Whether to enable geo location functionality for ' + entity.nameMultiple.formatForDisplay + ' or not.'
+                mandatory = false
             ]
         }
 

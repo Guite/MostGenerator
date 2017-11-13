@@ -8,7 +8,6 @@ import de.guite.modulestudio.metamodel.DerivedField
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.IntegerField
 import de.guite.modulestudio.metamodel.NumberField
-import de.guite.modulestudio.metamodel.UserField
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
@@ -162,7 +161,7 @@ class FileHelper {
         «IF !aggregators.empty»
             $diff = abs($this->«name» - $«name»);
         «ENDIF»
-        $this->«name» = «IF it instanceof UserField || (it instanceof IntegerField && (it as IntegerField).isUserGroupSelector)»$«name»;«ELSE»«IF it instanceof AbstractIntegerField»intval«ELSE»floatval«ENDIF»($«name»);«ENDIF»
+        $this->«name» = «numericCast('$' + name)»;
         «IF !aggregators.empty»
             «FOR aggregator : aggregators»
             $this->«aggregator.sourceAlias.formatForCode»->add«name.formatForCodeCapital»Without«entity.name.formatForCodeCapital»($diff);
@@ -171,17 +170,29 @@ class FileHelper {
     '''
 
     def private dispatch setterMethodImpl(IntegerField it, String name, String type, Boolean nullable) '''
-        if (intval($this->«name.formatForCode») !== intval($«name»)) {
+        if («numericCast('$this->' + name.formatForCode)» !== «numericCast('$' + name)») {
             «triggerPropertyChangeListeners(name)»
             «setterAssignmentNumeric(name, type)»
         }
     '''
     def private dispatch setterMethodImpl(NumberField it, String name, String type, Boolean nullable) '''
-        if (floatval($this->«name.formatForCode») !== floatval($«name»)) {
+        if («numericCast('$this->' + name.formatForCode)» !== «numericCast('$' + name)») {
             «triggerPropertyChangeListeners(name)»
             «setterAssignmentNumeric(name, type)»
         }
     '''
+
+    def private numericCast(DerivedField it, String variable) {
+        if (notOnlyNumericInteger) {
+            return variable
+        } else {
+            if (it instanceof AbstractIntegerField) {
+                return 'intval(' + variable + ')'
+            } else {
+                return 'floatval(' + variable + ')'
+            }
+        }
+    }
 
     def private dispatch setterAssignment(DatetimeField it, String name, String type) '''
         if (is_object($«name») && $«name» instanceOf \DateTime) {

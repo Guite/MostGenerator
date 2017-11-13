@@ -75,7 +75,7 @@ class ConfigController {
             throw new AccessDeniedException();
         }
 
-        $form = $this->createForm(ConfigType::class);
+        $form = $this->createForm(ConfigType::class, $this->get('«appService».app_settings'));
 
         if ($form->handleRequest($request)->isValid()) {
             if ($form->get('save')->isClicked()) {

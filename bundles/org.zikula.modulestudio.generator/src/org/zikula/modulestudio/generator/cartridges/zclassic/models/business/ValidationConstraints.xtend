@@ -25,6 +25,7 @@ import de.guite.modulestudio.metamodel.UploadField
 import de.guite.modulestudio.metamodel.UrlField
 import de.guite.modulestudio.metamodel.UserField
 import java.math.BigInteger
+import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.DateTimeExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
@@ -35,6 +36,7 @@ import org.zikula.modulestudio.generator.extensions.Utils
 
 class ValidationConstraints {
 
+    extension ControllerExtensions = new ControllerExtensions
     extension DateTimeExtensions = new DateTimeExtensions
     extension FormattingExtensions = new FormattingExtensions
     extension ModelExtensions = new ModelExtensions
@@ -74,12 +76,12 @@ class ValidationConstraints {
     '''
 
     def private fieldAnnotationsInteger(AbstractIntegerField it) '''
-        «IF !(it instanceof UserField)»
+        «IF !notOnlyNumericInteger»
             «' '»* @Assert\Type(type="integer")
         «ENDIF»
         «IF mandatory && (!primaryKey || (null !== entity && entity.getVersionField == this))»
             «' '»* @Assert\NotBlank()
-            «IF !(it instanceof UserField)»
+            «IF !notOnlyNumericInteger»
                 «' '»* @Assert\NotEqualTo(value=0)
             «ENDIF»
         «ELSEIF !nullable»
@@ -102,14 +104,16 @@ class ValidationConstraints {
              && entity.outgoing.filter(JoinRelationship).filter[r|r.sourceField == name].empty
          )»
             «fieldAnnotationsInteger»
-            «IF minValue.toString != '0' && maxValue.toString != '0'»
-                «' '»* @Assert\Range(min=«minValue», max=«maxValue»)
-            «ELSEIF minValue.toString != '0'»
-                «' '»* @Assert\GreaterThanOrEqual(value=«minValue»)
-            «ELSEIF maxValue.toString != '0'»
-                «' '»* @Assert\LessThanOrEqual(value=«maxValue»)
-            «ELSE»
-                «' '»* @Assert\LessThan(value=«BigInteger.valueOf((10 ** length) as long)»)
+            «IF !notOnlyNumericInteger»
+                «IF minValue.toString != '0' && maxValue.toString != '0'»
+                    «' '»* @Assert\Range(min=«minValue», max=«maxValue»)
+                «ELSEIF minValue.toString != '0'»
+                    «' '»* @Assert\GreaterThanOrEqual(value=«minValue»)
+                «ELSEIF maxValue.toString != '0'»
+                    «' '»* @Assert\LessThanOrEqual(value=«maxValue»)
+                «ELSE»
+                    «' '»* @Assert\LessThan(value=«BigInteger.valueOf((10 ** length) as long)»)
+                «ENDIF»
             «ENDIF»
         «ENDIF»
     '''

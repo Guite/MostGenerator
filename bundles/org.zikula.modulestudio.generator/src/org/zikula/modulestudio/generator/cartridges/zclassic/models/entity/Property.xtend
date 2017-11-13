@@ -12,6 +12,7 @@ import de.guite.modulestudio.metamodel.EntityIdentifierStrategy
 import de.guite.modulestudio.metamodel.Field
 import de.guite.modulestudio.metamodel.IntegerField
 import de.guite.modulestudio.metamodel.ListField
+import de.guite.modulestudio.metamodel.ListFieldItem
 import de.guite.modulestudio.metamodel.NumberField
 import de.guite.modulestudio.metamodel.NumberFieldType
 import de.guite.modulestudio.metamodel.ObjectField
@@ -87,6 +88,7 @@ class Property {
         /**
          «IF null !== documentation && documentation != ''»
           * «documentation»
+          *
          «ENDIF»
         «IF null !== entity»
              «IF primaryKey»
@@ -155,11 +157,17 @@ class Property {
             ArrayField: '[]'
             UploadField: 'null'
             ObjectField: 'null'
-            ListField: if (null !== it.defaultValue && it.defaultValue.length > 0) '\'' + it.defaultValue + '\'' else if (nullable) 'null' else '\'\''
+            ListField:
+                if (!items.filter[^default].empty) {
+                    if (multiple) '\'' + items.filter[^default].map[listItemValue].join('###') + '\''
+                    else '\'' + items.filter[^default].head.listItemValue + '\''
+                } else if (nullable) 'null' else '\'\''
             AbstractStringField: if (null !== it.defaultValue && it.defaultValue.length > 0) '\'' + it.defaultValue + '\'' else '\'\''
             default: '\'\''
         }
     }
+
+    def static private listItemValue(ListFieldItem it) '''«IF null !== value»«value.replace("'", "")»«ELSE»«name/*.formatForCode.replace("'", "")*/»«ENDIF»'''
 
     def private fieldAccessorDefault(DerivedField it) '''
         «IF isIndexByField»
