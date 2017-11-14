@@ -3,13 +3,11 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.techdoc
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.HookProviderMode
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
-import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class TechHelper {
 
     extension FormattingExtensions = new FormattingExtensions
-    extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
 
     def docPage(Application it, String language, String title, CharSequence content) '''
@@ -36,7 +34,7 @@ class TechHelper {
                 <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
                 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
             <![endif]-->
-            <link rel="icon" href="/«relativeAppRootPath»/«getResourcesPath»/public/images/admin.png">
+            <link rel="icon" href="../../public/images/admin.png">
             <style>
                 body {
                     padding-bottom: 80px;
@@ -58,7 +56,7 @@ class TechHelper {
         <body>
               <div class="container">
                   <h1>
-                      <img src="/«relativeAppRootPath»/«getResourcesPath»public/images/admin.png" width="48" height="48" alt="Icon" class="img-thumbnail pull-right" />
+                      <img src="../../public/images/admin.png" width="48" height="48" alt="Icon" class="img-thumbnail pull-right" />
                       «name.formatForDisplayCapital» &ndash; «title»
                   </h1>
                   <p>«appDescription»</p>
