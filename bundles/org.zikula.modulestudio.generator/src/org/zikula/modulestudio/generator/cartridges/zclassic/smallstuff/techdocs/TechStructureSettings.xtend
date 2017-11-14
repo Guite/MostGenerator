@@ -26,11 +26,11 @@ class TechStructureSettings {
     '''
 
     def private settingsHeader(Application it) '''
-        <tr class="sr-only">
-            <th id="hSettingName1" scope="col">«IF language == 'de'»Einstellung«ELSE»Setting«ENDIF»</th>
-            <th id="hSettingValue1" scope="col">«IF language == 'de'»Wert«ELSE»Value«ENDIF»</th>
-            <th id="hSettingName2" scope="col">«IF language == 'de'»Einstellung«ELSE»Setting«ENDIF»</th>
-            <th id="hSettingValue2" scope="col">«IF language == 'de'»Wert«ELSE»Value«ENDIF»</th>
+        <tr>
+            <th id="hSettingName1" scope="col" style="width: 25%">«IF language == 'de'»Einstellung«ELSE»Setting«ENDIF»</th>
+            <th id="hSettingValue1" scope="col" class="text-center" style="width: 25%">«IF language == 'de'»Wert«ELSE»Value«ENDIF»</th>
+            <th id="hSettingName2" scope="col" style="width: 25%">«IF language == 'de'»Einstellung«ELSE»Setting«ENDIF»</th>
+            <th id="hSettingValue2" scope="col" class="text-center" style="width: 25%">«IF language == 'de'»Wert«ELSE»Value«ENDIF»</th>
         </tr>
     '''
 
