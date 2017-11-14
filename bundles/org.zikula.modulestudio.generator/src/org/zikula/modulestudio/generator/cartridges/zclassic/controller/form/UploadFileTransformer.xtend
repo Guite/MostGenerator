@@ -17,7 +17,7 @@ class UploadFileTransformer {
     FileHelper fh = new FileHelper
 
     def generate(Application it, IFileSystemAccess fsa) {
-        generateClassPair(fsa, getAppSourceLibPath + 'Form/DataTransformer/UploadFileTransformer.php',
+        generateClassPair(fsa, 'Form/DataTransformer/UploadFileTransformer.php',
             fh.phpFileContent(it, transformerBaseImpl), fh.phpFileContent(it, transformerImpl)
         )
     }

@@ -76,7 +76,7 @@ class ControllerLayer {
      */
     def private generateController(Entity it, IFileSystemAccess fsa) {
         println('Generating "' + name.formatForDisplay + '" controller classes')
-        app.generateClassPair(fsa, app.getAppSourceLibPath + 'Controller/' + name.formatForCodeCapital + 'Controller.php',
+        app.generateClassPair(fsa, 'Controller/' + name.formatForCodeCapital + 'Controller.php',
             fh.phpFileContent(app, entityControllerBaseImpl), fh.phpFileContent(app, entityControllerImpl)
         )
     }

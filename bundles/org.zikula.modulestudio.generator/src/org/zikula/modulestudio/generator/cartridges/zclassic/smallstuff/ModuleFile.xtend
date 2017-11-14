@@ -17,7 +17,7 @@ class ModuleFile {
     FileHelper fh = new FileHelper
 
     def generate(Application it, IFileSystemAccess fsa) {
-        generateClassPair(fsa, getAppSourceLibPath + appName + '.php',
+        generateClassPair(fsa, appName + '.php',
             fh.phpFileContent(it, moduleBaseClass), fh.phpFileContent(it, moduleInfoImpl)
         )
     }

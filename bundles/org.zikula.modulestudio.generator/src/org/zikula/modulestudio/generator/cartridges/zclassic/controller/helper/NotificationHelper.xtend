@@ -23,7 +23,7 @@ class NotificationHelper {
     def generate(Application it, IFileSystemAccess fsa) {
         println('Generating helper class for workflow notifications')
         val fh = new FileHelper
-        generateClassPair(fsa, getAppSourceLibPath + 'Helper/NotificationHelper.php',
+        generateClassPair(fsa, 'Helper/NotificationHelper.php',
             fh.phpFileContent(it, notificationHelperBaseClass), fh.phpFileContent(it, notificationHelperImpl)
         )
     }

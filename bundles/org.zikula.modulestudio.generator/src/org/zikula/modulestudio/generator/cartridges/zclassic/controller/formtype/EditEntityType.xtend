@@ -62,7 +62,7 @@ class EditEntityType {
         app = it.application
         incomingRelations = getEditableJoinRelations(true).filter[getEditStageCode(true) > 0]
         outgoingRelations = getEditableJoinRelations(false).filter[getEditStageCode(false) > 0]
-        app.generateClassPair(fsa, app.getAppSourceLibPath + 'Form/Type/' + name.formatForCodeCapital + 'Type.php',
+        app.generateClassPair(fsa, 'Form/Type/' + name.formatForCodeCapital + 'Type.php',
             fh.phpFileContent(app, editTypeBaseImpl), fh.phpFileContent(app, editTypeImpl)
         )
     }

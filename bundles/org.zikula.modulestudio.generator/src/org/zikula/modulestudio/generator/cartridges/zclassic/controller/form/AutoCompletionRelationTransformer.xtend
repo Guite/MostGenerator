@@ -14,7 +14,7 @@ class AutoCompletionRelationTransformer {
     FileHelper fh = new FileHelper
 
     def generate(Application it, IFileSystemAccess fsa) {
-        generateClassPair(fsa, getAppSourceLibPath + 'Form/DataTransformer/AutoCompletionRelationTransformer.php',
+        generateClassPair(fsa, 'Form/DataTransformer/AutoCompletionRelationTransformer.php',
             fh.phpFileContent(it, transformerBaseImpl), fh.phpFileContent(it, transformerImpl)
         )
     }

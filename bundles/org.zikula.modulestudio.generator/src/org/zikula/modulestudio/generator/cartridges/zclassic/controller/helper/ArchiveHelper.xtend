@@ -25,7 +25,7 @@ class ArchiveHelper {
     def generate(Application it, IFileSystemAccess fsa) {
         println('Generating helper class for automatic archiving')
         val fh = new FileHelper
-        generateClassPair(fsa, getAppSourceLibPath + 'Helper/ArchiveHelper.php',
+        generateClassPair(fsa, 'Helper/ArchiveHelper.php',
             fh.phpFileContent(it, archiveHelperBaseClass), fh.phpFileContent(it, archiveHelperImpl)
         )
     }

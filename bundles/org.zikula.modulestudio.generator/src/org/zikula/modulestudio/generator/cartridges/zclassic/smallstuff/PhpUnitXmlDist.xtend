@@ -11,11 +11,11 @@ class PhpUnitXmlDist {
 
     def generate(Application it, IFileSystemAccess fsa) {
         var fileName = 'phpunit.xml.dist'
-        if (!shouldBeSkipped(getAppSourcePath + fileName)) {
-            if (shouldBeMarked(getAppSourcePath + fileName)) {
+        if (!shouldBeSkipped(fileName)) {
+            if (shouldBeMarked(fileName)) {
                 fileName = 'phpunit.xml.generated.dist'
             }
-            fsa.generateFile(getAppSourcePath + fileName, phpUnitXml)
+            fsa.generateFile(fileName, phpUnitXml)
         }
     }
 

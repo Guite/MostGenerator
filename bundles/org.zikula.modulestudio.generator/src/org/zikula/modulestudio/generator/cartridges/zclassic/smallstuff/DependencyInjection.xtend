@@ -15,7 +15,7 @@ class DependencyInjection {
 
     def generate(Application it, IFileSystemAccess fsa) {
         val extensionFileName = vendor.formatForCodeCapital + name.formatForCodeCapital + 'Extension.php'
-        generateClassPair(fsa, getAppSourceLibPath + 'DependencyInjection/' + extensionFileName,
+        generateClassPair(fsa, 'DependencyInjection/' + extensionFileName,
             fh.phpFileContent(it, extensionBaseImpl), fh.phpFileContent(it, extensionImpl)
         )
     }

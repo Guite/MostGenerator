@@ -20,7 +20,7 @@ class ItemSelector {
     FileHelper fh = new FileHelper
 
     def generate(Application it, IFileSystemAccess fsa) {
-        generateClassPair(fsa, getAppSourceLibPath + 'Form/Plugin/ItemSelector.php',
+        generateClassPair(fsa, 'Form/Plugin/ItemSelector.php',
             fh.phpFileContent(it, itemSelectorBaseImpl), fh.phpFileContent(it, itemSelectorImpl)
         )
         if (!shouldBeSkipped(viewPluginFilePath('function', 'ItemSelector'))) {

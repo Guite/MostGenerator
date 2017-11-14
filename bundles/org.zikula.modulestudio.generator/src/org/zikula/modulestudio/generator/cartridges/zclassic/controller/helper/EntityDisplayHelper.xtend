@@ -30,7 +30,7 @@ class EntityDisplayHelper {
     def generate(Application it, IFileSystemAccess fsa) {
         println('Generating helper class for formatted entity display')
         val fh = new FileHelper
-        generateClassPair(fsa, getAppSourceLibPath + 'Helper/EntityDisplayHelper.php',
+        generateClassPair(fsa, 'Helper/EntityDisplayHelper.php',
             fh.phpFileContent(it, entityDisplayHelperBaseClass), fh.phpFileContent(it, entityDisplayHelperImpl)
         )
     }

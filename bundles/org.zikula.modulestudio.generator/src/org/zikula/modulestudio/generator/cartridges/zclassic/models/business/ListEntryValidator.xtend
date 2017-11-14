@@ -20,10 +20,10 @@ class ListEntryValidator {
      */
     def generate(Application it, IFileSystemAccess fsa) {
         println('Generating list entry constraint and validator classes')
-        generateClassPair(fsa, getAppSourceLibPath + 'Validator/Constraints/ListEntry.php',
+        generateClassPair(fsa, 'Validator/Constraints/ListEntry.php',
             fh.phpFileContent(it, constraintBaseImpl), fh.phpFileContent(it, constraintImpl)
         )
-        generateClassPair(fsa, getAppSourceLibPath + 'Validator/Constraints/ListEntryValidator.php',
+        generateClassPair(fsa, 'Validator/Constraints/ListEntryValidator.php',
             fh.phpFileContent(it, validatorBaseImpl), fh.phpFileContent(it, validatorImpl)
         )
     }

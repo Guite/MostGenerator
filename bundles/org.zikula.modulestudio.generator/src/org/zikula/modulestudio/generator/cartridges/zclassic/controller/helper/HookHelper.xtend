@@ -40,7 +40,7 @@ class HookHelper {
     def private generateHookSubscribers(Application it, IFileSystemAccess fsa) {
         val fh = new FileHelper
         println('Generating helper class for hook calls')
-        generateClassPair(fsa, getAppSourceLibPath + 'Helper/HookHelper.php',
+        generateClassPair(fsa, 'Helper/HookHelper.php',
             fh.phpFileContent(it, hookFunctionsBaseImpl), fh.phpFileContent(it, hookFunctionsImpl)
         )
         println('Generating hook subscriber classes')
@@ -57,7 +57,7 @@ class HookHelper {
                     generateSubscriber = true
                 }
                 if (true === generateSubscriber) {
-                    generateClassPair(fsa, getAppSourceLibPath + 'HookSubscriber/' + entity.name.formatForCodeCapital + subscriberType + 'Subscriber.php',
+                    generateClassPair(fsa, 'HookSubscriber/' + entity.name.formatForCodeCapital + subscriberType + 'Subscriber.php',
                         fh.phpFileContent(it, entity.hookSubscriberBaseImpl(category, subscriberType)), fh.phpFileContent(it, entity.hookClassImpl('subscriber', category, subscriberType))
                     )
                 }
@@ -72,7 +72,7 @@ class HookHelper {
         val fh = new FileHelper
         println('Generating hook provider classes')
         if (hasFilterHookProvider) {
-            generateClassPair(fsa, getAppSourceLibPath + 'HookProvider/FilterHooksProvider.php',
+            generateClassPair(fsa, 'HookProvider/FilterHooksProvider.php',
                 fh.phpFileContent(it, filterHooksProviderBaseImpl), fh.phpFileContent(it, filterHooksProviderImpl)
             )
         }
@@ -89,7 +89,7 @@ class HookHelper {
                         generateProvider = true
                     }
                     if (true === generateProvider) {
-                        generateClassPair(fsa, getAppSourceLibPath + 'HookProvider/' + entity.name.formatForCodeCapital + providerType + 'Provider.php',
+                        generateClassPair(fsa, 'HookProvider/' + entity.name.formatForCodeCapital + providerType + 'Provider.php',
                             fh.phpFileContent(it, entity.hookProviderBaseImpl(category, providerType)), fh.phpFileContent(it, entity.hookClassImpl('provider', category, providerType))
                         )
                     }

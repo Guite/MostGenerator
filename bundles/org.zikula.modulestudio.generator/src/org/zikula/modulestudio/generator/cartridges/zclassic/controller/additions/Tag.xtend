@@ -18,7 +18,7 @@ class Tag {
     FileHelper fh = new FileHelper
 
     def generate(Application it, IFileSystemAccess fsa) {
-        generateClassPair(fsa, getAppSourceLibPath + 'TaggedObjectMeta/' + appName + '.php',
+        generateClassPair(fsa, 'TaggedObjectMeta/' + appName + '.php',
             fh.phpFileContent(it, tagBaseClass), fh.phpFileContent(it, tagImpl)
         )
     }

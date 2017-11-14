@@ -28,12 +28,12 @@ class Events {
     def generate(Application it, IFileSystemAccess fsa) {
         app = it
 
-        generateClassPair(fsa, getAppSourceLibPath + name.formatForCodeCapital + 'Events.php',
+        generateClassPair(fsa, name.formatForCodeCapital + 'Events.php',
             fh.phpFileContent(it, eventDefinitionsBaseClass), fh.phpFileContent(it, eventDefinitionsImpl)
         )
 
         for (entity : getAllEntities) {
-            generateClassPair(fsa, getAppSourceLibPath + 'Event/Filter' + entity.name.formatForCodeCapital + 'Event.php',
+            generateClassPair(fsa, 'Event/Filter' + entity.name.formatForCodeCapital + 'Event.php',
                 fh.phpFileContent(it, filterEventBaseClass(entity)), fh.phpFileContent(it, filterEventImpl(entity))
             )
         }

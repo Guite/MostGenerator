@@ -22,7 +22,7 @@ class TranslatableHelper {
     def generate(Application it, IFileSystemAccess fsa) {
         println('Generating helper class for translatable entities')
         val fh = new FileHelper
-        generateClassPair(fsa, getAppSourceLibPath + 'Helper/TranslatableHelper.php',
+        generateClassPair(fsa, 'Helper/TranslatableHelper.php',
             fh.phpFileContent(it, translatableFunctionsBaseImpl), fh.phpFileContent(it, translatableFunctionsImpl)
         )
     }

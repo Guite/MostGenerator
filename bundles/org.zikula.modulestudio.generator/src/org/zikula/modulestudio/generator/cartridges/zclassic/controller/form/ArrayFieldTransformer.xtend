@@ -14,7 +14,7 @@ class ArrayFieldTransformer {
     FileHelper fh = new FileHelper
 
     def generate(Application it, IFileSystemAccess fsa) {
-        generateClassPair(fsa, getAppSourceLibPath + 'Form/DataTransformer/ArrayFieldTransformer.php',
+        generateClassPair(fsa, 'Form/DataTransformer/ArrayFieldTransformer.php',
             fh.phpFileContent(it, transformerBaseImpl), fh.phpFileContent(it, transformerImpl)
         )
     }

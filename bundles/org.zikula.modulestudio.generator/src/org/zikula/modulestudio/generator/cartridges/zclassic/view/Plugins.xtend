@@ -42,7 +42,7 @@ class Plugins {
         println('Generating Twig extension class')
         val fh = new FileHelper
         val twigFolder = 'Twig'
-        generateClassPair(fsa, getAppSourceLibPath + twigFolder + '/TwigExtension.php',
+        generateClassPair(fsa, twigFolder + '/TwigExtension.php',
             fh.phpFileContent(it, twigExtensionBaseImpl), fh.phpFileContent(it, twigExtensionImpl)
         )
     }

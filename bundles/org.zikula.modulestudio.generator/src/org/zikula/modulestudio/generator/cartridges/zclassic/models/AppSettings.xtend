@@ -33,7 +33,7 @@ class AppSettings {
     def generate(Application it, IFileSystemAccess fsa) {
         println('Generating application settings class')
         thProp = new Property(null)
-        val destinationPath = getAppSourceLibPath
+        val destinationPath = ''
         val destinationFileName = 'AppSettings'
         var fileName = ''
         fileName = 'Abstract' + destinationFileName + '.php'

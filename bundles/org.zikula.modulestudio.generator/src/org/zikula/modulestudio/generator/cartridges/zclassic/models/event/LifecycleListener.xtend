@@ -21,7 +21,7 @@ class LifecycleListener {
 
     def generate(Application it, IFileSystemAccess fsa) {
         app = it
-        generateClassPair(fsa, getAppSourceLibPath + 'Listener/EntityLifecycleListener.php',
+        generateClassPair(fsa, 'Listener/EntityLifecycleListener.php',
             fh.phpFileContent(it, lifecycleListenerBaseImpl), fh.phpFileContent(it, lifecycleListenerImpl)
         )
     }

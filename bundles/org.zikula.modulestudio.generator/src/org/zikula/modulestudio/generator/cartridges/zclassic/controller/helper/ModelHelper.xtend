@@ -29,7 +29,7 @@ class ModelHelper {
     def generate(Application it, IFileSystemAccess fsa) {
         println('Generating helper class for model layer')
         val fh = new FileHelper
-        generateClassPair(fsa, getAppSourceLibPath + 'Helper/ModelHelper.php',
+        generateClassPair(fsa, 'Helper/ModelHelper.php',
             fh.phpFileContent(it, modelFunctionsBaseImpl), fh.phpFileContent(it, modelFunctionsImpl)
         )
     }

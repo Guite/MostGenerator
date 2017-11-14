@@ -14,7 +14,7 @@ class ListFieldTransformer {
     FileHelper fh = new FileHelper
 
     def generate(Application it, IFileSystemAccess fsa) {
-        generateClassPair(fsa, getAppSourceLibPath + 'Form/DataTransformer/ListFieldTransformer.php',
+        generateClassPair(fsa, 'Form/DataTransformer/ListFieldTransformer.php',
             fh.phpFileContent(it, transformerBaseImpl), fh.phpFileContent(it, transformerImpl)
         )
     }

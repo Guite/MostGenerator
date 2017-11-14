@@ -57,7 +57,7 @@ class Repository {
      */
     def private generate(Entity it) {
         println('Generating repository classes for entity "' + name.formatForDisplay + '"')
-        val repositoryPath = app.getAppSourceLibPath + 'Entity/Repository/'
+        val repositoryPath = 'Entity/Repository/'
         var fileSuffix = 'Repository'
 
         var fileName = 'Base/Abstract' + name.formatForCodeCapital + fileSuffix + '.php'

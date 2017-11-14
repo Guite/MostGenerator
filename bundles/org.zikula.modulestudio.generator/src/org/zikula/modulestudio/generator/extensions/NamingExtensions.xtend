@@ -125,14 +125,14 @@ class NamingExtensions {
      * Checks whether a certain file path is contained in the blacklist for files to be skipped during generation.
      */
     def shouldBeSkipped(Application it, String filePath) {
-        getListOfFilesToBeSkipped.contains(filePath.replace(getAppSourcePath, ''))
+        getListOfFilesToBeSkipped.contains(filePath)
     }
 
     /**
      * Checks whether a certain file path is contained in the list for files to be marked during generation.
      */
     def shouldBeMarked(Application it, String filePath) {
-        getListOfFilesToBeMarked.contains(filePath.replace(getAppSourcePath, ''))
+        getListOfFilesToBeMarked.contains(filePath)
     }
 
     /**
@@ -173,13 +173,6 @@ class NamingExtensions {
     }
 
     /**
-     * Returns the base path for the generated application.
-     */
-    def getAppSourcePath(Application it) {
-        ''
-    }
-
-    /**
      * Returns the relative path to the application's root directory.
      */
     def relativeAppRootPath(Application it) {
@@ -188,13 +181,6 @@ class NamingExtensions {
         } else {
             'modules/' + vendor.formatForCodeCapital + '/' + name.formatForCodeCapital + 'Module'
         }
-    }
-
-    /**
-     * Returns the base path for the source code of the generated application.
-     */
-    def getAppSourceLibPath(Application it) {
-        getAppSourcePath
     }
 
     /**
@@ -222,7 +208,7 @@ class NamingExtensions {
      * Returns the base path for any resources.
      */
     def getResourcesPath(Application it) {
-        getAppSourcePath + 'Resources/'
+        'Resources/'
     }
 
     /**
@@ -271,6 +257,6 @@ class NamingExtensions {
      * Returns the base path for the test source code of the generated application.
      */
     def getAppTestsPath(Application it) {
-        getAppSourcePath + 'Tests/'
+        'Tests/'
     }
 }

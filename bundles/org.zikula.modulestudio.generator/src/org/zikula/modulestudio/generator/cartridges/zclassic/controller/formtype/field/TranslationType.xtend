@@ -16,7 +16,7 @@ class TranslationType {
     FileHelper fh = new FileHelper
 
     def generate(Application it, IFileSystemAccess fsa) {
-        generateClassPair(fsa, getAppSourceLibPath + 'Form/Type/Field/TranslationType.php',
+        generateClassPair(fsa, 'Form/Type/Field/TranslationType.php',
             fh.phpFileContent(it, translationTypeBaseImpl), fh.phpFileContent(it, translationTypeImpl)
         )
     }

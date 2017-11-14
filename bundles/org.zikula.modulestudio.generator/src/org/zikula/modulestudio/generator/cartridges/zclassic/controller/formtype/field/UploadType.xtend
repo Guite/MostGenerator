@@ -19,7 +19,7 @@ class UploadType {
     FileHelper fh = new FileHelper
 
     def generate(Application it, IFileSystemAccess fsa) {
-        generateClassPair(fsa, getAppSourceLibPath + 'Form/Type/Field/UploadType.php',
+        generateClassPair(fsa, 'Form/Type/Field/UploadType.php',
             fh.phpFileContent(it, uploadTypeBaseImpl), fh.phpFileContent(it, uploadTypeImpl)
         )
     }

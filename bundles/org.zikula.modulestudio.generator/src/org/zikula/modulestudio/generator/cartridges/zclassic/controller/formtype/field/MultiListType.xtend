@@ -24,7 +24,7 @@ class MultiListType {
             return
         }
         app = it
-        generateClassPair(fsa, getAppSourceLibPath + 'Form/Type/Field/MultiListType.php',
+        generateClassPair(fsa, 'Form/Type/Field/MultiListType.php',
             fh.phpFileContent(it, multiListTypeBaseImpl), fh.phpFileContent(it, multiListTypeImpl)
         )
     }

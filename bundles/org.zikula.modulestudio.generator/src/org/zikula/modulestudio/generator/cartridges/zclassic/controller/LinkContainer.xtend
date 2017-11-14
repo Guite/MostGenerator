@@ -25,7 +25,7 @@ class LinkContainer {
 
     def generate(Application it, IFileSystemAccess fsa) {
         println('Generating link container class')
-        generateClassPair(fsa, getAppSourceLibPath + 'Container/LinkContainer.php',
+        generateClassPair(fsa, 'Container/LinkContainer.php',
             fh.phpFileContent(it, linkContainerBaseImpl), fh.phpFileContent(it, linkContainerImpl)
         )
     }

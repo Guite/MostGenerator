@@ -16,11 +16,11 @@ class TravisFile {
 
     def generate(Application it, IFileSystemAccess fsa) {
         var fileName = '.travis.yml'
-        if (!shouldBeSkipped(getAppSourcePath + fileName)) {
-            if (shouldBeMarked(getAppSourcePath + fileName)) {
+        if (!shouldBeSkipped(fileName)) {
+            if (shouldBeMarked(fileName)) {
                 fileName = '.travis.generated.yml'
             }
-            fsa.generateFile(getAppSourcePath + fileName, travisFile)
+            fsa.generateFile(fileName, travisFile)
         }
     }
 

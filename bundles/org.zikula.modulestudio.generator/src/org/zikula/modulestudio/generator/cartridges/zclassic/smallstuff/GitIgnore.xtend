@@ -8,8 +8,8 @@ class GitIgnore {
     extension NamingExtensions = new NamingExtensions
 
     def generate(Application it, IFileSystemAccess fsa) {
-        if (!shouldBeSkipped(getAppSourcePath + '.gitignore')) {
-            fsa.generateFile(getAppSourcePath + '.gitignore', gitIgnoreContent)
+        if (!shouldBeSkipped('.gitignore')) {
+            fsa.generateFile('.gitignore', gitIgnoreContent)
         }
     }
 

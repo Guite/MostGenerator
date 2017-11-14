@@ -20,7 +20,7 @@ class AutoCompletionRelationType {
     FileHelper fh = new FileHelper
 
     def generate(Application it, IFileSystemAccess fsa) {
-        generateClassPair(fsa, getAppSourceLibPath + 'Form/Type/Field/AutoCompletionRelationType.php',
+        generateClassPair(fsa, 'Form/Type/Field/AutoCompletionRelationType.php',
             fh.phpFileContent(it, relationTypeBaseImpl), fh.phpFileContent(it, relationTypeImpl)
         )
     }

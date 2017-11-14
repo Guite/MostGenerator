@@ -22,7 +22,7 @@ class SlugTransliterator {
         }
         println('Generating custom sluggable transliterator')
         val fh = new FileHelper
-        generateClassPair(fsa, getAppSourceLibPath + 'Helper/SlugTransliterator.php',
+        generateClassPair(fsa, 'Helper/SlugTransliterator.php',
             fh.phpFileContent(it, transliteratorBaseImpl), fh.phpFileContent(it, transliteratorImpl)
         )
     }

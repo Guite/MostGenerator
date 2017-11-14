@@ -30,7 +30,7 @@ class ExternalController {
             return
         }
         println('Generating external controller')
-        generateClassPair(fsa, getAppSourceLibPath + 'Controller/ExternalController.php',
+        generateClassPair(fsa, 'Controller/ExternalController.php',
             fh.phpFileContent(it, externalBaseClass), fh.phpFileContent(it, externalImpl)
         )
         new FinderType().generate(it, fsa)

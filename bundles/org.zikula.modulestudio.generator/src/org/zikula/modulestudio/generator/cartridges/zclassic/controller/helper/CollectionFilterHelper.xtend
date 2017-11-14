@@ -35,7 +35,7 @@ class CollectionFilterHelper {
     def generate(Application it, IFileSystemAccess fsa) {
         println('Generating helper class for filtering entity collections')
         val fh = new FileHelper
-        generateClassPair(fsa, getAppSourceLibPath + 'Helper/CollectionFilterHelper.php',
+        generateClassPair(fsa, 'Helper/CollectionFilterHelper.php',
             fh.phpFileContent(it, collectionFilterHelperBaseClass), fh.phpFileContent(it, collectionFilterHelperImpl)
         )
     }

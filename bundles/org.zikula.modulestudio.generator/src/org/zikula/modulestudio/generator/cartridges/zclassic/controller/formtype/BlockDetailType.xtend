@@ -31,7 +31,7 @@ class BlockDetailType {
         if (!generateDetailBlock || !hasDisplayActions) {
             return
         }
-        generateClassPair(fsa, getAppSourceLibPath + 'Block/Form/Type/ItemBlockType.php',
+        generateClassPair(fsa, 'Block/Form/Type/ItemBlockType.php',
             fh.phpFileContent(it, detailBlockTypeBaseImpl), fh.phpFileContent(it, detailBlockTypeImpl)
         )
     }

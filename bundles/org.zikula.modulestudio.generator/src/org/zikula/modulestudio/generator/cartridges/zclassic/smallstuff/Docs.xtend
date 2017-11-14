@@ -4,6 +4,8 @@ import de.guite.modulestudio.metamodel.Application
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.documents.License_GPL
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.documents.License_LGPL
+import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.techdocs.TechComplexity
+import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.techdocs.TechStructure
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
@@ -25,18 +27,18 @@ class Docs {
      */
     def generate(Application it, IFileSystemAccess fsa) {
         var fileName = 'CHANGELOG.md'
-        if (!shouldBeSkipped(getAppSourcePath + fileName)) {
-            if (shouldBeMarked(getAppSourcePath + fileName)) {
+        if (!shouldBeSkipped(fileName)) {
+            if (shouldBeMarked(fileName)) {
                 fileName = 'CHANGELOG.generated.md'
             }
-            fsa.generateFile(getAppSourcePath + fileName, Changelog)
+            fsa.generateFile(fileName, Changelog)
         }
         fileName = 'README.md'
-        if (!shouldBeSkipped(getAppSourcePath + fileName)) {
-            if (shouldBeMarked(getAppSourcePath + fileName)) {
+        if (!shouldBeSkipped(fileName)) {
+            if (shouldBeMarked(fileName)) {
                 fileName = 'README.generated.md'
             }
-            fsa.generateFile(getAppSourcePath + fileName, ReadmeMarkup)
+            fsa.generateFile(fileName, ReadmeMarkup)
         }
 
         val docPath = getAppDocPath
@@ -79,6 +81,25 @@ class Docs {
         }
         if (writeModelToDocs) {
             fsa.generateFile(docPath + '/model/.htaccess', htAccessForModel)
+        }
+        if (generateTechnicalDocumentation) {
+            val techDocPath = docPath + '/model/'
+            for (language : #['en', 'de']) {
+                fileName = 'structure_' + language + '.html'
+                if (!shouldBeSkipped(techDocPath + fileName)) {
+                    if (shouldBeMarked(techDocPath + fileName)) {
+                        fileName = 'structure_' + language + '.generated.html'
+                    }
+                    fsa.generateFile(techDocPath + fileName, new TechStructure().generate(it, language))
+                }
+                fileName = 'complexity_' + language + '.html'
+                if (!shouldBeSkipped(techDocPath + fileName)) {
+                    if (shouldBeMarked(techDocPath + fileName)) {
+                        fileName = 'complexity_' + language + '.generated.html'
+                    }
+                    fsa.generateFile(techDocPath + fileName, new TechComplexity().generate(it, language))
+                }
+            }
         }
     }
 

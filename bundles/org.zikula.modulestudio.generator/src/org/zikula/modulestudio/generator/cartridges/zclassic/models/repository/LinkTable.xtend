@@ -9,6 +9,7 @@ import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class LinkTable {
+
     extension FormattingExtensions = new FormattingExtensions
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
@@ -19,7 +20,7 @@ class LinkTable {
      * Creates a reference table class file for every many-to-many relationship instance.
      */
     def generate(ManyToManyRelationship it, Application app, IFileSystemAccess fsa) {
-        app.generateClassPair(fsa, app.getAppSourceLibPath + 'Entity/Repository/' + refClass.formatForCodeCapital + 'Repository.php',
+        app.generateClassPair(fsa, 'Entity/Repository/' + refClass.formatForCodeCapital + 'Repository.php',
             fh.phpFileContent(app, modelRefRepositoryBaseImpl(app)), fh.phpFileContent(app, modelRefRepositoryImpl(app))
         )
     }

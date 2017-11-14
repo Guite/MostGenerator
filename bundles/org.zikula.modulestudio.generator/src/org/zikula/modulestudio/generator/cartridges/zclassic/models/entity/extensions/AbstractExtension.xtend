@@ -40,7 +40,7 @@ abstract class AbstractExtension implements EntityExtensionInterface {
         this.app = application
         this.classType = classType
 
-        val entityPath = app.getAppSourceLibPath + 'Entity/'
+        val entityPath = 'Entity/'
         val entitySuffix = 'Entity'
         val repositorySuffix = 'Repository'
         var classPrefix = name.formatForCodeCapital + classType.formatForCodeCapital

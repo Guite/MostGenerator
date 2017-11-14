@@ -6,6 +6,7 @@ import de.guite.modulestudio.metamodel.EntityTreeType
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 
 class Tree {
+
     extension FormattingExtensions = new FormattingExtensions
 
     def generate(Entity it, Application app) '''

@@ -21,7 +21,7 @@ class ViewHelper {
     def generate(Application it, IFileSystemAccess fsa) {
         println('Generating helper class for view layer')
         val fh = new FileHelper
-        generateClassPair(fsa, getAppSourceLibPath + 'Helper/ViewHelper.php',
+        generateClassPair(fsa, 'Helper/ViewHelper.php',
             fh.phpFileContent(it, viewFunctionsBaseImpl), fh.phpFileContent(it, viewFunctionsImpl)
         )
     }

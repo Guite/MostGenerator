@@ -18,7 +18,7 @@ class CategoryHelper {
     def generate(Application it, IFileSystemAccess fsa) {
         println('Generating helper class for category functions')
         val fh = new FileHelper
-        generateClassPair(fsa, getAppSourceLibPath + 'Helper/CategoryHelper.php',
+        generateClassPair(fsa, 'Helper/CategoryHelper.php',
             fh.phpFileContent(it, categoryHelperBaseClass), fh.phpFileContent(it, categoryHelperImpl)
         )
     }

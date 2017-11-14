@@ -55,7 +55,7 @@ class ExampleDataHelper {
         }
         println('Generating helper class for inserting example data')
         val fh = new FileHelper
-        generateClassPair(fsa, getAppSourceLibPath + 'Helper/ExampleDataHelper.php',
+        generateClassPair(fsa, 'Helper/ExampleDataHelper.php',
             fh.phpFileContent(it, exampleDataHelperBaseClass), fh.phpFileContent(it, exampleDataHelperImpl)
         )
     }

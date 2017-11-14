@@ -16,7 +16,7 @@ class StandardFieldsTrait {
 
     def generate(Application it, IFileSystemAccess fsa, Boolean loggable) {
         isLoggable = loggable
-        val filePath = getAppSourceLibPath + 'Traits/' + (if (loggable) 'Loggable' else '') + 'StandardFieldsTrait.php'
+        val filePath = 'Traits/' + (if (loggable) 'Loggable' else '') + 'StandardFieldsTrait.php'
         if (!shouldBeSkipped(filePath)) {
             if (shouldBeMarked(filePath)) {
                 fsa.generateFile(filePath.replace('.php', '.generated.php'), fh.phpFileContent(it, traitFile))

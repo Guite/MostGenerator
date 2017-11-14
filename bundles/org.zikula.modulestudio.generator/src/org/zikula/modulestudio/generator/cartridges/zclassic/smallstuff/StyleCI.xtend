@@ -10,11 +10,11 @@ class StyleCI {
 
     def generate(Application it, IFileSystemAccess fsa) {
         var fileName = '.styleci.yml'
-        if (!shouldBeSkipped(getAppSourcePath + fileName)) {
-            if (shouldBeMarked(getAppSourcePath + fileName)) {
+        if (!shouldBeSkipped(fileName)) {
+            if (shouldBeMarked(fileName)) {
                 fileName = '.styleci.generated.yml'
             }
-            fsa.generateFile(getAppSourcePath + fileName, styleci)
+            fsa.generateFile(fileName, styleci)
         }
     }
 

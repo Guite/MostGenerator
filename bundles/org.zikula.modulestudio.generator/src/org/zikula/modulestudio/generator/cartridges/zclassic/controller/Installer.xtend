@@ -28,7 +28,7 @@ class Installer {
      * Entry point for application installer.
      */
     def generate(Application it, IFileSystemAccess fsa) {
-        generateClassPair(fsa, getAppSourceLibPath + name.formatForCodeCapital + 'ModuleInstaller.php',
+        generateClassPair(fsa, name.formatForCodeCapital + 'ModuleInstaller.php',
             fh.phpFileContent(it, installerBaseClass), fh.phpFileContent(it, installerImpl)
         )
     }

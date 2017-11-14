@@ -16,7 +16,7 @@ class ConfigController {
     def generate(Application it, IFileSystemAccess fsa) {
         println('Config controller class')
         val fh = new FileHelper
-        generateClassPair(fsa, getAppSourceLibPath + 'Controller/ConfigController.php',
+        generateClassPair(fsa, 'Controller/ConfigController.php',
             fh.phpFileContent(it, configControllerBaseClass), fh.phpFileContent(it, configControllerImpl)
         )
     }

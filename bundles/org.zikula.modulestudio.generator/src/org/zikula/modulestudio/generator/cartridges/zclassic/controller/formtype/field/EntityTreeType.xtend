@@ -16,7 +16,7 @@ class EntityTreeType {
     FileHelper fh = new FileHelper
 
     def generate(Application it, IFileSystemAccess fsa) {
-        generateClassPair(fsa, getAppSourceLibPath + 'Form/Type/Field/EntityTreeType.php',
+        generateClassPair(fsa, 'Form/Type/Field/EntityTreeType.php',
             fh.phpFileContent(it, entityTreeTypeBaseImpl), fh.phpFileContent(it, entityTreeTypeImpl)
         )
     }

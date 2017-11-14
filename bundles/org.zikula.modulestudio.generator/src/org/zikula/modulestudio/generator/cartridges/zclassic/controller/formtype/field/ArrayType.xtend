@@ -16,7 +16,7 @@ class ArrayType {
     FileHelper fh = new FileHelper
 
     def generate(Application it, IFileSystemAccess fsa) {
-        generateClassPair(fsa, getAppSourceLibPath + 'Form/Type/Field/ArrayType.php',
+        generateClassPair(fsa, 'Form/Type/Field/ArrayType.php',
             fh.phpFileContent(it, arrayTypeBaseImpl), fh.phpFileContent(it, arrayTypeImpl)
         )
     }

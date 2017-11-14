@@ -16,7 +16,7 @@ class GeoType {
     FileHelper fh = new FileHelper
 
     def generate(Application it, IFileSystemAccess fsa) {
-        generateClassPair(fsa, getAppSourceLibPath + 'Form/Type/Field/GeoType.php',
+        generateClassPair(fsa, 'Form/Type/Field/GeoType.php',
             fh.phpFileContent(it, geoTypeBaseImpl), fh.phpFileContent(it, geoTypeImpl)
         )
     }

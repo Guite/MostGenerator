@@ -31,7 +31,7 @@ class ConfigType {
         if (!needsConfig) {
             return
         }
-        generateClassPair(fsa, getAppSourceLibPath + 'Form/Type/ConfigType.php',
+        generateClassPair(fsa, 'Form/Type/ConfigType.php',
             fh.phpFileContent(it, configTypeBaseImpl), fh.phpFileContent(it, configTypeImpl)
         )
     }

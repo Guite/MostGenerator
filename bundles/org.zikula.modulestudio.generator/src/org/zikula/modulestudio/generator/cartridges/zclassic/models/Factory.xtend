@@ -24,7 +24,7 @@ class Factory {
      */
     def generate(Application it, IFileSystemAccess fsa) {
         println('Generating entity factory class')
-        generateClassPair(fsa, getAppSourceLibPath + 'Entity/Factory/EntityFactory.php',
+        generateClassPair(fsa, 'Entity/Factory/EntityFactory.php',
             fh.phpFileContent(it, modelFactoryBaseImpl), fh.phpFileContent(it, modelFactoryImpl)
         )
         new EntityInitialiser().generate(it, fsa)

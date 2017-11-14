@@ -16,7 +16,7 @@ class BlockModeration {
 
     def generate(Application it, IFileSystemAccess fsa) {
         println('Generating block for moderation')
-        generateClassPair(fsa, getAppSourceLibPath + 'Block/ModerationBlock.php',
+        generateClassPair(fsa, 'Block/ModerationBlock.php',
             fh.phpFileContent(it, moderationBlockBaseClass), fh.phpFileContent(it, moderationBlockImpl)
         )
         new BlockModerationView().generate(it, fsa)

@@ -29,7 +29,7 @@ class BlockListType {
         if (!generateListBlock) {
             return
         }
-        generateClassPair(fsa, getAppSourceLibPath + 'Block/Form/Type/ItemListBlockType.php',
+        generateClassPair(fsa, 'Block/Form/Type/ItemListBlockType.php',
             fh.phpFileContent(it, listBlockTypeBaseImpl), fh.phpFileContent(it, listBlockTypeImpl)
         )
     }

@@ -24,7 +24,7 @@ class ItemActionsMenu {
 
     def generate(Application it, IFileSystemAccess fsa) {
         println('Generating item actions menu class')
-        generateClassPair(fsa, getAppSourceLibPath + 'Menu/ItemActionsMenu.php',
+        generateClassPair(fsa, 'Menu/ItemActionsMenu.php',
             fh.phpFileContent(it, itemActionsMenuBaseImpl), fh.phpFileContent(it, itemActionsMenuImpl)
         )
     }

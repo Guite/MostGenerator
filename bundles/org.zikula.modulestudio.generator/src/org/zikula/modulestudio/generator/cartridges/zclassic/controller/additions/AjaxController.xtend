@@ -31,7 +31,7 @@ class AjaxController {
     def generate(Application it, IFileSystemAccess fsa) {
         println('Ajax controller class')
         val fh = new FileHelper
-        generateClassPair(fsa, getAppSourceLibPath + 'Controller/AjaxController.php',
+        generateClassPair(fsa, 'Controller/AjaxController.php',
             fh.phpFileContent(it, ajaxControllerBaseClass), fh.phpFileContent(it, ajaxControllerImpl)
         )
     }

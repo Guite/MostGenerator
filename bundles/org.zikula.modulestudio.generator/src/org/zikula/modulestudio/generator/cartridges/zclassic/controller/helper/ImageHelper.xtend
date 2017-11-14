@@ -22,7 +22,7 @@ class ImageHelper {
     def generate(Application it, IFileSystemAccess fsa) {
         println('Generating helper class for image handling')
         val fh = new FileHelper
-        generateClassPair(fsa, getAppSourceLibPath + 'Helper/ImageHelper.php',
+        generateClassPair(fsa, 'Helper/ImageHelper.php',
             fh.phpFileContent(it, imageFunctionsBaseImpl), fh.phpFileContent(it, imageFunctionsImpl)
         )
     }

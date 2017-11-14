@@ -292,6 +292,13 @@ class GeneratorSettingsExtensions {
     }
 
     /**
+     * Determines whether and how to generate stand-alone HTML files with technical documentation.
+     */
+    def generateTechnicalDocumentation(Application it) {
+        if (hasSettings) getSettings.generateTechnicalDocumentation else true
+    }
+
+    /**
      * Retrieves the SettingsContainer if present.
      */
     def private getSettings(Application it) {

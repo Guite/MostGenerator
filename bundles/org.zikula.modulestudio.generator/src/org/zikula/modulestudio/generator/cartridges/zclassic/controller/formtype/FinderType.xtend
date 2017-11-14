@@ -36,7 +36,7 @@ class FinderType {
         }
         app = it
         for (entity : getAllEntities.filter[hasDisplayAction]) {
-            generateClassPair(fsa, getAppSourceLibPath + 'Form/Type/Finder/' + entity.name.formatForCodeCapital + 'FinderType.php',
+            generateClassPair(fsa, 'Form/Type/Finder/' + entity.name.formatForCodeCapital + 'FinderType.php',
                 fh.phpFileContent(it, entity.finderTypeBaseImpl), fh.phpFileContent(it, entity.finderTypeImpl)
             )
         }

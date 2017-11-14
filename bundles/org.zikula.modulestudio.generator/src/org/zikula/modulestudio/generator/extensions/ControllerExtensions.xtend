@@ -200,7 +200,7 @@ class ControllerExtensions {
     }
 
     def getSourceEditMode(JoinRelationship it) {
-        switch (it) {
+        switch it {
             OneToOneRelationship:
                 return sourceEditing
             OneToManyRelationship:
@@ -215,7 +215,7 @@ class ControllerExtensions {
     }
 
     def getTargetEditMode(JoinRelationship it) {
-        switch (it) {
+        switch it {
             OneToOneRelationship:
                 return targetEditing
             OneToManyRelationship:
@@ -237,7 +237,7 @@ class ControllerExtensions {
      *    3    Embedded editing
      */
     def getEditStageCode(JoinRelationship it, Boolean incoming) {
-        switch (if (incoming) getTargetEditMode else getSourceEditMode) {
+        switch if (incoming) getTargetEditMode else getSourceEditMode {
             case NONE:
                 0
             case CHOOSE:

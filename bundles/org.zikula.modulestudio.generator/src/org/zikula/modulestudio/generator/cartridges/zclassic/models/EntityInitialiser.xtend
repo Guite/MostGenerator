@@ -27,7 +27,7 @@ class EntityInitialiser {
      */
     def generate(Application it, IFileSystemAccess fsa) {
         println('Generating entity initialiser class')
-        generateClassPair(fsa, getAppSourceLibPath + 'Entity/Factory/EntityInitialiser.php',
+        generateClassPair(fsa, 'Entity/Factory/EntityInitialiser.php',
             fh.phpFileContent(it, initialiserBaseImpl), fh.phpFileContent(it, initialiserImpl)
         )
     }

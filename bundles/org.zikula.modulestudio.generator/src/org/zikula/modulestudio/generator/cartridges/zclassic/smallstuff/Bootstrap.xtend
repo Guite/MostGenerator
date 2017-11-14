@@ -15,7 +15,7 @@ class Bootstrap {
     FileHelper fh = new FileHelper
 
     def generate(Application it, IFileSystemAccess fsa) {
-        val basePath = getAppSourcePath + 'Base/bootstrap.php'
+        val basePath = 'Base/bootstrap.php'
         if (!shouldBeSkipped(basePath)) {
             if (shouldBeMarked(basePath)) {
                 fsa.generateFile(basePath.replace('.php', '.generated.php'), bootstrapFile(true))
@@ -24,7 +24,7 @@ class Bootstrap {
             }
         }
 
-        val concretePath = getAppSourcePath + 'bootstrap.php'
+        val concretePath = 'bootstrap.php'
         if (!generateOnlyBaseClasses && !shouldBeSkipped(concretePath)) {
             if (shouldBeMarked(concretePath)) {
                 fsa.generateFile(concretePath.replace('.php', '.generated.php'), bootstrapFile(false))

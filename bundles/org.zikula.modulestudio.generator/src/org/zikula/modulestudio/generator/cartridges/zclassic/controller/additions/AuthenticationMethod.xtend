@@ -22,7 +22,7 @@ class AuthenticationMethod {
         if (authenticationMethod == AuthMethodType.NONE) {
             return
         }
-        generateClassPair(fsa, getAppSourceLibPath + 'AuthenticationMethod/' + name.formatForCodeCapital + 'AuthenticationMethod.php',
+        generateClassPair(fsa, 'AuthenticationMethod/' + name.formatForCodeCapital + 'AuthenticationMethod.php',
             fh.phpFileContent(it, authMethodBaseClass), fh.phpFileContent(it, authMethodImpl)
         )
     }

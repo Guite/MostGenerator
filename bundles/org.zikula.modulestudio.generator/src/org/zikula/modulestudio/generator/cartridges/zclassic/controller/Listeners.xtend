@@ -56,7 +56,7 @@ class Listeners {
         needsThirdPartyListener = ((needsApproval && generatePendingContentSupport) || ((generateListContentType || needsDetailContentType) && !targets('2.0')) || generateScribitePlugins)
 
         println('Generating event listener base classes')
-        listenerPath = getAppSourceLibPath + 'Listener/Base/'
+        listenerPath = 'Listener/Base/'
         isBase = true
         generateListenerClasses
 
@@ -65,7 +65,7 @@ class Listeners {
         }
 
         println('Generating event listener implementation classes')
-        listenerPath = getAppSourceLibPath + 'Listener/'
+        listenerPath = 'Listener/'
         isBase = false
         generateListenerClasses
     }

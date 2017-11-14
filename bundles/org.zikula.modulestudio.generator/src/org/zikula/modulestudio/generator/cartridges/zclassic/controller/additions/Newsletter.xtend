@@ -23,7 +23,7 @@ class Newsletter {
     FileHelper fh = new FileHelper
 
     def generate(Application it, IFileSystemAccess fsa) {
-        val pluginPath = getAppSourceLibPath + 'NewsletterPlugin/'
+        val pluginPath = 'NewsletterPlugin/'
         val pluginClassSuffix = 'Plugin'
         var pluginFileName = 'ItemList' + pluginClassSuffix + '.php'
         if (!generateOnlyBaseClasses && !shouldBeSkipped(pluginPath + pluginFileName)) {

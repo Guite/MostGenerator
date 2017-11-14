@@ -22,7 +22,7 @@ class SearchHelper {
     def generate(Application it, IFileSystemAccess fsa) {
         println('Generating helper class for search integration')
         val fh = new FileHelper
-        generateClassPair(fsa, getAppSourceLibPath + 'Helper/SearchHelper.php',
+        generateClassPair(fsa, 'Helper/SearchHelper.php',
             fh.phpFileContent(it, searchHelperBaseClass), fh.phpFileContent(it, searchHelperImpl)
         )
     }

@@ -29,10 +29,10 @@ class MultiHook {
     }
 
     def private generateNeedle(Entity it, IFileSystemAccess fsa) {
-        app.generateClassPair(fsa, app.getAppSourceLibPath + 'Needles/' + name.formatForDB + '_info.php',
+        app.generateClassPair(fsa, 'Needles/' + name.formatForDB + '_info.php',
             fh.phpFileContent(app, needleBaseInfo), fh.phpFileContent(app, needleInfo)
         )
-        app.generateClassPair(fsa, app.getAppSourceLibPath + 'Needles/' + name.formatForDB + '.php',
+        app.generateClassPair(fsa, 'Needles/' + name.formatForDB + '.php',
             fh.phpFileContent(app, needleBaseImpl), fh.phpFileContent(app, needleImpl)
         )
     }

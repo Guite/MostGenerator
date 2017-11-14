@@ -14,7 +14,7 @@ class TranslationListener {
     FileHelper fh = new FileHelper
 
     def generate(Application it, IFileSystemAccess fsa) {
-        generateClassPair(fsa, getAppSourceLibPath + 'Form/EventListener/TranslationListener.php',
+        generateClassPair(fsa, 'Form/EventListener/TranslationListener.php',
             fh.phpFileContent(it, listenerBaseImpl), fh.phpFileContent(it, listenerImpl)
         )
     }

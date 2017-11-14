@@ -84,7 +84,7 @@ class Entities {
             extMan = new ExtensionManager(it)
         }
         thProp = new Property(extMan)
-        val entityPath = app.getAppSourceLibPath + 'Entity/'
+        val entityPath = 'Entity/'
         val entityClassSuffix = 'Entity'
         val entityFileName = name.formatForCodeCapital + entityClassSuffix
         var fileName = ''

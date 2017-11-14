@@ -19,7 +19,7 @@ class Mailz {
     FileHelper fh = new FileHelper
 
     def generate(Application it, IFileSystemAccess fsa) {
-        generateClassPair(fsa, getAppSourceLibPath + 'Api/MailzApi.php',
+        generateClassPair(fsa, 'Api/MailzApi.php',
             fh.phpFileContent(it, mailzBaseClass), fh.phpFileContent(it, mailzImpl)
         )
         new MailzView().generate(it, fsa)

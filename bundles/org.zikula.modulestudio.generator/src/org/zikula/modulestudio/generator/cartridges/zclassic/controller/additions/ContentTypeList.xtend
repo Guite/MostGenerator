@@ -22,7 +22,7 @@ class ContentTypeList {
 
     def generate(Application it, IFileSystemAccess fsa) {
         println('Generating content type for multiple objects')
-        generateClassPair(fsa, getAppSourceLibPath + 'ContentType/ItemList.php',
+        generateClassPair(fsa, 'ContentType/ItemList.php',
             fh.phpFileContent(it, contentTypeBaseClass), fh.phpFileContent(it, contentTypeImpl)
         )
         new ContentTypeListView().generate(it, fsa)

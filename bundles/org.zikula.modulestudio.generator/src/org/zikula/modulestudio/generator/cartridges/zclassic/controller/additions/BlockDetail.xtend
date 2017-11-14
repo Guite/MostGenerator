@@ -21,7 +21,7 @@ class BlockDetail {
 
     def generate(Application it, IFileSystemAccess fsa) {
         println('Generating block for single objects')
-        generateClassPair(fsa, getAppSourceLibPath + 'Block/ItemBlock.php',
+        generateClassPair(fsa, 'Block/ItemBlock.php',
             fh.phpFileContent(it, detailBlockBaseClass), fh.phpFileContent(it, detailBlockImpl)
         )
         new BlockDetailType().generate(it, fsa)

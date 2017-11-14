@@ -25,7 +25,7 @@ class BlockList {
 
     def generate(Application it, IFileSystemAccess fsa) {
         println('Generating block for multiple objects')
-        generateClassPair(fsa, getAppSourceLibPath + 'Block/ItemListBlock.php',
+        generateClassPair(fsa, 'Block/ItemListBlock.php',
             fh.phpFileContent(it, listBlockBaseClass), fh.phpFileContent(it, listBlockImpl)
         )
         new BlockListType().generate(it, fsa)
