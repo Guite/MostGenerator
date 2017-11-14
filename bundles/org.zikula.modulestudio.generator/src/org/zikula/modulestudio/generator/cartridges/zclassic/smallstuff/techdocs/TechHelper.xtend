@@ -58,7 +58,7 @@ class TechHelper {
         <body>
               <div class="container">
                   <h1>
-                      <img src="/«relativeAppRootPath»/«getResourcesPath»/public/images/admin.png" width="48" height="48" alt="Icon" class="img-thumbnail pull-right" />
+                      <img src="/«relativeAppRootPath»/«getResourcesPath»public/images/admin.png" width="48" height="48" alt="Icon" class="img-thumbnail pull-right" />
                       «name.formatForDisplayCapital» &ndash; «title»
                   </h1>
                   <p>«appDescription»</p>
