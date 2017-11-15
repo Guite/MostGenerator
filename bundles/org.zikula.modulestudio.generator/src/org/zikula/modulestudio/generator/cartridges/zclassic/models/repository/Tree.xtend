@@ -34,15 +34,11 @@ class Tree {
                 return $this->selectAllTrees($useJoins);
             }
 
-            $result = null;
-
             // fetch root node
             $rootNode = $this->selectById($rootId, $useJoins);
 
             // fetch children
             $children = $this->children($rootNode);
-
-            // alternatively we could probably select all nodes with root = $rootId
 
             return array_merge([$rootNode], $children);
         }
