@@ -6,6 +6,7 @@ import de.guite.modulestudio.metamodel.DisplayAction
 import de.guite.modulestudio.metamodel.Entity
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.action.InlineRedirect
+import org.zikula.modulestudio.generator.cartridges.zclassic.controller.action.LoggableDeleted
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.action.LoggableHistory
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.action.MassHandling
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.additions.AjaxController
@@ -175,14 +176,14 @@ class ControllerLayer {
                     «adminAndUserImpl(action as Action, false)»
                 «ENDFOR»
                 «IF loggable && hasDisplayAction»
-                    «displayDeletedAction»
+                    «new LoggableDeleted().generate(it)»
                 «ENDIF»
                 «FOR action : getAllEntityActions.filter(DisplayAction)»
                     «adminAndUserImpl(action, false)»
                 «ENDFOR»
             «ELSE»
                 «IF loggable && hasDisplayAction»
-                    «displayDeletedAction»
+                    «new LoggableDeleted().generate(it)»
                 «ENDIF»
                 «FOR action : getAllEntityActions»
                     «adminAndUserImpl(action, false)»
@@ -202,103 +203,6 @@ class ControllerLayer {
             «ENDIF»
 
             // feel free to add your own controller methods here
-        }
-    '''
-
-    def private displayDeletedAction(Entity it) '''
-        «displayDeletedSingleAction(true)»
-
-        «displayDeletedSingleAction(false)»
-
-        «restoreDeletedEntity»
-    '''
-
-    def private displayDeletedSingleAction(Entity it, Boolean isAdmin) '''
-        /**
-         * Displays a deleted «name.formatForDisplay».
-         *
-         * @Route("/«IF isAdmin»admin/«ENDIF»«name.formatForCode»/deleted/{id}.{_format}",
-         *        requirements = {"id" = "\d+", "_format" = "html"},
-         *        defaults = {"_format" = "html"},
-         *        methods = {"GET"}
-         * )
-         «IF isAdmin»
-         * @Theme("admin")
-         «ENDIF»
-         *
-         * @param Request $request Current request instance
-         * @param integer $id      Identifier of entity
-         *
-         * @return Response Output
-         *
-         * @throws AccessDeniedException Thrown if the user doesn't have required permissions
-         * @throws NotFoundHttpException Thrown if «name.formatForDisplay» to be displayed isn't found
-         */
-        public function «IF isAdmin»adminD«ELSE»d«ENDIF»isplayDeletedAction(Request $request, $id = 0)
-        {
-            $«name.formatForCode» = $this->restoreDeletedEntity($id);
-
-            $undelete = $request->query->getInt('undelete', 0);
-            if ($undelete == 1) {
-                $actionObject->setWorkflowState('initial');
-                try {
-                    // execute the workflow action
-                    $workflowHelper = $this->get('«application.appService».workflow_helper');
-                    $success = $workflowHelper->executeAction($«name.formatForCode», 'submit');
-
-                    if ($success) {
-                        $this->addFlash('status', $this->__('Done! Reinserted «name.formatForDisplay».'));
-                    } else {
-                        $this->addFlash('error', $this->__('Error! Reinserting «name.formatForDisplay» failed.'));
-                    }
-                } catch (\Exception $exception) {
-                    $this->addFlash('error', $this->__f('Sorry, but an error occured during the %action% action. Please apply the changes again!', ['%action%' => 'submit']) . '  ' . $exception->getMessage());
-                }
-
-                $request->query->set('«getPrimaryKey.name.formatForCode»', $«name.formatForCode»->get«getPrimaryKey.name.formatForCodeCapital»());
-                $request->query->remove('undelete');
-
-                return $this->redirectToRoute('«application.appName.formatForDB»_«name.formatForDB»_«IF isAdmin»admin«ENDIF»display', $request->query->all());
-            }
-
-            return parent::«IF isAdmin»adminD«ELSE»d«ENDIF»isplayAction($request, $«name.formatForCode»);
-        }
-    '''
-
-    def private restoreDeletedEntity(Entity it) '''
-        /**
-         * Resets a deleted «name.formatForDisplay» back to the last version before it's deletion.
-         *
-         * @return «name.formatForCodeCapital»Entity The restored entity
-         *
-         * @throws NotFoundHttpException Thrown if «name.formatForDisplay» isn't found
-         */
-        protected function restoreDeletedEntity($id = 0)
-        {
-            if (!$id) {
-                throw new NotFoundHttpException($this->__('No such «name.formatForDisplay» found.'));
-            }
-
-            $entityFactory = $this->get('«application.appService».entity_factory');
-            $«name.formatForCode» = $entityFactory->create«name.formatForCodeCapital»();
-            $«name.formatForCode»->set«getPrimaryKey.name.formatForCodeCapital»($id);
-            $entityManager = $entityFactory->getObjectManager();
-            $logEntriesRepository = $entityManager->getRepository('«application.appName»:«name.formatForCodeCapital»LogEntryEntity');
-            $logEntries = $logEntriesRepository->getLogEntries($«name.formatForCode»);
-            $lastVersionBeforeDeletion = null;
-            foreach ($logEntries as $logEntry) {
-                if ($logEntry->getAction() != 'remove') {
-                    $lastVersionBeforeDeletion = $logEntry->getVersion();
-                    break;
-                }
-            }
-            if (null === $lastVersionBeforeDeletion) {
-                throw new NotFoundHttpException($this->__('No such «name.formatForDisplay» found.'));
-            }
-
-            $logEntriesRepository->revert($«name.formatForCode», $lastVersionBeforeDeletion);
-
-            return $«name.formatForCode»;
         }
     '''
 
