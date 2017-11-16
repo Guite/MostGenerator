@@ -46,19 +46,25 @@ class LoggableDeleted {
 
             $undelete = $request->query->getInt('undelete', 0);
             if ($undelete == 1) {
-                $actionObject->setWorkflowState('initial');
                 try {
-                    // execute the workflow action
-                    $workflowHelper = $this->get('«application.appService».workflow_helper');
-                    $success = $workflowHelper->executeAction($«name.formatForCode», 'submit');
+                    $em = $this->get('doctrine.entitymanager');
+                    $metadata = $em->getClassMetaData(get_class($«name.formatForCode»));
+                    $metadata->setIdGeneratorType(\Doctrine\ORM\Mapping\ClassMetadata::GENERATOR_TYPE_NONE);
+                    $metadata->setIdGenerator(new \Doctrine\ORM\Id\AssignedGenerator());
 
-                    if ($success) {
-                        $this->addFlash('status', $this->__('Done! Reinserted «name.formatForDisplay».'));
-                    } else {
-                        $this->addFlash('error', $this->__('Error! Reinserting «name.formatForDisplay» failed.'));
-                    }
+                    $versionField = $metadata->versionField;
+                    $metadata->setVersioned(false);
+                    $metadata->setVersionField(null);
+
+                    $em->persist($«name.formatForCode»);
+                    $em->flush($«name.formatForCode»);
+
+                    $this->addFlash('status', $this->__('Done! Undeleted «name.formatForDisplay».'));
+
+                    $metadata->setVersioned(true);
+                    $metadata->setVersionField($versionField);
                 } catch (\Exception $exception) {
-                    $this->addFlash('error', $this->__f('Sorry, but an error occured during the %action% action. Please apply the changes again!', ['%action%' => 'submit']) . '  ' . $exception->getMessage());
+                    $this->addFlash('error', $this->__f('Sorry, but an error occured during the %action% action. Please apply the changes again!', ['%action%' => 'undelete']) . '  ' . $exception->getMessage());
                 }
 
                 $request->query->set('«getPrimaryKey.name.formatForCode»', $«name.formatForCode»->get«getPrimaryKey.name.formatForCodeCapital»());
@@ -103,6 +109,9 @@ class LoggableDeleted {
             }
 
             $logEntriesRepository->revert($«name.formatForCode», $lastVersionBeforeDeletion);
+            «IF null !== getVersionField»
+                $«name.formatForCode»->set«getVersionField.name.formatForCodeCapital»($lastVersionBeforeDeletion + 2);
+            «ENDIF»
 
             return $«name.formatForCode»;
         }

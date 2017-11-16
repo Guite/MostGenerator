@@ -5,6 +5,7 @@ import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener.Group
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener.IpTrace
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener.Kernel
+import org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener.LoggableListener
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener.Mailer
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener.ModuleDispatch
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener.ModuleInstaller
@@ -54,6 +55,10 @@ class Listeners {
 
         val needsDetailContentType = generateDetailContentType && hasDisplayActions
         needsThirdPartyListener = ((needsApproval && generatePendingContentSupport) || ((generateListContentType || needsDetailContentType) && !targets('2.0')) || generateScribitePlugins)
+
+        if (hasLoggable) {
+            new LoggableListener().generate(it, fsa)
+        }
 
         println('Generating event listener base classes')
         listenerPath = 'Listener/Base/'

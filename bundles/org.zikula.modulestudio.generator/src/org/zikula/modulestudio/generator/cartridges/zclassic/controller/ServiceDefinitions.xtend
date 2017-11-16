@@ -265,6 +265,10 @@ class ServiceDefinitions {
     def private eventSubscriber(Application it) '''
         services:
             «servicesEventSubscriber»
+        «IF hasLoggable»
+            parameters:
+                stof_doctrine_extensions.listener.loggable.class: «appNamespace»\Listener\LoggableListener
+        «ENDIF»
     '''
 
     def private servicesEventSubscriber(Application it) '''
