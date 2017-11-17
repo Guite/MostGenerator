@@ -106,6 +106,9 @@ class FileHelper {
 
     def private dispatch setterMethodImpl(Object it, String name, String type, Boolean nullable) '''
         «IF type == 'float'»
+            «IF #['latitude', 'longitude'].contains(name)»
+                $«name» = round(floatval($«name»), 7);
+            «ENDIF»
             if (floatval($this->«name») !== floatval($«name»)) {
                 «IF nullable»
                     $this->«name» = floatval($«name»);
@@ -131,6 +134,9 @@ class FileHelper {
     '''
 
     def private dispatch setterMethodImpl(DerivedField it, String name, String type, Boolean nullable) '''
+        «IF it instanceof NumberField»
+            $«name» = round(floatval($«name»), «scale»);
+        «ENDIF»
         if ($this->«name.formatForCode» !== $«name») {
             «triggerPropertyChangeListeners(name)»
             «setterAssignment(name, type)»
@@ -195,14 +201,18 @@ class FileHelper {
     }
 
     def private dispatch setterAssignment(DatetimeField it, String name, String type) '''
-        if (is_object($«name») && $«name» instanceOf \DateTime) {
-            $this->«name» = $«name»;
-        «IF nullable»
-        } elseif (null === $«name» || empty($«name»)) {
-            $this->«name» = null;
+        if (!(null == $«name» && empty($«name»)) && !(is_object($«name») && $«name» instanceOf \DateTime)) {
+            $«name» = new \DateTime($«name»);
+        }
+        «IF !nullable»
+
+            if (null === $«name» || empty($«name»)) {
+                $«name» = new \DateTime();
+            }
         «ENDIF»
-        } else {
-            $this->«name» = new \DateTime($«name»);
+
+        if ($this->«name» != $«name») {
+            $this->«name» = $«name»;
         }
     '''
 }
