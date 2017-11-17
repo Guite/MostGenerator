@@ -105,8 +105,7 @@ class Actions {
                 $entityFactory = $this->get('«application.appService».entity_factory');
                 $entityManager = $entityFactory->getObjectManager();
                 $logEntriesRepository = $entityManager->getRepository('«application.appName»:«name.formatForCodeCapital»LogEntryEntity');
-                $deletionLogEntries = $logEntriesRepository->findBy(['action' => 'remove'], ['loggedAt' => 'DESC']);
-                $templateParameters['deletedItems'] = $deletionLogEntries;
+                $templateParameters['deletedItems'] = $logEntriesRepository->selectDeleted();
 
                 return $viewHelper->processTemplate($objectType, 'viewDeleted', $templateParameters);
             }
@@ -168,8 +167,7 @@ class Actions {
                 $entityFactory = $this->get('«application.appService».entity_factory');
                 $entityManager = $entityFactory->getObjectManager();
                 $logEntriesRepository = $entityManager->getRepository('«application.appName»:«name.formatForCodeCapital»LogEntryEntity');
-                $deletionLogEntries = $logEntriesRepository->findBy(['action' => 'remove'], null, 1);
-                $templateParameters['hasDeletedEntities'] = count($deletionLogEntries) > 0;
+                $templateParameters['hasDeletedEntities'] = count($logEntriesRepository->selectDeleted(1)) > 0;
             }
         «ENDIF»
 

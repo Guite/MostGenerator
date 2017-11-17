@@ -52,9 +52,9 @@ interface EntityExtensionInterface {
     def String extensionClassDescription(Entity it)
 
     /**
-     * Returns the extension base class ORM annotations.
+     * Returns the extension base class implementation.
      */
-    def String extensionClassBaseAnnotations(Entity it)
+    def String extensionClassBaseImplementation(Entity it)
 
     /**
      * Returns the extension implementation class ORM annotations.

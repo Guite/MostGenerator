@@ -94,7 +94,7 @@ abstract class AbstractExtension implements EntityExtensionInterface {
          */
         abstract class Abstract«name.formatForCodeCapital»«classType.formatForCodeCapital»Entity extends «extensionBaseClass»
         {
-            «extensionClassBaseAnnotations»
+            «extensionClassBaseImplementation»
         }
     '''
 
@@ -127,9 +127,9 @@ abstract class AbstractExtension implements EntityExtensionInterface {
     }
 
     /**
-     * Returns the extension base class ORM annotations.
+     * Returns the extension base class implementation.
      */
-    override extensionClassBaseAnnotations(Entity it) {
+    override extensionClassBaseImplementation(Entity it) {
         ''
     }
 

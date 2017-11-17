@@ -120,9 +120,9 @@ class Categories extends AbstractExtension implements EntityExtensionInterface {
     }
 
     /**
-     * Returns the extension base class ORM annotations.
+     * Returns the extension base class implementation.
      */
-    override extensionClassBaseAnnotations(Entity it) '''
+    override extensionClassBaseImplementation(Entity it) '''
         /**
          * @ORM\ManyToOne(targetEntity="\«entityClassName('', false)»", inversedBy="categories")
          * @ORM\JoinColumn(name="entityId", referencedColumnName="«getPrimaryKey.name.formatForCode»")

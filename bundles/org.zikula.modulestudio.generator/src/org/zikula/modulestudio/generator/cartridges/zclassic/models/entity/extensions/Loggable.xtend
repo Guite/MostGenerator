@@ -51,6 +51,7 @@ class Loggable extends AbstractExtension implements EntityExtensionInterface {
      * Returns the extension class import statements.
      */
     override extensionClassImports(Entity it) '''
+        use Doctrine\Common\Collections\ArrayCollection;
         use Gedmo\Loggable\Entity\MappedSuperclass\«extensionBaseClass»;
     '''
 
@@ -67,6 +68,39 @@ class Loggable extends AbstractExtension implements EntityExtensionInterface {
     override extensionClassDescription(Entity it) {
         'Entity extension domain class storing ' + name.formatForDisplay + ' log entries.'
     }
+
+    /**
+     * Returns the extension base class implementation.
+     */
+    override extensionClassBaseImplementation(Entity it) '''
+        /**
+         * Selects all log entries for deletions to determine deleted «name.formatForDisplay».
+         *
+         * @param integer $limit The maximum amount of items to fetch
+         *
+         * @return ArrayCollection Collection containing retrieved items
+         */
+        public function selectDeleted($limit = null)
+        {
+            $qb = $this->getEntityManager()->createQueryBuilder();
+            $qb->select('log')
+               ->from($this->_entityName, 'log')
+               ->andWhere('log.objectClass = :objectClass')
+               ->andWhere('log.action = :action')
+               ->orderBy('log.version', 'DESC');
+
+            $qb->setParameter('objectClass', str_replace('LogEntry', '', $this->_entityName))
+               ->setParameter('action', 'remove');
+
+            $query = $qb->getQuery();
+
+            if (null !== $limit) {
+                $query->MaxResults($limit);
+            }
+
+            return $query->getResult();
+        }
+    '''
 
     /**
      * Returns the extension implementation class ORM annotations.
