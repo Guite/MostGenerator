@@ -4,6 +4,7 @@ import de.guite.modulestudio.metamodel.Application
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
+import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
@@ -11,6 +12,7 @@ import org.zikula.modulestudio.generator.extensions.Utils
 class LifecycleListener {
 
     extension FormattingExtensions = new FormattingExtensions
+    extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension ModelExtensions = new ModelExtensions
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
@@ -33,6 +35,9 @@ class LifecycleListener {
         use Doctrine\Common\Persistence\Event\LifecycleEventArgs;
         use Doctrine\ORM\Event\PreUpdateEventArgs;
         use Doctrine\ORM\Events;
+        «IF hasLoggable»
+            use Gedmo\Loggable\Entity\MappedSuperclass\AbstractLogEntry;
+        «ENDIF»
         use Psr\Log\LoggerInterface;
         use Symfony\Component\DependencyInjection\ContainerAwareInterface;
         use Symfony\Component\DependencyInjection\ContainerAwareTrait;
@@ -147,9 +152,37 @@ class LifecycleListener {
             public function prePersist(LifecycleEventArgs $args)
             {
                 $entity = $args->getObject();
-                if (!$this->isEntityManagedByThisBundle($entity) || !method_exists($entity, 'get_objectType')) {
+                if (!$this->isEntityManagedByThisBundle($entity) || «IF hasLoggable»(!method_exists($entity, 'get_objectType') && !$entity instanceof AbstractLogEntry)«ELSE»!method_exists($entity, 'get_objectType')«ENDIF») {
                     return;
                 }
+                «IF hasLoggable»
+
+                    if ($entity instanceof AbstractLogEntry) {
+                        // check if a supported object has been undeleted
+                        if ('create' != $entity->getAction()) {
+                            return;
+                        }
+
+                        // select main entity
+                        $repository = $this->getObjectManager()->getRepository($entity->getObjectClass());
+                        $object = $repository->find($entity->getObjectId());
+                        if (null === $object || !method_exists($object, 'get_objectType')) {
+                            return;
+                        }
+
+                        // set correct version after undeletion
+                        $logVersion = $entity->getVersion();
+                        «FOR entity : getLoggableEntities»
+                            if ($object->get_objectType() == '«entity.name.formatForCode»' && method_exists($object, 'get«entity.getVersionField.name.formatForCodeCapital»')) {
+                                if ($logVersion < $object->get«entity.getVersionField.name.formatForCodeCapital»()) {
+                                    $entity->setVersion($object->get«entity.getVersionField.name.formatForCodeCapital»());
+                                }
+                            }
+                        «ENDFOR»
+
+                        return;
+                    }
+                «ENDIF»
                 «eventAction.prePersist(app)»
             }
 
@@ -230,7 +263,7 @@ class LifecycleListener {
              */
             protected function isEntityManagedByThisBundle($entity)
             {
-                if (!($entity instanceof EntityAccess)) {
+                if (!($entity instanceof EntityAccess«IF hasLoggable» || $entity instanceof AbstractLogEntry«ENDIF»)) {
                     return false;
                 }
 

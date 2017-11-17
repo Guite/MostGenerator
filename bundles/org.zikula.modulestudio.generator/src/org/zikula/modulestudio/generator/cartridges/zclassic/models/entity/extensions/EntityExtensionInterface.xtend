@@ -60,4 +60,9 @@ interface EntityExtensionInterface {
      * Returns the extension implementation class ORM annotations.
      */
     def String extensionClassImplAnnotations(Entity it)
+
+    /**
+     * Returns the extension repository base class implementation.
+     */
+    def String extensionRepositoryClassBaseImplementation(Entity it)
 }

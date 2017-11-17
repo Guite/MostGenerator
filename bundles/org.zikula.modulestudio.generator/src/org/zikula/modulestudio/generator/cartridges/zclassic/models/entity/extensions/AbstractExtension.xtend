@@ -206,8 +206,16 @@ abstract class AbstractExtension implements EntityExtensionInterface {
          */
         abstract class Abstract«name.formatForCodeCapital»«classType.formatForCodeCapital»Repository extends «IF classType == 'translation'»Translation«ELSEIF classType == 'logEntry'»LogEntry«ELSE»Entity«ENDIF»Repository
         {
+            «extensionRepositoryClassBaseImplementation»
         }
     '''
+
+    /**
+     * Returns the extension repository base class implementation.
+     */
+    override extensionRepositoryClassBaseImplementation(Entity it) {
+        ''
+    }
 
     def protected extensionClassRepositoryImpl(Entity it) '''
         namespace «app.appNamespace»\Entity\Repository;
