@@ -79,12 +79,12 @@ class AuthenticationMethod {
             /**
              * @var VariableApiInterface
              */
-            private $variableApi;
+            protected $variableApi;
 
             /**
              * @var PasswordApiInterface
              */
-            private $passwordApi;
+            protected $passwordApi;
 
             /**
              * «name.formatForCodeCapital»AuthenticationMethod constructor.

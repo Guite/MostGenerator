@@ -74,22 +74,22 @@ class SearchHelper {
         /**
          * @var SessionInterface
          */
-        private $session;
+        protected $session;
 
         /**
          * @var Request
          */
-        private $request;
+        protected $request;
 
         /**
          * @var EntityFactory
          */
-        private $entityFactory;
+        protected $entityFactory;
 
         /**
          * @var ControllerHelper
          */
-        private $controllerHelper;
+        protected $controllerHelper;
 
         /**
          * @var EntityDisplayHelper
@@ -100,12 +100,12 @@ class SearchHelper {
             /**
              * @var FeatureActivationHelper
              */
-            private $featureActivationHelper;
+            protected $featureActivationHelper;
 
             /**
              * @var CategoryHelper
              */
-            private $categoryHelper;
+            protected $categoryHelper;
         «ENDIF»
 
         /**

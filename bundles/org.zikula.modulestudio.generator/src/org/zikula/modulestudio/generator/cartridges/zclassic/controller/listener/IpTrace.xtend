@@ -10,12 +10,12 @@ class IpTrace {
         /**
          * @var Request
          */
-        private $request;
+        protected $request;
 
         /**
          * @var IpTraceableListener
          */
-        private $ipTraceableListener;
+        protected $ipTraceableListener;
 
         /**
          * IpTraceListener constructor.

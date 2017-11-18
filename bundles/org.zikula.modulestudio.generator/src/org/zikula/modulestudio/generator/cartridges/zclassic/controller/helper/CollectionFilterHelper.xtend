@@ -78,7 +78,7 @@ class CollectionFilterHelper {
                 /**
                  * @var CategoryHelper
                  */
-                private $categoryHelper;
+                protected $categoryHelper;
             «ENDIF»
 
             /**

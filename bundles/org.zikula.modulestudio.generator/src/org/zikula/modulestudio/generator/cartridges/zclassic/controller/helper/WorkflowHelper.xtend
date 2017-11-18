@@ -69,7 +69,7 @@ class WorkflowHelper {
             /**
              * @var CurrentUserApiInterface
              */
-            private $currentUserApi;
+            protected $currentUserApi;
 
             /**
              * @var EntityFactory

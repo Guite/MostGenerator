@@ -38,7 +38,7 @@ class TranslationType {
             /**
              * @var TranslationListener
              */
-            private $translationListener;
+            protected $translationListener;
 
             /**
              * TranslationsType constructor.
