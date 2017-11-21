@@ -213,11 +213,11 @@ class View {
                 <thead>
                 <tr>
                     {% if routeArea == 'admin' %}
-                        <th id="hSelect" scope="col" class="{% if items|length > 0 %}fixed-column {% endif %}text-center z-w02">
+                        <th id="hSelect" scope="col" class="text-center z-w02">
                             <input type="checkbox" class="«application.vendorAndName.toLowerCase»-mass-toggle" />
                         </th>
                     {% endif %}
-                    <th id="hItemActions" scope="col" class="{% if items|length > 0 %}fixed-column {% endif %}«IF !app.targets('2.0')»z-order-«ENDIF»unsorted z-w02">{{ __('Actions') }}</th>
+                    <th id="hItemActions" scope="col" class="«IF !app.targets('2.0')»z-order-«ENDIF»unsorted z-w02">{{ __('Actions') }}</th>
                     «IF hasSortableFields»
                         {% if activateSortable %}
                             <th id="hSortable" scope="col" class="«IF !app.targets('2.0')»z-order-«ENDIF»unsorted z-w02">{{ __('Sorting') }}</th>
@@ -241,7 +241,7 @@ class View {
             «ELSEIF listType == LIST_TYPE_TABLE»
                 <tr«IF hasSortableFields»{% if activateSortable %} data-item-id="{{ «name.formatForCode».getKey() }}" class="sort-item"{% endif %}«ENDIF»>
                     {% if routeArea == 'admin' %}
-                        <td headers="hSelect" class="fixed-column text-center z-w02">
+                        <td headers="hSelect" class="text-center z-w02">
                             <input type="checkbox" name="items[]" value="{{ «name.formatForCode».getKey() }}" class="«application.vendorAndName.toLowerCase»-toggle-checkbox" />
                         </td>
                     {% endif %}
@@ -473,7 +473,7 @@ class View {
         «IF listType != LIST_TYPE_TABLE»
             <«listType.asItemTag»>
         «ELSE»
-            <td id="«new ItemActionsView().itemActionContainerViewId(it)»" headers="hItemActions" class="fixed-column actions nowrap z-w02">
+            <td id="«new ItemActionsView().itemActionContainerViewId(it)»" headers="hItemActions" class="actions nowrap z-w02">
         «ENDIF»
             «new ItemActionsView().generate(it, 'view')»
         </«listType.asItemTag»>

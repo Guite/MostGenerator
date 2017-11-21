@@ -55,8 +55,6 @@ class DisplayFunctions {
         «IF hasViewActions»
 
             «initMassToggle»
-
-            «initFixedColumns»
         «ENDIF»
         «IF hasViewActions || hasDisplayActions»
 
@@ -193,47 +191,9 @@ class DisplayFunctions {
         function «vendorAndName»InitMassToggle() {
             if (jQuery('.«vendorAndName.toLowerCase»-mass-toggle').length > 0) {
                 jQuery('.«vendorAndName.toLowerCase»-mass-toggle').unbind('click').click(function (event) {
-                    if (jQuery('.table.fixed-columns').length > 0) {
-                        jQuery('.«vendorAndName.toLowerCase»-toggle-checkbox').prop('checked', false);
-                        jQuery('.table.fixed-columns .«vendorAndName.toLowerCase»-toggle-checkbox').prop('checked', jQuery(this).prop('checked'));
-                    } else {
-                        jQuery('.«vendorAndName.toLowerCase»-toggle-checkbox').prop('checked', jQuery(this).prop('checked'));
-                    }
+                    jQuery('.«vendorAndName.toLowerCase»-toggle-checkbox').prop('checked', jQuery(this).prop('checked'));
                 });
             }
-        }
-    '''
-
-    def private initFixedColumns(Application it) '''
-        /**
-         * Initialises fixed table columns.
-         */
-        function «vendorAndName»InitFixedColumns() {
-            jQuery('.table.fixed-columns').remove();
-            jQuery('.table').each(function () {
-                var originalTable, fixedColumnsTable, fixedTableWidth;
-
-                originalTable = jQuery(this);
-                fixedTableWidth = 0;
-                if (originalTable.find('.fixed-column').length > 0) {
-                    fixedColumnsTable = originalTable.clone().insertBefore(originalTable).addClass('fixed-columns').removeAttr('id');
-                    originalTable.find('.dropdown').addClass('hidden');
-                    fixedColumnsTable.find('.dropdown').removeClass('hidden');
-                    fixedColumnsTable.css('left', originalTable.parent().position().left);
-
-                    fixedColumnsTable.find('th, td').not('.fixed-column').remove();
-                    fixedColumnsTable.find('th').each(function (i, elem) {
-                        jQuery(this).css('width', originalTable.find('th').eq(i).css('width'));
-                        fixedTableWidth += originalTable.find('th').eq(i).width();
-                    });
-                    fixedColumnsTable.css('width', fixedTableWidth + 'px');
-
-                    fixedColumnsTable.find('tr').each(function (i, elem) {
-                        jQuery(this).height(originalTable.find('tr:eq(' + i + ')').height());
-                    });
-                }
-            });
-            «vendorAndName»InitMassToggle();
         }
     '''
 
@@ -390,7 +350,6 @@ class DisplayFunctions {
                 },
                 stop: function (event, ui) {
                     ui.item.removeClass('active-item-shadow');
-                    «vendorAndName»InitFixedColumns();
                 },
                 update: function (event, ui) {
                     jQuery.ajax({
@@ -430,9 +389,6 @@ class DisplayFunctions {
             if (isViewPage) {
                 «vendorAndName»InitQuickNavigation();
                 «vendorAndName»InitMassToggle();
-                jQuery(window).resize(«vendorAndName»InitFixedColumns);
-                «vendorAndName»InitFixedColumns();
-                window.setTimeout(«vendorAndName»InitFixedColumns, 1000);
                 «vendorAndName»InitItemActions('view');
                 «IF hasBooleansWithAjaxToggleInView»
                     «vendorAndName»InitAjaxToggles();
