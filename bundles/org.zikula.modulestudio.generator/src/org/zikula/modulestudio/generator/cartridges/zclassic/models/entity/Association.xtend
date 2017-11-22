@@ -139,7 +139,7 @@ class Association {
              * Bidirectional - «incomingMappingDescription(sourceName, targetName)».
              *
              * @ORM\ManyToMany(targetEntity="«/*\*/»«entityClass»", mappedBy="«targetName»"«additionalOptions(true)»)
-             «IF null !== orderByReverse && orderByReverse != ''»
+             «IF null !== orderByReverse && !orderByReverse.empty»
               * @ORM\OrderBy({«orderByDetails(orderByReverse)»})
              «ENDIF»
             «IF !nullable»
@@ -204,8 +204,8 @@ class Association {
 
     def private dispatch outgoingMappingAdditions(JoinRelationship it) ''''''
     def private dispatch outgoingMappingAdditions(OneToOneRelationship it) '''«IF orphanRemoval», orphanRemoval=true«ENDIF»'''
-    def private dispatch outgoingMappingAdditions(OneToManyRelationship it) '''«IF orphanRemoval», orphanRemoval=true«ENDIF»«IF null !== indexBy && indexBy != ''», indexBy="«indexBy»"«ENDIF»)'''
-    def private dispatch outgoingMappingAdditions(ManyToManyRelationship it) '''«IF orphanRemoval», orphanRemoval=true«ENDIF»«IF null !== indexBy && indexBy != ''», indexBy="«indexBy»"«ENDIF»'''
+    def private dispatch outgoingMappingAdditions(OneToManyRelationship it) '''«IF orphanRemoval», orphanRemoval=true«ENDIF»«IF null !== indexBy && !indexBy.empty», indexBy="«indexBy»"«ENDIF»)'''
+    def private dispatch outgoingMappingAdditions(ManyToManyRelationship it) '''«IF orphanRemoval», orphanRemoval=true«ENDIF»«IF null !== indexBy && !indexBy.empty», indexBy="«indexBy»"«ENDIF»'''
 
     def private dispatch outgoing(OneToManyRelationship it, String sourceName, String targetName, String entityClass) '''
         /**
@@ -217,7 +217,7 @@ class Association {
           * @ORM\OneToMany(targetEntity="«/*\*/»«entityClass»", mappedBy="«sourceName»"«additionalOptions(false)»«outgoingMappingAdditions»
          «ENDIF»
         «joinDetails(true)»
-         «IF null !== orderBy && orderBy != ''»
+         «IF null !== orderBy && !orderBy.empty»
           * @ORM\OrderBy({«orderByDetails(orderBy)»})
          «ENDIF»
         «IF !nullable»
@@ -241,7 +241,7 @@ class Association {
          *
          * @ORM\ManyToMany(targetEntity="«/*\*/»«entityClass»"«IF bidirectional», inversedBy="«sourceName»"«ENDIF»«additionalOptions(false)»«outgoingMappingAdditions»)
         «joinDetails(true)»
-         «IF null !== orderBy && orderBy != ''»
+         «IF null !== orderBy && !orderBy.empty»
           * @ORM\OrderBy({«orderByDetails(orderBy)»})
          «ENDIF»
         «IF !nullable»
@@ -266,7 +266,7 @@ class Association {
         val joinColumnsForeign = { if (useTarget) getTargetFields else getSourceFields }
         val foreignTableName = fullJoinTableName(useTarget, joinedEntityForeign)
         if (joinColumnsForeign.containsDefaultIdField(joinedEntityForeign) && joinColumnsLocal.containsDefaultIdField(joinedEntityLocal)
-           && !unique && nullable && onDelete == '') ''' * @ORM\JoinTable(name="«foreignTableName»")'''
+           && !unique && nullable && onDelete.empty) ''' * @ORM\JoinTable(name="«foreignTableName»")'''
         else ''' * @ORM\JoinTable(name="«foreignTableName»",
 «joinTableDetails(useTarget)»
  * )'''
@@ -290,7 +290,7 @@ class Association {
     def private joinColumnsSingle(JoinRelationship it, Boolean useTarget, DataObject joinedEntityLocal, String[] joinColumnsLocal) ''' *      joinColumns={«joinColumn(joinColumnsLocal.head, joinedEntityLocal.getPrimaryKey.name.formatForDB, !useTarget)»},'''
 
     def private joinColumn(JoinRelationship it, String columnName, String referencedColumnName, Boolean useTarget) '''
-        @ORM\JoinColumn(name="«joinColumnName(columnName, useTarget)»", referencedColumnName="«referencedColumnName»" «IF unique», unique=true«ENDIF»«IF !nullable», nullable=false«ENDIF»«IF onDelete != ''», onDelete="«onDelete»"«ENDIF»)'''
+        @ORM\JoinColumn(name="«joinColumnName(columnName, useTarget)»", referencedColumnName="«referencedColumnName»" «IF unique», unique=true«ENDIF»«IF !nullable», nullable=false«ENDIF»«IF !onDelete.empty», onDelete="«onDelete»"«ENDIF»)'''
 
     def private joinColumnName(JoinRelationship it, String columnName, Boolean useTarget) {
         switch it {
@@ -411,7 +411,7 @@ class Association {
     '''
 
     def private dispatch relationAccessorAdditions(OneToManyRelationship it, Boolean useTarget, String aliasName, String singleName) '''
-        «IF !useTarget && null !== indexBy && indexBy != ''»
+        «IF !useTarget && null !== indexBy && !indexBy.empty»
             /**
              * Returns an instance of «source.entityClassName('', false)» from the list of «getRelationAliasName(useTarget)» by its given «indexBy.formatForDisplay» index.
              *
@@ -474,7 +474,7 @@ class Association {
         «addMethodImplDefault(useTarget, selfIsMany, name, nameSingle, type)»
     '''
     def private dispatch addMethodImpl(OneToManyRelationship it, Boolean selfIsMany, Boolean useTarget, String name, String nameSingle, String type) '''
-        «IF !useTarget && null !== indexBy && indexBy != ''»
+        «IF !useTarget && null !== indexBy && !indexBy.empty»
             «addMethodSignature(useTarget, name, nameSingle, type)»
             {
                 $this->«name»[$«nameSingle»->get«indexBy.formatForCodeCapital»()] = $«nameSingle»;
@@ -506,7 +506,7 @@ class Association {
         «ENDIF»
     '''
     def private dispatch addMethodImpl(ManyToManyRelationship it, Boolean selfIsMany, Boolean useTarget, String name, String nameSingle, String type) '''
-        «IF !useTarget && null !== indexBy && indexBy != ''»
+        «IF !useTarget && null !== indexBy && !indexBy.empty»
             «addMethodSignature(useTarget, name, nameSingle, type)»
             {
                 $this->«name»[$«nameSingle»->get«indexBy.formatForCodeCapital»()] = $«nameSingle»;

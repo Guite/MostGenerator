@@ -313,7 +313,7 @@ class ExampleDataHelper {
 
     def private exampleRowsConstructorArgumentsAggregate(OneToManyRelationship it, Integer number) '''
         «val targetField = source.getAggregateFields.head.getAggregateTargetField»
-        $«getRelationAliasName(false)»«number», «IF targetField.defaultValue != '' && targetField.defaultValue != '0'»«targetField.defaultValue»«ELSE»«number»«ENDIF»
+        $«getRelationAliasName(false)»«number», «IF !targetField.defaultValue.empty && targetField.defaultValue != '0'»«targetField.defaultValue»«ELSE»«number»«ENDIF»
     '''
 
     def private exampleRowAssignment(DerivedField it, Entity dataEntity, String entityName, Integer number) {

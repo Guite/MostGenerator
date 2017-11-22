@@ -482,14 +482,14 @@ class ModelExtensions {
     def getUsedDisplayPattern(Entity it) {
         var usedDisplayPattern = displayPattern
 
-        if (isInheriting && (null === usedDisplayPattern || usedDisplayPattern == '')) {
+        if (isInheriting && (null === usedDisplayPattern || usedDisplayPattern.empty)) {
             // fetch inherited display pattern from parent entity
             if (parentType instanceof Entity) {
                 usedDisplayPattern = (parentType as Entity).displayPattern
             }
         }
 
-        if (null === usedDisplayPattern || usedDisplayPattern == '') {
+        if (null === usedDisplayPattern || usedDisplayPattern.empty) {
             usedDisplayPattern = name.formatForDisplay
         }
 
@@ -713,7 +713,7 @@ class ModelExtensions {
      */
     def getBooleansWithAjaxToggleEntity(DataObject it, String context) {
         val fields = getBooleanFieldsEntity.filter[ajaxTogglability]
-        if (fields.empty || context == '') {
+        if (fields.empty || context.empty) {
             return fields
         }
         if (context == 'view') {
@@ -727,7 +727,7 @@ class ModelExtensions {
      * Returns a list of all integer fields which are used as aggregates.
      */
     def getAggregateFields(DataObject it) {
-        getSelfAndParentDataObjects.map[fields.filter(IntegerField).filter[null !== aggregateFor && aggregateFor != '']].flatten
+        getSelfAndParentDataObjects.map[fields.filter(IntegerField).filter[null !== aggregateFor && !aggregateFor.empty]].flatten
     }
 
     /**
@@ -735,7 +735,7 @@ class ModelExtensions {
      * that is either the subFolderName attribute (if set) or the name otherwise.
      */
     def subFolderPathSegment(UploadField it) {
-        (if (null !== subFolderName && subFolderName != '') subFolderName else name).formatForDB
+        (if (null !== subFolderName && !subFolderName.empty) subFolderName else name).formatForDB
     }
 
     /**

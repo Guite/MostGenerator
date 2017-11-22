@@ -239,12 +239,12 @@ class TechStructureFields {
             if (fixed) result += 'Die Feldlänge ist fixiert.'
             if (nospace) result += 'Leerzeichen sind nicht erlaubt.'
             if (minLength > 0) result += 'Die minimale Länge beträgt ' + minLength + ' Zeichen.'
-            if (null !== regexp && regexp != '') result += 'Die Werte werden gegen ' + (if (regexpOpposite) 'Nichtzutreffen' else 'Zutreffen') + ' auf den regulären Ausdruck <code>' + regexp + '</code> validiert.'
+            if (null !== regexp && !regexp.empty) result += 'Die Werte werden gegen ' + (if (regexpOpposite) 'Nichtzutreffen' else 'Zutreffen') + ' auf den regulären Ausdruck <code>' + regexp + '</code> validiert.'
         } else {
             if (fixed) result += 'Field length is fixed.'
             if (nospace) result += 'Space chars are not allowed.'
             if (minLength > 0) result += 'Minimum length is ' + minLength + ' chars.'
-            if (null !== regexp && regexp != '') result += 'Values are validated against ' + (if (regexpOpposite) ' not') + ' matching the regular expression <code>' + regexp + '</code>.'
+            if (null !== regexp && !regexp.empty) result += 'Values are validated against ' + (if (regexpOpposite) ' not') + ' matching the regular expression <code>' + regexp + '</code>.'
         }
         result
     }
@@ -303,7 +303,7 @@ class TechStructureFields {
             result += commonStringConstraints
             result += 'Die erlaubten Dateierweiterungen sind "' + allowedExtensions + '".'
             result += 'Die erlaubten MIME-Typen sind "' + mimeTypes + '".'
-            if (maxSize != '') result += 'Die maximale Dateigröße beträgt ' + maxSize + '.'
+            if (!maxSize.empty) result += 'Die maximale Dateigröße beträgt ' + maxSize + '.'
             if (minWidth > 0 && maxWidth > 0) {
                 if (minWidth == maxWidth) result += 'Die Breite von Bildern muß genau ' + minWidth + ' Pixel betragen.'
                 else result += 'Die Breite von Bildern muß zwischen ' + minWidth + ' und ' + maxWidth + ' Pixeln liegen.'
@@ -343,7 +343,7 @@ class TechStructureFields {
             result += commonStringConstraints
             result += 'Allowed file extensions are "' + allowedExtensions + '".'
             result += 'Allowed mime types are "' + mimeTypes + '".'
-            if (maxSize != '') result += 'Maximum file size is ' + maxSize + '.'
+            if (!maxSize.empty) result += 'Maximum file size is ' + maxSize + '.'
             if (minWidth > 0 && maxWidth > 0) {
                 if (minWidth == maxWidth) result += 'Image width must be exactly equal to ' + minWidth + ' pixels.'
                 else result += 'Image width must be between ' + minWidth + ' and ' + maxWidth + ' pixels.'
@@ -428,11 +428,11 @@ class TechStructureFields {
         if (language == 'de') {
             if (past) result += 'Die Werte müssen in der Vergangenheit liegen.'
             if (future) result += 'Die Werte müssen in der Zukunft liegen.'
-            if (validatorAddition != '') result += 'Zusätzliche Validierung: <code>' + validatorAddition + '</code>.'
+            if (!validatorAddition.empty) result += 'Zusätzliche Validierung: <code>' + validatorAddition + '</code>.'
         } else {
             if (past) result += 'Values must be in the past.'
             if (future) result += 'Values must be in the future.'
-            if (validatorAddition != '') result += 'Additional validation: <code>' + validatorAddition + '</code>.'
+            if (!validatorAddition.empty) result += 'Additional validation: <code>' + validatorAddition + '</code>.'
         }
         result
     }
@@ -442,7 +442,7 @@ class TechStructureFields {
         if (null !== documentation && !documentation.empty) result += documentation + ' '
         if (language == 'de') {
             result += 'Dieses Feld ist ' + (if (!unique) 'nicht ') + ' eindeutig und erlaubt ' + (if (!nullable) 'keine ') + ' Null-Werte.'
-            if (null !== dbName && dbName != '') result += 'Wird in der Datenbank als "' + dbName + '" gespeichert.'
+            if (null !== dbName && !dbName.empty) result += 'Wird in der Datenbank als "' + dbName + '" gespeichert.'
             if (primaryKey) result += 'Fungiert als Primärschlüssel.'
             if (readonly) result += 'Erlaubt nur Lesezugriff.'
             if (!visible) result += 'Ist in Bearbeitungsformularen nicht sichtbar.'
@@ -450,7 +450,7 @@ class TechStructureFields {
             if (sortableGroup) result += 'Fungiert als Gruppierkriterium für die Sortable-Erweiterung.'
         } else {
             result += 'This field is ' + (if (!unique) 'not ') + ' unique and allows ' + (if (!nullable) 'no ') + ' null values.'
-            if (null !== dbName && dbName != '') result += 'Stored as "' + dbName + '" in the database.'
+            if (null !== dbName && !dbName.empty) result += 'Stored as "' + dbName + '" in the database.'
             if (primaryKey) result += 'Acts as primary key.'
             if (readonly) result += 'Allows read access only.'
             if (!visible) result += 'Is not visible in edit forms.'
@@ -475,13 +475,13 @@ class TechStructureFields {
         val result = commonRemarks
         if (language == 'de') {
             if (sortablePosition) result += 'Speichert die Position für die Sortable-Erweiterung.'
-            if (aggregateFor != '') result += 'Aggregiert eine 1:n Beziehung (' + aggregateFor + ').'
+            if (!aggregateFor.empty) result += 'Aggregiert eine 1:n Beziehung (' + aggregateFor + ').'
             if (percentage) result += 'Repräsentiert einen Prozentwert.'
             if (range) result += 'Repräsentiert einen Bereich.'
             if (version) result += 'Speichert die Version der Entität.'
         } else {
             if (sortablePosition) result += 'Stores the position for the Sortable extension.'
-            if (aggregateFor != '') result += 'Aggregates a 1:n relation (' + aggregateFor + ').'
+            if (!aggregateFor.empty) result += 'Aggregates a 1:n relation (' + aggregateFor + ').'
             if (percentage) result += 'Represents a percentage value.'
             if (range) result += 'Represents a range.'
             if (version) result += 'Stores the entity version.'

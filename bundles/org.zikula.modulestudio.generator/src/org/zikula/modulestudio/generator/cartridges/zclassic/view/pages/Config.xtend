@@ -146,9 +146,9 @@ class Config {
         <fieldset>
             <legend>{{ tabTitle }}</legend>
 
-            «IF null !== documentation && documentation != ''»
+            «IF null !== documentation && !documentation.empty»
                 «IF !documentation.containedTwigVariables.empty»
-                    {{ __f('«documentation.replace('\'', '\\\'').replaceTwigVariablesForTranslation»', {«documentation.containedTwigVariables.map[v|'\'%' + v + '%\': ' + v + '|default'].join(', ')»}) }}
+                    <p class="alert alert-info">{{ __f('«documentation.replace('\'', '\\\'').replaceTwigVariablesForTranslation»', {«documentation.containedTwigVariables.map[v|'\'%' + v + '%\': ' + v + '|default'].join(', ')»}) }}</p>
                 «ELSE»
                     <p class="alert alert-info">{{ __('«documentation.replace('\'', '\\\'')»')|nl2br }}</p>
                 «ENDIF»

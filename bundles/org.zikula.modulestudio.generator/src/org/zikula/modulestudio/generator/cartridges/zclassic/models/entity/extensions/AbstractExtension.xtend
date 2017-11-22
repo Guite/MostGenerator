@@ -28,7 +28,7 @@ abstract class AbstractExtension implements EntityExtensionInterface {
      */
     override extensionClasses(Entity it, IFileSystemAccess fsa) {
         this.fsa = fsa
-        if (extensionClassType != '') {
+        if (!extensionClassType.empty) {
             extensionClasses(it, extensionClassType)
         }
     }

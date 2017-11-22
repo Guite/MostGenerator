@@ -297,7 +297,7 @@ class EntityDisplayHelper {
                 // static part
                 // formattedPart = '\'' + patternPart.replace('\'', '') + '\''
             }
-            if (formattedPart != '' && result != '') {
+            if (formattedPart != '' && !result.empty) {
                 result = result.concat(",\n")
             }
             result = result.concat(formattedPart.toString)

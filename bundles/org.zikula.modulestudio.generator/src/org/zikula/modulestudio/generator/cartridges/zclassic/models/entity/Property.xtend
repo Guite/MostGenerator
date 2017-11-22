@@ -86,7 +86,7 @@ class Property {
 
     def persistentProperty(DerivedField it, String name, String type, String init, String modifier) '''
         /**
-         «IF null !== documentation && documentation != ''»
+         «IF null !== documentation && !documentation.empty»
           * «documentation»
           *
          «ENDIF»
@@ -99,14 +99,14 @@ class Property {
              «ENDIF»
             «IF null !== extMan»«extMan.columnAnnotations(it)»«ENDIF»
              «IF !(it instanceof UserField)»«/* user fields are implemented as join to UserEntity, see persistentPropertyAdditions */»
-             * @ORM\Column(«IF null !== dbName && dbName != ''»name="«dbName.formatForCode»", «ENDIF»«persistentPropertyImpl(type.toLowerCase)»«IF unique», unique=true«ENDIF»«IF nullable», nullable=true«ENDIF»)
+             * @ORM\Column(«IF null !== dbName && !dbName.empty»name="«dbName.formatForCode»", «ENDIF»«persistentPropertyImpl(type.toLowerCase)»«IF unique», unique=true«ENDIF»«IF nullable», nullable=true«ENDIF»)
              «ENDIF»
             «persistentPropertyAdditions»
         «ENDIF»
         «thVal.fieldAnnotations(it)»
          * @var «IF type == 'bigint' || type == 'smallint'»integer«ELSEIF type == 'datetime'»\DateTime«ELSE»«type»«ENDIF» $«name.formatForCode»
          */
-        «modifier» $«name.formatForCode»«IF init != ''»«init»«ELSE»«IF !(it instanceof DatetimeField)» = «defaultFieldData»«ENDIF»«ENDIF»;
+        «modifier» $«name.formatForCode»«IF !init.empty»«init»«ELSE»«IF !(it instanceof DatetimeField)» = «defaultFieldData»«ENDIF»«ENDIF»;
         «/* this last line is on purpose */»
     '''
 
@@ -182,7 +182,7 @@ class Property {
     '''
 
     def dispatch fieldAccessor(IntegerField it) '''
-        «IF isIndexByField/* || (null !== aggregateFor && aggregateFor != ''*/»
+        «IF isIndexByField/* || (null !== aggregateFor && !aggregateFor.empty*/»
             «fh.getterMethod(it, name.formatForCode, fieldTypeAsString, false)»
         «ELSE»
             «fh.getterAndSetterMethods(it, name.formatForCode, fieldTypeAsString, false, nullable, false, '', '')»

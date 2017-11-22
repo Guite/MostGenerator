@@ -54,9 +54,13 @@ class ViewHierarchy {
         «ENDIF»
         {% block content %}
             <div class="«appName.toLowerCase»-«name.formatForDB» «appName.toLowerCase»-viewhierarchy">
-                «IF null !== documentation && documentation != ''»
+                «IF null !== documentation && !documentation.empty»
 
-                    <p class="alert alert-info">{{ __('«documentation.replace('\'', '\\\'')»') }}</p>
+                    «IF !documentation.containedTwigVariables.empty»
+                        <p class="alert alert-info">{{ __f('«documentation.replace('\'', '\\\'').replaceTwigVariablesForTranslation»', {«documentation.containedTwigVariables.map[v|'\'%' + v + '%\': ' + v + '|default'].join(', ')»}) }}</p>
+                    «ELSE»
+                        <p class="alert alert-info">{{ __('«documentation.replace('\'', '\\\'')»') }}</p>
+                    «ENDIF»
                 «ENDIF»
 
                 <p>

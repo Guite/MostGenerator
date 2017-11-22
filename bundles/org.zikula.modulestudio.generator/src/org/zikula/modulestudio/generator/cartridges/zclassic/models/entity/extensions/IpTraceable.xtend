@@ -25,7 +25,7 @@ class IpTraceable extends AbstractExtension implements EntityExtensionInterface 
         «ENDIF»
     '''
 
-    def private ipTraceableDetails(StringField it) '''«IF ipTraceable == EntityIpTraceableType.CHANGE», field="«ipTraceableChangeTriggerField.formatForCode»"«IF null !== ipTraceableChangeTriggerValue && ipTraceableChangeTriggerValue != ''», value="«ipTraceableChangeTriggerValue.formatForCode»"«ENDIF»«ENDIF»'''
+    def private ipTraceableDetails(StringField it) '''«IF ipTraceable == EntityIpTraceableType.CHANGE», field="«ipTraceableChangeTriggerField.formatForCode»"«IF null !== ipTraceableChangeTriggerValue && !ipTraceableChangeTriggerValue.empty», value="«ipTraceableChangeTriggerValue.formatForCode»"«ENDIF»«ENDIF»'''
 
     /**
      * Generates additional entity properties.

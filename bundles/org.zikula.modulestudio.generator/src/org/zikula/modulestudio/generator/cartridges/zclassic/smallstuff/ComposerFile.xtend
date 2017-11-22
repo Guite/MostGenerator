@@ -132,7 +132,7 @@ class ComposerFile {
     '''
 
     def private dependency(Application it, ReferredApplication dependency) '''
-        "«dependency.name»:>=«dependency.minVersion»,<=«dependency.maxVersion»": "«IF null !== dependency.documentation && dependency.documentation != ''»«dependency.documentation.formatForDisplay»«ELSE»«dependency.name» application«ENDIF»"
+        "«dependency.name»:>=«dependency.minVersion»,<=«dependency.maxVersion»": "«IF null !== dependency.documentation && !dependency.documentation.empty»«dependency.documentation.formatForDisplay»«ELSE»«dependency.name» application«ENDIF»"
     '''
 
     def private generateCapabilities(Application it) '''
@@ -145,9 +145,9 @@ class ComposerFile {
                         "«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Entity\\«entity.name.formatForCodeCapital»Entity"«IF entity != getCategorisableEntities.last»,«ENDIF»
                     «ENDFOR»
                 ]
-            }«IF null !== capabilities && capabilities != ''»,«ENDIF»
+            }«IF null !== capabilities && !capabilities.empty»,«ENDIF»
         «ENDIF»
-        «IF null !== capabilities && capabilities != ''»
+        «IF null !== capabilities && !capabilities.empty»
             «val capabilitiesArray = capabilities.replaceAll(', ', '').split(',')»
             «FOR capability : capabilitiesArray»
                 "«capability.formatForDisplay»": {"version": "1.0"}«IF capability != capabilitiesArray.last»,«ENDIF»
@@ -159,7 +159,7 @@ class ComposerFile {
         if (hasCategorisableEntities) {
             return true
         }
-        if (null !== capabilities && capabilities != '') {
+        if (null !== capabilities && !capabilities.empty) {
             return true
         }
         false

@@ -94,10 +94,10 @@ class View {
         «ENDIF»
         {% block content %}
         <div class="«appName.toLowerCase»-«name.formatForDB» «appName.toLowerCase»-view">
-            «IF null !== documentation && documentation != ''»
+            «IF null !== documentation && !documentation.empty»
 
                 «IF !documentation.containedTwigVariables.empty»
-                    {{ __f('«documentation.replace('\'', '\\\'').replaceTwigVariablesForTranslation»', {«documentation.containedTwigVariables.map[v|'\'%' + v + '%\': ' + v + '|default'].join(', ')»}) }}
+                    <p class="alert alert-info">{{ __f('«documentation.replace('\'', '\\\'').replaceTwigVariablesForTranslation»', {«documentation.containedTwigVariables.map[v|'\'%' + v + '%\': ' + v + '|default'].join(', ')»}) }}</p>
                 «ELSE»
                     <p class="alert alert-info">{{ __('«documentation.replace('\'', '\\\'')»') }}</p>
                 «ENDIF»
@@ -389,9 +389,9 @@ class View {
     def private displayEntry(Object it, Boolean useTarget) '''
         «val cssClass = entryContainerCssClass»
         «IF listType != LIST_TYPE_TABLE»
-            <«listType.asItemTag»«IF cssClass != ''» class="«cssClass»"«ENDIF»>
+            <«listType.asItemTag»«IF !cssClass.empty» class="«cssClass»"«ENDIF»>
         «ELSE»
-            <td headers="h«markupIdCode(useTarget)»" class="text-«alignment»«IF cssClass != ''» «cssClass»«ENDIF»">
+            <td headers="h«markupIdCode(useTarget)»" class="text-«alignment»«IF !cssClass.empty» «cssClass»«ENDIF»">
         «ENDIF»
             «displayEntryInner(useTarget)»
         </«listType.asItemTag»>

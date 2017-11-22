@@ -303,7 +303,7 @@ class ModelJoinExtensions {
      * That is true if at least one incoming relation has an indexBy field set. 
      */
     def isIndexByTarget(DataObject it) {
-        !incoming.filter[null !== getIndexByField && getIndexByField != ''].empty
+        !incoming.filter[null !== getIndexByField && !getIndexByField.empty].empty
     }
 
     /**
@@ -319,8 +319,8 @@ class ModelJoinExtensions {
      */
     def isIndexed(Relationship it) {
         switch it {
-            OneToManyRelationship: null !== it.indexBy && it.indexBy != ''
-            ManyToManyRelationship: null !== it.indexBy && it.indexBy != ''
+            OneToManyRelationship: null !== it.indexBy && !it.indexBy.empty
+            ManyToManyRelationship: null !== it.indexBy && !it.indexBy.empty
             default: false
         }
     }

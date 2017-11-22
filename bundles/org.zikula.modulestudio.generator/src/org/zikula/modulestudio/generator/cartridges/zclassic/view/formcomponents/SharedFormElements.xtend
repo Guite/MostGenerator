@@ -26,7 +26,7 @@ class SharedFormElements {
     '''
 
     def private formRow(Field it, String subElem) '''
-        «IF subElem != ''»
+        «IF !subElem.empty»
             {{ form_row(attribute(«subElem», '«name.formatForCode»')) }}
         «ELSE»
             {{ form_row(form.«name.formatForCode») }}

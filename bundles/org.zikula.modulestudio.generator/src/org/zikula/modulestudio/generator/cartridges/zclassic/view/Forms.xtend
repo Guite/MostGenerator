@@ -244,7 +244,7 @@ class Forms {
             «ENDIF»
             «IF geographical»
                 «FOR geoFieldName : newArrayList('latitude', 'longitude')»
-                    «IF subElem != ''»
+                    «IF !subElem.empty»
                         {{ form_row(attribute(«subElem», '«geoFieldName»')) }}
                     «ELSE»
                         {{ form_row(form.«geoFieldName») }}
@@ -252,7 +252,7 @@ class Forms {
                 «ENDFOR»
             «ENDIF»
             «IF isInheriting»
-                «IF subElem != ''»
+                «IF !subElem.empty»
                     {{ form_row(attribute(«subElem», 'parentFields')) }}
                 «ELSE»
                     {{ form_row(form.parentFields) }}
@@ -263,7 +263,7 @@ class Forms {
 
     def private slugField(Entity it, String subElem) '''
         «IF hasSluggableFields && slugUpdatable && application.supportsSlugInputFields»
-            «IF subElem != ''»
+            «IF !subElem.empty»
                 {{ form_row(attribute(«subElem», 'slug')) }}
             «ELSE»
                 {{ form_row(form.slug) }}

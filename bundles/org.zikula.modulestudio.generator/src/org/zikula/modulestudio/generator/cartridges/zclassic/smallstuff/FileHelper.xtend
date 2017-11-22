@@ -54,8 +54,8 @@ class FileHelper {
         *
         * @copyright «author» («vendor»)
         * @license «license»
-        * @author «author»«IF null !== email && email != ''» <«email»>«ENDIF».
-        * @link «IF url != ''»«url»«ELSE»«msUrl»«ENDIF»«IF url != 'http://zikula.org'»
+        * @author «author»«IF null !== email && !email.empty» <«email»>«ENDIF».
+        * @link «IF !url.empty»«url»«ELSE»«msUrl»«ENDIF»«IF url != 'http://zikula.org'»
         * @link http://zikula.org«ENDIF»
     '''
 
@@ -93,7 +93,7 @@ class FileHelper {
          *
          * @return void
          */
-        public function set«name.formatForCodeCapital»(«IF !nullable && useHint»«type» «ENDIF»$«name»«IF init != ''» = «init»«ENDIF»)
+        public function set«name.formatForCodeCapital»(«IF !nullable && useHint»«type» «ENDIF»$«name»«IF !init.empty» = «init»«ENDIF»)
         {
             «IF null !== customImpl && customImpl != ''»
                 «customImpl»

@@ -25,7 +25,7 @@ class Blameable extends AbstractExtension implements EntityExtensionInterface {
         «ENDIF»
     '''
 
-    def private blameableDetails(UserField it) '''«IF blameable == EntityBlameableType.CHANGE», field="«blameableChangeTriggerField.formatForCode»"«IF null !== blameableChangeTriggerValue && blameableChangeTriggerValue != ''», value="«blameableChangeTriggerValue.formatForCode»"«ENDIF»«ENDIF»'''
+    def private blameableDetails(UserField it) '''«IF blameable == EntityBlameableType.CHANGE», field="«blameableChangeTriggerField.formatForCode»"«IF null !== blameableChangeTriggerValue && !blameableChangeTriggerValue.empty», value="«blameableChangeTriggerValue.formatForCode»"«ENDIF»«ENDIF»'''
 
     /**
      * Generates additional entity properties.

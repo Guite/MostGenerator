@@ -138,13 +138,13 @@ class TechStructureRelations {
             result += 'Sie verwendet den Abruftyp "' + fetchType.enumDescription + '".'
             result += 'Aus Sicht der Quelle ' + cascade.enumDescription + '.'
             result += 'Aus Sicht des Ziels ' + cascadeReverse.enumDescription + '.'
-            if (onDelete != '') result += 'Auf Datenbankebene werden zusätzliche Löschoperationen angewendet: ' + onDelete + '.'
+            if (!onDelete.empty) result += 'Auf Datenbankebene werden zusätzliche Löschoperationen angewendet: ' + onDelete + '.'
         } else {
             result += 'This relation is ' + (if (!unique) 'not ') + ' unique and allows ' + (if (!nullable) 'no ') + ' null values.'
             result += 'It uses the "' + fetchType.enumDescription + '" fetch type.'
             result += 'From source view ' + cascade.enumDescription + '.'
             result += 'From target view ' + cascadeReverse.enumDescription + '.'
-            if (onDelete != '') result += 'On database level additional delete operations are applied: ' + onDelete + '.'
+            if (!onDelete.empty) result += 'On database level additional delete operations are applied: ' + onDelete + '.'
         }
         result
     }
@@ -267,8 +267,8 @@ class TechStructureRelations {
         if (language == 'de') {
             result += 'Diese Relation wird durch eine ' + (if (bidirectional) 'bidirektionale' else 'unidirektionale') + ' Assoziation realisiert.'
             if (orphanRemoval) result += 'Waisen werden automatisch entfernt.'
-            if (null !== orderBy && orderBy != '') result += 'Die ' + targetAlias.formatForDisplay + ' werden nach dem Feld "' + orderBy + '" sortiert.'
-            if (null !== indexBy && indexBy != '') result += 'Die ' + targetAlias.formatForDisplay + ' werden nach dem Feld "' + indexBy + '" sortiert.'
+            if (null !== orderBy && !orderBy.empty) result += 'Die ' + targetAlias.formatForDisplay + ' werden nach dem Feld "' + orderBy + '" sortiert.'
+            if (null !== indexBy && !indexBy.empty) result += 'Die ' + targetAlias.formatForDisplay + ' werden nach dem Feld "' + indexBy + '" sortiert.'
             if (minTarget > 0 || maxTarget > 0) {
                 if (minTarget > 0 && maxTarget > 0) {
                     result += 'Es können mindestens ' + minTarget + ' und höchstens ' + maxTarget + ' ' + targetAlias.formatForDisplay + ' zugewiesen werden.'
@@ -282,8 +282,8 @@ class TechStructureRelations {
         } else {
             result += 'This relation is realised by ' + (if (bidirectional) 'a bidirectional' else 'an unidirectional') + ' association.'
             if (orphanRemoval) result += 'Orphans get removed automatically.'
-            if (null !== orderBy && orderBy != '') result += 'The ' + targetAlias.formatForDisplay + ' are sorted by the "' + orderBy + '" field.'
-            if (null !== indexBy && indexBy != '') result += 'The ' + targetAlias.formatForDisplay + ' are indexed by the "' + indexBy + '" field.'
+            if (null !== orderBy && !orderBy.empty) result += 'The ' + targetAlias.formatForDisplay + ' are sorted by the "' + orderBy + '" field.'
+            if (null !== indexBy && !indexBy.empty) result += 'The ' + targetAlias.formatForDisplay + ' are indexed by the "' + indexBy + '" field.'
             if (minTarget > 0 || maxTarget > 0) {
                 if (minTarget > 0 && maxTarget > 0) {
                     result += 'At least ' + minTarget + ' and at most ' + maxTarget + ' ' + targetAlias.formatForDisplay + ' may be assigned.'
@@ -318,9 +318,9 @@ class TechStructureRelations {
             result += 'Diese Relation wird durch eine ' + (if (bidirectional) 'bidirektionale' else 'unidirektionale') + ' Assoziation realisiert.'
             result += 'Die für die verbindende Tabelle erstellte Referenzklasse heißt "' + refClass + '".'
             if (orphanRemoval) result += 'Waisen werden automatisch entfernt.'
-            if (null !== orderByReverse && orderByReverse != '') result += 'Die ' + sourceAlias.formatForDisplay + ' werden nach dem Feld "' + orderByReverse + '" sortiert.'
-            if (null !== orderBy && orderBy != '') result += 'Die ' + targetAlias.formatForDisplay + ' werden nach dem Feld "' + orderBy + '" sortiert.'
-            if (null !== indexBy && indexBy != '') result += 'Die ' + targetAlias.formatForDisplay + ' werden nach dem Feld "' + indexBy + '" sortiert.'
+            if (null !== orderByReverse && !orderByReverse.empty) result += 'Die ' + sourceAlias.formatForDisplay + ' werden nach dem Feld "' + orderByReverse + '" sortiert.'
+            if (null !== orderBy && !orderBy.empty) result += 'Die ' + targetAlias.formatForDisplay + ' werden nach dem Feld "' + orderBy + '" sortiert.'
+            if (null !== indexBy && !indexBy.empty) result += 'Die ' + targetAlias.formatForDisplay + ' werden nach dem Feld "' + indexBy + '" sortiert.'
             if (minSource > 0 || maxSource > 0) {
                 if (minSource > 0 && maxSource > 0) {
                     result += 'Es können mindestens ' + minSource + ' und höchstens ' + maxSource + ' ' + sourceAlias.formatForDisplay + ' zugewiesen werden.'
@@ -351,9 +351,9 @@ class TechStructureRelations {
             result += 'This relation is realised by ' + (if (bidirectional) 'a bidirectional' else 'an unidirectional') + ' association.'
             result += 'The reference class created for the linking table is named "' + refClass + '".'
             if (orphanRemoval) result += 'Orphans get removed automatically.'
-            if (null !== orderByReverse && orderByReverse != '') result += 'The ' + sourceAlias.formatForDisplay + ' are sorted by the "' + orderByReverse + '" field.'
-            if (null !== orderBy && orderBy != '') result += 'The ' + targetAlias.formatForDisplay + ' are sorted by the "' + orderBy + '" field.'
-            if (null !== indexBy && indexBy != '') result += 'The ' + targetAlias.formatForDisplay + ' are indexed by the "' + indexBy + '" field.'
+            if (null !== orderByReverse && !orderByReverse.empty) result += 'The ' + sourceAlias.formatForDisplay + ' are sorted by the "' + orderByReverse + '" field.'
+            if (null !== orderBy && !orderBy.empty) result += 'The ' + targetAlias.formatForDisplay + ' are sorted by the "' + orderBy + '" field.'
+            if (null !== indexBy && !indexBy.empty) result += 'The ' + targetAlias.formatForDisplay + ' are indexed by the "' + indexBy + '" field.'
             if (minSource > 0 || maxSource > 0) {
                 if (minSource > 0 && maxSource > 0) {
                     result += 'At least ' + minSource + ' and at most ' + maxSource + ' ' + sourceAlias.formatForDisplay + ' may be assigned.'

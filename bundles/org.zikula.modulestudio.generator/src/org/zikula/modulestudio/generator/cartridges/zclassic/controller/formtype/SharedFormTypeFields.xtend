@@ -192,7 +192,7 @@ class SharedFormTypeFields {
             «val isExpandedListField = it instanceof ListField && (it as ListField).expanded»
             $builder->add('«name.formatForCode»', «formType»Type::class, [
                 'label' => $this->__('«name.formatForDisplayCapital»') . ':',
-                «IF null !== documentation && documentation != ''»
+                «IF null !== documentation && !documentation.empty»
                     'label_attr' => [
                         'class' => 'tooltips«IF isExpandedListField» «IF (it as ListField).multiple»checkbox«ELSE»radio«ENDIF»-inline«ENDIF»',
                         'title' => $this->__('«documentation.replace("'", '"')»')
@@ -225,7 +225,7 @@ class SharedFormTypeFields {
 
     def private helpDocumentation(DerivedField it) {
         val messages = newArrayList
-        if (null !== documentation && documentation != '') {
+        if (null !== documentation && !documentation.empty) {
             messages += '$this->__(\'' + documentation.replace("'", '"') + '\')'
         }
         messages
@@ -291,7 +291,7 @@ class SharedFormTypeFields {
                 messages += '''$this->__('Note: this value must not contain spaces.')'''
             }
         }
-        if (null !== regexp && regexp != '') {
+        if (null !== regexp && !regexp.empty) {
             messages += '''$this->__f('Note: this value must«IF regexpOpposite» not«ENDIF» conform to the regular expression "%pattern%".', ['%pattern%' => '«regexp.replace('\'', '')»'])'''
         }
         if (role == StringRole.BIC) {
@@ -386,7 +386,7 @@ class SharedFormTypeFields {
         if (true === nospace) {
             messages += '''$this->__('Note: this value must not contain spaces.')'''
         }
-        if (null !== regexp && regexp != '') {
+        if (null !== regexp && !regexp.empty) {
             messages += '''$this->__f('Note: this value must«IF regexpOpposite» not«ENDIF» conform to the regular expression "%pattern%".', ['%pattern%' => '«regexp.replace('\'', '')»'])'''
         }
 
@@ -574,7 +574,7 @@ class SharedFormTypeFields {
     def private dispatch titleAttribute(StringField it) '''«IF role == StringRole.COLOUR || role == StringRole.COUNTRY || role == StringRole.CURRENCY || (role == StringRole.DATE_INTERVAL && application.targets('2.0')) || role == StringRole.LANGUAGE || role == StringRole.LOCALE || role == StringRole.TIME_ZONE»Choose the «name.formatForDisplay»«ELSE»Enter the «name.formatForDisplay»«ENDIF»«IF null !== entity» of the «entity.name.formatForDisplay»«ENDIF»'''
     def private dispatch additionalAttributes(StringField it) '''
         'maxlength' => «length»,
-        «IF null !== regexp && regexp != ''»
+        «IF null !== regexp && !regexp.empty»
             «IF !regexpOpposite»
                 'pattern' => '«regexp.replace('\'', '')»',
             «ENDIF»
@@ -617,7 +617,7 @@ class SharedFormTypeFields {
     def private dispatch formType(TextField it) '''Textarea'''
     def private dispatch additionalAttributes(TextField it) '''
         'maxlength' => «length»,
-        «IF null !== regexp && regexp != ''»
+        «IF null !== regexp && !regexp.empty»
             «IF !regexpOpposite»
                 'pattern' => '«regexp.replace('\'', '')»',
             «ENDIF»
@@ -696,12 +696,12 @@ class SharedFormTypeFields {
     }
     def private dispatch additionalOptions(DatetimeField it) '''
         «IF isDateTimeField»
-            'empty_data' => «IF null !== defaultValue && defaultValue != '' && defaultValue != 'now'»'«defaultValue»'«ELSEIF nullable»''«ELSE»«defaultValueForNow»«ENDIF»,
+            'empty_data' => «IF null !== defaultValue && !defaultValue.empty && defaultValue != 'now'»'«defaultValue»'«ELSEIF nullable»''«ELSE»«defaultValueForNow»«ENDIF»,
             'with_seconds' => true,
             'date_widget' => 'single_text',
             'time_widget' => 'single_text'
         «ELSEIF isDateField»
-            'empty_data' => «IF null !== defaultValue && defaultValue != '' && defaultValue != 'now'»'«defaultValue»'«ELSEIF nullable»''«ELSE»«defaultValueForNow»«ENDIF»,
+            'empty_data' => «IF null !== defaultValue && !defaultValue.empty && defaultValue != 'now'»'«defaultValue»'«ELSEIF nullable»''«ELSE»«defaultValueForNow»«ENDIF»,
             'widget' => 'single_text'
         «ELSEIF isTimeField»
             'empty_data' => '«defaultValue»',
@@ -713,7 +713,7 @@ class SharedFormTypeFields {
     def private definition(Field it) '''
         ->add('«name.formatForCode»', «formType»Type::class, [
             'label' => $this->__('«labelText»') . ':',
-            «IF null !== documentation && documentation != ''»
+            «IF null !== documentation && !documentation.empty»
                 'label_attr' => [
                     'class' => 'tooltips',
                     'title' => $this->__('«documentation.replace("'", '"')»')

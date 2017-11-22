@@ -137,7 +137,7 @@ class ValidationConstraints {
         «IF nospace»
             «' '»* @Assert\Regex(pattern="/\s/", match=false, message="This value must not contain space chars.")
         «ENDIF»
-        «IF null !== regexp && regexp != ''»
+        «IF null !== regexp && !regexp.empty»
             «' '»* @Assert\Regex(pattern="«regexp»"«IF regexpOpposite», match=false«ENDIF»)
         «ENDIF»
     '''
@@ -212,10 +212,10 @@ class ValidationConstraints {
     def private getUploadConstraints(UploadField it) {
         val constraints = newArrayList
 
-        if (maxSize != '') {
+        if (!maxSize.empty) {
             constraints += '''maxSize = "«maxSize»"'''
         }
-        if (mimeTypes != '') {
+        if (!mimeTypes.empty) {
             val mimeTypesList = mimeTypes.replaceAll(', ', ',').split(',')
             var mimeTypeString = '"' + mimeTypesList.join('", "') + '"'
             constraints += '''mimeTypes = {«mimeTypeString»}'''
@@ -294,7 +294,7 @@ class ValidationConstraints {
         «ELSEIF isTimeField»
             «' '»* @Assert\Time()
         «ENDIF»
-        «IF null !== validatorAddition && validatorAddition != ''»
+        «IF null !== validatorAddition && !validatorAddition.empty»
             «' '»* @Assert\«validatorAddition»
         «ENDIF»
     '''

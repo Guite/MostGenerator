@@ -276,8 +276,8 @@ class ListEntriesHelper {
         $states[] = [
             'value'   => '«IF null !== value»«value.replace("'", "")»«ELSE»«name.formatForCode.replace("'", "")»«ENDIF»',
             'text'    => $this->__('«name.toFirstUpper.replace("'", "")»'),
-            'title'   => «IF null !== documentation && documentation != ''»$this->__('«documentation.replace("'", "")»')«ELSE»''«ENDIF»,
-            'image'   => '«IF null !== image && image != ''»«image».png«ENDIF»',
+            'title'   => «IF null !== documentation && !documentation.empty»$this->__('«documentation.replace("'", "")»')«ELSE»''«ENDIF»,
+            'image'   => '«IF null !== image && !image.empty»«image».png«ENDIF»',
             'default' => «^default.displayBool»
         ];
     '''

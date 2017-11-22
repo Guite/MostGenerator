@@ -142,7 +142,7 @@ class EntityInitialiser {
     '''
 
     def private setDefaultValue(DatetimeField it) {
-        if (it.defaultValue !== null && it.defaultValue != '' && it.defaultValue.length > 0) {
+        if (it.defaultValue !== null && !it.defaultValue.empty && it.defaultValue.length > 0) {
             if (it.defaultValue != 'now') {
                 '''$entity->set«name.formatForCodeCapital»(new \DateTime('«it.defaultValue»'));'''
             } else {
