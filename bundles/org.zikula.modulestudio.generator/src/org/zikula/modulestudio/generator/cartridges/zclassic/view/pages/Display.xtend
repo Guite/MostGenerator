@@ -4,6 +4,8 @@ import de.guite.modulestudio.metamodel.DerivedField
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.EntityTreeType
 import de.guite.modulestudio.metamodel.HookProviderMode
+import de.guite.modulestudio.metamodel.ItemActionsPosition
+import de.guite.modulestudio.metamodel.ItemActionsStyle
 import de.guite.modulestudio.metamodel.JoinRelationship
 import de.guite.modulestudio.metamodel.ManyToManyRelationship
 import de.guite.modulestudio.metamodel.OneToManyRelationship
@@ -79,7 +81,9 @@ class Display {
         {% block title %}
             {% set templateTitle = «objName»|«application.appName.formatForDB»_formattedTitle|default(__('«name.formatForDisplayCapital»')) %}
             «templateHeading(appName)»
-            «new ItemActionsView().generate(it, 'display')»
+            «IF #[ItemActionsPosition.START, ItemActionsPosition.BOTH].contains(application.displayActionsPosition) && application.displayActionsStyle == ItemActionsStyle.DROPDOWN»
+                «new ItemActionsView().generate(it, 'display')»
+            «ENDIF»
         {% endblock %}
         «IF !application.generateSeparateAdminTemplates || isAdmin»
             {% block admin_page_icon 'eye' %}
@@ -145,6 +149,9 @@ class Display {
 
                 <div class="tab-content">
                     <div role="tabpanel" class="tab-pane fade in active" id="tabFields" aria-labelledby="fieldsTab">
+                        «IF #[ItemActionsPosition.START, ItemActionsPosition.BOTH].contains(application.displayActionsPosition) && application.displayActionsStyle != ItemActionsStyle.DROPDOWN»
+                            «new ItemActionsView().generate(it, 'display')»
+                        «ENDIF»
                         <h3>{{ __('Fields') }}</h3>
                         «fieldDetails(appName)»
                     </div>
@@ -153,6 +160,9 @@ class Display {
                     <div class="row">
                         <div class="col-sm-9">
                 «ENDIF»
+                «IF #[ItemActionsPosition.START, ItemActionsPosition.BOTH].contains(application.displayActionsPosition) && application.displayActionsStyle != ItemActionsStyle.DROPDOWN»
+                    «new ItemActionsView().generate(it, 'display')»
+                «ENDIF»
                 «fieldDetails(appName)»
             «ENDIF»
 
@@ -160,6 +170,9 @@ class Display {
 
             «IF !skipHookSubscribers»
                 {{ block('display_hooks') }}
+            «ENDIF»
+            «IF #[ItemActionsPosition.END, ItemActionsPosition.BOTH].contains(application.displayActionsPosition)»
+                «new ItemActionsView().generate(it, 'display')»
             «ENDIF»
             «IF useGroupingTabs('display')»
                 </div>

@@ -8,6 +8,7 @@ import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.EntityTreeType
 import de.guite.modulestudio.metamodel.EntityWorkflowType
 import de.guite.modulestudio.metamodel.IntegerField
+import de.guite.modulestudio.metamodel.ItemActionsPosition
 import de.guite.modulestudio.metamodel.JoinRelationship
 import de.guite.modulestudio.metamodel.ListField
 import de.guite.modulestudio.metamodel.NamedObject
@@ -200,7 +201,9 @@ class View {
                     {% if routeArea == 'admin' %}
                         <col id="cSelect" />
                     {% endif %}
-                    <col id="cItemActions" />
+                    «IF #[ItemActionsPosition.START, ItemActionsPosition.BOTH].contains(app.viewActionsPosition)»
+                        <col id="cItemActions" />
+                    «ENDIF»
                     «IF hasSortableFields»
                         {% if activateSortable %}
                             <col id="cSortable" />
@@ -209,6 +212,9 @@ class View {
                     «FOR field : listItemsFields»«field.columnDef»«ENDFOR»
                     «FOR relation : listItemsIn»«relation.columnDef(false)»«ENDFOR»
                     «FOR relation : listItemsOut»«relation.columnDef(true)»«ENDFOR»
+                    «IF #[ItemActionsPosition.END, ItemActionsPosition.BOTH].contains(app.viewActionsPosition)»
+                        <col id="cItemActions" />
+                    «ENDIF»
                 </colgroup>
                 <thead>
                 <tr>
@@ -217,7 +223,9 @@ class View {
                             <input type="checkbox" class="«application.vendorAndName.toLowerCase»-mass-toggle" />
                         </th>
                     {% endif %}
-                    <th id="hItemActions" scope="col" class="«IF !app.targets('2.0')»z-order-«ENDIF»unsorted z-w02">{{ __('Actions') }}</th>
+                    «IF #[ItemActionsPosition.START, ItemActionsPosition.BOTH].contains(app.viewActionsPosition)»
+                        <th id="hItemActions" scope="col" class="«IF !app.targets('2.0')»z-order-«ENDIF»unsorted z-w02">{{ __('Actions') }}</th>
+                    «ENDIF»
                     «IF hasSortableFields»
                         {% if activateSortable %}
                             <th id="hSortable" scope="col" class="«IF !app.targets('2.0')»z-order-«ENDIF»unsorted z-w02">{{ __('Sorting') }}</th>
@@ -226,6 +234,9 @@ class View {
                     «FOR field : listItemsFields»«field.headerLine»«ENDFOR»
                     «FOR relation : listItemsIn»«relation.headerLine(false)»«ENDFOR»
                     «FOR relation : listItemsOut»«relation.headerLine(true)»«ENDFOR»
+                    «IF #[ItemActionsPosition.END, ItemActionsPosition.BOTH].contains(app.viewActionsPosition)»
+                        <th id="hItemActions" scope="col" class="«IF !app.targets('2.0')»z-order-«ENDIF»unsorted z-w02">{{ __('Actions') }}</th>
+                    «ENDIF»
                 </tr>
                 </thead>
                 <tbody>
@@ -246,7 +257,9 @@ class View {
                         </td>
                     {% endif %}
             «ENDIF»
-                «itemActions»
+                «IF #[ItemActionsPosition.START, ItemActionsPosition.BOTH].contains(application.viewActionsPosition)»
+                    «itemActions»
+                «ENDIF»
                 «IF hasSortableFields»
                     {% if activateSortable %}
                         <td headers="hSortable" class="text-center z-w02">
@@ -257,6 +270,9 @@ class View {
                 «FOR field : listItemsFields»«IF field.name == 'workflowState'»{% if routeArea == 'admin' %}«ENDIF»«field.displayEntry(false)»«IF field.name == 'workflowState'»{% endif %}«ENDIF»«ENDFOR»
                 «FOR relation : listItemsIn»«relation.displayEntry(false)»«ENDFOR»
                 «FOR relation : listItemsOut»«relation.displayEntry(true)»«ENDFOR»
+                «IF #[ItemActionsPosition.END, ItemActionsPosition.BOTH].contains(application.viewActionsPosition)»
+                    «itemActions»
+                «ENDIF»
             «IF listType == LIST_TYPE_UL || listType == LIST_TYPE_OL»
                 </ul></li>
             «ELSEIF listType == LIST_TYPE_DL»

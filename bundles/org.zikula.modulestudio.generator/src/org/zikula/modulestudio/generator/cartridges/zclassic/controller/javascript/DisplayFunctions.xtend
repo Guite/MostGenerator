@@ -1,9 +1,11 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.controller.javascript
 
 import de.guite.modulestudio.metamodel.Application
+import de.guite.modulestudio.metamodel.ItemActionsStyle
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
+import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
@@ -14,6 +16,7 @@ class DisplayFunctions {
 
     extension ControllerExtensions = new ControllerExtensions
     extension FormattingExtensions = new FormattingExtensions
+    extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension ModelExtensions = new ModelExtensions
     extension ModelJoinExtensions = new ModelJoinExtensions
@@ -202,17 +205,42 @@ class DisplayFunctions {
          * Creates a dropdown menu for the item actions.
          */
         function «vendorAndName»InitItemActions(context) {
+            «FOR styleWithJs : #[ItemActionsStyle.ICON, ItemActionsStyle.BUTTON_GROUP, ItemActionsStyle.DROPDOWN]»
+            «IF #[viewActionsStyle, displayActionsStyle].contains(styleWithJs)»
+                «IF viewActionsStyle == styleWithJs && displayActionsStyle == styleWithJs»
+                    «initItemActionStyle(styleWithJs, '')»
+                «ELSEIF viewActionsStyle == styleWithJs && displayActionsStyle != styleWithJs»
+                    if (context == 'view') {
+                        «initItemActionStyle(styleWithJs, '')»
+                    }
+                «ELSEIF viewActionsStyle != styleWithJs && displayActionsStyle == styleWithJs»
+                    if (context == 'display') {
+                        «initItemActionStyle(styleWithJs, '')»
+                    }
+                «ENDIF»
+            «ENDIF»
+            «ENDFOR»
+        }
+    '''
+
+    def private initItemActionStyle(Application it, ItemActionsStyle style, String context) '''
+        «IF style == ItemActionsStyle.ICON»
+            jQuery('ul.list-inline > li > a > i.tooltips').tooltip();
+        «ELSEIF style == ItemActionsStyle.BUTTON_GROUP»
+            jQuery('.btn-group-sm.item-actions').each(function (index) {
+                var innerList;
+                innerList = jQuery(this).children('ul.list-inline').first().detach();
+                jQuery(this).append(innerList.find('a.btn'));
+            });
+        «ELSEIF style == ItemActionsStyle.DROPDOWN»
             var containerSelector;
             var containers;
-            var listClasses;
 
             containerSelector = '';
             if (context == 'view') {
                 containerSelector = '.«appName.toLowerCase»-view';
-                listClasses = 'list-unstyled dropdown-menu';
             } else if (context == 'display') {
                 containerSelector = 'h2, h3';
-                listClasses = 'list-unstyled dropdown-menu';
             }
 
             if (containerSelector == '') {
@@ -224,19 +252,10 @@ class DisplayFunctions {
                 return;
             }
 
-            containers.find('.dropdown > ul').removeClass('list-inline').addClass(listClasses);
-            containers.find('.dropdown > ul a').each(function (index) {
-                var title;
-
-                title = jQuery(this).find('i').first().attr('title');
-                if (title == '') {
-                    title = jQuery(this).find('i').first().data('original-title');
-                }
-                jQuery(this).html(jQuery(this).html() + title);
-            });
+            containers.find('.dropdown > ul').removeClass('list-inline').addClass('list-unstyled dropdown-menu');
             containers.find('.dropdown > ul a i').addClass('fa-fw');
             containers.find('.dropdown-toggle').removeClass('hidden').dropdown();
-        }
+        «ENDIF»
     '''
 
     def private initInlineWindow(Application it) '''

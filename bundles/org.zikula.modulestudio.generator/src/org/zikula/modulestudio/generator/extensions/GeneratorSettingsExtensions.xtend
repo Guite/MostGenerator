@@ -4,6 +4,8 @@ import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.AuthMethodType
 import de.guite.modulestudio.metamodel.CoreVersion
 import de.guite.modulestudio.metamodel.HookProviderMode
+import de.guite.modulestudio.metamodel.ItemActionsPosition
+import de.guite.modulestudio.metamodel.ItemActionsStyle
 
 /**
  * This class contains several helper functions for accessing and using generator settings.
@@ -296,6 +298,48 @@ class GeneratorSettingsExtensions {
      */
     def generateTechnicalDocumentation(Application it) {
         if (hasSettings) getSettings.generateTechnicalDocumentation else true
+    }
+
+    /**
+     * Determines whether and where item actions should be available in view pages.
+     */
+    def viewActionsPosition(Application it) {
+        if (hasSettings) getSettings.viewActionsPosition else ItemActionsPosition.START
+    }
+
+    /**
+     * Determines the style used by the included item actions in view pages.
+     */
+    def viewActionsStyle(Application it) {
+        if (hasSettings) getSettings.viewActionsStyle else ItemActionsStyle.DROPDOWN
+    }
+
+    /**
+     * Determines whether item actions in view pages should contain an icon in addition to their label or not.
+     */
+    def viewActionsWithIcons(Application it) {
+        if (hasSettings) getSettings.viewActionsWithIcons else true
+    }
+
+    /**
+     * Determines whether and where item actions should be available in display pages.
+     */
+    def displayActionsPosition(Application it) {
+        if (hasSettings) getSettings.displayActionsPosition else ItemActionsPosition.START
+    }
+
+    /**
+     * Determines the style used by the included item actions in display pages.
+     */
+    def displayActionsStyle(Application it) {
+        if (hasSettings) getSettings.displayActionsStyle else ItemActionsStyle.DROPDOWN
+    }
+
+    /**
+     * Determines whether item actions in display pages should contain an icon in addition to their label or not.
+     */
+    def displayActionsWithIcons(Application it) {
+        if (hasSettings) getSettings.displayActionsWithIcons else true
     }
 
     /**

@@ -4,9 +4,11 @@ import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.EntityTreeType
 import de.guite.modulestudio.metamodel.EntityWorkflowType
+import de.guite.modulestudio.metamodel.ItemActionsStyle
 import de.guite.modulestudio.metamodel.ManyToManyRelationship
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
+import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
@@ -17,6 +19,7 @@ class ItemActions {
 
     extension ControllerExtensions = new ControllerExtensions
     extension FormattingExtensions = new FormattingExtensions
+    extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension ModelExtensions = new ModelExtensions
     extension ModelJoinExtensions = new ModelJoinExtensions
@@ -51,17 +54,21 @@ class ItemActions {
                 $menu->addChild($title, [
                     'route' => $routePrefix . 'display',
                     'routeParameters' => $entity->createUrlArgs()
-                ])->setAttribute('icon', 'fa fa-search-plus');
+                ]);
                 $menu[$title]->setLinkAttribute('target', '_blank');
                 $menu[$title]->setLinkAttribute('title', $this->__('Open preview page', '«app.appName.formatForDB»'));
+                «app.addLinkClass('default')»
+                «app.addIcon('search-plus')»
             }
             if ($context != 'display') {
                 $title = $this->__('Details', '«app.appName.formatForDB»');
                 $menu->addChild($title, [
                     'route' => $routePrefix . $routeArea . 'display',
                     'routeParameters' => $entity->createUrlArgs()
-                ])->setAttribute('icon', 'fa fa-eye');
+                ]);
                 $menu[$title]->setLinkAttribute('title', str_replace('"', '', $entityDisplayHelper->getFormattedTitle($entity)));
+                «app.addLinkClass('default')»
+                «app.addIcon('eye')»
             }
         «ENDIF»
     '''
@@ -86,8 +93,10 @@ class ItemActions {
                             $menu->addChild($title, [
                                 'route' => $routePrefix . $routeArea . 'loggablehistory',
                                 'routeParameters' => $entity->createUrlArgs()
-                            ])->setAttribute('icon', 'fa fa-history');
+                            ]);
                             $menu[$title]->setLinkAttribute('title', $this->__('Watch version history', '«app.appName.formatForDB»'));
+                            «app.addLinkClass('default')»
+                            «app.addIcon('history')»
                         }
                     }
                 «ENDIF»
@@ -99,8 +108,10 @@ class ItemActions {
                 $menu->addChild($title, [
                     'route' => $routePrefix . $routeArea . 'delete',
                     'routeParameters' => $entity->createUrlArgs()
-                ])->setAttribute('icon', 'fa fa-trash-o');
+                ]);
                 $menu[$title]->setLinkAttribute('title', $this->__('Delete this «name.formatForDisplay»', '«app.appName.formatForDB»'));
+                «app.addLinkClass('danger')»
+                «app.addIcon('trash-o')»
             }
         «ENDIF»
     '''
@@ -111,8 +122,10 @@ class ItemActions {
                 $title = $this->__('Back to overview', '«app.appName.formatForDB»');
                 $menu->addChild($title, [
                     'route' => $routePrefix . $routeArea . 'view'
-                ])->setAttribute('icon', 'fa fa-reply');
+                ]);
                 $menu[$title]->setLinkAttribute('title', $title);
+                «app.addLinkClass('default')»
+                «app.addIcon('reply')»
             }
         «ENDIF»
     '''
@@ -139,16 +152,20 @@ class ItemActions {
                             $menu->addChild($title, [
                                 'route' => '«app.appName.formatForDB»_«otherEntity.name.formatForDB»_' . $routeArea . 'edit',
                                 'routeParameters' => ['«relationAliasNameParam»' => $entity->«IF hasSluggableFields && slugUnique»getSlug()«ELSE»getKey()«ENDIF»]
-                            ])->setAttribute('icon', 'fa fa-plus');
+                            ]);
                             $menu[$title]->setLinkAttribute('title', $title);
+                            «app.addLinkClass('default')»
+                            «app.addIcon('plus')»
                         }
                     «ELSE»
                         $title = $this->__('Create «elem.getRelationAliasName(useTarget).formatForDisplay»', '«app.appName.formatForDB»');
                         $menu->addChild($title, [
                             'route' => '«app.appName.formatForDB»_«otherEntity.name.formatForDB»_' . $routeArea . 'edit',
                             'routeParameters' => ['«relationAliasNameParam»' => $entity->getKey()]
-                        ])->setAttribute('icon', 'fa fa-plus');
+                        ]);
                         $menu[$title]->setLinkAttribute('title', $title);
+                        «app.addLinkClass('default')»
+                        «app.addIcon('plus')»
                     «ENDIF»
                 }
             «ENDFOR»
@@ -161,16 +178,48 @@ class ItemActions {
             $menu->addChild($title, [
                 'route' => $routePrefix . $routeArea . 'edit',
                 'routeParameters' => $entity->createUrlArgs()
-            ])->setAttribute('icon', 'fa fa-pencil-square-o');
+            ]);
             $menu[$title]->setLinkAttribute('title', $this->__('Edit this «name.formatForDisplay»', '«application.appName.formatForDB»'));
+            «application.addLinkClass('default')»
+            «application.addIcon('pencil-square-o')»
         «ENDIF»
         «IF tree == EntityTreeType.NONE»
             $title = $this->__('Reuse', '«application.appName.formatForDB»');
             $menu->addChild($title, [
                 'route' => $routePrefix . $routeArea . 'edit',
                 'routeParameters' => ['astemplate' => $entity->getKey()]
-            ])->setAttribute('icon', 'fa fa-files-o');
+            ]);
             $menu[$title]->setLinkAttribute('title', $this->__('Reuse for new «name.formatForDisplay»', '«application.appName.formatForDB»'));
+            «application.addLinkClass('default')»
+            «application.addIcon('files-o')»
+        «ENDIF»
+    '''
+
+    def private addLinkClass(Application it, String linkClass) '''
+        «IF viewActionsStyle == ItemActionsStyle.BUTTON && displayActionsStyle == ItemActionsStyle.BUTTON»
+            $menu[$title]->setLinkAttribute('class', 'btn btn-sm btn-«linkClass»');
+        «ELSEIF viewActionsStyle == ItemActionsStyle.BUTTON && displayActionsStyle != ItemActionsStyle.BUTTON»
+            if ($context == 'view') {
+                $menu[$title]->setLinkAttribute('class', 'btn btn-sm btn-«linkClass»');
+            }
+        «ELSEIF viewActionsStyle != ItemActionsStyle.BUTTON && displayActionsStyle == ItemActionsStyle.BUTTON»
+            if ($context == 'display') {
+                $menu[$title]->setLinkAttribute('class', 'btn btn-sm btn-«linkClass»');
+            }
+        «ENDIF»
+    '''
+
+    def private addIcon(Application it, String icon) '''
+        «IF viewActionsWithIcons && displayActionsWithIcons»
+            $menu[$title]->setAttribute('icon', 'fa fa-«icon»');
+        «ELSEIF viewActionsWithIcons && !displayActionsWithIcons»
+            if ($context == 'view') {
+                $menu[$title]->setAttribute('icon', 'fa fa-«icon»');
+            }
+        «ELSEIF !viewActionsWithIcons && displayActionsWithIcons»
+            if ($context == 'display') {
+                $menu[$title]->setAttribute('icon', 'fa fa-«icon»');
+            }
         «ENDIF»
     '''
 }

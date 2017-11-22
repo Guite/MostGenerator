@@ -1,12 +1,16 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.view.pagecomponents
 
+import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.Entity
+import de.guite.modulestudio.metamodel.ItemActionsStyle
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
+import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class ItemActionsView {
 
     extension FormattingExtensions = new FormattingExtensions
+    extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     extension Utils = new Utils
 
     def generate(Entity it, String context) '''
@@ -15,11 +19,27 @@ class ItemActionsView {
     '''
 
     def private markup(Entity it, String context) '''
-        <div class="dropdown">
-            <a id="«itemActionContainerViewId»DropDownToggle" role="button" data-toggle="dropdown" data-target="#" href="javascript:void(0);" class="hidden dropdown-toggle"><i class="fa fa-tasks"></i>«IF context == 'display'» {{ __('Actions') }}«ENDIF» <span class="caret"></span></a>
-            {{ knp_menu_render(itemActions, {template: 'ZikulaMenuModule:Override:actions.html.twig'}) }}
-        </div>
+        «IF application.useStyle(context, ItemActionsStyle.BUTTON_GROUP)»
+            <div class="btn-group«IF context == 'view'»-vertical«ENDIF» btn-group-sm item-actions" role="group" aria-label="{{ __('Actions') }}">
+                «application.renderMenu(context)»
+            </div>
+        «ELSEIF application.useStyle(context, ItemActionsStyle.DROPDOWN)»
+            <div class="dropdown">
+                <a id="«itemActionContainerViewId»DropDownToggle" role="button" data-toggle="dropdown" data-target="#" href="javascript:void(0);" class="hidden dropdown-toggle"><i class="fa fa-tasks"></i>«IF context == 'display'» {{ __('Actions') }}«ENDIF» <span class="caret"></span></a>
+                «application.renderMenu(context)»
+            </div>
+        «ELSE»
+            «application.renderMenu(context)»
+        «ENDIF»
     '''
+
+    def private renderMenu(Application it, String context) '''
+        {{ knp_menu_render(itemActions, {template: 'ZikulaMenuModule:Override:«IF useStyle(context, ItemActionsStyle.ICON)»actions«ELSE»bootstrap_fontawesome«ENDIF».html.twig'}) }}
+    '''
+
+    def private useStyle(Application it, String context, ItemActionsStyle style) {
+        (context == 'view' && viewActionsStyle == style) || (context == 'display' && displayActionsStyle == style)
+    }
 
     def itemActionContainerViewId(Entity it) '''
         itemActions{{ «name.formatForCode».getKey() }}'''
