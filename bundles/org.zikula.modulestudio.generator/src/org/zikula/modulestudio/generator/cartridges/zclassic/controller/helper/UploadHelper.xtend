@@ -36,6 +36,7 @@ class UploadHelper {
 
         use Imagine\Gd\Imagine;
         use Imagine\Image\Box;
+        use Imagine\Image\ImageInterface;
         use Psr\Log\LoggerInterface;
         use Symfony\Component\Filesystem\Exception\IOExceptionInterface;
         use Symfony\Component\Filesystem\Filesystem;
@@ -232,7 +233,7 @@ class UploadHelper {
                         // resize to allowed maximum size
                         $imagine = new Imagine();
                         $image = $imagine->open($destinationFilePath);
-                        $image->resize(new Box($maxWidth, $maxHeight))
+                        $image->thumbnail(new Box($maxWidth, $maxHeight), ImageInterface::THUMBNAIL_INSET)
                               ->save($destinationFilePath);
                     }
                 }
@@ -520,7 +521,6 @@ class UploadHelper {
     def private deleteUploadFile(Application it) '''
         /**
          * Deletes an existing upload file.
-         * For images the thumbnails are removed, too.
          *
          * @param object  $entity    Currently treated entity
          * @param string  $fieldName Name of upload field
@@ -693,7 +693,7 @@ class UploadHelper {
 
     def private checkAndCreateUploadFolder(Application it) '''
         /**
-         * Creates upload folder including a subfolder for thumbnail and an .htaccess file within it.
+         * Creates an upload folder and a .htaccess file within it.
          *
          * @param string $objectType        Name of treated entity type
          * @param string $fieldName         Name of upload field
