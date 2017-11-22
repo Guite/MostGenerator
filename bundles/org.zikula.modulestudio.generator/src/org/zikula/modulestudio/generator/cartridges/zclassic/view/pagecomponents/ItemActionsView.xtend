@@ -13,19 +13,19 @@ class ItemActionsView {
     extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     extension Utils = new Utils
 
-    def generate(Entity it, String context) '''
+    def generate(Entity it, String context, String idSuffix) '''
         {% set itemActions = knp_menu_get('«application.appName»:ItemActionsMenu:menu', [], {entity: «name.formatForCode», area: routeArea, context: '«context»'}) %}
-        «markup(context)»
+        «markup(context, idSuffix)»
     '''
 
-    def private markup(Entity it, String context) '''
+    def private markup(Entity it, String context, String idSuffix) '''
         «IF application.useStyle(context, ItemActionsStyle.BUTTON_GROUP)»
             <div class="btn-group«IF context == 'view'»-vertical«ENDIF» btn-group-sm item-actions" role="group" aria-label="{{ __('Actions') }}">
                 «application.renderMenu(context)»
             </div>
         «ELSEIF application.useStyle(context, ItemActionsStyle.DROPDOWN)»
             <div class="dropdown">
-                <a id="«itemActionContainerViewId»DropDownToggle" role="button" data-toggle="dropdown" data-target="#" href="javascript:void(0);" class="hidden dropdown-toggle"><i class="fa fa-tasks"></i>«IF context == 'display'» {{ __('Actions') }}«ENDIF» <span class="caret"></span></a>
+                <a id="«itemActionContainerViewId»DropDownToggle«idSuffix»" role="button" data-toggle="dropdown" data-target="#" href="javascript:void(0);" class="hidden dropdown-toggle"><i class="fa fa-tasks"></i>«IF context == 'display'» {{ __('Actions') }}«ENDIF» <span class="caret"></span></a>
                 «application.renderMenu(context)»
             </div>
         «ELSE»

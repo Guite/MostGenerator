@@ -82,7 +82,7 @@ class Display {
             {% set templateTitle = «objName»|«application.appName.formatForDB»_formattedTitle|default(__('«name.formatForDisplayCapital»')) %}
             «templateHeading(appName)»
             «IF #[ItemActionsPosition.START, ItemActionsPosition.BOTH].contains(application.displayActionsPosition) && application.displayActionsStyle == ItemActionsStyle.DROPDOWN»
-                «new ItemActionsView().generate(it, 'display')»
+                «new ItemActionsView().generate(it, 'display', 'Start')»
             «ENDIF»
         {% endblock %}
         «IF !application.generateSeparateAdminTemplates || isAdmin»
@@ -150,7 +150,7 @@ class Display {
                 <div class="tab-content">
                     <div role="tabpanel" class="tab-pane fade in active" id="tabFields" aria-labelledby="fieldsTab">
                         «IF #[ItemActionsPosition.START, ItemActionsPosition.BOTH].contains(application.displayActionsPosition) && application.displayActionsStyle != ItemActionsStyle.DROPDOWN»
-                            «new ItemActionsView().generate(it, 'display')»
+                            «new ItemActionsView().generate(it, 'display', 'Start')»
                         «ENDIF»
                         <h3>{{ __('Fields') }}</h3>
                         «fieldDetails(appName)»
@@ -161,7 +161,7 @@ class Display {
                         <div class="col-sm-9">
                 «ENDIF»
                 «IF #[ItemActionsPosition.START, ItemActionsPosition.BOTH].contains(application.displayActionsPosition) && application.displayActionsStyle != ItemActionsStyle.DROPDOWN»
-                    «new ItemActionsView().generate(it, 'display')»
+                    «new ItemActionsView().generate(it, 'display', 'Start')»
                 «ENDIF»
                 «fieldDetails(appName)»
             «ENDIF»
@@ -172,7 +172,7 @@ class Display {
                 {{ block('display_hooks') }}
             «ENDIF»
             «IF #[ItemActionsPosition.END, ItemActionsPosition.BOTH].contains(application.displayActionsPosition)»
-                «new ItemActionsView().generate(it, 'display')»
+                «new ItemActionsView().generate(it, 'display', 'End')»
             «ENDIF»
             «IF useGroupingTabs('display')»
                 </div>
