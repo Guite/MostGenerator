@@ -227,13 +227,14 @@ class UploadHelper {
                     // check for maximum size
                     $maxWidth = isset($this->moduleVars['shrinkWidth' . $fieldSuffix]) ? $this->moduleVars['shrinkWidth' . $fieldSuffix] : 800;
                     $maxHeight = isset($this->moduleVars['shrinkHeight' . $fieldSuffix]) ? $this->moduleVars['shrinkHeight' . $fieldSuffix] : 600;
+                    $thumbMode = isset($this->moduleVars['thumbnailMode' . $fieldSuffix]) ? $this->moduleVars['thumbnailMode' . $fieldSuffix] : ImageInterface::THUMBNAIL_INSET;
 
                     $imgInfo = getimagesize($destinationFilePath);
                     if ($imgInfo[0] > $maxWidth || $imgInfo[1] > $maxHeight) {
                         // resize to allowed maximum size
                         $imagine = new Imagine();
                         $image = $imagine->open($destinationFilePath);
-                        $image->thumbnail(new Box($maxWidth, $maxHeight), ImageInterface::THUMBNAIL_INSET)
+                        $image->thumbnail(new Box($maxWidth, $maxHeight), $thumbMode)
                               ->save($destinationFilePath);
                     }
                 }

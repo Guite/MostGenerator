@@ -30,6 +30,7 @@ class ImageHelper {
     def private imageFunctionsBaseImpl(Application it) '''
         namespace «appNamespace»\Helper\Base;
 
+        use Imagine\Image\ImageInterface;
         use Symfony\Component\HttpFoundation\Session\SessionInterface;
         use Zikula\Common\Translator\TranslatorInterface;
         use Zikula\ExtensionsModule\Api\ApiInterface\VariableApiInterface;
@@ -154,7 +155,7 @@ class ImageHelper {
             $options = [
                 'thumbnail' => [
                     'size'      => [100, 100], // thumbnail width and height in pixels
-                    'mode'      => $this->variableApi->get('«appName»', 'thumbnailMode' . ucfirst($objectType) . ucfirst($fieldName), 'inset'),
+                    'mode'      => $this->variableApi->get('«appName»', 'thumbnailMode' . ucfirst($objectType) . ucfirst($fieldName), ImageInterface::THUMBNAIL_INSET),
                     'extension' => null        // file extension for thumbnails (jpg, png, gif; null for original file type)
                 ]
             ];
