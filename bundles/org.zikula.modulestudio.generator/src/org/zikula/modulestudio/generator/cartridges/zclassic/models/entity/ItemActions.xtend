@@ -196,18 +196,22 @@ class ItemActions {
     '''
 
     def private addLinkClass(Application it, String linkClass) '''
-        «IF viewActionsStyle == ItemActionsStyle.BUTTON && displayActionsStyle == ItemActionsStyle.BUTTON»
+        «IF viewActionsStyle.hasButtons && displayActionsStyle.hasButtons»
             $menu[$title]->setLinkAttribute('class', 'btn btn-sm btn-«linkClass»');
-        «ELSEIF viewActionsStyle == ItemActionsStyle.BUTTON && displayActionsStyle != ItemActionsStyle.BUTTON»
+        «ELSEIF viewActionsStyle.hasButtons && !displayActionsStyle.hasButtons»
             if ($context == 'view') {
                 $menu[$title]->setLinkAttribute('class', 'btn btn-sm btn-«linkClass»');
             }
-        «ELSEIF viewActionsStyle != ItemActionsStyle.BUTTON && displayActionsStyle == ItemActionsStyle.BUTTON»
+        «ELSEIF !viewActionsStyle.hasButtons && displayActionsStyle.hasButtons»
             if ($context == 'display') {
                 $menu[$title]->setLinkAttribute('class', 'btn btn-sm btn-«linkClass»');
             }
         «ENDIF»
     '''
+
+    def private hasButtons(ItemActionsStyle style) {
+        #[ItemActionsStyle.BUTTON, ItemActionsStyle.BUTTON_GROUP].contains(style)
+    }
 
     def private addIcon(Application it, String icon) '''
         «IF viewActionsWithIcons && displayActionsWithIcons»
