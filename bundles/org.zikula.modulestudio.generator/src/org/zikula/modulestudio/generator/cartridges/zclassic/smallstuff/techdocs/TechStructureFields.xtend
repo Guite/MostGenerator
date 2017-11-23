@@ -428,11 +428,11 @@ class TechStructureFields {
         if (language == 'de') {
             if (past) result += 'Die Werte müssen in der Vergangenheit liegen.'
             if (future) result += 'Die Werte müssen in der Zukunft liegen.'
-            if (!validatorAddition.empty) result += 'Zusätzliche Validierung: <code>' + validatorAddition + '</code>.'
+            if (null !== validatorAddition && !validatorAddition.empty) result += 'Zusätzliche Validierung: <code>' + validatorAddition + '</code>.'
         } else {
             if (past) result += 'Values must be in the past.'
             if (future) result += 'Values must be in the future.'
-            if (!validatorAddition.empty) result += 'Additional validation: <code>' + validatorAddition + '</code>.'
+            if (null !== validatorAddition && !validatorAddition.empty) result += 'Additional validation: <code>' + validatorAddition + '</code>.'
         }
         result
     }
@@ -475,13 +475,13 @@ class TechStructureFields {
         val result = commonRemarks
         if (language == 'de') {
             if (sortablePosition) result += 'Speichert die Position für die Sortable-Erweiterung.'
-            if (!aggregateFor.empty) result += 'Aggregiert eine 1:n Beziehung (' + aggregateFor + ').'
+            if (null !== aggregateFor && !aggregateFor.empty) result += 'Aggregiert eine 1:n Beziehung (' + aggregateFor + ').'
             if (percentage) result += 'Repräsentiert einen Prozentwert.'
             if (range) result += 'Repräsentiert einen Bereich.'
             if (version) result += 'Speichert die Version der Entität.'
         } else {
             if (sortablePosition) result += 'Stores the position for the Sortable extension.'
-            if (!aggregateFor.empty) result += 'Aggregates a 1:n relation (' + aggregateFor + ').'
+            if (null !== aggregateFor && !aggregateFor.empty) result += 'Aggregates a 1:n relation (' + aggregateFor + ').'
             if (percentage) result += 'Represents a percentage value.'
             if (range) result += 'Represents a range.'
             if (version) result += 'Stores the entity version.'

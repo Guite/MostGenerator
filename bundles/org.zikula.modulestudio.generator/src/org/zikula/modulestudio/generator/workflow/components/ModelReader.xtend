@@ -2,7 +2,6 @@ package org.zikula.modulestudio.generator.workflow.components
 
 import com.google.inject.Guice
 import com.google.inject.Injector
-import com.google.inject.Module
 import de.guite.modulestudio.MostDslRuntimeModule
 import de.guite.modulestudio.MostDslStandaloneSetup
 import org.eclipse.emf.common.util.URI
@@ -84,7 +83,7 @@ class ModelReader extends WorkflowComponentWithSlot {
 
         if (!this.isStandalone) {
             // create fallback injector
-            val Module runtimeModule = new MostDslRuntimeModule
+            val runtimeModule = new MostDslRuntimeModule
             this.injector = Guice.createInjector(runtimeModule)
         } else {
             // standalone setup for mwe files
