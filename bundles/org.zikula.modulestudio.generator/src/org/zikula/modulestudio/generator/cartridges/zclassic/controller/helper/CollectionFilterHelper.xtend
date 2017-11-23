@@ -342,7 +342,8 @@ class CollectionFilterHelper {
                         $qb->andWhere('tbl.' . $k . ' = 1');
                     }
                 «ENDIF»
-                } else if (is_array($v)) {
+                }
+                if (is_array($v)) {
                     continue;
                 }
 
