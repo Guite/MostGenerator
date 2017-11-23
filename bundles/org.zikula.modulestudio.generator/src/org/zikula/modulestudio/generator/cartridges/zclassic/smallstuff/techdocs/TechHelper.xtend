@@ -3,11 +3,13 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.techdoc
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.HookProviderMode
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
+import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class TechHelper {
 
     extension FormattingExtensions = new FormattingExtensions
+    extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     extension Utils = new Utils
 
     def docPage(Application it, String language, String title, CharSequence content) '''
@@ -146,7 +148,7 @@ class TechHelper {
         </tr>
         <tr>
             <th id="hGenerated" scope="row" headers="hBasicField">«IF language == 'de'»Generiert«ELSE»Generated«ENDIF»</th>
-            <td headers="hBasicValue hGenerated">«IF language == 'de'»durch«ELSE»by«ENDIF» <a href="«msUrl»«IF language != 'de'»/en/«ENDIF»" title="«IF language == 'de'»Internetseite von ModuleStudio«ELSE»ModuleStudio website«ENDIF»" target="_blank">ModuleStudio</a> «msVersion» «IF language == 'de'»am«ELSE»at«ENDIF» «timestamp»</td>
+            <td headers="hBasicValue hGenerated">«IF language == 'de'»durch«ELSE»by«ENDIF» <a href="«msUrl»«IF language != 'de'»/en/«ENDIF»" title="«IF language == 'de'»Internetseite von ModuleStudio«ELSE»ModuleStudio website«ENDIF»" target="_blank">ModuleStudio</a>«IF versionAllGeneratedFiles» «msVersion»«ENDIF»«IF timestampAllGeneratedFiles» «IF language == 'de'»am«ELSE»at«ENDIF» «timestamp»«ENDIF»</td>
         </tr>
     '''
 
