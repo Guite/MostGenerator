@@ -208,7 +208,13 @@ class SharedFormTypeFields {
                 «ENDIF»
                 'attr' => [
                     «additionalAttributes»
-                    'class' => '«validationHelper.fieldValidationCssClass(it)»',
+                    «IF isShrinkDimensionField»
+                        'class' => 'shrinkdimension-«name.formatForCode.toLowerCase»',
+                    «ELSEIF isShrinkEnableField»,
+                        'class' => 'shrink-enabler',
+                    «ELSE»
+                        'class' => '«validationHelper.fieldValidationCssClass(it)»',
+                    «ENDIF»
                     «IF it instanceof IntegerField && (it as IntegerField).range»
                         'min' => «(it as IntegerField).minValue»,
                         'max' => «(it as IntegerField).maxValue»,
@@ -708,35 +714,6 @@ class SharedFormTypeFields {
             'widget' => 'single_text'
         «ENDIF»
     '''
-
-/* TODO»
-    def private definition(Field it) '''
-        ->add('«name.formatForCode»', «formType»Type::class, [
-            'label' => $this->__('«labelText»') . ':',
-            «IF null !== documentation && !documentation.empty»
-                'label_attr' => [
-                    'class' => 'tooltips',
-                    'title' => $this->__('«documentation.replace("'", '"')»')
-                ],
-                'help' => $this->__('«documentation.replace("'", '"')»'),
-            «ENDIF»
-            «IF !(it instanceof IntegerField && (it as IntegerField).isUserGroupSelector) && !(it instanceof ListVar)»
-                'required' => false,
-            «ENDIF»
-            «IF !(it instanceof BooleanField)»
-                «IF !(it instanceof IntegerField && (it as IntegerField).isUserGroupSelector)»
-                    'empty_data' => «IF it instanceof IntegerField»intval('«defaultValue»')«ELSEIF it instanceof DerivedField»'«defaultValue»'«ELSE»''«ENDIF»,
-                «ENDIF»
-            «ENDIF»
-            'attr' => [
-                «additionalAttributes»
-                'title' => $this->__('«titleAttribute»')«IF isShrinkDimensionField»,
-                'class' => 'shrinkdimension-«name.formatForCode.toLowerCase»'«ELSEIF isShrinkEnableField»,
-                'class' => 'shrink-enabler'«ENDIF»
-            ],«additionalOptions»
-        ])
-    '''
-*/
 
     def private labelText(Field it) {
         if (isShrinkEnableField) {
