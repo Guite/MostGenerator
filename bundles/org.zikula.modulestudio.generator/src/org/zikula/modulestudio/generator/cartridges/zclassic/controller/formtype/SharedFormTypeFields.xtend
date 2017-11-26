@@ -208,13 +208,7 @@ class SharedFormTypeFields {
                 «ENDIF»
                 'attr' => [
                     «additionalAttributes»
-                    «IF isShrinkDimensionField»
-                        'class' => 'shrinkdimension-«name.formatForCode.toLowerCase»',
-                    «ELSEIF isShrinkEnableField»,
-                        'class' => 'shrink-enabler',
-                    «ELSE»
-                        'class' => '«validationHelper.fieldValidationCssClass(it)»',
-                    «ENDIF»
+                    'class' => '«validationHelper.fieldValidationCssClass(it)»',
                     «IF it instanceof IntegerField && (it as IntegerField).range»
                         'min' => «(it as IntegerField).minValue»,
                         'max' => «(it as IntegerField).maxValue»,

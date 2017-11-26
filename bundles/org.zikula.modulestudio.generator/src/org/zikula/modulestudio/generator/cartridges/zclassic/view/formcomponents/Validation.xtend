@@ -21,8 +21,8 @@ class Validation {
     extension ModelExtensions = new ModelExtensions
     extension Utils = new Utils
 
-    def fieldValidationCssClass(DerivedField it) '''«IF unique»validate-unique«ENDIF»«IF null !== cssClass && !cssClass.equals('')» «cssClass»«ENDIF»«fieldValidationCssClassAdditions»'''
-    def fieldValidationCssClassOptional(UploadField it)'''«IF unique»validate-unique«ENDIF»«IF null !== cssClass && !cssClass.equals('')» «cssClass»«ENDIF»«fieldValidationCssClassAdditions»'''
+    def fieldValidationCssClass(DerivedField it) '''«IF unique»validate-unique«ENDIF»«IF null !== cssClass && !cssClass.equals('')»«IF unique» «ENDIF»«cssClass»«ENDIF»«fieldValidationCssClassAdditions»'''
+    def fieldValidationCssClassOptional(UploadField it)'''«IF unique»validate-unique«ENDIF»«IF null !== cssClass && !cssClass.equals('')»«IF unique» «ENDIF»«cssClass»«ENDIF»«fieldValidationCssClassAdditions»'''
 
     def private fieldValidationCssClassAdditions(DerivedField it) {
         switch it {
