@@ -138,25 +138,13 @@ class PersistenceTransformer {
      * @param entity The given {@link Entity} instance.
      */
     def private addPrimaryKey(Entity entity) {
-        entity.fields.add(0, createIdColumn('', true))
-    }
-
-    /**
-     * Creates a new identifier field.
-     *
-     * @param colName The column name.
-     * @param isPrimary Whether the field should be primary or not.
-     * @return IntegerField The created column object.
-     */
-    def private createIdColumn(String colName, Boolean isPrimary) {
-        val factory = ModuleStudioFactory.eINSTANCE
-        val idField = factory.createIntegerField => [
-            name = if (isPrimary) 'id' else colName.formatForCode + '_id'
+        val idField = ModuleStudioFactory.eINSTANCE.createIntegerField => [
+            name = 'id'
             length = 9
-            primaryKey = isPrimary
-            unique = isPrimary
+            primaryKey = true
+            unique = true
         ]
-        idField
+        entity.fields.add(0, idField)
     }
 
     /**
