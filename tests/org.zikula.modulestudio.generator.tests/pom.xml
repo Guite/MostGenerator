@@ -28,8 +28,8 @@
                 <artifactId>tycho-surefire-plugin</artifactId>
                 <version>${tycho.version}</version>
                 <configuration>
-                    <useUIHarness>false</useUIHarness>
-                    <useUIThread>true</useUIThread><!-- only applies to UI test harness -->
+                    <useUIHarness>false</useUIHarness><!-- run tests using UI (true) or headless (false) test harness -->
+                    <useUIThread>false</useUIThread><!-- run tests in UI (true) or background (false) thread; only applies to UI test harness -->
                 </configuration>
             </plugin>
         </plugins>

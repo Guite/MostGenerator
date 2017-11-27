@@ -17,6 +17,7 @@
         <module>../MostProduct/releng/de.guite.modulestudio.target</module>
         <module>bundles</module>
         <module>features</module>
+        <module>tests</module>
         <module>releng</module>
     </modules>
 
