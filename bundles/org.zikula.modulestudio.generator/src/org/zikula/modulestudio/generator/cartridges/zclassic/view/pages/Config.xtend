@@ -81,6 +81,7 @@ class Config {
                 <div class="form-group form-buttons">
                     <div class="col-sm-offset-3 col-sm-9">
                         {{ form_widget(form.save) }}
+                        {{ form_widget(form.reset) }}
                         {{ form_widget(form.cancel) }}
                     </div>
                 </div>
