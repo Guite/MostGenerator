@@ -2,8 +2,6 @@ package org.zikula.modulestudio.generator.tests.application
 
 import com.google.inject.Inject
 import de.guite.modulestudio.metamodel.Application
-import de.guite.modulestudio.mostdsl.tests.TestModels
-import de.guite.modulestudio.tests.MostDslInjectorProvider
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.eclipse.xtext.generator.IGenerator
 import org.eclipse.xtext.generator.InMemoryFileSystemAccess
@@ -12,6 +10,8 @@ import org.eclipse.xtext.testing.XtextRunner
 import org.eclipse.xtext.testing.util.ParseHelper
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.zikula.modulestudio.generator.tests.MostDslInjectorProvider
+import org.zikula.modulestudio.generator.tests.TestModels
 
 import static extension org.junit.Assert.*
 
@@ -25,8 +25,6 @@ class ApplicationTest {
     //@Inject MostGenerator generator
     @Inject IGenerator generator
 
-    @Inject TestModels testModels
-
     @Inject extension ParseHelper<Application>
 
     var InMemoryFileSystemAccess fsa
@@ -36,7 +34,7 @@ class ApplicationTest {
      */
     @Test
     def void testDummyGenerator() {
-        val app = testModels.simpleNews.parse
+        val app = TestModels.simpleNews.parse
 
         // To capture the results we use a special kind of IFileSystemAccess
         // that keeps the files InMemory and does not write them to the disk.
