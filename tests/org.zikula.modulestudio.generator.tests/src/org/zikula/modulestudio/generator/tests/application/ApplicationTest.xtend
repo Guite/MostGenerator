@@ -7,6 +7,7 @@ import org.eclipse.xtext.generator.IGenerator
 import org.eclipse.xtext.generator.InMemoryFileSystemAccess
 import org.eclipse.xtext.testing.util.ParseHelper
 import org.junit.Test
+
 import static extension org.junit.Assert.*
 
 /**
@@ -27,15 +28,15 @@ class ApplicationTest {
     @Test
     def void testDummyGenerator() {
         val app = '''
-            application SimpleNews {
-                documentation 'Simple news extension'
-                vendor 'Guite'
-                author 'Axel Guckelsberger'
-                email 'info@guite.de'
-                url 'http://guite.de'
-                prefix 'sinew'
+            application "SimpleNews" {
+                documentation "Simple news extension"
+                vendor "Guite"
+                author "Axel Guckelsberger"
+                email "info@guite.de"
+                url "https://guite.de"
+                prefix "sinew"
                 entities {
-                    entity article {
+                    entity "article" {
                     }
                 }
             }
