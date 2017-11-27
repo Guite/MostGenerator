@@ -2,6 +2,7 @@ package org.zikula.modulestudio.generator.tests.application
 
 import com.google.inject.Inject
 import de.guite.modulestudio.metamodel.Application
+import de.guite.modulestudio.mostdsl.tests.TestModels
 import de.guite.modulestudio.tests.MostDslInjectorProvider
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.eclipse.xtext.generator.IGenerator
@@ -24,6 +25,8 @@ class ApplicationTest {
     //@Inject MostGenerator generator
     @Inject IGenerator generator
 
+    @Inject TestModels testModels
+
     @Inject extension ParseHelper<Application>
 
     var InMemoryFileSystemAccess fsa
@@ -33,20 +36,7 @@ class ApplicationTest {
      */
     @Test
     def void testDummyGenerator() {
-        val app = '''
-            application "SimpleNews" {
-                documentation "Simple news extension"
-                vendor "Guite"
-                author "Axel Guckelsberger"
-                email "info@guite.de"
-                url "https://guite.de"
-                prefix "sinew"
-                entities {
-                    entity "article" {
-                    }
-                }
-            }
-        '''.parse
+        val app = testModels.simpleNews.parse
 
         // To capture the results we use a special kind of IFileSystemAccess
         // that keeps the files InMemory and does not write them to the disk.
