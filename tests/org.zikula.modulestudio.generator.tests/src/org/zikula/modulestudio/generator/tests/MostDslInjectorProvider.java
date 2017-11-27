@@ -3,16 +3,24 @@
  */
 package org.zikula.modulestudio.generator.tests;
 
+import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
+import org.eclipse.xtext.generator.IGenerator2;
+import org.eclipse.xtext.parser.IEncodingProvider;
+import org.eclipse.xtext.service.DispatchingProvider;
 import org.eclipse.xtext.testing.GlobalRegistries;
 import org.eclipse.xtext.testing.GlobalRegistries.GlobalStateMemento;
 import org.eclipse.xtext.testing.IInjectorProvider;
 import org.eclipse.xtext.testing.IRegistryConfigurator;
+import org.zikula.modulestudio.generator.cartridges.MostGenerator;
 
+import com.google.inject.Binder;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 
 import de.guite.modulestudio.MostDslRuntimeModule;
 import de.guite.modulestudio.MostDslStandaloneSetup;
+import de.guite.modulestudio.encoding.MostDslEncodingProvider;
 
 public class MostDslInjectorProvider implements IInjectorProvider, IRegistryConfigurator {
 
@@ -50,6 +58,22 @@ public class MostDslInjectorProvider implements IInjectorProvider, IRegistryConf
             @Override
             public ClassLoader bindClassLoaderToInstance() {
                 return MostDslInjectorProvider.class.getClassLoader();
+            }
+
+            @Override
+            public void configureRuntimeEncodingProvider(Binder binder) {
+                binder.bind(IEncodingProvider.class).annotatedWith(DispatchingProvider.Runtime.class)
+                        .to(MostDslEncodingProvider.class);
+            }
+
+            @Override
+            public Class<? extends IGenerator2> bindIGenerator2() {
+                return MostGenerator.class;
+            }
+
+            @Override
+            public Class<? extends ResourceSet> bindResourceSet() {
+                return ResourceSetImpl.class;
             }
         };
     }
