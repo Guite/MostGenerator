@@ -11,6 +11,7 @@ Bundle-ActivationPolicy: lazy
 Require-Bundle: com.google.guava;bundle-version="15.0.0",
  com.google.inject;bundle-version="3.0.0",
  de.guite.modulestudio.mostdsl;bundle-version="1.2.0",
+ de.guite.modulestudio.mostdsl.tests;bundle-version="1.2.0",
  org.eclipse.xtend.lib;bundle-version="2.13.0",
  org.eclipse.xtext.generator;bundle-version="2.13.0",
  org.eclipse.xtext.testing;bundle-version="2.13.0",

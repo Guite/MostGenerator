@@ -2,17 +2,23 @@ package org.zikula.modulestudio.generator.tests.application
 
 import com.google.inject.Inject
 import de.guite.modulestudio.metamodel.Application
+import de.guite.modulestudio.tests.MostDslInjectorProvider
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.eclipse.xtext.generator.IGenerator
 import org.eclipse.xtext.generator.InMemoryFileSystemAccess
+import org.eclipse.xtext.testing.InjectWith
+import org.eclipse.xtext.testing.XtextRunner
 import org.eclipse.xtext.testing.util.ParseHelper
 import org.junit.Test
+import org.junit.runner.RunWith
 
 import static extension org.junit.Assert.*
 
 /**
  * This class tests certain aspects of the Application meta class.
  */
+@RunWith(XtextRunner)
+@InjectWith(MostDslInjectorProvider)
 class ApplicationTest {
 
     //@Inject MostGenerator generator
