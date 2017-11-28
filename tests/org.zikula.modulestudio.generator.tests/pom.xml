@@ -37,6 +37,20 @@
                 <groupId>org.eclipse.xtend</groupId>
                 <artifactId>xtend-maven-plugin</artifactId>
                 <version>${xtend-maven-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>compile</goal>
+                            <goal>testCompile</goal>
+                            <goal>xtend-install-debug-info</goal>
+                            <goal>xtend-test-install-debug-info</goal>
+                        </goals>
+                        <configuration>
+                            <xtendAsPrimaryDebugSource>true</xtendAsPrimaryDebugSource>
+                            <writeTraceFiles>true</writeTraceFiles>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <!-- Documentation: https://eclipse.org/tycho/sitedocs/tycho-surefire/tycho-surefire-plugin/plugin-info.html -->
@@ -44,6 +58,8 @@
                 <artifactId>tycho-surefire-plugin</artifactId>
                 <version>${tycho.version}</version>
                 <configuration>
+                    <!-- sets the VM argument line used when unit tests are run -->
+                    <argLine>${surefireArgLine}</argLine>
                     <useUIHarness>false</useUIHarness><!-- run tests using UI (true) or headless (false) test harness -->
                     <useUIThread>false</useUIThread><!-- run tests in UI (true) or background (false) thread; only applies to UI test harness -->
                 </configuration>

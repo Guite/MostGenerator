@@ -26,7 +26,7 @@ class ApplicationTest {
      * Testing a code generator.
      */
     @Test
-    def void testDummyGenerator() {
+    def static void testDummyGenerator() {
         assertTrue(true)
     /*
         val app = TestModels.simpleNews.parse

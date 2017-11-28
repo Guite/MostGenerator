@@ -33,6 +33,20 @@
                 <groupId>org.eclipse.xtend</groupId>
                 <artifactId>xtend-maven-plugin</artifactId>
                 <version>${xtend-maven-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>compile</goal>
+                            <goal>testCompile</goal>
+                            <goal>xtend-install-debug-info</goal>
+                            <goal>xtend-test-install-debug-info</goal>
+                        </goals>
+                        <configuration>
+                            <xtendAsPrimaryDebugSource>true</xtendAsPrimaryDebugSource>
+                            <writeTraceFiles>true</writeTraceFiles>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
 
             <!-- build stand-alone jar file -->
