@@ -23,8 +23,6 @@ import static extension org.junit.Assert.*
 @InjectWith(MostDslInjectorProvider)
 class SimpleGeneratorTest {
 
-    @Inject MostGenerator generator
-
     @Inject extension ParseHelper<Application>
 
     /**
@@ -68,6 +66,7 @@ class SimpleGeneratorTest {
         fsa = new InMemoryFileSystemAccess
         fsa.textFileEnconding = 'UTF-8'
 
+        val generator = new MostGenerator
         generator.cartridge = 'zclassic'
         generator.doGenerate(app.eResource, fsa)
     }
