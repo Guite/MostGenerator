@@ -13,7 +13,6 @@ Require-Bundle: de.guite.modulestudio.mostdsl;bundle-version="1.2.0",
  org.objectweb.asm;bundle-version="5.0.1"
 Bundle-Vendor: %providerName
 Bundle-ActivationPolicy: lazy
-Bundle-Activator: org.zikula.modulestudio.generator.application.ModuleStudioGeneratorActivator
 Export-Package: org.zikula.modulestudio.generator.application,
  org.zikula.modulestudio.generator.cartridges,
  org.zikula.modulestudio.generator.cartridges.zclassic,

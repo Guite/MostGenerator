@@ -5,7 +5,6 @@ import java.io.FileOutputStream
 import java.io.IOException
 import java.io.OutputStream
 import org.eclipse.core.runtime.FileLocator
-import org.eclipse.core.runtime.IStatus
 import org.eclipse.emf.mwe.utils.FileCopy
 import org.zikula.modulestudio.generator.workflow.components.ModelFileCopier
 
@@ -36,7 +35,8 @@ class WorkflowPostProcess {
         try {
             imageCreator.generate(settings)
         } catch (Exception e) {
-            ModuleStudioGeneratorActivator.log(IStatus.ERROR, e.message, e)
+            //ModuleStudioGeneratorActivator.log(IStatus.ERROR, e.message, e)
+            println(e.message)
             // if custom images could not be created copy the default one
             copyAdminImage
         }
@@ -85,7 +85,8 @@ class WorkflowPostProcess {
                 fileCopy.targetFile = targetFilePath
                 fileCopy.invoke(null)
             } catch (IOException e) {
-                ModuleStudioGeneratorActivator.log(IStatus.ERROR, e.message, e)
+                //ModuleStudioGeneratorActivator.log(IStatus.ERROR, e.message, e)
+                println(e.message)
             }
         } else {
             val inputStream = this.class.getResourceAsStream(settings.getAdminImageInputPath)

@@ -83,7 +83,7 @@ class WorkflowSettings {
      * @return image url
      */
     def getAdminImageUrl() {
-        val bundle = Platform.getBundle(ModuleStudioGeneratorActivator.PLUGIN_ID)
+        val bundle = Platform.getBundle('org.zikula.modulestudio.generator') // $NON-NLS-1$
         var resources = FileLocator.findEntries(bundle, new Path('/src' + getAdminImageInputPath)) //$NON-NLS-1$
         val resourcesExported = FileLocator.findEntries(bundle, new Path(getAdminImageInputPath))
         if (resources.empty) {

@@ -11,7 +11,6 @@ import java.io.IOException
 import java.util.List
 import javax.imageio.ImageIO
 import org.eclipse.core.runtime.FileLocator
-import org.eclipse.core.runtime.IStatus
 
 /**
  * The image creator serves for generating custom images for an application.
@@ -185,7 +184,8 @@ class ImageCreator {
                 ImageIO.write(image, 'png', outputFile)
             }
         } catch (IOException e) {
-            ModuleStudioGeneratorActivator.log(IStatus.ERROR, e.message, e)
+            //ModuleStudioGeneratorActivator.log(IStatus.ERROR, e.message, e)
+            println(e.message)
         } finally {
             graphics.dispose
         }
