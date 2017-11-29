@@ -10,7 +10,6 @@ Require-Bundle: de.guite.modulestudio.mostdsl;bundle-version="1.2.0",
  org.eclipse.xtend.core;bundle-version="2.13.0",
  org.eclipse.xtend.standalone;bundle-version="2.13.0";resolution:=optional,
  org.eclipse.xtext;bundle-version="2.13.0",
- org.eclipse.xtext.builder;bundle-version="2.13.0",
  org.objectweb.asm;bundle-version="5.0.1"
 Bundle-Vendor: %providerName
 Bundle-ActivationPolicy: lazy
