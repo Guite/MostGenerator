@@ -7,9 +7,6 @@ import de.guite.modulestudio.metamodel.ModuleStudioFactory
 
 class TestModels {
 
-    // Factory for instantiating meta objects.
-    val factory = ModuleStudioFactory.eINSTANCE
-
     def static simpleNews() {
         return '''
         application "SimpleNews" {
@@ -46,7 +43,8 @@ class TestModels {
      *
      * @return Application instance
      */
-    def validModel() {
+    def static validModel() {
+        val factory = ModuleStudioFactory.eINSTANCE
         val app = factory.createApplication => [
             vendor = 'Guite'
             name = 'SimpleNews'
@@ -58,11 +56,10 @@ class TestModels {
             leading = true
             displayPattern = '#title#'
         ]
-        val field = factory.createStringField => [
+        entity.fields += factory.createStringField => [
             name = 'title'
             sluggablePosition = 1
         ]
-        entity.fields.add(field)
         entity.actions += factory.createMainAction => [
             name = 'Index'
         ]
