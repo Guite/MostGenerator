@@ -1,3 +1,6 @@
+/**
+ * Copyright (c) 2007-2017 Axel Guckelsberger
+ */
 package org.zikula.modulestudio.generator.tests.application
 
 import org.eclipse.xtext.testing.InjectWith
