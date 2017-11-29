@@ -28,6 +28,9 @@ class TestModels {
                             length 200
                         }
                     }
+                    actions {
+                        mainAction "Index"
+                    }
                 }
             }
         }
@@ -35,7 +38,7 @@ class TestModels {
     }
 
     def static simpleNewsSerialised() {
-        return '''application "SimpleNews" { documentation "Simple news extension" vendor "Guite" author "Axel Guckelsberger" email "info@guite.de" url "https://guite.de" prefix "sinew" entities { entity "article" leading { nameMultiple "articles" displayPattern "#title#" fields { string "title" { length 200 } } } } }'''
+        return '''application "SimpleNews" { documentation "Simple news extension" vendor "Guite" author "Axel Guckelsberger" email "info@guite.de" url "https://guite.de" prefix "sinew" entities { entity "article" leading { nameMultiple "articles" displayPattern "#title#" fields { string "title" { length 200 } } actions { mainAction "Index" } } } }'''
     }
 
     /**
