@@ -95,7 +95,7 @@ class ZclassicGenerator implements IGenerator {
 
     def private generateBasicFiles(Application it) {
         pm?.subTask('Basic information')
-        println('Generating basic information')
+        'Generating basic information'.printIfNotTesting(fsa)
         new ModuleFile().generate(it, fsa)
         new DependencyInjection().generate(it, fsa)
         new ComposerFile().generate(it, fsa)
@@ -108,20 +108,20 @@ class ZclassicGenerator implements IGenerator {
 
     def private generateModel(Application it) {
         pm?.subTask('Model: Entity classes')
-        println('Generating entity classes')
+        'Generating entity classes'.printIfNotTesting(fsa)
         new Entities().generate(it, fsa)
 
         pm?.subTask('Model: Repository classes')
-        println('Generating repository classes')
+        'Generating repository classes'.printIfNotTesting(fsa)
         new Repository().generate(it, fsa)
 
         pm?.subTask('Model: Factory class')
-        println('Generating factory class')
+        'Generating factory class'.printIfNotTesting(fsa)
         new Factory().generate(it, fsa)
 
         if (!variables.empty) {
             pm?.subTask('Model: Application settings class')
-            println('Generating application settings class')
+            'Generating application settings class'.printIfNotTesting(fsa)
             new AppSettings().generate(it, fsa)
         }
 
@@ -136,39 +136,39 @@ class ZclassicGenerator implements IGenerator {
 
     def private generateController(Application it) {
         pm?.subTask('Controller: Application installer')
-        println('Generating application installer')
+        'Generating application installer'.printIfNotTesting(fsa)
         new Installer().generate(it, fsa)
         pm?.subTask('Controller: Controller classes')
-        println('Generating controller classes')
+        'Generating controller classes'.printIfNotTesting(fsa)
         new ControllerLayer().generate(it, fsa)
         pm?.subTask('Controller: Helper service classes')
-        println('Generating helper service classes')
+        'Generating helper service classes'.printIfNotTesting(fsa)
         new HelperServices().generate(it, fsa)
         pm?.subTask('Controller: Action handler classes')
-        println('Generating action handler classes')
+        'Generating action handler classes'.printIfNotTesting(fsa)
         new FormHandler().generate(it, fsa)
         pm?.subTask('Controller: Event listeners')
-        println('Generating Event listeners')
+        'Generating Event listeners'.printIfNotTesting(fsa)
         new Listeners().generate(it, fsa)
         pm?.subTask('Controller: Service definitions')
-        println('Generating service definitions')
+        'Generating service definitions'.printIfNotTesting(fsa)
         new ServiceDefinitions().generate(it, fsa)
         pm?.subTask('Controller: Custom event definitions')
-        println('Generating custom event definitions')
+        'Generating custom event definitions'.printIfNotTesting(fsa)
         new Events().generate(it, fsa)
         pm?.subTask('Controller: Bootstrapping')
-        println('Generating bootstrapping')
+        'Generating bootstrapping'.printIfNotTesting(fsa)
         new Bootstrap().generate(it, fsa)
         pm?.subTask('Controller: Workflows')
-        println('Generating workflows')
+        'Generating workflows'.printIfNotTesting(fsa)
         new Workflow().generate(it, fsa)
         if (hasUploads) {
             pm?.subTask('Controller: Upload handlers')
-            println('Generating upload handlers')
+            'Generating upload handlers'.printIfNotTesting(fsa)
             new Uploads().generate(it, fsa)
         }
         pm?.subTask('Controller: JavaScript files')
-        println('Generating JavaScript files')
+        'Generating JavaScript files'.printIfNotTesting(fsa)
         new JavaScriptFiles().generate(it, fsa)
         if (hasUiHooksProviders) {
             new HookAssignment().generate(it, fsa)
@@ -181,19 +181,19 @@ class ZclassicGenerator implements IGenerator {
 
     def private generateView(Application it) {
         pm?.subTask('View: Rendering templates')
-        println('Generating view templates')
+        'Generating view templates'.printIfNotTesting(fsa)
         new Views().generate(it, fsa)
         pm?.subTask('View: Form templates')
-        println('Generating form templates')
+        'Generating form templates'.printIfNotTesting(fsa)
         new Forms().generate(it, fsa)
         pm?.subTask('View: Module-specific plugins')
-        println('Generating application-specific plugins')
+        'Generating application-specific plugins'.printIfNotTesting(fsa)
         new Plugins().generate(it, fsa)
         pm?.subTask('View: CSS definitions')
-        println('Generating css definitions')
+        'Generating css definitions'.printIfNotTesting(fsa)
         new Styles().generate(it, fsa)
         pm?.subTask('View: Images')
-        println('Generating images')
+        'Generating images'.printIfNotTesting(fsa)
         new Images().generate(it, fsa)
     }
 
@@ -210,7 +210,7 @@ class ZclassicGenerator implements IGenerator {
         val needsModerationBlock = generateModerationBlock && needsApproval
         if (generateListBlock || needsModerationBlock) {
             pm?.subTask('Integration: Blocks')
-            println('Generating blocks')
+            'Generating blocks'.printIfNotTesting(fsa)
             if (generateListBlock) {
                 new BlockList().generate(it, fsa)
             }
@@ -227,7 +227,7 @@ class ZclassicGenerator implements IGenerator {
         val needsDetailContentType = generateDetailContentType && hasDisplayActions
         if ((generateListContentType || needsDetailContentType) && !targets('2.0')) {
             pm?.subTask('Integration: Content types')
-            println('Generating content types')
+            'Generating content types'.printIfNotTesting(fsa)
             if (generateListContentType) {
                 new ContentTypeList().generate(it, fsa)
             }
@@ -240,37 +240,37 @@ class ZclassicGenerator implements IGenerator {
     def private generateIntegrationThirdParty(Application it) {
         if (generateNewsletterPlugin && !targets('2.0')) {
             pm?.subTask('Integration: Newsletter plugin')
-            println('Generating newsletter plugin')
+            'Generating newsletter plugin'.printIfNotTesting(fsa)
             new Newsletter().generate(it, fsa)
         }
         if (generateMailzApi && !targets('2.0')) {
             pm?.subTask('Integration: Mailz api')
-            println('Generating mailz api')
+            'Generating mailz api'.printIfNotTesting(fsa)
             new Mailz().generate(it, fsa)
         }
         if (generateMultiHookNeedles && !targets('2.0')) {
             pm?.subTask('Integration: MultiHook needles')
-            println('Generating MultiHook needles')
+            'Generating MultiHook needles'.printIfNotTesting(fsa)
             new MultiHook().generate(it, fsa)
         }
         if (generateTagSupport && hasDisplayActions && !targets('2.0')) {
             pm?.subTask('Integration: Tag support')
-            println('Generating tag support')
+            'Generating tag support'.printIfNotTesting(fsa)
             new Tag().generate(it, fsa)
         }
     }
 
     def private generateAdditions(Application it) {
         pm?.subTask('Additions: Translations')
-        println('Generating translations')
+        'Generating translations'.printIfNotTesting(fsa)
         new Translations().generate(it, fsa)
         pm?.subTask('Additions: Documentation')
-        println('Generating documentation')
+        'Generating documentation'.printIfNotTesting(fsa)
         new Docs().generate(it, fsa)
 
         if (generateTests) {
             pm?.subTask('Additions: Tests')
-            println('Generating unit tests')
+            'Generating unit tests'.printIfNotTesting(fsa)
             new Tests().generate(it, fsa)
         }
     }

@@ -39,7 +39,7 @@ class Plugins {
 
     def generate(Application it, IFileSystemAccess fsa) {
         this.fsa = fsa
-        println('Generating Twig extension class')
+        'Generating Twig extension class'.printIfNotTesting(fsa)
         val fh = new FileHelper
         val twigFolder = 'Twig'
         generateClassPair(fsa, twigFolder + '/TwigExtension.php',

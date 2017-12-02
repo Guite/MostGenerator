@@ -7,6 +7,7 @@ import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
+import org.zikula.modulestudio.generator.extensions.Utils
 
 class ViewHierarchy {
 
@@ -14,9 +15,10 @@ class ViewHierarchy {
     extension FormattingExtensions = new FormattingExtensions
     extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     extension NamingExtensions = new NamingExtensions
+    extension Utils = new Utils
 
     def generate(Entity it, String appName, IFileSystemAccess fsa) {
-        println('Generating tree view templates for entity "' + name.formatForDisplay + '"')
+        'Generating tree view templates for entity "' + name.formatForDisplay + '"'.printIfNotTesting(fsa)
         var templateFilePath = templateFile('viewTree')
         if (!application.shouldBeSkipped(templateFilePath)) {
             fsa.generateFile(templateFilePath, hierarchyView(appName, false))

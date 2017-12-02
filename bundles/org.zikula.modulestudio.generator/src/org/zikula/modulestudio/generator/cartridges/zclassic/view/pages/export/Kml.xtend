@@ -9,6 +9,7 @@ import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.UrlExtensions
+import org.zikula.modulestudio.generator.extensions.Utils
 
 class Kml {
 
@@ -17,12 +18,13 @@ class Kml {
     extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     extension NamingExtensions = new NamingExtensions
     extension UrlExtensions = new UrlExtensions
+    extension Utils = new Utils
 
     def generate(Entity it, String appName, IFileSystemAccess fsa) {
         if (!(hasViewAction || hasDisplayAction)) {
             return
         }
-        println('Generating kml view templates for entity "' + name.formatForDisplay + '"')
+        'Generating KML view templates for entity "' + name.formatForDisplay + '"'.printIfNotTesting(fsa)
         var templateFilePath = ''
         if (hasViewAction) {
             templateFilePath = templateFileWithExtension('view', 'kml')

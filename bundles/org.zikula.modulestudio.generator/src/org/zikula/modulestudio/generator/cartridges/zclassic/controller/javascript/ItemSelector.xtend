@@ -20,7 +20,7 @@ class ItemSelector {
     def generate(Application it, IFileSystemAccess fsa) {
         var fileName = appName + '.ItemSelector.js'
         if (!shouldBeSkipped(getAppJsPath + fileName)) {
-            println('Generating JavaScript for item selector component')
+            'Generating JavaScript for item selector component'.printIfNotTesting(fsa)
             if (shouldBeMarked(getAppJsPath + fileName)) {
                 fileName = appName + '.ItemSelector.generated.js'
             }

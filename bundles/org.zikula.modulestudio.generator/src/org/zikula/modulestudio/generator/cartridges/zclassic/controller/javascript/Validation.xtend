@@ -23,7 +23,7 @@ class Validation {
     def generate(Application it, IFileSystemAccess fsa) {
         var fileName = appName + '.Validation.js'
         if (!shouldBeSkipped(getAppJsPath + fileName)) {
-            println('Generating JavaScript for validation')
+            'Generating JavaScript for validation'.printIfNotTesting(fsa)
             if (shouldBeMarked(getAppJsPath + fileName)) {
                 fileName = appName + '.Validation.generated.js'
             }

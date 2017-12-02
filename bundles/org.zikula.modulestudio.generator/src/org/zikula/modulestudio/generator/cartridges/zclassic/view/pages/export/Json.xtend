@@ -6,6 +6,7 @@ import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
+import org.zikula.modulestudio.generator.extensions.Utils
 
 class Json {
 
@@ -13,12 +14,13 @@ class Json {
     extension FormattingExtensions = new FormattingExtensions
     extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     extension NamingExtensions = new NamingExtensions
+    extension Utils = new Utils
 
     def generate(Entity it, String appName, IFileSystemAccess fsa) {
         if (!(hasViewAction || hasDisplayAction)) {
             return
         }
-        println('Generating json view templates for entity "' + name.formatForDisplay + '"')
+        'Generating JSON view templates for entity "' + name.formatForDisplay + '"'.printIfNotTesting(fsa)
         var templateFilePath = ''
         if (hasViewAction) {
             templateFilePath = templateFileWithExtension('view', 'json')

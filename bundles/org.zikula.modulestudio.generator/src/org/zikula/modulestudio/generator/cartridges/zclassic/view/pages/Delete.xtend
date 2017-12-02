@@ -15,7 +15,7 @@ class Delete {
     extension Utils = new Utils
 
     def generate(Entity it, String appName, IFileSystemAccess fsa) {
-        println('Generating delete templates for entity "' + name.formatForDisplay + '"')
+        'Generating delete templates for entity "' + name.formatForDisplay + '"'.printIfNotTesting(fsa)
         var templateFilePath = templateFile('delete')
         if (!application.shouldBeSkipped(templateFilePath)) {
             fsa.generateFile(templateFilePath, deleteView(false))

@@ -3,6 +3,7 @@ package org.zikula.modulestudio.generator.extensions
 import de.guite.modulestudio.metamodel.Application
 import java.util.Date
 import org.eclipse.xtext.generator.IFileSystemAccess
+import org.eclipse.xtext.generator.InMemoryFileSystemAccess
 
 /**
  * Miscellaneous utility methods.
@@ -222,5 +223,14 @@ class Utils {
      */
     def timestamp() {
         new Date(System.currentTimeMillis).toString
+    }
+
+    /**
+     * Prints a message if the current generation is not for a test.
+     */
+    def printIfNotTesting(String it, IFileSystemAccess fsa) {
+        if (!(fsa instanceof InMemoryFileSystemAccess)) {
+            println(it)
+        }
     }
 }

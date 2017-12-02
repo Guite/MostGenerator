@@ -23,7 +23,7 @@ class ItemActionsMenu {
     FileHelper fh = new FileHelper
 
     def generate(Application it, IFileSystemAccess fsa) {
-        println('Generating item actions menu class')
+        'Generating item actions menu class'.printIfNotTesting(fsa)
         generateClassPair(fsa, 'Menu/ItemActionsMenu.php',
             fh.phpFileContent(it, itemActionsMenuBaseImpl), fh.phpFileContent(it, itemActionsMenuImpl)
         )

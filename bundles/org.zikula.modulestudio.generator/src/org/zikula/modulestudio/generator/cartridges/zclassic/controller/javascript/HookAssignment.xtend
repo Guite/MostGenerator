@@ -23,7 +23,7 @@ class HookAssignment {
         }
         var fileName = appName + '.HookAssignment.js'
         if (!shouldBeSkipped(getAppJsPath + fileName)) {
-            println('Generating JavaScript for UI hook functions')
+            'Generating JavaScript for UI hook functions'.printIfNotTesting(fsa)
             if (shouldBeMarked(getAppJsPath + fileName)) {
                 fileName = appName + '.generated.js'
             }

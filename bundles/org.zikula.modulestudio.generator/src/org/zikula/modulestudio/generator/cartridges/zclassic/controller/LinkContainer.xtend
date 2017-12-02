@@ -24,7 +24,7 @@ class LinkContainer {
     FileHelper fh = new FileHelper
 
     def generate(Application it, IFileSystemAccess fsa) {
-        println('Generating link container class')
+        'Generating link container class'.printIfNotTesting(fsa)
         generateClassPair(fsa, 'Container/LinkContainer.php',
             fh.phpFileContent(it, linkContainerBaseImpl), fh.phpFileContent(it, linkContainerImpl)
         )

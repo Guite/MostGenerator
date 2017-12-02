@@ -21,7 +21,7 @@ class ContentTypeList {
     FileHelper fh = new FileHelper
 
     def generate(Application it, IFileSystemAccess fsa) {
-        println('Generating content type for multiple objects')
+        'Generating content type for multiple objects'.printIfNotTesting(fsa)
         generateClassPair(fsa, 'ContentType/ItemList.php',
             fh.phpFileContent(it, contentTypeBaseClass), fh.phpFileContent(it, contentTypeImpl)
         )

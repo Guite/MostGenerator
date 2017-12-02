@@ -21,7 +21,7 @@ class InlineEditing {
         }
         var fileName = appName + '.InlineEditing.js'
         if (!shouldBeSkipped(getAppJsPath + fileName)) {
-            println('Generating JavaScript for inline editing')
+            'Generating JavaScript for inline editing'.printIfNotTesting(fsa)
             if (shouldBeMarked(getAppJsPath + fileName)) {
                 fileName = appName + '.InlineEditing.generated.js'
             }

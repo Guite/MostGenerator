@@ -79,7 +79,7 @@ class Entities {
      * Creates an entity class file for every Entity instance.
      */
     def private generate(DataObject it, Application app, IFileSystemAccess fsa) {
-        println('Generating entity classes for entity "' + name.formatForDisplay + '"')
+        'Generating entity classes for entity "' + name.formatForDisplay + '"'.printIfNotTesting(fsa)
         if (it instanceof Entity) {
             extMan = new ExtensionManager(it)
         }

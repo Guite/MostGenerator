@@ -22,7 +22,7 @@ class WorkflowHelper {
      * Entry point for the helper class creation.
      */
     def generate(Application it, IFileSystemAccess fsa) {
-        println('Generating helper class for workflows')
+        'Generating helper class for workflows'.printIfNotTesting(fsa)
         val fh = new FileHelper
         generateClassPair(fsa, 'Helper/WorkflowHelper.php',
             fh.phpFileContent(it, workflowFunctionsBaseImpl), fh.phpFileContent(it, workflowFunctionsImpl)

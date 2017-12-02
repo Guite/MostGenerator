@@ -16,7 +16,7 @@ class CategoryHelper {
     extension Utils = new Utils
 
     def generate(Application it, IFileSystemAccess fsa) {
-        println('Generating helper class for category functions')
+        'Generating helper class for category functions'.printIfNotTesting(fsa)
         val fh = new FileHelper
         generateClassPair(fsa, 'Helper/CategoryHelper.php',
             fh.phpFileContent(it, categoryHelperBaseClass), fh.phpFileContent(it, categoryHelperImpl)

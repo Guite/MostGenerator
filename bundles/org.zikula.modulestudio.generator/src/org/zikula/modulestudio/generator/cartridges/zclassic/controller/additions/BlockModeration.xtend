@@ -15,7 +15,7 @@ class BlockModeration {
     FileHelper fh = new FileHelper
 
     def generate(Application it, IFileSystemAccess fsa) {
-        println('Generating block for moderation')
+        'Generating block for moderation'.printIfNotTesting(fsa)
         generateClassPair(fsa, 'Block/ModerationBlock.php',
             fh.phpFileContent(it, moderationBlockBaseClass), fh.phpFileContent(it, moderationBlockImpl)
         )

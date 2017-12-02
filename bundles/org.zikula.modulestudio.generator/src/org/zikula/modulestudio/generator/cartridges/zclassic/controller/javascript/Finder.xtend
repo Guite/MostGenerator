@@ -20,7 +20,7 @@ class Finder {
     def generate(Application it, IFileSystemAccess fsa) {
         var fileName = appName + '.Finder.js'
         if (!shouldBeSkipped(getAppJsPath + fileName)) {
-            println('Generating JavaScript for finder component')
+            'Generating JavaScript for finder component'.printIfNotTesting(fsa)
             if (shouldBeMarked(getAppJsPath + fileName)) {
                 fileName = appName + '.Finder.generated.js'
             }

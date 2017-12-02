@@ -27,7 +27,7 @@ class HookAssignmentEntity {
      */
     def generate(Application it, IFileSystemAccess fsa) {
         createEntity
-        println('Generating hook assignments entity class')
+        'Generating hook assignments entity class'.printIfNotTesting(fsa)
         generateClassPair(fsa, 'Entity/HookAssignmentEntity.php',
             fh.phpFileContent(it, entityBaseImpl), fh.phpFileContent(it, entityImpl)
         )

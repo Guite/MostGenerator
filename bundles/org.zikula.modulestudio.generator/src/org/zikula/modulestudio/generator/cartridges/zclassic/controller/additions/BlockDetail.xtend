@@ -20,7 +20,7 @@ class BlockDetail {
     FileHelper fh = new FileHelper
 
     def generate(Application it, IFileSystemAccess fsa) {
-        println('Generating block for single objects')
+        'Generating block for single objects'.printIfNotTesting(fsa)
         generateClassPair(fsa, 'Block/ItemBlock.php',
             fh.phpFileContent(it, detailBlockBaseClass), fh.phpFileContent(it, detailBlockImpl)
         )

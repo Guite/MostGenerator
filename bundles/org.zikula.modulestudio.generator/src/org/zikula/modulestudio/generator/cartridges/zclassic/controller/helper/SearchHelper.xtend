@@ -20,7 +20,7 @@ class SearchHelper {
     extension Utils = new Utils
 
     def generate(Application it, IFileSystemAccess fsa) {
-        println('Generating helper class for search integration')
+        'Generating helper class for search integration'.printIfNotTesting(fsa)
         val fh = new FileHelper
         generateClassPair(fsa, 'Helper/SearchHelper.php',
             fh.phpFileContent(it, searchHelperBaseClass), fh.phpFileContent(it, searchHelperImpl)

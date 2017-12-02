@@ -29,7 +29,7 @@ class DisplayFunctions {
     def generate(Application it, IFileSystemAccess fsa) {
         var fileName = appName + '.js'
         if (!shouldBeSkipped(getAppJsPath + fileName)) {
-            println('Generating JavaScript for display functions')
+            'Generating JavaScript for display functions'.printIfNotTesting(fsa)
             if (shouldBeMarked(getAppJsPath + fileName)) {
                 fileName = appName + '.generated.js'
             }

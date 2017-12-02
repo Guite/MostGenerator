@@ -25,7 +25,7 @@ class ListEntriesHelper {
      * Entry point for the helper class creation.
      */
     def generate(Application it, IFileSystemAccess fsa) {
-        println('Generating helper class for list entries')
+        'Generating helper class for list entries'.printIfNotTesting(fsa)
         val fh = new FileHelper
         generateClassPair(fsa, 'Helper/ListEntriesHelper.php',
             fh.phpFileContent(it, listFieldFunctionsBaseImpl), fh.phpFileContent(it, listFieldFunctionsImpl)

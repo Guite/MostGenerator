@@ -29,7 +29,7 @@ class ExternalController {
         if (!generateExternalControllerAndFinder || !hasDisplayActions) {
             return
         }
-        println('Generating external controller')
+        'Generating external controller'.printIfNotTesting(fsa)
         generateClassPair(fsa, 'Controller/ExternalController.php',
             fh.phpFileContent(it, externalBaseClass), fh.phpFileContent(it, externalImpl)
         )

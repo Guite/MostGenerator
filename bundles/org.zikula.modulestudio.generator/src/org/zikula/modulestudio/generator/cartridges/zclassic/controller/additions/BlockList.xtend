@@ -24,7 +24,7 @@ class BlockList {
     FileHelper fh = new FileHelper
 
     def generate(Application it, IFileSystemAccess fsa) {
-        println('Generating block for multiple objects')
+        'Generating block for multiple objects'.printIfNotTesting(fsa)
         generateClassPair(fsa, 'Block/ItemListBlock.php',
             fh.phpFileContent(it, listBlockBaseClass), fh.phpFileContent(it, listBlockImpl)
         )

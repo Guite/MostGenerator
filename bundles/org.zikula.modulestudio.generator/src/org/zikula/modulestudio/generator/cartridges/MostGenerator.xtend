@@ -24,7 +24,7 @@ class MostGenerator extends GeneratorDelegate implements IGenerator, IGenerator2
         val pkFields = firstEntity.fields.filter['id'.equals(name)] //$NON-NLS-1$
 
         if (pkFields.empty) {
-            app.transform
+            app.transform(fsa)
         }
 
         if ('zclassic'.equals(cartridge)) { //$NON-NLS-1$
@@ -34,8 +34,8 @@ class MostGenerator extends GeneratorDelegate implements IGenerator, IGenerator2
         //    new SomethingGenerator().generate(app, fsa, monitor)
     }
 
-    def private transform(Application it) {
-        new PersistenceTransformer().modify(it)
+    def private transform(Application it, IFileSystemAccess2 fsa) {
+        new PersistenceTransformer().modify(it, fsa)
     }
 
     def setCartridge(String cartridgeName) {

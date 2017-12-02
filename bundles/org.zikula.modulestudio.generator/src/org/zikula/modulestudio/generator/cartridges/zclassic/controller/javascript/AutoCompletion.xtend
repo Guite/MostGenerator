@@ -23,7 +23,7 @@ class AutoCompletion {
         }
         var fileName = appName + '.AutoCompletion.js'
         if (!shouldBeSkipped(getAppJsPath + fileName)) {
-            println('Generating JavaScript for auto completion')
+            'Generating JavaScript for auto completion'.printIfNotTesting(fsa)
             if (shouldBeMarked(getAppJsPath + fileName)) {
                 fileName = appName + '.AutoCompletion.generated.js'
             }

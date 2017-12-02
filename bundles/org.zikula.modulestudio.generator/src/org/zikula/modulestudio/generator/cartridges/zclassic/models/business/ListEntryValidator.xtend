@@ -19,7 +19,7 @@ class ListEntryValidator {
      * Creates constraint and validator classes for list field items.
      */
     def generate(Application it, IFileSystemAccess fsa) {
-        println('Generating list entry constraint and validator classes')
+        'Generating list entry constraint and validator classes'.printIfNotTesting(fsa)
         generateClassPair(fsa, 'Validator/Constraints/ListEntry.php',
             fh.phpFileContent(it, constraintBaseImpl), fh.phpFileContent(it, constraintImpl)
         )

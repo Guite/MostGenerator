@@ -31,7 +31,7 @@ class AppSettings {
      * Entry point for application settings class.
      */
     def generate(Application it, IFileSystemAccess fsa) {
-        println('Generating application settings class')
+        'Generating application settings class'.printIfNotTesting(fsa)
         thProp = new Property(null)
         val destinationPath = ''
         val destinationFileName = 'AppSettings'

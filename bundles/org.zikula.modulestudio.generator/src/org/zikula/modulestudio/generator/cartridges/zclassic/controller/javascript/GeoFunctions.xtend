@@ -18,7 +18,7 @@ class GeoFunctions {
     def generate(Application it, IFileSystemAccess fsa) {
         var fileName = appName + '.Geo.js'
         if (!shouldBeSkipped(getAppJsPath + fileName)) {
-            println('Generating JavaScript for geographical functions')
+            'Generating JavaScript for geographical functions'.printIfNotTesting(fsa)
             if (shouldBeMarked(getAppJsPath + fileName)) {
                 fileName = appName + '.generated.js'
             }

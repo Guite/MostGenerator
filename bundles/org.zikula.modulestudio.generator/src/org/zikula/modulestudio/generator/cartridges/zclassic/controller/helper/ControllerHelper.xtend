@@ -25,7 +25,7 @@ class ControllerHelper {
      * Entry point for the helper class creation.
      */
     def generate(Application it, IFileSystemAccess fsa) {
-        println('Generating helper class for controller layer')
+        'Generating helper class for controller layer'.printIfNotTesting(fsa)
         val fh = new FileHelper
         generateClassPair(fsa, 'Helper/ControllerHelper.php',
             fh.phpFileContent(it, controllerFunctionsBaseImpl), fh.phpFileContent(it, controllerFunctionsImpl)

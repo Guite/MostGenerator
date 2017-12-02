@@ -33,7 +33,7 @@ class CollectionFilterHelper {
     extension WorkflowExtensions = new WorkflowExtensions
 
     def generate(Application it, IFileSystemAccess fsa) {
-        println('Generating helper class for filtering entity collections')
+        'Generating helper class for filtering entity collections'.printIfNotTesting(fsa)
         val fh = new FileHelper
         generateClassPair(fsa, 'Helper/CollectionFilterHelper.php',
             fh.phpFileContent(it, collectionFilterHelperBaseClass), fh.phpFileContent(it, collectionFilterHelperImpl)

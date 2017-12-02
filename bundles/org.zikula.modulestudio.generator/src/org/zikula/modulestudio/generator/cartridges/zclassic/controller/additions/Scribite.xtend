@@ -21,7 +21,7 @@ class Scribite {
     String docPath
 
     def generate(Application it, IFileSystemAccess fsa) {
-        println('Generating Scribite support')
+        'Generating Scribite support'.printIfNotTesting(fsa)
         this.fsa = fsa
 
         docPath = getResourcesPath + 'scribite/'

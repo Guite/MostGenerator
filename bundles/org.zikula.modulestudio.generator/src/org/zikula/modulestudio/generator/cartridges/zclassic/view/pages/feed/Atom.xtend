@@ -24,7 +24,7 @@ class Atom {
         if (!hasViewAction) {
             return
         }
-        println('Generating atom view templates for entity "' + name.formatForDisplay + '"')
+        'Generating Atom view templates for entity "' + name.formatForDisplay + '"'.printIfNotTesting(fsa)
         var templateFilePath = templateFileWithExtension('view', 'atom')
         if (!application.shouldBeSkipped(templateFilePath)) {
             fsa.generateFile(templateFilePath, atomView(appName))

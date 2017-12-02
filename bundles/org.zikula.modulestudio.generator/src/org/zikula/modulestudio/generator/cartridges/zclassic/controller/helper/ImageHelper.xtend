@@ -20,7 +20,7 @@ class ImageHelper {
      * Entry point for the helper class creation.
      */
     def generate(Application it, IFileSystemAccess fsa) {
-        println('Generating helper class for image handling')
+        'Generating helper class for image handling'.printIfNotTesting(fsa)
         val fh = new FileHelper
         generateClassPair(fsa, 'Helper/ImageHelper.php',
             fh.phpFileContent(it, imageFunctionsBaseImpl), fh.phpFileContent(it, imageFunctionsImpl)

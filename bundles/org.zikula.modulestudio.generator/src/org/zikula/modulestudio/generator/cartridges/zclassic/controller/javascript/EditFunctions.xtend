@@ -25,7 +25,7 @@ class EditFunctions {
     def generate(Application it, IFileSystemAccess fsa) {
         var fileName = appName + '.EditFunctions.js'
         if (!shouldBeSkipped(getAppJsPath + fileName)) {
-            println('Generating JavaScript for edit functions')
+            'Generating JavaScript for edit functions'.printIfNotTesting(fsa)
             if (shouldBeMarked(getAppJsPath + fileName)) {
                 fileName = appName + '.EditFunctions.generated.js'
             }

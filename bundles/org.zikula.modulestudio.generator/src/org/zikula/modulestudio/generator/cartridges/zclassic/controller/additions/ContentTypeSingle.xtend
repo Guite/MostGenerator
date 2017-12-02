@@ -19,7 +19,7 @@ class ContentTypeSingle {
     FileHelper fh = new FileHelper
 
     def generate(Application it, IFileSystemAccess fsa) {
-        println('Generating content type for single objects')
+        'Generating content type for single objects'.printIfNotTesting(fsa)
         generateClassPair(fsa, 'ContentType/Item.php',
             fh.phpFileContent(it, contentTypeBaseClass), fh.phpFileContent(it, contentTypeImpl)
         )

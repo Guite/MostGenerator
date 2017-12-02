@@ -11,12 +11,14 @@ import de.guite.modulestudio.metamodel.OneToOneRelationship
 import de.guite.modulestudio.metamodel.StringField
 import de.guite.modulestudio.metamodel.StringRole
 import de.guite.modulestudio.metamodel.UploadField
+import org.eclipse.xtext.generator.IFileSystemAccess2
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.ModelInheritanceExtensions
+import org.zikula.modulestudio.generator.extensions.Utils
 
 /**
  * This class adds primary key fields to all entities of an application.
@@ -54,12 +56,18 @@ class PersistenceTransformer {
     extension ModelInheritanceExtensions = new ModelInheritanceExtensions
 
     /**
+     * Extension methods for common utilities.
+     */
+    extension Utils = new Utils
+
+    /**
      * Transformation entry point consuming the application instance.
      *
-     * @param it The given {@link Application} instance.
+     * @param it The given {@link Application} instance
+     * @param fsa The file system accessor
      */
-    def modify(Application it) {
-        println('Starting model transformation')
+    def modify(Application it, IFileSystemAccess2 fsa) {
+        'Starting model transformation'.printIfNotTesting(fsa)
 
         name = name.replaceUmlauts
         vendor = vendor.replaceUmlauts
@@ -103,15 +111,15 @@ class PersistenceTransformer {
      * @param it The currently treated {@link Entity} instance.
      */
     def private void handleEntity(Entity it) {
-        //println('Transforming entity ' + name)
-        //println('Field size before: ' + fields.size + ' fields')
+        //('Transforming entity ' + name).printIfNotTesting(fsa)
+        //('Field size before: ' + fields.size + ' fields').printIfNotTesting(fsa)
         if (getDerivedFields.filter[primaryKey].empty
              && outgoing.filter(OneToOneRelationship).filter[primaryKey].empty
              && outgoing.filter(ManyToOneRelationship).filter[primaryKey].empty
         ) {
             addPrimaryKey
         }
-        //println('Added primary key, field size now: ' + fields.size + ' fields')
+        //('Added primary key, field size now: ' + fields.size + ' fields').printIfNotTesting(fsa)
 
         if (!inheriting) {
             addWorkflowState

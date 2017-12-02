@@ -23,7 +23,7 @@ class Factory {
      * Creates a factory class file for easy entity creation.
      */
     def generate(Application it, IFileSystemAccess fsa) {
-        println('Generating entity factory class')
+        'Generating entity factory class'.printIfNotTesting(fsa)
         generateClassPair(fsa, 'Entity/Factory/EntityFactory.php',
             fh.phpFileContent(it, modelFactoryBaseImpl), fh.phpFileContent(it, modelFactoryImpl)
         )

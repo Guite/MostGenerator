@@ -20,7 +20,7 @@ class SlugTransliterator {
         if (!hasSluggable) {
             return
         }
-        println('Generating custom sluggable transliterator')
+        'Generating custom sluggable transliterator'.printIfNotTesting(fsa)
         val fh = new FileHelper
         generateClassPair(fsa, 'Helper/SlugTransliterator.php',
             fh.phpFileContent(it, transliteratorBaseImpl), fh.phpFileContent(it, transliteratorImpl)

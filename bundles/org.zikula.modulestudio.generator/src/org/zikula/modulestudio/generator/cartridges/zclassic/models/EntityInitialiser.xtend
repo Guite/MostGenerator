@@ -26,7 +26,7 @@ class EntityInitialiser {
      * Creates an entity initialiser class file for easy entity initialisation.
      */
     def generate(Application it, IFileSystemAccess fsa) {
-        println('Generating entity initialiser class')
+        'Generating entity initialiser class'.printIfNotTesting(fsa)
         generateClassPair(fsa, 'Entity/Factory/EntityInitialiser.php',
             fh.phpFileContent(it, initialiserBaseImpl), fh.phpFileContent(it, initialiserImpl)
         )

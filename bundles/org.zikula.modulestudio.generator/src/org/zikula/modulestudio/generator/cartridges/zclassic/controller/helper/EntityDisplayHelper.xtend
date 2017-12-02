@@ -28,7 +28,7 @@ class EntityDisplayHelper {
     extension Utils = new Utils
 
     def generate(Application it, IFileSystemAccess fsa) {
-        println('Generating helper class for formatted entity display')
+        'Generating helper class for formatted entity display'.printIfNotTesting(fsa)
         val fh = new FileHelper
         generateClassPair(fsa, 'Helper/EntityDisplayHelper.php',
             fh.phpFileContent(it, entityDisplayHelperBaseClass), fh.phpFileContent(it, entityDisplayHelperImpl)

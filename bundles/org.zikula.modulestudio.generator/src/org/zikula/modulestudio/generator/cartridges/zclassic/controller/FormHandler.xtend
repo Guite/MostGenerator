@@ -109,7 +109,7 @@ class FormHandler {
      * Entry point for generic Form handler base classes.
      */
     def private generateCommon(Application it, String actionName, IFileSystemAccess fsa) {
-        println('Generating "' + name + '" form handler base class')
+        'Generating "' + name + '" form handler base class'.printIfNotTesting(fsa)
         val formHandlerFolder = 'Form/Handler/Common/'
         generateClassPair(fsa, formHandlerFolder + actionName.formatForCodeCapital + 'Handler.php',
             fh.phpFileContent(it, formHandlerCommonBaseImpl(actionName)), fh.phpFileContent(app, formHandlerCommonImpl(actionName))
@@ -120,7 +120,7 @@ class FormHandler {
      * Entry point for Form handler classes per entity.
      */
     def private generate(Entity it, String actionName, IFileSystemAccess fsa) {
-        println('Generating form handler classes for "' + name + '_' + actionName + '"')
+        'Generating form handler classes for "' + name + '_' + actionName + '"'.printIfNotTesting(fsa)
         val formHandlerFolder = 'Form/Handler/' + name.formatForCodeCapital + '/'
         app.generateClassPair(fsa, formHandlerFolder + actionName.formatForCodeCapital + 'Handler.php',
             fh.phpFileContent(app, formHandlerBaseImpl(actionName)), fh.phpFileContent(app, formHandlerImpl(actionName))

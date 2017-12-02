@@ -55,7 +55,7 @@ class Listeners {
         val needsDetailContentType = generateDetailContentType && hasDisplayActions
         needsThirdPartyListener = ((needsApproval && generatePendingContentSupport) || ((generateListContentType || needsDetailContentType) && !targets('2.0')) || generateScribitePlugins)
 
-        println('Generating event listener base classes')
+        'Generating event listener base classes'.printIfNotTesting(fsa)
         listenerPath = 'Listener/Base/'
         isBase = true
         generateListenerClasses
@@ -64,7 +64,7 @@ class Listeners {
             return
         }
 
-        println('Generating event listener implementation classes')
+        'Generating event listener implementation classes'.printIfNotTesting(fsa)
         listenerPath = 'Listener/'
         isBase = false
         generateListenerClasses

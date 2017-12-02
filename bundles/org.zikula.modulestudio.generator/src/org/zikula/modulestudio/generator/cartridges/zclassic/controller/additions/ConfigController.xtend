@@ -14,7 +14,7 @@ class ConfigController {
     extension Utils = new Utils
 
     def generate(Application it, IFileSystemAccess fsa) {
-        println('Config controller class')
+        'Generating config controller class'.printIfNotTesting(fsa)
         val fh = new FileHelper
         generateClassPair(fsa, 'Controller/ConfigController.php',
             fh.phpFileContent(it, configControllerBaseClass), fh.phpFileContent(it, configControllerImpl)

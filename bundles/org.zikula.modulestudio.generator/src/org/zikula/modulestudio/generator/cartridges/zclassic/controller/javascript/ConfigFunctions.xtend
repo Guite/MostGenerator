@@ -18,7 +18,7 @@ class ConfigFunctions {
     def generate(Application it, IFileSystemAccess fsa) {
         var fileName = appName + '.Config.js'
         if (!shouldBeSkipped(getAppJsPath + fileName)) {
-            println('Generating JavaScript for config functions')
+            'Generating JavaScript for config functions'.printIfNotTesting(fsa)
             if (shouldBeMarked(getAppJsPath + fileName)) {
                 fileName = appName + '.generated.js'
             }

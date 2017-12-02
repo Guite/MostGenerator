@@ -29,7 +29,7 @@ class AjaxController {
     extension Utils = new Utils
 
     def generate(Application it, IFileSystemAccess fsa) {
-        println('Ajax controller class')
+        'Generating ajax controller class'.printIfNotTesting(fsa)
         val fh = new FileHelper
         generateClassPair(fsa, 'Controller/AjaxController.php',
             fh.phpFileContent(it, ajaxControllerBaseClass), fh.phpFileContent(it, ajaxControllerImpl)

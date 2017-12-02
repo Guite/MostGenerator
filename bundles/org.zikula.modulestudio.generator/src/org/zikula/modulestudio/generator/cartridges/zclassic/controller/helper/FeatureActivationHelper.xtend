@@ -19,7 +19,7 @@ class FeatureActivationHelper {
      * Entry point for the helper class creation.
      */
     def generate(Application it, IFileSystemAccess fsa) {
-        println('Generating helper class for dynamic feature enablement')
+        'Generating helper class for dynamic feature enablement'.printIfNotTesting(fsa)
         val fh = new FileHelper
         generateClassPair(fsa, 'Helper/FeatureActivationHelper.php',
             fh.phpFileContent(it, featureEnablementFunctionsBaseImpl), fh.phpFileContent(it, featureEnablementFunctionsImpl)

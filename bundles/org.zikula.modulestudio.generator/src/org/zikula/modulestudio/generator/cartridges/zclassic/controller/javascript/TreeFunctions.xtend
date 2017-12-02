@@ -18,7 +18,7 @@ class TreeFunctions {
     def generate(Application it, IFileSystemAccess fsa) {
         var fileName = appName + '.Tree.js'
         if (!shouldBeSkipped(getAppJsPath + fileName)) {
-            println('Generating JavaScript for tree functions')
+            'Generating JavaScript for tree functions'.printIfNotTesting(fsa)
             if (shouldBeMarked(getAppJsPath + fileName)) {
                 fileName = appName + '.Tree.generated.js'
             }

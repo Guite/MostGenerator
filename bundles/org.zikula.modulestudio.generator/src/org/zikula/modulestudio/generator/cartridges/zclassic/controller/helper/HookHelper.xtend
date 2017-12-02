@@ -39,11 +39,11 @@ class HookHelper {
      */
     def private generateHookSubscribers(Application it, IFileSystemAccess fsa) {
         val fh = new FileHelper
-        println('Generating helper class for hook calls')
+        'Generating helper class for hook calls'.printIfNotTesting(fsa)
         generateClassPair(fsa, 'Helper/HookHelper.php',
             fh.phpFileContent(it, hookFunctionsBaseImpl), fh.phpFileContent(it, hookFunctionsImpl)
         )
-        println('Generating hook subscriber classes')
+        'Generating hook subscriber classes'.printIfNotTesting(fsa)
         for (entity : getAllEntities.filter[e|!e.skipHookSubscribers]) {
             for (hookType : getHookTypes.entrySet) {
                 val category = hookType.key
@@ -70,7 +70,7 @@ class HookHelper {
      */
     def private generateHookProviders(Application it, IFileSystemAccess fsa) {
         val fh = new FileHelper
-        println('Generating hook provider classes')
+        'Generating hook provider classes'.printIfNotTesting(fsa)
         if (hasFilterHookProvider) {
             generateClassPair(fsa, 'HookProvider/FilterHooksProvider.php',
                 fh.phpFileContent(it, filterHooksProviderBaseImpl), fh.phpFileContent(it, filterHooksProviderImpl)

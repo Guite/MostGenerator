@@ -19,7 +19,7 @@ class Custom {
     Application app
 
     def generate(CustomAction it, Application app, Entity entity, IFileSystemAccess fsa) {
-        println('Generating ' + entity.name.formatForDisplay + ' templates for custom action "' + name.formatForDisplay + '"')
+        'Generating ' + entity.name.formatForDisplay + ' templates for custom action "' + name.formatForDisplay + '"'.printIfNotTesting(fsa)
         this.app = app
         var templateFilePath = templateFile(entity, name.formatForCode)
         if (!app.shouldBeSkipped(templateFilePath)) {

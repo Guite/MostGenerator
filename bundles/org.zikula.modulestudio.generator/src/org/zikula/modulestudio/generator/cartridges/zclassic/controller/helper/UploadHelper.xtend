@@ -24,7 +24,7 @@ class UploadHelper {
      * Entry point for the helper class creation.
      */
     def generate(Application it, IFileSystemAccess fsa) {
-        println('Generating helper class for upload handling')
+        'Generating helper class for upload handling'.printIfNotTesting(fsa)
         val fh = new FileHelper
         generateClassPair(fsa, 'Helper/UploadHelper.php',
             fh.phpFileContent(it, uploadFunctionsBaseImpl), fh.phpFileContent(it, uploadFunctionsImpl)

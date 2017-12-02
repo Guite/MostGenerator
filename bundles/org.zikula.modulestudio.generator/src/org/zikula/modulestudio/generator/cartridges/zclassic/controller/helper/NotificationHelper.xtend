@@ -21,7 +21,7 @@ class NotificationHelper {
     extension Utils = new Utils
 
     def generate(Application it, IFileSystemAccess fsa) {
-        println('Generating helper class for workflow notifications')
+        'Generating helper class for workflow notifications'.printIfNotTesting(fsa)
         val fh = new FileHelper
         generateClassPair(fsa, 'Helper/NotificationHelper.php',
             fh.phpFileContent(it, notificationHelperBaseClass), fh.phpFileContent(it, notificationHelperImpl)

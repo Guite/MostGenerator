@@ -16,7 +16,7 @@ class HistoryFunctions {
     def generate(Application it, IFileSystemAccess fsa) {
         var fileName = appName + '.VersionHistory.js'
         if (!shouldBeSkipped(getAppJsPath + fileName)) {
-            println('Generating JavaScript for version history view')
+            'Generating JavaScript for version history view'.printIfNotTesting(fsa)
             if (shouldBeMarked(getAppJsPath + fileName)) {
                 fileName = appName + '.VersionHistory.generated.js'
             }

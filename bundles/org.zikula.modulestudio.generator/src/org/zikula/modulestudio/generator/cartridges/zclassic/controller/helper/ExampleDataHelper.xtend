@@ -53,7 +53,7 @@ class ExampleDataHelper {
         if (amountOfExampleRows < 1) {
             return
         }
-        println('Generating helper class for inserting example data')
+        'Generating helper class for inserting example data'.printIfNotTesting(fsa)
         val fh = new FileHelper
         generateClassPair(fsa, 'Helper/ExampleDataHelper.php',
             fh.phpFileContent(it, exampleDataHelperBaseClass), fh.phpFileContent(it, exampleDataHelperImpl)

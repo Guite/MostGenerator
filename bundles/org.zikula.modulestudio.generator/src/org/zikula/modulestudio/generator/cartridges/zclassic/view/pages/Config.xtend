@@ -25,7 +25,7 @@ class Config {
         val templateExtension = '.html.twig'
         var fileName = 'config' + templateExtension
         if (!shouldBeSkipped(templatePath + fileName)) {
-            println('Generating config template')
+            'Generating config page view template'.printIfNotTesting(fsa)
             if (shouldBeMarked(templatePath + fileName)) {
                 fileName = 'config.generated' + templateExtension
             }
