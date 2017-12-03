@@ -441,7 +441,7 @@ class TechStructureFields {
         val result = newArrayList
         if (null !== documentation && !documentation.empty) result += documentation + ' '
         if (language == 'de') {
-            result += 'Dieses Feld ist ' + (if (!unique) 'nicht ') + ' eindeutig und erlaubt ' + (if (!nullable) 'keine ') + ' Null-Werte.'
+            result += 'Dieses Feld ist ' + (if (!unique) 'nicht ') + 'eindeutig und erlaubt ' + (if (!nullable) 'keine ') + 'Null-Werte.'
             if (null !== dbName && !dbName.empty) result += 'Wird in der Datenbank als "' + dbName + '" gespeichert.'
             if (primaryKey) result += 'Fungiert als Primärschlüssel.'
             if (readonly) result += 'Erlaubt nur Lesezugriff.'
@@ -449,7 +449,7 @@ class TechStructureFields {
             if (translatable) result += 'Dieses Feld ist übersetzbar.'
             if (sortableGroup) result += 'Fungiert als Gruppierkriterium für die Sortable-Erweiterung.'
         } else {
-            result += 'This field is ' + (if (!unique) 'not ') + ' unique and allows ' + (if (!nullable) 'no ') + ' null values.'
+            result += 'This field is ' + (if (!unique) 'not ') + 'unique and allows ' + (if (!nullable) 'no ') + 'null values.'
             if (null !== dbName && !dbName.empty) result += 'Stored as "' + dbName + '" in the database.'
             if (primaryKey) result += 'Acts as primary key.'
             if (readonly) result += 'Allows read access only.'
