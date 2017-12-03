@@ -40,7 +40,7 @@ class Display {
     extension WorkflowExtensions = new WorkflowExtensions
 
     def generate(Entity it, String appName, IFileSystemAccess fsa) {
-        'Generating display templates for entity "' + name.formatForDisplay + '"'.printIfNotTesting(fsa)
+        ('Generating display templates for entity "' + name.formatForDisplay + '"').printIfNotTesting(fsa)
         var templateFilePath = templateFile('display')
         if (!application.shouldBeSkipped(templateFilePath)) {
             fsa.generateFile(templateFilePath, displayView(appName, false))

@@ -24,7 +24,7 @@ class Rss {
         if (!hasViewAction) {
             return
         }
-        'Generating RSS view templates for entity "' + name.formatForDisplay + '"'.printIfNotTesting(fsa)
+        ('Generating RSS view templates for entity "' + name.formatForDisplay + '"').printIfNotTesting(fsa)
         var templateFilePath = templateFileWithExtension('view', 'rss')
         if (!application.shouldBeSkipped(templateFilePath)) {
             fsa.generateFile(templateFilePath, rssView(appName))

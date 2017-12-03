@@ -31,7 +31,7 @@ class Csv {
         if (!hasViewAction) {
             return
         }
-        'Generating CSV view templates for entity "' + name.formatForDisplay + '"'.printIfNotTesting(fsa)
+        ('Generating CSV view templates for entity "' + name.formatForDisplay + '"').printIfNotTesting(fsa)
         var templateFilePath = templateFileWithExtension('view', 'csv')
         if (!application.shouldBeSkipped(templateFilePath)) {
             fsa.generateFile(templateFilePath, csvView(appName))

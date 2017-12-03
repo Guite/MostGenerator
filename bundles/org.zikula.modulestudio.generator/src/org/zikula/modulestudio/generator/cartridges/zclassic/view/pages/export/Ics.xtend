@@ -25,7 +25,7 @@ class Ics {
         if (!hasDisplayAction) {
             return
         }
-        'Generating ICS view templates for entity "' + name.formatForDisplay + '"'.printIfNotTesting(fsa)
+        ('Generating ICS view templates for entity "' + name.formatForDisplay + '"').printIfNotTesting(fsa)
         var templateFilePath = templateFileWithExtension('display', 'ics')
         if (!application.shouldBeSkipped(templateFilePath)) {
             fsa.generateFile(templateFilePath, icsDisplay(appName))

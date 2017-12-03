@@ -20,7 +20,7 @@ class Json {
         if (!(hasViewAction || hasDisplayAction)) {
             return
         }
-        'Generating JSON view templates for entity "' + name.formatForDisplay + '"'.printIfNotTesting(fsa)
+        ('Generating JSON view templates for entity "' + name.formatForDisplay + '"').printIfNotTesting(fsa)
         var templateFilePath = ''
         if (hasViewAction) {
             templateFilePath = templateFileWithExtension('view', 'json')

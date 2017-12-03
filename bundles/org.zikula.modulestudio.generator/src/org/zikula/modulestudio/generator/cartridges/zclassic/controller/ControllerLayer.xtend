@@ -76,7 +76,7 @@ class ControllerLayer {
      * Creates controller class files for every Entity instance.
      */
     def private generateController(Entity it, IFileSystemAccess fsa) {
-        'Generating "' + name.formatForDisplay + '" controller classes'.printIfNotTesting(fsa)
+        ('Generating "' + name.formatForDisplay + '" controller classes').printIfNotTesting(fsa)
         app.generateClassPair(fsa, 'Controller/' + name.formatForCodeCapital + 'Controller.php',
             fh.phpFileContent(app, entityControllerBaseImpl), fh.phpFileContent(app, entityControllerImpl)
         )

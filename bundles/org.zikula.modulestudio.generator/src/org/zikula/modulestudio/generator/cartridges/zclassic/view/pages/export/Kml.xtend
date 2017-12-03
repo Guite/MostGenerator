@@ -24,7 +24,7 @@ class Kml {
         if (!(hasViewAction || hasDisplayAction)) {
             return
         }
-        'Generating KML view templates for entity "' + name.formatForDisplay + '"'.printIfNotTesting(fsa)
+        ('Generating KML view templates for entity "' + name.formatForDisplay + '"').printIfNotTesting(fsa)
         var templateFilePath = ''
         if (hasViewAction) {
             templateFilePath = templateFileWithExtension('view', 'kml')

@@ -53,7 +53,7 @@ class View {
     static val LIST_TYPE_TABLE = 3
 
     def generate(Entity it, String appName, Integer listType, IFileSystemAccess fsa) {
-        'Generating view templates for entity "' + name.formatForDisplay + '"'.printIfNotTesting(fsa)
+        ('Generating view templates for entity "' + name.formatForDisplay + '"').printIfNotTesting(fsa)
         this.listType = listType
         this.appName = appName
         var templateFilePath = templateFile('view')

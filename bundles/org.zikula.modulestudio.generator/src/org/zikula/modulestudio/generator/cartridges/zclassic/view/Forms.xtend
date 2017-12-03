@@ -51,7 +51,7 @@ class Forms {
      * Entry point for form templates for each entity.
      */
     def private generate(Entity it, String actionName) {
-        'Generating edit form templates for entity "' + name.formatForDisplay + '"'.printIfNotTesting(fsa)
+        ('Generating edit form templates for entity "' + name.formatForDisplay + '"').printIfNotTesting(fsa)
         isSeparateAdminTemplate = false
         var templatePath = editTemplateFile(actionName)
         if (!app.shouldBeSkipped(templatePath)) {

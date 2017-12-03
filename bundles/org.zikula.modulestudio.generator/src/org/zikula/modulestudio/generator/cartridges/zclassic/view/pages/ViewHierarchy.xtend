@@ -18,7 +18,7 @@ class ViewHierarchy {
     extension Utils = new Utils
 
     def generate(Entity it, String appName, IFileSystemAccess fsa) {
-        'Generating tree view templates for entity "' + name.formatForDisplay + '"'.printIfNotTesting(fsa)
+        ('Generating tree view templates for entity "' + name.formatForDisplay + '"').printIfNotTesting(fsa)
         var templateFilePath = templateFile('viewTree')
         if (!application.shouldBeSkipped(templateFilePath)) {
             fsa.generateFile(templateFilePath, hierarchyView(appName, false))

@@ -18,7 +18,7 @@ class Index {
         /*if (hasActions('view')) {
             return
         }*/
-        'Generating index templates for entity "' + name.formatForDisplay + '"'.printIfNotTesting(fsa)
+        ('Generating index templates for entity "' + name.formatForDisplay + '"').printIfNotTesting(fsa)
         var templateFilePath = templateFile('index')
         if (!application.shouldBeSkipped(templateFilePath)) {
             fsa.generateFile(templateFilePath, indexView(false))

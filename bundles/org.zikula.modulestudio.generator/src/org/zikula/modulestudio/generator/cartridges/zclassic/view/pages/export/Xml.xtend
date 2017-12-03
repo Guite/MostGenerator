@@ -34,7 +34,7 @@ class Xml {
         if (!(hasViewAction || hasDisplayAction)) {
             return
         }
-        'Generating XML view templates for entity "' + name.formatForDisplay + '"'.printIfNotTesting(fsa)
+        ('Generating XML view templates for entity "' + name.formatForDisplay + '"').printIfNotTesting(fsa)
         var templateFilePath = ''
         if (hasViewAction) {
             templateFilePath = templateFileWithExtension('view', 'xml')

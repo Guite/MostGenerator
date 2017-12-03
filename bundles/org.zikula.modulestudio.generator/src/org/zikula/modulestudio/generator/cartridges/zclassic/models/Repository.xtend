@@ -56,7 +56,7 @@ class Repository {
      * Creates a repository class file for every Entity instance.
      */
     def private generate(Entity it) {
-        'Generating repository classes for entity "' + name.formatForDisplay + '"'.printIfNotTesting(fsa)
+        ('Generating repository classes for entity "' + name.formatForDisplay + '"').printIfNotTesting(fsa)
         val repositoryPath = 'Entity/Repository/'
         var fileSuffix = 'Repository'
 

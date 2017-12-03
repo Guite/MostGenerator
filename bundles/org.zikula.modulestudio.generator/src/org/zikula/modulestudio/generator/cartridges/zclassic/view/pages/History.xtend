@@ -21,7 +21,7 @@ class History {
     extension Utils = new Utils
 
     def generate(Entity it, String appName, IFileSystemAccess fsa) {
-        'Generating history templates for entity "' + name.formatForDisplay + '"'.printIfNotTesting(fsa)
+        ('Generating history templates for entity "' + name.formatForDisplay + '"').printIfNotTesting(fsa)
         var templateFilePath = templateFile('history')
         if (!application.shouldBeSkipped(templateFilePath)) {
             fsa.generateFile(templateFilePath, historyView(false))
