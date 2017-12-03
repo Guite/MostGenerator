@@ -325,6 +325,9 @@ class DisplayFunctions {
          * Initialises image viewing behaviour.
          */
         function «vendorAndName»InitImageViewer() {
+            if (typeof(magnificPopup) === 'undefined') {
+                return;
+            }
             jQuery('a.image-link').magnificPopup({
                 type: 'image',
                 closeOnContentClick: true,
