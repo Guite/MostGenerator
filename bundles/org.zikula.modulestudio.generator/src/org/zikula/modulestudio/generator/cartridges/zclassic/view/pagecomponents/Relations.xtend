@@ -68,6 +68,7 @@ class Relations {
                 {% if context == 'hookDisplayView' and hasEditPermission %}
                     {% set entityNameTranslated = __('«name.formatForDisplay»') %}
                     {{ pageAddAsset('javascript', zasset('@«app.appName»:js/«app.appName».HookAssignment.js'), 99) }}
+                    {{ pageAddAsset('javascript', zasset('@«app.appName»:js/«app.appName».EditFunctions.js'), 99) }}
                     {{ pageAddAsset('javascript', zasset('@«app.appName»:js/«app.appName».InlineEditing.js'), 99) }}
                     {{ pageAddAsset('javascript', zasset('@«app.appName»:js/«app.appName».AutoCompletion.js'), 99) }}
                 {% endif %}
