@@ -500,7 +500,17 @@ class ControllerHelper {
                         $url = 'javascript:void(0);';
                         $subscriberUrl = $assignment->getSubscriberUrl();
                         if (null !== $subscriberUrl && !empty($subscriberUrl)) {
-                            $url = $this->router->generate($subscriberUrl['route'], $subscriberUrl['args']);
+                            «IF targets('2.0') || targets('2.0-dev')»
+                                $url = $this->router->generate($subscriberUrl['route'], $subscriberUrl['args']);
+                            «ELSE»
+                                if (!isset($subscriberUrl['route'])) {
+                                    // legacy module
+                                    $url = \ModUtil::url($subscriberUrl['application'], $subscriberUrl['controller'], $subscriberUrl['action'], $subscriberUrl['args'], null, null, true, true);
+                                } else {
+                                    $url = $this->router->generate($subscriberUrl['route'], $subscriberUrl['args']);
+                                }
+                            «ENDIF»
+
                             $fragment = $subscriberUrl['fragment'];
                             if (!empty($fragment)) {
                                 if ($fragment[0] != '#') {
