@@ -7,6 +7,7 @@ import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class ZikulaManifest {
+
     extension FormattingExtensions = new FormattingExtensions
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils

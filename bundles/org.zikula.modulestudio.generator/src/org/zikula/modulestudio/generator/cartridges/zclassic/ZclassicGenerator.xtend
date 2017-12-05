@@ -102,7 +102,9 @@ class ZclassicGenerator implements IGenerator {
         new ZikulaManifest().generate(it, fsa)
         new GitIgnore().generate(it, fsa)
         new TravisFile().generate(it, fsa)
-        new PhpUnitXmlDist().generate(it, fsa)
+        if (generateTests) {
+            new PhpUnitXmlDist().generate(it, fsa)
+        }
         new StyleCI().generate(it, fsa)
     }
 

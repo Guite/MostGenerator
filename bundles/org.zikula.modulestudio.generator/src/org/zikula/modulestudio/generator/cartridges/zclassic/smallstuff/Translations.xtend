@@ -6,6 +6,7 @@ import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class Translations {
+
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
     
@@ -13,10 +14,6 @@ class Translations {
      * Entry point for module translations.
      */
     def generate(Application it, IFileSystemAccess fsa) {
-        // These files will be removed later. At the moment we need them
-        // for creating according directories.
-        // See https://github.com/Guite/MostGenerator/issues/8 for more information.
-        val localePath = getAppLocalePath
-        createPlaceholder(fsa, localePath)
+        createPlaceholder(fsa, getAppLocalePath)
     }
 }

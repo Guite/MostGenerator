@@ -101,11 +101,15 @@ class TravisFile {
             «IF isSystemModule»
                 - php app/console lint:yaml system/«appName»/Resources
                 - php app/console lint:twig @«appName»
-                - phpunit --configuration system/«appName»/phpunit.xml.dist --coverage-text --coverage-clover=coverage.clover -v
+                «IF generateTests»
+                    - phpunit --configuration system/«appName»/phpunit.xml.dist --coverage-text --coverage-clover=coverage.clover -v
+                «ENDIF»
             «ELSE»
                 - php app/console lint:yaml modules/«vendor.formatForDB»/«name.formatForDB»-module/Resources
                 - php app/console lint:twig @«appName»
-                - phpunit --configuration modules/«vendor.formatForDB»/«name.formatForDB»-module/phpunit.xml.dist --coverage-text --coverage-clover=coverage.clover -v
+                «IF generateTests»
+                    - phpunit --configuration modules/«vendor.formatForDB»/«name.formatForDB»-module/phpunit.xml.dist --coverage-text --coverage-clover=coverage.clover -v
+                «ENDIF»
             «ENDIF»
 
         after_script:
