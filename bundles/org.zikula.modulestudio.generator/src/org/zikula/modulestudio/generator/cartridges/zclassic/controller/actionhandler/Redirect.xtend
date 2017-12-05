@@ -173,7 +173,7 @@ class Redirect {
          */
         protected function getRedirectUrl(array $args = [])
         {
-            «IF app.needsAutoCompletion»
+            «IF app.needsInlineEditing»
                 if (true === $this->templateParameters['inlineUsage']) {
                     $commandName = substr($args['commandName'], 0, 6) == 'submit' ? 'create' : $args['commandName'];
                     $urlArgs = [
