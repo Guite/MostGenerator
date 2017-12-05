@@ -115,7 +115,7 @@ class EntityDisplayHelper {
                     $locale = null !== $requestStack->getCurrentRequest() ? $requestStack->getCurrentRequest()->getLocale() : null;
                 «ENDIF»
                 «IF hasAnyDateTimeFields»
-                    $this->dateFormatter = new IntlDateFormatter($locale, null, null);
+                    $this->dateFormatter = new IntlDateFormatter($locale, IntlDateFormatter::NONE, IntlDateFormatter::NONE);
                 «ENDIF»
                 «IF hasNumberFields»
                     $this->numberFormatter = new NumberFormatter($locale, NumberFormatter::DECIMAL);
