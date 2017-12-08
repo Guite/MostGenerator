@@ -134,13 +134,13 @@ class TechStructureRelations {
     def private commonRemarks(JoinRelationship it) {
         val result = newArrayList
         if (language == 'de') {
-            result += 'Diese Relation ist ' + (if (!unique) 'nicht ') + 'eindeutig und erlaubt ' + (if (!nullable) 'keine ') + 'Null-Werte.'
+            result += 'Diese Relation ist ' + (if (!unique) 'nicht ' else '') + 'eindeutig und erlaubt ' + (if (!nullable) 'keine ' else '') + 'Null-Werte.'
             result += 'Sie verwendet den Abruftyp "' + fetchType.enumDescription + '".'
             result += 'Aus Sicht der Quelle ' + cascade.enumDescription + '.'
             result += 'Aus Sicht des Ziels ' + cascadeReverse.enumDescription + '.'
             if (!onDelete.empty) result += 'Auf Datenbankebene werden zusätzliche Löschoperationen angewendet: ' + onDelete + '.'
         } else {
-            result += 'This relation is ' + (if (!unique) 'not ') + 'unique and allows ' + (if (!nullable) 'no ') + 'null values.'
+            result += 'This relation is ' + (if (!unique) 'not ' else '') + 'unique and allows ' + (if (!nullable) 'no ' else '') + 'null values.'
             result += 'It uses the "' + fetchType.enumDescription + '" fetch type.'
             result += 'From source view ' + cascade.enumDescription + '.'
             result += 'From target view ' + cascadeReverse.enumDescription + '.'
