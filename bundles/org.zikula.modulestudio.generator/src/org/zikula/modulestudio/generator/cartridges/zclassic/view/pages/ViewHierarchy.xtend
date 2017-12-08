@@ -5,7 +5,6 @@ import de.guite.modulestudio.metamodel.EntityWorkflowType
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
-import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
@@ -13,7 +12,6 @@ class ViewHierarchy {
 
     extension ControllerExtensions = new ControllerExtensions
     extension FormattingExtensions = new FormattingExtensions
-    extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
 
@@ -23,7 +21,7 @@ class ViewHierarchy {
         if (!application.shouldBeSkipped(templateFilePath)) {
             fsa.generateFile(templateFilePath, hierarchyView(appName, false))
         }
-        if (application.generateSeparateAdminTemplates) {
+        if (application.separateAdminTemplates) {
             templateFilePath = templateFile('Admin/viewTree')
             if (!application.shouldBeSkipped(templateFilePath)) {
                 fsa.generateFile(templateFilePath, hierarchyView(appName, true))
@@ -33,7 +31,7 @@ class ViewHierarchy {
         if (!application.shouldBeSkipped(templateFilePath)) {
             fsa.generateFile(templateFilePath, hierarchyItemsView(appName, false))
         }
-        if (application.generateSeparateAdminTemplates) {
+        if (application.separateAdminTemplates) {
             templateFilePath = templateFile('Admin/viewTreeItems')
             if (!application.shouldBeSkipped(templateFilePath)) {
                 fsa.generateFile(templateFilePath, hierarchyItemsView(appName, true))
@@ -43,7 +41,7 @@ class ViewHierarchy {
 
     def private hierarchyView(Entity it, String appName, Boolean isAdmin) '''
         «val objName = name.formatForCode»
-        «IF application.generateSeparateAdminTemplates»
+        «IF application.separateAdminTemplates»
             {# purpose of this template: «nameMultiple.formatForDisplay» «IF isAdmin»admin«ELSE»user«ENDIF» tree view #}
             {% extends «IF isAdmin»'«appName»::adminBase.html.twig'«ELSE»'«appName»::base.html.twig'«ENDIF» %}
         «ELSE»
@@ -51,7 +49,7 @@ class ViewHierarchy {
             {% extends routeArea == 'admin' ? '«appName»::adminBase.html.twig' : '«appName»::base.html.twig' %}
         «ENDIF»
         {% block title __('«name.formatForDisplayCapital» hierarchy') %}
-        «IF !application.generateSeparateAdminTemplates || isAdmin»
+        «IF !application.separateAdminTemplates || isAdmin»
             {% block adminPageIcon 'list-alt' %}
         «ENDIF»
         {% block content %}
@@ -94,7 +92,7 @@ class ViewHierarchy {
     '''
 
     def private hierarchyItemsView(Entity it, String appName, Boolean isAdmin) '''
-        «IF application.generateSeparateAdminTemplates»
+        «IF application.separateAdminTemplates»
             {# purpose of this template: «nameMultiple.formatForDisplay» «IF isAdmin»admin«ELSE»user«ENDIF» tree items #}
         «ELSE»
             {# purpose of this template: «nameMultiple.formatForDisplay» tree items #}

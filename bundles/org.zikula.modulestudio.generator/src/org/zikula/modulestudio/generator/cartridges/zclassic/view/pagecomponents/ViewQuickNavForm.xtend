@@ -5,7 +5,6 @@ import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.JoinRelationship
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
-import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
@@ -14,7 +13,6 @@ import org.zikula.modulestudio.generator.extensions.Utils
 class ViewQuickNavForm {
 
     extension FormattingExtensions = new FormattingExtensions
-    extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     extension ModelExtensions = new ModelExtensions
     extension ModelJoinExtensions = new ModelJoinExtensions
     extension NamingExtensions = new NamingExtensions
@@ -26,7 +24,7 @@ class ViewQuickNavForm {
         if (!application.shouldBeSkipped(templatePath)) {
             fsa.generateFile(templatePath, quickNavForm)
         }
-        if (application.generateSeparateAdminTemplates) {
+        if (application.separateAdminTemplates) {
             templatePath = templateFile('Admin/viewQuickNav')
             if (!application.shouldBeSkipped(templatePath)) {
                 fsa.generateFile(templatePath, quickNavForm)

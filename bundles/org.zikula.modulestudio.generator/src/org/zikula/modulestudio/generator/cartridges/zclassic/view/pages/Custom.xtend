@@ -5,14 +5,12 @@ import de.guite.modulestudio.metamodel.CustomAction
 import de.guite.modulestudio.metamodel.Entity
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
-import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class Custom {
 
     extension FormattingExtensions = new FormattingExtensions
-    extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
 
@@ -25,7 +23,7 @@ class Custom {
         if (!app.shouldBeSkipped(templateFilePath)) {
             fsa.generateFile(templateFilePath, customView(it, entity, false))
         }
-        if (app.generateSeparateAdminTemplates) {
+        if (app.separateAdminTemplates) {
             templateFilePath = templateFile(entity, 'Admin/' + name.formatForCode)
             if (!app.shouldBeSkipped(templateFilePath)) {
                 fsa.generateFile(templateFilePath, customView(it, entity, true))
@@ -34,7 +32,7 @@ class Custom {
     }
 
     def private customView(CustomAction it, Entity controller, Boolean isAdmin) '''
-        «IF app.generateSeparateAdminTemplates»
+        «IF app.separateAdminTemplates»
             {# purpose of this template: show output of «name.formatForDisplay» action in «entity.name.formatForDisplay» «IF isAdmin»admin«ELSE»user«ENDIF» area #}
             {% extends «IF isAdmin»'«app.appName»::adminBase.html.twig'«ELSE»'«app.appName»::base.html.twig'«ENDIF» %}
         «ELSE»
@@ -42,7 +40,7 @@ class Custom {
             {% extends routeArea == 'admin' ? '«app.appName»::adminBase.html.twig' : '«app.appName»::base.html.twig' %}
         «ENDIF»
         {% block title __('«name.formatForDisplayCapital»') %}
-        «IF !app.generateSeparateAdminTemplates || isAdmin»
+        «IF !app.separateAdminTemplates || isAdmin»
             {% block admin_page_icon 'square' %}
         «ENDIF»
         {% block content %}
@@ -52,5 +50,5 @@ class Custom {
         {% endblock %}
     '''
 
-    def private relativeTemplatePath(CustomAction it, Entity controller, Boolean isAdmin) '''«entity.name.formatForCodeCapital»/«IF app.generateSeparateAdminTemplates && isAdmin»Admin/«ENDIF»«name.formatForCode.toFirstLower».html.twig'''
+    def private relativeTemplatePath(CustomAction it, Entity controller, Boolean isAdmin) '''«entity.name.formatForCodeCapital»/«IF app.separateAdminTemplates && isAdmin»Admin/«ENDIF»«name.formatForCode.toFirstLower».html.twig'''
 }

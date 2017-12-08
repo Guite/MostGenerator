@@ -52,7 +52,6 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.view.Plugins
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.Styles
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.Views
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
-import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
@@ -61,7 +60,6 @@ import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
 class ZclassicGenerator implements IGenerator {
 
     extension ControllerExtensions = new ControllerExtensions
-    extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension ModelExtensions = new ModelExtensions
     extension Utils = new Utils

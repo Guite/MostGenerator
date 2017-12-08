@@ -4,7 +4,6 @@ import de.guite.modulestudio.metamodel.Entity
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
-import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
@@ -12,7 +11,6 @@ class Json {
 
     extension ControllerExtensions = new ControllerExtensions
     extension FormattingExtensions = new FormattingExtensions
-    extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
 
@@ -27,7 +25,7 @@ class Json {
             if (!application.shouldBeSkipped(templateFilePath)) {
                 fsa.generateFile(templateFilePath, jsonView(appName))
             }
-            if (application.generateSeparateAdminTemplates) {
+            if (application.separateAdminTemplates) {
                 templateFilePath = templateFileWithExtension('Admin/view', 'json')
                 if (!application.shouldBeSkipped(templateFilePath)) {
                     fsa.generateFile(templateFilePath, jsonView(appName))
@@ -39,7 +37,7 @@ class Json {
             if (!application.shouldBeSkipped(templateFilePath)) {
                 fsa.generateFile(templateFilePath, jsonDisplay(appName))
             }
-            if (application.generateSeparateAdminTemplates) {
+            if (application.separateAdminTemplates) {
                 templateFilePath = templateFileWithExtension('Admin/display', 'json')
                 if (!application.shouldBeSkipped(templateFilePath)) {
                     fsa.generateFile(templateFilePath, jsonDisplay(appName))

@@ -9,7 +9,6 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.view.formcomponents
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.formcomponents.SharedFormElements
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
-import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.ModelInheritanceExtensions
@@ -22,7 +21,6 @@ class Forms {
 
     extension ControllerExtensions = new ControllerExtensions
     extension FormattingExtensions = new FormattingExtensions
-    extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     extension ModelExtensions = new ModelExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension ModelInheritanceExtensions = new ModelInheritanceExtensions
@@ -57,7 +55,7 @@ class Forms {
         if (!app.shouldBeSkipped(templatePath)) {
             fsa.generateFile(templatePath, formTemplate(actionName))
         }
-        if (application.generateSeparateAdminTemplates) {
+        if (application.separateAdminTemplates) {
             isSeparateAdminTemplate = true
             templatePath = editTemplateFile('Admin/' + actionName)
             if (!app.shouldBeSkipped(templatePath)) {
@@ -66,13 +64,13 @@ class Forms {
         }
 
         new Relations(fsa, app, false).generateInclusionTemplate(it)
-        if (application.generateSeparateAdminTemplates) {
+        if (application.separateAdminTemplates) {
             new Relations(fsa, app, true).generateInclusionTemplate(it)
         }
     }
 
     def private formTemplate(Entity it, String actionName) '''
-        «IF application.generateSeparateAdminTemplates»
+        «IF application.separateAdminTemplates»
             {# purpose of this template: build the «IF isSeparateAdminTemplate»admin«ELSE»user«ENDIF» form to «actionName.formatForDisplay» an instance of «name.formatForDisplay» #}
             {% set baseTemplate = app.request.query.getBoolean('raw', false) ? 'raw' : «IF isSeparateAdminTemplate»'adminBase'«ELSE»'base'«ENDIF» %}
         «ELSE»
@@ -82,7 +80,7 @@ class Forms {
         {% extends '«application.appName»::' ~ baseTemplate ~ '.html.twig' %}
 
         {% block title mode == 'create' ? __('Create «name.formatForDisplay»') : __('Edit «name.formatForDisplay»') %}
-        «IF !application.generateSeparateAdminTemplates || isSeparateAdminTemplate»
+        «IF !application.separateAdminTemplates || isSeparateAdminTemplate»
             {% block admin_page_icon mode == 'create' ? 'plus' : 'pencil-square-o' %}
         «ENDIF»
         {% block content %}

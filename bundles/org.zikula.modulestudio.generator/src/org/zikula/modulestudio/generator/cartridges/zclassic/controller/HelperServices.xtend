@@ -20,7 +20,6 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.controller.helper.T
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.helper.UploadHelper
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.helper.ViewHelper
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.helper.WorkflowHelper
-import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
@@ -30,7 +29,6 @@ import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
  */
 class HelperServices {
 
-    extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     extension ModelExtensions = new ModelExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension WorkflowExtensions = new WorkflowExtensions

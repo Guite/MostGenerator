@@ -2,11 +2,8 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.techdoc
 
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.AuthMethodType
-import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 
 class TechStructureSettings {
-
-    extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
 
     TechHelper helper = new TechHelper
     String language
@@ -93,7 +90,7 @@ class TechStructureSettings {
             <td headers="hSettingName1">«IF language == 'de'»Anbieter für Filter-Hooks«ELSE»Filter hooks provider«ENDIF»</td>
             <td headers="hSettingValue1" class="text-center">«filterHookProvider.literal» &ndash; «helper.hookProviderDescription(filterHookProvider, language)»</td>
             <td headers="hSettingName2">«IF language == 'de'»Separate Admin-Templates«ELSE»Separate admin templates«ENDIF»</td>
-            <td headers="hSettingValue2" class="text-center">«helper.flag(generateSeparateAdminTemplates)»</td>
+            <td headers="hSettingValue2" class="text-center">«helper.flag(separateAdminTemplates)»</td>
         </tr>
         <tr>
             <td headers="hSettingName1">«IF language == 'de'»RSS-Templates«ELSE»RSS templates«ENDIF»</td>

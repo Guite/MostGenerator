@@ -16,11 +16,6 @@ class Utils {
     extension FormattingExtensions = new FormattingExtensions
 
     /**
-     * Helper methods for generator settings.
-     */
-    extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
-
-    /**
      * Returns the version number of ModuleStudio.
      *
      * @return String The version number
@@ -135,7 +130,7 @@ class Utils {
     def Boolean targets(Application it, String version) {
         val useStable15 = !#['1.5-dev', '2.0', '2.0-dev'].contains(version)
 
-        switch getCoreVersion {
+        switch targetCoreVersion {
             case ZK2DEV:
                 #['2.0-dev', '2.0', '1.5-dev'].contains(version)
             case ZK20:
@@ -158,7 +153,7 @@ class Utils {
      * @return String the formatted version number
      */
     def targetSemVer(Application it, Boolean withPoint) {
-        switch getCoreVersion {
+        switch targetCoreVersion {
             case ZK2DEV:
                 if (!withPoint) '2.0' else '2.0.4'
             case ZK20:

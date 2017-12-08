@@ -3,13 +3,11 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.view.additions
 import de.guite.modulestudio.metamodel.Application
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
-import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 
 class BlockDetailView {
 
     extension ControllerExtensions = new ControllerExtensions
-    extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     extension NamingExtensions = new NamingExtensions
 
     def generate(Application it, IFileSystemAccess fsa) {

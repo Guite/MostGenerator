@@ -23,7 +23,6 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.view.pagecomponents
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.pagecomponents.ViewQuickNavForm
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
-import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
@@ -35,7 +34,6 @@ class View {
 
     extension ControllerExtensions = new ControllerExtensions
     extension FormattingExtensions = new FormattingExtensions
-    extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension ModelExtensions = new ModelExtensions
     extension NamingExtensions = new NamingExtensions
@@ -60,7 +58,7 @@ class View {
         if (!application.shouldBeSkipped(templateFilePath)) {
             fsa.generateFile(templateFilePath, viewView(false))
         }
-        if (application.generateSeparateAdminTemplates) {
+        if (application.separateAdminTemplates) {
             templateFilePath = templateFile('Admin/view')
             if (!application.shouldBeSkipped(templateFilePath)) {
                 fsa.generateFile(templateFilePath, viewView(true))
@@ -72,7 +70,7 @@ class View {
             if (!application.shouldBeSkipped(templateFilePath)) {
                 fsa.generateFile(templateFilePath, viewViewDeleted(false))
             }
-            if (application.generateSeparateAdminTemplates) {
+            if (application.separateAdminTemplates) {
                 templateFilePath = templateFile('Admin/viewDeleted')
                 if (!application.shouldBeSkipped(templateFilePath)) {
                     fsa.generateFile(templateFilePath, viewViewDeleted(true))
@@ -82,7 +80,7 @@ class View {
     }
 
     def private viewView(Entity it, Boolean isAdmin) '''
-        «IF application.generateSeparateAdminTemplates»
+        «IF application.separateAdminTemplates»
             {# purpose of this template: «nameMultiple.formatForDisplay» «IF isAdmin»admin«ELSE»user«ENDIF» list view #}
             {% extends «IF isAdmin»'«application.appName»::adminBase.html.twig'«ELSE»'«application.appName»::base.html.twig'«ENDIF» %}
         «ELSE»
@@ -90,7 +88,7 @@ class View {
             {% extends routeArea == 'admin' ? '«application.appName»::adminBase.html.twig' : '«application.appName»::base.html.twig' %}
         «ENDIF»
         {% block title own ? __('My «nameMultiple.formatForDisplay»') : __('«nameMultiple.formatForDisplayCapital» list') %}
-        «IF !application.generateSeparateAdminTemplates || isAdmin»
+        «IF !application.separateAdminTemplates || isAdmin»
             {% block admin_page_icon 'list-alt' %}
         «ENDIF»
         {% block content %}
@@ -516,7 +514,7 @@ class View {
     }
 
     def private viewViewDeleted(Entity it, Boolean isAdmin) '''
-        «IF application.generateSeparateAdminTemplates»
+        «IF application.separateAdminTemplates»
             {# purpose of this template: «IF isAdmin»admin«ELSE»user«ENDIF» list view of deleted «nameMultiple.formatForDisplay» #}
             {% extends «IF isAdmin»'«application.appName»::adminBase.html.twig'«ELSE»'«application.appName»::base.html.twig'«ENDIF» %}
         «ELSE»
@@ -524,7 +522,7 @@ class View {
             {% extends routeArea == 'admin' ? '«application.appName»::adminBase.html.twig' : '«application.appName»::base.html.twig' %}
         «ENDIF»
         {% block title __('Deleted «nameMultiple.formatForDisplay»') %}
-        «IF !application.generateSeparateAdminTemplates || isAdmin»
+        «IF !application.separateAdminTemplates || isAdmin»
             {% block admin_page_icon 'trash-o' %}
         «ENDIF»
         {% block content %}

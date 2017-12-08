@@ -31,11 +31,6 @@ class ModelBehaviourExtensions {
     extension DateTimeExtensions = new DateTimeExtensions
 
     /**
-     * Extensions related to generator settings.
-     */
-    extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
-
-    /**
      * Extensions related to the model layer.
      */
     extension ModelExtensions = new ModelExtensions

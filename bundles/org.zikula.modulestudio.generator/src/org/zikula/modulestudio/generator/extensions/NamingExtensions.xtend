@@ -18,11 +18,6 @@ class NamingExtensions {
     extension FormattingExtensions = new FormattingExtensions
 
     /**
-     * Helper methods for generator settings.
-     */
-    extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
-
-    /**
      * Additional utility methods.
      */
     extension Utils = new Utils
@@ -176,7 +171,7 @@ class NamingExtensions {
      * Returns the relative path to the application's root directory.
      */
     def relativeAppRootPath(Application it) {
-        if (systemModule) {
+        if (isSystemModule) {
             'system/' + name.formatForCodeCapital + 'Module'
         } else {
             'modules/' + vendor.formatForCodeCapital + '/' + name.formatForCodeCapital + 'Module'
@@ -258,5 +253,38 @@ class NamingExtensions {
      */
     def getAppTestsPath(Application it) {
         'Tests/'
+    }
+
+    /**
+     * Determines a blacklist with each entry representing a file which should not be generated.
+     */
+    def private getListOfFilesToBeSkipped(Application it) {
+        if (null !== skipFiles) {
+            getListOfAffectedFiles(skipFiles)
+        } else {
+            newArrayList('')
+        }
+    }
+
+    /**
+     * Determines a list with file pathes which should be marked by special file names.
+     */
+    def private getListOfFilesToBeMarked(Application it) {
+        if (null !== markFiles) {
+            getListOfAffectedFiles(markFiles)
+        } else {
+            newArrayList('')
+        }
+    }
+
+    /**
+     * Prepares a list of file pathes for further processing.
+     */
+    def private getListOfAffectedFiles(String setting) {
+        var list = setting.replace("\t", '').replace("\n", '').split(',').toList
+        for (i : 0 ..< list.size) {
+            list.set(i, list.get(i).trim)
+        }
+        list
     }
 }

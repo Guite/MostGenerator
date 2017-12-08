@@ -14,7 +14,6 @@ import de.guite.modulestudio.metamodel.UploadField
 import org.eclipse.xtext.generator.IFileSystemAccess2
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
-import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.ModelInheritanceExtensions
@@ -29,11 +28,6 @@ class PersistenceTransformer {
      * Extension methods for controllers.
      */
     extension ControllerExtensions = new ControllerExtensions
-
-    /**
-     * Extension methods for generator settings.
-     */
-    extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
 
     /**
      * Extension methods for formatting names.

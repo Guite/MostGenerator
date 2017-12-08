@@ -3,13 +3,11 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.techdoc
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.HookProviderMode
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
-import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class TechHelper {
 
     extension FormattingExtensions = new FormattingExtensions
-    extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     extension Utils = new Utils
 
     def docPage(Application it, String language, String title, CharSequence content) '''

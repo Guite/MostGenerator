@@ -12,7 +12,6 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.controller.javascri
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.javascript.InlineEditing
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.javascript.ItemSelector
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
-import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
@@ -20,7 +19,6 @@ import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 class JavaScriptFiles {
 
     extension ControllerExtensions = new ControllerExtensions
-    extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension ModelJoinExtensions = new ModelJoinExtensions
     extension ModelExtensions = new ModelExtensions

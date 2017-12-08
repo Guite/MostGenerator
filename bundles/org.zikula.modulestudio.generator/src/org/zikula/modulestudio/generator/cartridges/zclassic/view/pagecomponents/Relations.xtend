@@ -8,7 +8,6 @@ import de.guite.modulestudio.metamodel.JoinRelationship
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
-import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
@@ -20,7 +19,6 @@ class Relations {
 
     extension ControllerExtensions = new ControllerExtensions
     extension FormattingExtensions = new FormattingExtensions
-    extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension ModelExtensions = new ModelExtensions
     extension ModelJoinExtensions = new ModelJoinExtensions
@@ -33,7 +31,7 @@ class Relations {
         if (!app.shouldBeSkipped(templatePath)) {
             fsa.generateFile(templatePath, inclusionTemplate(app, many))
         }
-        if (application.generateSeparateAdminTemplates) {
+        if (application.separateAdminTemplates) {
             templatePath = templateFile('Admin/includeDisplayItemList' + (if (many) 'Many' else 'One'))
             if (!app.shouldBeSkipped(templatePath)) {
                 fsa.generateFile(templatePath, inclusionTemplate(app, many))

@@ -2,7 +2,6 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.controller.action
 
 import de.guite.modulestudio.metamodel.Entity
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
-import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.UrlExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
@@ -11,7 +10,6 @@ class LoggableHistory {
 
     extension FormattingExtensions = new FormattingExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
-    extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     extension UrlExtensions = new UrlExtensions
     extension Utils = new Utils
 
@@ -185,6 +183,6 @@ class LoggableHistory {
             $templateParameters['diffValues'] = $diffValues;
         }
 
-        return $this->render('@«application.appName»/«name.formatForCode.toFirstUpper»/«IF application.generateSeparateAdminTemplates»' . ($isAdmin ? 'Admin/' : '') . '«ENDIF»history.html.twig', $templateParameters);
+        return $this->render('@«application.appName»/«name.formatForCode.toFirstUpper»/«IF application.separateAdminTemplates»' . ($isAdmin ? 'Admin/' : '') . '«ENDIF»history.html.twig', $templateParameters);
     '''
 }

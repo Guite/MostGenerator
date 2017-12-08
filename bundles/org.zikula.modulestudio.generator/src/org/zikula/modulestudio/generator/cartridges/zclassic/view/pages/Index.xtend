@@ -3,14 +3,12 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.view.pages
 import de.guite.modulestudio.metamodel.Entity
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
-import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class Index {
 
     extension FormattingExtensions = new FormattingExtensions
-    extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
 
@@ -23,7 +21,7 @@ class Index {
         if (!application.shouldBeSkipped(templateFilePath)) {
             fsa.generateFile(templateFilePath, indexView(false))
         }
-        if (application.generateSeparateAdminTemplates) {
+        if (application.separateAdminTemplates) {
             templateFilePath = templateFile('Admin/index')
             if (!application.shouldBeSkipped(templateFilePath)) {
                 fsa.generateFile(templateFilePath, indexView(true))
@@ -32,7 +30,7 @@ class Index {
     }
 
     def private indexView(Entity it, Boolean isAdmin) '''
-        «IF application.generateSeparateAdminTemplates»
+        «IF application.separateAdminTemplates»
             {# purpose of this template: «nameMultiple.formatForDisplay» «IF isAdmin»admin«ELSE»user«ENDIF» index view #}
             {% extends «IF isAdmin»'«application.appName»::adminBase.html.twig'«ELSE»'«application.appName»::base.html.twig'«ENDIF» %}
         «ELSE»
@@ -40,7 +38,7 @@ class Index {
             {% extends routeArea == 'admin' ? '«application.appName»::adminBase.html.twig' : '«application.appName»::base.html.twig' %}
         «ENDIF»
         {% block title __('«nameMultiple.formatForDisplay»') %}
-        «IF !application.generateSeparateAdminTemplates || isAdmin»
+        «IF !application.separateAdminTemplates || isAdmin»
             {% block admin_page_icon 'home' %}
         «ENDIF»
         {% block content %}

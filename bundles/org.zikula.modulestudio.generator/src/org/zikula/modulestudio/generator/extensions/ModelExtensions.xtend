@@ -42,7 +42,6 @@ class ModelExtensions {
 
     extension CollectionUtils = new CollectionUtils
     extension FormattingExtensions = new FormattingExtensions
-    extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     extension ModelInheritanceExtensions = new ModelInheritanceExtensions
     extension Utils = new Utils
     extension WorkflowExtensions = new WorkflowExtensions

@@ -7,7 +7,6 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.document
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.techdocs.TechComplexity
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.techdocs.TechStructure
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
-import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
@@ -16,7 +15,6 @@ import org.zikula.modulestudio.generator.extensions.Utils
 class Docs {
 
     extension FormattingExtensions = new FormattingExtensions
-    extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension ModelExtensions = new ModelExtensions
     extension NamingExtensions = new NamingExtensions

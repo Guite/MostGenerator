@@ -15,7 +15,6 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.view.pagecomponents
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.pagecomponents.SimpleFields
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
-import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
@@ -29,7 +28,6 @@ class Display {
 
     extension ControllerExtensions = new ControllerExtensions
     extension FormattingExtensions = new FormattingExtensions
-    extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension ModelExtensions = new ModelExtensions
     extension ModelJoinExtensions = new ModelJoinExtensions
@@ -45,7 +43,7 @@ class Display {
         if (!application.shouldBeSkipped(templateFilePath)) {
             fsa.generateFile(templateFilePath, displayView(appName, false))
         }
-        if (application.generateSeparateAdminTemplates) {
+        if (application.separateAdminTemplates) {
             templateFilePath = templateFile('Admin/display')
             if (!application.shouldBeSkipped(templateFilePath)) {
                 fsa.generateFile(templateFilePath, displayView(appName, true))
@@ -56,7 +54,7 @@ class Display {
             if (!application.shouldBeSkipped(templateFilePath)) {
                 fsa.generateFile(templateFilePath, treeRelatives(appName, false))
             }
-            if (application.generateSeparateAdminTemplates) {
+            if (application.separateAdminTemplates) {
                 templateFilePath = templateFile('Admin/displayTreeRelatives')
                 if (!application.shouldBeSkipped(templateFilePath)) {
                     fsa.generateFile(templateFilePath, treeRelatives(appName, true))
@@ -69,7 +67,7 @@ class Display {
         «val refedElems = getOutgoingJoinRelations.filter[r|r.target instanceof Entity && r.target.application == it.application]
                         + incoming.filter(ManyToManyRelationship).filter[r|r.source instanceof Entity && r.source.application == it.application]»
         «val objName = name.formatForCode»
-        «IF application.generateSeparateAdminTemplates»
+        «IF application.separateAdminTemplates»
             {# purpose of this template: «nameMultiple.formatForDisplay» «IF isAdmin»admin«ELSE»user«ENDIF» display view #}
             {% set baseTemplate = app.request.query.getBoolean('raw', false) ? 'raw' : «IF isAdmin»'adminBase'«ELSE»'base'«ENDIF» %}
         «ELSE»
@@ -85,7 +83,7 @@ class Display {
                 «new ItemActionsView().generate(it, 'display', 'Start')»
             «ENDIF»
         {% endblock %}
-        «IF !application.generateSeparateAdminTemplates || isAdmin»
+        «IF !application.separateAdminTemplates || isAdmin»
             {% block admin_page_icon 'eye' %}
         «ENDIF»
         {% block content %}
@@ -356,7 +354,7 @@ class Display {
     def private treeRelatives(Entity it, String appName, Boolean isAdmin) '''
         «val objName = name.formatForCode»
         «val pluginPrefix = application.appName.formatForDB»
-        «IF application.generateSeparateAdminTemplates»
+        «IF application.separateAdminTemplates»
             {# purpose of this template: show different forms of relatives for a given tree node in «IF isAdmin»admin«ELSE»user«ENDIF» area #}
         «ELSE»
             {# purpose of this template: show different forms of relatives for a given tree node #}

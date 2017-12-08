@@ -19,7 +19,6 @@ import de.guite.modulestudio.metamodel.ViewAction
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.DateTimeExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
-import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
@@ -30,7 +29,6 @@ class Actions {
     extension ControllerExtensions = new ControllerExtensions
     extension DateTimeExtensions = new DateTimeExtensions
     extension FormattingExtensions = new FormattingExtensions
-    extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     extension ModelExtensions = new ModelExtensions
     extension ModelJoinExtensions = new ModelJoinExtensions
     extension NamingExtensions = new NamingExtensions
@@ -87,7 +85,7 @@ class Actions {
             return $this->redirectToRoute('«app.appName.formatForDB»_«name.formatForDB»_' . $templateParameters['routeArea'] . 'view');
         «ELSE»
             // return index template
-            return $this->render('@«app.appName»/«name.formatForCodeCapital»/«IF app.generateSeparateAdminTemplates»' . ($isAdmin ? 'Admin/' : '') . '«ENDIF»index.html.twig', $templateParameters);
+            return $this->render('@«app.appName»/«name.formatForCodeCapital»/«IF app.separateAdminTemplates»' . ($isAdmin ? 'Admin/' : '') . '«ENDIF»index.html.twig', $templateParameters);
         «ENDIF»
     '''
 
@@ -463,6 +461,6 @@ class Actions {
         ];
 
         // return template
-        return $this->render('@«app.appName»/«name.formatForCodeCapital»/«IF app.generateSeparateAdminTemplates»' . ($isAdmin ? 'Admin/' : '') . '«ENDIF»«action.name.formatForCode.toFirstLower».html.twig', $templateParameters);
+        return $this->render('@«app.appName»/«name.formatForCodeCapital»/«IF app.separateAdminTemplates»' . ($isAdmin ? 'Admin/' : '') . '«ENDIF»«action.name.formatForCode.toFirstLower».html.twig', $templateParameters);
     '''
 }

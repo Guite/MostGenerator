@@ -9,7 +9,6 @@ import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.Forms
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
-import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
@@ -21,7 +20,6 @@ class Relations {
 
     extension ControllerExtensions = new ControllerExtensions
     extension FormattingExtensions = new FormattingExtensions
-    extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     extension ModelExtensions = new ModelExtensions
     extension ModelJoinExtensions = new ModelJoinExtensions
     extension NamingExtensions = new NamingExtensions
@@ -106,7 +104,7 @@ class Relations {
         if (!app.shouldBeSkipped(templateFileNameItemList)) {
             fsa.generateFile(templateFileNameItemList, component_ItemList(ownEntity, many, hasEdit))
         }
-        if (app.generateSeparateAdminTemplates) {
+        if (app.separateAdminTemplates) {
             templateFileName = templateFile(ownEntity, 'Admin/' + templateName)
             templateFileNameItemList = templateFile(ownEntity, 'Admin/' + templateNameItemList)
             if (!app.shouldBeSkipped(templateFileName)) {
