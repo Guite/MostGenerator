@@ -94,7 +94,7 @@ class Relations {
         }
 
         // onlyTabTitle and onlyInclude are false here, so lets create the inclusion templates
-        'Generating edit inclusion templates for entity "' + ownEntity.name.formatForDisplay + '"'.printIfNotTesting(fsa)
+        ('Generating edit inclusion templates for entity "' + ownEntity.name.formatForDisplay + '"').printIfNotTesting(fsa)
         var templateNameItemList = 'includeSelect' + editSnippet + 'ItemList' + getTargetMultiplicity(useTarget)
         var templateFileName = templateFile(ownEntity, templateName)
         var templateFileNameItemList = templateFile(ownEntity, templateNameItemList)

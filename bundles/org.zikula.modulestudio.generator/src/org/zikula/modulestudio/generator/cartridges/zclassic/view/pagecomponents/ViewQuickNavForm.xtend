@@ -19,7 +19,7 @@ class ViewQuickNavForm {
     extension Utils = new Utils
 
     def generate(Entity it, String appName, IFileSystemAccess fsa) {
-        'Generating view filter form templates for entity "' + name.formatForDisplay + '"'.printIfNotTesting(fsa)
+        ('Generating view filter form templates for entity "' + name.formatForDisplay + '"').printIfNotTesting(fsa)
         var templatePath = templateFile('viewQuickNav')
         if (!application.shouldBeSkipped(templatePath)) {
             fsa.generateFile(templatePath, quickNavForm)
