@@ -707,6 +707,17 @@ class FormHandler {
             // to be customised in sub classes
             return null;
         }
+
+        /**
+         * Returns the form options.
+         *
+         * @return array
+         */
+        protected function getFormOptions()
+        {
+            // to be customised in sub classes
+            return [];
+        }
         «IF !getJoinRelations.empty»
 
             «relationPresetsHelper.baseMethod(it)»
@@ -1323,6 +1334,16 @@ class FormHandler {
          */
         protected function createForm()
         {
+            return $this->formFactory->create(«name.formatForCodeCapital»Type::class, $this->entityRef, $this->getFormOptions());
+        }
+
+        /**
+         * Returns the form options.
+         *
+         * @return array
+         */
+        protected function getFormOptions()
+        {
             $options = [
                 «IF hasUploadFieldsEntity»
                     'entity' => $this->entityRef,
@@ -1357,7 +1378,7 @@ class FormHandler {
                 }
             «ENDIF»
 
-            return $this->formFactory->create(«name.formatForCodeCapital»Type::class, $this->entityRef, $options);
+            return $options;
         }
     '''
 
