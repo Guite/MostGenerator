@@ -2,13 +2,9 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.view.formcomponent
 
 import de.guite.modulestudio.metamodel.DatetimeField
 import de.guite.modulestudio.metamodel.DerivedField
-import de.guite.modulestudio.metamodel.EmailField
-import de.guite.modulestudio.metamodel.ListField
 import de.guite.modulestudio.metamodel.StringField
 import de.guite.modulestudio.metamodel.StringRole
-import de.guite.modulestudio.metamodel.TextField
 import de.guite.modulestudio.metamodel.UploadField
-import de.guite.modulestudio.metamodel.UrlField
 import org.zikula.modulestudio.generator.extensions.DateTimeExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
@@ -26,14 +22,8 @@ class Validation {
 
     def private fieldValidationCssClassAdditions(DerivedField it) {
         switch it {
-            StringField case it.role == StringRole.COLOUR: ' validate-nospace validate-colour ' + application.appName.formatForDB + '-colour-picker'
-            StringField case it.nospace: ' validate-nospace'
-            TextField case it.nospace: ' validate-nospace'
-            EmailField case it.nospace: ' validate-nospace'
-            UrlField case it.nospace: ' validate-nospace'
-            UploadField case it.nospace: ' validate-nospace validate-upload'
+            StringField case it.role == StringRole.COLOUR: ' validate-colour ' + application.appName.formatForDB + '-colour-picker'
             UploadField: ' validate-upload'
-            ListField case it.nospace: ' validate-nospace'
             DatetimeField: '''«fieldValidationCssClassAdditionsDefault»«IF !isTimeField»«fieldValidationCssClassDateRange»«ENDIF»'''
             default: ''
         }

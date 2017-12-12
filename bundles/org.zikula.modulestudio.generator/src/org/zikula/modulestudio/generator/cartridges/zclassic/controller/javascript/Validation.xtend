@@ -185,13 +185,6 @@ class Validation {
          * Runs special validation rules.
          */
         function «vendorAndName»ExecuteCustomValidationConstraints(objectType, currentEntityId) {
-            jQuery('.validate-nospace').each(function () {
-                if (!«vendorAndName»ValidateNoSpace(jQuery(this).val())) {
-                    document.getElementById(jQuery(this).attr('id')).setCustomValidity(Translator.__('This value must not contain spaces.'));
-                } else {
-                    document.getElementById(jQuery(this).attr('id')).setCustomValidity('');
-                }
-            });
             «IF hasColourFields»
                 jQuery('.validate-colour').each(function () {
                     if (!«vendorAndName»ValidateHtmlColour(jQuery(this).val())) {

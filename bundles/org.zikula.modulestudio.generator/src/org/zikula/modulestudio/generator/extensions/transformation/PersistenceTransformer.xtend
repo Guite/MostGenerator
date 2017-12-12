@@ -3,13 +3,10 @@ package org.zikula.modulestudio.generator.extensions.transformation
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.EntityWorkflowType
-import de.guite.modulestudio.metamodel.IpAddressScope
 import de.guite.modulestudio.metamodel.ManyToOneRelationship
 import de.guite.modulestudio.metamodel.ModuleStudioFactory
 import de.guite.modulestudio.metamodel.NumberFieldType
 import de.guite.modulestudio.metamodel.OneToOneRelationship
-import de.guite.modulestudio.metamodel.StringField
-import de.guite.modulestudio.metamodel.StringRole
 import de.guite.modulestudio.metamodel.UploadField
 import org.eclipse.xtext.generator.IFileSystemAccess2
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
@@ -122,15 +119,6 @@ class PersistenceTransformer {
         // make optional upload fields nullable, too
         for (field : fields.filter(UploadField).filter[f|!f.mandatory]) {
             field.nullable = true
-        }
-
-        // add nospace constraint if required
-        for (field : fields.filter(StringField)) {
-            if (field.role == StringRole.BIC || field.role == StringRole.COLOUR || field.role == StringRole.COUNTRY || field.role == StringRole.CURRENCY
-                || field.role == StringRole.LANGUAGE || field.role == StringRole.LOCALE || field.ipAddress != IpAddressScope.NONE || field.role == StringRole.UUID
-            ) {
-                field.nospace = true
-            }
         }
     }
 

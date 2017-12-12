@@ -287,9 +287,6 @@ class SharedFormTypeFields {
             if (minLength > 0) {
                 messages += '''$this->__f('Note: this value must have a minimum length of %amount% characters.', ['%amount%' => «minLength»])'''
             }
-            if (true === nospace) {
-                messages += '''$this->__('Note: this value must not contain spaces.')'''
-            }
         }
         if (null !== regexp && !regexp.empty) {
             messages += '''$this->__f('Note: this value must«IF regexpOpposite» not«ENDIF» conform to the regular expression "%pattern%".', ['%pattern%' => '«regexp.replace('\'', '')»'])'''
@@ -383,9 +380,6 @@ class SharedFormTypeFields {
         if (minLength > 0) {
             messages += '''$this->__f('Note: this value must have a minimum length of %amount% characters.', ['%amount%' => «minLength»])'''
         }
-        if (true === nospace) {
-            messages += '''$this->__('Note: this value must not contain spaces.')'''
-        }
         if (null !== regexp && !regexp.empty) {
             messages += '''$this->__f('Note: this value must«IF regexpOpposite» not«ENDIF» conform to the regular expression "%pattern%".', ['%pattern%' => '«regexp.replace('\'', '')»'])'''
         }
@@ -401,9 +395,6 @@ class SharedFormTypeFields {
         }
         if (minLength > 0) {
             messages += '''$this->__f('Note: this value must have a minimum length of %amount% characters.', ['%amount%' => «minLength»])'''
-        }
-        if (true === nospace) {
-            messages += '''$this->__('Note: this value must not contain spaces.')'''
         }
 
         if (!multiple) {

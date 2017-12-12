@@ -237,12 +237,10 @@ class TechStructureFields {
         val result = newArrayList
         if (language == 'de') {
             if (fixed) result += 'Die Feldlänge ist fixiert.'
-            if (nospace) result += 'Leerzeichen sind nicht erlaubt.'
             if (minLength > 0) result += 'Die minimale Länge beträgt ' + minLength + ' Zeichen.'
             if (null !== regexp && !regexp.empty) result += 'Die Werte werden gegen ' + (if (regexpOpposite) 'Nichtzutreffen' else 'Zutreffen') + ' auf den regulären Ausdruck <code>' + regexp + '</code> validiert.'
         } else {
             if (fixed) result += 'Field length is fixed.'
-            if (nospace) result += 'Space chars are not allowed.'
             if (minLength > 0) result += 'Minimum length is ' + minLength + ' chars.'
             if (null !== regexp && !regexp.empty) result += 'Values are validated against ' + (if (regexpOpposite) ' not') + ' matching the regular expression <code>' + regexp + '</code>.'
         }

@@ -134,9 +134,6 @@ class ValidationConstraints {
 
     def private fieldAnnotationsString(AbstractStringField it) '''
         «fieldAnnotationsMandatory»
-        «IF nospace»
-            «' '»* @Assert\Regex(pattern="/\s/", match=false, message="This value must not contain space chars.")
-        «ENDIF»
         «IF null !== regexp && !regexp.empty»
             «' '»* @Assert\Regex(pattern="«regexp»"«IF regexpOpposite», match=false«ENDIF»)
         «ENDIF»
