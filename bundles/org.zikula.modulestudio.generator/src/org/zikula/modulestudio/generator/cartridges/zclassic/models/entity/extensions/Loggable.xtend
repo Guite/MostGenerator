@@ -81,14 +81,22 @@ class Loggable extends AbstractExtension implements EntityExtensionInterface {
          */
         public function selectDeleted($limit = null)
         {
+            $objectClass = str_replace('LogEntry', '', $this->_entityName);
+
+            // avoid selecting logs for those entries which already had been undeleted
+            $qbExisting = $this->getEntityManager()->createQueryBuilder();
+            $qbExisting->select('tbl.id')
+                ->from($objectClass, 'tbl');
+
             $qb = $this->getEntityManager()->createQueryBuilder();
             $qb->select('log')
                ->from($this->_entityName, 'log')
                ->andWhere('log.objectClass = :objectClass')
                ->andWhere('log.action = :action')
+               ->andWhere($qb->expr()->notIn('log.objectId', $qbExisting->getDQL()))
                ->orderBy('log.version', 'DESC');
 
-            $qb->setParameter('objectClass', str_replace('LogEntry', '', $this->_entityName))
+            $qb->setParameter('objectClass', $objectClass)
                ->setParameter('action', 'remove');
 
             $query = $qb->getQuery();
