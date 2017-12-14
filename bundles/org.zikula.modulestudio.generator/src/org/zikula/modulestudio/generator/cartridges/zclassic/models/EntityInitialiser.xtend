@@ -144,9 +144,9 @@ class EntityInitialiser {
     def private setDefaultValue(DatetimeField it) {
         if (it.defaultValue !== null && !it.defaultValue.empty && it.defaultValue.length > 0) {
             if (it.defaultValue != 'now') {
-                '''$entity->set«name.formatForCodeCapital»(new \DateTime('«it.defaultValue»'));'''
+                '''$entity->set«name.formatForCodeCapital»(new \DateTime«IF immutable»Immutable«ENDIF»('«it.defaultValue»'));'''
             } else {
-                '''$entity->set«name.formatForCodeCapital»(\DateTime::createFromFormat('«defaultFormat»', «defaultValueForNow»));'''
+                '''$entity->set«name.formatForCodeCapital»(\DateTime«IF immutable»Immutable«ENDIF»::createFromFormat('«defaultFormat»', «defaultValueForNow»));'''
             }
         }
     }

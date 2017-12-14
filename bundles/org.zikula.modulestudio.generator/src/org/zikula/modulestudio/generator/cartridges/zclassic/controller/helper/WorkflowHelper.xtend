@@ -290,7 +290,7 @@ class WorkflowHelper {
                     break;
             }
 
-            if ($title == '' && substr($actionId, 0, 6) == 'update') {
+            if ($title == '' && «IF targets('2.0')»$actionId«ELSE»substr($actionId, 0, 6)«ENDIF» == 'update') {
                 $title = $this->translator->__('Update');
             }
 
@@ -365,7 +365,7 @@ class WorkflowHelper {
                     break;
             }
 
-            if ($buttonClass == '' && substr($actionId, 0, 6) == 'update') {
+            if ($buttonClass == '' && «IF targets('2.0')»$actionId«ELSE»substr($actionId, 0, 6)«ENDIF» == 'update') {
                 $buttonClass = 'success';
         	}
 

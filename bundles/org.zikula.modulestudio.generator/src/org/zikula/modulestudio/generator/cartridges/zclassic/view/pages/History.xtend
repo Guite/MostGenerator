@@ -91,8 +91,8 @@ class History {
                         {% for fieldName, values in diffValues %}
                             <tr>
                                 <th headers="hFieldName" id="h{{ fieldName|replace({' ': '', '"':''}) }}" scope="row">{{ fieldName|humanize }}</th>
-                                <td headers="hMinVersion h{{ fieldName|replace({' ': '', '"':''}) }}"{% if values.changed %} class="diff-old"{% endif %}>{{ values.old is «app.appName.toLowerCase»_instanceOf('DateTime') ? values.old|localizeddate('long', 'medium') : values.old }}</td>
-                                <td headers="hMaxVersion h{{ fieldName|replace({' ': '', '"':''}) }}"{% if values.changed %} class="diff-new"{% endif %}>{{ values.new is «app.appName.toLowerCase»_instanceOf('DateTime') ? values.new|localizeddate('long', 'medium') : values.new }}</td>
+                                <td headers="hMinVersion h{{ fieldName|replace({' ': '', '"':''}) }}"{% if values.changed %} class="diff-old"{% endif %}>{{ values.old is «app.appName.toLowerCase»_instanceOf('DateTimeInterface') ? values.old|localizeddate('long', 'medium') : values.old }}</td>
+                                <td headers="hMaxVersion h{{ fieldName|replace({' ': '', '"':''}) }}"{% if values.changed %} class="diff-new"{% endif %}>{{ values.new is «app.appName.toLowerCase»_instanceOf('DateTimeInterface') ? values.new|localizeddate('long', 'medium') : values.new }}</td>
                             </tr>
                         {% endfor %}
                     </tbody>
@@ -163,7 +163,7 @@ class History {
                                                     <li>{{ __f('%field% set to <em>%value%</em>', {'%field%': field, '%value%': __('an empty collection')})|raw }}</li>
                                                 {% endif %}
                                             {% else %}
-                                                <li>{{ __f('%field% set to <em>%value%</em>', {'%field%': field, '%value%': value is «app.appName.toLowerCase»_instanceOf('DateTime') ? value|localizeddate('long', 'medium') : value|default(__('an empty value'))})|raw }}</li>
+                                                <li>{{ __f('%field% set to <em>%value%</em>', {'%field%': field, '%value%': value is «app.appName.toLowerCase»_instanceOf('DateTimeInterface') ? value|localizeddate('long', 'medium') : value|default(__('an empty value'))})|raw }}</li>
                                             {% endif %}
                                         {% endfor %}
                                     </ul>

@@ -59,6 +59,9 @@ class WorkflowEvents {
                 'workflow.transition' => ['onTransition', 5],
                 'workflow.enter' => ['onEnter', 5]«IF targets('2.0')»,«ENDIF»
                 «IF targets('2.0')»
+                    «IF targets('2.0-dev')»
+                        'workflow.completed' => ['onCompleted', 5]
+                    «ENDIF»
                     'workflow.announce' => ['onAnnounce', 5]
                 «ENDIF»
             ];
@@ -93,9 +96,11 @@ class WorkflowEvents {
             $objectType = $entity->get_objectType();
             $permissionLevel = ACCESS_READ;
             $transitionName = $event->getTransition()->getName();
-            if (substr($transitionName, 0, 6) == 'update') {
-                $transitionName = 'update';
-            }
+            «IF !targets('2.0')»
+                if (substr($transitionName, 0, 6) == 'update') {
+                    $transitionName = 'update';
+                }
+            «ENDIF»
             «/*not used atm $targetState = $event->getTransition()->getTos()[0];*/»
             $hasApproval = «IF needsApproval»in_array($objectType, ['«getAllEntities.filter[workflow != EntityWorkflowType.NONE].map[name.formatForCode].join('\', \'')»'])«ELSE»false«ENDIF»;
 
@@ -260,6 +265,30 @@ class WorkflowEvents {
                 }
             «ENDIF»
         }
+        «IF targets('2.0-dev')»
+
+            /**
+             * Listener for the `workflow.completed` event.
+             *
+             * Occurs after the object has completed a transition.
+             *
+             * This event is also triggered for each workflow individually, so you can react only to the events
+             * of a specific workflow by listening to `workflow.<workflow_name>.completed` instead.
+             * You can even listen to some specific transitions or states for a specific workflow
+             * using `workflow.<workflow_name>.completed.<state_name>`.
+             *
+             «exampleCode»
+             *
+             * @param Event $event The event instance
+             */
+            public function onCompleted(Event $event)
+            {
+                $entity = $event->getSubject();
+                if (!$this->isEntityManagedByThisBundle($entity) || !method_exists($entity, 'get_objectType')) {
+                    return;
+                }
+            }
+        «ENDIF»
         «IF targets('2.0')»
 
             /**

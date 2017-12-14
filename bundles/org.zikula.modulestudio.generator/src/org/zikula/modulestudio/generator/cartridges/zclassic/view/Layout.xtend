@@ -151,10 +151,17 @@ class Layout {
                 {%- endif -%}
             {%- endblock -%}
         «ENDIF»
-        «IF hasColourFields»
+        «IF hasColourFields && !targets('2.0-dev')»
 
             {%- block «appName.formatForDB»_field_colour_widget -%}
                 {%- set type = type|default('color') -%}
+                {{ block('form_widget_simple') }}
+            {%- endblock -%}
+        «ENDIF»
+        «IF hasTelephoneFields && !targets('2.0-dev')»
+
+            {%- block «appName.formatForDB»_field_tel_widget -%}
+                {%- set type = type|default('tel') -%}
                 {{ block('form_widget_simple') }}
             {%- endblock -%}
         «ENDIF»

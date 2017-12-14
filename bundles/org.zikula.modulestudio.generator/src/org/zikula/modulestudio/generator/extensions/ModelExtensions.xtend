@@ -141,6 +141,13 @@ class ModelExtensions {
     }
 
     /**
+     * Checks whether the application contains at least one entity with at least one phone number field.
+     */
+    def hasTelephoneFields(Application it) {
+        getAllEntities.exists[hasTelephoneFieldsEntity] || !variables.map[fields].filter(StringField).filter[role == StringRole.PHONE_NUMBER].empty
+    }
+
+    /**
      * Checks whether the application contains at least one entity with at least one country field.
      */
     def hasCountryFields(Application it) {
@@ -568,6 +575,20 @@ class ModelExtensions {
     }
 
     /**
+     * Checks whether this entity has at least one phone number field.
+     */
+    def hasTelephoneFieldsEntity(DataObject it) {
+        !getTelephoneFieldsEntity.empty
+    }
+
+    /**
+     * Returns a list of all phone number fields of this entity.
+     */
+    def getTelephoneFieldsEntity(DataObject it) {
+        getSelfAndParentDataObjects.map[fields.filter(StringField).filter[role == StringRole.PHONE_NUMBER]].flatten
+    }
+
+    /**
      * Checks whether this entity has at least one country field.
      */
     def hasCountryFieldsEntity(DataObject it) {
@@ -870,7 +891,7 @@ class ModelExtensions {
     /**
      * Prints an output string describing the type of the given date time field.
      */
-    def dateTimeFieldTypeAsString(DatetimeField it) {
+    def private dateTimeFieldTypeAsString(DatetimeField it) {
         if (components == DateTimeComponents.DATE_TIME) {
             return 'DateTime'
         }

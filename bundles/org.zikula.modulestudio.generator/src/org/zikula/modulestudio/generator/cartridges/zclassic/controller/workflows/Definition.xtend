@@ -185,7 +185,11 @@ class Definition {
     '''
 
     def private updateAction(ListFieldItem it) '''
-        «addTransition('update' + it.value, it.value, it.value)»
+        «IF app.targets('2.0')»
+            «addTransition('update', it.value, it.value)»
+        «ELSE»
+            «addTransition('update' + it.value, it.value, it.value)»
+        «ENDIF»
     '''
 
     def private rejectAction(ListFieldItem it) '''

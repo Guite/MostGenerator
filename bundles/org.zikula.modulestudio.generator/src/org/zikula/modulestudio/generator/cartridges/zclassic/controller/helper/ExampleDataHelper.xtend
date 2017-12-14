@@ -349,10 +349,6 @@ class ExampleDataHelper {
         «ENDIF»'''
 
     def private exampleRowValueText(DerivedField it, Entity dataEntity, Integer number) {
-        exampleRowValueTextInternal(dataEntity, number)
-    }
-
-    def private exampleRowValueTextInternal(DerivedField it, Entity dataEntity, Integer number) {
         switch it {
             StringField: exampleRowValueTextLength(dataEntity, number, it.length)
             TextField: exampleRowValueTextLength(dataEntity, number, it.length)

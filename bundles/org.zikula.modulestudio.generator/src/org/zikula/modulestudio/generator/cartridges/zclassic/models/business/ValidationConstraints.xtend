@@ -188,7 +188,7 @@ class ValidationConstraints {
     def dispatch fieldAnnotations(UrlField it) '''
         «fieldAnnotationsString»
         «' '»* @Assert\Length(min="«minLength»", max="«length»")
-        «' '»* @Assert\Url(checkDNS=«checkDNS.displayBool»«IF checkDNS», dnsMessage = "The host '{{ value }}' could not be resolved."«ENDIF»«/* , protocols={"http", "https"} */»)
+        «' '»* @Assert\Url(checkDNS=«IF application.targets('2.0-dev') && checkDNS»'ANY'«ELSE»«checkDNS.displayBool»«ENDIF»«IF checkDNS», dnsMessage = "The host '{{ value }}' could not be resolved."«ENDIF»«/* , protocols={"http", "https"} */»)
     '''
     def dispatch fieldAnnotations(UploadField it) '''
         «fieldAnnotationsString»
@@ -234,6 +234,14 @@ class ValidationConstraints {
         }
         if (maxHeight > 0) {
             constraints += '''maxHeight = «maxHeight»'''
+        }
+        if (application.targets('2.0-dev')) {
+            if (minPixels > 0) {
+                constraints += '''minPixels = «minPixels»'''
+            }
+            if (maxPixels > 0) {
+                constraints += '''maxPixels = «maxPixels»'''
+            }
         }
         if (minRatio > 0) {
             constraints += '''minRatio = «minRatio»'''
@@ -283,10 +291,20 @@ class ValidationConstraints {
             «ELSEIF future»
                 «' '»* @Assert\GreaterThan("now")
             «ENDIF»
-            «IF endDate && (null !== entity && entity.hasStartDateField)»
-                «' '»* @Assert\Expression("«IF !mandatory»!value or «ENDIF»value > this.get«entity.getStartDateField.name.formatForCodeCapital»()")
-            «ELSEIF endDate && (null !== varContainer && varContainer.hasStartDateField)»
-                «' '»* @Assert\Expression("«IF !mandatory»!value or «ENDIF»value > this.get«varContainer.getStartDateField.name.formatForCodeCapital»()")
+            «IF endDate»
+                «IF mandatory && application.targets('2.0-dev')»
+                    «IF null !== entity && entity.hasStartDateField»
+                        «' '»* @Assert\GreaterThan(propertyPath="«entity.getStartDateField.name.formatForCode»")
+                    «ELSEIF null !== varContainer && varContainer.hasStartDateField»
+                        «' '»* @Assert\GreaterThan(propertyPath="«varContainer.getStartDateField.name.formatForCode»")
+                    «ENDIF»
+                «ELSE»
+                    «IF null !== entity && entity.hasStartDateField»
+                        «' '»* @Assert\Expression("«IF !mandatory»!value or «ENDIF»value > this.get«entity.getStartDateField.name.formatForCodeCapital»()")
+                    «ELSEIF null !== varContainer && varContainer.hasStartDateField»
+                        «' '»* @Assert\Expression("«IF !mandatory»!value or «ENDIF»value > this.get«varContainer.getStartDateField.name.formatForCodeCapital»()")
+                    «ENDIF»
+                «ENDIF»
             «ENDIF»
         «ELSEIF isTimeField»
             «' '»* @Assert\Time()

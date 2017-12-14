@@ -7,7 +7,7 @@ import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
-class ColourType {
+class TelType {
 
     extension FormattingExtensions = new FormattingExtensions
     extension NamingExtensions = new NamingExtensions
@@ -19,40 +19,22 @@ class ColourType {
         if (targets('2.0-dev')) {
             return
         }
-        generateClassPair(fsa, 'Form/Type/Field/ColourType.php',
-            fh.phpFileContent(it, colourTypeBaseImpl), fh.phpFileContent(it, colourTypeImpl)
+        generateClassPair(fsa, 'Form/Type/Field/TelType.php',
+            fh.phpFileContent(it, telTypeBaseImpl), fh.phpFileContent(it, telTypeImpl)
         )
     }
 
-    def private colourTypeBaseImpl(Application it) '''
+    def private telTypeBaseImpl(Application it) '''
         namespace «appNamespace»\Form\Type\Field\Base;
 
         use Symfony\Component\Form\AbstractType;
         use Symfony\Component\Form\Extension\Core\Type\TextType;
-        use Symfony\Component\OptionsResolver\OptionsResolver;
 
         /**
-         * Colour field type base class.
-         *
-         * The allowed formats are '#RRGGBB' and '#RGB'.
+         * Telephone field type base class.
          */
-        abstract class AbstractColourType extends AbstractType
+        abstract class AbstractTelType extends AbstractType
         {
-            /**
-             * @inheritDoc
-             */
-            public function configureOptions(OptionsResolver $resolver)
-            {
-                parent::configureOptions($resolver);
-
-                $resolver->setDefaults([
-                    'attr' => [
-                        'maxlength' => 7,
-                        'class' => 'colour-selector'
-                    ]
-                ]);
-            }
-
             /**
              * @inheritDoc
              */
@@ -66,22 +48,20 @@ class ColourType {
              */
             public function getBlockPrefix()
             {
-                return '«appName.formatForDB»_field_colour';
+                return '«appName.formatForDB»_field_tel';
             }
         }
     '''
 
-    def private colourTypeImpl(Application it) '''
+    def private telTypeImpl(Application it) '''
         namespace «appNamespace»\Form\Type\Field;
 
-        use «appNamespace»\Form\Type\Field\Base\AbstractColourType;
+        use «appNamespace»\Form\Type\Field\Base\AbstractTelType;
 
         /**
-         * Colour field type implementation class.
-         *
-         * The allowed formats are '#RRGGBB' and '#RGB'.
+         * Telephone field type implementation class.
          */
-        class ColourType extends AbstractColourType
+        class TelType extends AbstractTelType
         {
             // feel free to add your customisation here
         }

@@ -23,6 +23,7 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype.field.EntityTreeType
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype.field.GeoType
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype.field.MultiListType
+import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype.field.TelType
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype.field.TranslationType
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype.field.UploadType
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
@@ -64,8 +65,11 @@ class FormHandler {
             new ArrayType().generate(it, fsa)
             new ArrayFieldTransformer().generate(it, fsa)
         }
-        if (hasColourFields) {
+        if (hasColourFields && !targets('2.0-dev')) {
             new ColourType().generate(it, fsa)
+        }
+        if (hasTelephoneFields && !targets('2.0-dev')) {
+            new TelType().generate(it, fsa)
         }
         if (hasUploads) {
             new UploadType().generate(it, fsa)

@@ -104,7 +104,7 @@ class Property {
             «persistentPropertyAdditions»
         «ENDIF»
         «thVal.fieldAnnotations(it)»
-         * @var «IF type == 'bigint' || type == 'smallint'»integer«ELSEIF type == 'datetime'»\DateTime«ELSE»«type»«ENDIF» $«name.formatForCode»
+         * @var «IF type == 'bigint' || type == 'smallint'»integer«ELSEIF type == 'datetime'»\DateTime«IF (it as DatetimeField).immutable»Immutable«ENDIF»«ELSE»«type»«ENDIF» $«name.formatForCode»
          */
         «modifier» $«name.formatForCode»«IF !init.empty»«init»«ELSE»«IF !(it instanceof DatetimeField)» = «defaultFieldData»«ENDIF»«ENDIF»;
         «/* this last line is on purpose */»
@@ -115,19 +115,21 @@ class Property {
             NumberField: '''type="«type»"«IF numberType == NumberFieldType.DECIMAL», precision=«it.length», scale=«it.scale»«ENDIF»'''
             TextField: '''type="«type»", length=«it.length»'''
             StringField:
-                '''«/*type="«type»", */»length=«it.length»'''
+                /* disabled until DBAL 2.6
+                if (role == StringRole.DATE_INTERVAL) '''type="dateinterval", length=«it.length»'''
+                else */'''«/*type="«type»", */»length=«it.length»'''
             EmailField:
                 '''«/*type="«type»", */»length=«it.length»'''
             UrlField:
                 '''«/*type="«type»", */»length=«it.length»'''
             ArrayField:
-                '''type="«arrayType.literal.toLowerCase»"«/*», length=«it.length*/»'''
+                '''type="«/* disabled until DBAL 2.6 IF arrayType == ArrayType.JSON_ARRAY»json«ELSE*/»«arrayType.literal.toLowerCase»«/*ENDIF*/»"«/*», length=«it.length*/»'''
             UploadField:
                 '''«/*type="«type»", */»length=«it.length»'''
             ListField:
                 '''«/*type="«type»", */»length=«it.length»'''
             DatetimeField:
-                '''type="«/*utc*/»«type»"'''
+                '''type="«/*utc*/»«type»«/* disabled until DBAL 2.6 IF immutable»_immutable«ENDIF*/»"'''
             default: '''type="«type»"'''
         }
     }

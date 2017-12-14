@@ -32,11 +32,13 @@ import de.guite.modulestudio.metamodel.UserField
 import de.guite.modulestudio.metamodel.Variables
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
+import org.zikula.modulestudio.generator.extensions.Utils
 
 class TechStructureFields {
 
     extension FormattingExtensions = new FormattingExtensions
     extension ModelExtensions = new ModelExtensions
+    extension Utils = new Utils
 
     TechHelper helper = new TechHelper
     String language
@@ -199,7 +201,7 @@ class TechStructureFields {
                 else result += 'Values must be between ' + minValue + ' and ' + maxValue + '.'
             }
             else if (minValue.toString != '0') result += 'Values must not be lower than ' + minValue + '.'
-            else if (maxValue.toString != '0') result += 'Values must not be higher than ' + maxValue + '.'
+            else if (maxValue.toString != '0') result += 'Values must not be greater than ' + maxValue + '.'
         }
         result
     }
@@ -220,7 +222,7 @@ class TechStructureFields {
                 else result += 'Values must be between ' + minValue + ' and ' + maxValue + '.'
             }
             else if (minValue > 0) result += 'Values must not be lower than ' + minValue + '.'
-            else if (maxValue > 0) result += 'Values must not be higher than ' + maxValue + '.'
+            else if (maxValue > 0) result += 'Values must not be greater than ' + maxValue + '.'
         }
         result
     }
@@ -302,80 +304,100 @@ class TechStructureFields {
             result += 'Die erlaubten Dateierweiterungen sind "' + allowedExtensions + '".'
             result += 'Die erlaubten MIME-Typen sind "' + mimeTypes + '".'
             if (!maxSize.empty) result += 'Die maximale Dateigröße beträgt ' + maxSize + '.'
-            if (minWidth > 0 && maxWidth > 0) {
-                if (minWidth == maxWidth) result += 'Die Breite von Bildern muß genau ' + minWidth + ' Pixel betragen.'
-                else result += 'Die Breite von Bildern muß zwischen ' + minWidth + ' und ' + maxWidth + ' Pixeln liegen.'
-            }
-            else if (minWidth > 0) result += 'Die Breite von Bildern darf nicht niedriger als ' + minWidth + ' Pixel sein.'
-            else if (maxWidth > 0) result += 'Die Breite von Bildern darf nicht höher als ' + maxWidth + ' Pixel sein.'
-            if (minHeight > 0 && maxHeight > 0) {
-                if (minHeight == maxHeight) result += 'Die Höhe von Bildern muß genau ' + minHeight + ' Pixel betragen.'
-                else result += 'Die Höhe von Bildern muß zwischen ' + minHeight + ' und ' + maxHeight + ' Pixeln liegen.'
-            }
-            else if (minHeight > 0) result += 'Die Höhe von Bildern darf nicht niedriger als ' + minHeight + ' Pixel sein.'
-            else if (maxHeight > 0) result += 'Die Höhe von Bildern darf nicht höher als ' + maxHeight + ' Pixel sein.'
-            if (minRatio > 0 && maxRatio > 0) {
-                if (minRatio == maxRatio) result += 'Das Seitenverhältnis von Bildern (Breite / Höhe) muß genau ' + minRatio + ' betragen.'
-                else result += 'Das Seitenverhältnis von Bildern (Breite / Höhe) muß zwischen ' + minRatio + ' und ' + maxRatio + ' liegen.'
-            }
-            else if (minRatio > 0) result += 'Das Seitenverhältnis von Bildern (Breite / Höhe) darf nicht niedriger als ' + minRatio + ' sein.'
-            else if (maxRatio > 0) result += 'Das Seitenverhältnis von Bildern (Breite / Höhe) darf nicht höher als ' + maxRatio + ' sein.'
-            if (!(allowSquare && allowLandscape && allowPortrait)) {
-                if (allowSquare && !allowLandscape && !allowPortrait) {
-                    result += 'Es ist nur Quadratformat (kein Hoch- oder Querformat) erlaubt.'
-                } else if (!allowSquare && allowLandscape && !allowPortrait) {
-                    result += 'Es ist nur Querformat (kein Quadrat- oder Hochformat) erlaubt.'
-                } else if (!allowSquare && !allowLandscape && allowPortrait) {
-                    result += 'Es ist nur Hochformat (kein Quadrat- oder Querformat) erlaubt.'
-                } else if (allowSquare && allowLandscape && !allowPortrait) {
-                    result += 'Es sind nur Quadrat- oder Querformat (kein Hochformat) erlaubt.'
-                } else if (allowSquare && !allowLandscape && allowPortrait) {
-                    result += 'Es sind nur Quadrat- oder Hochformat (kein Querformat) erlaubt.'
-                } else if (!allowSquare && allowLandscape && allowPortrait) {
-                    result += 'Es sind nur Quer- oder Hochformat (kein Quadratformat) erlaubt.'
+            if (isOnlyImageField) {
+                if (minWidth > 0 && maxWidth > 0) {
+                    if (minWidth == maxWidth) result += 'Die Breite von Bildern muß genau ' + minWidth + ' Pixel betragen.'
+                    else result += 'Die Breite von Bildern muß zwischen ' + minWidth + ' und ' + maxWidth + ' Pixeln liegen.'
                 }
+                else if (minWidth > 0) result += 'Die Breite von Bildern darf nicht niedriger als ' + minWidth + ' Pixel sein.'
+                else if (maxWidth > 0) result += 'Die Breite von Bildern darf nicht höher als ' + maxWidth + ' Pixel sein.'
+                if (minHeight > 0 && maxHeight > 0) {
+                    if (minHeight == maxHeight) result += 'Die Höhe von Bildern muß genau ' + minHeight + ' Pixel betragen.'
+                    else result += 'Die Höhe von Bildern muß zwischen ' + minHeight + ' und ' + maxHeight + ' Pixeln liegen.'
+                }
+                else if (minHeight > 0) result += 'Die Höhe von Bildern darf nicht niedriger als ' + minHeight + ' Pixel sein.'
+                else if (maxHeight > 0) result += 'Die Höhe von Bildern darf nicht höher als ' + maxHeight + ' Pixel sein.'
+                if (application.targets('2.0-dev')) {
+                    if (minPixels > 0 && maxPixels > 0) {
+                        if (minPixels == maxPixels) result += 'Die Anzahl von Pixeln muß genau ' + minPixels + ' Pixel betragen.'
+                        else result += 'Die Anzahl von Pixeln muß zwischen ' + minPixels + ' und ' + maxPixels + ' Pixeln liegen.'
+                    }
+                    else if (minPixels > 0) result += 'Die Anzahl von Pixeln darf nicht niedriger als ' + minPixels + ' Pixel sein.'
+                    else if (maxPixels > 0) result += 'Die Anzahl von Pixeln darf nicht höher als ' + maxPixels + ' Pixel sein.'
+                }
+                if (minRatio > 0 && maxRatio > 0) {
+                    if (minRatio == maxRatio) result += 'Das Seitenverhältnis von Bildern (Breite / Höhe) muß genau ' + minRatio + ' betragen.'
+                    else result += 'Das Seitenverhältnis von Bildern (Breite / Höhe) muß zwischen ' + minRatio + ' und ' + maxRatio + ' liegen.'
+                }
+                else if (minRatio > 0) result += 'Das Seitenverhältnis von Bildern (Breite / Höhe) darf nicht niedriger als ' + minRatio + ' sein.'
+                else if (maxRatio > 0) result += 'Das Seitenverhältnis von Bildern (Breite / Höhe) darf nicht höher als ' + maxRatio + ' sein.'
+                if (!(allowSquare && allowLandscape && allowPortrait)) {
+                    if (allowSquare && !allowLandscape && !allowPortrait) {
+                        result += 'Es ist nur Quadratformat (kein Hoch- oder Querformat) erlaubt.'
+                    } else if (!allowSquare && allowLandscape && !allowPortrait) {
+                        result += 'Es ist nur Querformat (kein Quadrat- oder Hochformat) erlaubt.'
+                    } else if (!allowSquare && !allowLandscape && allowPortrait) {
+                        result += 'Es ist nur Hochformat (kein Quadrat- oder Querformat) erlaubt.'
+                    } else if (allowSquare && allowLandscape && !allowPortrait) {
+                        result += 'Es sind nur Quadrat- oder Querformat (kein Hochformat) erlaubt.'
+                    } else if (allowSquare && !allowLandscape && allowPortrait) {
+                        result += 'Es sind nur Quadrat- oder Hochformat (kein Querformat) erlaubt.'
+                    } else if (!allowSquare && allowLandscape && allowPortrait) {
+                        result += 'Es sind nur Quer- oder Hochformat (kein Quadratformat) erlaubt.'
+                    }
+                }
+                if (detectCorrupted) result += 'Bildinhalte werden gegen korrupte Daten geprüft.'
             }
-            if (detectCorrupted) result += 'Bildinhalte werden gegen korrupte Daten geprüft.'
         } else {
             result += 'Has a length of ' + length + ' chars.'
             result += commonStringConstraints
             result += 'Allowed file extensions are "' + allowedExtensions + '".'
             result += 'Allowed mime types are "' + mimeTypes + '".'
             if (!maxSize.empty) result += 'Maximum file size is ' + maxSize + '.'
-            if (minWidth > 0 && maxWidth > 0) {
-                if (minWidth == maxWidth) result += 'Image width must be exactly equal to ' + minWidth + ' pixels.'
-                else result += 'Image width must be between ' + minWidth + ' and ' + maxWidth + ' pixels.'
-            }
-            else if (minWidth > 0) result += 'Image width must not be lower than ' + minWidth + ' pixels.'
-            else if (maxWidth > 0) result += 'Image width must not be higher than ' + maxWidth + ' pixels.'
-            if (minHeight > 0 && maxHeight > 0) {
-                if (minHeight == maxHeight) result += 'Image height must be exactly equal to ' + minHeight + ' pixels.'
-                else result += 'Image height must be between ' + minHeight + ' and ' + maxHeight + ' pixels.'
-            }
-            else if (minHeight > 0) result += 'Image height must not be lower than ' + minHeight + ' pixels.'
-            else if (maxHeight > 0) result += 'Image height must not be higher than ' + maxHeight + ' pixels.'
-            if (minRatio > 0 && maxRatio > 0) {
-                if (minRatio == maxRatio) result += 'Image aspect ratio (width / height) must be exactly equal to ' + minRatio + '.'
-                else result += 'Image aspect ratio (width / height) must be between ' + minRatio + ' and ' + maxRatio + '.'
-            }
-            else if (minRatio > 0) result += 'Image aspect ratio (width / height) must not be lower than ' + minRatio + '.'
-            else if (maxRatio > 0) result += 'Image aspect ratio (width / height) must not be higher than ' + maxRatio + '.'
-            if (!(allowSquare && allowLandscape && allowPortrait)) {
-                if (allowSquare && !allowLandscape && !allowPortrait) {
-                    result += 'Only square dimension (no portrait or landscape) is allowed.'
-                } else if (!allowSquare && allowLandscape && !allowPortrait) {
-                    result += 'Only landscape dimension (no square or portrait) is allowed.'
-                } else if (!allowSquare && !allowLandscape && allowPortrait) {
-                    result += 'Only portrait dimension (no square or landscape) is allowed.'
-                } else if (allowSquare && allowLandscape && !allowPortrait) {
-                    result += 'Only square or landscape dimension (no portrait) is allowed.'
-                } else if (allowSquare && !allowLandscape && allowPortrait) {
-                    result += 'Only square or portrait dimension (no landscape) is allowed.'
-                } else if (!allowSquare && allowLandscape && allowPortrait) {
-                    result += 'Only landscape or portrait dimension (no square) is allowed.'
+            if (isOnlyImageField) {
+                if (minWidth > 0 && maxWidth > 0) {
+                    if (minWidth == maxWidth) result += 'Image width must be exactly equal to ' + minWidth + ' pixels.'
+                    else result += 'Image width must be between ' + minWidth + ' and ' + maxWidth + ' pixels.'
                 }
+                else if (minWidth > 0) result += 'Image width must not be lower than ' + minWidth + ' pixels.'
+                else if (maxWidth > 0) result += 'Image width must not be greater than ' + maxWidth + ' pixels.'
+                if (minHeight > 0 && maxHeight > 0) {
+                    if (minHeight == maxHeight) result += 'Image height must be exactly equal to ' + minHeight + ' pixels.'
+                    else result += 'Image height must be between ' + minHeight + ' and ' + maxHeight + ' pixels.'
+                }
+                else if (minHeight > 0) result += 'Image height must not be lower than ' + minHeight + ' pixels.'
+                else if (maxHeight > 0) result += 'Image height must not be greater than ' + maxHeight + ' pixels.'
+                if (application.targets('2.0-dev')) {
+                    if (minPixels > 0 && maxPixels > 0) {
+                        if (minPixels == maxPixels) result += 'The amount of pixels must be exactly equal to ' + minPixels + ' pixels.'
+                        else result += 'The amount of pixels must be between ' + minPixels + ' and ' + maxPixels + ' pixels.'
+                    }
+                    else if (minPixels > 0) result += 'The amount of pixels must not be lower than ' + minPixels + ' pixels.'
+                    else if (maxPixels > 0) result += 'The amount of pixels must not be greater than ' + maxPixels + ' pixels.'
+                }
+                if (minRatio > 0 && maxRatio > 0) {
+                    if (minRatio == maxRatio) result += 'Image aspect ratio (width / height) must be exactly equal to ' + minRatio + '.'
+                    else result += 'Image aspect ratio (width / height) must be between ' + minRatio + ' and ' + maxRatio + '.'
+                }
+                else if (minRatio > 0) result += 'Image aspect ratio (width / height) must not be lower than ' + minRatio + '.'
+                else if (maxRatio > 0) result += 'Image aspect ratio (width / height) must not be greater than ' + maxRatio + '.'
+                if (!(allowSquare && allowLandscape && allowPortrait)) {
+                    if (allowSquare && !allowLandscape && !allowPortrait) {
+                        result += 'Only square dimension (no portrait or landscape) is allowed.'
+                    } else if (!allowSquare && allowLandscape && !allowPortrait) {
+                        result += 'Only landscape dimension (no square or portrait) is allowed.'
+                    } else if (!allowSquare && !allowLandscape && allowPortrait) {
+                        result += 'Only portrait dimension (no square or landscape) is allowed.'
+                    } else if (allowSquare && allowLandscape && !allowPortrait) {
+                        result += 'Only square or landscape dimension (no portrait) is allowed.'
+                    } else if (allowSquare && !allowLandscape && allowPortrait) {
+                        result += 'Only square or portrait dimension (no landscape) is allowed.'
+                    } else if (!allowSquare && allowLandscape && allowPortrait) {
+                        result += 'Only landscape or portrait dimension (no square) is allowed.'
+                    }
+                }
+                if (detectCorrupted) result += 'Image contents are validated against corrupted data.'
             }
-            if (detectCorrupted) result += 'Image contents are validated against corrupted data.'
         }
         result
     }
@@ -595,10 +617,12 @@ class TechStructureFields {
     def private dispatch remarks(DatetimeField it) {
         val result = commonRemarks
         if (language == 'de') {
+            if (immutable) result += 'Die Werte sind unveränderbar.'
             if (startDate) result += 'Agiert als Startdatum.'
             if (endDate) result += 'Agiert als Enddatum.'
             if (timestampable != EntityTimestampableType.NONE) result += 'Verwendet die Timestampable-Erweiterung (' + timestampable.literal + ').'
         } else {
+            if (immutable) result += 'Values are immutable.'
             if (startDate) result += 'Acts as start date.'
             if (endDate) result += 'Acts as end date.'
             if (timestampable != EntityTimestampableType.NONE) result += 'Uses the Timestampable extension (' + timestampable.literal + ').'
@@ -630,6 +654,8 @@ class TechStructureFields {
                 return if (language == 'de') 'Repräsentiert eine Locale.' else 'Represents a locale.'
             case PASSWORD:
                 return if (language == 'de') 'Repräsentiert ein Kennwort.' else 'Represents a password.'
+            case PHONE_NUMBER:
+                return if (language == 'de') 'Repräsentiert eine Telefonnummer.' else 'Represents a telephone number.'
             case TIME_ZONE:
                 return if (language == 'de') 'Repräsentiert eine Zeitzone.' else 'Represents a time zone.'
             case UUID:

@@ -411,7 +411,7 @@ class ServiceDefinitions {
                         - { name: form.type }
                 «ENDIF»
         «ENDIF»
-        «IF hasColourFields»
+        «IF hasColourFields && !targets('2.0-dev')»
 
             «modPrefix».form.type.field.colour:
                 class: «nsBase»Field\ColourType
@@ -439,6 +439,17 @@ class ServiceDefinitions {
                 class: «nsBase»Field\MultiListType
                 arguments:
                     - "@«modPrefix».listentries_helper"
+                «IF targets('2.0')»
+                    tags: ['form.type']
+                «ELSE»
+                    tags:
+                        - { name: form.type }
+                «ENDIF»
+        «ENDIF»
+        «IF hasTelephoneFields && !targets('2.0-dev')»
+
+            «modPrefix».form.type.field.tel:
+                class: «nsBase»Field\TelType
                 «IF targets('2.0')»
                     tags: ['form.type']
                 «ELSE»

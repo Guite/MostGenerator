@@ -154,7 +154,7 @@ class Newsletter {
         /**
          * Returns data for the Newsletter plugin.
          *
-         * @param \DateTime $filterAfterDate Optional date filter (items should be newer), format yyyy-mm-dd hh:mm:ss or null if not set
+         * @param \DateTimeInterface $filterAfterDate Optional date filter (items should be newer), format yyyy-mm-dd hh:mm:ss or null if not set
          *
          * @return array List of affected content items
          */
@@ -183,7 +183,7 @@ class Newsletter {
         /**
          * Collects newsletter data for each activated object type.
          *
-         * @param \DateTime $filterAfterDate Optional date filter (items should be newer), format yyyy-mm-dd hh:mm:ss or null if not set
+         * @param \DateTimeInterface $filterAfterDate Optional date filter (items should be newer), format yyyy-mm-dd hh:mm:ss or null if not set
          *
          * @return array Data grouped by object type
          */
@@ -215,8 +215,8 @@ class Newsletter {
         /**
          * Performs the internal data selection.
          *
-         * @param array     $args            Arguments array (contains object type)
-         * @param \DateTime $filterAfterDate Optional date filter (items should be newer), format yyyy-mm-dd hh:mm:ss or null if not set
+         * @param array              $args            Arguments array (contains object type)
+         * @param \DateTimeInterface $filterAfterDate Optional date filter (items should be newer), format yyyy-mm-dd hh:mm:ss or null if not set
          *
          * @return array List of selected items
          */

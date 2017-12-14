@@ -74,7 +74,7 @@ class FileHelper {
         /**
          * Returns the «name.formatForDisplay».
          *
-         * @return «IF type == 'smallint' || type == 'bigint'»integer«ELSEIF type == 'datetime'»\DateTime«ELSE»«type»«ENDIF»«IF type.toLowerCase != 'array' && isMany»[]«ENDIF»
+         * @return «IF type == 'smallint' || type == 'bigint'»integer«ELSEIF type == 'datetime'»\DateTimeInterface«ELSE»«type»«ENDIF»«IF type.toLowerCase != 'array' && isMany»[]«ENDIF»
          */
         public function get«name.formatForCodeCapital»()
         {
@@ -87,7 +87,7 @@ class FileHelper {
         /**
          * Sets the «name.formatForDisplay».
          *
-         * @param «IF type == 'smallint' || type == 'bigint'»integer«ELSEIF type == 'datetime'»\DateTime«ELSE»«type»«ENDIF»«IF type.toLowerCase != 'array' && isMany»[]«ENDIF» $«name»
+         * @param «IF type == 'smallint' || type == 'bigint'»integer«ELSEIF type == 'datetime'»\DateTimeInterface«ELSE»«type»«ENDIF»«IF type.toLowerCase != 'array' && isMany»[]«ENDIF» $«name»
          *
          * @return void
          */
@@ -199,13 +199,13 @@ class FileHelper {
     }
 
     def private dispatch setterAssignment(DatetimeField it, String name, String type) '''
-        if (!(null == $«name» && empty($«name»)) && !(is_object($«name») && $«name» instanceOf \DateTime)) {
-            $«name» = new \DateTime($«name»);
+        if (!(null == $«name» && empty($«name»)) && !(is_object($«name») && $«name» instanceOf \DateTimeInterface)) {
+            $«name» = new \DateTime«IF immutable»Immutable«ENDIF»($«name»);
         }
         «IF !nullable»
 
             if (null === $«name» || empty($«name»)) {
-                $«name» = new \DateTime();
+                $«name» = new \DateTime«IF immutable»Immutable«ENDIF»();
             }
         «ENDIF»
 

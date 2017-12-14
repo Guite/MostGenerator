@@ -62,7 +62,7 @@ class StandardFieldsTrait {
           * @Gedmo\Versioned
          «ENDIF»
          * @Assert\DateTime()
-         * @var \DateTime $createdDate
+         * @var \DateTimeInterface $createdDate
          */
         protected $createdDate;
 
@@ -84,7 +84,7 @@ class StandardFieldsTrait {
           * @Gedmo\Versioned
          «ENDIF»
          * @Assert\DateTime()
-         * @var \DateTime $updatedDate
+         * @var \DateTimeInterface $updatedDate
          */
         protected $updatedDate;
 
