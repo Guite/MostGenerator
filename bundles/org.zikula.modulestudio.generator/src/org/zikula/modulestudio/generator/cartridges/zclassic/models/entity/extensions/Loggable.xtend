@@ -102,7 +102,7 @@ class Loggable extends AbstractExtension implements EntityExtensionInterface {
             $query = $qb->getQuery();
 
             if (null !== $limit) {
-                $query->MaxResults($limit);
+                $query->setMaxResults($limit);
             }
 
             return $query->getResult();
