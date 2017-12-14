@@ -51,7 +51,6 @@ class Loggable extends AbstractExtension implements EntityExtensionInterface {
      * Returns the extension class import statements.
      */
     override extensionClassImports(Entity it) '''
-        use Doctrine\Common\Collections\ArrayCollection;
         use Gedmo\Loggable\Entity\MappedSuperclass\«extensionBaseClass»;
     '''
 

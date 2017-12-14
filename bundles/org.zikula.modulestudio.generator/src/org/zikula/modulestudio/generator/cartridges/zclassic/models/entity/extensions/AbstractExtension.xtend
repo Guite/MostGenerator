@@ -192,6 +192,7 @@ abstract class AbstractExtension implements EntityExtensionInterface {
         «IF classType == 'translation'»
             use Gedmo\Translatable\Entity\Repository\TranslationRepository;
         «ELSEIF classType == 'logEntry'»
+            use Doctrine\Common\Collections\ArrayCollection;
             use Gedmo\Loggable\Entity\Repository\LogEntryRepository;
         «ELSE»
             use Doctrine\ORM\EntityRepository;
