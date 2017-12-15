@@ -88,8 +88,7 @@ class Relations {
 
         if (onlyInclude) {
             val relationAliasName = getRelationAliasName(useTarget).formatForCodeCapital
-            val incomingForUniqueRelationName = if (!isManyToMany) useTarget else !useTarget
-            val uniqueNameForJs = getUniqueRelationNameForJs(otherEntity, many, incomingForUniqueRelationName, relationAliasName)
+            val uniqueNameForJs = getUniqueRelationNameForJs(otherEntity, relationAliasName)
             return includeStatementForEditTemplate(templateName, ownEntity, otherEntity, useTarget, relationAliasName, uniqueNameForJs)
         }
 
@@ -252,8 +251,7 @@ class Relations {
         }
 
         val relationAliasName = getRelationAliasName(!incoming).formatForCodeCapital
-        val many = isManySide(useTarget)
-        val uniqueNameForJs = getUniqueRelationNameForJs(targetEntity, many, incoming, relationAliasName)
+        val uniqueNameForJs = getUniqueRelationNameForJs(targetEntity, relationAliasName)
         val linkEntity = if (targetEntity == target) source else target
         if (!insideLoader) '''
             «app.vendorAndName»EditHandler = {

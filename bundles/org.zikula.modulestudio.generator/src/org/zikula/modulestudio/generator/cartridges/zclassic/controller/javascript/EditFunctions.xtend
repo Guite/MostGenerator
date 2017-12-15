@@ -180,7 +180,7 @@ class EditFunctions {
         function «vendorAndName»InitRelationHandling(objectType, alias, idPrefix, includeEditing, inputType, createUrl) {
             «IF needsAutoCompletion»
                 if (inputType == 'autocomplete') {
-                    «vendorAndName»InitAutoCompletion(objectType, alias, includeEditing);
+                    «vendorAndName»InitAutoCompletion(objectType, alias, idPrefix, includeEditing);
                 }
             «ENDIF»
             «IF needsInlineEditing»

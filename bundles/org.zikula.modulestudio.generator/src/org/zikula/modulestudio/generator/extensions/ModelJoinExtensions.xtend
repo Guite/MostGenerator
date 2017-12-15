@@ -279,7 +279,7 @@ class ModelJoinExtensions {
      * Returns a unique name for a relationship used by JavaScript during editing entities with auto completion fields.
      * The name is concatenated from the edited entity as well as the relation alias name.
      */
-    def getUniqueRelationNameForJs(JoinRelationship it, DataObject targetEntity, Boolean many, Boolean incoming, String relationAliasName) {
+    def getUniqueRelationNameForJs(JoinRelationship it, DataObject targetEntity, String relationAliasName) {
         application.prefix
         + targetEntity.name.formatForCodeCapital
         + '_'

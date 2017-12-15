@@ -629,7 +629,7 @@ class EditEntityType {
             «val isExpanded = if (outgoing) expandedTarget else expandedSource»
             $builder->add('«aliasName.formatForCode»', '«formType(autoComplete)»Type', [
                 «IF autoComplete»
-                    «val uniqueNameForJs = getUniqueRelationNameForJs((if (outgoing) source else target), isManySide(outgoing), (if (!isManyToMany) outgoing else !outgoing), aliasName.formatForCodeCapital)»
+                    «val uniqueNameForJs = getUniqueRelationNameForJs((if (outgoing) source else target), aliasName.formatForCodeCapital)»
                     'object_type' => '«relatedEntity.name.formatForCode»',
                     «IF isManySide(outgoing)»
                         'by_reference' => false,
@@ -731,13 +731,6 @@ class EditEntityType {
     def private formType(JoinRelationship it, Boolean autoComplete) {
         if (autoComplete) '''«app.appNamespace»\Form\Type\Field\AutoCompletionRelation'''
         else '''Symfony\Bridge\Doctrine\Form\Type\Entity'''
-    }
-
-    def private isManyToMany(JoinRelationship it) {
-        switch it {
-            ManyToManyRelationship: true
-            default: false
-        }
     }
 
     def private addAdditionalNotificationRemarksField(Entity it) '''

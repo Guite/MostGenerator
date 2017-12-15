@@ -177,8 +177,15 @@ class AutoCompletion {
         /**
          * Initialises auto completion for a relation field.
          */
-        function «vendorAndName»InitAutoCompletion(objectType, idPrefix, includeEditing) {
+        function «vendorAndName»InitAutoCompletion(objectType, alias, idPrefix, includeEditing) {
             var acOptions, acDataSet, acUrl«IF hasUiHooksProviders», isHookAttacher«ENDIF»;
+            «IF hasUiHooksProviders»
+
+                isHookAttacher = idPrefix.startsWith('hookAssignment');
+                if (isHookAttacher) {
+                    idPrefix = alias;
+                }
+            «ENDIF»
 
             // update identifier of hidden field for easier usage in JS
             jQuery('#' + idPrefix + 'Multiple').prev().attr('id', idPrefix);
@@ -196,10 +203,6 @@ class AutoCompletion {
             // clear values and ensure starting state
             «vendorAndName»ResetAutoCompletion(idPrefix);
 
-            «IF hasUiHooksProviders»
-
-                isHookAttacher = idPrefix.startsWith('hookAssignment');
-            «ENDIF»
             jQuery.each(«vendorAndName»InlineEditHandlers, function (key, editHandler) {
                 if (editHandler.prefix !== (idPrefix + 'SelectorDoNew') || editHandler.inputType !== 'autocomplete') {
                     return;
