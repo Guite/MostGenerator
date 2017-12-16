@@ -500,7 +500,7 @@ class ControllerHelper {
                         $url = 'javascript:void(0);';
                         $subscriberUrl = $assignment->getSubscriberUrl();
                         if (null !== $subscriberUrl && !empty($subscriberUrl)) {
-                            «IF targets('2.0') || targets('2.0-dev')»
+                            «IF targets('2.0')»
                                 $url = $this->router->generate($subscriberUrl['route'], $subscriberUrl['args']);
                             «ELSE»
                                 if (!isset($subscriberUrl['route'])) {

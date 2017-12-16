@@ -65,10 +65,10 @@ class FormHandler {
             new ArrayType().generate(it, fsa)
             new ArrayFieldTransformer().generate(it, fsa)
         }
-        if (hasColourFields && !targets('2.0-dev')) {
+        if (hasColourFields && !targets('2.0')) {
             new ColourType().generate(it, fsa)
         }
-        if (hasTelephoneFields && !targets('2.0-dev')) {
+        if (hasTelephoneFields && !targets('2.0')) {
             new TelType().generate(it, fsa)
         }
         if (hasUploads) {

@@ -195,8 +195,8 @@ class BlockListType {
                 'multiple' => $hasMultiSelection,
                 'module' => '«appName»',
                 'entity' => ucfirst($options['object_type']) . 'Entity',
-                'entityCategoryClass' => '«appNamespace»\Entity\\' . ucfirst($options['object_type']) . 'CategoryEntity'«IF targets('2.0-dev') || (!targets('2.0') && targets('1.5-dev'))»,
-                'showRegistryLabels' => true«ENDIF»
+                'entityCategoryClass' => '«appNamespace»\Entity\\' . ucfirst($options['object_type']) . 'CategoryEntity',
+                'showRegistryLabels' => true
             ]);
         }
     '''

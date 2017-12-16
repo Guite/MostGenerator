@@ -328,8 +328,8 @@ class QuickNavigationType {
                 'multiple' => «categorisableMultiSelection.displayBool»,
                 'module' => '«app.appName»',
                 'entity' => ucfirst($objectType) . 'Entity',
-                'entityCategoryClass' => '«app.appNamespace»\Entity\\' . ucfirst($objectType) . 'CategoryEntity'«IF app.targets('2.0-dev') || (!app.targets('2.0') && app.targets('1.5-dev'))»,
-                'showRegistryLabels' => true«ENDIF»
+                'entityCategoryClass' => '«app.appNamespace»\Entity\\' . ucfirst($objectType) . 'CategoryEntity',
+                'showRegistryLabels' => true
             ]);
         }
     '''

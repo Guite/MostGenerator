@@ -58,7 +58,7 @@ class SharedFormTypeFields {
         «IF !fields.filter(ListField).filter[!multiple].empty»
             use «nsSymfonyFormType»ChoiceType;
         «ENDIF»
-        «IF !fields.filter(StringField).filter[role == StringRole.COLOUR].empty && app.targets('2.0-dev')»
+        «IF !fields.filter(StringField).filter[role == StringRole.COLOUR].empty && app.targets('2.0')»
             use «nsSymfonyFormType»ColorType;
         «ENDIF»
         «IF !fields.filter(StringField).filter[role == StringRole.COUNTRY].empty»
@@ -108,7 +108,7 @@ class SharedFormTypeFields {
         «ENDIF»
         use «nsSymfonyFormType»ResetType;
         use «nsSymfonyFormType»SubmitType;
-        «IF !fields.filter(StringField).filter[role == StringRole.PHONE_NUMBER].empty && app.targets('2.0-dev')»
+        «IF !fields.filter(StringField).filter[role == StringRole.PHONE_NUMBER].empty && app.targets('2.0')»
             use «nsSymfonyFormType»TelType;
         «ENDIF»
         «IF !fields.filter(TextField).empty || (null !== dataObject && dataObject instanceof Entity && (dataObject as Entity).workflow != EntityWorkflowType.NONE)»
@@ -169,7 +169,7 @@ class SharedFormTypeFields {
         «IF !fields.filter(ArrayField).empty»
             use «app.appNamespace»\Form\Type\Field\ArrayType;
         «ENDIF»
-        «IF !fields.filter(StringField).filter[role == StringRole.COLOUR].empty && !app.targets('2.0-dev')»
+        «IF !fields.filter(StringField).filter[role == StringRole.COLOUR].empty && !app.targets('2.0')»
             use «app.appNamespace»\Form\Type\Field\ColourType;
         «ENDIF»
         «IF null !== dataObject && dataObject instanceof Entity && (dataObject as Entity).geographical»
@@ -178,7 +178,7 @@ class SharedFormTypeFields {
         «IF !fields.filter(ListField).filter[multiple].empty»
             use «app.appNamespace»\Form\Type\Field\MultiListType;
         «ENDIF»
-        «IF !fields.filter(StringField).filter[role == StringRole.PHONE_NUMBER].empty && !app.targets('2.0-dev')»
+        «IF !fields.filter(StringField).filter[role == StringRole.PHONE_NUMBER].empty && !app.targets('2.0')»
             use «app.appNamespace»\Form\Type\Field\TelType;
         «ENDIF»
         «IF null !== dataObject && dataObject instanceof Entity && (dataObject as Entity).hasTranslatableFields»
@@ -453,7 +453,7 @@ class SharedFormTypeFields {
             messages += '''$this->__f('Note: the image must have a height of at most %max% pixels.', ['%max%' => «maxHeight»])'''
         }
 
-        if (application.targets('2.0-dev')) {
+        if (application.targets('2.0')) {
             if (minPixels > 0 && maxPixels > 0) {
                 if (minPixels == maxPixels) {
                     messages += '''$this->__f('Note: the amount of pixels must be exactly equal to %amount% pixels.', ['%amount%' => «minPixels»])'''
@@ -587,7 +587,7 @@ class SharedFormTypeFields {
         'scale' => «scale»
     '''
 
-    def private dispatch formType(StringField it) '''«IF role == StringRole.COLOUR»«IF application.targets('2.0-dev')»Color«ELSE»Colour«ENDIF»«ELSEIF role == StringRole.COUNTRY»Country«ELSEIF role == StringRole.CURRENCY»Currency«ELSEIF role == StringRole.LANGUAGE»Language«ELSEIF role == StringRole.LOCALE»Locale«ELSEIF role == StringRole.PASSWORD»Password«ELSEIF role == StringRole.DATE_INTERVAL && application.targets('2.0')»DateInterval«ELSEIF role == StringRole.PHONE_NUMBER»Tel«ELSEIF role == StringRole.TIME_ZONE»Timezone«ELSE»Text«ENDIF»'''
+    def private dispatch formType(StringField it) '''«IF role == StringRole.COLOUR»«IF application.targets('2.0')»Color«ELSE»Colour«ENDIF»«ELSEIF role == StringRole.COUNTRY»Country«ELSEIF role == StringRole.CURRENCY»Currency«ELSEIF role == StringRole.LANGUAGE»Language«ELSEIF role == StringRole.LOCALE»Locale«ELSEIF role == StringRole.PASSWORD»Password«ELSEIF role == StringRole.DATE_INTERVAL && application.targets('2.0')»DateInterval«ELSEIF role == StringRole.PHONE_NUMBER»Tel«ELSEIF role == StringRole.TIME_ZONE»Timezone«ELSE»Text«ENDIF»'''
     def private dispatch titleAttribute(StringField it) '''«IF role == StringRole.COLOUR || role == StringRole.COUNTRY || role == StringRole.CURRENCY || (role == StringRole.DATE_INTERVAL && application.targets('2.0')) || role == StringRole.LANGUAGE || role == StringRole.LOCALE || role == StringRole.TIME_ZONE»Choose the «name.formatForDisplay»«ELSE»Enter the «name.formatForDisplay»«ENDIF»«IF null !== entity» of the «entity.name.formatForDisplay»«ENDIF»'''
     def private dispatch additionalAttributes(StringField it) '''
         'maxlength' => «length»,

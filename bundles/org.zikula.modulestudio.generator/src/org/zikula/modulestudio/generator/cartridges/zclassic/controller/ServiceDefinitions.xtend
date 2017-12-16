@@ -411,7 +411,7 @@ class ServiceDefinitions {
                         - { name: form.type }
                 «ENDIF»
         «ENDIF»
-        «IF hasColourFields && !targets('2.0-dev')»
+        «IF hasColourFields && !targets('2.0')»
 
             «modPrefix».form.type.field.colour:
                 class: «nsBase»Field\ColourType
@@ -446,7 +446,7 @@ class ServiceDefinitions {
                         - { name: form.type }
                 «ENDIF»
         «ENDIF»
-        «IF hasTelephoneFields && !targets('2.0-dev')»
+        «IF hasTelephoneFields && !targets('2.0')»
 
             «modPrefix».form.type.field.tel:
                 class: «nsBase»Field\TelType

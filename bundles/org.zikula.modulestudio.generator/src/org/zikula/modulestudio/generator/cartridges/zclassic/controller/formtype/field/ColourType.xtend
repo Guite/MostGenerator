@@ -16,7 +16,7 @@ class ColourType {
     FileHelper fh = new FileHelper
 
     def generate(Application it, IFileSystemAccess fsa) {
-        if (targets('2.0-dev')) {
+        if (targets('2.0')) {
             return
         }
         generateClassPair(fsa, 'Form/Type/Field/ColourType.php',

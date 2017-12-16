@@ -188,7 +188,7 @@ class ValidationConstraints {
     def dispatch fieldAnnotations(UrlField it) '''
         «fieldAnnotationsString»
         «' '»* @Assert\Length(min="«minLength»", max="«length»")
-        «' '»* @Assert\Url(checkDNS=«IF application.targets('2.0-dev') && checkDNS»'ANY'«ELSE»«checkDNS.displayBool»«ENDIF»«IF checkDNS», dnsMessage = "The host '{{ value }}' could not be resolved."«ENDIF»«/* , protocols={"http", "https"} */»)
+        «' '»* @Assert\Url(checkDNS=«IF application.targets('2.0') && checkDNS»'ANY'«ELSE»«checkDNS.displayBool»«ENDIF»«IF checkDNS», dnsMessage = "The host '{{ value }}' could not be resolved."«ENDIF»«/* , protocols={"http", "https"} */»)
     '''
     def dispatch fieldAnnotations(UploadField it) '''
         «fieldAnnotationsString»
@@ -235,7 +235,7 @@ class ValidationConstraints {
         if (maxHeight > 0) {
             constraints += '''maxHeight = «maxHeight»'''
         }
-        if (application.targets('2.0-dev')) {
+        if (application.targets('2.0')) {
             if (minPixels > 0) {
                 constraints += '''minPixels = «minPixels»'''
             }
@@ -292,7 +292,7 @@ class ValidationConstraints {
                 «' '»* @Assert\GreaterThan("now")
             «ENDIF»
             «IF endDate»
-                «IF mandatory && application.targets('2.0-dev')»
+                «IF mandatory && application.targets('2.0')»
                     «IF null !== entity && entity.hasStartDateField»
                         «' '»* @Assert\GreaterThan(propertyPath="«entity.getStartDateField.name.formatForCode»")
                     «ELSEIF null !== varContainer && varContainer.hasStartDateField»

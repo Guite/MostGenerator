@@ -317,7 +317,7 @@ class TechStructureFields {
                 }
                 else if (minHeight > 0) result += 'Die Höhe von Bildern darf nicht niedriger als ' + minHeight + ' Pixel sein.'
                 else if (maxHeight > 0) result += 'Die Höhe von Bildern darf nicht höher als ' + maxHeight + ' Pixel sein.'
-                if (application.targets('2.0-dev')) {
+                if (application.targets('2.0')) {
                     if (minPixels > 0 && maxPixels > 0) {
                         if (minPixels == maxPixels) result += 'Die Anzahl von Pixeln muß genau ' + minPixels + ' Pixel betragen.'
                         else result += 'Die Anzahl von Pixeln muß zwischen ' + minPixels + ' und ' + maxPixels + ' Pixeln liegen.'
@@ -367,7 +367,7 @@ class TechStructureFields {
                 }
                 else if (minHeight > 0) result += 'Image height must not be lower than ' + minHeight + ' pixels.'
                 else if (maxHeight > 0) result += 'Image height must not be greater than ' + maxHeight + ' pixels.'
-                if (application.targets('2.0-dev')) {
+                if (application.targets('2.0')) {
                     if (minPixels > 0 && maxPixels > 0) {
                         if (minPixels == maxPixels) result += 'The amount of pixels must be exactly equal to ' + minPixels + ' pixels.'
                         else result += 'The amount of pixels must be between ' + minPixels + ' and ' + maxPixels + ' pixels.'

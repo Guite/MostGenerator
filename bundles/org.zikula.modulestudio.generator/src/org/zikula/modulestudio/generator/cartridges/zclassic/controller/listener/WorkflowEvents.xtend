@@ -59,9 +59,7 @@ class WorkflowEvents {
                 'workflow.transition' => ['onTransition', 5],
                 'workflow.enter' => ['onEnter', 5]«IF targets('2.0')»,«ENDIF»
                 «IF targets('2.0')»
-                    «IF targets('2.0-dev')»
-                        'workflow.completed' => ['onCompleted', 5]
-                    «ENDIF»
+                    'workflow.completed' => ['onCompleted', 5],
                     'workflow.announce' => ['onAnnounce', 5]
                 «ENDIF»
             ];
@@ -265,7 +263,7 @@ class WorkflowEvents {
                 }
             «ENDIF»
         }
-        «IF targets('2.0-dev')»
+        «IF targets('2.0')»
 
             /**
              * Listener for the `workflow.completed` event.
@@ -288,8 +286,6 @@ class WorkflowEvents {
                     return;
                 }
             }
-        «ENDIF»
-        «IF targets('2.0')»
 
             /**
              * Listener for the `workflow.announce` event.
