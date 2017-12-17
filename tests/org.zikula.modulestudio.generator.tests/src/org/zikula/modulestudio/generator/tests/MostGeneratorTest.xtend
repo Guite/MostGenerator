@@ -28,7 +28,7 @@ import org.zikula.modulestudio.generator.cartridges.MostGenerator
  */
 @RunWith(XpectRunner)
 @XpectImport(#[XtextStandaloneSetup, XtextWorkspaceSetup])
-@XpectTestFiles(relativeTo = FileRoot.PROJECT, baseDir = "model/testcases", fileExtensions="xt")
+@XpectTestFiles(relativeTo = FileRoot.PROJECT, baseDir = "model", fileExtensions="xt")
 class MostGeneratorTest {
 
 	@Xpect(liveExecution = LiveExecutionType.FAST)
