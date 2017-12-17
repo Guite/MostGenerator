@@ -37,6 +37,7 @@ class UploadHelper {
         use Imagine\Gd\Imagine;
         use Imagine\Image\Box;
         use Imagine\Image\ImageInterface;
+        use Imagine\Image\Metadata\ExifMetadataReader;
         use Psr\Log\LoggerInterface;
         use Symfony\Component\Filesystem\Exception\IOExceptionInterface;
         use Symfony\Component\Filesystem\Filesystem;
@@ -219,6 +220,10 @@ class UploadHelper {
 
             «doFileValidation('$destinationFilePath')»
 
+            // collect data to return
+            $result['fileName'] = $fileName;
+            $result['metaData'] = $this->readMetaDataForFile($fileName, $destinationFilePath);
+
             $isImage = in_array($extension, $this->imageFileTypes);
             if ($isImage) {
                 // check if shrinking functionality is enabled
@@ -237,13 +242,13 @@ class UploadHelper {
                         $image = $imagine->open($destinationFilePath);
                         $image->thumbnail(new Box($maxWidth, $maxHeight), $thumbMode)
                               ->save($destinationFilePath);
+
+                        // update meta data excluding EXIF
+                        $newMetaData = $this->readMetaDataForFile($fileName, $destinationFilePath, false);
+                        $result['metaData'] = array_merge($result['metaData'], $newMetaData);
                     }
                 }
             }
-
-            // collect data to return
-            $result['fileName'] = $fileName;
-            $result['metaData'] = $this->readMetaDataForFile($fileName, $destinationFilePath);
 
             return $result;
         }
@@ -311,12 +316,13 @@ class UploadHelper {
         /**
          * Read meta data from a certain file.
          *
-         * @param string $fileName  Name of file to be processed
-         * @param string $filePath  Path to file to be processed
+         * @param string  $fileName    Name of file to be processed
+         * @param string  $filePath    Path to file to be processed
+         * @param boolean $includeExif Whether to read out EXIF data or not
          *
          * @return array Collected meta data
          */
-        public function readMetaDataForFile($fileName, $filePath)
+        protected function readMetaDataForFile($fileName, $filePath, $includeExif = true)
         {
             $meta = [];
             if (empty($fileName)) {
@@ -351,6 +357,17 @@ class UploadHelper {
             } else {
                 $meta['format'] = 'square';
             }
+
+            if (!$includeExif) {
+                return $meta;
+            }
+
+            // add EXIF data
+            $imagine = new Imagine();
+            $image = $imagine
+                ->setMetadataReader(new ExifMetadataReader())
+                ->open($filePath);
+            $meta = array_merge($meta, $image->metadata());
 
             return $meta;
         }
