@@ -363,13 +363,40 @@ class UploadHelper {
             }
 
             // add EXIF data
+            $exifData = $this->readExifData($filePath);
+            $meta = array_merge($meta, $exifData);
+
+            return $meta;
+        }
+
+        /**
+         * Read EXIF data from a certain file.
+         *
+         * @param string  $filePath Path to file to be processed
+         *
+         * @return array Collected meta data
+         */
+        protected function readExifData($filePath)
+        {
             $imagine = new Imagine();
             $image = $imagine
                 ->setMetadataReader(new ExifMetadataReader())
                 ->open($filePath);
-            $meta = array_merge($meta, $image->metadata()->toArray());
 
-            return $meta;
+            $exifData = $image->metadata()->toArray();
+
+            // convert byte arrays
+            foreach ($exifData as $k => $v) {
+                if (is_array($v)) {
+                    foreach ($v as $kk => $vv) {
+                        $exifData[$k][$kk] = mb_convert_encoding($vv, 'auto', 'byte2le');
+                    }
+                } else {
+                    $exifData[$k] = mb_convert_encoding($v, 'auto', 'byte2le');
+                }
+            }
+
+            return $exifData;
         }
     '''
 
