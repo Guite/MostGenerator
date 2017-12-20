@@ -306,7 +306,7 @@ class Entities {
         «IF isTopSuperClass»
         «' '»* @ORM\InheritanceType("«getChildRelations.head.strategy.literal»")
         «' '»* @ORM\DiscriminatorColumn(name="«getChildRelations.head.discriminatorColumn.formatForCode»"«/*, type="string"*/»)
-        «' '»* @ORM\DiscriminatorMap({«FOR relation : getChildRelations»«relation.discriminatorInfo»«ENDFOR»})
+        «' '»* @ORM\DiscriminatorMap({«FOR relation : getChildRelations SEPARATOR ', '»«relation.discriminatorInfo»«ENDFOR»})
         «ENDIF»
     '''
 
