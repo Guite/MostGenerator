@@ -340,7 +340,7 @@ class ModelJoinExtensions {
      * Returns the outgoing one2many relationship using this field as aggregate. 
      */
     def getAggregateRelationship(IntegerField it) {
-        val aggregateDetails = aggregateFor.split('#')
+        val aggregateDetails = aggregateFor.split('\\.')
         entity.outgoing.filter(OneToManyRelationship).findFirst[bidirectional && targetAlias == aggregateDetails.head]
     }
 
@@ -360,7 +360,7 @@ class ModelJoinExtensions {
      * Returns the target field of the outgoing one2many relationship using this field as aggregate. 
      */
     def dispatch getAggregateTargetField(IntegerField it) {
-        val aggregateDetails = aggregateFor.split('#')
+        val aggregateDetails = aggregateFor.split('\\.')
         getAggregateTargetEntity.fields.filter(DerivedField).findFirst[name == aggregateDetails.get(1)]
     }
 
