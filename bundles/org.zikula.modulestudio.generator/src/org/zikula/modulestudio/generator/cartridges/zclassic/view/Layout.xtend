@@ -80,6 +80,7 @@ class Layout {
             «IF generatePoweredByBacklinksIntoFooterTemplates»
                 «new FileHelper().msWeblink(it)»
             «ENDIF»
+            {{ pageAddAsset('stylesheet', zasset('@«appName»:css/custom.css')) }}
             «IF needsJQueryUI»
                 {{ pageAddAsset('stylesheet', asset('jquery-ui/themes/base/jquery-ui.min.css')) }}
                 {{ pageAddAsset('stylesheet', asset('bootstrap-jqueryui/bootstrap-jqueryui.min.css')) }}
@@ -252,6 +253,7 @@ class Layout {
             «ENDIF»
             <link rel="stylesheet" href="{{ asset('bundles/core/css/core.css') }}" />
             <link rel="stylesheet" href="{{ zasset('@«appName»:css/style.css') }}" />
+            <link rel="stylesheet" href="{{ zasset('@«appName»:css/custom.css') }}" />
             «IF generateExternalControllerAndFinder»
                 {% if useFinder|default == true %}
                     «rawCssAssets(true)»

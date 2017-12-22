@@ -31,6 +31,9 @@ class Styles {
         var fileName = 'style.css'
         fsa.generateFile(getAppCssPath + fileName, appStyles)
 
+        fileName = 'custom.css'
+        fsa.generateFile(getAppCssPath + fileName, '/* this file is intended for custom styles */')
+
         if (generateExternalControllerAndFinder) {
             fileName = 'finder.css'
             fsa.generateFile(getAppCssPath + fileName, finderStyles)

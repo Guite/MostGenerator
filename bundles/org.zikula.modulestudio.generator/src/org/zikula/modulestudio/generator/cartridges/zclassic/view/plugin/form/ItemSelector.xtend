@@ -128,6 +128,7 @@ class ItemSelector {
                     $jsAssetBag->add($assetHelper->resolve('@«appName»:js/«appName».js'));
                     $jsAssetBag->add($assetHelper->resolve('@«appName»:js/«appName».ItemSelector.js'));
                     $cssAssetBag->add($assetHelper->resolve('@«appName»:css/style.css'));
+                    $cssAssetBag->add($assetHelper->resolve('@«appName»:css/custom.css'));
                 }
                 $firstTime = false;
 
