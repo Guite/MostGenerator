@@ -1,7 +1,7 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.controller
 
 import de.guite.modulestudio.metamodel.Application
-import org.eclipse.xtext.generator.IFileSystemAccess
+import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener.Group
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener.IpTrace
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener.Kernel
@@ -16,11 +16,9 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener.UserRegistration
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener.Users
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener.WorkflowEvents
-import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
-import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
 
@@ -29,13 +27,10 @@ class Listeners {
     extension ControllerExtensions = new ControllerExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension ModelExtensions = new ModelExtensions
-    extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
     extension WorkflowExtensions = new WorkflowExtensions
 
-    FileHelper fh = new FileHelper
-    IFileSystemAccess fsa
-    Application app
+    IMostFileSystemAccess fsa
     Boolean isBase
     Boolean needsThirdPartyListener
 
@@ -45,9 +40,8 @@ class Listeners {
     /**
      * Entry point for event subscribers.
      */
-    def generate(Application it, IFileSystemAccess fsa) {
+    def generate(Application it, IMostFileSystemAccess fsa) {
         this.fsa = fsa
-        this.app = it
         listenerSuffix = 'Listener.php'
 
         val needsDetailContentType = generateDetailContentType && hasDisplayActions
@@ -92,12 +86,7 @@ class Listeners {
 
     def private listenerFile(String name, CharSequence content) {
         var filePath = listenerPath + (if (isBase) 'Abstract' else '') + name + listenerSuffix
-        if (!app.shouldBeSkipped(filePath)) {
-            if (app.shouldBeMarked(filePath)) {
-                filePath = listenerPath + name + listenerSuffix.replace('.php', '.generated.php')
-            }
-            fsa.generateFile(filePath, fh.phpFileContent(app, content))
-        }
+        fsa.generateFile(filePath, content)
     }
 
     def private listenersInstallerFile(Application it) '''

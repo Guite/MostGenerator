@@ -1,25 +1,21 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.view.additions
 
 import de.guite.modulestudio.metamodel.Application
-import org.eclipse.xtext.generator.IFileSystemAccess
+import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class NewsletterView {
+
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
 
-    def generate(Application it, IFileSystemAccess fsa) {
+    def generate(Application it, IMostFileSystemAccess fsa) {
         val pluginClassSuffix = 'Plugin'
         val templatePath = getViewPath + 'plugin_config/'
         // not ready for Twig yet
         var fileName = 'ItemList' + pluginClassSuffix + '.tpl'
-        if (!shouldBeSkipped(templatePath + fileName)) {
-            if (shouldBeMarked(templatePath + fileName)) {
-                fileName = 'ItemList' + pluginClassSuffix + '.generated.tpl'
-            }
-            fsa.generateFile(templatePath + fileName, editTemplate)
-        }
+        fsa.generateFile(templatePath + fileName, editTemplate)
     }
 
     def private editTemplate(Application it) '''

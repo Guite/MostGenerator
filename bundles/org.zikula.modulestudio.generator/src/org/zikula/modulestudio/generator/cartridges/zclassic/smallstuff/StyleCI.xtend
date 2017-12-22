@@ -1,21 +1,12 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff
 
 import de.guite.modulestudio.metamodel.Application
-import org.eclipse.xtext.generator.IFileSystemAccess
-import org.zikula.modulestudio.generator.extensions.NamingExtensions
+import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 
 class StyleCI {
 
-    extension NamingExtensions = new NamingExtensions
-
-    def generate(Application it, IFileSystemAccess fsa) {
-        var fileName = '.styleci.yml'
-        if (!shouldBeSkipped(fileName)) {
-            if (shouldBeMarked(fileName)) {
-                fileName = '.styleci.generated.yml'
-            }
-            fsa.generateFile(fileName, styleci)
-        }
+    def generate(Application it, IMostFileSystemAccess fsa) {
+        fsa.generateFile('.styleci.yml', styleci)
     }
 
     def private styleci(Application it) '''

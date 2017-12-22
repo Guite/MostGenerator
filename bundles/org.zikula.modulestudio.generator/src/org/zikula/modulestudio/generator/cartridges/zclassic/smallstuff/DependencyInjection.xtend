@@ -1,24 +1,18 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff
 
 import de.guite.modulestudio.metamodel.Application
-import org.eclipse.xtext.generator.IFileSystemAccess
+import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
-import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class DependencyInjection {
 
     extension FormattingExtensions = new FormattingExtensions
-    extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
 
-    FileHelper fh = new FileHelper
-
-    def generate(Application it, IFileSystemAccess fsa) {
+    def generate(Application it, IMostFileSystemAccess fsa) {
         val extensionFileName = vendor.formatForCodeCapital + name.formatForCodeCapital + 'Extension.php'
-        generateClassPair(fsa, 'DependencyInjection/' + extensionFileName,
-            fh.phpFileContent(it, extensionBaseImpl), fh.phpFileContent(it, extensionImpl)
-        )
+        fsa.generateClassPair('DependencyInjection/' + extensionFileName, extensionBaseImpl, extensionImpl)
     }
 
     def private extensionBaseImpl(Application it) '''

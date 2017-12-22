@@ -2,10 +2,9 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.controller
 
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.EntityTreeType
-import org.eclipse.xtext.generator.IFileSystemAccess
+import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.installer.MigrationHelper
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.installer.ModVars
-import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
@@ -20,15 +19,11 @@ class Installer {
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
 
-    FileHelper fh = new FileHelper
-
     /**
      * Entry point for application installer.
      */
-    def generate(Application it, IFileSystemAccess fsa) {
-        generateClassPair(fsa, name.formatForCodeCapital + 'ModuleInstaller.php',
-            fh.phpFileContent(it, installerBaseClass), fh.phpFileContent(it, installerImpl)
-        )
+    def generate(Application it, IMostFileSystemAccess fsa) {
+        fsa.generateClassPair(name.formatForCodeCapital + 'ModuleInstaller.php', installerBaseClass, installerImpl)
     }
 
     def private installerBaseClass(Application it) '''

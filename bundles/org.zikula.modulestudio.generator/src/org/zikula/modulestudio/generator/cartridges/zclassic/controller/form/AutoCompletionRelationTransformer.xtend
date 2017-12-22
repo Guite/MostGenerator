@@ -1,22 +1,15 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.controller.form
 
 import de.guite.modulestudio.metamodel.Application
-import org.eclipse.xtext.generator.IFileSystemAccess
-import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
-import org.zikula.modulestudio.generator.extensions.NamingExtensions
+import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class AutoCompletionRelationTransformer {
 
-    extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
 
-    FileHelper fh = new FileHelper
-
-    def generate(Application it, IFileSystemAccess fsa) {
-        generateClassPair(fsa, 'Form/DataTransformer/AutoCompletionRelationTransformer.php',
-            fh.phpFileContent(it, transformerBaseImpl), fh.phpFileContent(it, transformerImpl)
-        )
+    def generate(Application it, IMostFileSystemAccess fsa) {
+        fsa.generateClassPair('Form/DataTransformer/AutoCompletionRelationTransformer.php', transformerBaseImpl, transformerImpl)
     }
 
     def private transformerBaseImpl(Application it) '''

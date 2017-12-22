@@ -7,7 +7,7 @@ import de.guite.modulestudio.metamodel.JoinRelationship
 import de.guite.modulestudio.metamodel.ManyToManyRelationship
 import de.guite.modulestudio.metamodel.OneToManyRelationship
 import de.guite.modulestudio.metamodel.OneToOneRelationship
-import org.eclipse.xtext.generator.IFileSystemAccess
+import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.pagecomponents.SimpleFields
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
@@ -25,20 +25,18 @@ class Csv {
 
     SimpleFields fieldHelper = new SimpleFields
 
-    def generate(Entity it, String appName, IFileSystemAccess fsa) {
+    def generate(Entity it, String appName, IMostFileSystemAccess fsa) {
         if (!hasViewAction) {
             return
         }
         ('Generating CSV view templates for entity "' + name.formatForDisplay + '"').printIfNotTesting(fsa)
+
         var templateFilePath = templateFileWithExtension('view', 'csv')
-        if (!application.shouldBeSkipped(templateFilePath)) {
-            fsa.generateFile(templateFilePath, csvView(appName))
-        }
+        fsa.generateFile(templateFilePath, csvView(appName))
+
         if (application.separateAdminTemplates) {
             templateFilePath = templateFileWithExtension('Admin/view', 'csv')
-            if (!application.shouldBeSkipped(templateFilePath)) {
-                fsa.generateFile(templateFilePath, csvView(appName))
-            }
+            fsa.generateFile(templateFilePath, csvView(appName))
         }
     }
 

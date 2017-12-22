@@ -2,8 +2,7 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.models.entity.exte
 
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.Entity
-import org.eclipse.xtext.generator.IFileSystemAccess
-import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
+import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelInheritanceExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
@@ -18,13 +17,12 @@ abstract class AbstractExtension implements EntityExtensionInterface {
 
     Application app
     String classType = ''
-    FileHelper fh = new FileHelper
-    protected IFileSystemAccess fsa
+    protected IMostFileSystemAccess fsa
 
     /**
      * Generates separate extension classes.
      */
-    override extensionClasses(Entity it, IFileSystemAccess fsa) {
+    override extensionClasses(Entity it, IMostFileSystemAccess fsa) {
         this.fsa = fsa
         if (!extensionClassType.empty) {
             extensionClasses(it, extensionClassType)
@@ -46,36 +44,20 @@ abstract class AbstractExtension implements EntityExtensionInterface {
         var fileName = ''
         if (!isInheriting) {
             fileName = 'Base/Abstract' + classPrefix + entitySuffix + '.php'
-            if (!app.shouldBeSkipped(entityPath + fileName)) {
-                if (app.shouldBeMarked(entityPath + fileName)) {
-                    fileName = 'Base/Abstract' + classPrefix + entitySuffix + '.generated.php'
-                }
-                fsa.generateFile(entityPath + fileName, fh.phpFileContent(app, extensionClassBaseImpl))
-            }
+            fsa.generateFile(entityPath + fileName, extensionClassBaseImpl)
 
             fileName = 'Base/Abstract' + classPrefix + repositorySuffix + '.php'
-            if (classType != 'closure' && !app.shouldBeSkipped(repositoryPath + fileName)) {
-                if (app.shouldBeMarked(repositoryPath + fileName)) {
-                    fileName = 'Base/Abstract' + classPrefix + repositorySuffix + '.generated.php'
-                }
-                fsa.generateFile(repositoryPath + fileName, fh.phpFileContent(app, extensionClassRepositoryBaseImpl))
+            if (classType != 'closure') {
+                fsa.generateFile(repositoryPath + fileName, extensionClassRepositoryBaseImpl)
             }
         }
         if (!app.generateOnlyBaseClasses) {
             fileName = classPrefix + entitySuffix + '.php'
-            if (!app.shouldBeSkipped(entityPath + fileName)) {
-                if (app.shouldBeMarked(entityPath + fileName)) {
-                    fileName = classPrefix + entitySuffix + '.generated.php'
-                }
-                fsa.generateFile(entityPath + fileName, fh.phpFileContent(app, extensionClassImpl))
-            }
+            fsa.generateFile(entityPath + fileName, extensionClassImpl)
 
             fileName = classPrefix + repositorySuffix + '.php'
-            if (classType != 'closure' && !app.shouldBeSkipped(repositoryPath + fileName)) {
-                if (app.shouldBeMarked(repositoryPath + fileName)) {
-                    fileName = classPrefix + repositorySuffix + '.generated.php'
-                }
-                fsa.generateFile(repositoryPath + fileName, fh.phpFileContent(app, extensionClassRepositoryImpl))
+            if (classType != 'closure') {
+                fsa.generateFile(repositoryPath + fileName, extensionClassRepositoryImpl)
             }
         }
     }

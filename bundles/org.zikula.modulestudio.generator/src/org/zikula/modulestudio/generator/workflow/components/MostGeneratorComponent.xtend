@@ -2,6 +2,7 @@ package org.zikula.modulestudio.generator.workflow.components
 
 import com.google.inject.Inject
 import com.google.inject.Injector
+import de.guite.modulestudio.metamodel.Application
 import java.util.List
 import java.util.Map
 import org.eclipse.emf.ecore.resource.Resource
@@ -13,6 +14,7 @@ import org.eclipse.xtext.generator.GeneratorComponent
 import org.eclipse.xtext.generator.IGenerator
 import org.eclipse.xtext.generator.IGenerator2
 import org.eclipse.xtext.generator.JavaIoFileSystemAccess
+import org.zikula.modulestudio.generator.application.MostFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.MostGenerator
 
 /**
@@ -31,7 +33,7 @@ class MostGeneratorComponent extends GeneratorComponent implements
      * List of slot names.
      */
     @Accessors
-    List<String> slotNames = newArrayList()
+    List<String> slotNames = newArrayList
 
     /**
      * List of outlets.
@@ -117,12 +119,18 @@ class MostGeneratorComponent extends GeneratorComponent implements
             if (object instanceof Iterable<?>) {
                 for (object2 : object) {
                     if (!(object2 instanceof Resource)) {
-                        throw new IllegalStateException(
-                                "Slot contents was not a Resource but a '" + object.class.simpleName + "'!")
+                        throw new IllegalStateException("Slot contents was not a Resource but a '" + object.class.simpleName + "'!")
                     }
-                    instance.doGenerate(object2 as Resource, fileSystemAccess)
+                    val model = object2 as Resource
+                    if (fileSystemAccess instanceof MostFileSystemAccess) {
+                        fileSystemAccess.app = model.contents.head as Application
+                    }
+                    instance.doGenerate(model, fileSystemAccess)
                 }
             } else if (object instanceof Resource) {
+                if (fileSystemAccess instanceof MostFileSystemAccess) {
+                    fileSystemAccess.app = object.contents.head as Application
+                }
                 instance.doGenerate(object, fileSystemAccess)
             } else {
                 throw new IllegalStateException(
@@ -139,11 +147,11 @@ class MostGeneratorComponent extends GeneratorComponent implements
     }
 
     override protected getConfiguredFileSystemAccess() {
-        val configuredFileSystemAccess = injector.getInstance(JavaIoFileSystemAccess)
+        val fileSystemAccess = injector.getInstance(JavaIoFileSystemAccess)
         for (outlet : outlets.entrySet) {
-            configuredFileSystemAccess.setOutputPath(outlet.key, outlet.value)
+            fileSystemAccess.setOutputPath(outlet.key, outlet.value)
         }
-        configuredFileSystemAccess
+        fileSystemAccess
     }
 
     /**

@@ -4,7 +4,7 @@ import de.guite.modulestudio.metamodel.Action
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.DisplayAction
 import de.guite.modulestudio.metamodel.Entity
-import org.eclipse.xtext.generator.IFileSystemAccess
+import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.action.InlineRedirect
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.action.LoggableDeleted
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.action.LoggableHistory
@@ -15,7 +15,6 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.controller.addition
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.additions.Routing
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.additions.Scribite
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype.QuickNavigationType
-import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.extensions.CollectionUtils
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
@@ -34,14 +33,13 @@ class ControllerLayer {
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
 
-    FileHelper fh = new FileHelper
     Application app
     ControllerAction actionHelper
 
     /**
      * Entry point for the controller creation.
      */
-    def void generate(Application it, IFileSystemAccess fsa) {
+    def void generate(Application it, IMostFileSystemAccess fsa) {
         this.app = it
         this.actionHelper = new ControllerAction(app)
 
@@ -73,11 +71,9 @@ class ControllerLayer {
     /**
      * Creates controller class files for every Entity instance.
      */
-    def private generateController(Entity it, IFileSystemAccess fsa) {
+    def private generateController(Entity it, IMostFileSystemAccess fsa) {
         ('Generating "' + name.formatForDisplay + '" controller classes').printIfNotTesting(fsa)
-        app.generateClassPair(fsa, 'Controller/' + name.formatForCodeCapital + 'Controller.php',
-            fh.phpFileContent(app, entityControllerBaseImpl), fh.phpFileContent(app, entityControllerImpl)
-        )
+        fsa.generateClassPair('Controller/' + name.formatForCodeCapital + 'Controller.php', entityControllerBaseImpl, entityControllerImpl)
     }
 
     def private entityControllerBaseImpl(Entity it) '''

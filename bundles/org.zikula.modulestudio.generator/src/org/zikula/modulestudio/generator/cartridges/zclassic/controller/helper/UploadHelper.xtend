@@ -4,8 +4,7 @@ import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.UploadField
 import de.guite.modulestudio.metamodel.UploadNamingScheme
-import org.eclipse.xtext.generator.IFileSystemAccess
-import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
+import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
@@ -23,12 +22,9 @@ class UploadHelper {
     /**
      * Entry point for the helper class creation.
      */
-    def generate(Application it, IFileSystemAccess fsa) {
+    def generate(Application it, IMostFileSystemAccess fsa) {
         'Generating helper class for upload handling'.printIfNotTesting(fsa)
-        val fh = new FileHelper
-        generateClassPair(fsa, 'Helper/UploadHelper.php',
-            fh.phpFileContent(it, uploadFunctionsBaseImpl), fh.phpFileContent(it, uploadFunctionsImpl)
-        )
+        fsa.generateClassPair('Helper/UploadHelper.php', uploadFunctionsBaseImpl, uploadFunctionsImpl)
     }
 
     def private uploadFunctionsBaseImpl(Application it) '''

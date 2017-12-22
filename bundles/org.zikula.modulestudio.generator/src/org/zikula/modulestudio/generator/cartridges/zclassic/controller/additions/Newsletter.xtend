@@ -1,13 +1,11 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.controller.additions
 
 import de.guite.modulestudio.metamodel.Application
-import org.eclipse.xtext.generator.IFileSystemAccess
-import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
+import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.additions.NewsletterView
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
-import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class Newsletter {
@@ -15,20 +13,14 @@ class Newsletter {
     extension ControllerExtensions = new ControllerExtensions
     extension FormattingExtensions = new FormattingExtensions
     extension ModelExtensions = new ModelExtensions
-    extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
 
-    FileHelper fh = new FileHelper
-
-    def generate(Application it, IFileSystemAccess fsa) {
-        val pluginPath = 'NewsletterPlugin/'
-        val pluginClassSuffix = 'Plugin'
-        var pluginFileName = 'ItemList' + pluginClassSuffix + '.php'
-        if (!generateOnlyBaseClasses && !shouldBeSkipped(pluginPath + pluginFileName)) {
-            if (shouldBeMarked(pluginPath + pluginFileName)) {
-                pluginFileName = 'ItemList' + pluginClassSuffix + '.generated.php'
-            }
-            fsa.generateFile(pluginPath + pluginFileName, fh.phpFileContent(it, newsletterClass))
+    def generate(Application it, IMostFileSystemAccess fsa) {
+        if (!generateOnlyBaseClasses) {
+            val pluginPath = 'NewsletterPlugin/'
+            val pluginClassSuffix = 'Plugin'
+            var pluginFileName = 'ItemList' + pluginClassSuffix + '.php'
+            fsa.generateFile(pluginPath + pluginFileName, newsletterClass)
         }
         new NewsletterView().generate(it, fsa)
     }

@@ -3,7 +3,7 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.view.additions
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.EntityWorkflowType
-import org.eclipse.xtext.generator.IFileSystemAccess
+import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
@@ -16,7 +16,7 @@ class Emails {
     extension ModelExtensions = new ModelExtensions
     extension NamingExtensions = new NamingExtensions
 
-    def generate(Application it, IFileSystemAccess fsa) {
+    def generate(Application it, IMostFileSystemAccess fsa) {
         val entitiesWithWorkflow = getAllEntities.filter[workflow != EntityWorkflowType.NONE]
         if (entitiesWithWorkflow.empty) {
             return
@@ -27,20 +27,10 @@ class Emails {
 
         for (entity : entitiesWithWorkflow) {
             var fileName = 'notify' + entity.name.formatForCodeCapital + 'Creator' + templateExtension
-            if (!shouldBeSkipped(templatePath + fileName)) {
-                if (shouldBeMarked(templatePath + fileName)) {
-                    fileName = 'notify' + entity.name.formatForCodeCapital + 'Creator.generated' + templateExtension
-                }
-                fsa.generateFile(templatePath + fileName, entity.notifyCreatorTemplate)
-            }
+            fsa.generateFile(templatePath + fileName, entity.notifyCreatorTemplate)
 
             fileName = 'notify' + entity.name.formatForCodeCapital + 'Moderator' + templateExtension
-            if (!shouldBeSkipped(templatePath + fileName)) {
-                if (shouldBeMarked(templatePath + fileName)) {
-                    fileName = 'notify' + entity.name.formatForCodeCapital + 'Moderator.generated' + templateExtension
-                }
-                fsa.generateFile(templatePath + fileName, entity.notifyModeratorTemplate)
-            }
+            fsa.generateFile(templatePath + fileName, entity.notifyModeratorTemplate)
         }
     }
 

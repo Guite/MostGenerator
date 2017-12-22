@@ -1,12 +1,11 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.models
 
 import de.guite.modulestudio.metamodel.Application
-import org.eclipse.xtext.generator.IFileSystemAccess
+import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
-import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class Factory {
@@ -14,7 +13,6 @@ class Factory {
     extension FormattingExtensions = new FormattingExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension ModelExtensions = new ModelExtensions
-    extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
 
     FileHelper fh = new FileHelper
@@ -22,11 +20,9 @@ class Factory {
     /**
      * Creates a factory class file for easy entity creation.
      */
-    def generate(Application it, IFileSystemAccess fsa) {
+    def generate(Application it, IMostFileSystemAccess fsa) {
         'Generating entity factory class'.printIfNotTesting(fsa)
-        generateClassPair(fsa, 'Entity/Factory/EntityFactory.php',
-            fh.phpFileContent(it, modelFactoryBaseImpl), fh.phpFileContent(it, modelFactoryImpl)
-        )
+        fsa.generateClassPair('Entity/Factory/EntityFactory.php', modelFactoryBaseImpl, modelFactoryImpl)
         new EntityInitialiser().generate(it, fsa)
     }
 

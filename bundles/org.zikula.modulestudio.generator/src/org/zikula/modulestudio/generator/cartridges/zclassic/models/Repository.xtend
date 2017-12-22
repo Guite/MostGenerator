@@ -10,7 +10,7 @@ import de.guite.modulestudio.metamodel.JoinRelationship
 import de.guite.modulestudio.metamodel.ManyToManyRelationship
 import de.guite.modulestudio.metamodel.StringField
 import de.guite.modulestudio.metamodel.StringRole
-import org.eclipse.xtext.generator.IFileSystemAccess
+import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.repository.Joins
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.repository.LinkTable
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.repository.Tree
@@ -34,20 +34,22 @@ class Repository {
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
 
-    IFileSystemAccess fsa
+    IMostFileSystemAccess fsa
     FileHelper fh = new FileHelper
     Application app
 
     /**
      * Entry point for Doctrine repository classes.
      */
-    def generate(Application it, IFileSystemAccess fsa) {
+    def generate(Application it, IMostFileSystemAccess fsa) {
         this.fsa = fsa
         app = it
         getAllEntities.forEach(e|e.generate)
 
         val linkTable = new LinkTable
-        for (relation : getJoinRelations.filter(ManyToManyRelationship)) linkTable.generate(relation, it, fsa)
+        for (relation : getJoinRelations.filter(ManyToManyRelationship)) {
+            linkTable.generate(relation, it, fsa)
+        }
     }
 
     /**
@@ -59,20 +61,12 @@ class Repository {
         var fileSuffix = 'Repository'
 
         var fileName = 'Base/Abstract' + name.formatForCodeCapital + fileSuffix + '.php'
-        if (!app.shouldBeSkipped(repositoryPath + fileName)) {
-            if (app.shouldBeMarked(repositoryPath + fileName)) {
-                fileName = 'Base/' + name.formatForCodeCapital + fileSuffix + '.generated.php'
-            }
-            val content = if (!isInheriting) modelRepositoryBaseImpl else modelChildRepositoryBaseImpl
-            fsa.generateFile(repositoryPath + fileName, fh.phpFileContent(app, content))
-        }
+        val content = if (!isInheriting) modelRepositoryBaseImpl else modelChildRepositoryBaseImpl
+        fsa.generateFile(repositoryPath + fileName, content)
 
-        fileName = name.formatForCodeCapital + fileSuffix + '.php'
-        if (!app.generateOnlyBaseClasses && !app.shouldBeSkipped(repositoryPath + fileName)) {
-            if (app.shouldBeMarked(repositoryPath + fileName)) {
-                fileName = name.formatForCodeCapital + fileSuffix + '.generated.php'
-            }
-            fsa.generateFile(repositoryPath + fileName, fh.phpFileContent(app, modelRepositoryImpl))
+        if (!app.generateOnlyBaseClasses) {
+            fileName = name.formatForCodeCapital + fileSuffix + '.php'
+            fsa.generateFile(repositoryPath + fileName, modelRepositoryImpl)
         }
     }
 

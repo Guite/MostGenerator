@@ -247,7 +247,7 @@ class ModelBehaviourExtensions {
             .filter(JoinRelationship)
             .filter[r|r instanceof OneToOneRelationship || r instanceof OneToManyRelationship || r instanceof ManyToOneRelationship]
             .filter[r|r.source instanceof Entity && (r.source as Entity).hasSluggableFields && r.target instanceof Entity && (r.target as Entity).hasSluggableFields]
-        val List<JoinRelationship> uniqueSlugRelations = #[]
+        val List<JoinRelationship> uniqueSlugRelations = newArrayList
         for (relation : allSlugRelations) {
             var isRedundant = false
             for (uniqueRelation : uniqueSlugRelations) {

@@ -4,29 +4,23 @@ import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.EntityWorkflowType
 import de.guite.modulestudio.metamodel.ListFieldItem
-import org.eclipse.xtext.generator.IFileSystemAccess
-import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
+import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
-import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
 
 class WorkflowHelper {
 
     extension FormattingExtensions = new FormattingExtensions
-    extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
     extension WorkflowExtensions = new WorkflowExtensions
 
     /**
      * Entry point for the helper class creation.
      */
-    def generate(Application it, IFileSystemAccess fsa) {
+    def generate(Application it, IMostFileSystemAccess fsa) {
         'Generating helper class for workflows'.printIfNotTesting(fsa)
-        val fh = new FileHelper
-        generateClassPair(fsa, 'Helper/WorkflowHelper.php',
-            fh.phpFileContent(it, workflowFunctionsBaseImpl), fh.phpFileContent(it, workflowFunctionsImpl)
-        )
+        fsa.generateClassPair('Helper/WorkflowHelper.php', workflowFunctionsBaseImpl, workflowFunctionsImpl)
     }
 
     def private workflowFunctionsBaseImpl(Application it) '''

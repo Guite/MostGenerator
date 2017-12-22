@@ -2,14 +2,12 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.controller.helper
 
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.Entity
-import org.eclipse.xtext.generator.IFileSystemAccess
-import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
+import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.DateTimeExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
-import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class ArchiveHelper {
@@ -19,15 +17,11 @@ class ArchiveHelper {
     extension FormattingExtensions = new FormattingExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension ModelExtensions = new ModelExtensions
-    extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
 
-    def generate(Application it, IFileSystemAccess fsa) {
+    def generate(Application it, IMostFileSystemAccess fsa) {
         'Generating helper class for automatic archiving'.printIfNotTesting(fsa)
-        val fh = new FileHelper
-        generateClassPair(fsa, 'Helper/ArchiveHelper.php',
-            fh.phpFileContent(it, archiveHelperBaseClass), fh.phpFileContent(it, archiveHelperImpl)
-        )
+        fsa.generateClassPair('Helper/ArchiveHelper.php', archiveHelperBaseClass, archiveHelperImpl)
     }
 
     def private archiveHelperBaseClass(Application it) '''

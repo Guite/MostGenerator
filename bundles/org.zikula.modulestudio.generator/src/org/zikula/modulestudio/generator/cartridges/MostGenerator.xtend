@@ -8,6 +8,7 @@ import org.eclipse.xtext.generator.IFileSystemAccess2
 import org.eclipse.xtext.generator.IGenerator
 import org.eclipse.xtext.generator.IGenerator2
 import org.eclipse.xtext.generator.IGeneratorContext
+import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.ZclassicGenerator
 import org.zikula.modulestudio.generator.extensions.transformation.PersistenceTransformer
 
@@ -20,21 +21,22 @@ class MostGenerator extends GeneratorDelegate implements IGenerator, IGenerator2
     override void doGenerate(Resource input, IFileSystemAccess2 fsa, IGeneratorContext context) {
         val app = input.contents.head as Application
 
+        val mostFsa = fsa as IMostFileSystemAccess
+
         val firstEntity = app.entities.head
         val pkFields = firstEntity.fields.filter['id'.equals(name)] //$NON-NLS-1$
-
         if (pkFields.empty) {
-            app.transform(fsa)
+            app.transform(mostFsa)
         }
 
         if ('zclassic'.equals(cartridge)) { //$NON-NLS-1$
-            new ZclassicGenerator().generate(app, fsa, monitor)
+            new ZclassicGenerator().generate(app, mostFsa, monitor)
         }
         //else if ('something'.equals(cartridge)) //$NON-NLS-1$
-        //    new SomethingGenerator().generate(app, fsa, monitor)
+        //    new SomethingGenerator().generate(app, mostFsa, monitor)
     }
 
-    def private transform(Application it, IFileSystemAccess2 fsa) {
+    def private transform(Application it, IMostFileSystemAccess fsa) {
         new PersistenceTransformer().modify(it, fsa)
     }
 

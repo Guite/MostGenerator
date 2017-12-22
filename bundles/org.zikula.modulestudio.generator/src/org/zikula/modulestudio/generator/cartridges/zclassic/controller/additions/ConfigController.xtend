@@ -1,24 +1,18 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.controller.additions
 
 import de.guite.modulestudio.metamodel.Application
-import org.eclipse.xtext.generator.IFileSystemAccess
-import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
+import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
-import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class ConfigController {
 
     extension FormattingExtensions = new FormattingExtensions
-    extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
 
-    def generate(Application it, IFileSystemAccess fsa) {
+    def generate(Application it, IMostFileSystemAccess fsa) {
         'Generating config controller class'.printIfNotTesting(fsa)
-        val fh = new FileHelper
-        generateClassPair(fsa, 'Controller/ConfigController.php',
-            fh.phpFileContent(it, configControllerBaseClass), fh.phpFileContent(it, configControllerImpl)
-        )
+        fsa.generateClassPair('Controller/ConfigController.php', configControllerBaseClass, configControllerImpl)
     }
 
     def private configControllerBaseClass(Application it) '''

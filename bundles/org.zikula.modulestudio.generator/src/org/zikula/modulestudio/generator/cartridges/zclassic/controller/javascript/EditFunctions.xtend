@@ -2,7 +2,7 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.controller.javascr
 
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.DatetimeField
-import org.eclipse.xtext.generator.IFileSystemAccess
+import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
@@ -22,15 +22,10 @@ class EditFunctions {
     /**
      * Entry point for the JavaScript file with edit functionality.
      */
-    def generate(Application it, IFileSystemAccess fsa) {
-        var fileName = appName + '.EditFunctions.js'
-        if (!shouldBeSkipped(getAppJsPath + fileName)) {
-            'Generating JavaScript for edit functions'.printIfNotTesting(fsa)
-            if (shouldBeMarked(getAppJsPath + fileName)) {
-                fileName = appName + '.EditFunctions.generated.js'
-            }
-            fsa.generateFile(getAppJsPath + fileName, generate)
-        }
+    def generate(Application it, IMostFileSystemAccess fsa) {
+        'Generating JavaScript for edit functions'.printIfNotTesting(fsa)
+        val fileName = appName + '.EditFunctions.js'
+        fsa.generateFile(getAppJsPath + fileName, generate)
     }
 
     def private generate(Application it) '''

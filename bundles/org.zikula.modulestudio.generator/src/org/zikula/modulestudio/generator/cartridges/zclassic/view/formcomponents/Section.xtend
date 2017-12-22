@@ -3,7 +3,7 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.view.formcomponent
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.EntityWorkflowType
-import org.eclipse.xtext.generator.IFileSystemAccess
+import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 import org.zikula.modulestudio.generator.extensions.ViewExtensions
@@ -17,7 +17,7 @@ class Section {
     /**
      * Entry point for edit sections beside the actual fields.
      */
-    def generate(Entity it, Application app, IFileSystemAccess fsa, Boolean isAdmin) '''
+    def generate(Entity it, Application app, IMostFileSystemAccess fsa, Boolean isAdmin) '''
 
         «extensionsAndRelations(app, fsa, isAdmin)»
 
@@ -35,7 +35,7 @@ class Section {
         «moderationFields»
     '''
 
-    def private extensionsAndRelations(Entity it, Application app, IFileSystemAccess fsa, Boolean isAdmin) '''
+    def private extensionsAndRelations(Entity it, Application app, IMostFileSystemAccess fsa, Boolean isAdmin) '''
         «IF geographical»
             «IF useGroupingTabs('edit')»
                 <div role="tabpanel" class="tab-pane fade" id="tabMap" aria-labelledby="mapTab">

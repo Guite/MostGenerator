@@ -1,27 +1,21 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.controller.helper
 
 import de.guite.modulestudio.metamodel.Application
-import org.eclipse.xtext.generator.IFileSystemAccess
-import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
-import org.zikula.modulestudio.generator.extensions.NamingExtensions
+import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.Utils
 import org.zikula.modulestudio.generator.extensions.ViewExtensions
 
 class ViewHelper {
 
-    extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
     extension ViewExtensions = new ViewExtensions
 
     /**
      * Entry point for the helper class creation.
      */
-    def generate(Application it, IFileSystemAccess fsa) {
+    def generate(Application it, IMostFileSystemAccess fsa) {
         'Generating helper class for view layer'.printIfNotTesting(fsa)
-        val fh = new FileHelper
-        generateClassPair(fsa, 'Helper/ViewHelper.php',
-            fh.phpFileContent(it, viewFunctionsBaseImpl), fh.phpFileContent(it, viewFunctionsImpl)
-        )
+        fsa.generateClassPair('Helper/ViewHelper.php', viewFunctionsBaseImpl, viewFunctionsImpl)
     }
 
     def private viewFunctionsBaseImpl(Application it) '''

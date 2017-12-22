@@ -3,37 +3,33 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtyp
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.HookProviderMode
-import org.eclipse.xtext.generator.IFileSystemAccess
-import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
+import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
-import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class FormAwareProviderInnerForms {
 
     extension FormattingExtensions = new FormattingExtensions
     extension ModelExtensions = new ModelExtensions
-    extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
 
-    FileHelper fh = new FileHelper
     Application app
 
     /**
      * Entry point for form aware hook provider inner form type.
      */
-    def generate(Application it, IFileSystemAccess fsa) {
+    def generate(Application it, IMostFileSystemAccess fsa) {
         if (!hasFormAwareHookProviders) {
             return
         }
         app = it
         for (entity : getAllEntities.filter[formAwareHookProvider != HookProviderMode.DISABLED]) {
-            generateClassPair(fsa, 'Form/Type/Hook/Edit' + entity.name.formatForCodeCapital + 'Type.php',
-                fh.phpFileContent(it, entity.innerFormTypeBaseImpl('edit')), fh.phpFileContent(it, entity.innerFormTypeImpl('edit'))
+            fsa.generateClassPair('Form/Type/Hook/Edit' + entity.name.formatForCodeCapital + 'Type.php',
+                entity.innerFormTypeBaseImpl('edit'), entity.innerFormTypeImpl('edit')
             )
-            generateClassPair(fsa, 'Form/Type/Hook/Delete' + entity.name.formatForCodeCapital + 'Type.php',
-                fh.phpFileContent(it, entity.innerFormTypeBaseImpl('delete')), fh.phpFileContent(it, entity.innerFormTypeImpl('delete'))
+            fsa.generateClassPair('Form/Type/Hook/Delete' + entity.name.formatForCodeCapital + 'Type.php',
+                entity.innerFormTypeBaseImpl('delete'), entity.innerFormTypeImpl('delete')
             )
         }
     }

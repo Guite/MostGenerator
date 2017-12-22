@@ -2,17 +2,17 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin
 
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.EntityWorkflowType
-import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
 
 class ModerationObjects {
+
     extension FormattingExtensions = new FormattingExtensions
     extension Utils = new Utils
     extension WorkflowExtensions = new WorkflowExtensions
 
-    def generate(Application it, IFileSystemAccess fsa) {
+    def generate(Application it) {
         moderationObjectsImpl
     }
 

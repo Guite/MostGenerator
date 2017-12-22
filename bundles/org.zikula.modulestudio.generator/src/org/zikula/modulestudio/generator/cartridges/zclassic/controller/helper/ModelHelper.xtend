@@ -5,13 +5,11 @@ import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.EntityTreeType
 import de.guite.modulestudio.metamodel.JoinRelationship
 import de.guite.modulestudio.metamodel.RelationEditMode
-import org.eclipse.xtext.generator.IFileSystemAccess
-import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
+import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
-import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class ModelHelper {
@@ -20,18 +18,14 @@ class ModelHelper {
     extension FormattingExtensions = new FormattingExtensions
     extension ModelExtensions = new ModelExtensions
     extension ModelJoinExtensions = new ModelJoinExtensions
-    extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
 
     /**
      * Entry point for the helper class creation.
      */
-    def generate(Application it, IFileSystemAccess fsa) {
+    def generate(Application it, IMostFileSystemAccess fsa) {
         'Generating helper class for model layer'.printIfNotTesting(fsa)
-        val fh = new FileHelper
-        generateClassPair(fsa, 'Helper/ModelHelper.php',
-            fh.phpFileContent(it, modelFunctionsBaseImpl), fh.phpFileContent(it, modelFunctionsImpl)
-        )
+        fsa.generateClassPair('Helper/ModelHelper.php', modelFunctionsBaseImpl, modelFunctionsImpl)
     }
 
     def private modelFunctionsBaseImpl(Application it) '''
@@ -121,10 +115,10 @@ class ModelHelper {
     '''
 
     def private getUniqueListOfSourceEntityTypes(Entity it, Iterable<JoinRelationship> relations) {
-        var sourceTypes = newArrayList()
+        var sourceTypes = newArrayList
         for (relation : relations) {
             if (!sourceTypes.contains(relation.source)) {
-                sourceTypes.add(relation.source)
+                sourceTypes += relation.source
             }
         }
         sourceTypes

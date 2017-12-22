@@ -3,7 +3,7 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.view
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.DerivedField
 import de.guite.modulestudio.metamodel.Entity
-import org.eclipse.xtext.generator.IFileSystemAccess
+import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.formcomponents.Relations
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.formcomponents.Section
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.formcomponents.SharedFormElements
@@ -30,11 +30,11 @@ class Forms {
     extension Utils = new Utils
     extension ViewExtensions = new ViewExtensions
 
-    IFileSystemAccess fsa
+    IMostFileSystemAccess fsa
     Application app
     Boolean isSeparateAdminTemplate
 
-    def generate(Application it, IFileSystemAccess fsa) {
+    def generate(Application it, IMostFileSystemAccess fsa) {
         this.fsa = fsa
         this.app = it
         for (entity : getAllEntities.filter[hasEditAction]) {
@@ -52,15 +52,12 @@ class Forms {
         ('Generating edit form templates for entity "' + name.formatForDisplay + '"').printIfNotTesting(fsa)
         isSeparateAdminTemplate = false
         var templatePath = editTemplateFile(actionName)
-        if (!app.shouldBeSkipped(templatePath)) {
-            fsa.generateFile(templatePath, formTemplate(actionName))
-        }
+        fsa.generateFile(templatePath, formTemplate(actionName))
+
         if (application.separateAdminTemplates) {
             isSeparateAdminTemplate = true
             templatePath = editTemplateFile('Admin/' + actionName)
-            if (!app.shouldBeSkipped(templatePath)) {
-                fsa.generateFile(templatePath, formTemplate(actionName))
-            }
+            fsa.generateFile(templatePath, formTemplate(actionName))
         }
 
         new Relations(fsa, app, false).generateInclusionTemplate(it)
@@ -338,14 +335,8 @@ class Forms {
 
     def private entityInlineRedirectHandlerFile(Entity it) {
         val templatePath = app.getViewPath + name.formatForCodeCapital + '/'
-        val templateExtension = '.html.twig'
-        var fileName = 'inlineRedirectHandler' + templateExtension
-        if (!app.shouldBeSkipped(templatePath + fileName)) {
-            if (app.shouldBeMarked(templatePath + fileName)) {
-                fileName = 'inlineRedirectHandler.generated' + templateExtension
-            }
-            fsa.generateFile(templatePath + fileName, app.inlineRedirectHandlerImpl)
-        }
+        val fileName = 'inlineRedirectHandler.html.twig'
+        fsa.generateFile(templatePath + fileName, app.inlineRedirectHandlerImpl)
     }
 
     def private inlineRedirectHandlerImpl(Application it) '''

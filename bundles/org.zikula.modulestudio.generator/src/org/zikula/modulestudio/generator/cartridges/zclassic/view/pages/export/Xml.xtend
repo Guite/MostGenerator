@@ -10,7 +10,7 @@ import de.guite.modulestudio.metamodel.OneToOneRelationship
 import de.guite.modulestudio.metamodel.StringField
 import de.guite.modulestudio.metamodel.TextField
 import de.guite.modulestudio.metamodel.UploadField
-import org.eclipse.xtext.generator.IFileSystemAccess
+import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.pagecomponents.SimpleFields
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
@@ -28,7 +28,7 @@ class Xml {
 
     SimpleFields fieldHelper = new SimpleFields
 
-    def generate(Entity it, String appName, IFileSystemAccess fsa) {
+    def generate(Entity it, String appName, IMostFileSystemAccess fsa) {
         if (!(hasViewAction || hasDisplayAction)) {
             return
         }
@@ -36,37 +36,28 @@ class Xml {
         var templateFilePath = ''
         if (hasViewAction) {
             templateFilePath = templateFileWithExtension('view', 'xml')
-            if (!application.shouldBeSkipped(templateFilePath)) {
-                fsa.generateFile(templateFilePath, xmlView(appName))
-            }
+            fsa.generateFile(templateFilePath, xmlView(appName))
+
             if (application.separateAdminTemplates) {
                 templateFilePath = templateFileWithExtension('Admin/view', 'xml')
-                if (!application.shouldBeSkipped(templateFilePath)) {
-                    fsa.generateFile(templateFilePath, xmlView(appName))
-                }
+                fsa.generateFile(templateFilePath, xmlView(appName))
             }
         }
         if (hasDisplayAction) {
             templateFilePath = templateFileWithExtension('display', 'xml')
-            if (!application.shouldBeSkipped(templateFilePath)) {
-                fsa.generateFile(templateFilePath, xmlDisplay(appName))
-            }
+            fsa.generateFile(templateFilePath, xmlDisplay(appName))
+
             if (application.separateAdminTemplates) {
                 templateFilePath = templateFileWithExtension('Admin/display', 'xml')
-                if (!application.shouldBeSkipped(templateFilePath)) {
-                    fsa.generateFile(templateFilePath, xmlDisplay(appName))
-                }
+                fsa.generateFile(templateFilePath, xmlDisplay(appName))
             }
         }
         templateFilePath = templateFileWithExtension('include', 'xml')
-        if (!application.shouldBeSkipped(templateFilePath)) {
-            fsa.generateFile(templateFilePath, xmlInclude(appName))
-        }
+        fsa.generateFile(templateFilePath, xmlInclude(appName))
+
         if (application.separateAdminTemplates) {
             templateFilePath = templateFileWithExtension('Admin/include', 'xml')
-            if (!application.shouldBeSkipped(templateFilePath)) {
-                fsa.generateFile(templateFilePath, xmlInclude(appName))
-            }
+            fsa.generateFile(templateFilePath, xmlInclude(appName))
         }
     }
 

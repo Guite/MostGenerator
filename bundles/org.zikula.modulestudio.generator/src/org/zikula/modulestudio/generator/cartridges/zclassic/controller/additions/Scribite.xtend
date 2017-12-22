@@ -1,7 +1,7 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.controller.additions
 
 import de.guite.modulestudio.metamodel.Application
-import org.eclipse.xtext.generator.IFileSystemAccess
+import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
@@ -17,21 +17,18 @@ class Scribite {
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
 
-    IFileSystemAccess fsa
+    IMostFileSystemAccess fsa
     String docPath
 
-    def generate(Application it, IFileSystemAccess fsa) {
+    def generate(Application it, IMostFileSystemAccess fsa) {
+        if (!generateScribitePlugins) {
+            return
+        }
         'Generating Scribite support'.printIfNotTesting(fsa)
         this.fsa = fsa
 
         docPath = getResourcesPath + 'scribite/'
-        var fileName = 'integration.md'
-        if (!shouldBeSkipped(docPath + fileName)) {
-            if (shouldBeMarked(docPath + fileName)) {
-                fileName = 'integration.generated.md'
-            }
-            fsa.generateFile(docPath + fileName, integration)
-        }
+        fsa.generateFile(docPath + 'integration.md', integration)
 
         pluginCk
         pluginQuill
@@ -41,57 +38,23 @@ class Scribite {
 
     def private pluginCk(Application it) {
         val pluginPath = docPath + 'CKEditor/' + appName.formatForDB + '/'
-
-        var fileName = 'plugin.js'
-        if (!shouldBeSkipped(pluginPath + fileName)) {
-            if (shouldBeMarked(pluginPath + fileName)) {
-                fileName = 'plugin.generated.js'
-            }
-            fsa.generateFile(pluginPath + fileName, ckPlugin)
-        }
+        fsa.generateFile(pluginPath + 'plugin.js', ckPlugin)
     }
 
     def private pluginQuill(Application it) {
-        var pluginPath = docPath + 'Quill/' + appName.formatForDB + '/'
-
-        var fileName = 'plugin.js'
-        if (!shouldBeSkipped(pluginPath + fileName)) {
-            if (shouldBeMarked(pluginPath + fileName)) {
-                fileName = 'plugin.generated.js'
-            }
-            fsa.generateFile(pluginPath + fileName, quillPlugin)
-        }
+        val pluginPath = docPath + 'Quill/' + appName.formatForDB + '/'
+        fsa.generateFile(pluginPath + 'plugin.js', quillPlugin)
     }
 
     def private pluginSummernote(Application it) {
-        var pluginPath = docPath + 'Summernote/' + appName.formatForDB + '/'
-
-        var fileName = 'plugin.js'
-        if (!shouldBeSkipped(pluginPath + fileName)) {
-            if (shouldBeMarked(pluginPath + fileName)) {
-                fileName = 'plugin.generated.js'
-            }
-            fsa.generateFile(pluginPath + fileName, summernotePlugin)
-        }
+        val pluginPath = docPath + 'Summernote/' + appName.formatForDB + '/'
+        fsa.generateFile(pluginPath + 'plugin.js', summernotePlugin)
     }
 
     def private pluginTinyMce(Application it) {
-        var pluginPath = docPath + 'TinyMce/' + appName.formatForDB + '/'
-
-        var fileName = 'plugin.js'
-        if (!shouldBeSkipped(pluginPath + fileName)) {
-            if (shouldBeMarked(pluginPath + fileName)) {
-                fileName = 'plugin.generated.js'
-            }
-            fsa.generateFile(pluginPath + fileName, tinyPlugin)
-        }
-        fileName = 'plugin.min.js'
-        if (!shouldBeSkipped(pluginPath + fileName)) {
-            if (shouldBeMarked(pluginPath + fileName)) {
-                fileName = 'plugin.min.generated.js'
-            }
-            fsa.generateFile(pluginPath + fileName, tinyPlugin)
-        }
+        val pluginPath = docPath + 'TinyMce/' + appName.formatForDB + '/'
+        fsa.generateFile(pluginPath + 'plugin.js', tinyPlugin)
+        fsa.generateFile(pluginPath + 'plugin.min.js', tinyPlugin)
     }
 
     def private integration(Application it) '''

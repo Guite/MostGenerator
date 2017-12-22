@@ -5,7 +5,7 @@ import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.JoinRelationship
 import de.guite.modulestudio.metamodel.ManyToManyRelationship
 import de.guite.modulestudio.metamodel.RelationEditMode
-import org.eclipse.xtext.generator.IFileSystemAccess
+import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.Forms
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
@@ -27,14 +27,14 @@ class Relations {
     extension ViewExtensions = new ViewExtensions
     extension Utils = new Utils
 
-    IFileSystemAccess fsa
+    IMostFileSystemAccess fsa
     Application app
     Boolean isSeparateAdminTemplate
 
     /**
      * Constructor
      */
-    new(IFileSystemAccess fsa, Application app, Boolean isAdmin) {
+    new(IMostFileSystemAccess fsa, Application app, Boolean isAdmin) {
         this.fsa = fsa
         this.app = app
         this.isSeparateAdminTemplate = isAdmin
@@ -95,23 +95,17 @@ class Relations {
         // onlyTabTitle and onlyInclude are false here, so lets create the inclusion templates
         ('Generating edit inclusion templates for entity "' + ownEntity.name.formatForDisplay + '"').printIfNotTesting(fsa)
         var templateNameItemList = 'includeSelect' + editSnippet + 'ItemList' + getTargetMultiplicity(useTarget)
+
         var templateFileName = templateFile(ownEntity, templateName)
         var templateFileNameItemList = templateFile(ownEntity, templateNameItemList)
-        if (!app.shouldBeSkipped(templateFileName)) {
-            fsa.generateFile(templateFileName, includedEditTemplate(ownEntity, otherEntity, hasEdit, many))
-        }
-        if (!app.shouldBeSkipped(templateFileNameItemList)) {
-            fsa.generateFile(templateFileNameItemList, component_ItemList(ownEntity, many, hasEdit))
-        }
+        fsa.generateFile(templateFileName, includedEditTemplate(ownEntity, otherEntity, hasEdit, many))
+        fsa.generateFile(templateFileNameItemList, component_ItemList(ownEntity, many, hasEdit))
+
         if (app.separateAdminTemplates) {
             templateFileName = templateFile(ownEntity, 'Admin/' + templateName)
             templateFileNameItemList = templateFile(ownEntity, 'Admin/' + templateNameItemList)
-            if (!app.shouldBeSkipped(templateFileName)) {
-                fsa.generateFile(templateFileName, includedEditTemplate(ownEntity, otherEntity, hasEdit, many))
-            }
-            if (!app.shouldBeSkipped(templateFileNameItemList)) {
-                fsa.generateFile(templateFileNameItemList, component_ItemList(ownEntity, many, hasEdit))
-            }
+            fsa.generateFile(templateFileName, includedEditTemplate(ownEntity, otherEntity, hasEdit, many))
+            fsa.generateFile(templateFileNameItemList, component_ItemList(ownEntity, many, hasEdit))
         }
     }
 

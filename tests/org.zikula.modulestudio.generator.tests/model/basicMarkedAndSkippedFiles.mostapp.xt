@@ -1,0 +1,71 @@
+/**
+ * Copyright (c) 2007-2017 Axel Guckelsberger
+ */
+
+/* XPECT_SETUP org.zikula.modulestudio.generator.tests.MostGeneratorTest END_SETUP */
+
+/*
+test which files are contained in the output
+XPECT files ---
+    .gitignore
+    !composer.json
+    !zikula.manifest.json
+    !AcmeSimpleTestModule.php
+    AcmeSimpleTestModule.generated.php
+    Base/AbstractAcmeSimpleTestModule.php
+    Entity/Base/AbstractArticleEntity.php
+    Resources/views/Article/view.html.twig
+    !Resources/views/Article/display.html.twig
+    Resources/views/Article/display.html.generated.twig
+    !Resources/views/Article/delete.html.twig
+    !Resources/views/Article/delete.html.generated.twig
+--- */
+
+application "SimpleTest" {
+    documentation "Just a simple test application."
+    vendor "Acme"
+    author "Michael Smith"
+    email "info@example.org"
+    url "http://example.org"
+    prefix "simtest"
+    skipFiles "
+        composer.json,
+        zikula.manifest.json,
+        Resources/views/Article/delete.html.twig
+    "
+    markFiles "
+        AcmeSimpleTestModule.php,
+        Resources/views/Article/display.html.twig
+    "
+    entities {
+        entity "article" leading {
+            nameMultiple "articles"
+            displayPattern "#title#"
+            fields {
+                string "title" {
+                    sluggablePosition 1
+                    length 200
+                }
+            }
+            actions {
+                mainAction "Index",
+                viewAction "View",
+                displayAction "Display",
+                deleteAction "Delete"
+            }
+        },
+        entity "image" {
+            nameMultiple "images"
+            displayPattern "#title#"
+            fields {
+                string "title" {
+                    sluggablePosition 1
+                    length 200
+                }
+            }
+            actions {
+                mainAction "Index"
+            }
+        }
+    }
+}

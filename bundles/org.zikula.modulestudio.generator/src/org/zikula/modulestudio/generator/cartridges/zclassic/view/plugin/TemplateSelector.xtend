@@ -1,26 +1,24 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin
 
 import de.guite.modulestudio.metamodel.Application
-import org.eclipse.xtext.generator.IFileSystemAccess
-import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
+import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class TemplateSelector {
+
     extension FormattingExtensions = new FormattingExtensions
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
 
     Boolean generateSmartyPlugin
 
-    def generate(Application it, IFileSystemAccess fsa, Boolean enforceLegacy) {
+    def generate(Application it, IMostFileSystemAccess fsa, Boolean enforceLegacy) {
         generateSmartyPlugin = enforceLegacy
         if (generateSmartyPlugin) {
-            val pluginFilePath = viewPluginFilePath('function', 'TemplateSelector')
-            if (!shouldBeSkipped(pluginFilePath)) {
-                fsa.generateFile(pluginFilePath, new FileHelper().phpFileContent(it, selectorTemplatesImpl))
-            }
+            val pluginFilePath = legacyViewPluginFilePath('function', 'TemplateSelector')
+            fsa.generateFile(pluginFilePath, selectorTemplatesImpl)
         } else {
             selectorTemplatesImpl
         }

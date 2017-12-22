@@ -2,7 +2,7 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.view.pages
 
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.EntityWorkflowType
-import org.eclipse.xtext.generator.IFileSystemAccess
+import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
@@ -15,27 +15,23 @@ class ViewHierarchy {
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
 
-    def generate(Entity it, String appName, IFileSystemAccess fsa) {
+    def generate(Entity it, String appName, IMostFileSystemAccess fsa) {
         ('Generating tree view templates for entity "' + name.formatForDisplay + '"').printIfNotTesting(fsa)
+
         var templateFilePath = templateFile('viewTree')
-        if (!application.shouldBeSkipped(templateFilePath)) {
-            fsa.generateFile(templateFilePath, hierarchyView(appName, false))
-        }
+        fsa.generateFile(templateFilePath, hierarchyView(appName, false))
+
         if (application.separateAdminTemplates) {
             templateFilePath = templateFile('Admin/viewTree')
-            if (!application.shouldBeSkipped(templateFilePath)) {
-                fsa.generateFile(templateFilePath, hierarchyView(appName, true))
-            }
+            fsa.generateFile(templateFilePath, hierarchyView(appName, true))
         }
+
         templateFilePath = templateFile('viewTreeItems')
-        if (!application.shouldBeSkipped(templateFilePath)) {
-            fsa.generateFile(templateFilePath, hierarchyItemsView(appName, false))
-        }
+        fsa.generateFile(templateFilePath, hierarchyItemsView(appName, false))
+
         if (application.separateAdminTemplates) {
             templateFilePath = templateFile('Admin/viewTreeItems')
-            if (!application.shouldBeSkipped(templateFilePath)) {
-                fsa.generateFile(templateFilePath, hierarchyItemsView(appName, true))
-            }
+            fsa.generateFile(templateFilePath, hierarchyItemsView(appName, true))
         }
     }
 

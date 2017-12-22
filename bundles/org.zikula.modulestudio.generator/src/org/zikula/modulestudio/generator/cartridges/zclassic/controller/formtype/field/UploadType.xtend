@@ -2,26 +2,20 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtyp
 
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.UploadNamingScheme
-import org.eclipse.xtext.generator.IFileSystemAccess
+import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
-import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class UploadType {
 
     extension FormattingExtensions = new FormattingExtensions
     extension ModelExtensions = new ModelExtensions
-    extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
 
-    FileHelper fh = new FileHelper
-
-    def generate(Application it, IFileSystemAccess fsa) {
-        generateClassPair(fsa, 'Form/Type/Field/UploadType.php',
-            fh.phpFileContent(it, uploadTypeBaseImpl), fh.phpFileContent(it, uploadTypeImpl)
-        )
+    def generate(Application it, IMostFileSystemAccess fsa) {
+        fsa.generateClassPair('Form/Type/Field/UploadType.php', uploadTypeBaseImpl, uploadTypeImpl)
     }
 
     def private uploadTypeBaseImpl(Application it) '''

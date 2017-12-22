@@ -1,27 +1,27 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.controller.javascript
 
 import de.guite.modulestudio.metamodel.Application
-import org.eclipse.xtext.generator.IFileSystemAccess
+import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
+import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class HistoryFunctions {
 
+    extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
 
     /**
      * Entry point for the JavaScript file with version history functionality.
      */
-    def generate(Application it, IFileSystemAccess fsa) {
-        var fileName = appName + '.VersionHistory.js'
-        if (!shouldBeSkipped(getAppJsPath + fileName)) {
-            'Generating JavaScript for version history view'.printIfNotTesting(fsa)
-            if (shouldBeMarked(getAppJsPath + fileName)) {
-                fileName = appName + '.VersionHistory.generated.js'
-            }
-            fsa.generateFile(getAppJsPath + fileName, generate)
+    def generate(Application it, IMostFileSystemAccess fsa) {
+        if (hasLoggable) {
+            return
         }
+        'Generating JavaScript for version history view'.printIfNotTesting(fsa)
+        val fileName = appName + '.VersionHistory.js'
+        fsa.generateFile(getAppJsPath + fileName, generate)
     }
 
     def private generate(Application it) '''

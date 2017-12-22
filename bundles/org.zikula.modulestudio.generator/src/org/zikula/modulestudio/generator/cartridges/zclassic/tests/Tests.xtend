@@ -1,8 +1,7 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.tests
 
 import de.guite.modulestudio.metamodel.Application
-import org.eclipse.xtext.generator.IFileSystemAccess
-import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
+import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
@@ -11,29 +10,17 @@ class Tests {
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
 
-    FileHelper fh = new FileHelper
-
     /**
      * Entry point for module unit test classes.
      */
-    def generate(Application it, IFileSystemAccess fsa) {
+    def generate(Application it, IMostFileSystemAccess fsa) {
         var testsPath = getAppTestsPath
 
         var fileName = 'bootstrap.php'
-        if (!shouldBeSkipped(testsPath + fileName)) {
-            if (shouldBeMarked(testsPath + fileName)) {
-                fileName = 'bootstrap.generated.php'
-            }
-            fsa.generateFile(testsPath + fileName, fh.phpFileContent(it, bootstrapImpl))
-        }
+        fsa.generateFile(testsPath + fileName, bootstrapImpl)
 
         fileName = 'AllTests.php'
-        if (!shouldBeSkipped(testsPath + fileName)) {
-            if (shouldBeMarked(testsPath + fileName)) {
-                fileName = 'AllTests.generated.php'
-            }
-            fsa.generateFile(testsPath + fileName, fh.phpFileContent(it, testSuiteImpl))
-        }
+        fsa.generateFile(testsPath + fileName, testSuiteImpl)
     }
 
     def private bootstrapImpl(Application it) '''

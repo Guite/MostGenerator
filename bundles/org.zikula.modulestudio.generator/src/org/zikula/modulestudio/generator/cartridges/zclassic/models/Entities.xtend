@@ -9,7 +9,7 @@ import de.guite.modulestudio.metamodel.EntityIndexItem
 import de.guite.modulestudio.metamodel.EntityTreeType
 import de.guite.modulestudio.metamodel.InheritanceRelationship
 import de.guite.modulestudio.metamodel.MappedSuperClass
-import org.eclipse.xtext.generator.IFileSystemAccess
+import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.business.ValidationConstraints
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.entity.Association
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.entity.EntityConstructor
@@ -46,7 +46,7 @@ class Entities {
     /**
      * Entry point for Doctrine entity classes.
      */
-    def generate(Application it, IFileSystemAccess fsa) {
+    def generate(Application it, IMostFileSystemAccess fsa) {
         entities.forEach(e|e.generate(it, fsa))
 
         new LifecycleListener().generate(it, fsa)
@@ -76,7 +76,7 @@ class Entities {
     /**
      * Creates an entity class file for every Entity instance.
      */
-    def private generate(DataObject it, Application app, IFileSystemAccess fsa) {
+    def private generate(DataObject it, Application app, IMostFileSystemAccess fsa) {
         ('Generating entity classes for entity "' + name.formatForDisplay + '"').printIfNotTesting(fsa)
         if (it instanceof Entity) {
             extMan = new ExtensionManager(it)
@@ -88,19 +88,11 @@ class Entities {
         var fileName = ''
         if (!isInheriting) {
             fileName = 'Abstract' + entityFileName + '.php'
-            if (!app.shouldBeSkipped(entityPath + 'Base/' + fileName)) {
-                if (app.shouldBeMarked(entityPath + 'Base/' + fileName)) {
-                    fileName = entityFileName + '.generated.php'
-                }
-                fsa.generateFile(entityPath + 'Base/' + fileName, fh.phpFileContent(app, modelEntityBaseImpl(app)))
-            }
+            fsa.generateFile(entityPath + 'Base/' + fileName, modelEntityBaseImpl(app))
         }
-        fileName = entityFileName + '.php'
-        if (!app.generateOnlyBaseClasses && !app.shouldBeSkipped(entityPath + fileName)) {
-            if (app.shouldBeMarked(entityPath + fileName)) {
-                fileName = entityFileName + '.generated.php'
-            }
-            fsa.generateFile(entityPath + fileName, fh.phpFileContent(app, modelEntityImpl(app)))
+        if (!app.generateOnlyBaseClasses) {
+            fileName = entityFileName + '.php'
+            fsa.generateFile(entityPath + fileName, modelEntityImpl(app))
         }
     }
 

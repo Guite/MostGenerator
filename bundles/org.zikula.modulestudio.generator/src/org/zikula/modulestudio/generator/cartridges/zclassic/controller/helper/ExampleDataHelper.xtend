@@ -24,8 +24,7 @@ import de.guite.modulestudio.metamodel.TextField
 import de.guite.modulestudio.metamodel.UploadField
 import de.guite.modulestudio.metamodel.UrlField
 import de.guite.modulestudio.metamodel.UserField
-import org.eclipse.xtext.generator.IFileSystemAccess
-import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
+import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.DateTimeExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
@@ -46,15 +45,12 @@ class ExampleDataHelper {
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
 
-    def generate(Application it, IFileSystemAccess fsa) {
+    def generate(Application it, IMostFileSystemAccess fsa) {
         if (amountOfExampleRows < 1) {
             return
         }
         'Generating helper class for inserting example data'.printIfNotTesting(fsa)
-        val fh = new FileHelper
-        generateClassPair(fsa, 'Helper/ExampleDataHelper.php',
-            fh.phpFileContent(it, exampleDataHelperBaseClass), fh.phpFileContent(it, exampleDataHelperImpl)
-        )
+        fsa.generateClassPair('Helper/ExampleDataHelper.php', exampleDataHelperBaseClass, exampleDataHelperImpl)
     }
 
     def private exampleDataHelperBaseClass(Application it) '''

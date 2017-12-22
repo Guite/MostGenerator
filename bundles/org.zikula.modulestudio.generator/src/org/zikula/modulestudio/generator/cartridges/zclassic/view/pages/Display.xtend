@@ -9,7 +9,7 @@ import de.guite.modulestudio.metamodel.ItemActionsStyle
 import de.guite.modulestudio.metamodel.JoinRelationship
 import de.guite.modulestudio.metamodel.ManyToManyRelationship
 import de.guite.modulestudio.metamodel.OneToManyRelationship
-import org.eclipse.xtext.generator.IFileSystemAccess
+import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.pagecomponents.ItemActionsView
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.pagecomponents.Relations
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.pagecomponents.SimpleFields
@@ -37,28 +37,24 @@ class Display {
     extension ViewExtensions = new ViewExtensions
     extension WorkflowExtensions = new WorkflowExtensions
 
-    def generate(Entity it, String appName, IFileSystemAccess fsa) {
+    def generate(Entity it, String appName, IMostFileSystemAccess fsa) {
         ('Generating display templates for entity "' + name.formatForDisplay + '"').printIfNotTesting(fsa)
+
         var templateFilePath = templateFile('display')
-        if (!application.shouldBeSkipped(templateFilePath)) {
-            fsa.generateFile(templateFilePath, displayView(appName, false))
-        }
+        fsa.generateFile(templateFilePath, displayView(appName, false))
+
         if (application.separateAdminTemplates) {
             templateFilePath = templateFile('Admin/display')
-            if (!application.shouldBeSkipped(templateFilePath)) {
-                fsa.generateFile(templateFilePath, displayView(appName, true))
-            }
+            fsa.generateFile(templateFilePath, displayView(appName, true))
         }
+
         if (tree != EntityTreeType.NONE) {
             templateFilePath = templateFile('displayTreeRelatives')
-            if (!application.shouldBeSkipped(templateFilePath)) {
-                fsa.generateFile(templateFilePath, treeRelatives(appName, false))
-            }
+            fsa.generateFile(templateFilePath, treeRelatives(appName, false))
+
             if (application.separateAdminTemplates) {
                 templateFilePath = templateFile('Admin/displayTreeRelatives')
-                if (!application.shouldBeSkipped(templateFilePath)) {
-                    fsa.generateFile(templateFilePath, treeRelatives(appName, true))
-                }
+                fsa.generateFile(templateFilePath, treeRelatives(appName, true))
             }
         }
     }

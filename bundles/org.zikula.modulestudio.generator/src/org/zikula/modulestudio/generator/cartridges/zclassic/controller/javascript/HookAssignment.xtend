@@ -1,7 +1,7 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.controller.javascript
 
 import de.guite.modulestudio.metamodel.Application
-import org.eclipse.xtext.generator.IFileSystemAccess
+import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
@@ -17,18 +17,13 @@ class HookAssignment {
     /**
      * Entry point for the JavaScript file with hook assignment functionality.
      */
-    def generate(Application it, IFileSystemAccess fsa) {
+    def generate(Application it, IMostFileSystemAccess fsa) {
         if (!hasUiHooksProviders) {
             return
         }
-        var fileName = appName + '.HookAssignment.js'
-        if (!shouldBeSkipped(getAppJsPath + fileName)) {
-            'Generating JavaScript for UI hook functions'.printIfNotTesting(fsa)
-            if (shouldBeMarked(getAppJsPath + fileName)) {
-                fileName = appName + '.generated.js'
-            }
-            fsa.generateFile(getAppJsPath + fileName, generate)
-        }
+        'Generating JavaScript for UI hook functions'.printIfNotTesting(fsa)
+        val fileName = appName + '.HookAssignment.js'
+        fsa.generateFile(getAppJsPath + fileName, generate)
     }
 
     def private generate(Application it) '''

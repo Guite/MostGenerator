@@ -1,7 +1,7 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.view
 
 import de.guite.modulestudio.metamodel.Application
-import org.eclipse.xtext.generator.IFileSystemAccess
+import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
@@ -25,22 +25,14 @@ class Styles {
     /**
      * Entry point for application styles.
      */
-    def generate(Application it, IFileSystemAccess fsa) {
+    def generate(Application it, IMostFileSystemAccess fsa) {
         cssPrefix = appName.toLowerCase
 
         var fileName = 'style.css'
-        if (!shouldBeSkipped(getAppCssPath + fileName)) {
-            if (shouldBeMarked(getAppCssPath + fileName)) {
-                fileName = 'style.generated.css'
-            }
-            fsa.generateFile(getAppCssPath + fileName, appStyles)
-        }
+        fsa.generateFile(getAppCssPath + fileName, appStyles)
 
-        fileName = 'finder.css'
-        if (generateExternalControllerAndFinder && !shouldBeSkipped(getAppCssPath + fileName)) {
-            if (shouldBeMarked(getAppCssPath + fileName)) {
-                fileName = 'finder.generated.css'
-            }
+        if (generateExternalControllerAndFinder) {
+            fileName = 'finder.css'
             fsa.generateFile(getAppCssPath + fileName, finderStyles)
         }
     }

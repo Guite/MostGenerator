@@ -1,7 +1,7 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.controller.javascript
 
 import de.guite.modulestudio.metamodel.Application
-import org.eclipse.xtext.generator.IFileSystemAccess
+import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
@@ -17,18 +17,13 @@ class AutoCompletion {
     /**
      * Entry point for the JavaScript file with auto completion functionality.
      */
-    def generate(Application it, IFileSystemAccess fsa) {
+    def generate(Application it, IMostFileSystemAccess fsa) {
         if (!needsAutoCompletion) {
             return
         }
-        var fileName = appName + '.AutoCompletion.js'
-        if (!shouldBeSkipped(getAppJsPath + fileName)) {
-            'Generating JavaScript for auto completion'.printIfNotTesting(fsa)
-            if (shouldBeMarked(getAppJsPath + fileName)) {
-                fileName = appName + '.AutoCompletion.generated.js'
-            }
-            fsa.generateFile(getAppJsPath + fileName, generate)
-        }
+        'Generating JavaScript for auto completion'.printIfNotTesting(fsa)
+        val fileName = appName + '.AutoCompletion.js'
+        fsa.generateFile(getAppJsPath + fileName, generate)
     }
 
     def private generate(Application it) '''

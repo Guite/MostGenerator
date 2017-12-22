@@ -2,7 +2,7 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.view.additions
 
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.Entity
-import org.eclipse.xtext.generator.IFileSystemAccess
+import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.pagecomponents.SimpleFields
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
@@ -24,44 +24,24 @@ class ExternalView {
 
     private SimpleFields fieldHelper = new SimpleFields
 
-    def generate(Application it, IFileSystemAccess fsa) {
+    def generate(Application it, IMostFileSystemAccess fsa) {
         var fileName = ''
         val templateExtension = '.html.twig'
         for (entity : getAllEntities.filter[hasDisplayAction]) {
             val templatePath = getViewPath + 'External/' + entity.name.formatForCodeCapital + '/'
 
             fileName = 'display' + templateExtension
-            if (!shouldBeSkipped(templatePath + fileName)) {
-                if (shouldBeMarked(templatePath + fileName)) {
-                    fileName = 'display.generated' + templateExtension
-                }
-                fsa.generateFile(templatePath + fileName, entity.displayTemplate(it))
-            }
+            fsa.generateFile(templatePath + fileName, entity.displayTemplate(it))
 
             fileName = 'info' + templateExtension
-            if (!shouldBeSkipped(templatePath + fileName)) {
-                if (shouldBeMarked(templatePath + fileName)) {
-                    fileName = 'info.generated' + templateExtension
-                }
-                fsa.generateFile(templatePath + fileName, entity.itemInfoTemplate(it))
-            }
+            fsa.generateFile(templatePath + fileName, entity.itemInfoTemplate(it))
 
             fileName = 'find' + templateExtension
-            if (!shouldBeSkipped(templatePath + fileName)) {
-                if (shouldBeMarked(templatePath + fileName)) {
-                    fileName = 'find.generated' + templateExtension
-                }
-                fsa.generateFile(templatePath + fileName, entity.findTemplate(it))
-            }
+            fsa.generateFile(templatePath + fileName, entity.findTemplate(it))
 
             // content type editing is not ready for Twig yet
             fileName = 'select.tpl'
-            if (!shouldBeSkipped(templatePath + fileName)) {
-                if (shouldBeMarked(templatePath + fileName)) {
-                    fileName = 'select.generated.tpl'
-                }
-                fsa.generateFile(templatePath + fileName, entity.selectTemplate(it))
-            }
+            fsa.generateFile(templatePath + fileName, entity.selectTemplate(it))
         }
     }
 

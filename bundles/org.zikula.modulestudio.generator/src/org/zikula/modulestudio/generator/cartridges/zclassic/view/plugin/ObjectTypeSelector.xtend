@@ -1,14 +1,14 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin
 
 import de.guite.modulestudio.metamodel.Application
-import org.eclipse.xtext.generator.IFileSystemAccess
-import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
+import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class ObjectTypeSelector {
+
     extension FormattingExtensions = new FormattingExtensions
     extension ModelExtensions = new ModelExtensions
     extension NamingExtensions = new NamingExtensions
@@ -16,13 +16,11 @@ class ObjectTypeSelector {
 
     Boolean generateSmartyPlugin
 
-    def generate(Application it, IFileSystemAccess fsa, Boolean enforceLegacy) {
+    def generate(Application it, IMostFileSystemAccess fsa, Boolean enforceLegacy) {
         generateSmartyPlugin = enforceLegacy
         if (generateSmartyPlugin) {
-            val pluginFilePath = viewPluginFilePath('function', 'ObjectTypeSelector')
-            if (!shouldBeSkipped(pluginFilePath)) {
-                fsa.generateFile(pluginFilePath, new FileHelper().phpFileContent(it, selectorObjectTypesImpl))
-            }
+            val pluginFilePath = legacyViewPluginFilePath('function', 'ObjectTypeSelector')
+            fsa.generateFile(pluginFilePath, selectorObjectTypesImpl)
         } else {
             selectorObjectTypesImpl
         }

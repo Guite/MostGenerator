@@ -1,7 +1,7 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.view.extensions
 
 import de.guite.modulestudio.metamodel.Application
-import org.eclipse.xtext.generator.IFileSystemAccess
+import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 
@@ -10,28 +10,18 @@ class Attributes {
     extension ControllerExtensions = new ControllerExtensions
     extension NamingExtensions = new NamingExtensions
 
-    def generate (Application it, IFileSystemAccess fsa) {
+    def generate (Application it, IMostFileSystemAccess fsa) {
         val templatePath = getViewPath + 'Helper/'
         val templateExtension = '.html.twig'
 
         var fileName = ''
         if (hasViewActions || hasDisplayActions) {
             fileName = 'includeAttributesDisplay' + templateExtension
-            if (!shouldBeSkipped(templatePath + fileName)) {
-                if (shouldBeMarked(templatePath + fileName)) {
-                    fileName = 'includeAttributesDisplay.generated' + templateExtension
-                }
-                fsa.generateFile(templatePath + fileName, attributesViewImpl)
-            }
+            fsa.generateFile(templatePath + fileName, attributesViewImpl)
         }
         if (hasEditActions) {
             fileName = 'includeAttributesEdit' + templateExtension
-            if (!shouldBeSkipped(templatePath + fileName)) {
-                if (shouldBeMarked(templatePath + fileName)) {
-                    fileName = 'includeAttributesEdit.generated' + templateExtension
-                }
-                fsa.generateFile(templatePath + fileName, attributesEditImpl)
-            }
+            fsa.generateFile(templatePath + fileName, attributesEditImpl)
         }
     }
 

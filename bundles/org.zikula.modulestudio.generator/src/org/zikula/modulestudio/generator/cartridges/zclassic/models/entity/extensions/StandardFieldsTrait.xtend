@@ -1,29 +1,21 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.models.entity.extensions
 
 import de.guite.modulestudio.metamodel.Application
-import org.eclipse.xtext.generator.IFileSystemAccess
+import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
-import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class StandardFieldsTrait {
 
-    extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
 
     FileHelper fh = new FileHelper
     Boolean isLoggable
 
-    def generate(Application it, IFileSystemAccess fsa, Boolean loggable) {
+    def generate(Application it, IMostFileSystemAccess fsa, Boolean loggable) {
         isLoggable = loggable
         val filePath = 'Traits/' + (if (loggable) 'Loggable' else '') + 'StandardFieldsTrait.php'
-        if (!shouldBeSkipped(filePath)) {
-            if (shouldBeMarked(filePath)) {
-                fsa.generateFile(filePath.replace('.php', '.generated.php'), fh.phpFileContent(it, traitFile))
-            } else {
-                fsa.generateFile(filePath, fh.phpFileContent(it, traitFile))
-            }
-        }
+        fsa.generateFile(filePath, traitFile)
     }
 
     def private traitFile(Application it) '''

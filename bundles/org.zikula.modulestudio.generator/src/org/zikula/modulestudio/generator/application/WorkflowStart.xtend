@@ -1,4 +1,3 @@
-
 package org.zikula.modulestudio.generator.application
 
 import com.google.inject.Injector
@@ -131,14 +130,16 @@ class WorkflowStart {
         val setup = new MostGeneratorSetup
         val Injector injector = setup.createInjectorAndDoEMFRegistration
 
-        val configuredFileSystemAccess = injector
-                .getInstance(JavaIoFileSystemAccess)
+        val fileSystemAccess = injector.getInstance(JavaIoFileSystemAccess)
 
-        configuredFileSystemAccess.setOutputPath('DEFAULT_OUTPUT', settings.getPathToModuleRoot)
+        fileSystemAccess.setOutputPath('DEFAULT_OUTPUT', settings.getPathToModuleRoot)
+        if (fileSystemAccess instanceof MostFileSystemAccess) {
+            fileSystemAccess.app = getModel.contents.head as Application
+        }
 
-        configuredFileSystemAccess
+        fileSystemAccess
     }
-    
+
     def private getModel() {
         // do not read in the model again after validation did it already
         if (null === model) {

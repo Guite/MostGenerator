@@ -5,11 +5,10 @@ import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.StringField
 import de.guite.modulestudio.metamodel.StringRole
 import de.guite.modulestudio.metamodel.TextField
-import org.eclipse.xtext.generator.IFileSystemAccess
+import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
-import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.UrlExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
@@ -18,36 +17,21 @@ class CommonIntegrationTemplates {
     extension ControllerExtensions = new ControllerExtensions
     extension FormattingExtensions = new FormattingExtensions
     extension ModelExtensions = new ModelExtensions
-    extension NamingExtensions = new NamingExtensions
     extension UrlExtensions = new UrlExtensions
     extension Utils = new Utils
 
-    def generate(Application it, IFileSystemAccess fsa, String templatePath) {
+    def generate(Application it, IMostFileSystemAccess fsa, String templatePath) {
         val templateExtension = '.html.twig'
         var fileName = ''
         for (entity : getAllEntities) {
             fileName = 'itemlist_' + entity.name.formatForCode + '_display_description' + templateExtension
-            if (!shouldBeSkipped(templatePath + fileName)) {
-                if (shouldBeMarked(templatePath + fileName)) {
-                    fileName = 'itemlist_' + entity.name.formatForCode + '_display_description.generated' + templateExtension 
-                }
-                fsa.generateFile(templatePath + fileName, entity.displayDescTemplate(it))
-            }
+            fsa.generateFile(templatePath + fileName, entity.displayDescTemplate(it))
+
             fileName = 'itemlist_' + entity.name.formatForCode + '_display' + templateExtension
-            if (!shouldBeSkipped(templatePath + fileName)) {
-                if (shouldBeMarked(templatePath + fileName)) {
-                    fileName = 'itemlist_' + entity.name.formatForCode + '_display.generated' + templateExtension
-                }
-                fsa.generateFile(templatePath + fileName, entity.displayTemplate(it))
-            }
+            fsa.generateFile(templatePath + fileName, entity.displayTemplate(it))
         }
         fileName = 'itemlist_display' + templateExtension
-        if (!shouldBeSkipped(templatePath + fileName)) {
-            if (shouldBeMarked(templatePath + fileName)) {
-                fileName = 'itemlist_display.generated' + templateExtension
-            }
-            fsa.generateFile(templatePath + fileName, fallbackDisplayTemplate)
-        }
+        fsa.generateFile(templatePath + fileName, fallbackDisplayTemplate)
     }
 
     def private displayDescTemplate(Entity it, Application app) '''

@@ -1,14 +1,12 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.controller.additions
 
 import de.guite.modulestudio.metamodel.Application
-import org.eclipse.xtext.generator.IFileSystemAccess
+import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype.BlockListType
-import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.additions.BlockListView
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
-import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class BlockList {
@@ -16,16 +14,14 @@ class BlockList {
     extension FormattingExtensions = new FormattingExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension ModelExtensions = new ModelExtensions
-    extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
 
-    FileHelper fh = new FileHelper
-
-    def generate(Application it, IFileSystemAccess fsa) {
+    def generate(Application it, IMostFileSystemAccess fsa) {
+        if (!generateListBlock) {
+            return
+        }
         'Generating block for multiple objects'.printIfNotTesting(fsa)
-        generateClassPair(fsa, 'Block/ItemListBlock.php',
-            fh.phpFileContent(it, listBlockBaseClass), fh.phpFileContent(it, listBlockImpl)
-        )
+        fsa.generateClassPair('Block/ItemListBlock.php', listBlockBaseClass, listBlockImpl)
         new BlockListType().generate(it, fsa)
         new BlockListView().generate(it, fsa)
     }

@@ -6,7 +6,7 @@ import de.guite.modulestudio.metamodel.ListFieldItem
 import de.guite.modulestudio.metamodel.MappedSuperClass
 import java.util.ArrayList
 import java.util.HashMap
-import org.eclipse.xtext.generator.IFileSystemAccess
+import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelInheritanceExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
@@ -30,14 +30,14 @@ class Definition {
     HashMap<String, ArrayList<String>> transitionsFrom
     HashMap<String, String> transitionsTo
 
-    IFileSystemAccess fsa
+    IMostFileSystemAccess fsa
     String outputPath
 
     /**
      * Entry point for workflow definitions.
      * This generates YML files describing the workflows used in the application.
      */
-    def generate(Application it, IFileSystemAccess fsa) {
+    def generate(Application it, IMostFileSystemAccess fsa) {
         app = it
         this.fsa = fsa
         outputPath = getResourcesPath + 'workflows/'
@@ -52,19 +52,12 @@ class Definition {
             return
         }
 
-        var fileName = wfType.textualName + '.yml'
-        if (app.shouldBeSkipped(outputPath + fileName)) {
-            return
-        }
-
         this.wfType = wfType
         // generate only those states which are required by any entity using this workflow type
         this.states = getRequiredStateList(app, wfType)
         this.collectTransitions
 
-        if (app.shouldBeMarked(outputPath + fileName)) {
-            fileName = wfType.textualName + '.generated.yml'
-        }
+        val fileName = wfType.textualName + '.yml'
         fsa.generateFile(outputPath + fileName, workflowDefinition)
     }
 

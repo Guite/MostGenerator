@@ -2,7 +2,7 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.view.pages.export
 
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.UrlField
-import org.eclipse.xtext.generator.IFileSystemAccess
+import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.DateTimeExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
@@ -19,20 +19,18 @@ class Ics {
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
 
-    def generate(Entity it, String appName, IFileSystemAccess fsa) {
+    def generate(Entity it, String appName, IMostFileSystemAccess fsa) {
         if (!hasDisplayAction) {
             return
         }
         ('Generating ICS view templates for entity "' + name.formatForDisplay + '"').printIfNotTesting(fsa)
+
         var templateFilePath = templateFileWithExtension('display', 'ics')
-        if (!application.shouldBeSkipped(templateFilePath)) {
-            fsa.generateFile(templateFilePath, icsDisplay(appName))
-        }
+        fsa.generateFile(templateFilePath, icsDisplay(appName))
+
         if (application.separateAdminTemplates) {
             templateFilePath = templateFileWithExtension('Admin/display', 'ics')
-            if (!application.shouldBeSkipped(templateFilePath)) {
-                fsa.generateFile(templateFilePath, icsDisplay(appName))
-            }
+            fsa.generateFile(templateFilePath, icsDisplay(appName))
         }
     }
 

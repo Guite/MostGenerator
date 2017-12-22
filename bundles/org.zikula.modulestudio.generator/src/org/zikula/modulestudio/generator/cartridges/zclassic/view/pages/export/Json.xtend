@@ -1,7 +1,7 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.view.pages.export
 
 import de.guite.modulestudio.metamodel.Entity
-import org.eclipse.xtext.generator.IFileSystemAccess
+import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
@@ -14,7 +14,7 @@ class Json {
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
 
-    def generate(Entity it, String appName, IFileSystemAccess fsa) {
+    def generate(Entity it, String appName, IMostFileSystemAccess fsa) {
         if (!(hasViewAction || hasDisplayAction)) {
             return
         }
@@ -22,26 +22,20 @@ class Json {
         var templateFilePath = ''
         if (hasViewAction) {
             templateFilePath = templateFileWithExtension('view', 'json')
-            if (!application.shouldBeSkipped(templateFilePath)) {
-                fsa.generateFile(templateFilePath, jsonView(appName))
-            }
+            fsa.generateFile(templateFilePath, jsonView(appName))
+
             if (application.separateAdminTemplates) {
                 templateFilePath = templateFileWithExtension('Admin/view', 'json')
-                if (!application.shouldBeSkipped(templateFilePath)) {
-                    fsa.generateFile(templateFilePath, jsonView(appName))
-                }
+                fsa.generateFile(templateFilePath, jsonView(appName))
             }
         }
         if (hasDisplayAction) {
             templateFilePath = templateFileWithExtension('display', 'json')
-            if (!application.shouldBeSkipped(templateFilePath)) {
-                fsa.generateFile(templateFilePath, jsonDisplay(appName))
-            }
+            fsa.generateFile(templateFilePath, jsonDisplay(appName))
+
             if (application.separateAdminTemplates) {
                 templateFilePath = templateFileWithExtension('Admin/display', 'json')
-                if (!application.shouldBeSkipped(templateFilePath)) {
-                    fsa.generateFile(templateFilePath, jsonDisplay(appName))
-                }
+                fsa.generateFile(templateFilePath, jsonDisplay(appName))
             }
         }
     }

@@ -1,29 +1,29 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.controller.javascript
 
 import de.guite.modulestudio.metamodel.Application
-import org.eclipse.xtext.generator.IFileSystemAccess
+import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
+import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class TreeFunctions {
 
     extension FormattingExtensions = new FormattingExtensions
+    extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
 
     /**
      * Entry point for tree-related JavaScript functions.
      */
-    def generate(Application it, IFileSystemAccess fsa) {
-        var fileName = appName + '.Tree.js'
-        if (!shouldBeSkipped(getAppJsPath + fileName)) {
-            'Generating JavaScript for tree functions'.printIfNotTesting(fsa)
-            if (shouldBeMarked(getAppJsPath + fileName)) {
-                fileName = appName + '.Tree.generated.js'
-            }
-            fsa.generateFile(getAppJsPath + fileName, generate)
+    def generate(Application it, IMostFileSystemAccess fsa) {
+        if (!hasTrees) {
+            return
         }
+        'Generating JavaScript for tree functions'.printIfNotTesting(fsa)
+        val fileName = appName + '.Tree.js'
+        fsa.generateFile(getAppJsPath + fileName, generate)
     }
 
     def private generate(Application it) '''

@@ -1,26 +1,18 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff
 
 import de.guite.modulestudio.metamodel.Application
-import org.eclipse.xtext.generator.IFileSystemAccess
-import org.zikula.modulestudio.generator.extensions.NamingExtensions
+import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class PhpUnitXmlDist {
 
-    extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
 
-    def generate(Application it, IFileSystemAccess fsa) {
+    def generate(Application it, IMostFileSystemAccess fsa) {
         if (!generateTests) {
             return
         }
-        var fileName = 'phpunit.xml.dist'
-        if (!shouldBeSkipped(fileName)) {
-            if (shouldBeMarked(fileName)) {
-                fileName = 'phpunit.xml.generated.dist'
-            }
-            fsa.generateFile(fileName, phpUnitXml)
-        }
+        fsa.generateFile('phpunit.xml.dist', phpUnitXml)
     }
 
     def private phpUnitXml(Application it) '''

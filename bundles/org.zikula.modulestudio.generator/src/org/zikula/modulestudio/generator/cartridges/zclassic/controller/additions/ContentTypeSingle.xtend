@@ -1,9 +1,9 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.controller.additions
 
 import de.guite.modulestudio.metamodel.Application
-import org.eclipse.xtext.generator.IFileSystemAccess
-import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
+import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.additions.ContentTypeSingleView
+import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
@@ -11,18 +11,18 @@ import org.zikula.modulestudio.generator.extensions.Utils
 
 class ContentTypeSingle {
 
+    extension ControllerExtensions = new ControllerExtensions
     extension FormattingExtensions = new FormattingExtensions
     extension ModelExtensions = new ModelExtensions
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
 
-    FileHelper fh = new FileHelper
-
-    def generate(Application it, IFileSystemAccess fsa) {
+    def generate(Application it, IMostFileSystemAccess fsa) {
+        if (!generateDetailContentType || !hasDisplayActions) {
+            return
+        }
         'Generating content type for single objects'.printIfNotTesting(fsa)
-        generateClassPair(fsa, 'ContentType/Item.php',
-            fh.phpFileContent(it, contentTypeBaseClass), fh.phpFileContent(it, contentTypeImpl)
-        )
+        fsa.generateClassPair('ContentType/Item.php', contentTypeBaseClass, contentTypeImpl)
         new ContentTypeSingleView().generate(it, fsa)
     }
 

@@ -1,29 +1,27 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.controller.additions
 
 import de.guite.modulestudio.metamodel.Application
-import org.eclipse.xtext.generator.IFileSystemAccess
+import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype.BlockDetailType
-import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.additions.BlockDetailView
+import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
-import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class BlockDetail {
 
+    extension ControllerExtensions = new ControllerExtensions
     extension FormattingExtensions = new FormattingExtensions
     extension ModelExtensions = new ModelExtensions
-    extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
 
-    FileHelper fh = new FileHelper
-
-    def generate(Application it, IFileSystemAccess fsa) {
+    def generate(Application it, IMostFileSystemAccess fsa) {
+        if (!generateDetailBlock || !hasDisplayActions) {
+            return
+        }
         'Generating block for single objects'.printIfNotTesting(fsa)
-        generateClassPair(fsa, 'Block/ItemBlock.php',
-            fh.phpFileContent(it, detailBlockBaseClass), fh.phpFileContent(it, detailBlockImpl)
-        )
+        fsa.generateClassPair('Block/ItemBlock.php', detailBlockBaseClass, detailBlockImpl)
         new BlockDetailType().generate(it, fsa)
         new BlockDetailView().generate(it, fsa)
     }

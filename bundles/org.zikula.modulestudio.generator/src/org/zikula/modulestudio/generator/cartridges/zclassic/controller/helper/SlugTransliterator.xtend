@@ -1,30 +1,24 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.controller.helper
 
 import de.guite.modulestudio.metamodel.Application
-import org.eclipse.xtext.generator.IFileSystemAccess
-import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
+import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
-import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class SlugTransliterator {
 
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
-    extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
 
     /**
      * Entry point for the helper class creation.
      */
-    def generate(Application it, IFileSystemAccess fsa) {
+    def generate(Application it, IMostFileSystemAccess fsa) {
         if (!hasSluggable) {
             return
         }
         'Generating custom sluggable transliterator'.printIfNotTesting(fsa)
-        val fh = new FileHelper
-        generateClassPair(fsa, 'Helper/SlugTransliterator.php',
-            fh.phpFileContent(it, transliteratorBaseImpl), fh.phpFileContent(it, transliteratorImpl)
-        )
+        fsa.generateClassPair('Helper/SlugTransliterator.php', transliteratorBaseImpl, transliteratorImpl)
     }
 
     def private transliteratorBaseImpl(Application it) '''

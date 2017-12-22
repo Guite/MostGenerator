@@ -2,7 +2,7 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.controller.javascr
 
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.DatetimeField
-import org.eclipse.xtext.generator.IFileSystemAccess
+import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.DateTimeExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
@@ -20,15 +20,10 @@ class Validation {
     /**
      * Entry point for the JavaScript file with validation functionality.
      */
-    def generate(Application it, IFileSystemAccess fsa) {
-        var fileName = appName + '.Validation.js'
-        if (!shouldBeSkipped(getAppJsPath + fileName)) {
-            'Generating JavaScript for validation'.printIfNotTesting(fsa)
-            if (shouldBeMarked(getAppJsPath + fileName)) {
-                fileName = appName + '.Validation.generated.js'
-            }
-            fsa.generateFile(getAppJsPath + fileName, generate)
-        }
+    def generate(Application it, IMostFileSystemAccess fsa) {
+        'Generating JavaScript for validation'.printIfNotTesting(fsa)
+        val fileName = appName + '.Validation.js'
+        fsa.generateFile(getAppJsPath + fileName, generate)
     }
 
     def private generate(Application it) '''

@@ -7,33 +7,26 @@ import de.guite.modulestudio.metamodel.StringField
 import de.guite.modulestudio.metamodel.StringRole
 import de.guite.modulestudio.metamodel.UploadField
 import de.guite.modulestudio.metamodel.Variables
-import org.eclipse.xtext.generator.IFileSystemAccess
-import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
+import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
-import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class ConfigType {
 
     extension FormattingExtensions = new FormattingExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
-    extension NamingExtensions = new NamingExtensions
     extension SharedFormTypeFields = new SharedFormTypeFields
     extension Utils = new Utils
-
-    FileHelper fh = new FileHelper
 
     /**
      * Entry point for config form type.
      */
-    def generate(Application it, IFileSystemAccess fsa) {
+    def generate(Application it, IMostFileSystemAccess fsa) {
         if (!needsConfig) {
             return
         }
-        generateClassPair(fsa, 'Form/Type/ConfigType.php',
-            fh.phpFileContent(it, configTypeBaseImpl), fh.phpFileContent(it, configTypeImpl)
-        )
+        fsa.generateClassPair('Form/Type/ConfigType.php', configTypeBaseImpl, configTypeImpl)
     }
 
     def private configTypeBaseImpl(Application it) '''

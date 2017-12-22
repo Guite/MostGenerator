@@ -3,21 +3,17 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.models
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.ModuleStudioFactory
-import org.eclipse.xtext.generator.IFileSystemAccess
+import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.entity.ExtensionManager
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.entity.Property
-import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
-import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class HookAssignmentEntity {
 
     extension ModelExtensions = new ModelExtensions
-    extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
 
-    FileHelper fh = new FileHelper
     Entity entity
     ExtensionManager extMan
     Property thProp
@@ -25,12 +21,10 @@ class HookAssignmentEntity {
     /**
      * Creates an entity class for storing hook object assignments.
      */
-    def generate(Application it, IFileSystemAccess fsa) {
+    def generate(Application it, IMostFileSystemAccess fsa) {
         createEntity
         'Generating hook assignments entity class'.printIfNotTesting(fsa)
-        generateClassPair(fsa, 'Entity/HookAssignmentEntity.php',
-            fh.phpFileContent(it, entityBaseImpl), fh.phpFileContent(it, entityImpl)
-        )
+        fsa.generateClassPair('Entity/HookAssignmentEntity.php', entityBaseImpl, entityImpl)
         entities -= entity
     }
 

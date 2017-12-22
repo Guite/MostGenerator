@@ -3,7 +3,7 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.view
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.DatetimeField
 import de.guite.modulestudio.metamodel.UploadNamingScheme
-import org.eclipse.xtext.generator.IFileSystemAccess
+import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.DateTimeExtensions
@@ -29,36 +29,24 @@ class Layout {
     extension ViewExtensions = new ViewExtensions
     extension WorkflowExtensions = new WorkflowExtensions
 
-    IFileSystemAccess fsa
+    IMostFileSystemAccess fsa
 
-    new(IFileSystemAccess fsa) {
+    new(IMostFileSystemAccess fsa) {
         this.fsa = fsa
     }
 
     def baseTemplates(Application it) {
         val templatePath = getViewPath
         val templateExtension = '.html.twig'
+
         var fileName = 'base' + templateExtension
-        if (!shouldBeSkipped(templatePath + fileName)) {
-            if (shouldBeMarked(templatePath + fileName)) {
-                fileName = 'base.generated' + templateExtension
-            }
-            fsa.generateFile(templatePath + fileName, baseTemplate)
-        }
+        fsa.generateFile(templatePath + fileName, baseTemplate)
+
         fileName = 'adminBase' + templateExtension
-        if (!shouldBeSkipped(templatePath + fileName)) {
-            if (shouldBeMarked(templatePath + fileName)) {
-                fileName = 'adminBase.generated' + templateExtension
-            }
-            fsa.generateFile(templatePath + fileName, adminBaseTemplate)
-        }
+        fsa.generateFile(templatePath + fileName, adminBaseTemplate)
+
         fileName = 'Form/bootstrap_3' + templateExtension
-        if (!shouldBeSkipped(templatePath + fileName)) {
-            if (shouldBeMarked(templatePath + fileName)) {
-                fileName = 'Form/bootstrap_3.generated' + templateExtension
-            }
-            fsa.generateFile(templatePath + fileName, formBaseTemplate)
-        }
+        fsa.generateFile(templatePath + fileName, formBaseTemplate)
     }
 
     def baseTemplate(Application it) '''
@@ -246,14 +234,8 @@ class Layout {
     '''
 
     def rawPageFile(Application it) {
-        val templateExtension = '.html.twig'
-        var fileName = 'raw' + templateExtension
-        if (!shouldBeSkipped(getViewPath + fileName)) {
-            if (shouldBeMarked(getViewPath + fileName)) {
-                fileName = 'raw.generated' + templateExtension
-            }
-            fsa.generateFile(getViewPath + fileName, rawPageImpl)
-        }
+        val fileName = 'raw.html.twig'
+        fsa.generateFile(getViewPath + fileName, rawPageImpl)
     }
 
     def rawPageImpl(Application it) '''
@@ -386,14 +368,8 @@ class Layout {
         if (!generatePdfSupport) {
             return
         }
-        val templateExtension = '.html.twig'
-        var fileName = 'includePdfHeader' + templateExtension
-        if (!shouldBeSkipped(getViewPath + fileName)) {
-            if (shouldBeMarked(getViewPath + fileName)) {
-                fileName = 'includePdfHeader.generated' + templateExtension
-            }
-            fsa.generateFile(getViewPath + fileName, pdfHeaderImpl)
-        }
+        val fileName = 'includePdfHeader.html.twig'
+        fsa.generateFile(getViewPath + fileName, pdfHeaderImpl)
     }
 
     def private pdfHeaderImpl(Application it) '''

@@ -2,26 +2,21 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.models.repository
 
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.ManyToManyRelationship
-import org.eclipse.xtext.generator.IFileSystemAccess
-import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
+import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
-import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class LinkTable {
 
     extension FormattingExtensions = new FormattingExtensions
-    extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
-
-    FileHelper fh = new FileHelper
 
     /**
      * Creates a reference table class file for every many-to-many relationship instance.
      */
-    def generate(ManyToManyRelationship it, Application app, IFileSystemAccess fsa) {
-        app.generateClassPair(fsa, 'Entity/Repository/' + refClass.formatForCodeCapital + 'Repository.php',
-            fh.phpFileContent(app, modelRefRepositoryBaseImpl(app)), fh.phpFileContent(app, modelRefRepositoryImpl(app))
+    def generate(ManyToManyRelationship it, Application app, IMostFileSystemAccess fsa) {
+        fsa.generateClassPair('Entity/Repository/' + refClass.formatForCodeCapital + 'Repository.php',
+            modelRefRepositoryBaseImpl(app), modelRefRepositoryImpl(app)
         )
     }
 

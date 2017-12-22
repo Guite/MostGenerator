@@ -1,7 +1,7 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.view.pages
 
 import de.guite.modulestudio.metamodel.Entity
-import org.eclipse.xtext.generator.IFileSystemAccess
+import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
@@ -12,17 +12,15 @@ class Delete {
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
 
-    def generate(Entity it, String appName, IFileSystemAccess fsa) {
+    def generate(Entity it, String appName, IMostFileSystemAccess fsa) {
         ('Generating delete templates for entity "' + name.formatForDisplay + '"').printIfNotTesting(fsa)
+
         var templateFilePath = templateFile('delete')
-        if (!application.shouldBeSkipped(templateFilePath)) {
-            fsa.generateFile(templateFilePath, deleteView(false))
-        }
+        fsa.generateFile(templateFilePath, deleteView(false))
+
         if (application.separateAdminTemplates) {
             templateFilePath = templateFile('Admin/delete')
-            if (!application.shouldBeSkipped(templateFilePath)) {
-                fsa.generateFile(templateFilePath, deleteView(true))
-            }
+            fsa.generateFile(templateFilePath, deleteView(true))
         }
     }
 

@@ -6,7 +6,7 @@ import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.EntityTreeType
 import de.guite.modulestudio.metamodel.HookProviderMode
 import de.guite.modulestudio.metamodel.ManyToManyRelationship
-import org.eclipse.xtext.generator.IFileSystemAccess
+import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.additions.Emails
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.additions.HookProviderView
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.extensions.Attributes
@@ -47,11 +47,11 @@ class Views {
     extension Utils = new Utils
     extension WorkflowExtensions = new WorkflowExtensions
 
-    IFileSystemAccess fsa
+    IMostFileSystemAccess fsa
     Layout layoutHelper
     Relations relationHelper
 
-    def generate(Application it, IFileSystemAccess fsa) {
+    def generate(Application it, IMostFileSystemAccess fsa) {
         this.fsa = fsa
         layoutHelper = new Layout(fsa)
         relationHelper = new Relations()

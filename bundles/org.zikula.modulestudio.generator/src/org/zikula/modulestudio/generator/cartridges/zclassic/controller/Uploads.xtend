@@ -3,8 +3,7 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.controller
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.UploadField
-import org.eclipse.xtext.generator.IFileSystemAccess
-import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
+import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
@@ -17,13 +16,12 @@ class Uploads {
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
 
-    FileHelper fh = new FileHelper
-    IFileSystemAccess fsa
+    IMostFileSystemAccess fsa
 
     /**
      * Entry point for the upload handler.
      */
-    def generate(Application it, IFileSystemAccess fsa) {
+    def generate(Application it, IMostFileSystemAccess fsa) {
         this.fsa = fsa
         createUploadFolders
     }
@@ -31,10 +29,10 @@ class Uploads {
     def private createUploadFolders(Application it) {
         /* These files will be removed later. At the moment we need them to create according directories. */
         val uploadPath = getAppUploadPath
-        createPlaceholder(fsa, uploadPath)
+        fsa.createPlaceholder(uploadPath)
         for (entity : getUploadEntities.filter(Entity)) {
             val subFolderName = entity.nameMultiple.formatForDB + '/'
-            createPlaceholder(fsa, uploadPath + subFolderName)
+            fsa.createPlaceholder(uploadPath + subFolderName)
             val uploadFields = entity.getUploadFieldsEntity
             for (uploadField : uploadFields) {
                 uploadField.uploadFolder(uploadPath, subFolderName + uploadField.subFolderPathSegment)
@@ -44,12 +42,12 @@ class Uploads {
     }
 
     def private uploadFolder(UploadField it, String basePath, String folder) {
-        application.createPlaceholder(fsa, basePath + folder + '/')
+        fsa.createPlaceholder(basePath + folder + '/')
         fsa.generateFile(getAppUploadPath(application) + folder + '/.htaccess', htAccess)
     }
 
     def private htAccess(UploadField it) '''
-        # «fh.generatedBy(application, application.timestampAllGeneratedFiles, application.versionAllGeneratedFiles)»
+        # «generatedBy(application, application.timestampAllGeneratedFiles, application.versionAllGeneratedFiles)»
         # ------------------------------------------------------------
         # Purpose of file: block any web access to unallowed files
         # stored in this directory
@@ -80,7 +78,7 @@ class Uploads {
     '''
 
     def private htAccessTemplate(Application it) '''
-        # «fh.generatedBy(it, timestampAllGeneratedFiles, versionAllGeneratedFiles)»
+        # «generatedBy(it, timestampAllGeneratedFiles, versionAllGeneratedFiles)»
         # ------------------------------------------------------------
         # Purpose of file: block any web access to unallowed files
         # stored in this directory

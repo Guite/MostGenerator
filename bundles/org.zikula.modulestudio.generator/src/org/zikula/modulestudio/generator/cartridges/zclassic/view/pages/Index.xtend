@@ -1,7 +1,7 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.view.pages
 
 import de.guite.modulestudio.metamodel.Entity
-import org.eclipse.xtext.generator.IFileSystemAccess
+import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
@@ -12,20 +12,18 @@ class Index {
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
 
-    def generate(Entity it, IFileSystemAccess fsa) {
+    def generate(Entity it, IMostFileSystemAccess fsa) {
         /*if (hasActions('view')) {
             return
         }*/
         ('Generating index templates for entity "' + name.formatForDisplay + '"').printIfNotTesting(fsa)
+
         var templateFilePath = templateFile('index')
-        if (!application.shouldBeSkipped(templateFilePath)) {
-            fsa.generateFile(templateFilePath, indexView(false))
-        }
+        fsa.generateFile(templateFilePath, indexView(false))
+
         if (application.separateAdminTemplates) {
             templateFilePath = templateFile('Admin/index')
-            if (!application.shouldBeSkipped(templateFilePath)) {
-                fsa.generateFile(templateFilePath, indexView(true))
-            }
+            fsa.generateFile(templateFilePath, indexView(true))
         }
     }
 

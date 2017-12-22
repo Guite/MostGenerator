@@ -6,6 +6,7 @@ import org.eclipse.core.runtime.IProgressMonitor
 import org.eclipse.emf.ecore.resource.Resource
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.eclipse.xtext.generator.IGenerator
+import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.ControllerLayer
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.Events
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.FormHandler
@@ -25,9 +26,6 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.controller.addition
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.additions.MultiHook
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.additions.Newsletter
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.additions.Tag
-import org.zikula.modulestudio.generator.cartridges.zclassic.controller.javascript.HookAssignment
-import org.zikula.modulestudio.generator.cartridges.zclassic.controller.javascript.TreeFunctions
-import org.zikula.modulestudio.generator.cartridges.zclassic.controller.javascript.Validation
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.AppSettings
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.Entities
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.Factory
@@ -52,7 +50,6 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.view.Plugins
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.Styles
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.Views
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
-import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
@@ -60,21 +57,20 @@ import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
 class ZclassicGenerator implements IGenerator {
 
     extension ControllerExtensions = new ControllerExtensions
-    extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension ModelExtensions = new ModelExtensions
     extension Utils = new Utils
     extension WorkflowExtensions = new WorkflowExtensions
 
-    IFileSystemAccess fsa
+    IMostFileSystemAccess fsa
     IProgressMonitor pm
 
     override doGenerate(Resource resource, IFileSystemAccess fsa) {
-        this.fsa = fsa
+        this.fsa = fsa as IMostFileSystemAccess
         this.pm = null
         generateApp(resource.contents.head as Application)
     }
 
-    def generate(Application it, IFileSystemAccess fsa, IProgressMonitor pm) {
+    def generate(Application it, IMostFileSystemAccess fsa, IProgressMonitor pm) {
         this.fsa = fsa
         this.pm = pm
         generateApp
@@ -170,13 +166,6 @@ class ZclassicGenerator implements IGenerator {
         pm?.subTask('Controller: JavaScript files')
         'Generating JavaScript files'.printIfNotTesting(fsa)
         new JavaScriptFiles().generate(it, fsa)
-        if (hasUiHooksProviders) {
-            new HookAssignment().generate(it, fsa)
-        }
-        if (hasTrees) {
-            new TreeFunctions().generate(it, fsa)
-        }
-        new Validation().generate(it, fsa)
     }
 
     def private generateView(Application it) {

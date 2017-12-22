@@ -9,7 +9,7 @@ import de.guite.modulestudio.metamodel.ListField
 import de.guite.modulestudio.metamodel.MappedSuperClass
 import de.guite.modulestudio.metamodel.StringField
 import de.guite.modulestudio.metamodel.StringRole
-import org.eclipse.xtext.generator.IFileSystemAccess
+import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.DateTimeExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
@@ -35,48 +35,45 @@ class ServiceDefinitions {
     extension Utils = new Utils
     extension WorkflowExtensions = new WorkflowExtensions
 
+    IMostFileSystemAccess fsa
     String modPrefix = ''
 
-    def private generateServiceFile(Application it, IFileSystemAccess fsa, String fileName, CharSequence content) {
-        var definitionFilePath = getResourcesPath + 'config/' + fileName + '.yml'
-        if (!shouldBeSkipped(definitionFilePath)) {
-            if (shouldBeMarked(definitionFilePath)) {
-                definitionFilePath = getResourcesPath + 'config/' + fileName + '.generated.yml'
-            }
-            fsa.generateFile(definitionFilePath, content)
-        }
+    def private generateServiceFile(Application it, String fileName, CharSequence content) {
+        val definitionFilePath = getResourcesPath + 'config/' + fileName + '.yml'
+        fsa.generateFile(definitionFilePath, content)
     }
 
     /**
      * Entry point for service definitions.
      * This generates YAML files describing DI configuration.
      */
-    def generate(Application it, IFileSystemAccess fsa) {
+    def generate(Application it, IMostFileSystemAccess fsa) {
+        this.fsa = fsa
         modPrefix = appService
 
-        generateServiceFile(fsa, 'services', mainServiceFile)
+        generateServiceFile('services', mainServiceFile)
         if (authenticationMethod != AuthMethodType.NONE) {
-            generateServiceFile(fsa, 'authentication', authentication)
+            generateServiceFile('authentication', authentication)
         }
         if (!variables.empty) {
-            generateServiceFile(fsa, 'appSettings', appSettings)
+            generateServiceFile('appSettings', appSettings)
         }
         if (hasHookSubscribers || hasHookProviders) {
-            generateServiceFile(fsa, 'hooks', hooks)
+            generateServiceFile('hooks', hooks)
         }
-        generateServiceFile(fsa, 'linkContainer', linkContainer)
-        generateServiceFile(fsa, 'entityFactory', entityFactory)
-        generateServiceFile(fsa, 'eventSubscriber', eventSubscriber)
+        generateServiceFile('linkContainer', linkContainer)
+        generateServiceFile('entityFactory', entityFactory)
+        generateServiceFile('eventSubscriber', eventSubscriber)
         if (hasListFields) {
-            generateServiceFile(fsa, 'validators', validators)
+            generateServiceFile('validators', validators)
         }
         if (hasEditActions || needsConfig) {
-            generateServiceFile(fsa, 'formFields', formFields)
+            generateServiceFile('formFields', formFields)
         }
-        generateServiceFile(fsa, 'forms', forms)
-        generateServiceFile(fsa, 'helpers', helpers)
-        generateServiceFile(fsa, 'twig', twig)
-        generateServiceFile(fsa, 'logger', logger)
+        generateServiceFile('forms', forms)
+        generateServiceFile('helpers', helpers)
+        generateServiceFile('twig', twig)
+        generateServiceFile('logger', logger)
     }
 
     def private mainServiceFile(Application it) '''

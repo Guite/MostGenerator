@@ -1,26 +1,19 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.controller.additions
 
 import de.guite.modulestudio.metamodel.Application
-import org.eclipse.xtext.generator.IFileSystemAccess
-import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
+import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
-import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class Tag {
 
     extension FormattingExtensions = new FormattingExtensions
     extension ModelExtensions = new ModelExtensions
-    extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
 
-    FileHelper fh = new FileHelper
-
-    def generate(Application it, IFileSystemAccess fsa) {
-        generateClassPair(fsa, 'TaggedObjectMeta/' + appName + '.php',
-            fh.phpFileContent(it, tagBaseClass), fh.phpFileContent(it, tagImpl)
-        )
+    def generate(Application it, IMostFileSystemAccess fsa) {
+        fsa.generateClassPair('TaggedObjectMeta/' + appName + '.php', tagBaseClass, tagImpl)
     }
 
     def private tagBaseClass(Application it) '''

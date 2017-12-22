@@ -1,25 +1,17 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff
 
 import de.guite.modulestudio.metamodel.Application
-import org.eclipse.xtext.generator.IFileSystemAccess
+import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
-import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class ZikulaManifest {
 
     extension FormattingExtensions = new FormattingExtensions
-    extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
 
-    def generate(Application it, IFileSystemAccess fsa) {
-        var fileName = 'zikula.manifest.json'
-        if (!shouldBeSkipped(fileName)) {
-            if (shouldBeMarked(fileName)) {
-                fileName = 'zikula.manifest.generated.json'
-            }
-            fsa.generateFile(fileName, manifestFile)
-        }
+    def generate(Application it, IMostFileSystemAccess fsa) {
+        fsa.generateFile('zikula.manifest.json', manifestFile)
     }
 
     def private manifestFile(Application it) '''

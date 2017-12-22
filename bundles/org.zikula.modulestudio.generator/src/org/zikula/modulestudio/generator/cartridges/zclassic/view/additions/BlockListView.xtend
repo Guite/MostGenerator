@@ -1,7 +1,7 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.view.additions
 
 import de.guite.modulestudio.metamodel.Application
-import org.eclipse.xtext.generator.IFileSystemAccess
+import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
@@ -12,26 +12,17 @@ class BlockListView {
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
 
-    def generate(Application it, IFileSystemAccess fsa) {
+    def generate(Application it, IMostFileSystemAccess fsa) {
         val templatePath = getViewPath + 'Block/'
         if (!generateListContentType || targets('2.0')) {
             new CommonIntegrationTemplates().generate(it, fsa, templatePath)
         }
         val templateExtension = '.html.twig'
         var fileName = 'itemlist' + templateExtension
-        if (!shouldBeSkipped(templatePath + fileName)) {
-            if (shouldBeMarked(templatePath + fileName)) {
-                fileName = 'itemlist.generated' + templateExtension
-            }
-            fsa.generateFile(templatePath + fileName, displayTemplate)
-        }
+        fsa.generateFile(templatePath + fileName, displayTemplate)
+
         fileName = 'itemlist_modify' + templateExtension
-        if (!shouldBeSkipped(templatePath + fileName)) {
-            if (shouldBeMarked(templatePath + fileName)) {
-                fileName = 'itemlist_modify.generated' + templateExtension
-            }
-            fsa.generateFile(templatePath + fileName, editTemplate)
-        }
+        fsa.generateFile(templatePath + fileName, editTemplate)
     }
 
     def private displayTemplate(Application it) '''

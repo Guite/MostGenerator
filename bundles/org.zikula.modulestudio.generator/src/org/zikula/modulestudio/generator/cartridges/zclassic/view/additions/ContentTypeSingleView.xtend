@@ -1,7 +1,7 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.view.additions
 
 import de.guite.modulestudio.metamodel.Application
-import org.eclipse.xtext.generator.IFileSystemAccess
+import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
@@ -14,16 +14,11 @@ class ContentTypeSingleView {
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
 
-    def generate(Application it, IFileSystemAccess fsa) {
+    def generate(Application it, IMostFileSystemAccess fsa) {
         val templatePath = getViewPath + 'ContentType/'
         // content type editing is not ready for Twig yet
         var fileName = 'item_edit.tpl'
-        if (!shouldBeSkipped(templatePath + fileName)) {
-            if (shouldBeMarked(templatePath + fileName)) {
-                fileName = 'item_edit.generated.tpl'
-            }
-            fsa.generateFile(templatePath + fileName, editTemplate)
-        }
+        fsa.generateFile(templatePath + fileName, editTemplate)
     }
 
     def private editTemplate(Application it) '''

@@ -2,7 +2,7 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.controller.javascr
 
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.ItemActionsStyle
-import org.eclipse.xtext.generator.IFileSystemAccess
+import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
@@ -24,15 +24,10 @@ class DisplayFunctions {
     /**
      * Entry point for the JavaScript file with display functionality.
      */
-    def generate(Application it, IFileSystemAccess fsa) {
-        var fileName = appName + '.js'
-        if (!shouldBeSkipped(getAppJsPath + fileName)) {
-            'Generating JavaScript for display functions'.printIfNotTesting(fsa)
-            if (shouldBeMarked(getAppJsPath + fileName)) {
-                fileName = appName + '.generated.js'
-            }
-            fsa.generateFile(getAppJsPath + fileName, generate)
-        }
+    def generate(Application it, IMostFileSystemAccess fsa) {
+        'Generating JavaScript for display functions'.printIfNotTesting(fsa)
+        val fileName = appName + '.js'
+        fsa.generateFile(getAppJsPath + fileName, generate)
     }
 
     def private generate(Application it) '''

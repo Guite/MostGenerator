@@ -17,7 +17,7 @@ import de.guite.modulestudio.metamodel.OneToManyRelationship
 import de.guite.modulestudio.metamodel.OneToOneRelationship
 import de.guite.modulestudio.metamodel.UrlField
 import java.util.List
-import org.eclipse.xtext.generator.IFileSystemAccess
+import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.pagecomponents.ItemActionsView
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.pagecomponents.SimpleFields
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.pagecomponents.ViewQuickNavForm
@@ -50,31 +50,26 @@ class View {
     static val LIST_TYPE_DL = 2
     static val LIST_TYPE_TABLE = 3
 
-    def generate(Entity it, String appName, Integer listType, IFileSystemAccess fsa) {
+    def generate(Entity it, String appName, Integer listType, IMostFileSystemAccess fsa) {
         ('Generating view templates for entity "' + name.formatForDisplay + '"').printIfNotTesting(fsa)
         this.listType = listType
         this.appName = appName
+
         var templateFilePath = templateFile('view')
-        if (!application.shouldBeSkipped(templateFilePath)) {
-            fsa.generateFile(templateFilePath, viewView(false))
-        }
+        fsa.generateFile(templateFilePath, viewView(false))
+
         if (application.separateAdminTemplates) {
             templateFilePath = templateFile('Admin/view')
-            if (!application.shouldBeSkipped(templateFilePath)) {
-                fsa.generateFile(templateFilePath, viewView(true))
-            }
+            fsa.generateFile(templateFilePath, viewView(true))
         }
         new ViewQuickNavForm().generate(it, appName, fsa)
         if (loggable) {
             templateFilePath = templateFile('viewDeleted')
-            if (!application.shouldBeSkipped(templateFilePath)) {
-                fsa.generateFile(templateFilePath, viewViewDeleted(false))
-            }
+            fsa.generateFile(templateFilePath, viewViewDeleted(false))
+
             if (application.separateAdminTemplates) {
                 templateFilePath = templateFile('Admin/viewDeleted')
-                if (!application.shouldBeSkipped(templateFilePath)) {
-                    fsa.generateFile(templateFilePath, viewViewDeleted(true))
-                }
+                fsa.generateFile(templateFilePath, viewViewDeleted(true))
             }
         }
     }

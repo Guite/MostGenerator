@@ -2,13 +2,12 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.models
 
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.DatetimeField
-import org.eclipse.xtext.generator.IFileSystemAccess
+import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.extensions.DateTimeExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
-import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class EntityInitialiser {
@@ -17,7 +16,6 @@ class EntityInitialiser {
     extension FormattingExtensions = new FormattingExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension ModelExtensions = new ModelExtensions
-    extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
 
     FileHelper fh = new FileHelper
@@ -25,11 +23,9 @@ class EntityInitialiser {
     /**
      * Creates an entity initialiser class file for easy entity initialisation.
      */
-    def generate(Application it, IFileSystemAccess fsa) {
+    def generate(Application it, IMostFileSystemAccess fsa) {
         'Generating entity initialiser class'.printIfNotTesting(fsa)
-        generateClassPair(fsa, 'Entity/Factory/EntityInitialiser.php',
-            fh.phpFileContent(it, initialiserBaseImpl), fh.phpFileContent(it, initialiserImpl)
-        )
+        fsa.generateClassPair('Entity/Factory/EntityInitialiser.php', initialiserBaseImpl, initialiserImpl)
     }
 
     def private initialiserBaseImpl(Application it) '''

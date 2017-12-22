@@ -9,13 +9,11 @@ import de.guite.modulestudio.metamodel.NumberField
 import de.guite.modulestudio.metamodel.TextField
 import de.guite.modulestudio.metamodel.UploadField
 import de.guite.modulestudio.metamodel.UserField
-import org.eclipse.xtext.generator.IFileSystemAccess
-import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
+import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.DateTimeExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.ModelInheritanceExtensions
-import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class EntityDisplayHelper {
@@ -24,15 +22,11 @@ class EntityDisplayHelper {
     extension FormattingExtensions = new FormattingExtensions
     extension ModelExtensions = new ModelExtensions
     extension ModelInheritanceExtensions = new ModelInheritanceExtensions
-    extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
 
-    def generate(Application it, IFileSystemAccess fsa) {
+    def generate(Application it, IMostFileSystemAccess fsa) {
         'Generating helper class for formatted entity display'.printIfNotTesting(fsa)
-        val fh = new FileHelper
-        generateClassPair(fsa, 'Helper/EntityDisplayHelper.php',
-            fh.phpFileContent(it, entityDisplayHelperBaseClass), fh.phpFileContent(it, entityDisplayHelperImpl)
-        )
+        fsa.generateClassPair('Helper/EntityDisplayHelper.php', entityDisplayHelperBaseClass, entityDisplayHelperImpl)
     }
 
     def private entityDisplayHelperBaseClass(Application it) '''

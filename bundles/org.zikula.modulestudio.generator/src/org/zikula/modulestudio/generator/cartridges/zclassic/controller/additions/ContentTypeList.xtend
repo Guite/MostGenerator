@@ -1,8 +1,7 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.controller.additions
 
 import de.guite.modulestudio.metamodel.Application
-import org.eclipse.xtext.generator.IFileSystemAccess
-import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
+import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.additions.ContentTypeListView
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
@@ -18,13 +17,12 @@ class ContentTypeList {
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
 
-    FileHelper fh = new FileHelper
-
-    def generate(Application it, IFileSystemAccess fsa) {
+    def generate(Application it, IMostFileSystemAccess fsa) {
+        if (!generateListContentType) {
+            return
+        }
         'Generating content type for multiple objects'.printIfNotTesting(fsa)
-        generateClassPair(fsa, 'ContentType/ItemList.php',
-            fh.phpFileContent(it, contentTypeBaseClass), fh.phpFileContent(it, contentTypeImpl)
-        )
+        fsa.generateClassPair('ContentType/ItemList.php', contentTypeBaseClass, contentTypeImpl)
         new ContentTypeListView().generate(it, fsa)
     }
 

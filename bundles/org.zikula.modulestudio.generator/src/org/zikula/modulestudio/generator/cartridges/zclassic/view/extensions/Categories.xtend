@@ -1,7 +1,7 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.view.extensions
 
 import de.guite.modulestudio.metamodel.Application
-import org.eclipse.xtext.generator.IFileSystemAccess
+import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 
@@ -10,28 +10,18 @@ class Categories {
     extension ControllerExtensions = new ControllerExtensions
     extension NamingExtensions = new NamingExtensions
 
-    def generate (Application it, IFileSystemAccess fsa) {
+    def generate (Application it, IMostFileSystemAccess fsa) {
         val templatePath = getViewPath + 'Helper/'
         val templateExtension = '.html.twig'
 
         var fileName = ''
         if (hasViewActions || hasDisplayActions) {
             fileName = 'includeCategoriesDisplay' + templateExtension
-            if (!shouldBeSkipped(templatePath + fileName)) {
-                if (shouldBeMarked(templatePath + fileName)) {
-                    fileName = 'includeCategoriesDisplay.generated' + templateExtension
-                }
-                fsa.generateFile(templatePath + fileName, categoriesViewImpl)
-            }
+            fsa.generateFile(templatePath + fileName, categoriesViewImpl)
         }
         if (hasEditActions) {
             fileName = 'includeCategoriesEdit' + templateExtension
-            if (!shouldBeSkipped(templatePath + fileName)) {
-                if (shouldBeMarked(templatePath + fileName)) {
-                    fileName = 'includeCategoriesEdit.generated' + templateExtension
-                }
-                fsa.generateFile(templatePath + fileName, categoriesEditImpl)
-            }
+            fsa.generateFile(templatePath + fileName, categoriesEditImpl)
         }
     }
 

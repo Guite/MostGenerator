@@ -3,13 +3,11 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.controller.helper
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.HookProviderMode
-import org.eclipse.xtext.generator.IFileSystemAccess
+import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype.FormAwareProviderInnerForms
-import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
-import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class HookHelper {
@@ -17,13 +15,12 @@ class HookHelper {
     extension ControllerExtensions = new ControllerExtensions
     extension FormattingExtensions = new FormattingExtensions
     extension ModelExtensions = new ModelExtensions
-    extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
 
     /**
      * Entry point for the helper class creation.
      */
-    def generate(Application it, IFileSystemAccess fsa) {
+    def generate(Application it, IMostFileSystemAccess fsa) {
         if (hasHookSubscribers) {
             generateHookSubscribers(fsa)
         }
@@ -35,12 +32,9 @@ class HookHelper {
     /**
      * Entry point for hook subscribers.
      */
-    def private generateHookSubscribers(Application it, IFileSystemAccess fsa) {
-        val fh = new FileHelper
+    def private generateHookSubscribers(Application it, IMostFileSystemAccess fsa) {
         'Generating helper class for hook calls'.printIfNotTesting(fsa)
-        generateClassPair(fsa, 'Helper/HookHelper.php',
-            fh.phpFileContent(it, hookFunctionsBaseImpl), fh.phpFileContent(it, hookFunctionsImpl)
-        )
+        fsa.generateClassPair('Helper/HookHelper.php', hookFunctionsBaseImpl, hookFunctionsImpl)
         'Generating hook subscriber classes'.printIfNotTesting(fsa)
         for (entity : getAllEntities.filter[e|!e.skipHookSubscribers]) {
             for (hookType : getHookTypes.entrySet) {
@@ -55,8 +49,8 @@ class HookHelper {
                     generateSubscriber = true
                 }
                 if (true === generateSubscriber) {
-                    generateClassPair(fsa, 'HookSubscriber/' + entity.name.formatForCodeCapital + subscriberType + 'Subscriber.php',
-                        fh.phpFileContent(it, entity.hookSubscriberBaseImpl(category, subscriberType)), fh.phpFileContent(it, entity.hookClassImpl('subscriber', category, subscriberType))
+                    fsa.generateClassPair('HookSubscriber/' + entity.name.formatForCodeCapital + subscriberType + 'Subscriber.php',
+                        entity.hookSubscriberBaseImpl(category, subscriberType), entity.hookClassImpl('subscriber', category, subscriberType)
                     )
                 }
             }
@@ -66,13 +60,10 @@ class HookHelper {
     /**
      * Entry point for hook providers.
      */
-    def private generateHookProviders(Application it, IFileSystemAccess fsa) {
-        val fh = new FileHelper
+    def private generateHookProviders(Application it, IMostFileSystemAccess fsa) {
         'Generating hook provider classes'.printIfNotTesting(fsa)
         if (hasFilterHookProvider) {
-            generateClassPair(fsa, 'HookProvider/FilterHooksProvider.php',
-                fh.phpFileContent(it, filterHooksProviderBaseImpl), fh.phpFileContent(it, filterHooksProviderImpl)
-            )
+            fsa.generateClassPair('HookProvider/FilterHooksProvider.php', filterHooksProviderBaseImpl, filterHooksProviderImpl)
         }
         if (hasFormAwareHookProviders || hasUiHooksProviders) {
             for (hookType : getHookTypes.entrySet) {
@@ -87,8 +78,8 @@ class HookHelper {
                         generateProvider = true
                     }
                     if (true === generateProvider) {
-                        generateClassPair(fsa, 'HookProvider/' + entity.name.formatForCodeCapital + providerType + 'Provider.php',
-                            fh.phpFileContent(it, entity.hookProviderBaseImpl(category, providerType)), fh.phpFileContent(it, entity.hookClassImpl('provider', category, providerType))
+                        fsa.generateClassPair('HookProvider/' + entity.name.formatForCodeCapital + providerType + 'Provider.php',
+                            entity.hookProviderBaseImpl(category, providerType), entity.hookClassImpl('provider', category, providerType)
                         )
                     }
                 }

@@ -2,11 +2,9 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.controller
 
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.Entity
-import org.eclipse.xtext.generator.IFileSystemAccess
-import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
+import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
-import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 /**
@@ -16,25 +14,21 @@ class Events {
 
     extension FormattingExtensions = new FormattingExtensions
     extension ModelExtensions = new ModelExtensions
-    extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
 
-    FileHelper fh = new FileHelper
     Application app
 
     /**
      * Entry point for event definition class.
      */
-    def generate(Application it, IFileSystemAccess fsa) {
+    def generate(Application it, IMostFileSystemAccess fsa) {
         app = it
 
-        generateClassPair(fsa, name.formatForCodeCapital + 'Events.php',
-            fh.phpFileContent(it, eventDefinitionsBaseClass), fh.phpFileContent(it, eventDefinitionsImpl)
-        )
+        fsa.generateClassPair(name.formatForCodeCapital + 'Events.php', eventDefinitionsBaseClass, eventDefinitionsImpl)
 
         for (entity : getAllEntities) {
-            generateClassPair(fsa, 'Event/Filter' + entity.name.formatForCodeCapital + 'Event.php',
-                fh.phpFileContent(it, filterEventBaseClass(entity)), fh.phpFileContent(it, filterEventImpl(entity))
+            fsa.generateClassPair('Event/Filter' + entity.name.formatForCodeCapital + 'Event.php',
+                filterEventBaseClass(entity), filterEventImpl(entity)
             )
         }
     }

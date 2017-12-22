@@ -2,7 +2,7 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.models.entity.exte
 
 import de.guite.modulestudio.metamodel.DerivedField
 import de.guite.modulestudio.metamodel.Entity
-import org.eclipse.xtext.generator.IFileSystemAccess
+import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 
 interface EntityExtensionInterface {
 
@@ -29,7 +29,7 @@ interface EntityExtensionInterface {
     /**
      * Generates separate extension classes.
      */
-    def void extensionClasses(Entity it, IFileSystemAccess fsa)
+    def void extensionClasses(Entity it, IMostFileSystemAccess fsa)
 
     /**
      * Returns the extension class type.

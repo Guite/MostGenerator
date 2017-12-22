@@ -3,7 +3,7 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.view.additions
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.HookProviderMode
-import org.eclipse.xtext.generator.IFileSystemAccess
+import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
@@ -16,7 +16,7 @@ class HookProviderView {
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
 
-    def generate(Application it, IFileSystemAccess fsa) {
+    def generate(Application it, IMostFileSystemAccess fsa) {
         if (!hasFormAwareHookProviders && !hasUiHooksProviders) {
             return
         }
@@ -27,19 +27,10 @@ class HookProviderView {
         for (entity : getAllEntities) {
             if (entity.formAwareHookProvider != HookProviderMode.DISABLED) {
                 var fileName = 'edit' + entity.name.formatForCodeCapital + 'Form' + templateExtension
-                if (!shouldBeSkipped(templatePath + fileName)) {
-                    if (shouldBeMarked(templatePath + fileName)) {
-                        fileName = 'edit' + entity.name.formatForCodeCapital + 'Form.generated' + templateExtension
-                    }
-                    fsa.generateFile(templatePath + fileName, entity.formAwareEditTemplate)
-                }
+                fsa.generateFile(templatePath + fileName, entity.formAwareEditTemplate)
+
                 fileName = 'delete' + entity.name.formatForCodeCapital + 'Form' + templateExtension
-                if (!shouldBeSkipped(templatePath + fileName)) {
-                    if (shouldBeMarked(templatePath + fileName)) {
-                        fileName = 'delete' + entity.name.formatForCodeCapital + 'Form.generated' + templateExtension
-                    }
-                    fsa.generateFile(templatePath + fileName, entity.formAwareDeleteTemplate)
-                }
+                fsa.generateFile(templatePath + fileName, entity.formAwareDeleteTemplate)
             }
             if (entity.uiHooksProvider != HookProviderMode.DISABLED) {
                 // nothing yet, because includeDisplayItemListMany.html.twig is reused

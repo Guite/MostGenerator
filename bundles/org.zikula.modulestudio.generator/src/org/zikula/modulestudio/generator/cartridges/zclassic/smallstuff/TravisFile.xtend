@@ -1,25 +1,17 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff
 
 import de.guite.modulestudio.metamodel.Application
-import org.eclipse.xtext.generator.IFileSystemAccess
+import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
-import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class TravisFile {
 
     extension FormattingExtensions = new FormattingExtensions
-    extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
 
-    def generate(Application it, IFileSystemAccess fsa) {
-        var fileName = '.travis.yml'
-        if (!shouldBeSkipped(fileName)) {
-            if (shouldBeMarked(fileName)) {
-                fileName = '.travis.generated.yml'
-            }
-            fsa.generateFile(fileName, travisFile)
-        }
+    def generate(Application it, IMostFileSystemAccess fsa) {
+        fsa.generateFile('.travis.yml', travisFile)
     }
 
     def private travisFile(Application it) '''

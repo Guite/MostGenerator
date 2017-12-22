@@ -6,7 +6,7 @@ import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.EntityWorkflowType
 import de.guite.modulestudio.metamodel.ListField
 import de.guite.modulestudio.metamodel.MappedSuperClass
-import org.eclipse.xtext.generator.IFileSystemAccess
+import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.actionhandler.Locking
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.actionhandler.Redirect
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.actionhandler.RelationPresets
@@ -32,7 +32,6 @@ import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
-import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
 
@@ -43,7 +42,6 @@ class FormHandler {
     extension ModelExtensions = new ModelExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension ModelJoinExtensions = new ModelJoinExtensions
-    extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
     extension WorkflowExtensions = new WorkflowExtensions
 
@@ -57,7 +55,7 @@ class FormHandler {
     /**
      * Entry point for Form handler classes.
      */
-    def generate(Application it, IFileSystemAccess fsa) {
+    def generate(Application it, IMostFileSystemAccess fsa) {
         app = it
 
         // common form types (shared by entities and variables)
@@ -112,22 +110,22 @@ class FormHandler {
     /**
      * Entry point for generic Form handler base classes.
      */
-    def private generateCommon(Application it, String actionName, IFileSystemAccess fsa) {
+    def private generateCommon(Application it, String actionName, IMostFileSystemAccess fsa) {
         ('Generating "' + name + '" form handler base class').printIfNotTesting(fsa)
         val formHandlerFolder = 'Form/Handler/Common/'
-        generateClassPair(fsa, formHandlerFolder + actionName.formatForCodeCapital + 'Handler.php',
-            fh.phpFileContent(it, formHandlerCommonBaseImpl(actionName)), fh.phpFileContent(app, formHandlerCommonImpl(actionName))
+        fsa.generateClassPair(formHandlerFolder + actionName.formatForCodeCapital + 'Handler.php',
+            formHandlerCommonBaseImpl(actionName), formHandlerCommonImpl(actionName)
         )
     }
 
     /**
      * Entry point for Form handler classes per entity.
      */
-    def private generate(Entity it, String actionName, IFileSystemAccess fsa) {
+    def private generate(Entity it, String actionName, IMostFileSystemAccess fsa) {
         ('Generating form handler classes for "' + name + '_' + actionName + '"').printIfNotTesting(fsa)
         val formHandlerFolder = 'Form/Handler/' + name.formatForCodeCapital + '/'
-        app.generateClassPair(fsa, formHandlerFolder + actionName.formatForCodeCapital + 'Handler.php',
-            fh.phpFileContent(app, formHandlerBaseImpl(actionName)), fh.phpFileContent(app, formHandlerImpl(actionName))
+        fsa.generateClassPair(formHandlerFolder + actionName.formatForCodeCapital + 'Handler.php',
+            formHandlerBaseImpl(actionName), formHandlerImpl(actionName)
         )
     }
 

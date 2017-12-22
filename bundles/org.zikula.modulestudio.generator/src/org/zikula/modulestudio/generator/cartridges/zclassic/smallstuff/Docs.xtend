@@ -1,7 +1,7 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff
 
 import de.guite.modulestudio.metamodel.Application
-import org.eclipse.xtext.generator.IFileSystemAccess
+import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.documents.License_GPL
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.documents.License_LGPL
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.techdocs.TechComplexity
@@ -21,80 +21,43 @@ class Docs {
     /**
      * Entry point for module documentation.
      */
-    def generate(Application it, IFileSystemAccess fsa) {
+    def generate(Application it, IMostFileSystemAccess fsa) {
         var fileName = 'CHANGELOG.md'
-        if (!shouldBeSkipped(fileName)) {
-            if (shouldBeMarked(fileName)) {
-                fileName = 'CHANGELOG.generated.md'
-            }
-            fsa.generateFile(fileName, Changelog)
-        }
+        fsa.generateFile(fileName, Changelog)
+
         fileName = 'README.md'
-        if (!shouldBeSkipped(fileName)) {
-            if (shouldBeMarked(fileName)) {
-                fileName = 'README.generated.md'
-            }
-            fsa.generateFile(fileName, ReadmeMarkup)
-        }
+        fsa.generateFile(fileName, ReadmeMarkup)
 
         val docPath = getAppDocPath
         fileName = 'credits.md'
-        if (!shouldBeSkipped(docPath + 'credits.md')) {
-            if (shouldBeMarked(docPath + fileName)) {
-                fileName = 'credits.generated.md'
-            }
-            fsa.generateFile(docPath + fileName, Credits)
-        }
+        fsa.generateFile(docPath + fileName, Credits)
+
         fileName = 'modulestudio.md'
-        if (!shouldBeSkipped(docPath + fileName)) {
-            if (shouldBeMarked(docPath + fileName)) {
-                fileName = 'modulestudio.generated.md'
-            }
-            fsa.generateFile(docPath + fileName, MostText)
-        }
+        fsa.generateFile(docPath + fileName, MostText)
+
         fileName = 'install.md'
-        if (!shouldBeSkipped(docPath + fileName)) {
-            if (shouldBeMarked(docPath + fileName)) {
-                fileName = 'install.generated.md'
-            }
-            fsa.generateFile(docPath + fileName, Install)
-        }
+        fsa.generateFile(docPath + fileName, Install)
+
         if (!isSystemModule) {
             fileName = 'translation.md'
-            if (!shouldBeSkipped(docPath + fileName)) {
-                if (shouldBeMarked(docPath + fileName)) {
-                    fileName = 'translation.generated.md'
-                }
-                fsa.generateFile(docPath + fileName, Translation)
-            }
+            fsa.generateFile(docPath + fileName, Translation)
         }
+
         fileName = 'LICENSE'
-        if (!shouldBeSkipped(getAppLicencePath + fileName)) {
-            if (shouldBeMarked(getAppLicencePath + fileName)) {
-                fileName = 'LICENSE.generated'
-            }
-            fsa.generateFile(getAppLicencePath + fileName, License)
-        }
+        fsa.generateFile(getAppLicencePath + fileName, License)
+
         if (writeModelToDocs) {
             fsa.generateFile(docPath + '/model/.htaccess', htAccessForModel)
         }
+
         if (generateTechnicalDocumentation) {
             val techDocPath = docPath + '/model/'
             for (language : #['en', 'de']) {
                 fileName = 'structure_' + language + '.html'
-                if (!shouldBeSkipped(techDocPath + fileName)) {
-                    if (shouldBeMarked(techDocPath + fileName)) {
-                        fileName = 'structure_' + language + '.generated.html'
-                    }
-                    fsa.generateFile(techDocPath + fileName, new TechStructure().generate(it, language))
-                }
+                fsa.generateFile(techDocPath + fileName, new TechStructure().generate(it, language))
+
                 fileName = 'complexity_' + language + '.html'
-                if (!shouldBeSkipped(techDocPath + fileName)) {
-                    if (shouldBeMarked(techDocPath + fileName)) {
-                        fileName = 'complexity_' + language + '.generated.html'
-                    }
-                    fsa.generateFile(techDocPath + fileName, new TechComplexity().generate(it, language))
-                }
+                fsa.generateFile(techDocPath + fileName, new TechComplexity().generate(it, language))
             }
         }
     }
@@ -200,7 +163,7 @@ class Docs {
     '''
 
     def private htAccessForModel(Application it) '''
-        # «new FileHelper().generatedBy(it, timestampAllGeneratedFiles, versionAllGeneratedFiles)»
+        # «generatedBy(it, timestampAllGeneratedFiles, versionAllGeneratedFiles)»
         # ------------------------------------------------------------
         # Purpose of file: block any web access to unallowed files
         # stored in this directory

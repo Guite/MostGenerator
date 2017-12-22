@@ -2,26 +2,21 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.controller.additio
 
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.AuthMethodType
-import org.eclipse.xtext.generator.IFileSystemAccess
-import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
+import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
-import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class AuthenticationMethod {
 
     extension FormattingExtensions = new FormattingExtensions
-    extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
 
-    FileHelper fh = new FileHelper
-
-    def generate(Application it, IFileSystemAccess fsa) {
+    def generate(Application it, IMostFileSystemAccess fsa) {
         if (authenticationMethod == AuthMethodType.NONE) {
             return
         }
-        generateClassPair(fsa, 'AuthenticationMethod/' + name.formatForCodeCapital + 'AuthenticationMethod.php',
-            fh.phpFileContent(it, authMethodBaseClass), fh.phpFileContent(it, authMethodImpl)
+        fsa.generateClassPair('AuthenticationMethod/' + name.formatForCodeCapital + 'AuthenticationMethod.php',
+            authMethodBaseClass, authMethodImpl
         )
     }
 

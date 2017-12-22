@@ -1,7 +1,7 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.view.extensions
 
 import de.guite.modulestudio.metamodel.Application
-import org.eclipse.xtext.generator.IFileSystemAccess
+import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
@@ -14,20 +14,13 @@ class ModerationPanel {
     extension Utils = new Utils
     extension WorkflowExtensions = new WorkflowExtensions
 
-    def generate (Application it, IFileSystemAccess fsa) {
+    def generate (Application it, IMostFileSystemAccess fsa) {
         if (!(generateModerationPanel && needsApproval)) {
             return
         }
         val templatePath = getViewPath + 'Helper/'
-        val templateExtension = '.html.twig'
-
-        var fileName = 'includeModerationPanel' + templateExtension
-        if (!shouldBeSkipped(templatePath + fileName)) {
-            if (shouldBeMarked(templatePath + fileName)) {
-                fileName = 'includeModerationPanel.generated' + templateExtension
-            }
-            fsa.generateFile(templatePath + fileName, moderationPanelImpl)
-        }
+        val fileName = 'includeModerationPanel.html.twig'
+        fsa.generateFile(templatePath + fileName, moderationPanelImpl)
     }
 
     def private moderationPanelImpl(Application it) '''

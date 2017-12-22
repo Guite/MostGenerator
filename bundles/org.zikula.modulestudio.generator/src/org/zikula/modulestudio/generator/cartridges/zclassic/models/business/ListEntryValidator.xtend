@@ -1,31 +1,22 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.models.business
 
 import de.guite.modulestudio.metamodel.Application
-import org.eclipse.xtext.generator.IFileSystemAccess
-import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
+import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
-import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class ListEntryValidator {
 
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
-    extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
-
-    FileHelper fh = new FileHelper
 
     /**
      * Creates constraint and validator classes for list field items.
      */
-    def generate(Application it, IFileSystemAccess fsa) {
+    def generate(Application it, IMostFileSystemAccess fsa) {
         'Generating list entry constraint and validator classes'.printIfNotTesting(fsa)
-        generateClassPair(fsa, 'Validator/Constraints/ListEntry.php',
-            fh.phpFileContent(it, constraintBaseImpl), fh.phpFileContent(it, constraintImpl)
-        )
-        generateClassPair(fsa, 'Validator/Constraints/ListEntryValidator.php',
-            fh.phpFileContent(it, validatorBaseImpl), fh.phpFileContent(it, validatorImpl)
-        )
+        fsa.generateClassPair('Validator/Constraints/ListEntry.php', constraintBaseImpl, constraintImpl)
+        fsa.generateClassPair('Validator/Constraints/ListEntryValidator.php', validatorBaseImpl, validatorImpl)
     }
 
     def private constraintBaseImpl(Application it) '''

@@ -3,7 +3,7 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.view.pages.feed
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.StringField
 import de.guite.modulestudio.metamodel.TextField
-import org.eclipse.xtext.generator.IFileSystemAccess
+import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
@@ -18,20 +18,18 @@ class Rss {
     extension UrlExtensions = new UrlExtensions
     extension Utils = new Utils
 
-    def generate(Entity it, String appName, IFileSystemAccess fsa) {
+    def generate(Entity it, String appName, IMostFileSystemAccess fsa) {
         if (!hasViewAction) {
             return
         }
         ('Generating RSS view templates for entity "' + name.formatForDisplay + '"').printIfNotTesting(fsa)
+
         var templateFilePath = templateFileWithExtension('view', 'rss')
-        if (!application.shouldBeSkipped(templateFilePath)) {
-            fsa.generateFile(templateFilePath, rssView(appName))
-        }
+        fsa.generateFile(templateFilePath, rssView(appName))
+
         if (application.separateAdminTemplates) {
             templateFilePath = templateFileWithExtension('Admin/view', 'rss')
-            if (!application.shouldBeSkipped(templateFilePath)) {
-                fsa.generateFile(templateFilePath, rssView(appName))
-            }
+            fsa.generateFile(templateFilePath, rssView(appName))
         }
     }
 

@@ -1,12 +1,10 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype.field
 
 import de.guite.modulestudio.metamodel.Application
-import org.eclipse.xtext.generator.IFileSystemAccess
-import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
+import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
-import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class AutoCompletionRelationType {
@@ -14,15 +12,10 @@ class AutoCompletionRelationType {
     extension ControllerExtensions = new ControllerExtensions
     extension FormattingExtensions = new FormattingExtensions
     extension ModelExtensions = new ModelExtensions
-    extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
 
-    FileHelper fh = new FileHelper
-
-    def generate(Application it, IFileSystemAccess fsa) {
-        generateClassPair(fsa, 'Form/Type/Field/AutoCompletionRelationType.php',
-            fh.phpFileContent(it, relationTypeBaseImpl), fh.phpFileContent(it, relationTypeImpl)
-        )
+    def generate(Application it, IMostFileSystemAccess fsa) {
+        fsa.generateClassPair('Form/Type/Field/AutoCompletionRelationType.php', relationTypeBaseImpl, relationTypeImpl)
     }
 
     def private relationTypeBaseImpl(Application it) '''

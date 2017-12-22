@@ -3,7 +3,7 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.view.pagecomponent
 import de.guite.modulestudio.metamodel.DerivedField
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.JoinRelationship
-import org.eclipse.xtext.generator.IFileSystemAccess
+import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
@@ -18,17 +18,15 @@ class ViewQuickNavForm {
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
 
-    def generate(Entity it, String appName, IFileSystemAccess fsa) {
+    def generate(Entity it, String appName, IMostFileSystemAccess fsa) {
         ('Generating view filter form templates for entity "' + name.formatForDisplay + '"').printIfNotTesting(fsa)
+
         var templatePath = templateFile('viewQuickNav')
-        if (!application.shouldBeSkipped(templatePath)) {
-            fsa.generateFile(templatePath, quickNavForm)
-        }
+        fsa.generateFile(templatePath, quickNavForm)
+
         if (application.separateAdminTemplates) {
             templatePath = templateFile('Admin/viewQuickNav')
-            if (!application.shouldBeSkipped(templatePath)) {
-                fsa.generateFile(templatePath, quickNavForm)
-            }
+            fsa.generateFile(templatePath, quickNavForm)
         }
     }
 

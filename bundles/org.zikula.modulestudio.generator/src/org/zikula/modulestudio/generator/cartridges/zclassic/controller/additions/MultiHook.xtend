@@ -2,12 +2,10 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.controller.additio
 
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.Entity
-import org.eclipse.xtext.generator.IFileSystemAccess
-import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
+import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
-import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class MultiHook {
@@ -15,26 +13,20 @@ class MultiHook {
     extension ControllerExtensions = new ControllerExtensions
     extension FormattingExtensions = new FormattingExtensions
     extension ModelExtensions = new ModelExtensions
-    extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
 
-    FileHelper fh = new FileHelper
     Application app
 
-    def generate(Application it, IFileSystemAccess fsa) {
+    def generate(Application it, IMostFileSystemAccess fsa) {
         app = it
         for (entity: getAllEntities.filter[hasViewAction || hasDisplayAction]) {
             entity.generateNeedle(fsa)
         }
     }
 
-    def private generateNeedle(Entity it, IFileSystemAccess fsa) {
-        app.generateClassPair(fsa, 'Needles/' + name.formatForDB + '_info.php',
-            fh.phpFileContent(app, needleBaseInfo), fh.phpFileContent(app, needleInfo)
-        )
-        app.generateClassPair(fsa, 'Needles/' + name.formatForDB + '.php',
-            fh.phpFileContent(app, needleBaseImpl), fh.phpFileContent(app, needleImpl)
-        )
+    def private generateNeedle(Entity it, IMostFileSystemAccess fsa) {
+        fsa.generateClassPair('Needles/' + name.formatForDB + '_info.php', needleBaseInfo, needleInfo)
+        fsa.generateClassPair('Needles/' + name.formatForDB + '.php', needleBaseImpl, needleImpl)
     }
 
     def private needleBaseInfo(Entity it) '''

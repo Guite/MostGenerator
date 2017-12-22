@@ -1,7 +1,7 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.controller
 
 import de.guite.modulestudio.metamodel.Application
-import org.eclipse.xtext.generator.IFileSystemAccess
+import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.workflows.Definition
 
 /**
@@ -9,7 +9,7 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.controller.workflow
  */
 class Workflow {
 
-    def generate(Application it, IFileSystemAccess fsa) {
+    def generate(Application it, IMostFileSystemAccess fsa) {
         // YAML definitions
         new Definition().generate(it, fsa)
     }

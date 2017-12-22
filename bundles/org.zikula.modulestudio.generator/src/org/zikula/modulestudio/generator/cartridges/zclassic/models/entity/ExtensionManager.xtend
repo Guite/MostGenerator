@@ -4,7 +4,7 @@ import de.guite.modulestudio.metamodel.DerivedField
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.EntityTreeType
 import java.util.List
-import org.eclipse.xtext.generator.IFileSystemAccess
+import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.entity.extensions.Attributes
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.entity.extensions.Blameable
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.entity.extensions.Categories
@@ -28,7 +28,7 @@ class ExtensionManager {
     new(Entity entity) {
         this.entity = entity
 
-        this.extensions = newArrayList()
+        this.extensions = newArrayList
         if (entity.hasBlameableFields) {
             this.extensions += new Blameable
         }
@@ -64,7 +64,7 @@ class ExtensionManager {
     /**
      * Generates separate extension classes.
      */
-    def extensionClasses(IFileSystemAccess fsa) '''
+    def extensionClasses(IMostFileSystemAccess fsa) '''
         «FOR ext : this.extensions»
             «ext.extensionClasses(entity, fsa)»
         «ENDFOR»

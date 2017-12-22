@@ -1,15 +1,13 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.controller.additions
 
 import de.guite.modulestudio.metamodel.Application
-import org.eclipse.xtext.generator.IFileSystemAccess
+import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype.FinderType
-import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.additions.ExternalView
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
-import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class ExternalController {
@@ -18,19 +16,14 @@ class ExternalController {
     extension FormattingExtensions = new FormattingExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension ModelExtensions = new ModelExtensions
-    extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
 
-    FileHelper fh = new FileHelper
-
-    def generate(Application it, IFileSystemAccess fsa) {
+    def generate(Application it, IMostFileSystemAccess fsa) {
         if (!generateExternalControllerAndFinder || !hasDisplayActions) {
             return
         }
         'Generating external controller'.printIfNotTesting(fsa)
-        generateClassPair(fsa, 'Controller/ExternalController.php',
-            fh.phpFileContent(it, externalBaseClass), fh.phpFileContent(it, externalImpl)
-        )
+        fsa.generateClassPair('Controller/ExternalController.php', externalBaseClass, externalImpl)
         new FinderType().generate(it, fsa)
         new ExternalView().generate(it, fsa)
     }

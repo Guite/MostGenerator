@@ -2,7 +2,6 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin
 
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.EntityTreeType
-import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
@@ -15,7 +14,7 @@ class TreeData {
     extension ModelExtensions = new ModelExtensions
     extension Utils = new Utils
 
-    def generate(Application it, IFileSystemAccess fsa) {
+    def generate(Application it) {
         treeDataImpl
     }
 

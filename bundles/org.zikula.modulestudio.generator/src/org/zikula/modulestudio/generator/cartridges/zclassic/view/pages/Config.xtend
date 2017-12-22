@@ -3,7 +3,7 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.view.pages
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.DerivedField
 import de.guite.modulestudio.metamodel.Variables
-import org.eclipse.xtext.generator.IFileSystemAccess
+import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.formcomponents.SharedFormElements
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
@@ -20,17 +20,11 @@ class Config {
     extension Utils = new Utils
     extension WorkflowExtensions = new WorkflowExtensions
 
-    def generate(Application it, IFileSystemAccess fsa) {
+    def generate(Application it, IMostFileSystemAccess fsa) {
         val templatePath = getViewPath + 'Config/'
-        val templateExtension = '.html.twig'
-        var fileName = 'config' + templateExtension
-        if (!shouldBeSkipped(templatePath + fileName)) {
-            'Generating config page view template'.printIfNotTesting(fsa)
-            if (shouldBeMarked(templatePath + fileName)) {
-                fileName = 'config.generated' + templateExtension
-            }
-            fsa.generateFile(templatePath + fileName, configView)
-        }
+        val fileName = 'config.html.twig'
+        'Generating config page view template'.printIfNotTesting(fsa)
+        fsa.generateFile(templatePath + fileName, configView)
     }
 
     def private configView(Application it) '''

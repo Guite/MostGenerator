@@ -2,31 +2,25 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtyp
 
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.ListField
-import org.eclipse.xtext.generator.IFileSystemAccess
-import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
+import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
-import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class MultiListType {
 
     extension FormattingExtensions = new FormattingExtensions
     extension ModelExtensions = new ModelExtensions
-    extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
 
-    FileHelper fh = new FileHelper
     Application app
 
-    def generate(Application it, IFileSystemAccess fsa) {
+    def generate(Application it, IMostFileSystemAccess fsa) {
         if (!hasMultiListFields && variables.map[fields].flatten.filter(ListField).filter[multiple].empty) {
             return
         }
         app = it
-        generateClassPair(fsa, 'Form/Type/Field/MultiListType.php',
-            fh.phpFileContent(it, multiListTypeBaseImpl), fh.phpFileContent(it, multiListTypeImpl)
-        )
+        fsa.generateClassPair('Form/Type/Field/MultiListType.php', multiListTypeBaseImpl, multiListTypeImpl)
     }
 
     def private multiListTypeBaseImpl(Application it) '''

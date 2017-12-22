@@ -1,7 +1,7 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.controller
 
 import de.guite.modulestudio.metamodel.Application
-import org.eclipse.xtext.generator.IFileSystemAccess
+import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.helper.ArchiveHelper
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.helper.CategoryHelper
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.helper.CollectionFilterHelper
@@ -33,7 +33,7 @@ class HelperServices {
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension WorkflowExtensions = new WorkflowExtensions
 
-    def generate(Application it, IFileSystemAccess fsa) {
+    def generate(Application it, IMostFileSystemAccess fsa) {
         if (hasAutomaticArchiving) {
             new ArchiveHelper().generate(it, fsa)
         }

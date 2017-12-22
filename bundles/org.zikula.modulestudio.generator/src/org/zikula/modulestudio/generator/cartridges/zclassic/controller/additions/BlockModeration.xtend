@@ -1,24 +1,23 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.controller.additions
 
 import de.guite.modulestudio.metamodel.Application
-import org.eclipse.xtext.generator.IFileSystemAccess
-import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
+import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.additions.BlockModerationView
-import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
+import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
 
 class BlockModeration {
 
-    extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
+    extension WorkflowExtensions = new WorkflowExtensions
 
-    FileHelper fh = new FileHelper
-
-    def generate(Application it, IFileSystemAccess fsa) {
+    def generate(Application it, IMostFileSystemAccess fsa) {
+        val needsModerationBlock = generateModerationBlock && needsApproval
+        if (!needsModerationBlock) {
+            return
+        }
         'Generating block for moderation'.printIfNotTesting(fsa)
-        generateClassPair(fsa, 'Block/ModerationBlock.php',
-            fh.phpFileContent(it, moderationBlockBaseClass), fh.phpFileContent(it, moderationBlockImpl)
-        )
+        fsa.generateClassPair('Block/ModerationBlock.php', moderationBlockBaseClass, moderationBlockImpl)
         new BlockModerationView().generate(it, fsa)
     }
 

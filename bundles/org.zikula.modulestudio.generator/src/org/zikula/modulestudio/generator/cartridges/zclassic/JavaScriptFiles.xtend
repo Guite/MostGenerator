@@ -1,7 +1,7 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic
 
 import de.guite.modulestudio.metamodel.Application
-import org.eclipse.xtext.generator.IFileSystemAccess
+import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.javascript.AutoCompletion
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.javascript.ConfigFunctions
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.javascript.DisplayFunctions
@@ -9,8 +9,11 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.controller.javascri
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.javascript.Finder
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.javascript.GeoFunctions
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.javascript.HistoryFunctions
+import org.zikula.modulestudio.generator.cartridges.zclassic.controller.javascript.HookAssignment
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.javascript.InlineEditing
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.javascript.ItemSelector
+import org.zikula.modulestudio.generator.cartridges.zclassic.controller.javascript.TreeFunctions
+import org.zikula.modulestudio.generator.cartridges.zclassic.controller.javascript.Validation
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
@@ -26,7 +29,7 @@ class JavaScriptFiles {
     /**
      * Entry point for generating JavaScript files.
      */
-    def generate(Application it, IFileSystemAccess fsa) {
+    def generate(Application it, IMostFileSystemAccess fsa) {
         if (hasImageFields) {
             new ConfigFunctions().generate(it, fsa)
         }
@@ -53,5 +56,12 @@ class JavaScriptFiles {
         if (hasLoggable) {
             new HistoryFunctions().generate(it, fsa)
         }
+        if (hasUiHooksProviders) {
+            new HookAssignment().generate(it, fsa)
+        }
+        if (hasTrees) {
+            new TreeFunctions().generate(it, fsa)
+        }
+        new Validation().generate(it, fsa)
     }
 }

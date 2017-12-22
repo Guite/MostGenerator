@@ -1,0 +1,54 @@
+/**
+ * Copyright (c) 2007-2017 Axel Guckelsberger
+ */
+
+/* XPECT_SETUP org.zikula.modulestudio.generator.tests.MostGeneratorTest END_SETUP */
+
+/*
+test which files are contained in the output
+XPECT files ---
+    .gitignore
+    composer.json
+    zikula.manifest.json
+    AcmeSimpleTestModule.php
+    Base/AbstractAcmeSimpleTestModule.php
+    !this/file/not.foo
+    !also/NOT/this/file.html
+--- */
+
+application "SimpleTest" {
+    documentation "Just a simple test application."
+    vendor "Acme"
+    author "Michael Smith"
+    email "info@example.org"
+    url "http://example.org"
+    prefix "simtest"
+    entities {
+        entity "article" leading {
+            nameMultiple "articles"
+            displayPattern "#title#"
+            fields {
+                string "title" {
+                    sluggablePosition 1
+                    length 200
+                }
+            }
+            actions {
+                mainAction "Index"
+            }
+        },
+        entity "image" {
+            nameMultiple "images"
+            displayPattern "#title#"
+            fields {
+                string "title" {
+                    sluggablePosition 1
+                    length 200
+                }
+            }
+            actions {
+                mainAction "Index"
+            }
+        }
+    }
+}

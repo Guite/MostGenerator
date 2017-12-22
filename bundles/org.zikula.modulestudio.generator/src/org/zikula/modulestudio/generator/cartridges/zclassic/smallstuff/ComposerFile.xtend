@@ -5,13 +5,12 @@ import de.guite.modulestudio.metamodel.ApplicationDependencyType
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.JoinRelationship
 import de.guite.modulestudio.metamodel.ReferredApplication
-import org.eclipse.xtext.generator.IFileSystemAccess
+import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
-import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
 
@@ -22,18 +21,11 @@ class ComposerFile {
     extension ModelExtensions = new ModelExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension ModelJoinExtensions = new ModelJoinExtensions
-    extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
     extension WorkflowExtensions = new WorkflowExtensions
 
-    def generate(Application it, IFileSystemAccess fsa) {
-        var fileName = 'composer.json'
-        if (!shouldBeSkipped(fileName)) {
-            if (shouldBeMarked(fileName)) {
-                fileName = 'composer.generated.json'
-            }
-            fsa.generateFile(fileName, composerFile)
-        }
+    def generate(Application it, IMostFileSystemAccess fsa) {
+        fsa.generateFile('composer.json', composerFile)
     }
 
     def private composerFile(Application it) '''

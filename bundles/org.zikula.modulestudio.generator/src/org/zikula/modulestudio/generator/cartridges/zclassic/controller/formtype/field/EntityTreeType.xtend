@@ -1,24 +1,17 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype.field
 
 import de.guite.modulestudio.metamodel.Application
-import org.eclipse.xtext.generator.IFileSystemAccess
-import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
+import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
-import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class EntityTreeType {
 
     extension FormattingExtensions = new FormattingExtensions
-    extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
 
-    FileHelper fh = new FileHelper
-
-    def generate(Application it, IFileSystemAccess fsa) {
-        generateClassPair(fsa, 'Form/Type/Field/EntityTreeType.php',
-            fh.phpFileContent(it, entityTreeTypeBaseImpl), fh.phpFileContent(it, entityTreeTypeImpl)
-        )
+    def generate(Application it, IMostFileSystemAccess fsa) {
+        fsa.generateClassPair('Form/Type/Field/EntityTreeType.php', entityTreeTypeBaseImpl, entityTreeTypeImpl)
     }
 
     def private entityTreeTypeBaseImpl(Application it) '''

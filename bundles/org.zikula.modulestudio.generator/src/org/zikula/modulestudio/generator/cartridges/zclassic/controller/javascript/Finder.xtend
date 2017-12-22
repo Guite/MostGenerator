@@ -1,7 +1,7 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.controller.javascript
 
 import de.guite.modulestudio.metamodel.Application
-import org.eclipse.xtext.generator.IFileSystemAccess
+import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
@@ -17,15 +17,13 @@ class Finder {
     /**
      * Entry point for the JavaScript file with finder functionality.
      */
-    def generate(Application it, IFileSystemAccess fsa) {
-        var fileName = appName + '.Finder.js'
-        if (!shouldBeSkipped(getAppJsPath + fileName)) {
-            'Generating JavaScript for finder component'.printIfNotTesting(fsa)
-            if (shouldBeMarked(getAppJsPath + fileName)) {
-                fileName = appName + '.Finder.generated.js'
-            }
-            fsa.generateFile(getAppJsPath + fileName, generate)
+    def generate(Application it, IMostFileSystemAccess fsa) {
+        if (!generateExternalControllerAndFinder) {
+            return
         }
+        'Generating JavaScript for finder component'.printIfNotTesting(fsa)
+        val fileName = appName + '.Finder.js'
+        fsa.generateFile(getAppJsPath + fileName, generate)
     }
 
     def private generate(Application it) '''

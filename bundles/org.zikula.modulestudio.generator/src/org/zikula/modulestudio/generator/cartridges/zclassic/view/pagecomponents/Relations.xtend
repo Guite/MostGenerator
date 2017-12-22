@@ -5,7 +5,7 @@ import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.EntityWorkflowType
 import de.guite.modulestudio.metamodel.HookProviderMode
 import de.guite.modulestudio.metamodel.JoinRelationship
-import org.eclipse.xtext.generator.IFileSystemAccess
+import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
@@ -26,16 +26,13 @@ class Relations {
     extension UrlExtensions = new UrlExtensions
     extension Utils = new Utils
 
-    def displayItemList(Entity it, Application app, Boolean many, IFileSystemAccess fsa) {
+    def displayItemList(Entity it, Application app, Boolean many, IMostFileSystemAccess fsa) {
         var templatePath = templateFile('includeDisplayItemList' + (if (many) 'Many' else 'One'))
-        if (!app.shouldBeSkipped(templatePath)) {
-            fsa.generateFile(templatePath, inclusionTemplate(app, many))
-        }
+        fsa.generateFile(templatePath, inclusionTemplate(app, many))
+
         if (application.separateAdminTemplates) {
             templatePath = templateFile('Admin/includeDisplayItemList' + (if (many) 'Many' else 'One'))
-            if (!app.shouldBeSkipped(templatePath)) {
-                fsa.generateFile(templatePath, inclusionTemplate(app, many))
-            }
+            fsa.generateFile(templatePath, inclusionTemplate(app, many))
         }
     }
 

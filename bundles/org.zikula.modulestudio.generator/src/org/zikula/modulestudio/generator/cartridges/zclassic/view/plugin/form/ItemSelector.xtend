@@ -1,8 +1,7 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.form
 
 import de.guite.modulestudio.metamodel.Application
-import org.eclipse.xtext.generator.IFileSystemAccess
-import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
+import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
@@ -17,15 +16,11 @@ class ItemSelector {
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
 
-    FileHelper fh = new FileHelper
+    def generate(Application it, IMostFileSystemAccess fsa) {
+        fsa.generateClassPair('Form/Plugin/ItemSelector.php', itemSelectorBaseImpl, itemSelectorImpl)
 
-    def generate(Application it, IFileSystemAccess fsa) {
-        generateClassPair(fsa, 'Form/Plugin/ItemSelector.php',
-            fh.phpFileContent(it, itemSelectorBaseImpl), fh.phpFileContent(it, itemSelectorImpl)
-        )
-        if (!shouldBeSkipped(viewPluginFilePath('function', 'ItemSelector'))) {
-            fsa.generateFile(viewPluginFilePath('function', 'ItemSelector'), fh.phpFileContent(it, itemSelectorPluginImpl))
-        }
+        val pluginFilePath = legacyViewPluginFilePath('function', 'ItemSelector')
+        fsa.generateFile(pluginFilePath, itemSelectorPluginImpl)
     }
 
     def private itemSelectorBaseImpl(Application it) '''

@@ -5,13 +5,11 @@ import de.guite.modulestudio.metamodel.DerivedField
 import de.guite.modulestudio.metamodel.ListField
 import de.guite.modulestudio.metamodel.UploadField
 import de.guite.modulestudio.metamodel.UserField
-import org.eclipse.xtext.generator.IFileSystemAccess
+import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.entity.Property
-import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
-import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class AppSettings {
@@ -19,35 +17,20 @@ class AppSettings {
     extension ControllerExtensions = new ControllerExtensions
     extension FormattingExtensions = new FormattingExtensions
     extension ModelExtensions = new ModelExtensions
-    extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
 
-    FileHelper fh = new FileHelper
     Property thProp
 
     /**
      * Entry point for application settings class.
      */
-    def generate(Application it, IFileSystemAccess fsa) {
+    def generate(Application it, IMostFileSystemAccess fsa) {
+        if (variables.empty) {
+            return
+        }
         'Generating application settings class'.printIfNotTesting(fsa)
         thProp = new Property(null)
-        val destinationPath = ''
-        val destinationFileName = 'AppSettings'
-        var fileName = ''
-        fileName = 'Abstract' + destinationFileName + '.php'
-        if (!shouldBeSkipped(destinationPath + 'Base/' + fileName)) {
-            if (shouldBeMarked(destinationPath + 'Base/' + fileName)) {
-                fileName = destinationFileName + '.generated.php'
-            }
-            fsa.generateFile(destinationPath + 'Base/' + fileName, fh.phpFileContent(it, appSettingsBaseImpl))
-        }
-        fileName = destinationFileName + '.php'
-        if (!generateOnlyBaseClasses && !shouldBeSkipped(destinationPath + fileName)) {
-            if (shouldBeMarked(destinationPath + fileName)) {
-                fileName = destinationFileName + '.generated.php'
-            }
-            fsa.generateFile(destinationPath + fileName, fh.phpFileContent(it, appSettingsImpl))
-        }
+        fsa.generateClassPair('AppSettings.php', appSettingsBaseImpl, appSettingsImpl)
     }
 
     def private imports(Application it) '''

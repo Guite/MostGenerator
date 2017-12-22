@@ -2,7 +2,7 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.view.additions
 
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.Entity
-import org.eclipse.xtext.generator.IFileSystemAccess
+import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
@@ -19,25 +19,16 @@ class MailzView {
     extension UrlExtensions = new UrlExtensions
     extension Utils = new Utils
 
-    def generate(Application it, IFileSystemAccess fsa) {
+    def generate(Application it, IMostFileSystemAccess fsa) {
         val templatePath = getViewPath + 'Mailz/'
         val templateExtension = '.twig'
         var entityTemplate = ''
         for (entity : getAllEntities) {
             entityTemplate = templatePath + 'itemlist_' + entity.name.formatForCode + '.text' + templateExtension
-            if (!shouldBeSkipped(entityTemplate)) {
-                if (shouldBeMarked(entityTemplate)) {
-                    entityTemplate = templatePath + 'itemlist_' + entity.name.formatForCode + '.generated.text' + templateExtension
-                }
-                fsa.generateFile(entityTemplate, entity.textTemplate(it))
-            }
+            fsa.generateFile(entityTemplate, entity.textTemplate(it))
+
             entityTemplate = templatePath + 'itemlist_' + entity.name.formatForCode + '.html' + templateExtension
-            if (!shouldBeSkipped(entityTemplate)) {
-                if (shouldBeMarked(entityTemplate)) {
-                    entityTemplate = templatePath + 'itemlist_' + entity.name.formatForCode + '.generated.html' + templateExtension
-                }
-                fsa.generateFile(entityTemplate, entity.htmlTemplate(it))
-            }
+            fsa.generateFile(entityTemplate, entity.htmlTemplate(it))
         }
     }
 

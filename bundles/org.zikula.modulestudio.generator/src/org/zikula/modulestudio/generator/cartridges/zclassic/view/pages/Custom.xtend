@@ -3,7 +3,7 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.view.pages
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.CustomAction
 import de.guite.modulestudio.metamodel.Entity
-import org.eclipse.xtext.generator.IFileSystemAccess
+import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
@@ -16,18 +16,16 @@ class Custom {
 
     Application app
 
-    def generate(CustomAction it, Application app, Entity entity, IFileSystemAccess fsa) {
+    def generate(CustomAction it, Application app, Entity entity, IMostFileSystemAccess fsa) {
         ('Generating ' + entity.name.formatForDisplay + ' templates for custom action "' + name.formatForDisplay + '"').printIfNotTesting(fsa)
         this.app = app
+
         var templateFilePath = templateFile(entity, name.formatForCode)
-        if (!app.shouldBeSkipped(templateFilePath)) {
-            fsa.generateFile(templateFilePath, customView(it, entity, false))
-        }
+        fsa.generateFile(templateFilePath, customView(it, entity, false))
+
         if (app.separateAdminTemplates) {
             templateFilePath = templateFile(entity, 'Admin/' + name.formatForCode)
-            if (!app.shouldBeSkipped(templateFilePath)) {
-                fsa.generateFile(templateFilePath, customView(it, entity, true))
-            }
+            fsa.generateFile(templateFilePath, customView(it, entity, true))
         }
     }
 

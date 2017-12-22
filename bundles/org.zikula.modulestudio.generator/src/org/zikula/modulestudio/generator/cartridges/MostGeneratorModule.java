@@ -3,9 +3,11 @@ package org.zikula.modulestudio.generator.cartridges;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.xtext.generator.IGenerator2;
+import org.eclipse.xtext.generator.JavaIoFileSystemAccess;
 import org.eclipse.xtext.parser.IEncodingProvider;
 import org.eclipse.xtext.resource.generic.AbstractGenericResourceRuntimeModule;
 import org.eclipse.xtext.service.DispatchingProvider;
+import org.zikula.modulestudio.generator.application.MostFileSystemAccess;
 
 import com.google.inject.Binder;
 
@@ -55,6 +57,15 @@ public class MostGeneratorModule extends AbstractGenericResourceRuntimeModule {
      */
     public Class<? extends IGenerator2> bindIGenerator2() {
         return MostGenerator.class;
+    }
+
+    /**
+     * Binds the {@link org.zikula.modulestudio.generator.application.MostFileSystemAccess}.
+     *
+     * @return The {@link org.eclipse.xtext.generator.JavaIoFileSystemAccess} instance.
+     */
+    public Class<? extends JavaIoFileSystemAccess> bindJavaIoFileSystemAccess() {
+        return MostFileSystemAccess.class;
     }
 
     /**

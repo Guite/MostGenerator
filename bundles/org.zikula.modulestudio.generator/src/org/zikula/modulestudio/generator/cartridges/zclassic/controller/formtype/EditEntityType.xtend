@@ -15,8 +15,7 @@ import de.guite.modulestudio.metamodel.UploadField
 import de.guite.modulestudio.metamodel.UserField
 import java.util.ArrayList
 import java.util.List
-import org.eclipse.xtext.generator.IFileSystemAccess
-import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
+import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.DateTimeExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
@@ -40,7 +39,6 @@ class EditEntityType {
     extension SharedFormTypeFields = new SharedFormTypeFields
     extension Utils = new Utils
 
-    FileHelper fh = new FileHelper
     Application app
 
     List<String> extensions = newArrayList
@@ -50,7 +48,7 @@ class EditEntityType {
     /**
      * Entry point for entity editing form type.
      */
-    def generate(DataObject it, IFileSystemAccess fsa) {
+    def generate(DataObject it, IMostFileSystemAccess fsa) {
         if (!(it instanceof MappedSuperClass) && !(it as Entity).hasEditAction) {
             return
         }
@@ -62,9 +60,7 @@ class EditEntityType {
         app = it.application
         incomingRelations = getEditableJoinRelations(true).filter[getEditStageCode(true) > 0]
         outgoingRelations = getEditableJoinRelations(false).filter[getEditStageCode(false) > 0]
-        app.generateClassPair(fsa, 'Form/Type/' + name.formatForCodeCapital + 'Type.php',
-            fh.phpFileContent(app, editTypeBaseImpl), fh.phpFileContent(app, editTypeImpl)
-        )
+        fsa.generateClassPair('Form/Type/' + name.formatForCodeCapital + 'Type.php', editTypeBaseImpl, editTypeImpl)
     }
 
     def private editTypeBaseImpl(DataObject it) '''

@@ -1,7 +1,6 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin
 
 import de.guite.modulestudio.metamodel.Application
-import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
@@ -10,7 +9,7 @@ class GetFileSize {
     extension FormattingExtensions = new FormattingExtensions
     extension Utils = new Utils
 
-    def generate(Application it, IFileSystemAccess fsa) '''
+    def generate(Application it) '''
         «getFileSizeImpl»
 
         «getReadableFileSize»

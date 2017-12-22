@@ -3,8 +3,7 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.view
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.StringField
 import de.guite.modulestudio.metamodel.StringRole
-import org.eclipse.xtext.generator.IFileSystemAccess
-import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
+import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.FormatGeoData
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.FormatIcalText
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.GetCountryName
@@ -20,7 +19,6 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.form.It
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
-import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
 
@@ -29,20 +27,16 @@ class Plugins {
     extension FormattingExtensions = new FormattingExtensions
     extension ModelExtensions = new ModelExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
-    extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
     extension WorkflowExtensions = new WorkflowExtensions
 
-    IFileSystemAccess fsa
+    IMostFileSystemAccess fsa
 
-    def generate(Application it, IFileSystemAccess fsa) {
+    def generate(Application it, IMostFileSystemAccess fsa) {
         this.fsa = fsa
         'Generating Twig extension class'.printIfNotTesting(fsa)
-        val fh = new FileHelper
         val twigFolder = 'Twig'
-        generateClassPair(fsa, twigFolder + '/TwigExtension.php',
-            fh.phpFileContent(it, twigExtensionBaseImpl), fh.phpFileContent(it, twigExtensionImpl)
-        )
+        fsa.generateClassPair(twigFolder + '/TwigExtension.php', twigExtensionBaseImpl, twigExtensionImpl)
     }
 
     def generateInternal(Application it) {
@@ -350,28 +344,28 @@ class Plugins {
 
     def private viewPlugins(Application it) {
         val result = newArrayList
-        result += new ObjectState().generate(it, fsa)
+        result += new ObjectState().generate(it)
         if (hasCountryFields) {
-            result += new GetCountryName().generate(it, fsa)
+            result += new GetCountryName().generate(it)
         }
         if (hasUploads) {
-            result += new GetFileSize().generate(it, fsa)
+            result += new GetFileSize().generate(it)
         }
         if (hasListFields) {
-            result += new GetListEntry().generate(it, fsa)
+            result += new GetListEntry().generate(it)
         }
         if (hasGeographical) {
-            result += new FormatGeoData().generate(it, fsa)
+            result += new FormatGeoData().generate(it)
         }
         if (hasTrees) {
-            result += new TreeData().generate(it, fsa)
-            result += new TreeSelection().generate(it, fsa)
+            result += new TreeData().generate(it)
+            result += new TreeSelection().generate(it)
         }
         if (generateModerationPanel && needsApproval) {
-            result += new ModerationObjects().generate(it, fsa)
+            result += new ModerationObjects().generate(it)
         }
         if (generateIcsTemplates && hasEntitiesWithIcsTemplates) {
-            result += new FormatIcalText().generate(it, fsa)
+            result += new FormatIcalText().generate(it)
         }
         result.join("\n\n")
     }

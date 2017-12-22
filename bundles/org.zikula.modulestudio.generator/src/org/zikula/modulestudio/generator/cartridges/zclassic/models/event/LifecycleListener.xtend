@@ -1,12 +1,10 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.models.event
 
 import de.guite.modulestudio.metamodel.Application
-import org.eclipse.xtext.generator.IFileSystemAccess
-import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
+import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
-import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class LifecycleListener {
@@ -14,18 +12,14 @@ class LifecycleListener {
     extension FormattingExtensions = new FormattingExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension ModelExtensions = new ModelExtensions
-    extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
 
     Application app
-    FileHelper fh = new FileHelper
     EventAction eventAction = new EventAction('$entity')
 
-    def generate(Application it, IFileSystemAccess fsa) {
+    def generate(Application it, IMostFileSystemAccess fsa) {
         app = it
-        generateClassPair(fsa, 'Listener/EntityLifecycleListener.php',
-            fh.phpFileContent(it, lifecycleListenerBaseImpl), fh.phpFileContent(it, lifecycleListenerImpl)
-        )
+        fsa.generateClassPair('Listener/EntityLifecycleListener.php', lifecycleListenerBaseImpl, lifecycleListenerImpl)
     }
 
     def private lifecycleListenerBaseImpl(Application it) '''

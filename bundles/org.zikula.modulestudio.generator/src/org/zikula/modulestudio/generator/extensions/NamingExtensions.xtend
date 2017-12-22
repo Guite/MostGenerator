@@ -4,8 +4,6 @@ import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.DataObject
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.JoinRelationship
-import java.util.Arrays
-import org.eclipse.xtext.generator.IFileSystemAccess
 
 /**
  * Extension methods for naming classes and building file pathes.
@@ -47,11 +45,7 @@ class NamingExtensions {
      * Returns the full template file path for given controller action and entity.
      */
     def templateFile(Entity it, String actionName) {
-        var filePath = templateFileBase(actionName) + application.templateSuffix('html')
-        if (application.shouldBeMarked(filePath)) {
-            filePath = templateFileBase(actionName) + '.generated' + application.templateSuffix('html')
-        }
-        filePath
+        templateFileBase(actionName) + application.templateSuffix('html')
     }
 
     /**
@@ -59,11 +53,7 @@ class NamingExtensions {
      * using a custom template extension (like xml instead of tpl).
      */
     def templateFileWithExtension(Entity it, String actionName, String templateExtension) {
-        var filePath = templateFileBase(actionName) + application.templateSuffix(templateExtension)
-        if (application.shouldBeMarked(filePath)) {
-            filePath = templateFileBase(actionName) +'.generated' + application.templateSuffix(templateExtension)
-        }
-        filePath
+        templateFileBase(actionName) + application.templateSuffix(templateExtension)
     }
 
     /**
@@ -75,14 +65,10 @@ class NamingExtensions {
     
 
     /**
-     * Returns the full file path for a view plugin file.
+     * Returns the full file path for a legacy Smarty view plugin file.
      */
-    def viewPluginFilePath(Application it, String pluginType, String pluginName) {
-        var filePath = getViewPath + 'plugins/' + pluginType + '.' + appName.formatForDB + pluginName + '.php'
-        if (shouldBeMarked(filePath)) {
-            filePath = getViewPath + 'plugins/' + pluginType + '.' + appName.formatForDB + pluginName + '.generated.php'
-        }
-        filePath
+    def legacyViewPluginFilePath(Application it, String pluginType, String pluginName) {
+        getViewPath + 'plugins/' + pluginType + '.' + appName.formatForDB + pluginName + '.php'
     }
 
 
@@ -114,57 +100,6 @@ class NamingExtensions {
      */
     def entityManagerService(Application it) {
         'doctrine.orm.default_entity_manager'
-    }
-
-    /**
-     * Checks whether a certain file path is contained in the blacklist for files to be skipped during generation.
-     */
-    def shouldBeSkipped(Application it, String filePath) {
-        getListOfFilesToBeSkipped.contains(filePath)
-    }
-
-    /**
-     * Checks whether a certain file path is contained in the list for files to be marked during generation.
-     */
-    def shouldBeMarked(Application it, String filePath) {
-        getListOfFilesToBeMarked.contains(filePath)
-    }
-
-    /**
-     * Generates a base class and an inheriting concrete class with
-     * the corresponding content.
-     *
-     * @param it              The {@link Application} instance.
-     * @param fsa             Given file system access.
-     * @param concretePath    Path to concrete class file.
-     * @param baseContent     Content for base class file.
-     * @param concreteContent Content for concrete class file.
-     */
-    def generateClassPair(Application it, IFileSystemAccess fsa, String concretePath, CharSequence baseContent, CharSequence concreteContent) {
-        var basePathParts = concretePath.split('/') //$NON-NLS-1$
-        var baseFileName = basePathParts.last
-        basePathParts = Arrays.copyOf(basePathParts, basePathParts.length - 1)
-
-        var basePathPartsChangeable = newArrayList(basePathParts)
-        basePathPartsChangeable += 'Base' //$NON-NLS-1$
-        basePathPartsChangeable += 'Abstract' + baseFileName //$NON-NLS-1$
-        val basePath = basePathPartsChangeable.join('/') //$NON-NLS-1$
-
-        if (!shouldBeSkipped(basePath)) {
-            if (shouldBeMarked(basePath)) {
-                fsa.generateFile(basePath.replace('.php', '.generated.php'), baseContent)
-            } else {
-                fsa.generateFile(basePath, baseContent)
-            }
-        }
-
-        if (!generateOnlyBaseClasses && !shouldBeSkipped(concretePath)) {
-            if (shouldBeMarked(concretePath)) {
-                fsa.generateFile(concretePath.replace('.php', '.generated.php'), concreteContent)
-            } else {
-                fsa.generateFile(concretePath, concreteContent)
-            }
-        }
     }
 
     /**
@@ -253,38 +188,5 @@ class NamingExtensions {
      */
     def getAppTestsPath(Application it) {
         'Tests/'
-    }
-
-    /**
-     * Determines a blacklist with each entry representing a file which should not be generated.
-     */
-    def private getListOfFilesToBeSkipped(Application it) {
-        if (null !== skipFiles) {
-            getListOfAffectedFiles(skipFiles)
-        } else {
-            newArrayList('')
-        }
-    }
-
-    /**
-     * Determines a list with file pathes which should be marked by special file names.
-     */
-    def private getListOfFilesToBeMarked(Application it) {
-        if (null !== markFiles) {
-            getListOfAffectedFiles(markFiles)
-        } else {
-            newArrayList('')
-        }
-    }
-
-    /**
-     * Prepares a list of file pathes for further processing.
-     */
-    def private getListOfAffectedFiles(String setting) {
-        var list = setting.replace("\t", '').replace("\n", '').split(',').toList
-        for (i : 0 ..< list.size) {
-            list.set(i, list.get(i).trim)
-        }
-        list
     }
 }

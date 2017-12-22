@@ -8,7 +8,7 @@ import de.guite.modulestudio.metamodel.ModuleStudioFactory
 import de.guite.modulestudio.metamodel.NumberFieldType
 import de.guite.modulestudio.metamodel.OneToOneRelationship
 import de.guite.modulestudio.metamodel.UploadField
-import org.eclipse.xtext.generator.IFileSystemAccess2
+import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
@@ -57,7 +57,7 @@ class PersistenceTransformer {
      * @param it The given {@link Application} instance
      * @param fsa The file system accessor
      */
-    def modify(Application it, IFileSystemAccess2 fsa) {
+    def modify(Application it, IMostFileSystemAccess fsa) {
         'Starting model transformation'.printIfNotTesting(fsa)
 
         name = name.replaceUmlauts

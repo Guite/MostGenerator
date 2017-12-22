@@ -10,8 +10,7 @@ import de.guite.modulestudio.metamodel.ListField
 import de.guite.modulestudio.metamodel.StringField
 import de.guite.modulestudio.metamodel.StringRole
 import de.guite.modulestudio.metamodel.UserField
-import org.eclipse.xtext.generator.IFileSystemAccess
-import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
+import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
@@ -30,7 +29,6 @@ class QuickNavigationType {
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
 
-    FileHelper fh = new FileHelper
     Application app
     String nsSymfonyFormType = 'Symfony\\Component\\Form\\Extension\\Core\\Type\\'
     Iterable<JoinRelationship> incomingRelations
@@ -38,15 +36,15 @@ class QuickNavigationType {
     /**
      * Entry point for quick navigation form type.
      */
-    def generate(Application it, IFileSystemAccess fsa) {
+    def generate(Application it, IMostFileSystemAccess fsa) {
         if (!hasViewActions) {
             return
         }
         app = it
         for (entity : getAllEntities.filter[hasViewAction]) {
             incomingRelations = entity.getBidirectionalIncomingJoinRelationsWithOneSource.filter[source instanceof Entity]
-            generateClassPair(fsa, 'Form/Type/QuickNavigation/' + entity.name.formatForCodeCapital + 'QuickNavType.php',
-                fh.phpFileContent(it, entity.quickNavTypeBaseImpl), fh.phpFileContent(it, entity.quickNavTypeImpl)
+            fsa.generateClassPair('Form/Type/QuickNavigation/' + entity.name.formatForCodeCapital + 'QuickNavType.php',
+                entity.quickNavTypeBaseImpl, entity.quickNavTypeImpl
             )
         }
     }
