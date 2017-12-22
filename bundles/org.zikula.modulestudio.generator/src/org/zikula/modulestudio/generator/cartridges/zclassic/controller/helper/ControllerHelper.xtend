@@ -236,7 +236,7 @@ class ControllerHelper {
                 «ENDIF»
                 «IF hasAutomaticArchiving»
 
-                    $archiveHelper->archiveObsoleteObjects();
+                    $archiveHelper->archiveObsoleteObjects(75);
                 «ENDIF»
             }
 
