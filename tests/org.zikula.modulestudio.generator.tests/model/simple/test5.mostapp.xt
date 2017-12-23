@@ -1,0 +1,749 @@
+/**
+ * Copyright (c) 2007-2017 Axel Guckelsberger
+ */
+
+/* XPECT_SETUP org.zikula.modulestudio.generator.tests.MostGeneratorTest END_SETUP */
+
+/*
+test which files are contained in the output
+XPECT files ---
+    .gitignore
+    composer.json
+    zikula.manifest.json
+--- */
+
+application "SimpleNews" {
+    documentation "Simple news extension"
+    vendor "Guite"
+    author "Axel Guckelsberger"
+    email "info@guite.de"
+    url "https://guite.de"
+    prefix "sinew"
+    entities {
+        entity "post" {
+            nameMultiple "posts"
+            displayPattern "#title#"
+            fields {
+                string "title" {
+                    sluggablePosition 1
+                    length 200
+                },
+                integer "sortValue" sortablePosition
+            }
+            actions {
+                mainAction "Index"
+            }
+        },
+        entity "article1" leading {
+            nameMultiple "articles1"
+            fields {
+                boolean "bool1" nullable readonly sortableGroup {
+                    dbName "bool1"
+                    documentation "My field"
+                    defaultValue "true"
+                    mandatory false
+                    displayType DISPLAY
+                    visible false
+                },
+                boolean "bool2" unique translatable ajaxTogglability {
+                    defaultValue "true"
+                    mandatory true
+                    displayType VIEW_DISPLAY
+                    visible true
+                    cssClass "mybool"
+                }
+            }
+        },
+        entity "article2" {
+            nameMultiple "articles2"
+            identifierStrategy AUTO
+            lockType PAGELOCK_OPTIMISTIC
+            fields {
+                integer "integ1" nullable readonly sortableGroup {
+                    dbName "integ1"
+                    documentation "My field"
+                    defaultValue "123"
+                    mandatory false
+                    displayType DISPLAY
+                    visible false
+                },
+                integer "integ2" unique percentage translatable {
+                    defaultValue "123"
+                    mandatory true
+                    displayType VIEW_DISPLAY
+                    visible true
+                    cssClass "myint"
+                },
+                integer "integ3" range version {
+                    defaultValue "123"
+                    length 6
+                    minValue 2
+                    maxValue 2000
+                    aggregateFor "articles3.num2"
+                }
+            }
+        },
+        entity "article3" {
+            nameMultiple "articles3"
+            fields {
+                number "num1" nullable readonly sortableGroup {
+                    dbName "num1"
+                    documentation "My field"
+                    defaultValue "123"
+                    mandatory false
+                    displayType DISPLAY
+                    visible false
+                },
+                number "num2" unique percentage translatable {
+                    defaultValue "123"
+                    mandatory true
+                    displayType VIEW_DISPLAY
+                    visible true
+                    cssClass "mynum"
+                    numberType DECIMAL
+                },
+                number "num3" aggregationField currency {
+                    defaultValue "123.45"
+                    numberType FLOAT
+                    length 8
+                    minValue 2.45
+                    maxValue 2000.43
+                }
+            }
+        },
+        entity "article4" {
+            nameMultiple "articles4"
+            identifierStrategy NONE
+            fields {
+                string "str1" nullable readonly sortableGroup {
+                    dbName "str1"
+                    documentation "My field"
+                    defaultValue "123"
+                    mandatory false
+                    displayType DISPLAY
+                    visible false
+                },
+                string "str2" unique translatable {
+                    defaultValue "123"
+                    mandatory true
+                    displayType VIEW_DISPLAY
+                    visible true
+                    cssClass "mystr"
+                    minLength 3
+                    regexp "foo"
+                },
+                string "str3" fixed {
+                    defaultValue "foo bar"
+                    sluggablePosition 3
+                    regexp "foo" opposite
+                    length 8
+                },
+                string "str41" {
+                    length 30
+                    isbn NONE
+                },
+                string "str42" {
+                    length 30
+                    isbn ISBN10
+                },
+                string "str43" {
+                    length 30
+                    isbn ISBN13
+                },
+                string "str44" {
+                    length 30
+                    isbn ALL
+                },
+                string "str51" {
+                    length 30
+                    issn NONE
+                },
+                string "str52" {
+                    length 30
+                    issn NORMAL
+                },
+                string "str53" {
+                    length 30
+                    issn CASE_SENSITIVE
+                },
+                string "str54" {
+                    length 30
+                    issn REQUIRE_HYPHEN
+                },
+                string "str55" {
+                    length 30
+                    issn STRICT
+                },
+                string "str61" {
+                    length 50
+                    ipAddress NONE
+                },
+                string "str62" {
+                    length 50
+                    ipAddress IP4
+                },
+                string "str63" {
+                    length 50
+                    ipAddress IP6
+                },
+                string "str64" {
+                    length 50
+                    ipAddress ALL
+                },
+                string "str65" {
+                    length 50
+                    ipAddress IP4_NO_PRIV
+                },
+                string "str66" {
+                    length 50
+                    ipAddress IP6_NO_PRIV
+                },
+                string "str67" {
+                    length 50
+                    ipAddress ALL_NO_PRIV
+                },
+                string "str68" {
+                    length 50
+                    ipAddress IP4_NO_RES
+                },
+                string "str69" {
+                    length 50
+                    ipAddress IP6_NO_RES
+                },
+                string "str610" {
+                    length 50
+                    ipAddress ALL_NO_RES
+                },
+                string "str611" {
+                    length 50
+                    ipAddress IP4_PUBLIC
+                },
+                string "str612" {
+                    length 50
+                    ipAddress IP6_PUBLIC
+                },
+                string "str613" {
+                    length 50
+                    ipAddress ALL_PUBLIC
+                    role NONE
+                },
+                string "str71" {
+                    length 15
+                    role BIC
+                },
+                string "str72" {
+                    length 10
+                    role COLOUR
+                },
+                string "str73" {
+                    length 10
+                    role COUNTRY
+                },
+                string "str74" {
+                    length 30
+                    role CREDIT_CARD
+                },
+                string "str75" {
+                    length 10
+                    role CURRENCY
+                },
+                string "str76" {
+                    length 20
+                    role DATE_INTERVAL
+                },
+                string "str77" {
+                    length 50
+                    role IBAN
+                },
+                string "str78" {
+                    length 10
+                    role LANGUAGE
+                },
+                string "str79" {
+                    length 10
+                    role LOCALE
+                },
+                string "str710" {
+                    length 10
+                    role PASSWORD
+                },
+                string "str711" {
+                    length 10
+                    role PHONE_NUMBER
+                },
+                string "str712" {
+                    length 50
+                    role TIME_ZONE
+                },
+                string "str713" {
+                    length 50
+                    role UUID
+                },
+                string "str81" {
+                    ipTraceable NONE
+                },
+                string "str82" {
+                    ipTraceable CREATE
+                },
+                string "str83" {
+                    ipTraceable UPDATE
+                },
+                string "str84" {
+                    ipTraceable CHANGE
+                    ipTraceableChangeTriggerField "str71"
+                    ipTraceableChangeTriggerValue "foo"
+                }
+            }
+        },
+        entity "article5" {
+            nameMultiple "articles5"
+            identifierStrategy SEQUENCE
+            fields {
+                text "txt1" nullable readonly sortableGroup {
+                    dbName "txt1"
+                    documentation "My field"
+                    defaultValue "123"
+                    mandatory false
+                    displayType DISPLAY
+                    visible false
+                },
+                text "txt2" translatable {
+                    defaultValue "123"
+                    mandatory true
+                    displayType VIEW_DISPLAY
+                    visible true
+                    cssClass "mytxt"
+                    regexp "foo"
+                },
+                text "txt3" fixed {
+                    defaultValue "foo bar"
+                    sluggablePosition 3
+                    minLength 5
+                    regexp "foo" opposite
+                    length 1234
+                }
+            }
+        },
+        entity "article6" {
+            nameMultiple "articles6"
+            displayPattern "#usr1#"
+            identifierStrategy TABLE
+            lockType PESSIMISTIC_READ
+            slugStyle LOWERCASE
+            fields {
+                user "usr1" nullable readonly sortableGroup {
+                    dbName "usr1"
+                    documentation "My field"
+                    defaultValue "123"
+                    mandatory false
+                    displayType DISPLAY
+                    visible false
+                },
+                user "usr2" unique translatable {
+                    defaultValue "123"
+                    mandatory true
+                    displayType VIEW_DISPLAY
+                    visible true
+                    cssClass "myuser"
+                },
+                user "usr3" sortablePosition {
+                    defaultValue "123"
+                    length 6
+                    blameable NONE
+                },
+                user "usr4" {
+                    blameable CREATE
+                },
+                user "usr5" {
+                    blameable UPDATE
+                },
+                user "usr6" {
+                    blameable CHANGE
+                    blameableChangeTriggerField "usr3"
+                    blameableChangeTriggerValue "foo"
+                    onAccountDeletionCreator ADMIN
+                }
+            }
+            actions {
+                displayAction "Display"
+            }
+        },
+        entity "article7" {
+            nameMultiple "articles7"
+            identifierStrategy IDENTITY
+            changeTrackingPolicy DEFERRED_IMPLICIT
+            lockType PESSIMISTIC_WRITE
+            slugStyle UPPERCASE
+            fields {
+                email "ema1" nullable readonly sortableGroup {
+                    dbName "ema1"
+                    documentation "My field"
+                    defaultValue "info@guite.de"
+                    mandatory false
+                    displayType VIEW
+                    visible false
+                },
+                email "ema2" unique translatable {
+                    mandatory true
+                    displayType SORTING
+                    visible true
+                    cssClass "myema"
+                    minLength 3
+                    regexp "foo"
+                },
+                email "ema3" fixed checkMX checkHost {
+                    sluggablePosition 3
+                    regexp "foo" opposite
+                    length 50
+                }
+            }
+        },
+        entity "article8" {
+            nameMultiple "articles8"
+            lockType PAGELOCK
+            slugStyle CAMEL
+            tree NONE
+            fields {
+                url "url1" nullable readonly sortableGroup {
+                    dbName "url1"
+                    documentation "My field"
+                    defaultValue "https://guite.de"
+                    mandatory false
+                    displayType VIEW
+                    visible false
+                },
+                url "url2" unique translatable {
+                    mandatory true
+                    displayType SORTING
+                    visible true
+                    cssClass "myurl"
+                    minLength 3
+                    regexp "foo"
+                },
+                url "url3" fixed checkDNS {
+                    sluggablePosition 3
+                    regexp "foo" opposite
+                    length 50
+                }
+            }
+        },
+        entity "article9" {
+            nameMultiple "articles9"
+            lockType PAGELOCK_OPTIMISTIC
+            tree NESTED
+            fields {
+                integer "myVersion" version,
+                upload "file1" nullable readonly sortableGroup {
+                    dbName "str1"
+                    documentation "My field"
+                    defaultValue "foo"
+                    mandatory false
+                    displayType VIEW_SORTING
+                    visible false
+                    namingScheme RANDOMCHECKSUM
+                    allowSquare false
+                },
+                upload "file2" unique translatable {
+                    mandatory true
+                    displayType DISPLAY_SORTING
+                    visible true
+                    cssClass "myurl"
+                    minLength 3
+                    regexp "foo"
+                    namingScheme FIELDNAMEWITHCOUNTER
+                    allowSquare true
+                    allowLandscape true
+                    allowPortrait true
+                },
+                upload "file3" fixed multiple {
+                    displayType ALL
+                    sluggablePosition 3
+                    regexp "foo" opposite
+                    length 50
+                    allowedExtensions "foo, bar"
+                    namingScheme USERDEFINEDWITHCOUNTER
+                    subFolderName "foo"
+                    maxSize "20M"
+                    mimeTypes "images and other stuff"
+                    minWidth 500
+                    maxWidth 600
+                    minHeight 200
+                    maxHeight 400
+                    minPixels 2
+                    maxPixels 4000
+                    minRatio 2.4
+                    maxRatio 4.2
+                    allowLandscape false
+                    allowPortrait false
+                    detectCorrupted true
+                },
+                upload "file4" {
+                    namingScheme ORIGINALWITHCOUNTER
+                }
+            }
+        },
+        entity "article10" {
+            nameMultiple "articles10"
+            lockType PAGELOCK_PESSIMISTIC_READ
+            tree CLOSURE
+            fields {
+                list "list1" nullable readonly sortableGroup {
+                    dbName "ema1"
+                    documentation "My field"
+                    defaultValue "info@guite.de"
+                    mandatory false
+                    displayType VIEW
+                    visible false
+                    items {
+                        listItem "foo",
+                        default listItem "bar"
+                    }
+                },
+                list "list2" unique translatable expanded {
+                    mandatory true
+                    displayType SORTING
+                    visible true
+                    cssClass "mylist"
+                    minLength 3
+                    regexp "foo"
+                    items {
+                        listItem "foo",
+                        default listItem "bar"
+                    }
+                },
+                list "list3" fixed multiple expanded {
+                    sluggablePosition 3
+                    regexp "foo" opposite
+                    length 50
+                    min 2
+                    max 3
+                    items {
+                        default listItem "foo" ("1"),
+                        default listItem "bar" (   "2"   ),
+                        listItem "baz" (   "foobar"   ) {
+                            documentation "something"
+                            image "my image"
+                        }
+                    }
+                }
+            }
+        },
+        entity "article11" {
+            nameMultiple "articles11"
+            lockType PAGELOCK_PESSIMISTIC_WRITE
+            fields {
+                array "arr1" nullable readonly sortableGroup {
+                    dbName "arr1"
+                    documentation "My field"
+                    defaultValue "foo"
+                    mandatory false
+                    displayType VIEW
+                    visible false
+                    arrayType ARRAY
+                },
+                array "arr2" {
+                    mandatory true
+                    displayType SORTING
+                    visible true
+                    cssClass "myarr"
+                    arrayType SIMPLE_ARRAY
+                },
+                array "arr3" translatable {
+                    arrayType JSON_ARRAY
+                    min 3
+                    max 10
+                }
+            }
+        },
+        entity "article12" {
+            nameMultiple "articles12"
+            fields {
+                object "obj1" nullable readonly sortableGroup {
+                    dbName "obj1"
+                    documentation "My field"
+                    defaultValue "foo"
+                    mandatory false
+                    displayType VIEW
+                    visible false
+                },
+                object "obj2" {
+                    mandatory true
+                    displayType SORTING
+                    visible true
+                    cssClass "myobj"
+                },
+                object "obj3" translatable
+            }
+        },
+        entity "article13" {
+            nameMultiple "articles13"
+            fields {
+                datetime "dat1" nullable readonly sortableGroup {
+                    dbName "dat1"
+                    documentation "My field"
+                    defaultValue "now"
+                    mandatory false
+                    displayType DISPLAY
+                    visible false
+                },
+                datetime "dat2" unique translatable {
+                    defaultValue "now"
+                    mandatory true
+                    displayType VIEW_DISPLAY
+                    visible true
+                    cssClass "mydate"
+                    components TIME
+                },
+                datetime "dat3" immutable {
+                    defaultValue "2017-12-21 13:15:00"
+                    components DATE_TIME
+                    timestampable NONE
+                },
+                datetime "dat4" past startDate {
+                    defaultValue "2017-12-21"
+                    components DATE
+                    timestampable CREATE
+                },
+                datetime "dat5" future endDate {
+                    timestampable UPDATE
+                },
+                datetime "dat6" {
+                    timestampable CHANGE
+                    timestampableChangeTriggerField "dat3"
+                    timestampableChangeTriggerValue "foo"
+                    validatorAddition "foo bar"
+                }
+            }
+            indexes {
+                index "myIndex" {
+                    documentation "foo bar"
+                    type NORMAL
+                    items {
+                        indexItem "dat4",
+                        indexItem "dat5"
+                    }
+                },
+                index "otherIndex" {
+                    type UNIQUE
+                    items {
+                        indexItem "dat3"
+                    }
+                }
+            }
+            actions {
+                viewAction "View",
+                displayAction "Display",
+                editAction "Edit",
+                deleteAction "Delete",
+                customAction "myReport" {
+                    documentation "This is my special report action."
+                }
+            }
+        }
+    }
+    relations {
+        inheritance {
+            source "article1"
+            sourceAlias "article1"
+            target "post"
+            targetAlias "post"
+            strategy SINGLE_TABLE
+            discriminatorColumn "discr"
+        },
+        inheritance {
+            source "article2"
+            sourceAlias "article2"
+            target "post"
+            targetAlias "post"
+            strategy SINGLE_TABLE
+            discriminatorColumn "discr"
+        },
+        inheritance {
+            source "article3"
+            sourceAlias "article3"
+            target "post"
+            targetAlias "post"
+            strategy SINGLE_TABLE
+            discriminatorColumn "discr"
+        },
+        inheritance {
+            source "article4"
+            sourceAlias "article4"
+            target "post"
+            targetAlias "post"
+            strategy SINGLE_TABLE
+            discriminatorColumn "discr"
+        },
+        inheritance {
+            source "article5"
+            sourceAlias "article5"
+            target "post"
+            targetAlias "post"
+            strategy SINGLE_TABLE
+            discriminatorColumn "discr"
+        },
+        inheritance {
+            source "article7"
+            sourceAlias "article7"
+            target "post"
+            targetAlias "post"
+            strategy SINGLE_TABLE
+            discriminatorColumn "discr"
+        },
+        inheritance {
+            source "article8"
+            sourceAlias "article8"
+            target "post"
+            targetAlias "post"
+            strategy SINGLE_TABLE
+            discriminatorColumn "discr"
+        },
+        inheritance {
+            source "article9"
+            sourceAlias "article9"
+            target "post"
+            targetAlias "post"
+            strategy SINGLE_TABLE
+            discriminatorColumn "discr"
+        },
+        inheritance {
+            source "article10"
+            sourceAlias "article10"
+            target "post"
+            targetAlias "post"
+            strategy SINGLE_TABLE
+            discriminatorColumn "discr"
+        },
+        inheritance {
+            source "article11"
+            sourceAlias "article11"
+            target "post"
+            targetAlias "post"
+            strategy SINGLE_TABLE
+            discriminatorColumn "discr"
+        },
+        inheritance {
+            source "article12"
+            sourceAlias "article12"
+            target "post"
+            targetAlias "post"
+            strategy SINGLE_TABLE
+            discriminatorColumn "discr"
+        },
+        inheritance {
+            source "article13"
+            sourceAlias "article13"
+            target "post"
+            targetAlias "post"
+            strategy SINGLE_TABLE
+            discriminatorColumn "discr"
+        },
+        one2many bidirectional {
+            source "article2"
+            sourceAlias "article2"
+            target "article3"
+            targetAlias "articles3"
+            cascade PERSIST
+        }
+    }
+}

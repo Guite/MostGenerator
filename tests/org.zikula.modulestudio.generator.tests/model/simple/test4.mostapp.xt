@@ -1,0 +1,84 @@
+/**
+ * Copyright (c) 2007-2017 Axel Guckelsberger
+ */
+
+/* XPECT_SETUP org.zikula.modulestudio.generator.tests.MostGeneratorTest END_SETUP */
+
+/*
+test which files are contained in the output
+XPECT files ---
+    .gitignore
+    composer.json
+    zikula.manifest.json
+--- */
+
+application "SimpleNews" targets ZK15DEV {
+    documentation "Simple news extension"
+    vendor "Guite"
+    author "Axel Guckelsberger"
+    email "info@guite.de"
+    url "https://guite.de"
+    prefix "sinew"
+    entities {
+        entity "article" leading {
+            documentation "My article"
+            nameMultiple "articles"
+            displayPattern "#title#"
+            identifierStrategy TABLE
+            changeTrackingPolicy DEFERRED_IMPLICIT
+            lockType OPTIMISTIC
+            slugLength 50
+            slugUpdatable false
+            slugUnique false
+            slugSeparator "_"
+            slugStyle LOWERCASE
+            tree CLOSURE
+            standardFields false
+            onAccountDeletionCreator GUEST
+            onAccountDeletionLastEditor DELETE
+            workflow NONE
+            hasArchive false
+            hasTray false
+            ownerPermission false
+            skipHookSubscribers true
+            formAwareHookProvider DISABLED
+            uiHooksProvider ENABLED_SELF
+            fields {
+                string "title" {
+                    sluggablePosition 1
+                    length 200
+                },
+                integer "myVersion" version
+            }
+            actions {
+                mainAction "Index"
+            }
+        },
+        entity "image" {
+            nameMultiple "images"
+        }
+    }
+    relations {
+        inheritance {
+            source "image"
+            sourceAlias "image"
+            target "article"
+            targetAlias "article"
+            strategy JOINED
+            discriminatorColumn "discr"
+        }
+    }
+    variables {
+        varContainer "Settings" {
+            fields {
+                string "mySetting"
+            }
+        },
+        varContainer "OtherSettings" {
+            sortOrder 3
+            fields {
+                string "otherSetting"
+            }
+        }
+    }
+}

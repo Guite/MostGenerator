@@ -1,0 +1,267 @@
+/**
+ * Copyright (c) 2007-2017 Axel Guckelsberger
+ */
+
+/* XPECT_SETUP org.zikula.modulestudio.generator.tests.MostGeneratorTest END_SETUP */
+
+/*
+test which files are contained in the output
+XPECT files ---
+    .gitignore
+    composer.json
+    zikula.manifest.json
+--- */
+
+application "SimpleNews" targets ZK20 {
+    documentation "Simple news extension"
+    vendor "Guite"
+    author "Axel Guckelsberger"
+    email "info@guite.de"
+    url "https://guite.de"
+    version "0.0.5"
+    license "My license"
+    prefix "sinew"
+    capabilities "foo, bar"
+    isSystemModule true
+    amountOfExampleRows 3
+    generateAccountApi true
+    generateSearchApi true
+    generateMailzApi true
+    generateListBlock true
+    generateDetailBlock true
+    generateModerationBlock true
+    generateListContentType true
+    generateDetailContentType true
+    generateNewsletterPlugin true
+    generateModerationPanel true
+    generatePendingContentSupport true
+    generateExternalControllerAndFinder true
+    generateScribitePlugins true
+    generateTagSupport true
+    generateMultiHookNeedles true
+    generateRssTemplates true
+    generateAtomTemplates true
+    generateCsvTemplates true
+    generateXmlTemplates true
+    generateJsonTemplates true
+    generateKmlTemplates true
+    generateIcsTemplates true
+    generatePdfSupport true
+    authenticationMethod NONE
+    filterHookProvider DISABLED
+    generateOnlyBaseClasses false
+    timestampAllGeneratedFiles true
+    versionAllGeneratedFiles true
+    separateAdminTemplates false
+    generatePoweredByBacklinksIntoFooterTemplates true
+    generateTests true
+    writeModelToDocs true
+    generateTechnicalDocumentation true
+    viewActionsPosition START
+    viewActionsStyle ICON
+    viewActionsWithIcons true
+    displayActionsPosition BOTH
+    displayActionsStyle LINK
+    displayActionsWithIcons true
+    skipFiles "foo, bar"
+    markFiles "foo, bar"
+    entities {
+        entity "article" leading {
+            nameMultiple "articles"
+            displayPattern "#title#"
+            fields {
+                string "title" {
+                    sluggablePosition 1
+                    length 200
+                },
+                integer "mySortField" sortablePosition
+            }
+            actions {
+                mainAction "Index"
+            }
+        },
+        entity "image" {
+            nameMultiple "images"
+            displayPattern "#title#"
+            fields {
+                string "title" unique {
+                    sluggablePosition 1
+                    length 200
+                }
+            }
+            actions {
+                mainAction "Index"
+            }
+        }
+    }
+    relations {
+        one2one {
+            source "article"
+            sourceAlias "article11"
+            target "image"
+            targetAlias "image11"
+            nullable false
+            expandedSource false
+            expandedTarget false
+            useAutoCompletion NONE
+            fetchType LAZY
+            //cascade NONE
+            //cascadeReverse PERSIST
+        },
+        one2one bidirectional unique orphanRemoval inheritPermissions {
+            source "article"
+            sourceAlias "article12"
+            sourceField "id"
+            target "image"
+            targetAlias "image12"
+            targetField "id"
+            nullable true
+            expandedSource true
+            expandedTarget true
+            cascade REMOVE
+            cascadeReverse MERGE
+            onDelete "foo"
+        },
+        one2many {
+            source "article"
+            sourceAlias "article21"
+            target "image"
+            targetAlias "images21"
+            nullable false
+            expandedSource false
+            expandedTarget false
+            useAutoCompletion ONLY_SOURCE_SIDE
+            fetchType EAGER
+            sourceEditing NONE
+            targetEditing CHOOSE
+            //cascade DETACH
+            //cascadeReverse PERSIST_REMOVE
+        },
+        one2many bidirectional unique orphanRemoval inheritPermissions {
+            source "article"
+            sourceAlias "article22"
+            sourceField "id"
+            target "image"
+            targetAlias "images22"
+            targetField "id"
+            nullable true
+            expandedSource true
+            expandedTarget true
+            useAutoCompletion ONLY_TARGET_SIDE
+            fetchType EXTRA_LAZY
+            sourceEditing EMBEDDED
+            targetEditing INLINE
+            //cascade PERSIST_MERGE
+            //cascadeReverse PERSIST_DETACH
+            //onDelete "foo"
+            orderBy "title"
+            indexBy "title"
+        },
+        one2many {
+            source "article"
+            sourceAlias "article23"
+            target "image"
+            targetAlias "images23"
+            useAutoCompletion BOTH_SIDES
+            //cascade REMOVE_MERGE
+            //cascadeReverse REMOVE_DETACH
+            minTarget 5
+            maxTarget 8
+        },
+        many2one {
+            source "article"
+            sourceAlias "articles31"
+            target "image"
+            targetAlias "image31"
+            nullable false
+            expandedSource false
+            expandedTarget false
+            useAutoCompletion ONLY_SOURCE_SIDE
+            fetchType EAGER
+            sourceEditing NONE
+            //cascade MERGE_DETACH
+            //cascadeReverse PERSIST_REMOVE_MERGE
+        },
+        many2one unique sortableGroup {
+            source "article"
+            sourceAlias "articles32"
+            sourceField "id"
+            target "image"
+            targetAlias "image32"
+            targetField "id"
+            nullable true
+            expandedSource true
+            expandedTarget true
+            useAutoCompletion ONLY_TARGET_SIDE
+            fetchType EXTRA_LAZY
+            sourceEditing EMBEDDED
+            //cascade PERSIST_REMOVE_DETACH
+            //cascadeReverse PERSIST_MERGE_DETACH
+            //onDelete "foo"
+        },
+        many2one {
+            source "article"
+            sourceAlias "articles33"
+            target "image"
+            targetAlias "image33"
+            useAutoCompletion BOTH_SIDES
+            //cascade REMOVE_MERGE_DETACH
+            //cascadeReverse ALL
+        },
+        many2many {
+            source "article"
+            sourceAlias "articles41"
+            target "image"
+            targetAlias "images41"
+            nullable false
+            expandedSource false
+            expandedTarget false
+            useAutoCompletion ONLY_SOURCE_SIDE
+            fetchType EAGER
+            sourceEditing NONE
+            targetEditing INLINE
+            //cascade MERGE_DETACH
+            //cascadeReverse PERSIST_REMOVE_MERGE
+            refClass "articleImage1"
+            inheritPermissions NONE 
+        },
+        many2many bidirectional unique orphanRemoval {
+            source "article"
+            sourceAlias "articles42"
+            sourceField "id"
+            target "image"
+            targetAlias "images42"
+            targetField "id"
+            nullable true
+            expandedSource true
+            expandedTarget true
+            useAutoCompletion ONLY_TARGET_SIDE
+            fetchType EXTRA_LAZY
+            sourceEditing CHOOSE
+            targetEditing CHOOSE
+            //cascade PERSIST_REMOVE_DETACH
+            //cascadeReverse PERSIST_MERGE_DETACH
+            //onDelete "foo"
+            refClass "articleImage2"
+            inheritPermissions AFFIRMATIVE 
+        },
+        many2many {
+            source "article"
+            sourceAlias "articles43"
+            target "image"
+            targetAlias "images43"
+            useAutoCompletion BOTH_SIDES
+            //cascade REMOVE_MERGE_DETACH
+            //cascadeReverse ALL
+            refClass "articleImage3"
+            orderBy "title"
+            orderByReverse "title"
+            indexBy "title"
+            minSource 2
+            maxSource 5
+            minTarget 3
+            maxTarget 3
+            inheritPermissions UNANIMOUS 
+        }
+    }
+}

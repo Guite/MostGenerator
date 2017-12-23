@@ -1,0 +1,66 @@
+/**
+ * Copyright (c) 2007-2017 Axel Guckelsberger
+ */
+
+/* XPECT_SETUP org.zikula.modulestudio.generator.tests.MostGeneratorTest END_SETUP */
+
+/*
+test which files are contained in the output
+XPECT files ---
+    .gitignore
+    composer.json
+    zikula.manifest.json
+--- */
+
+application "SimpleNews" targets ZK15 {
+    documentation "Simple news extension"
+    vendor "Guite"
+    author "Axel Guckelsberger"
+    email "info@guite.de"
+    url "https://guite.de"
+    prefix "sinew"
+    authenticationMethod LOCAL
+    displayActionsStyle BUTTON
+    entities {
+        entity "article" leading readOnly {
+            documentation "My article"
+            nameMultiple "articles"
+            displayPattern "#title#"
+            identifierStrategy IDENTITY
+            changeTrackingPolicy NOTIFY
+            lockType PAGELOCK
+            slugLength 50
+            slugUpdatable true
+            slugUnique true
+            slugSeparator "~"
+            slugStyle CAMEL
+            tree NESTED
+            standardFields true
+            onAccountDeletionCreator ADMIN
+            onAccountDeletionLastEditor ADMIN
+            workflow STANDARD
+            hasArchive true
+            hasTray true
+            ownerPermission true
+            skipHookSubscribers false
+            formAwareHookProvider ENABLED_SELF
+            uiHooksProvider ENABLED
+            fields {
+                string "title" {
+                    sluggablePosition 1
+                    length 200
+                },
+                datetime "myDatetime" endDate
+            }
+            actions {
+                mainAction "Index"
+            }
+        },
+        mappedSuperClass "image" {
+            documentation "My image"
+            fields {
+                string "title"
+            }
+        }
+    }
+}

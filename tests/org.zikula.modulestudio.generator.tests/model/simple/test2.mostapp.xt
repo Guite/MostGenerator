@@ -1,0 +1,98 @@
+/**
+ * Copyright (c) 2007-2017 Axel Guckelsberger
+ */
+
+/* XPECT_SETUP org.zikula.modulestudio.generator.tests.MostGeneratorTest END_SETUP */
+
+/*
+test which files are contained in the output
+XPECT files ---
+    .gitignore
+    composer.json
+    zikula.manifest.json
+--- */
+
+application "SimpleNews" targets ZK2DEV {
+    documentation "Simple news extension"
+    vendor "Guite"
+    author "Axel Guckelsberger"
+    email "info@guite.de"
+    url "https://guite.de"
+    version "0.0.5"
+    license "My license"
+    prefix "sinew"
+    capabilities "foo, bar"
+    isSystemModule false
+    amountOfExampleRows 3
+    generateAccountApi false
+    generateSearchApi false
+    generateMailzApi false
+    generateListBlock false
+    generateDetailBlock false
+    generateModerationBlock false
+    generateListContentType false
+    generateDetailContentType false
+    generateNewsletterPlugin false
+    generateModerationPanel false
+    generatePendingContentSupport false
+    generateExternalControllerAndFinder false
+    generateScribitePlugins false
+    generateTagSupport false
+    generateMultiHookNeedles false
+    generateRssTemplates false
+    generateAtomTemplates false
+    generateCsvTemplates false
+    generateXmlTemplates false
+    generateJsonTemplates false
+    generateKmlTemplates false
+    generateIcsTemplates false
+    generatePdfSupport false
+    authenticationMethod REMOTE
+    filterHookProvider ENABLED
+    generateOnlyBaseClasses false
+    timestampAllGeneratedFiles false
+    versionAllGeneratedFiles false
+    separateAdminTemplates false
+    generatePoweredByBacklinksIntoFooterTemplates false
+    generateTests false
+    writeModelToDocs false
+    generateTechnicalDocumentation false
+    viewActionsPosition END
+    viewActionsStyle DROPDOWN
+    viewActionsWithIcons false
+    displayActionsPosition NONE
+    displayActionsStyle BUTTON_GROUP
+    displayActionsWithIcons false
+    skipFiles "foo, bar"
+    markFiles "foo, bar"
+    entities {
+        entity "article" leading {
+            nameMultiple "articles"
+            displayPattern "#title#"
+            lockType NONE
+            fields {
+                string "title" {
+                    sluggablePosition 1
+                    length 200
+                }
+            }
+            actions {
+                mainAction "Index"
+            }
+        },
+        entity "image" {
+            nameMultiple "images"
+            displayPattern "#title#"
+            changeTrackingPolicy DEFERRED_EXPLICIT
+            fields {
+                string "title" {
+                    sluggablePosition 1
+                    length 200
+                }
+            }
+            actions {
+                mainAction "Index"
+            }
+        }
+    }
+}

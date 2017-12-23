@@ -299,8 +299,8 @@ class ExampleDataHelper {
 
     def private exampleRowsConstructorArgument(DerivedField it, Integer number) {
         switch it {
-            IntegerField: if (it.defaultValue.length > 0) it.defaultValue else number
-            default: '\'' + (if (it.defaultValue.length > 0) it.defaultValue else it.name.formatForDisplayCapital + ' ' + number) + '\''
+            IntegerField: if (null !== it.defaultValue && it.defaultValue.length > 0) it.defaultValue else number
+            default: '\'' + (if (null !== it.defaultValue && it.defaultValue.length > 0) it.defaultValue else it.name.formatForDisplayCapital + ' ' + number) + '\''
         }
     }
 

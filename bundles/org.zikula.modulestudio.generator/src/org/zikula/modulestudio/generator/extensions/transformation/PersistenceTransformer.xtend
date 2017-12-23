@@ -1,9 +1,11 @@
 package org.zikula.modulestudio.generator.extensions.transformation
 
 import de.guite.modulestudio.metamodel.Application
+import de.guite.modulestudio.metamodel.DataObject
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.EntityWorkflowType
 import de.guite.modulestudio.metamodel.ManyToOneRelationship
+import de.guite.modulestudio.metamodel.MappedSuperClass
 import de.guite.modulestudio.metamodel.ModuleStudioFactory
 import de.guite.modulestudio.metamodel.NumberFieldType
 import de.guite.modulestudio.metamodel.OneToOneRelationship
@@ -65,7 +67,7 @@ class PersistenceTransformer {
         author = author.replaceUmlauts
 
         // handle all entities
-        for (entity : getAllEntities) {
+        for (entity : entities) {
             entity.handleEntity
         }
 
@@ -99,9 +101,9 @@ class PersistenceTransformer {
     /**
      * Transformation processing for a single entity.
      *
-     * @param it The currently treated {@link Entity} instance.
+     * @param it The currently treated {@link DataObject} instance.
      */
-    def private void handleEntity(Entity it) {
+    def private void handleEntity(DataObject it) {
         //('Transforming entity ' + name).printIfNotTesting(fsa)
         //('Field size before: ' + fields.size + ' fields').printIfNotTesting(fsa)
         if (getDerivedFields.filter[primaryKey].empty
@@ -112,8 +114,10 @@ class PersistenceTransformer {
         }
         //('Added primary key, field size now: ' + fields.size + ' fields').printIfNotTesting(fsa)
 
-        if (!inheriting) {
-            addWorkflowState
+        if (it instanceof Entity) {
+            if (!inheriting || parentType instanceof MappedSuperClass) {
+                addWorkflowState
+            }
         }
 
         // make optional upload fields nullable, too
@@ -125,9 +129,9 @@ class PersistenceTransformer {
     /**
      * Adds a primary key to a given entity.
      * 
-     * @param entity The given {@link Entity} instance.
+     * @param entity The given {@link DataObject} instance.
      */
-    def private addPrimaryKey(Entity entity) {
+    def private addPrimaryKey(DataObject entity) {
         val idField = ModuleStudioFactory.eINSTANCE.createIntegerField => [
             name = 'id'
             length = 9
