@@ -10,10 +10,11 @@ XPECT files ---
     .gitignore
     composer.json
     zikula.manifest.json
+    Helper/ArchiveHelper.php
+    Helper/Base/AbstractArchiveHelper.php
 --- */
 
 application "SimpleNews" targets ZK15 {
-    documentation "Simple news extension"
     vendor "Guite"
     author "Axel Guckelsberger"
     email "info@guite.de"
@@ -28,7 +29,7 @@ application "SimpleNews" targets ZK15 {
             displayPattern "#title#"
             identifierStrategy IDENTITY
             changeTrackingPolicy NOTIFY
-            lockType PAGELOCK
+            lockType PAGELOCK_PESSIMISTIC_WRITE
             slugLength 50
             slugUpdatable true
             slugUnique true

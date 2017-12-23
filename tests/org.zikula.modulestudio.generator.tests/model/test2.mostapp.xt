@@ -70,6 +70,7 @@ application "SimpleNews" targets ZK2DEV {
             nameMultiple "articles"
             displayPattern "#title#"
             lockType NONE
+            workflow ENTERPRISE
             fields {
                 string "title" {
                     sluggablePosition 1
@@ -80,7 +81,7 @@ application "SimpleNews" targets ZK2DEV {
                 mainAction "Index"
             }
         },
-        entity "image" {
+        entity "image" geographical attributable {
             nameMultiple "images"
             displayPattern "#title#"
             changeTrackingPolicy DEFERRED_EXPLICIT
@@ -88,6 +89,9 @@ application "SimpleNews" targets ZK2DEV {
                 string "title" {
                     sluggablePosition 1
                     length 200
+                },
+                string "zipCode" {
+                    mandatory false
                 }
             }
             actions {

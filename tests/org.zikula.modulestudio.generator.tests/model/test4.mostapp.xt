@@ -18,6 +18,7 @@ application "SimpleNews" targets ZK15DEV {
     author "Axel Guckelsberger"
     email "info@guite.de"
     url "https://guite.de"
+    license "GPL"
     prefix "sinew"
     entities {
         entity "article" leading {

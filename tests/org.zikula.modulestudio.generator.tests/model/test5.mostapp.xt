@@ -54,7 +54,7 @@ application "SimpleNews" {
                 }
             }
         },
-        entity "article2" {
+        entity "article2" loggable {
             nameMultiple "articles2"
             identifierStrategy AUTO
             lockType PAGELOCK_OPTIMISTIC
@@ -83,7 +83,7 @@ application "SimpleNews" {
                 }
             }
         },
-        entity "article3" {
+        entity "article3" categorisable {
             nameMultiple "articles3"
             fields {
                 number "num1" nullable readonly sortableGroup {
@@ -111,7 +111,7 @@ application "SimpleNews" {
                 }
             }
         },
-        entity "article4" {
+        entity "article4" categorisable categorisableMultiSelection {
             nameMultiple "articles4"
             identifierStrategy NONE
             fields {

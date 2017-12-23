@@ -262,13 +262,14 @@ class Definition {
     '''
 
     def private addTransition(String id, String state, String nextState) {
-        if (!transitionsFrom.containsKey(id)) {
-            transitionsFrom.put(id, newArrayList)
+        val uniqueKey = state + id
+        if (!transitionsFrom.containsKey(uniqueKey)) {
+            transitionsFrom.put(uniqueKey, newArrayList)
         }
-        transitionsFrom.get(id).add(state)
-        if (!transitionsTo.containsKey(id)) {
-            transitionsTo.put(id, nextState)
-        } else if (transitionsTo.get(id) != nextState) {
+        transitionsFrom.get(uniqueKey).add(state)
+        if (!transitionsTo.containsKey(uniqueKey)) {
+            transitionsTo.put(uniqueKey, nextState)
+        } else if (transitionsTo.get(uniqueKey) != nextState) {
             try {
                 throw new Exception('Invalid workflow structure: transition "' + id + '" has two different target states (' + nextState + ', ' + transitionsTo.get(id) + ').')
             } catch (Exception exc) {
