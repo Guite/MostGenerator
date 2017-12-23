@@ -90,7 +90,7 @@ class Definition {
     def private actionsImpl() '''
         transitions:
             «FOR transitionKey : transitionsFrom.keySet»
-                «transitionKey»:
+                «IF transitionKey.startsWith('update')»update«ELSE»transitionKey«ENDIF»:
                     from: «IF transitionsFrom.get(transitionKey).length > 1»[«transitionsFrom.get(transitionKey).join(', ')»]«ELSE»«transitionsFrom.get(transitionKey).join(', ')»«ENDIF»
                     to: «transitionsTo.get(transitionKey)»
             «ENDFOR»
@@ -262,7 +262,10 @@ class Definition {
     '''
 
     def private addTransition(String id, String state, String nextState) {
-        val uniqueKey = state + id
+        var uniqueKey = id
+        if (id.startsWith('update') && app.targets('2.0')) {
+            uniqueKey = id + state
+        }
         if (!transitionsFrom.containsKey(uniqueKey)) {
             transitionsFrom.put(uniqueKey, newArrayList)
         }
