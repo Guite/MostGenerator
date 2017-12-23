@@ -66,25 +66,28 @@ application "SimpleNews" targets ZK2DEV {
     skipFiles "foo, bar"
     markFiles "foo, bar"
     entities {
-        entity "article" leading {
+        entity "article" leading loggable categorisable {
             nameMultiple "articles"
             displayPattern "#title#"
-            lockType NONE
+            lockType OPTIMISTIC
+            tree CLOSURE
             workflow ENTERPRISE
             fields {
                 string "title" {
                     sluggablePosition 1
                     length 200
-                }
+                },
+                integer "currentVersion" version
             }
             actions {
                 mainAction "Index"
             }
         },
-        entity "image" geographical attributable {
+        entity "image" loggable geographical attributable {
             nameMultiple "images"
             displayPattern "#title#"
             changeTrackingPolicy DEFERRED_EXPLICIT
+            lockType PAGELOCK_OPTIMISTIC
             fields {
                 string "title" {
                     sluggablePosition 1
@@ -92,10 +95,24 @@ application "SimpleNews" targets ZK2DEV {
                 },
                 string "zipCode" {
                     mandatory false
-                }
+                },
+                integer "currentVersion" version
             }
             actions {
                 mainAction "Index"
+            }
+        },
+        entity "location" geographical {
+            nameMultiple "locations"
+            displayPattern "#title#"
+            fields {
+                string "title",
+                string "zipCode" {
+                    mandatory false
+                }
+            }
+            actions {
+                customAction "Export"
             }
         }
     }
