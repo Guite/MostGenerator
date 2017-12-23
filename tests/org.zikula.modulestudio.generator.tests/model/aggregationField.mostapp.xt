@@ -1,0 +1,66 @@
+/**
+ * Copyright (c) 2007-2017 Axel Guckelsberger
+ */
+
+/* XPECT_SETUP org.zikula.modulestudio.generator.tests.MostGeneratorTest END_SETUP */
+
+/*
+test which files are contained in the output
+XPECT files ---
+    .gitignore
+    composer.json
+    zikula.manifest.json
+--- */
+
+application "SimpleNews" {
+    documentation "Simple news extension"
+    vendor "Guite"
+    author "Axel Guckelsberger"
+    email "info@guite.de"
+    url "https://guite.de"
+    prefix "sinew"
+    entities {
+        entity "house" leading {
+            nameMultiple "houses"
+            displayPattern "#title#"
+            lockType PAGELOCK_PESSIMISTIC_READ
+            fields {
+                string "title",
+                integer "myValidAggregator1" {
+                    aggregateFor "houseStones.views1"
+                },
+                integer "myValidAggregator2" {
+                    aggregateFor "houseStones.views2"
+                }
+            }
+            actions {
+                mainAction "Index"
+            }
+        },
+        entity "stone" {
+            nameMultiple "stones"
+            displayPattern "#title#"
+            lockType NONE
+            fields {
+                string "title",
+                integer "myInt" {
+                    aggregateFor ""
+                },
+                integer "views1",
+                number "views2"
+            }
+            actions {
+                mainAction "Index"
+            }
+        }
+    }
+    relations {
+        one2many bidirectional {
+            source "house"
+            sourceAlias "house"
+            target "stone"
+            targetAlias "houseStones"
+            cascade PERSIST_MERGE
+        }
+    }
+}

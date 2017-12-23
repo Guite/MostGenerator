@@ -23,7 +23,7 @@ application "SimpleNews" targets ZK15 {
     authenticationMethod LOCAL
     displayActionsStyle BUTTON
     entities {
-        entity "article" leading readOnly {
+        entity "article" leading readOnly categorisable {
             documentation "My article"
             nameMultiple "articles"
             displayPattern "#title#"
@@ -51,10 +51,20 @@ application "SimpleNews" targets ZK15 {
                     sluggablePosition 1
                     length 200
                 },
-                datetime "myDatetime" endDate
+                datetime "myDatetime" endDate,
+                string "myColour" {
+                    role COLOUR
+                },
+                string "myPhone" {
+                    role PHONE_NUMBER
+                },
+                upload "myImage"
             }
             actions {
-                mainAction "Index"
+                mainAction "Index",
+                viewAction "View",
+                displayAction "Display",
+                editAction "Edit"
             }
         },
         mappedSuperClass "image" {

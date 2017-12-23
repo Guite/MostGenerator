@@ -39,20 +39,13 @@ application "SimpleNews" targets ZK2DEV {
     generateScribitePlugins false
     generateTagSupport false
     generateMultiHookNeedles false
-    generateRssTemplates false
-    generateAtomTemplates false
-    generateCsvTemplates false
-    generateXmlTemplates false
-    generateJsonTemplates false
-    generateKmlTemplates false
-    generateIcsTemplates false
-    generatePdfSupport false
+    generatePdfSupport true
     authenticationMethod REMOTE
     filterHookProvider ENABLED
     generateOnlyBaseClasses false
     timestampAllGeneratedFiles false
     versionAllGeneratedFiles false
-    separateAdminTemplates false
+    separateAdminTemplates true
     generatePoweredByBacklinksIntoFooterTemplates false
     generateTests false
     writeModelToDocs false
@@ -71,16 +64,26 @@ application "SimpleNews" targets ZK2DEV {
             displayPattern "#title#"
             lockType OPTIMISTIC
             tree CLOSURE
+            onAccountDeletionCreator GUEST
+            onAccountDeletionLastEditor GUEST
             workflow ENTERPRISE
             fields {
                 string "title" {
                     sluggablePosition 1
                     length 200
                 },
-                integer "currentVersion" version
+                integer "currentVersion" version,
+                datetime "myPast" past,
+                datetime "myFuture" future
             }
             actions {
-                mainAction "Index"
+                mainAction "Index",
+                viewAction "View" {
+                    documentation "My view action"
+                },
+                displayAction "Display",
+                editAction "Edit",
+                deleteAction "Delete"
             }
         },
         entity "image" loggable geographical attributable {
@@ -88,31 +91,191 @@ application "SimpleNews" targets ZK2DEV {
             displayPattern "#title#"
             changeTrackingPolicy DEFERRED_EXPLICIT
             lockType PAGELOCK_OPTIMISTIC
+            onAccountDeletionCreator DELETE
+            onAccountDeletionLastEditor DELETE
             fields {
-                string "title" {
+                string "title" translatable {
                     sluggablePosition 1
                     length 200
                 },
                 string "zipCode" {
                     mandatory false
                 },
-                integer "currentVersion" version
+                text "description",
+                integer "currentVersion" unique version,
+                upload "myImage",
+                datetime "myStart" startDate,
+                datetime "myEnd" endDate,
+                datetime "myPast" past {
+                    components TIME
+                },
+                datetime "myFuture" future {
+                    components TIME
+                }
             }
             actions {
-                mainAction "Index"
+                mainAction "Index",
+                viewAction "View",
+                displayAction "Display",
+                editAction "Edit"
             }
         },
         entity "location" geographical {
             nameMultiple "locations"
             displayPattern "#title#"
             fields {
-                string "title",
-                string "zipCode" {
+                string "title" {
+                    displayType NONE
+                },
+                string "myPassword" {
+                    displayType VIEW
+                    role PASSWORD
+                },
+                string "zipCode" unique {
                     mandatory false
+                    displayType DISPLAY
+                },
+                list "myList1" {
+                    items {
+                        listItem "My first item",
+                        default listItem "My second item"
+                    }
+                },
+                list "myList2" expanded {
+                    items {
+                        listItem "My first item",
+                        default listItem "My second item"
+                    }
+                },
+                list "myList3" multiple {
+                    items {
+                        listItem "My first item",
+                        default listItem "My second item"
+                    }
+                },
+                list "myList4" multiple expanded {
+                    min 1
+                    max 2
+                    items {
+                        default listItem "My first item",
+                        default listItem "My second item"
+                    }
+                },
+                datetime "myTime" immutable {
+                    defaultValue "now"
+                    components TIME
+                },
+                datetime "myStart" startDate {
+                    components DATE
+                },
+                datetime "myEnd" endDate {
+                    components DATE
+                },
+                datetime "myPast" past {
+                    components DATE
+                },
+                datetime "myFuture" future {
+                    components DATE
+                },
+                upload "myImage",
+                user "myUser1" {
+                    onAccountDeletionCreator ADMIN
+                },
+                user "myUser2" {
+                    onAccountDeletionCreator GUEST
+                },
+                user "myUser3" {
+                    onAccountDeletionCreator DELETE
                 }
             }
             actions {
+                mainAction "Index",
+                viewAction "View",
+                displayAction "Display",
+                editAction "Edit",
                 customAction "Export"
+            }
+        }
+    }
+    relations {
+        one2many bidirectional {
+            source "article"
+            sourceAlias "article"
+            target "image"
+            targetAlias "images"
+            sourceEditing EMBEDDED
+            targetEditing NONE
+            cascade ALL
+            orderBy "currentVersion"
+            indexBy "currentVersion"
+            minTarget 1
+            maxTarget 3
+        },
+        many2one unique {
+            source "article"
+            sourceAlias "myArticles"
+            target "image"
+            targetAlias "myImage"
+            nullable false
+            expandedSource true
+            expandedTarget true
+            useAutoCompletion BOTH_SIDES
+            fetchType EAGER
+            sourceEditing INLINE
+        },
+        many2many bidirectional {
+            source "image"
+            sourceAlias "images"
+            target "location"
+            targetAlias "locations"
+            sourceEditing CHOOSE
+            targetEditing INLINE
+            refClass "imageLocation"
+            orderBy "title"
+            orderByReverse "currentVersion"
+            indexBy "zipCode"
+            minSource 1
+            maxSource 3
+            minTarget 1
+            maxTarget 3
+            inheritPermissions AFFIRMATIVE
+        }
+    }
+    variables {
+        varContainer "GeneralSettings" {
+            documentation "My variable section"
+            fields {
+                user "myUser1" {
+                    onAccountDeletionCreator ADMIN
+                },
+                user "myUser2" {
+                    onAccountDeletionCreator GUEST
+                },
+                user "myUser3" {
+                    onAccountDeletionCreator DELETE
+                },
+                upload "myImage"
+            }
+        },
+        varContainer "OtherSettings" composite {
+            documentation "My variable section with {{ variable }}"
+            sortOrder 3
+            fields {
+                user "myUser4" {
+                    onAccountDeletionCreator ADMIN
+                },
+                user "myUser5" {
+                    onAccountDeletionCreator GUEST
+                },
+                user "myUser6" {
+                    onAccountDeletionCreator DELETE
+                },
+                number "myNumber",
+                datetime "myDate" {
+                    components DATE
+                },
+                datetime "myStart" startDate,
+                datetime "myEnd" endDate
             }
         }
     }

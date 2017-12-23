@@ -16,7 +16,7 @@ class HistoryFunctions {
      * Entry point for the JavaScript file with version history functionality.
      */
     def generate(Application it, IMostFileSystemAccess fsa) {
-        if (hasLoggable) {
+        if (!hasLoggable) {
             return
         }
         'Generating JavaScript for version history view'.printIfNotTesting(fsa)

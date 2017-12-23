@@ -1,7 +1,6 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.controller.helper
 
 import de.guite.modulestudio.metamodel.Application
-import de.guite.modulestudio.metamodel.UploadField
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
@@ -77,7 +76,7 @@ class ImageHelper {
             «getRuntimeOptions»
 
             «getCustomRuntimeOptions»
-            «IF hasImageFields || !variables.map[fields].filter(UploadField).filter[isImageField].empty»
+            «IF hasImageFields || !getUploadVariables.filter[isImageField].empty»
 
                 «checkIfImagineCacheDirectoryExists»
             «ENDIF»
@@ -97,7 +96,7 @@ class ImageHelper {
          */
         public function getRuntimeOptions($objectType = '', $fieldName = '', $context = '', array $args = [])
         {
-            «IF hasImageFields || !variables.map[fields].filter(UploadField).filter[isImageField].empty»
+            «IF hasImageFields || !getUploadVariables.filter[isImageField].empty»
                 $this->checkIfImagineCacheDirectoryExists();
 
             «ENDIF»

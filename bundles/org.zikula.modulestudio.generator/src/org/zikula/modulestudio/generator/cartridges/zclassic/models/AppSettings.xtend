@@ -173,7 +173,7 @@ class AppSettings {
 
                 // prepare user fields, fallback to admin user for undefined values
                 $adminUserId = UsersConstant::USER_ID_ADMIN;
-                «FOR userField : variables.map[fields].filter(UserField)»
+                «FOR userField : getAllVariables.filter(UserField)»
                     $userId = $this->get«userField.name.formatForCodeCapital»();
                     if ($userId < 1) {
                         $userId = $adminUserId;
@@ -206,7 +206,7 @@ class AppSettings {
         {
             «IF hasUserVariables»
                 // normalise user selector values
-                «FOR userField : variables.map[fields].filter(UserField)»
+                «FOR userField : getAllVariables.filter(UserField)»
                     $user = $this->get«userField.name.formatForCodeCapital»();
                     $user = is_object($user) ? $user->getUid() : intval($user);
                     $this->set«userField.name.formatForCodeCapital»($user);

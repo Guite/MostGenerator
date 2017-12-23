@@ -20,6 +20,10 @@ application "SimpleNews" targets ZK15DEV {
     url "https://guite.de"
     license "GPL"
     prefix "sinew"
+    generateMailzApi true
+    generateNewsletterPlugin true
+    generateTagSupport true
+    generateMultiHookNeedles true
     entities {
         entity "article" leading {
             documentation "My article"
@@ -49,14 +53,26 @@ application "SimpleNews" targets ZK15DEV {
                     sluggablePosition 1
                     length 200
                 },
-                integer "myVersion" version
+                integer "myVersion" version,
+                integer "parentIdentifier" nullable {
+                    mandatory false
+                }
             }
             actions {
-                mainAction "Index"
+                mainAction "Index",
+                viewAction "View",
+                displayAction "Display",
+                editAction "Edit"
             }
         },
         entity "image" {
             nameMultiple "images"
+            fields {
+                string "caption" translatable {
+                    mandatory false
+                    sluggablePosition 2
+                }
+            }
         }
     }
     relations {
@@ -67,6 +83,13 @@ application "SimpleNews" targets ZK15DEV {
             targetAlias "article"
             strategy JOINED
             discriminatorColumn "discr"
+        },
+        one2many bidirectional inheritPermissions {
+            source "article"
+            sourceAlias "article"
+            sourceField "parentIdentifier"
+            target "article"
+            targetAlias "subArticles"
         }
     }
     variables {

@@ -28,7 +28,7 @@ class Validation {
 
     def private generate(Application it) '''
         'use strict';
-        «IF hasAnyDateTimeFields || !variables.map[fields].filter(DatetimeField).empty»
+        «IF hasAnyDateTimeFields || !getAllVariables.filter(DatetimeField).empty»
 
             «dateFunctions»
         «ENDIF»
@@ -68,7 +68,7 @@ class Validation {
                 return allowedExtensions.test(val);
             }
         «ENDIF»
-        «val datetimeFields = getAllEntityFields.filter(DatetimeField).filter[isDateTimeField] + variables.map[fields].filter(DatetimeField).filter[isDateTimeField]»
+        «val datetimeFields = getAllEntityFields.filter(DatetimeField).filter[isDateTimeField] + getAllVariables.filter(DatetimeField).filter[isDateTimeField]»
         «IF !datetimeFields.empty»
             «IF datetimeFields.exists[past]»
 
@@ -91,7 +91,7 @@ class Validation {
                 }
             «ENDIF»
         «ENDIF»
-        «val dateFields = getAllEntityFields.filter(DatetimeField).filter[isDateField] + variables.map[fields].filter(DatetimeField).filter[isDateField]»
+        «val dateFields = getAllEntityFields.filter(DatetimeField).filter[isDateField] + getAllVariables.filter(DatetimeField).filter[isDateField]»
         «IF !dateFields.empty»
             «IF dateFields.exists[past]»
 
@@ -114,7 +114,7 @@ class Validation {
                 }
             «ENDIF»
         «ENDIF»
-        «val timeFields = getAllEntityFields.filter(DatetimeField).filter[isTimeField] + variables.map[fields].filter(DatetimeField).filter[isTimeField]»
+        «val timeFields = getAllEntityFields.filter(DatetimeField).filter[isTimeField] + getAllVariables.filter(DatetimeField).filter[isTimeField]»
         «IF !timeFields.empty»
             «IF timeFields.exists[past]»
 

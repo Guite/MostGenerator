@@ -77,7 +77,10 @@ application "SimpleNews" targets ZK20 {
                 integer "mySortField" sortablePosition
             }
             actions {
-                mainAction "Index"
+                mainAction "Index",
+                viewAction "View",
+                displayAction "Display",
+                editAction "Edit"
             }
         },
         entity "image" {
@@ -90,7 +93,10 @@ application "SimpleNews" targets ZK20 {
                 }
             }
             actions {
-                mainAction "Index"
+                mainAction "Index",
+                viewAction "View",
+                displayAction "Display",
+                editAction "Edit"
             }
         }
     }

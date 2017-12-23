@@ -122,7 +122,7 @@ class Layout {
     def formBaseTemplate(Application it) '''
         {# purpose of this template: apply some general form extensions #}
         {% extends 'ZikulaFormExtensionBundle:Form:bootstrap_3_zikula_admin_layout.html.twig' %}
-        «IF !getAllEntities.filter[e|e.hasDirectDateTimeFields].empty || !variables.map[fields].filter(DatetimeField).filter[isDateTimeField].empty»
+        «IF !getAllEntities.filter[e|e.hasDirectDateTimeFields].empty || !getAllVariables.filter(DatetimeField).filter[isDateTimeField].empty»
 
             {%- block datetime_widget -%}
                 {{- parent() -}}
@@ -131,7 +131,7 @@ class Layout {
                 {%- endif -%}
             {%- endblock -%}
         «ENDIF»
-        «IF !getAllEntities.filter[e|e.hasDirectDateFields].empty || !variables.map[fields].filter(DatetimeField).filter[isDateField].empty»
+        «IF !getAllEntities.filter[e|e.hasDirectDateFields].empty || !getAllVariables.filter(DatetimeField).filter[isDateField].empty»
 
             {%- block date_widget -%}
                 {{- parent() -}}

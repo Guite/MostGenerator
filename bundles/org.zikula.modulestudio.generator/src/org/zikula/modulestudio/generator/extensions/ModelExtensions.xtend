@@ -137,14 +137,14 @@ class ModelExtensions {
      * Checks whether the application contains at least one entity with at least one colour field.
      */
     def hasColourFields(Application it) {
-        getAllEntities.exists[hasColourFieldsEntity] || !variables.map[fields].filter(StringField).filter[role == StringRole.COLOUR].empty
+        getAllEntities.exists[hasColourFieldsEntity] || !getAllVariables.filter(StringField).filter[role == StringRole.COLOUR].empty
     }
 
     /**
      * Checks whether the application contains at least one entity with at least one phone number field.
      */
     def hasTelephoneFields(Application it) {
-        getAllEntities.exists[hasTelephoneFieldsEntity] || !variables.map[fields].filter(StringField).filter[role == StringRole.PHONE_NUMBER].empty
+        getAllEntities.exists[hasTelephoneFieldsEntity] || !getAllVariables.filter(StringField).filter[role == StringRole.PHONE_NUMBER].empty
     }
 
     /**
@@ -158,16 +158,30 @@ class ModelExtensions {
      * Checks whether the application contains at least one entity with at least one upload field.
      */
     def hasUploads(Application it) {
-        !getUploadEntities.empty || !variables.map[fields].filter(UploadField).empty
+        !getUploadEntities.empty || hasUploadVariables
+    }
+
+    /**
+     * Returns a list of all upload variables.
+     */
+    def getUploadVariables(Application it) {
+        getAllVariables.filter(UploadField)
+    }
+
+    /**
+     * Checks whether the application contains at least one upload variable.
+     */
+    def hasUploadVariables(Application it) {
+        !getUploadVariables.empty
     }
 
     /**
      * Checks whether an upload field with a certain upload naming scheme exists or not.
      */
     def hasUploadNamingScheme(Application it, UploadNamingScheme scheme) {
-        !entities.map[fields].filter(UploadField).filter[namingScheme == scheme].empty
+        !entities.map[fields].flatten.filter(UploadField).filter[namingScheme == scheme].empty
         ||
-        !variables.map[fields].filter(UploadField).filter[namingScheme == scheme].empty
+        !variables.map[fields].flatten.filter(UploadField).filter[namingScheme == scheme].empty
     }
 
     /**
@@ -188,7 +202,7 @@ class ModelExtensions {
      * Checks whether the application contains at least one user variable.
      */
     def hasUserVariables(Application it) {
-        !variables.map[fields].filter(UserField).empty
+        !getAllVariables.filter(UserField).empty
     }
 
     /**
@@ -747,7 +761,7 @@ class ModelExtensions {
      * Returns a list of all integer fields which are used as aggregates.
      */
     def getAggregateFields(DataObject it) {
-        getSelfAndParentDataObjects.map[fields.filter(IntegerField).filter[null !== aggregateFor && !aggregateFor.empty]].flatten
+        getSelfAndParentDataObjects.map[fields].flatten.filter(IntegerField).filter[null !== aggregateFor && !aggregateFor.empty]
     }
 
     /**

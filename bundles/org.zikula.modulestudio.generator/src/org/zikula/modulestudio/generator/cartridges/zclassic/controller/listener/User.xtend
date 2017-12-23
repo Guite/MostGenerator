@@ -151,7 +151,7 @@ class User {
                     «FOR entity : getAllEntities»«entity.userDelete»«ENDFOR»
                 «ENDIF»
                 «IF hasUserVariables»
-                    «FOR userField : variables.map[fields].filter(UserField)»
+                    «FOR userField : getAllVariables.filter(UserField)»
                         «userField.onAccountDeletionHandler»
                     «ENDFOR»
                 «ENDIF»

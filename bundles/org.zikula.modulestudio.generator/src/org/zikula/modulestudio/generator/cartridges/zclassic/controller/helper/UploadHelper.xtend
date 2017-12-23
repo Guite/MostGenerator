@@ -418,7 +418,7 @@ class UploadHelper {
             $allowedExtensions = [];
             switch ($objectType) {
                 «FOR entity : getUploadEntities.filter(Entity)»«entity.isAllowedFileExtensionEntityCase»«ENDFOR»
-                «IF !variables.map[fields].filter(UploadField).empty»
+                «IF hasUploadVariables»
                     «isAllowedFileExtensionEntityCase»
                 «ENDIF»
             }
@@ -452,7 +452,7 @@ class UploadHelper {
 
 
     def private dispatch isAllowedFileExtensionEntityCase(Application it) '''
-        «val uploadFields = variables.map[fields].filter(UploadField)»
+        «val uploadFields = getUploadVariables»
         case 'appSettings':
             «IF uploadFields.size > 1»
                 switch ($fieldName) {
@@ -489,7 +489,7 @@ class UploadHelper {
             $namingScheme = 0;
             switch ($objectType) {
                 «FOR entity : getUploadEntities.filter(Entity)»«entity.determineFileNameEntityCase»«ENDFOR»
-                «IF !variables.map[fields].filter(UploadField).empty»
+                «IF hasUploadVariables»
                     «determineFileNameEntityCase»
                 «ENDIF»
             }
@@ -548,7 +548,7 @@ class UploadHelper {
     '''
 
     def private dispatch determineFileNameEntityCase(Application it) '''
-        «val uploadFields = variables.map[fields].filter(UploadField)»
+        «val uploadFields = getUploadVariables»
         case 'appSettings':
             «IF uploadFields.size > 1»
                 switch ($fieldName) {
@@ -650,8 +650,8 @@ class UploadHelper {
                         «ENDIF»
                         break;
                 «ENDFOR»
-                «IF !variables.map[fields].filter(UploadField).empty»
-                    «val uploadFields = variables.map[fields].filter(UploadField)»
+                «IF hasUploadVariables»
+                    «val uploadFields = getUploadVariables»
                     case 'appSettings':
                         «IF uploadFields.size > 1»
                             $basePath .= 'appSettings/';
@@ -731,7 +731,7 @@ class UploadHelper {
                     $result &= $this->checkAndCreateUploadFolder('«uploadField.entity.name.formatForCode»', '«uploadField.name.formatForCode»', '«uploadField.allowedExtensions»');
                 «ENDFOR»
             «ENDFOR»
-            «FOR uploadField : variables.map[fields].filter(UploadField)»
+            «FOR uploadField : getUploadVariables»
                 $result &= $this->checkAndCreateUploadFolder('appSettings', '«uploadField.name.formatForCode»', '«uploadField.allowedExtensions»');
             «ENDFOR»
 

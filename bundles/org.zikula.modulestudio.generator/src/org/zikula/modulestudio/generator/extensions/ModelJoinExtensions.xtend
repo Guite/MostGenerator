@@ -368,10 +368,11 @@ class ModelJoinExtensions {
      * Returns a list of all incoming relationships aggregating this field. 
      */
     def getAggregatingRelationships(DerivedField it) {
+        val thisField = it
         if (null !== entity)
             entity.incoming.filter(OneToManyRelationship)
                            .filter[!source.getAggregateFields.empty]
-                           .filter[!source.getAggregateFields.filter[getAggregateTargetField == it].empty]
+                           .filter[!source.getAggregateFields.filter[getAggregateTargetField == thisField].empty]
         else #[]
     }
 

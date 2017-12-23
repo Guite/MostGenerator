@@ -105,7 +105,7 @@ class FormattingExtensions {
         var vars = newArrayList
 
         // matches {{foo}}, {{ bar}} or {{      foobar123            }}
-        val pattern = Pattern.compile("\\{\\{\\s*(\\w)\\s*\\}\\}")
+        val pattern = Pattern.compile("\\{\\{\\s*(\\w+)\\s*\\}\\}")
         val matcher = pattern.matcher(it)
 
         while (matcher.find) {
