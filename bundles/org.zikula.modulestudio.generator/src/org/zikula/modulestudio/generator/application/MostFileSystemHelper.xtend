@@ -1,7 +1,6 @@
 package org.zikula.modulestudio.generator.application
 
 import de.guite.modulestudio.metamodel.Application
-import java.io.File
 import java.util.Arrays
 import java.util.Map
 import org.zikula.modulestudio.generator.extensions.Utils
@@ -41,7 +40,7 @@ class MostFileSystemHelper {
      * Returns the path to the parent (base) class for a given file path. 
      */
     def getPathToBaseClass(Application it, String concretePath) {
-        var basePathSegments = concretePath.split(File.separator)
+        var basePathSegments = concretePath.split('/') //$NON-NLS-1$
         var baseFileName = basePathSegments.last
         basePathSegments = Arrays.copyOf(basePathSegments, basePathSegments.length - 1)
 
@@ -49,7 +48,7 @@ class MostFileSystemHelper {
         basePathPartsChangeable += 'Base' //$NON-NLS-1$
         basePathPartsChangeable += 'Abstract' + baseFileName //$NON-NLS-1$
 
-        basePathPartsChangeable.join(File.separator)
+        basePathPartsChangeable.join('/') //$NON-NLS-1$
     }
 
     /**
