@@ -303,29 +303,29 @@ class Association {
     def private additionalOptions(JoinRelationship it, Boolean useReverse) '''«cascadeOptions(useReverse)»«fetchTypeTag»'''
     def private cascadeOptions(JoinRelationship it, Boolean useReverse) {
         val cascadeProperty = { if (useReverse) cascadeReverse else cascade }
-        if (cascadeProperty == CascadeType::NONE) ''
+        if (cascadeProperty == CascadeType.NONE) ''
         else ''', cascade={«cascadeOptionsImpl(useReverse)»}'''
     }
 
-    def private fetchTypeTag(JoinRelationship it) { if (fetchType != RelationFetchType::LAZY) ''', fetch="«fetchType.literal»"''' }
+    def private fetchTypeTag(JoinRelationship it) { if (fetchType != RelationFetchType.LAZY) ''', fetch="«fetchType.literal»"''' }
 
     def private cascadeOptionsImpl(JoinRelationship it, Boolean useReverse) {
         val cascadeProperty = { if (useReverse) cascadeReverse else cascade }
-        if (cascadeProperty == CascadeType::PERSIST) '"persist"'
-        else if (cascadeProperty == CascadeType::REMOVE) '"remove"'
-        else if (cascadeProperty == CascadeType::MERGE) '"merge"'
-        else if (cascadeProperty == CascadeType::DETACH) '"detach"'
-        else if (cascadeProperty == CascadeType::PERSIST_REMOVE) '"persist", "remove"'
-        else if (cascadeProperty == CascadeType::PERSIST_MERGE) '"persist", "merge"'
-        else if (cascadeProperty == CascadeType::PERSIST_DETACH) '"persist", "detach"'
-        else if (cascadeProperty == CascadeType::REMOVE_MERGE) '"remove", "merge"'
-        else if (cascadeProperty == CascadeType::REMOVE_DETACH) '"remove", "detach"'
-        else if (cascadeProperty == CascadeType::MERGE_DETACH) '"merge", "detach"'
-        else if (cascadeProperty == CascadeType::PERSIST_REMOVE_MERGE) '"persist", "remove", "merge"'
-        else if (cascadeProperty == CascadeType::PERSIST_REMOVE_DETACH) '"persist", "remove", "detach"'
-        else if (cascadeProperty == CascadeType::PERSIST_MERGE_DETACH) '"persist", "merge", "detach"'
-        else if (cascadeProperty == CascadeType::REMOVE_MERGE_DETACH) '"remove", "merge", "detach"'
-        else if (cascadeProperty == CascadeType::ALL) '"all"'
+        if (cascadeProperty == CascadeType.PERSIST) '"persist"'
+        else if (cascadeProperty == CascadeType.REMOVE) '"remove"'
+        else if (cascadeProperty == CascadeType.MERGE) '"merge"'
+        else if (cascadeProperty == CascadeType.DETACH) '"detach"'
+        else if (cascadeProperty == CascadeType.PERSIST_REMOVE) '"persist", "remove"'
+        else if (cascadeProperty == CascadeType.PERSIST_MERGE) '"persist", "merge"'
+        else if (cascadeProperty == CascadeType.PERSIST_DETACH) '"persist", "detach"'
+        else if (cascadeProperty == CascadeType.REMOVE_MERGE) '"remove", "merge"'
+        else if (cascadeProperty == CascadeType.REMOVE_DETACH) '"remove", "detach"'
+        else if (cascadeProperty == CascadeType.MERGE_DETACH) '"merge", "detach"'
+        else if (cascadeProperty == CascadeType.PERSIST_REMOVE_MERGE) '"persist", "remove", "merge"'
+        else if (cascadeProperty == CascadeType.PERSIST_REMOVE_DETACH) '"persist", "remove", "detach"'
+        else if (cascadeProperty == CascadeType.PERSIST_MERGE_DETACH) '"persist", "merge", "detach"'
+        else if (cascadeProperty == CascadeType.REMOVE_MERGE_DETACH) '"remove", "merge", "detach"'
+        else if (cascadeProperty == CascadeType.ALL) '"all"'
     }
 
     def private orderByDetails(String orderBy) {

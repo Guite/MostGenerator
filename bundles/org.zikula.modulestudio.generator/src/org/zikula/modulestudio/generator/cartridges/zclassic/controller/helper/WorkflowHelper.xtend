@@ -284,8 +284,14 @@ class WorkflowHelper {
                     break;
             }
 
-            if ($title == '' && «IF targets('2.0')»$actionId«ELSE»substr($actionId, 0, 6)«ENDIF» == 'update') {
-                $title = $this->translator->__('Update');
+            if ($title == '') {
+                if («IF targets('2.0')»$actionId«ELSE»substr($actionId, 0, 6)«ENDIF» == 'update') {
+                    $title = $this->translator->__('Update');
+                } elseif («IF targets('2.0')»$actionId«ELSE»substr($actionId, 0, 5)«ENDIF» == 'trash') {
+                    $title = $this->translator->__('Trash');
+                } elseif («IF targets('2.0')»$actionId«ELSE»substr($actionId, 0, 7)«ENDIF» == 'recover') {
+                    $title = $this->translator->__('Recover');
+            	}
             }
 
             return $title;

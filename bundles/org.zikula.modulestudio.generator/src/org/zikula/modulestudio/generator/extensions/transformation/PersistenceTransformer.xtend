@@ -207,6 +207,14 @@ class PersistenceTransformer {
             ]
         }
 
+        //if (entity.softDeleteable) {
+            listField.items += factory.createListFieldItem => [
+                name = 'Trashed'
+                value = 'trashed'
+                documentation = 'Content has been marked as deleted, but is still persisted in the database.'
+            ]
+        //}
+
         listField.items += factory.createListFieldItem => [
             name = 'Deleted'
             value = 'deleted'

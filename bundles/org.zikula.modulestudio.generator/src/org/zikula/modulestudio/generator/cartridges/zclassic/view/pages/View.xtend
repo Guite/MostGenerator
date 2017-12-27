@@ -124,7 +124,7 @@ class View {
         «val objName = name.formatForCode»
         «IF hasEditAction»
             {% if canBeCreated %}
-                {% if hasPermission('«appName»:«name.formatForCodeCapital»:', '::', 'ACCESS_«IF workflow == EntityWorkflowType::NONE»EDIT«ELSE»COMMENT«ENDIF»') %}
+                {% if hasPermission('«appName»:«name.formatForCodeCapital»:', '::', 'ACCESS_«IF workflow == EntityWorkflowType.NONE»EDIT«ELSE»COMMENT«ENDIF»') %}
                     {% set createTitle = __('Create «name.formatForDisplay»') %}
                     <a href="{{ path('«appName.formatForDB»_«objName.toLowerCase»_' ~ routeArea ~ 'edit') }}" title="{{ createTitle|e('html_attr') }}"><i class="fa fa-plus"></i> {{ createTitle }}</a>
                 {% endif %}
@@ -317,8 +317,8 @@ class View {
             <div class="col-sm-6">
                 <select id="«appName.toFirstLower»Action" name="action" class="form-control input-sm">
                     <option value="">{{ __('Choose action') }}</option>
-                    «IF workflow != EntityWorkflowType::NONE»
-                        «IF workflow == EntityWorkflowType::ENTERPRISE»
+                    «IF workflow != EntityWorkflowType.NONE»
+                        «IF workflow == EntityWorkflowType.ENTERPRISE»
                             <option value="accept" title="{{ __('«getWorkflowActionDescription(workflow, 'Accept')»') }}">{{ __('Accept') }}</option>
                             «IF ownerPermission»
                                 <option value="reject" title="{{ __('«getWorkflowActionDescription(workflow, 'Reject')»') }}">{{ __('Reject') }}</option>

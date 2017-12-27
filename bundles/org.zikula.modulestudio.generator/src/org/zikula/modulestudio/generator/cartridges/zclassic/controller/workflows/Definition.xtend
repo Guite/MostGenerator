@@ -116,6 +116,7 @@ class Definition {
             case 'approved' : actionsForApproved
             case 'suspended' : actionsForSuspended
             case 'archived' : actionsForArchived
+            // done in actionsForDestructionImpl below
             case 'trashed' : ''
             case 'deleted' : ''
         }
@@ -253,8 +254,12 @@ class Definition {
     '''
 
     def private trashAndRecoverActions(ListFieldItem it) '''
-        «addTransition('trash', it.value, 'trashed')»
-        «addTransition('recover', 'trashed', it.value)»
+        «IF app.targets('2.0')»
+            «addTransition('trash', it.value, 'trashed')»
+        «ELSE»
+            «addTransition('trash' + it.value, it.value, 'trashed')»
+            «addTransition('recover' + it.value, 'trashed', it.value)»
+        «ENDIF»
     '''
 
     def private deleteAction(ListFieldItem it) '''
@@ -263,7 +268,7 @@ class Definition {
 
     def private addTransition(String id, String state, String nextState) {
         var uniqueKey = id
-        if (id.startsWith('update') && app.targets('2.0')) {
+        if (app.targets('2.0') && (id.startsWith('update') || id.startsWith('trash') || id.startsWith('recover'))) {
             uniqueKey = id + state
         }
         if (!transitionsFrom.containsKey(uniqueKey)) {

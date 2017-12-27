@@ -93,7 +93,7 @@ class Property {
         «IF null !== entity»
              «IF primaryKey»
                  * @ORM\Id
-                 «IF entity instanceof Entity && (entity as Entity).identifierStrategy != EntityIdentifierStrategy::NONE»
+                 «IF entity instanceof Entity && (entity as Entity).identifierStrategy != EntityIdentifierStrategy.NONE»
                      * @ORM\GeneratedValue(strategy="«(entity as Entity).identifierStrategy.literal»")
                  «ENDIF»
              «ENDIF»
