@@ -569,10 +569,9 @@ class FormHandler {
                 $this->returnTo = $this->request->getSession()->get($refererSessionVar);
             }
             // store current uri for repeated creations
-            $this->repeatReturnUrl = $this->request->getSchemeAndHttpHost() . $this->request->getBasePath() . $this->request->getPathInfo();
+            $this->repeatReturnUrl = $this->request->getUri();
 
             $this->permissionComponent = '«appName»:' . $this->objectTypeCapital . ':';
-
             «IF getAllEntities.exists[hasSluggableFields && slugUnique]»
                 $this->idField = in_array($this->objectType, $this->entitiesWithUniqueSlugs) ? 'slug' : $this->entityFactory->getIdField($this->objectType);
             «ELSE»
