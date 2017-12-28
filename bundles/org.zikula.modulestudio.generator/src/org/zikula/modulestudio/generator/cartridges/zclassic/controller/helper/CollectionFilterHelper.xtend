@@ -404,21 +404,20 @@ class CollectionFilterHelper {
 
                 $showOnlyOwnEntries = (bool)$this->request->query->getInt('own', $this->showOnlyOwnEntries);
             «ENDIF»
-            «IF hasVisibleWorkflow»
 
-                if (!in_array('workflowState', array_keys($parameters)) || empty($parameters['workflowState'])) {
-                    // per default we show approved «nameMultiple.formatForDisplay» only
-                    $onlineStates = ['approved'];
-                    «IF ownerPermission»
-                        if ($showOnlyOwnEntries) {
-                            // allow the owner to see his deferred «nameMultiple.formatForDisplay»
-                            $onlineStates[] = 'deferred';
-                        }
-                    «ENDIF»
-                    $qb->andWhere('tbl.workflowState IN (:onlineStates)')
-                       ->setParameter('onlineStates', $onlineStates);
-                }
-            «ENDIF»
+            if (!in_array('workflowState', array_keys($parameters)) || empty($parameters['workflowState'])) {
+                // per default we show approved «nameMultiple.formatForDisplay» only
+                $onlineStates = ['approved'];
+                «IF ownerPermission»
+                    if ($showOnlyOwnEntries) {
+                        // allow the owner to see his «nameMultiple.formatForDisplay»
+                        $onlineStates[] = 'deferred';
+                        $onlineStates[] = 'trashed';
+                    }
+                «ENDIF»
+                $qb->andWhere('tbl.workflowState IN (:onlineStates)')
+                   ->setParameter('onlineStates', $onlineStates);
+            }
             «IF standardFields»
 
                 if ($showOnlyOwnEntries) {
