@@ -122,8 +122,8 @@ class ItemSelector {
                     $homePath = $this->container->get('request_stack')->getCurrentRequest()->getBasePath();
 
                     «IF hasImageFields»
-                        $jsAssetBag->add($homePath . '/web/magnific-popup/jquery.magnific-popup.min.js');
-                        $cssAssetBag->add($homePath . '/web/magnific-popup/magnific-popup.css');
+                        $jsAssetBag->add($homePath . '/web/magnific-popup/jquery.magnific-popup.min.js' => 90);
+                        $cssAssetBag->add($homePath . '/web/magnific-popup/magnific-popup.css' => 90);
                     «ENDIF»
                     $jsAssetBag->add($assetHelper->resolve('@«appName»:js/«appName».js'));
                     $jsAssetBag->add($assetHelper->resolve('@«appName»:js/«appName».ItemSelector.js'));

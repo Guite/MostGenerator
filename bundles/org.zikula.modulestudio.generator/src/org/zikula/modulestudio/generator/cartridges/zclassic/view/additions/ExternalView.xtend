@@ -48,8 +48,8 @@ class ExternalView {
     def private displayTemplate(Entity it, Application app) '''
         {# Purpose of this template: Display one certain «name.formatForDisplay» within an external context #}
         «IF hasImageFieldsEntity»
-            {{ pageAddAsset('javascript', asset('magnific-popup/jquery.magnific-popup.min.js')) }}
-            {{ pageAddAsset('stylesheet', asset('magnific-popup/magnific-popup.css')) }}
+            {{ pageAddAsset('javascript', asset('magnific-popup/jquery.magnific-popup.min.js'), 90) }}
+            {{ pageAddAsset('stylesheet', asset('magnific-popup/magnific-popup.css'), 90) }}
             {{ pageAddAsset('javascript', zasset('@«app.appName»:js/«app.appName».js')) }}
         «ENDIF»
         <div id="«name.formatForCode»{{ «name.formatForCode».getKey() }}" class="«app.appName.toLowerCase»-external-«name.formatForDB»">

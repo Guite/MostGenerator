@@ -88,8 +88,8 @@ class Layout {
                 {{ pageAddAsset('javascript', asset('bootstrap-jqueryui/bootstrap-jqueryui.min.js')) }}
             «ENDIF»
             «IF hasImageFields»
-                {{ pageAddAsset('javascript', asset('magnific-popup/jquery.magnific-popup.min.js')) }}
-                {{ pageAddAsset('stylesheet', asset('magnific-popup/magnific-popup.css')) }}
+                {{ pageAddAsset('javascript', asset('magnific-popup/jquery.magnific-popup.min.js'), 90) }}
+                {{ pageAddAsset('stylesheet', asset('magnific-popup/magnific-popup.css'), 90) }}
             «ENDIF»
             {{ pageAddAsset('javascript', zasset('@«appName»:js/«appName».js')) }}
             «IF hasGeographical»
