@@ -309,35 +309,39 @@ class CollectionFilterHelper {
             foreach ($parameters as $k => $v) {
                 «IF categorisable»
                     if ($k == 'catId') {
-                        // single category filter
-                        if ($v > 0) {
+                        if (intval($v) > 0) {
+                            // single category filter
                             $qb->andWhere('tblCategories.category = :category')
                                ->setParameter('category', $v);
                         }
-                    } elseif ($k == 'catIdList') {
-                        // multi category filter
-                        /* old
+                        continue;
+                    }
+                    if ($k == 'catIdList') {
+                        // multi category filter«/* old 
                         $qb->andWhere('tblCategories.category IN (:categories)')
-                           ->setParameter('categories', $v);
-                         */
+                           ->setParameter('categories', $v);*/»
                         $qb = $this->categoryHelper->buildFilterClauses($qb, '«name.formatForCode»', $v);
+                        continue;
+                    }
                 «ENDIF»
-                «IF categorisable»} else«ENDIF»if (in_array($k, ['q', 'searchterm'])) {
+                if (in_array($k, ['q', 'searchterm'])) {
                     // quick search
                     if (!empty($v)) {
                         $qb = $this->addSearchFilter('«name.formatForCode»', $qb, $v);
                     }
                     continue;
+                }
                 «IF hasBooleanFieldsEntity»
-                } elseif (in_array($k, [«FOR field : getBooleanFieldsEntity SEPARATOR ', '»'«field.name.formatForCode»'«ENDFOR»])) {
-                    // boolean filter
-                    if ($v == 'no') {
-                        $qb->andWhere('tbl.' . $k . ' = 0');
-                    } elseif ($v == 'yes' || $v == '1') {
-                        $qb->andWhere('tbl.' . $k . ' = 1');
+                    if (in_array($k, [«FOR field : getBooleanFieldsEntity SEPARATOR ', '»'«field.name.formatForCode»'«ENDFOR»])) {
+                        // boolean filter
+                        if ($v == 'no') {
+                            $qb->andWhere('tbl.' . $k . ' = 0');
+                        } elseif ($v == 'yes' || $v == '1') {
+                            $qb->andWhere('tbl.' . $k . ' = 1');
+                        }
                     }
                 «ENDIF»
-                }
+
                 if (is_array($v)) {
                     continue;
                 }
