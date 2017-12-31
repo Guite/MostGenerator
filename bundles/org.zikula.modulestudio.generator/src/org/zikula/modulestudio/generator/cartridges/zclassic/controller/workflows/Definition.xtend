@@ -90,7 +90,7 @@ class Definition {
     def private actionsImpl() '''
         transitions:
             «FOR transitionKey : transitionsFrom.keySet»
-                «IF transitionKey.startsWith('update')»update«ELSE»«transitionKey»«ENDIF»:
+                «IF app.targets('2.0')»«IF transitionKey.startsWith('update')»update«ELSEIF transitionKey.startsWith('trash')»trash«ELSEIF transitionKey.startsWith('recover')»recover«ELSE»«transitionKey»«ENDIF»«ELSE»«transitionKey»«ENDIF»:
                     from: «IF transitionsFrom.get(transitionKey).length > 1»[«transitionsFrom.get(transitionKey).join(', ')»]«ELSE»«transitionsFrom.get(transitionKey).join(', ')»«ENDIF»
                     to: «transitionsTo.get(transitionKey)»
             «ENDFOR»
