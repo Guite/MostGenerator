@@ -224,7 +224,7 @@ class UploadHelper {
             $isImage = in_array($extension, $this->imageFileTypes);
             if ($isImage) {
                 // fix wrong orientation and shrink too large image if needed
-                ini_set('memory_limit', '1G');
+                @ini_set('memory_limit', '1G');
                 $imagine = new Imagine();
                 $image = $imagine->open($destinationFilePath);
                 $autorotateFilter = new Autorotate();
