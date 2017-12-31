@@ -53,7 +53,7 @@ class Relations {
         «ENDIF»
         «IF many && uiHooksProvider != HookProviderMode.DISABLED»
             {% if context != 'display' %}
-                <h3>{{ __('Assigned «nameMultiple.formatForDisplay»') }}</h3>
+                <h3>{{ __('Assigned «nameMultiple.formatForDisplay»', '«app.appName.toLowerCase»') }}</h3>
                 {{ pageAddAsset('stylesheet', zasset('@«app.appName»:css/style.css')) }}
                 {{ pageAddAsset('stylesheet', zasset('@«app.appName»:css/custom.css')) }}
                 {{ pageAddAsset('stylesheet', asset('jquery-ui/themes/base/jquery-ui.min.css')) }}
@@ -62,7 +62,7 @@ class Relations {
                 {{ pageAddAsset('javascript', asset('bootstrap-jqueryui/bootstrap-jqueryui.min.js')) }}
                 {{ pageAddAsset('javascript', zasset('@«app.appName»:js/«app.appName».js'), 99) }}
                 {% if context == 'hookDisplayView' and hasEditPermission %}
-                    {% set entityNameTranslated = __('«name.formatForDisplay»') %}
+                    {% set entityNameTranslated = __('«name.formatForDisplay»', '«app.appName.toLowerCase»') %}
                     {{ pageAddAsset('javascript', zasset('@«app.appName»:js/«app.appName».HookAssignment.js'), 99) }}
                     {{ pageAddAsset('javascript', zasset('@«app.appName»:js/«app.appName».EditFunctions.js'), 99) }}
                     {{ pageAddAsset('javascript', zasset('@«app.appName»:js/«app.appName».InlineEditing.js'), 99) }}
@@ -79,7 +79,7 @@ class Relations {
             {% if items|default and items|length > 0 %}
             <ul class="list-group «app.appName.toLowerCase»-related-item-list «name.formatForDB»">
             {% for item in items %}
-                {% if hasAdminPermission or item.workflowState == 'approved'«IF ownerPermission» or (item.workflowState == 'defered' and hasEditPermission and currentUser|default and item.createdBy.getUid() == currentUser.uid)«ENDIF» %}
+                {% if hasAdminPermission or item.workflowState == 'approved'«IF ownerPermission» or (item.workflowState in ['defered', 'trashed'] and hasEditPermission and currentUser|default and item.createdBy.getUid() == currentUser.uid)«ENDIF» %}
                 <li class="list-group-item">
         «ENDIF»
         <h4«IF many» class="list-group-item-heading"«ENDIF»>
@@ -114,7 +114,7 @@ class Relations {
                         {% set assignmentId = assignment.getId() %}
                     {% endfor %}
                     <p class="list-group-item-text">
-                        <a href="javascript:void(0);" title="{{ __f('Detach this %name%', {'%name%': entityNameTranslated})|e('html_attr') }}" class="detach-«app.appName.formatForDB»-object hidden" data-assignment-id="{{ assignmentId|e('html_attr') }}"><i class="fa fa-chain-broken"></i> {{ __f('Detach %name%', {'%name%': entityNameTranslated}) }}</a>
+                        <a href="javascript:void(0);" title="{{ __f('Detach this %name%', {'%name%': entityNameTranslated}, '«app.appName.toLowerCase»')|e('html_attr') }}" class="detach-«app.appName.formatForDB»-object hidden" data-assignment-id="{{ assignmentId|e('html_attr') }}"><i class="fa fa-chain-broken"></i> {{ __f('Detach %name%', {'%name%': entityNameTranslated}) }}</a>
                     </p>
                 {% endif %}
             «ENDIF»
@@ -126,7 +126,7 @@ class Relations {
             «IF uiHooksProvider != HookProviderMode.DISABLED»
                 {% if context == 'hookDisplayView' and hasEditPermission %}
                     {% set idPrefix = 'hookAssignment«name.formatForCodeCapital»' %}
-                    {% set addLinkText = __f('Attach %name%', {'%name%': entityNameTranslated}) %}
+                    {% set addLinkText = __f('Attach %name%', {'%name%': entityNameTranslated}, '«app.appName.toLowerCase»') %}
                     <div id="{{ idPrefix }}LiveSearch" class="«app.appName.toLowerCase»-add-hook-assignment">
                         <a id="{{ idPrefix }}AddLink" href="javascript:void(0);" title="{{ addLinkText|e('html_attr') }}" class="attach-«app.appName.formatForDB»-object hidden" data-owner="{{ subscriberOwner|e('html_attr') }}" data-area-id="{{ subscriberAreaId|e('html_attr') }}" data-object-id="{{ subscriberObjectId|e('html_attr') }}" data-url="{{ subscriberUrl|e('html_attr') }}" data-assigned-entity="«name.formatForCode»"><i class="fa fa-link"></i> {{ addLinkText }}</a>
                         <div id="{{ idPrefix }}AddFields" class="«app.appName.toLowerCase»-autocomplete«IF hasImageFieldsEntity»-with-image«ENDIF»">
@@ -136,7 +136,7 @@ class Relations {
                             <input type="hidden" name="{{ idPrefix }}" id="{{ idPrefix }}" value="{% for assignment in assignments %}{% if not loop.first %},{% endif %}{{ assignment.getAssignedId() }}{% endfor %}" />
                             <input type="hidden" name="{{ idPrefix }}Multiple" id="{{ idPrefix }}Multiple" value="0" />
                             <input type="text" id="{{ idPrefix }}Selector" name="{{ idPrefix }}Selector" autocomplete="off" />
-                            <input type="button" id="{{ idPrefix }}SelectorDoCancel" name="{{ idPrefix }}SelectorDoCancel" value="{{ __('Cancel') }}" class="btn btn-default «app.appName.toLowerCase»-inline-button" />
+                            <input type="button" id="{{ idPrefix }}SelectorDoCancel" name="{{ idPrefix }}SelectorDoCancel" value="{{ __('Cancel', '«app.appName.toLowerCase»') }}" class="btn btn-default «app.appName.toLowerCase»-inline-button" />
                             «IF hasEditAction»
                                 <a id="{{ idPrefix }}SelectorDoNew" href="{{ path('«app.appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ 'edit') }}" title="{{ __f('Create new %name%', {'%name%': entityNameTranslated}) }}" class="btn btn-default «app.appName.toLowerCase»-inline-button"><i class="fa fa-plus"></i> {{ __('Create') }}</a>
                             «ENDIF»
