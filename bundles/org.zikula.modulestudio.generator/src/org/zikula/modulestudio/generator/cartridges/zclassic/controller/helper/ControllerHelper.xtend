@@ -391,6 +391,10 @@ class ControllerHelper {
                     }
                 }
             }
+            if (false !== strpos($sort, ' DESC')) {
+                $sort = str_replace(' DESC', '', $sort);
+                $sortdir = 'desc';
+            }
             $sortableColumns->setOrderBy($sortableColumns->getColumn($sort), strtoupper($sortdir));
             $resultsPerPage = $templateParameters['num'];
             $request->query->set('own', $templateParameters['own']);
