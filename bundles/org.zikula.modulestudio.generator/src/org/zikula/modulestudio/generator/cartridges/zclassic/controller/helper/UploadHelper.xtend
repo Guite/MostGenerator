@@ -30,6 +30,7 @@ class UploadHelper {
     def private uploadFunctionsBaseImpl(Application it) '''
         namespace «appNamespace»\Helper\Base;
 
+        use Imagine\Filter\Basic\Autorotate;
         use Imagine\Gd\Imagine;
         use Imagine\Image\Box;
         use Imagine\Image\ImageInterface;
@@ -222,6 +223,13 @@ class UploadHelper {
 
             $isImage = in_array($extension, $this->imageFileTypes);
             if ($isImage) {
+                // fix wrong orientation and shrink too large image if needed
+                ini_set('memory_limit', '1G');
+                $imagine = new Imagine();
+                $image = $imagine->open($destinationFilePath);
+                $autorotateFilter = new Autorotate();
+                $image = $autorotateFilter->apply($image);
+
                 // check if shrinking functionality is enabled
                 $fieldSuffix = ucfirst($objectType) . ucfirst($fieldName);
                 if (isset($this->moduleVars['enableShrinkingFor' . $fieldSuffix]) && true === (bool)$this->moduleVars['enableShrinkingFor' . $fieldSuffix]) {
@@ -233,17 +241,15 @@ class UploadHelper {
                     $imgInfo = getimagesize($destinationFilePath);
                     if ($imgInfo[0] > $maxWidth || $imgInfo[1] > $maxHeight) {
                         // resize to allowed maximum size
-                        ini_set('memory_limit', '1G');
-                        $imagine = new Imagine();
-                        $image = $imagine->open($destinationFilePath);
-                        $image->thumbnail(new Box($maxWidth, $maxHeight), $thumbMode)
-                              ->save($destinationFilePath);
-
-                        // update meta data excluding EXIF
-                        $newMetaData = $this->readMetaDataForFile($fileName, $destinationFilePath, false);
-                        $result['metaData'] = array_merge($result['metaData'], $newMetaData);
+                        $image->thumbnail(new Box($maxWidth, $maxHeight), $thumbMode);
                     }
                 }
+
+                $image->save($destinationFilePath);
+
+                // update meta data excluding EXIF
+                $newMetaData = $this->readMetaDataForFile($fileName, $destinationFilePath, false);
+                $result['metaData'] = array_merge($result['metaData'], $newMetaData);
             }
 
             return $result;
