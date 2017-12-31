@@ -340,6 +340,10 @@ class ControllerHelper {
             // parameter for used sorting field
             «new ControllerHelperFunctions().defaultSorting(it)»
             $sortdir = $request->query->get('sortdir', 'ASC');
+            if (false !== strpos($sort, ' DESC')) {
+                $sort = str_replace(' DESC', '', $sort);
+                $sortdir = 'desc';
+            }
             $templateParameters['sort'] = $sort;
             $templateParameters['sortdir'] = strtolower($sortdir);
             «IF hasTrees»
@@ -390,10 +394,6 @@ class ControllerHelper {
                         $request->query->set($fieldName, $fieldValue);
                     }
                 }
-            }
-            if (false !== strpos($sort, ' DESC')) {
-                $sort = str_replace(' DESC', '', $sort);
-                $sortdir = 'desc';
             }
             $sortableColumns->setOrderBy($sortableColumns->getColumn($sort), strtoupper($sortdir));
             $resultsPerPage = $templateParameters['num'];
