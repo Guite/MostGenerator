@@ -245,7 +245,10 @@ class AjaxController {
 
         // parameter for used sorting field
         «new ControllerHelperFunctions().defaultSorting(it)»
-        $sortParam = $sort . ' asc';
+        $sortParam = $sort;
+        if (false === strpos(strtolower($sort), ' asc') && false === strpos(strtolower($sort), ' desc')) {
+            $sortParam .= ' asc';
+        }
 
         $currentPage = 1;
         $resultsPerPage = 20;
