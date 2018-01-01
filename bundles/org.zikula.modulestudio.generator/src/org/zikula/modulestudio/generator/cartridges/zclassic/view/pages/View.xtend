@@ -143,6 +143,17 @@ class View {
             {% set linkTitle = __('Switch to hierarchy view') %}
             <a href="{{ path('«appName.formatForDB»_«objName.toLowerCase»_' ~ routeArea ~ 'view', {tpl: 'tree'}) }}" title="{{ linkTitle|e('html_attr') }}"><i class="fa fa-code-fork"></i> {{ linkTitle }}</a>
         «ENDIF»
+        «IF standardFields»
+            {% if own == 1 %}
+                {% set linkTitle = __('Show also entries from other users') %}
+                {% set routeArgs = all ? {all: 1} : {} %}
+                <a href="{{ path('«appName.formatForDB»_«objName.toLowerCase»_' ~ routeArea ~ 'view', routeArgs) }}" title="{{ linkTitle|e('html_attr') }}"><i class="fa fa-users"></i> {{ linkTitle }}</a>
+            {% else %}
+                {% set linkTitle = __('Show only own entries') %}
+                {% set routeArgs = all ? {all: 1, own: 1} : {own: 1} %}
+                <a href="{{ path('«appName.formatForDB»_«objName.toLowerCase»_' ~ routeArea ~ 'view', routeArgs) }}" title="{{ linkTitle|e('html_attr') }}"><i class="fa fa-user"></i> {{ linkTitle }}</a>
+            {% endif %}
+        «ENDIF»
         «IF loggable»
             {% if hasDeletedEntities and hasPermission('«appName»:«name.formatForCodeCapital»:', '::', 'ACCESS_EDIT') %}
                 {% set linkTitle = __('View deleted «nameMultiple.formatForDisplay»') %}
