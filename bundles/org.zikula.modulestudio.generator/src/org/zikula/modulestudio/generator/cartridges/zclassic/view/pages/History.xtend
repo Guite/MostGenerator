@@ -194,7 +194,7 @@ class History {
                     <a href="{{ path('«appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ 'loggablehistory', {«IF hasSluggableFields && slugUnique»slug«ELSE»id«ENDIF»: «name.formatForCode».get«IF hasSluggableFields && slugUnique»Slug«ELSE»Key«ENDIF»()}) }}" title="{{ linkTitle|e('html_attr') }}"><i class="fa fa-history"></i> {{ linkTitle }}</a>
                 {% else %}
                     «IF hasViewAction»
-                        {% set linkTitle = __('Back to overview') %}
+                        {% set linkTitle = __('«nameMultiple.formatForDisplayCapital» list') %}
                         <a href="{{ path('«appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ 'view') }}" title="{{ linkTitle|e('html_attr') }}"><i class="fa fa-reply"></i> {{ linkTitle }}</a>
                     «ENDIF»
                     «IF hasDisplayAction»

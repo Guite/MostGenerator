@@ -117,7 +117,7 @@ class ItemActions {
     def private itemActionsTargetingView(Entity it, Application app) '''
         «IF hasDisplayAction && hasViewAction»
             if ($context == 'display') {
-                $title = $this->__('Back to overview', '«app.appName.formatForDB»');
+                $title = $this->__('«nameMultiple.formatForDisplayCapital» list', '«app.appName.formatForDB»');
                 $menu->addChild($title, [
                     'route' => $routePrefix . $routeArea . 'view'
                 ]);
