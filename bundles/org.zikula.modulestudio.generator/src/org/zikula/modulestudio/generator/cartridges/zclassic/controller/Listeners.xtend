@@ -398,11 +398,11 @@ class Listeners {
             «ENDIF»
             use Symfony\Component\HttpKernel\HttpKernelInterface;
             «IF needsApproval && generatePendingContentSupport»
-                use Zikula\Collection\Container;
+                use Zikula\Common\Collection\Collectible\PendingContentCollectible;
+                use Zikula\Common\Collection\Container;
             «ENDIF»
             use Zikula\Core\Event\GenericEvent;
             «IF needsApproval && generatePendingContentSupport»
-                use Zikula\Provider\AggregateItem;
                 use «appNamespace»\Helper\WorkflowHelper;
             «ENDIF»
             «IF generateScribitePlugins»
