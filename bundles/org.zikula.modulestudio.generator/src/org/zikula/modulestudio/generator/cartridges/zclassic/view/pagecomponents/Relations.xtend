@@ -114,7 +114,7 @@ class Relations {
                         {% set assignmentId = assignment.getId() %}
                     {% endfor %}
                     <p class="list-group-item-text">
-                        <a href="javascript:void(0);" title="{{ __f('Detach this %name%', {'%name%': entityNameTranslated}, '«app.appName.toLowerCase»')|e('html_attr') }}" class="detach-«app.appName.formatForDB»-object hidden" data-assignment-id="{{ assignmentId|e('html_attr') }}"><i class="fa fa-chain-broken"></i> {{ __f('Detach %name%', {'%name%': entityNameTranslated}) }}</a>
+                        <a href="javascript:void(0);" title="{{ __f('Detach this %name%', {'%name%': entityNameTranslated}, '«app.appName.toLowerCase»')|e('html_attr') }}" class="detach-«app.appName.formatForDB»-object hidden" data-assignment-id="{{ assignmentId|e('html_attr') }}"><i class="fa fa-chain-broken"></i> {{ __f('Detach %name%', {'%name%': entityNameTranslated}, '«app.appName.toLowerCase»') }}</a>
                     </p>
                 {% endif %}
             «ENDIF»
@@ -138,7 +138,7 @@ class Relations {
                             <input type="text" id="{{ idPrefix }}Selector" name="{{ idPrefix }}Selector" autocomplete="off" />
                             <input type="button" id="{{ idPrefix }}SelectorDoCancel" name="{{ idPrefix }}SelectorDoCancel" value="{{ __('Cancel', '«app.appName.toLowerCase»') }}" class="btn btn-default «app.appName.toLowerCase»-inline-button" />
                             «IF hasEditAction»
-                                <a id="{{ idPrefix }}SelectorDoNew" href="{{ path('«app.appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ 'edit') }}" title="{{ __f('Create new %name%', {'%name%': entityNameTranslated}, '«app.appName.toLowerCase»') }}" class="btn btn-default «app.appName.toLowerCase»-inline-button"><i class="fa fa-plus"></i> {{ __('Create') }}</a>
+                                <a id="{{ idPrefix }}SelectorDoNew" href="{{ path('«app.appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ 'edit') }}" title="{{ __f('Create new %name%', {'%name%': entityNameTranslated}, '«app.appName.toLowerCase»') }}" class="btn btn-default «app.appName.toLowerCase»-inline-button"><i class="fa fa-plus"></i> {{ __('Create', '«app.appName.toLowerCase»') }}</a>
                             «ENDIF»
                             <noscript><p>{{ __('This function requires JavaScript activated!') }}</p></noscript>
                         </div>
