@@ -52,6 +52,9 @@ class QuickNavigationType {
     def private quickNavTypeBaseImpl(Entity it) '''
         namespace «app.appNamespace»\Form\Type\QuickNavigation\Base;
 
+        «IF !incomingRelations.empty»
+            use Doctrine\ORM\EntityRepository;
+        «ENDIF»
         «IF !incomingRelations.empty || !fields.filter(UserField).empty»
             use Symfony\Bridge\Doctrine\Form\Type\EntityType;
         «ENDIF»
@@ -653,6 +656,10 @@ class QuickNavigationType {
 
     def private dispatch fieldImpl(JoinRelationship it) '''
         «val sourceAliasName = getRelationAliasName(false)»
+        $queryBuilder = function(EntityRepository $er) {
+            // select without joins
+            return $er->getListQueryBuilder('', '', false);
+        };
         $entityDisplayHelper = $this->entityDisplayHelper;
         $choiceLabelClosure = function ($entity) use ($entityDisplayHelper) {
             return $entityDisplayHelper->getFormattedTitle($entity);
@@ -660,6 +667,7 @@ class QuickNavigationType {
         $builder->add('«sourceAliasName.formatForCode»', EntityType::class, [
             'class' => '«app.appName»:«source.name.formatForCodeCapital»Entity',
             'choice_label' => $choiceLabelClosure,
+            'query_builder' => $queryBuilder,
             'placeholder' => $this->__('All'),
             'required' => false,
             'label' => $this->__('«/*(source as Entity).nameMultiple*/sourceAliasName.formatForDisplayCapital»'),
