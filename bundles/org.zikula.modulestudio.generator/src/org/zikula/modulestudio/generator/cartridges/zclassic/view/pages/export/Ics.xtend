@@ -57,7 +57,7 @@ class Ics {
             ORGANIZER;CN="{{ «objName».createdBy.getUname() }}":MAILTO:{{ «objName».createdBy.getEmail() }}
         «ENDIF»
         «IF categorisable»
-            CATEGORIES:{% for propName, catMapping in «objName».categories %}{% if not loop.first %},{% endif %}{{ catMapping.category.display_name[lang]|upper %}{% endfor %}
+            CATEGORIES:{% for propName, catMapping in «objName».categories %}{% if not loop.first %},{% endif %}{{ catMapping.category.display_name[lang]|upper }}{% endfor %}
         «ENDIF»
         SUMMARY{{ «objName»|«application.appName.formatForDB»_formattedTitle|«appName.formatForDB»_icalText }}
         «IF hasTextFieldsEntity»
