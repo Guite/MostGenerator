@@ -114,7 +114,7 @@ class Docs {
         2. Open a console and navigate to the Zikula root directory.
         3. Execute this command replacing `en` by your desired locale code:
 
-        `php «IF targets('2.0')»bin«ELSE»app«ENDIF»/console translation:extract en --bundle=«appName» --enable-extractor=jms_i18n_routing --output-format=po«IF generateTagSupport» --exclude-dir=TaggedObjectMeta«ENDIF»`
+        `php «IF targets('2.0')»bin«ELSE»app«ENDIF»/console translation:extract en --bundle=«appName» --enable-extractor=jms_i18n_routing --output-format=po«IF generateNewsletterPlugin» --exclude-dir=NewsletterPlugin«ENDIF»«IF generateTagSupport» --exclude-dir=TaggedObjectMeta«ENDIF»`
 
         You can also use multiple locales at once, for example `de fr es`.
 
@@ -122,7 +122,7 @@ class Docs {
 
         Note you can even include custom views in `app/Resources/«appName»/views/` and JavaScript files in `app/Resources/«appName»/public/js/` like this:
 
-        `php «IF targets('2.0')»bin«ELSE»app«ENDIF»/console translation:extract en --bundle=«appName» --enable-extractor=jms_i18n_routing --output-format=po«IF generateTagSupport» --exclude-dir=TaggedObjectMeta«ENDIF» --dir=./«relativeAppRootPath» --dir=./app/Resources/«appName»`
+        `php «IF targets('2.0')»bin«ELSE»app«ENDIF»/console translation:extract en --bundle=«appName» --enable-extractor=jms_i18n_routing --output-format=po«IF generateNewsletterPlugin» --exclude-dir=NewsletterPlugin«ENDIF»«IF generateTagSupport» --exclude-dir=TaggedObjectMeta«ENDIF» --dir=./«relativeAppRootPath» --dir=./app/Resources/«appName»`
 
         For questions and other remarks visit our homepage «url».
 
