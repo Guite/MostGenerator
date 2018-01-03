@@ -229,6 +229,7 @@ class UploadHelper {
                 $image = $imagine->open($destinationFilePath);
                 $autorotateFilter = new Autorotate();
                 $image = $autorotateFilter->apply($image);
+                $image->save($destinationFilePath);
 
                 // check if shrinking functionality is enabled
                 $fieldSuffix = ucfirst($objectType) . ucfirst($fieldName);
@@ -241,11 +242,12 @@ class UploadHelper {
                     $imgInfo = getimagesize($destinationFilePath);
                     if ($imgInfo[0] > $maxWidth || $imgInfo[1] > $maxHeight) {
                         // resize to allowed maximum size
+                        $imagine = new Imagine();
+                        $image = $imagine->open($destinationFilePath);
                         $image->thumbnail(new Box($maxWidth, $maxHeight), $thumbMode);
+                        $image->save($destinationFilePath);
                     }
                 }
-
-                $image->save($destinationFilePath);
 
                 // update meta data excluding EXIF
                 $newMetaData = $this->readMetaDataForFile($fileName, $destinationFilePath, false);
