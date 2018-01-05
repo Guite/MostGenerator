@@ -512,7 +512,7 @@ class EditEntityType {
             foreach ($options['attributes'] as $attributeName => $attributeValue) {
                 $builder->add('attributes' . $attributeName, TextType::class, [
                     'mapped' => false,
-                    'label' => $this->__($attributeName),
+                    'label' => $this->__(/** @Ignore */ $attributeName),
                     'attr' => [
                         'maxlength' => 255
                     ],
