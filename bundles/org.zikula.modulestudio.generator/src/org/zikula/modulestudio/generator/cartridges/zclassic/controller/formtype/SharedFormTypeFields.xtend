@@ -118,7 +118,7 @@ class SharedFormTypeFields {
         	    (
         	        (dataObject as Entity).attributable
         	        ||
-        	        ((dataObject as Entity).hasSluggableFields && (dataObject as Entity).slugUpdatable && app.supportsSlugInputFields)
+        	        ((dataObject as Entity).hasSluggableFields && (dataObject as Entity).slugUpdatable)
                 )
             )
             || !fields.filter(StringField).filter[!#[StringRole.COLOUR, StringRole.COUNTRY, StringRole.CURRENCY, StringRole.LANGUAGE, StringRole.LOCALE, StringRole.PASSWORD, StringRole.PHONE_NUMBER, StringRole.TIME_ZONE].contains(role)].empty

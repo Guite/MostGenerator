@@ -286,15 +286,6 @@ class FormHandler {
                  */
                 protected $hasAttributes = false;
             «ENDIF»
-            «IF hasSluggable && !getAllEntities.filter[slugUpdatable].empty»
-
-                /**
-                 * Whether the entity has an editable slug or not.
-                 *
-                 * @var boolean
-                 */
-                protected $hasSlugUpdatableField = false;
-            «ENDIF»
             «IF hasTranslatable»
 
                 /**
@@ -913,7 +904,7 @@ class FormHandler {
             $isRegularAction = !in_array($action, ['delete', 'cancel']);
 
             if ($isRegularAction || $action == 'delete') {
-                $this->fetchInputData(«IF hasSluggable && !getAllEntities.filter[slugUpdatable].empty»$args«ENDIF»);
+                $this->fetchInputData();
             }
             «IF hasHookSubscribers»
 
@@ -1075,23 +1066,11 @@ class FormHandler {
     def private fetchInputData(Application it) '''
         /**
          * Input data processing called by handleCommand method.
-         «IF hasSluggable && !getAllEntities.filter[slugUpdatable].empty»
-         *
-         * @param array $args List of additional arguments
-         «ENDIF»
          */
-        public function fetchInputData(«IF hasSluggable && !getAllEntities.filter[slugUpdatable].empty»array $args = []«ENDIF»)
+        public function fetchInputData()
         {
             // fetch posted data input values as an associative array
             $formData = $this->form->getData();
-            «IF hasSluggable && !getAllEntities.filter[slugUpdatable].empty»
-
-                if ($args['commandName'] != 'cancel') {
-                    if (true === $this->hasSlugUpdatableField && isset($entityData['slug'])) {
-                        $entityData['slug'] = iconv('UTF-8', 'ASCII//TRANSLIT', $entityData['slug']);
-                    }
-                }
-            «ENDIF»
             «IF hasStandardFieldEntities»
 
                 if (method_exists($this->entityRef, 'getCreatedBy')) {
@@ -1242,9 +1221,6 @@ class FormHandler {
         «locking.memberVarAssignments(it)»
         «IF app.hasAttributableEntities»
             $this->hasAttributes = «attributable.displayBool»;
-        «ENDIF»
-        «IF app.hasSluggable»
-            $this->hasSlugUpdatableField = «(hasSluggableFields && slugUpdatable).displayBool»;
         «ENDIF»
         «IF app.hasTranslatable»
             $this->hasTranslatableFields = «hasTranslatableFields.displayBool»;

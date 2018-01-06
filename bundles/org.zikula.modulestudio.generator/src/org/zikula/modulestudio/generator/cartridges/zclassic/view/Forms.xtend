@@ -257,7 +257,7 @@ class Forms {
     '''
 
     def private slugField(Entity it, String subElem) '''
-        «IF hasSluggableFields && slugUpdatable && application.supportsSlugInputFields»
+        «IF hasSluggableFields && slugUpdatable»
             «IF !subElem.empty»
                 {{ form_row(attribute(«subElem», 'slug')) }}
             «ELSE»

@@ -465,19 +465,19 @@ class EditEntityType {
     '''
 
     def private slugField(Entity it) '''
-        «IF hasSluggableFields && slugUpdatable && application.supportsSlugInputFields»
+        «IF hasSluggableFields && slugUpdatable»
             $builder->add('slug', TextType::class, [
                 'label' => $this->__('Permalink') . ':',
-                'required' => false«/* slugUnique.displayBool */»,
+                'required' => false,
                 'empty_data' => '',
                 'attr' => [
-                    'maxlength' => 255,
+                    'maxlength' => «slugLength»,
                     «IF slugUnique»
                         'class' => 'validate-unique',
                     «ENDIF»
-                    'title' => $this->__('You can input a custom permalink for the «name.formatForDisplay»«IF !slugUnique» or let this field free to create one automatically«ENDIF»')
+                    'title' => $this->__('You can input a custom permalink for the «name.formatForDisplay» or let this field free to create one automatically')
                 ],
-                'help' => $this->__('You can input a custom permalink for the «name.formatForDisplay»«IF !slugUnique» or let this field free to create one automatically«ENDIF»')
+                'help' => $this->__('You can input a custom permalink for the «name.formatForDisplay» or let this field free to create one automatically')
             ]);
         «ENDIF»
     '''

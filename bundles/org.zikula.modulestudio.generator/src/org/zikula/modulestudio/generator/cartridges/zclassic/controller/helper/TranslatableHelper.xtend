@@ -125,7 +125,7 @@ class TranslatableHelper {
 
     def private translatableFieldList(Entity it) '''
             case '«name.formatForCode»':
-                $fields = ['«getTranslatableFields.map[name.formatForCode].join('\', \'')»'«IF application.supportsSlugInputFields && hasTranslatableSlug», 'slug'«ENDIF»];
+                $fields = ['«getTranslatableFields.map[name.formatForCode].join('\', \'')»'«IF hasTranslatableSlug», 'slug'«ENDIF»];
                 break;
     '''
 
