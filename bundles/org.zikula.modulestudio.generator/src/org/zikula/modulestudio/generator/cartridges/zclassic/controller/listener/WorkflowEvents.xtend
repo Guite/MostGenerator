@@ -122,7 +122,11 @@ class WorkflowEvents {
                     $permissionLevel = ACCESS_ADD;
                     break;
                 case 'delete':
-                    $permissionLevel = ACCESS_DELETE;
+                    «IF !getAllEntities.filter[ownerPermission].empty»
+                        $permissionLevel = in_array($objectType, ['«getAllEntities.filter[ownerPermission].map[name.formatForCode].join('\', \'')»']) ? ACCESS_EDIT : ACCESS_DELETE;
+                    «ELSE»
+                        $permissionLevel = ACCESS_DELETE;
+                    «ENDIF»
                     break;
             }
 
