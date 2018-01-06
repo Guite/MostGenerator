@@ -64,7 +64,7 @@ class Actions {
                 $currentUserApi = $this->get('zikula_users_module.current_user');
                 $currentUserId = $currentUserApi->isLoggedIn() ? $currentUserApi->get('uid') : UsersConstant::USER_ID_ANONYMOUS;
                 $isOwner = $currentUserId > 0 && null !== $«name.formatForCode»->getCreatedBy() && $currentUserId == $«name.formatForCode»->getCreatedBy()->getUid();
-                if (!$this->hasPermission('«app.appName»:«objectTypeVar»:', «instanceId»'::', ACCESS_EDIT)) {
+                if (!$isOwner || !$this->hasPermission('«app.appName»:«objectTypeVar»:', «instanceId»'::', ACCESS_EDIT)) {
                     throw new AccessDeniedException();
                 }
             «ELSE»
