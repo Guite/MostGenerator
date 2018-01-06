@@ -46,7 +46,7 @@ class Actions {
         «ELSE»
             // parameter specifying which type of objects we are treating
             $objectType = '«name.formatForCode»';
-            $permLevel = $isAdmin ? ACCESS_ADMIN : «action.getPermissionAccessLevel»;
+            $permLevel = $isAdmin ? ACCESS_ADMIN : «getPermissionAccessLevel(action)»;
             «action.permissionCheck("' . ucfirst($objectType) . '", '')»
         «ENDIF»
         «actionImplBody(it, action)»
@@ -61,13 +61,13 @@ class Actions {
         }
     '''
 
-    def private getPermissionAccessLevel(Action it) {
+    def private getPermissionAccessLevel(Entity it, Action action) {
         switch it {
             MainAction: 'ACCESS_OVERVIEW'
             ViewAction: 'ACCESS_READ'
             DisplayAction: 'ACCESS_READ'
             EditAction: 'ACCESS_EDIT'
-            DeleteAction: 'ACCESS_DELETE'
+            DeleteAction: if (ownerPermission) 'ACCESS_EDIT' else 'ACCESS_DELETE'
             CustomAction: 'ACCESS_OVERVIEW'
             default: 'ACCESS_ADMIN'
         }

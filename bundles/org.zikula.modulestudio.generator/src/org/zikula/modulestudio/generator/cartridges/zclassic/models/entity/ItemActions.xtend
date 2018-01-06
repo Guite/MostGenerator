@@ -33,7 +33,7 @@ class ItemActions {
                 $component = '«app.appName»:«entity.name.formatForCodeCapital»:';
                 $instance = $entity->getKey() . '::';
                 $routePrefix = '«app.appName.formatForDB»_«entity.name.formatForDB»_';
-                «IF (entity.hasEditAction && entity.ownerPermission) || (entity.standardFields && !app.relations.empty)»
+                «IF (entity.ownerPermission && (entity.hasEditAction || entity.hasDeleteAction)) || (entity.standardFields && !app.relations.empty)»
                     $isOwner = $currentUserId > 0 && null !== $entity->getCreatedBy() && $currentUserId == $entity->getCreatedBy()->getUid();
                 «ENDIF»
 
@@ -101,7 +101,7 @@ class ItemActions {
             }
         «ENDIF»
         «IF hasDeleteAction»
-            if ($permissionApi->hasPermission($component, $instance, ACCESS_DELETE)) {
+            if ($permissionApi->hasPermission($component, $instance, ACCESS_DELETE)«IF ownerPermission» || ($isOwner && $permissionApi->hasPermission($component, $instance, ACCESS_EDIT))«ENDIF») {
                 $title = $this->__('Delete', '«app.appName.formatForDB»');
                 $menu->addChild($title, [
                     'route' => $routePrefix . $routeArea . 'delete',
