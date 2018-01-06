@@ -74,7 +74,7 @@ class Actions {
     '''
 
     def private getPermissionAccessLevel(Entity it, Action action) {
-        switch it {
+        switch action {
             MainAction: 'ACCESS_OVERVIEW'
             ViewAction: 'ACCESS_READ'
             DisplayAction: 'ACCESS_READ'
