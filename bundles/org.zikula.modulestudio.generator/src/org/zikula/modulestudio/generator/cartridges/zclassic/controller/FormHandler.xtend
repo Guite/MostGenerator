@@ -1208,6 +1208,9 @@ class FormHandler {
         use Symfony\Component\HttpFoundation\RedirectResponse;
         use Symfony\Component\Security\Core\Exception\AccessDeniedException;
         use RuntimeException;
+        «IF ownerPermission»
+            use Zikula\UsersModule\Constant as UsersConstant;
+        «ENDIF»
         «IF app.needsFeatureActivationHelper»
             use «app.appNamespace»\Helper\FeatureActivationHelper;
         «ENDIF»
@@ -1238,7 +1241,7 @@ class FormHandler {
             $entity = parent::initEntityForEditing();
 
             // only allow editing for the owner or people with higher permissions
-            $currentUserId = $this->currentUserApi->isLoggedIn() ? $this->currentUserApi->get('uid') : 1;
+            $currentUserId = $this->currentUserApi->isLoggedIn() ? $this->currentUserApi->get('uid') : UsersConstant::USER_ID_ANONYMOUS;
             $isOwner = null !== $entity && null !== $entity->getCreatedBy() && $currentUserId == $entity->getCreatedBy()->getUid();
             if (!$isOwner && !$this->permissionApi->hasPermission($this->permissionComponent, $this->idValue . '::', ACCESS_ADD)) {
                 throw new AccessDeniedException();

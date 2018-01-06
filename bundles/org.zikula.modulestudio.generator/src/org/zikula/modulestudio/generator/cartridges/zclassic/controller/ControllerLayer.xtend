@@ -132,6 +132,9 @@ class ControllerLayer {
         «IF !skipHookSubscribers»
             use Zikula\Core\RouteUrl;
         «ENDIF»
+        «IF ownerPermission && standardFields && hasDeleteAction»
+            use Zikula\UsersModule\Constant\UsersConstant;
+        «ENDIF»
         use «entityClassName('', false)»;
         «IF app.hasCategorisableEntities»
             use «app.appNamespace»\Helper\FeatureActivationHelper;

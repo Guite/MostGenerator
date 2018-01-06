@@ -42,12 +42,12 @@ class Actions {
 
     def actionImpl(Entity it, Action action) '''
         «IF it instanceof MainAction»
-            «permissionCheck('', '')»
+            «permissionCheck(action, '', '')»
         «ELSE»
             // parameter specifying which type of objects we are treating
             $objectType = '«name.formatForCode»';
             $permLevel = $isAdmin ? ACCESS_ADMIN : «getPermissionAccessLevel(action)»;
-            «action.permissionCheck("' . ucfirst($objectType) . '", '')»
+            «permissionCheck(action, "' . ucfirst($objectType) . '", '')»
         «ENDIF»
         «actionImplBody(it, action)»
     '''
@@ -55,9 +55,21 @@ class Actions {
     /**
      * Permission checks in system use cases.
      */
-    def private permissionCheck(Action it, String objectTypeVar, String instanceId) '''
+    def private permissionCheck(Entity it, Action action, String objectTypeVar, String instanceId) '''
         if (!$this->hasPermission('«app.appName»:«objectTypeVar»:', «instanceId»'::', $permLevel)) {
-            throw new AccessDeniedException();
+            «IF ownerPermission && standardFields && action instanceof DeleteAction»
+                if ($isAdmin) {
+                    throw new AccessDeniedException();
+                }
+                $currentUserApi = $this->get('zikula_users_module.current_user');
+                $currentUserId = $currentUserApi->isLoggedIn() ? $currentUserApi->get('uid') : UsersConstant::USER_ID_ANONYMOUS;
+                $isOwner = $currentUserId > 0 && null !== $«name.formatForCode»->getCreatedBy() && $currentUserId == $«name.formatForCode»->getCreatedBy()->getUid();
+                if (!$this->hasPermission('«app.appName»:«objectTypeVar»:', «instanceId»'::', ACCESS_EDIT)) {
+                    throw new AccessDeniedException();
+                }
+            «ELSE»
+                throw new AccessDeniedException();
+            «ENDIF»
         }
     '''
 
@@ -67,7 +79,7 @@ class Actions {
             ViewAction: 'ACCESS_READ'
             DisplayAction: 'ACCESS_READ'
             EditAction: 'ACCESS_EDIT'
-            DeleteAction: if (ownerPermission) 'ACCESS_EDIT' else 'ACCESS_DELETE'
+            DeleteAction: 'ACCESS_DELETE'
             CustomAction: 'ACCESS_OVERVIEW'
             default: 'ACCESS_ADMIN'
         }
@@ -236,7 +248,7 @@ class Actions {
     def private dispatch actionImplBody(Entity it, DisplayAction action) '''
         // create identifier for permission check
         $instanceId = $«name.formatForCode»->getKey();
-        «action.permissionCheck("' . ucfirst($objectType) . '", "$instanceId . ")»
+        «permissionCheck(action, "' . ucfirst($objectType) . '", "$instanceId . ")»
         «IF workflow != EntityWorkflowType.NONE»
 
             if ($«name.formatForCode»->getWorkflowState() != 'approved' && !$this->hasPermission('«app.appName»:' . ucfirst($objectType) . ':', $instanceId . '::', ACCESS_ADMIN)) {
@@ -289,7 +301,7 @@ class Actions {
     def dispatch private inheritedPermissionCheck(Entity it, Action action, JoinRelationship relation) '''
         if (null !== $«name.formatForCode»->get«relation.getRelationAliasName(false).formatForCodeCapital»()) {
             $parent = $«name.formatForCode»->get«relation.getRelationAliasName(false).formatForCodeCapital»();
-            «action.permissionCheck("' . ucfirst($parent->get_objectType()) . '", "$parent->getKey() . ")»
+            «permissionCheck(action, "' . ucfirst($parent->get_objectType()) . '", "$parent->getKey() . ")»
         }
     '''
 
@@ -304,7 +316,7 @@ class Actions {
                     break;
                 }
             «ELSEIF relation.inheritPermissions == ManyToManyPermissionInheritanceType.UNANIMOUS»
-                «action.permissionCheck("' . ucfirst($parent->get_objectType()) . '", "$parent->getKey() . ")»
+                «permissionCheck(action, "' . ucfirst($parent->get_objectType()) . '", "$parent->getKey() . ")»
             «ENDIF»
         }
         «IF relation.inheritPermissions == ManyToManyPermissionInheritanceType.AFFIRMATIVE»
