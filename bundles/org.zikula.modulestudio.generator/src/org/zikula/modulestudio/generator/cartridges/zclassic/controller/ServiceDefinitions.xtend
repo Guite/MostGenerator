@@ -9,6 +9,7 @@ import de.guite.modulestudio.metamodel.ListField
 import de.guite.modulestudio.metamodel.MappedSuperClass
 import de.guite.modulestudio.metamodel.StringField
 import de.guite.modulestudio.metamodel.StringRole
+import de.guite.modulestudio.metamodel.UploadField
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.DateTimeExtensions
@@ -100,6 +101,11 @@ class ServiceDefinitions {
         «ENDIF»
           - { resource: 'twig.yml' }
           - { resource: 'logger.yml' }
+        «IF hasImageFields || !getAllVariables.filter(UploadField).filter[isImageField].empty»
+
+            parameters:
+                liip_imagine.cache.signer.class: «appNamespace»\Imagine\Cache\DummySigner
+        «ENDIF»
     '''
 
     def private authentication(Application it) '''

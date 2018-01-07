@@ -1,6 +1,7 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.controller.helper
 
 import de.guite.modulestudio.metamodel.Application
+import de.guite.modulestudio.metamodel.UploadField
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
@@ -18,6 +19,9 @@ class ImageHelper {
     def generate(Application it, IMostFileSystemAccess fsa) {
         'Generating helper class for image handling'.printIfNotTesting(fsa)
         fsa.generateClassPair('Helper/ImageHelper.php', imageFunctionsBaseImpl, imageFunctionsImpl)
+        if (hasImageFields || !getAllVariables.filter(UploadField).filter[isImageField].empty) {
+            fsa.generateClassPair('Imagine/Cache/DummySigner.php', dummySignerBaseImpl, dummySignerImpl)
+        }
     }
 
     def private imageFunctionsBaseImpl(Application it) '''
@@ -204,6 +208,68 @@ class ImageHelper {
             }
 
             $this->session->getFlashBag()->add('warning', $this->translator->__f('The cache directory "%directory%" does not exist. Please create it and make it writable for the webserver.', ['%directory%' => $cachePath]));
+        }
+    '''
+
+
+    def private dummySignerBaseImpl(Application it) '''
+        namespace «appNamespace»\Imagine\Cache\Base;
+
+        use Liip\ImagineBundle\Imagine\Cache\SignerInterface;
+
+        /**
+         * Temporary dummy signer until https://github.com/liip/LiipImagineBundle/issues/837 has been resolved.
+         */
+        abstract class AbstractDummySigner implements SignerInterface
+        {
+            /**
+             * @var string
+             */
+            private $secret;
+
+            /**
+             * @param string $secret
+             */
+            public function __construct($secret)
+            {
+                $this->secret = $secret;
+            }
+
+            /**
+             * @inheritDoc
+             */
+            public function sign($path, array $runtimeConfig = null)
+            {
+                if ($runtimeConfig) {
+                    array_walk_recursive($runtimeConfig, function (&$value) {
+                        $value = (string) $value;
+                    });
+                }
+
+                return substr(preg_replace('/[^a-zA-Z0-9-_]/', '', base64_encode(hash_hmac('sha256', ltrim($path, '/').(null === $runtimeConfig ?: serialize($runtimeConfig)), $this->secret, true))), 0, 8);
+            }
+
+            /**
+             * @inheritDoc
+             */
+            public function check($hash, $path, array $runtimeConfig = null)
+            {
+                return true;//$hash === $this->sign($path, $runtimeConfig);
+            }
+        }
+    '''
+
+    def private dummySignerImpl(Application it) '''
+        namespace «appNamespace»\Imagine\Cache;
+
+        use «appNamespace»\Imagine\Cache\Base\AbstractDummySigner;
+
+        /**
+         * Temporary dummy signer until https://github.com/liip/LiipImagineBundle/issues/837 has been resolved.
+         */
+        class DummySigner extends AbstractDummySigner
+        {
+            // feel free to add your own convenience methods here
         }
     '''
 }
