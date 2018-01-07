@@ -82,7 +82,7 @@ class ItemActionsMenu {
                         return $menu;
                     }
                 «ENDIF»
-                $menu->setChildrenAttribute('class', 'list-inline');
+                $menu->setChildrenAttribute('class', 'list-inline item-actions');
 
                 «new ItemActions().itemActionsImpl(it)»
 
