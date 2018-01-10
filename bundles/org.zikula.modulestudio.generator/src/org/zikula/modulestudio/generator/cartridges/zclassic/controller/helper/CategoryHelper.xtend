@@ -362,7 +362,27 @@ class CategoryHelper {
          */
         public function hasPermission($entity)
         {
-            return $this->categoryPermissionApi->hasCategoryAccess($entity->getCategories()->toArray(), ACCESS_OVERVIEW);
+            $requireAccessForAll = $this->requireAccessForAll($entity);
+
+            return $this->categoryPermissionApi->hasCategoryAccess($entity->getCategories()->toArray(), ACCESS_OVERVIEW, $requireAccessForAll);
+        }
+
+        /**
+         * Returns whether permissions are required for all categories
+         * of a specific entity or for only one category.
+         *
+         * Returning false allows access if the user has access
+         * to at least one selected category.
+         * Returning true only allows access if the user has access
+         * to all selected categories.
+         *
+         * @param object $entity The entity to check permission for
+         *
+         * @return boolean True if access is required for all categories, false otherwise
+         */
+        protected function requireAccessForAll($entity)
+        {
+            return false;
         }
     '''
 
