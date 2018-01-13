@@ -174,7 +174,7 @@ class ExternalController {
         $assetHelper = $this->get('zikula_core.common.theme.asset_helper');
         $cssAssetBag = $this->get('zikula_core.common.theme.assets_css');
         $cssAssetBag->add($assetHelper->resolve('@«appName»:css/style.css'));
-        $cssAssetBag->add($assetHelper->resolve('@«appName»:css/custom.css'));
+        $cssAssetBag->add([$assetHelper->resolve('@«appName»:css/custom.css') => 120]);
 
         $activatedObjectTypes = $this->getVar('enabledFinderTypes', []);
         if (!in_array($objectType, $activatedObjectTypes)) {

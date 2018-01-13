@@ -80,7 +80,7 @@ class Layout {
             «IF generatePoweredByBacklinksIntoFooterTemplates»
                 «new FileHelper().msWeblink(it)»
             «ENDIF»
-            {{ pageAddAsset('stylesheet', zasset('@«appName»:css/custom.css')) }}
+            {{ pageAddAsset('stylesheet', zasset('@«appName»:css/custom.css'), 120) }}
             «IF needsJQueryUI»
                 {{ pageAddAsset('stylesheet', asset('jquery-ui/themes/base/jquery-ui.min.css')) }}
                 {{ pageAddAsset('stylesheet', asset('bootstrap-jqueryui/bootstrap-jqueryui.min.css')) }}

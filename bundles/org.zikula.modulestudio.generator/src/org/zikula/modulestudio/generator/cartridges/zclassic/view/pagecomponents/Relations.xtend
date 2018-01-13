@@ -55,7 +55,7 @@ class Relations {
             {% if context != 'display' %}
                 <h3>{{ __('Assigned «nameMultiple.formatForDisplay»', '«app.appName.toLowerCase»') }}</h3>
                 {{ pageAddAsset('stylesheet', zasset('@«app.appName»:css/style.css')) }}
-                {{ pageAddAsset('stylesheet', zasset('@«app.appName»:css/custom.css')) }}
+                {{ pageAddAsset('stylesheet', zasset('@«app.appName»:css/custom.css'), 120) }}
                 {{ pageAddAsset('stylesheet', asset('jquery-ui/themes/base/jquery-ui.min.css')) }}
                 {{ pageAddAsset('stylesheet', asset('bootstrap-jqueryui/bootstrap-jqueryui.min.css')) }}
                 {{ pageAddAsset('javascript', asset('jquery-ui/jquery-ui.min.js')) }}
