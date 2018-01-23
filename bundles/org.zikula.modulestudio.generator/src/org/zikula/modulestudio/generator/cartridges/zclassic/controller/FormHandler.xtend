@@ -672,6 +672,11 @@ class FormHandler {
 
             // handle form request and check validity constraints of edited entity
             if ($this->form->handleRequest($this->request) && $this->form->isSubmitted()) {
+                if ($this->form->get('cancel')->isClicked()) {
+                    «locking.releasePageLock(it)»
+
+                    return new RedirectResponse($this->getRedirectUrl(['commandName' => 'cancel']), 302);
+                }
                 if ($this->form->isValid()) {
                     $result = $this->handleCommand();
                     if (false === $result) {
@@ -679,9 +684,6 @@ class FormHandler {
                     }
 
                     return $result;
-                }
-                if ($this->form->get('cancel')->isClicked()) {
-                    return new RedirectResponse($this->getRedirectUrl(['commandName' => 'cancel']), 302);
                 }
             }
 
@@ -896,16 +898,11 @@ class FormHandler {
                 $args['commandName'] = 'submit';
                 $this->repeatCreateAction = true;
             }
-            if ($this->form->get('cancel')->isClicked()) {
-                $args['commandName'] = 'cancel';
-            }
 
             $action = $args['commandName'];
-            $isRegularAction = !in_array($action, ['delete', 'cancel']);
+            $isRegularAction = $action != 'delete';
 
-            if ($isRegularAction || $action == 'delete') {
-                $this->fetchInputData();
-            }
+            $this->fetchInputData();
             «IF hasHookSubscribers»
 
                 // get treated entity reference from persisted member var
@@ -926,40 +923,38 @@ class FormHandler {
                 }
             «ENDIF»
 
-            if ($isRegularAction || $action == 'delete') {
-                $success = $this->applyAction($args);
-                if (!$success) {
-                    // the workflow operation failed
-                    return false;
-                }
-                «IF hasTranslatable»
-
-                    if ($isRegularAction && true === $this->hasTranslatableFields) {
-                        if ($this->featureActivationHelper->isEnabled(FeatureActivationHelper::TRANSLATIONS, $this->objectType)) {
-                            $this->processTranslationsForUpdate();
-                        }
-                    }
-                «ENDIF»
-                «IF hasHookSubscribers»
-
-                    if ($entity->supportsHookSubscribers()) {
-                        $routeUrl = null;
-                        if ($action != 'delete') {
-                            $urlArgs = $entity->createUrlArgs();
-                            $urlArgs['_locale'] = $this->request->getLocale();
-                            $routeUrl = new RouteUrl('«appName.formatForDB»_' . $this->objectTypeLower . '_display', $urlArgs);
-                        }
-
-                        // Call form aware processing hooks
-                        $hookType = $action == 'delete' ? FormAwareCategory::TYPE_PROCESS_DELETE : FormAwareCategory::TYPE_PROCESS_EDIT;
-                        $this->hookHelper->callFormProcessHooks($this->form, $entity, $hookType, $routeUrl);
-
-                        // Let any ui hooks know that we have created, updated or deleted an item
-                        $hookType = $action == 'delete' ? UiHooksCategory::TYPE_PROCESS_DELETE : UiHooksCategory::TYPE_PROCESS_EDIT;
-                        $this->hookHelper->callProcessHooks($entity, $hookType, $routeUrl);
-                    }
-                «ENDIF»
+            $success = $this->applyAction($args);
+            if (!$success) {
+                // the workflow operation failed
+                return false;
             }
+            «IF hasTranslatable»
+
+                if ($isRegularAction && true === $this->hasTranslatableFields) {
+                    if ($this->featureActivationHelper->isEnabled(FeatureActivationHelper::TRANSLATIONS, $this->objectType)) {
+                        $this->processTranslationsForUpdate();
+                    }
+                }
+            «ENDIF»
+            «IF hasHookSubscribers»
+
+                if ($entity->supportsHookSubscribers()) {
+                    $routeUrl = null;
+                    if ($action != 'delete') {
+                        $urlArgs = $entity->createUrlArgs();
+                        $urlArgs['_locale'] = $this->request->getLocale();
+                        $routeUrl = new RouteUrl('«appName.formatForDB»_' . $this->objectTypeLower . '_display', $urlArgs);
+                    }
+
+                    // Call form aware processing hooks
+                    $hookType = $action == 'delete' ? FormAwareCategory::TYPE_PROCESS_DELETE : FormAwareCategory::TYPE_PROCESS_EDIT;
+                    $this->hookHelper->callFormProcessHooks($this->form, $entity, $hookType, $routeUrl);
+
+                    // Let any ui hooks know that we have created, updated or deleted an item
+                    $hookType = $action == 'delete' ? UiHooksCategory::TYPE_PROCESS_DELETE : UiHooksCategory::TYPE_PROCESS_EDIT;
+                    $this->hookHelper->callProcessHooks($entity, $hookType, $routeUrl);
+                }
+            «ENDIF»
 
             «locking.releasePageLock(it)»
 
@@ -1388,9 +1383,6 @@ class FormHandler {
             if ($this->templateParameters['mode'] == 'create' && $this->form->has('submitrepeat') && $this->form->get('submitrepeat')->isClicked()) {
                 $args['commandName'] = 'submit';
                 $this->repeatCreateAction = true;
-            }
-            if ($this->form->get('cancel')->isClicked()) {
-                $args['commandName'] = 'cancel';
             }
 
             return new RedirectResponse($this->getRedirectUrl($args), 302);
