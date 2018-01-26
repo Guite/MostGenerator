@@ -158,7 +158,7 @@ class EditFunctions {
                 });
             }
             editForm.find('button[type=submit]').bind('click keypress', function (event) {
-                triggerValidation = !jQuery(this).prop('formnovalidate');
+                triggerValidation = !jQuery(this).attr«/* use attr instead of prop to fix #1180 */»('formnovalidate');
             });
             editForm.submit(«vendorAndName»HandleFormSubmit);
 
