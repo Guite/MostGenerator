@@ -129,7 +129,7 @@ class ItemActions {
     '''
 
     def private itemActionsForAddingRelatedItems(Entity it, Application app) '''
-        «val refedElems = getOutgoingJoinRelations.filter[r|r.target.application == it.application && r.target instanceof Entity && (r.target as Entity).hasEditAction]
+        «val refedElems = getEditableJoinRelations(false).filter[r|(r.target as Entity).hasEditAction]
             + incoming.filter(ManyToManyRelationship).filter[r|r.source.application == it.application && r.source instanceof Entity && (r.source as Entity).hasEditAction]»
         «IF !refedElems.empty»
 
