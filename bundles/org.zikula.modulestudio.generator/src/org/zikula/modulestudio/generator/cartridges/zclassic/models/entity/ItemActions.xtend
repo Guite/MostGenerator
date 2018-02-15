@@ -6,6 +6,7 @@ import de.guite.modulestudio.metamodel.EntityTreeType
 import de.guite.modulestudio.metamodel.EntityWorkflowType
 import de.guite.modulestudio.metamodel.ItemActionsStyle
 import de.guite.modulestudio.metamodel.ManyToManyRelationship
+import de.guite.modulestudio.metamodel.ManyToOneRelationship
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
@@ -129,7 +130,7 @@ class ItemActions {
     '''
 
     def private itemActionsForAddingRelatedItems(Entity it, Application app) '''
-        «val refedElems = getEditableJoinRelations(false).filter[r|(r.target as Entity).hasEditAction]
+        «val refedElems = getEditableJoinRelations(false).filter[r|(r.target as Entity).hasEditAction && !(r instanceof ManyToOneRelationship)]
             + incoming.filter(ManyToManyRelationship).filter[r|r.source.application == it.application && r.source instanceof Entity && (r.source as Entity).hasEditAction]»
         «IF !refedElems.empty»
 

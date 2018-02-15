@@ -161,7 +161,7 @@ class ModelJoinExtensions {
         if (incoming) {
             getBidirectionalIncomingJoinRelations.filter[source.application == application && source instanceof Entity]
         } else {
-            getOutgoingJoinRelations.filter[target.application == application && target instanceof Entity && !(it instanceof ManyToOneRelationship)]
+            getOutgoingJoinRelations.filter[target.application == application && target instanceof Entity]
         }
     }
 
