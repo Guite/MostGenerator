@@ -506,7 +506,7 @@ class ComposerFile {
             case 'ZPL-2.0': 'ZPL-2.0'
             case 'Zope Public License 2.1': 'ZPL-2.1'
             case 'ZPL-2.1': 'ZPL-2.1'
-            default: 'LGPL-3.0+'
+            default: 'LGPL-3.0+-or-later'
         }
     }
 }
