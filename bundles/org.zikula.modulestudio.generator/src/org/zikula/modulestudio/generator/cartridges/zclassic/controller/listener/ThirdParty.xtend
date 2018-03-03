@@ -139,7 +139,7 @@ class ThirdParty {
                     $aggregateType = $amountInfo['aggregateType'];
                     $description = $amountInfo['description'];
                     $amount = $amountInfo['amount'];
-                    $route = '«appName.toLowerCase»_' . strtolower($amountInfo['objectType'] . '_adminview';
+                    $route = '«appName.toLowerCase»_' . strtolower($amountInfo['objectType']) . '_adminview';
                     $routeArgs = [
                         'workflowState' => $amountInfo['state']
                     ];
