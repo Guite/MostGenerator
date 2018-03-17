@@ -202,6 +202,9 @@ class ServiceDefinitions {
                                     - "@request_stack"
                                     - "@«modPrefix».entity_factory"
                                     - "@twig"
+                                    «IF !getUploadEntities.empty»
+                                        - "@«modPrefix».image_helper"
+                                    «ENDIF»
                                 tags:
                                     - { name: zikula.hook_provider, areaName: 'provider.«appName.formatForDB».ui_hooks.«entity.nameMultiple.formatForDB»' }
 

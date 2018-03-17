@@ -447,6 +447,9 @@ class HookHelper {
             use «application.appNamespace»\Form\Type\Hook\Edit«name.formatForCodeCapital»Type;
         «ELSEIF category == 'UiHooks'»
             use «application.appNamespace»\Entity\Factory\EntityFactory;
+            «IF !application.getUploadEntities.empty»
+                use «application.appNamespace»\Helper\ImageHelper;
+            «ENDIF»
         «ENDIF»
 
         /**
@@ -486,6 +489,13 @@ class HookHelper {
                  * @var Twig_Environment
                  */
                 protected $templating;
+                «IF !application.getUploadEntities.empty»
+
+                    /**
+                     * @var ImageHelper
+                     */
+                    protected $imageHelper;
+                «ENDIF»
             «ENDIF»
 
             /**
@@ -500,6 +510,9 @@ class HookHelper {
              * @param RequestStack        $requestStack
              * @param EntityFactory       $entityFactory
              * @param Twig_Environment    $twig
+             «IF !application.getUploadEntities.empty»
+             * @param ImageHelper         $imageHelper
+             «ENDIF»
              «ENDIF»
              */
             public function __construct(
@@ -510,7 +523,10 @@ class HookHelper {
                 «ELSEIF category == 'UiHooks'»
                     RequestStack $requestStack,
                     EntityFactory $entityFactory,
-                    Twig_Environment $twig
+                    Twig_Environment $twig«IF !application.getUploadEntities.empty»,«ENDIF»
+                    «IF !application.getUploadEntities.empty»
+                        ImageHelper $imageHelper
+                    «ENDIF»
                 «ENDIF»
             ) {
                 $this->translator = $translator;
@@ -521,6 +537,9 @@ class HookHelper {
                     $this->requestStack = $requestStack;
                     $this->entityFactory = $entityFactory;
                     $this->templating = $twig;
+                    «IF !application.getUploadEntities.empty»
+                        $this->imageHelper = $imageHelper;
+                    «ENDIF»
                 «ENDIF»
             }
 
@@ -824,6 +843,10 @@ class HookHelper {
                         $url = method_exists($hook, 'getUrl') ? $hook->getUrl() : null;
                         $templateParameters['subscriberUrl'] = (null !== $url && is_object($url)) ? $url->serialize() : serialize([]);
                     }
+                    «IF !application.getUploadEntities.empty»
+
+                        $templateParameters['relationThumbRuntimeOptions'] = $this->imageHelper->getCustomRuntimeOptions('', '', '«application.appName»_relateditem', 'controllerAction', ['action' => 'display']);
+                    «ENDIF»
 
                     $output = $this->templating->render($template, $templateParameters);
 

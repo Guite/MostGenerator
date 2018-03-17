@@ -139,11 +139,11 @@ class ImageHelper {
         /**
          * This method returns an Imagine runtime options array for the given arguments.
          *
-         * @param string $objectType Currently treated entity type
-         * @param string $fieldName  Name of upload field
+         * @param string $objectType  Currently treated entity type
+         * @param string $fieldName   Name of upload field
          * @param string $contextName Name of desired context
-         * @param string $context    Usage context (allowed values: controllerAction, api, actionHandler, block, contentType)
-         * @param array  $args       Additional arguments
+         * @param string $context     Usage context (allowed values: controllerAction, api, actionHandler, block, contentType)
+         * @param array  $args        Additional arguments
          *
          * @return array The selected runtime options
          */
