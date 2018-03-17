@@ -173,8 +173,8 @@ class Redirect {
          */
         protected function getRedirectUrl(array $args = [])
         {
-            «IF app.needsInlineEditing»
-                if (true === $this->templateParameters['inlineUsage']) {
+            «IF app.needsInlineEditing && (!incoming.empty || !outgoing.empty)»
+                if (isset($this->templateParameters['inlineUsage']) && true === $this->templateParameters['inlineUsage']) {
                     $commandName = substr($args['commandName'], 0, 6) == 'submit' ? 'create' : $args['commandName'];
                     $urlArgs = [
                         'idPrefix' => $this->idPrefix,
