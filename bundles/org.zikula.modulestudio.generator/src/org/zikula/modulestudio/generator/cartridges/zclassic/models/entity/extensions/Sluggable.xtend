@@ -76,7 +76,7 @@ class Sluggable extends AbstractExtension implements EntityExtensionInterface {
 
     def private treeSlugHandlerImpl(Entity it) '''
         «' '»*     @Gedmo\SlugHandler(class="Gedmo\Sluggable\Handler\TreeSlugHandler", options={
-        «slugHandlerOption('parentRelationField', 'parent')»
+        «slugHandlerOption('parentRelationField', 'parent')»,
         «slugHandlerOption('separator', '/')»
         «' '»*     })
     '''
