@@ -89,17 +89,19 @@ class Translatable extends AbstractExtension implements EntityExtensionInterface
     override extensionClassImplAnnotations(Entity it) '''
          «' '»*
          «' '»* @ORM\Entity(repositoryClass="«repositoryClass(extensionClassType)»")
-         «' '»* @ORM\Table(name="«fullEntityTableName»_translation",
+         «' '»* @ORM\Table(
+         «' '»*     name="«fullEntityTableName»_translation",
+         «' '»*     options={"row_format":"DYNAMIC"},
          «' '»*     indexes={
          «' '»*         @ORM\Index(name="translations_lookup_idx", columns={
          «' '»*             "locale", "object_class", "foreign_key"
          «' '»*         })
-         «' '»*     }«/*,commented out because the length of these four fields * 3 is more than 1000 bytes with UTF-8 (requiring 3 bytes per char)
+         «' '»*     },
          «' '»*     uniqueConstraints={
          «' '»*         @ORM\UniqueConstraint(name="lookup_unique_idx", columns={
          «' '»*             "locale", "object_class", "field", "foreign_key"
          «' '»*         })
-         «' '»*     }*/»
+         «' '»*     }
          «' '»* )
     '''
 }

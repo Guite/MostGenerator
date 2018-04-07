@@ -115,7 +115,9 @@ class Loggable extends AbstractExtension implements EntityExtensionInterface {
     override extensionClassImplAnnotations(Entity it) '''
          «' '»*
          «' '»* @ORM\Entity(repositoryClass="«repositoryClass(extensionClassType)»")
-         «' '»* @ORM\Table(name="«fullEntityTableName»_log_entry",
+         «' '»* @ORM\Table(
+         «' '»*     name="«fullEntityTableName»_log_entry",
+         «' '»*     options={"row_format":"DYNAMIC"},
          «' '»*     indexes={
          «' '»*         @ORM\Index(name="log_class_lookup_idx", columns={"object_class"}),
          «' '»*         @ORM\Index(name="log_date_lookup_idx", columns={"logged_at"}),
