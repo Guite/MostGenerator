@@ -6,6 +6,7 @@ import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.pagecomponents.SimpleFields
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
+import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.ModelInheritanceExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
@@ -16,6 +17,7 @@ class ExternalView {
 
     extension ControllerExtensions = new ControllerExtensions
     extension FormattingExtensions = new FormattingExtensions
+    extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension ModelExtensions = new ModelExtensions
     extension ModelInheritanceExtensions = new ModelInheritanceExtensions
     extension NamingExtensions = new NamingExtensions
@@ -27,6 +29,12 @@ class ExternalView {
     def generate(Application it, IMostFileSystemAccess fsa) {
         var fileName = ''
         val templateExtension = '.html.twig'
+        for (entity : getFinderEntities) {
+            val templatePath = getViewPath + 'External/' + entity.name.formatForCodeCapital + '/'
+
+            fileName = 'find' + templateExtension
+            fsa.generateFile(templatePath + fileName, entity.findTemplate(it))
+        }
         for (entity : getAllEntities.filter[hasDisplayAction]) {
             val templatePath = getViewPath + 'External/' + entity.name.formatForCodeCapital + '/'
 
@@ -35,9 +43,6 @@ class ExternalView {
 
             fileName = 'info' + templateExtension
             fsa.generateFile(templatePath + fileName, entity.itemInfoTemplate(it))
-
-            fileName = 'find' + templateExtension
-            fsa.generateFile(templatePath + fileName, entity.findTemplate(it))
 
             // content type editing is not ready for Twig yet
             fileName = 'select.tpl'

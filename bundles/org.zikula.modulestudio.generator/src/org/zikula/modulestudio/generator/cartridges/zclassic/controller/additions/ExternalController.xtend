@@ -212,7 +212,7 @@ class ExternalController {
         // the number of items displayed on a page for pagination
         $resultsPerPage = (int) $num;
         if ($resultsPerPage == 0) {
-            $resultsPerPage = $this->getVar('pageSize', 20);
+            $resultsPerPage = $this->getVar($objectType . 'EntriesPerPage', 20);
         }
 
         $templateParameters = [

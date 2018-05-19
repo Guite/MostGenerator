@@ -373,7 +373,7 @@ class PersistenceTransformer {
             mandatory = false
             multiple = true
         ]
-        for (entity : getAllEntities.filter[hasDisplayAction]) {
+        for (entity : getFinderEntities) {
             listField.items += factory.createListFieldItem => [
                 name = entity.name.formatForDisplayCapital
                 value = entity.name.formatForCode

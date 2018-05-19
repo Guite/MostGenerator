@@ -26,6 +26,11 @@ import java.util.List
 class ModelBehaviourExtensions {
 
     /**
+     * Extensions related to controller layers.
+     */
+    extension ControllerExtensions = new ControllerExtensions
+
+    /**
      * Extensions related to date and time.
      */
     extension DateTimeExtensions = new DateTimeExtensions
@@ -39,6 +44,14 @@ class ModelBehaviourExtensions {
      * Extensions related to inheritance relationships.
      */
     extension ModelInheritanceExtensions = new ModelInheritanceExtensions
+
+    /**
+     * Returns a list of all entities for the finder component
+     * (supporting either display actions or image upload fields).
+     */
+    def getFinderEntities(Application it) {
+        getAllEntities.filter[hasDisplayAction || hasImageFieldsEntity]
+    }
 
     /**
      * Checks whether the feature activation helper class should be generated or not.

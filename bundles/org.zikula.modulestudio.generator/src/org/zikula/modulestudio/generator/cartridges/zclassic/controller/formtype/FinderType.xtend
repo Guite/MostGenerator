@@ -29,7 +29,7 @@ class FinderType {
             return
         }
         app = it
-        for (entity : getAllEntities.filter[hasDisplayAction]) {
+        for (entity : getFinderEntities) {
             fsa.generateClassPair('Form/Type/Finder/' + entity.name.formatForCodeCapital + 'FinderType.php',
                 entity.finderTypeBaseImpl, entity.finderTypeImpl
             )
@@ -259,8 +259,10 @@ class FinderType {
                 'label' => $this->__('Paste as') . ':',
                 'empty_data' => 1,
                 'choices' => [
-                    $this->__('Relative link to the «name.formatForDisplay»') => 1,
-                    $this->__('Absolute url to the «name.formatForDisplay»') => 2,
+                    «IF hasDisplayAction»
+                        $this->__('Relative link to the «name.formatForDisplay»') => 1,
+                        $this->__('Absolute url to the «name.formatForDisplay»') => 2,
+                    «ENDIF»
                     $this->__('ID of «name.formatForDisplay»') => 3«IF hasImageFieldsEntity»,«ENDIF»
                     «IF hasImageFieldsEntity»
                         $this->__('Relative link to the image') => 6,
