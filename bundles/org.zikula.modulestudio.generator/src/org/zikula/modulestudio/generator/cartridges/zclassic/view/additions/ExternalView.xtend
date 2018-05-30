@@ -24,7 +24,7 @@ class ExternalView {
     extension UrlExtensions = new UrlExtensions
     extension Utils = new Utils
 
-    private SimpleFields fieldHelper = new SimpleFields
+    SimpleFields fieldHelper = new SimpleFields
 
     def generate(Application it, IMostFileSystemAccess fsa) {
         var fileName = ''

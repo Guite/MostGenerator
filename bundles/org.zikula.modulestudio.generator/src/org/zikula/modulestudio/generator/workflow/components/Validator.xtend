@@ -13,7 +13,7 @@ class Validator extends WorkflowComponentWithSlot {
     /**
      * Whether validation should be executed or not.
      */
-    private Boolean enabled = true
+    Boolean enabled = true
 
     /**
      * Invokes the workflow component.
