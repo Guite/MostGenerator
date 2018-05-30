@@ -126,7 +126,7 @@ class UploadHelper {
                 $this->dataDirectory = $dataDirectory;
 
                 $this->allowedObjectTypes = [«FOR entity : getUploadEntities SEPARATOR ', '»'«entity.name.formatForCode»'«ENDFOR»];
-                $this->imageFileTypes = ['gif', 'jpeg', 'jpg', 'png', 'swf'];
+                $this->imageFileTypes = ['gif', 'jpeg', 'jpg', 'png'];
                 $this->forbiddenFileTypes = ['cgi', 'pl', 'asp', 'phtml', 'php', 'php3', 'php4', 'php5', 'exe', 'com', 'bat', 'jsp', 'cfm', 'shtml'];
             }
 
