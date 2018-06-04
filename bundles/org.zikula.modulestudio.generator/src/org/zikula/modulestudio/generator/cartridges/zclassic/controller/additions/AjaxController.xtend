@@ -800,8 +800,6 @@ class AjaxController {
             return «IF targets('2.0')»$this->json«ELSE»new JsonResponse«ENDIF»($returnValue);
         }
 
-        $entityManager->clear();
-
         $entity = $repository->selectById($id, false);
         $destEntity = $repository->selectById($destId, false);
         if (null === $entity || null === $destEntity) {
@@ -810,11 +808,6 @@ class AjaxController {
 
             return «IF targets('2.0')»$this->json«ELSE»new JsonResponse«ENDIF»($returnValue);
         }
-
-        $entityManager->persist($destEntity);
-        «IF hasStandardFieldEntities»
-            $entityManager->persist($currentUser);
-        «ENDIF»
 
         if ($moveDirection == 'after') {
             $repository->persistAsNextSiblingOf($entity, $destEntity);
