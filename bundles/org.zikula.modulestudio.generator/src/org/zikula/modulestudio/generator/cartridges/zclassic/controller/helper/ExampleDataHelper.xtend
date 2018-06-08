@@ -65,9 +65,9 @@ class ExampleDataHelper {
         «ENDIF»
         use «appNamespace»\Entity\Factory\EntityFactory;
         «FOR entity : getAllEntities»
-            use «appNamespace»\Entity\«name.formatForCodeCapital»Entity;
+            use «appNamespace»\Entity\«entity.name.formatForCodeCapital»Entity;
             «IF entity.categorisable»
-                use «appNamespace»\Entity\«name.formatForCodeCapital»CategoryEntity;
+                use «appNamespace»\Entity\«entity.name.formatForCodeCapital»CategoryEntity;
             «ENDIF»
         «ENDFOR»
         use «appNamespace»\Helper\WorkflowHelper;

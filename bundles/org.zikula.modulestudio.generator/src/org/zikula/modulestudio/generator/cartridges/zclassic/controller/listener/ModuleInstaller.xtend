@@ -18,7 +18,7 @@ class ModuleInstaller {
             /**
              * @var ExampleDataHelper
              */
-            protected $exampleDataHelper
+            protected $exampleDataHelper;
 
         «ENDIF»
         «IF hasUiHooksProviders»
