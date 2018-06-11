@@ -254,8 +254,11 @@ class ServiceDefinitions {
         # Entity initialiser
         «modPrefix».entity_initialiser:
             class: «appNamespace»\Entity\Factory\EntityInitialiser
-            «IF !getAllListFields.filter[name != 'workflowState'].empty || hasGeographical»
+            «IF supportLocaleFilter || !getAllListFields.filter[name != 'workflowState'].empty || hasGeographical»
                 arguments:
+                «IF supportLocaleFilter»
+                    - "@request_stack"
+                «ENDIF»
                 «IF !getAllListFields.filter[name != 'workflowState'].empty»
                     - "@«modPrefix».listentries_helper"
                 «ENDIF»

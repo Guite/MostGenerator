@@ -31,6 +31,10 @@ class EntityInitialiser {
     def private initialiserBaseImpl(Application it) '''
         namespace «appNamespace»\Entity\Factory\Base;
 
+        «IF supportLocaleFilter»
+            use Symfony\Component\HttpFoundation\Request;
+            use Symfony\Component\HttpFoundation\RequestStack;
+        «ENDIF»
         «FOR entity : getAllEntities»
             use «appNamespace»\Entity\«entity.name.formatForCodeCapital»Entity;
         «ENDFOR»
@@ -43,6 +47,13 @@ class EntityInitialiser {
          */
         abstract class AbstractEntityInitialiser
         {
+            «IF supportLocaleFilter»
+                /**
+                 * @var Request
+                 */
+                protected $request;
+
+            «ENDIF»
             «IF hasListFieldsExceptWorkflowState»
                 /**
                  * @var ListEntriesHelper Helper service for managing list entries
@@ -66,6 +77,9 @@ class EntityInitialiser {
                 /**
                  * EntityInitialiser constructor.
                  *
+                 «IF supportLocaleFilter»
+                 * @param RequestStack $requestStack RequestStack service instance
+                 «ENDIF»
                  «IF hasListFieldsExceptWorkflowState»
                  * @param ListEntriesHelper $listEntriesHelper Helper service for managing list entries
                  «ENDIF»
@@ -74,8 +88,15 @@ class EntityInitialiser {
                  * @param float $defaultLongitude Default longitude for geographical entities
                  «ENDIF»
                  */
-                public function __construct(«IF hasListFieldsExceptWorkflowState»ListEntriesHelper $listEntriesHelper«IF hasGeographical», «ENDIF»«ENDIF»«IF hasGeographical»$defaultLatitude, $defaultLongitude«ENDIF»)
-                {
+                public function __construct(
+                    «IF supportLocaleFilter»RequestStack $requestStack«ENDIF»«IF supportLocaleFilter && hasListFieldsExceptWorkflowState»,«ENDIF»
+                    «IF hasListFieldsExceptWorkflowState»ListEntriesHelper $listEntriesHelper«ENDIF»«IF (supportLocaleFilter || hasListFieldsExceptWorkflowState) && hasGeographical»,«ENDIF»
+                    «IF hasGeographical»$defaultLatitude,
+                    $defaultLongitude«ENDIF»
+                ) {
+                    «IF supportLocaleFilter»
+                        $this->request = $requestStack->getCurrentRequest();
+                    «ENDIF»
                     «IF hasListFieldsExceptWorkflowState»
                         $this->listEntriesHelper = $listEntriesHelper;
                     «ENDIF»
@@ -96,6 +117,9 @@ class EntityInitialiser {
                  */
                 public function init«entity.name.formatForCodeCapital»(«entity.name.formatForCodeCapital»Entity $entity)
                 {
+                    «FOR field : entity.getLanguageFieldsEntity + entity.getLocaleFieldsEntity»
+                        $entity->set«field.name.formatForCodeCapital»($this->request->getLocale());
+                    «ENDFOR»
                     «FOR field : entity.getDerivedFields.filter(DatetimeField)»
                         «field.setDefaultValue»
                     «ENDFOR»
@@ -122,11 +146,10 @@ class EntityInitialiser {
                         «ENDFOR»
                     «ENDIF»
                     «IF entity.geographical»
-
                         $entity->setLatitude($this->defaultLatitude);
                         $entity->setLongitude($this->defaultLongitude);
-                    «ENDIF»
 
+                    «ENDIF»
                     return $entity;
                 }
 
