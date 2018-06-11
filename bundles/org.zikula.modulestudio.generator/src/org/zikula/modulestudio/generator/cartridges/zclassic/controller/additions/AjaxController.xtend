@@ -2,9 +2,6 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.controller.additio
 
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.EntityTreeType
-import de.guite.modulestudio.metamodel.StringField
-import de.guite.modulestudio.metamodel.StringRole
-import de.guite.modulestudio.metamodel.TextField
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.ControllerHelperFunctions
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
@@ -542,7 +539,9 @@ class AjaxController {
         }
 
         $entityManager = $entityFactory->getObjectManager();
-        «treeOperationDetermineEntityFields»
+        $entityDisplayHelper = $this->get('«appService».entity_display_helper');
+        $titleFieldName = $entityDisplayHelper->getTitleFieldName($objectType);
+        $descriptionFieldName = $entityDisplayHelper->getDescriptionFieldName($objectType);
 
         «treeOperationSwitch»
 
@@ -575,28 +574,6 @@ class AjaxController {
 
                 return «IF targets('2.0')»$this->json«ELSE»new JsonResponse«ENDIF»($returnValue);
             }
-        }
-    '''
-
-    def private treeOperationDetermineEntityFields(Application it) '''
-        $titleFieldName = $descriptionFieldName = '';
-
-        switch ($objectType) {
-            «FOR entity : getTreeEntities»
-                case '«entity.name.formatForCode»':
-                    «val stringFields = entity.fields.filter(StringField).filter[length >= 20 && !#[StringRole.COLOUR, StringRole.COUNTRY, StringRole.LANGUAGE, StringRole.LOCALE].contains(role)]»
-                    $titleFieldName = '«IF !stringFields.empty»«stringFields.head.name.formatForCode»«ENDIF»';
-                    «val textFields = entity.fields.filter(TextField).filter[mandatory && length >= 50]»
-                    «IF !textFields.empty»
-                        $descriptionFieldName = '«textFields.head.name.formatForCode»';
-                    «ELSE»
-                        «val textStringFields = entity.fields.filter(StringField).filter[mandatory && length >= 50 && !#[StringRole.COLOUR, StringRole.COUNTRY, StringRole.LANGUAGE, StringRole.LOCALE].contains(role)]»
-                        «IF textStringFields.length > 1»
-                            $descriptionFieldName = '«textStringFields.get(1).name.formatForCode»';
-                        «ENDIF»
-                    «ENDIF»
-                    break;
-            «ENDFOR»
         }
     '''
 

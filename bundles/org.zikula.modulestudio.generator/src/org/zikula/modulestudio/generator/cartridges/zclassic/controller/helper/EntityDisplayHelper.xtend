@@ -6,6 +6,8 @@ import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.Field
 import de.guite.modulestudio.metamodel.ListField
 import de.guite.modulestudio.metamodel.NumberField
+import de.guite.modulestudio.metamodel.StringField
+import de.guite.modulestudio.metamodel.StringRole
 import de.guite.modulestudio.metamodel.TextField
 import de.guite.modulestudio.metamodel.UploadField
 import de.guite.modulestudio.metamodel.UserField
@@ -191,7 +193,8 @@ class EntityDisplayHelper {
         {
             «FOR entity : getAllEntities»
                 if ($objectType == '«entity.name.formatForCode»') {
-                    return '«IF entity.hasDisplayStringFieldsEntity»«entity.getDisplayStringFieldsEntity.head.name.formatForCode»«ENDIF»';
+                    «val stringFields = entity.fields.filter(StringField).filter[length >= 20 && !#[StringRole.COLOUR, StringRole.COUNTRY, StringRole.LANGUAGE, StringRole.LOCALE, StringRole.PASSWORD].contains(role)]»
+                    return '«IF !stringFields.empty»«stringFields.head.name.formatForCode»«ENDIF»';
                 }
             «ENDFOR»
 
@@ -211,14 +214,15 @@ class EntityDisplayHelper {
         {
             «FOR entity : getAllEntities»
                 if ($objectType == '«entity.name.formatForCode»') {
-                    «val textFields = entity.getSelfAndParentDataObjects.map[fields.filter(TextField)].flatten»
+                    «val textFields = entity.getSelfAndParentDataObjects.map[fields.filter(TextField)].flatten.filter[length >= 50]»
+                    «val stringFields = entity.getDisplayStringFieldsEntity.filter[length >= 50 && !#[StringRole.COLOUR, StringRole.COUNTRY, StringRole.LANGUAGE, StringRole.LOCALE].contains(role)]»
                     «IF !textFields.empty»
                         return '«textFields.head.name.formatForCode»';
-                    «ELSEIF entity.hasDisplayStringFieldsEntity»
-                        «IF entity.getDisplayStringFieldsEntity.size > 1»
-                            return '«entity.getDisplayStringFieldsEntity.get(1).name.formatForCode»';
+                    «ELSEIF !stringFields.empty»
+                        «IF stringFields.size > 1»
+                            return '«stringFields.get(1).name.formatForCode»';
                         «ELSE»
-                            return '«entity.getDisplayStringFieldsEntity.head.name.formatForCode»';
+                            return '«stringFields.head.name.formatForCode»';
                         «ENDIF»
                     «ELSE»
                         return '';
