@@ -87,15 +87,12 @@ class ControllerLayer {
                 «adminAndUserImpl(action, true)»
             «ENDFOR»
             «IF hasViewAction»
-
                 «new MassHandling().generate(it, true)»
             «ENDIF»
             «IF loggable»
-
                 «new LoggableHistory().generate(it, true)»
             «ENDIF»
             «IF hasEditAction && app.needsInlineEditing»
-
                 «new InlineRedirect().generate(it, true)»
             «ENDIF»
         }
@@ -175,6 +172,9 @@ class ControllerLayer {
                 «IF loggable && hasDisplayAction»
                     «new LoggableDeleted().generate(it)»
                 «ENDIF»
+                «IF loggable»
+                    «new LoggableHistory().generate(it, false)»
+                «ENDIF»
                 «FOR action : getAllEntityActions.filter(DisplayAction)»
                     «adminAndUserImpl(action, false)»
                 «ENDFOR»
@@ -182,23 +182,19 @@ class ControllerLayer {
                 «IF loggable && hasDisplayAction»
                     «new LoggableDeleted().generate(it)»
                 «ENDIF»
+                «IF loggable»
+                    «new LoggableHistory().generate(it, false)»
+                «ENDIF»
                 «FOR action : getAllEntityActions»
                     «adminAndUserImpl(action, false)»
                 «ENDFOR»
             «ENDIF»
             «IF hasViewAction»
-
                 «new MassHandling().generate(it, false)»
             «ENDIF»
-            «IF loggable»
-
-                «new LoggableHistory().generate(it, false)»
-            «ENDIF»
             «IF hasEditAction && app.needsInlineEditing»
-
                 «new InlineRedirect().generate(it, false)»
             «ENDIF»
-
             // feel free to add your own controller methods here
         }
     '''
@@ -207,5 +203,6 @@ class ControllerLayer {
         «actionHelper.generate(it, action, isBase, true)»
 
         «actionHelper.generate(it, action, isBase, false)»
+
     '''
 }

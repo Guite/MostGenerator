@@ -17,6 +17,7 @@ class LoggableDeleted {
         «displayDeletedSingleAction(false)»
 
         «restoreDeletedEntity»
+
     '''
 
     def private displayDeletedSingleAction(Entity it, Boolean isAdmin) '''

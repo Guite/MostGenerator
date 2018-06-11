@@ -23,6 +23,7 @@ class InlineRedirect {
                 return parent::handleInlineRedirectAction($idPrefix, $commandName, $id);
             «ENDIF»
         }
+
     '''
 
     def private handleInlineRedirectDocBlock(Entity it, Boolean isBase) '''

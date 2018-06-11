@@ -100,7 +100,7 @@ class Annotations {
     def private actionRouteRequirementsForSingleEntity(Entity it, Action action) {
         var output = ''
         if (hasSluggableFields && !(action instanceof EditAction)) {
-            output = '''"slug" = "[^/.]+"'''
+            output = '''"slug" = "«IF tree != EntityTreeType.NONE»[^.]+«ELSE»[^/.]+«ENDIF»"'''
             if (slugUnique) {
                 return output
             }
