@@ -42,7 +42,7 @@ class LoggableHistory {
              «ENDIF»
              * @param boolean $isAdmin Whether the admin area is used or not
              */
-            protected function loggableHistoryActionInternal(Request $request, $id = 0, $isAdmin = false)
+            protected function loggableHistoryActionInternal(Request $request, «IF hasSluggableFields && slugUnique»$slug = ''«ELSE»$id = 0«ENDIF», $isAdmin = false)
             {
                 «loggableHistoryBaseImpl»
             }
