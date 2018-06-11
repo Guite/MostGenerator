@@ -362,7 +362,7 @@ class Display {
                 {% set allParents = «pluginPrefix»_treeSelection(objectType='«objName»', node=«objName», target='allParents') %}
                 {% if allParents is not null and allParents is iterable and allParents|length > 0 %}
                     <h4>{{ __('All parents') }}</h4>
-                    {{ relatives.list_relatives(allParents) }}
+                    {{ relatives.list_relatives(allParents, routeArea) }}
                 {% endif %}
             {% endif %}
             {% if directParent is not defined or directParent == true %}
@@ -379,14 +379,14 @@ class Display {
             {% set allChildren = «pluginPrefix»_treeSelection(objectType='«objName»', node=«objName», target='allChildren') %}
             {% if allChildren is not null and allChildren is iterable and allChildren|length > 0 %}
                 <h4>{{ __('All children') }}</h4>
-                {{ relatives.list_relatives(allChildren) }}
+                {{ relatives.list_relatives(allChildren, routeArea) }}
             {% endif %}
         {% endif %}
         {% if directChildren is not defined or directChildren == true %}
             {% set directChildren = «pluginPrefix»_treeSelection(objectType='«objName»', node=«objName», target='directChildren') %}
             {% if directChildren is not null and directChildren is iterable and directChildren|length > 0 %}
                 <h4>{{ __('Direct children') }}</h4>
-                {{ relatives.list_relatives(directChildren) }}
+                {{ relatives.list_relatives(directChildren, routeArea) }}
             {% endif %}
         {% endif %}
         {% if «objName».lvl > 0 %}
@@ -394,25 +394,25 @@ class Display {
                 {% set predecessors = «pluginPrefix»_treeSelection('«objName»', node=«objName», target='predecessors') %}
                 {% if predecessors is not null and predecessors is iterable and predecessors|length > 0 %}
                     <h4>{{ __('Predecessors') }}</h4>
-                    {{ relatives.list_relatives(predecessors) }}
+                    {{ relatives.list_relatives(predecessors, routeArea) }}
                 {% endif %}
             {% endif %}
             {% if successors is not defined or successors == true %}
                 {% set successors = «pluginPrefix»_treeSelection(objectType='«objName»', node=«objName», target='successors') %}
                 {% if successors is not null and successors is iterable and successors|length > 0 %}
                     <h4>{{ __('Successors') }}</h4>
-                    {{ relatives.list_relatives(successors) }}
+                    {{ relatives.list_relatives(successors, routeArea) }}
                 {% endif %}
             {% endif %}
             {% if preandsuccessors is not defined or preandsuccessors == true %}
                 {% set preandsuccessors = «pluginPrefix»_treeSelection(objectType='«objName»', node=«objName», target='preandsuccessors') %}
                 {% if preandsuccessors is not null and preandsuccessors is iterable and preandsuccessors|length > 0 %}
                     <h4>{{ __('Siblings') }}</h4>
-                    {{ relatives.list_relatives(preandsuccessors) }}
+                    {{ relatives.list_relatives(preandsuccessors, routeArea) }}
                 {% endif %}
             {% endif %}
         {% endif %}
-        {% macro list_relatives(items) %}
+        {% macro list_relatives(items, routeArea) %}
             «nodeLoop(appName, 'items')»
         {% endmacro %}
     '''
