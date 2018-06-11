@@ -228,18 +228,18 @@ class View {
                         </th>
                     {% endif %}
                     «IF #[ItemActionsPosition.START, ItemActionsPosition.BOTH].contains(app.viewActionsPosition)»
-                        <th id="hItemActionsStart" scope="col" class="«IF !app.targets('2.0')»z-order-«ENDIF»unsorted z-w02">{{ __('Actions') }}</th>
+                        <th id="hItemActionsStart" scope="col" class="«IF !app.targets('2.0')»z-order-unsorted «ENDIF»z-w02">{{ __('Actions') }}</th>
                     «ENDIF»
                     «IF hasSortableFields»
                         {% if activateSortable %}
-                            <th id="hSortable" scope="col" class="«IF !app.targets('2.0')»z-order-«ENDIF»unsorted z-w02">{{ __('Sorting') }}</th>
+                            <th id="hSortable" scope="col" class="«IF !app.targets('2.0')»z-order-unsorted «ENDIF»z-w02">{{ __('Sorting') }}</th>
                         {% endif %}
                     «ENDIF»
                     «FOR field : listItemsFields»«field.headerLine»«ENDFOR»
                     «FOR relation : listItemsIn»«relation.headerLine(false)»«ENDFOR»
                     «FOR relation : listItemsOut»«relation.headerLine(true)»«ENDFOR»
                     «IF #[ItemActionsPosition.END, ItemActionsPosition.BOTH].contains(app.viewActionsPosition)»
-                        <th id="hItemActionsEnd" scope="col" class="«IF !app.targets('2.0')»z-order-«ENDIF»unsorted z-w02">{{ __('Actions') }}</th>
+                        <th id="hItemActionsEnd" scope="col" class="«IF !app.targets('2.0')»z-order-unsorted «ENDIF»z-w02">{{ __('Actions') }}</th>
                     «ENDIF»
                 </tr>
                 </thead>
