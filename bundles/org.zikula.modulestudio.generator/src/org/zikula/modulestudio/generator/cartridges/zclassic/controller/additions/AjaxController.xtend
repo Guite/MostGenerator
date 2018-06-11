@@ -347,17 +347,17 @@ class AjaxController {
                 case '«entity.name.formatForCode»':
                     $repository = $this->get('«appService».entity_factory')->getRepository($objectType);
                     switch ($fieldName) {
-                    «FOR uniqueField : uniqueFields»
-                        case '«uniqueField.name.formatForCode»':
+                        «FOR uniqueField : uniqueFields»
+                            case '«uniqueField.name.formatForCode»':
                                 $result = !$repository->detectUniqueState('«uniqueField.name.formatForCode»', $value, $exclude);
                                 break;
-                    «ENDFOR»
-                    «IF entity.hasSluggableFields && entity.slugUnique»
-                        case 'slug':
+                        «ENDFOR»
+                        «IF entity.hasSluggableFields && entity.slugUnique»
+                            case 'slug':
                                 $entity = $repository->selectBySlug($value, false, $exclude);
                                 $result = null !== $entity && isset($entity['slug']);
                                 break;
-                    «ENDIF»
+                        «ENDIF»
                     }
                     break;
             «ENDIF»
@@ -390,8 +390,8 @@ class AjaxController {
                 «val uniqueFields = entity.getUniqueDerivedFields.filter[!primaryKey]»
                 «IF !uniqueFields.empty || (entity.hasSluggableFields && entity.slugUnique)»
                     case '«entity.name.formatForCode»':
-                            $uniqueFields = [«FOR uniqueField : uniqueFields SEPARATOR ', '»'«uniqueField.name.formatForCode»'«ENDFOR»«IF entity.hasSluggableFields && entity.slugUnique»«IF !uniqueFields.empty», «ENDIF»'slug'«ENDIF»];
-                            break;
+                        $uniqueFields = [«FOR uniqueField : uniqueFields SEPARATOR ', '»'«uniqueField.name.formatForCode»'«ENDFOR»«IF entity.hasSluggableFields && entity.slugUnique»«IF !uniqueFields.empty», «ENDIF»'slug'«ENDIF»];
+                        break;
                 «ENDIF»
             «ENDFOR»
         }
@@ -612,30 +612,30 @@ class AjaxController {
 
         switch ($op) {
             case 'addRootNode':
-                            «treeOperationAddRootNode»
+                «treeOperationAddRootNode»
 
-                            $logger->notice('{app}: User {user} added a new root node in the {entity} tree.', $logArgs);
-                            break;
+                $logger->notice('{app}: User {user} added a new root node in the {entity} tree.', $logArgs);
+                break;
             case 'addChildNode':
-                            «treeOperationAddChildNode»
+                «treeOperationAddChildNode»
 
-                            $logger->notice('{app}: User {user} added a new child node in the {entity} tree.', $logArgs);
-                            break;
+                $logger->notice('{app}: User {user} added a new child node in the {entity} tree.', $logArgs);
+                break;
             case 'deleteNode':
-                            «treeOperationDeleteNode»
+                «treeOperationDeleteNode»
 
-                            $logger->notice('{app}: User {user} deleted a node from the {entity} tree.', $logArgs);
-                            break;
+                $logger->notice('{app}: User {user} deleted a node from the {entity} tree.', $logArgs);
+                break;
             case 'moveNode':
-                            «treeOperationMoveNode»
+                «treeOperationMoveNode»
 
-                            $logger->notice('{app}: User {user} moved a node in the {entity} tree.', $logArgs);
-                            break;
+                $logger->notice('{app}: User {user} moved a node in the {entity} tree.', $logArgs);
+                break;
             case 'moveNodeTo':
-                            «treeOperationMoveNodeTo»
+                «treeOperationMoveNodeTo»
 
-                            $logger->notice('{app}: User {user} moved a node in the {entity} tree.', $logArgs);
-                            break;
+                $logger->notice('{app}: User {user} moved a node in the {entity} tree.', $logArgs);
+                break;
         }
     '''
 
