@@ -43,6 +43,7 @@ class TreeFunctions {
     '''
 
     def private initTree(Application it) '''
+        var trees;
         var tree;
         var objectType;
         var rootId;
@@ -58,7 +59,7 @@ class TreeFunctions {
             hasDisplay = hasDisplayAction;
             hasEdit = hasEditAction;
 
-            tree = jQuery('#' + idPrefix).jstree({
+            trees[idPrefix] = jQuery('#' + idPrefix).jstree({
                 'core': {
                     'multiple': false,
                     'check_callback': true
@@ -78,6 +79,7 @@ class TreeFunctions {
                 },
                 'plugins': [ 'contextmenu', 'dnd', 'search', 'state', 'wholerow'«/*, 'types' */» ]
             });
+            tree = trees[idPrefix];
             «/*
             tree.on('open_node.jstree', function (event, data) {
                 if (data.instance.is_leaf(data.node)) {
@@ -102,7 +104,7 @@ class TreeFunctions {
             tree.on('move_node.jstree', function (event, data) {
                 var node = data.node;
                 var parentId = data.parent;
-                var parentNode = tree.jstree('get_node', parentId, false);
+                var parentNode = trees[idPrefix].jstree('get_node', parentId, false);
 
                 «vendorAndName»TreeSave(node, parentNode, 'bottom');
             });
@@ -110,11 +112,11 @@ class TreeFunctions {
             // Expand and collapse
             jQuery('#' + idPrefix + 'Expand').click(function (event) {
                 event.preventDefault();
-                tree.jstree(true).open_all(null, 500);
+                trees[idPrefix].jstree(true).open_all(null, 500);
             });
             jQuery('#' + idPrefix + 'Collapse').click(function (event) {
                 event.preventDefault();
-                tree.jstree(true).close_all(null, 500);
+                trees[idPrefix].jstree(true).close_all(null, 500);
             });
 
             // Search
@@ -124,14 +126,16 @@ class TreeFunctions {
                     clearTimeout(searchStartDelay);
                 }
                 searchStartDelay = setTimeout(function () {
-                    var v = jQuery('#' + idPrefix + 'SearchTerm').val();
-                    tree.jstree(true).search(v);
+                    var searchTerm;
+
+                    searchTerm = jQuery('#' + idPrefix + 'SearchTerm').val();
+                    trees[idPrefix].jstree(true).search(searchTerm);
                 }, 250);
             });
 
             // allow redirecting if a link has been clicked
             tree.find('ul').on('click', 'li.jstree-node a', function (event) {
-                tree.jstree('save_state');
+                trees[idPrefix].jstree('save_state');
                 document.location.href = jQuery(this).attr('href');
             });
         }
@@ -147,10 +151,12 @@ class TreeFunctions {
     '''
 
     def private initTreeNodesImpl(Application it) '''
+        var idPrefix;
         var currentNode;
         var isRoot;
 
-        currentNode = tree.jstree('get_node', theNode, true);
+        idPrefix = 'pageTree' + theNode.id.split('_')[0].replace('tree', '').replace('node', '');
+        currentNode = trees[idPrefix].jstree('get_node', theNode, true);
         isRoot = (currentNode.attr('id') === 'tree' + rootId + 'node_' + rootId);
         nodeEntityId = currentNode.attr('id').replace('tree' + rootId + 'node_', '');
 
@@ -365,6 +371,7 @@ class TreeFunctions {
                 }).removeClass('hidden');
             }
 
+            trees = [];
             if (jQuery('.tree-container').length > 0) {
                 var treeContainer;
                 var idPrefix;
