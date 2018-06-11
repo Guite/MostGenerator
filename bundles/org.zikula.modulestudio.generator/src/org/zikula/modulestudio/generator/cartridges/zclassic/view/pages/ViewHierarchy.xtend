@@ -104,15 +104,21 @@ class ViewHierarchy {
         <div class="btn-toolbar" role="toolbar" aria-label="category button toolbar">
             <div class="btn-group btn-group-sm" role="group" aria-label="«name.formatForDB» buttons">
                 <button type="button" id="{{ idPrefix }}Expand" class="btn btn-info" title="{{ __('Expand all nodes') }}"><i class="fa fa-expand"></i> {{ __('Expand all') }}</button>
-                <button type="button" id="{{ idPrefix }}Collapse"class="btn btn-info" title="{{ __('Collapse all nodes') }}"><i class="fa fa-compress"></i> {{ __('Collapse all') }}</button>
+                <button type="button" id="{{ idPrefix }}Collapse" class="btn btn-info" title="{{ __('Collapse all nodes') }}"><i class="fa fa-compress"></i> {{ __('Collapse all') }}</button>
             </div>
         </div>
-        <div id="{{ idPrefix }}" class="tree-container" data-object-type="«name.formatForCode»" data-root-id="{{ rootId|e('html_attr') }}" data-has-display="«hasDisplayAction.displayBool»" data-has-edit="«(hasEditAction && !readOnly).displayBool»">
-            {% if hasNodes %}
-                <ul id="itemTree{{ rootId|e('html_attr') }}">
-                    {{ «appName.formatForDB»_treeData(objectType='«name.formatForCode»', tree=items, routeArea=routeArea, rootId=rootId) }}
-                </ul>
-            {% endif %}
+        <div class="clearfix">
+            <div id="{{ idPrefix }}" class="tree-container" data-object-type="«name.formatForCode»" data-root-id="{{ rootId|e('html_attr') }}" data-has-display="«hasDisplayAction.displayBool»" data-has-edit="«(hasEditAction && !readOnly).displayBool»">
+                {% if hasNodes %}
+                    <ul id="itemTree{{ rootId|e('html_attr') }}">
+                        {{ «appName.formatForDB»_treeData(objectType='«name.formatForCode»', tree=items, routeArea=routeArea, rootId=rootId) }}
+                    </ul>
+                {% endif %}
+            </div>
+            <p>&nbsp;</p>
+            <p>&nbsp;</p>
+            <p>&nbsp;</p>
+            <p>&nbsp;</p>
         </div>
     '''
 }
