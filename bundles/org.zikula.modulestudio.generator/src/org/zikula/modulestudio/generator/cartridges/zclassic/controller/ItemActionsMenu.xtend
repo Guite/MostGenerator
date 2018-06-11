@@ -76,7 +76,7 @@ class ItemActionsMenu {
                 «IF hasLoggable»
 
                     // return empty menu for preview of deleted items
-                    $request = $this->container->get('request');
+                    $request = $this->container->get('request_stack')->getMasterRequest();
                     $routeName = $request->get('_route');
                     if (stristr($routeName, 'displaydeleted')) {
                         return $menu;
