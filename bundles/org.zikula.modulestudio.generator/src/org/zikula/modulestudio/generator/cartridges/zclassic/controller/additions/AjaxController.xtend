@@ -585,17 +585,17 @@ class AjaxController {
             «FOR entity : getTreeEntities»
                 case '«entity.name.formatForCode»':
                     «val stringFields = entity.fields.filter(StringField).filter[length >= 20 && !#[StringRole.COLOUR, StringRole.COUNTRY, StringRole.LANGUAGE, StringRole.LOCALE].contains(role)]»
-                        $titleFieldName = '«IF !stringFields.empty»«stringFields.head.name.formatForCode»«ENDIF»';
-                        «val textFields = entity.fields.filter(TextField).filter[mandatory && length >= 50]»
-                        «IF !textFields.empty»
-                            $descriptionFieldName = '«textFields.head.name.formatForCode»';
-                        «ELSE»
-                            «val textStringFields = entity.fields.filter(StringField).filter[mandatory && length >= 50 && !#[StringRole.COLOUR, StringRole.COUNTRY, StringRole.LANGUAGE, StringRole.LOCALE].contains(role)]»
-                            «IF textStringFields.length > 1»
-                                $descriptionFieldName = '«textStringFields.get(1).name.formatForCode»';
-                            «ENDIF»
+                    $titleFieldName = '«IF !stringFields.empty»«stringFields.head.name.formatForCode»«ENDIF»';
+                    «val textFields = entity.fields.filter(TextField).filter[mandatory && length >= 50]»
+                    «IF !textFields.empty»
+                        $descriptionFieldName = '«textFields.head.name.formatForCode»';
+                    «ELSE»
+                        «val textStringFields = entity.fields.filter(StringField).filter[mandatory && length >= 50 && !#[StringRole.COLOUR, StringRole.COUNTRY, StringRole.LANGUAGE, StringRole.LOCALE].contains(role)]»
+                        «IF textStringFields.length > 1»
+                            $descriptionFieldName = '«textStringFields.get(1).name.formatForCode»';
                         «ENDIF»
-                        break;
+                    «ENDIF»
+                    break;
             «ENDFOR»
         }
     '''
@@ -640,6 +640,7 @@ class AjaxController {
     '''
 
     def private treeOperationAddRootNode(Application it) '''
+        $entity = $this->get('zikula_content_module.entity_factory')->$createMethod();
         if (!empty($titleFieldName)) {
             $entity[$titleFieldName] = $this->__('New root node');
         }
