@@ -122,7 +122,7 @@ class ComposerFile {
     '''
 
     def private dependency(Application it, ReferredApplication dependency) '''
-        "«dependency.name»:>=«dependency.minVersion»,<=«dependency.maxVersion»": "«IF null !== dependency.documentation && !dependency.documentation.empty»«dependency.documentation.formatForDisplay»«ELSE»«dependency.name» application«ENDIF»"
+        "«dependency.name»:>=«dependency.minVersion»«/*,<=«dependency.maxVersion»*/»": "«IF null !== dependency.documentation && !dependency.documentation.empty»«dependency.documentation.formatForDisplay»«ELSE»«dependency.name» application«ENDIF»"
     '''
 
     def private generateCapabilities(Application it) '''
