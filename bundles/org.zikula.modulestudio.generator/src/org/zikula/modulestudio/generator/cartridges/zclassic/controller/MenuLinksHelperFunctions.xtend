@@ -25,7 +25,7 @@ class MenuLinksHelperFunctions {
             if ($routeArea == 'admin' && $this->permissionApi->hasPermission($this->getBundleName() . '::', '::', ACCESS_ADMIN)) {
                 $links[] = [
                     'url' => $this->router->generate('«appName.formatForDB»_config_config'),
-                    'text' => «translate('Configuration')»,
+                    'text' => «translate('Settings')»,
                     'title' => «translate('Manage settings for this application')»,
                     'icon' => 'wrench'
                 ];
