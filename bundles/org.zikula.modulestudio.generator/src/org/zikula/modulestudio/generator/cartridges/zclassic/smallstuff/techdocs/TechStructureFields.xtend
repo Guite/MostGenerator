@@ -565,7 +565,7 @@ class TechStructureFields {
     def private dispatch remarks(ListField it) {
         val result = commonRemarks
         if (language == 'de') {
-            result += 'Die Liste wird durch ' +
+            result += 'Die Liste wird durch ' + (
                 if (multiple) {
                     if (expanded) 'Checkboxen'
                     else 'eine mehrwertige Dropdownliste'
@@ -573,12 +573,12 @@ class TechStructureFields {
                     if (expanded) 'Radio Buttons'
                     else 'eine einwertige Dropdownliste'
                 }
-            + ' repräsentiert.'
+            ) + ' repräsentiert.'
             result += 'Verfügbare Einträge: <ul>'
                 + items.map['<li>' + name.formatForDisplayCapital + ' (' + value + ')</li>'].join
                 + '</ul>'
         } else {
-            result += 'The list is represented by ' +
+            result += 'The list is represented by ' + (
                 if (multiple) {
                     if (expanded) 'checkboxes'
                     else 'a multi-valued dropdown list'
@@ -586,7 +586,7 @@ class TechStructureFields {
                     if (expanded) 'radio buttons'
                     else 'a single-valued dropdown list'
                 }
-            + '.'
+            ) + '.'
             result += 'Available entries: <ul>'
                 + items.map['<li>' + name.formatForDisplayCapital + ' (' + value + ')</li>'].join
                 + '</ul>'
