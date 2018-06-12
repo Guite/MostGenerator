@@ -46,16 +46,14 @@ class TreeFunctions {
         var trees;
         var tree;
         var objectType;
-        var rootId;
         var hasDisplay;
         var hasEdit;
 
         /**
          * Initialise a tree.
          */
-        function «vendorAndName»InitTree(idPrefix, theObjectType, theRootId, hasDisplayAction, hasEditAction) {
+        function «vendorAndName»InitTree(idPrefix, theObjectType, rootId, hasDisplayAction, hasEditAction) {
             objectType = theObjectType;
-            rootId = theRootId;
             hasDisplay = hasDisplayAction;
             hasEdit = hasEditAction;
 
@@ -151,12 +149,12 @@ class TreeFunctions {
     '''
 
     def private initTreeNodesImpl(Application it) '''
-        var idPrefix;
+        var rootId;
         var currentNode;
         var isRoot;
 
-        idPrefix = 'pageTree' + theNode.id.split('_')[0].replace('tree', '').replace('node', '');
-        currentNode = trees[idPrefix].jstree('get_node', theNode, true);
+        rootId = theNode.id.split('_')[0].replace('tree', '').replace('node', '');
+        currentNode = trees['pageTree' + rootId].jstree('get_node', theNode, true);
         isRoot = (currentNode.attr('id') === 'tree' + rootId + 'node_' + rootId);
         nodeEntityId = currentNode.attr('id').replace('tree' + rootId + 'node_', '');
 
