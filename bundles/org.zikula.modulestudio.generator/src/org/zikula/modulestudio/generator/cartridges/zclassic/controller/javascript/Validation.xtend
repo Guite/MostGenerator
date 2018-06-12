@@ -74,6 +74,7 @@ class Validation {
 
                 function «vendorAndName»ValidateDatetimePast(val) {
                     var valStr, cmpVal;
+
                     valStr = new String(val);
                     cmpVal = «vendorAndName»ReadDate(valStr, true);
 
@@ -84,6 +85,7 @@ class Validation {
 
                 function «vendorAndName»ValidateDatetimeFuture(val) {
                     var valStr, cmpVal;
+
                     valStr = new String(val);
                     cmpVal = «vendorAndName»ReadDate(valStr, true);
 
@@ -97,6 +99,7 @@ class Validation {
 
                 function «vendorAndName»ValidateDatePast(val) {
                     var valStr, cmpVal;
+
                     valStr = new String(val);
                     cmpVal = «vendorAndName»ReadDate(valStr, false);
 
@@ -107,6 +110,7 @@ class Validation {
 
                 function «vendorAndName»ValidateDateFuture(val) {
                     var valStr, cmpVal;
+
                     valStr = new String(val);
                     cmpVal = «vendorAndName»ReadDate(valStr, false);
 
@@ -141,10 +145,19 @@ class Validation {
 
             function «vendorAndName»ValidateDateRange«entity.name.formatForCodeCapital»(val) {
                 var cmpVal, cmpVal2, result;
+
                 «val startFieldName = startDateField.name.formatForCode»
                 «val endFieldName = endDateField.name.formatForCode»
-                cmpVal = «vendorAndName»ReadDate(jQuery("[id$='«startFieldName»']").val(), «(startDateField.isDateTimeField).displayBool»);
-                cmpVal2 = «vendorAndName»ReadDate(jQuery("[id$='«endFieldName»']").val(), «(endDateField.isDateTimeField).displayBool»);
+                «IF startDateField.isDateTimeField»
+                    cmpVal = jQuery("[id$='«startFieldName»_date']").val() + ' ' + jQuery("[id$='«startFieldName»_time']").val();
+                «ELSE»
+                    cmpVal = jQuery("[id$='«startFieldName»']").val();
+                «ENDIF»
+                «IF endDateField.isDateTimeField»
+                    cmpVal2 = jQuery("[id$='«endFieldName»_date']").val() + ' ' + jQuery("[id$='«endFieldName»_time']").val();
+                «ELSE»
+                    cmpVal2 = jQuery("[id$='«endFieldName»']").val();
+                «ENDIF»
 
                 if (typeof cmpVal == 'undefined' && typeof cmpVal2 == 'undefined') {
                     result = true;
@@ -161,10 +174,19 @@ class Validation {
 
             function «vendorAndName»ValidateDateRange«varContainer.name.formatForCodeCapital»(val) {
                 var cmpVal, cmpVal2, result;
+
                 «val startFieldName = startDateField.name.formatForCode»
                 «val endFieldName = endDateField.name.formatForCode»
-                cmpVal = «vendorAndName»ReadDate(jQuery("[id$='«startFieldName»']").val(), «(startDateField.isDateTimeField).displayBool»);
-                cmpVal2 = «vendorAndName»ReadDate(jQuery("[id$='«endFieldName»']").val(), «(endDateField.isDateTimeField).displayBool»);
+                «IF startDateField.isDateTimeField»
+                    cmpVal = jQuery("[id$='«startFieldName»_date']").val() + ' ' + jQuery("[id$='«startFieldName»_time']").val();
+                «ELSE»
+                    cmpVal = jQuery("[id$='«startFieldName»']").val();
+                «ENDIF»
+                «IF endDateField.isDateTimeField»
+                    cmpVal2 = jQuery("[id$='«endFieldName»_date']").val() + ' ' + jQuery("[id$='«endFieldName»_time']").val();
+                «ELSE»
+                    cmpVal2 = jQuery("[id$='«endFieldName»']").val();
+                «ENDIF»
 
                 if (typeof cmpVal == 'undefined' && typeof cmpVal2 == 'undefined') {
                     result = true;
@@ -279,7 +301,7 @@ class Validation {
                             } else {
                                 document.getElementById(jQuery(this).attr('id')).setCustomValidity('');
                             }
-                		}
+                        }
                     }
                 });
             «ENDFOR»
@@ -300,7 +322,7 @@ class Validation {
                             } else {
                                 document.getElementById(jQuery(this).attr('id')).setCustomValidity('');
                             }
-                		}
+                        }
                     }
                 });
             «ENDFOR»
