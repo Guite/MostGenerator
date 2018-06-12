@@ -114,7 +114,7 @@ class Installer {
                             $entityManager->persist($registry);
                             $entityManager->flush();
                         } catch (\Exception $exception) {
-                            $this->addFlash('error', $this->__f('Error! Could not create a category registry for the %entity% entity.', ['%entity%' => '«entity.name.formatForDisplay»']));
+                            $this->addFlash('warning', $this->__f('Error! Could not create a category registry for the %entity% entity.', ['%entity%' => '«entity.name.formatForDisplay»']));
                             $logger->error('{app}: User {user} could not create a category registry for {entities} during installation. Error details: {errorMessage}.', ['app' => '«appName»', 'user' => $userName, 'entities' => '«entity.nameMultiple.formatForDisplay»', 'errorMessage' => $exception->getMessage()]);
                         }
                         $categoryRegistryIdsPerEntity['«entity.name.formatForCode»'] = $registry->getId();
