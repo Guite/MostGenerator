@@ -89,8 +89,6 @@ class Installer {
             «ENDIF»
             «IF hasCategorisableEntities»
 
-                $categoryRegistryIdsPerEntity = [];
-
                 // add default entry for category registry (property named Main)
                 $categoryHelper = new \«appNamespace»\Helper\CategoryHelper(
                     $this->container->get('translator.default'),
@@ -101,24 +99,27 @@ class Installer {
                     $this->container->get('zikula_categories_module.api.category_permission')
                 );
                 $categoryGlobal = $this->container->get('zikula_categories_module.category_repository')->findOneBy(['name' => 'Global']);
-                $entityManager = $this->container->get('«entityManagerService»');
-                «FOR entity : getCategorisableEntities»
+                if ($categoryGlobal) {
+                    $categoryRegistryIdsPerEntity = [];
+                    $entityManager = $this->container->get('«entityManagerService»');
+                    «FOR entity : getCategorisableEntities»
 
-                    $registry = new CategoryRegistryEntity();
-                    $registry->setModname('«appName»');
-                    $registry->setEntityname('«entity.name.formatForCodeCapital»Entity');
-                    $registry->setProperty($categoryHelper->getPrimaryProperty('«entity.name.formatForCodeCapital»'));
-                    $registry->setCategory($categoryGlobal);
+                        $registry = new CategoryRegistryEntity();
+                        $registry->setModname('«appName»');
+                        $registry->setEntityname('«entity.name.formatForCodeCapital»Entity');
+                        $registry->setProperty($categoryHelper->getPrimaryProperty('«entity.name.formatForCodeCapital»'));
+                        $registry->setCategory($categoryGlobal);
 
-                    try {
-                        $entityManager->persist($registry);
-                        $entityManager->flush();
-                    } catch (\Exception $exception) {
-                        $this->addFlash('error', $this->__f('Error! Could not create a category registry for the %entity% entity.', ['%entity%' => '«entity.name.formatForDisplay»']));
-                        $logger->error('{app}: User {user} could not create a category registry for {entities} during installation. Error details: {errorMessage}.', ['app' => '«appName»', 'user' => $userName, 'entities' => '«entity.nameMultiple.formatForDisplay»', 'errorMessage' => $exception->getMessage()]);
-                    }
-                    $categoryRegistryIdsPerEntity['«entity.name.formatForCode»'] = $registry->getId();
-                «ENDFOR»
+                        try {
+                            $entityManager->persist($registry);
+                            $entityManager->flush();
+                        } catch (\Exception $exception) {
+                            $this->addFlash('error', $this->__f('Error! Could not create a category registry for the %entity% entity.', ['%entity%' => '«entity.name.formatForDisplay»']));
+                            $logger->error('{app}: User {user} could not create a category registry for {entities} during installation. Error details: {errorMessage}.', ['app' => '«appName»', 'user' => $userName, 'entities' => '«entity.nameMultiple.formatForDisplay»', 'errorMessage' => $exception->getMessage()]);
+                        }
+                        $categoryRegistryIdsPerEntity['«entity.name.formatForCode»'] = $registry->getId();
+                    «ENDFOR»
+                }
             «ENDIF»
 
             // initialisation successful
