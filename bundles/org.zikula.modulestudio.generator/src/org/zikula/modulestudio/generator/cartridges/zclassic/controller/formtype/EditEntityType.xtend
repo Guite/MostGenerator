@@ -646,7 +646,7 @@ class EditEntityType {
                     'expanded' => «isExpanded.displayBool»,
                     'query_builder' => $queryBuilder,
                     «IF /*outgoing && */nullable»
-                        «IF !isManySide(outgoing)»
+                        «IF !isManySide(outgoing) && !isExpanded/* expanded uses default: "None" */»
                             'placeholder' => $this->__('Please choose an option'),
                         «ENDIF»
                         'required' => false,
