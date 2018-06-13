@@ -265,7 +265,9 @@ class Association {
         val joinColumnsLocal = { if (useTarget) getSourceFields else getTargetFields }
         val joinColumnsForeign = { if (useTarget) getTargetFields else getSourceFields }
         val foreignTableName = fullJoinTableName(useTarget, joinedEntityForeign)
-        if (joinColumnsForeign.containsDefaultIdField(joinedEntityForeign) && joinColumnsLocal.containsDefaultIdField(joinedEntityLocal)
+        if (it instanceof OneToOneRelationship && !bidirectional) {
+            ''' * «joinColumn(it, joinColumnsForeign.head, joinedEntityForeign.getPrimaryKey.name.formatForDB, useTarget)»'''
+        } else if (joinColumnsForeign.containsDefaultIdField(joinedEntityForeign) && joinColumnsLocal.containsDefaultIdField(joinedEntityLocal)
            && !unique && nullable && onDelete.empty) ''' * @ORM\JoinTable(name="«foreignTableName»")'''
         else ''' * @ORM\JoinTable(name="«foreignTableName»",
 «joinTableDetails(useTarget)»

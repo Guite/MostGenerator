@@ -20,6 +20,7 @@ import de.guite.modulestudio.metamodel.FieldDisplayType
 import de.guite.modulestudio.metamodel.HookProviderMode
 import de.guite.modulestudio.metamodel.IntegerField
 import de.guite.modulestudio.metamodel.IpAddressScope
+import de.guite.modulestudio.metamodel.JoinRelationship
 import de.guite.modulestudio.metamodel.ListField
 import de.guite.modulestudio.metamodel.ManyToOneRelationship
 import de.guite.modulestudio.metamodel.NumberField
@@ -387,8 +388,9 @@ class ModelExtensions {
 
     /**
      * Returns a list of all editable fields of the given entity.
-     * At the moment instances of ArrayField and ObjectField are excluded.
+     * At the moment instances of ObjectField are excluded.
      * Also version fields are excluded as these are incremented automatically.
+     * In addition all fields which are used as join columns are excluded as well.
      */
     def getEditableFields(DataObject it) {
         var fields = getDerivedFields.filter[name != 'workflowState']
@@ -396,6 +398,16 @@ class ModelExtensions {
             fields = fields.filter[!primaryKey]
         }
         var filteredFields = fields.filter[!isVersionField].exclude(ObjectField)
+        val joinFieldNames = newArrayList
+        for (relation : incoming.filter(JoinRelationship).filter[targetField != 'id']) {
+            joinFieldNames += relation.targetField
+        }
+        for (relation : outgoing.filter(JoinRelationship).filter[sourceField != 'id']) {
+            joinFieldNames += relation.sourceField
+        }
+
+        filteredFields = filteredFields.filter(DerivedField).filter[!joinFieldNames.contains(name)]
+
         filteredFields.toList as List<DerivedField>
     }
 
