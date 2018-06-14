@@ -83,9 +83,7 @@ class Layout {
             {{ pageAddAsset('stylesheet', zasset('@«appName»:css/custom.css'), 120) }}
             «IF needsJQueryUI»
                 {{ pageAddAsset('stylesheet', asset('jquery-ui/themes/base/jquery-ui.min.css')) }}
-                {{ pageAddAsset('stylesheet', asset('bootstrap-jqueryui/bootstrap-jqueryui.min.css')) }}
                 {{ pageAddAsset('javascript', asset('jquery-ui/jquery-ui.min.js')) }}
-                {{ pageAddAsset('javascript', asset('bootstrap-jqueryui/bootstrap-jqueryui.min.js')) }}
             «ENDIF»
             «IF hasImageFields»
                 {{ pageAddAsset('javascript', asset('magnific-popup/jquery.magnific-popup.min.js'), 90) }}
@@ -249,7 +247,6 @@ class Layout {
             <link rel="stylesheet" href="{{ asset('bootstrap/css/bootstrap-theme.min.css') }}" />
             «IF needsJQueryUI»
                 <link rel="stylesheet" href="{{ asset('jquery-ui/themes/base/jquery-ui.min.css') }}" />
-                <link rel="stylesheet" href="{{ asset('bootstrap-jqueryui/bootstrap-jqueryui.min.css') }}" />
             «ENDIF»
             <link rel="stylesheet" href="{{ asset('bundles/core/css/core.css') }}" />
             <link rel="stylesheet" href="{{ zasset('@«appName»:css/style.css') }}" />
@@ -287,7 +284,6 @@ class Layout {
             <script src="{{ asset('bootstrap/js/bootstrap.min.js') }}"></script>
             «IF needsJQueryUI»
                 <script src="{{ asset('jquery-ui/jquery-ui.min.js') }}"></script>
-                <script src="{{ asset('bootstrap-jqueryui/bootstrap-jqueryui.min.js') }}"></script>
             «ENDIF»
             <script src="{{ asset('bundles/fosjsrouting/js/router.js') }}"></script>
             <script src="{{ asset('js/fos_js_routes.js') }}"></script>

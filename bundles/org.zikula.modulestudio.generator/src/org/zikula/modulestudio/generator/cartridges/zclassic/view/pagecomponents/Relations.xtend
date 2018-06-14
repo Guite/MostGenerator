@@ -57,9 +57,7 @@ class Relations {
                 {{ pageAddAsset('stylesheet', zasset('@«app.appName»:css/style.css')) }}
                 {{ pageAddAsset('stylesheet', zasset('@«app.appName»:css/custom.css'), 120) }}
                 {{ pageAddAsset('stylesheet', asset('jquery-ui/themes/base/jquery-ui.min.css')) }}
-                {{ pageAddAsset('stylesheet', asset('bootstrap-jqueryui/bootstrap-jqueryui.min.css')) }}
                 {{ pageAddAsset('javascript', asset('jquery-ui/jquery-ui.min.js')) }}
-                {{ pageAddAsset('javascript', asset('bootstrap-jqueryui/bootstrap-jqueryui.min.js')) }}
                 {{ pageAddAsset('javascript', zasset('@«app.appName»:js/«app.appName».js'), 99) }}
                 {% if context == 'hookDisplayView' and hasEditPermission %}
                     {% set entityNameTranslated = __('«name.formatForDisplay»', '«app.appName.toLowerCase»') %}
