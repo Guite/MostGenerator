@@ -367,13 +367,23 @@ class NotificationHelper {
             if ($this->recipientType == 'moderator' || $this->recipientType == 'superModerator' || $this->usesDesignatedEntityFields()) {
                 if ($this->action == 'submit') {
                     $mailSubject = $this->__('New content has been submitted');
+                } elseif ($this->action == 'demote') {
+                    $mailSubject = $this->__('Content has been demoted');
+                } elseif ($this->action == 'accept') {
+                    $mailSubject = $this->__('Content has been accepted');
+                } elseif ($this->action == 'approve') {
+                    $mailSubject = $this->__('Content has been approved');
                 } elseif ($this->action == 'delete') {
                     $mailSubject = $this->__('Content has been deleted');
                 } else {
                     $mailSubject = $this->__('Content has been updated');
                 }
             } elseif ($this->recipientType == 'creator') {
-                if ($this->action == 'delete') {
+                if ($this->action == 'accept') {
+                    $mailSubject = $this->__('Your submission has been accepted');
+                } elseif ($this->action == 'approve') {
+                    $mailSubject = $this->__('Your submission has been approved');
+                } elseif ($this->action == 'delete') {
                     $mailSubject = $this->__('Your submission has been deleted');
                 } else {
                     $mailSubject = $this->__('Your submission has been updated');
