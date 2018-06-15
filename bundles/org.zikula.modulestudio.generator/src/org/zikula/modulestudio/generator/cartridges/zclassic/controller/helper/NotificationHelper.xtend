@@ -383,6 +383,8 @@ class NotificationHelper {
                     $mailSubject = $this->__('Your submission has been accepted');
                 } elseif ($this->action == 'approve') {
                     $mailSubject = $this->__('Your submission has been approved');
+                } elseif ($this->action == 'reject') {
+                    $mailSubject = $this->__('Your submission has been rejected');
                 } elseif ($this->action == 'delete') {
                     $mailSubject = $this->__('Your submission has been deleted');
                 } else {
