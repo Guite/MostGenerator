@@ -169,7 +169,7 @@ class ListEntryValidator {
                     }
                 }
 
-                $count = count($value);
+                $count = count($selected);
 
                 if (null !== $constraint->min && $count < $constraint->min) {
                     $this->context->buildViolation(
