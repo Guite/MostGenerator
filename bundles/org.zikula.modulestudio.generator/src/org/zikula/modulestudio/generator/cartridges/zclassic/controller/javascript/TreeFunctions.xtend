@@ -151,12 +151,14 @@ class TreeFunctions {
     def private initTreeNodesImpl(Application it) '''
         var rootId;
         var currentNode;
+        var currentNodeDom;
         var isRoot;
 
         rootId = theNode.id.split('_')[0].replace('tree', '').replace('node', '');
-        currentNode = trees['pageTree' + rootId].jstree('get_node', theNode, true);
-        isRoot = (currentNode.attr('id') === 'tree' + rootId + 'node_' + rootId);
-        nodeEntityId = currentNode.attr('id').replace('tree' + rootId + 'node_', '');
+        currentNode = trees['pageTree' + rootId].jstree('get_node', theNode, false);
+        currentNodeDom = trees['pageTree' + rootId].jstree('get_node', theNode, true);
+        isRoot = (currentNode.id === 'tree' + rootId + 'node_' + rootId);
+        nodeEntityId = currentNode.id.replace('tree' + rootId + 'node_', '');
 
         var actions = {};
 
@@ -196,7 +198,7 @@ class TreeFunctions {
                 var amountOfChildren;
 
                 confirmQuestion = Translator.__('Do you really want to remove this node?');
-                amountOfChildren = node.children.length;
+                amountOfChildren = currentNode.children.length;
                 if (amountOfChildren > 0) {
                     confirmQuestion = Translator.__('Do you really want to remove this node including all child nodes?');
                 }
@@ -211,11 +213,11 @@ class TreeFunctions {
             return actions;
         }
 
-        if (currentNode.is(':first-child') && currentNode.is(':last-child')) {
+        if (currentNodeDom.is(':first-child') && currentNodeDom.is(':last-child')) {
             return actions;
         }
 
-        if (!currentNode.is(':first-child')) { // has previous sibling
+        if (!currentNodeDom.is(':first-child')) { // has previous sibling
             actions.moveTop = {
                 label: Translator.__('Move to top'),
                 title: Translator.__('Move to top position'),
@@ -234,7 +236,7 @@ class TreeFunctions {
                 icon: 'fa fa-fw fa-angle-up'
             };
         }
-        if (!currentNode.is(':last-child')) { // has next sibling
+        if (!currentNodeDom.is(':last-child')) { // has next sibling
             actions.moveDown = {
                 label: Translator.__('Move down'),
                 title: Translator.__('Move one position down'),
@@ -349,7 +351,6 @@ class TreeFunctions {
             }).done(function (res) {
                 return true;
             }).fail(function (jqXHR, textStatus) {
-                var treeName = 'itemTree' + rootId;
                 «vendorAndName»SimpleAlert(jQuery('.tree-container'), Translator.__('Error'), Translator.__('Could not persist your change.'), 'treeAjaxFailedAlert', 'danger');
 
                 window.location.reload();
