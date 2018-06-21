@@ -64,13 +64,17 @@ class TreeData {
         {
             $idPrefix = 'tree' . $rootId . 'node_' . $node->getKey();
             $title = $descriptionFieldName != '' ? strip_tags($node[$descriptionFieldName]) : '';
-            $liTag = '<li id="' . $idPrefix . '" title="' . str_replace('"', '', $title) . '" class="lvl' . $node->getLvl() . '">';
 
+            $urlArgs = $node->createUrlArgs();
+            $urlDataAttributes = '';
+            foreach ($urlArgs as $field => $value) {
+                $urlDataAttributes .= ' data-' . $field . '="' . $value . '"';
+            }
+
+            $liTag = '<li id="' . $idPrefix . '" title="' . str_replace('"', '', $title) . '" class="lvl' . $node->getLvl() . '"' . $urlDataAttributes . '>';
             $liContent = $this->entityDisplayHelper->getFormattedTitle($node);
             if ($hasEditAction) {
-                $urlArgs = $node->createUrlArgs();
                 $url = $this->router->generate('«appName.formatForDB»_' . strtolower($objectType) . '_' . $routeArea . 'edit', $urlArgs);
-
                 $liContent = '<a href="' . $url . '" title="' . str_replace('"', '', $title) . '">' . $liContent . '</a>';
             }
 

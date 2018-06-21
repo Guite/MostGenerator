@@ -45,17 +45,23 @@ class TreeFunctions {
     def private initTree(Application it) '''
         var trees;
         var tree;
+        var idPrefix;
+        var rootId;
         var objectType;
-        var hasDisplay;
-        var hasEdit;
+        var routeArgNames;
+        var hasDisplayAction;
+        var hasEditAction;
 
         /**
          * Initialise a tree.
          */
-        function «vendorAndName»InitTree(idPrefix, theObjectType, rootId, hasDisplayAction, hasEditAction) {
-            objectType = theObjectType;
-            hasDisplay = hasDisplayAction;
-            hasEdit = hasEditAction;
+        function «vendorAndName»InitTree(treeContainer) {
+            idPrefix = treeContainer.attr('id');
+            rootId = treeContainer.data('root-id');
+            objectType = treeContainer.data('object-type');
+            routeArgNames = treeContainer.data('urlargnames').split(',');
+            hasDisplayAction = treeContainer.data('has-display');
+            hasEditAction = treeContainer.data('has-edit');
 
             trees[idPrefix] = jQuery('#' + idPrefix).jstree({
                 'core': {
@@ -159,25 +165,30 @@ class TreeFunctions {
         currentNodeDom = trees['pageTree' + rootId].jstree('get_node', theNode, true);
         isRoot = (currentNode.id === 'tree' + rootId + 'node_' + rootId);
         nodeEntityId = currentNode.id.replace('tree' + rootId + 'node_', '');
+        nodeEntityRouteArgs = {};
+
+        jQuery.each(routeArgNames, function (index, value) {
+            nodeEntityRouteArgs[value] = currentNodeDom.data(value);
+        });
 
         var actions = {};
 
-        if (true === hasDisplay) {
+        if (true === hasDisplayAction) {
             actions.display = {
                 label: Translator.__('Display'),
                 title: Translator.__('Show detail page'),
                 action: function (node) {
-                    document.location.href = Routing.generate('«appName.formatForDB»_' + objectType.toLowerCase() + '_display', { id: nodeEntityId }, true);
+                    document.location.href = Routing.generate('«appName.formatForDB»_' + objectType.toLowerCase() + '_display', nodeEntityRouteArgs, true);
                 },
                 icon: 'fa fa-fw fa-eye'
             };
         }
-        if (true === hasEdit) {
+        if (true === hasEditAction) {
             actions.edit = {
                 label: Translator.__('Edit'),
                 title: Translator.__('Show edit form'),
                 action: function (node) {
-                    document.location.href = Routing.generate('«appName.formatForDB»_' + objectType.toLowerCase() + '_edit', { id: nodeEntityId }, true);
+                    document.location.href = Routing.generate('«appName.formatForDB»_' + objectType.toLowerCase() + '_edit', nodeEntityRouteArgs, true);
                 },
                 icon: 'fa fa-fw fa-pencil-square-o'
             };
@@ -372,16 +383,8 @@ class TreeFunctions {
 
             trees = [];
             if (jQuery('.tree-container').length > 0) {
-                var treeContainer;
-                var idPrefix;
-                var objectType;
-
                 jQuery('.tree-container').each(function (index) {
-                    treeContainer = jQuery(this).first();
-                    idPrefix = treeContainer.attr('id');
-                    objectType = treeContainer.data('object-type');
-
-                    «vendorAndName»InitTree(idPrefix, objectType, treeContainer.data('root-id'), treeContainer.data('has-display'), treeContainer.data('has-edit'));
+                    «vendorAndName»InitTree(jQuery(this).first());
                 });
             }
         });
