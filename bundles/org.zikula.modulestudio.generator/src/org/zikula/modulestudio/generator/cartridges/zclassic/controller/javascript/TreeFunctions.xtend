@@ -255,7 +255,7 @@ class TreeFunctions {
                     «vendorAndName»PerformTreeOperation(objectType, rootId, 'moveNodeDown');
                 },
                 icon: 'fa fa-fw fa-angle-down',
-                separator_before: currentNode.is(':first-child')
+                separator_before: currentNodeDom.is(':first-child')
             };
             actions.moveBottom = {
                 label: Translator.__('Move to bottom'),
