@@ -351,7 +351,7 @@ class AjaxController {
                         «ENDFOR»
                         «IF entity.hasSluggableFields && entity.slugUnique»
                             case 'slug':
-                                $entity = $repository->selectBySlug($value, false, $exclude);
+                                $entity = $repository->selectBySlug($value, false, false, $exclude);
                                 $result = null !== $entity && isset($entity['slug']);
                                 break;
                         «ENDIF»
