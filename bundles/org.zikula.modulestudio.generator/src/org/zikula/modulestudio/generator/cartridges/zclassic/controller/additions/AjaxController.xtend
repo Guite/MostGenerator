@@ -617,7 +617,7 @@ class AjaxController {
     '''
 
     def private treeOperationAddRootNode(Application it) '''
-        $entity = $this->get('zikula_content_module.entity_factory')->$createMethod();
+        $entity = $this->get('«appService».entity_factory')->$createMethod();
         if (!empty($titleFieldName)) {
             $entity[$titleFieldName] = $this->__('New root node');
         }
