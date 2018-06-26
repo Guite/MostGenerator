@@ -76,7 +76,7 @@ class FeatureActivationHelper {
         public function isEnabled($feature, $objectType)
         {
             «IF hasCategorisableEntities»
-                if ($feature == self::CATEGORIES) {
+                if (self::CATEGORIES == $feature) {
                     $method = 'hasCategories';
                     if (method_exists($this, $method)) {
                         return $this->$method($objectType);
@@ -86,7 +86,7 @@ class FeatureActivationHelper {
                 }
             «ENDIF»
             «IF hasAttributableEntities»
-                if ($feature == self::ATTRIBUTES) {
+                if (self::ATTRIBUTES == $feature) {
                     $method = 'hasAttributes';
                     if (method_exists($this, $method)) {
                         return $this->$method($objectType);
@@ -96,7 +96,7 @@ class FeatureActivationHelper {
                 }
             «ENDIF»
             «IF hasTranslatable»
-                if ($feature == self::TRANSLATIONS) {
+                if (self::TRANSLATIONS == $feature) {
                     $method = 'hasTranslations';
                     if (method_exists($this, $method)) {
                         return $this->$method($objectType);
@@ -106,7 +106,7 @@ class FeatureActivationHelper {
                 }
             «ENDIF»
             «IF hasTrees»
-                if ($feature == self::TREE_RELATIVES) {
+                if (self::TREE_RELATIVES == $feature) {
                     $method = 'hasTreeRelatives';
                     if (method_exists($this, $method)) {
                         return $this->$method($objectType);
