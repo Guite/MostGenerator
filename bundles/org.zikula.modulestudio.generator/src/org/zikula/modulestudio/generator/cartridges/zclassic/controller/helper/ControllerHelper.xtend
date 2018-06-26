@@ -338,12 +338,7 @@ class ControllerHelper {
             $repository = $this->entityFactory->getRepository($objectType);
 
             // parameter for used sorting field
-            «new ControllerHelperFunctions().defaultSorting(it)»
-            $sortdir = $request->query->get('sortdir', 'ASC');
-            if (false !== strpos($sort, ' DESC')) {
-                $sort = str_replace(' DESC', '', $sort);
-                $sortdir = 'desc';
-            }
+            list ($sort, $sortdir) = $this->determineDefaultViewSorting($objectType);
             $templateParameters['sort'] = $sort;
             $templateParameters['sortdir'] = strtolower($sortdir);
             «IF hasTrees»
@@ -459,6 +454,28 @@ class ControllerHelper {
             $request->attributes->set('_route_params', $routeParams);
 
             return $templateParameters;
+        }
+
+        /**
+         * Determines the default sorting criteria.
+         *
+         * @param string $objectType Name of treated entity type
+         *
+         * @return array with sort field and sort direction
+         */
+        protected function determineDefaultViewSorting($objectType)
+        {
+            $request = $this->request;
+            $repository = $this->entityFactory->getRepository($objectType);
+
+            «new ControllerHelperFunctions().defaultSorting(it)»
+            $sortdir = $request->query->get('sortdir', 'ASC');
+            if (false !== strpos($sort, ' DESC')) {
+                $sort = str_replace(' DESC', '', $sort);
+                $sortdir = 'desc';
+            }
+
+            return [$sort, $sortdir];
         }
     '''
 
