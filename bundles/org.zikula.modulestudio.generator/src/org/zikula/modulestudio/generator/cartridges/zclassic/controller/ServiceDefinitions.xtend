@@ -256,16 +256,16 @@ class ServiceDefinitions {
             class: «appNamespace»\Entity\Factory\EntityInitialiser
             «IF supportLocaleFilter || !getAllListFields.filter[name != 'workflowState'].empty || hasGeographical»
                 arguments:
-                «IF supportLocaleFilter»
-                    - "@request_stack"
-                «ENDIF»
-                «IF !getAllListFields.filter[name != 'workflowState'].empty»
-                    - "@«modPrefix».listentries_helper"
-                «ENDIF»
-                «IF hasGeographical»
-                    - "@=service('zikula_extensions_module.api.variable').get('«appName»', 'defaultLatitude', 0.00)"
-                    - "@=service('zikula_extensions_module.api.variable').get('«appName»', 'defaultLongitude', 0.00)"
-                «ENDIF»
+                    «IF supportLocaleFilter»
+                        - "@request_stack"
+                    «ENDIF»
+                    «IF !getAllListFields.filter[name != 'workflowState'].empty»
+                        - "@«modPrefix».listentries_helper"
+                    «ENDIF»
+                    «IF hasGeographical»
+                        - "@=service('zikula_extensions_module.api.variable').get('«appName»', 'defaultLatitude', 0.00)"
+                        - "@=service('zikula_extensions_module.api.variable').get('«appName»', 'defaultLongitude', 0.00)"
+                    «ENDIF»
             «ENDIF»
     '''
 

@@ -73,7 +73,7 @@ class EntityInitialiser {
                 protected $defaultLongitude;
 
             «ENDIF»
-            «IF hasListFieldsExceptWorkflowState || hasGeographical»
+            «IF supportLocaleFilter || hasListFieldsExceptWorkflowState || hasGeographical»
                 /**
                  * EntityInitialiser constructor.
                  *
@@ -119,10 +119,13 @@ class EntityInitialiser {
                 {
                     «FOR field : entity.getLanguageFieldsEntity + entity.getLocaleFieldsEntity»
                         $entity->set«field.name.formatForCodeCapital»($this->request->getLocale());
+
                     «ENDFOR»
-                    «FOR field : entity.getDerivedFields.filter(DatetimeField)»
-                        «field.setDefaultValue»
-                    «ENDFOR»
+                    «IF !entity.getDerivedFields.filter(DatetimeField).empty»
+                        «FOR field : entity.getDerivedFields.filter(DatetimeField)»
+                            «field.setDefaultValue»
+                        «ENDFOR»
+                    «ENDIF»
                     «IF !entity.getListFieldsEntity.filter[name != 'workflowState'].empty»
                         «FOR listField : entity.getListFieldsEntity.filter[name != 'workflowState']»
                             $listEntries = $this->listEntriesHelper->getEntries('«entity.name.formatForCode»', '«listField.name.formatForCode»');
