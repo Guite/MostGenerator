@@ -261,7 +261,7 @@ class SharedFormTypeFields {
                     messages += '''$this->__f('Note: this value must be between %minValue% and %maxValue%.', ['%minValue%' => «minValue», '%maxValue%' => «maxValue»])'''
                 }
             } else if (hasMin) {
-                messages += '''$this->__f('Note: this value must not be less than %minValue%.', ['%minValue%' => «minValue»])'''
+                messages += '''$this->__f('Note: this value must not be lower than %minValue%.', ['%minValue%' => «minValue»])'''
             } else if (hasMax) {
                 messages += '''$this->__f('Note: this value must not be greater than %maxValue%.', ['%maxValue%' => «maxValue»])'''
             }
@@ -280,7 +280,7 @@ class SharedFormTypeFields {
                 messages += '''$this->__f('Note: this value must be between %minValue% and %maxValue%.', ['%minValue%' => «minValue», '%maxValue%' => «maxValue»])'''
             }
         } else if (minValue > 0) {
-            messages += '''$this->__f('Note: this value must not be less than %minValue%.', ['%minValue%' => «minValue»])'''
+            messages += '''$this->__f('Note: this value must not be lower than %minValue%.', ['%minValue%' => «minValue»])'''
         } else if (maxValue > 0) {
             messages += '''$this->__f('Note: this value must not be greater than %maxValue%.', ['%maxValue%' => «maxValue»])'''
         }
@@ -535,7 +535,7 @@ class SharedFormTypeFields {
     }
 
     def private dispatch formType(Field it) '''Text'''
-    def private dispatch titleAttribute(Field it) '''Enter the «name.formatForDisplay»«IF null !== entity» of the «entity.name.formatForDisplay»«ENDIF»'''
+    def private dispatch titleAttribute(Field it) '''Enter the «name.formatForDisplay»«IF null !== entity» of the «entity.name.formatForDisplay»«ENDIF».'''
 
     def private dispatch additionalAttributes(Field it) '''
         'maxlength' => 255,
@@ -591,7 +591,7 @@ class SharedFormTypeFields {
     '''
 
     def private dispatch formType(StringField it) '''«IF role == StringRole.COLOUR»«IF application.targets('2.0')»Color«ELSE»Colour«ENDIF»«ELSEIF role == StringRole.COUNTRY»Country«ELSEIF role == StringRole.CURRENCY»Currency«ELSEIF role == StringRole.LANGUAGE»Language«ELSEIF role == StringRole.LOCALE»Locale«ELSEIF role == StringRole.PASSWORD»Password«ELSEIF role == StringRole.DATE_INTERVAL && application.targets('2.0')»DateInterval«ELSEIF role == StringRole.PHONE_NUMBER»Tel«ELSEIF role == StringRole.TIME_ZONE»Timezone«ELSE»Text«ENDIF»'''
-    def private dispatch titleAttribute(StringField it) '''«IF role == StringRole.COLOUR || role == StringRole.COUNTRY || role == StringRole.CURRENCY || (role == StringRole.DATE_INTERVAL && application.targets('2.0')) || role == StringRole.LANGUAGE || role == StringRole.LOCALE || role == StringRole.TIME_ZONE»Choose the «name.formatForDisplay»«ELSE»Enter the «name.formatForDisplay»«ENDIF»«IF null !== entity» of the «entity.name.formatForDisplay»«ENDIF»'''
+    def private dispatch titleAttribute(StringField it) '''«IF role == StringRole.COLOUR || role == StringRole.COUNTRY || role == StringRole.CURRENCY || (role == StringRole.DATE_INTERVAL && application.targets('2.0')) || role == StringRole.LANGUAGE || role == StringRole.LOCALE || role == StringRole.TIME_ZONE»Choose the «name.formatForDisplay»«ELSE»Enter the «name.formatForDisplay»«ENDIF»«IF null !== entity» of the «entity.name.formatForDisplay»«ENDIF».'''
     def private dispatch additionalAttributes(StringField it) '''
         'maxlength' => «length»,
         «IF null !== regexp && !regexp.empty»
