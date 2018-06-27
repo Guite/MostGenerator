@@ -596,7 +596,7 @@ class EditEntityType {
                 'label' => $this->__('«aliasName.formatForDisplayCapital»'),
                 «val helpMessage = relationHelpMessages(outgoing)»«IF !helpMessage.empty»'help' => «IF helpMessage.length > 1»[«ENDIF»«helpMessage.join(', ')»«IF helpMessage.length > 1»]«ENDIF»,«ENDIF»
                 'attr' => [
-                    'title' => $this->__('Choose the «aliasName.formatForDisplay»')
+                    'title' => $this->__('Choose the «aliasName.formatForDisplay».')
                 ]
             ]);
         «ELSE»
@@ -647,7 +647,7 @@ class EditEntityType {
                     'query_builder' => $queryBuilder,
                     «IF /*outgoing && */nullable»
                         «IF !isManySide(outgoing) && !isExpanded/* expanded uses default: "None" */»
-                            'placeholder' => $this->__('Please choose an option'),
+                            'placeholder' => $this->__('Please choose an option.'),
                         «ENDIF»
                         'required' => false,
                     «ENDIF»
@@ -660,7 +660,7 @@ class EditEntityType {
                 «ENDIF»
                 «val helpMessage = relationHelpMessages(outgoing)»«IF !helpMessage.empty»'help' => «IF helpMessage.length > 1»[«ENDIF»«helpMessage.join(', ')»«IF helpMessage.length > 1»]«ENDIF»,«ENDIF»
                 'attr' => [
-                    'title' => $this->__('Choose the «aliasName.formatForDisplay»')
+                    'title' => $this->__('Choose the «aliasName.formatForDisplay».')
                 ]
             ]);
         «ENDIF»
@@ -784,25 +784,25 @@ class EditEntityType {
                 'label' => $this->__('Creator') . ':',
                 'attr' => [
                     'maxlength' => 11,
-                    'title' => $this->__('Here you can choose a user which will be set as creator')
+                    'title' => $this->__('Here you can choose a user which will be set as creator.')
                 ],
                 'empty_data' => 0,
                 'required' => false,
-                'help' => $this->__('Here you can choose a user which will be set as creator')
+                'help' => $this->__('Here you can choose a user which will be set as creator.')
             ]);
             $builder->add('moderationSpecificCreationDate', DateTimeType::class, [
                 'mapped' => false,
                 'label' => $this->__('Creation date') . ':',
                 'attr' => [
                     'class' => '',
-                    'title' => $this->__('Here you can choose a custom creation date')
+                    'title' => $this->__('Here you can choose a custom creation date.')
                 ],
                 'empty_data' => '',
                 'required' => false,
                 'with_seconds' => true,
                 'date_widget' => 'single_text',
                 'time_widget' => 'single_text',
-                'help' => $this->__('Here you can choose a custom creation date')
+                'help' => $this->__('Here you can choose a custom creation date.')
             ]);
         }
     '''
