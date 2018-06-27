@@ -475,9 +475,9 @@ class EditEntityType {
                     «IF slugUnique»
                         'class' => 'validate-unique',
                     «ENDIF»
-                    'title' => $this->__('You can input a custom permalink for the «name.formatForDisplay» or let this field free to create one automatically')
+                    'title' => $this->__('You can input a custom permalink for the «name.formatForDisplay» or let this field free to create one automatically.')
                 ],
-                'help' => $this->__('You can input a custom permalink for the «name.formatForDisplay» or let this field free to create one automatically')
+                'help' => $this->__('You can input a custom permalink for the «name.formatForDisplay» or let this field free to create one automatically.')
             ]);
         «ENDIF»
     '''
