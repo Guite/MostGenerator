@@ -261,9 +261,9 @@ class SharedFormTypeFields {
                     messages += '''$this->__f('Note: this value must be between %minValue% and %maxValue%.', ['%minValue%' => «minValue», '%maxValue%' => «maxValue»])'''
                 }
             } else if (hasMin) {
-                messages += '''$this->__f('Note: this value must be greater than %minValue%.', ['%minValue%' => «minValue»])'''
+                messages += '''$this->__f('Note: this value must not be less than %minValue%.', ['%minValue%' => «minValue»])'''
             } else if (hasMax) {
-                messages += '''$this->__f('Note: this value must be less than %maxValue%.', ['%maxValue%' => «maxValue»])'''
+                messages += '''$this->__f('Note: this value must not be greater than %maxValue%.', ['%maxValue%' => «maxValue»])'''
             }
         }
 
@@ -280,9 +280,9 @@ class SharedFormTypeFields {
                 messages += '''$this->__f('Note: this value must be between %minValue% and %maxValue%.', ['%minValue%' => «minValue», '%maxValue%' => «maxValue»])'''
             }
         } else if (minValue > 0) {
-            messages += '''$this->__f('Note: this value must be greater than %minValue%.', ['%minValue%' => «minValue»])'''
+            messages += '''$this->__f('Note: this value must not be less than %minValue%.', ['%minValue%' => «minValue»])'''
         } else if (maxValue > 0) {
-            messages += '''$this->__f('Note: this value must be less than %maxValue%.', ['%maxValue%' => «maxValue»])'''
+            messages += '''$this->__f('Note: this value must not be greater than %maxValue%.', ['%maxValue%' => «maxValue»])'''
         }
 
         messages
