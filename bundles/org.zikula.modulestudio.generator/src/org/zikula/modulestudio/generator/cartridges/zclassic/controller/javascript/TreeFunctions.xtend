@@ -162,8 +162,8 @@ class TreeFunctions {
         var nodeEntityRouteArgs;
 
         rootId = theNode.id.split('_')[0].replace('tree', '').replace('node', '');
-        currentNode = trees['pageTree' + rootId].jstree('get_node', theNode, false);
-        currentNodeDom = trees['pageTree' + rootId].jstree('get_node', theNode, true);
+        currentNode = trees[objectType + 'Tree' + rootId].jstree('get_node', theNode, false);
+        currentNodeDom = trees[objectType + 'Tree' + rootId].jstree('get_node', theNode, true);
         isRoot = (currentNode.id === 'tree' + rootId + 'node_' + rootId);
         nodeEntityId = currentNode.id.replace('tree' + rootId + 'node_', '');
         nodeEntityRouteArgs = {};
