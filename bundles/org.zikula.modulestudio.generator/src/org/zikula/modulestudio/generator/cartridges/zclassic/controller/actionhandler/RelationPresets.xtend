@@ -6,6 +6,7 @@ import de.guite.modulestudio.metamodel.JoinRelationship
 import de.guite.modulestudio.metamodel.ManyToManyRelationship
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
+import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 
@@ -13,6 +14,7 @@ class RelationPresets {
 
     extension ControllerExtensions = new ControllerExtensions
     extension FormattingExtensions = new FormattingExtensions
+    extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension ModelJoinExtensions = new ModelJoinExtensions
     extension NamingExtensions = new NamingExtensions
 
@@ -143,9 +145,11 @@ class RelationPresets {
     def private saveSinglePreset(JoinRelationship it, Boolean useTarget) '''
         «val alias = getRelationAliasName(useTarget)»
         «val aliasInverse = getRelationAliasName(!useTarget)»
-        «val otherObjectType = (if (useTarget) target else source).name.formatForCode»
+        «val otherEntity = (if (useTarget) target else source)»
+        «val otherObjectType = otherEntity.name.formatForCode»
+        «val selectField = if (otherEntity instanceof Entity && (otherEntity as Entity).hasSluggableFields && (otherEntity as Entity).slugUnique) 'slug' else 'id'»
         if (!empty($this->relationPresets['«alias»'])) {
-            $relObj = $this->entityFactory->getRepository('«otherObjectType»')->selectById($this->relationPresets['«alias»']);
+            $relObj = $this->entityFactory->getRepository('«otherObjectType»')->selectBy«selectField.toFirstUpper»($this->relationPresets['«alias»']);
             if (null !== $relObj) {
                 «IF !useTarget && it instanceof ManyToManyRelationship»
                     $entity->«IF isManySide(useTarget)»add«ELSE»set«ENDIF»«alias.toFirstUpper»($relObj);
