@@ -38,9 +38,9 @@ class Atom {
         <?xml version="1.0" encoding="{% set charset = pageGetVar('meta.charset') %}{% if charset == 'ISO-8859-15' %}ISO-8859-1{% else %}{{ charset }}{% endif %}" ?>
         <feed xmlns="http://www.w3.org/2005/Atom">
             <title type="text">{{ __('Latest «nameMultiple.formatForDisplay»') }}</title>
-            <subtitle type="text">{{ __('A direct feed showing the list of «nameMultiple.formatForDisplay»') }} - {{ getModVar('ZConfig', 'slogan') }}</subtitle>
+            <subtitle type="text">{{ __('A direct feed showing the list of «nameMultiple.formatForDisplay»') }} - {{ getSystemVar('slogan') }}</subtitle>
             <author>
-                <name>{{ getModVar('ZConfig', 'sitename') }}</name>
+                <name>{{ getSystemVar('sitename') }}</name>
             </author>
         {% set amountOfItems = items|length %}
         {% if amountOfItems > 0 %}

@@ -48,11 +48,11 @@ class Rss {
                 <title>{{ __('Latest «nameMultiple.formatForDisplay»') }}</title>
                 <link>{{ app.request.schemeAndHttpHost ~ app.request.basePath }}</link>
                 <atom:link href="{{ app.request.schemeAndHttpHost ~ app.request.basePath ~ app.request.pathInfo }}" rel="self" type="application/rss+xml" />
-                <description>{{ __('A direct feed showing the list of «nameMultiple.formatForDisplay»') }} - {{ getModVar('ZConfig', 'slogan') }}</description>
+                <description>{{ __('A direct feed showing the list of «nameMultiple.formatForDisplay»') }} - {{ getSystemVar('slogan') }}</description>
                 <language>{{ app.request.locale }}</language>
                 {# commented out as imagepath is not defined and we can't know whether this logo exists or not
                 <image>
-                    <title>{{ getModVar('ZConfig', 'sitename') }}</title>
+                    <title>{{ getSystemVar('sitename') }}</title>
                     <url>{{ app.request.schemeAndHttpHost ~ app.request.basePath }}{{ imagepath }}/logo.jpg</url>
                     <link>{{ app.request.schemeAndHttpHost ~ app.request.basePath }}</link>
                 </image>

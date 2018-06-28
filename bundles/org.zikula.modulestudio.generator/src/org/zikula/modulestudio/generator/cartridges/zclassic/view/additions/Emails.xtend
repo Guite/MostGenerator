@@ -54,7 +54,7 @@ class Emails {
             «ENDIF»
         {% endif %}
 
-        <p>{{ __f('This mail has been sent automatically by %siteName%.', {'%siteName%': getModVar('ZConfig', 'sitename')}) }}</p>
+        <p>{{ __f('This mail has been sent automatically by %siteName%.', {'%siteName%': getSystemVar('sitename')}) }}</p>
     '''
 
     def private notifyModeratorTemplate(Entity it) '''
@@ -77,6 +77,6 @@ class Emails {
             «ENDIF»
         {% endif %}
 
-        <p>{{ __f('This mail has been sent automatically by %siteName%.', {'%siteName%': getModVar('ZConfig', 'sitename')}) }}</p>
+        <p>{{ __f('This mail has been sent automatically by %siteName%.', {'%siteName%': getSystemVar('sitename')}) }}</p>
     '''
 }

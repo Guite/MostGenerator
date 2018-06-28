@@ -277,7 +277,7 @@ class Layout {
             <script>
                 /* <![CDATA[ */
                     if (typeof(Zikula) == 'undefined') {var Zikula = {};}
-                    Zikula.Config = {'entrypoint': '{{ getModVar('ZConfig', 'entrypoint', 'index.php') }}', 'baseURL': '{{ app.request.getSchemeAndHttpHost() ~ '/' }}', 'baseURI': '{{ app.request.getBasePath() }}'};
+                    Zikula.Config = {'entrypoint': '{{ getSystemVar('entrypoint', 'index.php') }}', 'baseURL': '{{ app.request.schemeAndHttpHost ~ '/' }}', 'baseURI': '{{ app.request.basePath }}'};
                 /* ]]> */
             </script>
             <script src="{{ asset('jquery/jquery.min.js') }}"></script>

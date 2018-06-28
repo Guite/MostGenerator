@@ -76,6 +76,6 @@ class MailzView {
         «ELSEIF hasIndexAction»
             {{ url('«application.appName.formatForDB»_«name.formatForDB»_index') }}
         «ELSE»
-            {{ app.request.getSchemeAndHttpHost() ~ app.request.getBasePath() }}
+            {{ app.request.schemeAndHttpHost ~ app.request.basePath }}
         «ENDIF»'''
 }

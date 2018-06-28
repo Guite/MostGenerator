@@ -39,7 +39,7 @@ class Ics {
         {# purpose of this template: «nameMultiple.formatForDisplay» display ics view #}
         BEGIN:VCALENDAR
         VERSION:2.0
-        PRODID:{{ app.request.getSchemeAndHttpHost() }}
+        PRODID:{{ app.request.schemeAndHttpHost }}
         METHOD:PUBLISH
         BEGIN:VEVENT
         DTSTART:{{ «objName»|date('Ymd\THi00\Z') }}
