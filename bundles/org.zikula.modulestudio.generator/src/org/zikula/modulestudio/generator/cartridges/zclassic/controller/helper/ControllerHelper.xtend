@@ -403,9 +403,9 @@ class ControllerHelper {
                 }
                 unset($urlParameters[$parameterName]);
             }
-
+«/*
             $sort = $sortableColumns->getSortColumn()->getName();
-            $sortdir = $sortableColumns->getSortDirection();
+            $sortdir = $sortableColumns->getSortDirection();*/»
             $sortableColumns->setAdditionalUrlParameters($urlParameters);
 
             $where = '';
