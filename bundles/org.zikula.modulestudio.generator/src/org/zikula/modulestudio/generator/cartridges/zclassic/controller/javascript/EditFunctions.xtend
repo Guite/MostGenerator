@@ -100,7 +100,7 @@ class EditFunctions {
             }
         }
 
-        function «vendorAndName»HandleFormSubmit (event) {
+        function «vendorAndName»HandleFormSubmit(event) {
             if (triggerValidation) {
                 «vendorAndName»TriggerFormValidation();
                 if (!editForm.get(0).checkValidity()) {

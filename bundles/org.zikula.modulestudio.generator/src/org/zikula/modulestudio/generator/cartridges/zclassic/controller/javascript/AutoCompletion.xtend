@@ -2,6 +2,7 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.controller.javascr
 
 import de.guite.modulestudio.metamodel.Application
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
+import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
@@ -9,6 +10,7 @@ import org.zikula.modulestudio.generator.extensions.Utils
 
 class AutoCompletion {
 
+    extension ControllerExtensions = new ControllerExtensions
     extension ModelExtensions = new ModelExtensions
     extension ModelJoinExtensions = new ModelJoinExtensions
     extension NamingExtensions = new NamingExtensions
@@ -120,19 +122,21 @@ class AutoCompletion {
 
             li = jQuery('<li />', {
                 id: elemPrefix,
-                text: newTitle
+                text: newTitle + ' '
             });
-            if (true === includeEditing) {
-                li.append(«vendorAndName»CreateInlineEditLink(objectType, idPrefix, elemPrefix, newItemId));
-            }
+            «IF needsInlineEditing»
+                if (true === includeEditing) {
+                    li.append(«vendorAndName»CreateInlineEditLink(objectType, idPrefix, elemPrefix, newItemId));
+                }
+            «ENDIF»
 
             li.append(
                 jQuery('<a />', {
                     id: elemPrefix + 'Remove',
-                    href: 'javascript:«vendorAndName»RemoveRelatedItem(\'' + idPrefix + '\', ' + newItemId + ');',
-                    text: 'remove'
+                    href: 'javascript:«vendorAndName»RemoveRelatedItem(\'' + idPrefix + '\', ' + newItemId + ');'
                 }).append(
                     jQuery('<span />', { class: 'fa fa-trash-o' })
+                        .append(' ' + Translator.__('remove'))
                 )
             );
 
@@ -146,10 +150,12 @@ class AutoCompletion {
             }
 
             jQuery('#' + idPrefix + 'ReferenceList').append(li);
+            «IF needsInlineEditing»
 
-            if (true === includeEditing) {
-                «vendorAndName»InitInlineEditLink(objectType, idPrefix, elemPrefix, newItemId, 'autocomplete');
-            }
+                if (true === includeEditing) {
+                    «vendorAndName»InitInlineEditLink(objectType, idPrefix, elemPrefix, newItemId, 'autocomplete');
+                }
+            «ENDIF»
 
             itemIds += newItemId;
             jQuery('#' + idPrefix).val(itemIds);
