@@ -161,6 +161,8 @@ class Validation {
 
                 if (typeof cmpVal == 'undefined' && typeof cmpVal2 == 'undefined') {
                     result = true;
+                } else if ('' == jQuery.trim(cmpVal) || '' == jQuery.trim(cmpVal2)) {
+                    result = true;
                 } else {
                     result = (cmpVal <= cmpVal2);
                 }
@@ -190,6 +192,8 @@ class Validation {
 
                 if (typeof cmpVal == 'undefined' && typeof cmpVal2 == 'undefined') {
                     result = true;
+                } else if ('' == jQuery.trim(cmpVal) || '' == jQuery.trim(cmpVal2)) {
+                    result = true;
                 } else {
                     result = (cmpVal <= cmpVal2);
                 }
@@ -205,18 +209,18 @@ class Validation {
             «IF hasColourFields»
                 jQuery('.validate-colour').each(function () {
                     if (!«vendorAndName»ValidateHtmlColour(jQuery(this).val())) {
-                        document.getElementById(jQuery(this).attr('id')).setCustomValidity(Translator.__('Please select a valid html colour code.'));
+                        jQuery(this).get(0).setCustomValidity(Translator.__('Please select a valid html colour code.'));
                     } else {
-                        document.getElementById(jQuery(this).attr('id')).setCustomValidity('');
+                        jQuery(this).get(0).setCustomValidity('');
                     }
                 });
             «ENDIF»
             «IF hasUploads»
                 jQuery('.validate-upload').each(function () {
                     if (!«vendorAndName»ValidateUploadExtension(jQuery(this).val(), jQuery(this))) {
-                        document.getElementById(jQuery(this).attr('id')).setCustomValidity(Translator.__('Please select a valid file extension.'));
+                        jQuery(this).get(0).setCustomValidity(Translator.__('Please select a valid file extension.'));
                     } else {
-                        document.getElementById(jQuery(this).attr('id')).setCustomValidity('');
+                        jQuery(this).get(0).setCustomValidity('');
                     }
                 });
             «ENDIF»
@@ -248,18 +252,18 @@ class Validation {
                 «IF dateFields.exists[past]»
                     jQuery('.validate-date-past').each(function () {
                         if (!«vendorAndName»ValidateDatePast(jQuery(this).val())) {
-                            document.getElementById(jQuery(this).attr('id')).setCustomValidity(Translator.__('Please select a value in the past.'));
+                            jQuery(this).get(0).setCustomValidity(Translator.__('Please select a value in the past.'));
                         } else {
-                            document.getElementById(jQuery(this).attr('id')).setCustomValidity('');
+                            jQuery(this).get(0).setCustomValidity('');
                         }
                     });
                 «ENDIF»
                 «IF dateFields.exists[future]»
                     jQuery('.validate-date-future').each(function () {
                         if (!«vendorAndName»ValidateDateFuture(jQuery(this).val())) {
-                            document.getElementById(jQuery(this).attr('id')).setCustomValidity(Translator.__('Please select a value in the future.'));
+                            jQuery(this).get(0).setCustomValidity(Translator.__('Please select a value in the future.'));
                         } else {
-                            document.getElementById(jQuery(this).attr('id')).setCustomValidity('');
+                            jQuery(this).get(0).setCustomValidity('');
                         }
                     });
                 «ENDIF»
@@ -268,26 +272,26 @@ class Validation {
                 «IF timeFields.exists[past]»
                     jQuery('.validate-time-past').each(function () {
                         if (!«vendorAndName»ValidateTimePast(jQuery(this).val())) {
-                            document.getElementById(jQuery(this).attr('id')).setCustomValidity(Translator.__('Please select a value in the past.'));
+                            jQuery(this).get(0).setCustomValidity(Translator.__('Please select a value in the past.'));
                         } else {
-                            document.getElementById(jQuery(this).attr('id')).setCustomValidity('');
+                            jQuery(this).get(0).setCustomValidity('');
                         }
                     });
                 «ENDIF»
                 «IF timeFields.exists[future]»
                     jQuery('.validate-time-future').each(function () {
                         if (!«vendorAndName»ValidateTimeFuture(jQuery(this).val())) {
-                            document.getElementById(jQuery(this).attr('id')).setCustomValidity(Translator.__('Please select a value in the future.'));
+                            jQuery(this).get(0).setCustomValidity(Translator.__('Please select a value in the future.'));
                         } else {
-                            document.getElementById(jQuery(this).attr('id')).setCustomValidity('');
+                            jQuery(this).get(0).setCustomValidity('');
                         }
                     });
                 «ENDIF»
             «ENDIF»
             «FOR entity : entities.filter[hasStartAndEndDateField]»
                 jQuery('.validate-daterange-«entity.name.formatForDB»').each(function () {
-                    if (typeof jQuery(this).attr('id') != 'undefined') {
-                        if (jQuery(this).prop('tagName') == 'DIV') {
+                    if ('undefined' != typeof jQuery(this).attr('id')) {
+                        if ('DIV' == jQuery(this).prop('tagName')) {
                             if (!«vendorAndName»ValidateDateRange«entity.name.formatForCodeCapital»()) {
                                 document.getElementById(jQuery(this).attr('id') + '_date').setCustomValidity(Translator.__('The start must be before the end.'));
                                 document.getElementById(jQuery(this).attr('id') + '_time').setCustomValidity(Translator.__('The start must be before the end.'));
@@ -295,11 +299,11 @@ class Validation {
                                 document.getElementById(jQuery(this).attr('id') + '_date').setCustomValidity('');
                                 document.getElementById(jQuery(this).attr('id') + '_time').setCustomValidity('');
                             }
-                    	} else {
+                        } else {
                             if (!«vendorAndName»ValidateDateRange«entity.name.formatForCodeCapital»()) {
-                                document.getElementById(jQuery(this).attr('id')).setCustomValidity(Translator.__('The start must be before the end.'));
+                                jQuery(this).get(0).setCustomValidity(Translator.__('The start must be before the end.'));
                             } else {
-                                document.getElementById(jQuery(this).attr('id')).setCustomValidity('');
+                                jQuery(this).get(0).setCustomValidity('');
                             }
                         }
                     }
@@ -307,20 +311,20 @@ class Validation {
             «ENDFOR»
             «FOR varContainer : variables.filter[hasStartAndEndDateField]»
                 jQuery('.validate-daterange-«varContainer.name.formatForDB»').each(function () {
-                    if (typeof jQuery(this).attr('id') != 'undefined') {
-                        if (jQuery(this).prop('tagName') == 'DIV') {
+                    if ('undefined' != typeof jQuery(this).attr('id')) {
+                        if ('DIV' == jQuery(this).prop('tagName')) {
                             if (!«vendorAndName»ValidateDateRange«varContainer.name.formatForCodeCapital»()) {
-                                document.getElementById(jQuery(this).attr('id') + '_date').setCustomValidity(Translator.__('The start must be before the end.'));
-                                document.getElementById(jQuery(this).attr('id') + '_time').setCustomValidity(Translator.__('The start must be before the end.'));
+                                jQuery('#' + jQuery(this).attr('id') + '_date').get(0).setCustomValidity(Translator.__('The start must be before the end.'));
+                                jQuery('#' + jQuery(this).attr('id') + '_time').get(0).setCustomValidity(Translator.__('The start must be before the end.'));
                             } else {
-                                document.getElementById(jQuery(this).attr('id') + '_date').setCustomValidity('');
-                                document.getElementById(jQuery(this).attr('id') + '_time').setCustomValidity('');
+                                jQuery('#' + jQuery(this).attr('id') + '_date').get(0).setCustomValidity('');
+                                jQuery('#' + jQuery(this).attr('id') + '_time').get(0).setCustomValidity('');
                             }
-                    	} else {
+                        } else {
                             if (!«vendorAndName»ValidateDateRange«varContainer.name.formatForCodeCapital»()) {
-                                document.getElementById(jQuery(this).attr('id')).setCustomValidity(Translator.__('The start must be before the end.'));
+                                jQuery(this).get(0).setCustomValidity(Translator.__('The start must be before the end.'));
                             } else {
-                                document.getElementById(jQuery(this).attr('id')).setCustomValidity('');
+                                jQuery(this).get(0).setCustomValidity('');
                             }
                         }
                     }
@@ -329,9 +333,9 @@ class Validation {
             «IF entities.exists[getUniqueDerivedFields.filter[!primaryKey].size > 0]»
                 jQuery('.validate-unique').each(function () {
                     if (!«vendorAndName»UniqueCheck(jQuery(this), currentEntityId)) {
-                        document.getElementById(jQuery(this).attr('id')).setCustomValidity(Translator.__('This value is already assigned, but must be unique. Please change it.'));
+                        jQuery(this).get(0).setCustomValidity(Translator.__('This value is already assigned, but must be unique. Please change it.'));
                     } else {
-                        document.getElementById(jQuery(this).attr('id')).setCustomValidity('');
+                        jQuery(this).get(0).setCustomValidity('');
                     }
                 });
             «ENDIF»

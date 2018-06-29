@@ -287,22 +287,22 @@ class ValidationConstraints {
                 «' '»* @Assert\Date()
             «ENDIF»
             «IF past»
-                «' '»* @Assert\LessThan("now")
+                «' '»* @Assert\LessThan("now", message="Please select a value in the past.")
             «ELSEIF future»
-                «' '»* @Assert\GreaterThan("now")
+                «' '»* @Assert\GreaterThan("now", message="Please select a value in the future.")
             «ENDIF»
             «IF endDate»
                 «IF mandatory && application.targets('2.0')»
                     «IF null !== entity && entity.hasStartDateField»
-                        «' '»* @Assert\GreaterThan(propertyPath="«entity.getStartDateField.name.formatForCode»")
+                        «' '»* @Assert\GreaterThan(propertyPath="«entity.getStartDateField.name.formatForCode»", message="The start must be before the end.")
                     «ELSEIF null !== varContainer && varContainer.hasStartDateField»
-                        «' '»* @Assert\GreaterThan(propertyPath="«varContainer.getStartDateField.name.formatForCode»")
+                        «' '»* @Assert\GreaterThan(propertyPath="«varContainer.getStartDateField.name.formatForCode»", message="The start must be before the end.")
                     «ENDIF»
                 «ELSE»
                     «IF null !== entity && entity.hasStartDateField»
-                        «' '»* @Assert\Expression("«IF !mandatory»!value or «ENDIF»value > this.get«entity.getStartDateField.name.formatForCodeCapital»()")
+                        «' '»* @Assert\Expression("«IF !mandatory»!value or «ENDIF»value > this.get«entity.getStartDateField.name.formatForCodeCapital»()", message="The start must be before the end.")
                     «ELSEIF null !== varContainer && varContainer.hasStartDateField»
-                        «' '»* @Assert\Expression("«IF !mandatory»!value or «ENDIF»value > this.get«varContainer.getStartDateField.name.formatForCodeCapital»()")
+                        «' '»* @Assert\Expression("«IF !mandatory»!value or «ENDIF»value > this.get«varContainer.getStartDateField.name.formatForCodeCapital»()", message="The start must be before the end.")
                     «ENDIF»
                 «ENDIF»
             «ENDIF»
