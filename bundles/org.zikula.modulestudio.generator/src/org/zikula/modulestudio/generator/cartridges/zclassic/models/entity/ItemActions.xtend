@@ -143,14 +143,14 @@ class ItemActions {
 
                 $relatedComponent = '«app.appName»:«otherEntity.name.formatForCodeCapital»:';
                 $relatedInstance = $entity->getKey() . '::';
-                if («IF standardFields»$isOwner || «ENDIF»$permissionApi->hasPermission($relatedComponent, $relatedInstance, ACCESS_«IF (otherEntity as Entity).ownerPermission»ADD«ELSEIF (otherEntity as Entity).workflow == EntityWorkflowType.NONE»EDIT«ELSE»COMMENT«ENDIF»)) {
+                if («IF standardFields»$isOwner || «ENDIF»$permissionApi->hasPermission($relatedComponent, $relatedInstance, ACCESS_«IF otherEntity instanceof Entity && (otherEntity as Entity).ownerPermission»ADD«ELSEIF (otherEntity as Entity).workflow == EntityWorkflowType.NONE»EDIT«ELSE»COMMENT«ENDIF»)) {
                     «val many = elem.isManySideDisplay(useTarget)»
                     «IF !many»
                         if (!isset($entity->«relationAliasName») || null === $entity->«relationAliasName») {
                             $title = $this->__('Create «elem.getRelationAliasName(useTarget).formatForDisplay»', '«app.appName.formatForDB»');
                             $menu->addChild($title, [
                                 'route' => '«app.appName.formatForDB»_«otherEntity.name.formatForDB»_' . $routeArea . 'edit',
-                                'routeParameters' => ['«relationAliasNameParam»' => $entity->«IF hasSluggableFields && slugUnique»getSlug()«ELSE»getKey()«ENDIF»]
+                                'routeParameters' => ['«relationAliasNameParam»' => $entity->«IF hasSluggableFields && otherEntity instanceof Entity && (otherEntity as Entity).slugUnique»getSlug()«ELSE»getKey()«ENDIF»]
                             ]);
                             $menu[$title]->setLinkAttribute('title', $title);
                             «app.addLinkClass('default')»
@@ -160,7 +160,7 @@ class ItemActions {
                         $title = $this->__('Create «elem.getRelationAliasName(useTarget).formatForDisplay»', '«app.appName.formatForDB»');
                         $menu->addChild($title, [
                             'route' => '«app.appName.formatForDB»_«otherEntity.name.formatForDB»_' . $routeArea . 'edit',
-                            'routeParameters' => ['«relationAliasNameParam»' => $entity->«IF hasSluggableFields && slugUnique»getSlug()«ELSE»getKey()«ENDIF»]
+                            'routeParameters' => ['«relationAliasNameParam»' => $entity->«IF hasSluggableFields && otherEntity instanceof Entity && (otherEntity as Entity).slugUnique»getSlug()«ELSE»getKey()«ENDIF»]
                         ]);
                         $menu[$title]->setLinkAttribute('title', $title);
                         «app.addLinkClass('default')»
