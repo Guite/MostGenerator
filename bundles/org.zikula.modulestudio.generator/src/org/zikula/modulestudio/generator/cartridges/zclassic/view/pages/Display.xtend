@@ -61,7 +61,7 @@ class Display {
 
     def private displayView(Entity it, String appName, Boolean isAdmin) '''
         «val refedElems = getOutgoingJoinRelations.filter[r|r.target instanceof Entity && r.target.application == it.application]
-                        + incoming.filter(ManyToManyRelationship).filter[r|r.source instanceof Entity && r.source.application == it.application]»
+                        + incoming.filter(ManyToManyRelationship).filter[r|r.bidirectional && r.source instanceof Entity && r.source.application == it.application]»
         «val objName = name.formatForCode»
         «IF application.separateAdminTemplates»
             {# purpose of this template: «nameMultiple.formatForDisplay» «IF isAdmin»admin«ELSE»user«ENDIF» display view #}
