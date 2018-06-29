@@ -59,7 +59,9 @@ class EntityTreeType {
                         'use_joins' => true,
                         'attr' => [
                             'class' => 'entity-tree'
-                        ],«/*'query_builder' => function (EntityRepository $er) {
+                        ],
+                        'choice_label' => null«/*,
+                        'query_builder' => function (EntityRepository $er) {
                             return $er->selectTree($options['root'], $options['use_joins']);
                         },*/»
                         «IF !targets('2.0')»
@@ -83,11 +85,11 @@ class EntityTreeType {
             /**
              * Performs the actual data selection.
              *
-             * @param array $options The options
+             * @param Options $options The options
              *
              * @return array List of selected objects
              */
-            protected function loadChoices(array $options = [])
+            protected function loadChoices(Options $options)
             {
                 $repository = $options['em']->getRepository($options['class']);
                 $treeNodes = $repository->selectTree($options['root'], $options['use_joins']);
@@ -98,7 +100,7 @@ class EntityTreeType {
                         continue;
                     }
 
-                    $choices[$this->createChoiceLabel($node, $options['include_root_node'])] = $node->getKey();
+                    $choices[$this->createChoiceLabel($node, $options['include_root_node'])] = $node;
                 }
 
                 return $choices;
@@ -110,11 +112,11 @@ class EntityTreeType {
              *
              * @param object           $item       The treated entity
              * @param EntityRepository $repository The entity repository
-             * @param array            $options    The options
+             * @param Options          $options    The options
              *
              * @return boolean Whether this entity should be included into the list
              */
-            protected function isIncluded($item, EntityRepository $repository, array $options = [])
+            protected function isIncluded($item, EntityRepository $repository, Options $options)
             {
                 $nodeLevel = $item->getLvl();
 
@@ -139,7 +141,7 @@ class EntityTreeType {
              *
              * @return string The string representation of the object
              */
-            public function createChoiceLabel($choice, $includeRootNode = false)
+            protected function createChoiceLabel($choice, $includeRootNode = false)
             {
                 // determine current list hierarchy level depending on root node inclusion
                 $shownLevel = $choice->getLvl();
