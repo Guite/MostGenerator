@@ -150,7 +150,7 @@ class ItemActions {
                             $title = $this->__('Create «elem.getRelationAliasName(useTarget).formatForDisplay»', '«app.appName.formatForDB»');
                             $menu->addChild($title, [
                                 'route' => '«app.appName.formatForDB»_«otherEntity.name.formatForDB»_' . $routeArea . 'edit',
-                                'routeParameters' => ['«relationAliasNameParam»' => $entity->«IF hasSluggableFields && otherEntity instanceof Entity && (otherEntity as Entity).slugUnique»getSlug()«ELSE»getKey()«ENDIF»]
+                                'routeParameters' => ['«relationAliasNameParam»' => $entity->«IF hasSluggableFields && slugUnique»getSlug()«ELSE»getKey()«ENDIF»]
                             ]);
                             $menu[$title]->setLinkAttribute('title', $title);
                             «app.addLinkClass('default')»
@@ -160,7 +160,7 @@ class ItemActions {
                         $title = $this->__('Create «elem.getRelationAliasName(useTarget).formatForDisplay»', '«app.appName.formatForDB»');
                         $menu->addChild($title, [
                             'route' => '«app.appName.formatForDB»_«otherEntity.name.formatForDB»_' . $routeArea . 'edit',
-                            'routeParameters' => ['«relationAliasNameParam»' => $entity->«IF hasSluggableFields && otherEntity instanceof Entity && (otherEntity as Entity).slugUnique»getSlug()«ELSE»getKey()«ENDIF»]
+                            'routeParameters' => ['«relationAliasNameParam»' => $entity->«IF hasSluggableFields && slugUnique»getSlug()«ELSE»getKey()«ENDIF»]
                         ]);
                         $menu[$title]->setLinkAttribute('title', $title);
                         «app.addLinkClass('default')»
