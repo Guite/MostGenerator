@@ -44,8 +44,7 @@ class Kernel {
          *
          * Example from Symfony: the RouterListener determines controller and information about arguments.
          *
-         «commonExample.generalEventProperties(it)»
-         *
+         «commonExample.generalEventProperties(it, true)»
          * @param GetResponseEvent $event The event instance
          */
         public function onRequest(GetResponseEvent $event)
@@ -77,8 +76,7 @@ class Kernel {
          *
          * Example from Symfony: the ParamConverterListener performs reflection and type conversion.
          *
-         «commonExample.generalEventProperties(it)»
-         *
+         «commonExample.generalEventProperties(it, true)»
          * @param FilterControllerEvent $event The event instance
          */
         public function onController(FilterControllerEvent $event)
@@ -101,8 +99,7 @@ class Kernel {
          *
          * Example from Symfony: TemplateListener renders Twig templates with returned arrays.
          *
-         «commonExample.generalEventProperties(it)»
-         *
+         «commonExample.generalEventProperties(it, true)»
          * @param GetResponseForControllerResultEvent $event The event instance
          */
         public function onView(GetResponseForControllerResultEvent $event)
@@ -130,8 +127,7 @@ class Kernel {
          *    - WebDebugToolbarListener: injects the web debug toolbar
          *    - ResponseListener: updates the content type according to the request format
          *
-         «commonExample.generalEventProperties(it)»
-         *
+         «commonExample.generalEventProperties(it, true)»
          * @param FilterResponseEvent $event The event instance
          */
         public function onResponse(FilterResponseEvent $event)
@@ -146,8 +142,7 @@ class Kernel {
          *
          * You can cleanup things here which are not directly related to the response.
          *
-         «commonExample.generalEventProperties(it)»
-         *
+         «commonExample.generalEventProperties(it, true)»
          * @param FinishRequestEvent $event The event instance
          */
         public function onFinishRequest(FinishRequestEvent $event)
@@ -165,8 +160,7 @@ class Kernel {
          * Example from Symfony: SwiftmailerBundle with memory spooling activates an
          * EmailSenderListener which delivers emails created during the request.
          *
-         «commonExample.generalEventProperties(it)»
-         *
+         «commonExample.generalEventProperties(it, true)»
          * @param PostResponseEvent $event The event instance
          */
         public function onTerminate(PostResponseEvent $event)
@@ -202,8 +196,7 @@ class Kernel {
          *     `$exception = new \Exception('Some special exception');
          *     $event->setException($exception);`
          *
-         «commonExample.generalEventProperties(it)»
-         *
+         «commonExample.generalEventProperties(it, true)»
          * @param GetResponseForExceptionEvent $event The event instance
          */
         public function onException(GetResponseForExceptionEvent $event)

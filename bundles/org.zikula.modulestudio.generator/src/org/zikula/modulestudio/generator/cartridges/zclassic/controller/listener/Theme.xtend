@@ -24,8 +24,7 @@ class Theme {
          * Occurs immediately before twig theme engine renders a template.
          * The event subject is \Zikula\ThemeModule\Bridge\Event\TwigPreRenderEvent.
          *
-         «commonExample.generalEventProperties(it)»
-         *
+         «commonExample.generalEventProperties(it, false)»
          * @param TwigPreRenderEvent $event The event instance
          */
         public function preRender(TwigPreRenderEvent $event)
@@ -40,8 +39,7 @@ class Theme {
          *
          * An example for implementing this event is \Zikula\ThemeModule\EventListener\TemplateNameExposeListener.
          *
-         «commonExample.generalEventProperties(it)»
-         *
+         «commonExample.generalEventProperties(it, false)»
          * @param TwigPostRenderEvent $event The event instance
          */
         public function postRender(TwigPostRenderEvent $event)

@@ -35,8 +35,7 @@ class ModuleDispatch {
          *         'text' => $translator->__('Link text')
          *     ];`
          *
-         «commonExample.generalEventProperties(it)»
-         *
+         «commonExample.generalEventProperties(it, false)»
          * @param GenericEvent $event The event instance
          */
         public function serviceLinks(GenericEvent $event)

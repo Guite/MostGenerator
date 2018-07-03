@@ -37,8 +37,7 @@ class UserLogin {
          *
          * This event does not have any subject, arguments, or data.
          *
-         «commonExample.generalEventProperties(it)»
-         *
+         «commonExample.generalEventProperties(it, false)»
          * @param GenericEvent $event The event instance
          */
         public function started(GenericEvent $event)
@@ -69,8 +68,7 @@ class UserLogin {
          * The arguments of the event are:
          *     `'authentication_method'` will contain the name of the module and the name of the method that was used to authenticated the user.
          *
-         «commonExample.generalEventProperties(it)»
-         *
+         «commonExample.generalEventProperties(it, false)»
          * @param GenericEvent $event The event instance
          */
         public function veto(GenericEvent $event)
@@ -98,8 +96,7 @@ class UserLogin {
          * Finally, this event only fires in the event of a "normal" UI-oriented log-in attempt. A module attempting to log in
          * programmatically by directly calling the core functions will not see this event fired.
          *
-         «commonExample.generalEventProperties(it)»
-         *
+         «commonExample.generalEventProperties(it, false)»
          * @param GenericEvent $event The event instance
          */
         public function succeeded(GenericEvent $event)
@@ -127,8 +124,7 @@ class UserLogin {
          * Finally, this event only fires in the event of a "normal" UI-oriented log-in attempt. A module attempting to log in
          * programmatically by directly calling core functions will not see this event fired.
          *
-         «commonExample.generalEventProperties(it)»
-         *
+         «commonExample.generalEventProperties(it, false)»
          * @param GenericEvent $event The event instance
          */
         public function failed(GenericEvent $event)

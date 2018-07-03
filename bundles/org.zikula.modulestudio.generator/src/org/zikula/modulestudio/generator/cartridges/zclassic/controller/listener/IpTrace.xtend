@@ -45,8 +45,7 @@ class IpTrace {
          * If you use a cache like Varnish, you may want to set a proxy to Request::getClientIp() method.
          *     $this->request->setTrustedProxies(array('127.0.0.1'));
          *
-         «commonExample.generalEventProperties(it)»
-         *
+         «commonExample.generalEventProperties(it, true)»
          * @param GetResponseEvent $event The event instance
          */
         public function onKernelRequest(GetResponseEvent $event)

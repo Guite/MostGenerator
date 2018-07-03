@@ -29,8 +29,7 @@ class Mailer {
          * This is a notifyUntil event so the event must `$event->stopPropagation()` and set any
          * return data into `$event->data`, or `$event->setData()`.
          *
-         «commonExample.generalEventProperties(it)»
-         *
+         «commonExample.generalEventProperties(it, false)»
          * @param GenericEvent $event The event instance
          */
         public function sendMessageStart(GenericEvent $event)
@@ -46,8 +45,7 @@ class Mailer {
          * This is a notifyUntil event so the event must `$event->stopPropagation()` and set any
          * return data into `$event->data`, or `$event->setData()`.
          *
-         «commonExample.generalEventProperties(it)»
-         *
+         «commonExample.generalEventProperties(it, false)»
          * @param GenericEvent $event The event instance
          */
         public function sendMessagePerform(GenericEvent $event)
@@ -60,8 +58,7 @@ class Mailer {
          *
          * Invoked from `Zikula\MailerModule\Api\MailerApi#performSending`.
          *
-         «commonExample.generalEventProperties(it)»
-         *
+         «commonExample.generalEventProperties(it, false)»
          * @param GenericEvent $event The event instance
          */
         public function sendMessageSuccess(GenericEvent $event)
@@ -74,8 +71,7 @@ class Mailer {
          *
          * Invoked from `Zikula\MailerModule\Api\MailerApi#performSending`.
          *
-         «commonExample.generalEventProperties(it)»
-         *
+         «commonExample.generalEventProperties(it, false)»
          * @param GenericEvent $event The event instance
          */
         public function sendMessageFailure(GenericEvent $event)

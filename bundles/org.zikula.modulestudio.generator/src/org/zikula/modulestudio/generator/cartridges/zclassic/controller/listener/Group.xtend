@@ -29,8 +29,7 @@ class Group {
          * Occurs after a group is created. All handlers are notified.
          * The full group record created is available as the subject.
          *
-         «commonExample.generalEventProperties(it)»
-         *
+         «commonExample.generalEventProperties(it, false)»
          * @param GenericEvent $event The event instance
          */
         public function create(GenericEvent $event)
@@ -43,8 +42,7 @@ class Group {
          * Occurs after a group is updated. All handlers are notified.
          * The full updated group record is available as the subject.
          *
-         «commonExample.generalEventProperties(it)»
-         *
+         «commonExample.generalEventProperties(it, false)»
          * @param GenericEvent $event The event instance
          */
         public function update(GenericEvent $event)
@@ -57,8 +55,7 @@ class Group {
          * Occurs after a group is deleted from the system. All handlers are notified.
          * The full group record deleted is available as the subject.
          *
-         «commonExample.generalEventProperties(it)»
-         *
+         «commonExample.generalEventProperties(it, false)»
          * @param GenericEvent $event The event instance
          */
         public function delete(GenericEvent $event)
@@ -72,8 +69,7 @@ class Group {
          * It does not apply to pending membership requests.
          * The uid and gid are available as the subject.
          *
-         «commonExample.generalEventProperties(it)»
-         *
+         «commonExample.generalEventProperties(it, false)»
          * @param GenericEvent $event The event instance
          */
         public function addUser(GenericEvent $event)
@@ -86,8 +82,7 @@ class Group {
          * Occurs after a user is removed from a group. All handlers are notified.
          * The uid and gid are available as the subject.
          *
-         «commonExample.generalEventProperties(it)»
-         *
+         «commonExample.generalEventProperties(it, false)»
          * @param GenericEvent $event The event instance
          */
         public function removeUser(GenericEvent $event)
@@ -101,8 +96,7 @@ class Group {
          * The subject is the GroupApplicationEntity.
          * Arguments are the form data from \Zikula\GroupsModule\Form\Type\ManageApplicationType
          *
-         «commonExample.generalEventProperties(it)»
-         *
+         «commonExample.generalEventProperties(it, false)»
          * @param GenericEvent $event The event instance
          */
         public function applicationProcessed(GenericEvent $event)
@@ -115,8 +109,7 @@ class Group {
          * Occurs after the successful creation of a group application.
          * The subject is the GroupApplicationEntity.
          *
-         «commonExample.generalEventProperties(it)»
-         *
+         «commonExample.generalEventProperties(it, false)»
          * @param GenericEvent $event The event instance
          */
         public function newApplication(GenericEvent $event)

@@ -108,8 +108,7 @@ class User {
          * This is a storage-level event, not a UI event. It should not be used for UI-level actions such as redirects.
          * The subject of the event is set to the user record that was created.
          *
-         «commonExample.generalEventProperties(it)»
-         *
+         «commonExample.generalEventProperties(it, false)»
          * @param GenericEvent $event The event instance
          */
         public function create(GenericEvent $event)
@@ -124,8 +123,7 @@ class User {
          * This is a storage-level event, not a UI event. It should not be used for UI-level actions such as redirects.
          * The subject of the event is set to the user record, with the updated values.
          *
-         «commonExample.generalEventProperties(it)»
-         *
+         «commonExample.generalEventProperties(it, false)»
          * @param GenericEvent $event The event instance
          */
         public function update(GenericEvent $event)
@@ -138,8 +136,7 @@ class User {
          * Occurs after the deletion of a user account. Subject is $userId.
          * This is a storage-level event, not a UI event. It should not be used for UI-level actions such as redirects.
          *
-         «commonExample.generalEventProperties(it)»
-         *
+         «commonExample.generalEventProperties(it, false)»
          * @param GenericEvent $event The event instance
          */
         public function delete(GenericEvent $event)

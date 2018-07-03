@@ -114,8 +114,7 @@ class ThirdParty {
          * Listener for the `get.pending_content` event which collects information from modules
          * about pending content items waiting for approval.
          *
-         «commonExample.generalEventProperties(it)»
-         *
+         «commonExample.generalEventProperties(it, false)»
          * @param GenericEvent $event The event instance
          */
         public function pendingContentListener(GenericEvent $event)
@@ -163,8 +162,7 @@ class ThirdParty {
          * The subject is an instance of Content_Types.
          * You can register custom content types as well as custom layout types.
          *
-         «commonExample.generalEventProperties(it)»
-         *
+         «commonExample.generalEventProperties(it, false)»
          * @param \Zikula_Event $event The event instance
          */
         public function contentGetTypes(\Zikula_Event $event)
@@ -196,8 +194,7 @@ class ThirdParty {
          * This occurs when Scribite adds pagevars to the editor page.
          * «appName» will use this to add a javascript helper to add custom items.
          *
-         «commonExample.generalEventProperties(it)»
-         *
+         «commonExample.generalEventProperties(it, false)»
          * @param EditorHelperEvent $event The event instance
          */
         public function getEditorHelpers(EditorHelperEvent $event)
@@ -233,8 +230,7 @@ class ThirdParty {
          *
          * Adds external plugin to CKEditor.
          *
-         «commonExample.generalEventProperties(it)»
-         *
+         «commonExample.generalEventProperties(it, false)»
          * @param GenericEvent $event The event instance
          */
         public function getCKEditorPlugins(GenericEvent $event)
@@ -254,8 +250,7 @@ class ThirdParty {
          *
          * Adds external plugin to «editorName».
          *
-         «commonExample.generalEventProperties(it)»
-         *
+         «commonExample.generalEventProperties(it, false)»
          * @param GenericEvent $event The event instance
          */
         public function get«editorName»Plugins(GenericEvent $event)

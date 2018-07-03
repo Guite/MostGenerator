@@ -78,8 +78,7 @@ class ModuleInstaller {
          * The event allows accessing the module bundle and the extension
          * information array using `$event->getModule()` and `$event->getModInfo()`.
          *
-         «commonExample.generalEventProperties(it)»
-         *
+         «commonExample.generalEventProperties(it, false)»
          * @param ModuleStateEvent $event The event instance
          */
         public function moduleInstalled(ModuleStateEvent $event)
@@ -93,8 +92,7 @@ class ModuleInstaller {
          * The event allows accessing the module bundle and the extension
          * information array using `$event->getModule()` and `$event->getModInfo()`.
          *
-         «commonExample.generalEventProperties(it)»
-         *
+         «commonExample.generalEventProperties(it, false)»
          * @param ModuleStateEvent $event The event instance
          */
         public function modulePostInstalled(ModuleStateEvent $event)
@@ -118,8 +116,7 @@ class ModuleInstaller {
          * The event allows accessing the module bundle and the extension
          * information array using `$event->getModule()` and `$event->getModInfo()`.
          *
-         «commonExample.generalEventProperties(it)»
-         *
+         «commonExample.generalEventProperties(it, false)»
          * @param ModuleStateEvent $event The event instance
          */
         public function moduleUpgraded(ModuleStateEvent $event)
@@ -133,8 +130,7 @@ class ModuleInstaller {
          * The event allows accessing the module bundle and the extension
          * information array using `$event->getModule()` and `$event->getModInfo()`.
          *
-         «commonExample.generalEventProperties(it)»
-         *
+         «commonExample.generalEventProperties(it, false)»
          * @param ModuleStateEvent $event The event instance
          */
         public function moduleEnabled(ModuleStateEvent $event)
@@ -148,8 +144,7 @@ class ModuleInstaller {
          * The event allows accessing the module bundle and the extension
          * information array using `$event->getModule()` and `$event->getModInfo()`.
          *
-         «commonExample.generalEventProperties(it)»
-         *
+         «commonExample.generalEventProperties(it, false)»
          * @param ModuleStateEvent $event The event instance
          */
         public function moduleDisabled(ModuleStateEvent $event)
@@ -163,8 +158,7 @@ class ModuleInstaller {
          * The event allows accessing the module bundle and the extension
          * information array using `$event->getModule()` and `$event->getModInfo()`.
          *
-         «commonExample.generalEventProperties(it)»
-         *
+         «commonExample.generalEventProperties(it, false)»
          * @param ModuleStateEvent $event The event instance
          */
         public function moduleRemoved(ModuleStateEvent $event)

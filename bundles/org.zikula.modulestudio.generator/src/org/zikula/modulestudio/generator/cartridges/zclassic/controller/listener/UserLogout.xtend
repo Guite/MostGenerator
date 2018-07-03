@@ -25,8 +25,7 @@ class UserLogout {
          * Args contain array of `['authentication_method' => $authenticationMethod,
          *                         'uid'                   => $uid];`
          *
-         «commonExample.generalEventProperties(it)»
-         *
+         «commonExample.generalEventProperties(it, false)»
          * @param GenericEvent $event The event instance
          */
         public function succeeded(GenericEvent $event)

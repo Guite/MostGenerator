@@ -29,8 +29,7 @@ class UserRegistration {
          *
          * Occurs at the beginning of the registration process, before the registration form is displayed to the user.
          *
-         «commonExample.generalEventProperties(it)»
-         *
+         «commonExample.generalEventProperties(it, false)»
          * @param GenericEvent $event The event instance
          */
         public function started(GenericEvent $event)
@@ -58,8 +57,7 @@ class UserRegistration {
          * Because this event will not necessarily notify ALL listeners (if propagation is stopped) it CANNOT be relied upon
          * to effect change of any kind with regard to the entity.
          *
-         «commonExample.generalEventProperties(it)»
-         *
+         «commonExample.generalEventProperties(it, false)»
          * @param GenericEvent $event The event instance
          */
         public function createVeto(GenericEvent $event)
@@ -118,8 +116,7 @@ class UserRegistration {
          * be expecting to return to the log-in screen . Being redirected to a different page might be disorienting to the user. Second,
          * an event handler that was notified prior to the current handler may already have changed the `'redirectUrl'`.
          *
-         «commonExample.generalEventProperties(it)»
-         *
+         «commonExample.generalEventProperties(it, false)»
          * @param GenericEvent $event The event instance
          */
         public function succeeded(GenericEvent $event)
@@ -146,8 +143,7 @@ class UserRegistration {
          * Being redirected to a different page might be disorienting to the user. Second, an event handler that was notified
          * prior to the current handler may already have changed the `'redirectUrl'`.
          *
-         «commonExample.generalEventProperties(it)»
-         *
+         «commonExample.generalEventProperties(it, false)»
          * @param GenericEvent $event The event instance
          */
         public function failed(GenericEvent $event)
@@ -164,8 +160,7 @@ class UserRegistration {
          * The subject of the event is set to the UserEntity that was created.
          * This event occurs before the $authenticationMethod->register() method is called.
          *
-         «commonExample.generalEventProperties(it)»
-         *
+         «commonExample.generalEventProperties(it, false)»
          * @param GenericEvent $event The event instance
          */
         public function create(GenericEvent $event)
@@ -180,8 +175,7 @@ class UserRegistration {
          * The subject of the event is set to the UserEntity, with the updated values. The event data contains the
          * original UserEntity in an array `['oldValue' => $originalUser]`.
          *
-         «commonExample.generalEventProperties(it)»
-         *
+         «commonExample.generalEventProperties(it, false)»
          * @param GenericEvent $event The event instance
          */
         public function update(GenericEvent $event)
@@ -197,8 +191,7 @@ class UserRegistration {
          * event will fire. This is a storage-level event, not a UI event. It should not be used for UI-level actions such as redirects.
          * The subject of the event is set to the Uid being deleted.
          *
-         «commonExample.generalEventProperties(it)»
-         *
+         «commonExample.generalEventProperties(it, false)»
          * @param GenericEvent $event The event instance
          */
         public function delete(GenericEvent $event)
@@ -210,8 +203,7 @@ class UserRegistration {
          *
          * Occurs when an administrator approves a registration. The UserEntity is the subject.
          *
-         «commonExample.generalEventProperties(it)»
-         *
+         «commonExample.generalEventProperties(it, false)»
          * @param GenericEvent $event The event instance
          */
         public function forceApproval(GenericEvent $event)

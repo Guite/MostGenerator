@@ -25,8 +25,7 @@ class Users {
          *
          * Event data is populated by the new values.
          *
-         «commonExample.generalEventProperties(it)»
-         *
+         «commonExample.generalEventProperties(it, false)»
          * @param GenericEvent $event The event instance
          */
         public function configUpdated(GenericEvent $event)
