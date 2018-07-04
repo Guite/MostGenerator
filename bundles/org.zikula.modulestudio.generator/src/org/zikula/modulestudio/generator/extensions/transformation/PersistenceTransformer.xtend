@@ -79,7 +79,9 @@ class PersistenceTransformer {
         }
         // correct default values for country fields
         for (field : (entities.map[fields] + variables.map[fields]).flatten.filter(StringField).filter[StringRole.COUNTRY == role]) {
-            field.defaultValue = field.defaultValue.toUpperCase
+            if (null !== field.defaultValue) {
+                field.defaultValue = field.defaultValue.toUpperCase
+            }
         }
 
         addWorkflowSettings
