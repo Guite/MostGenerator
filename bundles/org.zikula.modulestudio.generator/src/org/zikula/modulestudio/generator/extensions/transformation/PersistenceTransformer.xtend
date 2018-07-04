@@ -9,6 +9,8 @@ import de.guite.modulestudio.metamodel.MappedSuperClass
 import de.guite.modulestudio.metamodel.ModuleStudioFactory
 import de.guite.modulestudio.metamodel.NumberFieldType
 import de.guite.modulestudio.metamodel.OneToOneRelationship
+import de.guite.modulestudio.metamodel.StringField
+import de.guite.modulestudio.metamodel.StringRole
 import de.guite.modulestudio.metamodel.UploadField
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
@@ -71,6 +73,15 @@ class PersistenceTransformer {
             entity.handleEntity
         }
 
+        // make optional upload fields nullable
+        for (field : (entities.map[fields] + variables.map[fields]).flatten.filter(UploadField).filter[!mandatory]) {
+            field.nullable = true
+        }
+        // correct default values for country fields
+        for (field : (entities.map[fields] + variables.map[fields]).flatten.filter(StringField).filter[StringRole.COUNTRY == role]) {
+            field.defaultValue = field.defaultValue.toUpperCase
+        }
+
         addWorkflowSettings
         addViewSettings
         addImageSettings
@@ -118,11 +129,6 @@ class PersistenceTransformer {
             if (!inheriting || parentType instanceof MappedSuperClass) {
                 addWorkflowState
             }
-        }
-
-        // make optional upload fields nullable, too
-        for (field : fields.filter(UploadField).filter[f|!f.mandatory]) {
-            field.nullable = true
         }
     }
 
