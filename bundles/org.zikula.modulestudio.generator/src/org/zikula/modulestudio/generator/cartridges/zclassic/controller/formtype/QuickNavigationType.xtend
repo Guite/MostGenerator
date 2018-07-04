@@ -93,6 +93,9 @@ class QuickNavigationType {
         «IF hasLocaleFieldsEntity»
             use Zikula\SettingsModule\Api\ApiInterface\LocaleApiInterface;
         «ENDIF»
+        «IF !fields.filter(UserField).empty»
+            use Zikula\UsersModule\Entity\UserEntity;
+        «ENDIF»
         «IF !fields.filter(ListField).filter[multiple].empty»
             use «app.appNamespace»\Form\Type\Field\MultiListType;
         «ENDIF»
@@ -626,7 +629,7 @@ class QuickNavigationType {
     def private dispatch additionalOptions(UserField it) '''
         'placeholder' => $this->__('All'),
         // Zikula core should provide a form type for this to hide entity details
-        'class' => 'Zikula\UsersModule\Entity\UserEntity',
+        'class' => UserEntity::class,
         'choice_label' => 'uname'
     '''
 
