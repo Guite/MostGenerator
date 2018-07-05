@@ -126,6 +126,8 @@ class Actions {
         $request->query->set('pos', $pos);
 
         $sortableColumns = new SortableColumns($this->get('router'), '«app.appName.formatForDB»_«name.toLowerCase»_' . ($isAdmin ? 'admin' : '') . 'view', 'sort', 'sortdir');
+
+        «initSortableColumns»
         «IF tree != EntityTreeType.NONE»
 
             if ('tree' == $request->query->getAlnum('tpl', '')) {
@@ -135,8 +137,6 @@ class Actions {
                 return $viewHelper->processTemplate($objectType, 'view', $templateParameters);
             }
         «ENDIF»
-
-        «initSortableColumns»
 
         $templateParameters = $controllerHelper->processViewActionParameters($objectType, $sortableColumns, $templateParameters«IF app.hasHookSubscribers», «(!skipHookSubscribers).displayBool»«ENDIF»);
 
