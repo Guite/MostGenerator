@@ -209,7 +209,7 @@ class ControllerHelper {
                 FeatureActivationHelper $featureActivationHelper«ENDIF»
             ) {
                 $this->setTranslator($translator);
-                $this->request = $requestStack->getMasterRequest();
+                $this->request = $requestStack->getCurrentRequest();
                 «IF hasUiHooksProviders»
                     $this->router = $router;
                 «ENDIF»
