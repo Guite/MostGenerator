@@ -73,11 +73,11 @@ class SimpleFields {
             «IF page == 'display'»
                   {% if not isQuickView %}
             «ENDIF»
-                {{ «realName».getUid()|profileLinkByUserId() }}{% if currentUser.loggedIn %}{% set sendMessageUrl = «realName».getUid()|messageSendLink(urlOnly=true) %}{% if sendMessageUrl != '#' %}<a href="{{ sendMessageUrl }}" title="{{ __f('Send private message to %userName%', { '%userName%': «realName».getUname() }) }}"><i class="fa fa-envelope-o"></i></a>{% endif %}{% endif %}
-                <span class="avatar">{{ userAvatar(«realName».getUid(), {rating: 'g'}) }}</span>
+                {{ «realName».uid|profileLinkByUserId }}{% if currentUser.loggedIn %}{% set sendMessageUrl = «realName».uid|messageSendLink(urlOnly=true) %}{% if sendMessageUrl != '#' %}<a href="{{ sendMessageUrl }}" title="{{ __f('Send private message to %userName%', {'%userName%': «realName».uname}) }}"><i class="fa fa-envelope-o"></i></a>{% endif %}{% endif %}
+                <span class="avatar">{{ userAvatar(«realName».uid, {rating: 'g'}) }}</span>
             «IF page == 'display'»
                 {% else %}
-                    {{ «realName».getUname() }}
+                    {{ «realName».uname }}
                 {% endif %}
             «ENDIF»
             «IF !mandatory»

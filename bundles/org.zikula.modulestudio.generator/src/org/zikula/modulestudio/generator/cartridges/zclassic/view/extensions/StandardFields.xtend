@@ -27,7 +27,7 @@ class StandardFields {
 
     def private standardFieldsViewImpl(Application it) '''
         {# purpose of this template: reusable display of standard fields #}
-        {% if (obj.createdBy|default and obj.createdBy.getUid() > 0) or (obj.updatedBy|default and obj.updatedBy.getUid() > 0) %}
+        {% if (obj.createdBy|default and obj.createdBy.uid > 0) or (obj.updatedBy|default and obj.updatedBy.uid > 0) %}
             {% if tabs|default(false) == true %}
                 <div role="tabpanel" class="tab-pane fade" id="tabStandardFields" aria-labelledby="standardFieldsTab">
                     <h3>{{ __('Creation and update') }}</h3>
@@ -43,30 +43,30 @@ class StandardFields {
 
     def private viewBody(Application it) '''
         <dl class="propertylist">
-        {% if obj.createdBy|default and obj.createdBy.getUid() > 0 %}
+        {% if obj.createdBy|default and obj.createdBy.uid > 0 %}
             <dt>{{ __('Creation') }}</dt>
-            {% set profileLink = obj.createdBy.getUid()|profileLinkByUserId() %}
-            <dd class="avatar">{{ userAvatar(obj.createdBy.getUid(), {rating: 'g'}) }}</dd>
+            {% set profileLink = obj.createdBy.uid|profileLinkByUserId %}
+            <dd class="avatar">{{ userAvatar(obj.createdBy.uid, {rating: 'g'}) }}</dd>
             <dd>
                 {{ __f('Created by %user on %date', {'%user': profileLink, '%date': obj.createdDate|localizeddate('medium', 'short')})|raw }}
                 {% if currentUser.loggedIn %}
-                    {% set sendMessageUrl = obj.createdBy.getUid()|messageSendLink(urlOnly=true) %}
+                    {% set sendMessageUrl = obj.createdBy.uid|messageSendLink(urlOnly=true) %}
                     {% if sendMessageUrl != '#' %}
-                        <a href="{{ sendMessageUrl }}" title="{{ __f('Send private message to %userName%', {'%userName%': obj.createdBy.getUname()}) }}"><i class="fa fa-envelope-o"></i></a>
+                        <a href="{{ sendMessageUrl }}" title="{{ __f('Send private message to %userName%', {'%userName%': obj.createdBy.uname}) }}"><i class="fa fa-envelope-o"></i></a>
                     {% endif %}
                 {% endif %}
             </dd>
         {% endif %}
-        {% if obj.updatedBy|default and obj.updatedBy.getUid() > 0 %}
+        {% if obj.updatedBy|default and obj.updatedBy.uid > 0 %}
             <dt>{{ __('Last update') }}</dt>
-            {% set profileLink = obj.updatedBy.getUid()|profileLinkByUserId() %}
-            <dd class="avatar">{{ userAvatar(obj.updatedBy.getUid(), {rating: 'g'}) }}</dd>
+            {% set profileLink = obj.updatedBy.uid|profileLinkByUserId %}
+            <dd class="avatar">{{ userAvatar(obj.updatedBy.uid, {rating: 'g'}) }}</dd>
             <dd>
                 {{ __f('Updated by %user on %date', {'%user': profileLink, '%date': obj.updatedDate|localizeddate('medium', 'short')})|raw }}
                 {% if currentUser.loggedIn %}
-                    {% set sendMessageUrl = obj.updatedBy.getUid()|messageSendLink(urlOnly=true) %}
+                    {% set sendMessageUrl = obj.updatedBy.uid|messageSendLink(urlOnly=true) %}
                     {% if sendMessageUrl != '#' %}
-                        <a href="{{ sendMessageUrl }}" title="{{ __f('Send private message to %userName%', {'%userName%': obj.updatedBy.getUname()}) }}"><i class="fa fa-envelope-o"></i></a>
+                        <a href="{{ sendMessageUrl }}" title="{{ __f('Send private message to %userName%', {'%userName%': obj.updatedBy.uname}) }}"><i class="fa fa-envelope-o"></i></a>
                     {% endif %}
                 {% endif %}
             </dd>
@@ -76,7 +76,7 @@ class StandardFields {
 
     def private standardFieldsEditImpl(Application it) '''
         {# purpose of this template: reusable editing of standard fields #}
-        {% if (obj.createdBy|default and obj.createdBy.getUid() > 0) or (obj.updatedBy|default and obj.updatedBy.getUid() > 0) %}
+        {% if (obj.createdBy|default and obj.createdBy.uid > 0) or (obj.updatedBy|default and obj.updatedBy.uid > 0) %}
             {% if tabs|default(false) == true %}
                 <div role="tabpanel" class="tab-pane fade" id="tabStandardFields" aria-labelledby="standardFieldsTab">
                     <h3>{{ __('Creation and update') }}</h3>
@@ -95,12 +95,12 @@ class StandardFields {
 
     def private editBody(Application it) '''
         <ul>
-        {% if obj.createdBy|default and obj.createdBy.getUid() > 0 %}
-            <li>{{ __f('Created by %user', {'%user': obj.createdBy.getUname()}) }}</li>
+        {% if obj.createdBy|default and obj.createdBy.uid > 0 %}
+            <li>{{ __f('Created by %user', {'%user': obj.createdBy.uname}) }}</li>
             <li>{{ __f('Created on %date', {'%date': obj.createdDate|localizeddate('medium', 'short')}) }}</li>
         {% endif %}
-        {% if obj.updatedBy|default and obj.updatedBy.getUid() > 0 %}
-            <li>{{ __f('Updated by %user', {'%user': obj.updatedBy.getUname()}) }}</li>
+        {% if obj.updatedBy|default and obj.updatedBy.uid > 0 %}
+            <li>{{ __f('Updated by %user', {'%user': obj.updatedBy.uname}) }}</li>
             <li>{{ __f('Updated on %date', {'%date': obj.updatedDate|localizeddate('medium', 'short')}) }}</li>
         {% endif %}
         </ul>
