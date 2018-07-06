@@ -126,6 +126,10 @@ class ViewExtensions {
      * Returns whether jQuery UI is needed or not.
      */
     def needsJQueryUI(Application it) {
+        if (targets('2.0-dev') || (targets('1.5-dev') && !targets('2.0'))) {
+            // jQuery UI is automatically loaded in Theme module's default page asset setter
+            return false
+        }
         (hasSortable && hasViewActions)
         || (!relations.empty && (hasViewActions || hasDisplayActions || hasEditActions))
     }
