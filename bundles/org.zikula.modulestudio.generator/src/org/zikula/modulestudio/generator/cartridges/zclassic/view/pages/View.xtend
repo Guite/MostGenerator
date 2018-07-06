@@ -155,7 +155,7 @@ class View {
             {% endif %}
         «ENDIF»
         «IF loggable»
-            {% if hasDeletedEntities and hasPermission('«appName»:«name.formatForCodeCapital»:', '::', 'ACCESS_EDIT') %}
+            {% if hasDeletedEntities %}
                 {% set linkTitle = __('View deleted «nameMultiple.formatForDisplay»') %}
                 <a href="{{ path('«appName.formatForDB»_«objName.toLowerCase»_' ~ routeArea ~ 'view', {deleted: 1}) }}" title="{{ linkTitle|e('html_attr') }}"><i class="fa fa-trash-o"></i> {{ linkTitle }}</a>
             {% endif %}

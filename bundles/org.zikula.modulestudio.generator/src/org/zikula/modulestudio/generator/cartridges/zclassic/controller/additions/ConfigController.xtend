@@ -65,7 +65,7 @@ class ConfigController {
     '''
 
     def private configBaseImpl(Application it) '''
-        if (!$this->hasPermission($this->name . '::', '::', ACCESS_ADMIN)) {
+        if (!$this->get('«appService».permission_helper')->hasPermission(ACCESS_ADMIN)) {
             throw new AccessDeniedException();
         }
 

@@ -27,7 +27,6 @@ class ArchiveHelper {
     def private archiveHelperBaseClass(Application it) '''
         namespace «appNamespace»\Helper\Base;
 
-        use Doctrine\ORM\QueryBuilder;
         use Psr\Log\LoggerInterface;
         use Symfony\Component\HttpFoundation\RequestStack;
         «IF hasHookSubscribers»
@@ -35,11 +34,11 @@ class ArchiveHelper {
         «ENDIF»
         use Zikula\Common\Translator\TranslatorInterface;
         use Zikula\Core\RouteUrl;
-        use Zikula\PermissionsModule\Api\ApiInterface\PermissionApiInterface;
         use «appNamespace»\Entity\Factory\EntityFactory;
         «IF hasHookSubscribers»
             use «appNamespace»\Helper\HookHelper;
         «ENDIF»
+        use «appNamespace»\Helper\PermissionHelper;
         use «appNamespace»\Helper\WorkflowHelper;
 
         /**
@@ -63,14 +62,14 @@ class ArchiveHelper {
             protected $logger;
 
             /**
-             * @var PermissionApiInterface
-             */
-            protected $permissionApi;
-
-            /**
              * @var EntityFactory
              */
             protected $entityFactory;
+
+            /**
+             * @var PermissionHelper
+             */
+            protected $permissionHelper;
 
             /**
              * @var WorkflowHelper
@@ -87,30 +86,30 @@ class ArchiveHelper {
             /**
              * ArchiveHelper constructor.
              *
-             * @param TranslatorInterface    $translator     Translator service instance
-             * @param RequestStack           $requestStack   RequestStack service instance
-             * @param LoggerInterface        $logger         Logger service instance
-             * @param PermissionApiInterface $permissionApi  PermissionApi service instance
-             * @param EntityFactory          $entityFactory  EntityFactory service instance
-             * @param WorkflowHelper         $workflowHelper WorkflowHelper service instance
+             * @param TranslatorInterface $translator       Translator service instance
+             * @param RequestStack        $requestStack     RequestStack service instance
+             * @param LoggerInterface     $logger           Logger service instance
+             * @param EntityFactory       $entityFactory    EntityFactory service instance
+             * @param PermissionHelper    $permissionHelper PermissionHelper service instance
+             * @param WorkflowHelper      $workflowHelper   WorkflowHelper service instance
              «IF hasHookSubscribers»
-             * @param HookHelper             $hookHelper     HookHelper service instance
+             * @param HookHelper          $hookHelper     HookHelper service instance
              «ENDIF»
              */
             public function __construct(
                 TranslatorInterface $translator,
                 RequestStack $requestStack,
                 LoggerInterface $logger,
-                PermissionApiInterface $permissionApi,
                 EntityFactory $entityFactory,
+                PermissionHelper $permissionHelper,
                 WorkflowHelper $workflowHelper«IF hasHookSubscribers»,
                 HookHelper $hookHelper«ENDIF»
             ) {
                 $this->translator = $translator;
                 $this->requestStack = $requestStack;
                 $this->logger = $logger;
-                $this->permissionApi = $permissionApi;
                 $this->entityFactory = $entityFactory;
+                $this->permissionHelper = $permissionHelper;
                 $this->workflowHelper = $workflowHelper;
                 «IF hasHookSubscribers»
                     $this->hookHelper = $hookHelper;
@@ -134,7 +133,7 @@ class ArchiveHelper {
                 return;
             }
 
-            if (!$this->permissionApi->hasPermission('«appName»', '.*', ACCESS_EDIT)) {
+            if (!$this->permissionHelper->hasPermission(ACCESS_EDIT)) {
                 // abort if current user has no permission for executing the archive workflow action
                 return;
             }

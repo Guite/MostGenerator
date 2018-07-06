@@ -463,7 +463,8 @@ class Listeners {
             use Symfony\Component\Workflow\Event\Event;
             use Symfony\Component\Workflow\Event\GuardEvent;
             use Zikula\Core\Doctrine\EntityAccess;
-            use Zikula\PermissionsModule\Api\ApiInterface\PermissionApiInterface;
+            use «appNamespace»\Entity\Factory\EntityFactory;
+            use «appNamespace»\Helper\PermissionHelper;
             «IF needsApproval»
                 use «appNamespace»\Helper\NotificationHelper;
             «ENDIF»

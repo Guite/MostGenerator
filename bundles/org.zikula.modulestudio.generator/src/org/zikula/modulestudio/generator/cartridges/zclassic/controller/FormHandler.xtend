@@ -160,7 +160,6 @@ class FormHandler {
             use Zikula\GroupsModule\Entity\Repository\GroupApplicationRepository;
         «ENDIF»
         use Zikula\PageLockModule\Api\ApiInterface\LockingApiInterface;
-        use Zikula\PermissionsModule\Api\ApiInterface\PermissionApiInterface;
         use Zikula\UsersModule\Api\ApiInterface\CurrentUserApiInterface;
         «IF needsApproval»
             use Zikula\UsersModule\Constant as UsersConstant;
@@ -174,6 +173,7 @@ class FormHandler {
             use «appNamespace»\Helper\HookHelper;
         «ENDIF»
         use «appNamespace»\Helper\ModelHelper;
+        use «appNamespace»\Helper\PermissionHelper;
         «IF hasTranslatable»
             use «appNamespace»\Helper\TranslatableHelper;
         «ENDIF»
@@ -207,13 +207,6 @@ class FormHandler {
              * @var string
              */
             protected $objectTypeLower;
-
-            /**
-             * Permission component based on object type.
-             *
-             * @var string
-             */
-            protected $permissionComponent;
 
             /**
              * Reference to treated entity instance.
@@ -325,11 +318,6 @@ class FormHandler {
              */
             protected $logger;
 
-            /**
-             * @var PermissionApiInterface
-             */
-            protected $permissionApi;
-
             «IF hasTranslatable || needsApproval»
                 /**
                  * @var VariableApiInterface
@@ -358,13 +346,6 @@ class FormHandler {
              * @var ControllerHelper
              */
             protected $controllerHelper;
-            «IF hasHookSubscribers»
-
-                /**
-                 * @var HookHelper
-                 */
-                protected $hookHelper;
-            «ENDIF»
 
             /**
              * @var ModelHelper
@@ -372,9 +353,21 @@ class FormHandler {
             protected $modelHelper;
 
             /**
+             * @var PermissionHelper
+             */
+            protected $permissionHelper;
+
+            /**
              * @var WorkflowHelper
              */
             protected $workflowHelper;
+            «IF hasHookSubscribers»
+
+                /**
+                 * @var HookHelper
+                 */
+                protected $hookHelper;
+            «ENDIF»
             «IF hasTranslatable»
 
                 /**
@@ -420,7 +413,6 @@ class FormHandler {
              * @param RequestStack              $requestStack     RequestStack service instance
              * @param RouterInterface           $router           Router service instance
              * @param LoggerInterface           $logger           Logger service instance
-             * @param PermissionApiInterface    $permissionApi    PermissionApi service instance
              «IF hasTranslatable || needsApproval»
              * @param VariableApiInterface      $variableApi      VariableApi service instance
              «ENDIF»
@@ -431,6 +423,7 @@ class FormHandler {
              * @param EntityFactory             $entityFactory    EntityFactory service instance
              * @param ControllerHelper          $controllerHelper ControllerHelper service instance
              * @param ModelHelper               $modelHelper      ModelHelper service instance
+             * @param PermissionHelper          $permissionHelper PermissionHelper service instance
              * @param WorkflowHelper            $workflowHelper   WorkflowHelper service instance
              «IF hasHookSubscribers»
              * @param HookHelper                $hookHelper       HookHelper service instance
@@ -449,7 +442,6 @@ class FormHandler {
                 RequestStack $requestStack,
                 RouterInterface $router,
                 LoggerInterface $logger,
-                PermissionApiInterface $permissionApi,
                 «IF hasTranslatable || needsApproval»
                     VariableApiInterface $variableApi,
                 «ENDIF»
@@ -460,6 +452,7 @@ class FormHandler {
                 EntityFactory $entityFactory,
                 ControllerHelper $controllerHelper,
                 ModelHelper $modelHelper,
+                PermissionHelper $permissionHelper,
                 WorkflowHelper $workflowHelper«IF hasHookSubscribers»,
                 HookHelper $hookHelper«ENDIF»«IF hasTranslatable»,
                 TranslatableHelper $translatableHelper«ENDIF»«IF needsFeatureActivationHelper»,
@@ -471,7 +464,6 @@ class FormHandler {
                 $this->request = $requestStack->getCurrentRequest();
                 $this->router = $router;
                 $this->logger = $logger;
-                $this->permissionApi = $permissionApi;
                 «IF hasTranslatable || needsApproval»
                     $this->variableApi = $variableApi;
                 «ENDIF»
@@ -482,6 +474,7 @@ class FormHandler {
                 $this->entityFactory = $entityFactory;
                 $this->controllerHelper = $controllerHelper;
                 $this->modelHelper = $modelHelper;
+                $this->permissionHelper = $permissionHelper;
                 $this->workflowHelper = $workflowHelper;
                 «IF hasHookSubscribers»
                     $this->hookHelper = $hookHelper;
@@ -562,7 +555,6 @@ class FormHandler {
             // store current uri for repeated creations
             $this->repeatReturnUrl = $this->request->getUri();
 
-            $this->permissionComponent = '«appName»:' . $this->objectTypeCapital . ':';
             «IF getAllEntities.exists[hasSluggableFields && slugUnique]»
                 $this->idField = in_array($this->objectType, $this->entitiesWithUniqueSlugs) ? 'slug' : $this->entityFactory->getIdField($this->objectType);
             «ELSE»
@@ -603,17 +595,17 @@ class FormHandler {
             $this->templateParameters['mode'] = !empty($this->idValue) ? 'edit' : 'create';
 
             if ($this->templateParameters['mode'] == 'edit') {
-                if (!$this->permissionApi->hasPermission($this->permissionComponent, $this->idValue . '::', ACCESS_EDIT)) {
-                    throw new AccessDeniedException();
-                }
-
                 $entity = $this->initEntityForEditing();
                 if (null !== $entity) {
                     «locking.addPageLock(it)»
                 }
+
+                if (!$this->permissionHelper->mayEdit($entity)) {
+                    throw new AccessDeniedException();
+                }
             } else {
                 $permissionLevel = «IF needsApproval»in_array($this->objectType, ['«getAllEntities.filter[workflow != EntityWorkflowType.NONE].map[name.formatForCode].join('\', \'')»']) ? ACCESS_COMMENT : ACCESS_EDIT«ELSE»ACCESS_EDIT«ENDIF»;
-                if (!$this->permissionApi->hasPermission($this->permissionComponent, '::', $permissionLevel)) {
+                if (!$this->permissionHelper->hasComponentPermission($this->objectType, $permissionLevel)) {
                     throw new AccessDeniedException();
                 }
 
@@ -1238,7 +1230,7 @@ class FormHandler {
             // only allow editing for the owner or people with higher permissions
             $currentUserId = $this->currentUserApi->isLoggedIn() ? $this->currentUserApi->get('uid') : UsersConstant::USER_ID_ANONYMOUS;
             $isOwner = null !== $entity && null !== $entity->getCreatedBy() && $currentUserId == $entity->getCreatedBy()->getUid();
-            if (!$isOwner && !$this->permissionApi->hasPermission($this->permissionComponent, $this->idValue . '::', ACCESS_ADD)) {
+            if (!$isOwner && !$this->permissionHelper->hasEntityPermission($entity, ACCESS_ADD)) {
                 throw new AccessDeniedException();
             }
 
@@ -1326,10 +1318,10 @@ class FormHandler {
                 'mode' => $this->templateParameters['mode'],
                 'actions' => $this->templateParameters['actions'],
                 «IF standardFields»
-                    'has_moderate_permission' => $this->permissionApi->hasPermission($this->permissionComponent, $this->idValue . '::', ACCESS_ADMIN),
+                    'has_moderate_permission' => $this->permissionHelper->hasEntityPermission($this->entityRef, ACCESS_ADMIN),
                 «ENDIF»
                 «IF !incoming.empty || !outgoing.empty»
-                    'filter_by_ownership' => !$this->permissionApi->hasPermission($this->permissionComponent, $this->idValue . '::', ACCESS_ADD)«IF !incoming.empty || !outgoing.empty»,«ENDIF»
+                    'filter_by_ownership' => !$this->permissionHelper->hasEntityPermission($this->entityRef, ACCESS_ADD)«IF !incoming.empty || !outgoing.empty»,«ENDIF»
                 «ENDIF»
                 «IF !incoming.empty || !outgoing.empty»
                     'inline_usage' => $this->templateParameters['inlineUsage']

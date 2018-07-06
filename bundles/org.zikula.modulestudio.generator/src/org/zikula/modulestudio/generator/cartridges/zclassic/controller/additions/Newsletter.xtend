@@ -184,13 +184,13 @@ class Newsletter {
             $objectTypes = $this->getPluginVar('ObjectTypes', []);
             $args = $this->getPluginVar('Args', []);
 
-            $permissionApi = $this->container->get('zikula_permissions_module.api.permission');
+            $permissionHelper = $this->container->get('«appService».permission_helper');
 
             $output = [];
 
             foreach ($objectTypes as $objectType) {
-                if (!$permissionApi->hasPermission($this->modname . ':' . ucfirst($objectType) . ':', '::', ACCESS_READ, $this->userNewsletter)) {
-                    // the newsletter has no permission for these items
+                if (!$permissionHelper->hasComponentPermission($objectType, ACCESS_READ, $this->userNewsletter)) {
+                    // the newsletter recipient has no permission for these items
                     continue;
                 }
 

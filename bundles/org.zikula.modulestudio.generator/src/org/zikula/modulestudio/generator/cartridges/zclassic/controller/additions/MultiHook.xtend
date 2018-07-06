@@ -94,12 +94,12 @@ class MultiHook {
             // strip application prefix from needle
             $needleId = str_replace('«app.prefix.toUpperCase»', '', $nid);
 
-            $permissionApi = $container->get('zikula_permissions_module.api.permission');
+            $permissionHelper = $this->container->get('«app.appService».permission_helper');
             $router = $container->getService('router');
 
             «IF hasViewAction»
                 if ($needleId == '«nameMultiple.formatForCode.toUpperCase»') {
-                    if (!$permissionApi->hasPermission('«app.appName»:«name.formatForCodeCapital»:', '::', ACCESS_READ)) {
+                    if (!$permissionHelper->hasComponentPermission('«name.formatForCode»', ACCESS_READ)) {
                         $cache[$nid] = '';
 
                         return $cache[$nid];
@@ -118,16 +118,16 @@ class MultiHook {
 
                 $entityId = (int)$needleParts[1];
 
-                if (!$permissionApi->hasPermission('«app.appName»:«name.formatForCodeCapital»:', $entityId . '::', ACCESS_READ)) {
-                    $cache[$nid] = '';
+                $repository = $container->get('«app.appService».entity_factory')->getRepository('«name.formatForCode»');
+                $entity = $repository->selectById($entityId, false);
+                if (null === $entity) {
+                    $cache[$nid] = '<em>' . $translator->__f('«name.formatForDisplayCapital» with id %id% could not be found', ['%id%' => $entityId]) . '</em>';
 
                     return $cache[$nid];
                 }
 
-                $repository = $container->get('«app.appService».entity_factory')->getRepository('«name.formatForCode»');
-                $entity = $repository->selectById($entityId);
-                if (null === $entity) {
-                    $cache[$nid] = '<em>' . $translator->__f('«name.formatForDisplayCapital» with id %id% could not be found', ['%id%' => $entityId]) . '</em>';
+                if (!$permissionHelper->mayRead($entity)) {
+                    $cache[$nid] = '';
 
                     return $cache[$nid];
                 }

@@ -221,11 +221,11 @@ class ServiceDefinitions {
                 arguments:
                     - "@translator.default"
                     - "@router"
-                    - "@zikula_permissions_module.api.permission"
                     «IF generateAccountApi»
                         - "@zikula_extensions_module.api.variable"
                     «ENDIF»
                     - "@«modPrefix».controller_helper"
+                    - "@«modPrefix».permission_helper"
                 «IF targets('2.0')»
                     tags: ['zikula.link_container']
                 «ELSE»
@@ -259,6 +259,7 @@ class ServiceDefinitions {
                     «IF supportLocaleFilter»
                         - "@request_stack"
                     «ENDIF»
+                    - "@«modPrefix».permission_helper"
                     «IF !getAllListFields.filter[name != 'workflowState'].empty»
                         - "@«modPrefix».listentries_helper"
                     «ENDIF»
@@ -336,7 +337,8 @@ class ServiceDefinitions {
         «modPrefix».workflow_events_listener:
             class: «appNamespace»\Listener\WorkflowEventsListener
             arguments:
-                - "@zikula_permissions_module.api.permission"
+                - "@«modPrefix».entity_factory"
+                - "@«modPrefix».permission_helper"
                 «IF needsApproval»
                     - "@«modPrefix».notification_helper"
                 «ENDIF»
@@ -569,7 +571,6 @@ class ServiceDefinitions {
                     - "@request_stack"
                     - "@router"
                     - "@logger"
-                    - "@zikula_permissions_module.api.permission"
                     «IF hasTranslatable || needsApproval»
                         - "@zikula_extensions_module.api.variable"
                     «ENDIF»
@@ -580,6 +581,7 @@ class ServiceDefinitions {
                     - "@«modPrefix».entity_factory"
                     - "@«modPrefix».controller_helper"
                     - "@«modPrefix».model_helper"
+                    - "@«modPrefix».permission_helper"
                     - "@«modPrefix».workflow_helper"
                     «IF hasHookSubscribers»
                         - "@«modPrefix».hook_helper"
@@ -713,8 +715,8 @@ class ServiceDefinitions {
                     - "@translator.default"
                     - "@request_stack"
                     - "@logger"
-                    - "@zikula_permissions_module.api.permission"
                     - "@«modPrefix».entity_factory"
+                    - "@«modPrefix».permission_helper"
                     - "@«modPrefix».workflow_helper"
                     «IF hasHookSubscribers»
                         - "@«modPrefix».hook_helper"
@@ -737,6 +739,7 @@ class ServiceDefinitions {
             class: «nsBase»CollectionFilterHelper
             arguments:
                 - "@request_stack"
+                - "@«modPrefix».permission_helper"
                 «IF hasStandardFieldEntities»
                     - "@zikula_users_module.current_user"
                 «ENDIF»
@@ -854,18 +857,27 @@ class ServiceDefinitions {
                     - "@«modPrefix».entity_display_helper"
                     - "@«modPrefix».workflow_helper"
         «ENDIF»
+
+        «modPrefix».permission_helper:
+            class: «nsBase»PermissionHelper
+            arguments:
+                - "@service_container"
+                - "@request_stack"
+                - "@zikula_permissions_module.api.permission"
+                - "@zikula_users_module.current_user"
+                - "@zikula_users_module.user_repository"
         «IF generateSearchApi»
 
             «modPrefix».search_helper:
                 class: «nsBase»SearchHelper
                 arguments:
                     - "@translator.default"
-                    - "@zikula_permissions_module.api.permission"
                     - "@session"
                     - "@request_stack"
                     - "@«modPrefix».entity_factory"
                     - "@«modPrefix».controller_helper"
                     - "@«modPrefix».entity_display_helper"
+                    - "@«modPrefix».permission_helper"
                     «IF hasCategorisableEntities»
                         - "@«modPrefix».feature_activation_helper"
                         - "@«modPrefix».category_helper"
@@ -904,10 +916,10 @@ class ServiceDefinitions {
                 - "@twig"
                 - "@twig.loader"
                 - "@request_stack"
-                - "@zikula_permissions_module.api.permission"
                 - "@zikula_extensions_module.api.variable"
                 - "@zikula_core.common.theme.pagevars"
                 - "@«modPrefix».controller_helper"
+                - "@«modPrefix».permission_helper"
 
         «modPrefix».workflow_helper:
             class: «nsBase»WorkflowHelper
@@ -915,10 +927,10 @@ class ServiceDefinitions {
                 - "@translator.default"
                 - "@workflow.registry"
                 - "@logger"
-                - "@zikula_permissions_module.api.permission"
                 - "@zikula_users_module.current_user"
                 - "@«modPrefix».entity_factory"
                 - "@«modPrefix».listentries_helper"
+                - "@«modPrefix».permission_helper"
     '''
 
     def private twig(Application it) '''

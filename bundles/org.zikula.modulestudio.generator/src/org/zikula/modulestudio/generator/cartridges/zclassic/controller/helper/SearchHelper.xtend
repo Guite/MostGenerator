@@ -35,7 +35,6 @@ class SearchHelper {
         use Zikula\Common\Translator\TranslatorInterface;
         use Zikula\Common\Translator\TranslatorTrait;
         use Zikula\Core\RouteUrl;
-        use Zikula\PermissionsModule\Api\ApiInterface\PermissionApiInterface;
         use Zikula\SearchModule\Entity\SearchResultEntity;
         use Zikula\SearchModule\SearchableInterface;
         use «appNamespace»\Entity\Factory\EntityFactory;
@@ -47,6 +46,7 @@ class SearchHelper {
         «IF hasCategorisableEntities»
             use «appNamespace»\Helper\FeatureActivationHelper;
         «ENDIF»
+        use «appNamespace»\Helper\PermissionHelper;
 
         /**
          * Search helper base class.
@@ -59,11 +59,6 @@ class SearchHelper {
 
     def private searchHelperBaseImpl(Application it) '''
         use TranslatorTrait;
-
-        /**
-         * @var PermissionApiInterface
-         */
-        protected $permissionApi;
 
         /**
          * @var SessionInterface
@@ -89,6 +84,11 @@ class SearchHelper {
          * @var EntityDisplayHelper
          */
         protected $entityDisplayHelper;
+
+        /**
+         * @var PermissionHelper
+         */
+        protected $permissionHelper;
         «IF hasCategorisableEntities»
 
             /**
@@ -106,12 +106,12 @@ class SearchHelper {
          * SearchHelper constructor.
          *
          * @param TranslatorInterface $translator          Translator service instance
-         * @param PermissionApiInterface $permissionApi    PermissionApi service instance
          * @param SessionInterface    $session             Session service instance
          * @param RequestStack        $requestStack        RequestStack service instance
          * @param EntityFactory       $entityFactory       EntityFactory service instance
          * @param ControllerHelper    $controllerHelper    ControllerHelper service instance
          * @param EntityDisplayHelper $entityDisplayHelper EntityDisplayHelper service instance
+         * @param PermissionHelper    $permissionHelper    PermissionHelper service instance
          «IF hasCategorisableEntities»
          * @param FeatureActivationHelper $featureActivationHelper FeatureActivationHelper service instance
          * @param CategoryHelper      $categoryHelper      CategoryHelper service instance
@@ -119,22 +119,22 @@ class SearchHelper {
          */
         public function __construct(
             TranslatorInterface $translator,
-            PermissionApiInterface $permissionApi,
             SessionInterface $session,
             RequestStack $requestStack,
             EntityFactory $entityFactory,
             ControllerHelper $controllerHelper,
-            EntityDisplayHelper $entityDisplayHelper«IF hasCategorisableEntities»,
+            EntityDisplayHelper $entityDisplayHelper,
+            PermissionHelper $permissionHelper«IF hasCategorisableEntities»,
             FeatureActivationHelper $featureActivationHelper,
             CategoryHelper $categoryHelper«ENDIF»
         ) {
             $this->setTranslator($translator);
-            $this->permissionApi = $permissionApi;
             $this->session = $session;
             $this->request = $requestStack->getCurrentRequest();
             $this->entityFactory = $entityFactory;
             $this->controllerHelper = $controllerHelper;
             $this->entityDisplayHelper = $entityDisplayHelper;
+            $this->permissionHelper = $permissionHelper;
             «IF hasCategorisableEntities»
                 $this->featureActivationHelper = $featureActivationHelper;
                 $this->categoryHelper = $categoryHelper;
@@ -187,7 +187,7 @@ class SearchHelper {
          */
         public function amendForm(FormBuilderInterface $builder)
         {
-            if (!$this->permissionApi->hasPermission('«appName»::', '::', ACCESS_READ)) {
+            if (!$this->permissionHelper->hasPermission(ACCESS_READ)) {
                 return '';
             }
 
@@ -214,7 +214,7 @@ class SearchHelper {
          */
         public function getResults(array $words, $searchType = 'AND', $modVars = null)
         {
-            if (!$this->permissionApi->hasPermission('«appName»::', '::', ACCESS_READ)) {
+            if (!$this->permissionHelper->hasPermission(ACCESS_READ)) {
                 return [];
             }
 
@@ -279,8 +279,7 @@ class SearchHelper {
                 $hasDisplayAction = in_array($objectType, $entitiesWithDisplayAction);
 
                 foreach ($entities as $entity) {
-                    // perform permission check
-                    if (!$this->permissionApi->hasPermission('«appName»:' . ucfirst($objectType) . ':', $entity->getKey() . '::', ACCESS_OVERVIEW)) {
+                    if (!$this->permissionHelper->mayRead($entity) {
                         continue;
                     }
                     «IF hasCategorisableEntities»

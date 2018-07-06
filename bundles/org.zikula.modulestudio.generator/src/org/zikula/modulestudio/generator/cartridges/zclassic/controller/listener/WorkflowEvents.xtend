@@ -18,9 +18,14 @@ class WorkflowEvents {
 
     def generate(Application it) '''
         /**
-         * @var PermissionApiInterface
+         * @var EntityFactory
          */
-        protected $permissionApi;
+        protected $entityFactory;
+
+        /**
+         * @var PermissionHelper
+         */
+        protected $permissionHelper;
         «IF needsApproval»
 
             /**
@@ -32,14 +37,19 @@ class WorkflowEvents {
         /**
          * WorkflowEventsListener constructor.
          *
-         * @param PermissionApiInterface $permissionApi «IF needsApproval»     «ENDIF»PermissionApi service instance
+         * @param EntityFactory $entityFactory EntityFactory service instance
+         * @param PermissionHelper $permissionHelper PermissionHelper service instance
          «IF needsApproval»
-         * @param NotificationHelper     $notificationHelper NotificationHelper service instance
+         * @param NotificationHelper $notificationHelper NotificationHelper service instance
          «ENDIF»
          */
-        public function __construct(PermissionApiInterface $permissionApi«IF needsApproval», NotificationHelper $notificationHelper«ENDIF»)
+        public function __construct(
+            EntityFactory $entityFactory,
+            PermissionHelper $permissionHelper«IF needsApproval»,
+            NotificationHelper $notificationHelper«ENDIF»)
         {
-            $this->permissionApi = $permissionApi;
+            $this->entityFactory = $entityFactory;
+            $this->permissionHelper = $permissionHelper;
             «IF needsApproval»
                 $this->notificationHelper = $notificationHelper;
             «ENDIF»
@@ -130,7 +140,7 @@ class WorkflowEvents {
                     break;
             }
 
-            if (!$this->permissionApi->hasPermission('«appName»:' . ucfirst($objectType) . ':', $entity->getKey() . '::', $permissionLevel)) {
+            if (!$this->permissionHelper->hasEntityPermission($entity, $permissionLevel)) {
                 // no permission for this transition, so disallow it
                 $event->setBlocked(true);
 

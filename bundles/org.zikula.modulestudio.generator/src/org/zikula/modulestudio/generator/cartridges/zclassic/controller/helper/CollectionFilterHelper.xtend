@@ -50,6 +50,7 @@ class CollectionFilterHelper {
         «IF hasCategorisableEntities»
             use «appNamespace»\Helper\CategoryHelper;
         «ENDIF»
+        use «appNamespace»\Helper\PermissionHelper;
 
         /**
          * Entity collection filter helper base class.
@@ -60,6 +61,11 @@ class CollectionFilterHelper {
              * @var Request
              */
             protected $request;
+
+            /**
+             * @var PermissionHelper
+             */
+            protected $permissionHelper;
             «IF hasStandardFieldEntities»
 
                 /**
@@ -90,20 +96,22 @@ class CollectionFilterHelper {
             /**
              * CollectionFilterHelper constructor.
              *
-             * @param RequestStack «IF hasCategorisableEntities»  «ENDIF»$requestStack «IF hasCategorisableEntities»       «ENDIF»RequestStack service instance
+             * @param RequestStack $requestStack RequestStack service instance
+             * @param PermissionHelper $permissionHelper PermissionHelper service instance
              «IF hasStandardFieldEntities»
              * @param CurrentUserApiInterface $currentUserApi CurrentUserApi service instance
              «ENDIF»
              «IF hasCategorisableEntities»
-             * @param CategoryHelper $categoryHelper      CategoryHelper service instance
+             * @param CategoryHelper $categoryHelper CategoryHelper service instance
              «ENDIF»
-             * @param boolean        $showOnlyOwnEntries  Fallback value to determine whether only own entries should be selected or not
+             * @param boolean $showOnlyOwnEntries Fallback value to determine whether only own entries should be selected or not
              «IF supportLocaleFilter»
-             * @param boolean        $filterDataByLocale  Whether to apply a locale-based filter or not
+             * @param boolean $filterDataByLocale Whether to apply a locale-based filter or not
              «ENDIF»
              */
             public function __construct(
                 RequestStack $requestStack,
+                PermissionHelper $permissionHelper,
                 «IF hasStandardFieldEntities»
                     CurrentUserApiInterface $currentUserApi,
                 «ENDIF»
@@ -114,6 +122,7 @@ class CollectionFilterHelper {
                 $filterDataByLocale«ENDIF»
             ) {
                 $this->request = $requestStack->getCurrentRequest();
+                $this->permissionHelper = $permissionHelper;
                 «IF hasStandardFieldEntities»
                     $this->currentUserApi = $currentUserApi;
                 «ENDIF»

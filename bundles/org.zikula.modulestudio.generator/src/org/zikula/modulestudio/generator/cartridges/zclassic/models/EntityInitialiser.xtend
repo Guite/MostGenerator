@@ -38,6 +38,7 @@ class EntityInitialiser {
         «FOR entity : getAllEntities»
             use «appNamespace»\Entity\«entity.name.formatForCodeCapital»Entity;
         «ENDFOR»
+        use «appNamespace»\Helper\PermissionHelper;
         «IF hasListFieldsExceptWorkflowState»
             use «appNamespace»\Helper\ListEntriesHelper;
         «ENDIF»
@@ -54,6 +55,11 @@ class EntityInitialiser {
                 protected $request;
 
             «ENDIF»
+            /**
+             * @var PermissionHelper
+             */
+            protected $permissionHelper;
+
             «IF hasListFieldsExceptWorkflowState»
                 /**
                  * @var ListEntriesHelper Helper service for managing list entries
@@ -80,6 +86,7 @@ class EntityInitialiser {
                  «IF supportLocaleFilter»
                  * @param RequestStack $requestStack RequestStack service instance
                  «ENDIF»
+                 * @param PermissionHelper $permissionHelper PermissionHelper service instance
                  «IF hasListFieldsExceptWorkflowState»
                  * @param ListEntriesHelper $listEntriesHelper Helper service for managing list entries
                  «ENDIF»
@@ -89,14 +96,16 @@ class EntityInitialiser {
                  «ENDIF»
                  */
                 public function __construct(
-                    «IF supportLocaleFilter»RequestStack $requestStack«ENDIF»«IF supportLocaleFilter && hasListFieldsExceptWorkflowState»,«ENDIF»
-                    «IF hasListFieldsExceptWorkflowState»ListEntriesHelper $listEntriesHelper«ENDIF»«IF (supportLocaleFilter || hasListFieldsExceptWorkflowState) && hasGeographical»,«ENDIF»
-                    «IF hasGeographical»$defaultLatitude,
+                    «IF supportLocaleFilter»RequestStack $requestStack,«ENDIF»
+                    PermissionHelper $permissionHelper«IF hasListFieldsExceptWorkflowState»,
+                    ListEntriesHelper $listEntriesHelper«ENDIF»«IF hasGeographical»,
+                    $defaultLatitude,
                     $defaultLongitude«ENDIF»
                 ) {
                     «IF supportLocaleFilter»
                         $this->request = $requestStack->getCurrentRequest();
                     «ENDIF»
+                    $this->permissionHelper = $permissionHelper;
                     «IF hasListFieldsExceptWorkflowState»
                         $this->listEntriesHelper = $listEntriesHelper;
                     «ENDIF»

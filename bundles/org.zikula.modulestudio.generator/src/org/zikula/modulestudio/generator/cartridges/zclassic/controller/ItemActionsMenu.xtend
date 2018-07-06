@@ -68,7 +68,7 @@ class ItemActionsMenu {
                 $routeArea = $options['area'];
                 $context = $options['context'];
 
-                $permissionApi = $this->container->get('zikula_permissions_module.api.permission');
+                $permissionHelper = $this->container->get('«appService».permission_helper');
                 $currentUserApi = $this->container->get('zikula_users_module.current_user');
                 «IF hasDisplayActions»
                     $entityDisplayHelper = $this->container->get('«appService».entity_display_helper');

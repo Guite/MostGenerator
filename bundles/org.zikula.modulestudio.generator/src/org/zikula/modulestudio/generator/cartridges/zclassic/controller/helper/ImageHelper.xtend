@@ -225,7 +225,7 @@ class ImageHelper {
             /**
              * @var string
              */
-            private $secret;
+            protected $secret;
 
             /**
              * @param string $secret

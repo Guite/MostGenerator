@@ -98,11 +98,6 @@ class ExternalController {
             $objectType = $controllerHelper->getDefaultObjectType('controllerAction', $contextArgs);
         }
 
-        $component = '«appName»:' . ucfirst($objectType) . ':';
-        if (!$this->hasPermission($component, $id . '::', ACCESS_READ)) {
-            return '';
-        }
-
         $entityFactory = $this->get('«appService».entity_factory');
         $repository = $entityFactory->getRepository($objectType);
 
@@ -110,6 +105,10 @@ class ExternalController {
         $entity = $repository->selectById($id);
         if (null === $entity) {
             return new Response($this->__('No such item.'));
+        }
+
+        if (!$this->get('«appService».permission_helper')->mayRead($entity)) {
+            return '';
         }
 
         $template = $request->query->has('template') ? $request->query->get('template', null) : null;
@@ -188,7 +187,7 @@ class ExternalController {
             return new RedirectResponse($redirectUrl);
         }
 
-        if (!$this->hasPermission('«appName»:' . ucfirst($objectType) . ':', '::', ACCESS_COMMENT)) {
+        if (!$this->get('«appService».permission_helper')->hasComponentPermission($objectType, ACCESS_COMMENT)) {
             throw new AccessDeniedException();
         }
 

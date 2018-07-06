@@ -22,7 +22,7 @@ class MenuLinksHelperFunctions {
             «entity.menuLinkToViewAction»
         «ENDFOR»
         «IF needsConfig»
-            if ($routeArea == 'admin' && $this->permissionApi->hasPermission($this->getBundleName() . '::', '::', ACCESS_ADMIN)) {
+            if ($routeArea == 'admin' && $this->permissionHelper->hasPermission(ACCESS_ADMIN)) {
                 $links[] = [
                     'url' => $this->router->generate('«appName.formatForDB»_config_config'),
                     'text' => «translate('Settings')»,
@@ -35,7 +35,7 @@ class MenuLinksHelperFunctions {
 
     def private menuLinkToViewAction(Entity it) '''
         if (in_array('«name.formatForCode»', $allowedObjectTypes)
-            && $this->permissionApi->hasPermission($this->getBundleName() . ':«name.formatForCodeCapital»:', '::', $permLevel)) {
+            && $this->permissionHelper->hasComponentPermission('«name.formatForCode»', $permLevel)) {
             $links[] = [
                 'url' => $this->router->generate('«application.appName.formatForDB»_«name.formatForDB»_' . $routeArea . 'view'«IF tree != EntityTreeType.NONE», ['tpl' => 'tree']«ENDIF»),
                 'text' => «application.translate(nameMultiple.formatForDisplayCapital)»,
@@ -46,7 +46,7 @@ class MenuLinksHelperFunctions {
 
     def private menuLinksBetweenControllers(Application it) '''
         if (LinkContainerInterface::TYPE_ADMIN == $type) {
-            if ($this->permissionApi->hasPermission($this->getBundleName() . '::', '::', ACCESS_READ)) {
+            if ($this->permissionHelper->hasPermission(ACCESS_READ)) {
                 $links[] = [
                     'url' => $this->router->generate('«appName.formatForDB»_«getLeadingEntity.name.formatForDB»_«getLeadingEntity.getPrimaryAction»'),
                     'text' => «translate('Frontend')»,
@@ -55,7 +55,7 @@ class MenuLinksHelperFunctions {
                 ];
             }
         } else {
-            if ($this->permissionApi->hasPermission($this->getBundleName() . '::', '::', ACCESS_ADMIN)) {
+            if ($this->permissionHelper->hasPermission(ACCESS_ADMIN)) {
                 $links[] = [
                     'url' => $this->router->generate('«appName.formatForDB»_«getLeadingEntity.name.formatForDB»_admin«getLeadingEntity.getPrimaryAction»'),
                     'text' => «translate('Backend')»,

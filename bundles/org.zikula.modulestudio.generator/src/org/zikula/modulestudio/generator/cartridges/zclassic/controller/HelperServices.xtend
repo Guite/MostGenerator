@@ -23,6 +23,7 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.controller.helper.W
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
+import org.zikula.modulestudio.generator.cartridges.zclassic.controller.helper.PermissionHelper
 
 /**
  * Entry point for the utility service class creation.
@@ -34,6 +35,7 @@ class HelperServices {
     extension WorkflowExtensions = new WorkflowExtensions
 
     def generate(Application it, IMostFileSystemAccess fsa) {
+        new PermissionHelper().generate(it, fsa)
         if (hasAutomaticArchiving) {
             new ArchiveHelper().generate(it, fsa)
         }

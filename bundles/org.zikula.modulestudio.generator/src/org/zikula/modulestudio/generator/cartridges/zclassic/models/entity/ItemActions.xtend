@@ -31,8 +31,6 @@ class ItemActions {
         «ENDIF»
         «FOR entity : app.getAllEntities»
             if ($entity instanceof «entity.name.formatForCodeCapital»Entity) {
-                $component = '«app.appName»:«entity.name.formatForCodeCapital»:';
-                $instance = $entity->getKey() . '::';
                 $routePrefix = '«app.appName.formatForDB»_«entity.name.formatForDB»_';
                 «IF (entity.ownerPermission && (entity.hasEditAction || entity.hasDeleteAction)) || (entity.standardFields && !app.relations.empty)»
                     $isOwner = $currentUserId > 0 && null !== $entity->getCreatedBy() && $currentUserId == $entity->getCreatedBy()->getUid();
@@ -74,10 +72,10 @@ class ItemActions {
 
     def private itemActionsTargetingEdit(Entity it, Application app) '''
         «IF hasEditAction»
-            if ($permissionApi->hasPermission($component, $instance, ACCESS_EDIT)) {
+            if ($permissionHelper->mayEdit($entity)) {
                 «IF ownerPermission»
                     // only allow editing for the owner or people with higher permissions
-                    if ($isOwner || $permissionApi->hasPermission($component, $instance, ACCESS_ADD)) {
+                    if ($isOwner || $permissionHelper->hasEntityPermission($entity, ACCESS_ADD)) {
                         «itemActionsForEditAction»
                     }
                 «ELSE»
@@ -102,7 +100,7 @@ class ItemActions {
             }
         «ENDIF»
         «IF hasDeleteAction»
-            if ($permissionApi->hasPermission($component, $instance, ACCESS_DELETE)«IF ownerPermission» || ($isOwner && $permissionApi->hasPermission($component, $instance, ACCESS_EDIT))«ENDIF») {
+            if ($permissionHelper->mayDelete($entity)«IF ownerPermission» || ($isOwner && $permissionHelper->mayEdit($entity))«ENDIF») {
                 $title = $this->__('Delete', '«app.appName.formatForDB»');
                 $menu->addChild($title, [
                     'route' => $routePrefix . $routeArea . 'delete',
@@ -141,9 +139,7 @@ class ItemActions {
                 «val relationAliasNameParam = elem.getRelationAliasName(!useTarget)»
                 «val otherEntity = (if (!useTarget) elem.source else elem.target)»
 
-                $relatedComponent = '«app.appName»:«otherEntity.name.formatForCodeCapital»:';
-                $relatedInstance = $entity->getKey() . '::';
-                if («IF standardFields»$isOwner || «ENDIF»$permissionApi->hasPermission($relatedComponent, $relatedInstance, ACCESS_«IF otherEntity instanceof Entity && (otherEntity as Entity).ownerPermission»ADD«ELSEIF (otherEntity as Entity).workflow == EntityWorkflowType.NONE»EDIT«ELSE»COMMENT«ENDIF»)) {
+                if («IF standardFields»$isOwner || «ENDIF»$permissionHelper->hasComponentPermission('«otherEntity.name.formatForCode»', ACCESS_«IF otherEntity instanceof Entity && (otherEntity as Entity).ownerPermission»ADD«ELSEIF (otherEntity as Entity).workflow == EntityWorkflowType.NONE»EDIT«ELSE»COMMENT«ENDIF»)) {
                     «val many = elem.isManySideDisplay(useTarget)»
                     «IF !many»
                         if (!isset($entity->«relationAliasName») || null === $entity->«relationAliasName») {

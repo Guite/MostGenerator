@@ -41,36 +41,33 @@ class Actions {
     }
 
     def actionImpl(Entity it, Action action) '''
-        «IF it instanceof MainAction»
-            «permissionCheck(action, '', '')»
+        $objectType = '«name.formatForCode»';
+        // permission check
+        $permLevel = $isAdmin ? ACCESS_ADMIN : «getPermissionAccessLevel(action)»;
+        $permissionHelper = $this->get('«app.appService».permission_helper');
+        «IF it instanceof DisplayAction || it instanceof DeleteAction»
+            if (!$permissionHelper->hasEntityPermission($«name.formatForCode», $permLevel)) {
+                «IF ownerPermission && standardFields && action instanceof DeleteAction»
+                    if ($isAdmin) {
+                        throw new AccessDeniedException();
+                    }
+                    $currentUserApi = $this->get('zikula_users_module.current_user');
+                    $currentUserId = $currentUserApi->isLoggedIn() ? $currentUserApi->get('uid') : UsersConstant::USER_ID_ANONYMOUS;
+                    $isOwner = $currentUserId > 0 && null !== $«name.formatForCode»->getCreatedBy() && $currentUserId == $«name.formatForCode»->getCreatedBy()->getUid();
+                    if (!$isOwner || !$permissionHelper->mayEdit($«name.formatForCode»)) {
+                        throw new AccessDeniedException();
+                    }
+                «ELSE»
+                    throw new AccessDeniedException();
+                «ENDIF»
+            }
         «ELSE»
-            // parameter specifying which type of objects we are treating
-            $objectType = '«name.formatForCode»';
-            $permLevel = $isAdmin ? ACCESS_ADMIN : «getPermissionAccessLevel(action)»;
-            «permissionCheck(action, "' . ucfirst($objectType) . '", '')»
-        «ENDIF»
-        «actionImplBody(it, action)»
-    '''
-
-    /**
-     * Permission checks in system use cases.
-     */
-    def private permissionCheck(Entity it, Action action, String objectTypeVar, String instanceId) '''
-        if (!$this->hasPermission('«app.appName»:«objectTypeVar»:', «instanceId»'::', $permLevel)) {
-            «IF ownerPermission && standardFields && action instanceof DeleteAction»
-                if ($isAdmin) {
-                    throw new AccessDeniedException();
-                }
-                $currentUserApi = $this->get('zikula_users_module.current_user');
-                $currentUserId = $currentUserApi->isLoggedIn() ? $currentUserApi->get('uid') : UsersConstant::USER_ID_ANONYMOUS;
-                $isOwner = $currentUserId > 0 && null !== $«name.formatForCode»->getCreatedBy() && $currentUserId == $«name.formatForCode»->getCreatedBy()->getUid();
-                if (!$isOwner || !$this->hasPermission('«app.appName»:«objectTypeVar»:', «instanceId»'::', ACCESS_EDIT)) {
-                    throw new AccessDeniedException();
-                }
-            «ELSE»
+            if (!$permissionHelper->hasComponentPermission($objectType, $permLevel)) {
                 throw new AccessDeniedException();
-            «ENDIF»
-        }
+            }
+        «ENDIF»
+
+        «actionImplBody(it, action)»
     '''
 
     def private getPermissionAccessLevel(Entity it, Action action) {
@@ -111,9 +108,8 @@ class Actions {
 
             // check if deleted entities should be displayed
             $viewDeleted = $request->query->getInt('deleted', 0);
-            if ($viewDeleted == 1 && $this->hasPermission('«application.appName»:«name.formatForCodeCapital»:', '::', ACCESS_EDIT)) {
-                $entityFactory = $this->get('«application.appService».entity_factory');
-                $entityManager = $entityFactory->getObjectManager();
+            if ($viewDeleted == 1 && $permissionHelper->hasComponentPermission('«name.formatForCode»', ACCESS_EDIT)) {
+                $entityManager = $this->get('«application.appService».entity_factory')->getObjectManager();
                 $logEntriesRepository = $entityManager->getRepository('«application.appName»:«name.formatForCodeCapital»LogEntryEntity');
                 $templateParameters['deletedItems'] = $logEntriesRepository->selectDeleted();
 
@@ -143,7 +139,7 @@ class Actions {
         // filter by permissions
         $filteredEntities = [];
         foreach ($templateParameters['items'] as $«name.formatForCode») {
-            if (!$this->hasPermission('«app.appName»:' . ucfirst($objectType) . ':', $«name.formatForCode»->getKey() . '::', $permLevel)) {
+            if (!$permissionHelper->hasEntityPermission($«name.formatForCode», $permLevel)) {
                 continue;
             }
             $filteredEntities[] = $«name.formatForCode»;
@@ -173,9 +169,8 @@ class Actions {
 
             // check if there exist any deleted «name.formatForDisplay»
             $templateParameters['hasDeletedEntities'] = false;
-            if ($this->hasPermission('«application.appName»:«name.formatForCodeCapital»:', '::', ACCESS_EDIT)) {
-                $entityFactory = $this->get('«application.appService».entity_factory');
-                $entityManager = $entityFactory->getObjectManager();
+            if ($permissionHelper->hasPermission(ACCESS_EDIT)) {
+                $entityManager = $this->get('«application.appService».entity_factory')->getObjectManager();
                 $logEntriesRepository = $entityManager->getRepository('«application.appName»:«name.formatForCodeCapital»LogEntryEntity');
                 $templateParameters['hasDeletedEntities'] = count($logEntriesRepository->selectDeleted(1)) > 0;
             }
@@ -188,7 +183,7 @@ class Actions {
     def dispatch private inheritedPermissionFilter(Entity it, JoinRelationship relation) '''
         if (null !== $«name.formatForCode»->get«relation.getRelationAliasName(false).formatForCodeCapital»()) {
             $parent = $«name.formatForCode»->get«relation.getRelationAliasName(false).formatForCodeCapital»();
-            if (!$this->hasPermission('«app.appName»:' . ucfirst($parent->get_objectType()) . ':', $parent->getKey() . '::', $permLevel)) {
+            if (!$permissionHelper->hasEntityPermission($parent, $permLevel)) {
                 continue;
             }
         }
@@ -198,12 +193,12 @@ class Actions {
         $parentAccess = «(relation.inheritPermissions == ManyToManyPermissionInheritanceType.UNANIMOUS).displayBool»;
         foreach ($«name.formatForCode»->get«relation.getRelationAliasName(false).formatForCodeCapital»() as $parent) {
             «IF relation.inheritPermissions == ManyToManyPermissionInheritanceType.AFFIRMATIVE»
-                if ($this->hasPermission('«app.appName»:' . ucfirst($parent->get_objectType()) . ':', $parent->getKey() . '::', $permLevel)) {
+                if ($permissionHelper->hasEntityPermission($parent, $permLevel)) {
                     $parentAccess = true;
                     break;
                 }
             «ELSEIF relation.inheritPermissions == ManyToManyPermissionInheritanceType.UNANIMOUS»
-                if (!$this->hasPermission('«app.appName»:' . ucfirst($parent->get_objectType()) . ':', $parent->getKey() . '::', $permLevel)) {
+                if (!$permissionHelper->hasEntityPermission($parent, $permLevel)) {
                     $parentAccess = false;
                     break;
                 }
@@ -246,33 +241,29 @@ class Actions {
     '''
 
     def private dispatch actionImplBody(Entity it, DisplayAction action) '''
-        // create identifier for permission check
-        $instanceId = $«name.formatForCode»->getKey();
-        «permissionCheck(action, "' . ucfirst($objectType) . '", "$instanceId . ")»
         «IF workflow != EntityWorkflowType.NONE»
-
-            if ($«name.formatForCode»->getWorkflowState() != 'approved' && !$this->hasPermission('«app.appName»:' . ucfirst($objectType) . ':', $instanceId . '::', ACCESS_ADMIN)) {
+            if ($«name.formatForCode»->getWorkflowState() != 'approved' && !$permissionHelper->hasEntityPermission($«name.formatForCode», ACCESS_ADMIN)) {
                 throw new AccessDeniedException();
             }
+
         «ENDIF»
         «IF categorisable»
-
             $featureActivationHelper = $this->get('«app.appService».feature_activation_helper');
             if ($featureActivationHelper->isEnabled(FeatureActivationHelper::CATEGORIES, $objectType)) {
                 if (!$this->get('«app.appService».category_helper')->hasPermission($«name.formatForCode»)) {
                     throw new AccessDeniedException();
                 }
             }
+
         «ENDIF»
         «IF !getBidirectionalIncomingPermissionInheriters.empty»
-
             // check inherited permissions
             «FOR relation : getBidirectionalIncomingPermissionInheriters»
                 «inheritedPermissionCheck(action, relation)»
             «ENDFOR»
+
         «ENDIF»
         «IF loggable»
-
             $requestedVersion = $request->query->getInt('version', 0);
             if ($requestedVersion > 0) {
                 // preview of a specific version is desired
@@ -285,8 +276,8 @@ class Actions {
                     $entityManager->detach($«name.formatForCode»);
                 }
             }
-        «ENDIF»
 
+        «ENDIF»
         $templateParameters = [
             'routeArea' => $isAdmin ? 'admin' : '',
             $objectType => $«name.formatForCode»
@@ -301,7 +292,9 @@ class Actions {
     def dispatch private inheritedPermissionCheck(Entity it, Action action, JoinRelationship relation) '''
         if (null !== $«name.formatForCode»->get«relation.getRelationAliasName(false).formatForCodeCapital»()) {
             $parent = $«name.formatForCode»->get«relation.getRelationAliasName(false).formatForCodeCapital»();
-            «permissionCheck(action, "' . ucfirst($parent->get_objectType()) . '", "$parent->getKey() . ")»
+            if (!$permissionHelper->hasEntityPermission($parent, $permLevel)) {
+                throw new AccessDeniedException();
+            }
         }
     '''
 
@@ -311,12 +304,14 @@ class Actions {
         «ENDIF»
         foreach ($«name.formatForCode»->get«relation.getRelationAliasName(false).formatForCodeCapital»() as $parent) {
             «IF relation.inheritPermissions == ManyToManyPermissionInheritanceType.AFFIRMATIVE»
-                if ($this->hasPermission('«app.appName»:' . ucfirst($parent->get_objectType()) . ':', $parent->getKey() . '::', $permLevel)) {
+                if ($permissionHelper->hasEntityPermission($parent, $permLevel)) {
                     $parentAccess = true;
                     break;
                 }
             «ELSEIF relation.inheritPermissions == ManyToManyPermissionInheritanceType.UNANIMOUS»
-                «permissionCheck(action, "' . ucfirst($parent->get_objectType()) . '", "$parent->getKey() . ")»
+                if (!$permissionHelper->hasEntityPermission($parent, $permLevel)) {
+                    throw new AccessDeniedException();
+                }
             «ENDIF»
         }
         «IF relation.inheritPermissions == ManyToManyPermissionInheritanceType.AFFIRMATIVE»

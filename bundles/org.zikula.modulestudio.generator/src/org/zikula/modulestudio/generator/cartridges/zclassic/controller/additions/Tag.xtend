@@ -58,18 +58,14 @@ class Tag {
 
             $this->setContainer(\ServiceUtil::getManager());
 
-            $permissionApi = $this->container->get('zikula_permissions_module.api.permission');
-            $component = $module . ':' . ucfirst($objectType) . ':';
-            $perm = $permissionApi->hasPermission($component, $objectId . '::', ACCESS_READ);
-            if (!$perm) {
+            $repository = $this->container->get('«appService».entity_factory')->getRepository($objectType);
+            $entity = $repository->selectById($objectId, false);
+            if (null === $entity) {
                 return;
             }
 
-            $repository = $this->container->get('«appService».entity_factory')->getRepository($objectType);
-            $useJoins = false;
-
-            $entity = $repository->selectById($objectId, $useJoins);
-            if (null === $entity) {
+            $permissionHelper = $this->container->get('«appService».permission_helper');
+            if (!$permissionHelper->mayRead($entity)) {
                 return;
             }
 
