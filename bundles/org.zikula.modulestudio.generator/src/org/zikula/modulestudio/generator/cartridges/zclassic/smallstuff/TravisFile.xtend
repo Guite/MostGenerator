@@ -24,6 +24,7 @@ class TravisFile {
           - 5.6
           - 7.0
           - 7.1
+          - 7.2
           - nightly
 
         matrix:
@@ -32,6 +33,7 @@ class TravisFile {
             «IF !targets('2.0')»
                 - php: 7.0
                 - php: 7.1
+                - php: 7.2
             «ENDIF»
             - php: nightly
 
