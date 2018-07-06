@@ -279,7 +279,7 @@ class SearchHelper {
                 $hasDisplayAction = in_array($objectType, $entitiesWithDisplayAction);
 
                 foreach ($entities as $entity) {
-                    if (!$this->permissionHelper->mayRead($entity) {
+                    if (!$this->permissionHelper->mayRead($entity)) {
                         continue;
                     }
                     «IF hasCategorisableEntities»
