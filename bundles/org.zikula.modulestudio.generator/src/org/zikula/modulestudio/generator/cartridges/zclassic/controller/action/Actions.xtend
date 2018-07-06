@@ -45,7 +45,7 @@ class Actions {
         // permission check
         $permLevel = $isAdmin ? ACCESS_ADMIN : «getPermissionAccessLevel(action)»;
         $permissionHelper = $this->get('«app.appService».permission_helper');
-        «IF it instanceof DisplayAction || it instanceof DeleteAction»
+        «IF action instanceof DisplayAction || action instanceof DeleteAction»
             if (!$permissionHelper->hasEntityPermission($«name.formatForCode», $permLevel)) {
                 «IF ownerPermission && standardFields && action instanceof DeleteAction»
                     if ($isAdmin) {
