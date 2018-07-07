@@ -95,8 +95,7 @@ class AjaxController {
          * Retrieve item list for finder selections in Forms, Content type plugin and Scribite.
          «IF !isBase»
          *
-         * @Route("/getItemListFinder", options={"expose"=true})
-         * @Method("GET")
+         * @Route("/getItemListFinder", methods = {"GET"}, options={"expose"=true})
          «ENDIF»
          *
          * @param string $ot      Name of currently used object type
@@ -209,8 +208,7 @@ class AjaxController {
          * Searches for entities for auto completion usage.
          «IF !isBase»
          *
-         * @Route("/getItemListAutoCompletion", options={"expose"=true})
-         * @Method("GET")
+         * @Route("/getItemListAutoCompletion", methods = {"GET"}, options={"expose"=true})
          «ENDIF»
          *
          * @param Request $request Current request instance
@@ -313,8 +311,7 @@ class AjaxController {
          * Checks whether a field value is a duplicate or not.
          «IF !isBase»
          *
-         * @Route("/checkForDuplicate", options={"expose"=true})
-         * @Method("GET")
+         * @Route("/checkForDuplicate", methods = {"GET"}, options={"expose"=true})
          «ENDIF»
          *
          * @param Request $request Current request instance
@@ -412,8 +409,7 @@ class AjaxController {
          * Changes a given flag (boolean field) by switching between true and false.
          «IF !isBase»
          *
-         * @Route("/toggleFlag", options={"expose"=true})
-         * @Method("POST")
+         * @Route("/toggleFlag", methods = {"POST"}, options={"expose"=true})
          «ENDIF»
          *
          * @param Request $request Current request instance
@@ -486,8 +482,7 @@ class AjaxController {
          * Performs different operations on tree hierarchies.
          «IF !isBase»
          *
-         * @Route("/handleTreeOperation", options={"expose"=true})
-         * @Method("POST")
+         * @Route("/handleTreeOperation", methods = {"POST"}, options={"expose"=true})
          «ENDIF»
          *
          * @param Request $request Current request instance
@@ -811,8 +806,7 @@ class AjaxController {
          * Updates the sort positions for a given list of entities.
          «IF !isBase»
          *
-         * @Route("/updateSortPositions", options={"expose"=true})
-         * @Method("POST")
+         * @Route("/updateSortPositions", methods = {"POST"}, options={"expose"=true})
          «ENDIF»
          *
          * @param Request $request Current request instance
@@ -892,8 +886,7 @@ class AjaxController {
          * Attachs a given hook assignment by creating the corresponding assignment data record.
          «IF !isBase»
          *
-         * @Route("/attachHookObject", options={"expose"=true})
-         * @Method("POST")
+         * @Route("/attachHookObject", methods = {"POST"}, options={"expose"=true})
          «ENDIF»
          *
          * @param Request $request Current request instance
@@ -909,8 +902,7 @@ class AjaxController {
          * Detachs a given hook assignment by removing the corresponding assignment data record.
          «IF !isBase»
          *
-         * @Route("/detachHookObject", options={"expose"=true})
-         * @Method("POST")
+         * @Route("/detachHookObject", methods = {"POST"}, options={"expose"=true})
          «ENDIF»
          *
          * @param Request $request Current request instance
@@ -1094,10 +1086,9 @@ class AjaxController {
         namespace «appNamespace»\Controller;
 
         use «appNamespace»\Controller\Base\AbstractAjaxController;
-        use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-        use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
         use Symfony\Component\HttpFoundation\JsonResponse;
         use Symfony\Component\HttpFoundation\Request;
+        use Symfony\Component\Routing\Annotation\Route;
         «IF needsDuplicateCheck || hasBooleansWithAjaxToggle || hasTrees || hasUiHooksProviders»
             use Symfony\Component\Security\Core\Exception\AccessDeniedException;
         «ENDIF»

@@ -104,14 +104,14 @@ class ControllerLayer {
         «IF hasEditAction || hasDeleteAction»
             use RuntimeException;
         «ENDIF»
-        use Symfony\Component\HttpFoundation\Request;
-        use Symfony\Component\Security\Core\Exception\AccessDeniedException;
-        «IF hasDisplayAction || hasEditAction || hasDeleteAction»
-            use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-        «ENDIF»
         «IF hasIndexAction || hasViewAction || hasEditAction || hasDeleteAction»
             use Symfony\Component\HttpFoundation\RedirectResponse;
         «ENDIF»
+        use Symfony\Component\HttpFoundation\Request;
+        «IF hasDisplayAction || hasEditAction || hasDeleteAction»
+            use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+        «ENDIF»
+        use Symfony\Component\Security\Core\Exception\AccessDeniedException;
         «IF (hasViewAction || hasDeleteAction) && !skipHookSubscribers»
             «IF hasDeleteAction»
                 use Zikula\Bundle\HookBundle\Category\FormAwareCategory;
@@ -151,12 +151,12 @@ class ControllerLayer {
         «IF hasDisplayAction || hasDeleteAction»
             use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
         «ENDIF»
-        use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
         use Symfony\Component\HttpFoundation\Request;
-        use Symfony\Component\Security\Core\Exception\AccessDeniedException;
         «IF hasDisplayAction || hasEditAction || hasDeleteAction»
             use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
         «ENDIF»
+        use Symfony\Component\Routing\Annotation\Route;
+        use Symfony\Component\Security\Core\Exception\AccessDeniedException;
         use Zikula\ThemeModule\Engine\Annotation\Theme;
         use «entityClassName('', false)»;
 
