@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <project default="create_run_jar" name="Create Runnable Jar with Jar-in-Jar Loader">
-    <!--ANT 1.7 is required-->
-    <!--define folder properties-->
+    <!-- ANT 1.7 is required -->
+    <!-- define folder properties -->
     <property name="main.class" value="org.example.standalone.Main" />
     <property name="project.build.directory" value="${basedir}/target" />
     <property name="dir.buildfile" value="${project.build.directory}" />
