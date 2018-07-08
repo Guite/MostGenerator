@@ -174,7 +174,8 @@ class ExternalController {
         $cssAssetBag->add($assetHelper->resolve('@«appName»:css/style.css'));
         $cssAssetBag->add([$assetHelper->resolve('@«appName»:css/custom.css') => 120]);
 
-        $activatedObjectTypes = $this->getVar('enabledFinderTypes', []);
+        $listEntriesHelper = $this->get('«appService».listentries_helper');
+        $activatedObjectTypes = $listEntriesHelper->extractMultiList($this->getVar('enabledFinderTypes', ''));
         if (!in_array($objectType, $activatedObjectTypes)) {
             if (!count($activatedObjectTypes)) {
                 throw new AccessDeniedException();
@@ -287,7 +288,8 @@ class ExternalController {
 
         $templateParameters['pager'] = [
             'numitems' => $objectCount,
-            'itemsperpage' => $resultsPerPage
+            'itemsperpage' => $resultsPerPage,
+            'activatedObjectTypes' => $activatedObjectTypes
         ];
 
         $output = $this->renderView('@«appName»/External/' . ucfirst($objectType) . '/find.html.twig', $templateParameters);

@@ -117,7 +117,7 @@ class ListEntriesHelper {
         /**
          * Extract concatenated multi selection.
          *
-         * @param string  $value The dropdown value to process
+         * @param string $value The dropdown value to process
          *
          * @return array List of single values
          */
