@@ -290,7 +290,7 @@ class ExternalController {
 
         $templateParameters['pager'] = [
             'numitems' => $objectCount,
-            'itemsperpage' => $resultsPerPage,
+            'itemsperpage' => $resultsPerPage
         ];
 
         $output = $this->renderView('@«appName»/External/' . ucfirst($objectType) . '/find.html.twig', $templateParameters);
