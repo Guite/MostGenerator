@@ -286,10 +286,11 @@ class ExternalController {
         $contextArgs = ['controller' => 'external', 'action' => 'display'];
         $templateParameters = $this->get('«appService».controller_helper')->addTemplateParameters($objectType, $templateParameters, 'controllerAction', $contextArgs);
 
+        $templateParameters['activatedObjectTypes'] = $activatedObjectTypes;
+
         $templateParameters['pager'] = [
             'numitems' => $objectCount,
             'itemsperpage' => $resultsPerPage,
-            'activatedObjectTypes' => $activatedObjectTypes
         ];
 
         $output = $this->renderView('@«appName»/External/' . ucfirst($objectType) . '/find.html.twig', $templateParameters);
