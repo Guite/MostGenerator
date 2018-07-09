@@ -112,6 +112,9 @@ class ControllerLayer {
             use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
         «ENDIF»
         use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+        «IF hasDeleteAction»
+            use Zikula\Bundle\FormExtensionBundle\Form\Type\DeletionType;
+        «ENDIF»
         «IF (hasViewAction || hasDeleteAction) && !skipHookSubscribers»
             «IF hasDeleteAction»
                 use Zikula\Bundle\HookBundle\Category\FormAwareCategory;

@@ -394,7 +394,7 @@ class Actions {
             return $this->redirectToRoute($redirectRoute);
         }
 
-        $form = $this->createForm('Zikula\Bundle\FormExtensionBundle\Form\Type\DeletionType', $«name.formatForCode»);
+        $form = $this->createForm(DeletionType::class, $«name.formatForCode»);
         «IF !skipHookSubscribers»
             $hookHelper = $this->get('«app.appService».hook_helper');
 
