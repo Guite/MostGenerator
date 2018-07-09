@@ -175,7 +175,7 @@ class Relations {
             {{ form_row(attribute(form, alias), {required: mandatory}) }}
         {% elseif displayMode == 'autocomplete' %}
             {{ form_row(attribute(form, alias), {required: mandatory}) }}
-            «component_AutoComplete(ownEntity, many, hasEdit)»«/*ENDIF*/»
+            «component_AutoComplete(ownEntity, many, hasEdit)»
         {% endif %}
     '''
 
