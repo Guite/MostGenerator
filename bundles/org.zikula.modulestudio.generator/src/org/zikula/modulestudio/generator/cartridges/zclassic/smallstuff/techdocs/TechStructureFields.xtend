@@ -554,6 +554,12 @@ class TechStructureFields {
     def private dispatch remarks(TextField it) {
         commonRemarks
     }
+    def private dispatch remarks(EmailField it) {
+        commonRemarks
+    }
+    def private dispatch remarks(UrlField it) {
+        commonRemarks
+    }
     def private dispatch remarks(UploadField it) {
         val result = commonRemarks
         if (language == 'de') {
@@ -616,6 +622,9 @@ class TechStructureFields {
             }
         }
         result
+    }
+    def private dispatch remarks(ObjectField it) {
+        commonRemarks
     }
     def private dispatch remarks(DatetimeField it) {
         val result = commonRemarks
