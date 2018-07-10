@@ -551,6 +551,9 @@ class TechStructureFields {
         }
         result
     }
+    def private dispatch remarks(TextField it) {
+        commonRemarks
+    }
     def private dispatch remarks(UploadField it) {
         val result = commonRemarks
         if (language == 'de') {
