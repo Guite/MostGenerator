@@ -131,7 +131,7 @@ class BlockDetail {
         }
 
         /**
-         * Returns any array of form options.
+         * Returns an array of form options.
          *
          * @return array Options array
          */
