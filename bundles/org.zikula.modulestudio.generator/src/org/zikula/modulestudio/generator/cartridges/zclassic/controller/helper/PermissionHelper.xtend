@@ -56,8 +56,8 @@ class PermissionHelper {
              * PermissionHelper constructor.
              *
              * @param ContainerInterface      $container
-             * @param RequestStack            $requestStack  RequestStack service instance
-             * @param PermissionApiInterface  $permissionApi PermissionApi service instance
+             * @param RequestStack            $requestStack   RequestStack service instance
+             * @param PermissionApiInterface  $permissionApi  PermissionApi service instance
              * @param CurrentUserApiInterface $currentUserApi CurrentUserApi service instance
              * @param UserRepositoryInterface $userRepository UserRepository service instance
              */

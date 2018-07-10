@@ -29,6 +29,7 @@ class ItemActionsMenu {
         use Knp\Menu\MenuItem;
         use Symfony\Component\DependencyInjection\ContainerAwareInterface;
         use Symfony\Component\DependencyInjection\ContainerAwareTrait;
+        use Zikula\Common\Translator\TranslatorInterface;
         use Zikula\Common\Translator\TranslatorTrait;
         «IF hasEditActions || !relations.empty»
             use Zikula\UsersModule\Constant as UsersConstant;
