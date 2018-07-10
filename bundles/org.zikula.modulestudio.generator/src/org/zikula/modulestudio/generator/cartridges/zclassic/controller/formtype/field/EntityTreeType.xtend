@@ -96,6 +96,9 @@ class EntityTreeType {
 
                 $choices = [];
                 foreach ($treeNodes as $node) {
+                    if (null === $node) {
+                        continue;
+                    }
                     if (!$this->isIncluded($node, $repository, $options)) {
                         continue;
                     }
