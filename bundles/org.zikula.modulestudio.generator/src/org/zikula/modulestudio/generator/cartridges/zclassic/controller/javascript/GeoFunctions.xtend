@@ -70,7 +70,7 @@ class GeoFunctions {
             if (infoElem.data('context') == 'display') {
                 «vendorAndName»InitGeographicalDisplay(parameters, false);
             } else if (infoElem.data('context') == 'edit') {
-                parameters.useGeoLocation = infoElem.data('use-geolocation');
+                parameters.useGeoLocation = 'true' == infoElem.attr('data-use-geolocation');
                 «vendorAndName»InitGeographicalEditing(parameters);
             }
         });
