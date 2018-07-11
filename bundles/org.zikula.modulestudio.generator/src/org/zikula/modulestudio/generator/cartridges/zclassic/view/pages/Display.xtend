@@ -1,5 +1,6 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.view.pages
 
+import de.guite.modulestudio.metamodel.BooleanField
 import de.guite.modulestudio.metamodel.DerivedField
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.EntityTreeType
@@ -225,12 +226,19 @@ class Display {
 
     def private templateHeading(Entity it, String appName) '''{{ templateTitle«IF !skipHookSubscribers»|notifyFilters('«appName.formatForDB».filter_hooks.«nameMultiple.formatForDB».filter')|safeHtml«ENDIF» }}«IF hasVisibleWorkflow»{% if routeArea == 'admin' %} <small>({{ «name.formatForCode».workflowState|«appName.formatForDB»_objectState(false)|lower }})</small>{% endif %}«ENDIF»'''
 
-    def private displayEntry(DerivedField it) '''
-        «val fieldLabel = if (name == 'workflowState') 'state' else name»
+    def private dispatch displayEntry(DerivedField it) '''
         {% if «entity.name.formatForCode».«name.formatForCode» is not empty«IF name == 'workflowState'» and routeArea == 'admin'«ENDIF» %}
-            <dt>{{ __('«fieldLabel.formatForDisplayCapital»') }}</dt>
-            <dd>«displayEntryImpl»</dd>
+            «displayEntryInner»
         {% endif %}
+    '''
+    def private dispatch displayEntry(BooleanField it) '''
+        «displayEntryInner»
+    '''
+
+    def private displayEntryInner(DerivedField it) '''
+        «val fieldLabel = if (name == 'workflowState') 'state' else name»
+        <dt>{{ __('«fieldLabel.formatForDisplayCapital»') }}</dt>
+        <dd>«displayEntryImpl»</dd>
     '''
 
     def private displayEntryImpl(DerivedField it) {
