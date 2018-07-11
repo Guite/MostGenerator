@@ -2,7 +2,6 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.controller.helper
 
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.Entity
-import de.guite.modulestudio.metamodel.EntityTreeType
 import de.guite.modulestudio.metamodel.JoinRelationship
 import de.guite.modulestudio.metamodel.RelationEditMode
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
@@ -65,7 +64,6 @@ class ModelHelper {
         /**
          * Determines whether creating an instance of a certain object type is possible.
          * This is when
-         *     - no tree is used
          *     - it has no incoming bidirectional non-nullable relationships.
          *     - the edit type of all those relationships has PASSIVE_EDIT and auto completion is used on the target side
          *       (then a new source object can be created while creating the target object).
@@ -83,7 +81,7 @@ class ModelHelper {
             $result = false;
 
             switch ($objectType) {
-                «FOR entity : getAllEntities.filter[hasEditAction && tree == EntityTreeType.NONE]»
+                «FOR entity : getAllEntities.filter[hasEditAction]»
                     case '«entity.name.formatForCode»':
                         «entity.canBeCreatedImpl»
                         break;

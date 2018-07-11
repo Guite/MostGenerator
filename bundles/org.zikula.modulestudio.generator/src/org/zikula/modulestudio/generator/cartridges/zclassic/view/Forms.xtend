@@ -3,6 +3,7 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.view
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.DerivedField
 import de.guite.modulestudio.metamodel.Entity
+import de.guite.modulestudio.metamodel.EntityTreeType
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.formcomponents.Relations
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.formcomponents.Section
@@ -170,9 +171,11 @@ class Forms {
 
     def fieldDetails(Entity it, String subElem) '''
         «translatableFieldDetails(subElem)»
-        «IF !hasTranslatableFields
+        «IF tree != EntityTreeType.NONE
+          || !hasTranslatableFields
           || (hasTranslatableFields && (!getEditableNonTranslatableFields.empty || (hasSluggableFields && !hasTranslatableSlug)))
-          || geographical»
+          || geographical
+          || isInheriting»
             «fieldDetailsFurtherOptions(subElem)»
         «ENDIF»
     '''
@@ -229,6 +232,11 @@ class Forms {
     def private fieldDetailsFurtherOptions(Entity it, String subElem) '''
         <fieldset>
             <legend>{{ __('«IF hasTranslatableFields»Further properties«ELSE»Content«ENDIF»') }}</legend>
+            «IF tree != EntityTreeType.NONE»
+                {% if mode == 'create' and form.parent is defined %}
+                    {{ form_row(form.parent) }}
+                {% endif %}
+            «ENDIF»
             «IF hasTranslatableFields»
                 «FOR field : getEditableNonTranslatableFields»«field.fieldWrapper(subElem)»«ENDFOR»
             «ELSE»

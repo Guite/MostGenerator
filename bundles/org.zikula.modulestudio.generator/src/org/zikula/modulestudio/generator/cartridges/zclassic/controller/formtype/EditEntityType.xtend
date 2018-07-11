@@ -3,6 +3,7 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtyp
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.DataObject
 import de.guite.modulestudio.metamodel.Entity
+import de.guite.modulestudio.metamodel.EntityTreeType
 import de.guite.modulestudio.metamodel.EntityWorkflowType
 import de.guite.modulestudio.metamodel.JoinRelationship
 import de.guite.modulestudio.metamodel.ListField
@@ -70,8 +71,14 @@ class EditEntityType {
             use Doctrine\ORM\EntityRepository;
         «ENDIF»
         «fields.formTypeImports(app, it)»
+        «IF it instanceof Entity && (it as Entity).tree != EntityTreeType.NONE»
+            use «app.appNamespace»\Entity\«name.formatForCodeCapital»Entity;
+        «ENDIF»
         «IF isInheriting»
             use «app.appNamespace»\Form\Type\«getParentDataObjects(newArrayList).head.name.formatForCodeCapital»Type;
+        «ENDIF»
+        «IF it instanceof Entity && (it as Entity).tree != EntityTreeType.NONE»
+            use «app.appNamespace»\Form\Type\Field\EntityTreeType;
         «ENDIF»
         «IF !incoming.empty || !outgoing.empty»
             use «app.appNamespace»\Helper\CollectionFilterHelper;
@@ -206,6 +213,20 @@ class EditEntityType {
              */
             public function buildForm(FormBuilderInterface $builder, array $options)
             {
+                «IF it instanceof Entity && (it as Entity).tree != EntityTreeType.NONE»
+                    if ('create' == $options['mode']) {
+                        $builder->add('parent', EntityTreeType::class, [
+                            'class' => «name.formatForCodeCapital»Entity::class,
+                            'multiple' => false,
+                            'expanded' => false,
+                            'use_joins' => false,
+                            'label' => $this->__('Parent «name.formatForDisplay»'),
+                            'attr' => [
+                                'title' => $this->__('Choose the parent «name.formatForDisplay».')
+                            ]
+                        ]);
+                    }
+                «ENDIF»
                 $this->addEntityFields($builder, $options);
                 «IF isInheriting»
                     «val parents = getParentDataObjects(newArrayList)»
@@ -753,7 +774,7 @@ class EditEntityType {
                     'title' => $helpText
                 ],
                 'attr' => [
-                    'title' => $options['mode'] == 'create' ? $this->__('Enter any additions about your content') : $this->__('Enter any additions about your changes')
+                    'title' => 'create' == $options['mode'] ? $this->__('Enter any additions about your content') : $this->__('Enter any additions about your changes')
                 ],
                 'required' => false,
                 'help' => $helpText
