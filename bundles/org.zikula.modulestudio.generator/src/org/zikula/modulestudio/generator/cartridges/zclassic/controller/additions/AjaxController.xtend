@@ -30,6 +30,7 @@ class AjaxController {
 
         use Symfony\Component\HttpFoundation\JsonResponse;
         use Symfony\Component\HttpFoundation\Request;
+        use Symfony\Component\HttpFoundation\Response;
         «IF hasTrees && hasEditActions»
             use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
         «ENDIF»
@@ -111,6 +112,10 @@ class AjaxController {
     '''
 
     def private getItemListFinderBaseImpl(Application it) '''
+        if (!$request->isXmlHttpRequest()) {
+            return «IF targets('2.0')»$this->json«ELSE»new JsonResponse«ENDIF»($this->__('Only ajax access is allowed!'), Response::HTTP_BAD_REQUEST);
+        }
+
         if (!$this->hasPermission('«appName»::Ajax', '::', ACCESS_EDIT)) {
             return true;
         }
@@ -222,6 +227,10 @@ class AjaxController {
     '''
 
     def private getItemListAutoCompletionBaseImpl(Application it) '''
+        if (!$request->isXmlHttpRequest()) {
+            return «IF targets('2.0')»$this->json«ELSE»new JsonResponse«ENDIF»($this->__('Only ajax access is allowed!'), Response::HTTP_BAD_REQUEST);
+        }
+
         if (!$this->hasPermission('«appName»::Ajax', '::', ACCESS_EDIT)) {
             return true;
         }
@@ -327,6 +336,10 @@ class AjaxController {
     '''
 
     def private checkForDuplicateBaseImpl(Application it) '''
+        if (!$request->isXmlHttpRequest()) {
+            return «IF targets('2.0')»$this->json«ELSE»new JsonResponse«ENDIF»($this->__('Only ajax access is allowed!'), Response::HTTP_BAD_REQUEST);
+        }
+
         if (!$this->hasPermission('«appName»::Ajax', '::', ACCESS_EDIT)) {
             throw new AccessDeniedException();
         }
@@ -425,6 +438,10 @@ class AjaxController {
     '''
 
     def private toggleFlagBaseImpl(Application it) '''
+        if (!$request->isXmlHttpRequest()) {
+            return «IF targets('2.0')»$this->json«ELSE»new JsonResponse«ENDIF»($this->__('Only ajax access is allowed!'), Response::HTTP_BAD_REQUEST);
+        }
+
         if (!$this->hasPermission('«appName»::Ajax', '::', ACCESS_EDIT)) {
             throw new AccessDeniedException();
         }
@@ -498,6 +515,10 @@ class AjaxController {
     '''
 
     def private handleTreeOperationBaseImpl(Application it) '''
+        if (!$request->isXmlHttpRequest()) {
+            return «IF targets('2.0')»$this->json«ELSE»new JsonResponse«ENDIF»($this->__('Only ajax access is allowed!'), Response::HTTP_BAD_REQUEST);
+        }
+
         if (!$this->hasPermission('«appName»::Ajax', '::', ACCESS_EDIT)) {
             throw new AccessDeniedException();
         }
@@ -822,6 +843,10 @@ class AjaxController {
     '''
 
     def private updateSortPositionsBaseImpl(Application it) '''
+        if (!$request->isXmlHttpRequest()) {
+            return «IF targets('2.0')»$this->json«ELSE»new JsonResponse«ENDIF»($this->__('Only ajax access is allowed!'), Response::HTTP_BAD_REQUEST);
+        }
+
         if (!$this->hasPermission('«appName»::Ajax', '::', ACCESS_EDIT)) {
             throw new AccessDeniedException();
         }
@@ -922,6 +947,10 @@ class AjaxController {
     '''
 
     def private attachHookObjectBaseImpl(Application it) '''
+        if (!$request->isXmlHttpRequest()) {
+            return «IF targets('2.0')»$this->json«ELSE»new JsonResponse«ENDIF»($this->__('Only ajax access is allowed!'), Response::HTTP_BAD_REQUEST);
+        }
+
         if (!$this->hasPermission('«appName»::Ajax', '::', ACCESS_EDIT)) {
             throw new AccessDeniedException();
         }
@@ -959,6 +988,10 @@ class AjaxController {
     '''
 
     def private detachHookObjectBaseImpl(Application it) '''
+        if (!$request->isXmlHttpRequest()) {
+            return «IF targets('2.0')»$this->json«ELSE»new JsonResponse«ENDIF»($this->__('Only ajax access is allowed!'), Response::HTTP_BAD_REQUEST);
+        }
+
         if (!$this->hasPermission('«appName»::Ajax', '::', ACCESS_EDIT)) {
             throw new AccessDeniedException();
         }
