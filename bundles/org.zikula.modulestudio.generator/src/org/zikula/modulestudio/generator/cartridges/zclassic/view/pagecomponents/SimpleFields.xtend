@@ -33,22 +33,22 @@ class SimpleFields {
         if (ajaxTogglability && (page == 'view' || page == 'display')) '''
             {% set itemId = «objName».getKey() %}
             <a id="toggle«name.formatForCodeCapital»{{ itemId }}" href="javascript:void(0);" class="«application.vendorAndName.toLowerCase»-ajax-toggle hidden" data-object-type="«entity.name.formatForCode»" data-field-name="«name.formatForCode»" data-item-id="{{ itemId }}">
-                <i class="fa fa-check{% if not «objName».«name.formatForCode» %} hidden{% endif %}" id="yes«name.formatForCodeCapital»{{ itemId }}" title="{{ __('This setting is enabled. Click here to disable it.') }}"></i>
-                <i class="fa fa-times{% if «objName».«name.formatForCode» %} hidden{% endif %}" id="no«name.formatForCodeCapital»{{ itemId }}" title="{{ __('This setting is disabled. Click here to enable it.') }}"></i>
+                <i class="fa fa-check text-success{% if not «objName».«name.formatForCode» %} hidden{% endif %}" id="yes«name.formatForCodeCapital»{{ itemId }}" title="{{ __('This setting is enabled. Click here to disable it.') }}"></i>
+                <i class="fa fa-times text-danger{% if «objName».«name.formatForCode» %} hidden{% endif %}" id="no«name.formatForCodeCapital»{{ itemId }}" title="{{ __('This setting is disabled. Click here to enable it.') }}"></i>
             </a>
             <noscript><div id="noscript«name.formatForCodeCapital»{{ itemId }}">
                 {% if «objName».«name.formatForCode» %}
-                    <i class="fa fa-check" title="{{ __('Yes') }}"></i>
+                    <i class="fa fa-check text-success" title="{{ __('Yes') }}"></i>
                 {% else %}
-                    <i class="fa fa-times" title="{{ __('No') }}"></i>
+                    <i class="fa fa-times text-danger" title="{{ __('No') }}"></i>
                 {% endif %}
             </div></noscript>
         '''
         else '''
             {% if «objName».«name.formatForCode» %}
-                <i class="fa fa-check" title="{{ __('Yes') }}"></i>
+                <i class="fa fa-check text-success" title="{{ __('Yes') }}"></i>
             {% else %}
-                <i class="fa fa-times" title="{{ __('No') }}"></i>
+                <i class="fa fa-times text-danger" title="{{ __('No') }}"></i>
             {% endif %}
         '''
     }
