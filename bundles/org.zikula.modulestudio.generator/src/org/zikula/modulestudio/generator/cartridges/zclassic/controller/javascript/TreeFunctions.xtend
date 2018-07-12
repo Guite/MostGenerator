@@ -37,7 +37,9 @@ class TreeFunctions {
         
         «treeContextMenuActions»
 
-        «treeSave»
+        «treeDropNode»
+
+        «treeMoveNode»
 
         «onLoad»
     '''
@@ -76,7 +78,9 @@ class TreeFunctions {
                     'is_draggable': function (node) {
                         // disable drag and drop for root category
                         return node[0].parent != '#';
-                    }
+                    },
+                    // drop as last child
+                    'inside_pos': 'last'
                 },
                 'state': {
                     'key': idPrefix
@@ -105,41 +109,49 @@ class TreeFunctions {
             });*/»
 
             // Drag n drop
-            tree.on('move_node.jstree', function (event, data) {
-                var node = data.node;
-                var parentId = data.parent;
-                var parentNode = trees[idPrefix].jstree('get_node', parentId, false);
-
-                «vendorAndName»TreeSave(node, parentNode, 'bottom');
-            });
+            tree.on('move_node.jstree', «vendorAndName»TreeDropNode);
+            // Copy is fired when moving between multiple trees
+            tree.on('copy_node.jstree', «vendorAndName»TreeDropNode);
 
             // Expand and collapse
             jQuery('#' + idPrefix + 'Expand').click(function (event) {
+                var theIdPrefix;
+
                 event.preventDefault();
-                trees[idPrefix].jstree(true).open_all(null, 500);
+                theIdPrefix = jQuery(this).attr('id').replace('Expand', '');
+                trees[theIdPrefix].jstree(true).open_all(null, 500);
             });
             jQuery('#' + idPrefix + 'Collapse').click(function (event) {
+                var theIdPrefix;
+
                 event.preventDefault();
-                trees[idPrefix].jstree(true).close_all(null, 500);
+                theIdPrefix = jQuery(this).attr('id').replace('Collapse', '');
+                trees[theIdPrefix].jstree(true).close_all(null, 500);
             });
 
             // Search
             var searchStartDelay = false;
             jQuery('#' + idPrefix + 'SearchTerm').keyup(function () {
+                var theIdPrefix;
+
+                theIdPrefix = jQuery(this).attr('id').replace('SearchTerm', '');
                 if (searchStartDelay) {
                     clearTimeout(searchStartDelay);
                 }
                 searchStartDelay = setTimeout(function () {
                     var searchTerm;
 
-                    searchTerm = jQuery('#' + idPrefix + 'SearchTerm').val();
-                    trees[idPrefix].jstree(true).search(searchTerm);
+                    searchTerm = jQuery('#' + theIdPrefix + 'SearchTerm').val();
+                    trees[theIdPrefix].jstree(true).search(searchTerm);
                 }, 250);
             });
 
             // allow redirecting if a link has been clicked
             tree.find('ul').on('click', 'li.jstree-node a', function (event) {
-                trees[idPrefix].jstree('save_state');
+                var theIdPrefix;
+
+                theIdPrefix = jQuery(this).parents('div.tree-container').attr('id');
+                trees[theIdPrefix].jstree('save_state');
                 document.location.href = jQuery(this).attr('href');
             });
         }
@@ -326,29 +338,70 @@ class TreeFunctions {
         }
     '''
 
-    def private treeSave(Application it) '''
+    def private treeDropNode(Application it) '''
         /**
-         * Callback function for config.onSave. This function is called after each tree change.
+         * Handles drag n drop events.
          *
-         * @param node - the node which is currently being moved
-         * @param parentNode - the new parent node
-         * @param position - can be "after", "before" or "bottom" and defines
-         *       whether the affected node is inserted after, before or as last child of "relativenode"
-         *
-         * @return true on success, otherwise the change will be reverted
+         * @see https://www.jstree.com/api/#/?f=move_node(obj,%20par%20[,%20pos,%20callback,%20is_loaded])
+         * @see https://www.jstree.com/api/#/?f=copy_node(obj,%20par%20[,%20pos,%20callback,%20is_loaded])
          */
-        function «vendorAndName»TreeSave(node, parentNode, position) {
-            var nodeParts, rootId, nodeId, destId;
+        function «vendorAndName»TreeDropNode(event, data) {
+            var isMultiTreeCopy;
+            var node;
+            var parentNode;
+            var previousNode;
 
+            isMultiTreeCopy = 'undefined' !== typeof data.original;
+            // when copying between multiple trees refer to original node to get real identifier
+            node = isMultiTreeCopy ? data.original : data.node;
             // do not allow inserts on root level
             if (node.parents.length < 1) {
                 return false;
             }
 
+            rootId = node.id.split('_')[0].replace('tree', '').replace('node', '');
+            parentNode = data.new_instance.get_node(data.parent, false);
+
+            previousNode = null;
+            if (data.position > 0) {
+                previousNode = data.new_instance.get_node(parentNode.children[data.position - 1], false);
+            }
+
+            if (null !== previousNode) {
+                «vendorAndName»TreeMoveNode(node, previousNode, 'after', isMultiTreeCopy);
+            } else {
+                «vendorAndName»TreeMoveNode(node, parentNode, 'bottom', isMultiTreeCopy);
+            }
+        }
+    '''
+
+    def private treeMoveNode(Application it) '''
+        /**
+         * Callback function for drag n drop. This function is called after each tree change
+         * caused by moving a node.
+         *
+         * @param node - the node which has been moved
+         * @param refNode - the new reference node
+         * @param position - can be "after", "before" or "bottom" and defines
+         *       whether the affected node is inserted after, before or as last child of "refNode"
+         * @param doReload - whether to reload the page after the change has been performed
+         *       (required for multi-tree copying to update identifiers)
+         *
+         * @return true on success, otherwise the change will be reverted
+         */
+        function «vendorAndName»TreeMoveNode(node, refNode, position, doReload) {
+            var nodeParts;
+            var rootId;
+            var nodeId;
+            var destId;
+
             nodeParts = node.id.split('node_');
             rootId = nodeParts[0].replace('tree', '');
             nodeId = nodeParts[1];
-            destId = parentNode.id.replace('tree' + rootId + 'node_', '');
+
+            nodeParts = refNode.id.split('node_');
+            rootId = nodeParts[0].replace('tree', '');
+            destId = nodeParts[1];
 
             jQuery.ajax({
                 method: 'POST',
@@ -361,6 +414,9 @@ class TreeFunctions {
                     destid: destId
                 }
             }).done(function (res) {
+                if (true === doReload) {
+                    window.location.reload();
+                }
                 return true;
             }).fail(function (jqXHR, textStatus) {
                 «vendorAndName»SimpleAlert(jQuery('.tree-container'), Translator.__('Error'), Translator.__('Could not persist your change.'), 'treeAjaxFailedAlert', 'danger');
