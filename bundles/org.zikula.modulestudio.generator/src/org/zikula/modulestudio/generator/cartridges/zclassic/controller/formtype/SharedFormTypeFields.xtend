@@ -1,5 +1,6 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype
 
+import de.guite.modulestudio.metamodel.AbstractStringField
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.ArrayField
 import de.guite.modulestudio.metamodel.BooleanField
@@ -596,7 +597,7 @@ class SharedFormTypeFields {
         'maxlength' => «length»,
         «IF null !== regexp && !regexp.empty»
             «IF !regexpOpposite»
-                'pattern' => '«regexp.replace('\'', '')»',
+                'pattern' => '«regexWithoutLeadingAndTrailingSlashes»',
             «ENDIF»
         «ENDIF»
     '''
@@ -639,7 +640,7 @@ class SharedFormTypeFields {
         'maxlength' => «length»,
         «IF null !== regexp && !regexp.empty»
             «IF !regexpOpposite»
-                'pattern' => '«regexp.replace('\'', '')»',
+                'pattern' => '«regexWithoutLeadingAndTrailingSlashes»',
             «ENDIF»
         «ENDIF»
     '''
@@ -647,13 +648,25 @@ class SharedFormTypeFields {
     def private dispatch formType(EmailField it) '''Email'''
     def private dispatch additionalAttributes(EmailField it) '''
         'maxlength' => «length»,
+        «IF null !== regexp && !regexp.empty»
+            «IF !regexpOpposite»
+                'pattern' => '«regexWithoutLeadingAndTrailingSlashes»',
+            «ENDIF»
+        «ENDIF»
     '''
 
     def private dispatch formType(UrlField it) '''Url'''
     def private dispatch additionalAttributes(UrlField it) '''
         'maxlength' => «length»,
+        «IF null !== regexp && !regexp.empty»
+            «IF !regexpOpposite»
+                'pattern' => '«regexWithoutLeadingAndTrailingSlashes»',
+            «ENDIF»
+        «ENDIF»
     '''
     def private dispatch additionalOptions(UrlField it) '''«/*'default_protocol' => 'http'*/»'''
+
+    def private regexWithoutLeadingAndTrailingSlashes(AbstractStringField it) '''«regexp.replaceAll('\'', '').replaceAll('^/+', '').replaceAll('/+$', '')»'''
 
     def private dispatch formType(UploadField it) '''Upload'''
     def private dispatch additionalAttributes(UploadField it) ''''''
