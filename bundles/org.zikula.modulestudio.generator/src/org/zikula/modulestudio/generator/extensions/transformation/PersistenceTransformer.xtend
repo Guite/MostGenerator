@@ -292,6 +292,13 @@ class PersistenceTransformer {
                 ]
             }
         }
+
+        varContainer.fields += factory.createBooleanField => [
+            name = 'showOnlyOwnEntries'
+            defaultValue = 'false'
+            documentation = 'Whether only own entries should be shown on view pages by default or not'
+            mandatory = false
+        ]
         if (supportLocaleFilter) {
             varContainer.fields += factory.createBooleanField => [
                 name = 'filterDataByLocale'
