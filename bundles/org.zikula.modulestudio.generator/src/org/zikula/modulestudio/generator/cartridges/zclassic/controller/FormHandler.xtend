@@ -931,8 +931,11 @@ class FormHandler {
             «IF hasHookSubscribers»
 
                 if ($entity->supportsHookSubscribers()) {
+                    $entitiesWithDisplayAction = ['«getAllEntities.filter[hasDisplayAction].map[name.formatForCode].join('\', \'')»'];
+                    $hasDisplayAction = in_array($this->objectType, $entitiesWithDisplayAction);
+
                     $routeUrl = null;
-                    if ($action != 'delete') {
+                    if ($hasDisplayAction && $action != 'delete') {
                         $urlArgs = $entity->createUrlArgs();
                         $urlArgs['_locale'] = $this->request->getLocale();
                         $routeUrl = new RouteUrl('«appName.formatForDB»_' . $this->objectTypeLower . '_display', $urlArgs);
