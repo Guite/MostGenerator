@@ -46,13 +46,6 @@ class Styles {
             div#z-maincontent.z-module-«name.formatForDB» table tbody tr td {
                 vertical-align: top;
             }
-            .table-responsive > .fixed-columns {
-                position: absolute;
-                display: inline-block;
-                width: auto;
-                border-right: 1px solid #ddd;
-                background-color: #fff;
-            }
             «IF hasSortable»
                 .ui-state-highlight {
                     height: 40px;
