@@ -62,15 +62,8 @@ class Styles {
         «ENDIF»
         «IF hasDisplayActions»
             /* display pages */
-            .«cssPrefix»-display div.col-sm-3 h3 {
-                color: #333;
-                font-weight: 400;
-                border-bottom: 1px solid #ccc;
-                padding-bottom: 8px;
-            }
-
-            .«cssPrefix»-display div.col-sm-3 p.managelink {
-                margin-left: 18px;
+            .«cssPrefix»-display p.managelink {
+                margin: 18px 0 0 18px;
             }
 
         «ENDIF»
@@ -83,7 +76,7 @@ class Styles {
         «IF hasTrees»
             .tree-container {
                 border: 1px solid #ccc;
-                width: 400px;
+                /*width: 400px;*/
                 float: left;
                 margin-right: 16px;
             }
