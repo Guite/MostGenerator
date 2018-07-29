@@ -308,7 +308,7 @@ class EntityDisplayHelper {
             NumberField: '''$this->«IF currency»currencyFormatter->formatCurrency(«value», 'EUR')«ELSE»numberFormatter->format(«value»)«ENDIF»'''
             UserField: '''(«value» ? «value»->getUname() : '')'''
             ListField: '''«IF null !== entity»$this->listEntriesHelper->resolve(«value», '«entity.name.formatForCode»', '«name.formatForCode»')«ELSE»«value»«ENDIF»'''
-            DatetimeField: '''$this->dateFormatter->formatObject(«value», [«IF isDateTimeField»IntlDateFormatter::SHORT, IntlDateFormatter::SHORT«ELSEIF isDateField»IntlDateFormatter::SHORT, IntlDateFormatter::NONE«ELSEIF isTimeField»IntlDateFormatter::NONE, IntlDateFormatter::NONE«ENDIF»])'''
+            DatetimeField: '''$this->dateFormatter->formatObject(«value», [«IF isDateTimeField»IntlDateFormatter::SHORT, IntlDateFormatter::SHORT«ELSEIF isDateField»IntlDateFormatter::SHORT, IntlDateFormatter::NONE«ELSEIF isTimeField»IntlDateFormatter::NONE, IntlDateFormatter::SHORT«ENDIF»])'''
             default: value
         }
     }
