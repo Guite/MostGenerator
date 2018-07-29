@@ -262,7 +262,9 @@ class Definition {
     def private trashAndRecoverActions(ListFieldItem it) '''
         «IF app.targets('2.0')»
             «addTransition('trash', it.value, 'trashed')»
-            «addTransition('recover', 'trashed', it.value)»
+            «IF !transitionsTo.containsKey('recovertrashed')»
+                «addTransition('recover', 'trashed', it.value)»
+            «ENDIF»
         «ELSE»
             «addTransition('trash' + it.value, it.value, 'trashed')»
             «addTransition('recover' + it.value, 'trashed', it.value)»
@@ -286,9 +288,9 @@ class Definition {
             transitionsTo.put(uniqueKey, nextState)
         } else if (transitionsTo.get(uniqueKey) != nextState) {
             try {
-                throw new Exception('Invalid workflow structure: transition "' + id + '" has two different target states (' + nextState + ', ' + transitionsTo.get(id) + ').')
+                throw new Exception('Invalid workflow structure: transition "' + id + '" (' + uniqueKey + ') has two different target states (' + nextState + ', ' + transitionsTo.get(id) + ').')
             } catch (Exception exc) {
-                throw new RuntimeException('Invalid workflow structure detected: transition "' + id + '" has two different target states (' + nextState + ', ' + transitionsTo.get(id) + ').', exc)
+                throw new RuntimeException('Invalid workflow structure detected: transition "' + id + '" (' + uniqueKey + ') has two different target states (' + nextState + ', ' + transitionsTo.get(id) + ').', exc)
             }
         }
     }
