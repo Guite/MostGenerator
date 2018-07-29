@@ -262,6 +262,7 @@ class Definition {
     def private trashAndRecoverActions(ListFieldItem it) '''
         «IF app.targets('2.0')»
             «addTransition('trash', it.value, 'trashed')»
+            «addTransition('recover', 'trashed', it.value)»
         «ELSE»
             «addTransition('trash' + it.value, it.value, 'trashed')»
             «addTransition('recover' + it.value, 'trashed', it.value)»
