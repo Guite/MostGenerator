@@ -142,7 +142,7 @@ class TechHelper {
         </tr>
         <tr>
             <th id="hPlatform" scope="row" headers="hBasicField">«IF language == 'de'»Plattform«ELSE»Platform«ENDIF»</th>
-            <td headers="hBasicValue hPlatform"><a href="https://zikula.de/«language»/" title="«IF language == 'de'»Internetseite von Zikula«ELSE»Zikula website«ENDIF»" target="_blank">Zikula</a> «targetSemVer(true)»</td>
+            <td headers="hBasicValue hPlatform"><a href="https://ziku.la/«language»/" title="«IF language == 'de'»Internetseite von Zikula«ELSE»Zikula website«ENDIF»" target="_blank">Zikula</a> «targetSemVer(true)»</td>
         </tr>
         <tr>
             <th id="hGenerated" scope="row" headers="hBasicField">«IF language == 'de'»Generiert«ELSE»Generated«ENDIF»</th>

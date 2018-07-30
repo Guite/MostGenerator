@@ -118,7 +118,7 @@ class MostFileSystemHelper {
         * @copyright «author» («vendor»)
         * @license «license»
         * @author «author»«IF null !== email && !email.empty» <«email»>«ENDIF».
-        * @link «IF !url.empty»«url»«ELSE»«msUrl»«ENDIF»«IF url != 'http://zikula.org'»
-        * @link http://zikula.org«ENDIF»
+        * @link «IF !url.empty»«url»«ELSE»«msUrl»«ENDIF»«IF url != 'https://ziku.la'»
+        * @link https://ziku.la«ENDIF»
     '''
 }
