@@ -291,7 +291,7 @@ class WorkflowHelper {
                     $title = $this->translator->__('Trash');
                 } elseif («IF targets('2.0')»$actionId«ELSE»substr($actionId, 0, 7)«ENDIF» == 'recover') {
                     $title = $this->translator->__('Recover');
-            	}
+                }
             }
 
             return $title;
