@@ -38,10 +38,10 @@ class EntityInitialiser {
         «FOR entity : getAllEntities»
             use «appNamespace»\Entity\«entity.name.formatForCodeCapital»Entity;
         «ENDFOR»
-        use «appNamespace»\Helper\PermissionHelper;
         «IF hasListFieldsExceptWorkflowState»
             use «appNamespace»\Helper\ListEntriesHelper;
         «ENDIF»
+        use «appNamespace»\Helper\PermissionHelper;
 
         /**
          * Entity initialiser class used to dynamically apply default values to newly created entities.
