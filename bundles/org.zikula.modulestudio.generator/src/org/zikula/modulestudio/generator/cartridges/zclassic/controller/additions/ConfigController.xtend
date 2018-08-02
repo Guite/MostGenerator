@@ -47,20 +47,21 @@ class ConfigController {
 
     def private configDocBlock(Application it, Boolean isBase) '''
         /**
+         «IF isBase»
          * This method takes care of the application configuration.
-         «IF !isBase»
-         *
-         * @Route("/config",
-         *        methods = {"GET", "POST"}
-         * )
-         * @Theme("admin")
-         «ENDIF»
          *
          * @param Request $request Current request instance
          *
          * @return Response Output
          *
          * @throws AccessDeniedException Thrown if the user doesn't have required permissions
+         «ELSE»
+         * @inheritDoc
+         * @Route("/config",
+         *        methods = {"GET", "POST"}
+         * )
+         * @Theme("admin")
+         «ENDIF»
          */
     '''
 

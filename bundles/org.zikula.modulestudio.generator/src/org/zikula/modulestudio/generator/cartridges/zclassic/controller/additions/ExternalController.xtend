@@ -66,15 +66,8 @@ class ExternalController {
 
     def private displayDocBlock(Application it, Boolean isBase) '''
         /**
+         «IF isBase»
          * Displays one item of a certain object type using a separate template for external usages.
-         «IF !isBase»
-         *
-         * @Route("/display/{objectType}/{id}/{source}/{displayMode}",
-         *        requirements = {"id" = "\d+", "source" = "block|contentType|scribite", "displayMode" = "link|embed"},
-         *        defaults = {"source" = "contentType", "displayMode" = "embed"},
-         *        methods = {"GET"}
-         * )
-         «ENDIF»
          *
          * @param Request $request     The current request
          * @param string  $objectType  The currently treated object type
@@ -83,6 +76,14 @@ class ExternalController {
          * @param string  $displayMode Display mode (link or embed)
          *
          * @return string Desired data output
+         «ELSE»
+         * @inheritDoc
+         * @Route("/display/{objectType}/{id}/{source}/{displayMode}",
+         *        requirements = {"id" = "\d+", "source" = "block|contentType|scribite", "displayMode" = "link|embed"},
+         *        defaults = {"source" = "contentType", "displayMode" = "embed"},
+         *        methods = {"GET"}
+         * )
+         «ENDIF»
          */
     '''
 
@@ -138,17 +139,9 @@ class ExternalController {
 
     def private finderDocBlock(Application it, Boolean isBase) '''
         /**
+         «IF isBase»
          * Popup selector for Scribite plugins.
          * Finds items of a certain object type.
-         «IF !isBase»
-         *
-         * @Route("/finder/{objectType}/{editor}/{sort}/{sortdir}/{pos}/{num}",
-         *        requirements = {"editor" = "ckeditor|quill|summernote|tinymce", "sortdir" = "asc|desc", "pos" = "\d+", "num" = "\d+"},
-         *        defaults = {"sort" = "", "sortdir" = "asc", "pos" = 1, "num" = 0},
-         *        methods = {"GET"},
-         *        options={"expose"=true}
-         * )
-         «ENDIF»
          *
          * @param Request $request    The current request
          * @param string  $objectType The object type
@@ -161,6 +154,15 @@ class ExternalController {
          * @return output The external item finder page
          *
          * @throws AccessDeniedException Thrown if the user doesn't have required permissions
+         «ELSE»
+         * @inheritDoc
+         * @Route("/finder/{objectType}/{editor}/{sort}/{sortdir}/{pos}/{num}",
+         *        requirements = {"editor" = "ckeditor|quill|summernote|tinymce", "sortdir" = "asc|desc", "pos" = "\d+", "num" = "\d+"},
+         *        defaults = {"sort" = "", "sortdir" = "asc", "pos" = 1, "num" = 0},
+         *        methods = {"GET"},
+         *        options={"expose"=true}
+         * )
+         «ENDIF»
          */
     '''
 

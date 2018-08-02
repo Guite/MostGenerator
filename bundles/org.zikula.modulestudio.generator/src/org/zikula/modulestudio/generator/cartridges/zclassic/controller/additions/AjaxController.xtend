@@ -93,17 +93,18 @@ class AjaxController {
 
     def private getItemListFinderDocBlock(Application it, Boolean isBase) '''
         /**
+         «IF isBase»
          * Retrieve item list for finder selections in Forms, Content type plugin and Scribite.
-         «IF !isBase»
-         *
-         * @Route("/getItemListFinder", methods = {"GET"}, options={"expose"=true})
-         «ENDIF»
          *
          * @param string $ot      Name of currently used object type
          * @param string $sort    Sorting field
          * @param string $sortdir Sorting direction
          *
          * @return JsonResponse
+         «ELSE»
+         * @inheritDoc
+         * @Route("/getItemListFinder", methods = {"GET"}, options={"expose"=true})
+         «ENDIF»
          */
     '''
 
@@ -210,15 +211,16 @@ class AjaxController {
 
     def private getItemListAutoCompletionDocBlock(Application it, Boolean isBase) '''
         /**
+         «IF isBase»
          * Searches for entities for auto completion usage.
-         «IF !isBase»
-         *
-         * @Route("/getItemListAutoCompletion", methods = {"GET"}, options={"expose"=true})
-         «ENDIF»
          *
          * @param Request $request Current request instance
          *
          * @return JsonResponse
+         «ELSE»
+         * @inheritDoc
+         * @Route("/getItemListAutoCompletion", methods = {"GET"}, options={"expose"=true})
+         «ENDIF»
          */
     '''
 
@@ -317,17 +319,18 @@ class AjaxController {
 
     def private checkForDuplicateDocBlock(Application it, Boolean isBase) '''
         /**
+         «IF isBase»
          * Checks whether a field value is a duplicate or not.
-         «IF !isBase»
-         *
-         * @Route("/checkForDuplicate", methods = {"GET"}, options={"expose"=true})
-         «ENDIF»
          *
          * @param Request $request Current request instance
          *
          * @return JsonResponse
          *
          * @throws AccessDeniedException Thrown if the user doesn't have required permissions
+         «ELSE»
+         * @inheritDoc
+         * @Route("/checkForDuplicate", methods = {"GET"}, options={"expose"=true})
+         «ENDIF»
          */
     '''
 
@@ -419,17 +422,18 @@ class AjaxController {
 
     def private toggleFlagDocBlock(Application it, Boolean isBase) '''
         /**
+         «IF isBase»
          * Changes a given flag (boolean field) by switching between true and false.
-         «IF !isBase»
-         *
-         * @Route("/toggleFlag", methods = {"POST"}, options={"expose"=true})
-         «ENDIF»
          *
          * @param Request $request Current request instance
          *
          * @return JsonResponse
          *
          * @throws AccessDeniedException Thrown if the user doesn't have required permissions
+         «ELSE»
+         * @inheritDoc
+         * @Route("/toggleFlag", methods = {"POST"}, options={"expose"=true})
+         «ENDIF»
          */
     '''
 
@@ -496,17 +500,18 @@ class AjaxController {
 
     def private handleTreeOperationDocBlock(Application it, Boolean isBase) '''
         /**
+         «IF isBase»
          * Performs different operations on tree hierarchies.
-         «IF !isBase»
-         *
-         * @Route("/handleTreeOperation", methods = {"POST"}, options={"expose"=true})
-         «ENDIF»
          *
          * @param Request $request Current request instance
          *
          * @return JsonResponse
          *
          * @throws AccessDeniedException Thrown if the user doesn't have required permissions
+         «ELSE»
+         * @inheritDoc
+         * @Route("/handleTreeOperation", methods = {"POST"}, options={"expose"=true})
+         «ENDIF»
          */
     '''
 
@@ -824,17 +829,18 @@ class AjaxController {
 
     def private updateSortPositionsDocBlock(Application it, Boolean isBase) '''
         /**
+         «IF isBase»
          * Updates the sort positions for a given list of entities.
-         «IF !isBase»
-         *
-         * @Route("/updateSortPositions", methods = {"POST"}, options={"expose"=true})
-         «ENDIF»
          *
          * @param Request $request Current request instance
          *
          * @return JsonResponse
          *
          * @throws AccessDeniedException Thrown if the user doesn't have required permissions
+         «ELSE»
+         * @inheritDoc
+         * @Route("/updateSortPositions", methods = {"POST"}, options={"expose"=true})
+         «ENDIF»
          */
     '''
 
@@ -908,33 +914,35 @@ class AjaxController {
 
     def private attachHookObjectDocBlock(Application it, Boolean isBase) '''
         /**
+         «IF isBase»
          * Attachs a given hook assignment by creating the corresponding assignment data record.
-         «IF !isBase»
-         *
-         * @Route("/attachHookObject", methods = {"POST"}, options={"expose"=true})
-         «ENDIF»
          *
          * @param Request $request Current request instance
          *
          * @return JsonResponse
          *
          * @throws AccessDeniedException Thrown if the user doesn't have required permissions
+         «ELSE»
+         * @inheritDoc
+         * @Route("/attachHookObject", methods = {"POST"}, options={"expose"=true})
+         «ENDIF»
          */
     '''
 
     def private detachHookObjectDocBlock(Application it, Boolean isBase) '''
         /**
+         «IF isBase»
          * Detachs a given hook assignment by removing the corresponding assignment data record.
-         «IF !isBase»
-         *
-         * @Route("/detachHookObject", methods = {"POST"}, options={"expose"=true})
-         «ENDIF»
          *
          * @param Request $request Current request instance
          *
          * @return JsonResponse
          *
          * @throws AccessDeniedException Thrown if the user doesn't have required permissions
+         «ELSE»
+         * @inheritDoc
+         * @Route("/detachHookObject", methods = {"POST"}, options={"expose"=true})
+         «ENDIF»
          */
     '''
 
