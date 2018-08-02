@@ -102,7 +102,7 @@ class LoggableDeleted {
 
             $routeArea = $isAdmin ? 'admin' : '';
 
-            return $this->redirectToRoute('«application.appName.formatForDB»_«name.formatForDB»_' . $routeArea . 'display', $page->createUrlArgs());
+            return $this->redirectToRoute('«application.appName.formatForDB»_«name.formatForDB»_' . $routeArea . 'display', $«name.formatForCode»->createUrlArgs());
         }
 
         if ($isAdmin) {
