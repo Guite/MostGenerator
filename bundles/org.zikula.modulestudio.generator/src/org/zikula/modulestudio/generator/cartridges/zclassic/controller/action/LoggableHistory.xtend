@@ -53,9 +53,17 @@ class LoggableHistory {
 
     def private loggableHistoryDocBlock(Entity it, Boolean isBase, Boolean isAdmin) '''
         /**
+         «IF isBase»
          * This method provides a change history for a given «name.formatForDisplay».
-         «IF !isBase»
          *
+         * @param Request $request Current request instance
+         * @param integer «IF hasSluggableFields && slugUnique»$slug«ELSE»$id  «ENDIF»    Identifier of «name.formatForDisplay»
+         *
+         * @return Response Output
+         *
+         * @throws NotFoundHttpException Thrown if invalid identifier is given or the «name.formatForDisplay» isn't found
+         «ELSE»
+         * @inheritDoc
          * @Route("/«IF isAdmin»admin/«ENDIF»«name.formatForCode»/history/{«IF hasSluggableFields && slugUnique»slug«ELSE»id«ENDIF»}",
          «IF hasSluggableFields && slugUnique»
          *        requirements = {"slug" = "«IF tree != EntityTreeType.NONE»[^.]+«ELSE»[^/.]+«ENDIF»"},
@@ -69,13 +77,6 @@ class LoggableHistory {
               * @Theme("admin")
          «ENDIF»
          «ENDIF»
-         *
-         * @param Request $request Current request instance
-         * @param integer «IF hasSluggableFields && slugUnique»$slug«ELSE»$id  «ENDIF»    Identifier of «name.formatForDisplay»
-         *
-         * @return Response Output
-         *
-         * @throws NotFoundHttpException Thrown if invalid identifier is given or the «name.formatForDisplay» isn't found
          */
     '''
 

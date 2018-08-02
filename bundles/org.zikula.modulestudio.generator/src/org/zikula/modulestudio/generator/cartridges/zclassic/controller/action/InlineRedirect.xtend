@@ -28,21 +28,22 @@ class InlineRedirect {
 
     def private handleInlineRedirectDocBlock(Entity it, Boolean isBase) '''
         /**
+         «IF isBase»
          * This method cares for a redirect within an inline frame.
-         «IF !isBase»
-         *
-         * @Route("/«name.formatForCode»/handleInlineRedirect/{idPrefix}/{commandName}/{id}",
-         *        requirements = {"id" = "\d+"},
-         *        defaults = {"commandName" = "", "id" = 0},
-         *        methods = {"GET"}
-         * )
-         «ENDIF»
          *
          * @param string  $idPrefix    Prefix for inline window element identifier
          * @param string  $commandName Name of action to be performed (create or edit)
          * @param integer $id          Identifier of created «name.formatForDisplay» (used for activating auto completion after closing the modal window)
          *
          * @return PlainResponse Output
+         «ELSE»
+         * @inheritDoc
+         * @Route("/«name.formatForCode»/handleInlineRedirect/{idPrefix}/{commandName}/{id}",
+         *        requirements = {"id" = "\d+"},
+         *        defaults = {"commandName" = "", "id" = 0},
+         *        methods = {"GET"}
+         * )
+         «ENDIF»
          */
     '''
 

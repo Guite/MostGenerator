@@ -45,12 +45,19 @@ class MassHandling {
 
     def private handleSelectedObjectsDocBlock(Entity it, Boolean isBase, Boolean isAdmin) '''
         /**
+         «IF isBase»
          * Process status changes for multiple items.
          *
          * This function processes the items selected in the admin view page.
          * Multiple items may have their state changed or be deleted.
-         «IF !isBase»
          *
+         * @param Request $request Current request instance
+         *
+         * @return RedirectResponse
+         *
+         * @throws RuntimeException Thrown if executing the workflow action fails
+         «ELSE»
+         * @inheritDoc
          * @Route("/«IF isAdmin»admin/«ENDIF»«nameMultiple.formatForCode»/handleSelectedEntries",
          *        methods = {"POST"}
          * )
@@ -58,12 +65,6 @@ class MassHandling {
               * @Theme("admin")
          «ENDIF»
          «ENDIF»
-         *
-         * @param Request $request Current request instance
-         *
-         * @return RedirectResponse
-         *
-         * @throws RuntimeException Thrown if executing the workflow action fails
          */
     '''
 

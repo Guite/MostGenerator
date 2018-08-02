@@ -138,7 +138,6 @@ class Annotations {
     '''
 
     def private dispatch actionRoute(CustomAction it, Entity entity, Boolean isAdmin) '''
-         «' '»*
          «' '»* @Route("/«IF isAdmin»admin/«ENDIF»«entity.nameMultiple.formatForCode»/«name.formatForCode»",
          «' '»*        methods = {"GET", "POST"}
          «' '»* )

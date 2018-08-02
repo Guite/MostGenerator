@@ -59,6 +59,7 @@ class ControllerAction {
         «ELSE»
         «new Annotations(app).generate(it, entity, isAdmin)»
         «ENDIF»
+        «IF isBase»
          *
          * @param Request $request Current request instance
         «actionDocMethodParams(entity, it)»
@@ -75,6 +76,7 @@ class ControllerAction {
          * @throws NotFoundHttpException Thrown by param converter if «entity.name.formatForDisplay» to be deleted isn't found
          * @throws RuntimeException      Thrown if another critical error occurs (e.g. workflow actions not available)
          «ENDIF»
+        «ENDIF»
          */
     '''
 

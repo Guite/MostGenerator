@@ -11,27 +11,47 @@ class LoggableDeleted {
     extension ModelExtensions = new ModelExtensions
     extension Utils = new Utils
 
-    def generate(Entity it) '''
-        «displayDeletedSingleAction(true)»
+    def generate(Entity it, Boolean isBase) '''
+        «displayDeleted(isBase, true)»
 
-        «displayDeletedSingleAction(false)»
+        «displayDeleted(isBase, false)»
 
-        «restoreDeletedEntity»
+        «IF isBase»
+            «restoreDeletedEntity»
 
+        «ENDIF»
     '''
 
-    def private displayDeletedSingleAction(Entity it, Boolean isAdmin) '''
+    def private displayDeleted(Entity it, Boolean isBase, Boolean isAdmin) '''
+        «displayDeletedDocBlock(isBase, isAdmin)»
+        public function «IF isAdmin»adminD«ELSE»d«ENDIF»isplayDeletedAction(Request $request, $id = 0)
+        {
+            «IF isBase»
+                return $this->displayDeletedActionInternal($request, $id, «isAdmin.displayBool»);
+            «ELSE»
+                return parent::«IF isAdmin»adminL«ELSE»d«ENDIF»isplayDeletedAction($request, $id);
+            «ENDIF»
+        }
+        «IF isBase && !isAdmin»
+
+            /**
+             * This method includes the common implementation code for adminDisplayDeletedAction() and displayDeletedAction().
+             *
+             * @param Request $request Current request instance
+             * @param integer $id      Identifier of «name.formatForDisplay»
+             * @param boolean $isAdmin Whether the admin area is used or not
+             */
+            protected function displayDeletedActionInternal(Request $request, $id = 0, $isAdmin = false)
+            {
+                «loggableDisplayDeletedBaseImpl»
+            }
+        «ENDIF»
+    '''
+
+    def private displayDeletedDocBlock(Entity it, Boolean isBase, Boolean isAdmin) '''
         /**
+         «IF isBase»
          * Displays a deleted «name.formatForDisplay».
-         *
-         * @Route("/«IF isAdmin»admin/«ENDIF»«name.formatForCode»/deleted/{id}.{_format}",
-         *        requirements = {"id" = "\d+", "_format" = "html"},
-         *        defaults = {"_format" = "html"},
-         *        methods = {"GET"}
-         * )
-         «IF isAdmin»
-         * @Theme("admin")
-         «ENDIF»
          *
          * @param Request $request Current request instance
          * @param integer $id      Identifier of entity
@@ -40,42 +60,58 @@ class LoggableDeleted {
          *
          * @throws AccessDeniedException Thrown if the user doesn't have required permissions
          * @throws NotFoundHttpException Thrown if «name.formatForDisplay» to be displayed isn't found
+         «ELSE»
+         * @inheritDoc
+         * @Route("/«IF isAdmin»admin/«ENDIF»«name.formatForCode»/deleted/{id}.{_format}",
+         *        requirements = {"id" = "\d+", "_format" = "html"},
+         *        defaults = {"_format" = "html"},
+         *        methods = {"GET"}
+         * )
+         «IF isAdmin»
+         * @Theme("admin")
+         «ENDIF»
+         «ENDIF»
          */
-        public function «IF isAdmin»adminD«ELSE»d«ENDIF»isplayDeletedAction(Request $request, $id = 0)
-        {
-            $«name.formatForCode» = $this->restoreDeletedEntity($id);
+    '''
 
-            $undelete = $request->query->getInt('undelete', 0);
-            if ($undelete == 1) {
-                try {
-                    $em = $this->get('doctrine.entitymanager');
-                    $metadata = $em->getClassMetaData(get_class($«name.formatForCode»));
-                    $metadata->setIdGeneratorType(\Doctrine\ORM\Mapping\ClassMetadata::GENERATOR_TYPE_NONE);
-                    $metadata->setIdGenerator(new \Doctrine\ORM\Id\AssignedGenerator());
+    def private loggableDisplayDeletedBaseImpl(Entity it) '''
+        $«name.formatForCode» = $this->restoreDeletedEntity($id);
 
-                    $versionField = $metadata->versionField;
-                    $metadata->setVersioned(false);
-                    $metadata->setVersionField(null);
+        $undelete = $request->query->getInt('undelete', 0);
+        if ($undelete == 1) {
+            try {
+                $em = $this->get('doctrine.entitymanager');
+                $metadata = $em->getClassMetaData(get_class($«name.formatForCode»));
+                $metadata->setIdGeneratorType(\Doctrine\ORM\Mapping\ClassMetadata::GENERATOR_TYPE_NONE);
+                $metadata->setIdGenerator(new \Doctrine\ORM\Id\AssignedGenerator());
 
-                    $em->persist($«name.formatForCode»);
-                    $em->flush($«name.formatForCode»);
+                $versionField = $metadata->versionField;
+                $metadata->setVersioned(false);
+                $metadata->setVersionField(null);
 
-                    $this->addFlash('status', $this->__('Done! Undeleted «name.formatForDisplay».'));
+                $em->persist($«name.formatForCode»);
+                $em->flush($«name.formatForCode»);
 
-                    $metadata->setVersioned(true);
-                    $metadata->setVersionField($versionField);
-                } catch (\Exception $exception) {
-                    $this->addFlash('error', $this->__f('Sorry, but an error occured during the %action% action. Please apply the changes again!', ['%action%' => 'undelete']) . '  ' . $exception->getMessage());
-                }
+                $this->addFlash('status', $this->__('Done! Undeleted «name.formatForDisplay».'));
 
-                $request->query->set('«getPrimaryKey.name.formatForCode»', $«name.formatForCode»->get«getPrimaryKey.name.formatForCodeCapital»());
-                $request->query->remove('undelete');
-
-                return $this->redirectToRoute('«application.appName.formatForDB»_«name.formatForDB»_«IF isAdmin»admin«ENDIF»display', $request->query->all());
+                $metadata->setVersioned(true);
+                $metadata->setVersionField($versionField);
+            } catch (\Exception $exception) {
+                $this->addFlash('error', $this->__f('Sorry, but an error occured during the %action% action. Please apply the changes again!', ['%action%' => 'undelete']) . '  ' . $exception->getMessage());
             }
 
-            return parent::«IF isAdmin»adminD«ELSE»d«ENDIF»isplayAction($request, $«name.formatForCode»);
+            $request->query->set('«getPrimaryKey.name.formatForCode»', $«name.formatForCode»->get«getPrimaryKey.name.formatForCodeCapital»());
+            $request->query->remove('undelete');
+            $routeArea = $isAdmin ? 'admin' : '';
+
+            return $this->redirectToRoute('«application.appName.formatForDB»_«name.formatForDB»_' . $routeArea . 'display', $request->query->all());
         }
+
+        if ($isAdmin) {
+            return $this->adminDisplayAction($request, $«name.formatForCode»);
+        }
+
+        return $this->displayAction($request, $«name.formatForCode»);
     '''
 
     def private restoreDeletedEntity(Entity it) '''

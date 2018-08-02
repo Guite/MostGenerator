@@ -90,6 +90,9 @@ class ControllerLayer {
                 «new MassHandling().generate(it, true)»
             «ENDIF»
             «IF loggable»
+                «IF hasDisplayAction»
+                    «new LoggableDeleted().generate(it, true)»
+                «ENDIF»
                 «new LoggableHistory().generate(it, true)»
             «ENDIF»
             «IF hasEditAction && app.needsInlineEditing»
@@ -172,20 +175,20 @@ class ControllerLayer {
                 «FOR action : getAllEntityActions.exclude(DisplayAction)»
                     «adminAndUserImpl(action as Action, false)»
                 «ENDFOR»
-                «IF loggable && hasDisplayAction»
-                    «new LoggableDeleted().generate(it)»
-                «ENDIF»
                 «IF loggable»
+                    «IF hasDisplayAction»
+                        «new LoggableDeleted().generate(it, false)»
+                    «ENDIF»
                     «new LoggableHistory().generate(it, false)»
                 «ENDIF»
                 «FOR action : getAllEntityActions.filter(DisplayAction)»
                     «adminAndUserImpl(action, false)»
                 «ENDFOR»
             «ELSE»
-                «IF loggable && hasDisplayAction»
-                    «new LoggableDeleted().generate(it)»
-                «ENDIF»
                 «IF loggable»
+                    «IF hasDisplayAction»
+                        «new LoggableDeleted().generate(it, false)»
+                    «ENDIF»
                     «new LoggableHistory().generate(it, false)»
                 «ENDIF»
                 «FOR action : getAllEntityActions»
