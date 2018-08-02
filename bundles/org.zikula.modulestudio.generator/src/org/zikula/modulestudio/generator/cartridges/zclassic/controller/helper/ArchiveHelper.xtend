@@ -27,6 +27,7 @@ class ArchiveHelper {
     def private archiveHelperBaseClass(Application it) '''
         namespace «appNamespace»\Helper\Base;
 
+        use Doctrine\DBAL\Exception\TableNotFoundException;
         use Psr\Log\LoggerInterface;
         use Symfony\Component\HttpFoundation\RequestStack;
         «IF hasHookSubscribers»
@@ -201,7 +202,12 @@ class ArchiveHelper {
 
             $query = $repository->getQueryFromBuilder($qb);
 
-            return $query->getResult();
+            try {
+                return $query->getResult();
+            } catch (TableNotFoundException $exception) {
+                // module has just been uninstalled
+                return [];
+            }
         }
 
         /**
