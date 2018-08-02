@@ -100,11 +100,9 @@ class LoggableDeleted {
                 $this->addFlash('error', $this->__f('Sorry, but an error occured during the %action% action. Please apply the changes again!', ['%action%' => 'undelete']) . '  ' . $exception->getMessage());
             }
 
-            $request->query->set('«getPrimaryKey.name.formatForCode»', $«name.formatForCode»->get«getPrimaryKey.name.formatForCodeCapital»());
-            $request->query->remove('undelete');
             $routeArea = $isAdmin ? 'admin' : '';
 
-            return $this->redirectToRoute('«application.appName.formatForDB»_«name.formatForDB»_' . $routeArea . 'display', $request->query->all());
+            return $this->redirectToRoute('«application.appName.formatForDB»_«name.formatForDB»_' . $routeArea . 'display', $page->createUrlArgs());
         }
 
         if ($isAdmin) {
