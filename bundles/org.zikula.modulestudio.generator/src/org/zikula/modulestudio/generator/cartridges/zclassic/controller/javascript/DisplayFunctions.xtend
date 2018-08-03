@@ -247,7 +247,9 @@ class DisplayFunctions {
 
             containers.find('.dropdown > ul').removeClass('list-inline').addClass('list-unstyled dropdown-menu');
             containers.find('.dropdown > ul a i').addClass('fa-fw');
-            containers.find('.dropdown-toggle').removeClass('hidden').dropdown();
+            if (containers.find('.dropdown-toggle').length > 0) {
+                containers.find('.dropdown-toggle').removeClass('hidden').dropdown();
+            }
         «ENDIF»
     '''
 
