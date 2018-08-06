@@ -584,7 +584,7 @@ class TechStructureFields {
                 }
             ) + ' repräsentiert.'
             result += 'Verfügbare Einträge: <ul>'
-                + items.map['<li>' + name.formatForDisplayCapital + ' (' + value + ')</li>'].join
+                + items.map['<li>' + name.toFirstUpper + ' (' + value + ')</li>'].join
                 + '</ul>'
         } else {
             result += 'The list is represented by ' + (
