@@ -206,11 +206,11 @@ class Property {
          */
         public function get«name.formatForCodeCapital»()
         {
-            if (!$this->_uploadBasePath) {
+            $fileName = $this->«name.formatForCode»FileName;
+            if (!empty($fileName) && !$this->_uploadBasePath) {
                 throw new \RuntimeException('Invalid upload base path in ' . get_class($this) . '#get«name.formatForCodeCapital»().');
             }
 
-            $fileName = $this->«name.formatForCode»FileName;
             $filePath = $this->_uploadBasePath . '«subFolderPathSegment»/' . $fileName;
             if (!empty($fileName) && file_exists($filePath)) {
                 $this->«name.formatForCode» = new File($filePath);
