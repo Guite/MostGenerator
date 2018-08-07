@@ -206,6 +206,10 @@ class Property {
          */
         public function get«name.formatForCodeCapital»()
         {
+            if (null !== $this->«name.formatForCode») {
+                return $this->«name.formatForCode»;
+            }
+
             $fileName = $this->«name.formatForCode»FileName;
             if (!empty($fileName) && !$this->_uploadBasePath) {
                 throw new \RuntimeException('Invalid upload base path in ' . get_class($this) . '#get«name.formatForCodeCapital»().');

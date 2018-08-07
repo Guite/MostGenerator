@@ -160,13 +160,7 @@ class UploadType {
                 if (null !== $file && is_array($file)) {
                     $file = $file[$fieldName];
                 }
-                if (null !== $file && is_string($file)) {
-                    if (false === strpos($file, '/')) {
-                        $file = $this->uploadHelper->getFileBaseFolder($this->entity->get_objectType(), $fieldName) . $file;
-                    }
-                    $file = file_exists($file) ? new File($file) : null;
-                }
-                $hasFile = null !== $file;
+                $hasFile = null !== $file && $file instanceof File;
                 $fileMeta = $hasFile ? $accessor->getValue($parentData, $fieldNameGetter . 'Meta') : [];
                 if (!isset($fileMeta['isImage'])) {
                     $fileMeta['isImage'] = false;
