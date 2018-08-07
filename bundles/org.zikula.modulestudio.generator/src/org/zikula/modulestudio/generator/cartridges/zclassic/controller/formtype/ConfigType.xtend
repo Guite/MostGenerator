@@ -96,25 +96,6 @@ class ConfigType {
                 «ENDFOR»
 
                 $this->addSubmitButtons($builder, $options);
-                «IF !getAllVariables.filter(UploadField).empty»
-
-                    $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
-                        $data = $event->getData();
-                        foreach (['«getAllVariables.filter(UploadField).map[f|f.name.formatForCode].join("', '")»'] as $uploadFieldName) {
-                            $data[$uploadFieldName] = [
-                                $uploadFieldName => $data[$uploadFieldName] instanceof File ? $data[$uploadFieldName]->getPathname() : null
-                            ];
-                        }
-                    });
-                    $builder->addEventListener(FormEvents::SUBMIT, function (FormEvent $event) {
-                        $data = $event->getData();
-                        foreach (['«getAllVariables.filter(UploadField).map[f|f.name.formatForCode].join("', '")»'] as $uploadFieldName) {
-                            if (is_array($data[$uploadFieldName])) {
-                                $data[$uploadFieldName] = $data[$uploadFieldName][$uploadFieldName];
-                            }
-                        }
-                    });
-                «ENDIF»
             }
 
             «FOR varContainer : getSortedVariableContainers»

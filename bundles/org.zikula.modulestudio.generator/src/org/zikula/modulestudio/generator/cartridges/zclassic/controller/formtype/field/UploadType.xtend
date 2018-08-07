@@ -112,7 +112,7 @@ class UploadType {
 
                 $builder->add($fieldName, FileType::class, $fileOptions);
                 $uploadFileTransformer = new UploadFileTransformer($this, $this->requestStack, $this->uploadHelper, $fieldName«IF hasUploadNamingScheme(UploadNamingScheme.USERDEFINEDWITHCOUNTER)», $options['custom_filename']«ENDIF»);
-                $builder->get($fieldName)->addModelTransformer($uploadFileTransformer);
+                $builder->addModelTransformer($uploadFileTransformer);
 
                 if (!$options['required']) {
                     $builder->add($fieldName . 'DeleteFile', CheckboxType::class, [

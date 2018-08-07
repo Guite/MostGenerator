@@ -138,10 +138,6 @@ class SharedFormTypeFields {
         «IF !fields.filter(UrlField).empty»
             use «nsSymfonyFormType»UrlType;
         «ENDIF»
-        «IF (null !== dataObject && dataObject.hasUploadFieldsEntity) || (null === dataObject && !fields.filter(UploadField).empty)»
-            use Symfony\Component\Form\FormEvent;
-            use Symfony\Component\Form\FormEvents;
-        «ENDIF»
         use Symfony\Component\Form\FormBuilderInterface;
         «IF null !== dataObject»
             use Symfony\Component\Form\FormInterface;

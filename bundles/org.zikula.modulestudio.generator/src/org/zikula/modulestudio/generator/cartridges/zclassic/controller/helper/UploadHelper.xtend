@@ -324,7 +324,7 @@ class UploadHelper {
          *
          * @return array Collected meta data
          */
-        protected function readMetaDataForFile($fileName, $filePath, $includeExif = true)
+        public function readMetaDataForFile($fileName, $filePath, $includeExif = true)
         {
             $meta = [];
             if (empty($fileName)) {

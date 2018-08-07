@@ -268,25 +268,6 @@ class EditEntityType {
                     «ENDIF»
                     $this->addSubmitButtons($builder, $options);
                 «ENDIF»
-                «IF hasUploadFieldsEntity»
-
-                    $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
-                        $entity = $event->getData();
-                        foreach (['«getUploadFieldsEntity.map[f|f.name.formatForCode].join("', '")»'] as $uploadFieldName) {
-                            $entity[$uploadFieldName] = [
-                                $uploadFieldName => $entity[$uploadFieldName] instanceof File ? $entity[$uploadFieldName]->getPathname() : null
-                            ];
-                        }
-                    });
-                    $builder->addEventListener(FormEvents::SUBMIT, function (FormEvent $event) {
-                        $entity = $event->getData();
-                        foreach (['«getUploadFieldsEntity.map[f|f.name.formatForCode].join("', '")»'] as $uploadFieldName) {
-                            if (is_array($entity[$uploadFieldName])) {
-                                $entity[$uploadFieldName] = $entity[$uploadFieldName][$uploadFieldName];
-                            }
-                        }
-                    });
-                «ENDIF»
             }
 
             «addFields»

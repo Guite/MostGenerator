@@ -83,30 +83,26 @@ class UploadFileTransformer {
             }
 
             /**
-             * Transforms a filename to the corresponding file object.
+             * Transforms a filename to the corresponding upload input array.
              *
-             * @param string|File|null $filePath
+             * @param File|null $file
              *
-             * @return File|null
+             * @return array
              */
-            public function transform($filePath)
+            public function transform($file)
             {
-                if (empty($filePath)) {
-                    return null;
-                }
-                if ($filePath instanceof File) {
-                    return $filePath;
-                }
-
-                return [$this->fieldName => new File($filePath)];
+                return [
+                	$this->fieldName => $file,
+                	$this->fieldName . 'DeleteFile' => false
+                ];
             }
 
             /**
-             * Transforms an uploaded file back to the filename string.
+             * Transforms a result array back to the File object
              *
-             * @param mixed $data Uploaded file or parent object (if file deletion checkbox has been provided)
+             * @param array $data Form data
              *
-             * @return string
+             * @return File
              */
             public function reverseTransform($data)
             {
@@ -120,54 +116,18 @@ class UploadFileTransformer {
                     // no file deletion checkbox has been provided
                     $uploadedFile = $data;
                 } else {
-                    $children = $this->formType->getFormBuilder()->all();
-                    foreach ($children as $child) {
-                        $childForm = $child->getForm();
-                        «IF hasUploadNamingScheme(UploadNamingScheme.USERDEFINEDWITHCOUNTER)»
-                            if (true === $this->supportCustomFileName && false !== strpos($childForm->getName(), 'CustomFileName')) {
-                                $customFileName = $childForm->getData();
-                                continue;
-                            }
-                        «ENDIF»
-                        if (false !== strpos($childForm->getName(), 'DeleteFile')) {
-                            //$deleteFile = $childForm->getData();
-                            foreach ($_POST as $k => $v) {
-                                if (!is_array($v)) {
-                                    continue;
-                                }
-                                foreach ($v as $field => $value) {
-                                    if ($field != str_replace('DeleteFile', '', $childForm->getName())) {
-                                        continue;
-                                    }
-                                    $deleteFile = isset($value[$childForm->getName()]) && $value[$childForm->getName()] == '1';
-                                    break 2;
-                                }
-                            }
-                        } elseif ($childForm->getData() instanceof UploadedFile) {
-                            $uploadedFile = $childForm->getData();
-                        }
-                    }
+                    $uploadedFile = isset($data[$this->fieldName]) ? $data[$this->fieldName] : null;
+                    $deleteFile = isset($data[$this->fieldName . 'DeleteFile']) ? $data[$this->fieldName . 'DeleteFile'] : false;
+                    «IF hasUploadNamingScheme(UploadNamingScheme.USERDEFINEDWITHCOUNTER)»
+                        $customFileName = isset($data[$this->fieldName . 'CustomFileName']) ? $data[$this->fieldName . 'CustomFileName'] : '';
+                    «ENDIF»
                 }
 
                 $entity = $this->formType->getEntity();
                 $objectType = $entity->get_objectType();
                 $fieldName = $this->fieldName;
 
-                if (null === $uploadedFile) {
-                    // check files array
-                    $filesKey = '«appName.toLowerCase»_' . $objectType;
-                    if ($this->request->files->has($filesKey)) {
-                        $files = $this->request->files->get($filesKey);
-                        if (isset($files[$fieldName]) && isset($files[$fieldName][$fieldName])) {
-                            $uploadedFile = $files[$fieldName][$fieldName];
-                        }
-                    }
-                }
-
                 $oldFile = $entity[$fieldName];
-                if (is_array($oldFile)) {
-                    $oldFile = $oldFile[$fieldName];
-                }
 
                 // check if an existing file must be deleted
                 $hasOldFile = !empty($oldFile);
@@ -196,15 +156,13 @@ class UploadFileTransformer {
                 $metaData = [];
                 if ($uploadResult['fileName'] != '') {
                     $result = $this->uploadHelper->getFileBaseFolder($this->formType->getEntity()->get_objectType(), $fieldName) . $uploadResult['fileName'];
+                    $result = null !== $result ? new File($result) : $result;
                     $metaData = $uploadResult['metaData'];
                 }
 
-                // assign the upload file
-                $setter = 'set' . ucfirst($fieldName);
-                $entity->$setter(null !== $result ? new File($result) : $result);
-
                 // assign the meta data
-                $entity[$fieldName . 'Meta'] = $metaData;
+                $setter = 'set' . ucfirst($fieldName) . 'Meta';
+                $entity->$setter($metaData);
 
                 return $result;
             }

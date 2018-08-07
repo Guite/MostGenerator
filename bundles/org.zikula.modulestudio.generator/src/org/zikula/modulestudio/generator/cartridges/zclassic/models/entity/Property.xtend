@@ -73,6 +73,7 @@ class Property {
         /**
          * «name.formatForDisplayCapital» file object.
          *
+        «thVal.uploadFileAnnotations(it)»
          * @var File $«name.formatForCode»
          */
         protected $«name.formatForCode» = null;
@@ -220,9 +221,9 @@ class Property {
                 $this->«name.formatForCode» = new File($filePath);
                 $this->set«name.formatForCodeCapital»Url($this->_uploadBaseUrl . '/' . $filePath);
             } else {
-        	    $this->set«name.formatForCodeCapital»FileName('');
-        	    $this->set«name.formatForCodeCapital»Url('');
-        	    $this->set«name.formatForCodeCapital»Meta([]);
+                $this->set«name.formatForCodeCapital»FileName('');
+                $this->set«name.formatForCodeCapital»Url('');
+                $this->set«name.formatForCodeCapital»Meta([]);
             }
 
             return $this->«name.formatForCode»;
@@ -251,10 +252,10 @@ class Property {
             «ENDIF»
 
             if (null === $this->«name.formatForCode») {
-        	    $this->set«name.formatForCodeCapital»FileName('');
-        	    $this->set«name.formatForCodeCapital»Url('');
-        	    $this->set«name.formatForCodeCapital»Meta([]);
-        	} else {
+                $this->set«name.formatForCodeCapital»FileName('');
+                $this->set«name.formatForCodeCapital»Url('');
+                $this->set«name.formatForCodeCapital»Meta([]);
+            } else {
                 $this->set«name.formatForCodeCapital»FileName($this->«name.formatForCode»->getFilename());
             }
         }
