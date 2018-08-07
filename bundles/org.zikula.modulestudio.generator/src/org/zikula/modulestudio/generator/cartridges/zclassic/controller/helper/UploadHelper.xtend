@@ -600,7 +600,7 @@ class UploadHelper {
             if (is_array($entity[$fieldName]) && isset($entity[$fieldName][$fieldName])) {
                 $entity[$fieldName] = $entity[$fieldName][$fieldName];
             }
-            $filePath = is_object($entity[$fieldName]) ? $entity[$fieldName]->getPathname() : $entity[$fieldName];
+            $filePath = $entity[$fieldName] instanceof File ? $entity[$fieldName]->getPathname() : $entity[$fieldName];
             if (file_exists($filePath) && !unlink($filePath)) {
                 return false;
             }
