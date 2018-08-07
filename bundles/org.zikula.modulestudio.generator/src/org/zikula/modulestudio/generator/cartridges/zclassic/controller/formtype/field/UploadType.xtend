@@ -116,7 +116,6 @@ class UploadType {
 
                 if (!$options['required']) {
                     $builder->add($fieldName . 'DeleteFile', CheckboxType::class, [
-                        'mapped' => false,
                         'label' => $this->translator->__('Delete existing file'),
                         'required' => false,
                         'attr' => [
@@ -128,7 +127,6 @@ class UploadType {
 
                     if (true === $options['custom_filename']) {
                         $builder->add($fieldName . 'CustomFileName', TextType::class, [
-                            'mapped' => false,
                             'label' => $this->translator->__('Custom file name'),
                             'required' => false,
                             'attr' => [

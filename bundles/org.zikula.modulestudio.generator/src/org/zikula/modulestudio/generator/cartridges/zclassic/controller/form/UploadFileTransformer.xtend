@@ -135,11 +135,11 @@ class UploadFileTransformer {
                     // remove old upload file
                     $entity = $this->uploadHelper->deleteUploadFile($entity, $fieldName);
                     // set old file to empty value as the file does not exist anymore
-                    $oldFile = '';
+                    $oldFile = null;
                 }
 
-                if (null === $uploadedFile) {
-                    // no file has been uploaded
+                if (null === $uploadedFile || !($uploadedFile instanceof UploadedFile)) {
+                    // no new file has been uploaded
                     return $oldFile;
                 }
 
