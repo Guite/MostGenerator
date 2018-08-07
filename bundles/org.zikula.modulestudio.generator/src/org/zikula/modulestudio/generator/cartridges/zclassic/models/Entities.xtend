@@ -229,6 +229,18 @@ class Entities {
              */
             protected $_propertyChangedListeners = [];
         «ENDIF»
+        «IF hasUploadFieldsEntity»
+
+            /**
+             * @var string Path to upload base folder
+             */
+            protected $_uploadBasePath = '';
+
+            /**
+             * @var string Base URL to upload files
+             */
+            protected $_uploadBaseUrl = '';
+        «ENDIF»
 
         «FOR field : getDerivedFields»«thProp.persistentProperty(field)»«ENDFOR»
         «extMan.additionalProperties»
@@ -238,7 +250,12 @@ class Entities {
     '''
 
     def private accessors(DataObject it) '''
-        «fh.getterAndSetterMethods(it, '_objectType', 'string', false, true, false, '', '')»
+        «fh.getterAndSetterMethods(it, '_objectType', 'string', false, false, false, '', '')»
+        «IF hasUploadFieldsEntity»
+
+            «fh.getterAndSetterMethods(it, '_uploadBasePath', 'string', false, false, false, '', '')»
+            «fh.getterAndSetterMethods(it, '_uploadBaseUrl', 'string', false, false, false, '', '')»
+        «ENDIF»
 
         «FOR field : getDerivedFields»«thProp.fieldAccessor(field)»«ENDFOR»
         «extMan.additionalAccessors»

@@ -38,9 +38,6 @@ class LifecycleListener {
         use Symfony\Component\DependencyInjection\ContainerInterface;
         use Symfony\Component\EventDispatcher\Event;
         use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-        «IF !getUploadEntities.empty»
-            use Symfony\Component\HttpFoundation\File\File;
-        «ENDIF»
         use Zikula\Core\Doctrine\EntityAccess;
         use «appNamespace»\«name.formatForCodeCapital»Events;
         «FOR entity : getAllEntities»

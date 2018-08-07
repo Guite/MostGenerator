@@ -21,13 +21,31 @@ class EventAction {
         «IF !getUploadEntities.empty»
 
             // prepare helper fields for uploaded files
-            $uploadFields = $this->getUploadFields($entity->get_objectType());
+            $uploadFields = $this->getUploadFields(«entityVar»->get_objectType());
             if (count($uploadFields) > 0) {
                 $uploadHelper = $this->container->get('«appService».upload_helper');
                 $request = $this->container->get('request_stack')->getCurrentRequest();
                 $baseUrl = $request->getSchemeAndHttpHost() . $request->getBasePath();
+
+                «entityVar»->set_uploadBasePath($uploadHelper->getFileBaseFolder(«entityVar»->get_objectType()));
+                «entityVar»->set_uploadBaseUrl($baseUrl);
+
+                // determine meta data if it does not exist
                 foreach ($uploadFields as $fieldName) {
-                    $uploadHelper->initialiseUploadField($entity, $fieldName, $baseUrl);
+                    if (empty(«entityVar»[$fieldName])) {
+                        continue;
+                    }
+
+                    if (is_array(«entityVar»[$fieldName . 'Meta']) && count(«entityVar»[$fieldName . 'Meta'])) {
+                        continue;
+                    }
+                    $basePath = $uploadHelper->getFileBaseFolder(«entityVar»->get_objectType(), $fieldName);
+                    $fileName = «entityVar»[$fieldName . 'FileName'];
+                    $filePath = $basePath . $fileName;
+                    if (!file_exists($filePath)) {
+                        continue;
+                    }
+                    «entityVar»[$fieldName . 'Meta'] = $uploadHelper->readMetaDataForFile($fileName, $filePath);
                 }
             }
         «ENDIF»
@@ -38,22 +56,6 @@ class EventAction {
     '''
 
     def prePersist(Application it) '''
-        «IF !getUploadEntities.empty»
-
-            $uploadFields = $this->getUploadFields(«entityVar»->get_objectType());
-            foreach ($uploadFields as $uploadField) {
-                if (empty(«entityVar»[$uploadField])) {
-                    continue;
-                }
-
-                if («entityVar»[$uploadField] instanceof File) {
-                    «entityVar»[$uploadField] = «entityVar»[$uploadField]->getFilename();
-                } elseif (false !== strpos(«entityVar»[$uploadField], '/')) {
-                    $fileParts = explode('/', «entityVar»[$uploadField]);
-                    «entityVar»[$uploadField] = end($fileParts);
-                }
-            }
-        «ENDIF»
 
         // create the filter event and dispatch it
         $event = $this->createFilterEvent(«entityVar»);
@@ -92,13 +94,13 @@ class EventAction {
             $uploadFields = $this->getUploadFields($objectType);
             if (count($uploadFields) > 0) {
                 $uploadHelper = $this->container->get('«appService».upload_helper');
-                foreach ($uploadFields as $uploadField) {
-                    if (empty(«entityVar»[$uploadField])) {
+                foreach ($uploadFields as $fieldName) {
+                    if (empty(«entityVar»[$fieldName])) {
                         continue;
                     }
 
                     // remove upload file
-                    $uploadHelper->deleteUploadFile(«entityVar», $uploadField);
+                    $uploadHelper->deleteUploadFile(«entityVar», $fieldName);
                 }
             }
         «ENDIF»
@@ -113,22 +115,6 @@ class EventAction {
     '''
 
     def preUpdate(Application it) '''
-        «IF !getUploadEntities.empty»
-
-            $uploadFields = $this->getUploadFields(«entityVar»->get_objectType());
-            foreach ($uploadFields as $uploadField) {
-                if (empty(«entityVar»[$uploadField])) {
-                    continue;
-                }
-
-                if («entityVar»[$uploadField] instanceof File) {
-                    «entityVar»[$uploadField] = «entityVar»[$uploadField]->getFilename();
-                } elseif (false !== strpos(«entityVar»[$uploadField], '/')) {
-                    $fileParts = explode('/', «entityVar»[$uploadField]);
-                    «entityVar»[$uploadField] = end($fileParts);
-                }
-            }
-        «ENDIF»
 
         // create the filter event and dispatch it
         $event = $this->createFilterEvent(«entityVar»);

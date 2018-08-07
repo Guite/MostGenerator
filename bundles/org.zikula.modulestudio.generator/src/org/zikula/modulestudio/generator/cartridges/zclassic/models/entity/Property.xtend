@@ -60,7 +60,7 @@ class Property {
          */
         protected $«name.formatForCode»Meta = [];
 
-        «persistentProperty(name.formatForCode, fieldTypeAsString, '')»
+        «persistentProperty(name.formatForCode + 'FileName', fieldTypeAsString, '')»
         /**
          * Full «name.formatForDisplay» path as url.
          *
@@ -69,6 +69,13 @@ class Property {
          */»* @var string $«name.formatForCode»Url
          */
         protected $«name.formatForCode»Url = '';
+
+        /**
+         * «name.formatForDisplayCapital» file object.
+         *
+         * @var File $«name.formatForCode»
+         */
+        protected $«name.formatForCode» = null;
         «/* this last line is on purpose */»
     '''
 
@@ -99,7 +106,7 @@ class Property {
              «ENDIF»
             «IF null !== extMan»«extMan.columnAnnotations(it)»«ENDIF»
              «IF !(it instanceof UserField)»«/* user fields are implemented as join to UserEntity, see persistentPropertyAdditions */»
-             * @ORM\Column(«IF null !== dbName && !dbName.empty»name="«dbName.formatForCode»", «ENDIF»«persistentPropertyImpl(type.toLowerCase)»«IF unique», unique=true«ENDIF»«IF nullable», nullable=true«ENDIF»)
+             * @ORM\Column(«IF null !== dbName && !dbName.empty»name="«dbName.formatForCode»", «ELSEIF it instanceof UploadField»name="«name.formatForCode»", «ENDIF»«persistentPropertyImpl(type.toLowerCase)»«IF unique», unique=true«ENDIF»«IF nullable», nullable=true«ENDIF»)
              «ENDIF»
             «persistentPropertyAdditions»
         «ENDIF»
@@ -192,7 +199,63 @@ class Property {
     '''
 
     def dispatch fieldAccessor(UploadField it) '''
-        «fieldAccessorDefault»
+        /**
+         * Returns the «name.formatForDisplay».
+         *
+         * @return File
+         */
+        public function get«name.formatForCodeCapital»()
+        {
+            if (!$this->_uploadBasePath) {
+                throw new \RuntimeException('Invalid upload base path in ' . get_class($this) . '#get«name.formatForCodeCapital»().');
+            }
+
+            $fileName = $this->«name.formatForCode»FileName;
+            $filePath = $this->_uploadBasePath . '«subFolderPathSegment»/' . $fileName;
+            if (!empty($fileName) && file_exists($filePath)) {
+                $this->«name.formatForCode» = new File($filePath);
+                $this->set«name.formatForCodeCapital»Url($this->_uploadBaseUrl . '/' . $filePath);
+            } else {
+        	    $this->set«name.formatForCodeCapital»FileName('');
+        	    $this->set«name.formatForCodeCapital»Url('');
+        	    $this->set«name.formatForCodeCapital»Meta([]);
+            }
+
+            return $this->«name.formatForCode»;
+        }
+
+        /**
+         * Sets the «name.formatForDisplay».
+         *
+         * @param File $«name.formatForCode»
+         *
+         * @return void
+         */
+        public function set«name.formatForCodeCapital»(«IF !nullable»File «ENDIF»$«name.formatForCode»)
+        {
+            if (null === $this->«name.formatForCode» && null === $«name.formatForCode») {
+                return;
+            }
+            if (null !== $this->«name.formatForCode» && null !== $«name.formatForCode» && $this->«name.formatForCode»->getRealPath() === $«name.formatForCode»->getRealPath()) {
+                return;
+            }
+            «fh.triggerPropertyChangeListeners(it, name)»
+            «IF nullable»
+                $this->«name.formatForCode» = $«name.formatForCode»;
+            «ELSE»
+                $this->«name.formatForCode» = isset($«name.formatForCode») ? $«name.formatForCode» : '';
+            «ENDIF»
+
+            if (null === $this->«name.formatForCode») {
+        	    $this->set«name.formatForCodeCapital»FileName('');
+        	    $this->set«name.formatForCodeCapital»Url('');
+        	    $this->set«name.formatForCodeCapital»Meta([]);
+        	} else {
+                $this->set«name.formatForCodeCapital»FileName($this->«name.formatForCode»->getFilename());
+            }
+        }
+
+        «fh.getterAndSetterMethods(it, name.formatForCode + 'FileName', 'string', false, true, false, '', '')»
         «fh.getterAndSetterMethods(it, name.formatForCode + 'Url', 'string', false, true, false, '', '')»
         «fh.getterAndSetterMethods(it, name.formatForCode + 'Meta', 'array', true, true, true, '[]', '')»
     '''

@@ -102,18 +102,18 @@ class FileHelper {
         «ENDIF»
         if ($this->«name.formatForCode» !== $«name») {
             «triggerPropertyChangeListeners(name)»
-            «setterAssignment(name, type)»
+            «setterAssignment(name)»
         }
     '''
 
     def private dispatch setterMethodImpl(BooleanField it, String name, String type, Boolean nullable) '''
         if (boolval($this->«name.formatForCode») !== boolval($«name»)) {
             «triggerPropertyChangeListeners(name)»
-            «setterAssignment(name, type)»
+            «setterAssignment(name)»
         }
     '''
 
-    def private dispatch setterAssignment(DerivedField it, String name, String type) '''
+    def private dispatch setterAssignment(DerivedField it, String name) '''
         «IF nullable»
             $this->«name» = $«name»;
         «ELSE»
@@ -121,11 +121,11 @@ class FileHelper {
         «ENDIF»
     '''
 
-    def private dispatch setterAssignment(BooleanField it, String name, String type) '''
+    def private dispatch setterAssignment(BooleanField it, String name) '''
         $this->«name» = boolval($«name»);
     '''
 
-    def private setterAssignmentNumeric(DerivedField it, String name, String type) '''
+    def private setterAssignmentNumeric(DerivedField it, String name) '''
         «val aggregators = getAggregatingRelationships»
         «IF !aggregators.empty»
             $diff = abs($this->«name» - $«name»);
@@ -141,13 +141,13 @@ class FileHelper {
     def private dispatch setterMethodImpl(IntegerField it, String name, String type, Boolean nullable) '''
         if («numericCast('$this->' + name.formatForCode)» !== «numericCast('$' + name)») {
             «triggerPropertyChangeListeners(name)»
-            «setterAssignmentNumeric(name, type)»
+            «setterAssignmentNumeric(name)»
         }
     '''
     def private dispatch setterMethodImpl(NumberField it, String name, String type, Boolean nullable) '''
         if («numericCast('$this->' + name.formatForCode)» !== «numericCast('$' + name)») {
             «triggerPropertyChangeListeners(name)»
-            «setterAssignmentNumeric(name, type)»
+            «setterAssignmentNumeric(name)»
         }
     '''
 
@@ -163,7 +163,7 @@ class FileHelper {
         }
     }
 
-    def private dispatch setterAssignment(DatetimeField it, String name, String type) '''
+    def private dispatch setterAssignment(DatetimeField it, String name) '''
         if (!(null == $«name» && empty($«name»)) && !(is_object($«name») && $«name» instanceOf \DateTimeInterface)) {
             $«name» = new \DateTime«IF immutable»Immutable«ENDIF»($«name»);
         }
