@@ -25,7 +25,7 @@ class Redirect {
 
     def getRedirectCodes(Application it) '''
         /**
-         * Get list of allowed redirect codes.
+         * Returns a list of allowed redirect codes.
          *
          * @return string[] list of possible redirect codes
          */
@@ -41,9 +41,7 @@ class Redirect {
 
     def getRedirectCodes(Entity it, Application app) '''
         /**
-         * Get list of allowed redirect codes.
-         *
-         * @return string[] list of possible redirect codes
+         * @inheritDoc
          */
         protected function getRedirectCodes()
         {
@@ -165,7 +163,7 @@ class Redirect {
 
     def getRedirectUrl(Entity it, Application app) '''
         /**
-         * Get url to redirect to.
+         * Get URL to redirect to.
          *
          * @param array $args List of arguments
          *

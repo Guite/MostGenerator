@@ -50,7 +50,7 @@ class RelationPresets {
         «IF !owningAssociations.empty || !ownedMMAssociations.empty»
 
             /**
-             * Initialises relationship presets.
+             * @inheritDoc
              */
             protected function initRelationPresets()
             {

@@ -838,6 +838,7 @@ class FormHandler {
     def private dispatch handleCommand(Application it) '''
         /**
          * Command event handler.
+         * This event handler is called when a command is issued by the user.
          *
          * @param array $args List of arguments
          *
@@ -1059,7 +1060,7 @@ class FormHandler {
 
     def private dispatch applyAction(Application it) '''
         /**
-         * This method executes a certain workflow action.
+         * Executes a certain workflow action.
          *
          * @param array $args List of arguments from handleCommand method
          *
@@ -1233,13 +1234,7 @@ class FormHandler {
 
     def private dispatch processForm(Entity it) '''
         /**
-         * Initialise form handler.
-         *
-         * This method takes care of all necessary initialisation of our data and form states.
-         *
-         * @param array $templateParameters List of preassigned template variables
-         *
-         * @return boolean False in case of initialisation errors, otherwise true
+         * @inheritDoc
          */
         public function processForm(array $templateParameters = [])
         {
@@ -1325,13 +1320,7 @@ class FormHandler {
 
     def private dispatch handleCommand(Entity it) '''
         /**
-         * Command event handler.
-         *
-         * This event handler is called when a command is issued by the user.
-         *
-         * @param array $args List of arguments
-         *
-         * @return mixed Redirect or false on errors
+         * @inheritDoc
          */
         public function handleCommand(array $args = [])
         {
@@ -1355,12 +1344,7 @@ class FormHandler {
         }
 
         /**
-         * Get success or error message for default operations.
-         *
-         * @param array   $args    List of arguments from handleCommand method
-         * @param boolean $success Becomes true if this is a success, false for default error
-         *
-         * @return String desired status or error message
+         * @inheritDoc
          */
         protected function getDefaultMessage(array $args = [], $success = false)
         {
@@ -1394,12 +1378,7 @@ class FormHandler {
 
     def private dispatch applyAction(Entity it) '''
         /**
-         * This method executes a certain workflow action.
-         *
-         * @param array $args List of arguments from handleCommand method
-         *
-         * @return boolean Whether everything worked well or not
-         *
+         * @inheritDoc
          * @throws RuntimeException Thrown if concurrent editing is recognised or another error occurs
          */
         public function applyAction(array $args = [])
