@@ -735,7 +735,7 @@ class Repository {
                 $orderBy = 'tbl.' . $orderBy;
             }
             «IF hasUploadFieldsEntity»
-                for (['«getUploadFieldsEntity.map[name.formatForCode].join('\', \'')»'] as $uploadField) {
+                foreach (['«getUploadFieldsEntity.map[name.formatForCode].join('\', \'')»'] as $uploadField) {
                     $orderBy = str_replace('tbl.' . $uploadField, 'tbl.' . $uploadField . 'FileName', $orderBy);
                 }
             «ENDIF»
