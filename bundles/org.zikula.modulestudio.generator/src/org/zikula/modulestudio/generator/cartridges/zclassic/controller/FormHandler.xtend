@@ -223,18 +223,11 @@ class FormHandler {
             protected $idField = null;
 
             /**
-             * Identifier«IF getAllEntities.exists[hasSluggableFields && slugUnique]» or slug«ENDIF» of treated entity.
+             * Identifier of treated entity.
              *
-             * @var integer«IF getAllEntities.exists[hasSluggableFields && slugUnique]»|string«ENDIF»
+             * @var integer
              */
             protected $idValue = 0;
-            «IF getAllEntities.exists[hasSluggableFields && slugUnique]»
-
-                /**
-                 * List of object types with unique slugs.
-                 */
-                protected $entitiesWithUniqueSlugs = ['«getAllEntities.filter[hasSluggableFields && slugUnique].map[name.formatForCode].join('\', \'')»'];
-            «ENDIF»
 
             /**
              * Code defining the redirect goal after command handling.
@@ -555,40 +548,18 @@ class FormHandler {
             // store current uri for repeated creations
             $this->repeatReturnUrl = $this->request->getUri();
 
-            «IF getAllEntities.exists[hasSluggableFields && slugUnique]»
-                $this->idField = in_array($this->objectType, $this->entitiesWithUniqueSlugs) ? 'slug' : $this->entityFactory->getIdField($this->objectType);
-            «ELSE»
-                $this->idField = $this->entityFactory->getIdField($this->objectType);
-            «ENDIF»
+            $this->idField = $this->entityFactory->getIdField($this->objectType);
 
             // retrieve identifier of the object we wish to edit
             $routeParams = $this->request->get('_route_params', []);
-            «IF getAllEntities.exists[hasSluggableFields && slugUnique]»
-                if ($this->idField == 'slug') {
-                    if (array_key_exists($this->idField, $routeParams)) {
-                        $this->idValue = !empty($routeParams[$this->idField]) ? $routeParams[$this->idField] : '';
-                    }
-                    if (empty($this->idValue)) {
-                        $this->idValue = $this->request->query->get($this->idField, '');
-                    }
-                }
-            «ENDIF»
-            if (empty($this->idValue)) {
-                «IF getAllEntities.exists[hasSluggableFields && slugUnique]»
-                    if ($this->idField == 'slug') {
-                        $this->idField = 'id';
-                    }
-
-                «ENDIF»
-                if (array_key_exists($this->idField, $routeParams)) {
-                    $this->idValue = (int) !empty($routeParams[$this->idField]) ? $routeParams[$this->idField] : 0;
-                }
-                if (0 === $this->idValue) {
-                    $this->idValue = $this->request->query->getInt($this->idField, 0);
-                }
-                if (0 === $this->idValue && $this->idField != 'id') {
-                    $this->idValue = $this->request->query->getInt('id', 0);
-                }
+            if (array_key_exists($this->idField, $routeParams)) {
+                $this->idValue = (int) !empty($routeParams[$this->idField]) ? $routeParams[$this->idField] : 0;
+            }
+            if (0 === $this->idValue) {
+                $this->idValue = $this->request->query->getInt($this->idField, 0);
+            }
+            if (0 === $this->idValue && $this->idField != 'id') {
+                $this->idValue = $this->request->query->getInt('id', 0);
             }
 
             $entity = null;
@@ -743,12 +714,6 @@ class FormHandler {
          */
         protected function initEntityForEditing()
         {
-            «IF getAllEntities.exists[hasSluggableFields && slugUnique]»
-                if (in_array($this->objectType, $this->entitiesWithUniqueSlugs)) {
-                    return $this->entityFactory->getRepository($this->objectType)->selectBySlug($this->idValue);
-                }
-
-            «ENDIF»
             return $this->entityFactory->getRepository($this->objectType)->selectById($this->idValue);
         }
     '''
@@ -1170,7 +1135,7 @@ class FormHandler {
         {
             «processForm»
 
-            «IF ownerPermission»
+            «IF ownerPermission || needsSlugHandler»
 
                 «formHandlerBaseInitEntityForEditing»
             «ENDIF»
@@ -1222,20 +1187,28 @@ class FormHandler {
 
     def private formHandlerBaseInitEntityForEditing(Entity it) '''
         /**
-         * Initialise existing entity for editing.
-         *
-         * @return EntityAccess Desired entity instance or null
+         * @inheritDoc
          */
         protected function initEntityForEditing()
         {
             $entity = parent::initEntityForEditing();
-
-            // only allow editing for the owner or people with higher permissions
-            $currentUserId = $this->currentUserApi->isLoggedIn() ? $this->currentUserApi->get('uid') : UsersConstant::USER_ID_ANONYMOUS;
-            $isOwner = null !== $entity && null !== $entity->getCreatedBy() && $currentUserId == $entity->getCreatedBy()->getUid();
-            if (!$isOwner && !$this->permissionHelper->hasEntityPermission($entity, ACCESS_ADD)) {
-                throw new AccessDeniedException();
+            if (null === $entity) {
+                return $entity;
             }
+            «IF ownerPermission»
+
+                // only allow editing for the owner or people with higher permissions
+                $currentUserId = $this->currentUserApi->isLoggedIn() ? $this->currentUserApi->get('uid') : UsersConstant::USER_ID_ANONYMOUS;
+                $isOwner = null !== $entity && null !== $entity->getCreatedBy() && $currentUserId == $entity->getCreatedBy()->getUid();
+                if (!$isOwner && !$this->permissionHelper->hasEntityPermission($entity, ACCESS_ADD)) {
+                    throw new AccessDeniedException();
+                }
+            «ENDIF»
+            «IF needsSlugHandler»
+
+                $slugParts = explode('/', $entity->getSlug());
+                $entity->setSlug(end($slugParts));
+            «ENDIF»
 
             return $entity;
         }
@@ -1300,7 +1273,7 @@ class FormHandler {
         «ENDIF»
 
         /**
-         * Creates the form type.
+         * @inheritDoc
          */
         protected function createForm()
         {
@@ -1308,9 +1281,7 @@ class FormHandler {
         }
 
         /**
-         * Returns the form options.
-         *
-         * @return array
+         * @inheritDoc
          */
         protected function getFormOptions()
         {

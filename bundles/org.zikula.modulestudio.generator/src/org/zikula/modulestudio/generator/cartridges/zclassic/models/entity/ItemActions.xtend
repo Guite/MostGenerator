@@ -172,7 +172,7 @@ class ItemActions {
             $title = $this->__('Edit', '«application.appName.formatForDB»');
             $menu->addChild($title, [
                 'route' => $routePrefix . $routeArea . 'edit',
-                'routeParameters' => $entity->createUrlArgs()
+                'routeParameters' => $entity->createUrlArgs(«IF hasSluggableFields && slugUnique»true«ENDIF»)
             ]);
             $menu[$title]->setLinkAttribute('title', $this->__('Edit this «name.formatForDisplay»', '«application.appName.formatForDB»'));
             «application.addLinkClass('default')»

@@ -251,6 +251,36 @@ class ModelBehaviourExtensions {
         getSelfAndParentDataObjects.map[fields.filter(AbstractStringField).filter[sluggablePosition > 0]].flatten.sortBy[sluggablePosition]
     }
 
+    def needsSlugHandler(Entity it) {
+        tree != EntityTreeType.NONE || needsRelativeOrInversedRelativeSlugHandler
+    }
+
+    def needsRelativeOrInversedRelativeSlugHandler(Entity it) {
+        needsRelativeSlugHandler || needsInversedRelativeSlugHandler
+    }
+
+    def needsRelativeAndInversedRelativeSlugHandlers(Entity it) {
+        needsRelativeSlugHandler && needsInversedRelativeSlugHandler
+    }
+
+    def needsRelativeSlugHandler(Entity it) {
+        !getRelationsForRelativeSlugHandler.empty
+    }
+
+    def needsInversedRelativeSlugHandler(Entity it) {
+        !getRelationsForInversedRelativeSlugHandler.empty
+    }
+
+    def getRelationsForRelativeSlugHandler(Entity it) {
+        application.getSlugRelations.filter[target == it && (it instanceof OneToOneRelationship || it instanceof OneToManyRelationship)]
+        + application.getSlugRelations.filter[source == it && (it instanceof ManyToOneRelationship)]
+    }
+
+    def getRelationsForInversedRelativeSlugHandler(Entity it) {
+        application.getSlugRelations.filter[source == it && (it instanceof OneToOneRelationship || it instanceof OneToManyRelationship)]
+        + application.getSlugRelations.filter[target == it && (it instanceof ManyToOneRelationship)]
+    }
+
     /**
      * Returns a list of all relationships connecting two sluggable entities.
      * The list is filtered to have unique source-target entity combinations.

@@ -107,11 +107,22 @@ class EntityMethods {
         /**
          * Creates url arguments array for easy creation of display urls.
          *
+         «IF hasSluggableFields && slugUnique»
+         * @param boolean $forEditing
+         *
+         «ENDIF»
          * @return array List of resulting arguments
          */
-        public function createUrlArgs()
+        public function createUrlArgs(«IF hasSluggableFields && slugUnique»$forEditing = false«ENDIF»)
         {
             «IF hasSluggableFields && slugUnique»
+                if (true === $forEditing) {
+                    return [
+                        '«getPrimaryKey.name.formatForCode»' => $this->get«getPrimaryKey.name.formatForCodeCapital»(),
+                        'slug' => $this->getSlug()
+                    ];
+                }
+
                 return [
                     'slug' => $this->getSlug()
                 ];

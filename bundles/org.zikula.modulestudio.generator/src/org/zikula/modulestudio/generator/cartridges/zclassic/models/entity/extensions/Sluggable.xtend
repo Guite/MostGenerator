@@ -72,13 +72,13 @@ class Sluggable extends AbstractExtension implements EntityExtensionInterface {
 
     def private treeSlugHandler(Entity it) ''', handlers={
 «treeSlugHandlerImpl»
- * }'''
+* }'''
 
     def private treeSlugHandlerImpl(Entity it) '''
-        «' '»*     @Gedmo\SlugHandler(class="Gedmo\Sluggable\Handler\TreeSlugHandler", options={
+        *     @Gedmo\SlugHandler(class="Gedmo\Sluggable\Handler\TreeSlugHandler", options={
         «slugHandlerOption('parentRelationField', 'parent')»,
         «slugHandlerOption('separator', '/')»
-        «' '»*     })
+        *     })
     '''
 
     def private relativeAndInverseRelativeSlugHandlers(Entity it) ''', handlers={
@@ -88,16 +88,16 @@ class Sluggable extends AbstractExtension implements EntityExtensionInterface {
 «FOR relation : getRelationsForInversedRelativeSlugHandler SEPARATOR ','»
 «inversedRelativeSlugHandlerImpl(relation)»
 «ENDFOR»
- * }'''
+* }'''
 
     def private relativeSlugHandler(Entity it) ''', handlers={
 «FOR relation : getRelationsForRelativeSlugHandler SEPARATOR ','»
 «relativeSlugHandlerImpl(relation)»
 «ENDFOR»
- * }'''
+* }'''
 
     def private relativeSlugHandlerImpl(Entity it, JoinRelationship relation) '''
-        «' '»*     @Gedmo\SlugHandler(class="Gedmo\Sluggable\Handler\RelativeSlugHandler", options={
+        *     @Gedmo\SlugHandler(class="Gedmo\Sluggable\Handler\RelativeSlugHandler", options={
         «IF relation instanceof OneToOneRelationship || relation instanceof OneToManyRelationship»
             «slugHandlerOption('relationField', relation.getRelationAliasName(false).formatForCodeCapital)»
         «ELSEIF relation instanceof ManyToOneRelationship»
@@ -105,7 +105,7 @@ class Sluggable extends AbstractExtension implements EntityExtensionInterface {
         «ENDIF»
         «slugHandlerOption('relationSlugField', 'slug')»
         «slugHandlerOption('separator', '/')»
-        «' '»*     })
+        *     })
     '''
 
     def private inversedRelativeSlugHandler(Entity it) ''', handlers={
@@ -115,7 +115,7 @@ class Sluggable extends AbstractExtension implements EntityExtensionInterface {
  * }'''
 
     def private inversedRelativeSlugHandlerImpl(Entity it, JoinRelationship relation) '''
-        «' '»*     @Gedmo\SlugHandler(class="Gedmo\Sluggable\Handler\InversedRelativeSlugHandler", options={
+        *     @Gedmo\SlugHandler(class="Gedmo\Sluggable\Handler\InversedRelativeSlugHandler", options={
         «IF relation instanceof OneToOneRelationship || relation instanceof OneToManyRelationship»
             «slugHandlerOption('relationClass', relation.target.entityClassName('', false))»
             «slugHandlerOption('mappedBy', relation.getRelationAliasName(true).formatForCodeCapital)»
@@ -124,38 +124,11 @@ class Sluggable extends AbstractExtension implements EntityExtensionInterface {
             «slugHandlerOption('mappedBy', relation.getRelationAliasName(false).formatForCodeCapital)»
         «ENDIF»
         «slugHandlerOption('inverseSlugField', 'slug')»
-        «' '»*     })
+        *     })
     '''
 
     def private slugHandlerOption(String name, String value) '''
-        «' '»*         @Gedmo\SlugHandlerOption(name="«name»", value="«value»")
-    '''
-
-    def private needsRelativeOrInversedRelativeSlugHandler(Entity it) {
-        needsRelativeSlugHandler || needsInversedRelativeSlugHandler
-    }
-
-    def private needsRelativeAndInversedRelativeSlugHandlers(Entity it) {
-        needsRelativeSlugHandler && needsInversedRelativeSlugHandler
-    }
-
-    def private needsRelativeSlugHandler(Entity it) {
-        !getRelationsForRelativeSlugHandler.empty
-    }
-
-    def private needsInversedRelativeSlugHandler(Entity it) {
-        !getRelationsForInversedRelativeSlugHandler.empty
-    }
-
-    def private getRelationsForRelativeSlugHandler(Entity it) {
-        application.getSlugRelations.filter[target == it && (it instanceof OneToOneRelationship || it instanceof OneToManyRelationship)]
-        + application.getSlugRelations.filter[source == it && (it instanceof ManyToOneRelationship)]
-    }
-
-    def private getRelationsForInversedRelativeSlugHandler(Entity it) {
-        application.getSlugRelations.filter[source == it && (it instanceof OneToOneRelationship || it instanceof OneToManyRelationship)]
-        + application.getSlugRelations.filter[target == it && (it instanceof ManyToOneRelationship)]
-    }
+        *         @Gedmo\SlugHandlerOption(name="«name»", value="«value»")'''
 
     /**
      * Generates additional accessor methods.
