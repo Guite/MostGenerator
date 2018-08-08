@@ -9,6 +9,7 @@ import de.guite.modulestudio.metamodel.JoinRelationship
 import de.guite.modulestudio.metamodel.ObjectField
 import de.guite.modulestudio.metamodel.StringField
 import de.guite.modulestudio.metamodel.TextField
+import de.guite.modulestudio.metamodel.UploadField
 import de.guite.modulestudio.metamodel.UserField
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.DateTimeExtensions
@@ -531,7 +532,7 @@ class CollectionFilterHelper {
                 if ($objectType == '«entity.name.formatForCode»') {
                     «val searchFields = entity.getDisplayFields.filter[isContainedInSearch]»
                     «FOR field : searchFields»
-                        $filters[] = 'tbl.«field.name.formatForCode» «IF field.isTextSearch»LIKE«ELSE»=«ENDIF» :search«field.name.formatForCodeCapital»';
+                        $filters[] = 'tbl.«field.name.formatForCode»«IF field instanceof UploadField»FileName«ENDIF» «IF field.isTextSearch»LIKE«ELSE»=«ENDIF» :search«field.name.formatForCodeCapital»';
                         $parameters['search«field.name.formatForCodeCapital»'] = «IF field.isTextSearch»'%' . $fragment . '%'«ELSE»$fragment«ENDIF»;
                     «ENDFOR»
                 }

@@ -161,7 +161,7 @@ class Repository {
             /**
              * Retrieves an array with all fields which can be used for sorting instances.
              *
-             * @return string[] Sorting fields array
+             * @return string[] List of sorting field names
              */
             public function getAllowedSortingFields()
             {
@@ -234,9 +234,7 @@ class Repository {
             protected $mainEntityClass = '«entityClassName('', false)»';
 
             /**
-             * Retrieves an array with all fields which can be used for sorting instances.
-             *
-             * @return string[] List of sorting field names
+             * @inheritDoc
              */
             public function getAllowedSortingFields()
             {
@@ -736,6 +734,11 @@ class Repository {
             if (false === strpos($orderBy, '.')) {
                 $orderBy = 'tbl.' . $orderBy;
             }
+            «IF hasUploadFieldsEntity»
+                for (['«getUploadFieldsEntity.map[name.formatForCode].join('\', \'')»'] as $uploadField) {
+                    $orderBy = str_replace('tbl.' . $uploadField, 'tbl.' . $uploadField . 'FileName', $orderBy);
+                }
+            «ENDIF»
             «IF standardFields»
                 if (false !== strpos($orderBy, 'tbl.createdBy')) {
                     $qb->addSelect('tblCreator')
