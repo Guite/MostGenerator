@@ -1,13 +1,18 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.view.extensions
 
 import de.guite.modulestudio.metamodel.Application
+import de.guite.modulestudio.metamodel.IntegerField
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
+import org.zikula.modulestudio.generator.extensions.FormattingExtensions
+import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 
 class StandardFields {
 
     extension ControllerExtensions = new ControllerExtensions
+    extension FormattingExtensions = new FormattingExtensions
+    extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension NamingExtensions = new NamingExtensions
 
     def generate (Application it, IMostFileSystemAccess fsa) {
@@ -103,6 +108,11 @@ class StandardFields {
             <li>{{ __f('Updated by %user', {'%user': obj.updatedBy.uname}) }}</li>
             <li>{{ __f('Updated on %date', {'%date': obj.updatedDate|localizeddate('medium', 'short')}) }}</li>
         {% endif %}
+        «FOR entity : getLoggableEntities»
+            {% if obj._objectType == '«entity.name.formatForCode»' %}
+                <li>{{ __('Current version') }}: {{ obj.«entity.fields.filter(IntegerField).filter[version].head.name.formatForCode» }}</li>
+            {% endif %}
+        «ENDFOR»
         </ul>
     '''
 }
