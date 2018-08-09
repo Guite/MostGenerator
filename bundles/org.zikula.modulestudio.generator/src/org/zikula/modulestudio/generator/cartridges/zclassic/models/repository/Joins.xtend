@@ -29,7 +29,7 @@ class Joins {
             $selection «IF isInheriting».«ENDIF»= '«FOR relation : getBidirectionalIncomingJoinRelations»«relation.addJoin(false, 'select')»«ENDFOR»«FOR relation : getOutgoingJoinRelations»«relation.addJoin(true, 'select')»«ENDFOR»';
             «IF categorisable»
 
-                $selection = ', tblCategories';
+                $selection .= ', tblCategories';
             «ENDIF»
 
             return $selection;
