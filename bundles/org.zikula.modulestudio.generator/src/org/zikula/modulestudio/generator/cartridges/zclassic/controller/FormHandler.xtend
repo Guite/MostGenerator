@@ -725,10 +725,10 @@ class FormHandler {
          */
         protected function initEntityForCreation()
         {
-            $templateId = $this->request->query->getInt('astemplate', '');
+            $templateId = $this->request->query->getInt('astemplate', 0);
             $entity = null;
 
-            if (!empty($templateId)) {
+            if ($templateId > 0) {
                 // reuse existing entity
                 $entityT = $this->entityFactory->getRepository($this->objectType)->selectById($templateId);
                 if (null === $entityT) {
@@ -740,6 +740,17 @@ class FormHandler {
             if (null === $entity) {
                 $createMethod = 'create' . ucfirst($this->objectType);
                 $entity = $this->entityFactory->$createMethod();
+                «IF hasTrees»
+                    if (in_array($this->objectType, ['«getTreeEntities.map[name.formatForCode].join('\', \'')»'])) {
+                        $parentId = $this->request->query->getInt('parent', 0);
+                        if ($parentId > 0) {
+                            $parentEntity = $this->entityFactory->getRepository($this->objectType)->selectById($parentId);
+                            if (null !== $parentEntity) {
+                                $entity->setParent($parentEntity);
+                            }
+                        }
+                    }
+                «ENDIF»
             }
 
             return $entity;

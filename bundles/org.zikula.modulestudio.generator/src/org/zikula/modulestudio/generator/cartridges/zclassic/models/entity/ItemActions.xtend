@@ -187,6 +187,17 @@ class ItemActions {
             $menu[$title]->setLinkAttribute('title', $this->__('Reuse for new «name.formatForDisplay»', '«application.appName.formatForDB»'));
             «application.addLinkClass('default')»
             «application.addIcon('files-o')»
+        «ELSE»
+            if ($permissionHelper->hasEntityPermission($entity, ACCESS_ADD)) {
+                $title = $this->__('Add sub «name.formatForDisplay»', 'zikulacontentmodule');
+                $menu->addChild($title, [
+                    'route' => $routePrefix . $routeArea . 'edit',
+                    'routeParameters' => ['parent' => $entity->getKey()]
+                ]);
+                $menu[$title]->setLinkAttribute('title', $this->__('Add a sub «name.formatForDisplay» to this «name.formatForDisplay»', 'zikulacontentmodule'));
+                «application.addLinkClass('default')»
+                «application.addIcon('child')»
+            }
         «ENDIF»
     '''
 

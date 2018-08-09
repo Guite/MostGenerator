@@ -37,7 +37,7 @@ class MenuLinksHelperFunctions {
         if (in_array('«name.formatForCode»', $allowedObjectTypes)
             && $this->permissionHelper->hasComponentPermission('«name.formatForCode»', $permLevel)) {
             $links[] = [
-                'url' => $this->router->generate('«application.appName.formatForDB»_«name.formatForDB»_' . $routeArea . 'view'«IF tree != EntityTreeType.NONE», ['tpl' => 'tree']«ENDIF»),
+                'url' => $this->router->generate('«application.appName.formatForDB»_«name.formatForDB»_' . $routeArea . 'view'«/*IF tree != EntityTreeType.NONE», ['tpl' => 'tree']«ENDIF*/»),
                 'text' => «application.translate(nameMultiple.formatForDisplayCapital)»,
                 'title' => «application.translate(nameMultiple.formatForDisplayCapital + ' list')»
             ];
