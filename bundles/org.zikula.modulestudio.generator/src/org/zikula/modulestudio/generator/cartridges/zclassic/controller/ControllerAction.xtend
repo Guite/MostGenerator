@@ -13,10 +13,13 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.controller.action.A
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.action.Annotations
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
+import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 
 class ControllerAction {
+
     extension ControllerExtensions = new ControllerExtensions
     extension FormattingExtensions = new FormattingExtensions
+    extension ModelBehaviourExtensions = new ModelBehaviourExtensions
 
     Application app
     Actions actionsImpl
@@ -68,12 +71,11 @@ class ControllerAction {
          *
          * @throws AccessDeniedException Thrown if the user doesn't have required permissions
          «IF it instanceof DisplayAction»
-         * @throws NotFoundHttpException Thrown by param converter if «entity.name.formatForDisplay» to be displayed isn't found
+         * @throws NotFoundHttpException Thrown if «entity.name.formatForDisplay» to be displayed isn't found
          «ELSEIF it instanceof EditAction»
-         * @throws NotFoundHttpException Thrown by form handler if «entity.name.formatForDisplay» to be edited isn't found
          * @throws RuntimeException      Thrown if another critical error occurs (e.g. workflow actions not available)
          «ELSEIF it instanceof DeleteAction»
-         * @throws NotFoundHttpException Thrown by param converter if «entity.name.formatForDisplay» to be deleted isn't found
+         * @throws NotFoundHttpException Thrown if «entity.name.formatForDisplay» to be deleted isn't found
          * @throws RuntimeException      Thrown if another critical error occurs (e.g. workflow actions not available)
          «ENDIF»
         «ENDIF»
@@ -114,9 +116,17 @@ class ControllerAction {
                + ' * @param int    $pos          Current pager position\n'
                + ' * @param int    $num          Amount of entries to display\n'
             DisplayAction:
-                ' * @param ' + refEntity.name.formatForCodeCapital + 'Entity $' + refEntity.name.formatForCode + ' Treated ' + refEntity.name.formatForDisplay + ' instance\n'
+                if (refEntity.hasUniqueSlug) {
+                    ' * @param string $slug Slug of treated ' + refEntity.name.formatForDisplay + ' instance\n'
+                } else {
+                    ' * @param integer $id Identifier of treated ' + refEntity.name.formatForDisplay + ' instance\n'
+                }
             DeleteAction:
-                ' * @param ' + refEntity.name.formatForCodeCapital + 'Entity $' + refEntity.name.formatForCode + ' Treated ' + refEntity.name.formatForDisplay + ' instance\n'
+                if (refEntity.hasUniqueSlug) {
+                    ' * @param string $slug Slug of treated ' + refEntity.name.formatForDisplay + ' instance\n'
+                } else {
+                    ' * @param integer $id Identifier of treated ' + refEntity.name.formatForDisplay + ' instance\n'
+                }
             default: ''
         }
     }
@@ -131,12 +141,16 @@ class ControllerAction {
     def private dispatch methodArgs(Entity it, ViewAction action) '''Request $request, $sort, $sortdir, $pos, $num''' 
     def private dispatch methodArgsCall(Entity it, ViewAction action) '''$request, $sort, $sortdir, $pos, $num''' 
 
-    def private dispatch methodArgs(Entity it, DisplayAction action) '''Request $request, «name.formatForCodeCapital»Entity $«name.formatForCode»''' 
-    def private dispatch methodArgsCall(Entity it, DisplayAction action) '''$request, $«name.formatForCode»''' 
+    def private dispatch methodArgs(Entity it, DisplayAction action) '''Request $request, $«IF hasUniqueSlug»slug«ELSE»id«ENDIF»''' 
+    def private dispatch methodArgsCall(Entity it, DisplayAction action) '''$request, $«IF hasUniqueSlug»slug«ELSE»id«ENDIF»''' 
 
     def private dispatch methodArgs(Entity it, EditAction action) '''Request $request''' 
     def private dispatch methodArgsCall(Entity it, EditAction action) '''$request''' 
 
-    def private dispatch methodArgs(Entity it, DeleteAction action) '''Request $request, «name.formatForCodeCapital»Entity $«name.formatForCode»''' 
-    def private dispatch methodArgsCall(Entity it, DeleteAction action) '''$request, $«name.formatForCode»''' 
+    def private dispatch methodArgs(Entity it, DeleteAction action) '''Request $request, $«IF hasUniqueSlug»slug«ELSE»id«ENDIF»''' 
+    def private dispatch methodArgsCall(Entity it, DeleteAction action) '''$request, $«IF hasUniqueSlug»slug«ELSE»id«ENDIF»''' 
+
+    def private hasUniqueSlug(Entity it) {
+        hasSluggableFields && slugUnique
+    }
 }

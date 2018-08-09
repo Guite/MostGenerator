@@ -569,10 +569,9 @@ class FormHandler {
                 $entity = $this->initEntityForEditing();
                 if (null !== $entity) {
                     «locking.addPageLock(it)»
-                }
-
-                if (!$this->permissionHelper->mayEdit($entity)) {
-                    throw new AccessDeniedException();
+                    if (!$this->permissionHelper->mayEdit($entity)) {
+                        throw new AccessDeniedException();
+                    }
                 }
             } else {
                 $permissionLevel = «IF needsApproval»in_array($this->objectType, ['«getAllEntities.filter[workflow != EntityWorkflowType.NONE].map[name.formatForCode].join('\', \'')»']) ? ACCESS_COMMENT : ACCESS_EDIT«ELSE»ACCESS_EDIT«ENDIF»;

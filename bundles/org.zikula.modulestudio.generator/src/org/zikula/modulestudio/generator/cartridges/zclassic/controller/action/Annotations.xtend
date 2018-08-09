@@ -13,7 +13,6 @@ import de.guite.modulestudio.metamodel.ViewAction
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
-import org.zikula.modulestudio.generator.extensions.Utils
 import org.zikula.modulestudio.generator.extensions.ViewExtensions
 
 class Annotations {
@@ -21,7 +20,6 @@ class Annotations {
     extension FormattingExtensions = new FormattingExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension ModelExtensions = new ModelExtensions
-    extension Utils = new Utils
     extension ViewExtensions = new ViewExtensions
 
     Application app
@@ -31,11 +29,8 @@ class Annotations {
     }
 
     def generate(Action it, Entity entity, Boolean isAdmin) '''
-        «actionRoute(entity, isAdmin)»
-        «IF null !== entity»
-            «IF it instanceof DisplayAction || it instanceof DeleteAction»
-                «paramConverter(entity)»
-            «ENDIF»«/*IF it instanceof MainAction»
+        «actionRoute(entity, isAdmin)»«/*IF null !== entity»
+            «IF it instanceof MainAction»
                 «' '»* @Cache(expires="+7 days", public=true)
             «ELSEIF it instanceof ViewAction»
                 «' '»* @Cache(expires="+2 hours", public=false)
@@ -47,8 +42,8 @@ class Annotations {
                 «ELSE»
                     «' '»* @Cache(expires="+12 hours", public=false)
                 «ENDIF»
-            «ENDIF*/»
-        «ENDIF»
+            «ENDIF»
+        «ENDIF*/»
         «IF isAdmin»
             «' '»* @Theme("admin")
         «ENDIF»
@@ -142,17 +137,4 @@ class Annotations {
          «' '»*        methods = {"GET", "POST"}
          «' '»* )
     '''
-
-    // currently called for DisplayAction and DeleteAction
-    def private paramConverter(Entity it) '''
-         «' '»* @ParamConverter("«name.formatForCode»", class="«app.appName»:«name.formatForCodeCapital»Entity", options = {«paramConverterOptions»})
-    '''
-
-    def private paramConverterOptions(Entity it) {
-        if (hasSluggableFields && slugUnique) {
-            return '"repository_method" = "selectBySlug", "mapping": {"slug": "slugTitle"}, "map_method_signature" = true'
-        }
-
-        return '"repository_method" = "selectById", "mapping": {"id": "' + getPrimaryKey.name.formatForCode + '"}, "map_method_signature" = true'
-    }
 }

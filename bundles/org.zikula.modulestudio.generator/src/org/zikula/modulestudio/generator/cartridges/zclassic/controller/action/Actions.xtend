@@ -19,6 +19,7 @@ import de.guite.modulestudio.metamodel.ViewAction
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.DateTimeExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
+import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
@@ -30,6 +31,7 @@ class Actions {
     extension DateTimeExtensions = new DateTimeExtensions
     extension FormattingExtensions = new FormattingExtensions
     extension ModelExtensions = new ModelExtensions
+    extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension ModelJoinExtensions = new ModelJoinExtensions
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
@@ -41,6 +43,13 @@ class Actions {
     }
 
     def actionImpl(Entity it, Action action) '''
+        «IF action instanceof DisplayAction || action instanceof DeleteAction»
+            $«name.formatForCode» = $this->get('«application.appService».entity_factory')->getRepository('«name.formatForCode»')->«IF hasSluggableFields && slugUnique»selectBySlug($slug)«ELSE»selectById($id)«ENDIF»;
+            if (null === $«name.formatForCode») {
+                throw new NotFoundHttpException($this->__('No such «name.formatForDisplay» found.'));
+            }
+
+        «ENDIF»
         $objectType = '«name.formatForCode»';
         // permission check
         $permLevel = $isAdmin ? ACCESS_ADMIN : «getPermissionAccessLevel(action)»;

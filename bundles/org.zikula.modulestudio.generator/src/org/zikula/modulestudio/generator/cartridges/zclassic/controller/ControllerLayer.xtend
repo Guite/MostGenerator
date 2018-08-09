@@ -111,7 +111,7 @@ class ControllerLayer {
             use Symfony\Component\HttpFoundation\RedirectResponse;
         «ENDIF»
         use Symfony\Component\HttpFoundation\Request;
-        «IF hasDisplayAction || hasEditAction || hasDeleteAction»
+        «IF hasDisplayAction || hasDeleteAction»
             use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
         «ENDIF»
         use Symfony\Component\Security\Core\Exception\AccessDeniedException;
@@ -154,9 +154,6 @@ class ControllerLayer {
             use RuntimeException;
         «ENDIF»
         «/*use Sensio\Bundle\FrameworkExtraBundle\Configuration\Cache;*/»
-        «IF hasDisplayAction || hasDeleteAction»
-            use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
-        «ENDIF»
         use Symfony\Component\HttpFoundation\Request;
         «IF hasDisplayAction || hasEditAction || hasDeleteAction»
             use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
