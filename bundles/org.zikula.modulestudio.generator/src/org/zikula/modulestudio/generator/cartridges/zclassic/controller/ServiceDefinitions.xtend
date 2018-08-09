@@ -498,7 +498,6 @@ class ServiceDefinitions {
                 class: «nsBase»Field\UploadType
                 arguments:
                     - "@translator.default"
-                    - "@request_stack"
                     - "@«modPrefix».image_helper"
                     - "@«modPrefix».upload_helper"
                 «IF targets('2.0')»

@@ -21,8 +21,6 @@ class UploadFileTransformer {
         use Symfony\Component\Form\DataTransformerInterface;
         use Symfony\Component\HttpFoundation\File\File;
         use Symfony\Component\HttpFoundation\File\UploadedFile;
-        use Symfony\Component\HttpFoundation\Request;
-        use Symfony\Component\HttpFoundation\RequestStack;
         use «appNamespace»\Form\Type\Field\UploadType;
         use «appNamespace»\Helper\UploadHelper;
 
@@ -37,11 +35,6 @@ class UploadFileTransformer {
              * @var UploadType
              */
             protected $formType = '';
-
-            /**
-             * @var Request
-             */
-            protected $request = '';
 
             /**
              * @var UploadHelper
@@ -64,17 +57,15 @@ class UploadFileTransformer {
              * UploadFileTransformer constructor.
              *
              * @param UploadType   $formType     The form type containing this transformer
-             * @param RequestStack $requestStack RequestStack service instance
              * @param UploadHelper $uploadHelper UploadHelper service instance
              * @param string       $fieldName    The form field name
              «IF hasUploadNamingScheme(UploadNamingScheme.USERDEFINEDWITHCOUNTER)»
              * @param boolean      $customName   Whether a custom file name is supported or not
              «ENDIF»
              */
-            public function __construct(UploadType $formType, RequestStack $requestStack, UploadHelper $uploadHelper, $fieldName = ''«IF hasUploadNamingScheme(UploadNamingScheme.USERDEFINEDWITHCOUNTER)», $customName = false«ENDIF»)
+            public function __construct(UploadType $formType, UploadHelper $uploadHelper, $fieldName = ''«IF hasUploadNamingScheme(UploadNamingScheme.USERDEFINEDWITHCOUNTER)», $customName = false«ENDIF»)
             {
                 $this->formType = $formType;
-                $this->request = $requestStack->getCurrentRequest();
                 $this->uploadHelper = $uploadHelper;
                 $this->fieldName = $fieldName;
                 «IF hasUploadNamingScheme(UploadNamingScheme.USERDEFINEDWITHCOUNTER)»

@@ -31,7 +31,6 @@ class UploadType {
         use Symfony\Component\Form\FormInterface;
         use Symfony\Component\Form\FormView;
         use Symfony\Component\HttpFoundation\File\File;
-        use Symfony\Component\HttpFoundation\RequestStack;
         use Symfony\Component\OptionsResolver\OptionsResolver;
         use Symfony\Component\PropertyAccess\PropertyAccess;
         use Zikula\Common\Translator\TranslatorInterface;
@@ -48,11 +47,6 @@ class UploadType {
              * @var TranslatorInterface
              */
             protected $translator;
-
-            /**
-             * @var RequestStack
-             */
-            protected $requestStack = '';
 
             /**
              * @var ImageHelper
@@ -78,14 +72,12 @@ class UploadType {
              * UploadTypeExtension constructor.
              *
              * @param TranslatorInterface $translator   Translator service instance
-             * @param RequestStack        $requestStack RequestStack service instance
              * @param ImageHelper         $imageHelper  ImageHelper service instance
              * @param UploadHelper        $uploadHelper UploadHelper service instance
              */
-            public function __construct(TranslatorInterface $translator, RequestStack $requestStack, ImageHelper $imageHelper, UploadHelper $uploadHelper)
+            public function __construct(TranslatorInterface $translator, ImageHelper $imageHelper, UploadHelper $uploadHelper)
             {
                 $this->translator = $translator;
-                $this->requestStack = $requestStack;
                 $this->imageHelper = $imageHelper;
                 $this->uploadHelper = $uploadHelper;
             }
@@ -111,7 +103,7 @@ class UploadType {
                 $fileOptions['attr']['class'] = 'validate-upload';
 
                 $builder->add($fieldName, FileType::class, $fileOptions);
-                $uploadFileTransformer = new UploadFileTransformer($this, $this->requestStack, $this->uploadHelper, $fieldName«IF hasUploadNamingScheme(UploadNamingScheme.USERDEFINEDWITHCOUNTER)», $options['custom_filename']«ENDIF»);
+                $uploadFileTransformer = new UploadFileTransformer($this, $this->uploadHelper, $fieldName«IF hasUploadNamingScheme(UploadNamingScheme.USERDEFINEDWITHCOUNTER)», $options['custom_filename']«ENDIF»);
                 $builder->addModelTransformer($uploadFileTransformer);
 
                 if (!$options['required']) {
