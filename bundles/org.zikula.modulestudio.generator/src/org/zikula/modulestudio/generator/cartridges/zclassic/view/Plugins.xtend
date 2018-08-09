@@ -65,8 +65,10 @@ class Plugins {
             use DateInterval;
         «ENDIF»
         «IF generateIcsTemplates && hasEntitiesWithIcsTemplates»
-            use Symfony\Component\HttpFoundation\Request;
             use Symfony\Component\HttpFoundation\RequestStack;
+        «ENDIF»
+        «IF hasCountryFields»
+            use Symfony\Component\Intl\Intl;
         «ENDIF»
         «IF hasTrees»
             use Symfony\Component\Routing\RouterInterface;
@@ -106,9 +108,9 @@ class Plugins {
         «ENDIF»
         «IF generateIcsTemplates && hasEntitiesWithIcsTemplates»
             /**
-             * @var Request
+             * @var RequestStack
              */
-            protected $request;
+            protected $requestStack;
 
         «ENDIF»
         /**
@@ -177,7 +179,7 @@ class Plugins {
                 $this->router = $router;
             «ENDIF»
             «IF generateIcsTemplates && hasEntitiesWithIcsTemplates»
-                $this->request = $requestStack->getCurrentRequest();
+                $this->requestStack = $requestStack;
             «ENDIF»
             $this->variableApi = $variableApi;
             «IF hasTrees»

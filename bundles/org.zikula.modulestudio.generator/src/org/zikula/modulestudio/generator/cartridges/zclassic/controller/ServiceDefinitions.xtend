@@ -846,7 +846,6 @@ class ServiceDefinitions {
                 arguments:
                     - "@kernel"
                     - "@translator.default"
-                    - "@session"
                     - "@router"
                     - "@request_stack"
                     - "@zikula_extensions_module.api.variable"

@@ -8,9 +8,9 @@ class IpTrace {
 
     def generate(Application it) '''
         /**
-         * @var Request
+         * @var RequestStack
          */
-        protected $request;
+        protected $requestStack;
 
         /**
          * @var IpTraceableListener
@@ -26,7 +26,7 @@ class IpTrace {
         public function __construct(IpTraceableListener $ipTraceableListener, RequestStack $requestStack = null)
         {
             $this->ipTraceableListener = $ipTraceableListener;
-            $this->request = null !== $requestStack ? $requestStack->getCurrentRequest() : null;
+            $this->requestStack = $requestStack;
         }
 
         /**
@@ -50,11 +50,12 @@ class IpTrace {
          */
         public function onKernelRequest(GetResponseEvent $event)
         {
-            if (null === $this->request) {
+            $request = null !== $this->requestStack ? $this->requestStack->getCurrentRequest() : null;
+            if (null === $request) {
                 return;
             }
 
-            $ip = $this->request->getClientIp();
+            $ip = $request->getClientIp();
             if (null !== $ip) {
                 $this->ipTraceableListener->setIpValue($ip);
             }

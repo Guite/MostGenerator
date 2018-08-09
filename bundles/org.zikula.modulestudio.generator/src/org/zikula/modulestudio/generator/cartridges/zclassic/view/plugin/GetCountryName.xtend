@@ -25,7 +25,7 @@ class GetCountryName {
          */
         public function getCountryName($countryCode)
         {
-            $result = \Symfony\Component\Intl\Intl::getRegionBundle()->getCountryName($countryCode);
+            $result = Intl::getRegionBundle()->getCountryName($countryCode);
             if (false === $result) {
                 $result = $countryCode;
             }

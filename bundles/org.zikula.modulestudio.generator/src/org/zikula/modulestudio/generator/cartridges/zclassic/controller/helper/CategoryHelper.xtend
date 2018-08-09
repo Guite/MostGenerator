@@ -23,7 +23,6 @@ class CategoryHelper {
         use Doctrine\ORM\QueryBuilder;
         use InvalidArgumentException;
         use Psr\Log\LoggerInterface;
-        use Symfony\Component\HttpFoundation\Request;
         use Symfony\Component\HttpFoundation\RequestStack;
         use Zikula\CategoriesModule\Api\ApiInterface\CategoryPermissionApiInterface;
         use Zikula\CategoriesModule\Entity\RepositoryInterface\CategoryRegistryRepositoryInterface;
@@ -41,9 +40,9 @@ class CategoryHelper {
             protected $translator;
 
             /**
-             * @var Request
+             * @var RequestStack
              */
-            protected $request;
+            protected $requestStack;
 
             /**
              * @var LoggerInterface
@@ -84,7 +83,7 @@ class CategoryHelper {
                 CategoryPermissionApiInterface $categoryPermissionApi
             ) {
                 $this->translator = $translator;
-                $this->request = $requestStack->getCurrentRequest();
+                $this->requestStack = $requestStack;
                 $this->logger = $logger;
                 $this->currentUserApi = $currentUserApi;
                 $this->categoryRegistryRepository = $categoryRegistryRepository;
@@ -145,7 +144,8 @@ class CategoryHelper {
                 throw new InvalidArgumentException($this->translator->__('Invalid object type received.'));
         	}
 
-            $dataSource = $source == 'GET' ? $this->request->query : $this->request->request;
+            $request = $this->requestStack->getCurrentRequest();
+            $dataSource = $source == 'GET' ? $request->query : $request->request;
             $catIdsPerRegistry = [];
 
             $properties = $this->getAllProperties($objectType);

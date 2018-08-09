@@ -32,7 +32,6 @@ class EntityInitialiser {
         namespace «appNamespace»\Entity\Factory\Base;
 
         «IF supportLocaleFilter»
-            use Symfony\Component\HttpFoundation\Request;
             use Symfony\Component\HttpFoundation\RequestStack;
         «ENDIF»
         «FOR entity : getAllEntities»
@@ -50,9 +49,9 @@ class EntityInitialiser {
         {
             «IF supportLocaleFilter»
                 /**
-                 * @var Request
+                 * @var RequestStack
                  */
-                protected $request;
+                protected $requestStack;
 
             «ENDIF»
             /**
@@ -103,7 +102,7 @@ class EntityInitialiser {
                     $defaultLongitude«ENDIF»
                 ) {
                     «IF supportLocaleFilter»
-                        $this->request = $requestStack->getCurrentRequest();
+                        $this->requestStack = $requestStack;
                     «ENDIF»
                     $this->permissionHelper = $permissionHelper;
                     «IF hasListFieldsExceptWorkflowState»
@@ -127,7 +126,7 @@ class EntityInitialiser {
                 public function init«entity.name.formatForCodeCapital»(«entity.name.formatForCodeCapital»Entity $entity)
                 {
                     «FOR field : entity.getLanguageFieldsEntity + entity.getLocaleFieldsEntity»
-                        $entity->set«field.name.formatForCodeCapital»($this->request->getLocale());
+                        $entity->set«field.name.formatForCodeCapital»($this->requestStack->getCurrentRequest()->getLocale());
 
                     «ENDFOR»
                     «IF !entity.getDerivedFields.filter(DatetimeField).empty»

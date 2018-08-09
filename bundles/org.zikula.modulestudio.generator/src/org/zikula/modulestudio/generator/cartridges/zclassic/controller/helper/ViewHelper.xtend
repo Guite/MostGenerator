@@ -22,7 +22,6 @@ class ViewHelper {
         namespace «appNamespace»\Helper\Base;
 
         use Symfony\Bundle\TwigBundle\Loader\FilesystemLoader;
-        use Symfony\Component\HttpFoundation\Request;
         use Symfony\Component\HttpFoundation\RequestStack;
         use Symfony\Component\HttpFoundation\Response;
         use Twig_Environment;
@@ -48,9 +47,9 @@ class ViewHelper {
             protected $twigLoader;
 
             /**
-             * @var Request
+             * @var RequestStack
              */
-            protected $request;
+            protected $requestStack;
 
             /**
              * @var VariableApiInterface
@@ -96,7 +95,7 @@ class ViewHelper {
             ) {
                 $this->twig = $twig;
                 $this->twigLoader = $twigLoader;
-                $this->request = $requestStack->getCurrentRequest();
+                $this->requestStack = $requestStack;
                 $this->variableApi = $variableApi;
                 $this->pageVars = $pageVars;
                 $this->controllerHelper = $controllerHelper;
@@ -141,7 +140,7 @@ class ViewHelper {
             $templateExtension = '.' . $this->determineExtension($type, $func);
 
             // check whether a special template is used
-            $tpl = $this->request->query->getAlnum('tpl', '');
+            $tpl = $this->requestStack->getCurrentRequest()->query->getAlnum('tpl', '');
             if (!empty($tpl)) {
                 // check if custom template exists
                 $customTemplate = $template . ucfirst($tpl);
@@ -186,7 +185,7 @@ class ViewHelper {
             «ENDIF»
 
             // look whether we need output with or without the theme
-            $raw = $this->request->query->getBoolean('raw', false);
+            $raw = $this->requestStack->getCurrentRequest()->query->getBoolean('raw', false);
             if (!$raw && $templateExtension != 'html.twig') {
                 $raw = true;
             }
@@ -274,7 +273,7 @@ class ViewHelper {
             }
 
             $extensions = $this->availableExtensions($type, $func);
-            $format = $this->request->getRequestFormat();
+            $format = $this->requestStack->getCurrentRequest()->getRequestFormat();
             if ($format != 'html' && in_array($format, $extensions)) {
                 $templateExtension = $format . '.twig';
             }
@@ -329,8 +328,9 @@ class ViewHelper {
             $output = $this->twig->render($template, $templateParameters);
 
             // make local images absolute
-            $output = str_replace('img src="' . $this->request->getSchemeAndHttpHost() . $this->request->getBasePath() . '/', 'img src="/', $output);
-            $output = str_replace('img src="/', 'img src="' . $this->request->server->get('DOCUMENT_ROOT') . '/', $output);
+            $request = $this->requestStack->getCurrentRequest();
+            $output = str_replace('img src="' . $request->getSchemeAndHttpHost() . $request->getBasePath() . '/', 'img src="/', $output);
+            $output = str_replace('img src="/', 'img src="' . $request->server->get('DOCUMENT_ROOT') . '/', $output);
 
             // then the surrounding
             $output = $this->twig->render('@«appName»/includePdfHeader.html.twig') . $output . '</body></html>';
@@ -345,7 +345,7 @@ class ViewHelper {
            $fileTitle = str_replace(' ', '_', $fileTitle);
 
             /*
-            if (true === $this->request->query->getBoolean('dbg', false)) {
+            if (true === $request->query->getBoolean('dbg', false)) {
                 die($output);
             }
             */

@@ -37,7 +37,6 @@ class ControllerHelper {
         «IF hasViewActions»
             use Symfony\Component\Form\FormFactoryInterface;
         «ENDIF»
-        use Symfony\Component\HttpFoundation\Request;
         use Symfony\Component\HttpFoundation\RequestStack;
         «IF hasUiHooksProviders»
             use Symfony\Component\Routing\RouterInterface;
@@ -82,9 +81,9 @@ class ControllerHelper {
             use TranslatorTrait;
 
             /**
-             * @var Request
+             * @var RequestStack
              */
-            protected $request;
+            protected $requestStack;
             «IF hasUiHooksProviders»
 
                 /**
@@ -209,7 +208,7 @@ class ControllerHelper {
                 FeatureActivationHelper $featureActivationHelper«ENDIF»
             ) {
                 $this->setTranslator($translator);
-                $this->request = $requestStack->getCurrentRequest();
+                $this->requestStack = $requestStack;
                 «IF hasUiHooksProviders»
                     $this->router = $router;
                 «ENDIF»
@@ -334,7 +333,7 @@ class ControllerHelper {
                 throw new \Exception($this->__('Error! Invalid object type received.'));
             }
 
-            $request = $this->request;
+            $request = $this->requestStack->getCurrentRequest();
             $repository = $this->entityFactory->getRepository($objectType);
 
             // parameter for used sorting field
@@ -465,7 +464,7 @@ class ControllerHelper {
          */
         protected function determineDefaultViewSorting($objectType)
         {
-            $request = $this->request;
+            $request = $this->requestStack->getCurrentRequest();
             $repository = $this->entityFactory->getRepository($objectType);
 
             «new ControllerHelperFunctions().defaultSorting(it)»
@@ -503,7 +502,7 @@ class ControllerHelper {
                     // build RouteUrl instance for display hooks
                     $entity = $templateParameters[$objectType];
                     $urlParameters = $entity->createUrlArgs();
-                    $urlParameters['_locale'] = $this->request->getLocale();
+                    $urlParameters['_locale'] = $this->requestStack->getCurrentRequest()->getLocale();
                     $templateParameters['currentUrlObject'] = new RouteUrl('«appName.formatForDB»_' . strtolower($objectType) . '_display', $urlParameters);
                 }
             «ENDIF»
@@ -622,7 +621,7 @@ class ControllerHelper {
 
             if ($context == 'controllerAction') {
                 if (!isset($args['action'])) {
-                    $routeName = $this->request->get('_route');
+                    $routeName = $this->requestStack->getCurrentRequest()->get('_route');
                     $routeNameParts = explode('_', $routeName);
                     $args['action'] = end($routeNameParts);
                 }

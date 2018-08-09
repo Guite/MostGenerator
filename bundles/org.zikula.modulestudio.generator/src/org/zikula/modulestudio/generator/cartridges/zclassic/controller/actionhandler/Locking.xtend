@@ -57,7 +57,7 @@ class Locking {
         «IF hasOptimisticLock»
 
             if ($this->templateParameters['mode'] == 'edit') {
-                $this->request->getSession()->set('«application.appName»EntityVersion', $this->entityRef->get«getVersionField.name.formatForCodeCapital»());
+                $this->requestStack->getCurrentRequest()->getSession()->set('«application.appName»EntityVersion', $this->entityRef->get«getVersionField.name.formatForCodeCapital»());
             }
         «ENDIF»
     '''
@@ -67,7 +67,7 @@ class Locking {
 
             $applyLock = $this->templateParameters['mode'] != 'create' && $action != 'delete';
             «IF hasOptimisticLock»
-                $expectedVersion = $this->request->getSession()->get('«application.appName»EntityVersion', 1);
+                $expectedVersion = $this->requestStack->getCurrentRequest()->getSession()->get('«application.appName»EntityVersion', 1);
             «ENDIF»
         «ENDIF»
     '''

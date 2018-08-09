@@ -57,7 +57,6 @@ class ExampleDataHelper {
         namespace «appNamespace»\Helper\Base;
 
         use Psr\Log\LoggerInterface;
-        use Symfony\Component\HttpFoundation\Request;
         use Symfony\Component\HttpFoundation\RequestStack;
         «IF hasUserFields || hasStandardFieldEntities»
             use Zikula\UsersModule\Constant as UsersConstant;
@@ -78,9 +77,9 @@ class ExampleDataHelper {
         abstract class AbstractExampleDataHelper
         {
             /**
-             * @var Request
+             * @var RequestStack
              */
-            protected $request;
+            protected $requestStack;
 
             /**
              * @var LoggerInterface
@@ -122,7 +121,7 @@ class ExampleDataHelper {
                 WorkflowHelper $workflowHelper«IF hasUserFields || hasStandardFieldEntities»,
                 UserRepositoryInterface $userRepository«ENDIF»
             ) {
-                $this->request = $requestStack->getCurrentRequest();
+                $this->requestStack = $requestStack;
                 $this->logger = $logger;
                 $this->entityFactory = $entityFactory;
                 $this->workflowHelper = $workflowHelper;
@@ -234,7 +233,7 @@ class ExampleDataHelper {
             «ENDIF»
             «FOR field : getFieldsForExampleData»«exampleRowAssignment(field, it, entityName, number)»«ENDFOR»
             «/*«IF hasTranslatableFields»
-                $«entityName»«number»->setLocale($this->request->getLocale());
+                $«entityName»«number»->setLocale($this->requestStack->getCurrentRequest()->getLocale());
             «ENDIF»*/»
             «IF tree != EntityTreeType.NONE»
                 $«entityName»«number»->setParent(«IF number == 1»null«ELSE»$«entityName»1«ENDIF»);
@@ -270,7 +269,7 @@ class ExampleDataHelper {
         try {
             «FOR entity : getAllEntities»«entity.persistEntities(it)»«ENDFOR»
         } catch (\Exception $exception) {
-            $this->request->getSession()->getFlashBag()->add('error', $this->__('Exception during example data creation') . ': ' . $exception->getMessage());
+            $this->requestStack->getCurrentRequest()->getSession()->getFlashBag()->add('error', $this->__('Exception during example data creation') . ': ' . $exception->getMessage());
             $this->logger->error('{app}: Could not completely create example data after installation. Error details: {errorMessage}.', ['app' => '«appName»', 'errorMessage' => $exception->getMessage()]);
 
             return false;
@@ -358,7 +357,7 @@ class ExampleDataHelper {
             BooleanField: if (defaultValue == 'true') 'true' else 'false'
             IntegerField: exampleRowValueNumber(dataEntity, number)
             NumberField: exampleRowValueNumber(dataEntity, number)
-            StringField: if (#[StringRole.COUNTRY, StringRole.LANGUAGE, StringRole.LOCALE].contains(role)) '''$this->request->getLocale()''' else if (it.role == StringRole.CURRENCY) 'EUR' else if (it.role == StringRole.COLOUR) '\'#ff6600\'' else exampleRowValueText(dataEntity, number)
+            StringField: if (#[StringRole.COUNTRY, StringRole.LANGUAGE, StringRole.LOCALE].contains(role)) '''$this->requestStack->getCurrentRequest()->getLocale()''' else if (it.role == StringRole.CURRENCY) 'EUR' else if (it.role == StringRole.COLOUR) '\'#ff6600\'' else exampleRowValueText(dataEntity, number)
             TextField: exampleRowValueText(dataEntity, number)
             EmailField: '\'' + application.email + '\''
             UrlField: '\'' + application.url + '\''

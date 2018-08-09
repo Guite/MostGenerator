@@ -393,7 +393,6 @@ class Listeners {
             «IF generateScribitePlugins»
                 use Symfony\Component\Filesystem\Filesystem;
                 use Symfony\Component\Finder\Finder;
-                use Symfony\Component\HttpFoundation\Request;
                 use Symfony\Component\HttpFoundation\RequestStack;
             «ENDIF»
             use Symfony\Component\HttpKernel\HttpKernelInterface;
@@ -431,7 +430,6 @@ class Listeners {
         «ELSE»
             use Gedmo\IpTraceable\IpTraceableListener;
             use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-            use Symfony\Component\HttpFoundation\Request;
             use Symfony\Component\HttpFoundation\RequestStack;
             use Symfony\Component\HttpKernel\Event\GetResponseEvent;
             use Symfony\Component\HttpKernel\KernelEvents;

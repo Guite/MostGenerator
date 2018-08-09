@@ -137,7 +137,6 @@ class FormHandler {
         use Symfony\Component\Form\AbstractType;
         use Symfony\Component\Form\FormFactoryInterface;
         use Symfony\Component\HttpFoundation\RedirectResponse;
-        use Symfony\Component\HttpFoundation\Request;
         use Symfony\Component\HttpFoundation\RequestStack;
         use Symfony\Component\Routing\RouterInterface;
         use Symfony\Component\Security\Core\Exception\AccessDeniedException;
@@ -293,15 +292,11 @@ class FormHandler {
             protected $formFactory;
 
             /**
-             * The current request.
-             *
-             * @var Request
+             * @var RequestStack
              */
-            protected $request;
+            protected $requestStack;
 
             /**
-             * The router.
-             *
              * @var RouterInterface
              */
             protected $router;
@@ -454,7 +449,7 @@ class FormHandler {
                 $this->kernel = $kernel;
                 $this->setTranslator($translator);
                 $this->formFactory = $formFactory;
-                $this->request = $requestStack->getCurrentRequest();
+                $this->requestStack = $requestStack;
                 $this->router = $router;
                 $this->logger = $logger;
                 «IF hasTranslatable || needsApproval»
@@ -522,44 +517,45 @@ class FormHandler {
          */
         public function processForm(array $templateParameters = [])
         {
+            $request = $this->requestStack->getCurrentRequest();
             $this->templateParameters = $templateParameters;
             «IF !getJoinRelations.empty»
-                $this->templateParameters['inlineUsage'] = $this->request->query->getBoolean('raw', false);
+                $this->templateParameters['inlineUsage'] = $request->query->getBoolean('raw', false);
             «ENDIF»
             «IF !getJoinRelations.empty || app.needsAutoCompletion»
 
-                $this->idPrefix = $this->request->query->get('idp', '');
+                $this->idPrefix = $request->query->get('idp', '');
             «ENDIF»
 
             // initialise redirect goal
-            $this->returnTo = $this->request->query->get('returnTo', null);
+            $this->returnTo = $request->query->get('returnTo', null);
             // default to referer
             $refererSessionVar = '«appName.formatForDB»' . $this->objectTypeCapital . 'Referer';
-            if (null === $this->returnTo && $this->request->headers->has('referer')) {
-                $currentReferer = $this->request->headers->get('referer');
-                if ($currentReferer != $this->request->getUri()) {
+            if (null === $this->returnTo && $request->headers->has('referer')) {
+                $currentReferer = $request->headers->get('referer');
+                if ($currentReferer != $request->getUri()) {
                     $this->returnTo = $currentReferer;
-                    $this->request->getSession()->set($refererSessionVar, $this->returnTo);
+                    $request->getSession()->set($refererSessionVar, $this->returnTo);
                 }
             }
-            if (null === $this->returnTo && $this->request->getSession()->has($refererSessionVar)) {
-                $this->returnTo = $this->request->getSession()->get($refererSessionVar);
+            if (null === $this->returnTo && $request->getSession()->has($refererSessionVar)) {
+                $this->returnTo = $request->getSession()->get($refererSessionVar);
             }
             // store current uri for repeated creations
-            $this->repeatReturnUrl = $this->request->getUri();
+            $this->repeatReturnUrl = $request->getUri();
 
             $this->idField = $this->entityFactory->getIdField($this->objectType);
 
             // retrieve identifier of the object we wish to edit
-            $routeParams = $this->request->get('_route_params', []);
+            $routeParams = $request->get('_route_params', []);
             if (array_key_exists($this->idField, $routeParams)) {
                 $this->idValue = (int) !empty($routeParams[$this->idField]) ? $routeParams[$this->idField] : 0;
             }
             if (0 === $this->idValue) {
-                $this->idValue = $this->request->query->getInt($this->idField, 0);
+                $this->idValue = $request->query->getInt($this->idField, 0);
             }
             if (0 === $this->idValue && $this->idField != 'id') {
-                $this->idValue = $this->request->query->getInt('id', 0);
+                $this->idValue = $request->query->getInt('id', 0);
             }
 
             $entity = null;
@@ -582,7 +578,7 @@ class FormHandler {
                 $entity = $this->initEntityForCreation();
 
                 // set default values from request parameters
-                foreach ($this->request->query->all() as $key => $value) {
+                foreach ($request->query->all() as $key => $value) {
                     if (strlen($key) < 5 || substr($key, 0, 4) != 'set_') {
                         continue;
                     }
@@ -596,7 +592,7 @@ class FormHandler {
             }
 
             if (null === $entity) {
-                $this->request->getSession()->getFlashBag()->add('error', $this->__('No such item found.'));
+                $request->getSession()->getFlashBag()->add('error', $this->__('No such item found.'));
 
                 return new RedirectResponse($this->getRedirectUrl(['commandName' => 'cancel']), 302);
             }
@@ -611,7 +607,7 @@ class FormHandler {
 
             $actions = $this->workflowHelper->getActionsForObject($entity);
             if (false === $actions || !is_array($actions)) {
-                $this->request->getSession()->getFlashBag()->add('error', $this->__('Error! Could not determine workflow actions.'));
+                $request->getSession()->getFlashBag()->add('error', $this->__('Error! Could not determine workflow actions.'));
                 $logArgs = ['app' => '«appName»', 'user' => $this->currentUserApi->get('uname'), 'entity' => $this->objectType, 'id' => $entity->getKey()];
                 $this->logger->error('{app}: User {user} tried to edit the {entity} with id {id}, but failed to determine available workflow actions.', $logArgs);
                 throw new \RuntimeException($this->__('Error! Could not determine workflow actions.'));
@@ -633,7 +629,7 @@ class FormHandler {
             «ENDIF»
 
             // handle form request and check validity constraints of edited entity
-            if ($this->form->handleRequest($this->request) && $this->form->isSubmitted()) {
+            if ($this->form->handleRequest($request) && $this->form->isSubmitted()) {
                 if ($this->form->get('cancel')->isClicked()) {
                     «locking.releasePageLock(it)»
 
@@ -725,7 +721,8 @@ class FormHandler {
          */
         protected function initEntityForCreation()
         {
-            $templateId = $this->request->query->getInt('astemplate', 0);
+            $request = $this->requestStack->getCurrentRequest();
+            $templateId = $request->query->getInt('astemplate', 0);
             $entity = null;
 
             if ($templateId > 0) {
@@ -742,7 +739,7 @@ class FormHandler {
                 $entity = $this->entityFactory->$createMethod();
                 «IF hasTrees»
                     if (in_array($this->objectType, ['«getTreeEntities.map[name.formatForCode].join('\', \'')»'])) {
-                        $parentId = $this->request->query->getInt('parent', 0);
+                        $parentId = $request->query->getInt('parent', 0);
                         if ($parentId > 0) {
                             $parentEntity = $this->entityFactory->getRepository($this->objectType)->selectById($parentId);
                             if (null !== $parentEntity) {
@@ -881,7 +878,7 @@ class FormHandler {
                     $hookType = $action == 'delete' ? UiHooksCategory::TYPE_VALIDATE_DELETE : UiHooksCategory::TYPE_VALIDATE_EDIT;
                     $validationErrors = $this->hookHelper->callValidationHooks($entity, $hookType);
                     if (count($validationErrors) > 0) {
-                        $flashBag = $this->request->getSession()->getFlashBag();
+                        $flashBag = $this->requestStack->getCurrentRequest()->getSession()->getFlashBag();
                         foreach ($validationErrors as $message) {
                             $flashBag->add('error', $message);
                         }
@@ -913,7 +910,7 @@ class FormHandler {
                     $routeUrl = null;
                     if ($hasDisplayAction && $action != 'delete') {
                         $urlArgs = $entity->createUrlArgs();
-                        $urlArgs['_locale'] = $this->request->getLocale();
+                        $urlArgs['_locale'] = $this->requestStack->getCurrentRequest()->getLocale();
                         $routeUrl = new RouteUrl('«appName.formatForDB»_' . $this->objectTypeLower . '_display', $urlArgs);
                     }
 
@@ -1019,7 +1016,7 @@ class FormHandler {
             }
 
             $flashType = true === $success ? 'status' : 'error';
-            $this->request->getSession()->getFlashBag()->add($flashType, $message);
+            $this->requestStack->getCurrentRequest()->getSession()->getFlashBag()->add($flashType, $message);
             $logArgs = ['app' => '«appName»', 'user' => $this->currentUserApi->get('uname'), 'entity' => $this->objectType, 'id' => $this->entityRef->getKey()];
             if (true === $success) {
                 $this->logger->notice('{app}: User {user} updated the {entity} with id {id}.', $logArgs);
@@ -1051,7 +1048,7 @@ class FormHandler {
             «IF needsApproval»
 
                 if (isset($this->form['additionalNotificationRemarks']) && $this->form['additionalNotificationRemarks']->getData() != '') {
-                    $this->request->getSession()->set('«appName»AdditionalNotificationRemarks', $this->form['additionalNotificationRemarks']->getData());
+                    $this->requestStack->getCurrentRequest()->getSession()->set('«appName»AdditionalNotificationRemarks', $this->form['additionalNotificationRemarks']->getData());
                 }
             «ENDIF»
             «IF hasAttributableEntities»
@@ -1257,7 +1254,7 @@ class FormHandler {
 
             if ($this->templateParameters['mode'] == 'create') {
                 if (!$this->modelHelper->canBeCreated($this->objectType)) {
-                    $this->request->getSession()->getFlashBag()->add('error', $this->__('Sorry, but you can not create the «name.formatForDisplay» yet as other items are required which must be created before!'));
+                    $this->requestStack->getCurrentRequest()->getSession()->getFlashBag()->add('error', $this->__('Sorry, but you can not create the «name.formatForDisplay» yet as other items are required which must be created before!'));
                     $logArgs = ['app' => '«app.appName»', 'user' => $this->currentUserApi->get('uname'), 'entity' => $this->objectType];
                     $this->logger->notice('{app}: User {user} tried to create a new {entity}, but failed as it other items are required which must be created before.', $logArgs);
 
@@ -1400,7 +1397,7 @@ class FormHandler {
             «locking.getVersion(it)»
 
             $success = false;
-            $flashBag = $this->request->getSession()->getFlashBag();
+            $flashBag = $this->requestStack->getCurrentRequest()->getSession()->getFlashBag();
             try {
                 «locking.applyLock(it)»
                 // execute the workflow action

@@ -79,7 +79,6 @@ class QuickNavigationType {
         «ENDIF»
         use Symfony\Component\Form\FormBuilderInterface;
         «IF !incomingRelations.empty»
-            use Symfony\Component\HttpFoundation\Request;
             use Symfony\Component\HttpFoundation\RequestStack;
         «ENDIF»
         «IF hasLocaleFieldsEntity»
@@ -118,9 +117,9 @@ class QuickNavigationType {
             «IF !incomingRelations.empty»
 
                 /**
-                 * @var Request
+                 * @var RequestStack
                  */
-                protected $request;
+                protected $requestStack;
 
                 /**
                  * @var EntityDisplayHelper
@@ -177,7 +176,7 @@ class QuickNavigationType {
             ) {
                 $this->setTranslator($translator);
                 «IF !incomingRelations.empty»
-                    $this->request = $requestStack->getCurrentRequest();
+                    $this->requestStack = $requestStack;
                     $this->entityDisplayHelper = $entityDisplayHelper;
                 «ENDIF»
                 «IF hasListFieldsEntity»
@@ -348,10 +347,11 @@ class QuickNavigationType {
         public function addIncomingRelationshipFields(FormBuilderInterface $builder, array $options = [])
         {
             $mainSearchTerm = '';
-            if ($this->request->query->has('q')) {
+            $request = $this->requestStack->getCurrentRequest();
+            if ($request->query->has('q')) {
                 // remove current search argument from request to avoid filtering related items
-                $mainSearchTerm = $this->request->query->get('q');
-                $this->request->query->remove('q');
+                $mainSearchTerm = $request->query->get('q');
+                $request->query->remove('q');
             }
 
             «FOR relation : incomingRelations»
@@ -360,7 +360,7 @@ class QuickNavigationType {
 
             if ($mainSearchTerm != '') {
                 // readd current search argument
-                $this->request->query->set('q', $mainSearchTerm);
+                $request->query->set('q', $mainSearchTerm);
             }
         }
     '''

@@ -39,7 +39,6 @@ class CollectionFilterHelper {
         namespace «appNamespace»\Helper\Base;
 
         use Doctrine\ORM\QueryBuilder;
-        use Symfony\Component\HttpFoundation\Request;
         use Symfony\Component\HttpFoundation\RequestStack;
         «IF hasStandardFieldEntities»
             use Zikula\UsersModule\Api\ApiInterface\CurrentUserApiInterface;
@@ -59,9 +58,9 @@ class CollectionFilterHelper {
         abstract class AbstractCollectionFilterHelper
         {
             /**
-             * @var Request
+             * @var RequestStack
              */
-            protected $request;
+            protected $requestStack;
 
             /**
              * @var PermissionHelper
@@ -122,7 +121,7 @@ class CollectionFilterHelper {
                 $showOnlyOwnEntries«IF supportLocaleFilter»,
                 $filterDataByLocale«ENDIF»
             ) {
-                $this->request = $requestStack->getCurrentRequest();
+                $this->requestStack = $requestStack;
                 $this->permissionHelper = $permissionHelper;
                 «IF hasStandardFieldEntities»
                     $this->currentUserApi = $currentUserApi;
@@ -239,57 +238,58 @@ class CollectionFilterHelper {
         protected function getViewQuickNavParametersFor«name.formatForCodeCapital»($context = '', array $args = [])
         {
             $parameters = [];
-            if (null === $this->request) {
+            $request = $this->requestStack->getCurrentRequest();
+            if (null === $request) {
                 return $parameters;
             }
 
             «IF categorisable»
-                $parameters['catId'] = $this->request->query->get('catId', '');
+                $parameters['catId'] = $request->query->get('catId', '');
                 $parameters['catIdList'] = $this->categoryHelper->retrieveCategoriesFromRequest('«name.formatForCode»', 'GET');
             «ENDIF»
             «IF !getBidirectionalIncomingJoinRelationsWithOneSource.empty»
                 «FOR relation: getBidirectionalIncomingJoinRelationsWithOneSource»
                     «val sourceAliasName = relation.getRelationAliasName(false)»
-                    $parameters['«sourceAliasName»'] = $this->request->query->get('«sourceAliasName»', 0);
+                    $parameters['«sourceAliasName»'] = $request->query->get('«sourceAliasName»', 0);
                 «ENDFOR»
             «ENDIF»
             «IF hasListFieldsEntity»
                 «FOR field : getListFieldsEntity»
                     «val fieldName = field.name.formatForCode»
-                    $parameters['«fieldName»'] = $this->request->query->get('«fieldName»', '');
+                    $parameters['«fieldName»'] = $request->query->get('«fieldName»', '');
                 «ENDFOR»
             «ENDIF»
             «IF hasUserFieldsEntity»
                 «FOR field : getUserFieldsEntity»
                     «val fieldName = field.name.formatForCode»
-                    $parameters['«fieldName»'] = $this->request->query->getInt('«fieldName»', 0);
+                    $parameters['«fieldName»'] = $request->query->getInt('«fieldName»', 0);
                 «ENDFOR»
             «ENDIF»
             «IF hasCountryFieldsEntity»
                 «FOR field : getCountryFieldsEntity»
                     «val fieldName = field.name.formatForCode»
-                    $parameters['«fieldName»'] = $this->request->query->get('«fieldName»', '');
+                    $parameters['«fieldName»'] = $request->query->get('«fieldName»', '');
                 «ENDFOR»
             «ENDIF»
             «IF hasLanguageFieldsEntity»
                 «FOR field : getLanguageFieldsEntity»
                     «val fieldName = field.name.formatForCode»
-                    $parameters['«fieldName»'] = $this->request->query->get('«fieldName»', '');
+                    $parameters['«fieldName»'] = $request->query->get('«fieldName»', '');
                 «ENDFOR»
             «ENDIF»
             «IF hasLocaleFieldsEntity»
                 «FOR field : getLocaleFieldsEntity»
                     «val fieldName = field.name.formatForCode»
-                    $parameters['«fieldName»'] = $this->request->query->get('«fieldName»', '');
+                    $parameters['«fieldName»'] = $request->query->get('«fieldName»', '');
                 «ENDFOR»
             «ENDIF»
             «IF hasAbstractStringFieldsEntity»
-                $parameters['q'] = $this->request->query->get('q', '');
+                $parameters['q'] = $request->query->get('q', '');
             «ENDIF»
             «IF hasBooleanFieldsEntity»
                 «FOR field : getBooleanFieldsEntity»
                     «val fieldName = field.name.formatForCode»
-                    $parameters['«fieldName»'] = $this->request->query->get('«fieldName»', '');
+                    $parameters['«fieldName»'] = $request->query->get('«fieldName»', '');
                 «ENDFOR»
             «ENDIF»
 
@@ -307,10 +307,11 @@ class CollectionFilterHelper {
          */
         protected function addCommonViewFiltersFor«name.formatForCodeCapital»(QueryBuilder $qb)
         {
-            if (null === $this->request) {
+            $request = $this->requestStack->getCurrentRequest();
+            if (null === $request) {
                 return $qb;
             }
-            $routeName = $this->request->get('_route');
+            $routeName = $request->get('_route');
             if (false !== strpos($routeName, 'edit')) {«/* fix for #547 */»
                 return $qb;
             }
@@ -405,17 +406,18 @@ class CollectionFilterHelper {
          */
         protected function applyDefaultFiltersFor«name.formatForCodeCapital»(QueryBuilder $qb, array $parameters = [])
         {
-            if (null === $this->request) {
+            $request = $this->requestStack->getCurrentRequest();
+            if (null === $request) {
                 return $qb;
             }
-            $routeName = $this->request->get('_route');
+            $routeName = $request->get('_route');
             $isAdminArea = false !== strpos($routeName, '«application.appName.toLowerCase»_«name.formatForDB»_admin');
             if ($isAdminArea) {
                 return $qb;
             }
             «IF ownerPermission || standardFields»
 
-                $showOnlyOwnEntries = (bool)$this->request->query->getInt('own', $this->showOnlyOwnEntries);
+                $showOnlyOwnEntries = (bool)$request->query->getInt('own', $this->showOnlyOwnEntries);
             «ENDIF»
 
             if (!in_array('workflowState', array_keys($parameters)) || empty($parameters['workflowState'])) {
@@ -440,7 +442,7 @@ class CollectionFilterHelper {
             «IF hasLanguageFieldsEntity || hasLocaleFieldsEntity»
 
                 if (true === (bool)$this->filterDataByLocale) {
-                    $allowedLocales = ['', $this->request->getLocale()];
+                    $allowedLocales = ['', $request->getLocale()];
                     «FOR field : getLanguageFieldsEntity»
                         «val fieldName = field.name.formatForCode»
                         if (!in_array('«fieldName»', array_keys($parameters)) || empty($parameters['«fieldName»'])) {
@@ -491,8 +493,9 @@ class CollectionFilterHelper {
          */
         protected function applyDateRangeFilterFor«name.formatForCodeCapital»(QueryBuilder $qb, $alias = 'tbl')
         {
+            $request = $this->requestStack->getCurrentRequest();
             «IF hasStartDateField»
-                $startDate = $this->request->query->get('«startDateField.name.formatForCode»', «startDateField.defaultValueForNow»);
+                $startDate = $request->query->get('«startDateField.name.formatForCode»', «startDateField.defaultValueForNow»);
                 $qb->andWhere(«startDateField.whereClauseForDateRangeFilter('<=', 'startDate')»)
                    ->setParameter('startDate', $startDate);
                 «IF null !== endDateField»
@@ -500,7 +503,7 @@ class CollectionFilterHelper {
                 «ENDIF»
             «ENDIF»
             «IF hasEndDateField»
-                $endDate = $this->request->query->get('«endDateField.name.formatForCode»', «endDateField.defaultValueForNow»);
+                $endDate = $request->query->get('«endDateField.name.formatForCode»', «endDateField.defaultValueForNow»);
                 $qb->andWhere(«endDateField.whereClauseForDateRangeFilter('>=', 'endDate')»)
                    ->setParameter('endDate', $endDate);
             «ENDIF»

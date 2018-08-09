@@ -26,9 +26,7 @@ class NotificationHelper {
         namespace «appNamespace»\Helper\Base;
 
         use Swift_Message;
-        use Symfony\Component\HttpFoundation\Request;
         use Symfony\Component\HttpFoundation\RequestStack;
-        use Symfony\Component\HttpFoundation\Session\SessionInterface;
         use Symfony\Component\Routing\RouterInterface;
         use Twig_Environment;
         use Zikula\Bundle\CoreBundle\HttpKernel\ZikulaHttpKernelInterface;
@@ -57,11 +55,6 @@ class NotificationHelper {
         use TranslatorTrait;
 
         /**
-         * @var SessionInterface
-         */
-        protected $session;
-
-        /**
          * @var RouterInterface
          */
         protected $router;
@@ -72,9 +65,9 @@ class NotificationHelper {
         protected $kernel;
 
         /**
-         * @var Request
+         * @var RequestStack
          */
-        protected $request;
+        protected $requestStack;
 
         /**
          * @var VariableApiInterface
@@ -146,7 +139,6 @@ class NotificationHelper {
          *
          * @param ZikulaHttpKernelInterface $kernel              Kernel service instance
          * @param TranslatorInterface       $translator          Translator service instance
-         * @param SessionInterface          $session             Session service instance
          * @param Routerinterface           $router              Router service instance
          * @param RequestStack              $requestStack        RequestStack service instance
          * @param VariableApiInterface      $variableApi         VariableApi service instance
@@ -159,7 +151,6 @@ class NotificationHelper {
         public function __construct(
             ZikulaHttpKernelInterface $kernel,
             TranslatorInterface $translator,
-            SessionInterface $session,
             RouterInterface $router,
             RequestStack $requestStack,
             VariableApiInterface $variableApi,
@@ -171,9 +162,8 @@ class NotificationHelper {
         ) {
             $this->kernel = $kernel;
             $this->setTranslator($translator);
-            $this->session = $session;
             $this->router = $router;
-            $this->request = $requestStack->getCurrentRequest();
+            $this->requestStack = $requestStack;
             $this->variableApi = $variableApi;
             $this->templating = $twig;
             $this->mailerApi = $mailerApi;
@@ -215,15 +205,17 @@ class NotificationHelper {
                 return true;
             }
 
+            $session = $this->requestStack->getCurrentRequest()->getSession();
+
             if (null === $this->kernel->getModule('ZikulaMailerModule')) {
-                $this->session->getFlashBag()->add('error', $this->__('Could not inform other persons about your amendments, because the Mailer module is not available - please contact an administrator about that!'));
+                $session->getFlashBag()->add('error', $this->__('Could not inform other persons about your amendments, because the Mailer module is not available - please contact an administrator about that!'));
 
                 return false;
             }
 
             $result = $this->sendMails();
 
-            $this->session->remove($this->name . 'AdditionalNotificationRemarks');
+            $session->remove($this->name . 'AdditionalNotificationRemarks');
 
             return $result;
         }
@@ -406,7 +398,8 @@ class NotificationHelper {
             $state = $this->entity->getWorkflowState();
             $stateInfo = $this->workflowHelper->getStateInfo($state);
 
-            $remarks = $this->session->get($this->name . 'AdditionalNotificationRemarks', '');
+            $session = $this->requestStack->getCurrentRequest()->getSession();
+            $remarks = $session->get($this->name . 'AdditionalNotificationRemarks', '');
 
             $urlArgs = $this->entity->createUrlArgs();
 

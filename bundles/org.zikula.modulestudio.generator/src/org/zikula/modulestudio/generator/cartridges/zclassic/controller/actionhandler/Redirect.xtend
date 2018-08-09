@@ -189,8 +189,9 @@ class Redirect {
                 return $this->repeatReturnUrl;
             }
 
-            if ($this->request->getSession()->has('«app.appName.formatForDB»' . $this->objectTypeCapital . 'Referer')) {
-                $this->request->getSession()->remove('«app.appName.formatForDB»' . $this->objectTypeCapital . 'Referer');
+            $session = $this->requestStack->getCurrentRequest()->getSession();
+            if ($session->has('«app.appName.formatForDB»' . $this->objectTypeCapital . 'Referer')) {
+                $session->remove('«app.appName.formatForDB»' . $this->objectTypeCapital . 'Referer');
             }
 
             // normal usage, compute return url from given redirect code

@@ -25,7 +25,6 @@ class TranslatableHelper {
         namespace «appNamespace»\Helper\Base;
 
         use Symfony\Component\Form\FormInterface;
-        use Symfony\Component\HttpFoundation\Request;
         use Symfony\Component\HttpFoundation\RequestStack;
         use Zikula\Common\Translator\TranslatorInterface;
         use Zikula\Core\Doctrine\EntityAccess;
@@ -44,9 +43,9 @@ class TranslatableHelper {
             protected $translator;
 
             /**
-             * @var Request
+             * @var RequestStack
              */
-            protected $request;
+            protected $requestStack;
 
             /**
              * @var VariableApiInterface
@@ -80,7 +79,7 @@ class TranslatableHelper {
                 EntityFactory $entityFactory
             ) {
                 $this->translator = $translator;
-                $this->request = $requestStack->getCurrentRequest();
+                $this->requestStack = $requestStack;
                 $this->variableApi = $variableApi;
                 $this->localeApi = $localeApi;
                 $this->entityFactory = $entityFactory;
@@ -137,7 +136,7 @@ class TranslatableHelper {
          */
         public function getCurrentLanguage()
         {
-            return $this->request->getLocale();
+            return $this->requestStack->getCurrentRequest()->getLocale();
         }
     '''
 

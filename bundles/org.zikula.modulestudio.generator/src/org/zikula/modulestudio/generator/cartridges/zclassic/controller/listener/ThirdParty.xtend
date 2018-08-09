@@ -25,9 +25,9 @@ class ThirdParty {
             protected $filesystem;
 
             /**
-             * @var Request
+             * @var RequestStack
              */
-            protected $request;
+            protected $requestStack;
 
         «ENDIF»
         «IF needsApproval && generatePendingContentSupport»
@@ -55,7 +55,7 @@ class ThirdParty {
             {
                 «IF generateScribitePlugins»
                     $this->filesystem = $filesystem;
-                    $this->request = $requestStack->getCurrentRequest();
+                    $this->requestStack = $requestStack;
                 «ENDIF»
                 «IF needsApproval && generatePendingContentSupport»
                     $this->workflowHelper = $workflowHelper;
@@ -218,7 +218,7 @@ class ThirdParty {
                 [
                     'module' => '«appName»',
                     'type' => 'javascript',
-                    'path' => $this->request->getBasePath() . '/web/modules/«vendorAndName.toLowerCase»/js/«appName».Finder.js'
+                    'path' => $this->requestStack->getCurrentRequest()->getBasePath() . '/web/modules/«vendorAndName.toLowerCase»/js/«appName».Finder.js'
                 ]
             );
         }
@@ -237,7 +237,7 @@ class ThirdParty {
         {
             $event->getSubject()->add([
                 'name' => '«appName.formatForDB»',
-                'path' => $this->request->getBasePath() . '/web/modules/«vendorAndName.toLowerCase»/scribite/CKEditor/«appName.formatForDB»/',
+                'path' => $this->requestStack->getCurrentRequest()->getBasePath() . '/web/modules/«vendorAndName.toLowerCase»/scribite/CKEditor/«appName.formatForDB»/',
                 'file' => 'plugin.js',
                 'img' => 'ed_«appName.formatForDB».gif'
             ]);
@@ -257,7 +257,7 @@ class ThirdParty {
         {
             $event->getSubject()->add([
                 'name' => '«appName.formatForDB»',
-                'path' => $this->request->getBasePath() . '/web/modules/«vendorAndName.toLowerCase»/scribite/«editorName»/«appName.formatForDB»/plugin.js'
+                'path' => $this->requestStack->getCurrentRequest()->getBasePath() . '/web/modules/«vendorAndName.toLowerCase»/scribite/«editorName»/«appName.formatForDB»/plugin.js'
             ]);
         }
     '''
