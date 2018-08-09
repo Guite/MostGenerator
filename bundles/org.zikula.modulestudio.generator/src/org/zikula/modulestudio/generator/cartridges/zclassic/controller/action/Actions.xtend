@@ -274,7 +274,8 @@ class Actions {
         «ENDIF»
         «IF loggable»
             $requestedVersion = $request->query->getInt('version', 0);
-            if ($requestedVersion > 0) {
+            $versionPermLevel = $isAdmin ? ACCESS_ADMIN : ACCESS_EDIT;
+            if ($requestedVersion > 0 && $permissionHelper->hasEntityPermission($«name.formatForCode», $versionPermLevel)) {
                 // preview of a specific version is desired
                 $entityManager = $this->get('«application.appService».entity_factory')->getObjectManager();
                 $logEntriesRepository = $entityManager->getRepository('«application.appName»:«name.formatForCodeCapital»LogEntryEntity');

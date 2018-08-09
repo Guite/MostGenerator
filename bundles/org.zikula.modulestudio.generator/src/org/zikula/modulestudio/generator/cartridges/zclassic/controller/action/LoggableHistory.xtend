@@ -62,6 +62,7 @@ class LoggableHistory {
          * @return Response Output
          *
          * @throws NotFoundHttpException Thrown if invalid identifier is given or the «name.formatForDisplay» isn't found
+         * @throws AccessDeniedException Thrown if the user doesn't have required permissions
          «ELSE»
          * @inheritDoc
          * @Route("/«IF isAdmin»admin/«ENDIF»«name.formatForCode»/history/{«IF hasSluggableFields && slugUnique»slug«ELSE»id«ENDIF»}",
@@ -89,6 +90,12 @@ class LoggableHistory {
         $«name.formatForCode» = $entityFactory->getRepository('«name.formatForCode»')->selectBy«IF hasSluggableFields && slugUnique»Slug($slug)«ELSE»Id($id)«ENDIF»;
         if (null === $«name.formatForCode») {
             throw new NotFoundHttpException($this->__('No such «name.formatForDisplay» found.'));
+        }
+
+        $permissionHelper = $this->get('«application.appService».permission_helper');
+        $permLevel = $isAdmin ? ACCESS_ADMIN : ACCESS_EDIT;
+        if (!$permissionHelper->hasEntityPermission($«name.formatForCode», $permLevel)) {
+            throw new AccessDeniedException();
         }
 
         $routeArea = $isAdmin ? 'admin' : '';
