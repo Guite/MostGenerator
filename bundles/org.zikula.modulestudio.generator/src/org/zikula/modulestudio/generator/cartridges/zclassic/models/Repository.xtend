@@ -344,6 +344,10 @@ class Repository {
             $qb = $this->genericBaseQuery('', '', $useJoins, $slimMode);
             $qb = $this->addIdListFilter($idList, $qb);
 
+            if (!$slimMode && null !== $this->collectionFilterHelper) {
+                $qb = $this->collectionFilterHelper->applyDefaultFilters('«name.formatForCode»', $qb);
+            }
+
             $query = $this->getQueryFromBuilder($qb);
         
             $results = $query->getResult();
@@ -379,6 +383,10 @@ class Repository {
 
             if ($excludeId > 0) {
                 $qb = $this->addExclusion($qb, [$excludeId]);
+            }
+
+            if (!$slimMode && null !== $this->collectionFilterHelper) {
+                $qb = $this->collectionFilterHelper->applyDefaultFilters('«name.formatForCode»', $qb);
             }
 
             $query = $this->getQueryFromBuilder($qb);
@@ -423,7 +431,7 @@ class Repository {
         public function getListQueryBuilder($where = '', $orderBy = '', $useJoins = true, $slimMode = false)
         {
             $qb = $this->genericBaseQuery($where, $orderBy, $useJoins, $slimMode);
-            if ((!$useJoins || !$slimMode) && null !== $this->collectionFilterHelper) {
+            if (!$slimMode && null !== $this->collectionFilterHelper) {
                 $qb = $this->collectionFilterHelper->addCommonViewFilters('«name.formatForCode»', $qb);
             }
 
