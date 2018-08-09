@@ -153,7 +153,7 @@ class History {
                                                     <li>{{ __f('%field% set to:', {'%field%': field}) }}
                                                         <ul>
                                                             {% for singleValue in value %}
-                                                                <li class="italic">{{ singleValue }}</li>
+                                                                <li class="italic">{% if singleValue is iterable %}Array{% else %}{{ singleValue }}{% endif %}</li>
                                                             {% endfor %}
                                                         </ul>
                                                     </li>
