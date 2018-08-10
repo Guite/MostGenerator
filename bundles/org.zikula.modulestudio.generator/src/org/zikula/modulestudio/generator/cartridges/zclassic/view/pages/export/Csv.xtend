@@ -14,6 +14,7 @@ import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
+import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
 
 class Csv {
 
@@ -22,6 +23,7 @@ class Csv {
     extension ModelExtensions = new ModelExtensions
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
+    extension WorkflowExtensions = new WorkflowExtensions
 
     SimpleFields fieldHelper = new SimpleFields
 
@@ -42,23 +44,30 @@ class Csv {
 
     def private csvView(Entity it, String appName) '''
         {# purpose of this template: «nameMultiple.formatForDisplay» view csv view #}
-        {% spaceless %}«FOR field : getDisplayFields.filter[name != 'workflowState'] SEPARATOR ';'»«field.headerLine»«ENDFOR»«IF geographical»«FOR geoFieldName : newArrayList('latitude', 'longitude')»;"{{ __('«geoFieldName.formatForDisplayCapital»') }}"«ENDFOR»«ENDIF»;"{{ __('Workflow state') }}"
+        {% spaceless %}«FOR field : getDisplayFields.filter[name != 'workflowState'] SEPARATOR ';'»«field.headerLine»«ENDFOR»«IF geographical»«FOR geoFieldName : newArrayList('latitude', 'longitude')»;"{{ __('«geoFieldName.formatForDisplayCapital»') }}"«ENDFOR»«ENDIF»«IF hasVisibleWorkflow»;"{{ __('Workflow state') }}"«ENDIF»«headerLinesRelations»
+        {% endspaceless %}
+        «val objName = name.formatForCode»
+        {% for «objName» in items %}
+
+        {% spaceless %}
+            «FOR field : getDisplayFields.filter[f|f.name != 'workflowState'] SEPARATOR ';'»«field.displayEntry»«ENDFOR»«IF geographical»«FOR geoFieldName : newArrayList('latitude', 'longitude')»;"{{ «name.formatForCode».«geoFieldName»|«appName.formatForDB»_geoData }}"«ENDFOR»«ENDIF»«IF hasVisibleWorkflow»;"{{ «name.formatForCode».workflowState|«appName.formatForDB»_objectState(false)|lower }}"«ENDIF»«dataLinesRelations»
+        {% endspaceless %}
+        {% endfor %}
+    '''
+
+    def private headerLinesRelations(Entity it) '''
         «FOR relation : incoming.filter(OneToManyRelationship).filter[bidirectional]»«relation.headerLineRelation(false)»«ENDFOR»
         «FOR relation : outgoing.filter(OneToOneRelationship)»«relation.headerLineRelation(true)»«ENDFOR»
         «FOR relation : incoming.filter(ManyToManyRelationship).filter[bidirectional]»«relation.headerLineRelation(false)»«ENDFOR»
         «FOR relation : outgoing.filter(OneToManyRelationship)»«relation.headerLineRelation(true)»«ENDFOR»
-        «FOR relation : outgoing.filter(ManyToManyRelationship)»«relation.headerLineRelation(true)»«ENDFOR»{% endspaceless %}
-        «val objName = name.formatForCode»
-        {% for «objName» in items %}
-        {% spaceless %}
-            «FOR field : getDisplayFields.filter[f|f.name != 'workflowState'] SEPARATOR ';'»«field.displayEntry»«ENDFOR»«IF geographical»«FOR geoFieldName : newArrayList('latitude', 'longitude')»;"{{ «name.formatForCode».«geoFieldName»|«appName.formatForDB»_geoData }}"«ENDFOR»«ENDIF»;"{{ «name.formatForCode».workflowState|«appName.formatForDB»_objectState(false)|lower }}"
-            «FOR relation : incoming.filter(OneToManyRelationship).filter[bidirectional]»«relation.displayRelatedEntry(false)»«ENDFOR»
-            «FOR relation : outgoing.filter(OneToOneRelationship)»«relation.displayRelatedEntry(true)»«ENDFOR»
-            «FOR relation : incoming.filter(ManyToManyRelationship).filter[bidirectional]»«relation.displayRelatedEntries(false)»«ENDFOR»
-            «FOR relation : outgoing.filter(OneToManyRelationship)»«relation.displayRelatedEntries(true)»«ENDFOR»
-            «FOR relation : outgoing.filter(ManyToManyRelationship)»«relation.displayRelatedEntries(true)»«ENDFOR»
-        {% endspaceless %}
-        {% endfor %}
+        «FOR relation : outgoing.filter(ManyToManyRelationship)»«relation.headerLineRelation(true)»«ENDFOR»
+    '''
+    def private dataLinesRelations(Entity it) '''
+        «FOR relation : incoming.filter(OneToManyRelationship).filter[bidirectional]»«relation.displayRelatedEntry(false)»«ENDFOR»
+        «FOR relation : outgoing.filter(OneToOneRelationship)»«relation.displayRelatedEntry(true)»«ENDFOR»
+        «FOR relation : incoming.filter(ManyToManyRelationship).filter[bidirectional]»«relation.displayRelatedEntries(false)»«ENDFOR»
+        «FOR relation : outgoing.filter(OneToManyRelationship)»«relation.displayRelatedEntries(true)»«ENDFOR»
+        «FOR relation : outgoing.filter(ManyToManyRelationship)»«relation.displayRelatedEntries(true)»«ENDFOR»
     '''
 
     def private headerLine(DerivedField it) '''

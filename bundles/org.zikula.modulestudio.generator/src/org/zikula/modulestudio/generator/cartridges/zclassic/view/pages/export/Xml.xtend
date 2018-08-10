@@ -17,6 +17,7 @@ import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
+import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
 
 class Xml {
 
@@ -25,6 +26,7 @@ class Xml {
     extension ModelExtensions = new ModelExtensions
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
+    extension WorkflowExtensions = new WorkflowExtensions
 
     SimpleFields fieldHelper = new SimpleFields
 
@@ -89,7 +91,9 @@ class Xml {
                     <«geoFieldName»>{{ «name.formatForCode».«geoFieldName»|«appName.formatForDB»_geoData }}</«geoFieldName»>
                 «ENDFOR»
             «ENDIF»
-            <workflowState>{{ «name.formatForCode».workflowState|«appName.formatForDB»_objectState(false)|lower }}</workflowState>
+            «IF hasVisibleWorkflow»
+                <workflowState>{{ «name.formatForCode».workflowState|«appName.formatForDB»_objectState(false)|lower }}</workflowState>
+            «ENDIF»
             «FOR relation : incoming.filter(OneToManyRelationship).filter[bidirectional]»«relation.displayRelatedEntry(false)»«ENDFOR»
             «FOR relation : outgoing.filter(OneToOneRelationship)»«relation.displayRelatedEntry(true)»«ENDFOR»
             «FOR relation : incoming.filter(ManyToManyRelationship).filter[bidirectional]»«relation.displayRelatedEntries(false)»«ENDFOR»
