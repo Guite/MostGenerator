@@ -44,18 +44,20 @@ class History {
             {% block admin_page_icon isDiffView == true ? 'arrows-h' : 'history' %}
         «ENDIF»
         {% block content %}
-            {% if isDiffView != true %}
-                {{ pageAddAsset('javascript', zasset('@«app.appName»:js/«app.appName».VersionHistory.js')) }}
-            {% endif %}
-            {{ block('page_nav_links') }}
-            <div class="«app.appName.toLowerCase»-«name.formatForDB» «app.appName.toLowerCase»-history">
-                {% if isDiffView == true %}
-                    {{ block('diff_view') }}
-                {% else %}
-                    {{ block('history_table') }}
+            <div class="«application.appName.toLowerCase»-«name.formatForDB» «application.appName.toLowerCase»-history">
+                {% if isDiffView != true %}
+                    {{ pageAddAsset('javascript', zasset('@«app.appName»:js/«app.appName».VersionHistory.js')) }}
                 {% endif %}
+                {{ block('page_nav_links') }}
+                <div class="«app.appName.toLowerCase»-«name.formatForDB» «app.appName.toLowerCase»-history">
+                    {% if isDiffView == true %}
+                        {{ block('diff_view') }}
+                    {% else %}
+                        {{ block('history_table') }}
+                    {% endif %}
+                </div>
+                {{ block('page_nav_links') }}
             </div>
-            {{ block('page_nav_links') }}
         {% endblock %}
         {% block page_nav_links %}
             «pageNavLinks(app.appName)»

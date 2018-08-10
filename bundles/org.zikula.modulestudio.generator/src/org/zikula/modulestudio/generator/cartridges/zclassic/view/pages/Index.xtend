@@ -40,7 +40,9 @@ class Index {
             {% block admin_page_icon 'home' %}
         «ENDIF»
         {% block content %}
-            <p>{{ __('Welcome to the «name.formatForDisplay» section of the «application.name.formatForDisplayCapital» application.') }}</p>
+            <div class="«application.appName.toLowerCase»-«name.formatForDB» «application.appName.toLowerCase»-index">
+                <p>{{ __('Welcome to the «name.formatForDisplay» section of the «application.name.formatForDisplayCapital» application.') }}</p>
+            </div>
         {% endblock %}
     '''
 }
