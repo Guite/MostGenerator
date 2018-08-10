@@ -102,14 +102,16 @@ class MassHandling {
             }
 
             «IF !skipHookSubscribers»
-                // Let any ui hooks perform additional validation actions
-                $hookType = $action == 'delete' ? UiHooksCategory::TYPE_VALIDATE_DELETE : UiHooksCategory::TYPE_VALIDATE_EDIT;
-                $validationErrors = $hookHelper->callValidationHooks($entity, $hookType);
-                if (count($validationErrors) > 0) {
-                    foreach ($validationErrors as $message) {
-                        $this->addFlash('error', $message);
+                if ($entity->supportsHookSubscribers()) {
+                    // Let any ui hooks perform additional validation actions
+                    $hookType = $action == 'delete' ? UiHooksCategory::TYPE_VALIDATE_DELETE : UiHooksCategory::TYPE_VALIDATE_EDIT;
+                    $validationErrors = $hookHelper->callValidationHooks($entity, $hookType);
+                    if (count($validationErrors) > 0) {
+                        foreach ($validationErrors as $message) {
+                            $this->addFlash('error', $message);
+                        }
+                        continue;
                     }
-                    continue;
                 }
 
             «ENDIF»
@@ -135,17 +137,19 @@ class MassHandling {
             }
             «IF !skipHookSubscribers»
 
-                // Let any ui hooks know that we have updated or deleted an item
-                $hookType = $action == 'delete' ? UiHooksCategory::TYPE_PROCESS_DELETE : UiHooksCategory::TYPE_PROCESS_EDIT;
-                $url = null;
-                «IF hasDisplayAction»
-                    if ($action != 'delete') {
-                        $urlArgs = $entity->createUrlArgs();
-                        $urlArgs['_locale'] = $request->getLocale();
-                        $url = new RouteUrl('«application.appName.formatForDB»_«name.formatForDB»_display', $urlArgs);
-                    }
-                «ENDIF»
-                $hookHelper->callProcessHooks($entity, $hookType, $url);
+                if ($entity->supportsHookSubscribers()) {
+                    // Let any ui hooks know that we have updated or deleted an item
+                    $hookType = $action == 'delete' ? UiHooksCategory::TYPE_PROCESS_DELETE : UiHooksCategory::TYPE_PROCESS_EDIT;
+                    $url = null;
+                    «IF hasDisplayAction»
+                        if ($action != 'delete') {
+                            $urlArgs = $entity->createUrlArgs();
+                            $urlArgs['_locale'] = $request->getLocale();
+                            $url = new RouteUrl('«application.appName.formatForDB»_«name.formatForDB»_display', $urlArgs);
+                        }
+                    «ENDIF»
+                    $hookHelper->callProcessHooks($entity, $hookType, $url);
+                }
             «ENDIF»
         }
 
