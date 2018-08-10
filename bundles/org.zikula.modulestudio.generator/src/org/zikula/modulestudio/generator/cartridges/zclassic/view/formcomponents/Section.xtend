@@ -22,7 +22,7 @@ class Section {
         «extensionsAndRelations(app, fsa, isAdmin)»
 
         «IF !skipHookSubscribers»
-            {% if formHookTemplates|length > 0 %}
+            {% if supportsHookSubscribers and formHookTemplates|length > 0 %}
                 <fieldset>
                     {% for hookTemplate in formHookTemplates %}
                         {{ include(hookTemplate.0, hookTemplate.1, ignore_missing = true) }}
