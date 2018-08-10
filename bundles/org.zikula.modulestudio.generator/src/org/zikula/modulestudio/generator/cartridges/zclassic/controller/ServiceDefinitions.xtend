@@ -638,6 +638,9 @@ class ServiceDefinitions {
                 class: «nsBase.replace('Form\\Type\\', '')»Block\Form\Type\ItemListBlockType
                 arguments:
                     - "@translator.default"
+                    «IF hasCategorisableEntities»
+                        - "@zikula_categories_module.category_repository"
+                    «ENDIF»
                 «IF targets('2.0')»
                     tags: ['form.type']
                 «ELSE»

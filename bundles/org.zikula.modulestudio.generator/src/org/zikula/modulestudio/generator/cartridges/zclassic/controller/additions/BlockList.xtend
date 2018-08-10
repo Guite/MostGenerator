@@ -102,12 +102,21 @@ class BlockList {
              */
             protected function resolveCategoryIds(array $properties = [])
             {
-                if (!isset($properties['catIds'])) {
-                    $categoryHelper = $this->get('«appService».category_helper');
-                    $primaryRegistry = $categoryHelper->getPrimaryProperty($properties['objectType']);
-                    $properties['catIds'] = [$primaryRegistry => []];
-                } elseif (!is_array($properties['catIds'])) {
-                    $properties['catIds'] = explode(',', $properties['catIds']);
+                $categoryHelper = $this->get('«appService».category_helper');
+                $primaryRegistry = $categoryHelper->getPrimaryProperty($properties['objectType']);
+                if (!isset($properties['categories'])) {
+                    $properties['categories'] = [$primaryRegistry => []];
+                } else {
+                    if (!is_array($properties['categories'])) {
+                        $properties['categories'] = explode(',', $properties['categories']);
+                    }
+                    if (count($properties['categories']) > 0) {
+                        $firstCategories = reset($properties['categories']);
+                        if (!is_array($firstCategories)) {
+                            $firstCategories = [$firstCategories];
+                        }
+                        $properties['categories'] = [$primaryRegistry => $firstCategories];
+                    }
                 }
 
                 return $properties;
@@ -157,14 +166,12 @@ class BlockList {
             «IF hasCategorisableEntities»
 
                 // fetch category registries
-                $catProperties = null;
                 if (in_array($objectType, $this->categorisableObjectTypes)) {
                     if ($featureActivationHelper->isEnabled(FeatureActivationHelper::CATEGORIES, $properties['objectType'])) {
                         $categoryHelper = $this->get('«appService».category_helper');
-                        $catProperties = $categoryHelper->getAllProperties($objectType);
                         // apply category filters
-                        if (is_array($properties['catIds']) && count($properties['catIds']) > 0) {
-                            $qb = $categoryHelper->buildFilterClauses($qb, $objectType, $properties['catIds']);
+                        if (is_array($properties['categories']) && count($properties['categories']) > 0) {
+                            $qb = $categoryHelper->buildFilterClauses($qb, $objectType, $properties['categories']);
                         }
                     }
                 }

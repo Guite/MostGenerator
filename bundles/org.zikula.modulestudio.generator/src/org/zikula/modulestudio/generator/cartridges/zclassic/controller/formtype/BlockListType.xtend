@@ -30,6 +30,9 @@ class BlockListType {
         namespace «appNamespace»\Block\Form\Type\Base;
 
         use Symfony\Component\Form\AbstractType;
+        «IF hasCategorisableEntities»
+            use Symfony\Component\Form\CallbackTransformer;
+        «ENDIF»
         use «nsSymfonyFormType»ChoiceType;
         «IF getAllEntities.size == 1»
             use «nsSymfonyFormType»HiddenType;
@@ -39,6 +42,7 @@ class BlockListType {
         use Symfony\Component\Form\FormBuilderInterface;
         use Symfony\Component\OptionsResolver\OptionsResolver;
         «IF hasCategorisableEntities»
+            use Zikula\CategoriesModule\Entity\RepositoryInterface\CategoryRepositoryInterface;
             use Zikula\CategoriesModule\Form\Type\CategoriesType;
         «ENDIF»
         use Zikula\Common\Translator\TranslatorInterface;
@@ -53,15 +57,28 @@ class BlockListType {
         abstract class AbstractItemListBlockType extends AbstractType
         {
             use TranslatorTrait;
+            «IF hasCategorisableEntities»
+
+                /**
+                 * @var CategoryRepositoryInterface
+                 */
+                protected $categoryRepository;
+            «ENDIF»
 
             /**
              * ItemListBlockType constructor.
              *
              * @param TranslatorInterface $translator Translator service instance
+             «IF hasCategorisableEntities»
+             * @param CategoryRepositoryInterface $categoryRepository
+             «ENDIF»
              */
             public function __construct(TranslatorInterface $translator)
             {
                 $this->setTranslator($translator);
+                «IF hasCategorisableEntities»
+                    $this->categoryRepository = $categoryRepository;
+                «ENDIF»
             }
 
             «setTranslatorMethod»
@@ -177,7 +194,8 @@ class BlockListType {
                 return;
             }
 
-            $hasMultiSelection = $options['category_helper']->hasMultipleSelection($options['object_type']);
+            $objectType = $options['object_type'];
+            $hasMultiSelection = $options['category_helper']->hasMultipleSelection($objectType);
             $builder->add('categories', CategoriesType::class, [
                 'label' => ($hasMultiSelection ? $this->__('Categories') : $this->__('Category')) . ':',
                 'empty_data' => $hasMultiSelection ? [] : null,
@@ -189,10 +207,43 @@ class BlockListType {
                 'required' => false,
                 'multiple' => $hasMultiSelection,
                 'module' => '«appName»',
-                'entity' => ucfirst($options['object_type']) . 'Entity',
-                'entityCategoryClass' => '«appNamespace»\Entity\\' . ucfirst($options['object_type']) . 'CategoryEntity',
+                'entity' => ucfirst($objectType) . 'Entity',
+                'entityCategoryClass' => '«appNamespace»\Entity\\' . ucfirst($objectType) . 'CategoryEntity',
                 'showRegistryLabels' => true
             ]);
+
+            $categoryRepository = $this->categoryRepository;
+            $builder->get('categories')->addModelTransformer(new CallbackTransformer(
+                function ($catIds) use ($categoryRepository, $objectType, $hasMultiSelection) {
+                    $categoryMappings = [];
+                    $entityCategoryClass = '«appNamespace»\Entity\\' . ucfirst($objectType) . 'CategoryEntity';
+
+                    $catIds = is_array($catIds) ? $catIds : explode(',', $catIds);
+                    foreach ($catIds as $catId) {
+                        $category = $categoryRepository->find($catId);
+                        if (null === $category) {
+                            continue;
+                        }
+                        $mapping = new $entityCategoryClass(null, $category, null);
+                        $categoryMappings[] = $mapping;
+                    }
+
+                    if (!$hasMultiSelection) {
+                        $categoryMappings = count($categoryMappings) > 0 ? reset($categoryMappings) : null;
+                    }
+
+                    return $categoryMappings;
+                },
+                function ($result) use ($hasMultiSelection) {
+                    $catIds = [];
+
+                    foreach ($result as $categoryMapping) {
+                        $catIds[] = $categoryMapping->getCategory()->getId();
+                    }
+
+                    return $catIds;
+                }
+            ));
         }
     '''
 
