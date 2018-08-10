@@ -48,9 +48,11 @@ class ItemActions {
         «IF hasDisplayAction»
             if ($routeArea == 'admin') {
                 $title = $this->__('Preview', '«app.appName.formatForDB»');
+                $previewRouteParameters = $entity->createUrlArgs();
+                $previewRouteParameters['preview'] = 1;
                 $menu->addChild($title, [
                     'route' => $routePrefix . 'display',
-                    'routeParameters' => $entity->createUrlArgs()
+                    'routeParameters' => $previewRouteParameters
                 ]);
                 $menu[$title]->setLinkAttribute('target', '_blank');
                 $menu[$title]->setLinkAttribute('title', $this->__('Open preview page', '«app.appName.formatForDB»'));
