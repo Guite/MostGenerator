@@ -43,6 +43,14 @@ class BlockDetail {
     '''
 
     def private detailBlockBaseImpl(Application it) '''
+        /**
+         * @inheritDoc
+         */
+        public function getType()
+        {
+            return $this->__('Single «name.formatForDisplay» item');
+        }
+
         «display»
 
         «getDisplayArguments»
@@ -67,11 +75,7 @@ class BlockDetail {
 
     def private display(Application it) '''
         /**
-         * Display the block content.
-         *
-         * @param array $properties The block properties
-         *
-         * @return string
+         * @inheritDoc
          */
         public function display(array $properties = [])
         {
@@ -121,9 +125,7 @@ class BlockDetail {
 
     def private modify(Application it) '''
         /**
-         * Returns the fully qualified class name of the block's form class.
-         *
-         * @return string Template path
+         * @inheritDoc
          */
         public function getFormClassName()
         {
@@ -131,9 +133,7 @@ class BlockDetail {
         }
 
         /**
-         * Returns an array of form options.
-         *
-         * @return array Options array
+         * @inheritDoc
          */
         public function getFormOptions()
         {
@@ -159,9 +159,7 @@ class BlockDetail {
         }
 
         /**
-         * Returns the template used for rendering the editing form.
-         *
-         * @return string Template path
+         * @inheritDoc
          */
         public function getFormTemplate()
         {

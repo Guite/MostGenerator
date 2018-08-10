@@ -3,11 +3,13 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.controller.additio
 import de.guite.modulestudio.metamodel.Application
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.additions.BlockModerationView
+import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
 
 class BlockModeration {
 
+    extension FormattingExtensions = new FormattingExtensions
     extension Utils = new Utils
     extension WorkflowExtensions = new WorkflowExtensions
 
@@ -36,6 +38,14 @@ class BlockModeration {
     '''
 
     def private moderationBlockBaseImpl(Application it) '''
+        /**
+         * @inheritDoc
+         */
+        public function getType()
+        {
+            return $this->__('«name.formatForDisplayCapital» moderation');
+        }
+
         «display»
 
         «getDisplayTemplate»
@@ -43,11 +53,7 @@ class BlockModeration {
 
     def private display(Application it) '''
         /**
-         * Display the block content.
-         *
-         * @param array $properties The block properties
-         *
-         * @return string
+         * @inheritDoc
          */
         public function display(array $properties = [])
         {

@@ -69,6 +69,14 @@ class BlockList {
             }
 
         «ENDIF»
+        /**
+         * @inheritDoc
+         */
+        public function getType()
+        {
+            return $this->__('List of «name.formatForDisplay» items');
+        }
+
         «display»
 
         «getDisplayTemplate»
@@ -126,11 +134,7 @@ class BlockList {
 
     def private display(Application it) '''
         /**
-         * Display the block content.
-         *
-         * @param array $properties The block properties
-         *
-         * @return string
+         * @inheritDoc
          */
         public function display(array $properties = [])
         {
@@ -262,9 +266,7 @@ class BlockList {
 
     def private modify(Application it) '''
         /**
-         * Returns the fully qualified class name of the block's form class.
-         *
-         * @return string Template path
+         * @inheritDoc
          */
         public function getFormClassName()
         {
@@ -272,9 +274,7 @@ class BlockList {
         }
 
         /**
-         * Returns an array of form options.
-         *
-         * @return array Options array
+         * @inheritDoc
          */
         public function getFormOptions()
         {
@@ -303,9 +303,7 @@ class BlockList {
         }
 
         /**
-         * Returns the template used for rendering the editing form.
-         *
-         * @return string Template path
+         * @inheritDoc
          */
         public function getFormTemplate()
         {
