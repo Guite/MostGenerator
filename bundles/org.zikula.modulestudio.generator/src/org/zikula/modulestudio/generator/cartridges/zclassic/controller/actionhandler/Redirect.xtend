@@ -153,7 +153,7 @@ class Redirect {
 
                 if ($objectIsPersisted) {
                     // redirect to the detail page of treated «name.formatForCode»
-                    $url = $this->router->generate($routePrefix . 'display', [«routeParams('this->idValue', false)»]);
+                    $url = $this->router->generate($routePrefix . 'display', [«IF hasSluggableFields && slugUnique && needsSlugHandler»$this->originalSlug«ELSE»«routeParams('this->idValue', false)»«ENDIF»]);
                 }
             «ENDIF»
 
