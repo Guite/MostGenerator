@@ -131,21 +131,22 @@ class BlockDetailType {
         {
             $builder->add('objectType', «IF getAllEntities.filter[hasDisplayAction].size == 1»Hidden«ELSE»Choice«ENDIF»Type::class, [
                 'label' => $this->__('Object type') . ':',
-                'empty_data' => '«leadingEntity.name.formatForCode»',
-                'attr' => [
-                    'title' => $this->__('If you change this please save the block once to reload the parameters below.')
-                ],
-                'help' => $this->__('If you change this please save the block once to reload the parameters below.')«IF getAllEntities.filter[hasDisplayAction].size > 1»,
-                'choices' => [
-                    «FOR entity : getAllEntities.filter[hasDisplayAction]»
-                        $this->__('«entity.nameMultiple.formatForDisplayCapital»') => '«entity.name.formatForCode»'«IF entity != getAllEntities.filter[hasDisplayAction].last»,«ENDIF»
-                    «ENDFOR»
-                ],
-                «IF !targets('2.0')»
-                    'choices_as_values' => true,
-                «ENDIF»
-                'multiple' => false,
-                'expanded' => false
+                'empty_data' => '«leadingEntity.name.formatForCode»'«IF getAllEntities.filter[hasDisplayAction].size > 1»,«ENDIF»
+                «IF getAllEntities.filter[hasDisplayAction].size > 1»
+                    'attr' => [
+                        'title' => $this->__('If you change this please save the block once to reload the parameters below.')
+                    ],
+                    'help' => $this->__('If you change this please save the block once to reload the parameters below.'),
+                    'choices' => [
+                        «FOR entity : getAllEntities.filter[hasDisplayAction]»
+                            $this->__('«entity.nameMultiple.formatForDisplayCapital»') => '«entity.name.formatForCode»'«IF entity != getAllEntities.filter[hasDisplayAction].last»,«ENDIF»
+                        «ENDFOR»
+                    ],
+                    «IF !targets('2.0')»
+                        'choices_as_values' => true,
+                    «ENDIF»
+                    'multiple' => false,
+                    'expanded' => false
                 «ENDIF»
             ]);
         }

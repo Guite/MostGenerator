@@ -143,21 +143,22 @@ class BlockListType {
         {
             $builder->add('objectType', «IF getAllEntities.size == 1»Hidden«ELSE»Choice«ENDIF»Type::class, [
                 'label' => $this->__('Object type') . ':',
-                'empty_data' => '«leadingEntity.name.formatForCode»',
-                'attr' => [
-                    'title' => $this->__('If you change this please save the block once to reload the parameters below.')
-                ],
-                'help' => $this->__('If you change this please save the block once to reload the parameters below.')«IF getAllEntities.size > 1»,
-                'choices' => [
-                    «FOR entity : getAllEntities»
-                        $this->__('«entity.nameMultiple.formatForDisplayCapital»') => '«entity.name.formatForCode»'«IF entity != getAllEntities.last»,«ENDIF»
-                    «ENDFOR»
-                ],
-                «IF !targets('2.0')»
-                    'choices_as_values' => true,
-                «ENDIF»
-                'multiple' => false,
-                'expanded' => false
+                'empty_data' => '«leadingEntity.name.formatForCode»'«IF getAllEntities.size > 1»,«ENDIF»
+                «IF getAllEntities.size > 1»
+                    'attr' => [
+                        'title' => $this->__('If you change this please save the block once to reload the parameters below.')
+                    ],
+                    'help' => $this->__('If you change this please save the block once to reload the parameters below.'),
+                    'choices' => [
+                        «FOR entity : getAllEntities»
+                            $this->__('«entity.nameMultiple.formatForDisplayCapital»') => '«entity.name.formatForCode»'«IF entity != getAllEntities.last»,«ENDIF»
+                        «ENDFOR»
+                    ],
+                    «IF !targets('2.0')»
+                        'choices_as_values' => true,
+                    «ENDIF»
+                    'multiple' => false,
+                    'expanded' => false
                 «ENDIF»
             ]);
         }
