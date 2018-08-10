@@ -73,7 +73,7 @@ class BlockListType {
              * @param CategoryRepositoryInterface $categoryRepository
              «ENDIF»
              */
-            public function __construct(TranslatorInterface $translator)
+            public function __construct(TranslatorInterface $translator«IF hasCategorisableEntities», CategoryRepositoryInterface $categoryRepository«ENDIF»)
             {
                 $this->setTranslator($translator);
                 «IF hasCategorisableEntities»
