@@ -575,20 +575,17 @@ class Repository {
         public function getCountQuery($where = '', $useJoins = false)
         {
             $selection = 'COUNT(tbl.«getPrimaryKey.name.formatForCode») AS num«nameMultiple.formatForCodeCapital»';
-            if (true === $useJoins) {
-                $selection .= $this->addJoinsToSelection();
-            }
 
             $qb = $this->getEntityManager()->createQueryBuilder();
             $qb->select($selection)
                ->from($this->mainEntityClass, 'tbl');
 
-            if (!empty($where)) {
-                $qb->andWhere($where);
-            }
-
             if (true === $useJoins) {
                 $this->addJoinsToFrom($qb);
+            }
+
+            if (!empty($where)) {
+                $qb->andWhere($where);
             }
 
             return $qb;
