@@ -67,6 +67,12 @@ class Mailz {
             $plugins[] = [
                 'pluginid'    => 2,
                 'module'      => '«appName»',
+                'title'       => $translator->__('3 recently updated «itemDesc»'),
+                'description' => $translator->__('A list of the three recently updated «itemDesc».')
+            ];
+            $plugins[] = [
+                'pluginid'    => 3,
+                'module'      => '«appName»',
                 'title'       => $translator->__('3 random «itemDesc»'),
                 'description' => $translator->__('A list of three random «itemDesc».')
             ];
@@ -96,10 +102,12 @@ class Mailz {
             $repository = $this->container->get('«appService».entity_factory')->getRepository($objectType);
 
             $sorting = 'default';
-            if ($args['pluginid'] == 2) {
-                $sorting = 'random';
-            } elseif ($args['pluginid'] == 1) {
+            if ($args['pluginid'] == 1) {
                 $sorting = 'newest';
+            } elseif ($args['pluginid'] == 2) {
+                $sorting = 'updated';
+            } elseif ($args['pluginid'] == 3) {
+                $sorting = 'random';
             }
             $sortParam = $this->container->get('«appService».model_helper')->resolveSortParameter($objectType, $sorting);
 

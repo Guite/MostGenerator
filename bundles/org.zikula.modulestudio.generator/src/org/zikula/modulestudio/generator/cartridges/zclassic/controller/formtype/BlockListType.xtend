@@ -262,6 +262,7 @@ class BlockListType {
                 'choices' => [
                     $this->__('Random') => 'random',
                     $this->__('Newest') => 'newest',
+                    $this->__('Updated') => 'updated',
                     $this->__('Default') => 'default'
                 ],
                 «IF !targets('2.0')»

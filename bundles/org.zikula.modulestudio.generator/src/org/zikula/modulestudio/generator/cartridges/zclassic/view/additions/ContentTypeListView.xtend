@@ -105,6 +105,9 @@ class ContentTypeListView {
                 {formradiobutton id='«appName.toFirstLower»SortNewest' value='newest' dataField='sorting' group='data' mandatory=true}
                 {gt text='Newest' domain='«appName.formatForDB»' assign='sortingNewestLabel'}
                 {formlabel for='«appName.toFirstLower»SortNewest' text=$sortingNewestLabel}
+                {formradiobutton id='«appName.toFirstLower»SortUpdated' value='updated' dataField='sorting' group='data' mandatory=true}
+                {gt text='Updated' domain='«appName.formatForDB»' assign='sortingUpdatedLabel'}
+                {formlabel for='«appName.toFirstLower»SortUpdated' text=$sortingUpdatedLabel}
                 {formradiobutton id='«appName.toFirstLower»SortDefault' value='default' dataField='sorting' group='data' mandatory=true}
                 {gt text='Default' domain='«appName.formatForDB»' assign='sortingDefaultLabel'}
                 {formlabel for='«appName.toFirstLower»SortDefault' text=$sortingDefaultLabel}

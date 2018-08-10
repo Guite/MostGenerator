@@ -58,7 +58,8 @@ class NewsletterView {
                 <select id="«appName.toFirstLower»Args_{$objectType}_sorting" name="«appName»Args[{$objectType}][sorting]" class="form-control">
                     <option value="random"{if $pageArgs.$objectType.sorting eq 'random'} selected="selected"{/if}>{gt text='Random'}</option>
                     <option value="newest"{if $pageArgs.$objectType.sorting eq 'newest'} selected="selected"{/if}>{gt text='Newest'}</option>
-                    <option value="alpha"{if $pageArgs.$objectType.sorting eq 'default' || ($pageArgs.$objectType.sorting != 'random' && $pageArgs.$objectType.sorting != 'newest')} selected="selected"{/if}>{gt text='Default'}</option>
+                    <option value="updated"{if $pageArgs.$objectType.sorting eq 'updated'} selected="selected"{/if}>{gt text='Updated'}</option>
+                    <option value="alpha"{if $pageArgs.$objectType.sorting eq 'default' || ($pageArgs.$objectType.sorting != 'random' && $pageArgs.$objectType.sorting != 'newest' && $pageArgs.$objectType.sorting != 'updated')} selected="selected"{/if}>{gt text='Default'}</option>
                 </select>
             </div>
         </div>
