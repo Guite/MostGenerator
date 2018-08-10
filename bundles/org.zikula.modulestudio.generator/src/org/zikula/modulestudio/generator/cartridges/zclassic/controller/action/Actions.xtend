@@ -294,7 +294,7 @@ class Actions {
         ];
 
         $controllerHelper = $this->get('«app.appService».controller_helper');
-        $templateParameters = $controllerHelper->processDisplayActionParameters($objectType, $templateParameters«IF app.hasHookSubscribers», «(!skipHookSubscribers).displayBool»«ENDIF»);
+        $templateParameters = $controllerHelper->processDisplayActionParameters($objectType, $templateParameters«IF app.hasHookSubscribers», $«name.formatForCode»->supportsHookSubscribers()«ENDIF»);
 
         «processDisplayOutput»
     '''
