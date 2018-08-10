@@ -35,7 +35,7 @@ class Index {
             {# purpose of this template: «nameMultiple.formatForDisplay» index view #}
             {% extends routeArea == 'admin' ? '«application.appName»::adminBase.html.twig' : '«application.appName»::base.html.twig' %}
         «ENDIF»
-        {% block title __('«nameMultiple.formatForDisplay»') %}
+        {% block title __('«nameMultiple.formatForDisplayCapital»') %}
         «IF !application.separateAdminTemplates || isAdmin»
             {% block admin_page_icon 'home' %}
         «ENDIF»
