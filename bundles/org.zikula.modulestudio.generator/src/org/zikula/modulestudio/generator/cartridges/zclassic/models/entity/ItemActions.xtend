@@ -189,12 +189,12 @@ class ItemActions {
             «application.addIcon('files-o')»
         «ELSE»
             if ($permissionHelper->hasEntityPermission($entity, ACCESS_ADD)) {
-                $title = $this->__('Add sub «name.formatForDisplay»', 'zikulacontentmodule');
+                $title = $this->__('Add sub «name.formatForDisplay»', '«application.appName.formatForDB»');
                 $menu->addChild($title, [
                     'route' => $routePrefix . $routeArea . 'edit',
                     'routeParameters' => ['parent' => $entity->getKey()]
                 ]);
-                $menu[$title]->setLinkAttribute('title', $this->__('Add a sub «name.formatForDisplay» to this «name.formatForDisplay»', 'zikulacontentmodule'));
+                $menu[$title]->setLinkAttribute('title', $this->__('Add a sub «name.formatForDisplay» to this «name.formatForDisplay»', '«application.appName.formatForDB»'));
                 «application.addLinkClass('default')»
                 «application.addIcon('child')»
             }
