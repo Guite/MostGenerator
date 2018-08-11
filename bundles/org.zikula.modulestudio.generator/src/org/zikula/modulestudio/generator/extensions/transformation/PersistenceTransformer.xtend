@@ -428,7 +428,7 @@ class PersistenceTransformer {
         varContainer.fields += factory.createStringField => [
             name = 'tileLayerUrl'
             defaultValue = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
-            documentation = 'URL of tile layer to use. See http://leaflet-extras.github.io/leaflet-providers/preview/ for examples.'
+            documentation = 'URL of tile layer to use. See https://leaflet-extras.github.io/leaflet-providers/preview/ for examples.'
         ]
         varContainer.fields += factory.createStringField => [
             name = 'tileLayerAttribution'
