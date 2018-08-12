@@ -159,16 +159,16 @@ class BlockListType {
         public function addObjectTypeField(FormBuilderInterface $builder, array $options = [])
         {
             $builder->add('objectType', «IF getAllEntities.size == 1»Hidden«ELSE»Choice«ENDIF»Type::class, [
-                'label' => $this->__('Object type') . ':',
+                'label' => $this->__('Object type'«IF !isSystemModule», '«appName.formatForDB»'«ENDIF») . ':',
                 'empty_data' => '«leadingEntity.name.formatForCode»'«IF getAllEntities.size > 1»,«ENDIF»
                 «IF getAllEntities.size > 1»
                     'attr' => [
-                        'title' => $this->__('If you change this please save the block once to reload the parameters below.')
+                        'title' => $this->__('If you change this please save the block once to reload the parameters below.'«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»)
                     ],
-                    'help' => $this->__('If you change this please save the block once to reload the parameters below.'),
+                    'help' => $this->__('If you change this please save the block once to reload the parameters below.'«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»),
                     'choices' => [
                         «FOR entity : getAllEntities»
-                            $this->__('«entity.nameMultiple.formatForDisplayCapital»') => '«entity.name.formatForCode»'«IF entity != getAllEntities.last»,«ENDIF»
+                            $this->__('«entity.nameMultiple.formatForDisplayCapital»'«IF !isSystemModule», '«appName.formatForDB»'«ENDIF») => '«entity.name.formatForCode»'«IF entity != getAllEntities.last»,«ENDIF»
                         «ENDFOR»
                     ],
                     «IF !targets('2.0')»
@@ -197,13 +197,13 @@ class BlockListType {
             $objectType = $options['object_type'];
             $hasMultiSelection = $options['category_helper']->hasMultipleSelection($objectType);
             $builder->add('categories', CategoriesType::class, [
-                'label' => ($hasMultiSelection ? $this->__('Categories') : $this->__('Category')) . ':',
+                'label' => ($hasMultiSelection ? $this->__('Categories'«IF !isSystemModule», '«appName.formatForDB»'«ENDIF») : $this->__('Category'«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»)) . ':',
                 'empty_data' => $hasMultiSelection ? [] : null,
                 'attr' => [
                     'class' => 'category-selector',
-                    'title' => $this->__('This is an optional filter.')
+                    'title' => $this->__('This is an optional filter.'«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»)
                 ],
-                'help' => $this->__('This is an optional filter.'),
+                'help' => $this->__('This is an optional filter.'«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»),
                 'required' => false,
                 'multiple' => $hasMultiSelection,
                 'module' => '«appName»',
@@ -257,13 +257,13 @@ class BlockListType {
         public function addSortingField(FormBuilderInterface $builder, array $options = [])
         {
             $builder->add('sorting', ChoiceType::class, [
-                'label' => $this->__('Sorting') . ':',
+                'label' => $this->__('Sorting'«IF !isSystemModule», '«appName.formatForDB»'«ENDIF») . ':',
                 'empty_data' => 'default',
                 'choices' => [
-                    $this->__('Random') => 'random',
-                    $this->__('Newest') => 'newest',
-                    $this->__('Updated') => 'updated',
-                    $this->__('Default') => 'default'
+                    $this->__('Random'«IF !isSystemModule», '«appName.formatForDB»'«ENDIF») => 'random',
+                    $this->__('Newest'«IF !isSystemModule», '«appName.formatForDB»'«ENDIF») => 'newest',
+                    $this->__('Updated'«IF !isSystemModule», '«appName.formatForDB»'«ENDIF») => 'updated',
+                    $this->__('Default'«IF !isSystemModule», '«appName.formatForDB»'«ENDIF») => 'default'
                 ],
                 «IF !targets('2.0')»
                     'choices_as_values' => true,
@@ -284,12 +284,12 @@ class BlockListType {
         public function addAmountField(FormBuilderInterface $builder, array $options = [])
         {
             $builder->add('amount', IntegerType::class, [
-                'label' => $this->__('Amount') . ':',
+                'label' => $this->__('Amount'«IF !isSystemModule», '«appName.formatForDB»'«ENDIF») . ':',
                 'attr' => [
                     'maxlength' => 2,
-                    'title' => $this->__('The maximum amount of items to be shown.') . ' ' . $this->__('Only digits are allowed.')
+                    'title' => $this->__('The maximum amount of items to be shown.'«IF !isSystemModule», '«appName.formatForDB»'«ENDIF») . ' ' . $this->__('Only digits are allowed.'«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»)
                 ],
-                'help' => $this->__('The maximum amount of items to be shown.') . ' ' . $this->__('Only digits are allowed.'),
+                'help' => $this->__('The maximum amount of items to be shown.'«IF !isSystemModule», '«appName.formatForDB»'«ENDIF») . ' ' . $this->__('Only digits are allowed.'«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»),
                 'empty_data' => 5,
                 'scale' => 0
             ]);
@@ -307,12 +307,12 @@ class BlockListType {
         {
             $builder
                 ->add('template', ChoiceType::class, [
-                    'label' => $this->__('Template') . ':',
+                    'label' => $this->__('Template'«IF !isSystemModule», '«appName.formatForDB»'«ENDIF») . ':',
                     'empty_data' => 'itemlist_display.html.twig',
                     'choices' => [
-                        $this->__('Only item titles') => 'itemlist_display.html.twig',
-                        $this->__('With description') => 'itemlist_display_description.html.twig',
-                        $this->__('Custom template') => 'custom'
+                        $this->__('Only item titles'«IF !isSystemModule», '«appName.formatForDB»'«ENDIF») => 'itemlist_display.html.twig',
+                        $this->__('With description'«IF !isSystemModule», '«appName.formatForDB»'«ENDIF») => 'itemlist_display_description.html.twig',
+                        $this->__('Custom template'«IF !isSystemModule», '«appName.formatForDB»'«ENDIF») => 'custom'
                     ],
                     «IF !targets('2.0')»
                         'choices_as_values' => true,
@@ -321,13 +321,13 @@ class BlockListType {
                     'expanded' => false
                 ])
                 ->add('customTemplate', TextType::class, [
-                    'label' => $this->__('Custom template') . ':',
+                    'label' => $this->__('Custom template'«IF !isSystemModule», '«appName.formatForDB»'«ENDIF») . ':',
                     'required' => false,
                     'attr' => [
                         'maxlength' => 80,
-                        'title' => $this->__('Example') . ': itemlist_[objectType]_display.html.twig'
+                        'title' => $this->__('Example'«IF !isSystemModule», '«appName.formatForDB»'«ENDIF») . ': itemlist_[objectType]_display.html.twig'
                     ],
-                    'help' => $this->__('Example') . ': <em>itemlist_[objectType]_display.html.twig</em>'
+                    'help' => $this->__('Example'«IF !isSystemModule», '«appName.formatForDB»'«ENDIF») . ': <em>itemlist_[objectType]_display.html.twig</em>'
                 ])
             ;
         }
@@ -343,13 +343,13 @@ class BlockListType {
         public function addFilterField(FormBuilderInterface $builder, array $options = [])
         {
             $builder->add('filter', TextType::class, [
-                'label' => $this->__('Filter (expert option)') . ':',
+                'label' => $this->__('Filter (expert option)'«IF !isSystemModule», '«appName.formatForDB»'«ENDIF») . ':',
                 'required' => false,
                 'attr' => [
                     'maxlength' => 255,
-                    'title' => $this->__('Example') . ': tbl.age >= 18'
+                    'title' => $this->__('Example'«IF !isSystemModule», '«appName.formatForDB»'«ENDIF») . ': tbl.age >= 18'
                 ],
-                'help' => $this->__('Example') . ': tbl.age >= 18'
+                'help' => $this->__('Example'«IF !isSystemModule», '«appName.formatForDB»'«ENDIF») . ': tbl.age >= 18'
             ]);
         }
     '''

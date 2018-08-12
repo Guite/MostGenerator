@@ -130,16 +130,16 @@ class BlockDetailType {
         public function addObjectTypeField(FormBuilderInterface $builder, array $options = [])
         {
             $builder->add('objectType', «IF getAllEntities.filter[hasDisplayAction].size == 1»Hidden«ELSE»Choice«ENDIF»Type::class, [
-                'label' => $this->__('Object type') . ':',
+                'label' => $this->__('Object type'«IF !isSystemModule», '«appName.formatForDB»'«ENDIF») . ':',
                 'empty_data' => '«leadingEntity.name.formatForCode»'«IF getAllEntities.filter[hasDisplayAction].size > 1»,«ENDIF»
                 «IF getAllEntities.filter[hasDisplayAction].size > 1»
                     'attr' => [
-                        'title' => $this->__('If you change this please save the block once to reload the parameters below.')
+                        'title' => $this->__('If you change this please save the block once to reload the parameters below.'«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»)
                     ],
-                    'help' => $this->__('If you change this please save the block once to reload the parameters below.'),
+                    'help' => $this->__('If you change this please save the block once to reload the parameters below.'«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»),
                     'choices' => [
                         «FOR entity : getAllEntities.filter[hasDisplayAction]»
-                            $this->__('«entity.nameMultiple.formatForDisplayCapital»') => '«entity.name.formatForCode»'«IF entity != getAllEntities.filter[hasDisplayAction].last»,«ENDIF»
+                            $this->__('«entity.nameMultiple.formatForDisplayCapital»'«IF !isSystemModule», '«appName.formatForDB»'«ENDIF») => '«entity.name.formatForCode»'«IF entity != getAllEntities.filter[hasDisplayAction].last»,«ENDIF»
                         «ENDFOR»
                     ],
                     «IF !targets('2.0')»
@@ -179,7 +179,7 @@ class BlockDetailType {
                     'choices_as_values' => true,
                 «ENDIF»
                 'required' => true,
-                'label' => $this->__('Entry to display') . ':'
+                'label' => $this->__('Entry to display'«IF !isSystemModule», '«appName.formatForDB»'«ENDIF») . ':'
             ]);
         }
     '''
@@ -195,15 +195,15 @@ class BlockDetailType {
         {
             $builder
                 ->add('customTemplate', TextType::class, [
-                    'label' => $this->__('Custom template') . ':',
+                    'label' => $this->__('Custom template'«IF !isSystemModule», '«appName.formatForDB»'«ENDIF») . ':',
                     'required' => false,
                     'attr' => [
                         'maxlength' => 80,
-                        'title' => $this->__('Example') . ': displaySpecial.html.twig'
+                        'title' => $this->__('Example'«IF !isSystemModule», '«appName.formatForDB»'«ENDIF») . ': displaySpecial.html.twig'
                     ],
                     'help' => [
-                        $this->__('Example') . ': <em>displaySpecial.html.twig</em>',
-                        $this->__('Needs to be located in the "External/YourEntity/" directory.')
+                        $this->__('Example'«IF !isSystemModule», '«appName.formatForDB»'«ENDIF») . ': <em>displaySpecial.html.twig</em>',
+                        $this->__('Needs to be located in the "External/YourEntity/" directory.'«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»)
                     ]
                 ])
             ;
