@@ -40,10 +40,15 @@ class TreeData {
             $repository = $this->entityFactory->getRepository($objectType);
             $descriptionFieldName = $this->entityDisplayHelper->getDescriptionFieldName($objectType);
 
-            $result = '';
+            $result = [
+                'nodes' => '',
+                'actions' => ''
+            ];
             foreach ($tree as $node) {
                 if ($node->getLvl() < 1 || $node->getKey() == $rootId) {
-                    $result .= $this->processTreeItemWithChildren($objectType, $node, $routeArea, $rootId, $descriptionFieldName, $hasEditAction);
+                    list ($nodes, $actions) = $this->processTreeItemWithChildren($objectType, $node, $routeArea, $rootId, $descriptionFieldName, $hasEditAction);
+                    $result['nodes'] .= $nodes;
+                    $result['actions'] .= $actions;
                 }
             }
 
@@ -81,19 +86,30 @@ class TreeData {
                 $liContent = '<a href="' . $url . '" title="' . str_replace('"', '', $title) . '">' . $liContent . '</a>';
             }
 
-            $treeItem = $liTag . $liContent;
+            $nodeItem = $liTag . $liContent;
+
+            $itemActionsMenu = $this->menuBuilder->createItemActionsMenu(['entity' => $node, 'area' => $routeArea, 'context' => 'view']);
+            $renderer = new ListRenderer(new Matcher());
+
+            $actions = '<li id="itemActions' . $node->getKey() . '">';
+            $actions .= $renderer->render($itemActionsMenu);
+            $actions = str_replace(' class="first"', '', $actions);
+            $actions = str_replace(' class="last"', '', $actions);
+            $actions .= '</li>';
 
             if (count($node->getChildren()) > 0) {
-                $treeItem .= '<ul>';
+                $nodeItem .= '<ul>';
                 foreach ($node->getChildren() as $childNode) {
-                    $treeItem .= $this->processTreeItemWithChildren($objectType, $childNode, $routeArea, $rootId, $descriptionFieldName, $hasEditAction);
+                    list ($subNodes, $subActions) = $this->processTreeItemWithChildren($objectType, $childNode, $routeArea, $rootId, $descriptionFieldName, $hasEditAction);
+                    $nodeItem .= $subNodes;
+                    $actions .= $subActions;
                 }
-                $treeItem .= '</ul>';
+                $nodeItem .= '</ul>';
             }
 
-            $treeItem .= '</li>';
+            $nodeItem .= '</li>';
 
-            return $treeItem;
+            return [$nodeItem, $actions];
         }
     '''
 }

@@ -51,7 +51,7 @@ class ControllerLayer {
         }
 
         new LinkContainer().generate(it, fsa)
-        new ItemActionsMenu().generate(it, fsa)
+        new MenuBuilder().generate(it, fsa)
         new Routing().generate(it, fsa)
         if (hasViewActions) {
             new QuickNavigationType().generate(it, fsa)

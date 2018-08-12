@@ -27,7 +27,7 @@ class ItemActions {
 
     def itemActionsImpl(Application app) '''
         «IF app.hasEditActions || !app.relations.empty»
-            $currentUserId = $currentUserApi->isLoggedIn() ? $currentUserApi->get('uid') : UsersConstant::USER_ID_ANONYMOUS;
+            $currentUserId = $this->currentUserApi->isLoggedIn() ? $this->currentUserApi->get('uid') : UsersConstant::USER_ID_ANONYMOUS;
         «ENDIF»
         «FOR entity : app.getAllEntities»
             if ($entity instanceof «entity.name.formatForCodeCapital»Entity) {
@@ -65,7 +65,7 @@ class ItemActions {
                     'route' => $routePrefix . $routeArea . 'display',
                     'routeParameters' => $entity->createUrlArgs()
                 ]);
-                $menu[$title]->setLinkAttribute('title', str_replace('"', '', $entityDisplayHelper->getFormattedTitle($entity)));
+                $menu[$title]->setLinkAttribute('title', str_replace('"', '', $this->entityDisplayHelper->getFormattedTitle($entity)));
                 «app.addLinkClass('default')»
                 «app.addIcon('eye')»
             }
@@ -74,10 +74,10 @@ class ItemActions {
 
     def private itemActionsTargetingEdit(Entity it, Application app) '''
         «IF hasEditAction»
-            if ($permissionHelper->mayEdit($entity)) {
+            if ($this->permissionHelper->mayEdit($entity)) {
                 «IF ownerPermission»
                     // only allow editing for the owner or people with higher permissions
-                    if ($isOwner || $permissionHelper->hasEntityPermission($entity, ACCESS_ADD)) {
+                    if ($isOwner || $this->permissionHelper->hasEntityPermission($entity, ACCESS_ADD)) {
                         «itemActionsForEditAction»
                     }
                 «ELSE»
@@ -85,7 +85,7 @@ class ItemActions {
                 «ENDIF»
                 «IF loggable»
                     if (in_array($context, ['view', 'display'])) {
-                        $logEntriesRepo = $this->container->get('«app.appService».entity_factory')->getObjectManager()->getRepository('«app.appName»:«name.formatForCodeCapital»LogEntryEntity');
+                        $logEntriesRepo = $this->entityFactory->getObjectManager()->getRepository('«app.appName»:«name.formatForCodeCapital»LogEntryEntity');
                         $logEntries = $logEntriesRepo->getLogEntries($entity);
                         if (count($logEntries) > 1) {
                             $title = $this->__('History', '«app.appName.formatForDB»');
@@ -102,7 +102,7 @@ class ItemActions {
             }
         «ENDIF»
         «IF hasDeleteAction»
-            if ($permissionHelper->mayDelete($entity)«IF ownerPermission» || ($isOwner && $permissionHelper->mayEdit($entity))«ENDIF») {
+            if ($this->permissionHelper->mayDelete($entity)«IF ownerPermission» || ($isOwner && $this->permissionHelper->mayEdit($entity))«ENDIF») {
                 $title = $this->__('Delete', '«app.appName.formatForDB»');
                 $menu->addChild($title, [
                     'route' => $routePrefix . $routeArea . 'delete',
@@ -141,7 +141,7 @@ class ItemActions {
                 «val relationAliasNameParam = elem.getRelationAliasName(!useTarget)»
                 «val otherEntity = (if (!useTarget) elem.source else elem.target)»
 
-                if («IF standardFields»$isOwner || «ENDIF»$permissionHelper->hasComponentPermission('«otherEntity.name.formatForCode»', ACCESS_«IF otherEntity instanceof Entity && (otherEntity as Entity).ownerPermission»ADD«ELSEIF (otherEntity as Entity).workflow == EntityWorkflowType.NONE»EDIT«ELSE»COMMENT«ENDIF»)) {
+                if («IF standardFields»$isOwner || «ENDIF»$this->permissionHelper->hasComponentPermission('«otherEntity.name.formatForCode»', ACCESS_«IF otherEntity instanceof Entity && (otherEntity as Entity).ownerPermission»ADD«ELSEIF (otherEntity as Entity).workflow == EntityWorkflowType.NONE»EDIT«ELSE»COMMENT«ENDIF»)) {
                     «val many = elem.isManySideDisplay(useTarget)»
                     «IF !many»
                         if (!isset($entity->«relationAliasName») || null === $entity->«relationAliasName») {
@@ -190,7 +190,7 @@ class ItemActions {
             «application.addLinkClass('default')»
             «application.addIcon('files-o')»
         «ELSE»
-            if ($permissionHelper->hasEntityPermission($entity, ACCESS_ADD)) {
+            if ($this->permissionHelper->hasEntityPermission($entity, ACCESS_ADD)) {
                 $title = $this->__('Add sub «name.formatForDisplay»', '«application.appName.formatForDB»');
                 $menu->addChild($title, [
                     'route' => $routePrefix . $routeArea . 'edit',

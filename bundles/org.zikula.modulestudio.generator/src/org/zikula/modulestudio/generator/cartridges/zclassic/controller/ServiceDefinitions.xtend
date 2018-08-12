@@ -62,7 +62,7 @@ class ServiceDefinitions {
         if (hasHookSubscribers || hasHookProviders) {
             generateServiceFile('hooks', hooks)
         }
-        generateServiceFile('linkContainer', linkContainer)
+        generateServiceFile('menu', menu)
         generateServiceFile('entityFactory', entityFactory)
         generateServiceFile('eventSubscriber', eventSubscriber)
         if (hasListFields) {
@@ -214,7 +214,7 @@ class ServiceDefinitions {
             «ENDIF»
     '''
 
-    def private linkContainer(Application it) '''
+    def private menu(Application it) '''
         services:
             «modPrefix».link_container:
                 class: «appNamespace»\Container\LinkContainer
@@ -232,6 +232,22 @@ class ServiceDefinitions {
                     tags:
                         - { name: zikula.link_container }
                 «ENDIF»
+            «modPrefix».menu_builder:
+                class: Zikula\ContentModule\Menu\MenuBuilder
+                arguments:
+                    - "@translator.default"
+                    - "@knp_menu.factory"
+                    - "@request_stack"
+                    «IF hasLoggable»
+                        - "@«modPrefix».entity_factory"
+                    «ENDIF»
+                    - "@«modPrefix».permission_helper"
+                    «IF hasDisplayActions»
+                        - "@«modPrefix».entity_display_helper"
+                    «ENDIF»
+                    - "@zikula_users_module.current_user"
+                tags:
+                    - { name: knp_menu.menu_builder, method: createItemActionsMenu, alias: «vendorAndName.toFirstLower»MenuItemActions }
     '''
 
     def private entityFactory(Application it) '''
@@ -960,6 +976,9 @@ class ServiceDefinitions {
                 - "@«modPrefix».workflow_helper"
                 «IF hasListFields»
                     - "@«modPrefix».listentries_helper"
+                «ENDIF»
+                «IF hasTrees»
+                    - "@«modPrefix».menu_builder"
                 «ENDIF»
             public: false
             «IF targets('2.0')»

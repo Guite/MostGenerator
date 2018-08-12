@@ -114,11 +114,17 @@ class ViewHierarchy {
         <div class="clearfix">
             <div id="{{ idPrefix }}" class="tree-container" data-root-id="{{ rootId|e('html_attr') }}" data-object-type="«name.formatForCode»" data-urlargnames="«IF hasSluggableFields && slugUnique»slug«ELSE»«getPrimaryKey.name.formatForCode»«IF hasSluggableFields»,slug«ENDIF»«ENDIF»" data-has-display="«hasDisplayAction.displayBool»" data-has-edit="«(hasEditAction && !readOnly).displayBool»">
                 {% if hasNodes %}
+                    {% set treeData = «appName.formatForDB»_treeData(objectType='«name.formatForCode»', tree=items, routeArea=routeArea, rootId=rootId) %}
                     <ul id="itemTree{{ rootId|e('html_attr') }}">
-                        {{ «appName.formatForDB»_treeData(objectType='«name.formatForCode»', tree=items, routeArea=routeArea, rootId=rootId) }}
+                        {{ treeData.nodes|raw }}
                     </ul>
                 {% endif %}
             </div>
+            {% if treeData|default %}
+                <ul id="itemActionsForTree{{ rootId|e('html_attr') }}" class="hidden">
+                    {{ treeData.actions|raw }}
+                </ul>
+            {% endif %}
             <p>&nbsp;</p>
             <p>&nbsp;</p>
             <p>&nbsp;</p>

@@ -12,7 +12,7 @@ class ItemActionsView {
     extension Utils = new Utils
 
     def generate(Entity it, String context, String idSuffix) '''
-        {% set itemActions = knp_menu_get('«application.appName»:ItemActionsMenu:menu', [], {entity: «name.formatForCode», area: routeArea, context: '«context»'}) %}
+        {% set itemActions = knp_menu_get('«application.vendorAndName.toFirstLower»MenuItemActions', [], {entity: «name.formatForCode», area: routeArea, context: '«context»'}) %}
         «markup(context, idSuffix)»
     '''
 

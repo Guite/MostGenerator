@@ -64,6 +64,10 @@ class Plugins {
         «IF targets('2.0') && !getAllEntities.filter[!fields.filter(StringField).filter[role == StringRole.DATE_INTERVAL].empty].empty»
             use DateInterval;
         «ENDIF»
+        «IF hasTrees»
+            use Knp\Menu\Matcher\Matcher;
+            use Knp\Menu\Renderer\ListRenderer;
+        «ENDIF»
         «IF generateIcsTemplates && hasEntitiesWithIcsTemplates»
             use Symfony\Component\HttpFoundation\RequestStack;
         «ENDIF»
@@ -85,6 +89,9 @@ class Plugins {
         «ENDIF»
         use «appNamespace»\Helper\EntityDisplayHelper;
         use «appNamespace»\Helper\WorkflowHelper;
+        «IF hasTrees»
+            use «appNamespace»\Menu\MenuBuilder;
+        «ENDIF»
 
         /**
          * Twig extension base class.
@@ -142,6 +149,13 @@ class Plugins {
             protected $listHelper;
 
         «ENDIF»
+        «IF hasTrees»
+            /**
+             * @var MenuBuilder
+             */
+            protected $menuBuilder;
+
+        «ENDIF»
         /**
          * TwigExtension constructor.
          *
@@ -161,6 +175,9 @@ class Plugins {
          «IF hasListFields»
             * @param ListEntriesHelper   $listHelper     ListEntriesHelper service instance
          «ENDIF»
+         «IF hasTrees»
+            * @param MenuBuilder         $menuBuilder    MenuBuilder service instance
+         «ENDIF»
          */
         public function __construct(
             TranslatorInterface $translator«IF hasTrees»,
@@ -172,7 +189,8 @@ class Plugins {
             «ENDIF»
             EntityDisplayHelper $entityDisplayHelper,
             WorkflowHelper $workflowHelper«IF hasListFields»,
-            ListEntriesHelper $listHelper«ENDIF»)
+            ListEntriesHelper $listHelper«ENDIF»«IF hasTrees»,
+            MenuBuilder $menuBuilder«ENDIF»)
         {
             $this->setTranslator($translator);
             «IF hasTrees»
@@ -189,6 +207,9 @@ class Plugins {
             $this->workflowHelper = $workflowHelper;
             «IF hasListFields»
                 $this->listHelper = $listHelper;
+            «ENDIF»
+            «IF hasTrees»
+                $this->menuBuilder = $menuBuilder;
             «ENDIF»
         }
 
