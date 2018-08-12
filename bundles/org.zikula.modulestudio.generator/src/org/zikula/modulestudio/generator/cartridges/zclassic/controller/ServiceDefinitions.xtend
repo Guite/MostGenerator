@@ -85,7 +85,7 @@ class ServiceDefinitions {
           «IF !variables.empty»
               - { resource: 'appSettings.yml' }
           «ENDIF»
-          - { resource: 'linkContainer.yml' }
+          - { resource: 'menu.yml' }
           - { resource: 'entityFactory.yml' }
           - { resource: 'eventSubscriber.yml' }
         «IF hasListFields»
