@@ -233,7 +233,7 @@ class ServiceDefinitions {
                         - { name: zikula.link_container }
                 «ENDIF»
             «modPrefix».menu_builder:
-                class: Zikula\ContentModule\Menu\MenuBuilder
+                class: «appNamespace»\Menu\MenuBuilder
                 arguments:
                     - "@translator.default"
                     - "@knp_menu.factory"
