@@ -14,12 +14,14 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.controller.action.A
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
+import org.zikula.modulestudio.generator.extensions.Utils
 
 class ControllerAction {
 
     extension ControllerExtensions = new ControllerExtensions
     extension FormattingExtensions = new FormattingExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
+    extension Utils = new Utils
 
     Application app
     Actions actionsImpl
@@ -34,7 +36,16 @@ class ControllerAction {
         public function «action.methodName(isAdmin)»Action(«methodArgs(it, action)»)
         {
             «IF isBase»
-                return $this->«action.methodName(false)»Internal(«methodArgsCall(it, action)», «isAdmin.displayBool»);
+                «IF action instanceof DisplayAction»
+                    $«name.formatForCode» = $this->get('«application.appService».entity_factory')->getRepository('«name.formatForCode»')->«IF hasSluggableFields && slugUnique»selectBySlug($slug)«ELSE»selectById($id)«ENDIF»;
+                    if (null === $«name.formatForCode») {
+                        throw new NotFoundHttpException($this->__('No such «name.formatForDisplay» found.'));
+                    }
+
+                    return $this->«action.methodName(false)»Internal($request, $«name.formatForCode», «isAdmin.displayBool»);
+                «ELSE»
+                    return $this->«action.methodName(false)»Internal(«methodArgsCall(it, action)», «isAdmin.displayBool»);
+                «ENDIF»
             «ELSE»
                 return parent::«action.methodName(isAdmin)»Action(«methodArgsCall(it, action)»);
             «ENDIF»
@@ -44,7 +55,7 @@ class ControllerAction {
             /**
              * This method includes the common implementation code for «action.methodName(true)»() and «action.methodName(false)»().
              */
-            protected function «action.methodName(false)»Internal(«methodArgs(it, action)», $isAdmin = false)
+            protected function «action.methodName(false)»Internal(«IF action instanceof DisplayAction»Request $request, «name.formatForCodeCapital»Entity $«name.formatForCode»«ELSE»«methodArgs(it, action)»«ENDIF», $isAdmin = false)
             {
                 «actionsImpl.actionImpl(it, action)»
             }

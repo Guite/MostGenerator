@@ -43,7 +43,7 @@ class Actions {
     }
 
     def actionImpl(Entity it, Action action) '''
-        «IF action instanceof DisplayAction || action instanceof DeleteAction»
+        «IF action instanceof DeleteAction»
             $«name.formatForCode» = $this->get('«application.appService».entity_factory')->getRepository('«name.formatForCode»')->«IF hasSluggableFields && slugUnique»selectBySlug($slug)«ELSE»selectById($id)«ENDIF»;
             if (null === $«name.formatForCode») {
                 throw new NotFoundHttpException($this->__('No such «name.formatForDisplay» found.'));
