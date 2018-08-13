@@ -606,6 +606,13 @@ class FormHandler {
                 return new RedirectResponse($this->getRedirectUrl(['commandName' => 'cancel']), 302);
             }
 
+            «IF !getAllEntities.filter[hasEditAction && hasSluggableFields && slugUnique && needsSlugHandler].empty»
+                if (in_array($this->objectType, ['«getAllEntities.filter[hasEditAction && hasSluggableFields && slugUnique && needsSlugHandler].map[name.formatForCode].join('\', \'')»'])) {
+                    $this->originalSlug = $entity->getSlug();
+                    $slugParts = explode('/', $entity->getSlug());
+                    $entity->setSlug(end($slugParts));
+                }
+            «ENDIF»
             // save entity reference for later reuse
             $this->entityRef = $entity;
 
@@ -1151,8 +1158,7 @@ class FormHandler {
         abstract class Abstract«actionName.formatForCodeCapital»Handler extends «actionName.formatForCodeCapital»Handler
         {
             «processForm»
-
-            «IF ownerPermission || (hasSluggableFields && needsSlugHandler)»
+            «IF ownerPermission»
 
                 «formHandlerBaseInitEntityForEditing»
             «ENDIF»
@@ -1220,12 +1226,6 @@ class FormHandler {
                 if (!$isOwner && !$this->permissionHelper->hasEntityPermission($entity, ACCESS_ADD)) {
                     throw new AccessDeniedException();
                 }
-            «ENDIF»
-            «IF hasSluggableFields && slugUnique && needsSlugHandler»
-
-                $this->originalSlug = $entity->getSlug();
-                $slugParts = explode('/', $entity->getSlug());
-                $entity->setSlug(end($slugParts));
             «ENDIF»
 
             return $entity;

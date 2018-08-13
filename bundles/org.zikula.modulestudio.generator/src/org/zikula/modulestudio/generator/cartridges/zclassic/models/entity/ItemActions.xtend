@@ -176,16 +176,15 @@ class ItemActions {
             «application.addLinkClass('default')»
             «application.addIcon('pencil-square-o')»
         «ENDIF»
-        «IF tree == EntityTreeType.NONE»
-            $title = $this->__('Reuse', '«application.appName.formatForDB»');
-            $menu->addChild($title, [
-                'route' => $routePrefix . $routeArea . 'edit',
-                'routeParameters' => ['astemplate' => $entity->getKey()]
-            ]);
-            $menu[$title]->setLinkAttribute('title', $this->__('Reuse for new «name.formatForDisplay»', '«application.appName.formatForDB»'));
-            «application.addLinkClass('default')»
-            «application.addIcon('files-o')»
-        «ELSE»
+        $title = $this->__('Reuse', '«application.appName.formatForDB»');
+        $menu->addChild($title, [
+            'route' => $routePrefix . $routeArea . 'edit',
+            'routeParameters' => ['astemplate' => $entity->getKey()]
+        ]);
+        $menu[$title]->setLinkAttribute('title', $this->__('Reuse for new «name.formatForDisplay»', '«application.appName.formatForDB»'));
+        «application.addLinkClass('default')»
+        «application.addIcon('files-o')»
+        «IF tree != EntityTreeType.NONE»
             if ($this->permissionHelper->hasEntityPermission($entity, ACCESS_ADD)) {
                 $title = $this->__('Add sub «name.formatForDisplay»', '«application.appName.formatForDB»');
                 $menu->addChild($title, [
