@@ -63,7 +63,7 @@ class Events {
          * @see «app.appNamespace»\Menu\MenuBuilder::createItemActionsMenu()
          * @var string
          */
-        const MENU_ITEMACTIONS_PRE_CONFIGURE = '«appName.formatForDB»itemactionsmenu_pre_configure';
+        const MENU_ITEMACTIONS_PRE_CONFIGURE = '«appName.formatForDB».itemactionsmenu_pre_configure';
 
         /**
          * The «appName.formatForDB».itemactionsmenu_post_configure event is thrown after the item actions
@@ -75,7 +75,7 @@ class Events {
          * @see «app.appNamespace»\Menu\MenuBuilder::createItemActionsMenu()
          * @var string
          */
-        const MENU_ITEMACTIONS_POST_CONFIGURE = '«appName.formatForDB»itemactionsmenu_post_configure';
+        const MENU_ITEMACTIONS_POST_CONFIGURE = '«appName.formatForDB».itemactionsmenu_post_configure';
     '''
 
     def private eventDefinitions(Entity it) '''
