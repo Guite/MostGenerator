@@ -84,19 +84,15 @@ class ItemActions {
                     «itemActionsForEditAction»
                 «ENDIF»
                 «IF loggable»
-                    if (in_array($context, ['view', 'display'])) {
-                        $logEntriesRepo = $this->entityFactory->getObjectManager()->getRepository('«app.appName»:«name.formatForCodeCapital»LogEntryEntity');
-                        $logEntries = $logEntriesRepo->getLogEntries($entity);
-                        if (count($logEntries) > 1) {
-                            $title = $this->__('History', '«app.appName.formatForDB»');
-                            $menu->addChild($title, [
-                                'route' => $routePrefix . $routeArea . 'loggablehistory',
-                                'routeParameters' => $entity->createUrlArgs()
-                            ]);
-                            $menu[$title]->setLinkAttribute('title', $this->__('Watch version history', '«app.appName.formatForDB»'));
-                            «app.addLinkClass('default')»
-                            «app.addIcon('history')»
-                        }
+                    if (in_array($context, ['view', 'display']) && $entity->get«versionField.name.formatForCodeCapital»() > 1) {
+                        $title = $this->__('History', '«app.appName.formatForDB»');
+                        $menu->addChild($title, [
+                            'route' => $routePrefix . $routeArea . 'loggablehistory',
+                            'routeParameters' => $entity->createUrlArgs()
+                        ]);
+                        $menu[$title]->setLinkAttribute('title', $this->__('Watch version history', '«app.appName.formatForDB»'));
+                        «app.addLinkClass('default')»
+                        «app.addIcon('history')»
                     }
                 «ENDIF»
             }

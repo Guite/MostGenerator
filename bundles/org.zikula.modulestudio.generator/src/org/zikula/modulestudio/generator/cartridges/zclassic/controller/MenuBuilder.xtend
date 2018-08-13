@@ -37,9 +37,6 @@ class MenuBuilder {
         «FOR entity : getAllEntities»
             use «appNamespace»\Entity\«entity.name.formatForCodeCapital»Entity;
         «ENDFOR»
-        «IF hasLoggable»
-            use «appNamespace»\Entity\Factory\EntityFactory;
-        «ENDIF»
         use «appNamespace»\«name.formatForCodeCapital»Events;
         use «appNamespace»\Event\ConfigureItemActionsMenuEvent;
         «IF hasDisplayActions»
@@ -69,13 +66,6 @@ class MenuBuilder {
              * @var RequestStack
              */
             protected $requestStack;
-            «IF hasLoggable»
-
-                /**
-                 * @var EntityFactory
-                 */
-                protected $entityFactory;
-            «ENDIF»
 
             /**
              * @var PermissionHelper
@@ -101,9 +91,6 @@ class MenuBuilder {
              * @param FactoryInterface         $factory             Factory service instance
              * @param EventDispatcherInterface $eventDispatcher     EventDispatcher service instance
              * @param RequestStack             $requestStack        RequestStack service instance
-             «IF hasLoggable»
-             * @param EntityFactory            $entityFactory       EntityFactory service instance
-             «ENDIF»
              * @param PermissionHelper         $permissionHelper    PermissionHelper service instance
              «IF hasDisplayActions»
              * @param EntityDisplayHelper      $entityDisplayHelper EntityDisplayHelper service instance
@@ -115,9 +102,6 @@ class MenuBuilder {
                 FactoryInterface $factory,
                 EventDispatcherInterface $eventDispatcher,
                 RequestStack $requestStack,
-                «IF hasLoggable»
-                    EntityFactory $entityFactory,
-                «ENDIF»
                 PermissionHelper $permissionHelper,
                 «IF hasDisplayActions»
                     EntityDisplayHelper $entityDisplayHelper,
@@ -128,9 +112,6 @@ class MenuBuilder {
                 $this->factory = $factory;
                 $this->eventDispatcher = $eventDispatcher;
                 $this->requestStack = $requestStack;
-                «IF hasLoggable»
-                    $this->entityFactory = $entityFactory;
-                «ENDIF»
                 $this->permissionHelper = $permissionHelper;
                 «IF hasDisplayActions»
                     $this->entityDisplayHelper = $entityDisplayHelper;

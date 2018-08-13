@@ -239,9 +239,6 @@ class ServiceDefinitions {
                     - "@knp_menu.factory"
                     - "@event_dispatcher"
                     - "@request_stack"
-                    «IF hasLoggable»
-                        - "@«modPrefix».entity_factory"
-                    «ENDIF»
                     - "@«modPrefix».permission_helper"
                     «IF hasDisplayActions»
                         - "@«modPrefix».entity_display_helper"
