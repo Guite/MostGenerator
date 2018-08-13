@@ -105,11 +105,7 @@ class LoggableDeleted {
             return $this->redirectToRoute('«application.appName.formatForDB»_«name.formatForDB»_' . $routeArea . 'display', $«name.formatForCode»->createUrlArgs());
         }
 
-        if ($isAdmin) {
-            return $this->adminDisplayAction($request, $«name.formatForCode»);
-        }
-
-        return $this->displayAction($request, $«name.formatForCode»);
+        return $this->displayInternal($request, $«name.formatForCode», $isAdmin);
     '''
 
     def private restoreDeletedEntity(Entity it) '''
