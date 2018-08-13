@@ -237,6 +237,7 @@ class ServiceDefinitions {
                 arguments:
                     - "@translator.default"
                     - "@knp_menu.factory"
+                    - "@event_dispatcher"
                     - "@request_stack"
                     «IF hasLoggable»
                         - "@«modPrefix».entity_factory"

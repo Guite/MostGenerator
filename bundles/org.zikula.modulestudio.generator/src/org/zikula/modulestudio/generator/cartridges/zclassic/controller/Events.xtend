@@ -26,6 +26,8 @@ class Events {
 
         fsa.generateClassPair(name.formatForCodeCapital + 'Events.php', eventDefinitionsBaseClass, eventDefinitionsImpl)
 
+        fsa.generateClassPair('Event/ConfigureItemActionsMenuEvent.php', menuEventBaseClass, menuEventImpl)
+
         for (entity : getAllEntities) {
             fsa.generateClassPair('Event/Filter' + entity.name.formatForCodeCapital + 'Event.php',
                 filterEventBaseClass(entity), filterEventImpl(entity)
@@ -36,15 +38,44 @@ class Events {
     def private eventDefinitionsBaseClass(Application it) '''
         namespace «appNamespace»\Base;
 
+        use «app.appNamespace»\Listener\EntityLifecycleListener;
+
         /**
          * Events definition base class.
          */
         abstract class Abstract«name.formatForCodeCapital»Events
         {
+            «menuEventDefinitions»
             «FOR entity : getAllEntities»
                 «entity.eventDefinitions»
             «ENDFOR»
         }
+    '''
+
+    def private menuEventDefinitions(Application it) '''
+        /**
+         * The «appName.formatForDB».itemactionsmenu_pre_configure event is thrown before the item actions
+         * menu is built in the menu builder.
+         *
+         * The event listener receives an
+         * «app.appNamespace»\Event\ConfigureItemActionsMenuEvent instance.
+         *
+         * @see «app.appNamespace»\Menu\MenuBuilder::createItemActionsMenu()
+         * @var string
+         */
+        const MENU_ITEMACTIONS_PRE_CONFIGURE = '«appName.formatForDB»itemactionsmenu_pre_configure';
+
+        /**
+         * The «appName.formatForDB».itemactionsmenu_post_configure event is thrown after the item actions
+         * menu has been built in the menu builder.
+         *
+         * The event listener receives an
+         * «app.appNamespace»\Event\ConfigureItemActionsMenuEvent instance.
+         *
+         * @see «app.appNamespace»\Menu\MenuBuilder::createItemActionsMenu()
+         * @var string
+         */
+        const MENU_ITEMACTIONS_POST_CONFIGURE = '«appName.formatForDB»itemactionsmenu_post_configure';
     '''
 
     def private eventDefinitions(Entity it) '''
@@ -57,7 +88,7 @@ class Events {
          * The event listener receives an
          * «app.appNamespace»\Event\Filter«name.formatForCodeCapital»Event instance.
          *
-         * @see «app.appNamespace»\Listener\EntityLifecycleListener::postLoad()
+         * @see EntityLifecycleListener::postLoad()
          * @var string
          */
         const «constPrefix»_POST_LOAD = '«entityEventPrefix»_post_load';
@@ -69,7 +100,7 @@ class Events {
          * The event listener receives an
          * «app.appNamespace»\Event\Filter«name.formatForCodeCapital»Event instance.
          *
-         * @see «app.appNamespace»\Listener\EntityLifecycleListener::prePersist()
+         * @see EntityLifecycleListener::prePersist()
          * @var string
          */
         const «constPrefix»_PRE_PERSIST = '«entityEventPrefix»_pre_persist';
@@ -81,7 +112,7 @@ class Events {
          * The event listener receives an
          * «app.appNamespace»\Event\Filter«name.formatForCodeCapital»Event instance.
          *
-         * @see «app.appNamespace»\Listener\EntityLifecycleListener::postPersist()
+         * @see EntityLifecycleListener::postPersist()
          * @var string
          */
         const «constPrefix»_POST_PERSIST = '«entityEventPrefix»_post_persist';
@@ -93,7 +124,7 @@ class Events {
          * The event listener receives an
          * «app.appNamespace»\Event\Filter«name.formatForCodeCapital»Event instance.
          *
-         * @see «app.appNamespace»\Listener\EntityLifecycleListener::preRemove()
+         * @see EntityLifecycleListener::preRemove()
          * @var string
          */
         const «constPrefix»_PRE_REMOVE = '«entityEventPrefix»_pre_remove';
@@ -105,7 +136,7 @@ class Events {
          * The event listener receives an
          * «app.appNamespace»\Event\Filter«name.formatForCodeCapital»Event instance.
          *
-         * @see «app.appNamespace»\Listener\EntityLifecycleListener::postRemove()
+         * @see EntityLifecycleListener::postRemove()
          * @var string
          */
         const «constPrefix»_POST_REMOVE = '«entityEventPrefix»_post_remove';
@@ -117,7 +148,7 @@ class Events {
          * The event listener receives an
          * «app.appNamespace»\Event\Filter«name.formatForCodeCapital»Event instance.
          *
-         * @see «app.appNamespace»\Listener\EntityLifecycleListener::preUpdate()
+         * @see EntityLifecycleListener::preUpdate()
          * @var string
          */
         const «constPrefix»_PRE_UPDATE = '«entityEventPrefix»_pre_update';
@@ -129,7 +160,7 @@ class Events {
          * The event listener receives an
          * «app.appNamespace»\Event\Filter«name.formatForCodeCapital»Event instance.
          *
-         * @see «app.appNamespace»\Listener\EntityLifecycleListener::postUpdate()
+         * @see EntityLifecycleListener::postUpdate()
          * @var string
          */
         const «constPrefix»_POST_UPDATE = '«entityEventPrefix»_post_update';
@@ -147,6 +178,76 @@ class Events {
         class «name.formatForCodeCapital»Events extends Abstract«name.formatForCodeCapital»Events
         {
             // feel free to extend the events definition here
+        }
+    '''
+
+    def private menuEventBaseClass(Application it) '''
+        namespace «app.appNamespace»\Event\Base;
+
+        use Knp\Menu\FactoryInterface;
+        use Knp\Menu\ItemInterface;
+        use Symfony\Component\EventDispatcher\Event;
+
+        /**
+         * Event base class for extending item actions menu.
+         */
+        class AbstractConfigureItemActionsMenuEvent extends Event
+        {
+            /**
+             * @var FactoryInterface.
+             */
+            protected $factory;
+
+            /**
+             * @var ItemInterface
+             */
+            protected $menu;
+
+            /**
+             * ConfigureItemActionsMenuEvent constructor.
+             *
+             * @param FactoryInterface $factory
+             * @param ItemInterface    $menu
+             */
+            public function __construct(FactoryInterface $factory, ItemInterface $menu)
+            {
+                $this->factory = $factory;
+                $this->menu = $menu;
+            }
+
+            /**
+             * Returns the factory.
+             *
+             * @return FactoryInterface
+             */
+            public function getFactory()
+            {
+                return $this->factory;
+            }
+
+            /**
+             * Returns the menu.
+             *
+             * @return ItemInterface
+             */
+            public function getMenu()
+            {
+                return $this->menu;
+            }
+        }
+    '''
+
+    def private menuEventImpl(Application it) '''
+        namespace «app.appNamespace»\Event;
+
+        use «app.appNamespace»\Event\Base\AbstractConfigureItemActionsMenuEvent;
+
+        /**
+         * Event implementation class for extending item actions menu.
+         */
+        class ConfigureItemActionsMenuEvent extends AbstractConfigureItemActionsMenuEvent
+        {
+            // feel free to extend the event class here
         }
     '''
 

@@ -27,6 +27,7 @@ class MenuBuilder {
 
         use Knp\Menu\FactoryInterface;
         use Knp\Menu\ItemInterface;
+        use Symfony\Component\EventDispatcher\EventDispatcherInterface;
         use Symfony\Component\HttpFoundation\RequestStack;
         use Zikula\Common\Translator\TranslatorInterface;
         use Zikula\Common\Translator\TranslatorTrait;
@@ -39,6 +40,8 @@ class MenuBuilder {
         «IF hasLoggable»
             use «appNamespace»\Entity\Factory\EntityFactory;
         «ENDIF»
+        use «appNamespace»\«name.formatForCodeCapital»Events;
+        use «appNamespace»\Event\ConfigureItemActionsMenuEvent;
         «IF hasDisplayActions»
             use «appNamespace»\Helper\EntityDisplayHelper;
         «ENDIF»
@@ -56,6 +59,11 @@ class MenuBuilder {
              * @var FactoryInterface
              */
             protected $factory;
+
+            /**
+             * @var EventDispatcherInterface
+             */
+            protected $eventDispatcher;
 
             /**
              * @var RequestStack
@@ -89,21 +97,23 @@ class MenuBuilder {
             /**
              * MenuBuilder constructor.
              *
-             * @param TranslatorInterface     $translator          Translator service instance
-             * @param FactoryInterface        $factory             Factory service instance
-             * @param RequestStack            $requestStack        RequestStack service instance
+             * @param TranslatorInterface      $translator          Translator service instance
+             * @param FactoryInterface         $factory             Factory service instance
+             * @param EventDispatcherInterface $eventDispatcher     EventDispatcher service instance
+             * @param RequestStack             $requestStack        RequestStack service instance
              «IF hasLoggable»
-             * @param EntityFactory           $entityFactory       EntityFactory service instance
+             * @param EntityFactory            $entityFactory       EntityFactory service instance
              «ENDIF»
-             * @param PermissionHelper        $permissionHelper    PermissionHelper service instance
+             * @param PermissionHelper         $permissionHelper    PermissionHelper service instance
              «IF hasDisplayActions»
-             * @param EntityDisplayHelper     $entityDisplayHelper EntityDisplayHelper service instance
+             * @param EntityDisplayHelper      $entityDisplayHelper EntityDisplayHelper service instance
              «ENDIF»
-             * @param CurrentUserApiInterface $currentUserApi      CurrentUserApi service instance
+             * @param CurrentUserApiInterface  $currentUserApi      CurrentUserApi service instance
              */
             public function __construct(
                 TranslatorInterface $translator,
                 FactoryInterface $factory,
+                EventDispatcherInterface $eventDispatcher,
                 RequestStack $requestStack,
                 «IF hasLoggable»
                     EntityFactory $entityFactory,
@@ -116,6 +126,7 @@ class MenuBuilder {
             {
                 $this->setTranslator($translator);
                 $this->factory = $factory;
+                $this->eventDispatcher = $eventDispatcher;
                 $this->requestStack = $requestStack;
                 «IF hasLoggable»
                     $this->entityFactory = $entityFactory;
@@ -156,7 +167,11 @@ class MenuBuilder {
                 «ENDIF»
                 $menu->setChildrenAttribute('class', 'list-inline item-actions');
 
+                $this->eventDispatcher->dispatch(«name.formatForCodeCapital»Events::MENU_ITEMACTIONS_PRE_CONFIGURE, new ConfigureItemActionsMenuEvent($this->factory, $menu, $options));
+
                 «new ItemActions().itemActionsImpl(it)»
+
+                $this->eventDispatcher->dispatch(«name.formatForCodeCapital»Events::MENU_ITEMACTIONS_POST_CONFIGURE, new ConfigureItemActionsMenuEvent($this->factory, $menu, $options));
 
                 return $menu;
             }
