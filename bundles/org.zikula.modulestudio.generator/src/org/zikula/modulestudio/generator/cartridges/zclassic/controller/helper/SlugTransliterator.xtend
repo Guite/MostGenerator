@@ -33,6 +33,14 @@ class SlugTransliterator {
          */
         abstract class AbstractSlugTransliterator
         {
+            /**
+             * Transliterates a given text.
+             *
+             * @param string $text
+             * @param string $separator
+             *
+             * @return string
+             */
             public static function transliterate($text, $separator = '-')
             {
                 $text = Urlizer::unaccent($text);
