@@ -251,7 +251,7 @@ class ExampleDataHelper {
             «FOR relation : incoming.filter(OneToManyRelationship).filter[bidirectional].filter[source.application == app]»«relation.exampleRowAssignmentIncoming(entityName, number)»«ENDFOR»
             «IF categorisable»
                 // create category assignment
-                $«entityName»«number»->getCategories()->add(new «name.formatForCodeCapital»CategoryEntity($categoryRegistry, $category, $«entityName»«number»));
+                $«entityName»«number»->getCategories()->add(new «name.formatForCodeCapital»CategoryEntity($categoryRegistry->getId(), $category, $«entityName»«number»));
             «ENDIF»
             «IF attributable»
                 // create example attributes
