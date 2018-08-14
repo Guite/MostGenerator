@@ -53,9 +53,13 @@ class Actions {
         $objectType = '«name.formatForCode»';
         // permission check
         $permLevel = $isAdmin ? ACCESS_ADMIN : «getPermissionAccessLevel(action)»;
-        «IF action instanceof DisplayAction && loggable»
+        «IF action instanceof ViewAction && tree != EntityTreeType.NONE»
+            if (!$isAdmin && 'tree' == $request->query->getAlnum('tpl', '')) {
+                $permLevel = ACCESS_EDIT;
+            }
+        «ELSEIF action instanceof DisplayAction && loggable»
             $route = $request->attributes->get('_route', '');
-            if ('«application.appName.formatForDB»_«name.formatForDB»_displaydeleted' == $route && !$isAdmin) {
+            if (!$isAdmin && '«application.appName.formatForDB»_«name.formatForDB»_displaydeleted' == $route) {
                 $permLevel = ACCESS_EDIT;
             }
         «ENDIF»
