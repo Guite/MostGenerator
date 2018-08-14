@@ -187,7 +187,7 @@ class SearchHelper {
         public function amendForm(FormBuilderInterface $builder)
         {
             if (!$this->permissionHelper->hasPermission(ACCESS_READ)) {
-                return '';
+                return;
             }
 
             $builder->add('active', HiddenType::class, [
