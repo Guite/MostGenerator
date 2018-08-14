@@ -815,11 +815,12 @@ class ServiceDefinitions {
             «modPrefix».example_data_helper:
                 class: «nsBase»ExampleDataHelper
                 arguments:
+                    - "@translator.default"
                     - "@request_stack"
                     - "@logger"
                     - "@«modPrefix».entity_factory"
                     - "@«modPrefix».workflow_helper"
-                    «IF hasUserFields || hasStandardFieldEntities»
+                    «IF hasUserFields»
                         - "@zikula_users_module.user_repository"
                     «ENDIF»
         «ENDIF»

@@ -58,7 +58,8 @@ class ExampleDataHelper {
 
         use Psr\Log\LoggerInterface;
         use Symfony\Component\HttpFoundation\RequestStack;
-        «IF hasUserFields || hasStandardFieldEntities»
+        use Zikula\Common\Translator\TranslatorInterface;
+        «IF hasUserFields»
             use Zikula\UsersModule\Constant as UsersConstant;
             use Zikula\UsersModule\Entity\RepositoryInterface\UserRepositoryInterface;
         «ENDIF»
@@ -76,6 +77,11 @@ class ExampleDataHelper {
          */
         abstract class AbstractExampleDataHelper
         {
+            /**
+             * @var TranslatorInterface
+             */
+            protected $translator;
+
             /**
              * @var RequestStack
              */
@@ -95,7 +101,7 @@ class ExampleDataHelper {
              * @var WorkflowHelper
              */
             protected $workflowHelper;
-            «IF hasUserFields || hasStandardFieldEntities»
+            «IF hasUserFields»
 
                 /**
                  * @var UserRepositoryInterface
@@ -106,26 +112,29 @@ class ExampleDataHelper {
             /**
              * ExampleDataHelper constructor.
              *
-             * @param RequestStack    $requestStack   RequestStack service instance
-             * @param LoggerInterface $logger         Logger service instance
-             * @param EntityFactory   $entityFactory  EntityFactory service instance
-             * @param WorkflowHelper  $workflowHelper WorkflowHelper service instance
-             «IF hasUserFields || hasStandardFieldEntities»
+             * @param TranslatorInterface $translator     Translator service instance
+             * @param RequestStack        $requestStack   RequestStack service instance
+             * @param LoggerInterface     $logger         Logger service instance
+             * @param EntityFactory       $entityFactory  EntityFactory service instance
+             * @param WorkflowHelper      $workflowHelper WorkflowHelper service instance
+             «IF hasUserFields»
              * @param UserRepositoryInterface $userRepository UserRepository service instance
              «ENDIF»
              */
             public function __construct(
+                TranslatorInterface $translator,
                 RequestStack $requestStack,
                 LoggerInterface $logger,
                 EntityFactory $entityFactory,
-                WorkflowHelper $workflowHelper«IF hasUserFields || hasStandardFieldEntities»,
+                WorkflowHelper $workflowHelper«IF hasUserFields»,
                 UserRepositoryInterface $userRepository«ENDIF»
             ) {
+                $this->translator = $translator;
                 $this->requestStack = $requestStack;
                 $this->logger = $logger;
                 $this->entityFactory = $entityFactory;
                 $this->workflowHelper = $workflowHelper;
-                «IF hasUserFields || hasStandardFieldEntities»
+                «IF hasUserFields»
                     $this->userRepository = $userRepository;
                 «ENDIF»
             }
@@ -142,11 +151,8 @@ class ExampleDataHelper {
          */
         public function createDefaultData()
         {
-            «IF hasUserFields || hasStandardFieldEntities»
+            «IF hasUserFields»
                 $adminUser = $this->userRepository->find(UsersConstant::USER_ID_ADMIN);
-            «ENDIF»
-            «IF !getAllEntities.filter[tree != EntityTreeType.NONE].empty»
-                $treeCounterRoot = 1;
             «ENDIF»
             «initDateValues»
             «IF hasCategorisableEntities»
@@ -237,10 +243,7 @@ class ExampleDataHelper {
             «ENDIF»*/»
             «IF tree != EntityTreeType.NONE»
                 $«entityName»«number»->setParent(«IF number == 1»null«ELSE»$«entityName»1«ENDIF»);
-                $«entityName»«number»->setLvl(«IF number == 1»1«ELSE»2«ENDIF»);
-                $«entityName»«number»->setLft(«IF number == 1»1«ELSE»«((number-1)*2)»«ENDIF»);
-                $«entityName»«number»->setRgt(«IF number == 1»«app.amountOfExampleRows*2»«ELSE»«((number-1)*2)+1»«ENDIF»);
-                $«entityName»«number»->setRoot($treeCounterRoot);
+                $«entityName»«number»->setRoot(1);
             «ENDIF»
             «FOR relation : outgoing.filter(OneToOneRelationship).filter[target.application == app]»«relation.exampleRowAssignmentOutgoing(entityName, number)»«ENDFOR» 
             «FOR relation : outgoing.filter(ManyToOneRelationship).filter[target.application == app]»«relation.exampleRowAssignmentOutgoing(entityName, number)»«ENDFOR»
@@ -257,9 +260,6 @@ class ExampleDataHelper {
                 $«entityName»«number»->setAttribute('field3', 'third value');
             «ENDIF»
         «ENDFOR»
-        «IF tree != EntityTreeType.NONE»
-            $treeCounterRoot++;
-        «ENDIF»
         «/* this last line is on purpose */»
     '''
 
@@ -269,7 +269,7 @@ class ExampleDataHelper {
         try {
             «FOR entity : getAllEntities»«entity.persistEntities(it)»«ENDFOR»
         } catch (\Exception $exception) {
-            $this->requestStack->getCurrentRequest()->getSession()->getFlashBag()->add('error', $this->__('Exception during example data creation') . ': ' . $exception->getMessage());
+            $this->requestStack->getCurrentRequest()->getSession()->getFlashBag()->add('error', $this->translator__('Exception during example data creation') . ': ' . $exception->getMessage());
             $this->logger->error('{app}: Could not completely create example data after installation. Error details: {errorMessage}.', ['app' => '«appName»', 'errorMessage' => $exception->getMessage()]);
 
             return false;
@@ -363,7 +363,7 @@ class ExampleDataHelper {
             UrlField: '\'' + application.url + '\''
             UploadField: exampleRowValueText(dataEntity, number)
             UserField: '$adminUser'
-            ArrayField: exampleRowValueNumber(dataEntity, number)
+            ArrayField: '[]'
             ObjectField: exampleRowValueText(dataEntity, number)
             DatetimeField: '''«IF isDateTimeField»«IF it.past»$dtPast«ELSEIF it.future»$dtFuture«ELSE»$dtNow«ENDIF»«ELSEIF isDateField»«IF it.past»$dPast«ELSEIF it.future»$dFuture«ELSE»$dNow«ENDIF»«ELSEIF isTimeField»«IF it.past»$tPast«ELSEIF it.future»$tFuture«ELSE»$tNow«ENDIF»«ENDIF»'''
             ListField: ''''«IF it.multiple»###«FOR item : getDefaultItems SEPARATOR '###'»«item.exampleRowValue»«ENDFOR»###«ELSE»«FOR item : getDefaultItems»«item.exampleRowValue»«ENDFOR»«ENDIF»'«/**/»'''
