@@ -6,21 +6,22 @@ import de.guite.modulestudio.metamodel.EntityTreeType
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
+import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
-import org.zikula.modulestudio.generator.extensions.UrlExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 /**
  * Redirect processing functions for edit form handlers.
  */
 class Redirect {
+
     extension ControllerExtensions = new ControllerExtensions
     extension FormattingExtensions = new FormattingExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
+    extension ModelExtensions = new ModelExtensions
     extension ModelJoinExtensions = new ModelJoinExtensions
     extension NamingExtensions = new NamingExtensions
-    extension UrlExtensions = new UrlExtensions
     extension Utils = new Utils
 
     def getRedirectCodes(Application it) '''
@@ -112,27 +113,9 @@ class Redirect {
         protected function getDefaultReturnUrl(array $args = [])
         {
             $objectIsPersisted = $args['commandName'] != 'delete' && !($this->templateParameters['mode'] == 'create' && $args['commandName'] == 'cancel');
-
-            if (null !== $this->returnTo) {
-                $refererParts = explode('/', $this->returnTo);
-                «IF hasSluggableFields && slugUnique»
-                    $isDisplayOrEditPage = $refererParts[count($refererParts)-2] == '«name.formatForCode»';
-                    if ($isDisplayOrEditPage) {
-                        // update slug for proper redirect to display/edit page
-                        $refererParts[count($refererParts)-1] = $this->entityRef->getSlug();
-                        $this->returnTo = implode('/', $refererParts);
-                    }
-                    if (!$isDisplayOrEditPage || $objectIsPersisted) {
-                        // return to referer
-                        return $this->returnTo;
-                    }
-                «ELSE»
-                    $isDisplayOrEditPage = $refererParts[count($refererParts)-1] == $this->idValue;
-                    if (!$isDisplayOrEditPage || $objectIsPersisted) {
-                        // return to referer
-                        return $this->returnTo;
-                    }
-                «ENDIF»
+            if (null !== $this->returnTo && $objectIsPersisted) {
+                // return to referer
+                return $this->returnTo;
             }
 
             «IF hasIndexAction || hasViewAction || hasDisplayAction && tree != EntityTreeType.NONE»
@@ -153,7 +136,7 @@ class Redirect {
 
                 if ($objectIsPersisted) {
                     // redirect to the detail page of treated «name.formatForCode»
-                    $url = $this->router->generate($routePrefix . 'display', [«IF hasSluggableFields && slugUnique && needsSlugHandler»'slug' => $this->originalSlug«ELSE»«routeParams('this->idValue', false)»«ENDIF»]);
+                    $url = $this->router->generate($routePrefix . 'display', $this->entityRef->createUrlArgs());
                 }
             «ENDIF»
 
@@ -191,6 +174,7 @@ class Redirect {
 
             $session = $this->requestStack->getCurrentRequest()->getSession();
             if ($session->has('«app.appName.formatForDB»' . $this->objectTypeCapital . 'Referer')) {
+                $this->returnTo = $session->get('zikulacontentmodule' . $this->objectTypeCapital . 'Referer');
                 $session->remove('«app.appName.formatForDB»' . $this->objectTypeCapital . 'Referer');
             }
 
@@ -202,6 +186,12 @@ class Redirect {
 
             $routeArea = substr($this->returnTo, 0, 5) == 'admin' ? 'admin' : '';
             $routePrefix = '«app.appName.formatForDB»_' . $this->objectTypeLower . '_' . $routeArea;
+
+            if (in_array($this->objectType, ['«app.getAllEntities.filter[hasEditAction && hasSluggableFields].map[name.formatForCode].join('\', \'')»'])) {
+                // force refresh because slugs may have changed (e.g. by translatable)
+                $this->entityFactory->getObjectManager()->clear();
+                $this->entityRef = $this->initEntityForEditing();
+            }
 
             // parse given redirect code and return corresponding url
             switch ($this->returnTo) {

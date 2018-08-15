@@ -138,6 +138,9 @@ class FormHandler {
         use Symfony\Component\Form\FormFactoryInterface;
         use Symfony\Component\HttpFoundation\RedirectResponse;
         use Symfony\Component\HttpFoundation\RequestStack;
+        «IF hasSluggable»
+            use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+        «ENDIF»
         use Symfony\Component\Routing\RouterInterface;
         use Symfony\Component\Security\Core\Exception\AccessDeniedException;
         use Zikula\Bundle\CoreBundle\HttpKernel\ZikulaHttpKernelInterface;
@@ -391,15 +394,6 @@ class FormHandler {
              * @var array
              */
             protected $templateParameters = [];
-            «IF !getAllEntities.filter[hasEditAction && hasSluggableFields && slugUnique && needsSlugHandler].empty»
-
-                /**
-                 * Original slug.
-                 *
-                 * @var string
-                 */
-                protected $originalSlug = '';
-            «ENDIF»
 
             /**
              * «actionName.formatForCodeCapital»Handler constructor.
@@ -577,6 +571,20 @@ class FormHandler {
                     if (!$this->permissionHelper->mayEdit($entity)) {
                         throw new AccessDeniedException();
                     }
+                    «IF hasSluggable»
+                        if (in_array($this->objectType, ['«getAllEntities.filter[hasEditAction && hasSluggableFields].map[name.formatForCode].join('\', \'')»'])) {
+                            // map display return urls to redirect codes because slugs may change
+                            $routePrefix = 'zikulacontentmodule_' . $this->objectTypeLower . '_';
+                            $userDisplayUrl = $this->router->generate($routePrefix . 'display', $entity->createUrlArgs(), UrlGeneratorInterface::ABSOLUTE_URL);
+                            $adminDisplayUrl = $this->router->generate($routePrefix . 'admindisplay', $entity->createUrlArgs(), UrlGeneratorInterface::ABSOLUTE_URL);
+                            if ($this->returnTo == $userDisplayUrl) {
+                                $this->returnTo = 'userDisplay';                                                                                                                       
+                            } elseif ($this->returnTo == $adminDisplayUrl) {                                                                                                           
+                                $this->returnTo = 'adminDisplay';                                                                                                                      
+                            }                                                                                                                                                          
+                            $request->getSession()->set($refererSessionVar, $this->returnTo);                                                                                          
+                        }
+                    «ENDIF»
                 }
             } else {
                 $permissionLevel = «IF needsApproval»in_array($this->objectType, ['«getAllEntities.filter[workflow != EntityWorkflowType.NONE].map[name.formatForCode].join('\', \'')»']) ? ACCESS_COMMENT : ACCESS_EDIT«ELSE»ACCESS_EDIT«ENDIF»;
@@ -606,13 +614,6 @@ class FormHandler {
                 return new RedirectResponse($this->getRedirectUrl(['commandName' => 'cancel']), 302);
             }
 
-            «IF !getAllEntities.filter[hasEditAction && hasSluggableFields && slugUnique && needsSlugHandler].empty»
-                if (in_array($this->objectType, ['«getAllEntities.filter[hasEditAction && hasSluggableFields && slugUnique && needsSlugHandler].map[name.formatForCode].join('\', \'')»'])) {
-                    $this->originalSlug = $entity->getSlug();
-                    $slugParts = explode('/', $entity->getSlug());
-                    $entity->setSlug(end($slugParts));
-                }
-            «ENDIF»
             // save entity reference for later reuse
             $this->entityRef = $entity;
 
