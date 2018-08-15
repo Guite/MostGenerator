@@ -574,7 +574,7 @@ class FormHandler {
                     «IF !getAllEntities.filter[hasDisplayAction && hasEditAction && hasSluggableFields].empty»
                         if (in_array($this->objectType, ['«getAllEntities.filter[hasDisplayAction && hasEditAction && hasSluggableFields].map[name.formatForCode].join('\', \'')»'])) {
                             // map display return urls to redirect codes because slugs may change
-                            $routePrefix = 'zikulacontentmodule_' . $this->objectTypeLower . '_';
+                            $routePrefix = '«app.appName.formatForDB»_' . $this->objectTypeLower . '_';
                             $userDisplayUrl = $this->router->generate($routePrefix . 'display', $entity->createUrlArgs(), UrlGeneratorInterface::ABSOLUTE_URL);
                             $adminDisplayUrl = $this->router->generate($routePrefix . 'admindisplay', $entity->createUrlArgs(), UrlGeneratorInterface::ABSOLUTE_URL);
                             if ($this->returnTo == $userDisplayUrl) {

@@ -172,7 +172,7 @@ class Redirect {
 
             $session = $this->requestStack->getCurrentRequest()->getSession();
             if ($session->has('«app.appName.formatForDB»' . $this->objectTypeCapital . 'Referer')) {
-                $this->returnTo = $session->get('zikulacontentmodule' . $this->objectTypeCapital . 'Referer');
+                $this->returnTo = $session->get('«app.appName.formatForDB»' . $this->objectTypeCapital . 'Referer');
                 $session->remove('«app.appName.formatForDB»' . $this->objectTypeCapital . 'Referer');
             }
 
