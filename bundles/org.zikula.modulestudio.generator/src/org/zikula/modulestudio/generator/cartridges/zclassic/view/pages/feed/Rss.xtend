@@ -59,7 +59,7 @@ class Rss {
                 #}
                 <docs>http://blogs.law.harvard.edu/tech/rss</docs>
                 <copyright>Copyright (c) {{ 'now'|date('Y') }}, {{ app.request.schemeAndHttpHost }}</copyright>
-                <webMaster>{{ pageGetVar('adminmail') }}</webMaster>
+                <webMaster>{{ getSystemVar('adminmail') }}</webMaster>
         «val objName = name.formatForCode»
         {% for «objName» in items %}
             <item>
