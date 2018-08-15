@@ -6,7 +6,6 @@ import de.guite.modulestudio.metamodel.EntityTreeType
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
-import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
@@ -19,7 +18,6 @@ class Redirect {
     extension ControllerExtensions = new ControllerExtensions
     extension FormattingExtensions = new FormattingExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
-    extension ModelExtensions = new ModelExtensions
     extension ModelJoinExtensions = new ModelJoinExtensions
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
@@ -187,12 +185,12 @@ class Redirect {
             $routeArea = substr($this->returnTo, 0, 5) == 'admin' ? 'admin' : '';
             $routePrefix = '«app.appName.formatForDB»_' . $this->objectTypeLower . '_' . $routeArea;
 
-            if (in_array($this->objectType, ['«app.getAllEntities.filter[hasEditAction && hasSluggableFields].map[name.formatForCode].join('\', \'')»'])) {
+            «IF hasSluggableFields»
                 // force refresh because slugs may have changed (e.g. by translatable)
                 $this->entityFactory->getObjectManager()->clear();
                 $this->entityRef = $this->initEntityForEditing();
-            }
 
+            «ENDIF»
             // parse given redirect code and return corresponding url
             switch ($this->returnTo) {
                 «IF hasIndexAction»
