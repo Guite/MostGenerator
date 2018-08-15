@@ -138,7 +138,7 @@ class FormHandler {
         use Symfony\Component\Form\FormFactoryInterface;
         use Symfony\Component\HttpFoundation\RedirectResponse;
         use Symfony\Component\HttpFoundation\RequestStack;
-        «IF hasSluggable»
+        «IF !getAllEntities.filter[hasDisplayAction && hasEditAction && hasSluggableFields].empty»
             use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
         «ENDIF»
         use Symfony\Component\Routing\RouterInterface;
