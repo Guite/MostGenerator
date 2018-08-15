@@ -614,6 +614,12 @@ class FormHandler {
                 return new RedirectResponse($this->getRedirectUrl(['commandName' => 'cancel']), 302);
             }
 
+            «IF !getAllEntities.filter[hasEditAction && hasSluggableFields && slugUnique && needsSlugHandler].empty»
+                if (in_array($this->objectType, ['«getAllEntities.filter[hasEditAction && hasSluggableFields && slugUnique && needsSlugHandler].map[name.formatForCode].join('\', \'')»'])) {
+                    $slugParts = explode('/', $entity->getSlug());
+                    $entity->setSlug(end($slugParts));
+                }
+            «ENDIF»
             // save entity reference for later reuse
             $this->entityRef = $entity;
 

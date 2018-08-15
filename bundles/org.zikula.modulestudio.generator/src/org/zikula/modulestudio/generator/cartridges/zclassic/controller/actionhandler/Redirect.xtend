@@ -130,7 +130,7 @@ class Redirect {
             «ELSE»
                 $url = $this->router->generate('home');
             «ENDIF»
-            «IF hasDisplayAction && tree != EntityTreeType.NONE»
+            «IF hasDisplayAction»
 
                 if ($objectIsPersisted) {
                     // redirect to the detail page of treated «name.formatForCode»
@@ -176,6 +176,12 @@ class Redirect {
                 $session->remove('«app.appName.formatForDB»' . $this->objectTypeCapital . 'Referer');
             }
 
+            «IF hasDisplayAction && hasSluggableFields»
+                // force refresh because slugs may have changed (e.g. by translatable)
+                $this->entityFactory->getObjectManager()->clear();
+                $this->entityRef = $this->initEntityForEditing();
+
+            «ENDIF»
             // normal usage, compute return url from given redirect code
             if (!in_array($this->returnTo, $this->getRedirectCodes())) {
                 // invalid return code, so return the default url
@@ -185,12 +191,6 @@ class Redirect {
             $routeArea = substr($this->returnTo, 0, 5) == 'admin' ? 'admin' : '';
             $routePrefix = '«app.appName.formatForDB»_' . $this->objectTypeLower . '_' . $routeArea;
 
-            «IF hasSluggableFields»
-                // force refresh because slugs may have changed (e.g. by translatable)
-                $this->entityFactory->getObjectManager()->clear();
-                $this->entityRef = $this->initEntityForEditing();
-
-            «ENDIF»
             // parse given redirect code and return corresponding url
             switch ($this->returnTo) {
                 «IF hasIndexAction»
