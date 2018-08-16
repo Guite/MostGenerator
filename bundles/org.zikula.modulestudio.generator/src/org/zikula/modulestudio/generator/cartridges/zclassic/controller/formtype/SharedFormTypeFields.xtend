@@ -26,6 +26,7 @@ import de.guite.modulestudio.metamodel.UrlField
 import de.guite.modulestudio.metamodel.UserField
 import java.math.BigInteger
 import java.util.List
+import org.zikula.modulestudio.generator.cartridges.zclassic.models.entity.Property
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.formcomponents.Validation
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.DateTimeExtensions
@@ -210,7 +211,7 @@ class SharedFormTypeFields {
                 «ENDIF»
                 «helpAttribute»
                 «IF !(it instanceof BooleanField || it instanceof UploadField || it instanceof DatetimeField)»
-                    'empty_data' => '«defaultValue»',
+                    'empty_data' => «Property.defaultFieldData(it)»,
                 «ENDIF»
                 'attr' => [
                     «additionalAttributes»
