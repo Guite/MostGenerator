@@ -255,7 +255,11 @@ class TranslatableHelper {
                 }
                 $translatedFields = $form['translations' . $language];
                 foreach ($translatedFields as $fieldName => $formField) {
-                    $entity[$fieldName] = $formField->getData();
+                    $fieldData = $formField->getData();
+                    if (!$fieldData && isset($form[$fieldName])) {
+                        $fieldData = $form[$fieldName]->getData();
+                    }
+                    $entity[$fieldName] = $fieldData;
                 }
                 $entity['locale'] = $language;
                 $entityManager->flush();
