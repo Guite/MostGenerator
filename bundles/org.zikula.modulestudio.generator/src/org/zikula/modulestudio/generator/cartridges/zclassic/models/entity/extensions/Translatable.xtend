@@ -1,5 +1,6 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.models.entity.extensions
 
+import de.guite.modulestudio.metamodel.AbstractIntegerField
 import de.guite.modulestudio.metamodel.DerivedField
 import de.guite.modulestudio.metamodel.Entity
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
@@ -67,6 +68,9 @@ class Translatable extends AbstractExtension implements EntityExtensionInterface
      */
     override extensionClassImports(Entity it) '''
         use Gedmo\Translatable\Entity\MappedSuperclass\«extensionBaseClass»;
+        «IF primaryKey instanceof AbstractIntegerField»
+            use Doctrine\ORM\Mapping as ORM;
+        «ENDIF»
     '''
 
     /**
@@ -82,6 +86,23 @@ class Translatable extends AbstractExtension implements EntityExtensionInterface
     override extensionClassDescription(Entity it) {
         'Entity extension domain class storing ' + name.formatForDisplay + ' translations.'
     }
+
+    /**
+     * Returns the extension base class implementation.
+     */
+    override extensionClassBaseImplementation(Entity it) '''
+        «IF primaryKey instanceof AbstractIntegerField»
+            /**
+             * Use integer instead of string for increased performance.
+             * @see https://github.com/Atlantic18/DoctrineExtensions/issues/1512
+             *
+             * @var integer $foreignKey
+             *
+             * @ORM\Column(name="foreign_key", type="integer")
+             */
+            protected $foreignKey;
+        «ENDIF»
+    '''
 
     /**
      * Returns the extension implementation class ORM annotations.
