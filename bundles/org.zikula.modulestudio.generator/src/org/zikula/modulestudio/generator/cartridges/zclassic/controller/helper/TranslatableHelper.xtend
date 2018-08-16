@@ -5,12 +5,14 @@ import de.guite.modulestudio.metamodel.Entity
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
+import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class TranslatableHelper {
 
     extension FormattingExtensions = new FormattingExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
+    extension ModelExtensions = new ModelExtensions
     extension Utils = new Utils
 
     /**
@@ -221,6 +223,12 @@ class TranslatableHelper {
                 foreach ($fields as $fieldName) {
                     $translationData[$fieldName] = isset($entityTranslations[$language][$fieldName]) ? $entityTranslations[$language][$fieldName] : '';
                 }
+                «IF !getAllEntities.filter[slugUnique && hasTranslatableSlug && needsSlugHandler].empty»
+                    if (in_array($objectType, ['«getAllEntities.filter[slugUnique && hasTranslatableSlug && needsSlugHandler].map[name.formatForCode].join('\', \'')»']) && isset($translationData['slug'])) {
+                        $slugParts = explode('/', $translationData['slug']);
+                        $translationData['slug'] = end($slugParts);
+                    }
+                «ENDIF»
                 // add data to collected translations
                 $translations[$language] = $translationData;
             }
