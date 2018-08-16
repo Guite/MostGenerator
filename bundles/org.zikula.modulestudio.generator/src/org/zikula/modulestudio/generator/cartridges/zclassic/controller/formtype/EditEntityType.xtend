@@ -468,18 +468,24 @@ class EditEntityType {
 
     def private slugField(Entity it) '''
         «IF hasSluggableFields && slugUpdatable»
+            $helpText = $this->__('You can input a custom permalink for the «name.formatForDisplay» or let this field free to create one automatically.');
+            «IF hasTranslatableSlug»
+                if ('create' != $options['mode']) {
+                    $helpText = '';
+                }
+            «ENDIF»
             $builder->add('slug', TextType::class, [
                 'label' => $this->__('Permalink') . ':',
-                'required' => false,
+                'required' => «IF hasTranslatableSlug»'create' != $options['mode']«ELSE»false«ENDIF»,
                 'empty_data' => '',
                 'attr' => [
                     'maxlength' => «slugLength»,
                     «IF slugUnique»
                         'class' => 'validate-unique',
                     «ENDIF»
-                    'title' => $this->__('You can input a custom permalink for the «name.formatForDisplay» or let this field free to create one automatically.')
+                    'title' => $helpText
                 ],
-                'help' => $this->__('You can input a custom permalink for the «name.formatForDisplay» or let this field free to create one automatically.')
+                'help' => $helpText
             ]);
         «ENDIF»
     '''
