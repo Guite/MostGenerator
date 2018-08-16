@@ -103,7 +103,6 @@ class Translatable extends AbstractExtension implements EntityExtensionInterface
             protected $foreignKey;
 
         «ENDIF»
-
         /**
          * Clone interceptor implementation.
          * Performs a quite simple shallow copy.
