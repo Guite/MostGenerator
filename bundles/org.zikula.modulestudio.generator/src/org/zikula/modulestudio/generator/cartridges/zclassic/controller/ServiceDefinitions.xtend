@@ -38,6 +38,7 @@ class ServiceDefinitions {
 
     IMostFileSystemAccess fsa
     String modPrefix = ''
+    Boolean needsDetailContentType
 
     def private generateServiceFile(Application it, String fileName, CharSequence content) {
         val definitionFilePath = getResourcesPath + 'config/' + fileName + '.yml'
@@ -51,6 +52,7 @@ class ServiceDefinitions {
     def generate(Application it, IMostFileSystemAccess fsa) {
         this.fsa = fsa
         modPrefix = appService
+        needsDetailContentType = generateDetailContentType && hasDisplayActions
 
         generateServiceFile('services', mainServiceFile)
         if (authenticationMethod != AuthMethodType.NONE) {
@@ -58,9 +60,6 @@ class ServiceDefinitions {
         }
         if (!variables.empty) {
             generateServiceFile('appSettings', appSettings)
-        }
-        if (hasHookSubscribers || hasHookProviders) {
-            generateServiceFile('hooks', hooks)
         }
         generateServiceFile('menu', menu)
         generateServiceFile('entityFactory', entityFactory)
@@ -73,8 +72,14 @@ class ServiceDefinitions {
         }
         generateServiceFile('forms', forms)
         generateServiceFile('helpers', helpers)
+        if (hasHookSubscribers || hasHookProviders) {
+            generateServiceFile('hooks', hooks)
+        }
         generateServiceFile('twig', twig)
         generateServiceFile('logger', logger)
+        if (targets('2.0') && (generateListContentType || needsDetailContentType)) {
+            generateServiceFile('contentTypes', contentTypes)
+        }
     }
 
     def private mainServiceFile(Application it) '''
@@ -101,6 +106,9 @@ class ServiceDefinitions {
         «ENDIF»
           - { resource: 'twig.yml' }
           - { resource: 'logger.yml' }
+        «IF targets('2.0') && (generateListContentType || needsDetailContentType)»
+            «'  '»- { resource: 'contentTypes.yml' }
+        «ENDIF»
         «IF hasImageFields || !getAllVariables.filter(UploadField).filter[isImageField].empty»
 
             parameters:
@@ -138,80 +146,6 @@ class ServiceDefinitions {
                     «IF hasUserGroupSelectors»
                         - "@zikula_groups_module.group_repository"
                     «ENDIF»
-    '''
-
-    def private hooks(Application it) '''
-        services:
-            «IF hasHookSubscribers»
-                «FOR entity : getAllEntities.filter[e|!e.skipHookSubscribers]»
-                    «modPrefix».hook_subscriber.filter_hooks.«entity.nameMultiple.formatForDB»:
-                        class: «appNamespace»\HookSubscriber\«entity.name.formatForCodeCapital»FilterHooksSubscriber
-                        arguments:
-                            - "@translator.default"
-                        tags:
-                            - { name: zikula.hook_subscriber, areaName: 'subscriber.«appName.formatForDB».filter_hooks.«entity.nameMultiple.formatForDB»' }
-
-                    «IF entity.hasEditAction || entity.hasDeleteAction»
-                        «modPrefix».hook_subscriber.form_aware_hook.«entity.nameMultiple.formatForDB»:
-                            class: «appNamespace»\HookSubscriber\«entity.name.formatForCodeCapital»FormAwareHookSubscriber
-                            arguments:
-                                - "@translator.default"
-                            tags:
-                                - { name: zikula.hook_subscriber, areaName: 'subscriber.«appName.formatForDB».form_aware_hook.«entity.nameMultiple.formatForDB»' }
-
-                    «ENDIF»
-                    «IF entity.hasViewAction || entity.hasDisplayAction || entity.hasEditAction || entity.hasDeleteAction»
-                        «modPrefix».hook_subscriber.ui_hooks.«entity.nameMultiple.formatForDB»:
-                            class: «appNamespace»\HookSubscriber\«entity.name.formatForCodeCapital»UiHooksSubscriber
-                            arguments:
-                                - "@translator.default"
-                            tags:
-                                - { name: zikula.hook_subscriber, areaName: 'subscriber.«appName.formatForDB».ui_hooks.«entity.nameMultiple.formatForDB»' }
-
-                    «ENDIF»
-                «ENDFOR»
-            «ENDIF»
-            «IF hasHookProviders»
-                «IF hasFilterHookProvider»
-                    «modPrefix».hook_provider.filter_hooks.provider:
-                        class: «appNamespace»\HookProvider\FilterHooksProvider
-                        arguments:
-                            - "@translator.default"
-                        tags:
-                            - { name: zikula.hook_provider, areaName: 'provider.«appName.formatForDB».filter_hooks.«name.formatForDB»' }
-
-                «ENDIF»
-                «IF hasFormAwareHookProviders || hasUiHooksProviders»
-                    «FOR entity : getAllEntities»
-                        «IF entity.formAwareHookProvider != HookProviderMode.DISABLED»
-                            «modPrefix».hook_provider.form_aware_hook.«entity.nameMultiple.formatForDB»:
-                                class: «appNamespace»\HookProvider\«entity.name.formatForCodeCapital»FormAwareHookProvider
-                                arguments:
-                                    - "@translator.default"
-                                    - "@session"
-                                    - "@form.factory"
-                                tags:
-                                    - { name: zikula.hook_provider, areaName: 'provider.«appName.formatForDB».form_aware_hook.«entity.nameMultiple.formatForDB»' }
-
-                        «ENDIF»
-                        «IF entity.uiHooksProvider != HookProviderMode.DISABLED»
-                            «modPrefix».hook_provider.ui_hooks.«entity.nameMultiple.formatForDB»:
-                                class: «appNamespace»\HookProvider\«entity.name.formatForCodeCapital»UiHooksProvider
-                                arguments:
-                                    - "@translator.default"
-                                    - "@request_stack"
-                                    - "@«modPrefix».entity_factory"
-                                    - "@twig"
-                                    «IF !getUploadEntities.empty»
-                                        - "@«modPrefix».image_helper"
-                                    «ENDIF»
-                                tags:
-                                    - { name: zikula.hook_provider, areaName: 'provider.«appName.formatForDB».ui_hooks.«entity.nameMultiple.formatForDB»' }
-
-                        «ENDIF»
-                    «ENDFOR»
-                «ENDIF»
-            «ENDIF»
     '''
 
     def private menu(Application it) '''
@@ -949,6 +883,80 @@ class ServiceDefinitions {
                 - "@«modPrefix».permission_helper"
     '''
 
+    def private hooks(Application it) '''
+        services:
+            «IF hasHookSubscribers»
+                «FOR entity : getAllEntities.filter[e|!e.skipHookSubscribers]»
+                    «modPrefix».hook_subscriber.filter_hooks.«entity.nameMultiple.formatForDB»:
+                        class: «appNamespace»\HookSubscriber\«entity.name.formatForCodeCapital»FilterHooksSubscriber
+                        arguments:
+                            - "@translator.default"
+                        tags:
+                            - { name: zikula.hook_subscriber, areaName: 'subscriber.«appName.formatForDB».filter_hooks.«entity.nameMultiple.formatForDB»' }
+
+                    «IF entity.hasEditAction || entity.hasDeleteAction»
+                        «modPrefix».hook_subscriber.form_aware_hook.«entity.nameMultiple.formatForDB»:
+                            class: «appNamespace»\HookSubscriber\«entity.name.formatForCodeCapital»FormAwareHookSubscriber
+                            arguments:
+                                - "@translator.default"
+                            tags:
+                                - { name: zikula.hook_subscriber, areaName: 'subscriber.«appName.formatForDB».form_aware_hook.«entity.nameMultiple.formatForDB»' }
+
+                    «ENDIF»
+                    «IF entity.hasViewAction || entity.hasDisplayAction || entity.hasEditAction || entity.hasDeleteAction»
+                        «modPrefix».hook_subscriber.ui_hooks.«entity.nameMultiple.formatForDB»:
+                            class: «appNamespace»\HookSubscriber\«entity.name.formatForCodeCapital»UiHooksSubscriber
+                            arguments:
+                                - "@translator.default"
+                            tags:
+                                - { name: zikula.hook_subscriber, areaName: 'subscriber.«appName.formatForDB».ui_hooks.«entity.nameMultiple.formatForDB»' }
+
+                    «ENDIF»
+                «ENDFOR»
+            «ENDIF»
+            «IF hasHookProviders»
+                «IF hasFilterHookProvider»
+                    «modPrefix».hook_provider.filter_hooks.provider:
+                        class: «appNamespace»\HookProvider\FilterHooksProvider
+                        arguments:
+                            - "@translator.default"
+                        tags:
+                            - { name: zikula.hook_provider, areaName: 'provider.«appName.formatForDB».filter_hooks.«name.formatForDB»' }
+
+                «ENDIF»
+                «IF hasFormAwareHookProviders || hasUiHooksProviders»
+                    «FOR entity : getAllEntities»
+                        «IF entity.formAwareHookProvider != HookProviderMode.DISABLED»
+                            «modPrefix».hook_provider.form_aware_hook.«entity.nameMultiple.formatForDB»:
+                                class: «appNamespace»\HookProvider\«entity.name.formatForCodeCapital»FormAwareHookProvider
+                                arguments:
+                                    - "@translator.default"
+                                    - "@session"
+                                    - "@form.factory"
+                                tags:
+                                    - { name: zikula.hook_provider, areaName: 'provider.«appName.formatForDB».form_aware_hook.«entity.nameMultiple.formatForDB»' }
+
+                        «ENDIF»
+                        «IF entity.uiHooksProvider != HookProviderMode.DISABLED»
+                            «modPrefix».hook_provider.ui_hooks.«entity.nameMultiple.formatForDB»:
+                                class: «appNamespace»\HookProvider\«entity.name.formatForCodeCapital»UiHooksProvider
+                                arguments:
+                                    - "@translator.default"
+                                    - "@request_stack"
+                                    - "@«modPrefix».entity_factory"
+                                    - "@twig"
+                                    «IF !getUploadEntities.empty»
+                                        - "@«modPrefix».image_helper"
+                                    «ENDIF»
+                                tags:
+                                    - { name: zikula.hook_provider, areaName: 'provider.«appName.formatForDB».ui_hooks.«entity.nameMultiple.formatForDB»' }
+
+                        «ENDIF»
+                    «ENDFOR»
+                «ENDIF»
+            «ENDIF»
+    '''
+
     def private twig(Application it) '''
         services:
             «servicesTwig»
@@ -1003,5 +1011,52 @@ class ServiceDefinitions {
                 tags:
                     - { name: monolog.processor }
             «ENDIF»
+    '''
+
+    def private contentTypes(Application it) '''
+        services:
+            «servicesContentTypes»
+    '''
+
+    def private servicesContentTypes(Application it) '''
+        «val nsBase = appNamespace + '\\ContentType\\'»
+        # Content types
+        «IF generateListContentType»
+            «nsBase»ItemListType:
+                parent: zikula_content_module.content_type.common
+                shared: false
+                calls:
+                    - [setControllerHelper, ['@«modPrefix».controller_helper']]
+                    - [setModelHelper, ['@«modPrefix».model_helper']]
+                    - [setEntityFactory, ['@«modPrefix».entity_factory']]
+                    «IF hasCategorisableEntities»
+                        - [setCategoryDependencies, ['@«modPrefix».feature_activation_helper', '@«modPrefix».category_helper']]
+                    «ENDIF»
+                tags: ['zikula.content_type']
+            «nsBase»\Form\Type\ItemListType:
+                parent: zikula_content_module.content_type.form.common
+                arguments:
+                    - "@translator.default"
+                    «IF hasCategorisableEntities»
+                        - "@zikula_categories_module.category_repository"
+                    «ENDIF»
+                tags: ['form.type']
+        «ENDIF»
+        «IF needsDetailContentType»
+            «nsBase»ItemType:
+                parent: zikula_content_module.content_type.common
+                shared: false
+                calls:
+                    - [setControllerHelper, ['@«modPrefix».controller_helper']]
+                    - [setFragmentHandler, ['@fragment.handler']]
+                tags: ['zikula.content_type']
+            «nsBase»\Form\Type\ItemType:
+                parent: zikula_content_module.content_type.form.common
+                arguments:
+                    - "@translator.default"
+                    - "@«modPrefix».entity_factory"
+                    - "@«modPrefix».entity_display_helper"
+                tags: ['form.type']
+        «ENDIF»
     '''
 }

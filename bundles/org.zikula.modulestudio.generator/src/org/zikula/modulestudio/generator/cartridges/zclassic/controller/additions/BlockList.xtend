@@ -233,7 +233,7 @@ class BlockList {
         protected function getDisplayTemplate(array $properties = [])
         {
             $templateFile = $properties['template'];
-            if ($templateFile == 'custom' && null !== $properties['customTemplate'] && $properties['customTemplate'] != '') {
+            if ('custom' == $templateFile && null !== $properties['customTemplate'] && '' != $properties['customTemplate']) {
                 $templateFile = $properties['customTemplate'];
             }
 

@@ -2,6 +2,7 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.controller.additio
 
 import de.guite.modulestudio.metamodel.Application
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
+import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype.ContentTypeListType
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.additions.ContentTypeListView
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
@@ -22,31 +23,384 @@ class ContentTypeList {
             return
         }
         'Generating content type for multiple objects'.printIfNotTesting(fsa)
-        fsa.generateClassPair('ContentType/ItemList.php', contentTypeBaseClass, contentTypeImpl)
+        if (targets('2.0')) {
+            fsa.generateClassPair('ContentType/ItemListType.php', contentTypeBaseClass, contentTypeImpl)
+            new ContentTypeListType().generate(it, fsa)
+        } else {
+            fsa.generateClassPair('ContentType/ItemList.php', contentTypeLegacyBaseClass, contentTypeLegacyImpl)
+        }
         new ContentTypeListView().generate(it, fsa)
     }
 
     def private contentTypeBaseClass(Application it) '''
         namespace «appNamespace»\ContentType\Base;
 
+        use Zikula\ContentModule\AbstractContentType;
+        use «appNamespace»\ContentType\Form\Type\ItemListType as FormType;
+        use «appNamespace»\Entity\Factory\EntityFactory;
+        «IF hasCategorisableEntities»
+            use «appNamespace»\Helper\CategoryHelper;
+        «ENDIF»
+        use «appNamespace»\Helper\ControllerHelper;
+        «IF hasCategorisableEntities»
+            use «appNamespace»\Helper\FeatureActivationHelper;
+        «ENDIF»
+        use «appNamespace»\Helper\ModelHelper;
+
+        /**
+         * Generic item list content type base class.
+         */
+        abstract class AbstractItemListType extends AbstractContentType
+        {
+            «contentTypeBaseImpl»
+        }
+    '''
+
+    def private contentTypeLegacyBaseClass(Application it) '''
+        namespace «appNamespace»\ContentType\Base;
+
         use Symfony\Component\DependencyInjection\ContainerAwareInterface;
         use Symfony\Component\DependencyInjection\ContainerAwareTrait;
-        «IF needsFeatureActivationHelper»
+        «IF hasCategorisableEntities»
             use «appNamespace»\Helper\FeatureActivationHelper;
         «ENDIF»
 
         /**
-         * Generic item list content plugin base class.
+         * Generic item list content type base class.
          */
         abstract class AbstractItemList extends \Content_AbstractContentType implements ContainerAwareInterface
         {
             use ContainerAwareTrait;
 
-            «contentTypeBaseImpl»
+            «contentTypeBaseLegacyImpl»
         }
     '''
 
     def private contentTypeBaseImpl(Application it) '''
+        /**
+         * @var ControllerHelper
+         */
+        protected $controllerHelper;
+
+        /**
+         * @var ModelHelper
+         */
+        protected $modelHelper;
+
+        /**
+         * @var EntityFactory
+         */
+        protected $entityFactory;
+
+        «IF hasCategorisableEntities»
+            /**
+             * @var FeatureActivationHelper
+             */
+            protected $featureActivationHelper;
+
+            /**
+             * @var CategoryHelper
+             */
+            protected $categoryHelper;
+
+            /**
+             * List of object types allowing categorisation.
+             *
+             * @var array
+             */
+            protected $categorisableObjectTypes;
+
+            /**
+             * List of category registries for different trees.
+             *
+             * @var array
+             */
+            protected $catRegistries;
+            
+            /**
+             * List of category properties for different trees.
+             *
+             * @var array
+             */
+            protected $catProperties;
+
+            /**
+             * List of category ids with sub arrays for each registry.
+             *
+             * @var array
+             */
+            protected $catIds;
+
+        «ENDIF»
+        /**
+         * @inheritDoc
+         */
+        public function getIcon()
+        {
+            return 'th-list';
+        }
+
+        /**
+         * @inheritDoc
+         */
+        public function getTitle()
+        {
+            return $this->__('«appName» list view');
+        }
+
+        /**
+         * @inheritDoc
+         */
+        public function getDescription()
+        {
+            return $this->__('Display a list of «appName» objects.');
+        }
+
+        /**
+         * @inheritDoc
+         */
+        public function getDefaultData()
+        {
+            return [
+                'objectType' => '«getLeadingEntity.name.formatForCode»',
+                'sorting' => 'default',
+                'amount' => 1,
+                'template' => 'itemlist_display.html.twig',
+                'customTemplate' => null,
+                'filter' => ''
+            ];
+        }
+
+        /**
+         * @inheritDoc
+         */
+        public function getData()
+        {
+            $data = parent::getData();
+
+            $contextArgs = ['name' => 'list'];
+            if (!isset($data['objectType']) || !in_array($data['objectType'], $this->controllerHelper->getObjectTypes('contentType', $contextArgs))) {
+                $data['objectType'] = $this->controllerHelper->getDefaultObjectType('contentType', $contextArgs);
+            }
+
+            if (!$this->data['template']) {
+                $this->data['template'] = 'itemlist_' . $this->data['objectType'] . '_display.html.twig';
+            }
+            «IF hasCategorisableEntities»
+
+                $objectType = $this->data['objectType'];
+                if ($this->featureActivationHelper->isEnabled(FeatureActivationHelper::CATEGORIES, $objectType)) {
+                    $this->categorisableObjectTypes = [«FOR entity : getCategorisableEntities SEPARATOR ', '»'«entity.name.formatForCode»'«ENDFOR»];
+
+                    // fetch category properties
+                    $this->catRegistries = [];
+                    $this->catProperties = [];
+                    if (in_array($objectType, $this->categorisableObjectTypes)) {
+                        $idField = $this->entityFactory->getIdField($this->objectType);
+                        $this->catRegistries = $categoryHelper->getAllPropertiesWithMainCat($objectType, $idField);
+                        $this->catProperties = $categoryHelper->getAllProperties($this->objectType);
+                    }
+
+                    if (!isset($this->data['catIds'])) {
+                        $primaryRegistry = $this->categoryHelper->getPrimaryProperty($objectType);
+                        $this->data['catIds'] = [$primaryRegistry => []];
+                        // backwards compatibility
+                        if (isset($this->data['catId'])) {
+                            $this->data['catIds'][$primaryRegistry][] = $this->data['catId'];
+                            unset($this->data['catId']);
+                        }
+                    } elseif (!is_array($this->data['catIds'])) {
+                        $this->data['catIds'] = explode(',', $this->data['catIds']);
+                    }
+
+                    foreach ($this->catRegistries as $registryId => $registryCid) {
+                        $propName = '';
+                        foreach ($this->catProperties as $propertyName => $propertyId) {
+                            if ($propertyId == $registryId) {
+                                $propName = $propertyName;
+                                break;
+                            }
+                        }
+                        $this->data['catIds'][$propName] = [];
+                        if (isset($this->data['catids' . $propName])) {
+                            $this->data['catIds'][$propName] = $this->data['catids' . $propName];
+                        }
+                        if (!is_array($this->data['catIds'][$propName])) {
+                            if ($this->data['catIds'][$propName]) {
+                                $this->data['catIds'][$propName] = [$this->data['catIds'][$propName]];
+                            } else {
+                                $this->data['catIds'][$propName] = [];
+                            }
+                        }
+                    }
+
+                    $this->catIds = $this->data['catIds'];
+                }
+            «ENDIF»
+
+            return $data;
+        }
+
+        /**
+         * @inheritDoc
+         */
+        public function displayView()
+        {
+            $objectType = $this->data['objectType'];
+            $repository = $this->entityFactory->getRepository($objectType);
+
+            // create query
+            $orderBy = $this->modelHelper->resolveSortParameter($this->data['objectType'], $this->data['sorting']);
+            $qb = $repository->getListQueryBuilder($this->data['filter'], $orderBy);
+            «IF hasCategorisableEntities»
+
+                if ($this->featureActivationHelper->isEnabled(FeatureActivationHelper::CATEGORIES, $objectType)) {
+                    // apply category filters
+                    if (in_array($objectType, $this->categorisableObjectTypes)) {
+                        if (is_array($this->catIds) && count($this->catIds) > 0) {
+                            $qb = $this->categoryHelper->buildFilterClauses($qb, $objectType, $this->catIds);
+                        }
+                    }
+                }
+            «ENDIF»
+
+            // get objects from database
+            $currentPage = 1;
+            $resultsPerPage = isset($this->amount) ? $this->amount : 1;
+            $query = $repository->getSelectWherePaginatedQuery($qb, $currentPage, $resultsPerPage);
+            try {
+                list($entities, $objectCount) = $repository->retrieveCollectionResult($query, true);
+            } catch (\Exception $exception) {
+                $entities = [];
+                $objectCount = 0;
+            }
+            «IF hasCategorisableEntities»
+
+                if ($this->featureActivationHelper->isEnabled(FeatureActivationHelper::CATEGORIES, $objectType)) {
+                    $entities = $this->categoryHelper->filterEntitiesByPermission($entities);
+                }
+            «ENDIF»
+
+            $data = $this->data;
+            $data['items'] = $entities;
+            «IF hasCategorisableEntities»
+
+                if ($this->featureActivationHelper->isEnabled(FeatureActivationHelper::CATEGORIES, $this->objectType)) {
+                    $data['registries'] = $this->catRegistries;
+                    $data['properties'] = $this->catProperties;
+                }
+            «ENDIF»
+
+            $data = $this->controllerHelper->addTemplateParameters($objectType, $data, 'contentType', []);
+            $this->data = $data;
+
+            return parent::displayView();
+        }
+
+        /**
+         * Returns the template used for output.
+         *
+         * @return string the template path
+         */
+        protected function getDisplayTemplate()
+        {
+            $templateFile = $this->data['template'];
+            if ('custom' == $templateFile && null !== $this->data['customTemplate'] && '' != $this->data['customTemplate']) {
+                $templateFile = $this->data['customTemplate'];
+            }
+
+            $templateForObjectType = str_replace('itemlist_', 'itemlist_' . $this->data['objectType'] . '_', $templateFile);
+            $templating = $this->container->get('templating');
+
+            $templateOptions = [
+                'ContentType/' . $templateForObjectType,
+                'ContentType/' . $templateFile,
+                'ContentType/itemlist_display.html.twig'
+            ];
+
+            $template = '';
+            foreach ($templateOptions as $templatePath) {
+                if ($this->twigLoader->exists('@«appName»/' . $templatePath)) {
+                    $template = '@«appName»/' . $templatePath;
+                    break;
+                }
+            }
+
+            return $template;
+        }
+
+        /**
+         * @inheritDoc
+         */
+        public function getEditFormClass()
+        {
+            return FormType::class;
+        }
+
+        /**
+         * @inheritDoc
+         */
+        public function getEditFormOptions($context)
+        {
+            $options = parent::getEditFormOptions($context);
+            $options['objectType'] = $this->data['objectType'];
+            «IF hasCategorisableEntities»
+                $options['is_categorisable'] = in_array($this->data['objectType'], $this->categorisableObjectTypes);
+                $options['category_helper'] = $this->categoryHelper;
+                $options['feature_activation_helper'] = $this->featureActivationHelper;
+            «ENDIF»
+
+            return $options;
+        }
+
+        /**
+         * @param ControllerHelper $controllerHelper
+         */
+        public function setControllerHelper(ControllerHelper $controllerHelper)
+        {
+            $this->controllerHelper = $controllerHelper;
+        }
+
+        /**
+         * @param ModelHelper $modelHelper
+         */
+        public function setModelHelper(ModelHelper $modelHelper)
+        {
+            $this->modelHelper = $modelHelper;
+        }
+
+        /**
+         * @param EntityFactory $entityFactory
+         */
+        public function setEntityFactory(EntityFactory $entityFactory)
+        {
+            $this->entityFactory = $entityFactory;
+        }
+        «IF hasCategorisableEntities»
+
+            /**
+             * @param FeatureActivationHelper $featureActivationHelper
+             * @param CategoryHelper $categoryHelper
+             */
+            public function setCategoryDependencies(
+                FeatureActivationHelper $featureActivationHelper,
+                CategoryHelper $categoryHelper
+            ) {
+                $this->featureActivationHelper = $featureActivationHelper;
+                $this->categoryHelper = $categoryHelper;
+            }
+
+            /**
+             * @param CategoryHelper $categoryHelper
+             */
+            public function setCategoryHelper(CategoryHelper $categoryHelper)
+            {
+                $this->categoryHelper = $categoryHelper;
+            }
+        «ENDIF»
+    '''
+
+    def private contentTypeBaseLegacyImpl(Application it) '''
         /**
          * The treated object type.
          *
@@ -164,7 +518,7 @@ class ContentTypeList {
          */
         public function getDescription()
         {
-            return $this->container->get('translator.default')->__('Display list of «appName» objects.');
+            return $this->container->get('translator.default')->__('Display a list of «appName» objects.');
         }
 
         /**
@@ -250,7 +604,6 @@ class ContentTypeList {
         public function display()
         {
             $repository = $this->container->get('«appService».entity_factory')->getRepository($this->objectType);
-            $permissionApi = $this->container->get('zikula_permissions_module.api.permission');
 
             // create query
             $orderBy = $this->container->get('«appService».model_helper')->resolveSortParameter($this->objectType, $this->sorting);
@@ -451,10 +804,24 @@ class ContentTypeList {
     def private contentTypeImpl(Application it) '''
         namespace «appNamespace»\ContentType;
 
+        use «appNamespace»\ContentType\Base\AbstractItemListType;
+
+        /**
+         * Generic item list content type implementation class.
+         */
+        class ItemListType extends AbstractItemListType
+        {
+            // feel free to extend the content type here
+        }
+    '''
+
+    def private contentTypeLegacyImpl(Application it) '''
+        namespace «appNamespace»\ContentType;
+
         use «appNamespace»\ContentType\Base\AbstractItemList;
 
         /**
-         * Generic item list content plugin implementation class.
+         * Generic item list content type implementation class.
          */
         class ItemList extends AbstractItemList
         {

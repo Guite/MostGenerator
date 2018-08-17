@@ -89,11 +89,9 @@ class ThirdParty {
         «IF needsApproval && generatePendingContentSupport»
             «pendingContentListener»
         «ENDIF»
-        «IF !targets('2.0')»
-            «IF generateListContentType || needsDetailContentType»
+        «IF !targets('2.0') && (generateListContentType || needsDetailContentType)»
 
-                «contentGetTypes»
-            «ENDIF»
+            «contentGetTypes»
         «ENDIF»
         «IF generateScribitePlugins»
 

@@ -43,7 +43,7 @@ class Plugins {
         val result = newArrayList
         result += viewPlugins
         if (!targets('2.0')) {
-            // content type editing is not ready for Twig yet
+            // legacy content type editing is not ready for Twig
             if (generateListContentType || generateDetailContentType) {
                 new ObjectTypeSelector().generate(it, fsa, true)
             }

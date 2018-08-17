@@ -7,7 +7,7 @@ import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
-class ContentTypeSingleView {
+class ContentTypeDetailView {
 
     extension FormattingExtensions = new FormattingExtensions
     extension ModelExtensions = new ModelExtensions
@@ -16,14 +16,27 @@ class ContentTypeSingleView {
 
     def generate(Application it, IMostFileSystemAccess fsa) {
         val templatePath = getViewPath + 'ContentType/'
-        // content type editing is not ready for Twig yet
-        var fileName = 'item_edit.tpl'
-        fsa.generateFile(templatePath + fileName, editTemplate)
+
+        if (targets('2.0')) {
+            var fileName = 'itemEdit.html.twig'
+            fsa.generateFile(templatePath + fileName, editTemplate)
+        } else {
+            // legacy content type editing is not ready for Twig
+            var fileName = 'item_edit.tpl'
+            fsa.generateFile(templatePath + fileName, editLegacyTemplate)
+        }
     }
 
     def private editTemplate(Application it) '''
-        {* Purpose of this template: edit view of specific item detail view content type *}
+        {# Purpose of this template: edit view of specific item detail view content type #}
+        {{ form_row(form.objectType) }}
+        {{ form_row(form.id) }}
+        {{ form_row(form.displayMode) }}
+        {{ form_row(form.customTemplate) }}
+    '''
 
+    def private editLegacyTemplate(Application it) '''
+        {* Purpose of this template: edit view of specific item detail view content type *}
         <div style="margin-left: 80px">
             «IF getAllEntities.size > 1»
                 <div class="form-group">

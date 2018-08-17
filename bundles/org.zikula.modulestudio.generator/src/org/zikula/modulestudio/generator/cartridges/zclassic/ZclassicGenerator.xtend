@@ -21,7 +21,6 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.controller.addition
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.additions.BlockList
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.additions.BlockModeration
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.additions.ContentTypeList
-import org.zikula.modulestudio.generator.cartridges.zclassic.controller.additions.ContentTypeSingle
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.additions.Mailz
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.additions.MultiHook
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.additions.Newsletter
@@ -53,6 +52,7 @@ import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
+import org.zikula.modulestudio.generator.cartridges.zclassic.controller.additions.ContentTypeDetail
 
 class ZclassicGenerator implements IGenerator {
 
@@ -214,14 +214,14 @@ class ZclassicGenerator implements IGenerator {
 
     def private generateIntegrationContentTypes(Application it) {
         val needsDetailContentType = generateDetailContentType && hasDisplayActions
-        if ((generateListContentType || needsDetailContentType) && !targets('2.0')) {
+        if (generateListContentType || needsDetailContentType) {
             pm?.subTask('Integration: Content types')
             'Generating content types'.printIfNotTesting(fsa)
             if (generateListContentType) {
                 new ContentTypeList().generate(it, fsa)
             }
             if (needsDetailContentType) {
-                new ContentTypeSingle().generate(it, fsa)
+                new ContentTypeDetail().generate(it, fsa)
             }
         }
     }

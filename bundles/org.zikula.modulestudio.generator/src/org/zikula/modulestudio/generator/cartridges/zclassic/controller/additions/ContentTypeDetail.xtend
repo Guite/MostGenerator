@@ -2,14 +2,15 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.controller.additio
 
 import de.guite.modulestudio.metamodel.Application
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
-import org.zikula.modulestudio.generator.cartridges.zclassic.view.additions.ContentTypeSingleView
+import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype.ContentTypeDetailType
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
+import org.zikula.modulestudio.generator.cartridges.zclassic.view.additions.ContentTypeDetailView
 
-class ContentTypeSingle {
+class ContentTypeDetail {
 
     extension ControllerExtensions = new ControllerExtensions
     extension FormattingExtensions = new FormattingExtensions
@@ -22,11 +23,34 @@ class ContentTypeSingle {
             return
         }
         'Generating content type for single objects'.printIfNotTesting(fsa)
-        fsa.generateClassPair('ContentType/Item.php', contentTypeBaseClass, contentTypeImpl)
-        new ContentTypeSingleView().generate(it, fsa)
+        if (targets('2.0')) {
+            fsa.generateClassPair('ContentType/ItemType.php', contentTypeBaseClass, contentTypeImpl)
+            new ContentTypeDetailType().generate(it, fsa)
+        } else {
+            fsa.generateClassPair('ContentType/Item.php', contentTypeLegacyBaseClass, contentTypeLegacyImpl)
+        }
+        new ContentTypeDetailView().generate(it, fsa)
     }
 
     def private contentTypeBaseClass(Application it) '''
+        namespace «appNamespace»\ContentType\Base;
+
+        use Symfony\Component\HttpKernel\Controller\ControllerReference;
+        use Symfony\Component\HttpKernel\Fragment\FragmentHandler;
+        use Zikula\ContentModule\AbstractContentType;
+        use «appNamespace»\ContentType\Form\Type\ItemType as FormType;
+        use «appNamespace»\Helper\ControllerHelper;
+
+        /**
+         * Generic single item display content type base class.
+         */
+        abstract class AbstractItemType extends AbstractContentType
+        {
+            «contentTypeBaseImpl»
+        }
+    '''
+
+    def private contentTypeLegacyBaseClass(Application it) '''
         namespace «appNamespace»\ContentType\Base;
 
         use Symfony\Component\DependencyInjection\ContainerAwareInterface;
@@ -34,17 +58,157 @@ class ContentTypeSingle {
         use Symfony\Component\HttpKernel\Controller\ControllerReference;
 
         /**
-         * Generic single item display content plugin base class.
+         * Generic single item display content type base class.
          */
         abstract class AbstractItem extends \Content_AbstractContentType implements ContainerAwareInterface
         {
             use ContainerAwareTrait;
 
-            «contentTypeBaseImpl»
+            «contentTypeBaseLegacyImpl»
         }
     '''
 
     def private contentTypeBaseImpl(Application it) '''
+        /**
+         * @var ControllerHelper
+         */
+        protected $controllerHelper;
+
+        /**
+         * @var FragmentHandler
+         */
+        protected $fragmentHandler;
+
+        /**
+         * @inheritDoc
+         */
+        public function getIcon()
+        {
+            return 'circle-o';
+        }
+
+        /**
+         * @inheritDoc
+         */
+        public function getTitle()
+        {
+            return $this->__('«appName» detail view');
+        }
+
+        /**
+         * @inheritDoc
+         */
+        public function getDescription()
+        {
+            return $this->__('Display or link a single «appName» object.');
+        }
+
+        /**
+         * @inheritDoc
+         */
+        public function getDefaultData()
+        {
+            return [
+                'objectType' => '«getLeadingEntity.name.formatForCode»',
+                'id' => null,
+                'displayMode' => 'embed',
+                'customTemplate' => null
+            ];
+        }
+
+        /**
+         * @inheritDoc
+         */
+        public function getData()
+        {
+            $data = parent::getData();
+
+            $contextArgs = ['name' => 'detail'];
+            if (!isset($data['objectType']) || !in_array($data['objectType'], $this->controllerHelper->getObjectTypes('contentType', $contextArgs))) {
+                $data['objectType'] = $this->controllerHelper->getDefaultObjectType('contentType', $contextArgs);
+            }
+
+            return $data;
+        }
+
+        /**
+         * @inheritDoc
+         */
+        public function displayView()
+        {
+            if (null === $this->data['id'] || empty($this->data['id']) || empty($this->data['displayMode'])) {
+                return '';
+            }
+
+            $controllerReference = new ControllerReference('«appName»:External:display', $this->getDisplayArguments(), ['template' => $this->data['customTemplate']]);
+
+            return $this->fragmentHandler->render($controllerReference, 'inline', []);
+        }
+
+        /**
+         * @inheritDoc
+         */
+        public function displayEditing()
+        {
+            if (null === $this->data['id'] || empty($this->data['id']) || empty($this->data['displayMode'])) {
+                return $this->__('No item selected.');
+            }
+
+            return parent::displayEditing();
+        }
+
+        /**
+         * Returns common arguments for displaying the selected object using the external controller.
+         *
+         * @return array Display arguments
+         */
+        protected function getDisplayArguments()
+        {
+            return [
+                'objectType' => $this->data['objectType'],
+                'id' => $this->data['id'],
+                'source' => 'contentType',
+                'displayMode' => $this->data['displayMode']
+            ];
+        }
+
+        /**
+         * @inheritDoc
+         */
+        public function getEditFormClass()
+        {
+            return FormType::class;
+        }
+
+        /**
+         * @inheritDoc
+         */
+        public function getEditFormOptions($context)
+        {
+            $options = parent::getEditFormOptions($context);
+            $options['objectType'] = $this->data['objectType'];
+
+            return $options;
+        }
+
+        /**
+         * @param ControllerHelper $controllerHelper
+         */
+        public function setControllerHelper(ControllerHelper $controllerHelper)
+        {
+            $this->controllerHelper = $controllerHelper;
+        }
+
+        /**
+         * @param FragmentHandler $fragmentHandler
+         */
+        public function setFragmentHandler(FragmentHandler $fragmentHandler)
+        {
+            $this->fragmentHandler = $fragmentHandler;
+        }
+    '''
+
+    def private contentTypeBaseLegacyImpl(Application it) '''
         /**
          * @var string
          */
@@ -223,10 +387,24 @@ class ContentTypeSingle {
     def private contentTypeImpl(Application it) '''
         namespace «appNamespace»\ContentType;
 
+        use «appNamespace»\ContentType\Base\AbstractItemType;
+
+        /**
+         * Generic single item display content type implementation class.
+         */
+        class ItemType extends AbstractItemType
+        {
+            // feel free to extend the content type here
+        }
+    '''
+
+    def private contentTypeLegacyImpl(Application it) '''
+        namespace «appNamespace»\ContentType;
+
         use «appNamespace»\ContentType\Base\AbstractItem;
 
         /**
-         * Generic single item display content plugin implementation class.
+         * Generic single item display content type implementation class.
          */
         class Item extends AbstractItem
         {

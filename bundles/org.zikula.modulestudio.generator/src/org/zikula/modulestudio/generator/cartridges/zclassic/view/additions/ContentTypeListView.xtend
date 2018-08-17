@@ -18,13 +18,51 @@ class ContentTypeListView {
         val templatePath = getViewPath + 'ContentType/'
         new CommonIntegrationTemplates().generate(it, fsa, templatePath)
 
-        // content type editing is not ready for Twig yet
-        var fileName = 'itemlist_edit.tpl'
-        fsa.generateFile(templatePath + fileName, editTemplate)
+        if (targets('2.0')) {
+            var fileName = 'itemListEdit.html.twig'
+            fsa.generateFile(templatePath + fileName, editTemplate)
+        } else {
+            // legacy content type editing is not ready for Twig
+            var fileName = 'itemlist_edit.tpl'
+            fsa.generateFile(templatePath + fileName, editLegacyTemplate)
+        }
     }
 
-    // content type editing is not ready for Twig yet
     def private editTemplate(Application it) '''
+        {# Purpose of this template: edit view of generic item list content type #}
+        {{ form_row(form.objectType) }}
+        «IF hasCategorisableEntities»
+            {% if form.categories is defined %}
+                {{ form_row(form.categories) }}
+            {% endif %}
+        «ENDIF»
+        {{ form_row(form.sorting) }}
+        {{ form_row(form.amount) }}
+
+        {{ form_row(form.template) }}
+
+        <div id="customTemplateArea"«/* data-switch="zikulablocksmodule_block[properties][template]" data-switch-value="custom"*/»>
+            {{ form_row(form.customTemplate) }}
+        </div>
+
+        {{ form_row(form.filter) }}
+«/*        «editTemplateJs»*/»
+        <script>
+            (function($) {
+            	$('#«appName.toFirstLower»Template').change(function() {
+            	    $('#customTemplateArea').toggleClass('hidden', $(this).val() != 'custom');
+        	    }).trigger('change');
+            })(jQuery)
+        </script>
+    '''
+/* needs to be done using jsEntrypoints in content type instead
+    def private editTemplateJs(Application it) '''
+        {{ pageAddAsset('stylesheet', asset('bootstrap/css/bootstrap.min.css')) }}
+        {{ pageAddAsset('stylesheet', asset('bootstrap/css/bootstrap-theme.min.css')) }}
+        {{ pageAddAsset('javascript', asset('bootstrap/js/bootstrap.min.js')) }}
+    '''
+*/
+    def private editLegacyTemplate(Application it) '''
         {* Purpose of this template: edit view of generic item list content type *}
         «editTemplateObjectType»
 

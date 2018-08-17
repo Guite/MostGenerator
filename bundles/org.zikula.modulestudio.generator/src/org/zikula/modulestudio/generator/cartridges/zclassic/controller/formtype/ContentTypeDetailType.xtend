@@ -4,34 +4,31 @@ import de.guite.modulestudio.metamodel.Application
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
-import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
-class BlockDetailType {
+class ContentTypeDetailType {
 
     extension ControllerExtensions = new ControllerExtensions
     extension FormattingExtensions = new FormattingExtensions
-    extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension ModelExtensions = new ModelExtensions
     extension Utils = new Utils
 
     String nsSymfonyFormType = 'Symfony\\Component\\Form\\Extension\\Core\\Type\\'
 
     /**
-     * Entry point for detail block form type.
+     * Entry point for detail content type form type.
      */
     def generate(Application it, IMostFileSystemAccess fsa) {
-        if (!generateDetailBlock || !hasDisplayActions) {
+        if (!generateDetailContentType || !hasDisplayActions) {
             return
         }
-        fsa.generateClassPair('Block/Form/Type/ItemBlockType.php', detailBlockTypeBaseImpl, detailBlockTypeImpl)
+        fsa.generateClassPair('ContentType/Form/Type/ItemType.php', detailContentTypeBaseImpl, detailContentTypeImpl)
     }
 
-    def private detailBlockTypeBaseImpl(Application it) '''
-        namespace «appNamespace»\Block\Form\Type\Base;
+    def private detailContentTypeBaseImpl(Application it) '''
+        namespace «appNamespace»\ContentType\Form\Type\Base;
 
-        use Symfony\Component\Form\AbstractType;
         use «nsSymfonyFormType»ChoiceType;
         «IF getAllEntities.filter[hasDisplayAction].size == 1»
             use «nsSymfonyFormType»HiddenType;
@@ -40,17 +37,16 @@ class BlockDetailType {
         use Symfony\Component\Form\FormBuilderInterface;
         use Symfony\Component\OptionsResolver\OptionsResolver;
         use Zikula\Common\Translator\TranslatorInterface;
-        use Zikula\Common\Translator\TranslatorTrait;
+        use Zikula\ContentModule\ContentType\Form\Type\AbstractType;
+        use Zikula\ContentModule\ContentTypeInterface;
         use «appNamespace»\Entity\Factory\EntityFactory;
         use «appNamespace»\Helper\EntityDisplayHelper;
 
         /**
-         * Detail block form type base class.
+         * Detail content type form type base class.
          */
-        abstract class AbstractItemBlockType extends AbstractType
+        abstract class AbstractItemType extends AbstractType
         {
-            use TranslatorTrait;
-
             /**
              * @var EntityFactory
              */
@@ -62,7 +58,7 @@ class BlockDetailType {
             protected $entityDisplayHelper;
 
             /**
-             * ItemBlockType constructor.
+             * ItemType constructor.
              *
              * @param TranslatorInterface $translator          Translator service instance
              * @param EntityFactory       $entityFactory       EntityFactory service instance
@@ -78,8 +74,6 @@ class BlockDetailType {
                 $this->entityDisplayHelper = $entityDisplayHelper;
             }
 
-            «setTranslatorMethod»
-
             /**
              * @inheritDoc
              */
@@ -87,12 +81,15 @@ class BlockDetailType {
             {
                 $this->addObjectTypeField($builder, $options);
                 $this->addIdField($builder, $options);
+                $this->addDisplayModeField($builder, $options);
                 $this->addTemplateField($builder, $options);
             }
 
             «addObjectTypeField»
 
             «addIdField»
+
+            «addDisplayModeField»
 
             «addTemplateField»
 
@@ -101,7 +98,7 @@ class BlockDetailType {
              */
             public function getBlockPrefix()
             {
-                return '«appName.formatForDB»_detailblock';
+                return '«appName.formatForDB»_contenttype_detail';
             }
 
             /**
@@ -111,10 +108,13 @@ class BlockDetailType {
             {
                 $resolver
                     ->setDefaults([
+                        'context' => ContentTypeInterface::CONTEXT_EDIT,
                         'object_type' => '«leadingEntity.name.formatForCode»'
                     ])
                     ->setRequired(['object_type'])
+                    ->setAllowedTypes('context', 'string')
                     ->setAllowedTypes('object_type', 'string')
+                    ->setAllowedValues('context', [ContentTypeInterface::CONTEXT_EDIT, ContentTypeInterface::CONTEXT_TRANSLATION])
                 ;
             }
         }
@@ -134,17 +134,14 @@ class BlockDetailType {
                 'empty_data' => '«leadingEntity.name.formatForCode»'«IF getAllEntities.filter[hasDisplayAction].size > 1»,«ENDIF»
                 «IF getAllEntities.filter[hasDisplayAction].size > 1»
                     'attr' => [
-                        'title' => $this->__('If you change this please save the block once to reload the parameters below.'«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»)
+                        'title' => $this->__('If you change this please save the element once to reload the parameters below.'«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»)
                     ],
-                    'help' => $this->__('If you change this please save the block once to reload the parameters below.'«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»),
+                    'help' => $this->__('If you change this please save the element once to reload the parameters below.'«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»),
                     'choices' => [
                         «FOR entity : getAllEntities.filter[hasDisplayAction]»
                             $this->__('«entity.nameMultiple.formatForDisplayCapital»'«IF !isSystemModule», '«appName.formatForDB»'«ENDIF») => '«entity.name.formatForCode»'«IF entity != getAllEntities.filter[hasDisplayAction].last»,«ENDIF»
                         «ENDFOR»
                     ],
-                    «IF !targets('2.0')»
-                        'choices_as_values' => true,
-                    «ENDIF»
                     'multiple' => false,
                     'expanded' => false
                 «ENDIF»
@@ -175,11 +172,33 @@ class BlockDetailType {
                 'multiple' => false,
                 'expanded' => false,
                 'choices' => $choices,
-                «IF !targets('2.0')»
-                    'choices_as_values' => true,
-                «ENDIF»
                 'required' => true,
                 'label' => $this->__('Entry to display'«IF !isSystemModule», '«appName.formatForDB»'«ENDIF») . ':'
+            ]);
+        }
+    '''
+
+    def private addDisplayModeField(Application it) '''
+        /**
+         * Adds a display mode field.
+         *
+         * @param FormBuilderInterface $builder The form builder
+         * @param array                $options The options
+         */
+        public function addDisplayModeField(FormBuilderInterface $builder, array $options = [])
+        {
+            $builder->add('displayMode', ChoiceType::class, [
+                'label' => $this->__('Display mode'«IF !isSystemModule», '«appName.formatForDB»'«ENDIF») . ':',
+                'label_attr' => [
+                    'class' => 'radio-inline'
+                ]
+                'empty_data' => 'embed',
+                'choices' => [
+                    $this->__('Link to object'«IF !isSystemModule», '«appName.formatForDB»'«ENDIF») => 'link',
+                    $this->__('Embed object display'«IF !isSystemModule», '«appName.formatForDB»'«ENDIF») => 'embed'
+                ],
+                'multiple' => false,
+                'expanded' => true
             ]);
         }
     '''
@@ -210,17 +229,17 @@ class BlockDetailType {
         }
     '''
 
-    def private detailBlockTypeImpl(Application it) '''
-        namespace «appNamespace»\Block\Form\Type;
+    def private detailContentTypeImpl(Application it) '''
+        namespace «appNamespace»\ContentType\Form\Type;
 
-        use «appNamespace»\Block\Form\Type\Base\AbstractItemBlockType;
+        use «appNamespace»\ContentType\Form\Type\Base\AbstractItemType;
 
         /**
-         * Detail block form type implementation class.
+         * Detail content type form type implementation class.
          */
-        class ItemBlockType extends AbstractItemBlockType
+        class ItemType extends AbstractItemType
         {
-            // feel free to extend the detail block form type class here
+            // feel free to extend the detail content type form type class here
         }
     '''
 }
