@@ -53,8 +53,7 @@ class ComposerFile {
         },
         "require": {
             «var dependencies = referredApplications.filter[dependencyType == ApplicationDependencyType.REQUIREMENT]»
-            "php": ">=5.5.9"«IF targets('2.0') && (generateListContentType || (generateDetailContentType && hasDisplayActions))»,
-            "zikula/content-module": ">=5.0.0"«ENDIF»«IF needsComposerInstall || !dependencies.empty»,«ENDIF»
+            "php": ">=5.5.9"«IF needsComposerInstall || !dependencies.empty»,«ENDIF»
             «IF hasGeographical»
                 "drmonty/leaflet": "*"«IF generatePdfSupport || !dependencies.empty»,«ENDIF»
             «ENDIF»
