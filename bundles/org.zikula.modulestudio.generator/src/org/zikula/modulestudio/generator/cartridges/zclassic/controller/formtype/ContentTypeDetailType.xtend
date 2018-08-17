@@ -191,7 +191,7 @@ class ContentTypeDetailType {
                 'label' => $this->__('Display mode'«IF !isSystemModule», '«appName.formatForDB»'«ENDIF») . ':',
                 'label_attr' => [
                     'class' => 'radio-inline'
-                ]
+                ],
                 'empty_data' => 'embed',
                 'choices' => [
                     $this->__('Link to object'«IF !isSystemModule», '«appName.formatForDB»'«ENDIF») => 'link',

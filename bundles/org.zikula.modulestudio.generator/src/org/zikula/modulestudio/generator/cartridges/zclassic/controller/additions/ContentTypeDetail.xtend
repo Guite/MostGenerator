@@ -92,7 +92,7 @@ class ContentTypeDetail {
          */
         public function getTitle()
         {
-            return $this->__('«appName» detail view');
+            return $this->__('«name.formatForDisplayCapital» detail');
         }
 
         /**
@@ -100,7 +100,7 @@ class ContentTypeDetail {
          */
         public function getDescription()
         {
-            return $this->__('Display or link a single «appName» object.');
+            return $this->__('Display or link a single «name.formatForDisplay» object.');
         }
 
         /**
@@ -186,7 +186,8 @@ class ContentTypeDetail {
         public function getEditFormOptions($context)
         {
             $options = parent::getEditFormOptions($context);
-            $options['objectType'] = $this->data['objectType'];
+            $data = $this->getData();
+            $options['object_type'] = $data['objectType'];
 
             return $options;
         }

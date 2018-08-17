@@ -145,7 +145,7 @@ class ContentTypeList {
          */
         public function getTitle()
         {
-            return $this->__('«appName» list view');
+            return $this->__('«name.formatForDisplayCapital» list');
         }
 
         /**
@@ -153,7 +153,7 @@ class ContentTypeList {
          */
         public function getDescription()
         {
-            return $this->__('Display a list of «appName» objects.');
+            return $this->__('Display a list of «name.formatForDisplay» objects.');
         }
 
         /**
@@ -183,12 +183,12 @@ class ContentTypeList {
                 $data['objectType'] = $this->controllerHelper->getDefaultObjectType('contentType', $contextArgs);
             }
 
-            if (!$this->data['template']) {
-                $this->data['template'] = 'itemlist_' . $this->data['objectType'] . '_display.html.twig';
+            if (!isset($data['template'])) {
+                $data['template'] = 'itemlist_' . $data['objectType'] . '_display.html.twig';
             }
             «IF hasCategorisableEntities»
 
-                $objectType = $this->data['objectType'];
+                $objectType = $data['objectType'];
                 if ($this->featureActivationHelper->isEnabled(FeatureActivationHelper::CATEGORIES, $objectType)) {
                     $this->categorisableObjectTypes = [«FOR entity : getCategorisableEntities SEPARATOR ', '»'«entity.name.formatForCode»'«ENDFOR»];
 
@@ -201,16 +201,16 @@ class ContentTypeList {
                         $this->catProperties = $categoryHelper->getAllProperties($this->objectType);
                     }
 
-                    if (!isset($this->data['catIds'])) {
+                    if (!isset($data['catIds'])) {
                         $primaryRegistry = $this->categoryHelper->getPrimaryProperty($objectType);
-                        $this->data['catIds'] = [$primaryRegistry => []];
+                        $data['catIds'] = [$primaryRegistry => []];
                         // backwards compatibility
-                        if (isset($this->data['catId'])) {
-                            $this->data['catIds'][$primaryRegistry][] = $this->data['catId'];
-                            unset($this->data['catId']);
+                        if (isset($data['catId'])) {
+                            $data['catIds'][$primaryRegistry][] = $data['catId'];
+                            unset($data['catId']);
                         }
-                    } elseif (!is_array($this->data['catIds'])) {
-                        $this->data['catIds'] = explode(',', $this->data['catIds']);
+                    } elseif (!is_array($data['catIds'])) {
+                        $data['catIds'] = explode(',', $data['catIds']);
                     }
 
                     foreach ($this->catRegistries as $registryId => $registryCid) {
@@ -221,20 +221,20 @@ class ContentTypeList {
                                 break;
                             }
                         }
-                        $this->data['catIds'][$propName] = [];
-                        if (isset($this->data['catids' . $propName])) {
-                            $this->data['catIds'][$propName] = $this->data['catids' . $propName];
+                        $data['catIds'][$propName] = [];
+                        if (isset($data['catids' . $propName])) {
+                            $data['catIds'][$propName] = $data['catids' . $propName];
                         }
-                        if (!is_array($this->data['catIds'][$propName])) {
-                            if ($this->data['catIds'][$propName]) {
-                                $this->data['catIds'][$propName] = [$this->data['catIds'][$propName]];
+                        if (!is_array($data['catIds'][$propName])) {
+                            if ($data['catIds'][$propName]) {
+                                $data['catIds'][$propName] = [$data['catIds'][$propName]];
                             } else {
-                                $this->data['catIds'][$propName] = [];
+                                $data['catIds'][$propName] = [];
                             }
                         }
                     }
 
-                    $this->catIds = $this->data['catIds'];
+                    $this->catIds = $data['catIds'];
                 }
             «ENDIF»
 
@@ -298,11 +298,9 @@ class ContentTypeList {
         }
 
         /**
-         * Returns the template used for output.
-         *
-         * @return string the template path
+         * @inheritDoc
          */
-        protected function getDisplayTemplate()
+        public function getViewTemplatePath($suffix = '')
         {
             $templateFile = $this->data['template'];
             if ('custom' == $templateFile && null !== $this->data['customTemplate'] && '' != $this->data['customTemplate']) {
@@ -310,7 +308,6 @@ class ContentTypeList {
             }
 
             $templateForObjectType = str_replace('itemlist_', 'itemlist_' . $this->data['objectType'] . '_', $templateFile);
-            $templating = $this->container->get('templating');
 
             $templateOptions = [
                 'ContentType/' . $templateForObjectType,
@@ -343,7 +340,8 @@ class ContentTypeList {
         public function getEditFormOptions($context)
         {
             $options = parent::getEditFormOptions($context);
-            $options['objectType'] = $this->data['objectType'];
+            $data = $this->getData();
+            $options['object_type'] = $data['objectType'];
             «IF hasCategorisableEntities»
                 $options['is_categorisable'] = in_array($this->data['objectType'], $this->categorisableObjectTypes);
                 $options['category_helper'] = $this->categoryHelper;

@@ -1033,13 +1033,12 @@ class ServiceDefinitions {
                         - [setCategoryDependencies, ['@«modPrefix».feature_activation_helper', '@«modPrefix».category_helper']]
                     «ENDIF»
                 tags: ['zikula.content_type']
-            «nsBase»\Form\Type\ItemListType:
+            «nsBase»Form\Type\ItemListType:
                 parent: zikula_content_module.content_type.form.common
-                arguments:
-                    - "@translator.default"
-                    «IF hasCategorisableEntities»
+                «IF hasCategorisableEntities»
+                    arguments:
                         - "@zikula_categories_module.category_repository"
-                    «ENDIF»
+                «ENDIF»
                 tags: ['form.type']
         «ENDIF»
         «IF needsDetailContentType»
@@ -1050,10 +1049,9 @@ class ServiceDefinitions {
                     - [setControllerHelper, ['@«modPrefix».controller_helper']]
                     - [setFragmentHandler, ['@fragment.handler']]
                 tags: ['zikula.content_type']
-            «nsBase»\Form\Type\ItemType:
+            «nsBase»Form\Type\ItemType:
                 parent: zikula_content_module.content_type.form.common
                 arguments:
-                    - "@translator.default"
                     - "@«modPrefix».entity_factory"
                     - "@«modPrefix».entity_display_helper"
                 tags: ['form.type']
