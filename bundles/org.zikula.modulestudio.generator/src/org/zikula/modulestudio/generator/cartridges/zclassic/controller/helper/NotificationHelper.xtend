@@ -27,6 +27,7 @@ class NotificationHelper {
 
         use Swift_Message;
         use Symfony\Component\HttpFoundation\RequestStack;
+        use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
         use Symfony\Component\Routing\RouterInterface;
         use Twig_Environment;
         use Zikula\Bundle\CoreBundle\HttpKernel\ZikulaHttpKernelInterface;
@@ -401,15 +402,19 @@ class NotificationHelper {
             $session = $this->requestStack->getCurrentRequest()->getSession();
             $remarks = $session->get($this->name . 'AdditionalNotificationRemarks', '');
 
-            $urlArgs = $this->entity->createUrlArgs();
-
             $hasDisplayAction = in_array($objectType, ['«getAllEntities.filter[hasDisplayAction].map[name.formatForCode].join('\', \'')»']);
             $hasEditAction = in_array($objectType, ['«getAllEntities.filter[hasEditAction].map[name.formatForCode].join('\', \'')»']);
             $routeArea = in_array($this->recipientType, ['moderator', 'superModerator']) ? 'admin' : '';
             $routePrefix = '«appName.formatForDB»_' . strtolower($objectType) . '_' . $routeArea;
 
-            $displayUrl = $hasDisplayAction ? $this->router->generate($routePrefix . 'display', $urlArgs, true) : '';
-            $editUrl = $hasEditAction ? $this->router->generate($routePrefix . 'edit', $urlArgs, true) : '';
+            $urlArgs = $this->entity->createUrlArgs();
+            $displayUrl = $hasDisplayAction ? $this->router->generate($routePrefix . 'display', $urlArgs, UrlGeneratorInterface::ABSOLUTE_URL) : '';
+
+            «IF !getAllEntities.filter[hasEditAction && hasSluggableFields && slugUnique].empty»
+                $needsArg = in_array($objectType, ['«getAllEntities.filter[hasEditAction && hasSluggableFields && slugUnique].map[name.formatForCode].join('\', \'')»']);
+                $urlArgs = $needsArg ? $this->entity->createUrlArgs(true) : $this->entity->createUrlArgs();
+            «ENDIF»
+            $editUrl = $hasEditAction ? $this->router->generate($routePrefix . 'edit', $urlArgs, UrlGeneratorInterface::ABSOLUTE_URL) : '';
 
             return [
                 'name' => $this->entityDisplayHelper->getFormattedTitle($this->entity),
