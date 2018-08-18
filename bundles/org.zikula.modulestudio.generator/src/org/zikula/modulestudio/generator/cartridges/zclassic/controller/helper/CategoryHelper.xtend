@@ -109,7 +109,7 @@ class CategoryHelper {
         {
             if (empty($objectType)) {
                 throw new InvalidArgumentException($this->translator->__('Invalid object type received.'));
-        	}
+            }
             if (empty($args['registry'])) {
                 // default to the primary registry
                 $registry = $this->getPrimaryProperty($objectType);
@@ -142,7 +142,7 @@ class CategoryHelper {
         {
             if (empty($objectType)) {
                 throw new InvalidArgumentException($this->translator->__('Invalid object type received.'));
-        	}
+            }
 
             $request = $this->requestStack->getCurrentRequest();
             $dataSource = $source == 'GET' ? $request->query : $request->request;
@@ -252,11 +252,11 @@ class CategoryHelper {
          *
          * @return array list of the registries (property name as key, id as value)
          */
-        «IF targets('2.0')»protected«ELSE»public«ENDIF» function getAllProperties($objectType = '')
+        public function getAllProperties($objectType = '')
         {
             if (empty($objectType)) {
                 throw new InvalidArgumentException($this->translator->__('Invalid object type received.'));
-        	}
+            }
 
             $moduleRegistries = $this->categoryRegistryRepository->findBy([
                 'modname' => '«appName»',
@@ -279,11 +279,11 @@ class CategoryHelper {
          *
          * @return array list of the registries (registry id as key, main category id as value)
          */
-        «IF targets('2.0')»protected«ELSE»public«ENDIF» function getAllPropertiesWithMainCat($objectType = '', $arrayKey = 'property')
+        public function getAllPropertiesWithMainCat($objectType = '', $arrayKey = 'property')
         {
             if (empty($objectType)) {
                 throw new InvalidArgumentException($this->translator->__('Invalid object type received.'));
-        	}
+            }
 
             $moduleRegistries = $this->categoryRegistryRepository->findBy([
                 'modname' => '«appName»',
@@ -311,7 +311,7 @@ class CategoryHelper {
         {
             if (empty($objectType)) {
                 throw new InvalidArgumentException($this->translator->__('Invalid object type received.'));
-        	}
+            }
 
             $registries = $this->getAllPropertiesWithMainCat($objectType, 'property');
             if ($registries && isset($registries[$property]) && $registries[$property]) {
