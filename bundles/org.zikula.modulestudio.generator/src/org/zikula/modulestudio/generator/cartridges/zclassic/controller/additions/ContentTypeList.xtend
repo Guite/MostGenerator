@@ -206,11 +206,11 @@ class ContentTypeList {
             $qb = $repository->getListQueryBuilder($this->data['filter'], $orderBy);
             «IF hasCategorisableEntities»
 
-                if ($this->featureActivationHelper->isEnabled(FeatureActivationHelper::CATEGORIES, $objectType)) {
-                    // apply category filters
-                    if (in_array($objectType, $this->categorisableObjectTypes)) {
-                        if (is_array($this->catIds) && count($this->catIds) > 0) {
-                            $qb = $this->categoryHelper->buildFilterClauses($qb, $objectType, $this->catIds);
+                if (in_array($objectType, $this->categorisableObjectTypes)) {
+                    if ($this->featureActivationHelper->isEnabled(FeatureActivationHelper::CATEGORIES, $objectType)) {
+                        // apply category filters
+                        if (is_array($this->data['categories']) && count($this->data['categories']) > 0) {
+                            $qb = $this->categoryHelper->buildFilterClauses($qb, $objectType, $this->data['categories']);
                         }
                     }
                 }
@@ -218,7 +218,7 @@ class ContentTypeList {
 
             // get objects from database
             $currentPage = 1;
-            $resultsPerPage = isset($this->amount) ? $this->amount : 1;
+            $resultsPerPage = isset($this->data['amount']) ? $this->data['amount'] : 1;
             $query = $repository->getSelectWherePaginatedQuery($qb, $currentPage, $resultsPerPage);
             try {
                 list($entities, $objectCount) = $repository->retrieveCollectionResult($query, true);
