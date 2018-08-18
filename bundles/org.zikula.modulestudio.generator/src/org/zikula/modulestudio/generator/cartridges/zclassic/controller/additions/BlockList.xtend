@@ -169,7 +169,6 @@ class BlockList {
             $qb = $repository->getListQueryBuilder($properties['filter'], $orderBy);
             «IF hasCategorisableEntities»
 
-                // fetch category registries
                 if (in_array($objectType, $this->categorisableObjectTypes)) {
                     if ($featureActivationHelper->isEnabled(FeatureActivationHelper::CATEGORIES, $properties['objectType'])) {
                         $categoryHelper = $this->get('«appService».category_helper');

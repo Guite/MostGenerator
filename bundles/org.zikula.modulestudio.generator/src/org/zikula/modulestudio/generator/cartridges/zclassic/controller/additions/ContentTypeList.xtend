@@ -110,27 +110,6 @@ class ContentTypeList {
              */
             protected $categorisableObjectTypes;
 
-            /**
-             * List of category registries for different trees.
-             *
-             * @var array
-             */
-            protected $catRegistries;
-            
-            /**
-             * List of category properties for different trees.
-             *
-             * @var array
-             */
-            protected $catProperties;
-
-            /**
-             * List of category ids with sub arrays for each registry.
-             *
-             * @var array
-             */
-            protected $catIds;
-
         «ENDIF»
         /**
          * @inheritDoc
@@ -192,51 +171,24 @@ class ContentTypeList {
                 if ($this->featureActivationHelper->isEnabled(FeatureActivationHelper::CATEGORIES, $objectType)) {
                     $this->categorisableObjectTypes = [«FOR entity : getCategorisableEntities SEPARATOR ', '»'«entity.name.formatForCode»'«ENDFOR»];
 
-                    // fetch category properties
-                    $this->catRegistries = [];
-                    $this->catProperties = [];
-                    if (in_array($objectType, $this->categorisableObjectTypes)) {
-                        $idField = $this->entityFactory->getIdField($this->objectType);
-                        $this->catRegistries = $categoryHelper->getAllPropertiesWithMainCat($objectType, $idField);
-                        $this->catProperties = $categoryHelper->getAllProperties($this->objectType);
-                    }
-
-                    if (!isset($data['catIds'])) {
-                        $primaryRegistry = $this->categoryHelper->getPrimaryProperty($objectType);
-                        $data['catIds'] = [$primaryRegistry => []];
-                        // backwards compatibility
-                        if (isset($data['catId'])) {
-                            $data['catIds'][$primaryRegistry][] = $data['catId'];
-                            unset($data['catId']);
+                    $primaryRegistry = $this->categoryHelper->getPrimaryProperty($objectType);
+                    if (!isset($data['categories'])) {
+                        $data['categories'] = [$primaryRegistry => []];
+                    } else {
+                        if (!is_array($data['categories'])) {
+                            $data['categories'] = explode(',', $data['categories']);
                         }
-                    } elseif (!is_array($data['catIds'])) {
-                        $data['catIds'] = explode(',', $data['catIds']);
-                    }
-
-                    foreach ($this->catRegistries as $registryId => $registryCid) {
-                        $propName = '';
-                        foreach ($this->catProperties as $propertyName => $propertyId) {
-                            if ($propertyId == $registryId) {
-                                $propName = $propertyName;
-                                break;
+                        if (count($data['categories']) > 0) {
+                            $firstCategories = reset($data['categories']);
+                            if (!is_array($firstCategories)) {
+                                $firstCategories = [$firstCategories];
                             }
-                        }
-                        $data['catIds'][$propName] = [];
-                        if (isset($data['catids' . $propName])) {
-                            $data['catIds'][$propName] = $data['catids' . $propName];
-                        }
-                        if (!is_array($data['catIds'][$propName])) {
-                            if ($data['catIds'][$propName]) {
-                                $data['catIds'][$propName] = [$data['catIds'][$propName]];
-                            } else {
-                                $data['catIds'][$propName] = [];
-                            }
+                            $data['categories'] = [$primaryRegistry => $firstCategories];
                         }
                     }
-
-                    $this->catIds = $data['catIds'];
                 }
             «ENDIF»
+            $this->data = $data;
 
             return $data;
         }

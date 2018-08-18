@@ -252,7 +252,7 @@ class CategoryHelper {
          *
          * @return array list of the registries (property name as key, id as value)
          */
-        public function getAllProperties($objectType = '')
+        «IF targets('2.0')»protected«ELSE»public«ENDIF» function getAllProperties($objectType = '')
         {
             if (empty($objectType)) {
                 throw new InvalidArgumentException($this->translator->__('Invalid object type received.'));
@@ -279,7 +279,7 @@ class CategoryHelper {
          *
          * @return array list of the registries (registry id as key, main category id as value)
          */
-        public function getAllPropertiesWithMainCat($objectType = '', $arrayKey = 'property')
+        «IF targets('2.0')»protected«ELSE»public«ENDIF» function getAllPropertiesWithMainCat($objectType = '', $arrayKey = 'property')
         {
             if (empty($objectType)) {
                 throw new InvalidArgumentException($this->translator->__('Invalid object type received.'));

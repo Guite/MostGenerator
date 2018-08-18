@@ -3,7 +3,6 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.controller
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.EntityTreeType
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
-import org.zikula.modulestudio.generator.cartridges.zclassic.controller.installer.MigrationHelper
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.installer.ModVars
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
@@ -183,17 +182,6 @@ class Installer {
                         return false;
                     }
             }
-            «IF !isSystemModule && !targets('2.0')»
-
-                // Note there are several helpers available for making migrating your extension from Zikula 1.3 to 1.4 easier.
-                // The following convenience methods are each responsible for a single aspect of upgrading to Zikula 1.4.x.
-
-                // here is a possible usage example
-                // of course 1.2.3 should match the number you used for the last stable 1.3.x module version.
-                /* if ($oldVersion = '1.2.3') {
-                    «new MigrationHelper().generateUsageExample(it)»
-                } * /
-            «ENDIF»
             «IF !targets('2.0') && hasHookSubscribers»
 
                 // remove obsolete persisted hooks from the database
@@ -204,10 +192,6 @@ class Installer {
             // update successful
             return true;
         }
-        «IF !isSystemModule && !targets('2.0')»
-
-            «new MigrationHelper().generate(it)»
-        «ENDIF»
     '''
 
     def private funcDelete(Application it) '''

@@ -126,6 +126,7 @@ class ContentTypeDetail {
             $contextArgs = ['name' => 'detail'];
             if (!isset($data['objectType']) || !in_array($data['objectType'], $this->controllerHelper->getObjectTypes('contentType', $contextArgs))) {
                 $data['objectType'] = $this->controllerHelper->getDefaultObjectType('contentType', $contextArgs);
+                $this->data = $data;
             }
 
             return $data;
