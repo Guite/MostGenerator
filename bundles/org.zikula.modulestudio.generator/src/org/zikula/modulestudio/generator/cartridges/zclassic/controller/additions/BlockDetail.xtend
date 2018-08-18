@@ -48,7 +48,7 @@ class BlockDetail {
          */
         public function getType()
         {
-            return $this->__('Single «name.formatForDisplay» item');
+            return $this->__('«name.formatForDisplayCapital» detail', '«appName.formatForDB»');
         }
 
         «display»

@@ -74,7 +74,7 @@ class BlockList {
          */
         public function getType()
         {
-            return $this->__('List of «name.formatForDisplay» items');
+            return $this->__('List of «name.formatForDisplay» items', '«appName.formatForDB»');
         }
 
         «display»
@@ -199,7 +199,7 @@ class BlockList {
 
             // set a block title
             if (empty($properties['title'])) {
-                $properties['title'] = $this->__('«appName» items');
+                $properties['title'] = $this->__('«appName» items', '«appName.formatForDB»');
             }
 
             $template = $this->getDisplayTemplate($properties);

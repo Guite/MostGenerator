@@ -43,7 +43,7 @@ class BlockModeration {
          */
         public function getType()
         {
-            return $this->__('«name.formatForDisplayCapital» moderation');
+            return $this->__('«name.formatForDisplayCapital» moderation', '«appName.formatForDB»');
         }
 
         «display»
@@ -74,7 +74,7 @@ class BlockModeration {
 
             // set a block title
             if (empty($properties['title'])) {
-                $properties['title'] = $this->__('Moderation');
+                $properties['title'] = $this->__('Moderation', '«appName.formatForDB»');
             }
 
             return $this->renderView($template, [«/*'properties' => $properties, */»'moderationObjects' => $amounts]);

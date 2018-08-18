@@ -124,7 +124,7 @@ class ContentTypeList {
          */
         public function getTitle()
         {
-            return $this->__('«name.formatForDisplayCapital» list');
+            return $this->__('«name.formatForDisplayCapital» list', '«appName.formatForDB»');
         }
 
         /**
@@ -132,7 +132,7 @@ class ContentTypeList {
          */
         public function getDescription()
         {
-            return $this->__('Display a list of «name.formatForDisplay» objects.');
+            return $this->__('Display a list of «name.formatForDisplay» objects.', '«appName.formatForDB»');
         }
 
         /**
@@ -458,7 +458,7 @@ class ContentTypeList {
          */
         public function getTitle()
         {
-            return $this->container->get('translator.default')->__('«appName» list view');
+            return $this->container->get('translator.default')->__('«appName» list view', '«appName.formatForDB»');
         }
 
         /**
@@ -468,7 +468,7 @@ class ContentTypeList {
          */
         public function getDescription()
         {
-            return $this->container->get('translator.default')->__('Display a list of «appName» objects.');
+            return $this->container->get('translator.default')->__('Display a list of «appName» objects.', '«appName.formatForDB»');
         }
 
         /**
@@ -716,7 +716,7 @@ class ContentTypeList {
                         $catsForDropdown = [
                             [
                                 'value' => '',
-                                'text' => $translator->__('All')
+                                'text' => $translator->__('All', '«appName.formatForDB»')
                             ]
                         ];
                         foreach ($cats as $category) {

@@ -92,7 +92,7 @@ class ContentTypeDetail {
          */
         public function getTitle()
         {
-            return $this->__('«name.formatForDisplayCapital» detail');
+            return $this->__('«name.formatForDisplayCapital» detail', '«appName.formatForDB»');
         }
 
         /**
@@ -100,7 +100,7 @@ class ContentTypeDetail {
          */
         public function getDescription()
         {
-            return $this->__('Display or link a single «name.formatForDisplay» object.');
+            return $this->__('Display or link a single «name.formatForDisplay» object.', '«appName.formatForDB»');
         }
 
         /**
@@ -152,7 +152,7 @@ class ContentTypeDetail {
         public function displayEditing()
         {
             if (null === $this->data['id'] || empty($this->data['id']) || empty($this->data['displayMode'])) {
-                return $this->__('No item selected.');
+                return $this->__('No item selected.', '«appName.formatForDB»');
             }
 
             return parent::displayEditing();
@@ -266,7 +266,7 @@ class ContentTypeDetail {
          */
         public function getTitle()
         {
-            return $this->container->get('translator.default')->__('«appName» detail view');
+            return $this->container->get('translator.default')->__('«appName» detail view', '«appName.formatForDB»');
         }
 
         /**
@@ -276,7 +276,7 @@ class ContentTypeDetail {
          */
         public function getDescription()
         {
-            return $this->container->get('translator.default')->__('Display or link a single «appName» object.');
+            return $this->container->get('translator.default')->__('Display or link a single «appName» object.', '«appName.formatForDB»');
         }
 
         /**
@@ -322,7 +322,7 @@ class ContentTypeDetail {
         public function displayEditing()
         {
             if (null === $this->id || empty($this->id) || empty($this->displayMode)) {
-                return $this->container->get('translator.default')->__('No item selected.');
+                return $this->container->get('translator.default')->__('No item selected.', '«appName.formatForDB»');
             }
 
             return $this->display();
