@@ -37,7 +37,7 @@ class ContentTypeDetail {
 
         use Symfony\Component\HttpKernel\Controller\ControllerReference;
         use Symfony\Component\HttpKernel\Fragment\FragmentHandler;
-        use Zikula\ContentModule\AbstractContentType;
+        use Zikula\Common\Content\AbstractContentType;
         use «appNamespace»\ContentType\Form\Type\ItemType as FormType;
         use «appNamespace»\Helper\ControllerHelper;
 

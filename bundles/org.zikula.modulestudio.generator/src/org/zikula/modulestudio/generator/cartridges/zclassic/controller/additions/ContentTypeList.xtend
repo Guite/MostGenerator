@@ -35,7 +35,7 @@ class ContentTypeList {
     def private contentTypeBaseClass(Application it) '''
         namespace «appNamespace»\ContentType\Base;
 
-        use Zikula\ContentModule\AbstractContentType;
+        use Zikula\Common\Content\AbstractContentType;
         use «appNamespace»\ContentType\Form\Type\ItemListType as FormType;
         use «appNamespace»\Entity\Factory\EntityFactory;
         «IF hasCategorisableEntities»

@@ -44,9 +44,9 @@ class ContentTypeListType {
             use Zikula\CategoriesModule\Entity\RepositoryInterface\CategoryRepositoryInterface;
             use Zikula\CategoriesModule\Form\Type\CategoriesType;
         «ENDIF»
+        use Zikula\Common\Content\AbstractContentFormType;
+        use Zikula\Common\Content\ContentTypeInterface;
         use Zikula\Common\Translator\TranslatorInterface;
-        use Zikula\ContentModule\ContentType\Form\Type\AbstractType;
-        use Zikula\ContentModule\ContentTypeInterface;
         «IF hasCategorisableEntities»
             use «appNamespace»\Helper\FeatureActivationHelper;
         «ENDIF»
@@ -54,7 +54,7 @@ class ContentTypeListType {
         /**
          * List content type form type base class.
          */
-        abstract class AbstractItemListType extends AbstractType
+        abstract class AbstractItemListType extends AbstractContentFormType
         {
             «IF hasCategorisableEntities»
                 /**

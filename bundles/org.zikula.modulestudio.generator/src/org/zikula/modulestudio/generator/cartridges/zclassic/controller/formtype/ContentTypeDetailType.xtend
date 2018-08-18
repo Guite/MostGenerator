@@ -36,16 +36,16 @@ class ContentTypeDetailType {
         use «nsSymfonyFormType»TextType;
         use Symfony\Component\Form\FormBuilderInterface;
         use Symfony\Component\OptionsResolver\OptionsResolver;
+        use Zikula\Common\Content\AbstractContentFormType;
+        use Zikula\Common\Content\ContentTypeInterface;
         use Zikula\Common\Translator\TranslatorInterface;
-        use Zikula\ContentModule\ContentType\Form\Type\AbstractType;
-        use Zikula\ContentModule\ContentTypeInterface;
         use «appNamespace»\Entity\Factory\EntityFactory;
         use «appNamespace»\Helper\EntityDisplayHelper;
 
         /**
          * Detail content type form type base class.
          */
-        abstract class AbstractItemType extends AbstractType
+        abstract class AbstractItemType extends AbstractContentFormType
         {
             /**
              * @var EntityFactory

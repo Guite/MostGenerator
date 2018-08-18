@@ -1023,7 +1023,7 @@ class ServiceDefinitions {
         # Content types
         «IF generateListContentType»
             «nsBase»ItemListType:
-                parent: zikula_content_module.content_type.common
+                parent: zikula.content_type.base
                 shared: false
                 calls:
                     - [setControllerHelper, ['@«modPrefix».controller_helper']]
@@ -1034,7 +1034,7 @@ class ServiceDefinitions {
                     «ENDIF»
                 tags: ['zikula.content_type']
             «nsBase»Form\Type\ItemListType:
-                parent: zikula_content_module.content_type.form.common
+                parent: zikula.content_type.form.base
                 «IF hasCategorisableEntities»
                     arguments:
                         - "@zikula_categories_module.category_repository"
@@ -1043,14 +1043,14 @@ class ServiceDefinitions {
         «ENDIF»
         «IF needsDetailContentType»
             «nsBase»ItemType:
-                parent: zikula_content_module.content_type.common
+                parent: zikula.content_type.base
                 shared: false
                 calls:
                     - [setControllerHelper, ['@«modPrefix».controller_helper']]
                     - [setFragmentHandler, ['@fragment.handler']]
                 tags: ['zikula.content_type']
             «nsBase»Form\Type\ItemType:
-                parent: zikula_content_module.content_type.form.common
+                parent: zikula.content_type.form.base
                 arguments:
                     - "@«modPrefix».entity_factory"
                     - "@«modPrefix».entity_display_helper"
