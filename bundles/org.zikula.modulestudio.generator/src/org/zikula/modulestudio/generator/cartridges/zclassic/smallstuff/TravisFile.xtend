@@ -75,7 +75,7 @@ class TravisFile {
                 - unzip -q ../../../«appName»
                 - cd  ../..
                 - php «consoleCmd» bootstrap:bundles
-                - mysql -e "INSERT INTO zk_test.modules (id, name, type, displayname, url, description, directory, version, capabilities, state, securityschema, core_min, core_max) VALUES (NULL, '«appName»', '3', '«name.formatForDisplayCapital»', '«name.formatForDB»', '«appDescription»', '«appName»', '«version»', 'N;', '3', 'N;', '«targetSemVer(true)»', '3.0.0');"
+                - mysql -e "INSERT INTO zk_test.modules (id, name, type, displayname, url, description, version, capabilities, state, securityschema, core_min, core_max) VALUES (NULL, '«appName»', '3', '«name.formatForDisplayCapital»', '«name.formatForDB»', '«appDescription»', '«version»', 'N;', '3', 'N;', '«targetSemVer(true)»', '3.0.0');"
             «ELSE»
                 - cd modules
                 - mkdir «vendor.formatForDB»
@@ -85,7 +85,7 @@ class TravisFile {
                 - unzip -q ../../../../«appName»
                 - cd  ../../..
                 - php «consoleCmd» bootstrap:bundles
-                - mysql -e "INSERT INTO zk_test.modules (id, name, type, displayname, url, description, directory, version, capabilities, state, securityschema, core_min, core_max) VALUES (NULL, '«appName»', '3', '«name.formatForDisplayCapital»', '«name.formatForDB»', '«appDescription»', '«vendor.formatForDB»/«name.formatForDB»-module', '«version»', 'N;', '3', 'N;', '«targetSemVer(true)»', '3.0.0');"
+                - mysql -e "INSERT INTO zk_test.modules (id, name, type, displayname, url, description, version, capabilities, state, securityschema, core_min, core_max) VALUES (NULL, '«appName»', '3', '«name.formatForDisplayCapital»', '«name.formatForDB»', '«appDescription»', '«version»', 'N;', '3', 'N;', '«targetSemVer(true)»', '3.0.0');"
             «ENDIF»
             - php «consoleCmd» cache:warmup
 
