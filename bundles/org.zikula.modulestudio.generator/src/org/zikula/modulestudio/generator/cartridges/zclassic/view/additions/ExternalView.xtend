@@ -83,6 +83,12 @@ class ExternalView {
             <div class="«app.appName.toLowerCase»-external-snippet">
                 «displaySnippet»
             </div>
+            «IF hasDisplayAction»
+
+                {# you can embed the display template like this: #}
+                {#{ app.request.query.set('raw', 1) }}
+                {{ include('@«app.appName»/«name.formatForDisplayCapital»/display.html.twig', {«name.formatForCode»: «name.formatForCode», routeArea: ''}) }#}
+            «ENDIF»
 
             {# you can distinguish the context like this: #}
             {# % if source == 'block' %}
