@@ -66,15 +66,15 @@ class TravisFile {
             - rm «targetSemVer(false)».tar.gz
             «ENDIF»
             - cd «targetSemVer(false)»
-            - php app/console zikula:install:start -n --database_user=root --database_name=zk_test --password=12345678 --email=admin@example.com --router:request_context:host=localhost
-            - php app/console zikula:install:finish
+            - php «consoleCmd» zikula:install:start -n --database_user=root --database_name=zk_test --password=12345678 --email=admin@example.com --router:request_context:host=localhost
+            - php «consoleCmd» zikula:install:finish
             «IF isSystemModule»
                 - cd system
                 - mkdir «appName»
                 - cd «appName»
                 - unzip -q ../../../«appName»
                 - cd  ../..
-                - php app/console bootstrap:bundles
+                - php «consoleCmd» bootstrap:bundles
                 - mysql -e "INSERT INTO zk_test.modules (id, name, type, displayname, url, description, directory, version, capabilities, state, securityschema, core_min, core_max) VALUES (NULL, '«appName»', '3', '«name.formatForDisplayCapital»', '«name.formatForDB»', '«appDescription»', '«appName»', '«version»', 'N;', '3', 'N;', '«targetSemVer(true)»', '3.0.0');"
             «ELSE»
                 - cd modules
@@ -84,21 +84,21 @@ class TravisFile {
                 - cd «name.formatForDB»-module
                 - unzip -q ../../../../«appName»
                 - cd  ../../..
-                - php app/console bootstrap:bundles
+                - php «consoleCmd» bootstrap:bundles
                 - mysql -e "INSERT INTO zk_test.modules (id, name, type, displayname, url, description, directory, version, capabilities, state, securityschema, core_min, core_max) VALUES (NULL, '«appName»', '3', '«name.formatForDisplayCapital»', '«name.formatForDB»', '«appDescription»', '«vendor.formatForDB»/«name.formatForDB»-module', '«version»', 'N;', '3', 'N;', '«targetSemVer(true)»', '3.0.0');"
             «ENDIF»
-            - php app/console cache:warmup
+            - php «consoleCmd» cache:warmup
 
         script:
             «IF isSystemModule»
-                - php app/console lint:yaml system/«appName»/Resources
-                - php app/console lint:twig @«appName»
+                - php «consoleCmd» lint:yaml system/«appName»/Resources
+                - php «consoleCmd» lint:twig @«appName»
                 «IF generateTests»
                     - phpunit --configuration system/«appName»/phpunit.xml.dist --coverage-text --coverage-clover=coverage.clover -v
                 «ENDIF»
             «ELSE»
-                - php app/console lint:yaml modules/«vendor.formatForDB»/«name.formatForDB»-module/Resources
-                - php app/console lint:twig @«appName»
+                - php «consoleCmd» lint:yaml modules/«vendor.formatForDB»/«name.formatForDB»-module/Resources
+                - php «consoleCmd» lint:twig @«appName»
                 «IF generateTests»
                     - phpunit --configuration modules/«vendor.formatForDB»/«name.formatForDB»-module/phpunit.xml.dist --coverage-text --coverage-clover=coverage.clover -v
                 «ENDIF»
@@ -129,4 +129,11 @@ class TravisFile {
             repo: «vendor.formatForCode»/«name.formatForCodeCapital»
 
     '''
+
+    def private consoleCmd(Application it) {
+        if (targets('2.0')) {
+            return 'bin/console'
+        }
+        'app/console'
+    }
 }
