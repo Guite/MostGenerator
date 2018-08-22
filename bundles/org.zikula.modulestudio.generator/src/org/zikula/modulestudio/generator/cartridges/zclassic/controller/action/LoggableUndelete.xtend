@@ -31,7 +31,7 @@ class LoggableUndelete {
             «IF isBase»
                 return $this->undeleteActionInternal($request, $id, «isAdmin.displayBool»);
             «ELSE»
-                return parent::«IF isAdmin»adminL«ELSE»d«ENDIF»isplayDeletedAction($request, $id);
+                return parent::«IF isAdmin»adminU«ELSE»u«ENDIF»ndeleteAction($request, $id);
             «ENDIF»
         }
         «IF isBase && !isAdmin»
