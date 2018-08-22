@@ -81,6 +81,9 @@ class Tree extends AbstractExtension implements EntityExtensionInterface {
         /**
          * Bidirectional - Many children [«name.formatForDisplay»] are linked by one parent [«name.formatForDisplay»] (OWNING SIDE).
          *
+         «IF loggable»
+             * @Gedmo\Versioned
+         «ENDIF»
          * @Gedmo\TreeParent
          * @ORM\ManyToOne(targetEntity="\«entityClassName('', false)»", inversedBy="children")
          * @ORM\JoinColumn(name="parent_id", referencedColumnName="«getPrimaryKey.name.formatForDisplay»", onDelete="SET NULL")

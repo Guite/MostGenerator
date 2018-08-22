@@ -154,10 +154,13 @@ class LoggableUndelete {
             «ENDIF»
 
             «IF tree !== EntityTreeType.NONE»
-                // look for a root node to use as parent
+                // check if parent is still valid
                 $repository = $entityFactory->getRepository('«name.formatForCode»');
-                $parentNode = $repository->findOneBy(['lvl' => 0]);
-                if (null !== $parentNode) {
+                $parentId = $«name.formatForCode»->getParent()->getId();
+                $parent = $parentId ? $repository->find($parentId) : null;
+                if (in_array('Doctrine\Common\Proxy\Proxy', class_implements($parent), true)) {
+                    // look for a root node to use as parent
+                    $parentNode = $repository->findOneBy(['lvl' => 0]);
                     $«name.formatForCode»->setParent($parentNode);
                 }
 
