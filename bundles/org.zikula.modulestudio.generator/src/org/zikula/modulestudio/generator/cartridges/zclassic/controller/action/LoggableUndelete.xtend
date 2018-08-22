@@ -153,6 +153,15 @@ class LoggableUndelete {
                 $«name.formatForCode»->set«getVersionField.name.formatForCodeCapital»($lastVersionBeforeDeletion + 2);
             «ENDIF»
 
+            «IF tree !== EntityTreeType.NONE»
+                // look for a root node to use as parent
+                $repository = $entityFactory->getRepository('«name.formatForCode»');
+                $parentNode = $repository->findOneBy(['lvl' => 0]);
+                if (null !== $parentNode) {
+                    $«name.formatForCode»->setParent($parentNode);
+                }
+
+            «ENDIF»
             $eventArgs = new \Doctrine\Common\Persistence\Event\LifecycleEventArgs($«name.formatForCode», $entityManager);
             $this->get('«application.appService».entity_lifecycle_listener')->postLoad($eventArgs);
 
