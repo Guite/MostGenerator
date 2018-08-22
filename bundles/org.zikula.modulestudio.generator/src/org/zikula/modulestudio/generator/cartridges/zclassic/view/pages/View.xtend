@@ -535,7 +535,7 @@ class View {
         <div class="«appName.toLowerCase»-«name.formatForDB» «appName.toLowerCase»-viewdeleted">
             {{ block('page_nav_links') }}
             «IF !hasDisplayAction»
-                <p class="alert alert-info">{{ __('Because there exists no display action for «nameMultiple.formatForDisplay» it is not possible to preview or undelete deleted items.') }}</p>
+                <p class="alert alert-info">{{ __('Because there exists no display action for «nameMultiple.formatForDisplay» it is not possible to preview deleted items.') }}</p>
             «ENDIF»
             <div class="table-responsive">
                 <table class="table table-striped table-bordered table-hover{% if routeArea == 'admin' %} table-condensed{% endif %}">

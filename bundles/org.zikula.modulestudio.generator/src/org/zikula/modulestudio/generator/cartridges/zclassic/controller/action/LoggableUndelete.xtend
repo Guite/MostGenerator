@@ -152,6 +152,9 @@ class LoggableUndelete {
                 $«name.formatForCode»->set«getVersionField.name.formatForCodeCapital»($lastVersionBeforeDeletion + 2);
             «ENDIF»
 
+            $eventArgs = new \Doctrine\Common\Persistence\Event\LifecycleEventArgs($«name.formatForCode», $entityManager);
+            $this->get('«application.appService».entity_lifecycle_listener')->postLoad($eventArgs);
+
             return $«name.formatForCode»;
         }
     '''
