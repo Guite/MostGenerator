@@ -6,7 +6,6 @@ import de.guite.modulestudio.metamodel.DisplayAction
 import de.guite.modulestudio.metamodel.Entity
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.action.InlineRedirect
-import org.zikula.modulestudio.generator.cartridges.zclassic.controller.action.LoggableDeleted
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.action.LoggableHistory
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.action.MassHandling
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.additions.AjaxController
@@ -22,6 +21,7 @@ import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
+import org.zikula.modulestudio.generator.cartridges.zclassic.controller.action.LoggableUndelete
 
 class ControllerLayer {
 
@@ -90,9 +90,7 @@ class ControllerLayer {
                 «new MassHandling().generate(it, true)»
             «ENDIF»
             «IF loggable»
-                «IF hasDisplayAction»
-                    «new LoggableDeleted().generate(it, true)»
-                «ENDIF»
+                «new LoggableUndelete().generate(it, true)»
                 «new LoggableHistory().generate(it, true)»
             «ENDIF»
             «IF hasEditAction && app.needsInlineEditing»
@@ -173,9 +171,7 @@ class ControllerLayer {
                     «adminAndUserImpl(action as Action, false)»
                 «ENDFOR»
                 «IF loggable»
-                    «IF hasDisplayAction»
-                        «new LoggableDeleted().generate(it, false)»
-                    «ENDIF»
+                    «new LoggableUndelete().generate(it, false)»
                     «new LoggableHistory().generate(it, false)»
                 «ENDIF»
                 «FOR action : getAllEntityActions.filter(DisplayAction)»
@@ -183,9 +179,7 @@ class ControllerLayer {
                 «ENDFOR»
             «ELSE»
                 «IF loggable»
-                    «IF hasDisplayAction»
-                        «new LoggableDeleted().generate(it, false)»
-                    «ENDIF»
+                    «new LoggableUndelete().generate(it, false)»
                     «new LoggableHistory().generate(it, false)»
                 «ENDIF»
                 «FOR action : getAllEntityActions»

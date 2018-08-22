@@ -1,20 +1,22 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.controller.action
 
 import de.guite.modulestudio.metamodel.Entity
+import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
-class LoggableDeleted {
+class LoggableUndelete {
 
+    extension ControllerExtensions = new ControllerExtensions
     extension FormattingExtensions = new FormattingExtensions
     extension ModelExtensions = new ModelExtensions
     extension Utils = new Utils
 
     def generate(Entity it, Boolean isBase) '''
-        «displayDeleted(isBase, true)»
+        «undelete(isBase, true)»
 
-        «displayDeleted(isBase, false)»
+        «undelete(isBase, false)»
 
         «IF isBase»
             «restoreDeletedEntity»
@@ -22,12 +24,12 @@ class LoggableDeleted {
         «ENDIF»
     '''
 
-    def private displayDeleted(Entity it, Boolean isBase, Boolean isAdmin) '''
-        «displayDeletedDocBlock(isBase, isAdmin)»
-        public function «IF isAdmin»adminD«ELSE»d«ENDIF»isplayDeletedAction(Request $request, $id = 0)
+    def private undelete(Entity it, Boolean isBase, Boolean isAdmin) '''
+        «undeleteDocBlock(isBase, isAdmin)»
+        public function «IF isAdmin»adminU«ELSE»u«ENDIF»ndeleteAction(Request $request, $id = 0)
         {
             «IF isBase»
-                return $this->displayDeletedActionInternal($request, $id, «isAdmin.displayBool»);
+                return $this->undeleteActionInternal($request, $id, «isAdmin.displayBool»);
             «ELSE»
                 return parent::«IF isAdmin»adminL«ELSE»d«ENDIF»isplayDeletedAction($request, $id);
             «ENDIF»
@@ -35,23 +37,23 @@ class LoggableDeleted {
         «IF isBase && !isAdmin»
 
             /**
-             * This method includes the common implementation code for adminDisplayDeletedAction() and displayDeletedAction().
+             * This method includes the common implementation code for adminUndeleteAction() and undeleteAction().
              *
              * @param Request $request Current request instance
              * @param integer $id      Identifier of «name.formatForDisplay»
              * @param boolean $isAdmin Whether the admin area is used or not
              */
-            protected function displayDeletedActionInternal(Request $request, $id = 0, $isAdmin = false)
+            protected function undeleteActionInternal(Request $request, $id = 0, $isAdmin = false)
             {
-                «loggableDisplayDeletedBaseImpl»
+                «loggableUndeleteBaseImpl»
             }
         «ENDIF»
     '''
 
-    def private displayDeletedDocBlock(Entity it, Boolean isBase, Boolean isAdmin) '''
+    def private undeleteDocBlock(Entity it, Boolean isBase, Boolean isAdmin) '''
         /**
          «IF isBase»
-         * Displays a deleted «name.formatForDisplay».
+         * «IF hasDisplayAction»Displays or undeletes«ELSE»Undeletes«ENDIF» a deleted «name.formatForDisplay».
          *
          * @param Request $request Current request instance
          * @param integer $id      Identifier of entity
@@ -74,38 +76,44 @@ class LoggableDeleted {
          */
     '''
 
-    def private loggableDisplayDeletedBaseImpl(Entity it) '''
+    def private loggableUndeleteBaseImpl(Entity it) '''
         $«name.formatForCode» = $this->restoreDeletedEntity($id);
 
-        $undelete = $request->query->getInt('undelete', 0);
-        if ($undelete == 1) {
-            try {
-                $em = $this->get('doctrine.entitymanager');
-                $metadata = $em->getClassMetaData(get_class($«name.formatForCode»));
-                $metadata->setIdGeneratorType(\Doctrine\ORM\Mapping\ClassMetadata::GENERATOR_TYPE_NONE);
-                $metadata->setIdGenerator(new \Doctrine\ORM\Id\AssignedGenerator());
-
-                $versionField = $metadata->versionField;
-                $metadata->setVersioned(false);
-                $metadata->setVersionField(null);
-
-                $em->persist($«name.formatForCode»);
-                $em->flush($«name.formatForCode»);
-
-                $this->addFlash('status', $this->__('Done! Undeleted «name.formatForDisplay».'));
-
-                $metadata->setVersioned(true);
-                $metadata->setVersionField($versionField);
-            } catch (\Exception $exception) {
-                $this->addFlash('error', $this->__f('Sorry, but an error occured during the %action% action. Please apply the changes again!', ['%action%' => 'undelete']) . '  ' . $exception->getMessage());
+        «IF hasDisplayAction»
+            $preview = $request->query->getInt('preview', 0);
+            if ($preview == 1) {
+                return $this->displayInternal($request, $«name.formatForCode», $isAdmin);
             }
 
-            $routeArea = $isAdmin ? 'admin' : '';
+        «ENDIF»
+        «undeletion»
 
-            return $this->redirectToRoute('«application.appName.formatForDB»_«name.formatForDB»_' . $routeArea . 'display', $«name.formatForCode»->createUrlArgs());
+        $routeArea = $isAdmin ? 'admin' : '';
+
+        return $this->redirectToRoute('«application.appName.formatForDB»_«name.formatForDB»_' . $routeArea . '«IF hasDisplayAction»display', $«name.formatForCode»->createUrlArgs()«ELSEIF hasViewAction»view'«ELSE»index'«ENDIF»);
+    '''
+
+    def private undeletion(Entity it) '''
+        try {
+            $em = $this->get('doctrine.entitymanager');
+            $metadata = $em->getClassMetaData(get_class($«name.formatForCode»));
+            $metadata->setIdGeneratorType(\Doctrine\ORM\Mapping\ClassMetadata::GENERATOR_TYPE_NONE);
+            $metadata->setIdGenerator(new \Doctrine\ORM\Id\AssignedGenerator());
+
+            $versionField = $metadata->versionField;
+            $metadata->setVersioned(false);
+            $metadata->setVersionField(null);
+
+            $em->persist($«name.formatForCode»);
+            $em->flush($«name.formatForCode»);
+
+            $this->addFlash('status', $this->__('Done! Undeleted «name.formatForDisplay».'));
+
+            $metadata->setVersioned(true);
+            $metadata->setVersionField($versionField);
+        } catch (\Exception $exception) {
+            $this->addFlash('error', $this->__f('Sorry, but an error occured during the %action% action. Please apply the changes again!', ['%action%' => 'undelete']) . '  ' . $exception->getMessage());
         }
-
-        return $this->displayInternal($request, $«name.formatForCode», $isAdmin);
     '''
 
     def private restoreDeletedEntity(Entity it) '''
@@ -130,7 +138,7 @@ class LoggableDeleted {
             $logEntries = $logEntriesRepository->getLogEntries($«name.formatForCode»);
             $lastVersionBeforeDeletion = null;
             foreach ($logEntries as $logEntry) {
-                if ($logEntry->getAction() != 'remove') {
+                if ('remove' != $logEntry->getAction()) {
                     $lastVersionBeforeDeletion = $logEntry->getVersion();
                     break;
                 }
