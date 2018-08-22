@@ -1,6 +1,7 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.controller.action
 
 import de.guite.modulestudio.metamodel.Entity
+import de.guite.modulestudio.metamodel.EntityTreeType
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
@@ -95,8 +96,8 @@ class LoggableUndelete {
 
     def private undeletion(Entity it) '''
         try {
-            $em = $this->get('doctrine.entitymanager');
-            $metadata = $em->getClassMetaData(get_class($«name.formatForCode»));
+            $entityManager = $this->get('«application.appService».entity_factory')->getObjectManager();
+            $metadata = $entityManager->getClassMetaData(get_class($«name.formatForCode»));
             $metadata->setIdGeneratorType(\Doctrine\ORM\Mapping\ClassMetadata::GENERATOR_TYPE_NONE);
             $metadata->setIdGenerator(new \Doctrine\ORM\Id\AssignedGenerator());
 
@@ -104,8 +105,8 @@ class LoggableUndelete {
             $metadata->setVersioned(false);
             $metadata->setVersionField(null);
 
-            $em->persist($«name.formatForCode»);
-            $em->flush($«name.formatForCode»);
+            $entityManager->persist($«name.formatForCode»);
+            $entityManager->flush($«name.formatForCode»);
 
             $this->addFlash('status', $this->__('Done! Undeleted «name.formatForDisplay».'));
 

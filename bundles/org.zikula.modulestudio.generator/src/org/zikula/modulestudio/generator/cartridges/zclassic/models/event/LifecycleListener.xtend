@@ -159,7 +159,7 @@ class LifecycleListener {
                             return;
                         }
 
-                        $repository = $this->container->get('doctrine.entitymanager')->getRepository($entity->getObjectClass());
+                        $repository = $this->container->get('«appService».entity_factory')->getObjectManager()->getRepository($entity->getObjectClass());
                         $object = $repository->find($entity->getObjectId());
                         if (null === $object || !method_exists($object, 'get_objectType')) {
                             return;
