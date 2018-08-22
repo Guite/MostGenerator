@@ -258,10 +258,6 @@ class LifecycleListener {
              */
             protected function isEntityManagedByThisBundle($entity)
             {
-                if (!($entity instanceof EntityAccess«IF hasLoggable» || $entity instanceof AbstractLogEntry«ENDIF»)) {
-                    return false;
-                }
-
                 $entityClassParts = explode('\\', get_class($entity));
 
                 return ($entityClassParts[0] == '«vendor.formatForCodeCapital»' && $entityClassParts[1] == '«name.formatForCodeCapital»Module');
