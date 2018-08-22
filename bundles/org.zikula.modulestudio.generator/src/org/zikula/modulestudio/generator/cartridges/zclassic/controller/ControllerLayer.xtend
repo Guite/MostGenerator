@@ -7,6 +7,7 @@ import de.guite.modulestudio.metamodel.Entity
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.action.InlineRedirect
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.action.LoggableHistory
+import org.zikula.modulestudio.generator.cartridges.zclassic.controller.action.LoggableUndelete
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.action.MassHandling
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.additions.AjaxController
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.additions.ConfigController
@@ -21,7 +22,6 @@ import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
-import org.zikula.modulestudio.generator.cartridges.zclassic.controller.action.LoggableUndelete
 
 class ControllerLayer {
 
