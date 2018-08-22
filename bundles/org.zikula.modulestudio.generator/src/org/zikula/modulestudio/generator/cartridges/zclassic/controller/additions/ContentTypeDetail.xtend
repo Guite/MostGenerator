@@ -92,7 +92,7 @@ class ContentTypeDetail {
          */
         public function getTitle()
         {
-            return $this->__('«name.formatForDisplayCapital» detail', '«appName.formatForDB»');
+            return $this->translator->__('«name.formatForDisplayCapital» detail', '«appName.formatForDB»');
         }
 
         /**
@@ -100,7 +100,7 @@ class ContentTypeDetail {
          */
         public function getDescription()
         {
-            return $this->__('Display or link a single «name.formatForDisplay» object.', '«appName.formatForDB»');
+            return $this->translator->__('Display or link a single «name.formatForDisplay» object.', '«appName.formatForDB»');
         }
 
         /**
@@ -152,7 +152,7 @@ class ContentTypeDetail {
         public function displayEditing()
         {
             if (null === $this->data['id'] || empty($this->data['id']) || empty($this->data['displayMode'])) {
-                return $this->__('No item selected.', '«appName.formatForDB»');
+                return $this->translator->__('No item selected.', '«appName.formatForDB»');
             }
 
             return parent::displayEditing();

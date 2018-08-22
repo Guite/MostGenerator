@@ -124,7 +124,7 @@ class ContentTypeList {
          */
         public function getTitle()
         {
-            return $this->__('«name.formatForDisplayCapital» list', '«appName.formatForDB»');
+            return $this->translator->__('«name.formatForDisplayCapital» list', '«appName.formatForDB»');
         }
 
         /**
@@ -132,7 +132,7 @@ class ContentTypeList {
          */
         public function getDescription()
         {
-            return $this->__('Display a list of «name.formatForDisplay» objects.', '«appName.formatForDB»');
+            return $this->translator->__('Display a list of «name.formatForDisplay» objects.', '«appName.formatForDB»');
         }
 
         /**
