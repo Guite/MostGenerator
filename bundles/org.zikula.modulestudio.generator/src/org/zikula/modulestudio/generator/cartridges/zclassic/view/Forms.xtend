@@ -139,7 +139,7 @@ class Forms {
                             </li>
                         {% endif %}
                     «ENDIF»
-                    {% if form.moderationSpecificCreator is defined %}
+                    {% if form.moderationSpecificCreator is defined or form.moderationSpecificCreationDate is defined %}
                         <li role="presentation">
                             <a id="moderationTab" href="#tabModeration" title="{{ __('Moderation options') }}" role="tab" data-toggle="tab">{{ __('Moderation') }}</a>
                         </li>

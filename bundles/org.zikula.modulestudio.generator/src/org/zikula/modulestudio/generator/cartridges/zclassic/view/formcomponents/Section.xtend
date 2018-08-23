@@ -83,19 +83,27 @@ class Section {
 
     def private moderationFields(Entity it) '''
         «IF standardFields»
-            {% if form.moderationSpecificCreator is defined %}
+            {% if form.moderationSpecificCreator is defined or form.moderationSpecificCreationDate is defined %}
                 «IF useGroupingTabs('edit')»
                     <div role="tabpanel" class="tab-pane fade" id="tabModeration" aria-labelledby="moderationTab">
                         <h3>{{ __('Moderation') }}</h3>
-                        {{ form_row(form.moderationSpecificCreator) }}
-                        {{ form_row(form.moderationSpecificCreationDate) }}
+                        {% if form.moderationSpecificCreator is defined %}
+                            {{ form_row(form.moderationSpecificCreator) }}
+                        {% endif %}
+                        {% if form.moderationSpecificCreationDate is defined %}
+                            {{ form_row(form.moderationSpecificCreationDate) }}
+                        {% endif %}
                     </div>
                 «ELSE»
                     <fieldset id="moderationFieldsSection">
                         <legend>{{ __('Moderation') }} <i class="fa fa-expand"></i></legend>
                         <div id="moderationFieldsContent">
-                            {{ form_row(form.moderationSpecificCreator) }}
-                            {{ form_row(form.moderationSpecificCreationDate) }}
+                            {% if form.moderationSpecificCreator is defined %}
+                                {{ form_row(form.moderationSpecificCreator) }}
+                            {% endif %}
+                            {% if form.moderationSpecificCreationDate is defined %}
+                                {{ form_row(form.moderationSpecificCreationDate) }}
+                            {% endif %}
                         </div>
                     </fieldset>
                 «ENDIF»

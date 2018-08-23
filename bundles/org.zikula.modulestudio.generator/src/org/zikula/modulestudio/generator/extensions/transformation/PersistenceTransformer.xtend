@@ -84,9 +84,9 @@ class PersistenceTransformer {
             }
         }
 
-        addWorkflowSettings
         addViewSettings
         addImageSettings
+        addModerationSettings
         addIntegrationSettings
         addGeoSettings
     }
@@ -241,33 +241,6 @@ class PersistenceTransformer {
         entity.indexes += wfIndex
     }
 
-    def private addWorkflowSettings(Application it) {
-        val entitiesWithApproval = getAllEntities.filter[workflow != EntityWorkflowType.NONE]
-        if (entitiesWithApproval.empty) {
-            return
-        }
-
-        val varContainer = createVarContainerForWorkflowSettings
-        val factory = ModuleStudioFactory.eINSTANCE
-
-        for (entity : entitiesWithApproval) {
-            varContainer.fields += factory.createIntegerField => [
-                name = 'moderationGroupFor' + entity.nameMultiple.formatForCodeCapital
-                defaultValue = '2' // use admin group (gid=2) as fallback
-                documentation = 'Used to determine moderator user accounts for sending email notifications.'
-            ]
-            if (entity.workflow == EntityWorkflowType.ENTERPRISE) {
-                varContainer.fields += factory.createIntegerField => [
-                    name = 'superModerationGroupFor' + entity.nameMultiple.formatForCodeCapital
-                    defaultValue = '2' // use admin group (gid=2) as fallback
-                    documentation = 'Used to determine moderator user accounts for sending email notifications.'
-                ]
-            }
-        }
-
-        variables += varContainer
-    }
-
     def private addViewSettings(Application it) {
         val entitiesWithView = getAllEntities.filter[hasViewAction]
         if (entitiesWithView.empty) {
@@ -374,6 +347,48 @@ class PersistenceTransformer {
         variables += varContainer
     }
 
+    def private addModerationSettings(Application it) {
+        val entitiesWithApproval = getAllEntities.filter[workflow != EntityWorkflowType.NONE]
+        val entitiesWithEditActionsAndStandardFields = getAllEntities.filter[hasEditAction && standardFields]
+        if (entitiesWithApproval.empty && entitiesWithEditActionsAndStandardFields.empty) {
+            return
+        }
+
+        val varContainer = createVarContainerForModerationSettings
+        val factory = ModuleStudioFactory.eINSTANCE
+
+        for (entity : entitiesWithApproval) {
+            varContainer.fields += factory.createIntegerField => [
+                name = 'moderationGroupFor' + entity.nameMultiple.formatForCodeCapital
+                defaultValue = '2' // use admin group (gid=2) as fallback
+                documentation = 'Used to determine moderator user accounts for sending email notifications.'
+            ]
+            if (entity.workflow == EntityWorkflowType.ENTERPRISE) {
+                varContainer.fields += factory.createIntegerField => [
+                    name = 'superModerationGroupFor' + entity.nameMultiple.formatForCodeCapital
+                    defaultValue = '2' // use admin group (gid=2) as fallback
+                    documentation = 'Used to determine moderator user accounts for sending email notifications.'
+                ]
+            }
+        }
+        for (entity : entitiesWithEditActionsAndStandardFields) {
+            varContainer.fields += factory.createBooleanField => [
+                name = 'allowModerationSpecificCreatorFor' + entity.name.formatForCodeCapital
+                defaultValue = 'false'
+                documentation = 'Whether to allow moderators choosing a user which will be set as creator.'
+                mandatory = false
+            ]
+            varContainer.fields += factory.createBooleanField => [
+                name = 'allowModerationSpecificCreationDateFor' + entity.name.formatForCodeCapital
+                defaultValue = 'false'
+                documentation = 'Whether to allow moderators choosing a custom creation date.'
+                mandatory = false
+            ]
+        }
+
+        variables += varContainer
+    }
+
     def private addIntegrationSettings(Application it) {
         if (!generateExternalControllerAndFinder) {
             return
@@ -448,11 +463,11 @@ class PersistenceTransformer {
         variables += varContainer
     }
 
-    def private createVarContainerForWorkflowSettings(Application it) {
+    def private createVarContainerForModerationSettings(Application it) {
         val newSortNumber = getNextVarContainerSortNumber
         ModuleStudioFactory.eINSTANCE.createVariables => [
             name = 'Moderation'
-            documentation = 'Here you can assign moderation groups for enhanced workflow actions.'
+            documentation = 'Here you can define moderation-related settings.'
             sortOrder = newSortNumber
         ]
     }

@@ -359,6 +359,8 @@ class EditEntityType {
                         'actions' => [],
                         «IF it instanceof Entity && (it as Entity).standardFields»
                             'has_moderate_permission' => false,
+                            'allow_moderation_specific_creator' => false,
+                            'allow_moderation_specific_creation_date' => false,
                         «ENDIF»
                         «IF it instanceof Entity && (it as Entity).hasTranslatableFields»
                             'translations' => [],
@@ -383,6 +385,8 @@ class EditEntityType {
                     ->setAllowedTypes('actions', 'array')
                     «IF it instanceof Entity && (it as Entity).standardFields»
                         ->setAllowedTypes('has_moderate_permission', 'bool')
+                        ->setAllowedTypes('allow_moderation_specific_creator', 'bool')
+                        ->setAllowedTypes('allow_moderation_specific_creation_date', 'bool')
                     «ENDIF»
                     «IF it instanceof Entity && (it as Entity).hasTranslatableFields»
                         ->setAllowedTypes('translations', 'array')
@@ -787,31 +791,35 @@ class EditEntityType {
                 }
             «ENDIF»
 
-            $builder->add('moderationSpecificCreator', UserLiveSearchType::class, [
-                'mapped' => false,
-                'label' => $this->__('Creator') . ':',
-                'attr' => [
-                    'maxlength' => 11,
-                    'title' => $this->__('Here you can choose a user which will be set as creator.')
-                ],
-                'empty_data' => 0,
-                'required' => false,
-                'help' => $this->__('Here you can choose a user which will be set as creator.')
-            ]);
-            $builder->add('moderationSpecificCreationDate', DateTimeType::class, [
-                'mapped' => false,
-                'label' => $this->__('Creation date') . ':',
-                'attr' => [
-                    'class' => '',
-                    'title' => $this->__('Here you can choose a custom creation date.')
-                ],
-                'empty_data' => '',
-                'required' => false,
-                'with_seconds' => true,
-                'date_widget' => 'single_text',
-                'time_widget' => 'single_text',
-                'help' => $this->__('Here you can choose a custom creation date.')
-            ]);
+            if ($options['allow_moderation_specific_creator']) {
+                $builder->add('moderationSpecificCreator', UserLiveSearchType::class, [
+                    'mapped' => false,
+                    'label' => $this->__('Creator') . ':',
+                    'attr' => [
+                        'maxlength' => 11,
+                        'title' => $this->__('Here you can choose a user which will be set as creator.')
+                    ],
+                    'empty_data' => 0,
+                    'required' => false,
+                    'help' => $this->__('Here you can choose a user which will be set as creator.')
+                ]);
+            }
+            if ($options['allow_moderation_specific_creation_date']) {
+                $builder->add('moderationSpecificCreationDate', TimeType::class, [
+                    'mapped' => false,
+                    'label' => $this->__('Creation date') . ':',
+                    'attr' => [
+                        'class' => '',
+                        'title' => $this->__('Here you can choose a custom creation date.')
+                    ],
+                    'empty_data' => '',
+                    'required' => false,
+                    'with_seconds' => true,
+                    'date_widget' => 'single_text',
+                    'time_widget' => 'single_text',
+                    'help' => $this->__('Here you can choose a custom creation date.')
+                ]);
+            }
         }
     '''
 
