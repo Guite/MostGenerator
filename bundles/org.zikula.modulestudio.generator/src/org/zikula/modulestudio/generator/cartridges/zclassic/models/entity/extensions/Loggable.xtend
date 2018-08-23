@@ -139,8 +139,8 @@ class Loggable extends AbstractExtension implements EntityExtensionInterface {
                 $limitParameter = intval($limitParameter);
                 if (!$limitParameter) {
                     $limitParameter = 25;
-            	}
-            	$limitParameter++; // one more for the initial creation entry
+                }
+                $limitParameter++; // one more for the initial creation entry
 
                 $qbMatchingObjects = $this->getEntityManager()->createQueryBuilder();
                 $qbMatchingObjects->select('log.objectId, COUNT(log.objectId) AS HIDDEN amountOfRevisions')
