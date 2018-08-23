@@ -118,7 +118,7 @@ class Loggable extends AbstractExtension implements EntityExtensionInterface {
          */
         public function purgeHistory($revisionHandling = 'unlimited', $limitParameter = '')
         {
-            if ('unlimited' == $revisionHandling) {
+            if ('unlimited' == $revisionHandling || !in_array($revisionHandling, ['limitedByAmount', 'limitedByDate'])) {
                 // nothing to do
                 return;
             }

@@ -30,7 +30,7 @@ class JavaScriptFiles {
      * Entry point for generating JavaScript files.
      */
     def generate(Application it, IMostFileSystemAccess fsa) {
-        if (hasImageFields) {
+        if (hasImageFields || hasLoggable) {
             new ConfigFunctions().generate(it, fsa)
         }
         new DisplayFunctions().generate(it, fsa)

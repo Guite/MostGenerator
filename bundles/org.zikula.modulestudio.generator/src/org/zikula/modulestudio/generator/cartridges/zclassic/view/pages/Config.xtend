@@ -6,6 +6,7 @@ import de.guite.modulestudio.metamodel.Variables
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.formcomponents.SharedFormElements
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
+import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
@@ -14,6 +15,7 @@ import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
 class Config {
 
     extension FormattingExtensions = new FormattingExtensions
+    extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension ModelExtensions = new ModelExtensions
     extension NamingExtensions = new NamingExtensions
     extension SharedFormElements = new SharedFormElements
@@ -84,7 +86,7 @@ class Config {
         {% endblock %}
         {% block footer %}
             {{ parent() }}
-            «IF hasImageFields»
+            «IF hasImageFields || hasLoggable»
                 {{ pageAddAsset('javascript', zasset('@«appName»:js/«appName».Config.js')) }}
             «ENDIF»
             {{ pageAddAsset('javascript', zasset('@«appName»:js/«appName».Validation.js'), 98) }}
