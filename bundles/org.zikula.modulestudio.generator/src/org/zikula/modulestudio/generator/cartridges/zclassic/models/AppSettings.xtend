@@ -99,11 +99,11 @@ class AppSettings {
 
         «ENDIF»
         «IF hasLoggable»
-
             /**
              * @var EntityFactory
              */
             protected $entityFactory;
+
         «ENDIF»
         «memberVars»
 

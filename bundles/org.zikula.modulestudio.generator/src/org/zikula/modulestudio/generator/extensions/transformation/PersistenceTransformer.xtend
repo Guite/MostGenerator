@@ -498,7 +498,7 @@ class PersistenceTransformer {
             ]
         }
 
-        for (entity : getGeographicalEntities) {
+        for (entity : getLoggableEntities) {
             var listField = factory.createListField => [
                 name = 'revisionHandlingFor' + entity.name.formatForCodeCapital
                 documentation = 'Adding a limitation to the revisioning will still keep the possibility to revert ' + entity.nameMultiple.formatForDisplay + ' to an older version. You will loose the possibility to inspect changes done earlier than the oldest stored revision though.'
