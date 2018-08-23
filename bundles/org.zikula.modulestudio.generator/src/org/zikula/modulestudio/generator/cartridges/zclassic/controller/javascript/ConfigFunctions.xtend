@@ -61,6 +61,12 @@ class ConfigFunctions {
                 });
             «ENDIF»
             «IF hasLoggable»
+                «FOR entity : getLoggableEntities»
+                    jQuery('#«appName.toLowerCase»_config_revisionHandlingFor' + objectTypeCapitalised).change(function (event) {
+                        «prefix.formatForDB»ToggleRevisionSettings('«entity.name.formatForCodeCapital»');
+                    });
+                    «prefix.formatForDB»ToggleRevisionSettings('«entity.name.formatForCodeCapital»');
+                «ENDFOR»
             «ENDIF»
         });
     '''
