@@ -57,89 +57,89 @@ class CollectionFilterHelper {
          */
         abstract class AbstractCollectionFilterHelper
         {
-            /**
-             * @var RequestStack
-             */
-            protected $requestStack;
-
-            /**
-             * @var PermissionHelper
-             */
-            protected $permissionHelper;
-            «IF hasStandardFieldEntities»
-
-                /**
-                 * @var CurrentUserApiInterface
-                 */
-                protected $currentUserApi;
-            «ENDIF»
-            «IF hasCategorisableEntities»
-
-                /**
-                 * @var CategoryHelper
-                 */
-                protected $categoryHelper;
-            «ENDIF»
-
-            /**
-             * @var bool Fallback value to determine whether only own entries should be selected or not
-             */
-            protected $showOnlyOwnEntries = false;
-            «IF supportLocaleFilter»
-
-                /**
-                 * @var bool Whether to apply a locale-based filter or not
-                 */
-                protected $filterDataByLocale = false;
-            «ENDIF»
-
-            /**
-             * CollectionFilterHelper constructor.
-             *
-             * @param RequestStack $requestStack RequestStack service instance
-             * @param PermissionHelper $permissionHelper PermissionHelper service instance
-             «IF hasStandardFieldEntities»
-             * @param CurrentUserApiInterface $currentUserApi CurrentUserApi service instance
-             «ENDIF»
-             «IF hasCategorisableEntities»
-             * @param CategoryHelper $categoryHelper CategoryHelper service instance
-             «ENDIF»
-             * @param boolean $showOnlyOwnEntries Fallback value to determine whether only own entries should be selected or not
-             «IF supportLocaleFilter»
-             * @param boolean $filterDataByLocale Whether to apply a locale-based filter or not
-             «ENDIF»
-             */
-            public function __construct(
-                RequestStack $requestStack,
-                PermissionHelper $permissionHelper,
-                «IF hasStandardFieldEntities»
-                    CurrentUserApiInterface $currentUserApi,
-                «ENDIF»
-                «IF hasCategorisableEntities»
-                    CategoryHelper $categoryHelper,
-                «ENDIF»
-                $showOnlyOwnEntries«IF supportLocaleFilter»,
-                $filterDataByLocale«ENDIF»
-            ) {
-                $this->requestStack = $requestStack;
-                $this->permissionHelper = $permissionHelper;
-                «IF hasStandardFieldEntities»
-                    $this->currentUserApi = $currentUserApi;
-                «ENDIF»
-                «IF hasCategorisableEntities»
-                    $this->categoryHelper = $categoryHelper;
-                «ENDIF»
-                $this->showOnlyOwnEntries = $showOnlyOwnEntries;
-                «IF supportLocaleFilter»
-                    $this->filterDataByLocale = $filterDataByLocale;
-                «ENDIF»
-            }
-
-            «collectionFilterHelperBaseImpl»
+            «helperBaseImpl»
         }
     '''
 
-    def private collectionFilterHelperBaseImpl(Application it) '''
+    def private helperBaseImpl(Application it) '''
+        /**
+         * @var RequestStack
+         */
+        protected $requestStack;
+
+        /**
+         * @var PermissionHelper
+         */
+        protected $permissionHelper;
+        «IF hasStandardFieldEntities»
+
+            /**
+             * @var CurrentUserApiInterface
+             */
+            protected $currentUserApi;
+        «ENDIF»
+        «IF hasCategorisableEntities»
+
+            /**
+             * @var CategoryHelper
+             */
+            protected $categoryHelper;
+        «ENDIF»
+
+        /**
+         * @var bool Fallback value to determine whether only own entries should be selected or not
+         */
+        protected $showOnlyOwnEntries = false;
+        «IF supportLocaleFilter»
+
+            /**
+             * @var bool Whether to apply a locale-based filter or not
+             */
+            protected $filterDataByLocale = false;
+        «ENDIF»
+
+        /**
+         * CollectionFilterHelper constructor.
+         *
+         * @param RequestStack $requestStack RequestStack service instance
+         * @param PermissionHelper $permissionHelper PermissionHelper service instance
+         «IF hasStandardFieldEntities»
+         * @param CurrentUserApiInterface $currentUserApi CurrentUserApi service instance
+         «ENDIF»
+         «IF hasCategorisableEntities»
+         * @param CategoryHelper $categoryHelper CategoryHelper service instance
+         «ENDIF»
+         * @param boolean $showOnlyOwnEntries Fallback value to determine whether only own entries should be selected or not
+         «IF supportLocaleFilter»
+         * @param boolean $filterDataByLocale Whether to apply a locale-based filter or not
+         «ENDIF»
+         */
+        public function __construct(
+            RequestStack $requestStack,
+            PermissionHelper $permissionHelper,
+            «IF hasStandardFieldEntities»
+                CurrentUserApiInterface $currentUserApi,
+            «ENDIF»
+            «IF hasCategorisableEntities»
+                CategoryHelper $categoryHelper,
+            «ENDIF»
+            $showOnlyOwnEntries«IF supportLocaleFilter»,
+            $filterDataByLocale«ENDIF»
+        ) {
+            $this->requestStack = $requestStack;
+            $this->permissionHelper = $permissionHelper;
+            «IF hasStandardFieldEntities»
+                $this->currentUserApi = $currentUserApi;
+            «ENDIF»
+            «IF hasCategorisableEntities»
+                $this->categoryHelper = $categoryHelper;
+            «ENDIF»
+            $this->showOnlyOwnEntries = $showOnlyOwnEntries;
+            «IF supportLocaleFilter»
+                $this->filterDataByLocale = $filterDataByLocale;
+            «ENDIF»
+        }
+
         /**
          * Returns an array of additional template variables for view quick navigation forms.
          *

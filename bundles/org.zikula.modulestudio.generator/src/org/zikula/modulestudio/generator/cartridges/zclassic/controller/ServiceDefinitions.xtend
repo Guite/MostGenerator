@@ -146,6 +146,9 @@ class ServiceDefinitions {
                     «IF hasUserGroupSelectors»
                         - "@zikula_groups_module.group_repository"
                     «ENDIF»
+                    «IF hasLoggable»
+                        - "@«modPrefix».entity_factory"
+                    «ENDIF»
     '''
 
     def private menu(Application it) '''
@@ -815,6 +818,9 @@ class ServiceDefinitions {
                 - "@service_container"
                 - "@request_stack"
                 - "@zikula_permissions_module.api.permission"
+                «IF hasLoggable»
+                    - "@zikula_extensions_module.api.variable"
+                «ENDIF»
                 - "@zikula_users_module.current_user"
                 - "@zikula_users_module.user_repository"
         «IF generateSearchApi»

@@ -79,203 +79,207 @@ class ControllerHelper {
          */
         abstract class AbstractControllerHelper
         {
-            use TranslatorTrait;
+            «helperBaseImpl»
+        }
+    '''
+
+    def private helperBaseImpl(Application it) '''
+        use TranslatorTrait;
+
+        /**
+         * @var RequestStack
+         */
+        protected $requestStack;
+        «IF hasUiHooksProviders»
 
             /**
-             * @var RequestStack
+             * @var RouterInterface
              */
-            protected $requestStack;
+            protected $router;
+        «ENDIF»
+        «IF hasViewActions»
+
+            /**
+             * @var FormFactoryInterface
+             */
+            protected $formFactory;
+        «ENDIF»
+        «IF hasViewActions»
+
+            /**
+             * @var VariableApiInterface
+             */
+            protected $variableApi;
+        «ENDIF»
+        «IF hasGeographical»
+
+            /**
+             * @var LoggerInterface
+             */
+            protected $logger;
+
+            /**
+             * @var CurrentUserApiInterface
+             */
+            protected $currentUserApi;
+        «ENDIF»
+
+        /**
+         * @var EntityFactory
+         */
+        protected $entityFactory;
+
+        /**
+         * @var CollectionFilterHelper
+         */
+        protected $collectionFilterHelper;
+
+        /**
+         * @var PermissionHelper
+         */
+        protected $permissionHelper;
+        «IF hasViewActions && hasEditActions»
+
+            /**
+             * @var ModelHelper
+             */
+            protected $modelHelper;
+        «ENDIF»
+        «IF !getUploadEntities.empty»
+
+            /**
+             * @var ImageHelper
+             */
+            protected $imageHelper;
+        «ENDIF»
+        «IF needsFeatureActivationHelper»
+
+            /**
+             * @var FeatureActivationHelper
+             */
+            protected $featureActivationHelper;
+        «ENDIF»
+
+        /**
+         * ControllerHelper constructor.
+         *
+         * @param TranslatorInterface $translator       Translator service instance
+         * @param RequestStack        $requestStack     RequestStack service instance
+         «IF hasAutomaticArchiving»
+         * @param ArchiveHelper       $archiveHelper    ArchiveHelper service instance
+         «ENDIF»
+         «IF hasUiHooksProviders»
+         * @param Routerinterface     $router           Router service instance
+         «ENDIF»
+         «IF hasViewActions»
+         * @param FormFactoryInterface $formFactory     FormFactory service instance
+         «ENDIF»
+         «IF hasViewActions»
+         * @param VariableApiInterface $variableApi     VariableApi service instance
+         «ENDIF»
+         «IF hasGeographical»
+         * @param LoggerInterface     $logger           Logger service instance
+         * @param CurrentUserApiInterface $currentUserApi  CurrentUserApi service instance
+         «ENDIF»
+         * @param EntityFactory       $entityFactory    EntityFactory service instance
+         * @param CollectionFilterHelper $collectionFilterHelper CollectionFilterHelper service instance
+         * @param PermissionHelper    $permissionHelper PermissionHelper service instance
+         «IF hasViewActions && hasEditActions»
+         * @param ModelHelper         $modelHelper      ModelHelper service instance
+         «ENDIF»
+         «IF !getUploadEntities.empty»
+         * @param ImageHelper         $imageHelper      ImageHelper service instance
+         «ENDIF»
+         «IF needsFeatureActivationHelper»
+         * @param FeatureActivationHelper $featureActivationHelper FeatureActivationHelper service instance
+         «ENDIF»
+         */
+        public function __construct(
+            TranslatorInterface $translator,
+            RequestStack $requestStack,
+            «IF hasAutomaticArchiving»
+                ArchiveHelper $archiveHelper,
+            «ENDIF»
             «IF hasUiHooksProviders»
-
-                /**
-                 * @var RouterInterface
-                 */
-                protected $router;
+                RouterInterface $router,
             «ENDIF»
             «IF hasViewActions»
-
-                /**
-                 * @var FormFactoryInterface
-                 */
-                protected $formFactory;
+                FormFactoryInterface $formFactory,
             «ENDIF»
             «IF hasViewActions»
-
-                /**
-                 * @var VariableApiInterface
-                 */
-                protected $variableApi;
+                VariableApiInterface $variableApi,
             «ENDIF»
             «IF hasGeographical»
-
-                /**
-                 * @var LoggerInterface
-                 */
-                protected $logger;
-
-                /**
-                 * @var CurrentUserApiInterface
-                 */
-                protected $currentUserApi;
+                LoggerInterface $logger,
+                CurrentUserApiInterface $currentUserApi,
             «ENDIF»
-
-            /**
-             * @var EntityFactory
-             */
-            protected $entityFactory;
-
-            /**
-             * @var CollectionFilterHelper
-             */
-            protected $collectionFilterHelper;
-
-            /**
-             * @var PermissionHelper
-             */
-            protected $permissionHelper;
+            EntityFactory $entityFactory,
+            CollectionFilterHelper $collectionFilterHelper,
+            PermissionHelper $permissionHelper«IF hasViewActions && hasEditActions»,
+            ModelHelper $modelHelper«ENDIF»«IF !getUploadEntities.empty»,
+            ImageHelper $imageHelper«ENDIF»«IF needsFeatureActivationHelper»,
+            FeatureActivationHelper $featureActivationHelper«ENDIF»
+        ) {
+            $this->setTranslator($translator);
+            $this->requestStack = $requestStack;
+            «IF hasUiHooksProviders»
+                $this->router = $router;
+            «ENDIF»
+            «IF hasViewActions»
+                $this->formFactory = $formFactory;
+            «ENDIF»
+            «IF hasViewActions»
+                $this->variableApi = $variableApi;
+            «ENDIF»
+            «IF hasGeographical»
+                $this->logger = $logger;
+                $this->currentUserApi = $currentUserApi;
+            «ENDIF»
+            $this->entityFactory = $entityFactory;
+            $this->collectionFilterHelper = $collectionFilterHelper;
+            $this->permissionHelper = $permissionHelper;
             «IF hasViewActions && hasEditActions»
-
-                /**
-                 * @var ModelHelper
-                 */
-                protected $modelHelper;
+                $this->modelHelper = $modelHelper;
             «ENDIF»
             «IF !getUploadEntities.empty»
-
-                /**
-                 * @var ImageHelper
-                 */
-                protected $imageHelper;
+                $this->imageHelper = $imageHelper;
             «ENDIF»
             «IF needsFeatureActivationHelper»
-
-                /**
-                 * @var FeatureActivationHelper
-                 */
-                protected $featureActivationHelper;
+                $this->featureActivationHelper = $featureActivationHelper;
             «ENDIF»
+            «IF hasAutomaticArchiving»
 
-            /**
-             * ControllerHelper constructor.
-             *
-             * @param TranslatorInterface $translator       Translator service instance
-             * @param RequestStack        $requestStack     RequestStack service instance
-             «IF hasAutomaticArchiving»
-             * @param ArchiveHelper       $archiveHelper    ArchiveHelper service instance
-             «ENDIF»
-             «IF hasUiHooksProviders»
-             * @param Routerinterface     $router           Router service instance
-             «ENDIF»
-             «IF hasViewActions»
-             * @param FormFactoryInterface $formFactory     FormFactory service instance
-             «ENDIF»
-             «IF hasViewActions»
-             * @param VariableApiInterface $variableApi     VariableApi service instance
-             «ENDIF»
-             «IF hasGeographical»
-             * @param LoggerInterface     $logger           Logger service instance
-             * @param CurrentUserApiInterface $currentUserApi  CurrentUserApi service instance
-             «ENDIF»
-             * @param EntityFactory       $entityFactory    EntityFactory service instance
-             * @param CollectionFilterHelper $collectionFilterHelper CollectionFilterHelper service instance
-             * @param PermissionHelper    $permissionHelper PermissionHelper service instance
-             «IF hasViewActions && hasEditActions»
-             * @param ModelHelper         $modelHelper      ModelHelper service instance
-             «ENDIF»
-             «IF !getUploadEntities.empty»
-             * @param ImageHelper         $imageHelper      ImageHelper service instance
-             «ENDIF»
-             «IF needsFeatureActivationHelper»
-             * @param FeatureActivationHelper $featureActivationHelper FeatureActivationHelper service instance
-             «ENDIF»
-             */
-            public function __construct(
-                TranslatorInterface $translator,
-                RequestStack $requestStack,
-                «IF hasAutomaticArchiving»
-                    ArchiveHelper $archiveHelper,
-                «ENDIF»
-                «IF hasUiHooksProviders»
-                    RouterInterface $router,
-                «ENDIF»
-                «IF hasViewActions»
-                    FormFactoryInterface $formFactory,
-                «ENDIF»
-                «IF hasViewActions»
-                    VariableApiInterface $variableApi,
-                «ENDIF»
-                «IF hasGeographical»
-                    LoggerInterface $logger,
-                    CurrentUserApiInterface $currentUserApi,
-                «ENDIF»
-                EntityFactory $entityFactory,
-                CollectionFilterHelper $collectionFilterHelper,
-                PermissionHelper $permissionHelper«IF hasViewActions && hasEditActions»,
-                ModelHelper $modelHelper«ENDIF»«IF !getUploadEntities.empty»,
-                ImageHelper $imageHelper«ENDIF»«IF needsFeatureActivationHelper»,
-                FeatureActivationHelper $featureActivationHelper«ENDIF»
-            ) {
-                $this->setTranslator($translator);
-                $this->requestStack = $requestStack;
-                «IF hasUiHooksProviders»
-                    $this->router = $router;
-                «ENDIF»
-                «IF hasViewActions»
-                    $this->formFactory = $formFactory;
-                «ENDIF»
-                «IF hasViewActions»
-                    $this->variableApi = $variableApi;
-                «ENDIF»
-                «IF hasGeographical»
-                    $this->logger = $logger;
-                    $this->currentUserApi = $currentUserApi;
-                «ENDIF»
-                $this->entityFactory = $entityFactory;
-                $this->collectionFilterHelper = $collectionFilterHelper;
-                $this->permissionHelper = $permissionHelper;
-                «IF hasViewActions && hasEditActions»
-                    $this->modelHelper = $modelHelper;
-                «ENDIF»
-                «IF !getUploadEntities.empty»
-                    $this->imageHelper = $imageHelper;
-                «ENDIF»
-                «IF needsFeatureActivationHelper»
-                    $this->featureActivationHelper = $featureActivationHelper;
-                «ENDIF»
-                «IF hasAutomaticArchiving»
-
-                    $archiveHelper->archiveObsoleteObjects(75);
-                «ENDIF»
-            }
-
-            «setTranslatorMethod»
-
-            «getObjectTypes»
-
-            «getDefaultObjectType»
-            «IF hasViewActions»
-
-                «processViewActionParameters»
-            «ENDIF»
-            «IF hasDisplayActions»
-
-                «processDisplayActionParameters»
-            «ENDIF»
-            «IF hasEditActions»
-
-                «processEditActionParameters»
-            «ENDIF»
-            «IF hasDeleteActions»
-
-                «processDeleteActionParameters»
-            «ENDIF»
-
-            «addTemplateParameters»
-            «IF hasGeographical»
-
-                «performGeoCoding»
+                $archiveHelper->archiveObsoleteObjects(75);
             «ENDIF»
         }
+
+        «setTranslatorMethod»
+
+        «getObjectTypes»
+
+        «getDefaultObjectType»
+        «IF hasViewActions»
+
+            «processViewActionParameters»
+        «ENDIF»
+        «IF hasDisplayActions»
+
+            «processDisplayActionParameters»
+        «ENDIF»
+        «IF hasEditActions»
+
+            «processEditActionParameters»
+        «ENDIF»
+        «IF hasDeleteActions»
+
+            «processDeleteActionParameters»
+        «ENDIF»
+
+        «addTemplateParameters»
+        «IF hasGeographical»
+
+            «performGeoCoding»
+        «ENDIF»
     '''
 
     def private getObjectTypes(Application it) '''

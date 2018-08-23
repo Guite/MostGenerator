@@ -109,31 +109,35 @@ class HookHelper {
          */
         abstract class AbstractHookHelper
         {
-            /**
-             * @var HookDispatcherInterface
-             */
-            protected $hookDispatcher;
-
-            /**
-             * HookHelper constructor.
-             *
-             * @param HookDispatcherInterface $hookDispatcher Hook dispatcher service instance
-             */
-            public function __construct($hookDispatcher)
-            {
-                $this->hookDispatcher = $hookDispatcher;
-            }
-
-            «callValidationHooks»
-
-            «callProcessHooks»
-
-            «callFormDisplayHooks»
-
-            «callFormProcessingHooks»
-
-            «dispatchHooks»
+            «helperBaseImpl»
         }
+    '''
+
+    def private helperBaseImpl(Application it) '''
+        /**
+         * @var HookDispatcherInterface
+         */
+        protected $hookDispatcher;
+
+        /**
+         * HookHelper constructor.
+         *
+         * @param HookDispatcherInterface $hookDispatcher Hook dispatcher service instance
+         */
+        public function __construct($hookDispatcher)
+        {
+            $this->hookDispatcher = $hookDispatcher;
+        }
+
+        «callValidationHooks»
+
+        «callProcessHooks»
+
+        «callFormDisplayHooks»
+
+        «callFormProcessingHooks»
+
+        «dispatchHooks»
     '''
 
     def private callValidationHooks(Application it) '''

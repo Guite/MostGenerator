@@ -40,81 +40,90 @@ class WorkflowHelper {
          */
         abstract class AbstractWorkflowHelper
         {
-            /**
-             * @var TranslatorInterface
-             */
-            protected $translator;
-
-            /**
-             * @var Registry
-             */
-            protected $workflowRegistry;
-
-            /**
-             * @var LoggerInterface
-             */
-            protected $logger;
-
-            /**
-             * @var CurrentUserApiInterface
-             */
-            protected $currentUserApi;
-
-            /**
-             * @var EntityFactory
-             */
-            protected $entityFactory;
-
-            /**
-             * @var ListEntriesHelper
-             */
-            protected $listEntriesHelper;
-
-            /**
-             * @var PermissionHelper
-             */
-            protected $permissionHelper;
-
-            /**
-             * WorkflowHelper constructor.
-             *
-             * @param TranslatorInterface     $translator        Translator service instance
-             * @param Registry                $registry          Workflow registry service instance
-             * @param LoggerInterface         $logger            Logger service instance
-             * @param CurrentUserApiInterface $currentUserApi    CurrentUserApi service instance
-             * @param EntityFactory           $entityFactory     EntityFactory service instance
-             * @param ListEntriesHelper       $listEntriesHelper ListEntriesHelper service instance
-             * @param PermissionHelper        $permissionHelper  PermissionHelper service instance
-             *
-             * @return void
-             */
-            public function __construct(
-                TranslatorInterface $translator,
-                Registry $registry,
-                LoggerInterface $logger,
-                CurrentUserApiInterface $currentUserApi,
-                EntityFactory $entityFactory,
-                ListEntriesHelper $listEntriesHelper,
-                PermissionHelper $permissionHelper
-            ) {
-                $this->translator = $translator;
-                $this->workflowRegistry = $registry;
-                $this->logger = $logger;
-                $this->currentUserApi = $currentUserApi;
-                $this->entityFactory = $entityFactory;
-                $this->listEntriesHelper = $listEntriesHelper;
-                $this->permissionHelper = $permissionHelper;
-            }
-
-            «getObjectStates»
-            «getStateInfo»
-            «getActionsForObject»
-            «executeAction»
-            «IF needsApproval»
-                «collectAmountOfModerationItems»
-                «getAmountOfModerationItems»
-            «ENDIF»
+            «helperBaseImpl»
         }
+    '''
+
+    def private helperBaseImpl(Application it) '''
+        /**
+         * @var TranslatorInterface
+         */
+        protected $translator;
+
+        /**
+         * @var Registry
+         */
+        protected $workflowRegistry;
+
+        /**
+         * @var LoggerInterface
+         */
+        protected $logger;
+
+        /**
+         * @var CurrentUserApiInterface
+         */
+        protected $currentUserApi;
+
+        /**
+         * @var EntityFactory
+         */
+        protected $entityFactory;
+
+        /**
+         * @var ListEntriesHelper
+         */
+        protected $listEntriesHelper;
+
+        /**
+         * @var PermissionHelper
+         */
+        protected $permissionHelper;
+
+        /**
+         * WorkflowHelper constructor.
+         *
+         * @param TranslatorInterface     $translator        Translator service instance
+         * @param Registry                $registry          Workflow registry service instance
+         * @param LoggerInterface         $logger            Logger service instance
+         * @param CurrentUserApiInterface $currentUserApi    CurrentUserApi service instance
+         * @param EntityFactory           $entityFactory     EntityFactory service instance
+         * @param ListEntriesHelper       $listEntriesHelper ListEntriesHelper service instance
+         * @param PermissionHelper        $permissionHelper  PermissionHelper service instance
+         *
+         * @return void
+         */
+        public function __construct(
+            TranslatorInterface $translator,
+            Registry $registry,
+            LoggerInterface $logger,
+            CurrentUserApiInterface $currentUserApi,
+            EntityFactory $entityFactory,
+            ListEntriesHelper $listEntriesHelper,
+            PermissionHelper $permissionHelper
+        ) {
+            $this->translator = $translator;
+            $this->workflowRegistry = $registry;
+            $this->logger = $logger;
+            $this->currentUserApi = $currentUserApi;
+            $this->entityFactory = $entityFactory;
+            $this->listEntriesHelper = $listEntriesHelper;
+            $this->permissionHelper = $permissionHelper;
+        }
+
+        «getObjectStates»
+
+        «getStateInfo»
+
+        «getActionsForObject»
+
+        «executeAction»
+        «IF needsApproval»
+
+            «collectAmountOfModerationItems»
+
+            «getAmountOfModerationItems»
+        «ENDIF»
     '''
 
     def private getObjectStates(Application it) '''
@@ -133,7 +142,6 @@ class WorkflowHelper {
 
             return $states;
         }
-
     '''
 
     def private stateInfo(Application it, ListFieldItem item) '''
@@ -185,7 +193,6 @@ class WorkflowHelper {
 
             return $result;
         }
-
     '''
 
     def private getActionsForObject(Application it) '''
@@ -375,7 +382,6 @@ class WorkflowHelper {
 
             return 'btn btn-' . $buttonClass;
         }
-
     '''
 
     def private executeAction(Application it) '''
@@ -437,7 +443,6 @@ class WorkflowHelper {
 
             return (false !== $result);
         }
-
     '''
 
     def private collectAmountOfModerationItems(Application it) '''
@@ -476,7 +481,6 @@ class WorkflowHelper {
 
             return $amounts;
         }
-
     '''
 
     def private readAmountForObjectTypeAndState(Entity it, String requiredAction) '''

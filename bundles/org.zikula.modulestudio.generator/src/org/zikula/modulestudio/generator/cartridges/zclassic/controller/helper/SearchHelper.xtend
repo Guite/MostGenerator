@@ -52,11 +52,11 @@ class SearchHelper {
          */
         abstract class AbstractSearchHelper implements SearchableInterface
         {
-            «searchHelperBaseImpl»
+            «helperBaseImpl»
         }
     '''
 
-    def private searchHelperBaseImpl(Application it) '''
+    def private helperBaseImpl(Application it) '''
         use TranslatorTrait;
 
         /**

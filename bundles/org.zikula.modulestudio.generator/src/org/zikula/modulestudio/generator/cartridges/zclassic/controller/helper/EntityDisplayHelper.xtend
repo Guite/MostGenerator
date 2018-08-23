@@ -56,74 +56,74 @@ class EntityDisplayHelper {
          */
         abstract class AbstractEntityDisplayHelper
         {
-            /**
-             * @var TranslatorInterface
-             */
-            protected $translator;
-            «IF hasListFields»
-
-                /**
-                 * @var ListEntriesHelper Helper service for managing list entries
-                 */
-                protected $listEntriesHelper;
-            «ENDIF»
-            «IF hasAnyDateTimeFields»
-
-                /**
-                 * @var IntlDateFormatter Formatter for dates
-                 */
-                protected $dateFormatter;
-            «ENDIF»
-            «IF hasNumberFields»
-
-                /**
-                 * @var NumberFormatter Formatter for numbers
-                 */
-                protected $numberFormatter;
-
-                /**
-                 * @var NumberFormatter Formatter for currencies
-                 */
-                protected $currencyFormatter;
-            «ENDIF»
-
-            /**
-             * EntityDisplayHelper constructor.
-             *
-             * @param TranslatorInterface $translator «IF hasListFields»       «ENDIF»Translator service instance
-             «IF hasAnyDateTimeFields || hasNumberFields»
-             * @param RequestStack        $requestStack      RequestStack service instance
-             «ENDIF»
-             «IF hasListFields»
-             * @param ListEntriesHelper   $listEntriesHelper Helper service for managing list entries
-             «ENDIF»
-             */
-            public function __construct(
-                TranslatorInterface $translator«IF hasAnyDateTimeFields || hasNumberFields»,
-                RequestStack $requestStack«ENDIF»«IF hasListFields»,
-                ListEntriesHelper $listEntriesHelper«ENDIF»
-            ) {
-                $this->translator = $translator;
-                «IF hasListFields»
-                    $this->listEntriesHelper = $listEntriesHelper;
-                «ENDIF»
-                «IF hasAnyDateTimeFields || hasNumberFields»
-                    $locale = null !== $requestStack->getCurrentRequest() ? $requestStack->getCurrentRequest()->getLocale() : null;
-                «ENDIF»
-                «IF hasAnyDateTimeFields»
-                    $this->dateFormatter = new IntlDateFormatter($locale, IntlDateFormatter::NONE, IntlDateFormatter::NONE);
-                «ENDIF»
-                «IF hasNumberFields»
-                    $this->numberFormatter = new NumberFormatter($locale, NumberFormatter::DECIMAL);
-                    $this->currencyFormatter = new NumberFormatter($locale, NumberFormatter::CURRENCY);
-                «ENDIF»
-            }
-
-            «entityDisplayHelperBaseImpl»
+            «helperBaseImpl»
         }
     '''
 
-    def private entityDisplayHelperBaseImpl(Application it) '''
+    def private helperBaseImpl(Application it) '''
+        /**
+         * @var TranslatorInterface
+         */
+        protected $translator;
+        «IF hasListFields»
+
+            /**
+             * @var ListEntriesHelper Helper service for managing list entries
+             */
+            protected $listEntriesHelper;
+        «ENDIF»
+        «IF hasAnyDateTimeFields»
+
+            /**
+             * @var IntlDateFormatter Formatter for dates
+             */
+            protected $dateFormatter;
+        «ENDIF»
+        «IF hasNumberFields»
+
+            /**
+             * @var NumberFormatter Formatter for numbers
+             */
+            protected $numberFormatter;
+
+            /**
+             * @var NumberFormatter Formatter for currencies
+             */
+            protected $currencyFormatter;
+        «ENDIF»
+
+        /**
+         * EntityDisplayHelper constructor.
+         *
+         * @param TranslatorInterface $translator «IF hasListFields»       «ENDIF»Translator service instance
+         «IF hasAnyDateTimeFields || hasNumberFields»
+         * @param RequestStack        $requestStack      RequestStack service instance
+         «ENDIF»
+         «IF hasListFields»
+         * @param ListEntriesHelper   $listEntriesHelper Helper service for managing list entries
+         «ENDIF»
+         */
+        public function __construct(
+            TranslatorInterface $translator«IF hasAnyDateTimeFields || hasNumberFields»,
+            RequestStack $requestStack«ENDIF»«IF hasListFields»,
+            ListEntriesHelper $listEntriesHelper«ENDIF»
+        ) {
+            $this->translator = $translator;
+            «IF hasListFields»
+                $this->listEntriesHelper = $listEntriesHelper;
+            «ENDIF»
+            «IF hasAnyDateTimeFields || hasNumberFields»
+                $locale = null !== $requestStack->getCurrentRequest() ? $requestStack->getCurrentRequest()->getLocale() : null;
+            «ENDIF»
+            «IF hasAnyDateTimeFields»
+                $this->dateFormatter = new IntlDateFormatter($locale, IntlDateFormatter::NONE, IntlDateFormatter::NONE);
+            «ENDIF»
+            «IF hasNumberFields»
+                $this->numberFormatter = new NumberFormatter($locale, NumberFormatter::DECIMAL);
+                $this->currencyFormatter = new NumberFormatter($locale, NumberFormatter::CURRENCY);
+            «ENDIF»
+        }
+
         /**
          * Returns the formatted title for a given entity.
          *

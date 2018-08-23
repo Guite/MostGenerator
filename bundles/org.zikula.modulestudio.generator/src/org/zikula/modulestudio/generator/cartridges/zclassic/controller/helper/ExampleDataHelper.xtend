@@ -77,73 +77,73 @@ class ExampleDataHelper {
          */
         abstract class AbstractExampleDataHelper
         {
-            /**
-             * @var TranslatorInterface
-             */
-            protected $translator;
-
-            /**
-             * @var RequestStack
-             */
-            protected $requestStack;
-
-            /**
-             * @var LoggerInterface
-             */
-            protected $logger;
-
-            /**
-             * @var EntityFactory
-             */
-            protected $entityFactory;
-
-            /**
-             * @var WorkflowHelper
-             */
-            protected $workflowHelper;
-            «IF hasUserFields»
-
-                /**
-                 * @var UserRepositoryInterface
-                 */
-                protected $userRepository;
-            «ENDIF»
-
-            /**
-             * ExampleDataHelper constructor.
-             *
-             * @param TranslatorInterface $translator     Translator service instance
-             * @param RequestStack        $requestStack   RequestStack service instance
-             * @param LoggerInterface     $logger         Logger service instance
-             * @param EntityFactory       $entityFactory  EntityFactory service instance
-             * @param WorkflowHelper      $workflowHelper WorkflowHelper service instance
-             «IF hasUserFields»
-             * @param UserRepositoryInterface $userRepository UserRepository service instance
-             «ENDIF»
-             */
-            public function __construct(
-                TranslatorInterface $translator,
-                RequestStack $requestStack,
-                LoggerInterface $logger,
-                EntityFactory $entityFactory,
-                WorkflowHelper $workflowHelper«IF hasUserFields»,
-                UserRepositoryInterface $userRepository«ENDIF»
-            ) {
-                $this->translator = $translator;
-                $this->requestStack = $requestStack;
-                $this->logger = $logger;
-                $this->entityFactory = $entityFactory;
-                $this->workflowHelper = $workflowHelper;
-                «IF hasUserFields»
-                    $this->userRepository = $userRepository;
-                «ENDIF»
-            }
-
-            «exampleDataHelperBaseImpl»
+            «helperBaseImpl»
         }
     '''
 
-    def private exampleDataHelperBaseImpl(Application it) '''
+    def private helperBaseImpl(Application it) '''
+        /**
+         * @var TranslatorInterface
+         */
+        protected $translator;
+
+        /**
+         * @var RequestStack
+         */
+        protected $requestStack;
+
+        /**
+         * @var LoggerInterface
+         */
+        protected $logger;
+
+        /**
+         * @var EntityFactory
+         */
+        protected $entityFactory;
+
+        /**
+         * @var WorkflowHelper
+         */
+        protected $workflowHelper;
+        «IF hasUserFields»
+
+            /**
+             * @var UserRepositoryInterface
+             */
+            protected $userRepository;
+        «ENDIF»
+
+        /**
+         * ExampleDataHelper constructor.
+         *
+         * @param TranslatorInterface $translator     Translator service instance
+         * @param RequestStack        $requestStack   RequestStack service instance
+         * @param LoggerInterface     $logger         Logger service instance
+         * @param EntityFactory       $entityFactory  EntityFactory service instance
+         * @param WorkflowHelper      $workflowHelper WorkflowHelper service instance
+         «IF hasUserFields»
+         * @param UserRepositoryInterface $userRepository UserRepository service instance
+         «ENDIF»
+         */
+        public function __construct(
+            TranslatorInterface $translator,
+            RequestStack $requestStack,
+            LoggerInterface $logger,
+            EntityFactory $entityFactory,
+            WorkflowHelper $workflowHelper«IF hasUserFields»,
+            UserRepositoryInterface $userRepository«ENDIF»
+        ) {
+            $this->translator = $translator;
+            $this->requestStack = $requestStack;
+            $this->logger = $logger;
+            $this->entityFactory = $entityFactory;
+            $this->workflowHelper = $workflowHelper;
+            «IF hasUserFields»
+                $this->userRepository = $userRepository;
+            «ENDIF»
+        }
+
         /**
          * Create the default data for «appName».
          *

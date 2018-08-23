@@ -37,54 +37,58 @@ class ImageHelper {
          */
         abstract class AbstractImageHelper
         {
-            /**
-             * @var TranslatorInterface
-             */
-            protected $translator;
-
-            /**
-             * @var SessionInterface
-             */
-            protected $session;
-
-            /**
-             * @var VariableApiInterface
-             */
-            protected $variableApi;
-
-            /**
-             * Name of the application.
-             *
-             * @var string
-             */
-            protected $name;
-
-            /**
-             * ImageHelper constructor.
-             *
-             * @param TranslatorInterface  $translator  Translator service instance
-             * @param SessionInterface     $session     Session service instance
-             * @param VariableApiInterface $variableApi VariableApi service instance
-             */
-            public function __construct(
-                TranslatorInterface $translator,
-                SessionInterface $session,
-                VariableApiInterface $variableApi
-            ) {
-                $this->translator = $translator;
-                $this->session = $session;
-                $this->variableApi = $variableApi;
-                $this->name = '«appName»';
-            }
-
-            «getRuntimeOptions»
-
-            «getCustomRuntimeOptions»
-            «IF hasImageFields || !getUploadVariables.filter[isImageField].empty»
-
-                «checkIfImagineCacheDirectoryExists»
-            «ENDIF»
+            «helperBaseImpl»
         }
+    '''
+
+    def private helperBaseImpl(Application it) '''
+        /**
+         * @var TranslatorInterface
+         */
+        protected $translator;
+
+        /**
+         * @var SessionInterface
+         */
+        protected $session;
+
+        /**
+         * @var VariableApiInterface
+         */
+        protected $variableApi;
+
+        /**
+         * Name of the application.
+         *
+         * @var string
+         */
+        protected $name;
+
+        /**
+         * ImageHelper constructor.
+         *
+         * @param TranslatorInterface  $translator  Translator service instance
+         * @param SessionInterface     $session     Session service instance
+         * @param VariableApiInterface $variableApi VariableApi service instance
+         */
+        public function __construct(
+            TranslatorInterface $translator,
+            SessionInterface $session,
+            VariableApiInterface $variableApi
+        ) {
+            $this->translator = $translator;
+            $this->session = $session;
+            $this->variableApi = $variableApi;
+            $this->name = '«appName»';
+        }
+
+        «getRuntimeOptions»
+
+        «getCustomRuntimeOptions»
+        «IF hasImageFields || !getUploadVariables.filter[isImageField].empty»
+
+            «checkIfImagineCacheDirectoryExists»
+        «ENDIF»
     '''
 
     def private getRuntimeOptions(Application it) '''

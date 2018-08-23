@@ -9,6 +9,7 @@ import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.entity.Property
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
+import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
@@ -16,6 +17,7 @@ class AppSettings {
 
     extension ControllerExtensions = new ControllerExtensions
     extension FormattingExtensions = new FormattingExtensions
+    extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension ModelExtensions = new ModelExtensions
     extension Utils = new Utils
 
@@ -47,8 +49,11 @@ class AppSettings {
             use Zikula\GroupsModule\Constant as GroupsConstant;
             use Zikula\GroupsModule\Entity\RepositoryInterface\GroupRepositoryInterface;
         «ENDIF»
-        «IF !getAllVariables.filter(UserField).empty»
+        «IF hasUserVariables»
             use Zikula\UsersModule\Entity\UserEntity;
+        «ENDIF»
+        «IF hasLoggable»
+            use «appNamespace»\Entity\Factory\EntityFactory;
         «ENDIF»
         «IF !getAllVariables.filter(ListField).empty»
             use «appNamespace»\Validator\Constraints as «name.formatForCodeCapital»Assert;
@@ -93,6 +98,13 @@ class AppSettings {
             protected $groupRepository;
 
         «ENDIF»
+        «IF hasLoggable»
+
+            /**
+             * @var EntityFactory
+             */
+            protected $entityFactory;
+        «ENDIF»
         «memberVars»
 
         «constructor»
@@ -127,11 +139,15 @@ class AppSettings {
          «IF hasUserGroupSelectors»
          * @param GroupRepositoryInterface $groupRepository GroupRepository service instance
          «ENDIF»
+         «IF hasLoggable»
+         * @param EntityFactory $entityFactory EntityFactory service instance
+         «ENDIF»
          */
         public function __construct(
             VariableApiInterface $variableApi«IF hasUserVariables»,
             UserRepositoryInterface $userRepository«ENDIF»«IF hasUserGroupSelectors»,
-            GroupRepositoryInterface $groupRepository«ENDIF»
+            GroupRepositoryInterface $groupRepository«ENDIF»«IF hasLoggable»,
+            EntityFactory $entityFactory«ENDIF»
         ) {
             $this->variableApi = $variableApi;
             «IF hasUserVariables»
@@ -139,6 +155,9 @@ class AppSettings {
             «ENDIF»
             «IF hasUserGroupSelectors»
                 $this->groupRepository = $groupRepository;
+            «ENDIF»
+            «IF hasLoggable»
+                $this->entityFactory = $entityFactory;
             «ENDIF»
 
             $this->load();
@@ -235,6 +254,22 @@ class AppSettings {
                     «ENDFOR»
                 «ENDIF»
             «ENDFOR»
+            «IF hasLoggable»
+
+                $entityManager = $this->entityFactory->getObjectManager();
+                «FOR entity : getLoggableEntities»
+                    $revisionHandling = $this->getRevisionHandlingFor«entity.name.formatForCodeCapital»();
+                    $limitParameter = '';
+                    if ('limitedByAmount' == $revisionHandling) {
+                        $limitParameter = $this->getMaximumAmountOf«entity.name.formatForCodeCapital»Revisions();
+                    }«IF entity.application.targets('2.0')» elseif ('limitedByDate' == $revisionHandling) {
+                        $limitParameter = $this->getPeriodFor«entity.name.formatForCodeCapital»Revisions();
+                    }«ENDIF»
+
+                    $logEntriesRepository = $entityManager->getRepository('«entity.application.appName»:«entity.name.formatForCodeCapital»LogEntryEntity');
+                    $logEntriesRepository->purgeHistory($revisionHandling, $limitParameter);
+                «ENDFOR»
+            «ENDIF»
         }
     '''
 

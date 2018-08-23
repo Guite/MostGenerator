@@ -2,12 +2,14 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.models.event
 
 import de.guite.modulestudio.metamodel.Application
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
+import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class EventAction {
 
     extension FormattingExtensions = new FormattingExtensions
+    extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension ModelExtensions = new ModelExtensions
     extension Utils = new Utils
 
@@ -56,6 +58,38 @@ class EventAction {
     '''
 
     def prePersist(Application it) '''
+        «IF hasLoggable»
+
+            if («entityVar» instanceof AbstractLogEntry) {
+                // check if a supported object has been undeleted
+                if ('create' != «entityVar»->getAction()) {
+                    return;
+                }
+
+                // select main entity
+                if (null === «entityVar»->getObjectId()) {
+                    return;
+                }
+
+                $repository = $this->container->get('«appService».entity_factory')->getObjectManager()->getRepository(«entityVar»->getObjectClass());
+                $object = $repository->find(«entityVar»->getObjectId());
+                if (null === $object || !method_exists($object, 'get_objectType')) {
+                    return;
+                }
+
+                // set correct version after undeletion
+                $logVersion = «entityVar»->getVersion();
+                «FOR entity : getLoggableEntities»
+                    if ('«entity.name.formatForCode»' == $object->get_objectType() && method_exists($object, 'get«entity.getVersionField.name.formatForCodeCapital»')) {
+                        if ($logVersion < $object->get«entity.getVersionField.name.formatForCodeCapital»()) {
+                            «entityVar»->setVersion($object->get«entity.getVersionField.name.formatForCodeCapital»());
+                        }
+                    }
+                «ENDFOR»
+
+                return;
+            }
+        «ENDIF»
 
         // create the filter event and dispatch it
         $event = $this->createFilterEvent(«entityVar»);
@@ -70,6 +104,10 @@ class EventAction {
         $currentUserApi = $this->container->get('zikula_users_module.current_user');
         $logArgs = ['app' => '«appName»', 'user' => $currentUserApi->get('uname'), 'entity' => «entityVar»->get_objectType(), 'id' => «entityVar»->getKey()];
         $this->logger->debug('{app}: User {user} created the {entity} with id {id}.', $logArgs);
+        «IF hasLoggable»
+
+            $this->purgeHistory(«entityVar»->get_objectType());
+        «ENDIF»
 
         // create the filter event and dispatch it
         $event = $this->createFilterEvent(«entityVar»);
@@ -104,6 +142,10 @@ class EventAction {
                 }
             }
         «ENDIF»
+        «IF hasLoggable»
+
+            $this->purgeHistory($objectType);
+        «ENDIF»
 
         $currentUserApi = $this->container->get('zikula_users_module.current_user');
         $logArgs = ['app' => '«appName»', 'user' => $currentUserApi->get('uname'), 'entity' => $objectType, 'id' => «entityVar»->getKey()];
@@ -129,6 +171,10 @@ class EventAction {
         $currentUserApi = $this->container->get('zikula_users_module.current_user');
         $logArgs = ['app' => '«appName»', 'user' => $currentUserApi->get('uname'), 'entity' => «entityVar»->get_objectType(), 'id' => «entityVar»->getKey()];
         $this->logger->debug('{app}: User {user} updated the {entity} with id {id}.', $logArgs);
+        «IF hasLoggable»
+
+            $this->purgeHistory(«entityVar»->get_objectType());
+        «ENDIF»
 
         // create the filter event and dispatch it
         $event = $this->createFilterEvent(«entityVar»);

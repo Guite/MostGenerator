@@ -39,66 +39,70 @@ class TranslatableHelper {
          */
         abstract class AbstractTranslatableHelper
         {
-            /**
-             * @var TranslatorInterface
-             */
-            protected $translator;
-
-            /**
-             * @var RequestStack
-             */
-            protected $requestStack;
-
-            /**
-             * @var VariableApiInterface
-             */
-            protected $variableApi;
-
-            /**
-             * @var LocaleApiInterface
-             */
-            protected $localeApi;
-
-            /**
-             * @var EntityFactory
-             */
-            protected $entityFactory;
-
-            /**
-             * TranslatableHelper constructor.
-             *
-             * @param TranslatorInterface  $translator    Translator service instance
-             * @param RequestStack         $requestStack  RequestStack service instance
-             * @param VariableApiInterface $variableApi   VariableApi service instance
-             * @param LocaleApiInterface   $localeApi     LocaleApi service instance
-             * @param EntityFactory        $entityFactory EntityFactory service instance
-             */
-            public function __construct(
-                TranslatorInterface $translator,
-                RequestStack $requestStack,
-                VariableApiInterface $variableApi,
-                LocaleApiInterface $localeApi,
-                EntityFactory $entityFactory
-            ) {
-                $this->translator = $translator;
-                $this->requestStack = $requestStack;
-                $this->variableApi = $variableApi;
-                $this->localeApi = $localeApi;
-                $this->entityFactory = $entityFactory;
-            }
-
-            «getTranslatableFieldsImpl»
-
-            «getCurrentLanguage»
-
-            «getSupportedLanguages»
-
-            «getMandatoryFields»
-
-            «prepareEntityForEditing»
-
-            «processEntityAfterEditing»
+            «helperBaseImpl»
         }
+    '''
+
+    def private helperBaseImpl(Application it) '''
+        /**
+         * @var TranslatorInterface
+         */
+        protected $translator;
+
+        /**
+         * @var RequestStack
+         */
+        protected $requestStack;
+
+        /**
+         * @var VariableApiInterface
+         */
+        protected $variableApi;
+
+        /**
+         * @var LocaleApiInterface
+         */
+        protected $localeApi;
+
+        /**
+         * @var EntityFactory
+         */
+        protected $entityFactory;
+
+        /**
+         * TranslatableHelper constructor.
+         *
+         * @param TranslatorInterface  $translator    Translator service instance
+         * @param RequestStack         $requestStack  RequestStack service instance
+         * @param VariableApiInterface $variableApi   VariableApi service instance
+         * @param LocaleApiInterface   $localeApi     LocaleApi service instance
+         * @param EntityFactory        $entityFactory EntityFactory service instance
+         */
+        public function __construct(
+            TranslatorInterface $translator,
+            RequestStack $requestStack,
+            VariableApiInterface $variableApi,
+            LocaleApiInterface $localeApi,
+            EntityFactory $entityFactory
+        ) {
+            $this->translator = $translator;
+            $this->requestStack = $requestStack;
+            $this->variableApi = $variableApi;
+            $this->localeApi = $localeApi;
+            $this->entityFactory = $entityFactory;
+        }
+
+        «getTranslatableFieldsImpl»
+
+        «getCurrentLanguage»
+
+        «getSupportedLanguages»
+
+        «getMandatoryFields»
+
+        «prepareEntityForEditing»
+
+        «processEntityAfterEditing»
     '''
 
     def private getTranslatableFieldsImpl(Application it) '''

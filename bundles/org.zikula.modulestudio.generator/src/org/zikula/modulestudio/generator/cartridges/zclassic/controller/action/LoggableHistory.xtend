@@ -168,6 +168,9 @@ class LoggableHistory {
 
             $diffValues = [];
             foreach ($logEntries as $logEntry) {
+                if (null === $logEntry->getData()) {
+                    continue;
+                }
                 foreach ($logEntry->getData() as $field => $value) {
                     if (!isset($diffValues[$field])) {
                         $diffValues[$field] = [

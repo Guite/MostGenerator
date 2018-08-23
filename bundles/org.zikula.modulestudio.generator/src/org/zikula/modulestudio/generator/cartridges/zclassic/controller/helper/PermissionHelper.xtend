@@ -2,10 +2,12 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.controller.helper
 
 import de.guite.modulestudio.metamodel.Application
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
+import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class PermissionHelper {
 
+    extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension Utils = new Utils
 
     def generate(Application it, IMostFileSystemAccess fsa) {
@@ -20,6 +22,9 @@ class PermissionHelper {
         use Symfony\Component\DependencyInjection\ContainerAwareTrait;
         use Symfony\Component\DependencyInjection\ContainerInterface;
         use Symfony\Component\HttpFoundation\RequestStack;
+        «IF hasLoggable»
+            use Zikula\ExtensionsModule\Api\ApiInterface\VariableApiInterface;
+        «ENDIF»
         use Zikula\PermissionsModule\Api\ApiInterface\PermissionApiInterface;
         use Zikula\UsersModule\Api\ApiInterface\CurrentUserApiInterface;
         use Zikula\UsersModule\Entity\RepositoryInterface\UserRepositoryInterface;
@@ -30,56 +35,72 @@ class PermissionHelper {
          */
         abstract class AbstractPermissionHelper implements ContainerAwareInterface
         {
-            use ContainerAwareTrait;
-
-            /**
-             * @var RequestStack
-             */
-            protected $requestStack;
-
-            /**
-             * @var PermissionApiInterface
-             */
-            protected $permissionApi;
-
-            /**
-             * @var CurrentUserApiInterface
-             */
-            protected $currentUserApi;
-
-            /**
-             * @var UserRepositoryInterface
-             */
-            protected $userRepository;
-
-            /**
-             * PermissionHelper constructor.
-             *
-             * @param ContainerInterface      $container
-             * @param RequestStack            $requestStack   RequestStack service instance
-             * @param PermissionApiInterface  $permissionApi  PermissionApi service instance
-             * @param CurrentUserApiInterface $currentUserApi CurrentUserApi service instance
-             * @param UserRepositoryInterface $userRepository UserRepository service instance
-             */
-            public function __construct(
-                ContainerInterface $container,
-                RequestStack $requestStack,
-                PermissionApiInterface $permissionApi,
-                CurrentUserApiInterface $currentUserApi,
-                UserRepositoryInterface $userRepository
-            ) {
-                $this->setContainer($container);
-                $this->requestStack = $requestStack;
-                $this->permissionApi = $permissionApi;
-                $this->currentUserApi = $currentUserApi;
-                $this->userRepository = $userRepository;
-            }
-
-            «permissionHelperBaseImpl»
+            «helperBaseImpl»
         }
     '''
 
-    def private permissionHelperBaseImpl(Application it) '''
+    def private helperBaseImpl(Application it) '''
+        use ContainerAwareTrait;
+
+        /**
+         * @var RequestStack
+         */
+        protected $requestStack;
+
+        /**
+         * @var PermissionApiInterface
+         */
+        protected $permissionApi;
+        «IF hasLoggable»
+
+            /**
+             * @var VariableApiInterface
+             */
+            protected $variableApi;
+        «ENDIF»
+
+        /**
+         * @var CurrentUserApiInterface
+         */
+        protected $currentUserApi;
+
+        /**
+         * @var UserRepositoryInterface
+         */
+        protected $userRepository;
+
+        /**
+         * PermissionHelper constructor.
+         *
+         * @param ContainerInterface      $container
+         * @param RequestStack            $requestStack   RequestStack service instance
+         * @param PermissionApiInterface  $permissionApi  PermissionApi service instance
+         «IF hasLoggable»
+         * @param VariableApiInterface    $variableApi    VariableApi service instance
+         «ENDIF»
+         * @param CurrentUserApiInterface $currentUserApi CurrentUserApi service instance
+         * @param UserRepositoryInterface $userRepository UserRepository service instance
+         */
+        public function __construct(
+            ContainerInterface $container,
+            RequestStack $requestStack,
+            PermissionApiInterface $permissionApi,
+            «IF hasLoggable»
+                VariableApiInterface $variableApi,
+            «ENDIF»
+            CurrentUserApiInterface $currentUserApi,
+            UserRepositoryInterface $userRepository
+        ) {
+            $this->setContainer($container);
+            $this->requestStack = $requestStack;
+            $this->permissionApi = $permissionApi;
+            «IF hasLoggable»
+                $this->variableApi = $variableApi;
+            «ENDIF»
+            $this->currentUserApi = $currentUserApi;
+            $this->userRepository = $userRepository;
+        }
+
         «accessMethods»
 
         «helperMethods»
@@ -111,6 +132,23 @@ class PermissionHelper {
         {
             return $this->hasEntityPermission($entity, ACCESS_EDIT, $userId);
         }
+        «IF hasLoggable»
+
+            /**
+             * Checks if the given entity instance may be deleted.
+             *
+             * @param object  $entity
+             * @param integer $userId
+             *
+             * @return boolean
+             */
+            public function mayAccessHistory($entity, $userId = null)
+            {
+                $objectType = $entity->get_objectType();
+
+                return $this->mayEdit($entity, $userId) && $this->variableApi->get('«appName»', 'show' . ucfirst($objectType) . 'History', true);
+            }
+        «ENDIF»
 
         /**
          * Checks if the given entity instance may be deleted.

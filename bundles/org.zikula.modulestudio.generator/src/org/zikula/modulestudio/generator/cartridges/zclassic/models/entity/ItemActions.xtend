@@ -83,18 +83,20 @@ class ItemActions {
                 «ELSE»
                     «itemActionsForEditAction»
                 «ENDIF»
-                «IF loggable»
-                    if (in_array($context, ['view', 'display']) && $entity->get«versionField.name.formatForCodeCapital»() > 1) {
-                        $title = $this->__('History', '«app.appName.formatForDB»');
-                        $menu->addChild($title, [
-                            'route' => $routePrefix . $routeArea . 'loggablehistory',
-                            'routeParameters' => $entity->createUrlArgs()
-                        ]);
-                        $menu[$title]->setLinkAttribute('title', $this->__('Watch version history', '«app.appName.formatForDB»'));
-                        «app.addLinkClass('default')»
-                        «app.addIcon('history')»
-                    }
-                «ENDIF»
+            }
+        «ENDIF»
+        «IF loggable»
+            if ($this->permissionHelper->mayAccessHistory($entity)) {
+                if (in_array($context, ['view', 'display']) && $entity->get«versionField.name.formatForCodeCapital»() > 1) {
+                    $title = $this->__('History', '«app.appName.formatForDB»');
+                    $menu->addChild($title, [
+                        'route' => $routePrefix . $routeArea . 'loggablehistory',
+                        'routeParameters' => $entity->createUrlArgs()
+                    ]);
+                    $menu[$title]->setLinkAttribute('title', $this->__('Watch version history', '«app.appName.formatForDB»'));
+                    «app.addLinkClass('default')»
+                    «app.addIcon('history')»
+                }
             }
         «ENDIF»
         «IF hasDeleteAction»

@@ -37,30 +37,34 @@ class ListEntriesHelper {
          */
         abstract class AbstractListEntriesHelper
         {
-            use TranslatorTrait;
-
-            /**
-             * ListEntriesHelper constructor.
-             *
-             * @param TranslatorInterface $translator Translator service instance
-             */
-            public function __construct(TranslatorInterface $translator)
-            {
-                $this->setTranslator($translator);
-            }
-
-            «setTranslatorMethod»
-
-            «resolve»
-
-            «extractMultiList»
-
-            «hasMultipleSelection»
-
-            «getEntries»
-
-            «additions»
+            «helperBaseImpl»
         }
+	'''
+
+    def private helperBaseImpl(Application it) '''
+        use TranslatorTrait;
+
+        /**
+         * ListEntriesHelper constructor.
+         *
+         * @param TranslatorInterface $translator Translator service instance
+         */
+        public function __construct(TranslatorInterface $translator)
+        {
+            $this->setTranslator($translator);
+        }
+
+        «setTranslatorMethod»
+
+        «resolve»
+
+        «extractMultiList»
+
+        «hasMultipleSelection»
+
+        «getEntries»
+
+        «additions»
     '''
 
     def private resolve(Application it) '''

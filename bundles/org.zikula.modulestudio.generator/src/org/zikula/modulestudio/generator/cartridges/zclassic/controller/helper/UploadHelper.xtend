@@ -50,106 +50,110 @@ class UploadHelper {
          */
         abstract class AbstractUploadHelper
         {
-            use TranslatorTrait;
-
-            /**
-             * @var Filesystem
-             */
-            protected $filesystem;
-
-            /**
-             * @var SessionInterface
-             */
-            protected $session;
-
-            /**
-             * @var LoggerInterface
-             */
-            protected $logger;
-
-            /**
-             * @var CurrentUserApiInterface
-             */
-            protected $currentUserApi;
-
-            /**
-             * @var array
-             */
-            protected $moduleVars;
-
-            /**
-             * @var String
-             */
-            protected $dataDirectory;
-
-            /**
-             * @var array List of object types with upload fields
-             */
-            protected $allowedObjectTypes;
-
-            /**
-             * @var array List of file types to be considered as images
-             */
-            protected $imageFileTypes;
-
-            /**
-             * @var array List of dangerous file types to be rejected
-             */
-            protected $forbiddenFileTypes;
-
-            /**
-             * UploadHelper constructor.
-             *
-             * @param TranslatorInterface     $translator     Translator service instance
-             * @param Filesystem              $filesystem     Filesystem service instance
-             * @param SessionInterface        $session        Session service instance
-             * @param LoggerInterface         $logger         Logger service instance
-             * @param CurrentUserApiInterface $currentUserApi CurrentUserApi service instance
-             * @param object                  $moduleVars     Existing module vars
-             * @param String                  $dataDirectory  The data directory name
-             */
-            public function __construct(
-                TranslatorInterface $translator,
-                Filesystem $filesystem,
-                SessionInterface $session,
-                LoggerInterface $logger,
-                CurrentUserApiInterface $currentUserApi,
-                $moduleVars,
-                $dataDirectory
-            ) {
-                $this->setTranslator($translator);
-                $this->filesystem = $filesystem;
-                $this->session = $session;
-                $this->logger = $logger;
-                $this->currentUserApi = $currentUserApi;
-                $this->moduleVars = $moduleVars;
-                $this->dataDirectory = $dataDirectory;
-
-                $this->allowedObjectTypes = [«FOR entity : getUploadEntities SEPARATOR ', '»'«entity.name.formatForCode»'«ENDFOR»];
-                $this->imageFileTypes = ['gif', 'jpeg', 'jpg', 'png'];
-                $this->forbiddenFileTypes = ['cgi', 'pl', 'asp', 'phtml', 'php', 'php3', 'php4', 'php5', 'exe', 'com', 'bat', 'jsp', 'cfm', 'shtml'];
-            }
-
-            «setTranslatorMethod»
-
-            «performFileUpload»
-
-            «validateFileUpload»
-
-            «readMetaDataForFile»
-
-            «isAllowedFileExtension»
-
-            «determineFileName»
-
-            «deleteUploadFile»
-
-            «getFileBaseFolder»
-
-            «checkAndCreateAllUploadFolders»
-
-            «checkAndCreateUploadFolder»
+            «helperBaseImpl»
         }
+    '''
+
+    def private helperBaseImpl(Application it) '''
+        use TranslatorTrait;
+
+        /**
+         * @var Filesystem
+         */
+        protected $filesystem;
+
+        /**
+         * @var SessionInterface
+         */
+        protected $session;
+
+        /**
+         * @var LoggerInterface
+         */
+        protected $logger;
+
+        /**
+         * @var CurrentUserApiInterface
+         */
+        protected $currentUserApi;
+
+        /**
+         * @var array
+         */
+        protected $moduleVars;
+
+        /**
+         * @var String
+         */
+        protected $dataDirectory;
+
+        /**
+         * @var array List of object types with upload fields
+         */
+        protected $allowedObjectTypes;
+
+        /**
+         * @var array List of file types to be considered as images
+         */
+        protected $imageFileTypes;
+
+        /**
+         * @var array List of dangerous file types to be rejected
+         */
+        protected $forbiddenFileTypes;
+
+        /**
+         * UploadHelper constructor.
+         *
+         * @param TranslatorInterface     $translator     Translator service instance
+         * @param Filesystem              $filesystem     Filesystem service instance
+         * @param SessionInterface        $session        Session service instance
+         * @param LoggerInterface         $logger         Logger service instance
+         * @param CurrentUserApiInterface $currentUserApi CurrentUserApi service instance
+         * @param object                  $moduleVars     Existing module vars
+         * @param String                  $dataDirectory  The data directory name
+         */
+        public function __construct(
+            TranslatorInterface $translator,
+            Filesystem $filesystem,
+            SessionInterface $session,
+            LoggerInterface $logger,
+            CurrentUserApiInterface $currentUserApi,
+            $moduleVars,
+            $dataDirectory
+        ) {
+            $this->setTranslator($translator);
+            $this->filesystem = $filesystem;
+            $this->session = $session;
+            $this->logger = $logger;
+            $this->currentUserApi = $currentUserApi;
+            $this->moduleVars = $moduleVars;
+            $this->dataDirectory = $dataDirectory;
+
+            $this->allowedObjectTypes = [«FOR entity : getUploadEntities SEPARATOR ', '»'«entity.name.formatForCode»'«ENDFOR»];
+            $this->imageFileTypes = ['gif', 'jpeg', 'jpg', 'png'];
+            $this->forbiddenFileTypes = ['cgi', 'pl', 'asp', 'phtml', 'php', 'php3', 'php4', 'php5', 'exe', 'com', 'bat', 'jsp', 'cfm', 'shtml'];
+        }
+
+        «setTranslatorMethod»
+
+        «performFileUpload»
+
+        «validateFileUpload»
+
+        «readMetaDataForFile»
+
+        «isAllowedFileExtension»
+
+        «determineFileName»
+
+        «deleteUploadFile»
+
+        «getFileBaseFolder»
+
+        «checkAndCreateAllUploadFolders»
+
+        «checkAndCreateUploadFolder»
     '''
 
     def private performFileUpload(Application it) '''

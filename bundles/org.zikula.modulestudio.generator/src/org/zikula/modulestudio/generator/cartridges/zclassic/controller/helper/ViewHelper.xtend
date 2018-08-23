@@ -36,84 +36,88 @@ class ViewHelper {
          */
         abstract class AbstractViewHelper
         {
-            /**
-             * @var Twig_Environment
-             */
-            protected $twig;
-
-            /**
-             * @var FilesystemLoader
-             */
-            protected $twigLoader;
-
-            /**
-             * @var RequestStack
-             */
-            protected $requestStack;
-
-            /**
-             * @var VariableApiInterface
-             */
-            protected $variableApi;
-
-            /**
-             * @var ParameterBag
-             */
-            protected $pageVars;
-
-            /**
-             * @var ControllerHelper
-             */
-            protected $controllerHelper;
-
-            /**
-             * @var PermissionHelper
-             */
-            protected $permissionHelper;
-
-            /**
-             * ViewHelper constructor.
-             *
-             * @param Twig_Environment     $twig             Twig service instance
-             * @param FilesystemLoader     $twigLoader       Twig loader service instance
-             * @param RequestStack         $requestStack     RequestStack service instance
-             * @param VariableApiInterface $variableApi      VariableApi service instance
-             * @param ParameterBag         $pageVars         ParameterBag for theme page variables
-             * @param ControllerHelper     $controllerHelper ControllerHelper service instance
-             * @param PermissionHelper     $permissionHelper PermissionHelper service instance
-             *
-             * @return void
-             */
-            public function __construct(
-                Twig_Environment $twig,
-                FilesystemLoader $twigLoader,
-                RequestStack $requestStack,
-                VariableApiInterface $variableApi,
-                ParameterBag $pageVars,
-                ControllerHelper $controllerHelper,
-                PermissionHelper $permissionHelper
-            ) {
-                $this->twig = $twig;
-                $this->twigLoader = $twigLoader;
-                $this->requestStack = $requestStack;
-                $this->variableApi = $variableApi;
-                $this->pageVars = $pageVars;
-                $this->controllerHelper = $controllerHelper;
-                $this->permissionHelper = $permissionHelper;
-            }
-
-            «getViewTemplate»
-
-            «processTemplate»
-
-            «determineExtension»
-
-            «availableExtensions»
-            «IF generatePdfSupport»
-
-                «processPdf»
-            «ENDIF»
+            «helperBaseImpl»
         }
+    '''
+
+    def private helperBaseImpl(Application it) '''
+        /**
+         * @var Twig_Environment
+         */
+        protected $twig;
+
+        /**
+         * @var FilesystemLoader
+         */
+        protected $twigLoader;
+
+        /**
+         * @var RequestStack
+         */
+        protected $requestStack;
+
+        /**
+         * @var VariableApiInterface
+         */
+        protected $variableApi;
+
+        /**
+         * @var ParameterBag
+         */
+        protected $pageVars;
+
+        /**
+         * @var ControllerHelper
+         */
+        protected $controllerHelper;
+
+        /**
+         * @var PermissionHelper
+         */
+        protected $permissionHelper;
+
+        /**
+         * ViewHelper constructor.
+         *
+         * @param Twig_Environment     $twig             Twig service instance
+         * @param FilesystemLoader     $twigLoader       Twig loader service instance
+         * @param RequestStack         $requestStack     RequestStack service instance
+         * @param VariableApiInterface $variableApi      VariableApi service instance
+         * @param ParameterBag         $pageVars         ParameterBag for theme page variables
+         * @param ControllerHelper     $controllerHelper ControllerHelper service instance
+         * @param PermissionHelper     $permissionHelper PermissionHelper service instance
+         *
+         * @return void
+         */
+        public function __construct(
+            Twig_Environment $twig,
+            FilesystemLoader $twigLoader,
+            RequestStack $requestStack,
+            VariableApiInterface $variableApi,
+            ParameterBag $pageVars,
+            ControllerHelper $controllerHelper,
+            PermissionHelper $permissionHelper
+        ) {
+            $this->twig = $twig;
+            $this->twigLoader = $twigLoader;
+            $this->requestStack = $requestStack;
+            $this->variableApi = $variableApi;
+            $this->pageVars = $pageVars;
+            $this->controllerHelper = $controllerHelper;
+            $this->permissionHelper = $permissionHelper;
+        }
+
+        «getViewTemplate»
+
+        «processTemplate»
+
+        «determineExtension»
+
+        «availableExtensions»
+        «IF generatePdfSupport»
+
+            «processPdf»
+        «ENDIF»
     '''
 
     def private getViewTemplate(Application it) '''

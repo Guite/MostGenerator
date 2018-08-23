@@ -34,67 +34,67 @@ class CategoryHelper {
          */
         abstract class AbstractCategoryHelper
         {
-            /**
-             * @var TranslatorInterface
-             */
-            protected $translator;
-
-            /**
-             * @var RequestStack
-             */
-            protected $requestStack;
-
-            /**
-             * @var LoggerInterface
-             */
-            protected $logger;
-
-            /**
-             * @var CurrentUserApiInterface
-             */
-            protected $currentUserApi;
-
-            /**
-             * @var CategoryRegistryRepositoryInterface
-             */
-            protected $categoryRegistryRepository;
-
-            /**
-             * @var CategoryPermissionApiInterface
-             */
-            protected $categoryPermissionApi;
-
-            /**
-             * CategoryHelper constructor.
-             *
-             * @param TranslatorInterface                 $translator                 Translator service instance
-             * @param RequestStack                        $requestStack               RequestStack service instance
-             * @param LoggerInterface                     $logger                     Logger service instance
-             * @param CurrentUserApiInterface             $currentUserApi             CurrentUserApi service instance
-             * @param CategoryRegistryRepositoryInterface $categoryRegistryRepository CategoryRegistryRepository service instance
-             * @param CategoryPermissionApiInterface      $categoryPermissionApi      CategoryPermissionApi service instance
-             */
-            public function __construct(
-                TranslatorInterface $translator,
-                RequestStack $requestStack,
-                LoggerInterface $logger,
-                CurrentUserApiInterface $currentUserApi,
-                CategoryRegistryRepositoryInterface $categoryRegistryRepository,
-                CategoryPermissionApiInterface $categoryPermissionApi
-            ) {
-                $this->translator = $translator;
-                $this->requestStack = $requestStack;
-                $this->logger = $logger;
-                $this->currentUserApi = $currentUserApi;
-                $this->categoryRegistryRepository = $categoryRegistryRepository;
-                $this->categoryPermissionApi = $categoryPermissionApi;
-            }
-
-            «categoryBaseImpl»
+            «helperBaseImpl»
         }
     '''
 
-    def private categoryBaseImpl(Application it) '''
+    def private helperBaseImpl(Application it) '''
+        /**
+         * @var TranslatorInterface
+         */
+        protected $translator;
+
+        /**
+         * @var RequestStack
+         */
+        protected $requestStack;
+
+        /**
+         * @var LoggerInterface
+         */
+        protected $logger;
+
+        /**
+         * @var CurrentUserApiInterface
+         */
+        protected $currentUserApi;
+
+        /**
+         * @var CategoryRegistryRepositoryInterface
+         */
+        protected $categoryRegistryRepository;
+
+        /**
+         * @var CategoryPermissionApiInterface
+         */
+        protected $categoryPermissionApi;
+
+        /**
+         * CategoryHelper constructor.
+         *
+         * @param TranslatorInterface                 $translator                 Translator service instance
+         * @param RequestStack                        $requestStack               RequestStack service instance
+         * @param LoggerInterface                     $logger                     Logger service instance
+         * @param CurrentUserApiInterface             $currentUserApi             CurrentUserApi service instance
+         * @param CategoryRegistryRepositoryInterface $categoryRegistryRepository CategoryRegistryRepository service instance
+         * @param CategoryPermissionApiInterface      $categoryPermissionApi      CategoryPermissionApi service instance
+         */
+        public function __construct(
+            TranslatorInterface $translator,
+            RequestStack $requestStack,
+            LoggerInterface $logger,
+            CurrentUserApiInterface $currentUserApi,
+            CategoryRegistryRepositoryInterface $categoryRegistryRepository,
+            CategoryPermissionApiInterface $categoryPermissionApi
+        ) {
+            $this->translator = $translator;
+            $this->requestStack = $requestStack;
+            $this->logger = $logger;
+            $this->currentUserApi = $currentUserApi;
+            $this->categoryRegistryRepository = $categoryRegistryRepository;
+            $this->categoryPermissionApi = $categoryPermissionApi;
+        }
+
         /**
          * Defines whether multiple selection is enabled for a given object type
          * or not. Subclass can override this method to apply a custom behaviour

@@ -37,27 +37,31 @@ class ModelHelper {
          */
         abstract class AbstractModelHelper
         {
-            /**
-             * @var EntityFactory
-             */
-            protected $entityFactory;
-
-            /**
-             * ModelHelper constructor.
-             *
-             * @param EntityFactory $entityFactory EntityFactory service instance
-             */
-            public function __construct(EntityFactory $entityFactory)
-            {
-                $this->entityFactory = $entityFactory;
-            }
-
-            «canBeCreated»
-
-            «hasExistingInstances»
-
-            «resolveSortParameter»
+            «helperBaseImpl»
         }
+    '''
+
+    def private helperBaseImpl(Application it) '''
+        /**
+         * @var EntityFactory
+         */
+        protected $entityFactory;
+
+        /**
+         * ModelHelper constructor.
+         *
+         * @param EntityFactory $entityFactory EntityFactory service instance
+         */
+        public function __construct(EntityFactory $entityFactory)
+        {
+            $this->entityFactory = $entityFactory;
+        }
+
+        «canBeCreated»
+
+        «hasExistingInstances»
+
+        «resolveSortParameter»
     '''
 
     def private canBeCreated(Application it) '''

@@ -89,6 +89,7 @@ class PersistenceTransformer {
         addModerationSettings
         addIntegrationSettings
         addGeoSettings
+        addVersionControlSettings
     }
 
     /**
@@ -463,6 +464,77 @@ class PersistenceTransformer {
         variables += varContainer
     }
 
+    def private addVersionControlSettings(Application it) {
+        if (!hasLoggable) {
+            return
+        }
+
+        val varContainer = createVarContainerForVersionControl
+        val factory = ModuleStudioFactory.eINSTANCE
+
+        val revisionHandlingItems = #[]
+        revisionHandlingItems += factory.createListFieldItem => [
+            name = 'Unlimited revisions'
+            value = 'unlimited'
+            ^default = true
+        ]
+        revisionHandlingItems += factory.createListFieldItem => [
+            name = 'Limited revisions by amount of revisions'
+            value = 'limitedByAmount'
+        ]
+        if (targets('2.0')) {
+            revisionHandlingItems += factory.createListFieldItem => [
+                name = 'Limited revisions by date interval'
+                value = 'limitedByDate'
+            ]
+        }
+        val revisionAmountItems = #[]
+        for (amount : #[1, 5, 10, 25, 50, 100, 250, 500]) {
+            revisionAmountItems += factory.createListFieldItem => [
+                value = amount.toString
+                ^default = if (amount == 25) true else false
+            ]
+        }
+
+        for (entity : getGeographicalEntities) {
+            var listField = factory.createListField => [
+                name = 'revisionHandlingFor' + entity.name.formatForCodeCapital
+                documentation = 'Adding a limitation to the revisioning will still keep the possibility to revert ' + entity.nameMultiple.formatForDisplay + ' to an older version. You will loose the possibility to inspect changes done earlier than the oldest stored revision though.'
+                length = 20
+                multiple = false
+            ]
+            listField.items.addAll(revisionHandlingItems)
+            varContainer.fields += listField
+
+            listField = factory.createListField => [
+                name = 'maximumAmountOf' + entity.name.formatForCodeCapital + 'Revisions'
+                length = 5
+                mandatory = false
+                multiple = false
+            ]
+            listField.items.addAll(revisionAmountItems)
+            varContainer.fields += listField
+
+            if (targets('2.0')) {
+                varContainer.fields += factory.createStringField => [
+                    name = 'periodFor' + entity.name.formatForCodeCapital + 'Revisions'
+                    defaultValue = 'P1Y'
+                    mandatory = false
+                    role = StringRole.DATE_INTERVAL
+                ]
+            }
+
+            varContainer.fields += factory.createBooleanField => [
+                name = 'show' + entity.name.formatForCodeCapital + 'History'
+                defaultValue = 'true'
+                documentation = 'Whether to show the version history to editors or not.'
+                mandatory = false
+            ]
+        }
+
+        variables += varContainer
+    }
+
     def private createVarContainerForModerationSettings(Application it) {
         val newSortNumber = getNextVarContainerSortNumber
         ModuleStudioFactory.eINSTANCE.createVariables => [
@@ -504,6 +576,15 @@ class PersistenceTransformer {
         ModuleStudioFactory.eINSTANCE.createVariables => [
             name = 'Geo'
             documentation = 'Here you can define settings related to geographical features.'
+            sortOrder = newSortNumber
+        ]
+    }
+
+    def private createVarContainerForVersionControl(Application it) {
+        val newSortNumber = getNextVarContainerSortNumber
+        ModuleStudioFactory.eINSTANCE.createVariables => [
+            name = 'Versioning'
+            documentation = 'Here you can define settings related to version control.'
             sortOrder = newSortNumber
         ]
     }

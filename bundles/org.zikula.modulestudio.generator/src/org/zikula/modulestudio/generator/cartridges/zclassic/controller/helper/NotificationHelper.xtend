@@ -48,11 +48,11 @@ class NotificationHelper {
          */
         abstract class AbstractNotificationHelper
         {
-            «notificationApiBaseImpl»
+            «helperBaseImpl»
         }
     '''
 
-    def private notificationApiBaseImpl(Application it) '''
+    def private helperBaseImpl(Application it) '''
         use TranslatorTrait;
 
         /**

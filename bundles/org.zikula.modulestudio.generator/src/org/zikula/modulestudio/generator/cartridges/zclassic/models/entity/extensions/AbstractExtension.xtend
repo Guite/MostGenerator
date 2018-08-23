@@ -176,6 +176,7 @@ abstract class AbstractExtension implements EntityExtensionInterface {
         «ELSEIF classType == 'logEntry'»
             use Doctrine\Common\Collections\ArrayCollection;
             use Gedmo\Loggable\Entity\Repository\LogEntryRepository;
+            use Gedmo\Loggable\LoggableListener;
         «ELSE»
             use Doctrine\ORM\EntityRepository;
         «ENDIF»

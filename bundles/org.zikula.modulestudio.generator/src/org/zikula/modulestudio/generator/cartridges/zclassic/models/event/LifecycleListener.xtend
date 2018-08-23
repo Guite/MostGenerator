@@ -146,38 +146,6 @@ class LifecycleListener {
                 if (!$this->isEntityManagedByThisBundle($entity) || «IF hasLoggable»(!method_exists($entity, 'get_objectType') && !$entity instanceof AbstractLogEntry)«ELSE»!method_exists($entity, 'get_objectType')«ENDIF») {
                     return;
                 }
-                «IF hasLoggable»
-
-                    if ($entity instanceof AbstractLogEntry) {
-                        // check if a supported object has been undeleted
-                        if ('create' != $entity->getAction()) {
-                            return;
-                        }
-
-                        // select main entity
-                        if (null === $entity->getObjectId()) {
-                            return;
-                        }
-
-                        $repository = $this->container->get('«appService».entity_factory')->getObjectManager()->getRepository($entity->getObjectClass());
-                        $object = $repository->find($entity->getObjectId());
-                        if (null === $object || !method_exists($object, 'get_objectType')) {
-                            return;
-                        }
-
-                        // set correct version after undeletion
-                        $logVersion = $entity->getVersion();
-                        «FOR entity : getLoggableEntities»
-                            if ($object->get_objectType() == '«entity.name.formatForCode»' && method_exists($object, 'get«entity.getVersionField.name.formatForCodeCapital»')) {
-                                if ($logVersion < $object->get«entity.getVersionField.name.formatForCodeCapital»()) {
-                                    $entity->setVersion($object->get«entity.getVersionField.name.formatForCodeCapital»());
-                                }
-                            }
-                        «ENDFOR»
-
-                        return;
-                    }
-                «ENDIF»
                 «eventAction.prePersist(app)»
             }
 
@@ -298,6 +266,35 @@ class LifecycleListener {
                     }
 
                     return $uploadFields;
+                }
+            «ENDIF»
+            «IF hasLoggable»
+
+                /**
+                 * Purges the version history as configured.
+                 *
+                 * @param string $objectType The object type
+                 */
+                protected function purgeHistory($objectType = '')
+                {
+                    if (!in_array($objectType, ['«getLoggableEntities.map[name.formatForCode].join('\', \'')»'])) {
+                        return;
+                    }
+
+                    $entityManager = $this->container->get('«appService».entity_factory')->getObjectManager();
+                    $variableApi = $this->container->get('zikula_extensions_module.api.variable');
+                    $objectTypeCapitalised = ucfirst($objectType);
+
+                    $revisionHandling = $variableApi->get('«appName»', 'revisionHandlingFor' . $objectTypeCapitalised, 'unlimited');
+                    $limitParameter = '';
+                    if ('limitedByAmount' == $revisionHandling) {
+                        $limitParameter = $variableApi->get('«appName»', 'maximumAmountOf' . $objectTypeCapitalised . 'Revisions', 25);
+                    }«IF targets('2.0')» elseif ('limitedByDate' == $revisionHandling) {
+                        $limitParameter = $variableApi->get('«appName»', 'periodFor' . $objectTypeCapitalised . 'Revisions', 'P1Y');
+                    }«ENDIF»
+
+                    $logEntriesRepository = $entityManager->getRepository('«appName»:' . $objectTypeCapitalised . 'LogEntryEntity');
+                    $logEntriesRepository->purgeHistory($revisionHandling, $limitParameter);
                 }
             «ENDIF»
         }
