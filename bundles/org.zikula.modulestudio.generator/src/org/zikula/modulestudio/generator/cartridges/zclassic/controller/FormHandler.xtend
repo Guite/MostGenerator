@@ -1313,8 +1313,8 @@ class FormHandler {
                 'actions' => $this->templateParameters['actions'],
                 «IF standardFields»
                     'has_moderate_permission' => $this->permissionHelper->hasEntityPermission($this->entityRef, ACCESS_ADMIN),
-                    'allow_moderation_specific_creator' => $this->variableApi->get('«app.appName»', 'allowModerationSpecificCreatorFor' . $this->objectTypeCapital),
-                    'allow_moderation_specific_creation_date' => $this->variableApi->get('«app.appName»', 'allowModerationSpecificCreationDateFor' . $this->objectTypeCapital),
+                    'allow_moderation_specific_creator' => $this->variableApi->get('«app.appName»', 'allowModerationSpecificCreatorFor' . $this->objectTypeCapital, false),
+                    'allow_moderation_specific_creation_date' => $this->variableApi->get('«app.appName»', 'allowModerationSpecificCreationDateFor' . $this->objectTypeCapital, false),
                 «ENDIF»
                 «IF !incoming.empty || !outgoing.empty»
                     'filter_by_ownership' => !$this->permissionHelper->hasEntityPermission($this->entityRef, ACCESS_ADD)«IF !incoming.empty || !outgoing.empty»,«ENDIF»
