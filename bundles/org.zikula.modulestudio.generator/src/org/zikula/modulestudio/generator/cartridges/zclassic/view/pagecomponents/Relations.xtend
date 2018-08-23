@@ -77,7 +77,7 @@ class Relations {
             {% if items|default and items|length > 0 %}
             <ul class="list-group «app.appName.toLowerCase»-related-item-list «name.formatForDB»">
             {% for item in items %}
-                {% if hasAdminPermission or item.workflowState == 'approved'«IF ownerPermission» or (item.workflowState in ['defered', 'trashed'] and hasEditPermission and currentUser|default and item.createdBy.getUid() == currentUser.uid)«ENDIF» %}
+                {% if hasAdminPermission or (item.workflowState == 'approved' and permissionHelper.mayRead(item))«IF ownerPermission» or (item.workflowState in ['defered', 'trashed'] and hasEditPermission and currentUser|default and item.createdBy.getUid() == currentUser.uid)«ENDIF» %}
                 <li class="list-group-item">
         «ENDIF»
         <h4«IF many» class="list-group-item-heading"«ENDIF»>

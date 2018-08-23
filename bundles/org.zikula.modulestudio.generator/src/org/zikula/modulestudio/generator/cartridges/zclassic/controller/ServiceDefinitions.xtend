@@ -724,6 +724,7 @@ class ServiceDefinitions {
                 «ENDIF»
                 - "@«modPrefix».entity_factory"
                 - "@«modPrefix».collection_filter_helper"
+                - "@«modPrefix».permission_helper"
                 «IF hasViewActions && hasEditActions»
                     - "@«modPrefix».model_helper"
                 «ENDIF»

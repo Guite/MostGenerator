@@ -72,6 +72,7 @@ class ControllerHelper {
         «IF hasViewActions && hasEditActions»
             use «appNamespace»\Helper\ModelHelper;
         «ENDIF»
+        use «appNamespace»\Helper\PermissionHelper;
 
         /**
          * Helper base class for controller layer methods.
@@ -127,6 +128,11 @@ class ControllerHelper {
              * @var CollectionFilterHelper
              */
             protected $collectionFilterHelper;
+
+            /**
+             * @var PermissionHelper
+             */
+            protected $permissionHelper;
             «IF hasViewActions && hasEditActions»
 
                 /**
@@ -152,31 +158,32 @@ class ControllerHelper {
             /**
              * ControllerHelper constructor.
              *
-             * @param TranslatorInterface $translator      Translator service instance
-             * @param RequestStack        $requestStack    RequestStack service instance
+             * @param TranslatorInterface $translator       Translator service instance
+             * @param RequestStack        $requestStack     RequestStack service instance
              «IF hasAutomaticArchiving»
-             * @param ArchiveHelper       $archiveHelper   ArchiveHelper service instance
+             * @param ArchiveHelper       $archiveHelper    ArchiveHelper service instance
              «ENDIF»
              «IF hasUiHooksProviders»
-             * @param Routerinterface     $router          Router service instance
+             * @param Routerinterface     $router           Router service instance
              «ENDIF»
              «IF hasViewActions»
-             * @param FormFactoryInterface $formFactory    FormFactory service instance
+             * @param FormFactoryInterface $formFactory     FormFactory service instance
              «ENDIF»
              «IF hasViewActions»
              * @param VariableApiInterface $variableApi     VariableApi service instance
              «ENDIF»
              «IF hasGeographical»
-             * @param LoggerInterface     $logger          Logger service instance
+             * @param LoggerInterface     $logger           Logger service instance
              * @param CurrentUserApiInterface $currentUserApi  CurrentUserApi service instance
              «ENDIF»
-             * @param EntityFactory       $entityFactory   EntityFactory service instance
+             * @param EntityFactory       $entityFactory    EntityFactory service instance
              * @param CollectionFilterHelper $collectionFilterHelper CollectionFilterHelper service instance
+             * @param PermissionHelper    $permissionHelper PermissionHelper service instance
              «IF hasViewActions && hasEditActions»
-             * @param ModelHelper         $modelHelper     ModelHelper service instance
+             * @param ModelHelper         $modelHelper      ModelHelper service instance
              «ENDIF»
              «IF !getUploadEntities.empty»
-             * @param ImageHelper         $imageHelper     ImageHelper service instance
+             * @param ImageHelper         $imageHelper      ImageHelper service instance
              «ENDIF»
              «IF needsFeatureActivationHelper»
              * @param FeatureActivationHelper $featureActivationHelper FeatureActivationHelper service instance
@@ -202,7 +209,8 @@ class ControllerHelper {
                     CurrentUserApiInterface $currentUserApi,
                 «ENDIF»
                 EntityFactory $entityFactory,
-                CollectionFilterHelper $collectionFilterHelper«IF hasViewActions && hasEditActions»,
+                CollectionFilterHelper $collectionFilterHelper,
+                PermissionHelper $permissionHelper«IF hasViewActions && hasEditActions»,
                 ModelHelper $modelHelper«ENDIF»«IF !getUploadEntities.empty»,
                 ImageHelper $imageHelper«ENDIF»«IF needsFeatureActivationHelper»,
                 FeatureActivationHelper $featureActivationHelper«ENDIF»
@@ -224,6 +232,7 @@ class ControllerHelper {
                 «ENDIF»
                 $this->entityFactory = $entityFactory;
                 $this->collectionFilterHelper = $collectionFilterHelper;
+                $this->permissionHelper = $permissionHelper;
                 «IF hasViewActions && hasEditActions»
                     $this->modelHelper = $modelHelper;
                 «ENDIF»
@@ -646,6 +655,7 @@ class ControllerHelper {
                     }
                 «ENDIF»
             }
+            $parameters['permissionHelper'] = $this->permissionHelper;
             «IF needsFeatureActivationHelper»
 
                 $parameters['featureActivationHelper'] = $this->featureActivationHelper;
