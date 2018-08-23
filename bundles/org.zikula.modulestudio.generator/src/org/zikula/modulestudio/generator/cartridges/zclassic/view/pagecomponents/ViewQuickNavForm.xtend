@@ -32,7 +32,7 @@ class ViewQuickNavForm {
 
     def private quickNavForm(Entity it) '''
         {# purpose of this template: «nameMultiple.formatForDisplay» view filter form #}
-        {% if hasPermission('«application.appName»:«name.formatForCodeCapital»:', '::', 'ACCESS_EDIT') %}
+        {% if permissionHelper.hasComponentPermission('«name.formatForCode»:', 'ACCESS_EDIT') %}
             {% form_theme quickNavForm with [
                 'bootstrap_3_layout.html.twig'
             ] %}
