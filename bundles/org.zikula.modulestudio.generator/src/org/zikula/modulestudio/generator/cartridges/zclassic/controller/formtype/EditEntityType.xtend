@@ -805,7 +805,7 @@ class EditEntityType {
                 ]);
             }
             if ($options['allow_moderation_specific_creation_date']) {
-                $builder->add('moderationSpecificCreationDate', TimeType::class, [
+                $builder->add('moderationSpecificCreationDate', DateTimeType::class, [
                     'mapped' => false,
                     'label' => $this->__('Creation date') . ':',
                     'attr' => [
