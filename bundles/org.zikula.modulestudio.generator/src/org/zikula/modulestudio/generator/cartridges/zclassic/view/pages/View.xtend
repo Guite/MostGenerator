@@ -124,7 +124,7 @@ class View {
         «val objName = name.formatForCode»
         «IF hasEditAction»
             {% if canBeCreated %}
-                {% if permissionHelper.hasComponentPermission('«name.formatForCode»:', 'ACCESS_«IF workflow == EntityWorkflowType.NONE»EDIT«ELSE»COMMENT«ENDIF»') %}
+                {% if permissionHelper.hasComponentPermission('«name.formatForCode»', 'ACCESS_«IF workflow == EntityWorkflowType.NONE»EDIT«ELSE»COMMENT«ENDIF»') %}
                     {% set createTitle = __('Create «name.formatForDisplay»') %}
                     <a href="{{ path('«appName.formatForDB»_«objName.toLowerCase»_' ~ routeArea ~ 'edit') }}" title="{{ createTitle|e('html_attr') }}"><i class="fa fa-plus"></i> {{ createTitle }}</a>
                 {% endif %}
