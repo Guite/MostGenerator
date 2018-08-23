@@ -65,7 +65,7 @@ class ViewHierarchy {
 
                 <p>
                     «IF hasEditAction»
-                    {% if permissionHelper.hasComponentPermission('«name.formatForCode»:', 'ACCESS_«IF workflow == EntityWorkflowType.NONE»EDIT«ELSE»COMMENT«ENDIF»') %}
+                    {% if permissionHelper.hasComponentPermission('«name.formatForCode»:', constant('ACCESS_«IF workflow == EntityWorkflowType.NONE»EDIT«ELSE»COMMENT«ENDIF»')) %}
                         {% set addRootTitle = __('Add root node') %}
                         <a id="treeAddRoot" href="javascript:void(0)" title="{{ addRootTitle|e('html_attr') }}" class="hidden" data-object-type="«objName»"><i class="fa fa-plus"></i> {{ addRootTitle }}</a>
                     {% endif %}

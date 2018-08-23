@@ -609,6 +609,14 @@ class SharedFormTypeFields {
             «ENDIF»
         «ENDIF»
         «IF role == StringRole.DATE_INTERVAL && application.targets('2.0')»
+            'labels' => [
+                'years' => $this->__('Years'),
+                'months' => $this->__('Months'),
+                'days' => $this->__('Days'),
+                'hours' => $this->__('Hours'),
+                'minutes' => $this->__('Minutes'),
+                'seconds' => $this->__('Seconds')
+            ],
             «IF !mandatory»
                 'placeholder' => [
                     'years' => $this->__('Years'),
@@ -627,8 +635,7 @@ class SharedFormTypeFields {
             'with_days' => true,
             'with_hours' => true,
             'with_minutes' => true,
-            'with_seconds' => true,
-            'with_invert' => true
+            'with_seconds' => true
         «ENDIF»
     '''
 
