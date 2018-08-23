@@ -159,7 +159,7 @@ class Loggable extends AbstractExtension implements EntityExtensionInterface {
                 ;
             }«IF application.targets('2.0')» elseif ('limitedByDate' == $revisionHandling) {
                 if (!$limitParameter) {
-                    $limitParameter = 'P1Y';
+                    $limitParameter = 'P1Y0M0DT0H0M0S';
                 }
                 $thresholdDate = new \DateTime(date('Ymd'));
                 $thresholdDate->sub(new \DateInterval($limitParameter));

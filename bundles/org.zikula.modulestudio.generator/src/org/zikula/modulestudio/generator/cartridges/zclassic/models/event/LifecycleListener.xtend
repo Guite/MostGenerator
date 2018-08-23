@@ -290,7 +290,7 @@ class LifecycleListener {
                     if ('limitedByAmount' == $revisionHandling) {
                         $limitParameter = $variableApi->get('«appName»', 'maximumAmountOf' . $objectTypeCapitalised . 'Revisions', 25);
                     }«IF targets('2.0')» elseif ('limitedByDate' == $revisionHandling) {
-                        $limitParameter = $variableApi->get('«appName»', 'periodFor' . $objectTypeCapitalised . 'Revisions', 'P1Y');
+                        $limitParameter = $variableApi->get('«appName»', 'periodFor' . $objectTypeCapitalised . 'Revisions', 'P1Y0M0DT0H0M0S');
                     }«ENDIF»
 
                     $logEntriesRepository = $entityManager->getRepository('«appName»:' . $objectTypeCapitalised . 'LogEntryEntity');

@@ -520,7 +520,7 @@ class PersistenceTransformer {
             if (targets('2.0')) {
                 varContainer.fields += factory.createStringField => [
                     name = 'periodFor' + entity.name.formatForCodeCapital + 'Revisions'
-                    defaultValue = 'P1Y'
+                    defaultValue = 'P1Y0M0DT0H0M0S'
                     mandatory = false
                     role = StringRole.DATE_INTERVAL
                 ]
