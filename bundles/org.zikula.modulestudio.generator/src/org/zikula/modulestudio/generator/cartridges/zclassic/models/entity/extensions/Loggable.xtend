@@ -148,7 +148,7 @@ class Loggable extends AbstractExtension implements EntityExtensionInterface {
                     ->andWhere('log.objectClass = :objectClass')
                     ->setParameter('objectClass', $objectClass)
                     ->groupBy('log.objectId')
-                    ->andWhere('amountOfRevisions > :maxAmount')
+                    ->andHaving('amountOfRevisions > :maxAmount')
                     ->setParameter('maxAmount', $limitParameter)
                 ;
                 $result = $qbMatchingObjects->getQuery()->getScalarResult();
@@ -179,6 +179,8 @@ class Loggable extends AbstractExtension implements EntityExtensionInterface {
                 return;
             }
 
+            $entityManager = $this->getEntityManager();
+
             // loop through the log entries
             $dataForObject = [];
             $lastObjectId = 0;
@@ -198,7 +200,9 @@ class Loggable extends AbstractExtension implements EntityExtensionInterface {
                     }
                 } else {
                     // we have a another log entry for the same object
-                    $dataForObject = array_merge($dataForObject, $logEntry->getData());
+                    if (null !== $logEntry->getData()) {
+                        $dataForObject = array_merge($dataForObject, $logEntry->getData());
+                    }
                     // thus we may remove the last one
                     $entityManager->remove($lastLogEntry);
                 }
