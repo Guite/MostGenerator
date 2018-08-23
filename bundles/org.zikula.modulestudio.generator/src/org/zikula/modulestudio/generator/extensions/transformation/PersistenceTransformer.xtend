@@ -4,6 +4,7 @@ import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.DataObject
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.EntityWorkflowType
+import de.guite.modulestudio.metamodel.ListFieldItem
 import de.guite.modulestudio.metamodel.ManyToOneRelationship
 import de.guite.modulestudio.metamodel.MappedSuperClass
 import de.guite.modulestudio.metamodel.ModuleStudioFactory
@@ -472,7 +473,7 @@ class PersistenceTransformer {
         val varContainer = createVarContainerForVersionControl
         val factory = ModuleStudioFactory.eINSTANCE
 
-        val revisionHandlingItems = #[]
+        val revisionHandlingItems = <ListFieldItem>newArrayList
         revisionHandlingItems += factory.createListFieldItem => [
             name = 'Unlimited revisions'
             value = 'unlimited'
@@ -488,9 +489,10 @@ class PersistenceTransformer {
                 value = 'limitedByDate'
             ]
         }
-        val revisionAmountItems = #[]
+        val revisionAmountItems = <ListFieldItem>newArrayList
         for (amount : #[1, 5, 10, 25, 50, 100, 250, 500]) {
             revisionAmountItems += factory.createListFieldItem => [
+                name = amount.toString
                 value = amount.toString
                 ^default = if (amount == 25) true else false
             ]
