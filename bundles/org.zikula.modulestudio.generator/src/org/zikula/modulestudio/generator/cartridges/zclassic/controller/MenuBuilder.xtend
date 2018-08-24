@@ -46,7 +46,7 @@ class MenuBuilder {
         use Zikula\UsersModule\Api\ApiInterface\CurrentUserApiInterface;
 
         /**
-         * This is the menu builder implementation class.
+         * Menu builder base class.
          */
         class AbstractMenuBuilder
         {
@@ -165,7 +165,7 @@ class MenuBuilder {
         use «appNamespace»\Menu\Base\AbstractMenuBuilder;
 
         /**
-         * This is the menu builder implementation class.
+         * Menu builder implementation class.
          */
         class MenuBuilder extends AbstractMenuBuilder
         {
