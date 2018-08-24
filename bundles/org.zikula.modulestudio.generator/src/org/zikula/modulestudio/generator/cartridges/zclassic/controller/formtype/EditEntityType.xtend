@@ -93,6 +93,12 @@ class EditEntityType {
         «IF isTranslatable»
             use «app.appNamespace»\Helper\TranslatableHelper;
         «ENDIF»
+        «IF it instanceof Entity && (it as Entity).standardFields»
+            use «application.appNamespace»\Traits\ModerationFormFieldsTrait;
+        «ENDIF»
+        «IF it instanceof Entity && (it as Entity).workflow != EntityWorkflowType.NONE»
+            use «application.appNamespace»\Traits\WorkflowFormFieldsTrait;
+        «ENDIF»
 
         /**
          * «name.formatForDisplayCapital» editing form type base class.
@@ -100,6 +106,12 @@ class EditEntityType {
         abstract class Abstract«name.formatForCodeCapital»Type extends AbstractType
         {
             use TranslatorTrait;
+            «IF it instanceof Entity && (it as Entity).standardFields»
+                use ModerationFormFieldsTrait;
+            «ENDIF»
+            «IF it instanceof Entity && (it as Entity).workflow != EntityWorkflowType.NONE»
+                use WorkflowFormFieldsTrait;
+            «ENDIF»
 
             /**
              * @var EntityFactory
@@ -290,14 +302,6 @@ class EditEntityType {
             «ENDIF»
             «IF !outgoingRelations.empty»
                 «addOutgoingRelationshipFields»
-
-            «ENDIF»
-            «IF it instanceof Entity && (it as Entity).workflow != EntityWorkflowType.NONE»
-                «addAdditionalNotificationRemarksField(it as Entity)»
-
-            «ENDIF»
-            «IF it instanceof Entity && (it as Entity).standardFields»
-                «addModerationFields(it as Entity)»
 
             «ENDIF»
             «IF it instanceof Entity»
@@ -740,88 +744,6 @@ class EditEntityType {
         if (autoComplete) '''«app.appNamespace»\Form\Type\Field\AutoCompletionRelation'''
         else '''Symfony\Bridge\Doctrine\Form\Type\Entity'''
     }
-
-    def private addAdditionalNotificationRemarksField(Entity it) '''
-        /**
-         * Adds a field for additional notification remarks.
-         *
-         * @param FormBuilderInterface $builder The form builder
-         * @param array                $options The options
-         */
-        public function addAdditionalNotificationRemarksField(FormBuilderInterface $builder, array $options = [])
-        {
-            $helpText = '';
-            if ($options['is_moderator']«IF workflow == EntityWorkflowType.ENTERPRISE» || $options['is_super_moderator']«ENDIF») {
-                $helpText = $this->__('These remarks (like a reason for deny) are not stored, but added to any notification emails send to the creator.');
-            } elseif ($options['is_creator']) {
-                $helpText = $this->__('These remarks (like questions about conformance) are not stored, but added to any notification emails send to our moderators.');
-            }
-
-            $builder->add('additionalNotificationRemarks', TextareaType::class, [
-                'mapped' => false,
-                'label' => $this->__('Additional remarks'),
-                'label_attr' => [
-                    'class' => 'tooltips',
-                    'title' => $helpText
-                ],
-                'attr' => [
-                    'title' => 'create' == $options['mode'] ? $this->__('Enter any additions about your content') : $this->__('Enter any additions about your changes')
-                ],
-                'required' => false,
-                'help' => $helpText
-            ]);
-        }
-    '''
-
-    def private addModerationFields(Entity it) '''
-        /**
-         * Adds special fields for moderators.
-         *
-         * @param FormBuilderInterface $builder The form builder
-         * @param array                $options The options
-         */
-        public function addModerationFields(FormBuilderInterface $builder, array $options = [])
-        {
-            if (!$options['has_moderate_permission']) {
-                return;
-            }
-            «IF !incoming.empty || !outgoing.empty»
-                if ($options['inline_usage']) {
-                    return;
-                }
-            «ENDIF»
-
-            if ($options['allow_moderation_specific_creator']) {
-                $builder->add('moderationSpecificCreator', UserLiveSearchType::class, [
-                    'mapped' => false,
-                    'label' => $this->__('Creator') . ':',
-                    'attr' => [
-                        'maxlength' => 11,
-                        'title' => $this->__('Here you can choose a user which will be set as creator.')
-                    ],
-                    'empty_data' => 0,
-                    'required' => false,
-                    'help' => $this->__('Here you can choose a user which will be set as creator.')
-                ]);
-            }
-            if ($options['allow_moderation_specific_creation_date']) {
-                $builder->add('moderationSpecificCreationDate', DateTimeType::class, [
-                    'mapped' => false,
-                    'label' => $this->__('Creation date') . ':',
-                    'attr' => [
-                        'class' => '',
-                        'title' => $this->__('Here you can choose a custom creation date.')
-                    ],
-                    'empty_data' => '',
-                    'required' => false,
-                    'with_seconds' => true,
-                    'date_widget' => 'single_text',
-                    'time_widget' => 'single_text',
-                    'help' => $this->__('Here you can choose a custom creation date.')
-                ]);
-            }
-        }
-    '''
 
     def private addSubmitButtons(Entity it) '''
         /**

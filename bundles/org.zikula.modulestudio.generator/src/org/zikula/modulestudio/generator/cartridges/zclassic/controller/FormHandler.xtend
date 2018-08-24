@@ -26,6 +26,8 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype.field.TelType
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype.field.TranslationType
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype.field.UploadType
+import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype.trait.ModerationFormFieldsTrait
+import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype.trait.WorkflowFormFieldsTrait
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
@@ -87,6 +89,12 @@ class FormHandler {
             // form types
             for (entity : entities.filter[it instanceof MappedSuperClass || (it as Entity).hasEditAction]) {
                 new EditEntityType().generate(entity, fsa)
+            }
+            if (hasStandardFieldEntities) {
+                new ModerationFormFieldsTrait().generate(it, fsa)
+            }
+            if (needsApproval) {
+                new WorkflowFormFieldsTrait().generate(it, fsa)
             }
             if (hasGeographical) {
                 new GeoType().generate(it, fsa)

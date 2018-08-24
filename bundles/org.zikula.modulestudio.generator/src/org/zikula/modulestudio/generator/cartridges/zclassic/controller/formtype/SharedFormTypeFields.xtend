@@ -72,16 +72,10 @@ class SharedFormTypeFields {
         «IF app.targets('2.0') && !fields.filter(StringField).filter[role == StringRole.DATE_INTERVAL].empty»
             use «nsSymfonyFormType»DateIntervalType;
         «ENDIF»
-        «IF (
-            null !== dataObject && (dataObject.hasDirectDateTimeFields || (dataObject instanceof Entity && (dataObject as Entity).standardFields))
-            || !fields.filter(DatetimeField).filter[isDateTimeField].empty
-        )»
+        «IF null !== dataObject && dataObject.hasDirectDateTimeFields || !fields.filter(DatetimeField).filter[isDateTimeField].empty»
             use «nsSymfonyFormType»DateTimeType;
         «ENDIF»
-        «IF (
-            null !== dataObject && dataObject.hasDirectDateFields
-            || !fields.filter(DatetimeField).filter[isDateField].empty
-        )»
+        «IF null !== dataObject && dataObject.hasDirectDateFields || !fields.filter(DatetimeField).filter[isDateField].empty»
             use «nsSymfonyFormType»DateType;
         «ENDIF»
         «IF !fields.filter(EmailField).empty»
@@ -127,10 +121,7 @@ class SharedFormTypeFields {
         »
             use «nsSymfonyFormType»TextType;
         «ENDIF»
-        «IF (
-            null !== dataObject && dataObject.hasDirectTimeFields
-            || !fields.filter(DatetimeField).filter[isTimeField].empty
-        )»
+        «IF null !== dataObject && dataObject.hasDirectTimeFields || !fields.filter(DatetimeField).filter[isTimeField].empty»
             use «nsSymfonyFormType»TimeType;
         «ENDIF»
         «IF !fields.filter(StringField).filter[role == StringRole.TIME_ZONE].empty»
@@ -185,7 +176,7 @@ class SharedFormTypeFields {
         «IF !fields.filter(UploadField).empty»
             use «app.appNamespace»\Form\Type\Field\UploadType;
         «ENDIF»
-        «IF !fields.filter(UserField).empty || (null !== dataObject && dataObject instanceof Entity && (dataObject as Entity).standardFields)»
+        «IF !fields.filter(UserField).empty»
             use Zikula\UsersModule\Form\Type\UserLiveSearchType;
         «ENDIF»
     '''

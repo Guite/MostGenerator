@@ -3,16 +3,21 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.models.entity.exte
 import de.guite.modulestudio.metamodel.Application
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
+import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class StandardFieldsTrait {
 
+    extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension Utils = new Utils
 
     FileHelper fh = new FileHelper
     Boolean isLoggable
 
     def generate(Application it, IMostFileSystemAccess fsa, Boolean loggable) {
+        if (!hasStandardFieldEntities) {
+            return
+        }
         isLoggable = loggable
         val filePath = 'Traits/' + (if (loggable) 'Loggable' else '') + 'StandardFieldsTrait.php'
         fsa.generateFile(filePath, traitFile)
