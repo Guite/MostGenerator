@@ -255,7 +255,9 @@ class DisplayFunctions {
 
     def private initInlineWindow(Application it) '''
         /**
-         * Helper function to create new Bootstrap modal window instances.
+         * Helper function to create new dialog window instances.
+         * Note we use jQuery UI dialogs instead of Bootstrap modals here
+         * because we want to be able to open multiple windows simultaneously.
          */
         function «vendorAndName»InitInlineWindow(containerElem) {
             var newWindowId;
