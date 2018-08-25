@@ -22,8 +22,8 @@ class TranslatableHelper {
      */
     def generate(Application it, IMostFileSystemAccess fsa) {
         'Generating helper class for translatable entities'.printIfNotTesting(fsa)
-        fsa.generateClassPair('Helper/TranslatableHelper.php', translatableFunctionsBaseImpl, translatableFunctionsImpl)
         needsDynamicTimestampableEnablement = if (!getAllEntities.filter[loggable && hasTranslatableFields && (standardFields || hasTimestampableFields)].empty) true else false
+        fsa.generateClassPair('Helper/TranslatableHelper.php', translatableFunctionsBaseImpl, translatableFunctionsImpl)
     }
 
     def private translatableFunctionsBaseImpl(Application it) '''
