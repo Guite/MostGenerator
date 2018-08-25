@@ -304,7 +304,7 @@ class TranslatableHelper {
                 if (null === $this->loggableListener) {
                     foreach ($eventManager->getListeners() as $event => $listeners) {
                         foreach ($listeners as $hash => $listener) {
-                            if ($listener instanceof loggableListener) {
+                            if ($listener instanceof LoggableListener) {
                                 $this->loggableListener = $listener;
                                 break 2;
                             }
