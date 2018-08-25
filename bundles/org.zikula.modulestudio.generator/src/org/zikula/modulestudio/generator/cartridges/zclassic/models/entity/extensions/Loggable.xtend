@@ -180,6 +180,8 @@ class Loggable extends AbstractExtension implements EntityExtensionInterface {
             }
 
             $entityManager = $this->getEntityManager();
+            $thresholdPerObject = 'limitedByAmount' == $revisionHandling ? $limitParameter : -1;
+            $counterPerObject = 0;
 
             // loop through the log entries
             $dataForObject = [];
@@ -187,7 +189,6 @@ class Loggable extends AbstractExtension implements EntityExtensionInterface {
             $lastLogEntry = null;
             foreach ($result as $logEntry) {
                 // step 2 - conflate data arrays
-                $version = $logEntry->getVersion();
                 if ($lastObjectId != $logEntry->getObjectId()) {
                     if ($lastObjectId > 0) {
                         // write conflated data into last obsolete version (which will be kept)
@@ -198,17 +199,21 @@ class Loggable extends AbstractExtension implements EntityExtensionInterface {
                     } else {
                         // very first loop execution, nothing special to do here
                     }
+                    $counterPerObject = 1;
                 } else {
                     // we have a another log entry for the same object
-                    if (null !== $logEntry->getData()) {
-                        $dataForObject = array_merge($dataForObject, $logEntry->getData());
+                    if ($counterPerObject < $thresholdPerObject) {
+                        if (null !== $logEntry->getData()) {
+                            $dataForObject = array_merge($dataForObject, $logEntry->getData());
+                        }
+                        // thus we may remove the last one
+                        $entityManager->remove($lastLogEntry);
                     }
-                    // thus we may remove the last one
-                    $entityManager->remove($lastLogEntry);
                 }
 
                 $lastObjectId = $logEntry->getObjectId();
                 $lastLogEntry = $logEntry;
+                $counterPerObject++;
             }
 
             // do not forget to save values for the last objectId
