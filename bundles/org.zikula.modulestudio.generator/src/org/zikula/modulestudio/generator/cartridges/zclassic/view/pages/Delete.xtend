@@ -49,7 +49,7 @@ class Delete {
                 {{ form_errors(deleteForm) }}
 
                 «IF !skipHookSubscribers»
-                    {% if «name.formatForCode».supportsHookSubscribers and formHookTemplates|length > 0 %}
+                    {% if «name.formatForCode».supportsHookSubscribers() and formHookTemplates|length > 0 %}
                         <fieldset>
                             {% for hookTemplate in formHookTemplates %}
                                 {{ include(hookTemplate.0, hookTemplate.1, ignore_missing = true) }}
@@ -75,7 +75,7 @@ class Delete {
         {% endblock %}
         «IF !skipHookSubscribers»
             {% block display_hooks %}
-                {% if «name.formatForCode».supportsHookSubscribers %}
+                {% if «name.formatForCode».supportsHookSubscribers() %}
                     «callDisplayHooks(app.appName)»
                 {% endif %}
             {% endblock %}

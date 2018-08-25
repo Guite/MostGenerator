@@ -197,7 +197,7 @@ class Display {
         «ENDIF»
         «IF !skipHookSubscribers»
             {% block display_hooks %}
-                {% if «name.formatForCode».supportsHookSubscribers %}
+                {% if «name.formatForCode».supportsHookSubscribers() %}
                     «callDisplayHooks(appName)»
                 {% endif %}
             {% endblock %}
