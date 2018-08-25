@@ -15,22 +15,22 @@ class TranslatableHelper {
     extension ModelExtensions = new ModelExtensions
     extension Utils = new Utils
 
-    Boolean needsDynamicTimestampableEnablement
+    Boolean needsDynamicLoggableEnablement
 
     /**
      * Entry point for the helper class creation.
      */
     def generate(Application it, IMostFileSystemAccess fsa) {
         'Generating helper class for translatable entities'.printIfNotTesting(fsa)
-        needsDynamicTimestampableEnablement = if (!getAllEntities.filter[loggable && hasTranslatableFields && (standardFields || hasTimestampableFields)].empty) true else false
+        needsDynamicLoggableEnablement = if (!getAllEntities.filter[loggable && hasTranslatableFields].empty) true else false
         fsa.generateClassPair('Helper/TranslatableHelper.php', translatableFunctionsBaseImpl, translatableFunctionsImpl)
     }
 
     def private translatableFunctionsBaseImpl(Application it) '''
         namespace «appNamespace»\Helper\Base;
 
-        «IF needsDynamicTimestampableEnablement»
-            use Gedmo\Timestampable\TimestampableListener;
+        «IF needsDynamicLoggableEnablement»
+            use Gedmo\Loggable\LoggableListener;
         «ENDIF»
         use Symfony\Component\Form\FormInterface;
         use Symfony\Component\HttpFoundation\RequestStack;
@@ -74,12 +74,12 @@ class TranslatableHelper {
          * @var EntityFactory
          */
         protected $entityFactory;
-        «IF needsDynamicTimestampableEnablement»
+        «IF needsDynamicLoggableEnablement»
 
             /**
-             * @var TimestampableListener
+             * @var LoggableListener
              */
-            protected $timestampableListener;
+            protected $loggableListener;
         «ENDIF»
 
         /**
@@ -103,8 +103,8 @@ class TranslatableHelper {
             $this->variableApi = $variableApi;
             $this->localeApi = $localeApi;
             $this->entityFactory = $entityFactory;
-            «IF needsDynamicTimestampableEnablement»
-                $this->timestampableListener = null;
+            «IF needsDynamicLoggableEnablement»
+                $this->loggableListener = null;
             «ENDIF»
         }
 
@@ -266,8 +266,8 @@ class TranslatableHelper {
          */
         public function processEntityAfterEditing($entity, $form)
         {
-            «IF needsDynamicTimestampableEnablement»
-                $this->toggleTimestampable(true);
+            «IF needsDynamicLoggableEnablement»
+                $this->toggleLoggable(false);
             «ENDIF»
             $objectType = $entity->get_objectType();
             $supportedLanguages = $this->getSupportedLanguages($objectType);
@@ -286,42 +286,39 @@ class TranslatableHelper {
                 $entity['locale'] = $language;
                 $this->entityFactory->getObjectManager()->flush();
             }
-            «IF needsDynamicTimestampableEnablement»
-                $this->toggleTimestampable(true);
+            «IF needsDynamicLoggableEnablement»
+                $this->toggleLoggable(true);
             «ENDIF»
         }
-        «IF needsDynamicTimestampableEnablement»
+        «IF needsDynamicLoggableEnablement»
 
             /**
-             * Enables or disables the timestampable listener.
+             * Enables or disables the loggable listener to avoid log entries
+             * for translation changes.
              *
              * @param boolean $enable True for enable, false for disable
-             *
-             * @see https://github.com/Atlantic18/DoctrineExtensions/issues/1722
              */
-            public function toggleTimestampable($enable = true)
+            public function toggleLoggable($enable = true)
             {
                 $eventManager = $this->entityFactory->getObjectManager()->getEventManager();
-                $timestampableEvents = ['prePersist', 'onFlush', 'loadClassMetadata'];
-
-                if (null === $this->timestampableListener) {
+                if (null === $this->loggableListener) {
                     foreach ($eventManager->getListeners() as $event => $listeners) {
                         foreach ($listeners as $hash => $listener) {
-                            if ($listener instanceof TimestampableListener) {
-                                $this->timestampableListener = $listener;
+                            if ($listener instanceof loggableListener) {
+                                $this->loggableListener = $listener;
                                 break 2;
                             }
                         }
                     }
                 }
-                if (null === $this->timestampableListener) {
+                if (null === $this->loggableListener) {
                     return;
                 }
 
                 if (true === $enable) {
-                    $eventManager->addEventListener($timestampableEvents, $this->timestampableListener);
+                    $eventManager->addEventSubscriber($this->loggableListener);
                 } else {
-                    $eventManager->removeEventListener($timestampableEvents, $this->timestampableListener);
+                    $eventManager->removeEventSubscriber($this->loggableListener);
                 }
             }
         «ENDIF»
