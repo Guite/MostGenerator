@@ -38,9 +38,6 @@ class Translatable extends AbstractExtension implements EntityExtensionInterface
          * Used locale to override Translation listener's locale.
          * this is not a mapped field of entity metadata, just a simple property.
          *
-         «IF loggable»
-             * @Gedmo\Versioned
-         «ENDIF»
          * @Assert\Locale()
          * @Gedmo\Locale«/*the same as @Gedmo\Language*/»
          * @var string $locale
