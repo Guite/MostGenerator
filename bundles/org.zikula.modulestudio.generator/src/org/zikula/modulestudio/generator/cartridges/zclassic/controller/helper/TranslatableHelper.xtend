@@ -15,17 +15,23 @@ class TranslatableHelper {
     extension ModelExtensions = new ModelExtensions
     extension Utils = new Utils
 
+    Boolean needsDynamicTimestampableEnablement
+
     /**
      * Entry point for the helper class creation.
      */
     def generate(Application it, IMostFileSystemAccess fsa) {
         'Generating helper class for translatable entities'.printIfNotTesting(fsa)
         fsa.generateClassPair('Helper/TranslatableHelper.php', translatableFunctionsBaseImpl, translatableFunctionsImpl)
+        needsDynamicTimestampableEnablement = if (!getAllEntities.filter[loggable && hasTranslatableFields && (standardFields || hasTimestampableFields)].empty) true else false
     }
 
     def private translatableFunctionsBaseImpl(Application it) '''
         namespace «appNamespace»\Helper\Base;
 
+        «IF needsDynamicTimestampableEnablement»
+            use Gedmo\Timestampable\TimestampableListener;
+        «ENDIF»
         use Symfony\Component\Form\FormInterface;
         use Symfony\Component\HttpFoundation\RequestStack;
         use Zikula\Common\Translator\TranslatorInterface;
@@ -68,6 +74,13 @@ class TranslatableHelper {
          * @var EntityFactory
          */
         protected $entityFactory;
+        «IF needsDynamicTimestampableEnablement»
+
+            /**
+             * @var TimestampableListener
+             */
+            protected $timestampableListener;
+        «ENDIF»
 
         /**
          * TranslatableHelper constructor.
@@ -90,6 +103,9 @@ class TranslatableHelper {
             $this->variableApi = $variableApi;
             $this->localeApi = $localeApi;
             $this->entityFactory = $entityFactory;
+            «IF needsDynamicTimestampableEnablement»
+                $this->timestampableListener = null;
+            «ENDIF»
         }
 
         «getTranslatableFieldsImpl»
@@ -245,12 +261,14 @@ class TranslatableHelper {
         /**
          * Post-editing method persisting translated fields.
          *
-         * @param EntityAccess  $entity        The entity being edited
-         * @param FormInterface $form          Form containing translations
-         * @param EntityManager $entityManager Entity manager
+         * @param EntityAccess  $entity The entity being edited
+         * @param FormInterface $form   Form containing translations
          */
-        public function processEntityAfterEditing($entity, $form, $entityManager)
+        public function processEntityAfterEditing($entity, $form)
         {
+            «IF needsDynamicTimestampableEnablement»
+                $this->toggleTimestampable(true);
+            «ENDIF»
             $objectType = $entity->get_objectType();
             $supportedLanguages = $this->getSupportedLanguages($objectType);
             foreach ($supportedLanguages as $language) {
@@ -266,9 +284,47 @@ class TranslatableHelper {
                     $entity[$fieldName] = $fieldData;
                 }
                 $entity['locale'] = $language;
-                $entityManager->flush();
+                $this->entityFactory->getObjectManager()->flush();
             }
+            «IF needsDynamicTimestampableEnablement»
+                $this->toggleTimestampable(true);
+            «ENDIF»
         }
+        «IF needsDynamicTimestampableEnablement»
+
+            /**
+             * Enables or disables the timestampable listener.
+             *
+             * @param boolean $enable True for enable, false for disable
+             *
+             * @see https://github.com/Atlantic18/DoctrineExtensions/issues/1722
+             */
+            public function toggleTimestampable($enable = true)
+            {
+                $eventManager = $this->entityFactory->getObjectManager()->getEventManager();
+                $timestampableEvents = ['prePersist', 'onFlush', 'loadClassMetadata'];
+
+                if (null === $this->timestampableListener) {
+                    foreach ($eventManager->getListeners() as $event => $listeners) {
+                        foreach ($listeners as $hash => $listener) {
+                            if ($listener instanceof TimestampableListener) {
+                                $this->timestampableListener = $listener;
+                                break 2;
+                            }
+                        }
+                    }
+                }
+                if (null === $this->timestampableListener) {
+                    return;
+                }
+
+                if (true === $enable) {
+                    $eventManager->addEventListener($timestampableEvents, $this->timestampableListener);
+                } else {
+                    $eventManager->removeEventListener($timestampableEvents, $this->timestampableListener);
+                }
+            }
+        «ENDIF»
     '''
 
     def private translatableFunctionsImpl(Application it) '''

@@ -989,7 +989,7 @@ class FormHandler {
                 }
 
                 // persist translated fields
-                $this->translatableHelper->processEntityAfterEditing($this->entityRef, $this->form, $this->entityFactory->getObjectManager());
+                $this->translatableHelper->processEntityAfterEditing($this->entityRef, $this->form);
             }
         «ENDIF»
 
