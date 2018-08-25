@@ -133,8 +133,9 @@ class Loggable extends AbstractExtension implements EntityExtensionInterface {
                ->setParameter('objectClass', $objectClass)
                ->addOrderBy('log.objectId', 'ASC')
                ->addOrderBy('log.version', 'ASC')
-           ;
+            ;
 
+            $logAmountMap = [];
             if ('limitedByAmount' == $revisionHandling) {
                 $limitParameter = intval($limitParameter);
                 if (!$limitParameter) {
@@ -143,7 +144,7 @@ class Loggable extends AbstractExtension implements EntityExtensionInterface {
                 $limitParameter++; // one more for the initial creation entry
 
                 $qbMatchingObjects = $this->getEntityManager()->createQueryBuilder();
-                $qbMatchingObjects->select('log.objectId, COUNT(log.objectId) AS HIDDEN amountOfRevisions')
+                $qbMatchingObjects->select('log.objectId, COUNT(log.objectId) amountOfRevisions')
                     ->from($this->_entityName, 'log')
                     ->andWhere('log.objectClass = :objectClass')
                     ->setParameter('objectClass', $objectClass)
@@ -153,6 +154,9 @@ class Loggable extends AbstractExtension implements EntityExtensionInterface {
                 ;
                 $result = $qbMatchingObjects->getQuery()->getScalarResult();
                 $identifiers = array_column($result, 'objectId');
+                foreach ($result as $row) {
+                    $logAmountMap[$row['objectId']] = $row['amountOfRevisions'];
+                }
 
                 $qb->andWhere('log.objectId IN (:identifiers)')
                    ->setParameter('identifiers', $identifiers)
@@ -180,7 +184,8 @@ class Loggable extends AbstractExtension implements EntityExtensionInterface {
             }
 
             $entityManager = $this->getEntityManager();
-            $thresholdPerObject = 'limitedByAmount' == $revisionHandling ? $limitParameter : -1;
+            $keepPerObject = 'limitedByAmount' == $revisionHandling ? $limitParameter : -1;
+            $thresholdForObject = 0;
             $counterPerObject = 0;
 
             // loop through the log entries
@@ -189,7 +194,8 @@ class Loggable extends AbstractExtension implements EntityExtensionInterface {
             $lastLogEntry = null;
             foreach ($result as $logEntry) {
                 // step 2 - conflate data arrays
-                if ($lastObjectId != $logEntry->getObjectId()) {
+                $objectId = $logEntry->getObjectId();
+                if ($lastObjectId != $objectId) {
                     if ($lastObjectId > 0) {
                         // write conflated data into last obsolete version (which will be kept)
                         $lastLogEntry->setData($dataForObject);
@@ -200,9 +206,10 @@ class Loggable extends AbstractExtension implements EntityExtensionInterface {
                         // very first loop execution, nothing special to do here
                     }
                     $counterPerObject = 1;
+                    $thresholdForObject = $keepPerObject > 0 && isset($logAmountMap[$objectId]) ? $logAmountMap[$objectId] : 1;
                 } else {
                     // we have a another log entry for the same object
-                    if ($thresholdPerObject < 0 || $counterPerObject < $thresholdPerObject) {
+                    if ($keepPerObject < 0 || $counterPerObject < $thresholdForObject) {
                         if (null !== $logEntry->getData()) {
                             $dataForObject = array_merge($dataForObject, $logEntry->getData());
                         }
@@ -211,7 +218,7 @@ class Loggable extends AbstractExtension implements EntityExtensionInterface {
                     }
                 }
 
-                $lastObjectId = $logEntry->getObjectId();
+                $lastObjectId = $objectId;
                 $lastLogEntry = $logEntry;
                 $counterPerObject++;
             }
