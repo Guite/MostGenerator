@@ -197,8 +197,10 @@ class Loggable extends AbstractExtension implements EntityExtensionInterface {
                 $objectId = $logEntry->getObjectId();
                 if ($lastObjectId != $objectId) {
                     if ($lastObjectId > 0) {
-                        // write conflated data into last obsolete version (which will be kept)
-                        $lastLogEntry->setData($dataForObject);
+                        if (count($dataForObject)) {
+                            // write conflated data into last obsolete version (which will be kept)
+                            $lastLogEntry->setData($dataForObject);
+                        }
                         // this becomes a creation entry now
                         $lastLogEntry->setAction(LoggableListener::ACTION_CREATE);
                         // we keep the old loggedAt value though
@@ -207,6 +209,7 @@ class Loggable extends AbstractExtension implements EntityExtensionInterface {
                     }
                     $counterPerObject = 1;
                     $thresholdForObject = $keepPerObject > 0 && isset($logAmountMap[$objectId]) ? ($logAmountMap[$objectId] - $keepPerObject) : 1;
+                    $dataForObject = $logEntry->getData();
                 } else {
                     // we have a another log entry for the same object
                     if ($keepPerObject < 0 || $counterPerObject < $thresholdForObject) {
@@ -226,8 +229,10 @@ class Loggable extends AbstractExtension implements EntityExtensionInterface {
             }
 
             // do not forget to save values for the last objectId
-            if (null !== $lastLogEntry && count($dataForObject)) {
-                $lastLogEntry->setData($dataForObject);
+            if (null !== $lastLogEntry) {
+                if (count($dataForObject)) {
+                    $lastLogEntry->setData($dataForObject);
+                }
                 $lastLogEntry->setAction(LoggableListener::ACTION_CREATE);
             }
 
