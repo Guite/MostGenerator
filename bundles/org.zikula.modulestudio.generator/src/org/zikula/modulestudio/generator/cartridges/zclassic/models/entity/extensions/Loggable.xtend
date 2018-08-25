@@ -202,7 +202,7 @@ class Loggable extends AbstractExtension implements EntityExtensionInterface {
                     $counterPerObject = 1;
                 } else {
                     // we have a another log entry for the same object
-                    if ($counterPerObject < $thresholdPerObject) {
+                    if ($thresholdPerObject < 0 || $counterPerObject < $thresholdPerObject) {
                         if (null !== $logEntry->getData()) {
                             $dataForObject = array_merge($dataForObject, $logEntry->getData());
                         }
