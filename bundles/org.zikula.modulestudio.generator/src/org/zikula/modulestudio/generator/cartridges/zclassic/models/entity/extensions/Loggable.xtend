@@ -220,7 +220,7 @@ class Loggable extends AbstractExtension implements EntityExtensionInterface {
 
                 $lastObjectId = $objectId;
                 if ($keepPerObject < 0 || $counterPerObject < $thresholdForObject) {
-                	$lastLogEntry = $logEntry;
+                    $lastLogEntry = $logEntry;
                 }
                 $counterPerObject++;
             }
