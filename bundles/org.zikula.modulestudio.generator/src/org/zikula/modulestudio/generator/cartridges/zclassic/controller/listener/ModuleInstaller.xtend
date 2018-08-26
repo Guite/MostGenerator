@@ -165,7 +165,7 @@ class ModuleInstaller {
         {
             «IF hasUiHooksProviders»
                 $module = $event->getModule();
-                if (null === $module || $module->getName() === '«appName»') {
+                if (null === $module || '«appName»' === $module->getName()) {
                     return;
                 }
 
