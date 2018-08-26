@@ -135,14 +135,14 @@ class ItemActions {
             // more actions for adding new related items
             «FOR elem : refedElems»
                 «val useTarget = (elem.source == it)»
-                «val relationAliasName = elem.getRelationAliasName(useTarget).formatForCode.toFirstLower»
+                «val relationAliasName = elem.getRelationAliasName(useTarget).formatForCodeCapital»
                 «val relationAliasNameParam = elem.getRelationAliasName(!useTarget)»
                 «val otherEntity = (if (!useTarget) elem.source else elem.target)»
 
                 if («IF standardFields»$isOwner || «ENDIF»$this->permissionHelper->hasComponentPermission('«otherEntity.name.formatForCode»', ACCESS_«IF otherEntity instanceof Entity && (otherEntity as Entity).ownerPermission»ADD«ELSEIF (otherEntity as Entity).workflow == EntityWorkflowType.NONE»EDIT«ELSE»COMMENT«ENDIF»)) {
                     «val many = elem.isManySideDisplay(useTarget)»
                     «IF !many»
-                        if (!isset($entity->«relationAliasName») || null === $entity->«relationAliasName») {
+                        if (null === $entity->get«relationAliasName»()) {
                             $title = $this->__('Create «elem.getRelationAliasName(useTarget).formatForDisplay»', '«app.appName.formatForDB»');
                             $menu->addChild($title, [
                                 'route' => '«app.appName.formatForDB»_«otherEntity.name.formatForDB»_' . $routeArea . 'edit',
