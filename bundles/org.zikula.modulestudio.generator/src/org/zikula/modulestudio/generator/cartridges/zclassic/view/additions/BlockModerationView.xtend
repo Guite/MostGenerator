@@ -2,12 +2,17 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.view.additions
 
 import de.guite.modulestudio.metamodel.Application
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
+import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
+import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class BlockModerationView {
+
+    extension ControllerExtensions = new ControllerExtensions
     extension FormattingExtensions = new FormattingExtensions
+    extension ModelExtensions = new ModelExtensions
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
 
@@ -23,7 +28,15 @@ class BlockModerationView {
             <ul>
             {% for modItem in moderationObjects %}
                 {% set itemObjectType = modItem.objectType|lower %}
-                <li><a href="{{ path('«appName.formatForDB»_' ~ itemObjectType ~ '_adminview', {workflowState: modItem.state}) }}" class="bold">{{ modItem.message }}</a></li>
+                «IF hasViewActions»
+                    {% if itemObjectType in ['«getAllEntities.filter[hasViewAction].map[name.formatForCode].join('\', \'')»'] %}
+                        <li><a href="{{ path('«appName.formatForDB»_' ~ itemObjectType ~ '_adminview', {workflowState: modItem.state}) }}" class="bold">{{ modItem.message }}</a></li>
+                    {% else %}
+                        <li><a href="{{ path('«appName.formatForDB»_' ~ itemObjectType ~ '_adminindex', {workflowState: modItem.state}) }}" class="bold">{{ modItem.message }}</a></li>
+                    {% endif %}
+                «ELSE»
+                    <li><a href="{{ path('«appName.formatForDB»_' ~ itemObjectType ~ '_adminindex', {workflowState: modItem.state}) }}" class="bold">{{ modItem.message }}</a></li>
+                «ENDIF»
             {% endfor %}
             </ul>
         {% endif %}
