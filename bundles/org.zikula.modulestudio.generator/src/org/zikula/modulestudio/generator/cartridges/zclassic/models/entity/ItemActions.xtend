@@ -87,7 +87,7 @@ class ItemActions {
         «ENDIF»
         «IF loggable»
             if ($this->permissionHelper->mayAccessHistory($entity)) {
-                if (in_array($context, ['view', 'display']) && $entity->get«versionField.name.formatForCodeCapital»() > 1) {
+                if (in_array($context, ['view', 'display']) && $this->loggableHelper->hasHistoryItems($entity)) {
                     $title = $this->__('History', '«app.appName.formatForDB»');
                     $menu->addChild($title, [
                         'route' => $routePrefix . $routeArea . 'loggablehistory',

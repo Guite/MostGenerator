@@ -180,6 +180,9 @@ class ServiceDefinitions {
                     «IF hasDisplayActions»
                         - "@«modPrefix».entity_display_helper"
                     «ENDIF»
+                    «IF hasLoggable»
+                        «modPrefix».loggable_helper
+                    «ENDIF»
                     - "@zikula_users_module.current_user"
                 tags:
                     - { name: knp_menu.menu_builder, method: createItemActionsMenu, alias: «vendorAndName.toFirstLower»MenuItemActions }

@@ -42,6 +42,9 @@ class MenuBuilder {
         «IF hasDisplayActions»
             use «appNamespace»\Helper\EntityDisplayHelper;
         «ENDIF»
+        «IF hasLoggable»
+            use «appNamespace»\Helper\LoggableHelper;
+        «ENDIF»
         use «appNamespace»\Helper\PermissionHelper;
         use Zikula\UsersModule\Api\ApiInterface\CurrentUserApiInterface;
 
@@ -78,6 +81,13 @@ class MenuBuilder {
                  */
                 protected $entityDisplayHelper;
             «ENDIF»
+            «IF hasLoggable»
+
+                /**
+                 * @var LoggableHelper
+                 */
+                protected $loggableHelper;
+            «ENDIF»
 
             /**
              * @var CurrentUserApiInterface
@@ -95,6 +105,9 @@ class MenuBuilder {
              «IF hasDisplayActions»
              * @param EntityDisplayHelper      $entityDisplayHelper EntityDisplayHelper service instance
              «ENDIF»
+             «IF hasLoggable»
+             * @param LoggableHelper           $loggableHelper      LoggableHelper service instance
+             «ENDIF»
              * @param CurrentUserApiInterface  $currentUserApi      CurrentUserApi service instance
              */
             public function __construct(
@@ -106,6 +119,9 @@ class MenuBuilder {
                 «IF hasDisplayActions»
                     EntityDisplayHelper $entityDisplayHelper,
                 «ENDIF»
+                «IF hasLoggable»
+                    LoggableHelper $loggableHelper,
+                «ENDIF»
                 CurrentUserApiInterface $currentUserApi)
             {
                 $this->setTranslator($translator);
@@ -115,6 +131,9 @@ class MenuBuilder {
                 $this->permissionHelper = $permissionHelper;
                 «IF hasDisplayActions»
                     $this->entityDisplayHelper = $entityDisplayHelper;
+                «ENDIF»
+                «IF hasLoggable»
+                    $this->loggableHelper = $loggableHelper;
                 «ENDIF»
                 $this->currentUserApi = $currentUserApi;
             }

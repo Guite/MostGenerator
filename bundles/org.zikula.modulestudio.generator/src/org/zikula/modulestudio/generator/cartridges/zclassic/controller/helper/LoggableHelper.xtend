@@ -86,6 +86,10 @@ class LoggableHelper {
 
         «determineDiffViewParameters»
 
+        «getVersionFieldName»
+
+        «hasHistoryItems»
+
         «hasDeletedEntities»
 
         «getDeletedEntities»
@@ -146,6 +150,51 @@ class LoggableHelper {
             }
 
             return [$minVersion, $maxVersion, $diffValues];
+        }
+    '''
+
+    def private getVersionFieldName(Application it) '''
+        /**
+         * Return name of the version field for the given object type.
+         *
+         * @param string $objectType Currently treated entity type
+         *
+         * @return string
+         */
+        public function getVersionFieldName($objectType = '')
+        {
+            $versionFieldMap = [
+                «FOR entity : getLoggableEntities»
+                    '«entity.name.formatForCode»' => '«entity.getVersionField.name.formatForCode»',
+                «ENDFOR»
+            ];
+
+            return isset($versionFieldMap[$objectType]) ? $versionFieldMap[$objectType] : '';
+        }
+    '''
+
+    def private hasHistoryItems(Application it) '''
+        /**
+         * Checks whether a history may be shown for the given entity instance.
+         *
+         * @param EntityAccess $entity Currently treated entity instance
+         *
+         * @return boolean
+         */
+        public function hasHistoryItems($entity)
+        {
+            $objectType = $entity->get_objectType();
+            $versionField = $this->getVersionFieldName($objectType);
+            $getter = 'get' . ucfirst($versionField);
+
+            /** alternative (with worse performance)
+             * $entityManager = $this->entityFactory->getObjectManager();
+             * $logEntriesRepository = $entityManager->getRepository('«appName»:' . ucfirst($objectType) . 'LogEntryEntity');
+             * $logEntries = $logEntriesRepository->getLogEntries($entity);
+             * return count($logEntries) > 1;
+             */
+
+            return $entity->$getter() > 1;
         }
     '''
 
@@ -251,14 +300,11 @@ class LoggableHelper {
                 return null;
             }
 
-            $versionFieldMap = [
-                «FOR entity : getLoggableEntities»
-                    '«entity.name.formatForCode»' => '«entity.getVersionField.name.formatForCode»',
-                «ENDFOR»
-            ];
+            $objectType = $entity->get_objectType();
+            $versionField = $this->getVersionFieldName($objectType);
 
             $logEntriesRepository->revert($entity, $lastVersionBeforeDeletion);
-            $versionSetter = 'set' . ucfirst($versionFieldMap[$objectType]);
+            $versionSetter = 'set' . ucfirst($versionField);
             $entity->$versionSetter($lastVersionBeforeDeletion + 2);
 
             $entity = $this->revertPostProcess($entity);
