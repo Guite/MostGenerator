@@ -69,9 +69,6 @@ class Tree extends AbstractExtension implements EntityExtensionInterface {
         protected $rgt;
 
         /**
-         «IF loggable»
-             * @Gedmo\Versioned
-         «ENDIF»
          * @Gedmo\TreeRoot
          * @ORM\Column(type="integer", nullable=true)
          * @var integer $root

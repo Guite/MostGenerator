@@ -408,14 +408,15 @@ class TranslatableHelper {
 
             // remove all existing translations
             $entityManager = $this->entityFactory->getObjectManager();
-            $repository = $entityManager->getRepository('«appNamespace»\Entity\\' . ucfirst($objectType) . 'TranslationEntity');
-            $translationMeta = $repository->getClassMetadata();
+            $translationClass = 'Zikula\ContentModule\Entity\\' . ucfirst($objectType) . 'TranslationEntity';
+            $repository = $entityManager->getRepository($translationClass);
+            $translationMeta = $entityManager->getClassMetadata($translationClass);
             $qb = $entityManager->createQueryBuilder();
             $qb->delete($translationMeta->rootEntityName, 'trans')
                ->where('trans.objectClass = :objectClass')
                ->andWhere('trans.foreignKey = :objectId')
                ->setParameter('objectClass', get_class($entity))
-               ->setParameter('foreignKey', $entity->getKey())
+               ->setParameter('objectId', $entity->getKey())
             ;
             $query = $qb->getQuery();
             $query->execute();
@@ -430,11 +431,11 @@ class TranslatableHelper {
                 }
 
                 foreach ($translatableFields as $fieldName) {
-                    if (!isset($translationData[$locale][$fieldName])) {
+                    if (!isset($translationData[$language][$fieldName])) {
                         continue;
                     }
                     $setter = 'set' . ucfirst($fieldName);
-                    $entity->$setter($translationData[$locale][$fieldName]);
+                    $entity->$setter($translationData[$language][$fieldName]);
                 }
 
                 $entity['locale'] = $language;
