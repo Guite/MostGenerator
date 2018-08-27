@@ -215,7 +215,6 @@ class ImageHelper {
         }
     '''
 
-
     def private dummySignerBaseImpl(Application it) '''
         namespace «appNamespace»\Imagine\Cache\Base;
 

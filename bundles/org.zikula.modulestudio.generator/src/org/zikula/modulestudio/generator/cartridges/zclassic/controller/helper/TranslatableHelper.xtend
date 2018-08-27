@@ -119,6 +119,12 @@ class TranslatableHelper {
         «prepareEntityForEditing»
 
         «processEntityAfterEditing»
+        «IF hasLoggableTranslatable»
+
+            «setEntityFieldsFromLogData»
+
+            «refreshTranslationsFromLogData»
+        «ENDIF»
     '''
 
     def private getTranslatableFieldsImpl(Application it) '''
@@ -224,7 +230,8 @@ class TranslatableHelper {
             }
 
             // get translations
-            $repository = $this->entityFactory->getObjectManager()->getRepository('Gedmo\Translatable\Entity\Translation');
+            $entityManager = $this->entityFactory->getObjectManager();
+            $repository = $entityManager->getRepository('«appNamespace»\Entity\' . ucfirst($objectType) . 'TranslationEntity');
             $entityTranslations = $repository->findTranslations($entity);
 
             $supportedLanguages = $this->getSupportedLanguages($objectType);
@@ -264,31 +271,56 @@ class TranslatableHelper {
          * @param EntityAccess  $entity The entity being edited
          * @param FormInterface $form   Form containing translations
          */
-        public function processEntityAfterEditing($entity, $form)
+        public function processEntityAfterEditing($entity, FormInterface $form)
         {
             «IF needsDynamicLoggableEnablement»
                 $this->toggleLoggable(false);
+
             «ENDIF»
             $objectType = $entity->get_objectType();
             $supportedLanguages = $this->getSupportedLanguages($objectType);
             foreach ($supportedLanguages as $language) {
-                if (!isset($form['translations' . $language])) {
+                $translationInput = $this->readTranslationInput($form, $language);
+                if (!count($translationInput)) {
                     continue;
                 }
-                $translatedFields = $form['translations' . $language];
-                foreach ($translatedFields as $fieldName => $formField) {
-                    $fieldData = $formField->getData();
-                    if (!$fieldData && isset($form[$fieldName])) {
-                        $fieldData = $form[$fieldName]->getData();
-                    }
-                    $entity[$fieldName] = $fieldData;
+                foreach ($translationInput as $fieldName => $fieldData) {
+                    $setter = 'set' . ucfirst($fieldName);
+                    $entity->$setter($fieldData);
                 }
                 $entity['locale'] = $language;
                 $this->entityFactory->getObjectManager()->flush();
             }
             «IF needsDynamicLoggableEnablement»
+
                 $this->toggleLoggable(true);
             «ENDIF»
+        }
+
+        /**
+         * Collects translated fields from given form for a specific language.
+         *
+         * @param FormInterface $form     Form containing translations
+         * @param string        $language The desired language
+         *
+         * @return array
+         */
+        public function readTranslationInput(FormInterface $form, $language = 'en')
+        {
+            $data = [];
+            if (!isset($form['translations' . $language])) {
+                return $data;
+            }
+            $translatedFields = $form['translations' . $language];
+            foreach ($translatedFields as $fieldName => $formField) {
+                $fieldData = $formField->getData();
+                if (!$fieldData && isset($form[$fieldName])) {
+                    $fieldData = $form[$fieldName]->getData();
+                }
+                $data[$fieldName] = $fieldData;
+            }
+
+            return $data;
         }
         «IF needsDynamicLoggableEnablement»
 
@@ -322,6 +354,97 @@ class TranslatableHelper {
                 }
             }
         «ENDIF»
+    '''
+
+    def private setEntityFieldsFromLogData(Application it) '''
+        /**
+         * Sets values for translatable fields of given entity from it's stored
+         * translation data.
+         *
+         * @param EntityAccess $entity Currently treated entity instance
+         *
+         * @return EntityAccess The processed entity instance
+         */
+        public function setEntityFieldsFromLogData($entity)
+        {
+            // check if this revision has translation data for current locale
+            $translationData = $entity->getTranslationData();
+            $language = $this->getCurrentLanguage();
+            if (!isset($translationData[$language])) {
+                return $entity;
+            }
+
+            $objectType = $entity->get_objectType();
+            $translatableFields = $this->getTranslatableFields($objectType);
+            foreach ($translatableFields as $fieldName) {
+                if (!isset($translationData[$language][$fieldName])) {
+                    continue;
+                }
+                $setter = 'set' . ucfirst($fieldName);
+                $entity->$setter($translationData[$language][$fieldName]);
+            }
+
+            return $entity;
+        }
+    '''
+
+    def private refreshTranslationsFromLogData(Application it) '''
+        /**
+         * Removes all translations and persists them again for all
+         * translatable fields of given entity from it's stored
+         * translation data.
+         *
+         * The logic of this method is similar to processEntityAfterEditing above.
+         *
+         * @param EntityAccess $entity Currently treated entity instance
+         */
+        public function refreshTranslationsFromLogData($entity)
+        {
+            «IF needsDynamicLoggableEnablement»
+                $this->toggleLoggable(false);
+
+            «ENDIF»
+            $objectType = $entity->get_objectType();
+
+            // remove all existing translations
+            $entityManager = $this->entityFactory->getObjectManager();
+            $repository = $entityManager->getRepository('«appNamespace»\Entity\' . ucfirst($objectType) . 'TranslationEntity');
+            $translationMeta = $repository->getClassMetadata();
+            $qb = $entityManager->createQueryBuilder();
+            $qb->delete($translationMeta->rootEntityName, 'trans')
+               ->where('trans.objectClass = :objectClass')
+               ->andWhere('trans.foreignKey = :objectId')
+               ->setParameter('objectClass', get_class($entity))
+               ->setParameter('foreignKey', $entity->getKey())
+            ;
+            $query = $qb->getQuery();
+            $query->execute();
+
+            $translatableFields = $this->getTranslatableFields($objectType);
+            $translationData = $entity->getTranslationData();
+            $supportedLanguages = $this->getSupportedLanguages($objectType);
+            foreach ($supportedLanguages as $language) {
+                // check if this revision has translation data for current locale
+                if (!isset($translationData[$language])) {
+                    continue;
+                }
+
+                foreach ($translatableFields as $fieldName) {
+                    if (!isset($translationData[$locale][$fieldName])) {
+                        continue;
+                    }
+                    $setter = 'set' . ucfirst($fieldName);
+                    $entity->$setter($translationData[$locale][$fieldName]);
+                }
+
+                $entity['locale'] = $language;
+                $entityManager->flush();
+            }
+            «IF needsDynamicLoggableEnablement»
+
+                $this->toggleLoggable(true);
+            «ENDIF»
+        }
     '''
 
     def private translatableFunctionsImpl(Application it) '''

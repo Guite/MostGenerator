@@ -899,12 +899,32 @@ class FormHandler {
             $isRegularAction = $action != 'delete';
 
             $this->fetchInputData();
+            «IF !getTranslatableEntities.filter[loggable].empty»
+
+                if ($isRegularAction && true === $this->hasTranslatableFields) {
+                    if ($this->featureActivationHelper->isEnabled(FeatureActivationHelper::TRANSLATIONS, $this->objectType)) {
+                        if (in_array($this->objectType, ['«getTranslatableEntities.filter[loggable].map[name.formatForCode].join('\', \'')»'])) {
+                            // collect translated fields for revisioning
+                            $translationData = [];
+                            $supportedLanguages = $this->translatableHelper->getSupportedLanguages($this->objectType);
+                            foreach ($supportedLanguages as $language) {
+                                $translationInput = $this->translatableHelper->readTranslationInput($form, $language);
+                                if (!count($translationInput)) {
+                                    continue;
+                                }
+                                $translationData[$language] = $translationInput;
+                            }
+                            $this->entityRef->setTranslationData($translationData);
+                        }
+                    }
+                }
+            «ENDIF»
             «IF hasHookSubscribers»
 
                 // get treated entity reference from persisted member var
                 $entity = $this->entityRef;
 
-                if ($entity->supportsHookSubscribers() && $action != 'cancel') {
+                if ($entity->supportsHookSubscribers()) {
                     // Let any ui hooks perform additional validation actions
                     $hookType = $action == 'delete' ? UiHooksCategory::TYPE_VALIDATE_DELETE : UiHooksCategory::TYPE_VALIDATE_EDIT;
                     $validationErrors = $this->hookHelper->callValidationHooks($entity, $hookType);

@@ -554,7 +554,7 @@ class View {
                         </tr>
                     </thead>
                     <tbody>
-                        {% for logEntry in deletedItems %}
+                        {% for logEntry in deletedEntities %}
                             <tr>
                                 <td headers="hVersion" class="text-center">{{ logEntry.objectId }}</td>
                                 <td headers="hDate">{{ logEntry.loggedAt|localizeddate('long', 'medium') }}</td>

@@ -1,17 +1,16 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.controller.action
 
 import de.guite.modulestudio.metamodel.Entity
-import de.guite.modulestudio.metamodel.EntityTreeType
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
-import org.zikula.modulestudio.generator.extensions.ModelExtensions
+import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class LoggableUndelete {
 
     extension ControllerExtensions = new ControllerExtensions
     extension FormattingExtensions = new FormattingExtensions
-    extension ModelExtensions = new ModelExtensions
+    extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension Utils = new Utils
 
     def generate(Entity it, Boolean isBase) '''
@@ -19,10 +18,6 @@ class LoggableUndelete {
 
         «undelete(isBase, false)»
 
-        «IF isBase»
-            «restoreDeletedEntity»
-
-        «ENDIF»
     '''
 
     def private undelete(Entity it, Boolean isBase, Boolean isAdmin) '''
@@ -79,6 +74,9 @@ class LoggableUndelete {
 
     def private loggableUndeleteBaseImpl(Entity it) '''
         $«name.formatForCode» = $this->restoreDeletedEntity($id);
+        if (null === $«name.formatForCode») {
+            throw new NotFoundHttpException($this->__('No such «name.formatForDisplay» found.'));
+        }
 
         «IF hasDisplayAction»
             $preview = $request->query->getInt('preview', 0);
@@ -88,6 +86,10 @@ class LoggableUndelete {
 
         «ENDIF»
         «undeletion»
+        «IF hasTranslatableFields»
+
+            $this->get('«application.appService».translatable_helper')->refreshTranslationsFromLogData($«name.formatForCode»);
+        «ENDIF»
 
         $routeArea = $isAdmin ? 'admin' : '';
 
@@ -96,79 +98,10 @@ class LoggableUndelete {
 
     def private undeletion(Entity it) '''
         try {
-            $entityManager = $this->get('«application.appService».entity_factory')->getObjectManager();
-            $metadata = $entityManager->getClassMetaData(get_class($«name.formatForCode»));
-            $metadata->setIdGeneratorType(\Doctrine\ORM\Mapping\ClassMetadata::GENERATOR_TYPE_NONE);
-            $metadata->setIdGenerator(new \Doctrine\ORM\Id\AssignedGenerator());
-
-            $versionField = $metadata->versionField;
-            $metadata->setVersioned(false);
-            $metadata->setVersionField(null);
-
-            $entityManager->persist($«name.formatForCode»);
-            $entityManager->flush($«name.formatForCode»);
-
+            $this->get('«application.appService».loggable_helper')->undelete($«name.formatForCode»);
             $this->addFlash('status', $this->__('Done! Undeleted «name.formatForDisplay».'));
-
-            $metadata->setVersioned(true);
-            $metadata->setVersionField($versionField);
         } catch (\Exception $exception) {
             $this->addFlash('error', $this->__f('Sorry, but an error occured during the %action% action. Please apply the changes again!', ['%action%' => 'undelete']) . '  ' . $exception->getMessage());
-        }
-    '''
-
-    def private restoreDeletedEntity(Entity it) '''
-        /**
-         * Resets a deleted «name.formatForDisplay» back to the last version before it's deletion.
-         *
-         * @return «name.formatForCodeCapital»Entity The restored entity
-         *
-         * @throws NotFoundHttpException Thrown if «name.formatForDisplay» isn't found
-         */
-        protected function restoreDeletedEntity($id = 0)
-        {
-            if (!$id) {
-                throw new NotFoundHttpException($this->__('No such «name.formatForDisplay» found.'));
-            }
-
-            $entityFactory = $this->get('«application.appService».entity_factory');
-            $«name.formatForCode» = $entityFactory->create«name.formatForCodeCapital»();
-            $«name.formatForCode»->set«getPrimaryKey.name.formatForCodeCapital»($id);
-            $entityManager = $entityFactory->getObjectManager();
-            $logEntriesRepository = $entityManager->getRepository('«application.appName»:«name.formatForCodeCapital»LogEntryEntity');
-            $logEntries = $logEntriesRepository->getLogEntries($«name.formatForCode»);
-            $lastVersionBeforeDeletion = null;
-            foreach ($logEntries as $logEntry) {
-                if ('remove' != $logEntry->getAction()) {
-                    $lastVersionBeforeDeletion = $logEntry->getVersion();
-                    break;
-                }
-            }
-            if (null === $lastVersionBeforeDeletion) {
-                throw new NotFoundHttpException($this->__('No such «name.formatForDisplay» found.'));
-            }
-
-            $logEntriesRepository->revert($«name.formatForCode», $lastVersionBeforeDeletion);
-            «IF null !== getVersionField»
-                $«name.formatForCode»->set«getVersionField.name.formatForCodeCapital»($lastVersionBeforeDeletion + 2);
-            «ENDIF»
-
-            «IF tree !== EntityTreeType.NONE»
-                // check if parent is still valid
-                $repository = $entityFactory->getRepository('«name.formatForCode»');
-                $parentId = $«name.formatForCode»->getParent()->getId();
-                $parent = $parentId ? $repository->find($parentId) : null;
-                if (in_array('Doctrine\Common\Proxy\Proxy', class_implements($parent), true)) {
-                    // look for a root node to use as parent
-                    $parentNode = $repository->findOneBy(['lvl' => 0]);
-                    $«name.formatForCode»->setParent($parentNode);
-                }
-
-            «ENDIF»
-            $eventArgs = new \Doctrine\Common\Persistence\Event\LifecycleEventArgs($«name.formatForCode», $entityManager);
-            $this->get('«application.appService».entity_lifecycle_listener')->postLoad($eventArgs);
-
-            return $«name.formatForCode»;
         }
     '''
 }

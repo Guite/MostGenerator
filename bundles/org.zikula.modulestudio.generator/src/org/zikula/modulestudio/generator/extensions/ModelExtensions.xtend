@@ -835,37 +835,6 @@ class ModelExtensions {
     }
 
     /**
-     * Determines the version field of a data object if there is one.
-     */
-    def getVersionField(DataObject it) {
-        val intVersions = getSelfAndParentDataObjects.map[fields.filter(IntegerField).filter[version]].flatten
-        if (!intVersions.empty) {
-            return intVersions.head
-        }
-    }
-
-    /**
-     * Checks whether the given field is a default (= no custom) identifier field.
-     */
-    def isDefaultIdField(DerivedField it) {
-        isDefaultIdFieldName(entity, name.formatForDB)
-    }
-
-    /**
-     * Checks whether the given string is the name of the default (= no custom) identifier field.
-     */
-    def isDefaultIdFieldName(DataObject it, String s) {
-        newArrayList('id', name.formatForDB + 'id', name.formatForDB + '_id').contains(s)
-    }
-
-    /**
-     * Checks whether the given list contains the name of a default (= no custom) identifier field.
-     */
-    def boolean containsDefaultIdField(Iterable<String> l, DataObject dataObject) {
-        isDefaultIdFieldName(dataObject, l.head) || (l.size > 1 && containsDefaultIdField(l.tail, dataObject))
-    }
-
-    /**
      * Prints an output string corresponding to the given entity lock type.
      */
     def ipScopeAsConstant(IpAddressScope scope) {

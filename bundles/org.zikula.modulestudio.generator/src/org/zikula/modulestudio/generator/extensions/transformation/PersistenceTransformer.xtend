@@ -1,9 +1,11 @@
 package org.zikula.modulestudio.generator.extensions.transformation
 
 import de.guite.modulestudio.metamodel.Application
+import de.guite.modulestudio.metamodel.ArrayType
 import de.guite.modulestudio.metamodel.DataObject
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.EntityWorkflowType
+import de.guite.modulestudio.metamodel.FieldDisplayType
 import de.guite.modulestudio.metamodel.ListFieldItem
 import de.guite.modulestudio.metamodel.ManyToOneRelationship
 import de.guite.modulestudio.metamodel.MappedSuperClass
@@ -132,6 +134,17 @@ class PersistenceTransformer {
         if (it instanceof Entity) {
             if (!inheriting || parentType instanceof MappedSuperClass) {
                 addWorkflowState
+            }
+
+            if (loggable && hasTranslatableFields) {
+                // add array field to store revisions of translations
+                fields += ModuleStudioFactory.eINSTANCE.createArrayField => [
+                    name = 'translationData'
+                    mandatory = false
+                    displayType = FieldDisplayType.NONE
+                    visible = false
+                    arrayType = ArrayType.JSON_ARRAY
+                ]
             }
         }
     }

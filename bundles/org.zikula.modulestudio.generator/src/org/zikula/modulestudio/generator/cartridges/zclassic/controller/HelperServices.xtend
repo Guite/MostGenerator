@@ -12,8 +12,10 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.controller.helper.F
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.helper.HookHelper
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.helper.ImageHelper
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.helper.ListEntriesHelper
+import org.zikula.modulestudio.generator.cartridges.zclassic.controller.helper.LoggableHelper
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.helper.ModelHelper
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.helper.NotificationHelper
+import org.zikula.modulestudio.generator.cartridges.zclassic.controller.helper.PermissionHelper
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.helper.SearchHelper
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.helper.SlugTransliterator
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.helper.TranslatableHelper
@@ -23,7 +25,6 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.controller.helper.W
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
-import org.zikula.modulestudio.generator.cartridges.zclassic.controller.helper.PermissionHelper
 
 /**
  * Entry point for the utility service class creation.
@@ -58,6 +59,9 @@ class HelperServices {
         }
         if (hasListFields) {
             new ListEntriesHelper().generate(it, fsa)
+        }
+        if (hasLoggable) {
+            new LoggableHelper().generate(it, fsa)
         }
         new ModelHelper().generate(it, fsa)
         if (needsApproval) {

@@ -790,6 +790,17 @@ class ServiceDefinitions {
                 arguments:
                     - "@translator.default"
         «ENDIF»
+        «IF hasLoggable»
+
+            «modPrefix».loggable_helper:
+                class: «nsBase»LoggableHelper
+                arguments:
+                - "@«modPrefix».entity_factory"
+                - "@«modPrefix».entity_lifecycle_listener"
+                «IF hasLoggableTranslatable»
+                    - "@«modPrefix».translatable_helper"
+                «ENDIF»
+        «ENDIF»
 
         «modPrefix».model_helper:
             class: «nsBase»ModelHelper

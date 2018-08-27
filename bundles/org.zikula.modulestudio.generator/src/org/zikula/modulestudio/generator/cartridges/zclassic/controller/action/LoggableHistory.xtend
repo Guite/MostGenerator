@@ -106,12 +106,16 @@ class LoggableHistory {
         $revertToVersion = $request->query->getInt('revert', 0);
         if ($revertToVersion > 0 && count($logEntries) > 1) {
             // revert to requested version
-            $logEntriesRepository->revert($«name.formatForCode», $revertToVersion);
+            $«name.formatForCode» = $this->get('«application.appService».loggable_helper')->revert($«name.formatForCode», $revertToVersion);
 
             try {
                 // execute the workflow action
                 $workflowHelper = $this->get('«application.appService».workflow_helper');
                 $success = $workflowHelper->executeAction($«name.formatForCode», 'update'«IF !application.targets('2.0')» . $«name.formatForCode»->getWorkflowState()«ENDIF»);
+                «IF hasTranslatableFields»
+
+                    $this->get('«application.appService».translatable_helper')->refreshTranslationsFromLogData($«name.formatForCode»);
+                «ENDIF»
 
                 if ($success) {
                     $this->addFlash('status', $this->__f('Done! Reverted «name.formatForDisplay» to version %version%.', ['%version%' => $revertToVersion]));
@@ -156,41 +160,7 @@ class LoggableHistory {
         ];
 
         if (true === $isDiffView) {
-            $minVersion = $maxVersion = 0;
-            if ($versions[0] < $versions[1]) {
-                $minVersion = $versions[0];
-                $maxVersion = $versions[1];
-            } else {
-                $minVersion = $versions[1];
-                $maxVersion = $versions[0];
-            }
-            $logEntries = array_reverse($logEntries);
-
-            $diffValues = [];
-            foreach ($logEntries as $logEntry) {
-                if (null === $logEntry->getData()) {
-                    continue;
-                }
-                foreach ($logEntry->getData() as $field => $value) {
-                    if (!isset($diffValues[$field])) {
-                        $diffValues[$field] = [
-                            'old' => '',
-                            'new' => '',
-                            'changed' => false
-                        ];
-                    }
-                    if (is_array($value)) {
-                        $value = is_array(reset($value)) ? 'Array' : implode(', ', $value);
-                    }
-                    if ($logEntry->getVersion() <= $minVersion) {
-                        $diffValues[$field]['old'] = $value;
-                        $diffValues[$field]['new'] = $value;
-                    } elseif ($logEntry->getVersion() <= $maxVersion) {
-                        $diffValues[$field]['new'] = $value;
-                        $diffValues[$field]['changed'] = $diffValues[$field]['new'] != $diffValues[$field]['old'];
-                    }
-                }
-            }
+            list ($minVersion, $maxVersion, $diffValues) = $this->get('«application.appService».loggable_helper')->determineDiffViewParameters($logEntries);
             $templateParameters['minVersion'] = $minVersion;
             $templateParameters['maxVersion'] = $maxVersion;
             $templateParameters['diffValues'] = $diffValues;

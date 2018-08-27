@@ -131,6 +131,20 @@ class ModelBehaviourExtensions {
     }
 
     /**
+     * Checks whether the application contains at least one entity with loggable and translatable extensions enabled.
+     */
+    def hasLoggableTranslatable(Application it) {
+        !getLoggableTranslatableEntities.empty
+    }
+
+    /**
+     * Returns a list of all entities with loggable and translatable extensions enabled.
+     */
+    def getLoggableTranslatableEntities(Application it) {
+        getAllEntities.filter[loggable && hasTranslatableFields]
+    }
+
+    /**
      * Checks whether the application contains at least one entity with the tree extension enabled.
      */
     def hasTrees(Application it) {
@@ -371,6 +385,16 @@ class ModelBehaviourExtensions {
      */
     def hasTranslatableSlug(Entity it) {
         !getSluggableFields.filter[translatable].empty
+    }
+
+    /**
+     * Determines the version field of a data object if there is one.
+     */
+    def getVersionField(DataObject it) {
+        val intVersions = getSelfAndParentDataObjects.map[fields.filter(IntegerField).filter[version]].flatten
+        if (!intVersions.empty) {
+            return intVersions.head
+        }
     }
 
     /**

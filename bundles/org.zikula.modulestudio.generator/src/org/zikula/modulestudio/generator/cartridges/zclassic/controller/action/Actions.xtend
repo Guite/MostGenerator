@@ -128,9 +128,7 @@ class Actions {
             // check if deleted entities should be displayed
             $viewDeleted = $request->query->getInt('deleted', 0);
             if ($viewDeleted == 1 && $permissionHelper->hasComponentPermission('«name.formatForCode»', ACCESS_EDIT)) {
-                $entityManager = $this->get('«application.appService».entity_factory')->getObjectManager();
-                $logEntriesRepository = $entityManager->getRepository('«application.appName»:«name.formatForCodeCapital»LogEntryEntity');
-                $templateParameters['deletedItems'] = $logEntriesRepository->selectDeleted();
+                $templateParameters['deletedEntities'] = $this->get('«application.appService».loggable_helper')->getDeletedEntities($objectType);
 
                 return $viewHelper->processTemplate($objectType, 'viewDeleted', $templateParameters);
             }
@@ -189,9 +187,7 @@ class Actions {
             // check if there exist any deleted «name.formatForDisplay»
             $templateParameters['hasDeletedEntities'] = false;
             if ($permissionHelper->hasPermission(ACCESS_EDIT)) {
-                $entityManager = $this->get('«application.appService».entity_factory')->getObjectManager();
-                $logEntriesRepository = $entityManager->getRepository('«application.appName»:«name.formatForCodeCapital»LogEntryEntity');
-                $templateParameters['hasDeletedEntities'] = count($logEntriesRepository->selectDeleted(1)) > 0;
+                $templateParameters['hasDeletedEntities'] = $this->get('«application.appService».loggable_helper')->hasDeletedEntities($objectType);
             }
         «ENDIF»
 
@@ -286,15 +282,8 @@ class Actions {
             $requestedVersion = $request->query->getInt('version', 0);
             $versionPermLevel = $isAdmin ? ACCESS_ADMIN : ACCESS_EDIT;
             if ($requestedVersion > 0 && $permissionHelper->hasEntityPermission($«name.formatForCode», $versionPermLevel)) {
-                // preview of a specific version is desired
-                $entityManager = $this->get('«application.appService».entity_factory')->getObjectManager();
-                $logEntriesRepository = $entityManager->getRepository('«application.appName»:«name.formatForCodeCapital»LogEntryEntity');
-                $logEntries = $logEntriesRepository->getLogEntries($«name.formatForCode»);
-                if (count($logEntries) > 1) {
-                    // revert to requested version but detach to avoid persisting it
-                    $logEntriesRepository->revert($«name.formatForCode», $requestedVersion);
-                    $entityManager->detach($«name.formatForCode»);
-                }
+                // preview of a specific version is desired, but detach entity
+                $«name.formatForCode» = $this->get('«application.appService».loggable_helper')->revert($«name.formatForCode», $requestedVersion, true);
             }
 
         «ENDIF»
