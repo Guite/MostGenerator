@@ -346,7 +346,7 @@ class LoggableHelper {
                 }
             «ENDIF»
 
-            $eventArgs = new LifecycleEventArgs($entity, $entityManager);
+            $eventArgs = new LifecycleEventArgs($entity, $this->entityFactory->getObjectManager());
             $this->entityLifecycleListener->postLoad($eventArgs);
 
             return $entity;
