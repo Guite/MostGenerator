@@ -98,7 +98,7 @@ class Loggable extends AbstractExtension implements EntityExtensionInterface {
                ->andWhere('log.action = :action')
                ->setParameter('action', LoggableListener::ACTION_REMOVE)
                ->andWhere($qb->expr()->notIn('log.objectId', $qbExisting->getDQL()))
-               ->orderBy('log.version', 'DESC')
+               ->orderBy('log.loggedAt', 'DESC')
            ;
 
             $query = $qb->getQuery();

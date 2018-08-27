@@ -393,7 +393,7 @@ class ModelExtensions {
      * In addition all fields which are used as join columns are excluded as well.
      */
     def getEditableFields(DataObject it) {
-        var fields = getDerivedFields.filter[name != 'workflowState']
+        var fields = getDerivedFields.filter[name != 'workflowState' && name != 'translationData']
         if (it instanceof Entity && (it as Entity).identifierStrategy != EntityIdentifierStrategy.NONE) {
             fields = fields.filter[!primaryKey]
         }

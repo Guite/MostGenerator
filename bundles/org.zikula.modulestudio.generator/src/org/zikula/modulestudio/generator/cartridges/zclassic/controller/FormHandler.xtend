@@ -908,7 +908,7 @@ class FormHandler {
                             $translationData = [];
                             $supportedLanguages = $this->translatableHelper->getSupportedLanguages($this->objectType);
                             foreach ($supportedLanguages as $language) {
-                                $translationInput = $this->translatableHelper->readTranslationInput($form, $language);
+                                $translationInput = $this->translatableHelper->readTranslationInput($this->form, $language);
                                 if (!count($translationInput)) {
                                     continue;
                                 }
