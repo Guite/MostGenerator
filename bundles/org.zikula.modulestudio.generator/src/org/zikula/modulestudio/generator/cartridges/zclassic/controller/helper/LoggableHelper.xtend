@@ -284,7 +284,8 @@ class LoggableHelper {
             $methodName = 'create' . ucfirst($objectType);
             $entity = $this->entityFactory->$methodName();
             $idField = $this->entityFactory->getIdField($objectType);
-            $entity->[$idField] = $id;
+            $setter = 'set' . ucfirst($idField);
+            $entity->$setter($id);
 
             $entityManager = $this->entityFactory->getObjectManager();
             $logEntriesRepository = $entityManager->getRepository('«appName»:' . ucfirst($objectType) . 'LogEntryEntity');
