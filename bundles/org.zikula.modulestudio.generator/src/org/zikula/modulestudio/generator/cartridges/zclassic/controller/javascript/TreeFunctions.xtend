@@ -223,7 +223,7 @@ class TreeFunctions {
                 label: Translator.__('Add child node'),
                 title: Translator.__('Add child node'),
                 action: function (node) {
-                    zikulaContentPerformTreeOperation(objectType, rootId, 'addChildNode');
+                    «vendorAndName»PerformTreeOperation(objectType, rootId, 'addChildNode');
                 },
                 icon: 'fa fa-fw fa-plus'
             };

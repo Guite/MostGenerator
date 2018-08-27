@@ -39,6 +39,18 @@ class History {
             {# purpose of this template: «nameMultiple.formatForDisplay» change history view #}
             {% extends routeArea == 'admin' ? '«app.appName»::adminBase.html.twig' : '«app.appName»::base.html.twig' %}
         «ENDIF»
+        {% import _self as helper %}
+        {% macro outputSimpleValue(input) %}
+            {{ input is «app.appName.toLowerCase»_instanceOf('DateTimeInterface') ? input|localizeddate('long', 'medium') : input|default(__('an empty value')) }}
+        {% endmacro %}
+        {% macro outputArray(input«IF hasTranslatableFields», keysAreLanguages«ENDIF») %}
+            {% import _self as helper %}
+            <ul>
+                {% for key, value in input %}
+                    <li><span class="bold">{{ «IF hasTranslatableFields»keysAreLanguages ? key|languageName|safeHtml|humanize : «ENDIF»key|humanize }}:</span> {% if value is iterable %}{{ helper.outputArray(value«IF hasTranslatableFields», false«ENDIF») }}{% else %}<span class="italic">{{ value }}</span>{% endif %}</li>
+                {% endfor %}
+            </ul>
+        {% endmacro %}
         {% block title isDiffView == true ? __f('Compare versions of %entityTitle%', {'%entityTitle%': «name.formatForCode»|«app.appName.formatForDB»_formattedTitle}) : __f('«name.formatForDisplayCapital» change history for %entityTitle%', {'%entityTitle%': «name.formatForCode»|«application.appName.formatForDB»_formattedTitle}) %}
         «IF !application.separateAdminTemplates || isAdmin»
             {% block admin_page_icon isDiffView == true ? 'arrows-h' : 'history' %}
@@ -88,9 +100,31 @@ class History {
                     <tbody>
                         {% for fieldName, values in diffValues %}
                             <tr>
-                                <th headers="hFieldName" id="h{{ fieldName|replace({' ': '', '"':''}) }}" scope="row">{{ fieldName|humanize }}</th>
-                                <td headers="hMinVersion h{{ fieldName|replace({' ': '', '"':''}) }}"{% if values.changed %} class="diff-old"{% endif %}>{{ values.old is «app.appName.toLowerCase»_instanceOf('DateTimeInterface') ? values.old|localizeddate('long', 'medium') : values.old }}</td>
-                                <td headers="hMaxVersion h{{ fieldName|replace({' ': '', '"':''}) }}"{% if values.changed %} class="diff-new"{% endif %}>{{ values.new is «app.appName.toLowerCase»_instanceOf('DateTimeInterface') ? values.new|localizeddate('long', 'medium') : values.new }}</td>
+                                <th headers="hFieldName" id="h{{ fieldName|replace({' ': '', '"':''}) }}" scope="row">
+                                    {{ fieldName|humanize }}
+                                </th>
+                                <td headers="hMinVersion h{{ fieldName|replace({' ': '', '"':''}) }}"{% if values.changed %} class="diff-old"{% endif %}>
+                                    {% if values.old is iterable %}
+                                        {% if values.old|length > 0 %}
+                                            {{ helper.outputArray(values.old«IF hasTranslatableFields», (fieldName == 'translationData')«ENDIF») }}
+                                        {% else %}
+                                            {{ __('an empty collection') }}
+                                        {% endif %}
+                                    {% else %}
+                                        {{ helper.outputSimpleValue(values.old) }}
+                                    {% endif %}
+                                </td>
+                                <td headers="hMaxVersion h{{ fieldName|replace({' ': '', '"':''}) }}"{% if values.changed %} class="diff-new"{% endif %}>
+                                    {% if values.new is iterable %}
+                                        {% if values.new|length > 0 %}
+                                            {{ helper.outputArray(values.new«IF hasTranslatableFields», (fieldName == 'translationData')«ENDIF») }}
+                                        {% else %}
+                                            {{ __('an empty collection') }}
+                                        {% endif %}
+                                    {% else %}
+                                        {{ helper.outputSimpleValue(values.new) }}
+                                    {% endif %}
+                                </td>
                             </tr>
                         {% endfor %}
                     </tbody>
@@ -150,18 +184,14 @@ class History {
                                         {% for field, value in logEntry.data %}
                                             {% if value is iterable %}
                                                 {% if value|length > 0 %}
-                                                    <li>{{ __f('%field% set to:', {'%field%': field}) }}
-                                                        <ul>
-                                                            {% for singleValue in value %}
-                                                                <li class="italic">{% if singleValue is iterable %}Array{% else %}{{ singleValue }}{% endif %}</li>
-                                                            {% endfor %}
-                                                        </ul>
+                                                    <li>{{ __f('%field% set to:', {'%field%': field|humanize}) }}
+                                                        {{ helper.outputArray(value«IF hasTranslatableFields», (field == 'translationData')«ENDIF») }}
                                                     </li>
                                                 {% else %}
-                                                    <li>{{ __f('%field% set to <em>%value%</em>', {'%field%': field, '%value%': __('an empty collection')})|raw }}</li>
+                                                    <li>{{ __f('%field% set to <em>%value%</em>', {'%field%': field|humanize, '%value%': __('an empty collection')})|raw }}</li>
                                                 {% endif %}
                                             {% else %}
-                                                <li>{{ __f('%field% set to <em>%value%</em>', {'%field%': field, '%value%': value is «app.appName.toLowerCase»_instanceOf('DateTimeInterface') ? value|localizeddate('long', 'medium') : value|default(__('an empty value'))})|raw }}</li>
+                                                <li>{{ __f('%field% set to <em>%value%</em>', {'%field%': field|humanize, '%value%': helper.outputSimpleValue(value)})|raw }}</li>
                                             {% endif %}
                                         {% endfor %}
                                     </ul>

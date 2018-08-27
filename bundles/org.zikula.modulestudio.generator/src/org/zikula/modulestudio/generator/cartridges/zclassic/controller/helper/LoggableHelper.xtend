@@ -137,9 +137,6 @@ class LoggableHelper {
                             'changed' => false
                         ];
                     }
-                    if (is_array($value)) {
-                        $value = is_array(reset($value)) ? 'Array' : implode(', ', $value);
-                    }
                     if ($logEntry->getVersion() <= $minVersion) {
                         $diffValues[$field]['old'] = $value;
                         $diffValues[$field]['new'] = $value;
