@@ -231,7 +231,7 @@ class TranslatableHelper {
 
             // get translations
             $entityManager = $this->entityFactory->getObjectManager();
-            $repository = $entityManager->getRepository('«appNamespace»\Entity\' . ucfirst($objectType) . 'TranslationEntity');
+            $repository = $entityManager->getRepository('«appNamespace»\Entity\\' . ucfirst($objectType) . 'TranslationEntity');
             $entityTranslations = $repository->findTranslations($entity);
 
             $supportedLanguages = $this->getSupportedLanguages($objectType);
@@ -408,7 +408,7 @@ class TranslatableHelper {
 
             // remove all existing translations
             $entityManager = $this->entityFactory->getObjectManager();
-            $repository = $entityManager->getRepository('«appNamespace»\Entity\' . ucfirst($objectType) . 'TranslationEntity');
+            $repository = $entityManager->getRepository('«appNamespace»\Entity\\' . ucfirst($objectType) . 'TranslationEntity');
             $translationMeta = $repository->getClassMetadata();
             $qb = $entityManager->createQueryBuilder();
             $qb->delete($translationMeta->rootEntityName, 'trans')
