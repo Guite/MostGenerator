@@ -162,7 +162,7 @@ class FormHandler {
         «IF hasHookSubscribers»
             use Zikula\Core\RouteUrl;
         «ENDIF»
-        «IF hasTranslatable || needsApproval»
+        «IF hasTranslatable || needsApproval || hasStandardFieldEntities»
             use Zikula\ExtensionsModule\Api\ApiInterface\VariableApiInterface;
         «ENDIF»
         «IF needsApproval»
@@ -317,7 +317,7 @@ class FormHandler {
              */
             protected $logger;
 
-            «IF hasTranslatable || needsApproval»
+            «IF hasTranslatable || needsApproval || hasStandardFieldEntities»
                 /**
                  * @var VariableApiInterface
                  */
@@ -412,7 +412,7 @@ class FormHandler {
              * @param RequestStack              $requestStack     RequestStack service instance
              * @param RouterInterface           $router           Router service instance
              * @param LoggerInterface           $logger           Logger service instance
-             «IF hasTranslatable || needsApproval»
+             «IF hasTranslatable || needsApproval || hasStandardFieldEntities»
              * @param VariableApiInterface      $variableApi      VariableApi service instance
              «ENDIF»
              * @param CurrentUserApiInterface   $currentUserApi   CurrentUserApi service instance
@@ -441,7 +441,7 @@ class FormHandler {
                 RequestStack $requestStack,
                 RouterInterface $router,
                 LoggerInterface $logger,
-                «IF hasTranslatable || needsApproval»
+                «IF hasTranslatable || needsApproval || hasStandardFieldEntities»
                     VariableApiInterface $variableApi,
                 «ENDIF»
                 CurrentUserApiInterface $currentUserApi,
@@ -463,7 +463,7 @@ class FormHandler {
                 $this->requestStack = $requestStack;
                 $this->router = $router;
                 $this->logger = $logger;
-                «IF hasTranslatable || needsApproval»
+                «IF hasTranslatable || needsApproval || hasStandardFieldEntities»
                     $this->variableApi = $variableApi;
                 «ENDIF»
                 $this->currentUserApi = $currentUserApi;

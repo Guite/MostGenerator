@@ -524,7 +524,7 @@ class ServiceDefinitions {
                     - "@request_stack"
                     - "@router"
                     - "@logger"
-                    «IF hasTranslatable || needsApproval»
+                    «IF hasTranslatable || needsApproval || hasStandardFieldEntities»
                         - "@zikula_extensions_module.api.variable"
                     «ENDIF»
                     - "@zikula_users_module.current_user"
