@@ -160,7 +160,7 @@ class LoggableHistory {
         ];
 
         if (true === $isDiffView) {
-            list ($minVersion, $maxVersion, $diffValues) = $this->get('«application.appService».loggable_helper')->determineDiffViewParameters($logEntries);
+            list ($minVersion, $maxVersion, $diffValues) = $this->get('«application.appService».loggable_helper')->determineDiffViewParameters($logEntries, $versions);
             $templateParameters['minVersion'] = $minVersion;
             $templateParameters['maxVersion'] = $maxVersion;
             $templateParameters['diffValues'] = $diffValues;

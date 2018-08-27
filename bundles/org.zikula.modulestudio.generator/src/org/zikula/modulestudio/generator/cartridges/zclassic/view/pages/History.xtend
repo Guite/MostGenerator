@@ -197,11 +197,11 @@ class History {
                         {% set linkTitle = __('«nameMultiple.formatForDisplayCapital» list') %}
                         <a href="{{ path('«appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ 'view') }}" title="{{ linkTitle|e('html_attr') }}"><i class="fa fa-reply"></i> {{ linkTitle }}</a>
                     «ENDIF»
-                    «IF hasDisplayAction»
-                        {% set linkTitle = __('Back to detail view') %}
-                        <a href="{{ path('«appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ 'display'«routeParams(name.formatForCode, true)») }}" title="{{ linkTitle|e('html_attr') }}"><i class="fa fa-eye"></i> {{ linkTitle }}</a>
-                    «ENDIF»
                 {% endif %}
+                «IF hasDisplayAction»
+                    {% set linkTitle = __('Back to detail view') %}
+                    <a href="{{ path('«appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ 'display'«routeParams(name.formatForCode, true)») }}" title="{{ linkTitle|e('html_attr') }}"><i class="fa fa-eye"></i> {{ linkTitle }}</a>
+                «ENDIF»
             </p>
         «ENDIF»
     '''
