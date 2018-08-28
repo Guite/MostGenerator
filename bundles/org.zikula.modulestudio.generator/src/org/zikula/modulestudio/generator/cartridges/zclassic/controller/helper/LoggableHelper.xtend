@@ -447,6 +447,9 @@ class LoggableHelper {
          */
         protected function translateActionDescriptionInternal($text = '', array $parameters = [])
         {
+            «IF !isSystemModule»
+                $this->translator->setDomain('«appName.formatForDB»');
+            «ENDIF»
             $actionTranslated = '';
             switch ($text) {
                 «FOR entity : getLoggableEntities»
