@@ -74,7 +74,7 @@ class LoggableUndelete {
 
     def private loggableUndeleteBaseImpl(Entity it) '''
         $loggableHelper = $this->get('«application.appService».loggable_helper');
-        $«name.formatForCode» = $loggableHelper->restoreDeletedEntity($id);
+        $«name.formatForCode» = $loggableHelper->restoreDeletedEntity('«name.formatForCode»', $id);
         if (null === $«name.formatForCode») {
             throw new NotFoundHttpException($this->__('No such «name.formatForDisplay» found.'));
         }
