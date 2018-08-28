@@ -278,18 +278,21 @@ class TranslatableHelper {
 
             «ENDIF»
             $objectType = $entity->get_objectType();
+            $entityManager = $this->entityFactory->getObjectManager();
             $supportedLanguages = $this->getSupportedLanguages($objectType);
             foreach ($supportedLanguages as $language) {
                 $translationInput = $this->readTranslationInput($form, $language);
                 if (!count($translationInput)) {
                     continue;
                 }
+
                 foreach ($translationInput as $fieldName => $fieldData) {
                     $setter = 'set' . ucfirst($fieldName);
                     $entity->$setter($fieldData);
                 }
-                $entity['locale'] = $language;
-                $this->entityFactory->getObjectManager()->flush();
+
+                $entity->setLocale($language);
+                $entityManager->flush($entity);
             }
             «IF needsDynamicLoggableEnablement»
 
@@ -438,8 +441,8 @@ class TranslatableHelper {
                     $entity->$setter($translationData[$language][$fieldName]);
                 }
 
-                $entity['locale'] = $language;
-                $entityManager->flush();
+                $entity->setLocale($language);
+                $entityManager->flush($entity);
             }
             «IF needsDynamicLoggableEnablement»
 
