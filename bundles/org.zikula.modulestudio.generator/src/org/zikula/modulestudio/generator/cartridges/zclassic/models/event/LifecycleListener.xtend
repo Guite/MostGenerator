@@ -362,14 +362,28 @@ class LifecycleListener {
                     $eventManager = $entityManager->getEventManager();
                     $customLoggableListener = $this->container->get('«appService».loggable_listener');
 
+                    «IF hasTranslatable»
+                        $hasLoggableActivated = false;
+                    «ENDIF»
                     foreach ($eventManager->getListeners() as $event => $listeners) {
                         foreach ($listeners as $hash => $listener) {
                             if ($listener instanceof LoggableListener) {
                                 $eventManager->removeEventSubscriber($listener);
+                                «IF hasTranslatable»
+                                    $hasLoggableActivated = true;
+                                «ENDIF»
                                 break 2;
                             }
                         }
                     }
+                    «IF hasTranslatable»
+
+                        if (!$hasLoggableActivated) {
+                            // translations are persisted, so we temporarily disable loggable listener
+                            // to avoid creating unrequired log entries for the main entity
+                            return;
+                        }
+                    «ENDIF»
 
                     $currentUserApi = $this->container->get('zikula_users_module.current_user');
                     $userName = $currentUserApi->isLoggedIn() ? $currentUserApi->get('uname') : $this->container->get('translator.default')->__('Guest');
