@@ -106,7 +106,11 @@ class History {
                                 <td headers="hMinVersion h{{ fieldName|replace({' ': '', '"':''}) }}"{% if values.changed %} class="diff-old"{% endif %}>
                                     {% if values.old is iterable %}
                                         {% if values.old|length > 0 %}
-                                            {{ helper.outputArray(values.old«IF hasTranslatableFields», (fieldName == 'translationData')«ENDIF») }}
+                                            {% if fieldName in ['createdBy', 'updatedBy'] and values.old.uid is defined %}
+                                                {{ userAvatar(values.old.uid, {size: 20, rating: 'g'}) }} {{ values.old.uid|profileLinkByUserId() }}
+                                            {% else %}
+                                                {{ helper.outputArray(values.old«IF hasTranslatableFields», (fieldName == 'translationData')«ENDIF») }}
+                                            {% endif %}
                                         {% else %}
                                             {{ __('an empty collection') }}
                                         {% endif %}
@@ -117,7 +121,11 @@ class History {
                                 <td headers="hMaxVersion h{{ fieldName|replace({' ': '', '"':''}) }}"{% if values.changed %} class="diff-new"{% endif %}>
                                     {% if values.new is iterable %}
                                         {% if values.new|length > 0 %}
-                                            {{ helper.outputArray(values.new«IF hasTranslatableFields», (fieldName == 'translationData')«ENDIF») }}
+                                            {% if fieldName in ['createdBy', 'updatedBy'] and values.new.uid is defined %}
+                                                {{ userAvatar(values.new.uid, {size: 20, rating: 'g'}) }} {{ values.new.uid|profileLinkByUserId() }}
+                                            {% else %}
+                                                {{ helper.outputArray(values.new«IF hasTranslatableFields», (fieldName == 'translationData')«ENDIF») }}
+                                            {% endif %}
                                         {% else %}
                                             {{ __('an empty collection') }}
                                         {% endif %}
@@ -151,7 +159,7 @@ class History {
                     <th id="hVersion" scope="col" class="«IF !app.targets('2.0')»z-order-«ENDIF»unsorted z-w02">{{ __('Version') }}</th>
                     <th id="hDate" scope="col" class="«IF !app.targets('2.0')»z-order-«ENDIF»unsorted">{{ __('Date') }}</th>
                     <th id="hUser" scope="col" class="«IF !app.targets('2.0')»z-order-«ENDIF»unsorted">{{ __('User') }}</th>
-                    <th id="hOperation" scope="col" class="«IF !app.targets('2.0')»z-order-«ENDIF»unsorted">{{ __('Operation') }}</th>
+                    <th id="hOperation" scope="col" class="«IF !app.targets('2.0')»z-order-«ENDIF»unsorted" colspan="2">{{ __('Operation') }}</th>
                     <th id="hChanges" scope="col" class="«IF !app.targets('2.0')»z-order-«ENDIF»unsorted">{{ __('Changes') }}</th>
                     <th id="hActions" scope="col" class="«IF !app.targets('2.0')»z-order-«ENDIF»unsorted">{{ __('Actions') }}</th>
                 </tr>
@@ -164,7 +172,11 @@ class History {
                         </td>
                         <td headers="hVersion" class="text-center">{{ logEntry.version }}{% if loop.first %} ({{ __('latest') }}){% endif %}</td>
                         <td headers="hDate">{{ logEntry.loggedAt|localizeddate('long', 'medium') }}</td>
-                        <td headers="hUser">{{ userAvatar(logEntry.username, {size: 20, rating: 'g'}) }} {{ logEntry.username|profileLinkByUserName() }}</td>
+                        <td headers="hUser">
+                            {% if logEntry.username %}
+                                {{ userAvatar(logEntry.username, {size: 20, rating: 'g'}) }} {{ logEntry.username|profileLinkByUserName() }}
+                            {% endif %}
+                        </td>
                         <td headers="hOperation">
                             {% if logEntry.action == constant('Gedmo\\Loggable\\LoggableListener::ACTION_CREATE') %}
                                 {{ __('Created') }}
@@ -173,6 +185,9 @@ class History {
                             {% elseif logEntry.action == constant('Gedmo\\Loggable\\LoggableListener::ACTION_REMOVE') %}
                                 {{ __('Removed') }}
                             {% endif %}
+                        </td>
+                        <td headers="hOperation">
+                            {{ logEntry|«application.appName.formatForDB»_logDescription }}
                         </td>
                         <td headers="hChanges">
                             {% if logEntry.data is not empty %}
@@ -184,8 +199,13 @@ class History {
                                         {% for field, value in logEntry.data %}
                                             {% if value is iterable %}
                                                 {% if value|length > 0 %}
-                                                    <li>{{ __f('%field% set to:', {'%field%': field|humanize}) }}
+                                                    <li>
+                                                    {% if field in ['createdBy', 'updatedBy'] and value.uid is defined %}
+                                                        {{ __f('%field% set to <em>%value%</em>', {'%field%': field|humanize, '%value%': userAvatar(value.uid, {size: 20, rating: 'g'}) ~ ' ' ~ value.uid|profileLinkByUserId()})|raw }}
+                                                    {% else %}
+                                                        {{ __f('%field% set to:', {'%field%': field|humanize}) }}
                                                         {{ helper.outputArray(value«IF hasTranslatableFields», (field == 'translationData')«ENDIF») }}
+                                                    {% endif %}
                                                     </li>
                                                 {% else %}
                                                     <li>{{ __f('%field% set to <em>%value%</em>', {'%field%': field|humanize, '%value%': __('an empty collection')})|raw }}</li>

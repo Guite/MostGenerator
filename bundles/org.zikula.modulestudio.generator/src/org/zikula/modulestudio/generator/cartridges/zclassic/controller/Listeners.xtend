@@ -2,20 +2,21 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.controller
 
 import de.guite.modulestudio.metamodel.Application
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
-import org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener.Group
-import org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener.IpTrace
-import org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener.Kernel
-import org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener.Mailer
-import org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener.ModuleDispatch
-import org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener.ModuleInstaller
-import org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener.Theme
-import org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener.ThirdParty
-import org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener.User
-import org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener.UserLogin
-import org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener.UserLogout
-import org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener.UserRegistration
-import org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener.Users
-import org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener.WorkflowEvents
+import org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener.GroupListener
+import org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener.IpTraceListener
+import org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener.KernelListener
+import org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener.LoggableListener
+import org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener.MailerListener
+import org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener.ModuleDispatchListener
+import org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener.ModuleInstallerListener
+import org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener.ThemeListener
+import org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener.ThirdPartyListener
+import org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener.UserListener
+import org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener.UserLoginListener
+import org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener.UserLogoutListener
+import org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener.UserRegistrationListener
+import org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener.UsersListener
+import org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener.WorkflowEventsListener
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
@@ -81,6 +82,9 @@ class Listeners {
         if (!getAllEntities.filter[hasIpTraceableFields].empty) {
             listenerFile('IpTrace', listenersIpTraceFile)
         }
+        if (hasLoggable) {
+            listenerFile('Loggable', listenersLoggableFile)
+        }
         listenerFile('WorkflowEvents', listenersWorkflowEventsFile)
     }
 
@@ -112,7 +116,7 @@ class Listeners {
         «IF isBase»abstract «ENDIF»class «IF isBase»Abstract«ENDIF»InstallerListener«IF !isBase» extends AbstractInstallerListener«ELSE» implements EventSubscriberInterface«ENDIF»
         {
             «IF isBase»
-                «new ModuleInstaller().generate(it)»
+                «new ModuleInstallerListener().generate(it)»
             «ELSE»
                 // feel free to enhance the parent methods
             «ENDIF»
@@ -142,7 +146,7 @@ class Listeners {
         «IF isBase»abstract «ENDIF»class «IF isBase»Abstract«ENDIF»KernelListener«IF !isBase» extends AbstractKernelListener«ELSE» implements EventSubscriberInterface«ENDIF»
         {
             «IF isBase»
-                «new Kernel().generate(it)»
+                «new KernelListener().generate(it)»
             «ELSE»
                 // feel free to enhance the parent methods
             «ENDIF»
@@ -165,7 +169,7 @@ class Listeners {
         «IF isBase»abstract «ENDIF»class «IF isBase»Abstract«ENDIF»ModuleDispatchListener«IF !isBase» extends AbstractModuleDispatchListener«ELSE» implements EventSubscriberInterface«ENDIF»
         {
             «IF isBase»
-                «new ModuleDispatch().generate(it)»
+                «new ModuleDispatchListener().generate(it)»
             «ELSE»
                 // feel free to enhance the parent methods
             «ENDIF»
@@ -189,7 +193,7 @@ class Listeners {
         «IF isBase»abstract «ENDIF»class «IF isBase»Abstract«ENDIF»MailerListener«IF !isBase» extends AbstractMailerListener«ELSE» implements EventSubscriberInterface«ENDIF»
         {
             «IF isBase»
-                «new Mailer().generate(it)»
+                «new MailerListener().generate(it)»
             «ELSE»
                 // feel free to enhance the parent methods
             «ENDIF»
@@ -214,7 +218,7 @@ class Listeners {
         «IF isBase»abstract «ENDIF»class «IF isBase»Abstract«ENDIF»ThemeListener«IF !isBase» extends AbstractThemeListener«ELSE» implements EventSubscriberInterface«ENDIF»
         {
             «IF isBase»
-                «new Theme().generate(it)»
+                «new ThemeListener().generate(it)»
             «ELSE»
                 // feel free to enhance the parent methods
             «ENDIF»
@@ -238,7 +242,7 @@ class Listeners {
         «IF isBase»abstract «ENDIF»class «IF isBase»Abstract«ENDIF»UserLoginListener«IF !isBase» extends AbstractUserLoginListener«ELSE» implements EventSubscriberInterface«ENDIF»
         {
             «IF isBase»
-                «new UserLogin().generate(it)»
+                «new UserLoginListener().generate(it)»
             «ELSE»
                 // feel free to enhance the parent methods
             «ENDIF»
@@ -262,7 +266,7 @@ class Listeners {
         «IF isBase»abstract «ENDIF»class «IF isBase»Abstract«ENDIF»UserLogoutListener«IF !isBase» extends AbstractUserLogoutListener«ELSE» implements EventSubscriberInterface«ENDIF»
         {
             «IF isBase»
-                «new UserLogout().generate(it)»
+                «new UserLogoutListener().generate(it)»
             «ELSE»
                 // feel free to enhance the parent methods
             «ENDIF»
@@ -304,7 +308,7 @@ class Listeners {
         «IF isBase»abstract «ENDIF»class «IF isBase»Abstract«ENDIF»UserListener«IF !isBase» extends AbstractUserListener«ELSE» implements EventSubscriberInterface«ENDIF»
         {
             «IF isBase»
-                «new User().generate(it)»
+                «new UserListener().generate(it)»
             «ELSE»
                 // feel free to enhance the parent methods
             «ENDIF»
@@ -328,7 +332,7 @@ class Listeners {
         «IF isBase»abstract «ENDIF»class «IF isBase»Abstract«ENDIF»UserRegistrationListener«IF !isBase» extends AbstractUserRegistrationListener«ELSE» implements EventSubscriberInterface«ENDIF»
         {
             «IF isBase»
-                «new UserRegistration().generate(it)»
+                «new UserRegistrationListener().generate(it)»
             «ELSE»
                 // feel free to enhance the parent methods
             «ENDIF»
@@ -352,7 +356,7 @@ class Listeners {
         «IF isBase»abstract «ENDIF»class «IF isBase»Abstract«ENDIF»UsersListener«IF !isBase» extends AbstractUsersListener«ELSE» implements EventSubscriberInterface«ENDIF»
         {
             «IF isBase»
-                «new Users().generate(it)»
+                «new UsersListener().generate(it)»
             «ELSE»
                 // feel free to enhance the parent methods
             «ENDIF»
@@ -376,7 +380,7 @@ class Listeners {
         «IF isBase»abstract «ENDIF»class «IF isBase»Abstract«ENDIF»GroupListener«IF !isBase» extends AbstractGroupListener«ELSE» implements EventSubscriberInterface«ENDIF»
         {
             «IF isBase»
-                «new Group().generate(it)»
+                «new GroupListener().generate(it)»
             «ELSE»
                 // feel free to enhance the parent methods
             «ENDIF»
@@ -415,7 +419,7 @@ class Listeners {
         «IF isBase»abstract «ENDIF»class «IF isBase»Abstract«ENDIF»ThirdPartyListener«IF !isBase» extends AbstractThirdPartyListener«ELSE» implements EventSubscriberInterface«ENDIF»
         {
             «IF isBase»
-                «new ThirdParty().generate(it)»
+                «new ThirdPartyListener().generate(it)»
             «ELSE»
                 // feel free to enhance the parent methods
             «ENDIF»
@@ -444,7 +448,31 @@ class Listeners {
         «IF isBase»abstract «ENDIF»class «IF isBase»Abstract«ENDIF»IpTraceListener«IF !isBase» extends AbstractIpTraceListener«ELSE» implements EventSubscriberInterface«ENDIF»
         {
             «IF isBase»
-                «new IpTrace().generate(it)»
+                «new IpTraceListener().generate(it)»
+            «ELSE»
+                // feel free to enhance the parent methods
+            «ENDIF»
+        }
+    '''
+
+    def private listenersLoggableFile(Application it) '''
+        namespace «appNamespace»\Listener«IF isBase»\Base«ENDIF»;
+
+        «IF !isBase»
+            use «appNamespace»\Listener\Base\AbstractLoggableListener;
+        «ELSE»
+            use Gedmo\Loggable\LoggableListener as BaseListener;
+            use «appNamespace»\Helper\EntityDisplayHelper;
+            use «appNamespace»\Helper\LoggableHelper;
+        «ENDIF»
+
+        /**
+         * Event handler implementation class for injecting log entry additions.
+         */
+        «IF isBase»abstract «ENDIF»class «IF isBase»Abstract«ENDIF»LoggableListener«IF !isBase» extends AbstractLoggableListener«ELSE» extends BaseListener«ENDIF»
+        {
+            «IF isBase»
+                «new LoggableListener().generate(it)»
             «ELSE»
                 // feel free to enhance the parent methods
             «ENDIF»
@@ -476,7 +504,7 @@ class Listeners {
         «IF isBase»abstract «ENDIF»class «IF isBase»Abstract«ENDIF»WorkflowEventsListener«IF !isBase» extends AbstractWorkflowEventsListener«ELSE» implements EventSubscriberInterface«ENDIF»
         {
             «IF isBase»
-                «new WorkflowEvents().generate(it)»
+                «new WorkflowEventsListener().generate(it)»
             «ELSE»
                 // feel free to enhance the parent methods
             «ENDIF»

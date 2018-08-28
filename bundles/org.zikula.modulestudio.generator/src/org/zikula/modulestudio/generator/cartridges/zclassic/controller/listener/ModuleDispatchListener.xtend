@@ -4,7 +4,7 @@ import de.guite.modulestudio.metamodel.Application
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
-class ModuleDispatch {
+class ModuleDispatchListener {
 
     extension FormattingExtensions = new FormattingExtensions
     extension Utils = new Utils

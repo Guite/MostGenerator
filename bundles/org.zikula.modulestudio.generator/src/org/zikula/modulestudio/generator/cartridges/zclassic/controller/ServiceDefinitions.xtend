@@ -181,7 +181,7 @@ class ServiceDefinitions {
                         - "@«modPrefix».entity_display_helper"
                     «ENDIF»
                     «IF hasLoggable»
-                        «modPrefix».loggable_helper
+                        - "@«modPrefix».loggable_helper"
                     «ENDIF»
                     - "@zikula_users_module.current_user"
                 tags:
@@ -279,12 +279,18 @@ class ServiceDefinitions {
                     arguments:
                         - "@gedmo_doctrine_extensions.listener.ip_traceable"
                         - "@request_stack"
+                «ELSEIF className == 'Loggable'»
+                    arguments:
+                        - "@«modPrefix».entity_display_helper"
+                        - "@«modPrefix».loggable_helper"
                 «ENDIF»
-                «IF targets('2.0')»
-                    tags: ['kernel.event_subscriber']
-                «ELSE»
-                    tags:
-                        - { name: kernel.event_subscriber }
+                «IF className != 'Loggable'»
+                    «IF targets('2.0')»
+                        tags: ['kernel.event_subscriber']
+                    «ELSE»
+                        tags:
+                            - { name: kernel.event_subscriber }
+                    «ENDIF»
                 «ENDIF»
 
         «ENDFOR»
@@ -332,10 +338,13 @@ class ServiceDefinitions {
 
         val needsDetailContentType = generateDetailContentType && hasDisplayActions
         if ((needsApproval && generatePendingContentSupport) || ((generateListContentType || needsDetailContentType) && !targets('2.0')) || generateScribitePlugins) {
-            listeners.add('ThirdParty')
+            listeners += 'ThirdParty'
         }
         if (!getAllEntities.filter[hasIpTraceableFields].empty) {
-            listeners.add('IpTrace')
+            listeners += 'IpTrace'
+        }
+        if (hasLoggable) {
+            listeners += 'Loggable'
         }
 
         listeners
@@ -798,11 +807,13 @@ class ServiceDefinitions {
             «modPrefix».loggable_helper:
                 class: «nsBase»LoggableHelper
                 arguments:
-                - "@«modPrefix».entity_factory"
-                - "@«modPrefix».entity_lifecycle_listener"
-                «IF hasLoggableTranslatable»
-                    - "@«modPrefix».translatable_helper"
-                «ENDIF»
+                    - "@translator.default"
+                    - "@«modPrefix».entity_factory"
+                    - "@«modPrefix».entity_display_helper"
+                    - "@«modPrefix».entity_lifecycle_listener"
+                    «IF hasLoggableTranslatable»
+                        - "@«modPrefix».translatable_helper"
+                    «ENDIF»
         «ENDIF»
 
         «modPrefix».model_helper:
@@ -1004,6 +1015,9 @@ class ServiceDefinitions {
                 - "@«modPrefix».workflow_helper"
                 «IF hasListFields»
                     - "@«modPrefix».listentries_helper"
+                «ENDIF»
+                «IF hasLoggable»
+                    - "@«modPrefix».loggable_helper"
                 «ENDIF»
                 «IF hasTrees»
                     - "@«modPrefix».menu_builder"

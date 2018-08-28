@@ -88,7 +88,11 @@ class TreeData {
 
             $nodeItem = $liTag . $liContent;
 
-            $itemActionsMenu = $this->menuBuilder->createItemActionsMenu(['entity' => $node, 'area' => $routeArea, 'context' => 'view']);
+            $itemActionsMenu = $this->menuBuilder->createItemActionsMenu([
+                'entity' => $node,
+                'area' => $routeArea,
+                'context' => 'view'
+            ]);
             $renderer = new ListRenderer(new Matcher());
 
             $actions = '<li id="itemActions' . $node->getKey() . '">';

@@ -27,10 +27,13 @@ class LifecycleListener {
 
         use Doctrine\Common\EventSubscriber;
         use Doctrine\Common\Persistence\Event\LifecycleEventArgs;
+        use Doctrine\ORM\Event\OnFlushEventArgs;
+        use Doctrine\ORM\Event\PreFlushEventArgs;
         use Doctrine\ORM\Event\PreUpdateEventArgs;
         use Doctrine\ORM\Events;
         «IF hasLoggable»
             use Gedmo\Loggable\Entity\MappedSuperclass\AbstractLogEntry;
+            use Gedmo\Loggable\LoggableListener;
         «ENDIF»
         use Psr\Log\LoggerInterface;
         use Symfony\Component\DependencyInjection\ContainerAwareInterface;
@@ -86,6 +89,8 @@ class LifecycleListener {
             public function getSubscribedEvents()
             {
                 return [
+                    Events::preFlush,
+                    Events::onFlush,
                     Events::preRemove,
                     Events::postRemove,
                     Events::prePersist,
@@ -94,6 +99,28 @@ class LifecycleListener {
                     Events::postUpdate,
                     Events::postLoad
                 ];
+            }
+
+            /**
+             * The preFlush event is called at EntityManager#flush() before anything else.
+             *
+             * @param PreFlushEventArgs $args Event arguments
+             */
+            public function preFlush(PreFlushEventArgs $args)
+            {
+                «IF hasLoggable»
+                    $this->activateCustomLoggableListener();
+                «ENDIF»
+            }
+
+            /**
+             * The onFlush event is called inside EntityManager#flush() after the changes to all the
+             * managed entities and their associations have been computed.
+             *
+             * @param OnFlushEventArgs $args Event arguments
+             */
+            public function onFlush(OnFlushEventArgs $args)
+            {
             }
 
             /**
@@ -295,6 +322,32 @@ class LifecycleListener {
 
                     $logEntriesRepository = $entityManager->getRepository('«appName»:' . $objectTypeCapitalised . 'LogEntryEntity');
                     $logEntriesRepository->purgeHistory($revisionHandling, $limitParameter);
+                }
+
+                /**
+                 * Enables the custom loggable listener.
+                 */
+                protected function activateCustomLoggableListener()
+                {
+                    $entityManager = $this->container->get('«appService».entity_factory')->getObjectManager();
+                    $eventManager = $entityManager->getEventManager();
+                    $customLoggableListener = $this->container->get('«appService».loggable_listener');
+
+                    foreach ($eventManager->getListeners() as $event => $listeners) {
+                        foreach ($listeners as $hash => $listener) {
+                            if ($listener instanceof LoggableListener) {
+                                $eventManager->removeEventSubscriber($listener);
+                                break 2;
+                            }
+                        }
+                    }
+
+                    $currentUserApi = $this->container->get('zikula_users_module.current_user');
+                    $userName = $currentUserApi->isLoggedIn() ? $currentUserApi->get('uname') : $this->container->get('translator.default')->__('Guest');
+
+                    $customLoggableListener->setUsername($userName);
+
+                    $eventManager->addEventSubscriber($customLoggableListener);
                 }
             «ENDIF»
         }

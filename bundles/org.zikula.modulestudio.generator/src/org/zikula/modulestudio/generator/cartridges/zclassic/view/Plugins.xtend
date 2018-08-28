@@ -64,6 +64,9 @@ class Plugins {
         «IF targets('2.0') && !getAllEntities.filter[!fields.filter(StringField).filter[role == StringRole.DATE_INTERVAL].empty].empty»
             use DateInterval;
         «ENDIF»
+        «IF hasLoggable»
+            use Gedmo\Loggable\Entity\MappedSuperclass\AbstractLogEntry;
+        «ENDIF»
         «IF hasTrees»
             use Knp\Menu\Matcher\Matcher;
             use Knp\Menu\Renderer\ListRenderer;
@@ -86,6 +89,9 @@ class Plugins {
         «ENDIF»
         «IF hasListFields»
             use «appNamespace»\Helper\ListEntriesHelper;
+        «ENDIF»
+        «IF hasLoggable»
+            use «appNamespace»\Helper\LoggableHelper;
         «ENDIF»
         use «appNamespace»\Helper\EntityDisplayHelper;
         use «appNamespace»\Helper\WorkflowHelper;
@@ -149,6 +155,13 @@ class Plugins {
             protected $listHelper;
 
         «ENDIF»
+        «IF hasLoggable»
+            /**
+             * @var LoggableHelper
+             */
+            protected $loggableHelper;
+
+        «ENDIF»
         «IF hasTrees»
             /**
              * @var MenuBuilder
@@ -175,6 +188,9 @@ class Plugins {
          «IF hasListFields»
             * @param ListEntriesHelper   $listHelper     ListEntriesHelper service instance
          «ENDIF»
+         «IF hasLoggable»
+            * @param LoggableHelper      $loggableHelper LoggableHelper service instance
+         «ENDIF»
          «IF hasTrees»
             * @param MenuBuilder         $menuBuilder    MenuBuilder service instance
          «ENDIF»
@@ -189,7 +205,8 @@ class Plugins {
             «ENDIF»
             EntityDisplayHelper $entityDisplayHelper,
             WorkflowHelper $workflowHelper«IF hasListFields»,
-            ListEntriesHelper $listHelper«ENDIF»«IF hasTrees»,
+            ListEntriesHelper $listHelper«ENDIF»«IF hasLoggable»,
+            LoggableHelper $loggableHelper«ENDIF»«IF hasTrees»,
             MenuBuilder $menuBuilder«ENDIF»)
         {
             $this->setTranslator($translator);
@@ -207,6 +224,9 @@ class Plugins {
             $this->workflowHelper = $workflowHelper;
             «IF hasListFields»
                 $this->listHelper = $listHelper;
+            «ENDIF»
+            «IF hasLoggable»
+                $this->loggableHelper = $loggableHelper;
             «ENDIF»
             «IF hasTrees»
                 $this->menuBuilder = $menuBuilder;
@@ -260,6 +280,9 @@ class Plugins {
                 «ENDIF»
                 «IF hasEntitiesWithIcsTemplates»
                     new \Twig_SimpleFilter('«appNameLower»_icalText', [$this, 'formatIcalText']),
+                «ENDIF»
+                «IF hasLoggable»
+                    new \Twig_SimpleFilter('«appNameLower»_logDescription', [$this, 'getLogDescription']),
                 «ENDIF»
                 new \Twig_SimpleFilter('«appNameLower»_formattedTitle', [$this, 'getFormattedEntityTitle']),
                 new \Twig_SimpleFilter('«appNameLower»_objectState', [$this, 'getObjectState'], ['is_safe' => ['html']])
@@ -349,6 +372,23 @@ class Plugins {
         {
             return $this->entityDisplayHelper->getFormattedTitle($entity);
         }
+        «IF hasLoggable»
+
+            /**
+             * The «appName.formatForDB»_logDescription filter returns the translated clear text
+             * description for a given log entry.
+             * Example:
+             *     {{ logEntry|«appName.formatForDB»_logDescription }}
+             *
+             * @param AbstractLogEntry $logEntry
+             *
+             * @return string
+             */
+            public function getLogDescription(AbstractLogEntry $logEntry)
+            {
+                return $this->loggableHelper->translateActionDescription($logEntry);
+            }
+        «ENDIF»
     '''
 
     def private twigExtensionImpl(Application it) '''

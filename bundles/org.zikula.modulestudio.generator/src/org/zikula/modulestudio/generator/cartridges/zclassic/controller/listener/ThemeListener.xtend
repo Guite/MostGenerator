@@ -2,7 +2,7 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.controller.listene
 
 import de.guite.modulestudio.metamodel.Application
 
-class Theme {
+class ThemeListener {
 
     CommonExample commonExample = new CommonExample()
 
@@ -22,7 +22,6 @@ class Theme {
          * Listener for the `theme.pre_render` event.
          *
          * Occurs immediately before twig theme engine renders a template.
-         * The event subject is \Zikula\ThemeModule\Bridge\Event\TwigPreRenderEvent.
          *
          «commonExample.generalEventProperties(it, false)»
          * @param TwigPreRenderEvent $event The event instance
@@ -35,7 +34,6 @@ class Theme {
          * Listener for the `theme.post_render` event.
          *
          * Occurs immediately after twig theme engine renders a template.
-         * The event subject is \Zikula\ThemeModule\Bridge\Event\TwigPostRenderEvent.
          *
          * An example for implementing this event is \Zikula\ThemeModule\EventListener\TemplateNameExposeListener.
          *

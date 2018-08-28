@@ -408,7 +408,7 @@ class TranslatableHelper {
 
             // remove all existing translations
             $entityManager = $this->entityFactory->getObjectManager();
-            $translationClass = 'Zikula\ContentModule\Entity\\' . ucfirst($objectType) . 'TranslationEntity';
+            $translationClass = '«appNamespace»\Entity\\' . ucfirst($objectType) . 'TranslationEntity';
             $repository = $entityManager->getRepository($translationClass);
             $translationMeta = $entityManager->getClassMetadata($translationClass);
             $qb = $entityManager->createQueryBuilder();

@@ -2,7 +2,7 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.controller.listene
 
 import de.guite.modulestudio.metamodel.Application
 
-class IpTrace {
+class IpTraceListener {
 
     CommonExample commonExample = new CommonExample()
 

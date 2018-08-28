@@ -6,12 +6,14 @@ import de.guite.modulestudio.metamodel.EntityWorkflowType
 import de.guite.modulestudio.metamodel.ListFieldItem
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
+import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
 
 class WorkflowHelper {
 
     extension FormattingExtensions = new FormattingExtensions
+    extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension Utils = new Utils
     extension WorkflowExtensions = new WorkflowExtensions
 
@@ -374,7 +376,7 @@ class WorkflowHelper {
 
             if ($buttonClass == '' && «IF targets('2.0')»$actionId«ELSE»substr($actionId, 0, 6)«ENDIF» == 'update') {
                 $buttonClass = 'success';
-        	}
+            }
 
             if (empty($buttonClass)) {
                 $buttonClass = 'default';
@@ -405,12 +407,25 @@ class WorkflowHelper {
             $entityManager = $this->entityFactory->getObjectManager();
             $logArgs = ['app' => '«appName»', 'user' => $this->currentUserApi->get('uname')];
 
+            «IF hasLoggable»
+                $objectType = $entity->get_objectType();
+                $isLoggable = in_array($objectType, ['«getLoggableEntities.map[name.formatForCode].join('\', \'')»']);
+                if ($isLoggable && !$entity->get_actionDescriptionForLogEntry()) {
+                    if ('delete' == $actionId) {
+                        $entity->set_actionDescriptionForLogEntry('_HISTORY_' . strtoupper($objectType) . '_DELETED');
+                    } elseif ('submit' == $actionId) {
+                        $entity->set_actionDescriptionForLogEntry('_HISTORY_' . strtoupper($objectType) . '_CREATED');
+                    } else {
+                        $entity->set_actionDescriptionForLogEntry('_HISTORY_' . strtoupper($objectType) . '_UPDATED');
+                    }
+                }
+            «ENDIF»
             $result = false;
 
             try {
                 $workflow->apply($entity, $actionId);
 
-                if ($actionId == 'delete') {
+                if ('delete' == $actionId) {
                     $entityManager->remove($entity);
                 } else {
                     $entityManager->persist($entity);

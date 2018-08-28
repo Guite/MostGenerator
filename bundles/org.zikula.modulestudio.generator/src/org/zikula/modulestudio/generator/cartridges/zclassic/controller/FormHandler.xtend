@@ -890,7 +890,7 @@ class FormHandler {
                     $args['commandName'] = $action['id'];
                 }
             }
-            if ($this->templateParameters['mode'] == 'create' && $this->form->has('submitrepeat') && $this->form->get('submitrepeat')->isClicked()) {
+            if ('create' == $this->templateParameters['mode'] && $this->form->has('submitrepeat') && $this->form->get('submitrepeat')->isClicked()) {
                 $args['commandName'] = 'submit';
                 $this->repeatCreateAction = true;
             }
@@ -1155,7 +1155,7 @@ class FormHandler {
         {
             $roles = [];
             $currentUserId = $this->currentUserApi->isLoggedIn() ? $this->currentUserApi->get('uid') : UsersConstant::USER_ID_ANONYMOUS;
-            $roles['is_creator'] = $this->templateParameters['mode'] == 'create'
+            $roles['is_creator'] = 'create' == $this->templateParameters['mode']
                 || (method_exists($this->entityRef, 'getCreatedBy') && $this->entityRef->getCreatedBy()->getUid() == $currentUserId);
 
             $groupApplicationArgs = [
@@ -1309,7 +1309,7 @@ class FormHandler {
                 return $result;
             }
 
-            if ($this->templateParameters['mode'] == 'create') {
+            if ('create' == $this->templateParameters['mode']) {
                 if (!$this->modelHelper->canBeCreated($this->objectType)) {
                     $this->requestStack->getCurrentRequest()->getSession()->getFlashBag()->add('error', $this->__('Sorry, but you can not create the «name.formatForDisplay» yet as other items are required which must be created before!'));
                     $logArgs = ['app' => '«app.appName»', 'user' => $this->currentUserApi->get('uname'), 'entity' => $this->objectType];
@@ -1402,7 +1402,7 @@ class FormHandler {
                     $args['commandName'] = $action['id'];
                 }
             }
-            if ($this->templateParameters['mode'] == 'create' && $this->form->has('submitrepeat') && $this->form->get('submitrepeat')->isClicked()) {
+            if ('create' == $this->templateParameters['mode'] && $this->form->has('submitrepeat') && $this->form->get('submitrepeat')->isClicked()) {
                 $args['commandName'] = 'submit';
                 $this->repeatCreateAction = true;
             }
@@ -1425,7 +1425,7 @@ class FormHandler {
                     case 'defer':
                 «ENDIF»
                 case 'submit':
-                    if ($this->templateParameters['mode'] == 'create') {
+                    if ('create' == $this->templateParameters['mode']) {
                         $message = $this->__('Done! «name.formatForDisplayCapital» created.');
                     } else {
                         $message = $this->__('Done! «name.formatForDisplayCapital» updated.');
@@ -1454,6 +1454,24 @@ class FormHandler {
             $entity = $this->entityRef;
 
             $action = $args['commandName'];
+            «IF loggable»
+                if ('delete' == $action) {
+                    $entity->set_actionDescriptionForLogEntry('_HISTORY_«name.formatForCode.toUpperCase»_DELETED');
+                } else if ('create' == $this->templateParameters['mode']) {
+                    $entity->set_actionDescriptionForLogEntry('_HISTORY_«name.formatForCode.toUpperCase»_CREATED');
+                } else {
+                    $templateId = $this->requestStack->getCurrentRequest()->query->getInt('astemplate', 0);
+                    if ($templateId > 0) {
+                        $entityT = $this->entityFactory->getRepository($this->objectType)->selectById($templateId, false, true);
+                        if (null !== $entityT) {
+                            $entity->set_actionDescriptionForLogEntry('_HISTORY_«name.formatForCode.toUpperCase»_CLONED|%«name.formatForCode»=' . $entityT->getKey());
+                        }
+                    }
+                    if (!$entity->get_actionDescriptionForLogEntry()) {
+                        $entity->set_actionDescriptionForLogEntry('_HISTORY_«name.formatForCode.toUpperCase»_UPDATED');
+                    }
+                }
+            «ENDIF»
             «locking.getVersion(it)»
 
             $success = false;
@@ -1471,7 +1489,7 @@ class FormHandler {
 
             $this->addDefaultMessage($args, $success);
 
-            if ($success && $this->templateParameters['mode'] == 'create') {
+            if ($success && 'create' == $this->templateParameters['mode']) {
                 // store new identifier
                 $this->idValue = $entity->getKey();
             }

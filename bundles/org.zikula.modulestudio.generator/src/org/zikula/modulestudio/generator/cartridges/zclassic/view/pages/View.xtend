@@ -548,6 +548,7 @@ class View {
                     <thead>
                         <tr>
                             <th id="hId" scope="col" class="«IF !application.targets('2.0')»z-order-«ENDIF»unsorted z-w02">{{ __('ID') }}</th>
+                            <th id="hTitle" scope="col" class="«IF !application.targets('2.0')»z-order-«ENDIF»unsorted">{{ __('Title') }}</th>
                             <th id="hDate" scope="col" class="«IF !application.targets('2.0')»z-order-«ENDIF»unsorted">{{ __('Date') }}</th>
                             <th id="hUser" scope="col" class="«IF !application.targets('2.0')»z-order-«ENDIF»unsorted">{{ __('User') }}</th>
                             <th id="hActions" scope="col" class="«IF !application.targets('2.0')»z-order-«ENDIF»unsorted">{{ __('Actions') }}</th>
@@ -557,6 +558,9 @@ class View {
                         {% for logEntry in deletedEntities %}
                             <tr>
                                 <td headers="hVersion" class="text-center">{{ logEntry.objectId }}</td>
+                                <td headers="hTitle">
+                                    {{ logEntry|«application.appName.formatForDB»_logDescription }}
+                                </td>
                                 <td headers="hDate">{{ logEntry.loggedAt|localizeddate('long', 'medium') }}</td>
                                 <td headers="hUser">{{ userAvatar(logEntry.username, {size: 20, rating: 'g'}) }} {{ logEntry.username|profileLinkByUserName() }}</td>
                                 <td headers="hActions" class="actions nowrap">

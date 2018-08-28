@@ -73,7 +73,8 @@ class LoggableUndelete {
     '''
 
     def private loggableUndeleteBaseImpl(Entity it) '''
-        $«name.formatForCode» = $this->restoreDeletedEntity($id);
+        $loggableHelper = $this->get('«application.appService».loggable_helper');
+        $«name.formatForCode» = $loggableHelper->restoreDeletedEntity($id);
         if (null === $«name.formatForCode») {
             throw new NotFoundHttpException($this->__('No such «name.formatForDisplay» found.'));
         }
@@ -98,7 +99,7 @@ class LoggableUndelete {
 
     def private undeletion(Entity it) '''
         try {
-            $this->get('«application.appService».loggable_helper')->undelete($«name.formatForCode»);
+            $loggableHelper->undelete($«name.formatForCode»);
             $this->addFlash('status', $this->__('Done! Undeleted «name.formatForDisplay».'));
         } catch (\Exception $exception) {
             $this->addFlash('error', $this->__f('Sorry, but an error occured during the %action% action. Please apply the changes again!', ['%action%' => 'undelete']) . '  ' . $exception->getMessage());

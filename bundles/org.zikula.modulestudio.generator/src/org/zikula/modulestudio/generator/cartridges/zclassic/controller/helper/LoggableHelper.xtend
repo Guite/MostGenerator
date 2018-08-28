@@ -1,6 +1,7 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.controller.helper
 
 import de.guite.modulestudio.metamodel.Application
+import de.guite.modulestudio.metamodel.Entity
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
@@ -29,8 +30,13 @@ class LoggableHelper {
         use Doctrine\Common\Persistence\Event\LifecycleEventArgs;
         use Doctrine\ORM\Id\AssignedGenerator;
         use Doctrine\ORM\Mapping\ClassMetadata;
+        use Gedmo\Loggable\Entity\MappedSuperclass\AbstractLogEntry;
+        use Gedmo\Loggable\LoggableListener;
+        use Zikula\Common\Translator\TranslatorInterface;
+        use Zikula\Common\Translator\TranslatorTrait;
         use Zikula\Core\Doctrine\EntityAccess;
         use «appNamespace»\Entity\Factory\EntityFactory;
+        use «appNamespace»\Helper\EntityDisplayHelper;
         «IF hasLoggableTranslatable»
             use «appNamespace»\Helper\TranslatableHelper;
         «ENDIF»
@@ -46,10 +52,17 @@ class LoggableHelper {
     '''
 
     def private helperBaseImpl(Application it) '''
+        use TranslatorTrait;
+
         /**
          * @var EntityFactory
          */
         protected $entityFactory;
+
+        /**
+         * @var EntityDisplayHelper
+         */
+        protected $entityDisplayHelper;
 
         /**
          * @var EntityLifecycleListener
@@ -66,23 +79,31 @@ class LoggableHelper {
         /**
          * LoggableHelper constructor.
          *
-         * @param EntityFactory $entityFactory EntityFactory service instance
+         * @param TranslatorInterface     $translator              Translator service instance
+         * @param EntityFactory           $entityFactory           EntityFactory service instance
+         * @param EntityDisplayHelper     $entityDisplayHelper     EntityDisplayHelper service instance
          * @param EntityLifecycleListener $entityLifecycleListener Entity lifecycle subscriber
          «IF hasLoggableTranslatable»
-         * @param TranslatableHelper $translatableHelper TranslatableHelper service instance
+         * @param TranslatableHelper      $translatableHelper      TranslatableHelper service instance
          «ENDIF»
          */
         public function __construct(
+            TranslatorInterface $translator,
             EntityFactory $entityFactory,
+            EntityDisplayHelper $entityDisplayHelper,
             EntityLifecycleListener $entityLifecycleListener«IF hasLoggableTranslatable»,
             TranslatableHelper $translatableHelper«ENDIF»
         ) {
+            $this->setTranslator($translator);
             $this->entityFactory = $entityFactory;
+            $this->entityDisplayHelper = $entityDisplayHelper;
             $this->entityLifecycleListener = $entityLifecycleListener;
             «IF hasLoggableTranslatable»
                 $this->translatableHelper = $translatableHelper;
             «ENDIF»
         }
+
+        «setTranslatorMethod»
 
         «determineDiffViewParameters»
 
@@ -101,6 +122,8 @@ class LoggableHelper {
         «revertPostProcess»
 
         «undeleteEntity»
+
+        «translateActionDescription»
     '''
 
     def private determineDiffViewParameters(Application it) '''
@@ -157,7 +180,7 @@ class LoggableHelper {
          *
          * @param string $objectType Currently treated entity type
          *
-         * @return string
+         * @return string|null
          */
         public function getVersionFieldName($objectType = '')
         {
@@ -167,7 +190,7 @@ class LoggableHelper {
                 «ENDFOR»
             ];
 
-            return isset($versionFieldMap[$objectType]) ? $versionFieldMap[$objectType] : '';
+            return isset($versionFieldMap[$objectType]) ? $versionFieldMap[$objectType] : null;
         }
     '''
 
@@ -182,17 +205,20 @@ class LoggableHelper {
         public function hasHistoryItems($entity)
         {
             $objectType = $entity->get_objectType();
-            $versionField = $this->getVersionFieldName($objectType);
-            $getter = 'get' . ucfirst($versionField);
+            $versionFieldName = $this->getVersionFieldName($objectType);
 
-            /** alternative (with worse performance)
-             * $entityManager = $this->entityFactory->getObjectManager();
-             * $logEntriesRepository = $entityManager->getRepository('«appName»:' . ucfirst($objectType) . 'LogEntryEntity');
-             * $logEntries = $logEntriesRepository->getLogEntries($entity);
-             * return count($logEntries) > 1;
-             */
+            if (null !== $versionFieldName) {
+                $versionGetter = 'get' . ucfirst($versionFieldName);
 
-            return $entity->$getter() > 1;
+                return $entity->$versionGetter() > 1;
+            }
+
+            // alternative (with worse performance)
+            $entityManager = $this->entityFactory->getObjectManager();
+            $logEntriesRepository = $entityManager->getRepository('«appName»:' . ucfirst($objectType) . 'LogEntryEntity');
+            $logEntries = $logEntriesRepository->getLogEntries($entity);
+
+            return count($logEntries) > 1;
         }
     '''
 
@@ -290,7 +316,7 @@ class LoggableHelper {
             $logEntries = $logEntriesRepository->getLogEntries($entity);
             $lastVersionBeforeDeletion = null;
             foreach ($logEntries as $logEntry) {
-                if ('remove' != $logEntry->getAction()) {
+                if (LoggableListener::ACTION_REMOVE != $logEntry->getAction()) {
                     $lastVersionBeforeDeletion = $logEntry->getVersion();
                     break;
                 }
@@ -300,11 +326,15 @@ class LoggableHelper {
             }
 
             $objectType = $entity->get_objectType();
-            $versionField = $this->getVersionFieldName($objectType);
+            $versionFieldName = $this->getVersionFieldName($objectType);
 
             $logEntriesRepository->revert($entity, $lastVersionBeforeDeletion);
-            $versionSetter = 'set' . ucfirst($versionField);
-            $entity->$versionSetter($lastVersionBeforeDeletion + 2);
+            if (null !== $versionFieldName) {
+                $versionSetter = 'set' . ucfirst($versionFieldName);
+                $entity->$versionSetter($lastVersionBeforeDeletion + 2);
+            }
+
+            $entity->set_actionDescriptionForLogEntry('_HISTORY_' . strtoupper($objectType) . '_RESTORED|%version=' . $lastVersionBeforeDeletion);
 
             $entity = $this->revertPostProcess($entity);
 
@@ -379,6 +409,90 @@ class LoggableHelper {
             $metadata->setVersioned(true);
             $metadata->setVersionField($versionField);
         }
+    '''
+
+    def private translateActionDescription(Application it) '''
+        /**
+         * Returns the translated clear text action description for a given log entry.
+         *
+         * @param AbstractLogEntry $logEntry
+         *
+         * @return string
+         */
+        public function translateActionDescription(AbstractLogEntry $logEntry)
+        {
+            $textAndParam = explode('|', $logEntry->getActionDescription());
+            $text = $textAndParam[0];
+            $parametersStr = count($textAndParam) > 1 ? $textAndParam[1] : '';
+
+            $parameters = [];
+            $parametersStr = explode(',', $parametersStr);
+            foreach ($parametersStr as $parameterStr) {
+                $varAndValue = explode('=', $parameterStr);
+                if (2 == count($varAndValue)) {
+                    $parameters[$varAndValue[0]] = $varAndValue[1];
+                }
+            }
+
+            return $this->translateActionDescriptionInternal($text, $parameters);
+        }
+
+        /**
+         * Returns the translated clear text action description for a given log entry.
+         *
+         * @param string $text       The constant which is replaced by a corresponding Gettext call
+         * @param array  $parameters Optional additional parameters for the Gettext call
+         *
+         * @return string The resulting description
+         */
+        protected function translateActionDescriptionInternal($text = '', array $parameters = [])
+        {
+            $actionTranslated = '';
+            switch ($text) {
+                «FOR entity : getLoggableEntities»
+                    «entity.actionDescriptions('_HISTORY_' + entity.name.formatForCode.toUpperCase + '_', entity.name.formatForDisplayCapital)»
+                «ENDFOR»
+                default:
+                    $actionTranslated = $text;
+            }
+
+            return $actionTranslated;
+        }
+    '''
+
+    def private actionDescriptions(Entity it, String constantPrefix, String displayName) '''
+        case '«constantPrefix»CREATED':
+            $actionTranslated = $this->__('«displayName» created');
+            break;
+        case '«constantPrefix»UPDATED':
+            $actionTranslated = $this->__('«displayName» updated');
+            break;
+        case '«constantPrefix»CLONED':
+            if (isset($parameters['%«name.formatForCode»']) && is_numeric($parameters['%«name.formatForCode»'])) {
+                $originalEntity = $this->entityFactory->getRepository('«name.formatForCode»')->selectById($parameters['%«name.formatForCode»']);
+                if (null !== $originalEntity) {
+                    $parameters['%«name.formatForCode»'] = $this->entityDisplayHelper->getFormattedTitle($originalEntity);
+                }
+            }
+            $actionTranslated = $this->__f('«displayName» cloned from «name.formatForDisplay» "%«name.formatForCode»"', $parameters);
+            break;
+        case '«constantPrefix»RESTORED':
+            $actionTranslated = $this->__f('«displayName» restored from version "%version"', $parameters);
+            break;
+        case '«constantPrefix»DELETED':
+            $actionTranslated = $this->__('«displayName» deleted');
+            break;
+        «IF hasTranslatableFields»«/* currently not used by default but provided for convenience */»
+            case '«constantPrefix»TRANSLATION_CREATED':
+                $actionTranslated = $this->__('«displayName» translation created');
+                break;
+            case '«constantPrefix»TRANSLATION_UPDATED':
+                $actionTranslated = $this->__('«displayName» translation updated');
+                break;
+            case '«constantPrefix»TRANSLATION_DELETED':
+                $actionTranslated = $this->__('«displayName» translation deleted');
+                break;
+        «ENDIF»
     '''
 
     def private loggableFunctionsImpl(Application it) '''

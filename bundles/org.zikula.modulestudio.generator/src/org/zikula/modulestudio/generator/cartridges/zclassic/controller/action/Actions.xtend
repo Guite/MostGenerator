@@ -442,6 +442,9 @@ class Actions {
     '''
 
     def private deletionProcess(Entity it, DeleteAction action) '''
+        «IF loggable»
+            $«name.formatForCode»->set_actionDescriptionForLogEntry('_HISTORY_«name.formatForCode.toUpperCase»_DELETED');
+        «ENDIF»
         «IF !skipHookSubscribers»
             if ($«name.formatForCode»->supportsHookSubscribers()) {
                 // Let any ui hooks perform additional validation actions

@@ -3,6 +3,7 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.models.entity.exte
 import de.guite.modulestudio.metamodel.DerivedField
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.ObjectField
+import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
@@ -34,12 +35,19 @@ class Loggable extends AbstractExtension implements EntityExtensionInterface {
      * Generates additional entity properties.
      */
     override properties(Entity it) '''
+
+        /**
+         * @var string Description of currently executed action to be persisted in next log entry
+         */
+        protected $_actionDescriptionForLogEntry = '';
     '''
 
     /**
      * Generates additional accessor methods.
      */
     override accessors(Entity it) '''
+        «val fh = new FileHelper»
+        «fh.getterAndSetterMethods(it, '_actionDescriptionForLogEntry', 'string', false, false, false, '', '')»
     '''
 
     /**
@@ -53,6 +61,7 @@ class Loggable extends AbstractExtension implements EntityExtensionInterface {
      * Returns the extension class import statements.
      */
     override extensionClassImports(Entity it) '''
+        use Doctrine\ORM\Mapping as ORM;
         use Gedmo\Loggable\Entity\MappedSuperclass\«extensionBaseClass»;
     '''
 
@@ -69,6 +78,44 @@ class Loggable extends AbstractExtension implements EntityExtensionInterface {
     override extensionClassDescription(Entity it) {
         'Entity extension domain class storing ' + name.formatForDisplay + ' log entries.'
     }
+
+    /**
+     * Returns the extension base class implementation.
+     */
+    override extensionClassBaseImplementation(Entity it) '''
+        /**
+         * Extended description of the executed action which produced this log entry.
+         *
+         * @var string $actionDescription
+         *
+         * @ORM\Column(name="action_description", length=255)
+         */
+        protected $actionDescription = '';
+
+        /**
+         * Returns the action description.
+         *
+         * @return string
+         */
+        public function getActionDescription()
+        {
+            return $this->actionDescription;
+        }
+
+        /**
+         * Sets the action description.
+         *
+         * @param string $actionDescription
+         *
+         * @return void
+         */
+        public function setActionDescription($actionDescription)
+        {
+            if ($this->actionDescription !== $actionDescription) {
+                $this->actionDescription = isset($actionDescription) ? $actionDescription : '';
+            }
+        }
+    '''
 
     /**
      * Returns the extension repository base class implementation.

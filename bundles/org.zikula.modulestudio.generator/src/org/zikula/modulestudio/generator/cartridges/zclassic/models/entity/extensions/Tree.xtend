@@ -36,9 +36,6 @@ class Tree extends AbstractExtension implements EntityExtensionInterface {
     override properties(Entity it) '''
 
         /**
-         «IF loggable»
-             * @Gedmo\Versioned
-         «ENDIF»
          * @Gedmo\TreeLeft
          * @ORM\Column(type="integer")
          * @Assert\Type(type="integer")
@@ -47,9 +44,6 @@ class Tree extends AbstractExtension implements EntityExtensionInterface {
         protected $lft;
 
         /**
-         «IF loggable»
-             * @Gedmo\Versioned
-         «ENDIF»
          * @Gedmo\TreeLevel
          * @ORM\Column(type="integer")
          * @Assert\Type(type="integer")
@@ -58,9 +52,6 @@ class Tree extends AbstractExtension implements EntityExtensionInterface {
         protected $lvl;
 
         /**
-         «IF loggable»
-             * @Gedmo\Versioned
-         «ENDIF»
          * @Gedmo\TreeRight
          * @ORM\Column(type="integer")
          * @Assert\Type(type="integer")
