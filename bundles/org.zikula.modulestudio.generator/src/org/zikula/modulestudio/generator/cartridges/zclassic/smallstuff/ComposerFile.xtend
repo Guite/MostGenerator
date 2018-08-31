@@ -53,13 +53,13 @@ class ComposerFile {
         },
         "require": {
             «var dependencies = referredApplications.filter[dependencyType == ApplicationDependencyType.REQUIREMENT]»
-            "php": ">=5.5.9"«IF needsComposerInstall || !dependencies.empty»,«ENDIF»
-            «IF hasGeographical»
-                "drmonty/leaflet": "*"«IF generatePdfSupport || !dependencies.empty»,«ENDIF»
-            «ENDIF»
             «IF generatePdfSupport»
-                "dompdf/dompdf": "*"«IF !dependencies.empty»,«ENDIF»
+                "dompdf/dompdf": "*",
             «ENDIF»
+            «IF hasGeographical»
+                "drmonty/leaflet": "*",
+            «ENDIF»
+            "php": ">=5.5.9"«IF !dependencies.empty»,«ENDIF»
             «IF !dependencies.empty»
                 «FOR referredApp : dependencies»
                     «dependency(referredApp)»«IF referredApp != dependencies.last»,«ENDIF»
