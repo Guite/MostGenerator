@@ -68,14 +68,14 @@ class ComposerFile {
         },
         «IF !isSystemModule»
             "require-dev": {
-                "jakub-onderka/php-parallel-lint": "*",
-                "phploc/phploc": "*",
-                "pdepend/pdepend": "2.*",
-                "squizlabs/php_codesniffer": "*",
-                "phpunit/phpunit": "4.*",
-                "theseer/phpdox": "*",
-                "phpmd/phpmd": "2.*",
-                "sebastian/phpcpd": "*"
+                "jakub-onderka/php-parallel-lint": "^1",
+                "pdepend/pdepend": "^2",
+                "phploc/phploc": "^4",
+                "phpmd/phpmd": "^2",
+                "phpunit/phpunit": "^5",
+                "sebastian/phpcpd": "^3",
+                "squizlabs/php_codesniffer": "^3",
+                "theseer/phpdox": "^0"
             },
         «ENDIF»
         «{ dependencies = referredApplications.filter[dependencyType == ApplicationDependencyType.RECOMMENDATION]; '' }»
@@ -116,7 +116,7 @@ class ComposerFile {
             "preferred-install": "dist",
             "optimize-autoloader": true,
             "platform": {
-                "php": "5.5.9"
+                "php": "7.0.30"
             },
             "sort-packages": true
         }
