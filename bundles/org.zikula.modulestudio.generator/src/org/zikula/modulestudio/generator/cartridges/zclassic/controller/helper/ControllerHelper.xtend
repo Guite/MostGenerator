@@ -391,7 +391,7 @@ class ControllerHelper {
                         $sort = $fieldValue;
                     } elseif ($fieldName == 'sortdir' && !empty($fieldValue)) {
                         $sortdir = $fieldValue;
-                    } elseif (false === stripos($fieldName, 'thumbRuntimeOptions') && false === stripos($fieldName, 'featureActivationHelper')) {
+                    } elseif (false === stripos($fieldName, 'thumbRuntimeOptions') && false === stripos($fieldName, 'featureActivationHelper') && false === stripos($fieldName, 'permissionHelper')) {
                         // set filter as query argument, fetched inside repository
                         «IF hasUserFields»
                             if ($fieldValue instanceof UserEntity) {
