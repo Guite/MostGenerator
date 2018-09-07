@@ -206,6 +206,7 @@ class ContentTypeList {
             $qb = $repository->getListQueryBuilder($this->data['filter'], $orderBy);
             «IF hasCategorisableEntities»
 
+                $this->getData();
                 if (in_array($objectType, $this->categorisableObjectTypes)) {
                     if ($this->featureActivationHelper->isEnabled(FeatureActivationHelper::CATEGORIES, $objectType)) {
                         // apply category filters
