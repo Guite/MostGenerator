@@ -206,17 +206,22 @@ class NotificationHelper {
                 return true;
             }
 
-            $session = $this->requestStack->getCurrentRequest()->getSession();
+            $request = $this->requestStack->getCurrentRequest();
+            $session = null !== $request ? $request->getSession() : null;
 
             if (null === $this->kernel->getModule('ZikulaMailerModule')) {
-                $session->getFlashBag()->add('error', $this->__('Could not inform other persons about your amendments, because the Mailer module is not available - please contact an administrator about that!'));
+                if (null !== $session) {
+                    $session->getFlashBag()->add('error', $this->__('Could not inform other persons about your amendments, because the Mailer module is not available - please contact an administrator about that!'));
+                }
 
                 return false;
             }
 
             $result = $this->sendMails();
 
-            $session->remove($this->name . 'AdditionalNotificationRemarks');
+            if (null !== $session) {
+                $session->remove($this->name . 'AdditionalNotificationRemarks');
+            }
 
             return $result;
         }
@@ -399,8 +404,9 @@ class NotificationHelper {
             $state = $this->entity->getWorkflowState();
             $stateInfo = $this->workflowHelper->getStateInfo($state);
 
-            $session = $this->requestStack->getCurrentRequest()->getSession();
-            $remarks = $session->get($this->name . 'AdditionalNotificationRemarks', '');
+            $request = $this->requestStack->getCurrentRequest();
+            $session = null !== $request ? $request->getSession() : null;
+            $remarks = null !== $session ? $session->get($this->name . 'AdditionalNotificationRemarks', '') : '';
 
             $hasDisplayAction = in_array($objectType, ['«getAllEntities.filter[hasDisplayAction].map[name.formatForCode].join('\', \'')»']);
             $hasEditAction = in_array($objectType, ['«getAllEntities.filter[hasEditAction].map[name.formatForCode].join('\', \'')»']);
