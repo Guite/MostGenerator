@@ -34,14 +34,12 @@ import de.guite.modulestudio.metamodel.UploadField
 import de.guite.modulestudio.metamodel.UploadNamingScheme
 import de.guite.modulestudio.metamodel.UrlField
 import de.guite.modulestudio.metamodel.UserField
-import java.util.List
 
 /**
  * This class contains model related extension methods.
  */
 class ModelExtensions {
 
-    extension CollectionUtils = new CollectionUtils
     extension FormattingExtensions = new FormattingExtensions
     extension ModelInheritanceExtensions = new ModelInheritanceExtensions
     extension Utils = new Utils
@@ -351,8 +349,7 @@ class ModelExtensions {
      * Returns a list of all fields which should be displayed on the view page.
      */
     def getFieldsForViewPage(Entity it) {
-        var fields = getDisplayFields.filter[f|f.isVisibleOnViewPage].exclude(ArrayField).exclude(ObjectField)
-        fields.toList as List<DerivedField>
+        getDisplayFields.filter[f|f.isVisibleOnViewPage].reject(ArrayField).reject(ObjectField).toList
     }
 
     /**
@@ -382,8 +379,7 @@ class ModelExtensions {
      * Returns a list of all fields which may be used for sorting.
      */
     def getSortingFields(DataObject it) {
-        var fields = getDisplayFields.filter[f|f.isSortField].exclude(UserField).exclude(ArrayField).exclude(ObjectField)
-        fields.toList as List<Field>
+        getDisplayFields.filter[f|f.isSortField].reject(UserField).reject(ArrayField).reject(ObjectField).toList
     }
 
     /**
@@ -397,7 +393,7 @@ class ModelExtensions {
         if (it instanceof Entity && (it as Entity).identifierStrategy != EntityIdentifierStrategy.NONE) {
             fields = fields.filter[!primaryKey]
         }
-        var filteredFields = fields.filter[!isVersionField].exclude(ObjectField)
+        var filteredFields = fields.filter[!isVersionField].reject(ObjectField)
         val joinFieldNames = newArrayList
         for (relation : incoming.filter(JoinRelationship).filter[targetField != 'id']) {
             joinFieldNames += relation.targetField
@@ -408,7 +404,7 @@ class ModelExtensions {
 
         filteredFields = filteredFields.filter(DerivedField).filter[!joinFieldNames.contains(name)]
 
-        filteredFields.toList as List<DerivedField>
+        filteredFields.toList
     }
 
     /**
@@ -427,8 +423,7 @@ class ModelExtensions {
      * At the moment instances of UploadField are excluded.
      */
     def getFieldsForExampleData(DataObject it) {
-        val exampleFields = getDerivedFields.filter[!primaryKey].exclude(UploadField)
-        exampleFields.toList as List<DerivedField>
+        getDerivedFields.filter[!primaryKey].reject(UploadField).toList
     }
 
     /**

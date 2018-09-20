@@ -43,7 +43,7 @@ class Relations {
     /**
      * This method creates the templates to be included into the edit forms.
      */
-    def generateInclusionTemplate(Entity it) '''
+    def CharSequence generateInclusionTemplate(Entity it) '''
         «FOR relation : getEditableJoinRelations(true)»«relation.generate(false, false, false)»«ENDFOR»
         «FOR relation : getEditableJoinRelations(false)»«relation.generate(false, false, true)»«ENDFOR»
     '''

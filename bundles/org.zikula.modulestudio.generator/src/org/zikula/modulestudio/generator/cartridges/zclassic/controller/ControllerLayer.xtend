@@ -15,7 +15,6 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.controller.addition
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.additions.Routing
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.additions.Scribite
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype.QuickNavigationType
-import org.zikula.modulestudio.generator.extensions.CollectionUtils
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
@@ -25,7 +24,6 @@ import org.zikula.modulestudio.generator.extensions.Utils
 
 class ControllerLayer {
 
-    extension CollectionUtils = new CollectionUtils
     extension ControllerExtensions = new ControllerExtensions
     extension FormattingExtensions = new FormattingExtensions
     extension ModelExtensions = new ModelExtensions
@@ -167,8 +165,8 @@ class ControllerLayer {
         class «name.formatForCodeCapital»Controller extends Abstract«name.formatForCodeCapital»Controller
         {
             «IF hasSluggableFields»«/* put display method at the end to avoid conflict between delete/edit and display for slugs */»
-                «FOR action : getAllEntityActions.exclude(DisplayAction)»
-                    «adminAndUserImpl(action as Action, false)»
+                «FOR action : getAllEntityActions.reject(DisplayAction)»
+                    «adminAndUserImpl(action, false)»
                 «ENDFOR»
                 «IF loggable»
                     «new LoggableUndelete().generate(it, false)»
