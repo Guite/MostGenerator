@@ -15,6 +15,7 @@ import de.guite.modulestudio.metamodel.OneToOneRelationship
 import de.guite.modulestudio.metamodel.StringField
 import de.guite.modulestudio.metamodel.StringRole
 import de.guite.modulestudio.metamodel.UploadField
+import org.eclipse.emf.ecore.util.EcoreUtil
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
@@ -518,7 +519,7 @@ class PersistenceTransformer {
                 length = 20
                 multiple = false
             ]
-            listField.items.addAll(revisionHandlingItems)
+            listField.items.addAll(EcoreUtil.copyAll(revisionHandlingItems))
             varContainer.fields += listField
 
             listField = factory.createListField => [
@@ -527,7 +528,7 @@ class PersistenceTransformer {
                 mandatory = false
                 multiple = false
             ]
-            listField.items.addAll(revisionAmountItems)
+            listField.items.addAll(EcoreUtil.copyAll(revisionAmountItems))
             varContainer.fields += listField
 
             if (targets('2.0')) {
