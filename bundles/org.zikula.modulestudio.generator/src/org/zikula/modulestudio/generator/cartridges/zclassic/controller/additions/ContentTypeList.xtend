@@ -238,7 +238,7 @@ class ContentTypeList {
             $data['items'] = $entities;
             «IF hasCategorisableEntities»
 
-                if ($this->featureActivationHelper->isEnabled(FeatureActivationHelper::CATEGORIES, $this->objectType)) {
+                if ($this->featureActivationHelper->isEnabled(FeatureActivationHelper::CATEGORIES, $objectType)) {
                     $data['registries'] = $this->catRegistries;
                     $data['properties'] = $this->catProperties;
                 }
