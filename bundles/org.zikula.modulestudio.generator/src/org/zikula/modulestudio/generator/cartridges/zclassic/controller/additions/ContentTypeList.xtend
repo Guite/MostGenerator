@@ -236,13 +236,6 @@ class ContentTypeList {
 
             $data = $this->data;
             $data['items'] = $entities;
-            «IF hasCategorisableEntities»
-
-                if ($this->featureActivationHelper->isEnabled(FeatureActivationHelper::CATEGORIES, $objectType)) {
-                    $data['registries'] = $this->catRegistries;
-                    $data['properties'] = $this->catProperties;
-                }
-            «ENDIF»
 
             $data = $this->controllerHelper->addTemplateParameters($objectType, $data, 'contentType', []);
             $this->data = $data;
