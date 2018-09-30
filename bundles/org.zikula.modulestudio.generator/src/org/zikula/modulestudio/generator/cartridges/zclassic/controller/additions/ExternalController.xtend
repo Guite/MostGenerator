@@ -255,18 +255,18 @@ class ExternalController {
         $qb = $repository->getListQueryBuilder($where, $orderBy);
         «IF hasImageFields»
 
-            if (true === $templateParameters['onlyImages'] && $templateParameters['imageField'] != '') {
+            if (true === $templateParameters['onlyImages'] && '' != $templateParameters['imageField']) {
                 $imageField = $templateParameters['imageField'];
                 $orX = $qb->expr()->orX();
                 foreach (['gif', 'jpg', 'jpeg', 'jpe', 'png', 'bmp'] as $imageExtension) {
-                    $orX->add($qb->expr()->like('tbl.' . $imageField, $qb->expr()->literal('%.' . $imageExtension)));
+                    $orX->add($qb->expr()->like('tbl.' . $imageField . 'FileName', $qb->expr()->literal('%.' . $imageExtension)));
                 }
 
                 $qb->andWhere($orX);
             }
         «ENDIF»
 
-        if ($searchTerm != '') {
+        if ('' != $searchTerm) {
             $qb = $this->get('«appService».collection_filter_helper')->addSearchFilter($objectType, $qb, $searchTerm);
         }
         $query = $repository->getQueryFromBuilder($qb);
