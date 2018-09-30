@@ -107,6 +107,7 @@ class ControllerLayer {
             use Symfony\Component\HttpFoundation\RedirectResponse;
         «ENDIF»
         use Symfony\Component\HttpFoundation\Request;
+        use Symfony\Component\HttpFoundation\Response;
         «IF hasDisplayAction || hasDeleteAction»
             use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
         «ENDIF»
