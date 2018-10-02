@@ -27,7 +27,7 @@ class Scribite {
         'Generating Scribite support'.printIfNotTesting(fsa)
         this.fsa = fsa
 
-        docPath = getResourcesPath + 'scribite/'
+        docPath = getResourcesPath + 'public/scribite/'
         fsa.generateFile(docPath + 'integration.md', integration)
 
         pluginCk
