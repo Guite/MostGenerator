@@ -396,7 +396,6 @@ class Listeners {
             use Symfony\Component\EventDispatcher\EventSubscriberInterface;
             «IF generateScribitePlugins»
                 use Symfony\Component\Filesystem\Filesystem;
-                use Symfony\Component\Finder\Finder;
                 use Symfony\Component\HttpFoundation\RequestStack;
             «ENDIF»
             use Symfony\Component\HttpKernel\HttpKernelInterface;

@@ -63,9 +63,6 @@ class Scribite {
         It is easy to include «appName» in your [Scribite editors](https://github.com/zikula-modules/Scribite/).
         «appName» contains already a popup for selecting «getLeadingEntity.nameMultiple.formatForDisplay»«IF entities.size() > 1» and other items«ENDIF».
         Please note that Scribite 6.0+ is required for this.
-
-        To activate the popup for the editor of your choice (currently supported: CKEditor, Quill, Summernote, TinyMCE)
-        you only need to add the plugin to the list of extra plugins in the editor configuration.
     '''
 
     def private ckPlugin(Application it) '''

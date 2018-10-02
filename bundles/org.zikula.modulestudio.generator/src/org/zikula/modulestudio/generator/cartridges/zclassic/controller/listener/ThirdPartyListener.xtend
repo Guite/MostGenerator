@@ -197,17 +197,10 @@ class ThirdPartyListener {
         {
             // install assets for Scribite plugins
             $targetDir = 'web/modules/«vendorAndName.toLowerCase»';
-            $finder = new Finder();
             if (!$this->filesystem->exists($targetDir)) {
                 $moduleDirectory = str_replace('Listener/Base', '', __DIR__);
-                $this->filesystem->mkdir($targetDir, 0777);
                 if (is_dir($originDir = $moduleDirectory . 'Resources/public')) {
-                    $this->filesystem->mirror($originDir, $targetDir, Finder::create()->in($originDir));
-                }
-                if (is_dir($originDir = $moduleDirectory . 'Resources/scribite')) {
-                    $targetDir .= '/scribite';
-                    $this->filesystem->mkdir($targetDir, 0777);
-                    $this->filesystem->mirror($originDir, $targetDir, Finder::create()->in($originDir));
+                    $this->filesystem->symlink($originDir, $targetDir, true);
                 }
             }
 
