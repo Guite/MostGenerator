@@ -232,11 +232,11 @@ class Property {
         /**
          * Sets the «name.formatForDisplay».
          *
-         * @param File $«name.formatForCode»
+         * @param File|null $«name.formatForCode»
          *
          * @return void
          */
-        public function set«name.formatForCodeCapital»(«IF !nullable»File «ENDIF»$«name.formatForCode»)
+        public function set«name.formatForCodeCapital»(«/* disabled due to #1206 IF !nullable»File «ENDIF*/»$«name.formatForCode»)
         {
             if (null === $this->«name.formatForCode» && null === $«name.formatForCode») {
                 return;
