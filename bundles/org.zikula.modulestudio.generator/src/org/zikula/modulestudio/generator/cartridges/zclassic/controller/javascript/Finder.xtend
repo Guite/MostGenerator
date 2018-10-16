@@ -145,6 +145,9 @@ class Finder {
             itemUrl = jQuery('#url' + itemId).val().replace(quoteFinder, '');
             itemTitle = jQuery('#title' + itemId).val().replace(quoteFinder, '').trim();
             itemDescription = jQuery('#desc' + itemId).val().replace(quoteFinder, '').trim();
+            if (!itemDescription) {
+                itemDescription = itemTitle;
+            }
             «IF hasImageFields»
                 imagePath = jQuery('#imagePath' + itemId).length > 0 ? jQuery('#imagePath' + itemId).val().replace(quoteFinder, '') : '';
             «ENDIF»
