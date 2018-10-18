@@ -454,6 +454,7 @@ class HookHelper {
             «IF !application.getUploadEntities.empty»
                 use «application.appNamespace»\Helper\ImageHelper;
             «ENDIF»
+            use «application.appNamespace»\Helper\PermissionHelper;
         «ENDIF»
 
         /**
@@ -493,6 +494,11 @@ class HookHelper {
                  * @var Twig_Environment
                  */
                 protected $templating;
+
+                /**
+                 * @var PermissionHelper
+                 */
+                protected $permissionHelper;
                 «IF !application.getUploadEntities.empty»
 
                     /**
@@ -514,6 +520,7 @@ class HookHelper {
              * @param RequestStack        $requestStack
              * @param EntityFactory       $entityFactory
              * @param Twig_Environment    $twig
+             * @param PermissionHelper    $permissionHelper
              «IF !application.getUploadEntities.empty»
              * @param ImageHelper         $imageHelper
              «ENDIF»
@@ -527,7 +534,8 @@ class HookHelper {
                 «ELSEIF category == 'UiHooks'»
                     RequestStack $requestStack,
                     EntityFactory $entityFactory,
-                    Twig_Environment $twig«IF !application.getUploadEntities.empty»,«ENDIF»
+                    Twig_Environment $twig,
+                    PermissionHelper $permissionHelper«IF !application.getUploadEntities.empty»,«ENDIF»
                     «IF !application.getUploadEntities.empty»
                         ImageHelper $imageHelper
                     «ENDIF»
@@ -541,6 +549,7 @@ class HookHelper {
                     $this->requestStack = $requestStack;
                     $this->entityFactory = $entityFactory;
                     $this->templating = $twig;
+                    $this->permissionHelper = $permissionHelper;
                     «IF !application.getUploadEntities.empty»
                         $this->imageHelper = $imageHelper;
                     «ENDIF»
@@ -851,6 +860,7 @@ class HookHelper {
 
                         $templateParameters['relationThumbRuntimeOptions'] = $this->imageHelper->getCustomRuntimeOptions('', '', '«application.appName»_relateditem', 'controllerAction', ['action' => 'display']);
                     «ENDIF»
+                    $parameters['permissionHelper'] = $this->permissionHelper;
 
                     $output = $this->templating->render($template, $templateParameters);
 

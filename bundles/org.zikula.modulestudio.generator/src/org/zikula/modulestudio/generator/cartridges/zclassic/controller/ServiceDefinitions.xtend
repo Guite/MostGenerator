@@ -977,6 +977,7 @@ class ServiceDefinitions {
                                     - "@request_stack"
                                     - "@«modPrefix».entity_factory"
                                     - "@twig"
+                                    - "@«modPrefix».permission_helper"
                                     «IF !getUploadEntities.empty»
                                         - "@«modPrefix».image_helper"
                                     «ENDIF»
