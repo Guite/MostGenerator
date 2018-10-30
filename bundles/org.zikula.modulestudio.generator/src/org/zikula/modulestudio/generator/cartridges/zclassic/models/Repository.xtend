@@ -551,10 +551,15 @@ class Repository {
             if (!$isPaginated) {
                 $result = $query->getResult();
             } else {
-                «IF !(outgoing.filter(JoinRelationship).empty && incoming.filter(JoinRelationship).empty)»
+                «IF categorisable || !(outgoing.filter(JoinRelationship).empty && incoming.filter(JoinRelationship).empty)»
                     $paginator = new Paginator($query, true);
                 «ELSE»
                     $paginator = new Paginator($query, false);
+                «ENDIF»
+                «IF hasTranslatableFields»
+                    if (true === $this->translationsEnabled) {
+                        $paginator->setUseOutputWalkers(true);
+                    }
                 «ENDIF»
 
                 $count = count($paginator);
