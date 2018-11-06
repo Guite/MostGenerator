@@ -140,7 +140,7 @@ class Styles {
             }
 
             .ui-autocomplete-loading {
-                background: white url("../../../../../../images/ajax/indicator_arrows.gif") right center no-repeat;
+                background: white url("../../../../../../web/bundles/core/images/ajax/indicator_arrows.gif") right center no-repeat;
             }
 
             .ui-autocomplete .suggestion {
@@ -156,11 +156,17 @@ class Styles {
             }
 
             div.«cssPrefix»-autocomplete .ui-autocomplete .suggestion {
-                background-image: url("../../../../../../images/icons/extrasmall/tab_right.png");
+                content: "\f0da";
+                font-family: 'FontAwesome';
+                font-style: normal;
+                color: #000;
+                margin-right: 15px;
+                position: absolute;
+                left: 0;
             }
             «IF hasImageFields»
                 div.«cssPrefix»-autocomplete-with-image .ui-autocomplete .suggestion {
-                    background-image: url("../../../../../../images/icons/extrasmall/agt_Multimedia.png");
+                    content: "\f03e";
                 }
             «ENDIF»
             .ui-autocomplete .suggestion img {
