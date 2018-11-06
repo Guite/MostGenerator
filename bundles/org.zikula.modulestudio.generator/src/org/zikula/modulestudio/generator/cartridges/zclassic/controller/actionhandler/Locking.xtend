@@ -28,10 +28,6 @@ class Locking {
             // try to guarantee that only one person at a time can be editing this entity
             $lockName = '«appName»' . $this->objectTypeCapital . $entity->getKey();
             $this->lockingApi->addLock($lockName, $this->getRedirectUrl(['commandName' => '']));
-            «IF !getUploadEntities.empty»
-                // reload entity as the addLock call above has triggered the preUpdate event
-                $this->entityFactory->getObjectManager()->refresh($entity);
-            «ENDIF»
         }
     '''
 
