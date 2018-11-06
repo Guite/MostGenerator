@@ -687,7 +687,7 @@ class ControllerHelper {
             $json = '';
 
             // we can either use Snoopy if available
-            //require_once('«relativeAppRootPath»/vendor/Snoopy/Snoopy.class.php');
+            //require_once '«relativeAppRootPath»/vendor/Snoopy/Snoopy.class.php';
             //$snoopy = new Snoopy();
             //$snoopy->fetch($url);
             //$json = $snoopy->results;
@@ -713,12 +713,12 @@ class ControllerHelper {
                 'longitude' => 0
             ];
 
-            if ($json == '') {
+            if ('' == $json) {
                 return $result;
             }
 
             $data = json_decode($json);
-            if (json_last_error() == JSON_ERROR_NONE && $data->status == 'OK' && count($data) > 0) {
+            if (JSON_ERROR_NONE == json_last_error() && 'OK' == $data->status && 0 < count($data)) {
                 $location = $data[0];
                 $result['latitude'] = str_replace(',', '.', $location->lat);
                 $result['longitude'] = str_replace(',', '.', $location->lng);
