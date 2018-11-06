@@ -337,7 +337,7 @@ class WorkflowHelper {
                 «ENDIF»
                 «IF hasWorkflow(EntityWorkflowType::STANDARD) || hasWorkflow(EntityWorkflowType::ENTERPRISE)»
                     case 'approve':
-                        $buttonClass = '';
+                        $buttonClass = 'success';
                         break;
                 «ENDIF»
                 «IF hasWorkflowState('accepted')»
