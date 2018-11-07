@@ -105,7 +105,7 @@ class WorkflowEventsListener {
             $permissionLevel = ACCESS_READ;
             $transitionName = $event->getTransition()->getName();
             «IF !targets('2.0')»
-                if (substr($transitionName, 0, 6) == 'update') {
+                if ('update' == substr($transitionName, 0, 6)) {
                     $transitionName = 'update';
                 }
             «ENDIF»
@@ -148,10 +148,10 @@ class WorkflowEventsListener {
             }
             «IF !getJoinRelations.empty && !getAllEntities.filter[!getOutgoingJoinRelationsWithoutDeleteCascade.empty].empty»
 
-                if ($transitionName == 'delete') {
+                if ('delete' == $transitionName) {
                     // check if deleting the entity would break related child entities
                     «FOR entity : getAllEntities.filter[!getOutgoingJoinRelationsWithoutDeleteCascade.empty]»
-                        if ($objectType == '«entity.name.formatForCode»') {
+                        if ('«entity.name.formatForCode»' == $objectType) {
                             $isBlocked = false;
                             «FOR relation : entity.getOutgoingJoinRelationsWithoutDeleteCascade»
                                 «IF relation.isManySide(true)»
@@ -272,7 +272,7 @@ class WorkflowEventsListener {
                 } elseif (in_array($entity->get_objectType(), ['«getAllEntities.filter[workflow == EntityWorkflowType.ENTERPRISE].map[name.formatForCode].join('\', \'')»'])) {
                     $workflowShortName = 'enterprise';
                 }
-                if ($workflowShortName != 'none') {
+                if ('none' != $workflowShortName) {
                     $this->sendNotifications($entity, $event->getTransition()->getName(), $workflowShortName);
                 }
             «ENDIF»
@@ -357,7 +357,7 @@ class WorkflowEventsListener {
 
             $entityClassParts = explode('\\', get_class($entity));
 
-            return ($entityClassParts[0] == '«vendor.formatForCodeCapital»' && $entityClassParts[1] == '«name.formatForCodeCapital»Module');
+            return ('«vendor.formatForCodeCapital»' == $entityClassParts[0] && '«name.formatForCodeCapital»Module' == $entityClassParts[1]);
         }
     '''
 
@@ -377,15 +377,15 @@ class WorkflowEventsListener {
             $sendToCreator = true;
             $sendToModerator = false;
             $sendToSuperModerator = false;
-            if ($actionId == 'submit' && $newState == 'waiting'
-                || $actionId == 'demote' && $newState == 'accepted') {
+            if ('submit' == $actionId && 'waiting' == $newState
+                || 'demote' == $actionId && 'accepted' == $newState) {
                 // only to moderator
                 $sendToCreator = false;
                 $sendToModerator = true;
-            } elseif ($actionId == 'accept' && $newState == 'accepted') {
+            } elseif ('accept' == $actionId && 'accepted' == $newState) {
                 // to creator and super moderator
                 $sendToSuperModerator = true;
-            } elseif ($actionId == 'approve' && $newState == 'approved' && $workflowShortName == 'enterprise') {
+            } elseif ('approve' == $actionId && 'approved' == $newState && 'enterprise' == $workflowShortName) {
                 // to creator and moderator
                 $sendToModerator = true;
             }

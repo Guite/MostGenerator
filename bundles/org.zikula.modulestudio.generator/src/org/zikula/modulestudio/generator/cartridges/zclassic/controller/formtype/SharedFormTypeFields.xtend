@@ -304,8 +304,8 @@ class SharedFormTypeFields {
             messages += '''$this->__('Note: this value must be a valid ISSN (International Standard Serial Number.«issn.issnMessage»')'''
         } else if (ipAddress != IpAddressScope.NONE) {
             messages += '''$this->__('Note: this value must be a valid IP address.«ipAddress.scopeMessage»')'''
-        } else if (role == StringRole.PHONE_NUMBER) {
-            messages += '''$this->__('Note: this value must be a valid telephone number.')'''
+        //} else if (role == StringRole.PHONE_NUMBER) {
+        //    messages += '''$this->__('Note: this value must be a valid telephone number.')'''
         } else if (role == StringRole.UUID) {
             messages += '''$this->__('Note: this value must be a valid UUID (Universally Unique Identifier).')'''
         }
