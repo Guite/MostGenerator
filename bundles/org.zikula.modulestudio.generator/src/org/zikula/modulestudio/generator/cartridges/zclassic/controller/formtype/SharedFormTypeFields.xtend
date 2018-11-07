@@ -210,9 +210,25 @@ class SharedFormTypeFields {
                     «IF readonly»
                         'readonly' => 'readonly',
                     «ENDIF»
-                    «IF it instanceof IntegerField && (it as IntegerField).range»
-                        'min' => «(it as IntegerField).minValue»,
-                        'max' => «(it as IntegerField).maxValue»,
+                    «IF it instanceof IntegerField»
+                        «IF range»
+                            'min' => «minValue»,
+                            'max' => «maxValue»,
+                        «ELSE»
+                            «IF minValue.compareTo(BigInteger.valueOf(0)) > 0»
+                                'min' => «minValue»,
+                            «ENDIF»
+                            «IF maxValue.compareTo(BigInteger.valueOf(0)) > 0»
+                                'max' => «maxValue»,
+                            «ENDIF»
+                        «ENDIF»
+                    «ELSEIF it instanceof NumberField»
+                        «IF minValue > 0»
+                            'min' => «minValue»,
+                        «ENDIF»
+                        «IF maxValue > 0»
+                            'max' => «maxValue»,
+                        «ENDIF»
                     «ENDIF»
                     'title' => $this->__('«titleAttribute»')
                 ],
