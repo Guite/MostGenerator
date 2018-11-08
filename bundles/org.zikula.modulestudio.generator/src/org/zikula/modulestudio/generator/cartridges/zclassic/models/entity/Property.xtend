@@ -251,7 +251,7 @@ class Property {
                 $this->«name.formatForCode» = isset($«name.formatForCode») ? $«name.formatForCode» : '';
             «ENDIF»
 
-            if (null === $this->«name.formatForCode») {
+            if (null === $this->«name.formatForCode» || '' == $this->«name.formatForCode») {
                 $this->set«name.formatForCodeCapital»FileName('');
                 $this->set«name.formatForCodeCapital»Url('');
                 $this->set«name.formatForCodeCapital»Meta([]);
