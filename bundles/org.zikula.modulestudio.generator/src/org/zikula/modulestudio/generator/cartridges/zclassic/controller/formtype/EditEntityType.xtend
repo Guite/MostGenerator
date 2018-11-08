@@ -599,7 +599,7 @@ class EditEntityType {
     def private relationDefinition(JoinRelationship it, Boolean outgoing, Boolean autoComplete) '''
         «val aliasName = getRelationAliasName(outgoing)»
         «val relatedEntity = if (outgoing) target else source»
-        «val editMode = if (outgoing) getTargetEditMode else getSourceEditMode»
+        «val editMode = if (outgoing) getSourceEditMode else getTargetEditMode»
         «IF editMode == RelationEditMode.EMBEDDED»
             $builder->add('«aliasName.formatForCode»', '«app.appNamespace»\Form\Type\«relatedEntity.name.formatForCodeCapital»Type', [
                 «IF isManySide(outgoing)»
