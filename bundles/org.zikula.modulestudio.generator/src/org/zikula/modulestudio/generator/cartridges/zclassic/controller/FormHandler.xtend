@@ -1430,6 +1430,11 @@ class FormHandler {
                     } else {
                         $message = $this->__('Done! «name.formatForDisplayCapital» updated.');
                     }
+                    «IF EntityWorkflowType.NONE !== workflow»
+                        if ('waiting' == $this->entityRef->getWorkflowState()) {
+                            $message .= ' ' . $this->__('It is now waiting for approval by our moderators.');
+                        }
+                    «ENDIF»
                     break;
                 case 'delete':
                     $message = $this->__('Done! «name.formatForDisplayCapital» deleted.');
