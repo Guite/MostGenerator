@@ -32,6 +32,10 @@ class GetListEntry {
             if ((empty($value) && $value != '0') || empty($objectType) || empty($fieldName)) {
                 return $value;
             }
+            «IF !isSystemModule»
+
+                $this->translator->setDomain('«appName.formatForDB»');
+            «ENDIF»
 
             return $this->listHelper->resolve($value, $objectType, $fieldName, $delimiter);
         }
