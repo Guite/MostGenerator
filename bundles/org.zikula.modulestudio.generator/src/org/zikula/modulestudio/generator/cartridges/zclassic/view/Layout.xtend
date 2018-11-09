@@ -378,12 +378,12 @@ class Layout {
             <title>{{ pageGetVar('title') }}</title>
             <style>
                 @page {
-                    margin: 0 2cm 1cm 1cm;
+                    margin: 1cm 2cm 1cm 1cm;
                 }
 
                 img {
                     border-width: 0;
-                    vertical-align: middle;
+                    vertical-align: top;
                 }
             </style>
         </head>
