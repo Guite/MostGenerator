@@ -116,7 +116,7 @@ class Factory {
                 /**
                  * Creates a new «entity.name.formatForCode» instance.
                  *
-                 * @return «appNamespace»\Entity\«entity.name.formatForCode»Entity The newly created entity instance
+                 * @return \«appNamespace»\Entity\«entity.name.formatForCodeCapital»Entity The newly created entity instance
                  */
                 public function create«entity.name.formatForCodeCapital»()
                 {
