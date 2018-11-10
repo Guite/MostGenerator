@@ -100,7 +100,7 @@ class ControllerLayer {
     def private entityControllerBaseImports(Entity it) '''
         namespace «app.appNamespace»\Controller\Base;
 
-        «IF hasEditAction || hasDeleteAction»
+        «IF hasViewAction || hasEditAction || hasDeleteAction»
             use RuntimeException;
         «ENDIF»
         «IF hasIndexAction || hasViewAction || hasEditAction || hasDeleteAction»
