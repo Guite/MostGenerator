@@ -243,6 +243,7 @@ class Layout {
         <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="{{ app.request.locale }}" lang="{{ app.request.locale }}">
         <head>
             <title>{{ block('pageTitle')|default(block('title')) }}</title>
+            <link rel="stylesheet" href="{{ asset('bootstrap-font-awesome.css') }}" />
             <link rel="stylesheet" href="{{ asset('bootstrap/css/bootstrap.min.css') }}" />
             <link rel="stylesheet" href="{{ asset('bootstrap/css/bootstrap-theme.min.css') }}" />
             «IF needsJQueryUI»
@@ -305,6 +306,7 @@ class Layout {
             «ELSE»
                 «rawJsInit»
             «ENDIF»
+            {% block footer %}{% endblock %}
         </body>
         </html>
     '''

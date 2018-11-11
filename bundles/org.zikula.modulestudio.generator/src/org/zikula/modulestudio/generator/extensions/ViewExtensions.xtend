@@ -135,8 +135,14 @@ class ViewExtensions {
      */
     def includeLeaflet(Entity it, String actionName, String objName) '''
         {% set pathToLeaflet = zasset('@«application.appName»:css/style.css')|replace({'Resources/public/css/style.css': ''}) ~ 'vendor/drmonty/leaflet/' %}
-        {{ pageAddAsset('stylesheet', pathToLeaflet ~ 'css/leaflet.css') }}
-        {{ pageAddAsset('javascript', pathToLeaflet ~ 'js/leaflet' ~ (app.environment == 'dev' ? '' : '.min') ~ '.js') }}
+        {% set isQuickView = app.request.query.getBoolean('raw', false) %}
+        {% if isQuickView %}
+            <link rel="stylesheet" href="{{ pathToLeaflet ~ 'css/leaflet.css' }}" />
+            <script src="{{ pathToLeaflet ~ 'js/leaflet' ~ (app.environment == 'dev' ? '' : '.min') ~ '.js' }}"></script>
+        {% else %}
+            {{ pageAddAsset('stylesheet', pathToLeaflet ~ 'css/leaflet.css') }}
+            {{ pageAddAsset('javascript', pathToLeaflet ~ 'js/leaflet' ~ (app.environment == 'dev' ? '' : '.min') ~ '.js') }}
+        {% endif %}
         <div id="geographicalInfo" class="hidden" data-context="«actionName»" data-latitude="{{ «objName».latitude|«application.appName.formatForDB»_geoData }}" data-longitude="{{ «objName».longitude|«application.appName.formatForDB»_geoData }}" data-zoom-level="{{ getModVar('«application.appName»', 'defaultZoomLevel', 18) }}" data-tile-layer-url="{{ getModVar('«application.appName»', 'tileLayerUrl') }}" data-tile-layer-attribution="{{ getModVar('«application.appName»', 'tileLayerAttribution') }}"«IF actionName == 'edit'» data-use-geolocation="{% if mode == 'create' and getModVar('«application.appName»', 'enable«name.formatForCodeCapital»GeoLocation', false) == true %}true{% else %}false{% endif %}"«ENDIF»></div>
 
     '''
