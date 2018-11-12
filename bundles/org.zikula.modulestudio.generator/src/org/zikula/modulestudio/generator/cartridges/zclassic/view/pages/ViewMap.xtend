@@ -90,8 +90,8 @@ class ViewMap {
                         markerData.push({
                             latitude: {{ «name.formatForCode».latitude|e('js') }},
                             longitude: {{ «name.formatForCode».longitude|e('js') }},
-                            title: '{{ «name.formatForCode»|«appName.formatForDB»_formattedTitle|e('js') }}'«IF hasImageFieldsEntity»,
-                            image: '{% if «name.formatForCode».«getImageFieldsEntity.head.name.formatForCode» is not empty and «name.formatForCode».«getImageFieldsEntity.head.name.formatForCode»Meta|default %}{{ «name.formatForCode».«getImageFieldsEntity.head.name.formatForCode»Url|e('js') }}{% endif %}'«ENDIF»«IF hasDisplayAction»,
+                            title: '{{ «name.formatForCode»|«appName.formatForDB»_formattedTitle|e('js') }}'«IF null !== getMapImageField»,
+                            image: '{% if «name.formatForCode».«getMapImageField.name.formatForCode» is not empty and «name.formatForCode».«getMapImageField.name.formatForCode»Meta|default %}{{ «name.formatForCode».«getMapImageField.name.formatForCode»Url|e('js') }}{% endif %}'«ENDIF»«IF hasDisplayAction»,
                             detailUrl: '{{ path('«appName.formatForDB»_«name.formatForCode»_' ~ routeArea ~ 'display'«routeParams(name.formatForCode, true)»)|e('js') }}'«ENDIF»
                         });
                     {% endfor %}
@@ -119,6 +119,13 @@ class ViewMap {
             {% endblock %}
         «ENDIF»
     '''
+
+    def private getMapImageField(Entity it) {
+    	if (getUploadFieldsEntity.filter[isOnlyImageField].empty) {
+    	    return null
+    	}
+    	getUploadFieldsEntity.filter[isOnlyImageField].head
+    }
 
     def private pageNavLinks(Entity it) '''
         «val objName = name.formatForCode»
