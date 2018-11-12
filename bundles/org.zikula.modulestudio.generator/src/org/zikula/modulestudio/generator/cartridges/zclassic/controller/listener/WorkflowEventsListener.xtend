@@ -264,18 +264,6 @@ class WorkflowEventsListener {
             if (!$this->isEntityManagedByThisBundle($entity) || !method_exists($entity, 'get_objectType')) {
                 return;
             }
-            «IF needsApproval»
-
-                $workflowShortName = 'none';
-                if (in_array($entity->get_objectType(), ['«getAllEntities.filter[workflow == EntityWorkflowType.STANDARD].map[name.formatForCode].join('\', \'')»'])) {
-                    $workflowShortName = 'standard';
-                } elseif (in_array($entity->get_objectType(), ['«getAllEntities.filter[workflow == EntityWorkflowType.ENTERPRISE].map[name.formatForCode].join('\', \'')»'])) {
-                    $workflowShortName = 'enterprise';
-                }
-                if ('none' != $workflowShortName) {
-                    $this->sendNotifications($entity, $event->getTransition()->getName(), $workflowShortName);
-                }
-            «ENDIF»
         }
         «IF targets('2.0')»
 
@@ -299,6 +287,18 @@ class WorkflowEventsListener {
                 if (!$this->isEntityManagedByThisBundle($entity) || !method_exists($entity, 'get_objectType')) {
                     return;
                 }
+                «IF needsApproval»
+
+                    $workflowShortName = 'none';
+                    if (in_array($entity->get_objectType(), ['«getAllEntities.filter[workflow == EntityWorkflowType.STANDARD].map[name.formatForCode].join('\', \'')»'])) {
+                        $workflowShortName = 'standard';
+                    } elseif (in_array($entity->get_objectType(), ['«getAllEntities.filter[workflow == EntityWorkflowType.ENTERPRISE].map[name.formatForCode].join('\', \'')»'])) {
+                        $workflowShortName = 'enterprise';
+                    }
+                    if ('none' != $workflowShortName) {
+                        $this->sendNotifications($entity, $event->getTransition()->getName(), $workflowShortName);
+                    }
+                «ENDIF»
             }
 
             /**
@@ -387,6 +387,10 @@ class WorkflowEventsListener {
                 $sendToSuperModerator = true;
             } elseif ('approve' == $actionId && 'approved' == $newState && 'enterprise' == $workflowShortName) {
                 // to creator and moderator
+                $sendToModerator = true;
+            } elseif ('update' == $actionId && 'waiting' == $newState) {
+                // only to moderator
+                $sendToCreator = false;
                 $sendToModerator = true;
             }
             $recipientTypes = [];

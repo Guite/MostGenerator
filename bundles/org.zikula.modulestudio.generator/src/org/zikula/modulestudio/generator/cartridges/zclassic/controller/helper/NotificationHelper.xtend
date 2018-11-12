@@ -235,7 +235,7 @@ class NotificationHelper {
         {
             $this->recipients = [];
 
-            if ($this->recipientType == 'moderator' || $this->recipientType == 'superModerator') {
+            if (in_array($this->recipientType, ['moderator', 'superModerator'])) {
                 «val entitiesWithWorkflow = getAllEntities.filter[workflow != EntityWorkflowType.NONE]»
                 $modVarSuffixes = [
                     «FOR entity : entitiesWithWorkflow»
@@ -255,7 +255,7 @@ class NotificationHelper {
                         $this->addRecipient($user);
                     }
                 }
-            } elseif ($this->recipientType == 'creator' && method_exists($this->entity, 'getCreatedBy')) {
+            } elseif ('creator' == $this->recipientType && method_exists($this->entity, 'getCreatedBy')) {
                 $this->addRecipient($this->entity->getCreatedBy());
             } elseif ($this->usesDesignatedEntityFields()) {
                 $this->addRecipient();
