@@ -22,8 +22,12 @@ class GeoFunctions {
             return
         }
         'Generating JavaScript for geographical functions'.printIfNotTesting(fsa)
-        val fileName = appName + '.Geo.js'
+        var fileName = appName + '.Geo.js'
         fsa.generateFile(getAppJsPath + fileName, generate)
+        if (!getGeographicalEntities.filter[hasViewAction].empty) {
+            fileName = appName + '.ViewMap.js'
+            fsa.generateFile(getAppJsPath + fileName, generateViewMap)
+        }
     }
 
     def private generate(Application it) '''
@@ -161,5 +165,97 @@ class GeoFunctions {
                 }
             }
         }
+    '''
+
+    def private generateViewMap(Application it) '''
+        'use strict';
+
+        var map;
+        var objectType;
+        var fieldPrefix;
+        var entityMarkers;
+        var labelMarkers;
+
+        /**
+         * Reacts on map zoom change.
+         */
+        function handleViewMapZoom() {
+            if (map.getZoom() > 10) {
+                map.addLayer(labelMarkers);
+                map.removeLayer(entityMarkers);
+            } else {
+                map.addLayer(entityMarkers);
+                map.removeLayer(labelMarkers);
+            }
+        }
+
+        /**
+         * Adds markers to the current map.
+         */
+        function addMarkers() {
+            entityMarkers.clearLayers();
+            labelMarkers.clearLayers();
+
+            for (var i = 0; i < markerData.length; i++) {
+                var marker = markerData[i];
+                var markerCaption = (marker.image ? '<img src="' + marker.image + '" alt="Logo" style="max-width: 100px !important" /><br />' : '') + marker.title;
+                if ('undefined' !== typeof marker.detailUrl && marker.detailUrl) {
+                    markerCaption += '<br /><a href="' + marker.detailUrl + '" target="_blank"><i class="fa fa-arrow-circle-right"></i> Details</a>';
+                }
+                L.marker([marker.latitude, marker.longitude]).bindPopup(markerCaption).addTo(entityMarkers);
+                L.marker([marker.latitude, marker.longitude], {
+                    icon: L.divIcon({
+                        className: 'detail-marker',
+                        html: markerCaption
+                    })
+                })/*.bindPopup(markerCaption)*/.addTo(labelMarkers);
+            }
+
+            if (entityMarkers.getLayers().length > 0) {
+                map.fitBounds(entityMarkers.getBounds());
+                handleViewMapZoom();
+            }
+        }
+
+        /**
+         * Initialises geographical view features.
+         */
+        function «vendorAndName»InitGeographicalView(parameters, isEditMode) {
+            // create map and focus on DACH by default
+            map = L.map('mapContainer').setView([49.210, 11.997], 5);
+
+            // add tile layer
+            L.tileLayer(parameters.tileLayerUrl, {
+                attribution: parameters.tileLayerAttribution
+            }).addTo(map);
+
+            entityMarkers = L.featureGroup();
+            labelMarkers = L.featureGroup().addTo(map);
+
+            addMarkers();
+
+            map.on('zoomend', handleViewMapZoom);
+        }
+
+        jQuery(document).ready(function () {
+            var infoElem, parameters;
+
+            infoElem = jQuery('#geographicalInfo');
+            if (infoElem.length == 0) {
+                return;
+            }
+
+            objectType = infoElem.data('object-type');
+            fieldPrefix = '#«appName.toLowerCase»_' + objectType + 'quicknav_';
+
+            parameters = {
+                tileLayerUrl: infoElem.data('tile-layer-url'),
+                tileLayerAttribution: infoElem.data('tile-layer-attribution')
+            };
+
+            if (infoElem.data('context') == 'view') {
+                «vendorAndName»InitGeographicalView(parameters, false);
+            }
+        });
     '''
 }

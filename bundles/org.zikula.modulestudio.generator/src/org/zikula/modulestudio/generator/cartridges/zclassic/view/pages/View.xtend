@@ -143,6 +143,10 @@ class View {
             {% set linkTitle = __('Switch to hierarchy view') %}
             <a href="{{ path('«appName.formatForDB»_«objName.toLowerCase»_' ~ routeArea ~ 'view', {tpl: 'tree'}) }}" title="{{ linkTitle|e('html_attr') }}"><i class="fa fa-code-fork"></i> {{ linkTitle }}</a>
         «ENDIF»
+        «IF geographical»
+            {% set linkTitle = __('Show map') %}
+            <a href="{{ path('«appName.formatForDB»_«objName.toLowerCase»_' ~ routeArea ~ 'view', {tpl: 'map', all: 1}) }}" title="{{ linkTitle|e('html_attr') }}"><i class="fa fa-map-o"></i> {{ linkTitle }}</a>
+        «ENDIF»
         «IF standardFields»
             {% if own == 1 %}
                 {% set linkTitle = __('Show also entries from other users') %}

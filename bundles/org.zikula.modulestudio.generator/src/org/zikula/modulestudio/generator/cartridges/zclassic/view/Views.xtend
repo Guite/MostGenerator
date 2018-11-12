@@ -22,6 +22,7 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.view.pages.History
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.pages.Index
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.pages.View
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.pages.ViewHierarchy
+import org.zikula.modulestudio.generator.cartridges.zclassic.view.pages.ViewMap
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.pages.export.Csv
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.pages.export.Ics
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.pages.export.Json
@@ -99,6 +100,9 @@ class Views {
         }
         if (entity.hasViewAction) {
             new View().generate(entity, appName, 3, fsa)
+            if (entity.geographical) {
+                new ViewMap().generate(entity, appName, fsa)
+            }
             if (entity.tree != EntityTreeType.NONE) {
                 new ViewHierarchy().generate(entity, appName, fsa)
             }
