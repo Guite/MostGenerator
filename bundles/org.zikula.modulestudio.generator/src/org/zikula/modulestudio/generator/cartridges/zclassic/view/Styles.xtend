@@ -155,20 +155,16 @@ class Styles {
                 background-color: #fff;
             }
 
-            div.«cssPrefix»-autocomplete .ui-autocomplete .suggestion {
+            .ui-autocomplete .suggestion:before {
                 content: "\f0da";
                 font-family: 'FontAwesome';
                 font-style: normal;
-                color: #000;
+                color: #7db441;
                 margin-right: 15px;
                 position: absolute;
-                left: 0;
+                left: 20px;
             }
-            «IF hasImageFields»
-                div.«cssPrefix»-autocomplete-with-image .ui-autocomplete .suggestion {
-                    content: "\f03e";
-                }
-            «ENDIF»
+
             .ui-autocomplete .suggestion img {
                 max-width: 20px;
                 max-height: 20px;
@@ -242,11 +238,6 @@ class Styles {
 
         div.«cssPrefix»-view form.«cssPrefix»-quicknav fieldset label {
             margin-right: 5px;
-        }
-
-        div.«cssPrefix»-view form.«cssPrefix»-quicknav fieldset #num {
-            width: 50px;
-            text-align: right;
         }
     '''
 
