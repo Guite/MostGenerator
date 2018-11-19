@@ -64,7 +64,7 @@ class ExampleDataHelper {
             use Zikula\UsersModule\Entity\RepositoryInterface\UserRepositoryInterface;
         «ENDIF»
         use «appNamespace»\Entity\Factory\EntityFactory;
-        «FOR entity : getAllEntities»
+        «FOR entity : getExampleEntities»
             use «appNamespace»\Entity\«entity.name.formatForCodeCapital»Entity;
             «IF entity.categorisable»
                 use «appNamespace»\Entity\«entity.name.formatForCodeCapital»CategoryEntity;
@@ -171,8 +171,8 @@ class ExampleDataHelper {
     '''
 
     def private createExampleRows(Application it) '''
-        «FOR entity : getAllEntities»«entity.initExampleObjects(it)»«ENDFOR»
-        «FOR entity : getAllEntities»«entity.createExampleRows(it)»«ENDFOR»
+        «FOR entity : getExampleEntities»«entity.initExampleObjects(it)»«ENDFOR»
+        «FOR entity : getExampleEntities»«entity.createExampleRows(it)»«ENDFOR»
         «persistExampleObjects»
     '''
 
@@ -247,8 +247,9 @@ class ExampleDataHelper {
             «ENDIF»
             «FOR relation : outgoing.filter(OneToOneRelationship).filter[target.application == app]»«relation.exampleRowAssignmentOutgoing(entityName, number)»«ENDFOR» 
             «FOR relation : outgoing.filter(ManyToOneRelationship).filter[target.application == app]»«relation.exampleRowAssignmentOutgoing(entityName, number)»«ENDFOR»
-            «FOR relation : outgoing.filter(ManyToManyRelationship).filter[target.application == app]»«relation.exampleRowAssignmentOutgoing(entityName, number)»«ENDFOR»
+            «FOR relation : outgoing.filter(ManyToManyRelationship).filter[!bidirectional].filter[target.application == app]»«relation.exampleRowAssignmentOutgoing(entityName, number)»«ENDFOR»
             «FOR relation : incoming.filter(OneToManyRelationship).filter[bidirectional].filter[source.application == app]»«relation.exampleRowAssignmentIncoming(entityName, number)»«ENDFOR»
+            «FOR relation : incoming.filter(ManyToManyRelationship).filter[bidirectional].filter[source.application == app]»«relation.exampleRowAssignmentIncoming(entityName, number)»«ENDFOR»
             «IF categorisable»
                 // create category assignment
                 $«entityName»«number»->getCategories()->add(new «name.formatForCodeCapital»CategoryEntity($categoryRegistry->getId(), $category, $«entityName»«number»));
@@ -267,16 +268,28 @@ class ExampleDataHelper {
         // execute the workflow action for each entity
         $action = 'submit';
         try {
-            «FOR entity : getAllEntities»«entity.persistEntities(it)»«ENDFOR»
+            $entityManager = $this->entityFactory->getObjectManager();
+            «FOR entity : getExampleEntities»«entity.persistEntities(it)»«ENDFOR»
+            «FOR entity : getExampleEntities»«entity.saveEntities(it)»«ENDFOR»
         } catch (\Exception $exception) {
-            $this->requestStack->getCurrentRequest()->getSession()->getFlashBag()->add('error', $this->translator__('Exception during example data creation') . ': ' . $exception->getMessage());
+            $this->requestStack->getCurrentRequest()->getSession()->getFlashBag()->add('error', $this->translator->__('Exception during example data creation') . ': ' . $exception->getMessage());
             $this->logger->error('{app}: Could not completely create example data after installation. Error details: {errorMessage}.', ['app' => '«appName»', 'errorMessage' => $exception->getMessage()]);
 
             return false;
         }
     '''
 
+    def private getExampleEntities(Application it) {
+        // avoid "Column 'fooFile' cannot be null" error
+        getAllEntities.filter[fields.filter(UploadField).filter[mandatory].empty]
+    }
+
     def private persistEntities(Entity it, Application app) '''
+        «FOR number : 1..app.amountOfExampleRows»
+            $entityManager->persist($«name.formatForCode»«number»);
+        «ENDFOR»
+    '''
+    def private saveEntities(Entity it, Application app) '''
         «FOR number : 1..app.amountOfExampleRows»
             $success = $this->workflowHelper->executeAction($«name.formatForCode»«number», $action);
         «ENDFOR»
@@ -328,8 +341,11 @@ class ExampleDataHelper {
     def private dispatch exampleRowAssignmentOutgoing(ManyToManyRelationship it, String entityName, Integer number) '''
             $«entityName»«number»->add«getRelationAliasName(true).formatForCodeCapital»($«target.name.formatForCode»«number»);
     '''
-    def private exampleRowAssignmentIncoming(JoinRelationship it, String entityName, Integer number) '''
+    def private dispatch exampleRowAssignmentIncoming(JoinRelationship it, String entityName, Integer number) '''
             $«entityName»«number»->set«getRelationAliasName(false).formatForCodeCapital»($«source.name.formatForCode»«number»);
+    '''
+    def private dispatch exampleRowAssignmentIncoming(ManyToManyRelationship it, String entityName, Integer number) '''
+            $«entityName»«number»->add«getRelationAliasName(false).formatForCodeCapital»($«source.name.formatForCode»«number»);
     '''
 
     def private exampleRowValueNumber(DerivedField it, Entity dataEntity, Integer number) '''«number»'''
