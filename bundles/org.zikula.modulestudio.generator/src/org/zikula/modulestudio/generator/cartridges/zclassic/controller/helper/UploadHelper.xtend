@@ -344,7 +344,7 @@ class UploadHelper {
                 return $meta;
             }
 
-            if ($meta['extension'] == 'swf') {
+            if ('swf' == $meta['extension']) {
                 $meta['isImage'] = false;
             }
 
@@ -364,7 +364,7 @@ class UploadHelper {
                 $meta['format'] = 'square';
             }
 
-            if (!$includeExif || $meta['extension'] != 'jpg') {
+            if (!$includeExif || 'jpg' != $meta['extension']) {
                 return $meta;
             }
 
