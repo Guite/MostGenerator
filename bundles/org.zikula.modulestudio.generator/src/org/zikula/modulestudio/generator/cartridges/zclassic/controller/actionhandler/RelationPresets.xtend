@@ -55,7 +55,6 @@ class RelationPresets {
             protected function initRelationPresets()
             {
                 $entity = $this->entityRef;
-
                 «initPresets»
 
                 // save entity reference for later reuse
@@ -101,7 +100,7 @@ class RelationPresets {
 
     def private initSinglePreset(JoinRelationship it, Boolean useTarget) '''
         «val alias = getRelationAliasName(useTarget)»
-        $this->relationPresets['«alias»'] = $this->requestStack->getCurrentRequest()->get('«alias»', '');
+        $this->relationPresets['«alias»'] = $this->requestStack->getCurrentRequest()->query->get('«alias»', '');
     '''
 
     def private getOwningAssociations(Entity it, Application refApp) {
@@ -124,7 +123,7 @@ class RelationPresets {
         «val ownedMMAssociationsNonEditable = getOwnedMMAssociations(app).filter[!isShownInForm(false)]»
         «IF !owningAssociationsNonEditable.empty || !ownedMMAssociationsNonEditable.empty»
 
-            if ($args['commandName'] == 'create') {
+            if ('create' == $this->templateParameters['mode']) {
                 «IF !owningAssociationsNonEditable.empty»
                 // save predefined incoming relationship from parent entity
                 «FOR relation : owningAssociationsNonEditable»
