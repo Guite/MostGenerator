@@ -49,14 +49,14 @@ class Validation {
                 var valStr;
                 valStr = new String(val);
 
-                return valStr === '' || (/^#[0-9a-f]{3}([0-9a-f]{3})?$/i.test(valStr));
+                return '' == valStr || (/^#[0-9a-f]{3}([0-9a-f]{3})?$/i.test(valStr));
             }
         «ENDIF»
         «IF hasUploads»
 
             function «vendorAndName»ValidateUploadExtension(val, elem) {
                 var fileExtension, allowedExtensions;
-                if (val === '') {
+                if ('' == val) {
                     return true;
                 }
 
@@ -78,7 +78,7 @@ class Validation {
                     valStr = new String(val);
                     cmpVal = «vendorAndName»ReadDate(valStr, true);
 
-                    return valStr === '' || (cmpVal < «vendorAndName»Today('datetime'));
+                    return '' == valStr || (cmpVal < «vendorAndName»Today('datetime'));
                 }
             «ENDIF»
             «IF datetimeFields.exists[future]»
@@ -89,7 +89,7 @@ class Validation {
                     valStr = new String(val);
                     cmpVal = «vendorAndName»ReadDate(valStr, true);
 
-                    return valStr === '' || (cmpVal > «vendorAndName»Today('datetime'));
+                    return '' == valStr || (cmpVal > «vendorAndName»Today('datetime'));
                 }
             «ENDIF»
         «ENDIF»
@@ -103,7 +103,7 @@ class Validation {
                     valStr = new String(val);
                     cmpVal = «vendorAndName»ReadDate(valStr, false);
 
-                    return valStr === '' || (cmpVal < «vendorAndName»Today('date'));
+                    return '' == valStr || (cmpVal < «vendorAndName»Today('date'));
                 }
             «ENDIF»
             «IF dateFields.exists[future]»
@@ -114,7 +114,7 @@ class Validation {
                     valStr = new String(val);
                     cmpVal = «vendorAndName»ReadDate(valStr, false);
 
-                    return valStr === '' || (cmpVal > «vendorAndName»Today('date'));
+                    return '' == valStr || (cmpVal > «vendorAndName»Today('date'));
                 }
             «ENDIF»
         «ENDIF»
@@ -126,7 +126,7 @@ class Validation {
                     var cmpVal;
                     cmpVal = new String(val);
 
-                    return cmpVal === '' || (cmpVal < «vendorAndName»Today('time'));
+                    return '' == cmpVal || (cmpVal < «vendorAndName»Today('time'));
                 }
             «ENDIF»
             «IF timeFields.exists[future]»
@@ -135,7 +135,7 @@ class Validation {
                     var cmpVal;
                     cmpVal = new String(val);
 
-                    return cmpVal === '' || (cmpVal > «vendorAndName»Today('time'));
+                    return '' == cmpVal || (cmpVal > «vendorAndName»Today('time'));
                 }
             «ENDIF»
         «ENDIF»
