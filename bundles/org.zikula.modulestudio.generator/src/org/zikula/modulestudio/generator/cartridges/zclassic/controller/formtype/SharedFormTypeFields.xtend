@@ -686,7 +686,7 @@ class SharedFormTypeFields {
     '''
     def private dispatch additionalOptions(UploadField it) '''
         'entity' => $options['entity'],
-        'allowed_extensions' => '«allowedExtensions»',
+        'allowed_extensions' => implode(', ', $this->uploadHelper->getAllowedFileExtensions('«entity.name.formatForCode»', '«name.formatForCode»')),
         'allowed_size' => '«maxSize»'«IF namingScheme == UploadNamingScheme.USERDEFINEDWITHCOUNTER»,
         'custom_filename' => true«ENDIF»
     '''

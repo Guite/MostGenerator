@@ -581,6 +581,9 @@ class ServiceDefinitions {
                         «IF entity.hasListFieldsEntity»
                             - "@«modPrefix».listentries_helper"
                         «ENDIF»
+                        «IF entity.hasUploadFieldsEntity»
+                            - "@«modPrefix».upload_helper"
+                        «ENDIF»
                         «IF entity.hasLocaleFieldsEntity»
                             - "@zikula_settings_module.locale_api"
                         «ENDIF»
@@ -652,6 +655,9 @@ class ServiceDefinitions {
                     - "@translator.default"
                     «IF !getAllVariables.filter(ListField).empty»
                         - "@«modPrefix».listentries_helper"
+                    «ENDIF»
+                    «IF hasUploadVariables»
+                        - "@«modPrefix».upload_helper"
                     «ENDIF»
                     «IF !getAllVariables.filter(StringField).filter[role == StringRole.LOCALE].empty»
                         - "@zikula_settings_module.locale_api"

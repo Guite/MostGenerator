@@ -143,6 +143,8 @@ class UploadHelper {
 
         «readMetaDataForFile»
 
+        «getAllowedFileExtensions»
+
         «isAllowedFileExtension»
 
         «determineFileName»
@@ -412,26 +414,44 @@ class UploadHelper {
         }
     '''
 
+    def private getAllowedFileExtensions(Application it) '''
+        /**
+         * Determines the allowed file extensions for a given object type and field.
+         *
+         * @param string $objectType Currently treated entity type
+         * @param string $fieldName  Name of upload field
+         *
+         * @return string[] List of allowed file extensions
+         */
+        public function getAllowedFileExtensions($objectType, $fieldName)
+        {
+            // determine the allowed extensions
+            $allowedExtensions = [];
+            switch ($objectType) {
+                «FOR entity : getUploadEntities.filter(Entity)»«entity.getAllowedFileExtensionsEntityCase»«ENDFOR»
+                «IF hasUploadVariables»
+                    «getAllowedFileExtensionsEntityCase»
+                «ENDIF»
+            }
+
+            return $allowedExtensions;
+        }
+    '''
+
     def private isAllowedFileExtension(Application it) '''
         /**
-         * Determines the allowed file extensions for a given object type.
+         * Determines whether a certain file extension is allowed for a given object type and field.
          *
          * @param string $objectType Currently treated entity type
          * @param string $fieldName  Name of upload field
          * @param string $extension  Input file extension
          *
-         * @return string[] List of allowed file extensions
+         * @return boolean True if given extension is allowed, false otherwise
          */
         protected function isAllowedFileExtension($objectType, $fieldName, $extension)
         {
             // determine the allowed extensions
-            $allowedExtensions = [];
-            switch ($objectType) {
-                «FOR entity : getUploadEntities.filter(Entity)»«entity.isAllowedFileExtensionEntityCase»«ENDFOR»
-                «IF hasUploadVariables»
-                    «isAllowedFileExtensionEntityCase»
-                «ENDIF»
-            }
+            $allowedExtensions = $this->getAllowedFileExtensions($objectType, $fieldName);
 
             if (count($allowedExtensions) > 0) {
                 if (!in_array($extension, $allowedExtensions)) {
@@ -447,12 +467,12 @@ class UploadHelper {
         }
     '''
 
-    def private dispatch isAllowedFileExtensionEntityCase(Entity it) '''
+    def private dispatch getAllowedFileExtensionsEntityCase(Entity it) '''
         «val uploadFields = getUploadFieldsEntity»
         case '«name.formatForCode»':
             «IF uploadFields.size > 1»
                 switch ($fieldName) {
-                    «FOR uploadField : uploadFields»«uploadField.isAllowedFileExtensionFieldCase»«ENDFOR»
+                    «FOR uploadField : uploadFields»«uploadField.getAllowedFileExtensionsFieldCase»«ENDFOR»
                 }
             «ELSE»
                 $allowedExtensions = ['«uploadFields.head.allowedExtensions.replace(', ', "', '")»'];
@@ -461,12 +481,12 @@ class UploadHelper {
     '''
 
 
-    def private dispatch isAllowedFileExtensionEntityCase(Application it) '''
+    def private dispatch getAllowedFileExtensionsEntityCase(Application it) '''
         «val uploadFields = getUploadVariables»
         case 'appSettings':
             «IF uploadFields.size > 1»
                 switch ($fieldName) {
-                    «FOR uploadField : uploadFields»«uploadField.isAllowedFileExtensionFieldCase»«ENDFOR»
+                    «FOR uploadField : uploadFields»«uploadField.getAllowedFileExtensionsFieldCase»«ENDFOR»
                 }
             «ELSE»
                 $allowedExtensions = ['«uploadFields.head.allowedExtensions.replace(', ', "', '")»'];
@@ -474,7 +494,7 @@ class UploadHelper {
                 break;
     '''
 
-    def private isAllowedFileExtensionFieldCase(UploadField it) '''
+    def private getAllowedFileExtensionsFieldCase(UploadField it) '''
         case '«name.formatForCode»':
             $allowedExtensions = ['«allowedExtensions.replace(', ', "', '")»'];
             break;

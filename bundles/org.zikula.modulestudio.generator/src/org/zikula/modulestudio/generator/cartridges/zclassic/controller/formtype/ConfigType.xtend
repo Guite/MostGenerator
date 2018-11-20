@@ -9,12 +9,14 @@ import de.guite.modulestudio.metamodel.Variables
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
+import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class ConfigType {
 
     extension FormattingExtensions = new FormattingExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
+    extension ModelExtensions = new ModelExtensions
     extension SharedFormTypeFields = new SharedFormTypeFields
     extension Utils = new Utils
 
@@ -36,6 +38,9 @@ class ConfigType {
         «IF !getAllVariables.filter(ListField).empty»
             use «appNamespace»\Helper\ListEntriesHelper;
         «ENDIF»
+        «IF hasUploadVariables»
+            use «appNamespace»\Helper\UploadHelper;
+        «ENDIF»
 
         /**
          * Configuration form type base class.
@@ -49,6 +54,13 @@ class ConfigType {
                  * @var ListEntriesHelper
                  */
                 protected $listHelper;
+            «ENDIF»
+            «IF hasUploadVariables»
+
+                /**
+                 * @var UploadHelper
+                 */
+                protected $uploadHelper;
             «ENDIF»
             «IF !getAllVariables.filter(StringField).filter[role == StringRole.LOCALE].empty»
 
@@ -65,18 +77,25 @@ class ConfigType {
              «IF !getAllVariables.filter(ListField).empty»
              * @param ListEntriesHelper $listHelper ListEntriesHelper service instance
              «ENDIF»
+             «IF hasUploadVariables»
+             * @param UploadHelper $uploadHelper UploadHelper service instance
+             «ENDIF»
              «IF !getAllVariables.filter(StringField).filter[role == StringRole.LOCALE].empty»
              * @param LocaleApiInterface $localeApi LocaleApi service instance
              «ENDIF»
              */
             public function __construct(
                 TranslatorInterface $translator«IF !getAllVariables.filter(ListField).empty»,
-                ListEntriesHelper $listHelper«ENDIF»«IF !getAllVariables.filter(StringField).filter[role == StringRole.LOCALE].empty»,
+                ListEntriesHelper $listHelper«ENDIF»«IF hasUploadVariables»,
+                UploadHelper $uploadHelper«ENDIF»«IF !getAllVariables.filter(StringField).filter[role == StringRole.LOCALE].empty»,
                 LocaleApiInterface $localeApi«ENDIF»
             ) {
                 $this->setTranslator($translator);
                 «IF !getAllVariables.filter(ListField).empty»
                     $this->listHelper = $listHelper;
+                «ENDIF»
+                «IF hasUploadVariables»
+                    $this->uploadHelper = $uploadHelper;
                 «ENDIF»
                 «IF !getAllVariables.filter(StringField).filter[role == StringRole.LOCALE].empty»
                     $this->localeApi = $localeApi;

@@ -93,6 +93,9 @@ class EditEntityType {
         «IF isTranslatable»
             use «app.appNamespace»\Helper\TranslatableHelper;
         «ENDIF»
+        «IF hasUploadFieldsEntity»
+            use «app.appNamespace»\Helper\UploadHelper;
+        «ENDIF»
         «IF it instanceof Entity && (it as Entity).standardFields»
             use «application.appNamespace»\Traits\ModerationFormFieldsTrait;
         «ENDIF»
@@ -148,6 +151,13 @@ class EditEntityType {
                  */
                 protected $listHelper;
             «ENDIF»
+            «IF hasUploadFieldsEntity»
+
+                /**
+                 * @var UploadHelper
+                 */
+                protected $uploadHelper;
+            «ENDIF»
             «IF hasLocaleFieldsEntity»
 
                 /**
@@ -179,6 +189,9 @@ class EditEntityType {
              «IF hasListFieldsEntity»
              * @param ListEntriesHelper $listHelper ListEntriesHelper service instance
              «ENDIF»
+             «IF hasUploadFieldsEntity»
+             * @param UploadHelper $uploadHelper UploadHelper service instance
+             «ENDIF»
              «IF hasLocaleFieldsEntity»
              * @param LocaleApiInterface $localeApi LocaleApi service instance
              «ENDIF»
@@ -193,7 +206,8 @@ class EditEntityType {
                 EntityDisplayHelper $entityDisplayHelper«ENDIF»«IF isTranslatable»,
                 VariableApiInterface $variableApi,
                 TranslatableHelper $translatableHelper«ENDIF»«IF hasListFieldsEntity»,
-                ListEntriesHelper $listHelper«ENDIF»«IF hasLocaleFieldsEntity»,
+                ListEntriesHelper $listHelper«ENDIF»«IF hasUploadFieldsEntity»,
+                UploadHelper $uploadHelper«ENDIF»«IF hasLocaleFieldsEntity»,
                 LocaleApiInterface $localeApi«ENDIF»«IF app.needsFeatureActivationHelper»,
                 FeatureActivationHelper $featureActivationHelper«ENDIF»
             ) {
@@ -209,6 +223,9 @@ class EditEntityType {
                 «ENDIF»
                 «IF hasListFieldsEntity»
                     $this->listHelper = $listHelper;
+                «ENDIF»
+                «IF hasUploadFieldsEntity»
+                    $this->uploadHelper = $uploadHelper;
                 «ENDIF»
                 «IF hasLocaleFieldsEntity»
                     $this->localeApi = $localeApi;
