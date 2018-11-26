@@ -144,8 +144,8 @@ class ValidationConstraints {
     def dispatch fieldAnnotations(StringField it) '''
         «fieldAnnotationsString»
         «' '»* @Assert\Length(min="«minLength»", max="«length»")
-        «IF fixed»
-            «' '»@Assert\Length(min="«length»", max="«length»")
+        «IF fixed && minLength != length»
+            «' '»* @Assert\Length(min="«length»", max="«length»")
         «ENDIF»
         «IF role == StringRole.BIC»
             «' '»* @Assert\Bic()
