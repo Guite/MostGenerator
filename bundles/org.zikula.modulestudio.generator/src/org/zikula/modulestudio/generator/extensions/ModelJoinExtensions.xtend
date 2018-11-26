@@ -43,7 +43,14 @@ class ModelJoinExtensions {
     def private getJoinTableName(JoinRelationship it, Boolean useTarget, DataObject joinedEntityForeign) {
         switch it {
             OneToManyRelationship case useTarget: sourceAlias.formatForDB + targetAlias.formatForDB
-            ManyToManyRelationship: source.name.formatForDB + '_' + target.name.formatForDB
+            //ManyToManyRelationship: source.name.formatForDB + '_' + target.name.formatForDB
+            ManyToManyRelationship: {
+                if (application.relations.filter(ManyToManyRelationship).filter[e|e.source == source && e.target == target].size > 1) {
+                    source.name.formatForDB + '_' + refClass.formatForDB
+                } else {
+                    source.name.formatForDB + '_' + target.name.formatForDB
+                }
+            }
             default: joinedEntityForeign.name.formatForDB
         }
     }
