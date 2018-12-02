@@ -1,8 +1,11 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener
 
 import de.guite.modulestudio.metamodel.Application
+import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 
 class LoggableListener {
+
+    extension FormattingExtensions = new FormattingExtensions
 
     def generate(Application it) '''
         /**
@@ -36,6 +39,10 @@ class LoggableListener {
         protected function prePersistLogEntry($logEntry, $object)
         {
             parent::prePersistLogEntry($logEntry, $object);
+
+            if (!$this->isEntityManagedByThisBundle($object) || !method_exists($object, 'get_objectType')) {
+                return;
+            }
 
             $objectType = $object->get_objectType();
 
@@ -83,5 +90,19 @@ class LoggableListener {
         }
 
          */»
+
+        /**
+         * Checks whether this listener is responsible for the given entity or not.
+         *
+         * @param EntityAccess $entity The given entity
+         *
+         * @return boolean True if entity is managed by this listener, false otherwise
+         */
+        protected function isEntityManagedByThisBundle($entity)
+        {
+            $entityClassParts = explode('\\', get_class($entity));
+
+            return ($entityClassParts[0] == '«vendor.formatForCodeCapital»' && $entityClassParts[1] == '«name.formatForCodeCapital»Module');
+        }
     '''
 }

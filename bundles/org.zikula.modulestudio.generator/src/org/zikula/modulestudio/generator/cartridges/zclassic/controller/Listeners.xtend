@@ -461,6 +461,7 @@ class Listeners {
             use «appNamespace»\Listener\Base\AbstractLoggableListener;
         «ELSE»
             use Gedmo\Loggable\LoggableListener as BaseListener;
+            use Zikula\Core\Doctrine\EntityAccess;
             use «appNamespace»\Helper\EntityDisplayHelper;
             use «appNamespace»\Helper\LoggableHelper;
         «ENDIF»
