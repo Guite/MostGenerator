@@ -295,8 +295,8 @@ class TechStructureRelations {
             }
             if (inheritPermissions) result += 'Source visibility affects target visibility by permission inheritance.'
         }
-        result += editRemarks(false, sourceEditing, bidirectional, false)
-        result += editRemarks(true, targetEditing, bidirectional, true)
+        result += editRemarks(false, sourceEditing, bidirectional, true)
+        result += editRemarks(true, targetEditing, bidirectional, false)
         result
     }
     def dispatch private remarks(ManyToOneRelationship it) {
@@ -308,8 +308,8 @@ class TechStructureRelations {
             if (primaryKey) result += 'The relation\'s foreign key acts as primary key.'
             if (sortableGroup) result += 'The relation\'s foreign key acts as grouping criteria for the Sortable extension.'
         }
-        result += editRemarks(false, sourceEditing, false, true)
-        result += editRemarks(true, RelationEditMode.NONE, false, false)
+        result += editRemarks(false, sourceEditing, false, false)
+        result += editRemarks(true, RelationEditMode.NONE, false, true)
         result
     }
     def dispatch private remarks(ManyToManyRelationship it) {
