@@ -564,10 +564,10 @@ class TechStructureFields {
         val result = commonRemarks
         if (language == 'de') {
             if (multiple) result += 'Das Feld erlaubt den Upload mehrerer Dateien.'
-            result += 'Die hochgeladenen Dateien werden im Unterordner "' + subFolderPathSegment + '" gespeichert und ' + namingScheme.enumDescription + '.'
+            result += 'Die hochgeladenen Dateien werden im Unterordner "' + subFolderPathSegment + '" gespeichert und ' + namingScheme.enumDescription
         } else {
             if (multiple) result += 'The field allows uploading multiple files.'
-            result += 'Uploaded files are stored in the "' + subFolderPathSegment + '" subfolder and ' + namingScheme.enumDescription + '.'
+            result += 'Uploaded files are stored in the "' + subFolderPathSegment + '" subfolder and ' + namingScheme.enumDescription
         }
         result
     }
