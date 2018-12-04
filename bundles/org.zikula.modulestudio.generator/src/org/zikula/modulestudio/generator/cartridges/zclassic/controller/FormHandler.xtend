@@ -652,7 +652,7 @@ class FormHandler {
             }
             «IF hasHookSubscribers»
 
-                if ($entity->supportsHookSubscribers()) {
+                if (method_exists($entity, 'supportsHookSubscribers') && $entity->supportsHookSubscribers()) {
                     // Call form aware display hooks
                     $formHook = $this->hookHelper->callFormDisplayHooks($this->form, $entity, FormAwareCategory::TYPE_EDIT);
                     $this->templateParameters['formHookTemplates'] = $formHook->getTemplates();
@@ -936,7 +936,7 @@ class FormHandler {
                 // get treated entity reference from persisted member var
                 $entity = $this->entityRef;
 
-                if ($entity->supportsHookSubscribers()) {
+                if (method_exists($entity, 'supportsHookSubscribers') && $entity->supportsHookSubscribers()) {
                     // Let any ui hooks perform additional validation actions
                     $hookType = $action == 'delete' ? UiHooksCategory::TYPE_VALIDATE_DELETE : UiHooksCategory::TYPE_VALIDATE_EDIT;
                     $validationErrors = $this->hookHelper->callValidationHooks($entity, $hookType);
@@ -966,7 +966,7 @@ class FormHandler {
             «ENDIF»
             «IF hasHookSubscribers»
 
-                if ($entity->supportsHookSubscribers()) {
+                if (method_exists($entity, 'supportsHookSubscribers') && $entity->supportsHookSubscribers()) {
                     $entitiesWithDisplayAction = ['«getAllEntities.filter[hasDisplayAction].map[name.formatForCode].join('\', \'')»'];
                     $hasDisplayAction = in_array($this->objectType, $entitiesWithDisplayAction);
 
@@ -1324,7 +1324,9 @@ class FormHandler {
 
             // assign data to template as array (for additions like standard fields)
             $this->templateParameters[$this->objectTypeLower] = $entityData;
-            $this->templateParameters['supportsHookSubscribers'] = $this->entityRef->supportsHookSubscribers();
+            «IF !skipHookSubscribers»
+                $this->templateParameters['supportsHookSubscribers'] = $this->entityRef->supportsHookSubscribers();
+            «ENDIF»
 
             return $result;
         }
