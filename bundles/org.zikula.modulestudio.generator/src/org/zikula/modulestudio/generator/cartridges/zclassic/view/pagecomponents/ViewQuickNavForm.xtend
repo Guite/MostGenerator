@@ -144,13 +144,12 @@ class ViewQuickNavForm {
     '''
 
     def private dispatch formField(JoinRelationship it) '''
-        «val sourceName = source.name.formatForCode»
         «val sourceAliasName = getRelationAliasName(false)»
-        {% if «sourceName»Filter is defined and «sourceName»Filter != true %}
+        {% if «sourceAliasName»Filter is defined and «sourceAliasName»Filter != true %}
             <div class="hidden">
         {% endif %}
             {{ form_row(quickNavForm.«sourceAliasName») }}
-        {% if «sourceName»Filter is defined and «sourceName»Filter != true %}
+        {% if «sourceAliasName»Filter is defined and «sourceAliasName»Filter != true %}
             </div>
         {% endif %}
     '''
