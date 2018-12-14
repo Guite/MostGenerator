@@ -31,11 +31,17 @@ class BlockModerationView {
                 «IF hasViewActions»
                     {% if itemObjectType in ['«getAllEntities.filter[hasViewAction].map[name.formatForCode].join('\', \'')»'] %}
                         <li><a href="{{ path('«appName.formatForDB»_' ~ itemObjectType ~ '_adminview', {workflowState: modItem.state}) }}" class="bold">{{ modItem.message }}</a></li>
-                    {% else %}
+                    {% elseif itemObjectType in ['«getAllEntities.filter[hasIndexAction].map[name.formatForCode].join('\', \'')»'] %}
                         <li><a href="{{ path('«appName.formatForDB»_' ~ itemObjectType ~ '_adminindex', {workflowState: modItem.state}) }}" class="bold">{{ modItem.message }}</a></li>
+                    {% else %}
+                        <li><strong>{{ modItem.message }}</strong></li>
                     {% endif %}
                 «ELSE»
-                    <li><a href="{{ path('«appName.formatForDB»_' ~ itemObjectType ~ '_adminindex', {workflowState: modItem.state}) }}" class="bold">{{ modItem.message }}</a></li>
+                    {% if itemObjectType in ['«getAllEntities.filter[hasIndexAction].map[name.formatForCode].join('\', \'')»'] %}
+                        <li><a href="{{ path('«appName.formatForDB»_' ~ itemObjectType ~ '_adminindex', {workflowState: modItem.state}) }}" class="bold">{{ modItem.message }}</a></li>
+                    {% else %}
+                        <li><strong>{{ modItem.message }}</strong></li>
+                    {% endif %}
                 «ENDIF»
             {% endfor %}
             </ul>

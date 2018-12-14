@@ -39,11 +39,17 @@ class ModerationPanel {
                         «IF hasViewActions»
                             {% if itemObjectType in ['«getAllEntities.filter[hasViewAction].map[name.formatForCode].join('\', \'')»'] %}
                                 <a href="{{ path('«appName.formatForDB»_' ~ itemObjectType ~ '_adminview', {workflowState: modItem.state}) }}" class="bold alert-link">{{ modItem.message }}</a>
-                            {% else %}
+                            {% elseif itemObjectType in ['«getAllEntities.filter[hasIndexAction].map[name.formatForCode].join('\', \'')»'] %}
                                 <a href="{{ path('«appName.formatForDB»_' ~ itemObjectType ~ '_adminindex', {workflowState: modItem.state}) }}" class="bold alert-link">{{ modItem.message }}</a>
+                            {% else %}
+                                <strong>{{ modItem.message }}</strong>
                             {% endif %}
                         «ELSE»
-                            <a href="{{ path('«appName.formatForDB»_' ~ itemObjectType ~ '_adminindex', {workflowState: modItem.state}) }}" class="bold alert-link">{{ modItem.message }}</a>
+                            {% if itemObjectType in ['«getAllEntities.filter[hasIndexAction].map[name.formatForCode].join('\', \'')»'] %}
+                                <a href="{{ path('«appName.formatForDB»_' ~ itemObjectType ~ '_adminindex', {workflowState: modItem.state}) }}" class="bold alert-link">{{ modItem.message }}</a>
+                            {% else %}
+                                <strong>{{ modItem.message }}</strong>
+                            {% endif %}
                         «ENDIF»
                     </p>
                 {% endfor %}
