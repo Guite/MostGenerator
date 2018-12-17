@@ -27,7 +27,10 @@ class ViewHelper {
         use Twig_Environment;
         use Zikula\Core\Response\PlainResponse;
         use Zikula\ExtensionsModule\Api\ApiInterface\VariableApiInterface;
-        use Zikula\ThemeModule\Engine\ParameterBag;
+        use Zikula\ThemeModule\Engine\AssetFilter;
+        «IF generatePdfSupport»
+            use Zikula\ThemeModule\Engine\ParameterBag;
+        «ENDIF»
         use «appNamespace»\Helper\ControllerHelper;
         use «appNamespace»\Helper\PermissionHelper;
 
@@ -62,10 +65,17 @@ class ViewHelper {
         protected $variableApi;
 
         /**
-         * @var ParameterBag
+         * @var AssetFilter
          */
-        protected $pageVars;
+        protected $assetFilter;
 
+        «IF generatePdfSupport»
+            /**
+             * @var ParameterBag
+             */
+            protected $pageVars;
+
+        «ENDIF»
         /**
          * @var ControllerHelper
          */
@@ -83,7 +93,10 @@ class ViewHelper {
          * @param FilesystemLoader     $twigLoader       Twig loader service instance
          * @param RequestStack         $requestStack     RequestStack service instance
          * @param VariableApiInterface $variableApi      VariableApi service instance
+         * @param AssetFilter          $assetFilter      Theme asset filter
+         «IF generatePdfSupport»
          * @param ParameterBag         $pageVars         ParameterBag for theme page variables
+         «ENDIF»
          * @param ControllerHelper     $controllerHelper ControllerHelper service instance
          * @param PermissionHelper     $permissionHelper PermissionHelper service instance
          *
@@ -94,7 +107,10 @@ class ViewHelper {
             FilesystemLoader $twigLoader,
             RequestStack $requestStack,
             VariableApiInterface $variableApi,
-            ParameterBag $pageVars,
+            AssetFilter $assetFilter,
+            «IF generatePdfSupport»
+                ParameterBag $pageVars,
+            «ENDIF»
             ControllerHelper $controllerHelper,
             PermissionHelper $permissionHelper
         ) {
@@ -102,7 +118,10 @@ class ViewHelper {
             $this->twigLoader = $twigLoader;
             $this->requestStack = $requestStack;
             $this->variableApi = $variableApi;
-            $this->pageVars = $pageVars;
+            $this->asssetFilter = $assetFilter;
+            «IF generatePdfSupport»
+                $this->pageVars = $pageVars;
+            «ENDIF»
             $this->controllerHelper = $controllerHelper;
             $this->permissionHelper = $permissionHelper;
         }
@@ -110,6 +129,8 @@ class ViewHelper {
         «getViewTemplate»
 
         «processTemplate»
+
+        «injectAssetsIntoRawOutput»
 
         «determineExtension»
 
@@ -205,8 +226,9 @@ class ViewHelper {
                         // see http://stackoverflow.com/questions/4348802/how-can-i-output-a-utf-8-csv-in-php-that-excel-will-read-properly
                         $output = chr(255) . chr(254) . mb_convert_encoding($output, 'UTF-16LE', 'UTF-8');
                     }
-
                 «ENDIF»
+                $output = $this->injectAssetsIntoRawOutput($output);
+
                 $response = new PlainResponse($output);
             } else {
                 // normal output
@@ -257,6 +279,20 @@ class ViewHelper {
             «ENDIF»
 
             return $response;
+        }
+    '''
+
+    def private injectAssetsIntoRawOutput(Application it) '''
+        /**
+         * Adds assets to a raw page which is not processed by the Theme engine.
+         *
+         * @param string $output The output to be enhanced
+         *
+         * @return string Output including additional assets
+         */
+        protected function injectAssetsIntoRawOutput($output = '')
+        {
+            return $this->assetFilter->filter($output);
         }
     '''
 

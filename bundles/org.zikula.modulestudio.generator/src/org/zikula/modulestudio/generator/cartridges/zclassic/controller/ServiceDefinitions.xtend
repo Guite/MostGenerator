@@ -905,7 +905,10 @@ class ServiceDefinitions {
                 - "@twig.loader"
                 - "@request_stack"
                 - "@zikula_extensions_module.api.variable"
-                - "@zikula_core.common.theme.pagevars"
+                - "@zikula_core.internal.theme_filter"
+                «IF generatePdfSupport»
+                    - "@zikula_core.common.theme.pagevars"
+                «ENDIF»
                 - "@«modPrefix».controller_helper"
                 - "@«modPrefix».permission_helper"
 

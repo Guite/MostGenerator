@@ -181,10 +181,10 @@ class Plugins {
          «ENDIF»
          * @param VariableApiInterface   $variableApi    VariableApi service instance
          «IF hasTrees»
-         * @param EntityFactory       $entityFactory     EntityFactory service instance
+         * @param EntityFactory          $entityFactory  EntityFactory service instance
          «ENDIF»
-         * @param EntityDisplayHelper $entityDisplayHelper EntityDisplayHelper service instance
-         * @param WorkflowHelper      $workflowHelper WorkflowHelper service instance
+         * @param EntityDisplayHelper    $entityDisplayHelper EntityDisplayHelper service instance
+         * @param WorkflowHelper         $workflowHelper WorkflowHelper service instance
          «IF hasListFields»
             * @param ListEntriesHelper   $listHelper     ListEntriesHelper service instance
          «ENDIF»

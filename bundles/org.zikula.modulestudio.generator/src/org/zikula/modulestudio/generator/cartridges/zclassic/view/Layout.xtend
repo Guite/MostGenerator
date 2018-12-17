@@ -77,23 +77,27 @@ class Layout {
         {% block content %}{% endblock %}
 
         {% block footer %}
-            «IF generatePoweredByBacklinksIntoFooterTemplates»
-                «new FileHelper().msWeblink(it)»
-            «ENDIF»
-            {{ pageAddAsset('stylesheet', zasset('@«appName»:css/custom.css'), 120) }}
-            «IF needsJQueryUI»
-                {{ pageAddAsset('stylesheet', asset('jquery-ui/themes/base/jquery-ui.min.css')) }}
-                {{ pageAddAsset('javascript', asset('jquery-ui/jquery-ui.min.js')) }}
-            «ENDIF»
-            «IF hasImageFields»
-                {{ pageAddAsset('javascript', asset('magnific-popup/jquery.magnific-popup.min.js'), 90) }}
-                {{ pageAddAsset('stylesheet', asset('magnific-popup/magnific-popup.css'), 90) }}
-            «ENDIF»
-            {{ pageAddAsset('javascript', zasset('@«appName»:js/«appName».js')) }}
-            «IF hasGeographical»
-                {{ pageAddAsset('javascript', zasset('@«appName»:js/«appName».Geo.js')) }}
-            «ENDIF»
+            «commonFooter»
         {% endblock %}
+    '''
+
+    def private commonFooter(Application it) '''
+        «IF generatePoweredByBacklinksIntoFooterTemplates»
+            «new FileHelper().msWeblink(it)»
+        «ENDIF»
+        {{ pageAddAsset('stylesheet', zasset('@«appName»:css/custom.css'), 120) }}
+        «IF needsJQueryUI»
+            {{ pageAddAsset('stylesheet', asset('jquery-ui/themes/base/jquery-ui.min.css')) }}
+            {{ pageAddAsset('javascript', asset('jquery-ui/jquery-ui.min.js')) }}
+        «ENDIF»
+        «IF hasImageFields»
+            {{ pageAddAsset('javascript', asset('magnific-popup/jquery.magnific-popup.min.js'), 90) }}
+            {{ pageAddAsset('stylesheet', asset('magnific-popup/magnific-popup.css'), 90) }}
+        «ENDIF»
+        {{ pageAddAsset('javascript', zasset('@«appName»:js/«appName».js')) }}
+        «IF hasGeographical»
+            {{ pageAddAsset('javascript', zasset('@«appName»:js/«appName».Geo.js')) }}
+        «ENDIF»
     '''
 
     def adminBaseTemplate(Application it) '''
@@ -243,28 +247,6 @@ class Layout {
         <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="{{ app.request.locale }}" lang="{{ app.request.locale }}">
         <head>
             <title>{{ block('pageTitle')|default(block('title')) }}</title>
-            <link rel="stylesheet" href="{{ asset('bootstrap-font-awesome.css') }}" />
-            <link rel="stylesheet" href="{{ asset('bootstrap/css/bootstrap.min.css') }}" />
-            <link rel="stylesheet" href="{{ asset('bootstrap/css/bootstrap-theme.min.css') }}" />
-            «IF needsJQueryUI»
-                <link rel="stylesheet" href="{{ asset('jquery-ui/themes/base/jquery-ui.min.css') }}" />
-            «ENDIF»
-            <link rel="stylesheet" href="{{ asset('bundles/core/css/core.css') }}" />
-            <link rel="stylesheet" href="{{ zasset('@«appName»:css/style.css') }}" />
-            <link rel="stylesheet" href="{{ zasset('@«appName»:css/custom.css') }}" />
-            «IF generateExternalControllerAndFinder»
-                {% if useFinder|default == true %}
-                    «rawCssAssets(true)»
-                «IF hasImageFields»
-                    {% else %}
-                        «rawCssAssets(false)»
-                «ENDIF»
-                {% endif %}
-            «ELSE»
-                «IF hasImageFields»
-                    «rawCssAssets(false)»
-                «ENDIF»
-            «ENDIF»
         </head>
         <body>
             «IF generateExternalControllerAndFinder»
@@ -275,81 +257,29 @@ class Layout {
                 <h2>{{ block('title') }}</h2>
             «ENDIF»
             {% block content %}{% endblock %}
-            <script>
-                /* <![CDATA[ */
-                    if (typeof(Zikula) == 'undefined') {var Zikula = {};}
-                    Zikula.Config = {'entrypoint': '{{ getSystemVar('entrypoint', 'index.php') }}', 'baseURL': '{{ app.request.schemeAndHttpHost ~ '/' }}', 'baseURI': '{{ app.request.basePath }}'};
-                /* ]]> */
-            </script>
-            <script src="{{ asset('jquery/jquery.min.js') }}"></script>
-            <script src="{{ asset('bootstrap/js/bootstrap.min.js') }}"></script>
-            «IF needsJQueryUI»
-                <script src="{{ asset('jquery-ui/jquery-ui.min.js') }}"></script>
-            «ENDIF»
-            <script src="{{ asset('bundles/fosjsrouting/js/router.js') }}"></script>
-            <script src="{{ asset('js/fos_js_routes.js') }}"></script>
-            <script src="{{ asset('bundles/bazingajstranslation/js/translator.min.js') }}"></script>
-            <script src="{{ asset('bundles/core/js/Zikula.Translator.js') }}"></script>
-            «IF generateExternalControllerAndFinder»
-                {% if useFinder|default == true %}
-                    «rawJsAssets(true)»
-                {% else %}
-                    «rawJsAssets(false)»
-                {% endif %}
-            «ELSE»
-                «rawJsAssets(false)»
-            «ENDIF»
-            «IF generateExternalControllerAndFinder»
-                {% if useFinder|default != true %}
-                    «rawJsInit»
-                {% endif %}
-            «ELSE»
-                «rawJsInit»
-            «ENDIF»
-            {% block footer %}{% endblock %}
-        </body>
-        </html>
-    '''
-
-    def private rawCssAssets(Application it, Boolean forFinder) '''
-        «IF forFinder»
-            <link rel="stylesheet" href="{{ zasset('@«appName»:css/finder.css') }}" />
-        «ELSE»
-            «IF hasImageFields»
-                <link rel="stylesheet" href="{{ asset('magnific-popup/magnific-popup.css') }}" />
-            «ENDIF»
-        «ENDIF»
-    '''
-
-    def private rawJsAssets(Application it, Boolean forFinder) '''
-        «IF forFinder»
-            <script src="{{ zasset('@«appName»:js/«appName».Finder.js') }}"></script>
-        «ELSE»
-            «IF hasImageFields»
-                <script src="{{ asset('magnific-popup/jquery.magnific-popup.min.js') }}"></script>
-            «ENDIF»
-            <script src="{{ zasset('@«appName»:js/«appName».js') }}"></script>
-            «IF hasGeographical»
-                <script src="{{ zasset('@«appName»:js/«appName».Geo.js') }}"></script>
-            «ENDIF»
-            «IF hasEditActions || needsConfig»
-                «IF hasEditActions»
-                    {% if 'edit' in app.request.get('_route') %}
-                        {{ pageAddAsset('javascript', zasset('@«appName»:js/«appName».Validation.js'), 98) }}
-                        {{ pageAddAsset('javascript', zasset('@«appName»:js/«appName».EditFunctions.js'), 99) }}
-                        «IF needsInlineEditing»
-                            {{ pageAddAsset('javascript', zasset('@«appName»:js/«appName».InlineEditing.js'), 99) }}
-                        «ENDIF»
-                        «IF needsAutoCompletion»
-                            {{ pageAddAsset('javascript', zasset('@«appName»:js/«appName».AutoCompletion.js'), 99) }}
-                        «ENDIF»
+            {% block footer %}
+                «commonFooter»
+                <script>
+                    /* <![CDATA[ */
+                        if (typeof(Zikula) == 'undefined') {var Zikula = {};}
+                        Zikula.Config = {'entrypoint': '{{ getSystemVar('entrypoint', 'index.php') }}', 'baseURL': '{{ app.request.schemeAndHttpHost ~ '/' }}', 'baseURI': '{{ app.request.basePath }}'};
+                    /* ]]> */
+                </script>
+                «IF hasEditActions || needsConfig»
+                    {% if «IF hasEditActions»'edit' in app.request.get('_route')«IF needsConfig» or «ENDIF»«ENDIF»«IF needsConfig»'config' in app.request.get('_route')«ENDIF» %}
+                        {{ polyfill([«IF hasGeographical»'geolocation', «ENDIF»'forms', 'forms-ext']) }}
                     {% endif %}
                 «ENDIF»
-                {% if «IF hasEditActions»'edit' in app.request.get('_route')«IF needsConfig» or «ENDIF»«ENDIF»«IF needsConfig»'config' in app.request.get('_route')«ENDIF» %}
-                    {{ polyfill([«IF hasGeographical»'geolocation', «ENDIF»'forms', 'forms-ext']) }}
-                {% endif %}
-            «ENDIF»
-        «ENDIF»
+                «IF generateExternalControllerAndFinder»
+                    {% if useFinder|default != true %}
+                        «rawJsInit»
+                    {% endif %}
+                «ELSE»
+                    «rawJsInit»
+                «ENDIF»
+            {% endblock %}
+        </body>
+        </html>
     '''
 
     def private rawJsInit(Application it) '''
