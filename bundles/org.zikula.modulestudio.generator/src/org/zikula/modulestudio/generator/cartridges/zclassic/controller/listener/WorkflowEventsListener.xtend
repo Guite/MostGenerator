@@ -264,6 +264,9 @@ class WorkflowEventsListener {
             if (!$this->isEntityManagedByThisBundle($entity) || !method_exists($entity, 'get_objectType')) {
                 return;
             }
+            «IF !targets('2.0')»
+                «sendNotificationsCall»
+            «ENDIF»
         }
         «IF targets('2.0')»
 
@@ -287,18 +290,7 @@ class WorkflowEventsListener {
                 if (!$this->isEntityManagedByThisBundle($entity) || !method_exists($entity, 'get_objectType')) {
                     return;
                 }
-                «IF needsApproval»
-
-                    $workflowShortName = 'none';
-                    if (in_array($entity->get_objectType(), ['«getAllEntities.filter[workflow == EntityWorkflowType.STANDARD].map[name.formatForCode].join('\', \'')»'])) {
-                        $workflowShortName = 'standard';
-                    } elseif (in_array($entity->get_objectType(), ['«getAllEntities.filter[workflow == EntityWorkflowType.ENTERPRISE].map[name.formatForCode].join('\', \'')»'])) {
-                        $workflowShortName = 'enterprise';
-                    }
-                    if ('none' != $workflowShortName) {
-                        $this->sendNotifications($entity, $event->getTransition()->getName(), $workflowShortName);
-                    }
-                «ENDIF»
+                «sendNotificationsCall»
             }
 
             /**
@@ -328,6 +320,21 @@ class WorkflowEventsListener {
         «IF needsApproval»
 
             «sendNotifications»
+        «ENDIF»
+    '''
+
+    def private sendNotificationsCall(Application it) '''
+        «IF needsApproval»
+
+            $workflowShortName = 'none';
+            if (in_array($entity->get_objectType(), ['«getAllEntities.filter[workflow == EntityWorkflowType.STANDARD].map[name.formatForCode].join('\', \'')»'])) {
+                $workflowShortName = 'standard';
+            } elseif (in_array($entity->get_objectType(), ['«getAllEntities.filter[workflow == EntityWorkflowType.ENTERPRISE].map[name.formatForCode].join('\', \'')»'])) {
+                $workflowShortName = 'enterprise';
+            }
+            if ('none' != $workflowShortName) {
+                $this->sendNotifications($entity, $event->getTransition()->getName(), $workflowShortName);
+            }
         «ENDIF»
     '''
 
