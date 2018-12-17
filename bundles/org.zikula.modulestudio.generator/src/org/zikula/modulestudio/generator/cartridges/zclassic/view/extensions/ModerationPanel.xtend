@@ -29,7 +29,7 @@ class ModerationPanel {
 
     def private moderationPanelImpl(Application it) '''
         {# purpose of this template: show amount of pending items to moderators #}
-        {% if not app.request.query.getBoolean('raw', false) %}
+        {% if not app.request.query.getBoolean('raw', false) and app.request.requestFormat != 'pdf' %}
             {% set moderationObjects = «appName.formatForDB»_moderationObjects() %}
             {% if moderationObjects|length > 0 %}
                 {% for modItem in moderationObjects %}
