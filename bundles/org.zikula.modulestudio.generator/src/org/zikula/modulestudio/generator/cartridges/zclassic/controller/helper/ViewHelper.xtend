@@ -118,7 +118,7 @@ class ViewHelper {
             $this->twigLoader = $twigLoader;
             $this->requestStack = $requestStack;
             $this->variableApi = $variableApi;
-            $this->asssetFilter = $assetFilter;
+            $this->assetFilter = $assetFilter;
             «IF generatePdfSupport»
                 $this->pageVars = $pageVars;
             «ENDIF»

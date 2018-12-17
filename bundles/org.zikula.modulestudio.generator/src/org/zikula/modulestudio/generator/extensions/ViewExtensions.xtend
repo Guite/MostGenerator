@@ -135,14 +135,8 @@ class ViewExtensions {
      */
     def includeLeaflet(Entity it, String actionName, String objName) '''
         {% set pathToLeaflet = zasset('@«application.appName»:css/style.css')|replace({'Resources/public/css/style.css': ''}) ~ 'vendor/drmonty/leaflet/' %}
-        {% set isQuickView = app.request.query.getBoolean('raw', false) %}
-        {% if isQuickView %}
-            <link rel="stylesheet" href="{{ pathToLeaflet ~ 'css/leaflet.css' }}" />
-            <script src="{{ pathToLeaflet ~ 'js/leaflet' ~ (app.environment == 'dev' ? '' : '.min') ~ '.js' }}"></script>
-        {% else %}
-            {{ pageAddAsset('stylesheet', pathToLeaflet ~ 'css/leaflet.css') }}
-            {{ pageAddAsset('javascript', pathToLeaflet ~ 'js/leaflet' ~ (app.environment == 'dev' ? '' : '.min') ~ '.js') }}
-        {% endif %}
+        {{ pageAddAsset('stylesheet', pathToLeaflet ~ 'css/leaflet.css') }}
+        {{ pageAddAsset('javascript', pathToLeaflet ~ 'js/leaflet' ~ (app.environment == 'dev' ? '' : '.min') ~ '.js') }}
         «IF 'view' == actionName»
             <div id="geographicalInfo" class="hidden" data-context="«actionName»" data-object-type="«objName»" data-tile-layer-url="{{ getModVar('«application.appName»', 'tileLayerUrl') }}" data-tile-layer-attribution="{{ getModVar('«application.appName»', 'tileLayerAttribution') }}"></div>
         «ELSE»
