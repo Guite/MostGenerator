@@ -327,32 +327,32 @@ class Plugins {
 
                 $amount = $interval->y;
                 if ($amount > 0) {
-                    $description .= $this->_fn('%amount year', '%amount years', $amount, ['%amount' => $amount]);
+                    $description .= $this->translator->transChoice('%amount year|%amount years', $amount, ['%amount' => $amount]«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»);
                 }
 
                 $amount = $interval->m;
                 if ($amount > 0) {
-                    $description .= ', ' . $this->_fn('%amount month', '%amount months', $amount, ['%amount' => $amount]);
+                    $description .= ', ' . $this->translator->transChoice('%amount month|%amount months', $amount, ['%amount' => $amount]«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»);
                 }
 
                 $amount = $interval->d;
                 if ($amount > 0) {
-                    $description .= ', ' . $this->_fn('%amount day', '%amount days', $amount, ['%amount' => $amount]);
+                    $description .= ', ' . $this->translator->transChoice('%amount day|%amount days', $amount, ['%amount' => $amount]«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»);
                 }
 
                 $amount = $interval->h;
                 if ($amount > 0) {
-                    $description .= ', ' . $this->_fn('%amount hour', '%amount hours', $amount, ['%amount' => $amount]);
+                    $description .= ', ' . $this->translator->transChoice('%amount hour|%amount hours', $amount, ['%amount' => $amount]«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»);
                 }
 
                 $amount = $interval->i;
                 if ($amount > 0) {
-                    $description .= ', ' . $this->_fn('%amount minute', '%amount minutes', $amount, ['%amount' => $amount]);
+                    $description .= ', ' . $this->translator->transChoice('%amount minute|%amount minutes', $amount, ['%amount' => $amount]«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»);
                 }
 
                 $amount = $interval->s;
                 if ($amount > 0) {
-                    $description .= ', ' . $this->_fn('%amount second', '%amount seconds', $amount, ['%amount' => $amount]);
+                    $description .= ', ' . $this->translator->transChoice('%amount second|%amount seconds', $amount, ['%amount' => $amount]«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»);
                 }
 
                 return $description;

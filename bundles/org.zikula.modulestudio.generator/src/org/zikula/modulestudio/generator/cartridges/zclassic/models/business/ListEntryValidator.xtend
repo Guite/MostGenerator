@@ -2,11 +2,13 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.models.business
 
 import de.guite.modulestudio.metamodel.Application
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
+import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class ListEntryValidator {
 
+    extension FormattingExtensions = new FormattingExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension Utils = new Utils
 
@@ -173,16 +175,16 @@ class ListEntryValidator {
 
                 if (null !== $constraint->min && $count < $constraint->min) {
                     $this->context->buildViolation(
-                        $this->__fn('You must select at least "%limit%" choice.', 'You must select at least "%limit%" choices.', $count, [
+                        $this->translator->transChoice('You must select at least "%limit%" choice.', 'You must select at least "%limit%" choices.', $count, [
                             '%limit%' => $constraint->min
-                        ])
+                        ]«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»)
                     )->addViolation();
                 }
                 if (null !== $constraint->max && $count > $constraint->max) {
                     $this->context->buildViolation(
-                        $this->__fn('You must select at most "%limit%" choice.', 'You must select at most "%limit%" choices.', $count, [
+                        $this->translator->transChoice('You must select at most "%limit%" choice.', 'You must select at most "%limit%" choices.', $count, [
                             '%limit%' => $constraint->max
-                        ])
+                        ]«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»)
                     )->addViolation();
                 }
             }
