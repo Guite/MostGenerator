@@ -36,7 +36,6 @@ class ExternalController {
         use Symfony\Component\HttpFoundation\Response;
         use Symfony\Component\Security\Core\Exception\AccessDeniedException;
         use Zikula\Core\Controller\AbstractController;
-        use Zikula\Core\Response\PlainResponse;
         «IF hasCategorisableEntities»
             use «appNamespace»\Helper\FeatureActivationHelper;
         «ENDIF»
@@ -126,7 +125,10 @@ class ExternalController {
         $contextArgs = ['controller' => 'external', 'action' => 'display'];
         $templateParameters = $this->get('«appService».controller_helper')->addTemplateParameters($objectType, $templateParameters, 'controllerAction', $contextArgs);
 
-        return $this->render('@«appName»/External/' . ucfirst($objectType) . '/' . $template, $templateParameters);
+        $viewHelper = $this->get('«appService».view_helper');
+        $request->query->set('raw', true);
+        
+        return $viewHelper->processTemplate('external', ucfirst($objectType) . '/' . str_replace('.html.twig', '', $template), $templateParameters);
     '''
 
     def private finderBase(Application it) '''
@@ -295,9 +297,10 @@ class ExternalController {
             'itemsperpage' => $resultsPerPage
         ];
 
-        $output = $this->renderView('@«appName»/External/' . ucfirst($objectType) . '/find.html.twig', $templateParameters);
-
-        return new PlainResponse($output);
+        $viewHelper = $this->get('«appService».view_helper');
+        $request->query->set('raw', true);
+        
+        return $viewHelper->processTemplate('external', ucfirst($objectType) . '/find', $templateParameters);
     '''
 
     def private externalImpl(Application it) '''

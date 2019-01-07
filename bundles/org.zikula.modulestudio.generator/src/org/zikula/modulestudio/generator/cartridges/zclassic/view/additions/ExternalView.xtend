@@ -220,6 +220,10 @@ class ExternalView {
 
             «findTemplateEditForm(app)»
         {% endblock %}
+        {% block footer %}
+            {{ parent() }}
+            {{ pageAddAsset('javascript', zasset('@«app.appName»:js/«app.appName».Finder.js')) }}
+        {% endblock %}
     '''
 
     def private findTemplateObjectTypeSwitcher(Entity it, Application app) '''
