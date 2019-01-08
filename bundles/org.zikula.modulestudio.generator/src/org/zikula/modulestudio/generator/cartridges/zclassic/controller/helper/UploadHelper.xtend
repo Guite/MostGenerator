@@ -453,7 +453,7 @@ class UploadHelper {
             // determine the allowed extensions
             $allowedExtensions = $this->getAllowedFileExtensions($objectType, $fieldName);
 
-            if (count($allowedExtensions) > 0) {
+            if (count($allowedExtensions) > 0 && $allowedExtensions[0] != '*') {
                 if (!in_array($extension, $allowedExtensions)) {
                     return false;
                 }
