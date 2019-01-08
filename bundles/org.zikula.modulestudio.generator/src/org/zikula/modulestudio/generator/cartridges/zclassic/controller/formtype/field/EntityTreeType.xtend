@@ -60,7 +60,7 @@ class EntityTreeType {
                         'attr' => [
                             'class' => 'entity-tree'
                         ],
-                        'choice_label' => null«/*,
+                        'choice_label' => null«IF !targets('2.0')»,«ENDIF»«/*
                         'query_builder' => function (EntityRepository $er) {
                             return $er->selectTree($options['root'], $options['use_joins']);
                         },*/»
