@@ -96,6 +96,16 @@ class ViewQuickNavForm {
                 «field.formField»
             «ENDFOR»
         «ENDIF»
+        «IF hasCurrencyFieldsEntity»
+            «FOR field : getCurrencyFieldsEntity»
+                «field.formField»
+            «ENDFOR»
+        «ENDIF»
+        «IF hasTimezoneFieldsEntity»
+            «FOR field : getTimezoneFieldsEntity»
+                «field.formField»
+            «ENDFOR»
+        «ENDIF»
         «IF hasAbstractStringFieldsEntity»
             {% if searchFilter is defined and searchFilter != true %}
                 <div class="hidden">
