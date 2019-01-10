@@ -130,20 +130,20 @@ class WorkflowHelper {
 
     def private getObjectStates(Application it) '''
        /**
-         * This method returns a list of possible object states.
-         *
-         * @return array List of collected state information
-         */
-        public function getObjectStates()
-        {
-            $states = [];
-            «val states = getRequiredStateList»
-            «FOR state : states»
-                «stateInfo(state)»
-            «ENDFOR»
+        * This method returns a list of possible object states.
+        *
+        * @return array List of collected state information
+        */
+       public function getObjectStates()
+       {
+           $states = [];
+           «val states = getRequiredStateList»
+           «FOR state : states»
+               «stateInfo(state)»
+           «ENDFOR»
 
-            return $states;
-        }
+           return $states;
+       }
     '''
 
     def private stateInfo(Application it, ListFieldItem item) '''
