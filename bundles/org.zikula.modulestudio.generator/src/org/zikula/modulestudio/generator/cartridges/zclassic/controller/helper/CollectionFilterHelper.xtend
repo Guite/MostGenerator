@@ -40,6 +40,9 @@ class CollectionFilterHelper {
 
         use Doctrine\ORM\QueryBuilder;
         use Symfony\Component\HttpFoundation\RequestStack;
+        «IF !getAllEntities.filter[ownerPermission].empty»
+            use Zikula\ExtensionsModule\Api\ApiInterface\VariableApiInterface;
+        «ENDIF»
         «IF hasStandardFieldEntities»
             use Zikula\UsersModule\Api\ApiInterface\CurrentUserApiInterface;
             use Zikula\UsersModule\Constant as UsersConstant;
@@ -85,6 +88,13 @@ class CollectionFilterHelper {
              */
             protected $categoryHelper;
         «ENDIF»
+        «IF !getAllEntities.filter[ownerPermission].empty»
+
+            /**
+             * @var VariableApiInterface
+             */
+            protected $variableApi;
+        «ENDIF»
 
         /**
          * @var bool Fallback value to determine whether only own entries should be selected or not
@@ -109,6 +119,9 @@ class CollectionFilterHelper {
          «IF hasCategorisableEntities»
          * @param CategoryHelper $categoryHelper CategoryHelper service instance
          «ENDIF»
+         «IF !getAllEntities.filter[ownerPermission].empty»
+         * @param VariableApiInterface $variableApi VariableApi service instance
+         «ENDIF»
          * @param boolean $showOnlyOwnEntries Fallback value to determine whether only own entries should be selected or not
          «IF supportLocaleFilter»
          * @param boolean $filterDataByLocale Whether to apply a locale-based filter or not
@@ -123,6 +136,9 @@ class CollectionFilterHelper {
             «IF hasCategorisableEntities»
                 CategoryHelper $categoryHelper,
             «ENDIF»
+            «IF !getAllEntities.filter[ownerPermission].empty»
+                VariableApiInterface $variableApi,
+            «ENDIF»
             $showOnlyOwnEntries«IF supportLocaleFilter»,
             $filterDataByLocale«ENDIF»
         ) {
@@ -133,6 +149,9 @@ class CollectionFilterHelper {
             «ENDIF»
             «IF hasCategorisableEntities»
                 $this->categoryHelper = $categoryHelper;
+            «ENDIF»
+            «IF !getAllEntities.filter[ownerPermission].empty»
+                $this->variableApi = $variableApi;
             «ENDIF»
             $this->showOnlyOwnEntries = $showOnlyOwnEntries;
             «IF supportLocaleFilter»
@@ -418,7 +437,11 @@ class CollectionFilterHelper {
             }
             «IF ownerPermission || standardFields»
 
-                $showOnlyOwnEntries = (bool)$request->query->getInt('own', $this->showOnlyOwnEntries);
+                «IF ownerPermission»
+                    $showOnlyOwnEntries = (bool)$this->variableApi->get('«application.appName»', '«name.formatForCode»PrivateMode', false);
+                «ELSEIF standardFields»
+                    $showOnlyOwnEntries = (bool)$request->query->getInt('own', $this->showOnlyOwnEntries);
+                «ENDIF»
             «ENDIF»
 
             if (!in_array('workflowState', array_keys($parameters)) || empty($parameters['workflowState'])) {
@@ -434,7 +457,7 @@ class CollectionFilterHelper {
                 $qb->andWhere('tbl.workflowState IN (:onlineStates)')
                    ->setParameter('onlineStates', $onlineStates);
             }
-            «IF standardFields»
+            «IF ownerPermission || standardFields»
 
                 if ($showOnlyOwnEntries) {
                     $qb = $this->addCreatorFilter($qb);

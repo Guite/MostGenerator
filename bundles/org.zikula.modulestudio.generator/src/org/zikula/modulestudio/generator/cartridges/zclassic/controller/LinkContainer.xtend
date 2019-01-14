@@ -122,8 +122,15 @@ class LinkContainer {
                             if (true === $this->variableApi->get('«appName»', 'linkOwn«entity.nameMultiple.formatForCodeCapital»OnAccountPage', true)) {
                                 $objectType = '«entity.name.formatForCode»';
                                 if ($this->permissionHelper->hasComponentPermission($objectType, ACCESS_READ)) {
+                                    $routeArgs = ['own' => 1];
+                                    «IF entity.ownerPermission»
+                                        $showOnlyOwnEntries = (bool)$this->variableApi->get('«appName»', '«entity.name.formatForCode»PrivateMode', false);
+                                        if (true == $showOnlyOwnEntries) {
+                                            $routeArgs = [];
+                                        }
+                                    «ENDIF»
                                     $links[] = [
-                                        'url' => $this->router->generate('«appName.formatForDB»_' . strtolower($objectType) . '_view', ['own' => 1]),
+                                        'url' => $this->router->generate('«appName.formatForDB»_' . strtolower($objectType) . '_view', $routeArgs),
                                         'text' => $this->__('My «entity.nameMultiple.formatForDisplay»'«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»),
                                         'icon' => 'list-alt'
                                     ];

@@ -717,6 +717,9 @@ class ServiceDefinitions {
                 «IF hasCategorisableEntities»
                     - "@«modPrefix».category_helper"
                 «ENDIF»
+                «IF !getAllEntities.filter[ownerPermission].empty»
+                    - "@zikula_extensions_module.api.variable"
+                «ENDIF»
                 - "@=service('zikula_extensions_module.api.variable').get('«appName»', 'showOnlyOwnEntries', false)"
                 «IF supportLocaleFilter»
                     - "@=service('zikula_extensions_module.api.variable').get('«appName»', 'filterDataByLocale', false)"

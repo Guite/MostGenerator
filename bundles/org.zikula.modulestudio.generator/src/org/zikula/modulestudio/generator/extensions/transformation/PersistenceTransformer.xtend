@@ -281,7 +281,14 @@ class PersistenceTransformer {
                 ]
             }
         }
-
+        for (entity : getAllEntities.filter[ownerPermission]) {
+            varContainer.fields += factory.createBooleanField => [
+                name = entity.name.formatForCode + 'PrivateMode'
+                defaultValue = 'false'
+                documentation = 'Whether users may only see own ' + entity.nameMultiple.formatForDisplay
+                mandatory = false
+            ]
+        }
         varContainer.fields += factory.createBooleanField => [
             name = 'showOnlyOwnEntries'
             defaultValue = 'false'

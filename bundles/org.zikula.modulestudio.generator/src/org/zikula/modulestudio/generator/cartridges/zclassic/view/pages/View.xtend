@@ -130,13 +130,16 @@ class View {
                 {% endif %}
             {% endif %}
         «ENDIF»
+        «IF ownerPermission»
+            {% set showOnlyOwn = getModVar('«application.appName»', '«name.formatForCode»PrivateMode', false) %}
+        «ENDIF»
         {% if all == 1 %}
             {% set linkTitle = __('Back to paginated view') %}
-            {% set routeArgs = own ? {own: 1} : {} %}
+            {% set routeArgs = own«IF ownerPermission» and not showOnlyOwn«ENDIF» ? {own: 1} : {} %}
             <a href="{{ path('«appName.formatForDB»_«objName.toLowerCase»_' ~ routeArea ~ 'view', routeArgs) }}" title="{{ linkTitle|e('html_attr') }}"><i class="fa fa-table"></i> {{ linkTitle }}</a>
         {% else %}
             {% set linkTitle = __('Show all entries') %}
-            {% set routeArgs = own ? {all: 1, own: 1} : {all: 1} %}
+            {% set routeArgs = own«IF ownerPermission» and not showOnlyOwn«ENDIF» ? {all: 1, own: 1} : {all: 1} %}
             <a href="{{ path('«appName.formatForDB»_«objName.toLowerCase»_' ~ routeArea ~ 'view', routeArgs) }}" title="{{ linkTitle|e('html_attr') }}"><i class="fa fa-table"></i> {{ linkTitle }}</a>
         {% endif %}
         «IF tree != EntityTreeType.NONE»
@@ -148,7 +151,7 @@ class View {
             <a href="{{ path('«appName.formatForDB»_«objName.toLowerCase»_' ~ routeArea ~ 'view', {tpl: 'map', all: 1}) }}" title="{{ linkTitle|e('html_attr') }}"><i class="fa fa-map-o"></i> {{ linkTitle }}</a>
         «ENDIF»
         «IF standardFields»
-            {% if own == 1 %}
+            «IF ownerPermission»{% if not showOnlyOwn %}«ENDIF»{% if own == 1 %}
                 {% set linkTitle = __('Show also entries from other users') %}
                 {% set routeArgs = all ? {all: 1} : {} %}
                 <a href="{{ path('«appName.formatForDB»_«objName.toLowerCase»_' ~ routeArea ~ 'view', routeArgs) }}" title="{{ linkTitle|e('html_attr') }}"><i class="fa fa-users"></i> {{ linkTitle }}</a>
@@ -156,7 +159,7 @@ class View {
                 {% set linkTitle = __('Show only own entries') %}
                 {% set routeArgs = all ? {all: 1, own: 1} : {own: 1} %}
                 <a href="{{ path('«appName.formatForDB»_«objName.toLowerCase»_' ~ routeArea ~ 'view', routeArgs) }}" title="{{ linkTitle|e('html_attr') }}"><i class="fa fa-user"></i> {{ linkTitle }}</a>
-            {% endif %}
+            {% endif %}«IF ownerPermission»{% endif %}«ENDIF»
         «ENDIF»
         «IF loggable»
             {% if hasDeletedEntities %}
