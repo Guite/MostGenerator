@@ -268,7 +268,7 @@ class TechStructureRelations {
             result += 'Diese Relation wird durch eine ' + (if (bidirectional) 'bidirektionale' else 'unidirektionale') + ' Assoziation realisiert.'
             if (orphanRemoval) result += 'Waisen werden automatisch entfernt.'
             if (null !== orderBy && !orderBy.empty) result += 'Die ' + targetAlias.formatForDisplay + ' werden nach dem Feld "' + orderBy + '" sortiert.'
-            if (null !== indexBy && !indexBy.empty) result += 'Die ' + targetAlias.formatForDisplay + ' werden nach dem Feld "' + indexBy + '" sortiert.'
+            if (null !== indexBy && !indexBy.empty) result += 'Die ' + targetAlias.formatForDisplay + ' werden nach dem Feld "' + indexBy + '" indiziert.'
             if (minTarget > 0 || maxTarget > 0) {
                 if (minTarget > 0 && maxTarget > 0) {
                     result += 'Es können mindestens ' + minTarget + ' und höchstens ' + maxTarget + ' ' + targetAlias.formatForDisplay + ' zugewiesen werden.'
@@ -320,7 +320,7 @@ class TechStructureRelations {
             if (orphanRemoval) result += 'Waisen werden automatisch entfernt.'
             if (null !== orderByReverse && !orderByReverse.empty) result += 'Die ' + sourceAlias.formatForDisplay + ' werden nach dem Feld "' + orderByReverse + '" sortiert.'
             if (null !== orderBy && !orderBy.empty) result += 'Die ' + targetAlias.formatForDisplay + ' werden nach dem Feld "' + orderBy + '" sortiert.'
-            if (null !== indexBy && !indexBy.empty) result += 'Die ' + targetAlias.formatForDisplay + ' werden nach dem Feld "' + indexBy + '" sortiert.'
+            if (null !== indexBy && !indexBy.empty) result += 'Die ' + targetAlias.formatForDisplay + ' werden nach dem Feld "' + indexBy + '" indiziert.'
             if (minSource > 0 || maxSource > 0) {
                 if (minSource > 0 && maxSource > 0) {
                     result += 'Es können mindestens ' + minSource + ' und höchstens ' + maxSource + ' ' + sourceAlias.formatForDisplay + ' zugewiesen werden.'

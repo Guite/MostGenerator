@@ -185,6 +185,7 @@ class Display {
         «IF !refedElems.empty»
             «val relationHelper = new Relations»
             {% block related_items %}
+                {% set isQuickView = app.request.query.getBoolean('raw', false) %}
                 «IF useGroupingTabs('display')»
                     <div role="tabpanel" class="tab-pane fade" id="tabRelations" aria-labelledby="relationsTab">
                         <h3>{{ __('Related data') }}</h3>
