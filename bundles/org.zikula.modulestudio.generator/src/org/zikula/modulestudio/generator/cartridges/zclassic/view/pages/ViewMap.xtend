@@ -138,7 +138,7 @@ class ViewMap {
             {% endif %}
         «ENDIF»
         «IF ownerPermission»
-            {% set showOnlyOwn = getModVar('«application.appName»', '«name.formatForCode»PrivateMode', false) %}
+            {% set showOnlyOwn = routeArea != 'admin' and getModVar('«application.appName»', '«name.formatForCode»PrivateMode', false) %}
         «ENDIF»
         {% if all == 1 %}
             {% set linkTitle = __('Back to paginated view') %}

@@ -364,7 +364,9 @@ class ControllerHelper {
 
             $templateParameters['all'] = 'csv' == $request->getRequestFormat() ? 1 : $request->query->getInt('all', 0);
             «IF !getAllEntities.filter[ownerPermission].empty»
-                if (in_array($objectType, ['«getAllEntities.filter[ownerPermission].map[name.formatForCode].join('\',  \'')»'])) {
+                $routeName = $request->get('_route');
+                $isAdminArea = false !== strpos($routeName, '«appName.toLowerCase»_' . strtolower($objectType) . '_admin');
+                if (!$isAdminArea && in_array($objectType, ['«getAllEntities.filter[ownerPermission].map[name.formatForCode].join('\',  \'')»'])) {
                     $showOnlyOwnEntries = (bool)$this->variableApi->get('«appName»', $objectType . 'PrivateMode', false);
                     if (true == $showOnlyOwnEntries) {
                         $templateParameters['own'] = 1;
