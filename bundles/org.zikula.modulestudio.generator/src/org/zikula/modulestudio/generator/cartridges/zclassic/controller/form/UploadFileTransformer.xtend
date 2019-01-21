@@ -21,7 +21,6 @@ class UploadFileTransformer {
         use Symfony\Component\Form\DataTransformerInterface;
         use Symfony\Component\HttpFoundation\File\File;
         use Symfony\Component\HttpFoundation\File\UploadedFile;
-        use «appNamespace»\Form\Type\Field\UploadType;
         use «appNamespace»\Helper\UploadHelper;
 
         /**
@@ -32,9 +31,9 @@ class UploadFileTransformer {
         abstract class AbstractUploadFileTransformer implements DataTransformerInterface
         {
             /**
-             * @var UploadType
+             * @var object
              */
-            protected $formType = '';
+            protected $entity = null;
 
             /**
              * @var UploadHelper
@@ -56,16 +55,16 @@ class UploadFileTransformer {
             /**
              * UploadFileTransformer constructor.
              *
-             * @param UploadType   $formType     The form type containing this transformer
+             * @param object       $entity       The containing entity
              * @param UploadHelper $uploadHelper UploadHelper service instance
              * @param string       $fieldName    The form field name
              «IF hasUploadNamingScheme(UploadNamingScheme.USERDEFINEDWITHCOUNTER)»
              * @param boolean      $customName   Whether a custom file name is supported or not
              «ENDIF»
              */
-            public function __construct(UploadType $formType, UploadHelper $uploadHelper, $fieldName = ''«IF hasUploadNamingScheme(UploadNamingScheme.USERDEFINEDWITHCOUNTER)», $customName = false«ENDIF»)
+            public function __construct($entity, UploadHelper $uploadHelper, $fieldName = ''«IF hasUploadNamingScheme(UploadNamingScheme.USERDEFINEDWITHCOUNTER)», $customName = false«ENDIF»)
             {
-                $this->formType = $formType;
+                $this->entity = $entity;
                 $this->uploadHelper = $uploadHelper;
                 $this->fieldName = $fieldName;
                 «IF hasUploadNamingScheme(UploadNamingScheme.USERDEFINEDWITHCOUNTER)»
@@ -114,7 +113,7 @@ class UploadFileTransformer {
                     «ENDIF»
                 }
 
-                $entity = $this->formType->getEntity();
+                $entity = $this->entity;
                 $objectType = $entity->get_objectType();
                 $fieldName = $this->fieldName;
 
@@ -146,7 +145,7 @@ class UploadFileTransformer {
                 $result = null;
                 $metaData = [];
                 if ($uploadResult['fileName'] != '') {
-                    $result = $this->uploadHelper->getFileBaseFolder($this->formType->getEntity()->get_objectType(), $fieldName) . $uploadResult['fileName'];
+                    $result = $this->uploadHelper->getFileBaseFolder($entity->get_objectType(), $fieldName) . $uploadResult['fileName'];
                     $result = null !== $result ? new File($result) : $result;
                     $metaData = $uploadResult['metaData'];
                 }
