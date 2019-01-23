@@ -128,9 +128,13 @@ class Utils {
      * @return Boolean The result
      */
     def Boolean targets(Application it, String version) {
-        val useStable15 = !#['1.5-dev', '2.0', '2.0-dev'].contains(version)
+        val useStable15 = !#['1.5-dev', '2.0', '2.0-dev', '3.0', '3.0-dev'].contains(version)
 
         switch targetCoreVersion {
+            case ZK3DEV:
+                #['3.0-dev', '3.0', '2.0-dev', '2.0', '1.5-dev'].contains(version)
+            case ZK30:
+                #['3.0', '2.0-dev', '2.0', '1.5-dev'].contains(version)
             case ZK2DEV:
                 #['2.0-dev', '2.0', '1.5-dev'].contains(version)
             case ZK20:
@@ -154,6 +158,10 @@ class Utils {
      */
     def targetSemVer(Application it, Boolean withPoint) {
         switch targetCoreVersion {
+            case ZK3DEV:
+                if (!withPoint) '3.0' else '3.0.0'
+            case ZK30:
+                if (!withPoint) '3.0' else '3.0.0'
             case ZK2DEV:
                 if (!withPoint) '2.0' else '2.0.12'
             case ZK20:
