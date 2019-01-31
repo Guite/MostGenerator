@@ -216,6 +216,9 @@ class Styles {
             div.«cssPrefix»-history .table-responsive .table > tbody > tr > td.diff-new {
                 background-color: #eaffea !important;
             }
+            div.«cssPrefix»-history .img-responsive {
+                max-width: 20px;
+            }
         «ENDIF»
     '''
 
