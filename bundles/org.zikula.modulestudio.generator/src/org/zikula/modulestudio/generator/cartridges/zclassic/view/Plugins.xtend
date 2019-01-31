@@ -87,13 +87,13 @@ class Plugins {
         «IF hasTrees»
             use «appNamespace»\Entity\Factory\EntityFactory;
         «ENDIF»
+        use «appNamespace»\Helper\EntityDisplayHelper;
         «IF hasListFields»
             use «appNamespace»\Helper\ListEntriesHelper;
         «ENDIF»
         «IF hasLoggable»
             use «appNamespace»\Helper\LoggableHelper;
         «ENDIF»
-        use «appNamespace»\Helper\EntityDisplayHelper;
         use «appNamespace»\Helper\WorkflowHelper;
         «IF hasTrees»
             use «appNamespace»\Menu\MenuBuilder;
@@ -207,8 +207,8 @@ class Plugins {
             WorkflowHelper $workflowHelper«IF hasListFields»,
             ListEntriesHelper $listHelper«ENDIF»«IF hasLoggable»,
             LoggableHelper $loggableHelper«ENDIF»«IF hasTrees»,
-            MenuBuilder $menuBuilder«ENDIF»)
-        {
+            MenuBuilder $menuBuilder«ENDIF»
+        ) {
             $this->setTranslator($translator);
             «IF hasTrees»
                 $this->router = $router;

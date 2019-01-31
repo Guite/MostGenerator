@@ -122,8 +122,8 @@ class MenuBuilder {
                 «IF hasLoggable»
                     LoggableHelper $loggableHelper,
                 «ENDIF»
-                CurrentUserApiInterface $currentUserApi)
-            {
+                CurrentUserApiInterface $currentUserApi
+            ) {
                 $this->setTranslator($translator);
                 $this->factory = $factory;
                 $this->eventDispatcher = $eventDispatcher;
