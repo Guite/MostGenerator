@@ -107,7 +107,7 @@ class History {
                                     {% if values.old is iterable %}
                                         {% if values.old|length > 0 %}
                                             {% if fieldName in ['createdBy', 'updatedBy'] and values.old.uid is defined %}
-                                                {{ userAvatar(values.old.uid, {size: 20, rating: 'g'}) }} {{ values.old.uid|profileLinkByUserId() }}
+                                                {{ userAvatar(values.old.uid, {rating: 'g'}) }} {{ values.old.uid|profileLinkByUserId() }}
                                             {% else %}
                                                 {{ helper.outputArray(values.old«IF hasTranslatableFields», (fieldName == 'translationData')«ENDIF») }}
                                             {% endif %}
@@ -122,7 +122,7 @@ class History {
                                     {% if values.new is iterable %}
                                         {% if values.new|length > 0 %}
                                             {% if fieldName in ['createdBy', 'updatedBy'] and values.new.uid is defined %}
-                                                {{ userAvatar(values.new.uid, {size: 20, rating: 'g'}) }} {{ values.new.uid|profileLinkByUserId() }}
+                                                {{ userAvatar(values.new.uid, {rating: 'g'}) }} {{ values.new.uid|profileLinkByUserId() }}
                                             {% else %}
                                                 {{ helper.outputArray(values.new«IF hasTranslatableFields», (fieldName == 'translationData')«ENDIF») }}
                                             {% endif %}
@@ -174,7 +174,7 @@ class History {
                         <td headers="hDate">{{ logEntry.loggedAt|localizeddate('long', 'medium') }}</td>
                         <td headers="hUser">
                             {% if logEntry.username %}
-                                {{ userAvatar(logEntry.username, {size: 20, rating: 'g'}) }} {{ logEntry.username|profileLinkByUserName() }}
+                                {{ userAvatar(logEntry.username, {rating: 'g'}) }} {{ logEntry.username|profileLinkByUserName() }}
                             {% endif %}
                         </td>
                         <td headers="hOperation">
@@ -201,7 +201,7 @@ class History {
                                                 {% if value|length > 0 %}
                                                     <li>
                                                     {% if field in ['createdBy', 'updatedBy'] and value.uid is defined %}
-                                                        {{ __f('%field% set to <em>%value%</em>', {'%field%': field|humanize, '%value%': userAvatar(value.uid, {size: 20, rating: 'g'}) ~ ' ' ~ value.uid|profileLinkByUserId()})|raw }}
+                                                        {{ __f('%field% set to <em>%value%</em>', {'%field%': field|humanize, '%value%': userAvatar(value.uid, {rating: 'g'}) ~ ' ' ~ value.uid|profileLinkByUserId()})|raw }}
                                                     {% else %}
                                                         {{ __f('%field% set to:', {'%field%': field|humanize}) }}
                                                         {{ helper.outputArray(value«IF hasTranslatableFields», (field == 'translationData')«ENDIF») }}
