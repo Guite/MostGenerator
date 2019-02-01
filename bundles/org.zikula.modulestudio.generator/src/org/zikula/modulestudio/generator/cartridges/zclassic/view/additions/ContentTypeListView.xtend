@@ -80,9 +80,9 @@ class ContentTypeListView {
 
         <script>
             (function($) {
-            	$('#«appName.toFirstLower»Template').change(function() {
-            	    $('#customTemplateArea').toggleClass('hidden', $(this).val() != 'custom');
-        	    }).trigger('change');
+                $('#«appName.toFirstLower»Template').change(function() {
+                    $('#customTemplateArea').toggleClass('hidden', 'custom' != $(this).val());
+                }).trigger('change');
             })(jQuery)
         </script>
     '''
