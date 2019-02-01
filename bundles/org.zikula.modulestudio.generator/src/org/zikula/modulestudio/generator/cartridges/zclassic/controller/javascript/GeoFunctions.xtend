@@ -108,7 +108,7 @@ class GeoFunctions {
                 .bindPopup('A pretty CSS3 popup.<br> Easily customizable.')
                 .openPopup();*/»
 
-            jQuery('#tabMap').on('shown.bs.tab', function () {
+            jQuery('#mapTab').on('shown.bs.tab', function () {
                 // redraw the map after it's tab has been opened
                 map.invalidateSize();
             });
