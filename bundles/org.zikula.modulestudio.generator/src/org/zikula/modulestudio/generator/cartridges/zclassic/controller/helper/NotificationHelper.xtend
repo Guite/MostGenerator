@@ -179,6 +179,8 @@ class NotificationHelper {
         /**
          * Sends a mail to either an item's creator or a group of moderators.
          *
+         * @param array $args
+         *
          * @return boolean
          */
         public function process($args)
