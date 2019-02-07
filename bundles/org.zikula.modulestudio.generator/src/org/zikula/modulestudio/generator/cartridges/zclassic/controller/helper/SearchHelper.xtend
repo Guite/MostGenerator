@@ -158,7 +158,7 @@ class SearchHelper {
                 «FOR entity : entitiesWithStrings»
                     '«appName.toFirstLower»«entity.nameMultiple.formatForCodeCapital»' => [
                         'value' => '«entity.name.formatForCode»',
-                        'label' => $this->__('«entity.nameMultiple.formatForDisplayCapital»')
+                        'label' => $this->__('«entity.nameMultiple.formatForDisplayCapital»'«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»)
                     ]«IF entity != entitiesWithStrings.last»,«ENDIF»
                 «ENDFOR»
             ];
