@@ -1,6 +1,7 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.controller.helper
 
 import de.guite.modulestudio.metamodel.Application
+import de.guite.modulestudio.metamodel.UploadField
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
@@ -198,6 +199,7 @@ class SearchHelper {
 
             foreach ($searchTypes as $searchType => $typeInfo) {
                 $builder->add('active_' . $searchType, CheckboxType::class, [
+                    'data' => true,
                     'value' => $typeInfo['value'],
                     'label' => $typeInfo['label'],
                     'label_attr' => ['class' => 'checkbox-inline'],
@@ -244,7 +246,7 @@ class SearchHelper {
                     «FOR entity : entities.filter[hasAbstractStringFieldsEntity]»
                         case '«entity.name.formatForCode»':
                             «FOR field : entity.getAbstractStringFieldsEntity»
-                                $whereArray[] = 'tbl.«field.name.formatForCode»';
+                                $whereArray[] = 'tbl.«field.name.formatForCode»«IF field instanceof UploadField»FileName«ENDIF»';
                             «ENDFOR»
                             «IF entity.hasLanguageFieldsEntity»
                                 $languageField = '«entity.getLanguageFieldsEntity.head.name.formatForCode»';
@@ -293,7 +295,7 @@ class SearchHelper {
                         }
                     «ENDIF»
 
-                    $description = !empty($descriptionFieldName) ? $entity[$descriptionFieldName] : '';
+                    $description = !empty($descriptionFieldName) ? strip_tags($entity[$descriptionFieldName]) : '';
                     $created = isset($entity['createdDate']) ? $entity['createdDate'] : null;
 
                     $formattedTitle = $this->entityDisplayHelper->getFormattedTitle($entity);
