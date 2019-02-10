@@ -165,13 +165,13 @@ class Utils {
             case ZK2DEV:
                 if (!withPoint) '2.0' else '2.0.12'
             case ZK20:
-                if (!withPoint) '2.0' else '2.0.11'
+                if (!withPoint) '2.0' else '2.0.12'
             case ZK15:
                 if (!withPoint) '1.5' else '1.5.8'
             case ZK15DEV:
                 if (!withPoint) '1.5' else '1.5.9'
             default:
-                if (!withPoint) '2.0' else '2.0.11'
+                if (!withPoint) '2.0' else '2.0.12'
         }
     }
 

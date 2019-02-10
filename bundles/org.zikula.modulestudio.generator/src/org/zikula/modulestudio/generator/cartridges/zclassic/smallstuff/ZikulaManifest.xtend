@@ -33,7 +33,7 @@ class ZikulaManifest {
         },
         "version": {
             "semver": "«version»",
-            "compatibility": ">=«targetSemVer(true)» <3.0.0",
+            "compatibility": ">=«targetSemVer(true)» <«IF targets('3.0')»4«ELSE»3«ENDIF».0.0",
             "composerpath": "composer.json",
             "description": "«appDescription»",
             "keywords": [

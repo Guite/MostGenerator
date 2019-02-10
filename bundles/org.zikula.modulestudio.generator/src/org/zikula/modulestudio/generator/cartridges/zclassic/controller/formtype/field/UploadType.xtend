@@ -193,7 +193,7 @@ class UploadType {
                         «IF hasUploadNamingScheme(UploadNamingScheme.USERDEFINEDWITHCOUNTER)»
                             'custom_filename' => false,
                         «ENDIF»
-                        'error_bubbling' => false«IF targets('3.0')»,
+                        'error_bubbling' => false«IF targets('2.0')»,
                         'allow_file_upload' => true«ENDIF»
                     ])
                     ->setAllowedTypes('allowed_extensions', 'string')
