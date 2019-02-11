@@ -284,7 +284,12 @@ class LifecycleListener {
             {
                 $entityClassParts = explode('\\', get_class($entity));
 
-                return ($entityClassParts[0] == '«vendor.formatForCodeCapital»' && $entityClassParts[1] == '«name.formatForCodeCapital»Module');
+                if ('DoctrineProxy' == $entityClassParts[0] && '__CG__' == $entityClassParts[1]) {
+                    array_shift($entityClassParts);
+                    array_shift($entityClassParts);
+                }
+
+                return ('«vendor.formatForCodeCapital»' == $entityClassParts[0] && '«name.formatForCodeCapital»Module' == $entityClassParts[1]);
             }
 
             /**
