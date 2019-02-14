@@ -106,6 +106,9 @@ class LoggableHistory {
         $revertToVersion = $request->query->getInt('revert', 0);
         if ($revertToVersion > 0 && count($logEntries) > 1) {
             // revert to requested version
+            «IF hasSluggableFields && slugUnique»
+                $«name.formatForCode»Id = $«name.formatForCode»->getId();
+            «ENDIF»
             $«name.formatForCode» = $this->get('«application.appService».loggable_helper')->revert($«name.formatForCode», $revertToVersion);
 
             try {
@@ -125,6 +128,10 @@ class LoggableHistory {
             } catch (\Exception $exception) {
                 $this->addFlash('error', $this->__f('Sorry, but an error occured during the %action% action. Please apply the changes again!', ['%action%' => 'update']) . '  ' . $exception->getMessage());
             }
+            «IF hasSluggableFields && slugUnique»
+
+                $«name.formatForCode» = $entityFactory->getRepository('«name.formatForCode»')->selectById($«name.formatForCode»Id);
+            «ENDIF»
 
             return $this->redirectToRoute('«application.appName.formatForDB»_«name.formatForDB»_' . $routeArea . 'loggablehistory', [«routeParams(name.formatForCode, false)»]);
         }
