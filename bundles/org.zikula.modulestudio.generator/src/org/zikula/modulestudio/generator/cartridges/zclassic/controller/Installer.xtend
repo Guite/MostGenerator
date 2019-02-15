@@ -100,7 +100,6 @@ class Installer {
                 $categoryGlobal = $this->container->get('zikula_categories_module.category_repository')->findOneBy(['name' => 'Global']);
                 if ($categoryGlobal) {
                     $categoryRegistryIdsPerEntity = [];
-                    $entityManager = $this->container->get('«entityManagerService»');
                     «FOR entity : getCategorisableEntities»
 
                         $registry = new CategoryRegistryEntity();
@@ -110,8 +109,8 @@ class Installer {
                         $registry->setCategory($categoryGlobal);
 
                         try {
-                            $entityManager->persist($registry);
-                            $entityManager->flush();
+                            $this->entityManager->persist($registry);
+                            $this->entityManager->flush();
                         } catch (\Exception $exception) {
                             $this->addFlash('warning', $this->__f('Error! Could not create a category registry for the %entity% entity. If you want to use categorisation, register at least one registry in the Categories administration.', ['%entity%' => '«entity.name.formatForDisplay»']));
                             $logger->error('{app}: User {user} could not create a category registry for {entities} during installation. Error details: {errorMessage}.', ['app' => '«appName»', 'user' => $userName, 'entities' => '«entity.nameMultiple.formatForDisplay»', 'errorMessage' => $exception->getMessage()]);
@@ -222,12 +221,11 @@ class Installer {
             «IF hasCategorisableEntities»
 
                 // remove category registry entries
-                $entityManager = $this->container->get('«entityManagerService»');
                 $registries = $this->container->get('zikula_categories_module.category_registry_repository')->findBy(['modname' => '«appName»']);
                 foreach ($registries as $registry) {
-                    $entityManager->remove($registry);
+                    $this->entityManager->remove($registry);
                 }
-                $entityManager->flush();
+                $this->entityManager->flush();
             «ENDIF»
             «IF hasUploads»
 
