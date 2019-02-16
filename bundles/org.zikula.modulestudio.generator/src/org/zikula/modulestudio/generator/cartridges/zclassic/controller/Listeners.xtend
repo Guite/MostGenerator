@@ -491,9 +491,6 @@ class Listeners {
             use Zikula\Core\Doctrine\EntityAccess;
             use «appNamespace»\Entity\Factory\EntityFactory;
             use «appNamespace»\Helper\PermissionHelper;
-            «IF needsApproval»
-                use «appNamespace»\Helper\NotificationHelper;
-            «ENDIF»
         «ENDIF»
 
         /**
