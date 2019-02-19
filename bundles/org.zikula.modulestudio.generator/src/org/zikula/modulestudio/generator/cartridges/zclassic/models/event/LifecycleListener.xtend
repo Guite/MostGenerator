@@ -372,7 +372,7 @@ class LifecycleListener {
                     «ENDIF»
                     foreach ($eventManager->getListeners() as $event => $listeners) {
                         foreach ($listeners as $hash => $listener) {
-                            if ('Gedmo\Loggable\LoggableListener' == $listener) {
+                            if (is_object($listener) && 'Gedmo\Loggable\LoggableListener' == get_class($listener)) {
                                 $eventManager->removeEventSubscriber($listener);
                                 «IF hasTranslatable»
                                     $hasLoggableActivated = true;
