@@ -1,6 +1,7 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.models
 
 import de.guite.modulestudio.metamodel.Application
+import de.guite.modulestudio.metamodel.ArrayField
 import de.guite.modulestudio.metamodel.DataObject
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.EntityChangeTrackingPolicy
@@ -247,6 +248,13 @@ class Entities {
 
         «FOR relation : getBidirectionalIncomingJoinRelations»«thAssoc.generate(relation, false)»«ENDFOR»
         «FOR relation : getOutgoingJoinRelations»«thAssoc.generate(relation, true)»«ENDFOR»
+        «IF it instanceof Entity && (it as Entity).loggable && (it as Entity).hasTranslatableFields && getDerivedFields.filter(ArrayField).filter[name.equals('translationData')].empty»
+            /**
+             * @Assert\Type(type="array")
+             * @var array Log data for refreshing translations during revert to another revision
+             */
+            protected $translationData = [];
+        «ENDIF»
     '''
 
     def private accessors(DataObject it) '''
@@ -261,6 +269,9 @@ class Entities {
 
         «FOR relation : getBidirectionalIncomingJoinRelations»«thAssoc.relationAccessor(relation, false)»«ENDFOR»
         «FOR relation : getOutgoingJoinRelations»«thAssoc.relationAccessor(relation, true)»«ENDFOR»
+        «IF it instanceof Entity && (it as Entity).loggable && (it as Entity).hasTranslatableFields && getDerivedFields.filter(ArrayField).filter[name.equals('translationData')].empty»
+            «fh.getterAndSetterMethods(it, 'translationData', 'array', true, true, true, '[]', '')»
+        «ENDIF»
     '''
 
     def private modelEntityImpl(DataObject it, Application app) '''
