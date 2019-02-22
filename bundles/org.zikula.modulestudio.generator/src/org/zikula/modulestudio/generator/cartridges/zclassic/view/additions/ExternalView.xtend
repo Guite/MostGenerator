@@ -87,7 +87,10 @@ class ExternalView {
 
                 {# you can embed the display template like this: #}
                 {#{ app.request.query.set('raw', 1) }}
-                {{ include('@«app.appName»/«name.formatForDisplayCapital»/display.html.twig', {«name.formatForCode»: «name.formatForCode», routeArea: '', currentUrlObject: null}) }#}
+                {% set displayPage = include('@«app.appName»/«name.formatForDisplayCapital»/display.html.twig', {«name.formatForCode»: «name.formatForCode», routeArea: '', currentUrlObject: null}) %}
+                {% set displayPage = displayPage|split('<body>') %}
+                {% set displayPage = displayPage[1]|split('</body>') %}
+                {{ displayPage[0]|raw }#}
             «ENDIF»
 
             {# you can distinguish the context like this: #}
