@@ -107,7 +107,7 @@ class ExternalController {
         }
 
         if (!$this->get('«appService».permission_helper')->mayRead($entity)) {
-            return '';
+            return new Response('');
         }
 
         $template = $request->query->has('template') ? $request->query->get('template', null) : null;
