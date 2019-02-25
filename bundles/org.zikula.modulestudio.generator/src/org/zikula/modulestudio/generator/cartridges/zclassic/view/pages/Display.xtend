@@ -327,7 +327,7 @@ class Display {
                     <p>{{ __('This «name.formatForDisplay» is assigned to the following data objects:') }}</p>
                     <ul>
                     {% for assignment in hookAssignments %}
-                    	<li><a href="{{ assignment.url|e('html_attr') }}" title="{{ __('View this object')|e('html_attr') }}">{{ assignment.date|localizeddate('medium', 'short') }} - {{ assignment.text }}</a></li>
+                        <li><a href="{{ assignment.url|e('html_attr') }}" title="{{ __('View this object')|e('html_attr') }}">{{ assignment.date|localizeddate('medium', 'short') }} - {{ assignment.text }}</a></li>
                     {% endfor %}
                     </ul>
                 {% else %}
