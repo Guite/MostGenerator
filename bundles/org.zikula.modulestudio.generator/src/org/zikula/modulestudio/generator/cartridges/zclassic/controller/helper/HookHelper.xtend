@@ -860,7 +860,7 @@ class HookHelper {
 
                         $templateParameters['relationThumbRuntimeOptions'] = $this->imageHelper->getCustomRuntimeOptions('', '', '«application.appName»_relateditem', 'controllerAction', ['action' => 'display']);
                     «ENDIF»
-                    $parameters['permissionHelper'] = $this->permissionHelper;
+                    $templateParameters['permissionHelper'] = $this->permissionHelper;
 
                     $output = $this->templating->render($template, $templateParameters);
 
