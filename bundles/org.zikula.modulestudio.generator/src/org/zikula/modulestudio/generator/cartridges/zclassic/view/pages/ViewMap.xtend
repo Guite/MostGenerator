@@ -88,8 +88,8 @@ class ViewMap {
                     var markerData = [];
                     {% for «name.formatForCode» in items if «name.formatForCode».latitude|default and «name.formatForCode».longitude|default %}
                         markerData.push({
-                            latitude: {{ «name.formatForCode».latitude|e('js') }},
-                            longitude: {{ «name.formatForCode».longitude|e('js') }},
+                            latitude: '{{ «name.formatForCode».latitude|e('js') }}',
+                            longitude: '{{ «name.formatForCode».longitude|e('js') }}',
                             title: '{{ «name.formatForCode»|«appName.formatForDB»_formattedTitle|e('js') }}'«IF null !== getMapImageField»,
                             image: '{% if «name.formatForCode».«getMapImageField.name.formatForCode» is not empty and «name.formatForCode».«getMapImageField.name.formatForCode»Meta|default %}{{ «name.formatForCode».«getMapImageField.name.formatForCode»Url|e('js') }}{% endif %}'«ENDIF»«IF hasDisplayAction»,
                             detailUrl: '{{ path('«appName.formatForDB»_«name.formatForCode»_' ~ routeArea ~ 'display'«routeParams(name.formatForCode, true)»)|e('js') }}'«ENDIF»
