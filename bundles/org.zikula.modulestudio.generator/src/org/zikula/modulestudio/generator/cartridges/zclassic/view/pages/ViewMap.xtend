@@ -86,7 +86,7 @@ class ViewMap {
                 <script>
                 /* <![CDATA[ */
                     var markerData = [];
-                    {% for «name.formatForCode» in items if «name.formatForCode».latitude|default and «name.formatForCode».longitude|default %}
+                    {% for «name.formatForCode» in items if «name.formatForCode».latitude|default != 0 and «name.formatForCode».longitude|default != 0 %}
                         markerData.push({
                             latitude: '{{ «name.formatForCode».latitude|e('js') }}',
                             longitude: '{{ «name.formatForCode».longitude|e('js') }}',
