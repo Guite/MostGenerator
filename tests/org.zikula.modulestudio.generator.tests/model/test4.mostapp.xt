@@ -12,7 +12,7 @@ XPECT files ---
     zikula.manifest.json
 --- */
 
-application "SimpleNews" targets ZK15DEV {
+application "SimpleNews" targets ZK3DEV {
     documentation "Simple news extension"
     vendor "Guite"
     author "Axel Guckelsberger"

@@ -4,6 +4,7 @@ import de.guite.modulestudio.metamodel.ArrayField
 import de.guite.modulestudio.metamodel.BooleanField
 import de.guite.modulestudio.metamodel.DatetimeField
 import de.guite.modulestudio.metamodel.EmailField
+import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.Field
 import de.guite.modulestudio.metamodel.IntegerField
 import de.guite.modulestudio.metamodel.ListField
@@ -97,7 +98,7 @@ class SimpleFields {
     }
 
     def dispatch displayField(TextField it, String objName, String page) '''
-        {{ «objName».«name.formatForCode»«IF page == 'view'»|striptags|truncate(50)«ELSE»|safeHtml«ENDIF» }}'''
+        {{ «objName».«name.formatForCode»«IF page == 'view'»|striptags|truncate(50)«ELSE»«IF page == 'display' && null !== entity && entity instanceof Entity && !(entity as Entity).skipHookSubscribers»|notifyFilters('«entity.application.appName.formatForDB».filter_hooks.«(entity as Entity).nameMultiple.formatForDB».filter')«ENDIF»|safeHtml«ENDIF» }}'''
 
     def dispatch displayField(EmailField it, String objName, String page) {
         val realName = objName + '.' + name.formatForCode

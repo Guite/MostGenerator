@@ -179,13 +179,13 @@ application "SimpleNews" targets ZK2DEV {
                 },
                 upload "myImage",
                 user "myUser1" {
-                    onAccountDeletionCreator ADMIN
+                    onAccountDeletion ADMIN
                 },
                 user "myUser2" {
-                    onAccountDeletionCreator GUEST
+                    onAccountDeletion GUEST
                 },
                 user "myUser3" {
-                    onAccountDeletionCreator DELETE
+                    onAccountDeletion DELETE
                 }
             }
             actions {
@@ -246,13 +246,13 @@ application "SimpleNews" targets ZK2DEV {
             documentation "My variable section"
             fields {
                 user "myUser1" {
-                    onAccountDeletionCreator ADMIN
+                    onAccountDeletion ADMIN
                 },
                 user "myUser2" {
-                    onAccountDeletionCreator GUEST
+                    onAccountDeletion GUEST
                 },
                 user "myUser3" {
-                    onAccountDeletionCreator DELETE
+                    onAccountDeletion DELETE
                 },
                 upload "myImage"
             }
@@ -262,13 +262,13 @@ application "SimpleNews" targets ZK2DEV {
             sortOrder 3
             fields {
                 user "myUser4" {
-                    onAccountDeletionCreator ADMIN
+                    onAccountDeletion ADMIN
                 },
                 user "myUser5" {
-                    onAccountDeletionCreator GUEST
+                    onAccountDeletion GUEST
                 },
                 user "myUser6" {
-                    onAccountDeletionCreator DELETE
+                    onAccountDeletion DELETE
                 },
                 number "myNumber",
                 datetime "myDate" {

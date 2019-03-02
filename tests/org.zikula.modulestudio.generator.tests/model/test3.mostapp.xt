@@ -14,7 +14,7 @@ XPECT files ---
     Helper/Base/AbstractArchiveHelper.php
 --- */
 
-application "SimpleNews" targets ZK15 {
+application "SimpleNews" targets ZK30 {
     vendor "Guite"
     author "Axel Guckelsberger"
     email "info@guite.de"

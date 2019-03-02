@@ -375,7 +375,7 @@ application "SimpleNews" {
                     blameable CHANGE
                     blameableChangeTriggerField "usr3"
                     blameableChangeTriggerValue "foo"
-                    onAccountDeletionCreator ADMIN
+                    onAccountDeletion ADMIN
                 }
             }
             actions {
