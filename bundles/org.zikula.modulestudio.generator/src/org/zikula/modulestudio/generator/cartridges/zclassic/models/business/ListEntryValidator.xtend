@@ -175,14 +175,14 @@ class ListEntryValidator {
 
                 if (null !== $constraint->min && $count < $constraint->min) {
                     $this->context->buildViolation(
-                        $this->translator->transChoice('You must select at least "%limit%" choice.', 'You must select at least "%limit%" choices.', $count, [
+                        $this->translator->transChoice('You must select at least "%limit%" choice.|You must select at least "%limit%" choices.', $count, [
                             '%limit%' => $constraint->min
                         ]«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»)
                     )->addViolation();
                 }
                 if (null !== $constraint->max && $count > $constraint->max) {
                     $this->context->buildViolation(
-                        $this->translator->transChoice('You must select at most "%limit%" choice.', 'You must select at most "%limit%" choices.', $count, [
+                        $this->translator->transChoice('You must select at most "%limit%" choice.|You must select at most "%limit%" choices.', $count, [
                             '%limit%' => $constraint->max
                         ]«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»)
                     )->addViolation();
