@@ -75,6 +75,9 @@ class ServiceDefinitions {
         if (hasHookSubscribers || hasHookProviders) {
             generateServiceFile('hooks', hooks)
         }
+        if (generateMultiHookNeedles && targets('2.0')) {
+            generateServiceFile('needles', needles)
+        }
         generateServiceFile('twig', twig)
         generateServiceFile('logger', logger)
         if (targets('2.0') && (generateListContentType || needsDetailContentType)) {
@@ -103,6 +106,9 @@ class ServiceDefinitions {
           - { resource: 'helpers.yml' }
         «IF hasHookSubscribers || hasHookProviders»
             «'  '»- { resource: 'hooks.yml' }
+        «ENDIF»
+        «IF generateMultiHookNeedles && targets('2.0')»
+            «'  '»- { resource: 'needles.yml' }
         «ENDIF»
           - { resource: 'twig.yml' }
           - { resource: 'logger.yml' }
@@ -1000,6 +1006,23 @@ class ServiceDefinitions {
                     «ENDFOR»
                 «ENDIF»
             «ENDIF»
+    '''
+
+    def private needles(Application it) '''
+        services:
+            «FOR entity : getAllEntities.filter[hasViewAction || hasDisplayAction]»
+                «modPrefix».multihook_needle.«entity.name.formatForDB»:
+                    class: «appNamespace»\Needle\«entity.name.formatForCodeCapital»Needle
+                    arguments:
+                        - '@translator.default'
+                        - '@router'
+                        - '@«modPrefix».permission_helper'
+                        «IF hasDisplayActions»
+                            - '@«modPrefix».entity_factory'
+                            - '@«modPrefix».entity_display_helper'
+                        «ENDIF»
+                    tags: ['zikula.multihook_needle']
+            «ENDFOR»
     '''
 
     def private twig(Application it) '''

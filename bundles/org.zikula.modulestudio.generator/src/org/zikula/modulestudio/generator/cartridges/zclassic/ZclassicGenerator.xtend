@@ -237,7 +237,7 @@ class ZclassicGenerator implements IGenerator {
             'Generating mailz api'.printIfNotTesting(fsa)
             new Mailz().generate(it, fsa)
         }
-        if (generateMultiHookNeedles && !targets('2.0')) {
+        if (generateMultiHookNeedles) {
             pm?.subTask('Integration: MultiHook needles')
             'Generating MultiHook needles'.printIfNotTesting(fsa)
             new MultiHook().generate(it, fsa)
