@@ -29,7 +29,7 @@ class NotificationHelper {
         use Symfony\Component\HttpFoundation\RequestStack;
         use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
         use Symfony\Component\Routing\RouterInterface;
-        use Twig_Environment;
+        use Twig«IF targets('3.0')»\«ELSE»_«ENDIF»Environment;
         use Zikula\Bundle\CoreBundle\HttpKernel\ZikulaHttpKernelInterface;
         use Zikula\Common\Translator\TranslatorInterface;
         use Zikula\Common\Translator\TranslatorTrait;
@@ -76,7 +76,7 @@ class NotificationHelper {
         protected $variableApi;
 
         /**
-         * @var Twig_Environment
+         * @var «IF !targets('3.0')»Twig_«ENDIF»Environment
          */
         protected $templating;
 
@@ -143,7 +143,11 @@ class NotificationHelper {
          * @param Routerinterface           $router              Router service instance
          * @param RequestStack              $requestStack        RequestStack service instance
          * @param VariableApiInterface      $variableApi         VariableApi service instance
+        «IF targets('3.0')»
+         * @param Environment               $twig                Twig service instance
+        «ELSE»
          * @param Twig_Environment          $twig                Twig service instance
+        «ENDIF»
          * @param MailerApiInterface        $mailerApi           MailerApi service instance
          * @param GroupRepositoryInterface  $groupRepository     GroupRepository service instance
          * @param EntityDisplayHelper       $entityDisplayHelper EntityDisplayHelper service instance
@@ -155,7 +159,7 @@ class NotificationHelper {
             RouterInterface $router,
             RequestStack $requestStack,
             VariableApiInterface $variableApi,
-            Twig_Environment $twig,
+            «IF !targets('3.0')»Twig_«ENDIF»Environment $twig,
             MailerApiInterface $mailerApi,
             GroupRepositoryInterface $groupRepository,
             EntityDisplayHelper $entityDisplayHelper,

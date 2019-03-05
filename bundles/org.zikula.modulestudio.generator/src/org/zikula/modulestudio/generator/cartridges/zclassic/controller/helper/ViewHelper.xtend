@@ -21,10 +21,15 @@ class ViewHelper {
     def private viewFunctionsBaseImpl(Application it) '''
         namespace «appNamespace»\Helper\Base;
 
-        use Symfony\Bundle\TwigBundle\Loader\FilesystemLoader;
+        «IF !targets('3.0')»
+            use Symfony\Bundle\TwigBundle\Loader\FilesystemLoader;
+        «ENDIF»
         use Symfony\Component\HttpFoundation\RequestStack;
         use Symfony\Component\HttpFoundation\Response;
-        use Twig_Environment;
+        use Twig«IF targets('3.0')»\«ELSE»_«ENDIF»Environment;
+        «IF targets('3.0')»
+            use Twig\Loader\LoaderInterface;
+        «ENDIF»
         use Zikula\Core\Response\PlainResponse;
         use Zikula\ExtensionsModule\Api\ApiInterface\VariableApiInterface;
         use Zikula\ThemeModule\Engine\AssetFilter;
@@ -45,12 +50,12 @@ class ViewHelper {
 
     def private helperBaseImpl(Application it) '''
         /**
-         * @var Twig_Environment
+         * @var «IF !targets('3.0')»Twig_«ENDIF»Environment
          */
         protected $twig;
 
         /**
-         * @var FilesystemLoader
+         * @var «IF targets('3.0')»LoaderInterface«ELSE»FilesystemLoader«ENDIF»
          */
         protected $twigLoader;
 
@@ -89,8 +94,13 @@ class ViewHelper {
         /**
          * ViewHelper constructor.
          *
+        «IF targets('3.0')»
+         * @param Environment          $twig             Twig service instance
+         * @param LoaderInterface      $twigLoader       Twig loader service instance
+        «ELSE»
          * @param Twig_Environment     $twig             Twig service instance
          * @param FilesystemLoader     $twigLoader       Twig loader service instance
+        «ENDIF»
          * @param RequestStack         $requestStack     RequestStack service instance
          * @param VariableApiInterface $variableApi      VariableApi service instance
          * @param AssetFilter          $assetFilter      Theme asset filter
@@ -103,8 +113,8 @@ class ViewHelper {
          * @return void
          */
         public function __construct(
-            Twig_Environment $twig,
-            FilesystemLoader $twigLoader,
+            «IF !targets('3.0')»Twig_«ENDIF»Environment $twig,
+            «IF targets('3.0')»LoaderInterface«ELSE»FilesystemLoader«ENDIF» $twigLoader,
             RequestStack $requestStack,
             VariableApiInterface $variableApi,
             AssetFilter $assetFilter,

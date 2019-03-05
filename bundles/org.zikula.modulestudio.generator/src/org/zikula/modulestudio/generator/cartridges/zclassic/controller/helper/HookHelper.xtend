@@ -430,7 +430,7 @@ class HookHelper {
         «ELSEIF category == 'UiHooks'»
             use Doctrine\ORM\QueryBuilder;
             use Symfony\Component\HttpFoundation\RequestStack;
-            use Twig_Environment;
+            use Twig«IF application.targets('3.0')»\«ELSE»_«ENDIF»Environment;
         «ENDIF»
         use Zikula\Bundle\HookBundle\Category\«category»Category;
         «IF category == 'FormAware'»
@@ -491,7 +491,7 @@ class HookHelper {
                 protected $entityFactory;
 
                 /**
-                 * @var Twig_Environment
+                 * @var «IF !application.targets('3.0')»Twig_«ENDIF»Environment
                  */
                 protected $templating;
 
@@ -519,7 +519,11 @@ class HookHelper {
              * @param TranslatorInterface $translator
              * @param RequestStack        $requestStack
              * @param EntityFactory       $entityFactory
+             «IF application.targets('3.0')»
+             * @param Environment         $twig
+             «ELSE»
              * @param Twig_Environment    $twig
+             «ENDIF»
              * @param PermissionHelper    $permissionHelper
              «IF !application.getUploadEntities.empty»
              * @param ImageHelper         $imageHelper
@@ -534,7 +538,7 @@ class HookHelper {
                 «ELSEIF category == 'UiHooks'»
                     RequestStack $requestStack,
                     EntityFactory $entityFactory,
-                    Twig_Environment $twig,
+                    «IF !application.targets('3.0')»Twig_«ENDIF»Environment $twig,
                     PermissionHelper $permissionHelper«IF !application.getUploadEntities.empty»,«ENDIF»
                     «IF !application.getUploadEntities.empty»
                         ImageHelper $imageHelper
