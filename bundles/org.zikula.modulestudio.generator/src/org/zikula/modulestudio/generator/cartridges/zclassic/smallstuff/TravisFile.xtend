@@ -47,7 +47,7 @@ class TravisFile {
             «IF targets('3.0')»
                 - phpenv config-rm xdebug.ini
                 # load memcache.so
-                - pecl install -f memcached-3.1.3 && echo "extension = memcache.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
+                #- pecl install -f memcached-3.1.3 && echo "extension = memcache.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
             «ELSE»
                 - if [[ "$TRAVIS_PHP_VERSION" != "nightly" ]]; then phpenv config-rm xdebug.ini; fi;
                 # load memcache.so for php 5
