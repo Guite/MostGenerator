@@ -59,7 +59,7 @@ class ComposerFile {
             «IF hasGeographical»
                 "drmonty/leaflet": "^1",
             «ENDIF»
-            "php": ">=5.5.9"«IF !dependencies.empty»,«ENDIF»
+            "php": ">=«IF targets('3.0')»7.2.0«ELSE»5.5.9«ENDIF»"«IF !dependencies.empty»,«ENDIF»
             «IF !dependencies.empty»
                 «FOR referredApp : dependencies»
                     «dependency(referredApp)»«IF referredApp != dependencies.last»,«ENDIF»
@@ -115,9 +115,11 @@ class ComposerFile {
             "vendor-dir": "vendor",
             "preferred-install": "dist",
             "optimize-autoloader": true,
-            "platform": {
-                "php": "7.0.30"
-            },
+            «IF !targets('3.0')»
+                "platform": {
+                    "php": "7.0.30"
+                },
+            «ENDIF»
             "sort-packages": true
         }
     '''

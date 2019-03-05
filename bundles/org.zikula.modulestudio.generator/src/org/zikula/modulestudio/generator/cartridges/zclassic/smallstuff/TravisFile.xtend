@@ -20,11 +20,14 @@ class TravisFile {
         sudo: false
 
         php:
+        «IF !targets('3.0')»
           - 5.5
           - 5.6
           - 7.0
           - 7.1
+        «ENDIF»
           - 7.2
+          - 7.3
           - nightly
 
         matrix:
@@ -41,13 +44,19 @@ class TravisFile {
           - mysql
 
         before_install:
-            - if [[ "$TRAVIS_PHP_VERSION" != "nightly" ]]; then phpenv config-rm xdebug.ini; fi;
-            # load memcache.so for php 5
-            - if [[ "$TRAVIS_PHP_VERSION" != "nightly" ]] && [ $(php -r "echo PHP_MAJOR_VERSION;") == 5 ]; then (pecl install -f memcached-2.1.0 && echo "extension = memcache.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini) || echo "Continuing without memcache extension"; fi;
-            # load memcache.so for php >= 7.1
-            - if [[ "$TRAVIS_PHP_VERSION" != "nightly" ]] && [ $(php -r "echo PHP_MAJOR_VERSION;") == 7 ] && [ $(php -r "echo PHP_MINOR_VERSION;") >= 1 ]; then (pecl install -f memcached-2.1.0 && echo "extension = memcache.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini) || echo "Continuing without memcache extension"; fi;
-            # Set the COMPOSER_ROOT_VERSION to the right version according to the branch being built
-            - if [ "$TRAVIS_BRANCH" = "master" ]; then export COMPOSER_ROOT_VERSION=dev-master; else export COMPOSER_ROOT_VERSION="$TRAVIS_BRANCH".x-dev; fi;
+            «IF targets('3.0')»
+                - phpenv config-rm xdebug.ini
+                # load memcache.so
+                - pecl install -f memcached-3.1.3 && echo "extension = memcache.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
+            «ELSE»
+                - if [[ "$TRAVIS_PHP_VERSION" != "nightly" ]]; then phpenv config-rm xdebug.ini; fi;
+                # load memcache.so for php 5
+                - if [[ "$TRAVIS_PHP_VERSION" != "nightly" ]] && [ $(php -r "echo PHP_MAJOR_VERSION;") == 5 ]; then (pecl install -f memcached-2.1.0 && echo "extension = memcache.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini) || echo "Continuing without memcache extension"; fi;
+                # load memcache.so for php >= 7.1
+                - if [[ "$TRAVIS_PHP_VERSION" != "nightly" ]] && [ $(php -r "echo PHP_MAJOR_VERSION;") == 7 ] && [ $(php -r "echo PHP_MINOR_VERSION;") >= 1 ]; then (pecl install -f memcached-2.1.0 && echo "extension = memcache.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini) || echo "Continuing without memcache extension"; fi;
+                # Set the COMPOSER_ROOT_VERSION to the right version according to the branch being built
+                - if [ "$TRAVIS_BRANCH" = "master" ]; then export COMPOSER_ROOT_VERSION=dev-master; else export COMPOSER_ROOT_VERSION="$TRAVIS_BRANCH".x-dev; fi;
+            «ENDIF»
 
             - composer self-update
             - if [ -n "$GH_TOKEN" ]; then composer config github-oauth.github.com ${GH_TOKEN}; fi;
