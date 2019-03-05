@@ -17,6 +17,7 @@ import de.guite.modulestudio.metamodel.NumberField
 import de.guite.modulestudio.metamodel.NumberFieldType
 import de.guite.modulestudio.metamodel.ObjectField
 import de.guite.modulestudio.metamodel.StringField
+import de.guite.modulestudio.metamodel.StringRole
 import de.guite.modulestudio.metamodel.TextField
 import de.guite.modulestudio.metamodel.UploadField
 import de.guite.modulestudio.metamodel.UrlField
@@ -26,12 +27,14 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelp
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
+import org.zikula.modulestudio.generator.extensions.Utils
 
 class Property {
 
     extension FormattingExtensions = new FormattingExtensions
     extension ModelExtensions = new ModelExtensions
     extension ModelJoinExtensions = new ModelJoinExtensions
+    extension Utils = new Utils
 
     FileHelper fh = new FileHelper
     ExtensionManager extMan
@@ -123,21 +126,19 @@ class Property {
             NumberField: '''type="«type»"«IF numberType == NumberFieldType.DECIMAL», precision=«it.length», scale=«it.scale»«ENDIF»'''
             TextField: '''type="«type»", length=«it.length»'''
             StringField:
-                /* disabled until DBAL 2.6
-                if (role == StringRole.DATE_INTERVAL) '''type="dateinterval", length=«it.length»'''
-                else */'''«/*type="«type»", */»length=«it.length»'''
+                '''«IF ((null !== entity && entity.application.targets('3.0')) || (null !== varContainer && varContainer.application.targets('3.0'))) && role == StringRole.DATE_INTERVAL»type="dateinterval"«ELSE»«/*type="«type»", */»length=«it.length»«ENDIF»'''
             EmailField:
                 '''«/*type="«type»", */»length=«it.length»'''
             UrlField:
                 '''«/*type="«type»", */»length=«it.length»'''
             ArrayField:
-                '''type="«/* disabled until DBAL 2.6 IF arrayType == ArrayType.JSON_ARRAY»json«ELSE*/»«arrayType.literal.toLowerCase»«/*ENDIF*/»"«/*», length=«it.length*/»'''
+                '''type="«arrayType.literal.toLowerCase»"«/*», length=«it.length*/»'''
             UploadField:
                 '''«/*type="«type»", */»length=«it.length»'''
             ListField:
                 '''«/*type="«type»", */»length=«it.length»'''
             DatetimeField:
-                '''type="«/*utc*/»«type»«/* disabled until DBAL 2.6 IF immutable»_immutable«ENDIF*/»"'''
+                '''type="«/*utc*/»«type»«IF ((null !== entity && entity.application.targets('3.0')) || (null !== varContainer && varContainer.application.targets('3.0'))) && immutable»_immutable«ENDIF»"'''
             default: '''type="«type»"'''
         }
     }
