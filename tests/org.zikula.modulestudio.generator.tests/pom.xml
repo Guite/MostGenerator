@@ -12,9 +12,12 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.junit.jupiter</groupId>
+            <!-- groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
-            <version>${junit.version}</version>
+            <version>${junit.version}</version -->
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>${junit4.version}</version>
         </dependency>
     </dependencies>
 
