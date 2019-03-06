@@ -366,7 +366,7 @@ class MultiHook {
          */
         public function getSubjects()
         {
-            return [«IF hasViewAction»'«nameMultiple.formatForCode.toUpperCase»'«ENDIF»«IF hasDisplayAction»«IF hasViewAction», «ENDIF»'«name.formatForCode.toUpperCase»-'«ENDIF»];
+            return [«IF hasViewAction»'«app.prefix.toUpperCase»«nameMultiple.formatForCode.toUpperCase»'«ENDIF»«IF hasDisplayAction»«IF hasViewAction», «ENDIF»'«app.prefix.toUpperCase»«name.formatForCode.toUpperCase»-'«ENDIF»];
         }
 
         /**
@@ -399,20 +399,13 @@ class MultiHook {
                         $cache[$needleId] = '';
                     } else {
                         $cache[$needleId] = '<a href="' . $this->router->generate('«app.appName.formatForDB»_«name.formatForDB»_view', [], UrlGeneratorInterface::ABSOLUTE_URL) . '" title="' . $this->translator->__('View «nameMultiple.formatForDisplay»', '«app.appName.formatForDB»') . '">' . $this->translator->__('«nameMultiple.formatForDisplayCapital»', '«app.appName.formatForDB»') . '</a>';
-                	}
+                    }
 
                     return $cache[$needleId];
                 }
 
             «ENDIF»
             «IF hasDisplayAction»
-                $needleParts = explode('-', $needleId);
-                if ('«name.formatForCode.toUpperCase»' != $needleParts[0] || count($needleParts) < 2) {
-                    $cache[$needleId] = '';
-
-                    return $cache[$needleId];
-                }
-
                 $entityId = intval($needleId);
                 if (!$entityId) {
                     $cache[$needleId] = '';
