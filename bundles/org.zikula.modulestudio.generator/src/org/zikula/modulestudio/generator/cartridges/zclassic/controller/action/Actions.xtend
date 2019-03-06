@@ -94,7 +94,7 @@ class Actions {
             MainAction: 'ACCESS_OVERVIEW'
             ViewAction: 'ACCESS_READ'
             DisplayAction: 'ACCESS_READ'
-            EditAction: 'ACCESS_EDIT'
+            EditAction: if (workflow != EntityWorkflowType.NONE) 'ACCESS_COMMENT' else 'ACCESS_EDIT'
             DeleteAction: 'ACCESS_DELETE'
             CustomAction: 'ACCESS_OVERVIEW'
             default: 'ACCESS_ADMIN'
