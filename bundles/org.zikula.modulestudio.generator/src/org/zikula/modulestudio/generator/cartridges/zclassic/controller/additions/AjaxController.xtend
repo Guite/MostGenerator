@@ -34,7 +34,7 @@ class AjaxController {
         «IF hasTrees && hasEditActions»
             use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
         «ENDIF»
-        «IF needsDuplicateCheck || hasBooleansWithAjaxToggle || hasTrees || hasSortable || hasUiHooksProviders»
+        «IF generateExternalControllerAndFinder || needsAutoCompletion || needsDuplicateCheck || hasBooleansWithAjaxToggle || hasTrees || hasSortable || hasUiHooksProviders»
             use Symfony\Component\Security\Core\Exception\AccessDeniedException;
         «ENDIF»
         use Zikula\Core\Controller\AbstractController;
@@ -118,7 +118,7 @@ class AjaxController {
         }
 
         if (!$this->hasPermission('«appName»::Ajax', '::', ACCESS_EDIT)) {
-            return true;
+            throw new AccessDeniedException();
         }
 
         $objectType = $request->query->getAlnum('ot', '«getLeadingEntity.name.formatForCode»');
@@ -234,7 +234,7 @@ class AjaxController {
         }
 
         if (!$this->hasPermission('«appName»::Ajax', '::', ACCESS_EDIT)) {
-            return true;
+            throw new AccessDeniedException();
         }
 
         $objectType = $request->query->getAlnum('ot', '«getLeadingEntity.name.formatForCode»');
