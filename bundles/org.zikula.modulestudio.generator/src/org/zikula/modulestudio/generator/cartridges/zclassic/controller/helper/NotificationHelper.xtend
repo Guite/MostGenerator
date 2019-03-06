@@ -143,11 +143,11 @@ class NotificationHelper {
          * @param Routerinterface           $router              Router service instance
          * @param RequestStack              $requestStack        RequestStack service instance
          * @param VariableApiInterface      $variableApi         VariableApi service instance
-        «IF targets('3.0')»
+         «IF targets('3.0')»
          * @param Environment               $twig                Twig service instance
-        «ELSE»
+         «ELSE»
          * @param Twig_Environment          $twig                Twig service instance
-        «ENDIF»
+         «ENDIF»
          * @param MailerApiInterface        $mailerApi           MailerApi service instance
          * @param GroupRepositoryInterface  $groupRepository     GroupRepository service instance
          * @param EntityDisplayHelper       $entityDisplayHelper EntityDisplayHelper service instance

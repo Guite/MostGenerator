@@ -94,13 +94,13 @@ class ViewHelper {
         /**
          * ViewHelper constructor.
          *
-        «IF targets('3.0')»
+         «IF targets('3.0')»
          * @param Environment          $twig             Twig service instance
          * @param LoaderInterface      $twigLoader       Twig loader service instance
-        «ELSE»
+         «ELSE»
          * @param Twig_Environment     $twig             Twig service instance
          * @param FilesystemLoader     $twigLoader       Twig loader service instance
-        «ENDIF»
+         «ENDIF»
          * @param RequestStack         $requestStack     RequestStack service instance
          * @param VariableApiInterface $variableApi      VariableApi service instance
          * @param AssetFilter          $assetFilter      Theme asset filter
