@@ -52,7 +52,7 @@ class Layout {
     def baseTemplate(Application it) '''
         {# purpose of this template: general base layout #}
         {% block header %}
-            «IF hasGeographical && hasEditActions»
+            «IF hasGeographical && hasEditActions && !targets('3.0')»
                 {% if 'edit' in app.request.get('_route') %}
                     {{ polyfill(['geolocation']) }}
                 {% endif %}
@@ -265,7 +265,7 @@ class Layout {
                         Zikula.Config = {'entrypoint': '{{ getSystemVar('entrypoint', 'index.php') }}', 'baseURL': '{{ app.request.schemeAndHttpHost ~ '/' }}', 'baseURI': '{{ app.request.basePath }}'};
                     /* ]]> */
                 </script>
-                «IF hasEditActions || needsConfig»
+                «IF (hasEditActions || needsConfig) && !targets('3.0')»
                     {% if «IF hasEditActions»'edit' in app.request.get('_route')«IF needsConfig» or «ENDIF»«ENDIF»«IF needsConfig»'config' in app.request.get('_route')«ENDIF» %}
                         {{ polyfill([«IF hasGeographical»'geolocation', «ENDIF»'forms', 'forms-ext']) }}
                     {% endif %}
