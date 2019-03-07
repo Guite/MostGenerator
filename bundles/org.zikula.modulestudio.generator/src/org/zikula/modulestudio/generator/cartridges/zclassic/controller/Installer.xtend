@@ -28,9 +28,6 @@ class Installer {
     def private installerBaseClass(Application it) '''
         namespace «appNamespace»\Base;
 
-        «IF !isSystemModule»
-            use Doctrine\DBAL\Connection;
-        «ENDIF»
         use RuntimeException;
         use Zikula\Core\AbstractExtensionInstaller;
         «IF hasCategorisableEntities»
