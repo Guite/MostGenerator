@@ -413,7 +413,8 @@ class Actions {
             }
         «ENDIF»
 
-        if ($form->handleRequest($request)->isValid()) {
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
             if ($form->get('delete')->isClicked()) {
                 «deletionProcess(action)»
             } elseif ($form->get('cancel')->isClicked()) {

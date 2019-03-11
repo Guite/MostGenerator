@@ -660,7 +660,8 @@ class FormHandler {
             «ENDIF»
 
             // handle form request and check validity constraints of edited entity
-            if ($this->form->handleRequest($request) && $this->form->isSubmitted()) {
+            $this->form->handleRequest($request);
+            if ($this->form->isSubmitted()) {
                 if ($this->form->has('cancel') && $this->form->get('cancel')->isClicked()) {
                     «locking.releasePageLock(it)»
 

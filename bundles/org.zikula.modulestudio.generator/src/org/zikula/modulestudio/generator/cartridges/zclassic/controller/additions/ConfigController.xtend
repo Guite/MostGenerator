@@ -72,7 +72,8 @@ class ConfigController {
 
         $form = $this->createForm(ConfigType::class, $this->get('«appService».app_settings'));
 
-        if ($form->handleRequest($request)->isValid()) {
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
             if ($form->get('save')->isClicked()) {
                 $appSettings = $form->getData();
                 $appSettings->save();

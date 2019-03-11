@@ -237,7 +237,8 @@ class ExternalController {
         ];
         $form = $this->createForm('«appNamespace»\Form\Type\Finder\\' . ucfirst($objectType) . 'FinderType', $templateParameters, $formOptions);
 
-        if ($form->handleRequest($request)->isValid()) {
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
             $formData = $form->getData();
             $templateParameters = array_merge($templateParameters, $formData);
             $currentPage = $formData['currentPage'];
