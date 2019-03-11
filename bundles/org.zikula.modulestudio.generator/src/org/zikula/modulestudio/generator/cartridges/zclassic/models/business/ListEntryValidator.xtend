@@ -60,14 +60,16 @@ class ListEntryValidator {
              * @var integer
              */
             public $max;
+            «IF !targets('3.0')»
 
-            /**
-             * @inheritDoc
-             */
-            public function validatedBy()
-            {
-                return '«appService».validator.list_entry.validator';
-            }
+                /**
+                 * @inheritDoc
+                 */
+                public function validatedBy()
+                {
+                    return '«appService».validator.list_entry.validator';
+                }
+            «ENDIF»
         }
     '''
 
