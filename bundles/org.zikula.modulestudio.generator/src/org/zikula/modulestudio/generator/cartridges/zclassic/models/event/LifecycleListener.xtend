@@ -34,7 +34,6 @@ class LifecycleListener {
         use Doctrine\ORM\Events;
         «IF hasLoggable»
             use Gedmo\Loggable\Entity\MappedSuperclass\AbstractLogEntry;
-            use Gedmo\Loggable\LoggableListener;
         «ENDIF»
         use Psr\Log\LoggerInterface;
         use Symfony\Component\DependencyInjection\ContainerAwareInterface;

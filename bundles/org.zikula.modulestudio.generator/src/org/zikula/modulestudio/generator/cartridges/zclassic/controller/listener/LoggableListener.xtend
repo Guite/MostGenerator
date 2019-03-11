@@ -92,6 +92,18 @@ class LoggableListener {
          */»
 
         /**
+         * @inheritDoc
+         */
+        protected function createLogEntry($action, $object, LoggableAdapter $ea)
+        {
+            if (!$this->isEntityManagedByThisBundle($object) || !method_exists($object, 'get_objectType')) {
+                return;
+            }
+
+            return parent::createLogEntry($action, $object, $ea);
+        }
+
+        /**
          * Checks whether this listener is responsible for the given entity or not.
          *
          * @param EntityAccess $entity The given entity
