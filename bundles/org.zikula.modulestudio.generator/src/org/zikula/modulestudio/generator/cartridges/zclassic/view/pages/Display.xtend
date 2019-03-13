@@ -74,7 +74,9 @@ class Display {
         {% extends '«application.appName»::' ~ baseTemplate ~ '.html.twig' %}
         {% block pageTitle %}{{ «objName»|«application.appName.formatForDB»_formattedTitle|default(__('«name.formatForDisplayCapital»')) }}{% endblock %}
         {% block title %}
-            {% set isQuickView = app.request.query.getBoolean('raw', false) %}
+            «IF #[ItemActionsPosition.START, ItemActionsPosition.BOTH].contains(application.displayActionsPosition) && application.displayActionsStyle == ItemActionsStyle.DROPDOWN»
+                {% set isQuickView = app.request.query.getBoolean('raw', false) %}
+            «ENDIF»
             {% set templateTitle = «objName»|«application.appName.formatForDB»_formattedTitle|default(__('«name.formatForDisplayCapital»')) %}
             «templateHeading(appName)»
             «IF #[ItemActionsPosition.START, ItemActionsPosition.BOTH].contains(application.displayActionsPosition) && application.displayActionsStyle == ItemActionsStyle.DROPDOWN»
