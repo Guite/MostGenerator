@@ -173,11 +173,6 @@ class ExternalController {
     '''
 
     def private finderBaseImpl(Application it) '''
-        $assetHelper = $this->get('zikula_core.common.theme.asset_helper');
-        $cssAssetBag = $this->get('zikula_core.common.theme.assets_css');
-        $cssAssetBag->add($assetHelper->resolve('@«appName»:css/style.css'));
-        $cssAssetBag->add([$assetHelper->resolve('@«appName»:css/custom.css') => 120]);
-
         $listEntriesHelper = $this->get('«appService».listentries_helper');
         $activatedObjectTypes = $listEntriesHelper->extractMultiList($this->getVar('enabledFinderTypes', ''));
         if (!in_array($objectType, $activatedObjectTypes)) {
@@ -198,6 +193,11 @@ class ExternalController {
         if (empty($editor) || !in_array($editor, ['ckeditor', 'quill', 'summernote', 'tinymce'])) {
             return new Response($this->__('Error: Invalid editor context given for external controller action.'));
         }
+
+        $assetHelper = $this->get('zikula_core.common.theme.asset_helper');
+        $cssAssetBag = $this->get('zikula_core.common.theme.assets_css');
+        $cssAssetBag->add($assetHelper->resolve('@«appName»:css/style.css'));
+        $cssAssetBag->add([$assetHelper->resolve('@«appName»:css/custom.css') => 120]);
 
         $repository = $this->get('«appService».entity_factory')->getRepository($objectType);
         if (empty($sort) || !in_array($sort, $repository->getAllowedSortingFields())) {
