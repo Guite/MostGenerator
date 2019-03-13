@@ -74,10 +74,13 @@ class Display {
         {% extends '«application.appName»::' ~ baseTemplate ~ '.html.twig' %}
         {% block pageTitle %}{{ «objName»|«application.appName.formatForDB»_formattedTitle|default(__('«name.formatForDisplayCapital»')) }}{% endblock %}
         {% block title %}
+            {% set isQuickView = app.request.query.getBoolean('raw', false) %}
             {% set templateTitle = «objName»|«application.appName.formatForDB»_formattedTitle|default(__('«name.formatForDisplayCapital»')) %}
             «templateHeading(appName)»
             «IF #[ItemActionsPosition.START, ItemActionsPosition.BOTH].contains(application.displayActionsPosition) && application.displayActionsStyle == ItemActionsStyle.DROPDOWN»
-                «new ItemActionsView().generate(it, 'display', 'Start')»
+                {% if not isQuickView %}
+                    «new ItemActionsView().generate(it, 'display', 'Start')»
+                {% endif %}
             «ENDIF»
         {% endblock %}
         «IF !application.separateAdminTemplates || isAdmin»
