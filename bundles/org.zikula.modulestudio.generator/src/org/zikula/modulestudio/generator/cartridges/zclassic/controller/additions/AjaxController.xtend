@@ -66,7 +66,7 @@ class AjaxController {
             «toggleFlagBase»
         «ENDIF»
         «IF hasTrees»
-        
+
             «handleTreeOperationBase»
         «ENDIF»
         «IF hasSortable»
