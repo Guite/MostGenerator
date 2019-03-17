@@ -25,9 +25,6 @@ class AuthenticationMethod {
 
         «IF authenticationMethod == AuthMethodType.REMOTE»
             use Symfony\Component\HttpFoundation\RequestStack;
-        «ENDIF»
-        use Symfony\Component\HttpFoundation\Session\SessionInterface;
-        «IF authenticationMethod == AuthMethodType.REMOTE»
             use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
             use Symfony\Component\Routing\RouterInterface;
         «ENDIF»
@@ -48,15 +45,10 @@ class AuthenticationMethod {
             protected $translator;
 
             /**
-             * @var SessionInterface
+             * @var RequestStack
              */
-            protected $session;
+            protected $requestStack;
             «IF authenticationMethod == AuthMethodType.REMOTE»
-
-                /**
-                 * @var RequestStack
-                 */
-                protected $requestStack;
 
                 /**
                  * @var RouterInterface
@@ -82,23 +74,19 @@ class AuthenticationMethod {
             /**
              * «name.formatForCodeCapital»AuthenticationMethod constructor.
              *
+             * @param TranslatorInterface $translator
+             * @param RequestStack $requestStack
              «IF authenticationMethod == AuthMethodType.REMOTE»
-             * @param TranslatorInterface $translator   Translator service instance
-             * @param SessionInterface    $session      Session service instance
-             * @param RequestStack        $requestStack RequestStack service instance
-             * @param RouterInterface     $router       Router service instance
+             * @param RouterInterface $router
              «ENDIF»
-             * @param TranslatorInterface  $translator    Translator service instance
-             * @param SessionInterface     $session       Session service instance
-             * @param EntityFactory        $entityFactory EntityFactory service instance
-             * @param VariableApiInterface $variableApi   VariableApi service instance
-             * @param PasswordApiInterface $passwordApi   PasswordApi service instance
+             * @param EntityFactory $entityFactory
+             * @param VariableApiInterface $variableApi
+             * @param PasswordApiInterface $passwordApi
              */
             public function __construct(
                 TranslatorInterface $translator,
-                SessionInterface $session,
+                RequestStack $requestStack,
                 «IF authenticationMethod == AuthMethodType.REMOTE»
-                    RequestStack $requestStack,
                     RouterInterface $router,
                 «ENDIF»
                 EntityFactory $entityFactory,
@@ -106,9 +94,8 @@ class AuthenticationMethod {
                 PasswordApiInterface $passwordApi)
             {
                 $this->translator = $translator;
-                $this->session = $session;
+                $this->requestStack = $requestStack;
                 «IF authenticationMethod == AuthMethodType.REMOTE»
-                    $this->requestStack = $requestStack;
                     $this->router = $router;
                 «ENDIF»
                 $this->entityFactory = $entityFactory;
@@ -156,7 +143,8 @@ class AuthenticationMethod {
          */
         public function authenticate(array $data = [])
         {
-            $this->session->getFlashBag()->add('error', $this->translator->__('Login for «name.formatForDisplay» authentication method is not implemented yet.'));
+            $session = $this->requestStack->getCurrentRequest()->getSession();
+            $session->getFlashBag()->add('error', $this->translator->__('Login for «name.formatForDisplay» authentication method is not implemented yet.'));
 
             return null;
         }
@@ -166,7 +154,8 @@ class AuthenticationMethod {
          */
         public function register(array $data = [])
         {
-            $this->session->getFlashBag()->add('error', $this->translator->__('Registration for «name.formatForDisplay» authentication method is not implemented yet.'));
+            $session = $this->requestStack->getCurrentRequest()->getSession();
+            $session->getFlashBag()->add('error', $this->translator->__('Registration for «name.formatForDisplay» authentication method is not implemented yet.'));
 
             return false;
         }

@@ -68,13 +68,15 @@ class BlockListType {
             /**
              * ItemListBlockType constructor.
              *
-             * @param TranslatorInterface $translator Translator service instance
+             * @param TranslatorInterface $translator
              «IF hasCategorisableEntities»
              * @param CategoryRepositoryInterface $categoryRepository
              «ENDIF»
              */
-            public function __construct(TranslatorInterface $translator«IF hasCategorisableEntities», CategoryRepositoryInterface $categoryRepository«ENDIF»)
-            {
+            public function __construct(
+                TranslatorInterface $translator«IF hasCategorisableEntities»,
+                CategoryRepositoryInterface $categoryRepository«ENDIF»
+            ) {
                 $this->setTranslator($translator);
                 «IF hasCategorisableEntities»
                     $this->categoryRepository = $categoryRepository;

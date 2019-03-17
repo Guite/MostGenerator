@@ -92,14 +92,14 @@ class ArchiveHelper {
         /**
          * ArchiveHelper constructor.
          *
-         * @param TranslatorInterface $translator       Translator service instance
-         * @param RequestStack        $requestStack     RequestStack service instance
-         * @param LoggerInterface     $logger           Logger service instance
-         * @param EntityFactory       $entityFactory    EntityFactory service instance
-         * @param PermissionHelper    $permissionHelper PermissionHelper service instance
-         * @param WorkflowHelper      $workflowHelper   WorkflowHelper service instance
+         * @param TranslatorInterface $translator
+         * @param RequestStack $requestStack
+         * @param LoggerInterface $logger
+         * @param EntityFactory $entityFactory
+         * @param PermissionHelper $permissionHelper
+         * @param WorkflowHelper $workflowHelper
          «IF hasHookSubscribers»
-         * @param HookHelper          $hookHelper     HookHelper service instance
+         * @param HookHelper $hookHelper
          «ENDIF»
          */
         public function __construct(

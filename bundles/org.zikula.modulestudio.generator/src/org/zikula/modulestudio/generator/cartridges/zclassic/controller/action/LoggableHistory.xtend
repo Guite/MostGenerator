@@ -22,30 +22,22 @@ class LoggableHistory {
     '''
 
     def private loggableHistory(Entity it, Boolean isBase, Boolean isAdmin) '''
-        «loggableHistoryDocBlock(isBase, isAdmin)»
-        public function «IF isAdmin»adminL«ELSE»l«ENDIF»oggableHistoryAction(Request $request, «IF hasSluggableFields && slugUnique»$slug = ''«ELSE»$id = 0«ENDIF»)
-        {
-            «IF isBase»
-                return $this->loggableHistoryActionInternal($request, «IF hasSluggableFields && slugUnique»$slug«ELSE»$id«ENDIF», «isAdmin.displayBool»);
-            «ELSE»
-                return parent::«IF isAdmin»adminL«ELSE»l«ENDIF»oggableHistoryAction($request, «IF hasSluggableFields && slugUnique»$slug«ELSE»$id«ENDIF»);
-            «ENDIF»
-        }
-        «IF isBase && !isAdmin»
-
-            /**
-             * This method includes the common implementation code for adminLoggableHistoryAction() and loggableHistoryAction().
-             *
-             * @param Request $request Current request instance
-             «IF hasSluggableFields && slugUnique»
-             * @param string  $slug    Identifier of «name.formatForDisplay»
-             «ELSE»
-             * @param integer $id      Identifier of «name.formatForDisplay»
-             «ENDIF»
-             * @param boolean $isAdmin Whether the admin area is used or not
-             */
-            protected function loggableHistoryActionInternal(Request $request, «IF hasSluggableFields && slugUnique»$slug = ''«ELSE»$id = 0«ENDIF», $isAdmin = false)
-            {
+        «IF !isBase»
+            «loggableHistoryDocBlock(isBase, isAdmin)»
+            public function «IF isAdmin»adminL«ELSE»l«ENDIF»oggableHistoryAction(
+                «loggableHistoryArguments(false)»
+            ) {
+                «IF application.targets('3.0')»
+                    return $this->loggableHistoryActionInternal($request, $permissionHelper, $entityFactory, $loggableHelper, «IF hasTranslatableFields»$translatableHelper, «ENDIF»$workflowHelper, «IF hasSluggableFields && slugUnique»$slug«ELSE»$id«ENDIF», «isAdmin.displayBool»);
+                «ELSE»
+                    return $this->loggableHistoryActionInternal($request, «IF hasSluggableFields && slugUnique»$slug«ELSE»$id«ENDIF», «isAdmin.displayBool»);
+                «ENDIF»
+            }
+        «ELSEIF isBase && !isAdmin»
+            «loggableHistoryDocBlock(isBase, isAdmin)»
+            protected function loggableHistoryActionInternal(
+                «loggableHistoryArguments(true)»
+            ) {
                 «loggableHistoryBaseImpl»
             }
         «ENDIF»
@@ -56,8 +48,18 @@ class LoggableHistory {
          «IF isBase»
          * This method provides a change history for a given «name.formatForDisplay».
          *
-         * @param Request $request Current request instance
-         * @param integer «IF hasSluggableFields && slugUnique»$slug«ELSE»$id  «ENDIF»    Identifier of «name.formatForDisplay»
+         * @param Request $request
+         * @param PermissionHelper $permissionHelper
+         * @param EntityFactory $entityFactory
+         «IF application.targets('3.0')»
+         * @param LoggableHelper $loggableHelper
+         «IF hasTranslatableFields»
+         * @param TranslatableHelper $translatableHelper
+         «ENDIF»
+         * @param WorkflowHelper $workflowHelper
+         «ENDIF»
+         * @param integer «IF hasSluggableFields && slugUnique»$slug«ELSE»$id«ENDIF» Identifier of «name.formatForDisplay»
+         * @param boolean $isAdmin Whether the admin area is used or not
          *
          * @return Response Output
          *
@@ -81,25 +83,48 @@ class LoggableHistory {
          */
     '''
 
+    def private loggableHistoryArguments(Entity it, Boolean internalMethod) '''
+        «IF application.targets('3.0')»
+            Request $request,
+            PermissionHelper $permissionHelper,
+            EntityFactory $entityFactory,
+            LoggableHelper $loggableHelper,
+            «IF hasTranslatableFields»
+                TranslatableHelper $translatableHelper,
+            «ENDIF»
+            WorkflowHelper $workflowHelper,
+            «IF hasSluggableFields && slugUnique»$slug = ''«ELSE»$id = 0«ENDIF»«IF internalMethod»,
+            $isAdmin = false«ENDIF»
+        «ELSE»
+            Request $request,
+            «IF hasSluggableFields && slugUnique»$slug = ''«ELSE»$id = 0«ENDIF»«IF internalMethod»,
+            $isAdmin = false«ENDIF»
+        «ENDIF»
+    '''
+
     def private loggableHistoryBaseImpl(Entity it) '''
         if (empty(«IF hasSluggableFields && slugUnique»$slug«ELSE»$id«ENDIF»)) {
             throw new NotFoundHttpException($this->__('No such «name.formatForDisplay» found.'));
         }
 
-        $entityFactory = $this->get('«application.appService».entity_factory');
+        «IF !application.targets('3.0')»
+            $entityFactory = $this->get('«application.appService».entity_factory');
+        «ENDIF»
         $«name.formatForCode» = $entityFactory->getRepository('«name.formatForCode»')->selectBy«IF hasSluggableFields && slugUnique»Slug($slug)«ELSE»Id($id)«ENDIF»;
         if (null === $«name.formatForCode») {
             throw new NotFoundHttpException($this->__('No such «name.formatForDisplay» found.'));
         }
 
-        $permissionHelper = $this->get('«application.appService».permission_helper');
+        «IF !application.targets('3.0')»
+            $permissionHelper = $this->get('«application.appService».permission_helper');
+        «ENDIF»
         $permLevel = $isAdmin ? ACCESS_ADMIN : ACCESS_EDIT;
         if (!$permissionHelper->hasEntityPermission($«name.formatForCode», $permLevel)) {
             throw new AccessDeniedException();
         }
 
         $routeArea = $isAdmin ? 'admin' : '';
-        $entityManager = $entityFactory->getObjectManager();
+        $entityManager = $entityFactory->getEntityManager();
         $logEntriesRepository = $entityManager->getRepository('«application.appName»:«name.formatForCodeCapital»LogEntryEntity');
         $logEntries = $logEntriesRepository->getLogEntries($«name.formatForCode»);
 
@@ -109,15 +134,17 @@ class LoggableHistory {
             «IF hasSluggableFields && slugUnique»
                 $«name.formatForCode»Id = $«name.formatForCode»->getId();
             «ENDIF»
-            $«name.formatForCode» = $this->get('«application.appService».loggable_helper')->revert($«name.formatForCode», $revertToVersion);
+            $«name.formatForCode» = «IF application.targets('3.0')»$loggableHelper«ELSE»$this->get('«application.appService».loggable_helper')«ENDIF»->revert($«name.formatForCode», $revertToVersion);
 
             try {
                 // execute the workflow action
-                $workflowHelper = $this->get('«application.appService».workflow_helper');
+                «IF !application.targets('3.0')»
+                    $workflowHelper = $this->get('«application.appService».workflow_helper');
+                «ENDIF»
                 $success = $workflowHelper->executeAction($«name.formatForCode», 'update'«IF !application.targets('2.0')» . $«name.formatForCode»->getWorkflowState()«ENDIF»);
                 «IF hasTranslatableFields»
 
-                    $this->get('«application.appService».translatable_helper')->refreshTranslationsFromLogData($«name.formatForCode»);
+                    «IF application.targets('3.0')»$translatableHelper«ELSE»$this->get('«application.appService».translatable_helper')«ENDIF»->refreshTranslationsFromLogData($«name.formatForCode»);
                 «ENDIF»
 
                 if ($success) {
@@ -167,7 +194,7 @@ class LoggableHistory {
         ];
 
         if (true === $isDiffView) {
-            list ($minVersion, $maxVersion, $diffValues) = $this->get('«application.appService».loggable_helper')->determineDiffViewParameters($logEntries, $versions);
+            list ($minVersion, $maxVersion, $diffValues) = «IF application.targets('3.0')»$loggableHelper«ELSE»$this->get('«application.appService».loggable_helper')«ENDIF»->determineDiffViewParameters($logEntries, $versions);
             $templateParameters['minVersion'] = $minVersion;
             $templateParameters['maxVersion'] = $maxVersion;
             $templateParameters['diffValues'] = $diffValues;

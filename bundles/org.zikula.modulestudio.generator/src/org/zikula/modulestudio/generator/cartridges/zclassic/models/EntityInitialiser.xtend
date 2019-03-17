@@ -34,6 +34,9 @@ class EntityInitialiser {
         «IF supportLocaleFilter»
             use Symfony\Component\HttpFoundation\RequestStack;
         «ENDIF»
+        «IF hasGeographical»
+            use Zikula\ExtensionsModule\Api\ApiInterface\VariableApiInterface;
+        «ENDIF»
         «FOR entity : getAllEntities»
             use «appNamespace»\Entity\«entity.name.formatForCodeCapital»Entity;
         «ENDFOR»
@@ -61,7 +64,7 @@ class EntityInitialiser {
 
             «IF hasListFieldsExceptWorkflowState»
                 /**
-                 * @var ListEntriesHelper Helper service for managing list entries
+                 * @var ListEntriesHelper
                  */
                 protected $listEntriesHelper;
 
@@ -83,23 +86,21 @@ class EntityInitialiser {
                  * EntityInitialiser constructor.
                  *
                  «IF supportLocaleFilter»
-                 * @param RequestStack $requestStack RequestStack service instance
+                 * @param RequestStack $requestStack
                  «ENDIF»
-                 * @param PermissionHelper $permissionHelper PermissionHelper service instance
+                 * @param PermissionHelper $permissionHelper
                  «IF hasListFieldsExceptWorkflowState»
-                 * @param ListEntriesHelper $listEntriesHelper Helper service for managing list entries
+                 * @param ListEntriesHelper $listEntriesHelper
                  «ENDIF»
                  «IF hasGeographical»
-                 * @param float $defaultLatitude Default latitude for geographical entities
-                 * @param float $defaultLongitude Default longitude for geographical entities
+                 * @param VariableApiInterface $variableApi
                  «ENDIF»
                  */
                 public function __construct(
                     «IF supportLocaleFilter»RequestStack $requestStack,«ENDIF»
                     PermissionHelper $permissionHelper«IF hasListFieldsExceptWorkflowState»,
                     ListEntriesHelper $listEntriesHelper«ENDIF»«IF hasGeographical»,
-                    $defaultLatitude,
-                    $defaultLongitude«ENDIF»
+                    VariableApiInterface $variableApi«ENDIF»
                 ) {
                     «IF supportLocaleFilter»
                         $this->requestStack = $requestStack;
@@ -109,8 +110,8 @@ class EntityInitialiser {
                         $this->listEntriesHelper = $listEntriesHelper;
                     «ENDIF»
                     «IF hasGeographical»
-                        $this->defaultLatitude = $defaultLatitude;
-                        $this->defaultLongitude = $defaultLongitude;
+                        $this->defaultLatitude = $variableApi->get('«appName»', 'defaultLatitude', 0.00);
+                        $this->defaultLongitude = $variableApi->get('«appName»', 'defaultLongitude', 0.00);
                     «ENDIF»
                 }
 

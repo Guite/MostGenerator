@@ -194,6 +194,9 @@ class ContentTypeDetail {
         }
 
         /**
+         «IF targets('3.0')»
+         * @required
+         «ENDIF»
          * @param ControllerHelper $controllerHelper
          */
         public function setControllerHelper(ControllerHelper $controllerHelper)
@@ -202,6 +205,9 @@ class ContentTypeDetail {
         }
 
         /**
+         «IF targets('3.0')»
+         * @required
+         «ENDIF»
          * @param FragmentHandler $fragmentHandler
          */
         public function setFragmentHandler(FragmentHandler $fragmentHandler)

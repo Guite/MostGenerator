@@ -48,9 +48,9 @@ class AutoCompletionRelationTransformer {
             /**
              * AutoCompletionRelationTransformer constructor.
              *
-             * @param EntityFactory $entityFactory EntityFactory service instance
-             * @param String        $objectType    The type of entities being processed
-             * @param boolean       $isMultiple    Whether a single object or a collection of object is processed
+             * @param EntityFactory $entityFactory
+             * @param string $objectType The type of entities being processed
+             * @param boolean $isMultiple Whether a single object or a collection of object is processed
              */
             public function __construct(EntityFactory $entityFactory, $objectType, $isMultiple)
             {

@@ -80,12 +80,12 @@ class LoggableHelper {
         /**
          * LoggableHelper constructor.
          *
-         * @param TranslatorInterface     $translator              Translator service instance
-         * @param EntityFactory           $entityFactory           EntityFactory service instance
-         * @param EntityDisplayHelper     $entityDisplayHelper     EntityDisplayHelper service instance
-         * @param EntityLifecycleListener $entityLifecycleListener Entity lifecycle subscriber
+         * @param TranslatorInterface $translator
+         * @param EntityFactory $entityFactory
+         * @param EntityDisplayHelper $entityDisplayHelper
+         * @param EntityLifecycleListener $entityLifecycleListener
          «IF hasLoggableTranslatable»
-         * @param TranslatableHelper      $translatableHelper      TranslatableHelper service instance
+         * @param TranslatableHelper $translatableHelper
          «ENDIF»
          */
         public function __construct(
@@ -215,7 +215,7 @@ class LoggableHelper {
             }
 
             // alternative (with worse performance)
-            $entityManager = $this->entityFactory->getObjectManager();
+            $entityManager = $this->entityFactory->getEntityManager();
             $logEntriesRepository = $entityManager->getRepository('«appName»:' . ucfirst($objectType) . 'LogEntryEntity');
             $logEntries = $logEntriesRepository->getLogEntries($entity);
 
@@ -233,7 +233,7 @@ class LoggableHelper {
          */
         public function hasDeletedEntities($objectType = '')
         {
-            $entityManager = $this->entityFactory->getObjectManager();
+            $entityManager = $this->entityFactory->getEntityManager();
             $logEntriesRepository = $entityManager->getRepository('«appName»:' . ucfirst($objectType) . 'LogEntryEntity');
 
             return count($logEntriesRepository->selectDeleted(1)) > 0;
@@ -250,7 +250,7 @@ class LoggableHelper {
          */
         public function getDeletedEntities($objectType = '')
         {
-            $entityManager = $this->entityFactory->getObjectManager();
+            $entityManager = $this->entityFactory->getEntityManager();
             $logEntriesRepository = $entityManager->getRepository('«appName»:' . ucfirst($objectType) . 'LogEntryEntity');
 
             return $logEntriesRepository->selectDeleted();
@@ -269,7 +269,7 @@ class LoggableHelper {
          */
         public function revert($entity, $requestedVersion = 1, $detach = false)
         {
-            $entityManager = $this->entityFactory->getObjectManager();
+            $entityManager = $this->entityFactory->getEntityManager();
             $objectType = $entity->get_objectType();
 
             $logEntriesRepository = $entityManager->getRepository('«appName»:' . ucfirst($objectType) . 'LogEntryEntity');
@@ -312,7 +312,7 @@ class LoggableHelper {
             $setter = 'set' . ucfirst($idField);
             $entity->$setter($id);
 
-            $entityManager = $this->entityFactory->getObjectManager();
+            $entityManager = $this->entityFactory->getEntityManager();
             $logEntriesRepository = $entityManager->getRepository('«appName»:' . ucfirst($objectType) . 'LogEntryEntity');
             $logEntries = $logEntriesRepository->getLogEntries($entity);
             $lastVersionBeforeDeletion = null;
@@ -375,7 +375,7 @@ class LoggableHelper {
                 }
             «ENDIF»
 
-            $eventArgs = new LifecycleEventArgs($entity, $this->entityFactory->getObjectManager());
+            $eventArgs = new LifecycleEventArgs($entity, $this->entityFactory->getEntityManager());
             $this->entityLifecycleListener->postLoad($eventArgs);
 
             return $entity;
@@ -394,7 +394,7 @@ class LoggableHelper {
          */
         public function undelete($entity)
         {
-            $entityManager = $this->entityFactory->getObjectManager();
+            $entityManager = $this->entityFactory->getEntityManager();
 
             $metadata = $entityManager->getClassMetaData(get_class($entity));
             $metadata->setIdGeneratorType(ClassMetadata::GENERATOR_TYPE_NONE);

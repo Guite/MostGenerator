@@ -18,11 +18,21 @@ class ConfigController {
     def private configControllerBaseClass(Application it) '''
         namespace «appNamespace»\Controller\Base;
 
+        «IF targets('3.0')»
+            use Psr\Log\LoggerInterface;
+        «ENDIF»
         use Symfony\Component\HttpFoundation\Request;
         use Symfony\Component\HttpFoundation\Response;
         use Symfony\Component\Security\Core\Exception\AccessDeniedException;
         use Zikula\Core\Controller\AbstractController;
+        «IF targets('3.0')»
+            use Zikula\UsersModule\Api\ApiInterface\CurrentUserApiInterface;
+            use «appNamespace»\AppSettings;
+        «ENDIF»
         use «appNamespace»\Form\Type\ConfigType;
+        «IF targets('3.0')»
+            use «appNamespace»\Helper\PermissionHelper;
+        «ENDIF»
 
         /**
          * Config controller base class.
@@ -35,14 +45,30 @@ class ConfigController {
 
     def private configAction(Application it, Boolean isBase) '''
         «configDocBlock(isBase)»
-        public function configAction(Request $request)
-        {
-            «IF isBase»
-                «configBaseImpl»
-            «ELSE»
-                return parent::configAction($request);
-            «ENDIF»
-        }
+        «IF targets('3.0')»
+            public function configAction(
+                Request $request,
+                PermissionHelper $permissionHelper,
+                AppSettings $appSettings,
+                LoggerInterface $logger,
+                CurrentUserApiInterface $currentUserApi
+            ) {
+                «IF isBase»
+                    «configBaseImpl»
+                «ELSE»
+                    return parent::configAction($request, $permissionHelper, $appSettings, $logger, $currentUserApi);
+                «ENDIF»
+            }
+        «ELSE»
+            public function configAction(Request $request)
+            {
+                «IF isBase»
+                    «configBaseImpl»
+                «ELSE»
+                    return parent::configAction($request);
+                «ENDIF»
+            }
+        «ENDIF»
     '''
 
     def private configDocBlock(Application it, Boolean isBase) '''
@@ -50,7 +76,13 @@ class ConfigController {
          «IF isBase»
          * This method takes care of the application configuration.
          *
-         * @param Request $request Current request instance
+         * @param Request $request
+         «IF targets('3.0')»
+         * @param PermissionHelper $permissionHelper
+         * @param AppSettings $appSettings
+         * @param LoggerInterface $logger
+         * @param CurrentUserApiInterface $currentUserApi
+         «ENDIF»
          *
          * @return Response Output
          *
@@ -66,12 +98,11 @@ class ConfigController {
     '''
 
     def private configBaseImpl(Application it) '''
-        if (!$this->get('«appService».permission_helper')->hasPermission(ACCESS_ADMIN)) {
+        if (!«IF targets('3.0')»$permissionHelper«ELSE»$this->get('«appService».permission_helper')«ENDIF»->hasPermission(ACCESS_ADMIN)) {
             throw new AccessDeniedException();
         }
 
-        $form = $this->createForm(ConfigType::class, $this->get('«appService».app_settings'));
-
+        $form = $this->createForm(ConfigType::class, «IF targets('3.0')»$appSettings«ELSE»$this->get('«appService».app_settings')«ENDIF»);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             if ($form->get('save')->isClicked()) {
@@ -79,8 +110,13 @@ class ConfigController {
                 $appSettings->save();
 
                 $this->addFlash('status', $this->__('Done! Module configuration updated.'));
-                $userName = $this->get('zikula_users_module.current_user')->get('uname');
-                $this->get('logger')->notice('{app}: User {user} updated the configuration.', ['app' => '«appName»', 'user' => $userName]);
+                «IF targets('3.0')»
+                    $userName = $currentUserApi->get('uname');
+                    $logger->notice('{app}: User {user} updated the configuration.', ['app' => 'ZikulaContentModule', 'user' => $userName]);
+                «ELSE»
+                    $userName = $this->get('zikula_users_module.current_user')->get('uname');
+                    $this->get('logger')->notice('{app}: User {user} updated the configuration.', ['app' => '«appName»', 'user' => $userName]);
+                «ENDIF»
             } elseif ($form->get('cancel')->isClicked()) {
                 $this->addFlash('status', $this->__('Operation cancelled.'));
             }
@@ -100,12 +136,22 @@ class ConfigController {
     def private configControllerImpl(Application it) '''
         namespace «appNamespace»\Controller;
 
-        use «appNamespace»\Controller\Base\AbstractConfigController;
+        «IF targets('3.0')»
+            use Psr\Log\LoggerInterface;
+        «ENDIF»
         use Symfony\Component\HttpFoundation\Request;
         use Symfony\Component\HttpFoundation\Response;
         use Symfony\Component\Routing\Annotation\Route;
         use Symfony\Component\Security\Core\Exception\AccessDeniedException;
         use Zikula\ThemeModule\Engine\Annotation\Theme;
+        «IF targets('3.0')»
+            use Zikula\UsersModule\Api\ApiInterface\CurrentUserApiInterface;
+            use «appNamespace»\AppSettings;
+        «ENDIF»
+        use «appNamespace»\Controller\Base\AbstractConfigController;
+        «IF targets('3.0')»
+            use «appNamespace»\Helper\PermissionHelper;
+        «ENDIF»
 
         /**
          * Config controller implementation class.

@@ -28,7 +28,7 @@ class ImageHelper {
         namespace «appNamespace»\Helper\Base;
 
         use Imagine\Image\ImageInterface;
-        use Symfony\Component\HttpFoundation\Session\SessionInterface;
+        use Symfony\Component\HttpFoundation\RequestStack;
         use Zikula\Common\Translator\TranslatorInterface;
         use Zikula\ExtensionsModule\Api\ApiInterface\VariableApiInterface;
 
@@ -48,9 +48,9 @@ class ImageHelper {
         protected $translator;
 
         /**
-         * @var SessionInterface
+         * @var RequestStack
          */
-        protected $session;
+        protected $requestStack;
 
         /**
          * @var VariableApiInterface
@@ -67,17 +67,17 @@ class ImageHelper {
         /**
          * ImageHelper constructor.
          *
-         * @param TranslatorInterface  $translator  Translator service instance
-         * @param SessionInterface     $session     Session service instance
-         * @param VariableApiInterface $variableApi VariableApi service instance
+         * @param TranslatorInterface $translator
+         * @param RequestStack $requestStack
+         * @param VariableApiInterface $variableApi
          */
         public function __construct(
             TranslatorInterface $translator,
-            SessionInterface $session,
+            RequestStack $requestStack,
             VariableApiInterface $variableApi
         ) {
             $this->translator = $translator;
-            $this->session = $session;
+            $this->requestStack = $requestStack;
             $this->variableApi = $variableApi;
             $this->name = '«appName»';
         }
@@ -211,7 +211,8 @@ class ImageHelper {
                 return;
             }
 
-            $this->session->getFlashBag()->add('warning', $this->translator->__f('The cache directory "%directory%" does not exist. Please create it and make it writable for the webserver.', ['%directory%' => $cachePath]));
+            $session = $this->requestStack->getCurrentRequest()->getSession();
+            $session->getFlashBag()->add('warning', $this->translator->__f('The cache directory "%directory%" does not exist. Please create it and make it writable for the webserver.', ['%directory%' => $cachePath]));
         }
     '''
 

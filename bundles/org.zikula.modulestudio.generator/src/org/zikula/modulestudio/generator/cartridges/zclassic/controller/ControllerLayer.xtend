@@ -16,6 +16,7 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.controller.addition
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.additions.Scribite
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype.QuickNavigationType
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
+import org.zikula.modulestudio.generator.extensions.DateTimeExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
@@ -25,6 +26,7 @@ import org.zikula.modulestudio.generator.extensions.Utils
 class ControllerLayer {
 
     extension ControllerExtensions = new ControllerExtensions
+    extension DateTimeExtensions = new DateTimeExtensions
     extension FormattingExtensions = new FormattingExtensions
     extension ModelExtensions = new ModelExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
@@ -97,13 +99,53 @@ class ControllerLayer {
         }
     '''
 
+    def private commonAppImports(Entity it) '''
+        use «entityClassName('', false)»;
+        «IF app.targets('3.0')»
+            «IF hasViewAction || hasDisplayAction || (hasEditAction && app.needsInlineEditing) || hasDeleteAction || loggable»
+                use «app.appNamespace»\Entity\Factory\EntityFactory;
+            «ENDIF»
+            «IF hasEditAction»
+                use «app.appNamespace»\Form\Handler\«name.formatForCodeCapital»\EditHandler;
+            «ENDIF»
+            «IF (hasViewAction || hasDisplayAction) && categorisable»
+                use «app.appNamespace»\Helper\CategoryHelper;
+            «ENDIF»
+            «IF hasViewAction || hasDisplayAction || hasEditAction || hasDeleteAction»
+                use «app.appNamespace»\Helper\ControllerHelper;
+            «ENDIF»
+            «IF (hasDisplayAction && app.generateIcsTemplates && hasStartAndEndDateField) || (hasEditAction && app.needsInlineEditing)»
+                use «app.appNamespace»\Helper\EntityDisplayHelper;
+            «ENDIF»
+            «IF (hasViewAction || hasDisplayAction) && categorisable»
+                use «app.appNamespace»\Helper\FeatureActivationHelper;
+            «ENDIF»
+            «IF (hasViewAction || hasDeleteAction) && !skipHookSubscribers»
+                use «app.appNamespace»\Helper\HookHelper;
+            «ENDIF»
+            «IF loggable»
+                use «app.appNamespace»\Helper\LoggableHelper;
+            «ENDIF»
+            use «app.appNamespace»\Helper\PermissionHelper;
+            «IF loggable && hasTranslatableFields»
+                use «app.appNamespace»\Helper\TranslatableHelper;
+            «ENDIF»
+            «IF hasViewAction || hasDisplayAction || hasEditAction || hasDeleteAction»
+                use «app.appNamespace»\Helper\ViewHelper;
+            «ENDIF»
+            «IF hasViewAction || hasDeleteAction || loggable»
+                use «app.appNamespace»\Helper\WorkflowHelper;
+            «ENDIF»
+        «ENDIF»
+    '''
+
     def private entityControllerBaseImports(Entity it) '''
         namespace «app.appNamespace»\Controller\Base;
 
         «IF hasViewAction || hasEditAction || hasDeleteAction»
             use RuntimeException;
         «ENDIF»
-        «IF hasIndexAction || hasViewAction || hasEditAction || hasDeleteAction»
+        «IF hasEditAction »
             use Symfony\Component\HttpFoundation\RedirectResponse;
         «ENDIF»
         use Symfony\Component\HttpFoundation\Request;
@@ -132,13 +174,13 @@ class ControllerLayer {
         «IF !skipHookSubscribers»
             use Zikula\Core\RouteUrl;
         «ENDIF»
+        «IF app.targets('3.0') && (hasViewAction || hasDeleteAction)»
+            use Zikula\UsersModule\Api\ApiInterface\CurrentUserApiInterface;
+        «ENDIF»
         «IF ownerPermission && standardFields && hasDeleteAction»
             use Zikula\UsersModule\Constant\UsersConstant;
         «ENDIF»
-        use «entityClassName('', false)»;
-        «IF app.hasCategorisableEntities»
-            use «app.appNamespace»\Helper\FeatureActivationHelper;
-        «ENDIF»
+        «commonAppImports»
 
     '''
 
@@ -158,7 +200,10 @@ class ControllerLayer {
         use Symfony\Component\Routing\Annotation\Route;
         use Symfony\Component\Security\Core\Exception\AccessDeniedException;
         use Zikula\ThemeModule\Engine\Annotation\Theme;
-        use «entityClassName('', false)»;
+        «IF app.targets('3.0') && hasViewAction»
+            use Zikula\UsersModule\Api\ApiInterface\CurrentUserApiInterface;
+        «ENDIF»
+        «commonAppImports»
 
         /**
          * «name.formatForDisplayCapital» controller class providing navigation and interaction functionality.

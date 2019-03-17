@@ -53,13 +53,13 @@ class UserListener {
              * UserListener constructor.
              *
              «IF hasStandardFieldEntities || hasUserFields»
-             * @param TranslatorInterface     $translator     Translator service instance
-             * @param EntityFactory           $entityFactory  EntityFactory service instance
-             * @param CurrentUserApiInterface $currentUserApi CurrentUserApi service instance
-             * @param LoggerInterface         $logger         Logger service instance
+             * @param TranslatorInterface $translator
+             * @param EntityFactory $entityFactory
+             * @param CurrentUserApiInterface $currentUserApi
+             * @param LoggerInterface $logger
              «ENDIF»
              «IF hasUserVariables»
-             * @param VariableApiInterface    $variableApi    VariableApi service instance
+             * @param VariableApiInterface $variableApi
              «ENDIF»
              *
              * @return void

@@ -151,19 +151,19 @@ class QuickNavigationType {
             /**
              * «name.formatForCodeCapital»QuickNavType constructor.
              *
-             * @param TranslatorInterface $translator   Translator service instance
+             * @param TranslatorInterface $translator
             «IF !incomingRelations.empty»
-             * @param RequestStack        $requestStack RequestStack service instance
-             * @param EntityDisplayHelper $entityDisplayHelper EntityDisplayHelper service instance
+             * @param RequestStack $requestStack
+             * @param EntityDisplayHelper $entityDisplayHelper
             «ENDIF»
             «IF hasListFieldsEntity»
-                «' '»* @param ListEntriesHelper   $listHelper   ListEntriesHelper service instance
+                «' '»* @param ListEntriesHelper $listHelper
             «ENDIF»
             «IF hasLocaleFieldsEntity»
-                «' '»* @param LocaleApiInterface  $localeApi    LocaleApi service instance
+                «' '»* @param LocaleApiInterface $localeApi
             «ENDIF»
             «IF app.needsFeatureActivationHelper»
-                «' '»* @param FeatureActivationHelper $featureActivationHelper FeatureActivationHelper service instance
+                «' '»* @param FeatureActivationHelper $featureActivationHelper
             «ENDIF»
              */
             public function __construct(
@@ -326,7 +326,6 @@ class QuickNavigationType {
                     'class' => 'input-sm category-selector',
                     'title' => $this->__('This is an optional filter.')
                 ],
-                'help' => $this->__('This is an optional filter.'),
                 'required' => false,
                 'multiple' => «categorisableMultiSelection.displayBool»,
                 'module' => '«app.appName»',

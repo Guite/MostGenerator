@@ -40,11 +40,11 @@ class ThirdPartyListener {
              * ThirdPartyListener constructor.
              *
              «IF generateScribitePlugins»
-             * @param Filesystem   $filesystem   Filesystem service instance
-             * @param RequestStack $requestStack RequestStack service instance
+             * @param Filesystem $filesystem
+             * @param RequestStack $requestStack
              «ENDIF»
              «IF needsApproval && generatePendingContentSupport»
-             * @param WorkflowHelper $workflowHelper WorkflowHelper service instance
+             * @param WorkflowHelper $workflowHelper
              «ENDIF»
              *
              * @return void

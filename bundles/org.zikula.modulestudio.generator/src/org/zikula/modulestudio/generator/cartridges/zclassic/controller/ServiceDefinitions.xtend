@@ -54,7 +54,11 @@ class ServiceDefinitions {
         modPrefix = appService
         needsDetailContentType = generateDetailContentType && hasDisplayActions
 
-        generateServiceFile('services', mainServiceFile)
+        if (targets('3.0')) {
+            generateServiceFile('services', mainServiceFile)
+            return
+        }
+        generateServiceFile('services', mainServiceFileLegacy)
         if (authenticationMethod != AuthMethodType.NONE) {
             generateServiceFile('authentication', authentication)
         }
@@ -86,6 +90,112 @@ class ServiceDefinitions {
     }
 
     def private mainServiceFile(Application it) '''
+        services:
+            _defaults:
+                autowire: true
+                autoconfigure: true
+                public: false
+                bind:
+                    $bundle: '@«appNamespace»\«appName»'
+                    $twigLoader: '@twig.loader'
+
+            «appNamespace»\:
+                resource: '../../*'
+                exclude: '../../{bootstrap.php,Base/bootstrap.php,Tests,vendor}'
+
+            «appNamespace»\Helper\:
+                resource: '../../Helper/*'
+                lazy: true
+
+            «specificServices»
+        «IF hasImageFields || !getAllVariables.filter(UploadField).filter[isImageField].empty»
+
+            parameters:
+                liip_imagine.cache.signer.class: «appNamespace»\Imagine\Cache\DummySigner
+        «ENDIF»
+    '''
+
+    def private specificServices(Application it) '''
+        # public because EntityLifecycleListener accesses this using container
+        «appNamespace»\Entity\Factory\EntityFactory:
+            public: true
+        «IF generateListContentType || needsDetailContentType»
+
+            _instanceof:
+                Zikula\Common\Content\ContentTypeInterface:
+                    bind:
+                         $permissionHelper: '@«appNamespace»\Helper\PermissionHelper'
+            «IF needsDetailContentType»
+
+                «appNamespace»\ContentType\ItemType:
+                    arguments:
+                        $fragmentHandler: '@fragment.handler'
+            «ENDIF»
+        «ENDIF»
+        «IF hasEditActions»
+
+            «appNamespace»\Form\Handler\:
+                resource: '../../Form/Handler'
+                calls:
+                    - [setLockingApi, ['@?Zikula\PageLockModule\Api\LockingApi']]
+        «ENDIF»
+        «IF hasUploads»
+
+            # public because EntityLifecycleListener accesses this using container
+            «appNamespace»\Helper\UploadHelper:
+                public: true
+                arguments:
+                    $dataDirectory: '%datadir%'
+        «ENDIF»
+        «IF generatePdfSupport»
+
+            «appNamespace»\Helper\ViewHelper:
+                arguments:
+                    $pageVars: '@zikula_core.common.theme.pagevars'
+        «ENDIF»
+
+        «appNamespace»\Listener\EntityLifecycleListener:
+            tags: ['doctrine.event_subscriber']
+        «IF hasLoggable»
+
+            # public because EntityLifecycleListener accesses this using container
+            «appNamespace»\Listener\LoggableListener:
+                public: true
+        «ENDIF»
+
+        «appNamespace»\Menu\MenuBuilder:
+            tags:
+                - { name: knp_menu.menu_builder, method: createItemActionsMenu, alias: «vendorAndName.toFirstLower»MenuItemActions }
+        «IF generateMultiHookNeedles»
+            «FOR entity : getAllEntities.filter[hasViewAction || hasDisplayAction]»
+
+                «appNamespace»\Needle\«entity.name.formatForCodeCapital»Needle:
+                    tags: ['zikula.multihook_needle']
+            «ENDFOR»
+        «ENDIF»
+        «IF getSubscriberNames.contains('IpTrace')»
+
+            gedmo_doctrine_extensions.listener.ip_traceable:
+                class: Gedmo\IpTraceable\IpTraceableListener
+                public: false
+                calls:
+                    - [setAnnotationReader, ['@annotation_reader']]
+                tags:
+                    - { name: doctrine.event_subscriber, connection: default }
+        «ENDIF»
+        «IF hasSluggable»
+
+            stof_doctrine_extensions.listener.sluggable:
+                class: '%stof_doctrine_extensions.listener.sluggable.class%'
+                calls:
+                    - [setAnnotationReader, ['@annotation_reader']]
+                    - [setTransliterator, [[«appNamespace»\Helper\SlugTransliterator, 'transliterate']]]
+                tags:
+                    - { name: doctrine.event_subscriber, connection: default }
+        «ENDIF»
+    '''
+
+    def private mainServiceFileLegacy(Application it) '''
         imports:
           «IF authenticationMethod != AuthMethodType.NONE»
               - { resource: 'authentication.yml' }
@@ -128,9 +238,8 @@ class ServiceDefinitions {
             class: «appNamespace»\AuthenticationMethod\«name.formatForCodeCapital»AuthenticationMethod
             arguments:
                 - "@translator.default"
-                - "@session"
+                - "@request_stack"
                 «IF authenticationMethod == AuthMethodType.REMOTE»
-                    - "@request_stack"
                     - "@router"
                 «ENDIF»
                 - "@«modPrefix».entity_factory"
@@ -331,8 +440,8 @@ class ServiceDefinitions {
                 tags:
                     - { name: doctrine.event_subscriber, connection: default }
                 calls:
-                    - [ setAnnotationReader, ["@annotation_reader"] ]
-                    - [ setTransliterator, [[«appNamespace»\Helper\SlugTransliterator, 'transliterate']]]
+                    - [setAnnotationReader, ["@annotation_reader"]]
+                    - [setTransliterator, [[«appNamespace»\Helper\SlugTransliterator, 'transliterate']]]
 
         «ENDIF»
     '''
@@ -723,13 +832,7 @@ class ServiceDefinitions {
                 «IF hasCategorisableEntities»
                     - "@«modPrefix».category_helper"
                 «ENDIF»
-                «IF !getAllEntities.filter[ownerPermission].empty»
-                    - "@zikula_extensions_module.api.variable"
-                «ENDIF»
-                - "@=service('zikula_extensions_module.api.variable').get('«appName»', 'showOnlyOwnEntries', false)"
-                «IF supportLocaleFilter»
-                    - "@=service('zikula_extensions_module.api.variable').get('«appName»', 'filterDataByLocale', false)"
-                «ENDIF»
+                - "@zikula_extensions_module.api.variable"
 
         «modPrefix».controller_helper:
             class: «nsBase»ControllerHelper
@@ -807,7 +910,7 @@ class ServiceDefinitions {
                 class: «nsBase»ImageHelper
                 arguments:
                     - "@translator.default"
-                    - "@session"
+                    - "@request_stack"
                     - "@zikula_extensions_module.api.variable"
         «ENDIF»
         «IF hasListFields»
@@ -855,7 +958,6 @@ class ServiceDefinitions {
         «modPrefix».permission_helper:
             class: «nsBase»PermissionHelper
             arguments:
-                - "@service_container"
                 - "@request_stack"
                 - "@zikula_permissions_module.api.permission"
                 «IF hasLoggable»
@@ -869,7 +971,6 @@ class ServiceDefinitions {
                 class: «nsBase»SearchHelper
                 arguments:
                     - "@translator.default"
-                    - "@session"
                     - "@request_stack"
                     - "@«modPrefix».entity_factory"
                     - "@«modPrefix».controller_helper"
@@ -900,10 +1001,10 @@ class ServiceDefinitions {
                 arguments:
                     - "@translator.default"
                     - "@filesystem"
-                    - "@session"
+                    - "@request_stack"
                     - "@logger"
                     - "@zikula_users_module.current_user"
-                    - "@=service('zikula_extensions_module.api.variable').getAll('«appName»')"
+                    - "@zikula_extensions_module.api.variable"
                     - "%datadir%"
         «ENDIF»
 
@@ -981,7 +1082,7 @@ class ServiceDefinitions {
                                 class: «appNamespace»\HookProvider\«entity.name.formatForCodeCapital»FormAwareHookProvider
                                 arguments:
                                     - "@translator.default"
-                                    - "@session"
+                                    - "@request_stack"
                                     - "@form.factory"
                                 tags:
                                     - { name: zikula.hook_provider, areaName: 'provider.«appName.formatForDB».form_aware_hook.«entity.nameMultiple.formatForDB»' }
@@ -1101,7 +1202,7 @@ class ServiceDefinitions {
                     - [setModelHelper, ['@«modPrefix».model_helper']]
                     - [setEntityFactory, ['@«modPrefix».entity_factory']]
                     «IF hasCategorisableEntities»
-                        - [setCategoryDependencies, ['@«modPrefix».feature_activation_helper', '@«modPrefix».category_helper']]
+                        - [setCategoryDependencies, ['@«modPrefix».category_helper', '@«modPrefix».feature_activation_helper']]
                     «ENDIF»
                 tags: ['zikula.content_type']
             «nsBase»Form\Type\ItemListType:

@@ -21,15 +21,10 @@ class ViewHelper {
     def private viewFunctionsBaseImpl(Application it) '''
         namespace «appNamespace»\Helper\Base;
 
-        «IF !targets('3.0')»
-            use Symfony\Bundle\TwigBundle\Loader\FilesystemLoader;
-        «ENDIF»
+        use Symfony\Bundle\TwigBundle\Loader\FilesystemLoader;
         use Symfony\Component\HttpFoundation\RequestStack;
         use Symfony\Component\HttpFoundation\Response;
         use Twig«IF targets('3.0')»\«ELSE»_«ENDIF»Environment;
-        «IF targets('3.0')»
-            use Twig\Loader\LoaderInterface;
-        «ENDIF»
         use Zikula\Core\Response\PlainResponse;
         use Zikula\ExtensionsModule\Api\ApiInterface\VariableApiInterface;
         use Zikula\ThemeModule\Engine\AssetFilter;
@@ -55,7 +50,7 @@ class ViewHelper {
         protected $twig;
 
         /**
-         * @var «IF targets('3.0')»LoaderInterface«ELSE»FilesystemLoader«ENDIF»
+         * @var FilesystemLoader
          */
         protected $twigLoader;
 
@@ -94,27 +89,22 @@ class ViewHelper {
         /**
          * ViewHelper constructor.
          *
-         «IF targets('3.0')»
-         * @param Environment          $twig             Twig service instance
-         * @param LoaderInterface      $twigLoader       Twig loader service instance
-         «ELSE»
-         * @param Twig_Environment     $twig             Twig service instance
-         * @param FilesystemLoader     $twigLoader       Twig loader service instance
-         «ENDIF»
-         * @param RequestStack         $requestStack     RequestStack service instance
-         * @param VariableApiInterface $variableApi      VariableApi service instance
-         * @param AssetFilter          $assetFilter      Theme asset filter
+         * @param «IF !targets('3.0')»Twig_«ENDIF»Environment $twig
+         * @param FilesystemLoader $twigLoader
+         * @param RequestStack $requestStack
+         * @param VariableApiInterface $variableApi
+         * @param AssetFilter $assetFilter
          «IF generatePdfSupport»
-         * @param ParameterBag         $pageVars         ParameterBag for theme page variables
+         * @param ParameterBag $pageVars
          «ENDIF»
-         * @param ControllerHelper     $controllerHelper ControllerHelper service instance
-         * @param PermissionHelper     $permissionHelper PermissionHelper service instance
+         * @param ControllerHelper $controllerHelper
+         * @param PermissionHelper $permissionHelper
          *
          * @return void
          */
         public function __construct(
             «IF !targets('3.0')»Twig_«ENDIF»Environment $twig,
-            «IF targets('3.0')»LoaderInterface«ELSE»FilesystemLoader«ENDIF» $twigLoader,
+            FilesystemLoader $twigLoader,
             RequestStack $requestStack,
             VariableApiInterface $variableApi,
             AssetFilter $assetFilter,

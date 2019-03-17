@@ -138,20 +138,16 @@ class NotificationHelper {
         /**
          * NotificationHelper constructor.
          *
-         * @param ZikulaHttpKernelInterface $kernel              Kernel service instance
-         * @param TranslatorInterface       $translator          Translator service instance
-         * @param Routerinterface           $router              Router service instance
-         * @param RequestStack              $requestStack        RequestStack service instance
-         * @param VariableApiInterface      $variableApi         VariableApi service instance
-         «IF targets('3.0')»
-         * @param Environment               $twig                Twig service instance
-         «ELSE»
-         * @param Twig_Environment          $twig                Twig service instance
-         «ENDIF»
-         * @param MailerApiInterface        $mailerApi           MailerApi service instance
-         * @param GroupRepositoryInterface  $groupRepository     GroupRepository service instance
-         * @param EntityDisplayHelper       $entityDisplayHelper EntityDisplayHelper service instance
-         * @param WorkflowHelper            $workflowHelper      WorkflowHelper service instance
+         * @param ZikulaHttpKernelInterface $kernel
+         * @param TranslatorInterface $translator
+         * @param Routerinterface $router
+         * @param RequestStack $requestStack
+         * @param VariableApiInterface $variableApi
+         * @param «IF !targets('3.0')»Twig_«ENDIF»Environment $twig
+         * @param MailerApiInterface $mailerApi
+         * @param GroupRepositoryInterface $groupRepository
+         * @param EntityDisplayHelper $entityDisplayHelper
+         * @param WorkflowHelper $workflowHelper
          */
         public function __construct(
             ZikulaHttpKernelInterface $kernel,

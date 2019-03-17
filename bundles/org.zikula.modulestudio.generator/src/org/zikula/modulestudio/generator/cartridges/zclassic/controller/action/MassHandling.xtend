@@ -19,25 +19,22 @@ class MassHandling {
     '''
 
     def private handleSelectedObjects(Entity it, Boolean isBase, Boolean isAdmin) '''
-        «handleSelectedObjectsDocBlock(isBase, isAdmin)»
-        public function «IF isAdmin»adminH«ELSE»h«ENDIF»andleSelectedEntriesAction(Request $request)
-        {
-            «IF isBase»
-                return $this->handleSelectedEntriesActionInternal($request, «isAdmin.displayBool»);
-            «ELSE»
-                return parent::«IF isAdmin»adminH«ELSE»h«ENDIF»andleSelectedEntriesAction($request);
-            «ENDIF»
-        }
-        «IF isBase && !isAdmin»
-
-            /**
-             * This method includes the common implementation code for adminHandleSelectedEntriesAction() and handleSelectedEntriesAction().
-             *
-             * @param Request $request Current request instance
-             * @param boolean $isAdmin Whether the admin area is used or not
-             */
-            protected function handleSelectedEntriesActionInternal(Request $request, $isAdmin = false)
-            {
+        «IF !isBase»
+            «handleSelectedObjectsDocBlock(isBase, isAdmin)»
+            public function «IF isAdmin»adminH«ELSE»h«ENDIF»andleSelectedEntriesAction(
+                «handleSelectedObjectsArguments(false)»
+            ) {
+                «IF application.targets('3.0')»
+                    return $this->handleSelectedEntriesActionInternal($request, $entityFactory, $workflowHelper, «IF !skipHookSubscribers»$hookHelper, «ENDIF»$currentUserApi, «isAdmin.displayBool»);
+                «ELSE»
+                    return $this->handleSelectedEntriesActionInternal($request, «isAdmin.displayBool»);
+                «ENDIF»
+            }
+        «ELSEIF isBase && !isAdmin»
+            «handleSelectedObjectsDocBlock(isBase, isAdmin)»
+            protected function handleSelectedEntriesActionInternal(
+                «handleSelectedObjectsArguments(true)»
+            ) {
                 «handleSelectedObjectsBaseImpl»
             }
         «ENDIF»
@@ -51,7 +48,16 @@ class MassHandling {
          * This function processes the items selected in the admin view page.
          * Multiple items may have their state changed or be deleted.
          *
-         * @param Request $request Current request instance
+         * @param Request $request
+         «IF application.targets('3.0')»
+         * @param EntityFactory $entityFactory
+         * @param WorkflowHelper $workflowHelper
+         «IF !skipHookSubscribers»
+         * @param HookHelper $hookHelper
+         «ENDIF»
+         * @param CurrentUserApiInterface $currentUserApi
+         «ENDIF»
+         * @param boolean $isAdmin Whether the admin area is used or not
          *
          * @return RedirectResponse
          *
@@ -68,6 +74,22 @@ class MassHandling {
          */
     '''
 
+    def private handleSelectedObjectsArguments(Entity it, Boolean internalMethod) '''
+        «IF application.targets('3.0')»
+            Request $request,
+            EntityFactory $entityFactory,
+            WorkflowHelper $workflowHelper,
+            «IF !skipHookSubscribers»
+                HookHelper $hookHelper,
+            «ENDIF»
+            CurrentUserApiInterface $currentUserApi«IF internalMethod»,
+            $isAdmin = false«ENDIF»
+        «ELSE»
+            Request $request«IF internalMethod»,
+            $isAdmin = false«ENDIF»
+        «ENDIF»
+    '''
+
     def private handleSelectedObjectsBaseImpl(Entity it) '''
         $objectType = '«name.formatForCode»';
 
@@ -77,13 +99,15 @@ class MassHandling {
 
         $action = strtolower($action);
 
-        $repository = $this->get('«application.appService».entity_factory')->getRepository($objectType);
-        $workflowHelper = $this->get('«application.appService».workflow_helper');
-        «IF !skipHookSubscribers»
-            $hookHelper = $this->get('«application.appService».hook_helper');
+        $repository = «IF application.targets('3.0')»$entityFactory«ELSE»$this->get('«application.appService».entity_factory')«ENDIF»->getRepository($objectType);
+        «IF !application.targets('3.0')»
+            $workflowHelper = $this->get('«application.appService».workflow_helper');
+            «IF !skipHookSubscribers»
+                $hookHelper = $this->get('«application.appService».hook_helper');
+            «ENDIF»
         «ENDIF»
         $logger = $this->get('logger');
-        $userName = $this->get('zikula_users_module.current_user')->get('uname');
+        $userName = «IF application.targets('3.0')»$currentUserApi«ELSE»$this->get('zikula_users_module.current_user')«ENDIF»->get('uname');
 
         // process each item
         foreach ($items as $itemId) {

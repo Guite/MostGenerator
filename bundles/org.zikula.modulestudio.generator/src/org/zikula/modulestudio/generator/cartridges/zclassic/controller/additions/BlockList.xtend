@@ -29,12 +29,24 @@ class BlockList {
     def private listBlockBaseClass(Application it) '''
         namespace «appNamespace»\Block\Base;
 
+        «IF targets('3.0')»
+            use Symfony\Bundle\TwigBundle\Loader\FilesystemLoader;
+        «ENDIF»
         use Zikula\BlocksModule\AbstractBlockHandler;
-        use Zikula\Core\AbstractBundle;
+        use «appNamespace»\Block\Form\Type\ItemListBlockType;
+        «IF targets('3.0')»
+            use «appNamespace»\Entity\Factory\EntityFactory;
+            «IF hasCategorisableEntities»
+                use «appNamespace»\Helper\CategoryHelper;
+            «ENDIF»
+            use «appNamespace»\Helper\ControllerHelper;
+        «ENDIF»
         «IF hasCategorisableEntities»
             use «appNamespace»\Helper\FeatureActivationHelper;
         «ENDIF»
-        use «appNamespace»\Block\Form\Type\ItemListBlockType;
+        «IF targets('3.0')»
+            use «appNamespace»\Helper\ModelHelper;
+        «ENDIF»
 
         /**
          * Generic item list block base class.
@@ -46,6 +58,40 @@ class BlockList {
     '''
 
     def private listBlockBaseImpl(Application it) '''
+        «IF targets('3.0')»
+            /**
+             * @var FilesystemLoader
+             */
+            protected $twigLoader;
+
+            /**
+             * @var ControllerHelper
+             */
+            protected $controllerHelper;
+
+            /**
+             * @var ModelHelper
+             */
+            protected $modelHelper;
+
+            /**
+             * @var EntityFactory
+             */
+            protected $entityFactory;
+
+            «IF hasCategorisableEntities»
+                /**
+                 * @var categoryHelper
+                 */
+                protected $categoryHelper;
+
+                /**
+                 * @var FeatureActivationHelper
+                 */
+                protected $featureActivationHelper;
+
+            «ENDIF»
+        «ENDIF»
         «IF hasCategorisableEntities»
             /**
              * List of object types allowing categorisation.
@@ -54,20 +100,22 @@ class BlockList {
              */
             protected $categorisableObjectTypes;
 
-            /**
-             * ItemListBlock constructor.
-             *
-             * @param AbstractBundle $bundle An AbstractBundle instance
-             *
-             * @throws \InvalidArgumentException
-             */
-            public function __construct(AbstractBundle $bundle)
-            {
-                parent::__construct($bundle);
+            «IF !targets('3.0')»
+                /**
+                 * ItemListBlock constructor.
+                 *
+                 * @param AbstractBundle $bundle An AbstractBundle instance
+                 *
+                 * @throws \InvalidArgumentException
+                 */
+                public function __construct(AbstractBundle $bundle)
+                {
+                    parent::__construct($bundle);
 
-                $this->categorisableObjectTypes = [«FOR entity : getCategorisableEntities SEPARATOR ', '»'«entity.name.formatForCode»'«ENDFOR»];
-            }
+                    «initListOfCategorisableEntities»
+                }
 
+            «ENDIF»
         «ENDIF»
         /**
          * @inheritDoc
@@ -110,8 +158,12 @@ class BlockList {
              */
             protected function resolveCategoryIds(array $properties = [])
             {
-                $categoryHelper = $this->get('«appService».category_helper');
-                $primaryRegistry = $categoryHelper->getPrimaryProperty($properties['objectType']);
+                «IF targets('3.0')»
+                    $primaryRegistry = $this->categoryHelper->getPrimaryProperty($properties['objectType']);
+                «ELSE»
+                    $categoryHelper = $this->get('«appService».category_helper');
+                    $primaryRegistry = $categoryHelper->getPrimaryProperty($properties['objectType']);
+                «ENDIF»
                 if (!isset($properties['categories'])) {
                     $properties['categories'] = [$primaryRegistry => []];
                 } else {
@@ -130,6 +182,59 @@ class BlockList {
                 return $properties;
             }
         «ENDIF»
+        «IF targets('3.0')»
+
+            /**
+             * @required
+             * @param FilesystemLoader $twigLoader
+             */
+            public function setTwigLoader(FilesystemLoader $twigLoader)
+            {
+                $this->twigLoader = $twigLoader;
+            }
+
+            /**
+             * @required
+             * @param ControllerHelper $controllerHelper
+             */
+            public function setControllerHelper(ControllerHelper $controllerHelper)
+            {
+                $this->controllerHelper = $controllerHelper;
+            }
+
+            /**
+             * @required
+             * @param ModelHelper $modelHelper
+             */
+            public function setModelHelper(ModelHelper $modelHelper)
+            {
+                $this->modelHelper = $modelHelper;
+            }
+
+            /**
+             * @required
+             * @param EntityFactory $entityFactory
+             */
+            public function setEntityFactory(EntityFactory $entityFactory)
+            {
+                $this->entityFactory = $entityFactory;
+            }
+            «IF hasCategorisableEntities»
+
+                /**
+                 * @required
+                 * @param CategoryHelper $categoryHelper
+                 * @param FeatureActivationHelper $featureActivationHelper
+                 */
+                public function setCategoryDependencies(
+                    CategoryHelper $categoryHelper,
+                    FeatureActivationHelper $featureActivationHelper
+                ) {
+                    $this->categoryHelper = $categoryHelper;
+                    $this->featureActivationHelper = $featureActivationHelper;
+                }
+            «ENDIF»
+        «ENDIF»
     '''
 
     def private display(Application it) '''
@@ -143,40 +248,67 @@ class BlockList {
                 return '';
             }
 
+            «IF targets('3.0') && hasCategorisableEntities»
+                «initListOfCategorisableEntities»
+
+            «ENDIF»
             // set default values for all params which are not properly set
             $defaults = $this->getDefaults();
             $properties = array_merge($defaults, $properties);
             «IF hasCategorisableEntities»
 
-                $featureActivationHelper = $this->get('«appService».feature_activation_helper');
-                if ($featureActivationHelper->isEnabled(FeatureActivationHelper::CATEGORIES, $properties['objectType'])) {
-                    $properties = $this->resolveCategoryIds($properties);
+                «IF !targets('3.0')»
+                    $featureActivationHelper = $this->get('«appService».feature_activation_helper');
+                «ENDIF»
+                $hasCategories = in_array($objectType, $this->categorisableObjectTypes)
+                    && $«IF targets('3.0')»this->«ENDIF»featureActivationHelper->isEnabled(FeatureActivationHelper::CATEGORIES, $properties['objectType']);
+                if ($hasCategories) {
+                    $categoryProperties = $this->resolveCategoryIds($properties);
                 }
             «ENDIF»
 
-            $controllerHelper = $this->get('«appService».controller_helper');
-            $contextArgs = ['name' => 'list'];
-            if (!isset($properties['objectType']) || !in_array($properties['objectType'], $controllerHelper->getObjectTypes('block', $contextArgs))) {
-                $properties['objectType'] = $controllerHelper->getDefaultObjectType('block', $contextArgs);
-            }
+            «IF targets('3.0')»
+                $contextArgs = ['name' => 'list'];
+                if (!isset($properties['objectType']) || !in_array($properties['objectType'], $this->controllerHelper->getObjectTypes('block', $contextArgs))) {
+                    $properties['objectType'] = $this->controllerHelper->getDefaultObjectType('block', $contextArgs);
+                }
+            «ELSE»
+                $controllerHelper = $this->get('«appService».controller_helper');
+                $contextArgs = ['name' => 'list'];
+                if (!isset($properties['objectType']) || !in_array($properties['objectType'], $controllerHelper->getObjectTypes('block', $contextArgs))) {
+                    $properties['objectType'] = $controllerHelper->getDefaultObjectType('block', $contextArgs);
+                }
+            «ENDIF»
 
             $objectType = $properties['objectType'];
 
-            $repository = $this->get('«appService».entity_factory')->getRepository($objectType);
+            «IF targets('3.0')»
+                $repository = $this->entityFactory->getRepository($objectType);
 
-            // create query
-            $orderBy = $this->get('«appService».model_helper')->resolveSortParameter($objectType, $properties['sorting']);
+                // create query
+                $orderBy = $this->modelHelper->resolveSortParameter($objectType, $properties['sorting']);
+            «ELSE»
+                $repository = $this->get('«appService».entity_factory')->getRepository($objectType);
+
+                // create query
+                $orderBy = $this->get('«appService».model_helper')->resolveSortParameter($objectType, $properties['sorting']);
+            «ENDIF»
             $qb = $repository->getListQueryBuilder($properties['filter'], $orderBy);
             «IF hasCategorisableEntities»
 
-                if (in_array($objectType, $this->categorisableObjectTypes)) {
-                    if ($featureActivationHelper->isEnabled(FeatureActivationHelper::CATEGORIES, $properties['objectType'])) {
+                if ($hasCategories) {
+                    «IF targets('3.0')»
+                        // apply category filters
+                        if (is_array($properties['categories']) && count($properties['categories']) > 0) {
+                            $qb = $this->categoryHelper->buildFilterClauses($qb, $objectType, $properties['categories']);
+                        }
+                    «ELSE»
                         $categoryHelper = $this->get('«appService».category_helper');
                         // apply category filters
                         if (is_array($properties['categories']) && count($properties['categories']) > 0) {
                             $qb = $categoryHelper->buildFilterClauses($qb, $objectType, $properties['categories']);
                         }
-                    }
+                    «ENDIF»
                 }
             «ENDIF»
 
@@ -192,8 +324,8 @@ class BlockList {
             }
             «IF hasCategorisableEntities»
 
-                if ($featureActivationHelper->isEnabled(FeatureActivationHelper::CATEGORIES, $objectType)) {
-                    $entities = $this->get('«appService».category_helper')->filterEntitiesByPermission($entities);
+                if ($hasCategories) {
+                    $entities = $this->«IF targets('3.0')»categoryHelper«ELSE»get('«appService».category_helper')«ENDIF»->filterEntitiesByPermission($entities);
                 }
             «ENDIF»
 
@@ -210,12 +342,12 @@ class BlockList {
                 'items' => $entities
             ];
             «IF hasCategorisableEntities»
-                if ($featureActivationHelper->isEnabled(FeatureActivationHelper::CATEGORIES, $properties['objectType'])) {
-                    $templateParameters['properties'] = $properties;
+                if ($hasCategories) {
+                    $templateParameters['properties'] = $categoryProperties;
                 }
             «ENDIF»
 
-            $templateParameters = $this->get('«appService».controller_helper')->addTemplateParameters($properties['objectType'], $templateParameters, 'block', []);
+            $templateParameters = $this->«IF targets('3.0')»controllerHelper«ELSE»get('«appService».controller_helper')«ENDIF»->addTemplateParameters($properties['objectType'], $templateParameters, 'block', []);
 
             return $this->renderView($template, $templateParameters);
         }
@@ -237,7 +369,9 @@ class BlockList {
             }
 
             $templateForObjectType = str_replace('itemlist_', 'itemlist_' . $properties['objectType'] . '_', $templateFile);
-            $templating = $this->get('templating');
+            «IF !targets('3.0')»
+                $templating = $this->get('templating');
+            «ENDIF»
 
             $templateOptions = [
                 «IF generateListContentType && !targets('2.0')»
@@ -253,7 +387,7 @@ class BlockList {
 
             $template = '';
             foreach ($templateOptions as $templatePath) {
-                if ($templating->exists('@«appName»/' . $templatePath)) {
+                if («IF targets('3.0')»$this->twigLoader«ELSE»$templating«ENDIF»->exists('@«appName»/' . $templatePath)) {
                     $template = '@«appName»/' . $templatePath;
                     break;
                 }
@@ -278,8 +412,11 @@ class BlockList {
         public function getFormOptions()
         {
             $objectType = '«leadingEntity.name.formatForCode»';
+            «IF targets('3.0') && hasCategorisableEntities»
+                «initListOfCategorisableEntities»
+            «ENDIF»
 
-            $request = $this->get('request_stack')->getCurrentRequest();
+            $request = $this->«IF targets('3.0')»requestStack«ELSE»get('request_stack')«ENDIF»->getCurrentRequest();
             if ($request->attributes->has('blockEntity')) {
                 $blockEntity = $request->attributes->get('blockEntity');
                 if (is_object($blockEntity) && method_exists($blockEntity, 'getProperties')) {
@@ -296,8 +433,8 @@ class BlockList {
             return [
                 'object_type' => $objectType«IF hasCategorisableEntities»,
                 'is_categorisable' => in_array($objectType, $this->categorisableObjectTypes),
-                'category_helper' => $this->get('«appService».category_helper'),
-                'feature_activation_helper' => $this->get('«appService».feature_activation_helper')«ENDIF»
+                'category_helper' => $this->«IF targets('3.0')»categoryHelper«ELSE»get('«appService».category_helper')«ENDIF»,
+                'feature_activation_helper' => $this->«IF targets('3.0')»featureActivationHelper«ELSE»get('«appService».feature_activation_helper')«ENDIF»«ENDIF»
             ];
         }
 
@@ -308,6 +445,10 @@ class BlockList {
         {
             return '@«appName»/Block/itemlist_modify.html.twig';
         }
+    '''
+
+    def private initListOfCategorisableEntities(Application it) '''
+        $this->categorisableObjectTypes = [«FOR entity : getCategorisableEntities SEPARATOR ', '»'«entity.name.formatForCode»'«ENDFOR»];
     '''
 
     def private listBlockImpl(Application it) '''

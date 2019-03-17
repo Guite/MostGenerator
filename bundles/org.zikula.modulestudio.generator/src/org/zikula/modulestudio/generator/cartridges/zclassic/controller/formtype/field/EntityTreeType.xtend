@@ -37,7 +37,7 @@ class EntityTreeType {
             /**
              * EntityTreeType constructor.
              *
-             * @param EntityDisplayHelper $entityDisplayHelper EntityDisplayHelper service instance
+             * @param EntityDisplayHelper $entityDisplayHelper
              */
             public function __construct(EntityDisplayHelper $entityDisplayHelper)
             {

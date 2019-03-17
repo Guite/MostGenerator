@@ -298,6 +298,9 @@ class ContentTypeList {
         }
 
         /**
+         «IF targets('3.0')»
+         * @required
+         «ENDIF»
          * @param ControllerHelper $controllerHelper
          */
         public function setControllerHelper(ControllerHelper $controllerHelper)
@@ -306,6 +309,9 @@ class ContentTypeList {
         }
 
         /**
+         «IF targets('3.0')»
+         * @required
+         «ENDIF»
          * @param ModelHelper $modelHelper
          */
         public function setModelHelper(ModelHelper $modelHelper)
@@ -314,6 +320,9 @@ class ContentTypeList {
         }
 
         /**
+         «IF targets('3.0')»
+         * @required
+         «ENDIF»
          * @param EntityFactory $entityFactory
          */
         public function setEntityFactory(EntityFactory $entityFactory)
@@ -323,15 +332,18 @@ class ContentTypeList {
         «IF hasCategorisableEntities»
 
             /**
-             * @param FeatureActivationHelper $featureActivationHelper
+             «IF targets('3.0')»
+             * @required
+             «ENDIF»
              * @param CategoryHelper $categoryHelper
+             * @param FeatureActivationHelper $featureActivationHelper
              */
             public function setCategoryDependencies(
-                FeatureActivationHelper $featureActivationHelper,
-                CategoryHelper $categoryHelper
+                CategoryHelper $categoryHelper,
+                FeatureActivationHelper $featureActivationHelper
             ) {
-                $this->featureActivationHelper = $featureActivationHelper;
                 $this->categoryHelper = $categoryHelper;
+                $this->featureActivationHelper = $featureActivationHelper;
             }
         «ENDIF»
     '''

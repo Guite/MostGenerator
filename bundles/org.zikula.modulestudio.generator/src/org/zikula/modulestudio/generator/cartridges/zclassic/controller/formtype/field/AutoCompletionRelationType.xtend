@@ -49,8 +49,8 @@ class AutoCompletionRelationType {
             /**
              * AutoCompletionRelationType constructor.
              *
-             * @param Routerinterface $router        Router service instance
-             * @param EntityFactory   $entityFactory EntityFactory service instance
+             * @param Routerinterface $router
+             * @param EntityFactory $entityFactory
              */
             public function __construct(RouterInterface $router, EntityFactory $entityFactory)
             {

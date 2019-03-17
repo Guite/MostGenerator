@@ -181,27 +181,27 @@ class Plugins {
         /**
          * TwigExtension constructor.
          *
-         * @param TranslatorInterface $translator     Translator service instance
+         * @param TranslatorInterface $translator
          «IF hasTrees»
-            * @param Routerinterface     $router         Router service instance
+            * @param Routerinterface $router
          «ENDIF»
          «IF generateIcsTemplates && hasEntitiesWithIcsTemplates»
-            * @param RequestStack        $requestStack   RequestStack service instance
+            * @param RequestStack $requestStack
          «ENDIF»
-         * @param VariableApiInterface   $variableApi    VariableApi service instance
+         * @param VariableApiInterface $variableApi
          «IF hasTrees»
-         * @param EntityFactory          $entityFactory  EntityFactory service instance
+         * @param EntityFactory $entityFactory
          «ENDIF»
-         * @param EntityDisplayHelper    $entityDisplayHelper EntityDisplayHelper service instance
-         * @param WorkflowHelper         $workflowHelper WorkflowHelper service instance
+         * @param EntityDisplayHelper $entityDisplayHelper
+         * @param WorkflowHelper $workflowHelper
          «IF hasListFields»
-            * @param ListEntriesHelper   $listHelper     ListEntriesHelper service instance
+            * @param ListEntriesHelper $listHelper
          «ENDIF»
          «IF hasLoggable»
-            * @param LoggableHelper      $loggableHelper LoggableHelper service instance
+            * @param LoggableHelper $loggableHelper
          «ENDIF»
          «IF hasTrees»
-            * @param MenuBuilder         $menuBuilder    MenuBuilder service instance
+            * @param MenuBuilder $menuBuilder
          «ENDIF»
          */
         public function __construct(

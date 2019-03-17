@@ -95,12 +95,12 @@ class EntityDisplayHelper {
         /**
          * EntityDisplayHelper constructor.
          *
-         * @param TranslatorInterface $translator «IF hasListFields»       «ENDIF»Translator service instance
+         * @param TranslatorInterface $translator
          «IF hasAnyDateTimeFields || hasNumberFields»
-         * @param RequestStack        $requestStack      RequestStack service instance
+         * @param RequestStack $requestStack
          «ENDIF»
          «IF hasListFields»
-         * @param ListEntriesHelper   $listEntriesHelper Helper service for managing list entries
+         * @param ListEntriesHelper $listEntriesHelper
          «ENDIF»
          */
         public function __construct(

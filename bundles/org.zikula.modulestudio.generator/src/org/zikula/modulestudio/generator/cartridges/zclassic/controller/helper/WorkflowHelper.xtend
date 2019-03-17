@@ -85,13 +85,13 @@ class WorkflowHelper {
         /**
          * WorkflowHelper constructor.
          *
-         * @param TranslatorInterface     $translator        Translator service instance
-         * @param Registry                $registry          Workflow registry service instance
-         * @param LoggerInterface         $logger            Logger service instance
-         * @param CurrentUserApiInterface $currentUserApi    CurrentUserApi service instance
-         * @param EntityFactory           $entityFactory     EntityFactory service instance
-         * @param ListEntriesHelper       $listEntriesHelper ListEntriesHelper service instance
-         * @param PermissionHelper        $permissionHelper  PermissionHelper service instance
+         * @param TranslatorInterface $translator
+         * @param Registry $registry
+         * @param LoggerInterface $logger
+         * @param CurrentUserApiInterface $currentUserApi
+         * @param EntityFactory $entityFactory
+         * @param ListEntriesHelper $listEntriesHelper
+         * @param PermissionHelper $permissionHelper
          *
          * @return void
          */
@@ -404,7 +404,7 @@ class WorkflowHelper {
             }
 
             // get entity manager
-            $entityManager = $this->entityFactory->getObjectManager();
+            $entityManager = $this->entityFactory->getEntityManager();
             $logArgs = ['app' => '«appName»', 'user' => $this->currentUserApi->get('uname')];
 
             «IF hasLoggable»

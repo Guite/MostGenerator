@@ -43,8 +43,8 @@ class Actions {
     }
 
     def actionImpl(Entity it, Action action) '''
-        «IF action instanceof DeleteAction»
-            $«name.formatForCode» = $this->get('«application.appService».entity_factory')->getRepository('«name.formatForCode»')->«IF hasSluggableFields && slugUnique»selectBySlug($slug)«ELSE»selectById($id)«ENDIF»;
+        «IF action instanceof DisplayAction || action instanceof DeleteAction»
+            $«name.formatForCode» = «IF app.targets('3.0')»$entityFactory«ELSE»$this->get('«application.appService».entity_factory')«ENDIF»->getRepository('«name.formatForCode»')->«IF hasSluggableFields && slugUnique»selectBySlug($slug)«ELSE»selectById($id)«ENDIF»;
             if (null === $«name.formatForCode») {
                 throw new NotFoundHttpException($this->__('No such «name.formatForDisplay» found.'));
             }
@@ -63,14 +63,18 @@ class Actions {
                 $permLevel = ACCESS_EDIT;
             }
         «ENDIF»
-        $permissionHelper = $this->get('«app.appService».permission_helper');
+        «IF !app.targets('3.0')»
+            $permissionHelper = $this->get('«app.appService».permission_helper');
+        «ENDIF»
         «IF action instanceof DisplayAction || action instanceof DeleteAction»
             if (!$permissionHelper->hasEntityPermission($«name.formatForCode», $permLevel)) {
                 «IF ownerPermission && standardFields && action instanceof DeleteAction»
                     if ($isAdmin) {
                         throw new AccessDeniedException();
                     }
-                    $currentUserApi = $this->get('zikula_users_module.current_user');
+                    «IF !app.targets('3.0')»
+                        $currentUserApi = $this->get('zikula_users_module.current_user');
+                    «ENDIF»
                     $currentUserId = $currentUserApi->isLoggedIn() ? $currentUserApi->get('uid') : UsersConstant::USER_ID_ANONYMOUS;
                     $isOwner = $currentUserId > 0 && null !== $«name.formatForCode»->getCreatedBy() && $currentUserId == $«name.formatForCode»->getCreatedBy()->getUid();
                     if (!$isOwner || !$permissionHelper->mayEdit($«name.formatForCode»)) {
@@ -121,14 +125,16 @@ class Actions {
         $templateParameters = [
             'routeArea' => $isAdmin ? 'admin' : ''
         ];
-        $controllerHelper = $this->get('«app.appService».controller_helper');
-        $viewHelper = $this->get('«app.appService».view_helper');
+        «IF !app.targets('3.0')»
+            $controllerHelper = $this->get('«app.appService».controller_helper');
+            $viewHelper = $this->get('«app.appService».view_helper');
+        «ENDIF»
         «IF loggable»
 
             // check if deleted entities should be displayed
             $viewDeleted = $request->query->getInt('deleted', 0);
             if ($viewDeleted == 1 && $permissionHelper->hasComponentPermission('«name.formatForCode»', ACCESS_EDIT)) {
-                $templateParameters['deletedEntities'] = $this->get('«application.appService».loggable_helper')->getDeletedEntities($objectType);
+                $templateParameters['deletedEntities'] = «IF app.targets('3.0')»$loggableHelper«ELSE»$this->get('«application.appService».loggable_helper')«ENDIF»->getDeletedEntities($objectType);
 
                 return $viewHelper->processTemplate($objectType, 'viewDeleted', $templateParameters);
             }
@@ -165,9 +171,11 @@ class Actions {
         «IF categorisable»
 
             // filter by category permissions
-            $featureActivationHelper = $this->get('«app.appService».feature_activation_helper');
+            «IF !app.targets('3.0')»
+                $featureActivationHelper = $this->get('«app.appService».feature_activation_helper');
+            «ENDIF»
             if ($featureActivationHelper->isEnabled(FeatureActivationHelper::CATEGORIES, $objectType)) {
-                $templateParameters['items'] = $this->get('«app.appService».category_helper')->filterEntitiesByPermission($templateParameters['items']);
+                $templateParameters['items'] = «IF app.targets('3.0')»$categoryHelper«ELSE»$this->get('«app.appService».category_helper')«ENDIF»->filterEntitiesByPermission($templateParameters['items']);
             }
         «ENDIF»
         «IF !getBidirectionalIncomingPermissionInheriters.empty»
@@ -187,7 +195,7 @@ class Actions {
             // check if there exist any deleted «name.formatForDisplay»
             $templateParameters['hasDeletedEntities'] = false;
             if ($permissionHelper->hasPermission(ACCESS_EDIT)) {
-                $templateParameters['hasDeletedEntities'] = $this->get('«application.appService».loggable_helper')->hasDeletedEntities($objectType);
+                $templateParameters['hasDeletedEntities'] = «IF app.targets('3.0')»$loggableHelper«ELSE»$this->get('«application.appService».loggable_helper')«ENDIF»->hasDeletedEntities($objectType);
             }
         «ENDIF»
 
@@ -257,15 +265,17 @@ class Actions {
 
     def private dispatch actionImplBody(Entity it, DisplayAction action) '''
         «IF workflow != EntityWorkflowType.NONE»
-            if ($«name.formatForCode»->getWorkflowState() != 'approved' && !$permissionHelper->hasEntityPermission($«name.formatForCode», ACCESS_EDIT)) {
+            if ('approved' != $«name.formatForCode»->getWorkflowState() && !$permissionHelper->hasEntityPermission($«name.formatForCode», ACCESS_EDIT)) {
                 throw new AccessDeniedException();
             }
 
         «ENDIF»
         «IF categorisable»
-            $featureActivationHelper = $this->get('«app.appService».feature_activation_helper');
+            «IF !app.targets('3.0')»
+                $featureActivationHelper = $this->get('«app.appService».feature_activation_helper');
+            «ENDIF»
             if ($featureActivationHelper->isEnabled(FeatureActivationHelper::CATEGORIES, $objectType)) {
-                if (!$this->get('«app.appService».category_helper')->hasPermission($«name.formatForCode»)) {
+                if (!«IF app.targets('3.0')»$categoryHelper«ELSE»$this->get('«app.appService».category_helper')«ENDIF»->hasPermission($«name.formatForCode»)) {
                     throw new AccessDeniedException();
                 }
             }
@@ -283,7 +293,7 @@ class Actions {
             $versionPermLevel = $isAdmin ? ACCESS_ADMIN : ACCESS_EDIT;
             if ($requestedVersion > 0 && $permissionHelper->hasEntityPermission($«name.formatForCode», $versionPermLevel)) {
                 // preview of a specific version is desired, but detach entity
-                $«name.formatForCode» = $this->get('«application.appService».loggable_helper')->revert($«name.formatForCode», $requestedVersion, true);
+                $«name.formatForCode» = «IF app.targets('3.0')»$loggableHelper«ELSE»$this->get('«application.appService».loggable_helper')«ENDIF»->revert($«name.formatForCode», $requestedVersion, true);
             }
 
         «ENDIF»
@@ -292,7 +302,9 @@ class Actions {
             $objectType => $«name.formatForCode»
         ];
 
-        $controllerHelper = $this->get('«app.appService».controller_helper');
+        «IF !app.targets('3.0')»
+            $controllerHelper = $this->get('«app.appService».controller_helper');
+        «ENDIF»
         $templateParameters = $controllerHelper->processDisplayActionParameters($objectType, $templateParameters«IF app.hasHookSubscribers», $«name.formatForCode»->supportsHookSubscribers()«ENDIF»);
 
         «processDisplayOutput»
@@ -317,13 +329,13 @@ class Actions {
                     $parentAccess = true;
                     break;
                 }
-            «ELSEIF relation.inheritPermissions == ManyToManyPermissionInheritanceType.UNANIMOUS»
+            «ELSEIF ManyToManyPermissionInheritanceType.UNANIMOUS == relation.inheritPermissions»
                 if (!$permissionHelper->hasEntityPermission($parent, $permLevel)) {
                     throw new AccessDeniedException();
                 }
             «ENDIF»
         }
-        «IF relation.inheritPermissions == ManyToManyPermissionInheritanceType.AFFIRMATIVE»
+        «IF ManyToManyPermissionInheritanceType.AFFIRMATIVE == relation.inheritPermissions»
             if (true !== $parentAccess) {
                 throw new AccessDeniedException();
             }
@@ -332,14 +344,14 @@ class Actions {
 
     def private processDisplayOutput(Entity it) '''
         // fetch and return the appropriate template
-        $response = $this->get('«app.appService».view_helper')->processTemplate($objectType, 'display', $templateParameters);
-        «IF app.generateIcsTemplates && app.hasDisplayActions && !app.getAllEntities.filter[hasDisplayAction && hasStartAndEndDateField].empty»
+        $response = «IF app.targets('3.0')»$viewHelper«ELSE»$this->get('«app.appService».view_helper')«ENDIF»->processTemplate($objectType, 'display', $templateParameters);
+        «IF app.generateIcsTemplates && hasStartAndEndDateField»
 
             if ('ics' == $request->getRequestFormat()) {
                 $fileName = $objectType . '_' .
                     (property_exists($«name.formatForCode», 'slug')
                         ? $«name.formatForCode»['slug']
-                        : $this->get('«app.appService».entity_display_helper')->getFormattedTitle($«name.formatForCode»)
+                        : «IF app.targets('3.0')»$entityDisplayHelper«ELSE»$this->get('«app.appService».entity_display_helper')«ENDIF»->getFormattedTitle($«name.formatForCode»)
                     ) . '.ics'
                 ;
                 $response->headers->set('Content-Disposition', 'attachment; filename=' . $fileName);
@@ -354,11 +366,15 @@ class Actions {
             'routeArea' => $isAdmin ? 'admin' : ''
         ];
 
-        $controllerHelper = $this->get('«app.appService».controller_helper');
+        «IF !app.targets('3.0')»
+            $controllerHelper = $this->get('«app.appService».controller_helper');
+        «ENDIF»
         $templateParameters = $controllerHelper->processEditActionParameters($objectType, $templateParameters);
 
         // delegate form processing to the form handler
-        $formHandler = $this->get('«app.appService».form.handler.«name.formatForDB»');
+        «IF !app.targets('3.0')»
+            $formHandler = $this->get('«app.appService».form.handler.«name.formatForDB»');
+        «ENDIF»
         $result = $formHandler->processForm($templateParameters);
         if ($result instanceof RedirectResponse) {
             return $result;
@@ -367,15 +383,17 @@ class Actions {
         $templateParameters = $formHandler->getTemplateParameters();
 
         // fetch and return the appropriate template
-        return $this->get('«app.appService».view_helper')->processTemplate($objectType, 'edit', $templateParameters);
+        return «IF app.targets('3.0')»$viewHelper«ELSE»$this->get('«app.appService».view_helper')«ENDIF»->processTemplate($objectType, 'edit', $templateParameters);
     '''
 
     def private dispatch actionImplBody(Entity it, DeleteAction action) '''
         $logger = $this->get('logger');
-        $logArgs = ['app' => '«app.appName»', 'user' => $this->get('zikula_users_module.current_user')->get('uname'), 'entity' => '«name.formatForDisplay»', 'id' => $«name.formatForCode»->getKey()];
+        $logArgs = ['app' => '«app.appName»', 'user' => «IF app.targets('3.0')»$currentUserApi«ELSE»$this->get('zikula_users_module.current_user')«ENDIF»->get('uname'), 'entity' => '«name.formatForDisplay»', 'id' => $«name.formatForCode»->getKey()];
 
         // determine available workflow actions
-        $workflowHelper = $this->get('«app.appService».workflow_helper');
+        «IF !app.targets('3.0')»
+            $workflowHelper = $this->get('«app.appService».workflow_helper');
+        «ENDIF»
         $actions = $workflowHelper->getActionsForObject($«name.formatForCode»);
         if (false === $actions || !is_array($actions)) {
             $this->addFlash('error', $this->__('Error! Could not determine workflow actions.'));
@@ -406,8 +424,10 @@ class Actions {
         $form = $this->createForm(DeletionType::class, $«name.formatForCode»);
         «IF !skipHookSubscribers»
             if ($«name.formatForCode»->supportsHookSubscribers()) {
-                $hookHelper = $this->get('«app.appService».hook_helper');
+                «IF !app.targets('3.0')»
+                    $hookHelper = $this->get('«app.appService».hook_helper');
 
+                «ENDIF»
                 // Call form aware display hooks
                 $formHook = $hookHelper->callFormDisplayHooks($form, $«name.formatForCode», FormAwareCategory::TYPE_DELETE);
             }
@@ -435,11 +455,13 @@ class Actions {
             }
     	«ENDIF»
 
-        $controllerHelper = $this->get('«app.appService».controller_helper');
+        «IF !app.targets('3.0')»
+            $controllerHelper = $this->get('«app.appService».controller_helper');
+        «ENDIF»
         $templateParameters = $controllerHelper->processDeleteActionParameters($objectType, $templateParameters«IF app.hasHookSubscribers», «(!skipHookSubscribers).displayBool»«ENDIF»);
 
         // fetch and return the appropriate template
-        return $this->get('«app.appService».view_helper')->processTemplate($objectType, 'delete', $templateParameters);
+        return «IF app.targets('3.0')»$viewHelper«ELSE»$this->get('«app.appService».view_helper')«ENDIF»->processTemplate($objectType, 'delete', $templateParameters);
     '''
 
     def private deletionProcess(Entity it, DeleteAction action) '''

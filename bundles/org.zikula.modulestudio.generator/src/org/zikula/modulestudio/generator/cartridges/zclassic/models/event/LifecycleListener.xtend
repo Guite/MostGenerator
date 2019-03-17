@@ -41,11 +41,27 @@ class LifecycleListener {
         use Symfony\Component\DependencyInjection\ContainerInterface;
         use Symfony\Component\EventDispatcher\Event;
         use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+        «IF targets('3.0') && hasLoggable»
+            use Zikula\Common\Translator\Translator;
+        «ENDIF»
         use Zikula\Core\Doctrine\EntityAccess;
+        «IF targets('3.0') && hasLoggable»
+            use Zikula\ExtensionsModule\Api\VariableApi;
+            use Zikula\UsersModule\Api\CurrentUserApi;
+        «ENDIF»
         use «appNamespace»\«name.formatForCodeCapital»Events;
+        «IF targets('3.0') && hasLoggable»
+            use «appNamespace»\Entity\Factory\EntityFactory;
+        «ENDIF»
         «FOR entity : getAllEntities»
             use «appNamespace»\Event\Filter«entity.name.formatForCodeCapital»Event;
         «ENDFOR»
+        «IF targets('3.0') && !getUploadEntities.empty»
+            use «appNamespace»\Helper\UploadHelper;
+        «ENDIF»
+        «IF targets('3.0') && hasLoggable»
+            use «appNamespace»\Listener\LoggableListener;
+        «ENDIF»
 
         /**
          * Event subscriber base class for entity lifecycle events.
@@ -67,9 +83,9 @@ class LifecycleListener {
             /**
              * EntityLifecycleListener constructor.
              *
-             * @param ContainerInterface       $container
-             * @param EventDispatcherInterface $eventDispatcher EventDispatcher service instance
-             * @param LoggerInterface          $logger          Logger service instance
+             * @param ContainerInterface $container
+             * @param EventDispatcherInterface $eventDispatcher
+             * @param LoggerInterface $logger
              */
             public function __construct(
                 ContainerInterface $container,
@@ -341,8 +357,8 @@ class LifecycleListener {
                         return;
                     }
 
-                    $entityManager = $this->container->get('«appService».entity_factory')->getObjectManager();
-                    $variableApi = $this->container->get('zikula_extensions_module.api.variable');
+                    $entityManager = $this->container->get(«IF targets('3.0')»EntityFactory::class«ELSE»'«appService».entity_factory'«ENDIF»)->getEntityManager();
+                    $variableApi = $this->container->get(«IF targets('3.0')»VariableApi::class«ELSE»'zikula_extensions_module.api.variable'«ENDIF»);
                     $objectTypeCapitalised = ucfirst($objectType);
 
                     $revisionHandling = $variableApi->get('«appName»', 'revisionHandlingFor' . $objectTypeCapitalised, 'unlimited');
@@ -362,9 +378,9 @@ class LifecycleListener {
                  */
                 protected function activateCustomLoggableListener()
                 {
-                    $entityManager = $this->container->get('«appService».entity_factory')->getObjectManager();
+                    $entityManager = $this->container->get(«IF targets('3.0')»EntityFactory::class«ELSE»'«appService».entity_factory'«ENDIF»)->getEntityManager();
                     $eventManager = $entityManager->getEventManager();
-                    $customLoggableListener = $this->container->get('«appService».loggable_listener');
+                    $customLoggableListener = $this->container->get(«IF targets('3.0')»LoggableListener::class«ELSE»'«appService».loggable_listener'«ENDIF»);
 
                     «IF hasTranslatable»
                         $hasLoggableActivated = false;
@@ -389,8 +405,8 @@ class LifecycleListener {
                         }
                     «ENDIF»
 
-                    $currentUserApi = $this->container->get('zikula_users_module.current_user');
-                    $userName = $currentUserApi->isLoggedIn() ? $currentUserApi->get('uname') : $this->container->get('translator.default')->__('Guest');
+                    $currentUserApi = $this->container->get(«IF targets('3.0')»CurrentUserApi::class«ELSE»'zikula_users_module.current_user'«ENDIF»);
+                    $userName = $currentUserApi->isLoggedIn() ? $currentUserApi->get('uname') : $this->container->get(«IF targets('3.0')»Translator::class«ELSE»'translator.default'«ENDIF»)->__('Guest');
 
                     $customLoggableListener->setUsername($userName);
 

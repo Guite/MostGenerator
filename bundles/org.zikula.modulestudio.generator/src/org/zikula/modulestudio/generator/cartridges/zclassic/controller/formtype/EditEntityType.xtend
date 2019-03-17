@@ -176,27 +176,27 @@ class EditEntityType {
             /**
              * «name.formatForCodeCapital»Type constructor.
              *
-             * @param TranslatorInterface $translator «IF isTranslatable» «ENDIF»   Translator service instance
-             * @param EntityFactory $entityFactory EntityFactory service instance
+             * @param TranslatorInterface $translator
+             * @param EntityFactory $entityFactory
              «IF !incoming.empty || !outgoing.empty»
-             * @param CollectionFilterHelper $collectionFilterHelper CollectionFilterHelper service instance
-             * @param EntityDisplayHelper $entityDisplayHelper EntityDisplayHelper service instance
+             * @param CollectionFilterHelper $collectionFilterHelper
+             * @param EntityDisplayHelper $entityDisplayHelper
              «ENDIF»
              «IF isTranslatable»
-             * @param VariableApiInterface $variableApi VariableApi service instance
-             * @param TranslatableHelper $translatableHelper TranslatableHelper service instance
+             * @param VariableApiInterface $variableApi
+             * @param TranslatableHelper $translatableHelper
              «ENDIF»
              «IF hasListFieldsEntity»
-             * @param ListEntriesHelper $listHelper ListEntriesHelper service instance
+             * @param ListEntriesHelper $listHelper
              «ENDIF»
              «IF hasUploadFieldsEntity»
-             * @param UploadHelper $uploadHelper UploadHelper service instance
+             * @param UploadHelper $uploadHelper
              «ENDIF»
              «IF hasLocaleFieldsEntity»
-             * @param LocaleApiInterface $localeApi LocaleApi service instance
+             * @param LocaleApiInterface $localeApi
              «ENDIF»
              «IF app.needsFeatureActivationHelper»
-             * @param FeatureActivationHelper $featureActivationHelper FeatureActivationHelper service instance
+             * @param FeatureActivationHelper $featureActivationHelper
              «ENDIF»
              */
             public function __construct(

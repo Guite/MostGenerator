@@ -25,7 +25,7 @@ class EventAction {
             // prepare helper fields for uploaded files
             $uploadFields = $this->getUploadFields(«entityVar»->get_objectType());
             if (count($uploadFields) > 0) {
-                $uploadHelper = $this->container->get('«appService».upload_helper');
+                $uploadHelper = $this->container->get(«IF targets('3.0')»UploadHelper::class«ELSE»'«appService».upload_helper'«ENDIF»);
                 $request = $this->container->get('request_stack')->getCurrentRequest();
                 $baseUrl = $request->getSchemeAndHttpHost() . $request->getBasePath();
 
@@ -71,7 +71,7 @@ class EventAction {
                     return;
                 }
 
-                $repository = $this->container->get('«appService».entity_factory')->getObjectManager()->getRepository(«entityVar»->getObjectClass());
+                $repository = $this->container->get(«IF targets('3.0')»EntityFactory::class«ELSE»'«appService».entity_factory'«ENDIF»)->getEntityManager()->getRepository(«entityVar»->getObjectClass());
                 $object = $repository->find(«entityVar»->getObjectId());
                 if (null === $object || !method_exists($object, 'get_objectType')) {
                     return;
@@ -101,7 +101,7 @@ class EventAction {
 
     def postPersist(Application it) '''
 
-        $currentUserApi = $this->container->get('zikula_users_module.current_user');
+        $currentUserApi = $this->container->get(«IF targets('3.0')»CurrentUserApi::class«ELSE»'zikula_users_module.current_user'«ENDIF»);
         $logArgs = ['app' => '«appName»', 'user' => $currentUserApi->get('uname'), 'entity' => «entityVar»->get_objectType(), 'id' => «entityVar»->getKey()];
         $this->logger->debug('{app}: User {user} created the {entity} with id {id}.', $logArgs);
         «IF hasLoggable»
@@ -131,7 +131,7 @@ class EventAction {
 
             $uploadFields = $this->getUploadFields($objectType);
             if (count($uploadFields) > 0) {
-                $uploadHelper = $this->container->get('«appService».upload_helper');
+                $uploadHelper = $this->container->get(«IF targets('3.0')»UploadHelper::class«ELSE»'«appService».upload_helper'«ENDIF»);
                 foreach ($uploadFields as $fieldName) {
                     if (empty(«entityVar»[$fieldName])) {
                         continue;
@@ -147,7 +147,7 @@ class EventAction {
             $this->purgeHistory($objectType);
         «ENDIF»
 
-        $currentUserApi = $this->container->get('zikula_users_module.current_user');
+        $currentUserApi = $this->container->get(«IF targets('3.0')»CurrentUserApi::class«ELSE»'zikula_users_module.current_user'«ENDIF»);
         $logArgs = ['app' => '«appName»', 'user' => $currentUserApi->get('uname'), 'entity' => $objectType, 'id' => «entityVar»->getKey()];
         $this->logger->debug('{app}: User {user} removed the {entity} with id {id}.', $logArgs);
 
@@ -168,7 +168,7 @@ class EventAction {
 
     def postUpdate(Application it) '''
 
-        $currentUserApi = $this->container->get('zikula_users_module.current_user');
+        $currentUserApi = $this->container->get(«IF targets('3.0')»CurrentUserApi::class«ELSE»'zikula_users_module.current_user'«ENDIF»);
         $logArgs = ['app' => '«appName»', 'user' => $currentUserApi->get('uname'), 'entity' => «entityVar»->get_objectType(), 'id' => «entityVar»->getKey()];
         $this->logger->debug('{app}: User {user} updated the {entity} with id {id}.', $logArgs);
         «IF hasLoggable»

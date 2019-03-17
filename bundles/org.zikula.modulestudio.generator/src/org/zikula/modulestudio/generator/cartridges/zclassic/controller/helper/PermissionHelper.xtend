@@ -18,9 +18,6 @@ class PermissionHelper {
     def private permissionHelperBaseClass(Application it) '''
         namespace «appNamespace»\Helper\Base;
 
-        use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-        use Symfony\Component\DependencyInjection\ContainerAwareTrait;
-        use Symfony\Component\DependencyInjection\ContainerInterface;
         use Symfony\Component\HttpFoundation\RequestStack;
         «IF hasLoggable»
             use Zikula\ExtensionsModule\Api\ApiInterface\VariableApiInterface;
@@ -33,15 +30,13 @@ class PermissionHelper {
         /**
          * Permission helper base class.
          */
-        abstract class AbstractPermissionHelper implements ContainerAwareInterface
+        abstract class AbstractPermissionHelper
         {
             «helperBaseImpl»
         }
     '''
 
     def private helperBaseImpl(Application it) '''
-        use ContainerAwareTrait;
-
         /**
          * @var RequestStack
          */
@@ -72,17 +67,15 @@ class PermissionHelper {
         /**
          * PermissionHelper constructor.
          *
-         * @param ContainerInterface      $container
-         * @param RequestStack            $requestStack   RequestStack service instance
-         * @param PermissionApiInterface  $permissionApi  PermissionApi service instance
+         * @param RequestStack $requestStack
+         * @param PermissionApiInterface $permissionApi
          «IF hasLoggable»
-         * @param VariableApiInterface    $variableApi    VariableApi service instance
+         * @param VariableApiInterface $variableApi
          «ENDIF»
-         * @param CurrentUserApiInterface $currentUserApi CurrentUserApi service instance
-         * @param UserRepositoryInterface $userRepository UserRepository service instance
+         * @param CurrentUserApiInterface $currentUserApi
+         * @param UserRepositoryInterface $userRepository
          */
         public function __construct(
-            ContainerInterface $container,
             RequestStack $requestStack,
             PermissionApiInterface $permissionApi,
             «IF hasLoggable»
@@ -91,7 +84,6 @@ class PermissionHelper {
             CurrentUserApiInterface $currentUserApi,
             UserRepositoryInterface $userRepository
         ) {
-            $this->setContainer($container);
             $this->requestStack = $requestStack;
             $this->permissionApi = $permissionApi;
             «IF hasLoggable»

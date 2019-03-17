@@ -31,7 +31,6 @@ class SearchHelper {
         use Symfony\Component\Form\Extension\Core\Type\HiddenType;
         use Symfony\Component\Form\FormBuilderInterface;
         use Symfony\Component\HttpFoundation\RequestStack;
-        use Symfony\Component\HttpFoundation\Session\SessionInterface;
         use Zikula\Common\Translator\TranslatorInterface;
         use Zikula\Common\Translator\TranslatorTrait;
         use Zikula\Core\RouteUrl;
@@ -59,11 +58,6 @@ class SearchHelper {
 
     def private helperBaseImpl(Application it) '''
         use TranslatorTrait;
-
-        /**
-         * @var SessionInterface
-         */
-        protected $session;
 
         /**
          * @var RequestStack
@@ -105,21 +99,19 @@ class SearchHelper {
         /**
          * SearchHelper constructor.
          *
-         * @param TranslatorInterface $translator          Translator service instance
-         * @param SessionInterface    $session             Session service instance
-         * @param RequestStack        $requestStack        RequestStack service instance
-         * @param EntityFactory       $entityFactory       EntityFactory service instance
-         * @param ControllerHelper    $controllerHelper    ControllerHelper service instance
-         * @param EntityDisplayHelper $entityDisplayHelper EntityDisplayHelper service instance
-         * @param PermissionHelper    $permissionHelper    PermissionHelper service instance
+         * @param TranslatorInterface $translator
+         * @param RequestStack $requestStack
+         * @param EntityFactory $entityFactory
+         * @param ControllerHelper $controllerHelper
+         * @param EntityDisplayHelper $entityDisplayHelper
+         * @param PermissionHelper $permissionHelper
          «IF hasCategorisableEntities»
-         * @param FeatureActivationHelper $featureActivationHelper FeatureActivationHelper service instance
-         * @param CategoryHelper      $categoryHelper      CategoryHelper service instance
+         * @param FeatureActivationHelper $featureActivationHelper
+         * @param CategoryHelper $categoryHelper
          «ENDIF»
          */
         public function __construct(
             TranslatorInterface $translator,
-            SessionInterface $session,
             RequestStack $requestStack,
             EntityFactory $entityFactory,
             ControllerHelper $controllerHelper,
@@ -129,7 +121,6 @@ class SearchHelper {
             CategoryHelper $categoryHelper«ENDIF»
         ) {
             $this->setTranslator($translator);
-            $this->session = $session;
             $this->requestStack = $requestStack;
             $this->entityFactory = $entityFactory;
             $this->controllerHelper = $controllerHelper;
@@ -283,6 +274,7 @@ class SearchHelper {
                 $descriptionFieldName = $this->entityDisplayHelper->getDescriptionFieldName($objectType);
                 $hasDisplayAction = in_array($objectType, $entitiesWithDisplayAction);
 
+                $session = $this->requestStack->getCurrentRequest()->getSession();
                 foreach ($entities as $entity) {
                     if (!$this->permissionHelper->mayRead($entity)) {
                         continue;
@@ -312,9 +304,9 @@ class SearchHelper {
                     $result = new SearchResultEntity();
                     $result->setTitle($formattedTitle)
                         ->setText($description)
-                        ->setModule('«appName»')
+                        ->setModule(«IF targets('3.0')»$this->getBundleName()«ELSE»'«appName»'«ENDIF»)
                         ->setCreated($created)
-                        ->setSesid($this->session->getId());
+                        ->setSesid($session->getId());
                     if (null !== $displayUrl) {
                         $result->setUrl($displayUrl);
                     }
@@ -370,6 +362,16 @@ class SearchHelper {
 
             return $where;
         }
+        «IF targets('3.0')»
+
+            /**
+             * @inheritDoc
+             */
+            public function getBundleName()
+            {
+                return '«appName»';
+            }
+        «ENDIF»
     '''
 
     def private searchHelperImpl(Application it) '''

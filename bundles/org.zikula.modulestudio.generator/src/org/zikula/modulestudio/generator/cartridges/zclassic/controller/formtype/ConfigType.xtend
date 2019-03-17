@@ -73,15 +73,15 @@ class ConfigType {
             /**
              * ConfigType constructor.
              *
-             * @param TranslatorInterface $translator Translator service instance
+             * @param TranslatorInterface $translator
              «IF !getAllVariables.filter(ListField).empty»
-             * @param ListEntriesHelper $listHelper ListEntriesHelper service instance
+             * @param ListEntriesHelper $listHelper
              «ENDIF»
              «IF hasUploadVariables»
-             * @param UploadHelper $uploadHelper UploadHelper service instance
+             * @param UploadHelper $uploadHelper
              «ENDIF»
              «IF !getAllVariables.filter(StringField).filter[role == StringRole.LOCALE].empty»
-             * @param LocaleApiInterface $localeApi LocaleApi service instance
+             * @param LocaleApiInterface $localeApi
              «ENDIF»
              */
             public function __construct(

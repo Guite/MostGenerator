@@ -33,10 +33,10 @@ class ModuleInstallerListener {
              * InstallerListener constructor.
              *
              «IF amountOfExampleRows > 0»
-             * @param ExampleDataHelper $exampleDataHelper Example data helper service instance
+             * @param ExampleDataHelper $exampleDataHelper
              «ENDIF»
              «IF hasUiHooksProviders»
-             * @param EntityFactory $entityFactory EntityFactory service instance
+             * @param EntityFactory $entityFactory
              «ENDIF»
              */
             public function __construct(
@@ -170,7 +170,7 @@ class ModuleInstallerListener {
                 }
 
                 // delete any existing hook assignments for the removed module
-                $qb = $this->entityFactory->getObjectManager()->createQueryBuilder();
+                $qb = $this->entityFactory->getEntityManager()->createQueryBuilder();
                 $qb->delete('«vendor.formatForCodeCapital + '\\' + name.formatForCodeCapital + 'Module\\Entity\\HookAssignmentEntity'»', 'tbl')
                    ->where('tbl.subscriberOwner = :moduleName')
                    ->setParameter('moduleName', $module->getName());

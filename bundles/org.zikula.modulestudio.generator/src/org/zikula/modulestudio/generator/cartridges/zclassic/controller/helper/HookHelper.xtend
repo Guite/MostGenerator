@@ -122,7 +122,7 @@ class HookHelper {
         /**
          * HookHelper constructor.
          *
-         * @param HookDispatcherInterface $hookDispatcher Hook dispatcher service instance
+         * @param HookDispatcherInterface $hookDispatcher
          */
         public function __construct(HookDispatcherInterface $hookDispatcher)
         {
@@ -274,7 +274,7 @@ class HookHelper {
                 $this->translator = $translator;
             }
 
-            «commonMethods(application, name, category, 'subscriber')»
+            «commonMethods(application, name, category, 'subscriber', nameMultiple.formatForDB)»
 
             /**
              * @inheritDoc
@@ -373,7 +373,7 @@ class HookHelper {
                 $this->translator = $translator;
             }
 
-            «commonMethods(name, 'FilterHooks', 'provider')»
+            «commonMethods(name, 'FilterHooks', 'provider', name.formatForDB)»
 
             /**
              * @inheritDoc
@@ -426,10 +426,11 @@ class HookHelper {
 
         «IF category == 'FormAware'»
             use Symfony\Component\Form\FormFactoryInterface;
-            use Symfony\Component\HttpFoundation\Session\SessionInterface;
         «ELSEIF category == 'UiHooks'»
             use Doctrine\ORM\QueryBuilder;
-            use Symfony\Component\HttpFoundation\RequestStack;
+        «ENDIF»
+        use Symfony\Component\HttpFoundation\RequestStack;
+        «IF category == 'UiHooks'»
             use Twig«IF application.targets('3.0')»\«ELSE»_«ENDIF»Environment;
         «ENDIF»
         use Zikula\Bundle\HookBundle\Category\«category»Category;
@@ -469,22 +470,17 @@ class HookHelper {
              */
             protected $translator;
 
-            «IF category == 'FormAware'»
-                /**
-                 * @var SessionInterface
-                 */
-                protected $session;
+            /**
+             * @var RequestStack
+             */
+            protected $requestStack;
 
+            «IF category == 'FormAware'»
                 /**
                  * @var FormFactoryInterface
                  */
                 protected $formFactory;
             «ELSEIF category == 'UiHooks'»
-                /**
-                 * @var RequestStack
-                 */
-                protected $requestStack;
-
                 /**
                  * @var EntityFactory
                  */
@@ -511,32 +507,25 @@ class HookHelper {
             /**
              * «name.formatForCodeCapital»«providerType»Provider constructor.
              *
+             * @param TranslatorInterface $translator
+             * @param RequestStack $requestStack
              «IF category == 'FormAware'»
-             * @param TranslatorInterface  $translator
-             * @param SessionInterface     $session
              * @param FormFactoryInterface $formFactory
              «ELSEIF category == 'UiHooks'»
-             * @param TranslatorInterface $translator
-             * @param RequestStack        $requestStack
-             * @param EntityFactory       $entityFactory
-             «IF application.targets('3.0')»
-             * @param Environment         $twig
-             «ELSE»
-             * @param Twig_Environment    $twig
-             «ENDIF»
-             * @param PermissionHelper    $permissionHelper
+             * @param EntityFactory $entityFactory
+             * @param «IF !application.targets('3.0')»Twig_«ENDIF»Environment $twig
+             * @param PermissionHelper $permissionHelper
              «IF !application.getUploadEntities.empty»
-             * @param ImageHelper         $imageHelper
+             * @param ImageHelper $imageHelper
              «ENDIF»
              «ENDIF»
              */
             public function __construct(
                 TranslatorInterface $translator,
+                RequestStack $requestStack,
                 «IF category == 'FormAware'»
-                    SessionInterface $session,
                     FormFactoryInterface $formFactory
                 «ELSEIF category == 'UiHooks'»
-                    RequestStack $requestStack,
                     EntityFactory $entityFactory,
                     «IF !application.targets('3.0')»Twig_«ENDIF»Environment $twig,
                     PermissionHelper $permissionHelper«IF !application.getUploadEntities.empty»,«ENDIF»
@@ -546,11 +535,10 @@ class HookHelper {
                 «ENDIF»
             ) {
                 $this->translator = $translator;
+                $this->requestStack = $requestStack;
                 «IF category == 'FormAware'»
-                    $this->session = $session;
                     $this->formFactory = $formFactory;
                 «ELSEIF category == 'UiHooks'»
-                    $this->requestStack = $requestStack;
                     $this->entityFactory = $entityFactory;
                     $this->templating = $twig;
                     $this->permissionHelper = $permissionHelper;
@@ -560,7 +548,7 @@ class HookHelper {
                 «ENDIF»
             }
 
-            «commonMethods(application, name, category, 'provider')»
+            «commonMethods(application, name, category, 'provider', nameMultiple.formatForDB)»
 
             /**
              * @inheritDoc
@@ -612,7 +600,8 @@ class HookHelper {
                 {
                     $innerForm = $hook->getFormData('«application.appName.formatForDB»_hook_edit«name.formatForDB»form');
                     $dummyOutput = $innerForm['dummyName'] . ' (Option ' . $innerForm['dummyChoice'] . ')';
-                    $this->session->getFlashBag()->add('success', sprintf('The «name.formatForCodeCapital»«providerType»Provider edit form was processed and the answer was %s', $dummyOutput));
+                    $session = $this->requestStack->getCurrentRequest()->getSession();
+                    $session->getFlashBag()->add('success', sprintf('The «name.formatForCodeCapital»«providerType»Provider edit form was processed and the answer was %s', $dummyOutput));
                 }
 
                 /**
@@ -641,7 +630,8 @@ class HookHelper {
                 {
                     $innerForm = $hook->getFormData('«application.appName.formatForDB»_hook_delete«name.formatForDB»form');
                     $dummyOutput = $innerForm['dummyName'] . ' (Option ' . $innerForm['dummyChoice'] . ')';
-                    $this->session->getFlashBag()->add('success', sprintf('The «name.formatForCodeCapital»«providerType»Provider delete form was processed and the answer was %s', $dummyOutput));
+                    $session = $this->requestStack->getCurrentRequest()->getSession();
+                    $session->getFlashBag()->add('success', sprintf('The «name.formatForCodeCapital»«providerType»Provider delete form was processed and the answer was %s', $dummyOutput));
                 }
             «ELSEIF category == 'UiHooks'»
                 /**
@@ -689,7 +679,7 @@ class HookHelper {
                     }
                     $url = $url->toArray();
 
-                    $entityManager = $this->entityFactory->getObjectManager();
+                    $entityManager = $this->entityFactory->getEntityManager();
 
                     // update url information for assignments of updated data object
                     $qb = $entityManager->createQueryBuilder();
@@ -736,7 +726,7 @@ class HookHelper {
                 public function processDelete(ProcessHook $hook)
                 {
                     // delete assignments of removed data object
-                    $qb = $this->entityFactory->getObjectManager()->createQueryBuilder();
+                    $qb = $this->entityFactory->getEntityManager()->createQueryBuilder();
                     $qb->delete($this->getHookAssignmentEntity(), 'tbl');
                     $qb = $this->addContextFilters($qb, $hook);
 
@@ -814,7 +804,7 @@ class HookHelper {
                  */
                 protected function selectAssignedIds(Hook $hook)
                 {
-                    $qb = $this->entityFactory->getObjectManager()->createQueryBuilder();
+                    $qb = $this->entityFactory->getEntityManager()->createQueryBuilder();
                     $qb->select('tbl')
                        ->from($this->getHookAssignmentEntity(), 'tbl');
                     $qb = $this->addContextFilters($qb, $hook);
@@ -874,7 +864,7 @@ class HookHelper {
         }
     '''
 
-    def private commonMethods(Application it, String group, String category, String type) '''
+    def private commonMethods(Application it, String group, String category, String type, String areaSuffix) '''
         /**
          * @inheritDoc
          */
@@ -898,5 +888,15 @@ class HookHelper {
         {
             return $this->translator->__('«group.formatForDisplayCapital» «category.formatForDisplay» «type»');
         }
+        «IF targets('3.0')»
+
+            /**
+             * @inheritDoc
+             */
+            public function getAreaName()
+            {
+                return '«type».«appName.formatForDB».«IF category == 'FilterHooks'»filter_hooks«ELSEIF category == 'FormAware'»form_aware_hook«ELSEIF category == 'UiHooks'»ui_hooks«ENDIF».«areaSuffix»';
+            }
+        «ENDIF»
     '''
 }

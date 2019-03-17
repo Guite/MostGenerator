@@ -163,35 +163,35 @@ class ControllerHelper {
         /**
          * ControllerHelper constructor.
          *
-         * @param TranslatorInterface $translator       Translator service instance
-         * @param RequestStack        $requestStack     RequestStack service instance
+         * @param TranslatorInterface $translator
+         * @param RequestStack $requestStack
          «IF hasAutomaticArchiving»
-         * @param ArchiveHelper       $archiveHelper    ArchiveHelper service instance
+         * @param ArchiveHelper $archiveHelper
          «ENDIF»
          «IF hasUiHooksProviders»
-         * @param Routerinterface     $router           Router service instance
+         * @param Routerinterface $router
          «ENDIF»
          «IF hasViewActions»
-         * @param FormFactoryInterface $formFactory     FormFactory service instance
+         * @param FormFactoryInterface $formFactory
          «ENDIF»
          «IF hasViewActions»
-         * @param VariableApiInterface $variableApi     VariableApi service instance
+         * @param VariableApiInterface $variableApi
          «ENDIF»
          «IF hasGeographical»
-         * @param LoggerInterface     $logger           Logger service instance
-         * @param CurrentUserApiInterface $currentUserApi  CurrentUserApi service instance
+         * @param LoggerInterface $logger
+         * @param CurrentUserApiInterface $currentUserApi
          «ENDIF»
-         * @param EntityFactory       $entityFactory    EntityFactory service instance
-         * @param CollectionFilterHelper $collectionFilterHelper CollectionFilterHelper service instance
-         * @param PermissionHelper    $permissionHelper PermissionHelper service instance
+         * @param EntityFactory $entityFactory
+         * @param CollectionFilterHelper $collectionFilterHelper
+         * @param PermissionHelper $permissionHelper
          «IF hasViewActions && hasEditActions»
-         * @param ModelHelper         $modelHelper      ModelHelper service instance
+         * @param ModelHelper $modelHelper
          «ENDIF»
          «IF !getUploadEntities.empty»
-         * @param ImageHelper         $imageHelper      ImageHelper service instance
+         * @param ImageHelper $imageHelper
          «ENDIF»
          «IF needsFeatureActivationHelper»
-         * @param FeatureActivationHelper $featureActivationHelper FeatureActivationHelper service instance
+         * @param FeatureActivationHelper $featureActivationHelper
          «ENDIF»
          */
         public function __construct(
@@ -538,7 +538,7 @@ class ControllerHelper {
             «IF hasUiHooksProviders»
 
                 if (in_array($objectType, ['«getAllEntities.filter[uiHooksProvider != HookProviderMode.DISABLED].map[name.formatForCode].join('\', \'')»'])) {
-                    $qb = $this->entityFactory->getObjectManager()->createQueryBuilder();
+                    $qb = $this->entityFactory->getEntityManager()->createQueryBuilder();
                     $qb->select('tbl')
                        ->from('«vendor.formatForCodeCapital + '\\' + name.formatForCodeCapital + 'Module\\Entity\\HookAssignmentEntity'»', 'tbl')
                        ->where('tbl.assignedEntity = :objectType')

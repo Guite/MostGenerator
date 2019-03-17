@@ -30,8 +30,14 @@ class BlockDetail {
         namespace «appNamespace»\Block\Base;
 
         use Symfony\Component\HttpKernel\Controller\ControllerReference;
+        «IF targets('3.0')»
+            use Symfony\Component\HttpKernel\Fragment\FragmentHandler;
+        «ENDIF»
         use Zikula\BlocksModule\AbstractBlockHandler;
         use «appNamespace»\Block\Form\Type\ItemBlockType;
+        «IF targets('3.0')»
+            use «appNamespace»\Helper\ControllerHelper;
+        «ENDIF»
 
         /**
          * Generic item detail block base class.
@@ -43,6 +49,18 @@ class BlockDetail {
     '''
 
     def private detailBlockBaseImpl(Application it) '''
+        «IF targets('3.0')»
+            /**
+             * @var ControllerHelper
+             */
+            protected $controllerHelper;
+
+            /**
+             * @var FragmentHandler
+             */
+            protected $fragmentHandler;
+
+        «ENDIF»
         /**
          * @inheritDoc
          */
@@ -71,6 +89,26 @@ class BlockDetail {
                 'customTemplate' => null
             ];
         }
+        «IF targets('3.0')»
+
+            /**
+             * @required
+             * @param ControllerHelper $controllerHelper
+             */
+            public function setControllerHelper(ControllerHelper $controllerHelper)
+            {
+                $this->controllerHelper = $controllerHelper;
+            }
+
+            /**
+             * @required
+             * @param FragmentHandler $fragmentHandler
+             */
+            public function setFragmentHandler(FragmentHandler $fragmentHandler)
+            {
+                $this->fragmentHandler = $fragmentHandler;
+            }
+        «ENDIF»
     '''
 
     def private display(Application it) '''
@@ -92,15 +130,22 @@ class BlockDetail {
                 return '';
             }
 
-            $controllerHelper = $this->get('«appService».controller_helper');
-            $contextArgs = ['name' => 'detail'];
-            if (!isset($properties['objectType']) || !in_array($properties['objectType'], $controllerHelper->getObjectTypes('block', $contextArgs))) {
-                $properties['objectType'] = $controllerHelper->getDefaultObjectType('block', $contextArgs);
-            }
+            «IF targets('3.0')»
+                $contextArgs = ['name' => 'detail'];
+                if (!isset($properties['objectType']) || !in_array($properties['objectType'], $this->controllerHelper->getObjectTypes('block', $contextArgs))) {
+                    $properties['objectType'] = $this->controllerHelper->getDefaultObjectType('block', $contextArgs);
+                }
+            «ELSE»
+                $controllerHelper = $this->get('«appService».controller_helper');
+                $contextArgs = ['name' => 'detail'];
+                if (!isset($properties['objectType']) || !in_array($properties['objectType'], $controllerHelper->getObjectTypes('block', $contextArgs))) {
+                    $properties['objectType'] = $controllerHelper->getDefaultObjectType('block', $contextArgs);
+                }
+            «ENDIF»
 
             $controllerReference = new ControllerReference('«appName»:External:display', $this->getDisplayArguments($properties), ['template' => $properties['customTemplate']]);
 
-            return $this->get('fragment.handler')->render($controllerReference, 'inline', []);
+            return $this->«IF targets('3.0')»fragmentHandler«ELSE»get('fragment.handler')«ENDIF»->render($controllerReference, 'inline', []);
         }
     '''
 
@@ -139,7 +184,7 @@ class BlockDetail {
         {
             $objectType = '«leadingEntity.name.formatForCode»';
 
-            $request = $this->get('request_stack')->getCurrentRequest();
+            $request = $this->«IF targets('3.0')»requestStack«ELSE»get('request_stack')«ENDIF»->getCurrentRequest();
             if ($request->attributes->has('blockEntity')) {
                 $blockEntity = $request->attributes->get('blockEntity');
                 if (is_object($blockEntity) && method_exists($blockEntity, 'getProperties')) {

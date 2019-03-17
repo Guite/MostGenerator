@@ -406,32 +406,32 @@ class FormHandler {
             /**
              * «actionName.formatForCodeCapital»Handler constructor.
              *
-             * @param ZikulaHttpKernelInterface $kernel           Kernel service instance
-             * @param TranslatorInterface       $translator       Translator service instance
-             * @param FormFactoryInterface      $formFactory      FormFactory service instance
-             * @param RequestStack              $requestStack     RequestStack service instance
-             * @param RouterInterface           $router           Router service instance
-             * @param LoggerInterface           $logger           Logger service instance
+             * @param ZikulaHttpKernelInterface $kernel
+             * @param TranslatorInterface $translator
+             * @param FormFactoryInterface $formFactory
+             * @param RequestStack $requestStack
+             * @param RouterInterface $router
+             * @param LoggerInterface $logger
              «IF hasTranslatable || needsApproval || hasStandardFieldEntities»
-             * @param VariableApiInterface      $variableApi      VariableApi service instance
+             * @param VariableApiInterface $variableApi
              «ENDIF»
-             * @param CurrentUserApiInterface   $currentUserApi   CurrentUserApi service instance
+             * @param CurrentUserApiInterface $currentUserApi
              «IF needsApproval»
-             * @param GroupApplicationRepository $groupApplicationRepository GroupApplicationRepository service instance.
+             * @param GroupApplicationRepository $groupApplicationRepository
              «ENDIF»
-             * @param EntityFactory             $entityFactory    EntityFactory service instance
-             * @param ControllerHelper          $controllerHelper ControllerHelper service instance
-             * @param ModelHelper               $modelHelper      ModelHelper service instance
-             * @param PermissionHelper          $permissionHelper PermissionHelper service instance
-             * @param WorkflowHelper            $workflowHelper   WorkflowHelper service instance
+             * @param EntityFactory $entityFactory
+             * @param ControllerHelper $controllerHelper
+             * @param ModelHelper $modelHelper
+             * @param PermissionHelper $permissionHelper
+             * @param WorkflowHelper $workflowHelper
              «IF hasHookSubscribers»
-             * @param HookHelper                $hookHelper       HookHelper service instance
+             * @param HookHelper $hookHelper
              «ENDIF»
              «IF hasTranslatable»
-             * @param TranslatableHelper        $translatableHelper TranslatableHelper service instance
+             * @param TranslatableHelper $translatableHelper
              «ENDIF»
              «IF needsFeatureActivationHelper»
-             * @param FeatureActivationHelper   $featureActivationHelper FeatureActivationHelper service instance
+             * @param FeatureActivationHelper $featureActivationHelper
              «ENDIF»
              */
             public function __construct(

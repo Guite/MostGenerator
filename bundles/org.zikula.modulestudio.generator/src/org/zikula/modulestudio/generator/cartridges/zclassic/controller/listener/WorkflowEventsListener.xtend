@@ -37,10 +37,10 @@ class WorkflowEventsListener {
         /**
          * WorkflowEventsListener constructor.
          *
-         * @param EntityFactory $entityFactory EntityFactory service instance
-         * @param PermissionHelper $permissionHelper PermissionHelper service instance
+         * @param EntityFactory $entityFactory
+         * @param PermissionHelper $permissionHelper
          «IF needsApproval»
-         * @param NotificationHelper $notificationHelper NotificationHelper service instance
+         * @param NotificationHelper $notificationHelper
          «ENDIF»
          */
         public function __construct(

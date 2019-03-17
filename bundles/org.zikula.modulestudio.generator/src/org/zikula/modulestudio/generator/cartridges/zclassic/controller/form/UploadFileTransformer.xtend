@@ -55,11 +55,11 @@ class UploadFileTransformer {
             /**
              * UploadFileTransformer constructor.
              *
-             * @param object       $entity       The containing entity
-             * @param UploadHelper $uploadHelper UploadHelper service instance
-             * @param string       $fieldName    The form field name
+             * @param object $entity
+             * @param UploadHelper $uploadHelper
+             * @param string $fieldName The form field name
              «IF hasUploadNamingScheme(UploadNamingScheme.USERDEFINEDWITHCOUNTER)»
-             * @param boolean      $customName   Whether a custom file name is supported or not
+             * @param boolean $customName Whether a custom file name is supported or not
              «ENDIF»
              */
             public function __construct($entity, UploadHelper $uploadHelper, $fieldName = ''«IF hasUploadNamingScheme(UploadNamingScheme.USERDEFINEDWITHCOUNTER)», $customName = false«ENDIF»)

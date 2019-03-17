@@ -70,11 +70,19 @@ class ComposerFile {
             "require-dev": {
                 "jakub-onderka/php-parallel-lint": "^1",
                 "pdepend/pdepend": "^2",
-                "phploc/phploc": "^4",
-                "phpmd/phpmd": "^2",
-                "phpunit/phpunit": "^5",
-                "sebastian/phpcpd": "^3",
-                "squizlabs/php_codesniffer": "^3",
+                «IF targets('3.0')»
+                    "phploc/phploc": "^5",
+                    "phpmd/phpmd": "^2",
+                    "phpunit/phpunit": "^8",
+                    "sebastian/phpcpd": "^4",
+                    "squizlabs/php_codesniffer": "^3",
+                «ELSE»
+                    "phploc/phploc": "^4",
+                    "phpmd/phpmd": "^2",
+                    "phpunit/phpunit": "^5",
+                    "sebastian/phpcpd": "^3",
+                    "squizlabs/php_codesniffer": "^3",
+                «ENDIF»
                 "theseer/phpdox": "^0"
             },
         «ENDIF»

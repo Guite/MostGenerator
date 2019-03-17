@@ -21,7 +21,7 @@ class IpTraceListener {
          * IpTraceListener constructor.
          *
          * @param IpTraceableListener $ipTraceableListener
-         * @param RequestStack        $requestStack
+         * @param RequestStack $requestStack
          */
         public function __construct(IpTraceableListener $ipTraceableListener, RequestStack $requestStack = null)
         {

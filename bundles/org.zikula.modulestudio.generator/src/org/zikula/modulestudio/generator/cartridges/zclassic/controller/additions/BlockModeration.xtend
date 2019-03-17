@@ -27,6 +27,9 @@ class BlockModeration {
         namespace «appNamespace»\Block\Base;
 
         use Zikula\BlocksModule\AbstractBlockHandler;
+        «IF targets('3.0')»
+            use Zikula\UsersModule\Api\ApiInterface\CurrentUserApiInterface;
+        «ENDIF»
 
         /**
          * Moderation block base class.
@@ -38,6 +41,13 @@ class BlockModeration {
     '''
 
     def private moderationBlockBaseImpl(Application it) '''
+        «IF targets('3.0')»
+            /**
+             * @var CurrentUserApiInterface
+             */
+            protected $currentUserApi;
+
+        «ENDIF»
         /**
          * @inheritDoc
          */
@@ -49,6 +59,17 @@ class BlockModeration {
         «display»
 
         «getDisplayTemplate»
+        «IF targets('3.0')»
+
+            /**
+             * @required
+             * @param CurrentUserApiInterface $currentUserApi
+             */
+            public function setCurrentUserApi(CurrentUserApiInterface $currentUserApi)
+            {
+                $this->currentUserApi = $currentUserApi;
+            }
+        «ENDIF»
     '''
 
     def private display(Application it) '''
@@ -62,10 +83,16 @@ class BlockModeration {
                 return '';
             }
 
-            $currentUserApi = $this->get('zikula_users_module.current_user');
-            if (!$currentUserApi->isLoggedIn()) {
-                return '';
-            }
+            «IF targets('3.0')»
+                if (!$this->currentUserApi->isLoggedIn()) {
+                    return '';
+                }
+            «ELSE»
+                $currentUserApi = $this->get('zikula_users_module.current_user');
+                if (!$currentUserApi->isLoggedIn()) {
+                    return '';
+                }
+            «ENDIF»
 
             $template = $this->getDisplayTemplate();
 

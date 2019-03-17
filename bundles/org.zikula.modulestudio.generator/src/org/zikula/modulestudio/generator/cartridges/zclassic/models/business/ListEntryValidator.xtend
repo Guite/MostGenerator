@@ -113,8 +113,8 @@ class ListEntryValidator {
             /**
              * ListEntryValidator constructor.
              *
-             * @param TranslatorInterface $translator        Translator service instance
-             * @param ListEntriesHelper   $listEntriesHelper ListEntriesHelper service instance
+             * @param TranslatorInterface $translator
+             * @param ListEntriesHelper $listEntriesHelper
              */
             public function __construct(TranslatorInterface $translator, ListEntriesHelper $listEntriesHelper)
             {

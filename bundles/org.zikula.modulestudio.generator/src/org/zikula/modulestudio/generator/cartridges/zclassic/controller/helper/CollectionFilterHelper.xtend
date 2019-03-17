@@ -42,9 +42,7 @@ class CollectionFilterHelper {
 
         use Doctrine\ORM\QueryBuilder;
         use Symfony\Component\HttpFoundation\RequestStack;
-        «IF !getAllEntities.filter[ownerPermission].empty»
-            use Zikula\ExtensionsModule\Api\ApiInterface\VariableApiInterface;
-        «ENDIF»
+        use Zikula\ExtensionsModule\Api\ApiInterface\VariableApiInterface;
         «IF hasStandardFieldEntities»
             use Zikula\UsersModule\Api\ApiInterface\CurrentUserApiInterface;
             use Zikula\UsersModule\Constant as UsersConstant;
@@ -113,21 +111,15 @@ class CollectionFilterHelper {
         /**
          * CollectionFilterHelper constructor.
          *
-         * @param RequestStack $requestStack RequestStack service instance
-         * @param PermissionHelper $permissionHelper PermissionHelper service instance
+         * @param RequestStack $requestStack
+         * @param PermissionHelper $permissionHelper
          «IF hasStandardFieldEntities»
-         * @param CurrentUserApiInterface $currentUserApi CurrentUserApi service instance
+         * @param CurrentUserApiInterface $currentUserApi
          «ENDIF»
          «IF hasCategorisableEntities»
-         * @param CategoryHelper $categoryHelper CategoryHelper service instance
+         * @param CategoryHelper $categoryHelper
          «ENDIF»
-         «IF !getAllEntities.filter[ownerPermission].empty»
-         * @param VariableApiInterface $variableApi VariableApi service instance
-         «ENDIF»
-         * @param boolean $showOnlyOwnEntries Fallback value to determine whether only own entries should be selected or not
-         «IF supportLocaleFilter»
-         * @param boolean $filterDataByLocale Whether to apply a locale-based filter or not
-         «ENDIF»
+         * @param VariableApiInterface $variableApi
          */
         public function __construct(
             RequestStack $requestStack,
@@ -138,11 +130,7 @@ class CollectionFilterHelper {
             «IF hasCategorisableEntities»
                 CategoryHelper $categoryHelper,
             «ENDIF»
-            «IF !getAllEntities.filter[ownerPermission].empty»
-                VariableApiInterface $variableApi,
-            «ENDIF»
-            $showOnlyOwnEntries«IF supportLocaleFilter»,
-            $filterDataByLocale«ENDIF»
+            VariableApiInterface $variableApi
         ) {
             $this->requestStack = $requestStack;
             $this->permissionHelper = $permissionHelper;
@@ -155,9 +143,9 @@ class CollectionFilterHelper {
             «IF !getAllEntities.filter[ownerPermission].empty»
                 $this->variableApi = $variableApi;
             «ENDIF»
-            $this->showOnlyOwnEntries = $showOnlyOwnEntries;
+            $this->showOnlyOwnEntries = $variableApi->get('«appName»', 'showOnlyOwnEntries', false);
             «IF supportLocaleFilter»
-                $this->filterDataByLocale = $filterDataByLocale;
+                $this->filterDataByLocale = $variableApi->get('«appName»', 'filterDataByLocale', false);
             «ENDIF»
         }
 

@@ -212,11 +212,14 @@ class Events {
              * ConfigureItemActionsMenuEvent constructor.
              *
              * @param FactoryInterface $factory
-             * @param ItemInterface    $menu
-             * @param array            $options
+             * @param ItemInterface $menu
+             * @param array $options
              */
-            public function __construct(FactoryInterface $factory, ItemInterface $menu, array $options = [])
-            {
+            public function __construct(
+                FactoryInterface $factory,
+                ItemInterface $menu,
+                array $options = []
+            ) {
                 $this->factory = $factory;
                 $this->menu = $menu;
                 $this->options = $options;

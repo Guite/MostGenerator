@@ -67,13 +67,13 @@ class LinkContainer {
             /**
              * LinkContainer constructor.
              *
-             * @param TranslatorInterface  $translator       Translator service instance
-             * @param Routerinterface      $router           Router service instance
+             * @param TranslatorInterface $translator
+             * @param Routerinterface $router
              «IF generateAccountApi»
-             * @param VariableApiInterface $variableApi      VariableApi service instance
+             * @param VariableApiInterface $variableApi
              «ENDIF»
-             * @param ControllerHelper     $controllerHelper ControllerHelper service instance
-             * @param PermissionHelper     $permissionHelper PermissionHelper service instance
+             * @param ControllerHelper $controllerHelper
+             * @param PermissionHelper $permissionHelper
              */
             public function __construct(
                 TranslatorInterface $translator,

@@ -117,13 +117,13 @@ class ExampleDataHelper {
         /**
          * ExampleDataHelper constructor.
          *
-         * @param TranslatorInterface $translator     Translator service instance
-         * @param RequestStack        $requestStack   RequestStack service instance
-         * @param LoggerInterface     $logger         Logger service instance
-         * @param EntityFactory       $entityFactory  EntityFactory service instance
-         * @param WorkflowHelper      $workflowHelper WorkflowHelper service instance
+         * @param TranslatorInterface $translator
+         * @param RequestStack $requestStack
+         * @param LoggerInterface $logger
+         * @param EntityFactory $entityFactory
+         * @param WorkflowHelper $workflowHelper
          «IF hasUserFields»
-         * @param UserRepositoryInterface $userRepository UserRepository service instance
+         * @param UserRepositoryInterface $userRepository
          «ENDIF»
          */
         public function __construct(
@@ -158,10 +158,10 @@ class ExampleDataHelper {
             «IF hasCategorisableEntities»
                 // example category
                 $categoryId = 41; // Business and work
-                $category = $this->entityFactory->getObjectManager()->find('ZikulaCategoriesModule:CategoryEntity', $categoryId);
+                $category = $this->entityFactory->getEntityManager()->find('ZikulaCategoriesModule:CategoryEntity', $categoryId);
 
                 // determine category registry identifiers
-                $registryRepository = $this->entityFactory->getObjectManager()->getRepository('ZikulaCategoriesModule:CategoryRegistryEntity');
+                $registryRepository = $this->entityFactory->getEntityManager()->getRepository('ZikulaCategoriesModule:CategoryRegistryEntity');
                 $categoryRegistries = $registryRepository->findBy(['modname' => '«appName»']);
 
             «ENDIF»
@@ -268,7 +268,7 @@ class ExampleDataHelper {
         // execute the workflow action for each entity
         $action = 'submit';
         try {
-            $entityManager = $this->entityFactory->getObjectManager();
+            $entityManager = $this->entityFactory->getEntityManager();
             «FOR entity : getExampleEntities»«entity.persistEntities(it)»«ENDFOR»
             «FOR entity : getExampleEntities»«entity.saveEntities(it)»«ENDFOR»
         } catch (\Exception $exception) {

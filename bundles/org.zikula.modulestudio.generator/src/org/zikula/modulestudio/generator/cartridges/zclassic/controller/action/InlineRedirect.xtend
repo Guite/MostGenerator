@@ -15,12 +15,15 @@ class InlineRedirect {
 
     def generate(Entity it, Boolean isBase) '''
         «handleInlineRedirectDocBlock(isBase)»
-        public function handleInlineRedirectAction($idPrefix, $commandName, $id = 0)
-        {
+        «handleInlineRedirectSignature» {
             «IF isBase»
                 «handleInlineRedirectBaseImpl»
             «ELSE»
-                return parent::handleInlineRedirectAction($idPrefix, $commandName, $id);
+                «IF application.targets('3.0')»
+                    return parent::handleInlineRedirectAction($entityFactory, $idPrefix, $commandName, $id);
+                «ELSE»
+                    return parent::handleInlineRedirectAction($idPrefix, $commandName, $id);
+                «ENDIF»
             «ENDIF»
         }
 
@@ -31,9 +34,13 @@ class InlineRedirect {
          «IF isBase»
          * This method cares for a redirect within an inline frame.
          *
-         * @param string  $idPrefix    Prefix for inline window element identifier
-         * @param string  $commandName Name of action to be performed (create or edit)
-         * @param integer $id          Identifier of created «name.formatForDisplay» (used for activating auto completion after closing the modal window)
+         «IF application.targets('3.0')»
+         * @param EntityFactory $entityFactory
+         * @param EntityDisplayHelper $entityDisplayHelper
+         «ENDIF»
+         * @param string $idPrefix Prefix for inline window element identifier
+         * @param string $commandName Name of action to be performed (create or edit)
+         * @param integer $id Identifier of created «name.formatForDisplay» (used for activating auto completion after closing the modal window)
          *
          * @return PlainResponse Output
          «ELSE»
@@ -47,6 +54,18 @@ class InlineRedirect {
          */
     '''
 
+    def private handleInlineRedirectSignature(Entity it) '''
+        public function handleInlineRedirectAction(
+            «IF application.targets('3.0')»
+                EntityFactory $entityFactory,
+                EntityDisplayHelper $entityDisplayHelper,
+            «ENDIF»
+            $idPrefix,
+            $commandName,
+            $id = 0
+        )
+    '''
+
     def private handleInlineRedirectBaseImpl(Entity it) '''
         if (empty($idPrefix)) {
             return false;
@@ -56,7 +75,7 @@ class InlineRedirect {
         $searchTerm = '';
         «IF hasStringFieldsEntity»
             if (!empty($id)) {
-                $repository = $this->get('«application.appService».entity_factory')->getRepository('«name.formatForCode»');
+                $repository = «IF application.targets('3.0')»$entityFactory«ELSE»$this->get('«application.appService».entity_factory')«ENDIF»->getRepository('«name.formatForCode»');
                 «IF hasSluggableFields && slugUnique»
                     $«name.formatForCode» = null;
                     if (!is_numeric($id)) {
@@ -69,7 +88,7 @@ class InlineRedirect {
                     $«name.formatForCode» = $repository->selectById($id);
                 «ENDIF»
                 if (null !== $«name.formatForCode») {
-                    $formattedTitle = $this->get('«application.appService».entity_display_helper')->getFormattedTitle($«name.formatForCode»);
+                    $formattedTitle = «IF application.targets('3.0')»$entityDisplayHelper«ELSE»$this->get('«application.appService».entity_display_helper')«ENDIF»->getFormattedTitle($«name.formatForCode»);
                     $searchTerm = $«name.formatForCode»->get«getStringFieldsEntity.head.name.formatForCodeCapital»();
                 }
             }

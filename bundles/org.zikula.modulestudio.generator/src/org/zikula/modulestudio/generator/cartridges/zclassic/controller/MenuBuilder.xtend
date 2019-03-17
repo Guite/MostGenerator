@@ -97,18 +97,18 @@ class MenuBuilder {
             /**
              * MenuBuilder constructor.
              *
-             * @param TranslatorInterface      $translator          Translator service instance
-             * @param FactoryInterface         $factory             Factory service instance
-             * @param EventDispatcherInterface $eventDispatcher     EventDispatcher service instance
-             * @param RequestStack             $requestStack        RequestStack service instance
-             * @param PermissionHelper         $permissionHelper    PermissionHelper service instance
+             * @param TranslatorInterface $translator
+             * @param FactoryInterface $factory
+             * @param EventDispatcherInterface $eventDispatcher
+             * @param RequestStack $requestStack
+             * @param PermissionHelper $permissionHelper
              «IF hasDisplayActions»
-             * @param EntityDisplayHelper      $entityDisplayHelper EntityDisplayHelper service instance
+             * @param EntityDisplayHelper $entityDisplayHelper
              «ENDIF»
              «IF hasLoggable»
-             * @param LoggableHelper           $loggableHelper      LoggableHelper service instance
+             * @param LoggableHelper $loggableHelper
              «ENDIF»
-             * @param CurrentUserApiInterface  $currentUserApi      CurrentUserApi service instance
+             * @param CurrentUserApiInterface $currentUserApi
              */
             public function __construct(
                 TranslatorInterface $translator,

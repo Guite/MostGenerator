@@ -21,26 +21,22 @@ class LoggableUndelete {
     '''
 
     def private undelete(Entity it, Boolean isBase, Boolean isAdmin) '''
-        «undeleteDocBlock(isBase, isAdmin)»
-        public function «IF isAdmin»adminU«ELSE»u«ENDIF»ndeleteAction(Request $request, $id = 0)
-        {
-            «IF isBase»
-                return $this->undeleteActionInternal($request, $id, «isAdmin.displayBool»);
-            «ELSE»
-                return parent::«IF isAdmin»adminU«ELSE»u«ENDIF»ndeleteAction($request, $id);
-            «ENDIF»
-        }
-        «IF isBase && !isAdmin»
-
-            /**
-             * This method includes the common implementation code for adminUndeleteAction() and undeleteAction().
-             *
-             * @param Request $request Current request instance
-             * @param integer $id      Identifier of «name.formatForDisplay»
-             * @param boolean $isAdmin Whether the admin area is used or not
-             */
-            protected function undeleteActionInternal(Request $request, $id = 0, $isAdmin = false)
-            {
+        «IF !isBase»
+            «undeleteDocBlock(isBase, isAdmin)»
+            public function «IF isAdmin»adminU«ELSE»u«ENDIF»ndeleteAction(
+                «undeleteArguments(false)»
+            ) {
+                «IF application.targets('3.0')»
+                    return $this->undeleteActionInternal($request, $loggableHelper, «IF hasTranslatableFields»$translatableHelper, «ENDIF»$id, «isAdmin.displayBool»);
+                «ELSE»
+                    return $this->undeleteActionInternal($request, $id, «isAdmin.displayBool»);
+                «ENDIF»
+            }
+        «ELSEIF isBase && !isAdmin»
+            «undeleteDocBlock(isBase, isAdmin)»
+            protected function undeleteActionInternal(
+                «undeleteArguments(true)»
+            ) {
                 «loggableUndeleteBaseImpl»
             }
         «ENDIF»
@@ -51,8 +47,15 @@ class LoggableUndelete {
          «IF isBase»
          * «IF hasDisplayAction»Displays or undeletes«ELSE»Undeletes«ENDIF» a deleted «name.formatForDisplay».
          *
-         * @param Request $request Current request instance
-         * @param integer $id      Identifier of entity
+         * @param Request $request
+         «IF application.targets('3.0')»
+         * @param LoggableHelper $loggableHelper
+         «IF hasTranslatableFields»
+         * @param TranslatableHelper $translatableHelper
+         «ENDIF»
+         «ENDIF»
+         * @param integer $id Identifier of entity
+         * @param boolean $isAdmin Whether the admin area is used or not
          *
          * @return Response Output
          *
@@ -72,8 +75,26 @@ class LoggableUndelete {
          */
     '''
 
+    def private undeleteArguments(Entity it, Boolean internalMethod) '''
+        «IF application.targets('3.0')»
+            Request $request,
+            LoggableHelper $loggableHelper,
+            «IF hasTranslatableFields»
+                TranslatableHelper $translatableHelper,
+            «ENDIF»
+            $id = 0«IF internalMethod»,
+            $isAdmin = false«ENDIF»
+        «ELSE»
+            Request $request,
+            $id = 0«IF internalMethod»,
+            $isAdmin = false«ENDIF»
+        «ENDIF»
+    '''
+
     def private loggableUndeleteBaseImpl(Entity it) '''
-        $loggableHelper = $this->get('«application.appService».loggable_helper');
+        «IF !application.targets('3.0')»
+            $loggableHelper = $this->get('«application.appService».loggable_helper');
+        «ENDIF»
         $«name.formatForCode» = $loggableHelper->restoreDeletedEntity('«name.formatForCode»', $id);
         if (null === $«name.formatForCode») {
             throw new NotFoundHttpException($this->__('No such «name.formatForDisplay» found.'));
@@ -89,7 +110,7 @@ class LoggableUndelete {
         «undeletion»
         «IF hasTranslatableFields»
 
-            $this->get('«application.appService».translatable_helper')->refreshTranslationsFromLogData($«name.formatForCode»);
+            «IF application.targets('3.0')»$translatableHelper«ELSE»$this->get('«application.appService».translatable_helper')«ENDIF»->refreshTranslationsFromLogData($«name.formatForCode»);
         «ENDIF»
 
         $routeArea = $isAdmin ? 'admin' : '';

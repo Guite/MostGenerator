@@ -75,13 +75,15 @@ class FinderType {
             /**
              * «name.formatForCodeCapital»FinderType constructor.
              *
-             * @param TranslatorInterface $translator Translator service instance
+             * @param TranslatorInterface $translator
             «IF app.needsFeatureActivationHelper»
-                «' '»* @param FeatureActivationHelper $featureActivationHelper FeatureActivationHelper service instance
+                «' '»* @param FeatureActivationHelper $featureActivationHelper
             «ENDIF»
              */
-            public function __construct(TranslatorInterface $translator«IF app.needsFeatureActivationHelper», FeatureActivationHelper $featureActivationHelper«ENDIF»)
-            {
+            public function __construct(
+                TranslatorInterface $translator«IF app.needsFeatureActivationHelper»,
+                FeatureActivationHelper $featureActivationHelper«ENDIF»
+            ) {
                 $this->setTranslator($translator);
                 «IF app.needsFeatureActivationHelper»
                     $this->featureActivationHelper = $featureActivationHelper;

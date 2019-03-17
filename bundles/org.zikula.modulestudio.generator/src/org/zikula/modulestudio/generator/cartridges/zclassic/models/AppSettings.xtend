@@ -132,15 +132,15 @@ class AppSettings {
         /**
          * AppSettings constructor.
          *
-         * @param VariableApiInterface $variableApi VariableApi service instance
+         * @param VariableApiInterface $variableApi
          «IF hasUserVariables»
-         * @param UserRepositoryInterface $userRepository UserRepository service instance
+         * @param UserRepositoryInterface $userRepository
          «ENDIF»
          «IF hasUserGroupSelectors»
-         * @param GroupRepositoryInterface $groupRepository GroupRepository service instance
+         * @param GroupRepositoryInterface $groupRepository
          «ENDIF»
          «IF hasLoggable»
-         * @param EntityFactory $entityFactory EntityFactory service instance
+         * @param EntityFactory $entityFactory
          «ENDIF»
          */
         public function __construct(
@@ -256,7 +256,7 @@ class AppSettings {
             «ENDFOR»
             «IF hasLoggable»
 
-                $entityManager = $this->entityFactory->getObjectManager();
+                $entityManager = $this->entityFactory->getEntityManager();
                 «FOR entity : getLoggableEntities»
                     $revisionHandling = $this->getRevisionHandlingFor«entity.name.formatForCodeCapital»();
                     $limitParameter = '';

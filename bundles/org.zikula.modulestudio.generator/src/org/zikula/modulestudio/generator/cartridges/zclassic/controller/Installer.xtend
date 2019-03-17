@@ -1,6 +1,7 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.controller
 
 import de.guite.modulestudio.metamodel.Application
+import de.guite.modulestudio.metamodel.DataObject
 import de.guite.modulestudio.metamodel.EntityTreeType
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.installer.ModVars
@@ -31,14 +32,36 @@ class Installer {
         use RuntimeException;
         use Zikula\Core\AbstractExtensionInstaller;
         «IF hasCategorisableEntities»
+            «IF targets('3.0')»
+                use Zikula\CategoriesModule\Api\CategoryPermissionApi;
+            «ENDIF»
             use Zikula\CategoriesModule\Entity\CategoryRegistryEntity;
+            «IF targets('3.0')»
+                use Zikula\CategoriesModule\Entity\RepositoryInterface\CategoryRegistryRepositoryInterface;
+                use Zikula\CategoriesModule\Entity\RepositoryInterface\CategoryRepositoryInterface;
+            «ENDIF»
         «ENDIF»
+        «IF hasUploads || hasCategorisableEntities»
+            «IF targets('3.0')»
+                use Zikula\Common\Translator\Translator;
+                use Zikula\ExtensionsModule\Api\VariableApi;
+                use Zikula\UsersModule\Api\CurrentUserApi;
+            «ENDIF»
+        «ENDIF»
+        «funcListEntityClasses('import')»
 
         /**
          * Installer base class.
          */
         abstract class Abstract«name.formatForCodeCapital»ModuleInstaller extends AbstractExtensionInstaller
         {
+            /**
+             * @var array
+             */
+            protected $entities = [
+                «funcListEntityClasses('usage')»
+            ];
+
             «installerBaseImpl»
         }
     '''
@@ -49,8 +72,6 @@ class Installer {
         «funcUpdate»
 
         «funcDelete»
-
-        «funcListEntityClasses»
     '''
 
     def private funcInit(Application it) '''
@@ -65,13 +86,17 @@ class Installer {
         {
             $logger = $this->container->get('logger');
             «IF hasUploads || hasCategorisableEntities»
-                $userName = $this->container->get('zikula_users_module.current_user')->get('uname');
+                «IF targets('3.0')»
+                    $userName = $this->container->get(CurrentUserApi::class)->get('uname');
+                «ELSE»
+                    $userName = $this->container->get('zikula_users_module.current_user')->get('uname');
+                «ENDIF»
             «ENDIF»
 
             «processUploadFolders»
             // create all tables from according entity definitions
             try {
-                $this->schemaTool->create($this->listEntityClasses());
+                $this->schemaTool->create($this->entities);
             } catch (\Exception $exception) {
                 $this->addFlash('error', $this->__('Doctrine Exception') . ': ' . $exception->getMessage());
                 $logger->error('{app}: Could not create the database tables during installation. Error details: {errorMessage}.', ['app' => '«appName»', 'errorMessage' => $exception->getMessage()]);
@@ -86,15 +111,27 @@ class Installer {
             «IF hasCategorisableEntities»
 
                 // add default entry for category registry (property named Main)
-                $categoryHelper = new \«appNamespace»\Helper\CategoryHelper(
-                    $this->container->get('translator.default'),
-                    $this->container->get('request_stack'),
-                    $logger,
-                    $this->container->get('zikula_users_module.current_user'),
-                    $this->container->get('zikula_categories_module.category_registry_repository'),
-                    $this->container->get('zikula_categories_module.api.category_permission')
-                );
-                $categoryGlobal = $this->container->get('zikula_categories_module.category_repository')->findOneBy(['name' => 'Global']);
+                «IF targets('3.0')»
+                    $categoryHelper = new \«appNamespace»\Helper\CategoryHelper(
+                        $this->container->get(Translator::class),
+                        $this->container->get('request_stack'),
+                        $logger,
+                        $this->container->get(CurrentUserApi::class),
+                        $this->container->get(CategoryRegistryRepositoryInterface::class),
+                        $this->container->get(CategoryPermissionApi::class)
+                    );
+                    $categoryGlobal = $this->container->get(CategoryRepositoryInterface::class)->findOneBy(['name' => 'Global']);
+                «ELSE»
+                    $categoryHelper = new \«appNamespace»\Helper\CategoryHelper(
+                        $this->container->get('translator.default'),
+                        $this->container->get('request_stack'),
+                        $logger,
+                        $this->container->get('zikula_users_module.current_user'),
+                        $this->container->get('zikula_categories_module.category_registry_repository'),
+                        $this->container->get('zikula_categories_module.api.category_permission')
+                    );
+                    $categoryGlobal = $this->container->get('zikula_categories_module.category_repository')->findOneBy(['name' => 'Global']);
+                «ENDIF»
                 if ($categoryGlobal) {
                     $categoryRegistryIdsPerEntity = [];
                     «FOR entity : getCategorisableEntities»
@@ -127,15 +164,27 @@ class Installer {
             // Check if upload directories exist and if needed create them
             try {
                 $container = $this->container;
-                $uploadHelper = new \«appNamespace»\Helper\UploadHelper(
-                    $container->get('translator.default'),
-                    $container->get('filesystem'),
-                    $container->get('session'),
-                    $container->get('logger'),
-                    $container->get('zikula_users_module.current_user'),
-                    $container->get('zikula_extensions_module.api.variable'),
-                    $container->getParameter('datadir')
-                );
+                «IF targets('3.0')»
+                    $uploadHelper = new \«appNamespace»\Helper\UploadHelper(
+                        $container->get(Translator::class),
+                        $container->get('filesystem'),
+                        $container->get('session'),
+                        $container->get('logger'),
+                        $container->get(CurrentUserApi::class),
+                        $container->get(VariableApi::class),
+                        $container->getParameter('datadir')
+                    );
+                «ELSE»
+                    $uploadHelper = new \«appNamespace»\Helper\UploadHelper(
+                        $container->get('translator.default'),
+                        $container->get('filesystem'),
+                        $container->get('session'),
+                        $container->get('logger'),
+                        $container->get('zikula_users_module.current_user'),
+                        $container->get('zikula_extensions_module.api.variable'),
+                        $container->getParameter('datadir')
+                    );
+                «ENDIF»
                 $uploadHelper->checkAndCreateAllUploadFolders();
             } catch (\Exception $exception) {
                 $this->addFlash('error', $exception->getMessage());
@@ -170,7 +219,7 @@ class Installer {
                     // ...
                     // update the database schema
                     try {
-                        $this->schemaTool->update($this->listEntityClasses());
+                        $this->schemaTool->update($this->entities);
                     } catch (\Exception $exception) {
                         $this->addFlash('error', $this->__('Doctrine Exception') . ': ' . $exception->getMessage());
                         $logger->error('{app}: Could not update the database tables during the upgrade. Error details: {errorMessage}.', ['app' => '«appName»', 'errorMessage' => $exception->getMessage()]);
@@ -203,7 +252,7 @@ class Installer {
             $logger = $this->container->get('logger');
 
             try {
-                $this->schemaTool->drop($this->listEntityClasses());
+                $this->schemaTool->drop($this->entities);
             } catch (\Exception $exception) {
                 $this->addFlash('error', $this->__('Doctrine Exception') . ': ' . $exception->getMessage());
                 $logger->error('{app}: Could not remove the database tables during uninstallation. Error details: {errorMessage}.', ['app' => '«appName»', 'errorMessage' => $exception->getMessage()]);
@@ -218,7 +267,11 @@ class Installer {
             «IF hasCategorisableEntities»
 
                 // remove category registry entries
-                $registries = $this->container->get('zikula_categories_module.category_registry_repository')->findBy(['modname' => '«appName»']);
+                «IF targets('3.0')»
+                    $registries = $this->container->get(CategoryRegistryRepositoryInterface::class)->findBy(['modname' => '«appName»']);
+                «ELSE»
+                    $registries = $this->container->get('zikula_categories_module.category_registry_repository')->findBy(['modname' => '«appName»']);
+                «ENDIF»
                 foreach ($registries as $registry) {
                     $this->entityManager->remove($registry);
                 }
@@ -236,39 +289,56 @@ class Installer {
         }
     '''
 
-    def private funcListEntityClasses(Application it) '''
-        /**
-         * Build array with all entity classes for «appName».
-         *
-         * @return string[] List of class names
-         */
-        protected function listEntityClasses()
-        {
-            $classNames = [];
+    def private funcListEntityClasses(Application it, String context) '''
+        «IF 'import' == context»
             «FOR entity : getAllEntities»
-                $classNames[] = '«entity.entityClassName('', false)»';
+                use «entity.entityClassName('', false)»;
                 «IF entity.loggable»
-                    $classNames[] = '«entity.entityClassName('logEntry', false)»';
+                    use «entity.entityClassName('logEntry', false)»;
                 «ENDIF»
                 «IF entity.tree == EntityTreeType.CLOSURE»
-                    $classNames[] = '«entity.entityClassName('closure', false)»';
+                    use «entity.entityClassName('closure', false)»;
                 «ENDIF»
                 «IF entity.hasTranslatableFields»
-                    $classNames[] = '«entity.entityClassName('translation', false)»';
+                    use «entity.entityClassName('translation', false)»;
                 «ENDIF»
                 «IF entity.attributable»
-                    $classNames[] = '«entity.entityClassName('attribute', false)»';
+                    use «entity.entityClassName('attribute', false)»;
                 «ENDIF»
                 «IF entity.categorisable»
-                    $classNames[] = '«entity.entityClassName('category', false)»';
+                    use «entity.entityClassName('category', false)»;
                 «ENDIF»
             «ENDFOR»
             «IF hasUiHooksProviders»
-                $classNames[] = '«vendor.formatForCodeCapital + '\\' + name.formatForCodeCapital + 'Module\\Entity\\HookAssignmentEntity'»';
+                use «vendor.formatForCodeCapital + '\\' + name.formatForCodeCapital + 'Module\\Entity\\HookAssignmentEntity'»;
             «ENDIF»
+        «ELSEIF 'usage' == context»
+            «FOR entity : getAllEntities»
+                «entity.entityClassUsage('')»,
+                «IF entity.loggable»
+                    «entity.entityClassUsage('logEntry')»,
+                «ENDIF»
+                «IF entity.tree == EntityTreeType.CLOSURE»
+                    «entity.entityClassUsage('closure')»,
+                «ENDIF»
+                «IF entity.hasTranslatableFields»
+                    «entity.entityClassUsage('translation')»,
+                «ENDIF»
+                «IF entity.attributable»
+                    «entity.entityClassUsage('attribute')»,
+                «ENDIF»
+                «IF entity.categorisable»
+                    «entity.entityClassUsage('category')»,
+                «ENDIF»
+            «ENDFOR»
+            «IF hasUiHooksProviders»
+                HookAssignmentEntity::class
+            «ENDIF»
+        «ENDIF»
+    '''
 
-            return $classNames;
-        }
+    def private entityClassUsage(DataObject it, String suffix) '''
+        «name.formatForCodeCapital + suffix.formatForCodeCapital + 'Entity::class'»
     '''
 
     def private installerImpl(Application it) '''

@@ -66,7 +66,7 @@ class Layout {
         {% block titleArea %}
             <h2>{% block title %}{% endblock %}</h2>
         {% endblock %}
-        {{ pageSetVar('title', block('pageTitle')|default(block('title'))) }}
+        {{ pageSetVar('title', block('pageTitle') is defined ? block('pageTitle') : block('title')) }}
 
         «IF generateModerationPanel && needsApproval»
             {{ include('@«appName»/Helper/includeModerationPanel.html.twig') }}
