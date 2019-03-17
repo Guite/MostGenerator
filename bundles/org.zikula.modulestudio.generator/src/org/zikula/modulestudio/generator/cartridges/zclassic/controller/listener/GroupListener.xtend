@@ -1,8 +1,11 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener
 
 import de.guite.modulestudio.metamodel.Application
+import org.zikula.modulestudio.generator.extensions.Utils
 
 class GroupListener {
+
+    extension Utils = new Utils
 
     CommonExample commonExample = new CommonExample()
 
@@ -15,6 +18,9 @@ class GroupListener {
             return [
                 GroupEvents::GROUP_CREATE                => ['create', 5],
                 GroupEvents::GROUP_UPDATE                => ['update', 5],
+                «IF targets('3.0')»
+                GroupEvents::GROUP_PRE_DELETE            => ['preDelete', 5],
+                «ENDIF»
                 GroupEvents::GROUP_DELETE                => ['delete', 5],
                 GroupEvents::GROUP_ADD_USER              => ['addUser', 5],
                 GroupEvents::GROUP_REMOVE_USER           => ['removeUser', 5],
@@ -48,6 +54,21 @@ class GroupListener {
         public function update(GenericEvent $event)
         {
         }
+        «IF targets('3.0')»
+
+        /**
+         * Listener for the `group.pre_delete` event.
+         *
+         * Occurs before a group is deleted from the system. All handlers are notified.
+         * The full group record to be deleted is available as the subject.
+         *
+         «commonExample.generalEventProperties(it, false)»
+         * @param GenericEvent $event The event instance
+         */
+        public function preDelete(GenericEvent $event)
+        {
+        }
+        «ENDIF»
 
         /**
          * Listener for the `group.delete` event.
