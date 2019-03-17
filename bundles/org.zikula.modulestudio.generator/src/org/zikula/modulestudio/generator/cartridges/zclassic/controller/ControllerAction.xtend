@@ -188,7 +188,7 @@ class ControllerAction {
     '''
     def private dispatch methodArgsCall(Entity it, Action action, Boolean isAdmin) '''
         «IF application.targets('3.0')»
-            $request, «isAdmin.displayBool»
+            $request, $permissionHelper, «isAdmin.displayBool»
         «ELSE»
             $request, «isAdmin.displayBool»
         «ENDIF»
