@@ -78,7 +78,7 @@ class NotificationHelper {
         /**
          * @var «IF !targets('3.0')»Twig_«ENDIF»Environment
          */
-        protected $templating;
+        protected $twig;
 
         /**
          * @var MailerApiInterface
@@ -166,7 +166,7 @@ class NotificationHelper {
             $this->router = $router;
             $this->requestStack = $requestStack;
             $this->variableApi = $variableApi;
-            $this->templating = $twig;
+            $this->twig = $twig;
             $this->mailerApi = $mailerApi;
             $this->groupRepository = $groupRepository;
             $this->entityDisplayHelper = $entityDisplayHelper;
@@ -336,7 +336,7 @@ class NotificationHelper {
                     continue;
                 }
 
-                $body = $this->templating->render('@«appName»/' . $template, [
+                $body = $this->twig->render('@«appName»/' . $template, [
                     'recipient' => $recipient,
                     'mailData' => $mailData
                 ]);
@@ -344,9 +344,12 @@ class NotificationHelper {
                 $html = true;
 
                 // create new message instance
-                /** @var Swift_Message */
-                $message = Swift_Message::newInstance();
-
+                «IF targets('3.0')»
+                    $message = new Swift_Message();
+                «ELSE»
+                    /** @var Swift_Message */
+                    $message = Swift_Message::newInstance();
+                «ENDIF»
                 $message->setFrom([$adminMail => $siteName]);
                 $message->setTo([$recipient['email'] => $recipient['name']]);
 
