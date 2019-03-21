@@ -136,6 +136,10 @@ class ControllerLayer {
             «IF hasViewAction || hasDeleteAction || loggable»
                 use «app.appNamespace»\Helper\WorkflowHelper;
             «ENDIF»
+        «ELSE»
+            «IF (hasViewAction || hasDisplayAction) && categorisable»
+                use «app.appNamespace»\Helper\FeatureActivationHelper;
+            «ENDIF»
         «ENDIF»
     '''
 

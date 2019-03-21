@@ -100,22 +100,6 @@ class BlockList {
              */
             protected $categorisableObjectTypes;
 
-            «IF !targets('3.0')»
-                /**
-                 * ItemListBlock constructor.
-                 *
-                 * @param AbstractBundle $bundle An AbstractBundle instance
-                 *
-                 * @throws \InvalidArgumentException
-                 */
-                public function __construct(AbstractBundle $bundle)
-                {
-                    parent::__construct($bundle);
-
-                    «initListOfCategorisableEntities»
-                }
-
-            «ENDIF»
         «ENDIF»
         /**
          * @inheritDoc
@@ -248,24 +232,13 @@ class BlockList {
                 return '';
             }
 
-            «IF targets('3.0') && hasCategorisableEntities»
+            «IF hasCategorisableEntities»
                 «initListOfCategorisableEntities»
 
             «ENDIF»
             // set default values for all params which are not properly set
             $defaults = $this->getDefaults();
             $properties = array_merge($defaults, $properties);
-            «IF hasCategorisableEntities»
-
-                «IF !targets('3.0')»
-                    $featureActivationHelper = $this->get('«appService».feature_activation_helper');
-                «ENDIF»
-                $hasCategories = in_array($objectType, $this->categorisableObjectTypes)
-                    && $«IF targets('3.0')»this->«ENDIF»featureActivationHelper->isEnabled(FeatureActivationHelper::CATEGORIES, $properties['objectType']);
-                if ($hasCategories) {
-                    $categoryProperties = $this->resolveCategoryIds($properties);
-                }
-            «ENDIF»
 
             «IF targets('3.0')»
                 $contextArgs = ['name' => 'list'];
@@ -281,6 +254,17 @@ class BlockList {
             «ENDIF»
 
             $objectType = $properties['objectType'];
+            «IF hasCategorisableEntities»
+
+                «IF !targets('3.0')»
+                    $featureActivationHelper = $this->get('«appService».feature_activation_helper');
+                «ENDIF»
+                $hasCategories = in_array($objectType, $this->categorisableObjectTypes)
+                    && $«IF targets('3.0')»this->«ENDIF»featureActivationHelper->isEnabled(FeatureActivationHelper::CATEGORIES, $properties['objectType']);
+                if ($hasCategories) {
+                    $categoryProperties = $this->resolveCategoryIds($properties);
+                }
+            «ENDIF»
 
             «IF targets('3.0')»
                 $repository = $this->entityFactory->getRepository($objectType);
@@ -412,7 +396,7 @@ class BlockList {
         public function getFormOptions()
         {
             $objectType = '«leadingEntity.name.formatForCode»';
-            «IF targets('3.0') && hasCategorisableEntities»
+            «IF hasCategorisableEntities»
                 «initListOfCategorisableEntities»
             «ENDIF»
 
