@@ -274,7 +274,7 @@ class SearchHelper {
                 $descriptionFieldName = $this->entityDisplayHelper->getDescriptionFieldName($objectType);
                 $hasDisplayAction = in_array($objectType, $entitiesWithDisplayAction);
 
-                $session = $this->requestStack->getCurrentRequest()->getSession();
+                $session = $request->getSession();
                 foreach ($entities as $entity) {
                     if (!$this->permissionHelper->mayRead($entity)) {
                         continue;
