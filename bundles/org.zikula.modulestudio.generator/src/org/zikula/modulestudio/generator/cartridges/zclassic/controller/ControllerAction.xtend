@@ -141,7 +141,7 @@ class ControllerAction {
                     +
                     if (refEntity.loggable) '@param LoggableHelper $loggableHelper\n' else ''
                     +
-                    if (app.generateIcsTemplates && hasStartAndEndDateField) '@param EntityDisplayHelper $entityDisplayHelper\n' else ''
+                    if (app.generateIcsTemplates && refEntity.hasStartAndEndDateField) '@param EntityDisplayHelper $entityDisplayHelper\n' else ''
                 } else ''
                 +
                 if (refEntity.hasUniqueSlug) {
