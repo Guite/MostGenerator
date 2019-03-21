@@ -338,8 +338,7 @@ class Installer {
     '''
 
     def private entityClassUsage(DataObject it, String suffix) '''
-        «name.formatForCodeCapital + suffix.formatForCodeCapital + 'Entity::class'»
-    '''
+        «name.formatForCodeCapital + suffix.formatForCodeCapital + 'Entity::class'»'''
 
     def private installerImpl(Application it) '''
         namespace «appNamespace»;
