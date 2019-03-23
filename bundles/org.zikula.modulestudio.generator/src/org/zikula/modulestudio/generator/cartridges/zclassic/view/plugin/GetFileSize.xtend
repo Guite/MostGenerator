@@ -77,7 +77,7 @@ class GetFileSize {
             // format number
             $dec_point = ',';
             $thousands_separator = '.';
-            if ($size - number_format($size, 0) >= 0.005) {
+            if ($size - intval($size) >= 0.005) {
                 $size = number_format($size, 2, $dec_point, $thousands_separator);
             } else {
                 $size = number_format($size, 0, '', $thousands_separator);
