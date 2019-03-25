@@ -2,11 +2,13 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.controller.helper
 
 import de.guite.modulestudio.metamodel.Application
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
+import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class PermissionHelper {
 
+    extension ControllerExtensions = new ControllerExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension Utils = new Utils
 
@@ -102,7 +104,7 @@ class PermissionHelper {
         /**
          * Checks if the given entity instance may be read.
          *
-         * @param object  $entity
+         * @param object $entity
          * @param integer $userId
          *
          * @return boolean
@@ -115,7 +117,7 @@ class PermissionHelper {
         /**
          * Checks if the given entity instance may be edited.
          *
-         * @param object  $entity
+         * @param object $entity
          * @param integer $userId
          *
          * @return boolean
@@ -129,7 +131,7 @@ class PermissionHelper {
             /**
              * Checks if the given entity instance may be deleted.
              *
-             * @param object  $entity
+             * @param object $entity
              * @param integer $userId
              *
              * @return boolean
@@ -145,7 +147,7 @@ class PermissionHelper {
         /**
          * Checks if the given entity instance may be deleted.
          *
-         * @param object  $entity
+         * @param object $entity
          * @param integer $userId
          *
          * @return boolean
@@ -158,7 +160,7 @@ class PermissionHelper {
         /**
          * Checks if a certain permission level is granted for the given entity instance.
          *
-         * @param object  $entity
+         * @param object $entity
          * @param integer $permissionLevel
          * @param integer $userId
          *
@@ -177,7 +179,7 @@ class PermissionHelper {
         /**
          * Checks if a certain permission level is granted for the given object type.
          *
-         * @param string  $objectType
+         * @param string $objectType
          * @param integer $permissionLevel
          * @param integer $userId
          *
@@ -187,6 +189,21 @@ class PermissionHelper {
         {
             return $this->permissionApi->hasPermission('«appName»:' . ucfirst($objectType) . ':', '::', $permissionLevel, $userId);
         }
+        «IF hasViewActions»
+
+            /**
+             * Checks if the quick navigation form for the given object type may be used or not.
+             *
+             * @param string $objectType
+             * @param integer $userId
+             *
+             * @return boolean
+             */
+            public function mayUseQuickNav($objectType, $userId = null)
+            {
+                return $this->hasComponentPermission($objectType, ACCESS_READ, $userId);
+            }
+        «ENDIF»
 
         /**
          * Checks if a certain permission level is granted for the application in general.
