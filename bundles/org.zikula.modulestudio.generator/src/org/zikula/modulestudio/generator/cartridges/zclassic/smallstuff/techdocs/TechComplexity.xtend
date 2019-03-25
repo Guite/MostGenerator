@@ -371,10 +371,10 @@ class TechComplexity {
             metricsOutputs.get('complexity').set(complexityIndex, metricsOutputs.get('complexity').get(complexityIndex) + 1)
             output += '''
                 <tr>
-                    <th id="hInput«entity.name.formatForCodeCapital»" scope="row" headers="hInputTable">«entity.name.formatForDisplayCapital»</th>
-                    <td headers="hInput«entity.name.formatForCodeCapital» hInputViewAmount" class="text-right">«entity.countColumns»</td>
-                    <td headers="hInput«entity.name.formatForCodeCapital» hInputRelationAmount" class="text-right">«entity.countRelations»</td>
-                    <td headers="hInput«entity.name.formatForCodeCapital» hInputComplexity">«complexityLabels.get(complexityIndex)»</td>
+                    <th id="hOutput«entity.name.formatForCodeCapital»" scope="row" headers="hOutputTable">«entity.name.formatForDisplayCapital»</th>
+                    <td headers="hOutput«entity.name.formatForCodeCapital» hOutputViewAmount" class="text-right">«entity.countColumns»</td>
+                    <td headers="hOutput«entity.name.formatForCodeCapital» hOutputRelationAmount" class="text-right">«entity.countRelations»</td>
+                    <td headers="hOutput«entity.name.formatForCodeCapital» hOutputComplexity">«complexityLabels.get(complexityIndex)»</td>
                 </tr>
             '''
         }

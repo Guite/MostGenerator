@@ -168,7 +168,7 @@ class Installer {
                     $uploadHelper = new \«appNamespace»\Helper\UploadHelper(
                         $container->get(Translator::class),
                         $container->get('filesystem'),
-                        $container->get('session'),
+                        $container->get('request_stack'),
                         $container->get('logger'),
                         $container->get(CurrentUserApi::class),
                         $container->get(VariableApi::class),
@@ -178,7 +178,7 @@ class Installer {
                     $uploadHelper = new \«appNamespace»\Helper\UploadHelper(
                         $container->get('translator.default'),
                         $container->get('filesystem'),
-                        $container->get('session'),
+                        $container->get('request_stack'),
                         $container->get('logger'),
                         $container->get('zikula_users_module.current_user'),
                         $container->get('zikula_extensions_module.api.variable'),
