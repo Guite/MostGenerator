@@ -275,9 +275,9 @@ class DisplayFunctions {
                 // check if window exists already
                 if (jQuery('#' + newWindowId).length < 1) {
                     // create new window instance
-                    jQuery('<div />', { id: newWindowId })
+                    jQuery('<div>', { id: newWindowId })
                         .append(
-                            jQuery('<iframe width="100%" height="100%" marginWidth="0" marginHeight="0" frameBorder="0" scrolling="auto" />')
+                            jQuery('<iframe width="100%" height="100%" marginWidth="0" marginHeight="0" frameBorder="0" scrolling="auto">')
                                 .attr('src', containerElem.attr('href'))
                         )
                         .dialog({

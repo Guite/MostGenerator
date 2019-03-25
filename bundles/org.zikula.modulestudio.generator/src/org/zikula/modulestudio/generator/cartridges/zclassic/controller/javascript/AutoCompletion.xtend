@@ -120,7 +120,7 @@ class AutoCompletion {
             newTitle = selectedListItem.title;
             elemPrefix = idPrefix + 'Reference_' + newItemId;
 
-            li = jQuery('<li />', {
+            li = jQuery('<li>', {
                 id: elemPrefix,
                 text: newTitle + ' '
             });
@@ -131,18 +131,18 @@ class AutoCompletion {
             «ENDIF»
 
             li.append(
-                jQuery('<a />', {
+                jQuery('<a>', {
                     id: elemPrefix + 'Remove',
                     href: 'javascript:«vendorAndName»RemoveRelatedItem(\'' + idPrefix + '\', ' + newItemId + ');'
                 }).append(
-                    jQuery('<span />', { class: 'fa fa-trash-o' })
+                    jQuery('<span>', { class: 'fa fa-trash-o' })
                         .append(' ' + Translator.__('remove'))
                 )
             );
 
             if (selectedListItem.image !== '') {
                 li.append(
-                    jQuery('<div />', {
+                    jQuery('<div>', {
                         id: elemPrefix + 'Preview',
                         name: idPrefix + 'Preview'
                     }).html(selectedListItem.image)
@@ -235,7 +235,7 @@ class AutoCompletion {
                         jQuery('#' + idPrefix + 'LiveSearch .empty-message').remove();
                         if (ui.content.length === 0) {
                             jQuery('#' + idPrefix + 'LiveSearch').append(
-                                jQuery('<div />', { class: 'empty-message' }).text(Translator.__('No results found!'))
+                                jQuery('<div>', { class: 'empty-message' }).text(Translator.__('No results found!'))
                             );
                         }
                     },
@@ -259,7 +259,7 @@ class AutoCompletion {
                     }
                 })
                 .autocomplete('instance')._renderItem = function (ul, item) {
-                    return jQuery('<div />', { class: 'suggestion' })
+                    return jQuery('<div>', { class: 'suggestion' })
                         .append('<div class="media"><div class="media-left"><a href="javascript:void(0)">' + item.image + '</a></div><div class="media-body"><p class="media-heading">' + item.title + '</p>' + item.description + '</div></div>')
                         .appendTo(ul);
                 };
