@@ -27,7 +27,6 @@ class PhpUnitXmlDist {
             convertWarningsToExceptions="true"
             processIsolation="false"
             stopOnFailure="false"
-            syntaxCheck="true"
         >
             <testsuites>
                 <testsuite name="«appName» Test Suite">
