@@ -126,14 +126,14 @@ class ViewQuickNavForm {
     def private categoriesFields(Entity it) '''
         {% set categoriesEnabled = featureActivationHelper.isEnabled(constant('«application.vendor.formatForCodeCapital»\\«application.name.formatForCodeCapital»Module\\Helper\\FeatureActivationHelper::CATEGORIES'), '«name.formatForCode»') %}
         {% if categoriesEnabled %}
-            {% if (categoryFilter is defined and categoryFilter != true) %}
+            {% if categoryFilter is defined and categoryFilter != true %}
                 <div class="hidden">
             {% else %}
                 <div class="row">
                     <div class="col-sm-3">
             {% endif %}
                 {{ form_row(quickNavForm.categories) }}
-            {% if (categoryFilter is defined and categoryFilter != true) %}
+            {% if categoryFilter is defined and categoryFilter != true %}
                 </div>
             {% else %}
                     </div>
