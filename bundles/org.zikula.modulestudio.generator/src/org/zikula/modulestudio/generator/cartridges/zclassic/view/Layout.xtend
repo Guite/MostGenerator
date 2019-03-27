@@ -89,7 +89,6 @@ class Layout {
         «IF generatePoweredByBacklinksIntoFooterTemplates»
             «new FileHelper().msWeblink(it)»
         «ENDIF»
-        {{ moduleFooter() }}
         {{ pageAddAsset('stylesheet', zasset('@«appName»:css/custom.css'), 120) }}
         «IF needsJQueryUI»
             {{ pageAddAsset('stylesheet', asset('jquery-ui/themes/base/jquery-ui.min.css')) }}
