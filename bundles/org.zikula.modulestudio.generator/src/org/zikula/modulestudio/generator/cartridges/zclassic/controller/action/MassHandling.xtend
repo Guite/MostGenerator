@@ -96,6 +96,9 @@ class MassHandling {
         // Get parameters
         $action = $request->request->get('action', null);
         $items = $request->request->get('items', null);
+        if (!is_array($items) || !count($items)) {
+            return $this->redirectToRoute('«application.appName.formatForDB»_«name.formatForDB»_' . ($isAdmin ? 'admin' : '') . '«getPrimaryAction»');
+        }
 
         $action = strtolower($action);
 
