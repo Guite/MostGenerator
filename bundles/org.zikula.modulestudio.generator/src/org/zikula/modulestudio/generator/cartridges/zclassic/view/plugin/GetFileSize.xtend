@@ -30,7 +30,7 @@ class GetFileSize {
          * @return string File size in a readable form
          «ENDIF»
          */
-        public function getFileSize(«IF targets('3.0')»int $size = 0, string $filepath = '', bool $nodesc = false, bool $onlydesc = false): string«ELSE»($size = 0, $filepath = '', $nodesc = false, $onlydesc = false)«ENDIF»
+        public function getFileSize«IF targets('3.0')»(int $size = 0, string $filepath = '', bool $nodesc = false, bool $onlydesc = false): string«ELSE»($size = 0, $filepath = '', $nodesc = false, $onlydesc = false)«ENDIF»
         {
             «IF !targets('3.0')»
                 if (!is_numeric($size)) {

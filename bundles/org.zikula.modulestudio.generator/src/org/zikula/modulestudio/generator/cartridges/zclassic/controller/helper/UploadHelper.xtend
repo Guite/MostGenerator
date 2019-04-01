@@ -266,7 +266,7 @@ class UploadHelper {
          * @return bool true if file is valid else false
          «ENDIF»
          */
-        protected function validateFileUpload(«IF targets('3.0')»string $objectType«ENDIF», UploadedFile $file, «IF targets('3.0')»string $fieldName«ENDIF»)«IF targets('3.0')»: bool«ENDIF»
+        protected function validateFileUpload(«IF targets('3.0')»string «ENDIF»$objectType, UploadedFile $file, «IF targets('3.0')»string «ENDIF»$fieldName)«IF targets('3.0')»: bool«ENDIF»
         {
             $flashBag = $this->requestStack->getCurrentRequest()->getSession()->getFlashBag();
 
