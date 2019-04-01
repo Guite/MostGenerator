@@ -146,14 +146,20 @@ class ControllerLayer {
     def private entityControllerBaseImports(Entity it) '''
         namespace «app.appNamespace»\Controller\Base;
 
+        «IF hasViewAction || hasEditAction»
+            use Exception;
+        «ENDIF»
         «IF hasViewAction || hasEditAction || hasDeleteAction»
             use RuntimeException;
         «ENDIF»
-        «IF hasEditAction »
+        «IF hasEditAction»
             use Symfony\Component\HttpFoundation\RedirectResponse;
         «ENDIF»
         use Symfony\Component\HttpFoundation\Request;
         use Symfony\Component\HttpFoundation\Response;
+        «IF hasViewAction»
+            use Symfony\Component\Routing\RouterInterface;
+        «ENDIF»
         «IF hasDisplayAction || hasDeleteAction»
             use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
         «ENDIF»
@@ -175,7 +181,7 @@ class ControllerLayer {
         «IF hasEditAction && app.needsInlineEditing»
             use Zikula\Core\Response\PlainResponse;
         «ENDIF»
-        «IF !skipHookSubscribers»
+        «IF hasViewAction && hasDisplayAction && !skipHookSubscribers»
             use Zikula\Core\RouteUrl;
         «ENDIF»
         «IF app.targets('3.0') && (hasViewAction || hasDeleteAction)»
@@ -192,19 +198,14 @@ class ControllerLayer {
         namespace «app.appNamespace»\Controller;
 
         use «app.appNamespace»\Controller\Base\Abstract«name.formatForCodeCapital»Controller;
-
-        «IF hasEditAction || hasDeleteAction»
-            use RuntimeException;
+        «IF hasViewAction»
+            use Symfony\Component\HttpFoundation\RedirectResponse;
         «ENDIF»
-        «/*use Sensio\Bundle\FrameworkExtraBundle\Configuration\Cache;*/»
         use Symfony\Component\HttpFoundation\Request;
-        «IF hasDisplayAction || hasEditAction || hasDeleteAction»
-            use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-        «ENDIF»
+        use Symfony\Component\HttpFoundation\Response;
         use Symfony\Component\Routing\Annotation\Route;
-        use Symfony\Component\Security\Core\Exception\AccessDeniedException;
         use Zikula\ThemeModule\Engine\Annotation\Theme;
-        «IF app.targets('3.0') && hasViewAction»
+        «IF app.targets('3.0') && (hasViewAction || hasDeleteAction)»
             use Zikula\UsersModule\Api\ApiInterface\CurrentUserApiInterface;
         «ENDIF»
         «commonAppImports»

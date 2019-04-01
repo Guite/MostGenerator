@@ -96,20 +96,6 @@ class SearchHelper {
             protected $categoryHelper;
         «ENDIF»
 
-        /**
-         * SearchHelper constructor.
-         *
-         * @param TranslatorInterface $translator
-         * @param RequestStack $requestStack
-         * @param EntityFactory $entityFactory
-         * @param ControllerHelper $controllerHelper
-         * @param EntityDisplayHelper $entityDisplayHelper
-         * @param PermissionHelper $permissionHelper
-         «IF hasCategorisableEntities»
-         * @param FeatureActivationHelper $featureActivationHelper
-         * @param CategoryHelper $categoryHelper
-         «ENDIF»
-         */
         public function __construct(
             TranslatorInterface $translator,
             RequestStack $requestStack,
@@ -141,10 +127,12 @@ class SearchHelper {
         «val entitiesWithStrings = getAllEntities.filter[hasAbstractStringFieldsEntity]»
         /**
          * Returns list of supported search types.
+         «IF !targets('3.0')»
          *
          * @return array List of search types
+         «ENDIF»
          */
-        protected function getSearchTypes()
+        protected function getSearchTypes()«IF targets('3.0')»: array«ENDIF»
         {
             $searchTypes = [
                 «FOR entity : entitiesWithStrings»
@@ -158,7 +146,7 @@ class SearchHelper {
             $allowedTypes = $this->controllerHelper->getObjectTypes('helper', ['helper' => 'search', 'action' => 'getSearchTypes']);
             $allowedSearchTypes = [];
             foreach ($searchTypes as $searchType => $typeInfo) {
-                if (!in_array($typeInfo['value'], $allowedTypes)) {
+                if (!in_array($typeInfo['value'], $allowedTypes, true)) {
                     continue;
                 }
                 if (!$this->permissionHelper->hasComponentPermission($typeInfo['value'], ACCESS_READ)) {
@@ -176,10 +164,7 @@ class SearchHelper {
     '''
 
     def private amendForm(Application it) '''
-        /**
-         * @inheritDoc
-         */
-        public function amendForm(FormBuilderInterface $builder)
+        public function amendForm(FormBuilderInterface $builder)«IF targets('3.0')»: void«ENDIF»
         {
             if (!$this->permissionHelper->hasPermission(ACCESS_READ)) {
                 return;
@@ -204,10 +189,7 @@ class SearchHelper {
     '''
 
     def private getResults(Application it) '''
-        /**
-         * @inheritDoc
-         */
-        public function getResults(array $words, $searchType = 'AND', $modVars = null)
+        public function getResults(array $words, «IF targets('3.0')»string «ENDIF»$searchType = 'AND', «IF targets('3.0')»array «ENDIF»$modVars = null)«IF targets('3.0')»: array«ENDIF»
         {
             if (!$this->permissionHelper->hasPermission(ACCESS_READ)) {
                 return [];
@@ -267,12 +249,12 @@ class SearchHelper {
                 // fetch the results
                 $entities = $query->getResult();
 
-                if (count($entities) == 0) {
+                if (0 === count($entities)) {
                     continue;
                 }
 
                 $descriptionFieldName = $this->entityDisplayHelper->getDescriptionFieldName($objectType);
-                $hasDisplayAction = in_array($objectType, $entitiesWithDisplayAction);
+                $hasDisplayAction = in_array($objectType, $entitiesWithDisplayAction, true);
 
                 $session = $request->getSession();
                 foreach ($entities as $entity) {
@@ -281,7 +263,7 @@ class SearchHelper {
                     }
                     «IF hasCategorisableEntities»
 
-                        if (in_array($objectType, ['«getCategorisableEntities.map[name.formatForCode].join('\', \'')»'])) {
+                        if (in_array($objectType, ['«getCategorisableEntities.map[name.formatForCode].join('\', \'')»'], true)) {
                             if ($this->featureActivationHelper->isEnabled(FeatureActivationHelper::CATEGORIES, $objectType)) {
                                 if (!$this->categoryHelper->hasPermission($entity)) {
                                     continue;
@@ -291,13 +273,17 @@ class SearchHelper {
                     «ENDIF»
 
                     $description = !empty($descriptionFieldName) ? strip_tags($entity[$descriptionFieldName]) : '';
-                    $created = isset($entity['createdDate']) ? $entity['createdDate'] : null;
+                    «IF targets('3.0')»
+                        $created = $entity['createdDate'] ?? null;
+                    «ELSE»
+                        $created = isset($entity['createdDate']) ? $entity['createdDate'] : null;
+                    «ENDIF»
 
                     $formattedTitle = $this->entityDisplayHelper->getFormattedTitle($entity);
                     $displayUrl = null;
                     if ($hasDisplayAction) {
                         $urlArgs = $entity->createUrlArgs();
-                        $urlArgs['_locale'] = (null !== $languageField && !empty($entity[$languageField])) ? $entity[$languageField] : $request->getLocale();
+                        $urlArgs['_locale'] = null !== $languageField && !empty($entity[$languageField]) ? $entity[$languageField] : $request->getLocale();
                         $displayUrl = new RouteUrl('«appName.formatForDB»_' . strtolower($objectType) . '_display', $urlArgs);
                     }
 
@@ -306,7 +292,8 @@ class SearchHelper {
                         ->setText($description)
                         ->setModule(«IF targets('3.0')»$this->getBundleName()«ELSE»'«appName»'«ENDIF»)
                         ->setCreated($created)
-                        ->setSesid($session->getId());
+                        ->setSesid($session->getId())
+                    ;
                     if (null !== $displayUrl) {
                         $result->setUrl($displayUrl);
                     }
@@ -319,10 +306,7 @@ class SearchHelper {
     '''
 
     def private getErrors(Application it) '''
-        /**
-         * @inheritDoc
-         */
-        public function getErrors()
+        public function getErrors()«IF targets('3.0')»: array«ENDIF»
         {
             return [];
         }
@@ -331,6 +315,7 @@ class SearchHelper {
     def private formatWhere(Application it) '''
         /**
          * Construct a QueryBuilder Where orX|andX Expr instance.
+         «IF !targets('3.0')»
          *
          * @param QueryBuilder $qb
          * @param string[] $words  List of words to query for
@@ -338,14 +323,15 @@ class SearchHelper {
          * @param string $searchtype AND|OR|EXACT
          *
          * @return null|Composite
+         «ENDIF»
          */
-        protected function formatWhere(QueryBuilder $qb, array $words = [], array $fields = [], $searchtype = 'AND')
+        protected function formatWhere(QueryBuilder $qb, array $words = [], array $fields = [], «IF targets('3.0')»string «ENDIF»$searchtype = 'AND')«IF targets('3.0')»: ?Composite«ENDIF»
         {
             if (empty($words) || empty($fields)) {
                 return null;
             }
 
-            $method = ($searchtype == 'OR') ? 'orX' : 'andX';
+            $method = 'OR' === $searchtype ? 'orX' : 'andX';
             /** @var $where Composite */
             $where = $qb->expr()->$method();
             $i = 1;
@@ -364,10 +350,7 @@ class SearchHelper {
         }
         «IF targets('3.0')»
 
-            /**
-             * @inheritDoc
-             */
-            public function getBundleName()
+            public function getBundleName(): string
             {
                 return '«appName»';
             }

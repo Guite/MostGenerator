@@ -21,6 +21,7 @@ class UploadFileTransformer {
         use Symfony\Component\Form\DataTransformerInterface;
         use Symfony\Component\HttpFoundation\File\File;
         use Symfony\Component\HttpFoundation\File\UploadedFile;
+        use Zikula\Core\Doctrine\EntityAccess;
         use «appNamespace»\Helper\UploadHelper;
 
         /**
@@ -31,7 +32,7 @@ class UploadFileTransformer {
         abstract class AbstractUploadFileTransformer implements DataTransformerInterface
         {
             /**
-             * @var object
+             * @var EntityAccess
              */
             protected $entity = null;
 
@@ -52,18 +53,12 @@ class UploadFileTransformer {
                 protected $supportCustomFileName = false;
             «ENDIF»
 
-            /**
-             * UploadFileTransformer constructor.
-             *
-             * @param object $entity
-             * @param UploadHelper $uploadHelper
-             * @param string $fieldName The form field name
-             «IF hasUploadNamingScheme(UploadNamingScheme.USERDEFINEDWITHCOUNTER)»
-             * @param boolean $customName Whether a custom file name is supported or not
-             «ENDIF»
-             */
-            public function __construct($entity, UploadHelper $uploadHelper, $fieldName = ''«IF hasUploadNamingScheme(UploadNamingScheme.USERDEFINEDWITHCOUNTER)», $customName = false«ENDIF»)
-            {
+            public function __construct(
+                EntityAccess $entity,
+                UploadHelper $uploadHelper,
+                $fieldName = ''«IF hasUploadNamingScheme(UploadNamingScheme.USERDEFINEDWITHCOUNTER)»,
+                $customName = false«ENDIF»
+            ) {
                 $this->entity = $entity;
                 $this->uploadHelper = $uploadHelper;
                 $this->fieldName = $fieldName;
@@ -144,7 +139,7 @@ class UploadFileTransformer {
 
                 $result = null;
                 $metaData = [];
-                if ($uploadResult['fileName'] != '') {
+                if ('' !== $uploadResult['fileName']) {
                     $result = $this->uploadHelper->getFileBaseFolder($objectType, $fieldName) . $uploadResult['fileName'];
                     $result = null !== $result ? new File($result) : $result;
                     $metaData = $uploadResult['metaData'];

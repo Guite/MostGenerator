@@ -6,12 +6,14 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelp
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
+import org.zikula.modulestudio.generator.extensions.Utils
 
 class Categories extends AbstractExtension implements EntityExtensionInterface {
 
     extension FormattingExtensions = new FormattingExtensions
     extension ModelExtensions = new ModelExtensions
     extension NamingExtensions = new NamingExtensions
+    extension Utils = new Utils
 
     /**
      * Additional field annotations.
@@ -43,20 +45,24 @@ class Categories extends AbstractExtension implements EntityExtensionInterface {
      * Generates additional accessor methods.
      */
     override accessors(Entity it) '''
-        «val fh = new FileHelper»
-        «fh.getterMethod(it, 'categories', 'ArrayCollection', true)»
+        «val fh = new FileHelper(application)»
+        «IF application.targets('3.0')»
+            «fh.getterMethod(it, 'categories', 'Collection', true, true, true)»
+        «ELSE»
+            «fh.getterMethod(it, 'categories', 'Collection', true, true, false)»
+        «ENDIF»
 
         /**
          * Sets the categories.
-         *
-         * @param ArrayCollection $categories List of categories
+         «IF !application.targets('3.0')»
          *
          * @return void
+         «ENDIF»
          */
-        public function setCategories(ArrayCollection $categories)
+        public function setCategories(Collection $categories)«IF application.targets('3.0')»: void«ENDIF»
         {
             foreach ($this->categories as $category) {
-                if (false === $key = $this->collectionContains($categories, $category)) {
+                if (false === ($key = $this->collectionContains($categories, $category))) {
                     $this->categories->removeElement($category);
                 } else {
                     $categories->remove($key);
@@ -69,18 +75,20 @@ class Categories extends AbstractExtension implements EntityExtensionInterface {
 
         /**
          * Checks if a collection contains an element based only on two criteria (categoryRegistryId, category).
+         «IF !application.targets('3.0')»
          *
-         * @param ArrayCollection $collection Given collection
+         * @param Collection $collection Given collection
          * @param \«entityClassName('category', false)» $element Element to search for
+         «ENDIF»
          *
          * @return bool|int
          */
-        private function collectionContains(ArrayCollection $collection, \«entityClassName('category', false)» $element)
+        private function collectionContains(Collection $collection, \«entityClassName('category', false)» $element)
         {
             foreach ($collection as $key => $category) {
                 /** @var \«entityClassName('category', false)» $category */
-                if ($category->getCategoryRegistryId() == $element->getCategoryRegistryId()
-                    && $category->getCategory() == $element->getCategory()
+                if ($category->getCategoryRegistryId() === $element->getCategoryRegistryId()
+                    && $category->getCategory() === $element->getCategory()
                 ) {
                     return $key;
                 }
@@ -103,6 +111,7 @@ class Categories extends AbstractExtension implements EntityExtensionInterface {
     override extensionClassImports(Entity it) '''
         use Doctrine\ORM\Mapping as ORM;
         use Zikula\CategoriesModule\Entity\«extensionBaseClass»;
+        use «entityClassName('', false)»;
     '''
 
     /**
@@ -126,7 +135,7 @@ class Categories extends AbstractExtension implements EntityExtensionInterface {
         /**
          * @ORM\ManyToOne(targetEntity="\«entityClassName('', false)»", inversedBy="categories")
          * @ORM\JoinColumn(name="entityId", referencedColumnName="«getPrimaryKey.name.formatForCode»")
-         * @var \«entityClassName('', false)»
+         * @var «name.formatForCodeCapital»Entity
          */
         protected $entity;
 

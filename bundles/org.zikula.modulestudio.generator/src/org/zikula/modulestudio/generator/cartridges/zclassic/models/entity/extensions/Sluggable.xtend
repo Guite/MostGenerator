@@ -11,12 +11,14 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelp
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
+import org.zikula.modulestudio.generator.extensions.Utils
 
 class Sluggable extends AbstractExtension implements EntityExtensionInterface {
 
     extension FormattingExtensions = new FormattingExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension NamingExtensions = new NamingExtensions
+    extension Utils = new Utils
 
     /**
      * Generates additional annotations on class level.
@@ -134,7 +136,11 @@ class Sluggable extends AbstractExtension implements EntityExtensionInterface {
      * Generates additional accessor methods.
      */
     override accessors(Entity it) '''
-        «val fh = new FileHelper»
-        «fh.getterAndSetterMethods(it, 'slug', 'string', false, true, false, '', '')»
+        «val fh = new FileHelper(application)»
+        «IF application.targets('3.0')»
+            «fh.getterAndSetterMethods(it, 'slug', 'string', false, true, true, '', '')»
+        «ELSE»
+            «fh.getterAndSetterMethods(it, 'slug', 'string', false, true, false, '', '')»
+        «ENDIF»
     '''
 }

@@ -76,10 +76,8 @@ class EntityMethods {
         «IF hasNotifyPolicy»
             /**
              * Adds a property change listener.
-             *
-             * @param PropertyChangedListener $listener The listener to be added
              */
-            public function addPropertyChangedListener(PropertyChangedListener $listener)
+            public function addPropertyChangedListener(PropertyChangedListener $listener)«IF application.targets('3.0')»: void«ENDIF»
             {
                 $this->_propertyChangedListeners[] = $listener;
             }
@@ -87,11 +85,13 @@ class EntityMethods {
             /**
              * Notify all registered listeners about a changed property.
              *
-             * @param String $propName Name of property which has been changed
-             * @param mixed  $oldValue The old property value
-             * @param mixed  $newValue The new property value
+             «IF !application.targets('3.0')»
+             * @param string $propName Name of property which has been changed
+             «ENDIF»
+             * @param mixed $oldValue The old property value
+             * @param mixed $newValue The new property value
              */
-            protected function _onPropertyChanged($propName, $oldValue, $newValue)
+            protected function _onPropertyChanged(«IF application.targets('3.0')»string «ENDIF»$propName, $oldValue, $newValue)«IF application.targets('3.0')»: void«ENDIF»
             {
                 if ($this->_propertyChangedListeners) {
                     foreach ($this->_propertyChangedListeners as $listener) {
@@ -106,14 +106,16 @@ class EntityMethods {
     def private createUrlArgs(Entity it) '''
         /**
          * Creates url arguments array for easy creation of display urls.
+         «IF !application.targets('3.0')»
          *
          «IF hasSluggableFields && slugUnique»
-         * @param boolean $forEditing
+         * @param bool $forEditing
          *
          «ENDIF»
          * @return array List of resulting arguments
+         «ENDIF»
          */
-        public function createUrlArgs(«IF hasSluggableFields && slugUnique»$forEditing = false«ENDIF»)
+        public function createUrlArgs(«IF hasSluggableFields && slugUnique»«IF application.targets('3.0')»bool «ENDIF»$forEditing = false«ENDIF»)«IF application.targets('3.0')»: array«ENDIF»
         {
             «IF hasSluggableFields && slugUnique»
                 if (true === $forEditing) {
@@ -138,10 +140,12 @@ class EntityMethods {
     def private getKey(Entity it) '''
         /**
          * Returns the primary key.
+         «IF !application.targets('3.0')»
          *
-         * @return integer The identifier
+         * @return int The identifier
+         «ENDIF»
          */
-        public function getKey()
+        public function getKey()«IF application.targets('3.0')»: int«ENDIF»
         {
             return $this->get«getPrimaryKey.name.formatForCodeCapital»();
         }
@@ -150,10 +154,12 @@ class EntityMethods {
     def private supportsHookSubscribers(Entity it) '''
         /**
          * Determines whether this entity supports hook subscribers or not.
+         «IF !application.targets('3.0')»
          *
-         * @return boolean
+         * @return bool
+         «ENDIF»
          */
-        public function supportsHookSubscribers()
+        public function supportsHookSubscribers()«IF application.targets('3.0')»: bool«ENDIF»
         {
             return «IF !skipHookSubscribers»true«ELSE»false«ENDIF»;
         }
@@ -162,10 +168,12 @@ class EntityMethods {
     def private getHookAreaPrefix(Entity it) '''
         /**
          * Return lower case name of multiple items needed for hook areas.
+         «IF !application.targets('3.0')»
          *
          * @return string
+         «ENDIF»
          */
-        public function getHookAreaPrefix()
+        public function getHookAreaPrefix()«IF application.targets('3.0')»: string«ENDIF»
         {
             return '«application.appName.formatForDB».ui_hooks.«nameMultiple.formatForDB»';
         }
@@ -175,10 +183,12 @@ class EntityMethods {
         /**
          * ToString interceptor implementation.
          * This method is useful for debugging purposes.
+         «IF !application.targets('3.0')»
          *
          * @return string The output string for this entity
+         «ENDIF»
          */
-        public function __toString()
+        public function __toString()«IF application.targets('3.0')»: string«ENDIF»
         {
             return '«name.formatForDisplayCapital» ' . $this->getKey()«IF hasDisplayStringFieldsEntity» . ': ' . $this->get«getDisplayStringFieldsEntity.head.name.formatForCodeCapital»()«ENDIF»;
         }
@@ -187,12 +197,14 @@ class EntityMethods {
     def private relatedObjectsImpl(DataObject it, Application app) '''
         /**
          * Returns an array of all related objects that need to be persisted after clone.
+         «IF !application.targets('3.0')»
          * 
          * @param array $objects Objects that are added to this array
          * 
          * @return array List of entity objects
+         «ENDIF»
          */
-        public function getRelatedObjectsToPersist(&$objects = [])
+        public function getRelatedObjectsToPersist(«IF application.targets('3.0')»array «ENDIF»&$objects = [])«IF application.targets('3.0')»: array«ENDIF»
         {
             «val joinsIn = incomingJoinRelationsForCloning.filter[!(it instanceof ManyToManyRelationship)]»
             «val joinsOut = outgoingJoinRelationsForCloning.filter[!(it instanceof ManyToManyRelationship)]»
@@ -316,7 +328,7 @@ class EntityMethods {
                     }
                 }
 
-                $ref = new \ReflectionClass(__CLASS__);
+                $ref = new ReflectionClass(__CLASS__);
                 $props = $ref->getProperties();
 
                 $serializeFields = [];

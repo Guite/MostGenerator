@@ -39,7 +39,7 @@ class Entities {
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
 
-    FileHelper fh = new FileHelper
+    FileHelper fh
     Association thAssoc = new Association
     ExtensionManager extMan
     Property thProp
@@ -48,6 +48,7 @@ class Entities {
      * Entry point for Doctrine entity classes.
      */
     def generate(Application it, IMostFileSystemAccess fsa) {
+        fh = new FileHelper(it)
         entities.forEach(e|e.generate(it, fsa))
 
         new LifecycleListener().generate(it, fsa)
@@ -82,7 +83,7 @@ class Entities {
         if (it instanceof Entity) {
             extMan = new ExtensionManager(it)
         }
-        thProp = new Property(extMan)
+        thProp = new Property(app, extMan)
         val entityPath = 'Entity/'
         val entityClassSuffix = 'Entity'
         val entityFileName = name.formatForCodeCapital + entityClassSuffix
@@ -106,7 +107,11 @@ class Entities {
             use Gedmo\Mapping\Annotation as Gedmo;
         «ENDIF»
         «IF isBase»
+            «IF hasCollections»
+                use InvalidArgumentException;
+            «ENDIF»
             «IF hasUploadFieldsEntity»
+                use RuntimeException;
                 use Symfony\Component\HttpFoundation\File\File;
             «ENDIF»
             use Symfony\Component\Validator\Constraints as Assert;
@@ -130,19 +135,26 @@ class Entities {
             «IF hasCollections || attributable || categorisable»
                 use Doctrine\Common\Collections\ArrayCollection;
             «ENDIF»
+            «IF attributable || categorisable || EntityTreeType.NONE != tree»
+                use Doctrine\Common\Collections\Collection;
+            «ENDIF»
+        «ENDIF»
+        «IF isBase && hasNotifyPolicy»
+            use Doctrine\Common\NotifyPropertyChanged;
+            use Doctrine\Common\PropertyChangedListener;
         «ENDIF»
         «IF isBase || loggable || hasTranslatableFields || tree != EntityTreeType.NONE»
             use Gedmo\Mapping\Annotation as Gedmo;
         «ENDIF»
         «IF isBase»
-            «IF hasNotifyPolicy»
-                use Doctrine\Common\NotifyPropertyChanged;
-                use Doctrine\Common\PropertyChangedListener;
-            «ENDIF»
             «IF hasTranslatableFields»
                 use Gedmo\Translatable\Translatable;
             «ENDIF»
             «IF hasUploadFieldsEntity»
+                «IF loggable»
+                    use ReflectionClass;
+                «ENDIF»
+                use RuntimeException;
                 use Symfony\Component\HttpFoundation\File\File;
             «ENDIF»
             use Symfony\Component\Validator\Constraints as Assert;
@@ -258,10 +270,10 @@ class Entities {
     '''
 
     def private accessors(DataObject it) '''
-        «fh.getterAndSetterMethods(it, '_objectType', 'string', false, false, false, '', '')»
+        «fh.getterAndSetterMethods(it, '_objectType', 'string', false, false, application.targets('3.0'), '', '')»
         «IF hasUploadFieldsEntity»
-            «fh.getterAndSetterMethods(it, '_uploadBasePath', 'string', false, false, false, '', '')»
-            «fh.getterAndSetterMethods(it, '_uploadBaseUrl', 'string', false, false, false, '', '')»
+            «fh.getterAndSetterMethods(it, '_uploadBasePath', 'string', false, false, application.targets('3.0'), '', '')»
+            «fh.getterAndSetterMethods(it, '_uploadBaseUrl', 'string', false, false, application.targets('3.0'), '', '')»
         «ENDIF»
 
         «FOR field : getDerivedFields»«thProp.fieldAccessor(field)»«ENDFOR»

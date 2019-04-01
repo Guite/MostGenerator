@@ -27,6 +27,7 @@ class CategoryHelper {
         use Zikula\CategoriesModule\Api\ApiInterface\CategoryPermissionApiInterface;
         use Zikula\CategoriesModule\Entity\RepositoryInterface\CategoryRegistryRepositoryInterface;
         use Zikula\Common\Translator\TranslatorInterface;
+        use Zikula\Core\Doctrine\EntityAccess;
         use Zikula\UsersModule\Api\ApiInterface\CurrentUserApiInterface;
 
         /**
@@ -69,16 +70,6 @@ class CategoryHelper {
          */
         protected $categoryPermissionApi;
 
-        /**
-         * CategoryHelper constructor.
-         *
-         * @param TranslatorInterface $translator
-         * @param RequestStack $requestStack
-         * @param LoggerInterface $logger
-         * @param CurrentUserApiInterface $currentUserApi
-         * @param CategoryRegistryRepositoryInterface $categoryRegistryRepository
-         * @param CategoryPermissionApiInterface $categoryPermissionApi
-         */
         public function __construct(
             TranslatorInterface $translator,
             RequestStack $requestStack,
@@ -99,13 +90,15 @@ class CategoryHelper {
          * Defines whether multiple selection is enabled for a given object type
          * or not. Subclass can override this method to apply a custom behaviour
          * to certain category registries for example.
+         «IF !targets('3.0')»
          *
          * @param string $objectType The object type to retrieve
-         * @param string $registry   Name of category registry to be used (optional)
+         * @param string $registry Name of category registry to be used (optional)
          *
-         * @return boolean true if multiple selection is allowed, else false
+         * @return bool true if multiple selection is allowed, else false
+         «ENDIF»
          */
-        public function hasMultipleSelection($objectType = '', $registry = '')
+        public function hasMultipleSelection(«IF targets('3.0')»string «ENDIF»$objectType = '', «IF targets('3.0')»string «ENDIF»$registry = '')«IF targets('3.0')»: bool«ENDIF»
         {
             if (empty($objectType)) {
                 throw new InvalidArgumentException($this->translator->__('Invalid object type received.'));
@@ -132,20 +125,22 @@ class CategoryHelper {
 
         /**
          * Retrieves input data from POST for all registries.
+         «IF !targets('3.0')»
          *
          * @param string $objectType The object type to retrieve
-         * @param string $source     Where to retrieve the data from (defaults to POST)
+         * @param string $source Where to retrieve the data from (defaults to POST)
          *
          * @return array The fetched data indexed by the registry id
+         «ENDIF»
          */
-        public function retrieveCategoriesFromRequest($objectType = '', $source = 'POST')
+        public function retrieveCategoriesFromRequest(«IF targets('3.0')»string «ENDIF»$objectType = '', «IF targets('3.0')»string «ENDIF»$source = 'POST')«IF targets('3.0')»: array«ENDIF»
         {
             if (empty($objectType)) {
                 throw new InvalidArgumentException($this->translator->__('Invalid object type received.'));
             }
 
             $request = $this->requestStack->getCurrentRequest();
-            $dataSource = $source == 'GET' ? $request->query : $request->request;
+            $dataSource = 'GET' === $source ? $request->query : $request->request;
             $catIdsPerRegistry = [];
 
             $properties = $this->getAllProperties($objectType);
@@ -160,21 +155,30 @@ class CategoryHelper {
             if (null === $inputValues) {
                 return $catIdsPerRegistry;
             }
-            $inputCategories = isset($inputValues['categories']) ? $inputValues['categories'] : [];
+            «IF targets('3.0')»
+                $inputCategories = $inputValues['categories'] ?? [];
+            «ELSE»
+                $inputCategories = isset($inputValues['categories']) ? $inputValues['categories'] : [];
+            «ENDIF»
 
             if (!count($inputCategories)) {
                 return $catIdsPerRegistry;
             }
 
             foreach ($properties as $propertyName => $propertyId) {
-                $inputValue = isset($inputCategories['registry_' . $propertyId]) ? $inputCategories['registry_' . $propertyId] : [];
+                $registryKey = 'registry_' . $propertyId;
+                «IF targets('3.0')»
+                    $inputValue = $inputCategories[$registryKey] ?? [];
+                «ELSE»
+                    $inputValue = isset($inputCategories[$registryKey]) ? $inputCategories[$registryKey] : [];
+                «ENDIF»
                 if (!is_array($inputValue)) {
                     $inputValue = [$inputValue];
                 }
 
                 // prevent "All" option hiding all entries
                 foreach ($inputValue as $k => $v) {
-                    if ($v == 0) {
+                    if (0 === $v) {
                         unset($inputValue[$k]);
                     }
                 }
@@ -187,14 +191,16 @@ class CategoryHelper {
 
         /**
          * Adds a list of where clauses for a certain list of categories to a given query builder.
+         «IF !targets('3.0')»
          *
          * @param QueryBuilder $queryBuilder Query builder instance to be enhanced
-         * @param string       $objectType   The treated object type (optional)
-         * @param array        $catIds       Category ids grouped by property name
+         * @param string $objectType The treated object type (optional)
+         * @param array $catIds Category ids grouped by property name
          *
          * @return QueryBuilder The enriched query builder instance
+         «ENDIF»
          */
-        public function buildFilterClauses(QueryBuilder $queryBuilder, $objectType = '', array $catIds = [])
+        public function buildFilterClauses(QueryBuilder $queryBuilder, «IF targets('3.0')»string «ENDIF»$objectType = '', array $catIds = [])«IF targets('3.0')»: QueryBuilder«ENDIF»
         {
             $qb = $queryBuilder;
 
@@ -230,8 +236,8 @@ class CategoryHelper {
                 $filterParameters['values'][$propertyName] = $catIdsForProperty;
             }
 
-            if (count($filtersPerRegistry) > 0) {
-                if (count($filtersPerRegistry) == 1) {
+            if (0 < count($filtersPerRegistry)) {
+                if (1 === count($filtersPerRegistry)) {
                     $qb->andWhere($filtersPerRegistry[0]);
                 } else {
                     «/* See http://stackoverflow.com/questions/9815047/chaining-orx-in-doctrine2-query-builder
@@ -248,12 +254,14 @@ class CategoryHelper {
 
         /**
          * Returns a list of all registries / properties for a given object type.
+         «IF !targets('3.0')»
          *
          * @param string $objectType The object type to retrieve
          *
-         * @return array list of the registries (property name as key, id as value)
+         * @return array List of the registries (property name as key, id as value)
+         «ENDIF»
          */
-        public function getAllProperties($objectType = '')
+        public function getAllProperties(«IF targets('3.0')»string «ENDIF»$objectType = '')«IF targets('3.0')»: array«ENDIF»
         {
             if (empty($objectType)) {
                 throw new InvalidArgumentException($this->translator->__('Invalid object type received.'));
@@ -274,13 +282,15 @@ class CategoryHelper {
 
         /**
          * Returns a list of all registries with main category for a given object type.
+         «IF !targets('3.0')»
          *
          * @param string $objectType The object type to retrieve
-         * @param string $arrayKey   Key for the result array (optional)
+         * @param string $arrayKey Key for the result array (optional)
          *
-         * @return array list of the registries (registry id as key, main category id as value)
+         * @return array List of the registries (registry id as key, main category id as value)
+         «ENDIF»
          */
-        public function getAllPropertiesWithMainCat($objectType = '', $arrayKey = 'property')
+        public function getAllPropertiesWithMainCat(«IF targets('3.0')»string «ENDIF»$objectType = '', «IF targets('3.0')»string «ENDIF»$arrayKey = 'property')«IF targets('3.0')»: array«ENDIF»
         {
             if (empty($objectType)) {
                 throw new InvalidArgumentException($this->translator->__('Invalid object type received.'));
@@ -302,19 +312,21 @@ class CategoryHelper {
 
         /**
          * Returns the main category id for a given object type and a certain property name.
+         «IF !targets('3.0')»
          *
          * @param string $objectType The object type to retrieve
-         * @param string $property   The property name (optional)
+         * @param string $property The property name (optional)
          *
-         * @return integer The main category id of desired tree
+         * @return int The main category id of desired tree
+         «ENDIF»
          */
-        public function getMainCatForProperty($objectType = '', $property = '')
+        public function getMainCatForProperty(«IF targets('3.0')»string «ENDIF»$objectType = '', «IF targets('3.0')»string «ENDIF»$property = '')«IF targets('3.0')»: ?int«ENDIF»
         {
             if (empty($objectType)) {
                 throw new InvalidArgumentException($this->translator->__('Invalid object type received.'));
             }
 
-            $registries = $this->getAllPropertiesWithMainCat($objectType, 'property');
+            $registries = $this->getAllPropertiesWithMainCat($objectType);
             if ($registries && isset($registries[$property]) && $registries[$property]) {
                 return $registries[$property];
             }
@@ -324,12 +336,14 @@ class CategoryHelper {
 
         /**
          * Returns the name of the primary registry.
+         «IF !targets('3.0')»
          *
          * @param string $objectType The object type to retrieve
          *
-         * @return string name of the main registry
+         * @return string Name of the main registry
+         «ENDIF»
          */
-        public function getPrimaryProperty($objectType = '')
+        public function getPrimaryProperty(«IF targets('3.0')»string «ENDIF»$objectType = '')«IF targets('3.0')»: string«ENDIF»
         {
             return 'Main';
         }
@@ -338,10 +352,12 @@ class CategoryHelper {
          * Filters a given list of entities to these the current user has permissions for.
          *
          * @param array|ArrayCollection $entities The given list of entities
+         «IF !targets('3.0')»
          *
          * @return array The filtered list of entities
+         «ENDIF»
          */
-        public function filterEntitiesByPermission($entities)
+        public function filterEntitiesByPermission($entities)«IF targets('3.0')»: array«ENDIF»
         {
             $filteredEntities = [];
             foreach ($entities as $entity) {
@@ -356,12 +372,14 @@ class CategoryHelper {
 
         /**
          * Checks whether permissions are granted to the given categories or not.
+         «IF !targets('3.0')»
          *
-         * @param object $entity The entity to check permission for
+         * @param EntityAccess $entity The entity to check permission for
          *
-         * @return boolean True if permissions are given, false otherwise
+         * @return bool True if permissions are given, false otherwise
+         «ENDIF»
          */
-        public function hasPermission($entity)
+        public function hasPermission(EntityAccess $entity)«IF targets('3.0')»: bool«ENDIF»
         {
             $requireAccessForAll = $this->requireAccessForAll($entity);
 
@@ -376,12 +394,14 @@ class CategoryHelper {
          * to at least one selected category.
          * Returning true only allows access if the user has access
          * to all selected categories.
+         «IF !targets('3.0')»
          *
-         * @param object $entity The entity to check permission for
+         * @param EntityAccess $entity The entity to check permission for
          *
-         * @return boolean True if access is required for all categories, false otherwise
+         * @return bool True if access is required for all categories, false otherwise
+         «ENDIF»
          */
-        protected function requireAccessForAll($entity)
+        protected function requireAccessForAll(EntityAccess $entity)«IF targets('3.0')»: bool«ENDIF»
         {
             return false;
         }

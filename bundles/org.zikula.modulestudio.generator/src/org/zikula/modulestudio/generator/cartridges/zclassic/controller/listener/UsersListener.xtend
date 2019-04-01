@@ -1,15 +1,15 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener
 
 import de.guite.modulestudio.metamodel.Application
+import org.zikula.modulestudio.generator.extensions.Utils
 
 class UsersListener {
+
+    extension Utils = new Utils
 
     CommonExample commonExample = new CommonExample()
 
     def generate(Application it) '''
-        /**
-         * Makes our handlers known to the event system.
-         */
         public static function getSubscribedEvents()
         {
             return [
@@ -26,9 +26,8 @@ class UsersListener {
          * Event data is populated by the new values.
          *
          «commonExample.generalEventProperties(it, false)»
-         * @param GenericEvent $event The event instance
          */
-        public function configUpdated(GenericEvent $event)
+        public function configUpdated(GenericEvent $event)«IF targets('3.0')»: void«ENDIF»
         {
         }
     '''

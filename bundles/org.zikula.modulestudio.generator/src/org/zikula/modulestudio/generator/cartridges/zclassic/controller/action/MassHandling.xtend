@@ -23,7 +23,7 @@ class MassHandling {
             «handleSelectedObjectsDocBlock(isBase, isAdmin)»
             public function «IF isAdmin»adminH«ELSE»h«ENDIF»andleSelectedEntriesAction(
                 «handleSelectedObjectsArguments(false)»
-            ) {
+            )«IF application.targets('3.0')»: RedirectResponse«ENDIF» {
                 «IF application.targets('3.0')»
                     return $this->handleSelectedEntriesActionInternal($request, $entityFactory, $workflowHelper, «IF !skipHookSubscribers»$hookHelper, «ENDIF»$currentUserApi, «isAdmin.displayBool»);
                 «ELSE»
@@ -34,7 +34,7 @@ class MassHandling {
             «handleSelectedObjectsDocBlock(isBase, isAdmin)»
             protected function handleSelectedEntriesActionInternal(
                 «handleSelectedObjectsArguments(true)»
-            ) {
+            )«IF application.targets('3.0')»: RedirectResponse«ENDIF» {
                 «handleSelectedObjectsBaseImpl»
             }
         «ENDIF»
@@ -42,24 +42,18 @@ class MassHandling {
 
     def private handleSelectedObjectsDocBlock(Entity it, Boolean isBase, Boolean isAdmin) '''
         /**
-         «IF isBase»
          * Process status changes for multiple items.
          *
+         «IF isBase»
          * This function processes the items selected in the admin view page.
          * Multiple items may have their state changed or be deleted.
+         «IF !application.targets('3.0')»
          *
          * @param Request $request
-         «IF application.targets('3.0')»
-         * @param EntityFactory $entityFactory
-         * @param WorkflowHelper $workflowHelper
-         «IF !skipHookSubscribers»
-         * @param HookHelper $hookHelper
-         «ENDIF»
-         * @param CurrentUserApiInterface $currentUserApi
-         «ENDIF»
          * @param boolean $isAdmin Whether the admin area is used or not
          *
          * @return RedirectResponse
+         «ENDIF»
          *
          * @throws RuntimeException Thrown if executing the workflow action fails
          «ELSE»
@@ -83,7 +77,7 @@ class MassHandling {
                 HookHelper $hookHelper,
             «ENDIF»
             CurrentUserApiInterface $currentUserApi«IF internalMethod»,
-            $isAdmin = false«ENDIF»
+            bool $isAdmin = false«ENDIF»
         «ELSE»
             Request $request«IF internalMethod»,
             $isAdmin = false«ENDIF»
@@ -94,8 +88,8 @@ class MassHandling {
         $objectType = '«name.formatForCode»';
 
         // Get parameters
-        $action = $request->request->get('action', null);
-        $items = $request->request->get('items', null);
+        $action = $request->request->get('action');
+        $items = $request->request->get('items');
         if (!is_array($items) || !count($items)) {
             return $this->redirectToRoute('«application.appName.formatForDB»_«name.formatForDB»_' . ($isAdmin ? 'admin' : '') . '«getPrimaryAction»');
         }
@@ -123,7 +117,7 @@ class MassHandling {
             // check if $action can be applied to this entity (may depend on it's current workflow state)
             $allowedActions = $workflowHelper->getActionsForObject($entity);
             $actionIds = array_keys($allowedActions);
-            if (!in_array($action, $actionIds)) {
+            if (!in_array($action, $actionIds, true)) {
                 // action not allowed, skip this object
                 continue;
             }
@@ -131,7 +125,7 @@ class MassHandling {
             «IF !skipHookSubscribers»
                 if ($entity->supportsHookSubscribers()) {
                     // Let any ui hooks perform additional validation actions
-                    $hookType = $action == 'delete' ? UiHooksCategory::TYPE_VALIDATE_DELETE : UiHooksCategory::TYPE_VALIDATE_EDIT;
+                    $hookType = 'delete' === $action ? UiHooksCategory::TYPE_VALIDATE_DELETE : UiHooksCategory::TYPE_VALIDATE_EDIT;
                     $validationErrors = $hookHelper->callValidationHooks($entity, $hookType);
                     if (count($validationErrors) > 0) {
                         foreach ($validationErrors as $message) {
@@ -146,7 +140,7 @@ class MassHandling {
             try {
                 // execute the workflow action
                 $success = $workflowHelper->executeAction($entity, $action);
-            } catch (\Exception $exception) {
+            } catch (Exception $exception) {
                 $this->addFlash('error', $this->__f('Sorry, but an error occured during the %action% action.', ['%action%' => $action]) . '  ' . $exception->getMessage());
                 $logger->error('{app}: User {user} tried to execute the {action} workflow action for the {entity} with id {id}, but failed. Error details: {errorMessage}.', ['app' => '«application.appName»', 'user' => $userName, 'action' => $action, 'entity' => '«name.formatForDisplay»', 'id' => $itemId, 'errorMessage' => $exception->getMessage()]);
             }
@@ -155,7 +149,7 @@ class MassHandling {
                 continue;
             }
 
-            if ($action == 'delete') {
+            if ('delete' === $action) {
                 $this->addFlash('status', $this->__('Done! Item deleted.'));
                 $logger->notice('{app}: User {user} deleted the {entity} with id {id}.', ['app' => '«application.appName»', 'user' => $userName, 'entity' => '«name.formatForDisplay»', 'id' => $itemId]);
             } else {
@@ -166,10 +160,10 @@ class MassHandling {
 
                 if ($entity->supportsHookSubscribers()) {
                     // Let any ui hooks know that we have updated or deleted an item
-                    $hookType = $action == 'delete' ? UiHooksCategory::TYPE_PROCESS_DELETE : UiHooksCategory::TYPE_PROCESS_EDIT;
+                    $hookType = 'delete' === $action ? UiHooksCategory::TYPE_PROCESS_DELETE : UiHooksCategory::TYPE_PROCESS_EDIT;
                     $url = null;
                     «IF hasDisplayAction»
-                        if ($action != 'delete') {
+                        if ('delete' !== $action) {
                             $urlArgs = $entity->createUrlArgs();
                             $urlArgs['_locale'] = $request->getLocale();
                             $url = new RouteUrl('«application.appName.formatForDB»_«name.formatForDB»_display', $urlArgs);

@@ -38,11 +38,13 @@ class ModerationFormFieldsTrait {
     def private traitImpl(Application it) '''
         /**
          * Adds special fields for moderators.
+         «IF !targets('3.0')»
          *
          * @param FormBuilderInterface $builder The form builder
-         * @param array                $options The options
+         * @param array $options The options
+         «ENDIF»
          */
-        public function addModerationFields(FormBuilderInterface $builder, array $options = [])
+        public function addModerationFields(FormBuilderInterface $builder, array $options = [])«IF targets('3.0')»: void«ENDIF»
         {
             if (!$options['has_moderate_permission']) {
                 return;

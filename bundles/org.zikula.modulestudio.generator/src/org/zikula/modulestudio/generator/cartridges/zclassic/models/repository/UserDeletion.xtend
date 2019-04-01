@@ -42,24 +42,37 @@ class UserDeletion {
     def private updateCreator(Entity it) '''
         /**
          * Updates the creator of all objects created by a certain user.
+         «IF !application.targets('3.0')»
          *
-         * @param integer $userId
-         * @param integer $newUserId
+         * @param int $userId
+         * @param int $newUserId
          * @param TranslatorInterface $translator
          * @param LoggerInterface $logger
          * @param CurrentUserApiInterface $currentUserApi
          *
          * @return void
+         «ENDIF»
          *
          * @throws InvalidArgumentException Thrown if invalid parameters are received
          */
-        public function updateCreator($userId, $newUserId, TranslatorInterface $translator, LoggerInterface $logger, CurrentUserApiInterface $currentUserApi)
-        {
-            // check id parameter
-            if ($userId == 0 || !is_numeric($userId)
-             || $newUserId == 0 || !is_numeric($newUserId)) {
-                throw new InvalidArgumentException($translator->__('Invalid user identifier received.'));
-            }
+        public function updateCreator(
+            «IF application.targets('3.0')»int «ENDIF»$userId,
+            «IF application.targets('3.0')»int «ENDIF»$newUserId,
+            TranslatorInterface $translator,
+            LoggerInterface $logger,
+            CurrentUserApiInterface $currentUserApi
+        )«IF application.targets('3.0')»: void«ENDIF» {
+            «IF application.targets('3.0')»
+                if (0 === $userId || 0 === $newUserId) {
+                    throw new InvalidArgumentException($translator->__('Invalid user identifier received.'));
+                }
+            «ELSE»
+                if (0 === $userId || !is_numeric($userId)
+                    || 0 === $newUserId || !is_numeric($newUserId)
+                ) {
+                    throw new InvalidArgumentException($translator->__('Invalid user identifier received.'));
+                }
+            «ENDIF»
 
             $qb = $this->getEntityManager()->createQueryBuilder();
             $qb->update($this->mainEntityClass, 'tbl')
@@ -78,24 +91,37 @@ class UserDeletion {
     def private updateLastEditor(Entity it) '''
         /**
          * Updates the last editor of all objects updated by a certain user.
+         «IF !application.targets('3.0')»
          *
-         * @param integer $userId
-         * @param integer $newUserId
+         * @param int $userId
+         * @param int $newUserId
          * @param TranslatorInterface $translator
          * @param LoggerInterface $logger
          * @param CurrentUserApiInterface $currentUserApi
          *
          * @return void
+         «ENDIF»
          *
          * @throws InvalidArgumentException Thrown if invalid parameters are received
          */
-        public function updateLastEditor($userId, $newUserId, TranslatorInterface $translator, LoggerInterface $logger, CurrentUserApiInterface $currentUserApi)
-        {
-            // check id parameter
-            if ($userId == 0 || !is_numeric($userId)
-             || $newUserId == 0 || !is_numeric($newUserId)) {
-                throw new InvalidArgumentException($translator->__('Invalid user identifier received.'));
-            }
+        public function updateLastEditor(
+            «IF application.targets('3.0')»int «ENDIF»$userId,
+            «IF application.targets('3.0')»int «ENDIF»$newUserId,
+            TranslatorInterface $translator,
+            LoggerInterface $logger,
+            CurrentUserApiInterface $currentUserApi
+        )«IF application.targets('3.0')»: void«ENDIF» {
+            «IF application.targets('3.0')»
+                if (0 === $userId || 0 === $newUserId) {
+                    throw new InvalidArgumentException($translator->__('Invalid user identifier received.'));
+                }
+            «ELSE»
+                if (0 === $userId || !is_numeric($userId)
+                    || 0 === $newUserId || !is_numeric($newUserId)
+                ) {
+                    throw new InvalidArgumentException($translator->__('Invalid user identifier received.'));
+                }
+            «ENDIF»
 
             $qb = $this->getEntityManager()->createQueryBuilder();
             $qb->update($this->mainEntityClass, 'tbl')
@@ -114,20 +140,25 @@ class UserDeletion {
     def private deleteByCreator(Entity it) '''
         /**
          * Deletes all objects created by a certain user.
+         «IF !application.targets('3.0')»
          *
-         * @param integer $userId
+         * @param int $userId
          * @param TranslatorInterface $translator
          * @param LoggerInterface $logger
          * @param CurrentUserApiInterface $currentUserApi
          *
          * @return void
+         «ENDIF»
          *
          * @throws InvalidArgumentException Thrown if invalid parameters are received
          */
-        public function deleteByCreator($userId, TranslatorInterface $translator, LoggerInterface $logger, CurrentUserApiInterface $currentUserApi)
-        {
-            // check id parameter
-            if ($userId == 0 || !is_numeric($userId)) {
+        public function deleteByCreator(
+            «IF application.targets('3.0')»int «ENDIF»$userId,
+            TranslatorInterface $translator,
+            LoggerInterface $logger,
+            CurrentUserApiInterface $currentUserApi
+        )«IF application.targets('3.0')»: void«ENDIF» {
+            if (0 === $userId«IF !application.targets('3.0')» || !is_numeric($userId)«ENDIF») {
                 throw new InvalidArgumentException($translator->__('Invalid user identifier received.'));
             }
 
@@ -147,20 +178,25 @@ class UserDeletion {
     def private deleteByLastEditor(Entity it) '''
         /**
          * Deletes all objects updated by a certain user.
+         «IF !application.targets('3.0')»
          *
-         * @param integer $userId
+         * @param int $userId
          * @param TranslatorInterface $translator
          * @param LoggerInterface $logger
          * @param CurrentUserApiInterface $currentUserApi
          *
          * @return void
+         «ENDIF»
          *
          * @throws InvalidArgumentException Thrown if invalid parameters are received
          */
-        public function deleteByLastEditor($userId, TranslatorInterface $translator, LoggerInterface $logger, CurrentUserApiInterface $currentUserApi)
-        {
-            // check id parameter
-            if ($userId == 0 || !is_numeric($userId)) {
+        public function deleteByLastEditor(
+            «IF application.targets('3.0')»int «ENDIF»$userId,
+            TranslatorInterface $translator,
+            LoggerInterface $logger,
+            CurrentUserApiInterface $currentUserApi
+        )«IF application.targets('3.0')»: void«ENDIF» {
+            if (0 === $userId«IF !application.targets('3.0')» || !is_numeric($userId)«ENDIF») {
                 throw new InvalidArgumentException($translator->__('Invalid user identifier received.'));
             }
 
@@ -180,29 +216,42 @@ class UserDeletion {
     def private updateUserField(Entity it) '''
         /**
          * Updates a user field value of all objects affected by a certain user.
+         «IF !application.targets('3.0')»
          *
          * @param string $fieldName The name of the user field
-         * @param integer $userId The userid to be replaced
-         * @param integer $newUserId The new userid as replacement
+         * @param int $userId The userid to be replaced
+         * @param int $newUserId The new userid as replacement
          * @param TranslatorInterface $translator
          * @param LoggerInterface $logger
          * @param CurrentUserApiInterface $currentUserApi
          *
          * @return void
+         «ENDIF»
          *
          * @throws InvalidArgumentException Thrown if invalid parameters are received
          */
-        public function updateUserField($userFieldName, $userId, $newUserId, TranslatorInterface $translator, LoggerInterface $logger, CurrentUserApiInterface $currentUserApi)
-        {
-            // check field parameter
-            if (empty($userFieldName) || !in_array($userFieldName, [«FOR field : getUserFieldsEntity SEPARATOR ', '»'«field.name.formatForCode»'«ENDFOR»])) {
+        public function updateUserField(
+            «IF application.targets('3.0')»string «ENDIF»$userFieldName,
+            «IF application.targets('3.0')»int «ENDIF»$userId,
+            «IF application.targets('3.0')»int «ENDIF»$newUserId,
+            TranslatorInterface $translator,
+            LoggerInterface $logger,
+            CurrentUserApiInterface $currentUserApi
+        )«IF application.targets('3.0')»: void«ENDIF» {
+            if (empty($userFieldName) || !in_array($userFieldName, [«FOR field : getUserFieldsEntity SEPARATOR ', '»'«field.name.formatForCode»'«ENDFOR»], true)) {
                 throw new InvalidArgumentException($translator->__('Invalid user field name received.'));
             }
-            // check id parameter
-            if ($userId == 0 || !is_numeric($userId)
-             || $newUserId == 0 || !is_numeric($newUserId)) {
-                throw new InvalidArgumentException($translator->__('Invalid user identifier received.'));
-            }
+            «IF application.targets('3.0')»
+                if (0 === $userId || 0 === $newUserId) {
+                    throw new InvalidArgumentException($translator->__('Invalid user identifier received.'));
+                }
+            «ELSE»
+                if (0 === $userId || !is_numeric($userId)
+                    || 0 === $newUserId || !is_numeric($newUserId)
+                ) {
+                    throw new InvalidArgumentException($translator->__('Invalid user identifier received.'));
+                }
+            «ENDIF»
 
             $qb = $this->getEntityManager()->createQueryBuilder();
             $qb->update($this->mainEntityClass, 'tbl')
@@ -221,25 +270,30 @@ class UserDeletion {
     def private deleteByUserField(Entity it) '''
         /**
          * Deletes all objects updated by a certain user.
+         «IF !application.targets('3.0')»
          *
          * @param string $fieldName The name of the user field
-         * @param integer $userId The userid to be removed
+         * @param int $userId The userid to be removed
          * @param TranslatorInterface $translator
          * @param LoggerInterface $logger
          * @param CurrentUserApiInterface $currentUserApi
          *
          * @return void
+         «ENDIF»
          *
          * @throws InvalidArgumentException Thrown if invalid parameters are received
          */
-        public function deleteByUserField($userFieldName, $userId, TranslatorInterface $translator, LoggerInterface $logger, CurrentUserApiInterface $currentUserApi)
-        {
-            // check field parameter
-            if (empty($userFieldName) || !in_array($userFieldName, [«FOR field : getUserFieldsEntity SEPARATOR ', '»'«field.name.formatForCode»'«ENDFOR»])) {
+        public function deleteByUserField(
+            «IF application.targets('3.0')»string «ENDIF»$userFieldName,
+            «IF application.targets('3.0')»int «ENDIF»$userId,
+            TranslatorInterface $translator,
+            LoggerInterface $logger,
+            CurrentUserApiInterface $currentUserApi
+        )«IF application.targets('3.0')»: void«ENDIF» {
+            if (empty($userFieldName) || !in_array($userFieldName, [«FOR field : getUserFieldsEntity SEPARATOR ', '»'«field.name.formatForCode»'«ENDFOR»], true)) {
                 throw new InvalidArgumentException($translator->__('Invalid user field name received.'));
             }
-            // check id parameter
-            if ($userId == 0 || !is_numeric($userId)) {
+            if (0 === $userId«IF !application.targets('3.0')» || !is_numeric($userId)«ENDIF») {
                 throw new InvalidArgumentException($translator->__('Invalid user identifier received.'));
             }
 

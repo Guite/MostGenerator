@@ -32,9 +32,6 @@ class TranslationListener {
     '''
 
     def private listenerBaseImplBody(Application it) '''
-        /**
-         * @inheritDoc
-         */
         public static function getSubscribedEvents()
         {
             return [
@@ -44,10 +41,8 @@ class TranslationListener {
 
         /**
          * Adds translation fields to the form.
-         *
-         * @param FormEvent $event
          */
-        public function preSetData(FormEvent $event)
+        public function preSetData(FormEvent $event)«IF targets('3.0')»: void«ENDIF»
         {
             $form = $event->getForm();
             $formOptions = $form->getConfig()->getOptions();
@@ -61,8 +56,12 @@ class TranslationListener {
 
                 $originalFieldConfig = $entityForm->get($fieldName)->getConfig();
                 $fieldOptions = $originalFieldConfig->getOptions();
-                $fieldOptions['required'] = $fieldOptions['required'] && in_array($fieldName, $formOptions['mandatory_fields']);
-                $fieldOptions['data'] = isset($formOptions['values'][$fieldName]) ? $formOptions['values'][$fieldName] : null;
+                $fieldOptions['required'] = $fieldOptions['required'] && in_array($fieldName, $formOptions['mandatory_fields'], true);
+                «IF targets('3.0')»
+                    $fieldOptions['data'] = $formOptions['values'][$fieldName] ?? null;
+                «ELSE»
+                    $fieldOptions['data'] = isset($formOptions['values'][$fieldName]) ? $formOptions['values'][$fieldName] : null;
+                «ENDIF»
 
                 $form->add($fieldName, get_class($originalFieldConfig->getType()->getInnerType()), $fieldOptions);
             }
@@ -70,12 +69,12 @@ class TranslationListener {
 
         /**
          * Returns parent form editing the entity.
-         *
-         * @param FormInterface $form
+         «IF !targets('3.0')»
          *
          * @return FormInterface
+         «ENDIF»
          */
-        protected function getEntityForm(FormInterface $form)
+        protected function getEntityForm(FormInterface $form)«IF targets('3.0')»: FormInterface«ENDIF»
         {
             $parentForm = $form;
             do {

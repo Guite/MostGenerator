@@ -33,24 +33,22 @@ class Tests {
             define('PHPUnit_MAIN_METHOD', 'AllTests::main');
         }
 
-        require_once dirname(__FILE__) . '/bootstrap.php';
+        require_once __DIR__ . '/bootstrap.php';
 
         class AllTests
         {
-            public static function main()
+            public static function main()«IF targets('3.0')»: void«ENDIF»
             {
                 PHPUnit_TextUI_TestRunner::run(self::suite());
             }
 
-            public static function suite()
+            public static function suite()«IF targets('3.0')»: PHPUnit_Framework_TestSuite«ENDIF»
             {
-                $suite = new PHPUnit_Framework_TestSuite('«appName» - All Tests');
-
-                return $suite;
+                return new PHPUnit_Framework_TestSuite('«appName» - All Tests');
             }
         }
 
-        if (PHPUnit_MAIN_METHOD == 'AllTests::main') {
+        if (PHPUnit_MAIN_METHOD === 'AllTests::main') {
             AllTests::main();
         }
    '''

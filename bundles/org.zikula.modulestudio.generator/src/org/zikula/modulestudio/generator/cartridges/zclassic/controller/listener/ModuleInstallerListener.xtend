@@ -29,16 +29,6 @@ class ModuleInstallerListener {
 
         «ENDIF»
         «IF amountOfExampleRows > 0 || hasUiHooksProviders»
-            /**
-             * InstallerListener constructor.
-             *
-             «IF amountOfExampleRows > 0»
-             * @param ExampleDataHelper $exampleDataHelper
-             «ENDIF»
-             «IF hasUiHooksProviders»
-             * @param EntityFactory $entityFactory
-             «ENDIF»
-             */
             public function __construct(
                 «IF amountOfExampleRows > 0»
                     ExampleDataHelper $exampleDataHelper«IF hasUiHooksProviders»,«ENDIF»
@@ -56,18 +46,15 @@ class ModuleInstallerListener {
             }
 
         «ENDIF»
-        /**
-         * Makes our handlers known to the event system.
-         */
         public static function getSubscribedEvents()
         {
             return [
-                CoreEvents::MODULE_INSTALL             => ['moduleInstalled', 5],
-                CoreEvents::MODULE_POSTINSTALL         => ['modulePostInstalled', 5],
-                CoreEvents::MODULE_UPGRADE             => ['moduleUpgraded', 5],
-                CoreEvents::MODULE_ENABLE              => ['moduleEnabled', 5],
-                CoreEvents::MODULE_DISABLE             => ['moduleDisabled', 5],
-                CoreEvents::MODULE_REMOVE              => ['moduleRemoved', 5]
+                CoreEvents::MODULE_INSTALL     => ['moduleInstalled', 5],
+                CoreEvents::MODULE_POSTINSTALL => ['modulePostInstalled', 5],
+                CoreEvents::MODULE_UPGRADE     => ['moduleUpgraded', 5],
+                CoreEvents::MODULE_ENABLE      => ['moduleEnabled', 5],
+                CoreEvents::MODULE_DISABLE     => ['moduleDisabled', 5],
+                CoreEvents::MODULE_REMOVE      => ['moduleRemoved', 5]
             ];
         }
 
@@ -79,9 +66,8 @@ class ModuleInstallerListener {
          * information array using `$event->getModule()` and `$event->getModInfo()`.
          *
          «commonExample.generalEventProperties(it, false)»
-         * @param ModuleStateEvent $event The event instance
          */
-        public function moduleInstalled(ModuleStateEvent $event)
+        public function moduleInstalled(ModuleStateEvent $event)«IF targets('3.0')»: void«ENDIF»
         {
         }
 
@@ -93,9 +79,8 @@ class ModuleInstallerListener {
          * information array using `$event->getModule()` and `$event->getModInfo()`.
          *
          «commonExample.generalEventProperties(it, false)»
-         * @param ModuleStateEvent $event The event instance
          */
-        public function modulePostInstalled(ModuleStateEvent $event)
+        public function modulePostInstalled(ModuleStateEvent $event)«IF targets('3.0')»: void«ENDIF»
         {
             «IF amountOfExampleRows > 0»
                 $module = $event->getModule();
@@ -103,7 +88,7 @@ class ModuleInstallerListener {
                     return;
                 }
 
-                if ($module->getName() === '«appName»') {
+                if ('«appName»' === $module->getName()) {
                     $this->exampleDataHelper->createDefaultData();
                 }
             «ENDIF»
@@ -117,9 +102,8 @@ class ModuleInstallerListener {
          * information array using `$event->getModule()` and `$event->getModInfo()`.
          *
          «commonExample.generalEventProperties(it, false)»
-         * @param ModuleStateEvent $event The event instance
          */
-        public function moduleUpgraded(ModuleStateEvent $event)
+        public function moduleUpgraded(ModuleStateEvent $event)«IF targets('3.0')»: void«ENDIF»
         {
         }
 
@@ -131,9 +115,8 @@ class ModuleInstallerListener {
          * information array using `$event->getModule()` and `$event->getModInfo()`.
          *
          «commonExample.generalEventProperties(it, false)»
-         * @param ModuleStateEvent $event The event instance
          */
-        public function moduleEnabled(ModuleStateEvent $event)
+        public function moduleEnabled(ModuleStateEvent $event)«IF targets('3.0')»: void«ENDIF»
         {
         }
 
@@ -145,9 +128,8 @@ class ModuleInstallerListener {
          * information array using `$event->getModule()` and `$event->getModInfo()`.
          *
          «commonExample.generalEventProperties(it, false)»
-         * @param ModuleStateEvent $event The event instance
          */
-        public function moduleDisabled(ModuleStateEvent $event)
+        public function moduleDisabled(ModuleStateEvent $event)«IF targets('3.0')»: void«ENDIF»
         {
         }
 
@@ -159,9 +141,8 @@ class ModuleInstallerListener {
          * information array using `$event->getModule()` and `$event->getModInfo()`.
          *
          «commonExample.generalEventProperties(it, false)»
-         * @param ModuleStateEvent $event The event instance
          */
-        public function moduleRemoved(ModuleStateEvent $event)
+        public function moduleRemoved(ModuleStateEvent $event)«IF targets('3.0')»: void«ENDIF»
         {
             «IF hasUiHooksProviders»
                 $module = $event->getModule();

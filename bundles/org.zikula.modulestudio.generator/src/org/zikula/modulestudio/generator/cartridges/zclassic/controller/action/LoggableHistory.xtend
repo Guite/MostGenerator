@@ -26,7 +26,7 @@ class LoggableHistory {
             «loggableHistoryDocBlock(isBase, isAdmin)»
             public function «IF isAdmin»adminL«ELSE»l«ENDIF»oggableHistoryAction(
                 «loggableHistoryArguments(false)»
-            ) {
+            )«IF application.targets('3.0')»: Response«ENDIF» {
                 «IF application.targets('3.0')»
                     return $this->loggableHistoryActionInternal($request, $permissionHelper, $entityFactory, $loggableHelper, «IF hasTranslatableFields»$translatableHelper, «ENDIF»$workflowHelper, «IF hasSluggableFields && slugUnique»$slug«ELSE»$id«ENDIF», «isAdmin.displayBool»);
                 «ELSE»
@@ -37,7 +37,7 @@ class LoggableHistory {
             «loggableHistoryDocBlock(isBase, isAdmin)»
             protected function loggableHistoryActionInternal(
                 «loggableHistoryArguments(true)»
-            ) {
+            )«IF application.targets('3.0')»: Response«ENDIF» {
                 «loggableHistoryBaseImpl»
             }
         «ENDIF»
@@ -48,21 +48,16 @@ class LoggableHistory {
          «IF isBase»
          * This method provides a change history for a given «name.formatForDisplay».
          *
+         «IF !application.targets('3.0')»
          * @param Request $request
          * @param PermissionHelper $permissionHelper
          * @param EntityFactory $entityFactory
-         «IF application.targets('3.0')»
-         * @param LoggableHelper $loggableHelper
-         «IF hasTranslatableFields»
-         * @param TranslatableHelper $translatableHelper
-         «ENDIF»
-         * @param WorkflowHelper $workflowHelper
-         «ENDIF»
-         * @param integer «IF hasSluggableFields && slugUnique»$slug«ELSE»$id«ENDIF» Identifier of «name.formatForDisplay»
+         * @param «IF hasSluggableFields && slugUnique»string $slug«ELSE»int $id«ENDIF» Identifier of «name.formatForDisplay»
          * @param boolean $isAdmin Whether the admin area is used or not
          *
          * @return Response Output
          *
+         «ENDIF»
          * @throws NotFoundHttpException Thrown if invalid identifier is given or the «name.formatForDisplay» isn't found
          * @throws AccessDeniedException Thrown if the user doesn't have required permissions
          «ELSE»
@@ -93,8 +88,8 @@ class LoggableHistory {
                 TranslatableHelper $translatableHelper,
             «ENDIF»
             WorkflowHelper $workflowHelper,
-            «IF hasSluggableFields && slugUnique»$slug = ''«ELSE»$id = 0«ENDIF»«IF internalMethod»,
-            $isAdmin = false«ENDIF»
+            «IF hasSluggableFields && slugUnique»string $slug = ''«ELSE»int $id = 0«ENDIF»«IF internalMethod»,
+            bool $isAdmin = false«ENDIF»
         «ELSE»
             Request $request,
             «IF hasSluggableFields && slugUnique»$slug = ''«ELSE»$id = 0«ENDIF»«IF internalMethod»,
@@ -128,8 +123,8 @@ class LoggableHistory {
         $logEntriesRepository = $entityManager->getRepository('«application.appName»:«name.formatForCodeCapital»LogEntryEntity');
         $logEntries = $logEntriesRepository->getLogEntries($«name.formatForCode»);
 
-        $revertToVersion = $request->query->getInt('revert', 0);
-        if ($revertToVersion > 0 && count($logEntries) > 1) {
+        $revertToVersion = $request->query->getInt('revert');
+        if (0 < $revertToVersion && 1 < count($logEntries)) {
             // revert to requested version
             «IF hasSluggableFields && slugUnique»
                 $«name.formatForCode»Id = $«name.formatForCode»->getId();
@@ -152,7 +147,7 @@ class LoggableHistory {
                 } else {
                     $this->addFlash('error', $this->__f('Error! Reverting «name.formatForDisplay» to version %version% failed.', ['%version%' => $revertToVersion]));
                 }
-            } catch (\Exception $exception) {
+            } catch (Exception $exception) {
                 $this->addFlash('error', $this->__f('Sorry, but an error occured during the %action% action. Please apply the changes again!', ['%action%' => 'update']) . '  ' . $exception->getMessage());
             }
             «IF hasSluggableFields && slugUnique»
@@ -165,7 +160,7 @@ class LoggableHistory {
 
         $isDiffView = false;
         $versions = $request->query->get('versions', []);
-        if (is_array($versions) && count($versions) == 2) {
+        if (is_array($versions) && 2 === count($versions)) {
             $isDiffView = true;
             $allVersionsExist = true;
             foreach ($versions as $versionNumber) {

@@ -40,15 +40,22 @@ class Tag {
     def private tagBaseImpl(Application it) '''
         /**
          * «appName» constructor.
+         «IF !targets('3.0')»
          *
-         * @param integer $objectId Identifier of treated object
-         * @param integer $areaId Name of hook area
+         * @param int $objectId Identifier of treated object
+         * @param int $areaId Name of hook area
          * @param string $module Name of the owning module
          * @param string $urlString **deprecated**
          * @param UrlInterface $urlObject Object carrying url arguments
+         «ENDIF»
          */
-        function __construct($objectId, $areaId, $module, $urlString = null, UrlInterface $urlObject = null)
-        {
+        function __construct(
+            «IF targets('3.0')»int «ENDIF»$objectId,
+            «IF targets('3.0')»int «ENDIF»$areaId,
+            «IF targets('3.0')»string «ENDIF»$module,
+            «IF targets('3.0')»string «ENDIF»$urlString = null,
+            UrlInterface $urlObject = null
+        ) {
             // call base constructor to store arguments in member vars
             parent::__construct($objectId, $areaId, $module, $urlString, $urlObject);
 
@@ -73,7 +80,7 @@ class Tag {
             $this->setObjectTitle($entityDisplayHelper->getFormattedTitle($entity));
 
             $dateFieldName = $entityDisplayHelper->getStartDateFieldName($objectType);
-            if ($dateFieldName != '') {
+            if ('' !== $dateFieldName) {
                 $this->setObjectDate($entity[$dateFieldName]);
             } else {
                 $this->setObjectDate('');
@@ -88,10 +95,8 @@ class Tag {
 
         /**
          * Sets the object title.
-         *
-         * @param string $title
          */
-        public function setObjectTitle($title)
+        public function setObjectTitle(«IF targets('3.0')»string «ENDIF»$title)«IF targets('3.0')»: void«ENDIF»
         {
             $this->title = $title;
         }
@@ -101,7 +106,7 @@ class Tag {
          *
          * @param DateTimeInterface|string $date
          */
-        public function setObjectDate($date)
+        public function setObjectDate($date)«IF targets('3.0')»: void«ENDIF»
         {
             if ($date instanceof DateTimeInterface) {
                 $locale = $this->container->get('request_stack')->getCurrentRequest()->getLocale();
@@ -114,10 +119,8 @@ class Tag {
 
         /**
          * Sets the object author.
-         *
-         * @param string $author
          */
-        public function setObjectAuthor($author)
+        public function setObjectAuthor(«IF targets('3.0')»string «ENDIF»$author)«IF targets('3.0')»: void«ENDIF»
         {
             $this->author = $author;
         }

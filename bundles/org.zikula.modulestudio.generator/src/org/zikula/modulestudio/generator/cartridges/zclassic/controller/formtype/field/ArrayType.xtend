@@ -27,26 +27,17 @@ class ArrayType {
          */
         abstract class AbstractArrayType extends AbstractType
         {
-            /**
-             * @inheritDoc
-             */
             public function buildForm(FormBuilderInterface $builder, array $options)
             {
                 $transformer = new ArrayFieldTransformer();
                 $builder->addModelTransformer($transformer);
             }
 
-            /**
-             * @inheritDoc
-             */
             public function getParent()
             {
                 return TextareaType::class;
             }
 
-            /**
-             * @inheritDoc
-             */
             public function getBlockPrefix()
             {
                 return '«appName.formatForDB»_field_array';

@@ -1,15 +1,15 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener
 
 import de.guite.modulestudio.metamodel.Application
+import org.zikula.modulestudio.generator.extensions.Utils
 
 class MailerListener {
+
+    extension Utils = new Utils
 
     CommonExample commonExample = new CommonExample()
 
     def generate(Application it) '''
-        /**
-         * Makes our handlers known to the event system.
-         */
         public static function getSubscribedEvents()
         {
             return [
@@ -30,9 +30,8 @@ class MailerListener {
          * return data into `$event->data`, or `$event->setData()`.
          *
          «commonExample.generalEventProperties(it, false)»
-         * @param GenericEvent $event The event instance
          */
-        public function sendMessageStart(GenericEvent $event)
+        public function sendMessageStart(GenericEvent $event)«IF targets('3.0')»: void«ENDIF»
         {
         }
 
@@ -46,9 +45,8 @@ class MailerListener {
          * return data into `$event->data`, or `$event->setData()`.
          *
          «commonExample.generalEventProperties(it, false)»
-         * @param GenericEvent $event The event instance
          */
-        public function sendMessagePerform(GenericEvent $event)
+        public function sendMessagePerform(GenericEvent $event)«IF targets('3.0')»: void«ENDIF»
         {
         }
 
@@ -59,9 +57,8 @@ class MailerListener {
          * Invoked from `Zikula\MailerModule\Api\MailerApi#performSending`.
          *
          «commonExample.generalEventProperties(it, false)»
-         * @param GenericEvent $event The event instance
          */
-        public function sendMessageSuccess(GenericEvent $event)
+        public function sendMessageSuccess(GenericEvent $event)«IF targets('3.0')»: void«ENDIF»
         {
         }
 
@@ -72,9 +69,8 @@ class MailerListener {
          * Invoked from `Zikula\MailerModule\Api\MailerApi#performSending`.
          *
          «commonExample.generalEventProperties(it, false)»
-         * @param GenericEvent $event The event instance
          */
-        public function sendMessageFailure(GenericEvent $event)
+        public function sendMessageFailure(GenericEvent $event)«IF targets('3.0')»: void«ENDIF»
         {
         }
     '''

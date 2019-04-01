@@ -2,6 +2,7 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.models.entity
 
 import de.guite.modulestudio.metamodel.AbstractIntegerField
 import de.guite.modulestudio.metamodel.AbstractStringField
+import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.ArrayField
 import de.guite.modulestudio.metamodel.BooleanField
 import de.guite.modulestudio.metamodel.DatetimeField
@@ -36,16 +37,17 @@ class Property {
     extension ModelJoinExtensions = new ModelJoinExtensions
     extension Utils = new Utils
 
-    FileHelper fh = new FileHelper
+    FileHelper fh
     ExtensionManager extMan
     ValidationConstraints thVal = new ValidationConstraints
 
-    new(ExtensionManager extMan) {
+    new(Application it, ExtensionManager extMan) {
+        fh = new FileHelper(it)
         this.extMan = extMan
     }
 
     def dispatch persistentProperty(DerivedField it) {
-        persistentProperty(name.formatForCode, fieldTypeAsString, '')
+        persistentProperty(name.formatForCode, fieldTypeAsString(true), fieldTypeAsString(false), '')
     }
 
     def dispatch persistentProperty(UploadField it) '''
@@ -63,7 +65,7 @@ class Property {
          */
         protected $«name.formatForCode»Meta = [];
 
-        «persistentProperty(name.formatForCode + 'FileName', fieldTypeAsString, '')»
+        «persistentProperty(name.formatForCode + 'FileName', fieldTypeAsString(true), fieldTypeAsString(false), '')»
         /**
          * Full «name.formatForDisplay» path as url.
          *
@@ -84,18 +86,18 @@ class Property {
     '''
 
     def dispatch persistentProperty(ArrayField it) {
-        persistentProperty(name.formatForCode, fieldTypeAsString, ' = []')
+        persistentProperty(name.formatForCode, fieldTypeAsString(true), fieldTypeAsString(false), ' = []')
     }
 
     /**
-     * Note we use protected and not private to let the dev change things in
+     * Note we use protected and not private to let the developer change things in
      * concrete implementations
      */
-    def persistentProperty(DerivedField it, String name, String type, String init) {
-        persistentProperty(name, type, init, 'protected')
+    def persistentProperty(DerivedField it, String name, String typePhp, String typeDoctrine, String init) {
+        persistentProperty(name, typePhp, typeDoctrine, init, 'protected')
     }
 
-    def persistentProperty(DerivedField it, String name, String type, String init, String modifier) '''
+    def persistentProperty(DerivedField it, String name, String typePhp, String typeDoctrine, String init, String modifier) '''
         /**
          «IF null !== documentation && !documentation.empty»
           * «documentation»
@@ -110,12 +112,12 @@ class Property {
              «ENDIF»
             «IF null !== extMan»«extMan.columnAnnotations(it)»«ENDIF»
              «IF !(it instanceof UserField)»«/* user fields are implemented as join to UserEntity, see persistentPropertyAdditions */»
-             * @ORM\Column(«IF null !== dbName && !dbName.empty»name="«dbName.formatForCode»", «ELSEIF it instanceof UploadField»name="«it.name.formatForCode»", «ENDIF»«persistentPropertyImpl(type.toLowerCase)»«IF unique», unique=true«ENDIF»«IF nullable», nullable=true«ENDIF»)
+             * @ORM\Column(«IF null !== dbName && !dbName.empty»name="«dbName.formatForCode»", «ELSEIF it instanceof UploadField»name="«it.name.formatForCode»", «ENDIF»«persistentPropertyImpl(typeDoctrine.toLowerCase)»«IF unique», unique=true«ENDIF»«IF nullable», nullable=true«ENDIF»)
              «ENDIF»
             «persistentPropertyAdditions»
         «ENDIF»
         «thVal.fieldAnnotations(it)»
-         * @var «IF type == 'bigint' || type == 'smallint'»integer«ELSEIF type == 'datetime'»\DateTime«IF (it as DatetimeField).immutable»Immutable«ENDIF»«ELSE»«type»«ENDIF» $«name.formatForCode»
+         * @var «IF typePhp == 'DateTime'»\DateTime«IF (it as DatetimeField).immutable»Immutable«ENDIF»«ELSE»«typePhp»«ENDIF» $«name.formatForCode»
          */
         «modifier» $«name.formatForCode»«IF !init.empty»«init»«ELSE»«IF !(it instanceof DatetimeField)» = «defaultFieldData»«ENDIF»«ENDIF»;
         «/* this last line is on purpose */»
@@ -182,9 +184,9 @@ class Property {
 
     def private fieldAccessorDefault(DerivedField it) '''
         «IF isIndexByField»
-            «fh.getterMethod(it, name.formatForCode, fieldTypeAsString, false)»
+            «fh.getterMethod(it, name.formatForCode, fieldTypeAsString(true), false, nullable, application.targets('3.0'))»
         «ELSE»
-            «fh.getterAndSetterMethods(it, name.formatForCode, fieldTypeAsString, false, nullable, false, '', '')»
+            «fh.getterAndSetterMethods(it, name.formatForCode, fieldTypeAsString(true), false, nullable, application.targets('3.0'), '', '')»
         «ENDIF»
     '''
 
@@ -194,19 +196,21 @@ class Property {
 
     def dispatch fieldAccessor(IntegerField it) '''
         «IF isIndexByField/* || (null !== aggregateFor && !aggregateFor.empty*/»
-            «fh.getterMethod(it, name.formatForCode, fieldTypeAsString, false)»
+            «fh.getterMethod(it, name.formatForCode, fieldTypeAsString(true), false, nullable, application.targets('3.0'))»
         «ELSE»
-            «fh.getterAndSetterMethods(it, name.formatForCode, fieldTypeAsString, false, nullable, false, '', '')»
+            «fh.getterAndSetterMethods(it, name.formatForCode, fieldTypeAsString(true), false, nullable, application.targets('3.0'), '', '')»
         «ENDIF»
     '''
 
     def dispatch fieldAccessor(UploadField it) '''
         /**
          * Returns the «name.formatForDisplay».
+         «IF !application.targets('3.0')»
          *
          * @return File
+         «ENDIF»
          */
-        public function get«name.formatForCodeCapital»()
+        public function get«name.formatForCodeCapital»()«IF application.targets('3.0')»: ?File«ENDIF»
         {
             if (null !== $this->«name.formatForCode») {
                 return $this->«name.formatForCode»;
@@ -214,7 +218,7 @@ class Property {
 
             $fileName = $this->«name.formatForCode»FileName;
             if (!empty($fileName) && !$this->_uploadBasePath) {
-                throw new \RuntimeException('Invalid upload base path in ' . get_class($this) . '#get«name.formatForCodeCapital»().');
+                throw new RuntimeException('Invalid upload base path in ' . get_class($this) . '#get«name.formatForCodeCapital»().');
             }
 
             $filePath = $this->_uploadBasePath . '«subFolderPathSegment»/' . $fileName;
@@ -232,12 +236,12 @@ class Property {
 
         /**
          * Sets the «name.formatForDisplay».
-         *
-         * @param File|null $«name.formatForCode»
+         «IF !application.targets('3.0')»
          *
          * @return void
+         «ENDIF»
          */
-        public function set«name.formatForCodeCapital»(«/* disabled due to #1206 IF !nullable»File «ENDIF*/»$«name.formatForCode»)
+        public function set«name.formatForCodeCapital»(File $«name.formatForCode» = null)«IF application.targets('3.0')»: void«ENDIF»
         {
             if (null === $this->«name.formatForCode» && null === $«name.formatForCode») {
                 return;
@@ -249,10 +253,10 @@ class Property {
             «IF nullable»
                 $this->«name.formatForCode» = $«name.formatForCode»;
             «ELSE»
-                $this->«name.formatForCode» = isset($«name.formatForCode») ? $«name.formatForCode» : '';
+                $this->«name.formatForCode» = «IF application.targets('3.0')»$«name.formatForCode» ?? ''«ELSE»isset($«name.formatForCode») ? $«name.formatForCode» : ''«ENDIF»;
             «ENDIF»
 
-            if (null === $this->«name.formatForCode» || '' == $this->«name.formatForCode») {
+            if (null === $this->«name.formatForCode» || '' === $this->«name.formatForCode») {
                 $this->set«name.formatForCodeCapital»FileName('');
                 $this->set«name.formatForCodeCapital»Url('');
                 $this->set«name.formatForCodeCapital»Meta([]);
@@ -261,8 +265,14 @@ class Property {
             }
         }
 
-        «fh.getterAndSetterMethods(it, name.formatForCode + 'FileName', 'string', false, true, false, '', '')»
-        «fh.getterAndSetterMethods(it, name.formatForCode + 'Url', 'string', false, true, false, '', '')»
-        «fh.getterAndSetterMethods(it, name.formatForCode + 'Meta', 'array', true, true, true, '[]', '')»
+        «IF application.targets('3.0')»
+            «fh.getterAndSetterMethods(it, name.formatForCode + 'FileName', 'string', false, true, true, '', '')»
+            «fh.getterAndSetterMethods(it, name.formatForCode + 'Url', 'string', false, true, true, '', '')»
+            «fh.getterAndSetterMethods(it, name.formatForCode + 'Meta', 'array', true, true, true, '[]', '')»
+        «ELSE»
+            «fh.getterAndSetterMethods(it, name.formatForCode + 'FileName', 'string', false, true, false, '', '')»
+            «fh.getterAndSetterMethods(it, name.formatForCode + 'Url', 'string', false, true, false, '', '')»
+            «fh.getterAndSetterMethods(it, name.formatForCode + 'Meta', 'array', true, true, true, '[]', '')»
+        «ENDIF»
     '''
 }

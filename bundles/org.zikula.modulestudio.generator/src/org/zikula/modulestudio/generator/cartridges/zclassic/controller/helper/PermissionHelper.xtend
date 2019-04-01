@@ -21,9 +21,11 @@ class PermissionHelper {
         namespace «appNamespace»\Helper\Base;
 
         use Symfony\Component\HttpFoundation\RequestStack;
+        use Zikula\Core\Doctrine\EntityAccess;
         «IF hasLoggable»
             use Zikula\ExtensionsModule\Api\ApiInterface\VariableApiInterface;
         «ENDIF»
+        use Zikula\GroupsModule\Entity\GroupEntity;
         use Zikula\PermissionsModule\Api\ApiInterface\PermissionApiInterface;
         use Zikula\UsersModule\Api\ApiInterface\CurrentUserApiInterface;
         use Zikula\UsersModule\Entity\RepositoryInterface\UserRepositoryInterface;
@@ -66,17 +68,6 @@ class PermissionHelper {
          */
         protected $userRepository;
 
-        /**
-         * PermissionHelper constructor.
-         *
-         * @param RequestStack $requestStack
-         * @param PermissionApiInterface $permissionApi
-         «IF hasLoggable»
-         * @param VariableApiInterface $variableApi
-         «ENDIF»
-         * @param CurrentUserApiInterface $currentUserApi
-         * @param UserRepositoryInterface $userRepository
-         */
         public function __construct(
             RequestStack $requestStack,
             PermissionApiInterface $permissionApi,
@@ -103,26 +94,30 @@ class PermissionHelper {
     def private accessMethods(Application it) '''
         /**
          * Checks if the given entity instance may be read.
+         «IF !targets('3.0')»
          *
-         * @param object $entity
-         * @param integer $userId
+         * @param EntityAccess $entity
+         * @param int $userId
          *
-         * @return boolean
+         * @return bool
+         «ENDIF»
          */
-        public function mayRead($entity, $userId = null)
+        public function mayRead(EntityAccess $entity, «IF targets('3.0')»int «ENDIF»$userId = null)«IF targets('3.0')»: bool«ENDIF»
         {
             return $this->hasEntityPermission($entity, ACCESS_READ, $userId);
         }
 
         /**
          * Checks if the given entity instance may be edited.
+         «IF !targets('3.0')»
          *
-         * @param object $entity
-         * @param integer $userId
+         * @param EntityAccess $entity
+         * @param int $userId
          *
-         * @return boolean
+         * @return bool
+         «ENDIF»
          */
-        public function mayEdit($entity, $userId = null)
+        public function mayEdit(EntityAccess $entity, «IF targets('3.0')»int «ENDIF»$userId = null)«IF targets('3.0')»: bool«ENDIF»
         {
             return $this->hasEntityPermission($entity, ACCESS_EDIT, $userId);
         }
@@ -130,13 +125,15 @@ class PermissionHelper {
 
             /**
              * Checks if the given entity instance may be deleted.
+             «IF !targets('3.0')»
              *
-             * @param object $entity
-             * @param integer $userId
+             * @param EntityAccess $entity
+             * @param int $userId
              *
-             * @return boolean
+             * @return bool
+             «ENDIF»
              */
-            public function mayAccessHistory($entity, $userId = null)
+            public function mayAccessHistory(EntityAccess $entity, «IF targets('3.0')»int «ENDIF»$userId = null)«IF targets('3.0')»: bool«ENDIF»
             {
                 $objectType = $entity->get_objectType();
 
@@ -146,27 +143,31 @@ class PermissionHelper {
 
         /**
          * Checks if the given entity instance may be deleted.
+         «IF !targets('3.0')»
          *
-         * @param object $entity
-         * @param integer $userId
+         * @param EntityAccess $entity
+         * @param int $userId
          *
-         * @return boolean
+         * @return bool
+         «ENDIF»
          */
-        public function mayDelete($entity, $userId = null)
+        public function mayDelete(EntityAccess $entity, «IF targets('3.0')»int «ENDIF»$userId = null)«IF targets('3.0')»: bool«ENDIF»
         {
             return $this->hasEntityPermission($entity, ACCESS_DELETE, $userId);
         }
 
         /**
          * Checks if a certain permission level is granted for the given entity instance.
+         «IF !targets('3.0')»
          *
-         * @param object $entity
-         * @param integer $permissionLevel
-         * @param integer $userId
+         * @param EntityAccess $entity
+         * @param int $permissionLevel
+         * @param int $userId
          *
-         * @return boolean
+         * @return bool
+         «ENDIF»
          */
-        public function hasEntityPermission($entity, $permissionLevel, $userId = null)
+        public function hasEntityPermission(EntityAccess $entity, «IF targets('3.0')»int «ENDIF»$permissionLevel, «IF targets('3.0')»int «ENDIF»$userId = null)«IF targets('3.0')»: bool«ENDIF»
         {
             $objectType = $entity->get_objectType();
             $instance = $entity->getKey() . '::';
@@ -178,14 +179,16 @@ class PermissionHelper {
     def private helperMethods(Application it) '''
         /**
          * Checks if a certain permission level is granted for the given object type.
+         «IF !targets('3.0')»
          *
          * @param string $objectType
-         * @param integer $permissionLevel
-         * @param integer $userId
+         * @param int $permissionLevel
+         * @param int $userId
          *
-         * @return boolean
+         * @return bool
+         «ENDIF»
          */
-        public function hasComponentPermission($objectType, $permissionLevel, $userId = null)
+        public function hasComponentPermission(«IF targets('3.0')»string «ENDIF»$objectType, «IF targets('3.0')»int «ENDIF»$permissionLevel, «IF targets('3.0')»int «ENDIF»$userId = null)«IF targets('3.0')»: bool«ENDIF»
         {
             return $this->permissionApi->hasPermission('«appName»:' . ucfirst($objectType) . ':', '::', $permissionLevel, $userId);
         }
@@ -193,13 +196,15 @@ class PermissionHelper {
 
             /**
              * Checks if the quick navigation form for the given object type may be used or not.
+             «IF !targets('3.0')»
              *
              * @param string $objectType
-             * @param integer $userId
+             * @param int $userId
              *
-             * @return boolean
+             * @return bool
+             «ENDIF»
              */
-            public function mayUseQuickNav($objectType, $userId = null)
+            public function mayUseQuickNav(«IF targets('3.0')»string «ENDIF»$objectType, «IF targets('3.0')»int «ENDIF»$userId = null)«IF targets('3.0')»: bool«ENDIF»
             {
                 return $this->hasComponentPermission($objectType, ACCESS_READ, $userId);
             }
@@ -207,13 +212,15 @@ class PermissionHelper {
 
         /**
          * Checks if a certain permission level is granted for the application in general.
+         «IF !targets('3.0')»
          *
-         * @param integer $permissionLevel
-         * @param integer $userId
+         * @param int $permissionLevel
+         * @param int $userId
          *
-         * @return boolean
+         * @return bool
+         «ENDIF»
          */
-        public function hasPermission($permissionLevel, $userId = null)
+        public function hasPermission(«IF targets('3.0')»int «ENDIF»$permissionLevel, «IF targets('3.0')»int «ENDIF»$userId = null)«IF targets('3.0')»: bool«ENDIF»
         {
             return $this->permissionApi->hasPermission('«appName»::', '::', $permissionLevel, $userId);
         }
@@ -221,9 +228,9 @@ class PermissionHelper {
         /**
          * Returns the list of user group ids of the current user.
          *
-         * @return array List of group ids
+         * @return int[] List of group ids
          */
-        public function getUserGroupIds()
+        public function getUserGroupIds()«IF targets('3.0')»: array«ENDIF»
         {
             $isLoggedIn = $this->currentUserApi->isLoggedIn();
             if (!$isLoggedIn) {
@@ -232,30 +239,34 @@ class PermissionHelper {
 
             $groupIds = [];
             $groups = $this->currentUserApi->get('groups');
+            /** @var GroupEntity $group */
             foreach ($groups as $group) {
                 $groupIds[] = $group->getGid();
             }
-
 
             return $groupIds;
         }
 
         /**
          * Returns the the current user's id.
+         «IF !targets('3.0')»
          *
-         * @return integer
+         * @return int
+         «ENDIF»
          */
-        public function getUserId()
+        public function getUserId()«IF targets('3.0')»: int«ENDIF»
         {
-            return $this->currentUserApi->get('uid');
+            return (int)$this->currentUserApi->get('uid');
         }
 
         /**
          * Returns the the current user's entity.
+         «IF !targets('3.0')»
          *
          * @return UserEntity
+         «ENDIF»
          */
-        public function getUser()
+        public function getUser()«IF targets('3.0')»: UserEntity«ENDIF»
         {
             return $this->userRepository->find($this->getUserId());
         }

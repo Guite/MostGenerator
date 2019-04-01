@@ -203,11 +203,11 @@ class DisplayFunctions {
                 «IF viewActionsStyle == styleWithJs && displayActionsStyle == styleWithJs»
                     «initItemActionStyle(styleWithJs, '')»
                 «ELSEIF viewActionsStyle == styleWithJs && displayActionsStyle != styleWithJs»
-                    if (context == 'view') {
+                    if ('view' === context) {
                         «initItemActionStyle(styleWithJs, '')»
                     }
                 «ELSEIF viewActionsStyle != styleWithJs && displayActionsStyle == styleWithJs»
-                    if (context == 'display') {
+                    if ('display' === context) {
                         «initItemActionStyle(styleWithJs, '')»
                     }
                 «ENDIF»
@@ -230,13 +230,13 @@ class DisplayFunctions {
             var containers;
 
             containerSelector = '';
-            if (context == 'view') {
+            if ('view' === context) {
                 containerSelector = '.«appName.toLowerCase»-view';
-            } else if (context == 'display') {
+            } else if ('display' === context) {
                 containerSelector = 'h2, h3';
             }
 
-            if (containerSelector == '') {
+            if ('' === containerSelector) {
                 return;
             }
 

@@ -20,14 +20,7 @@ import de.guite.modulestudio.metamodel.ManyToManyPermissionInheritanceType
  */
 class ModelJoinExtensions {
 
-    /**
-     * Extensions used for formatting element names.
-     */
     extension FormattingExtensions = new FormattingExtensions
-
-    /**
-     * Extensions related to the model layer.
-     */
     extension ModelExtensions = new ModelExtensions
 
     /**

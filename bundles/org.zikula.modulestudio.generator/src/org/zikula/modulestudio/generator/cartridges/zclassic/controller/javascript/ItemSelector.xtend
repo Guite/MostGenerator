@@ -20,6 +20,9 @@ class ItemSelector {
      * Entry point for the JavaScript file with item selector functionality.
      */
     def generate(Application it, IMostFileSystemAccess fsa) {
+        if (targets('2.0')) {
+            return;
+        }
         val needsDetailContentType = generateDetailContentType && hasDisplayActions
         if (!needsDetailContentType) {
             return

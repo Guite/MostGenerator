@@ -65,14 +65,6 @@ class BlockListType {
                 protected $categoryRepository;
             «ENDIF»
 
-            /**
-             * ItemListBlockType constructor.
-             *
-             * @param TranslatorInterface $translator
-             «IF hasCategorisableEntities»
-             * @param CategoryRepositoryInterface $categoryRepository
-             «ENDIF»
-             */
             public function __construct(
                 TranslatorInterface $translator«IF hasCategorisableEntities»,
                 CategoryRepositoryInterface $categoryRepository«ENDIF»
@@ -85,9 +77,6 @@ class BlockListType {
 
             «setTranslatorMethod»
 
-            /**
-             * @inheritDoc
-             */
             public function buildForm(FormBuilderInterface $builder, array $options)
             {
                 $this->addObjectTypeField($builder, $options);
@@ -116,17 +105,11 @@ class BlockListType {
 
             «addFilterField»
 
-            /**
-             * @inheritDoc
-             */
             public function getBlockPrefix()
             {
                 return '«appName.formatForDB»_listblock';
             }
 
-            /**
-             * @inheritDoc
-             */
             public function configureOptions(OptionsResolver $resolver)
             {
                 $resolver
@@ -154,11 +137,8 @@ class BlockListType {
     def private addObjectTypeField(Application it) '''
         /**
          * Adds an object type field.
-         *
-         * @param FormBuilderInterface $builder The form builder
-         * @param array                $options The options
          */
-        public function addObjectTypeField(FormBuilderInterface $builder, array $options = [])
+        public function addObjectTypeField(FormBuilderInterface $builder, array $options = [])«IF targets('3.0')»: void«ENDIF»
         {
             $builder->add('objectType', «IF getAllEntities.size == 1»Hidden«ELSE»Choice«ENDIF»Type::class, [
                 'label' => $this->__('Object type'«IF !isSystemModule», '«appName.formatForDB»'«ENDIF») . ':',
@@ -186,11 +166,8 @@ class BlockListType {
     def private addCategoriesField(Application it) '''
         /**
          * Adds a categories field.
-         *
-         * @param FormBuilderInterface $builder The form builder
-         * @param array                $options The options
          */
-        public function addCategoriesField(FormBuilderInterface $builder, array $options = [])
+        public function addCategoriesField(FormBuilderInterface $builder, array $options = [])«IF targets('3.0')»: void«ENDIF»
         {
             if (!$options['is_categorisable'] || null === $options['category_helper']) {
                 return;
@@ -216,7 +193,7 @@ class BlockListType {
 
             $categoryRepository = $this->categoryRepository;
             $builder->get('categories')->addModelTransformer(new CallbackTransformer(
-                function ($catIds) use ($categoryRepository, $objectType, $hasMultiSelection) {
+                static function ($catIds) use ($categoryRepository, $objectType, $hasMultiSelection) {
                     $categoryMappings = [];
                     $entityCategoryClass = '«appNamespace»\Entity\\' . ucfirst($objectType) . 'CategoryEntity';
 
@@ -231,12 +208,12 @@ class BlockListType {
                     }
 
                     if (!$hasMultiSelection) {
-                        $categoryMappings = count($categoryMappings) > 0 ? reset($categoryMappings) : null;
+                        $categoryMappings = 0 < count($categoryMappings) ? reset($categoryMappings) : null;
                     }
 
                     return $categoryMappings;
                 },
-                function ($result) use ($hasMultiSelection) {
+                static function ($result) use ($hasMultiSelection) {
                     $catIds = [];
 
                     foreach ($result as $categoryMapping) {
@@ -252,11 +229,8 @@ class BlockListType {
     def private addSortingField(Application it) '''
         /**
          * Adds a sorting field.
-         *
-         * @param FormBuilderInterface $builder The form builder
-         * @param array                $options The options
          */
-        public function addSortingField(FormBuilderInterface $builder, array $options = [])
+        public function addSortingField(FormBuilderInterface $builder, array $options = [])«IF targets('3.0')»: void«ENDIF»
         {
             $builder->add('sorting', ChoiceType::class, [
                 'label' => $this->__('Sorting'«IF !isSystemModule», '«appName.formatForDB»'«ENDIF») . ':',
@@ -279,11 +253,8 @@ class BlockListType {
     def private addAmountField(Application it) '''
         /**
          * Adds a page size field.
-         *
-         * @param FormBuilderInterface $builder The form builder
-         * @param array                $options The options
          */
-        public function addAmountField(FormBuilderInterface $builder, array $options = [])
+        public function addAmountField(FormBuilderInterface $builder, array $options = [])«IF targets('3.0')»: void«ENDIF»
         {
             $builder->add('amount', IntegerType::class, [
                 'label' => $this->__('Amount'«IF !isSystemModule», '«appName.formatForDB»'«ENDIF») . ':',
@@ -301,11 +272,8 @@ class BlockListType {
     def private addTemplateFields(Application it) '''
         /**
          * Adds template fields.
-         *
-         * @param FormBuilderInterface $builder The form builder
-         * @param array                $options The options
          */
-        public function addTemplateFields(FormBuilderInterface $builder, array $options = [])
+        public function addTemplateFields(FormBuilderInterface $builder, array $options = [])«IF targets('3.0')»: void«ENDIF»
         {
             $builder
                 ->add('template', ChoiceType::class, [
@@ -338,11 +306,8 @@ class BlockListType {
     def private addFilterField(Application it) '''
         /**
          * Adds a filter field.
-         *
-         * @param FormBuilderInterface $builder The form builder
-         * @param array                $options The options
          */
-        public function addFilterField(FormBuilderInterface $builder, array $options = [])
+        public function addFilterField(FormBuilderInterface $builder, array $options = [])«IF targets('3.0')»: void«ENDIF»
         {
             $builder->add('filter', TextType::class, [
                 'label' => $this->__('Filter (expert option)'«IF !isSystemModule», '«appName.formatForDB»'«ENDIF») . ':',

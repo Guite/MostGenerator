@@ -9,10 +9,11 @@ class GeographicalTrait {
 
     extension Utils = new Utils
 
-    FileHelper fh = new FileHelper
+    FileHelper fh
     Boolean isLoggable
 
     def generate(Application it, IMostFileSystemAccess fsa, Boolean loggable) {
+        fh = new FileHelper(it)
         isLoggable = loggable
         val filePath = 'Traits/' + (if (loggable) 'Loggable' else '') + 'GeographicalTrait.php'
         fsa.generateFile(filePath, traitFile)
@@ -61,7 +62,12 @@ class GeographicalTrait {
          */
         protected $longitude = 0.00;
 
-        «fh.getterAndSetterMethods(it, 'latitude', 'float', false, true, false, '', '')»
-        «fh.getterAndSetterMethods(it, 'longitude', 'float', false, true, false, '', '')»
+        «IF targets('3.0')»
+            «fh.getterAndSetterMethods(it, 'latitude', 'float', false, true, true, '', '')»
+            «fh.getterAndSetterMethods(it, 'longitude', 'float', false, true, true, '', '')»
+        «ELSE»
+            «fh.getterAndSetterMethods(it, 'latitude', 'float', false, true, false, '', '')»
+            «fh.getterAndSetterMethods(it, 'longitude', 'float', false, true, false, '', '')»
+        «ENDIF»
     '''
 }

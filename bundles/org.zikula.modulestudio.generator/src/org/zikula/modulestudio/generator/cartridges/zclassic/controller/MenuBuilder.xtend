@@ -94,22 +94,6 @@ class MenuBuilder {
              */
             protected $currentUserApi;
 
-            /**
-             * MenuBuilder constructor.
-             *
-             * @param TranslatorInterface $translator
-             * @param FactoryInterface $factory
-             * @param EventDispatcherInterface $eventDispatcher
-             * @param RequestStack $requestStack
-             * @param PermissionHelper $permissionHelper
-             «IF hasDisplayActions»
-             * @param EntityDisplayHelper $entityDisplayHelper
-             «ENDIF»
-             «IF hasLoggable»
-             * @param LoggableHelper $loggableHelper
-             «ENDIF»
-             * @param CurrentUserApiInterface $currentUserApi
-             */
             public function __construct(
                 TranslatorInterface $translator,
                 FactoryInterface $factory,
@@ -142,15 +126,17 @@ class MenuBuilder {
 
             /**
              * Builds the item actions menu.
+             «IF !targets('3.0')»
              *
              * @param array $options List of additional options
              *
              * @return ItemInterface The assembled menu
+             «ENDIF»
              */
-            public function createItemActionsMenu(array $options = [])
+            public function createItemActionsMenu(array $options = [])«IF targets('3.0')»: ItemInterface«ENDIF»
             {
                 $menu = $this->factory->createItem('itemActions');
-                if (!isset($options['entity']) || !isset($options['area']) || !isset($options['context'])) {
+                if (!isset($options['entity'], $options['area'], $options['context'])) {
                     return $menu;
                 }
 
@@ -161,7 +147,7 @@ class MenuBuilder {
 
                     // return empty menu for preview of deleted items
                     $routeName = $this->requestStack->getMasterRequest()->get('_route');
-                    if (stristr($routeName, 'displaydeleted')) {
+                    if (false !== stripos($routeName, 'displaydeleted')) {
                         return $menu;
                     }
                 «ENDIF»

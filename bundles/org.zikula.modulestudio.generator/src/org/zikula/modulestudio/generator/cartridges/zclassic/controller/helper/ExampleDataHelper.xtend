@@ -56,8 +56,12 @@ class ExampleDataHelper {
     def private exampleDataHelperBaseClass(Application it) '''
         namespace «appNamespace»\Helper\Base;
 
+        use Exception;
         use Psr\Log\LoggerInterface;
         use Symfony\Component\HttpFoundation\RequestStack;
+        «IF hasCategorisableEntities»
+            use Zikula\CategoriesModule\Entity\CategoryEntity;
+        «ENDIF»
         use Zikula\Common\Translator\TranslatorInterface;
         «IF hasUserFields»
             use Zikula\UsersModule\Constant as UsersConstant;
@@ -114,18 +118,6 @@ class ExampleDataHelper {
             protected $userRepository;
         «ENDIF»
 
-        /**
-         * ExampleDataHelper constructor.
-         *
-         * @param TranslatorInterface $translator
-         * @param RequestStack $requestStack
-         * @param LoggerInterface $logger
-         * @param EntityFactory $entityFactory
-         * @param WorkflowHelper $workflowHelper
-         «IF hasUserFields»
-         * @param UserRepositoryInterface $userRepository
-         «ENDIF»
-         */
         public function __construct(
             TranslatorInterface $translator,
             RequestStack $requestStack,
@@ -146,10 +138,8 @@ class ExampleDataHelper {
 
         /**
          * Create the default data for «appName».
-         *
-         * @return void
          */
-        public function createDefaultData()
+        public function createDefaultData()«IF targets('3.0')»: void«ENDIF»
         {
             «IF hasUserFields»
                 $adminUser = $this->userRepository->find(UsersConstant::USER_ID_ADMIN);
@@ -158,6 +148,7 @@ class ExampleDataHelper {
             «IF hasCategorisableEntities»
                 // example category
                 $categoryId = 41; // Business and work
+                /** @var CategoryEntity $category */
                 $category = $this->entityFactory->getEntityManager()->find('ZikulaCategoriesModule:CategoryEntity', $categoryId);
 
                 // determine category registry identifiers
@@ -227,7 +218,7 @@ class ExampleDataHelper {
         «IF categorisable»
             $categoryRegistry = null;
             foreach ($categoryRegistries as $registry) {
-                if ($registry->getEntityname() == '«name.formatForCodeCapital»Entity') {
+                if ('«name.formatForCodeCapital»Entity' === $registry->getEntityname()) {
                     $categoryRegistry = $registry;
                     break;
                 }
@@ -271,11 +262,9 @@ class ExampleDataHelper {
             $entityManager = $this->entityFactory->getEntityManager();
             «FOR entity : getExampleEntities»«entity.persistEntities(it)»«ENDFOR»
             «FOR entity : getExampleEntities»«entity.saveEntities(it)»«ENDFOR»
-        } catch (\Exception $exception) {
+        } catch (Exception $exception) {
             $this->requestStack->getCurrentRequest()->getSession()->getFlashBag()->add('error', $this->translator->__('Exception during example data creation') . ': ' . $exception->getMessage());
             $this->logger->error('{app}: Could not completely create example data after installation. Error details: {errorMessage}.', ['app' => '«appName»', 'errorMessage' => $exception->getMessage()]);
-
-            return false;
         }
     '''
 

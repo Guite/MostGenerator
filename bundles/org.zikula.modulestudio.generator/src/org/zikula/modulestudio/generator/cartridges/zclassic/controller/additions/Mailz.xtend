@@ -21,6 +21,7 @@ class Mailz {
     def private mailzBaseClass(Application it) '''
         namespace «appNamespace»\Api\Base;
 
+        use Exception;
         use Symfony\Component\DependencyInjection\ContainerAwareInterface;
         use Symfony\Component\DependencyInjection\ContainerAwareTrait;
         use Zikula_AbstractBase;
@@ -47,14 +48,16 @@ class Mailz {
     def private mailzBaseImpl(Application it) '''
         /**
          * Returns existing Mailz plugins with type / title.
+         «IF !targets('3.0')»
          *
          * @param array $args List of arguments
          *
          * @return array List of provided plugin functions
+         «ENDIF»
          */
-        public function getPlugins(array $args = [])
+        public function getPlugins(array $args = [])«IF targets('3.0')»: array«ENDIF»
         {
-            $translator = $this->container->get('translator.default');
+            $translator = $this->container->get(«IF targets('3.0')»Translator::class«ELSE»'translator.default'«ENDIF»);
 
             «val itemDesc = getLeadingEntity.nameMultiple.formatForDisplay»
             $plugins = [];
@@ -92,7 +95,7 @@ class Mailz {
          *
          * @return string output of plugin template
          */
-        public function getContent(array $args = [])
+        public function getContent(array $args = [])«IF targets('3.0')»: string«ENDIF»
         {
             // $args is something like:
             // Array ( [uid] => 5 [contenttype] => h [pluginid] => 1 [nid] => 1 [last] => 0000-00-00 00:00:00 [params] => Array ( [] => ) ) 1
@@ -117,12 +120,12 @@ class Mailz {
             // get objects from database
             try {
                 list($entities, $objectCount) = $repository->selectWherePaginated($where, $orderBy, 1, $resultsPerPage);
-            } catch (\Exception $exception) {
+            } catch (Exception $exception) {
                 $entities = [];
                 $objectCount = 0;
             }
 
-            $templateType = $args['contenttype'] == 't' ? 'text' : 'html';
+            $templateType = 't' === $args['contenttype'] ? 'text' : 'html';
 
             //$templateParameters = ['sorting' => $this->sorting, 'amount' => $this->amount, 'filter' => $this->filter, 'template' => $this->template];
             $templateParameters = [

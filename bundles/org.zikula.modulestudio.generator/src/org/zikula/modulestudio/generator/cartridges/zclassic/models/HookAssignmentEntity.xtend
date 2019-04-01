@@ -66,7 +66,7 @@ class HookAssignmentEntity {
         entity.standardFields = false
         entities += entity
         extMan = new ExtensionManager(entity)
-        thProp = new Property(extMan)
+        thProp = new Property(it, extMan)
     }
 
     def private entityBaseImpl(Application it) '''

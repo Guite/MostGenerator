@@ -148,24 +148,6 @@ class QuickNavigationType {
                 protected $featureActivationHelper;
             «ENDIF»
 
-            /**
-             * «name.formatForCodeCapital»QuickNavType constructor.
-             *
-             * @param TranslatorInterface $translator
-            «IF !incomingRelations.empty»
-             * @param RequestStack $requestStack
-             * @param EntityDisplayHelper $entityDisplayHelper
-            «ENDIF»
-            «IF hasListFieldsEntity»
-                «' '»* @param ListEntriesHelper $listHelper
-            «ENDIF»
-            «IF hasLocaleFieldsEntity»
-                «' '»* @param LocaleApiInterface $localeApi
-            «ENDIF»
-            «IF app.needsFeatureActivationHelper»
-                «' '»* @param FeatureActivationHelper $featureActivationHelper
-            «ENDIF»
-             */
             public function __construct(
                 TranslatorInterface $translator«IF !incomingRelations.empty»,
                 RequestStack $requestStack,
@@ -192,9 +174,6 @@ class QuickNavigationType {
 
             «app.setTranslatorMethod»
 
-            /**
-             * @inheritDoc
-             */
             public function buildForm(FormBuilderInterface $builder, array $options)
             {
                 $builder
@@ -298,9 +277,6 @@ class QuickNavigationType {
                 «addBooleanFields»
 
             «ENDIF»
-            /**
-             * @inheritDoc
-             */
             public function getBlockPrefix()
             {
                 return '«app.appName.formatForDB»_«name.formatForDB»quicknav';
@@ -311,11 +287,8 @@ class QuickNavigationType {
     def private addCategoriesField(Entity it) '''
         /**
          * Adds a categories field.
-         *
-         * @param FormBuilderInterface $builder The form builder
-         * @param array                $options The options
          */
-        public function addCategoriesField(FormBuilderInterface $builder, array $options = [])
+        public function addCategoriesField(FormBuilderInterface $builder, array $options = [])«IF app.targets('3.0')»: void«ENDIF»
         {
             $objectType = '«name.formatForCode»';
 
@@ -339,11 +312,8 @@ class QuickNavigationType {
     def private addIncomingRelationshipFields(Entity it) '''
         /**
          * Adds fields for incoming relationships.
-         *
-         * @param FormBuilderInterface $builder The form builder
-         * @param array                $options The options
          */
-        public function addIncomingRelationshipFields(FormBuilderInterface $builder, array $options = [])
+        public function addIncomingRelationshipFields(FormBuilderInterface $builder, array $options = [])«IF app.targets('3.0')»: void«ENDIF»
         {
             $mainSearchTerm = '';
             $request = $this->requestStack->getCurrentRequest();
@@ -357,7 +327,7 @@ class QuickNavigationType {
                 «relation.fieldImpl»
             «ENDFOR»
 
-            if ($mainSearchTerm != '') {
+            if ('' !== $mainSearchTerm) {
                 // readd current search argument
                 $request->query->set('q', $mainSearchTerm);
             }
@@ -367,11 +337,8 @@ class QuickNavigationType {
     def private addListFields(Entity it) '''
         /**
          * Adds list fields.
-         *
-         * @param FormBuilderInterface $builder The form builder
-         * @param array                $options The options
          */
-        public function addListFields(FormBuilderInterface $builder, array $options = [])
+        public function addListFields(FormBuilderInterface $builder, array $options = [])«IF app.targets('3.0')»: void«ENDIF»
         {
             «FOR field : getListFieldsEntity»
                 $listEntries = $this->listHelper->getEntries('«name.formatForCode»', '«field.name.formatForCode»');
@@ -389,11 +356,8 @@ class QuickNavigationType {
     def private addUserFields(Entity it) '''
         /**
          * Adds user fields.
-         *
-         * @param FormBuilderInterface $builder The form builder
-         * @param array                $options The options
          */
-        public function addUserFields(FormBuilderInterface $builder, array $options = [])
+        public function addUserFields(FormBuilderInterface $builder, array $options = [])«IF app.targets('3.0')»: void«ENDIF»
         {
             «FOR field : getUserFieldsEntity»
                 «field.fieldImpl»
@@ -404,11 +368,8 @@ class QuickNavigationType {
     def private addCountryFields(Entity it) '''
         /**
          * Adds country fields.
-         *
-         * @param FormBuilderInterface $builder The form builder
-         * @param array                $options The options
          */
-        public function addCountryFields(FormBuilderInterface $builder, array $options = [])
+        public function addCountryFields(FormBuilderInterface $builder, array $options = [])«IF app.targets('3.0')»: void«ENDIF»
         {
             «FOR field : getCountryFieldsEntity»
                 «field.fieldImpl»
@@ -419,11 +380,8 @@ class QuickNavigationType {
     def private addLanguageFields(Entity it) '''
         /**
          * Adds language fields.
-         *
-         * @param FormBuilderInterface $builder The form builder
-         * @param array                $options The options
          */
-        public function addLanguageFields(FormBuilderInterface $builder, array $options = [])
+        public function addLanguageFields(FormBuilderInterface $builder, array $options = [])«IF app.targets('3.0')»: void«ENDIF»
         {
             «FOR field : getLanguageFieldsEntity»
                 «field.fieldImpl»
@@ -434,11 +392,8 @@ class QuickNavigationType {
     def private addLocaleFields(Entity it) '''
         /**
          * Adds locale fields.
-         *
-         * @param FormBuilderInterface $builder The form builder
-         * @param array                $options The options
          */
-        public function addLocaleFields(FormBuilderInterface $builder, array $options = [])
+        public function addLocaleFields(FormBuilderInterface $builder, array $options = [])«IF app.targets('3.0')»: void«ENDIF»
         {
             «FOR field : getLocaleFieldsEntity»
                 «field.fieldImpl»
@@ -449,11 +404,8 @@ class QuickNavigationType {
     def private addCurrencyFields(Entity it) '''
         /**
          * Adds currency fields.
-         *
-         * @param FormBuilderInterface $builder The form builder
-         * @param array                $options The options
          */
-        public function addCurrencyFields(FormBuilderInterface $builder, array $options = [])
+        public function addCurrencyFields(FormBuilderInterface $builder, array $options = [])«IF app.targets('3.0')»: void«ENDIF»
         {
             «FOR field : getCurrencyFieldsEntity»
                 «field.fieldImpl»
@@ -464,11 +416,8 @@ class QuickNavigationType {
     def private addTimezoneFields(Entity it) '''
         /**
          * Adds time zone fields.
-         *
-         * @param FormBuilderInterface $builder The form builder
-         * @param array                $options The options
          */
-        public function addTimezoneFields(FormBuilderInterface $builder, array $options = [])
+        public function addTimezoneFields(FormBuilderInterface $builder, array $options = [])«IF app.targets('3.0')»: void«ENDIF»
         {
             «FOR field : getTimezoneFieldsEntity»
                 «field.fieldImpl»
@@ -479,11 +428,8 @@ class QuickNavigationType {
     def private addSearchField(Entity it) '''
         /**
          * Adds a search field.
-         *
-         * @param FormBuilderInterface $builder The form builder
-         * @param array                $options The options
          */
-        public function addSearchField(FormBuilderInterface $builder, array $options = [])
+        public function addSearchField(FormBuilderInterface $builder, array $options = [])«IF app.targets('3.0')»: void«ENDIF»
         {
             $builder->add('q', SearchType::class, [
                 'label' => $this->__('Search'),
@@ -499,11 +445,8 @@ class QuickNavigationType {
     def private addSortingFields(Entity it) '''
         /**
          * Adds sorting fields.
-         *
-         * @param FormBuilderInterface $builder The form builder
-         * @param array                $options The options
          */
-        public function addSortingFields(FormBuilderInterface $builder, array $options = [])
+        public function addSortingFields(FormBuilderInterface $builder, array $options = [])«IF app.targets('3.0')»: void«ENDIF»
         {
             $builder
                 ->add('sort', ChoiceType::class, [
@@ -553,11 +496,8 @@ class QuickNavigationType {
     def private addAmountField(Entity it) '''
         /**
          * Adds a page size field.
-         *
-         * @param FormBuilderInterface $builder The form builder
-         * @param array                $options The options
          */
-        public function addAmountField(FormBuilderInterface $builder, array $options = [])
+        public function addAmountField(FormBuilderInterface $builder, array $options = [])«IF app.targets('3.0')»: void«ENDIF»
         {
             $builder->add('num', ChoiceType::class, [
                 'label' => $this->__('Page size'),
@@ -566,13 +506,13 @@ class QuickNavigationType {
                     'class' => 'input-sm text-right'
                 ],
                 'choices' => [
-                    $this->__('5') => 5,
-                    $this->__('10') => 10,
-                    $this->__('15') => 15,
-                    $this->__('20') => 20,
-                    $this->__('30') => 30,
-                    $this->__('50') => 50,
-                    $this->__('100') => 100
+                    5 => 5,
+                    10 => 10,
+                    15 => 15,
+                    20 => 20,
+                    30 => 30,
+                    50 => 50,
+                    100 => 100
                 ],
                 «IF !app.targets('2.0')»
                     'choices_as_values' => true,
@@ -586,11 +526,8 @@ class QuickNavigationType {
     def private addBooleanFields(Entity it) '''
         /**
          * Adds boolean fields.
-         *
-         * @param FormBuilderInterface $builder The form builder
-         * @param array                $options The options
          */
-        public function addBooleanFields(FormBuilderInterface $builder, array $options = [])
+        public function addBooleanFields(FormBuilderInterface $builder, array $options = [])«IF app.targets('3.0')»: void«ENDIF»
         {
             «FOR field : getBooleanFieldsEntity»
                 «field.fieldImpl»

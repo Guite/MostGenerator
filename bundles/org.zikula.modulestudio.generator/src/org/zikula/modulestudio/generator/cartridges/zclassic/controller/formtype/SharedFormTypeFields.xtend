@@ -81,7 +81,7 @@ class SharedFormTypeFields {
         «IF !fields.filter(EmailField).empty»
             use «nsSymfonyFormType»EmailType;
         «ENDIF»
-        «IF !fields.filter(IntegerField).filter[!percentage && !range && !isUserGroupSelector].empty»
+        «IF !fields.filter(IntegerField).filter[!primaryKey && !percentage && !range && !isUserGroupSelector].empty»
             use «nsSymfonyFormType»IntegerType;
         «ENDIF»
         «IF !fields.filter(StringField).filter[role == StringRole.LANGUAGE].empty»

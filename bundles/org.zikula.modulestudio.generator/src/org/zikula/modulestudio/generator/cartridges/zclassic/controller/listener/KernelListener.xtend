@@ -12,9 +12,6 @@ class KernelListener {
     CommonExample commonExample = new CommonExample()
 
     def generate(Application it) '''
-        /**
-         * Makes our handlers known to the event system.
-         */
         public static function getSubscribedEvents()
         {
             return [
@@ -45,9 +42,8 @@ class KernelListener {
          * Example from Symfony: the RouterListener determines controller and information about arguments.
          *
          «commonExample.generalEventProperties(it, true)»
-         * @param GetResponseEvent $event The event instance
          */
-        public function onRequest(GetResponseEvent $event)
+        public function onRequest(GetResponseEvent $event)«IF targets('3.0')»: void«ENDIF»
         {
         }
 
@@ -77,9 +73,8 @@ class KernelListener {
          * Example from Symfony: the ParamConverterListener performs reflection and type conversion.
          *
          «commonExample.generalEventProperties(it, true)»
-         * @param FilterControllerEvent $event The event instance
          */
-        public function onController(FilterControllerEvent $event)
+        public function onController(FilterControllerEvent $event)«IF targets('3.0')»: void«ENDIF»
         {
         }
 
@@ -100,9 +95,8 @@ class KernelListener {
          * Example from Symfony: TemplateListener renders Twig templates with returned arrays.
          *
          «commonExample.generalEventProperties(it, true)»
-         * @param GetResponseForControllerResultEvent $event The event instance
          */
-        public function onView(GetResponseForControllerResultEvent $event)
+        public function onView(GetResponseForControllerResultEvent $event)«IF targets('3.0')»: void«ENDIF»
         {
         }
 
@@ -128,9 +122,8 @@ class KernelListener {
          *    - ResponseListener: updates the content type according to the request format
          *
          «commonExample.generalEventProperties(it, true)»
-         * @param FilterResponseEvent $event The event instance
          */
-        public function onResponse(FilterResponseEvent $event)
+        public function onResponse(FilterResponseEvent $event)«IF targets('3.0')»: void«ENDIF»
         {
         }
 
@@ -143,9 +136,8 @@ class KernelListener {
          * You can cleanup things here which are not directly related to the response.
          *
          «commonExample.generalEventProperties(it, true)»
-         * @param FinishRequestEvent $event The event instance
          */
-        public function onFinishRequest(FinishRequestEvent $event)
+        public function onFinishRequest(FinishRequestEvent $event)«IF targets('3.0')»: void«ENDIF»
         {
         }
 
@@ -161,9 +153,8 @@ class KernelListener {
          * EmailSenderListener which delivers emails created during the request.
          *
          «commonExample.generalEventProperties(it, true)»
-         * @param PostResponseEvent $event The event instance
          */
-        public function onTerminate(PostResponseEvent $event)
+        public function onTerminate(PostResponseEvent $event)«IF targets('3.0')»: void«ENDIF»
         {
         }
 
@@ -197,9 +188,8 @@ class KernelListener {
          *     $event->setException($exception);`
          *
          «commonExample.generalEventProperties(it, true)»
-         * @param GetResponseForExceptionEvent $event The event instance
          */
-        public function onException(GetResponseForExceptionEvent $event)
+        public function onException(GetResponseForExceptionEvent $event)«IF targets('3.0')»: void«ENDIF»
         {
         }
     '''

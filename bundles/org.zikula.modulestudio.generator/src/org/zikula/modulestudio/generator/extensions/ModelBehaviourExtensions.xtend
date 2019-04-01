@@ -25,25 +25,11 @@ import java.util.List
  */
 class ModelBehaviourExtensions {
 
-    /**
-     * Extensions related to controller layers.
-     */
     extension ControllerExtensions = new ControllerExtensions
-
-    /**
-     * Extensions related to date and time.
-     */
     extension DateTimeExtensions = new DateTimeExtensions
-
-    /**
-     * Extensions related to the model layer.
-     */
     extension ModelExtensions = new ModelExtensions
-
-    /**
-     * Extensions related to inheritance relationships.
-     */
     extension ModelInheritanceExtensions = new ModelInheritanceExtensions
+    extension Utils = new Utils
 
     /**
      * Returns a list of all entities for the finder component
@@ -434,12 +420,7 @@ class ModelBehaviourExtensions {
     }
 
     def setTranslatorMethod(Application it) '''
-        /**
-         * Sets the translator.
-         *
-         * @param TranslatorInterface $translator
-         */
-        public function setTranslator(TranslatorInterface $translator)
+        public function setTranslator(TranslatorInterface $translator)«IF targets('3.0')»: void«ENDIF»
         {
             $this->translator = $translator;
         }

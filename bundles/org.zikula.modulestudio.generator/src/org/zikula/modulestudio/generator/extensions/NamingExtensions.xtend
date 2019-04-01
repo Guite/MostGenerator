@@ -10,14 +10,7 @@ import de.guite.modulestudio.metamodel.JoinRelationship
  */
 class NamingExtensions {
 
-    /**
-     * Extensions used for formatting element names.
-     */
     extension FormattingExtensions = new FormattingExtensions
-
-    /**
-     * Additional utility methods.
-     */
     extension Utils = new Utils
 
     /**

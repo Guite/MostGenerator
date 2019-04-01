@@ -111,34 +111,22 @@ class ContentTypeList {
             protected $categorisableObjectTypes;
 
         «ENDIF»
-        /**
-         * @inheritDoc
-         */
-        public function getIcon()
+        public function getIcon()«IF targets('3.0')»: string«ENDIF»
         {
             return 'th-list';
         }
 
-        /**
-         * @inheritDoc
-         */
-        public function getTitle()
+        public function getTitle()«IF targets('3.0')»: string«ENDIF»
         {
             return $this->translator->__('«name.formatForDisplayCapital» list', '«appName.formatForDB»');
         }
 
-        /**
-         * @inheritDoc
-         */
-        public function getDescription()
+        public function getDescription()«IF targets('3.0')»: string«ENDIF»
         {
             return $this->translator->__('Display a list of «name.formatForDisplay» objects.', '«appName.formatForDB»');
         }
 
-        /**
-         * @inheritDoc
-         */
-        public function getDefaultData()
+        public function getDefaultData()«IF targets('3.0')»: array«ENDIF»
         {
             return [
                 'objectType' => '«getLeadingEntity.name.formatForCode»',
@@ -150,15 +138,12 @@ class ContentTypeList {
             ];
         }
 
-        /**
-         * @inheritDoc
-         */
-        public function getData()
+        public function getData()«IF targets('3.0')»: array«ENDIF»
         {
             $data = parent::getData();
 
             $contextArgs = ['name' => 'list'];
-            if (!isset($data['objectType']) || !in_array($data['objectType'], $this->controllerHelper->getObjectTypes('contentType', $contextArgs))) {
+            if (!isset($data['objectType']) || !in_array($data['objectType'], $this->controllerHelper->getObjectTypes('contentType', $contextArgs), true)) {
                 $data['objectType'] = $this->controllerHelper->getDefaultObjectType('contentType', $contextArgs);
             }
 
@@ -193,10 +178,7 @@ class ContentTypeList {
             return $data;
         }
 
-        /**
-         * @inheritDoc
-         */
-        public function displayView()
+        public function displayView()«IF targets('3.0')»: string«ENDIF»
         {
             $objectType = $this->data['objectType'];
             $repository = $this->entityFactory->getRepository($objectType);
@@ -243,13 +225,10 @@ class ContentTypeList {
             return parent::displayView();
         }
 
-        /**
-         * @inheritDoc
-         */
-        public function getViewTemplatePath($suffix = '')
+        public function getViewTemplatePath(«IF targets('3.0')»string «ENDIF»$suffix = '')«IF targets('3.0')»: string«ENDIF»
         {
             $templateFile = $this->data['template'];
-            if ('custom' == $templateFile && null !== $this->data['customTemplate'] && '' != $this->data['customTemplate']) {
+            if ('custom' === $templateFile && null !== $this->data['customTemplate'] && '' !== $this->data['customTemplate']) {
                 $templateFile = $this->data['customTemplate'];
             }
 
@@ -272,18 +251,12 @@ class ContentTypeList {
             return $template;
         }
 
-        /**
-         * @inheritDoc
-         */
-        public function getEditFormClass()
+        public function getEditFormClass()«IF targets('3.0')»: string«ENDIF»
         {
             return FormType::class;
         }
 
-        /**
-         * @inheritDoc
-         */
-        public function getEditFormOptions($context)
+        public function getEditFormOptions($context)«IF targets('3.0')»: array«ENDIF»
         {
             $options = parent::getEditFormOptions($context);
             $data = $this->getData();
@@ -297,51 +270,46 @@ class ContentTypeList {
             return $options;
         }
 
-        /**
-         «IF targets('3.0')»
-         * @required
-         «ENDIF»
-         * @param ControllerHelper $controllerHelper
-         */
-        public function setControllerHelper(ControllerHelper $controllerHelper)
+        «IF targets('3.0')»
+            /**
+             * @required
+             */
+        «ENDIF»
+        public function setControllerHelper(ControllerHelper $controllerHelper)«IF targets('3.0')»: void«ENDIF»
         {
             $this->controllerHelper = $controllerHelper;
         }
 
-        /**
-         «IF targets('3.0')»
-         * @required
-         «ENDIF»
-         * @param ModelHelper $modelHelper
-         */
-        public function setModelHelper(ModelHelper $modelHelper)
+        «IF targets('3.0')»
+            /**
+             * @required
+             */
+        «ENDIF»
+        public function setModelHelper(ModelHelper $modelHelper)«IF targets('3.0')»: void«ENDIF»
         {
             $this->modelHelper = $modelHelper;
         }
 
-        /**
-         «IF targets('3.0')»
-         * @required
-         «ENDIF»
-         * @param EntityFactory $entityFactory
-         */
-        public function setEntityFactory(EntityFactory $entityFactory)
+        «IF targets('3.0')»
+            /**
+             * @required
+             */
+        «ENDIF»
+        public function setEntityFactory(EntityFactory $entityFactory)«IF targets('3.0')»: void«ENDIF»
         {
             $this->entityFactory = $entityFactory;
         }
         «IF hasCategorisableEntities»
 
-            /**
-             «IF targets('3.0')»
-             * @required
-             «ENDIF»
-             * @param CategoryHelper $categoryHelper
-             * @param FeatureActivationHelper $featureActivationHelper
-             */
+            «IF targets('3.0')»
+                /**
+                 * @required
+                 */
+            «ENDIF»
             public function setCategoryDependencies(
                 CategoryHelper $categoryHelper,
                 FeatureActivationHelper $featureActivationHelper
-            ) {
+            )«IF targets('3.0')»: void«ENDIF» {
                 $this->categoryHelper = $categoryHelper;
                 $this->featureActivationHelper = $featureActivationHelper;
             }
@@ -421,9 +389,6 @@ class ContentTypeList {
             protected $catIds;
         «ENDIF»
 
-        /**
-         * ItemList constructor.
-         */
         public function __construct()
         {
             $this->setContainer(\ServiceUtil::getManager());

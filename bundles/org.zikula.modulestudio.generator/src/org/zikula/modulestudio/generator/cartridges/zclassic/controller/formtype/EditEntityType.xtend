@@ -71,8 +71,9 @@ class EditEntityType {
             use Doctrine\ORM\EntityRepository;
         «ENDIF»
         «fields.formTypeImports(app, it)»
-        «IF it instanceof Entity && (it as Entity).tree != EntityTreeType.NONE»
-            use «app.appNamespace»\Entity\«name.formatForCodeCapital»Entity;
+        use «entityClassName('', false)»;
+        «IF it instanceof Entity && (it as Entity).categorisable»
+            use «entityClassName('Category', false)»;
         «ENDIF»
         «IF isInheriting»
             use «app.appNamespace»\Form\Type\«getParentDataObjects(newArrayList).head.name.formatForCodeCapital»Type;
@@ -173,32 +174,6 @@ class EditEntityType {
                 protected $featureActivationHelper;
             «ENDIF»
 
-            /**
-             * «name.formatForCodeCapital»Type constructor.
-             *
-             * @param TranslatorInterface $translator
-             * @param EntityFactory $entityFactory
-             «IF !incoming.empty || !outgoing.empty»
-             * @param CollectionFilterHelper $collectionFilterHelper
-             * @param EntityDisplayHelper $entityDisplayHelper
-             «ENDIF»
-             «IF isTranslatable»
-             * @param VariableApiInterface $variableApi
-             * @param TranslatableHelper $translatableHelper
-             «ENDIF»
-             «IF hasListFieldsEntity»
-             * @param ListEntriesHelper $listHelper
-             «ENDIF»
-             «IF hasUploadFieldsEntity»
-             * @param UploadHelper $uploadHelper
-             «ENDIF»
-             «IF hasLocaleFieldsEntity»
-             * @param LocaleApiInterface $localeApi
-             «ENDIF»
-             «IF app.needsFeatureActivationHelper»
-             * @param FeatureActivationHelper $featureActivationHelper
-             «ENDIF»
-             */
             public function __construct(
                 TranslatorInterface $translator,
                 EntityFactory $entityFactory«IF !incoming.empty || !outgoing.empty»,
@@ -237,13 +212,10 @@ class EditEntityType {
 
             «app.setTranslatorMethod»
 
-            /**
-             * @inheritDoc
-             */
             public function buildForm(FormBuilderInterface $builder, array $options)
             {
                 «IF it instanceof Entity && (it as Entity).tree != EntityTreeType.NONE»
-                    if ('create' == $options['mode']) {
+                    if ('create' === $options['mode']) {
                         $builder->add('parent', EntityTreeType::class, [
                             'class' => «name.formatForCodeCapital»Entity::class,
                             'multiple' => false,
@@ -262,7 +234,7 @@ class EditEntityType {
                     $builder->add('parentFields', «parents.head.name.formatForCodeCapital»Type::class, [
                         'label' => $this->__('«parents.head.name.formatForDisplayCapital» data'),
                         'inherit_data' => true,
-                        'data_class' => '«entityClassName('', false)»'
+                        'data_class' => «name.formatForCodeCapital»Entity::class
                     ]);
                 «ENDIF»
                 «IF extensions.contains('attributes')»
@@ -325,23 +297,17 @@ class EditEntityType {
                 «addSubmitButtons»
 
             «ENDIF»
-            /**
-             * @inheritDoc
-             */
             public function getBlockPrefix()
             {
                 return '«app.appName.formatForDB»_«name.formatForDB»';
             }
 
-            /**
-             * @inheritDoc
-             */
             public function configureOptions(OptionsResolver $resolver)
             {
                 $resolver
                     ->setDefaults([
                         // define class for underlying data (required for embedding forms)
-                        'data_class' => '«entityClassName('', false)»',
+                        'data_class' => «name.formatForCodeCapital»Entity::class,
                         'empty_data' => function (FormInterface $form) {
                             return $this->entityFactory->create«name.formatForCodeCapital»();
                         },
@@ -425,11 +391,8 @@ class EditEntityType {
     def private addFields(DataObject it) '''
         /**
          * Adds basic entity fields.
-         *
-         * @param FormBuilderInterface $builder The form builder
-         * @param array                $options The options
          */
-        public function addEntityFields(FormBuilderInterface $builder, array $options = [])
+        public function addEntityFields(FormBuilderInterface $builder, array $options = [])«IF app.targets('3.0')»: void«ENDIF»
         {
             «IF it instanceof Entity && isTranslatable»
                 «translatableFields(it as Entity)»
@@ -452,13 +415,17 @@ class EditEntityType {
                 $translatableFields = $this->translatableHelper->getTranslatableFields('«name.formatForCode»');
                 $mandatoryFields = $this->translatableHelper->getMandatoryFields('«name.formatForCode»');
                 foreach ($supportedLanguages as $language) {
-                    if ($language == $currentLanguage) {
+                    if ($language === $currentLanguage) {
                         continue;
                     }
                     $builder->add('translations' . $language, TranslationType::class, [
                         'fields' => $translatableFields,
                         'mandatory_fields' => $mandatoryFields[$language],
-                        'values' => isset($options['translations'][$language]) ? $options['translations'][$language] : []
+                        «IF app.targets('3.0')»
+                            'values' => $options['translations'][$language] ?? []
+                        «ELSE»
+                            'values' => isset($options['translations'][$language]) ? $options['translations'][$language] : []
+                        «ENDIF»
                     ]);
                 }
             }
@@ -495,13 +462,13 @@ class EditEntityType {
         «IF hasSluggableFields && slugUpdatable»
             $helpText = $this->__('You can input a custom permalink for the «name.formatForDisplay» or let this field free to create one automatically.');
             «IF hasTranslatableSlug»
-                if ('create' != $options['mode']) {
+                if ('create' !== $options['mode']) {
                     $helpText = '';
                 }
             «ENDIF»
             $builder->add('slug', TextType::class, [
                 'label' => $this->__('Permalink') . ':',
-                'required' => «IF hasTranslatableSlug»'create' != $options['mode']«ELSE»false«ENDIF»,
+                'required' => «IF hasTranslatableSlug»'create' !== $options['mode']«ELSE»false«ENDIF»,
                 'empty_data' => '',
                 'attr' => [
                     'maxlength' => «slugLength»,
@@ -518,11 +485,8 @@ class EditEntityType {
     def private addGeographicalFields(Entity it) '''
         /**
          * Adds fields for coordinates.
-         *
-         * @param FormBuilderInterface $builder The form builder
-         * @param array                $options The options
          */
-        public function addGeographicalFields(FormBuilderInterface $builder, array $options = [])
+        public function addGeographicalFields(FormBuilderInterface $builder, array $options = [])«IF app.targets('3.0')»: void«ENDIF»
         {
             «FOR geoFieldName : newArrayList('latitude', 'longitude')»
                 $builder->add('«geoFieldName»', GeoType::class, [
@@ -536,11 +500,8 @@ class EditEntityType {
     def private addAttributeFields(Entity it) '''
         /**
          * Adds fields for attributes.
-         *
-         * @param FormBuilderInterface $builder The form builder
-         * @param array                $options The options
          */
-        public function addAttributeFields(FormBuilderInterface $builder, array $options = [])
+        public function addAttributeFields(FormBuilderInterface $builder, array $options = [])«IF app.targets('3.0')»: void«ENDIF»
         {
             foreach ($options['attributes'] as $attributeName => $attributeValue) {
                 $builder->add('attributes' . $attributeName, TextType::class, [
@@ -559,11 +520,8 @@ class EditEntityType {
     def private addCategoriesField(Entity it) '''
         /**
          * Adds a categories field.
-         *
-         * @param FormBuilderInterface $builder The form builder
-         * @param array                $options The options
          */
-        public function addCategoriesField(FormBuilderInterface $builder, array $options = [])
+        public function addCategoriesField(FormBuilderInterface $builder, array $options = [])«IF app.targets('3.0')»: void«ENDIF»
         {
             $builder->add('categories', CategoriesType::class, [
                 'label' => $this->__('«IF categorisableMultiSelection»Categories«ELSE»Category«ENDIF»') . ':',
@@ -575,7 +533,7 @@ class EditEntityType {
                 'multiple' => «categorisableMultiSelection.displayBool»,
                 'module' => '«app.appName»',
                 'entity' => '«name.formatForCodeCapital»Entity',
-                'entityCategoryClass' => '«app.appNamespace»\Entity\«name.formatForCodeCapital»CategoryEntity',
+                'entityCategoryClass' => «name.formatForCodeCapital»CategoryEntity::class,
                 'showRegistryLabels' => true
             ]);
         }
@@ -584,11 +542,8 @@ class EditEntityType {
     def private addIncomingRelationshipFields(DataObject it) '''
         /**
          * Adds fields for incoming relationships.
-         *
-         * @param FormBuilderInterface $builder The form builder
-         * @param array                $options The options
          */
-        public function addIncomingRelationshipFields(FormBuilderInterface $builder, array $options = [])
+        public function addIncomingRelationshipFields(FormBuilderInterface $builder, array $options = [])«IF app.targets('3.0')»: void«ENDIF»
         {
             «FOR relation : incomingRelations»
                 «val autoComplete = relation.useAutoCompletion != RelationAutoCompletionUsage.NONE && relation.useAutoCompletion != RelationAutoCompletionUsage.ONLY_TARGET_SIDE»
@@ -600,11 +555,8 @@ class EditEntityType {
     def private addOutgoingRelationshipFields(DataObject it) '''
         /**
          * Adds fields for outgoing relationships.
-         *
-         * @param FormBuilderInterface $builder The form builder
-         * @param array                $options The options
          */
-        public function addOutgoingRelationshipFields(FormBuilderInterface $builder, array $options = [])
+        public function addOutgoingRelationshipFields(FormBuilderInterface $builder, array $options = [])«IF app.targets('3.0')»: void«ENDIF»
         {
             «FOR relation : outgoingRelations»
                 «val autoComplete = relation.useAutoCompletion != RelationAutoCompletionUsage.NONE && relation.useAutoCompletion != RelationAutoCompletionUsage.ONLY_SOURCE_SIDE»
@@ -765,21 +717,18 @@ class EditEntityType {
     def private addSubmitButtons(Entity it) '''
         /**
          * Adds submit buttons.
-         *
-         * @param FormBuilderInterface $builder The form builder
-         * @param array                $options The options
          */
-        public function addSubmitButtons(FormBuilderInterface $builder, array $options = [])
+        public function addSubmitButtons(FormBuilderInterface $builder, array $options = [])«IF app.targets('3.0')»: void«ENDIF»
         {
             foreach ($options['actions'] as $action) {
                 $builder->add($action['id'], SubmitType::class, [
                     'label' => $action['title'],
-                    'icon' => ($action['id'] == 'delete' ? 'fa-trash-o' : ''),
+                    'icon' => 'delete' === $action['id'] ? 'fa-trash-o' : '',
                     'attr' => [
                         'class' => $action['buttonClass']
                     ]
                 ]);
-                if ($options['mode'] == 'create' && $action['id'] == 'submit'«IF !incoming.empty || !outgoing.empty» && !$options['inline_usage']«ENDIF») {
+                if ('create' === $options['mode'] && 'submit' === $action['id']«IF !incoming.empty || !outgoing.empty» && !$options['inline_usage']«ENDIF») {
                     // add additional button to submit item and return to create form
                     $builder->add('submitrepeat', SubmitType::class, [
                         'label' => $this->__('Submit and repeat'),

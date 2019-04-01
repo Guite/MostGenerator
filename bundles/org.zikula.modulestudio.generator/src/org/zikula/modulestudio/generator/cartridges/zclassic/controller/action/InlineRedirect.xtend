@@ -33,17 +33,16 @@ class InlineRedirect {
         /**
          «IF isBase»
          * This method cares for a redirect within an inline frame.
+         «IF !application.targets('3.0')»
          *
-         «IF application.targets('3.0')»
-         * @param EntityFactory $entityFactory
-         * @param EntityDisplayHelper $entityDisplayHelper
-         «ENDIF»
          * @param string $idPrefix Prefix for inline window element identifier
          * @param string $commandName Name of action to be performed (create or edit)
-         * @param integer $id Identifier of created «name.formatForDisplay» (used for activating auto completion after closing the modal window)
+         * @param int $id Identifier of created «name.formatForDisplay» (used for activating auto completion after closing the modal window)
          *
-         * @return PlainResponse Output
+         * @return Response
+         «ENDIF»
          «ELSE»
+         *
          * @inheritDoc
          * @Route("/«name.formatForCode»/handleInlineRedirect/{idPrefix}/{commandName}/{id}",
          *        requirements = {"id" = "\d+"},
@@ -60,10 +59,10 @@ class InlineRedirect {
                 EntityFactory $entityFactory,
                 EntityDisplayHelper $entityDisplayHelper,
             «ENDIF»
-            $idPrefix,
-            $commandName,
-            $id = 0
-        )
+            string $idPrefix,
+            string $commandName,
+            int $id = 0
+        )«IF application.targets('3.0')»: Response«ENDIF»
     '''
 
     def private handleInlineRedirectBaseImpl(Entity it) '''

@@ -1,15 +1,15 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener
 
 import de.guite.modulestudio.metamodel.Application
+import org.zikula.modulestudio.generator.extensions.Utils
 
 class UserLoginListener {
+
+    extension Utils = new Utils
 
     CommonExample commonExample = new CommonExample()
 
     def generate(Application it) '''
-        /**
-         * Makes our handlers known to the event system.
-         */
         public static function getSubscribedEvents()
         {
             return [
@@ -38,9 +38,8 @@ class UserLoginListener {
          * This event does not have any subject, arguments, or data.
          *
          «commonExample.generalEventProperties(it, false)»
-         * @param GenericEvent $event The event instance
          */
-        public function started(GenericEvent $event)
+        public function started(GenericEvent $event)«IF targets('3.0')»: void«ENDIF»
         {
         }
 
@@ -69,9 +68,8 @@ class UserLoginListener {
          *     `'authentication_method'` will contain the name of the module and the name of the method that was used to authenticated the user.
          *
          «commonExample.generalEventProperties(it, false)»
-         * @param GenericEvent $event The event instance
          */
-        public function veto(GenericEvent $event)
+        public function veto(GenericEvent $event)«IF targets('3.0')»: void«ENDIF»
         {
         }
 
@@ -97,9 +95,8 @@ class UserLoginListener {
          * programmatically by directly calling the core functions will not see this event fired.
          *
          «commonExample.generalEventProperties(it, false)»
-         * @param GenericEvent $event The event instance
          */
-        public function succeeded(GenericEvent $event)
+        public function succeeded(GenericEvent $event)«IF targets('3.0')»: void«ENDIF»
         {
         }
 
@@ -125,9 +122,8 @@ class UserLoginListener {
          * programmatically by directly calling core functions will not see this event fired.
          *
          «commonExample.generalEventProperties(it, false)»
-         * @param GenericEvent $event The event instance
          */
-        public function failed(GenericEvent $event)
+        public function failed(GenericEvent $event)«IF targets('3.0')»: void«ENDIF»
         {
         }
     '''

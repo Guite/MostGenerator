@@ -34,6 +34,7 @@ import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
+import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
 
@@ -44,10 +45,11 @@ class FormHandler {
     extension ModelExtensions = new ModelExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension ModelJoinExtensions = new ModelJoinExtensions
+    extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
     extension WorkflowExtensions = new WorkflowExtensions
 
-    FileHelper fh = new FileHelper
+    FileHelper fh
     Redirect redirectHelper = new Redirect
     RelationPresets relationPresetsHelper = new RelationPresets
     Locking locking = new Locking
@@ -59,6 +61,7 @@ class FormHandler {
      */
     def generate(Application it, IMostFileSystemAccess fsa) {
         app = it
+        fh = new FileHelper(app)
 
         // common form types (shared by entities and variables)
         if (!entities.filter[e|!e.fields.filter(ArrayField).empty].empty || !getAllVariables.filter(ArrayField).empty) {
@@ -142,8 +145,11 @@ class FormHandler {
 
         use Psr\Log\LoggerInterface;
         use RuntimeException;
-        use Symfony\Component\Form\AbstractType;
+        use Symfony\Component\Form\Form;
         use Symfony\Component\Form\FormFactoryInterface;
+        «IF targets('3.0')»
+            use Symfony\Component\Form\FormInterface;
+        «ENDIF»
         use Symfony\Component\HttpFoundation\RedirectResponse;
         use Symfony\Component\HttpFoundation\RequestStack;
         «IF !getAllEntities.filter[hasDisplayAction && hasEditAction && hasSluggableFields].empty»
@@ -223,14 +229,14 @@ class FormHandler {
              *
              * @var EntityAccess
              */
-            protected $entityRef = null;
+            protected $entityRef;
 
             /**
              * Name of primary identifier field.
              *
              * @var string
              */
-            protected $idField = null;
+            protected $idField;
 
             /**
              * Identifier of treated entity.
@@ -244,7 +250,7 @@ class FormHandler {
              *
              * @var string
              */
-            protected $returnTo = null;
+            protected $returnTo;
 
             /**
              * Whether a create action is going to be repeated or not.
@@ -258,7 +264,7 @@ class FormHandler {
              *
              * @var string
              */
-            protected $repeatReturnUrl = null;
+            protected $repeatReturnUrl;
             «IF !getJoinRelations.empty»
                 «relationPresetsHelper.memberFields(it)»
             «ENDIF»
@@ -387,12 +393,12 @@ class FormHandler {
              *
              * @var LockingApiInterface
              */
-            protected $lockingApi = null;
+            protected $lockingApi;
 
             /**
              * The handled form type.
              *
-             * @var AbstractType
+             * @var Form
              */
             protected $form;
 
@@ -403,37 +409,6 @@ class FormHandler {
              */
             protected $templateParameters = [];
 
-            /**
-             * «actionName.formatForCodeCapital»Handler constructor.
-             *
-             * @param ZikulaHttpKernelInterface $kernel
-             * @param TranslatorInterface $translator
-             * @param FormFactoryInterface $formFactory
-             * @param RequestStack $requestStack
-             * @param RouterInterface $router
-             * @param LoggerInterface $logger
-             «IF hasTranslatable || needsApproval || hasStandardFieldEntities»
-             * @param VariableApiInterface $variableApi
-             «ENDIF»
-             * @param CurrentUserApiInterface $currentUserApi
-             «IF needsApproval»
-             * @param GroupApplicationRepository $groupApplicationRepository
-             «ENDIF»
-             * @param EntityFactory $entityFactory
-             * @param ControllerHelper $controllerHelper
-             * @param ModelHelper $modelHelper
-             * @param PermissionHelper $permissionHelper
-             * @param WorkflowHelper $workflowHelper
-             «IF hasHookSubscribers»
-             * @param HookHelper $hookHelper
-             «ENDIF»
-             «IF hasTranslatable»
-             * @param TranslatableHelper $translatableHelper
-             «ENDIF»
-             «IF needsFeatureActivationHelper»
-             * @param FeatureActivationHelper $featureActivationHelper
-             «ENDIF»
-             */
             public function __construct(
                 ZikulaHttpKernelInterface $kernel,
                 TranslatorInterface $translator,
@@ -504,10 +479,12 @@ class FormHandler {
 
             /**
              * Sets optional locking api reference.
+             «IF !targets('3.0')»
              *
              * @param LockingApiInterface $lockingApi
+             «ENDIF»
              */
-            public function setLockingApi(LockingApiInterface $lockingApi)
+            public function setLockingApi(LockingApiInterface $lockingApi)«IF targets('3.0')»: void«ENDIF»
             {
                 $this->lockingApi = $lockingApi;
             }
@@ -519,11 +496,14 @@ class FormHandler {
          * Initialise form handler.
          *
          * This method takes care of all necessary initialisation of our data and form states.
+         «IF !targets('3.0')»
          *
          * @param array $templateParameters List of preassigned template variables
+         «ENDIF»
          *
-         * @return boolean False in case of initialisation errors, otherwise true
+         * @return bool|RedirectResponse Redirect or false on errors
          *
+         * @throws AccessDeniedException Thrown if user has not the required permissions
          * @throws RuntimeException Thrown if the workflow actions can not be determined
          */
         public function processForm(array $templateParameters = [])
@@ -531,7 +511,7 @@ class FormHandler {
             $request = $this->requestStack->getCurrentRequest();
             $this->templateParameters = $templateParameters;
             «IF !getJoinRelations.empty»
-                $this->templateParameters['inlineUsage'] = $request->query->getBoolean('raw', false);
+                $this->templateParameters['inlineUsage'] = $request->query->getBoolean('raw');
             «ENDIF»
             «IF !getJoinRelations.empty || app.needsAutoCompletion»
 
@@ -539,12 +519,12 @@ class FormHandler {
             «ENDIF»
 
             // initialise redirect goal
-            $this->returnTo = $request->query->get('returnTo', null);
+            $this->returnTo = $request->query->get('returnTo');
             // default to referer
             $refererSessionVar = '«appName.formatForDB»' . $this->objectTypeCapital . 'Referer';
             if (null === $this->returnTo && $request->headers->has('referer')) {
                 $currentReferer = $request->headers->get('referer');
-                if ($currentReferer != urldecode($request->getUri())) {
+                if ($currentReferer !== urldecode($request->getUri())) {
                     $this->returnTo = $currentReferer;
                     $request->getSession()->set($refererSessionVar, $this->returnTo);
                 }
@@ -563,16 +543,16 @@ class FormHandler {
                 $this->idValue = (int) !empty($routeParams[$this->idField]) ? $routeParams[$this->idField] : 0;
             }
             if (0 === $this->idValue) {
-                $this->idValue = $request->query->getInt($this->idField, 0);
+                $this->idValue = $request->query->getInt($this->idField);
             }
-            if (0 === $this->idValue && $this->idField != 'id') {
-                $this->idValue = $request->query->getInt('id', 0);
+            if (0 === $this->idValue && 'id' !== $this->idField) {
+                $this->idValue = $request->query->getInt('id');
             }
 
             $entity = null;
             $this->templateParameters['mode'] = !empty($this->idValue) ? 'edit' : 'create';
 
-            if ($this->templateParameters['mode'] == 'edit') {
+            if ('edit' === $this->templateParameters['mode']) {
                 $entity = $this->initEntityForEditing();
                 if (null !== $entity) {
                     «locking.addPageLock(it)»
@@ -580,14 +560,14 @@ class FormHandler {
                         throw new AccessDeniedException();
                     }
                     «IF !getAllEntities.filter[hasDisplayAction && hasEditAction && hasSluggableFields].empty»
-                        if (in_array($this->objectType, ['«getAllEntities.filter[hasDisplayAction && hasEditAction && hasSluggableFields].map[name.formatForCode].join('\', \'')»'])) {
+                        if (in_array($this->objectType, ['«getAllEntities.filter[hasDisplayAction && hasEditAction && hasSluggableFields].map[name.formatForCode].join('\', \'')»'], true)) {
                             // map display return urls to redirect codes because slugs may change
                             $routePrefix = '«app.appName.formatForDB»_' . $this->objectTypeLower . '_';
                             $userDisplayUrl = $this->router->generate($routePrefix . 'display', $entity->createUrlArgs(), UrlGeneratorInterface::ABSOLUTE_URL);
                             $adminDisplayUrl = $this->router->generate($routePrefix . 'admindisplay', $entity->createUrlArgs(), UrlGeneratorInterface::ABSOLUTE_URL);
-                            if ($this->returnTo == $userDisplayUrl) {
+                            if ($this->returnTo === $userDisplayUrl) {
                                 $this->returnTo = 'userDisplay';
-                            } elseif ($this->returnTo == $adminDisplayUrl) {
+                            } elseif ($this->returnTo === $adminDisplayUrl) {
                                 $this->returnTo = 'adminDisplay';
                             }
                             $request->getSession()->set($refererSessionVar, $this->returnTo);
@@ -595,7 +575,7 @@ class FormHandler {
                     «ENDIF»
                 }
             } else {
-                $permissionLevel = «IF needsApproval»in_array($this->objectType, ['«getAllEntities.filter[workflow != EntityWorkflowType.NONE].map[name.formatForCode].join('\', \'')»']) ? ACCESS_COMMENT : ACCESS_EDIT«ELSE»ACCESS_EDIT«ENDIF»;
+                $permissionLevel = «IF needsApproval»in_array($this->objectType, ['«getAllEntities.filter[workflow != EntityWorkflowType.NONE].map[name.formatForCode].join('\', \'')»'], true) ? ACCESS_COMMENT : ACCESS_EDIT«ELSE»ACCESS_EDIT«ENDIF»;
                 if (!$this->permissionHelper->hasComponentPermission($this->objectType, $permissionLevel)) {
                     throw new AccessDeniedException();
                 }
@@ -604,7 +584,7 @@ class FormHandler {
 
                 // set default values from request parameters
                 foreach ($request->query->all() as $key => $value) {
-                    if (strlen($key) < 5 || substr($key, 0, 4) != 'set_') {
+                    if (5 > strlen($key) || 0 !== strpos($key, 'set_')) {
                         continue;
                     }
                     $fieldName = str_replace('set_', '', $key);
@@ -623,7 +603,7 @@ class FormHandler {
             }
 
             «IF !getAllEntities.filter[hasEditAction && hasSluggableFields && slugUnique && needsSlugHandler].empty»
-                if (in_array($this->objectType, ['«getAllEntities.filter[hasEditAction && hasSluggableFields && slugUnique && needsSlugHandler].map[name.formatForCode].join('\', \'')»'])) {
+                if (in_array($this->objectType, ['«getAllEntities.filter[hasEditAction && hasSluggableFields && slugUnique && needsSlugHandler].map[name.formatForCode].join('\', \'')»'], true)) {
                     $slugParts = explode('/', $entity->getSlug());
                     $entity->setSlug(end($slugParts));
                 }
@@ -641,7 +621,7 @@ class FormHandler {
                 $request->getSession()->getFlashBag()->add('error', $this->__('Error! Could not determine workflow actions.'));
                 $logArgs = ['app' => '«appName»', 'user' => $this->currentUserApi->get('uname'), 'entity' => $this->objectType, 'id' => $entity->getKey()];
                 $this->logger->error('{app}: User {user} tried to edit the {entity} with id {id}, but failed to determine available workflow actions.', $logArgs);
-                throw new \RuntimeException($this->__('Error! Could not determine workflow actions.'));
+                throw new RuntimeException($this->__('Error! Could not determine workflow actions.'));
             }
 
             $this->templateParameters['actions'] = $actions;
@@ -686,7 +666,7 @@ class FormHandler {
         /**
          * Creates the form type.
          */
-        protected function createForm()
+        protected function createForm()«IF targets('3.0')»: ?FormInterface«ENDIF»
         {
             // to be customised in sub classes
             return null;
@@ -694,10 +674,12 @@ class FormHandler {
 
         /**
          * Returns the form options.
+         «IF !targets('3.0')»
          *
          * @return array
+         «ENDIF»
          */
-        protected function getFormOptions()
+        protected function getFormOptions()«IF targets('3.0')»: array«ENDIF»
         {
             // to be customised in sub classes
             return [];
@@ -707,7 +689,7 @@ class FormHandler {
             «relationPresetsHelper.baseMethod(it)»
         «ENDIF»
         
-        «fh.getterMethod(it, 'templateParameters', 'array', true)»
+        «fh.getterMethod(it, 'templateParameters', 'array', true, false, targets('3.0'))»
 
         «initEntityForEditing»
 
@@ -736,10 +718,12 @@ class FormHandler {
     def private initEntityForEditing(Application it) '''
         /**
          * Initialise existing entity for editing.
+         «IF !targets('3.0')»
          *
          * @return EntityAccess|null Desired entity instance or null
+         «ENDIF»
          */
-        protected function initEntityForEditing()
+        protected function initEntityForEditing()«IF targets('3.0')»: ?EntityAccess«ENDIF»
         {
             return $this->entityFactory->getRepository($this->objectType)->selectById($this->idValue);
         }
@@ -748,13 +732,15 @@ class FormHandler {
     def private initEntityForCreation(Application it) '''
         /**
          * Initialise new entity for creation.
+         «IF !targets('3.0')»
          *
          * @return EntityAccess|null Desired entity instance or null
+         «ENDIF»
          */
-        protected function initEntityForCreation()
+        protected function initEntityForCreation()«IF targets('3.0')»: ?EntityAccess«ENDIF»
         {
             $request = $this->requestStack->getCurrentRequest();
-            $templateId = $request->query->getInt('astemplate', 0);
+            $templateId = $request->query->getInt('astemplate');
             $entity = null;
 
             if ($templateId > 0) {
@@ -770,8 +756,8 @@ class FormHandler {
                 $createMethod = 'create' . ucfirst($this->objectType);
                 $entity = $this->entityFactory->$createMethod();
                 «IF hasTrees»
-                    if (in_array($this->objectType, ['«getTreeEntities.map[name.formatForCode].join('\', \'')»'])) {
-                        $parentId = $request->query->getInt('parent', 0);
+                    if (in_array($this->objectType, ['«getTreeEntities.map[name.formatForCode].join('\', \'')»'], true)) {
+                        $parentId = $request->query->getInt('parent');
                         if ($parentId > 0) {
                             $parentEntity = $this->entityFactory->getRepository($this->objectType)->selectById($parentId);
                             if (null !== $parentEntity) {
@@ -792,7 +778,7 @@ class FormHandler {
             /**
              * Initialise translations.
              */
-            protected function initTranslationsForEditing()
+            protected function initTranslationsForEditing()«IF targets('3.0')»: void«ENDIF»
             {
                 $translationsEnabled = $this->featureActivationHelper->isEnabled(FeatureActivationHelper::TRANSLATIONS, $this->objectType);
                 $this->templateParameters['translationsEnabled'] = $translationsEnabled;
@@ -805,12 +791,12 @@ class FormHandler {
                     return;
                 }
 
-                if ($this->variableApi->getSystemVar('multilingual') != 1) {
+                if (!$this->variableApi->getSystemVar('multilingual')) {
                     $this->templateParameters['translationsEnabled'] = false;
 
                     return;
                 }
-                if (count($supportedLanguages) < 2) {
+                if (2 > count($supportedLanguages)) {
                     $this->templateParameters['translationsEnabled'] = false;
 
                     return;
@@ -819,11 +805,11 @@ class FormHandler {
                 $mandatoryFieldsPerLocale = $this->translatableHelper->getMandatoryFields($this->objectType);
                 $localesWithMandatoryFields = [];
                 foreach ($mandatoryFieldsPerLocale as $locale => $fields) {
-                    if (count($fields) > 0) {
+                    if (0 < count($fields)) {
                         $localesWithMandatoryFields[] = $locale;
                     }
                 }
-                if (!in_array($this->translatableHelper->getCurrentLanguage(), $localesWithMandatoryFields)) {
+                if (!in_array($this->translatableHelper->getCurrentLanguage(), $localesWithMandatoryFields, true)) {
                     $localesWithMandatoryFields[] = $this->translatableHelper->getCurrentLanguage();
                 }
                 $this->templateParameters['localesWithMandatoryFields'] = $localesWithMandatoryFields;
@@ -843,7 +829,7 @@ class FormHandler {
             /**
              * Initialise attributes.
              */
-            protected function initAttributesForEditing()
+            protected function initAttributesForEditing()«IF targets('3.0')»: void«ENDIF»
             {
                 $entity = $this->entityRef;
 
@@ -865,7 +851,7 @@ class FormHandler {
              *
              * @return string[] List of attribute names
              */
-            protected function getAttributeFieldNames()
+            protected function getAttributeFieldNames()«IF targets('3.0')»: array«ENDIF»
             {
                 return [
                     'field1', 'field2', 'field3'
@@ -878,10 +864,12 @@ class FormHandler {
         /**
          * Command event handler.
          * This event handler is called when a command is issued by the user.
+         «IF !targets('3.0')»
          *
          * @param array $args List of arguments
+         «ENDIF»
          *
-         * @return mixed Redirect or false on errors
+         * @return bool|RedirectResponse Redirect or false on errors
          */
         public function handleCommand(array $args = [])
         {
@@ -891,20 +879,20 @@ class FormHandler {
                     $args['commandName'] = $action['id'];
                 }
             }
-            if ('create' == $this->templateParameters['mode'] && $this->form->has('submitrepeat') && $this->form->get('submitrepeat')->isClicked()) {
+            if ('create' === $this->templateParameters['mode'] && $this->form->has('submitrepeat') && $this->form->get('submitrepeat')->isClicked()) {
                 $args['commandName'] = 'submit';
                 $this->repeatCreateAction = true;
             }
 
             $action = $args['commandName'];
-            $isRegularAction = $action != 'delete';
+            $isRegularAction = 'delete' !== $action;
 
             $this->fetchInputData();
             «IF !getTranslatableEntities.filter[loggable].empty»
 
                 if ($isRegularAction && true === $this->hasTranslatableFields) {
                     if ($this->featureActivationHelper->isEnabled(FeatureActivationHelper::TRANSLATIONS, $this->objectType)) {
-                        if (in_array($this->objectType, ['«getTranslatableEntities.filter[loggable].map[name.formatForCode].join('\', \'')»'])) {
+                        if (in_array($this->objectType, ['«getTranslatableEntities.filter[loggable].map[name.formatForCode].join('\', \'')»'], true)) {
                             // collect translated fields for revisioning
                             $translationData = [];
 
@@ -939,9 +927,9 @@ class FormHandler {
 
                 if (method_exists($entity, 'supportsHookSubscribers') && $entity->supportsHookSubscribers()) {
                     // Let any ui hooks perform additional validation actions
-                    $hookType = $action == 'delete' ? UiHooksCategory::TYPE_VALIDATE_DELETE : UiHooksCategory::TYPE_VALIDATE_EDIT;
+                    $hookType = 'delete' === $action ? UiHooksCategory::TYPE_VALIDATE_DELETE : UiHooksCategory::TYPE_VALIDATE_EDIT;
                     $validationErrors = $this->hookHelper->callValidationHooks($entity, $hookType);
-                    if (count($validationErrors) > 0) {
+                    if (0 < count($validationErrors)) {
                         $flashBag = $this->requestStack->getCurrentRequest()->getSession()->getFlashBag();
                         foreach ($validationErrors as $message) {
                             $flashBag->add('error', $message);
@@ -959,31 +947,29 @@ class FormHandler {
             }
             «IF hasTranslatable»
 
-                if ($isRegularAction && true === $this->hasTranslatableFields) {
-                    if ($this->featureActivationHelper->isEnabled(FeatureActivationHelper::TRANSLATIONS, $this->objectType)) {
-                        $this->processTranslationsForUpdate();
-                    }
+                if ($isRegularAction && true === $this->hasTranslatableFields && $this->featureActivationHelper->isEnabled(FeatureActivationHelper::TRANSLATIONS, $this->objectType)) {
+                    $this->processTranslationsForUpdate();
                 }
             «ENDIF»
             «IF hasHookSubscribers»
 
                 if (method_exists($entity, 'supportsHookSubscribers') && $entity->supportsHookSubscribers()) {
                     $entitiesWithDisplayAction = ['«getAllEntities.filter[hasDisplayAction].map[name.formatForCode].join('\', \'')»'];
-                    $hasDisplayAction = in_array($this->objectType, $entitiesWithDisplayAction);
+                    $hasDisplayAction = in_array($this->objectType, $entitiesWithDisplayAction, true);
 
                     $routeUrl = null;
-                    if ($hasDisplayAction && $action != 'delete') {
+                    if ($hasDisplayAction && 'delete' !== $action) {
                         $urlArgs = $entity->createUrlArgs();
                         $urlArgs['_locale'] = $this->requestStack->getCurrentRequest()->getLocale();
                         $routeUrl = new RouteUrl('«appName.formatForDB»_' . $this->objectTypeLower . '_display', $urlArgs);
                     }
 
                     // Call form aware processing hooks
-                    $hookType = $action == 'delete' ? FormAwareCategory::TYPE_PROCESS_DELETE : FormAwareCategory::TYPE_PROCESS_EDIT;
+                    $hookType = 'delete' === $action ? FormAwareCategory::TYPE_PROCESS_DELETE : FormAwareCategory::TYPE_PROCESS_EDIT;
                     $this->hookHelper->callFormProcessHooks($this->form, $entity, $hookType, $routeUrl);
 
                     // Let any ui hooks know that we have created, updated or deleted an item
-                    $hookType = $action == 'delete' ? UiHooksCategory::TYPE_PROCESS_DELETE : UiHooksCategory::TYPE_PROCESS_EDIT;
+                    $hookType = 'delete' === $action ? UiHooksCategory::TYPE_PROCESS_DELETE : UiHooksCategory::TYPE_PROCESS_EDIT;
                     $this->hookHelper->callProcessHooks($entity, $hookType, $routeUrl);
                 }
             «ENDIF»
@@ -1015,7 +1001,7 @@ class FormHandler {
             /**
              * Prepare update of translations.
              */
-            protected function processTranslationsForUpdate()
+            protected function processTranslationsForUpdate()«IF targets('3.0')»: void«ENDIF»
             {
                 if (!$this->templateParameters['translationsEnabled']) {
                     return;
@@ -1028,13 +1014,15 @@ class FormHandler {
 
         /**
          * Get success or error message for default operations.
+         «IF !targets('3.0')»
          *
-         * @param array   $args    List of arguments from handleCommand method
-         * @param boolean $success Becomes true if this is a success, false for default error
+         * @param array $args List of arguments from handleCommand method
+         * @param bool $success Becomes true if this is a success, false for default error
          *
-         * @return String desired status or error message
+         * @return string desired status or error message
+         «ENDIF»
          */
-        protected function getDefaultMessage(array $args = [], $success = false)
+        protected function getDefaultMessage(array $args = [], «IF targets('3.0')»bool «ENDIF»$success = false)«IF targets('3.0')»: string«ENDIF»
         {
             $message = '';
             switch ($args['commandName']) {
@@ -1066,13 +1054,15 @@ class FormHandler {
 
         /**
          * Add success or error message to session.
+         «IF !targets('3.0')»
          *
-         * @param array   $args    List of arguments from handleCommand method
-         * @param boolean $success Becomes true if this is a success, false for default error
+         * @param array $args List of arguments from handleCommand method
+         * @param bool $success Becomes true if this is a success, false for default error
+         «ENDIF»
          *
          * @throws RuntimeException Thrown if executing the workflow action fails
          */
-        protected function addDefaultMessage(array $args = [], $success = false)
+        protected function addDefaultMessage(array $args = [], «IF targets('3.0')»bool «ENDIF»$success = false)«IF targets('3.0')»: void«ENDIF»
         {
             $message = $this->getDefaultMessage($args, $success);
             if (empty($message)) {
@@ -1093,8 +1083,12 @@ class FormHandler {
     def private fetchInputData(Application it) '''
         /**
          * Input data processing called by handleCommand method.
+         «IF !targets('3.0')»
+         *
+         * @return array
+         «ENDIF»
          */
-        public function fetchInputData()
+        public function fetchInputData()«IF targets('3.0')»: array«ENDIF»
         {
             // fetch posted data input values as an associative array
             $formData = $this->form->getData();
@@ -1104,14 +1098,14 @@ class FormHandler {
                     if (isset($this->form['moderationSpecificCreator']) && null !== $this->form['moderationSpecificCreator']->getData()) {
                         $this->entityRef->setCreatedBy($this->form['moderationSpecificCreator']->getData());
                     }
-                    if (isset($this->form['moderationSpecificCreationDate']) && $this->form['moderationSpecificCreationDate']->getData() != '') {
+                    if (isset($this->form['moderationSpecificCreationDate']) && '' !== $this->form['moderationSpecificCreationDate']->getData()) {
                         $this->entityRef->setCreatedDate($this->form['moderationSpecificCreationDate']->getData());
                     }
                 }
             «ENDIF»
             «IF needsApproval»
 
-                if (isset($this->form['additionalNotificationRemarks']) && $this->form['additionalNotificationRemarks']->getData() != '') {
+                if (isset($this->form['additionalNotificationRemarks']) && '' !== $this->form['additionalNotificationRemarks']->getData()) {
                     $this->requestStack->getCurrentRequest()->getSession()->set('«appName»AdditionalNotificationRemarks', $this->form['additionalNotificationRemarks']->getData());
                 }
             «ENDIF»
@@ -1132,12 +1126,14 @@ class FormHandler {
     def private dispatch applyAction(Application it) '''
         /**
          * Executes a certain workflow action.
+         «IF !targets('3.0')»
          *
          * @param array $args List of arguments from handleCommand method
          *
-         * @return boolean Whether everything worked well or not
+         * @return bool Whether everything worked well or not
+         «ENDIF»
          */
-        public function applyAction(array $args = [])
+        public function applyAction(array $args = [])«IF targets('3.0')»: bool«ENDIF»
         {
             // stub for subclasses
             return false;
@@ -1147,17 +1143,19 @@ class FormHandler {
     def private prepareWorkflowAdditions(Application it) '''
         /**
          * Prepares properties related to advanced workflows.
+         «IF !targets('3.0')»
          *
-         * @param boolean $enterprise Whether the enterprise workflow is used instead of the standard workflow
+         * @param bool $enterprise Whether the enterprise workflow is used instead of the standard workflow
          *
          * @return array List of additional form options
+         «ENDIF»
          */
-        protected function prepareWorkflowAdditions($enterprise = false)
+        protected function prepareWorkflowAdditions(«IF targets('3.0')»bool «ENDIF»$enterprise = false)«IF targets('3.0')»: array«ENDIF»
         {
             $roles = [];
             $currentUserId = $this->currentUserApi->isLoggedIn() ? $this->currentUserApi->get('uid') : UsersConstant::USER_ID_ANONYMOUS;
-            $roles['is_creator'] = 'create' == $this->templateParameters['mode']
-                || (method_exists($this->entityRef, 'getCreatedBy') && $this->entityRef->getCreatedBy()->getUid() == $currentUserId);
+            $roles['is_creator'] = 'create' === $this->templateParameters['mode']
+                || (method_exists($this->entityRef, 'getCreatedBy') && $this->entityRef->getCreatedBy()->getUid() === $currentUserId);
 
             $groupApplicationArgs = [
                 'user' => $currentUserId,
@@ -1231,13 +1229,21 @@ class FormHandler {
         use «app.appNamespace»\Form\Type\«name.formatForCodeCapital»Type;
 
         «locking.imports(it)»
-        use Symfony\Component\HttpFoundation\RedirectResponse;
-        use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+        use Exception;
         use RuntimeException;
+        «IF app.targets('3.0')»
+            use Symfony\Component\Form\FormInterface;
+        «ENDIF»
+        use Symfony\Component\HttpFoundation\RedirectResponse;
         «IF ownerPermission»
+            use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+            «IF app.targets('3.0')»
+                use Zikula\Core\Doctrine\EntityAccess;
+            «ENDIF»
             use Zikula\UsersModule\Constant as UsersConstant;
         «ENDIF»
-        «IF app.needsFeatureActivationHelper»
+        use «entityClassName('', false)»;
+        «IF attributable»
             use «app.appNamespace»\Helper\FeatureActivationHelper;
         «ENDIF»
     '''
@@ -1257,10 +1263,7 @@ class FormHandler {
     '''
 
     def private formHandlerBaseInitEntityForEditing(Entity it) '''
-        /**
-         * @inheritDoc
-         */
-        protected function initEntityForEditing()
+        protected function initEntityForEditing()«IF app.targets('3.0')»: ?EntityAccess«ENDIF»
         {
             $entity = parent::initEntityForEditing();
             if (null === $entity) {
@@ -1270,7 +1273,7 @@ class FormHandler {
 
                 // only allow editing for the owner or people with higher permissions
                 $currentUserId = $this->currentUserApi->isLoggedIn() ? $this->currentUserApi->get('uid') : UsersConstant::USER_ID_ANONYMOUS;
-                $isOwner = null !== $entity && null !== $entity->getCreatedBy() && $currentUserId == $entity->getCreatedBy()->getUid();
+                $isOwner = null !== $entity && null !== $entity->getCreatedBy() && $currentUserId === $entity->getCreatedBy()->getUid();
                 if (!$isOwner && !$this->permissionHelper->hasEntityPermission($entity, ACCESS_ADD)) {
                     throw new AccessDeniedException();
                 }
@@ -1298,9 +1301,6 @@ class FormHandler {
 
 
     def private dispatch processForm(Entity it) '''
-        /**
-         * @inheritDoc
-         */
         public function processForm(array $templateParameters = [])
         {
             «memberVarAssignments»
@@ -1310,14 +1310,12 @@ class FormHandler {
                 return $result;
             }
 
-            if ('create' == $this->templateParameters['mode']) {
-                if (!$this->modelHelper->canBeCreated($this->objectType)) {
-                    $this->requestStack->getCurrentRequest()->getSession()->getFlashBag()->add('error', $this->__('Sorry, but you can not create the «name.formatForDisplay» yet as other items are required which must be created before!'));
-                    $logArgs = ['app' => '«app.appName»', 'user' => $this->currentUserApi->get('uname'), 'entity' => $this->objectType];
-                    $this->logger->notice('{app}: User {user} tried to create a new {entity}, but failed as it other items are required which must be created before.', $logArgs);
+            if ('create' === $this->templateParameters['mode'] && !$this->modelHelper->canBeCreated($this->objectType)) {
+                $this->requestStack->getCurrentRequest()->getSession()->getFlashBag()->add('error', $this->__('Sorry, but you can not create the «name.formatForDisplay» yet as other items are required which must be created before!'));
+                $logArgs = ['app' => '«app.appName»', 'user' => $this->currentUserApi->get('uname'), 'entity' => $this->objectType];
+                $this->logger->notice('{app}: User {user} tried to create a new {entity}, but failed as it other items are required which must be created before.', $logArgs);
 
-                    return new RedirectResponse($this->getRedirectUrl(['commandName' => '']), 302);
-                }
+                return new RedirectResponse($this->getRedirectUrl(['commandName' => '']), 302);
             }
             «locking.setVersion(it)»
 
@@ -1335,18 +1333,12 @@ class FormHandler {
             «relationPresetsHelper.childMethod(it)»
         «ENDIF»
 
-        /**
-         * @inheritDoc
-         */
-        protected function createForm()
+        protected function createForm()«IF app.targets('3.0')»: ?FormInterface«ENDIF»
         {
             return $this->formFactory->create(«name.formatForCodeCapital»Type::class, $this->entityRef, $this->getFormOptions());
         }
 
-        /**
-         * @inheritDoc
-         */
-        protected function getFormOptions()
+        protected function getFormOptions()«IF app.targets('3.0')»: array«ENDIF»
         {
             $options = [
                 «IF hasUploadFieldsEntity»
@@ -1356,8 +1348,8 @@ class FormHandler {
                 'actions' => $this->templateParameters['actions'],
                 «IF standardFields»
                     'has_moderate_permission' => $this->permissionHelper->hasEntityPermission($this->entityRef, ACCESS_ADMIN),
-                    'allow_moderation_specific_creator' => $this->variableApi->get('«app.appName»', 'allowModerationSpecificCreatorFor' . $this->objectTypeCapital, false),
-                    'allow_moderation_specific_creation_date' => $this->variableApi->get('«app.appName»', 'allowModerationSpecificCreationDateFor' . $this->objectTypeCapital, false),
+                    'allow_moderation_specific_creator' => (bool)$this->variableApi->get('«app.appName»', 'allowModerationSpecificCreatorFor' . $this->objectTypeCapital),
+                    'allow_moderation_specific_creation_date' => (bool)$this->variableApi->get('«app.appName»', 'allowModerationSpecificCreationDateFor' . $this->objectTypeCapital),
                 «ENDIF»
                 «IF !incoming.empty || !outgoing.empty»
                     'filter_by_ownership' => !$this->permissionHelper->hasEntityPermission($this->entityRef, ACCESS_ADD)«IF !incoming.empty || !outgoing.empty»,«ENDIF»
@@ -1380,7 +1372,12 @@ class FormHandler {
 
                 $options['translations'] = [];
                 foreach ($this->templateParameters['supportedLanguages'] as $language) {
-                    $options['translations'][$language] = isset($this->templateParameters[$this->objectTypeLower . $language]) ? $this->templateParameters[$this->objectTypeLower . $language] : [];
+                    $translationKey = $this->objectTypeLower . $language;
+                    «IF app.targets('3.0')»
+                        $options['translations'][$language] = $this->templateParameters[$translationKey] ?? [];
+                    «ELSE»
+                        $options['translations'][$language] = isset($this->templateParameters[$translationKey]) ? $this->templateParameters[$translationKey] : [];
+                    «ENDIF»
                 }
             «ENDIF»
 
@@ -1389,9 +1386,6 @@ class FormHandler {
     '''
 
     def private dispatch handleCommand(Entity it) '''
-        /**
-         * @inheritDoc
-         */
         public function handleCommand(array $args = [])
         {
             $result = parent::handleCommand($args);
@@ -1405,7 +1399,7 @@ class FormHandler {
                     $args['commandName'] = $action['id'];
                 }
             }
-            if ('create' == $this->templateParameters['mode'] && $this->form->has('submitrepeat') && $this->form->get('submitrepeat')->isClicked()) {
+            if ('create' === $this->templateParameters['mode'] && $this->form->has('submitrepeat') && $this->form->get('submitrepeat')->isClicked()) {
                 $args['commandName'] = 'submit';
                 $this->repeatCreateAction = true;
             }
@@ -1413,28 +1407,24 @@ class FormHandler {
             return new RedirectResponse($this->getRedirectUrl($args), 302);
         }
 
-        /**
-         * @inheritDoc
-         */
-        protected function getDefaultMessage(array $args = [], $success = false)
+        protected function getDefaultMessage(array $args = [], «IF app.targets('3.0')»bool «ENDIF»$success = false)«IF app.targets('3.0')»: string«ENDIF»
         {
             if (false === $success) {
                 return parent::getDefaultMessage($args, $success);
             }
 
-            $message = '';
             switch ($args['commandName']) {
                 «IF app.hasWorkflowState('deferred')»
                     case 'defer':
                 «ENDIF»
                 case 'submit':
-                    if ('create' == $this->templateParameters['mode']) {
+                    if ('create' === $this->templateParameters['mode']) {
                         $message = $this->__('Done! «name.formatForDisplayCapital» created.');
                     } else {
                         $message = $this->__('Done! «name.formatForDisplayCapital» updated.');
                     }
                     «IF EntityWorkflowType.NONE !== workflow»
-                        if ('waiting' == $this->entityRef->getWorkflowState()) {
+                        if ('waiting' === $this->entityRef->getWorkflowState()) {
                             $message .= ' ' . $this->__('It is now waiting for approval by our moderators.');
                         }
                     «ENDIF»
@@ -1456,19 +1446,20 @@ class FormHandler {
          * @inheritDoc
          * @throws RuntimeException Thrown if concurrent editing is recognised or another error occurs
          */
-        public function applyAction(array $args = [])
+        public function applyAction(array $args = [])«IF app.targets('3.0')»: bool«ENDIF»
         {
             // get treated entity reference from persisted member var
+            /** @var «name.formatForCodeCapital»Entity $entity */
             $entity = $this->entityRef;
 
             $action = $args['commandName'];
             «IF loggable»
-                if ('delete' == $action) {
+                if ('delete' === $action) {
                     $entity->set_actionDescriptionForLogEntry('_HISTORY_«name.formatForCode.toUpperCase»_DELETED');
-                } else if ('create' == $this->templateParameters['mode']) {
+                } else if ('create' === $this->templateParameters['mode']) {
                     $entity->set_actionDescriptionForLogEntry('_HISTORY_«name.formatForCode.toUpperCase»_CREATED');
                 } else {
-                    $templateId = $this->requestStack->getCurrentRequest()->query->getInt('astemplate', 0);
+                    $templateId = $this->requestStack->getCurrentRequest()->query->getInt('astemplate');
                     if ($templateId > 0) {
                         $entityT = $this->entityFactory->getRepository($this->objectType)->selectById($templateId, false, true);
                         if (null !== $entityT) {
@@ -1489,7 +1480,7 @@ class FormHandler {
                 // execute the workflow action
                 $success = $this->workflowHelper->executeAction($entity, $action);
             «locking.catchException(it)»
-            } catch (\Exception $exception) {
+            } catch (Exception $exception) {
                 $flashBag->add('error', $this->__f('Sorry, but an error occured during the %action% action. Please apply the changes again!', ['%action%' => $action]) . ' ' . $exception->getMessage());
                 $logArgs = ['app' => '«app.appName»', 'user' => $this->currentUserApi->get('uname'), 'entity' => '«name.formatForDisplay»', 'id' => $entity->getKey(), 'errorMessage' => $exception->getMessage()];
                 $this->logger->error('{app}: User {user} tried to edit the {entity} with id {id}, but failed. Error details: {errorMessage}.', $logArgs);
@@ -1497,7 +1488,7 @@ class FormHandler {
 
             $this->addDefaultMessage($args, $success);
 
-            if ($success && 'create' == $this->templateParameters['mode']) {
+            if ($success && 'create' === $this->templateParameters['mode']) {
                 // store new identifier
                 $this->idValue = $entity->getKey();
             }

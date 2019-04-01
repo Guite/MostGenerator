@@ -322,10 +322,12 @@ class ValidationConstraints {
          * This method is used for validation.
          *
          * @Assert\IsTrue(message="This value must be a valid user id.")
+         «IF !application.targets('3.0')»
          *
          * @return boolean True if data is valid else false
+         «ENDIF»
          */
-        public function is«name.formatForCodeCapital»UserValid()
+        public function is«name.formatForCodeCapital»UserValid()«IF application.targets('3.0')»: bool«ENDIF»
         {
             return «IF !mandatory»null === $this['«name.formatForCode»'] || «ENDIF»$this['«name.formatForCode»'] instanceof UserEntity;
         }
@@ -339,10 +341,12 @@ class ValidationConstraints {
              * This method is used for validation.
              *
              * @Assert\IsTrue(message="This value must be a time in the past.")
+             «IF !application.targets('3.0')»
              *
              * @return boolean True if data is valid else false
+             «ENDIF»
              */
-            public function is«name.formatForCodeCapital»TimeValidPast()
+            public function is«name.formatForCodeCapital»TimeValidPast()«IF application.targets('3.0')»: bool«ENDIF»
             {
                 $format = 'His';
 
@@ -354,10 +358,12 @@ class ValidationConstraints {
              * This method is used for validation.
              *
              * @Assert\IsTrue(message="This value must be a time in the future.")
+             «IF !application.targets('3.0')»
              *
              * @return boolean True if data is valid else false
+             «ENDIF»
              */
-            public function is«name.formatForCodeCapital»TimeValidFuture()
+            public function is«name.formatForCodeCapital»TimeValidFuture()«IF application.targets('3.0')»: bool«ENDIF»
             {
                 $format = 'His';
 

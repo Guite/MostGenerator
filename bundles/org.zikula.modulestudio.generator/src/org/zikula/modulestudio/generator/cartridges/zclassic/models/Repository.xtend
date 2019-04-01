@@ -35,7 +35,7 @@ class Repository {
     extension Utils = new Utils
 
     IMostFileSystemAccess fsa
-    FileHelper fh = new FileHelper
+    FileHelper fh
     Application app
 
     /**
@@ -44,6 +44,7 @@ class Repository {
     def generate(Application it, IMostFileSystemAccess fsa) {
         this.fsa = fsa
         app = it
+        fh = new FileHelper(app)
         getAllEntities.forEach(e|e.generate)
 
         val linkTable = new LinkTable
@@ -104,7 +105,7 @@ class Repository {
             «ENDIF*/»/**
              * @var string The main entity class
              */
-            protected $mainEntityClass = '«entityClassName('', false)»';
+            protected $mainEntityClass = «name.formatForCodeCapital»Entity::class;
 
             /**
              * @var string The default sorting field/expression
@@ -114,7 +115,7 @@ class Repository {
             /**
              * @var CollectionFilterHelper
              */
-            protected $collectionFilterHelper = null;
+            protected $collectionFilterHelper;
             «IF hasTranslatableFields»
 
                 /**
@@ -163,7 +164,7 @@ class Repository {
              *
              * @return string[] List of sorting field names
              */
-            public function getAllowedSortingFields()
+            public function getAllowedSortingFields()«IF app.targets('3.0')»: array«ENDIF»
             {
                 return [
                     «FOR field : getSortingFields»«field.singleSortingField»«ENDFOR»
@@ -171,10 +172,10 @@ class Repository {
                 ];
             }
 
-            «fh.getterAndSetterMethods(it, 'defaultSortingField', 'string', false, true, false, '', '')»
+            «fh.getterAndSetterMethods(it, 'defaultSortingField', 'string', false, true, app.targets('3.0'), '', '')»
             «fh.getterAndSetterMethods(it, 'collectionFilterHelper', 'CollectionFilterHelper', false, true, true, '', '')»
             «IF hasTranslatableFields»
-                «fh.getterAndSetterMethods(it, 'translationsEnabled', 'bool', false, false, false, '', '')»
+                «fh.getterAndSetterMethods(it, 'translationsEnabled', 'bool', false, true, app.targets('3.0'), '', '')»
             «ENDIF»
 
             «new UserDeletion().generate(it)»
@@ -259,12 +260,9 @@ class Repository {
 
         use Doctrine\Common\Collections\ArrayCollection;
         «IF tree != EntityTreeType.NONE»
-            use Gedmo\Tree\Entity\Repository\«tree.literal.toLowerCase.toFirstUpper»TreeRepository;
-            «/* use Gedmo\Tree\Traits\Repository\«tree.literal.toLowerCase.toFirstUpper»TreeRepositoryTrait; */ »
             use Doctrine\ORM\EntityManager;
-        «ELSEIF hasSortableFields»
-            use Gedmo\Sortable\Entity\Repository\SortableRepository;
-        «ELSE»
+        «ENDIF»
+        «IF tree == EntityTreeType.NONE && !hasSortableFields»
             use Doctrine\ORM\EntityRepository;
         «ENDIF»
         «/*IF tree != EntityTreeType.NONE»
@@ -276,11 +274,21 @@ class Repository {
             use Doctrine\DBAL\LockMode;
         «ENDIF»
         use Doctrine\ORM\Tools\Pagination\Paginator;
+        «IF tree == EntityTreeType.NONE && hasSortableFields»
+            use Gedmo\Sortable\Entity\Repository\SortableRepository;
+        «ENDIF»
+        «IF tree != EntityTreeType.NONE»
+            use Gedmo\Tree\Entity\Repository\«tree.literal.toLowerCase.toFirstUpper»TreeRepository;
+            «/* use Gedmo\Tree\Traits\Repository\«tree.literal.toLowerCase.toFirstUpper»TreeRepositoryTrait; */ »
+        «ENDIF»
+        «IF hasTranslatableFields»
+            use Gedmo\Translatable\Query\TreeWalker\TranslationWalker;
+        «ENDIF»
         use InvalidArgumentException;
         use Psr\Log\LoggerInterface;
         use Zikula\Common\Translator\TranslatorInterface;
         use Zikula\UsersModule\Api\ApiInterface\CurrentUserApiInterface;
-        use «app.appNamespace»\Entity\«name.formatForCodeCapital»Entity;
+        use «entityClassName('', false)»;
         use «app.appNamespace»\Helper\CollectionFilterHelper;
 
     '''
@@ -288,21 +296,22 @@ class Repository {
     def private selectById(Entity it) '''
         /**
          * Adds an array of id filters to given query instance.
+         «IF !application.targets('3.0')»
          *
-         * @param array        $idList List of identifiers to use to retrieve the object
-         * @param QueryBuilder $qb     Query builder to be enhanced
+         * @param array $idList List of identifiers to use to retrieve the object
+         * @param QueryBuilder $qb Query builder to be enhanced
          *
          * @return QueryBuilder Enriched query builder instance
+         «ENDIF»
          *
          * @throws InvalidArgumentException Thrown if invalid parameters are received
          */
-        protected function addIdListFilter(array $idList, QueryBuilder $qb)
+        protected function addIdListFilter(array $idList, QueryBuilder $qb)«IF application.targets('3.0')»: QueryBuilder«ENDIF»
         {
             $orX = $qb->expr()->orX();
 
             foreach ($idList as $id) {
-                // check id parameter
-                if ($id == 0) {
+                if (0 === $id) {
                     throw new InvalidArgumentException('Invalid identifier received.');
                 }
 
@@ -317,29 +326,29 @@ class Repository {
         /**
          * Selects an object from the database.
          *
-         * @param mixed   $id       The id (or array of ids) to use to retrieve the object (optional) (default=0)
-         * @param boolean $useJoins Whether to include joining related objects (optional) (default=true)
-         * @param boolean $slimMode If activated only some basic fields are selected without using any joins (optional) (default=false)
+         * @param mixed $id The id (or array of ids) to use to retrieve the object (optional) (default=0)
+         * @param bool $useJoins Whether to include joining related objects (optional) (default=true)
+         * @param bool $slimMode If activated only some basic fields are selected without using any joins (optional) (default=false)
          *
-         * @return array|«name.formatForCode»Entity Retrieved data array or «name.formatForCode»Entity instance
+         * @return array|«name.formatForCodeCapital»Entity Retrieved data array or «name.formatForCode»Entity instance
          */
-        public function selectById($id = 0, $useJoins = true, $slimMode = false)
+        public function selectById($id = 0, «IF application.targets('3.0')»bool «ENDIF»$useJoins = true, «IF application.targets('3.0')»bool «ENDIF»$slimMode = false)
         {
             $results = $this->selectByIdList(is_array($id) ? $id : [$id], $useJoins, $slimMode);
 
-            return null !== $results && count($results) > 0 ? $results[0] : null;
+            return null !== $results && 0 < count($results) ? $results[0] : null;
         }
         
         /**
          * Selects a list of objects with an array of ids
          *
-         * @param mixed   $idList   The array of ids to use to retrieve the objects (optional) (default=0)
-         * @param boolean $useJoins Whether to include joining related objects (optional) (default=true)
-         * @param boolean $slimMode If activated only some basic fields are selected without using any joins (optional) (default=false)
+         * @param array $idList The array of ids to use to retrieve the objects (optional) (default=0)
+         * @param bool $useJoins Whether to include joining related objects (optional) (default=true)
+         * @param bool $slimMode If activated only some basic fields are selected without using any joins (optional) (default=false)
          *
-         * @return ArrayCollection Collection containing retrieved «name.formatForCode»Entity instances
+         * @return array Retrieved «name.formatForCodeCapital»Entity instances
          */
-        public function selectByIdList($idList = [0], $useJoins = true, $slimMode = false)
+        public function selectByIdList(array $idList = [0], «IF application.targets('3.0')»bool «ENDIF»$useJoins = true, «IF application.targets('3.0')»bool «ENDIF»$slimMode = false)«IF application.targets('3.0')»: array«ENDIF»
         {
             $qb = $this->genericBaseQuery('', '', $useJoins, $slimMode);
             $qb = $this->addIdListFilter($idList, $qb);
@@ -352,27 +361,28 @@ class Repository {
         
             $results = $query->getResult();
 
-            return count($results) > 0 ? $results : null;
+            return 0 < count($results) ? $results : null;
         }
     '''
 
     def private selectBySlug(Entity it) '''
         /**
          * Selects an object by slug field.
+         «IF !application.targets('3.0')»
          *
-         * @param string  $slugTitle The slug value
-         * @param boolean $useJoins  Whether to include joining related objects (optional) (default=true)
-         * @param boolean $slimMode If activated only some basic fields are selected without using any joins (optional) (default=false)
-         * @param integer $excludeId Optional id to be excluded (used for unique validation)
+         * @param string $slugTitle The slug value
+         * @param bool $useJoins  Whether to include joining related objects (optional) (default=true)
+         * @param bool $slimMode If activated only some basic fields are selected without using any joins (optional) (default=false)
+         * @param int $excludeId Optional id to be excluded (used for unique validation)
          *
-         * @return «entityClassName('', false)» Retrieved instance of «entityClassName('', false)»
+         * @return «name.formatForCodeCapital»Entity
+         «ENDIF»
          *
          * @throws InvalidArgumentException Thrown if invalid parameters are received
          */
-        public function selectBySlug($slugTitle = '', $useJoins = true, $slimMode = false, $excludeId = 0)
+        public function selectBySlug«IF application.targets('3.0')»(string $slugTitle = '', bool $useJoins = true, bool $slimMode = false, int $excludeId = 0): «name.formatForCodeCapital»Entity«ELSE»($slugTitle = '', $useJoins = true, $slimMode = false, $excludeId = 0)«ENDIF»
         {
-            // check input parameter
-            if ($slugTitle == '') {
+            if ('' === $slugTitle) {
                 throw new InvalidArgumentException('Invalid slug title received.');
             }
 
@@ -400,15 +410,17 @@ class Repository {
     def private addExclusion(Entity it) '''
         /**
          * Adds where clauses excluding desired identifiers from selection.
+         «IF !application.targets('3.0')»
          *
-         * @param QueryBuilder $qb         Query builder to be enhanced
-         * @param array        $exclusions List of identifiers to be excluded from selection
+         * @param QueryBuilder $qb Query builder to be enhanced
+         * @param array $exclusions List of identifiers to be excluded from selection
          *
          * @return QueryBuilder Enriched query builder instance
+         «ENDIF»
          */
-        protected function addExclusion(QueryBuilder $qb, array $exclusions = [])
+        protected function addExclusion(QueryBuilder $qb, array $exclusions = [])«IF application.targets('3.0')»: QueryBuilder«ENDIF»
         {
-            if (count($exclusions) > 0) {
+            if (0 < count($exclusions)) {
                 $qb->andWhere('tbl.«getPrimaryKey.name.formatForCode» NOT IN (:excludedIdentifiers)')
                    ->setParameter('excludedIdentifiers', $exclusions);
             }
@@ -420,15 +432,17 @@ class Repository {
     def private selectWhere(Entity it) '''
         /**
          * Returns query builder for selecting a list of objects with a given where clause.
+         «IF !application.targets('3.0')»
          *
-         * @param string  $where    The where clause to use when retrieving the collection (optional) (default='')
-         * @param string  $orderBy  The order-by clause to use when retrieving the collection (optional) (default='')
-         * @param boolean $useJoins Whether to include joining related objects (optional) (default=true)
-         * @param boolean $slimMode If activated only some basic fields are selected without using any joins (optional) (default=false)
+         * @param string $where The where clause to use when retrieving the collection (optional) (default='')
+         * @param string $orderBy The order-by clause to use when retrieving the collection (optional) (default='')
+         * @param bool $useJoins Whether to include joining related objects (optional) (default=true)
+         * @param bool $slimMode If activated only some basic fields are selected without using any joins (optional) (default=false)
          *
          * @return QueryBuilder Query builder for the given arguments
+         «ENDIF»
          */
-        public function getListQueryBuilder($where = '', $orderBy = '', $useJoins = true, $slimMode = false)
+        public function getListQueryBuilder«IF application.targets('3.0')»(string $where = '', string $orderBy = '', bool $useJoins = true, bool $slimMode = false): QueryBuilder«ELSE»($where = '', $orderBy = '', $useJoins = true, $slimMode = false)«ENDIF»
         {
             $qb = $this->genericBaseQuery($where, $orderBy, $useJoins, $slimMode);
             if (!$slimMode && null !== $this->collectionFilterHelper) {
@@ -440,44 +454,48 @@ class Repository {
 
         /**
          * Selects a list of objects with a given where clause.
+         «IF !application.targets('3.0')»
          *
-         * @param string  $where    The where clause to use when retrieving the collection (optional) (default='')
-         * @param string  $orderBy  The order-by clause to use when retrieving the collection (optional) (default='')
-         * @param boolean $useJoins Whether to include joining related objects (optional) (default=true)
-         * @param boolean $slimMode If activated only some basic fields are selected without using any joins (optional) (default=false)
+         * @param string $where The where clause to use when retrieving the collection (optional) (default='')
+         * @param string $orderBy The order-by clause to use when retrieving the collection (optional) (default='')
+         * @param bool $useJoins Whether to include joining related objects (optional) (default=true)
+         * @param bool $slimMode If activated only some basic fields are selected without using any joins (optional) (default=false)
          *
-         * @return ArrayCollection Collection containing retrieved «name.formatForCode»Entity instances
+         * @return array List of retrieved «name.formatForCode»Entity instances
+         «ENDIF»
          */
-        public function selectWhere($where = '', $orderBy = '', $useJoins = true, $slimMode = false)
+        public function selectWhere«IF application.targets('3.0')»(string $where = '', string $orderBy = '', bool $useJoins = true, bool $slimMode = false): array«ELSE»($where = '', $orderBy = '', $useJoins = true, $slimMode = false)«ENDIF»
         {
             $qb = $this->getListQueryBuilder($where, $orderBy, $useJoins, $slimMode);
 
             $query = $this->getQueryFromBuilder($qb);
 
-            return $this->retrieveCollectionResult($query, false);
+            return $this->retrieveCollectionResult($query);
         }
     '''
 
     def private selectWherePaginated(Entity it) '''
         /**
          * Returns query builder instance for retrieving a list of objects with a given where clause and pagination parameters.
+         «IF application.targets('3.0')»
          *
-         * @param QueryBuilder $qb             Query builder to be enhanced
-         * @param integer      $currentPage    Where to start selection
-         * @param integer      $resultsPerPage Amount of items to select
+         * @param QueryBuilder $qb Query builder to be enhanced
+         * @param int $currentPage Where to start selection
+         * @param int $resultsPerPage Amount of items to select
          *
          * @return Query Created query instance
+         «ENDIF»
          */
-        public function getSelectWherePaginatedQuery(QueryBuilder $qb, $currentPage = 1, $resultsPerPage = 25)
+        public function getSelectWherePaginatedQuery«IF application.targets('3.0')»(QueryBuilder $qb, int $currentPage = 1, int $resultsPerPage = 25): Query«ELSE»(QueryBuilder $qb, $currentPage = 1, $resultsPerPage = 25)«ENDIF»
         {
-            if ($currentPage < 1) {
+            if (1 > $currentPage) {
                 $currentPage = 1;
             }
-            if ($resultsPerPage < 1) {
+            if (1 > $resultsPerPage) {
                 $resultsPerPage = 25;
             }
             $query = $this->getQueryFromBuilder($qb);
-            $offset = ($currentPage-1) * $resultsPerPage;
+            $offset = ($currentPage - 1) * $resultsPerPage;
 
             $query->setFirstResult($offset)
                   ->setMaxResults($resultsPerPage);
@@ -487,17 +505,19 @@ class Repository {
 
         /**
          * Selects a list of objects with a given where clause and pagination parameters.
+         «IF !application.targets('3.0')»
          *
-         * @param string  $where          The where clause to use when retrieving the collection (optional) (default='')
-         * @param string  $orderBy        The order-by clause to use when retrieving the collection (optional) (default='')
-         * @param integer $currentPage    Where to start selection
-         * @param integer $resultsPerPage Amount of items to select
-         * @param boolean $useJoins       Whether to include joining related objects (optional) (default=true)
-         * @param boolean $slimMode       If activated only some basic fields are selected without using any joins (optional) (default=false)
+         * @param string $where The where clause to use when retrieving the collection (optional) (default='')
+         * @param string $orderBy The order-by clause to use when retrieving the collection (optional) (default='')
+         * @param int $currentPage Where to start selection
+         * @param int $resultsPerPage Amount of items to select
+         * @param bool $useJoins Whether to include joining related objects (optional) (default=true)
+         * @param bool $slimMode If activated only some basic fields are selected without using any joins (optional) (default=false)
+         «ENDIF»
          *
-         * @return array Retrieved collection and amount of total records affected by this query
+         * @return array Retrieved collection and the amount of total records affected
          */
-        public function selectWherePaginated($where = '', $orderBy = '', $currentPage = 1, $resultsPerPage = 25, $useJoins = true, $slimMode = false)
+        public function selectWherePaginated«IF application.targets('3.0')»(string $where = '', string $orderBy = '', int $currentPage = 1, int $resultsPerPage = 25, bool $useJoins = true, bool $slimMode = false): array«ELSE»($where = '', $orderBy = '', $currentPage = 1, $resultsPerPage = 25, $useJoins = true, $slimMode = false)«ENDIF»
         {
             $qb = $this->getListQueryBuilder($where, $orderBy, $useJoins, $slimMode);
             $query = $this->getSelectWherePaginatedQuery($qb, $currentPage, $resultsPerPage);
@@ -509,20 +529,22 @@ class Repository {
     def private selectSearch(Entity it) '''
         /**
          * Selects entities by a given search fragment.
+         «IF !application.targets('3.0')»
          *
-         * @param string  $fragment       The fragment to search for
-         * @param array   $exclude        List of identifiers to be excluded from search
-         * @param string  $orderBy        The order-by clause to use when retrieving the collection (optional) (default='')
-         * @param integer $currentPage    Where to start selection
-         * @param integer $resultsPerPage Amount of items to select
-         * @param boolean $useJoins       Whether to include joining related objects (optional) (default=true)
+         * @param string $fragment The fragment to search for
+         * @param array $exclude List of identifiers to be excluded from search
+         * @param string $orderBy The order-by clause to use when retrieving the collection (optional) (default='')
+         * @param in $currentPage Where to start selection
+         * @param in $resultsPerPage Amount of items to select
+         * @param bool $useJoins Whether to include joining related objects (optional) (default=true)
+         «ENDIF»
          *
-         * @return array Retrieved collection and amount of total records affected by this query
+         * @return array Retrieved collection and (for paginated queries) the amount of total records affected
          */
-        public function selectSearch($fragment = '', array $exclude = [], $orderBy = '', $currentPage = 1, $resultsPerPage = 25, $useJoins = true)
+        public function selectSearch«IF application.targets('3.0')»(string $fragment = '', array $exclude = [], string $orderBy = '', int $currentPage = 1, int $resultsPerPage = 25, bool $useJoins = true): array«ELSE»($fragment = '', array $exclude = [], $orderBy = '', $currentPage = 1, $resultsPerPage = 25, $useJoins = true)«ENDIF»
         {
             $qb = $this->getListQueryBuilder('', $orderBy, $useJoins);
-            if (count($exclude) > 0) {
+            if (0 < count($exclude)) {
                 $qb = $this->addExclusion($qb, $exclude);
             }
 
@@ -539,13 +561,15 @@ class Repository {
     def private retrieveCollectionResult(Entity it) '''
         /**
          * Performs a given database selection and post-processed the results.
+         «IF !application.targets('3.0')»
          *
-         * @param Query   $query       The Query instance to be executed
-         * @param boolean $isPaginated Whether the given query uses a paginator or not (optional) (default=false)
+         * @param Query $query The Query instance to be executed
+         * @param bool $isPaginated Whether the given query uses a paginator or not (optional) (default=false)
+         «ENDIF»
          *
          * @return array Retrieved collection and (for paginated queries) the amount of total records affected
          */
-        public function retrieveCollectionResult(Query $query, $isPaginated = false)
+        public function retrieveCollectionResult(Query $query, «IF application.targets('3.0')»bool «ENDIF»$isPaginated = false)«IF application.targets('3.0')»: array«ENDIF»
         {
             $count = 0;
             if (!$isPaginated) {
@@ -577,13 +601,15 @@ class Repository {
     def private getCountQuery(Entity it) '''
         /**
          * Returns query builder instance for a count query.
+         «IF !application.targets('3.0')»
          *
-         * @param string  $where    The where clause to use when retrieving the object count (optional) (default='')
-         * @param boolean $useJoins Whether to include joining related objects (optional) (default=false)
+         * @param string $where The where clause to use when retrieving the object count (optional) (default='')
+         * @param bool $useJoins Whether to include joining related objects (optional) (default=false)
          *
          * @return QueryBuilder Created query builder instance
+         «ENDIF»
          */
-        public function getCountQuery($where = '', $useJoins = false)
+        public function getCountQuery«IF application.targets('3.0')»(string $where = '', bool $useJoins = false): QueryBuilder«ELSE»($where = '', $useJoins = false)«ENDIF»
         {
             $selection = 'COUNT(tbl.«getPrimaryKey.name.formatForCode») AS num«nameMultiple.formatForCodeCapital»';
 
@@ -606,14 +632,16 @@ class Repository {
     def private selectCount(Entity it) '''
         /**
          * Selects entity count with a given where clause.
+         «IF !application.targets('3.0')»
          *
-         * @param string  $where      The where clause to use when retrieving the object count (optional) (default='')
-         * @param boolean $useJoins   Whether to include joining related objects (optional) (default=false)
-         * @param array   $parameters List of determined filter options
+         * @param string $where The where clause to use when retrieving the object count (optional) (default='')
+         * @param bool $useJoins Whether to include joining related objects (optional) (default=false)
+         * @param array $parameters List of determined filter options
          *
-         * @return integer Amount of affected records
+         * @return int Amount of affected records
+         «ENDIF»
          */
-        public function selectCount($where = '', $useJoins = false, array $parameters = [])
+        public function selectCount«IF application.targets('3.0')»(string $where = '', bool $useJoins = false, array $parameters = []): int«ELSE»($where = '', $useJoins = false, array $parameters = [])«ENDIF»
         {
             $qb = $this->getCountQuery($where, $useJoins);
 
@@ -626,23 +654,25 @@ class Repository {
                 $query->setLockMode(LockMode::«lockType.lockTypeAsConstant»);
             «ENDIF»
 
-            return $query->getSingleScalarResult();
+            return (int)$query->getSingleScalarResult();
         }
     '''
 
     def private detectUniqueState(Entity it) '''
         /**
          * Checks for unique values.
+         «IF !application.targets('3.0')»
          *
-         * @param string  $fieldName  The name of the property to be checked
-         * @param string  $fieldValue The value of the property to be checked
-         * @param integer $excludeId  Id of «nameMultiple.formatForDisplay» to exclude (optional)
+         * @param string $fieldName The name of the property to be checked
+         * @param string $fieldValue The value of the property to be checked
+         * @param int $excludeId Identifier of «nameMultiple.formatForDisplay» to exclude (optional)
          *
-         * @return boolean Result of this check, true if the given «name.formatForDisplay» does not already exist
+         * @return bool Result of this check, true if the given «name.formatForDisplay» does not already exist
+         «ENDIF»
          */
-        public function detectUniqueState($fieldName, $fieldValue, $excludeId = 0)
+        public function detectUniqueState«IF application.targets('3.0')»(string $fieldName, string $fieldValue, int $excludeId = 0): bool«ELSE»($fieldName, $fieldValue, $excludeId = 0)«ENDIF»
         {
-            $qb = $this->getCountQuery('', false);
+            $qb = $this->getCountQuery();
             $qb->andWhere('tbl.' . $fieldName . ' = :' . $fieldName)
                ->setParameter($fieldName, $fieldValue);
 
@@ -655,24 +685,26 @@ class Repository {
             «IF hasPessimisticReadLock»
                 $query->setLockMode(LockMode::«lockType.lockTypeAsConstant»);
             «ENDIF»
-            $count = $query->getSingleScalarResult();
+            $count = (int)$query->getSingleScalarResult();
 
-            return ($count == 0);
+            return 1 > $count;
         }
     '''
 
     def private genericBaseQuery(Entity it) '''
         /**
          * Builds a generic Doctrine query supporting WHERE and ORDER BY.
+         «IF !application.targets('3.0')»
          *
-         * @param string  $where    The where clause to use when retrieving the collection (optional) (default='')
-         * @param string  $orderBy  The order-by clause to use when retrieving the collection (optional) (default='')
-         * @param boolean $useJoins Whether to include joining related objects (optional) (default=true)
-         * @param boolean $slimMode If activated only some basic fields are selected without using any joins (optional) (default=false)
+         * @param string $where The where clause to use when retrieving the collection (optional) (default='')
+         * @param string $orderBy The order-by clause to use when retrieving the collection (optional) (default='')
+         * @param bool $useJoins Whether to include joining related objects (optional) (default=true)
+         * @param bool $slimMode If activated only some basic fields are selected without using any joins (optional) (default=false)
          *
          * @return QueryBuilder Query builder instance to be further processed
+         «ENDIF»
          */
-        public function genericBaseQuery($where = '', $orderBy = '', $useJoins = true, $slimMode = false)
+        public function genericBaseQuery«IF application.targets('3.0')»(string $where = '', string $orderBy = '', bool $useJoins = true, bool $slimMode = false): QueryBuilder«ELSE»($where = '', $orderBy = '', $useJoins = true, $slimMode = false)«ENDIF»
         {
             // normally we select the whole table
             $selection = 'tbl';
@@ -722,18 +754,20 @@ class Repository {
     def private genericBaseQueryOrderBy(Entity it) '''
         /**
          * Adds ORDER BY clause to given query builder.
+         «IF !application.targets('3.0')»
          *
-         * @param QueryBuilder $qb      Given query builder instance
-         * @param string       $orderBy The order-by clause to use when retrieving the collection (optional) (default='')
+         * @param QueryBuilder $qb Given query builder instance
+         * @param string $orderBy The order-by clause to use when retrieving the collection (optional) (default='')
          *
          * @return QueryBuilder Query builder instance to be further processed
+         «ENDIF»
          */
-        protected function genericBaseQueryAddOrderBy(QueryBuilder $qb, $orderBy = '')
+        protected function genericBaseQueryAddOrderBy(QueryBuilder $qb, «IF application.targets('3.0')»string «ENDIF»$orderBy = '')«IF application.targets('3.0')»: QueryBuilder«ENDIF»
         {
-            if ($orderBy == 'RAND()') {
+            if ('RAND()' === $orderBy) {
                 // random selection
-                $qb->addSelect('MOD(tbl.«getPrimaryKey.name.formatForCode», ' . mt_rand(2, 15) . ') AS HIDDEN randomIdentifiers')
-                   ->add('orderBy', 'randomIdentifiers');
+                $qb->addSelect('MOD(tbl.«getPrimaryKey.name.formatForCode», ' . «IF application.targets('3.0')»random_int«ELSE»mt_rand«ENDIF»(2, 15) . ') AS HIDDEN randomIdentifiers')
+                   ->orderBy('randomIdentifiers');
 
                 return $qb;
             }
@@ -776,22 +810,21 @@ class Repository {
     def private getQueryFromBuilder(Entity it) '''
         /**
          * Retrieves Doctrine query from query builder.
+         «IF !application.targets('3.0')»
          *
          * @param QueryBuilder $qb Query builder instance
          *
          * @return Query Query instance to be further processed
+         «ENDIF»
          */
-        public function getQueryFromBuilder(QueryBuilder $qb)
+        public function getQueryFromBuilder(QueryBuilder $qb)«IF application.targets('3.0')»: Query«ENDIF»
         {
             $query = $qb->getQuery();
             «IF hasTranslatableFields»
 
                 if (true === $this->translationsEnabled) {
                     // set the translation query hint
-                    $query->setHint(
-                        Query::HINT_CUSTOM_OUTPUT_WALKER,
-                        'Gedmo\\Translatable\\Query\\TreeWalker\\TranslationWalker'
-                    );
+                    $query->setHint(Query::HINT_CUSTOM_OUTPUT_WALKER, TranslationWalker::class);
                 }
             «ENDIF»
             «IF hasPessimisticReadLock»

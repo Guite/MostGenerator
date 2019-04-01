@@ -92,19 +92,15 @@ class ExternalController {
          «IF isBase»
          * Displays one item of a certain object type using a separate template for external usages.
          *
+         «IF !targets('3.0')»
          * @param Request $request
-         «IF targets('3.0')»
-         * @param ControllerHelper $controllerHelper
-         * @param PermissionHelper $permissionHelper
-         * @param EntityFactory $entityFactory
-         * @param ViewHelper $viewHelper
-         «ENDIF»
          * @param string $objectType The currently treated object type
          * @param int $id Identifier of the entity to be shown
          * @param string $source Source of this call (block, contentType, scribite)
          * @param string $displayMode Display mode (link or embed)
          *
-         * @return string Desired data output
+         * @return Response
+         «ENDIF»
          «ELSE»
          * @inheritDoc
          * @Route("/display/{objectType}/{id}/{source}/{displayMode}",
@@ -124,11 +120,11 @@ class ExternalController {
                 PermissionHelper $permissionHelper,
                 EntityFactory $entityFactory,
                 ViewHelper $viewHelper,
-                $objectType,
-                $id,
-                $source,
-                $displayMode
-            )
+                string $objectType,
+                int $id,
+                string $source,
+                string $displayMode
+            ): Response
         «ELSE»
             public function displayAction(
                 Request $request,
@@ -145,7 +141,7 @@ class ExternalController {
             $controllerHelper = $this->get('«appService».controller_helper');
         «ENDIF»
         $contextArgs = ['controller' => 'external', 'action' => 'display'];
-        if (!in_array($objectType, $controllerHelper->getObjectTypes('controllerAction', $contextArgs))) {
+        if (!in_array($objectType, $controllerHelper->getObjectTypes('controllerAction', $contextArgs), true)) {
             $objectType = $controllerHelper->getDefaultObjectType('controllerAction', $contextArgs);
         }
 
@@ -164,8 +160,8 @@ class ExternalController {
             return new Response('');
         }
 
-        $template = $request->query->has('template') ? $request->query->get('template', null) : null;
-        if (null === $template || '' == $template) {
+        $template = $request->query->get('template');
+        if (null === $template || '' === $template) {
             $template = 'display.html.twig';
         }
 
@@ -200,20 +196,8 @@ class ExternalController {
          * Popup selector for Scribite plugins.
          * Finds items of a certain object type.
          *
+         «IF !targets('3.0')»
          * @param Request $request
-         «IF targets('3.0')»
-         * @param ControllerHelper $controllerHelper
-         * @param PermissionHelper $permissionHelper
-         * @param EntityFactory $entityFactory
-         * @param CollectionFilterHelper $collectionFilterHelper
-         * @param ListEntriesHelper $listEntriesHelper
-         «IF hasCategorisableEntities»
-         * @param CategoryHelper $categoryHelper
-         * @param FeatureActivationHelper $featureActivationHelper
-         «ENDIF»
-         * @param ViewHelper $viewHelper
-         * @param Asset $assetHelper
-         «ENDIF»
          * @param string $objectType The object type
          * @param string $editor Name of used Scribite editor
          * @param string $sort Sorting field
@@ -221,8 +205,9 @@ class ExternalController {
          * @param int $pos Current pager position
          * @param int $num Amount of entries to display
          *
-         * @return output The external item finder page
+         * @return Response
          *
+         «ENDIF»
          * @throws AccessDeniedException Thrown if the user doesn't have required permissions
          «ELSE»
          * @inheritDoc
@@ -251,13 +236,13 @@ class ExternalController {
                 «ENDIF»
                 ViewHelper $viewHelper,
                 Asset $assetHelper,
-                $objectType,
-                $editor,
-                $sort,
-                $sortdir,
-                $pos = 1,
-                $num = 0
-            )
+                string $objectType,
+                string $editor,
+                string $sort,
+                string $sortdir,
+                int $pos = 1,
+                int $num = 0
+            ): Response
         «ELSE»
             public function finderAction(
                 Request $request,
@@ -276,7 +261,7 @@ class ExternalController {
             $listEntriesHelper = $this->get('«appService».listentries_helper');
         «ENDIF»
         $activatedObjectTypes = $listEntriesHelper->extractMultiList($this->getVar('enabledFinderTypes', ''));
-        if (!in_array($objectType, $activatedObjectTypes)) {
+        if (!in_array($objectType, $activatedObjectTypes, true)) {
             if (!count($activatedObjectTypes)) {
                 throw new AccessDeniedException();
             }
@@ -291,7 +276,7 @@ class ExternalController {
             throw new AccessDeniedException();
         }
 
-        if (empty($editor) || !in_array($editor, ['ckeditor', 'quill', 'summernote', 'tinymce'])) {
+        if (empty($editor) || !in_array($editor, ['ckeditor', 'quill', 'summernote', 'tinymce'], true)) {
             return new Response($this->__('Error: Invalid editor context given for external controller action.'));
         }
 
@@ -303,21 +288,21 @@ class ExternalController {
         $cssAssetBag->add([$assetHelper->resolve('@«appName»:css/custom.css') => 120]);
 
         $repository = «IF targets('3.0')»$entityFactory«ELSE»$this->get('«appService».entity_factory')«ENDIF»->getRepository($objectType);
-        if (empty($sort) || !in_array($sort, $repository->getAllowedSortingFields())) {
+        if (empty($sort) || !in_array($sort, $repository->getAllowedSortingFields(), true)) {
             $sort = $repository->getDefaultSortingField();
         }
 
         $sdir = strtolower($sortdir);
-        if ($sdir != 'asc' && $sdir != 'desc') {
+        if ('asc' !== $sdir && 'desc' !== $sdir) {
             $sdir = 'asc';
         }
 
         // the current offset which is used to calculate the pagination
-        $currentPage = (int) $pos;
+        $currentPage = «IF !targets('3.0')»(int)«ENDIF»$pos;
 
         // the number of items displayed on a page for pagination
-        $resultsPerPage = (int) $num;
-        if ($resultsPerPage == 0) {
+        $resultsPerPage = «IF !targets('3.0')»(int)«ENDIF»$num;
+        if (0 === $resultsPerPage) {
             $resultsPerPage = $this->getVar($objectType . 'EntriesPerPage', 20);
         }
 
@@ -361,7 +346,7 @@ class ExternalController {
         $qb = $repository->getListQueryBuilder($where, $orderBy);
         «IF hasImageFields»
 
-            if (true === $templateParameters['onlyImages'] && '' != $templateParameters['imageField']) {
+            if (true === $templateParameters['onlyImages'] && '' !== $templateParameters['imageField']) {
                 $imageField = $templateParameters['imageField'];
                 $orX = $qb->expr()->orX();
                 foreach (['gif', 'jpg', 'jpeg', 'jpe', 'png', 'bmp'] as $imageExtension) {
@@ -372,7 +357,7 @@ class ExternalController {
             }
         «ENDIF»
 
-        if ('' != $searchTerm) {
+        if ('' !== $searchTerm) {
             $qb = $this->«IF targets('3.0')»$collectionFilterHelper«ELSE»get('«appService».collection_filter_helper')«ENDIF»->addSearchFilter($objectType, $qb, $searchTerm);
         }
         $query = $repository->getQueryFromBuilder($qb);
@@ -380,7 +365,7 @@ class ExternalController {
         list($entities, $objectCount) = $repository->retrieveCollectionResult($query, true);
 
         «IF hasCategorisableEntities»
-            if (in_array($objectType, ['«getCategorisableEntities.map[name.formatForCode].join('\', \'')»'])) {
+            if (in_array($objectType, ['«getCategorisableEntities.map[name.formatForCode].join('\', \'')»'], true)) {
                 «IF !targets('3.0')»
                     $featureActivationHelper = $this->get('«appService».feature_activation_helper');
                 «ENDIF»
@@ -415,6 +400,7 @@ class ExternalController {
         namespace «appNamespace»\Controller;
 
         use Symfony\Component\HttpFoundation\Request;
+        use Symfony\Component\HttpFoundation\Response;
         use Symfony\Component\Routing\Annotation\Route;
         «commonSystemImports»
         use «appNamespace»\Controller\Base\AbstractExternalController;

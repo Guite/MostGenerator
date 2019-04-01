@@ -24,18 +24,20 @@ class TreeData {
         /**
          * The «appName.formatForDB»_treeData function delivers the html output for a JS tree
          * based on given tree entities.
+         «IF !targets('3.0')»
          *
-         * @param string  $objectType Name of treated object type
-         * @param array   $tree       Object collection with tree items
-         * @param string  $routeArea  Either 'admin' or an emptyy string
-         * @param integer $rootId     Optional id of root node, defaults to 1
+         * @param string $objectType Name of treated object type
+         * @param array $tree Object collection with tree items
+         * @param string $routeArea Either 'admin' or an empty string
+         * @param int $rootId Optional id of root node, defaults to 1
          *
-         * @return string Output markup
+         * @return array
+         «ENDIF»
          */
-        public function getTreeData($objectType, $tree = [], $routeArea = '', $rootId = 1)
+        public function getTreeData«IF targets('3.0')»(string $objectType, array $tree = [], string $routeArea = '', int $rootId = 1): array«ELSE»($objectType, $tree = [], $routeArea = '', $rootId = 1)«ENDIF»
         {
             // check whether an edit action is available
-            $hasEditAction = in_array($objectType, ['«getAllEntities.filter[tree != EntityTreeType.NONE && hasEditAction].map[name.formatForCode].join('\', \'')»']);
+            $hasEditAction = in_array($objectType, ['«getAllEntities.filter[tree != EntityTreeType.NONE && hasEditAction].map[name.formatForCode].join('\', \'')»'], true);
 
             $repository = $this->entityFactory->getRepository($objectType);
             $descriptionFieldName = $this->entityDisplayHelper->getDescriptionFieldName($objectType);
@@ -45,7 +47,7 @@ class TreeData {
                 'actions' => ''
             ];
             foreach ($tree as $node) {
-                if ($node->getLvl() < 1 || $node->getKey() == $rootId) {
+                if (1 > $node->getLvl() || $rootId === $node->getKey()) {
                     list ($nodes, $actions) = $this->processTreeItemWithChildren($objectType, $node, $routeArea, $rootId, $descriptionFieldName, $hasEditAction);
                     $result['nodes'] .= $nodes;
                     $result['actions'] .= $actions;
@@ -57,22 +59,24 @@ class TreeData {
 
         /**
          * Builds an unordered list for a tree node and it's children.
+         «IF !targets('3.0')»
          *
-         * @param string  $objectType           Name of treated object type
-         * @param object  $node                 The processed tree node
-         * @param string  $routeArea            Either 'admin' or an emptyy string
-         * @param integer $rootId               Optional id of root node, defaults to 1
-         * @param string  $descriptionFieldName Name of field to be used as a description
-         * @param boolean $hasEditAction        Whether item editing is possible or not
+         * @param string $objectType Name of treated object type
+         * @param EntityAccess $node The processed tree node
+         * @param string $routeArea Either 'admin' or an emptyy string
+         * @param int $rootId Optional id of root node, defaults to 1
+         * @param string $descriptionFieldName Name of field to be used as a description
+         * @param bool $hasEditAction Whether item editing is possible or not
          *
-         * @return string Output markup
+         * @return array
+         «ENDIF»
          */
-        protected function processTreeItemWithChildren($objectType, $node, $routeArea, $rootId, $descriptionFieldName, $hasEditAction)
+        protected function processTreeItemWithChildren«IF targets('3.0')»(string $objectType, EntityAccess $node, string $routeArea, int $rootId, string $descriptionFieldName, bool $hasEditAction): array«ELSE»($objectType, $node, $routeArea, $rootId, $descriptionFieldName, $hasEditAction)«ENDIF»
         {
             $idPrefix = 'tree' . $rootId . 'node_' . $node->getKey();
-            $title = $descriptionFieldName != '' ? strip_tags($node[$descriptionFieldName]) : '';
+            $title = '' !== $descriptionFieldName ? strip_tags($node[$descriptionFieldName]) : '';
 
-            $needsArg = in_array($objectType, ['«getAllEntities.filter[tree != EntityTreeType.NONE && hasEditAction && hasSluggableFields && slugUnique].map[name.formatForCode].join('\', \'')»']);
+            $needsArg = in_array($objectType, ['«getAllEntities.filter[tree != EntityTreeType.NONE && hasEditAction && hasSluggableFields && slugUnique].map[name.formatForCode].join('\', \'')»'], true);
             $urlArgs = $needsArg ? $node->createUrlArgs(true) : $node->createUrlArgs();
             $urlDataAttributes = '';
             foreach ($urlArgs as $field => $value) {
@@ -97,8 +101,7 @@ class TreeData {
 
             $actions = '<li id="itemActions' . $node->getKey() . '">';
             $actions .= $renderer->render($itemActionsMenu);
-            $actions = str_replace(' class="first"', '', $actions);
-            $actions = str_replace(' class="last"', '', $actions);
+            $actions = str_replace([' class="first"', ' class="last"'], '', $actions);
             $actions .= '</li>';
 
             if (count($node->getChildren()) > 0) {

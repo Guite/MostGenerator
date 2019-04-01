@@ -31,9 +31,6 @@ class ColourType {
          */
         abstract class AbstractColourType extends AbstractType
         {
-            /**
-             * @inheritDoc
-             */
             public function configureOptions(OptionsResolver $resolver)
             {
                 parent::configureOptions($resolver);
@@ -46,17 +43,11 @@ class ColourType {
                 ]);
             }
 
-            /**
-             * @inheritDoc
-             */
             public function getParent()
             {
                 return TextType::class;
             }
 
-            /**
-             * @inheritDoc
-             */
             public function getBlockPrefix()
             {
                 return '«appName.formatForDB»_field_colour';

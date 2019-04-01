@@ -19,17 +19,19 @@ class GetListEntry {
          * or names for a given list item.
          * Example:
          *     {{ entity.listField|«appName.formatForDB»_listEntry('entityName', 'fieldName') }}
+         «IF !targets('3.0')»
          *
-         * @param string $value      The dropdown value to process
+         * @param string $value The dropdown value to process
          * @param string $objectType The treated object type
-         * @param string $fieldName  The list field's name
-         * @param string $delimiter  String used as separator for multiple selections
+         * @param string $fieldName The list field's name
+         * @param string $delimiter String used as separator for multiple selections
          *
          * @return string List item name
+         «ENDIF»
          */
-        public function getListEntry($value, $objectType = '', $fieldName = '', $delimiter = ', ')
+        public function getListEntry«IF targets('3.0')»(string $value, string $objectType = '', string $fieldName = '', string $delimiter = ', '): string«ELSE»($value, $objectType = '', $fieldName = '', $delimiter = ', ')«ENDIF»
         {
-            if ((empty($value) && $value != '0') || empty($objectType) || empty($fieldName)) {
+            if ((empty($value) && '0' !== $value) || empty($objectType) || empty($fieldName)) {
                 return $value;
             }
             «IF !isSystemModule»

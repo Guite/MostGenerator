@@ -12,9 +12,6 @@ class ModuleDispatchListener {
     CommonExample commonExample = new CommonExample()
 
     def generate(Application it) '''
-        /**
-         * Makes our handlers known to the event system.
-         */
         public static function getSubscribedEvents()
         {
             return [
@@ -36,9 +33,8 @@ class ModuleDispatchListener {
          *     ];`
          *
          «commonExample.generalEventProperties(it, false)»
-         * @param GenericEvent $event The event instance
          */
-        public function serviceLinks(GenericEvent $event)
+        public function serviceLinks(GenericEvent $event)«IF targets('3.0')»: void«ENDIF»
         {
         }
     '''

@@ -46,8 +46,11 @@ class Loggable extends AbstractExtension implements EntityExtensionInterface {
      * Generates additional accessor methods.
      */
     override accessors(Entity it) '''
-        «val fh = new FileHelper»
-        «fh.getterAndSetterMethods(it, '_actionDescriptionForLogEntry', 'string', false, false, false, '', '')»
+        «IF application.targets('3.0')»
+            «(new FileHelper(application)).getterAndSetterMethods(it, '_actionDescriptionForLogEntry', 'string', false, false, true, '', '')»
+        «ELSE»
+            «(new FileHelper(application)).getterAndSetterMethods(it, '_actionDescriptionForLogEntry', 'string', false, false, false, '', '')»
+        «ENDIF»
     '''
 
     /**
@@ -86,35 +89,16 @@ class Loggable extends AbstractExtension implements EntityExtensionInterface {
         /**
          * Extended description of the executed action which produced this log entry.
          *
-         * @var string $actionDescription
-         *
+         * @var string
          * @ORM\Column(name="action_description", length=255)
          */
         protected $actionDescription = '';
 
-        /**
-         * Returns the action description.
-         *
-         * @return string
-         */
-        public function getActionDescription()
-        {
-            return $this->actionDescription;
-        }
-
-        /**
-         * Sets the action description.
-         *
-         * @param string $actionDescription
-         *
-         * @return void
-         */
-        public function setActionDescription($actionDescription)
-        {
-            if ($this->actionDescription !== $actionDescription) {
-                $this->actionDescription = isset($actionDescription) ? $actionDescription : '';
-            }
-        }
+        «IF application.targets('3.0')»
+            «(new FileHelper(application)).getterAndSetterMethods(it, 'actionDescription', 'string', false, false, true, '', '')»
+        «ELSE»
+            «(new FileHelper(application)).getterAndSetterMethods(it, 'actionDescription', 'string', false, false, false, '', '')»
+        «ENDIF»
     '''
 
     /**
@@ -123,12 +107,14 @@ class Loggable extends AbstractExtension implements EntityExtensionInterface {
     override extensionRepositoryClassBaseImplementation(Entity it) '''
         /**
          * Selects all log entries for removals to determine deleted «nameMultiple.formatForDisplay».
+         «IF !application.targets('3.0')»
          *
          * @param integer $limit The maximum amount of items to fetch
          *
-         * @return ArrayCollection Collection containing retrieved items
+         * @return array Collection containing retrieved items
+         «ENDIF»
          */
-        public function selectDeleted($limit = null)
+        public function selectDeleted«IF application.targets('3.0')»(int $limit = null): array«ELSE»($limit = null)«ENDIF»
         {
             $objectClass = str_replace('LogEntry', '', $this->_entityName);
 
@@ -161,11 +147,11 @@ class Loggable extends AbstractExtension implements EntityExtensionInterface {
          * Removes (or rather conflates) all obsolete log entries.
          *
          * @param string $revisionHandling The currently configured revision handling mode
-         * @param string $limitParameter   Optional parameter for limitation (maximum revision amount«IF application.targets('2.0')» or date interval«ENDIF»)
+         * @param string $limitParameter Optional parameter for limitation (maximum revision amount«IF application.targets('2.0')» or date interval«ENDIF»)
          */
-        public function purgeHistory($revisionHandling = 'unlimited', $limitParameter = '')
+        public function purgeHistory«IF application.targets('3.0')»(string $revisionHandling = 'unlimited', string $limitParameter = ''): void«ELSE»($revisionHandling = 'unlimited', $limitParameter = '')«ENDIF»
         {
-            if ('unlimited' == $revisionHandling || !in_array($revisionHandling, ['limitedByAmount', 'limitedByDate'])) {
+            if ('unlimited' === $revisionHandling || !in_array($revisionHandling, ['limitedByAmount', 'limitedByDate'], true)) {
                 // nothing to do
                 return;
             }
@@ -183,8 +169,8 @@ class Loggable extends AbstractExtension implements EntityExtensionInterface {
             ;
 
             $logAmountMap = [];
-            if ('limitedByAmount' == $revisionHandling) {
-                $limitParameter = intval($limitParameter);
+            if ('limitedByAmount' === $revisionHandling) {
+                $limitParameter = (int)$limitParameter;
                 if (!$limitParameter) {
                     $limitParameter = 25;
                 }
@@ -208,12 +194,12 @@ class Loggable extends AbstractExtension implements EntityExtensionInterface {
                 $qb->andWhere('log.objectId IN (:identifiers)')
                    ->setParameter('identifiers', $identifiers)
                 ;
-            }«IF application.targets('2.0')» elseif ('limitedByDate' == $revisionHandling) {
+            }«IF application.targets('2.0')» elseif ('limitedByDate' === $revisionHandling) {
                 if (!$limitParameter) {
                     $limitParameter = 'P1Y0M0DT0H0M0S';
                 }
-                $thresholdDate = new \DateTime(date('Ymd'));
-                $thresholdDate->sub(new \DateInterval($limitParameter));
+                $thresholdDate = new DateTime(date('Ymd'));
+                $thresholdDate->sub(new DateInterval($limitParameter));
 
                 $qb->andWhere('log.loggedAt <= :thresholdDate')
                    ->setParameter('thresholdDate', $thresholdDate)
@@ -231,7 +217,7 @@ class Loggable extends AbstractExtension implements EntityExtensionInterface {
             }
 
             $entityManager = $this->getEntityManager();
-            $keepPerObject = 'limitedByAmount' == $revisionHandling ? $limitParameter : -1;
+            $keepPerObject = 'limitedByAmount' === $revisionHandling ? $limitParameter : -1;
             $thresholdForObject = 0;
             $counterPerObject = 0;
 
@@ -242,7 +228,7 @@ class Loggable extends AbstractExtension implements EntityExtensionInterface {
             foreach ($result as $logEntry) {
                 // step 2 - conflate data arrays
                 $objectId = $logEntry->getObjectId();
-                if ($lastObjectId != $objectId) {
+                if ($lastObjectId !== $objectId) {
                     if ($lastObjectId > 0) {
                         if (count($dataForObject)) {
                             // write conflated data into last obsolete version (which will be kept)
@@ -259,7 +245,7 @@ class Loggable extends AbstractExtension implements EntityExtensionInterface {
                     $dataForObject = $logEntry->getData();
                 } else {
                     // we have a another log entry for the same object
-                    if ($keepPerObject < 0 || $counterPerObject < $thresholdForObject) {
+                    if (0 > $keepPerObject || $counterPerObject < $thresholdForObject) {
                         if (null !== $logEntry->getData()) {
                             $dataForObject = array_merge($dataForObject, $logEntry->getData());
                         }
@@ -269,7 +255,7 @@ class Loggable extends AbstractExtension implements EntityExtensionInterface {
                 }
 
                 $lastObjectId = $objectId;
-                if ($keepPerObject < 0 || $counterPerObject < $thresholdForObject) {
+                if (0 > $keepPerObject || $counterPerObject < $thresholdForObject) {
                     $lastLogEntry = $logEntry;
                 }
                 $counterPerObject++;

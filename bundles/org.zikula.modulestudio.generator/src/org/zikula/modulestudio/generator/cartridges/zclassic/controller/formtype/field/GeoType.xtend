@@ -26,9 +26,6 @@ class GeoType {
          */
         abstract class AbstractGeoType extends AbstractType
         {
-            /**
-             * @inheritDoc
-             */
             public function configureOptions(OptionsResolver $resolver)
             {
                 parent::configureOptions($resolver);
@@ -42,17 +39,11 @@ class GeoType {
                 ]);
             }
 
-            /**
-             * @inheritDoc
-             */
             public function getParent()
             {
                 return NumberType::class;
             }
 
-            /**
-             * @inheritDoc
-             */
             public function getBlockPrefix()
             {
                 return '«appName.formatForDB»_field_geo';

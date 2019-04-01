@@ -8,6 +8,9 @@ import de.guite.modulestudio.metamodel.ListField
 import de.guite.modulestudio.metamodel.ListFieldItem
 import java.util.ArrayList
 
+/**
+ * This class contains extension methods for workflow-related queries.
+ */
 class WorkflowExtensions {
 
     extension ModelInheritanceExtensions = new ModelInheritanceExtensions

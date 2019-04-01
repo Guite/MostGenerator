@@ -93,7 +93,8 @@ class HookHelper {
     def private hookFunctionsBaseImpl(Application it) '''
         namespace «appNamespace»\Helper\Base;
 
-        use Symfony\Component\Form\Form;
+        use Symfony\Component\EventDispatcher\Event;
+        use Symfony\Component\Form\FormInterface;
         use Zikula\Bundle\HookBundle\Dispatcher\HookDispatcherInterface;
         use Zikula\Bundle\HookBundle\FormAwareHook\FormAwareHook;
         use Zikula\Bundle\HookBundle\FormAwareHook\FormAwareResponse;
@@ -119,11 +120,6 @@ class HookHelper {
          */
         protected $hookDispatcher;
 
-        /**
-         * HookHelper constructor.
-         *
-         * @param HookDispatcherInterface $hookDispatcher
-         */
         public function __construct(HookDispatcherInterface $hookDispatcher)
         {
             $this->hookDispatcher = $hookDispatcher;
@@ -143,13 +139,15 @@ class HookHelper {
     def private callValidationHooks(Application it) '''
         /**
          * Calls validation hooks.
+         «IF !targets('3.0')»
          *
-         * @param EntityAccess $entity   The currently processed entity
-         * @param string       $hookType Name of hook type to be called
+         * @param EntityAccess $entity The currently processed entity
+         * @param string $hookType Name of hook type to be called
+         «ENDIF»
          *
          * @return string[] List of error messages returned by validators
          */
-        public function callValidationHooks($entity, $hookType)
+        public function callValidationHooks(EntityAccess $entity, «IF targets('3.0')»string «ENDIF»$hookType)«IF targets('3.0')»: array«ENDIF»
         {
             $hookAreaPrefix = $entity->getHookAreaPrefix();
 
@@ -163,12 +161,14 @@ class HookHelper {
     def private callProcessHooks(Application it) '''
         /**
          * Calls process hooks.
+         «IF !targets('3.0')»
          *
-         * @param EntityAccess $entity   The currently processed entity
-         * @param string       $hookType Name of hook type to be called
+         * @param EntityAccess $entity The currently processed entity
+         * @param string $hookType Name of hook type to be called
          * @param UrlInterface $routeUrl The route url object
+         «ENDIF»
          */
-        public function callProcessHooks($entity, $hookType, UrlInterface $routeUrl = null)
+        public function callProcessHooks(EntityAccess $entity, «IF targets('3.0')»string «ENDIF»$hookType, UrlInterface $routeUrl = null)«IF targets('3.0')»: void«ENDIF»
         {
             $hookAreaPrefix = $entity->getHookAreaPrefix();
 
@@ -180,14 +180,16 @@ class HookHelper {
     def private callFormDisplayHooks(Application it) '''
         /**
          * Calls form aware display hooks.
+         «IF !targets('3.0')»
          *
-         * @param Form         $form     The form instance
-         * @param EntityAccess $entity   The currently processed entity
-         * @param string       $hookType Name of hook type to be called
+         * @param FormInterface $form The form instance
+         * @param EntityAccess $entity The currently processed entity
+         * @param string $hookType Name of hook type to be called
          *
          * @return FormAwareHook The created hook instance
+         «ENDIF»
          */
-        public function callFormDisplayHooks(Form $form, $entity, $hookType)
+        public function callFormDisplayHooks(FormInterface $form, EntityAccess $entity, «IF targets('3.0')»string «ENDIF»$hookType)«IF targets('3.0')»: FormAwareHook«ENDIF»
         {
             $hookAreaPrefix = $entity->getHookAreaPrefix();
             $hookAreaPrefix = str_replace('.ui_hooks.', '.form_aware_hook.', $hookAreaPrefix);
@@ -202,13 +204,15 @@ class HookHelper {
     def private callFormProcessingHooks(Application it) '''
         /**
          * Calls form aware processing hooks.
+         «IF !targets('3.0')»
          *
-         * @param Form         $form     The form instance
-         * @param EntityAccess $entity   The currently processed entity
-         * @param string       $hookType Name of hook type to be called
+         * @param FormInterface $form The form instance
+         * @param EntityAccess $entity The currently processed entity
+         * @param string $hookType Name of hook type to be called
          * @param UrlInterface $routeUrl The route url object
+         «ENDIF»
          */
-        public function callFormProcessHooks(Form $form, $entity, $hookType, UrlInterface $routeUrl = null)
+        public function callFormProcessHooks(FormInterface $form, EntityAccess $entity, «IF targets('3.0')»string «ENDIF»$hookType, UrlInterface $routeUrl = null)«IF targets('3.0')»: void«ENDIF»
         {
             $formResponse = new FormAwareResponse($form, $entity, $routeUrl);
             $hookAreaPrefix = $entity->getHookAreaPrefix();
@@ -221,15 +225,17 @@ class HookHelper {
     def private dispatchHooks(Application it) '''
         /**
          * Dispatch hooks.
+         «IF !targets('3.0')»
          *
-         * @param string $name Hook event name
-         * @param Hook   $hook Hook interface
+         * @param string $eventName Hook event name
+         * @param Hook $hook Hook interface
          *
-         * @return Hook
+         * @return Event
+         «ENDIF»
          */
-        public function dispatchHooks($name, Hook $hook)
+        public function dispatchHooks(«IF targets('3.0')»string «ENDIF»$eventName, Hook $hook)«IF targets('3.0')»: Event«ENDIF»
         {
-            return $this->hookDispatcher->dispatch($name, $hook);
+            return $this->hookDispatcher->dispatch($eventName, $hook);
         }
     '''
 
@@ -264,11 +270,6 @@ class HookHelper {
              */
             protected $translator;
 
-            /**
-             * «name.formatForCodeCapital»«subscriberType»Subscriber constructor.
-             *
-             * @param TranslatorInterface $translator
-             */
             public function __construct(TranslatorInterface $translator)
             {
                 $this->translator = $translator;
@@ -276,10 +277,7 @@ class HookHelper {
 
             «commonMethods(application, name, category, 'subscriber', nameMultiple.formatForDB)»
 
-            /**
-             * @inheritDoc
-             */
-            public function getEvents()
+            public function getEvents()«IF application.targets('3.0')»: array«ENDIF»
             {
                 return [
                     «IF category == 'FilterHooks'»
@@ -348,7 +346,9 @@ class HookHelper {
         use Zikula\Bundle\HookBundle\Category\FilterHooksCategory;
         use Zikula\Bundle\HookBundle\Hook\FilterHook;
         use Zikula\Bundle\HookBundle\«providerInterface(filterHookProvider)»;
-        use Zikula\Bundle\HookBundle\ServiceIdTrait;
+        «IF !targets('3.0')»
+            use Zikula\Bundle\HookBundle\ServiceIdTrait;
+        «ENDIF»
         use Zikula\Common\Translator\TranslatorInterface;
 
         /**
@@ -356,18 +356,15 @@ class HookHelper {
          */
         abstract class AbstractFilterHooksProvider implements «providerInterface(filterHookProvider)»
         {
-            use ServiceIdTrait;
+            «IF targets('3.0')»
+                use ServiceIdTrait;
 
+            «ENDIF»
             /**
              * @var TranslatorInterface
              */
             protected $translator;
 
-            /**
-             * FilterHooksProvider constructor.
-             *
-             * @param TranslatorInterface $translator
-             */
             public function __construct(TranslatorInterface $translator)
             {
                 $this->translator = $translator;
@@ -375,10 +372,7 @@ class HookHelper {
 
             «commonMethods(name, 'FilterHooks', 'provider', name.formatForDB)»
 
-            /**
-             * @inheritDoc
-             */
-            public function getProviderTypes()
+            public function getProviderTypes()«IF targets('3.0')»: array«ENDIF»
             {
                 return [
                     FilterHooksCategory::TYPE_FILTER => ['applyFilter']
@@ -387,10 +381,8 @@ class HookHelper {
 
             /**
              * Filters the given data.
-             *
-             * @param FilterHook $hook
              */
-            public function applyFilter(FilterHook $hook)
+            public function applyFilter(FilterHook $hook)«IF targets('3.0')»: void«ENDIF»
             {
                 $hook->setData($hook->getData() . '<p>' . $this->translator->__('This is a dummy addition by a generated filter provider.') . '</p>');
             }
@@ -408,10 +400,7 @@ class HookHelper {
          */
         class FilterHooksProvider extends AbstractFilterHooksProvider
         {
-            /**
-             * @inheritDoc
-             */
-            public function applyFilter(FilterHook $hook)
+            public function applyFilter(FilterHook $hook)«IF targets('3.0')»: void«ENDIF»
             {
                 // replace this by your own filter operation
                 parent::applyFilter($hook);
@@ -445,7 +434,9 @@ class HookHelper {
             use Zikula\Bundle\HookBundle\Hook\ValidationHook;
         «ENDIF»
         use Zikula\Bundle\HookBundle\«providerInterface(if (category == 'FormAware') formAwareHookProvider else if (category == 'UiHooks') uiHooksProvider else HookProviderMode.ENABLED)»;
-        use Zikula\Bundle\HookBundle\ServiceIdTrait;
+        «IF !application.targets('3.0')»
+            use Zikula\Bundle\HookBundle\ServiceIdTrait;
+        «ENDIF»
         use Zikula\Common\Translator\TranslatorInterface;
         «IF category == 'FormAware'»
             use «application.appNamespace»\Form\Type\Hook\Delete«name.formatForCodeCapital»Type;
@@ -463,8 +454,10 @@ class HookHelper {
          */
         abstract class Abstract«name.formatForCodeCapital»«providerType»Provider implements «providerInterface(if (category == 'FormAware') formAwareHookProvider else if (category == 'UiHooks') uiHooksProvider else HookProviderMode.ENABLED)»
         {
-            use ServiceIdTrait;
+            «IF !application.targets('3.0')»
+                use ServiceIdTrait;
 
+            «ENDIF»
             /**
              * @var TranslatorInterface
              */
@@ -504,22 +497,6 @@ class HookHelper {
                 «ENDIF»
             «ENDIF»
 
-            /**
-             * «name.formatForCodeCapital»«providerType»Provider constructor.
-             *
-             * @param TranslatorInterface $translator
-             * @param RequestStack $requestStack
-             «IF category == 'FormAware'»
-             * @param FormFactoryInterface $formFactory
-             «ELSEIF category == 'UiHooks'»
-             * @param EntityFactory $entityFactory
-             * @param «IF !application.targets('3.0')»Twig_«ENDIF»Environment $twig
-             * @param PermissionHelper $permissionHelper
-             «IF !application.getUploadEntities.empty»
-             * @param ImageHelper $imageHelper
-             «ENDIF»
-             «ENDIF»
-             */
             public function __construct(
                 TranslatorInterface $translator,
                 RequestStack $requestStack,
@@ -550,10 +527,7 @@ class HookHelper {
 
             «commonMethods(application, name, category, 'provider', nameMultiple.formatForDB)»
 
-            /**
-             * @inheritDoc
-             */
-            public function getProviderTypes()
+            public function getProviderTypes()«IF application.targets('3.0')»: array«ENDIF»
             {
                 return [
                     «IF category == 'FormAware'»
@@ -576,10 +550,8 @@ class HookHelper {
             «IF category == 'FormAware'»
                 /**
                  * Provide the inner editing form.
-                 *
-                 * @param FormAwareHook $hook
                  */
-                public function edit(FormAwareHook $hook)
+                public function edit(FormAwareHook $hook)«IF application.targets('3.0')»: void«ENDIF»
                 {
                     $innerForm = $this->formFactory->create(Edit«name.formatForCodeCapital»Type::class, null, [
                         'auto_initialize' => false,«/* required */»
@@ -593,10 +565,8 @@ class HookHelper {
 
                 /**
                  * Process the inner editing form.
-                 *
-                 * @param FormAwareResponse $hook
                  */
-                public function processEdit(FormAwareResponse $hook)
+                public function processEdit(FormAwareResponse $hook)«IF application.targets('3.0')»: void«ENDIF»
                 {
                     $innerForm = $hook->getFormData('«application.appName.formatForDB»_hook_edit«name.formatForDB»form');
                     $dummyOutput = $innerForm['dummyName'] . ' (Option ' . $innerForm['dummyChoice'] . ')';
@@ -606,10 +576,8 @@ class HookHelper {
 
                 /**
                  * Provide the inner deletion form.
-                 *
-                 * @param FormAwareHook $hook
                  */
-                public function delete(FormAwareHook $hook)
+                public function delete(FormAwareHook $hook)«IF application.targets('3.0')»: void«ENDIF»
                 {
                     $innerForm = $this->formFactory->create(Delete«name.formatForCodeCapital»Type::class, null, [
                         'auto_initialize' => false,«/* required */»
@@ -623,10 +591,8 @@ class HookHelper {
 
                 /**
                  * Process the inner deletion form.
-                 *
-                 * @param FormAwareResponse $hook
                  */
-                public function processDelete(FormAwareResponse $hook)
+                public function processDelete(FormAwareResponse $hook)«IF application.targets('3.0')»: void«ENDIF»
                 {
                     $innerForm = $hook->getFormData('«application.appName.formatForDB»_hook_delete«name.formatForDB»form');
                     $dummyOutput = $innerForm['dummyName'] . ' (Option ' . $innerForm['dummyChoice'] . ')';
@@ -636,10 +602,8 @@ class HookHelper {
             «ELSEIF category == 'UiHooks'»
                 /**
                  * Display hook for view/display templates.
-                 *
-                 * @param DisplayHook $hook
                  */
-                public function view(DisplayHook $hook)
+                public function view(DisplayHook $hook)«IF application.targets('3.0')»: void«ENDIF»
                 {
                     $response = $this->renderDisplayHookResponse($hook, 'hookDisplayView');
                     $hook->setResponse($response);
@@ -647,10 +611,8 @@ class HookHelper {
 
                 /**
                  * Display hook for create/edit forms.
-                 *
-                 * @param DisplayHook $hook
                  */
-                public function displayEdit(DisplayHook $hook)
+                public function displayEdit(DisplayHook $hook)«IF application.targets('3.0')»: void«ENDIF»
                 {
                     $response = $this->renderDisplayHookResponse($hook, 'hookDisplayEdit');
                     $hook->setResponse($response);
@@ -658,20 +620,16 @@ class HookHelper {
 
                 /**
                  * Validate input from an item to be edited.
-                 *
-                 * @param ValidationHook $hook
                  */
-                public function validateEdit(ValidationHook $hook)
+                public function validateEdit(ValidationHook $hook)«IF application.targets('3.0')»: bool«ENDIF»
                 {
                     return true;
                 }
 
                 /**
                  * Perform the final update actions for an edited item.
-                 *
-                 * @param ProcessHook $hook
                  */
-                public function processEdit(ProcessHook $hook)
+                public function processEdit(ProcessHook $hook)«IF application.targets('3.0')»: void«ENDIF»
                 {
                     $url = $hook->getUrl();
                     if (null === $url || !is_object($url)) {
@@ -699,10 +657,8 @@ class HookHelper {
 
                 /**
                  * Display hook for delete forms.
-                 *
-                 * @param DisplayHook $hook
                  */
-                public function displayDelete(DisplayHook $hook)
+                public function displayDelete(DisplayHook $hook)«IF application.targets('3.0')»: void«ENDIF»
                 {
                     $response = $this->renderDisplayHookResponse($hook, 'hookDisplayDelete');
                     $hook->setResponse($response);
@@ -710,20 +666,16 @@ class HookHelper {
 
                 /**
                  * Validate input from an item to be deleted.
-                 *
-                 * @param ValidationHook $hook
                  */
-                public function validateDelete(ValidationHook $hook)
+                public function validateDelete(ValidationHook $hook)«IF application.targets('3.0')»: bool«ENDIF»
                 {
                     return true;
                 }
 
                 /**
                  * Perform the final delete actions for a deleted item.
-                 *
-                 * @param ProcessHook $hook
                  */
-                public function processDelete(ProcessHook $hook)
+                public function processDelete(ProcessHook $hook)«IF application.targets('3.0')»: void«ENDIF»
                 {
                     // delete assignments of removed data object
                     $qb = $this->entityFactory->getEntityManager()->createQueryBuilder();
@@ -736,33 +688,39 @@ class HookHelper {
 
                 /**
                  * Returns the area name used by this provider.
+                 «IF !application.targets('3.0')»
                  *
                  * @return string
+                 «ENDIF»
                  */
-                protected function getAreaName()
+                protected function getAreaName()«IF application.targets('3.0')»: string«ENDIF»
                 {
                     return 'provider.«application.appName.formatForDB».ui_hooks.«nameMultiple.formatForDB»';
                 }
 
                 /**
                  * Returns the entity for hook assignment data.
+                 «IF !application.targets('3.0')»
                  *
                  * @return string
+                 «ENDIF»
                  */
-                protected function getHookAssignmentEntity()
+                protected function getHookAssignmentEntity()«IF application.targets('3.0')»: string«ENDIF»
                 {
                     return '«application.vendor.formatForCodeCapital + '\\' + application.name.formatForCodeCapital + 'Module\\Entity\\HookAssignmentEntity'»';
                 }
 
                 /**
                  * Adds common hook-based filters to a given query builder.
+                 «IF !application.targets('3.0')»
                  *
                  * @param QueryBuilder $qb
                  * @param Hook $hook
                  *
                  * @return QueryBuilder
+                 «ENDIF»
                  */
-                protected function addContextFilters(QueryBuilder $qb, Hook $hook)
+                protected function addContextFilters(QueryBuilder $qb, Hook $hook)«IF application.targets('3.0')»: QueryBuilder«ENDIF»
                 {
                     $qb->where('tbl.subscriberOwner = :moduleName')
                        ->setParameter('moduleName', $hook->getCaller())
@@ -771,19 +729,22 @@ class HookHelper {
                        ->andWhere('tbl.subscriberObjectId = :objectId')
                        ->setParameter('objectId', $hook->getId())
                        ->andWhere('tbl.assignedEntity = :objectType')
-                       ->setParameter('objectType', '«name.formatForCode»');
+                       ->setParameter('objectType', '«name.formatForCode»')
+                   ;
 
                     return $qb;
                 }
 
                 /**
                  * Returns a list of assigned entities for a given hook context.
+                 «IF !application.targets('3.0')»
                  *
                  * @param Hook $hook
                  *
                  * @return array List of assignments and assigned entities
+                 «ENDIF»
                  */
-                protected function selectAssignedEntities(Hook $hook)
+                protected function selectAssignedEntities(Hook $hook)«IF application.targets('3.0')»: array«ENDIF»
                 {
                     list ($assignments, $assignedIds) = $this->selectAssignedIds($hook);
                     if (!count($assignedIds)) {
@@ -797,12 +758,14 @@ class HookHelper {
 
                 /**
                  * Returns a list of assigned entity identifiers for a given hook context.
+                 «IF !application.targets('3.0')»
                  *
                  * @param Hook $hook
                  *
                  * @return array List of assignments and identifiers of assigned entities
+                 «ENDIF»
                  */
-                protected function selectAssignedIds(Hook $hook)
+                protected function selectAssignedIds(Hook $hook)«IF application.targets('3.0')»: array«ENDIF»
                 {
                     $qb = $this->entityFactory->getEntityManager()->createQueryBuilder();
                     $qb->select('tbl')
@@ -823,13 +786,15 @@ class HookHelper {
 
                 /**
                  * Returns the response for a display hook of a given context.
+                 «IF !application.targets('3.0')»
                  *
-                 * @param Hook   $hook
+                 * @param Hook $hook
                  * @param string $context
                  *
                  * @return DisplayHookResponse
+                 «ENDIF»
                  */
-                protected function renderDisplayHookResponse(Hook $hook, $context)
+                protected function renderDisplayHookResponse(Hook $hook, «IF application.targets('3.0')»string «ENDIF»$context)«IF application.targets('3.0')»: DisplayHookResponse«ENDIF»
                 {
                     list ($assignments, $assignedEntities) = $this->selectAssignedEntities($hook);
                     $template = '@«application.appName»/«name.formatForCodeCapital»/includeDisplayItemListMany.html.twig';
@@ -840,7 +805,7 @@ class HookHelper {
                         'routeArea' => ''
                     ];
 
-                    if ($context == 'hookDisplayView') {
+                    if ('hookDisplayView' === $context) {
                         // add context information to template parameters in order to provide means
                         // for adding new assignments and removing existing assignments
                         $templateParameters['assignments'] = $assignments;
@@ -865,35 +830,23 @@ class HookHelper {
     '''
 
     def private commonMethods(Application it, String group, String category, String type, String areaSuffix) '''
-        /**
-         * @inheritDoc
-         */
-        public function getOwner()
+        public function getOwner()«IF targets('3.0')»: string«ENDIF»
         {
             return '«appName»';
         }
 
-        /**
-         * @inheritDoc
-         */
-        public function getCategory()
+        public function getCategory()«IF targets('3.0')»: string«ENDIF»
         {
             return «category»Category::NAME;
         }
 
-        /**
-         * @inheritDoc
-         */
-        public function getTitle()
+        public function getTitle()«IF targets('3.0')»: string«ENDIF»
         {
             return $this->translator->__('«group.formatForDisplayCapital» «category.formatForDisplay» «type»');
         }
         «IF targets('3.0')»
 
-            /**
-             * @inheritDoc
-             */
-            public function getAreaName()
+            public function getAreaName(): string
             {
                 return '«type».«appName.formatForDB».«IF category == 'FilterHooks'»filter_hooks«ELSEIF category == 'FormAware'»form_aware_hook«ELSEIF category == 'UiHooks'»ui_hooks«ENDIF».«areaSuffix»';
             }

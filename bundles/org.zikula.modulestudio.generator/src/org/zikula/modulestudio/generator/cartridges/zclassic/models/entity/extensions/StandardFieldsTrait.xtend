@@ -11,13 +11,14 @@ class StandardFieldsTrait {
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension Utils = new Utils
 
-    FileHelper fh = new FileHelper
+    FileHelper fh
     Boolean isLoggable
 
     def generate(Application it, IMostFileSystemAccess fsa, Boolean loggable) {
         if (!hasStandardFieldEntities) {
             return
         }
+        fh = new FileHelper(it)
         isLoggable = loggable
         val filePath = 'Traits/' + (if (loggable) 'Loggable' else '') + 'StandardFieldsTrait.php'
         fsa.generateFile(filePath, traitFile)
@@ -26,6 +27,7 @@ class StandardFieldsTrait {
     def private traitFile(Application it) '''
         namespace «appNamespace»\Traits;
 
+        use DateTimeInterface;
         use Doctrine\ORM\Mapping as ORM;
         use Gedmo\Mapping\Annotation as Gedmo;
         use Symfony\Component\Validator\Constraints as Assert;
@@ -59,7 +61,7 @@ class StandardFieldsTrait {
           * @Gedmo\Versioned
          «ENDIF»
          * @Assert\DateTime()
-         * @var \DateTimeInterface $createdDate
+         * @var DateTimeInterface $createdDate
          */
         protected $createdDate;
 
@@ -81,13 +83,20 @@ class StandardFieldsTrait {
           * @Gedmo\Versioned
          «ENDIF»
          * @Assert\DateTime()
-         * @var \DateTimeInterface $updatedDate
+         * @var DateTimeInterface $updatedDate
          */
         protected $updatedDate;
 
-        «fh.getterAndSetterMethods(it, 'createdBy', 'UserEntity', false, true, false, '', '')»
-        «fh.getterAndSetterMethods(it, 'createdDate', 'datetime', false, true, false, '', '')»
-        «fh.getterAndSetterMethods(it, 'updatedBy', 'UserEntity', false, true, false, '', '')»
-        «fh.getterAndSetterMethods(it, 'updatedDate', 'datetime', false, true, false, '', '')»
+        «IF targets('3.0')»
+            «fh.getterAndSetterMethods(it, 'createdBy', 'UserEntity', false, true, true, '', '')»
+            «fh.getterAndSetterMethods(it, 'createdDate', 'DateTimeInterface', false, true, true, '', '')»
+            «fh.getterAndSetterMethods(it, 'updatedBy', 'UserEntity', false, true, true, '', '')»
+            «fh.getterAndSetterMethods(it, 'updatedDate', 'DateTimeInterface', false, true, true, '', '')»
+        «ELSE»
+            «fh.getterAndSetterMethods(it, 'createdBy', 'UserEntity', false, true, false, '', '')»
+            «fh.getterAndSetterMethods(it, 'createdDate', 'datetime', false, true, false, '', '')»
+            «fh.getterAndSetterMethods(it, 'updatedBy', 'UserEntity', false, true, false, '', '')»
+            «fh.getterAndSetterMethods(it, 'updatedDate', 'datetime', false, true, false, '', '')»
+        «ENDIF»
     '''
 }

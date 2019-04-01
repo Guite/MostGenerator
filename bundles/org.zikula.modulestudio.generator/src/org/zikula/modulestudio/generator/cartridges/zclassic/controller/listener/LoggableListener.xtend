@@ -2,10 +2,12 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.controller.listene
 
 import de.guite.modulestudio.metamodel.Application
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
+import org.zikula.modulestudio.generator.extensions.Utils
 
 class LoggableListener {
 
     extension FormattingExtensions = new FormattingExtensions
+    extension Utils = new Utils
 
     def generate(Application it) '''
         /**
@@ -18,12 +20,6 @@ class LoggableListener {
          */
         protected $loggableHelper;
 
-        /**
-         * LoggableListener constructor.
-         *
-         * @param EntityDisplayHelper $entityDisplayHelper
-         * @param LoggableHelper $loggableHelper
-         */
         public function __construct(
             EntityDisplayHelper $entityDisplayHelper,
             LoggableHelper $loggableHelper
@@ -33,13 +29,11 @@ class LoggableListener {
             $this->loggableHelper = $loggableHelper;
         }
 
-        /**
-         * @inheritDoc
-         */
         protected function prePersistLogEntry($logEntry, $object)
         {
             parent::prePersistLogEntry($logEntry, $object);
 
+            /** @var EntityAccess $object */
             if (!$this->isEntityManagedByThisBundle($object) || !method_exists($object, 'get_objectType')) {
                 return;
             }
@@ -50,7 +44,7 @@ class LoggableListener {
             $versionGetter = 'get' . ucfirst($versionFieldName);
 
             // workaround to set correct version after restore of item
-            if (BaseListener::ACTION_CREATE == $logEntry->getAction() && $logEntry->getVersion() < $object->$versionGetter()) {
+            if (BaseListener::ACTION_CREATE === $logEntry->getAction() && $logEntry->getVersion() < $object->$versionGetter()) {
                 $logEntry->setVersion($object->$versionGetter());
             }
 
@@ -58,7 +52,7 @@ class LoggableListener {
                 return;
             }
 
-            if (BaseListener::ACTION_REMOVE == $logEntry->getAction()) {
+            if (BaseListener::ACTION_REMOVE === $logEntry->getAction()) {
                 // provide title to make the object identifiable in the list of deleted entities
                 $logEntry->setActionDescription($this->entityDisplayHelper->getFormattedTitle($object));
 
@@ -77,9 +71,6 @@ class LoggableListener {
          *
         use Gedmo\Loggable\Mapping\Event\LoggableAdapter;
 
-        /**
-         * @inheritDoc
-         * /
         protected function createLogEntry($action, $object, LoggableAdapter $ea)
         {
             $logEntry = parent::createLogEntry($action, $object, $ea);
@@ -91,9 +82,6 @@ class LoggableListener {
 
          */»
 
-        /**
-         * @inheritDoc
-         */
         protected function createLogEntry($action, $object, LoggableAdapter $ea)
         {
             if (!$this->isEntityManagedByThisBundle($object) || !method_exists($object, 'get_objectType')) {
@@ -107,19 +95,21 @@ class LoggableListener {
          * Checks whether this listener is responsible for the given entity or not.
          *
          * @param EntityAccess $entity The given entity
+         «IF !targets('3.0')»
          *
-         * @return boolean True if entity is managed by this listener, false otherwise
+         * @return bool True if entity is managed by this listener, false otherwise
+         «ENDIF»
          */
-        protected function isEntityManagedByThisBundle($entity)
+        protected function isEntityManagedByThisBundle($entity)«IF targets('3.0')»: bool«ENDIF»
         {
             $entityClassParts = explode('\\', get_class($entity));
 
-            if ('DoctrineProxy' == $entityClassParts[0] && '__CG__' == $entityClassParts[1]) {
+            if ('DoctrineProxy' === $entityClassParts[0] && '__CG__' === $entityClassParts[1]) {
                 array_shift($entityClassParts);
                 array_shift($entityClassParts);
             }
 
-            return ('«vendor.formatForCodeCapital»' == $entityClassParts[0] && '«name.formatForCodeCapital»Module' == $entityClassParts[1]);
+            return '«vendor.formatForCodeCapital»' === $entityClassParts[0] && '«name.formatForCodeCapital»Module' === $entityClassParts[1];
         }
     '''
 }

@@ -22,6 +22,7 @@ class EntityTreeType {
         use Symfony\Component\Form\AbstractType;
         use Symfony\Component\OptionsResolver\Options;
         use Symfony\Component\OptionsResolver\OptionsResolver;
+        use Zikula\Core\Doctrine\EntityAccess;
         use «appNamespace»\Helper\EntityDisplayHelper;
 
         /**
@@ -34,19 +35,11 @@ class EntityTreeType {
              */
             protected $entityDisplayHelper;
 
-            /**
-             * EntityTreeType constructor.
-             *
-             * @param EntityDisplayHelper $entityDisplayHelper
-             */
             public function __construct(EntityDisplayHelper $entityDisplayHelper)
             {
                 $this->entityDisplayHelper = $entityDisplayHelper;
             }
 
-            /**
-             * @inheritDoc
-             */
             public function configureOptions(OptionsResolver $resolver)
             {
                 parent::configureOptions($resolver);
@@ -84,12 +77,12 @@ class EntityTreeType {
 
             /**
              * Performs the actual data selection.
-             *
-             * @param Options $options The options
+             «IF !targets('3.0')»
              *
              * @return array List of selected objects
+             «ENDIF»
              */
-            protected function loadChoices(Options $options)
+            protected function loadChoices(Options $options)«IF targets('3.0')»: array«ENDIF»
             {
                 $repository = $options['em']->getRepository($options['class']);
                 $treeNodes = $repository->selectTree($options['root'], $options['use_joins']);
@@ -121,23 +114,25 @@ class EntityTreeType {
             /**
              * Determines whether a certain list item should be included or not.
              * Allows to exclude undesired items after the selection has happened.
+             «IF !targets('3.0')»
              *
-             * @param object           $item       The treated entity
+             * @param EntityAccess $item The treated entity
              * @param EntityRepository $repository The entity repository
-             * @param Options          $options    The options
+             * @param Options $options The options
              *
              * @return boolean Whether this entity should be included into the list
+             «ENDIF»
              */
-            protected function isIncluded($item, EntityRepository $repository, Options $options)
+            protected function isIncluded(EntityAccess $item, EntityRepository $repository, Options $options)«IF targets('3.0')»: bool«ENDIF»
             {
                 $nodeLevel = $item->getLvl();
 
-                if (!$options['include_root_nodes'] && $nodeLevel == 0) {
+                if (0 === $nodeLevel && !$options['include_root_nodes']) {
                     // if we do not include the root node skip it
                     return false;
                 }
 
-                if (!$options['include_leaf_nodes'] && $repository->childCount($item) == 0) {
+                if (!$options['include_leaf_nodes'] && 0 === $repository->childCount($item)) {
                     // if we do not include leaf nodes skip them
                     return false;
                 }
@@ -147,13 +142,15 @@ class EntityTreeType {
 
             /**
              * Creates the label for a choice.
+             «IF !targets('3.0')»
              *
-             * @param object  $choice          The object
+             * @param object $choice The object
              * @param boolean $includeRootNode Whether the root node should be included or not
              *
              * @return string The string representation of the object
+             «ENDIF»
              */
-            protected function createChoiceLabel($choice, $includeRootNode = false)
+            protected function createChoiceLabel($choice, «IF targets('3.0')»bool «ENDIF»$includeRootNode = false)«IF targets('3.0')»: string«ENDIF»
             {
                 // determine current list hierarchy level depending on root node inclusion
                 $shownLevel = $choice->getLvl();
@@ -162,22 +159,14 @@ class EntityTreeType {
                 }
                 $prefix = str_repeat('- - ', $shownLevel);
 
-                $itemLabel = $prefix . $this->entityDisplayHelper->getFormattedTitle($choice);
-
-                return $itemLabel;
+                return $prefix . $this->entityDisplayHelper->getFormattedTitle($choice);
             }
 
-            /**
-             * @inheritDoc
-             */
             public function getParent()
             {
                 return EntityType::class;
             }
 
-            /**
-             * @inheritDoc
-             */
             public function getBlockPrefix()
             {
                 return '«appName.formatForDB»_field_entitytree';

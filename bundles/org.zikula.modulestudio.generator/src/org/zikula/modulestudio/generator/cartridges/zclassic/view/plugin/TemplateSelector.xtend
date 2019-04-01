@@ -15,6 +15,9 @@ class TemplateSelector {
     Boolean generateSmartyPlugin
 
     def generate(Application it, IMostFileSystemAccess fsa, Boolean enforceLegacy) {
+        if (targets('2.0')) {
+            return '';
+        }
         generateSmartyPlugin = enforceLegacy
         if (generateSmartyPlugin) {
             val pluginFilePath = legacyViewPluginFilePath('function', 'TemplateSelector')
@@ -32,8 +35,8 @@ class TemplateSelector {
             «' '»* Available parameters:
             «' '»*   - assign: If set, the results are assigned to the corresponding variable instead of printed out.
             «' '»*
-            «' '»* @param  array            $params All attributes passed to this function from the template
-            «' '»* @param  Zikula_Form_View $view   Reference to the view object
+            «' '»* @param array $params All attributes passed to this function from the template
+            «' '»* @param Zikula_Form_View $view Reference to the view object
         «ENDIF»
          *
          * @return string The output of the plugin

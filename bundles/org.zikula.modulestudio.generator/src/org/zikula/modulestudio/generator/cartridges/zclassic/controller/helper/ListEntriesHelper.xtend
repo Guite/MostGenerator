@@ -44,11 +44,6 @@ class ListEntriesHelper {
     def private helperBaseImpl(Application it) '''
         use TranslatorTrait;
 
-        /**
-         * ListEntriesHelper constructor.
-         *
-         * @param TranslatorInterface $translator
-         */
         public function __construct(TranslatorInterface $translator)
         {
             $this->setTranslator($translator);
@@ -70,31 +65,31 @@ class ListEntriesHelper {
     def private resolve(Application it) '''
         /**
          * Return the name or names for a given list item.
+         «IF !targets('3.0')»
          *
-         * @param string $value      The dropdown value to process
+         * @param string $value The dropdown value to process
          * @param string $objectType The treated object type
-         * @param string $fieldName  The list field's name
-         * @param string $delimiter  String used as separator for multiple selections
+         * @param string $fieldName The list field's name
+         * @param string $delimiter String used as separator for multiple selections
          *
          * @return string List item name
+         «ENDIF»
          */
-        public function resolve($value, $objectType = '', $fieldName = '', $delimiter = ', ')
+        public function resolve«IF targets('3.0')»(string $value, string $objectType = '', string $fieldName = '', string $delimiter = ', '): string«ELSE»($value, $objectType = '', $fieldName = '', $delimiter = ', ')«ENDIF»
         {
-            if ((empty($value) && $value != '0') || empty($objectType) || empty($fieldName)) {
+            if ((empty($value) && '0' !== $value) || empty($objectType) || empty($fieldName)) {
                 return $value;
             }
 
             $isMulti = $this->hasMultipleSelection($objectType, $fieldName);
-            if (true === $isMulti) {
-                $value = $this->extractMultiList($value);
-            }
+            $values = $isMulti ? $this->extractMultiList($value) : [];
 
             $options = $this->getEntries($objectType, $fieldName);
             $result = '';
 
             if (true === $isMulti) {
                 foreach ($options as $option) {
-                    if (!in_array($option['value'], $value)) {
+                    if (!in_array($option['value'], $values, true)) {
                         continue;
                     }
                     if (!empty($result)) {
@@ -104,7 +99,7 @@ class ListEntriesHelper {
                 }
             } else {
                 foreach ($options as $option) {
-                    if ($option['value'] != $value) {
+                    if ($option['value'] !== $value) {
                         continue;
                     }
                     $result = $option['text'];
@@ -120,19 +115,21 @@ class ListEntriesHelper {
     def private extractMultiList(Application it) '''
         /**
          * Extract concatenated multi selection.
+         «IF !targets('3.0')»
          *
          * @param string $value The dropdown value to process
          *
-         * @return array List of single values
+         * @return string[] List of single values
+         «ENDIF»
          */
-        public function extractMultiList($value)
+        public function extractMultiList(«IF targets('3.0')»string «ENDIF»$value)«IF targets('3.0')»: array«ENDIF»
         {
             $listValues = explode('###', $value);
             $amountOfValues = count($listValues);
-            if ($amountOfValues > 1 && $listValues[$amountOfValues - 1] == '') {
+            if ($amountOfValues > 1 && '' === $listValues[$amountOfValues - 1]) {
                 unset($listValues[$amountOfValues - 1]);
             }
-            if ($listValues[0] == '') {
+            if ('' === $listValues[0]) {
                 // use array_shift instead of unset for proper key reindexing
                 // keys must start with 0, otherwise the dropdownlist form plugin gets confused
                 array_shift($listValues);
@@ -146,13 +143,15 @@ class ListEntriesHelper {
     def private hasMultipleSelection(Application it) '''
         /**
          * Determine whether a certain dropdown field has a multi selection or not.
+         «IF !targets('3.0')»
          *
          * @param string $objectType The treated object type
-         * @param string $fieldName  The list field's name
+         * @param string $fieldName The list field's name
          *
-         * @return boolean True if this is a multi list false otherwise
+         * @return bool True if this is a multi list false otherwise
+         «ENDIF»
          */
-        public function hasMultipleSelection($objectType, $fieldName)
+        public function hasMultipleSelection(«IF targets('3.0')»string «ENDIF»$objectType, «IF targets('3.0')»string «ENDIF»$fieldName)«IF targets('3.0')»: bool«ENDIF»
         {
             if (empty($objectType) || empty($fieldName)) {
                 return false;
@@ -192,13 +191,15 @@ class ListEntriesHelper {
     def private getEntries(Application it) '''
         /**
          * Get entries for a certain dropdown field.
+         «IF !targets('3.0')»
          *
-         * @param string  $objectType The treated object type
-         * @param string  $fieldName  The list field's name
+         * @param string $objectType The treated object type
+         * @param string $fieldName The list field's name
          *
          * @return array Array with desired list entries
+         «ENDIF»
          */
-        public function getEntries($objectType, $fieldName)
+        public function getEntries(«IF targets('3.0')»string «ENDIF»$objectType, «IF targets('3.0')»string «ENDIF»$fieldName)«IF targets('3.0')»: array«ENDIF»
         {
             if (empty($objectType) || empty($fieldName)) {
                 return [];
@@ -252,10 +253,12 @@ class ListEntriesHelper {
     def private getItemsImpl(ListField it) '''
         /**
          * Get '«name.formatForDisplay»' list entries.
+         «IF !application.targets('3.0')»
          *
          * @return array Array with desired list entries
+         «ENDIF»
          */
-        public function get«name.formatForCodeCapital»EntriesFor«IF null !== entity»«entity.name.formatForCodeCapital»«ELSE»AppSettings«ENDIF»()
+        public function get«name.formatForCodeCapital»EntriesFor«IF null !== entity»«entity.name.formatForCodeCapital»«ELSE»AppSettings«ENDIF»()«IF application.targets('3.0')»: array«ENDIF»
         {
             $states = [];
             «IF name == 'workflowState'»

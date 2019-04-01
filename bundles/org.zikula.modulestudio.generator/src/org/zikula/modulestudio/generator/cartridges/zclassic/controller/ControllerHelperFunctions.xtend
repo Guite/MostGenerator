@@ -6,7 +6,7 @@ class ControllerHelperFunctions {
 
     def defaultSorting(Application it) '''
         $sort = $request->query->get('sort', '');
-        if (empty($sort) || !in_array($sort, $repository->getAllowedSortingFields())) {
+        if (empty($sort) || !in_array($sort, $repository->getAllowedSortingFields(), true)) {
             $sort = $repository->getDefaultSortingField();
             $request->query->set('sort', $sort);
             // set default sorting in route parameters (e.g. for the pager)

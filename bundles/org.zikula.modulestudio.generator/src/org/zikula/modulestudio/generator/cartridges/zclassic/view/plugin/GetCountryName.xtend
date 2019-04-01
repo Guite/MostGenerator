@@ -18,12 +18,14 @@ class GetCountryName {
          * The «appName.formatForDB»_countryName filter displays the country name for a given country code.
          * Example:
          *     {{ 'de'|«appName.formatForDB»_countryName }}
+         «IF !targets('3.0')»
          *
          * @param string $countryCode The country code to process
          *
          * @return string Country name
+         «ENDIF»
          */
-        public function getCountryName($countryCode)
+        public function getCountryName«IF targets('3.0')»(string $countryCode): string«ELSE»($countryCode)«ENDIF»
         {
             $result = Intl::getRegionBundle()->getCountryName($countryCode);
             if (false === $result) {

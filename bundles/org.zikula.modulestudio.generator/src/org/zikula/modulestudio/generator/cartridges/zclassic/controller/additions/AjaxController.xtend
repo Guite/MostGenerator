@@ -62,6 +62,12 @@ class AjaxController {
     def private ajaxControllerBaseClass(Application it) '''
         namespace «appNamespace»\Controller\Base;
 
+        «IF hasUiHooksProviders»
+            use DateTime;
+        «ENDIF»
+        «IF hasTrees»
+            use Exception;
+        «ENDIF»
         use Symfony\Component\HttpFoundation\JsonResponse;
         use Symfony\Component\HttpFoundation\Request;
         use Symfony\Component\HttpFoundation\Response;
@@ -133,17 +139,14 @@ class AjaxController {
         /**
          «IF isBase»
          * Retrieve item list for finder selections, for example used in Scribite editor plug-ins.
+         «IF !targets('3.0')»
          *
          * @param Request $request
-         «IF targets('3.0')»
-         * @param ControllerHelper $controllerHelper
-         * @param PermissionHelper $permissionHelper
-         * @param EntityFactory $entityFactory
-         * @param EntityDisplayHelper $entityDisplayHelper
-         «ENDIF»
          *
          * @return JsonResponse
+         «ENDIF»
          «ELSE»
+         *
          * @inheritDoc
          * @Route("/getItemListFinder", methods = {"GET"}, options={"expose"=true})
          «ENDIF»
@@ -158,7 +161,7 @@ class AjaxController {
                 PermissionHelper $permissionHelper,
                 EntityFactory $entityFactory,
                 EntityDisplayHelper $entityDisplayHelper
-            )
+            ): JsonResponse
         «ELSE»
             public function getItemListFinderAction(
                 Request $request
@@ -180,7 +183,7 @@ class AjaxController {
             $controllerHelper = $this->get('«appService».controller_helper');
         «ENDIF»
         $contextArgs = ['controller' => 'ajax', 'action' => 'getItemListFinder'];
-        if (!in_array($objectType, $controllerHelper->getObjectTypes('controllerAction', $contextArgs))) {
+        if (!in_array($objectType, $controllerHelper->getObjectTypes('controllerAction', $contextArgs), true)) {
             $objectType = $controllerHelper->getDefaultObjectType('controllerAction', $contextArgs);
         }
 
@@ -192,22 +195,22 @@ class AjaxController {
         «ENDIF»
         $descriptionFieldName = $entityDisplayHelper->getDescriptionFieldName($objectType);
 
-        $sort = $request->query->getAlnum('sort', '');
-        if (empty($sort) || !in_array($sort, $repository->getAllowedSortingFields())) {
+        $sort = $request->query->getAlnum('sort');
+        if (empty($sort) || !in_array($sort, $repository->getAllowedSortingFields(), true)) {
             $sort = $repository->getDefaultSortingField();
         }
 
-        $sdir = strtolower($request->query->getAlpha('sortdir', ''));
-        if ($sdir != 'asc' && $sdir != 'desc') {
+        $sdir = strtolower($request->query->getAlpha('sortdir'));
+        if ('asc' !== $sdir && 'desc' !== $sdir) {
             $sdir = 'asc';
         }
 
         $where = ''; // filters are processed inside the repository class
-        $searchTerm = $request->query->get('q', '');
+        $searchTerm = $request->query->get('q');
         $sortParam = $sort . ' ' . $sdir;
 
         $entities = [];
-        if ($searchTerm != '') {
+        if ('' !== $searchTerm) {
             list ($entities, $totalAmount) = $repository->selectSearch($searchTerm, [], $sortParam, 1, 50);
         } else {
             $entities = $repository->selectWhere($where, $sortParam);
@@ -232,22 +235,31 @@ class AjaxController {
     def private getItemListFinderPrepareSlimItem(Application it) '''
         /**
          * Builds and returns a slim data array from a given entity.
+         «IF !targets('3.0')»
          *
-         «IF targets('3.0')»
-         * @param ControllerHelper $controllerHelper
-         «ENDIF»
          * @param EntityRepository $repository Repository for the treated object type
-         «IF targets('3.0')»
-         * @param EntityDisplayHelper $entityDisplayHelper
-         «ENDIF»
          * @param object $item The currently treated entity
          * @param string $itemId Data item identifier(s)
          * @param string $descriptionField Name of item description field
          *
          * @return array The slim data representation
+         «ENDIF»
          */
-        protected function prepareSlimItem(«IF targets('3.0')»ControllerHelper $controllerHelper, $repository, EntityDisplayHelper $entityDisplayHelper«ELSE»$repository«ENDIF», $item, $itemId, $descriptionField)
-        {
+        protected function prepareSlimItem(
+            «IF targets('3.0')»
+                ControllerHelper $controllerHelper,
+                EntityRepository $repository,
+                EntityDisplayHelper $entityDisplayHelper,
+                $item,
+                string $itemId,
+                string $descriptionField
+            «ELSE»
+                $repository,
+                $item,
+                $itemId,
+                $descriptionField
+            «ENDIF»
+        )«IF targets('3.0')»: array«ENDIF» {
             $objectType = $item->get_objectType();
             $previewParameters = [
                 $objectType => $item
@@ -258,11 +270,11 @@ class AjaxController {
             $previewInfo = base64_encode($this->get('twig')->render('@«appName»/External/' . ucfirst($objectType) . '/info.html.twig', $previewParameters));
 
             $title = «IF targets('3.0')»$entityDisplayHelper«ELSE»$this->get('«appService».entity_display_helper')«ENDIF»->getFormattedTitle($item);
-            $description = $descriptionField != '' ? $item[$descriptionField] : '';
+            $description = $descriptionField !== '' ? $item[$descriptionField] : '';
 
             return [
-                'id'          => $itemId,
-                'title'       => str_replace('&amp;', '&', $title),
+                'id' => $itemId,
+                'title' => str_replace('&amp;', '&', $title),
                 'description' => $description,
                 'previewInfo' => $previewInfo
             ];
@@ -280,19 +292,14 @@ class AjaxController {
         /**
          «IF isBase»
          * Searches for entities for auto completion usage.
+         «IF !targets('3.0')»
          *
          * @param Request $request
-         «IF targets('3.0')»
-         * @param ControllerHelper $controllerHelper
-         * @param EntityFactory $entityFactory
-         * @param EntityDisplayHelper $entityDisplayHelper
-         «IF hasImageFields»
-         * @param ImageHelper $imageHelper
-         «ENDIF»
-         «ENDIF»
          *
          * @return JsonResponse
+         «ENDIF»
          «ELSE»
+         *
          * @inheritDoc
          * @Route("/getItemListAutoCompletion", methods = {"GET"}, options={"expose"=true})
          «ENDIF»
@@ -307,7 +314,7 @@ class AjaxController {
                 EntityFactory $entityFactory,
                 EntityDisplayHelper $entityDisplayHelper«IF hasImageFields»,
                 ImageHelper $imageHelper«ENDIF»
-            )
+            ): JsonResponse
         «ELSE»
             public function getItemListAutoCompletionAction(
                 Request $request
@@ -329,13 +336,13 @@ class AjaxController {
             $controllerHelper = $this->get('«appService».controller_helper');
         «ENDIF»
         $contextArgs = ['controller' => 'ajax', 'action' => 'getItemListAutoCompletion'];
-        if (!in_array($objectType, $controllerHelper->getObjectTypes('controllerAction', $contextArgs))) {
+        if (!in_array($objectType, $controllerHelper->getObjectTypes('controllerAction', $contextArgs), true)) {
             $objectType = $controllerHelper->getDefaultObjectType('controllerAction', $contextArgs);
         }
 
         $repository = «IF targets('3.0')»$entityFactory«ELSE»$this->get('«appService».entity_factory')«ENDIF»->getRepository($objectType);
-        $fragment = $request->query->get('fragment', '');
-        $exclude = $request->query->get('exclude', '');
+        $fragment = $request->query->get('fragment');
+        $exclude = $request->query->get('exclude');
         $exclude = !empty($exclude) ? explode(',', str_replace(', ', ',', $exclude)) : [];
 
         // parameter for used sorting field
@@ -414,14 +421,12 @@ class AjaxController {
          «IF isBase»
          * Checks whether a field value is a duplicate or not.
          *
+         «IF !targets('3.0')»
          * @param Request $request
-         «IF targets('3.0')»
-         * @param ControllerHelper $controllerHelper
-         * @param EntityFactory $entityFactory
-         «ENDIF»
          *
          * @return JsonResponse
          *
+         «ENDIF»
          * @throws AccessDeniedException Thrown if the user doesn't have required permissions
          «ELSE»
          * @inheritDoc
@@ -436,7 +441,7 @@ class AjaxController {
                 Request $request,
                 ControllerHelper $controllerHelper,
                 EntityFactory $entityFactory
-            )
+            ): JsonResponse
         «ELSE»
             public function checkForDuplicateAction(
                 Request $request
@@ -490,12 +495,12 @@ class AjaxController {
             $controllerHelper = $this->get('«appService».controller_helper');
         «ENDIF»
         $contextArgs = ['controller' => 'ajax', 'action' => 'checkForDuplicate'];
-        if (!in_array($objectType, $controllerHelper->getObjectTypes('controllerAction', $contextArgs))) {
+        if (!in_array($objectType, $controllerHelper->getObjectTypes('controllerAction', $contextArgs), true)) {
             $objectType = $controllerHelper->getDefaultObjectType('controllerAction', $contextArgs);
         }
 
-        $fieldName = $request->query->getAlnum('fn', '');
-        $value = $request->query->get('v', '');
+        $fieldName = $request->query->getAlnum('fn');
+        $value = $request->query->get('v');
 
         if (empty($fieldName) || empty($value)) {
             return «IF targets('2.0')»$this->json«ELSE»new JsonResponse«ENDIF»($this->__('Error: invalid input.'), JsonResponse::HTTP_BAD_REQUEST);
@@ -513,11 +518,11 @@ class AjaxController {
                 «ENDIF»
             «ENDFOR»
         }
-        if (!count($uniqueFields) || !in_array($fieldName, $uniqueFields)) {
+        if (!count($uniqueFields) || !in_array($fieldName, $uniqueFields, true)) {
             return «IF targets('2.0')»$this->json«ELSE»new JsonResponse«ENDIF»($this->__('Error: invalid input.'), JsonResponse::HTTP_BAD_REQUEST);
         }
 
-        $exclude = $request->query->getInt('ex', '');
+        $exclude = $request->query->getInt('ex');
     '''
 
     def private toggleFlagBase(Application it) '''
@@ -532,14 +537,12 @@ class AjaxController {
          «IF isBase»
          * Changes a given flag (boolean field) by switching between true and false.
          *
+         «IF !targets('3.0')»
          * @param Request $request
-         «IF targets('3.0')»
-         * @param EntityFactory $entityFactory
-         * @param CurrentUserApiInterface $currentUserApi
-         «ENDIF»
          *
          * @return JsonResponse
          *
+         «ENDIF»
          * @throws AccessDeniedException Thrown if the user doesn't have required permissions
          «ELSE»
          * @inheritDoc
@@ -554,7 +557,7 @@ class AjaxController {
                 Request $request,
                 EntityFactory $entityFactory,
                 CurrentUserApiInterface $currentUserApi
-            )
+            ): JsonResponse
         «ELSE»
             public function toggleFlagAction(
                 Request $request
@@ -572,14 +575,14 @@ class AjaxController {
         }
 
         $objectType = $request->request->getAlnum('ot', '«getLeadingEntity.name.formatForCode»');
-        $field = $request->request->getAlnum('field', '');
-        $id = $request->request->getInt('id', 0);
+        $field = $request->request->getAlnum('field');
+        $id = $request->request->getInt('id');
 
         «val entities = getEntitiesWithAjaxToggle»
-        if ($id == 0
-            || («FOR entity : entities SEPARATOR ' && '»$objectType != '«entity.name.formatForCode»'«ENDFOR»)
+        if (0 === $id
+            || («FOR entity : entities SEPARATOR ' && '»'«entity.name.formatForCode»' !== $objectType«ENDFOR»)
         «FOR entity : entities»
-            || ($objectType == '«entity.name.formatForCode»' && !in_array($field, [«FOR field : entity.getBooleansWithAjaxToggleEntity('') SEPARATOR ', '»'«field.name.formatForCode»'«ENDFOR»]))
+            || ('«entity.name.formatForCode»' === $objectType && !in_array($field, [«FOR field : entity.getBooleansWithAjaxToggleEntity('') SEPARATOR ', '»'«field.name.formatForCode»'«ENDFOR»], true))
         «ENDFOR»
         ) {
             return «IF targets('2.0')»$this->json«ELSE»new JsonResponse«ENDIF»($this->__('Error: invalid input.'), JsonResponse::HTTP_BAD_REQUEST);
@@ -599,7 +602,7 @@ class AjaxController {
         $entity[$field] = !$entity[$field];
 
         // save entity back to database
-        $entityFactory->getEntityManager()->flush($entity);
+        $entityFactory->getEntityManager()->flush();
 
         $logger = $this->get('logger');
         $logArgs = ['app' => '«appName»', 'user' => «IF targets('3.0')»$currentUserApi«ELSE»$this->get('zikula_users_module.current_user')«ENDIF»->get('uname'), 'field' => $field, 'entity' => $objectType, 'id' => $id];
@@ -625,17 +628,12 @@ class AjaxController {
          «IF isBase»
          * Performs different operations on tree hierarchies.
          *
+         «IF !targets('3.0')»
          * @param Request $request
-         «IF targets('3.0')»
-         * @param EntityFactory $entityFactory
-         * @param EntityDisplayHelper $entityDisplayHelper
-         * @param CurrentUserApiInterface $currentUserApi
-         * @param UserRepositoryInterface $userRepository
-         * @param WorkflowHelper $workflowHelper
-         «ENDIF»
          *
          * @return JsonResponse
          *
+         «ENDIF»
          * @throws AccessDeniedException Thrown if the user doesn't have required permissions
          «ELSE»
          * @inheritDoc
@@ -653,7 +651,7 @@ class AjaxController {
                 CurrentUserApiInterface $currentUserApi,
                 UserRepositoryInterface $userRepository,
                 WorkflowHelper $workflowHelper
-            )
+            ): JsonResponse
         «ELSE»
             public function handleTreeOperationAction(
                 Request $request
@@ -674,7 +672,7 @@ class AjaxController {
         // parameter specifying which type of objects we are treating
         $objectType = $request->request->getAlnum('ot', '«treeEntities.head.name.formatForCode»');
         // ensure that we use only object types with tree extension enabled
-        if (!in_array($objectType, [«FOR treeEntity : treeEntities SEPARATOR ", "»'«treeEntity.name.formatForCode»'«ENDFOR»])) {
+        if (!in_array($objectType, [«FOR treeEntity : treeEntities SEPARATOR ", "»'«treeEntity.name.formatForCode»'«ENDFOR»], true)) {
             $objectType = '«treeEntities.head.name.formatForCode»';
         }
 
@@ -693,8 +691,8 @@ class AjaxController {
         $repository = $entityFactory->getRepository($objectType);
 
         $rootId = 1;
-        if (!in_array($op, ['addRootNode'])) {
-            $rootId = $request->request->getInt('root', 0);
+        if (!in_array($op, ['addRootNode'], true)) {
+            $rootId = $request->request->getInt('root');
             if (!$rootId) {
                 $returnValue['result'] = 'failure';
                 $returnValue['message'] = $this->__('Error: invalid root node.');
@@ -723,8 +721,8 @@ class AjaxController {
     '''
 
     def private prepareTreeOperationParameters(Application it) '''
-        $op = $request->request->getAlpha('op', '');
-        if (!in_array($op, ['addRootNode', 'addChildNode', 'deleteNode', 'moveNode', 'moveNodeTo'])) {
+        $op = $request->request->getAlpha('op');
+        if (!in_array($op, ['addRootNode', 'addChildNode', 'deleteNode', 'moveNode', 'moveNodeTo'], true)) {
             $returnValue['result'] = 'failure';
             $returnValue['message'] = $this->__('Error: invalid operation.');
 
@@ -733,8 +731,8 @@ class AjaxController {
 
         // Get id of treated node
         $id = 0;
-        if (!in_array($op, ['addRootNode', 'addChildNode'])) {
-            $id = $request->request->getInt('id', 0);
+        if (!in_array($op, ['addRootNode', 'addChildNode'], true)) {
+            $id = $request->request->getInt('id');
             if (!$id) {
                 $returnValue['result'] = 'failure';
                 $returnValue['message'] = $this->__('Error: invalid node.');
@@ -813,7 +811,7 @@ class AjaxController {
             if (!$success) {
                 $returnValue['result'] = 'failure';
             }
-        } catch (\Exception $exception) {
+        } catch (Exception $exception) {
             $returnValue['result'] = 'failure';
             $returnValue['message'] = $this->__f('Sorry, but an error occured during the %action% action. Please apply the changes again!', ['%action%' => $action]) . '  ' . $exception->getMessage();
 
@@ -822,7 +820,7 @@ class AjaxController {
     '''
 
     def private treeOperationAddChildNode(Application it) '''
-        $parentId = $request->request->getInt('pid', 0);
+        $parentId = $request->request->getInt('pid');
         if (!$parentId) {
             $returnValue['result'] = 'failure';
             $returnValue['message'] = $this->__('Error: invalid parent node.');
@@ -862,9 +860,9 @@ class AjaxController {
                 $returnValue['result'] = 'failure';
             } else {
                 «IF hasEditActions && !getAllEntities.filter[tree != EntityTreeType.NONE && hasEditAction].empty»
-                    if (in_array($objectType, ['«getAllEntities.filter[tree != EntityTreeType.NONE && hasEditAction].map[name.formatForCode].join('\', \'')»'])) {
+                    if (in_array($objectType, ['«getAllEntities.filter[tree != EntityTreeType.NONE && hasEditAction].map[name.formatForCode].join('\', \'')»'], true)) {
                         «IF !getAllEntities.filter[tree != EntityTreeType.NONE && hasEditAction && hasSluggableFields && slugUnique].empty»
-                            $needsArg = in_array($objectType, ['«getAllEntities.filter[tree != EntityTreeType.NONE && hasEditAction && hasSluggableFields && slugUnique].map[name.formatForCode].join('\', \'')»']);
+                            $needsArg = in_array($objectType, ['«getAllEntities.filter[tree != EntityTreeType.NONE && hasEditAction && hasSluggableFields && slugUnique].map[name.formatForCode].join('\', \'')»'], true);
                             $urlArgs = $needsArg ? $childEntity->createUrlArgs(true) : $childEntity->createUrlArgs();
                         «ELSE»
                             $urlArgs = $childEntity->createUrlArgs();
@@ -873,7 +871,7 @@ class AjaxController {
                     }
                 «ENDIF»
             }
-        } catch (\Exception $exception) {
+        } catch (Exception $exception) {
             $returnValue['result'] = 'failure';
             $returnValue['message'] = $this->__f('Sorry, but an error occured during the %action% action. Please apply the changes again!', ['%action%' => $action]) . '  ' . $exception->getMessage();
 
@@ -902,7 +900,7 @@ class AjaxController {
             if (!$success) {
                 $returnValue['result'] = 'failure';
             }
-        } catch (\Exception $exception) {
+        } catch (Exception $exception) {
             $returnValue['result'] = 'failure';
             $returnValue['message'] = $this->__f('Sorry, but an error occured during the %action% action. Please apply the changes again!', ['%action%' => $action]) . '  ' . $exception->getMessage();
 
@@ -914,8 +912,8 @@ class AjaxController {
     '''
 
     def private treeOperationMoveNode(Application it) '''
-        $moveDirection = $request->request->getAlpha('direction', '');
-        if (!in_array($moveDirection, ['top', 'up', 'down', 'bottom'])) {
+        $moveDirection = $request->request->getAlpha('direction');
+        if (!in_array($moveDirection, ['top', 'up', 'down', 'bottom'], true)) {
             $returnValue['result'] = 'failure';
             $returnValue['message'] = $this->__('Error: invalid direction.');
 
@@ -930,28 +928,28 @@ class AjaxController {
             return «IF targets('2.0')»$this->json«ELSE»new JsonResponse«ENDIF»($returnValue);
         }
 
-        if ($moveDirection == 'top') {
+        if ('top' === $moveDirection) {
             $repository->moveUp($entity, true);
-        } elseif ($moveDirection == 'up') {
+        } elseif ('up' === $moveDirection) {
             $repository->moveUp($entity, 1);
-        } elseif ($moveDirection == 'down') {
+        } elseif ('down' === $moveDirection) {
             $repository->moveDown($entity, 1);
-        } elseif ($moveDirection == 'bottom') {
+        } elseif ('bottom' === $moveDirection) {
             $repository->moveDown($entity, true);
         }
         $entityManager->flush();
     '''
 
     def private treeOperationMoveNodeTo(Application it) '''
-        $moveDirection = $request->request->getAlpha('direction', '');
-        if (!in_array($moveDirection, ['after', 'before', 'bottom'])) {
+        $moveDirection = $request->request->getAlpha('direction');
+        if (!in_array($moveDirection, ['after', 'before', 'bottom'], true)) {
             $returnValue['result'] = 'failure';
             $returnValue['message'] = $this->__('Error: invalid direction.');
 
             return «IF targets('2.0')»$this->json«ELSE»new JsonResponse«ENDIF»($returnValue);
         }
 
-        $destId = $request->request->getInt('destid', 0);
+        $destId = $request->request->getInt('destid');
         if (!$destId) {
             $returnValue['result'] = 'failure';
             $returnValue['message'] = $this->__('Error: invalid destination node.');
@@ -968,11 +966,11 @@ class AjaxController {
             return «IF targets('2.0')»$this->json«ELSE»new JsonResponse«ENDIF»($returnValue);
         }
 
-        if ($moveDirection == 'after') {
+        if ('after' === $moveDirection) {
             $repository->persistAsNextSiblingOf($entity, $destEntity);
-        } elseif ($moveDirection == 'before') {
+        } elseif ('before' === $moveDirection) {
             $repository->persistAsPrevSiblingOf($entity, $destEntity);
-        } elseif ($moveDirection == 'bottom') {
+        } elseif ('bottom' === $moveDirection) {
             $repository->persistAsLastChildOf($entity, $destEntity);
         }
 
@@ -991,13 +989,12 @@ class AjaxController {
          «IF isBase»
          * Updates the sort positions for a given list of entities.
          *
+         «IF !targets('3.0')»
          * @param Request $request
-         «IF targets('3.0')»
-         * @param EntityFactory $entityFactory
-         «ENDIF»
          *
          * @return JsonResponse
          *
+         «ENDIF»
          * @throws AccessDeniedException Thrown if the user doesn't have required permissions
          «ELSE»
          * @inheritDoc
@@ -1011,7 +1008,7 @@ class AjaxController {
             public function updateSortPositionsAction(
                 Request $request,
                 EntityFactory $entityFactory
-            )
+            ): JsonResponse
         «ELSE»
             public function updateSortPositionsAction(
                 Request $request
@@ -1030,10 +1027,10 @@ class AjaxController {
 
         $objectType = $request->request->getAlnum('ot', '«getLeadingEntity.name.formatForCode»');
         $itemIds = $request->request->get('identifiers', []);
-        $min = $request->request->getInt('min', 0);
-        $max = $request->request->getInt('max', 0);
+        $min = $request->request->getInt('min');
+        $max = $request->request->getInt('max');
 
-        if (!is_array($itemIds) || count($itemIds) < 2 || $max < 1 || $max <= $min) {
+        if (!is_array($itemIds) || 2 > count($itemIds) || 1 > $max || $max <= $min) {
             return «IF targets('2.0')»$this->json«ELSE»new JsonResponse«ENDIF»($this->__('Error: invalid input.'), JsonResponse::HTTP_BAD_REQUEST);
         }
 
@@ -1088,13 +1085,12 @@ class AjaxController {
          «IF isBase»
          * Attachs a given hook assignment by creating the corresponding assignment data record.
          *
+         «IF !targets('3.0')»
          * @param Request $request
-         «IF targets('3.0')»
-         * @param EntityFactory $entityFactory
-         «ENDIF»
          *
          * @return JsonResponse
          *
+         «ENDIF»
          * @throws AccessDeniedException Thrown if the user doesn't have required permissions
          «ELSE»
          * @inheritDoc
@@ -1108,13 +1104,12 @@ class AjaxController {
          «IF isBase»
          * Detachs a given hook assignment by removing the corresponding assignment data record.
          *
+         «IF !targets('3.0')»
          * @param Request $request
-         «IF targets('3.0')»
-         * @param EntityFactory $entityFactory
-         «ENDIF»
          *
          * @return JsonResponse
          *
+         «ENDIF»
          * @throws AccessDeniedException Thrown if the user doesn't have required permissions
          «ELSE»
          * @inheritDoc
@@ -1128,7 +1123,7 @@ class AjaxController {
             public function attachHookObjectAction(
                 Request $request,
                 EntityRepository $entityRepository
-            )
+            ): JsonResponse
         «ELSE»
             public function attachHookObjectAction(
                 Request $request
@@ -1141,7 +1136,7 @@ class AjaxController {
             public function detachHookObjectAction(
                 Request $request,
                 EntityRepository $entityRepository
-            )
+            )_ JsonResponse
         «ELSE»
             public function detachHookObjectAction(
                 Request $request
@@ -1158,12 +1153,12 @@ class AjaxController {
             throw new AccessDeniedException();
         }
 
-        $subscriberOwner = $request->request->get('owner', '');
-        $subscriberAreaId = $request->request->get('areaId', '');
-        $subscriberObjectId = $request->request->getInt('objectId', 0);
-        $subscriberUrl = $request->request->get('url', '');
-        $assignedEntity = $request->request->get('assignedEntity', '');
-        $assignedId = $request->request->getInt('assignedId', 0);
+        $subscriberOwner = $request->request->get('owner');
+        $subscriberAreaId = $request->request->get('areaId');
+        $subscriberObjectId = $request->request->getInt('objectId');
+        $subscriberUrl = $request->request->get('url');
+        $assignedEntity = $request->request->get('assignedEntity');
+        $assignedId = $request->request->getInt('assignedId');
 
         if (!$subscriberOwner || !$subscriberAreaId || !$subscriberObjectId || !$assignedEntity || !$assignedId) {
             return «IF targets('2.0')»$this->json«ELSE»new JsonResponse«ENDIF»($this->__('Error: invalid input.'), JsonResponse::HTTP_BAD_REQUEST);
@@ -1178,7 +1173,7 @@ class AjaxController {
         $assignment->setSubscriberUrl($subscriberUrl);
         $assignment->setAssignedEntity($assignedEntity);
         $assignment->setAssignedId($assignedId);
-        $assignment->setUpdatedDate(new \DateTime());
+        $assignment->setUpdatedDate(new DateTime());
 
         $entityManager = «IF targets('3.0')»$entityFactory«ELSE»$this->get('«appService».entity_factory')«ENDIF»->getEntityManager();
         $entityManager->persist($assignment);
@@ -1350,9 +1345,6 @@ class AjaxController {
         use Symfony\Component\HttpFoundation\JsonResponse;
         use Symfony\Component\HttpFoundation\Request;
         use Symfony\Component\Routing\Annotation\Route;
-        «IF needsDuplicateCheck || hasBooleansWithAjaxToggle || hasTrees || hasUiHooksProviders»
-            use Symfony\Component\Security\Core\Exception\AccessDeniedException;
-        «ENDIF»
         «commonSystemImports»
         use «appNamespace»\Controller\Base\AbstractAjaxController;
         «commonAppImports»

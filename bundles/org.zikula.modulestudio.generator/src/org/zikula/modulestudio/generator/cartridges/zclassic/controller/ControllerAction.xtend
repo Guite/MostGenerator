@@ -38,14 +38,14 @@ class ControllerAction {
             «action.actionDoc(it, isBase, isAdmin)»
             public function «action.methodName(isAdmin)»Action(
                 «methodArguments(it, action, false)»
-            ) {
+            )«IF app.targets('3.0')»: Response«ENDIF» {
                 return $this->«action.methodName(false)»Internal(«methodArgsCall(it, action, isAdmin)»);
             }
         «ELSEIF isBase && !isAdmin»
             «action.actionDoc(it, isBase, isAdmin)»
             protected function «action.methodName(false)»Internal(
                 «methodArguments(it, action, true)»
-            ) {
+            )«IF app.targets('3.0')»: Response«ENDIF» {
                 «actionsImpl.actionImpl(it, action)»
             }
         «ENDIF»
@@ -55,8 +55,6 @@ class ControllerAction {
         /**
          «IF isBase»
          * «actionDocMethodDescription(isAdmin)»
-         «ELSE»
-         * @inheritDoc
          «ENDIF»
         «IF isBase»«actionDocMethodDocumentation»
         «ELSE»
@@ -64,18 +62,13 @@ class ControllerAction {
         «ENDIF»
         «IF isBase»
          *
+        «IF !app.targets('3.0')»
          * @param Request $request
-         «IF app.targets('3.0')»
-         * @param PermissionHelper $permissionHelper
-         «IF !(it instanceof MainAction || it instanceof CustomAction)»
-         * @param ControllerHelper $controllerHelper
-         * @param ViewHelper $viewHelper
-         «ENDIF»
-         «ENDIF»
         «actionDocMethodParams(entity, it)»
          *
          * @return Response Output
          *
+         «ENDIF»
          * @throws AccessDeniedException Thrown if the user doesn't have required permissions
          «IF it instanceof DisplayAction»
          * @throws NotFoundHttpException Thrown if «entity.name.formatForDisplay» to be displayed isn't found
@@ -84,6 +77,9 @@ class ControllerAction {
          «ELSEIF it instanceof DeleteAction»
          * @throws NotFoundHttpException Thrown if «entity.name.formatForDisplay» to be deleted isn't found
          * @throws RuntimeException Thrown if another critical error occurs (e.g. workflow actions not available)
+         «ENDIF»
+         «IF it instanceof ViewAction || it instanceof EditAction»
+         * @throws Exception
          «ENDIF»
         «ENDIF»
          */
@@ -147,7 +143,7 @@ class ControllerAction {
                 if (refEntity.hasUniqueSlug) {
                     ' * @param string $slug Slug of treated ' + refEntity.name.formatForDisplay + ' instance\n'
                 } else {
-                    ' * @param integer $id Identifier of treated ' + refEntity.name.formatForDisplay + ' instance\n'
+                    ' * @param int $id Identifier of treated ' + refEntity.name.formatForDisplay + ' instance\n'
                 }
             EditAction:
                 if (app.targets('3.0')) {
@@ -166,7 +162,7 @@ class ControllerAction {
                 if (refEntity.hasUniqueSlug) {
                     ' * @param string $slug Slug of treated ' + refEntity.name.formatForDisplay + ' instance\n'
                 } else {
-                    ' * @param integer $id Identifier of treated ' + refEntity.name.formatForDisplay + ' instance\n'
+                    ' * @param int $id Identifier of treated ' + refEntity.name.formatForDisplay + ' instance\n'
                 }
             default: ''
         }
@@ -180,7 +176,7 @@ class ControllerAction {
         «IF application.targets('3.0')»
             Request $request,
             PermissionHelper $permissionHelper«IF internalMethod»,
-            $isAdmin = false«ENDIF»
+            bool $isAdmin = false«ENDIF»
         «ELSE»
             Request $request«IF internalMethod»,
             $isAdmin = false«ENDIF»
@@ -207,11 +203,11 @@ class ControllerAction {
             «IF loggable»
                 LoggableHelper $loggableHelper,
             «ENDIF»
-            $sort,
-            $sortdir,
-            $pos,
-            $num«IF internalMethod»,
-            $isAdmin = false«ENDIF»
+            string $sort,
+            string $sortdir,
+            int $pos,
+            int $num«IF internalMethod»,
+            bool $isAdmin = false«ENDIF»
         «ELSE»
             Request $request,
             $sort,
@@ -246,19 +242,21 @@ class ControllerAction {
             «IF app.generateIcsTemplates && hasStartAndEndDateField»
                 EntityDisplayHelper $entityDisplayHelper,
             «ENDIF»
-            $«IF hasUniqueSlug»slug«ELSE»id«ENDIF»«IF internalMethod»,
-            $isAdmin = false«ENDIF»
+            «name.formatForCodeCapital»Entity $«name.formatForCode» = null,
+            «IF hasUniqueSlug»string $slug = ''«ELSE»int $id = 0«ENDIF»«IF internalMethod»,
+            bool $isAdmin = false«ENDIF»
         «ELSE»
             Request $request,
-            $«IF hasUniqueSlug»slug«ELSE»id«ENDIF»«IF internalMethod»,
+            «name.formatForCodeCapital»Entity $«name.formatForCode» = null,
+            «IF hasUniqueSlug»string $slug = ''«ELSE»int $id = 0«ENDIF»«IF internalMethod»,
             $isAdmin = false«ENDIF»
         «ENDIF»
     '''
     def private dispatch methodArgsCall(Entity it, DisplayAction action, Boolean isAdmin) {
         if (application.targets('3.0')) {
-            '''$request, $permissionHelper, $controllerHelper, $viewHelper, $entityFactory, «IF categorisable»$categoryHelper, $featureActivationHelper, «ENDIF»«IF loggable»$loggableHelper, «ENDIF»«IF app.generateIcsTemplates && hasStartAndEndDateField» $entityDisplayHelper, «ENDIF»$«IF hasUniqueSlug»slug«ELSE»id«ENDIF», «isAdmin.displayBool»'''
+            '''$request, $permissionHelper, $controllerHelper, $viewHelper, $entityFactory, «IF categorisable»$categoryHelper, $featureActivationHelper, «ENDIF»«IF loggable»$loggableHelper, «ENDIF»«IF app.generateIcsTemplates && hasStartAndEndDateField» $entityDisplayHelper, «ENDIF»$«name.formatForCode», $«IF hasUniqueSlug»slug«ELSE»id«ENDIF», «isAdmin.displayBool»'''
         } else {
-            '''$request, $«IF hasUniqueSlug»slug«ELSE»id«ENDIF», «isAdmin.displayBool»'''
+            '''$request, $«name.formatForCode», $«IF hasUniqueSlug»slug«ELSE»id«ENDIF», «isAdmin.displayBool»'''
         }
     }
 
@@ -269,7 +267,7 @@ class ControllerAction {
             ControllerHelper $controllerHelper,
             ViewHelper $viewHelper,
             EditHandler $formHandler«IF internalMethod»,
-            $isAdmin = false«ENDIF»
+            bool $isAdmin = false«ENDIF»
         «ELSE»
             Request $request«IF internalMethod»,
             $isAdmin = false«ENDIF»
@@ -295,8 +293,8 @@ class ControllerAction {
             «IF !skipHookSubscribers»
                 HookHelper $hookHelper,
             «ENDIF»
-            $«IF hasUniqueSlug»slug«ELSE»id«ENDIF»«IF internalMethod»,
-            $isAdmin = false«ENDIF»
+            «IF hasUniqueSlug»string $slug«ELSE»int $id«ENDIF»«IF internalMethod»,
+            bool $isAdmin = false«ENDIF»
         «ELSE»
             Request $request,
             $«IF hasUniqueSlug»slug«ELSE»id«ENDIF»«IF internalMethod»,

@@ -10,9 +10,6 @@ import org.zikula.modulestudio.generator.application.MostInMemoryFileSystemAcces
  */
 class Utils {
 
-    /**
-     * Extensions used for formatting element names.
-     */
     extension FormattingExtensions = new FormattingExtensions
 
     /**

@@ -28,12 +28,14 @@ class ArchiveHelper {
         namespace «appNamespace»\Helper\Base;
 
         use Doctrine\DBAL\Exception\TableNotFoundException;
+        use Exception;
         use Psr\Log\LoggerInterface;
         use Symfony\Component\HttpFoundation\RequestStack;
         «IF hasHookSubscribers»
             use Zikula\Bundle\HookBundle\Category\UiHooksCategory;
         «ENDIF»
         use Zikula\Common\Translator\TranslatorInterface;
+        use Zikula\Core\Doctrine\EntityAccess;
         use Zikula\Core\RouteUrl;
         use «appNamespace»\Entity\Factory\EntityFactory;
         «IF hasHookSubscribers»
@@ -89,19 +91,6 @@ class ArchiveHelper {
             protected $hookHelper;
         «ENDIF»
 
-        /**
-         * ArchiveHelper constructor.
-         *
-         * @param TranslatorInterface $translator
-         * @param RequestStack $requestStack
-         * @param LoggerInterface $logger
-         * @param EntityFactory $entityFactory
-         * @param PermissionHelper $permissionHelper
-         * @param WorkflowHelper $workflowHelper
-         «IF hasHookSubscribers»
-         * @param HookHelper $hookHelper
-         «ENDIF»
-         */
         public function __construct(
             TranslatorInterface $translator,
             RequestStack $requestStack,
@@ -124,12 +113,14 @@ class ArchiveHelper {
 
         /**
          * Moves obsolete data into the archive.
+         «IF !targets('3.0')»
          *
-         * @param integer $probabilityPercent Execution probability
+         * @param int $probabilityPercent Execution probability
+         «ENDIF»
          */
-        public function archiveObsoleteObjects($probabilityPercent = 75)
+        public function archiveObsoleteObjects(«IF targets('3.0')»int «ENDIF»$probabilityPercent = 75)«IF targets('3.0')»: void«ENDIF»
         {
-            $randProbability = mt_rand(1, 100);
+            $randProbability = «IF targets('3.0')»random_int«ELSE»mt_rand«ENDIF»(1, 100);
             if ($randProbability < $probabilityPercent) {
                 return;
             }
@@ -161,7 +152,7 @@ class ArchiveHelper {
          *
          * @throws RuntimeException Thrown if workflow action execution fails
          */
-        protected function archive«nameMultiple.formatForCodeCapital»()
+        protected function archive«nameMultiple.formatForCodeCapital»()«IF application.targets('3.0')»: void«ENDIF»
         {
             «val endField = getEndDateField»
             «IF endField.isDateTimeField»
@@ -181,13 +172,15 @@ class ArchiveHelper {
         /**
          * Returns the list of entities which should be archived.
          *
+         «IF !targets('3.0')»
          * @param string $objectType Name of treated entity type
-         * @param string $endField   Name of field storing the end date
-         * @param mixed  $endDate    Datetime or date string for the threshold date
+         * @param string $endField Name of field storing the end date
+         «ENDIF»
+         * @param mixed $endDate Datetime or date string for the threshold date
          *
          * @return array List of affected entities
          */
-        protected function getObjectsToBeArchived($objectType = '', $endField = '', $endDate = '')
+        protected function getObjectsToBeArchived(«IF targets('3.0')»string «ENDIF»$objectType = '', «IF targets('3.0')»string «ENDIF»$endField = '', $endDate = '')
         {
             $repository = $this->entityFactory->getRepository($objectType);
             $qb = $repository->genericBaseQuery('', '', false);
@@ -212,19 +205,21 @@ class ArchiveHelper {
 
         /**
          * Archives a single entity.
+         «IF !targets('3.0')»
          *
-         * @param object $entity The given entity instance
+         * @param EntityAccess $entity The given entity instance
          *
-         * @return boolean True if everything worked successfully, false otherwise
+         * @return bool True if everything worked successfully, false otherwise
+         «ENDIF»
          */
-        protected function archiveSingleObject($entity)
+        protected function archiveSingleObject(«IF targets('3.0')»EntityAccess «ENDIF»$entity)«IF targets('3.0')»: bool«ENDIF»
         {
             $request = $this->requestStack->getCurrentRequest();
             «IF hasHookSubscribers»
                 if ($entity->supportsHookSubscribers()) {
                     // Let any hooks perform additional validation actions
                     $validationErrors = $this->hookHelper->callValidationHooks($entity, UiHooksCategory::TYPE_VALIDATE_EDIT);
-                    if (count($validationErrors) > 0) {
+                    if (0 < count($validationErrors)) {
                         if (null !== $request) {
                             $flashBag = $request->getSession()->getFlashBag();
                             foreach ($validationErrors as $message) {
@@ -241,7 +236,7 @@ class ArchiveHelper {
             try {
                 // execute the workflow action
                 $success = $this->workflowHelper->executeAction($entity, 'archive');
-            } catch (\Exception $exception) {
+            } catch (Exception $exception) {
                 if (null !== $request) {
                     $flashBag = $request->getSession()->getFlashBag();
                     $flashBag->add('error', $this->translator->__f('Sorry, but an error occured during the %action% action. Please apply the changes again!', ['%action%' => $action]) . '  ' . $exception->getMessage());
@@ -269,6 +264,8 @@ class ArchiveHelper {
                     $this->hookHelper->callProcessHooks($entity, UiHooksCategory::TYPE_PROCESS_EDIT, $url);
                 }
             «ENDIF»
+
+            return $success;
         }
     '''
 

@@ -16,16 +16,17 @@ class TreeSelection {
     def private treeSelectionImpl(Application it) '''
         /**
          * The «appName.formatForDB»_treeSelection function retrieves tree entities based on a given one.
+         «IF !targets('3.0')»
          *
-         * Available parameters:
-         *   - objectType:   Name of treated object type.
-         *   - node:         Given entity as tree entry point.
-         *   - target:       One of 'allParents', 'directParent', 'allChildren', 'directChildren', 'predecessors', 'successors', 'preandsuccessors'
-         *   - skipRootNode: Whether root nodes are skipped or not (defaults to true). Useful for when working with many trees at once.
+         * @param string $objectType Name of treated object type
+         * @param EntityAccess $node Given entity as tree entry point
+         * @param string $target One of 'allParents', 'directParent', 'allChildren', 'directChildren', 'predecessors', 'successors', 'preandsuccessors'
+         * @param bool $skipRootNode Whether root nodes are skipped or not (defaults to true). Useful for when working with many trees at once
          *
-         * @return string The output of the plugin
+         * @return array The output of the plugin
+         «ENDIF»
          */
-        public function getTreeSelection($objectType, $node, $target, $skipRootNode = true)
+        public function getTreeSelection«IF targets('3.0')»(string $objectType, EntityAccess $node, string $target, bool $skipRootNode = true): array«ELSE»($objectType, $node, $target, $skipRootNode = true)«ENDIF»
         {
             $repository = $this->entityFactory->getRepository($objectType);
             $titleFieldName = $this->entityDisplayHelper->getTitleFieldName($objectType);
@@ -36,24 +37,24 @@ class TreeSelection {
                 case 'allParents':
                 case 'directParent':
                     $path = $repository->getPath($node);
-                    if (count($path) > 0) {
+                    if (0 < count($path)) {
                         // remove $node
                         unset($path[count($path)-1]);
                     }
-                    if ($skipRootNode && count($path) > 0) {
+                    if ($skipRootNode && 0 < count($path)) {
                         // remove root level
                         array_shift($path);
                     }
-                    if ($target == 'allParents') {
+                    if ('allParents' === $target) {
                         $result = $path;
-                    } elseif ($target == 'directParent' && count($path) > 0) {
-                        $result = $path[count($path)-1];
+                    } elseif ('directParent' === $target && 0 < count($path)) {
+                        $result = $path[count($path) - 1];
                     }
                     break;
                 case 'allChildren':
                 case 'directChildren':
-                    $direct = $target == 'directChildren';
-                    $sortByField = $titleFieldName != '' ? $titleFieldName : null;
+                    $direct = 'directChildren' === $target;
+                    $sortByField = '' !== $titleFieldName ? $titleFieldName : null;
                     $sortDirection = 'ASC';
                     $result = $repository->children($node, $direct, $sortByField, $sortDirection);
                     break;

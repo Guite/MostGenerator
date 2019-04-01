@@ -44,7 +44,9 @@ class Actions {
 
     def actionImpl(Entity it, Action action) '''
         «IF action instanceof DisplayAction || action instanceof DeleteAction»
-            $«name.formatForCode» = «IF app.targets('3.0')»$entityFactory«ELSE»$this->get('«application.appService».entity_factory')«ENDIF»->getRepository('«name.formatForCode»')->«IF hasSluggableFields && slugUnique»selectBySlug($slug)«ELSE»selectById($id)«ENDIF»;
+            if (null === $«name.formatForCode») {
+                $«name.formatForCode» = «IF app.targets('3.0')»$entityFactory«ELSE»$this->get('«application.appService».entity_factory')«ENDIF»->getRepository('«name.formatForCode»')->«IF hasSluggableFields && slugUnique»selectBySlug($slug)«ELSE»selectById($id)«ENDIF»;
+            }
             if (null === $«name.formatForCode») {
                 throw new NotFoundHttpException($this->__('No such «name.formatForDisplay» found.'));
             }
@@ -54,12 +56,12 @@ class Actions {
         // permission check
         $permLevel = $isAdmin ? ACCESS_ADMIN : «getPermissionAccessLevel(action)»;
         «IF action instanceof ViewAction && tree != EntityTreeType.NONE»
-            if (!$isAdmin && 'tree' == $request->query->getAlnum('tpl', '')) {
+            if (!$isAdmin && 'tree' === $request->query->getAlnum('tpl')) {
                 $permLevel = ACCESS_EDIT;
             }
         «ELSEIF action instanceof DisplayAction && loggable»
             $route = $request->attributes->get('_route', '');
-            if (!$isAdmin && '«application.appName.formatForDB»_«name.formatForDB»_displaydeleted' == $route) {
+            if (!$isAdmin && '«application.appName.formatForDB»_«name.formatForDB»_displaydeleted' === $route) {
                 $permLevel = ACCESS_EDIT;
             }
         «ENDIF»
@@ -76,7 +78,7 @@ class Actions {
                         $currentUserApi = $this->get('zikula_users_module.current_user');
                     «ENDIF»
                     $currentUserId = $currentUserApi->isLoggedIn() ? $currentUserApi->get('uid') : UsersConstant::USER_ID_ANONYMOUS;
-                    $isOwner = $currentUserId > 0 && null !== $«name.formatForCode»->getCreatedBy() && $currentUserId == $«name.formatForCode»->getCreatedBy()->getUid();
+                    $isOwner = $currentUserId > 0 && null !== $«name.formatForCode»->getCreatedBy() && $currentUserId === $«name.formatForCode»->getCreatedBy()->getUid();
                     if (!$isOwner || !$permissionHelper->mayEdit($«name.formatForCode»)) {
                         throw new AccessDeniedException();
                     }
@@ -132,8 +134,8 @@ class Actions {
         «IF loggable»
 
             // check if deleted entities should be displayed
-            $viewDeleted = $request->query->getInt('deleted', 0);
-            if ($viewDeleted == 1 && $permissionHelper->hasComponentPermission('«name.formatForCode»', ACCESS_EDIT)) {
+            $viewDeleted = $request->query->getInt('deleted');
+            if (1 === $viewDeleted && $permissionHelper->hasComponentPermission('«name.formatForCode»', ACCESS_EDIT)) {
                 $templateParameters['deletedEntities'] = «IF app.targets('3.0')»$loggableHelper«ELSE»$this->get('«application.appService».loggable_helper')«ENDIF»->getDeletedEntities($objectType);
 
                 return $viewHelper->processTemplate($objectType, 'viewDeleted', $templateParameters);
@@ -144,10 +146,12 @@ class Actions {
         $request->query->set('sortdir', $sortdir);
         $request->query->set('pos', $pos);
 
-        $sortableColumns = new SortableColumns($this->get('router'), '«app.appName.formatForDB»_«name.toLowerCase»_' . ($isAdmin ? 'admin' : '') . 'view', 'sort', 'sortdir');
+        /** @var RouterInterface $router */
+        $router = $this->get('router');
+        $sortableColumns = new SortableColumns($router, '«app.appName.formatForDB»_«name.toLowerCase»_' . ($isAdmin ? 'admin' : '') . 'view', 'sort', 'sortdir');
         «IF tree != EntityTreeType.NONE»
 
-            if ('tree' == $request->query->getAlnum('tpl', '')) {
+            if ('tree' === $request->query->getAlnum('tpl')) {
                 $templateParameters = $controllerHelper->processViewActionParameters($objectType, $sortableColumns, $templateParameters«IF app.hasHookSubscribers», «(!skipHookSubscribers).displayBool»«ENDIF»);
 
                 // fetch and return the appropriate template
@@ -265,7 +269,7 @@ class Actions {
 
     def private dispatch actionImplBody(Entity it, DisplayAction action) '''
         «IF workflow != EntityWorkflowType.NONE»
-            if ('approved' != $«name.formatForCode»->getWorkflowState() && !$permissionHelper->hasEntityPermission($«name.formatForCode», ACCESS_EDIT)) {
+            if ('approved' !== $«name.formatForCode»->getWorkflowState() && !$permissionHelper->hasEntityPermission($«name.formatForCode», ACCESS_EDIT)) {
                 throw new AccessDeniedException();
             }
 
@@ -289,9 +293,9 @@ class Actions {
 
         «ENDIF»
         «IF loggable»
-            $requestedVersion = $request->query->getInt('version', 0);
+            $requestedVersion = $request->query->getInt('version');
             $versionPermLevel = $isAdmin ? ACCESS_ADMIN : ACCESS_EDIT;
-            if ($requestedVersion > 0 && $permissionHelper->hasEntityPermission($«name.formatForCode», $versionPermLevel)) {
+            if (0 < $requestedVersion && $permissionHelper->hasEntityPermission($«name.formatForCode», $versionPermLevel)) {
                 // preview of a specific version is desired, but detach entity
                 $«name.formatForCode» = «IF app.targets('3.0')»$loggableHelper«ELSE»$this->get('«application.appService».loggable_helper')«ENDIF»->revert($«name.formatForCode», $requestedVersion, true);
             }
@@ -347,7 +351,7 @@ class Actions {
         $response = «IF app.targets('3.0')»$viewHelper«ELSE»$this->get('«app.appService».view_helper')«ENDIF»->processTemplate($objectType, 'display', $templateParameters);
         «IF app.generateIcsTemplates && hasStartAndEndDateField»
 
-            if ('ics' == $request->getRequestFormat()) {
+            if ('ics' === $request->getRequestFormat()) {
                 $fileName = $objectType . '_' .
                     (property_exists($«name.formatForCode», 'slug')
                         ? $«name.formatForCode»['slug']
@@ -398,7 +402,7 @@ class Actions {
         if (false === $actions || !is_array($actions)) {
             $this->addFlash('error', $this->__('Error! Could not determine workflow actions.'));
             $logger->error('{app}: User {user} tried to delete the {entity} with id {id}, but failed to determine available workflow actions.', $logArgs);
-            throw new \RuntimeException($this->__('Error! Could not determine workflow actions.'));
+            throw new RuntimeException($this->__('Error! Could not determine workflow actions.'));
         }
 
         // redirect to the «IF hasViewAction»list of «nameMultiple.formatForDisplay»«ELSE»index page«ENDIF»
@@ -472,7 +476,7 @@ class Actions {
             if ($«name.formatForCode»->supportsHookSubscribers()) {
                 // Let any ui hooks perform additional validation actions
                 $validationErrors = $hookHelper->callValidationHooks($«name.formatForCode», UiHooksCategory::TYPE_VALIDATE_DELETE);
-                if (count($validationErrors) > 0) {
+                if (0 < count($validationErrors)) {
                     foreach ($validationErrors as $message) {
                         $this->addFlash('error', $message);
                     }

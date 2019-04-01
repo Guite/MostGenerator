@@ -398,7 +398,6 @@ class Listeners {
                 use Symfony\Component\Filesystem\Filesystem;
                 use Symfony\Component\HttpFoundation\RequestStack;
             «ENDIF»
-            use Symfony\Component\HttpKernel\HttpKernelInterface;
             «IF needsApproval && generatePendingContentSupport»
                 use Zikula\Common\Collection\Collectible\PendingContentCollectible;
                 use Zikula\Common\Collection\Container;

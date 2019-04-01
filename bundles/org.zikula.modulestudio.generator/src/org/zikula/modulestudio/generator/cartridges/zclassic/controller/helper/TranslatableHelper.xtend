@@ -82,15 +82,6 @@ class TranslatableHelper {
             protected $loggableListener;
         «ENDIF»
 
-        /**
-         * TranslatableHelper constructor.
-         *
-         * @param TranslatorInterface $translator
-         * @param RequestStack $requestStack
-         * @param VariableApiInterface $variableApi
-         * @param LocaleApiInterface $localeApi
-         * @param EntityFactory $entityFactory
-         */
         public function __construct(
             TranslatorInterface $translator,
             RequestStack $requestStack,
@@ -132,12 +123,14 @@ class TranslatableHelper {
          * Return list of translatable fields per entity.
          * These are required to be determined to recognise
          * that they have to be selected from according translation tables.
+         «IF !targets('3.0')»
          *
          * @param string $objectType The currently treated object type
          *
-         * @return array List of translatable fields
+         * @return string[] List of translatable fields
+         «ENDIF»
          */
-        public function getTranslatableFields($objectType)
+        public function getTranslatableFields(«IF targets('3.0')»string «ENDIF»$objectType)«IF targets('3.0')»: array«ENDIF»
         {
             $fields = [];
             switch ($objectType) {
@@ -159,24 +152,30 @@ class TranslatableHelper {
     def private getCurrentLanguage(Application it) '''
         /**
          * Return the current language code.
+         «IF !targets('3.0')»
          *
          * @return string code of current language
+         «ENDIF»
          */
-        public function getCurrentLanguage()
+        public function getCurrentLanguage()«IF targets('3.0')»: string«ENDIF»
         {
-            return $this->requestStack->getCurrentRequest()->getLocale();
+            $request = $this->requestStack->getCurrentRequest();
+
+            return null !== $request ? $request->getLocale() : 'en';
         }
     '''
 
     def private getSupportedLanguages(Application it) '''
         /**
          * Return list of supported languages on the current system.
+         «IF !targets('3.0')»
          *
          * @param string $objectType The currently treated object type
          *
-         * @return array List of language codes
+         * @return string[] List of language codes
+         «ENDIF»
          */
-        public function getSupportedLanguages($objectType)
+        public function getSupportedLanguages(«IF targets('3.0')»string «ENDIF»$objectType)«IF targets('3.0')»: array«ENDIF»
         {
             if ($this->variableApi->getSystemVar('multilingual')) {
                 return $this->localeApi->getSupportedLocales();
@@ -190,12 +189,14 @@ class TranslatableHelper {
     def private getMandatoryFields(Application it) '''
         /**
          * Returns a list of mandatory fields for each supported language.
+         «IF !targets('3.0')»
          *
          * @param string $objectType The currently treated object type
          *
          * @return array List of mandatory fields for each language code
+         «ENDIF»
          */
-        public function getMandatoryFields($objectType)
+        public function getMandatoryFields(«IF targets('3.0')»string «ENDIF»$objectType)«IF targets('3.0')»: array«ENDIF»
         {
             $mandatoryFields = [];
             foreach ($this->getSupportedLanguages($objectType) as $language) {
@@ -210,16 +211,14 @@ class TranslatableHelper {
         /**
          * Collects translated fields for editing.
          *
-         * @param EntityAccess $entity The entity being edited
-         *
          * @return array Collected translations for each language code
          */
-        public function prepareEntityForEditing($entity)
+        public function prepareEntityForEditing(EntityAccess $entity)«IF targets('3.0')»: array«ENDIF»
         {
             $translations = [];
             $objectType = $entity->get_objectType();
 
-            if ($this->variableApi->getSystemVar('multilingual') != 1) {
+            if (!$this->variableApi->getSystemVar('multilingual')) {
                 return $translations;
             }
 
@@ -237,7 +236,7 @@ class TranslatableHelper {
             $supportedLanguages = $this->getSupportedLanguages($objectType);
             $currentLanguage = $this->getCurrentLanguage();
             foreach ($supportedLanguages as $language) {
-                if ($language == $currentLanguage) {
+                if ($language === $currentLanguage) {
                     foreach ($fields as $fieldName) {«/* fix for #980 */»
                         if (null === $entity[$fieldName]) {
                             $entity[$fieldName] = '';
@@ -248,10 +247,14 @@ class TranslatableHelper {
                 }
                 $translationData = [];
                 foreach ($fields as $fieldName) {
-                    $translationData[$fieldName] = isset($entityTranslations[$language][$fieldName]) ? $entityTranslations[$language][$fieldName] : '';
+                    «IF targets('3.0')»
+                        $translationData[$fieldName] = $entityTranslations[$language][$fieldName] ?? '';
+                    «ELSE»
+                        $translationData[$fieldName] = isset($entityTranslations[$language][$fieldName]) ? $entityTranslations[$language][$fieldName] : '';
+                    «ENDIF»
                 }
                 «IF !getAllEntities.filter[slugUnique && hasTranslatableSlug && needsSlugHandler].empty»
-                    if (in_array($objectType, ['«getAllEntities.filter[slugUnique && hasTranslatableSlug && needsSlugHandler].map[name.formatForCode].join('\', \'')»']) && isset($translationData['slug'])) {
+                    if (isset($translationData['slug']) && in_array($objectType, ['«getAllEntities.filter[slugUnique && hasTranslatableSlug && needsSlugHandler].map[name.formatForCode].join('\', \'')»'])) {
                         $slugParts = explode('/', $translationData['slug']);
                         $translationData['slug'] = end($slugParts);
                     }
@@ -267,11 +270,13 @@ class TranslatableHelper {
     def private processEntityAfterEditing(Application it) '''
         /**
          * Post-editing method persisting translated fields.
+         «IF !targets('3.0')»
          *
-         * @param EntityAccess  $entity The entity being edited
-         * @param FormInterface $form   Form containing translations
+         * @param EntityAccess $entity The entity being edited
+         * @param FormInterface $form Form containing translations
+         «ENDIF»
          */
-        public function processEntityAfterEditing($entity, FormInterface $form)
+        public function processEntityAfterEditing(EntityAccess $entity, FormInterface $form)«IF targets('3.0')»: void«ENDIF»
         {
             «IF needsDynamicLoggableEnablement»
                 $this->toggleLoggable(false);
@@ -292,7 +297,7 @@ class TranslatableHelper {
                 }
 
                 $entity->setLocale($language);
-                $entityManager->flush($entity);
+                $entityManager->flush();
             }
             «IF needsDynamicLoggableEnablement»
 
@@ -302,19 +307,22 @@ class TranslatableHelper {
 
         /**
          * Collects translated fields from given form for a specific language.
+         «IF !targets('3.0')»
          *
-         * @param FormInterface $form     Form containing translations
-         * @param string        $language The desired language
+         * @param FormInterface $form Form containing translations
+         * @param string $language The desired language
          *
          * @return array
+         «ENDIF»
          */
-        public function readTranslationInput(FormInterface $form, $language = 'en')
+        public function readTranslationInput(FormInterface $form, «IF targets('3.0')»string «ENDIF»$language = 'en')«IF targets('3.0')»: array«ENDIF»
         {
             $data = [];
-            if (!isset($form['translations' . $language])) {
+            $translationKey = 'translations' . $language;
+            if (!isset($form[$translationKey])) {
                 return $data;
             }
-            $translatedFields = $form['translations' . $language];
+            $translatedFields = $form[$translationKey];
             foreach ($translatedFields as $fieldName => $formField) {
                 $fieldData = $formField->getData();
                 if (!$fieldData && isset($form[$fieldName])) {
@@ -330,10 +338,12 @@ class TranslatableHelper {
             /**
              * Enables or disables the loggable listener to avoid log entries
              * for translation changes.
+             «IF !targets('3.0')»
              *
-             * @param boolean $enable True for enable, false for disable
+             * @param bool $enable True for enable, false for disable
+             «ENDIF»
              */
-            public function toggleLoggable($enable = true)
+            public function toggleLoggable(«IF targets('3.0')»bool «ENDIF»$enable = true)«IF targets('3.0')»: void«ENDIF»
             {
                 $eventManager = $this->entityFactory->getEntityManager()->getEventManager();
                 if (null === $this->loggableListener) {
@@ -363,12 +373,14 @@ class TranslatableHelper {
         /**
          * Sets values for translatable fields of given entity from it's stored
          * translation data.
+         «IF !targets('3.0')»
          *
          * @param EntityAccess $entity Currently treated entity instance
          *
          * @return EntityAccess The processed entity instance
+         «ENDIF»
          */
-        public function setEntityFieldsFromLogData($entity)
+        public function setEntityFieldsFromLogData(EntityAccess $entity)«IF targets('3.0')»: EntityAccess«ENDIF»
         {
             // check if this revision has translation data for current locale
             $translationData = $entity->getTranslationData();
@@ -398,10 +410,12 @@ class TranslatableHelper {
          * translation data.
          *
          * The logic of this method is similar to processEntityAfterEditing above.
+         «IF !targets('3.0')»
          *
          * @param EntityAccess $entity Currently treated entity instance
+         «ENDIF»
          */
-        public function refreshTranslationsFromLogData($entity)
+        public function refreshTranslationsFromLogData(EntityAccess $entity)«IF targets('3.0')»: void«ENDIF»
         {
             «IF needsDynamicLoggableEnablement»
                 $this->toggleLoggable(false);
@@ -442,7 +456,7 @@ class TranslatableHelper {
                 }
 
                 $entity->setLocale($language);
-                $entityManager->flush($entity);
+                $entityManager->flush();
             }
             «IF needsDynamicLoggableEnablement»
 

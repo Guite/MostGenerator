@@ -28,7 +28,9 @@ class WorkflowHelper {
     def private workflowFunctionsBaseImpl(Application it) '''
         namespace «appNamespace»\Helper\Base;
 
+        use Exception;
         use Psr\Log\LoggerInterface;
+        use RuntimeException;
         use Symfony\Component\Workflow\Registry;
         use Zikula\Common\Translator\TranslatorInterface;
         use Zikula\Core\Doctrine\EntityAccess;
@@ -82,19 +84,6 @@ class WorkflowHelper {
          */
         protected $permissionHelper;
 
-        /**
-         * WorkflowHelper constructor.
-         *
-         * @param TranslatorInterface $translator
-         * @param Registry $registry
-         * @param LoggerInterface $logger
-         * @param CurrentUserApiInterface $currentUserApi
-         * @param EntityFactory $entityFactory
-         * @param ListEntriesHelper $listEntriesHelper
-         * @param PermissionHelper $permissionHelper
-         *
-         * @return void
-         */
         public function __construct(
             TranslatorInterface $translator,
             Registry $registry,
@@ -131,10 +120,12 @@ class WorkflowHelper {
     def private getObjectStates(Application it) '''
        /**
         * This method returns a list of possible object states.
+        «IF !targets('3.0')»
         *
         * @return array List of collected state information
+        «ENDIF»
         */
-       public function getObjectStates()
+       public function getObjectStates()«IF targets('3.0')»: array«ENDIF»
        {
            $states = [];
            «val states = getRequiredStateList»
@@ -176,17 +167,19 @@ class WorkflowHelper {
     def private getStateInfo(Application it) '''
         /**
          * This method returns information about a certain state.
+         «IF !targets('3.0')»
          *
          * @param string $state The given state value
          *
          * @return array|null The corresponding state information
+         «ENDIF»
          */
-        public function getStateInfo($state = 'initial')
+        public function getStateInfo(«IF targets('3.0')»string «ENDIF»$state = 'initial')«IF targets('3.0')»: ?array«ENDIF»
         {
             $result = null;
             $stateList = $this->getObjectStates();
             foreach ($stateList as $singleState) {
-                if ($singleState['value'] != $state) {
+                if ($singleState['value'] !== $state) {
                     continue;
                 }
                 $result = $singleState;
@@ -200,12 +193,14 @@ class WorkflowHelper {
     def private getActionsForObject(Application it) '''
         /**
          * Retrieve the available actions for a given entity object.
+         «IF !targets('3.0')»
          *
          * @param EntityAccess $entity The given entity instance
          *
          * @return array List of available workflow actions
+         «ENDIF»
          */
-        public function getActionsForObject(EntityAccess $entity)
+        public function getActionsForObject(EntityAccess $entity)«IF targets('3.0')»: array«ENDIF»
         {
             $workflow = $this->workflowRegistry->get($entity);
             $wfActions = $workflow->getEnabledTransitions($entity);
@@ -226,13 +221,15 @@ class WorkflowHelper {
 
         /**
          * Returns a translatable title for a certain action.
+         «IF !targets('3.0')»
          *
          * @param string $currentState Current state of the entity
-         * @param string $actionId     Id of the treated action
+         * @param string $actionId Id of the treated action
          *
          * @return string The action title
+         «ENDIF»
          */
-        protected function getTitleForAction($currentState, $actionId)
+        protected function getTitleForAction(«IF targets('3.0')»string «ENDIF»$currentState, «IF targets('3.0')»string «ENDIF»$actionId)«IF targets('3.0')»: string«ENDIF»
         {
             $title = '';
             switch ($actionId) {
@@ -256,7 +253,7 @@ class WorkflowHelper {
                 «ENDIF»
                 «IF hasWorkflow(EntityWorkflowType::STANDARD) || hasWorkflow(EntityWorkflowType::ENTERPRISE)»
                     case 'approve':
-                        $title = $currentState == 'initial' ? $this->translator->__('Submit and approve') : $this->translator->__('Approve');
+                        $title = 'initial' === $currentState ? $this->translator->__('Submit and approve') : $this->translator->__('Approve');
                         break;
                 «ENDIF»
                 «IF hasWorkflowState('accepted')»
@@ -293,12 +290,12 @@ class WorkflowHelper {
                     break;
             }
 
-            if ($title == '') {
-                if («IF targets('2.0')»$actionId«ELSE»substr($actionId, 0, 6)«ENDIF» == 'update') {
+            if ('' === $title) {
+                if ('update' === «IF targets('2.0')»$actionId«ELSE»substr($actionId, 0, 6)«ENDIF») {
                     $title = $this->translator->__('Update');
-                } elseif («IF targets('2.0')»$actionId«ELSE»substr($actionId, 0, 5)«ENDIF» == 'trash') {
+                } elseif ('trash' === «IF targets('2.0')»$actionId«ELSE»substr($actionId, 0, 5)«ENDIF») {
                     $title = $this->translator->__('Trash');
-                } elseif («IF targets('2.0')»$actionId«ELSE»substr($actionId, 0, 7)«ENDIF» == 'recover') {
+                } elseif ('recover' === «IF targets('2.0')»$actionId«ELSE»substr($actionId, 0, 7)«ENDIF») {
                     $title = $this->translator->__('Recover');
                 }
             }
@@ -308,12 +305,14 @@ class WorkflowHelper {
 
         /**
          * Returns a button class for a certain action.
+         «IF !targets('3.0')»
          *
          * @param string $actionId Id of the treated action
          *
          * @return string The button class
+         «ENDIF»
          */
-        protected function getButtonClassForAction($actionId)
+        protected function getButtonClassForAction(«IF targets('3.0')»string «ENDIF»$actionId)«IF targets('3.0')»: string«ENDIF»
         {
             $buttonClass = '';
             switch ($actionId) {
@@ -374,7 +373,7 @@ class WorkflowHelper {
                     break;
             }
 
-            if ($buttonClass == '' && «IF targets('2.0')»$actionId«ELSE»substr($actionId, 0, 6)«ENDIF» == 'update') {
+            if ('' === $buttonClass && 'update' === «IF targets('2.0')»$actionId«ELSE»substr($actionId, 0, 6)«ENDIF») {
                 $buttonClass = 'success';
             }
 
@@ -389,14 +388,16 @@ class WorkflowHelper {
     def private executeAction(Application it) '''
         /**
          * Executes a certain workflow action for a given entity object.
+         «IF !targets('3.0')»
          *
-         * @param EntityAccess $entity    The given entity instance
-         * @param string       $actionId  Name of action to be executed
-         * @param boolean      $recursive True if the function called itself
+         * @param EntityAccess $entity The given entity instance
+         * @param string $actionId  Name of action to be executed
+         * @param bool $recursive True if the function called itself
          *
-         * @return boolean Whether everything worked well or not
+         * @return bool Whether everything worked well or not
+         «ENDIF»
          */
-        public function executeAction(EntityAccess $entity, $actionId = '', $recursive = false)
+        public function executeAction(EntityAccess $entity, «IF targets('3.0')»string «ENDIF»$actionId = '', «IF targets('3.0')»bool «ENDIF»$recursive = false)«IF targets('3.0')»: bool«ENDIF»
         {
             $workflow = $this->workflowRegistry->get($entity);
             if (!$workflow->can($entity, $actionId)) {
@@ -411,9 +412,9 @@ class WorkflowHelper {
                 $objectType = $entity->get_objectType();
                 $isLoggable = in_array($objectType, ['«getLoggableEntities.map[name.formatForCode].join('\', \'')»']);
                 if ($isLoggable && !$entity->get_actionDescriptionForLogEntry()) {
-                    if ('delete' == $actionId) {
+                    if ('delete' === $actionId) {
                         $entity->set_actionDescriptionForLogEntry('_HISTORY_' . strtoupper($objectType) . '_DELETED');
-                    } elseif ('submit' == $actionId) {
+                    } elseif ('submit' === $actionId) {
                         $entity->set_actionDescriptionForLogEntry('_HISTORY_' . strtoupper($objectType) . '_CREATED');
                     } else {
                         $entity->set_actionDescriptionForLogEntry('_HISTORY_' . strtoupper($objectType) . '_UPDATED');
@@ -426,7 +427,7 @@ class WorkflowHelper {
             }
 
             try {
-                if ('delete' == $actionId) {
+                if ('delete' === $actionId) {
                     $entityManager->remove($entity);
                 } else {
                     $entityManager->persist($entity);
@@ -436,40 +437,42 @@ class WorkflowHelper {
                 $entityManager->flush();
 
                 $result = true;
-                if ('delete' == $actionId) {
+                if ('delete' === $actionId) {
                     $this->logger->notice('{app}: User {user} deleted an entity.', $logArgs);
                 } else {
                     $this->logger->notice('{app}: User {user} updated an entity.', $logArgs);
                 }
-            } catch (\Exception $exception) {
-                if ('delete' == $actionId) {
+            } catch (Exception $exception) {
+                if ('delete' === $actionId) {
                     $this->logger->error('{app}: User {user} tried to delete an entity, but failed.', $logArgs);
                 } else {
                     $this->logger->error('{app}: User {user} tried to update an entity, but failed.', $logArgs);
                 }
-                throw new \RuntimeException($exception->getMessage());
+                throw new RuntimeException($exception->getMessage());
             }
 
             if (false !== $result && !$recursive) {
                 $entities = $entity->getRelatedObjectsToPersist();
                 foreach ($entities as $rel) {
-                    if ($rel->getWorkflowState() == 'initial') {
+                    if ('initial' === $rel->getWorkflowState()) {
                         $this->executeAction($rel, $actionId, true);
                     }
                 }
             }
 
-            return (false !== $result);
+            return false !== $result;
         }
     '''
 
     def private collectAmountOfModerationItems(Application it) '''
         /**
          * Collects amount of moderation items foreach object type.
+         «IF !targets('3.0')»
          *
          * @return array List of collected amounts
+         «ENDIF»
          */
-        public function collectAmountOfModerationItems()
+        public function collectAmountOfModerationItems()«IF targets('3.0')»: array«ENDIF»
         {
             $amounts = [];
 
@@ -506,7 +509,7 @@ class WorkflowHelper {
         «val permissionLevel = if (requiredAction == 'approval') 'ADD' else if (requiredAction == 'acceptance') 'EDIT' else 'MODERATE'»
         if ($this->permissionHelper->hasComponentPermission($objectType, ACCESS_«permissionLevel»)) {
             $amount = $this->getAmountOfModerationItems($objectType, $state);
-            if ($amount > 0) {
+            if (0 < $amount) {
                 $amounts[] = [
                     'aggregateType' => '«nameMultiple.formatForCode»«requiredAction.toFirstUpper»',
                     'description' => $this->translator->__('«nameMultiple.formatForCodeCapital» pending «requiredAction»'),
@@ -525,13 +528,15 @@ class WorkflowHelper {
         /**
          * Retrieves the amount of moderation items for a given object type
          * and a certain workflow state.
+         «IF !targets('3.0')»
          *
          * @param string $objectType Name of treated object type
          * @param string $state The given state value
          *
-         * @return integer The affected amount of objects
+         * @return int The affected amount of objects
+         «ENDIF»
          */
-        public function getAmountOfModerationItems($objectType, $state)
+        public function getAmountOfModerationItems(«IF targets('3.0')»string «ENDIF»$objectType = '', «IF targets('3.0')»string «ENDIF»$state = '')«IF targets('3.0')»: int«ENDIF»
         {
             $repository = $this->entityFactory->getRepository($objectType);
 

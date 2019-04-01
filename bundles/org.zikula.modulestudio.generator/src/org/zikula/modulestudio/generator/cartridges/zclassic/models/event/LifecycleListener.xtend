@@ -47,15 +47,13 @@ class LifecycleListener {
         use Zikula\Core\Doctrine\EntityAccess;
         «IF targets('3.0') && hasLoggable»
             use Zikula\ExtensionsModule\Api\VariableApi;
+        «ENDIF»
+        «IF targets('3.0')»
             use Zikula\UsersModule\Api\CurrentUserApi;
         «ENDIF»
-        use «appNamespace»\«name.formatForCodeCapital»Events;
         «IF targets('3.0') && hasLoggable»
             use «appNamespace»\Entity\Factory\EntityFactory;
         «ENDIF»
-        «FOR entity : getAllEntities»
-            use «appNamespace»\Event\Filter«entity.name.formatForCodeCapital»Event;
-        «ENDFOR»
         «IF targets('3.0') && !getUploadEntities.empty»
             use «appNamespace»\Helper\UploadHelper;
         «ENDIF»
@@ -80,13 +78,6 @@ class LifecycleListener {
              */
             protected $logger;
 
-            /**
-             * EntityLifecycleListener constructor.
-             *
-             * @param ContainerInterface $container
-             * @param EventDispatcherInterface $eventDispatcher
-             * @param LoggerInterface $logger
-             */
             public function __construct(
                 ContainerInterface $container,
                 EventDispatcherInterface $eventDispatcher,
@@ -122,10 +113,8 @@ class LifecycleListener {
              * The preFlush event is called at EntityManager#flush() before anything else.
              *
              * @see https://www.doctrine-project.org/projects/doctrine-orm/en/latest/reference/events.html#preflush
-             *
-             * @param PreFlushEventArgs $args Event arguments
              */
-            public function preFlush(PreFlushEventArgs $args)
+            public function preFlush(PreFlushEventArgs $args)«IF targets('3.0')»: void«ENDIF»
             {
                 «IF hasLoggable»
                     $this->activateCustomLoggableListener();
@@ -137,10 +126,8 @@ class LifecycleListener {
              * managed entities and their associations have been computed.
              *
              * @see https://www.doctrine-project.org/projects/doctrine-orm/en/latest/reference/events.html#onflush
-             *
-             * @param OnFlushEventArgs $args Event arguments
              */
-            public function onFlush(OnFlushEventArgs $args)
+            public function onFlush(OnFlushEventArgs $args)«IF targets('3.0')»: void«ENDIF»
             {
             }
 
@@ -148,10 +135,8 @@ class LifecycleListener {
              * The postFlush event is called at the end of EntityManager#flush().
              *
              * @see https://www.doctrine-project.org/projects/doctrine-orm/en/latest/reference/events.html#postflush
-             *
-             * @param PostFlushEventArgs $args Event arguments
              */
-            public function postFlush(PostFlushEventArgs $args)
+            public function postFlush(PostFlushEventArgs $args)«IF targets('3.0')»: void«ENDIF»
             {
             }
 
@@ -160,11 +145,10 @@ class LifecycleListener {
              * remove operation for that entity is executed. It is not called for a DQL DELETE statement.
              *
              * @see https://www.doctrine-project.org/projects/doctrine-orm/en/latest/reference/events.html#preremove
-             *
-             * @param LifecycleEventArgs $args Event arguments
              */
-            public function preRemove(LifecycleEventArgs $args)
+            public function preRemove(LifecycleEventArgs $args)«IF targets('3.0')»: void«ENDIF»
             {
+                /** @var EntityAccess $entity */
                 $entity = $args->getObject();
                 if (!$this->isEntityManagedByThisBundle($entity) || !method_exists($entity, 'get_objectType')) {
                     return;
@@ -181,11 +165,10 @@ class LifecycleListener {
              * In this case, you should load yourself the proxy in the associated pre event.
              *
              * @see https://www.doctrine-project.org/projects/doctrine-orm/en/latest/reference/events.html#postupdate-postremove-postpersist
-             *
-             * @param LifecycleEventArgs $args Event arguments
              */
-            public function postRemove(LifecycleEventArgs $args)
+            public function postRemove(LifecycleEventArgs $args)«IF targets('3.0')»: void«ENDIF»
             {
+                /** @var EntityAccess $entity */
                 $entity = $args->getObject();
                 if (!$this->isEntityManagedByThisBundle($entity) || !method_exists($entity, 'get_objectType')) {
                     return;
@@ -202,11 +185,10 @@ class LifecycleListener {
              * This includes modifications to collections such as additions, removals or replacement.
              *
              * @see https://www.doctrine-project.org/projects/doctrine-orm/en/latest/reference/events.html#prepersist
-             *
-             * @param LifecycleEventArgs $args Event arguments
              */
-            public function prePersist(LifecycleEventArgs $args)
+            public function prePersist(LifecycleEventArgs $args)«IF targets('3.0')»: void«ENDIF»
             {
+                /** @var EntityAccess $entity */
                 $entity = $args->getObject();
                 if (!$this->isEntityManagedByThisBundle($entity) || «IF hasLoggable»(!method_exists($entity, 'get_objectType') && !$entity instanceof AbstractLogEntry)«ELSE»!method_exists($entity, 'get_objectType')«ENDIF») {
                     return;
@@ -220,11 +202,10 @@ class LifecycleListener {
              * are available in the postPersist event.
              *
              * @see https://www.doctrine-project.org/projects/doctrine-orm/en/latest/reference/events.html#postupdate-postremove-postpersist
-             *
-             * @param LifecycleEventArgs $args Event arguments
              */
-            public function postPersist(LifecycleEventArgs $args)
+            public function postPersist(LifecycleEventArgs $args)«IF targets('3.0')»: void«ENDIF»
             {
+                /** @var EntityAccess $entity */
                 $entity = $args->getObject();
                 if (!$this->isEntityManagedByThisBundle($entity) || !method_exists($entity, 'get_objectType')) {
                     return;
@@ -237,11 +218,10 @@ class LifecycleListener {
              * It is not called for a DQL UPDATE statement nor when the computed changeset is empty.
              *
              * @see https://www.doctrine-project.org/projects/doctrine-orm/en/latest/reference/events.html#preupdate
-             *
-             * @param PreUpdateEventArgs $args Event arguments
              */
-            public function preUpdate(PreUpdateEventArgs $args)
+            public function preUpdate(PreUpdateEventArgs $args)«IF targets('3.0')»: void«ENDIF»
             {
+                /** @var EntityAccess $entity */
                 $entity = $args->getObject();
                 if (!$this->isEntityManagedByThisBundle($entity) || !method_exists($entity, 'get_objectType')) {
                     return;
@@ -254,11 +234,10 @@ class LifecycleListener {
              * It is not called for a DQL UPDATE statement.
              *
              * @see https://www.doctrine-project.org/projects/doctrine-orm/en/latest/reference/events.html#postupdate-postremove-postpersist
-             *
-             * @param LifecycleEventArgs $args Event arguments
              */
-            public function postUpdate(LifecycleEventArgs $args)
+            public function postUpdate(LifecycleEventArgs $args)«IF targets('3.0')»: void«ENDIF»
             {
+                /** @var EntityAccess $entity */
                 $entity = $args->getObject();
                 if (!$this->isEntityManagedByThisBundle($entity) || !method_exists($entity, 'get_objectType')) {
                     return;
@@ -276,11 +255,10 @@ class LifecycleListener {
              * and postLoad event handlers.
              *
              * @see https://www.doctrine-project.org/projects/doctrine-orm/en/latest/reference/events.html#postload
-             *
-             * @param LifecycleEventArgs $args Event arguments
              */
-            public function postLoad(LifecycleEventArgs $args)
+            public function postLoad(LifecycleEventArgs $args)«IF targets('3.0')»: void«ENDIF»
             {
+                /** @var EntityAccess $entity */
                 $entity = $args->getObject();
                 if (!$this->isEntityManagedByThisBundle($entity) || !method_exists($entity, 'get_objectType')) {
                     return;
@@ -292,45 +270,50 @@ class LifecycleListener {
              * Checks whether this listener is responsible for the given entity or not.
              *
              * @param EntityAccess $entity The given entity
+             «IF !targets('3.0')»
              *
-             * @return boolean True if entity is managed by this listener, false otherwise
+             * @return bool True if entity is managed by this listener, false otherwise
+             «ENDIF»
              */
-            protected function isEntityManagedByThisBundle($entity)
+            protected function isEntityManagedByThisBundle($entity)«IF targets('3.0')»: bool«ENDIF»
             {
                 $entityClassParts = explode('\\', get_class($entity));
 
-                if ('DoctrineProxy' == $entityClassParts[0] && '__CG__' == $entityClassParts[1]) {
+                if ('DoctrineProxy' === $entityClassParts[0] && '__CG__' === $entityClassParts[1]) {
                     array_shift($entityClassParts);
                     array_shift($entityClassParts);
                 }
 
-                return ('«vendor.formatForCodeCapital»' == $entityClassParts[0] && '«name.formatForCodeCapital»Module' == $entityClassParts[1]);
+                return '«vendor.formatForCodeCapital»' === $entityClassParts[0] && '«name.formatForCodeCapital»Module' === $entityClassParts[1];
             }
 
             /**
              * Returns a filter event instance for the given entity.
+             «IF !targets('3.0')»
              *
              * @param EntityAccess $entity The given entity
              *
              * @return Event The created event instance
+             «ENDIF»
              */
-            protected function createFilterEvent($entity)
+            protected function createFilterEvent(EntityAccess $entity)«IF targets('3.0')»: Event«ENDIF»
             {
                 $filterEventClass = '\\«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Event\\Filter' . ucfirst($entity->get_objectType()) . 'Event';
-                $event = new $filterEventClass($entity);
 
-                return $event;
+                return new $filterEventClass($entity);
             }
             «IF !getUploadEntities.empty»
 
                 /**
                  * Returns list of upload fields for the given object type.
+                 «IF !targets('3.0')»
                  *
                  * @param string $objectType The object type
+                 «ENDIF»
                  *
                  * @return string[] List of upload field names
                  */
-                protected function getUploadFields($objectType = '')
+                protected function getUploadFields(«IF targets('3.0')»string «ENDIF»$objectType = '')«IF targets('3.0')»: array«ENDIF»
                 {
                     $uploadFields = [];
                     switch ($objectType) {
@@ -348,10 +331,12 @@ class LifecycleListener {
 
                 /**
                  * Purges the version history as configured.
+                 «IF !targets('3.0')»
                  *
                  * @param string $objectType The object type
+                 «ENDIF»
                  */
-                protected function purgeHistory($objectType = '')
+                protected function purgeHistory(«IF targets('3.0')» string«ENDIF»$objectType = '')«IF targets('3.0')»: void«ENDIF»
                 {
                     if (!in_array($objectType, ['«getLoggableEntities.map[name.formatForCode].join('\', \'')»'])) {
                         return;
@@ -363,9 +348,9 @@ class LifecycleListener {
 
                     $revisionHandling = $variableApi->get('«appName»', 'revisionHandlingFor' . $objectTypeCapitalised, 'unlimited');
                     $limitParameter = '';
-                    if ('limitedByAmount' == $revisionHandling) {
+                    if ('limitedByAmount' === $revisionHandling) {
                         $limitParameter = $variableApi->get('«appName»', 'maximumAmountOf' . $objectTypeCapitalised . 'Revisions', 25);
-                    }«IF targets('2.0')» elseif ('limitedByDate' == $revisionHandling) {
+                    }«IF targets('2.0')» elseif ('limitedByDate' === $revisionHandling) {
                         $limitParameter = $variableApi->get('«appName»', 'periodFor' . $objectTypeCapitalised . 'Revisions', 'P1Y0M0DT0H0M0S');
                     }«ENDIF»
 
@@ -376,7 +361,7 @@ class LifecycleListener {
                 /**
                  * Enables the custom loggable listener.
                  */
-                protected function activateCustomLoggableListener()
+                protected function activateCustomLoggableListener()«IF targets('3.0')»: void«ENDIF»
                 {
                     $entityManager = $this->container->get(«IF targets('3.0')»EntityFactory::class«ELSE»'«appService».entity_factory'«ENDIF»)->getEntityManager();
                     $eventManager = $entityManager->getEventManager();
@@ -387,7 +372,7 @@ class LifecycleListener {
                     «ENDIF»
                     foreach ($eventManager->getListeners() as $event => $listeners) {
                         foreach ($listeners as $hash => $listener) {
-                            if (is_object($listener) && 'Gedmo\Loggable\LoggableListener' == get_class($listener)) {
+                            if (is_object($listener) && 'Gedmo\Loggable\LoggableListener' === get_class($listener)) {
                                 $eventManager->removeEventSubscriber($listener);
                                 «IF hasTranslatable»
                                     $hasLoggableActivated = true;

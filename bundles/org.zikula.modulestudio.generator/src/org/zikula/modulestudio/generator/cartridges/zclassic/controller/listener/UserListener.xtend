@@ -49,21 +49,6 @@ class UserListener {
 
         «ENDIF»
         «IF hasStandardFieldEntities || hasUserFields || hasUserVariables»
-            /**
-             * UserListener constructor.
-             *
-             «IF hasStandardFieldEntities || hasUserFields»
-             * @param TranslatorInterface $translator
-             * @param EntityFactory $entityFactory
-             * @param CurrentUserApiInterface $currentUserApi
-             * @param LoggerInterface $logger
-             «ENDIF»
-             «IF hasUserVariables»
-             * @param VariableApiInterface $variableApi
-             «ENDIF»
-             *
-             * @return void
-             */
             public function __construct(
                 «IF hasStandardFieldEntities || hasUserFields»
                     TranslatorInterface $translator,
@@ -87,9 +72,6 @@ class UserListener {
             }
 
         «ENDIF»
-        /**
-         * Makes our handlers known to the event system.
-         */
         public static function getSubscribedEvents()
         {
             return [
@@ -109,9 +91,8 @@ class UserListener {
          * The subject of the event is set to the user record that was created.
          *
          «commonExample.generalEventProperties(it, false)»
-         * @param GenericEvent $event The event instance
          */
-        public function create(GenericEvent $event)
+        public function create(GenericEvent $event)«IF targets('3.0')»: void«ENDIF»
         {
         }
 
@@ -124,9 +105,8 @@ class UserListener {
          * The subject of the event is set to the user record, with the updated values.
          *
          «commonExample.generalEventProperties(it, false)»
-         * @param GenericEvent $event The event instance
          */
-        public function update(GenericEvent $event)
+        public function update(GenericEvent $event)«IF targets('3.0')»: void«ENDIF»
         {
         }
 
@@ -137,9 +117,8 @@ class UserListener {
          * This is a storage-level event, not a UI event. It should not be used for UI-level actions such as redirects.
          *
          «commonExample.generalEventProperties(it, false)»
-         * @param GenericEvent $event The event instance
          */
-        public function delete(GenericEvent $event)
+        public function delete(GenericEvent $event)«IF targets('3.0')»: void«ENDIF»
         {
             «IF hasStandardFieldEntities || hasUserFields || hasUserVariables»
                 $userId = $event->getSubject();
@@ -201,12 +180,12 @@ class UserListener {
             // set «name.formatForDisplay» variable to «IF onAccountDeletion != AccountDeletionHandler.DELETE»«onAccountDeletion.adhAsConstant» («application.adhUid(onAccountDeletion)»)«ELSE»admin (UsersConstant::USER_ID_ADMIN)«ENDIF» if it is affected
             «IF varContainer.composite»
                 $«varContainer.name.formatForCode» = $this->variableApi->get('«application.appName»', '«varContainer.name.formatForCode»');
-                if (isset($«varContainer.name.formatForCode»['«name.formatForCode»']) && $userId == $«varContainer.name.formatForCode»['«name.formatForCode»']) {
+                if (isset($«varContainer.name.formatForCode»['«name.formatForCode»']) && $userId === $«varContainer.name.formatForCode»['«name.formatForCode»']) {
                     $«varContainer.name.formatForCode»['«name.formatForCode»'] = «IF onAccountDeletion != AccountDeletionHandler.DELETE»«application.adhUid(onAccountDeletion)»«ELSE»UsersConstant::USER_ID_ADMIN«ENDIF»;
                     $this->variableApi->set('«application.appName»', '«varContainer.name.formatForCode»', $«varContainer.name.formatForCode»);
                 }
             «ELSE»
-                if ($userId == $this->variableApi->get('«application.appName»', '«name.formatForCode»')) {
+                if ($userId === $this->variableApi->get('«application.appName»', '«name.formatForCode»')) {
                     $this->variableApi->set('«application.appName»', '«name.formatForCode»', «IF onAccountDeletion != AccountDeletionHandler.DELETE»«application.adhUid(onAccountDeletion)»«ELSE»UsersConstant::USER_ID_ADMIN«ENDIF»);
                 }
             «ENDIF»

@@ -17,6 +17,9 @@ class ItemSelector {
     extension Utils = new Utils
 
     def generate(Application it, IMostFileSystemAccess fsa) {
+        if (targets('2.0')) {
+            return;
+        }
         fsa.generateClassPair('Form/Plugin/ItemSelector.php', itemSelectorBaseImpl, itemSelectorImpl)
 
         val pluginFilePath = legacyViewPluginFilePath('function', 'ItemSelector')

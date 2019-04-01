@@ -185,6 +185,9 @@ class MultiHook {
 
         use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
         use Symfony\Component\Routing\RouterInterface;
+        «IF application.targets('3.0')»
+            use Zikula\Common\MultiHook\NeedleInterface;
+        «ENDIF»
         use Zikula\Common\Translator\TranslatorInterface;
         «IF hasDisplayAction»
             use «app.appNamespace»\Entity\Factory\EntityFactory;
@@ -195,7 +198,7 @@ class MultiHook {
         /**
          * «name.formatForCodeCapital»Needle base class.
          */
-        abstract class Abstract«name.formatForCodeCapital»Needle
+        abstract class Abstract«name.formatForCodeCapital»Needle«IF application.targets('3.0')» implements NeedleInterface«ENDIF»
         {
             «needleBaseImpl»
         }
@@ -203,8 +206,6 @@ class MultiHook {
 
     def private needleBaseImpl(Entity it) '''
         /**
-         * Translator instance
-         *
          * @var TranslatorInterface
          */
         protected $translator;
@@ -245,17 +246,6 @@ class MultiHook {
          */
         protected $name;
 
-        /**
-         * «name.formatForCodeCapital»Needle constructor.
-         *
-         * @param TranslatorInterface $translator
-         * @param RouterInterface $router
-         * @param PermissionHelper $permissionHelper
-        «IF hasDisplayAction»
-         * @param EntityFactory $entityFactory
-         * @param EntityDisplayHelper $entityDisplayHelper
-        «ENDIF»
-         */
         public function __construct(
             TranslatorInterface $translator,
             RouterInterface $router,
@@ -279,105 +269,57 @@ class MultiHook {
             $this->name = str_replace('Needle', '', array_pop($nsParts));
         }
 
-        /**
-         * Returns the bundle name.
-         *
-         * @return string
-         */
-        public function getBundleName()
-        {
-            return $this->bundleName;
-        }
-
-        /**
-         * Returns the name of this needle.
-         *
-         * @return string
-         */
-        public function getName()
+        public function getName()«IF application.targets('3.0')»: string«ENDIF»
         {
             return $this->name;
         }
 
-        /**
-         * Returns the icon name (FontAwesome icon code suffix, e.g. "pencil").
-         *
-         * @return string
-         */
-        public function getIcon()
+        public function getIcon()«IF application.targets('3.0')»: string«ENDIF»
         {
             return 'circle-o';
         }
 
-        /**
-         * Returns the title of this needle.
-         *
-         * @return string
-         */
-        public function getTitle()
+        public function getTitle()«IF application.targets('3.0')»: string«ENDIF»
         {
             return $this->translator->__('«nameMultiple.formatForDisplayCapital»', '«app.appName.formatForDB»');
         }
 
-        /**
-         * Returns the description of this needle.
-         *
-         * @return string
-         */
-        public function getDescription()
+        public function getDescription()«IF application.targets('3.0')»: string«ENDIF»
         {
             return $this->translator->__('Links to «IF hasViewAction»the list of «nameMultiple.formatForDisplay»«ENDIF»«IF hasDisplayAction»«IF hasViewAction» and «ENDIF»specific «nameMultiple.formatForDisplay»«ENDIF».', '«app.appName.formatForDB»');
         }
 
-        /**
-         * Returns usage information shown on settings page.
-         *
-         * @return string
-         */
-        public function getUsageInfo()
+        public function getUsageInfo()«IF application.targets('3.0')»: string«ENDIF»
         {
             return '«app.prefix.toUpperCase»{«IF hasViewAction»«nameMultiple.formatForCode.toUpperCase»«ENDIF»«IF hasDisplayAction»«IF hasViewAction»|«ENDIF»«name.formatForCode.toUpperCase»-«name.formatForCode»Id«ENDIF»}';
         }
 
-        /**
-         * Returns whether this needle is active or not.
-         *
-         * @return boolean
-         */
-        public function isActive()
+        public function isActive()«IF application.targets('3.0')»: bool«ENDIF»
         {
             return true;
         }
 
-        /**
-         * Returns whether this needle is case sensitive or not.
-         *
-         * @return boolean
-         */
-        public function isCaseSensitive()
+        public function isCaseSensitive()«IF application.targets('3.0')»: bool«ENDIF»
         {
             return true;
         }
 
-        /**
-         * Returns the needle subject entries.
-         *
-         * @return string[]
-         */
-        public function getSubjects()
+        public function getSubjects()«IF application.targets('3.0')»: array«ENDIF»
         {
             return [«IF hasViewAction»'«app.prefix.toUpperCase»«nameMultiple.formatForCode.toUpperCase»'«ENDIF»«IF hasDisplayAction»«IF hasViewAction», «ENDIF»'«app.prefix.toUpperCase»«name.formatForCode.toUpperCase»-'«ENDIF»];
         }
 
         /**
          * Applies the needle functionality.
+         «IF !application.targets('3.0')»
          *
          * @param string $needleId
          * @param string $needleText
          *
          * @return string Replaced value for the needle
+         «ENDIF»
          */
-        public function apply($needleId, $needleText)
+        public function apply«IF application.targets('3.0')»(string $needleId, string $needleText): string«ELSE»($needleId, $needleText)«ENDIF»
         {
             // cache the results
             static $cache;
@@ -394,7 +336,7 @@ class MultiHook {
             $needleText = str_replace('«app.prefix.toUpperCase»', '', $needleText);
 
             «IF hasViewAction»
-                if ('«nameMultiple.formatForCode.toUpperCase»' == $needleText) {
+                if ('«nameMultiple.formatForCode.toUpperCase»' === $needleText) {
                     if (!$this->permissionHelper->hasComponentPermission('«name.formatForCode»', ACCESS_READ)) {
                         $cache[$needleId] = '';
                     } else {
@@ -406,7 +348,7 @@ class MultiHook {
 
             «ENDIF»
             «IF hasDisplayAction»
-                $entityId = intval($needleId);
+                $entityId = (int)$needleId;
                 if (!$entityId) {
                     $cache[$needleId] = '';
 
@@ -432,6 +374,11 @@ class MultiHook {
             «ENDIF»
 
             return $cache[$needleId];
+        }
+
+        public function getBundleName()«IF application.targets('3.0')»: string«ENDIF»
+        {
+            return $this->bundleName;
         }
     '''
 

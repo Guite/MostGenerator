@@ -31,6 +31,7 @@ class ControllerHelper {
     def private controllerFunctionsBaseImpl(Application it) '''
         namespace «appNamespace»\Helper\Base;
 
+        use Exception;
         «IF hasGeographical»
             use Psr\Log\LoggerInterface;
         «ENDIF»
@@ -160,40 +161,6 @@ class ControllerHelper {
             protected $featureActivationHelper;
         «ENDIF»
 
-        /**
-         * ControllerHelper constructor.
-         *
-         * @param TranslatorInterface $translator
-         * @param RequestStack $requestStack
-         «IF hasAutomaticArchiving»
-         * @param ArchiveHelper $archiveHelper
-         «ENDIF»
-         «IF hasUiHooksProviders»
-         * @param Routerinterface $router
-         «ENDIF»
-         «IF hasViewActions»
-         * @param FormFactoryInterface $formFactory
-         «ENDIF»
-         «IF hasViewActions»
-         * @param VariableApiInterface $variableApi
-         «ENDIF»
-         «IF hasGeographical»
-         * @param LoggerInterface $logger
-         * @param CurrentUserApiInterface $currentUserApi
-         «ENDIF»
-         * @param EntityFactory $entityFactory
-         * @param CollectionFilterHelper $collectionFilterHelper
-         * @param PermissionHelper $permissionHelper
-         «IF hasViewActions && hasEditActions»
-         * @param ModelHelper $modelHelper
-         «ENDIF»
-         «IF !getUploadEntities.empty»
-         * @param ImageHelper $imageHelper
-         «ENDIF»
-         «IF needsFeatureActivationHelper»
-         * @param FeatureActivationHelper $featureActivationHelper
-         «ENDIF»
-         */
         public function __construct(
             TranslatorInterface $translator,
             RequestStack $requestStack,
@@ -285,15 +252,17 @@ class ControllerHelper {
     def private getObjectTypes(Application it) '''
         /**
          * Returns an array of all allowed object types in «appName».
+         «IF !targets('3.0')»
          *
          * @param string $context Usage context (allowed values: controllerAction, api, helper, actionHandler, block, contentType, util)
-         * @param array  $args    Additional arguments
+         * @param array $args Additional arguments
+         «ENDIF»
          *
          * @return string[] List of allowed object types
          */
-        public function getObjectTypes($context = '', array $args = [])
+        public function getObjectTypes(«IF targets('3.0')»string «ENDIF»$context = '', array $args = [])«IF targets('3.0')»: array«ENDIF»
         {
-            if (!in_array($context, ['controllerAction', 'api', 'helper', 'actionHandler', 'block', 'contentType', 'util'])) {
+            if (!in_array($context, ['controllerAction', 'api', 'helper', 'actionHandler', 'block', 'contentType', 'util'], true)) {
                 $context = 'controllerAction';
             }
 
@@ -309,15 +278,17 @@ class ControllerHelper {
     def private getDefaultObjectType(Application it) '''
         /**
          * Returns the default object type in «appName».
+         «IF !targets('3.0')»
          *
          * @param string $context Usage context (allowed values: controllerAction, api, helper, actionHandler, block, contentType, util)
-         * @param array  $args    Additional arguments
+         * @param array $args Additional arguments
          *
          * @return string The name of the default object type
+         «ENDIF»
          */
-        public function getDefaultObjectType($context = '', array $args = [])
+        public function getDefaultObjectType(«IF targets('3.0')»string «ENDIF»$context = '', array $args = [])«IF targets('3.0')»: string«ENDIF»
         {
-            if (!in_array($context, ['controllerAction', 'api', 'helper', 'actionHandler', 'block', 'contentType', 'util'])) {
+            if (!in_array($context, ['controllerAction', 'api', 'helper', 'actionHandler', 'block', 'contentType', 'util'], true)) {
                 $context = 'controllerAction';
             }
 
@@ -329,24 +300,33 @@ class ControllerHelper {
         /**
          * Processes the parameters for a view action.
          * This includes handling pagination, quick navigation forms and other aspects.
+         «IF !targets('3.0')»
          *
-         * @param string          $objectType         Name of treated entity type
-         * @param SortableColumns $sortableColumns    Used SortableColumns instance
-         * @param array           $templateParameters Template data
+         * @param string $objectType Name of treated entity type
+         * @param SortableColumns $sortableColumns Used SortableColumns instance
+         * @param array $templateParameters Template data
          «IF hasHookSubscribers»
-         * @param boolean         $hasHookSubscriber  Whether hook subscribers are supported or not
+         * @param bool $hasHookSubscriber Whether hook subscribers are supported or not
          «ENDIF»
          *
          * @return array Enriched template parameters used for creating the response
+         «ENDIF»
          */
-        public function processViewActionParameters($objectType, SortableColumns $sortableColumns, array $templateParameters = []«IF hasHookSubscribers», $hasHookSubscriber = false«ENDIF»)
-        {
+        public function processViewActionParameters(
+            «IF targets('3.0')»string «ENDIF»$objectType,
+            SortableColumns $sortableColumns,
+            array $templateParameters = []«IF hasHookSubscribers»,
+            «IF targets('3.0')»bool «ENDIF»$hasHookSubscriber = false«ENDIF»
+        )«IF targets('3.0')»: array«ENDIF» {
             $contextArgs = ['controller' => $objectType, 'action' => 'view'];
-            if (!in_array($objectType, $this->getObjectTypes('controllerAction', $contextArgs))) {
-                throw new \Exception($this->__('Error! Invalid object type received.'));
+            if (!in_array($objectType, $this->getObjectTypes('controllerAction', $contextArgs), true)) {
+                throw new Exception($this->__('Error! Invalid object type received.'));
             }
 
             $request = $this->requestStack->getCurrentRequest();
+            if (null === $request) {
+                throw new Exception($this->__('Error! Controller helper needs a request.'));
+            }
             $repository = $this->entityFactory->getRepository($objectType);
 
             // parameter for used sorting field
@@ -355,41 +335,41 @@ class ControllerHelper {
             $templateParameters['sortdir'] = strtolower($sortdir);
             «IF hasTrees»
 
-                if ('tree' == $request->query->getAlnum('tpl', '')) {
+                if ('tree' === $request->query->getAlnum('tpl')) {
                     $templateParameters['trees'] = $repository->selectAllTrees();
 
                     return $this->addTemplateParameters($objectType, $templateParameters, 'controllerAction', $contextArgs);
                 }
             «ENDIF»
 
-            $templateParameters['all'] = 'csv' == $request->getRequestFormat() ? 1 : $request->query->getInt('all', 0);
+            $templateParameters['all'] = 'csv' === $request->getRequestFormat() ? 1 : $request->query->getInt('all');
             «IF !getAllEntities.filter[ownerPermission].empty»
                 $routeName = $request->get('_route');
                 $isAdminArea = false !== strpos($routeName, '«appName.toLowerCase»_' . strtolower($objectType) . '_admin');
-                if (!$isAdminArea && in_array($objectType, ['«getAllEntities.filter[ownerPermission].map[name.formatForCode].join('\',  \'')»'])) {
-                    $showOnlyOwnEntries = (bool)$this->variableApi->get('«appName»', $objectType . 'PrivateMode', false);
-                    if (true == $showOnlyOwnEntries) {
+                if (!$isAdminArea && in_array($objectType, ['«getAllEntities.filter[ownerPermission].map[name.formatForCode].join('\',  \'')»'], true)) {
+                    $showOnlyOwnEntries = (bool)$this->variableApi->get('«appName»', $objectType . 'PrivateMode');
+                    if (true === $showOnlyOwnEntries) {
                         $templateParameters['own'] = 1;
                     } else {
-                        $templateParameters['own'] = (bool)$request->query->getInt('own', $this->variableApi->get('«appName»', 'showOnlyOwnEntries', false)) ? 1 : 0;
+                        $templateParameters['own'] = (bool)$request->query->getInt('own', $this->variableApi->get('«appName»', 'showOnlyOwnEntries')) ? 1 : 0;
                     }
                 } else {
-                    $templateParameters['own'] = (bool)$request->query->getInt('own', $this->variableApi->get('«appName»', 'showOnlyOwnEntries', false)) ? 1 : 0;
+                    $templateParameters['own'] = (bool)$request->query->getInt('own', $this->variableApi->get('«appName»', 'showOnlyOwnEntries')) ? 1 : 0;
                 }
             «ELSE»
-                $templateParameters['own'] = (bool)$request->query->getInt('own', $this->variableApi->get('«appName»', 'showOnlyOwnEntries', false)) ? 1 : 0;
+                $templateParameters['own'] = (bool)$request->query->getInt('own', $this->variableApi->get('«appName»', 'showOnlyOwnEntries')) ? 1 : 0;
             «ENDIF»
 
             $resultsPerPage = 0;
-            if (1 != $templateParameters['all']) {
+            if (1 !== $templateParameters['all']) {
                 // the number of items displayed on a page for pagination
-                $resultsPerPage = $request->query->getInt('num', 0);
-                if (in_array($resultsPerPage, [0, 10])) {
+                $resultsPerPage = $request->query->getInt('num');
+                if (in_array($resultsPerPage, [0, 10], true)) {
                     $resultsPerPage = $this->variableApi->get('«appName»', $objectType . 'EntriesPerPage', 10);
                 }
             }
             $templateParameters['num'] = $resultsPerPage;
-            $templateParameters['tpl'] = $request->query->getAlnum('tpl', '');
+            $templateParameters['tpl'] = $request->query->getAlnum('tpl');
 
             $templateParameters = $this->addTemplateParameters($objectType, $templateParameters, 'controllerAction', $contextArgs);
 
@@ -398,14 +378,14 @@ class ControllerHelper {
             if ($quickNavForm->isSubmitted()) {
                 $quickNavData = $quickNavForm->getData();
                 foreach ($quickNavData as $fieldName => $fieldValue) {
-                    if ($fieldName == 'routeArea') {
+                    if ('routeArea' === $fieldName) {
                         continue;
                     }
-                    if (in_array($fieldName, ['all', 'own', 'num'])) {
+                    if (in_array($fieldName, ['all', 'own', 'num'], true)) {
                         $templateParameters[$fieldName] = $fieldValue;
-                    } elseif ('sort' == $fieldName && !empty($fieldValue)) {
+                    } elseif ('sort' === $fieldName && !empty($fieldValue)) {
                         $sort = $fieldValue;
-                    } elseif ('sortdir' == $fieldName && !empty($fieldValue)) {
+                    } elseif ('sortdir' === $fieldName && !empty($fieldValue)) {
                         $sortdir = $fieldValue;
                     } elseif (false === stripos($fieldName, 'thumbRuntimeOptions') && false === stripos($fieldName, 'featureActivationHelper') && false === stripos($fieldName, 'permissionHelper')) {
                         // set filter as query argument, fetched inside repository
@@ -437,7 +417,7 @@ class ControllerHelper {
             $sortableColumns->setAdditionalUrlParameters($urlParameters);
 
             $where = '';
-            if ($templateParameters['all'] == 1) {
+            if (1 === $templateParameters['all']) {
                 // retrieve item list without pagination
                 $entities = $repository->selectWhere($where, $sort . ' ' . $sortdir);
             } else {
@@ -486,14 +466,19 @@ class ControllerHelper {
 
         /**
          * Determines the default sorting criteria.
+         «IF !targets('3.0')»
          *
          * @param string $objectType Name of treated entity type
          *
          * @return array with sort field and sort direction
+         «ENDIF»
          */
-        protected function determineDefaultViewSorting($objectType)
+        protected function determineDefaultViewSorting(«IF targets('3.0')»string «ENDIF»$objectType)«IF targets('3.0')»: array«ENDIF»
         {
             $request = $this->requestStack->getCurrentRequest();
+            if (null === $request) {
+                return ['', 'ASC'];
+            }
             $repository = $this->entityFactory->getRepository($objectType);
 
             «new ControllerHelperFunctions().defaultSorting(it)»
@@ -510,20 +495,22 @@ class ControllerHelper {
     def private processDisplayActionParameters(Application it) '''
         /**
          * Processes the parameters for a display action.
+         «IF !targets('3.0')»
          *
-         * @param string  $objectType         Name of treated entity type
-         * @param array   $templateParameters Template data
+         * @param string $objectType Name of treated entity type
+         * @param array $templateParameters Template data
          «IF hasHookSubscribers»
-         * @param boolean $hasHookSubscriber  Whether hook subscribers are supported or not
+         * @param bool $hasHookSubscriber Whether hook subscribers are supported or not
          «ENDIF»
          *
          * @return array Enriched template parameters used for creating the response
+         «ENDIF»
          */
-        public function processDisplayActionParameters($objectType, array $templateParameters = []«IF hasHookSubscribers», $hasHookSubscriber = false«ENDIF»)
+        public function processDisplayActionParameters(«IF targets('3.0')»string «ENDIF»$objectType, array $templateParameters = []«IF hasHookSubscribers», «IF targets('3.0')»bool «ENDIF»$hasHookSubscriber = false«ENDIF»)«IF targets('3.0')»: array«ENDIF»
         {
             $contextArgs = ['controller' => $objectType, 'action' => 'display'];
-            if (!in_array($objectType, $this->getObjectTypes('controllerAction', $contextArgs))) {
-                throw new \Exception($this->__('Error! Invalid object type received.'));
+            if (!in_array($objectType, $this->getObjectTypes('controllerAction', $contextArgs), true)) {
+                throw new Exception($this->__('Error! Invalid object type received.'));
             }
             «IF hasHookSubscribers»
 
@@ -537,7 +524,7 @@ class ControllerHelper {
             «ENDIF»
             «IF hasUiHooksProviders»
 
-                if (in_array($objectType, ['«getAllEntities.filter[uiHooksProvider != HookProviderMode.DISABLED].map[name.formatForCode].join('\', \'')»'])) {
+                if (in_array($objectType, ['«getAllEntities.filter[uiHooksProvider != HookProviderMode.DISABLED].map[name.formatForCode].join('\', \'')»'], true)) {
                     $qb = $this->entityFactory->getEntityManager()->createQueryBuilder();
                     $qb->select('tbl')
                        ->from('«vendor.formatForCodeCapital + '\\' + name.formatForCodeCapital + 'Module\\Entity\\HookAssignmentEntity'»', 'tbl')
@@ -568,7 +555,7 @@ class ControllerHelper {
 
                             $fragment = $subscriberUrl['fragment'];
                             if (!empty($fragment)) {
-                                if ($fragment[0] != '#') {
+                                if ('#' !== $fragment[0]) {
                                     $fragment = '#' . $fragment;
                             	}
                                 $url .= $fragment;
@@ -591,17 +578,19 @@ class ControllerHelper {
     def private processEditActionParameters(Application it) '''
         /**
          * Processes the parameters for an edit action.
+         «IF !targets('3.0')»
          *
-         * @param string  $objectType         Name of treated entity type
-         * @param array   $templateParameters Template data
+         * @param string $objectType Name of treated entity type
+         * @param array $templateParameters Template data
          *
          * @return array Enriched template parameters used for creating the response
+         «ENDIF»
          */
-        public function processEditActionParameters($objectType, array $templateParameters = [])
+        public function processEditActionParameters(«IF targets('3.0')»string «ENDIF»$objectType, array $templateParameters = [])«IF targets('3.0')»: array«ENDIF»
         {
             $contextArgs = ['controller' => $objectType, 'action' => 'edit'];
-            if (!in_array($objectType, $this->getObjectTypes('controllerAction', $contextArgs))) {
-                throw new \Exception($this->__('Error! Invalid object type received.'));
+            if (!in_array($objectType, $this->getObjectTypes('controllerAction', $contextArgs), true)) {
+                throw new Exception($this->__('Error! Invalid object type received.'));
             }
 
             return $this->addTemplateParameters($objectType, $templateParameters, 'controllerAction', $contextArgs);
@@ -611,20 +600,22 @@ class ControllerHelper {
     def private processDeleteActionParameters(Application it) '''
         /**
          * Processes the parameters for a delete action.
+         «IF !targets('3.0')»
          *
-         * @param string  $objectType         Name of treated entity type
-         * @param array   $templateParameters Template data
+         * @param string $objectType Name of treated entity type
+         * @param array $templateParameters Template data
          «IF hasHookSubscribers»
-         * @param boolean $hasHookSubscriber  Whether hook subscribers are supported or not
+         * @param bool $hasHookSubscriber Whether hook subscribers are supported or not
          «ENDIF»
          *
          * @return array Enriched template parameters used for creating the response
+         «ENDIF»
          */
-        public function processDeleteActionParameters($objectType, array $templateParameters = []«IF hasHookSubscribers», $hasHookSubscriber = false«ENDIF»)
+        public function processDeleteActionParameters(«IF targets('3.0')»string «ENDIF»$objectType, array $templateParameters = []«IF hasHookSubscribers», «IF targets('3.0')»bool «ENDIF»$hasHookSubscriber = false«ENDIF»)«IF targets('3.0')»: array«ENDIF»
         {
             $contextArgs = ['controller' => $objectType, 'action' => 'delete'];
-            if (!in_array($objectType, $this->getObjectTypes('controllerAction', $contextArgs))) {
-                throw new \Exception($this->__('Error! Invalid object type received.'));
+            if (!in_array($objectType, $this->getObjectTypes('controllerAction', $contextArgs), true)) {
+                throw new Exception($this->__('Error! Invalid object type received.'));
             }
 
             return $this->addTemplateParameters($objectType, $templateParameters, 'controllerAction', $contextArgs);
@@ -634,21 +625,23 @@ class ControllerHelper {
     def private addTemplateParameters(Application it) '''
         /**
          * Returns an array of additional template variables which are specific to the object type.
+         «IF !targets('3.0')»
          *
          * @param string $objectType Name of treated entity type
-         * @param array  $parameters Given parameters to enrich
-         * @param string $context    Usage context (allowed values: controllerAction, api, actionHandler, block, contentType)
-         * @param array  $args       Additional arguments
+         * @param array $parameters Given parameters to enrich
+         * @param string $context Usage context (allowed values: controllerAction, api, actionHandler, block, contentType)
+         * @param array $args Additional arguments
          *
          * @return array List of template variables to be assigned
+         «ENDIF»
          */
-        public function addTemplateParameters($objectType = '', array $parameters = [], $context = '', array $args = [])
+        public function addTemplateParameters(«IF targets('3.0')»string «ENDIF»$objectType = '', array $parameters = [], «IF targets('3.0')»string «ENDIF»$context = '', array $args = [])«IF targets('3.0')»: array«ENDIF»
         {
-            if (!in_array($context, ['controllerAction', 'api', 'actionHandler', 'block', 'contentType', 'mailz'])) {
+            if (!in_array($context, ['controllerAction', 'api', 'actionHandler', 'block', 'contentType', 'mailz'], true)) {
                 $context = 'controllerAction';
             }
 
-            if ($context == 'controllerAction') {
+            if ('controllerAction' === $context) {
                 if (!isset($args['action'])) {
                     $routeName = $this->requestStack->getCurrentRequest()->get('_route');
                     $routeNameParts = explode('_', $routeName);
@@ -661,7 +654,7 @@ class ControllerHelper {
 
                     // initialise Imagine runtime options
                     «FOR entity : getUploadEntities»
-                        if ($objectType == '«entity.name.formatForCode»') {
+                        if ('«entity.name.formatForCode»' === $objectType) {
                             $thumbRuntimeOptions = [];
                             «FOR uploadField : entity.getUploadFieldsEntity»
                                 $thumbRuntimeOptions[$objectType . '«uploadField.name.formatForCodeCapital»'] = $this->imageHelper->getRuntimeOptions($objectType, '«uploadField.name.formatForCode»', $context, $args);
@@ -669,7 +662,7 @@ class ControllerHelper {
                             $parameters['thumbRuntimeOptions'] = $thumbRuntimeOptions;
                         }
                     «ENDFOR»
-                    if (in_array($args['action'], ['display', 'edit', 'view'])) {
+                    if (in_array($args['action'], ['display', 'edit', 'view'], true)) {
                         // use separate preset for images in related items
                         $parameters['relationThumbRuntimeOptions'] = $this->imageHelper->getCustomRuntimeOptions('', '', '«appName»_relateditem', $context, $args);
                     }
@@ -691,12 +684,14 @@ class ControllerHelper {
          * To use this please extend it or customise it to your needs in the concrete subclass.
          *
          * You can also easily do geocoding on JS level with some Leaflet plugins, see http://leafletjs.com/plugins.html#geocoding
+         «IF !targets('3.0')»
          *
          * @param string $address The address input string
          *
-         * @return Array The determined coordinates
+         * @return array The determined coordinates
+         «ENDIF»
          */
-        public function performGeoCoding($address)
+        public function performGeoCoding(«IF targets('3.0')»string «ENDIF»$address)«IF targets('3.0')»: array«ENDIF»
         {
             $url = 'https://nominatim.openstreetmap.org/search?limit=1&format=json&q=' . urlencode($address);
 
@@ -713,7 +708,10 @@ class ControllerHelper {
                 $ch = curl_init();
                 curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
                 curl_setopt($ch, CURLOPT_HEADER, 0);
-                //curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1); // can cause problems with open_basedir
+                if (!ini_get('open_basedir')) {
+                    // This option does not work with open_basedir set in php.ini
+                    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
+                }
                 curl_setopt($ch, CURLOPT_URL, $url);
                 $json = curl_exec($ch);
                 curl_close($ch);
@@ -729,12 +727,12 @@ class ControllerHelper {
                 'longitude' => 0
             ];
 
-            if ('' == $json) {
+            if ('' === $json) {
                 return $result;
             }
 
             $data = json_decode($json);
-            if (JSON_ERROR_NONE == json_last_error() && 'OK' == $data->status && 0 < count($data)) {
+            if (JSON_ERROR_NONE === json_last_error() && 'OK' === $data->status && 0 < count($data)) {
                 $location = $data[0];
                 $result['latitude'] = str_replace(',', '.', $location->lat);
                 $result['longitude'] = str_replace(',', '.', $location->lng);

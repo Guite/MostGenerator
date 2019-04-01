@@ -32,6 +32,10 @@ class AuthenticationMethod {
         use Zikula\ExtensionsModule\Api\ApiInterface\VariableApiInterface;
         use Zikula\UsersModule\AuthenticationMethodInterface\«IF authenticationMethod == AuthMethodType.LOCAL»Non«ENDIF»ReEntrantAuthenticationMethodInterface;
         use Zikula\ZAuthModule\Api\ApiInterface\PasswordApiInterface;
+        «IF authenticationMethod == AuthMethodType.LOCAL»
+            use Zikula\ZAuthModule\Form\Type\RegistrationType;
+            use Zikula\ZAuthModule\Form\Type\UnameLoginType;
+        «ENDIF»
         use «appNamespace»\Entity\Factory\EntityFactory;
 
         /**
@@ -71,18 +75,6 @@ class AuthenticationMethod {
              */
             protected $passwordApi;
 
-            /**
-             * «name.formatForCodeCapital»AuthenticationMethod constructor.
-             *
-             * @param TranslatorInterface $translator
-             * @param RequestStack $requestStack
-             «IF authenticationMethod == AuthMethodType.REMOTE»
-             * @param RouterInterface $router
-             «ENDIF»
-             * @param EntityFactory $entityFactory
-             * @param VariableApiInterface $variableApi
-             * @param PasswordApiInterface $passwordApi
-             */
             public function __construct(
                 TranslatorInterface $translator,
                 RequestStack $requestStack,
@@ -114,34 +106,22 @@ class AuthenticationMethod {
     '''
 
     def private authMethodBaseImplCommon(Application it) '''
-        /**
-         * @inheritDoc
-         */
-        public function getAlias()
+        public function getAlias()«IF targets('3.0')»: string«ENDIF»
         {
             return '«name.formatForDB»_authentication';
         }
 
-        /**
-         * @inheritDoc
-         */
-        public function getDisplayName()
+        public function getDisplayName()«IF targets('3.0')»: string«ENDIF»
         {
             return $this->translator->__('«name.formatForDisplayCapital»');
         }
 
-        /**
-         * @inheritDoc
-         */
-        public function getDescription()
+        public function getDescription()«IF targets('3.0')»: string«ENDIF»
         {
             return $this->translator->__('Allow a user to authenticate and login using the «name.formatForDisplay» module.');
         }
 
-        /**
-         * @inheritDoc
-         */
-        public function authenticate(array $data = [])
+        public function authenticate(array $data = [])«IF targets('3.0')»: ?int«ENDIF»
         {
             $session = $this->requestStack->getCurrentRequest()->getSession();
             $session->getFlashBag()->add('error', $this->translator->__('Login for «name.formatForDisplay» authentication method is not implemented yet.'));
@@ -149,10 +129,7 @@ class AuthenticationMethod {
             return null;
         }
 
-        /**
-         * @inheritDoc
-         */
-        public function register(array $data = [])
+        public function register(array $data = [])«IF targets('3.0')»: bool«ENDIF»
         {
             $session = $this->requestStack->getCurrentRequest()->getSession();
             $session->getFlashBag()->add('error', $this->translator->__('Registration for «name.formatForDisplay» authentication method is not implemented yet.'));
@@ -162,47 +139,32 @@ class AuthenticationMethod {
     '''
 
     def private authMethodBaseImplRemote(Application it) '''
-        /**
-         * @inheritDoc
-         */
-        public function getId()
+        public function getId()«IF targets('3.0')»: string«ENDIF»
         {
             return null;
         }
 
-        /**
-         * @inheritDoc
-         */
-        public function getEmail()
+        public function getEmail()«IF targets('3.0')»: string«ENDIF»
         {
             return null;
         }
 
-        /**
-         * @inheritDoc
-         */
-        public function getUname()
+        public function getUname()«IF targets('3.0')»: string«ENDIF»
         {
             return null;
         }
     '''
 
     def private authMethodBaseImplLocal(Application it) '''
-        /**
-         * @inheritDoc
-         */
-        public function getLoginFormClassName()
+        public function getLoginFormClassName()«IF targets('3.0')»: string«ENDIF»
         {
-            return 'Zikula\ZAuthModule\Form\Type\UnameLoginType';
+            return UnameLoginType::class;
         }
 
-        /**
-         * @inheritDoc
-         */
-        public function getLoginTemplateName($type = 'page', $position = 'left')
+        public function getLoginTemplateName«IF targets('3.0')»(string $type = 'page', string $position = 'left'): string«ELSE»($type = 'page', $position = 'left')«ENDIF»
         {
-            if ($type == 'block') {
-                if ($position == 'topnav') {
+            if ('block' === $type) {
+                if ('topnav' === $position) {
                     return 'ZikulaZAuthModule:Authentication:UnameLoginBlock.topnav.html.twig';
                 }
 
@@ -212,18 +174,12 @@ class AuthenticationMethod {
             return 'ZikulaZAuthModule:Authentication:UnameLogin.html.twig';
         }
 
-        /**
-         * @inheritDoc
-         */
-        public function getRegistrationFormClassName()
+        public function getRegistrationFormClassName()«IF targets('3.0')»: string«ENDIF»
         {
-            return 'Zikula\ZAuthModule\Form\Type\RegistrationType';
+            return RegistrationType;
         }
 
-        /**
-         * @inheritDoc
-         */
-        public function getRegistrationTemplateName()
+        public function getRegistrationTemplateName()«IF targets('3.0')»: string«ENDIF»
         {
             return 'ZikulaZAuthModule:Authentication:register.html.twig';
         }
@@ -250,32 +206,13 @@ class AuthenticationMethod {
     '''
 
     def private authMethodImplCommon(Application it) '''
-        /**
-         * Authenticate the user from the provided data and return the associated native uid.
-         *
-         * @param array $data Authentication data
-         *
-         * @return integer|null
-         *
-         * @inheritDoc
-         */
-        public function authenticate(array $data = [])
+        public function authenticate(array $data = [])«IF targets('3.0')»: ?int«ENDIF»
         {
             // @todo replace by your own authentication logic
             return parent::authenticate($data);
         }
 
-        /**
-         * Register a new user from the provided data and map authorization to a Zikula UID.
-         * MUST return boolean TRUE on success.
-         *
-         * @param array $data Authentication data
-         *
-         * @return boolean
-         *
-         * @inheritDoc
-         */
-        public function register(array $data = [])
+        public function register(array $data = [])«IF targets('3.0')»: bool«ENDIF»
         {
             // @todo replace by your own registration logic
             return parent::register($data);
@@ -283,34 +220,19 @@ class AuthenticationMethod {
     '''
 
     def private authMethodImplRemote(Application it) '''
-        /**
-         * Return the ID of the user sent by the provider.
-         *
-         * @return string
-         */
-        public function getId()
+        public function getId()«IF targets('3.0')»: string«ENDIF»
         {
             // @todo replace by your own logic
             return parent::getId();
         }
 
-        /**
-         * After authentication, this method is used to update the user entity.
-         *
-         * @return string
-         */
-        public function getEmail()
+        public function getEmail()«IF targets('3.0')»: string«ENDIF»
         {
             // @todo replace by your own logic
             return parent::getEmail();
         }
 
-        /**
-         * After authentication, this method is used to update the user entity.
-         *
-         * @return string
-         */
-        public function getUname()
+        public function getUname()«IF targets('3.0')»: string«ENDIF»
         {
             // @todo replace by your own logic
             return parent::getUname();
@@ -318,48 +240,25 @@ class AuthenticationMethod {
     '''
 
     def private authMethodImplLocal(Application it) '''
-        /**
-         * Provide a FqCN for a Symfony form for login.
-         *
-         * @return string
-         */
-        public function getLoginFormClassName()
+        public function getLoginFormClassName()«IF targets('3.0')»: string«ENDIF»
         {
             // @todo replace by your own form type
             return parent::getLoginFormClassName();
         }
 
-        /**
-         * Provide a path to the required template for login.
-         *
-         * @param string $type
-         * @param string $position
-         *
-         * @return string
-         */
-        public function getLoginTemplateName($type = 'page', $position = 'left')
+        public function getLoginTemplateName«IF targets('3.0')»(string $type = 'page', string $position = 'left'): string«ELSE»($type = 'page', $position = 'left')«ENDIF»
         {
             // @todo replace by your own template
             return parent::getLoginTemplateName($type, $position);
         }
 
-        /**
-         * Provide a FqCN for a Symfony form for registration.
-         *
-         * @return string
-         */
-        public function getRegistrationFormClassName()
+        public function getRegistrationFormClassName()«IF targets('3.0')»: string«ENDIF»
         {
             // @todo replace by your own form type
             return parent::getRegistrationFormClassName();
         }
 
-        /**
-         * Provide a path to the required template for registration.
-         *
-         * @return string
-         */
-        public function getRegistrationTemplateName()
+        public function getRegistrationTemplateName()«IF targets('3.0')»: string«ENDIF»
         {
             // @todo replace by your own template
             return parent::getRegistrationTemplateName();

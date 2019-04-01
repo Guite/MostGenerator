@@ -20,10 +20,12 @@ class ModerationObjects {
         /**
          * The «appName.formatForDB»_moderationObjects function determines the amount of «IF hasWorkflow(EntityWorkflowType::ENTERPRISE)»unaccepted and «ENDIF»unapproved objects.
          * It uses the same logic as the moderation block and the pending content listener.
+         «IF !targets('3.0')»
          *
-         * @return string The output of the plugin
+         * @return array Information about items to be reviewed
+         «ENDIF»
          */
-        public function getModerationObjects()
+        public function getModerationObjects()«IF targets('3.0')»: array«ENDIF»
         {
             return $this->workflowHelper->collectAmountOfModerationItems();
         }

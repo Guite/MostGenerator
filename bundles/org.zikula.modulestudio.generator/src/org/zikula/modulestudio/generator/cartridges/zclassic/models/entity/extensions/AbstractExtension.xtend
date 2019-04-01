@@ -3,16 +3,15 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.models.entity.exte
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.Entity
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
+import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelInheritanceExtensions
-import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 abstract class AbstractExtension implements EntityExtensionInterface {
 
     extension FormattingExtensions = new FormattingExtensions
     extension ModelInheritanceExtensions = new ModelInheritanceExtensions
-    extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
 
     Application app
@@ -114,25 +113,8 @@ abstract class AbstractExtension implements EntityExtensionInterface {
     }
 
     def protected extensionClassEntityAccessors(Entity it) '''
-        /**
-         * Get reference to owning entity.
-         *
-         * @return \«entityClassName('', false)»
-         */
-        public function getEntity()
-        {
-            return $this->entity;
-        }
-
-        /**
-         * Set reference to owning entity.
-         *
-         * @param \«entityClassName('', false)» $entity
-         */
-        public function setEntity(/*\«entityClassName('', false)» */$entity)
-        {
-            $this->entity = $entity;
-        }
+        «(new FileHelper(application)).getterMethod(it, 'entity', name.formatForCodeCapital + 'Entity', false, false, app.targets('3.0'))»
+        «(new FileHelper(application)).setterMethod(it, 'entity', name.formatForCodeCapital + 'Entity', false, false, false, '', '')»
     '''
 
     def protected extensionClassImpl(Entity it) '''
@@ -171,9 +153,13 @@ abstract class AbstractExtension implements EntityExtensionInterface {
     def protected extensionClassRepositoryBaseImpl(Entity it) '''
         namespace «app.appNamespace»\Entity\Repository\Base;
 
-        «IF classType == 'translation'»
+        «IF 'translation' == classType»
             use Gedmo\Translatable\Entity\Repository\TranslationRepository;
-        «ELSEIF classType == 'logEntry'»
+        «ELSEIF 'logEntry' == classType»
+            «IF application.targets('2.0')»
+                use DateInterval;
+                use DateTime;
+            «ENDIF»
             use Doctrine\Common\Collections\ArrayCollection;
             use Gedmo\Loggable\Entity\Repository\LogEntryRepository;
             use Gedmo\Loggable\LoggableListener;

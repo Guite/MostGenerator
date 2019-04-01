@@ -27,7 +27,6 @@ class LinkContainer {
         use Symfony\Component\Routing\RouterInterface;
         use Zikula\Common\Translator\TranslatorInterface;
         use Zikula\Common\Translator\TranslatorTrait;
-        use Zikula\Core\Doctrine\EntityAccess;
         use Zikula\Core\LinkContainer\LinkContainerInterface;
         «IF generateAccountApi»
             use Zikula\ExtensionsModule\Api\ApiInterface\VariableApiInterface;
@@ -64,17 +63,6 @@ class LinkContainer {
              */
             protected $permissionHelper;
 
-            /**
-             * LinkContainer constructor.
-             *
-             * @param TranslatorInterface $translator
-             * @param Routerinterface $router
-             «IF generateAccountApi»
-             * @param VariableApiInterface $variableApi
-             «ENDIF»
-             * @param ControllerHelper $controllerHelper
-             * @param PermissionHelper $permissionHelper
-             */
             public function __construct(
                 TranslatorInterface $translator,
                 RouterInterface $router,
@@ -95,6 +83,7 @@ class LinkContainer {
 
             «setTranslatorMethod»
 
+            «IF !targets('3.0')»
             /**
              * Returns available header links.
              *
@@ -102,17 +91,18 @@ class LinkContainer {
              *
              * @return array List of header links
              */
-            public function getLinks($type = LinkContainerInterface::TYPE_ADMIN)
+            «ENDIF»
+            public function getLinks(«IF targets('3.0')»string «ENDIF»$type = LinkContainerInterface::TYPE_ADMIN)«IF targets('3.0')»: array«ENDIF»
             {
                 $contextArgs = ['api' => 'linkContainer', 'action' => 'getLinks'];
                 $allowedObjectTypes = $this->controllerHelper->getObjectTypes('api', $contextArgs);
         
-                $permLevel = LinkContainerInterface::TYPE_ADMIN == $type ? ACCESS_ADMIN : ACCESS_READ;
+                $permLevel = LinkContainerInterface::TYPE_ADMIN === $type ? ACCESS_ADMIN : ACCESS_READ;
 
                 // Create an array of links to return
                 $links = [];
 
-                if (LinkContainerInterface::TYPE_ACCOUNT == $type) {
+                if (LinkContainerInterface::TYPE_ACCOUNT === $type) {
                     «IF generateAccountApi»
                         if (!$this->permissionHelper->hasPermission(ACCESS_OVERVIEW)) {
                             return $links;
@@ -124,8 +114,8 @@ class LinkContainer {
                                 if ($this->permissionHelper->hasComponentPermission($objectType, ACCESS_READ)) {
                                     $routeArgs = ['own' => 1];
                                     «IF entity.ownerPermission»
-                                        $showOnlyOwnEntries = (bool)$this->variableApi->get('«appName»', '«entity.name.formatForCode»PrivateMode', false);
-                                        if (true == $showOnlyOwnEntries) {
+                                        $showOnlyOwnEntries = (bool)$this->variableApi->get('«appName»', '«entity.name.formatForCode»PrivateMode');
+                                        if (true === $showOnlyOwnEntries) {
                                             $routeArgs = [];
                                         }
                                     «ENDIF»
@@ -151,19 +141,21 @@ class LinkContainer {
                     return $links;
                 }
 
-                $routeArea = LinkContainerInterface::TYPE_ADMIN == $type ? 'admin' : '';
+                $routeArea = LinkContainerInterface::TYPE_ADMIN === $type ? 'admin' : '';
                 «val menuLinksHelper = new MenuLinksHelperFunctions»
                 «menuLinksHelper.generate(it)»
 
                 return $links;
             }
 
+            «IF !targets('3.0')»
             /**
              * Returns the name of the providing bundle.
              *
              * @return string The bundle name
              */
-            public function getBundleName()
+            «ENDIF»
+            public function getBundleName()«IF targets('3.0')»: string«ENDIF»
             {
                 return '«appName»';
             }

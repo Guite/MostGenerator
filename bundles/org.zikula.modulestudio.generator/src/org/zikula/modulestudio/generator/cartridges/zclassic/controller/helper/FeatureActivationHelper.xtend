@@ -38,28 +38,28 @@ class FeatureActivationHelper {
             /**
              * Categorisation feature
              */
-            const CATEGORIES = 'categories';
+            «IF targets('3.0')»public «ENDIF»const CATEGORIES = 'categories';
 
         «ENDIF»
         «IF hasAttributableEntities»
             /**
              * Attribution feature
              */
-            const ATTRIBUTES = 'attributes';
+            «IF targets('3.0')»public «ENDIF»const ATTRIBUTES = 'attributes';
 
         «ENDIF»
         «IF hasTranslatable»
             /**
              * Translation feature
              */
-            const TRANSLATIONS = 'translations';
+            «IF targets('3.0')»public «ENDIF»const TRANSLATIONS = 'translations';
 
         «ENDIF»
         «IF hasTrees»
             /**
              * Tree relatives feature
              */
-            const TREE_RELATIVES = 'treeRelatives';
+            «IF targets('3.0')»public «ENDIF»const TREE_RELATIVES = 'treeRelatives';
 
         «ENDIF»
     '''
@@ -67,52 +67,54 @@ class FeatureActivationHelper {
     def private isEnabled(Application it) '''
         /**
          * This method checks whether a certain feature is enabled for a given entity type or not.
+         «IF !targets('3.0')»
          *
-         * @param string $feature     Name of requested feature
-         * @param string $objectType  Currently treated entity type
+         * @param string $feature Name of requested feature
+         * @param string $objectType Currently treated entity type
          *
-         * @return boolean True if the feature is enabled, false otherwise
+         * @return bool True if the feature is enabled, false otherwise
+         «ENDIF»
          */
-        public function isEnabled($feature, $objectType)
+        public function isEnabled(«IF targets('3.0')»string «ENDIF»$feature = '', «IF targets('3.0')»string «ENDIF»$objectType = '')«IF targets('3.0')»: bool«ENDIF»
         {
             «IF hasCategorisableEntities»
-                if (self::CATEGORIES == $feature) {
+                if (self::CATEGORIES === $feature) {
                     $method = 'hasCategories';
                     if (method_exists($this, $method)) {
                         return $this->$method($objectType);
                     }
 
-                    return in_array($objectType, ['«getCategorisableEntities.map[name.formatForCode].join('\', \'')»']);
+                    return in_array($objectType, ['«getCategorisableEntities.map[name.formatForCode].join('\', \'')»'], true);
                 }
             «ENDIF»
             «IF hasAttributableEntities»
-                if (self::ATTRIBUTES == $feature) {
+                if (self::ATTRIBUTES === $feature) {
                     $method = 'hasAttributes';
                     if (method_exists($this, $method)) {
                         return $this->$method($objectType);
                     }
 
-                    return in_array($objectType, ['«getAttributableEntities.map[name.formatForCode].join('\', \'')»']);
+                    return in_array($objectType, ['«getAttributableEntities.map[name.formatForCode].join('\', \'')»'], true);
                 }
             «ENDIF»
             «IF hasTranslatable»
-                if (self::TRANSLATIONS == $feature) {
+                if (self::TRANSLATIONS === $feature) {
                     $method = 'hasTranslations';
                     if (method_exists($this, $method)) {
                         return $this->$method($objectType);
                     }
 
-                    return in_array($objectType, ['«getTranslatableEntities.map[name.formatForCode].join('\', \'')»']);
+                    return in_array($objectType, ['«getTranslatableEntities.map[name.formatForCode].join('\', \'')»'], true);
                 }
             «ENDIF»
             «IF hasTrees»
-                if (self::TREE_RELATIVES == $feature) {
+                if (self::TREE_RELATIVES === $feature) {
                     $method = 'hasTreeRelatives';
                     if (method_exists($this, $method)) {
                         return $this->$method($objectType);
                     }
 
-                    return in_array($objectType, ['«getTreeEntities.map[name.formatForCode].join('\', \'')»']);
+                    return in_array($objectType, ['«getTreeEntities.map[name.formatForCode].join('\', \'')»'], true);
                 }
             «ENDIF»
 

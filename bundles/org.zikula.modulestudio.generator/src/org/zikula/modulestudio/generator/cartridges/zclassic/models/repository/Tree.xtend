@@ -4,10 +4,12 @@ import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.EntityTreeType
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
+import org.zikula.modulestudio.generator.extensions.Utils
 
 class Tree {
 
     extension FormattingExtensions = new FormattingExtensions
+    extension Utils = new Utils
 
     def generate(Entity it, Application app) '''
         «IF tree != EntityTreeType.NONE»
@@ -21,15 +23,17 @@ class Tree {
     def private selectTree(Entity it) '''
         /**
          * Selects tree of «nameMultiple.formatForCode».
+         «IF !application.targets('3.0')»
          *
-         * @param integer $rootId   Optional id of root node to use as a branch, defaults to 0 which corresponds to the whole tree
-         * @param boolean $useJoins Whether to include joining related objects (optional) (default=true)
+         * @param int $rootId Optional id of root node to use as a branch, defaults to 0 which corresponds to the whole tree
+         * @param bool $useJoins Whether to include joining related objects (optional) (default=true)
          *
-         * @return array|ArrayCollection Retrieved data array or tree node objects
+         * @return array Retrieved data array or tree node objects
+         «ENDIF»
          */
-        public function selectTree($rootId = 0, $useJoins = true)
+        public function selectTree(«IF application.targets('3.0')»int «ENDIF»$rootId = 0, «IF application.targets('3.0')» bool«ENDIF»$useJoins = true)«IF application.targets('3.0')»: array«ENDIF»
         {
-            if ($rootId == 0) {
+            if (0 === $rootId) {
                 // return all trees if no specific one has been asked for
                 return $this->selectAllTrees($useJoins);
             }
@@ -47,12 +51,14 @@ class Tree {
     def private selectAllTrees(Entity it) '''
         /**
          * Selects all trees at once.
+         «IF !application.targets('3.0')»
          *
-         * @param boolean $useJoins Whether to include joining related objects (optional) (default=true)
+         * @param bool $useJoins Whether to include joining related objects (optional) (default=true)
          *
          * @return array|ArrayCollection Retrieved data array or tree node objects
+         «ENDIF»
          */
-        public function selectAllTrees($useJoins = true)
+        public function selectAllTrees«IF application.targets('3.0')»(bool $useJoins = true): array«ELSE»($useJoins = true)«ENDIF»
         {
             $trees = [];
 

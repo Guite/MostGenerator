@@ -21,7 +21,7 @@ class MenuLinksHelperFunctions {
             «entity.menuLinkToViewAction»
         «ENDFOR»
         «IF needsConfig»
-            if ($routeArea == 'admin' && $this->permissionHelper->hasPermission(ACCESS_ADMIN)) {
+            if ('admin' === $routeArea && $this->permissionHelper->hasPermission(ACCESS_ADMIN)) {
                 $links[] = [
                     'url' => $this->router->generate('«appName.formatForDB»_config_config'),
                     'text' => «translate('Settings')»,
@@ -33,7 +33,7 @@ class MenuLinksHelperFunctions {
     '''
 
     def private menuLinkToViewAction(Entity it) '''
-        if (in_array('«name.formatForCode»', $allowedObjectTypes)
+        if (in_array('«name.formatForCode»', $allowedObjectTypes, true)
             && $this->permissionHelper->hasComponentPermission('«name.formatForCode»', $permLevel)) {
             $links[] = [
                 'url' => $this->router->generate('«application.appName.formatForDB»_«name.formatForDB»_' . $routeArea . 'view'«/*IF tree != EntityTreeType.NONE», ['tpl' => 'tree']«ENDIF*/»),
@@ -44,7 +44,7 @@ class MenuLinksHelperFunctions {
     '''
 
     def private menuLinksBetweenControllers(Application it) '''
-        if (LinkContainerInterface::TYPE_ADMIN == $type) {
+        if (LinkContainerInterface::TYPE_ADMIN === $type) {
             if ($this->permissionHelper->hasPermission(ACCESS_READ)) {
                 $links[] = [
                     'url' => $this->router->generate('«appName.formatForDB»_«getLeadingEntity.name.formatForDB»_«getLeadingEntity.getPrimaryAction»'),

@@ -64,13 +64,6 @@ class ImageHelper {
          */
         protected $name;
 
-        /**
-         * ImageHelper constructor.
-         *
-         * @param TranslatorInterface $translator
-         * @param RequestStack $requestStack
-         * @param VariableApiInterface $variableApi
-         */
         public function __construct(
             TranslatorInterface $translator,
             RequestStack $requestStack,
@@ -94,15 +87,17 @@ class ImageHelper {
     def private getRuntimeOptions(Application it) '''
         /**
          * This method returns an Imagine runtime options array for the given arguments.
+         «IF !targets('3.0')»
          *
          * @param string $objectType Currently treated entity type
-         * @param string $fieldName  Name of upload field
-         * @param string $context    Usage context (allowed values: controllerAction, api, actionHandler, block, contentType)
-         * @param array  $args       Additional arguments
+         * @param string $fieldName Name of upload field
+         * @param string $context Usage context (allowed values: controllerAction, api, actionHandler, block, contentType)
+         * @param array $args Additional arguments
          *
          * @return array The selected runtime options
+         «ENDIF»
          */
-        public function getRuntimeOptions($objectType = '', $fieldName = '', $context = '', array $args = [])
+        public function getRuntimeOptions(«IF targets('3.0')»string «ENDIF»$objectType = '', «IF targets('3.0')»string «ENDIF»$fieldName = '', «IF targets('3.0')»string «ENDIF»$context = '', array $args = [])«IF targets('3.0')»: array«ENDIF»
         {
             «IF hasImageFields || !getUploadVariables.filter[isImageField].empty»
                 $this->checkIfImagineCacheDirectoryExists();
@@ -113,7 +108,7 @@ class ImageHelper {
             }
 
             $contextName = '';
-            if ($context == 'controllerAction') {
+            if ('controllerAction' === $context) {
                 if (!isset($args['controller'])) {
                     $args['controller'] = 'user';
                 }
@@ -122,7 +117,7 @@ class ImageHelper {
                 }
 
                 «IF needsAutoCompletion»
-                    if ($args['controller'] == 'ajax' && $args['action'] == 'getItemListAutoCompletion') {
+                    if ('ajax' === $args['controller'] && 'getItemListAutoCompletion' === $args['action']) {
                         $contextName = $this->name . '_ajax_autocomplete';
                     } else {
                         $contextName = $this->name . '_' . $args['controller'] . '_' . $args['action'];
@@ -142,39 +137,41 @@ class ImageHelper {
     def private getCustomRuntimeOptions(Application it) '''
         /**
          * This method returns an Imagine runtime options array for the given arguments.
+         «IF !targets('3.0')»
          *
-         * @param string $objectType  Currently treated entity type
-         * @param string $fieldName   Name of upload field
+         * @param string $objectType Currently treated entity type
+         * @param string $fieldName Name of upload field
          * @param string $contextName Name of desired context
-         * @param string $context     Usage context (allowed values: controllerAction, api, actionHandler, block, contentType)
-         * @param array  $args        Additional arguments
+         * @param string $context Usage context (allowed values: controllerAction, api, actionHandler, block, contentType)
+         * @param array $args Additional arguments
          *
          * @return array The selected runtime options
+         «ENDIF»
          */
-        public function getCustomRuntimeOptions($objectType = '', $fieldName = '', $contextName = '', $context = '', array $args = [])
+        public function getCustomRuntimeOptions(«IF targets('3.0')»string «ENDIF»$objectType = '', «IF targets('3.0')»string «ENDIF»$fieldName = '', «IF targets('3.0')»string «ENDIF»$contextName = '', «IF targets('3.0')»string «ENDIF»$context = '', array $args = [])«IF targets('3.0')»: array«ENDIF»
         {
             $options = [
                 'thumbnail' => [
-                    'size'      => [100, 100], // thumbnail width and height in pixels
-                    'mode'      => $this->variableApi->get('«appName»', 'thumbnailMode' . ucfirst($objectType) . ucfirst($fieldName), ImageInterface::THUMBNAIL_INSET),
-                    'extension' => null        // file extension for thumbnails (jpg, png, gif; null for original file type)
+                    'size' => [100, 100], // thumbnail width and height in pixels
+                    'mode' => $this->variableApi->get('«appName»', 'thumbnailMode' . ucfirst($objectType) . ucfirst($fieldName), ImageInterface::THUMBNAIL_INSET),
+                    'extension' => null // file extension for thumbnails (jpg, png, gif; null for original file type)
                 ]
             ];
 
             «IF needsAutoCompletion»
-                if ($contextName == $this->name . '_ajax_autocomplete') {
+                if ($this->name . '_ajax_autocomplete' === $contextName) {
                     $options['thumbnail']['size'] = [100, 75];
 
                     return $options;
                 }
             «ENDIF»
-            if ($contextName == $this->name . '_relateditem') {
+            if ($this->name . '_relateditem' === $contextName) {
                 $options['thumbnail']['size'] = [100, 75];
-            } elseif ($context == 'controllerAction') {
+            } elseif ('controllerAction' === $context) {
                 if (in_array($args['action'], ['view', 'display', 'edit'])) {
                     $fieldSuffix = ucfirst($objectType) . ucfirst($fieldName) . ucfirst($args['action']);
-                    $defaultWidth = $args['action'] == 'view' ? 32 : 240;
-                    $defaultHeight = $args['action'] == 'view' ? 24 : 180;
+                    $defaultWidth = 'view' === $args['action'] ? 32 : 240;
+                    $defaultHeight = 'view' === $args['action'] ? 24 : 180;
                     $options['thumbnail']['size'] = [
                         $this->variableApi->get('«appName»', 'thumbnailWidth' . $fieldSuffix, $defaultWidth),
                         $this->variableApi->get('«appName»', 'thumbnailHeight' . $fieldSuffix, $defaultHeight)
@@ -204,7 +201,7 @@ class ImageHelper {
         /**
          * Check if cache directory exists and create it if needed.
          */
-        protected function checkIfImagineCacheDirectoryExists()
+        protected function checkIfImagineCacheDirectoryExists()«IF targets('3.0')»: void«ENDIF»
         {
             $cachePath = 'web/imagine/cache';
             if (file_exists($cachePath)) {
@@ -231,17 +228,16 @@ class ImageHelper {
              */
             protected $secret;
 
+            «IF !targets('3.0')»
             /**
              * @param string $secret
              */
-            public function __construct($secret)
+            «ENDIF»
+            public function __construct(«IF targets('3.0')»string «ENDIF»$secret)
             {
                 $this->secret = $secret;
             }
 
-            /**
-             * @inheritDoc
-             */
             public function sign($path, array $runtimeConfig = null)
             {
                 if ($runtimeConfig) {
@@ -253,9 +249,6 @@ class ImageHelper {
                 return substr(preg_replace('/[^a-zA-Z0-9-_]/', '', base64_encode(hash_hmac('sha256', ltrim($path, '/').(null === $runtimeConfig ?: serialize($runtimeConfig)), $this->secret, true))), 0, 8);
             }
 
-            /**
-             * @inheritDoc
-             */
             public function check($hash, $path, array $runtimeConfig = null)
             {
                 return true;//$hash === $this->sign($path, $runtimeConfig);

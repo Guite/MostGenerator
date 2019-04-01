@@ -24,7 +24,7 @@ class Locking {
     '''
 
     def addPageLock(Application it) '''
-        if (true === $this->hasPageLockSupport && $this->kernel->isBundle('ZikulaPageLockModule') && null !== $this->lockingApi) {
+        if (true === $this->hasPageLockSupport && null !== $this->lockingApi && $this->kernel->isBundle('ZikulaPageLockModule')) {
             // try to guarantee that only one person at a time can be editing this entity
             $lockName = '«appName»' . $this->objectTypeCapital . $entity->getKey();
             $this->lockingApi->addLock($lockName, $this->getRedirectUrl(['commandName' => '']));
@@ -32,8 +32,8 @@ class Locking {
     '''
 
     def releasePageLock(Application it) '''
-        if (true === $this->hasPageLockSupport && $this->templateParameters['mode'] == 'edit' && $this->kernel->isBundle('ZikulaPageLockModule') && null !== $this->lockingApi) {
-            $lockName = '«appName»' . $this->objectTypeCapital . $entity->getKey();
+        if (true === $this->hasPageLockSupport && null !== $this->lockingApi && 'edit' === $this->templateParameters['mode'] && $this->kernel->isBundle('ZikulaPageLockModule')) {
+            $lockName = '«appName»' . $this->objectTypeCapital . $this->entityRef->getKey();
             $this->lockingApi->releaseLock($lockName);
         }
     '''
@@ -54,7 +54,7 @@ class Locking {
     def setVersion(Entity it) '''
         «IF hasOptimisticLock»
 
-            if ($this->templateParameters['mode'] == 'edit') {
+            if ('edit' === $this->templateParameters['mode']) {
                 $this->requestStack->getCurrentRequest()->getSession()->set('«application.appName»EntityVersion', $this->entityRef->get«getVersionField.name.formatForCodeCapital»());
             }
         «ENDIF»
@@ -63,7 +63,7 @@ class Locking {
     def getVersion(Entity it) '''
         «IF hasOptimisticLock || hasPessimisticWriteLock»
 
-            $applyLock = $this->templateParameters['mode'] != 'create' && $action != 'delete';
+            $applyLock = 'create' !== $this->templateParameters['mode'] && 'delete' !== $action;
             «IF hasOptimisticLock»
                 $expectedVersion = $this->requestStack->getCurrentRequest()->getSession()->get('«application.appName»EntityVersion', 1);
             «ENDIF»

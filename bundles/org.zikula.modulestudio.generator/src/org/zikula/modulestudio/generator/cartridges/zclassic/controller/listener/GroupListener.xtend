@@ -10,9 +10,6 @@ class GroupListener {
     CommonExample commonExample = new CommonExample()
 
     def generate(Application it) '''
-        /**
-         * Makes our handlers known to the event system.
-         */
         public static function getSubscribedEvents()
         {
             return [
@@ -36,9 +33,8 @@ class GroupListener {
          * The full group record created is available as the subject.
          *
          «commonExample.generalEventProperties(it, false)»
-         * @param GenericEvent $event The event instance
          */
-        public function create(GenericEvent $event)
+        public function create(GenericEvent $event)«IF targets('3.0')»: void«ENDIF»
         {
         }
 
@@ -49,9 +45,8 @@ class GroupListener {
          * The full updated group record is available as the subject.
          *
          «commonExample.generalEventProperties(it, false)»
-         * @param GenericEvent $event The event instance
          */
-        public function update(GenericEvent $event)
+        public function update(GenericEvent $event)«IF targets('3.0')»: void«ENDIF»
         {
         }
         «IF targets('3.0')»
@@ -63,9 +58,8 @@ class GroupListener {
          * The full group record to be deleted is available as the subject.
          *
          «commonExample.generalEventProperties(it, false)»
-         * @param GenericEvent $event The event instance
          */
-        public function preDelete(GenericEvent $event)
+        public function preDelete(GenericEvent $event): void
         {
         }
         «ENDIF»
@@ -77,9 +71,8 @@ class GroupListener {
          * The full group record deleted is available as the subject.
          *
          «commonExample.generalEventProperties(it, false)»
-         * @param GenericEvent $event The event instance
          */
-        public function delete(GenericEvent $event)
+        public function delete(GenericEvent $event)«IF targets('3.0')»: void«ENDIF»
         {
         }
 
@@ -91,9 +84,8 @@ class GroupListener {
          * The uid and gid are available as the subject.
          *
          «commonExample.generalEventProperties(it, false)»
-         * @param GenericEvent $event The event instance
          */
-        public function addUser(GenericEvent $event)
+        public function addUser(GenericEvent $event)«IF targets('3.0')»: void«ENDIF»
         {
         }
 
@@ -104,9 +96,8 @@ class GroupListener {
          * The uid and gid are available as the subject.
          *
          «commonExample.generalEventProperties(it, false)»
-         * @param GenericEvent $event The event instance
          */
-        public function removeUser(GenericEvent $event)
+        public function removeUser(GenericEvent $event)«IF targets('3.0')»: void«ENDIF»
         {
         }
 
@@ -118,9 +109,8 @@ class GroupListener {
          * Arguments are the form data from \Zikula\GroupsModule\Form\Type\ManageApplicationType
          *
          «commonExample.generalEventProperties(it, false)»
-         * @param GenericEvent $event The event instance
          */
-        public function applicationProcessed(GenericEvent $event)
+        public function applicationProcessed(GenericEvent $event)«IF targets('3.0')»: void«ENDIF»
         {
         }
 
@@ -131,9 +121,8 @@ class GroupListener {
          * The subject is the GroupApplicationEntity.
          *
          «commonExample.generalEventProperties(it, false)»
-         * @param GenericEvent $event The event instance
          */
-        public function newApplication(GenericEvent $event)
+        public function newApplication(GenericEvent $event)«IF targets('3.0')»: void«ENDIF»
         {
         }
     '''

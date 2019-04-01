@@ -47,9 +47,6 @@ class CollectionFilterHelper {
             use Zikula\UsersModule\Api\ApiInterface\CurrentUserApiInterface;
             use Zikula\UsersModule\Constant as UsersConstant;
         «ENDIF»
-        «FOR entity : getAllEntities»
-            use «appNamespace»\Entity\«entity.name.formatForCodeCapital»Entity;
-        «ENDFOR»
         «IF hasCategorisableEntities»
             use «appNamespace»\Helper\CategoryHelper;
         «ENDIF»
@@ -108,19 +105,6 @@ class CollectionFilterHelper {
             protected $filterDataByLocale = false;
         «ENDIF»
 
-        /**
-         * CollectionFilterHelper constructor.
-         *
-         * @param RequestStack $requestStack
-         * @param PermissionHelper $permissionHelper
-         «IF hasStandardFieldEntities»
-         * @param CurrentUserApiInterface $currentUserApi
-         «ENDIF»
-         «IF hasCategorisableEntities»
-         * @param CategoryHelper $categoryHelper
-         «ENDIF»
-         * @param VariableApiInterface $variableApi
-         */
         public function __construct(
             RequestStack $requestStack,
             PermissionHelper $permissionHelper,
@@ -143,29 +127,31 @@ class CollectionFilterHelper {
             «IF !getAllEntities.filter[ownerPermission].empty»
                 $this->variableApi = $variableApi;
             «ENDIF»
-            $this->showOnlyOwnEntries = $variableApi->get('«appName»', 'showOnlyOwnEntries', false);
+            $this->showOnlyOwnEntries = (bool)$variableApi->get('«appName»', 'showOnlyOwnEntries');
             «IF supportLocaleFilter»
-                $this->filterDataByLocale = $variableApi->get('«appName»', 'filterDataByLocale', false);
+                $this->filterDataByLocale = (bool)$variableApi->get('«appName»', 'filterDataByLocale');
             «ENDIF»
         }
 
         /**
          * Returns an array of additional template variables for view quick navigation forms.
+         «IF !targets('3.0')»
          *
          * @param string $objectType Name of treated entity type
-         * @param string $context    Usage context (allowed values: controllerAction, api, actionHandler, block, contentType)
-         * @param array  $args       Additional arguments
+         * @param string $context Usage context (allowed values: controllerAction, api, actionHandler, block, contentType)
+         * @param array $args Additional arguments
          *
          * @return array List of template variables to be assigned
+         «ENDIF»
          */
-        public function getViewQuickNavParameters($objectType = '', $context = '', array $args = [])
+        public function getViewQuickNavParameters(«IF targets('3.0')»string «ENDIF»$objectType = '', «IF targets('3.0')»string «ENDIF»$context = '', array $args = [])«IF targets('3.0')»: array«ENDIF»
         {
             if (!in_array($context, ['controllerAction', 'api', 'actionHandler', 'block', 'contentType'])) {
                 $context = 'controllerAction';
             }
 
             «FOR entity : getAllEntities»
-                if ($objectType == '«entity.name.formatForCode»') {
+                if ('«entity.name.formatForCode»' === $objectType) {
                     return $this->getViewQuickNavParametersFor«entity.name.formatForCodeCapital»($context, $args);
                 }
             «ENDFOR»
@@ -175,16 +161,18 @@ class CollectionFilterHelper {
 
         /**
          * Adds quick navigation related filter options as where clauses.
+         «IF !targets('3.0')»
          *
-         * @param string       $objectType Name of treated entity type
-         * @param QueryBuilder $qb         Query builder to be enhanced
+         * @param string $objectType Name of treated entity type
+         * @param QueryBuilder $qb Query builder to be enhanced
          *
          * @return QueryBuilder Enriched query builder instance
+         «ENDIF»
          */
-        public function addCommonViewFilters($objectType, QueryBuilder $qb)
+        public function addCommonViewFilters(«IF targets('3.0')»string «ENDIF»$objectType, QueryBuilder $qb)«IF targets('3.0')»: QueryBuilder«ENDIF»
         {
             «FOR entity : getAllEntities»
-                if ($objectType == '«entity.name.formatForCode»') {
+                if ('«entity.name.formatForCode»' === $objectType) {
                     return $this->addCommonViewFiltersFor«entity.name.formatForCodeCapital»($qb);
                 }
             «ENDFOR»
@@ -194,17 +182,19 @@ class CollectionFilterHelper {
 
         /**
          * Adds default filters as where clauses.
+         «IF !targets('3.0')»
          *
-         * @param string       $objectType Name of treated entity type
-         * @param QueryBuilder $qb         Query builder to be enhanced
-         * @param array        $parameters List of determined filter options
+         * @param string $objectType Name of treated entity type
+         * @param QueryBuilder $qb Query builder to be enhanced
+         * @param array $parameters List of determined filter options
          *
          * @return QueryBuilder Enriched query builder instance
+         «ENDIF»
          */
-        public function applyDefaultFilters($objectType, QueryBuilder $qb, array $parameters = [])
+        public function applyDefaultFilters(«IF targets('3.0')»string «ENDIF»$objectType, QueryBuilder $qb, array $parameters = [])«IF targets('3.0')»: QueryBuilder«ENDIF»
         {
             «FOR entity : getAllEntities»
-                if ($objectType == '«entity.name.formatForCode»') {
+                if ('«entity.name.formatForCode»' === $objectType) {
                     return $this->applyDefaultFiltersFor«entity.name.formatForCodeCapital»($qb, $parameters);
                 }
             «ENDFOR»
@@ -238,13 +228,15 @@ class CollectionFilterHelper {
     def private getViewQuickNavParameters(Entity it) '''
         /**
          * Returns an array of additional template variables for view quick navigation forms.
+         «IF !application.targets('3.0')»
          *
          * @param string $context Usage context (allowed values: controllerAction, api, actionHandler, block, contentType)
-         * @param array  $args    Additional arguments
+         * @param array $args Additional arguments
          *
          * @return array List of template variables to be assigned
+         «ENDIF»
          */
-        protected function getViewQuickNavParametersFor«name.formatForCodeCapital»($context = '', array $args = [])
+        protected function getViewQuickNavParametersFor«name.formatForCodeCapital»(«IF application.targets('3.0')»string «ENDIF»$context = '', array $args = [])«IF application.targets('3.0')»: array«ENDIF»
         {
             $parameters = [];
             $request = $this->requestStack->getCurrentRequest();
@@ -309,18 +301,20 @@ class CollectionFilterHelper {
     def private addCommonViewFilters(Entity it) '''
         /**
          * Adds quick navigation related filter options as where clauses.
+         «IF !application.targets('3.0')»
          *
          * @param QueryBuilder $qb Query builder to be enhanced
          *
          * @return QueryBuilder Enriched query builder instance
+         «ENDIF»
          */
-        protected function addCommonViewFiltersFor«name.formatForCodeCapital»(QueryBuilder $qb)
+        protected function addCommonViewFiltersFor«name.formatForCodeCapital»(QueryBuilder $qb)«IF application.targets('3.0')»: QueryBuilder«ENDIF»
         {
             $request = $this->requestStack->getCurrentRequest();
             if (null === $request) {
                 return $qb;
             }
-            $routeName = $request->get('_route');
+            $routeName = $request->get('_route', '');
             if (false !== strpos($routeName, 'edit')) {«/* fix for #547 */»
                 return $qb;
             }
@@ -328,15 +322,15 @@ class CollectionFilterHelper {
             $parameters = $this->getViewQuickNavParametersFor«name.formatForCodeCapital»();
             foreach ($parameters as $k => $v) {
                 «IF categorisable»
-                    if ($k == 'catId') {
-                        if (intval($v) > 0) {
+                    if ('catId' === $k) {
+                        if (0 < (int)$v) {
                             // single category filter
                             $qb->andWhere('tblCategories.category = :category')
                                ->setParameter('category', $v);
                         }
                         continue;
                     }
-                    if ($k == 'catIdList') {
+                    if ('catIdList' === $k) {
                         // multi category filter«/* old 
                         $qb->andWhere('tblCategories.category IN (:categories)')
                            ->setParameter('categories', $v);*/»
@@ -344,7 +338,7 @@ class CollectionFilterHelper {
                         continue;
                     }
                 «ENDIF»
-                if (in_array($k, ['q', 'searchterm'])) {
+                if (in_array($k, ['q', 'searchterm'], true)) {
                     // quick search
                     if (!empty($v)) {
                         $qb = $this->addSearchFilter('«name.formatForCode»', $qb, $v);
@@ -352,11 +346,11 @@ class CollectionFilterHelper {
                     continue;
                 }
                 «IF hasBooleanFieldsEntity»
-                    if (in_array($k, [«FOR field : getBooleanFieldsEntity SEPARATOR ', '»'«field.name.formatForCode»'«ENDFOR»])) {
+                    if (in_array($k, [«FOR field : getBooleanFieldsEntity SEPARATOR ', '»'«field.name.formatForCode»'«ENDFOR»], true)) {
                         // boolean filter
-                        if ($v == 'no') {
+                        if ('no' === $v) {
                             $qb->andWhere('tbl.' . $k . ' = 0');
-                        } elseif ($v == 'yes' || $v == '1') {
+                        } elseif ('yes' === $v || '1' === $v) {
                             $qb->andWhere('tbl.' . $k . ' = 1');
                         }
                         continue;
@@ -368,22 +362,22 @@ class CollectionFilterHelper {
                 }
 
                 // field filter
-                if ((!is_numeric($v) && $v != '') || (is_numeric($v) && $v > 0)) {
-                    if ($k == 'workflowState' && substr($v, 0, 1) == '!') {
+                if ((!is_numeric($v) && '' !== $v) || (is_numeric($v) && 0 < $v)) {
+                    if ('workflowState' === $k && '0' === strpos($v, '!')) {
                         $qb->andWhere('tbl.' . $k . ' != :' . $k)
-                           ->setParameter($k, substr($v, 1, strlen($v)-1));
-                    } elseif (substr($v, 0, 1) == '%') {
+                           ->setParameter($k, substr($v, 1));
+                    } elseif (0 === strpos($v, '%')) {
                         $qb->andWhere('tbl.' . $k . ' LIKE :' . $k)
                            ->setParameter($k, '%' . substr($v, 1) . '%');
                     «IF !getListFieldsEntity.filter[multiple].empty»
-                        } elseif (in_array($k, [«FOR field : getListFieldsEntity.filter[multiple] SEPARATOR ', '»'«field.name.formatForCode»'«ENDFOR»])) {
+                        } elseif (in_array($k, [«FOR field : getListFieldsEntity.filter[multiple] SEPARATOR ', '»'«field.name.formatForCode»'«ENDFOR»], true)) {
                             // multi list filter
                             $qb->andWhere('tbl.' . $k . ' LIKE :' . $k)
                                ->setParameter($k, '%' . $v . '%');
                     «ENDIF»
                     } else {
                         «IF hasUserFieldsEntity»
-                            if (in_array($k, ['«getUserFieldsEntity.map[name.formatForCode].join('\', \'')»'])) {
+                            if (in_array($k, ['«getUserFieldsEntity.map[name.formatForCode].join('\', \'')»'], true)) {
                                 $qb->leftJoin('tbl.' . $k, 'tbl' . ucfirst($k))
                                    ->andWhere('tbl' . ucfirst($k) . '.uid = :' . $k)
                                    ->setParameter($k, $v);
@@ -399,28 +393,28 @@ class CollectionFilterHelper {
                 }
             }
 
-            $qb = $this->applyDefaultFiltersFor«name.formatForCodeCapital»($qb, $parameters);
-
-            return $qb;
+            return $this->applyDefaultFiltersFor«name.formatForCodeCapital»($qb, $parameters);
         }
     '''
 
     def private applyDefaultFilters(Entity it) '''
         /**
          * Adds default filters as where clauses.
+         «IF !application.targets('3.0')»
          *
-         * @param QueryBuilder $qb         Query builder to be enhanced
-         * @param array        $parameters List of determined filter options
+         * @param QueryBuilder $qb Query builder to be enhanced
+         * @param array $parameters List of determined filter options
          *
          * @return QueryBuilder Enriched query builder instance
+         «ENDIF»
          */
-        protected function applyDefaultFiltersFor«name.formatForCodeCapital»(QueryBuilder $qb, array $parameters = [])
+        protected function applyDefaultFiltersFor«name.formatForCodeCapital»(QueryBuilder $qb, array $parameters = [])«IF application.targets('3.0')»: QueryBuilder«ENDIF»
         {
             $request = $this->requestStack->getCurrentRequest();
             if (null === $request) {
                 return $qb;
             }
-            $routeName = $request->get('_route');
+            $routeName = $request->get('_route', '');
             $isAdminArea = false !== strpos($routeName, '«application.appName.toLowerCase»_«name.formatForDB»_admin');
             if ($isAdminArea) {
                 return $qb;
@@ -428,13 +422,13 @@ class CollectionFilterHelper {
             «IF ownerPermission || standardFields»
 
                 «IF ownerPermission»
-                    $showOnlyOwnEntries = (bool)$this->variableApi->get('«application.appName»', '«name.formatForCode»PrivateMode', false);
+                    $showOnlyOwnEntries = (bool)$this->variableApi->get('«application.appName»', '«name.formatForCode»PrivateMode');
                 «ELSEIF standardFields»
                     $showOnlyOwnEntries = (bool)$request->query->getInt('own', $this->showOnlyOwnEntries);
                 «ENDIF»
             «ENDIF»
 
-            if (!in_array('workflowState', array_keys($parameters)) || empty($parameters['workflowState'])) {
+            if (!array_key_exists('workflowState', $parameters) || empty($parameters['workflowState'])) {
                 // per default we show approved «nameMultiple.formatForDisplay» only
                 $onlineStates = ['approved'];
                 «IF ownerPermission»
@@ -459,14 +453,14 @@ class CollectionFilterHelper {
                     $allowedLocales = ['', $request->getLocale()];
                     «FOR field : getLanguageFieldsEntity»
                         «val fieldName = field.name.formatForCode»
-                        if (!in_array('«fieldName»', array_keys($parameters)) || empty($parameters['«fieldName»'])) {
+                        if (!array_key_exists('«fieldName»', $parameters) || empty($parameters['«fieldName»'])) {
                             $qb->andWhere('tbl.«fieldName» IN (:current«fieldName.toFirstUpper»)')
                                ->setParameter('current«fieldName.toFirstUpper»', $allowedLocales);
                         }
                     «ENDFOR»
                     «FOR field : getLocaleFieldsEntity»
                         «val fieldName = field.name.formatForCode»
-                        if (!in_array('«fieldName»', array_keys($parameters)) || empty($parameters['«fieldName»'])) {
+                        if (!array_key_exists('«fieldName»', $parameters) || empty($parameters['«fieldName»'])) {
                             $qb->andWhere('tbl.«fieldName» IN (:current«fieldName.toFirstUpper»)')
                                ->setParameter('current«fieldName.toFirstUpper»', $allowedLocales);
                         }
@@ -489,7 +483,7 @@ class CollectionFilterHelper {
         if (relatedEntity instanceof Entity && (relatedEntity as Entity).hasStartOrEndDateField) {
             val aliasName = 'tbl' + getRelationAliasName(useTarget).formatForCodeCapital
             '''
-                if (in_array('«aliasName»', $qb->getAllAliases())) {
+                if (in_array('«aliasName»', $qb->getAllAliases(), true)) {
                     $qb = $this->applyDateRangeFilterFor«relatedEntity.name.formatForCodeCapital»($qb, '«aliasName»');
                 }
             '''
@@ -499,13 +493,15 @@ class CollectionFilterHelper {
     def private applyDateRangeFilter(Entity it) '''
         /**
          * Applies «IF hasStartDateField»start «IF hasEndDateField»and «ENDIF»«ENDIF»«IF hasEndDateField»end «ENDIF»date filters for selecting «nameMultiple.formatForDisplay».
+         «IF !application.targets('3.0')»
          *
-         * @param QueryBuilder $qb    Query builder to be enhanced
-         * @param string       $alias Table alias
+         * @param QueryBuilder $qb Query builder to be enhanced
+         * @param string $alias Table alias
          *
          * @return QueryBuilder Enriched query builder instance
+         «ENDIF»
          */
-        protected function applyDateRangeFilterFor«name.formatForCodeCapital»(QueryBuilder $qb, $alias = 'tbl')
+        protected function applyDateRangeFilterFor«name.formatForCodeCapital»(QueryBuilder $qb, «IF application.targets('3.0')»string «ENDIF»$alias = 'tbl')«IF application.targets('3.0')»: QueryBuilder«ENDIF»
         {
             $request = $this->requestStack->getCurrentRequest();
             «IF hasStartDateField»
@@ -529,16 +525,18 @@ class CollectionFilterHelper {
     def private addSearchFilter(Application it) '''
         /**
          * Adds a where clause for search query.
+         «IF !targets('3.0')»
          *
-         * @param string       $objectType Name of treated entity type
-         * @param QueryBuilder $qb         Query builder to be enhanced
-         * @param string       $fragment   The fragment to search for
+         * @param string $objectType Name of treated entity type
+         * @param QueryBuilder $qb Query builder to be enhanced
+         * @param string $fragment The fragment to search for
          *
          * @return QueryBuilder Enriched query builder instance
+         «ENDIF»
          */
-        public function addSearchFilter($objectType, QueryBuilder $qb, $fragment = '')
+        public function addSearchFilter(«IF targets('3.0')»string «ENDIF»$objectType, QueryBuilder $qb, «IF targets('3.0')»string «ENDIF»$fragment = '')«IF targets('3.0')»: QueryBuilder«ENDIF»
         {
-            if ($fragment == '') {
+            if ('' === $fragment) {
                 return $qb;
             }
 
@@ -546,7 +544,7 @@ class CollectionFilterHelper {
             $parameters = [];
 
             «FOR entity : getAllEntities»
-                if ($objectType == '«entity.name.formatForCode»') {
+                if ('«entity.name.formatForCode»' === $objectType) {
                     «val searchFields = entity.getDisplayFields.filter[isContainedInSearch]»
                     «FOR field : searchFields»
                         «IF field instanceof AbstractIntegerField || field instanceof NumberField»
@@ -575,25 +573,22 @@ class CollectionFilterHelper {
     def private addCreatorFilter(Application it) '''
         /**
          * Adds a filter for the createdBy field.
+         «IF !targets('3.0')»
          *
-         * @param QueryBuilder $qb     Query builder to be enhanced
-         * @param integer      $userId The user identifier used for filtering
+         * @param QueryBuilder $qb Query builder to be enhanced
+         * @param int $userId The user identifier used for filtering
          *
          * @return QueryBuilder Enriched query builder instance
+         «ENDIF»
          */
-        public function addCreatorFilter(QueryBuilder $qb, $userId = null)
+        public function addCreatorFilter(QueryBuilder $qb, «IF targets('3.0')»int «ENDIF»$userId = null)«IF targets('3.0')»: QueryBuilder«ENDIF»
         {
             if (null === $userId) {
-                $userId = $this->currentUserApi->isLoggedIn() ? $this->currentUserApi->get('uid') : UsersConstant::USER_ID_ANONYMOUS;
+                $userId = $this->currentUserApi->isLoggedIn() ? (int)$this->currentUserApi->get('uid') : UsersConstant::USER_ID_ANONYMOUS;
             }
 
-            if (is_array($userId)) {
-                $qb->andWhere('tbl.createdBy IN (:userIds)')
-                   ->setParameter('userIds', $userId);
-            } else {
-                $qb->andWhere('tbl.createdBy = :userId')
-                   ->setParameter('userId', $userId);
-            }
+            $qb->andWhere('tbl.createdBy = :userId')
+               ->setParameter('userId', $userId);
 
             return $qb;
         }

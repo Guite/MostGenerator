@@ -47,11 +47,6 @@ class ModelHelper {
          */
         protected $entityFactory;
 
-        /**
-         * ModelHelper constructor.
-         *
-         * @param EntityFactory $entityFactory
-         */
         public function __construct(EntityFactory $entityFactory)
         {
             $this->entityFactory = $entityFactory;
@@ -75,12 +70,14 @@ class ModelHelper {
          *
          * Note that even creation of a certain object is possible, it may still be forbidden for the current user
          * if he does not have the required permission level.
+         «IF !targets('3.0')»
          *
          * @param string $objectType Name of treated entity type
          *
-         * @return boolean Whether a new instance can be created or not
+         * @return bool Whether a new instance can be created or not
+         «ENDIF»
          */
-        public function canBeCreated($objectType)
+        public function canBeCreated(«IF targets('3.0')»string «ENDIF»$objectType = '')«IF targets('3.0')»: bool«ENDIF»
         {
             $result = false;
 
@@ -129,34 +126,36 @@ class ModelHelper {
     def private resolveSortParameter(Application it) '''
         /**
          * Returns a desired sorting criteria for passing it to a repository method.
+         «IF !targets('3.0')»
          *
          * @param string $objectType Name of treated entity type
-         * @param string $sorting    The type of sorting (newest, random, default)
+         * @param string $sorting The type of sorting (newest, random, default)
          *
          * @return string The order by clause
+         «ENDIF»
          */
-        public function resolveSortParameter($objectType = '', $sorting = 'default')
+        public function resolveSortParameter(«IF targets('3.0')»string «ENDIF»$objectType = '', «IF targets('3.0')»string «ENDIF»$sorting = 'default')«IF targets('3.0')»: string«ENDIF»
         {
-            if ($sorting == 'random') {
+            if ('random' === $sorting) {
                 return 'RAND()';
             }
 
             $hasStandardFields = in_array($objectType, ['«getAllEntities.filter[standardFields].map[name.formatForCode].join('\', \'')»']);
 
             $sortParam = '';
-            if ($sorting == 'newest') {
+            if ('newest' === $sorting) {
                 if (true === $hasStandardFields) {
                     $sortParam = 'createdDate DESC';
                 } else {
                     $sortParam = $this->entityFactory->getIdField($objectType) . ' DESC';
                 }
-            } elseif ($sorting == 'updated') {
+            } elseif ('updated' === $sorting) {
                 if (true === $hasStandardFields) {
                     $sortParam = 'updatedDate DESC';
                 } else {
                     $sortParam = $this->entityFactory->getIdField($objectType) . ' DESC';
                 }
-            } elseif ($sorting == 'default') {
+            } elseif ('default' === $sorting) {
                 $repository = $this->entityFactory->getRepository($objectType);
                 $sortParam = $repository->getDefaultSortingField();
             }
@@ -168,19 +167,21 @@ class ModelHelper {
     def private hasExistingInstances(Application it) '''
         /**
          * Determines whether there exists at least one instance of a certain object type in the database.
+         «IF !targets('3.0')»
          *
          * @param string $objectType Name of treated entity type
          *
-         * @return boolean Whether at least one instance exists or not
+         * @return bool Whether at least one instance exists or not
+         «ENDIF»
          */
-        protected function hasExistingInstances($objectType)
+        protected function hasExistingInstances(«IF targets('3.0')»string «ENDIF»$objectType = '')«IF targets('3.0')»: bool«ENDIF»
         {
             $repository = $this->entityFactory->getRepository($objectType);
             if (null === $repository) {
                 return false;
             }
 
-            return $repository->selectCount() > 0;
+            return 0 < $repository->selectCount();
         }
     '''
 

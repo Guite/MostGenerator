@@ -854,26 +854,31 @@ class ModelExtensions {
     /**
      * Prints an output string describing the type of the given derived field.
      */
-    def fieldTypeAsString(DerivedField it) {
+    def fieldTypeAsString(DerivedField it, Boolean forPhp) {
         switch it {
-            BooleanField: 'boolean'
+            BooleanField: if (forPhp) 'bool' else 'boolean'
             UserField: 'UserEntity'
             AbstractIntegerField: {
-                    // choose mapping type depending on length
-                    if (it.length < 5) 'smallint'
-                    else if (it.length < 12) 'integer'
-                    else 'bigint'
+                    if (forPhp) 'int'
+                    else {
+                        // choose mapping type depending on length
+                        if (it.length < 5) 'smallint'
+                        else if (it.length < 12) 'integer'
+                        else 'bigint'
+                    }
             }
-            NumberField: if (numberType == NumberFieldType.DECIMAL) 'decimal' else 'float'
+            NumberField: if (forPhp) 'float' else {
+                if (numberType == NumberFieldType.DECIMAL) 'decimal' else 'float'
+            }
             StringField: 'string'
-            TextField: 'text'
+            TextField: if (forPhp) 'string' else 'text'
             EmailField: 'string'
             UrlField: 'string'
             UploadField: 'string'
             ListField: 'string'
             ArrayField: 'array'
             ObjectField: 'object'
-            DatetimeField: dateTimeFieldTypeAsString
+            DatetimeField: if (forPhp) 'DateTime' else dateTimeFieldTypeAsString
             default: ''
         }
     }

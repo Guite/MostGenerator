@@ -31,7 +31,7 @@ class AppSettings {
             return
         }
         'Generating application settings class'.printIfNotTesting(fsa)
-        thProp = new Property(null)
+        thProp = new Property(it, null)
         fsa.generateClassPair('AppSettings.php', appSettingsBaseImpl, appSettingsImpl)
     }
 
@@ -129,20 +129,6 @@ class AppSettings {
     '''
 
     def private constructor(Application it) '''
-        /**
-         * AppSettings constructor.
-         *
-         * @param VariableApiInterface $variableApi
-         «IF hasUserVariables»
-         * @param UserRepositoryInterface $userRepository
-         «ENDIF»
-         «IF hasUserGroupSelectors»
-         * @param GroupRepositoryInterface $groupRepository
-         «ENDIF»
-         «IF hasLoggable»
-         * @param EntityFactory $entityFactory
-         «ENDIF»
-         */
         public function __construct(
             VariableApiInterface $variableApi«IF hasUserVariables»,
             UserRepositoryInterface $userRepository«ENDIF»«IF hasUserGroupSelectors»,
@@ -168,7 +154,7 @@ class AppSettings {
         /**
          * Loads module variables from the database.
          */
-        protected function load()
+        protected function load()«IF targets('3.0')»: void«ENDIF»
         {
             $moduleVars = $this->variableApi->getAll('«appName»');
 
@@ -194,7 +180,7 @@ class AppSettings {
                 $adminUserId = UsersConstant::USER_ID_ADMIN;
                 «FOR userField : getAllVariables.filter(UserField)»
                     $userId = $this->get«userField.name.formatForCodeCapital»();
-                    if ($userId < 1) {
+                    if (USER_ID_ANONYMOUS > $userId) {
                         $userId = $adminUserId;
                     }
 
@@ -207,7 +193,7 @@ class AppSettings {
                 $adminGroupId = GroupsConstant::GROUP_ID_ADMIN;
                 «FOR groupSelector : getUserGroupSelectors»
                     $groupId = $this->get«groupSelector.name.formatForCodeCapital»();
-                    if ($groupId < 1) {
+                    if (GROUP_ID_USERS > $groupId) {
                         $groupId = $adminGroupId;
                     }
 
@@ -221,7 +207,7 @@ class AppSettings {
         /**
          * Saves module variables into the database.
          */
-        public function save()
+        public function save()«IF targets('3.0')»: void«ENDIF»
         {
             «IF hasUserVariables»
                 // normalise user selector values
@@ -260,9 +246,9 @@ class AppSettings {
                 «FOR entity : getLoggableEntities»
                     $revisionHandling = $this->getRevisionHandlingFor«entity.name.formatForCodeCapital»();
                     $limitParameter = '';
-                    if ('limitedByAmount' == $revisionHandling) {
+                    if ('limitedByAmount' === $revisionHandling) {
                         $limitParameter = $this->getMaximumAmountOf«entity.name.formatForCodeCapital»Revisions();
-                    }«IF entity.application.targets('2.0')» elseif ('limitedByDate' == $revisionHandling) {
+                    }«IF entity.application.targets('2.0')» elseif ('limitedByDate' === $revisionHandling) {
                         $limitParameter = $this->getPeriodFor«entity.name.formatForCodeCapital»Revisions();
                     }«ENDIF»
 

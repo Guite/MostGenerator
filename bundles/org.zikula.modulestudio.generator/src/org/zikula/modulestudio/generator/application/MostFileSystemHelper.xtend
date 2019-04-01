@@ -105,6 +105,11 @@ class MostFileSystemHelper {
 
     def private phpFileHeader(Application it, Boolean isBootstrapFile) '''
         <?php
+        «IF targets('3.0')»
+
+            declare(strict_types=1);
+
+        «ENDIF»
         /**
          «phpFileHeaderImpl»
          * @version «generatedBy(timestampAllGeneratedFiles || isBootstrapFile, versionAllGeneratedFiles || isBootstrapFile)»

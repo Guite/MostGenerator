@@ -29,34 +29,11 @@ import org.zikula.modulestudio.generator.extensions.Utils
  */
 class PersistenceTransformer {
 
-    /**
-     * Extension methods for controllers.
-     */
     extension ControllerExtensions = new ControllerExtensions
-
-    /**
-     * Extension methods for formatting names.
-     */
     extension FormattingExtensions = new FormattingExtensions
-
-    /**
-     * Extension methods related to behavioural model extensions.
-     */
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
-
-    /**
-     * Extension methods related to the model layer.
-     */
     extension ModelExtensions = new ModelExtensions
-
-    /**
-     * Extension methods related to inheritance.
-     */
     extension ModelInheritanceExtensions = new ModelInheritanceExtensions
-
-    /**
-     * Extension methods for common utilities.
-     */
     extension Utils = new Utils
 
     /**

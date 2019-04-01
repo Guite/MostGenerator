@@ -166,7 +166,7 @@ class EditFunctions {
             });
             editForm.submit(«vendorAndName»HandleFormSubmit);
 
-            if (mode != 'create') {
+            if ('create' !== mode) {
                 «vendorAndName»TriggerFormValidation();
             }
         }

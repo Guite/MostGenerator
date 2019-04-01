@@ -1,15 +1,15 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener
 
 import de.guite.modulestudio.metamodel.Application
+import org.zikula.modulestudio.generator.extensions.Utils
 
 class UserRegistrationListener {
+
+    extension Utils = new Utils
 
     CommonExample commonExample = new CommonExample()
 
     def generate(Application it) '''
-        /**
-         * Makes our handlers known to the event system.
-         */
         public static function getSubscribedEvents()
         {
             return [
@@ -30,9 +30,8 @@ class UserRegistrationListener {
          * Occurs at the beginning of the registration process, before the registration form is displayed to the user.
          *
          «commonExample.generalEventProperties(it, false)»
-         * @param GenericEvent $event The event instance
          */
-        public function started(GenericEvent $event)
+        public function started(GenericEvent $event)«IF targets('3.0')»: void«ENDIF»
         {
         }
 
@@ -58,9 +57,8 @@ class UserRegistrationListener {
          * to effect change of any kind with regard to the entity.
          *
          «commonExample.generalEventProperties(it, false)»
-         * @param GenericEvent $event The event instance
          */
-        public function createVeto(GenericEvent $event)
+        public function createVeto(GenericEvent $event)«IF targets('3.0')»: void«ENDIF»
         {
         }
 
@@ -117,9 +115,8 @@ class UserRegistrationListener {
          * an event handler that was notified prior to the current handler may already have changed the `'redirectUrl'`.
          *
          «commonExample.generalEventProperties(it, false)»
-         * @param GenericEvent $event The event instance
          */
-        public function succeeded(GenericEvent $event)
+        public function succeeded(GenericEvent $event)«IF targets('3.0')»: void«ENDIF»
         {
         }
 
@@ -144,9 +141,8 @@ class UserRegistrationListener {
          * prior to the current handler may already have changed the `'redirectUrl'`.
          *
          «commonExample.generalEventProperties(it, false)»
-         * @param GenericEvent $event The event instance
          */
-        public function failed(GenericEvent $event)
+        public function failed(GenericEvent $event)«IF targets('3.0')»: void«ENDIF»
         {
         }
 
@@ -161,9 +157,8 @@ class UserRegistrationListener {
          * This event occurs before the $authenticationMethod->register() method is called.
          *
          «commonExample.generalEventProperties(it, false)»
-         * @param GenericEvent $event The event instance
          */
-        public function create(GenericEvent $event)
+        public function create(GenericEvent $event)«IF targets('3.0')»: void«ENDIF»
         {
         }
 
@@ -176,9 +171,8 @@ class UserRegistrationListener {
          * original UserEntity in an array `['oldValue' => $originalUser]`.
          *
          «commonExample.generalEventProperties(it, false)»
-         * @param GenericEvent $event The event instance
          */
-        public function update(GenericEvent $event)
+        public function update(GenericEvent $event)«IF targets('3.0')»: void«ENDIF»
         {
         }
 
@@ -192,9 +186,8 @@ class UserRegistrationListener {
          * The subject of the event is set to the Uid being deleted.
          *
          «commonExample.generalEventProperties(it, false)»
-         * @param GenericEvent $event The event instance
          */
-        public function delete(GenericEvent $event)
+        public function delete(GenericEvent $event)«IF targets('3.0')»: void«ENDIF»
         {
         }
 
@@ -204,9 +197,8 @@ class UserRegistrationListener {
          * Occurs when an administrator approves a registration. The UserEntity is the subject.
          *
          «commonExample.generalEventProperties(it, false)»
-         * @param GenericEvent $event The event instance
          */
-        public function forceApproval(GenericEvent $event)
+        public function forceApproval(GenericEvent $event)«IF targets('3.0')»: void«ENDIF»
         {
         }
     '''

@@ -28,17 +28,11 @@ class TelType {
          */
         abstract class AbstractTelType extends AbstractType
         {
-            /**
-             * @inheritDoc
-             */
             public function getParent()
             {
                 return TextType::class;
             }
 
-            /**
-             * @inheritDoc
-             */
             public function getBlockPrefix()
             {
                 return '«appName.formatForDB»_field_tel';

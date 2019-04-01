@@ -19,13 +19,15 @@ class ObjectState {
          * Examples:
          *    {{ item.workflowState|«appName.formatForDB»_objectState }}        {# with visual feedback #}
          *    {{ item.workflowState|«appName.formatForDB»_objectState(false) }} {# no ui feedback #}
+         «IF !targets('3.0')»
          *
-         * @param string  $state      Name of given workflow state
+         * @param string $state Name of given workflow state
          * @param boolean $uiFeedback Whether the output should include some visual feedback about the state
          *
          * @return string Enriched and translated workflow state ready for display
+         «ENDIF»
          */
-        public function getObjectState($state = 'initial', $uiFeedback = true)
+        public function getObjectState«IF targets('3.0')»(string $state = 'initial', bool $uiFeedback = true): string«ELSE»($state = 'initial', $uiFeedback = true)«ENDIF»
         {
             $stateInfo = $this->workflowHelper->getStateInfo($state);
 

@@ -135,20 +135,6 @@ class NotificationHelper {
          */
         protected $name;
 
-        /**
-         * NotificationHelper constructor.
-         *
-         * @param ZikulaHttpKernelInterface $kernel
-         * @param TranslatorInterface $translator
-         * @param Routerinterface $router
-         * @param RequestStack $requestStack
-         * @param VariableApiInterface $variableApi
-         * @param «IF !targets('3.0')»Twig_«ENDIF»Environment $twig
-         * @param MailerApiInterface $mailerApi
-         * @param GroupRepositoryInterface $groupRepository
-         * @param EntityDisplayHelper $entityDisplayHelper
-         * @param WorkflowHelper $workflowHelper
-         */
         public function __construct(
             ZikulaHttpKernelInterface $kernel,
             TranslatorInterface $translator,
@@ -178,12 +164,14 @@ class NotificationHelper {
 
         /**
          * Sends a mail to either an item's creator or a group of moderators.
+         «IF !targets('3.0')»
          *
          * @param array $args
          *
-         * @return boolean
+         * @return bool
+         «ENDIF»
          */
-        public function process($args)
+        public function process(array $args)«IF targets('3.0')»: bool«ENDIF»
         {
             if (!isset($args['recipientType']) || !$args['recipientType']) {
                 return false;
@@ -237,7 +225,7 @@ class NotificationHelper {
         {
             $this->recipients = [];
 
-            if (in_array($this->recipientType, ['moderator', 'superModerator'])) {
+            if (in_array($this->recipientType, ['moderator', 'superModerator'], true)) {
                 «val entitiesWithWorkflow = getAllEntities.filter[workflow != EntityWorkflowType.NONE]»
                 $modVarSuffixes = [
                     «FOR entity : entitiesWithWorkflow»
@@ -247,7 +235,7 @@ class NotificationHelper {
                 $modVarSuffix = $modVarSuffixes[$this->entity['_objectType']];
 
                 $moderatorGroupId = $this->variableApi->get('«appName»', 'moderationGroupFor' . $modVarSuffix, GroupsConstant::GROUP_ID_ADMIN);
-                if ($this->recipientType == 'superModerator') {
+                if ('superModerator' === $this->recipientType) {
                     $moderatorGroupId = $this->variableApi->get('«appName»', 'superModerationGroupFor' . $modVarSuffix, GroupsConstant::GROUP_ID_ADMIN);
                 }
 
@@ -257,7 +245,7 @@ class NotificationHelper {
                         $this->addRecipient($user);
                     }
                 }
-            } elseif ('creator' == $this->recipientType && method_exists($this->entity, 'getCreatedBy')) {
+            } elseif ('creator' === $this->recipientType && method_exists($this->entity, 'getCreatedBy')) {
                 $this->addRecipient($this->entity->getCreatedBy());
             } elseif ($this->usesDesignatedEntityFields()) {
                 $this->addRecipient();
@@ -271,10 +259,12 @@ class NotificationHelper {
 
         /**
          * Collects data for building the recipients array.
+         «IF !targets('3.0')»
          *
          * @param UserEntity $user Recipient user record
+         «ENDIF»
          */
-        protected function addRecipient(UserEntity $user = null)
+        protected function addRecipient(UserEntity $user = null)«IF targets('3.0')»: void«ENDIF»
         {
             if ($this->usesDesignatedEntityFields()) {
                 $recipientTypeParts = explode('-', $this->recipientType);
@@ -308,8 +298,12 @@ class NotificationHelper {
 
         /**
          * Performs the actual mailing.
+         «IF !targets('3.0')»
+         *
+         * @return bool
+         «ENDIF»
          */
-        protected function sendMails()
+        protected function sendMails()«IF targets('3.0')»: bool«ENDIF»
         {
             $objectType = $this->entity['_objectType'];
             $siteName = $this->variableApi->getSystemVar('sitename');
@@ -361,34 +355,36 @@ class NotificationHelper {
 
         /**
          * Returns the subject used for the emails to be sent.
+         «IF !targets('3.0')»
          *
          * @return string
+         «ENDIF»
          */
-        protected function getMailSubject()
+        protected function getMailSubject()«IF targets('3.0')»: string«ENDIF»
         {
             $mailSubject = '';
-            if ($this->recipientType == 'moderator' || $this->recipientType == 'superModerator' || $this->usesDesignatedEntityFields()) {
-                if ($this->action == 'submit') {
+            if ('moderator' === $this->recipientType || 'superModerator' === $this->recipientType || $this->usesDesignatedEntityFields()) {
+                if ('submit' === $this->action) {
                     $mailSubject = $this->__('New content has been submitted');
-                } elseif ($this->action == 'demote') {
+                } elseif ('demote' === $this->action) {
                     $mailSubject = $this->__('Content has been demoted');
-                } elseif ($this->action == 'accept') {
+                } elseif ('accept' === $this->action) {
                     $mailSubject = $this->__('Content has been accepted');
-                } elseif ($this->action == 'approve') {
+                } elseif ('approve' === $this->action) {
                     $mailSubject = $this->__('Content has been approved');
-                } elseif ($this->action == 'delete') {
+                } elseif ('delete' === $this->action) {
                     $mailSubject = $this->__('Content has been deleted');
                 } else {
                     $mailSubject = $this->__('Content has been updated');
                 }
-            } elseif ($this->recipientType == 'creator') {
-                if ($this->action == 'accept') {
+            } elseif ('creator' === $this->recipientType) {
+                if ('accept' === $this->action) {
                     $mailSubject = $this->__('Your submission has been accepted');
-                } elseif ($this->action == 'approve') {
+                } elseif ('approve' === $this->action) {
                     $mailSubject = $this->__('Your submission has been approved');
-                } elseif ($this->action == 'reject') {
+                } elseif ('reject' === $this->action) {
                     $mailSubject = $this->__('Your submission has been rejected');
-                } elseif ($this->action == 'delete') {
+                } elseif ('delete' === $this->action) {
                     $mailSubject = $this->__('Your submission has been deleted');
                 } else {
                     $mailSubject = $this->__('Your submission has been updated');
@@ -400,10 +396,12 @@ class NotificationHelper {
 
         /**
          * Collects data used by the email templates.
+         «IF !targets('3.0')»
          *
          * @return array Email template data
+         «ENDIF»
          */
-        protected function prepareEmailData()
+        protected function prepareEmailData()«IF targets('3.0')»: array«ENDIF»
         {
             $objectType = $this->entity->get_objectType();
             $state = $this->entity->getWorkflowState();
@@ -413,16 +411,16 @@ class NotificationHelper {
             $session = null !== $request ? $request->getSession() : null;
             $remarks = null !== $session ? $session->get($this->name . 'AdditionalNotificationRemarks', '') : '';
 
-            $hasDisplayAction = in_array($objectType, ['«getAllEntities.filter[hasDisplayAction].map[name.formatForCode].join('\', \'')»']);
-            $hasEditAction = in_array($objectType, ['«getAllEntities.filter[hasEditAction].map[name.formatForCode].join('\', \'')»']);
-            $routeArea = in_array($this->recipientType, ['moderator', 'superModerator']) ? 'admin' : '';
+            $hasDisplayAction = in_array($objectType, ['«getAllEntities.filter[hasDisplayAction].map[name.formatForCode].join('\', \'')»'], true);
+            $hasEditAction = in_array($objectType, ['«getAllEntities.filter[hasEditAction].map[name.formatForCode].join('\', \'')»'], true);
+            $routeArea = in_array($this->recipientType, ['moderator', 'superModerator'], true) ? 'admin' : '';
             $routePrefix = '«appName.formatForDB»_' . strtolower($objectType) . '_' . $routeArea;
 
             $urlArgs = $this->entity->createUrlArgs();
             $displayUrl = $hasDisplayAction ? $this->router->generate($routePrefix . 'display', $urlArgs, UrlGeneratorInterface::ABSOLUTE_URL) : '';
 
             «IF !getAllEntities.filter[hasEditAction && hasSluggableFields && slugUnique].empty»
-                $needsArg = in_array($objectType, ['«getAllEntities.filter[hasEditAction && hasSluggableFields && slugUnique].map[name.formatForCode].join('\', \'')»']);
+                $needsArg = in_array($objectType, ['«getAllEntities.filter[hasEditAction && hasSluggableFields && slugUnique].map[name.formatForCode].join('\', \'')»'], true);
                 $urlArgs = $needsArg ? $this->entity->createUrlArgs(true) : $this->entity->createUrlArgs();
             «ENDIF»
             $editUrl = $hasEditAction ? $this->router->generate($routePrefix . 'edit', $urlArgs, UrlGeneratorInterface::ABSOLUTE_URL) : '';
@@ -438,12 +436,14 @@ class NotificationHelper {
 
         /**
          * Checks whether a special notification type is used or not.
+         «IF !targets('3.0')»
          *
-         * @return boolean
+         * @return bool
+         «ENDIF»
          */
-        protected function usesDesignatedEntityFields()
+        protected function usesDesignatedEntityFields()«IF targets('3.0')»: bool«ENDIF»
         {
-            return strpos($this->recipientType, 'field-') === 0;
+            return 0 === strpos($this->recipientType, 'field-');
         }
     '''
 

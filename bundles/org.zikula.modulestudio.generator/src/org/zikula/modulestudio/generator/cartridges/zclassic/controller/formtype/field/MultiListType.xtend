@@ -42,36 +42,22 @@ class MultiListType {
              */
             protected $listHelper;
 
-            /**
-             * MultiListType constructor.
-             *
-             * @param ListEntriesHelper $listHelper
-             */
             public function __construct(ListEntriesHelper $listHelper)
             {
                 $this->listHelper = $listHelper;
             }
 
-            /**
-             * @inheritDoc
-             */
             public function buildForm(FormBuilderInterface $builder, array $options)
             {
                 $transformer = new ListFieldTransformer($this->listHelper);
                 $builder->addModelTransformer($transformer);
             }
 
-            /**
-             * @inheritDoc
-             */
             public function getParent()
             {
                 return ChoiceType::class;
             }
 
-            /**
-             * @inheritDoc
-             */
             public function getBlockPrefix()
             {
                 return '«appName.formatForDB»_field_multilist';

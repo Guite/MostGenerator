@@ -36,19 +36,6 @@ class ThirdPartyListener {
 
         «ENDIF»
         «IF generateScribitePlugins || (needsApproval && generatePendingContentSupport)»
-            /**
-             * ThirdPartyListener constructor.
-             *
-             «IF generateScribitePlugins»
-             * @param Filesystem $filesystem
-             * @param RequestStack $requestStack
-             «ENDIF»
-             «IF needsApproval && generatePendingContentSupport»
-             * @param WorkflowHelper $workflowHelper
-             «ENDIF»
-             *
-             * @return void
-             */
             public function __construct(«IF generateScribitePlugins»Filesystem $filesystem, RequestStack $requestStack«ENDIF»«IF needsApproval && generatePendingContentSupport»«IF generateScribitePlugins», «ENDIF»WorkflowHelper $workflowHelper«ENDIF»)
             {
                 «IF generateScribitePlugins»
@@ -62,9 +49,6 @@ class ThirdPartyListener {
 
         «ENDIF»
         «val needsDetailContentType = generateDetailContentType && hasDisplayActions»
-        /**
-         * Makes our handlers known to the event system.
-         */
         public static function getSubscribedEvents()
         {
             return [
@@ -111,9 +95,8 @@ class ThirdPartyListener {
          * about pending content items waiting for approval.
          *
          «commonExample.generalEventProperties(it, false)»
-         * @param GenericEvent $event The event instance
          */
-        public function pendingContentListener(GenericEvent $event)
+        public function pendingContentListener(GenericEvent $event)«IF targets('3.0')»: void«ENDIF»
         {
             «pendingContentListenerImpl»
         }
@@ -129,7 +112,7 @@ class ThirdPartyListener {
         «ELSE»
             $collection = new Container('«appName»');
             $amounts = $this->workflowHelper->collectAmountOfModerationItems();
-            if (count($amounts) > 0) {
+            if (0 < count($amounts)) {
                 foreach ($amounts as $amountInfo) {
                     $aggregateType = $amountInfo['aggregateType'];
                     $description = $amountInfo['description'];
@@ -143,7 +126,7 @@ class ThirdPartyListener {
                 }
 
                 // add collected items for pending content
-                if ($collection->count() > 0) {
+                if (0 < $collection->count()) {
                     $event->getSubject()->add($collection);
                 }
             }
@@ -159,9 +142,8 @@ class ThirdPartyListener {
          * You can register custom content types as well as custom layout types.
          *
          «commonExample.generalEventProperties(it, false)»
-         * @param \Zikula_Event $event The event instance
          */
-        public function contentGetTypes(\Zikula_Event $event)
+        public function contentGetTypes(\Zikula_Event $event)«IF targets('3.0')»: void«ENDIF»
         {
             «contentGetTypesImpl»
         }
@@ -191,9 +173,8 @@ class ThirdPartyListener {
          * «appName» will use this to add a javascript helper to add custom items.
          *
          «commonExample.generalEventProperties(it, false)»
-         * @param EditorHelperEvent $event The event instance
          */
-        public function getEditorHelpers(EditorHelperEvent $event)
+        public function getEditorHelpers(EditorHelperEvent $event)«IF targets('3.0')»: void«ENDIF»
         {
             // install assets for Scribite plugins
             $targetDir = 'web/modules/«vendorAndName.toLowerCase»';
@@ -221,9 +202,8 @@ class ThirdPartyListener {
          * Adds external plugin to CKEditor.
          *
          «commonExample.generalEventProperties(it, false)»
-         * @param GenericEvent $event The event instance
          */
-        public function getCKEditorPlugins(GenericEvent $event)
+        public function getCKEditorPlugins(GenericEvent $event)«IF targets('3.0')»: void«ENDIF»
         {
             $event->getSubject()->add([
                 'name' => '«appName.formatForDB»',
@@ -241,9 +221,8 @@ class ThirdPartyListener {
          * Adds external plugin to «editorName».
          *
          «commonExample.generalEventProperties(it, false)»
-         * @param GenericEvent $event The event instance
          */
-        public function get«editorName»Plugins(GenericEvent $event)
+        public function get«editorName»Plugins(GenericEvent $event)«IF targets('3.0')»: void«ENDIF»
         {
             $event->getSubject()->add([
                 'name' => '«appName.formatForDB»',

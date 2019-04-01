@@ -1,15 +1,15 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener
 
 import de.guite.modulestudio.metamodel.Application
+import org.zikula.modulestudio.generator.extensions.Utils
 
 class ThemeListener {
+
+    extension Utils = new Utils
 
     CommonExample commonExample = new CommonExample()
 
     def generate(Application it) '''
-        /**
-         * Makes our handlers known to the event system.
-         */
         public static function getSubscribedEvents()
         {
             return [
@@ -24,9 +24,8 @@ class ThemeListener {
          * Occurs immediately before twig theme engine renders a template.
          *
          «commonExample.generalEventProperties(it, false)»
-         * @param TwigPreRenderEvent $event The event instance
          */
-        public function preRender(TwigPreRenderEvent $event)
+        public function preRender(TwigPreRenderEvent $event)«IF targets('3.0')»: void«ENDIF»
         {
         }
 
@@ -38,9 +37,8 @@ class ThemeListener {
          * An example for implementing this event is \Zikula\ThemeModule\EventListener\TemplateNameExposeListener.
          *
          «commonExample.generalEventProperties(it, false)»
-         * @param TwigPostRenderEvent $event The event instance
          */
-        public function postRender(TwigPostRenderEvent $event)
+        public function postRender(TwigPostRenderEvent $event)«IF targets('3.0')»: void«ENDIF»
         {
         }
     '''

@@ -49,8 +49,7 @@ class Translatable extends AbstractExtension implements EntityExtensionInterface
      * Generates additional accessor methods.
      */
     override accessors(Entity it) '''
-        «val fh = new FileHelper»
-        «fh.getterAndSetterMethods(it, 'locale', 'string', false, true, false, '', '')»
+        «(new FileHelper(application)).getterAndSetterMethods(it, 'locale', 'string', false, true, false, '', '')»
     '''
 
     /**

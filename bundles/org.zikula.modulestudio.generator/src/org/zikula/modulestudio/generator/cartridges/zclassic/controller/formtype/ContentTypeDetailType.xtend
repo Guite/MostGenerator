@@ -57,13 +57,6 @@ class ContentTypeDetailType {
              */
             protected $entityDisplayHelper;
 
-            /**
-             * ItemType constructor.
-             *
-             * @param TranslatorInterface $translator
-             * @param EntityFactory $entityFactory
-             * @param EntityDisplayHelper $entityDisplayHelper
-             */
             public function __construct(
                 TranslatorInterface $translator,
                 EntityFactory $entityFactory,
@@ -74,9 +67,6 @@ class ContentTypeDetailType {
                 $this->entityDisplayHelper = $entityDisplayHelper;
             }
 
-            /**
-             * @inheritDoc
-             */
             public function buildForm(FormBuilderInterface $builder, array $options)
             {
                 $this->addObjectTypeField($builder, $options);
@@ -93,17 +83,11 @@ class ContentTypeDetailType {
 
             «addTemplateField»
 
-            /**
-             * @inheritDoc
-             */
             public function getBlockPrefix()
             {
                 return '«appName.formatForDB»_contenttype_detail';
             }
 
-            /**
-             * @inheritDoc
-             */
             public function configureOptions(OptionsResolver $resolver)
             {
                 $resolver
@@ -123,11 +107,8 @@ class ContentTypeDetailType {
     def private addObjectTypeField(Application it) '''
         /**
          * Adds an object type field.
-         *
-         * @param FormBuilderInterface $builder The form builder
-         * @param array                $options The options
          */
-        public function addObjectTypeField(FormBuilderInterface $builder, array $options = [])
+        public function addObjectTypeField(FormBuilderInterface $builder, array $options = [])«IF targets('3.0')»: void«ENDIF»
         {
             $builder->add('objectType', «IF getAllEntities.filter[hasDisplayAction].size == 1»Hidden«ELSE»Choice«ENDIF»Type::class, [
                 'label' => $this->__('Object type'«IF !isSystemModule», '«appName.formatForDB»'«ENDIF») . ':',
@@ -152,11 +133,8 @@ class ContentTypeDetailType {
     def private addIdField(Application it) '''
         /**
          * Adds a item identifier field.
-         *
-         * @param FormBuilderInterface $builder The form builder
-         * @param array                $options The options
          */
-        public function addIdField(FormBuilderInterface $builder, array $options = [])
+        public function addIdField(FormBuilderInterface $builder, array $options = [])«IF targets('3.0')»: void«ENDIF»
         {
             $repository = $this->entityFactory->getRepository($options['object_type']);
             // select without joins
@@ -181,11 +159,8 @@ class ContentTypeDetailType {
     def private addDisplayModeField(Application it) '''
         /**
          * Adds a display mode field.
-         *
-         * @param FormBuilderInterface $builder The form builder
-         * @param array                $options The options
          */
-        public function addDisplayModeField(FormBuilderInterface $builder, array $options = [])
+        public function addDisplayModeField(FormBuilderInterface $builder, array $options = [])«IF targets('3.0')»: void«ENDIF»
         {
             $builder->add('displayMode', ChoiceType::class, [
                 'label' => $this->__('Display mode'«IF !isSystemModule», '«appName.formatForDB»'«ENDIF») . ':',
@@ -206,11 +181,8 @@ class ContentTypeDetailType {
     def private addTemplateField(Application it) '''
         /**
          * Adds template fields.
-         *
-         * @param FormBuilderInterface $builder The form builder
-         * @param array                $options The options
          */
-        public function addTemplateField(FormBuilderInterface $builder, array $options = [])
+        public function addTemplateField(FormBuilderInterface $builder, array $options = [])«IF targets('3.0')»: void«ENDIF»
         {
             $builder
                 ->add('customTemplate', TextType::class, [

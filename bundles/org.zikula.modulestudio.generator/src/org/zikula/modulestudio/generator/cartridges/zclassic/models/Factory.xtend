@@ -15,12 +15,13 @@ class Factory {
     extension ModelExtensions = new ModelExtensions
     extension Utils = new Utils
 
-    FileHelper fh = new FileHelper
+    FileHelper fh
 
     /**
      * Creates a factory class file for easy entity creation.
      */
     def generate(Application it, IMostFileSystemAccess fsa) {
+        fh = new FileHelper(it)
         'Generating entity factory class'.printIfNotTesting(fsa)
         fsa.generateClassPair('Entity/Factory/EntityFactory.php', modelFactoryBaseImpl, modelFactoryImpl)
         new EntityInitialiser().generate(it, fsa)
@@ -33,6 +34,9 @@ class Factory {
         use Doctrine\ORM\EntityRepository;
         use InvalidArgumentException;
         use «appNamespace»\Entity\Factory\EntityInitialiser;
+        «FOR entity : getAllEntities»
+            use «appNamespace»\Entity\«entity.name.formatForCodeCapital»Entity;
+        «ENDFOR»
         use «appNamespace»\Helper\CollectionFilterHelper;
         «IF hasTranslatable»
             use «appNamespace»\Helper\FeatureActivationHelper;
@@ -49,7 +53,7 @@ class Factory {
             protected $entityManager;
 
             /**
-             * @var EntityInitialiser The entity initialiser for dynamic application of default values
+             * @var EntityInitialiser
              */
             protected $entityInitialiser;
 
@@ -65,16 +69,6 @@ class Factory {
                 protected $featureActivationHelper;
             «ENDIF»
 
-            /**
-             * EntityFactory constructor.
-             *
-             * @param EntityManagerInterface $entityManager
-             * @param EntityInitialiser $entityInitialiser
-             * @param CollectionFilterHelper $collectionFilterHelper
-             «IF hasTranslatable»
-             * @param FeatureActivationHelper $featureActivationHelper
-             «ENDIF»
-             */
             public function __construct(
                 EntityManagerInterface $entityManager,
                 EntityInitialiser $entityInitialiser,
@@ -91,20 +85,23 @@ class Factory {
 
             /**
              * Returns a repository for a given object type.
+             «IF !targets('3.0')»
              *
              * @param string $objectType Name of desired entity type
              *
              * @return EntityRepository The repository responsible for the given object type
+             «ENDIF»
              */
-            public function getRepository($objectType)
+            public function getRepository(«IF targets('3.0')»string «ENDIF»$objectType)«IF targets('3.0')»: EntityRepository«ENDIF»
             {
                 $entityClass = '«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Entity\\' . ucfirst($objectType) . 'Entity';
 
+                /** @var EntityRepository $repository */
                 $repository = $this->getEntityManager()->getRepository($entityClass);
                 $repository->setCollectionFilterHelper($this->collectionFilterHelper);
                 «IF hasTranslatable»
 
-                    if (in_array($objectType, ['«getTranslatableEntities.map[name.formatForCode].join('\', \'')»'])) {
+                    if (in_array($objectType, ['«getTranslatableEntities.map[name.formatForCode].join('\', \'')»'], true)) {
                         $repository->setTranslationsEnabled($this->featureActivationHelper->isEnabled(FeatureActivationHelper::TRANSLATIONS, $objectType));
                     }
                 «ENDIF»
@@ -115,14 +112,14 @@ class Factory {
 
                 /**
                  * Creates a new «entity.name.formatForCode» instance.
+                 «IF !targets('3.0')»
                  *
-                 * @return \«appNamespace»\Entity\«entity.name.formatForCodeCapital»Entity The newly created entity instance
+                 * @return «entity.name.formatForCodeCapital»Entity The newly created entity instance
+                 «ENDIF»
                  */
-                public function create«entity.name.formatForCodeCapital»()
+                public function create«entity.name.formatForCodeCapital»()«IF targets('3.0')»: «entity.name.formatForCodeCapital»Entity«ENDIF»
                 {
-                    $entityClass = '«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Entity\\«entity.name.formatForCodeCapital»Entity';
-
-                    $entity = new $entityClass(«/* TODO provide entity constructor arguments if required */»);
+                    $entity = new «entity.name.formatForCodeCapital»Entity(«/* TODO provide entity constructor arguments if required */»);
 
                     $this->entityInitialiser->init«entity.name.formatForCodeCapital»($entity);
 
@@ -132,21 +129,22 @@ class Factory {
 
             «getIdField»
 
-            «fh.getterAndSetterMethods(it, 'entityManager', 'EntityManagerInterface', false, true, false, '', '')»
-
-            «fh.getterAndSetterMethods(it, 'entityInitialiser', 'EntityInitialiser', false, true, false, '', '')»
+            «fh.getterAndSetterMethods(it, 'entityManager', 'EntityManagerInterface', false, true, true, '', '')»
+            «fh.getterAndSetterMethods(it, 'entityInitialiser', 'EntityInitialiser', false, true, true, '', '')»
         }
     '''
 
     def private getIdField(Application it) '''
         /**
          * Returns the identifier field's name for a given object type.
+         «IF !targets('3.0')»
          *
          * @param string $objectType The object type to be treated
          *
          * @return string Primary identifier field name
+         «ENDIF»
          */
-        public function getIdField($objectType = '')
+        public function getIdField«IF targets('3.0')»(string $objectType = ''): string«ELSE»($objectType = '')«ENDIF»
         {
             if (empty($objectType)) {
                 throw new InvalidArgumentException('Invalid object type received.');

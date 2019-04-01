@@ -44,6 +44,7 @@ class EntityDisplayHelper {
             use Symfony\Component\HttpFoundation\RequestStack;
         «ENDIF»
         use Zikula\Common\Translator\TranslatorInterface;
+        use Zikula\Core\Doctrine\EntityAccess;
         «FOR entity : getAllEntities»
             use «appNamespace»\Entity\«entity.name.formatForCodeCapital»Entity;
         «ENDFOR»
@@ -92,17 +93,6 @@ class EntityDisplayHelper {
             protected $currencyFormatter;
         «ENDIF»
 
-        /**
-         * EntityDisplayHelper constructor.
-         *
-         * @param TranslatorInterface $translator
-         «IF hasAnyDateTimeFields || hasNumberFields»
-         * @param RequestStack $requestStack
-         «ENDIF»
-         «IF hasListFields»
-         * @param ListEntriesHelper $listEntriesHelper
-         «ENDIF»
-         */
         public function __construct(
             TranslatorInterface $translator«IF hasAnyDateTimeFields || hasNumberFields»,
             RequestStack $requestStack«ENDIF»«IF hasListFields»,
@@ -126,12 +116,14 @@ class EntityDisplayHelper {
 
         /**
          * Returns the formatted title for a given entity.
+         «IF !targets('3.0')»
          *
-         * @param object $entity The given entity instance
+         * @param EntityAccess $entity The given entity instance
          *
          * @return string The formatted title
+         «ENDIF»
          */
-        public function getFormattedTitle($entity)
+        public function getFormattedTitle(EntityAccess $entity)«IF targets('3.0')»: string«ENDIF»
         {
             «FOR entity : getAllEntities»
                 if ($entity instanceof «entity.name.formatForCodeCapital»Entity) {
@@ -152,12 +144,14 @@ class EntityDisplayHelper {
     def private formatMethod(Entity it) '''
         /**
          * Returns the formatted title for a given entity.
+         «IF !application.targets('3.0')»
          *
          * @param «name.formatForCodeCapital»Entity $entity The given entity instance
          *
          * @return string The formatted title
+         «ENDIF»
          */
-        protected function format«name.formatForCodeCapital»(«name.formatForCodeCapital»Entity $entity)
+        protected function format«name.formatForCodeCapital»(«name.formatForCodeCapital»Entity $entity)«IF application.targets('3.0')»: string«ENDIF»
         {
             «IF displayPatternParts.length < 2»«/* no field references, just pass to translator */»
                 return $this->translator->__('«getUsedDisplayPattern.formatForCodeCapital»');
@@ -184,15 +178,17 @@ class EntityDisplayHelper {
     def private getTitleFieldName(Application it) '''
         /**
          * Returns name of the field used as title / name for entities of this repository.
+         «IF !targets('3.0')»
          *
          * @param string $objectType Name of treated entity type
          *
          * @return string Name of field to be used as title
+         «ENDIF»
          */
-        public function getTitleFieldName($objectType)
+        public function getTitleFieldName(«IF targets('3.0')»string «ENDIF»$objectType = '')«IF targets('3.0')»: string«ENDIF»
         {
             «FOR entity : getAllEntities»
-                if ($objectType == '«entity.name.formatForCode»') {
+                if ('«entity.name.formatForCode»' === $objectType) {
                     «val stringFields = entity.fields.filter(StringField).filter[length >= 20 && !#[StringRole.COLOUR, StringRole.COUNTRY, StringRole.LANGUAGE, StringRole.LOCALE, StringRole.PASSWORD].contains(role)]»
                     return '«IF !stringFields.empty»«stringFields.head.name.formatForCode»«ENDIF»';
                 }
@@ -205,15 +201,17 @@ class EntityDisplayHelper {
     def private getDescriptionFieldName(Application it) '''
         /**
          * Returns name of the field used for describing entities of this repository.
+         «IF !targets('3.0')»
          *
          * @param string $objectType Name of treated entity type
          *
          * @return string Name of field to be used as description
+         «ENDIF»
          */
-        public function getDescriptionFieldName($objectType)
+        public function getDescriptionFieldName(«IF targets('3.0')»string «ENDIF»$objectType = '')«IF targets('3.0')»: string«ENDIF»
         {
             «FOR entity : getAllEntities»
-                if ($objectType == '«entity.name.formatForCode»') {
+                if ('«entity.name.formatForCode»' === $objectType) {
                     «val textFields = entity.getSelfAndParentDataObjects.map[fields.filter(TextField)].flatten.filter[length >= 50]»
                     «val stringFields = entity.getDisplayStringFieldsEntity.filter[length >= 50 && !#[StringRole.COLOUR, StringRole.COUNTRY, StringRole.LANGUAGE, StringRole.LOCALE].contains(role)]»
                     «IF !textFields.empty»
@@ -237,15 +235,17 @@ class EntityDisplayHelper {
     def private getPreviewFieldName(Application it) '''
         /**
          * Returns name of first upload field which is capable for handling images.
+         «IF !targets('3.0')»
          *
          * @param string $objectType Name of treated entity type
          *
          * @return string Name of field to be used for preview images
+         «ENDIF»
          */
-        public function getPreviewFieldName($objectType)
+        public function getPreviewFieldName(«IF targets('3.0')»string «ENDIF»$objectType = '')«IF targets('3.0')»: string«ENDIF»
         {
             «FOR entity : getAllEntities.filter[hasImageFieldsEntity]»
-                if ($objectType == '«entity.name.formatForCode»') {
+                if ('«entity.name.formatForCode»' === $objectType) {
                     return '«entity.getImageFieldsEntity.head.name.formatForCode»';
                 }
             «ENDFOR»
@@ -258,15 +258,17 @@ class EntityDisplayHelper {
         /**
          * Returns name of the date(time) field to be used for representing the start
          * of this object. Used for providing meta data to the tag module.
+         «IF !targets('3.0')»
          *
          * @param string $objectType Name of treated entity type
          *
          * @return string Name of field to be used as date
+         «ENDIF»
          */
-        public function getStartDateFieldName($objectType)
+        public function getStartDateFieldName(«IF targets('3.0')»string «ENDIF»$objectType = '')«IF targets('3.0')»: string«ENDIF»
         {
             «FOR entity : getAllEntities»
-                if ($objectType == '«entity.name.formatForCode»') {
+                if ('«entity.name.formatForCode»' === $objectType) {
                     return '«IF null !== entity.getStartDateField»«entity.getStartDateField.name.formatForCode»«ELSEIF entity.standardFields»createdDate«ENDIF»';
                 }
             «ENDFOR»

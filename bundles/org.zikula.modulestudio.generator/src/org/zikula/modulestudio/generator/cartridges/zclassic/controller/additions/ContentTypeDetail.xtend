@@ -79,34 +79,22 @@ class ContentTypeDetail {
          */
         protected $fragmentHandler;
 
-        /**
-         * @inheritDoc
-         */
-        public function getIcon()
+        public function getIcon()«IF targets('3.0')»: string«ENDIF»
         {
             return 'circle-o';
         }
 
-        /**
-         * @inheritDoc
-         */
-        public function getTitle()
+        public function getTitle()«IF targets('3.0')»: string«ENDIF»
         {
             return $this->translator->__('«name.formatForDisplayCapital» detail', '«appName.formatForDB»');
         }
 
-        /**
-         * @inheritDoc
-         */
-        public function getDescription()
+        public function getDescription()«IF targets('3.0')»: string«ENDIF»
         {
             return $this->translator->__('Display or link a single «name.formatForDisplay» object.', '«appName.formatForDB»');
         }
 
-        /**
-         * @inheritDoc
-         */
-        public function getDefaultData()
+        public function getDefaultData()«IF targets('3.0')»: array«ENDIF»
         {
             return [
                 'objectType' => '«getLeadingEntity.name.formatForCode»',
@@ -116,15 +104,12 @@ class ContentTypeDetail {
             ];
         }
 
-        /**
-         * @inheritDoc
-         */
-        public function getData()
+        public function getData()«IF targets('3.0')»: array«ENDIF»
         {
             $data = parent::getData();
 
             $contextArgs = ['name' => 'detail'];
-            if (!isset($data['objectType']) || !in_array($data['objectType'], $this->controllerHelper->getObjectTypes('contentType', $contextArgs))) {
+            if (!isset($data['objectType']) || !in_array($data['objectType'], $this->controllerHelper->getObjectTypes('contentType', $contextArgs), true)) {
                 $data['objectType'] = $this->controllerHelper->getDefaultObjectType('contentType', $contextArgs);
                 $this->data = $data;
             }
@@ -132,10 +117,7 @@ class ContentTypeDetail {
             return $data;
         }
 
-        /**
-         * @inheritDoc
-         */
-        public function displayView()
+        public function displayView()«IF targets('3.0')»: string«ENDIF»
         {
             if (null === $this->data['id'] || empty($this->data['id']) || empty($this->data['displayMode'])) {
                 return '';
@@ -146,10 +128,7 @@ class ContentTypeDetail {
             return $this->fragmentHandler->render($controllerReference, 'inline', []);
         }
 
-        /**
-         * @inheritDoc
-         */
-        public function displayEditing()
+        public function displayEditing()«IF targets('3.0')»: string«ENDIF»
         {
             if (null === $this->data['id'] || empty($this->data['id']) || empty($this->data['displayMode'])) {
                 return $this->translator->__('No item selected.', '«appName.formatForDB»');
@@ -160,10 +139,12 @@ class ContentTypeDetail {
 
         /**
          * Returns common arguments for displaying the selected object using the external controller.
+         «IF !targets('3.0')»
          *
          * @return array Display arguments
+         «ENDIF»
          */
-        protected function getDisplayArguments()
+        protected function getDisplayArguments()«IF targets('3.0')»: array«ENDIF»
         {
             return [
                 'objectType' => $this->data['objectType'],
@@ -173,18 +154,12 @@ class ContentTypeDetail {
             ];
         }
 
-        /**
-         * @inheritDoc
-         */
-        public function getEditFormClass()
+        public function getEditFormClass()«IF targets('3.0')»: string«ENDIF»
         {
             return FormType::class;
         }
 
-        /**
-         * @inheritDoc
-         */
-        public function getEditFormOptions($context)
+        public function getEditFormOptions($context)«IF targets('3.0')»: array«ENDIF»
         {
             $options = parent::getEditFormOptions($context);
             $data = $this->getData();
@@ -193,24 +168,22 @@ class ContentTypeDetail {
             return $options;
         }
 
-        /**
-         «IF targets('3.0')»
-         * @required
-         «ENDIF»
-         * @param ControllerHelper $controllerHelper
-         */
-        public function setControllerHelper(ControllerHelper $controllerHelper)
+        «IF targets('3.0')»
+            /**
+             * @required
+             */
+        «ENDIF»
+        public function setControllerHelper(ControllerHelper $controllerHelper)«IF targets('3.0')»: void«ENDIF»
         {
             $this->controllerHelper = $controllerHelper;
         }
 
-        /**
-         «IF targets('3.0')»
-         * @required
-         «ENDIF»
-         * @param FragmentHandler $fragmentHandler
-         */
-        public function setFragmentHandler(FragmentHandler $fragmentHandler)
+        «IF targets('3.0')»
+            /**
+             * @required
+             */
+        «ENDIF»
+        public function setFragmentHandler(FragmentHandler $fragmentHandler)«IF targets('3.0')»: void«ENDIF»
         {
             $this->fragmentHandler = $fragmentHandler;
         }
@@ -237,9 +210,6 @@ class ContentTypeDetail {
          */
         protected $customTemplate;
 
-        /**
-         * Item constructor.
-         */
         public function __construct()
         {
             $this->setContainer(\ServiceUtil::getManager());

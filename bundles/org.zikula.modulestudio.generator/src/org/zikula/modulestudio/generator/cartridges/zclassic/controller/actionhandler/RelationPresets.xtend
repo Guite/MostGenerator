@@ -9,6 +9,7 @@ import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
+import org.zikula.modulestudio.generator.extensions.Utils
 
 class RelationPresets {
 
@@ -17,6 +18,7 @@ class RelationPresets {
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension ModelJoinExtensions = new ModelJoinExtensions
     extension NamingExtensions = new NamingExtensions
+    extension Utils = new Utils
 
     def memberFields(Application it) '''
 
@@ -33,7 +35,7 @@ class RelationPresets {
         /**
          * Initialises relationship presets.
          */
-        protected function initRelationPresets()
+        protected function initRelationPresets()«IF targets('3.0')»: void«ENDIF»
         {
             // to be customised in sub classes
         }
@@ -49,10 +51,7 @@ class RelationPresets {
         «val ownedMMAssociations = getOwnedMMAssociations(application)»
         «IF !owningAssociations.empty || !ownedMMAssociations.empty»
 
-            /**
-             * @inheritDoc
-             */
-            protected function initRelationPresets()
+            protected function initRelationPresets()«IF application.targets('3.0')»: void«ENDIF»
             {
                 $entity = $this->entityRef;
                 «initPresets»

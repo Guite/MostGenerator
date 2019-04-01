@@ -52,7 +52,7 @@ class ConfigController {
                 AppSettings $appSettings,
                 LoggerInterface $logger,
                 CurrentUserApiInterface $currentUserApi
-            ) {
+            ): Response {
                 «IF isBase»
                     «configBaseImpl»
                 «ELSE»
@@ -76,16 +76,12 @@ class ConfigController {
          «IF isBase»
          * This method takes care of the application configuration.
          *
+         «IF !targets('3.0')»
          * @param Request $request
-         «IF targets('3.0')»
-         * @param PermissionHelper $permissionHelper
-         * @param AppSettings $appSettings
-         * @param LoggerInterface $logger
-         * @param CurrentUserApiInterface $currentUserApi
-         «ENDIF»
          *
          * @return Response Output
          *
+         «ENDIF»
          * @throws AccessDeniedException Thrown if the user doesn't have required permissions
          «ELSE»
          * @inheritDoc
@@ -142,7 +138,6 @@ class ConfigController {
         use Symfony\Component\HttpFoundation\Request;
         use Symfony\Component\HttpFoundation\Response;
         use Symfony\Component\Routing\Annotation\Route;
-        use Symfony\Component\Security\Core\Exception\AccessDeniedException;
         use Zikula\ThemeModule\Engine\Annotation\Theme;
         «IF targets('3.0')»
             use Zikula\UsersModule\Api\ApiInterface\CurrentUserApiInterface;

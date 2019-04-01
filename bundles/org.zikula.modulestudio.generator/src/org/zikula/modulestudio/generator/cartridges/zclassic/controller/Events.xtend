@@ -39,6 +39,7 @@ class Events {
         namespace «appNamespace»\Base;
 
         use «app.appNamespace»\Listener\EntityLifecycleListener;
+        use «app.appNamespace»\Menu\MenuBuilder;
 
         /**
          * Events definition base class.
@@ -60,10 +61,10 @@ class Events {
          * The event listener receives an
          * «app.appNamespace»\Event\ConfigureItemActionsMenuEvent instance.
          *
-         * @see «app.appNamespace»\Menu\MenuBuilder::createItemActionsMenu()
+         * @see MenuBuilder::createItemActionsMenu()
          * @var string
          */
-        const MENU_ITEMACTIONS_PRE_CONFIGURE = '«appName.formatForDB».itemactionsmenu_pre_configure';
+        «IF targets('3.0')»public «ENDIF»const MENU_ITEMACTIONS_PRE_CONFIGURE = '«appName.formatForDB».itemactionsmenu_pre_configure';
 
         /**
          * The «appName.formatForDB».itemactionsmenu_post_configure event is thrown after the item actions
@@ -72,10 +73,10 @@ class Events {
          * The event listener receives an
          * «app.appNamespace»\Event\ConfigureItemActionsMenuEvent instance.
          *
-         * @see «app.appNamespace»\Menu\MenuBuilder::createItemActionsMenu()
+         * @see MenuBuilder::createItemActionsMenu()
          * @var string
          */
-        const MENU_ITEMACTIONS_POST_CONFIGURE = '«appName.formatForDB».itemactionsmenu_post_configure';
+        «IF targets('3.0')»public «ENDIF»const MENU_ITEMACTIONS_POST_CONFIGURE = '«appName.formatForDB».itemactionsmenu_post_configure';
     '''
 
     def private eventDefinitions(Entity it) '''
@@ -91,7 +92,7 @@ class Events {
          * @see EntityLifecycleListener::postLoad()
          * @var string
          */
-        const «constPrefix»_POST_LOAD = '«entityEventPrefix»_post_load';
+        «IF app.targets('3.0')»public «ENDIF»const «constPrefix»_POST_LOAD = '«entityEventPrefix»_post_load';
 
         /**
          * The «entityEventPrefix»_pre_persist event is thrown before a new «name.formatForDisplay»
@@ -103,7 +104,7 @@ class Events {
          * @see EntityLifecycleListener::prePersist()
          * @var string
          */
-        const «constPrefix»_PRE_PERSIST = '«entityEventPrefix»_pre_persist';
+        «IF app.targets('3.0')»public «ENDIF»const «constPrefix»_PRE_PERSIST = '«entityEventPrefix»_pre_persist';
 
         /**
          * The «entityEventPrefix»_post_persist event is thrown after a new «name.formatForDisplay»
@@ -115,7 +116,7 @@ class Events {
          * @see EntityLifecycleListener::postPersist()
          * @var string
          */
-        const «constPrefix»_POST_PERSIST = '«entityEventPrefix»_post_persist';
+        «IF app.targets('3.0')»public «ENDIF»const «constPrefix»_POST_PERSIST = '«entityEventPrefix»_post_persist';
 
         /**
          * The «entityEventPrefix»_pre_remove event is thrown before an existing «name.formatForDisplay»
@@ -127,7 +128,7 @@ class Events {
          * @see EntityLifecycleListener::preRemove()
          * @var string
          */
-        const «constPrefix»_PRE_REMOVE = '«entityEventPrefix»_pre_remove';
+        «IF app.targets('3.0')»public «ENDIF»const «constPrefix»_PRE_REMOVE = '«entityEventPrefix»_pre_remove';
 
         /**
          * The «entityEventPrefix»_post_remove event is thrown after an existing «name.formatForDisplay»
@@ -139,7 +140,7 @@ class Events {
          * @see EntityLifecycleListener::postRemove()
          * @var string
          */
-        const «constPrefix»_POST_REMOVE = '«entityEventPrefix»_post_remove';
+        «IF app.targets('3.0')»public «ENDIF»const «constPrefix»_POST_REMOVE = '«entityEventPrefix»_post_remove';
 
         /**
          * The «entityEventPrefix»_pre_update event is thrown before an existing «name.formatForDisplay»
@@ -151,7 +152,7 @@ class Events {
          * @see EntityLifecycleListener::preUpdate()
          * @var string
          */
-        const «constPrefix»_PRE_UPDATE = '«entityEventPrefix»_pre_update';
+        «IF app.targets('3.0')»public «ENDIF»const «constPrefix»_PRE_UPDATE = '«entityEventPrefix»_pre_update';
 
         /**
          * The «entityEventPrefix»_post_update event is thrown after an existing new «name.formatForDisplay»
@@ -163,7 +164,7 @@ class Events {
          * @see EntityLifecycleListener::postUpdate()
          * @var string
          */
-        const «constPrefix»_POST_UPDATE = '«entityEventPrefix»_post_update';
+        «IF app.targets('3.0')»public «ENDIF»const «constPrefix»_POST_UPDATE = '«entityEventPrefix»_post_update';
 
     '''
 
@@ -208,13 +209,6 @@ class Events {
              */
             protected $options;
 
-            /**
-             * ConfigureItemActionsMenuEvent constructor.
-             *
-             * @param FactoryInterface $factory
-             * @param ItemInterface $menu
-             * @param array $options
-             */
             public function __construct(
                 FactoryInterface $factory,
                 ItemInterface $menu,
@@ -226,31 +220,25 @@ class Events {
             }
 
             /**
-             * Returns the factory.
-             *
              * @return FactoryInterface
              */
-            public function getFactory()
+            public function getFactory()«IF targets('3.0')»: FactoryInterface«ENDIF»
             {
                 return $this->factory;
             }
 
             /**
-             * Returns the menu.
-             *
              * @return ItemInterface
              */
-            public function getMenu()
+            public function getMenu()«IF targets('3.0')»: ItemInterface«ENDIF»
             {
                 return $this->menu;
             }
 
             /**
-             * Returns the options.
-             *
              * @return array
              */
-            public function getOptions()
+            public function getOptions()«IF targets('3.0')»: array«ENDIF»
             {
                 return $this->options;
             }
@@ -292,12 +280,6 @@ class Events {
              */
             protected $entityChangeSet = [];
 
-            /**
-             * Filter«name.formatForCodeCapital»Event constructor.
-             *
-             * @param «name.formatForCodeCapital»Entity $«name.formatForCode» Processed entity
-             * @param array $entityChangeSet Change set for preUpdate events
-             */
             public function __construct(«name.formatForCodeCapital»Entity $«name.formatForCode», array $entityChangeSet = [])
             {
                 $this->«name.formatForCode» = $«name.formatForCode»;
@@ -305,21 +287,17 @@ class Events {
             }
 
             /**
-             * Returns the entity.
-             *
              * @return «name.formatForCodeCapital»Entity
              */
-            public function get«name.formatForCodeCapital»()
+            public function get«name.formatForCodeCapital»()«IF app.targets('3.0')»: «name.formatForCodeCapital»Entity«ENDIF»
             {
                 return $this->«name.formatForCode»;
             }
 
             /**
-             * Returns the change set.
-             *
              * @return array Entity change set
              */
-            public function getEntityChangeSet()
+            public function getEntityChangeSet()«IF app.targets('3.0')»: array«ENDIF»
             {
                 return $this->entityChangeSet;
             }

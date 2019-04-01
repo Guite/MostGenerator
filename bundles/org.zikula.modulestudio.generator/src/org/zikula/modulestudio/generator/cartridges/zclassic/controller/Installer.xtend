@@ -29,7 +29,7 @@ class Installer {
     def private installerBaseClass(Application it) '''
         namespace «appNamespace»\Base;
 
-        use RuntimeException;
+        use Exception;
         use Zikula\Core\AbstractExtensionInstaller;
         «IF hasCategorisableEntities»
             «IF targets('3.0')»
@@ -44,7 +44,9 @@ class Installer {
         «IF hasUploads || hasCategorisableEntities»
             «IF targets('3.0')»
                 use Zikula\Common\Translator\Translator;
-                use Zikula\ExtensionsModule\Api\VariableApi;
+                «IF hasUploads»
+                    use Zikula\ExtensionsModule\Api\VariableApi;
+                «ENDIF»
                 use Zikula\UsersModule\Api\CurrentUserApi;
             «ENDIF»
         «ENDIF»
@@ -56,7 +58,7 @@ class Installer {
         abstract class Abstract«name.formatForCodeCapital»ModuleInstaller extends AbstractExtensionInstaller
         {
             /**
-             * @var array
+             * @var string[]
              */
             protected $entities = [
                 «funcListEntityClasses('usage')»
@@ -75,14 +77,7 @@ class Installer {
     '''
 
     def private funcInit(Application it) '''
-        /**
-         * Install the «appName» application.
-         *
-         * @return boolean True on success, or false
-         *
-         * @throws RuntimeException Thrown if database tables can not be created or another error occurs
-         */
-        public function install()
+        public function install()«IF targets('3.0')»: bool«ENDIF»
         {
             $logger = $this->container->get('logger');
             «IF hasUploads || hasCategorisableEntities»
@@ -97,7 +92,7 @@ class Installer {
             // create all tables from according entity definitions
             try {
                 $this->schemaTool->create($this->entities);
-            } catch (\Exception $exception) {
+            } catch (Exception $exception) {
                 $this->addFlash('error', $this->__('Doctrine Exception') . ': ' . $exception->getMessage());
                 $logger->error('{app}: Could not create the database tables during installation. Error details: {errorMessage}.', ['app' => '«appName»', 'errorMessage' => $exception->getMessage()]);
 
@@ -145,7 +140,7 @@ class Installer {
                         try {
                             $this->entityManager->persist($registry);
                             $this->entityManager->flush();
-                        } catch (\Exception $exception) {
+                        } catch (Exception $exception) {
                             $this->addFlash('warning', $this->__f('Error! Could not create a category registry for the %entity% entity. If you want to use categorisation, register at least one registry in the Categories administration.', ['%entity%' => '«entity.name.formatForDisplay»']));
                             $logger->error('{app}: User {user} could not create a category registry for {entities} during installation. Error details: {errorMessage}.', ['app' => '«appName»', 'user' => $userName, 'entities' => '«entity.nameMultiple.formatForDisplay»', 'errorMessage' => $exception->getMessage()]);
                         }
@@ -186,7 +181,7 @@ class Installer {
                     );
                 «ENDIF»
                 $uploadHelper->checkAndCreateAllUploadFolders();
-            } catch (\Exception $exception) {
+            } catch (Exception $exception) {
                 $this->addFlash('error', $exception->getMessage());
                 $logger->error('{app}: User {user} could not create upload folders during installation. Error details: {errorMessage}.', ['app' => '«appName»', 'user' => $userName, 'errorMessage' => $exception->getMessage()]);
 
@@ -196,18 +191,7 @@ class Installer {
     '''
 
     def private funcUpdate(Application it) '''
-        /**
-         * Upgrade the «appName» application from an older version.
-         *
-         * If the upgrade fails at some point, it returns the last upgraded version.
-         *
-         * @param integer $oldVersion Version to upgrade from
-         *
-         * @return boolean True on success, false otherwise
-         *
-         * @throws RuntimeException Thrown if database tables can not be updated
-         */
-        public function upgrade($oldVersion)
+        public function upgrade(«IF targets('3.0')»string «ENDIF»$oldVersion)«IF targets('3.0')»: bool«ENDIF»
         {
         /*
             $logger = $this->container->get('logger');
@@ -220,7 +204,7 @@ class Installer {
                     // update the database schema
                     try {
                         $this->schemaTool->update($this->entities);
-                    } catch (\Exception $exception) {
+                    } catch (Exception $exception) {
                         $this->addFlash('error', $this->__('Doctrine Exception') . ': ' . $exception->getMessage());
                         $logger->error('{app}: Could not update the database tables during the upgrade. Error details: {errorMessage}.', ['app' => '«appName»', 'errorMessage' => $exception->getMessage()]);
 
@@ -240,20 +224,13 @@ class Installer {
     '''
 
     def private funcDelete(Application it) '''
-        /**
-         * Uninstall «appName».
-         *
-         * @return boolean True on success, false otherwise
-         *
-         * @throws RuntimeException Thrown if database tables or stored workflows can not be removed
-         */
-        public function uninstall()
+        public function uninstall()«IF targets('3.0')»: bool«ENDIF»
         {
             $logger = $this->container->get('logger');
 
             try {
                 $this->schemaTool->drop($this->entities);
-            } catch (\Exception $exception) {
+            } catch (Exception $exception) {
                 $this->addFlash('error', $this->__('Doctrine Exception') . ': ' . $exception->getMessage());
                 $logger->error('{app}: Could not remove the database tables during uninstallation. Error details: {errorMessage}.', ['app' => '«appName»', 'errorMessage' => $exception->getMessage()]);
 

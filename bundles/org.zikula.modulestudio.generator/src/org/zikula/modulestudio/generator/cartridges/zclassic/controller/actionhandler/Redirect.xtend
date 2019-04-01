@@ -28,7 +28,7 @@ class Redirect {
          *
          * @return string[] list of possible redirect codes
          */
-        protected function getRedirectCodes()
+        protected function getRedirectCodes()«IF targets('3.0')»: array«ENDIF»
         {
             $codes = [];
 
@@ -39,10 +39,7 @@ class Redirect {
     '''
 
     def getRedirectCodes(Entity it, Application app) '''
-        /**
-         * @inheritDoc
-         */
-        protected function getRedirectCodes()
+        protected function getRedirectCodes()«IF app.targets('3.0')»: array«ENDIF»
         {
             $codes = parent::getRedirectCodes();
 
@@ -103,14 +100,16 @@ class Redirect {
         /**
          * Get the default redirect url. Required if no returnTo parameter has been supplied.
          * This method is called in handleCommand so we know which command has been performed.
+         «IF !app.targets('3.0')»
          *
          * @param array $args List of arguments
          *
          * @return string The default redirect url
+         «ENDIF»
          */
-        protected function getDefaultReturnUrl(array $args = [])
+        protected function getDefaultReturnUrl(array $args = [])«IF app.targets('3.0')»: string«ENDIF»
         {
-            $objectIsPersisted = $args['commandName'] != 'delete' && !($this->templateParameters['mode'] == 'create' && $args['commandName'] == 'cancel');
+            $objectIsPersisted = 'delete' !== $args['commandName'] && !('create' === $this->templateParameters['mode'] && 'cancel' === $args['commandName']);
             if (null !== $this->returnTo && $objectIsPersisted) {
                 // return to referer
                 return $this->returnTo;
@@ -145,16 +144,18 @@ class Redirect {
     def getRedirectUrl(Entity it, Application app) '''
         /**
          * Get URL to redirect to.
+         «IF !app.targets('3.0')»
          *
          * @param array $args List of arguments
          *
          * @return string The redirect url
+         «ENDIF»
          */
-        protected function getRedirectUrl(array $args = [])
+        protected function getRedirectUrl(array $args = [])«IF app.targets('3.0')»: string«ENDIF»
         {
             «IF app.needsInlineEditing && (!incoming.empty || !outgoing.empty)»
                 if (isset($this->templateParameters['inlineUsage']) && true === $this->templateParameters['inlineUsage']) {
-                    $commandName = substr($args['commandName'], 0, 6) == 'submit' ? 'create' : $args['commandName'];
+                    $commandName = 'submit' === substr($args['commandName'], 0, 6) ? 'create' : $args['commandName'];
                     $urlArgs = [
                         'idPrefix' => $this->idPrefix,
                         'commandName' => $commandName,
@@ -177,7 +178,7 @@ class Redirect {
             }
 
             «IF hasDisplayAction && hasSluggableFields»
-                if ('create' != $this->templateParameters['mode']) {
+                if ('create' !== $this->templateParameters['mode']) {
                     // force refresh because slugs may have changed (e.g. by translatable)
                     $this->entityFactory->getEntityManager()->clear();
                     $this->entityRef = $this->initEntityForEditing();
@@ -185,12 +186,12 @@ class Redirect {
 
             «ENDIF»
             // normal usage, compute return url from given redirect code
-            if (!in_array($this->returnTo, $this->getRedirectCodes())) {
+            if (!in_array($this->returnTo, $this->getRedirectCodes(), true)) {
                 // invalid return code, so return the default url
                 return $this->getDefaultReturnUrl($args);
             }
 
-            $routeArea = substr($this->returnTo, 0, 5) == 'admin' ? 'admin' : '';
+            $routeArea = 0 === strpos($this->returnTo, 'admin') ? 'admin' : '';
             $routePrefix = '«app.appName.formatForDB»_' . $this->objectTypeLower . '_' . $routeArea;
 
             // parse given redirect code and return corresponding url
@@ -213,7 +214,7 @@ class Redirect {
                 «IF hasDisplayAction»
                     case 'userDisplay':
                     case 'adminDisplay':
-                        if ($args['commandName'] != 'delete' && !($this->templateParameters['mode'] == 'create' && $args['commandName'] == 'cancel')) {
+                        if ('delete' !== $args['commandName'] && !('create' === $this->templateParameters['mode'] && 'cancel' === $args['commandName'])) {
                             return $this->router->generate($routePrefix . 'display', $this->entityRef->createUrlArgs());
                         }
 

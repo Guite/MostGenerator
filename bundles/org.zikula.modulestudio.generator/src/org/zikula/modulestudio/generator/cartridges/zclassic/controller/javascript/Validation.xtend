@@ -39,17 +39,19 @@ class Validation {
 
         function «vendorAndName»ValidateNoSpace(val) {
             var valStr;
-            valStr = new String(val);
 
-            return (valStr.indexOf(' ') === -1);
+            valStr = '' + val;
+
+            return -1 === valStr.indexOf(' ');
         }
         «IF hasColourFields»
 
             function «vendorAndName»ValidateHtmlColour(val) {
                 var valStr;
-                valStr = new String(val);
 
-                return '' == valStr || (/^#[0-9a-f]{3}([0-9a-f]{3})?$/i.test(valStr));
+                valStr = '' + val;
+
+                return '' === valStr || /^#[0-9a-f]{3}([0-9a-f]{3})?$/i.test(valStr);
             }
         «ENDIF»
         «IF hasUploads»
@@ -75,10 +77,10 @@ class Validation {
                 function «vendorAndName»ValidateDatetimePast(val) {
                     var valStr, cmpVal;
 
-                    valStr = new String(val);
+                    valStr = '' + val;
                     cmpVal = «vendorAndName»ReadDate(valStr, true);
 
-                    return '' == valStr || (cmpVal < «vendorAndName»Today('datetime'));
+                    return '' === valStr || cmpVal < «vendorAndName»Today('datetime');
                 }
             «ENDIF»
             «IF datetimeFields.exists[future]»
@@ -86,10 +88,10 @@ class Validation {
                 function «vendorAndName»ValidateDatetimeFuture(val) {
                     var valStr, cmpVal;
 
-                    valStr = new String(val);
+                    valStr = '' + val;
                     cmpVal = «vendorAndName»ReadDate(valStr, true);
 
-                    return '' == valStr || (cmpVal > «vendorAndName»Today('datetime'));
+                    return '' === valStr || cmpVal > «vendorAndName»Today('datetime');
                 }
             «ENDIF»
         «ENDIF»
@@ -100,10 +102,10 @@ class Validation {
                 function «vendorAndName»ValidateDatePast(val) {
                     var valStr, cmpVal;
 
-                    valStr = new String(val);
+                    valStr = '' + val;
                     cmpVal = «vendorAndName»ReadDate(valStr, false);
 
-                    return '' == valStr || (cmpVal < «vendorAndName»Today('date'));
+                    return '' === valStr || cmpVal < «vendorAndName»Today('date');
                 }
             «ENDIF»
             «IF dateFields.exists[future]»
@@ -111,10 +113,10 @@ class Validation {
                 function «vendorAndName»ValidateDateFuture(val) {
                     var valStr, cmpVal;
 
-                    valStr = new String(val);
+                    valStr = '' + val;
                     cmpVal = «vendorAndName»ReadDate(valStr, false);
 
-                    return '' == valStr || (cmpVal > «vendorAndName»Today('date'));
+                    return '' === valStr || cmpVal > «vendorAndName»Today('date');
                 }
             «ENDIF»
         «ENDIF»
@@ -124,18 +126,20 @@ class Validation {
 
                 function «vendorAndName»ValidateTimePast(val) {
                     var cmpVal;
-                    cmpVal = new String(val);
 
-                    return '' == cmpVal || (cmpVal < «vendorAndName»Today('time'));
+                    valStr = '' + val;
+
+                    return '' === cmpVal || cmpVal < «vendorAndName»Today('time');
                 }
             «ENDIF»
             «IF timeFields.exists[future]»
 
                 function «vendorAndName»ValidateTimeFuture(val) {
                     var cmpVal;
-                    cmpVal = new String(val);
 
-                    return '' == cmpVal || (cmpVal > «vendorAndName»Today('time'));
+                    valStr = '' + val;
+
+                    return '' === cmpVal || cmpVal > «vendorAndName»Today('time');
                 }
             «ENDIF»
         «ENDIF»
@@ -348,31 +352,31 @@ class Validation {
 
             timestamp = new Date();
             todayDate = '';
-            if (format !== 'time') {
+            if ('time' !== format) {
                 month = new String((parseInt(timestamp.getMonth()) + 1));
-                if (month.length === 1) {
+                if (1 === month.length) {
                     month = '0' + month;
                 }
                 day = new String(timestamp.getDate());
-                if (day.length === 1) {
+                if (1 === day.length) {
                     day = '0' + day;
                 }
                 todayDate += timestamp.getFullYear() + '-' + month + '-' + day;
             }
-            if (format === 'datetime') {
+            if ('datetime' === format) {
                 todayDate += ' ';
             }
-            if (format != 'date') {
+            if ('date' !== format) {
                 hours = new String(timestamp.getHours());
-                if (hours.length === 1) {
+                if (1 === hours.length) {
                     hours = '0' + hours;
                 }
                 minutes = new String(timestamp.getMinutes());
-                if (minutes.length === 1) {
+                if (1 === minutes.length) {
                     minutes = '0' + minutes;
                 }
                 seconds = new String(timestamp.getSeconds());
-                if (seconds.length === 1) {
+                if (1 === seconds.length) {
                     seconds = '0' + seconds;
                 }
                 todayDate += hours + ':' + minutes;// + ':' + seconds;
@@ -384,12 +388,12 @@ class Validation {
         // returns YYYY-MM-DD even if date is in DD.MM.YYYY
         function «vendorAndName»ReadDate(val, includeTime) {
             // look if we have YYYY-MM-DD
-            if (val.substr(4, 1) === '-' && val.substr(7, 1) === '-') {
+            if ('-' === val.substr(4, 1) && '-' === val.substr(7, 1)) {
                 return val;
             }
 
             // look if we have DD.MM.YYYY
-            if (val.substr(2, 1) === '.' && val.substr(5, 1) === '.') {
+            if ('.' === val.substr(2, 1) && '.' === val.substr(5, 1)) {
                 var newVal = val.substr(6, 4) + '-' + val.substr(3, 2) + '-' + val.substr(0, 2);
                 if (true === includeTime) {
                     newVal += ' ' + val.substr(11, 7);

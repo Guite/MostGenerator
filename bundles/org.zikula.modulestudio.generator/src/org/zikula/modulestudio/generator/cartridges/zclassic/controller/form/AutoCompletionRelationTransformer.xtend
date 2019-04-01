@@ -36,24 +36,20 @@ class AutoCompletionRelationTransformer {
             protected $entityFactory;
 
             /**
-             * @var String
+             * @var string
              */
             protected $objectType;
 
             /**
-             * @var Boolean
+             * @var bool
              */
             protected $isMultiple = false;
 
-            /**
-             * AutoCompletionRelationTransformer constructor.
-             *
-             * @param EntityFactory $entityFactory
-             * @param string $objectType The type of entities being processed
-             * @param boolean $isMultiple Whether a single object or a collection of object is processed
-             */
-            public function __construct(EntityFactory $entityFactory, $objectType, $isMultiple)
-            {
+            public function __construct(
+                EntityFactory $entityFactory,
+                «IF targets('3.0')»string «ENDIF»$objectType,
+                «IF targets('3.0')»bool «ENDIF»$isMultiple
+            ) {
                 $this->entityFactory = $entityFactory;
                 $this->objectType = $objectType;
                 $this->isMultiple = $isMultiple;
@@ -70,7 +66,7 @@ class AutoCompletionRelationTransformer {
             {
                 $result = '';
 
-                if ($this->isMultiple && !count($entities) || !$this->isMultiple && null == $entities) {
+                if ($this->isMultiple && !count($entities) || !$this->isMultiple && null === $entities) {
                     return $result;
                 }
 
@@ -79,7 +75,7 @@ class AutoCompletionRelationTransformer {
                 }
 
                 foreach ($entities as $entity) {
-                    if ($result != '') {
+                    if ('' !== $result) {
                         $result .= ',';
                     }
                     $result .= $entity->getKey();
@@ -112,7 +108,7 @@ class AutoCompletionRelationTransformer {
                 }
 
                 // fix for #446
-                if (count($value) == 1 && empty($value[0])) {
+                if (1 === count($value) && empty($value[0])) {
                     return $this->isMultiple ? new ArrayCollection() : null;
                 }
 
@@ -141,13 +137,15 @@ class AutoCompletionRelationTransformer {
     def private buildWhereClause(Application it) '''
         /**
          * Builds the where clause for selecting matches for the current search.
+         «IF !targets('3.0')»
          *
-         * @param array        $inputValues The identifier list
-         * @param QueryBuilder $qb          The query builder to be enriched
+         * @param array $inputValues The identifier list
+         * @param QueryBuilder $qb The query builder to be enriched
          *
          * @return Querybuilder The enriched query builder
+         «ENDIF»
          */
-        protected function buildWhereClause(array $inputValues = [], QueryBuilder $qb)
+        protected function buildWhereClause(array $inputValues = [], QueryBuilder $qb)«IF targets('3.0')»: QueryBuilder«ENDIF»
         {
             // remove empty option if it has been selected
             foreach ($inputValues as $k => $v) {
@@ -157,7 +155,7 @@ class AutoCompletionRelationTransformer {
             }
 
             // readd filter value for returning nothing if no real item has been selected
-            if (count($inputValues) == 0) {
+            if (0 === count($inputValues)) {
                 $inputValues[] = 0;
             }
 

@@ -26,14 +26,14 @@ class ItemActions {
     extension Utils = new Utils
 
     def itemActionsImpl(Application app) '''
-        «IF app.hasEditActions || !app.relations.empty»
+        «IF (!app.getAllEntities.filter[ownerPermission].empty && (app.hasEditActions || app.hasDeleteActions)) || !app.relations.empty»
             $currentUserId = $this->currentUserApi->isLoggedIn() ? $this->currentUserApi->get('uid') : UsersConstant::USER_ID_ANONYMOUS;
         «ENDIF»
         «FOR entity : app.getAllEntities»
             if ($entity instanceof «entity.name.formatForCodeCapital»Entity) {
                 $routePrefix = '«app.appName.formatForDB»_«entity.name.formatForDB»_';
                 «IF (entity.ownerPermission && (entity.hasEditAction || entity.hasDeleteAction)) || (entity.standardFields && !app.relations.empty)»
-                    $isOwner = $currentUserId > 0 && null !== $entity->getCreatedBy() && $currentUserId == $entity->getCreatedBy()->getUid();
+                    $isOwner = $currentUserId > 0 && null !== $entity->getCreatedBy() && $currentUserId === $entity->getCreatedBy()->getUid();
                 «ENDIF»
 
                 «entity.itemActionsTargetingDisplay(app)»
@@ -46,7 +46,7 @@ class ItemActions {
 
     def private itemActionsTargetingDisplay(Entity it, Application app) '''
         «IF hasDisplayAction»
-            if ($routeArea == 'admin') {
+            if ('admin' === $routeArea) {
                 $title = $this->__('Preview', '«app.appName.formatForDB»');
                 $previewRouteParameters = $entity->createUrlArgs();
                 $previewRouteParameters['preview'] = 1;
@@ -59,7 +59,7 @@ class ItemActions {
                 «app.addLinkClass('default')»
                 «app.addIcon('search-plus')»
             }
-            if ($context != 'display') {
+            if ('display' !== $context) {
                 $title = $this->__('Details', '«app.appName.formatForDB»');
                 $menu->addChild($title, [
                     'route' => $routePrefix . $routeArea . 'display',
@@ -115,7 +115,7 @@ class ItemActions {
 
     def private itemActionsTargetingView(Entity it, Application app) '''
         «IF hasDisplayAction && hasViewAction»
-            if ($context == 'display') {
+            if ('display' === $context) {
                 $title = $this->__('«nameMultiple.formatForDisplayCapital» list', '«app.appName.formatForDB»');
                 $menu->addChild($title, [
                     'route' => $routePrefix . $routeArea . 'view'
@@ -204,11 +204,11 @@ class ItemActions {
         «IF viewActionsStyle.hasButtons && displayActionsStyle.hasButtons»
             $menu[$title]->setLinkAttribute('class', 'btn btn-sm btn-«linkClass»');
         «ELSEIF viewActionsStyle.hasButtons && !displayActionsStyle.hasButtons»
-            if ($context == 'view') {
+            if ('view' === $context) {
                 $menu[$title]->setLinkAttribute('class', 'btn btn-sm btn-«linkClass»');
             }
         «ELSEIF !viewActionsStyle.hasButtons && displayActionsStyle.hasButtons»
-            if ($context == 'display') {
+            if ('display' === $context) {
                 $menu[$title]->setLinkAttribute('class', 'btn btn-sm btn-«linkClass»');
             }
         «ENDIF»
@@ -222,11 +222,11 @@ class ItemActions {
         «IF viewActionsWithIcons && displayActionsWithIcons»
             $menu[$title]->setAttribute('icon', 'fa fa-«icon»');
         «ELSEIF viewActionsWithIcons && !displayActionsWithIcons»
-            if ($context == 'view') {
+            if ('view' === $context) {
                 $menu[$title]->setAttribute('icon', 'fa fa-«icon»');
             }
         «ELSEIF !viewActionsWithIcons && displayActionsWithIcons»
-            if ($context == 'display') {
+            if ('display' === $context) {
                 $menu[$title]->setAttribute('icon', 'fa fa-«icon»');
             }
         «ENDIF»

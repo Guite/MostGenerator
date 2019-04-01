@@ -21,6 +21,9 @@ class ViewHelper {
     def private viewFunctionsBaseImpl(Application it) '''
         namespace «appNamespace»\Helper\Base;
 
+        «IF generatePdfSupport»
+            use Dompdf\Dompdf;
+        «ENDIF»
         use Symfony\Bundle\TwigBundle\Loader\FilesystemLoader;
         use Symfony\Component\HttpFoundation\RequestStack;
         use Symfony\Component\HttpFoundation\Response;
@@ -86,22 +89,6 @@ class ViewHelper {
          */
         protected $permissionHelper;
 
-        /**
-         * ViewHelper constructor.
-         *
-         * @param «IF !targets('3.0')»Twig_«ENDIF»Environment $twig
-         * @param FilesystemLoader $twigLoader
-         * @param RequestStack $requestStack
-         * @param VariableApiInterface $variableApi
-         * @param AssetFilter $assetFilter
-         «IF generatePdfSupport»
-         * @param ParameterBag $pageVars
-         «ENDIF»
-         * @param ControllerHelper $controllerHelper
-         * @param PermissionHelper $permissionHelper
-         *
-         * @return void
-         */
         public function __construct(
             «IF !targets('3.0')»Twig_«ENDIF»Environment $twig,
             FilesystemLoader $twigLoader,
@@ -144,19 +131,21 @@ class ViewHelper {
     def private getViewTemplate(Application it) '''
         /**
          * Determines the view template for a certain method with given parameters.
+         «IF !targets('3.0')»
          *
          «IF separateAdminTemplates»
-         * @param string  $type    Current controller (name of currently treated entity)
-         * @param string  $func    Current function (index, view, ...)
-         * @param boolean $isAdmin Whether an admin template is desired or not
+         * @param string $type Current controller (name of currently treated entity)
+         * @param string $func Current function (index, view, ...)
+         * @param bool $isAdmin Whether an admin template is desired or not
          «ELSE»
          * @param string $type Current controller (name of currently treated entity)
          * @param string $func Current function (index, view, ...)
          «ENDIF»
          *
          * @return string name of template file
+         «ENDIF»
          */
-        public function getViewTemplate($type, $func«IF separateAdminTemplates», $isAdmin = false«ENDIF»)
+        public function getViewTemplate(«IF targets('3.0')»string «ENDIF»$type, «IF targets('3.0')»string «ENDIF»$func«IF separateAdminTemplates», «IF targets('3.0')»bool «ENDIF»$isAdmin = false«ENDIF»)«IF targets('3.0')»: string«ENDIF»
         {
             // create the base template name
             $template = '@«appName»/' . ucfirst($type) . '/' . «IF separateAdminTemplates»($isAdmin ? 'Admin/' : '') . «ENDIF»$func;
@@ -165,7 +154,8 @@ class ViewHelper {
             $templateExtension = '.' . $this->determineExtension($type, $func);
 
             // check whether a special template is used
-            $tpl = $this->requestStack->getCurrentRequest()->query->getAlnum('tpl', '');
+            $request = $this->requestStack->getCurrentRequest();
+            $tpl = null !== $request ? $request->query->getAlnum('tpl') : '';
             if (!empty($tpl)) {
                 // check if custom template exists
                 $customTemplate = $template . ucfirst($tpl);
@@ -183,16 +173,22 @@ class ViewHelper {
     def private processTemplate(Application it) '''
         /**
          * Helper method for managing view templates.
+         «IF !targets('3.0')»
          *
-         * @param string $type               Current controller (name of currently treated entity)
-         * @param string $func               Current function (index, view, ...)
-         * @param array  $templateParameters Template data
-         * @param string $template           Optional assignment of precalculated template file
+         * @param string $type Current controller (name of currently treated entity)
+         * @param string $func Current function (index, view, ...)
+         * @param array $templateParameters Template data
+         * @param string $template Optional assignment of precalculated template file
          *
-         * @return mixed Output
+         * @return Response
+         «ENDIF»
          */
-        public function processTemplate($type, $func, array $templateParameters = [], $template = '')
-        {
+        public function processTemplate(
+            «IF targets('3.0')»string «ENDIF»$type,
+            «IF targets('3.0')»string «ENDIF»$func,
+            array $templateParameters = [],
+            «IF targets('3.0')»string «ENDIF»$template = ''
+        )«IF targets('3.0')»: Response«ENDIF» {
             $templateExtension = $this->determineExtension($type, $func);
             if (empty($template)) {
                 «IF separateAdminTemplates»
@@ -202,7 +198,7 @@ class ViewHelper {
             }
             «IF generatePdfSupport»
 
-                if ($templateExtension == 'pdf.twig') {
+                if ('pdf.twig' === $templateExtension) {
                     $template = str_replace('.pdf', '.html', $template);
 
                     return $this->processPdf($templateParameters, $template);
@@ -210,8 +206,9 @@ class ViewHelper {
             «ENDIF»
 
             // look whether we need output with or without the theme
-            $raw = $this->requestStack->getCurrentRequest()->query->getBoolean('raw', false);
-            if (!$raw && $templateExtension != 'html.twig') {
+            $request = $this->requestStack->getCurrentRequest();
+            $raw = null !== $request ? $request->query->getBoolean('raw') : false;
+            if (!$raw && 'html.twig' !== $templateExtension) {
                 $raw = true;
             }
 
@@ -221,7 +218,7 @@ class ViewHelper {
             if (true === $raw) {
                 // standalone output
                 «IF supportedFormats.exists[it == 'csv']»
-                    if ($templateExtension == 'csv.twig') {
+                    if ('csv.twig' === $templateExtension) {
                         // convert to UTF-16 for improved excel compatibility
                         // see http://stackoverflow.com/questions/4348802/how-can-i-output-a-utf-8-csv-in-php-that-excel-will-read-properly
                         $output = chr(255) . chr(254) . mb_convert_encoding($output, 'UTF-16LE', 'UTF-8');
@@ -285,12 +282,14 @@ class ViewHelper {
     def private injectAssetsIntoRawOutput(Application it) '''
         /**
          * Adds assets to a raw page which is not processed by the Theme engine.
+         «IF !targets('3.0')»
          *
          * @param string $output The output to be enhanced
          *
          * @return string Output including additional assets
+         «ENDIF»
          */
-        protected function injectAssetsIntoRawOutput($output = '')
+        protected function injectAssetsIntoRawOutput(«IF targets('3.0')»string «ENDIF»$output = '')«IF targets('3.0')»: string«ENDIF»
         {
             return $this->assetFilter->filter($output);
         }
@@ -299,13 +298,15 @@ class ViewHelper {
     def private determineExtension(Application it) '''
         /**
          * Get extension of the currently treated template.
+         «IF !targets('3.0')»
          *
          * @param string $type Current controller (name of currently treated entity)
          * @param string $func Current function (index, view, ...)
          *
          * @return string Template extension
+         «ENDIF»
          */
-        protected function determineExtension($type, $func)
+        protected function determineExtension(«IF targets('3.0')»string «ENDIF»$type, «IF targets('3.0')»string «ENDIF»$func)«IF targets('3.0')»: string«ENDIF»
         {
             $templateExtension = 'html.twig';
             if (!in_array($func, ['view', 'display'])) {
@@ -313,8 +314,13 @@ class ViewHelper {
             }
 
             $extensions = $this->availableExtensions($type, $func);
-            $format = $this->requestStack->getCurrentRequest()->getRequestFormat();
-            if ($format != 'html' && in_array($format, $extensions)) {
+            $request = $this->requestStack->getCurrentRequest();
+            if (null === $request) {
+                return $templateExtension;
+            }
+
+            $format = $request->getRequestFormat();
+            if ('html' !== $format && in_array($format, $extensions, true)) {
                 $templateExtension = $format . '.twig';
             }
 
@@ -325,23 +331,25 @@ class ViewHelper {
     def private availableExtensions(Application it) '''
         /**
          * Get list of available template extensions.
+         «IF !targets('3.0')»
          *
          * @param string $type Current controller (name of currently treated entity)
          * @param string $func Current function (index, view, ...)
+         «ENDIF»
          *
          * @return string[] List of allowed template extensions
          */
-        protected function availableExtensions($type, $func)
+        protected function availableExtensions(«IF targets('3.0')»string «ENDIF»$type, «IF targets('3.0')» string«ENDIF»$func)«IF targets('3.0')»: array«ENDIF»
         {
             $extensions = [];
             $hasAdminAccess = $this->permissionHelper->hasComponentPermission($type, ACCESS_ADMIN);
-            if ($func == 'view') {
+            if ('view' === $func) {
                 if ($hasAdminAccess) {
                     $extensions = [«FOR format : getListOfViewFormats SEPARATOR ', '»'«format»'«ENDFOR»];
                 } else {
                     $extensions = [«FOR format : getListOfViewFormats.filter[#['rss', 'atom', 'pdf'].contains(it)] SEPARATOR ', '»'«format»'«ENDFOR»];
                 }
-            } elseif ($func == 'display') {
+            } elseif ('display' === $func) {
                 if ($hasAdminAccess) {
                     $extensions = [«FOR format : getListOfDisplayFormats SEPARATOR ', '»'«format»'«ENDFOR»];
                 } else {
@@ -356,32 +364,38 @@ class ViewHelper {
     def private processPdf(Application it) '''
         /**
          * Processes a template file using dompdf (LGPL).
+         «IF !targets('3.0')»
          *
-         * @param array  $templateParameters Template data
-         * @param string $template           Name of template to use
+         * @param array $templateParameters Template data
+         * @param string $template Name of template to use
          *
-         * @return mixed Output
+         * @return Response
+         «ENDIF»
          */
-        protected function processPdf(array $templateParameters = [], $template = '')
+        protected function processPdf(array $templateParameters = [], «IF targets('3.0')»string «ENDIF»$template = '')«IF targets('3.0')»: Response«ENDIF»
         {
             // first the content, to set page vars
             $output = $this->twig->render($template, $templateParameters);
 
             // make local images absolute
             $request = $this->requestStack->getCurrentRequest();
-            $output = str_replace('img src="' . $request->getSchemeAndHttpHost() . $request->getBasePath() . '/', 'img src="/', $output);
-            $output = str_replace('img src="/', 'img src="' . $request->server->get('DOCUMENT_ROOT') . '/', $output);
+            $output = str_replace(
+                ['img src="' . $request->getSchemeAndHttpHost() . $request->getBasePath() . '/', 'img src="/'],
+                ['img src="/', 'img src="' . $request->server->get('DOCUMENT_ROOT') . '/'],
+                $output
+            );
 
             // then the surrounding
             $output = $this->twig->render('@«appName»/includePdfHeader.html.twig') . $output . '</body></html>';
 
             // create name of the pdf output file
             $siteName = $this->variableApi->getSystemVar('sitename');
-            $pageTitle = iconv('UTF-8', 'ASCII//TRANSLIT', $this->pageVars->get('title', ''));
+            $pageTitle = iconv('UTF-8', 'ASCII//TRANSLIT', $this->pageVars->get('title'));
             $fileTitle = iconv('UTF-8', 'ASCII//TRANSLIT', $siteName)
-                       . '-'
-                       . ($pageTitle != '' ? $pageTitle . '-' : '')
-                       . date('Ymd') . '.pdf';
+               . '-'
+               . ('' !== $pageTitle ? $pageTitle . '-' : '')
+               . date('Ymd') . '.pdf'
+           ;
            $fileTitle = str_replace(' ', '_', $fileTitle);
 
             /*
@@ -391,7 +405,7 @@ class ViewHelper {
             */
 
             // instantiate pdf object
-            $pdf = new \Dompdf\Dompdf();
+            $pdf = new Dompdf();
             // define page properties
             $pdf->setPaper('A4', 'portrait');
             // load html input data

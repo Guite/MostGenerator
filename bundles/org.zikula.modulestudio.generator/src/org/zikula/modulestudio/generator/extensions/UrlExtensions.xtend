@@ -8,19 +8,8 @@ import de.guite.modulestudio.metamodel.Entity
  */
 class UrlExtensions {
 
-    /**
-     * Extensions used for formatting element names.
-     */
     extension FormattingExtensions = new FormattingExtensions
-
-    /**
-     * Extensions related to behavioural aspects of the model layer.
-     */
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
-
-    /**
-     * Extensions related to the model layer.
-     */
     extension ModelExtensions = new ModelExtensions
 
     /**

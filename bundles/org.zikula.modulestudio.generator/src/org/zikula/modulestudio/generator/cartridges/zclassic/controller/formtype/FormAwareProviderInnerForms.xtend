@@ -5,12 +5,14 @@ import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.HookProviderMode
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
+import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class FormAwareProviderInnerForms {
 
     extension FormattingExtensions = new FormattingExtensions
+    extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension ModelExtensions = new ModelExtensions
     extension Utils = new Utils
 
@@ -42,30 +44,35 @@ class FormAwareProviderInnerForms {
         use Symfony\Component\Form\Extension\Core\Type\TextType;
         use Symfony\Component\Form\FormBuilderInterface;
         use Symfony\Component\OptionsResolver\OptionsResolver;
-        use Zikula\Common\Translator\IdentityTranslator;
+        use Zikula\Common\Translator\TranslatorInterface;
+        use Zikula\Common\Translator\TranslatorTrait;
 
         /**
          * «action.formatForDisplayCapital» «name.formatForDisplay» form type base class.
          */
         abstract class Abstract«action.formatForCodeCapital»«name.formatForCodeCapital»Type extends AbstractType
         {
-            /**
-             * @inheritDoc
-             */
+            use TranslatorTrait;
+
+            public function __construct(TranslatorInterface $translator) {
+                $this->setTranslator($translator);
+            }
+
+            «app.setTranslatorMethod»
+
             public function buildForm(FormBuilderInterface $builder, array $options)
             {
-                $translator = $options['translator'];
                 $builder
                     ->add('dummyName', TextType::class, [
-                        'label' => $translator->__('Dummy «name.formatForDisplay» text'),
+                        'label' => $this->__('Dummy «name.formatForDisplay» text'),
                         'required' => true
                     ])
                     ->add('dummmyChoice', ChoiceType::class, [
-                        'label' => $translator->__('Dummy «name.formatForDisplay» choice'),
+                        'label' => $this->__('Dummy «name.formatForDisplay» choice'),
                         'choices' => [
-                            $translator->__('Option A') => 'A',
-                            $translator->__('Option A') => 'B',
-                            $translator->__('Option A') => 'C'
+                            $this->__('Option A') => 'A',
+                            $this->__('Option A') => 'B',
+                            $this->__('Option A') => 'C'
                         ],
                         «IF !app.targets('2.0')»
                             'choices_as_values' => true,
@@ -77,22 +84,9 @@ class FormAwareProviderInnerForms {
                 ;
             }
 
-            /**
-             * @inheritDoc
-             */
             public function getBlockPrefix()
             {
                 return '«app.appName.formatForDB»_hook_«action.formatForDB»«name.formatForDB»';
-            }
-
-            /**
-             * @inheritDoc
-             */
-            public function configureOptions(OptionsResolver $resolver)
-            {
-                $resolver->setDefaults([
-                    'translator' => new IdentityTranslator()
-                ]);
             }
         }
     '''

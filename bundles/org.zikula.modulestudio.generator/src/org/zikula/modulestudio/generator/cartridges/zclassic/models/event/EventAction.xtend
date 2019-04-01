@@ -24,7 +24,7 @@ class EventAction {
 
             // prepare helper fields for uploaded files
             $uploadFields = $this->getUploadFields(«entityVar»->get_objectType());
-            if (count($uploadFields) > 0) {
+            if (0 < count($uploadFields)) {
                 $uploadHelper = $this->container->get(«IF targets('3.0')»UploadHelper::class«ELSE»'«appService».upload_helper'«ENDIF»);
                 $request = $this->container->get('request_stack')->getCurrentRequest();
                 $baseUrl = $request->getSchemeAndHttpHost() . $request->getBasePath();
@@ -62,7 +62,7 @@ class EventAction {
 
             if («entityVar» instanceof AbstractLogEntry) {
                 // check if a supported object has been undeleted
-                if ('create' != «entityVar»->getAction()) {
+                if ('create' !== «entityVar»->getAction()) {
                     return;
                 }
 
@@ -80,7 +80,7 @@ class EventAction {
                 // set correct version after undeletion
                 $logVersion = «entityVar»->getVersion();
                 «FOR entity : getLoggableEntities»
-                    if ('«entity.name.formatForCode»' == $object->get_objectType() && method_exists($object, 'get«entity.getVersionField.name.formatForCodeCapital»')) {
+                    if ('«entity.name.formatForCode»' === $object->get_objectType() && method_exists($object, 'get«entity.getVersionField.name.formatForCodeCapital»')) {
                         if ($logVersion < $object->get«entity.getVersionField.name.formatForCodeCapital»()) {
                             «entityVar»->setVersion($object->get«entity.getVersionField.name.formatForCodeCapital»());
                         }
@@ -94,9 +94,6 @@ class EventAction {
         // create the filter event and dispatch it
         $event = $this->createFilterEvent(«entityVar»);
         $this->eventDispatcher->dispatch(constant('\\«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\«name.formatForCodeCapital»Events::' . strtoupper(«entityVar»->get_objectType()) . '_PRE_PERSIST'), $event);
-        if ($event->isPropagationStopped()) {
-            return false;
-        }
     '''
 
     def postPersist(Application it) '''
@@ -119,9 +116,6 @@ class EventAction {
         // create the filter event and dispatch it
         $event = $this->createFilterEvent(«entityVar»);
         $this->eventDispatcher->dispatch(constant('\\«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\«name.formatForCodeCapital»Events::' . strtoupper(«entityVar»->get_objectType()) . '_PRE_REMOVE'), $event);
-        if ($event->isPropagationStopped()) {
-            return false;
-        }
     '''
 
     def postRemove(Application it) '''
@@ -130,7 +124,7 @@ class EventAction {
         «IF !getUploadEntities.empty»
 
             $uploadFields = $this->getUploadFields($objectType);
-            if (count($uploadFields) > 0) {
+            if (0 < count($uploadFields)) {
                 $uploadHelper = $this->container->get(«IF targets('3.0')»UploadHelper::class«ELSE»'«appService».upload_helper'«ENDIF»);
                 foreach ($uploadFields as $fieldName) {
                     if (empty(«entityVar»[$fieldName])) {
@@ -161,9 +155,6 @@ class EventAction {
         // create the filter event and dispatch it
         $event = $this->createFilterEvent(«entityVar»);
         $this->eventDispatcher->dispatch(constant('\\«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\«name.formatForCodeCapital»Events::' . strtoupper(«entityVar»->get_objectType()) . '_PRE_UPDATE'), $event);
-        if ($event->isPropagationStopped()) {
-            return false;
-        }
     '''
 
     def postUpdate(Application it) '''

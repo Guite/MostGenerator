@@ -14,6 +14,7 @@ import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
+import org.zikula.modulestudio.generator.extensions.Utils
 
 class Association {
 
@@ -21,13 +22,15 @@ class Association {
     extension ModelExtensions = new ModelExtensions
     extension ModelJoinExtensions = new ModelJoinExtensions
     extension NamingExtensions = new NamingExtensions
+    extension Utils = new Utils
 
-    FileHelper fh = new FileHelper
+    FileHelper fh
 
     /**
      * If we have an outgoing association useTarget is true; for an incoming one it is false.
      */
     def generate(JoinRelationship it, Boolean useTarget) {
+        fh = new FileHelper(application)
         val sourceName = getRelationAliasName(false).toFirstLower
         val targetName = getRelationAliasName(true).toFirstLower
         val entityClass = (if (useTarget) target else source).entityClassName('', false)
@@ -417,16 +420,18 @@ class Association {
             /**
              * Returns an instance of «source.entityClassName('', false)» from the list of «getRelationAliasName(useTarget)» by its given «indexBy.formatForDisplay» index.
              *
-             * @param «source.entityClassName('', false)» $«indexBy.formatForCode»
+             «IF !application.targets('3.0')»
+             * @param «source.getDerivedFields.findFirst[e|e.name.equals(indexBy)].fieldTypeAsString(true)» $«indexBy.formatForCode»
              *
              * @return The desired «source.entityClassName('', false)» instance
              * 
-             * @throws \InvalidArgumentException If desired index does not exist
+             «ENDIF»
+             * @throws InvalidArgumentException If desired index does not exist
              */
-            public function get«singleName.formatForCodeCapital»($«indexBy.formatForCode»)
+            public function get«singleName.formatForCodeCapital»(«IF application.targets('3.0')»«source.getDerivedFields.findFirst[e|e.name.equals(indexBy)].fieldTypeAsString(true)» «ENDIF»$«indexBy.formatForCode»)«IF !application.targets('3.0')»: «source.entityClassName('', false)»«ENDIF»
             {
                 if (!isset($this->«aliasName.formatForCode»[$«indexBy.formatForCode»])) {
-                    throw new \InvalidArgumentException("«indexBy.formatForDisplayCapital» is not available on this list of «aliasName.formatForDisplay».");
+                    throw new InvalidArgumentException("«indexBy.formatForDisplayCapital» is not available on this list of «aliasName.formatForDisplay».");
                 }
 
                 return $this->«aliasName.formatForCode»[$«indexBy.formatForCode»];
@@ -438,10 +443,12 @@ class Association {
     def private addMethod(JoinRelationship it, Boolean useTarget, Boolean selfIsMany, String name, String nameSingle, String type) '''
         /**
          * Adds an instance of \«type» to the list of «name.formatForDisplay».
+         «IF !application.targets('3.0')»
          *
          * @param «addParameters(useTarget, nameSingle, type)» The instance to be added to the collection
          *
          * @return void
+         «ENDIF»
          */
         «addMethodImpl(useTarget, selfIsMany, name, nameSingle, type)»
         «/* this last line is on purpose */»
@@ -459,11 +466,11 @@ class Association {
     def private dispatch addParameters(OneToManyRelationship it, Boolean useTarget, String name, String type) '''
         «IF !useTarget && !source.getAggregateFields.empty»
             «val targetField = source.getAggregateFields.head.getAggregateTargetField»
-            \«targetField.fieldTypeAsString» $«targetField.name.formatForCode»
+            \«targetField.fieldTypeAsString(true)» $«targetField.name.formatForCode»
         «ELSE»\«type» $«name»«ENDIF»'''
 
     def private addMethodSignature(JoinRelationship it, Boolean useTarget, String name, String nameSingle, String type) '''
-        public function add«name.toFirstUpper»(«addParameters(useTarget, nameSingle, type)»)'''
+        public function add«name.toFirstUpper»(«addParameters(useTarget, nameSingle, type)»)«IF application.targets('3.0')»: void«ENDIF»'''
 
     def private addMethodImplDefault(JoinRelationship it, Boolean selfIsMany, Boolean useTarget, String name, String nameSingle, String type) '''
         «addMethodSignature(useTarget, name, nameSingle, type)»
@@ -496,10 +503,12 @@ class Association {
 
             /**
              * Additional add function for internal use.
+             «IF !application.targets('3.0')»
              *
-             * @param «targetField.fieldTypeAsString» $«targetField.name.formatForCode» Given instance to be used for aggregation
+             * @param «targetField.fieldTypeAsString(true)» $«targetField.name.formatForCode» Given instance to be used for aggregation
+             «ENDIF»
              */
-            protected function add«targetField.name.formatForCodeCapital»Without«getRelationAliasName(true).formatForCodeCapital»($«targetField.name.formatForCode»)
+            protected function add«targetField.name.formatForCodeCapital»Without«getRelationAliasName(true).formatForCodeCapital»(«IF application.targets('3.0')»«targetField.fieldTypeAsString(true)» «ENDIF»$«targetField.name.formatForCode»)«IF application.targets('3.0')»: void«ENDIF»
             {
                 $this->«sourceField.name.formatForCode» += $«targetField.name.formatForCode»;
             }
@@ -535,12 +544,14 @@ class Association {
     def private removeMethod(JoinRelationship it, Boolean useTarget, Boolean selfIsMany, String name, String nameSingle, String type) '''
         /**
          * Removes an instance of \«type» from the list of «name.formatForDisplay».
+         «IF !application.targets('3.0')»
          *
          * @param \«type» $«nameSingle» The instance to be removed from the collection
          *
          * @return void
+         «ENDIF»
          */
-        public function remove«name.toFirstUpper»(\«type» $«nameSingle»)
+        public function remove«name.toFirstUpper»(\«type» $«nameSingle»)«IF application.targets('3.0')»: void«ENDIF»
         {
             «IF selfIsMany»
                 $this->«name»->removeElement($«nameSingle»);

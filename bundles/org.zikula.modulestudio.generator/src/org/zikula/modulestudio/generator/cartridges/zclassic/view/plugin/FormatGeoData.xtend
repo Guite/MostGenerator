@@ -18,12 +18,14 @@ class FormatGeoData {
          * The «appName.formatForDB»_geoData filter formats geo data.
          * Example:
          *     {{ latitude|«appName.formatForDB»_geoData }}
+         «IF !targets('3.0')»
          *
          * @param string $string The data to be formatted
          *
          * @return string The formatted output
+         «ENDIF»
          */
-        public function formatGeoData($string)
+        public function formatGeoData«IF targets('3.0')»(string $string): string«ELSE»($string)«ENDIF»
         {
             return number_format($string, 7, '.', '');
         }

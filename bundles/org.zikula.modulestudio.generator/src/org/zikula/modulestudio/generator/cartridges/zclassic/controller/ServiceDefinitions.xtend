@@ -166,13 +166,6 @@ class ServiceDefinitions {
         «appNamespace»\Menu\MenuBuilder:
             tags:
                 - { name: knp_menu.menu_builder, method: createItemActionsMenu, alias: «vendorAndName.toFirstLower»MenuItemActions }
-        «IF generateMultiHookNeedles»
-            «FOR entity : getAllEntities.filter[hasViewAction || hasDisplayAction]»
-
-                «appNamespace»\Needle\«entity.name.formatForCodeCapital»Needle:
-                    tags: ['zikula.multihook_needle']
-            «ENDFOR»
-        «ENDIF»
         «IF getSubscriberNames.contains('IpTrace')»
 
             gedmo_doctrine_extensions.listener.ip_traceable:
@@ -323,19 +316,17 @@ class ServiceDefinitions {
         # Entity initialiser
         «modPrefix».entity_initialiser:
             class: «appNamespace»\Entity\Factory\EntityInitialiser
-            «IF supportLocaleFilter || !getAllListFields.filter[name != 'workflowState'].empty || hasGeographical»
-                arguments:
-                    «IF supportLocaleFilter»
-                        - "@request_stack"
-                    «ENDIF»
-                    - "@«modPrefix».permission_helper"
-                    «IF !getAllListFields.filter[name != 'workflowState'].empty»
-                        - "@«modPrefix».listentries_helper"
-                    «ENDIF»
-                    «IF hasGeographical»
-                        - "@zikula_extensions_module.api.variable"
-                    «ENDIF»
-            «ENDIF»
+            arguments:
+                «IF supportLocaleFilter»
+                    - "@request_stack"
+                «ENDIF»
+                - "@«modPrefix».permission_helper"
+                «IF !getAllListFields.filter[name != 'workflowState'].empty»
+                    - "@«modPrefix».listentries_helper"
+                «ENDIF»
+                «IF hasGeographical»
+                    - "@zikula_extensions_module.api.variable"
+                «ENDIF»
     '''
 
     def private eventSubscriber(Application it) '''

@@ -72,14 +72,6 @@ class FinderType {
                 protected $featureActivationHelper;
             «ENDIF»
 
-            /**
-             * «name.formatForCodeCapital»FinderType constructor.
-             *
-             * @param TranslatorInterface $translator
-            «IF app.needsFeatureActivationHelper»
-                «' '»* @param FeatureActivationHelper $featureActivationHelper
-            «ENDIF»
-             */
             public function __construct(
                 TranslatorInterface $translator«IF app.needsFeatureActivationHelper»,
                 FeatureActivationHelper $featureActivationHelper«ENDIF»
@@ -92,9 +84,6 @@ class FinderType {
 
             «app.setTranslatorMethod»
 
-            /**
-             * @inheritDoc
-             */
             public function buildForm(FormBuilderInterface $builder, array $options)
             {
                 $builder
@@ -155,17 +144,11 @@ class FinderType {
 
             «addSearchField»
 
-            /**
-             * @inheritDoc
-             */
             public function getBlockPrefix()
             {
                 return '«app.appName.formatForDB»_«name.formatForDB»finder';
             }
 
-            /**
-             * @inheritDoc
-             */
             public function configureOptions(OptionsResolver $resolver)
             {
                 $resolver
@@ -185,11 +168,8 @@ class FinderType {
     def private addCategoriesField(Entity it) '''
         /**
          * Adds a categories field.
-         *
-         * @param FormBuilderInterface $builder The form builder
-         * @param array                $options The options
          */
-        public function addCategoriesField(FormBuilderInterface $builder, array $options = [])
+        public function addCategoriesField(FormBuilderInterface $builder, array $options = [])«IF app.targets('3.0')»: void«ENDIF»
         {
             $builder->add('categories', CategoriesType::class, [
                 'label' => $this->__('«IF categorisableMultiSelection»Categories«ELSE»Category«ENDIF»') . ':',
@@ -212,11 +192,8 @@ class FinderType {
     def private addImageFields(Entity it) '''
         /**
          * Adds fields for image insertion options.
-         *
-         * @param FormBuilderInterface $builder The form builder
-         * @param array                $options The options
          */
-        public function addImageFields(FormBuilderInterface $builder, array $options = [])
+        public function addImageFields(FormBuilderInterface $builder, array $options = [])«IF app.targets('3.0')»: void«ENDIF»
         {
             $builder->add('onlyImages', CheckboxType::class, [
                 'label' => $this->__('Only images'),
@@ -251,11 +228,8 @@ class FinderType {
     def private addPasteAsField(Entity it) '''
         /**
          * Adds a "paste as" field.
-         *
-         * @param FormBuilderInterface $builder The form builder
-         * @param array                $options The options
          */
-        public function addPasteAsField(FormBuilderInterface $builder, array $options = [])
+        public function addPasteAsField(FormBuilderInterface $builder, array $options = [])«IF app.targets('3.0')»: void«ENDIF»
         {
             $builder->add('pasteAs', ChoiceType::class, [
                 'label' => $this->__('Paste as') . ':',
@@ -285,11 +259,8 @@ class FinderType {
     def private addSortingFields(Entity it) '''
         /**
          * Adds sorting fields.
-         *
-         * @param FormBuilderInterface $builder The form builder
-         * @param array                $options The options
          */
-        public function addSortingFields(FormBuilderInterface $builder, array $options = [])
+        public function addSortingFields(FormBuilderInterface $builder, array $options = [])«IF app.targets('3.0')»: void«ENDIF»
         {
             $builder
                 ->add('sort', ChoiceType::class, [
@@ -334,11 +305,8 @@ class FinderType {
     def private addAmountField(Entity it) '''
         /**
          * Adds a page size field.
-         *
-         * @param FormBuilderInterface $builder The form builder
-         * @param array                $options The options
          */
-        public function addAmountField(FormBuilderInterface $builder, array $options = [])
+        public function addAmountField(FormBuilderInterface $builder, array $options = [])«IF app.targets('3.0')»: void«ENDIF»
         {
             $builder->add('num', ChoiceType::class, [
                 'label' => $this->__('Page size') . ':',
@@ -347,13 +315,13 @@ class FinderType {
                     'class' => 'text-right'
                 ],
                 'choices' => [
-                    $this->__('5') => 5,
-                    $this->__('10') => 10,
-                    $this->__('15') => 15,
-                    $this->__('20') => 20,
-                    $this->__('30') => 30,
-                    $this->__('50') => 50,
-                    $this->__('100') => 100
+                    5 => 5,
+                    10 => 10,
+                    15 => 15,
+                    20 => 20,
+                    30 => 30,
+                    50 => 50,
+                    100 => 100
                 ],
                 «IF !app.targets('2.0')»
                     'choices_as_values' => true,
@@ -367,11 +335,8 @@ class FinderType {
     def private addSearchField(Entity it) '''
         /**
          * Adds a search field.
-         *
-         * @param FormBuilderInterface $builder The form builder
-         * @param array                $options The options
          */
-        public function addSearchField(FormBuilderInterface $builder, array $options = [])
+        public function addSearchField(FormBuilderInterface $builder, array $options = [])«IF app.targets('3.0')»: void«ENDIF»
         {
             $builder->add('q', SearchType::class, [
                 'label' => $this->__('Search for') . ':',

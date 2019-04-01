@@ -6,12 +6,14 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelp
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
+import org.zikula.modulestudio.generator.extensions.Utils
 
 class Attributes extends AbstractExtension implements EntityExtensionInterface {
 
     extension FormattingExtensions = new FormattingExtensions
     extension ModelExtensions = new ModelExtensions
     extension NamingExtensions = new NamingExtensions
+    extension Utils = new Utils
 
     /**
      * Generates additional annotations on class level.
@@ -43,17 +45,23 @@ class Attributes extends AbstractExtension implements EntityExtensionInterface {
      * Generates additional accessor methods.
      */
     override accessors(Entity it) '''
-        «val fh = new FileHelper»
-        «fh.getterMethod(it, 'attributes', 'array', true)»
-        /**
-         * Set attribute.
-         *
-         * @param string $name  Attribute name
-         * @param string $value Attribute value
-         *
-         * @return void
-         */
-        public function setAttribute($name, $value)
+        «val fh = new FileHelper(application)»
+        «IF application.targets('3.0')»
+            «fh.getterMethod(it, 'attributes', 'Collection', true, true, true)»
+        «ELSE»
+            «fh.getterMethod(it, 'attributes', 'Collection', true, true, false)»
+        «ENDIF»
+        «IF !application.targets('3.0')»
+            /**
+             * Set attribute.
+             *
+             * @param string $name Attribute name
+             * @param string $value Attribute value
+             *
+             * @return void
+             */
+        «ENDIF»
+        public function setAttribute«IF application.targets('3.0')»(string $name, string $value): void«ELSE»($name, $value)«ENDIF»
         {
             if (isset($this->attributes[$name])) {
                 if (null === $value) {
@@ -81,6 +89,7 @@ class Attributes extends AbstractExtension implements EntityExtensionInterface {
     override extensionClassImports(Entity it) '''
         use Doctrine\ORM\Mapping as ORM;
         use Zikula\Core\Doctrine\Entity\«extensionBaseClass»;
+        use «entityClassName('', false)»;
     '''
 
     /**
@@ -104,7 +113,7 @@ class Attributes extends AbstractExtension implements EntityExtensionInterface {
         /**
          * @ORM\ManyToOne(targetEntity="\«entityClassName('', false)»", inversedBy="attributes")
          * @ORM\JoinColumn(name="entityId", referencedColumnName="«getPrimaryKey.name.formatForCode»")
-         * @var \«entityClassName('', false)»
+         * @var «name.formatForCodeCapital»Entity
          */
         protected $entity;
 

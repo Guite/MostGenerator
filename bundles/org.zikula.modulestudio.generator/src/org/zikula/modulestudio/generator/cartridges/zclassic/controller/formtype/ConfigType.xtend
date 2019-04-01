@@ -70,20 +70,6 @@ class ConfigType {
                 protected $localeApi;
             «ENDIF»
 
-            /**
-             * ConfigType constructor.
-             *
-             * @param TranslatorInterface $translator
-             «IF !getAllVariables.filter(ListField).empty»
-             * @param ListEntriesHelper $listHelper
-             «ENDIF»
-             «IF hasUploadVariables»
-             * @param UploadHelper $uploadHelper
-             «ENDIF»
-             «IF !getAllVariables.filter(StringField).filter[role == StringRole.LOCALE].empty»
-             * @param LocaleApiInterface $localeApi
-             «ENDIF»
-             */
             public function __construct(
                 TranslatorInterface $translator«IF !getAllVariables.filter(ListField).empty»,
                 ListEntriesHelper $listHelper«ENDIF»«IF hasUploadVariables»,
@@ -104,9 +90,6 @@ class ConfigType {
 
             «setTranslatorMethod»
 
-            /**
-             * @inheritDoc
-             */
             public function buildForm(FormBuilderInterface $builder, array $options)
             {
                 «FOR varContainer : getSortedVariableContainers»
@@ -122,17 +105,11 @@ class ConfigType {
             «ENDFOR»
             «addSubmitButtons»
 
-            /**
-             * @inheritDoc
-             */
             public function getBlockPrefix()
             {
                 return '«appName.formatForDB»_config';
             }
 
-            /**
-             * @inheritDoc
-             */
             public function configureOptions(OptionsResolver $resolver)
             {
                 $resolver
@@ -147,11 +124,8 @@ class ConfigType {
     def private addFieldsMethod(Variables it) '''
         /**
          * Adds fields for «name.formatForDisplay» fields.
-         *
-         * @param FormBuilderInterface $builder The form builder
-         * @param array                $options The options
          */
-        public function add«name.formatForCodeCapital»Fields(FormBuilderInterface $builder, array $options = [])
+        public function add«name.formatForCodeCapital»Fields(FormBuilderInterface $builder, array $options = [])«IF application.targets('3.0')»: void«ENDIF»
         {
             «FOR field : fields.filter(DerivedField)»
                 «field.definition»
@@ -162,11 +136,8 @@ class ConfigType {
     def private addSubmitButtons(Application it) '''
         /**
          * Adds submit buttons.
-         *
-         * @param FormBuilderInterface $builder The form builder
-         * @param array                $options The options
          */
-        public function addSubmitButtons(FormBuilderInterface $builder, array $options = [])
+        public function addSubmitButtons(FormBuilderInterface $builder, array $options = [])«IF targets('3.0')»: void«ENDIF»
         {
             $builder->add('save', SubmitType::class, [
                 'label' => $this->__('Update configuration'),

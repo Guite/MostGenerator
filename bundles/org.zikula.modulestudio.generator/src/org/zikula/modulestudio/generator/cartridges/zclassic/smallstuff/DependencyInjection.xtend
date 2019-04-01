@@ -24,13 +24,10 @@ class DependencyInjection {
         use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 
         /**
-         * Base class for service definition loader using the DependencyInjection extension.
+         * DependencyInjection extension base class.
          */
         abstract class Abstract«vendor.formatForCodeCapital»«name.formatForCodeCapital»Extension extends Extension
         {
-            /**
-             * @inheritDoc
-             */
             public function load(array $configs, ContainerBuilder $container)
             {
                 $loader = new YamlFileLoader($container, new FileLocator(__DIR__ . '/../../Resources/config'));
@@ -45,7 +42,7 @@ class DependencyInjection {
         use «appNamespace»\DependencyInjection\Base\Abstract«vendor.formatForCodeCapital»«name.formatForCodeCapital»Extension;
 
         /**
-         * Implementation class for service definition loader using the DependencyInjection extension.
+         * DependencyInjection extension implementation class.
          */
         class «vendor.formatForCodeCapital»«name.formatForCodeCapital»Extension extends Abstract«vendor.formatForCodeCapital»«name.formatForCodeCapital»Extension
         {

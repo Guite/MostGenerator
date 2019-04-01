@@ -1,8 +1,11 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener
 
 import de.guite.modulestudio.metamodel.Application
+import org.zikula.modulestudio.generator.extensions.Utils
 
 class IpTraceListener {
+
+    extension Utils = new Utils
 
     CommonExample commonExample = new CommonExample()
 
@@ -17,21 +20,14 @@ class IpTraceListener {
          */
         protected $ipTraceableListener;
 
-        /**
-         * IpTraceListener constructor.
-         *
-         * @param IpTraceableListener $ipTraceableListener
-         * @param RequestStack $requestStack
-         */
-        public function __construct(IpTraceableListener $ipTraceableListener, RequestStack $requestStack = null)
-        {
+        public function __construct(
+            IpTraceableListener $ipTraceableListener,
+            RequestStack $requestStack = null
+        ) {
             $this->ipTraceableListener = $ipTraceableListener;
             $this->requestStack = $requestStack;
         }
 
-        /**
-         * Makes our handlers known to the event system.
-         */
         public static function getSubscribedEvents()
         {
             return [
@@ -46,9 +42,8 @@ class IpTraceListener {
          *     $this->request->setTrustedProxies(array('127.0.0.1'));
          *
          «commonExample.generalEventProperties(it, true)»
-         * @param GetResponseEvent $event The event instance
          */
-        public function onKernelRequest(GetResponseEvent $event)
+        public function onKernelRequest(GetResponseEvent $event)«IF targets('3.0')»: void«ENDIF»
         {
             $request = null !== $this->requestStack ? $this->requestStack->getCurrentRequest() : null;
             if (null === $request) {

@@ -87,7 +87,7 @@ class Layout {
 
     def private commonFooter(Application it) '''
         «IF generatePoweredByBacklinksIntoFooterTemplates»
-            «new FileHelper().msWeblink(it)»
+            «new FileHelper(it).msWeblink»
         «ENDIF»
         {{ pageAddAsset('stylesheet', zasset('@«appName»:css/custom.css'), 120) }}
         «IF needsJQueryUI»

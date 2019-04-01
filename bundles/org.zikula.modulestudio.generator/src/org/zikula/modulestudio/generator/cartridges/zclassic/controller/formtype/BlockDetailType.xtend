@@ -61,13 +61,6 @@ class BlockDetailType {
              */
             protected $entityDisplayHelper;
 
-            /**
-             * ItemBlockType constructor.
-             *
-             * @param TranslatorInterface $translator
-             * @param EntityFactory $entityFactory
-             * @param EntityDisplayHelper $entityDisplayHelper
-             */
             public function __construct(
                 TranslatorInterface $translator,
                 EntityFactory $entityFactory,
@@ -80,9 +73,6 @@ class BlockDetailType {
 
             «setTranslatorMethod»
 
-            /**
-             * @inheritDoc
-             */
             public function buildForm(FormBuilderInterface $builder, array $options)
             {
                 $this->addObjectTypeField($builder, $options);
@@ -96,17 +86,11 @@ class BlockDetailType {
 
             «addTemplateField»
 
-            /**
-             * @inheritDoc
-             */
             public function getBlockPrefix()
             {
                 return '«appName.formatForDB»_detailblock';
             }
 
-            /**
-             * @inheritDoc
-             */
             public function configureOptions(OptionsResolver $resolver)
             {
                 $resolver
@@ -123,11 +107,8 @@ class BlockDetailType {
     def private addObjectTypeField(Application it) '''
         /**
          * Adds an object type field.
-         *
-         * @param FormBuilderInterface $builder The form builder
-         * @param array                $options The options
          */
-        public function addObjectTypeField(FormBuilderInterface $builder, array $options = [])
+        public function addObjectTypeField(FormBuilderInterface $builder, array $options = [])«IF targets('3.0')»: void«ENDIF»
         {
             $builder->add('objectType', «IF getAllEntities.filter[hasDisplayAction].size == 1»Hidden«ELSE»Choice«ENDIF»Type::class, [
                 'label' => $this->__('Object type'«IF !isSystemModule», '«appName.formatForDB»'«ENDIF») . ':',
@@ -155,11 +136,8 @@ class BlockDetailType {
     def private addIdField(Application it) '''
         /**
          * Adds a item identifier field.
-         *
-         * @param FormBuilderInterface $builder The form builder
-         * @param array                $options The options
          */
-        public function addIdField(FormBuilderInterface $builder, array $options = [])
+        public function addIdField(FormBuilderInterface $builder, array $options = [])«IF targets('3.0')»: void«ENDIF»
         {
             $repository = $this->entityFactory->getRepository($options['object_type']);
             // select without joins
@@ -187,11 +165,8 @@ class BlockDetailType {
     def private addTemplateField(Application it) '''
         /**
          * Adds template fields.
-         *
-         * @param FormBuilderInterface $builder The form builder
-         * @param array                $options The options
          */
-        public function addTemplateField(FormBuilderInterface $builder, array $options = [])
+        public function addTemplateField(FormBuilderInterface $builder, array $options = [])«IF targets('3.0')»: void«ENDIF»
         {
             $builder
                 ->add('customTemplate', TextType::class, [

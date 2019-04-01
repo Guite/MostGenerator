@@ -29,6 +29,7 @@ class BlockModeration {
         use Zikula\BlocksModule\AbstractBlockHandler;
         «IF targets('3.0')»
             use Zikula\UsersModule\Api\ApiInterface\CurrentUserApiInterface;
+            use «appNamespace»\Helper\WorkflowHelper;
         «ENDIF»
 
         /**
@@ -47,11 +48,13 @@ class BlockModeration {
              */
             protected $currentUserApi;
 
+            /**
+             * @var WorkflowHelper
+             */
+            protected $workflowHelper;
+
         «ENDIF»
-        /**
-         * @inheritDoc
-         */
-        public function getType()
+        public function getType()«IF targets('3.0')»: string«ENDIF»
         {
             return $this->__('«name.formatForDisplayCapital» moderation', '«appName.formatForDB»');
         }
@@ -63,23 +66,27 @@ class BlockModeration {
 
             /**
              * @required
-             * @param CurrentUserApiInterface $currentUserApi
              */
-            public function setCurrentUserApi(CurrentUserApiInterface $currentUserApi)
+            public function setCurrentUserApi(CurrentUserApiInterface $currentUserApi): void
             {
                 $this->currentUserApi = $currentUserApi;
+            }
+
+            /**
+             * @required
+             */
+            public function setWorkflowHelper(WorkflowHelper $workflowHelper): void
+            {
+                $this->workflowHelper = $workflowHelper;
             }
         «ENDIF»
     '''
 
     def private display(Application it) '''
-        /**
-         * @inheritDoc
-         */
-        public function display(array $properties = [])
+        public function display(array $properties = [])«IF targets('3.0')»: string«ENDIF»
         {
             // only show block content if the user has the required permissions
-            if (!$this->hasPermission('«appName»:ModerationBlock:', "$properties[title]::", ACCESS_OVERVIEW)) {
+            if (!$this->hasPermission('«appName»:ModerationBlock:', $properties['title'] . '::', ACCESS_OVERVIEW)) {
                 return '';
             }
 
@@ -96,8 +103,12 @@ class BlockModeration {
 
             $template = $this->getDisplayTemplate();
 
-            $workflowHelper = $this->get('«appService».workflow_helper');
-            $amounts = $workflowHelper->collectAmountOfModerationItems();
+            «IF targets('3.0')»
+                $amounts = $this->workflowHelper->collectAmountOfModerationItems();
+            «ELSE»
+                $workflowHelper = $this->get('«appService».workflow_helper');
+                $amounts = $workflowHelper->collectAmountOfModerationItems();
+            «ENDIF»
 
             // set a block title
             if (empty($properties['title'])) {
@@ -111,10 +122,12 @@ class BlockModeration {
     def private getDisplayTemplate(Application it) '''
         /**
          * Returns the template used for output.
+        «IF !targets('3.0')»
          *
          * @return string the template path
+        «ENDIF»
          */
-        protected function getDisplayTemplate()
+        protected function getDisplayTemplate()«IF targets('3.0')»: string«ENDIF»
         {
             return '@«appName»/Block/moderation.html.twig';
         }

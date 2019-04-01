@@ -34,20 +34,11 @@ class WorkflowEventsListener {
             protected $notificationHelper;
         «ENDIF»
 
-        /**
-         * WorkflowEventsListener constructor.
-         *
-         * @param EntityFactory $entityFactory
-         * @param PermissionHelper $permissionHelper
-         «IF needsApproval»
-         * @param NotificationHelper $notificationHelper
-         «ENDIF»
-         */
         public function __construct(
             EntityFactory $entityFactory,
             PermissionHelper $permissionHelper«IF needsApproval»,
-            NotificationHelper $notificationHelper«ENDIF»)
-        {
+            NotificationHelper $notificationHelper«ENDIF»
+        ) {
             $this->entityFactory = $entityFactory;
             $this->permissionHelper = $permissionHelper;
             «IF needsApproval»
@@ -55,9 +46,6 @@ class WorkflowEventsListener {
             «ENDIF»
         }
 
-        /**
-         * Makes our handlers known to the event system.
-         */
         public static function getSubscribedEvents()
         {
             return [
@@ -91,11 +79,10 @@ class WorkflowEventsListener {
          *     `if (!$event->isBlocked()) {
          *         $event->setBlocked(true);
          *     }`
-         *
-         * @param GuardEvent $event The event instance
          */
-        public function onGuard(GuardEvent $event)
+        public function onGuard(GuardEvent $event)«IF targets('3.0')»: void«ENDIF»
         {
+            /** @var EntityAccess $entity */
             $entity = $event->getSubject();
             if (!$this->isEntityManagedByThisBundle($entity) || !method_exists($entity, 'get_objectType')) {
                 return;
@@ -105,7 +92,7 @@ class WorkflowEventsListener {
             $permissionLevel = ACCESS_READ;
             $transitionName = $event->getTransition()->getName();
             «IF !targets('2.0')»
-                if ('update' == substr($transitionName, 0, 6)) {
+                if ('update' === substr($transitionName, 0, 6)) {
                     $transitionName = 'update';
                 }
             «ENDIF»
@@ -148,10 +135,10 @@ class WorkflowEventsListener {
             }
             «IF !getJoinRelations.empty && !getAllEntities.filter[!getOutgoingJoinRelationsWithoutDeleteCascade.empty].empty»
 
-                if ('delete' == $transitionName) {
+                if ('delete' === $transitionName) {
                     // check if deleting the entity would break related child entities
                     «FOR entity : getAllEntities.filter[!getOutgoingJoinRelationsWithoutDeleteCascade.empty]»
-                        if ('«entity.name.formatForCode»' == $objectType) {
+                        if ('«entity.name.formatForCode»' === $objectType) {
                             $isBlocked = false;
                             «FOR relation : entity.getOutgoingJoinRelationsWithoutDeleteCascade»
                                 «IF relation.isManySide(true)»
@@ -183,11 +170,10 @@ class WorkflowEventsListener {
          * using `workflow.<workflow_name>.leave.<state_name>`.
          *
          «exampleCode»
-         *
-         * @param Event $event The event instance
          */
-        public function onLeave(Event $event)
+        public function onLeave(Event $event)«IF targets('3.0')»: void«ENDIF»
         {
+            /** @var EntityAccess $entity */
             $entity = $event->getSubject();
             if (!$this->isEntityManagedByThisBundle($entity) || !method_exists($entity, 'get_objectType')) {
                 return;
@@ -208,11 +194,10 @@ class WorkflowEventsListener {
              * using `workflow.<workflow_name>.entered.<state_name>`.
              *
              «exampleCode»
-             *
-             * @param Event $event The event instance
              */
-            public function onEntered(Event $event)
+            public function onEntered(Event $event)«IF targets('3.0')»: void«ENDIF»
             {
+                /** @var EntityAccess $entity */
                 $entity = $event->getSubject();
                 if (!$this->isEntityManagedByThisBundle($entity) || !method_exists($entity, 'get_objectType')) {
                     return;
@@ -232,11 +217,10 @@ class WorkflowEventsListener {
          * using `workflow.<workflow_name>.transition.<transition_name>`.
          *
          «exampleCode»
-         *
-         * @param Event $event The event instance
          */
-        public function onTransition(Event $event)
+        public function onTransition(Event $event)«IF targets('3.0')»: void«ENDIF»
         {
+            /** @var EntityAccess $entity */
             $entity = $event->getSubject();
             if (!$this->isEntityManagedByThisBundle($entity) || !method_exists($entity, 'get_objectType')) {
                 return;
@@ -255,11 +239,10 @@ class WorkflowEventsListener {
          * using `workflow.<workflow_name>.enter.<state_name>`.
          *
          «exampleCode»
-         *
-         * @param Event $event The event instance
          */
-        public function onEnter(Event $event)
+        public function onEnter(Event $event)«IF targets('3.0')»: void«ENDIF»
         {
+            /** @var EntityAccess $entity */
             $entity = $event->getSubject();
             if (!$this->isEntityManagedByThisBundle($entity) || !method_exists($entity, 'get_objectType')) {
                 return;
@@ -281,11 +264,10 @@ class WorkflowEventsListener {
              * using `workflow.<workflow_name>.completed.<state_name>`.
              *
              «exampleCode»
-             *
-             * @param Event $event The event instance
              */
-            public function onCompleted(Event $event)
+            public function onCompleted(Event $event)«IF targets('3.0')»: void«ENDIF»
             {
+                /** @var EntityAccess $entity */
                 $entity = $event->getSubject();
                 if (!$this->isEntityManagedByThisBundle($entity) || !method_exists($entity, 'get_objectType')) {
                     return;
@@ -304,11 +286,10 @@ class WorkflowEventsListener {
              * using `workflow.<workflow_name>.announce.<state_name>`.
              *
              «exampleCode»
-             *
-             * @param Event $event The event instance
              */
-            public function onAnnounce(Event $event)
+            public function onAnnounce(Event $event)«IF targets('3.0')»: void«ENDIF»
             {
+                /** @var EntityAccess $entity */
                 $entity = $event->getSubject();
                 if (!$this->isEntityManagedByThisBundle($entity) || !method_exists($entity, 'get_objectType')) {
                     return;
@@ -353,10 +334,12 @@ class WorkflowEventsListener {
          * Checks whether this listener is responsible for the given entity or not.
          *
          * @param EntityAccess $entity The given entity
+         «IF !targets('3.0')»
          *
-         * @return boolean True if entity is managed by this listener, false otherwise
+         * @return bool True if entity is managed by this listener, false otherwise
+         «ENDIF»
          */
-        protected function isEntityManagedByThisBundle($entity)
+        protected function isEntityManagedByThisBundle($entity)«IF targets('3.0')»: bool«ENDIF»
         {
             if (!($entity instanceof EntityAccess)) {
                 return false;
@@ -364,24 +347,26 @@ class WorkflowEventsListener {
 
             $entityClassParts = explode('\\', get_class($entity));
 
-            if ('DoctrineProxy' == $entityClassParts[0] && '__CG__' == $entityClassParts[1]) {
+            if ('DoctrineProxy' === $entityClassParts[0] && '__CG__' === $entityClassParts[1]) {
                 array_shift($entityClassParts);
                 array_shift($entityClassParts);
             }
 
-            return ('«vendor.formatForCodeCapital»' == $entityClassParts[0] && '«name.formatForCodeCapital»Module' == $entityClassParts[1]);
+            return '«vendor.formatForCodeCapital»' === $entityClassParts[0] && '«name.formatForCodeCapital»Module' === $entityClassParts[1];
         }
     '''
 
     def private sendNotifications(Application it) '''
         /**
          * Sends email notifications.
+         «IF !targets('3.0')»
          *
-         * @param object $entity            Processed entity
-         * @param string $actionId          Name of performed transition
+         * @param EntityAccess $entity Processed entity
+         * @param string $actionId Name of performed transition
          * @param string $workflowShortName Name of workflow (none, standard, enterprise)
+         «ENDIF»
          */
-        protected function sendNotifications($entity, $actionId, $workflowShortName)
+        protected function sendNotifications($entity, «IF targets('3.0')»string «ENDIF»$actionId, «IF targets('3.0')»string «ENDIF»$workflowShortName)«IF targets('3.0')»: void«ENDIF»
         {
             $newState = $entity->getWorkflowState();
 
@@ -389,18 +374,18 @@ class WorkflowEventsListener {
             $sendToCreator = true;
             $sendToModerator = false;
             $sendToSuperModerator = false;
-            if ('submit' == $actionId && 'waiting' == $newState
-                || 'demote' == $actionId && 'accepted' == $newState) {
+            if ('submit' === $actionId && 'waiting' === $newState
+                || 'demote' === $actionId && 'accepted' === $newState) {
                 // only to moderator
                 $sendToCreator = false;
                 $sendToModerator = true;
-            } elseif ('accept' == $actionId && 'accepted' == $newState) {
+            } elseif ('accept' === $actionId && 'accepted' === $newState) {
                 // to creator and super moderator
                 $sendToSuperModerator = true;
-            } elseif ('approve' == $actionId && 'approved' == $newState && 'enterprise' == $workflowShortName) {
+            } elseif ('approve' === $actionId && 'approved' === $newState && 'enterprise' === $workflowShortName) {
                 // to creator and moderator
                 $sendToModerator = true;
-            } elseif ('update' == $actionId && 'waiting' == $newState) {
+            } elseif ('update' === $actionId && 'waiting' === $newState) {
                 // only to moderator
                 $sendToCreator = false;
                 $sendToModerator = true;

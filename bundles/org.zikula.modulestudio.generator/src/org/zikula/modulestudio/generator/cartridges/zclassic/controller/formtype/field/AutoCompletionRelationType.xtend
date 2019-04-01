@@ -46,30 +46,18 @@ class AutoCompletionRelationType {
              */
             protected $entityFactory;
 
-            /**
-             * AutoCompletionRelationType constructor.
-             *
-             * @param Routerinterface $router
-             * @param EntityFactory $entityFactory
-             */
             public function __construct(RouterInterface $router, EntityFactory $entityFactory)
             {
                 $this->router = $router;
                 $this->entityFactory = $entityFactory;
             }
 
-            /**
-             * @inheritDoc
-             */
             public function buildForm(FormBuilderInterface $builder, array $options)
             {
                 $transformer = new AutoCompletionRelationTransformer($this->entityFactory, $options['object_type'], $options['multiple']);
                 $builder->addModelTransformer($transformer);
             }
 
-            /**
-             * @inheritDoc
-             */
             public function buildView(FormView $view, FormInterface $form, array $options)
             {
                 $view->vars['object_type'] = $options['object_type'];
@@ -84,9 +72,6 @@ class AutoCompletionRelationType {
                 «ENDIF»
             }
 
-            /**
-             * @inheritDoc
-             */
             public function configureOptions(OptionsResolver $resolver)
             {
                 parent::configureOptions($resolver);
@@ -109,17 +94,11 @@ class AutoCompletionRelationType {
                 ;
             }
 
-            /**
-             * @inheritDoc
-             */
             public function getParent()
             {
                 return HiddenType::class;
             }
 
-            /**
-             * @inheritDoc
-             */
             public function getBlockPrefix()
             {
                 return '«appName.formatForDB»_field_autocompletionrelation';

@@ -92,6 +92,7 @@ class Plugins {
         «ENDIF»
         use Zikula\Common\Translator\TranslatorInterface;
         use Zikula\Common\Translator\TranslatorTrait;
+        use Zikula\Core\Doctrine\EntityAccess;
         use Zikula\ExtensionsModule\Api\ApiInterface\VariableApiInterface;
         «IF hasTrees»
             use «appNamespace»\Entity\Factory\EntityFactory;
@@ -178,32 +179,6 @@ class Plugins {
             protected $menuBuilder;
 
         «ENDIF»
-        /**
-         * TwigExtension constructor.
-         *
-         * @param TranslatorInterface $translator
-         «IF hasTrees»
-            * @param Routerinterface $router
-         «ENDIF»
-         «IF generateIcsTemplates && hasEntitiesWithIcsTemplates»
-            * @param RequestStack $requestStack
-         «ENDIF»
-         * @param VariableApiInterface $variableApi
-         «IF hasTrees»
-         * @param EntityFactory $entityFactory
-         «ENDIF»
-         * @param EntityDisplayHelper $entityDisplayHelper
-         * @param WorkflowHelper $workflowHelper
-         «IF hasListFields»
-            * @param ListEntriesHelper $listHelper
-         «ENDIF»
-         «IF hasLoggable»
-            * @param LoggableHelper $loggableHelper
-         «ENDIF»
-         «IF hasTrees»
-            * @param MenuBuilder $menuBuilder
-         «ENDIF»
-         */
         public function __construct(
             TranslatorInterface $translator«IF hasTrees»,
             RouterInterface $router«ENDIF»«IF generateIcsTemplates && hasEntitiesWithIcsTemplates»,
@@ -244,11 +219,13 @@ class Plugins {
 
         «setTranslatorMethod»
 
-        /**
-         * Returns a list of custom Twig functions.
-         *
-         * @return «IF targets('3.0')»Twig«ELSE»\Twig_Simple«ENDIF»Function[] List of functions
-         */
+        «IF !targets('3.0')»
+            /**
+             * Returns a list of custom Twig functions.
+             *
+             * @return «IF targets('3.0')»Twig«ELSE»\Twig_Simple«ENDIF»Function[] List of functions
+             */
+        «ENDIF»
         public function getFunctions()
         {
             return [
@@ -264,11 +241,13 @@ class Plugins {
             ];
         }
 
-        /**
-         * Returns a list of custom Twig filters.
-         *
-         * @return «IF targets('3.0')»Twig«ELSE»\Twig_Simple«ENDIF»Filter[] List of filters
-         */
+        «IF !targets('3.0')»
+            /**
+             * Returns a list of custom Twig filters.
+             *
+             * @return «IF targets('3.0')»Twig«ELSE»\Twig_Simple«ENDIF»Filter[] List of filters
+             */
+        «ENDIF»
         public function getFilters()
         {
             return [
@@ -299,15 +278,17 @@ class Plugins {
         }
         «IF hasLoggable»
 
-            /**
-             * Returns a list of custom Twig tests.
-             *
-             * @return «IF targets('3.0')»Twig«ELSE»\Twig_Simple«ENDIF»Test[] List of tests
-             */
+            «IF !targets('3.0')»
+                /**
+                 * Returns a list of custom Twig tests.
+                 *
+                 * @return «IF targets('3.0')»Twig«ELSE»\Twig_Simple«ENDIF»Test[] List of tests
+                 */
+            «ENDIF»
             public function getTests()
             {
                 return [
-                    new «IF targets('3.0')»Twig«ELSE»\Twig_Simple«ENDIF»Test('«appNameLower»_instanceOf', function ($var, $instance) {
+                    new «IF targets('3.0')»Twig«ELSE»\Twig_Simple«ENDIF»Test('«appNameLower»_instanceOf', static function ($var, $instance) {
                         return $var instanceof $instance;
                     })
                 ];
@@ -323,44 +304,46 @@ class Plugins {
              *     {{ myDateIntervalString|«appName.formatForDB»_dateInterval }}
              *
              * @see http://php.net/manual/en/dateinterval.format.php
+             «IF !targets('3.0')»
              *
-             * @param object $duration The given duration string
+             * @param string $duration The given duration string
              *
              * @return string The formatted title
+             «ENDIF»
              */
-            public function getFormattedDateInterval($duration)
+            public function getFormattedDateInterval«IF targets('3.0')»(string $duration): string«ELSE»($duration)«ENDIF»
             {
                 $interval = new DateInterval($duration);
 
-                $description = $interval->invert == 1 ? '- ' : '';
+                $description = 1 === $interval->invert ? '- ' : '';
 
                 $amount = $interval->y;
-                if ($amount > 0) {
+                if (0 < $amount) {
                     $description .= $this->translator->transChoice('%amount year|%amount years', $amount, ['%amount' => $amount]«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»);
                 }
 
                 $amount = $interval->m;
-                if ($amount > 0) {
+                if (0 < $amount) {
                     $description .= ', ' . $this->translator->transChoice('%amount month|%amount months', $amount, ['%amount' => $amount]«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»);
                 }
 
                 $amount = $interval->d;
-                if ($amount > 0) {
+                if (0 < $amount) {
                     $description .= ', ' . $this->translator->transChoice('%amount day|%amount days', $amount, ['%amount' => $amount]«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»);
                 }
 
                 $amount = $interval->h;
-                if ($amount > 0) {
+                if (0 < $amount) {
                     $description .= ', ' . $this->translator->transChoice('%amount hour|%amount hours', $amount, ['%amount' => $amount]«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»);
                 }
 
                 $amount = $interval->i;
-                if ($amount > 0) {
+                if (0 < $amount) {
                     $description .= ', ' . $this->translator->transChoice('%amount minute|%amount minutes', $amount, ['%amount' => $amount]«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»);
                 }
 
                 $amount = $interval->s;
-                if ($amount > 0) {
+                if (0 < $amount) {
                     $description .= ', ' . $this->translator->transChoice('%amount second|%amount seconds', $amount, ['%amount' => $amount]«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»);
                 }
 
@@ -372,12 +355,14 @@ class Plugins {
          * The «appName.formatForDB»_formattedTitle filter outputs a formatted title for a given entity.
          * Example:
          *     {{ myPost|«appName.formatForDB»_formattedTitle }}
+         «IF !targets('3.0')»
          *
-         * @param object $entity The given entity instance
+         * @param EntityAccess $entity The given entity instance
          *
          * @return string The formatted title
+         «ENDIF»
          */
-        public function getFormattedEntityTitle($entity)
+        public function getFormattedEntityTitle«IF targets('3.0')»(EntityAccess $entity): string«ELSE»($entity)«ENDIF»
         {
             return $this->entityDisplayHelper->getFormattedTitle($entity);
         }
@@ -388,12 +373,14 @@ class Plugins {
              * description for a given log entry.
              * Example:
              *     {{ logEntry|«appName.formatForDB»_logDescription }}
+             «IF !targets('3.0')»
              *
              * @param AbstractLogEntry $logEntry
              *
              * @return string
+             «ENDIF»
              */
-            public function getLogDescription(AbstractLogEntry $logEntry)
+            public function getLogDescription(AbstractLogEntry $logEntry)«IF targets('3.0')»: string«ENDIF»
             {
                 return $this->loggableHelper->translateActionDescription($logEntry);
             }

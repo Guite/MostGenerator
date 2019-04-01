@@ -37,11 +37,13 @@ class WorkflowFormFieldsTrait {
     def private traitImpl(Application it) '''
         /**
          * Adds a field for additional notification remarks.
+         «IF !targets('3.0')»
          *
          * @param FormBuilderInterface $builder The form builder
-         * @param array                $options The options
+         * @param array $options The options
+         «ENDIF»
          */
-        public function addAdditionalNotificationRemarksField(FormBuilderInterface $builder, array $options = [])
+        public function addAdditionalNotificationRemarksField(FormBuilderInterface $builder, array $options = [])«IF targets('3.0')»: void«ENDIF»
         {
             $helpText = '';
             if ($options['is_moderator']«IF hasWorkflow(EntityWorkflowType.ENTERPRISE)» || $options['is_super_moderator']«ENDIF») {

@@ -62,9 +62,6 @@ class ListEntryValidator {
             public $max;
             «IF !targets('3.0')»
 
-                /**
-                 * @inheritDoc
-                 */
                 public function validatedBy()
                 {
                     return '«appService».validator.list_entry.validator';
@@ -110,12 +107,6 @@ class ListEntryValidator {
              */
             protected $listEntriesHelper;
 
-            /**
-             * ListEntryValidator constructor.
-             *
-             * @param TranslatorInterface $translator
-             * @param ListEntriesHelper $listEntriesHelper
-             */
             public function __construct(TranslatorInterface $translator, ListEntriesHelper $listEntriesHelper)
             {
                 $this->setTranslator($translator);
@@ -124,16 +115,13 @@ class ListEntryValidator {
 
             «setTranslatorMethod»
 
-            /**
-             * @inheritDoc
-             */
             public function validate($value, Constraint $constraint)
             {
                 if (null === $value) {
                     return;
                 }
 
-                if ('workflowState' == $constraint->propertyName && in_array($value, ['initial', 'deleted'])) {
+                if ('workflowState' === $constraint->propertyName && in_array($value, ['initial', 'deleted'], true)) {
                     return;
             	}
 
@@ -145,7 +133,7 @@ class ListEntryValidator {
 
                 if (!$constraint->multiple) {
                     // single-valued list
-                    if ('' != $value && !in_array($value, $allowedValues)) {
+                    if ('' !== $value && !in_array($value, $allowedValues, true)) {
                         $this->context->buildViolation(
                             $this->__f('The value "%value%" is not allowed for the "%property%" property.', [
                                 '%value%' => $value,
@@ -160,10 +148,10 @@ class ListEntryValidator {
                 // multi-values list
                 $selected = explode('###', $value);
                 foreach ($selected as $singleValue) {
-                    if ('' == $singleValue) {
+                    if ('' === $singleValue) {
                         continue;
                     }
-                    if (!in_array($singleValue, $allowedValues)) {
+                    if (!in_array($singleValue, $allowedValues, true)) {
                         $this->context->buildViolation(
                             $this->__f('The value "%value%" is not allowed for the "%property%" property.', [
                                 '%value%' => $singleValue,

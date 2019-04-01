@@ -68,13 +68,6 @@ class UploadType {
              */
             protected $entity = null;
 
-            /**
-             * UploadTypeExtension constructor.
-             *
-             * @param TranslatorInterface $translator
-             * @param ImageHelper $imageHelper
-             * @param UploadHelper $uploadHelper
-             */
             public function __construct(
                 TranslatorInterface $translator,
                 ImageHelper $imageHelper,
@@ -85,9 +78,6 @@ class UploadType {
                 $this->uploadHelper = $uploadHelper;
             }
 
-            /**
-             * @inheritDoc
-             */
             public function buildForm(FormBuilderInterface $builder, array $options)
             {
                 $options['compound'] = false;
@@ -133,9 +123,6 @@ class UploadType {
                 «ENDIF»
             }
 
-            /**
-             * @inheritDoc
-             */
             public function buildView(FormView $view, FormInterface $form, array $options)
             {
                 $fieldName = $form->getConfig()->getName();
@@ -179,9 +166,6 @@ class UploadType {
                 «ENDIF»
             }
 
-            /**
-             * @inheritDoc
-             */
             public function configureOptions(OptionsResolver $resolver)
             {
                 $resolver
@@ -207,11 +191,8 @@ class UploadType {
                 ;
             }
 
-            «new FileHelper().getterMethod(null, 'formBuilder', 'FormBuilderInterface', false)»
-            «new FileHelper().getterMethod(null, 'entity', 'object', false)»
-            /**
-             * @inheritDoc
-             */
+            «new FileHelper(it).getterMethod(null, 'formBuilder', 'FormBuilderInterface', false, false, targets('3.0'))»
+            «new FileHelper(it).getterMethod(null, 'entity', 'object', false, false, targets('3.0'))»
             public function getBlockPrefix()
             {
                 return '«appName.formatForDB»_field_upload';

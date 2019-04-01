@@ -18,12 +18,13 @@ class EntityInitialiser {
     extension ModelExtensions = new ModelExtensions
     extension Utils = new Utils
 
-    FileHelper fh = new FileHelper
+    FileHelper fh
 
     /**
      * Creates an entity initialiser class file for easy entity initialisation.
      */
     def generate(Application it, IMostFileSystemAccess fsa) {
+        fh = new FileHelper(it)
         'Generating entity initialiser class'.printIfNotTesting(fsa)
         fsa.generateClassPair('Entity/Factory/EntityInitialiser.php', initialiserBaseImpl, initialiserImpl)
     }
@@ -31,6 +32,12 @@ class EntityInitialiser {
     def private initialiserBaseImpl(Application it) '''
         namespace «appNamespace»\Entity\Factory\Base;
 
+        «IF !getAllEntities.filter[!fields.filter(DatetimeField).filter[!immutable].empty].empty»
+            use DateTime;
+        «ENDIF»
+        «IF !getAllEntities.filter[!fields.filter(DatetimeField).filter[immutable].empty].empty»
+            use DateTimeImmutable;
+        «ENDIF»
         «IF supportLocaleFilter»
             use Symfony\Component\HttpFoundation\RequestStack;
         «ENDIF»
@@ -81,50 +88,36 @@ class EntityInitialiser {
                 protected $defaultLongitude;
 
             «ENDIF»
-            «IF supportLocaleFilter || hasListFieldsExceptWorkflowState || hasGeographical»
-                /**
-                 * EntityInitialiser constructor.
-                 *
-                 «IF supportLocaleFilter»
-                 * @param RequestStack $requestStack
-                 «ENDIF»
-                 * @param PermissionHelper $permissionHelper
-                 «IF hasListFieldsExceptWorkflowState»
-                 * @param ListEntriesHelper $listEntriesHelper
-                 «ENDIF»
-                 «IF hasGeographical»
-                 * @param VariableApiInterface $variableApi
-                 «ENDIF»
-                 */
-                public function __construct(
-                    «IF supportLocaleFilter»RequestStack $requestStack,«ENDIF»
-                    PermissionHelper $permissionHelper«IF hasListFieldsExceptWorkflowState»,
-                    ListEntriesHelper $listEntriesHelper«ENDIF»«IF hasGeographical»,
-                    VariableApiInterface $variableApi«ENDIF»
-                ) {
-                    «IF supportLocaleFilter»
-                        $this->requestStack = $requestStack;
-                    «ENDIF»
-                    $this->permissionHelper = $permissionHelper;
-                    «IF hasListFieldsExceptWorkflowState»
-                        $this->listEntriesHelper = $listEntriesHelper;
-                    «ENDIF»
-                    «IF hasGeographical»
-                        $this->defaultLatitude = $variableApi->get('«appName»', 'defaultLatitude', 0.00);
-                        $this->defaultLongitude = $variableApi->get('«appName»', 'defaultLongitude', 0.00);
-                    «ENDIF»
-                }
+            public function __construct(
+                «IF supportLocaleFilter»RequestStack $requestStack,«ENDIF»
+                PermissionHelper $permissionHelper«IF hasListFieldsExceptWorkflowState»,
+                ListEntriesHelper $listEntriesHelper«ENDIF»«IF hasGeographical»,
+                VariableApiInterface $variableApi«ENDIF»
+            ) {
+                «IF supportLocaleFilter»
+                    $this->requestStack = $requestStack;
+                «ENDIF»
+                $this->permissionHelper = $permissionHelper;
+                «IF hasListFieldsExceptWorkflowState»
+                    $this->listEntriesHelper = $listEntriesHelper;
+                «ENDIF»
+                «IF hasGeographical»
+                    $this->defaultLatitude = $variableApi->get('«appName»', 'defaultLatitude', 0.00);
+                    $this->defaultLongitude = $variableApi->get('«appName»', 'defaultLongitude', 0.00);
+                «ENDIF»
+            }
 
-            «ENDIF»
             «FOR entity : getAllEntities»
                 /**
                  * Initialises a given «entity.name.formatForCode» instance.
+                 «IF !targets('3.0')»
                  *
                  * @param «entity.name.formatForCodeCapital»Entity $entity The newly created entity instance
                  *
                  * @return «entity.name.formatForCodeCapital»Entity The updated entity instance
+                 «ENDIF»
                  */
-                public function init«entity.name.formatForCodeCapital»(«entity.name.formatForCodeCapital»Entity $entity)
+                public function init«entity.name.formatForCodeCapital»(«entity.name.formatForCodeCapital»Entity $entity)«IF targets('3.0')»: «entity.name.formatForCodeCapital»Entity«ENDIF»
                 {
                     «FOR field : entity.getLanguageFieldsEntity + entity.getLocaleFieldsEntity»
                         $entity->set«field.name.formatForCodeCapital»($this->requestStack->getCurrentRequest()->getLocale());
@@ -167,17 +160,17 @@ class EntityInitialiser {
 
             «ENDFOR»
             «IF hasListFieldsExceptWorkflowState»
-                «fh.getterAndSetterMethods(it, 'listEntriesHelper', 'ListEntriesHelper', false, true, false, '', '')»
+                «fh.getterAndSetterMethods(it, 'listEntriesHelper', 'ListEntriesHelper', false, true, true, '', '')»
             «ENDIF»
         }
     '''
 
     def private setDefaultValue(DatetimeField it) {
         if (it.defaultValue !== null && !it.defaultValue.empty && it.defaultValue.length > 0) {
-            if (it.defaultValue != 'now') {
-                '''$entity->set«name.formatForCodeCapital»(new \DateTime«IF immutable»Immutable«ENDIF»('«it.defaultValue»'));'''
+            if ('now' != it.defaultValue) {
+                '''$entity->set«name.formatForCodeCapital»(new DateTime«IF immutable»Immutable«ENDIF»('«it.defaultValue»'));'''
             } else {
-                '''$entity->set«name.formatForCodeCapital»(\DateTime«IF immutable»Immutable«ENDIF»::createFromFormat('«defaultFormat»', «defaultValueForNow»));'''
+                '''$entity->set«name.formatForCodeCapital»(DateTime«IF immutable»Immutable«ENDIF»::createFromFormat('«defaultFormat»', «defaultValueForNow»));'''
             }
         }
     }

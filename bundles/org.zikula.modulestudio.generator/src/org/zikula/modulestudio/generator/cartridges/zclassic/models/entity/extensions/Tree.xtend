@@ -7,12 +7,14 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelp
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
+import org.zikula.modulestudio.generator.extensions.Utils
 
 class Tree extends AbstractExtension implements EntityExtensionInterface {
 
     extension FormattingExtensions = new FormattingExtensions
     extension ModelExtensions = new ModelExtensions
     extension NamingExtensions = new NamingExtensions
+    extension Utils = new Utils
 
     /**
      * Generates additional annotations on class level.
@@ -38,31 +40,31 @@ class Tree extends AbstractExtension implements EntityExtensionInterface {
         /**
          * @Gedmo\TreeLeft
          * @ORM\Column(type="integer")
-         * @Assert\Type(type="integer")
-         * @var integer $lft
+         * @Assert\Type(type="int")
+         * @var int $lft
          */
         protected $lft;
 
         /**
          * @Gedmo\TreeLevel
          * @ORM\Column(type="integer")
-         * @Assert\Type(type="integer")
-         * @var integer $lvl
+         * @Assert\Type(type="int")
+         * @var int $lvl
          */
         protected $lvl;
 
         /**
          * @Gedmo\TreeRight
          * @ORM\Column(type="integer")
-         * @Assert\Type(type="integer")
-         * @var integer $rgt
+         * @Assert\Type(type="int")
+         * @var int $rgt
          */
         protected $rgt;
 
         /**
          * @Gedmo\TreeRoot
          * @ORM\Column(type="integer", nullable=true)
-         * @var integer $root
+         * @var int $root
          */
         protected $root;
 
@@ -75,7 +77,7 @@ class Tree extends AbstractExtension implements EntityExtensionInterface {
          * @Gedmo\TreeParent
          * @ORM\ManyToOne(targetEntity="\«entityClassName('', false)»", inversedBy="children")
          * @ORM\JoinColumn(name="parent_id", referencedColumnName="«getPrimaryKey.name.formatForDisplay»", onDelete="SET NULL")
-         * @var \«entityClassName('', false)» $parent
+         * @var self $parent
          */
         protected $parent;
 
@@ -84,7 +86,7 @@ class Tree extends AbstractExtension implements EntityExtensionInterface {
          *
          * @ORM\OneToMany(targetEntity="\«entityClassName('', false)»", mappedBy="parent")
          * @ORM\OrderBy({"lft" = "ASC"})
-         * @var \«entityClassName('', false)» $children
+         * @var self $children
          */
         protected $children;
     '''
@@ -93,20 +95,29 @@ class Tree extends AbstractExtension implements EntityExtensionInterface {
      * Generates additional accessor methods.
      */
     override accessors(Entity it) '''
-        «val fh = new FileHelper»
-        «fh.getterAndSetterMethods(it, 'lft', 'integer', false, true, false, '', '')»
-        «fh.getterAndSetterMethods(it, 'lvl', 'integer', false, true, false, '', '')»
-        «fh.getterAndSetterMethods(it, 'rgt', 'integer', false, true, false, '', '')»
-        «fh.getterAndSetterMethods(it, 'root', 'integer', false, true, false, '', '')»
-        «fh.getterAndSetterMethods(it, 'parent', '\\' + entityClassName('', false), false, true, true, 'null', '')»
-        «fh.getterAndSetterMethods(it, 'children', 'array', true, true, false, '', '')»
+        «val fh = new FileHelper(application)»
+        «IF application.targets('3.0')»
+            «fh.getterAndSetterMethods(it, 'lft', 'int', false, true, true, '', '')»
+            «fh.getterAndSetterMethods(it, 'lvl', 'int', false, true, true, '', '')»
+            «fh.getterAndSetterMethods(it, 'rgt', 'int', false, true, true, '', '')»
+            «fh.getterAndSetterMethods(it, 'root', 'int', false, true, true, '', '')»
+            «fh.getterAndSetterMethods(it, 'parent', 'self', false, true, true, 'null', '')»
+            «fh.getterAndSetterMethods(it, 'children', 'Collection', true, true, true, '', '')»
+        «ELSE»
+            «fh.getterAndSetterMethods(it, 'lft', 'int', false, true, false, '', '')»
+            «fh.getterAndSetterMethods(it, 'lvl', 'int', false, true, false, '', '')»
+            «fh.getterAndSetterMethods(it, 'rgt', 'int', false, true, false, '', '')»
+            «fh.getterAndSetterMethods(it, 'root', 'int', false, true, false, '', '')»
+            «fh.getterAndSetterMethods(it, 'parent', 'self', false, true, true, 'null', '')»
+            «fh.getterAndSetterMethods(it, 'children', 'array', true, true, false, '', '')»
+        «ENDIF»
     '''
 
     /**
      * Returns the extension class type.
      */
     override extensionClassType(Entity it) {
-        if (tree == EntityTreeType.CLOSURE) {
+        if (EntityTreeType.CLOSURE === tree) {
             'closure'
         } else {
             ''
