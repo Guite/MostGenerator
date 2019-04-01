@@ -63,7 +63,7 @@ class GetFileSize {
          * @return string File size in a readable form
          «ENDIF»
          */
-        private function getReadableFileSize(«IF targets('3.0')»int $size, bool $nodesc = false, bool $onlydesc = false): string«ELSE»($size, $nodesc = false, $onlydesc = false)«ENDIF»
+        private function getReadableFileSize«IF targets('3.0')»(int $size, bool $nodesc = false, bool $onlydesc = false): string«ELSE»($size, $nodesc = false, $onlydesc = false)«ENDIF»
         {
             $sizeDesc = $this->__('Bytes');
             if ($size >= 1024) {
