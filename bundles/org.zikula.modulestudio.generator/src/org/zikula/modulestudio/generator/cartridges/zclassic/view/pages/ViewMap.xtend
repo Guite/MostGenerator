@@ -138,7 +138,7 @@ class ViewMap {
             {% endif %}
         «ENDIF»
         «IF ownerPermission»
-            {% set showOnlyOwn = routeArea != 'admin' and getModVar('«application.appName»', '«name.formatForCode»PrivateMode', false) %}
+            {% set showOnlyOwn = routeArea != 'admin' and getModVar('«application.appName»', '«name.formatForCode»PrivateMode') %}
         «ENDIF»
         {% if all == 1 %}
             {% set linkTitle = __('Back to paginated view') %}
@@ -154,7 +154,7 @@ class ViewMap {
                 {% set linkTitle = __('Show also entries from other users') %}
                 {% set routeArgs = all ? {all: 1} : {} %}
                 <a href="{{ path('«appName.formatForDB»_«objName.toLowerCase»_' ~ routeArea ~ 'view', routeArgs) }}" title="{{ linkTitle|e('html_attr') }}"><i class="fa fa-users"></i> {{ linkTitle }}</a>
-            {% else %}
+            {% elseif permissionHelper.hasComponentPermission('«name.formatForCode»', constant('ACCESS_«IF workflow == EntityWorkflowType.NONE»EDIT«ELSE»COMMENT«ENDIF»')) %}
                 {% set linkTitle = __('Show only own entries') %}
                 {% set routeArgs = all ? {all: 1, own: 1} : {own: 1} %}
                 <a href="{{ path('«appName.formatForDB»_«objName.toLowerCase»_' ~ routeArea ~ 'view', routeArgs) }}" title="{{ linkTitle|e('html_attr') }}"><i class="fa fa-user"></i> {{ linkTitle }}</a>
