@@ -477,7 +477,7 @@ class Repository {
     def private selectWherePaginated(Entity it) '''
         /**
          * Returns query builder instance for retrieving a list of objects with a given where clause and pagination parameters.
-         «IF application.targets('3.0')»
+         «IF !application.targets('3.0')»
          *
          * @param QueryBuilder $qb Query builder to be enhanced
          * @param int $currentPage Where to start selection
