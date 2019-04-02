@@ -146,7 +146,7 @@ class CollectionFilterHelper {
          */
         public function getViewQuickNavParameters(«IF targets('3.0')»string «ENDIF»$objectType = '', «IF targets('3.0')»string «ENDIF»$context = '', array $args = [])«IF targets('3.0')»: array«ENDIF»
         {
-            if (!in_array($context, ['controllerAction', 'api', 'actionHandler', 'block', 'contentType'])) {
+            if (!in_array($context, ['controllerAction', 'api', 'actionHandler', 'block', 'contentType'], true)) {
                 $context = 'controllerAction';
             }
 
@@ -321,6 +321,9 @@ class CollectionFilterHelper {
 
             $parameters = $this->getViewQuickNavParametersFor«name.formatForCodeCapital»();
             foreach ($parameters as $k => $v) {
+                if (null === $v) {
+                    continue;
+                }
                 «IF categorisable»
                     if ('catId' === $k) {
                         if (0 < (int)$v) {

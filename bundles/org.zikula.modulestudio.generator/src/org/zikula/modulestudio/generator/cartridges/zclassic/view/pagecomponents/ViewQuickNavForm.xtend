@@ -46,6 +46,7 @@ class ViewQuickNavForm {
                     <h3>{{ __('Quick navigation') }}</h3>
                     «formFields»
                     {{ form_widget(quickNavForm.updateview) }}
+                    <a href="{{ path('«application.appName.formatForDB»_«name.formatForCode.toLowerCase»_' ~ routeArea|default ~ 'view') }}" title="{{ __('Back to default view') }}" class="btn btn-default btn-sm">{{ __('Reset') }}</a>
                     «IF categorisable»
                         {% if categoriesEnabled %}
                             {% if categoryFilter is defined and categoryFilter != true %}
