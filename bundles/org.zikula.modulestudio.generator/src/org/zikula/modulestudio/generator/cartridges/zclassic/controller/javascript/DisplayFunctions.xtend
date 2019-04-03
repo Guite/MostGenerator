@@ -89,8 +89,12 @@ class DisplayFunctions {
             quickNavForm = jQuery('.«appName.toLowerCase»-quicknav').first();
             objectType = quickNavForm.attr('id').replace('«appName.toFirstLower»', '').replace('QuickNavForm', '');
 
+            var quickNavFilterTimer;
             quickNavForm.find('select').change(function (event) {
-                quickNavForm.submit();
+                clearTimeout(quickNavFilterTimer);
+                quickNavFilterTimer = setTimeout(function() {
+                    quickNavForm.submit();
+                }, 5000);
             });
 
             var fieldPrefix = '«appName.formatForDB»_' + objectType.toLowerCase() + 'quicknav_';
