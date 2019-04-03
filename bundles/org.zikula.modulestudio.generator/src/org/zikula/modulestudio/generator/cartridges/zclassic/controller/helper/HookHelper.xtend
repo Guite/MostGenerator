@@ -356,7 +356,7 @@ class HookHelper {
          */
         abstract class AbstractFilterHooksProvider implements «providerInterface(filterHookProvider)»
         {
-            «IF targets('3.0')»
+            «IF !targets('3.0')»
                 use ServiceIdTrait;
 
             «ENDIF»
