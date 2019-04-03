@@ -58,10 +58,14 @@ class InlineRedirect {
             «IF application.targets('3.0')»
                 EntityFactory $entityFactory,
                 EntityDisplayHelper $entityDisplayHelper,
+                string $idPrefix,
+                string $commandName,
+                int $id = 0
+            «ELSE»
+                $idPrefix,
+                $commandName,
+                $id = 0
             «ENDIF»
-            string $idPrefix,
-            string $commandName,
-            int $id = 0
         )«IF application.targets('3.0')»: Response«ENDIF»
     '''
 
