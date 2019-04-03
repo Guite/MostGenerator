@@ -248,7 +248,7 @@ class ControllerAction {
         «ELSE»
             Request $request,
             «name.formatForCodeCapital»Entity $«name.formatForCode» = null,
-            «IF hasUniqueSlug»string $slug = ''«ELSE»int $id = 0«ENDIF»«IF internalMethod»,
+            «IF hasUniqueSlug»$slug = ''«ELSE»$id = 0«ENDIF»«IF internalMethod»,
             $isAdmin = false«ENDIF»
         «ENDIF»
     '''
