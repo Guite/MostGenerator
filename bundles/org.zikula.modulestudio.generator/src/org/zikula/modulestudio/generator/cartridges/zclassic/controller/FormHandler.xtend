@@ -1083,12 +1083,10 @@ class FormHandler {
     def private fetchInputData(Application it) '''
         /**
          * Input data processing called by handleCommand method.
-         «IF !targets('3.0')»
          *
-         * @return array
-         «ENDIF»
+         * @return mixed
          */
-        public function fetchInputData()«IF targets('3.0')»: array«ENDIF»
+        public function fetchInputData()
         {
             // fetch posted data input values as an associative array
             $formData = $this->form->getData();
