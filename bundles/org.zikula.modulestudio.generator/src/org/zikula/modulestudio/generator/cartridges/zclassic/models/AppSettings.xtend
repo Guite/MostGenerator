@@ -193,7 +193,7 @@ class AppSettings {
                 $adminGroupId = GroupsConstant::GROUP_ID_ADMIN;
                 «FOR groupSelector : getUserGroupSelectors»
                     $groupId = $this->get«groupSelector.name.formatForCodeCapital»();
-                    if (GROUP_ID_USERS > $groupId) {
+                    if (GroupsConstant::GROUP_ID_USERS > $groupId) {
                         $groupId = $adminGroupId;
                     }
 
