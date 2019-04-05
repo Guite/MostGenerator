@@ -230,6 +230,7 @@ class ContentTypeListType {
         {
             $builder->add('sorting', ChoiceType::class, [
                 'label' => $this->__('Sorting'«IF !isSystemModule», '«appName.formatForDB»'«ENDIF») . ':',
+                'label_attr' => ['class' => 'radio-inline'],
                 'empty_data' => 'default',
                 'choices' => [
                     $this->__('Random'«IF !isSystemModule», '«appName.formatForDB»'«ENDIF») => 'random',
@@ -238,7 +239,7 @@ class ContentTypeListType {
                     $this->__('Default'«IF !isSystemModule», '«appName.formatForDB»'«ENDIF») => 'default'
                 ],
                 'multiple' => false,
-                'expanded' => false
+                'expanded' => true
             ]);
         }
     '''

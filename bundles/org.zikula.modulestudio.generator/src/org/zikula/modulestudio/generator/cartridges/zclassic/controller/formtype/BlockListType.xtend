@@ -234,6 +234,7 @@ class BlockListType {
         {
             $builder->add('sorting', ChoiceType::class, [
                 'label' => $this->__('Sorting'«IF !isSystemModule», '«appName.formatForDB»'«ENDIF») . ':',
+                'label_attr' => ['class' => 'radio-inline'],
                 'empty_data' => 'default',
                 'choices' => [
                     $this->__('Random'«IF !isSystemModule», '«appName.formatForDB»'«ENDIF») => 'random',
@@ -245,7 +246,7 @@ class BlockListType {
                     'choices_as_values' => true,
                 «ENDIF»
                 'multiple' => false,
-                'expanded' => false
+                'expanded' => true
             ]);
         }
     '''
