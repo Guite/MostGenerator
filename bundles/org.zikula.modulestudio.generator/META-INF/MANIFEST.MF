@@ -7,9 +7,9 @@ Require-Bundle: de.guite.modulestudio.mostdsl;bundle-version="1.4.0",
  org.apache.log4j;bundle-version="1.2.15",
  org.eclipse.core.runtime;bundle-version="3.15.200",
  org.eclipse.emf.mwe2.launch;bundle-version="2.10.0",
- org.eclipse.xtend.core;bundle-version="2.17.0",
- org.eclipse.xtend.standalone;bundle-version="2.17.0";resolution:=optional,
- org.eclipse.xtext;bundle-version="2.17.0",
+ org.eclipse.xtend.core;bundle-version="2.17.1",
+ org.eclipse.xtend.standalone;bundle-version="2.17.1";resolution:=optional,
+ org.eclipse.xtext;bundle-version="2.17.1",
  org.objectweb.asm;bundle-version="7.0.0"
 Bundle-Vendor: %providerName
 Bundle-ActivationPolicy: lazy
