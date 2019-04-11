@@ -1095,6 +1095,20 @@ class ServiceDefinitions {
 
                         «ENDIF»
                     «ENDFOR»
+                    «IF hasFormAwareHookProviders»
+                        «FOR entity : getAllEntities.filter[formAwareHookProvider != HookProviderMode.DISABLED]»
+                            «modPrefix».hook_provider.form_aware.type.edit_«entity.name.formatForDB»:
+                                class: «appNamespace»\Form\Type\Hook\Edit«entity.name.formatForCodeCapital»Type
+                                arguments:
+                                    - "@translator.default"
+
+                            «modPrefix».hook_provider.form_aware.type.delete_«entity.name.formatForDB»:
+                                class: «appNamespace»\Form\Type\Hook\Delete«entity.name.formatForCodeCapital»Type
+                                arguments:
+                                    - "@translator.default"
+
+                        «ENDFOR»
+                    «ENDIF»
                 «ENDIF»
             «ENDIF»
     '''
