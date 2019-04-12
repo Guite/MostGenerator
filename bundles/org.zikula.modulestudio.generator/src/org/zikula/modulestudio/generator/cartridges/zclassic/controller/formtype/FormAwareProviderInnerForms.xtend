@@ -54,7 +54,8 @@ class FormAwareProviderInnerForms {
         {
             use TranslatorTrait;
 
-            public function __construct(TranslatorInterface $translator) {
+            public function __construct(TranslatorInterface $translator)
+            {
                 $this->setTranslator($translator);
             }
 
@@ -69,10 +70,11 @@ class FormAwareProviderInnerForms {
                     ])
                     ->add('dummmyChoice', ChoiceType::class, [
                         'label' => $this->__('Dummy «name.formatForDisplay» choice'),
+                        'label_attr' => ['class' => 'checkbox-inline'],
                         'choices' => [
                             $this->__('Option A') => 'A',
-                            $this->__('Option A') => 'B',
-                            $this->__('Option A') => 'C'
+                            $this->__('Option B') => 'B',
+                            $this->__('Option C') => 'C'
                         ],
                         «IF !app.targets('2.0')»
                             'choices_as_values' => true,

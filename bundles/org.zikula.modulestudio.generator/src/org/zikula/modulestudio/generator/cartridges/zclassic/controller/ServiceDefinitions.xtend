@@ -1101,11 +1101,23 @@ class ServiceDefinitions {
                                 class: «appNamespace»\Form\Type\Hook\Edit«entity.name.formatForCodeCapital»Type
                                 arguments:
                                     - "@translator.default"
+                                «IF targets('2.0')»
+                                    tags: ['form.type']
+                                «ELSE»
+                                    tags:
+                                        - { name: form.type }
+                                «ENDIF»
 
                             «modPrefix».hook_provider.form_aware.type.delete_«entity.name.formatForDB»:
                                 class: «appNamespace»\Form\Type\Hook\Delete«entity.name.formatForCodeCapital»Type
                                 arguments:
                                     - "@translator.default"
+                                «IF targets('2.0')»
+                                    tags: ['form.type']
+                                «ELSE»
+                                    tags:
+                                        - { name: form.type }
+                                «ENDIF»
 
                         «ENDFOR»
                     «ENDIF»
