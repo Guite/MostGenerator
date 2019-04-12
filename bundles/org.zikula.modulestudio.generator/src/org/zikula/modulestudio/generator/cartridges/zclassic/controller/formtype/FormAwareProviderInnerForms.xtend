@@ -68,7 +68,7 @@ class FormAwareProviderInnerForms {
                         'label' => $this->__('Dummy «name.formatForDisplay» text'),
                         'required' => true
                     ])
-                    ->add('dummmyChoice', ChoiceType::class, [
+                    ->add('dummyChoice', ChoiceType::class, [
                         'label' => $this->__('Dummy «name.formatForDisplay» choice'),
                         'label_attr' => ['class' => 'checkbox-inline'],
                         'choices' => [

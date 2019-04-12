@@ -553,12 +553,11 @@ class HookHelper {
                  */
                 public function edit(FormAwareHook $hook)«IF application.targets('3.0')»: void«ENDIF»
                 {
-                    $innerForm = $this->formFactory->create(Edit«name.formatForCodeCapital»Type::class, null, [
-                        'auto_initialize' => false,«/* required */»
-                        'mapped' => false«/* required */»
-                    ]);
                     $hook
-                        ->formAdd($innerForm)
+                        ->formAdd('«application.appName.formatForDB»_hook_edit«name.formatForDB»', Edit«name.formatForCodeCapital»Type::class, [
+                            'auto_initialize' => false,«/* required */»
+                            'mapped' => false«/* required */»
+                        ])
                         ->addTemplate('@«application.appName»/Hook/edit«name.formatForCodeCapital»Form.html.twig')
                     ;
                 }
@@ -568,8 +567,8 @@ class HookHelper {
                  */
                 public function processEdit(FormAwareResponse $hook)«IF application.targets('3.0')»: void«ENDIF»
                 {
-                    $innerForm = $hook->getFormData('«application.appName.formatForDB»_hook_edit«name.formatForDB»form');
-                    $dummyOutput = $innerForm['dummyName'] . ' (Option ' . $innerForm['dummyChoice'] . ')';
+                    $innerForm = $hook->getFormData('«application.appName.formatForDB»_hook_edit«name.formatForDB»');
+                    $dummyOutput = $innerForm['dummyName'] . ' (Option ' . implode(', ', $innerForm['dummyChoice']) . ')';
                     $session = $this->requestStack->getCurrentRequest()->getSession();
                     $session->getFlashBag()->add('success', sprintf('The «name.formatForCodeCapital»«providerType»Provider edit form was processed and the answer was %s', $dummyOutput));
                 }
@@ -579,12 +578,11 @@ class HookHelper {
                  */
                 public function delete(FormAwareHook $hook)«IF application.targets('3.0')»: void«ENDIF»
                 {
-                    $innerForm = $this->formFactory->create(Delete«name.formatForCodeCapital»Type::class, null, [
-                        'auto_initialize' => false,«/* required */»
-                        'mapped' => false«/* required */»
-                    ]);
                     $hook
-                        ->formAdd($innerForm)
+                        ->formAdd('«application.appName.formatForDB»_hook_delete«name.formatForDB»', Delete«name.formatForCodeCapital»Type::class, [
+                            'auto_initialize' => false,«/* required */»
+                            'mapped' => false«/* required */»
+                        ])
                         ->addTemplate('@«application.appName»/Hook/delete«name.formatForCodeCapital»Form.html.twig')
                     ;
                 }
@@ -594,8 +592,8 @@ class HookHelper {
                  */
                 public function processDelete(FormAwareResponse $hook)«IF application.targets('3.0')»: void«ENDIF»
                 {
-                    $innerForm = $hook->getFormData('«application.appName.formatForDB»_hook_delete«name.formatForDB»form');
-                    $dummyOutput = $innerForm['dummyName'] . ' (Option ' . $innerForm['dummyChoice'] . ')';
+                    $innerForm = $hook->getFormData('«application.appName.formatForDB»_hook_delete«name.formatForDB»');
+                    $dummyOutput = $innerForm['dummyName'] . ' (Option ' . implode(', ', $innerForm['dummyChoice']) . ')';
                     $session = $this->requestStack->getCurrentRequest()->getSession();
                     $session->getFlashBag()->add('success', sprintf('The «name.formatForCodeCapital»«providerType»Provider delete form was processed and the answer was %s', $dummyOutput));
                 }
