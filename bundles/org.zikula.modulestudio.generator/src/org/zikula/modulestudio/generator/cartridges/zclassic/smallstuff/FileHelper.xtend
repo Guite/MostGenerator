@@ -82,9 +82,9 @@ class FileHelper {
             «IF #['latitude', 'longitude'].contains(name)»
                 $«name» = round((float)$«name», 7);
             «ENDIF»
-            if ((float)$this->«name» !== «IF !app.targets('3.0')»(bool)«ENDIF»$«name») {
+            if ((float)$this->«name» !== «IF !app.targets('3.0')»(float)«ENDIF»$«name») {
                 «IF nullable»
-                    $this->«name» = «IF !app.targets('3.0')»(bool)«ENDIF»$«name»;
+                    $this->«name» = «IF !app.targets('3.0')»(float)«ENDIF»$«name»;
                 «ELSE»
                     $this->«name» = «IF app.targets('3.0')»$«name» ?? 0.00«ELSE»isset($«name») ? (float)$«name» : 0.00«ENDIF»;
                 «ENDIF»
