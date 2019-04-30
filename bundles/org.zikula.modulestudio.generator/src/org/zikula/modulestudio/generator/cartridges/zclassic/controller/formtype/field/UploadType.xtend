@@ -88,7 +88,7 @@ class UploadType {
 
                 $fileOptions = [];
                 foreach ($options as $optionName => $optionValue) {
-                    if (in_array($optionName, ['entity', 'allowed_extensions', 'allowed_size'])) {
+                    if (in_array($optionName, ['entity', 'allow_deletion', 'allowed_extensions', 'allowed_size'])) {
                         continue;
                     }
                     $fileOptions[$optionName] = $optionValue;
@@ -99,7 +99,7 @@ class UploadType {
                 $uploadFileTransformer = new UploadFileTransformer($this->entity, $this->uploadHelper, $fieldName«IF hasUploadNamingScheme(UploadNamingScheme.USERDEFINEDWITHCOUNTER)», $options['custom_filename']«ENDIF»);
                 $builder->addModelTransformer($uploadFileTransformer);
 
-                if (!$options['required']) {
+                if ($options['allow_deletion'] && !$options['required']) {
                     $builder->add($fieldName . 'DeleteFile', CheckboxType::class, [
                         'label' => $this->translator->__('Delete existing file'),
                         'required' => false,
@@ -153,6 +153,7 @@ class UploadType {
                 $view->vars['file_url'] = $hasFile ? $accessor->getValue($parentData, $fieldNameGetter . 'Url') : null;
 
                 // assign other custom options
+                $view->vars['allow_deletion'] = array_key_exists('allow_deletion', $options) ? $options['allow_deletion'] : false;
                 $view->vars['allowed_extensions'] = array_key_exists('allowed_extensions', $options) ? $options['allowed_extensions'] : '';
                 $view->vars['allowed_size'] = array_key_exists('allowed_size', $options) ? $options['allowed_size'] : 0;
                 $view->vars['thumb_runtime_options'] = null;
@@ -170,11 +171,12 @@ class UploadType {
             {
                 $resolver
                     ->setRequired(['entity'])
-                    ->setDefined(['allowed_extensions', 'allowed_size'«IF hasUploadNamingScheme(UploadNamingScheme.USERDEFINEDWITHCOUNTER)», 'custom_filename'«ENDIF»])
+                    ->setDefined(['allow_deletion', 'allowed_extensions', 'allowed_size'«IF hasUploadNamingScheme(UploadNamingScheme.USERDEFINEDWITHCOUNTER)», 'custom_filename'«ENDIF»])
                     ->setDefaults([
                         'attr' => [
                             'class' => 'file-selector'
                         ],
+                        'allow_deletion' => false,
                         'allowed_extensions' => '',
                         'allowed_size' => '',
                         «IF hasUploadNamingScheme(UploadNamingScheme.USERDEFINEDWITHCOUNTER)»
@@ -183,6 +185,7 @@ class UploadType {
                         'error_bubbling' => false«IF targets('2.0')»,
                         'allow_file_upload' => true«ENDIF»
                     ])
+                    ->setAllowedTypes('allow_deletion', 'bool')
                     ->setAllowedTypes('allowed_extensions', 'string')
                     ->setAllowedTypes('allowed_size', 'string')
                     «IF hasUploadNamingScheme(UploadNamingScheme.USERDEFINEDWITHCOUNTER)»

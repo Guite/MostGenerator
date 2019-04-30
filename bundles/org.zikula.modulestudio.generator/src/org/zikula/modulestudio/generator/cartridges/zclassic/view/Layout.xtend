@@ -195,7 +195,7 @@ class Layout {
                             {% endif %}
                             </a>
                         </span>
-                        {% if not required and form[field_name ~ 'DeleteFile'] is defined %}
+                        {% if allow_deletion and not required and form[field_name ~ 'DeleteFile'] is defined %}
                             {{ form_row(attribute(form, field_name ~ 'DeleteFile')) }}
                         {% endif %}
                     {% endif %}
