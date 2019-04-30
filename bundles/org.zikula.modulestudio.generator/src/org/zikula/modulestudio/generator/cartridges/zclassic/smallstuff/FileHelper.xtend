@@ -51,7 +51,7 @@ class FileHelper {
         «ENDIF»
         public function get«name.formatForCodeCapital»()«IF useHint»: «IF nullable»?«ENDIF»«IF type == 'smallint' || type == 'bigint'»int«ELSEIF type.toLowerCase == 'datetime'»\DateTimeInterface«ELSE»«type»«ENDIF»«ENDIF»
         {
-            return $this->«name»;
+            return «IF type == 'float'&& #['latitude', 'longitude'].contains(name)»(float)«ENDIF»$this->«name»;
         }
         «/* this last line is on purpose */»
     '''

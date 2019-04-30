@@ -25,7 +25,7 @@ class FormatGeoData {
          * @return string The formatted output
          «ENDIF»
          */
-        public function formatGeoData«IF targets('3.0')»(string $string): string«ELSE»($string)«ENDIF»
+        public function formatGeoData«IF targets('3.0')»(float $string): string«ELSE»($string)«ENDIF»
         {
             return number_format($string, 7, '.', '');
         }
