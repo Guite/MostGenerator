@@ -39,6 +39,7 @@ class NotificationHelper {
         use Zikula\GroupsModule\Entity\RepositoryInterface\GroupRepositoryInterface;
         use Zikula\MailerModule\Api\ApiInterface\MailerApiInterface;
         use Zikula\UsersModule\Constant as UsersConstant;
+        use Zikula\UsersModule\Entity\RepositoryInterface\UserRepositoryInterface;
         use Zikula\UsersModule\Entity\UserEntity;
         use «appNamespace»\Helper\EntityDisplayHelper;
         use «appNamespace»\Helper\WorkflowHelper;
@@ -89,6 +90,11 @@ class NotificationHelper {
          * @var GroupRepositoryInterface
          */
         protected $groupRepository;
+
+        /**
+         * @var UserRepositoryInterface
+         */
+        protected $userRepository;
 
         /**
          * @var EntityDisplayHelper
@@ -144,6 +150,7 @@ class NotificationHelper {
             «IF !targets('3.0')»Twig_«ENDIF»Environment $twig,
             MailerApiInterface $mailerApi,
             GroupRepositoryInterface $groupRepository,
+            UserRepositoryInterface $userRepository,
             EntityDisplayHelper $entityDisplayHelper,
             WorkflowHelper $workflowHelper
         ) {
@@ -155,6 +162,7 @@ class NotificationHelper {
             $this->twig = $twig;
             $this->mailerApi = $mailerApi;
             $this->groupRepository = $groupRepository;
+            $this->userRepository = $userRepository;
             $this->entityDisplayHelper = $entityDisplayHelper;
             $this->workflowHelper = $workflowHelper;
             $this->name = '«appName»';
@@ -253,7 +261,7 @@ class NotificationHelper {
 
             if ($debug) {
                 // add the admin, too
-                $this->addRecipient(UsersConstant::USER_ID_ADMIN);
+                $this->addRecipient($this->userRepository->find(UsersConstant::USER_ID_ADMIN));
             }
         }
 

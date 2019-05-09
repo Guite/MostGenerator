@@ -941,6 +941,7 @@ class ServiceDefinitions {
                     - "@twig"
                     - "@zikula_mailer_module.api.mailer"
                     - "@zikula_groups_module.group_repository"
+                    - "@zikula_users_module.user_repository"
                     - "@«modPrefix».entity_display_helper"
                     - "@«modPrefix».workflow_helper"
         «ENDIF»
