@@ -417,11 +417,6 @@ class CollectionFilterHelper {
             if (null === $request) {
                 return $qb;
             }
-            $routeName = $request->get('_route', '');
-            $isAdminArea = false !== strpos($routeName, '«application.appName.toLowerCase»_«name.formatForDB»_admin');
-            if ($isAdminArea) {
-                return $qb;
-            }
             «IF ownerPermission || standardFields»
 
                 «IF ownerPermission»
@@ -429,7 +424,16 @@ class CollectionFilterHelper {
                 «ELSEIF standardFields»
                     $showOnlyOwnEntries = (bool)$request->query->getInt('own', $this->showOnlyOwnEntries);
                 «ENDIF»
+                if ($showOnlyOwnEntries) {
+                    $qb = $this->addCreatorFilter($qb);
+                }
             «ENDIF»
+
+            $routeName = $request->get('_route', '');
+            $isAdminArea = false !== strpos($routeName, '«application.appName.toLowerCase»_«name.formatForDB»_admin');
+            if ($isAdminArea) {
+                return $qb;
+            }
 
             if (!array_key_exists('workflowState', $parameters) || empty($parameters['workflowState'])) {
                 // per default we show approved «nameMultiple.formatForDisplay» only
@@ -444,12 +448,6 @@ class CollectionFilterHelper {
                 $qb->andWhere('tbl.workflowState IN (:onlineStates)')
                    ->setParameter('onlineStates', $onlineStates);
             }
-            «IF ownerPermission || standardFields»
-
-                if ($showOnlyOwnEntries) {
-                    $qb = $this->addCreatorFilter($qb);
-                }
-            «ENDIF»
             «IF hasLanguageFieldsEntity || hasLocaleFieldsEntity»
 
                 if (true === (bool)$this->filterDataByLocale) {
