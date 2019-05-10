@@ -366,7 +366,7 @@ class CollectionFilterHelper {
 
                 // field filter
                 if ((!is_numeric($v) && '' !== $v) || (is_numeric($v) && 0 < $v)) {
-                    if ('workflowState' === $k && '0' === strpos($v, '!')) {
+                    if ('workflowState' === $k && 0 === strpos($v, '!')) {
                         $qb->andWhere('tbl.' . $k . ' != :' . $k)
                            ->setParameter($k, substr($v, 1));
                     } elseif (0 === strpos($v, '%')) {
