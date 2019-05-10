@@ -202,7 +202,7 @@ class SharedFormTypeFields {
                 «ENDIF»
                 «helpAttribute»
                 «IF !(it instanceof BooleanField || it instanceof UploadField || it instanceof DatetimeField)»
-                    'empty_data' => «Property.defaultFieldData(it)»,
+                    'empty_data' => «IF it instanceof ListField && (it as ListField).multiple»[]«ELSE»«Property.defaultFieldData(it)»«ENDIF»,
                 «ENDIF»
                 'attr' => [
                     «additionalAttributes»
