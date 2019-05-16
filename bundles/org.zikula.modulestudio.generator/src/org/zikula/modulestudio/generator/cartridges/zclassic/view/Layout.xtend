@@ -286,15 +286,18 @@ class Layout {
     '''
 
     def private rawJsInit(Application it) '''
-        <script>
-        /* <![CDATA[ */
-            ( function($) {
-                $(document).ready(function() {
-                    $('.dropdown-toggle').addClass('hidden');
-                });
-            })(jQuery);
-        /* ]]> */
-        </script>
+        {% set customScript %}
+            <script>
+            /* <![CDATA[ */
+                ( function($) {
+                    $(document).ready(function() {
+                        $('.dropdown-toggle').addClass('hidden');
+                    });
+                })(jQuery);
+            /* ]]> */
+            </script>
+        {% endset %}
+        {{ pageAddAsset('footer', customScript) }}
     '''
 
     def pdfHeaderFile(Application it) {
