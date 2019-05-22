@@ -415,17 +415,20 @@ class ControllerHelper {
             $sort = $sortableColumns->getSortColumn()->getName();
             $sortdir = $sortableColumns->getSortDirection();*/»
             $sortableColumns->setAdditionalUrlParameters($urlParameters);
+            «IF hasCategorisableEntities»
+                $useJoins = in_array($objectType, ['«getCategorisableEntities.map[name.formatForCode].join('\', \'')»']);
+            «ENDIF»
 
             $where = '';
             if (1 === $templateParameters['all']) {
                 // retrieve item list without pagination
-                $entities = $repository->selectWhere($where, $sort . ' ' . $sortdir, false);
+                $entities = $repository->selectWhere($where, $sort . ' ' . $sortdir, «IF hasCategorisableEntities»$useJoins«ELSE»false«ENDIF»);
             } else {
                 // the current offset which is used to calculate the pagination
                 $currentPage = $request->query->getInt('pos', 1);
 
                 // retrieve item list with pagination
-                list($entities, $objectCount) = $repository->selectWherePaginated($where, $sort . ' ' . $sortdir, $currentPage, $resultsPerPage, false);
+                list($entities, $objectCount) = $repository->selectWherePaginated($where, $sort . ' ' . $sortdir, $currentPage, $resultsPerPage, «IF hasCategorisableEntities»$useJoins«ELSE»false«ENDIF»);
 
                 $templateParameters['currentPage'] = $currentPage;
                 $templateParameters['pager'] = [
