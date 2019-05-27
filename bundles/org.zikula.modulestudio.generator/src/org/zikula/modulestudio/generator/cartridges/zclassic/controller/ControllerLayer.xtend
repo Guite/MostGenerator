@@ -108,17 +108,11 @@ class ControllerLayer {
             «IF hasEditAction»
                 use «app.appNamespace»\Form\Handler\«name.formatForCodeCapital»\EditHandler;
             «ENDIF»
-            «IF (hasViewAction || hasDisplayAction) && categorisable»
-                use «app.appNamespace»\Helper\CategoryHelper;
-            «ENDIF»
             «IF hasViewAction || hasDisplayAction || hasEditAction || hasDeleteAction»
                 use «app.appNamespace»\Helper\ControllerHelper;
             «ENDIF»
             «IF (hasDisplayAction && app.generateIcsTemplates && hasStartAndEndDateField) || (hasEditAction && app.needsInlineEditing)»
                 use «app.appNamespace»\Helper\EntityDisplayHelper;
-            «ENDIF»
-            «IF (hasViewAction || hasDisplayAction) && categorisable»
-                use «app.appNamespace»\Helper\FeatureActivationHelper;
             «ENDIF»
             «IF (hasViewAction || hasDeleteAction) && !skipHookSubscribers»
                 use «app.appNamespace»\Helper\HookHelper;
@@ -135,10 +129,6 @@ class ControllerLayer {
             «ENDIF»
             «IF hasViewAction || hasDeleteAction || loggable»
                 use «app.appNamespace»\Helper\WorkflowHelper;
-            «ENDIF»
-        «ELSE»
-            «IF (hasViewAction || hasDisplayAction) && categorisable»
-                use «app.appNamespace»\Helper\FeatureActivationHelper;
             «ENDIF»
         «ENDIF»
     '''

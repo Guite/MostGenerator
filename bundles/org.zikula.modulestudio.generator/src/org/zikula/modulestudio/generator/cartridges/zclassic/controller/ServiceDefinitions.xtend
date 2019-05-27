@@ -956,6 +956,10 @@ class ServiceDefinitions {
                 «ENDIF»
                 - "@zikula_users_module.current_user"
                 - "@zikula_users_module.user_repository"
+                «IF hasCategorisableEntities»
+                    - "@«modPrefix».feature_activation_helper"
+                    - "@«modPrefix».category_helper"
+                «ENDIF»
         «IF generateSearchApi»
 
             «modPrefix».search_helper:
@@ -967,10 +971,6 @@ class ServiceDefinitions {
                     - "@«modPrefix».controller_helper"
                     - "@«modPrefix».entity_display_helper"
                     - "@«modPrefix».permission_helper"
-                    «IF hasCategorisableEntities»
-                        - "@«modPrefix».feature_activation_helper"
-                        - "@«modPrefix».category_helper"
-                    «ENDIF»
                 tags:
                     - { name: zikula.searchable_module, bundleName: «appName» }
         «ENDIF»
@@ -1217,6 +1217,7 @@ class ServiceDefinitions {
                 calls:
                     - [setControllerHelper, ['@«modPrefix».controller_helper']]
                     - [setModelHelper, ['@«modPrefix».model_helper']]
+                    - [setPermissionHelper, ['@«modPrefix».permission_helper']]
                     - [setEntityFactory, ['@«modPrefix».entity_factory']]
                     «IF hasCategorisableEntities»
                         - [setCategoryDependencies, ['@«modPrefix».category_helper', '@«modPrefix».feature_activation_helper']]

@@ -46,6 +46,7 @@ class ContentTypeList {
             use «appNamespace»\Helper\FeatureActivationHelper;
         «ENDIF»
         use «appNamespace»\Helper\ModelHelper;
+        use «appNamespace»\Helper\PermissionHelper;
 
         /**
          * Generic item list content type base class.
@@ -86,6 +87,11 @@ class ContentTypeList {
          * @var ModelHelper
          */
         protected $modelHelper;
+
+        /**
+         * @var PermissionHelper
+         */
+        protected $permissionHelper;
 
         /**
          * @var EntityFactory
@@ -209,12 +215,9 @@ class ContentTypeList {
                 $entities = [];
                 $objectCount = 0;
             }
-            «IF hasCategorisableEntities»
 
-                if ($this->featureActivationHelper->isEnabled(FeatureActivationHelper::CATEGORIES, $objectType)) {
-                    $entities = $this->categoryHelper->filterEntitiesByPermission($entities);
-                }
-            «ENDIF»
+            // filter by permissions
+            $entities = $this->permissionHelper->filterCollection($objectType, $entities, ACCESS_VIEW);
 
             $data = $this->data;
             $data['items'] = $entities;
@@ -288,6 +291,16 @@ class ContentTypeList {
         public function setModelHelper(ModelHelper $modelHelper)«IF targets('3.0')»: void«ENDIF»
         {
             $this->modelHelper = $modelHelper;
+        }
+
+        «IF targets('3.0')»
+            /**
+             * @required
+             */
+        «ENDIF»
+        public function setPermissionHelper(PermissionHelper $permissionHelper)«IF targets('3.0')»: void«ENDIF»
+        {
+            $this->permissionHelper = $permissionHelper;
         }
 
         «IF targets('3.0')»
@@ -545,12 +558,9 @@ class ContentTypeList {
                 $entities = [];
                 $objectCount = 0;
             }
-            «IF hasCategorisableEntities»
 
-                if ($featureActivationHelper->isEnabled(FeatureActivationHelper::CATEGORIES, $this->objectType)) {
-                    $entities = $categoryHelper->filterEntitiesByPermission($entities);
-                }
-            «ENDIF»
+            // filter by permissions
+            $entities = $this->container->get('«appService».permission_helper')->filterCollection($objectType, $entities, ACCESS_VIEW);
 
             $data = [
                 'objectType' => $this->objectType,

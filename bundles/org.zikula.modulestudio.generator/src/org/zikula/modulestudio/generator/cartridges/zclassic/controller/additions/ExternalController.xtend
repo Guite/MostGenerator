@@ -6,7 +6,6 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.additions.ExternalView
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
-import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
@@ -14,7 +13,6 @@ class ExternalController {
 
     extension ControllerExtensions = new ControllerExtensions
     extension FormattingExtensions = new FormattingExtensions
-    extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension ModelExtensions = new ModelExtensions
     extension Utils = new Utils
 
@@ -37,14 +35,8 @@ class ExternalController {
     def private commonAppImports(Application it) '''
         «IF targets('3.0')»
             use «appNamespace»\Entity\Factory\EntityFactory;
-            «IF hasCategorisableEntities»
-                use «appNamespace»\Helper\CategoryHelper;
-            «ENDIF»
             use «appNamespace»\Helper\CollectionFilterHelper;
             use «appNamespace»\Helper\ControllerHelper;
-            «IF hasCategorisableEntities»
-                use «appNamespace»\Helper\FeatureActivationHelper;
-            «ENDIF»
             use «appNamespace»\Helper\ListEntriesHelper;
             use «appNamespace»\Helper\PermissionHelper;
             use «appNamespace»\Helper\ViewHelper;
@@ -61,9 +53,6 @@ class ExternalController {
         use Zikula\Core\Controller\AbstractController;
         «commonSystemImports»
         «commonAppImports»
-        «IF !targets('3.0') && hasCategorisableEntities»
-            use «appNamespace»\Helper\FeatureActivationHelper;
-        «ENDIF»
 
         /**
          * Controller for external calls base class.
@@ -230,10 +219,6 @@ class ExternalController {
                 EntityFactory $entityFactory,
                 CollectionFilterHelper $collectionFilterHelper,
                 ListEntriesHelper $listEntriesHelper,
-                «IF hasCategorisableEntities»
-                CategoryHelper $categoryHelper,
-                FeatureActivationHelper $featureActivationHelper,
-                «ENDIF»
                 ViewHelper $viewHelper,
                 Asset $assetHelper,
                 string $objectType,
@@ -364,17 +349,9 @@ class ExternalController {
 
         list($entities, $objectCount) = $repository->retrieveCollectionResult($query, true);
 
-        «IF hasCategorisableEntities»
-            if (in_array($objectType, ['«getCategorisableEntities.map[name.formatForCode].join('\', \'')»'], true)) {
-                «IF !targets('3.0')»
-                    $featureActivationHelper = $this->get('«appService».feature_activation_helper');
-                «ENDIF»
-                if ($featureActivationHelper->isEnabled(FeatureActivationHelper::CATEGORIES, $objectType)) {
-                    $entities = «IF targets('3.0')»$categoryHelper«ELSE»$this->get('«appService».category_helper')«ENDIF»->filterEntitiesByPermission($entities);
-                }
-            }
+        // filter by permissions
+        $entities = «IF targets('3.0')»$permissionHelper«ELSE»$this->get('«appService».permission_helper')«ENDIF»->filterCollection($objectType, $entities, ACCESS_VIEW);
 
-        «ENDIF»
         $templateParameters['items'] = $entities;
         $templateParameters['finderForm'] = $form->createView();
 
@@ -436,7 +413,7 @@ class ExternalController {
         «finderDocBlock(false)»
         «finderSignature» {
             «IF targets('3.0')»
-                return parent::finderAction($request, $controllerHelper, $permissionHelper, $entityFactory, $collectionFilterHelper, $listEntriesHelper, «IF hasCategorisableEntities»$categoryHelper, $featureActivationHelper, «ENDIF»$viewHelper, $assetHelper, $objectType, $editor, $sort, $sortdir, $pos, $num);
+                return parent::finderAction($request, $controllerHelper, $permissionHelper, $entityFactory, $collectionFilterHelper, $listEntriesHelper, $viewHelper, $assetHelper, $objectType, $editor, $sort, $sortdir, $pos, $num);
             «ELSE»
                 return parent::finderAction($request, $objectType, $editor, $sort, $sortdir, $pos, $num);
             «ENDIF»

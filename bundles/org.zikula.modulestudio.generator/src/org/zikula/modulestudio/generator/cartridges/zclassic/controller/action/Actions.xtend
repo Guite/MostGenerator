@@ -9,10 +9,7 @@ import de.guite.modulestudio.metamodel.EditAction
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.EntityTreeType
 import de.guite.modulestudio.metamodel.EntityWorkflowType
-import de.guite.modulestudio.metamodel.JoinRelationship
 import de.guite.modulestudio.metamodel.MainAction
-import de.guite.modulestudio.metamodel.ManyToManyPermissionInheritanceType
-import de.guite.modulestudio.metamodel.ManyToManyRelationship
 import de.guite.modulestudio.metamodel.OneToManyRelationship
 import de.guite.modulestudio.metamodel.OneToOneRelationship
 import de.guite.modulestudio.metamodel.ViewAction
@@ -21,7 +18,6 @@ import org.zikula.modulestudio.generator.extensions.DateTimeExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
-import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
@@ -32,7 +28,6 @@ class Actions {
     extension FormattingExtensions = new FormattingExtensions
     extension ModelExtensions = new ModelExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
-    extension ModelJoinExtensions = new ModelJoinExtensions
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
 
@@ -164,36 +159,7 @@ class Actions {
         $templateParameters = $controllerHelper->processViewActionParameters($objectType, $sortableColumns, $templateParameters«IF app.hasHookSubscribers», «(!skipHookSubscribers).displayBool»«ENDIF»);
 
         // filter by permissions
-        $filteredEntities = [];
-        foreach ($templateParameters['items'] as $«name.formatForCode») {
-            if (!$permissionHelper->hasEntityPermission($«name.formatForCode», $permLevel)) {
-                continue;
-            }
-            $filteredEntities[] = $«name.formatForCode»;
-        }
-        $templateParameters['items'] = $filteredEntities;
-        «IF categorisable»
-
-            // filter by category permissions
-            «IF !app.targets('3.0')»
-                $featureActivationHelper = $this->get('«app.appService».feature_activation_helper');
-            «ENDIF»
-            if ($featureActivationHelper->isEnabled(FeatureActivationHelper::CATEGORIES, $objectType)) {
-                $templateParameters['items'] = «IF app.targets('3.0')»$categoryHelper«ELSE»$this->get('«app.appService».category_helper')«ENDIF»->filterEntitiesByPermission($templateParameters['items']);
-            }
-        «ENDIF»
-        «IF !getBidirectionalIncomingPermissionInheriters.empty»
-
-            // filter by inherited permissions
-            $filteredEntities = [];
-            foreach ($templateParameters['items'] as $«name.formatForCode») {
-                «FOR relation : getBidirectionalIncomingPermissionInheriters»
-                    «inheritedPermissionFilter(relation)»
-                «ENDFOR»
-                $filteredEntities[] = $«name.formatForCode»;
-            }
-            $templateParameters['items'] = $filteredEntities;
-        «ENDIF»
+        $templateParameters['items'] = $permissionHelper->filterCollection($objectType, $templateParameters['items'], $permLevel);
         «IF loggable»
 
             // check if there exist any deleted «name.formatForDisplay»
@@ -205,35 +171,6 @@ class Actions {
 
         // fetch and return the appropriate template
         return $viewHelper->processTemplate($objectType, 'view', $templateParameters);
-    '''
-
-    def dispatch private inheritedPermissionFilter(Entity it, JoinRelationship relation) '''
-        if (null !== $«name.formatForCode»->get«relation.getRelationAliasName(false).formatForCodeCapital»()) {
-            $parent = $«name.formatForCode»->get«relation.getRelationAliasName(false).formatForCodeCapital»();
-            if (!$permissionHelper->hasEntityPermission($parent, $permLevel)) {
-                continue;
-            }
-        }
-    '''
-
-    def dispatch private inheritedPermissionFilter(Entity it, ManyToManyRelationship relation) '''
-        $parentAccess = «(relation.inheritPermissions == ManyToManyPermissionInheritanceType.UNANIMOUS).displayBool»;
-        foreach ($«name.formatForCode»->get«relation.getRelationAliasName(false).formatForCodeCapital»() as $parent) {
-            «IF relation.inheritPermissions == ManyToManyPermissionInheritanceType.AFFIRMATIVE»
-                if ($permissionHelper->hasEntityPermission($parent, $permLevel)) {
-                    $parentAccess = true;
-                    break;
-                }
-            «ELSEIF relation.inheritPermissions == ManyToManyPermissionInheritanceType.UNANIMOUS»
-                if (!$permissionHelper->hasEntityPermission($parent, $permLevel)) {
-                    $parentAccess = false;
-                    break;
-                }
-            «ENDIF»
-        }
-        if (true !== $parentAccess) {
-            continue;
-        }
     '''
 
     def private initSortableColumns(Entity it) '''
@@ -274,24 +211,6 @@ class Actions {
             }
 
         «ENDIF»
-        «IF categorisable»
-            «IF !app.targets('3.0')»
-                $featureActivationHelper = $this->get('«app.appService».feature_activation_helper');
-            «ENDIF»
-            if ($featureActivationHelper->isEnabled(FeatureActivationHelper::CATEGORIES, $objectType)) {
-                if (!«IF app.targets('3.0')»$categoryHelper«ELSE»$this->get('«app.appService».category_helper')«ENDIF»->hasPermission($«name.formatForCode»)) {
-                    throw new AccessDeniedException();
-                }
-            }
-
-        «ENDIF»
-        «IF !getBidirectionalIncomingPermissionInheriters.empty»
-            // check inherited permissions
-            «FOR relation : getBidirectionalIncomingPermissionInheriters»
-                «inheritedPermissionCheck(action, relation)»
-            «ENDFOR»
-
-        «ENDIF»
         «IF loggable»
             $requestedVersion = $request->query->getInt('version');
             $versionPermLevel = $isAdmin ? ACCESS_ADMIN : ACCESS_EDIT;
@@ -312,38 +231,6 @@ class Actions {
         $templateParameters = $controllerHelper->processDisplayActionParameters($objectType, $templateParameters«IF app.hasHookSubscribers», $«name.formatForCode»->supportsHookSubscribers()«ENDIF»);
 
         «processDisplayOutput»
-    '''
-
-    def dispatch private inheritedPermissionCheck(Entity it, Action action, JoinRelationship relation) '''
-        if (null !== $«name.formatForCode»->get«relation.getRelationAliasName(false).formatForCodeCapital»()) {
-            $parent = $«name.formatForCode»->get«relation.getRelationAliasName(false).formatForCodeCapital»();
-            if (!$permissionHelper->hasEntityPermission($parent, $permLevel)) {
-                throw new AccessDeniedException();
-            }
-        }
-    '''
-
-    def dispatch private inheritedPermissionCheck(Entity it, Action action, ManyToManyRelationship relation) '''
-        «IF relation.inheritPermissions == ManyToManyPermissionInheritanceType.AFFIRMATIVE»
-            $parentAccess = false;
-        «ENDIF»
-        foreach ($«name.formatForCode»->get«relation.getRelationAliasName(false).formatForCodeCapital»() as $parent) {
-            «IF relation.inheritPermissions == ManyToManyPermissionInheritanceType.AFFIRMATIVE»
-                if ($permissionHelper->hasEntityPermission($parent, $permLevel)) {
-                    $parentAccess = true;
-                    break;
-                }
-            «ELSEIF ManyToManyPermissionInheritanceType.UNANIMOUS == relation.inheritPermissions»
-                if (!$permissionHelper->hasEntityPermission($parent, $permLevel)) {
-                    throw new AccessDeniedException();
-                }
-            «ENDIF»
-        }
-        «IF ManyToManyPermissionInheritanceType.AFFIRMATIVE == relation.inheritPermissions»
-            if (true !== $parentAccess) {
-                throw new AccessDeniedException();
-            }
-        «ENDIF»
     '''
 
     def private processDisplayOutput(Entity it) '''

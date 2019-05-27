@@ -47,6 +47,7 @@ class BlockList {
         «ENDIF»
         «IF targets('3.0')»
             use «appNamespace»\Helper\ModelHelper;
+            use «appNamespace»\Helper\PermissionHelper;
         «ENDIF»
 
         /**
@@ -74,6 +75,11 @@ class BlockList {
              * @var ModelHelper
              */
             protected $modelHelper;
+
+            /**
+             * @var PermissionHelper
+             */
+            protected $permissionHelper;
 
             /**
              * @var EntityFactory
@@ -197,6 +203,14 @@ class BlockList {
             /**
              * @required
              */
+            public function setPermissionHelper(PermissionHelper $permissionHelper): void
+            {
+                $this->permissionHelper = $permissionHelper;
+            }
+
+            /**
+             * @required
+             */
             public function setEntityFactory(EntityFactory $entityFactory): void
             {
                 $this->entityFactory = $entityFactory;
@@ -299,12 +313,9 @@ class BlockList {
                 $entities = [];
                 $objectCount = 0;
             }
-            «IF hasCategorisableEntities»
 
-                if ($hasCategories) {
-                    $entities = $this->«IF targets('3.0')»categoryHelper«ELSE»get('«appService».category_helper')«ENDIF»->filterEntitiesByPermission($entities);
-                }
-            «ENDIF»
+            // filter by permissions
+            $entities = «IF targets('3.0')»$this->permissionHelper«ELSE»$this->get('«appService».permission_helper')«ENDIF»->filterCollection($objectType, $entities, ACCESS_VIEW);
 
             // set a block title
             if (empty($properties['title'])) {

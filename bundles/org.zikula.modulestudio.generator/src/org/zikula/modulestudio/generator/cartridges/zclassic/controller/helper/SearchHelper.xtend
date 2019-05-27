@@ -37,14 +37,8 @@ class SearchHelper {
         use Zikula\SearchModule\Entity\SearchResultEntity;
         use Zikula\SearchModule\SearchableInterface;
         use «appNamespace»\Entity\Factory\EntityFactory;
-        «IF hasCategorisableEntities»
-            use «appNamespace»\Helper\CategoryHelper;
-        «ENDIF»
         use «appNamespace»\Helper\ControllerHelper;
         use «appNamespace»\Helper\EntityDisplayHelper;
-        «IF hasCategorisableEntities»
-            use «appNamespace»\Helper\FeatureActivationHelper;
-        «ENDIF»
         use «appNamespace»\Helper\PermissionHelper;
 
         /**
@@ -83,18 +77,6 @@ class SearchHelper {
          * @var PermissionHelper
          */
         protected $permissionHelper;
-        «IF hasCategorisableEntities»
-
-            /**
-             * @var FeatureActivationHelper
-             */
-            protected $featureActivationHelper;
-
-            /**
-             * @var CategoryHelper
-             */
-            protected $categoryHelper;
-        «ENDIF»
 
         public function __construct(
             TranslatorInterface $translator,
@@ -102,9 +84,7 @@ class SearchHelper {
             EntityFactory $entityFactory,
             ControllerHelper $controllerHelper,
             EntityDisplayHelper $entityDisplayHelper,
-            PermissionHelper $permissionHelper«IF hasCategorisableEntities»,
-            FeatureActivationHelper $featureActivationHelper,
-            CategoryHelper $categoryHelper«ENDIF»
+            PermissionHelper $permissionHelper
         ) {
             $this->setTranslator($translator);
             $this->requestStack = $requestStack;
@@ -112,10 +92,6 @@ class SearchHelper {
             $this->controllerHelper = $controllerHelper;
             $this->entityDisplayHelper = $entityDisplayHelper;
             $this->permissionHelper = $permissionHelper;
-            «IF hasCategorisableEntities»
-                $this->featureActivationHelper = $featureActivationHelper;
-                $this->categoryHelper = $categoryHelper;
-            «ENDIF»
         }
 
         «setTranslatorMethod»
@@ -261,16 +237,6 @@ class SearchHelper {
                     if (!$this->permissionHelper->mayRead($entity)) {
                         continue;
                     }
-                    «IF hasCategorisableEntities»
-
-                        if (in_array($objectType, ['«getCategorisableEntities.map[name.formatForCode].join('\', \'')»'], true)) {
-                            if ($this->featureActivationHelper->isEnabled(FeatureActivationHelper::CATEGORIES, $objectType)) {
-                                if (!$this->categoryHelper->hasPermission($entity)) {
-                                    continue;
-                                }
-                            }
-                        }
-                    «ENDIF»
 
                     $description = !empty($descriptionFieldName) ? strip_tags($entity[$descriptionFieldName]) : '';
                     «IF targets('3.0')»

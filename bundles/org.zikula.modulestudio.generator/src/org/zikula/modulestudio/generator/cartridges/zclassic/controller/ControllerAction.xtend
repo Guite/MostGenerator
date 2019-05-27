@@ -115,11 +115,6 @@ class ControllerAction {
         switch it {
             ViewAction:
                 if (app.targets('3.0')) {
-                    if (refEntity.categorisable) {
-                        ' * @param CategoryHelper $categoryHelper\n'
-                      + ' * @param FeatureActivationHelper $featureActivationHelper\n'
-                    } else {''}
-                    +
                     if (refEntity.loggable) '@param LoggableHelper $loggableHelper\n' else ''
                 } else {''}
                + ' * @param string $sort Sorting field\n'
@@ -129,11 +124,6 @@ class ControllerAction {
             DisplayAction:
                 if (app.targets('3.0')) {
                     ' * @param EntityFactory $entityFactory\n'
-                    +
-                    if (refEntity.categorisable) {
-                        ' * @param CategoryHelper $categoryHelper\n'
-                      + ' * @param FeatureActivationHelper $featureActivationHelper\n'
-                    } else {''}
                     +
                     if (refEntity.loggable) '@param LoggableHelper $loggableHelper\n' else ''
                     +
@@ -196,10 +186,6 @@ class ControllerAction {
             PermissionHelper $permissionHelper,
             ControllerHelper $controllerHelper,
             ViewHelper $viewHelper,
-            «IF categorisable»
-                CategoryHelper $categoryHelper,
-                FeatureActivationHelper $featureActivationHelper,
-            «ENDIF»
             «IF loggable»
                 LoggableHelper $loggableHelper,
             «ENDIF»
@@ -219,7 +205,7 @@ class ControllerAction {
     '''
     def private dispatch methodArgsCall(Entity it, ViewAction action, Boolean isAdmin) {
         if (application.targets('3.0')) {
-            '''$request, $permissionHelper, $controllerHelper, $viewHelper, «IF categorisable»$categoryHelper, $featureActivationHelper, «ENDIF»«IF loggable»$loggableHelper, «ENDIF»$sort, $sortdir, $pos, $num, «isAdmin.displayBool»'''
+            '''$request, $permissionHelper, $controllerHelper, $viewHelper, «IF loggable»$loggableHelper, «ENDIF»$sort, $sortdir, $pos, $num, «isAdmin.displayBool»'''
         } else {
             '''$request, $sort, $sortdir, $pos, $num, «isAdmin.displayBool»'''
         }
@@ -232,10 +218,6 @@ class ControllerAction {
             ControllerHelper $controllerHelper,
             ViewHelper $viewHelper,
             EntityFactory $entityFactory,
-            «IF categorisable»
-                CategoryHelper $categoryHelper,
-                FeatureActivationHelper $featureActivationHelper,
-            «ENDIF»
             «IF loggable»
                 LoggableHelper $loggableHelper,
             «ENDIF»
@@ -254,7 +236,7 @@ class ControllerAction {
     '''
     def private dispatch methodArgsCall(Entity it, DisplayAction action, Boolean isAdmin) {
         if (application.targets('3.0')) {
-            '''$request, $permissionHelper, $controllerHelper, $viewHelper, $entityFactory, «IF categorisable»$categoryHelper, $featureActivationHelper, «ENDIF»«IF loggable»$loggableHelper, «ENDIF»«IF app.generateIcsTemplates && hasStartAndEndDateField» $entityDisplayHelper, «ENDIF»$«name.formatForCode», $«IF hasUniqueSlug»slug«ELSE»id«ENDIF», «isAdmin.displayBool»'''
+            '''$request, $permissionHelper, $controllerHelper, $viewHelper, $entityFactory, «IF loggable»$loggableHelper, «ENDIF»«IF app.generateIcsTemplates && hasStartAndEndDateField» $entityDisplayHelper, «ENDIF»$«name.formatForCode», $«IF hasUniqueSlug»slug«ELSE»id«ENDIF», «isAdmin.displayBool»'''
         } else {
             '''$request, $«name.formatForCode», $«IF hasUniqueSlug»slug«ELSE»id«ENDIF», «isAdmin.displayBool»'''
         }
