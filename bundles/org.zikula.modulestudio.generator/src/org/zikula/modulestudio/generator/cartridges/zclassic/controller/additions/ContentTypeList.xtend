@@ -265,6 +265,7 @@ class ContentTypeList {
             $data = $this->getData();
             $options['object_type'] = $data['objectType'];
             «IF hasCategorisableEntities»
+                $this->categorisableObjectTypes = [«FOR entity : getCategorisableEntities SEPARATOR ', '»'«entity.name.formatForCode»'«ENDFOR»];
                 $options['is_categorisable'] = in_array($this->data['objectType'], $this->categorisableObjectTypes);
                 $options['category_helper'] = $this->categoryHelper;
                 $options['feature_activation_helper'] = $this->featureActivationHelper;
