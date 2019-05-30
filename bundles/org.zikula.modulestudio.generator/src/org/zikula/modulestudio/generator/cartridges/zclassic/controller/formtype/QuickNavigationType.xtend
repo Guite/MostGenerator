@@ -564,7 +564,6 @@ class QuickNavigationType {
 
     def private dispatch additionalOptions(UserField it) '''
         'placeholder' => $this->__('All'),
-        // Zikula core should provide a form type for this to hide entity details
         'class' => UserEntity::class,
         'choice_label' => 'uname'
     '''

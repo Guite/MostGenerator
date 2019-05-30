@@ -565,7 +565,6 @@ class SharedFormTypeFields {
     '''
     def private dispatch additionalOptions(IntegerField it) '''
         «IF isUserGroupSelector»
-            // Zikula core should provide a form type for this to hide entity details
             'class' => 'ZikulaGroupsModule:GroupEntity',
             'choice_label' => 'name',
             'choice_value' => 'gid'
