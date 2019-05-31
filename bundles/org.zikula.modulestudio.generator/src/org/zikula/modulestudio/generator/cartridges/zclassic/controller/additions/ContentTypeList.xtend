@@ -91,7 +91,7 @@ class ContentTypeList {
         /**
          * @var PermissionHelper
          */
-        protected $permissionHelper;
+        protected $modulePermissionHelper;
 
         /**
          * @var EntityFactory
@@ -217,7 +217,7 @@ class ContentTypeList {
             }
 
             // filter by permissions
-            $entities = $this->permissionHelper->filterCollection($objectType, $entities, ACCESS_VIEW);
+            $entities = $this->modulePermissionHelper->filterCollection($objectType, $entities, ACCESS_VIEW);
 
             $data = $this->data;
             $data['items'] = $entities;
@@ -299,9 +299,9 @@ class ContentTypeList {
              * @required
              */
         «ENDIF»
-        public function setPermissionHelper(PermissionHelper $permissionHelper)«IF targets('3.0')»: void«ENDIF»
+        public function setModulePermissionHelper(PermissionHelper $permissionHelper)«IF targets('3.0')»: void«ENDIF»
         {
-            $this->permissionHelper = $permissionHelper;
+            $this->modulePermissionHelper = $permissionHelper;
         }
 
         «IF targets('3.0')»

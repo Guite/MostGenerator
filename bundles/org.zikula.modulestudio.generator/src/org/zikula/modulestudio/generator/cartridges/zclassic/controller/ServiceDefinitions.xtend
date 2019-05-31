@@ -1217,7 +1217,7 @@ class ServiceDefinitions {
                 calls:
                     - [setControllerHelper, ['@«modPrefix».controller_helper']]
                     - [setModelHelper, ['@«modPrefix».model_helper']]
-                    - [setPermissionHelper, ['@«modPrefix».permission_helper']]
+                    - [setModulePermissionHelper, ['@«modPrefix».permission_helper']]
                     - [setEntityFactory, ['@«modPrefix».entity_factory']]
                     «IF hasCategorisableEntities»
                         - [setCategoryDependencies, ['@«modPrefix».category_helper', '@«modPrefix».feature_activation_helper']]
