@@ -315,7 +315,7 @@ class BlockList {
             }
 
             // filter by permissions
-            $entities = «IF targets('3.0')»$this->permissionHelper«ELSE»$this->get('«appService».permission_helper')«ENDIF»->filterCollection($objectType, $entities, ACCESS_VIEW);
+            $entities = «IF targets('3.0')»$this->permissionHelper«ELSE»$this->get('«appService».permission_helper')«ENDIF»->filterCollection($objectType, $entities, ACCESS_READ);
 
             // set a block title
             if (empty($properties['title'])) {

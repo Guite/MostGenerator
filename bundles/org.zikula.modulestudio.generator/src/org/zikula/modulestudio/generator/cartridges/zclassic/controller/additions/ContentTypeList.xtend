@@ -217,7 +217,7 @@ class ContentTypeList {
             }
 
             // filter by permissions
-            $entities = $this->modulePermissionHelper->filterCollection($objectType, $entities, ACCESS_VIEW);
+            $entities = $this->modulePermissionHelper->filterCollection($objectType, $entities, ACCESS_READ);
 
             $data = $this->data;
             $data['items'] = $entities;
@@ -561,7 +561,7 @@ class ContentTypeList {
             }
 
             // filter by permissions
-            $entities = $this->container->get('«appService».permission_helper')->filterCollection($objectType, $entities, ACCESS_VIEW);
+            $entities = $this->container->get('«appService».permission_helper')->filterCollection($objectType, $entities, ACCESS_READ);
 
             $data = [
                 'objectType' => $this->objectType,

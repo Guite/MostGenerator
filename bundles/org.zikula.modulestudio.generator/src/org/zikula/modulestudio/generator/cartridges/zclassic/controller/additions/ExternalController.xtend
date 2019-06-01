@@ -350,7 +350,7 @@ class ExternalController {
         list($entities, $objectCount) = $repository->retrieveCollectionResult($query, true);
 
         // filter by permissions
-        $entities = «IF targets('3.0')»$permissionHelper«ELSE»$this->get('«appService».permission_helper')«ENDIF»->filterCollection($objectType, $entities, ACCESS_VIEW);
+        $entities = «IF targets('3.0')»$permissionHelper«ELSE»$this->get('«appService».permission_helper')«ENDIF»->filterCollection($objectType, $entities, ACCESS_READ);
 
         $templateParameters['items'] = $entities;
         $templateParameters['finderForm'] = $form->createView();
