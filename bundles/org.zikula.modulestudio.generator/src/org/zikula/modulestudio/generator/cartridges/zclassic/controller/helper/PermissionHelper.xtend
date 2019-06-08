@@ -268,8 +268,8 @@ class PermissionHelper {
     }
 
     def dispatch private inheritedPermissionCheck(Entity it, JoinRelationship relation) '''
-        if (null !== $«name.formatForCode»->get«relation.getRelationAliasName(false).formatForCodeCapital»()) {
-            $parent = $«name.formatForCode»->get«relation.getRelationAliasName(false).formatForCodeCapital»();
+        if (null !== $entity->get«relation.getRelationAliasName(false).formatForCodeCapital»()) {
+            $parent = $entity->get«relation.getRelationAliasName(false).formatForCodeCapital»();
             if (!$this->hasEntityPermission($parent, $permissionLevel, $userId)) {
                 return false;
             }
@@ -280,7 +280,7 @@ class PermissionHelper {
         «IF relation.inheritPermissions == ManyToManyPermissionInheritanceType.AFFIRMATIVE»
             $parentAccess = false;
         «ENDIF»
-        foreach ($«name.formatForCode»->get«relation.getRelationAliasName(false).formatForCodeCapital»() as $parent) {
+        foreach ($entity->get«relation.getRelationAliasName(false).formatForCodeCapital»() as $parent) {
             «IF relation.inheritPermissions == ManyToManyPermissionInheritanceType.AFFIRMATIVE»
                 if ($this->hasEntityPermission($parent, $permissionLevel, $userId)) {
                     $parentAccess = true;
