@@ -1,9 +1,13 @@
 # ModuleStudio Generator - MDSD for Zikula
 
-ModuleStudio is an IDE for modeling and generating applications
-for the [Zikula application framework](https://github.com/zikula/core/).
+ModuleStudio is a model-driven development environment with which one can quickly,
+simply and efficiently describe and generate web applications. Create complex
+modules in a few steps and meet individual project requirements with them.
 
-The issue tracker can be found at [this github project](https://github.com/Guite/MostGenerator/issues).
+The generated applications can be used with the [Zikula application framework](https://github.com/zikula/core/)
+which is based on [Symfony](https://github.com/symfony/symfony/).
+
+The issue tracker for ModuleStudio can be found at [this github project](https://github.com/Guite/MostGenerator/issues).
 
 For more information visit [the project homepage](https://modulestudio.de/).
 
