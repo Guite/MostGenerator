@@ -31,12 +31,12 @@ class LoggableListener {
 
         protected function prePersistLogEntry($logEntry, $object)
         {
-            parent::prePersistLogEntry($logEntry, $object);
-
             /** @var EntityAccess $object */
             if (!$this->isEntityManagedByThisBundle($object) || !method_exists($object, 'get_objectType')) {
                 return;
             }
+
+            parent::prePersistLogEntry($logEntry, $object);
 
             $objectType = $object->get_objectType();
 
