@@ -227,9 +227,9 @@ class NotificationHelper {
         /**
          * Collects the recipients.
          *
-         * @param boolean $debug Whether to add the admin or not
+         * @param bool $debug Whether to add the admin or not
          */
-        protected function collectRecipients($debug = false)
+        protected function collectRecipients(«IF targets('3.0')»bool «ENDIF»$debug = false)
         {
             $this->recipients = [];
 
