@@ -35,6 +35,11 @@ class EntityTreeType {
              */
             protected $entityDisplayHelper;
 
+            /**
+             * @var array
+             */
+            protected $labelMap;
+
             public function __construct(EntityDisplayHelper $entityDisplayHelper)
             {
                 $this->entityDisplayHelper = $entityDisplayHelper;
@@ -53,7 +58,9 @@ class EntityTreeType {
                         'attr' => [
                             'class' => 'entity-tree'
                         ],
-                        'choice_label' => null«IF !targets('2.0')»,«ENDIF»«/*
+                        'choice_label' => function ($choice, $key, $value) {
+                            return isset($this->labelMap[$key]) ? $this->labelMap[$key] : $key;
+                        }«IF !targets('2.0')»,«ENDIF»«/*
                         'query_builder' => function (EntityRepository $er) {
                             return $er->selectTree($options['root'], $options['use_joins']);
                         },*/»
@@ -104,7 +111,9 @@ class EntityTreeType {
                             continue;
                         }
 
-                        $choices[$this->createChoiceLabel($node, $options['include_root_nodes'])] = $node;
+                        $nodeId = $node['id'];
+                        $this->labelMap[$nodeId] = $this->createChoiceLabel($node, $options['include_root_nodes']);
+                        $choices[$nodeId] = $node;
                     }
                 }
 
