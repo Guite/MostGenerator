@@ -81,6 +81,7 @@ class QuickNavigationType {
         «IF !incomingRelations.empty»
             use Symfony\Component\HttpFoundation\RequestStack;
         «ENDIF»
+        use Symfony\Component\OptionsResolver\OptionsResolver;
         «IF hasLocaleFieldsEntity»
             use Zikula\Bundle\FormExtensionBundle\Form\Type\LocaleType;
         «ENDIF»
@@ -280,6 +281,13 @@ class QuickNavigationType {
             public function getBlockPrefix()
             {
                 return '«app.appName.formatForDB»_«name.formatForDB»quicknav';
+            }
+
+            public function configureOptions(OptionsResolver $resolver)
+            {
+                $resolver->setDefaults([
+                    'csrf_protection' => false
+                ]);
             }
         }
     '''
