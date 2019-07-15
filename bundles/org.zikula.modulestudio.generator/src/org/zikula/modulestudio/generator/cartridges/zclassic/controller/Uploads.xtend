@@ -74,7 +74,7 @@ class Uploads {
             <IfModule mod_authz_core.c>
                 Require all granted
             </IfModule>
-        </filesmatch>
+        </FilesMatch>
     '''
 
     def private htAccessTemplate(Application it) '''
@@ -105,6 +105,6 @@ class Uploads {
             <IfModule mod_authz_core.c>
                 Require all granted
             </IfModule>
-        </filesmatch>
+        </FilesMatch>
     '''
 }
