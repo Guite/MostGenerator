@@ -198,7 +198,7 @@ class Property {
         «IF isIndexByField/* || (null !== aggregateFor && !aggregateFor.empty*/»
             «fh.getterMethod(it, name.formatForCode, fieldTypeAsString(true), false, nullable, application.targets('3.0'))»
         «ELSE»
-            «fh.getterAndSetterMethods(it, name.formatForCode, fieldTypeAsString(true), false, nullable, application.targets('3.0'), '', '')»
+            «fh.getterAndSetterMethods(it, name.formatForCode, fieldTypeAsString(true), false, nullable || primaryKey, application.targets('3.0'), '', '')»
         «ENDIF»
     '''
 

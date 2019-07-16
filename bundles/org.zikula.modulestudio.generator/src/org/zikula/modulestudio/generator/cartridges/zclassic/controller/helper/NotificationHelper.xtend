@@ -355,7 +355,7 @@ class NotificationHelper {
                 $message->setFrom([$adminMail => $siteName]);
                 $message->setTo([$recipient['email'] => $recipient['name']]);
 
-                $totalResult &= $this->mailerApi->sendMessage($message, $subject, $body, $altBody, $html);
+                $totalResult = $totalResult && $this->mailerApi->sendMessage($message, $subject, $body, $altBody, $html);
             }
 
             return $totalResult;

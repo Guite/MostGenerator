@@ -145,7 +145,7 @@ class EntityMethods {
          * @return int The identifier
          «ENDIF»
          */
-        public function getKey()«IF application.targets('3.0')»: int«ENDIF»
+        public function getKey()«IF application.targets('3.0')»: ?int«ENDIF»
         {
             return $this->get«getPrimaryKey.name.formatForCodeCapital»();
         }

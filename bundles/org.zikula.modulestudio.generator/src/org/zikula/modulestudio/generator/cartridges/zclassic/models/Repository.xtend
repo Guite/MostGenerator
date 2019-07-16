@@ -348,7 +348,7 @@ class Repository {
          *
          * @return array Retrieved «name.formatForCodeCapital»Entity instances
          */
-        public function selectByIdList(array $idList = [0], «IF application.targets('3.0')»bool «ENDIF»$useJoins = true, «IF application.targets('3.0')»bool «ENDIF»$slimMode = false)«IF application.targets('3.0')»: array«ENDIF»
+        public function selectByIdList(array $idList = [0], «IF application.targets('3.0')»bool «ENDIF»$useJoins = true, «IF application.targets('3.0')»bool «ENDIF»$slimMode = false)«IF application.targets('3.0')»: ?array«ENDIF»
         {
             $qb = $this->genericBaseQuery('', '', $useJoins, $slimMode);
             $qb = $this->addIdListFilter($idList, $qb);
