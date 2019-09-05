@@ -42,13 +42,13 @@ class CommonIntegrationTemplates {
                 «val textFields = fields.filter(TextField)»
                 «IF !textFields.empty»
                     {% if «name.formatForCode».«textFields.head.name.formatForCode» %}
-                        <dd>{{ «name.formatForCode».«textFields.head.name.formatForCode»|striptags|truncate(200, true, '&hellip;') }}</dd>
+                        <dd>{{ «name.formatForCode».«textFields.head.name.formatForCode»|striptags|truncate(200, true, '…') }}</dd>
                     {% endif %}
                 «ELSE»
                     «val stringFields = fields.filter(StringField).filter[role != StringRole.PASSWORD]»
                     «IF !stringFields.empty»
                         {% if «name.formatForCode».«stringFields.head.name.formatForCode» %}
-                            <dd>{{ «name.formatForCode».«stringFields.head.name.formatForCode»|striptags|truncate(200, true, '&hellip;') }}</dd>
+                            <dd>{{ «name.formatForCode».«stringFields.head.name.formatForCode»|striptags|truncate(200, true, '…') }}</dd>
                         {% endif %}
                     «ENDIF»
                 «ENDIF»
