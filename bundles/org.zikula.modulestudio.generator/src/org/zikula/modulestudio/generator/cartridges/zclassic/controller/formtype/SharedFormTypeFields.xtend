@@ -679,7 +679,9 @@ class SharedFormTypeFields {
     def private regexWithoutLeadingAndTrailingSlashes(AbstractStringField it) '''«regexp.replaceAll('\'', '').replaceAll('^/+', '').replaceAll('/+$', '')»'''
 
     def private dispatch formType(UploadField it) '''Upload'''
-    def private dispatch additionalAttributes(UploadField it) ''''''
+    def private dispatch additionalAttributes(UploadField it) '''
+        'accept' => '.' . implode(',.', $this->uploadHelper->getAllowedFileExtensions('«IF null !== entity»«entity.name.formatForCode»«ELSE»«varContainer.name.formatForCode»«ENDIF»', '«name.formatForCode»')),
+    '''
     def private dispatch requiredOption(UploadField it) '''
         'required' => «mandatory.displayBool» && $options['mode'] == 'create',
     '''

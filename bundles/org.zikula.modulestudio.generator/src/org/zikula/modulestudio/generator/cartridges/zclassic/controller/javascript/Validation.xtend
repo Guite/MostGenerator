@@ -63,7 +63,7 @@ class Validation {
                 }
 
                 fileExtension = '.' + val.substr(val.lastIndexOf('.') + 1);
-                allowedExtensions = jQuery('#' + elem.attr('id') + 'FileExtensions').text();
+                allowedExtensions = jQuery('#' + elem.attr('id').replace(':', '\\:') + 'FileExtensions').text();
                 allowedExtensions = '(.' + allowedExtensions.replace(/, /g, '|.').replace(/,/g, '|.') + ')$';
                 allowedExtensions = new RegExp(allowedExtensions, 'i');
 
