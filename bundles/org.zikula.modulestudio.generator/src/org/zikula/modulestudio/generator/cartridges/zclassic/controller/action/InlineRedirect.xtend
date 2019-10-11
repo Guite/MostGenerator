@@ -43,7 +43,6 @@ class InlineRedirect {
          «ENDIF»
          «ELSE»
          *
-         * @inheritDoc
          * @Route("/«name.formatForCode»/handleInlineRedirect/{idPrefix}/{commandName}/{id}",
          *        requirements = {"id" = "\d+"},
          *        defaults = {"commandName" = "", "id" = 0},

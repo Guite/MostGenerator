@@ -60,7 +60,6 @@ class LoggableUndelete {
          * @throws AccessDeniedException Thrown if the user doesn't have required permissions
          * @throws NotFoundHttpException Thrown if «name.formatForDisplay» to be displayed isn't found
          «ELSE»
-         * @inheritDoc
          * @Route("/«IF isAdmin»admin/«ENDIF»«name.formatForCode»/deleted/{id}.{_format}",
          *        requirements = {"id" = "\d+", "_format" = "html"},
          *        defaults = {"_format" = "html"},

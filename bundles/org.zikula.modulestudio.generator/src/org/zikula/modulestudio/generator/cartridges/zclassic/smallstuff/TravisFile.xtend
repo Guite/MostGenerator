@@ -20,12 +20,12 @@ class TravisFile {
         sudo: false
 
         php:
-        «IF !targets('3.0')»
+          «IF !targets('3.0')»
           - 5.5
           - 5.6
           - 7.0
           - 7.1
-        «ENDIF»
+          «ENDIF»
           - 7.2
           - 7.3
           - nightly

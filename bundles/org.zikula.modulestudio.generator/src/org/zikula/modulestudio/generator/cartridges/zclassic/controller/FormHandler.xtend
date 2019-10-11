@@ -1441,7 +1441,6 @@ class FormHandler {
 
     def private dispatch applyAction(Entity it) '''
         /**
-         * @inheritDoc
          * @throws RuntimeException Thrown if concurrent editing is recognised or another error occurs
          */
         public function applyAction(array $args = [])«IF app.targets('3.0')»: bool«ENDIF»

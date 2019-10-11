@@ -147,7 +147,6 @@ class AjaxController {
          «ENDIF»
          «ELSE»
          *
-         * @inheritDoc
          * @Route("/getItemListFinder", methods = {"GET"}, options={"expose"=true})
          «ENDIF»
          */
@@ -300,7 +299,6 @@ class AjaxController {
          «ENDIF»
          «ELSE»
          *
-         * @inheritDoc
          * @Route("/getItemListAutoCompletion", methods = {"GET"}, options={"expose"=true})
          «ENDIF»
          */
@@ -429,7 +427,6 @@ class AjaxController {
          «ENDIF»
          * @throws AccessDeniedException Thrown if the user doesn't have required permissions
          «ELSE»
-         * @inheritDoc
          * @Route("/checkForDuplicate", methods = {"GET"}, options={"expose"=true})
          «ENDIF»
          */
@@ -545,7 +542,6 @@ class AjaxController {
          «ENDIF»
          * @throws AccessDeniedException Thrown if the user doesn't have required permissions
          «ELSE»
-         * @inheritDoc
          * @Route("/toggleFlag", methods = {"POST"}, options={"expose"=true})
          «ENDIF»
          */
@@ -636,7 +632,6 @@ class AjaxController {
          «ENDIF»
          * @throws AccessDeniedException Thrown if the user doesn't have required permissions
          «ELSE»
-         * @inheritDoc
          * @Route("/handleTreeOperation", methods = {"POST"}, options={"expose"=true})
          «ENDIF»
          */
@@ -997,7 +992,6 @@ class AjaxController {
          «ENDIF»
          * @throws AccessDeniedException Thrown if the user doesn't have required permissions
          «ELSE»
-         * @inheritDoc
          * @Route("/updateSortPositions", methods = {"POST"}, options={"expose"=true})
          «ENDIF»
          */
@@ -1093,7 +1087,6 @@ class AjaxController {
          «ENDIF»
          * @throws AccessDeniedException Thrown if the user doesn't have required permissions
          «ELSE»
-         * @inheritDoc
          * @Route("/attachHookObject", methods = {"POST"}, options={"expose"=true})
          «ENDIF»
          */
@@ -1112,7 +1105,6 @@ class AjaxController {
          «ENDIF»
          * @throws AccessDeniedException Thrown if the user doesn't have required permissions
          «ELSE»
-         * @inheritDoc
          * @Route("/detachHookObject", methods = {"POST"}, options={"expose"=true})
          «ENDIF»
          */

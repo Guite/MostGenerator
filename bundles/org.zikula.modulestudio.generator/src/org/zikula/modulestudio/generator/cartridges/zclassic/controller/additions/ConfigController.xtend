@@ -84,7 +84,6 @@ class ConfigController {
          «ENDIF»
          * @throws AccessDeniedException Thrown if the user doesn't have required permissions
          «ELSE»
-         * @inheritDoc
          * @Route("/config",
          *        methods = {"GET", "POST"}
          * )

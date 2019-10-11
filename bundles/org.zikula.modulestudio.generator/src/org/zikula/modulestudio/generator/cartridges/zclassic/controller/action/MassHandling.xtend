@@ -57,7 +57,6 @@ class MassHandling {
          *
          * @throws RuntimeException Thrown if executing the workflow action fails
          «ELSE»
-         * @inheritDoc
          * @Route("/«IF isAdmin»admin/«ENDIF»«nameMultiple.formatForCode»/handleSelectedEntries",
          *        methods = {"POST"}
          * )

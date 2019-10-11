@@ -235,7 +235,7 @@ class Repository {
             protected $mainEntityClass = '«entityClassName('', false)»';
 
             /**
-             * @inheritDoc
+             * @return string[]
              */
             public function getAllowedSortingFields()
             {
