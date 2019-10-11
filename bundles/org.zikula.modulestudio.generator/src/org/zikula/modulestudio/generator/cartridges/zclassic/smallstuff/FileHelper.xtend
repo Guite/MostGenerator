@@ -128,7 +128,7 @@ class FileHelper {
         «IF nullable»
             $this->«name» = $«name»;
         «ELSE»
-            $this->«name» = «IF app.targets('3.0')»$«name» ?? ''«ELSE»isset($«name») ? $«name» : «fallbackValue»«ENDIF»;
+            $this->«name» = «IF app.targets('3.0')»$«name» ?? «fallbackValue»«ELSE»isset($«name») ? $«name» : «fallbackValue»«ENDIF»;
         «ENDIF»
     '''
     def private dispatch fallbackValue(DerivedField it) {
