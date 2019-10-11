@@ -135,7 +135,7 @@ class FileHelper {
         ''
     }
     def private dispatch fallbackValue(ArrayField it) {
-        []
+        '[]'
     }
 
     def private dispatch setterAssignment(BooleanField it, String name) '''
