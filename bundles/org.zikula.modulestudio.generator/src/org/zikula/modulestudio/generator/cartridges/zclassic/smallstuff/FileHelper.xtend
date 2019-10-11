@@ -132,7 +132,7 @@ class FileHelper {
         «ENDIF»
     '''
     def private dispatch fallbackValue(DerivedField it) {
-        ''
+        '\'\''
     }
     def private dispatch fallbackValue(ArrayField it) {
         '[]'
