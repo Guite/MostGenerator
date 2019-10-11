@@ -2,6 +2,7 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff
 
 import de.guite.modulestudio.metamodel.AbstractIntegerField
 import de.guite.modulestudio.metamodel.Application
+import de.guite.modulestudio.metamodel.ArrayField
 import de.guite.modulestudio.metamodel.BooleanField
 import de.guite.modulestudio.metamodel.DatetimeField
 import de.guite.modulestudio.metamodel.DerivedField
@@ -127,9 +128,15 @@ class FileHelper {
         «IF nullable»
             $this->«name» = $«name»;
         «ELSE»
-            $this->«name» = «IF app.targets('3.0')»$«name» ?? ''«ELSE»isset($«name») ? $«name» : ''«ENDIF»;
+            $this->«name» = «IF app.targets('3.0')»$«name» ?? ''«ELSE»isset($«name») ? $«name» : «fallbackValue»«ENDIF»;
         «ENDIF»
     '''
+    def private dispatch fallbackValue(DerivedField it) {
+        ''
+    }
+    def private dispatch fallbackValue(ArrayField it) {
+        []
+    }
 
     def private dispatch setterAssignment(BooleanField it, String name) '''
         $this->«name» = «IF !app.targets('3.0')»(bool)«ENDIF»$«name»;
