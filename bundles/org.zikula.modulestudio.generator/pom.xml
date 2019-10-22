@@ -10,8 +10,9 @@
 
     <parent>
         <groupId>org.zikula.modulestudio.generator</groupId>
-        <artifactId>org.zikula.modulestudio.generator.bundles</artifactId>
+        <artifactId>bundles</artifactId>
         <version>1.4.0-SNAPSHOT</version>
+        <relativePath>../pom.tycho</relativePath>
     </parent>
 
     <build>
