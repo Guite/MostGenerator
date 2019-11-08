@@ -159,9 +159,8 @@ class ContentTypeList {
             «IF hasCategorisableEntities»
 
                 $objectType = $data['objectType'];
+                $this->categorisableObjectTypes = [«FOR entity : getCategorisableEntities SEPARATOR ', '»'«entity.name.formatForCode»'«ENDFOR»];
                 if ($this->featureActivationHelper->isEnabled(FeatureActivationHelper::CATEGORIES, $objectType)) {
-                    $this->categorisableObjectTypes = [«FOR entity : getCategorisableEntities SEPARATOR ', '»'«entity.name.formatForCode»'«ENDFOR»];
-
                     $primaryRegistry = $this->categoryHelper->getPrimaryProperty($objectType);
                     if (!isset($data['categories'])) {
                         $data['categories'] = [$primaryRegistry => []];
