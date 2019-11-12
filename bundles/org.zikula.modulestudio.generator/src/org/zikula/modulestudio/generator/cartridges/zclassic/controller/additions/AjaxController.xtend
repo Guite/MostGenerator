@@ -367,7 +367,14 @@ class AjaxController {
                 «ENDIF»
                 $itemDescription = isset($item[$descriptionFieldName]) && !empty($item[$descriptionFieldName]) ? $item[$descriptionFieldName] : '';//$this->__('No description yet.')
                 if (!empty($itemDescription)) {
-                    $itemDescription = substr(strip_tags($itemDescription), 0, 50) . '&hellip;';
+                    $itemDescription = strip_tags($itemDescription);
+                    $descriptionLength = 50;
+                    if (strlen($itemDescription) > $descriptionLength) {
+                        if (false !== ($breakpoint = strpos($itemDescription, ' ', $descriptionLength))) {
+                            $descriptionLength = $breakpoint;
+                            $itemDescription = rtrim(substr($itemDescription, 0, $descriptionLength)) . '&hellip;';
+                        }
+                    }
                 }
 
                 $resultItem = [
