@@ -227,19 +227,19 @@ class ServiceDefinitions {
 
     def private authentication(Application it) '''
         services:
-            «modPrefix».authentication_method.«name.formatForDB»_authentication
-            class: «appNamespace»\AuthenticationMethod\«name.formatForCodeCapital»AuthenticationMethod
-            arguments:
-                - "@translator.default"
-                - "@request_stack"
-                «IF authenticationMethod == AuthMethodType.REMOTE»
-                    - "@router"
-                «ENDIF»
-                - "@«modPrefix».entity_factory"
-                - "@zikula_extensions_module.api.variable"
-                - "@zikula_zauth_module.api.password"
-            tags:
-                - { name: zikula.authentication_method, alias: '«name.formatForDB»_authentication' }
+            «modPrefix».authentication_method.«name.formatForDB»_authentication:
+                class: «appNamespace»\AuthenticationMethod\«name.formatForCodeCapital»AuthenticationMethod
+                arguments:
+                    - "@translator.default"
+                    - "@request_stack"
+                    «IF authenticationMethod == AuthMethodType.REMOTE»
+                        - "@router"
+                    «ENDIF»
+                    - "@«modPrefix».entity_factory"
+                    - "@zikula_extensions_module.api.variable"
+                    - "@zikula_zauth_module.api.password"
+                tags:
+                    - { name: zikula.authentication_method, alias: '«name.formatForDB»_authentication' }
     '''
 
     def private appSettings(Application it) '''
