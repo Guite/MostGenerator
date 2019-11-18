@@ -329,7 +329,7 @@ class ValidationConstraints {
          */
         public function is«name.formatForCodeCapital»UserValid()«IF application.targets('3.0')»: bool«ENDIF»
         {
-            return «IF !mandatory»null === $this['«name.formatForCode»'] || «ENDIF»$this['«name.formatForCode»'] instanceof UserEntity;
+            return «IF !mandatory»«IF nullable»null«ELSE»0«ENDIF» === $this['«name.formatForCode»'] || «ENDIF»$this['«name.formatForCode»'] instanceof UserEntity;
         }
     '''
 
