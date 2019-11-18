@@ -16,7 +16,6 @@ import de.guite.modulestudio.metamodel.ManyToOneRelationship
 import de.guite.modulestudio.metamodel.OneToManyRelationship
 import de.guite.modulestudio.metamodel.OneToOneRelationship
 import de.guite.modulestudio.metamodel.RelationEditMode
-import de.guite.modulestudio.metamodel.UserField
 import de.guite.modulestudio.metamodel.ViewAction
 
 /**
@@ -180,7 +179,7 @@ class ControllerExtensions {
      * may not only contain integers.
      */
     def notOnlyNumericInteger(DerivedField it) {
-        it instanceof UserField || (it instanceof IntegerField && (it as IntegerField).isUserGroupSelector)
+        it instanceof IntegerField && (it as IntegerField).isUserGroupSelector
     }
 
     /**

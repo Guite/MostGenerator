@@ -9,6 +9,7 @@ import de.guite.modulestudio.metamodel.DerivedField
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.IntegerField
 import de.guite.modulestudio.metamodel.NumberField
+import de.guite.modulestudio.metamodel.UserField
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
@@ -142,6 +143,16 @@ class FileHelper {
         $this->«name» = «IF !app.targets('3.0')»(bool)«ENDIF»$«name»;
     '''
 
+    def private dispatch setterAssignment(UserField it, String name) '''
+        «IF nullable»
+            $this->«name» = $«name»;
+        «ELSE»
+            if ($«name» instanceof UserEntity) {
+                $this->«name» = $«name»;
+            }
+        «ENDIF»
+    '''
+
     def private setterAssignmentNumeric(DerivedField it, String name) '''
         «val aggregators = getAggregatingRelationships»
         «IF !aggregators.empty»
@@ -159,6 +170,12 @@ class FileHelper {
         if («numericCast('$this->' + name.formatForCode)» !== «IF app.targets('3.0')»$«name»«ELSE»«numericCast('$' + name)»«ENDIF») {
             «triggerPropertyChangeListeners(name)»
             «setterAssignmentNumeric(name)»
+        }
+    '''
+    def private dispatch setterMethodImpl(UserField it, String name, String type, Boolean nullable) '''
+        if ($this->«name.formatForCode» !== $«name») {
+            «triggerPropertyChangeListeners(name)»
+            «setterAssignment(name)»
         }
     '''
     def private dispatch setterMethodImpl(NumberField it, String name, String type, Boolean nullable) '''

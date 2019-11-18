@@ -198,6 +198,13 @@ class ModelExtensions {
     }
 
     /**
+     * Checks whether the application contains at least one non-nullable user field.
+     */
+    def hasNonNullableUserFields(Application it) {
+        !getAllEntityFields.filter(UserField).filter[!nullable].empty
+    }
+
+    /**
      * Checks whether the application contains at least one user variable.
      */
     def hasUserVariables(Application it) {

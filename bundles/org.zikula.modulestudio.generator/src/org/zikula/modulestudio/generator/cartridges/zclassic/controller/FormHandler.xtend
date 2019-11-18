@@ -6,6 +6,7 @@ import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.EntityWorkflowType
 import de.guite.modulestudio.metamodel.ListField
 import de.guite.modulestudio.metamodel.MappedSuperClass
+import de.guite.modulestudio.metamodel.UserField
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.actionhandler.Locking
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.actionhandler.Redirect
@@ -177,8 +178,11 @@ class FormHandler {
         «ENDIF»
         use Zikula\PageLockModule\Api\ApiInterface\LockingApiInterface;
         use Zikula\UsersModule\Api\ApiInterface\CurrentUserApiInterface;
-        «IF needsApproval»
+        «IF needsApproval || hasNonNullableUserFields»
             use Zikula\UsersModule\Constant as UsersConstant;
+        «ENDIF»
+        «IF hasNonNullableUserFields»
+            use Zikula\UsersModule\Entity\RepositoryInterface\UserRepositoryInterface;
         «ENDIF»
         use «appNamespace»\Entity\Factory\EntityFactory;
         «IF needsFeatureActivationHelper»
@@ -342,6 +346,13 @@ class FormHandler {
                 protected $groupApplicationRepository;
 
             «ENDIF»
+            «IF hasNonNullableUserFields»
+
+                /**
+                 * @var UserRepositoryInterface
+                 */
+                protected $userRepository;
+            «ENDIF»
             /**
              * @var EntityFactory
              */
@@ -423,6 +434,9 @@ class FormHandler {
                 «IF needsApproval»
                     GroupApplicationRepository $groupApplicationRepository,
                 «ENDIF»
+                «IF hasNonNullableUserFields»
+                    UserRepositoryInterface $userRepository,
+                «ENDIF»
                 EntityFactory $entityFactory,
                 ControllerHelper $controllerHelper,
                 ModelHelper $modelHelper,
@@ -444,6 +458,9 @@ class FormHandler {
                 $this->currentUserApi = $currentUserApi;
                 «IF needsApproval»
                     $this->groupApplicationRepository = $groupApplicationRepository;
+                «ENDIF»
+                «IF hasNonNullableUserFields»
+                    $this->userRepository = $userRepository;
                 «ENDIF»
                 $this->entityFactory = $entityFactory;
                 $this->controllerHelper = $controllerHelper;
@@ -1466,6 +1483,15 @@ class FormHandler {
                     if (!$entity->get_actionDescriptionForLogEntry()) {
                         $entity->set_actionDescriptionForLogEntry('_HISTORY_«name.formatForCode.toUpperCase»_UPDATED');
                     }
+                }
+            «ENDIF»
+            «IF !fields.filter(UserField).filter[!nullable].empty»
+                if ('delete' !== $action) {
+                    «FOR field : fields.filter(UserField).filter[!nullable]»
+                        if (!$entity->get«field.name.formatForDisplayCapital»()) {
+                            $entity->set«field.name.formatForDisplayCapital»($this->userRepository->find(UsersConstant::USER_ID_ANONYMOUS));
+                        }
+                    «ENDFOR»
                 }
             «ENDIF»
             «locking.getVersion(it)»

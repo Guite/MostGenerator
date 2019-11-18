@@ -645,6 +645,9 @@ class ServiceDefinitions {
                     «IF needsApproval»
                         - "@zikula_groups_module.group_application_repository"
                     «ENDIF»
+                    «IF hasNonNullableUserFields»
+                        - "@zikula_users_module.user_repository"
+                    «ENDIF»
                     - "@«modPrefix».entity_factory"
                     - "@«modPrefix».controller_helper"
                     - "@«modPrefix».model_helper"
