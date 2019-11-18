@@ -721,6 +721,9 @@ class SharedFormTypeFields {
 
     def private dispatch formType(UserField it) '''UserLiveSearch'''
     def private dispatch additionalAttributes(UserField it) '''
+        «IF !nullable»
+            'empty_data' => 0,
+        «ENDIF»
         'maxlength' => «length»,
     '''
     def private dispatch additionalOptions(UserField it) '''
