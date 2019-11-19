@@ -539,11 +539,16 @@ class WorkflowHelper {
         public function getAmountOfModerationItems(«IF targets('3.0')»string «ENDIF»$objectType = '', «IF targets('3.0')»string «ENDIF»$state = '')«IF targets('3.0')»: int«ENDIF»
         {
             $repository = $this->entityFactory->getRepository($objectType);
+            $collectionFilterHelper = $repository->getCollectionFilterHelper();
+            $repository->setCollectionFilterHelper(null);
 
             $where = 'tbl.workflowState = \'' . $state . '\'';
             $parameters = ['workflowState' => $state];
 
-            return $repository->selectCount($where, false, $parameters);
+            $result = $repository->selectCount($where, false, $parameters);
+            $repository->setCollectionFilterHelper($collectionFilterHelper);
+
+            return $result;
         }
     '''
 
