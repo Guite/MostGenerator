@@ -686,7 +686,7 @@ class ControllerHelper {
          * Example method for performing geocoding in PHP.
          * To use this please extend it or customise it to your needs in the concrete subclass.
          *
-         * You can also easily do geocoding on JS level with some Leaflet plugins, see http://leafletjs.com/plugins.html#geocoding
+         * You can also easily do geocoding on JS level with some Leaflet plugins, see https://leafletjs.com/plugins.html#geocoding
          «IF !targets('3.0')»
          *
          * @param string $address The address input string
