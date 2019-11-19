@@ -178,7 +178,7 @@ class FormHandler {
         «ENDIF»
         use Zikula\PageLockModule\Api\ApiInterface\LockingApiInterface;
         use Zikula\UsersModule\Api\ApiInterface\CurrentUserApiInterface;
-        «IF needsApproval || hasNonNullableUserFields»
+        «IF needsApproval»
             use Zikula\UsersModule\Constant as UsersConstant;
         «ENDIF»
         «IF hasNonNullableUserFields»
@@ -1255,6 +1255,8 @@ class FormHandler {
             «IF app.targets('3.0')»
                 use Zikula\Core\Doctrine\EntityAccess;
             «ENDIF»
+        «ENDIF»
+        «IF ownerPermission || !fields.filter(UserField).filter[!nullable].empty»
             use Zikula\UsersModule\Constant as UsersConstant;
         «ENDIF»
         use «entityClassName('', false)»;
