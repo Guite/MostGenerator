@@ -1488,8 +1488,8 @@ class FormHandler {
             «IF !fields.filter(UserField).filter[!nullable].empty»
                 if ('delete' !== $action) {
                     «FOR field : fields.filter(UserField).filter[!nullable]»
-                        if (!$entity->get«field.name.formatForDisplayCapital»()) {
-                            $entity->set«field.name.formatForDisplayCapital»($this->userRepository->find(UsersConstant::USER_ID_ANONYMOUS));
+                        if (!$entity->get«field.name.formatForCodeCapital»()) {
+                            $entity->set«field.name.formatForCodeCapital»($this->userRepository->find(UsersConstant::USER_ID_ANONYMOUS));
                         }
                     «ENDFOR»
                 }
