@@ -1,6 +1,7 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.view
 
 import de.guite.modulestudio.metamodel.Application
+import de.guite.modulestudio.metamodel.ItemActionsStyle
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
@@ -59,6 +60,14 @@ class Styles {
                 margin: 18px 0 0 18px;
             }
 
+            «IF displayActionsStyle == ItemActionsStyle.DROPDOWN»
+                .z-module-«appName.formatForDB» h2 .dropdown.item-actions,
+                .z-module-«appName.formatForDB» h3 .dropdown.item-actions {
+                    display: inline;
+                    font-size: 18px;
+                }
+
+            «ENDIF»
         «ENDIF»
         «IF hasGeographical»
             div.«cssPrefix»-mapcontainer {

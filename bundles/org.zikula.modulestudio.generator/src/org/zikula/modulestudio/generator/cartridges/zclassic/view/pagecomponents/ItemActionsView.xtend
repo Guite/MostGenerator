@@ -22,7 +22,7 @@ class ItemActionsView {
                 «application.renderMenu(context)»
             </div>
         «ELSEIF application.useStyle(context, ItemActionsStyle.DROPDOWN)»
-            <div class="dropdown">
+            <div class="dropdown item-actions">
                 <a id="«itemActionContainerViewId»DropDownToggle«idSuffix»" role="button" data-toggle="dropdown" href="javascript:void(0);" class="hidden dropdown-toggle"><i class="fa fa-tasks"></i>«IF context == 'display'» {{ __('Actions') }}«ENDIF» <span class="caret"></span></a>
                 «application.renderMenu(context)»
             </div>
