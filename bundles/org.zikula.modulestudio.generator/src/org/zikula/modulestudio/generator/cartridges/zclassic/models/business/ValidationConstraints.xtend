@@ -129,7 +129,11 @@ class ValidationConstraints {
         «ENDIF»
     '''
     def dispatch fieldAnnotations(UserField it) '''
-        «fieldAnnotationsInteger»
+        «IF mandatory && !primaryKey»
+            «' '»* @Assert\NotBlank()
+        «ELSEIF !nullable»
+            «' '»* @Assert\NotNull()
+        «ENDIF»
     '''
 
     def private fieldAnnotationsString(AbstractStringField it) '''
