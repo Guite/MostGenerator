@@ -46,6 +46,10 @@ class Section {
                 <legend>{{ __('Map') }}</legend>
                 <div id="mapContainer" class="«app.appName.toLowerCase»-mapcontainer">
                 </div>
+                <br />
+                «FOR geoFieldName : newArrayList('latitude', 'longitude')»
+                    {{ form_row(form.«geoFieldName») }}
+                «ENDFOR»
             «IF useGroupingTabs('edit')»
                 </div>
             «ELSE»

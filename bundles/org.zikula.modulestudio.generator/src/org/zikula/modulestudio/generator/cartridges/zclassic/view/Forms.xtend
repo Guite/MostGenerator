@@ -245,13 +245,9 @@ class Forms {
             «IF !hasTranslatableFields || (hasSluggableFields && !hasTranslatableSlug)»
                 «slugField(subElem)»
             «ENDIF»
-            «IF geographical»
+            «IF geographical && !subElem.empty»
                 «FOR geoFieldName : newArrayList('latitude', 'longitude')»
-                    «IF !subElem.empty»
-                        {{ form_row(attribute(«subElem», '«geoFieldName»')) }}
-                    «ELSE»
-                        {{ form_row(form.«geoFieldName») }}
-                    «ENDIF»
+                    {{ form_row(attribute(«subElem», '«geoFieldName»')) }}
                 «ENDFOR»
             «ENDIF»
             «IF isInheriting»
