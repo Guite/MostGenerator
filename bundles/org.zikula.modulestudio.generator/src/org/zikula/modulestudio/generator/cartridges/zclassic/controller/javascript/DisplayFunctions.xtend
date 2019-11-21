@@ -403,7 +403,7 @@ class DisplayFunctions {
                                 «vendorAndName»SimpleAlert(jQuery('#sortableTable'), Translator.__('Success'), data.message, 'sortingDoneAlert', 'success');
                             }*/
                             window.location.reload();
-                    	}
+                        }
                     });
                 }
             });
