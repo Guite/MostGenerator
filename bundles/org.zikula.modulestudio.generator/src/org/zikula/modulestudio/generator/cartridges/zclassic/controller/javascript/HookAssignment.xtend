@@ -51,10 +51,9 @@ class HookAssignment {
                     url: attachLink.data('url'),
                     assignedEntity: attachLink.data('assigned-entity'),
                     assignedId: entityId
-                },
-                success: function (data) {
-                    window.location.reload();
                 }
+            }).done(function (data) {
+                window.location.reload();
             });
         }
     '''
@@ -69,10 +68,9 @@ class HookAssignment {
                 url: Routing.generate('«appName.formatForDB»_ajax_detachhookobject'),
                 data: {
                     id: jQuery(this).data('assignment-id')
-                },
-                success: function (data) {
-                    window.location.reload();
                 }
+            }).done(function (data) {
+                window.location.reload();
             });
         }
     '''

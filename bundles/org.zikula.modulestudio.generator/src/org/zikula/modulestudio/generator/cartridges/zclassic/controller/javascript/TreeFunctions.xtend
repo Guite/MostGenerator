@@ -334,17 +334,17 @@ class TreeFunctions {
                 method: 'POST',
                 url: Routing.generate('«appName.formatForDB»_ajax_handletreeoperation'),
                 data: params
-            }).done(function (response) {
-                if (response.result == 'success') {
-                    /*«vendorAndName»SimpleAlert(jQuery('.tree-container'), Translator.__('Success'), response.message, 'treeAjaxDoneAlert', 'success');*/
+            }).done(function (data) {
+                if (data.result == 'success') {
+                    /*«vendorAndName»SimpleAlert(jQuery('.tree-container'), Translator.__('Success'), data.message, 'treeAjaxDoneAlert', 'success');*/
 
-                    if (typeof response.returnUrl != 'undefined') {
-                        window.location = response.returnUrl;
+                    if (typeof data.returnUrl != 'undefined') {
+                        window.location = data.returnUrl;
                     } else {
                         window.location.reload();
                     }
                 } else {
-                    «vendorAndName»SimpleAlert(jQuery('.tree-container'), Translator.__('Error'), response.message != '' ? response.message : Translator.__('Could not persist your change.'), 'treeAjaxFailedAlert', 'danger');
+                    «vendorAndName»SimpleAlert(jQuery('.tree-container'), Translator.__('Error'), data.message != '' ? data.message : Translator.__('Could not persist your change.'), 'treeAjaxFailedAlert', 'danger');
                 }
             }).fail(function (jqXHR, textStatus) {
                 «vendorAndName»SimpleAlert(jQuery('.tree-container'), Translator.__('Error'), Translator.__('Could not persist your change.'), 'treeAjaxFailedAlert', 'danger');
@@ -433,15 +433,17 @@ class TreeFunctions {
                     id: nodeId,
                     destid: destId
                 }
-            }).done(function (res) {
+            }).done(function (data) {
                 if (true === doReload) {
                     window.location.reload();
                 }
+
                 return true;
             }).fail(function (jqXHR, textStatus) {
                 «vendorAndName»SimpleAlert(jQuery('.tree-container'), Translator.__('Error'), Translator.__('Could not persist your change.'), 'treeAjaxFailedAlert', 'danger');
 
                 window.location.reload();
+
                 return false;
             });
 

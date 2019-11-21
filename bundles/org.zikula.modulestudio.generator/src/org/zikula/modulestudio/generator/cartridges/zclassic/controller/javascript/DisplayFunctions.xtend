@@ -117,27 +117,26 @@ class DisplayFunctions {
                     ot: objectType,
                     field: fieldName,
                     id: itemId
-                },
-                success: function (data) {
-                    var idSuffix;
-                    var toggleLink;
+                }
+            }).done(function (data) {
+                var idSuffix;
+                var toggleLink;
 
-                    idSuffix = «vendorAndName»CapitaliseFirstLetter(fieldName) + itemId;
-                    toggleLink = jQuery('#toggle' + idSuffix);
+                idSuffix = «vendorAndName»CapitaliseFirstLetter(fieldName) + itemId;
+                toggleLink = jQuery('#toggle' + idSuffix);
 
-                    /*if (data.message) {
-                        «vendorAndName»SimpleAlert(toggleLink, Translator.__('Success'), data.message, 'toggle' + idSuffix + 'DoneAlert', 'success');
-                    }*/
+                /*if (data.message) {
+                    «vendorAndName»SimpleAlert(toggleLink, Translator.__('Success'), data.message, 'toggle' + idSuffix + 'DoneAlert', 'success');
+                }*/
 
-                    toggleLink.find('.fa-check').toggleClass('hidden', true !== data.state);
-                    toggleLink.find('.fa-times').toggleClass('hidden', true === data.state);
-                }«/*,
-                error: function (jqXHR, textStatus, thrownError) {
-                    // nothing to do yet
-                    var idSuffix = fieldName + '_' + itemId;
-                    «vendorAndName»SimpleAlert(jQuery('#toggle' + idSuffix), Translator.__('Error'), Translator.__('Could not persist your change.'), 'toggle' + idSuffix + 'FailedAlert', 'danger');
-                }*/»
-            });
+                toggleLink.find('.fa-check').toggleClass('hidden', true !== data.state);
+                toggleLink.find('.fa-times').toggleClass('hidden', true === data.state);
+            })«/*,
+            fail: function (jqXHR, textStatus, errorThrown) {
+                // nothing to do yet
+                var idSuffix = fieldName + '_' + itemId;
+                «vendorAndName»SimpleAlert(jQuery('#toggle' + idSuffix), Translator.__('Error'), Translator.__('Could not persist your change.'), 'toggle' + idSuffix + 'FailedAlert', 'danger');
+            })*/»;
         }
     '''
 
@@ -397,13 +396,12 @@ class DisplayFunctions {
                             identifiers: jQuery(this).sortable('toArray', { attribute: 'data-item-id' }),
                             min: jQuery('#sortableTable').data('min'),
                             max: jQuery('#sortableTable').data('max')
-                        },
-                        success: function (data) {
-                            /*if (data.message) {
-                                «vendorAndName»SimpleAlert(jQuery('#sortableTable'), Translator.__('Success'), data.message, 'sortingDoneAlert', 'success');
-                            }*/
-                            window.location.reload();
                         }
+                    }).done(function (data) {
+                        /*if (data.message) {
+                            «vendorAndName»SimpleAlert(jQuery('#sortableTable'), Translator.__('Success'), data.message, 'sortingDoneAlert', 'success');
+                        }*/
+                        window.location.reload();
                     });
                 }
             });

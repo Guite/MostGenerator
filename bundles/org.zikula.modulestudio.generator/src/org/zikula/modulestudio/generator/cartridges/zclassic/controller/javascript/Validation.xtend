@@ -439,11 +439,10 @@ class Validation {
                 method: 'GET',
                 dataType: 'json',
                 async: false,
-                data: params,
-                success: function (data) {
-                    if (null == data || true === data.isDuplicate) {
-                        result = false;
-                    }
+                data: params
+            }).done(function (data) {
+                if (null == data || true === data.isDuplicate) {
+                    result = false;
                 }
             });
 
