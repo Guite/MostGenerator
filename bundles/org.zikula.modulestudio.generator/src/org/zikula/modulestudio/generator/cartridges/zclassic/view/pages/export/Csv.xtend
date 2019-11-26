@@ -47,45 +47,44 @@ class Csv {
         «FOR field : getDisplayFields.filter[name != 'workflowState'] SEPARATOR ';'»«field.headerLine»«ENDFOR»«IF geographical»«FOR geoFieldName : newArrayList('latitude', 'longitude')»;"{{ __('«geoFieldName.formatForDisplayCapital»') }}"«ENDFOR»«ENDIF»«IF hasVisibleWorkflow»;"{{ __('Workflow state') }}"«ENDIF»«headerLinesRelations»
         «val objName = name.formatForCode»
         {% for «objName» in items %}
-        «FOR field : getDisplayFields.filter[f|f.name != 'workflowState'] SEPARATOR ';'»«field.displayEntry»«ENDFOR»«IF geographical»«FOR geoFieldName : newArrayList('latitude', 'longitude')»;"{{ «name.formatForCode».«geoFieldName»|«appName.formatForDB»_geoData }}"«ENDFOR»«ENDIF»«IF hasVisibleWorkflow»;"{{ «name.formatForCode».workflowState|«appName.formatForDB»_objectState(false)|lower }}"«ENDIF»«dataLinesRelations»
+        «FOR field : getDisplayFields.filter[name != 'workflowState'] SEPARATOR ';'»«field.displayEntry»«ENDFOR»«IF geographical»«FOR geoFieldName : newArrayList('latitude', 'longitude')»;"{{ «name.formatForCode».«geoFieldName»|«appName.formatForDB»_geoData }}"«ENDFOR»«ENDIF»«IF hasVisibleWorkflow»;"{{ «name.formatForCode».workflowState|«appName.formatForDB»_objectState(false)|lower }}"«ENDIF»«dataLinesRelations»
         {% endfor %}
     '''
 
-    def private headerLinesRelations(Entity it) '''
-        «FOR relation : incoming.filter(OneToManyRelationship).filter[bidirectional]»«relation.headerLineRelation(false)»«ENDFOR»
-        «FOR relation : outgoing.filter(OneToOneRelationship)»«relation.headerLineRelation(true)»«ENDFOR»
-        «FOR relation : incoming.filter(ManyToManyRelationship).filter[bidirectional]»«relation.headerLineRelation(false)»«ENDFOR»
-        «FOR relation : outgoing.filter(OneToManyRelationship)»«relation.headerLineRelation(true)»«ENDFOR»
-        «FOR relation : outgoing.filter(ManyToManyRelationship)»«relation.headerLineRelation(true)»«ENDFOR»
-    '''
-    def private dataLinesRelations(Entity it) '''
-        «FOR relation : incoming.filter(OneToManyRelationship).filter[bidirectional]»«relation.displayRelatedEntry(false)»«ENDFOR»
-        «FOR relation : outgoing.filter(OneToOneRelationship)»«relation.displayRelatedEntry(true)»«ENDFOR»
-        «FOR relation : incoming.filter(ManyToManyRelationship).filter[bidirectional]»«relation.displayRelatedEntries(false)»«ENDFOR»
-        «FOR relation : outgoing.filter(OneToManyRelationship)»«relation.displayRelatedEntries(true)»«ENDFOR»
-        «FOR relation : outgoing.filter(ManyToManyRelationship)»«relation.displayRelatedEntries(true)»«ENDFOR»
-    '''
+    def private headerLinesRelations(Entity it) {
+        var output = ''
+        for (relation : incoming.filter(OneToManyRelationship).filter[bidirectional]) output += relation.headerLineRelation(false)
+        for (relation : outgoing.filter(OneToOneRelationship)) output += relation.headerLineRelation(true)
+        for (relation : incoming.filter(ManyToManyRelationship).filter[bidirectional]) output += relation.headerLineRelation(false)
+        for (relation : outgoing.filter(OneToManyRelationship)) output += relation.headerLineRelation(true)
+        for (relation : outgoing.filter(ManyToManyRelationship)) output += relation.headerLineRelation(true)
+        output
+    }
+    def private dataLinesRelations(Entity it) {
+        var output = ''
+        for (relation : incoming.filter(OneToManyRelationship).filter[bidirectional]) output += relation.displayRelatedEntries(false, false)
+        for (relation : outgoing.filter(OneToOneRelationship)) output += relation.displayRelatedEntries(true, false)
+        for (relation : incoming.filter(ManyToManyRelationship).filter[bidirectional]) output += relation.displayRelatedEntries(false, true)
+        for (relation : outgoing.filter(OneToManyRelationship)) output += relation.displayRelatedEntries(true, true)
+        for (relation : outgoing.filter(ManyToManyRelationship)) output += relation.displayRelatedEntries(true, true)
+        output
+    }
 
-    def private headerLine(DerivedField it) '''
-        "{{ __('«name.formatForDisplayCapital»') }}"'''
+    def private headerLine(DerivedField it) '''"{{ __('«name.formatForDisplayCapital»') }}"'''
 
     def private headerLineRelation(JoinRelationship it, Boolean useTarget) ''';"{{ __('«getRelationAliasName(useTarget).formatForDisplayCapital»') }}"'''
 
-    def private dispatch displayEntry(DerivedField it) '''
-        "«fieldHelper.displayField(it, entity.name.formatForCode, 'viewcsv')»"'''
+    def private dispatch displayEntry(DerivedField it) '''"«fieldHelper.displayField(it, entity.name.formatForCode, 'viewcsv')»"'''
 
-    def private dispatch displayEntry(BooleanField it) '''
-        "{% if not «entity.name.formatForCode».«name.formatForCode» %}0{% else %}1{% endif %}"'''
+    def private dispatch displayEntry(BooleanField it) '''"{% if not «entity.name.formatForCode».«name.formatForCode» %}0{% else %}1{% endif %}"'''
 
-    def private displayRelatedEntry(JoinRelationship it, Boolean useTarget) '''
-        «val relationAliasName = getRelationAliasName(useTarget).formatForCode»
-        «val mainEntity = (if (!useTarget) target else source)»
-        «val relObjName = mainEntity.name.formatForCode + '.' + relationAliasName»
-        ;"{% if «relObjName»|default %}{{ «relObjName»|«application.appName.formatForDB»_formattedTitle }}{% endif %}"'''
-
-    def private displayRelatedEntries(JoinRelationship it, Boolean useTarget) '''
-        «val relationAliasName = getRelationAliasName(useTarget).formatForCode»
-        «val mainEntity = (if (!useTarget) target else source)»
-        «val relObjName = mainEntity.name.formatForCode + '.' + relationAliasName»
-        ;"{% if «relObjName»|default %}{% for relatedItem in «relObjName» %}{{ relatedItem|«application.appName.formatForDB»_formattedTitle }}{% if not loop.last %}, {% endif %}{% endfor %}{% endif %}"'''
+    def private displayRelatedEntries(JoinRelationship it, Boolean useTarget, Boolean multiple) {
+        val relationAliasName = getRelationAliasName(useTarget).formatForCode
+        val mainEntity = (if (!useTarget) target else source)
+        val relObjName = mainEntity.name.formatForCode + '.' + relationAliasName
+        if (multiple) {
+            return ''';"{% if «relObjName»|default %}{% for relatedItem in «relObjName» %}{{ relatedItem|«application.appName.formatForDB»_formattedTitle }}{% if not loop.last %}, {% endif %}{% endfor %}{% endif %}"'''
+        }
+        return ''';"{% if «relObjName»|default %}{{ «relObjName»|«application.appName.formatForDB»_formattedTitle }}{% endif %}"'''
+    }
 }

@@ -173,13 +173,13 @@ class SimpleFields {
     def dispatch displayField(ListField it, String objName, String page) '''
         {{ «objName».«name.formatForCode»|«application.appName.formatForDB»_listEntry('«entity.name.formatForCode»', '«name.formatForCode»') }}'''
 
-    def dispatch displayField(ArrayField it, String objName, String page) '''
-        «IF page == 'viewcsv'»{% if «objName».«name.formatForCode» is iterable and «objName».«name.formatForCode»|length > 0 %}{% set firstItem = true %}{% for entry in if entry is not iterable %}{% if true == firstItem %}{% set firstItem = false %}{% else %}, {% endif %}{{ entry }}{% endfor %}{% endif %}
-        «ELSE»
+    def dispatch displayField(ArrayField it, String objName, String page) {
+        if (page == 'viewcsv') return '''{% if «objName».«name.formatForCode» is iterable and «objName».«name.formatForCode»|length > 0 %}{% set firstItem = true %}{% for entry in «objName».«name.formatForCode» if entry is not iterable %}{% if true == firstItem %}{% set firstItem = false %}{% else %}, {% endif %}{{ entry }}{% endfor %}{% endif %}'''
+        else return '''
             {% if «objName».«name.formatForCode» is iterable and «objName».«name.formatForCode»|length > 0 %}
                 «IF page == 'viewxml'»
                     {% set firstItem = true %}
-                    {% for entry in if entry is not iterable %}
+                    {% for entry in «objName».«name.formatForCode» if entry is not iterable %}
                         {% if true == firstItem %}{% set firstItem = false %}{% else %}, {% endif %}{{ entry }}
                     {% endfor %}
                 «ELSE»
@@ -190,23 +190,31 @@ class SimpleFields {
                     </ul>
                 «ENDIF»
             {% endif %}
-        «ENDIF»
-    '''
+        '''
+    }
 
     def dispatch displayField(DatetimeField it, String objName, String page) {
         if (isDateTimeField) {
-            if (!mandatory && nullable) { '''
-                {% if «objName».«name.formatForCode» is not empty %}
-                    {{ «objName».«name.formatForCode»|localizeddate('medium', 'short') }}
-                {% endif %}'''
+            if (!mandatory && nullable) {
+                if (page == 'viewcsv') { '''
+                    {% if «objName».«name.formatForCode» is not empty %}{{ «objName».«name.formatForCode»|localizeddate('medium', 'short') }}{% endif %}'''
+                } else { '''
+                    {% if «objName».«name.formatForCode» is not empty %}
+                        {{ «objName».«name.formatForCode»|localizeddate('medium', 'short') }}
+                    {% endif %}'''
+                }
             } else { '''
                 {{ «objName».«name.formatForCode»|localizeddate('medium', 'short') }}'''
             }
         } else if (isDateField) {
-            if (!mandatory && nullable) { '''
-                {% if «objName».«name.formatForCode» is not empty %}
-                    {{ «objName».«name.formatForCode»|localizeddate('medium', 'none') }}
-                {% endif %}'''
+            if (!mandatory && nullable) {
+                if (page == 'viewcsv') { '''
+                    {% if «objName».«name.formatForCode» is not empty %}{{ «objName».«name.formatForCode»|localizeddate('medium', 'none') }}{% endif %}'''
+                } else { '''
+                    {% if «objName».«name.formatForCode» is not empty %}
+                        {{ «objName».«name.formatForCode»|localizeddate('medium', 'none') }}
+                    {% endif %}'''
+                }
             } else { '''
                 {{ «objName».«name.formatForCode»|localizeddate('medium', 'none') }}'''
             }
