@@ -174,20 +174,23 @@ class SimpleFields {
         {{ «objName».«name.formatForCode»|«application.appName.formatForDB»_listEntry('«entity.name.formatForCode»', '«name.formatForCode»') }}'''
 
     def dispatch displayField(ArrayField it, String objName, String page) '''
-        {% if «objName».«name.formatForCode» is iterable and «objName».«name.formatForCode»|length > 0 %}
-            «IF page == 'viewcsv' || page == 'viewxml'»
-                {% set firstItem = true %}
-                {% for entry in if entry is not iterable %}
-                    {% if true == firstItem %}{% set firstItem = false %}{% else %}, {% endif %}{{ entry }}
-                {% endfor %}
-            «ELSE»
-                <ul>
-                {% for entry in «objName».«name.formatForCode»«IF page == 'viewcsv' || page == 'viewxml'» if entry is not iterable«ENDIF» %}
-                    <li>{{ entry }}</li>
-                {% endfor %}
-                </ul>
-            «ENDIF»
-        {% endif %}
+        «IF page == 'viewcsv'»{% if «objName».«name.formatForCode» is iterable and «objName».«name.formatForCode»|length > 0 %}{% set firstItem = true %}{% for entry in if entry is not iterable %}{% if true == firstItem %}{% set firstItem = false %}{% else %}, {% endif %}{{ entry }}{% endfor %}{% endif %}
+        «ELSE»
+            {% if «objName».«name.formatForCode» is iterable and «objName».«name.formatForCode»|length > 0 %}
+                «IF page == 'viewxml'»
+                    {% set firstItem = true %}
+                    {% for entry in if entry is not iterable %}
+                        {% if true == firstItem %}{% set firstItem = false %}{% else %}, {% endif %}{{ entry }}
+                    {% endfor %}
+                «ELSE»
+                    <ul>
+                    {% for entry in «objName».«name.formatForCode»«IF page == 'viewcsv' || page == 'viewxml'» if entry is not iterable«ENDIF» %}
+                        <li>{{ entry }}</li>
+                    {% endfor %}
+                    </ul>
+                «ENDIF»
+            {% endif %}
+        «ENDIF»
     '''
 
     def dispatch displayField(DatetimeField it, String objName, String page) {
