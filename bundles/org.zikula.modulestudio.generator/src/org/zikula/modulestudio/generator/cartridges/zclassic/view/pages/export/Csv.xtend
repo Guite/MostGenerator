@@ -44,14 +44,10 @@ class Csv {
 
     def private csvView(Entity it, String appName) '''
         {# purpose of this template: «nameMultiple.formatForDisplay» view csv view #}
-        {% spaceless %}«FOR field : getDisplayFields.filter[name != 'workflowState'] SEPARATOR ';'»«field.headerLine»«ENDFOR»«IF geographical»«FOR geoFieldName : newArrayList('latitude', 'longitude')»;"{{ __('«geoFieldName.formatForDisplayCapital»') }}"«ENDFOR»«ENDIF»«IF hasVisibleWorkflow»;"{{ __('Workflow state') }}"«ENDIF»«headerLinesRelations»
-        {% endspaceless %}
+        «FOR field : getDisplayFields.filter[name != 'workflowState'] SEPARATOR ';'»«field.headerLine»«ENDFOR»«IF geographical»«FOR geoFieldName : newArrayList('latitude', 'longitude')»;"{{ __('«geoFieldName.formatForDisplayCapital»') }}"«ENDFOR»«ENDIF»«IF hasVisibleWorkflow»;"{{ __('Workflow state') }}"«ENDIF»«headerLinesRelations»
         «val objName = name.formatForCode»
         {% for «objName» in items %}
-
-        {% spaceless %}
-            «FOR field : getDisplayFields.filter[f|f.name != 'workflowState'] SEPARATOR ';'»«field.displayEntry»«ENDFOR»«IF geographical»«FOR geoFieldName : newArrayList('latitude', 'longitude')»;"{{ «name.formatForCode».«geoFieldName»|«appName.formatForDB»_geoData }}"«ENDFOR»«ENDIF»«IF hasVisibleWorkflow»;"{{ «name.formatForCode».workflowState|«appName.formatForDB»_objectState(false)|lower }}"«ENDIF»«dataLinesRelations»
-        {% endspaceless %}
+        «FOR field : getDisplayFields.filter[f|f.name != 'workflowState'] SEPARATOR ';'»«field.displayEntry»«ENDFOR»«IF geographical»«FOR geoFieldName : newArrayList('latitude', 'longitude')»;"{{ «name.formatForCode».«geoFieldName»|«appName.formatForDB»_geoData }}"«ENDFOR»«ENDIF»«IF hasVisibleWorkflow»;"{{ «name.formatForCode».workflowState|«appName.formatForDB»_objectState(false)|lower }}"«ENDIF»«dataLinesRelations»
         {% endfor %}
     '''
 
@@ -91,11 +87,5 @@ class Csv {
         «val relationAliasName = getRelationAliasName(useTarget).formatForCode»
         «val mainEntity = (if (!useTarget) target else source)»
         «val relObjName = mainEntity.name.formatForCode + '.' + relationAliasName»
-        ;"
-        {% if «relObjName»|default %}
-            {% for relatedItem in «relObjName» %}
-            {{ relatedItem|«application.appName.formatForDB»_formattedTitle }}{% if not loop.last %}, {% endif %}
-            {% endfor %}
-        {% endif %}
-        "'''
+        ;"{% if «relObjName»|default %}{% for relatedItem in «relObjName» %}{{ relatedItem|«application.appName.formatForDB»_formattedTitle }}{% if not loop.last %}, {% endif %}{% endfor %}{% endif %}"'''
 }
