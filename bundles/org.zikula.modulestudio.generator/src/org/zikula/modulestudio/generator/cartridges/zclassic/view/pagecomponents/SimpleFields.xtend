@@ -175,11 +175,18 @@ class SimpleFields {
 
     def dispatch displayField(ArrayField it, String objName, String page) '''
         {% if «objName».«name.formatForCode» is iterable and «objName».«name.formatForCode»|length > 0 %}
-            <ul>
-            {% for entry in «objName».«name.formatForCode»«IF page == 'viewcsv' || page == 'viewxml'» if entry is not iterable«ENDIF» %}
-                <li>{{ entry }}</li>
-            {% endfor %}
-            </ul>
+            «IF page == 'viewcsv' || page == 'viewxml'»
+                {% set firstItem = true %}
+                {% for entry in if entry is not iterable %}
+                    {% if true == firstItem %}{% set firstItem = false %}{% else %}, {% endif %}{{ entry }}
+                {% endfor %}
+            «ELSE»
+                <ul>
+                {% for entry in «objName».«name.formatForCode»«IF page == 'viewcsv' || page == 'viewxml'» if entry is not iterable«ENDIF» %}
+                    <li>{{ entry }}</li>
+                {% endfor %}
+                </ul>
+            «ENDIF»
         {% endif %}
     '''
 
