@@ -24,6 +24,13 @@
             <plugin>
                 <groupId>org.eclipse.xtend</groupId>
                 <artifactId>xtend-maven-plugin</artifactId>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.eclipse.emf</groupId>
+                        <artifactId>org.eclipse.emf.mwe.utils</artifactId>
+                        <version>1.5.1</version>
+                    </dependency>
+                </dependencies>
             </plugin>
 
             <!-- build stand-alone jar file -->
