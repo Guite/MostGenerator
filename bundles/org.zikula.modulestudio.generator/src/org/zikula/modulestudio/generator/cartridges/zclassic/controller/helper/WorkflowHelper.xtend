@@ -420,12 +420,9 @@ class WorkflowHelper {
                         $entity->set_actionDescriptionForLogEntry('_HISTORY_' . strtoupper($objectType) . '_UPDATED');
                     }
                 }
+
             «ENDIF»
             $result = false;
-            if (!$workflow->can($entity, $actionId)) {
-                return $result;
-            }
-
             try {
                 if ('delete' === $actionId) {
                     $entityManager->remove($entity);

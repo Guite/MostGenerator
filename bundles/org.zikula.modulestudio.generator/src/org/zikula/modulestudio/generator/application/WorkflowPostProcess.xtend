@@ -84,9 +84,9 @@ class WorkflowPostProcess {
                 fileCopy.sourceFile = sourceImageFile.absolutePath
                 fileCopy.targetFile = targetFilePath
                 fileCopy.invoke(null)
-            } catch (IOException e) {
-                //ModuleStudioGeneratorActivator.log(IStatus.ERROR, e.message, e)
-                println(e.message)
+            } catch (IOException exception) {
+                //ModuleStudioGeneratorActivator.log(IStatus.ERROR, exception.message, exception)
+                println(exception.message)
             }
         } else {
             val inputStream = this.class.getResourceAsStream(settings.getAdminImageInputPath)
