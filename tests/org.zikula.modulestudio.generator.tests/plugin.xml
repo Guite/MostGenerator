@@ -2,7 +2,7 @@
 <?eclipse version="3.0"?>
 <plugin>
     <extension
-         point="org.xpect.fileExtensions">
+         point="org.eclipse.xpect.fileExtensions">
         <fileExtension
             fileExtension="mostapp"
             xtextLanguageName="de.guite.modulestudio.MostDsl"
