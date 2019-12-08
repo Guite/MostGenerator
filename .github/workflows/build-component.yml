@@ -39,7 +39,7 @@ jobs:
       run: |
         mkdir -p deploy/repo
         mkdir -p deploy/standalone
-        cp releng/org.zikula.modulestudio.generator.build/target/org.zikula.modulestudio.generator.build*.zip deploy/repo
+        cp -R releng/org.zikula.modulestudio.generator.build/target/repository/* deploy/repo
         cp bundles/org.zikula.modulestudio.generator/target/ModuleStudio-generator.jar deploy/standalone
 
     # see https://github.com/SamKirkland/FTP-Deploy-Action
