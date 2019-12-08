@@ -20,10 +20,6 @@
    </license>
 
    <includes
-         id="org.eclipse.platform"
-         version="0.0.0"/>
-
-   <includes
          id="org.eclipse.emf.mwe2.launcher"
          version="0.0.0"/>
 
