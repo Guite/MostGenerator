@@ -61,3 +61,11 @@ jobs:
         LOCAL_DIR: deploy/standalone
         REMOTE_DIR: standalone
         ARGS: --delete --continue --ignore-time
+
+    # see https://github.com/peter-evans/repository-dispatch
+    - name: Dispatch downstream job
+      uses: peter-evans/repository-dispatch@master
+      with:
+        token: ${{ secrets.DISPATCH_TOKEN }}
+        repository: Guite/MostProduct
+        event-type: upstream-build
