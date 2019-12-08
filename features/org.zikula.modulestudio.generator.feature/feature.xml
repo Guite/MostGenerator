@@ -31,10 +31,11 @@
       <import plugin="de.guite.modulestudio.mostdsl" version="1.4.0" match="greaterOrEqual"/>
       <import plugin="org.apache.log4j" version="1.2.15" match="greaterOrEqual"/>
       <import plugin="org.eclipse.core.runtime" version="3.16.0" match="greaterOrEqual"/>
-      <import plugin="org.objectweb.asm" version="7.1.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.emf.mwe2.launch" version="2.11.1" match="greaterOrEqual"/>
       <import plugin="org.eclipse.xtend.core" version="2.20.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.xtext" version="2.20.0" match="greaterOrEqual"/>
+      <import plugin="org.objectweb.asm" version="7.1.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.emf.mwe.utils" version="1.5.1" match="greaterOrEqual"/>
    </requires>
 
    <plugin
