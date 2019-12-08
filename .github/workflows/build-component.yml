@@ -1,6 +1,6 @@
 name: Build component
-# This workflow is triggered on pushes to the repository and for pull requests.
-on: [push, pull_request]
+# This workflow is triggered on pushes, for pull requests and by external dispatching.
+on: [push, pull_request, repository_dispatch]
 jobs:
   build:
     # This job runs on Linux
@@ -18,7 +18,7 @@ jobs:
 
     # see https://github.com/actions/setup-java
     - name: Setup JDK
-      uses: actions/setup-java@v1
+      uses: actions/setup-java@master
       with:
         java-version: 11
 
