@@ -1,0 +1,63 @@
+name: Build component
+# This workflow is triggered on pushes to the repository and for pull requests.
+on: [push, pull_request]
+jobs:
+  build:
+    # This job runs on Linux
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout sources from component repository
+      uses: actions/checkout@v2-beta
+
+    - name: Checkout additional sources from product repository
+      uses: actions/checkout@v2-beta
+      with:
+        repository: Guite/MostProduct
+        token: ${{ secrets.ACCESS_MOST_PRODUCT }}
+        path: MostProduct
+
+    # see https://github.com/actions/setup-java
+    - name: Setup JDK
+      uses: actions/setup-java@v1
+      with:
+        java-version: 11
+
+    # temporary workaround until Maven has been updated from 3.6.1 to at least 3.6.2 at the host
+    # see https://help.github.com/en/actions/automating-your-workflow-with-github-actions/software-installed-on-github-hosted-runners#ubuntu-1804-lts
+    - name: Update Maven
+      run: |
+        wget -q https://www-eu.apache.org/dist/maven/maven-3/3.6.3/binaries/apache-maven-3.6.3-bin.tar.gz
+        tar xzf apache-maven-3.6.3-bin.tar.gz && rm apache-maven-3.6.3-bin.tar.gz
+        mv apache-maven-3.6.3 maven
+
+    # https://stackoverflow.com/questions/71069/can-maven-be-made-less-verbose
+    - name: Maven Build
+      run: |
+        maven/bin/mvn clean verify -B -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn
+
+    - name: Collect artifacts to deploy
+      run: |
+        mkdir -p deploy/repo
+        mkdir -p deploy/standalone
+        cp releng/org.zikula.modulestudio.generator.build/target/org.zikula.modulestudio.generator.build*.zip deploy/repo
+        cp bundles/org.zikula.modulestudio.generator/target/ModuleStudio-generator.jar deploy/standalone
+
+    # see https://github.com/SamKirkland/FTP-Deploy-Action
+    - name: Deploy repository
+      uses: SamKirkland/FTP-Deploy-Action@master
+      env:
+        FTP_SERVER: ${{ secrets.FTP_SERVER }}
+        FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
+        FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
+        LOCAL_DIR: deploy/repo
+        REMOTE_DIR: components/generator
+        ARGS: --delete --continue --ignore-time
+    - name: Deploy standalone generator
+      uses: SamKirkland/FTP-Deploy-Action@master
+      env:
+        FTP_SERVER: ${{ secrets.FTP_SERVER }}
+        FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
+        FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
+        LOCAL_DIR: deploy/standalone
+        REMOTE_DIR: standalone
+        ARGS: --delete --continue --ignore-time

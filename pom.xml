@@ -24,7 +24,7 @@
     <repositories>
         <repository>
             <id>most-dsl</id>
-            <url>file://${dsl.repository}</url>
+            <url>${dsl.repository}</url>
             <layout>p2</layout>
         </repository>
     </repositories>

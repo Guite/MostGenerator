@@ -15,4 +15,4 @@ The issue tracker for ModuleStudio can be found at [this github project](https:/
 
 For more information visit [the project homepage](https://modulestudio.de/).
 
-![Build Status](http://guite.info:8080/buildStatus/icon?job=MOST-1_Prepare-4_Generator/master)
+[![Build Status](https://github.com/Guite/MostGenerator/workflows/Build%20component/badge.svg)](https://github.com/Guite/MostGenerator/actions?query=workflow%3A"Build+component")
