@@ -1,0 +1,33 @@
+name: Create release
+# This workflow is triggered by external dispatching.
+on:
+  repository_dispatch:
+    types: [create-release]
+jobs:
+  build:
+    # This job runs on Linux
+    runs-on: ubuntu-latest
+    steps:
+    # see https://github.com/actions/create-release
+    - name: Create release
+      id: create_release
+      uses: actions/create-release@master
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ github.event.client_payload.version_number }}
+        release_name: ${{ github.event.client_payload.version_number }}
+        body: |
+          Changelog: https://modulestudio.de/en/documentation/98-changelog/
+        draft: false
+        prerelease: false
+
+    # see https://github.com/peter-evans/repository-dispatch
+    - name: Dispatch downstream job
+      uses: peter-evans/repository-dispatch@master
+      with:
+        token: ${{ secrets.DISPATCH_TOKEN }}
+        repository: Guite/MostProduct
+        event-type: deploy-release
+        #client-payload: '{"version_number": "${{ github.event.client_payload.version_number }}", "upload_url": "${{ steps.create_release.outputs.upload_url }}"}'
+        client-payload: '{"version_number": "${{ github.event.client_payload.version_number }}"}'
