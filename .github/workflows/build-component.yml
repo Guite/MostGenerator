@@ -1,6 +1,10 @@
 name: Build component
 # This workflow is triggered on pushes, for pull requests and by external dispatching.
-on: [push, pull_request, repository_dispatch]
+on:
+  push:
+  pull_request:
+  repository_dispatch:
+    types: [upstream-build, manual-build]
 jobs:
   build:
     # This job runs on Linux
