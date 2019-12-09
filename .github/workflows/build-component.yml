@@ -38,9 +38,7 @@ jobs:
     - name: Collect artifacts to deploy
       run: |
         mkdir -p deploy/repo
-        mkdir -p deploy/standalone
         cp -R releng/org.zikula.modulestudio.generator.build/target/repository/* deploy/repo
-        cp bundles/org.zikula.modulestudio.generator/target/ModuleStudio-generator.jar deploy/standalone
 
     # see https://github.com/SamKirkland/FTP-Deploy-Action
     - name: Deploy repository
@@ -52,15 +50,20 @@ jobs:
         LOCAL_DIR: deploy/repo
         REMOTE_DIR: components/generator
         ARGS: --delete --continue --ignore-time
+
+    # see https://github.com/WebFreak001/deploy-nightly
     - name: Deploy standalone generator
-      uses: SamKirkland/FTP-Deploy-Action@master
+      uses: WebFreak001/deploy-nightly@master
       env:
-        FTP_SERVER: ${{ secrets.FTP_SERVER }}
-        FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
-        FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
-        LOCAL_DIR: deploy/standalone
-        REMOTE_DIR: standalone
-        ARGS: --delete --continue --ignore-time
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # automatically provided by github actions
+      with:
+        upload_url: https://uploads.github.com/repos/Guite/MostGenerator/releases/22066470/assets{?name,label}
+        release_id: 22066470
+        asset_path: ./bundles/org.zikula.modulestudio.generator/target/ModuleStudio-generator.jar
+        #asset_name: ModuleStudio-generator-$$.jar # $$ inserts date (YYYYMMDD) and 6 letter commit hash, example: https://github.com/Pure-D/serve-d/releases/tag/nightly
+        asset_name: ModuleStudio-generator.jar
+        asset_content_type: application/java-archive
+        max_releases: 7 # optional, if there are more releases than this matching the asset_name, the oldest ones are going to be deleted
 
     # see https://github.com/peter-evans/repository-dispatch
     - name: Dispatch downstream job
