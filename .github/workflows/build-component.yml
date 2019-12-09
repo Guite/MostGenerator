@@ -43,8 +43,6 @@ jobs:
       run: |
         mkdir -p deploy/repo
         cp -R releng/org.zikula.modulestudio.generator.build/target/repository/* deploy/repo
-        mkdir -p deploy/coverage
-        cp -R releng/org.zikula.modulestudio.generator.build/target/site/jacoco-aggregate/* deploy/coverage
 
     # see https://github.com/SamKirkland/FTP-Deploy-Action
     - name: Deploy repository
@@ -55,15 +53,6 @@ jobs:
         FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
         LOCAL_DIR: deploy/repo
         REMOTE_DIR: components/generator
-        ARGS: --delete --continue
-    - name: Deploy coverage report
-      uses: SamKirkland/FTP-Deploy-Action@master
-      env:
-        FTP_SERVER: ${{ secrets.FTP_SERVER }}
-        FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
-        FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
-        LOCAL_DIR: deploy/coverage
-        REMOTE_DIR: reports/generator-coverage
         ARGS: --delete --continue
 
     # see https://github.com/WebFreak001/deploy-nightly
