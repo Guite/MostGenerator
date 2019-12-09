@@ -55,7 +55,7 @@ jobs:
     - name: Deploy standalone generator
       uses: WebFreak001/deploy-nightly@master
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # automatically provided by github actions
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: https://uploads.github.com/repos/Guite/MostGenerator/releases/22066470/assets{?name,label}
         release_id: 22066470
