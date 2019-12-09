@@ -63,7 +63,7 @@ jobs:
         #asset_name: ModuleStudio-generator-$$.jar # $$ inserts date (YYYYMMDD) and 6 letter commit hash, example: https://github.com/Pure-D/serve-d/releases/tag/nightly
         asset_name: ModuleStudio-generator.jar
         asset_content_type: application/java-archive
-        max_releases: 7 # optional, if there are more releases than this matching the asset_name, the oldest ones are going to be deleted
+        max_releases: 1 # optional, if there are more releases than this matching the asset_name, the oldest ones are going to be deleted
 
     # see https://github.com/peter-evans/repository-dispatch
     - name: Dispatch downstream job
