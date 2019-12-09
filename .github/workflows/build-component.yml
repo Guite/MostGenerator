@@ -69,3 +69,7 @@ jobs:
         token: ${{ secrets.DISPATCH_TOKEN }}
         repository: Guite/MostProduct
         event-type: upstream-build
+    - name: Regenerate modules
+      run: ./.github/scripts/regenerateModules.sh
+      env:
+        DISPATCH_TOKEN: ${{ secrets.DISPATCH_TOKEN }}
