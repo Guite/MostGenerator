@@ -53,7 +53,7 @@ jobs:
         FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
         LOCAL_DIR: deploy/repo
         REMOTE_DIR: components/generator
-        ARGS: --delete --continue --ignore-time
+        ARGS: --delete --continue
 
     # see https://github.com/WebFreak001/deploy-nightly
     - name: Deploy standalone generator
