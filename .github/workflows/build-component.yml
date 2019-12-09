@@ -53,7 +53,8 @@ jobs:
 
     # see https://github.com/WebFreak001/deploy-nightly
     - name: Deploy standalone generator
-      uses: WebFreak001/deploy-nightly@master
+      #uses: WebFreak001/deploy-nightly@master
+      uses: Guite/deploy-nightly@master
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
