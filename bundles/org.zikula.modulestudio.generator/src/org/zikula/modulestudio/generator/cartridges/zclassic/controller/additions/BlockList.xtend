@@ -31,7 +31,7 @@ class BlockList {
 
         use Exception;
         «IF targets('3.0')»
-            use Symfony\Bundle\TwigBundle\Loader\FilesystemLoader;
+            use Twig\Loader\FilesystemLoader;
         «ENDIF»
         use Zikula\BlocksModule\AbstractBlockHandler;
         use «appNamespace»\Block\Form\Type\ItemListBlockType;

@@ -24,10 +24,15 @@ class ViewHelper {
         «IF generatePdfSupport»
             use Dompdf\Dompdf;
         «ENDIF»
-        use Symfony\Bundle\TwigBundle\Loader\FilesystemLoader;
+        «IF !targets('3.0')»
+            use Symfony\Bundle\TwigBundle\Loader\FilesystemLoader;
+        «ENDIF»
         use Symfony\Component\HttpFoundation\RequestStack;
         use Symfony\Component\HttpFoundation\Response;
         use Twig«IF targets('3.0')»\«ELSE»_«ENDIF»Environment;
+        «IF targets('3.0')»
+            use Twig\Loader\FilesystemLoader;
+        «ENDIF»
         use Zikula\Core\Response\PlainResponse;
         use Zikula\ExtensionsModule\Api\ApiInterface\VariableApiInterface;
         use Zikula\ThemeModule\Engine\AssetFilter;
