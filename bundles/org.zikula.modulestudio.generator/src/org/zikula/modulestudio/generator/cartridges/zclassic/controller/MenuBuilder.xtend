@@ -28,6 +28,9 @@ class MenuBuilder {
         use Knp\Menu\FactoryInterface;
         use Knp\Menu\ItemInterface;
         use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+        «IF targets('3.0')»
+            use Symfony\Component\EventDispatcher\LegacyEventDispatcherProxy;
+        «ENDIF»
         use Symfony\Component\HttpFoundation\RequestStack;
         use Zikula\Common\Translator\TranslatorInterface;
         use Zikula\Common\Translator\TranslatorTrait;
@@ -110,7 +113,11 @@ class MenuBuilder {
             ) {
                 $this->setTranslator($translator);
                 $this->factory = $factory;
-                $this->eventDispatcher = $eventDispatcher;
+                «IF targets('3.0')»
+                    $this->eventDispatcher = LegacyEventDispatcherProxy::decorate($eventDispatcher);
+                «ELSE»
+                    $this->eventDispatcher = $eventDispatcher;
+                «ENDIF»
                 $this->requestStack = $requestStack;
                 $this->permissionHelper = $permissionHelper;
                 «IF hasDisplayActions»
@@ -153,11 +160,19 @@ class MenuBuilder {
                 «ENDIF»
                 $menu->setChildrenAttribute('class', 'list-inline item-actions');
 
-                $this->eventDispatcher->dispatch(«name.formatForCodeCapital»Events::MENU_ITEMACTIONS_PRE_CONFIGURE, new ConfigureItemActionsMenuEvent($this->factory, $menu, $options));
+                «IF targets('3.0')»
+                    $this->eventDispatcher->dispatch(new ConfigureItemActionsMenuEvent($this->factory, $menu, $options), «name.formatForCodeCapital»Events::MENU_ITEMACTIONS_PRE_CONFIGURE);
+                «ELSE»
+                    $this->eventDispatcher->dispatch(«name.formatForCodeCapital»Events::MENU_ITEMACTIONS_PRE_CONFIGURE, new ConfigureItemActionsMenuEvent($this->factory, $menu, $options));
+                «ENDIF»
 
                 «new ItemActions().itemActionsImpl(it)»
 
-                $this->eventDispatcher->dispatch(«name.formatForCodeCapital»Events::MENU_ITEMACTIONS_POST_CONFIGURE, new ConfigureItemActionsMenuEvent($this->factory, $menu, $options));
+                «IF targets('3.0')»
+                    $this->eventDispatcher->dispatch(new ConfigureItemActionsMenuEvent($this->factory, $menu, $options), «name.formatForCodeCapital»Events::MENU_ITEMACTIONS_POST_CONFIGURE);
+                «ELSE»
+                    $this->eventDispatcher->dispatch(«name.formatForCodeCapital»Events::MENU_ITEMACTIONS_POST_CONFIGURE, new ConfigureItemActionsMenuEvent($this->factory, $menu, $options));
+                «ENDIF»
 
                 return $menu;
             }
