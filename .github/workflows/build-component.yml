@@ -1,5 +1,4 @@
 name: Build component
-# This workflow is triggered on pushes, for pull requests and by external dispatching.
 on:
   push:
   pull_request:
@@ -7,7 +6,6 @@ on:
     types: [upstream-build, manual-build]
 jobs:
   build:
-    # This job runs on Linux
     runs-on: ubuntu-latest
     steps:
     - name: Checkout sources from component repository
@@ -76,6 +74,7 @@ jobs:
         token: ${{ secrets.DISPATCH_TOKEN }}
         repository: Guite/MostProduct
         event-type: upstream-build
+
     - name: Regenerate modules
       run: ./.github/scripts/regenerateModules.sh
       env:

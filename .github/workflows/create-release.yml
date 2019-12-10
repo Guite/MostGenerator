@@ -1,11 +1,9 @@
 name: Create release
-# This workflow is triggered by external dispatching.
 on:
   repository_dispatch:
     types: [create-release]
 jobs:
   build:
-    # This job runs on Linux
     runs-on: ubuntu-latest
     steps:
     # see https://github.com/actions/create-release
