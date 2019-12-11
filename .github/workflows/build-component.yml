@@ -24,18 +24,10 @@ jobs:
       with:
         java-version: 11
 
-    # temporary workaround until Maven has been updated from 3.6.1 to at least 3.6.2 at the host
-    # see https://help.github.com/en/actions/automating-your-workflow-with-github-actions/software-installed-on-github-hosted-runners#ubuntu-1804-lts
-    - name: Update Maven
-      run: |
-        wget -q https://www-eu.apache.org/dist/maven/maven-3/3.6.3/binaries/apache-maven-3.6.3-bin.tar.gz
-        tar xzf apache-maven-3.6.3-bin.tar.gz && rm apache-maven-3.6.3-bin.tar.gz
-        mv apache-maven-3.6.3 maven
-
     # https://stackoverflow.com/questions/71069/can-maven-be-made-less-verbose
     - name: Maven Build
       run: |
-        maven/bin/mvn clean verify -B -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn
+        mvn clean verify -B -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn
 
     - name: Collect artifacts to deploy
       run: |
