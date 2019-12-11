@@ -34,8 +34,8 @@ class GetListEntry {
             string $objectType = '',
             string $fieldName = '',
             string $delimiter = ', '
-        ): string«ELSE»($value, $objectType = '', $fieldName = '', $delimiter = ', ')«ENDIF»
-        {
+        ): string {«ELSE»($value, $objectType = '', $fieldName = '', $delimiter = ', ')
+        {«ENDIF»
             if ((empty($value) && '0' !== $value) || empty($objectType) || empty($fieldName)) {
                 return $value;
             }
