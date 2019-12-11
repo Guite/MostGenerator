@@ -39,7 +39,9 @@ class ControllerAction {
             public function «action.methodName(isAdmin)»Action(
                 «methodArguments(it, action, false)»
             )«IF app.targets('3.0')»: Response«ENDIF» {
-                return $this->«action.methodName(false)»Internal(«methodArgsCall(it, action, isAdmin)»);
+                return $this->«action.methodName(false)»Internal(
+                    «methodArgsCall(it, action, isAdmin)»
+                );
             }
         «ELSEIF isBase && !isAdmin»
             «action.actionDoc(it, isBase, isAdmin)»
@@ -174,9 +176,16 @@ class ControllerAction {
     '''
     def private dispatch methodArgsCall(Entity it, Action action, Boolean isAdmin) {
         if (application.targets('3.0')) {
-            '''$request, $permissionHelper, «isAdmin.displayBool»'''
+            '''
+                $request,
+                $permissionHelper,
+                «isAdmin.displayBool»
+            '''
         } else {
-            '''$request, «isAdmin.displayBool»'''
+            '''
+                $request,
+                «isAdmin.displayBool»
+            '''
         }
     }
 
@@ -205,9 +214,27 @@ class ControllerAction {
     '''
     def private dispatch methodArgsCall(Entity it, ViewAction action, Boolean isAdmin) {
         if (application.targets('3.0')) {
-            '''$request, $permissionHelper, $controllerHelper, $viewHelper, «IF loggable»$loggableHelper, «ENDIF»$sort, $sortdir, $pos, $num, «isAdmin.displayBool»'''
+            '''
+                $request,
+                $permissionHelper,
+                $controllerHelper,
+                $viewHelper,«IF loggable»
+                $loggableHelper,«ENDIF»
+                $sort,
+                $sortdir,
+                $pos,
+                $num,
+                «isAdmin.displayBool»
+            '''
         } else {
-            '''$request, $sort, $sortdir, $pos, $num, «isAdmin.displayBool»'''
+            '''
+                $request,
+                $sort,
+                $sortdir,
+                $pos,
+                $num,
+                «isAdmin.displayBool»
+            '''
         }
     }
 
@@ -236,9 +263,25 @@ class ControllerAction {
     '''
     def private dispatch methodArgsCall(Entity it, DisplayAction action, Boolean isAdmin) {
         if (application.targets('3.0')) {
-            '''$request, $permissionHelper, $controllerHelper, $viewHelper, $entityFactory, «IF loggable»$loggableHelper, «ENDIF»«IF app.generateIcsTemplates && hasStartAndEndDateField» $entityDisplayHelper, «ENDIF»$«name.formatForCode», $«IF hasUniqueSlug»slug«ELSE»id«ENDIF», «isAdmin.displayBool»'''
+            '''
+                $request,
+                $permissionHelper,
+                $controllerHelper,
+                $viewHelper,
+                $entityFactory,«IF loggable»
+                $loggableHelper,«ENDIF»«IF app.generateIcsTemplates && hasStartAndEndDateField»
+                $entityDisplayHelper,«ENDIF»
+                $«name.formatForCode»,
+                $«IF hasUniqueSlug»slug«ELSE»id«ENDIF»,
+                «isAdmin.displayBool»
+            '''
         } else {
-            '''$request, $«name.formatForCode», $«IF hasUniqueSlug»slug«ELSE»id«ENDIF», «isAdmin.displayBool»'''
+            '''
+                $request,
+                $«name.formatForCode»,
+                $«IF hasUniqueSlug»slug«ELSE»id«ENDIF»,
+                «isAdmin.displayBool»
+            '''
         }
     }
 
@@ -257,9 +300,19 @@ class ControllerAction {
     '''
     def private dispatch methodArgsCall(Entity it, EditAction action, Boolean isAdmin) {
         if (application.targets('3.0')) {
-            '''$request, $permissionHelper, $controllerHelper, $viewHelper, $formHandler, «isAdmin.displayBool»'''
+            '''
+                $request,
+                $permissionHelper,
+                $controllerHelper,
+                $viewHelper,
+                $formHandler,
+                «isAdmin.displayBool»
+            '''
         } else {
-            '''$request, «isAdmin.displayBool»'''
+            '''
+                $request,
+                «isAdmin.displayBool»
+            '''
         }
     }
 
@@ -285,9 +338,24 @@ class ControllerAction {
     '''
     def private dispatch methodArgsCall(Entity it, DeleteAction action, Boolean isAdmin) {
         if (application.targets('3.0')) {
-            '''$request, $permissionHelper, $controllerHelper, $viewHelper, $entityFactory, $currentUserApi, $workflowHelper, «IF !skipHookSubscribers»$hookHelper, «ENDIF»$«IF hasUniqueSlug»slug«ELSE»id«ENDIF», «isAdmin.displayBool»'''
+            '''
+                $request,
+                $permissionHelper,
+                $controllerHelper,
+                $viewHelper,
+                $entityFactory,
+                $currentUserApi,
+                $workflowHelper,«IF !skipHookSubscribers»
+                $hookHelper,«ENDIF»
+                $«IF hasUniqueSlug»slug«ELSE»id«ENDIF»,
+                «isAdmin.displayBool»
+            '''
         } else {
-            '''$request, $«IF hasUniqueSlug»slug«ELSE»id«ENDIF», «isAdmin.displayBool»'''
+            '''
+                $request,
+                $«IF hasUniqueSlug»slug«ELSE»id«ENDIF»,
+                «isAdmin.displayBool»
+            '''
         }
     }
 

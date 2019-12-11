@@ -29,7 +29,13 @@ class LoggableUndelete {
                 «undeleteArguments(false)»
             )«IF application.targets('3.0')»: Response«ENDIF» {
                 «IF application.targets('3.0')»
-                    return $this->undeleteActionInternal($request, $loggableHelper, «IF hasTranslatableFields»$translatableHelper, «ENDIF»$id, «isAdmin.displayBool»);
+                    return $this->undeleteActionInternal(
+                        $request,
+                        $loggableHelper,«IF hasTranslatableFields»
+                        $translatableHelper,«ENDIF»
+                        $id,
+                        «isAdmin.displayBool»
+                    );
                 «ELSE»
                     return $this->undeleteActionInternal($request, $id, «isAdmin.displayBool»);
                 «ENDIF»
@@ -152,7 +158,13 @@ class LoggableUndelete {
             $loggableHelper->undelete($«name.formatForCode»);
             $this->addFlash('status', $this->__('Done! Undeleted «name.formatForDisplay».'));
         } catch (Exception $exception) {
-            $this->addFlash('error', $this->__f('Sorry, but an error occured during the %action% action. Please apply the changes again!', ['%action%' => 'undelete']) . '  ' . $exception->getMessage());
+            $this->addFlash(
+                'error',
+                $this->__f(
+                    'Sorry, but an error occured during the %action% action. Please apply the changes again!',
+                    ['%action%' => 'undelete']
+                ) . '  ' . $exception->getMessage()
+            );
         }
     '''
 }

@@ -33,9 +33,10 @@ class Categories extends AbstractExtension implements EntityExtensionInterface {
     override properties(Entity it) '''
 
         /**
-         * @ORM\OneToMany(targetEntity="\«entityClassName('category', false)»", 
-         *                mappedBy="entity", cascade={"all"}, 
-         *                orphanRemoval=true«/*commented out as this causes only one category to be selected (#349)   , indexBy="categoryRegistryId"*/»)
+         * @ORM\OneToMany(targetEntity="\«entityClassName('category', false)»",
+         *                mappedBy="entity", cascade={"all"},
+         *                orphanRemoval=true«/*commented out as this causes only one category to be selected (#349)   , indexBy="categoryRegistryId"*/»
+         * )
          * @var \«entityClassName('category', false)»
          */
         protected $categories = null;
@@ -62,7 +63,7 @@ class Categories extends AbstractExtension implements EntityExtensionInterface {
         public function setCategories(Collection $categories)«IF application.targets('3.0')»: void«ENDIF»
         {
             foreach ($this->categories as $category) {
-                if (false === ($key = $this->collectionContains($categories, $category))) {
+                if (false === ($key = $this->categoryCollectionContains($categories, $category))) {
                     $this->categories->removeElement($category);
                 } else {
                     $categories->remove($key);
@@ -83,11 +84,12 @@ class Categories extends AbstractExtension implements EntityExtensionInterface {
          *
          * @return bool|int
          */
-        private function collectionContains(Collection $collection, \«entityClassName('category', false)» $element)
+        private function categoryCollectionContains(Collection $collection, \«entityClassName('category', false)» $element)
         {
             foreach ($collection as $key => $category) {
                 /** @var \«entityClassName('category', false)» $category */
-                if ($category->getCategoryRegistryId() === $element->getCategoryRegistryId()
+                if (
+                    $category->getCategoryRegistryId() === $element->getCategoryRegistryId()
                     && $category->getCategory() === $element->getCategory()
                 ) {
                     return $key;

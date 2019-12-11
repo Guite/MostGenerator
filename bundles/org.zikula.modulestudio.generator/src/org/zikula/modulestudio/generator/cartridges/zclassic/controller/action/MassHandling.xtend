@@ -25,7 +25,14 @@ class MassHandling {
                 «handleSelectedObjectsArguments(false)»
             )«IF application.targets('3.0')»: RedirectResponse«ENDIF» {
                 «IF application.targets('3.0')»
-                    return $this->handleSelectedEntriesActionInternal($request, $entityFactory, $workflowHelper, «IF !skipHookSubscribers»$hookHelper, «ENDIF»$currentUserApi, «isAdmin.displayBool»);
+                    return $this->handleSelectedEntriesActionInternal(
+                        $request,
+                        $entityFactory,
+                        $workflowHelper,«IF !skipHookSubscribers»
+                        $hookHelper,«ENDIF»
+                        $currentUserApi,
+                        «isAdmin.displayBool»
+                    );
                 «ELSE»
                     return $this->handleSelectedEntriesActionInternal($request, «isAdmin.displayBool»);
                 «ENDIF»
@@ -124,7 +131,10 @@ class MassHandling {
             «IF !skipHookSubscribers»
                 if ($entity->supportsHookSubscribers()) {
                     // Let any ui hooks perform additional validation actions
-                    $hookType = 'delete' === $action ? UiHooksCategory::TYPE_VALIDATE_DELETE : UiHooksCategory::TYPE_VALIDATE_EDIT;
+                    $hookType = 'delete' === $action
+                        ? UiHooksCategory::TYPE_VALIDATE_DELETE
+                        : UiHooksCategory::TYPE_VALIDATE_EDIT
+                    ;
                     $validationErrors = $hookHelper->callValidationHooks($entity, $hookType);
                     if (count($validationErrors) > 0) {
                         foreach ($validationErrors as $message) {
@@ -140,8 +150,24 @@ class MassHandling {
                 // execute the workflow action
                 $success = $workflowHelper->executeAction($entity, $action);
             } catch (Exception $exception) {
-                $this->addFlash('error', $this->__f('Sorry, but an error occured during the %action% action.', ['%action%' => $action]) . '  ' . $exception->getMessage());
-                $logger->error('{app}: User {user} tried to execute the {action} workflow action for the {entity} with id {id}, but failed. Error details: {errorMessage}.', ['app' => '«application.appName»', 'user' => $userName, 'action' => $action, 'entity' => '«name.formatForDisplay»', 'id' => $itemId, 'errorMessage' => $exception->getMessage()]);
+                $this->addFlash(
+                    'error',
+                    $this->__f(
+                        'Sorry, but an error occured during the %action% action.',
+                        ['%action%' => $action]
+                    ) . '  ' . $exception->getMessage()
+                );
+                $logger->error(
+                    '{app}: User {user} tried to execute the {action} workflow action for the {entity} with id {id}, but failed. Error details: {errorMessage}.',
+                    [
+                        'app' => '«application.appName»',
+                        'user' => $userName,
+                        'action' => $action,
+                        'entity' => '«name.formatForDisplay»',
+                        'id' => $itemId,
+                        'errorMessage' => $exception->getMessage()
+                    ]
+                );
             }
 
             if (!$success) {
@@ -150,16 +176,36 @@ class MassHandling {
 
             if ('delete' === $action) {
                 $this->addFlash('status', $this->__('Done! Item deleted.'));
-                $logger->notice('{app}: User {user} deleted the {entity} with id {id}.', ['app' => '«application.appName»', 'user' => $userName, 'entity' => '«name.formatForDisplay»', 'id' => $itemId]);
+                $logger->notice(
+                    '{app}: User {user} deleted the {entity} with id {id}.',
+                    [
+                        'app' => '«application.appName»',
+                        'user' => $userName,
+                        'entity' => '«name.formatForDisplay»',
+                        'id' => $itemId
+                    ]
+                );
             } else {
                 $this->addFlash('status', $this->__('Done! Item updated.'));
-                $logger->notice('{app}: User {user} executed the {action} workflow action for the {entity} with id {id}.', ['app' => '«application.appName»', 'user' => $userName, 'action' => $action, 'entity' => '«name.formatForDisplay»', 'id' => $itemId]);
+                $logger->notice(
+                    '{app}: User {user} executed the {action} workflow action for the {entity} with id {id}.',
+                    [
+                        'app' => '«application.appName»',
+                        'user' => $userName,
+                        'action' => $action,
+                        'entity' => '«name.formatForDisplay»',
+                        'id' => $itemId
+                    ]
+                );
             }
             «IF !skipHookSubscribers»
 
                 if ($entity->supportsHookSubscribers()) {
                     // Let any ui hooks know that we have updated or deleted an item
-                    $hookType = 'delete' === $action ? UiHooksCategory::TYPE_PROCESS_DELETE : UiHooksCategory::TYPE_PROCESS_EDIT;
+                    $hookType = 'delete' === $action
+                        ? UiHooksCategory::TYPE_PROCESS_DELETE
+                        : UiHooksCategory::TYPE_PROCESS_EDIT
+                    ;
                     $url = null;
                     «IF hasDisplayAction»
                         if ('delete' !== $action) {

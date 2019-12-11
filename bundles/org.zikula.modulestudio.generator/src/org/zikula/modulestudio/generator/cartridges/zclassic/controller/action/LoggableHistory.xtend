@@ -18,7 +18,6 @@ class LoggableHistory {
         «loggableHistory(isBase, true)»
 
         «loggableHistory(isBase, false)»
-
     '''
 
     def private loggableHistory(Entity it, Boolean isBase, Boolean isAdmin) '''
@@ -28,7 +27,16 @@ class LoggableHistory {
                 «loggableHistoryArguments(false)»
             )«IF application.targets('3.0')»: Response«ENDIF» {
                 «IF application.targets('3.0')»
-                    return $this->loggableHistoryActionInternal($request, $permissionHelper, $entityFactory, $loggableHelper, «IF hasTranslatableFields»$translatableHelper, «ENDIF»$workflowHelper, «IF hasSluggableFields && slugUnique»$slug«ELSE»$id«ENDIF», «isAdmin.displayBool»);
+                    return $this->loggableHistoryActionInternal(
+                        $request,
+                        $permissionHelper,
+                        $entityFactory,
+                        $loggableHelper,«IF hasTranslatableFields»
+                        $translatableHelper,«ENDIF»
+                        $workflowHelper,
+                        «IF hasSluggableFields && slugUnique»$slug«ELSE»$id«ENDIF»,
+                        «isAdmin.displayBool»
+                    );
                 «ELSE»
                     return $this->loggableHistoryActionInternal($request, «IF hasSluggableFields && slugUnique»$slug«ELSE»$id«ENDIF», «isAdmin.displayBool»);
                 «ENDIF»
@@ -147,7 +155,13 @@ class LoggableHistory {
                     $this->addFlash('error', $this->__f('Error! Reverting «name.formatForDisplay» to version %version% failed.', ['%version%' => $revertToVersion]));
                 }
             } catch (Exception $exception) {
-                $this->addFlash('error', $this->__f('Sorry, but an error occured during the %action% action. Please apply the changes again!', ['%action%' => 'update']) . '  ' . $exception->getMessage());
+                $this->addFlash(
+                    'error',
+                    $this->__f(
+                        'Sorry, but an error occured during the %action% action. Please apply the changes again!',
+                        ['%action%' => 'update']
+                    ) . '  ' . $exception->getMessage()
+                );
             }
             «IF hasSluggableFields && slugUnique»
 
@@ -188,7 +202,14 @@ class LoggableHistory {
         ];
 
         if (true === $isDiffView) {
-            list ($minVersion, $maxVersion, $diffValues) = «IF application.targets('3.0')»$loggableHelper«ELSE»$this->get('«application.appService».loggable_helper')«ENDIF»->determineDiffViewParameters($logEntries, $versions);
+            list (
+                $minVersion,
+                $maxVersion,
+                $diffValues
+            ) = «IF application.targets('3.0')»$loggableHelper«ELSE»$this->get('«application.appService».loggable_helper')«ENDIF»->determineDiffViewParameters(
+                $logEntries,
+                $versions
+            );
             $templateParameters['minVersion'] = $minVersion;
             $templateParameters['maxVersion'] = $maxVersion;
             $templateParameters['diffValues'] = $diffValues;

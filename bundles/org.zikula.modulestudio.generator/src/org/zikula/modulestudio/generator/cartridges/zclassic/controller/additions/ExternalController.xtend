@@ -100,8 +100,8 @@ class ExternalController {
          */
     '''
 
-    def private displaySignature(Application it) '''
-        «IF targets('3.0')»
+    def private displaySignature(Application it) {
+        if (targets('3.0')) '''
             public function displayAction(
                 Request $request,
                 ControllerHelper $controllerHelper,
@@ -112,17 +112,16 @@ class ExternalController {
                 int $id,
                 string $source,
                 string $displayMode
-            ): Response
-        «ELSE»
+            ): Response'''
+        else '''
             public function displayAction(
                 Request $request,
                 $objectType,
                 $id,
                 $source,
                 $displayMode
-            )
-        «ENDIF»
-    '''
+            )'''
+    }
 
     def private displayBaseImpl(Application it) '''
         «IF !targets('3.0')»
@@ -208,8 +207,8 @@ class ExternalController {
          */
     '''
 
-    def private finderSignature(Application it) '''
-        «IF targets('3.0')»
+    def private finderSignature(Application it) {
+        if (targets('3.0')) '''
             public function finderAction(
                 Request $request,
                 ControllerHelper $controllerHelper,
@@ -225,8 +224,8 @@ class ExternalController {
                 string $sortdir,
                 int $pos = 1,
                 int $num = 0
-            ): Response
-        «ELSE»
+            ): Response'''
+        else '''
             public function finderAction(
                 Request $request,
                 $objectType,
@@ -235,9 +234,8 @@ class ExternalController {
                 $sortdir,
                 $pos = 1,
                 $num = 0
-            )
-        «ENDIF»
-    '''
+            )'''
+    }
 
     def private finderBaseImpl(Application it) '''
         «IF !targets('3.0')»
@@ -400,9 +398,25 @@ class ExternalController {
         «displayDocBlock(false)»
         «displaySignature» {
             «IF targets('3.0')»
-                return parent::displayAction($request, $controllerHelper, $permissionHelper, $entityFactory, $viewHelper, $objectType, $id, $source, $displayMode);
+                return parent::displayAction(
+                    $request,
+                    $controllerHelper,
+                    $permissionHelper,
+                    $entityFactory,
+                    $viewHelper,
+                    $objectType,
+                    $id,
+                    $source,
+                    $displayMode
+                );
             «ELSE»
-                return parent::displayAction($request, $objectType, $id, $source, $displayMode);
+                return parent::displayAction(
+                    $request,
+                    $objectType,
+                    $id,
+                    $source,
+                    $displayMode
+                );
             «ENDIF»
         }
     '''
@@ -411,9 +425,32 @@ class ExternalController {
         «finderDocBlock(false)»
         «finderSignature» {
             «IF targets('3.0')»
-                return parent::finderAction($request, $controllerHelper, $permissionHelper, $entityFactory, $collectionFilterHelper, $listEntriesHelper, $viewHelper, $assetHelper, $objectType, $editor, $sort, $sortdir, $pos, $num);
+                return parent::finderAction(
+                    $request,
+                    $controllerHelper,
+                    $permissionHelper,
+                    $entityFactory,
+                    $collectionFilterHelper,
+                    $listEntriesHelper,
+                    $viewHelper,
+                    $assetHelper,
+                    $objectType,
+                    $editor,
+                    $sort,
+                    $sortdir,
+                    $pos,
+                    $num
+                );
             «ELSE»
-                return parent::finderAction($request, $objectType, $editor, $sort, $sortdir, $pos, $num);
+                return parent::finderAction(
+                    $request,
+                    $objectType,
+                    $editor,
+                    $sort,
+                    $sortdir,
+                    $pos,
+                    $num
+                );
             «ENDIF»
         }
     '''

@@ -20,7 +20,13 @@ class InlineRedirect {
                 «handleInlineRedirectBaseImpl»
             «ELSE»
                 «IF application.targets('3.0')»
-                    return parent::handleInlineRedirectAction($entityFactory, $idPrefix, $commandName, $id);
+                    return parent::handleInlineRedirectAction(
+                        $entityFactory,
+                        $entityDisplayHelper,
+                        $idPrefix,
+                        $commandName,
+                        $id
+                    );
                 «ELSE»
                     return parent::handleInlineRedirectAction($idPrefix, $commandName, $id);
                 «ENDIF»

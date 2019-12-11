@@ -73,8 +73,8 @@ class Factory {
                 EntityManagerInterface $entityManager,
                 EntityInitialiser $entityInitialiser,
                 CollectionFilterHelper $collectionFilterHelper«IF hasTranslatable»,
-                FeatureActivationHelper $featureActivationHelper«ENDIF»)
-            {
+                FeatureActivationHelper $featureActivationHelper«ENDIF»
+            ) {
                 $this->entityManager = $entityManager;
                 $this->entityInitialiser = $entityInitialiser;
                 $this->collectionFilterHelper = $collectionFilterHelper;
@@ -102,7 +102,9 @@ class Factory {
                 «IF hasTranslatable»
 
                     if (in_array($objectType, ['«getTranslatableEntities.map[name.formatForCode].join('\', \'')»'], true)) {
-                        $repository->setTranslationsEnabled($this->featureActivationHelper->isEnabled(FeatureActivationHelper::TRANSLATIONS, $objectType));
+                        $repository->setTranslationsEnabled(
+                            $this->featureActivationHelper->isEnabled(FeatureActivationHelper::TRANSLATIONS, $objectType)
+                        );
                     }
                 «ENDIF»
 

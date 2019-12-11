@@ -143,11 +143,17 @@ class Actions {
 
         /** @var RouterInterface $router */
         $router = $this->get('router');
-        $sortableColumns = new SortableColumns($router, '«app.appName.formatForDB»_«name.toLowerCase»_' . ($isAdmin ? 'admin' : '') . 'view', 'sort', 'sortdir');
+        $routeName = '«app.appName.formatForDB»_«name.toLowerCase»_' . ($isAdmin ? 'admin' : '') . 'view';
+        $sortableColumns = new SortableColumns($router, $routeName, 'sort', 'sortdir');
         «IF tree != EntityTreeType.NONE»
 
             if ('tree' === $request->query->getAlnum('tpl')) {
-                $templateParameters = $controllerHelper->processViewActionParameters($objectType, $sortableColumns, $templateParameters«IF app.hasHookSubscribers», «(!skipHookSubscribers).displayBool»«ENDIF»);
+                $templateParameters = $controllerHelper->processViewActionParameters(
+                    $objectType,
+                    $sortableColumns,
+                    $templateParameters«IF app.hasHookSubscribers»,
+                    «(!skipHookSubscribers).displayBool»«ENDIF»
+                );
 
                 // fetch and return the appropriate template
                 return $viewHelper->processTemplate($objectType, 'view', $templateParameters);
@@ -156,10 +162,19 @@ class Actions {
 
         «initSortableColumns»
 
-        $templateParameters = $controllerHelper->processViewActionParameters($objectType, $sortableColumns, $templateParameters«IF app.hasHookSubscribers», «(!skipHookSubscribers).displayBool»«ENDIF»);
+        $templateParameters = $controllerHelper->processViewActionParameters(
+            $objectType,
+            $sortableColumns,
+            $templateParameters«IF app.hasHookSubscribers»,
+            «(!skipHookSubscribers).displayBool»«ENDIF»
+        );
 
         // filter by permissions
-        $templateParameters['items'] = $permissionHelper->filterCollection($objectType, $templateParameters['items'], $permLevel);
+        $templateParameters['items'] = $permissionHelper->filterCollection(
+            $objectType,
+            $templateParameters['items'],
+            $permLevel
+        );
         «IF loggable»
 
             // check if there exist any deleted «name.formatForDisplay»
@@ -228,7 +243,11 @@ class Actions {
         «IF !app.targets('3.0')»
             $controllerHelper = $this->get('«app.appService».controller_helper');
         «ENDIF»
-        $templateParameters = $controllerHelper->processDisplayActionParameters($objectType, $templateParameters«IF app.hasHookSubscribers», $«name.formatForCode»->supportsHookSubscribers()«ENDIF»);
+        $templateParameters = $controllerHelper->processDisplayActionParameters(
+            $objectType,
+            $templateParameters«IF app.hasHookSubscribers»,
+            $«name.formatForCode»->supportsHookSubscribers()«ENDIF»
+        );
 
         «processDisplayOutput»
     '''

@@ -94,6 +94,9 @@ class ControllerLayer {
                 «new LoggableHistory().generate(it, true)»
             «ENDIF»
             «IF hasEditAction && app.needsInlineEditing»
+                «IF loggable»
+
+                «ENDIF»
                 «new InlineRedirect().generate(it, true)»
             «ENDIF»
         }
