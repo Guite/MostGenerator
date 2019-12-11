@@ -121,7 +121,6 @@ abstract class AbstractExtension implements EntityExtensionInterface {
         namespace «app.appNamespace»\Entity;
 
         use «app.appNamespace»\Entity\«IF isInheriting»«parentType.name.formatForCodeCapital»«classType.formatForCodeCapital»Entity«ELSE»Base\Abstract«name.formatForCodeCapital»«classType.formatForCodeCapital»Entity«ENDIF» as BaseEntity;
-
         use Doctrine\ORM\Mapping as ORM;
 
         /**

@@ -43,7 +43,7 @@ class KernelListener {
          *
          «commonExample.generalEventProperties(it, true)»
          */
-        public function onRequest(GetResponseEvent $event)«IF targets('3.0')»: void«ENDIF»
+        public function onRequest(«IF targets('3.0')»Request«ELSE»GetResponse«ENDIF»Event $event)«IF targets('3.0')»: void«ENDIF»
         {
         }
 
@@ -74,7 +74,7 @@ class KernelListener {
          *
          «commonExample.generalEventProperties(it, true)»
          */
-        public function onController(FilterControllerEvent $event)«IF targets('3.0')»: void«ENDIF»
+        public function onController(«IF !targets('3.0')»Filter«ENDIF»ControllerEvent $event)«IF targets('3.0')»: void«ENDIF»
         {
         }
 
@@ -96,7 +96,7 @@ class KernelListener {
          *
          «commonExample.generalEventProperties(it, true)»
          */
-        public function onView(GetResponseForControllerResultEvent $event)«IF targets('3.0')»: void«ENDIF»
+        public function onView(«IF targets('3.0')»View«ELSE»GetResponseForControllerResult«ENDIF»Event $event)«IF targets('3.0')»: void«ENDIF»
         {
         }
 
@@ -123,7 +123,7 @@ class KernelListener {
          *
          «commonExample.generalEventProperties(it, true)»
          */
-        public function onResponse(FilterResponseEvent $event)«IF targets('3.0')»: void«ENDIF»
+        public function onResponse(«IF !targets('3.0')»Filter«ENDIF»ResponseEvent $event)«IF targets('3.0')»: void«ENDIF»
         {
         }
 
@@ -154,7 +154,7 @@ class KernelListener {
          *
          «commonExample.generalEventProperties(it, true)»
          */
-        public function onTerminate(PostResponseEvent $event)«IF targets('3.0')»: void«ENDIF»
+        public function onTerminate(«IF targets('3.0')»Terminate«ELSE»PostResponse«ENDIF»Event $event)«IF targets('3.0')»: void«ENDIF»
         {
         }
 
@@ -169,7 +169,11 @@ class KernelListener {
          *     `$exception = $event->getException();
          *     if ($exception instanceof MySpecialException || $exception instanceof MySpecialExceptionInterface) {
          *         $response = new Response();
-         *         $message = sprintf('«name.formatForDisplay» App Error says: %s with code: %s', $exception->getMessage(), $exception->getCode());
+         *         $message = sprintf(
+         *             '«name.formatForDisplay» App Error says: %s with code: %s',
+         *             $exception->getMessage(),
+         *             $exception->getCode()
+         *         );
          *         $response->setContent($message);`
          *
          *         HttpExceptionInterface is a special type of exception that holds the status code and header details
@@ -189,7 +193,7 @@ class KernelListener {
          *
          «commonExample.generalEventProperties(it, true)»
          */
-        public function onException(GetResponseForExceptionEvent $event)«IF targets('3.0')»: void«ENDIF»
+        public function onException(«IF !targets('3.0')»GetResponseFor«ENDIF»ExceptionEvent $event)«IF targets('3.0')»: void«ENDIF»
         {
         }
     '''

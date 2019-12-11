@@ -49,7 +49,12 @@ class TreeData {
             foreach ($tree as $node) {
                 if (1 > $node->getLvl() || $rootId === $node->getKey()) {
                     list ($nodes, $actions) = $this->processTreeItemWithChildren(
-                        $objectType, $node, $routeArea, $rootId, $descriptionFieldName, $hasEditAction
+                        $objectType,
+                        $node,
+                        $routeArea,
+                        $rootId,
+                        $descriptionFieldName,
+                        $hasEditAction
                     );
                     $result['nodes'] .= $nodes;
                     $result['actions'] .= $actions;
@@ -93,7 +98,8 @@ class TreeData {
             }
 
             $titleAttribute = ' title="' . str_replace('"', '', $title) . '"';
-            $liTag = '<li id="' . $idPrefix . '"' . $titleAttribute . ' class="lvl' . $node->getLvl() . '"' . $urlDataAttributes . '>';
+            $classAttribute = ' class="lvl' . $node->getLvl() . '"';
+            $liTag = '<li id="' . $idPrefix . '"' . $titleAttribute . $classAttribute . $urlDataAttributes . '>';
             $liContent = $this->entityDisplayHelper->getFormattedTitle($node);
             if ($hasEditAction) {
                 $routeName = '«appName.formatForDB»_' . strtolower($objectType) . '_' . $routeArea . 'edit';
@@ -119,7 +125,12 @@ class TreeData {
                 $nodeItem .= '<ul>';
                 foreach ($node->getChildren() as $childNode) {
                     list ($subNodes, $subActions) = $this->processTreeItemWithChildren(
-                        $objectType, $childNode, $routeArea, $rootId, $descriptionFieldName, $hasEditAction
+                        $objectType,
+                        $childNode,
+                        $routeArea,
+                        $rootId,
+                        $descriptionFieldName,
+                        $hasEditAction
                     );
                     $nodeItem .= $subNodes;
                     $actions .= $subActions;

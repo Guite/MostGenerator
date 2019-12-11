@@ -83,7 +83,12 @@ class UserDeletion {
             «initQueryAdditions»
             $query->execute();
 
-            $logArgs = ['app' => '«application.appName»', 'user' => $currentUserApi->get('uname'), 'entities' => '«nameMultiple.formatForDisplay»', 'userid' => $userId];
+            $logArgs = [
+                'app' => '«application.appName»',
+                'user' => $currentUserApi->get('uname'),
+                'entities' => '«nameMultiple.formatForDisplay»',
+                'userid' => $userId
+            ];
             $logger->debug('{app}: User {user} updated {entities} created by user id {userid}.', $logArgs);
         }
     '''
@@ -132,7 +137,12 @@ class UserDeletion {
             «initQueryAdditions»
             $query->execute();
 
-            $logArgs = ['app' => '«application.appName»', 'user' => $currentUserApi->get('uname'), 'entities' => '«nameMultiple.formatForDisplay»', 'userid' => $userId];
+            $logArgs = [
+                'app' => '«application.appName»',
+                'user' => $currentUserApi->get('uname'),
+                'entities' => '«nameMultiple.formatForDisplay»',
+                'userid' => $userId
+            ];
             $logger->debug('{app}: User {user} updated {entities} edited by user id {userid}.', $logArgs);
         }
     '''
@@ -170,7 +180,12 @@ class UserDeletion {
             «initQueryAdditions»
             $query->execute();
 
-            $logArgs = ['app' => '«application.appName»', 'user' => $currentUserApi->get('uname'), 'entities' => '«nameMultiple.formatForDisplay»', 'userid' => $userId];
+            $logArgs = [
+                'app' => '«application.appName»',
+                'user' => $currentUserApi->get('uname'),
+                'entities' => '«nameMultiple.formatForDisplay»',
+                'userid' => $userId
+            ];
             $logger->debug('{app}: User {user} deleted {entities} created by user id {userid}.', $logArgs);
         }
     '''
@@ -208,7 +223,12 @@ class UserDeletion {
             «initQueryAdditions»
             $query->execute();
 
-            $logArgs = ['app' => '«application.appName»', 'user' => $currentUserApi->get('uname'), 'entities' => '«nameMultiple.formatForDisplay»', 'userid' => $userId];
+            $logArgs = [
+                'app' => '«application.appName»',
+                'user' => $currentUserApi->get('uname'),
+                'entities' => '«nameMultiple.formatForDisplay»',
+                'userid' => $userId
+            ];
             $logger->debug('{app}: User {user} deleted {entities} edited by user id {userid}.', $logArgs);
         }
     '''
@@ -262,7 +282,14 @@ class UserDeletion {
             «initQueryAdditions»
             $query->execute();
 
-            $logArgs = ['app' => '«application.appName»', 'user' => $currentUserApi->get('uname'), 'entities' => '«nameMultiple.formatForDisplay»', 'field' => $userFieldName, 'userid' => $userId, 'newuserid' => $newUserId];
+            $logArgs = [
+                'app' => '«application.appName»',
+                'user' => $currentUserApi->get('uname'),
+                'entities' => '«nameMultiple.formatForDisplay»',
+                'field' => $userFieldName,
+                'userid' => $userId,
+                'newuserid' => $newUserId
+            ];
             $logger->debug('{app}: User {user} updated {entities} setting {field} from {userid} to {newuserid}.', $logArgs);
         }
     '''
@@ -305,7 +332,13 @@ class UserDeletion {
             «initQueryAdditions»
             $query->execute();
 
-            $logArgs = ['app' => '«application.appName»', 'user' => $currentUserApi->get('uname'), 'entities' => '«nameMultiple.formatForDisplay»', 'field' => $userFieldName, 'userid' => $userId];
+            $logArgs = [
+                'app' => '«application.appName»',
+                'user' => $currentUserApi->get('uname'),
+                'entities' => '«nameMultiple.formatForDisplay»',
+                'field' => $userFieldName,
+                'userid' => $userId
+            ];
             $logger->debug('{app}: User {user} deleted {entities} with {field} having set to user id {userid}.', $logArgs);
         }
     '''

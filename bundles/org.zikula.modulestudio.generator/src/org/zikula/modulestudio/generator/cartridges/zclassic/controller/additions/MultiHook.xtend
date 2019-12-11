@@ -340,8 +340,14 @@ class MultiHook {
                     if (!$this->permissionHelper->hasComponentPermission('«name.formatForCode»', ACCESS_READ)) {
                         $cache[$needleId] = '';
                     } else {
-                        $route = $this->router->generate('«app.appName.formatForDB»_«name.formatForDB»_view', [], UrlGeneratorInterface::ABSOLUTE_URL);
-                        $cache[$needleId] = '<a href="' . $route . '" title="' . $this->translator->__('View «nameMultiple.formatForDisplay»', '«app.appName.formatForDB»') . '">' . $this->translator->__('«nameMultiple.formatForDisplayCapital»', '«app.appName.formatForDB»') . '</a>';
+                        $route = $this->router->generate(
+                            '«app.appName.formatForDB»_«name.formatForDB»_view',
+                            [],
+                            UrlGeneratorInterface::ABSOLUTE_URL
+                        );
+                        $linkTitle = $this->translator->__('View «nameMultiple.formatForDisplay»', '«app.appName.formatForDB»');
+                        $linkText = $this->translator->__('«nameMultiple.formatForDisplayCapital»', '«app.appName.formatForDB»');
+                        $cache[$needleId] = '<a href="' . $route . '" title="' . $linkTitle . '">' . $linkText . '</a>';
                     }
 
                     return $cache[$needleId];
@@ -376,7 +382,11 @@ class MultiHook {
                 }
 
                 $title = $this->entityDisplayHelper->getFormattedTitle($entity);
-                $route = $this->router->generate('«app.appName.formatForDB»_«name.formatForDB»_display', $entity->createUrlArgs(), UrlGeneratorInterface::ABSOLUTE_URL);
+                $route = $this->router->generate(
+                    '«app.appName.formatForDB»_«name.formatForDB»_display',
+                    $entity->createUrlArgs(),
+                    UrlGeneratorInterface::ABSOLUTE_URL
+                );
                 $cache[$needleId] = '<a href="' . $route . '" title="' . str_replace('"', '', $title) . '">' . $title . '</a>';
             «ENDIF»
 

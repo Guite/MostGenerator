@@ -24,7 +24,11 @@ class Locking {
     '''
 
     def addPageLock(Application it) '''
-        if (true === $this->hasPageLockSupport && null !== $this->lockingApi && $this->kernel->isBundle('ZikulaPageLockModule')) {
+        if (
+            true === $this->hasPageLockSupport
+            && null !== $this->lockingApi
+            && $this->kernel->isBundle('ZikulaPageLockModule')
+        ) {
             // try to guarantee that only one person at a time can be editing this entity
             $lockName = '«appName»' . $this->objectTypeCapital . $entity->getKey();
             $this->lockingApi->addLock($lockName, $this->getRedirectUrl(['commandName' => '']));
@@ -32,7 +36,12 @@ class Locking {
     '''
 
     def releasePageLock(Application it) '''
-        if (true === $this->hasPageLockSupport && null !== $this->lockingApi && 'edit' === $this->templateParameters['mode'] && $this->kernel->isBundle('ZikulaPageLockModule')) {
+        if (
+            true === $this->hasPageLockSupport
+            && null !== $this->lockingApi
+            && 'edit' === $this->templateParameters['mode']
+            && $this->kernel->isBundle('ZikulaPageLockModule')
+        ) {
             $lockName = '«appName»' . $this->objectTypeCapital . $this->entityRef->getKey();
             $this->lockingApi->releaseLock($lockName);
         }
@@ -55,7 +64,10 @@ class Locking {
         «IF hasOptimisticLock»
 
             if ('edit' === $this->templateParameters['mode']) {
-                $this->requestStack->getCurrentRequest()->getSession()->set('«application.appName»EntityVersion', $this->entityRef->get«getVersionField.name.formatForCodeCapital»());
+                $this->requestStack->getCurrentRequest()->getSession()->set(
+                    '«application.appName»EntityVersion',
+                    $this->entityRef->get«getVersionField.name.formatForCodeCapital»()
+                );
             }
         «ENDIF»
     '''
@@ -65,7 +77,10 @@ class Locking {
 
             $applyLock = 'create' !== $this->templateParameters['mode'] && 'delete' !== $action;
             «IF hasOptimisticLock»
-                $expectedVersion = $this->requestStack->getCurrentRequest()->getSession()->get('«application.appName»EntityVersion', 1);
+                $expectedVersion = $this->requestStack->getCurrentRequest()->getSession()->get(
+                    '«application.appName»EntityVersion',
+                    1
+                );
             «ENDIF»
         «ENDIF»
     '''
@@ -87,9 +102,20 @@ class Locking {
     def catchException(Entity it) '''
         «IF hasOptimisticLock»
             } catch (OptimisticLockException $exception) {
-                $flashBag->add('error', $this->__('Sorry, but someone else has already changed this record. Please apply the changes again!'));
-                $logArgs = ['app' => '«application.appName»', 'user' => $this->currentUserApi->get('uname'), 'entity' => '«name.formatForDisplay»', 'id' => $entity->getKey()];
-                $this->logger->error('{app}: User {user} tried to edit the {entity} with id {id}, but failed as someone else has already changed it.', $logArgs);
+                $flashBag->add(
+                    'error',
+                    $this->__('Sorry, but someone else has already changed this record. Please apply the changes again!')
+                );
+                $logArgs = [
+                    'app' => '«application.appName»',
+                    'user' => $this->currentUserApi->get('uname'),
+                    'entity' => '«name.formatForDisplay»',
+                    'id' => $entity->getKey()
+                ];
+                $this->logger->error(
+                    '{app}: User {user} tried to edit the {entity} with id {id}, but failed as someone else has already changed it.',
+                    $logArgs
+                );
         «ENDIF»
     '''
 }

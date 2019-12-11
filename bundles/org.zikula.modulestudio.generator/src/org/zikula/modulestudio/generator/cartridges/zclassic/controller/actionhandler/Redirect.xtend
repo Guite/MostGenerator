@@ -109,14 +109,19 @@ class Redirect {
          */
         protected function getDefaultReturnUrl(array $args = [])«IF app.targets('3.0')»: string«ENDIF»
         {
-            $objectIsPersisted = 'delete' !== $args['commandName'] && !('create' === $this->templateParameters['mode'] && 'cancel' === $args['commandName']);
+            $objectIsPersisted = 'delete' !== $args['commandName']
+                && !('create' === $this->templateParameters['mode'] && 'cancel' === $args['commandName']
+            );
             if (null !== $this->returnTo && $objectIsPersisted) {
                 // return to referer
                 return $this->returnTo;
             }
 
             «IF hasIndexAction || hasViewAction || hasDisplayAction && tree != EntityTreeType.NONE»
-                $routeArea = array_key_exists('routeArea', $this->templateParameters) ? $this->templateParameters['routeArea'] : '';
+                $routeArea = array_key_exists('routeArea', $this->templateParameters)
+                    ? $this->templateParameters['routeArea']
+                    : ''
+                ;
                 $routePrefix = '«app.appName.formatForDB»_' . $this->objectTypeLower . '_' . $routeArea;
 
             «ENDIF»
@@ -214,7 +219,9 @@ class Redirect {
                 «IF hasDisplayAction»
                     case 'userDisplay':
                     case 'adminDisplay':
-                        if ('delete' !== $args['commandName'] && !('create' === $this->templateParameters['mode'] && 'cancel' === $args['commandName'])) {
+                        if ('delete' !== $args['commandName']
+                            && !('create' === $this->templateParameters['mode'] && 'cancel' === $args['commandName'])
+                        ) {
                             return $this->router->generate($routePrefix . 'display', $this->entityRef->createUrlArgs());
                         }
 

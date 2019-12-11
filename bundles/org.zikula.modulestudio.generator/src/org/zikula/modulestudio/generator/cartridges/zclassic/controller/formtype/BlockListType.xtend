@@ -175,6 +175,7 @@ class BlockListType {
 
             $objectType = $options['object_type'];
             $hasMultiSelection = $options['category_helper']->hasMultipleSelection($objectType);
+            $entityCategoryClass = '«appNamespace»\Entity\\' . ucfirst($objectType) . 'CategoryEntity';
             $builder->add('categories', CategoriesType::class, [
                 'label' => ($hasMultiSelection ? $this->__('Categories'«IF !isSystemModule», '«appName.formatForDB»'«ENDIF») : $this->__('Category'«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»)) . ':',
                 'empty_data' => $hasMultiSelection ? [] : null,
@@ -187,7 +188,7 @@ class BlockListType {
                 'multiple' => $hasMultiSelection,
                 'module' => '«appName»',
                 'entity' => ucfirst($objectType) . 'Entity',
-                'entityCategoryClass' => '«appNamespace»\Entity\\' . ucfirst($objectType) . 'CategoryEntity',
+                'entityCategoryClass' => $entityCategoryClass,
                 'showRegistryLabels' => true
             ]);
 

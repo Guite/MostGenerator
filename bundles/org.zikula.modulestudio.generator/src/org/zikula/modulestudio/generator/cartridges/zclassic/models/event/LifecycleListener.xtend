@@ -343,7 +343,7 @@ class LifecycleListener {
                  * @param string $objectType The object type
                  «ENDIF»
                  */
-                protected function purgeHistory(«IF targets('3.0')» string«ENDIF»$objectType = '')«IF targets('3.0')»: void«ENDIF»
+                protected function purgeHistory(«IF targets('3.0')»string «ENDIF»$objectType = '')«IF targets('3.0')»: void«ENDIF»
                 {
                     if (!in_array($objectType, ['«getLoggableEntities.map[name.formatForCode].join('\', \'')»'])) {
                         return;

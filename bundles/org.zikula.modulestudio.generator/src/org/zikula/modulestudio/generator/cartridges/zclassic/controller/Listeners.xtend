@@ -130,13 +130,26 @@ class Listeners {
             use «appNamespace»\Listener\Base\AbstractKernelListener;
         «ELSE»
             use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-            use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
-            use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
+            use Symfony\Component\HttpKernel\Event\«IF !targets('3.0')»Filter«ENDIF»ControllerEvent;
+            «IF !targets('3.0')»
+                use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
+            «ENDIF»
+            «IF targets('3.0')»
+                use Symfony\Component\HttpKernel\Event\ExceptionEvent;
+            «ENDIF»
             use Symfony\Component\HttpKernel\Event\FinishRequestEvent;
-            use Symfony\Component\HttpKernel\Event\GetResponseEvent;
-            use Symfony\Component\HttpKernel\Event\GetResponseForControllerResultEvent;
-            use Symfony\Component\HttpKernel\Event\GetResponseForExceptionEvent;
-            use Symfony\Component\HttpKernel\Event\PostResponseEvent;
+            «IF !targets('3.0')»
+                use Symfony\Component\HttpKernel\Event\GetResponseEvent;
+                use Symfony\Component\HttpKernel\Event\GetResponseForControllerResultEvent;
+                use Symfony\Component\HttpKernel\Event\GetResponseForExceptionEvent;
+                use Symfony\Component\HttpKernel\Event\PostResponseEvent;
+            «ENDIF»
+            «IF targets('3.0')»
+                use Symfony\Component\HttpKernel\Event\RequestEvent;
+                use Symfony\Component\HttpKernel\Event\ResponseEvent;
+                use Symfony\Component\HttpKernel\Event\TerminateEvent;
+                use Symfony\Component\HttpKernel\Event\ViewEvent;
+            «ENDIF»
             use Symfony\Component\HttpKernel\KernelEvents;
         «ENDIF»
 

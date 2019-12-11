@@ -61,7 +61,8 @@ class ItemActions {
                     'routeParameters' => $previewRouteParameters
                 ]);
                 $menu[$title]->setLinkAttribute('target', '_blank');
-                $menu[$title]->setLinkAttribute('title',
+                $menu[$title]->setLinkAttribute(
+                    'title',
                     $this->__('Open preview page', '«app.appName.formatForDB»')
                 );
                 «app.addLinkClass('default')»
@@ -74,7 +75,8 @@ class ItemActions {
                     'routeParameters' => $entity->createUrlArgs()
                 ]);
                 $entityTitle = $this->entityDisplayHelper->getFormattedTitle($entity);
-                $menu[$title]->setLinkAttribute('title',
+                $menu[$title]->setLinkAttribute(
+                    'title',
                     str_replace('"', '', $entityTitle)
                 );
                 «app.addLinkClass('default')»
@@ -104,7 +106,8 @@ class ItemActions {
                         'route' => $routePrefix . $routeArea . 'loggablehistory',
                         'routeParameters' => $entity->createUrlArgs()
                     ]);
-                    $menu[$title]->setLinkAttribute('title',
+                    $menu[$title]->setLinkAttribute(
+                        'title',
                         $this->__('Watch version history', '«app.appName.formatForDB»')
                     );
                     «app.addLinkClass('default')»
@@ -119,7 +122,8 @@ class ItemActions {
                     'route' => $routePrefix . $routeArea . 'delete',
                     'routeParameters' => $entity->createUrlArgs()
                 ]);
-                $menu[$title]->setLinkAttribute('title',
+                $menu[$title]->setLinkAttribute(
+                    'title',
                     $this->__('Delete this «name.formatForDisplay»', '«app.appName.formatForDB»')
                 );
                 «app.addLinkClass('danger')»
@@ -189,7 +193,8 @@ class ItemActions {
                 'route' => $routePrefix . $routeArea . 'edit',
                 'routeParameters' => $entity->createUrlArgs(«IF hasSluggableFields && slugUnique»true«ENDIF»)
             ]);
-            $menu[$title]->setLinkAttribute('title',
+            $menu[$title]->setLinkAttribute(
+                'title',
                 $this->__('Edit this «name.formatForDisplay»', '«application.appName.formatForDB»')
             );
             «application.addLinkClass('default')»
@@ -200,7 +205,8 @@ class ItemActions {
             'route' => $routePrefix . $routeArea . 'edit',
             'routeParameters' => ['astemplate' => $entity->getKey()]
         ]);
-        $menu[$title]->setLinkAttribute('title',
+        $menu[$title]->setLinkAttribute(
+            'title',
             $this->__('Reuse for new «name.formatForDisplay»', '«application.appName.formatForDB»')
         );
         «application.addLinkClass('default')»
@@ -212,7 +218,8 @@ class ItemActions {
                     'route' => $routePrefix . $routeArea . 'edit',
                     'routeParameters' => ['parent' => $entity->getKey()]
                 ]);
-                $menu[$title]->setLinkAttribute('title',
+                $menu[$title]->setLinkAttribute(
+                    'title',
                     $this->__('Add a sub «name.formatForDisplay» to this «name.formatForDisplay»', '«application.appName.formatForDB»')
                 );
                 «application.addLinkClass('default')»

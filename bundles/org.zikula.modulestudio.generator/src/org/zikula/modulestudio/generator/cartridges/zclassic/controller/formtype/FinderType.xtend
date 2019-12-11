@@ -171,6 +171,7 @@ class FinderType {
          */
         public function addCategoriesField(FormBuilderInterface $builder, array $options = [])«IF app.targets('3.0')»: void«ENDIF»
         {
+            $entityCategoryClass = '«app.appNamespace»\Entity\\' . ucfirst($options['object_type']) . 'CategoryEntity';
             $builder->add('categories', CategoriesType::class, [
                 'label' => $this->__('«IF categorisableMultiSelection»Categories«ELSE»Category«ENDIF»') . ':',
                 'empty_data' => «IF categorisableMultiSelection»[]«ELSE»null«ENDIF»,
@@ -183,7 +184,7 @@ class FinderType {
                 'multiple' => «categorisableMultiSelection.displayBool»,
                 'module' => '«app.appName»',
                 'entity' => ucfirst($options['object_type']) . 'Entity',
-                'entityCategoryClass' => '«app.appNamespace»\Entity\\' . ucfirst($options['object_type']) . 'CategoryEntity',
+                'entityCategoryClass' => $entityCategoryClass,
                 'showRegistryLabels' => true
             ]);
         }

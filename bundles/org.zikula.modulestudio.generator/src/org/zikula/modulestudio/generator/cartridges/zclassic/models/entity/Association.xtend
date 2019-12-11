@@ -64,7 +64,10 @@ class Association {
          * Bidirectional - «incomingMappingDescription(it, sourceName, targetName)».
          *
         «incomingMappingDetails»
-         * @ORM\«incomingMappingType»(targetEntity="«/*\*/»«entityClass»", inversedBy="«targetName»"«additionalOptions(true)»)
+         * @ORM\«incomingMappingType»(
+         *     targetEntity="«/*\*/»«entityClass»",
+         *     inversedBy="«targetName»"«additionalOptions(true)»
+         * )
         «joinDetails(false)»
         «IF !nullable»
             «val aliasName = getRelationAliasName(false).toFirstLower»
@@ -141,7 +144,10 @@ class Association {
             /**
              * Bidirectional - «incomingMappingDescription(sourceName, targetName)».
              *
-             * @ORM\ManyToMany(targetEntity="«/*\*/»«entityClass»", mappedBy="«targetName»"«additionalOptions(true)»)
+             * @ORM\ManyToMany(
+             *     targetEntity="«/*\*/»«entityClass»",
+             *     mappedBy="«targetName»"«additionalOptions(true)»
+             * )
              «IF null !== orderByReverse && !orderByReverse.empty»
               * @ORM\OrderBy({«orderByDetails(orderByReverse)»})
              «ENDIF»
@@ -167,7 +173,10 @@ class Association {
         /**
          * «IF bidirectional»Bi«ELSE»Uni«ENDIF»directional - «outgoingMappingDescription(sourceName, targetName)».
          *
-         * @ORM\«outgoingMappingType»(targetEntity="«/*\*/»«entityClass»"«IF bidirectional», mappedBy="«sourceName»"«ENDIF»«cascadeOptions(false)»«fetchTypeTag»«outgoingMappingAdditions»)
+         * @ORM\«outgoingMappingType»(
+         *     targetEntity="«/*\*/»«entityClass»"«IF bidirectional»,
+         *     mappedBy="«sourceName»"«ENDIF»«cascadeOptions(false)»«fetchTypeTag»«outgoingMappingAdditions»
+         * )
         «joinDetails(true)»
         «IF !nullable»
             «val aliasName = getRelationAliasName(true).toFirstLower»
@@ -215,9 +224,14 @@ class Association {
          * «IF bidirectional»Bi«ELSE»Uni«ENDIF»directional - «outgoingMappingDescription(sourceName, targetName)».
          *
          «IF !bidirectional»
-          * @ORM\ManyToMany(targetEntity="«/*\*/»«entityClass»"«additionalOptions(false)»)
+          * @ORM\ManyToMany(
+          *     targetEntity="«/*\*/»«entityClass»"«additionalOptions(false)»
+          * )
          «ELSE»
-          * @ORM\OneToMany(targetEntity="«/*\*/»«entityClass»", mappedBy="«sourceName»"«additionalOptions(false)»«outgoingMappingAdditions»
+          * @ORM\OneToMany(
+          *     targetEntity="«/*\*/»«entityClass»",
+          *     mappedBy="«sourceName»"«additionalOptions(false)»«outgoingMappingAdditions»
+          * )
          «ENDIF»
         «joinDetails(true)»
          «IF null !== orderBy && !orderBy.empty»
@@ -242,7 +256,10 @@ class Association {
         /**
          * «IF bidirectional»Bi«ELSE»Uni«ENDIF»directional - «outgoingMappingDescription(sourceName, targetName)».
          *
-         * @ORM\ManyToMany(targetEntity="«/*\*/»«entityClass»"«IF bidirectional», inversedBy="«sourceName»"«ENDIF»«additionalOptions(false)»«outgoingMappingAdditions»)
+         * @ORM\ManyToMany(
+         *     targetEntity="«/*\*/»«entityClass»"«IF bidirectional»,
+         *     inversedBy="«sourceName»"«ENDIF»«additionalOptions(false)»«outgoingMappingAdditions»
+         * )
         «joinDetails(true)»
          «IF null !== orderBy && !orderBy.empty»
           * @ORM\OrderBy({«orderByDetails(orderBy)»})

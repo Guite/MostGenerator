@@ -86,6 +86,8 @@ class ThirdPartyListener {
             «getCommonEditorPlugins('Summernote')»
 
             «getCommonEditorPlugins('TinyMce')»
+
+            «getPathToModuleWebAssets»
         «ENDIF»
     '''
 
@@ -189,7 +191,7 @@ class ThirdPartyListener {
                 [
                     'module' => '«appName»',
                     'type' => 'javascript',
-                    'path' => $this->requestStack->getCurrentRequest()->getBasePath() . '/web/modules/«vendorAndName.toLowerCase»/js/«appName».Finder.js'
+                    'path' => $this->getPathToModuleWebAssets() . 'js/«appName».Finder.js'
                 ]
             );
         }
@@ -207,7 +209,7 @@ class ThirdPartyListener {
         {
             $event->getSubject()->add([
                 'name' => '«appName.formatForDB»',
-                'path' => $this->requestStack->getCurrentRequest()->getBasePath() . '/web/modules/«vendorAndName.toLowerCase»/scribite/CKEditor/«appName.formatForDB»/',
+                'path' => $this->getPathToModuleWebAssets() . 'scribite/CKEditor/«appName.formatForDB»/',
                 'file' => 'plugin.js',
                 'img' => 'ed_«appName.formatForDB».gif'
             ]);
@@ -226,8 +228,22 @@ class ThirdPartyListener {
         {
             $event->getSubject()->add([
                 'name' => '«appName.formatForDB»',
-                'path' => $this->requestStack->getCurrentRequest()->getBasePath() . '/web/modules/«vendorAndName.toLowerCase»/scribite/«editorName»/«appName.formatForDB»/plugin.js'
+                'path' => $this->getPathToModuleWebAssets() . 'scribite/«editorName»/«appName.formatForDB»/plugin.js'
             ]);
+        }
+    '''
+
+    def private getPathToModuleWebAssets(Application it) '''
+        /**
+         * Returns base path where module assets are located.
+         «IF !targets('3.0')»
+         *
+         * @return string
+         «ENDIF»
+         */
+        protected function getPathToModuleWebAssets()«IF targets('3.0')»: string«ENDIF»
+        {
+            return $this->requestStack->getCurrentRequest()->getBasePath() . '/web/modules/«vendorAndName.toLowerCase»/';
         }
     '''
 }

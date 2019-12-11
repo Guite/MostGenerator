@@ -197,7 +197,10 @@ class FileHelper {
     }
 
     def private dispatch setterAssignment(DatetimeField it, String name) '''
-        if (!(null === $«name» && empty($«name»)) && !(is_object($«name») && $«name» instanceOf \DateTimeInterface)) {
+        if (
+            !(null === $«name» && empty($«name»))
+            && !(is_object($«name») && $«name» instanceof \DateTimeInterface)
+        ) {
             $«name» = new \DateTime«IF immutable»Immutable«ENDIF»($«name»);
         }
         «IF !nullable»

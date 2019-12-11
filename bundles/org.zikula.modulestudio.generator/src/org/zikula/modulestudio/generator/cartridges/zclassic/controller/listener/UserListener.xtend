@@ -142,18 +142,40 @@ class UserListener {
             «IF standardFields»
                 «IF onAccountDeletionCreator != AccountDeletionHandler.DELETE»
                     // set creator to «onAccountDeletionCreator.adhAsConstant» («application.adhUid(onAccountDeletionCreator)») for all «nameMultiple.formatForDisplay» created by this user
-                    $repo->updateCreator($userId, «application.adhUid(onAccountDeletionCreator)», $this->translator, $this->logger, $this->currentUserApi);
+                    $repo->updateCreator(
+                        $userId,
+                        «application.adhUid(onAccountDeletionCreator)»,
+                        $this->translator,
+                        $this->logger,
+                        $this->currentUserApi
+                    );
                 «ELSE»
                     // delete all «nameMultiple.formatForDisplay» created by this user
-                    $repo->deleteByCreator($userId, $this->translator, $this->logger, $this->currentUserApi);
+                    $repo->deleteByCreator(
+                        $userId,
+                        $this->translator,
+                        $this->logger,
+                        $this->currentUserApi
+                    );
                 «ENDIF»
 
                 «IF onAccountDeletionLastEditor != AccountDeletionHandler.DELETE»
                     // set last editor to «onAccountDeletionLastEditor.adhAsConstant» («application.adhUid(onAccountDeletionLastEditor)») for all «nameMultiple.formatForDisplay» updated by this user
-                    $repo->updateLastEditor($userId, «application.adhUid(onAccountDeletionLastEditor)», $this->translator, $this->logger, $this->currentUserApi);
+                    $repo->updateLastEditor(
+                        $userId,
+                        «application.adhUid(onAccountDeletionLastEditor)»,
+                        $this->translator,
+                        $this->logger,
+                        $this->currentUserApi
+                    );
                 «ELSE»
                     // delete all «nameMultiple.formatForDisplay» recently updated by this user
-                    $repo->deleteByLastEditor($userId, $this->translator, $this->logger, $this->currentUserApi);
+                    $repo->deleteByLastEditor(
+                        $userId,
+                        $this->translator,
+                        $this->logger,
+                        $this->currentUserApi
+                    );
                 «ENDIF»
             «ENDIF»
             «IF hasUserFieldsEntity»
@@ -162,8 +184,15 @@ class UserListener {
                 «ENDFOR»
             «ENDIF»
 
-            $logArgs = ['app' => '«application.appName»', 'user' => $this->currentUserApi->get('uname'), 'entities' => '«nameMultiple.formatForDisplay»'];
-            $this->logger->notice('{app}: User {user} has been deleted, so we deleted/updated corresponding {entities}, too.', $logArgs);
+            $logArgs = [
+                'app' => '«application.appName»',
+                'user' => $this->currentUserApi->get('uname'),
+                'entities' => '«nameMultiple.formatForDisplay»'
+            ];
+            $this->logger->notice(
+                '{app}: User {user} has been deleted, so we deleted/updated corresponding {entities}, too.',
+                $logArgs
+            );
         «ENDIF»
     '''
 
@@ -171,10 +200,23 @@ class UserListener {
         «IF null !== entity && entity instanceof Entity»
             «IF onAccountDeletion != AccountDeletionHandler.DELETE»
                 // set «name.formatForDisplay» to «onAccountDeletion.adhAsConstant» («application.adhUid(onAccountDeletion)») for all «(entity as Entity).nameMultiple.formatForDisplay» affected by this user
-                $repo->updateUserField('«name.formatForCode»', $userId, «application.adhUid(onAccountDeletion)», $this->translator, $this->logger, $this->currentUserApi);
+                $repo->updateUserField(
+                    '«name.formatForCode»',
+                    $userId,
+                    «application.adhUid(onAccountDeletion)»,
+                    $this->translator,
+                    $this->logger,
+                    $this->currentUserApi
+                );
             «ELSE»
                 // delete all «(entity as Entity).nameMultiple.formatForDisplay» affected by this user
-                $repo->deleteByUserField('«name.formatForCode»', $userId, $this->translator, $this->logger, $this->currentUserApi);
+                $repo->deleteByUserField(
+                    '«name.formatForCode»',
+                    $userId,
+                    $this->translator,
+                    $this->logger,
+                    $this->currentUserApi
+                );
             «ENDIF»
         «ELSEIF null !== varContainer»
             // set «name.formatForDisplay» variable to «IF onAccountDeletion != AccountDeletionHandler.DELETE»«onAccountDeletion.adhAsConstant» («application.adhUid(onAccountDeletion)»)«ELSE»admin (UsersConstant::USER_ID_ADMIN)«ENDIF» if it is affected

@@ -299,7 +299,7 @@ class QuickNavigationType {
         public function addCategoriesField(FormBuilderInterface $builder, array $options = [])«IF app.targets('3.0')»: void«ENDIF»
         {
             $objectType = '«name.formatForCode»';
-
+            $entityCategoryClass = '«app.appNamespace»\Entity\\' . ucfirst($objectType) . 'CategoryEntity';
             $builder->add('categories', CategoriesType::class, [
                 'label' => $this->__('«IF categorisableMultiSelection»Categories«ELSE»Category«ENDIF»'),
                 'empty_data' => «IF categorisableMultiSelection»[]«ELSE»null«ENDIF»,
@@ -311,7 +311,7 @@ class QuickNavigationType {
                 'multiple' => «categorisableMultiSelection.displayBool»,
                 'module' => '«app.appName»',
                 'entity' => ucfirst($objectType) . 'Entity',
-                'entityCategoryClass' => '«app.appNamespace»\Entity\\' . ucfirst($objectType) . 'CategoryEntity',
+                'entityCategoryClass' => $entityCategoryClass,
                 'showRegistryLabels' => true
             ]);
         }

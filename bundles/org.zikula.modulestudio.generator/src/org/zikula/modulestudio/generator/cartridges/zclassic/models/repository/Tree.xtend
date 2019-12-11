@@ -31,7 +31,7 @@ class Tree {
          * @return array Retrieved data array or tree node objects
          «ENDIF»
          */
-        public function selectTree(«IF application.targets('3.0')»int «ENDIF»$rootId = 0, «IF application.targets('3.0')» bool«ENDIF»$useJoins = true)«IF application.targets('3.0')»: array«ENDIF»
+        public function selectTree(«IF application.targets('3.0')»int «ENDIF»$rootId = 0, «IF application.targets('3.0')»bool «ENDIF»$useJoins = true)«IF application.targets('3.0')»: array«ENDIF»
         {
             if (0 === $rootId) {
                 // return all trees if no specific one has been asked for

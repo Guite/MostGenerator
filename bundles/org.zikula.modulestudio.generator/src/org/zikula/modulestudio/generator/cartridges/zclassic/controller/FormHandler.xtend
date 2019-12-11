@@ -580,8 +580,16 @@ class FormHandler {
                         if (in_array($this->objectType, ['«getAllEntities.filter[hasDisplayAction && hasEditAction && hasSluggableFields].map[name.formatForCode].join('\', \'')»'], true)) {
                             // map display return urls to redirect codes because slugs may change
                             $routePrefix = '«app.appName.formatForDB»_' . $this->objectTypeLower . '_';
-                            $userDisplayUrl = $this->router->generate($routePrefix . 'display', $entity->createUrlArgs(), UrlGeneratorInterface::ABSOLUTE_URL);
-                            $adminDisplayUrl = $this->router->generate($routePrefix . 'admindisplay', $entity->createUrlArgs(), UrlGeneratorInterface::ABSOLUTE_URL);
+                            $userDisplayUrl = $this->router->generate(
+                                $routePrefix . 'display',
+                                $entity->createUrlArgs(),
+                                UrlGeneratorInterface::ABSOLUTE_URL
+                            );
+                            $adminDisplayUrl = $this->router->generate(
+                                $routePrefix . 'admindisplay',
+                                $entity->createUrlArgs(),
+                                UrlGeneratorInterface::ABSOLUTE_URL
+                            );
                             if ($this->returnTo === $userDisplayUrl) {
                                 $this->returnTo = 'userDisplay';
                             } elseif ($this->returnTo === $adminDisplayUrl) {
@@ -635,9 +643,20 @@ class FormHandler {
 
             $actions = $this->workflowHelper->getActionsForObject($entity);
             if (false === $actions || !is_array($actions)) {
-                $request->getSession()->getFlashBag()->add('error', $this->__('Error! Could not determine workflow actions.'));
-                $logArgs = ['app' => '«appName»', 'user' => $this->currentUserApi->get('uname'), 'entity' => $this->objectType, 'id' => $entity->getKey()];
-                $this->logger->error('{app}: User {user} tried to edit the {entity} with id {id}, but failed to determine available workflow actions.', $logArgs);
+                $request->getSession()->getFlashBag()->add(
+                    'error',
+                    $this->__('Error! Could not determine workflow actions.')
+                );
+                $logArgs = [
+                    'app' => '«appName»',
+                    'user' => $this->currentUserApi->get('uname'),
+                    'entity' => $this->objectType,
+                    'id' => $entity->getKey()
+                ];
+                $this->logger->error(
+                    '{app}: User {user} tried to edit the {entity} with id {id}, but failed to determine available workflow actions.',
+                    $logArgs
+                );
                 throw new RuntimeException($this->__('Error! Could not determine workflow actions.'));
             }
 
@@ -797,7 +816,10 @@ class FormHandler {
              */
             protected function initTranslationsForEditing()«IF targets('3.0')»: void«ENDIF»
             {
-                $translationsEnabled = $this->featureActivationHelper->isEnabled(FeatureActivationHelper::TRANSLATIONS, $this->objectType);
+                $translationsEnabled = $this->featureActivationHelper->isEnabled(
+                    FeatureActivationHelper::TRANSLATIONS,
+                    $this->objectType
+                );
                 $this->templateParameters['translationsEnabled'] = $translationsEnabled;
 
                 $supportedLanguages = $this->translatableHelper->getSupportedLanguages($this->objectType);
@@ -896,7 +918,11 @@ class FormHandler {
                     $args['commandName'] = $action['id'];
                 }
             }
-            if ('create' === $this->templateParameters['mode'] && $this->form->has('submitrepeat') && $this->form->get('submitrepeat')->isClicked()) {
+            if (
+                'create' === $this->templateParameters['mode']
+                && $this->form->has('submitrepeat')
+                && $this->form->get('submitrepeat')->isClicked()
+            ) {
                 $args['commandName'] = 'submit';
                 $this->repeatCreateAction = true;
             }
@@ -944,7 +970,10 @@ class FormHandler {
 
                 if (method_exists($entity, 'supportsHookSubscribers') && $entity->supportsHookSubscribers()) {
                     // Let any ui hooks perform additional validation actions
-                    $hookType = 'delete' === $action ? UiHooksCategory::TYPE_VALIDATE_DELETE : UiHooksCategory::TYPE_VALIDATE_EDIT;
+                    $hookType = 'delete' === $action
+                        ? UiHooksCategory::TYPE_VALIDATE_DELETE
+                        : UiHooksCategory::TYPE_VALIDATE_EDIT
+                    ;
                     $validationErrors = $this->hookHelper->callValidationHooks($entity, $hookType);
                     if (0 < count($validationErrors)) {
                         $flashBag = $this->requestStack->getCurrentRequest()->getSession()->getFlashBag();
@@ -964,7 +993,14 @@ class FormHandler {
             }
             «IF hasTranslatable»
 
-                if ($isRegularAction && true === $this->hasTranslatableFields && $this->featureActivationHelper->isEnabled(FeatureActivationHelper::TRANSLATIONS, $this->objectType)) {
+                if (
+                    true === $isRegularAction
+                    && true === $this->hasTranslatableFields
+                    && $this->featureActivationHelper->isEnabled(
+                        FeatureActivationHelper::TRANSLATIONS,
+                        $this->objectType
+                    )
+                ) {
                     $this->processTranslationsForUpdate();
                 }
             «ENDIF»
@@ -982,11 +1018,17 @@ class FormHandler {
                     }
 
                     // Call form aware processing hooks
-                    $hookType = 'delete' === $action ? FormAwareCategory::TYPE_PROCESS_DELETE : FormAwareCategory::TYPE_PROCESS_EDIT;
+                    $hookType = 'delete' === $action
+                        ? FormAwareCategory::TYPE_PROCESS_DELETE
+                        : FormAwareCategory::TYPE_PROCESS_EDIT
+                    ;
                     $this->hookHelper->callFormProcessHooks($this->form, $entity, $hookType, $routeUrl);
 
                     // Let any ui hooks know that we have created, updated or deleted an item
-                    $hookType = 'delete' === $action ? UiHooksCategory::TYPE_PROCESS_DELETE : UiHooksCategory::TYPE_PROCESS_EDIT;
+                    $hookType = 'delete' === $action
+                        ? UiHooksCategory::TYPE_PROCESS_DELETE
+                        : UiHooksCategory::TYPE_PROCESS_EDIT
+                    ;
                     $this->hookHelper->callProcessHooks($entity, $hookType, $routeUrl);
                 }
             «ENDIF»
@@ -1088,7 +1130,12 @@ class FormHandler {
 
             $flashType = true === $success ? 'status' : 'error';
             $this->requestStack->getCurrentRequest()->getSession()->getFlashBag()->add($flashType, $message);
-            $logArgs = ['app' => '«appName»', 'user' => $this->currentUserApi->get('uname'), 'entity' => $this->objectType, 'id' => $this->entityRef->getKey()];
+            $logArgs = [
+                'app' => '«appName»',
+                'user' => $this->currentUserApi->get('uname'),
+                'entity' => $this->objectType,
+                'id' => $this->entityRef->getKey()
+            ];
             if (true === $success) {
                 $this->logger->notice('{app}: User {user} updated the {entity} with id {id}.', $logArgs);
             } else {
@@ -1110,18 +1157,30 @@ class FormHandler {
             «IF hasStandardFieldEntities»
 
                 if (method_exists($this->entityRef, 'getCreatedBy')) {
-                    if (isset($this->form['moderationSpecificCreator']) && null !== $this->form['moderationSpecificCreator']->getData()) {
+                    if (
+                        isset($this->form['moderationSpecificCreator'])
+                        && null !== $this->form['moderationSpecificCreator']->getData()
+                    ) {
                         $this->entityRef->setCreatedBy($this->form['moderationSpecificCreator']->getData());
                     }
-                    if (isset($this->form['moderationSpecificCreationDate']) && '' !== $this->form['moderationSpecificCreationDate']->getData()) {
+                    if (
+                        isset($this->form['moderationSpecificCreationDate'])
+                        && '' !== $this->form['moderationSpecificCreationDate']->getData()
+                    ) {
                         $this->entityRef->setCreatedDate($this->form['moderationSpecificCreationDate']->getData());
                     }
                 }
             «ENDIF»
             «IF needsApproval»
 
-                if (isset($this->form['additionalNotificationRemarks']) && '' !== $this->form['additionalNotificationRemarks']->getData()) {
-                    $this->requestStack->getCurrentRequest()->getSession()->set('«appName»AdditionalNotificationRemarks', $this->form['additionalNotificationRemarks']->getData());
+                if (
+                    isset($this->form['additionalNotificationRemarks'])
+                    && '' !== $this->form['additionalNotificationRemarks']->getData()
+                ) {
+                    $this->requestStack->getCurrentRequest()->getSession()->set(
+                        '«appName»AdditionalNotificationRemarks',
+                        $this->form['additionalNotificationRemarks']->getData()
+                    );
                 }
             «ENDIF»
             «IF hasAttributableEntities»
@@ -1168,7 +1227,10 @@ class FormHandler {
         protected function prepareWorkflowAdditions(«IF targets('3.0')»bool «ENDIF»$enterprise = false)«IF targets('3.0')»: array«ENDIF»
         {
             $roles = [];
-            $currentUserId = $this->currentUserApi->isLoggedIn() ? $this->currentUserApi->get('uid') : UsersConstant::USER_ID_ANONYMOUS;
+            $currentUserId = $this->currentUserApi->isLoggedIn()
+                ? $this->currentUserApi->get('uid')
+                : UsersConstant::USER_ID_ANONYMOUS
+            ;
             $roles['is_creator'] = 'create' === $this->templateParameters['mode']
                 || (method_exists($this->entityRef, 'getCreatedBy') && $this->entityRef->getCreatedBy()->getUid() === $currentUserId);
 
@@ -1242,7 +1304,6 @@ class FormHandler {
 
         use «app.appNamespace»\Form\Handler\Common\«actionName.formatForCodeCapital»Handler;
         use «app.appNamespace»\Form\Type\«name.formatForCodeCapital»Type;
-
         «locking.imports(it)»
         use Exception;
         use RuntimeException;
@@ -1289,8 +1350,14 @@ class FormHandler {
             «IF ownerPermission»
 
                 // only allow editing for the owner or people with higher permissions
-                $currentUserId = $this->currentUserApi->isLoggedIn() ? $this->currentUserApi->get('uid') : UsersConstant::USER_ID_ANONYMOUS;
-                $isOwner = null !== $entity && null !== $entity->getCreatedBy() && $currentUserId === $entity->getCreatedBy()->getUid();
+                $currentUserId = $this->currentUserApi->isLoggedIn()
+                    ? $this->currentUserApi->get('uid')
+                    : UsersConstant::USER_ID_ANONYMOUS
+                ;
+                $isOwner = null !== $entity
+                    && null !== $entity->getCreatedBy()
+                    && $currentUserId === $entity->getCreatedBy()->getUid()
+                ;
                 if (!$isOwner && !$this->permissionHelper->hasEntityPermission($entity, ACCESS_ADD)) {
                     throw new AccessDeniedException();
                 }
@@ -1328,9 +1395,19 @@ class FormHandler {
             }
 
             if ('create' === $this->templateParameters['mode'] && !$this->modelHelper->canBeCreated($this->objectType)) {
-                $this->requestStack->getCurrentRequest()->getSession()->getFlashBag()->add('error', $this->__('Sorry, but you can not create the «name.formatForDisplay» yet as other items are required which must be created before!'));
-                $logArgs = ['app' => '«app.appName»', 'user' => $this->currentUserApi->get('uname'), 'entity' => $this->objectType];
-                $this->logger->notice('{app}: User {user} tried to create a new {entity}, but failed as it other items are required which must be created before.', $logArgs);
+                $this->requestStack->getCurrentRequest()->getSession()->getFlashBag()->add(
+                    'error',
+                    $this->__('Sorry, but you can not create the «name.formatForDisplay» yet as other items are required which must be created before!')
+                );
+                $logArgs = [
+                    'app' => '«app.appName»',
+                    'user' => $this->currentUserApi->get('uname'),
+                    'entity' => $this->objectType
+                ];
+                $this->logger->notice(
+                    '{app}: User {user} tried to create a new {entity}, but failed as it other items are required which must be created before.',
+                    $logArgs
+                );
 
                 return new RedirectResponse($this->getRedirectUrl(['commandName' => '']), 302);
             }
@@ -1365,8 +1442,16 @@ class FormHandler {
                 'actions' => $this->templateParameters['actions'],
                 «IF standardFields»
                     'has_moderate_permission' => $this->permissionHelper->hasEntityPermission($this->entityRef, ACCESS_ADMIN),
-                    'allow_moderation_specific_creator' => (bool)$this->variableApi->get('«app.appName»', 'allowModerationSpecificCreatorFor' . $this->objectTypeCapital),
-                    'allow_moderation_specific_creation_date' => (bool)$this->variableApi->get('«app.appName»', 'allowModerationSpecificCreationDateFor' . $this->objectTypeCapital),
+                    'allow_moderation_specific_creator' => (bool)$this->variableApi->get(
+                        '«app.appName»',
+                        'allowModerationSpecificCreatorFor' . $this->objectTypeCapital,
+                        false
+                    ),
+                    'allow_moderation_specific_creation_date' => (bool)$this->variableApi->get(
+                        '«app.appName»',
+                        'allowModerationSpecificCreationDateFor' . $this->objectTypeCapital,
+                        false
+                    ),
                 «ENDIF»
                 «IF !incoming.empty || !outgoing.empty»
                     'filter_by_ownership' => !$this->permissionHelper->hasEntityPermission($this->entityRef, ACCESS_ADD)«IF !incoming.empty || !outgoing.empty»,«ENDIF»
@@ -1416,7 +1501,11 @@ class FormHandler {
                     $args['commandName'] = $action['id'];
                 }
             }
-            if ('create' === $this->templateParameters['mode'] && $this->form->has('submitrepeat') && $this->form->get('submitrepeat')->isClicked()) {
+            if (
+                'create' === $this->templateParameters['mode']
+                && $this->form->has('submitrepeat')
+                && $this->form->get('submitrepeat')->isClicked()
+            ) {
                 $args['commandName'] = 'submit';
                 $this->repeatCreateAction = true;
             }
@@ -1472,7 +1561,7 @@ class FormHandler {
             «IF loggable»
                 if ('delete' === $action) {
                     $entity->set_actionDescriptionForLogEntry('_HISTORY_«name.formatForCode.toUpperCase»_DELETED');
-                } else if ('create' === $this->templateParameters['mode']) {
+                } elseif ('create' === $this->templateParameters['mode']) {
                     $entity->set_actionDescriptionForLogEntry('_HISTORY_«name.formatForCode.toUpperCase»_CREATED');
                 } else {
                     $templateId = $this->requestStack->getCurrentRequest()->query->getInt('astemplate');
@@ -1506,9 +1595,24 @@ class FormHandler {
                 $success = $this->workflowHelper->executeAction($entity, $action);
             «locking.catchException(it)»
             } catch (Exception $exception) {
-                $flashBag->add('error', $this->__f('Sorry, but an error occured during the %action% action. Please apply the changes again!', ['%action%' => $action]) . ' ' . $exception->getMessage());
-                $logArgs = ['app' => '«app.appName»', 'user' => $this->currentUserApi->get('uname'), 'entity' => '«name.formatForDisplay»', 'id' => $entity->getKey(), 'errorMessage' => $exception->getMessage()];
-                $this->logger->error('{app}: User {user} tried to edit the {entity} with id {id}, but failed. Error details: {errorMessage}.', $logArgs);
+                $flashBag->add(
+                    'error',
+                    $this->__f(
+                        'Sorry, but an error occured during the %action% action. Please apply the changes again!',
+                        ['%action%' => $action]
+                    ) . ' ' . $exception->getMessage()
+                );
+                $logArgs = [
+                    'app' => '«app.appName»',
+                    'user' => $this->currentUserApi->get('uname'),
+                    'entity' => '«name.formatForDisplay»',
+                    'id' => $entity->getKey(),
+                    'errorMessage' => $exception->getMessage()
+                ];
+                $this->logger->error(
+                    '{app}: User {user} tried to edit the {entity} with id {id}, but failed. Error details: {errorMessage}.',
+                    $logArgs
+                );
             }
 
             $this->addDefaultMessage($args, $success);
