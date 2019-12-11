@@ -132,7 +132,7 @@ class Loggable extends AbstractExtension implements EntityExtensionInterface {
                ->setParameter('action', LoggableListener::ACTION_REMOVE)
                ->andWhere($qb->expr()->notIn('log.objectId', $qbExisting->getDQL()))
                ->orderBy('log.loggedAt', 'DESC')
-           ;
+            ;
 
             $query = $qb->getQuery();
 
@@ -151,7 +151,10 @@ class Loggable extends AbstractExtension implements EntityExtensionInterface {
          */
         public function purgeHistory«IF application.targets('3.0')»(string $revisionHandling = 'unlimited', string $limitParameter = ''): void«ELSE»($revisionHandling = 'unlimited', $limitParameter = '')«ENDIF»
         {
-            if ('unlimited' === $revisionHandling || !in_array($revisionHandling, ['limitedByAmount', 'limitedByDate'], true)) {
+            if (
+                'unlimited' === $revisionHandling
+                || !in_array($revisionHandling, ['limitedByAmount', 'limitedByDate'], true)
+            ) {
                 // nothing to do
                 return;
             }
@@ -241,7 +244,10 @@ class Loggable extends AbstractExtension implements EntityExtensionInterface {
                         // very first loop execution, nothing special to do here
                     }
                     $counterPerObject = 1;
-                    $thresholdForObject = $keepPerObject > 0 && isset($logAmountMap[$objectId]) ? ($logAmountMap[$objectId] - $keepPerObject) : 1;
+                    $thresholdForObject = 0 < $keepPerObject && isset($logAmountMap[$objectId])
+                        ? ($logAmountMap[$objectId] - $keepPerObject)
+                        : 1
+                    ;
                     $dataForObject = $logEntry->getData();
                 } else {
                     // we have a another log entry for the same object

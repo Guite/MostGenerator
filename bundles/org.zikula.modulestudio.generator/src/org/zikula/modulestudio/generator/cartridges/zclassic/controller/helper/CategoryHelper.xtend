@@ -201,8 +201,11 @@ class CategoryHelper {
          * @return QueryBuilder The enriched query builder instance
          «ENDIF»
          */
-        public function buildFilterClauses(QueryBuilder $queryBuilder, «IF targets('3.0')»string «ENDIF»$objectType = '', array $catIds = [])«IF targets('3.0')»: QueryBuilder«ENDIF»
-        {
+        public function buildFilterClauses(
+            QueryBuilder $queryBuilder,
+            «IF targets('3.0')»string «ENDIF»$objectType = '',
+            array $catIds = []
+        )«IF targets('3.0')»: QueryBuilder«ENDIF» {
             $qb = $queryBuilder;
 
             $properties = $this->getAllProperties($objectType);
@@ -362,7 +365,11 @@ class CategoryHelper {
         {
             $requireAccessForAll = $this->requireAccessForAll($entity);
 
-            return $this->categoryPermissionApi->hasCategoryAccess($entity->getCategories()->toArray(), ACCESS_OVERVIEW, $requireAccessForAll);
+            return $this->categoryPermissionApi->hasCategoryAccess(
+                $entity->getCategories()->toArray(),
+                ACCESS_OVERVIEW,
+                $requireAccessForAll
+            );
         }
 
         /**

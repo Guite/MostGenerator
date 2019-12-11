@@ -212,8 +212,12 @@ class HookHelper {
          * @param UrlInterface $routeUrl The route url object
          «ENDIF»
          */
-        public function callFormProcessHooks(FormInterface $form, EntityAccess $entity, «IF targets('3.0')»string «ENDIF»$hookType, UrlInterface $routeUrl = null)«IF targets('3.0')»: void«ENDIF»
-        {
+        public function callFormProcessHooks(
+            FormInterface $form,
+            EntityAccess $entity,
+            «IF targets('3.0')»string «ENDIF»$hookType,
+            UrlInterface $routeUrl = null
+        )«IF targets('3.0')»: void«ENDIF» {
             $formResponse = new FormAwareResponse($form, $entity, $routeUrl);
             $hookAreaPrefix = $entity->getHookAreaPrefix();
             $hookAreaPrefix = str_replace('.ui_hooks.', '.form_aware_hook.', $hookAreaPrefix);

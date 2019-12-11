@@ -344,7 +344,7 @@ class ViewHelper {
          *
          * @return string[] List of allowed template extensions
          */
-        protected function availableExtensions(«IF targets('3.0')»string «ENDIF»$type, «IF targets('3.0')» string«ENDIF»$func)«IF targets('3.0')»: array«ENDIF»
+        protected function availableExtensions(«IF targets('3.0')»string «ENDIF»$type, «IF targets('3.0')»string «ENDIF»$func)«IF targets('3.0')»: array«ENDIF»
         {
             $extensions = [];
             $hasAdminAccess = $this->permissionHelper->hasComponentPermission($type, ACCESS_ADMIN);

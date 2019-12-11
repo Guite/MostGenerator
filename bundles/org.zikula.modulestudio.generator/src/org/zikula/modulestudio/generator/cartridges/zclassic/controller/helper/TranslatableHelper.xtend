@@ -230,7 +230,9 @@ class TranslatableHelper {
 
             // get translations
             $entityManager = $this->entityFactory->getEntityManager();
-            $repository = $entityManager->getRepository('«appNamespace»\Entity\\' . ucfirst($objectType) . 'TranslationEntity');
+            $repository = $entityManager->getRepository(
+                '«appNamespace»\Entity\\' . ucfirst($objectType) . 'TranslationEntity'
+            );
             $entityTranslations = $repository->findTranslations($entity);
 
             $supportedLanguages = $this->getSupportedLanguages($objectType);

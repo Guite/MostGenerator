@@ -146,13 +146,14 @@ class ExampleDataHelper {
             «ENDIF»
             «initDateValues»
             «IF hasCategorisableEntities»
+                $entityManager = $this->entityFactory->getEntityManager();
                 // example category
                 $categoryId = 41; // Business and work
                 /** @var CategoryEntity $category */
-                $category = $this->entityFactory->getEntityManager()->find('ZikulaCategoriesModule:CategoryEntity', $categoryId);
+                $category = $entityManager->find('ZikulaCategoriesModule:CategoryEntity', $categoryId);
 
                 // determine category registry identifiers
-                $registryRepository = $this->entityFactory->getEntityManager()->getRepository('ZikulaCategoriesModule:CategoryRegistryEntity');
+                $registryRepository = $entityManager->getRepository('ZikulaCategoriesModule:CategoryRegistryEntity');
                 $categoryRegistries = $registryRepository->findBy(['modname' => '«appName»']);
 
             «ENDIF»
@@ -263,8 +264,12 @@ class ExampleDataHelper {
             «FOR entity : getExampleEntities»«entity.persistEntities(it)»«ENDFOR»
             «FOR entity : getExampleEntities»«entity.saveEntities(it)»«ENDFOR»
         } catch (Exception $exception) {
-            $this->requestStack->getCurrentRequest()->getSession()->getFlashBag()->add('error', $this->translator->__('Exception during example data creation') . ': ' . $exception->getMessage());
-            $this->logger->error('{app}: Could not completely create example data after installation. Error details: {errorMessage}.', ['app' => '«appName»', 'errorMessage' => $exception->getMessage()]);
+            $flashBag = $this->requestStack->getCurrentRequest()->getSession()->getFlashBag();
+            $flashBag->add('error', $this->translator->__('Exception during example data creation') . ': ' . $exception->getMessage());
+            $this->logger->error(
+                '{app}: Could not completely create example data after installation. Error details: {errorMessage}.',
+                ['app' => '«appName»', 'errorMessage' => $exception->getMessage()]
+            );
         }
     '''
 

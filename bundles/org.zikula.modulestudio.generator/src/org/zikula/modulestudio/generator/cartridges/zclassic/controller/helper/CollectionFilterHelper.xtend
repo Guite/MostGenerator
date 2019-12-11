@@ -585,7 +585,10 @@ class CollectionFilterHelper {
         public function addCreatorFilter(QueryBuilder $qb, «IF targets('3.0')»int «ENDIF»$userId = null)«IF targets('3.0')»: QueryBuilder«ENDIF»
         {
             if (null === $userId) {
-                $userId = $this->currentUserApi->isLoggedIn() ? (int)$this->currentUserApi->get('uid') : UsersConstant::USER_ID_ANONYMOUS;
+                $userId = $this->currentUserApi->isLoggedIn()
+                    ? (int)$this->currentUserApi->get('uid')
+                    : UsersConstant::USER_ID_ANONYMOUS
+                ;
             }
 
             $qb->andWhere('tbl.createdBy = :userId')

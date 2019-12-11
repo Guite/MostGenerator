@@ -26,8 +26,13 @@ class TreeSelection {
          * @return array The output of the plugin
          «ENDIF»
          */
-        public function getTreeSelection«IF targets('3.0')»(string $objectType, EntityAccess $node, string $target, bool $skipRootNode = true): array«ELSE»($objectType, $node, $target, $skipRootNode = true)«ENDIF»
-        {
+        public function getTreeSelection«IF targets('3.0')»(
+            string $objectType,
+            EntityAccess $node,
+            string $target,
+            bool $skipRootNode = true
+        ): array {«ELSE»($objectType, $node, $target, $skipRootNode = true)
+        {«ENDIF»
             $repository = $this->entityFactory->getRepository($objectType);
             $titleFieldName = $this->entityDisplayHelper->getTitleFieldName($objectType);
 
@@ -68,7 +73,10 @@ class TreeSelection {
                     break;
                 case 'preandsuccessors':
                     $includeSelf = false;
-                    $result = array_merge($repository->getPrevSiblings($node, $includeSelf), $repository->getNextSiblings($node, $includeSelf));
+                    $result = array_merge(
+                        $repository->getPrevSiblings($node, $includeSelf),
+                        $repository->getNextSiblings($node, $includeSelf)
+                    );
                     break;
             }
 

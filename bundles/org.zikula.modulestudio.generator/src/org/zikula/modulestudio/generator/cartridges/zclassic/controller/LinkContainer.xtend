@@ -119,8 +119,9 @@ class LinkContainer {
                                             $routeArgs = [];
                                         }
                                     «ENDIF»
+                                    $routeName = '«appName.formatForDB»_' . strtolower($objectType) . '_view';
                                     $links[] = [
-                                        'url' => $this->router->generate('«appName.formatForDB»_' . strtolower($objectType) . '_view', $routeArgs),
+                                        'url' => $this->router->generate($routeName, $routeArgs),
                                         'text' => $this->__('My «entity.nameMultiple.formatForDisplay»'«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»),
                                         'icon' => 'list-alt'
                                     ];

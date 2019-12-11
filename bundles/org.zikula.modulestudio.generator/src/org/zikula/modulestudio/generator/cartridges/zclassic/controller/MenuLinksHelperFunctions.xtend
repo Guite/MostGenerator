@@ -33,8 +33,10 @@ class MenuLinksHelperFunctions {
     '''
 
     def private menuLinkToViewAction(Entity it) '''
-        if (in_array('«name.formatForCode»', $allowedObjectTypes, true)
-            && $this->permissionHelper->hasComponentPermission('«name.formatForCode»', $permLevel)) {
+        if (
+            in_array('«name.formatForCode»', $allowedObjectTypes, true)
+            && $this->permissionHelper->hasComponentPermission('«name.formatForCode»', $permLevel)
+        ) {
             $links[] = [
                 'url' => $this->router->generate('«application.appName.formatForDB»_«name.formatForDB»_' . $routeArea . 'view'«/*IF tree != EntityTreeType.NONE», ['tpl' => 'tree']«ENDIF*/»),
                 'text' => «application.translate(nameMultiple.formatForDisplayCapital)»,

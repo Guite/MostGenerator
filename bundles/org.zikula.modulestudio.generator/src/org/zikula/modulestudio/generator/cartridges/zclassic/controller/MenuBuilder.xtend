@@ -161,17 +161,29 @@ class MenuBuilder {
                 $menu->setChildrenAttribute('class', 'list-inline item-actions');
 
                 «IF targets('3.0')»
-                    $this->eventDispatcher->dispatch(new ConfigureItemActionsMenuEvent($this->factory, $menu, $options), «name.formatForCodeCapital»Events::MENU_ITEMACTIONS_PRE_CONFIGURE);
+                    $this->eventDispatcher->dispatch(
+                        new ConfigureItemActionsMenuEvent($this->factory, $menu, $options),
+                        «name.formatForCodeCapital»Events::MENU_ITEMACTIONS_PRE_CONFIGURE
+                    );
                 «ELSE»
-                    $this->eventDispatcher->dispatch(«name.formatForCodeCapital»Events::MENU_ITEMACTIONS_PRE_CONFIGURE, new ConfigureItemActionsMenuEvent($this->factory, $menu, $options));
+                    $this->eventDispatcher->dispatch(
+                        «name.formatForCodeCapital»Events::MENU_ITEMACTIONS_PRE_CONFIGURE,
+                        new ConfigureItemActionsMenuEvent($this->factory, $menu, $options)
+                    );
                 «ENDIF»
 
                 «new ItemActions().itemActionsImpl(it)»
 
                 «IF targets('3.0')»
-                    $this->eventDispatcher->dispatch(new ConfigureItemActionsMenuEvent($this->factory, $menu, $options), «name.formatForCodeCapital»Events::MENU_ITEMACTIONS_POST_CONFIGURE);
+                    $this->eventDispatcher->dispatch(
+                        new ConfigureItemActionsMenuEvent($this->factory, $menu, $options),
+                        «name.formatForCodeCapital»Events::MENU_ITEMACTIONS_POST_CONFIGURE
+                    );
                 «ELSE»
-                    $this->eventDispatcher->dispatch(«name.formatForCodeCapital»Events::MENU_ITEMACTIONS_POST_CONFIGURE, new ConfigureItemActionsMenuEvent($this->factory, $menu, $options));
+                    $this->eventDispatcher->dispatch(
+                        «name.formatForCodeCapital»Events::MENU_ITEMACTIONS_POST_CONFIGURE,
+                        new ConfigureItemActionsMenuEvent($this->factory, $menu, $options)
+                    );
                 «ENDIF»
 
                 return $menu;

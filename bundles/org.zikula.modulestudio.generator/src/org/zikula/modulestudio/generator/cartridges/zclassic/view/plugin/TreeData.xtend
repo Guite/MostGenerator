@@ -48,7 +48,9 @@ class TreeData {
             ];
             foreach ($tree as $node) {
                 if (1 > $node->getLvl() || $rootId === $node->getKey()) {
-                    list ($nodes, $actions) = $this->processTreeItemWithChildren($objectType, $node, $routeArea, $rootId, $descriptionFieldName, $hasEditAction);
+                    list ($nodes, $actions) = $this->processTreeItemWithChildren(
+                        $objectType, $node, $routeArea, $rootId, $descriptionFieldName, $hasEditAction
+                    );
                     $result['nodes'] .= $nodes;
                     $result['actions'] .= $actions;
                 }
@@ -71,8 +73,15 @@ class TreeData {
          * @return array
          «ENDIF»
          */
-        protected function processTreeItemWithChildren«IF targets('3.0')»(string $objectType, EntityAccess $node, string $routeArea, int $rootId, string $descriptionFieldName, bool $hasEditAction): array«ELSE»($objectType, $node, $routeArea, $rootId, $descriptionFieldName, $hasEditAction)«ENDIF»
-        {
+        protected function processTreeItemWithChildren«IF targets('3.0')»(
+            string $objectType,
+            EntityAccess $node,
+            string $routeArea,
+            int $rootId,
+            string $descriptionFieldName,
+            bool $hasEditAction
+        ): array {«ELSE»($objectType, $node, $routeArea, $rootId, $descriptionFieldName, $hasEditAction)
+        {«ENDIF»
             $idPrefix = 'tree' . $rootId . 'node_' . $node->getKey();
             $title = '' !== $descriptionFieldName ? strip_tags($node[$descriptionFieldName]) : '';
 
@@ -83,10 +92,12 @@ class TreeData {
                 $urlDataAttributes .= ' data-' . $field . '="' . $value . '"';
             }
 
-            $liTag = '<li id="' . $idPrefix . '" title="' . str_replace('"', '', $title) . '" class="lvl' . $node->getLvl() . '"' . $urlDataAttributes . '>';
+            $titleAttribute = ' title="' . str_replace('"', '', $title) . '"';
+            $liTag = '<li id="' . $idPrefix . '"' . $titleAttribute . ' class="lvl' . $node->getLvl() . '"' . $urlDataAttributes . '>';
             $liContent = $this->entityDisplayHelper->getFormattedTitle($node);
             if ($hasEditAction) {
-                $url = $this->router->generate('«appName.formatForDB»_' . strtolower($objectType) . '_' . $routeArea . 'edit', $urlArgs);
+                $routeName = '«appName.formatForDB»_' . strtolower($objectType) . '_' . $routeArea . 'edit';
+                $url = $this->router->generate($routeName, $urlArgs);
                 $liContent = '<a href="' . $url . '" title="' . str_replace('"', '', $title) . '">' . $liContent . '</a>';
             }
 
@@ -107,7 +118,9 @@ class TreeData {
             if (count($node->getChildren()) > 0) {
                 $nodeItem .= '<ul>';
                 foreach ($node->getChildren() as $childNode) {
-                    list ($subNodes, $subActions) = $this->processTreeItemWithChildren($objectType, $childNode, $routeArea, $rootId, $descriptionFieldName, $hasEditAction);
+                    list ($subNodes, $subActions) = $this->processTreeItemWithChildren(
+                        $objectType, $childNode, $routeArea, $rootId, $descriptionFieldName, $hasEditAction
+                    );
                     $nodeItem .= $subNodes;
                     $actions .= $subActions;
                 }

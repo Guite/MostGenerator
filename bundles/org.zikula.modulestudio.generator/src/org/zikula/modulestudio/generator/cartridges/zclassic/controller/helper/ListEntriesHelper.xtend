@@ -75,8 +75,13 @@ class ListEntriesHelper {
          * @return string List item name
          «ENDIF»
          */
-        public function resolve«IF targets('3.0')»(string $value, string $objectType = '', string $fieldName = '', string $delimiter = ', '): string«ELSE»($value, $objectType = '', $fieldName = '', $delimiter = ', ')«ENDIF»
-        {
+        public function resolve(«IF targets('3.0')»
+            string $value,
+            string $objectType = '',
+            string $fieldName = '',
+            string $delimiter = ', '
+        ): string {«ELSE»$value, $objectType = '', $fieldName = '', $delimiter = ', ')
+        {«ENDIF»
             if ((empty($value) && '0' !== $value) || empty($objectType) || empty($fieldName)) {
                 return $value;
             }

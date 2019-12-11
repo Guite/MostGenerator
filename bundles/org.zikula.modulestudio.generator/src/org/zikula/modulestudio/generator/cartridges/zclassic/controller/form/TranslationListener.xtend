@@ -56,7 +56,9 @@ class TranslationListener {
 
                 $originalFieldConfig = $entityForm->get($fieldName)->getConfig();
                 $fieldOptions = $originalFieldConfig->getOptions();
-                $fieldOptions['required'] = $fieldOptions['required'] && in_array($fieldName, $formOptions['mandatory_fields'], true);
+                $fieldOptions['required'] = $fieldOptions['required']
+                    && in_array($fieldName, $formOptions['mandatory_fields'], true)
+                ;
                 «IF targets('3.0')»
                     $fieldOptions['data'] = $formOptions['values'][$fieldName] ?? null;
                 «ELSE»

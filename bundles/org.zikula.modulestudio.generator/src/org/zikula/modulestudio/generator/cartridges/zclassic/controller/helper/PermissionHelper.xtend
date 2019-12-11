@@ -174,7 +174,9 @@ class PermissionHelper {
             {
                 $objectType = $entity->get_objectType();
 
-                return $this->mayEdit($entity, $userId) && $this->variableApi->get('«appName»', 'show' . ucfirst($objectType) . 'History', true);
+                return $this->mayEdit($entity, $userId)
+                    && $this->variableApi->get('«appName»', 'show' . ucfirst($objectType) . 'History', true)
+                ;
             }
         «ENDIF»
 
@@ -231,7 +233,12 @@ class PermissionHelper {
                 «ENDFOR»
 
             «ENDIF»
-            return $this->permissionApi->hasPermission('«appName»:' . ucfirst($objectType) . ':', $instance, $permissionLevel, $userId);
+            return $this->permissionApi->hasPermission(
+                '«appName»:' . ucfirst($objectType) . ':',
+                $instance,
+                $permissionLevel,
+                $userId
+            );
         }
         «IF hasViewActions»
 
@@ -313,7 +320,12 @@ class PermissionHelper {
          */
         public function hasComponentPermission(«IF targets('3.0')»string «ENDIF»$objectType, «IF targets('3.0')»int «ENDIF»$permissionLevel, «IF targets('3.0')»int «ENDIF»$userId = null)«IF targets('3.0')»: bool«ENDIF»
         {
-            return $this->permissionApi->hasPermission('«appName»:' . ucfirst($objectType) . ':', '::', $permissionLevel, $userId);
+            return $this->permissionApi->hasPermission(
+                '«appName»:' . ucfirst($objectType) . ':',
+                '::',
+                $permissionLevel,
+                $userId
+            );
         }
         «IF hasViewActions»
 
@@ -345,7 +357,12 @@ class PermissionHelper {
          */
         public function hasPermission(«IF targets('3.0')»int «ENDIF»$permissionLevel, «IF targets('3.0')»int «ENDIF»$userId = null)«IF targets('3.0')»: bool«ENDIF»
         {
-            return $this->permissionApi->hasPermission('«appName»::', '::', $permissionLevel, $userId);
+            return $this->permissionApi->hasPermission(
+                '«appName»::',
+                '::',
+                $permissionLevel,
+                $userId
+            );
         }
 
         /**

@@ -340,7 +340,8 @@ class MultiHook {
                     if (!$this->permissionHelper->hasComponentPermission('«name.formatForCode»', ACCESS_READ)) {
                         $cache[$needleId] = '';
                     } else {
-                        $cache[$needleId] = '<a href="' . $this->router->generate('«app.appName.formatForDB»_«name.formatForDB»_view', [], UrlGeneratorInterface::ABSOLUTE_URL) . '" title="' . $this->translator->__('View «nameMultiple.formatForDisplay»', '«app.appName.formatForDB»') . '">' . $this->translator->__('«nameMultiple.formatForDisplayCapital»', '«app.appName.formatForDB»') . '</a>';
+                        $route = $this->router->generate('«app.appName.formatForDB»_«name.formatForDB»_view', [], UrlGeneratorInterface::ABSOLUTE_URL);
+                        $cache[$needleId] = '<a href="' . $route . '" title="' . $this->translator->__('View «nameMultiple.formatForDisplay»', '«app.appName.formatForDB»') . '">' . $this->translator->__('«nameMultiple.formatForDisplayCapital»', '«app.appName.formatForDB»') . '</a>';
                     }
 
                     return $cache[$needleId];
@@ -358,7 +359,12 @@ class MultiHook {
                 $repository = $this->entityFactory->getRepository('«name.formatForCode»');
                 $entity = $repository->selectById($entityId, false);
                 if (null === $entity) {
-                    $cache[$needleId] = '<em>' . $this->translator->__f('«name.formatForDisplayCapital» with id %id% could not be found', ['%id%' => $entityId], '«app.appName.formatForDB»') . '</em>';
+                    $notFoundMessage = $this->translator->__f(
+                        '«name.formatForDisplayCapital» with id %id% could not be found',
+                        ['%id%' => $entityId],
+                        '«app.appName.formatForDB»'
+                    );
+                    $cache[$needleId] = '<em>' . $notFoundMessage . '</em>';
 
                     return $cache[$needleId];
                 }
@@ -370,7 +376,8 @@ class MultiHook {
                 }
 
                 $title = $this->entityDisplayHelper->getFormattedTitle($entity);
-                $cache[$needleId] = '<a href="' . $this->router->generate('«app.appName.formatForDB»_«name.formatForDB»_display', $entity->createUrlArgs(), UrlGeneratorInterface::ABSOLUTE_URL) . '" title="' . str_replace('"', '', $title) . '">' . $title . '</a>';
+                $route = $this->router->generate('«app.appName.formatForDB»_«name.formatForDB»_display', $entity->createUrlArgs(), UrlGeneratorInterface::ABSOLUTE_URL);
+                $cache[$needleId] = '<a href="' . $route . '" title="' . str_replace('"', '', $title) . '">' . $title . '</a>';
             «ENDIF»
 
             return $cache[$needleId];

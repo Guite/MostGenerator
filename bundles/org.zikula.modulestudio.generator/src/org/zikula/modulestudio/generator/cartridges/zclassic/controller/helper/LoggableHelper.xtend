@@ -218,7 +218,9 @@ class LoggableHelper {
 
             // alternative (with worse performance)
             $entityManager = $this->entityFactory->getEntityManager();
-            $logEntriesRepository = $entityManager->getRepository('«appName»:' . ucfirst($objectType) . 'LogEntryEntity');
+            $logEntriesRepository = $entityManager->getRepository(
+                '«appName»:' . ucfirst($objectType) . 'LogEntryEntity'
+            );
             $logEntries = $logEntriesRepository->getLogEntries($entity);
 
             return 1 < count($logEntries);
@@ -238,7 +240,9 @@ class LoggableHelper {
         public function hasDeletedEntities(«IF targets('3.0')»string «ENDIF»$objectType = '')«IF targets('3.0')»: bool«ENDIF»
         {
             $entityManager = $this->entityFactory->getEntityManager();
-            $logEntriesRepository = $entityManager->getRepository('«appName»:' . ucfirst($objectType) . 'LogEntryEntity');
+            $logEntriesRepository = $entityManager->getRepository(
+                '«appName»:' . ucfirst($objectType) . 'LogEntryEntity'
+            );
 
             return 0 < count($logEntriesRepository->selectDeleted(1));
         }
@@ -257,7 +261,9 @@ class LoggableHelper {
         public function getDeletedEntities(«IF targets('3.0')»string «ENDIF»$objectType = '')«IF targets('3.0')»: array«ENDIF»
         {
             $entityManager = $this->entityFactory->getEntityManager();
-            $logEntriesRepository = $entityManager->getRepository('«appName»:' . ucfirst($objectType) . 'LogEntryEntity');
+            $logEntriesRepository = $entityManager->getRepository(
+                '«appName»:' . ucfirst($objectType) . 'LogEntryEntity'
+            );
 
             return $logEntriesRepository->selectDeleted();
         }
@@ -280,7 +286,9 @@ class LoggableHelper {
             $entityManager = $this->entityFactory->getEntityManager();
             $objectType = $entity->get_objectType();
 
-            $logEntriesRepository = $entityManager->getRepository('«appName»:' . ucfirst($objectType) . 'LogEntryEntity');
+            $logEntriesRepository = $entityManager->getRepository(
+                '«appName»:' . ucfirst($objectType) . 'LogEntryEntity'
+            );
             $logEntries = $logEntriesRepository->getLogEntries($entity);
             if (2 > count($logEntries)) {
                 return $entity;
@@ -321,7 +329,9 @@ class LoggableHelper {
             $entity->$setter($id);
 
             $entityManager = $this->entityFactory->getEntityManager();
-            $logEntriesRepository = $entityManager->getRepository('«appName»:' . ucfirst($objectType) . 'LogEntryEntity');
+            $logEntriesRepository = $entityManager->getRepository(
+                '«appName»:' . ucfirst($objectType) . 'LogEntryEntity'
+            );
             $logEntries = $logEntriesRepository->getLogEntries($entity);
             $lastVersionBeforeDeletion = null;
             foreach ($logEntries as $logEntry) {

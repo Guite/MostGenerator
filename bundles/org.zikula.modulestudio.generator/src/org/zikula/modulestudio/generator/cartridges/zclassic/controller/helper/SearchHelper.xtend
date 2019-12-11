@@ -119,7 +119,10 @@ class SearchHelper {
                 «ENDFOR»
             ];
 
-            $allowedTypes = $this->controllerHelper->getObjectTypes('helper', ['helper' => 'search', 'action' => 'getSearchTypes']);
+            $allowedTypes = $this->controllerHelper->getObjectTypes(
+                'helper',
+                ['helper' => 'search', 'action' => 'getSearchTypes']
+            );
             $allowedSearchTypes = [];
             foreach ($searchTypes as $searchType => $typeInfo) {
                 if (!in_array($typeInfo['value'], $allowedTypes, true)) {
@@ -249,7 +252,10 @@ class SearchHelper {
                     $displayUrl = null;
                     if ($hasDisplayAction) {
                         $urlArgs = $entity->createUrlArgs();
-                        $urlArgs['_locale'] = null !== $languageField && !empty($entity[$languageField]) ? $entity[$languageField] : $request->getLocale();
+                        $urlArgs['_locale'] = null !== $languageField && !empty($entity[$languageField])
+                            ? $entity[$languageField]
+                            : $request->getLocale()
+                        ;
                         $displayUrl = new RouteUrl('«appName.formatForDB»_' . strtolower($objectType) . '_display', $urlArgs);
                     }
 
@@ -284,15 +290,19 @@ class SearchHelper {
          «IF !targets('3.0')»
          *
          * @param QueryBuilder $qb
-         * @param string[] $words  List of words to query for
+         * @param string[] $words List of words to query for
          * @param string[] $fields List of fields to include into query
          * @param string $searchtype AND|OR|EXACT
          *
          * @return null|Composite
          «ENDIF»
          */
-        protected function formatWhere(QueryBuilder $qb, array $words = [], array $fields = [], «IF targets('3.0')»string «ENDIF»$searchtype = 'AND')«IF targets('3.0')»: ?Composite«ENDIF»
-        {
+        protected function formatWhere(
+            QueryBuilder $qb,
+            array $words = [],
+            array $fields = [],
+            «IF targets('3.0')»string «ENDIF»$searchtype = 'AND'
+        )«IF targets('3.0')»: ?Composite«ENDIF» {
             if (empty($words) || empty($fields)) {
                 return null;
             }

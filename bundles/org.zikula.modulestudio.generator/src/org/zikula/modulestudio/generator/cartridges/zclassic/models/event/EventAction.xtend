@@ -53,11 +53,12 @@ class EventAction {
         «ENDIF»
 
         // create the filter event and dispatch it
+        $eventClass = '\\«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\«name.formatForCodeCapital»Events';
         $event = $this->createFilterEvent(«entityVar»);
         «IF targets('3.0')»
-            $this->eventDispatcher->dispatch($event, constant('\\«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\«name.formatForCodeCapital»Events::' . strtoupper(«entityVar»->get_objectType()) . '_POST_LOAD'));
+            $this->eventDispatcher->dispatch($event, constant($eventClass . '::' . strtoupper(«entityVar»->get_objectType()) . '_POST_LOAD'));
         «ELSE»
-            $this->eventDispatcher->dispatch(constant('\\«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\«name.formatForCodeCapital»Events::' . strtoupper(«entityVar»->get_objectType()) . '_POST_LOAD'), $event);
+            $this->eventDispatcher->dispatch(constant($eventClass . '::' . strtoupper(«entityVar»->get_objectType()) . '_POST_LOAD'), $event);
         «ENDIF»
     '''
 
@@ -96,11 +97,12 @@ class EventAction {
         «ENDIF»
 
         // create the filter event and dispatch it
+        $eventClass = '\\«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\«name.formatForCodeCapital»Events';
         $event = $this->createFilterEvent(«entityVar»);
         «IF targets('3.0')»
-            $this->eventDispatcher->dispatch($event, constant('\\«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\«name.formatForCodeCapital»Events::' . strtoupper(«entityVar»->get_objectType()) . '_PRE_PERSIST'));
+            $this->eventDispatcher->dispatch($event, constant($eventClass . '::' . strtoupper(«entityVar»->get_objectType()) . '_PRE_PERSIST'));
         «ELSE»
-            $this->eventDispatcher->dispatch(constant('\\«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\«name.formatForCodeCapital»Events::' . strtoupper(«entityVar»->get_objectType()) . '_PRE_PERSIST'), $event);
+            $this->eventDispatcher->dispatch(constant($eventClass . '::' . strtoupper(«entityVar»->get_objectType()) . '_PRE_PERSIST'), $event);
         «ENDIF»
     '''
 
@@ -115,22 +117,24 @@ class EventAction {
         «ENDIF»
 
         // create the filter event and dispatch it
+        $eventClass = '\\«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\«name.formatForCodeCapital»Events';
         $event = $this->createFilterEvent(«entityVar»);
         «IF targets('3.0')»
-            $this->eventDispatcher->dispatch($event, constant('\\«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\«name.formatForCodeCapital»Events::' . strtoupper(«entityVar»->get_objectType()) . '_POST_PERSIST'));
+            $this->eventDispatcher->dispatch($event, constant($eventClass . '::' . strtoupper(«entityVar»->get_objectType()) . '_POST_PERSIST'));
         «ELSE»
-            $this->eventDispatcher->dispatch(constant('\\«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\«name.formatForCodeCapital»Events::' . strtoupper(«entityVar»->get_objectType()) . '_POST_PERSIST'), $event);
+            $this->eventDispatcher->dispatch(constant($eventClass . '::' . strtoupper(«entityVar»->get_objectType()) . '_POST_PERSIST'), $event);
         «ENDIF»
     '''
 
     def preRemove(Application it) '''
 
         // create the filter event and dispatch it
+        $eventClass = '\\«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\«name.formatForCodeCapital»Events';
         $event = $this->createFilterEvent(«entityVar»);
         «IF targets('3.0')»
-            $this->eventDispatcher->dispatch($event, constant('\\«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\«name.formatForCodeCapital»Events::' . strtoupper(«entityVar»->get_objectType()) . '_PRE_REMOVE'));
+            $this->eventDispatcher->dispatch($event, constant($eventClass . '::' . strtoupper(«entityVar»->get_objectType()) . '_PRE_REMOVE'));
         «ELSE»
-            $this->eventDispatcher->dispatch(constant('\\«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\«name.formatForCodeCapital»Events::' . strtoupper(«entityVar»->get_objectType()) . '_PRE_REMOVE'), $event);
+            $this->eventDispatcher->dispatch(constant($eventClass . '::' . strtoupper(«entityVar»->get_objectType()) . '_PRE_REMOVE'), $event);
         «ENDIF»
     '''
 
@@ -162,22 +166,24 @@ class EventAction {
         $this->logger->debug('{app}: User {user} removed the {entity} with id {id}.', $logArgs);
 
         // create the filter event and dispatch it
+        $eventClass = '\\«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\«name.formatForCodeCapital»Events';
         $event = $this->createFilterEvent(«entityVar»);
         «IF targets('3.0')»
-            $this->eventDispatcher->dispatch($event, constant('\\«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\«name.formatForCodeCapital»Events::' . strtoupper($objectType) . '_POST_REMOVE'));
+            $this->eventDispatcher->dispatch($event, constant($eventClass . '::' . strtoupper($objectType) . '_POST_REMOVE'));
         «ELSE»
-            $this->eventDispatcher->dispatch(constant('\\«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\«name.formatForCodeCapital»Events::' . strtoupper($objectType) . '_POST_REMOVE'), $event);
+            $this->eventDispatcher->dispatch(constant($eventClass . '::' . strtoupper($objectType) . '_POST_REMOVE'), $event);
         «ENDIF»
     '''
 
     def preUpdate(Application it) '''
 
         // create the filter event and dispatch it
+        $eventClass = '\\«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\«name.formatForCodeCapital»Events';
         $event = $this->createFilterEvent(«entityVar»);
         «IF targets('3.0')»
-            $this->eventDispatcher->dispatch($event, constant('\\«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\«name.formatForCodeCapital»Events::' . strtoupper(«entityVar»->get_objectType()) . '_PRE_UPDATE'));
+            $this->eventDispatcher->dispatch($event, constant($eventClass . '::' . strtoupper(«entityVar»->get_objectType()) . '_PRE_UPDATE'));
         «ELSE»
-            $this->eventDispatcher->dispatch(constant('\\«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\«name.formatForCodeCapital»Events::' . strtoupper(«entityVar»->get_objectType()) . '_PRE_UPDATE'), $event);
+            $this->eventDispatcher->dispatch(constant($eventClass . '::' . strtoupper(«entityVar»->get_objectType()) . '_PRE_UPDATE'), $event);
         «ENDIF»
     '''
 
@@ -192,11 +198,12 @@ class EventAction {
         «ENDIF»
 
         // create the filter event and dispatch it
+        $eventClass = '\\«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\«name.formatForCodeCapital»Events';
         $event = $this->createFilterEvent(«entityVar»);
         «IF targets('3.0')»
-            $this->eventDispatcher->dispatch($event, constant('\\«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\«name.formatForCodeCapital»Events::' . strtoupper(«entityVar»->get_objectType()) . '_POST_UPDATE'));
+            $this->eventDispatcher->dispatch($event, constant($eventClass . '::' . strtoupper(«entityVar»->get_objectType()) . '_POST_UPDATE'));
         «ELSE»
-            $this->eventDispatcher->dispatch(constant('\\«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\«name.formatForCodeCapital»Events::' . strtoupper(«entityVar»->get_objectType()) . '_POST_UPDATE'), $event);
+            $this->eventDispatcher->dispatch(constant($eventClass . '::' . strtoupper(«entityVar»->get_objectType()) . '_POST_UPDATE'), $event);
         «ENDIF»
     '''
 }
