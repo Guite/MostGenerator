@@ -39,7 +39,7 @@ class TreeSelection {
                     $path = $repository->getPath($node);
                     if (0 < count($path)) {
                         // remove $node
-                        unset($path[count($path)-1]);
+                        unset($path[count($path) - 1]);
                     }
                     if ($skipRootNode && 0 < count($path)) {
                         // remove root level

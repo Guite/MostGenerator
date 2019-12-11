@@ -29,7 +29,12 @@ class GetListEntry {
          * @return string List item name
          «ENDIF»
          */
-        public function getListEntry«IF targets('3.0')»(string $value, string $objectType = '', string $fieldName = '', string $delimiter = ', '): string«ELSE»($value, $objectType = '', $fieldName = '', $delimiter = ', ')«ENDIF»
+        public function getListEntry«IF targets('3.0')»(
+            string $value,
+            string $objectType = '',
+            string $fieldName = '',
+            string $delimiter = ', '
+        ): string«ELSE»($value, $objectType = '', $fieldName = '', $delimiter = ', ')«ENDIF»
         {
             if ((empty($value) && '0' !== $value) || empty($objectType) || empty($fieldName)) {
                 return $value;

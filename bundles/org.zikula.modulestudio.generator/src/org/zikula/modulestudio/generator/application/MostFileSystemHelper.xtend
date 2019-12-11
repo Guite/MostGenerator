@@ -105,15 +105,15 @@ class MostFileSystemHelper {
 
     def private phpFileHeader(Application it, Boolean isBootstrapFile) '''
         <?php
-        «IF targets('3.0')»
 
-            declare(strict_types=1);
-
-        «ENDIF»
         /**
          «phpFileHeaderImpl»
          * @version «generatedBy(timestampAllGeneratedFiles || isBootstrapFile, versionAllGeneratedFiles || isBootstrapFile)»
          */
+        «IF targets('3.0')»
+
+            declare(strict_types=1);
+        «ENDIF»
 
     '''
 
@@ -123,7 +123,7 @@ class MostFileSystemHelper {
         * @copyright «author» («vendor»)
         * @license «license»
         * @author «author»«IF null !== email && !email.empty» <«email»>«ENDIF».
-        * @link «IF !url.empty»«url»«ELSE»«msUrl»«ENDIF»«IF url != 'https://ziku.la'»
-        * @link https://ziku.la«ENDIF»
+        * @see «IF !url.empty»«url»«ELSE»«msUrl»«ENDIF»«IF url != 'https://ziku.la'»
+        * @see https://ziku.la«ENDIF»
     '''
 }
