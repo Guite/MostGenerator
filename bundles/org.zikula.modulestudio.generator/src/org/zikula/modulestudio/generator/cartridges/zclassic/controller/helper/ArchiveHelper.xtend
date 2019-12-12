@@ -239,7 +239,13 @@ class ArchiveHelper {
             } catch (Exception $exception) {
                 if (null !== $request) {
                     $flashBag = $request->getSession()->getFlashBag();
-                    $flashBag->add('error', $this->translator->__f('Sorry, but an error occured during the %action% action. Please apply the changes again!', ['%action%' => $action]) . '  ' . $exception->getMessage());
+                    $flashBag->add(
+                        'error',
+                        $this->translator->__f(
+                            'Sorry, but an error occured during the %action% action. Please apply the changes again!',
+                            ['%action%' => $action]
+                        ) . '  ' . $exception->getMessage()
+                    );
                 }
             }
 
@@ -260,7 +266,7 @@ class ArchiveHelper {
                             $urlArgs['_locale'] = $request->getLocale();
                         }
                         $url = new RouteUrl('«appName.formatForDB»_' . strtolower($objectType) . '_display', $urlArgs);
-                	}
+                    }
                     $this->hookHelper->callProcessHooks($entity, UiHooksCategory::TYPE_PROCESS_EDIT, $url);
                 }
             «ENDIF»

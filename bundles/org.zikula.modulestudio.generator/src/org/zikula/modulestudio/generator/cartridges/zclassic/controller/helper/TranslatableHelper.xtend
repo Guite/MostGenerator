@@ -252,7 +252,10 @@ class TranslatableHelper {
                     «IF targets('3.0')»
                         $translationData[$fieldName] = $entityTranslations[$language][$fieldName] ?? '';
                     «ELSE»
-                        $translationData[$fieldName] = isset($entityTranslations[$language][$fieldName]) ? $entityTranslations[$language][$fieldName] : '';
+                        $translationData[$fieldName] = isset($entityTranslations[$language][$fieldName])
+                            ? $entityTranslations[$language][$fieldName]
+                            : ''
+                        ;
                     «ENDIF»
                 }
                 «IF !getAllEntities.filter[slugUnique && hasTranslatableSlug && needsSlugHandler].empty»

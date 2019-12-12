@@ -62,7 +62,10 @@ class TranslationListener {
                 «IF targets('3.0')»
                     $fieldOptions['data'] = $formOptions['values'][$fieldName] ?? null;
                 «ELSE»
-                    $fieldOptions['data'] = isset($formOptions['values'][$fieldName]) ? $formOptions['values'][$fieldName] : null;
+                    $fieldOptions['data'] = isset($formOptions['values'][$fieldName])
+                        ? $formOptions['values'][$fieldName]
+                        : null
+                    ;
                 «ENDIF»
 
                 $form->add($fieldName, get_class($originalFieldConfig->getType()->getInnerType()), $fieldOptions);

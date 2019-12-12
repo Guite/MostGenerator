@@ -144,8 +144,17 @@ class Installer {
                             $this->entityManager->persist($registry);
                             $this->entityManager->flush();
                         } catch (Exception $exception) {
-                            $this->addFlash('warning', $this->__f('Error! Could not create a category registry for the %entity% entity. If you want to use categorisation, register at least one registry in the Categories administration.', ['%entity%' => '«entity.name.formatForDisplay»']));
-                            $logger->error('{app}: User {user} could not create a category registry for {entities} during installation. Error details: {errorMessage}.', ['app' => '«appName»', 'user' => $userName, 'entities' => '«entity.nameMultiple.formatForDisplay»', 'errorMessage' => $exception->getMessage()]);
+                            $this->addFlash(
+                                'warning',
+                                $this->__f(
+                                    'Error! Could not create a category registry for the %entity% entity. If you want to use categorisation, register at least one registry in the Categories administration.',
+                                    ['%entity%' => '«entity.name.formatForDisplay»']
+                                )
+                            );
+                            $logger->error(
+                                '{app}: User {user} could not create a category registry for {entities} during installation. Error details: {errorMessage}.',
+                                ['app' => '«appName»', 'user' => $userName, 'entities' => '«entity.nameMultiple.formatForDisplay»', 'errorMessage' => $exception->getMessage()]
+                            );
                         }
                         $categoryRegistryIdsPerEntity['«entity.name.formatForCode»'] = $registry->getId();
                     «ENDFOR»
@@ -186,7 +195,10 @@ class Installer {
                 $uploadHelper->checkAndCreateAllUploadFolders();
             } catch (Exception $exception) {
                 $this->addFlash('error', $exception->getMessage());
-                $logger->error('{app}: User {user} could not create upload folders during installation. Error details: {errorMessage}.', ['app' => '«appName»', 'user' => $userName, 'errorMessage' => $exception->getMessage()]);
+                $logger->error(
+                    '{app}: User {user} could not create upload folders during installation. Error details: {errorMessage}.',
+                    ['app' => '«appName»', 'user' => $userName, 'errorMessage' => $exception->getMessage()]
+                );
 
                 return false;
             }
