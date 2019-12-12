@@ -44,6 +44,7 @@ class FileHelper {
     '''
 
     def getterMethod(Object it, String name, String type, Boolean isMany, Boolean nullable, Boolean useHint) '''
+
         «IF !app.targets('3.0')»
         /**
          * Returns the «name.formatForDisplay».
@@ -55,10 +56,10 @@ class FileHelper {
         {
             return «IF type == 'float'&& #['latitude', 'longitude'].contains(name)»(float)«ENDIF»$this->«name»;
         }
-        «/* this last line is on purpose */»
     '''
 
     def setterMethod(Object it, String name, String type, Boolean isMany, Boolean nullable, Boolean useHint, String init, CharSequence customImpl) '''
+
         «IF !app.targets('3.0')»
         /**
          * Sets the «name.formatForDisplay».
@@ -76,7 +77,6 @@ class FileHelper {
                 «setterMethodImpl(name, type, nullable)»
             «ENDIF»
         }
-        «/* this last line is on purpose */»
     '''
 
     def private dispatch setterMethodImpl(Object it, String name, String type, Boolean nullable) '''

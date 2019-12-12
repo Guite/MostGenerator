@@ -126,18 +126,28 @@ class BlockDetail {
 
             «IF targets('3.0')»
                 $contextArgs = ['name' => 'detail'];
-                if (!isset($properties['objectType']) || !in_array($properties['objectType'], $this->controllerHelper->getObjectTypes('block', $contextArgs), true)) {
+                if (
+                    !isset($properties['objectType'])
+                    || !in_array($properties['objectType'], $this->controllerHelper->getObjectTypes('block', $contextArgs), true)
+                ) {
                     $properties['objectType'] = $this->controllerHelper->getDefaultObjectType('block', $contextArgs);
                 }
             «ELSE»
                 $controllerHelper = $this->get('«appService».controller_helper');
                 $contextArgs = ['name' => 'detail'];
-                if (!isset($properties['objectType']) || !in_array($properties['objectType'], $controllerHelper->getObjectTypes('block', $contextArgs), true)) {
+                if (
+                    !isset($properties['objectType'])
+                    || !in_array($properties['objectType'], $controllerHelper->getObjectTypes('block', $contextArgs), true)
+                ) {
                     $properties['objectType'] = $controllerHelper->getDefaultObjectType('block', $contextArgs);
                 }
             «ENDIF»
 
-            $controllerReference = new ControllerReference('«appName»:External:display', $this->getDisplayArguments($properties), ['template' => $properties['customTemplate']]);
+            $controllerReference = new ControllerReference(
+                '«appName»:External:display',
+                $this->getDisplayArguments($properties),
+                ['template' => $properties['customTemplate']]
+            );
 
             return $this->«IF targets('3.0')»fragmentHandler«ELSE»get('fragment.handler')«ENDIF»->render($controllerReference);
         }

@@ -113,7 +113,8 @@ class Locking {
                     'id' => $entity->getKey()
                 ];
                 $this->logger->error(
-                    '{app}: User {user} tried to edit the {entity} with id {id}, but failed as someone else has already changed it.',
+                    '{app}: User {user} tried to edit the {entity} with id {id},'
+                        . ' but failed as someone else has already changed it.',
                     $logArgs
                 );
         «ENDIF»

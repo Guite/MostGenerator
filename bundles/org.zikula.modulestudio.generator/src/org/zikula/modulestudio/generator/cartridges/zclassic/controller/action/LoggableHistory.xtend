@@ -150,9 +150,21 @@ class LoggableHistory {
                 «ENDIF»
 
                 if ($success) {
-                    $this->addFlash('status', $this->__f('Done! Reverted «name.formatForDisplay» to version %version%.', ['%version%' => $revertToVersion]));
+                    $this->addFlash(
+                        'status',
+                        $this->__f(
+                            'Done! Reverted «name.formatForDisplay» to version %version%.',
+                            ['%version%' => $revertToVersion]
+                        )
+                    );
                 } else {
-                    $this->addFlash('error', $this->__f('Error! Reverting «name.formatForDisplay» to version %version% failed.', ['%version%' => $revertToVersion]));
+                    $this->addFlash(
+                        'error',
+                        $this->__f(
+                            'Error! Reverting «name.formatForDisplay» to version %version% failed.',
+                            ['%version%' => $revertToVersion]
+                        )
+                    );
                 }
             } catch (Exception $exception) {
                 $this->addFlash(
@@ -168,7 +180,10 @@ class LoggableHistory {
                 $«name.formatForCode» = $entityFactory->getRepository('«name.formatForCode»')->selectById($«name.formatForCode»Id);
             «ENDIF»
 
-            return $this->redirectToRoute('«application.appName.formatForDB»_«name.formatForDB»_' . $routeArea . 'loggablehistory', [«routeParams(name.formatForCode, false)»]);
+            return $this->redirectToRoute(
+                '«application.appName.formatForDB»_«name.formatForDB»_' . $routeArea . 'loggablehistory',
+                [«routeParams(name.formatForCode, false)»]
+            );
         }
 
         $isDiffView = false;

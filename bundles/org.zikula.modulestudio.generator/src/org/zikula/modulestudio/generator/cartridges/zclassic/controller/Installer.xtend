@@ -94,7 +94,10 @@ class Installer {
                 $this->schemaTool->create($this->entities);
             } catch (Exception $exception) {
                 $this->addFlash('error', $this->__('Doctrine Exception') . ': ' . $exception->getMessage());
-                $logger->error('{app}: Could not create the database tables during installation. Error details: {errorMessage}.', ['app' => '«appName»', 'errorMessage' => $exception->getMessage()]);
+                $logger->error(
+                    '{app}: Could not create the database tables during installation. Error details: {errorMessage}.',
+                    ['app' => '«appName»', 'errorMessage' => $exception->getMessage()]
+                );
 
                 return false;
             }
@@ -206,7 +209,10 @@ class Installer {
                         $this->schemaTool->update($this->entities);
                     } catch (Exception $exception) {
                         $this->addFlash('error', $this->__('Doctrine Exception') . ': ' . $exception->getMessage());
-                        $logger->error('{app}: Could not update the database tables during the upgrade. Error details: {errorMessage}.', ['app' => '«appName»', 'errorMessage' => $exception->getMessage()]);
+                        $logger->error(
+                            '{app}: Could not update the database tables during the upgrade. Error details: {errorMessage}.',
+                            ['app' => '«appName»', 'errorMessage' => $exception->getMessage()]
+                        );
 
                         return false;
                     }
@@ -232,7 +238,10 @@ class Installer {
                 $this->schemaTool->drop($this->entities);
             } catch (Exception $exception) {
                 $this->addFlash('error', $this->__('Doctrine Exception') . ': ' . $exception->getMessage());
-                $logger->error('{app}: Could not remove the database tables during uninstallation. Error details: {errorMessage}.', ['app' => '«appName»', 'errorMessage' => $exception->getMessage()]);
+                $logger->error(
+                    '{app}: Could not remove the database tables during uninstallation. Error details: {errorMessage}.',
+                    ['app' => '«appName»', 'errorMessage' => $exception->getMessage()]
+                );
 
                 return false;
             }
@@ -245,10 +254,11 @@ class Installer {
 
                 // remove category registry entries
                 «IF targets('3.0')»
-                    $registries = $this->container->get(CategoryRegistryRepositoryInterface::class)->findBy(['modname' => '«appName»']);
+                    $registryRepository = $this->container->get(CategoryRegistryRepositoryInterface::class);
                 «ELSE»
-                    $registries = $this->container->get('zikula_categories_module.category_registry_repository')->findBy(['modname' => '«appName»']);
+                    $registryRepository = $this->container->get('zikula_categories_module.category_registry_repository');
                 «ENDIF»
+                $registries = $registryRepository->findBy(['modname' => '«appName»']);
                 foreach ($registries as $registry) {
                     $this->entityManager->remove($registry);
                 }
@@ -258,7 +268,13 @@ class Installer {
 
                 // remind user about upload folders not being deleted
                 $uploadPath = $this->container->getParameter('datadir') . '/«appName»/';
-                $this->addFlash('status', $this->__f('The upload directories at "%path%" can be removed manually.', ['%path%' => $uploadPath]));
+                $this->addFlash(
+                    'status',
+                    $this->__f(
+                        'The upload directories at "%path%" can be removed manually.',
+                        ['%path%' => $uploadPath]
+                    )
+                );
             «ENDIF»
 
             // uninstallation successful

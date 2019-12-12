@@ -157,7 +157,10 @@ class LifecycleListener {
             {
                 /** @var EntityAccess $entity */
                 $entity = $args->getObject();
-                if (!$this->isEntityManagedByThisBundle($entity) || !method_exists($entity, 'get_objectType')) {
+                if (
+                    !$this->isEntityManagedByThisBundle($entity)
+                    || !method_exists($entity, 'get_objectType')
+                ) {
                     return;
                 }
                 «eventAction.preRemove(app)»
@@ -177,7 +180,10 @@ class LifecycleListener {
             {
                 /** @var EntityAccess $entity */
                 $entity = $args->getObject();
-                if (!$this->isEntityManagedByThisBundle($entity) || !method_exists($entity, 'get_objectType')) {
+                if (
+                    !$this->isEntityManagedByThisBundle($entity)
+                    || !method_exists($entity, 'get_objectType')
+                ) {
                     return;
                 }
                 «eventAction.postRemove(app)»
@@ -197,7 +203,10 @@ class LifecycleListener {
             {
                 /** @var EntityAccess $entity */
                 $entity = $args->getObject();
-                if (!$this->isEntityManagedByThisBundle($entity) || «IF hasLoggable»(!method_exists($entity, 'get_objectType') && !$entity instanceof AbstractLogEntry)«ELSE»!method_exists($entity, 'get_objectType')«ENDIF») {
+                if (
+                    !$this->isEntityManagedByThisBundle($entity)
+                    || «IF hasLoggable»(!method_exists($entity, 'get_objectType') && !$entity instanceof AbstractLogEntry)«ELSE»!method_exists($entity, 'get_objectType')«ENDIF»
+                ) {
                     return;
                 }
                 «eventAction.prePersist(app)»
@@ -214,7 +223,10 @@ class LifecycleListener {
             {
                 /** @var EntityAccess $entity */
                 $entity = $args->getObject();
-                if (!$this->isEntityManagedByThisBundle($entity) || !method_exists($entity, 'get_objectType')) {
+                if (
+                    !$this->isEntityManagedByThisBundle($entity)
+                    || !method_exists($entity, 'get_objectType')
+                ) {
                     return;
                 }
                 «eventAction.postPersist(app)»
@@ -230,7 +242,10 @@ class LifecycleListener {
             {
                 /** @var EntityAccess $entity */
                 $entity = $args->getObject();
-                if (!$this->isEntityManagedByThisBundle($entity) || !method_exists($entity, 'get_objectType')) {
+                if (
+                    !$this->isEntityManagedByThisBundle($entity)
+                    || !method_exists($entity, 'get_objectType')
+                ) {
                     return;
                 }
                 «eventAction.preUpdate(app)»
@@ -246,7 +261,10 @@ class LifecycleListener {
             {
                 /** @var EntityAccess $entity */
                 $entity = $args->getObject();
-                if (!$this->isEntityManagedByThisBundle($entity) || !method_exists($entity, 'get_objectType')) {
+                if (
+                    !$this->isEntityManagedByThisBundle($entity)
+                    || !method_exists($entity, 'get_objectType')
+                ) {
                     return;
                 }
                 «eventAction.postUpdate(app)»
@@ -267,7 +285,10 @@ class LifecycleListener {
             {
                 /** @var EntityAccess $entity */
                 $entity = $args->getObject();
-                if (!$this->isEntityManagedByThisBundle($entity) || !method_exists($entity, 'get_objectType')) {
+                if (
+                    !$this->isEntityManagedByThisBundle($entity)
+                    || !method_exists($entity, 'get_objectType')
+                ) {
                     return;
                 }
                 «eventAction.postLoad(app)»
@@ -291,7 +312,9 @@ class LifecycleListener {
                     array_shift($entityClassParts);
                 }
 
-                return '«vendor.formatForCodeCapital»' === $entityClassParts[0] && '«name.formatForCodeCapital»Module' === $entityClassParts[1];
+                return '«vendor.formatForCodeCapital»' === $entityClassParts[0]
+                    && '«name.formatForCodeCapital»Module' === $entityClassParts[1]
+                ;
             }
 
             /**
@@ -353,15 +376,29 @@ class LifecycleListener {
                     $variableApi = $this->container->get(«IF targets('3.0')»VariableApi::class«ELSE»'zikula_extensions_module.api.variable'«ENDIF»);
                     $objectTypeCapitalised = ucfirst($objectType);
 
-                    $revisionHandling = $variableApi->get('«appName»', 'revisionHandlingFor' . $objectTypeCapitalised, 'unlimited');
+                    $revisionHandling = $variableApi->get(
+                        '«appName»',
+                        'revisionHandlingFor' . $objectTypeCapitalised,
+                        'unlimited'
+                    );
                     $limitParameter = '';
                     if ('limitedByAmount' === $revisionHandling) {
-                        $limitParameter = $variableApi->get('«appName»', 'maximumAmountOf' . $objectTypeCapitalised . 'Revisions', 25);
+                        $limitParameter = $variableApi->get(
+                            '«appName»',
+                            'maximumAmountOf' . $objectTypeCapitalised . 'Revisions',
+                            25
+                        );
                     }«IF targets('2.0')» elseif ('limitedByDate' === $revisionHandling) {
-                        $limitParameter = $variableApi->get('«appName»', 'periodFor' . $objectTypeCapitalised . 'Revisions', 'P1Y0M0DT0H0M0S');
+                        $limitParameter = $variableApi->get(
+                            '«appName»',
+                            'periodFor' . $objectTypeCapitalised . 'Revisions',
+                            'P1Y0M0DT0H0M0S'
+                        );
                     }«ENDIF»
 
-                    $logEntriesRepository = $entityManager->getRepository('«appName»:' . $objectTypeCapitalised . 'LogEntryEntity');
+                    $logEntriesRepository = $entityManager->getRepository(
+                        '«appName»:' . $objectTypeCapitalised . 'LogEntryEntity'
+                    );
                     $logEntriesRepository->purgeHistory($revisionHandling, $limitParameter);
                 }
 
@@ -398,7 +435,10 @@ class LifecycleListener {
                     «ENDIF»
 
                     $currentUserApi = $this->container->get(«IF targets('3.0')»CurrentUserApi::class«ELSE»'zikula_users_module.current_user'«ENDIF»);
-                    $userName = $currentUserApi->isLoggedIn() ? $currentUserApi->get('uname') : $this->container->get(«IF targets('3.0')»Translator::class«ELSE»'translator.default'«ENDIF»)->__('Guest');
+                    $userName = $currentUserApi->isLoggedIn()
+                        ? $currentUserApi->get('uname')
+                        : $this->container->get(«IF targets('3.0')»Translator::class«ELSE»'translator.default'«ENDIF»)->__('Guest')
+                    ;
 
                     $customLoggableListener->setUsername($userName);
 

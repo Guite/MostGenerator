@@ -219,7 +219,8 @@ class Redirect {
                 «IF hasDisplayAction»
                     case 'userDisplay':
                     case 'adminDisplay':
-                        if ('delete' !== $args['commandName']
+                        if (
+                            'delete' !== $args['commandName']
                             && !('create' === $this->templateParameters['mode'] && 'cancel' === $args['commandName'])
                         ) {
                             return $this->router->generate($routePrefix . 'display', $this->entityRef->createUrlArgs());

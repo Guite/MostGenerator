@@ -41,7 +41,9 @@ class ItemActions {
                         && $currentUserId === $entity->getCreatedBy()->getUid()
                     ;
                 «ENDIF»
+                «IF entity.hasDisplayAction || entity.hasEditAction || entity.loggable || entity.hasDeleteAction»
 
+                «ENDIF»
                 «entity.itemActionsTargetingDisplay(app)»
                 «entity.itemActionsTargetingEdit(app)»
                 «entity.itemActionsTargetingView(app)»

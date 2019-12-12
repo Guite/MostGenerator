@@ -219,10 +219,9 @@ class Entities {
 
     def private modelEntityBaseImplBody(DataObject it, Application app) '''
         «memberVars»
-
         «IF it instanceof Entity»
-            «new EntityConstructor().constructor(it, false)»
 
+            «new EntityConstructor().constructor(it, false)»
         «ENDIF»
         «accessors»
 

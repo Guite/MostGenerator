@@ -345,7 +345,11 @@ class ControllerHelper {
             «ENDIF»
 
             $templateParameters['all'] = 'csv' === $request->getRequestFormat() ? 1 : $request->query->getInt('all');
-            $showOnlyOwnEntriesSetting = (bool)$request->query->getInt('own', $this->variableApi->get('«appName»', 'showOnlyOwnEntries')) ? 1 : 0;
+            $showOnlyOwnEntriesSetting = (bool)$request->query->getInt(
+                'own',
+                $this->variableApi->get('«appName»', 'showOnlyOwnEntries')
+            );
+            $showOnlyOwnEntriesSetting = $showOnlyOwnEntriesSetting ? 1 : 0;
             «IF !getAllEntities.filter[ownerPermission].empty»
                 $routeName = $request->get('_route');
                 $isAdminArea = false !== strpos($routeName, '«appName.toLowerCase»_' . strtolower($objectType) . '_admin');
@@ -663,8 +667,12 @@ class ControllerHelper {
          * @return array List of template variables to be assigned
          «ENDIF»
          */
-        public function addTemplateParameters(«IF targets('3.0')»string «ENDIF»$objectType = '', array $parameters = [], «IF targets('3.0')»string «ENDIF»$context = '', array $args = [])«IF targets('3.0')»: array«ENDIF»
-        {
+        public function addTemplateParameters(
+            «IF targets('3.0')»string «ENDIF»$objectType = '',
+            array $parameters = [],
+            «IF targets('3.0')»string «ENDIF»$context = '',
+            array $args = []
+        )«IF targets('3.0')»: array«ENDIF» {
             $allowedContexts = ['controllerAction', 'api', 'helper', 'actionHandler', 'block', 'contentType', 'mailz'];
             if (!in_array($context, $allowedContexts, true)) {
                 $context = 'controllerAction';

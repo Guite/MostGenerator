@@ -109,7 +109,10 @@ class ContentTypeDetail {
             $data = parent::getData();
 
             $contextArgs = ['name' => 'detail'];
-            if (!isset($data['objectType']) || !in_array($data['objectType'], $this->controllerHelper->getObjectTypes('contentType', $contextArgs), true)) {
+            if (
+                !isset($data['objectType'])
+                || !in_array($data['objectType'], $this->controllerHelper->getObjectTypes('contentType', $contextArgs), true)
+            ) {
                 $data['objectType'] = $this->controllerHelper->getDefaultObjectType('contentType', $contextArgs);
                 $this->data = $data;
             }
@@ -123,7 +126,11 @@ class ContentTypeDetail {
                 return '';
             }
 
-            $controllerReference = new ControllerReference('«appName»:External:display', $this->getDisplayArguments(), ['template' => $this->data['customTemplate']]);
+            $controllerReference = new ControllerReference(
+                '«appName»:External:display',
+                $this->getDisplayArguments(),
+                ['template' => $this->data['customTemplate']]
+            );
 
             return $this->fragmentHandler->render($controllerReference, 'inline', []);
         }

@@ -165,7 +165,6 @@ class Events {
          * @var string
          */
         «IF app.targets('3.0')»public «ENDIF»const «constPrefix»_POST_UPDATE = '«entityEventPrefix»_post_update';
-
     '''
 
     def private eventDefinitionsImpl(Application it) '''

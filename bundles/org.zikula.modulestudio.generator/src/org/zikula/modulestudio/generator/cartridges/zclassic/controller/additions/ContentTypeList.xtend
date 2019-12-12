@@ -149,7 +149,10 @@ class ContentTypeList {
             $data = parent::getData();
 
             $contextArgs = ['name' => 'list'];
-            if (!isset($data['objectType']) || !in_array($data['objectType'], $this->controllerHelper->getObjectTypes('contentType', $contextArgs), true)) {
+            if (
+                !isset($data['objectType'])
+                || !in_array($data['objectType'], $this->controllerHelper->getObjectTypes('contentType', $contextArgs), true)
+            ) {
                 $data['objectType'] = $this->controllerHelper->getDefaultObjectType('contentType', $contextArgs);
             }
 
@@ -194,7 +197,7 @@ class ContentTypeList {
             «IF hasCategorisableEntities»
 
                 $this->getData();
-                if (in_array($objectType, $this->categorisableObjectTypes)) {
+                if (in_array($objectType, $this->categorisableObjectTypes, true)) {
                     if ($this->featureActivationHelper->isEnabled(FeatureActivationHelper::CATEGORIES, $objectType)) {
                         // apply category filters
                         if (is_array($this->data['categories']) && count($this->data['categories']) > 0) {
@@ -230,7 +233,11 @@ class ContentTypeList {
         public function getViewTemplatePath(«IF targets('3.0')»string «ENDIF»$suffix = '')«IF targets('3.0')»: string«ENDIF»
         {
             $templateFile = $this->data['template'];
-            if ('custom' === $templateFile && null !== $this->data['customTemplate'] && '' !== $this->data['customTemplate']) {
+            if (
+                'custom' === $templateFile
+                && null !== $this->data['customTemplate']
+                && '' !== $this->data['customTemplate']
+            ) {
                 $templateFile = $this->data['customTemplate'];
             }
 

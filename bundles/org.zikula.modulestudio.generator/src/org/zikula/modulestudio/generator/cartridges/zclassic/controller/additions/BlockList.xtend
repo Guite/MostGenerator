@@ -249,13 +249,19 @@ class BlockList {
 
             «IF targets('3.0')»
                 $contextArgs = ['name' => 'list'];
-                if (!isset($properties['objectType']) || !in_array($properties['objectType'], $this->controllerHelper->getObjectTypes('block', $contextArgs), true)) {
+                if (
+                    !isset($properties['objectType'])
+                    || !in_array($properties['objectType'], $this->controllerHelper->getObjectTypes('block', $contextArgs), true)
+                ) {
                     $properties['objectType'] = $this->controllerHelper->getDefaultObjectType('block', $contextArgs);
                 }
             «ELSE»
                 $controllerHelper = $this->get('«appService».controller_helper');
                 $contextArgs = ['name' => 'list'];
-                if (!isset($properties['objectType']) || !in_array($properties['objectType'], $controllerHelper->getObjectTypes('block', $contextArgs), true)) {
+                if (
+                    !isset($properties['objectType'])
+                    || !in_array($properties['objectType'], $controllerHelper->getObjectTypes('block', $contextArgs), true)
+                ) {
                     $properties['objectType'] = $controllerHelper->getDefaultObjectType('block', $contextArgs);
                 }
             «ENDIF»
@@ -267,7 +273,11 @@ class BlockList {
                     $featureActivationHelper = $this->get('«appService».feature_activation_helper');
                 «ENDIF»
                 $hasCategories = in_array($objectType, $this->categorisableObjectTypes, true)
-                    && $«IF targets('3.0')»this->«ENDIF»featureActivationHelper->isEnabled(FeatureActivationHelper::CATEGORIES, $properties['objectType']);
+                    && $«IF targets('3.0')»this->«ENDIF»featureActivationHelper->isEnabled(
+                        FeatureActivationHelper::CATEGORIES,
+                        $properties['objectType']
+                    )
+                ;
                 if ($hasCategories) {
                     $categoryProperties = $this->resolveCategoryIds($properties);
                 }
@@ -335,7 +345,11 @@ class BlockList {
                 }
             «ENDIF»
 
-            $templateParameters = $this->«IF targets('3.0')»controllerHelper«ELSE»get('«appService».controller_helper')«ENDIF»->addTemplateParameters($properties['objectType'], $templateParameters, 'block');
+            $templateParameters = $this->«IF targets('3.0')»controllerHelper«ELSE»get('«appService».controller_helper')«ENDIF»->addTemplateParameters(
+                $properties['objectType'],
+                $templateParameters,
+                'block'
+            );
 
             return $this->renderView($template, $templateParameters);
         }
@@ -354,7 +368,11 @@ class BlockList {
         protected function getDisplayTemplate(array $properties = [])«IF targets('3.0')»: string«ENDIF»
         {
             $templateFile = $properties['template'];
-            if ('custom' === $templateFile && null !== $properties['customTemplate'] && '' !== $properties['customTemplate']) {
+            if (
+                'custom' === $templateFile
+                && null !== $properties['customTemplate']
+                && '' !== $properties['customTemplate']
+            ) {
                 $templateFile = $properties['customTemplate'];
             }
 

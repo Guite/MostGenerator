@@ -160,14 +160,23 @@ class ExternalController {
         ];
 
         $contextArgs = ['controller' => 'external', 'action' => 'display'];
-        $templateParameters = «IF targets('3.0')»$controllerHelper«ELSE»$this->get('«appService».controller_helper')«ENDIF»->addTemplateParameters($objectType, $templateParameters, 'controllerAction', $contextArgs);
+        $templateParameters = «IF targets('3.0')»$controllerHelper«ELSE»$this->get('«appService».controller_helper')«ENDIF»->addTemplateParameters(
+            $objectType,
+            $templateParameters,
+            'controllerAction',
+            $contextArgs
+        );
 
         «IF !targets('3.0')»
             $viewHelper = $this->get('«appService».view_helper');
         «ENDIF»
         $request->query->set('raw', true);
         
-        return $viewHelper->processTemplate('external', ucfirst($objectType) . '/' . str_replace('.html.twig', '', $template), $templateParameters);
+        return $viewHelper->processTemplate(
+            'external',
+            ucfirst($objectType) . '/' . str_replace('.html.twig', '', $template),
+            $templateParameters
+        );
     '''
 
     def private finderBase(Application it) '''
@@ -248,7 +257,10 @@ class ExternalController {
             }
 
             // redirect to first valid object type
-            $redirectUrl = $this->get('router')->generate('«appName.formatForDB»_external_finder', ['objectType' => array_shift($activatedObjectTypes), 'editor' => $editor]);
+            $redirectUrl = $this->get('router')->generate(
+                '«appName.formatForDB»_external_finder',
+                ['objectType' => array_shift($activatedObjectTypes), 'editor' => $editor]
+            );
 
             return new RedirectResponse($redirectUrl);
         }
@@ -304,7 +316,11 @@ class ExternalController {
             'object_type' => $objectType,
             'editor_name' => $editor
         ];
-        $form = $this->createForm('«appNamespace»\Form\Type\Finder\\' . ucfirst($objectType) . 'FinderType', $templateParameters, $formOptions);
+        $form = $this->createForm(
+            '«appNamespace»\Form\Type\Finder\\' . ucfirst($objectType) . 'FinderType',
+            $templateParameters,
+            $formOptions
+        );
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
@@ -352,7 +368,12 @@ class ExternalController {
         $templateParameters['finderForm'] = $form->createView();
 
         $contextArgs = ['controller' => 'external', 'action' => 'display'];
-        $templateParameters = «IF targets('3.0')»$controllerHelper«ELSE»$this->get('«appService».controller_helper')«ENDIF»->addTemplateParameters($objectType, $templateParameters, 'controllerAction', $contextArgs);
+        $templateParameters = «IF targets('3.0')»$controllerHelper«ELSE»$this->get('«appService».controller_helper')«ENDIF»->addTemplateParameters(
+            $objectType,
+            $templateParameters,
+            'controllerAction',
+            $contextArgs
+        );
 
         $templateParameters['activatedObjectTypes'] = $activatedObjectTypes;
 

@@ -158,7 +158,8 @@ class MassHandling {
                     ) . '  ' . $exception->getMessage()
                 );
                 $logger->error(
-                    '{app}: User {user} tried to execute the {action} workflow action for the {entity} with id {id}, but failed. Error details: {errorMessage}.',
+                    '{app}: User {user} tried to execute the {action} workflow action for the {entity} with id {id},'
+                        . ' but failed. Error details: {errorMessage}.',
                     [
                         'app' => '«application.appName»',
                         'user' => $userName,

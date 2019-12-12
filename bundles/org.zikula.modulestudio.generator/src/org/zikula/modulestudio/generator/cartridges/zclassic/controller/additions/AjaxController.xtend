@@ -223,7 +223,15 @@ class AjaxController {
                 continue;
             }
             $itemId = $item->getKey();
-            $slimItems[] = $this->prepareSlimItem(«IF targets('3.0')»$controllerHelper, $repository, $entityDisplayHelper«ELSE»$repository«ENDIF», $item, $itemId, $descriptionFieldName);
+            $slimItems[] = $this->prepareSlimItem(
+                «IF targets('3.0')»$controllerHelper,
+                $repository,
+                $entityDisplayHelper,
+                «ELSE»$repository,«ENDIF»
+                $item,
+                $itemId,
+                $descriptionFieldName
+            );
         }
 
         // return response
@@ -263,9 +271,18 @@ class AjaxController {
                 $objectType => $item
             ];
             $contextArgs = ['controller' => $objectType, 'action' => 'display'];
-            $previewParameters = «IF targets('3.0')»$controllerHelper«ELSE»$this->get('«appService».controller_helper')«ENDIF»->addTemplateParameters($objectType, $previewParameters, 'controllerAction', $contextArgs);
+            $previewParameters = «IF targets('3.0')»$controllerHelper«ELSE»$this->get('«appService».controller_helper')«ENDIF»->addTemplateParameters(
+                $objectType,
+                $previewParameters,
+                'controllerAction',
+                $contextArgs
+            );
 
-            $previewInfo = base64_encode($this->get('twig')->render('@«appName»/External/' . ucfirst($objectType) . '/info.html.twig', $previewParameters));
+            $previewInfo = $this->get('twig')->render(
+                '@«appName»/External/' . ucfirst($objectType) . '/info.html.twig',
+                $previewParameters
+            );
+            $previewInfo = base64_encode($previewInfo);
 
             $title = «IF targets('3.0')»$entityDisplayHelper«ELSE»$this->get('«appService».entity_display_helper')«ENDIF»->getFormattedTitle($item);
             $description = $descriptionField !== '' ? $item[$descriptionField] : '';
@@ -578,7 +595,8 @@ class AjaxController {
         $id = $request->request->getInt('id');
 
         «val entities = getEntitiesWithAjaxToggle»
-        if (0 === $id
+        if (
+            0 === $id
             || («FOR entity : entities SEPARATOR ' && '»'«entity.name.formatForCode»' !== $objectType«ENDFOR»)
         «FOR entity : entities»
             || ('«entity.name.formatForCode»' === $objectType && !in_array($field, [«FOR field : entity.getBooleansWithAjaxToggleEntity('') SEPARATOR ', '»'«field.name.formatForCode»'«ENDFOR»], true))
@@ -604,7 +622,13 @@ class AjaxController {
         $entityFactory->getEntityManager()->flush();
 
         $logger = $this->get('logger');
-        $logArgs = ['app' => '«appName»', 'user' => «IF targets('3.0')»$currentUserApi«ELSE»$this->get('zikula_users_module.current_user')«ENDIF»->get('uname'), 'field' => $field, 'entity' => $objectType, 'id' => $id];
+        $logArgs = [
+            'app' => '«appName»',
+            'user' => «IF targets('3.0')»$currentUserApi«ELSE»$this->get('zikula_users_module.current_user')«ENDIF»->get('uname'),
+            'field' => $field,
+            'entity' => $objectType,
+            'id' => $id
+        ];
         $logger->notice('{app}: User {user} toggled the {field} flag the {entity} with id {id}.', $logArgs);
 
         // return response
@@ -810,7 +834,10 @@ class AjaxController {
             }
         } catch (Exception $exception) {
             $returnValue['result'] = 'failure';
-            $returnValue['message'] = $this->__f('Sorry, but an error occured during the %action% action. Please apply the changes again!', ['%action%' => $action]) . '  ' . $exception->getMessage();
+            $returnValue['message'] = $this->__f(
+                'Sorry, but an error occured during the %action% action. Please apply the changes again!',
+                ['%action%' => $action]
+            ) . '  ' . $exception->getMessage();
 
             return «IF targets('2.0')»$this->json«ELSE»new JsonResponse«ENDIF»($returnValue);
         }
@@ -858,19 +885,23 @@ class AjaxController {
             } else {
                 «IF hasEditActions && !getAllEntities.filter[tree != EntityTreeType.NONE && hasEditAction].empty»
                     if (in_array($objectType, ['«getAllEntities.filter[tree != EntityTreeType.NONE && hasEditAction].map[name.formatForCode].join('\', \'')»'], true)) {
+                        $routeName = '«appName.formatForDB»_' . strtolower($objectType) . '_edit';
                         «IF !getAllEntities.filter[tree != EntityTreeType.NONE && hasEditAction && hasSluggableFields && slugUnique].empty»
                             $needsArg = in_array($objectType, ['«getAllEntities.filter[tree != EntityTreeType.NONE && hasEditAction && hasSluggableFields && slugUnique].map[name.formatForCode].join('\', \'')»'], true);
                             $urlArgs = $needsArg ? $childEntity->createUrlArgs(true) : $childEntity->createUrlArgs();
                         «ELSE»
                             $urlArgs = $childEntity->createUrlArgs();
                         «ENDIF»
-                        $returnValue['returnUrl'] = $this->get('router')->generate('«appName.formatForDB»_' . strtolower($objectType) . '_edit', $urlArgs, UrlGeneratorInterface::ABSOLUTE_URL);
+                        $returnValue['returnUrl'] = $this->get('router')->generate($routeName, $urlArgs, UrlGeneratorInterface::ABSOLUTE_URL);
                     }
                 «ENDIF»
             }
         } catch (Exception $exception) {
             $returnValue['result'] = 'failure';
-            $returnValue['message'] = $this->__f('Sorry, but an error occured during the %action% action. Please apply the changes again!', ['%action%' => $action]) . '  ' . $exception->getMessage();
+            $returnValue['message'] = $this->__f(
+                'Sorry, but an error occured during the %action% action. Please apply the changes again!',
+                ['%action%' => $action]
+            ) . '  ' . $exception->getMessage();
 
             return «IF targets('2.0')»$this->json«ELSE»new JsonResponse«ENDIF»($returnValue);
         }
@@ -899,7 +930,10 @@ class AjaxController {
             }
         } catch (Exception $exception) {
             $returnValue['result'] = 'failure';
-            $returnValue['message'] = $this->__f('Sorry, but an error occured during the %action% action. Please apply the changes again!', ['%action%' => $action]) . '  ' . $exception->getMessage();
+            $returnValue['message'] = $this->__f(
+                'Sorry, but an error occured during the %action% action. Please apply the changes again!',
+                ['%action%' => $action]
+            ) . '  ' . $exception->getMessage();
 
             return «IF targets('2.0')»$this->json«ELSE»new JsonResponse«ENDIF»($returnValue);
         }

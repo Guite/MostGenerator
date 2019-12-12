@@ -654,7 +654,8 @@ class FormHandler {
                     'id' => $entity->getKey()
                 ];
                 $this->logger->error(
-                    '{app}: User {user} tried to edit the {entity} with id {id}, but failed to determine available workflow actions.',
+                    '{app}: User {user} tried to edit the {entity} with id {id},'
+                        . ' but failed to determine available workflow actions.',
                     $logArgs
                 );
                 throw new RuntimeException($this->__('Error! Could not determine workflow actions.'));
@@ -1405,7 +1406,8 @@ class FormHandler {
                     'entity' => $this->objectType
                 ];
                 $this->logger->notice(
-                    '{app}: User {user} tried to create a new {entity}, but failed as it other items are required which must be created before.',
+                    '{app}: User {user} tried to create a new {entity}, but failed'
+                        . ' as other items are required which must be created before.',
                     $logArgs
                 );
 

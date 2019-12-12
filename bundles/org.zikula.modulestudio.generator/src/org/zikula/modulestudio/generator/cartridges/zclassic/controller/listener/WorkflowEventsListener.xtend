@@ -281,7 +281,7 @@ class WorkflowEventsListener {
                         $isBlocked = false;
                         «FOR relation : entity.getOutgoingJoinRelationsWithoutDeleteCascade»
                             «IF relation.isManySide(true)»
-                                if (count($entity->get«relation.targetAlias.formatForCodeCapital»()) > 0) {
+                                if (0 < count($entity->get«relation.targetAlias.formatForCodeCapital»())) {
                                     $isBlocked = true;
                                 }
                             «ELSE»

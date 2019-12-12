@@ -77,7 +77,8 @@ class EventAction {
                     return;
                 }
 
-                $repository = $this->container->get(«IF targets('3.0')»EntityFactory::class«ELSE»'«appService».entity_factory'«ENDIF»)->getEntityManager()->getRepository(«entityVar»->getObjectClass());
+                $entityManager = $this->container->get(«IF targets('3.0')»EntityFactory::class«ELSE»'«appService».entity_factory'«ENDIF»)->getEntityManager();
+                $repository = $entityManager->getRepository(«entityVar»->getObjectClass());
                 $object = $repository->find(«entityVar»->getObjectId());
                 if (null === $object || !method_exists($object, 'get_objectType')) {
                     return;
@@ -111,7 +112,12 @@ class EventAction {
     def postPersist(Application it) '''
 
         $currentUserApi = $this->container->get(«IF targets('3.0')»CurrentUserApi::class«ELSE»'zikula_users_module.current_user'«ENDIF»);
-        $logArgs = ['app' => '«appName»', 'user' => $currentUserApi->get('uname'), 'entity' => «entityVar»->get_objectType(), 'id' => «entityVar»->getKey()];
+        $logArgs = [
+            'app' => '«appName»',
+            'user' => $currentUserApi->get('uname'),
+            'entity' => «entityVar»->get_objectType(),
+            'id' => «entityVar»->getKey()
+        ];
         $this->logger->debug('{app}: User {user} created the {entity} with id {id}.', $logArgs);
         «IF hasLoggable»
 
@@ -196,7 +202,12 @@ class EventAction {
     def postUpdate(Application it) '''
 
         $currentUserApi = $this->container->get(«IF targets('3.0')»CurrentUserApi::class«ELSE»'zikula_users_module.current_user'«ENDIF»);
-        $logArgs = ['app' => '«appName»', 'user' => $currentUserApi->get('uname'), 'entity' => «entityVar»->get_objectType(), 'id' => «entityVar»->getKey()];
+        $logArgs = [
+            'app' => '«appName»',
+            'user' => $currentUserApi->get('uname'),
+            'entity' => «entityVar»->get_objectType(),
+            'id' => «entityVar»->getKey()
+        ];
         $this->logger->debug('{app}: User {user} updated the {entity} with id {id}.', $logArgs);
         «IF hasLoggable»
 

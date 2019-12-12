@@ -151,7 +151,7 @@ class ModelJoinExtensions {
      */
     def getOutgoingJoinRelationsWithoutDeleteCascade(DataObject it) {
         val excludedCascadeTypes = #[CascadeType.REMOVE, CascadeType.PERSIST_REMOVE, CascadeType.REMOVE_MERGE, CascadeType.REMOVE_DETACH, CascadeType.PERSIST_REMOVE_MERGE, CascadeType.PERSIST_REMOVE_DETACH, CascadeType.ALL]
-        getOutgoingJoinRelations.filter[!excludedCascadeTypes.contains(cascade)]
+        getOutgoingJoinRelations.filter[!excludedCascadeTypes.contains(cascade)].filter[!(it instanceof ManyToOneRelationship)]
     }
 
     /**
