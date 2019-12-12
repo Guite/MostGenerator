@@ -149,9 +149,10 @@ class ContentTypeList {
             $data = parent::getData();
 
             $contextArgs = ['name' => 'list'];
+            $allowedObjectTypes = $this->controllerHelper->getObjectTypes('contentType', $contextArgs);
             if (
                 !isset($data['objectType'])
-                || !in_array($data['objectType'], $this->controllerHelper->getObjectTypes('contentType', $contextArgs), true)
+                || !in_array($data['objectType'], $allowedObjectTypes, true)
             ) {
                 $data['objectType'] = $this->controllerHelper->getDefaultObjectType('contentType', $contextArgs);
             }

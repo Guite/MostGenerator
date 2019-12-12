@@ -598,9 +598,9 @@ class AjaxController {
         if (
             0 === $id
             || («FOR entity : entities SEPARATOR ' && '»'«entity.name.formatForCode»' !== $objectType«ENDFOR»)
-        «FOR entity : entities»
-            || ('«entity.name.formatForCode»' === $objectType && !in_array($field, [«FOR field : entity.getBooleansWithAjaxToggleEntity('') SEPARATOR ', '»'«field.name.formatForCode»'«ENDFOR»], true))
-        «ENDFOR»
+            «FOR entity : entities»
+                || ('«entity.name.formatForCode»' === $objectType && !in_array($field, [«FOR field : entity.getBooleansWithAjaxToggleEntity('') SEPARATOR ', '»'«field.name.formatForCode»'«ENDFOR»], true))
+            «ENDFOR»
         ) {
             return «IF targets('2.0')»$this->json«ELSE»new JsonResponse«ENDIF»($this->__('Error: invalid input.'), JsonResponse::HTTP_BAD_REQUEST);
         }
@@ -880,22 +880,28 @@ class AjaxController {
                 $workflowHelper = $this->get('«appService».workflow_helper');
             «ENDIF»
             $success = $workflowHelper->executeAction($childEntity, $action);
-            if (!$success) {
-                $returnValue['result'] = 'failure';
-            } else {
-                «IF hasEditActions && !getAllEntities.filter[tree != EntityTreeType.NONE && hasEditAction].empty»
-                    if (in_array($objectType, ['«getAllEntities.filter[tree != EntityTreeType.NONE && hasEditAction].map[name.formatForCode].join('\', \'')»'], true)) {
-                        $routeName = '«appName.formatForDB»_' . strtolower($objectType) . '_edit';
-                        «IF !getAllEntities.filter[tree != EntityTreeType.NONE && hasEditAction && hasSluggableFields && slugUnique].empty»
-                            $needsArg = in_array($objectType, ['«getAllEntities.filter[tree != EntityTreeType.NONE && hasEditAction && hasSluggableFields && slugUnique].map[name.formatForCode].join('\', \'')»'], true);
-                            $urlArgs = $needsArg ? $childEntity->createUrlArgs(true) : $childEntity->createUrlArgs();
-                        «ELSE»
-                            $urlArgs = $childEntity->createUrlArgs();
-                        «ENDIF»
-                        $returnValue['returnUrl'] = $this->get('router')->generate($routeName, $urlArgs, UrlGeneratorInterface::ABSOLUTE_URL);
-                    }
-                «ENDIF»
-            }
+            «IF hasEditActions && !getAllEntities.filter[tree != EntityTreeType.NONE && hasEditAction].empty»
+                if (!$success) {
+                    $returnValue['result'] = 'failure';
+                } elseif (in_array($objectType, ['«getAllEntities.filter[tree != EntityTreeType.NONE && hasEditAction].map[name.formatForCode].join('\', \'')»'], true)) {
+                    $routeName = '«appName.formatForDB»_' . strtolower($objectType) . '_edit';
+                    «IF !getAllEntities.filter[tree != EntityTreeType.NONE && hasEditAction && hasSluggableFields && slugUnique].empty»
+                        $needsArg = in_array($objectType, ['«getAllEntities.filter[tree != EntityTreeType.NONE && hasEditAction && hasSluggableFields && slugUnique].map[name.formatForCode].join('\', \'')»'], true);
+                        $urlArgs = $needsArg ? $childEntity->createUrlArgs(true) : $childEntity->createUrlArgs();
+                    «ELSE»
+                        $urlArgs = $childEntity->createUrlArgs();
+                    «ENDIF»
+                    $returnValue['returnUrl'] = $this->get('router')->generate(
+                        $routeName,
+                        $urlArgs,
+                        UrlGeneratorInterface::ABSOLUTE_URL
+                    );
+                }
+            «ELSE»
+                if (!$success) {
+                    $returnValue['result'] = 'failure';
+                }
+            «ENDIF»
         } catch (Exception $exception) {
             $returnValue['result'] = 'failure';
             $returnValue['message'] = $this->__f(

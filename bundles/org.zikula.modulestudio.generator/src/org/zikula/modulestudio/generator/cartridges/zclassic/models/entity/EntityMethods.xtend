@@ -273,8 +273,8 @@ class EntityMethods {
                 $this->setUpdatedBy(null);
                 $this->setUpdatedDate(null);
             «ENDIF»
-
             «IF !joinsIn.empty || !joinsOut.empty»
+
                 // handle related objects
                 // prevent shared references by doing a deep copy - see (2) and (3) for more information
                 // clone referenced objects only if a new record is necessary

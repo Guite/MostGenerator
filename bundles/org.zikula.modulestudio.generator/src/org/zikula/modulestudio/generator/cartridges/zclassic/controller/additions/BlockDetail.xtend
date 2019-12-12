@@ -126,9 +126,10 @@ class BlockDetail {
 
             «IF targets('3.0')»
                 $contextArgs = ['name' => 'detail'];
+                $allowedObjectTypes = $this->controllerHelper->getObjectTypes('block', $contextArgs);
                 if (
                     !isset($properties['objectType'])
-                    || !in_array($properties['objectType'], $this->controllerHelper->getObjectTypes('block', $contextArgs), true)
+                    || !in_array($properties['objectType'], $allowedObjectTypes, true)
                 ) {
                     $properties['objectType'] = $this->controllerHelper->getDefaultObjectType('block', $contextArgs);
                 }

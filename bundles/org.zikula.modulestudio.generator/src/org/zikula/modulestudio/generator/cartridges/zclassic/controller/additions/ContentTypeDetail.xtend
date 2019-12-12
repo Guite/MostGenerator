@@ -109,9 +109,10 @@ class ContentTypeDetail {
             $data = parent::getData();
 
             $contextArgs = ['name' => 'detail'];
+            $allowedObjectTypes = $this->controllerHelper->getObjectTypes('contentType', $contextArgs);
             if (
                 !isset($data['objectType'])
-                || !in_array($data['objectType'], $this->controllerHelper->getObjectTypes('contentType', $contextArgs), true)
+                || !in_array($data['objectType'], $allowedObjectTypes, true)
             ) {
                 $data['objectType'] = $this->controllerHelper->getDefaultObjectType('contentType', $contextArgs);
                 $this->data = $data;
