@@ -249,7 +249,12 @@ class Property {
             if (null === $this->«name.formatForCode» && null === $«name.formatForCode») {
                 return;
             }
-            if (null !== $this->«name.formatForCode» && null !== $«name.formatForCode» && $this->«name.formatForCode» instanceof File && $this->«name.formatForCode»->getRealPath() === $«name.formatForCode»->getRealPath()) {
+            if (
+                null !== $this->«name.formatForCode»
+                && null !== $«name.formatForCode»
+                && $this->«name.formatForCode» instanceof File
+                && $this->«name.formatForCode»->getRealPath() === $«name.formatForCode»->getRealPath()
+            ) {
                 return;
             }
             «fh.triggerPropertyChangeListeners(it, name)»

@@ -622,8 +622,10 @@ class ControllerHelper {
          * @return array Enriched template parameters used for creating the response
          «ENDIF»
          */
-        public function processEditActionParameters(«IF targets('3.0')»string «ENDIF»$objectType, array $templateParameters = [])«IF targets('3.0')»: array«ENDIF»
-        {
+        public function processEditActionParameters(
+            «IF targets('3.0')»string «ENDIF»$objectType,
+            array $templateParameters = []
+        )«IF targets('3.0')»: array«ENDIF» {
             $contextArgs = ['controller' => $objectType, 'action' => 'edit'];
             if (!in_array($objectType, $this->getObjectTypes('controllerAction', $contextArgs), true)) {
                 throw new Exception($this->__('Error! Invalid object type received.'));
@@ -647,8 +649,11 @@ class ControllerHelper {
          * @return array Enriched template parameters used for creating the response
          «ENDIF»
          */
-        public function processDeleteActionParameters(«IF targets('3.0')»string «ENDIF»$objectType, array $templateParameters = []«IF hasHookSubscribers», «IF targets('3.0')»bool «ENDIF»$hasHookSubscriber = false«ENDIF»)«IF targets('3.0')»: array«ENDIF»
-        {
+        public function processDeleteActionParameters(
+            «IF targets('3.0')»string «ENDIF»$objectType,
+            array $templateParameters = []«IF hasHookSubscribers»,
+            «IF targets('3.0')»bool «ENDIF»$hasHookSubscriber = false«ENDIF»
+        )«IF targets('3.0')»: array«ENDIF» {
             $contextArgs = ['controller' => $objectType, 'action' => 'delete'];
             if (!in_array($objectType, $this->getObjectTypes('controllerAction', $contextArgs), true)) {
                 throw new Exception($this->__('Error! Invalid object type received.'));

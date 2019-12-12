@@ -102,9 +102,15 @@ class UploadFileTransformer {
                     $uploadedFile = $data;
                 } else {
                     $uploadedFile = isset($data[$this->fieldName]) ? $data[$this->fieldName] : null;
-                    $deleteFile = isset($data[$this->fieldName . 'DeleteFile']) ? $data[$this->fieldName . 'DeleteFile'] : false;
+                    $deleteFile = isset($data[$this->fieldName . 'DeleteFile'])
+                        ? $data[$this->fieldName . 'DeleteFile']
+                        : false
+                    ;
                     «IF hasUploadNamingScheme(UploadNamingScheme.USERDEFINEDWITHCOUNTER)»
-                        $customFileName = isset($data[$this->fieldName . 'CustomFileName']) ? $data[$this->fieldName . 'CustomFileName'] : '';
+                        $customFileName = isset($data[$this->fieldName . 'CustomFileName'])
+                            ? $data[$this->fieldName . 'CustomFileName']
+                            : ''
+                        ;
                     «ENDIF»
                 }
 
