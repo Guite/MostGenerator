@@ -1611,7 +1611,8 @@ class FormHandler {
                     'errorMessage' => $exception->getMessage()
                 ];
                 $this->logger->error(
-                    '{app}: User {user} tried to edit the {entity} with id {id}, but failed. Error details: {errorMessage}.',
+                    '{app}: User {user} tried to edit the {entity} with id {id},'
+                        . ' but failed. Error details: {errorMessage}.',
                     $logArgs
                 );
             }

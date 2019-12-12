@@ -172,7 +172,12 @@ class EventAction {
         «ENDIF»
 
         $currentUserApi = $this->container->get(«IF targets('3.0')»CurrentUserApi::class«ELSE»'zikula_users_module.current_user'«ENDIF»);
-        $logArgs = ['app' => '«appName»', 'user' => $currentUserApi->get('uname'), 'entity' => $objectType, 'id' => «entityVar»->getKey()];
+        $logArgs = [
+            'app' => '«appName»',
+            'user' => $currentUserApi->get('uname'),
+            'entity' => $objectType,
+            'id' => «entityVar»->getKey()
+        ];
         $this->logger->debug('{app}: User {user} removed the {entity} with id {id}.', $logArgs);
 
         // create the filter event and dispatch it

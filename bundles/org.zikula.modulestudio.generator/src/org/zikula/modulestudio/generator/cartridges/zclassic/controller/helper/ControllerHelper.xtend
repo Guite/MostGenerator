@@ -385,7 +385,9 @@ class ControllerHelper {
                 $contextArgs
             );
 
-            $quickNavFormType = '«appNamespace»\Form\Type\QuickNavigation\\' . ucfirst($objectType) . 'QuickNavType';
+            $quickNavFormType = '«appNamespace»\Form\Type\QuickNavigation\\'
+                . ucfirst($objectType) . 'QuickNavType'
+            ;
             $quickNavForm = $this->formFactory->create($quickNavFormType, $templateParameters);
             $quickNavForm->handleRequest($request);
             if ($quickNavForm->isSubmitted()) {
