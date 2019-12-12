@@ -108,7 +108,6 @@ class AppSettings {
         «memberVars»
 
         «constructor»
-
         «accessors»
 
         «load»

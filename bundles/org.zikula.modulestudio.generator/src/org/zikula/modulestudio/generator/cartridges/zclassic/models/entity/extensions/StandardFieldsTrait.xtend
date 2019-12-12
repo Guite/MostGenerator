@@ -86,7 +86,6 @@ class StandardFieldsTrait {
          * @var DateTimeInterface $updatedDate
          */
         protected $updatedDate;
-
         «IF targets('3.0')»
             «fh.getterAndSetterMethods(it, 'createdBy', 'UserEntity', false, true, true, '', '')»
             «fh.getterAndSetterMethods(it, 'createdDate', 'DateTimeInterface', false, true, true, '', '')»

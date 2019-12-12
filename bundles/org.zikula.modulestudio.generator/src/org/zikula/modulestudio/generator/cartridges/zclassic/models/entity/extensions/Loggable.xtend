@@ -93,7 +93,6 @@ class Loggable extends AbstractExtension implements EntityExtensionInterface {
          * @ORM\Column(name="action_description", length=255)
          */
         protected $actionDescription = '';
-
         «IF application.targets('3.0')»
             «(new FileHelper(application)).getterAndSetterMethods(it, 'actionDescription', 'string', false, false, true, '', '')»
         «ELSE»

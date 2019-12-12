@@ -434,6 +434,7 @@ class Association {
 
     def private dispatch relationAccessorAdditions(OneToManyRelationship it, Boolean useTarget, String aliasName, String singleName) '''
         «IF !useTarget && null !== indexBy && !indexBy.empty»
+
             /**
              * Returns an instance of «source.entityClassName('', false)» from the list of «getRelationAliasName(useTarget)» by its given «indexBy.formatForDisplay» index.
              *
@@ -453,11 +454,11 @@ class Association {
 
                 return $this->«aliasName.formatForCode»[$«indexBy.formatForCode»];
             }
-            «/* this last line is on purpose */»
         «ENDIF»
     '''
 
     def private addMethod(JoinRelationship it, Boolean useTarget, Boolean selfIsMany, String name, String nameSingle, String type) '''
+
         /**
          * Adds an instance of \«type» to the list of «name.formatForDisplay».
          «IF !application.targets('3.0')»
@@ -468,7 +469,6 @@ class Association {
          «ENDIF»
          */
         «addMethodImpl(useTarget, selfIsMany, name, nameSingle, type)»
-        «/* this last line is on purpose */»
     '''
 
     def private isManyToMany(JoinRelationship it) {
@@ -559,6 +559,7 @@ class Association {
     '''
 
     def private removeMethod(JoinRelationship it, Boolean useTarget, Boolean selfIsMany, String name, String nameSingle, String type) '''
+
         /**
          * Removes an instance of \«type» from the list of «name.formatForDisplay».
          «IF !application.targets('3.0')»
@@ -586,7 +587,6 @@ class Association {
                 «ENDIF»
             «ENDIF»
         }
-        «/* this last line is on purpose */»
     '''
 
     def private isBidirectional(JoinRelationship it) {

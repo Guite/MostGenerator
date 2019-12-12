@@ -140,7 +140,6 @@ class Categories extends AbstractExtension implements EntityExtensionInterface {
          * @var «name.formatForCodeCapital»Entity
          */
         protected $entity;
-
         «extensionClassEntityAccessors»
     '''
 
