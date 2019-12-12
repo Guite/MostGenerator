@@ -725,7 +725,6 @@ class FormHandler {
 
             «relationPresetsHelper.baseMethod(it)»
         «ENDIF»
-        
         «fh.getterMethod(it, 'templateParameters', 'array', true, false, targets('3.0'))»
 
         «initEntityForEditing»

@@ -82,6 +82,7 @@ class Events {
     def private eventDefinitions(Entity it) '''
         «val constPrefix = name.formatForDB.toUpperCase»
         «val entityEventPrefix = app.appName.formatForDB + '.' + name.formatForDB»
+
         /**
          * The «entityEventPrefix»_post_load event is thrown when «nameMultiple.formatForDisplay»
          * are loaded from the database.

@@ -171,13 +171,11 @@ class Repository {
                     «extensionSortingFields»
                 ];
             }
-
             «fh.getterAndSetterMethods(it, 'defaultSortingField', 'string', false, true, app.targets('3.0'), '', '')»
             «fh.getterAndSetterMethods(it, 'collectionFilterHelper', 'CollectionFilterHelper', false, true, true, '', '')»
             «IF hasTranslatableFields»
                 «fh.getterAndSetterMethods(it, 'translationsEnabled', 'bool', false, true, app.targets('3.0'), '', '')»
             «ENDIF»
-
             «new UserDeletion().generate(it)»
 
             «selectById»

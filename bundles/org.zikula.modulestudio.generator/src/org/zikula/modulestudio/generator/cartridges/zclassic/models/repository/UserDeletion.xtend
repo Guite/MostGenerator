@@ -14,9 +14,6 @@ class UserDeletion {
     def generate(Entity it) '''
         «IF standardFields»
             «userDeletionStandardFields»
-            «IF hasUserFieldsEntity»
-
-            «ENDIF»
         «ENDIF»
         «IF hasUserFieldsEntity»
             «userDeletionUserFields»
@@ -24,6 +21,7 @@ class UserDeletion {
     '''
 
     def private userDeletionStandardFields(Entity it) '''
+
         «updateCreator»
 
         «updateLastEditor»
@@ -34,6 +32,7 @@ class UserDeletion {
     '''
 
     def private userDeletionUserFields(Entity it) '''
+
         «updateUserField»
 
         «deleteByUserField»

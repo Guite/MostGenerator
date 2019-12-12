@@ -384,7 +384,6 @@ class Association {
         «ENDIF»
     '''
 
-
     def relationAccessor(JoinRelationship it, Boolean useTarget) '''
         «val relationAliasName = getRelationAliasName(useTarget)»
         «relationAccessorImpl(useTarget, relationAliasName)»

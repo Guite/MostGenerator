@@ -224,7 +224,6 @@ class Entities {
             «new EntityConstructor().constructor(it, false)»
         «ENDIF»
         «accessors»
-
         «new EntityMethods().generate(it, app, thProp)»
     '''
 
@@ -274,10 +273,8 @@ class Entities {
             «fh.getterAndSetterMethods(it, '_uploadBasePath', 'string', false, false, application.targets('3.0'), '', '')»
             «fh.getterAndSetterMethods(it, '_uploadBaseUrl', 'string', false, false, application.targets('3.0'), '', '')»
         «ENDIF»
-
         «FOR field : getDerivedFields»«thProp.fieldAccessor(field)»«ENDFOR»
         «extMan.additionalAccessors»
-
         «FOR relation : getBidirectionalIncomingJoinRelations»«thAssoc.relationAccessor(relation, false)»«ENDFOR»
         «FOR relation : getOutgoingJoinRelations»«thAssoc.relationAccessor(relation, true)»«ENDFOR»
         «IF it instanceof Entity && (it as Entity).loggable && (it as Entity).hasTranslatableFields && getDerivedFields.filter(ArrayField).filter[name.equals('translationData')].empty»
@@ -302,12 +299,11 @@ class Entities {
                 «FOR relation : getBidirectionalIncomingJoinRelations»«thAssoc.generate(relation, false)»«ENDFOR»
                 «FOR relation : getOutgoingJoinRelations»«thAssoc.generate(relation, true)»«ENDFOR»
                 «IF it instanceof Entity»
-                    «new EntityConstructor().constructor(it, true)»
 
+                    «new EntityConstructor().constructor(it, true)»
                 «ENDIF»
                 «FOR field : getDerivedFields»«thProp.fieldAccessor(field)»«ENDFOR»
                 «extMan.additionalAccessors»
-
                 «FOR relation : getBidirectionalIncomingJoinRelations»«thAssoc.relationAccessor(relation, false)»«ENDFOR»
                 «FOR relation : getOutgoingJoinRelations»«thAssoc.relationAccessor(relation, true)»«ENDFOR»
             «ENDIF»

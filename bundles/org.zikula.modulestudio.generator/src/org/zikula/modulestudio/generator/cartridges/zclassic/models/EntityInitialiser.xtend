@@ -106,8 +106,8 @@ class EntityInitialiser {
                     $this->defaultLongitude = $variableApi->get('«appName»', 'defaultLongitude', 0.00);
                 «ENDIF»
             }
-
             «FOR entity : getAllEntities»
+
                 /**
                  * Initialises a given «entity.name.formatForCode» instance.
                  «IF !targets('3.0')»
@@ -157,7 +157,6 @@ class EntityInitialiser {
                     «ENDIF»
                     return $entity;
                 }
-
             «ENDFOR»
             «IF hasListFieldsExceptWorkflowState»
                 «fh.getterAndSetterMethods(it, 'listEntriesHelper', 'ListEntriesHelper', false, true, true, '', '')»
