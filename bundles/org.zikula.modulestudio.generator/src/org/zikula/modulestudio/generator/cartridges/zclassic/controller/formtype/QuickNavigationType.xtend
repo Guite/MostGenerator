@@ -602,7 +602,7 @@ class QuickNavigationType {
 
     def private dispatch fieldImpl(JoinRelationship it) '''
         «val sourceAliasName = getRelationAliasName(false)»
-        $queryBuilder = function(EntityRepository $er) {
+        $queryBuilder = function (EntityRepository $er) {
             // select without joins
             return $er->getListQueryBuilder('', '', false);
         };

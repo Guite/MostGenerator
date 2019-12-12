@@ -198,9 +198,9 @@ class EntityMethods {
         /**
          * Returns an array of all related objects that need to be persisted after clone.
          «IF !application.targets('3.0')»
-         * 
+         *
          * @param array $objects Objects that are added to this array
-         * 
+         *
          * @return array List of entity objects
          «ENDIF»
          */

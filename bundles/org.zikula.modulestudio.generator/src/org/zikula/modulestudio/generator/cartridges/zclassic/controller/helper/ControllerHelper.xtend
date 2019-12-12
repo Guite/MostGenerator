@@ -254,7 +254,8 @@ class ControllerHelper {
          * Returns an array of all allowed object types in «appName».
          «IF !targets('3.0')»
          *
-         * @param string $context Usage context (allowed values: controllerAction, api, helper, actionHandler, block, contentType, mailz)
+         * @param string $context Usage context (allowed values: controllerAction, api, helper, actionHandler,
+         *                        block, contentType, mailz)
          * @param array $args Additional arguments
          «ENDIF»
          *
@@ -281,7 +282,8 @@ class ControllerHelper {
          * Returns the default object type in «appName».
          «IF !targets('3.0')»
          *
-         * @param string $context Usage context (allowed values: controllerAction, api, helper, actionHandler, block, contentType, mailz)
+         * @param string $context Usage context (allowed values: controllerAction, api, helper, actionHandler,
+         *                        block, contentType, mailz)
          * @param array $args Additional arguments
          *
          * @return string The name of the default object type
@@ -663,7 +665,8 @@ class ControllerHelper {
          *
          * @param string $objectType Name of treated entity type
          * @param array $parameters Given parameters to enrich
-         * @param string $context Usage context (allowed values: controllerAction, api, helper, actionHandler, block, contentType, mailz)
+         * @param string $context Usage context (allowed values: controllerAction, api, helper, actionHandler,
+         *                        block, contentType, mailz)
          * @param array $args Additional arguments
          *
          * @return array List of template variables to be assigned
@@ -699,14 +702,25 @@ class ControllerHelper {
                         if ('«entity.name.formatForCode»' === $objectType) {
                             $thumbRuntimeOptions = [];
                             «FOR uploadField : entity.getUploadFieldsEntity»
-                                $thumbRuntimeOptions[$objectType . '«uploadField.name.formatForCodeCapital»'] = $this->imageHelper->getRuntimeOptions($objectType, '«uploadField.name.formatForCode»', $context, $args);
+                                $thumbRuntimeOptions[$objectType . '«uploadField.name.formatForCodeCapital»'] = $this->imageHelper->getRuntimeOptions(
+                                    $objectType,
+                                    '«uploadField.name.formatForCode»',
+                                    $context,
+                                    $args
+                                );
                             «ENDFOR»
                             $parameters['thumbRuntimeOptions'] = $thumbRuntimeOptions;
                         }
                     «ENDFOR»
                     if (in_array($args['action'], ['display', 'edit', 'view'], true)) {
                         // use separate preset for images in related items
-                        $parameters['relationThumbRuntimeOptions'] = $this->imageHelper->getCustomRuntimeOptions('', '', '«appName»_relateditem', $context, $args);
+                        $parameters['relationThumbRuntimeOptions'] = $this->imageHelper->getCustomRuntimeOptions(
+                            '',
+                            '',
+                            '«appName»_relateditem',
+                            $context,
+                            $args
+                        );
                     }
                 «ENDIF»
             }

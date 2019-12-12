@@ -153,13 +153,27 @@ class UploadType {
                 $view->vars['file_url'] = $hasFile ? $accessor->getValue($parentData, $fieldNameGetter . 'Url') : null;
 
                 // assign other custom options
-                $view->vars['allow_deletion'] = array_key_exists('allow_deletion', $options) ? $options['allow_deletion'] : false;
-                $view->vars['allowed_extensions'] = array_key_exists('allowed_extensions', $options) ? $options['allowed_extensions'] : '';
-                $view->vars['allowed_size'] = array_key_exists('allowed_size', $options) ? $options['allowed_size'] : 0;
+                $view->vars['allow_deletion'] = array_key_exists('allow_deletion', $options)
+                    ? $options['allow_deletion']
+                    : false
+                ;
+                $view->vars['allowed_extensions'] = array_key_exists('allowed_extensions', $options)
+                    ? $options['allowed_extensions']
+                    : ''
+                ;
+                $view->vars['allowed_size'] = array_key_exists('allowed_size', $options)
+                    ? $options['allowed_size']
+                    : 0
+                ;
                 $view->vars['thumb_runtime_options'] = null;
 
                 if (true === $fileMeta['isImage']) {
-                    $view->vars['thumb_runtime_options'] = $this->imageHelper->getRuntimeOptions($this->entity->get_objectType(), $fieldName, 'controllerAction', ['action' => 'edit']);
+                    $view->vars['thumb_runtime_options'] = $this->imageHelper->getRuntimeOptions(
+                        $this->entity->get_objectType(),
+                        $fieldName,
+                        'controllerAction',
+                        ['action' => 'edit']
+                    );
                 }
                 «IF hasUploadNamingScheme(UploadNamingScheme.USERDEFINEDWITHCOUNTER)»
 

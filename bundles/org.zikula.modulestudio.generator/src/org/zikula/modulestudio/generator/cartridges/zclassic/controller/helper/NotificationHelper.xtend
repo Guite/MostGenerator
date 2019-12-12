@@ -209,7 +209,12 @@ class NotificationHelper {
 
             if (null === $this->kernel->getModule('ZikulaMailerModule')) {
                 if (null !== $session) {
-                    $session->getFlashBag()->add('error', $this->__('Could not inform other persons about your amendments, because the Mailer module is not available - please contact an administrator about that!'));
+                    $session->getFlashBag()->add(
+                        'error',
+                        $this->__(
+                            'Could not inform other persons about your amendments, because the Mailer module is not available - please contact an administrator about that!'
+                        )
+                    );
                 }
 
                 return false;
@@ -242,9 +247,17 @@ class NotificationHelper {
                 ];
                 $modVarSuffix = $modVarSuffixes[$this->entity['_objectType']];
 
-                $moderatorGroupId = $this->variableApi->get('«appName»', 'moderationGroupFor' . $modVarSuffix, GroupsConstant::GROUP_ID_ADMIN);
+                $moderatorGroupId = $this->variableApi->get(
+                    '«appName»',
+                    'moderationGroupFor' . $modVarSuffix,
+                    GroupsConstant::GROUP_ID_ADMIN
+                );
                 if ('superModerator' === $this->recipientType) {
-                    $moderatorGroupId = $this->variableApi->get('«appName»', 'superModerationGroupFor' . $modVarSuffix, GroupsConstant::GROUP_ID_ADMIN);
+                    $moderatorGroupId = $this->variableApi->get(
+                        '«appName»',
+                        'superModerationGroupFor' . $modVarSuffix,
+                        GroupsConstant::GROUP_ID_ADMIN
+                    );
                 }
 
                 $moderatorGroup = $this->groupRepository->find($moderatorGroupId);
@@ -290,16 +303,19 @@ class NotificationHelper {
                 ];
 
                 return;
-        	}
+            }
 
             if (null === $user) {
                 return;
             }
 
             $userAttributes = $user->getAttributes();
-
+            $recipientName = isset($userAttributes['name']) && !empty($userAttributes['name'])
+                ? $userAttributes['name']
+                : $user->getUname()
+            ;
             $this->recipients[] = [
-                'name' => isset($userAttributes['name']) && !empty($userAttributes['name']) ? $userAttributes['name'] : $user->getUname(),
+                'name' => $recipientName,
                 'email' => $user->getEmail()
             ];
         }
@@ -318,9 +334,9 @@ class NotificationHelper {
             $adminMail = $this->variableApi->getSystemVar('adminmail');
 
             $templateType = '';
-            if (strpos($this->recipientType,'field-') === 0) {
+            if ($this->usesDesignatedEntityFields()) {
                 $templateType = $this->recipientType;
-        	} else {
+            } else {
                 $templateType = $this->recipientType == 'creator' ? 'Creator' : 'Moderator';
             }
             $template = 'Email/notify' . ucfirst($objectType) . $templateType .  '.html.twig';
@@ -371,7 +387,10 @@ class NotificationHelper {
         protected function getMailSubject()«IF targets('3.0')»: string«ENDIF»
         {
             $mailSubject = '';
-            if ('moderator' === $this->recipientType || 'superModerator' === $this->recipientType || $this->usesDesignatedEntityFields()) {
+            if (
+                in_array($this->recipientType, ['moderator', 'superModerator'], true)
+                || $this->usesDesignatedEntityFields()
+            ) {
                 if ('submit' === $this->action) {
                     $mailSubject = $this->__('New content has been submitted');
                 } elseif ('demote' === $this->action) {
@@ -425,13 +444,19 @@ class NotificationHelper {
             $routePrefix = '«appName.formatForDB»_' . strtolower($objectType) . '_' . $routeArea;
 
             $urlArgs = $this->entity->createUrlArgs();
-            $displayUrl = $hasDisplayAction ? $this->router->generate($routePrefix . 'display', $urlArgs, UrlGeneratorInterface::ABSOLUTE_URL) : '';
+            $displayUrl = $hasDisplayAction
+                ? $this->router->generate($routePrefix . 'display', $urlArgs, UrlGeneratorInterface::ABSOLUTE_URL)
+                : ''
+            ;
 
             «IF !getAllEntities.filter[hasEditAction && hasSluggableFields && slugUnique].empty»
                 $needsArg = in_array($objectType, ['«getAllEntities.filter[hasEditAction && hasSluggableFields && slugUnique].map[name.formatForCode].join('\', \'')»'], true);
                 $urlArgs = $needsArg ? $this->entity->createUrlArgs(true) : $this->entity->createUrlArgs();
             «ENDIF»
-            $editUrl = $hasEditAction ? $this->router->generate($routePrefix . 'edit', $urlArgs, UrlGeneratorInterface::ABSOLUTE_URL) : '';
+            $editUrl = $hasEditAction
+                ? $this->router->generate($routePrefix . 'edit', $urlArgs, UrlGeneratorInterface::ABSOLUTE_URL)
+                : ''
+            ;
 
             return [
                 'name' => $this->entityDisplayHelper->getFormattedTitle($this->entity),

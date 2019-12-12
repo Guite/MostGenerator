@@ -245,7 +245,9 @@ class Redirect {
                             case 'userDisplay«sourceEntity.name.formatForCodeCapital»':
                             case 'adminDisplay«sourceEntity.name.formatForCodeCapital»':
                                 if (!empty($this->relationPresets['«incomingRelation.getRelationAliasName(false)»'])) {
-                                    return $this->router->generate('«app.appName.formatForDB»_«sourceEntity.name.formatForDB»_' . $routeArea . 'display',  ['id' => $this->relationPresets['«incomingRelation.getRelationAliasName(false)»']]);
+                                    $routeName = '«app.appName.formatForDB»_«sourceEntity.name.formatForDB»_' . $routeArea . 'display';
+
+                                    return $this->router->generate($routeName, ['id' => $this->relationPresets['«incomingRelation.getRelationAliasName(false)»']]);
                                 }
 
                                 return $this->getDefaultReturnUrl($args);

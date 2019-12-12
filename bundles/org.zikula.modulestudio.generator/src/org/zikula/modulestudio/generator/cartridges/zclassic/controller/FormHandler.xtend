@@ -600,7 +600,12 @@ class FormHandler {
                     «ENDIF»
                 }
             } else {
-                $permissionLevel = «IF needsApproval»in_array($this->objectType, ['«getAllEntities.filter[workflow != EntityWorkflowType.NONE].map[name.formatForCode].join('\', \'')»'], true) ? ACCESS_COMMENT : ACCESS_EDIT«ELSE»ACCESS_EDIT«ENDIF»;
+                «IF needsApproval»
+                    $objectTypesNeedingApproval = ['«getAllEntities.filter[workflow != EntityWorkflowType.NONE].map[name.formatForCode].join('\', \'')»'];
+                    $permissionLevel = in_array($this->objectType, $objectTypesNeedingApproval, true) ? ACCESS_COMMENT : ACCESS_EDIT;
+                «ELSE»
+                    $permissionLevel = ACCESS_EDIT;
+                «ENDIF»
                 if (!$this->permissionHelper->hasComponentPermission($this->objectType, $permissionLevel)) {
                     throw new AccessDeniedException();
                 }
@@ -1232,20 +1237,32 @@ class FormHandler {
                 : UsersConstant::USER_ID_ANONYMOUS
             ;
             $roles['is_creator'] = 'create' === $this->templateParameters['mode']
-                || (method_exists($this->entityRef, 'getCreatedBy') && $this->entityRef->getCreatedBy()->getUid() === $currentUserId);
+                || (
+                    method_exists($this->entityRef, 'getCreatedBy')
+                    && $this->entityRef->getCreatedBy()->getUid() === $currentUserId
+                )
+            ;
 
             $groupApplicationArgs = [
                 'user' => $currentUserId,
-                'group' => $this->variableApi->get('«appName»', 'moderationGroupFor' . $this->objectTypeCapital, GroupsConstant::GROUP_ID_ADMIN)
+                'group' => $this->variableApi->get(
+                    '«appName»',
+                    'moderationGroupFor' . $this->objectTypeCapital,
+                    GroupsConstant::GROUP_ID_ADMIN
+                )
             ];
-            $roles['is_moderator'] = count($this->groupApplicationRepository->findBy($groupApplicationArgs)) > 0;
+            $roles['is_moderator'] = 0 < count($this->groupApplicationRepository->findBy($groupApplicationArgs));
 
             if (true === $enterprise) {
                 $groupApplicationArgs = [
                     'user' => $currentUserId,
-                    'group' => $this->variableApi->get('«appName»', 'superModerationGroupFor' . $this->objectTypeCapital, GroupsConstant::GROUP_ID_ADMIN)
+                    'group' => $this->variableApi->get(
+                        '«appName»',
+                        'superModerationGroupFor' . $this->objectTypeCapital,
+                        GroupsConstant::GROUP_ID_ADMIN
+                    )
                 ];
-                $roles['is_super_moderator'] = count($this->groupApplicationRepository->findBy($groupApplicationArgs)) > 0;
+                $roles['is_super_moderator'] = 0 < count($this->groupApplicationRepository->findBy($groupApplicationArgs));
             }
 
             return $roles;

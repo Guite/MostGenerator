@@ -587,14 +587,14 @@ class EditEntityType {
                 ]
             ]);
         «ELSE»
-            $queryBuilder = function(EntityRepository $er) {
+            $queryBuilder = function (EntityRepository $er) {
                 // select without joins
                 return $er->getListQueryBuilder('', '', false);
             };
             «IF (relatedEntity as Entity).ownerPermission»
                 if (true === $options['filter_by_ownership']) {
                     $collectionFilterHelper = $this->collectionFilterHelper;
-                    $queryBuilder = function(EntityRepository $er) use ($collectionFilterHelper) {
+                    $queryBuilder = function (EntityRepository $er) use ($collectionFilterHelper) {
                         // select without joins
                         $qb = $er->getListQueryBuilder('', '', false);
                         $qb = $collectionFilterHelper->addCreatorFilter($qb);

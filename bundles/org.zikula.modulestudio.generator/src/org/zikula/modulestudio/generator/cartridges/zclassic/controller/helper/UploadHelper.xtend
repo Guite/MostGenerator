@@ -124,7 +124,10 @@ class UploadHelper {
 
             $this->allowedObjectTypes = [«FOR entity : getUploadEntities SEPARATOR ', '»'«entity.name.formatForCode»'«ENDFOR»];
             $this->imageFileTypes = ['gif', 'jpeg', 'jpg', 'png'];
-            $this->forbiddenFileTypes = ['cgi', 'pl', 'asp', 'phtml', 'php', 'php3', 'php4', 'php5', 'exe', 'com', 'bat', 'jsp', 'cfm', 'shtml'];
+            $this->forbiddenFileTypes = [
+                'cgi', 'pl', 'asp', 'phtml', 'php', 'php3', 'php4', 'php5',
+                'exe', 'com', 'bat', 'jsp', 'cfm', 'shtml'
+            ];
         }
 
         «setTranslatorMethod»
@@ -202,7 +205,17 @@ class UploadHelper {
                 $basePath = $this->getFileBaseFolder($objectType, $fieldName);
             } catch (Exception $exception) {
                 $flashBag->add('error', $exception->getMessage());
-                $this->logger->error('{app}: User {user} could not detect upload destination path for entity {entity} and field {field}. ' . $exception->getMessage(), ['app' => '«appName»', 'user' => $this->currentUserApi->get('uname'), 'entity' => $objectType, 'field' => $fieldName]);
+                $logArgs = [
+                    'app' => '«appName»',
+                    'user' => $this->currentUserApi->get('uname'),
+                    'entity' => $objectType,
+                    'field' => $fieldName
+                ];
+                $this->logger->error(
+                    '{app}: User {user} could not detect upload destination path for entity {entity} and field {field}.'
+                        . ' ' . $exception->getMessage(),
+                    $logArgs
+                );
 
                 return $result;
             }
@@ -229,11 +242,23 @@ class UploadHelper {
 
                 // check if shrinking functionality is enabled
                 $fieldSuffix = ucfirst($objectType) . ucfirst($fieldName);
-                if (isset($this->moduleVars['enableShrinkingFor' . $fieldSuffix]) && true === (bool)$this->moduleVars['enableShrinkingFor' . $fieldSuffix]) {
+                if (
+                    isset($this->moduleVars['enableShrinkingFor' . $fieldSuffix])
+                    && true === (bool)$this->moduleVars['enableShrinkingFor' . $fieldSuffix]
+                ) {
                     // check for maximum size
-                    $maxWidth = isset($this->moduleVars['shrinkWidth' . $fieldSuffix]) ? $this->moduleVars['shrinkWidth' . $fieldSuffix] : 800;
-                    $maxHeight = isset($this->moduleVars['shrinkHeight' . $fieldSuffix]) ? $this->moduleVars['shrinkHeight' . $fieldSuffix] : 600;
-                    $thumbMode = isset($this->moduleVars['thumbnailMode' . $fieldSuffix]) ? $this->moduleVars['thumbnailMode' . $fieldSuffix] : ImageInterface::THUMBNAIL_INSET;
+                    $maxWidth = isset($this->moduleVars['shrinkWidth' . $fieldSuffix])
+                        ? $this->moduleVars['shrinkWidth' . $fieldSuffix]
+                        : 800
+                    ;
+                    $maxHeight = isset($this->moduleVars['shrinkHeight' . $fieldSuffix])
+                        ? $this->moduleVars['shrinkHeight' . $fieldSuffix]
+                        : 600
+                    ;
+                    $thumbMode = isset($this->moduleVars['thumbnailMode' . $fieldSuffix])
+                        ? $this->moduleVars['thumbnailMode' . $fieldSuffix]
+                        : ImageInterface::THUMBNAIL_INSET
+                    ;
 
                     $imgInfo = getimagesize($destinationFilePath);
                     if ($imgInfo[0] > $maxWidth || $imgInfo[1] > $maxHeight) {
@@ -273,7 +298,10 @@ class UploadHelper {
             // check if a file has been uploaded properly without errors
             if (UPLOAD_ERR_OK !== $file->getError()) {
                 $flashBag->add('error', $file->getErrorMessage());
-                $this->logger->error('{app}: User {user} tried to upload a file with errors: ' . $file->getErrorMessage(), ['app' => '«appName»', 'user' => $this->currentUserApi->get('uname')]);
+                $this->logger->error(
+                    '{app}: User {user} tried to upload a file with errors: ' . $file->getErrorMessage(),
+                    ['app' => '«appName»', 'user' => $this->currentUserApi->get('uname')]
+                );
 
                 return false;
             }
@@ -285,8 +313,14 @@ class UploadHelper {
             // validate extension
             $isValidExtension = $this->isAllowedFileExtension($objectType, $fieldName, $extension);
             if (false === $isValidExtension) {
-                $flashBag->add('error', $this->__('Error! This file type is not allowed. Please choose another file format.'));
-                $this->logger->error('{app}: User {user} tried to upload a file with a forbidden extension ("{extension}").', ['app' => '«appName»', 'user' => $this->currentUserApi->get('uname'), 'extension' => $extension]);
+                $flashBag->add(
+                    'error',
+                    $this->__('Error! This file type is not allowed. Please choose another file format.')
+                );
+                $this->logger->error(
+                    '{app}: User {user} tried to upload a file with a forbidden extension ("{extension}").',
+                    ['app' => '«appName»', 'user' => $this->currentUserApi->get('uname'), 'extension' => $extension]
+                );
 
                 return false;
             }
@@ -302,7 +336,10 @@ class UploadHelper {
             $imgInfo = getimagesize(«fileVar»);
             if (!is_array($imgInfo) || !$imgInfo[0] || !$imgInfo[1]) {
                 $flashBag->add('error', $this->__('Error! This file type seems not to be a valid image.'));
-                $this->logger->error('{app}: User {user} tried to upload a file which is seems not to be a valid image.', ['app' => '«appName»', 'user' => $this->currentUserApi->get('uname')]);
+                $this->logger->error(
+                    '{app}: User {user} tried to upload a file which is seems not to be a valid image.',
+                    ['app' => '«appName»', 'user' => $this->currentUserApi->get('uname')]
+                );
 
                 return false;
             }
@@ -471,7 +508,7 @@ class UploadHelper {
             «ELSE»
                 $allowedExtensions = ['«uploadFields.head.allowedExtensions.replace(', ', "', '")»'];
             «ENDIF»
-                break;
+            break;
     '''
 
 
@@ -578,8 +615,7 @@ class UploadHelper {
                     // prefix with random number
                     $fileName = $fieldName . «IF targets('3.0')»random_int«ELSE»mt_rand«ENDIF»(1, 999999) . '.' . $extension;
                 }
-            }
-            while (file_exists($basePath . $fileName)); // repeat until we have a new name
+            } while (file_exists($basePath . $fileName)); // repeat until we have a new name
 
             // return the final file name
             return $fileName;
@@ -596,7 +632,7 @@ class UploadHelper {
             «ELSE»
                 $namingScheme = «uploadFields.head.namingScheme.value»;
             «ENDIF»
-                break;
+            break;
     '''
 
     def private dispatch determineFileNameEntityCase(Application it) '''
@@ -791,8 +827,17 @@ class UploadHelper {
                 try {
                     $this->filesystem->mkdir($uploadPath, 0777);
                 } catch (IOExceptionInterface $exception) {
-                    $flashBag->add('error', $this->__f('The upload directory "%path%" does not exist and could not be created. Try to create it yourself and make sure that this folder is accessible via the web and writable by the webserver.', ['%path%' => $exception->getPath()]));
-                    $this->logger->error('{app}: The upload directory {directory} does not exist and could not be created.', ['app' => '«appName»', 'directory' => $uploadPath]);
+                    $flashBag->add(
+                        'error',
+                        $this->__f(
+                            'The upload directory "%path%" does not exist and could not be created. Try to create it yourself and make sure that this folder is accessible via the web and writable by the webserver.',
+                            ['%path%' => $exception->getPath()]
+                        )
+                    );
+                    $this->logger->error(
+                        '{app}: The upload directory {directory} does not exist and could not be created.',
+                        ['app' => '«appName»', 'directory' => $uploadPath]
+                    );
 
                     return false;
                 }
@@ -803,8 +848,17 @@ class UploadHelper {
                 try {
                     $this->filesystem->chmod($uploadPath, 0777);
                 } catch (IOExceptionInterface $exception) {
-                    $flashBag->add('warning', $this->__f('Warning! The upload directory at "%path%" exists but is not writable by the webserver.', ['%path%' => $exception->getPath()]));
-                    $this->logger->error('{app}: The upload directory {directory} exists but is not writable by the webserver.', ['app' => '«appName»', 'directory' => $uploadPath]);
+                    $flashBag->add(
+                        'warning',
+                        $this->__f(
+                            'Warning! The upload directory at "%path%" exists but is not writable by the webserver.',
+                            ['%path%' => $exception->getPath()]
+                        )
+                    );
+                    $this->logger->error(
+                        '{app}: The upload directory {directory} exists but is not writable by the webserver.',
+                        ['app' => '«appName»', 'directory' => $uploadPath]
+                    );
 
                     return false;
                 }
@@ -816,12 +870,25 @@ class UploadHelper {
             if (!$this->filesystem->exists($htaccessFilePath) && $this->filesystem->exists($htaccessFileTemplate)) {
                 try {
                     $extensions = str_replace(',', '|', str_replace(' ', '', $allowedExtensions));
-                    $htaccessContent = str_replace('__EXTENSIONS__', $extensions, file_get_contents($htaccessFileTemplate, false));
+                    $htaccessContent = str_replace(
+                        '__EXTENSIONS__',
+                        $extensions,
+                        file_get_contents($htaccessFileTemplate, false)
+                    );
                     $this->filesystem->dumpFile($htaccessFilePath, $htaccessContent);
                 } catch (IOExceptionInterface $exception) {
-                    $flashBag->add('error', $this->__f('An error occured during creation of the .htaccess file in directory "%path%".', ['%path%' => $exception->getPath()]));
+                    $flashBag->add(
+                        'error',
+                        $this->__f(
+                            'An error occured during creation of the .htaccess file in directory "%path%".',
+                            ['%path%' => $exception->getPath()]
+                        )
+                    );
 
-                    $this->logger->error('{app}: An error occured during creation of the .htaccess file in directory {directory}.', ['app' => '«appName»', 'directory' => $uploadPath]);
+                    $this->logger->error(
+                        '{app}: An error occured during creation of the .htaccess file in directory {directory}.',
+                        ['app' => '«appName»', 'directory' => $uploadPath]
+                    );
 
                     return false;
                 }

@@ -221,7 +221,10 @@ class Actions {
 
     def private dispatch actionImplBody(Entity it, DisplayAction action) '''
         «IF workflow != EntityWorkflowType.NONE»
-            if ('approved' !== $«name.formatForCode»->getWorkflowState() && !$permissionHelper->hasEntityPermission($«name.formatForCode», ACCESS_EDIT)) {
+            if (
+                'approved' !== $«name.formatForCode»->getWorkflowState()
+                && !$permissionHelper->hasEntityPermission($«name.formatForCode», ACCESS_EDIT)
+            ) {
                 throw new AccessDeniedException();
             }
 

@@ -253,7 +253,10 @@ class WorkflowHelper {
                 «ENDIF»
                 «IF hasWorkflow(EntityWorkflowType::STANDARD) || hasWorkflow(EntityWorkflowType::ENTERPRISE)»
                     case 'approve':
-                        $title = 'initial' === $currentState ? $this->translator->__('Submit and approve') : $this->translator->__('Approve');
+                        $title = 'initial' === $currentState
+                            ? $this->translator->__('Submit and approve')
+                            : $this->translator->__('Approve')
+                        ;
                         break;
                 «ENDIF»
                 «IF hasWorkflowState('accepted')»
@@ -517,10 +520,18 @@ class WorkflowHelper {
                     'amount' => $amount,
                     'objectType' => $objectType,
                     'state' => $state,
-                    'message' => $this->translator->transChoice('One «name.formatForDisplay» is waiting for «requiredAction».|%count% «nameMultiple.formatForDisplay» are waiting for «requiredAction».', $amount, ['%count%' => $amount]«IF !application.isSystemModule», '«application.appName.formatForDB»'«ENDIF»)
+                    'message' => $this->translator->transChoice(
+                        'One «name.formatForDisplay» is waiting for «requiredAction».|%count% «nameMultiple.formatForDisplay» are waiting for «requiredAction».',
+                        $amount,
+                        ['%count%' => $amount]«IF !application.isSystemModule»,
+                        '«application.appName.formatForDB»'«ENDIF»
+                    )
                 ];
 
-                $this->logger->info('{app}: There are {amount} {entities} waiting for approval.', ['app' => '«application.appName»', 'amount' => $amount, 'entities' => '«nameMultiple.formatForDisplay»']);
+                $this->logger->info(
+                    '{app}: There are {amount} {entities} waiting for approval.',
+                    ['app' => '«application.appName»', 'amount' => $amount, 'entities' => '«nameMultiple.formatForDisplay»']
+                );
             }
         }
     '''

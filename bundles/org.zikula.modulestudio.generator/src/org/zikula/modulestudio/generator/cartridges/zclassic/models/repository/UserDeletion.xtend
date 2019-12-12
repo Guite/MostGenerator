@@ -66,7 +66,8 @@ class UserDeletion {
                     throw new InvalidArgumentException($translator->__('Invalid user identifier received.'));
                 }
             «ELSE»
-                if (0 === $userId || !is_numeric($userId)
+                if (
+                    0 === $userId || !is_numeric($userId)
                     || 0 === $newUserId || !is_numeric($newUserId)
                 ) {
                     throw new InvalidArgumentException($translator->__('Invalid user identifier received.'));
@@ -120,7 +121,8 @@ class UserDeletion {
                     throw new InvalidArgumentException($translator->__('Invalid user identifier received.'));
                 }
             «ELSE»
-                if (0 === $userId || !is_numeric($userId)
+                if (
+                    0 === $userId || !is_numeric($userId)
                     || 0 === $newUserId || !is_numeric($newUserId)
                 ) {
                     throw new InvalidArgumentException($translator->__('Invalid user identifier received.'));
@@ -265,7 +267,8 @@ class UserDeletion {
                     throw new InvalidArgumentException($translator->__('Invalid user identifier received.'));
                 }
             «ELSE»
-                if (0 === $userId || !is_numeric($userId)
+                if (
+                    0 === $userId || !is_numeric($userId)
                     || 0 === $newUserId || !is_numeric($newUserId)
                 ) {
                     throw new InvalidArgumentException($translator->__('Invalid user identifier received.'));

@@ -148,12 +148,21 @@ class ImageHelper {
          * @return array The selected runtime options
          «ENDIF»
          */
-        public function getCustomRuntimeOptions(«IF targets('3.0')»string «ENDIF»$objectType = '', «IF targets('3.0')»string «ENDIF»$fieldName = '', «IF targets('3.0')»string «ENDIF»$contextName = '', «IF targets('3.0')»string «ENDIF»$context = '', array $args = [])«IF targets('3.0')»: array«ENDIF»
-        {
+        public function getCustomRuntimeOptions(
+            «IF targets('3.0')»string «ENDIF»$objectType = '',
+            «IF targets('3.0')»string «ENDIF»$fieldName = '',
+            «IF targets('3.0')»string «ENDIF»$contextName = '',
+            «IF targets('3.0')»string «ENDIF»$context = '',
+            array $args = []
+        )«IF targets('3.0')»: array«ENDIF» {
             $options = [
                 'thumbnail' => [
                     'size' => [100, 100], // thumbnail width and height in pixels
-                    'mode' => $this->variableApi->get('«appName»', 'thumbnailMode' . ucfirst($objectType) . ucfirst($fieldName), ImageInterface::THUMBNAIL_INSET),
+                    'mode' => $this->variableApi->get(
+                        '«appName»',
+                        'thumbnailMode' . ucfirst($objectType) . ucfirst($fieldName),
+                        ImageInterface::THUMBNAIL_INSET
+                    ),
                     'extension' => null // file extension for thumbnails (jpg, png, gif; null for original file type)
                 ]
             ];
@@ -209,7 +218,13 @@ class ImageHelper {
             }
 
             $session = $this->requestStack->getCurrentRequest()->getSession();
-            $session->getFlashBag()->add('warning', $this->translator->__f('The cache directory "%directory%" does not exist. Please create it and make it writable for the webserver.', ['%directory%' => $cachePath]));
+            $session->getFlashBag()->add(
+                'warning',
+                $this->translator->__f(
+                    'The cache directory "%directory%" does not exist. Please create it and make it writable for the webserver.',
+                    ['%directory%' => $cachePath]
+                )
+            );
         }
     '''
 
@@ -246,7 +261,21 @@ class ImageHelper {
                     });
                 }
 
-                return substr(preg_replace('/[^a-zA-Z0-9-_]/', '', base64_encode(hash_hmac('sha256', ltrim($path, '/').(null === $runtimeConfig ?: serialize($runtimeConfig)), $this->secret, true))), 0, 8);
+                $encodedPath = base64_encode(
+                    hash_hmac(
+                        'sha256',
+                        ltrim($path, '/')
+                            . (null === $runtimeConfig ?: serialize($runtimeConfig)),
+                        $this->secret,
+                        true
+                    )
+                );
+
+                return substr(
+                    preg_replace('/[^a-zA-Z0-9-_]/', '', $encodedPath),
+                    0,
+                    8
+                );
             }
 
             public function check($hash, $path, array $runtimeConfig = null)
