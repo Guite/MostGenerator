@@ -43,7 +43,11 @@ class Delete {
 
                 {% form_theme deleteForm with [
                     '@«app.appName»/Form/bootstrap_3.html.twig',
-                    'ZikulaFormExtensionBundle:Form:form_div_layout.html.twig'
+                    «IF app.targets('3.0')»
+                        '@ZikulaFormExtension/Form/form_div_layout.html.twig'
+                    «ELSE»
+                        'ZikulaFormExtensionBundle:Form:form_div_layout.html.twig'
+                    «ENDIF»
                 ] %}
                 {{ form_start(deleteForm) }}
                 {{ form_errors(deleteForm) }}

@@ -30,6 +30,9 @@ class Installer {
         namespace «appNamespace»\Base;
 
         use Exception;
+        «IF targets('3.0')»
+            use Psr\Log\LoggerInterface;
+        «ENDIF»
         use Zikula\Core\AbstractExtensionInstaller;
         «IF hasCategorisableEntities»
             «IF targets('3.0')»
@@ -57,6 +60,13 @@ class Installer {
          */
         abstract class Abstract«name.formatForCodeCapital»ModuleInstaller extends AbstractExtensionInstaller
         {
+            «IF targets('3.0')»
+                /**
+                 * @var LoggerInterface
+                 */
+                private $logger;
+
+            «ENDIF»
             /**
              * @var string[]
              */
@@ -74,27 +84,40 @@ class Installer {
         «funcUpdate»
 
         «funcDelete»
+        «IF targets('3.0')»
+
+            /**
+             * @required
+             */
+            public function setLogger(LoggerInterface $logger)
+            {
+                $this->logger = $logger;
+            }
+        «ENDIF»
     '''
 
     def private funcInit(Application it) '''
         public function install()«IF targets('3.0')»: bool«ENDIF»
         {
-            $logger = $this->container->get('logger');
+            «IF !targets('3.0')»
+                $logger = $this->container->get('logger');
+
+            «ENDIF»
             «IF hasUploads || hasCategorisableEntities»
                 «IF targets('3.0')»
                     $userName = $this->container->get(CurrentUserApi::class)->get('uname');
                 «ELSE»
                     $userName = $this->container->get('zikula_users_module.current_user')->get('uname');
                 «ENDIF»
-            «ENDIF»
 
+            «ENDIF»
             «processUploadFolders»
             // create all tables from according entity definitions
             try {
                 $this->schemaTool->create($this->entities);
             } catch (Exception $exception) {
                 $this->addFlash('error', $this->__('Doctrine Exception') . ': ' . $exception->getMessage());
-                $logger->error(
+                $«IF targets('3.0')»this->«ENDIF»logger->error(
                     '{app}: Could not create the database tables during installation. Error details: {errorMessage}.',
                     ['app' => '«appName»', 'errorMessage' => $exception->getMessage()]
                 );
@@ -113,7 +136,7 @@ class Installer {
                     $categoryHelper = new \«appNamespace»\Helper\CategoryHelper(
                         $this->container->get(Translator::class),
                         $this->container->get('request_stack'),
-                        $logger,
+                        $«IF targets('3.0')»this->«ENDIF»logger,
                         $this->container->get(CurrentUserApi::class),
                         $this->container->get(CategoryRegistryRepositoryInterface::class),
                         $this->container->get(CategoryPermissionApi::class)
@@ -123,7 +146,7 @@ class Installer {
                     $categoryHelper = new \«appNamespace»\Helper\CategoryHelper(
                         $this->container->get('translator.default'),
                         $this->container->get('request_stack'),
-                        $logger,
+                        $«IF targets('3.0')»this->«ENDIF»logger,
                         $this->container->get('zikula_users_module.current_user'),
                         $this->container->get('zikula_categories_module.category_registry_repository'),
                         $this->container->get('zikula_categories_module.api.category_permission')
@@ -151,7 +174,7 @@ class Installer {
                                     ['%entity%' => '«entity.name.formatForDisplay»']
                                 )
                             );
-                            $logger->error(
+                            $«IF targets('3.0')»this->«ENDIF»logger->error(
                                 '{app}: User {user} could not create a category registry for {entities} during installation. Error details: {errorMessage}.',
                                 ['app' => '«appName»', 'user' => $userName, 'entities' => '«entity.nameMultiple.formatForDisplay»', 'errorMessage' => $exception->getMessage()]
                             );
@@ -176,7 +199,7 @@ class Installer {
                         $container->get(Translator::class),
                         $container->get('filesystem'),
                         $container->get('request_stack'),
-                        $container->get('logger'),
+                        $«IF targets('3.0')»this->«ENDIF»logger,
                         $container->get(CurrentUserApi::class),
                         $container->get(VariableApi::class),
                         $container->getParameter('datadir')
@@ -186,7 +209,7 @@ class Installer {
                         $container->get('translator.default'),
                         $container->get('filesystem'),
                         $container->get('request_stack'),
-                        $container->get('logger'),
+                        $«IF targets('3.0')»this->«ENDIF»logger,
                         $container->get('zikula_users_module.current_user'),
                         $container->get('zikula_extensions_module.api.variable'),
                         $container->getParameter('datadir')
@@ -195,7 +218,7 @@ class Installer {
                 $uploadHelper->checkAndCreateAllUploadFolders();
             } catch (Exception $exception) {
                 $this->addFlash('error', $exception->getMessage());
-                $logger->error(
+                $«IF targets('3.0')»this->«ENDIF»logger->error(
                     '{app}: User {user} could not create upload folders during installation. Error details: {errorMessage}.',
                     ['app' => '«appName»', 'user' => $userName, 'errorMessage' => $exception->getMessage()]
                 );
@@ -209,9 +232,11 @@ class Installer {
         public function upgrade(«IF targets('3.0')»string «ENDIF»$oldVersion)«IF targets('3.0')»: bool«ENDIF»
         {
         /*
-            $logger = $this->container->get('logger');
+            «IF !targets('3.0')»
+                $logger = $this->container->get('logger');
 
-            // Upgrade dependent on old version number
+            «ENDIF»
+            // upgrade dependent on old version number
             switch ($oldVersion) {
                 case '1.0.0':
                     // do something
@@ -221,7 +246,7 @@ class Installer {
                         $this->schemaTool->update($this->entities);
                     } catch (Exception $exception) {
                         $this->addFlash('error', $this->__('Doctrine Exception') . ': ' . $exception->getMessage());
-                        $logger->error(
+                        $«IF targets('3.0')»this->«ENDIF»logger->error(
                             '{app}: Could not update the database tables during the upgrade.'
                                 . ' Error details: {errorMessage}.',
                             ['app' => '«appName»', 'errorMessage' => $exception->getMessage()]
@@ -245,13 +270,15 @@ class Installer {
     def private funcDelete(Application it) '''
         public function uninstall()«IF targets('3.0')»: bool«ENDIF»
         {
-            $logger = $this->container->get('logger');
+            «IF !targets('3.0')»
+                $logger = $this->container->get('logger');
 
+            «ENDIF»
             try {
                 $this->schemaTool->drop($this->entities);
             } catch (Exception $exception) {
                 $this->addFlash('error', $this->__('Doctrine Exception') . ': ' . $exception->getMessage());
-                $logger->error(
+                $«IF targets('3.0')»this->«ENDIF»logger->error(
                     '{app}: Could not remove the database tables during uninstallation. Error details: {errorMessage}.',
                     ['app' => '«appName»', 'errorMessage' => $exception->getMessage()]
                 );

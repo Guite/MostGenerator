@@ -38,7 +38,11 @@ class Config {
             <div class="«appName.toLowerCase»-config">
                 {% form_theme form with [
                     '@«appName»/Form/bootstrap_3.html.twig',
-                    'ZikulaFormExtensionBundle:Form:form_div_layout.html.twig'
+                    «IF targets('3.0')»
+                        '@ZikulaFormExtension/Form/form_div_layout.html.twig'
+                    «ELSE»
+                        'ZikulaFormExtensionBundle:Form:form_div_layout.html.twig'
+                    «ENDIF»
                 ] %}
                 {{ form_start(form) }}
                 <div class="zikula-bootstrap-tab-container">

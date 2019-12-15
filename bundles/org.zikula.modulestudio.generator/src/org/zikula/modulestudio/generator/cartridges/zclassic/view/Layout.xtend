@@ -126,7 +126,11 @@ class Layout {
 
     def formBaseTemplate(Application it) '''
         {# purpose of this template: apply some general form extensions #}
-        {% extends 'ZikulaFormExtensionBundle:Form:bootstrap_3_zikula_admin_layout.html.twig' %}
+        «IF targets('3.0')»
+            {% extends '@ZikulaFormExtension/Form/bootstrap_3_zikula_admin_layout.html.twig' %}
+        «ELSE»
+            {% extends 'ZikulaFormExtensionBundle:Form:bootstrap_3_zikula_admin_layout.html.twig' %}
+        «ENDIF»
         «IF !getAllEntities.filter[e|e.hasDirectDateTimeFields].empty || !getAllVariables.filter(DatetimeField).filter[isDateTimeField].empty»
 
             {%- block datetime_widget -%}

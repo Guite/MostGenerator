@@ -103,7 +103,11 @@ class Forms {
     def private formTemplateBody(Entity it, String actionName) '''
         {% form_theme form with [
             '@«application.appName»/Form/bootstrap_3.html.twig',
-            'ZikulaFormExtensionBundle:Form:form_div_layout.html.twig'
+            «IF application.targets('3.0')»
+                '@ZikulaFormExtension/Form/form_div_layout.html.twig'
+            «ELSE»
+                'ZikulaFormExtensionBundle:Form:form_div_layout.html.twig'
+            «ENDIF»
         ] %}
         {{ form_start(form, {attr: {id: '«name.formatForCode»EditForm', class: '«app.vendorAndName.toLowerCase»-edit-form'}}) }}
         «IF useGroupingTabs('edit')»
