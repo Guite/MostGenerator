@@ -187,7 +187,11 @@ class Events {
 
         use Knp\Menu\FactoryInterface;
         use Knp\Menu\ItemInterface;
-        use Symfony\Component\EventDispatcher\Event;
+        «IF targets('3.0')»
+            use Symfony\Contracts\EventDispatcher\Event;
+        «ELSE»
+            use Symfony\Component\EventDispatcher\Event;
+        «ENDIF»
 
         /**
          * Event base class for extending item actions menu.
@@ -262,7 +266,11 @@ class Events {
     def private filterEventBaseClass(Entity it) '''
         namespace «app.appNamespace»\Event\Base;
 
-        use Symfony\Component\EventDispatcher\Event;
+        «IF app.targets('3.0')»
+            use Symfony\Contracts\EventDispatcher\Event;
+        «ELSE»
+            use Symfony\Component\EventDispatcher\Event;
+        «ENDIF»
         use «app.appNamespace»\Entity\«name.formatForCodeCapital»Entity;
 
         /**

@@ -93,8 +93,13 @@ class HookHelper {
     def private hookFunctionsBaseImpl(Application it) '''
         namespace «appNamespace»\Helper\Base;
 
-        use Symfony\Component\EventDispatcher\Event;
+        «IF !targets('3.0')»
+            use Symfony\Component\EventDispatcher\Event;
+        «ENDIF»
         use Symfony\Component\Form\FormInterface;
+        «IF targets('3.0')»
+            use Symfony\Contracts\EventDispatcher\Event;
+        «ENDIF»
         use Zikula\Bundle\HookBundle\Dispatcher\HookDispatcherInterface;
         use Zikula\Bundle\HookBundle\FormAwareHook\FormAwareHook;
         use Zikula\Bundle\HookBundle\FormAwareHook\FormAwareResponse;
