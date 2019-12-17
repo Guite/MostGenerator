@@ -27,12 +27,17 @@ class LoggableHelper {
     def private loggableFunctionsBaseImpl(Application it) '''
         namespace «appNamespace»\Helper\Base;
 
-        use Doctrine\Common\Persistence\Event\LifecycleEventArgs;
+        «IF !targets('3.0')»
+            use Doctrine\Common\Persistence\Event\LifecycleEventArgs;
+        «ENDIF»
         «IF hasTrees && !getTreeEntities.filter[loggable].empty»
             use Doctrine\Common\Proxy\Proxy;
         «ENDIF»
         use Doctrine\ORM\Id\AssignedGenerator;
         use Doctrine\ORM\Mapping\ClassMetadata;
+        «IF targets('3.0')»
+            use Doctrine\Persistence\Event\LifecycleEventArgs;
+        «ENDIF»
         use Exception;
         use Gedmo\Loggable\Entity\MappedSuperclass\AbstractLogEntry;
         use Gedmo\Loggable\LoggableListener;

@@ -26,12 +26,17 @@ class LifecycleListener {
         namespace «appNamespace»\Listener\Base;
 
         use Doctrine\Common\EventSubscriber;
-        use Doctrine\Common\Persistence\Event\LifecycleEventArgs;
+        «IF !targets('3.0')»
+            use Doctrine\Common\Persistence\Event\LifecycleEventArgs;
+        «ENDIF»
         use Doctrine\ORM\Event\OnFlushEventArgs;
         use Doctrine\ORM\Event\PostFlushEventArgs;
         use Doctrine\ORM\Event\PreFlushEventArgs;
         use Doctrine\ORM\Event\PreUpdateEventArgs;
         use Doctrine\ORM\Events;
+        «IF targets('3.0')»
+            use Doctrine\Persistence\Event\LifecycleEventArgs;
+        «ENDIF»
         «IF hasLoggable»
             use Gedmo\Loggable\Entity\MappedSuperclass\AbstractLogEntry;
         «ENDIF»
