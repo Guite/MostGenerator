@@ -75,7 +75,11 @@ class Plugins {
             use Symfony\Component\HttpFoundation\RequestStack;
         «ENDIF»
         «IF hasCountryFields»
-            use Symfony\Component\Intl\Intl;
+            «IF targets('3.0')»
+                use Symfony\Component\Intl\Countries;
+            «ELSE»
+                use Symfony\Component\Intl\Intl;
+            «ENDIF»
         «ENDIF»
         «IF hasTrees»
             use Symfony\Component\Routing\RouterInterface;

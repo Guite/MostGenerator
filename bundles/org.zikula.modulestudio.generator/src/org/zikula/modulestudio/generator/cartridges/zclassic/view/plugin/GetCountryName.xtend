@@ -27,7 +27,11 @@ class GetCountryName {
          */
         public function getCountryName«IF targets('3.0')»(string $countryCode): string«ELSE»($countryCode)«ENDIF»
         {
-            $result = Intl::getRegionBundle()->getCountryName($countryCode);
+            «IF targets('3.0')»
+                $result = Countries::getName($countryCode);
+            «ELSE»
+                $result = Intl::getRegionBundle()->getCountryName($countryCode);
+            «ENDIF»
             if (false === $result) {
                 $result = $countryCode;
             }
