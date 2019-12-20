@@ -31,7 +31,7 @@ class ViewHelper {
         use Symfony\Component\HttpFoundation\Response;
         use Twig«IF targets('3.0')»\«ELSE»_«ENDIF»Environment;
         «IF targets('3.0')»
-            use Twig\Loader\FilesystemLoader;
+            use Twig\Loader\LoaderInterface;
         «ENDIF»
         use Zikula\Core\Response\PlainResponse;
         use Zikula\ExtensionsModule\Api\ApiInterface\VariableApiInterface;
@@ -58,7 +58,7 @@ class ViewHelper {
         protected $twig;
 
         /**
-         * @var FilesystemLoader
+         * @var «IF targets('3.0')»LoaderInterface«ELSE»FilesystemLoader«ENDIF»
          */
         protected $twigLoader;
 
@@ -96,7 +96,7 @@ class ViewHelper {
 
         public function __construct(
             «IF !targets('3.0')»Twig_«ENDIF»Environment $twig,
-            FilesystemLoader $twigLoader,
+            «IF targets('3.0')»LoaderInterface«ELSE»FilesystemLoader«ENDIF» $twigLoader,
             RequestStack $requestStack,
             VariableApiInterface $variableApi,
             AssetFilter $assetFilter,

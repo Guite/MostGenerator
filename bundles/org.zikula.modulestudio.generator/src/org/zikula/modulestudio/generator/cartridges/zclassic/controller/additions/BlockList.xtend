@@ -31,7 +31,7 @@ class BlockList {
 
         use Exception;
         «IF targets('3.0')»
-            use Twig\Loader\FilesystemLoader;
+            use Twig\Loader\LoaderInterface;
         «ENDIF»
         use Zikula\BlocksModule\AbstractBlockHandler;
         use «appNamespace»\Block\Form\Type\ItemListBlockType;
@@ -62,7 +62,7 @@ class BlockList {
     def private listBlockBaseImpl(Application it) '''
         «IF targets('3.0')»
             /**
-             * @var FilesystemLoader
+             * @var LoaderInterface
              */
             protected $twigLoader;
 
@@ -179,7 +179,7 @@ class BlockList {
             /**
              * @required
              */
-            public function setTwigLoader(FilesystemLoader $twigLoader): void
+            public function setTwigLoader(LoaderInterface $twigLoader): void
             {
                 $this->twigLoader = $twigLoader;
             }
