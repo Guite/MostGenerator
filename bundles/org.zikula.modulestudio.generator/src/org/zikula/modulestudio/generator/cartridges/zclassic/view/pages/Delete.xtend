@@ -28,10 +28,18 @@ class Delete {
         «val app = application»
         «IF application.separateAdminTemplates»
             {# purpose of this template: «nameMultiple.formatForDisplay» «IF isAdmin»admin«ELSE»user«ENDIF» delete confirmation view #}
-            {% extends «IF isAdmin»'«application.appName»::adminBase.html.twig'«ELSE»'«application.appName»::base.html.twig'«ENDIF» %}
+            «IF application.targets('3.0')»
+                {% extends «IF isAdmin»'@«application.appName»/adminBase.html.twig'«ELSE»'@«application.appName»/base.html.twig'«ENDIF» %}
+            «ELSE»
+                {% extends «IF isAdmin»'«application.appName»::adminBase.html.twig'«ELSE»'«application.appName»::base.html.twig'«ENDIF» %}
+            «ENDIF»
         «ELSE»
             {# purpose of this template: «nameMultiple.formatForDisplay» delete confirmation view #}
-            {% extends routeArea == 'admin' ? '«app.appName»::adminBase.html.twig' : '«app.appName»::base.html.twig' %}
+            «IF application.targets('3.0')»
+                {% extends routeArea == 'admin' ? '@«app.appName»/adminBase.html.twig' : '@«app.appName»/base.html.twig' %}
+            «ELSE»
+                {% extends routeArea == 'admin' ? '«app.appName»::adminBase.html.twig' : '«app.appName»::base.html.twig' %}
+            «ENDIF»
         «ENDIF»
         {% block title __('Delete «name.formatForDisplay»') %}
         «IF !application.separateAdminTemplates || isAdmin»

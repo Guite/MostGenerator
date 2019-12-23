@@ -41,10 +41,18 @@ class ViewMap {
     def private mapView(Entity it, String appName, Boolean isAdmin) '''
         «IF application.separateAdminTemplates»
             {# purpose of this template: «nameMultiple.formatForDisplay» «IF isAdmin»admin«ELSE»user«ENDIF» tree view #}
-            {% extends «IF isAdmin»'«appName»::adminBase.html.twig'«ELSE»'«appName»::base.html.twig'«ENDIF» %}
+            «IF application.targets('3.0')»
+                {% extends «IF isAdmin»'@«appName»/adminBase.html.twig'«ELSE»'@«appName»/base.html.twig'«ENDIF» %}
+            «ELSE»
+                {% extends «IF isAdmin»'«appName»::adminBase.html.twig'«ELSE»'«appName»::base.html.twig'«ENDIF» %}
+            «ENDIF»
         «ELSE»
             {# purpose of this template: «nameMultiple.formatForDisplay» map view #}
-            {% extends routeArea == 'admin' ? '«appName»::adminBase.html.twig' : '«appName»::base.html.twig' %}
+            «IF application.targets('3.0')»
+                {% extends routeArea == 'admin' ? '@«appName»/adminBase.html.twig' : '@«appName»/base.html.twig' %}
+            «ELSE»
+                {% extends routeArea == 'admin' ? '«appName»::adminBase.html.twig' : '«appName»::base.html.twig' %}
+            «ENDIF»
         «ENDIF»
         {% block title own ? __('My «nameMultiple.formatForDisplay»') : __('«nameMultiple.formatForDisplayCapital» list') %}
         «IF !application.separateAdminTemplates || isAdmin»

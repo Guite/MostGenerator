@@ -71,7 +71,11 @@ class Display {
             {# purpose of this template: «nameMultiple.formatForDisplay» display view #}
             {% set baseTemplate = app.request.query.getBoolean('raw', false) ? 'raw' : (routeArea == 'admin' ? 'adminBase' : 'base') %}
         «ENDIF»
-        {% extends '«application.appName»::' ~ baseTemplate ~ '.html.twig' %}
+        «IF application.targets('3.0')»
+            {% extends '@«application.appName»/' ~ baseTemplate ~ '.html.twig' %}
+        «ELSE»
+            {% extends '«application.appName»::' ~ baseTemplate ~ '.html.twig' %}
+        «ENDIF»
         {% block pageTitle %}{{ «objName»|«application.appName.formatForDB»_formattedTitle|default(__('«name.formatForDisplayCapital»')) }}{% endblock %}
         {% block title %}
             «IF #[ItemActionsPosition.START, ItemActionsPosition.BOTH].contains(application.displayActionsPosition) && application.displayActionsStyle == ItemActionsStyle.DROPDOWN»

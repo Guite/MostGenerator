@@ -31,7 +31,11 @@ class Config {
 
     def private configView(Application it) '''
         {# purpose of this template: module configuration page #}
-        {% extends '«appName»::adminBase.html.twig' %}
+        «IF targets('3.0')»
+            {% extends '@«appName»/adminBase.html.twig' %}
+        «ELSE»
+            {% extends '«appName»::adminBase.html.twig' %}
+        «ENDIF»
         {% block title __('Settings') %}
         {% block admin_page_icon 'wrench' %}
         {% block content %}
