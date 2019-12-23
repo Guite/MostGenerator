@@ -168,7 +168,11 @@ class ExternalView {
     def private findTemplate(Entity it, Application app) '''
         {# Purpose of this template: Display a popup selector of «nameMultiple.formatForDisplay» for scribite integration #}
         {% set useFinder = true %}
-        {% extends '«app.appName»::raw.html.twig' %}
+        «IF app.targets('3.0')»
+            {% extends '@«app.appName»/raw.html.twig' %}
+        «ELSE»
+            {% extends '«app.appName»::raw.html.twig' %}
+        «ENDIF»
         {% block title __('Search and select «name.formatForDisplay»') %}
         {% block content %}
             <div class="container">

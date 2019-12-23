@@ -537,10 +537,18 @@ class View {
     def private viewViewDeleted(Entity it, Boolean isAdmin) '''
         «IF application.separateAdminTemplates»
             {# purpose of this template: «IF isAdmin»admin«ELSE»user«ENDIF» list view of deleted «nameMultiple.formatForDisplay» #}
-            {% extends «IF isAdmin»'«application.appName»::adminBase.html.twig'«ELSE»'«application.appName»::base.html.twig'«ENDIF» %}
+            «IF application.targets('3.0')»
+                {% extends «IF isAdmin»'@«application.appName»/adminBase.html.twig'«ELSE»'@«application.appName»/base.html.twig'«ENDIF» %}
+            «ELSE»
+                {% extends «IF isAdmin»'«application.appName»::adminBase.html.twig'«ELSE»'«application.appName»::base.html.twig'«ENDIF» %}
+            «ENDIF»
         «ELSE»
             {# purpose of this template: list view of deleted «nameMultiple.formatForDisplay» #}
-            {% extends routeArea == 'admin' ? '«application.appName»::adminBase.html.twig' : '«application.appName»::base.html.twig' %}
+            «IF application.targets('3.0')»
+                {% extends routeArea == 'admin' ? '@«application.appName»/adminBase.html.twig' : '@«application.appName»/base.html.twig' %}
+            «ELSE»
+                {% extends routeArea == 'admin' ? '«application.appName»::adminBase.html.twig' : '«application.appName»::base.html.twig' %}
+            «ENDIF»
         «ENDIF»
         {% block title __('Deleted «nameMultiple.formatForDisplay»') %}
         «IF !application.separateAdminTemplates || isAdmin»
