@@ -110,10 +110,13 @@ class Locking {
     def catchException(Entity it) '''
         «IF hasOptimisticLock»
             } catch (OptimisticLockException $exception) {
-                $flashBag->add(
-                    'error',
-                    $this->__('Sorry, but someone else has already changed this record. Please apply the changes again!')
-                );
+                $request = $this->requestStack->getCurrentRequest();
+                if ($request->hasSession() && ($session = $request->getSession())) {
+                    $session->getFlashBag()->add(
+                        'error',
+                        $this->__('Sorry, but someone else has already changed this record. Please apply the changes again!')
+                    );
+                }
                 $logArgs = [
                     'app' => '«application.appName»',
                     'user' => $this->currentUserApi->get('uname'),
