@@ -520,12 +520,21 @@ class WorkflowHelper {
                     'amount' => $amount,
                     'objectType' => $objectType,
                     'state' => $state,
-                    'message' => $this->translator->transChoice(
-                        'One «name.formatForDisplay» is waiting for «requiredAction».|%count% «nameMultiple.formatForDisplay» are waiting for «requiredAction».',
-                        $amount,
-                        ['%count%' => $amount]«IF !application.isSystemModule»,
-                        '«application.appName.formatForDB»'«ENDIF»
-                    )
+                    «IF application.targets('3.0')»
+                        'message' => $this->translator->trans(
+                            'One «name.formatForDisplay» is waiting for «requiredAction».|%count% «nameMultiple.formatForDisplay» are waiting for «requiredAction».',
+                            $amount,
+                            ['%count%' => $amount]«IF !application.isSystemModule»,
+                            '«application.appName.formatForDB»'«ENDIF»
+                        )
+                    «ELSE»
+                        'message' => $this->translator->transChoice(
+                            'One «name.formatForDisplay» is waiting for «requiredAction».|%count% «nameMultiple.formatForDisplay» are waiting for «requiredAction».',
+                            $amount,
+                            ['%count%' => $amount]«IF !application.isSystemModule»,
+                            '«application.appName.formatForDB»'«ENDIF»
+                        )
+                    «ENDIF»
                 ];
 
                 $this->logger->info(

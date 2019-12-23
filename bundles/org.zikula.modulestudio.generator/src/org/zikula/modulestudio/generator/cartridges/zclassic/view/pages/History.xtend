@@ -200,7 +200,11 @@ class History {
                         <td headers="hChanges">
                             {% if logEntry.data is not empty %}
                                 <a role="button" data-toggle="collapse" href="#changes{{ logEntry.version }}" aria-expanded="false" aria-controls="changes{{ logEntry.version }}">
-                                    {{ '{0} No fields updated|{1} One field updated|]1,Inf[ %amount% fields updated'|transchoice(logEntry.data|length, {'%amount%': logEntry.data|length}«IF !application.isSystemModule», '«application.appName.formatForDB»'«ENDIF») }}
+                                    «IF application.targets('3.0')»
+                                        {{ '{0} No fields updated|{1} One field updated|]1,Inf[ %count% fields updated'|trans(logEntry.data|length, {'%count%': logEntry.data|length}«IF !application.isSystemModule», '«application.appName.formatForDB»'«ENDIF») }}
+                                    «ELSE»
+                                        {{ '{0} No fields updated|{1} One field updated|]1,Inf[ %amount% fields updated'|transchoice(logEntry.data|length, {'%amount%': logEntry.data|length}«IF !application.isSystemModule», '«application.appName.formatForDB»'«ENDIF») }}
+                                    «ENDIF»
                                 </a>
                                 <div id="changes{{ logEntry.version }}" class="collapse">
                                     <ul>

@@ -76,7 +76,11 @@ class Definition {
                                 - «app.appNamespace»\Entity\«entity.name.formatForCodeCapital»Entity
                             «ENDIF»
                         «ENDFOR»
-                    «statesImpl»
+                    «/*IF app.targets('3.0')»
+                        initial_marking: [initial]
+                    «ELSE»
+                        initial_place: initial
+                    «ENDIF*/»«statesImpl»
                     «actionsImpl»
     '''
 

@@ -165,26 +165,50 @@ class ListEntryValidator {
 
                 if (null !== $constraint->min && $count < $constraint->min) {
                     $this->context->buildViolation(
-                        $this->translator->transChoice(
-                            'You must select at least "%limit%" choice.|You must select at least "%limit%" choices.',
-                            $count,
-                            [
-                                '%limit%' => $constraint->min
-                            ]«IF !isSystemModule»,
-                            '«appName.formatForDB»'«ENDIF»
-                        )
+                        «IF targets('3.0')»
+                            $this->translator->trans(
+                                'You must select at least "%limit%" choice.|You must select at least "%limit%" choices.',
+                                $count,
+                                [
+                                    '%count%' => $count,
+                                    '%limit%' => $constraint->min
+                                ]«IF !isSystemModule»,
+                                '«appName.formatForDB»'«ENDIF»
+                            )
+                        «ELSE»
+                            $this->translator->transChoice(
+                                'You must select at least "%limit%" choice.|You must select at least "%limit%" choices.',
+                                $count,
+                                [
+                                    '%limit%' => $constraint->min
+                                ]«IF !isSystemModule»,
+                                '«appName.formatForDB»'«ENDIF»
+                            )
+                        «ENDIF»
                     )->addViolation();
                 }
                 if (null !== $constraint->max && $count > $constraint->max) {
                     $this->context->buildViolation(
-                        $this->translator->transChoice(
-                            'You must select at most "%limit%" choice.|You must select at most "%limit%" choices.',
-                            $count,
-                            [
-                                '%limit%' => $constraint->max
-                            ]«IF !isSystemModule»,
-                            '«appName.formatForDB»'«ENDIF»
-                        )
+                        «IF targets('3.0')»
+                            $this->translator->trans(
+                                'You must select at most "%limit%" choice.|You must select at most "%limit%" choices.',
+                                $count,
+                                [
+                                    '%count%' => $count,
+                                    '%limit%' => $constraint->max
+                                ]«IF !isSystemModule»,
+                                '«appName.formatForDB»'«ENDIF»
+                            )
+                        «ELSE»
+                            $this->translator->transChoice(
+                                'You must select at most "%limit%" choice.|You must select at most "%limit%" choices.',
+                                $count,
+                                [
+                                    '%limit%' => $constraint->max
+                                ]«IF !isSystemModule»,
+                                '«appName.formatForDB»'«ENDIF»
+                            )
+                        «ENDIF»
                     )->addViolation();
                 }
             }
