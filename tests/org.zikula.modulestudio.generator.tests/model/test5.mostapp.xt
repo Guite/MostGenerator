@@ -405,7 +405,7 @@ application "SimpleNews" {
                     minLength 3
                     regexp "foo"
                 },
-                email "ema3" fixed checkMX checkHost {
+                email "ema3" fixed {
                     sluggablePosition 3
                     regexp "foo" opposite
                     length 50
@@ -434,7 +434,7 @@ application "SimpleNews" {
                     minLength 3
                     regexp "foo"
                 },
-                url "url3" fixed checkDNS {
+                url "url3" fixed {
                     sluggablePosition 3
                     regexp "foo" opposite
                     length 50

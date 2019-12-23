@@ -168,7 +168,6 @@ class ListEntryValidator {
                         «IF targets('3.0')»
                             $this->translator->trans(
                                 'You must select at least "%limit%" choice.|You must select at least "%limit%" choices.',
-                                $count,
                                 [
                                     '%count%' => $count,
                                     '%limit%' => $constraint->min
@@ -192,7 +191,6 @@ class ListEntryValidator {
                         «IF targets('3.0')»
                             $this->translator->trans(
                                 'You must select at most "%limit%" choice.|You must select at most "%limit%" choices.',
-                                $count,
                                 [
                                     '%count%' => $count,
                                     '%limit%' => $constraint->max
