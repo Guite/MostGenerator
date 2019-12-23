@@ -186,13 +186,21 @@ class ValidationConstraints {
         «fieldAnnotationsString»
         «' '»* @Assert\Length(min="«minLength»", max="«length»")
         «IF mandatory»
-            «' '»* @Assert\Email(checkMX=«checkMX.displayBool», checkHost=«checkHost.displayBool»)
+            «IF application.targets('3.0')»
+                «' '»* @Assert\Email()
+            «ELSE»
+                «' '»* @Assert\Email(checkMX=«checkMX.displayBool», checkHost=«checkHost.displayBool»)
+            «ENDIF»
         «ENDIF»
     '''
     def dispatch fieldAnnotations(UrlField it) '''
         «fieldAnnotationsString»
         «' '»* @Assert\Length(min="«minLength»", max="«length»")
-        «' '»* @Assert\Url(checkDNS=«IF application.targets('2.0') && checkDNS»'ANY'«ELSE»«checkDNS.displayBool»«ENDIF»«IF checkDNS», dnsMessage = "The host '{{ value }}' could not be resolved."«ENDIF»«/* , protocols={"http", "https"} */»)
+        «IF application.targets('3.0')»
+            «' '»* @Assert\Url()
+        «ELSE»
+            «' '»* @Assert\Url(checkDNS=«IF application.targets('2.0') && checkDNS»'ANY'«ELSE»«checkDNS.displayBool»«ENDIF»«IF checkDNS», dnsMessage = "The host '{{ value }}' could not be resolved."«ENDIF»)
+        «ENDIF»
     '''
     def dispatch fieldAnnotations(UploadField it) '''
         «fieldAnnotationsString»
@@ -287,10 +295,12 @@ class ValidationConstraints {
     def dispatch fieldAnnotations(DatetimeField it) '''
         «fieldAnnotationsMandatory»
         «IF isDateTimeField || isDateField»
-            «IF isDateTimeField»
-                «' '»* @Assert\DateTime()
-            «ELSEIF isDateField»
-                «' '»* @Assert\Date()
+            «IF !application.targets('3.0')»«/* no constraint if the underlying model is type hinted already */»
+                «IF isDateTimeField»
+                    «' '»* @Assert\DateTime()
+                «ELSEIF isDateField»
+                    «' '»* @Assert\Date()
+                «ENDIF»
             «ENDIF»
             «IF past»
                 «' '»* @Assert\LessThan("now", message="Please select a value in the past.")

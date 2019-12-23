@@ -572,9 +572,8 @@ class SharedFormTypeFields {
             «IF percentage»
                 'type' => 'integer',
             «ENDIF»
-            «IF !range»
-                'scale' => 0«IF isShrinkDimensionField || isThumbDimensionField»,
-                'input_group' => ['right' => $this->__('pixels')]«ENDIF»
+            «IF isShrinkDimensionField || isThumbDimensionField»
+                'input_group' => ['right' => $this->__('pixels')]
             «ENDIF»
         «ENDIF»
     '''
@@ -587,6 +586,7 @@ class SharedFormTypeFields {
         «/* not required since these are the default values IF currency»
             'currency' => 'EUR',
             'divisor' => 1,
+            'rounding_mode' => NumberToLocalizedStringTransformer::ROUND_HALF_UP
         «ENDIF*/»
         «/* not required since these are the default values IF percentage»
             'type' => 'fractional',
@@ -752,6 +752,9 @@ class SharedFormTypeFields {
         «ELSEIF isTimeField»
             'empty_data' => '«defaultValue»',
             'widget' => 'single_text'
+        «ENDIF»
+        «IF application.targets('3.0') && immutable»
+            'input' => 'datetime_immutable'
         «ENDIF»
     '''
 
