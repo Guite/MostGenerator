@@ -106,7 +106,11 @@ class Layout {
 
     def adminBaseTemplate(Application it) '''
         {# purpose of this template: admin area base layout #}
-        {% extends '«appName»::base.html.twig' %}
+        «IF targets('3.0')»
+            {% extends '@«appName»/base.html.twig' %}
+        «ELSE»
+            {% extends '«appName»::base.html.twig' %}
+        «ENDIF»
         {% block header %}
             {% if not app.request.query.getBoolean('raw', false) %}
                 {{ adminHeader() }}
@@ -322,7 +326,6 @@ class Layout {
                 @page {
                     margin: 1cm 2cm 1cm 1cm;
                 }
-
                 img {
                     border-width: 0;
                     vertical-align: top;

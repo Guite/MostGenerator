@@ -75,8 +75,11 @@ class Forms {
             {# purpose of this template: build the form to «actionName.formatForDisplay» an instance of «name.formatForDisplay» #}
             {% set baseTemplate = app.request.query.getBoolean('raw', false) ? 'raw' : (routeArea == 'admin' ? 'adminBase' : 'base') %}
         «ENDIF»
-        {% extends '«application.appName»::' ~ baseTemplate ~ '.html.twig' %}
-
+        «IF application.targets('3.0')»
+            {% extends '@«application.appName»/' ~ baseTemplate ~ '.html.twig' %}
+        «ELSE»
+            {% extends '«application.appName»::' ~ baseTemplate ~ '.html.twig' %}
+        «ENDIF»
         {% block title mode == 'create' ? __('Create «name.formatForDisplay»') : __('Edit «name.formatForDisplay»') %}
         «IF !application.separateAdminTemplates || isSeparateAdminTemplate»
             {% block admin_page_icon mode == 'create' ? 'plus' : 'pencil-square-o' %}

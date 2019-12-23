@@ -32,10 +32,18 @@ class Custom {
     def private customView(CustomAction it, Entity controller, Boolean isAdmin) '''
         «IF app.separateAdminTemplates»
             {# purpose of this template: show output of «name.formatForDisplay» action in «entity.name.formatForDisplay» «IF isAdmin»admin«ELSE»user«ENDIF» area #}
-            {% extends «IF isAdmin»'«app.appName»::adminBase.html.twig'«ELSE»'«app.appName»::base.html.twig'«ENDIF» %}
+            «IF app.targets('3.0')»
+                {% extends «IF isAdmin»'@«app.appName»/adminBase.html.twig'«ELSE»'@«app.appName»/base.html.twig'«ENDIF» %}
+            «ELSE»
+                {% extends «IF isAdmin»'«app.appName»::adminBase.html.twig'«ELSE»'«app.appName»::base.html.twig'«ENDIF» %}
+            «ENDIF»
         «ELSE»
             {# purpose of this template: show output of «name.formatForDisplay» action in «entity.name.formatForDisplay» area #}
-            {% extends routeArea == 'admin' ? '«app.appName»::adminBase.html.twig' : '«app.appName»::base.html.twig' %}
+            «IF app.targets('3.0')»
+                {% extends routeArea == 'admin' ? '@«app.appName»/adminBase.html.twig' : '@«app.appName»/base.html.twig' %}
+            «ELSE»
+                {% extends routeArea == 'admin' ? '«app.appName»::adminBase.html.twig' : '«app.appName»::base.html.twig' %}
+            «ENDIF»
         «ENDIF»
         {% block title __('«name.formatForDisplayCapital»') %}
         «IF !app.separateAdminTemplates || isAdmin»
