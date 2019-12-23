@@ -583,8 +583,13 @@ class HookHelper {
                 {
                     $innerForm = $hook->getFormData('«application.appName.formatForDB»_hook_edit«name.formatForDB»');
                     $dummyOutput = $innerForm['dummyName'] . ' (Option ' . implode(', ', $innerForm['dummyChoice']) . ')';
-                    $session = $this->requestStack->getCurrentRequest()->getSession();
-                    $session->getFlashBag()->add('success', sprintf('The «name.formatForCodeCapital»«providerType»Provider edit form was processed and the answer was %s', $dummyOutput));
+                    $request = $this->requestStack->getCurrentRequest();
+                    if ($request->hasSession() && ($session = $request->getSession())) {
+                        $session->getFlashBag()->add(
+                            'success',
+                            sprintf('The «name.formatForCodeCapital»«providerType»Provider edit form was processed and the answer was %s', $dummyOutput)
+                        );
+                    }
                 }
 
                 /**
@@ -608,8 +613,13 @@ class HookHelper {
                 {
                     $innerForm = $hook->getFormData('«application.appName.formatForDB»_hook_delete«name.formatForDB»');
                     $dummyOutput = $innerForm['dummyName'] . ' (Option ' . implode(', ', $innerForm['dummyChoice']) . ')';
-                    $session = $this->requestStack->getCurrentRequest()->getSession();
-                    $session->getFlashBag()->add('success', sprintf('The «name.formatForCodeCapital»«providerType»Provider delete form was processed and the answer was %s', $dummyOutput));
+                    $request = $this->requestStack->getCurrentRequest();
+                    if ($request->hasSession() && ($session = $request->getSession())) {
+                        $session->getFlashBag()->add(
+                            'success',
+                            sprintf('The «name.formatForCodeCapital»«providerType»Provider delete form was processed and the answer was %s', $dummyOutput)
+                        );
+                    }
                 }
             «ELSEIF category == 'UiHooks'»
                 /**

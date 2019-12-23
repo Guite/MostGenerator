@@ -205,7 +205,7 @@ class NotificationHelper {
             }
 
             $request = $this->requestStack->getCurrentRequest();
-            $session = null !== $request ? $request->getSession() : null;
+            $session = null !== $request && $request->hasSession() ? $request->getSession() : null;
 
             if (null === $this->kernel->getModule('ZikulaMailerModule')) {
                 if (null !== $session) {
@@ -435,7 +435,7 @@ class NotificationHelper {
             $stateInfo = $this->workflowHelper->getStateInfo($state);
 
             $request = $this->requestStack->getCurrentRequest();
-            $session = null !== $request ? $request->getSession() : null;
+            $session = null !== $request && $request->hasSession() ? $request->getSession() : null;
             $remarks = null !== $session ? $session->get($this->name . 'AdditionalNotificationRemarks', '') : '';
 
             $hasDisplayAction = in_array($objectType, ['«getAllEntities.filter[hasDisplayAction].map[name.formatForCode].join('\', \'')»'], true);

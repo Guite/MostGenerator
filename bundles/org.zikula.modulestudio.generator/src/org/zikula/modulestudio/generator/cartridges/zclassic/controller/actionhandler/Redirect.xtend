@@ -176,10 +176,12 @@ class Redirect {
                 return $this->repeatReturnUrl;
             }
 
-            $session = $this->requestStack->getCurrentRequest()->getSession();
-            if ($session->has('«app.appName.formatForDB»' . $this->objectTypeCapital . 'Referer')) {
-                $this->returnTo = $session->get('«app.appName.formatForDB»' . $this->objectTypeCapital . 'Referer');
-                $session->remove('«app.appName.formatForDB»' . $this->objectTypeCapital . 'Referer');
+            $request = $this->requestStack->getCurrentRequest();
+            if ($request->hasSession() && ($session = $request->getSession())) {
+                if ($session->has('«app.appName.formatForDB»' . $this->objectTypeCapital . 'Referer')) {
+                    $this->returnTo = $session->get('«app.appName.formatForDB»' . $this->objectTypeCapital . 'Referer');
+                    $session->remove('«app.appName.formatForDB»' . $this->objectTypeCapital . 'Referer');
+                }
             }
 
             «IF hasDisplayAction && hasSluggableFields»

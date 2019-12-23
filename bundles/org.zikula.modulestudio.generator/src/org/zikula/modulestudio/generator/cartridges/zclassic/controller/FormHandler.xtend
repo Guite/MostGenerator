@@ -531,23 +531,25 @@ class FormHandler {
                 $this->templateParameters['inlineUsage'] = $request->query->getBoolean('raw');
             «ENDIF»
             «IF !getJoinRelations.empty || app.needsAutoCompletion»
-
                 $this->idPrefix = $request->query->get('idp', '');
             «ENDIF»
+            $session = $request->hasSession() ? $request->getSession() : null;
 
             // initialise redirect goal
             $this->returnTo = $request->query->get('returnTo');
-            // default to referer
-            $refererSessionVar = '«appName.formatForDB»' . $this->objectTypeCapital . 'Referer';
-            if (null === $this->returnTo && $request->headers->has('referer')) {
-                $currentReferer = $request->headers->get('referer');
-                if ($currentReferer !== urldecode($request->getUri())) {
-                    $this->returnTo = $currentReferer;
-                    $request->getSession()->set($refererSessionVar, $this->returnTo);
+            if (null !== $session) {
+                // default to referer
+                $refererSessionVar = '«appName.formatForDB»' . $this->objectTypeCapital . 'Referer';
+                if (null === $this->returnTo && $request->headers->has('referer')) {
+                    $currentReferer = $request->headers->get('referer');
+                    if ($currentReferer !== urldecode($request->getUri())) {
+                        $this->returnTo = $currentReferer;
+                        $session->set($refererSessionVar, $this->returnTo);
+                    }
                 }
-            }
-            if (null === $this->returnTo && $request->getSession()->has($refererSessionVar)) {
-                $this->returnTo = $request->getSession()->get($refererSessionVar);
+                if (null === $this->returnTo && $session->has($refererSessionVar)) {
+                    $this->returnTo = $session->get($refererSessionVar);
+                }
             }
             // store current uri for repeated creations
             $this->repeatReturnUrl = $request->getUri();
@@ -577,7 +579,7 @@ class FormHandler {
                         throw new AccessDeniedException();
                     }
                     «IF !getAllEntities.filter[hasDisplayAction && hasEditAction && hasSluggableFields].empty»
-                        if (in_array($this->objectType, ['«getAllEntities.filter[hasDisplayAction && hasEditAction && hasSluggableFields].map[name.formatForCode].join('\', \'')»'], true)) {
+                        if (null !== $session && in_array($this->objectType, ['«getAllEntities.filter[hasDisplayAction && hasEditAction && hasSluggableFields].map[name.formatForCode].join('\', \'')»'], true)) {
                             // map display return urls to redirect codes because slugs may change
                             $routePrefix = '«app.appName.formatForDB»_' . $this->objectTypeLower . '_';
                             $userDisplayUrl = $this->router->generate(
@@ -595,7 +597,7 @@ class FormHandler {
                             } elseif ($this->returnTo === $adminDisplayUrl) {
                                 $this->returnTo = 'adminDisplay';
                             }
-                            $request->getSession()->set($refererSessionVar, $this->returnTo);
+                            $session->set($refererSessionVar, $this->returnTo);
                         }
                     «ENDIF»
                 }
@@ -627,7 +629,9 @@ class FormHandler {
             }
 
             if (null === $entity) {
-                $request->getSession()->getFlashBag()->add('error', $this->__('No such item found.'));
+                if (null !== $session) {
+                    $session->getFlashBag()->add('error', $this->__('No such item found.'));
+                }
 
                 return new RedirectResponse($this->getRedirectUrl(['commandName' => 'cancel']), 302);
             }
@@ -648,10 +652,12 @@ class FormHandler {
 
             $actions = $this->workflowHelper->getActionsForObject($entity);
             if (false === $actions || !is_array($actions)) {
-                $request->getSession()->getFlashBag()->add(
-                    'error',
-                    $this->__('Error! Could not determine workflow actions.')
-                );
+                if (null !== $session) {
+                    $session->getFlashBag()->add(
+                        'error',
+                        $this->__('Error! Could not determine workflow actions.')
+                    );
+                }
                 $logArgs = [
                     'app' => '«appName»',
                     'user' => $this->currentUserApi->get('uname'),
@@ -981,9 +987,11 @@ class FormHandler {
                     ;
                     $validationErrors = $this->hookHelper->callValidationHooks($entity, $hookType);
                     if (0 < count($validationErrors)) {
-                        $flashBag = $this->requestStack->getCurrentRequest()->getSession()->getFlashBag();
-                        foreach ($validationErrors as $message) {
-                            $flashBag->add('error', $message);
+                        $request = $this->requestStack->getCurrentRequest();
+                        if ($request->hasSession() && ($session = $request->getSession())) {
+                            foreach ($validationErrors as $message) {
+                                $session->getFlashBag()->add('error', $message);
+                            }
                         }
 
                         return false;
@@ -1134,7 +1142,10 @@ class FormHandler {
             }
 
             $flashType = true === $success ? 'status' : 'error';
-            $this->requestStack->getCurrentRequest()->getSession()->getFlashBag()->add($flashType, $message);
+            $request = $this->requestStack->getCurrentRequest();
+            if ($request->hasSession() && ($session = $request->getSession())) {
+                $session->getFlashBag()->add($flashType, $message);
+            }
             $logArgs = [
                 'app' => '«appName»',
                 'user' => $this->currentUserApi->get('uname'),
@@ -1182,10 +1193,13 @@ class FormHandler {
                     isset($this->form['additionalNotificationRemarks'])
                     && '' !== $this->form['additionalNotificationRemarks']->getData()
                 ) {
-                    $this->requestStack->getCurrentRequest()->getSession()->set(
-                        '«appName»AdditionalNotificationRemarks',
-                        $this->form['additionalNotificationRemarks']->getData()
-                    );
+                    $request = $this->requestStack->getCurrentRequest();
+                    if ($request->hasSession() && ($session = $request->getSession())) {
+                        $session->set(
+                            '«appName»AdditionalNotificationRemarks',
+                            $this->form['additionalNotificationRemarks']->getData()
+                        );
+                    }
                 }
             «ENDIF»
             «IF hasAttributableEntities»
@@ -1412,10 +1426,13 @@ class FormHandler {
             }
 
             if ('create' === $this->templateParameters['mode'] && !$this->modelHelper->canBeCreated($this->objectType)) {
-                $this->requestStack->getCurrentRequest()->getSession()->getFlashBag()->add(
-                    'error',
-                    $this->__('Sorry, but you can not create the «name.formatForDisplay» yet as other items are required which must be created before!')
-                );
+                $request = $this->requestStack->getCurrentRequest();
+                if ($request->hasSession() && ($session = $request->getSession())) {
+                    $session()->getFlashBag()->add(
+                        'error',
+                        $this->__('Sorry, but you can not create the «name.formatForDisplay» yet as other items are required which must be created before!')
+                    );
+                }
                 $logArgs = [
                     'app' => '«app.appName»',
                     'user' => $this->currentUserApi->get('uname'),
@@ -1606,20 +1623,22 @@ class FormHandler {
             «locking.getVersion(it)»
 
             $success = false;
-            $flashBag = $this->requestStack->getCurrentRequest()->getSession()->getFlashBag();
             try {
                 «locking.applyLock(it)»
                 // execute the workflow action
                 $success = $this->workflowHelper->executeAction($entity, $action);
             «locking.catchException(it)»
             } catch (Exception $exception) {
-                $flashBag->add(
-                    'error',
-                    $this->__f(
-                        'Sorry, but an error occured during the %action% action. Please apply the changes again!',
-                        ['%action%' => $action]
-                    ) . ' ' . $exception->getMessage()
-                );
+                $request = $this->requestStack->getCurrentRequest();
+                if ($request->hasSession() && ($session = $request->getSession())) {
+                    $flashBag->add(
+                        'error',
+                        $this->__f(
+                            'Sorry, but an error occured during the %action% action. Please apply the changes again!',
+                            ['%action%' => $action]
+                        ) . ' ' . $exception->getMessage()
+                    );
+                }
                 $logArgs = [
                     'app' => '«app.appName»',
                     'user' => $this->currentUserApi->get('uname'),

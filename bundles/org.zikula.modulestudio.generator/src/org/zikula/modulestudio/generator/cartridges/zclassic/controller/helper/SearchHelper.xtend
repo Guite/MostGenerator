@@ -235,7 +235,7 @@ class SearchHelper {
                 $descriptionFieldName = $this->entityDisplayHelper->getDescriptionFieldName($objectType);
                 $hasDisplayAction = in_array($objectType, $entitiesWithDisplayAction, true);
 
-                $session = $request->getSession();
+                $session = $request->hasSession() ? $request->getSession() : null;
                 foreach ($entities as $entity) {
                     if (!$this->permissionHelper->mayRead($entity)) {
                         continue;
@@ -264,7 +264,7 @@ class SearchHelper {
                         ->setText($description)
                         ->setModule(«IF targets('3.0')»$this->getBundleName()«ELSE»'«appName»'«ENDIF»)
                         ->setCreated($created)
-                        ->setSesid($session->getId())
+                        ->setSesid(null !== $session ? $session->getId() : null)
                     ;
                     if (null !== $displayUrl) {
                         $result->setUrl($displayUrl);

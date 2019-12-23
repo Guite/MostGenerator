@@ -216,7 +216,9 @@ class ImageHelper {
             if (file_exists($cachePath)) {
                 return;
             }
-
+            if (!$this->requestStack->getCurrentRequest()->hasSession()) {
+                return;
+            }
             $session = $this->requestStack->getCurrentRequest()->getSession();
             $session->getFlashBag()->add(
                 'warning',

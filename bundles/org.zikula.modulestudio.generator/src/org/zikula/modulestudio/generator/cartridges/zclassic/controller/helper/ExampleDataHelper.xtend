@@ -264,12 +264,14 @@ class ExampleDataHelper {
             «FOR entity : getExampleEntities»«entity.persistEntities(it)»«ENDFOR»
             «FOR entity : getExampleEntities»«entity.saveEntities(it)»«ENDFOR»
         } catch (Exception $exception) {
-            $flashBag = $this->requestStack->getCurrentRequest()->getSession()->getFlashBag();
-            $flashBag->add(
-                'error',
-                $this->translator->__('Exception during example data creation')
-                    . ': ' . $exception->getMessage()
-            );
+            if ($this->requestStack->getCurrentRequest()->hasSession()) {
+                $flashBag = $this->requestStack->getCurrentRequest()->getSession()->getFlashBag();
+                $flashBag->add(
+                    'error',
+                    $this->translator->__('Exception during example data creation')
+                        . ': ' . $exception->getMessage()
+                );
+            }
             $this->logger->error(
                 '{app}: Could not completely create example data after installation. Error details: {errorMessage}.',
                 ['app' => '«appName»', 'errorMessage' => $exception->getMessage()]

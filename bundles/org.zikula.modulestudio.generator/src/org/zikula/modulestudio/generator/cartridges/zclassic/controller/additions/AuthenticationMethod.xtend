@@ -123,16 +123,20 @@ class AuthenticationMethod {
 
         public function authenticate(array $data = [])«IF targets('3.0')»: ?int«ENDIF»
         {
-            $session = $this->requestStack->getCurrentRequest()->getSession();
-            $session->getFlashBag()->add('error', $this->translator->__('Login for «name.formatForDisplay» authentication method is not implemented yet.'));
+            $request = $this->requestStack->getCurrentRequest();
+            if ($request->hasSession() && ($session = $request->getSession())) {
+                $session->getFlashBag()->add('error', $this->translator->__('Login for «name.formatForDisplay» authentication method is not implemented yet.'));
+            }
 
             return null;
         }
 
         public function register(array $data = [])«IF targets('3.0')»: bool«ENDIF»
         {
-            $session = $this->requestStack->getCurrentRequest()->getSession();
-            $session->getFlashBag()->add('error', $this->translator->__('Registration for «name.formatForDisplay» authentication method is not implemented yet.'));
+            $request = $this->requestStack->getCurrentRequest();
+            if ($request->hasSession() && ($session = $request->getSession())) {
+                $session->getFlashBag()->add('error', $this->translator->__('Registration for «name.formatForDisplay» authentication method is not implemented yet.'));
+            }
 
             return false;
         }
