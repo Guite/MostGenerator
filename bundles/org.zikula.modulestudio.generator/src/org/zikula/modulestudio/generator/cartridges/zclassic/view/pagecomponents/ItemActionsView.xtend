@@ -32,7 +32,11 @@ class ItemActionsView {
     '''
 
     def private renderMenu(Application it, String context) '''
-        {{ knp_menu_render(itemActions, {template: 'ZikulaMenuModule:Override:«IF useStyle(context, ItemActionsStyle.ICON)»actions«ELSE»bootstrap_fontawesome«ENDIF».html.twig'}) }}
+        «IF targets('3.0')»
+            {{ knp_menu_render(itemActions, {template: '@ZikulaMenuModule/Override/«IF useStyle(context, ItemActionsStyle.ICON)»actions«ELSE»bootstrap_fontawesome«ENDIF».html.twig'}) }}
+        «ELSE»
+            {{ knp_menu_render(itemActions, {template: 'ZikulaMenuModule:Override:«IF useStyle(context, ItemActionsStyle.ICON)»actions«ELSE»bootstrap_fontawesome«ENDIF».html.twig'}) }}
+        «ENDIF»
     '''
 
     def private useStyle(Application it, String context, ItemActionsStyle style) {
