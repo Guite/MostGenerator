@@ -12,6 +12,8 @@ import de.guite.modulestudio.metamodel.MappedSuperClass
 import de.guite.modulestudio.metamodel.OneToManyRelationship
 import de.guite.modulestudio.metamodel.RelationAutoCompletionUsage
 import de.guite.modulestudio.metamodel.RelationEditMode
+import de.guite.modulestudio.metamodel.StringField
+import de.guite.modulestudio.metamodel.StringRole
 import de.guite.modulestudio.metamodel.UploadField
 import de.guite.modulestudio.metamodel.UserField
 import java.util.ArrayList
@@ -110,6 +112,13 @@ class EditEntityType {
         abstract class Abstract«name.formatForCodeCapital»Type extends AbstractType
         {
             use TranslatorTrait;
+            «IF application.targets('3.0') && !fields.filter(StringField).filter[#[StringRole.COUNTRY, StringRole.CURRENCY, StringRole.LANGUAGE, StringRole.LOCALE, StringRole.TIME_ZONE].contains(role)].empty»
+                /**
+                 * @var RequestStack
+                 */
+                protected $requestStack;
+
+            «ENDIF»
             «IF it instanceof Entity && (it as Entity).standardFields»
                 use ModerationFormFieldsTrait;
             «ENDIF»
@@ -176,6 +185,9 @@ class EditEntityType {
 
             public function __construct(
                 TranslatorInterface $translator,
+                «IF application.targets('3.0') && !fields.filter(StringField).filter[#[StringRole.COUNTRY, StringRole.CURRENCY, StringRole.LANGUAGE, StringRole.LOCALE, StringRole.TIME_ZONE].contains(role)].empty»
+                    RequestStack $requestStack,
+                «ENDIF»
                 EntityFactory $entityFactory«IF !incoming.empty || !outgoing.empty»,
                 CollectionFilterHelper $collectionFilterHelper,
                 EntityDisplayHelper $entityDisplayHelper«ENDIF»«IF isTranslatable»,
@@ -187,6 +199,9 @@ class EditEntityType {
                 FeatureActivationHelper $featureActivationHelper«ENDIF»
             ) {
                 $this->setTranslator($translator);
+                «IF application.targets('3.0') && !fields.filter(StringField).filter[#[StringRole.COUNTRY, StringRole.CURRENCY, StringRole.LANGUAGE, StringRole.LOCALE, StringRole.TIME_ZONE].contains(role)].empty»
+                    $this->requestStack = $requestStack;
+                «ENDIF»
                 $this->entityFactory = $entityFactory;
                 «IF !incoming.empty || !outgoing.empty»
                     $this->collectionFilterHelper = $collectionFilterHelper;

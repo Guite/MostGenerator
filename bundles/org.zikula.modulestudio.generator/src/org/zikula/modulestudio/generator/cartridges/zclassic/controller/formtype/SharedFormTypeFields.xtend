@@ -137,6 +137,9 @@ class SharedFormTypeFields {
         «IF (null !== dataObject && dataObject.hasUploadFieldsEntity) || (null === dataObject && !fields.filter(UploadField).empty)»
             use Symfony\Component\HttpFoundation\File\File;
         «ENDIF»
+        «IF app.targets('3.0') && !fields.filter(StringField).filter[#[StringRole.COUNTRY, StringRole.CURRENCY, StringRole.LANGUAGE, StringRole.LOCALE, StringRole.TIME_ZONE].contains(role)].empty»
+            use Symfony\Component\HttpFoundation\RequestStack;
+        «ENDIF»
         use Symfony\Component\OptionsResolver\OptionsResolver;
         «IF !fields.filter(StringField).filter[role == StringRole.LOCALE].empty»
             use Zikula\Bundle\FormExtensionBundle\Form\Type\LocaleType;
@@ -610,7 +613,9 @@ class SharedFormTypeFields {
         «ENDIF»
         «IF role == StringRole.LOCALE»
             'choices' => $this->localeApi->getSupportedLocaleNames(),
-            «IF !application.targets('2.0')»
+            «IF application.targets('2.0')»
+                'choice_loader' => null,
+            «ELSE»
                 'choices_as_values' => true
             «ENDIF»
         «ENDIF»
@@ -642,6 +647,20 @@ class SharedFormTypeFields {
             'with_hours' => true,
             'with_minutes' => true,
             'with_seconds' => true
+        «ENDIF»
+        «IF application.targets('3.0')»
+            «IF role == StringRole.COUNTRY»
+                'choice_translation_locale' => $this->requestStack->getCurrentRequest()->getLocale()
+            «ELSEIF role == StringRole.CURRENCY»
+                'choice_translation_locale' => $this->requestStack->getCurrentRequest()->getLocale()
+            «ELSEIF role == StringRole.LANGUAGE»
+                'choice_translation_locale' => $this->requestStack->getCurrentRequest()->getLocale()
+            «ELSEIF role == StringRole.LOCALE»
+                'choice_translation_locale' => $this->requestStack->getCurrentRequest()->getLocale()
+            «ELSEIF role == StringRole.TIME_ZONE»
+                'choice_translation_locale' => $this->requestStack->getCurrentRequest()->getLocale(),
+                'intl' => true
+            «ENDIF»
         «ENDIF»
     '''
 

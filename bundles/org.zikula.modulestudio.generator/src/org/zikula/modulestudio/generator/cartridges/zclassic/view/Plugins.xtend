@@ -255,7 +255,7 @@ class Plugins {
         public function getFilters()
         {
             return [
-                «IF hasCountryFields»
+                «IF hasCountryFields && !targets('3.0')»
                     new «IF targets('3.0')»Twig«ELSE»\Twig_Simple«ENDIF»Filter('«appNameLower»_countryName', [$this, 'getCountryName']),
                 «ENDIF»
                 «IF targets('2.0') && !getAllEntities.filter[!fields.filter(StringField).filter[role == StringRole.DATE_INTERVAL].empty].empty»
@@ -432,7 +432,7 @@ class Plugins {
     def private viewPlugins(Application it) {
         val result = newArrayList
         result += new ObjectState().generate(it)
-        if (hasCountryFields) {
+        if (hasCountryFields && !targets('3.0')) {
             result += new GetCountryName().generate(it)
         }
         if (hasUploads) {

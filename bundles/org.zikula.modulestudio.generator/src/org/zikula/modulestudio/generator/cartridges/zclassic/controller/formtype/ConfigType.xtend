@@ -48,6 +48,13 @@ class ConfigType {
         abstract class AbstractConfigType extends AbstractType
         {
             use TranslatorTrait;
+            «IF targets('3.0') && !getAllVariables.filter(StringField).filter[#[StringRole.COUNTRY, StringRole.CURRENCY, StringRole.LANGUAGE, StringRole.LOCALE, StringRole.TIME_ZONE].contains(role)].empty»
+                /**
+                 * @var RequestStack
+                 */
+                protected $requestStack;
+
+            «ENDIF»
             «IF !getAllVariables.filter(ListField).empty»
 
                 /**
@@ -71,12 +78,16 @@ class ConfigType {
             «ENDIF»
 
             public function __construct(
-                TranslatorInterface $translator«IF !getAllVariables.filter(ListField).empty»,
+                TranslatorInterface $translator«IF targets('3.0') && !getAllVariables.filter(StringField).filter[#[StringRole.COUNTRY, StringRole.CURRENCY, StringRole.LANGUAGE, StringRole.LOCALE, StringRole.TIME_ZONE].contains(role)].empty»,
+                RequestStack $requestStack«ENDIF»«IF !getAllVariables.filter(ListField).empty»,
                 ListEntriesHelper $listHelper«ENDIF»«IF hasUploadVariables»,
                 UploadHelper $uploadHelper«ENDIF»«IF !getAllVariables.filter(StringField).filter[role == StringRole.LOCALE].empty»,
                 LocaleApiInterface $localeApi«ENDIF»
             ) {
                 $this->setTranslator($translator);
+                «IF targets('3.0') && !getAllVariables.filter(StringField).filter[#[StringRole.COUNTRY, StringRole.CURRENCY, StringRole.LANGUAGE, StringRole.LOCALE, StringRole.TIME_ZONE].contains(role)].empty»
+                    $this->requestStack = $requestStack;
+                «ENDIF»
                 «IF !getAllVariables.filter(ListField).empty»
                     $this->listHelper = $listHelper;
                 «ENDIF»
