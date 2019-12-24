@@ -17,7 +17,7 @@ class WorkflowEventsListener {
     extension WorkflowExtensions = new WorkflowExtensions
 
     def generate(Application it) '''
-        «IF !getJoinRelations.empty && !getAllEntities.filter[!getOutgoingJoinRelationsWithoutDeleteCascade.empty].empty»
+        «IF targets('3.0') && !getJoinRelations.empty && !getAllEntities.filter[!getOutgoingJoinRelationsWithoutDeleteCascade.empty].empty»
             /**
              * @var TranslatorInterface
              */
@@ -42,14 +42,14 @@ class WorkflowEventsListener {
         «ENDIF»
 
         public function __construct(
-            «IF !getJoinRelations.empty && !getAllEntities.filter[!getOutgoingJoinRelationsWithoutDeleteCascade.empty].empty»
+            «IF targets('3.0') && !getJoinRelations.empty && !getAllEntities.filter[!getOutgoingJoinRelationsWithoutDeleteCascade.empty].empty»
                 TranslatorInterface $translator,
             «ENDIF»
             EntityFactory $entityFactory,
             PermissionHelper $permissionHelper«IF needsApproval»,
             NotificationHelper $notificationHelper«ENDIF»
         ) {
-            «IF !getJoinRelations.empty && !getAllEntities.filter[!getOutgoingJoinRelationsWithoutDeleteCascade.empty].empty»
+            «IF targets('3.0') && !getJoinRelations.empty && !getAllEntities.filter[!getOutgoingJoinRelationsWithoutDeleteCascade.empty].empty»
                 $this->translator = $translator;
             «ENDIF»
             $this->entityFactory = $entityFactory;
