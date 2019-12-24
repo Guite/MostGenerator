@@ -137,7 +137,7 @@ class ServiceDefinitions {
             «appNamespace»\Form\Handler\:
                 resource: '../../Form/Handler'
                 calls:
-                    - [setLockingApi, ['@?Zikula\PageLockModule\Api\LockingApi']]
+                    - setLockingApi: ['@?Zikula\PageLockModule\Api\LockingApi']
         «ENDIF»
         «IF hasUploads»
 
@@ -172,7 +172,7 @@ class ServiceDefinitions {
                 class: Gedmo\IpTraceable\IpTraceableListener
                 public: false
                 calls:
-                    - [setAnnotationReader, ['@annotation_reader']]
+                    - setAnnotationReader: ['@annotation_reader']
                 tags:
                     - { name: doctrine.event_subscriber, connection: default }
         «ENDIF»
@@ -181,8 +181,8 @@ class ServiceDefinitions {
             stof_doctrine_extensions.listener.sluggable:
                 class: '%stof_doctrine_extensions.listener.sluggable.class%'
                 calls:
-                    - [setAnnotationReader, ['@annotation_reader']]
-                    - [setTransliterator, [[«appNamespace»\Helper\SlugTransliterator, 'transliterate']]]
+                    - setAnnotationReader: ['@annotation_reader']
+                    - setTransliterator: [[«appNamespace»\Helper\SlugTransliterator, 'transliterate']]
                 tags:
                     - { name: doctrine.event_subscriber, connection: default }
         «ENDIF»
