@@ -20,6 +20,7 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
+import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
 
@@ -28,6 +29,7 @@ class Listeners {
     extension ControllerExtensions = new ControllerExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension ModelExtensions = new ModelExtensions
+    extension ModelJoinExtensions = new ModelJoinExtensions
     extension Utils = new Utils
     extension WorkflowExtensions = new WorkflowExtensions
 
@@ -501,6 +503,12 @@ class Listeners {
             use Symfony\Component\EventDispatcher\EventSubscriberInterface;
             use Symfony\Component\Workflow\Event\Event;
             use Symfony\Component\Workflow\Event\GuardEvent;
+            «IF targets('3.0')»
+                «IF !getJoinRelations.empty && !getAllEntities.filter[!getOutgoingJoinRelationsWithoutDeleteCascade.empty].empty»
+                    use Symfony\Component\Workflow\TransitionBlocker;
+                    use Zikula\Common\Translator\TranslatorInterface;
+                «ENDIF»
+            «ENDIF»
             use Zikula\Core\Doctrine\EntityAccess;
             use «appNamespace»\Entity\Factory\EntityFactory;
             use «appNamespace»\Helper\PermissionHelper;

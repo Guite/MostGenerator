@@ -17,6 +17,13 @@ class WorkflowEventsListener {
     extension WorkflowExtensions = new WorkflowExtensions
 
     def generate(Application it) '''
+        «IF !getJoinRelations.empty && !getAllEntities.filter[!getOutgoingJoinRelationsWithoutDeleteCascade.empty].empty»
+            /**
+             * @var TranslatorInterface
+             */
+            protected $translator;
+
+        «ENDIF»
         /**
          * @var EntityFactory
          */
@@ -35,10 +42,16 @@ class WorkflowEventsListener {
         «ENDIF»
 
         public function __construct(
+            «IF !getJoinRelations.empty && !getAllEntities.filter[!getOutgoingJoinRelationsWithoutDeleteCascade.empty].empty»
+                TranslatorInterface $translator,
+            «ENDIF»
             EntityFactory $entityFactory,
             PermissionHelper $permissionHelper«IF needsApproval»,
             NotificationHelper $notificationHelper«ENDIF»
         ) {
+            «IF !getJoinRelations.empty && !getAllEntities.filter[!getOutgoingJoinRelationsWithoutDeleteCascade.empty].empty»
+                $this->translator = $translator;
+            «ENDIF»
             $this->entityFactory = $entityFactory;
             $this->permissionHelper = $permissionHelper;
             «IF needsApproval»
@@ -72,6 +85,12 @@ class WorkflowEventsListener {
          *     `if (!$event->isBlocked()) {
          *         $event->setBlocked(true);
          *     }`
+         «IF targets('3.0')»
+         * Example with providing a reason:
+         *     `$event->addTransitionBlocker(
+         *         new TransitionBlocker('You can not this because that.')
+         *     );`
+         «ENDIF»
          */
         public function onGuard(GuardEvent $event)«IF targets('3.0')»: void«ENDIF»
         {
@@ -267,7 +286,7 @@ class WorkflowEventsListener {
         }
 
         if (!$this->permissionHelper->hasEntityPermission($entity, $permissionLevel)) {
-            // no permission for this transition, so disallow it
+            // no permission for this transition, so disallow it«IF targets('3.0')» (without a reason)«ENDIF»
             $event->setBlocked(true);
 
             return;
@@ -282,11 +301,27 @@ class WorkflowEventsListener {
                         «FOR relation : entity.getOutgoingJoinRelationsWithoutDeleteCascade»
                             «IF relation.isManySide(true)»
                                 if (0 < count($entity->get«relation.targetAlias.formatForCodeCapital»())) {
-                                    $isBlocked = true;
+                                    «IF targets('3.0')»
+                                        $event->addTransitionBlocker(
+                                            new TransitionBlocker(
+                                                $this->translator->__('Sorry, but you can not delete the «entity.name.formatForDisplay» yet as it still contains «relation.targetAlias.formatForDisplay»!')
+                                            )
+                                        );
+                                    «ELSE»
+                                        $isBlocked = true;
+                                    «ENDIF»
                                 }
                             «ELSE»
                                 if (null !== $entity->get«relation.targetAlias.formatForCodeCapital»()) {
-                                    $isBlocked = true;
+                                    «IF targets('3.0')»
+                                        $event->addTransitionBlocker(
+                                            new TransitionBlocker(
+                                                $this->translator->__('Sorry, but you can not delete the «entity.name.formatForDisplay» yet as it still contains a «relation.targetAlias.formatForDisplay»!')
+                                            )
+                                        );
+                                    «ELSE»
+                                        $isBlocked = true;
+                                    «ENDIF»
                                 }
                             «ENDIF»
                         «ENDFOR»

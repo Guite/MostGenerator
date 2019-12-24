@@ -321,6 +321,18 @@ class Forms {
                 «submitActionsImpl»
             </div>
         </div>
+        «IF app.targets('3.0') && !getOutgoingJoinRelationsWithoutDeleteCascade.empty»
+            {% if not workflow_can(«name.formatForDB», 'delete') %}
+                <div class="alert alert-info">
+                    <h4>{{ __('Deletion of this «name.formatForDisplay» is not possible') }}</h4>
+                    <ul>
+                        {% for blocker in workflow_transition_blockers(«name.formatForDB», 'delete') %}
+                            <li>{{ blocker.message }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            {% endif %}
+        «ENDIF»
     '''
 
     def private submitActionsImpl(Entity it) '''
