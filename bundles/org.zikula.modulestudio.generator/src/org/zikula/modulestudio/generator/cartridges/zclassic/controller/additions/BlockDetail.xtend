@@ -145,7 +145,11 @@ class BlockDetail {
             «ENDIF»
 
             $controllerReference = new ControllerReference(
-                '«appName»:External:display',
+                «IF targets('3.0')»
+                    '«appNamespace»\Controller\ExternalController::displayAction',
+                «ELSE»
+                    '«appName»:External:display',
+                «ENDIF»
                 $this->getDisplayArguments($properties),
                 ['template' => $properties['customTemplate']]
             );

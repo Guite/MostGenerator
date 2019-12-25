@@ -128,7 +128,11 @@ class ContentTypeDetail {
             }
 
             $controllerReference = new ControllerReference(
-                '«appName»:External:display',
+                «IF targets('3.0')»
+                    '«appNamespace»\Controller\ExternalController::displayAction',
+                «ELSE»
+                    '«appName»:External:display',
+                «ENDIF»
                 $this->getDisplayArguments(),
                 ['template' => $this->data['customTemplate']]
             );
