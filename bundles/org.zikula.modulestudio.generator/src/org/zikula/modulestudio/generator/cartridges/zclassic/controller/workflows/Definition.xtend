@@ -67,9 +67,13 @@ class Definition {
                 «app.appName.formatForDB»_«wfType.textualName.formatForDB»:
                     type: state_machine
                     marking_store:
-                        type: single_state
-                        arguments:
-                            - workflowState
+                        type: «IF app.targets('3.0')»method«ELSE»single_state«ENDIF»
+                        «IF app.targets('3.0')»
+                            property: workflowState
+                        «ELSE»
+                            arguments:
+                                - workflowState
+                        «ENDIF»
                     supports:
                         «FOR entity : app.getEntitiesForWorkflow(wfType)»
                             «IF !entity.isInheriting || entity.parentType instanceof MappedSuperClass»
