@@ -3,6 +3,7 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.models.business
 import de.guite.modulestudio.metamodel.AbstractIntegerField
 import de.guite.modulestudio.metamodel.AbstractStringField
 import de.guite.modulestudio.metamodel.ArrayField
+import de.guite.modulestudio.metamodel.ArrayType
 import de.guite.modulestudio.metamodel.BooleanField
 import de.guite.modulestudio.metamodel.DataObject
 import de.guite.modulestudio.metamodel.DatetimeField
@@ -34,7 +35,6 @@ import org.zikula.modulestudio.generator.extensions.ModelInheritanceExtensions
 import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
-import de.guite.modulestudio.metamodel.ArrayType
 
 class ValidationConstraints {
 
