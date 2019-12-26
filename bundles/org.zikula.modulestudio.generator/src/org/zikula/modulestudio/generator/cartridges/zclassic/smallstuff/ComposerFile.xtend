@@ -59,7 +59,7 @@ class ComposerFile {
             «IF hasGeographical»
                 "drmonty/leaflet": "^1",
             «ENDIF»
-            "php": ">=«IF targets('3.0')»7.2.0«ELSE»5.5.9«ENDIF»"«IF !dependencies.empty»,«ENDIF»
+            "php": ">=«IF targets('3.0')»7.2.5«ELSE»5.5.9«ENDIF»"«IF !dependencies.empty»,«ENDIF»
             «IF !dependencies.empty»
                 «FOR referredApp : dependencies»
                     «dependency(referredApp)»«IF referredApp != dependencies.last»,«ENDIF»
