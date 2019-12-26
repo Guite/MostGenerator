@@ -318,7 +318,11 @@ class ValidationConstraints {
             «' '»* @Assert\Count(min="«min»", max="«max»")
         «ENDIF»
         «IF arrayType == ArrayType.JSON_ARRAY»
-            «' '»* @Assert\Json
+            «IF null !== entity && entity.application.targets('3.0')»
+                «' '»* @Assert\Json
+            «ELSEIF null !== varContainer && varContainer.application.targets('3.0')»
+                «' '»* @Assert\Json
+            «ENDIF»
         «ENDIF»
     '''
     def dispatch fieldAnnotations(ObjectField it) '''
