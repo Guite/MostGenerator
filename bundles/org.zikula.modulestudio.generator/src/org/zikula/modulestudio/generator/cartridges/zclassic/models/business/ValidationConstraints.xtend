@@ -30,9 +30,11 @@ import org.zikula.modulestudio.generator.extensions.DateTimeExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
+import org.zikula.modulestudio.generator.extensions.ModelInheritanceExtensions
 import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
+import de.guite.modulestudio.metamodel.ArrayType
 
 class ValidationConstraints {
 
@@ -41,6 +43,7 @@ class ValidationConstraints {
     extension FormattingExtensions = new FormattingExtensions
     extension ModelExtensions = new ModelExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
+    extension ModelInheritanceExtensions = new ModelInheritanceExtensions
     extension ModelJoinExtensions = new ModelJoinExtensions
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
@@ -50,9 +53,9 @@ class ValidationConstraints {
 
     def private fieldAnnotationsMandatory(DerivedField it) '''
         «IF mandatory»
-            «' '»* @Assert\NotBlank()
+            «' '»* @Assert\NotBlank
         «ELSEIF !nullable»
-            «' '»* @Assert\NotNull()
+            «' '»* @Assert\NotNull
         «ENDIF»
     '''
 
@@ -60,7 +63,7 @@ class ValidationConstraints {
         «IF mandatory»
             «' '»* @Assert\IsTrue(message="This option is mandatory.")
         «ELSEIF !nullable»
-            «' '»* @Assert\NotNull()
+            «' '»* @Assert\NotNull
         «ENDIF»
         «' '»* @Assert\Type(type="bool")
     '''
@@ -68,10 +71,10 @@ class ValidationConstraints {
     def private fieldAnnotationsNumeric(DerivedField it) '''
         «' '»* @Assert\Type(type="numeric")
         «IF mandatory»
-            «' '»* @Assert\NotBlank()
+            «' '»* @Assert\NotBlank
             «' '»* @Assert\NotEqualTo(value=0)
         «ELSEIF !nullable»
-            «' '»* @Assert\NotNull()
+            «' '»* @Assert\NotNull
         «ENDIF»
     '''
 
@@ -80,12 +83,12 @@ class ValidationConstraints {
             «' '»* @Assert\Type(type="integer")
         «ENDIF»
         «IF mandatory && (!primaryKey || (null !== entity && entity.getVersionField == this))»
-            «' '»* @Assert\NotBlank()
+            «' '»* @Assert\NotBlank
             «IF !notOnlyNumericInteger»
                 «' '»* @Assert\NotEqualTo(value=0)
             «ENDIF»
         «ELSEIF !nullable»
-            «' '»* @Assert\NotNull()
+            «' '»* @Assert\NotNull
         «ENDIF»
     '''
     def dispatch fieldAnnotations(AbstractIntegerField it) '''
@@ -130,9 +133,9 @@ class ValidationConstraints {
     '''
     def dispatch fieldAnnotations(UserField it) '''
         «IF mandatory && !primaryKey»
-            «' '»* @Assert\NotBlank()
+            «' '»* @Assert\NotBlank
         «ELSEIF !nullable»
-            «' '»* @Assert\NotNull()
+            «' '»* @Assert\NotNull
         «ENDIF»
     '''
 
@@ -152,28 +155,54 @@ class ValidationConstraints {
             «' '»* @Assert\Length(min="«length»", max="«length»")
         «ENDIF»
         «IF role == StringRole.BIC»
-            «' '»* @Assert\Bic()
+            «IF null !== entity && entity.application.targets('3.0')»
+                «IF !entity.getSelfAndParentDataObjects.map[fields.filter(StringField).filter[role == StringRole.IBAN]].flatten.empty»
+                    «' '»* @Assert\Bic(ibanPropertyPath = "«entity.getSelfAndParentDataObjects.map[fields.filter(StringField).filter[role == StringRole.IBAN]].flatten.head.name.formatForCode»")
+                «ELSE»
+                    «' '»* @Assert\Bic
+                «ENDIF»
+            «ELSEIF null !== varContainer && varContainer.application.targets('3.0')»
+                «IF !varContainer.fields.filter(StringField).filter[role == StringRole.IBAN].empty»
+                    «' '»* @Assert\Bic(ibanPropertyPath = "«varContainer.fields.filter(StringField).filter[role == StringRole.IBAN].head.name.formatForCode»")
+                «ELSE»
+                    «' '»* @Assert\Bic
+                «ENDIF»
+            «ELSE»
+                «' '»* @Assert\Bic
+            «ENDIF»
         «ELSEIF role == StringRole.COLOUR»
             «' '»* @Assert\Regex(pattern="/^#?(([a-fA-F0-9]{3}){1,2})$/", message="This value must be a valid html colour code [#123 or #123456].")
         «ELSEIF role == StringRole.COUNTRY»
-            «' '»* @Assert\Country()
+            «' '»* @Assert\Country
         «ELSEIF role == StringRole.CREDIT_CARD»
             «' '»* @Assert\Luhn(message="Please check your credit card number.")
-            «' '»* @Assert\CardScheme(schemes={"AMEX", "CHINA_UNIONPAY", "DINERS", "DISCOVER", "INSTAPAYMENT", "JCB", "LASER", "MAESTRO", "MASTERCARD", "VISA"})
+            «IF null !== entity && entity.application.targets('3.0')»
+                «' '»* @Assert\CardScheme(schemes={"AMEX", "CHINA_UNIONPAY", "DINERS", "DISCOVER", "INSTAPAYMENT", "JCB", "LASER", "MAESTRO", "MASTERCARD", "UATP", "VISA"})
+            «ELSEIF null !== varContainer && varContainer.application.targets('3.0')»
+                «' '»* @Assert\CardScheme(schemes={"AMEX", "CHINA_UNIONPAY", "DINERS", "DISCOVER", "INSTAPAYMENT", "JCB", "LASER", "MAESTRO", "MASTERCARD", "UATP", "VISA"})
+            «ELSE»
+                «' '»* @Assert\CardScheme(schemes={"AMEX", "CHINA_UNIONPAY", "DINERS", "DISCOVER", "INSTAPAYMENT", "JCB", "LASER", "MAESTRO", "MASTERCARD", "VISA"})
+            «ENDIF»
         «ELSEIF role == StringRole.CURRENCY»
-            «' '»* @Assert\Currency()
+            «' '»* @Assert\Currency
         «ELSEIF role == StringRole.IBAN»
-            «' '»* @Assert\Iban()
+            «' '»* @Assert\Iban
         «ELSEIF role == StringRole.LANGUAGE»
-            «' '»* @Assert\Language()
+            «' '»* @Assert\Language
         «ELSEIF role == StringRole.LOCALE»
-            «' '»* @Assert\Locale()
+            «' '»* @Assert\Locale
         «ELSEIF isbn != StringIsbnStyle.NONE»
             «' '»* @Assert\Isbn(«IF isbn != StringIsbnStyle.ALL»type="«IF isbn == StringIsbnStyle.ISBN10»isbn10«ELSEIF isbn == StringIsbnStyle.ISBN13»isbn13«ENDIF»"«ENDIF»)
         «ELSEIF issn != StringIssnStyle.NONE»
             «' '»* @Assert\Issn(caseSensitive=«(issn == StringIssnStyle.CASE_SENSITIVE || issn == StringIssnStyle.STRICT).displayBool», requireHyphen=«(issn == StringIssnStyle.REQUIRE_HYPHEN || issn == StringIssnStyle.STRICT).displayBool»)
         «ELSEIF ipAddress != IpAddressScope.NONE»
             «' '»* @Assert\Ip(version="«ipAddress.ipScopeAsConstant»")
+        «ELSEIF role == StringRole.TIME_ZONE»
+            «IF null !== entity && entity.application.targets('3.0')»
+                «' '»@Assert\Timezone
+            «ELSEIF null !== varContainer && varContainer.application.targets('3.0')»
+                «' '»@Assert\Timezone
+            «ENDIF»
         «ELSEIF role == StringRole.UUID»
             «' '»* @Assert\Uuid(strict=true)
         «ENDIF»
@@ -187,7 +216,7 @@ class ValidationConstraints {
         «' '»* @Assert\Length(min="«minLength»", max="«length»")
         «IF mandatory»
             «IF application.targets('3.0')»
-                «' '»* @Assert\Email()
+                «' '»* @Assert\Email
             «ELSE»
                 «' '»* @Assert\Email(checkMX=«checkMX.displayBool», checkHost=«checkHost.displayBool»)
             «ENDIF»
@@ -197,7 +226,7 @@ class ValidationConstraints {
         «fieldAnnotationsString»
         «' '»* @Assert\Length(min="«minLength»", max="«length»")
         «IF application.targets('3.0')»
-            «' '»* @Assert\Url()
+            «' '»* @Assert\Url
         «ELSE»
             «' '»* @Assert\Url(checkDNS=«IF application.targets('2.0') && checkDNS»'ANY'«ELSE»«checkDNS.displayBool»«ENDIF»«IF checkDNS», dnsMessage = "The host '{{ value }}' could not be resolved."«ENDIF»)
         «ENDIF»
@@ -288,6 +317,9 @@ class ValidationConstraints {
         «IF max > 0»
             «' '»* @Assert\Count(min="«min»", max="«max»")
         «ENDIF»
+        «IF arrayType == ArrayType.JSON_ARRAY»
+            «' '»* @Assert\Json
+        «ENDIF»
     '''
     def dispatch fieldAnnotations(ObjectField it) '''
         «fieldAnnotationsMandatory»
@@ -297,9 +329,9 @@ class ValidationConstraints {
         «IF isDateTimeField || isDateField»
             «IF !application.targets('3.0')»«/* no constraint if the underlying model is type hinted already */»
                 «IF isDateTimeField»
-                    «' '»* @Assert\DateTime()
+                    «' '»* @Assert\DateTime
                 «ELSEIF isDateField»
-                    «' '»* @Assert\Date()
+                    «' '»* @Assert\Date
                 «ENDIF»
             «ENDIF»
             «IF past»
@@ -323,7 +355,7 @@ class ValidationConstraints {
                 «ENDIF»
             «ENDIF»
         «ELSEIF isTimeField»
-            «' '»* @Assert\Time()
+            «' '»* @Assert\Time
         «ENDIF»
         «IF null !== validatorAddition && !validatorAddition.empty»
             «' '»* @Assert\«validatorAddition»
