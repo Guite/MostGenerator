@@ -49,7 +49,6 @@ class LifecycleListener {
         «ENDIF»
         use Symfony\Component\EventDispatcher\EventDispatcherInterface;
         «IF targets('3.0')»
-            use Symfony\Component\EventDispatcher\LegacyEventDispatcherProxy;
             use Symfony\Contracts\EventDispatcher\Event;
         «ENDIF»
         «IF targets('3.0') && hasLoggable»
@@ -95,11 +94,7 @@ class LifecycleListener {
                 LoggerInterface $logger
             ) {
                 $this->setContainer($container);
-                «IF targets('3.0')»
-                    $this->eventDispatcher = LegacyEventDispatcherProxy::decorate($eventDispatcher);
-                «ELSE»
-                    $this->eventDispatcher = $eventDispatcher;
-                «ENDIF»
+                $this->eventDispatcher = $eventDispatcher;
                 $this->logger = $logger;
             }
 

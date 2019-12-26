@@ -28,9 +28,6 @@ class MenuBuilder {
         use Knp\Menu\FactoryInterface;
         use Knp\Menu\ItemInterface;
         use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-        «IF targets('3.0')»
-            use Symfony\Component\EventDispatcher\LegacyEventDispatcherProxy;
-        «ENDIF»
         use Symfony\Component\HttpFoundation\RequestStack;
         use Zikula\Common\Translator\TranslatorInterface;
         use Zikula\Common\Translator\TranslatorTrait;
@@ -113,11 +110,7 @@ class MenuBuilder {
             ) {
                 $this->setTranslator($translator);
                 $this->factory = $factory;
-                «IF targets('3.0')»
-                    $this->eventDispatcher = LegacyEventDispatcherProxy::decorate($eventDispatcher);
-                «ELSE»
-                    $this->eventDispatcher = $eventDispatcher;
-                «ENDIF»
+                $this->eventDispatcher = $eventDispatcher;
                 $this->requestStack = $requestStack;
                 $this->permissionHelper = $permissionHelper;
                 «IF hasDisplayActions»
