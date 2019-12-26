@@ -150,19 +150,15 @@ class ValidationConstraints {
     }
     def dispatch fieldAnnotations(StringField it) '''
         «fieldAnnotationsString»
-        «' '»* @Assert\Length(min="«minLength»", max="«length»")
+        «' '»* @Assert\Length(min="«minLength»", max="«length»"«IF application.targets('3.0')», allowEmptyString="«(if (mandatory) false else true).displayBool»"«ENDIF»)
         «IF fixed && minLength != length»
-            «' '»* @Assert\Length(min="«length»", max="«length»")
+            «' '»* @Assert\Length(min="«length»", max="«length»"«IF application.targets('3.0')», allowEmptyString="«(if (mandatory) false else true).displayBool»"«ENDIF»)
         «ENDIF»
         «IF role == StringRole.BIC»
-            «IF null !== entity && entity.application.targets('3.0')»
-                «IF !entity.getSelfAndParentDataObjects.map[fields.filter(StringField).filter[role == StringRole.IBAN]].flatten.empty»
+            «IF application.targets('3.0')»
+                «IF null !== entity && !entity.getSelfAndParentDataObjects.map[fields.filter(StringField).filter[role == StringRole.IBAN]].flatten.empty»
                     «' '»* @Assert\Bic(ibanPropertyPath = "«entity.getSelfAndParentDataObjects.map[fields.filter(StringField).filter[role == StringRole.IBAN]].flatten.head.name.formatForCode»")
-                «ELSE»
-                    «' '»* @Assert\Bic
-                «ENDIF»
-            «ELSEIF null !== varContainer && varContainer.application.targets('3.0')»
-                «IF !varContainer.fields.filter(StringField).filter[role == StringRole.IBAN].empty»
+                «ELSEIF null !== varContainer && !varContainer.fields.filter(StringField).filter[role == StringRole.IBAN].empty»
                     «' '»* @Assert\Bic(ibanPropertyPath = "«varContainer.fields.filter(StringField).filter[role == StringRole.IBAN].head.name.formatForCode»")
                 «ELSE»
                     «' '»* @Assert\Bic
@@ -176,13 +172,7 @@ class ValidationConstraints {
             «' '»* @Assert\Country
         «ELSEIF role == StringRole.CREDIT_CARD»
             «' '»* @Assert\Luhn(message="Please check your credit card number.")
-            «IF null !== entity && entity.application.targets('3.0')»
-                «' '»* @Assert\CardScheme(schemes={"AMEX", "CHINA_UNIONPAY", "DINERS", "DISCOVER", "INSTAPAYMENT", "JCB", "LASER", "MAESTRO", "MASTERCARD", "UATP", "VISA"})
-            «ELSEIF null !== varContainer && varContainer.application.targets('3.0')»
-                «' '»* @Assert\CardScheme(schemes={"AMEX", "CHINA_UNIONPAY", "DINERS", "DISCOVER", "INSTAPAYMENT", "JCB", "LASER", "MAESTRO", "MASTERCARD", "UATP", "VISA"})
-            «ELSE»
-                «' '»* @Assert\CardScheme(schemes={"AMEX", "CHINA_UNIONPAY", "DINERS", "DISCOVER", "INSTAPAYMENT", "JCB", "LASER", "MAESTRO", "MASTERCARD", "VISA"})
-            «ENDIF»
+            «' '»* @Assert\CardScheme(schemes={"AMEX", "CHINA_UNIONPAY", "DINERS", "DISCOVER", "INSTAPAYMENT", "JCB", "LASER", "MAESTRO", "MASTERCARD"«IF application.targets('3.0')», "UATP"«ENDIF», "VISA"})
         «ELSEIF role == StringRole.CURRENCY»
             «' '»* @Assert\Currency
         «ELSEIF role == StringRole.IBAN»
@@ -197,23 +187,19 @@ class ValidationConstraints {
             «' '»* @Assert\Issn(caseSensitive=«(issn == StringIssnStyle.CASE_SENSITIVE || issn == StringIssnStyle.STRICT).displayBool», requireHyphen=«(issn == StringIssnStyle.REQUIRE_HYPHEN || issn == StringIssnStyle.STRICT).displayBool»)
         «ELSEIF ipAddress != IpAddressScope.NONE»
             «' '»* @Assert\Ip(version="«ipAddress.ipScopeAsConstant»")
-        «ELSEIF role == StringRole.TIME_ZONE»
-            «IF null !== entity && entity.application.targets('3.0')»
-                «' '»@Assert\Timezone
-            «ELSEIF null !== varContainer && varContainer.application.targets('3.0')»
-                «' '»@Assert\Timezone
-            «ENDIF»
+        «ELSEIF role == StringRole.TIME_ZONE && application.targets('3.0')»
+            «' '»@Assert\Timezone
         «ELSEIF role == StringRole.UUID»
             «' '»* @Assert\Uuid(strict=true)
         «ENDIF»
     '''
     def dispatch fieldAnnotations(TextField it) '''
         «fieldAnnotationsString»
-        «' '»* @Assert\Length(min="«minLength»", max="«length»")
+        «' '»* @Assert\Length(min="«minLength»", max="«length»"«IF application.targets('3.0')», allowEmptyString="«(if (mandatory) false else true).displayBool»"«ENDIF»)
     '''
     def dispatch fieldAnnotations(EmailField it) '''
         «fieldAnnotationsString»
-        «' '»* @Assert\Length(min="«minLength»", max="«length»")
+        «' '»* @Assert\Length(min="«minLength»", max="«length»"«IF application.targets('3.0')», allowEmptyString="«(if (mandatory) false else true).displayBool»"«ENDIF»)
         «IF mandatory»
             «IF application.targets('3.0')»
                 «' '»* @Assert\Email
@@ -224,7 +210,7 @@ class ValidationConstraints {
     '''
     def dispatch fieldAnnotations(UrlField it) '''
         «fieldAnnotationsString»
-        «' '»* @Assert\Length(min="«minLength»", max="«length»")
+        «' '»* @Assert\Length(min="«minLength»", max="«length»"«IF application.targets('3.0')», allowEmptyString="«(if (mandatory) false else true).displayBool»"«ENDIF»)
         «IF application.targets('3.0')»
             «' '»* @Assert\Url
         «ELSE»
@@ -233,7 +219,7 @@ class ValidationConstraints {
     '''
     def dispatch fieldAnnotations(UploadField it) '''
         «fieldAnnotationsString»
-        «' '»* @Assert\Length(min="«minLength»", max="«length»")
+        «' '»* @Assert\Length(min="«minLength»", max="«length»"«IF application.targets('3.0')», allowEmptyString="«(if (mandatory) false else true).displayBool»"«ENDIF»)
     '''
     def uploadFileAnnotations(UploadField it) '''
         «' '»* @Assert\File(
@@ -317,12 +303,8 @@ class ValidationConstraints {
         «IF max > 0»
             «' '»* @Assert\Count(min="«min»", max="«max»")
         «ENDIF»
-        «IF arrayType == ArrayType.JSON_ARRAY»
-            «IF null !== entity && entity.application.targets('3.0')»
-                «' '»* @Assert\Json
-            «ELSEIF null !== varContainer && varContainer.application.targets('3.0')»
-                «' '»* @Assert\Json
-            «ENDIF»
+        «IF arrayType == ArrayType.JSON_ARRAY && application.targets('3.0')»
+            «' '»* @Assert\Json
         «ENDIF»
     '''
     def dispatch fieldAnnotations(ObjectField it) '''
