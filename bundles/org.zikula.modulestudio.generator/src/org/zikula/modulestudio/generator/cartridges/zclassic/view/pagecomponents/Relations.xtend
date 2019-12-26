@@ -82,7 +82,7 @@ class Relations {
         «ENDIF»
         <h4«IF many» class="list-group-item-heading"«ENDIF»>
         «IF hasDisplayAction»
-            {% spaceless %}
+            {% «IF app.targets('3.0')»apply spaceless«ELSE»spaceless«ENDIF» %}
             {% if not noLink %}
                 <a href="{{ path('«app.appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ 'display'«routeParams('item', true)») }}" title="{{ item|«app.appName.formatForDB»_formattedTitle|e('html_attr') }}">
             {% endif %}
@@ -93,7 +93,7 @@ class Relations {
                 </a>
                 <a id="«name.formatForCode»Item{{ item.getKey() }}Display" href="{{ path('«app.appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ 'display', {«IF !hasSluggableFields || !slugUnique»«routePkParams('item', true)»«ENDIF»«appendSlug('item', true)», raw: 1}) }}" title="{{ __('Open quick view window') }}" class="«application.vendorAndName.toLowerCase»-inline-window hidden" data-modal-title="{{ item|«app.appName.formatForDB»_formattedTitle|e('html_attr') }}"><i class="fa fa-id-card-o"></i></a>
             {% endif %}
-            {% endspaceless %}
+            {% «IF app.targets('3.0')»endapply«ELSE»endspaceless«ENDIF» %}
         «ENDIF»
         </h4>
         «IF hasImageFieldsEntity»

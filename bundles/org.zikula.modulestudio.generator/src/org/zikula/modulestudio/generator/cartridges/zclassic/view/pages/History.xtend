@@ -47,15 +47,19 @@ class History {
                 {% extends routeArea == 'admin' ? '«app.appName»::adminBase.html.twig' : '«app.appName»::base.html.twig' %}
             «ENDIF»
         «ENDIF»
-        {% import _self as helper %}
+        «IF !app.targets('3.0')»
+            {% import _self as helper %}
+        «ENDIF»
         {% macro outputSimpleValue(input) %}
             {{ input is «app.appName.toLowerCase»_instanceOf('DateTimeInterface') ? input|localizeddate('long', 'medium') : input|default(__('an empty value')) }}
         {% endmacro %}
         {% macro outputArray(input«IF hasTranslatableFields», keysAreLanguages«ENDIF») %}
-            {% import _self as helper %}
+            «IF !app.targets('3.0')»
+                {% import _self as helper %}
+            «ENDIF»
             <ul>
                 {% for key, value in input %}
-                    <li><span class="bold">{{ «IF hasTranslatableFields»keysAreLanguages ? key|languageName|safeHtml|humanize : «ENDIF»key|humanize }}:</span> {% if value is iterable %}{{ helper.outputArray(value«IF hasTranslatableFields», false«ENDIF») }}{% else %}<span class="italic">{{ value }}</span>{% endif %}</li>
+                    <li><span class="bold">{{ «IF hasTranslatableFields»keysAreLanguages ? key|languageName|safeHtml|humanize : «ENDIF»key|humanize }}:</span> {% if value is iterable %}{{ «IF app.targets('3.0')»_self«ELSE»helper«ENDIF».outputArray(value«IF hasTranslatableFields», false«ENDIF») }}{% else %}<span class="italic">{{ value }}</span>{% endif %}</li>
                 {% endfor %}
             </ul>
         {% endmacro %}
@@ -117,13 +121,13 @@ class History {
                                             {% if fieldName in ['createdBy', 'updatedBy'] and values.old.uid is defined %}
                                                 {{ userAvatar(values.old.uid, {rating: 'g'}) }} {{ values.old.uid|profileLinkByUserId() }}
                                             {% else %}
-                                                {{ helper.outputArray(values.old«IF hasTranslatableFields», (fieldName == 'translationData')«ENDIF») }}
+                                                {{ «IF app.targets('3.0')»_self«ELSE»helper«ENDIF».outputArray(values.old«IF hasTranslatableFields», (fieldName == 'translationData')«ENDIF») }}
                                             {% endif %}
                                         {% else %}
                                             {{ __('an empty collection') }}
                                         {% endif %}
                                     {% else %}
-                                        {{ helper.outputSimpleValue(values.old) }}
+                                        {{ «IF app.targets('3.0')»_self«ELSE»helper«ENDIF».outputSimpleValue(values.old) }}
                                     {% endif %}
                                 </td>
                                 <td headers="hMaxVersion h{{ fieldName|replace({' ': '', '"':''}) }}"{% if values.changed %} class="diff-new"{% endif %}>
@@ -132,13 +136,13 @@ class History {
                                             {% if fieldName in ['createdBy', 'updatedBy'] and values.new.uid is defined %}
                                                 {{ userAvatar(values.new.uid, {rating: 'g'}) }} {{ values.new.uid|profileLinkByUserId() }}
                                             {% else %}
-                                                {{ helper.outputArray(values.new«IF hasTranslatableFields», (fieldName == 'translationData')«ENDIF») }}
+                                                {{ «IF app.targets('3.0')»_self«ELSE»helper«ENDIF».outputArray(values.new«IF hasTranslatableFields», (fieldName == 'translationData')«ENDIF») }}
                                             {% endif %}
                                         {% else %}
                                             {{ __('an empty collection') }}
                                         {% endif %}
                                     {% else %}
-                                        {{ helper.outputSimpleValue(values.new) }}
+                                        {{ «IF app.targets('3.0')»_self«ELSE»helper«ENDIF».outputSimpleValue(values.new) }}
                                     {% endif %}
                                 </td>
                             </tr>
@@ -216,14 +220,14 @@ class History {
                                                         {{ __f('%field% set to <em>%value%</em>', {'%field%': field|humanize, '%value%': userAvatar(value.uid, {rating: 'g'}) ~ ' ' ~ value.uid|profileLinkByUserId()})|raw }}
                                                     {% else %}
                                                         {{ __f('%field% set to:', {'%field%': field|humanize}) }}
-                                                        {{ helper.outputArray(value«IF hasTranslatableFields», (field == 'translationData')«ENDIF») }}
+                                                        {{ «IF app.targets('3.0')»_self«ELSE»helper«ENDIF».outputArray(value«IF hasTranslatableFields», (field == 'translationData')«ENDIF») }}
                                                     {% endif %}
                                                     </li>
                                                 {% else %}
                                                     <li>{{ __f('%field% set to <em>%value%</em>', {'%field%': field|humanize, '%value%': __('an empty collection')})|raw }}</li>
                                                 {% endif %}
                                             {% else %}
-                                                <li>{{ __f('%field% set to <em>%value%</em>', {'%field%': field|humanize, '%value%': helper.outputSimpleValue(value)})|raw }}</li>
+                                                <li>{{ __f('%field% set to <em>%value%</em>', {'%field%': field|humanize, '%value%': «IF app.targets('3.0')»_self«ELSE»helper«ENDIF».outputSimpleValue(value)})|raw }}</li>
                                             {% endif %}
                                         {% endfor %}
                                     </ul>

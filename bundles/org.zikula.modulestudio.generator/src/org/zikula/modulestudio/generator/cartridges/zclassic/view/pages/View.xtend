@@ -469,11 +469,11 @@ class View {
         «var relObjName = mainEntity.name.formatForCode + '.' + relationAliasName»
         {% if «relObjName»|default %}
             «IF linkEntity.hasDisplayAction»
-                <a href="{{ path('«linkEntity.application.appName.formatForDB»_«linkEntity.name.formatForDB»_' ~ routeArea ~ 'display'«linkEntity.routeParams(relObjName, true)») }}">{% spaceless %}
+                <a href="{{ path('«linkEntity.application.appName.formatForDB»_«linkEntity.name.formatForDB»_' ~ routeArea ~ 'display'«linkEntity.routeParams(relObjName, true)») }}">{% «IF application.targets('3.0')»apply spaceless«ELSE»spaceless«ENDIF» %}
             «ENDIF»
               {{ «relObjName»|«application.appName.formatForDB»_formattedTitle }}
             «IF linkEntity.hasDisplayAction»
-                {% endspaceless %}</a>
+                {% «IF application.targets('3.0')»endapply«ELSE»endspaceless«ENDIF» %}</a>
                 <a id="«linkEntity.name.formatForCode»Item{{ «mainEntity.name.formatForCode».getKey() }}_rel_{{ «relObjName».getKey() }}Display" href="{{ path('«application.appName.formatForDB»_«linkEntity.name.formatForDB»_' ~ routeArea ~ 'display', {«IF !linkEntity.hasSluggableFields || !linkEntity.slugUnique»«linkEntity.routePkParams(relObjName, true)»«ENDIF»«linkEntity.appendSlug(relObjName, true)», raw: 1}) }}" title="{{ __('Open quick view window')|e('html_attr') }}" class="«application.vendorAndName.toLowerCase»-inline-window hidden" data-modal-title="{{ «relObjName»|«application.appName.formatForDB»_formattedTitle|e('html_attr') }}"><i class="fa fa-id-card-o"></i></a>
             «ENDIF»
         {% else %}

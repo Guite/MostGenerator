@@ -177,7 +177,7 @@ class Layout {
 
             {% block «appName.formatForDB»_field_upload_label %}{% endblock %}
             {% block «appName.formatForDB»_field_upload_row %}
-                {% spaceless %}
+                {% «IF targets('3.0')»apply spaceless«ELSE»spaceless«ENDIF» %}
                 {{ form_row(attribute(form, field_name)) }}
                 <div class="col-sm-9 col-sm-offset-3" style="margin-top: -20px; padding-left: 8px">
                     {% if not required %}
@@ -208,7 +208,7 @@ class Layout {
                         {% endif %}
                     {% endif %}
                 </div>
-                {% endspaceless %}
+                {% «IF targets('3.0')»endapply«ELSE»endspaceless«ENDIF» %}
             {% endblock %}
         «ENDIF»
         «IF hasAutoCompletionRelation»

@@ -267,11 +267,11 @@ class Display {
             <dd>
               {% if not isQuickView %}
                   «IF linkEntity.hasDisplayAction»
-                      <a href="{{ path('«linkEntity.application.appName.formatForDB»_«linkEntity.name.toLowerCase»_' ~ routeArea ~ 'display'«linkEntity.routeParams(relObjName, true)») }}">{% spaceless %}
+                      <a href="{{ path('«linkEntity.application.appName.formatForDB»_«linkEntity.name.toLowerCase»_' ~ routeArea ~ 'display'«linkEntity.routeParams(relObjName, true)») }}">{% «IF application.targets('3.0')»apply spaceless«ELSE»spaceless«ENDIF» %}
                   «ENDIF»
                     {{ «relObjName»|«application.appName.formatForDB»_formattedTitle }}
                   «IF linkEntity.hasDisplayAction»
-                    {% endspaceless %}</a>
+                    {% «IF application.targets('3.0')»endapply«ELSE»endspaceless«ENDIF» %}</a>
                     <a id="«linkEntity.name.formatForCode»Item{{ «relObjName».getKey() }}Display" href="{{ path('«linkEntity.application.appName.formatForDB»_«linkEntity.name.formatForDB»_' ~ routeArea ~ 'display', {«IF !linkEntity.hasSluggableFields || !linkEntity.slugUnique»«linkEntity.routePkParams(relObjName, true)»«ENDIF»«linkEntity.appendSlug(relObjName, true)», raw: 1}) }}" title="{{ __('Open quick view window')|e('html_attr') }}" class="«application.vendorAndName.toLowerCase»-inline-window hidden" data-modal-title="{{ «relObjName»|«application.appName.formatForDB»_formattedTitle|e('html_attr') }}"><i class="fa fa-id-card-o"></i></a>
                   «ENDIF»
               {% else %}
@@ -375,14 +375,16 @@ class Display {
         «ELSE»
             {# purpose of this template: show different forms of relatives for a given tree node #}
         «ENDIF»
-        {% import _self as relatives %}
+        «IF !application.targets('3.0')»
+            {% import _self as relatives %}
+        «ENDIF»
         <h3>{{ __('Related «nameMultiple.formatForDisplay»') }}</h3>
         {% if «objName».lvl > 0 %}
             {% if allParents is not defined or allParents == true %}
                 {% set allParents = «pluginPrefix»_treeSelection(objectType='«objName»', node=«objName», target='allParents') %}
                 {% if allParents is not null and allParents is iterable and allParents|length > 0 %}
                     <h4>{{ __('All parents') }}</h4>
-                    {{ relatives.list_relatives(allParents, routeArea) }}
+                    {{ «IF application.targets('3.0')»_self«ELSE»relatives«ENDIF».list_relatives(allParents, routeArea) }}
                 {% endif %}
             {% endif %}
             {% if directParent is not defined or directParent == true %}
@@ -399,14 +401,14 @@ class Display {
             {% set allChildren = «pluginPrefix»_treeSelection(objectType='«objName»', node=«objName», target='allChildren') %}
             {% if allChildren is not null and allChildren is iterable and allChildren|length > 0 %}
                 <h4>{{ __('All children') }}</h4>
-                {{ relatives.list_relatives(allChildren, routeArea) }}
+                {{ «IF application.targets('3.0')»_self«ELSE»relatives«ENDIF».list_relatives(allChildren, routeArea) }}
             {% endif %}
         {% endif %}
         {% if directChildren is not defined or directChildren == true %}
             {% set directChildren = «pluginPrefix»_treeSelection(objectType='«objName»', node=«objName», target='directChildren') %}
             {% if directChildren is not null and directChildren is iterable and directChildren|length > 0 %}
                 <h4>{{ __('Direct children') }}</h4>
-                {{ relatives.list_relatives(directChildren, routeArea) }}
+                {{ «IF application.targets('3.0')»_self«ELSE»relatives«ENDIF».list_relatives(directChildren, routeArea) }}
             {% endif %}
         {% endif %}
         {% if «objName».lvl > 0 %}
@@ -414,21 +416,21 @@ class Display {
                 {% set predecessors = «pluginPrefix»_treeSelection('«objName»', node=«objName», target='predecessors') %}
                 {% if predecessors is not null and predecessors is iterable and predecessors|length > 0 %}
                     <h4>{{ __('Predecessors') }}</h4>
-                    {{ relatives.list_relatives(predecessors, routeArea) }}
+                    {{ «IF application.targets('3.0')»_self«ELSE»relatives«ENDIF».list_relatives(predecessors, routeArea) }}
                 {% endif %}
             {% endif %}
             {% if successors is not defined or successors == true %}
                 {% set successors = «pluginPrefix»_treeSelection(objectType='«objName»', node=«objName», target='successors') %}
                 {% if successors is not null and successors is iterable and successors|length > 0 %}
                     <h4>{{ __('Successors') }}</h4>
-                    {{ relatives.list_relatives(successors, routeArea) }}
+                    {{ «IF application.targets('3.0')»_self«ELSE»relatives«ENDIF».list_relatives(successors, routeArea) }}
                 {% endif %}
             {% endif %}
             {% if preandsuccessors is not defined or preandsuccessors == true %}
                 {% set preandsuccessors = «pluginPrefix»_treeSelection(objectType='«objName»', node=«objName», target='preandsuccessors') %}
                 {% if preandsuccessors is not null and preandsuccessors is iterable and preandsuccessors|length > 0 %}
                     <h4>{{ __('Siblings') }}</h4>
-                    {{ relatives.list_relatives(preandsuccessors, routeArea) }}
+                    {{ «IF application.targets('3.0')»_self«ELSE»relatives«ENDIF».list_relatives(preandsuccessors, routeArea) }}
                 {% endif %}
             {% endif %}
         {% endif %}
