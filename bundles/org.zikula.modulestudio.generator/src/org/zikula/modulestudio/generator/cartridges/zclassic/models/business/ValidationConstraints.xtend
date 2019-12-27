@@ -112,6 +112,7 @@ class ValidationConstraints {
                     «' '»* @Assert\Range(min=«minValue», max=«maxValue»)
                 «ELSEIF minValue.toString != '0'»
                     «' '»* @Assert\GreaterThanOrEqual(value=«minValue»)
+                    «' '»* @Assert\LessThan(value=«BigInteger.valueOf((10 ** length) as long)»)
                 «ELSEIF maxValue.toString != '0'»
                     «' '»* @Assert\LessThanOrEqual(value=«maxValue»)
                 «ELSE»
@@ -122,10 +123,12 @@ class ValidationConstraints {
     '''
     def dispatch fieldAnnotations(NumberField it) '''
         «fieldAnnotationsNumeric»
-        «IF minValue.toString != '0.0'»
+        «IF minValue.toString != '0.0' && maxValue.toString != '0.0'»
+            «' '»* @Assert\Range(min=«minValue», max=«maxValue»)
+        «ELSEIF minValue.toString != '0.0'»
             «' '»* @Assert\GreaterThanOrEqual(value=«minValue»)
-        «ENDIF»
-        «IF maxValue.toString != '0.0'»
+            «' '»* @Assert\LessThan(value=«BigInteger.valueOf((10 ** length) as long)»)
+        «ELSEIF maxValue.toString != '0.0'»
             «' '»* @Assert\LessThanOrEqual(value=«maxValue»)
         «ELSE»
             «' '»* @Assert\LessThan(value=«BigInteger.valueOf((10 ** length) as long)»)
