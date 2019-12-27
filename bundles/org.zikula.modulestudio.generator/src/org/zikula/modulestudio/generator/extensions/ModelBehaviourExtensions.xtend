@@ -5,6 +5,7 @@ import de.guite.modulestudio.metamodel.AccountDeletionHandler
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.DataObject
 import de.guite.modulestudio.metamodel.DatetimeField
+import de.guite.modulestudio.metamodel.EmailValidationMode
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.EntityBlameableType
 import de.guite.modulestudio.metamodel.EntityIpTraceableType
@@ -419,6 +420,18 @@ class ModelBehaviourExtensions {
         }
     }
 
+    /**
+     * Returns the validation string for a given email validation mode.
+     */
+    def validationModeAsString(EmailValidationMode mode) {
+        switch mode {
+            case LOOSE    : 'loose'
+            case STRICT   : 'strict'
+            case HTML5    : 'html5'
+            default: 'html5'
+        }
+    }
+
     def setTranslatorMethod(Application it) '''
         public function setTranslator(TranslatorInterface $translator)«IF targets('3.0')»: void«ENDIF»
         {
@@ -430,6 +443,6 @@ class ModelBehaviourExtensions {
      * Checks whether a composer execution is required before installing the application.
      */
     def needsComposerInstall(Application it) {
-        hasGeographical || generatePdfSupport
+        hasGeographical || generatePdfSupport || (targets('3.0') && hasEmailFieldsWithValidationMode(EmailValidationMode.STRICT)) 
     }
 }

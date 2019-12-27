@@ -2,6 +2,7 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff
 
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.ApplicationDependencyType
+import de.guite.modulestudio.metamodel.EmailValidationMode
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.JoinRelationship
 import de.guite.modulestudio.metamodel.ReferredApplication
@@ -58,6 +59,9 @@ class ComposerFile {
             «ENDIF»
             «IF hasGeographical»
                 "drmonty/leaflet": "^1",
+            «ENDIF»
+            «IF targets('3.0') && hasEmailFieldsWithValidationMode(EmailValidationMode.STRICT)»
+                "egulias/email-validator": "^2",
             «ENDIF»
             "php": ">=«IF targets('3.0')»7.2.5«ELSE»5.5.9«ENDIF»"«IF !dependencies.empty»,«ENDIF»
             «IF !dependencies.empty»

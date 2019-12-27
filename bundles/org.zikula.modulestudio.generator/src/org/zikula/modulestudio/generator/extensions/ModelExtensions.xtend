@@ -10,6 +10,7 @@ import de.guite.modulestudio.metamodel.DateTimeComponents
 import de.guite.modulestudio.metamodel.DatetimeField
 import de.guite.modulestudio.metamodel.DerivedField
 import de.guite.modulestudio.metamodel.EmailField
+import de.guite.modulestudio.metamodel.EmailValidationMode
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.EntityChangeTrackingPolicy
 import de.guite.modulestudio.metamodel.EntityIdentifierStrategy
@@ -123,6 +124,20 @@ class ModelExtensions {
             'FormAware' -> 'FormAwareHook',
             'UiHooks' -> 'UiHooks'
         )
+    }
+
+    /**
+     * Checks whether the application contains at least one email field with the given validation mode.
+     */
+    def hasEmailFieldsWithValidationMode(Application it, EmailValidationMode mode) {
+        getAllEntities.exists[!getEmailFieldsWithValidationModeEntity(mode).empty] || !getAllVariables.filter(EmailField).filter[validationMode == mode].empty
+    }
+
+    /**
+     * Returns a list of all email fields of this entity.
+     */
+    def getEmailFieldsWithValidationModeEntity(DataObject it, EmailValidationMode mode) {
+        getSelfAndParentDataObjects.map[fields.filter(EmailField).filter[validationMode == mode]].flatten
     }
 
     /**

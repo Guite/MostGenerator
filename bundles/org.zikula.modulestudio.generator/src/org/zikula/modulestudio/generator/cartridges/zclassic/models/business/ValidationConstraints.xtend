@@ -205,7 +205,7 @@ class ValidationConstraints {
         «' '»* @Assert\Length(min="«minLength»", max="«length»"«IF application.targets('3.0')», allowEmptyString="«(if (mandatory) false else true).displayBool»"«ENDIF»)
         «IF mandatory»
             «IF application.targets('3.0')»
-                «' '»* @Assert\Email
+                «' '»* @Assert\Email(mode="«validationMode.validationModeAsString»")
             «ELSE»
                 «' '»* @Assert\Email(checkMX=«checkMX.displayBool», checkHost=«checkHost.displayBool»)
             «ENDIF»
