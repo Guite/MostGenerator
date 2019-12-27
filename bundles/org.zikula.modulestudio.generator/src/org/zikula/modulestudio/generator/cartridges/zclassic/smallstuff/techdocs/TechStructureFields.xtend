@@ -31,12 +31,14 @@ import de.guite.modulestudio.metamodel.UrlField
 import de.guite.modulestudio.metamodel.UserField
 import de.guite.modulestudio.metamodel.Variables
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
+import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class TechStructureFields {
 
     extension FormattingExtensions = new FormattingExtensions
+    extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension ModelExtensions = new ModelExtensions
     extension Utils = new Utils
 
@@ -273,13 +275,21 @@ class TechStructureFields {
         if (language == 'de') {
             result += 'Hat eine Länge von ' + length + ' Zeichen.'
             result += commonStringConstraints
-            if (checkMX) result += 'Die Validität des MX-Records des Hosts der gegebenen E-Mail Adresse wird geprüft.'
-            if (checkHost) result += 'Die Validität des MX- oder A- oder AAAA-Records des Hosts der gegebenen E-Mail Adresse wird geprüft.'
+            if (application.targets('3.0')) {
+                result += 'Der Validierungsmodus ist auf "' + validationMode.validationModeAsString + '" eingestellt.'
+            } else {
+                if (checkMX) result += 'Die Validität des MX-Records des Hosts der gegebenen E-Mail Adresse wird geprüft.'
+                if (checkHost) result += 'Die Validität des MX- oder A- oder AAAA-Records des Hosts der gegebenen E-Mail Adresse wird geprüft.'
+            }
         } else {
             result += 'Has a length of ' + length + ' chars.'
             result += commonStringConstraints
-            if (checkMX) result += 'The MX record\'s validity of the given email\'s host is checked.'
-            if (checkHost) result += 'The MX or A or AAAA record\'s validity of given email\'s host is checked.'
+            if (application.targets('3.0')) {
+                result += 'Validation mode is set to "' + validationMode.validationModeAsString + '".'
+            } else {
+                if (checkMX) result += 'The MX record\'s validity of the given email\'s host is checked.'
+                if (checkHost) result += 'The MX or A or AAAA record\'s validity of given email\'s host is checked.'
+            }
         }
         result
     }
@@ -288,11 +298,15 @@ class TechStructureFields {
         if (language == 'de') {
             result += 'Hat eine Länge von ' + length + ' Zeichen.'
             result += commonStringConstraints
-            if (checkDNS) result += 'Der assoziierte Host wird geprüft.'
+            if (!application.targets('3.0')) {
+                if (checkDNS) result += 'Der assoziierte Host wird geprüft.'
+            }
         } else {
             result += 'Has a length of ' + length + ' chars.'
             result += commonStringConstraints
-            if (checkDNS) result += 'The associated host is checked.'
+            if (!application.targets('3.0')) {
+                if (checkDNS) result += 'The associated host is checked.'
+            }
         }
         result
     }
