@@ -47,7 +47,7 @@ class LifecycleListener {
         «IF !targets('3.0')»
             use Symfony\Component\EventDispatcher\Event;
         «ENDIF»
-        use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+        use Symfony\«IF targets('3.0')»Contracts«ELSE»Component«ENDIF»\EventDispatcher\EventDispatcherInterface;
         «IF targets('3.0')»
             use Symfony\Contracts\EventDispatcher\Event;
         «ENDIF»

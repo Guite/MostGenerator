@@ -27,7 +27,7 @@ class MenuBuilder {
 
         use Knp\Menu\FactoryInterface;
         use Knp\Menu\ItemInterface;
-        use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+        use Symfony\«IF targets('3.0')»Contracts«ELSE»Component«ENDIF»\EventDispatcher\EventDispatcherInterface;
         use Symfony\Component\HttpFoundation\RequestStack;
         use Zikula\Common\Translator\TranslatorInterface;
         use Zikula\Common\Translator\TranslatorTrait;
