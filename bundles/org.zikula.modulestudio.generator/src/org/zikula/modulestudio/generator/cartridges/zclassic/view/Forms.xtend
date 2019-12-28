@@ -199,7 +199,7 @@ class Forms {
                                         <span class="label label-danger"><i class="fa fa-warning"></i> <span class="sr-only">{{ __('Errors') }}</span></span>
                                     {% endif %}
                                     {% set hasRequiredFields = language in localesWithMandatoryFields %}
-                                    {% if hasRequiredFields %}<span class="required">{% endif %}{{ language«IF app.targets('3.0')»language_name«ELSE»|languageName|safeHtml«ENDIF» }}{% if hasRequiredFields %}</span>{% endif %}
+                                    {% if hasRequiredFields %}<span class="required">{% endif %}{{ language«IF application.targets('3.0')»language_name«ELSE»|languageName|safeHtml«ENDIF» }}{% if hasRequiredFields %}</span>{% endif %}
                                 </a>
                             </li>
                         {% endfor %}
@@ -208,7 +208,7 @@ class Forms {
                         {% for language in supportedLanguages %}
                             <div class="{{ form.vars.id|lower }}-translations-fields-{{ language }} tab-pane fade{% if language == app.request.locale %} active in{% endif %}">
                                 <fieldset>
-                                    <legend>{{ language«IF app.targets('3.0')»language_name«ELSE»|languageName|safeHtml«ENDIF» }}</legend>
+                                    <legend>{{ language«IF application.targets('3.0')»language_name«ELSE»|languageName|safeHtml«ENDIF» }}</legend>
                                     {% if language == app.request.locale %}
                                         «fieldSet(subElem)»
                                     {% else %}
@@ -222,7 +222,7 @@ class Forms {
             {% else %}
                 {% set language = app.request.locale %}
                 <fieldset>
-                    <legend>{{ language«IF app.targets('3.0')»language_name«ELSE»|languageName|safeHtml«ENDIF» }}</legend>
+                    <legend>{{ language«IF application.targets('3.0')»language_name«ELSE»|languageName|safeHtml«ENDIF» }}</legend>
                     «fieldSet(subElem)»
                 </fieldset>
             {% endif %}
