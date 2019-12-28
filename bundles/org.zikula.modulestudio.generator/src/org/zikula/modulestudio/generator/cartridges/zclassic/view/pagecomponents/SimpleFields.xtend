@@ -59,9 +59,9 @@ class SimpleFields {
 
     def dispatch displayField(NumberField it, String objName, String page) {
         if (percentage) '''
-            {{ («objName».«name.formatForCode» * 100)|localizednumber }}%'''
+            {{ («objName».«name.formatForCode» * 100)|«IF application.targets('3.0')»format_number«ELSE»localizednumber«ENDIF» }}%'''
         else '''
-            {{ «objName».«name.formatForCode»|localized«IF currency»currency('EUR')«ELSE»number«ENDIF» }}'''
+            {{ «objName».«name.formatForCode»|«IF application.targets('3.0')»format_«ELSE»localized«ENDIF»«IF currency»currency('EUR')«ELSE»number«ENDIF» }}'''
     }
 
     def dispatch displayField(UserField it, String objName, String page) {
@@ -94,21 +94,21 @@ class SimpleFields {
         else if (application.targets('2.0') && role == StringRole.DATE_INTERVAL) '''
             {{ «objName».«name.formatForCode»|«application.appName.formatForDB»_dateInterval }}'''
         else if (application.targets('3.0') && role == StringRole.COUNTRY) '''
-            {{ «objName».«name.formatForCode»|countryName }}'''
+            {{ «objName».«name.formatForCode»|country_name }}'''
         else if (application.targets('3.0') && role == StringRole.CURRENCY) '''
-            {{ «objName».«name.formatForCode»|currencyName }}'''
+            {{ «objName».«name.formatForCode»|currency_name }}'''
         else if (application.targets('3.0') && role == StringRole.LANGUAGE) '''
-            {{ «objName».«name.formatForCode»|languageName }}'''
+            {{ «objName».«name.formatForCode»|language_name }}'''
         else if (application.targets('3.0') && role == StringRole.LOCALE) '''
-            {{ «objName».«name.formatForCode»|localeName }}'''
+            {{ «objName».«name.formatForCode»|locale_name }}'''
         else if (application.targets('3.0') && role == StringRole.TIME_ZONE) '''
-            {{ «objName».«name.formatForCode»|timezoneName }}'''
+            {{ «objName».«name.formatForCode»|timezone_name }}'''
         else '''
             {{ «objName».«name.formatForCode»«IF role == StringRole.COUNTRY»|«application.appName.formatForDB»_countryName«ELSEIF role == StringRole.LANGUAGE || role == StringRole.LOCALE»|languageName«ENDIF» }}'''
     }
 
     def dispatch displayField(TextField it, String objName, String page) '''
-        {{ «objName».«name.formatForCode»«IF page == 'view'»|striptags|truncate(50)«ELSE»«IF page == 'display' && null !== entity && entity instanceof Entity && !(entity as Entity).skipHookSubscribers»|notifyFilters('«entity.application.appName.formatForDB».filter_hooks.«(entity as Entity).nameMultiple.formatForDB».filter')«ENDIF»|safeHtml«ENDIF» }}'''
+        {{ «objName».«name.formatForCode»«IF page == 'view'»|striptags|«IF application.targets('3.0')»u.«ENDIF»truncate(50)«ELSE»«IF page == 'display' && null !== entity && entity instanceof Entity && !(entity as Entity).skipHookSubscribers»|notifyFilters('«entity.application.appName.formatForDB».filter_hooks.«(entity as Entity).nameMultiple.formatForDB».filter')«ENDIF»|safeHtml«ENDIF» }}'''
 
     def dispatch displayField(EmailField it, String objName, String page) {
         val realName = objName + '.' + name.formatForCode
@@ -207,29 +207,29 @@ class SimpleFields {
         if (isDateTimeField) {
             if (!mandatory && nullable) {
                 if (page == 'viewcsv') { '''
-                    {% if «objName».«name.formatForCode» is not empty %}{{ «objName».«name.formatForCode»|localizeddate('medium', 'short') }}{% endif %}'''
+                    {% if «objName».«name.formatForCode» is not empty %}{{ «objName».«name.formatForCode»|«IF application.targets('3.0')»format_datetime«ELSE»localizeddate«ENDIF»('medium', 'short') }}{% endif %}'''
                 } else { '''
                     {% if «objName».«name.formatForCode» is not empty %}
-                        {{ «objName».«name.formatForCode»|localizeddate('medium', 'short') }}
+                        {{ «objName».«name.formatForCode»|«IF application.targets('3.0')»format_datetime«ELSE»localizeddate«ENDIF»('medium', 'short') }}
                     {% endif %}'''
                 }
             } else { '''
-                {{ «objName».«name.formatForCode»|localizeddate('medium', 'short') }}'''
+                {{ «objName».«name.formatForCode»|«IF application.targets('3.0')»format_datetime«ELSE»localizeddate«ENDIF»('medium', 'short') }}'''
             }
         } else if (isDateField) {
             if (!mandatory && nullable) {
                 if (page == 'viewcsv') { '''
-                    {% if «objName».«name.formatForCode» is not empty %}{{ «objName».«name.formatForCode»|localizeddate('medium', 'none') }}{% endif %}'''
+                    {% if «objName».«name.formatForCode» is not empty %}{{ «objName».«name.formatForCode»|«IF application.targets('3.0')»format_date«ELSE»localizeddate«ENDIF»('medium', 'none') }}{% endif %}'''
                 } else { '''
                     {% if «objName».«name.formatForCode» is not empty %}
-                        {{ «objName».«name.formatForCode»|localizeddate('medium', 'none') }}
+                        {{ «objName».«name.formatForCode»|«IF application.targets('3.0')»format_date«ELSE»localizeddate«ENDIF»('medium', 'none') }}
                     {% endif %}'''
                 }
             } else { '''
-                {{ «objName».«name.formatForCode»|localizeddate('medium', 'none') }}'''
+                {{ «objName».«name.formatForCode»|«IF application.targets('3.0')»format_date«ELSE»localizeddate«ENDIF»('medium', 'none') }}'''
             }
         } else if (isTimeField) { '''
-            {{ «objName».«name.formatForCode»|localizeddate('none', 'short') }}'''
+            {{ «objName».«name.formatForCode»|«IF application.targets('3.0')»format_time«ELSE»localizeddate«ENDIF»('none', 'short') }}'''
         }
     }
 }

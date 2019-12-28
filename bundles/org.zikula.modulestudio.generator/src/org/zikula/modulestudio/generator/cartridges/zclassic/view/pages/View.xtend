@@ -584,7 +584,7 @@ class View {
                                 <td headers="hTitle">
                                     {{ logEntry|«application.appName.formatForDB»_logDescription }}
                                 </td>
-                                <td headers="hDate">{{ logEntry.loggedAt|localizeddate('long', 'medium') }}</td>
+                                <td headers="hDate">{{ logEntry.loggedAt|«IF application.targets('3.0')»format_datetime«ELSE»localizeddate«ENDIF»('long', 'medium') }}</td>
                                 <td headers="hUser">{{ userAvatar(logEntry.username, {size: 20, rating: 'g'}) }} {{ logEntry.username|profileLinkByUserName() }}</td>
                                 <td headers="hActions" class="actions nowrap">
                                     «IF hasDisplayAction»

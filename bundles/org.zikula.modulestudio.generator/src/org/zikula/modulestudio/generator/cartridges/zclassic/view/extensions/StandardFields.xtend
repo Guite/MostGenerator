@@ -7,6 +7,7 @@ import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
+import org.zikula.modulestudio.generator.extensions.Utils
 
 class StandardFields {
 
@@ -14,6 +15,7 @@ class StandardFields {
     extension FormattingExtensions = new FormattingExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension NamingExtensions = new NamingExtensions
+    extension Utils = new Utils
 
     def generate (Application it, IMostFileSystemAccess fsa) {
         val templatePath = getViewPath + 'Helper/'
@@ -53,7 +55,7 @@ class StandardFields {
             {% set profileLink = obj.createdBy.uid|profileLinkByUserId %}
             <dd class="avatar">{{ userAvatar(obj.createdBy.uid, {rating: 'g'}) }}</dd>
             <dd>
-                {{ __f('Created by %user on %date', {'%user': profileLink, '%date': obj.createdDate|localizeddate('medium', 'short')})|raw }}
+                {{ __f('Created by %user on %date', {'%user': profileLink, '%date': obj.createdDate|«IF targets('3.0')»format_datetime«ELSE»localizeddate«ENDIF»('medium', 'short')})|raw }}
                 {% if currentUser.loggedIn %}
                     {% set sendMessageUrl = obj.createdBy.uid|messageSendLink(urlOnly=true) %}
                     {% if sendMessageUrl != '#' %}
@@ -67,7 +69,7 @@ class StandardFields {
             {% set profileLink = obj.updatedBy.uid|profileLinkByUserId %}
             <dd class="avatar">{{ userAvatar(obj.updatedBy.uid, {rating: 'g'}) }}</dd>
             <dd>
-                {{ __f('Updated by %user on %date', {'%user': profileLink, '%date': obj.updatedDate|localizeddate('medium', 'short')})|raw }}
+                {{ __f('Updated by %user on %date', {'%user': profileLink, '%date': obj.updatedDate|«IF targets('3.0')»format_datetime«ELSE»localizeddate«ENDIF»('medium', 'short')})|raw }}
                 {% if currentUser.loggedIn %}
                     {% set sendMessageUrl = obj.updatedBy.uid|messageSendLink(urlOnly=true) %}
                     {% if sendMessageUrl != '#' %}
@@ -102,11 +104,11 @@ class StandardFields {
         <ul>
         {% if obj.createdBy|default and obj.createdBy.uid > 0 %}
             <li>{{ __f('Created by %user', {'%user': obj.createdBy.uname}) }}</li>
-            <li>{{ __f('Created on %date', {'%date': obj.createdDate|localizeddate('medium', 'short')}) }}</li>
+            <li>{{ __f('Created on %date', {'%date': obj.createdDate|«IF targets('3.0')»format_datetime«ELSE»localizeddate«ENDIF»('medium', 'short')}) }}</li>
         {% endif %}
         {% if obj.updatedBy|default and obj.updatedBy.uid > 0 %}
             <li>{{ __f('Updated by %user', {'%user': obj.updatedBy.uname}) }}</li>
-            <li>{{ __f('Updated on %date', {'%date': obj.updatedDate|localizeddate('medium', 'short')}) }}</li>
+            <li>{{ __f('Updated on %date', {'%date': obj.updatedDate|«IF targets('3.0')»format_datetime«ELSE»localizeddate«ENDIF»('medium', 'short')}) }}</li>
         {% endif %}
         «FOR entity : getLoggableEntities»
             {% if obj._objectType == '«entity.name.formatForCode»' %}

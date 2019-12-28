@@ -51,7 +51,7 @@ class History {
             {% import _self as helper %}
         «ENDIF»
         {% macro outputSimpleValue(input) %}
-            {{ input is «app.appName.toLowerCase»_instanceOf('DateTimeInterface') ? input|localizeddate('long', 'medium') : input|default(__('an empty value')) }}
+            {{ input is «app.appName.toLowerCase»_instanceOf('DateTimeInterface') ? input|«IF application.targets('3.0')»format_datetime«ELSE»localizeddate«ENDIF»('long', 'medium') : input|default(__('an empty value')) }}
         {% endmacro %}
         {% macro outputArray(input«IF hasTranslatableFields», keysAreLanguages«ENDIF») %}
             «IF !app.targets('3.0')»
@@ -59,7 +59,7 @@ class History {
             «ENDIF»
             <ul>
                 {% for key, value in input %}
-                    <li><span class="bold">{{ «IF hasTranslatableFields»keysAreLanguages ? key|languageName|safeHtml|humanize : «ENDIF»key|humanize }}:</span> {% if value is iterable %}{{ «IF app.targets('3.0')»_self«ELSE»helper«ENDIF».outputArray(value«IF hasTranslatableFields», false«ENDIF») }}{% else %}<span class="italic">{{ value }}</span>{% endif %}</li>
+                    <li><span class="bold">{{ «IF hasTranslatableFields»keysAreLanguages ? key|«IF app.targets('3.0')»language_name«ELSE»languageName|safeHtml|humanize«ENDIF» : «ENDIF»key|humanize }}:</span> {% if value is iterable %}{{ «IF app.targets('3.0')»_self«ELSE»helper«ENDIF».outputArray(value«IF hasTranslatableFields», false«ENDIF») }}{% else %}<span class="italic">{{ value }}</span>{% endif %}</li>
                 {% endfor %}
             </ul>
         {% endmacro %}
@@ -183,7 +183,7 @@ class History {
                             <input type="checkbox" name="versions[]" value="{{ logEntry.version }}" class="«application.vendorAndName.toLowerCase»-toggle-checkbox" />
                         </td>
                         <td headers="hVersion" class="text-center">{{ logEntry.version }}{% if loop.first %} ({{ __('latest') }}){% endif %}</td>
-                        <td headers="hDate">{{ logEntry.loggedAt|localizeddate('long', 'medium') }}</td>
+                        <td headers="hDate">{{ logEntry.loggedAt|«IF application.targets('3.0')»format_datetime«ELSE»localizeddate«ENDIF»('long', 'medium') }}</td>
                         <td headers="hUser">
                             {% if logEntry.username %}
                                 {{ userAvatar(logEntry.username, {rating: 'g'}) }} {{ logEntry.username|profileLinkByUserName() }}

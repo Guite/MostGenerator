@@ -86,11 +86,11 @@ class Atom {
         <summary type="html">
             <![CDATA[
             «IF !textFields.empty»
-                {{ «objName».«textFields.head.name.formatForCode»|truncate(150, true, '…')|default('-') }}
+                {{ «objName».«textFields.head.name.formatForCode»|«IF application.targets('3.0')»u.«ENDIF»truncate(150«IF !application.targets('3.0')», true«ENDIF», '…')|default('-') }}
             «ELSEIF !stringFields.empty»
-                {{ «objName».«stringFields.head.name.formatForCode»|truncate(150, true, '…')|default('-') }}
+                {{ «objName».«stringFields.head.name.formatForCode»|«IF application.targets('3.0')»u.«ENDIF»truncate(150«IF !application.targets('3.0')», true«ENDIF», '…')|default('-') }}
             «ELSE»
-                {{ «objName»|«application.appName.formatForDB»_formattedTitle|truncate(150, true, '…')|default('-') }}
+                {{ «objName»|«application.appName.formatForDB»_formattedTitle|«IF application.targets('3.0')»u.«ENDIF»truncate(150«IF !application.targets('3.0')», true«ENDIF», '…')|default('-') }}
             «ENDIF»
             ]]>
         </summary>
