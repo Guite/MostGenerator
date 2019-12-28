@@ -121,7 +121,7 @@ class UserListener {
         public function delete(GenericEvent $event)«IF targets('3.0')»: void«ENDIF»
         {
             «IF hasStandardFieldEntities || hasUserFields || hasUserVariables»
-                $userId = $event->getSubject();
+                $userId = (int) $event->getSubject();
 
                 «IF hasStandardFieldEntities || hasUserFields»
                     «FOR entity : getAllEntities»«entity.userDelete»«ENDFOR»
