@@ -200,7 +200,7 @@ class ItemActions {
                 $this->__('Edit this «name.formatForDisplay»', '«application.appName.formatForDB»')
             );
             «application.addLinkClass('default')»
-            «application.addIcon('pencil-square-o')»
+            «application.addIcon(if (application.targets('3.0')) 'edit' else 'pencil-square-o')»
         «ENDIF»
         $title = $this->__('Reuse', '«application.appName.formatForDB»');
         $menu->addChild($title, [
