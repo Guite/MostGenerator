@@ -58,7 +58,7 @@ class ViewHierarchy {
         «ENDIF»
         {% block title __('«name.formatForDisplayCapital» hierarchy') %}
         «IF !application.separateAdminTemplates || isAdmin»
-            {% block adminPageIcon 'list-alt' %}
+            {% block admin_page_icon 'code-«IF application.targets('3.0')»branch«ELSE»fork«ENDIF»' %}
         «ENDIF»
         {% block content %}
             <div class="«appName.toLowerCase»-«name.formatForDB» «appName.toLowerCase»-viewhierarchy">

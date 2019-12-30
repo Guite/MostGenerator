@@ -56,7 +56,7 @@ class ViewMap {
         «ENDIF»
         {% block title own ? __('My «nameMultiple.formatForDisplay»') : __('«nameMultiple.formatForDisplayCapital» list') %}
         «IF !application.separateAdminTemplates || isAdmin»
-            {% block adminPageIcon 'map-o' %}
+            {% block admin_page_icon 'map«IF application.targets('3.0')»«ELSE»-o«ENDIF»' %}
         «ENDIF»
         {% block content %}
             <div class="«appName.toLowerCase»-«name.formatForDB» «appName.toLowerCase»-view «appName.toLowerCase»-map">

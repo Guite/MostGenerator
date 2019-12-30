@@ -92,7 +92,7 @@ class View {
         «ENDIF»
         {% block title own ? __('My «nameMultiple.formatForDisplay»') : __('«nameMultiple.formatForDisplayCapital» list') %}
         «IF !application.separateAdminTemplates || isAdmin»
-            {% block admin_page_icon 'list-alt' %}
+            {% block admin_page_icon 'list«IF application.targets('3.0')»«ELSE»-alt«ENDIF»' %}
         «ENDIF»
         {% block content %}
         <div class="«appName.toLowerCase»-«name.formatForDB» «appName.toLowerCase»-view">
@@ -552,7 +552,7 @@ class View {
         «ENDIF»
         {% block title __('Deleted «nameMultiple.formatForDisplay»') %}
         «IF !application.separateAdminTemplates || isAdmin»
-            {% block admin_page_icon 'trash-o' %}
+            {% block admin_page_icon 'trash-«IF application.targets('3.0')»alt«ELSE»o«ENDIF»' %}
         «ENDIF»
         {% block content %}
         <div class="«appName.toLowerCase»-«name.formatForDB» «appName.toLowerCase»-viewdeleted">
