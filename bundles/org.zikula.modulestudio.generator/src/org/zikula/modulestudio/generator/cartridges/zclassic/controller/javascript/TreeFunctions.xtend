@@ -216,7 +216,7 @@ class TreeFunctions {
                     action: function (node) {
                         document.location.href = Routing.generate('«appName.formatForDB»_' + objectType.toLowerCase() + '_edit', nodeEntityRouteArgs, true);
                     },
-                    icon: 'fa fa-fw fa-pencil-square-o'
+                    icon: 'fa fa-fw fa-«IF targets('3.0')»edit«ELSE»pencil-square-o«ENDIF»'
                 };
             }
             actions.addChildNode = {
@@ -243,7 +243,7 @@ class TreeFunctions {
                         «vendorAndName»PerformTreeOperation(objectType, rootId, 'deleteNode');
                     }
                 },
-                icon: 'fa fa-fw fa-trash-o'
+                icon: 'fa fa-fw fa-trash-«IF targets('3.0')»alt«ELSE»o«ENDIF»'
             };
         }
 

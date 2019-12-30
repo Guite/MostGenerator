@@ -130,7 +130,7 @@ class TechHelper {
         </tr>
         <tr>
             <th id="hUrl" scope="row" headers="hBasicField">URL</th>
-            <td headers="hBasicValue hUrl"><a href="«url»" title="«IF language == 'de'»Projektseite«ELSE»Project page«ENDIF»" target="_blank"><i class="fa fa-external-link-square"></i> «url»</a></td>
+            <td headers="hBasicValue hUrl"><a href="«url»" title="«IF language == 'de'»Projektseite«ELSE»Project page«ENDIF»" target="_blank"><i class="fa fa-external-link-square«IF targets('3.0')»-alt«ENDIF»"></i> «url»</a></td>
         </tr>
         <tr>
             <th id="hVersion" scope="row" headers="hBasicField">Version</th>

@@ -59,7 +59,7 @@ class StandardFields {
                 {% if currentUser.loggedIn %}
                     {% set sendMessageUrl = obj.createdBy.uid|messageSendLink(urlOnly=true) %}
                     {% if sendMessageUrl != '#' %}
-                        <a href="{{ sendMessageUrl }}" title="{{ __f('Send private message to %userName%', {'%userName%': obj.createdBy.uname}) }}"><i class="fa fa-envelope-o"></i></a>
+                        <a href="{{ sendMessageUrl }}" title="{{ __f('Send private message to %userName%', {'%userName%': obj.createdBy.uname}) }}"><i class="fa fa-envelope«IF !targets('3.0')»-o«ENDIF»"></i></a>
                     {% endif %}
                 {% endif %}
             </dd>
@@ -73,7 +73,7 @@ class StandardFields {
                 {% if currentUser.loggedIn %}
                     {% set sendMessageUrl = obj.updatedBy.uid|messageSendLink(urlOnly=true) %}
                     {% if sendMessageUrl != '#' %}
-                        <a href="{{ sendMessageUrl }}" title="{{ __f('Send private message to %userName%', {'%userName%': obj.updatedBy.uname}) }}"><i class="fa fa-envelope-o"></i></a>
+                        <a href="{{ sendMessageUrl }}" title="{{ __f('Send private message to %userName%', {'%userName%': obj.updatedBy.uname}) }}"><i class="fa fa-envelope«IF !targets('3.0')»-o«ENDIF»"></i></a>
                     {% endif %}
                 {% endif %}
             </dd>

@@ -139,7 +139,7 @@ class InlineEditing {
                 href: editHref,
                 text: 'edit'
             }).append(
-                jQuery('<span>', { class: 'fa fa-pencil-square-o' })
+                jQuery('<span>', { class: 'fa fa-«IF targets('3.0')»edit«ELSE»pencil-square-o«ENDIF»' })
             );
 
             return editLink;
@@ -254,7 +254,7 @@ class InlineEditing {
                                 href: createUrl,
                                 title: Translator.__('Edit this entry')
                             }).append(
-                                jQuery('<span>', { class: 'fa fa-pencil-square-o' })
+                                jQuery('<span>', { class: 'fa fa-«IF targets('3.0')»edit«ELSE»pencil-square-o«ENDIF»' })
                             )
                         );
                     }

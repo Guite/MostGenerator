@@ -74,7 +74,7 @@ class SimpleFields {
             «IF page == 'display'»
                   {% if not isQuickView %}
             «ENDIF»
-                {{ «realName».uid|profileLinkByUserId }}{% if currentUser.loggedIn %}{% set sendMessageUrl = «realName».uid|messageSendLink(urlOnly=true) %}{% if sendMessageUrl != '#' %}<a href="{{ sendMessageUrl }}" title="{{ __f('Send private message to %userName%', {'%userName%': «realName».uname}) }}"><i class="fa fa-envelope-o"></i></a>{% endif %}{% endif %}
+                {{ «realName».uid|profileLinkByUserId }}{% if currentUser.loggedIn %}{% set sendMessageUrl = «realName».uid|messageSendLink(urlOnly=true) %}{% if sendMessageUrl != '#' %}<a href="{{ sendMessageUrl }}" title="{{ __f('Send private message to %userName%', {'%userName%': «realName».uname}) }}"><i class="fa fa-envelope«IF !application.targets('3.0')»-o«ENDIF»"></i></a>{% endif %}{% endif %}
                 <span class="avatar">{{ userAvatar(«realName».uid, {rating: 'g'}) }}</span>
             «IF page == 'display'»
                 {% else %}
@@ -142,7 +142,7 @@ class SimpleFields {
             «IF page == 'display'»
                   {% if not isQuickView %}
             «ENDIF»
-            <a href="{{ «realName» }}" title="{{ __('Visit this page') }}"><i class="fa fa-external-link-square"></i></a>
+            <a href="{{ «realName» }}" title="{{ __('Visit this page') }}"><i class="fa fa-external-link-square«IF application.targets('3.0')»-alt«ENDIF»"></i></a>
             «IF page == 'display'»
                 {% else %}
                     {{ «realName» }}

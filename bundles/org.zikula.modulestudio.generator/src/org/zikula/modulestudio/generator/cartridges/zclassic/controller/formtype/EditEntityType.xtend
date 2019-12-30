@@ -740,7 +740,7 @@ class EditEntityType {
             foreach ($options['actions'] as $action) {
                 $builder->add($action['id'], SubmitType::class, [
                     'label' => $action['title'],
-                    'icon' => 'delete' === $action['id'] ? 'fa-trash-o' : '',
+                    'icon' => 'delete' === $action['id'] ? 'fa-trash-«IF app.targets('3.0')»alt«ELSE»o«ENDIF»' : '',
                     'attr' => [
                         'class' => $action['buttonClass']
                     ]

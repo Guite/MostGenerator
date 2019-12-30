@@ -78,7 +78,7 @@ class TechStructure {
     '''
 
     def dispatch private entityInfo(DataObject it) '''
-        <h3><i class="fa fa-vcard-o"></i> «name.formatForDisplayCapital»«IF it instanceof Entity» / «nameMultiple.formatForDisplayCapital»«ENDIF»</h3>
+        <h3><i class="fa fa-«IF application.targets('3.0')»address-chard«ELSE»vcard-o«ENDIF»"></i> «name.formatForDisplayCapital»«IF it instanceof Entity» / «nameMultiple.formatForDisplayCapital»«ENDIF»</h3>
         «IF null !== documentation && !documentation.empty»
             <p>«documentation»</p>
         «ENDIF»
@@ -91,7 +91,7 @@ class TechStructure {
             «new TechStructureFields().generate(it, language)»
         «ENDIF»
         «IF !incoming.empty || !outgoing.empty»
-            <h4><i class="fa fa-arrows-h"></i> «IF language == 'de'»Relationen«ELSE»Relations«ENDIF»</h4>
+            <h4><i class="fa fa-arrows«IF application.targets('3.0')»-alt«ENDIF»-h"></i> «IF language == 'de'»Relationen«ELSE»Relations«ENDIF»</h4>
             «new TechStructureRelations().generate(it, language)»
         «ENDIF»
         «IF it instanceof Entity»

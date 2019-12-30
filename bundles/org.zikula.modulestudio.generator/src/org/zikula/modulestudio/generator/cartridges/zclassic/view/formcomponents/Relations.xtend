@@ -206,9 +206,9 @@ class Relations {
         <li id="{{ idPrefixItem }}">
             {{ item|«app.appName.formatForDB»_formattedTitle }}
             «IF includeEditing»
-                <a id="{{ idPrefixItem }}Edit" href="{{ path('«app.appName.formatForDB»_«targetEntity.name.formatForDB»_' ~ routeArea ~ 'edit'«targetEntity.routeParams('item', true)») }}"><i class="fa fa-pencil-square-o"></i></a>
+                <a id="{{ idPrefixItem }}Edit" href="{{ path('«app.appName.formatForDB»_«targetEntity.name.formatForDB»_' ~ routeArea ~ 'edit'«targetEntity.routeParams('item', true)») }}"><i class="fa fa-«IF app.targets('3.0')»edit«ELSE»pencil-square-o«ENDIF»"></i></a>
             «ENDIF»
-             <a id="{{ idPrefixItem }}Remove" href="javascript:«app.vendorAndName»RemoveRelatedItem('{{ idPrefix }}', '{{ item.getKey() }}');"><i class="fa fa-trash-o"></i></a>
+             <a id="{{ idPrefixItem }}Remove" href="javascript:«app.vendorAndName»RemoveRelatedItem('{{ idPrefix }}', '{{ item.getKey() }}');"><i class="fa fa-trash-«IF app.targets('3.0')»alt«ELSE»o«ENDIF»"></i></a>
             «IF targetEntity.hasImageFieldsEntity»
                 <br />
                 «val imageFieldName = targetEntity.getImageFieldsEntity.head.name.formatForCode»

@@ -43,7 +43,7 @@ class Delete {
         «ENDIF»
         {% block title __('Delete «name.formatForDisplay»') %}
         «IF !application.separateAdminTemplates || isAdmin»
-            {% block admin_page_icon 'trash-o' %}
+            {% block admin_page_icon 'trash-«IF application.targets('3.0')»alt«ELSE»o«ENDIF»' %}
         «ENDIF»
         {% block content %}
             <div class="«app.appName.toLowerCase»-«name.formatForDB» «app.appName.toLowerCase»-delete">
