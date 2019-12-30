@@ -349,7 +349,7 @@ class ControllerHelper {
             $templateParameters['all'] = 'csv' === $request->getRequestFormat() ? 1 : $request->query->getInt('all');
             $showOnlyOwnEntriesSetting = (bool)$request->query->getInt(
                 'own',
-                $this->variableApi->get('«appName»', 'showOnlyOwnEntries')
+                (int) $this->variableApi->get('«appName»', 'showOnlyOwnEntries')
             );
             $showOnlyOwnEntriesSetting = $showOnlyOwnEntriesSetting ? 1 : 0;
             «IF !getAllEntities.filter[ownerPermission].empty»
