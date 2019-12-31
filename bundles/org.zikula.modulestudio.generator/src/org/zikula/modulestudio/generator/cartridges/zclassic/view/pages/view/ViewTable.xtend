@@ -1,11 +1,10 @@
-package org.zikula.modulestudio.generator.cartridges.zclassic.view.pages
+package org.zikula.modulestudio.generator.cartridges.zclassic.view.pages.view
 
 import de.guite.modulestudio.metamodel.BooleanField
 import de.guite.modulestudio.metamodel.DataObject
 import de.guite.modulestudio.metamodel.DerivedField
 import de.guite.modulestudio.metamodel.EmailField
 import de.guite.modulestudio.metamodel.Entity
-import de.guite.modulestudio.metamodel.EntityTreeType
 import de.guite.modulestudio.metamodel.EntityWorkflowType
 import de.guite.modulestudio.metamodel.IntegerField
 import de.guite.modulestudio.metamodel.ItemActionsPosition
@@ -18,8 +17,9 @@ import de.guite.modulestudio.metamodel.OneToOneRelationship
 import de.guite.modulestudio.metamodel.UrlField
 import java.util.List
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
-import org.zikula.modulestudio.generator.cartridges.zclassic.view.pagecomponents.ItemActionsView
+import org.zikula.modulestudio.generator.cartridges.zclassic.view.pagecomponents.MenuViews
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.pagecomponents.SimpleFields
+import org.zikula.modulestudio.generator.cartridges.zclassic.view.pagecomponents.ViewPagesHelper
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.pagecomponents.ViewQuickNavForm
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
@@ -30,7 +30,7 @@ import org.zikula.modulestudio.generator.extensions.UrlExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
 
-class View {
+class ViewTable {
 
     extension ControllerExtensions = new ControllerExtensions
     extension FormattingExtensions = new FormattingExtensions
@@ -51,7 +51,7 @@ class View {
     static val LIST_TYPE_TABLE = 3
 
     def generate(Entity it, String appName, Integer listType, IMostFileSystemAccess fsa) {
-        ('Generating view templates for entity "' + name.formatForDisplay + '"').printIfNotTesting(fsa)
+        ('Generating table view templates for entity "' + name.formatForDisplay + '"').printIfNotTesting(fsa)
         this.listType = listType
         this.appName = appName
 
@@ -64,13 +64,7 @@ class View {
         }
         new ViewQuickNavForm().generate(it, appName, fsa)
         if (loggable) {
-            templateFilePath = templateFile('viewDeleted')
-            fsa.generateFile(templateFilePath, viewViewDeleted(false))
-
-            if (application.separateAdminTemplates) {
-                templateFilePath = templateFile('Admin/viewDeleted')
-                fsa.generateFile(templateFilePath, viewViewDeleted(true))
-            }
+            new ViewDeleted().generate(it, appName, fsa)
         }
     }
 
@@ -95,86 +89,18 @@ class View {
             {% block admin_page_icon 'list-alt' %}
         «ENDIF»
         {% block content %}
-        <div class="«appName.toLowerCase»-«name.formatForDB» «appName.toLowerCase»-view">
-            «IF null !== documentation && !documentation.empty»
+            <div class="«appName.toLowerCase»-«name.formatForDB» «appName.toLowerCase»-view">
+                «new ViewPagesHelper().commonHeader(it)»
+                {{ include('@«application.appName»/«name.formatForCodeCapital»/«IF isAdmin»Admin/«ENDIF»viewQuickNav.html.twig'«IF !hasVisibleWorkflow», {workflowStateFilter: false}«ENDIF») }}{# see template file for available options #}
 
-                «IF !documentation.containedTwigVariables.empty»
-                    <p class="alert alert-info">{{ __f('«documentation.replace('\'', '\\\'').replaceTwigVariablesForTranslation»', {«documentation.containedTwigVariables.map[v|'\'%' + v + '%\': ' + v + '|default'].join(', ')»}) }}</p>
-                «ELSE»
-                    <p class="alert alert-info">{{ __('«documentation.replace('\'', '\\\'')»') }}</p>
+                «viewForm»
+                «IF !skipHookSubscribers»
+
+                    {{ block('display_hooks') }}
                 «ENDIF»
-            «ENDIF»
-
-            {{ block('page_nav_links') }}
-
-            {{ include('@«application.appName»/«name.formatForCodeCapital»/«IF isAdmin»Admin/«ENDIF»viewQuickNav.html.twig'«IF !hasVisibleWorkflow», {workflowStateFilter: false}«ENDIF») }}{# see template file for available options #}
-
-            «viewForm»
-            «IF !skipHookSubscribers»
-
-                {{ block('display_hooks') }}
-            «ENDIF»
-        </div>
+            </div>
         {% endblock %}
-        {% block page_nav_links %}
-            <p>
-                «pageNavLinks»
-            </p>
-        {% endblock %}
-        «IF !skipHookSubscribers»
-            {% block display_hooks %}
-                «callDisplayHooks»
-            {% endblock %}
-        «ENDIF»
-    '''
-
-    def private pageNavLinks(Entity it) '''
-        «val objName = name.formatForCode»
-        «IF hasEditAction»
-            {% if canBeCreated %}
-                {% if permissionHelper.hasComponentPermission('«name.formatForCode»', constant('ACCESS_«IF workflow == EntityWorkflowType.NONE»EDIT«ELSE»COMMENT«ENDIF»')) %}
-                    {% set createTitle = __('Create «name.formatForDisplay»') %}
-                    <a href="{{ path('«appName.formatForDB»_«objName.toLowerCase»_' ~ routeArea ~ 'edit') }}" title="{{ createTitle|e('html_attr') }}"><i class="fa fa-plus"></i> {{ createTitle }}</a>
-                {% endif %}
-            {% endif %}
-        «ENDIF»
-        «IF ownerPermission»
-            {% set showOnlyOwn = routeArea != 'admin' and getModVar('«application.appName»', '«name.formatForCode»PrivateMode') %}
-        «ENDIF»
-        {% if all == 1 %}
-            {% set linkTitle = __('Back to paginated view') %}
-            {% set routeArgs = own«IF ownerPermission» and not showOnlyOwn«ENDIF» ? {own: 1} : {} %}
-            <a href="{{ path('«appName.formatForDB»_«objName.toLowerCase»_' ~ routeArea ~ 'view', routeArgs) }}" title="{{ linkTitle|e('html_attr') }}"><i class="fa fa-table"></i> {{ linkTitle }}</a>
-        {% else %}
-            {% set linkTitle = __('Show all entries') %}
-            {% set routeArgs = own«IF ownerPermission» and not showOnlyOwn«ENDIF» ? {all: 1, own: 1} : {all: 1} %}
-            <a href="{{ path('«appName.formatForDB»_«objName.toLowerCase»_' ~ routeArea ~ 'view', routeArgs) }}" title="{{ linkTitle|e('html_attr') }}"><i class="fa fa-table"></i> {{ linkTitle }}</a>
-        {% endif %}
-        «IF tree != EntityTreeType.NONE»
-            {% set linkTitle = __('Switch to hierarchy view') %}
-            <a href="{{ path('«appName.formatForDB»_«objName.toLowerCase»_' ~ routeArea ~ 'view', {tpl: 'tree'}) }}" title="{{ linkTitle|e('html_attr') }}"><i class="fa fa-code-«IF application.targets('3.0')»branch«ELSE»fork«ENDIF»"></i> {{ linkTitle }}</a>
-        «ENDIF»
-        «IF geographical»
-            {% set linkTitle = __('Show map') %}
-            <a href="{{ path('«appName.formatForDB»_«objName.toLowerCase»_' ~ routeArea ~ 'view', {tpl: 'map', all: 1}) }}" title="{{ linkTitle|e('html_attr') }}"><i class="fa fa-map«IF !application.targets('3.0')»-o«ENDIF»"></i> {{ linkTitle }}</a>
-        «ENDIF»
-        «IF standardFields»
-            «IF ownerPermission»{% if not showOnlyOwn %}«ENDIF»{% if own == 1 %}
-                {% set linkTitle = __('Show also entries from other users') %}
-                {% set routeArgs = all ? {all: 1} : {} %}
-                <a href="{{ path('«appName.formatForDB»_«objName.toLowerCase»_' ~ routeArea ~ 'view', routeArgs) }}" title="{{ linkTitle|e('html_attr') }}"><i class="fa fa-users"></i> {{ linkTitle }}</a>
-            {% elseif permissionHelper.hasComponentPermission('«name.formatForCode»', constant('ACCESS_«IF workflow == EntityWorkflowType.NONE»EDIT«ELSE»COMMENT«ENDIF»')) %}
-                {% set linkTitle = __('Show only own entries') %}
-                {% set routeArgs = all ? {all: 1, own: 1} : {own: 1} %}
-                <a href="{{ path('«appName.formatForDB»_«objName.toLowerCase»_' ~ routeArea ~ 'view', routeArgs) }}" title="{{ linkTitle|e('html_attr') }}"><i class="fa fa-user"></i> {{ linkTitle }}</a>
-            {% endif %}«IF ownerPermission»{% endif %}«ENDIF»
-        «ENDIF»
-        «IF loggable»
-            {% if hasDeletedEntities %}
-                {% set linkTitle = __('View deleted «nameMultiple.formatForDisplay»') %}
-                <a href="{{ path('«appName.formatForDB»_«objName.toLowerCase»_' ~ routeArea ~ 'view', {deleted: 1}) }}" title="{{ linkTitle|e('html_attr') }}"><i class="fa fa-trash-«IF application.targets('3.0')»alt«ELSE»o«ENDIF»"></i> {{ linkTitle }}</a>
-            {% endif %}
-        «ENDIF»
+        «new ViewPagesHelper().callDisplayHooks(it)»
     '''
 
     def private viewForm(Entity it) '''
@@ -370,19 +296,6 @@ class View {
         </fieldset>
     '''
 
-    def private callDisplayHooks(Entity it) '''
-
-        {# here you can activate calling display hooks for the view page if you need it #}
-        {# % if routeArea != 'admin' %}
-            {% set hooks = notifyDisplayHooks(eventName='«appName.formatForDB».ui_hooks.«nameMultiple.formatForDB».display_view', urlObject=currentUrlObject, outputAsArray=true) %}
-            {% if hooks is iterable and hooks|length > 0 %}
-                {% for area, hook in hooks %}
-                    <div class="z-displayhook" data-area="{{ area|e('html_attr') }}">{{ hook|raw }}</div>
-                {% endfor %}
-            {% endif %}
-        {% endif % #}
-    '''
-
     def private columnDef(DerivedField it) '''
         «IF name == 'workflowState'»{% if routeArea == 'admin' %}«ENDIF»
         <col id="c«markupIdCode(false)»" />
@@ -508,9 +421,9 @@ class View {
         «IF listType != LIST_TYPE_TABLE»
             <«listType.asItemTag»>
         «ELSE»
-            <td id="«new ItemActionsView().itemActionContainerViewId(it)»«idSuffix»" headers="hItemActions«idSuffix»" class="actions nowrap z-w02">
+            <td id="«new MenuViews().itemActionContainerViewId(it)»«idSuffix»" headers="hItemActions«idSuffix»" class="actions nowrap z-w02">
         «ENDIF»
-            «new ItemActionsView().generate(it, 'view', idSuffix)»
+            «new MenuViews().itemActions(it, 'view', idSuffix)»
         </«listType.asItemTag»>
     '''
 
@@ -533,80 +446,4 @@ class View {
             default: 'td'
         }
     }
-
-    def private viewViewDeleted(Entity it, Boolean isAdmin) '''
-        «IF application.separateAdminTemplates»
-            {# purpose of this template: «IF isAdmin»admin«ELSE»user«ENDIF» list view of deleted «nameMultiple.formatForDisplay» #}
-            «IF application.targets('3.0')»
-                {% extends «IF isAdmin»'@«application.appName»/adminBase.html.twig'«ELSE»'@«application.appName»/base.html.twig'«ENDIF» %}
-            «ELSE»
-                {% extends «IF isAdmin»'«application.appName»::adminBase.html.twig'«ELSE»'«application.appName»::base.html.twig'«ENDIF» %}
-            «ENDIF»
-        «ELSE»
-            {# purpose of this template: list view of deleted «nameMultiple.formatForDisplay» #}
-            «IF application.targets('3.0')»
-                {% extends routeArea == 'admin' ? '@«application.appName»/adminBase.html.twig' : '@«application.appName»/base.html.twig' %}
-            «ELSE»
-                {% extends routeArea == 'admin' ? '«application.appName»::adminBase.html.twig' : '«application.appName»::base.html.twig' %}
-            «ENDIF»
-        «ENDIF»
-        {% block title __('Deleted «nameMultiple.formatForDisplay»') %}
-        «IF !application.separateAdminTemplates || isAdmin»
-            {% block admin_page_icon 'trash-«IF application.targets('3.0')»alt«ELSE»o«ENDIF»' %}
-        «ENDIF»
-        {% block content %}
-        <div class="«appName.toLowerCase»-«name.formatForDB» «appName.toLowerCase»-viewdeleted">
-            {{ block('page_nav_links') }}
-            «IF !hasDisplayAction»
-                <p class="alert alert-info">{{ __('Because there exists no display action for «nameMultiple.formatForDisplay» it is not possible to preview deleted items.') }}</p>
-            «ENDIF»
-            <div class="table-responsive">
-                <table class="table table-striped table-bordered table-hover{% if routeArea == 'admin' %} table-condensed{% endif %}">
-                    <colgroup>
-                        <col id="cId" />
-                        <col id="cDate" />
-                        <col id="cUser" />
-                        <col id="cActions" />
-                    </colgroup>
-                    <thead>
-                        <tr>
-                            <th id="hId" scope="col" class="«IF !application.targets('2.0')»z-order-«ENDIF»unsorted z-w02">{{ __('ID') }}</th>
-                            <th id="hTitle" scope="col" class="«IF !application.targets('2.0')»z-order-«ENDIF»unsorted">{{ __('Title') }}</th>
-                            <th id="hDate" scope="col" class="«IF !application.targets('2.0')»z-order-«ENDIF»unsorted">{{ __('Date') }}</th>
-                            <th id="hUser" scope="col" class="«IF !application.targets('2.0')»z-order-«ENDIF»unsorted">{{ __('User') }}</th>
-                            <th id="hActions" scope="col" class="«IF !application.targets('2.0')»z-order-«ENDIF»unsorted">{{ __('Actions') }}</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for logEntry in deletedEntities %}
-                            <tr>
-                                <td headers="hVersion" class="text-center">{{ logEntry.objectId }}</td>
-                                <td headers="hTitle">
-                                    {{ logEntry|«application.appName.formatForDB»_logDescription }}
-                                </td>
-                                <td headers="hDate">{{ logEntry.loggedAt|«IF application.targets('3.0')»format_datetime«ELSE»localizeddate«ENDIF»('long', 'medium') }}</td>
-                                <td headers="hUser">{{ userAvatar(logEntry.username, {size: 20, rating: 'g'}) }} {{ logEntry.username|profileLinkByUserName() }}</td>
-                                <td headers="hActions" class="actions nowrap">
-                                    «IF hasDisplayAction»
-                                        {% set linkTitle = __f('Preview «name.formatForDisplay» %id%', {'%id%': logEntry.objectId}) %}
-                                        <a id="«name.formatForCode»ItemDisplay{{ logEntry.objectId }}" href="{{ path('«appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ 'undelete', {«getPrimaryKey.name.formatForCode»: logEntry.objectId, preview: 1, raw: 1}) }}" title="{{ linkTitle|e('html_attr') }}" class="«application.vendorAndName.toLowerCase»-inline-window hidden" data-modal-title="{{ __f('«name.formatForDisplayCapital» %id%', {'%id%': logEntry.objectId}) }}"><i class="fa fa-id-card«IF !application.targets('3.0')»-o«ENDIF»"></i></a>
-                                    «ENDIF»
-                                    {% set linkTitle = __f('Undelete «name.formatForDisplay» %id%', {'%id%': logEntry.objectId}) %}
-                                    <a href="{{ path('«appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ 'undelete', {«getPrimaryKey.name.formatForCode»: logEntry.objectId}) }}" title="{{ linkTitle|e('html_attr') }}"><i class="fa fa-history"></i></a>
-                                </td>
-                            </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-            {{ block('page_nav_links') }}
-        </div>
-        {% endblock %}
-        {% block page_nav_links %}
-            <p>
-                {% set linkTitle = __('Back to overview') %}
-                <a href="{{ path('«appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ 'view') }}" title="{{ linkTitle|e('html_attr') }}"><i class="fa fa-reply"></i> {{ linkTitle }}</a>
-            </p>
-        {% endblock %}
-    '''
 }

@@ -31,11 +31,11 @@ class HistoryFunctions {
             var amountOfSelectedVersions;
 
             amountOfSelectedVersions = jQuery('.«vendorAndName.toLowerCase»-toggle-checkbox:checked').length;
-            if (amountOfSelectedVersions > 2) {
+            if (2 < amountOfSelectedVersions) {
                 jQuery(this).prop('checked', false);
                 amountOfSelectedVersions--;
             }
-            jQuery('#compareButton').prop('disabled', amountOfSelectedVersions != 2);
+            jQuery('#compareButton').prop('disabled', 2 != amountOfSelectedVersions);
         }
 
         jQuery(document).ready(function () {

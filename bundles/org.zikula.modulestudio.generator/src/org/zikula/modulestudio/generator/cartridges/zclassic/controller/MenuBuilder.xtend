@@ -2,7 +2,8 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.controller
 
 import de.guite.modulestudio.metamodel.Application
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
-import org.zikula.modulestudio.generator.cartridges.zclassic.models.entity.ItemActions
+import org.zikula.modulestudio.generator.cartridges.zclassic.controller.menu.ItemActions
+import org.zikula.modulestudio.generator.cartridges.zclassic.controller.menu.ViewActions
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
@@ -31,6 +32,10 @@ class MenuBuilder {
         use Symfony\Component\HttpFoundation\RequestStack;
         use Zikula\Common\Translator\TranslatorInterface;
         use Zikula\Common\Translator\TranslatorTrait;
+        «IF hasViewActions»
+            use Zikula\ExtensionsModule\Api\ApiInterface\VariableApiInterface;
+        «ENDIF»
+        use Zikula\UsersModule\Api\ApiInterface\CurrentUserApiInterface;
         «IF hasEditActions || !relations.empty»
             use Zikula\UsersModule\Constant as UsersConstant;
         «ENDIF»
@@ -45,97 +50,134 @@ class MenuBuilder {
         «IF hasLoggable»
             use «appNamespace»\Helper\LoggableHelper;
         «ENDIF»
+        «IF hasViewActions && hasEditActions»
+            use «appNamespace»\Helper\ModelHelper;
+        «ENDIF»
         use «appNamespace»\Helper\PermissionHelper;
-        use Zikula\UsersModule\Api\ApiInterface\CurrentUserApiInterface;
 
         /**
          * Menu builder base class.
          */
         class AbstractMenuBuilder
         {
-            use TranslatorTrait;
+            «menuBuilderClassBaseImpl»
+        }
+    '''
+
+    def private menuBuilderClassBaseImpl(Application it) '''
+        use TranslatorTrait;
+
+        /**
+         * @var FactoryInterface
+         */
+        protected $factory;
+
+        /**
+         * @var EventDispatcherInterface
+         */
+        protected $eventDispatcher;
+
+        /**
+         * @var RequestStack
+         */
+        protected $requestStack;
+
+        /**
+         * @var PermissionHelper
+         */
+        protected $permissionHelper;
+        «IF hasDisplayActions»
 
             /**
-             * @var FactoryInterface
+             * @var EntityDisplayHelper
              */
-            protected $factory;
+            protected $entityDisplayHelper;
+        «ENDIF»
+        «IF hasLoggable»
 
             /**
-             * @var EventDispatcherInterface
+             * @var LoggableHelper
              */
-            protected $eventDispatcher;
+            protected $loggableHelper;
+        «ENDIF»
+
+        /**
+         * @var CurrentUserApiInterface
+         */
+        protected $currentUserApi;
+        «IF hasViewActions»
 
             /**
-             * @var RequestStack
+             * @var VariableApiInterface
              */
-            protected $requestStack;
+            protected $variableApi;
+        «ENDIF»
+        «IF hasViewActions && hasEditActions»
 
             /**
-             * @var PermissionHelper
+             * @var ModelHelper
              */
-            protected $permissionHelper;
+            protected $modelHelper;
+        «ENDIF»
+
+        public function __construct(
+            TranslatorInterface $translator,
+            FactoryInterface $factory,
+            EventDispatcherInterface $eventDispatcher,
+            RequestStack $requestStack,
+            PermissionHelper $permissionHelper,
             «IF hasDisplayActions»
-
-                /**
-                 * @var EntityDisplayHelper
-                 */
-                protected $entityDisplayHelper;
+                EntityDisplayHelper $entityDisplayHelper,
             «ENDIF»
             «IF hasLoggable»
-
-                /**
-                 * @var LoggableHelper
-                 */
-                protected $loggableHelper;
+                LoggableHelper $loggableHelper,
             «ENDIF»
+            CurrentUserApiInterface $currentUserApi«IF hasViewActions»,
+            VariableApiInterface $variableApi«ENDIF»«IF hasViewActions && hasEditActions»,
+            ModelHelper $modelHelper«ENDIF»
+        ) {
+            $this->setTranslator($translator);
+            $this->factory = $factory;
+            $this->eventDispatcher = $eventDispatcher;
+            $this->requestStack = $requestStack;
+            $this->permissionHelper = $permissionHelper;
+            «IF hasDisplayActions»
+                $this->entityDisplayHelper = $entityDisplayHelper;
+            «ENDIF»
+            «IF hasLoggable»
+                $this->loggableHelper = $loggableHelper;
+            «ENDIF»
+            $this->currentUserApi = $currentUserApi;
+            «IF hasViewActions»
+                $this->variableApi = $variableApi;
+            «ENDIF»
+            «IF hasViewActions && hasEditActions»
+                $this->modelHelper = $modelHelper;
+            «ENDIF»
+        }
 
-            /**
-             * @var CurrentUserApiInterface
-             */
-            protected $currentUserApi;
+        «setTranslatorMethod»
 
-            public function __construct(
-                TranslatorInterface $translator,
-                FactoryInterface $factory,
-                EventDispatcherInterface $eventDispatcher,
-                RequestStack $requestStack,
-                PermissionHelper $permissionHelper,
-                «IF hasDisplayActions»
-                    EntityDisplayHelper $entityDisplayHelper,
-                «ENDIF»
-                «IF hasLoggable»
-                    LoggableHelper $loggableHelper,
-                «ENDIF»
-                CurrentUserApiInterface $currentUserApi
-            ) {
-                $this->setTranslator($translator);
-                $this->factory = $factory;
-                $this->eventDispatcher = $eventDispatcher;
-                $this->requestStack = $requestStack;
-                $this->permissionHelper = $permissionHelper;
-                «IF hasDisplayActions»
-                    $this->entityDisplayHelper = $entityDisplayHelper;
-                «ENDIF»
-                «IF hasLoggable»
-                    $this->loggableHelper = $loggableHelper;
-                «ENDIF»
-                $this->currentUserApi = $currentUserApi;
-            }
+        «createMenu('item')»
+        «IF hasViewActions»
+            «createMenu('view')»
+        «ENDIF»
+    '''
 
-            «setTranslatorMethod»
-
-            /**
-             * Builds the item actions menu.
-             «IF !targets('3.0')»
-             *
-             * @param array $options List of additional options
-             *
-             * @return ItemInterface The assembled menu
-             «ENDIF»
-             */
-            public function createItemActionsMenu(array $options = [])«IF targets('3.0')»: ItemInterface«ENDIF»
-            {
-                $menu = $this->factory->createItem('itemActions');
+    def private createMenu(Application it, String actionType) '''
+        /**
+         * Builds the «actionType» actions menu.
+         «IF !targets('3.0')»
+         *
+         * @param array $options List of additional options
+         *
+         * @return ItemInterface The assembled menu
+         «ENDIF»
+         */
+        public function create«actionType.toFirstUpper»ActionsMenu(array $options = [])«IF targets('3.0')»: ItemInterface«ENDIF»
+        {
+            $menu = $this->factory->createItem('«actionType»Actions');
+            «IF 'item' == actionType»
                 if (!isset($options['entity'], $options['area'], $options['context'])) {
                     return $menu;
                 }
@@ -151,36 +193,47 @@ class MenuBuilder {
                         return $menu;
                     }
                 «ENDIF»
-                $menu->setChildrenAttribute('class', 'list-inline item-actions');
+            «ELSEIF 'view' == actionType»
+                if (!isset($options['objectType'], $options['area'])) {
+                    return $menu;
+                }
 
-                «IF targets('3.0')»
-                    $this->eventDispatcher->dispatch(
-                        new ConfigureItemActionsMenuEvent($this->factory, $menu, $options),
-                        «name.formatForCodeCapital»Events::MENU_ITEMACTIONS_PRE_CONFIGURE
-                    );
-                «ELSE»
-                    $this->eventDispatcher->dispatch(
-                        «name.formatForCodeCapital»Events::MENU_ITEMACTIONS_PRE_CONFIGURE,
-                        new ConfigureItemActionsMenuEvent($this->factory, $menu, $options)
-                    );
-                «ENDIF»
+                $objectType = $options['objectType'];
+                $routeArea = $options['area'];
+            «ENDIF»
+            $menu->setChildrenAttribute('class', 'list-inline «actionType»-actions');
 
-                «new ItemActions().itemActionsImpl(it)»
+            «IF targets('3.0')»
+                $this->eventDispatcher->dispatch(
+                    new Configure«actionType.toFirstUpper»ActionsMenuEvent($this->factory, $menu, $options),
+                    «name.formatForCodeCapital»Events::MENU_«actionType.toUpperCase»ACTIONS_PRE_CONFIGURE
+                );
+            «ELSE»
+                $this->eventDispatcher->dispatch(
+                    «name.formatForCodeCapital»Events::MENU_«actionType.toUpperCase»ACTIONS_PRE_CONFIGURE,
+                    new Configure«actionType.toFirstUpper»ActionsMenuEvent($this->factory, $menu, $options)
+                );
+            «ENDIF»
 
-                «IF targets('3.0')»
-                    $this->eventDispatcher->dispatch(
-                        new ConfigureItemActionsMenuEvent($this->factory, $menu, $options),
-                        «name.formatForCodeCapital»Events::MENU_ITEMACTIONS_POST_CONFIGURE
-                    );
-                «ELSE»
-                    $this->eventDispatcher->dispatch(
-                        «name.formatForCodeCapital»Events::MENU_ITEMACTIONS_POST_CONFIGURE,
-                        new ConfigureItemActionsMenuEvent($this->factory, $menu, $options)
-                    );
-                «ENDIF»
+            «IF 'item' == actionType»
+                «new ItemActions().actionsImpl(it)»
+            «ELSEIF 'view' == actionType»
+                «new ViewActions().actionsImpl(it)»
+            «ENDIF»
 
-                return $menu;
-            }
+            «IF targets('3.0')»
+                $this->eventDispatcher->dispatch(
+                    new Configure«actionType.toFirstUpper»ActionsMenuEvent($this->factory, $menu, $options),
+                    «name.formatForCodeCapital»Events::MENU_«actionType.toUpperCase»ACTIONS_POST_CONFIGURE
+                );
+            «ELSE»
+                $this->eventDispatcher->dispatch(
+                    «name.formatForCodeCapital»Events::MENU_«actionType.toUpperCase»ACTIONS_POST_CONFIGURE,
+                    new Configure«actionType.toFirstUpper»ActionsMenuEvent($this->factory, $menu, $options)
+                );
+            «ENDIF»
+
+            return $menu;
         }
     '''
 

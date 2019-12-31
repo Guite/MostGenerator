@@ -1,4 +1,4 @@
-package org.zikula.modulestudio.generator.cartridges.zclassic.models.entity
+package org.zikula.modulestudio.generator.cartridges.zclassic.controller.menu
 
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.Entity
@@ -25,31 +25,35 @@ class ItemActions {
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
 
-    def itemActionsImpl(Application app) '''
-        «IF (!app.getAllEntities.filter[ownerPermission].empty && (app.hasEditActions || app.hasDeleteActions)) || !app.relations.empty»
+    def actionsImpl(Application it) '''
+        «IF (!getAllEntities.filter[ownerPermission].empty && (hasEditActions || hasDeleteActions)) || !relations.empty»
             $currentUserId = $this->currentUserApi->isLoggedIn()
                 ? $this->currentUserApi->get('uid')
                 : UsersConstant::USER_ID_ANONYMOUS
             ;
         «ENDIF»
-        «FOR entity : app.getAllEntities»
+        «FOR entity : getAllEntities»
             if ($entity instanceof «entity.name.formatForCodeCapital»Entity) {
-                $routePrefix = '«app.appName.formatForDB»_«entity.name.formatForDB»_';
-                «IF (entity.ownerPermission && (entity.hasEditAction || entity.hasDeleteAction)) || (entity.standardFields && !app.relations.empty)»
-                    $isOwner = 0 < $currentUserId
-                        && null !== $entity->getCreatedBy()
-                        && $currentUserId === $entity->getCreatedBy()->getUid()
-                    ;
-                «ENDIF»
-                «IF entity.hasDisplayAction || entity.hasEditAction || entity.loggable || entity.hasDeleteAction»
-
-                «ENDIF»
-                «entity.itemActionsTargetingDisplay(app)»
-                «entity.itemActionsTargetingEdit(app)»
-                «entity.itemActionsTargetingView(app)»
-                «entity.itemActionsForAddingRelatedItems(app)»
+                «entity.actionsImpl»
             }
         «ENDFOR»
+    '''
+
+    def private actionsImpl(Entity it) '''
+        $routePrefix = '«application.appName.formatForDB»_«name.formatForDB»_';
+        «IF (ownerPermission && (hasEditAction || hasDeleteAction)) || (standardFields && !application.relations.empty)»
+            $isOwner = 0 < $currentUserId
+                && null !== $entity->getCreatedBy()
+                && $currentUserId === $entity->getCreatedBy()->getUid()
+            ;
+        «ENDIF»
+        «IF hasDisplayAction || hasEditAction || loggable || hasDeleteAction»
+
+        «ENDIF»
+        «itemActionsTargetingDisplay(application)»
+        «itemActionsTargetingEdit(application)»
+        «itemActionsTargetingView(application)»
+        «itemActionsForAddingRelatedItems(application)»
     '''
 
     def private itemActionsTargetingDisplay(Entity it, Application app) '''

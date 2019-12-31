@@ -1,8 +1,8 @@
-package org.zikula.modulestudio.generator.cartridges.zclassic.view.pages
+package org.zikula.modulestudio.generator.cartridges.zclassic.view.pages.view
 
 import de.guite.modulestudio.metamodel.Entity
-import de.guite.modulestudio.metamodel.EntityWorkflowType
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
+import org.zikula.modulestudio.generator.cartridges.zclassic.view.pagecomponents.ViewPagesHelper
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
@@ -40,7 +40,6 @@ class ViewHierarchy {
     }
 
     def private hierarchyView(Entity it, String appName, Boolean isAdmin) '''
-        «val objName = name.formatForCode»
         «IF application.separateAdminTemplates»
             {# purpose of this template: «nameMultiple.formatForDisplay» «IF isAdmin»admin«ELSE»user«ENDIF» tree view #}
             «IF application.targets('3.0')»
@@ -62,26 +61,7 @@ class ViewHierarchy {
         «ENDIF»
         {% block content %}
             <div class="«appName.toLowerCase»-«name.formatForDB» «appName.toLowerCase»-viewhierarchy">
-                «IF null !== documentation && !documentation.empty»
-
-                    «IF !documentation.containedTwigVariables.empty»
-                        <p class="alert alert-info">{{ __f('«documentation.replace('\'', '\\\'').replaceTwigVariablesForTranslation»', {«documentation.containedTwigVariables.map[v|'\'%' + v + '%\': ' + v + '|default'].join(', ')»}) }}</p>
-                    «ELSE»
-                        <p class="alert alert-info">{{ __('«documentation.replace('\'', '\\\'')»') }}</p>
-                    «ENDIF»
-                «ENDIF»
-
-                <p>
-                    «IF hasEditAction»
-                    {% if permissionHelper.hasComponentPermission('«name.formatForCode»:', constant('ACCESS_«IF workflow == EntityWorkflowType.NONE»EDIT«ELSE»COMMENT«ENDIF»')) %}
-                        {% set addRootTitle = __('Add root node') %}
-                        <a id="treeAddRoot" href="javascript:void(0)" title="{{ addRootTitle|e('html_attr') }}" class="hidden" data-object-type="«objName»"><i class="fa fa-plus"></i> {{ addRootTitle }}</a>
-                    {% endif %}
-                    «ENDIF»
-                    {% set switchTitle = __('Switch to table view') %}
-                    <a href="{{ path('«appName.formatForDB»_«objName.toLowerCase»_' ~ routeArea ~ 'view') }}" title="{{ switchTitle|e('html_attr') }}"><i class="fa fa-table"></i> {{ switchTitle }}</a>
-                </p>
-
+                «new ViewPagesHelper().commonHeader(it)»
                 {% for rootId, treeNodes in trees %}
                     {{ include('@«appName»/«name.formatForCodeCapital»/«IF isAdmin»Admin/«ENDIF»viewTreeItems.html.twig', {rootId: rootId, items: treeNodes}) }}
                 {% else %}
@@ -89,8 +69,13 @@ class ViewHierarchy {
                 {% endfor %}
 
                 <br style="clear: left" />
+                «IF !skipHookSubscribers»
+
+                    {{ block('display_hooks') }}
+                «ENDIF»
             </div>
         {% endblock %}
+        «new ViewPagesHelper().callDisplayHooks(it)»
         {% block footer %}
             {{ parent() }}
             {{ pageAddAsset('stylesheet', asset('jstree/dist/themes/default/style.min.css')) }}

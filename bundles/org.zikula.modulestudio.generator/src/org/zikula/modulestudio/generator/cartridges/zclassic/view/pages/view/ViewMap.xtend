@@ -1,8 +1,8 @@
-package org.zikula.modulestudio.generator.cartridges.zclassic.view.pages
+package org.zikula.modulestudio.generator.cartridges.zclassic.view.pages.view
 
 import de.guite.modulestudio.metamodel.Entity
-import de.guite.modulestudio.metamodel.EntityWorkflowType
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
+import org.zikula.modulestudio.generator.cartridges.zclassic.view.pagecomponents.ViewPagesHelper
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
@@ -23,11 +23,8 @@ class ViewMap {
     extension ViewExtensions = new ViewExtensions
     extension WorkflowExtensions = new WorkflowExtensions
 
-    String appName
-
     def generate(Entity it, String appName, IMostFileSystemAccess fsa) {
         ('Generating map view templates for entity "' + name.formatForDisplay + '"').printIfNotTesting(fsa)
-        this.appName = appName
 
         var templateFilePath = templateFile('viewMap')
         fsa.generateFile(templateFilePath, mapView(appName, false))
@@ -60,17 +57,15 @@ class ViewMap {
         «ENDIF»
         {% block content %}
             <div class="«appName.toLowerCase»-«name.formatForDB» «appName.toLowerCase»-view «appName.toLowerCase»-map">
+                «new ViewPagesHelper().commonHeader(it)»
+                {{ include('@«application.appName»/«name.formatForCodeCapital»/«IF isAdmin»Admin/«ENDIF»viewQuickNav.html.twig', {«IF !hasVisibleWorkflow»workflowStateFilter: false, «ENDIF»sorting: false, pageSizeSelector: false}) }}{# see template file for available options #}
 
-            {{ block('page_nav_links') }}
+                <div id="mapContainer" style="height: 800px">
+                </div>
+                «IF !skipHookSubscribers»
 
-            {{ include('@«application.appName»/«name.formatForCodeCapital»/«IF isAdmin»Admin/«ENDIF»viewQuickNav.html.twig', {«IF !hasVisibleWorkflow»workflowStateFilter: false, «ENDIF»sorting: false, pageSizeSelector: false}) }}{# see template file for available options #}
-
-            <div id="mapContainer" style="height: 800px">
-            </div>
-            «IF !skipHookSubscribers»
-
-                {{ block('display_hooks') }}
-            «ENDIF»
+                    {{ block('display_hooks') }}
+                «ENDIF»
             </div>
         {% endblock %}
         {% block footer %}
@@ -116,16 +111,7 @@ class ViewMap {
             {% endset %}
             {{ pageAddAsset('footer', customScript) }}
         {% endblock %}
-        {% block page_nav_links %}
-            <p>
-                «pageNavLinks»
-            </p>
-        {% endblock %}
-        «IF !skipHookSubscribers»
-            {% block display_hooks %}
-                «callDisplayHooks»
-            {% endblock %}
-        «ENDIF»
+        «new ViewPagesHelper().callDisplayHooks(it)»
     '''
 
     def private getMapImageField(Entity it) {
@@ -134,52 +120,4 @@ class ViewMap {
     	}
     	getUploadFieldsEntity.filter[isOnlyImageField].head
     }
-
-    def private pageNavLinks(Entity it) '''
-        «val objName = name.formatForCode»
-        «IF hasEditAction»
-            {% if canBeCreated %}
-                {% if permissionHelper.hasComponentPermission('«name.formatForCode»', constant('ACCESS_«IF workflow == EntityWorkflowType.NONE»EDIT«ELSE»COMMENT«ENDIF»')) %}
-                    {% set createTitle = __('Create «name.formatForDisplay»') %}
-                    <a href="{{ path('«appName.formatForDB»_«objName.toLowerCase»_' ~ routeArea ~ 'edit') }}" title="{{ createTitle|e('html_attr') }}"><i class="fa fa-plus"></i> {{ createTitle }}</a>
-                {% endif %}
-            {% endif %}
-        «ENDIF»
-        «IF ownerPermission»
-            {% set showOnlyOwn = routeArea != 'admin' and getModVar('«application.appName»', '«name.formatForCode»PrivateMode') %}
-        «ENDIF»
-        {% if all == 1 %}
-            {% set linkTitle = __('Back to paginated view') %}
-            {% set routeArgs = own«IF ownerPermission» and not showOnlyOwn«ENDIF» ? {own: 1} : {} %}
-            <a href="{{ path('«appName.formatForDB»_«objName.toLowerCase»_' ~ routeArea ~ 'view', routeArgs) }}" title="{{ linkTitle|e('html_attr') }}"><i class="fa fa-table"></i> {{ linkTitle }}</a>
-        {% else %}
-            {% set linkTitle = __('Show all entries') %}
-            {% set routeArgs = own«IF ownerPermission» and not showOnlyOwn«ENDIF» ? {all: 1, own: 1} : {all: 1} %}
-            <a href="{{ path('«appName.formatForDB»_«objName.toLowerCase»_' ~ routeArea ~ 'view', routeArgs) }}" title="{{ linkTitle|e('html_attr') }}"><i class="fa fa-table"></i> {{ linkTitle }}</a>
-        {% endif %}
-        «IF standardFields»
-            «IF ownerPermission»{% if not showOnlyOwn %}«ENDIF»{% if own == 1 %}
-                {% set linkTitle = __('Show also entries from other users') %}
-                {% set routeArgs = all ? {all: 1} : {} %}
-                <a href="{{ path('«appName.formatForDB»_«objName.toLowerCase»_' ~ routeArea ~ 'view', routeArgs) }}" title="{{ linkTitle|e('html_attr') }}"><i class="fa fa-users"></i> {{ linkTitle }}</a>
-            {% elseif permissionHelper.hasComponentPermission('«name.formatForCode»', constant('ACCESS_«IF workflow == EntityWorkflowType.NONE»EDIT«ELSE»COMMENT«ENDIF»')) %}
-                {% set linkTitle = __('Show only own entries') %}
-                {% set routeArgs = all ? {all: 1, own: 1} : {own: 1} %}
-                <a href="{{ path('«appName.formatForDB»_«objName.toLowerCase»_' ~ routeArea ~ 'view', routeArgs) }}" title="{{ linkTitle|e('html_attr') }}"><i class="fa fa-user"></i> {{ linkTitle }}</a>
-            {% endif %}«IF ownerPermission»{% endif %}«ENDIF»
-        «ENDIF»
-    '''
-
-    def private callDisplayHooks(Entity it) '''
-
-        {# here you can activate calling display hooks for the view page if you need it #}
-        {# % if routeArea != 'admin' %}
-            {% set hooks = notifyDisplayHooks(eventName='«appName.formatForDB».ui_hooks.«nameMultiple.formatForDB».display_view', urlObject=currentUrlObject, outputAsArray=true) %}
-            {% if hooks is iterable and hooks|length > 0 %}
-                {% for area, hook in hooks %}
-                    <div class="z-displayhook" data-area="{{ area|e('html_attr') }}">{{ hook|raw }}</div>
-                {% endfor %}
-            {% endif %}
-        {% endif % #}
-    '''
 }

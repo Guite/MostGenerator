@@ -3,6 +3,7 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.controller
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.Entity
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
+import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
@@ -12,6 +13,7 @@ import org.zikula.modulestudio.generator.extensions.Utils
  */
 class Events {
 
+    extension ControllerExtensions = new ControllerExtensions
     extension FormattingExtensions = new FormattingExtensions
     extension ModelExtensions = new ModelExtensions
     extension Utils = new Utils
@@ -26,7 +28,10 @@ class Events {
 
         fsa.generateClassPair(name.formatForCodeCapital + 'Events.php', eventDefinitionsBaseClass, eventDefinitionsImpl)
 
-        fsa.generateClassPair('Event/ConfigureItemActionsMenuEvent.php', menuEventBaseClass, menuEventImpl)
+        fsa.generateClassPair('Event/ConfigureItemActionsMenuEvent.php', menuEventBaseClass('item'), menuEventImpl('item'))
+        if (hasViewActions) {
+            fsa.generateClassPair('Event/ConfigureViewActionsMenuEvent.php', menuEventBaseClass('view'), menuEventImpl('view'))
+        }
 
         for (entity : getAllEntities) {
             fsa.generateClassPair('Event/Filter' + entity.name.formatForCodeCapital + 'Event.php',
@@ -77,6 +82,31 @@ class Events {
          * @var string
          */
         «IF targets('3.0')»public «ENDIF»const MENU_ITEMACTIONS_POST_CONFIGURE = '«appName.formatForDB».itemactionsmenu_post_configure';
+        «IF hasViewActions»
+            /**
+             * The «appName.formatForDB».viewactionsmenu_pre_configure event is thrown before the view actions
+             * menu is built in the menu builder.
+             *
+             * The event listener receives an
+             * «app.appNamespace»\Event\ConfigureViewActionsMenuEvent instance.
+             *
+             * @see MenuBuilder::createViewActionsMenu()
+             * @var string
+             */
+            «IF targets('3.0')»public «ENDIF»const MENU_VIEWACTIONS_PRE_CONFIGURE = '«appName.formatForDB».viewactionsmenu_pre_configure';
+
+            /**
+             * The «appName.formatForDB».viewactionsmenu_post_configure event is thrown after the view actions
+             * menu has been built in the menu builder.
+             *
+             * The event listener receives an
+             * «app.appNamespace»\Event\ConfigureViewActionsMenuEvent instance.
+             *
+             * @see MenuBuilder::createViewActionsMenu()
+             * @var string
+             */
+            «IF targets('3.0')»public «ENDIF»const MENU_VIEWACTIONS_POST_CONFIGURE = '«appName.formatForDB».viewactionsmenu_post_configure';
+        «ENDIF»
     '''
 
     def private eventDefinitions(Entity it) '''
@@ -182,7 +212,7 @@ class Events {
         }
     '''
 
-    def private menuEventBaseClass(Application it) '''
+    def private menuEventBaseClass(Application it, String actionType) '''
         namespace «app.appNamespace»\Event\Base;
 
         use Knp\Menu\FactoryInterface;
@@ -194,9 +224,9 @@ class Events {
         «ENDIF»
 
         /**
-         * Event base class for extending item actions menu.
+         * Event base class for extending «actionType» actions menu.
          */
-        class AbstractConfigureItemActionsMenuEvent extends Event
+        class AbstractConfigure«actionType.toFirstUpper»ActionsMenuEvent extends Event
         {
             /**
              * @var FactoryInterface.
@@ -249,15 +279,15 @@ class Events {
         }
     '''
 
-    def private menuEventImpl(Application it) '''
+    def private menuEventImpl(Application it, String actionType) '''
         namespace «app.appNamespace»\Event;
 
-        use «app.appNamespace»\Event\Base\AbstractConfigureItemActionsMenuEvent;
+        use «app.appNamespace»\Event\Base\AbstractConfigure«actionType.toFirstUpper»ActionsMenuEvent;
 
         /**
-         * Event implementation class for extending item actions menu.
+         * Event implementation class for extending «actionType» actions menu.
          */
-        class ConfigureItemActionsMenuEvent extends AbstractConfigureItemActionsMenuEvent
+        class Configure«actionType.toFirstUpper»ActionsMenuEvent extends AbstractConfigure«actionType.toFirstUpper»ActionsMenuEvent
         {
             // feel free to extend the event class here
         }

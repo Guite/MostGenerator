@@ -175,14 +175,6 @@ class Actions {
             $templateParameters['items'],
             $permLevel
         );
-        «IF loggable»
-
-            // check if there exist any deleted «name.formatForDisplay»
-            $templateParameters['hasDeletedEntities'] = false;
-            if ($permissionHelper->hasPermission(ACCESS_EDIT)) {
-                $templateParameters['hasDeletedEntities'] = «IF app.targets('3.0')»$loggableHelper«ELSE»$this->get('«application.appService».loggable_helper')«ENDIF»->hasDeletedEntities($objectType);
-            }
-        «ENDIF»
 
         // fetch and return the appropriate template
         return $viewHelper->processTemplate($objectType, 'view', $templateParameters);

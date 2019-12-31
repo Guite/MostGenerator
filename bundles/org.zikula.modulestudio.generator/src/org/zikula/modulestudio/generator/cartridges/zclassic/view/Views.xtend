@@ -20,9 +20,6 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.view.pages.Delete
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.pages.Display
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.pages.History
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.pages.Index
-import org.zikula.modulestudio.generator.cartridges.zclassic.view.pages.View
-import org.zikula.modulestudio.generator.cartridges.zclassic.view.pages.ViewHierarchy
-import org.zikula.modulestudio.generator.cartridges.zclassic.view.pages.ViewMap
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.pages.export.Csv
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.pages.export.Ics
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.pages.export.Json
@@ -30,6 +27,9 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.view.pages.export.K
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.pages.export.Xml
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.pages.feed.Atom
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.pages.feed.Rss
+import org.zikula.modulestudio.generator.cartridges.zclassic.view.pages.view.ViewHierarchy
+import org.zikula.modulestudio.generator.cartridges.zclassic.view.pages.view.ViewMap
+import org.zikula.modulestudio.generator.cartridges.zclassic.view.pages.view.ViewTable
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.DateTimeExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
@@ -99,7 +99,7 @@ class Views {
             new Index().generate(entity, fsa)
         }
         if (entity.hasViewAction) {
-            new View().generate(entity, appName, 3, fsa)
+            new ViewTable().generate(entity, appName, 3, fsa)
             if (entity.geographical) {
                 new ViewMap().generate(entity, appName, fsa)
             }

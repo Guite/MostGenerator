@@ -70,9 +70,6 @@ class ControllerHelper {
         «IF !getUploadEntities.empty»
             use «appNamespace»\Helper\ImageHelper;
         «ENDIF»
-        «IF hasViewActions && hasEditActions»
-            use «appNamespace»\Helper\ModelHelper;
-        «ENDIF»
         use «appNamespace»\Helper\PermissionHelper;
 
         /**
@@ -139,13 +136,6 @@ class ControllerHelper {
          * @var PermissionHelper
          */
         protected $permissionHelper;
-        «IF hasViewActions && hasEditActions»
-
-            /**
-             * @var ModelHelper
-             */
-            protected $modelHelper;
-        «ENDIF»
         «IF !getUploadEntities.empty»
 
             /**
@@ -182,8 +172,7 @@ class ControllerHelper {
             «ENDIF»
             EntityFactory $entityFactory,
             CollectionFilterHelper $collectionFilterHelper,
-            PermissionHelper $permissionHelper«IF hasViewActions && hasEditActions»,
-            ModelHelper $modelHelper«ENDIF»«IF !getUploadEntities.empty»,
+            PermissionHelper $permissionHelper«IF !getUploadEntities.empty»,
             ImageHelper $imageHelper«ENDIF»«IF needsFeatureActivationHelper»,
             FeatureActivationHelper $featureActivationHelper«ENDIF»
         ) {
@@ -205,9 +194,6 @@ class ControllerHelper {
             $this->entityFactory = $entityFactory;
             $this->collectionFilterHelper = $collectionFilterHelper;
             $this->permissionHelper = $permissionHelper;
-            «IF hasViewActions && hasEditActions»
-                $this->modelHelper = $modelHelper;
-            «ENDIF»
             «IF !getUploadEntities.empty»
                 $this->imageHelper = $imageHelper;
             «ENDIF»
@@ -356,7 +342,7 @@ class ControllerHelper {
                 $routeName = $request->get('_route');
                 $isAdminArea = false !== strpos($routeName, '«appName.toLowerCase»_' . strtolower($objectType) . '_admin');
                 if (!$isAdminArea && in_array($objectType, ['«getAllEntities.filter[ownerPermission].map[name.formatForCode].join('\',  \'')»'], true)) {
-                    $showOnlyOwnEntries = (bool)$this->variableApi->get('«appName»', $objectType . 'PrivateMode');
+                    $showOnlyOwnEntries = (bool)$this->variableApi->get('«appName»', $objectType . 'PrivateMode', false);
                     if (true === $showOnlyOwnEntries) {
                         $templateParameters['own'] = 1;
                     } else {
@@ -480,10 +466,6 @@ class ControllerHelper {
 
             $templateParameters['sort'] = $sortableColumns->generateSortableColumns();
             $templateParameters['quickNavForm'] = $quickNavForm->createView();
-            «IF hasEditActions»
-
-                $templateParameters['canBeCreated'] = $this->modelHelper->canBeCreated($objectType);
-            «ENDIF»
 
             $request->query->set('sort', $sort);
             $request->query->set('sortdir', $sortdir);

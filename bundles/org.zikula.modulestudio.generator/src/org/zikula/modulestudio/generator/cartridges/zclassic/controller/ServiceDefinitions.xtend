@@ -292,6 +292,12 @@ class ServiceDefinitions {
                         - "@«modPrefix».loggable_helper"
                     «ENDIF»
                     - "@zikula_users_module.current_user"
+                    «IF hasViewActions»
+                        - "@zikula_extensions_module.api.variable"
+                    «ENDIF»
+                    «IF hasViewActions && hasEditActions»
+                        - "@«modPrefix».model_helper"
+                    «ENDIF»
                 tags:
                     - { name: knp_menu.menu_builder, method: createItemActionsMenu, alias: «vendorAndName.toFirstLower»MenuItemActions }
     '''
@@ -851,9 +857,6 @@ class ServiceDefinitions {
                 - "@«modPrefix».entity_factory"
                 - "@«modPrefix».collection_filter_helper"
                 - "@«modPrefix».permission_helper"
-                «IF hasViewActions && hasEditActions»
-                    - "@«modPrefix».model_helper"
-                «ENDIF»
                 «IF !getUploadEntities.empty»
                     - "@«modPrefix».image_helper"
                 «ENDIF»
