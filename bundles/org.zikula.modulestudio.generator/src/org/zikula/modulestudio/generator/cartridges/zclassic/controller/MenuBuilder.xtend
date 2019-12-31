@@ -44,6 +44,9 @@ class MenuBuilder {
         «ENDFOR»
         use «appNamespace»\«name.formatForCodeCapital»Events;
         use «appNamespace»\Event\ConfigureItemActionsMenuEvent;
+        «IF hasViewActions»
+            use «appNamespace»\Event\ConfigureViewActionsMenuEvent;
+        «ENDIF»
         «IF hasDisplayActions»
             use «appNamespace»\Helper\EntityDisplayHelper;
         «ENDIF»
@@ -160,6 +163,7 @@ class MenuBuilder {
 
         «createMenu('item')»
         «IF hasViewActions»
+
             «createMenu('view')»
         «ENDIF»
     '''

@@ -166,6 +166,9 @@ class ServiceDefinitions {
         «appNamespace»\Menu\MenuBuilder:
             tags:
                 - { name: knp_menu.menu_builder, method: createItemActionsMenu, alias: «vendorAndName.toFirstLower»MenuItemActions }
+                «IF hasViewActions»
+                - { name: knp_menu.menu_builder, method: createViewActionsMenu, alias: «vendorAndName.toFirstLower»MenuViewActions }
+                «ENDIF»
         «IF getSubscriberNames.contains('IpTrace')»
 
             gedmo_doctrine_extensions.listener.ip_traceable:
@@ -300,6 +303,9 @@ class ServiceDefinitions {
                     «ENDIF»
                 tags:
                     - { name: knp_menu.menu_builder, method: createItemActionsMenu, alias: «vendorAndName.toFirstLower»MenuItemActions }
+                    «IF hasViewActions»
+                    - { name: knp_menu.menu_builder, method: createViewActionsMenu, alias: «vendorAndName.toFirstLower»MenuViewActions }
+                    «ENDIF»
     '''
 
     def private entityFactory(Application it) '''

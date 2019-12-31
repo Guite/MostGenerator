@@ -46,7 +46,7 @@ class ViewActions {
                         $menu[$title]->setAttribute('icon', 'fa fa-plus');
                     }
                 «ENDIF»
-                $title = __('Switch to table view', '«app.appName.formatForDB»');
+                $title = $this->__('Switch to table view', '«app.appName.formatForDB»');
                 $menu->addChild($title, [
                     'route' => $routePrefix . $routeArea . 'view'
                 ]);
@@ -67,7 +67,7 @@ class ViewActions {
             «IF tree != EntityTreeType.NONE»
                 $title = $this->__('Switch to hierarchy view', '«app.appName.formatForDB»');
                 $menu->addChild($title, [
-                    'route' => $routePrefix . $routeArea . 'view'
+                    'route' => $routePrefix . $routeArea . 'view',
                     'routeParameters' => ['tpl' => 'tree']
                 ]);
                 $menu[$title]->setLinkAttribute('title', $title);
@@ -76,7 +76,7 @@ class ViewActions {
             «IF geographical»
                 $title = $this->__('Show map', '«app.appName.formatForDB»');
                 $menu->addChild($title, [
-                    'route' => $routePrefix . $routeArea . 'view'
+                    'route' => $routePrefix . $routeArea . 'view',
                     'routeParameters' => ['tpl' => 'map', 'all' => 1]
                 ]);
                 $menu[$title]->setLinkAttribute('title', $title);
@@ -92,7 +92,7 @@ class ViewActions {
                 if ($hasDeletedEntities) {
                     $title = $this->__('View deleted «nameMultiple.formatForDisplay»', '«app.appName.formatForDB»');
                     $menu->addChild($title, [
-                        'route' => $routePrefix . $routeArea . 'view'
+                        'route' => $routePrefix . $routeArea . 'view',
                         'routeParameters' => ['deleted' => 1]
                     ]);
                     $menu[$title]->setLinkAttribute('title', $title);
@@ -145,7 +145,7 @@ class ViewActions {
 
     def private linkToggleOwner(Entity it) '''
         «IF standardFields»
-            if («IF ownerPermission»!$showOnlyOwn && «ENDIF»$this->permissionHelper.hasComponentPermission($objectType, ACCESS_«IF workflow == EntityWorkflowType.NONE»EDIT«ELSE»COMMENT«ENDIF»)) {
+            if («IF ownerPermission»!$showOnlyOwn && «ENDIF»$this->permissionHelper->hasComponentPermission($objectType, ACCESS_«IF workflow == EntityWorkflowType.NONE»EDIT«ELSE»COMMENT«ENDIF»)) {
                 «linkToggleOwnerImpl»
             }
         «ENDIF»
