@@ -83,6 +83,7 @@ class Events {
          */
         «IF targets('3.0')»public «ENDIF»const MENU_ITEMACTIONS_POST_CONFIGURE = '«appName.formatForDB».itemactionsmenu_post_configure';
         «IF hasViewActions»
+
             /**
              * The «appName.formatForDB».viewactionsmenu_pre_configure event is thrown before the view actions
              * menu is built in the menu builder.
