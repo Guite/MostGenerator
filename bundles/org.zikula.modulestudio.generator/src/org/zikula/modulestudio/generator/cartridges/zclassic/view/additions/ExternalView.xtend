@@ -43,10 +43,11 @@ class ExternalView {
 
             fileName = 'info' + templateExtension
             fsa.generateFile(templatePath + fileName, entity.itemInfoTemplate(it))
-
-            // content type editing is not ready for Twig yet
-            fileName = 'select.tpl'
-            fsa.generateFile(templatePath + fileName, entity.selectTemplate(it))
+            if (!targets('2.0')) {
+                // content type editing is not ready for Twig yet
+                fileName = 'select.tpl'
+                fsa.generateFile(templatePath + fileName, entity.selectTemplate(it))
+            }
         }
     }
 
@@ -178,7 +179,7 @@ class ExternalView {
             <div class="container">
                 «findTemplateObjectTypeSwitcher(app)»
                 {% form_theme finderForm with [
-                    '@«app.appName»/Form/bootstrap_3.html.twig',
+                    '@«app.appName»/Form/bootstrap_«IF app.targets('3.0')»4«ELSE»3«ENDIF».html.twig',
                     «IF app.targets('3.0')»
                         '@ZikulaFormExtension/Form/form_div_layout.html.twig'
                     «ELSE»
@@ -219,8 +220,8 @@ class ExternalView {
                     <div>
                         {{ pager({display: 'page', rowcount: pager.numitems, limit: pager.itemsperpage, posvar: 'pos', maxpages: 10, route: '«app.appName.formatForDB»_external_finder'}) }}
                     </div>
-                    <div class="form-group">
-                        <div class="col-sm-offset-3 col-sm-9">
+                    <div class="form-group«IF app.targets('3.0')» row«ENDIF»">
+                        <div class="«IF app.targets('3.0')»col-md-9 offset-md-3«ELSE»col-sm-offset-3 col-sm-9«ENDIF»">
                             {{ form_widget(finderForm.update) }}
                             {{ form_widget(finderForm.cancel) }}
                         </div>
@@ -240,10 +241,18 @@ class ExternalView {
     def private findTemplateObjectTypeSwitcher(Entity it, Application app) '''
         «IF app.hasDisplayActions»
             <div class="zikula-bootstrap-tab-container">
-                <ul class="nav nav-tabs">
+                <ul class="nav nav-tabs" role="tablist">
                 «FOR entity : app.getAllEntities.filter[hasDisplayAction]»
                     {% if '«entity.name.formatForCode»' in activatedObjectTypes %}
-                        <li{{ objectType == '«entity.name.formatForCode»' ? ' class="active"' : '' }}><a href="{{ path('«app.appName.formatForDB»_external_finder', {objectType: '«entity.name.formatForCode»', editor: editorName}) }}" title="{{ __('Search and select «entity.name.formatForDisplay»') }}">{{ __('«entity.nameMultiple.formatForDisplayCapital»') }}</a></li>
+                        «IF app.targets('3.0')»
+                            <li class="nav-item">
+                                <a href="{{ path('«app.appName.formatForDB»_external_finder', {objectType: '«entity.name.formatForCode»', editor: editorName}) }}" title="{{ __('Search and select «entity.name.formatForDisplay»') }}" class="nav-link{{ objectType == '«entity.name.formatForCode»' ? ' active' : '' }}">{{ __('«entity.nameMultiple.formatForDisplayCapital»') }}</a>
+                            </li>
+                        «ELSE»
+                            <li{{ objectType == '«entity.name.formatForCode»' ? ' class="active"' : '' }}>
+                                <a href="{{ path('«app.appName.formatForDB»_external_finder', {objectType: '«entity.name.formatForCode»', editor: editorName}) }}" title="{{ __('Search and select «entity.name.formatForDisplay»') }}">{{ __('«entity.nameMultiple.formatForDisplayCapital»') }}</a>
+                            </li>
+                        «ENDIF»
                     {% endif %}
                 «ENDFOR»
                 </ul>
@@ -252,9 +261,9 @@ class ExternalView {
     '''
 
     def private findTemplateObjectId(Entity it, Application app) '''
-        <div class="form-group">
-            <label class="col-sm-3 control-label">{{ __('«name.formatForDisplayCapital»') }}:</label>
-            <div class="col-sm-9">
+        <div class="form-group«IF app.targets('3.0')» row«ENDIF»">
+            <label class="«IF app.targets('3.0')»col-md-3 col-form«ELSE»col-sm-3 control«ENDIF»-label">{{ __('«name.formatForDisplayCapital»') }}:</label>
+            <div class="col-«IF app.targets('3.0')»md«ELSE»sm«ENDIF»-9">
                 <div id="«app.appName.toLowerCase»ItemContainer">
                     «IF hasImageFieldsEntity»
                         {% if not onlyImages %}
@@ -340,16 +349,16 @@ class ExternalView {
     def private selectTemplate(Entity it, Application app) '''
         {* Purpose of this template: Display a popup selector for Forms and Content integration *}
         {assign var='baseID' value='«name.formatForCode»'}
-        <div id="itemSelectorInfo" class="hidden" data-base-id="{$baseID}" data-selected-id="{$selectedId|default:0}"></div>
+        <div id="itemSelectorInfo" class="«IF app.targets('3.0')»d-none«ELSE»hidden«ENDIF»" data-base-id="{$baseID}" data-selected-id="{$selectedId|default:0}"></div>
         <div class="row">
-            <div class="col-sm-8">
+            <div class="col-«IF app.targets('3.0')»md«ELSE»sm«ENDIF»-8">
                 «IF categorisable»
 
                     {if $properties ne null && is_array($properties)}
                         {gt text='All' assign='lblDefault'}
                         {nocache}
                         {foreach key='propertyName' item='propertyId' from=$properties}
-                            <div class="form-group">
+                            <div class="form-group«IF app.targets('3.0')» row«ENDIF»">
                                 {assign var='hasMultiSelection' value=$categoryHelper->hasMultipleSelection('«name.formatForCode»', $propertyName)}
                                 {gt text='Category' assign='categoryLabel'}
                                 {assign var='categorySelectorId' value='catid'}
@@ -362,7 +371,7 @@ class ExternalView {
                                     {assign var='categorySelectorSize' value='8'}
                                 {/if}
                                 <label for="{$baseID}_{$categorySelectorId}{$propertyName}" class="col-sm-3 control-label">{$categoryLabel}:</label>
-                                <div class="col-sm-9">
+                                <div class="col-«IF app.targets('3.0')»md«ELSE»sm«ENDIF»-9">
                                     {selector_category name="`$baseID`_`$categorySelectorName``$propertyName`" field='id' selectedValue=$catIds.$propertyName|default:null categoryRegistryModule='«app.appName»' categoryRegistryTable="`$objectType`Entity" categoryRegistryProperty=$propertyName defaultText=$lblDefault editLink=false multipleSize=$categorySelectorSize cssClass='form-control'}
                                 </div>
                             </div>
@@ -370,9 +379,9 @@ class ExternalView {
                         {/nocache}
                     {/if}
                 «ENDIF»
-                <div class="form-group">
-                    <label for="{$baseID}Id" class="col-sm-3 control-label">{gt text='«name.formatForDisplayCapital»'}:</label>
-                    <div class="col-sm-9">
+                <div class="form-group«IF app.targets('3.0')» row«ENDIF»">
+                    <label for="{$baseID}Id" class="«IF app.targets('3.0')»col-md-3 col-form«ELSE»col-sm-3 control«ENDIF»-label-label">{gt text='«name.formatForDisplayCapital»'}:</label>
+                    <div class="col-«IF app.targets('3.0')»md«ELSE»sm«ENDIF»-9">
                         <select id="{$baseID}Id" name="id" class="form-control">
                             {foreach item='«name.formatForCode»' from=$items}
                                 <option value="{$«name.formatForCode»->getKey()}"{if $selectedId eq $«name.formatForCode»->getKey()} selected="selected"{/if}>{$«name.formatForCode»->get«IF hasDisplayStringFieldsEntity»«getDisplayStringFieldsEntity.head.name.formatForCodeCapital»«ELSE»«getSelfAndParentDataObjects.map[fields].flatten.head.name.formatForCodeCapital»«ENDIF»()}</option>
@@ -382,9 +391,9 @@ class ExternalView {
                         </select>
                     </div>
                 </div>
-                <div class="form-group">
-                    <label for="{$baseID}Sort" class="col-sm-3 control-label">{gt text='Sort by'}:</label>
-                    <div class="col-sm-9">
+                <div class="form-group«IF app.targets('3.0')» row«ENDIF»">
+                    <label for="{$baseID}Sort" class="«IF app.targets('3.0')»col-md-3 col-form«ELSE»col-sm-3 control«ENDIF»-label-label">{gt text='Sort by'}:</label>
+                    <div class="col-«IF app.targets('3.0')»md«ELSE»sm«ENDIF»-9">
                         <select id="{$baseID}Sort" name="sort" class="form-control">
                             «FOR field : getSortingFields»
                                 <option value="«field.name.formatForCode»"{if $sort eq '«field.name.formatForCode»'} selected="selected"{/if}>{gt text='«field.name.formatForDisplayCapital»'}</option>
@@ -403,9 +412,9 @@ class ExternalView {
                     </div>
                 </div>
                 «IF hasAbstractStringFieldsEntity»
-                    <div class="form-group">
-                        <label for="{$baseID}SearchTerm" class="col-sm-3 control-label">{gt text='Search for'}:</label>
-                        <div class="col-sm-9">
+                    <div class="form-group«IF app.targets('3.0')» row«ENDIF»">
+                        <label for="{$baseID}SearchTerm" class="«IF app.targets('3.0')»col-md-3 col-form«ELSE»col-sm-3 control«ENDIF»-label-label">{gt text='Search for'}:</label>
+                        <div class="col-«IF app.targets('3.0')»md«ELSE»sm«ENDIF»-9">
                             <div class="input-group">
                                 <input type="text" id="{$baseID}SearchTerm" name="q" class="form-control" />
                                 <span class="input-group-btn">
@@ -416,7 +425,7 @@ class ExternalView {
                     </div>
                 «ENDIF»
             </div>
-            <div class="col-sm-4">
+            <div class="col-«IF app.targets('3.0')»md«ELSE»sm«ENDIF»-4">
                 <div id="{$baseID}Preview" style="border: 1px dotted #a3a3a3; padding: .2em .5em">
                     <p><strong>{gt text='«name.formatForDisplayCapital» information'}</strong></p>
                     {img id='ajaxIndicator' modname='core' set='ajax' src='indicator_circle.gif' alt='' class='hidden'}

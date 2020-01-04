@@ -67,7 +67,7 @@ class EditFunctions {
             jQuery('#' + fieldName + 'ResetVal').click(function (event) {
                 event.preventDefault();
                 «vendorAndName»ResetUploadField(fieldName);
-            }).removeClass('hidden');
+            }).removeClass('«IF targets('3.0')»d-none«ELSE»hidden«ENDIF»');
         }
     '''
 
@@ -83,7 +83,7 @@ class EditFunctions {
                 } else {
                     jQuery('#' + fieldName + ', #' + fieldName + '').val('');
                 }
-            }).removeClass('hidden');
+            }).removeClass('«IF targets('3.0')»d-none«ELSE»hidden«ENDIF»');
         }
     '''
 
@@ -115,7 +115,7 @@ class EditFunctions {
 
             // hide form buttons to prevent double submits by accident
             formButtons.each(function (index) {
-                jQuery(this).addClass('hidden');
+                jQuery(this).addClass('«IF targets('3.0')»d-none«ELSE»hidden«ENDIF»');
             });
 
             return true;
@@ -135,13 +135,13 @@ class EditFunctions {
             «IF hasStandardFieldEntities»
 
                 if (jQuery('#moderationFieldsSection').length > 0) {
-                    jQuery('#moderationFieldsContent').addClass('hidden');
+                    jQuery('#moderationFieldsContent').addClass('«IF targets('3.0')»d-none«ELSE»hidden«ENDIF»');
                     jQuery('#moderationFieldsSection legend').addClass('pointer').click(function (event) {
-                        if (jQuery('#moderationFieldsContent').hasClass('hidden')) {
-                            jQuery('#moderationFieldsContent').removeClass('hidden');
+                        if (jQuery('#moderationFieldsContent').hasClass('«IF targets('3.0')»d-none«ELSE»hidden«ENDIF»')) {
+                            jQuery('#moderationFieldsContent').removeClass('«IF targets('3.0')»d-none«ELSE»hidden«ENDIF»');
                             jQuery(this).find('i').removeClass('fa-expand').addClass('fa-compress');
                         } else {
-                            jQuery('#moderationFieldsContent').addClass('hidden');
+                            jQuery('#moderationFieldsContent').addClass('«IF targets('3.0')»d-none«ELSE»hidden«ENDIF»');
                             jQuery(this).find('i').removeClass('fa-compress').addClass('fa-expand');
                         }
                     });

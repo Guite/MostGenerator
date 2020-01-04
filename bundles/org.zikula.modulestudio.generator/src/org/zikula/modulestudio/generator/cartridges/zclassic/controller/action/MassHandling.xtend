@@ -27,6 +27,7 @@ class MassHandling {
                 «IF application.targets('3.0')»
                     return $this->handleSelectedEntriesActionInternal(
                         $request,
+                        $logger,
                         $entityFactory,
                         $workflowHelper,«IF !skipHookSubscribers»
                         $hookHelper,«ENDIF»
@@ -77,6 +78,7 @@ class MassHandling {
     def private handleSelectedObjectsArguments(Entity it, Boolean internalMethod) '''
         «IF application.targets('3.0')»
             Request $request,
+            LoggerInterface $logger,
             EntityFactory $entityFactory,
             WorkflowHelper $workflowHelper,
             «IF !skipHookSubscribers»
@@ -108,8 +110,8 @@ class MassHandling {
             «IF !skipHookSubscribers»
                 $hookHelper = $this->get('«application.appService».hook_helper');
             «ENDIF»
+            $logger = $this->get('logger');
         «ENDIF»
-        $logger = $this->get('logger');
         $userName = «IF application.targets('3.0')»$currentUserApi«ELSE»$this->get('zikula_users_module.current_user')«ENDIF»->get('uname');
 
         // process each item

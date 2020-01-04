@@ -28,7 +28,7 @@ class MenuViews {
             </div>
         «ELSEIF application.useStyle(context, ItemActionsStyle.DROPDOWN)»
             <div class="dropdown item-actions">
-                <a id="«itemActionContainerViewId»DropDownToggle«idSuffix»" role="button" data-toggle="dropdown" href="javascript:void(0);" class="hidden dropdown-toggle"><i class="fa fa-tasks"></i>«IF context == 'display'» {{ __('Actions') }}«ENDIF» <span class="caret"></span></a>
+                <a id="«itemActionContainerViewId»DropDownToggle«idSuffix»" role="button" data-toggle="dropdown" href="javascript:void(0);" class="«IF application.targets('3.0')»d-none«ELSE»hidden«ENDIF» dropdown-toggle"><i class="fa fa-tasks"></i>«IF context == 'display'» {{ __('Actions') }}«ENDIF» <span class="caret"></span></a>
                 «application.renderItemActionsMenu(context)»
             </div>
         «ELSE»

@@ -55,13 +55,7 @@ class ContentTypeListView {
             })(jQuery)
         </script>
     '''
-/* needs to be done using jsEntrypoints in content type instead
-    def private editTemplateJs(Application it) '''
-        {{ pageAddAsset('stylesheet', asset('bootstrap/css/bootstrap.min.css')) }}
-        {{ pageAddAsset('stylesheet', asset('bootstrap/css/bootstrap-theme.min.css')) }}
-        {{ pageAddAsset('javascript', asset('bootstrap/js/bootstrap.min.js')) }}
-    '''
-*/
+
     def private editLegacyTemplate(Application it) '''
         {* Purpose of this template: edit view of generic item list content type *}
         «editTemplateObjectType»
@@ -88,10 +82,10 @@ class ContentTypeListView {
     '''
 
     def private editTemplateObjectType(Application it) '''
-        <div class="form-group">
+        <div class="form-group«IF targets('3.0')» row«ENDIF»">
             {gt text='Object type' domain='«appName.formatForDB»' assign='objectTypeSelectorLabel'}
             {formlabel for='«appName.toFirstLower»ObjectType' text=$objectTypeSelectorLabel«editLabelClass»}
-            <div class="col-sm-9">
+            <div class="col-«IF targets('3.0')»md«ELSE»sm«ENDIF»-9">
                 {«appName.formatForDB»ObjectTypeSelector assign='allObjectTypes'}
                 {formdropdownlist id='«appName.toFirstLower»ObjectType' dataField='objectType' group='data' mandatory=true items=$allObjectTypes«editInputClass»}
                 <span class="help-block">{gt text='If you change this please save the element once to reload the parameters below.' domain='«appName.formatForDB»'}</span>
@@ -111,7 +105,7 @@ class ContentTypeListView {
                         {assign var='propName' value=$propertyName}
                     {/if}
                 {/foreach}
-                <div class="form-group">
+                <div class="form-group«IF targets('3.0')» row«ENDIF»">
                     {assign var='hasMultiSelection' value=$categoryHelper->hasMultipleSelection($objectType, $propertyName)}
                     {gt text='Category' domain='«appName.formatForDB»' assign='categorySelectorLabel'}
                     {assign var='selectionMode' value='single'}
@@ -120,7 +114,7 @@ class ContentTypeListView {
                         {assign var='selectionMode' value='multiple'}
                     {/if}
                     {formlabel for="«appName.toFirstLower»CatIds`$propertyName`" text=$categorySelectorLabel«editLabelClass»}
-                    <div class="col-sm-9">
+                    <div class="col-«IF targets('3.0')»md«ELSE»sm«ENDIF»-9">
                         {formdropdownlist id="«appName.toFirstLower»CatIds`$propName`" items=$categories.$propName dataField="catids`$propName`" group='data' selectionMode=$selectionMode«editInputClass»}
                         <span class="help-block">{gt text='This is an optional filter.' domain='«appName.formatForDB»'}</span>
                     </div>
@@ -133,10 +127,10 @@ class ContentTypeListView {
     '''
 
     def private editTemplateSorting(Application it) '''
-        <div class="form-group">
+        <div class="form-group«IF targets('3.0')» row«ENDIF»">
             {gt text='Sorting' domain='«appName.formatForDB»' assign='sortingLabel'}
             {formlabel text=$sortingLabel«editLabelClass»}
-            <div class="col-sm-9">
+            <div class="col-«IF targets('3.0')»md«ELSE»sm«ENDIF»-9">
                 {formradiobutton id='«appName.toFirstLower»SortRandom' value='random' dataField='sorting' group='data' mandatory=true}
                 {gt text='Random' domain='«appName.formatForDB»' assign='sortingRandomLabel'}
                 {formlabel for='«appName.toFirstLower»SortRandom' text=$sortingRandomLabel}
@@ -154,46 +148,46 @@ class ContentTypeListView {
     '''
 
     def private editTemplateAmount(Application it) '''
-        <div class="form-group">
+        <div class="form-group«IF targets('3.0')» row«ENDIF»">
             {gt text='Amount' domain='«appName.formatForDB»' assign='amountLabel'}
             {formlabel for='«appName.toFirstLower»Amount' text=$amountLabel«editLabelClass»}
-            <div class="col-sm-9">
+            <div class="col-«IF targets('3.0')»md«ELSE»sm«ENDIF»-9">
                 {formintinput id='«appName.toFirstLower»Amount' dataField='amount' group='data' mandatory=true maxLength=2 cssClass='form-control'}
             </div>
         </div>
     '''
 
     def private editTemplateTemplate(Application it) '''
-        <div class="form-group">
+        <div class="form-group«IF targets('3.0')» row«ENDIF»">
             {gt text='Template' domain='«appName.formatForDB»' assign='templateLabel'}
             {formlabel for='«appName.toFirstLower»Template' text=$templateLabel«editLabelClass»}
-            <div class="col-sm-9">
+            <div class="col-«IF targets('3.0')»md«ELSE»sm«ENDIF»-9">
                 {«appName.formatForDB»TemplateSelector assign='allTemplates'}
                 {formdropdownlist id='«appName.toFirstLower»Template' dataField='template' group='data' mandatory=true items=$allTemplates«editInputClass»}
             </div>
         </div>
 
-        <div id="customTemplateArea" class="form-group"{* data-switch="«appName.toFirstLower»Template" data-switch-value="custom"*}>
+        <div class="form-group«IF targets('3.0')» row«ENDIF»"{* data-switch="«appName.toFirstLower»Template" data-switch-value="custom"*}>
             {gt text='Custom template' domain='«appName.formatForDB»' assign='customTemplateLabel'}
             {formlabel for='«appName.toFirstLower»CustomTemplate' text=$customTemplateLabel«editLabelClass»}
-            <div class="col-sm-9">
+            <div class="col-«IF targets('3.0')»md«ELSE»sm«ENDIF»-9">
                 {formtextinput id='«appName.toFirstLower»CustomTemplate' dataField='customTemplate' group='data' mandatory=false maxLength=80«editInputClass»}
-                <span class="help-block">{gt text='Example' domain='«appName.formatForDB»'}: <em>itemlist_[objectType]_display.html.twig</em></span>
+                <span class="help-block">{gt text='Example' domain='«appName.formatForDB»'}: <code>itemlist_[objectType]_display.html.twig</code></span>
             </div>
         </div>
     '''
 
     def private editTemplateFilter(Application it) '''
-        <div class="form-group">
+        <div class="form-group«IF targets('3.0')» row«ENDIF»">
             {gt text='Filter (expert option)' domain='«appName.formatForDB»' assign='filterLabel'}
             {formlabel for='«appName.toFirstLower»Filter' text=$filterLabel«editLabelClass»}
-            <div class="col-sm-9">
+            <div class="col-«IF targets('3.0')»md«ELSE»sm«ENDIF»-9">
                 {formtextinput id='«appName.toFirstLower»Filter' dataField='filter' group='data' mandatory=false maxLength=255«editInputClass»}
-                <span class="help-block">{gt text='Example' domain='«appName.formatForDB»'}: <em>tbl.age >= 18</em></span>
+                <span class="help-block">{gt text='Example' domain='«appName.formatForDB»'}: <code>tbl.age >= 18</code></span>
             </div>
         </div>
     '''
 
-    def private editLabelClass() ''' cssClass='col-sm-3 control-label'«''»'''
+    def private editLabelClass(Application it) ''' cssClass='«IF targets('3.0')»col-md-3 col-form«ELSE»col-sm-3 control«ENDIF»-label'«''»'''
     def private editInputClass() ''' cssClass='form-control'«''»'''
 }

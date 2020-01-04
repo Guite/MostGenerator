@@ -49,13 +49,13 @@ class TechStructureFields {
     def dispatch generate(DataObject it, String language) {
         this.language = language
         prefix = 'Entity' + name.formatForCodeCapital + 'Field'
-        helper.table(fieldColumns, fieldHeader, fieldContent)
+        helper.table(application, fieldColumns, fieldHeader, fieldContent)
     }
 
     def dispatch generate(Variables it, String language) {
         this.language = language
         prefix = 'Variables' + name.formatForCodeCapital + 'Field'
-        helper.table(fieldColumns, fieldHeader, fieldContent)
+        helper.table(application, fieldColumns, fieldHeader, fieldContent)
     }
 
     def private fieldColumns(NamedObject it) '''

@@ -50,7 +50,7 @@ class Delete {
                 <p class="alert alert-warning">{{ __f('Do you really want to delete this «name.formatForDisplay»: "%name%" ?', {'%name%': «name.formatForCode»|«app.appName.formatForDB»_formattedTitle}) }}</p>
 
                 {% form_theme deleteForm with [
-                    '@«app.appName»/Form/bootstrap_3.html.twig',
+                    '@«app.appName»/Form/bootstrap_«IF application.targets('3.0')»4«ELSE»3«ENDIF».html.twig',
                     «IF app.targets('3.0')»
                         '@ZikulaFormExtension/Form/form_div_layout.html.twig'
                     «ELSE»
@@ -71,8 +71,8 @@ class Delete {
                 «ENDIF»
                 <fieldset>
                     <legend>{{ __('Confirmation prompt') }}</legend>
-                    <div class="form-group">
-                        <div class="col-sm-offset-3 col-sm-9">
+                    <div class="form-group«IF application.targets('3.0')» row«ENDIF»">
+                        <div class="«IF application.targets('3.0')»col-md-9 offset-md-3«ELSE»col-sm-offset-3 col-sm-9«ENDIF»">
                             {{ form_widget(deleteForm.delete) }}
                             {{ form_widget(deleteForm.cancel) }}
                         </div>

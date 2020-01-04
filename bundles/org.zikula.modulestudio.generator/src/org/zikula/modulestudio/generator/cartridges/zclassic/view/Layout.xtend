@@ -45,7 +45,7 @@ class Layout {
         fileName = 'adminBase' + templateExtension
         fsa.generateFile(templatePath + fileName, adminBaseTemplate)
 
-        fileName = 'Form/bootstrap_3' + templateExtension
+        fileName = 'Form/bootstrap_' + (if (targets('3.0')) '4' else '3') + templateExtension
         fsa.generateFile(templatePath + fileName, formBaseTemplate)
     }
 
@@ -131,7 +131,7 @@ class Layout {
     def formBaseTemplate(Application it) '''
         {# purpose of this template: apply some general form extensions #}
         «IF targets('3.0')»
-            {% extends '@ZikulaFormExtension/Form/bootstrap_3_zikula_admin_layout.html.twig' %}
+            {% extends '@ZikulaFormExtension/Form/bootstrap_4_zikula_admin_layout.html.twig' %}
         «ELSE»
             {% extends 'ZikulaFormExtensionBundle:Form:bootstrap_3_zikula_admin_layout.html.twig' %}
         «ENDIF»
@@ -140,7 +140,9 @@ class Layout {
             {%- block datetime_widget -%}
                 {{- parent() -}}
                 {%- if not required -%}
-                    <em class="help-block small"><a id="{{ id }}ResetVal" href="javascript:void(0);" class="hidden">{{ __('Reset to empty value') }}</a></em>
+                    «IF targets('3.0')»<small class="form-text text-muted">«ELSE»<em class="help-block small">«ENDIF»
+                        <a id="{{ id }}ResetVal" href="javascript:void(0);" class="«IF targets('3.0')»d-none«ELSE»hidden«ENDIF»">{{ __('Reset to empty value') }}</a>
+                    «IF targets('3.0')»</small>«ELSE»</em>«ENDIF»
                 {%- endif -%}
             {%- endblock -%}
         «ENDIF»
@@ -149,7 +151,9 @@ class Layout {
             {%- block date_widget -%}
                 {{- parent() -}}
                 {%- if not required -%}
-                    <em class="help-block small"><a id="{{ id }}ResetVal" href="javascript:void(0);" class="hidden">{{ __('Reset to empty value') }}</a></em>
+                    «IF targets('3.0')»<small class="form-text text-muted">«ELSE»<em class="help-block small">«ENDIF»
+                        <a id="{{ id }}ResetVal" href="javascript:void(0);" class="«IF targets('3.0')»d-none«ELSE»hidden«ENDIF»">{{ __('Reset to empty value') }}</a>
+                    «IF targets('3.0')»</small>«ELSE»</em>«ENDIF»
                 {%- endif -%}
             {%- endblock -%}
         «ENDIF»
@@ -179,13 +183,19 @@ class Layout {
             {% block «appName.formatForDB»_field_upload_row %}
                 {% «IF targets('3.0')»apply spaceless«ELSE»spaceless«ENDIF» %}
                 {{ form_row(attribute(form, field_name)) }}
-                <div class="col-sm-9 col-sm-offset-3" style="margin-top: -20px; padding-left: 8px">
+                <div class="«IF targets('3.0')»col-md-9 offset-md-3«ELSE»col-sm-9 col-sm-offset-3«ENDIF»"«IF !targets('3.0')» style="margin-top: -20px; padding-left: 8px"«ENDIF»>
                     {% if not required %}
-                        <em class="help-block small"><a id="{{ id }}_{{ field_name }}ResetVal" href="javascript:void(0);" class="hidden">{{ __('Reset to empty value') }}</a></em>
+                        «IF targets('3.0')»<small class="form-text text-muted">«ELSE»<em class="help-block small">«ENDIF»
+                            <a id="{{ id }}_{{ field_name }}ResetVal" href="javascript:void(0);" class="«IF targets('3.0')»d-none«ELSE»hidden«ENDIF»">{{ __('Reset to empty value') }}</a>
+                        «IF targets('3.0')»</small>«ELSE»</em>«ENDIF»
                     {% endif %}
-                    <em class="help-block small">{{ __('Allowed file extensions') }}: <span id="{{ id }}_{{ field_name }}FileExtensions">{{ allowed_extensions|default('') }}</span></em>
+                    «IF targets('3.0')»<small class="form-text text-muted">«ELSE»<em class="help-block small">«ENDIF»
+                        {{ __('Allowed file extensions') }}: <span id="{{ id }}_{{ field_name }}FileExtensions">{{ allowed_extensions|default('') }}</span>
+                    «IF targets('3.0')»</small>«ELSE»</em>«ENDIF»
                     {% if allowed_size|default %}
-                        <em class="help-block small">{{ __('Allowed file size') }}: {{ allowed_size }}</em>
+                        «IF targets('3.0')»<small class="form-text text-muted">«ELSE»<em class="help-block small">«ENDIF»
+                            {{ __('Allowed file size') }}: {{ allowed_size }}
+                        «IF targets('3.0')»</small>«ELSE»</em>«ENDIF»
                     {% endif %}
                     «IF hasUploadNamingScheme(UploadNamingScheme.USERDEFINEDWITHCOUNTER)»
                         {% if has_custom_filename %}
@@ -193,7 +203,7 @@ class Layout {
                         {% endif %}
                     «ENDIF»
                     {% if file_path|default %}
-                        <span class="help-block">
+                        «IF targets('3.0')»<small class="form-text text-muted">«ELSE»<span class="help-block small">«ENDIF»
                             {{ __('Current file') }}:
                             <a href="{{ file_url }}" title="{{ __('Open file') }}"{% if file_meta.isImage %} class="image-link"{% endif %}>
                             {% if file_meta.isImage %}
@@ -202,7 +212,7 @@ class Layout {
                                 {{ __('Download') }} ({{ file_meta.size|«appName.formatForDB»_fileSize(file_path, false, false) }})
                             {% endif %}
                             </a>
-                        </span>
+                        «IF targets('3.0')»</small>«ELSE»</span>«ENDIF»
                         {% if allow_deletion and not required and form[field_name ~ 'DeleteFile'] is defined %}
                             {{ form_row(attribute(form, field_name ~ 'DeleteFile')) }}
                         {% endif %}
@@ -228,7 +238,7 @@ class Layout {
                 {% set addLinkText = multiple ? __f('Add %name%', {'%name%': entityNameTranslated}) : __f('Select %name%', {'%name%': entityNameTranslated}) %}
 
                 <div id="{{ idPrefix }}LiveSearch" class="«appName.toLowerCase»-relation-rightside">
-                    <a id="{{ idPrefix }}AddLink" href="javascript:void(0);" class="hidden">{{ addLinkText }}</a>
+                    <a id="{{ idPrefix }}AddLink" href="javascript:void(0);" class="«IF targets('3.0')»d-none«ELSE»hidden«ENDIF»">{{ addLinkText }}</a>
                     <div id="{{ idPrefix }}AddFields" class="«appName.toLowerCase»-autocomplete{{ withImage ? '-with-image' : '' }}">
                         <label for="{{ idPrefix }}Selector">{{ __f('Find %name%', {'%name%': entityNameTranslated}) }}</label>
                         <br />
@@ -299,7 +309,7 @@ class Layout {
             /* <![CDATA[ */
                 ( function($) {
                     $(document).ready(function() {
-                        $('.dropdown-toggle').addClass('hidden');
+                        $('.dropdown-toggle').addClass('«IF targets('3.0')»d-none«ELSE»hidden«ENDIF»');
                     });
                 })(jQuery);
             /* ]]> */

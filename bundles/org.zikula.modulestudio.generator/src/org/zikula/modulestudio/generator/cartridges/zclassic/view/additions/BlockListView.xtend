@@ -47,12 +47,5 @@ class BlockListView {
         </div>
 
         {{ form_row(form.filter) }}
-        «editTemplateJs»
-    '''
-
-    def private editTemplateJs(Application it) '''
-        {{ pageAddAsset('stylesheet', asset('bootstrap/css/bootstrap.min.css')) }}
-        {{ pageAddAsset('stylesheet', asset('bootstrap/css/bootstrap-theme.min.css')) }}
-        {{ pageAddAsset('javascript', asset('bootstrap/js/bootstrap.min.js')) }}
     '''
 }

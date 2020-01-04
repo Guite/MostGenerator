@@ -304,7 +304,7 @@ class QuickNavigationType {
                 'label' => $this->__('«IF categorisableMultiSelection»Categories«ELSE»Category«ENDIF»'),
                 'empty_data' => «IF categorisableMultiSelection»[]«ELSE»null«ENDIF»,
                 'attr' => [
-                    'class' => 'input-sm category-selector',
+                    'class' => '«IF app.targets('3.0')»form-control«ELSE»input«ENDIF»-sm category-selector',
                     'title' => $this->__('This is an optional filter.')
                 ],
                 'required' => false,
@@ -443,7 +443,7 @@ class QuickNavigationType {
                 'label' => $this->__('Search'),
                 'attr' => [
                     'maxlength' => 255,
-                    'class' => 'input-sm'
+                    'class' => '«IF app.targets('3.0')»form-control«ELSE»input«ENDIF»-sm'
                 ],
                 'required' => false
             ]);
@@ -460,7 +460,7 @@ class QuickNavigationType {
                 ->add('sort', ChoiceType::class, [
                     'label' => $this->__('Sort by'),
                     'attr' => [
-                        'class' => 'input-sm'
+                        'class' => '«IF app.targets('3.0')»form-control«ELSE»input«ENDIF»-sm'
                     ],
                     'choices' =>             [
                         «FOR field : getSortingFields»
@@ -485,7 +485,7 @@ class QuickNavigationType {
                     'label' => $this->__('Sort direction'),
                     'empty_data' => 'asc',
                     'attr' => [
-                        'class' => 'input-sm'
+                        'class' => '«IF app.targets('3.0')»form-control«ELSE»input«ENDIF»-sm'
                     ],
                     'choices' => [
                         $this->__('Ascending') => 'asc',
@@ -511,7 +511,7 @@ class QuickNavigationType {
                 'label' => $this->__('Page size'),
                 'empty_data' => 20,
                 'attr' => [
-                    'class' => 'input-sm text-right'
+                    'class' => '«IF app.targets('3.0')»form-control«ELSE»input«ENDIF»-sm text-right'
                 ],
                 'choices' => [
                     5 => 5,
@@ -547,7 +547,7 @@ class QuickNavigationType {
         $builder->add('«name.formatForCode»', «IF it instanceof StringField && (it as StringField).role == StringRole.LOCALE»Locale«ELSEIF it instanceof ListField && (it as ListField).multiple»MultiList«ELSEIF it instanceof UserField»Entity«ELSE»«fieldType»«ENDIF»Type::class, [
             'label' => $this->__('«IF name == 'workflowState'»State«ELSE»«name.formatForDisplayCapital»«ENDIF»'),
             'attr' => [
-                'class' => 'input-sm'
+                'class' => '«IF app.targets('3.0')»form-control«ELSE»input«ENDIF»-sm'
             ],
             'required' => false,
             «additionalOptions»
@@ -618,7 +618,7 @@ class QuickNavigationType {
             'required' => false,
             'label' => $this->__('«/*(source as Entity).nameMultiple*/sourceAliasName.formatForDisplayCapital»'),
             'attr' => [
-                'class' => 'input-sm'
+                'class' => '«IF app.targets('3.0')»form-control«ELSE»input«ENDIF»-sm'
             ]
         ]);
     '''

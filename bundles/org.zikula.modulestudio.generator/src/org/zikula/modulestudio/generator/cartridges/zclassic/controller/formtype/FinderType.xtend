@@ -198,6 +198,11 @@ class FinderType {
         {
             $builder->add('onlyImages', CheckboxType::class, [
                 'label' => $this->__('Only images'),
+                «IF app.targets('3.0')»
+                    'label_attr' => [
+                        'class' => 'switch-custom'
+                    ],
+                «ENDIF»
                 'empty_data' => false,
                 'help' => $this->__('Enable this option to insert images'),
                 'required' => false

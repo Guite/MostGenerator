@@ -244,7 +244,9 @@ class ContentTypeListType {
         {
             $builder->add('sorting', ChoiceType::class, [
                 'label' => $this->__('Sorting'«IF !isSystemModule», '«appName.formatForDB»'«ENDIF») . ':',
-                'label_attr' => ['class' => 'radio-inline'],
+                'label_attr' => [
+                    'class' => 'radio-«IF targets('3.0')»custom«ELSE»inline«ENDIF»'
+                ],
                 'empty_data' => 'default',
                 'choices' => [
                     $this->__('Random'«IF !isSystemModule», '«appName.formatForDB»'«ENDIF») => 'random',
@@ -304,7 +306,8 @@ class ContentTypeListType {
                     'maxlength' => 80,
                     'title' => $this->__('Example'«IF !isSystemModule», '«appName.formatForDB»'«ENDIF») . ': ' . $exampleTemplate
                 ],
-                'help' => $this->__('Example'«IF !isSystemModule», '«appName.formatForDB»'«ENDIF») . ': <em>' . $exampleTemplate . '</em>'
+                'help' => $this->__('Example'«IF !isSystemModule», '«appName.formatForDB»'«ENDIF») . ': <code>' . $exampleTemplate . '</code>'«IF targets('3.0')»,
+                'help_html' => true«ENDIF»
             ]);
         }
     '''

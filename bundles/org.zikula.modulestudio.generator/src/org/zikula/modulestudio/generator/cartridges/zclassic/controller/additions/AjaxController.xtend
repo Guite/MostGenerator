@@ -27,7 +27,14 @@ class AjaxController {
 
     def private commonSystemImports(Application it) '''
         «IF targets('3.0')»
+            «IF needsAutoCompletion»
+                use Liip\ImagineBundle\Imagine\Cache\CacheManager;
+            «ENDIF»
             «IF hasBooleansWithAjaxToggle || hasTrees»
+                use Psr\Log\LoggerInterface;
+                «IF hasTrees»
+                    use Symfony\Component\Routing\RouterInterface;
+                «ENDIF»
                 use Zikula\UsersModule\Api\ApiInterface\CurrentUserApiInterface;
                 «IF hasTrees»
                     use Zikula\UsersModule\Entity\RepositoryInterface\UserRepositoryInterface;
@@ -278,7 +285,7 @@ class AjaxController {
                 $contextArgs
             );
 
-            $previewInfo = $this->get('twig')->render(
+            $previewInfo = $this->«IF targets('3.0')»renderView«ELSE»get('twig')->render«ENDIF»(
                 '@«appName»/External/' . ucfirst($objectType) . '/info.html.twig',
                 $previewParameters
             );
@@ -324,6 +331,7 @@ class AjaxController {
         if (targets('3.0')) '''
             public function getItemListAutoCompletionAction(
                 Request $request,
+                CacheManager $imagineCacheManager,
                 ControllerHelper $controllerHelper,
                 EntityFactory $entityFactory,
                 EntityDisplayHelper $entityDisplayHelper«IF hasImageFields»,
@@ -421,8 +429,8 @@ class AjaxController {
         $descriptionFieldName = $entityDisplayHelper->getDescriptionFieldName($objectType);
         «IF hasImageFields»
             $previewFieldName = $entityDisplayHelper->getPreviewFieldName($objectType);
-            $imagineCacheManager = $this->get('liip_imagine.cache.manager');
             «IF !targets('3.0')»
+                $imagineCacheManager = $this->get('liip_imagine.cache.manager');
                 $imageHelper = $this->get('«appService».image_helper');
             «ENDIF»
             $thumbRuntimeOptions = $imageHelper->getRuntimeOptions($objectType, $previewFieldName, 'controllerAction', $contextArgs);
@@ -572,6 +580,7 @@ class AjaxController {
         if (targets('3.0')) '''
             public function toggleFlagAction(
                 Request $request,
+                LoggerInterface $logger,
                 EntityFactory $entityFactory,
                 CurrentUserApiInterface $currentUserApi
             ): JsonResponse'''
@@ -621,7 +630,9 @@ class AjaxController {
         // save entity back to database
         $entityFactory->getEntityManager()->flush();
 
-        $logger = $this->get('logger');
+        «IF !targets('3.0')»
+            $logger = $this->get('logger');
+        «ENDIF»
         $logArgs = [
             'app' => '«appName»',
             'user' => «IF targets('3.0')»$currentUserApi«ELSE»$this->get('zikula_users_module.current_user')«ENDIF»->get('uname'),
@@ -668,6 +679,8 @@ class AjaxController {
         if (targets('3.0')) '''
             public function handleTreeOperationAction(
                 Request $request,
+                RouterInterface $router,
+                LoggerInterface $logger,
                 EntityFactory $entityFactory,
                 EntityDisplayHelper $entityDisplayHelper,
                 CurrentUserApiInterface $currentUserApi,
@@ -766,8 +779,8 @@ class AjaxController {
     def private treeOperationSwitch(Application it) '''
         «IF !targets('3.0')»
             $currentUserApi = $this->get('zikula_users_module.current_user');
+            $logger = $this->get('logger');
         «ENDIF»
-        $logger = $this->get('logger');
         $logArgs = ['app' => '«appName»', 'user' => $currentUserApi->get('uname'), 'entity' => $objectType];
         «IF hasStandardFieldEntities»
 
@@ -891,7 +904,7 @@ class AjaxController {
                     «ELSE»
                         $urlArgs = $childEntity->createUrlArgs();
                     «ENDIF»
-                    $returnValue['returnUrl'] = $this->get('router')->generate(
+                    $returnValue['returnUrl'] = «IF targets('3.0')»$router«ELSE»$this->get('router')«ENDIF»->generate(
                         $routeName,
                         $urlArgs,
                         UrlGeneratorInterface::ABSOLUTE_URL
@@ -1305,6 +1318,7 @@ class AjaxController {
             «IF targets('3.0')»
                 return parent::getItemListAutoCompletionAction(
                     $request,
+                    $imagineCacheManager,
                     $controllerHelper,
                     $entityFactory,
                     $entityDisplayHelper«IF hasImageFields»,
@@ -1337,6 +1351,7 @@ class AjaxController {
             «IF targets('3.0')»
                 return parent::toggleFlagAction(
                     $request,
+                    $logger,
                     $entityFactory,
                     $currentUserApi
                 );
@@ -1352,6 +1367,8 @@ class AjaxController {
             «IF targets('3.0')»
                 return parent::handleTreeOperationAction(
                     $request,
+                    $router,
+                    $logger,
                     $entityFactory,
                     $entityDisplayHelper,
                     $currentUserApi,

@@ -32,7 +32,7 @@ class TechStructure {
         «helper.basicInfo(it, language)»
         «IF !referredApplications.empty»
             <h2><i class="fa fa-link"></i> «IF language == 'de'»Abhängigkeiten«ELSE»Dependencies«ENDIF»</h2>
-            «helper.table(dependenciesColumns, dependenciesHeader, dependenciesContent)»
+            «helper.table(it, dependenciesColumns, dependenciesHeader, dependenciesContent)»
         «ENDIF»
         «entityInfo»
         «IF needsConfig»

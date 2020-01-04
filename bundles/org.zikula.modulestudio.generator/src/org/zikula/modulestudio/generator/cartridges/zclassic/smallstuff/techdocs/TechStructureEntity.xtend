@@ -22,27 +22,27 @@ class TechStructureEntity {
 
     def generateBasic(Entity it, String language) {
         this.language = language
-        helper.table(entitySettingsColumns, entitySettingsHeader, entitySettingsContent)
+        helper.table(application, entitySettingsColumns, entitySettingsHeader, entitySettingsContent)
     }
 
     def generateIndexes(Entity it, String language) {
         this.language = language
-        helper.table(entityIndexColumns, entityIndexHeader, entityIndexContent)
+        helper.table(application, entityIndexColumns, entityIndexHeader, entityIndexContent)
     }
 
     def generateActions(Entity it, String language) {
         this.language = language
-        helper.table(entityActionColumns, entityActionHeader, entityActionContent)
+        helper.table(application, entityActionColumns, entityActionHeader, entityActionContent)
     }
 
     def generateWorkflows(Entity it, String language) {
         this.language = language
-        helper.table(entityWorkflowColumns, entityWorkflowHeader, entityWorkflowContent)
+        helper.table(application, entityWorkflowColumns, entityWorkflowHeader, entityWorkflowContent)
     }
 
     def generateBehaviour(Entity it, String language) {
         this.language = language
-        helper.table(entityBehaviourColumns, entityBehaviourHeader, entityBehaviourContent)
+        helper.table(application, entityBehaviourColumns, entityBehaviourHeader, entityBehaviourContent)
     }
 
     def private entitySettingsColumns(Entity it) '''

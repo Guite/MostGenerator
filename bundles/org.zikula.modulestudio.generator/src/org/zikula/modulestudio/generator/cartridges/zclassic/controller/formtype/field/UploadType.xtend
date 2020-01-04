@@ -102,6 +102,11 @@ class UploadType {
                 if ($options['allow_deletion'] && !$options['required']) {
                     $builder->add($fieldName . 'DeleteFile', CheckboxType::class, [
                         'label' => $this->translator->__('Delete existing file'),
+                        «IF targets('3.0')»
+                            'label_attr' => [
+                                'class' => 'switch-custom'
+                            ],
+                        «ENDIF»
                         'required' => false,
                         'attr' => [
                             'title' => $this->translator->__('Delete this file ?')

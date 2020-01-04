@@ -70,7 +70,9 @@ class FormAwareProviderInnerForms {
                     ])
                     ->add('dummyChoice', ChoiceType::class, [
                         'label' => $this->__('Dummy «name.formatForDisplay» choice'),
-                        'label_attr' => ['class' => 'checkbox-inline'],
+                        'label_attr' => [
+                            'class' => 'checkbox-«IF app.targets('3.0')»custom«ELSE»inline«ENDIF»'
+                        ],
                         'choices' => [
                             $this->__('Option A') => 'A',
                             $this->__('Option B') => 'B',

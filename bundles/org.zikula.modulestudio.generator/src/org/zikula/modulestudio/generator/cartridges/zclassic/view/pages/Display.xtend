@@ -134,108 +134,102 @@ class Display {
     def private content(Entity it, String appName, Boolean isAdmin) '''
         «val refedElems = getReferredElements»
         «IF useGroupingTabs('display')»
-            <div class="zikula-bootstrap-tab-container">
-                <ul class="nav nav-tabs">
-                    <li role="presentation" class="active">
-                        <a id="fieldsTab" href="#tabFields" title="{{ __('Fields') }}" role="tab" data-toggle="tab">{{ __('Fields') }}</a>
-                    </li>
-                    «IF geographical»
-                        <li role="presentation">
-                            <a id="mapTab" href="#tabMap" title="{{ __('Map') }}" role="tab" data-toggle="tab">{{ __('Map') }}</a>
-                        </li>
-                    «ENDIF»
-                    «IF !refedElems.empty»
-                        <li role="presentation">
-                            <a id="relationsTab" href="#tabRelations" title="{{ __('Related data') }}" role="tab" data-toggle="tab">{{ __('Related data') }}</a>
-                        </li>
-                    «ENDIF»
-                    «IF attributable»
-                        {% if featureActivationHelper.isEnabled(constant('«application.vendor.formatForCodeCapital»\\«application.name.formatForCodeCapital»Module\\Helper\\FeatureActivationHelper::ATTRIBUTES'), '«name.formatForCode»') %}
-                            <li role="presentation">
-                                <a id="attributesTab" href="#tabAttributes" title="{{ __('Attributes') }}" role="tab" data-toggle="tab">{{ __('Attributes') }}</a>
-                            </li>
-                        {% endif %}
-                    «ENDIF»
-                    «IF categorisable»
-                        {% if featureActivationHelper.isEnabled(constant('«application.vendor.formatForCodeCapital»\\«application.name.formatForCodeCapital»Module\\Helper\\FeatureActivationHelper::CATEGORIES'), '«name.formatForCode»') %}
-                            <li role="presentation">
-                                <a id="categoriesTab" href="#tabCategories" title="{{ __('Categories') }}" role="tab" data-toggle="tab">{{ __('Categories') }}</a>
-                            </li>
-                        {% endif %}
-                    «ENDIF»
-                    «IF tree != EntityTreeType.NONE»
-                        {% if featureActivationHelper.isEnabled(constant('«application.vendor.formatForCodeCapital»\\«application.name.formatForCodeCapital»Module\\Helper\\FeatureActivationHelper::TREE_RELATIVES'), '«name.formatForCode»') %}
-                            <li role="presentation">
-                                <a id="relativesTab" href="#tabRelatives" title="{{ __('Relatives') }}" role="tab" data-toggle="tab">{{ __('Relatives') }}</a>
-                            </li>
-                        {% endif %}
-                    «ENDIF»
-                    «IF uiHooksProvider != HookProviderMode.DISABLED»
-                        <li role="presentation">
-                            <a id="assignmentsTab" href="#tabAssignments" title="{{ __('Hook assignments') }}" role="tab" data-toggle="tab">{{ __('Hook assignments') }}</a>
-                        </li>
-                    «ENDIF»
-                    «IF standardFields»
-                        <li role="presentation">
-                            <a id="standardFieldsTab" href="#tabStandardFields" title="{{ __('Creation and update') }}" role="tab" data-toggle="tab">{{ __('Creation and update') }}</a>
-                        </li>
-                    «ENDIF»
-                    «IF !skipHookSubscribers»
-                        <li role="presentation">
-                            <a id="hooksTab" href="#tabHooks" title="{{ __('Hooks') }}" role="tab" data-toggle="tab">{{ __('Hooks') }}</a>
-                        </li>
-                    «ENDIF»
-                </ul>
-            </div>
-
+            «tabs»
             <div class="tab-content">
-                <div role="tabpanel" class="tab-pane fade in active" id="tabFields" aria-labelledby="fieldsTab">
-                    «IF #[ItemActionsPosition.START, ItemActionsPosition.BOTH].contains(application.displayActionsPosition) && application.displayActionsStyle != ItemActionsStyle.DROPDOWN»
-                        «new MenuViews().itemActions(it, 'display', 'Start')»
-                    «ENDIF»
-                    <h3>{{ __('Fields') }}</h3>
-                    «fieldDetails(appName)»
+                <div role="tabpanel" class="tab-pane fade «IF application.targets('3.0')»show«ELSE»in«ENDIF» active" id="tabFields" aria-labelledby="fieldsTab">
+                    «fieldSection(true)»
                 </div>
-        «ELSE»
-            «IF !refedElems.empty»
-                <div class="row">
-                    <div class="col-sm-9">
-            «ENDIF»
-            «IF #[ItemActionsPosition.START, ItemActionsPosition.BOTH].contains(application.displayActionsPosition) && application.displayActionsStyle != ItemActionsStyle.DROPDOWN»
-                «new MenuViews().itemActions(it, 'display', 'Start')»
-            «ENDIF»
-            «fieldDetails(appName)»
-        «ENDIF»
-
-        «displayExtensions(name.formatForCode, isAdmin)»
-
-        «IF !skipHookSubscribers»
-            {{ block('display_hooks') }}
-        «ENDIF»
-        «IF #[ItemActionsPosition.END, ItemActionsPosition.BOTH].contains(application.displayActionsPosition)»
-            «new MenuViews().itemActions(it, 'display', 'End')»
-        «ENDIF»
-        «IF useGroupingTabs('display')»
+                «displayExtensions(name.formatForCode, isAdmin)»
+                «displayAdditions»
+            </div>
+        «ELSEIF !refedElems.empty»
+            <div class="row">
+                <div class="col-«IF application.targets('3.0')»md«ELSE»sm«ENDIF»-9">
+                    «fieldSection(false)»
+                    «displayExtensions(name.formatForCode, isAdmin)»
+                    «displayAdditions»
+                </div>
+                <div class="col-«IF application.targets('3.0')»md«ELSE»sm«ENDIF»-3">
+                    {{ block('related_items') }}
+                </div>
             </div>
         «ELSE»
-            «IF !refedElems.empty»
-                    </div>
-                    <div class="col-sm-3">
-                        {{ block('related_items') }}
-                    </div>
-                </div>
-            «ENDIF»
+            «fieldSection(false)»
+            «displayExtensions(name.formatForCode, isAdmin)»
+            «displayAdditions»
         «ENDIF»
     '''
 
-    def private fieldDetails(Entity it, String appName) '''
+    def private tabs(Entity it) '''
+        <div class="zikula-bootstrap-tab-container">
+            <ul class="nav nav-tabs" role="tablist">
+                <li class="«IF application.targets('3.0')»nav-item«ELSE»active«ENDIF»" role="presentation">
+                    <a id="fieldsTab" href="#tabFields" title="{{ __('Fields') }}" role="tab" data-toggle="tab"«IF application.targets('3.0')» class="nav-link active"«ENDIF»>{{ __('Fields') }}</a>
+                </li>
+                «IF geographical»
+                    <li«IF application.targets('3.0')» class="nav-item"«ENDIF» role="presentation">
+                        <a id="mapTab" href="#tabMap" title="{{ __('Map') }}" role="tab" data-toggle="tab"«IF application.targets('3.0')» class="nav-link"«ENDIF»>{{ __('Map') }}</a>
+                    </li>
+                «ENDIF»
+                «IF !getReferredElements.empty»
+                    <li«IF application.targets('3.0')» class="nav-item"«ENDIF» role="presentation">
+                        <a id="relationsTab" href="#tabRelations" title="{{ __('Related data') }}" role="tab" data-toggle="tab"«IF application.targets('3.0')» class="nav-link"«ENDIF»>{{ __('Related data') }}</a>
+                    </li>
+                «ENDIF»
+                «IF attributable»
+                    {% if featureActivationHelper.isEnabled(constant('«application.vendor.formatForCodeCapital»\\«application.name.formatForCodeCapital»Module\\Helper\\FeatureActivationHelper::ATTRIBUTES'), '«name.formatForCode»') %}
+                        <li«IF application.targets('3.0')» class="nav-item"«ENDIF» role="presentation">
+                            <a id="attributesTab" href="#tabAttributes" title="{{ __('Attributes') }}" role="tab" data-toggle="tab"«IF application.targets('3.0')» class="nav-link"«ENDIF»>{{ __('Attributes') }}</a>
+                        </li>
+                    {% endif %}
+                «ENDIF»
+                «IF categorisable»
+                    {% if featureActivationHelper.isEnabled(constant('«application.vendor.formatForCodeCapital»\\«application.name.formatForCodeCapital»Module\\Helper\\FeatureActivationHelper::CATEGORIES'), '«name.formatForCode»') %}
+                        <li«IF application.targets('3.0')» class="nav-item"«ENDIF» role="presentation">
+                            <a id="categoriesTab" href="#tabCategories" title="{{ __('Categories') }}" role="tab" data-toggle="tab"«IF application.targets('3.0')» class="nav-link"«ENDIF»>{{ __('Categories') }}</a>
+                        </li>
+                    {% endif %}
+                «ENDIF»
+                «IF tree != EntityTreeType.NONE»
+                    {% if featureActivationHelper.isEnabled(constant('«application.vendor.formatForCodeCapital»\\«application.name.formatForCodeCapital»Module\\Helper\\FeatureActivationHelper::TREE_RELATIVES'), '«name.formatForCode»') %}
+                        <li«IF application.targets('3.0')» class="nav-item"«ENDIF» role="presentation">
+                            <a id="relativesTab" href="#tabRelatives" title="{{ __('Relatives') }}" role="tab" data-toggle="tab"«IF application.targets('3.0')» class="nav-link"«ENDIF»>{{ __('Relatives') }}</a>
+                        </li>
+                    {% endif %}
+                «ENDIF»
+                «IF uiHooksProvider != HookProviderMode.DISABLED»
+                    <li«IF application.targets('3.0')» class="nav-item"«ENDIF» role="presentation">
+                        <a id="assignmentsTab" href="#tabAssignments" title="{{ __('Hook assignments') }}" role="tab" data-toggle="tab"«IF application.targets('3.0')» class="nav-link"«ENDIF»>{{ __('Hook assignments') }}</a>
+                    </li>
+                «ENDIF»
+                «IF standardFields»
+                    <li«IF application.targets('3.0')» class="nav-item"«ENDIF» role="presentation">
+                        <a id="standardFieldsTab" href="#tabStandardFields" title="{{ __('Creation and update') }}" role="tab" data-toggle="tab"«IF application.targets('3.0')» class="nav-link"«ENDIF»>{{ __('Creation and update') }}</a>
+                    </li>
+                «ENDIF»
+                «IF !skipHookSubscribers»
+                    <li«IF application.targets('3.0')» class="nav-item"«ENDIF» role="presentation">
+                        <a id="hooksTab" href="#tabHooks" title="{{ __('Hooks') }}" role="tab" data-toggle="tab"«IF application.targets('3.0')» class="nav-link"«ENDIF»>{{ __('Hooks') }}</a>
+                    </li>
+                «ENDIF»
+            </ul>
+        </div>
+    '''
+
+    def private fieldSection(Entity it, Boolean withHeading) '''
+        «IF #[ItemActionsPosition.START, ItemActionsPosition.BOTH].contains(application.displayActionsPosition) && application.displayActionsStyle != ItemActionsStyle.DROPDOWN»
+            «new MenuViews().itemActions(it, 'display', 'Start')»
+        «ENDIF»
+        «IF withHeading»
+            <h3>{{ __('Fields') }}</h3>
+        «ENDIF»
         <dl>
             «FOR field : getFieldsForDisplayPage»«field.displayEntry»«ENDFOR»
             «IF geographical»
                 «FOR geoFieldName : newArrayList('latitude', 'longitude')»
                     {% if «name.formatForCode».«geoFieldName» is not empty %}
                         <dt>{{ __('«geoFieldName.toFirstUpper»') }}</dt>
-                        <dd>{{ «name.formatForCode».«geoFieldName»|«appName.formatForDB»_geoData }}</dd>
+                        <dd>{{ «name.formatForCode».«geoFieldName»|«application.appName.formatForDB»_geoData }}</dd>
                     {% endif %}
                 «ENDFOR»
             «ENDIF»
@@ -280,7 +274,7 @@ class Display {
                     {{ «relObjName»|«application.appName.formatForDB»_formattedTitle }}
                   «IF linkEntity.hasDisplayAction»
                     {% «IF application.targets('3.0')»endapply«ELSE»endspaceless«ENDIF» %}</a>
-                    <a id="«linkEntity.name.formatForCode»Item{{ «relObjName».getKey() }}Display" href="{{ path('«linkEntity.application.appName.formatForDB»_«linkEntity.name.formatForDB»_' ~ routeArea ~ 'display', {«IF !linkEntity.hasSluggableFields || !linkEntity.slugUnique»«linkEntity.routePkParams(relObjName, true)»«ENDIF»«linkEntity.appendSlug(relObjName, true)», raw: 1}) }}" title="{{ __('Open quick view window')|e('html_attr') }}" class="«application.vendorAndName.toLowerCase»-inline-window hidden" data-modal-title="{{ «relObjName»|«application.appName.formatForDB»_formattedTitle|e('html_attr') }}"><i class="fa fa-id-card«IF !application.targets('3.0')»-o«ENDIF»"></i></a>
+                    <a id="«linkEntity.name.formatForCode»Item{{ «relObjName».getKey() }}Display" href="{{ path('«linkEntity.application.appName.formatForDB»_«linkEntity.name.formatForDB»_' ~ routeArea ~ 'display', {«IF !linkEntity.hasSluggableFields || !linkEntity.slugUnique»«linkEntity.routePkParams(relObjName, true)»«ENDIF»«linkEntity.appendSlug(relObjName, true)», raw: 1}) }}" title="{{ __('Open quick view window')|e('html_attr') }}" class="«application.vendorAndName.toLowerCase»-inline-window «IF application.targets('3.0')»d-none«ELSE»hidden«ENDIF»" data-modal-title="{{ «relObjName»|«application.appName.formatForDB»_formattedTitle|e('html_attr') }}"><i class="fa fa-id-card«IF !application.targets('3.0')»-o«ENDIF»"></i></a>
                   «ENDIF»
               {% else %}
                   {{ «relObjName»|«application.appName.formatForDB»_formattedTitle }}
@@ -356,6 +350,15 @@ class Display {
         «ENDIF»
         «IF standardFields»
             {{ include('@«application.appName»/Helper/includeStandardFieldsDisplay.html.twig', {obj: «objName»«IF useGroupingTabs('display')», tabs: true«ENDIF»}) }}
+        «ENDIF»
+    '''
+
+    def private displayAdditions(Entity it) '''
+        «IF !skipHookSubscribers»
+            {{ block('display_hooks') }}
+        «ENDIF»
+        «IF #[ItemActionsPosition.END, ItemActionsPosition.BOTH].contains(application.displayActionsPosition)»
+            «new MenuViews().itemActions(it, 'display', 'End')»
         «ENDIF»
     '''
 

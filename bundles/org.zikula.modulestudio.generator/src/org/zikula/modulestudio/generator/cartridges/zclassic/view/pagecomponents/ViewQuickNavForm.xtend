@@ -34,9 +34,9 @@ class ViewQuickNavForm {
         {# purpose of this template: «nameMultiple.formatForDisplay» view filter form #}
         {% if permissionHelper.mayUseQuickNav('«name.formatForCode»') %}
             {% form_theme quickNavForm with [
-                'bootstrap_3_layout.html.twig'
+                'bootstrap_«IF application.targets('3.0')»4«ELSE»3«ENDIF»_layout.html.twig'
             ] %}
-            {{ form_start(quickNavForm, {attr: {id: '«application.appName.toFirstLower»«name.formatForCodeCapital»QuickNavForm', class: '«application.appName.toLowerCase»-quicknav navbar-form', role: 'navigation'}}) }}
+            {{ form_start(quickNavForm, {attr: {id: '«application.appName.toFirstLower»«name.formatForCodeCapital»QuickNavForm', class: '«application.appName.toLowerCase»-quicknav «IF application.targets('3.0')»form-inline«ELSE»navbar-form«ENDIF»', role: 'navigation'}}) }}
             {{ form_errors(quickNavForm) }}
             <a href="#collapse«name.formatForCodeCapital»QuickNav" role="button" data-toggle="collapse" class="btn btn-default" aria-expanded="false" aria-controls="collapse«name.formatForCodeCapital»QuickNav">
                 <i class="fa fa-filter" aria-hidden="true"></i> {{ __('Filter') }}
@@ -109,7 +109,7 @@ class ViewQuickNavForm {
         «ENDIF»
         «IF hasAbstractStringFieldsEntity»
             {% if searchFilter is defined and searchFilter != true %}
-                <div class="hidden">
+                <div class="«IF application.targets('3.0')»d-none«ELSE»hidden«ENDIF»">
             {% endif %}
                 {{ form_row(quickNavForm.q) }}
             {% if searchFilter is defined and searchFilter != true %}
@@ -128,17 +128,17 @@ class ViewQuickNavForm {
         {% set categoriesEnabled = featureActivationHelper.isEnabled(constant('«application.vendor.formatForCodeCapital»\\«application.name.formatForCodeCapital»Module\\Helper\\FeatureActivationHelper::CATEGORIES'), '«name.formatForCode»') %}
         {% if categoriesEnabled %}
             {% if categoryFilter is defined and categoryFilter != true %}
-                <div class="hidden">
+                <div class="«IF application.targets('3.0')»d-none«ELSE»hidden«ENDIF»">
             {% else %}
                 <div class="row">
-                    <div class="col-sm-3">
+                    <div class="col-«IF application.targets('3.0')»md«ELSE»sm«ENDIF»-3">
             {% endif %}
                 {{ form_row(quickNavForm.categories) }}
             {% if categoryFilter is defined and categoryFilter != true %}
                 </div>
             {% else %}
                     </div>
-                    <div class="col-sm-9">
+                    <div class="col-«IF application.targets('3.0')»md«ELSE»sm«ENDIF»-9">
             {% endif %}
         {% endif %}
     '''
@@ -146,7 +146,7 @@ class ViewQuickNavForm {
     def private dispatch formField(DerivedField it) '''
         «val fieldName = name.formatForCode»
         {% if «fieldName»Filter is defined and «fieldName»Filter != true %}
-            <div class="hidden">
+            <div class="«IF application.targets('3.0')»d-none«ELSE»hidden«ENDIF»">
         {% endif %}
             {{ form_row(quickNavForm.«fieldName») }}
         {% if «fieldName»Filter is defined and «fieldName»Filter != true %}
@@ -157,7 +157,7 @@ class ViewQuickNavForm {
     def private dispatch formField(JoinRelationship it) '''
         «val sourceAliasName = getRelationAliasName(false)»
         {% if «sourceAliasName»Filter is defined and «sourceAliasName»Filter != true %}
-            <div class="hidden">
+            <div class="«IF application.targets('3.0')»d-none«ELSE»hidden«ENDIF»">
         {% endif %}
             {{ form_row(quickNavForm.«sourceAliasName») }}
         {% if «sourceAliasName»Filter is defined and «sourceAliasName»Filter != true %}
@@ -167,7 +167,7 @@ class ViewQuickNavForm {
 
     def private sortingAndPageSize(Entity it) '''
         {% if sorting is defined and sorting != true %}
-            <div class="hidden">
+            <div class="«IF application.targets('3.0')»d-none«ELSE»hidden«ENDIF»">
         {% endif %}
             {{ form_row(quickNavForm.sort) }}
             {{ form_row(quickNavForm.sortdir) }}
@@ -175,7 +175,7 @@ class ViewQuickNavForm {
             </div>
         {% endif %}
         {% if pageSizeSelector is defined and pageSizeSelector != true %}
-            <div class="hidden">
+            <div class="«IF application.targets('3.0')»d-none«ELSE»hidden«ENDIF»">
         {% endif %}
             {{ form_row(quickNavForm.num) }}
         {% if pageSizeSelector is defined and pageSizeSelector != true %}

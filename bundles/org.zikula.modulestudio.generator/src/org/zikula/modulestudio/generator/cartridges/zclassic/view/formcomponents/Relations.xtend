@@ -124,8 +124,8 @@ class Relations {
 
     def private tabTitleForEditTemplate(JoinRelationship it, Entity ownEntity, Boolean many) '''
         «val ownEntityName = ownEntity.getEntityNameSingularPlural(many)»
-        <li role="presentation">
-            <a id="«ownEntityName.formatForCode»Tab" href="#tab«ownEntityName.formatForCodeCapital»" title="{{ __('«ownEntityName.formatForDisplayCapital»') }}" role="tab" data-toggle="tab">{{ __('«ownEntityName.formatForDisplayCapital»') }}</a>
+        <li«IF application.targets('3.0')» class="nav-item"«ENDIF» role="presentation">
+            <a id="«ownEntityName.formatForCode»Tab" href="#tab«ownEntityName.formatForCodeCapital»" title="{{ __('«ownEntityName.formatForDisplayCapital»') }}" role="tab" data-toggle="tab"«IF application.targets('3.0')» class="nav-link"«ENDIF»>{{ __('«ownEntityName.formatForDisplayCapital»') }}</a>
         </li>
     '''
 

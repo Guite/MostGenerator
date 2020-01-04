@@ -106,7 +106,7 @@ class ViewTable {
     def private viewForm(Entity it) '''
         «IF listType == LIST_TYPE_TABLE»
             {% if routeArea == 'admin' %}
-            <form action="{{ path('«appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ 'handleselectedentries') }}" method="post" id="«nameMultiple.formatForCode»ViewForm" class="form-horizontal" role="form">
+            <form action="{{ path('«appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ 'handleselectedentries') }}" method="post" id="«nameMultiple.formatForCode»ViewForm"«IF !application.targets('3.0')» class="form-horizontal" role="form"«ENDIF»>
                 <div>
             {% endif %}
         «ENDIF»
@@ -164,23 +164,23 @@ class ViewTable {
                 <thead>
                 <tr>
                     {% if routeArea == 'admin' %}
-                        <th id="hSelect" scope="col" class="text-center z-w02">
+                        <th id="hSelect" scope="col" class="text-center«IF !app.targets('3.0')» z-w02«ENDIF»">
                             <input type="checkbox" class="«application.vendorAndName.toLowerCase»-mass-toggle" />
                         </th>
                     {% endif %}
                     «IF #[ItemActionsPosition.START, ItemActionsPosition.BOTH].contains(app.viewActionsPosition)»
-                        <th id="hItemActionsStart" scope="col" class="«IF !app.targets('2.0')»z-order-unsorted «ENDIF»z-w02">{{ __('Actions') }}</th>
+                        <th id="hItemActionsStart" scope="col" class="«IF !app.targets('3.0')»«IF !app.targets('2.0')»z-order-unsorted«ENDIF» z-w02«ENDIF»">{{ __('Actions') }}</th>
                     «ENDIF»
                     «IF hasSortableFields»
                         {% if activateSortable %}
-                            <th id="hSortable" scope="col" class="«IF !app.targets('2.0')»z-order-unsorted «ENDIF»z-w02">{{ __('Sorting') }}</th>
+                            <th id="hSortable" scope="col" class="«IF !app.targets('3.0')»«IF !app.targets('2.0')»z-order-unsorted«ENDIF» z-w02«ENDIF»">{{ __('Sorting') }}</th>
                         {% endif %}
                     «ENDIF»
                     «FOR field : listItemsFields»«field.headerLine»«ENDFOR»
                     «FOR relation : listItemsIn»«relation.headerLine(false)»«ENDFOR»
                     «FOR relation : listItemsOut»«relation.headerLine(true)»«ENDFOR»
                     «IF #[ItemActionsPosition.END, ItemActionsPosition.BOTH].contains(app.viewActionsPosition)»
-                        <th id="hItemActionsEnd" scope="col" class="«IF !app.targets('2.0')»z-order-unsorted «ENDIF»z-w02">{{ __('Actions') }}</th>
+                        <th id="hItemActionsEnd" scope="col" class="«IF !app.targets('3.0')»«IF !app.targets('2.0')»z-order-unsorted«ENDIF» z-w02«ENDIF»">{{ __('Actions') }}</th>
                     «ENDIF»
                 </tr>
                 </thead>
@@ -197,7 +197,7 @@ class ViewTable {
             «ELSEIF listType == LIST_TYPE_TABLE»
                 <tr«IF hasSortableFields»{% if activateSortable %} data-item-id="{{ «name.formatForCode».getKey() }}" class="sort-item"{% endif %}«ENDIF»>
                     {% if routeArea == 'admin' %}
-                        <td headers="hSelect" class="text-center z-w02">
+                        <td headers="hSelect" class="text-center«IF !application.targets('3.0')» z-w02«ENDIF»">
                             <input type="checkbox" name="items[]" value="{{ «name.formatForCode».getKey() }}" class="«application.vendorAndName.toLowerCase»-toggle-checkbox" />
                         </td>
                     {% endif %}
@@ -207,7 +207,7 @@ class ViewTable {
                 «ENDIF»
                 «IF hasSortableFields»
                     {% if activateSortable %}
-                        <td headers="hSortable" class="text-center z-w02">
+                        <td headers="hSortable" class="text-center«IF !application.targets('3.0')» z-w02«ENDIF»">
                             <i class="fa fa-arrows«IF application.targets('3.0')»-alt«ENDIF» sort-handle pointer" title="{{ __('Drag to reorder') }}"></i>
                         </td>
                     {% endif %}
@@ -231,8 +231,8 @@ class ViewTable {
             «ELSEIF listType == LIST_TYPE_DL»
                 <dt>
             «ELSEIF listType == LIST_TYPE_TABLE»
-                <tr class="z-{{ routeArea == 'admin' ? 'admin' : 'data' }}tableempty">
-                «'    '»<td class="text-left" colspan="{% if routeArea == 'admin' %}«(listItemsFields.size + listItemsIn.size + listItemsOut.size + 1 + 1)»{% else %}«(listItemsFields.size + listItemsIn.size + listItemsOut.size + 1 + 0)»{% endif %}">
+                <tr class="«IF application.targets('3.0')»table-info«ELSE»z-{{ routeArea == 'admin' ? 'admin' : 'data' }}tableempty«ENDIF»">
+                «'    '»<td«IF !application.targets('3.0')» class="text-left"«ENDIF» colspan="{% if routeArea == 'admin' %}«(listItemsFields.size + listItemsIn.size + listItemsOut.size + 1 + 1)»{% else %}«(listItemsFields.size + listItemsIn.size + listItemsOut.size + 1 + 0)»{% endif %}"«IF application.targets('3.0')» class="text-center"«ENDIF»>
             «ENDIF»
             {{ __('No «nameMultiple.formatForDisplay» found.') }}
             «IF listType == LIST_TYPE_UL || listType == LIST_TYPE_OL»
@@ -265,9 +265,9 @@ class ViewTable {
 
     def private massActionFields(Entity it) '''
         <fieldset>
-            <label for="«appName.toFirstLower»Action" class="col-sm-3 control-label">{{ __('With selected «nameMultiple.formatForDisplay»') }}</label>
-            <div class="col-sm-6">
-                <select id="«appName.toFirstLower»Action" name="action" class="form-control input-sm">
+            <label for="«appName.toFirstLower»Action" class="col-«IF application.targets('3.0')»md«ELSE»sm«ENDIF»-3 «IF application.targets('3.0')»col-form«ELSE»control«ENDIF»-label">{{ __('With selected «nameMultiple.formatForDisplay»') }}</label>
+            <div class="col-«IF application.targets('3.0')»md«ELSE»sm«ENDIF»-6">
+                <select id="«appName.toFirstLower»Action" name="action" class="form-control «IF application.targets('3.0')»form-control«ELSE»input«ENDIF»-sm">
                     <option value="">{{ __('Choose action') }}</option>
                     «IF workflow != EntityWorkflowType.NONE»
                         «IF workflow == EntityWorkflowType.ENTERPRISE»
@@ -290,7 +290,7 @@ class ViewTable {
                     <option value="delete" title="{{ __('«getWorkflowActionDescription(workflow, 'Delete')»') }}">{{ __('Delete') }}</option>
                 </select>
             </div>
-            <div class="col-sm-3">
+            <div class="col-«IF application.targets('3.0')»md«ELSE»sm«ENDIF»-3">
                 <input type="submit" value="{{ __('Submit') }}" class="btn btn-default btn-sm" />
             </div>
         </fieldset>
@@ -387,7 +387,7 @@ class ViewTable {
               {{ «relObjName»|«application.appName.formatForDB»_formattedTitle }}
             «IF linkEntity.hasDisplayAction»
                 {% «IF application.targets('3.0')»endapply«ELSE»endspaceless«ENDIF» %}</a>
-                <a id="«linkEntity.name.formatForCode»Item{{ «mainEntity.name.formatForCode».getKey() }}_rel_{{ «relObjName».getKey() }}Display" href="{{ path('«application.appName.formatForDB»_«linkEntity.name.formatForDB»_' ~ routeArea ~ 'display', {«IF !linkEntity.hasSluggableFields || !linkEntity.slugUnique»«linkEntity.routePkParams(relObjName, true)»«ENDIF»«linkEntity.appendSlug(relObjName, true)», raw: 1}) }}" title="{{ __('Open quick view window')|e('html_attr') }}" class="«application.vendorAndName.toLowerCase»-inline-window hidden" data-modal-title="{{ «relObjName»|«application.appName.formatForDB»_formattedTitle|e('html_attr') }}"><i class="fa fa-id-card«IF !application.targets('3.0')»-o«ENDIF»"></i></a>
+                <a id="«linkEntity.name.formatForCode»Item{{ «mainEntity.name.formatForCode».getKey() }}_rel_{{ «relObjName».getKey() }}Display" href="{{ path('«application.appName.formatForDB»_«linkEntity.name.formatForDB»_' ~ routeArea ~ 'display', {«IF !linkEntity.hasSluggableFields || !linkEntity.slugUnique»«linkEntity.routePkParams(relObjName, true)»«ENDIF»«linkEntity.appendSlug(relObjName, true)», raw: 1}) }}" title="{{ __('Open quick view window')|e('html_attr') }}" class="«application.vendorAndName.toLowerCase»-inline-window «IF application.targets('3.0')»d-none«ELSE»hidden«ENDIF»" data-modal-title="{{ «relObjName»|«application.appName.formatForDB»_formattedTitle|e('html_attr') }}"><i class="fa fa-id-card«IF !application.targets('3.0')»-o«ENDIF»"></i></a>
             «ENDIF»
         {% else %}
             {{ __('Not set.') }}
@@ -421,7 +421,7 @@ class ViewTable {
         «IF listType != LIST_TYPE_TABLE»
             <«listType.asItemTag»>
         «ELSE»
-            <td id="«new MenuViews().itemActionContainerViewId(it)»«idSuffix»" headers="hItemActions«idSuffix»" class="actions nowrap z-w02">
+            <td id="«new MenuViews().itemActionContainerViewId(it)»«idSuffix»" headers="hItemActions«idSuffix»" class="actions nowrap«IF !application.targets('3.0')» z-w02«ENDIF»">
         «ENDIF»
             «new MenuViews().itemActions(it, 'view', idSuffix)»
         </«listType.asItemTag»>

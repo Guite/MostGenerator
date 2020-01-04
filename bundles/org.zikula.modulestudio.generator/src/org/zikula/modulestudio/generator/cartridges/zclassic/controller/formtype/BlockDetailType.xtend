@@ -177,9 +177,10 @@ class BlockDetailType {
                         'title' => $this->__('Example'«IF !isSystemModule», '«appName.formatForDB»'«ENDIF») . ': displaySpecial.html.twig'
                     ],
                     'help' => [
-                        $this->__('Example'«IF !isSystemModule», '«appName.formatForDB»'«ENDIF») . ': <em>displaySpecial.html.twig</em>',
+                        $this->__('Example'«IF !isSystemModule», '«appName.formatForDB»'«ENDIF») . ': <code>displaySpecial.html.twig</code>',
                         $this->__('Needs to be located in the "External/YourEntity/" directory.'«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»)
-                    ]
+                    ]«IF targets('3.0')»,
+                    'help_html' => true«ENDIF»
                 ])
             ;
         }

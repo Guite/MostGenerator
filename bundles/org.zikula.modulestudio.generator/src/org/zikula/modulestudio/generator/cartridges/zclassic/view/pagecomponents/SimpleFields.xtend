@@ -33,9 +33,9 @@ class SimpleFields {
     def dispatch displayField(BooleanField it, String objName, String page) {
         if (ajaxTogglability && (page == 'view' || page == 'display')) '''
             {% set itemId = «objName».getKey() %}
-            <a id="toggle«name.formatForCodeCapital»{{ itemId }}" href="javascript:void(0);" class="«application.vendorAndName.toLowerCase»-ajax-toggle hidden" data-object-type="«entity.name.formatForCode»" data-field-name="«name.formatForCode»" data-item-id="{{ itemId }}">
-                <i class="fa fa-check text-success{% if not «objName».«name.formatForCode» %} hidden{% endif %}" id="yes«name.formatForCodeCapital»{{ itemId }}" title="{{ __('This setting is enabled. Click here to disable it.') }}"></i>
-                <i class="fa fa-times text-danger{% if «objName».«name.formatForCode» %} hidden{% endif %}" id="no«name.formatForCodeCapital»{{ itemId }}" title="{{ __('This setting is disabled. Click here to enable it.') }}"></i>
+            <a id="toggle«name.formatForCodeCapital»{{ itemId }}" href="javascript:void(0);" class="«application.vendorAndName.toLowerCase»-ajax-toggle «IF application.targets('3.0')»d-none«ELSE»hidden«ENDIF»" data-object-type="«entity.name.formatForCode»" data-field-name="«name.formatForCode»" data-item-id="{{ itemId }}">
+                <i class="fa fa-check text-success{% if not «objName».«name.formatForCode» %} «IF application.targets('3.0')»d-none«ELSE»hidden«ENDIF»{% endif %}" id="yes«name.formatForCodeCapital»{{ itemId }}" title="{{ __('This setting is enabled. Click here to disable it.') }}"></i>
+                <i class="fa fa-times text-danger{% if «objName».«name.formatForCode» %} «IF application.targets('3.0')»d-none«ELSE»hidden«ENDIF»{% endif %}" id="no«name.formatForCodeCapital»{{ itemId }}" title="{{ __('This setting is disabled. Click here to enable it.') }}"></i>
             </a>
             <noscript><div id="noscript«name.formatForCodeCapital»{{ itemId }}">
                 {% if «objName».«name.formatForCode» %}
@@ -222,14 +222,14 @@ class SimpleFields {
                     {% if «objName».«name.formatForCode» is not empty %}{{ «objName».«name.formatForCode»|«IF application.targets('3.0')»format_date«ELSE»localizeddate«ENDIF»('medium', 'none') }}{% endif %}'''
                 } else { '''
                     {% if «objName».«name.formatForCode» is not empty %}
-                        {{ «objName».«name.formatForCode»|«IF application.targets('3.0')»format_date«ELSE»localizeddate«ENDIF»('medium', 'none') }}
+                        {{ «objName».«name.formatForCode»|«IF application.targets('3.0')»format_date('medium')«ELSE»localizeddate('medium', 'none')«ENDIF» }}
                     {% endif %}'''
                 }
             } else { '''
-                {{ «objName».«name.formatForCode»|«IF application.targets('3.0')»format_date«ELSE»localizeddate«ENDIF»('medium', 'none') }}'''
+                {{ «objName».«name.formatForCode»|«IF application.targets('3.0')»format_date('medium')«ELSE»localizeddate('medium', 'none')«ENDIF» }}'''
             }
         } else if (isTimeField) { '''
-            {{ «objName».«name.formatForCode»|«IF application.targets('3.0')»format_time«ELSE»localizeddate«ENDIF»('none', 'short') }}'''
+            {{ «objName».«name.formatForCode»|«IF application.targets('3.0')»format_time('short')«ELSE»localizeddate('none', 'short')«ENDIF» }}'''
         }
     }
 }

@@ -33,7 +33,7 @@ class ObjectState {
 
             $result = $stateInfo['text'];
             if (true === $uiFeedback) {
-                $result = '<span class="label label-' . $stateInfo['ui'] . '">' . $result . '</span>';
+                $result = '<span class="«IF targets('3.0')»badge badge«ELSE»label label«ENDIF»-' . $stateInfo['ui'] . '">' . $result . '</span>';
             }
 
             return $result;

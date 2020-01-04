@@ -28,6 +28,7 @@ class ExternalController {
 
     def private commonSystemImports(Application it) '''
         «IF targets('3.0')»
+            use Symfony\Component\Routing\RouterInterface;
             use Zikula\ThemeModule\Engine\Asset;
         «ENDIF»
     '''
@@ -220,6 +221,7 @@ class ExternalController {
         if (targets('3.0')) '''
             public function finderAction(
                 Request $request,
+                RouterInterface $router,
                 ControllerHelper $controllerHelper,
                 PermissionHelper $permissionHelper,
                 EntityFactory $entityFactory,
@@ -257,7 +259,7 @@ class ExternalController {
             }
 
             // redirect to first valid object type
-            $redirectUrl = $this->get('router')->generate(
+            $redirectUrl = «IF targets('3.0')»$router«ELSE»$this->get('router')«ENDIF»->generate(
                 '«appName.formatForDB»_external_finder',
                 ['objectType' => array_shift($activatedObjectTypes), 'editor' => $editor]
             );
@@ -448,6 +450,7 @@ class ExternalController {
             «IF targets('3.0')»
                 return parent::finderAction(
                     $request,
+                    $router,
                     $controllerHelper,
                     $permissionHelper,
                     $entityFactory,

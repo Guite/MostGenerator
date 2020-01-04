@@ -58,10 +58,10 @@ class AutoCompletion {
             }
 
             // show/hide the toggle link
-            jQuery('#' + idPrefix + 'AddLink').toggleClass('hidden');
+            jQuery('#' + idPrefix + 'AddLink').toggleClass('«IF targets('3.0')»d-none«ELSE»hidden«ENDIF»');
 
             // hide/show the fields
-            jQuery('#' + idPrefix + 'AddFields').toggleClass('hidden');
+            jQuery('#' + idPrefix + 'AddFields').toggleClass('«IF targets('3.0')»d-none«ELSE»hidden«ENDIF»');
         }
     '''
 

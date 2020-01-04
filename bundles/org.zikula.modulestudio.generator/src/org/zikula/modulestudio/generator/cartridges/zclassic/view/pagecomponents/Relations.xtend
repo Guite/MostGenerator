@@ -80,7 +80,7 @@ class Relations {
                 {% if hasAdminPermission or (item.workflowState == 'approved' and permissionHelper.mayRead(item))«IF ownerPermission» or (item.workflowState in ['defered', 'trashed'] and hasEditPermission and currentUser|default and item.createdBy.getUid() == currentUser.uid)«ENDIF» %}
                 <li class="list-group-item">
         «ENDIF»
-        <h4«IF many» class="list-group-item-heading"«ENDIF»>
+        «IF app.targets('3.0')»<h5>«ELSE»<h4«IF many» class="list-group-item-heading"«ENDIF»>«ENDIF»
         «IF hasDisplayAction»
             {% «IF app.targets('3.0')»apply spaceless«ELSE»spaceless«ENDIF» %}
             {% if not noLink %}
@@ -91,11 +91,11 @@ class Relations {
         «IF hasDisplayAction»
             {% if not noLink %}
                 </a>
-                <a id="«name.formatForCode»Item{{ item.getKey() }}Display" href="{{ path('«app.appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ 'display', {«IF !hasSluggableFields || !slugUnique»«routePkParams('item', true)»«ENDIF»«appendSlug('item', true)», raw: 1}) }}" title="{{ __('Open quick view window') }}" class="«application.vendorAndName.toLowerCase»-inline-window hidden" data-modal-title="{{ item|«app.appName.formatForDB»_formattedTitle|e('html_attr') }}"><i class="fa fa-id-card«IF !app.targets('3.0')»-o«ENDIF»"></i></a>
+                <a id="«name.formatForCode»Item{{ item.getKey() }}Display" href="{{ path('«app.appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ 'display', {«IF !hasSluggableFields || !slugUnique»«routePkParams('item', true)»«ENDIF»«appendSlug('item', true)», raw: 1}) }}" title="{{ __('Open quick view window') }}" class="«application.vendorAndName.toLowerCase»-inline-window «IF app.targets('3.0')»d-none«ELSE»hidden«ENDIF»" data-modal-title="{{ item|«app.appName.formatForDB»_formattedTitle|e('html_attr') }}"><i class="fa fa-id-card«IF !app.targets('3.0')»-o«ENDIF»"></i></a>
             {% endif %}
             {% «IF app.targets('3.0')»endapply«ELSE»endspaceless«ENDIF» %}
         «ENDIF»
-        </h4>
+        «IF app.targets('3.0')»</h5>«ELSE»</h4>«ENDIF»
         «IF hasImageFieldsEntity»
             «val imageFieldName = getImageFieldsEntity.head.name.formatForCode»
             {% if item.«imageFieldName» is not empty and item.«imageFieldName»Meta.isImage %}
@@ -111,8 +111,8 @@ class Relations {
                     {% for assignment in assignments if assignment.getAssignedId() == item.getKey() %}
                         {% set assignmentId = assignment.getId() %}
                     {% endfor %}
-                    <p class="list-group-item-text">
-                        <a href="javascript:void(0);" title="{{ __f('Detach this %name%', {'%name%': entityNameTranslated}, '«app.appName.toLowerCase»')|e('html_attr') }}" class="detach-«app.appName.formatForDB»-object hidden" data-assignment-id="{{ assignmentId|e('html_attr') }}"><i class="fa fa-«IF app.targets('3.0')»unlink«ELSE»chain-broken«ENDIF»"></i> {{ __f('Detach %name%', {'%name%': entityNameTranslated}, '«app.appName.toLowerCase»') }}</a>
+                    <p«IF !app.targets('3.0')» class="list-group-item-text"«ENDIF»>
+                        <a href="javascript:void(0);" title="{{ __f('Detach this %name%', {'%name%': entityNameTranslated}, '«app.appName.toLowerCase»')|e('html_attr') }}" class="detach-«app.appName.formatForDB»-object «IF app.targets('3.0')»d-none«ELSE»hidden«ENDIF»" data-assignment-id="{{ assignmentId|e('html_attr') }}"><i class="fa fa-«IF app.targets('3.0')»unlink«ELSE»chain-broken«ENDIF»"></i> {{ __f('Detach %name%', {'%name%': entityNameTranslated}, '«app.appName.toLowerCase»') }}</a>
                     </p>
                 {% endif %}
             «ENDIF»
@@ -126,7 +126,7 @@ class Relations {
                     {% set idPrefix = 'hookAssignment«name.formatForCodeCapital»' %}
                     {% set addLinkText = __f('Attach %name%', {'%name%': entityNameTranslated}, '«app.appName.toLowerCase»') %}
                     <div id="{{ idPrefix }}LiveSearch" class="«app.appName.toLowerCase»-add-hook-assignment">
-                        <a id="{{ idPrefix }}AddLink" href="javascript:void(0);" title="{{ addLinkText|e('html_attr') }}" class="attach-«app.appName.formatForDB»-object hidden" data-owner="{{ subscriberOwner|e('html_attr') }}" data-area-id="{{ subscriberAreaId|e('html_attr') }}" data-object-id="{{ subscriberObjectId|e('html_attr') }}" data-url="{{ subscriberUrl|e('html_attr') }}" data-assigned-entity="«name.formatForCode»"><i class="fa fa-link"></i> {{ addLinkText }}</a>
+                        <a id="{{ idPrefix }}AddLink" href="javascript:void(0);" title="{{ addLinkText|e('html_attr') }}" class="attach-«app.appName.formatForDB»-object «IF app.targets('3.0')»d-none«ELSE»hidden«ENDIF»" data-owner="{{ subscriberOwner|e('html_attr') }}" data-area-id="{{ subscriberAreaId|e('html_attr') }}" data-object-id="{{ subscriberObjectId|e('html_attr') }}" data-url="{{ subscriberUrl|e('html_attr') }}" data-assigned-entity="«name.formatForCode»"><i class="fa fa-link"></i> {{ addLinkText }}</a>
                         <div id="{{ idPrefix }}AddFields" class="«app.appName.toLowerCase»-autocomplete«IF hasImageFieldsEntity»-with-image«ENDIF»">
                             <label for="{{ idPrefix }}Selector">{{ __f('Find %name%', {'%name%': entityNameTranslated}, '«app.appName.toLowerCase»') }}</label>
                             <br />

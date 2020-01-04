@@ -110,6 +110,8 @@ class InlineRedirect {
             'commandName' => $commandName
         ];
 
-        return new PlainResponse($this->get('twig')->render('@«application.appName»/«name.formatForCode.toFirstUpper»/inlineRedirectHandler.html.twig', $templateParameters));
+        return new PlainResponse(
+            $this->«IF application.targets('3.0')»renderView«ELSE»get('twig')->render«ENDIF»('@«application.appName»/«name.formatForCode.toFirstUpper»/inlineRedirectHandler.html.twig', $templateParameters)
+        );
     '''
 }

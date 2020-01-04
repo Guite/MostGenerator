@@ -33,7 +33,7 @@ class ConfigFunctions {
                 var idSuffix;
 
                 idSuffix = fieldName.replace('«appName.toLowerCase»_config_', '');
-                jQuery('#shrinkDetails' + idSuffix).toggleClass('hidden', !jQuery('#«appName.toLowerCase»_config_enableShrinkingFor' + idSuffix).prop('checked'));
+                jQuery('#shrinkDetails' + idSuffix).toggleClass('«IF targets('3.0')»d-none«ELSE»hidden«ENDIF»', !jQuery('#«appName.toLowerCase»_config_enableShrinkingFor' + idSuffix).prop('checked'));
             }
 
         «ENDIF»
@@ -44,9 +44,9 @@ class ConfigFunctions {
 
                 idPrefix = '«appName.toLowerCase»_config_';
                 revisionHandling = jQuery('#' + idPrefix + 'revisionHandlingFor' + objectTypeCapitalised).val();
-                jQuery('#' + idPrefix + 'maximumAmountOf' + objectTypeCapitalised + 'Revisions').parents('.form-group').toggleClass('hidden', 'limitedByAmount' != revisionHandling);
+                jQuery('#' + idPrefix + 'maximumAmountOf' + objectTypeCapitalised + 'Revisions').parents('.form-group').toggleClass('«IF targets('3.0')»d-none«ELSE»hidden«ENDIF»', 'limitedByAmount' != revisionHandling);
                 «IF targets('2.0')»
-                    jQuery('#' + idPrefix + 'periodFor' + objectTypeCapitalised + 'Revisions_years').parents('.form-group').toggleClass('hidden', 'limitedByDate' != revisionHandling);
+                    jQuery('#' + idPrefix + 'periodFor' + objectTypeCapitalised + 'Revisions_years').parents('.form-group').toggleClass('«IF targets('3.0')»d-none«ELSE»hidden«ENDIF»', 'limitedByDate' != revisionHandling);
                 «ENDIF»
             }
 

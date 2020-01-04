@@ -142,6 +142,9 @@ class ControllerLayer {
         «IF hasViewAction || hasEditAction»
             use Exception;
         «ENDIF»
+        «IF app.targets('3.0') && (hasViewAction || hasDeleteAction)»
+            use Psr\Log\LoggerInterface;
+        «ENDIF»
         «IF hasViewAction || hasEditAction || hasDeleteAction»
             use RuntimeException;
         «ENDIF»
@@ -191,12 +194,18 @@ class ControllerLayer {
         namespace «app.appNamespace»\Controller;
 
         use «app.appNamespace»\Controller\Base\Abstract«name.formatForCodeCapital»Controller;
+        «IF app.targets('3.0') && (hasViewAction || hasDeleteAction)»
+            use Psr\Log\LoggerInterface;
+        «ENDIF»
         «IF hasViewAction»
             use Symfony\Component\HttpFoundation\RedirectResponse;
         «ENDIF»
         use Symfony\Component\HttpFoundation\Request;
         use Symfony\Component\HttpFoundation\Response;
         use Symfony\Component\Routing\Annotation\Route;
+        «IF app.targets('3.0') && hasViewAction»
+            use Symfony\Component\Routing\RouterInterface;
+        «ENDIF»
         use Zikula\ThemeModule\Engine\Annotation\Theme;
         «IF app.targets('3.0') && (hasViewAction || hasDeleteAction)»
             use Zikula\UsersModule\Api\ApiInterface\CurrentUserApiInterface;

@@ -83,7 +83,7 @@ class TechComplexity {
                 A function point is a unit to specify the complexity of a software system. More information is available <a href="https://en.wikipedia.org/wiki/Function_point" target="_blank">at Wikipedia</a>.
             «ENDIF»
         </p>
-        «helper.table(fpColumns, fpHeader, fpContent)»
+        «helper.table(it, fpColumns, fpHeader, fpContent)»
         <h3>«IF language == 'de'»Weitere Aktionen«ELSE»Further actions«ENDIF»</h3>
         <p>
             «IF language == 'de'»
@@ -127,7 +127,7 @@ class TechComplexity {
         <tr>
             <th id="hInternalData" scope="row" headers="hDesignation">
                 «IF language == 'de'»Interne Daten«ELSE»Internal data«ENDIF»
-                «helper.table(internalDataColumns, internalDataHeader, internalDataContent)»
+                «helper.table(it, internalDataColumns, internalDataHeader, internalDataContent)»
             </th>
             <td headers="hInternalData hComplexity">
                 <br />
@@ -239,7 +239,7 @@ class TechComplexity {
         <tr>
             <th id="hInputs" scope="row" headers="hDesignation">
                 «IF language == 'de'»Eingaben«ELSE»Inputs«ENDIF»
-                «helper.table(inputsColumns, inputsHeader, inputsContent)»
+                «helper.table(it, inputsColumns, inputsHeader, inputsContent)»
             </th>
             <td headers="hInputs hComplexity">
                 <br />
@@ -313,7 +313,7 @@ class TechComplexity {
         <tr>
             <th id="hOutputs" scope="row" headers="hDesignation">
                 «IF language == 'de'»Ausgaben«ELSE»Outputs«ENDIF»
-                «helper.table(outputsColumns, outputsHeader, outputsContent)»
+                «helper.table(it, outputsColumns, outputsHeader, outputsContent)»
             </th>
             <td headers="hOutputs hComplexity">
                 <br />

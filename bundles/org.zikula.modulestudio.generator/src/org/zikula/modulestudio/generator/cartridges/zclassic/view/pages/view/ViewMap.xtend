@@ -100,7 +100,7 @@ class ViewMap {
                     {% endfor %}
                     ( function($) {
                         $(document).ready(function() {
-                            $('.«appName.formatForDB»-quicknav').removeClass('navbar-form');
+                            $('.«appName.formatForDB»-quicknav').removeClass('«IF application.targets('3.0')»form-inline«ELSE»navbar-form«ENDIF»');
                             $('.«appName.formatForDB»-quicknav input, .«appName.formatForDB»-quicknav select')
                                 .css('width', '100%')
                             ;

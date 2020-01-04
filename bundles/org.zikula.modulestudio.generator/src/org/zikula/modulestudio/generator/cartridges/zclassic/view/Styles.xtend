@@ -149,7 +149,7 @@ class Styles {
             }
 
             .ui-autocomplete-loading {
-                background: white url("../../../../../../web/bundles/core/images/ajax/indicator_arrows.gif") right center no-repeat;
+                background: white url("../../../../../../web/«IF targets('2.0')»modules/zikulausers«ELSE»bundles/core«ENDIF»/images/ajax/indicator_arrows.gif") right center no-repeat;
             }
 
             .ui-autocomplete .suggestion {
@@ -225,7 +225,7 @@ class Styles {
             div.«cssPrefix»-history .table-responsive .table > tbody > tr > td.diff-new {
                 background-color: #eaffea !important;
             }
-            div.«cssPrefix»-history .img-responsive {
+            div.«cssPrefix»-history .img-«IF targets('3.0')»fluid«ELSE»responsive«ENDIF» {
                 max-width: 20px;
             }
         «ENDIF»

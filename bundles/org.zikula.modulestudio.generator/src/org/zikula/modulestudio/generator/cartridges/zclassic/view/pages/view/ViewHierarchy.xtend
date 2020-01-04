@@ -100,8 +100,8 @@ class ViewHierarchy {
 
         <div class="btn-toolbar" role="toolbar" aria-label="{{ __('Tree button toolbar') }}">
             <div class="btn-group btn-group-sm" role="group" aria-label="«name.formatForDB» buttons">
-                <button type="button" id="{{ idPrefix }}Expand" class="btn btn-info" title="{{ __('Expand all nodes') }}"><i class="fa fa-expand"></i> {{ __('Expand all') }}</button>
-                <button type="button" id="{{ idPrefix }}Collapse" class="btn btn-info" title="{{ __('Collapse all nodes') }}"><i class="fa fa-compress"></i> {{ __('Collapse all') }}</button>
+                <button type="button" id="{{ idPrefix }}Expand" class="btn btn-«IF application.targets('3.0')»secondary«ELSE»info«ENDIF»" title="{{ __('Expand all nodes') }}"><i class="fa fa-expand"></i> {{ __('Expand all') }}</button>
+                <button type="button" id="{{ idPrefix }}Collapse" class="btn btn-«IF application.targets('3.0')»secondary«ELSE»info«ENDIF»" title="{{ __('Collapse all nodes') }}"><i class="fa fa-compress"></i> {{ __('Collapse all') }}</button>
             </div>
         </div>
         <div class="clearfix">
@@ -114,7 +114,7 @@ class ViewHierarchy {
                 {% endif %}
             </div>
             {% if treeData|default %}
-                <ul id="itemActionsForTree{{ rootId|e('html_attr') }}" class="hidden">
+                <ul id="itemActionsForTree{{ rootId|e('html_attr') }}" class="«IF application.targets('3.0')»d-none«ELSE»hidden«ENDIF»">
                     {{ treeData.actions|raw }}
                 </ul>
             {% endif %}

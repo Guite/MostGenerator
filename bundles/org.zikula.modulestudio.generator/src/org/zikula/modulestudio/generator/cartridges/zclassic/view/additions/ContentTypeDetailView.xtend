@@ -39,21 +39,21 @@ class ContentTypeDetailView {
         {* Purpose of this template: edit view of specific item detail view content type *}
         <div style="margin-left: 80px">
             «IF getAllEntities.size > 1»
-                <div class="form-group">
+                <div class="form-group«IF targets('3.0')» row«ENDIF»">
                     {formlabel for='«appName.toFirstLower»ObjectType' __text='Object type'«editLabelClass»}
-                    <div class="col-sm-9">
+                    <div class="col-«IF targets('3.0')»md«ELSE»sm«ENDIF»-9">
                         {«appName.formatForDB»ObjectTypeSelector assign='allObjectTypes'}
                         {formdropdownlist id='«appName.toFirstLower»ObjectType' dataField='objectType' group='data' mandatory=true items=$allObjectTypes«editInputClass»}
                         <span class="help-block">{gt text='If you change this please save the element once to reload the parameters below.'}</span>
                     </div>
                 </div>
             «ENDIF»
-            <div{* class="form-group"*}>
+            <div{* class="form-group«IF targets('3.0')» row«ENDIF»"*}>
                 <p>{gt text='Please select your item here. You can resort the dropdown list and reduce it\'s entries by applying filters. On the right side you will see a preview of the selected entry.' domain='«appName.formatForDB»'}</p>
                 {«appName.formatForDB»ItemSelector id='id' group='data' objectType=$objectType}«/* MAYBE PER OBJECTTYPE */»
             </div>
 
-            <div{* class="form-group"*}>
+            <div{* class="form-group«IF targets('3.0')» row«ENDIF»"*}>
                 {gt text='Link to object' assign='displayModeLabel'}
                 {formradiobutton id='linkButton' value='link' dataField='displayMode' group='data' mandatory=1}
                 {formlabel for='linkButton' text=$displayModeLabel}
@@ -62,10 +62,10 @@ class ContentTypeDetailView {
                 {formlabel for='embedButton' text=$displayModeLabel}
             </div>
 
-            <div{* class="form-group"*}>
+            <div{* class="form-group«IF targets('3.0')» row«ENDIF»"*}>
                 {gt text='Custom template' domain='«appName.formatForDB»' assign='customTemplateLabel'}
                 {formlabel for='«appName.toFirstLower»CustomTemplate' text=$customTemplateLabel«editLabelClass»}
-                <div class="col-sm-9">
+                <div class="col-«IF targets('3.0')»md«ELSE»sm«ENDIF»-9">
                     {formtextinput id='«appName.toFirstLower»CustomTemplate' dataField='customTemplate' group='data' mandatory=false maxLength=80«editInputClass»}
                     <span class="help-block">{gt text='Example' domain='«appName.formatForDB»'}: <em>displaySpecial.html.twig</em></span>
                     <span class="help-block">{gt text='Needs to be located in the "External/YourEntity/" directory.' domain='«appName.formatForDB»'}</span>
@@ -74,6 +74,6 @@ class ContentTypeDetailView {
         </div>
     '''
 
-    def private editLabelClass() ''' cssClass='col-sm-3 control-label'«''»'''
+    def private editLabelClass(Application it) ''' cssClass='«IF targets('3.0')»col-md-3 col-form«ELSE»col-sm-3 control«ENDIF»-label'«''»'''
     def private editInputClass() ''' cssClass='form-control'«''»'''
 }

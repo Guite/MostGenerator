@@ -107,50 +107,29 @@ class ControllerAction {
         }
     }
 
+    // not for 3.0
     def private actionDocMethodParams(Entity it, Action action) {
         if (!(action instanceof MainAction || action instanceof CustomAction)) {
             '''«actionDocAdditionalParams(action, it)»'''
         }
     }
 
+    // not for 3.0
     def private actionDocAdditionalParams(Action it, Entity refEntity) {
         switch it {
             ViewAction:
-                if (app.targets('3.0')) {
-                    if (refEntity.loggable) '@param LoggableHelper $loggableHelper\n' else ''
-                } else {''}
-               + ' * @param string $sort Sorting field\n'
+               ' * @param string $sort Sorting field\n'
                + ' * @param string $sortdir Sorting direction\n'
                + ' * @param int $pos Current pager position\n'
                + ' * @param int $num Amount of entries to display\n'
             DisplayAction:
-                if (app.targets('3.0')) {
-                    ' * @param EntityFactory $entityFactory\n'
-                    +
-                    if (refEntity.loggable) '@param LoggableHelper $loggableHelper\n' else ''
-                    +
-                    if (app.generateIcsTemplates && refEntity.hasStartAndEndDateField) '@param EntityDisplayHelper $entityDisplayHelper\n' else ''
-                } else ''
-                +
                 if (refEntity.hasUniqueSlug) {
                     ' * @param string $slug Slug of treated ' + refEntity.name.formatForDisplay + ' instance\n'
                 } else {
                     ' * @param int $id Identifier of treated ' + refEntity.name.formatForDisplay + ' instance\n'
                 }
-            EditAction:
-                if (app.targets('3.0')) {
-                    ' * @param EditHandler $formHandler\n'
-                } else ''
+            EditAction: ''
             DeleteAction:
-                if (app.targets('3.0')) {
-                    ' * @param EntityFactory $entityFactory\n'
-                  + ' * @param CurrentUserApiInterface $currentUserApi\n'
-                  + ' * @param WorkflowHelper $workflowHelper\n'
-                  + if (!refEntity.skipHookSubscribers) ' * @param HookHelper $hookHelper\n' else ''
-                } else {
-                    ''
-                }
-                +
                 if (refEntity.hasUniqueSlug) {
                     ' * @param string $slug Slug of treated ' + refEntity.name.formatForDisplay + ' instance\n'
                 } else {
@@ -192,6 +171,7 @@ class ControllerAction {
     def private dispatch methodArguments(Entity it, ViewAction action, Boolean internalMethod) '''
         «IF application.targets('3.0')»
             Request $request,
+            RouterInterface $router,
             PermissionHelper $permissionHelper,
             ControllerHelper $controllerHelper,
             ViewHelper $viewHelper,
@@ -216,6 +196,7 @@ class ControllerAction {
         if (application.targets('3.0')) {
             '''
                 $request,
+                $router,
                 $permissionHelper,
                 $controllerHelper,
                 $viewHelper,«IF loggable»
@@ -319,6 +300,7 @@ class ControllerAction {
     def private dispatch methodArguments(Entity it, DeleteAction action, Boolean internalMethod) '''
         «IF application.targets('3.0')»
             Request $request,
+            LoggerInterface $logger,
             PermissionHelper $permissionHelper,
             ControllerHelper $controllerHelper,
             ViewHelper $viewHelper,
@@ -340,6 +322,7 @@ class ControllerAction {
         if (application.targets('3.0')) {
             '''
                 $request,
+                $logger,
                 $permissionHelper,
                 $controllerHelper,
                 $viewHelper,

@@ -80,13 +80,13 @@ class Finder {
 
                 imageModeEnabled = jQuery("[id$='onlyImages']").prop('checked');
                 if (!imageModeEnabled) {
-                    jQuery('#imageFieldRow').addClass('hidden');
-                    jQuery("[id$='pasteAs'] option[value=6]").addClass('hidden');
-                    jQuery("[id$='pasteAs'] option[value=7]").addClass('hidden');
-                    jQuery("[id$='pasteAs'] option[value=8]").addClass('hidden');
-                    jQuery("[id$='pasteAs'] option[value=9]").addClass('hidden');
+                    jQuery('#imageFieldRow').addClass('«IF targets('3.0')»d-none«ELSE»hidden«ENDIF»');
+                    jQuery("[id$='pasteAs'] option[value=6]").addClass('«IF targets('3.0')»d-none«ELSE»hidden«ENDIF»');
+                    jQuery("[id$='pasteAs'] option[value=7]").addClass('«IF targets('3.0')»d-none«ELSE»hidden«ENDIF»');
+                    jQuery("[id$='pasteAs'] option[value=8]").addClass('«IF targets('3.0')»d-none«ELSE»hidden«ENDIF»');
+                    jQuery("[id$='pasteAs'] option[value=9]").addClass('«IF targets('3.0')»d-none«ELSE»hidden«ENDIF»');
                 } else {
-                    jQuery('#searchTermRow').addClass('hidden');
+                    jQuery('#searchTermRow').addClass('«IF targets('3.0')»d-none«ELSE»hidden«ENDIF»');
                 }
 
                 jQuery('input[type="checkbox"]').click(«objName».finder.onParamChanged);
@@ -96,7 +96,7 @@ class Finder {
                 }
             «ENDIF»
             jQuery('select').not("[id$='pasteAs']").change(«objName».finder.onParamChanged);
-            «/*jQuery('.btn-success').addClass('hidden');*/»
+            «/*jQuery('.btn-success').addClass('«IF targets('3.0')»d-none«ELSE»hidden«ENDIF»');*/»
             jQuery('.btn-default').click(«objName».finder.handleCancel);
 
             var selectedItems = jQuery('#«appName.toLowerCase»ItemContainer a');

@@ -152,6 +152,9 @@ class SharedFormTypeFields {
         «IF null !== dataObject && dataObject instanceof Entity && (dataObject as Entity).hasTranslatableFields»
             use Zikula\ExtensionsModule\Api\ApiInterface\VariableApiInterface;
         «ENDIF»
+        «IF !fields.filter(IntegerField).filter[isUserGroupSelector].empty»
+            use Zikula\GroupsModule\Entity\GroupEntity;
+        «ENDIF»
         «IF (null !== dataObject && dataObject.hasLocaleFieldsEntity) || (null === dataObject && !fields.filter(StringField).filter[role == StringRole.LOCALE].empty)»
             use Zikula\SettingsModule\Api\ApiInterface\LocaleApiInterface;
         «ENDIF»
@@ -190,17 +193,22 @@ class SharedFormTypeFields {
             «IF it instanceof ListField»
                 «fetchListEntries»
             «ENDIF»
+            «val useCustomSwitch = it instanceof BooleanField && application.targets('3.0')»
             «val isExpandedListField = it instanceof ListField && (it as ListField).expanded»
             $builder->add('«name.formatForCode»', «formType»Type::class, [
                 'label' => $this->__('«name.formatForDisplayCapital»') . ':',
                 «IF null !== documentation && !documentation.empty»
                     'label_attr' => [
-                        'class' => 'tooltips«IF isExpandedListField» «IF (it as ListField).multiple»checkbox«ELSE»radio«ENDIF»-inline«ENDIF»',
+                        'class' => 'tooltips«IF useCustomSwitch» switch-custom«ELSEIF isExpandedListField» «IF (it as ListField).multiple»checkbox«ELSE»radio«ENDIF»-«IF application.targets('3.0')»custom«ELSE»inline«ENDIF»«ENDIF»',
                         'title' => $this->__('«documentation.replace("'", '"')»')
+                    ],
+                «ELSEIF useCustomSwitch»
+                    'label_attr' => [
+                        'class' => 'switch-custom'
                     ],
                 «ELSEIF isExpandedListField»
                     'label_attr' => [
-                        'class' => '«IF (it as ListField).multiple»checkbox«ELSE»radio«ENDIF»-inline'
+                        'class' => '«IF (it as ListField).multiple»checkbox«ELSE»radio«ENDIF»-«IF application.targets('3.0')»custom«ELSE»inline«ENDIF»'
                     ],
                 «ENDIF»
                 «helpAttribute»
@@ -568,7 +576,7 @@ class SharedFormTypeFields {
     '''
     def private dispatch additionalOptions(IntegerField it) '''
         «IF isUserGroupSelector»
-            'class' => 'ZikulaGroupsModule:GroupEntity',
+            'class' => GroupEntity::class,
             'choice_label' => 'name',
             'choice_value' => 'gid'
         «ELSE»

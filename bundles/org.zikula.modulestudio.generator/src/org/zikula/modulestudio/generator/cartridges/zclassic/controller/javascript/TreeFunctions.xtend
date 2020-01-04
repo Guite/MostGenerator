@@ -95,7 +95,7 @@ class TreeFunctions {
                 }
                 jQuery('#' + data.node.id)
                     // hide the folder icons
-                    .find('a.jstree-anchor.leaf > i.fa-folder').hide().end()
+                    .find('a.jstree-anchor.leaf > i.fa-folder').addClass('«IF targets('3.0')»d-none«ELSE»hidden«ENDIF»).end()
                     // replace folder with folder-open
                     .find('i.jstree-icon.jstree-themeicon').first()
                         .removeClass('fa-folder').addClass('fa-folder-open');
@@ -255,7 +255,8 @@ class TreeFunctions {
             return actions;
         }
 
-        if (!currentNodeDom.is(':first-child')) { // has previous sibling
+        if (!currentNodeDom.is(':first-child')) {
+            // has previous sibling
             actions.moveTop = {
                 label: Translator.__('Move to top'),
                 title: Translator.__('Move to top position'),
@@ -274,7 +275,8 @@ class TreeFunctions {
                 icon: 'fa fa-fw fa-angle-up'
             };
         }
-        if (!currentNodeDom.is(':last-child')) { // has next sibling
+        if (!currentNodeDom.is(':last-child')) {
+            // has next sibling
             actions.moveDown = {
                 label: Translator.__('Move down'),
                 title: Translator.__('Move one position down'),
@@ -338,13 +340,13 @@ class TreeFunctions {
                 if (data.result == 'success') {
                     /*«vendorAndName»SimpleAlert(jQuery('.tree-container'), Translator.__('Success'), data.message, 'treeAjaxDoneAlert', 'success');*/
 
-                    if (typeof data.returnUrl != 'undefined') {
+                    if (typeof data.returnUrl !== 'undefined') {
                         window.location = data.returnUrl;
                     } else {
                         window.location.reload();
                     }
                 } else {
-                    «vendorAndName»SimpleAlert(jQuery('.tree-container'), Translator.__('Error'), data.message != '' ? data.message : Translator.__('Could not persist your change.'), 'treeAjaxFailedAlert', 'danger');
+                    «vendorAndName»SimpleAlert(jQuery('.tree-container'), Translator.__('Error'), data.message !== '' ? data.message : Translator.__('Could not persist your change.'), 'treeAjaxFailedAlert', 'danger');
                 }
             }).fail(function (jqXHR, textStatus) {
                 «vendorAndName»SimpleAlert(jQuery('.tree-container'), Translator.__('Error'), Translator.__('Could not persist your change.'), 'treeAjaxFailedAlert', 'danger');

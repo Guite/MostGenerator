@@ -41,7 +41,7 @@ class Config {
         {% block content %}
             <div class="«appName.toLowerCase»-config">
                 {% form_theme form with [
-                    '@«appName»/Form/bootstrap_3.html.twig',
+                    '@«appName»/Form/bootstrap_«IF targets('3.0')»4«ELSE»3«ENDIF».html.twig',
                     «IF targets('3.0')»
                         '@ZikulaFormExtension/Form/form_div_layout.html.twig'
                     «ELSE»
@@ -50,12 +50,16 @@ class Config {
                 ] %}
                 {{ form_start(form) }}
                 <div class="zikula-bootstrap-tab-container">
-                    <ul class="nav nav-tabs">
+                    <ul class="nav nav-tabs" role="tablist">
                         «FOR varContainer : getSortedVariableContainers»
                             {% set tabTitle = __('«varContainer.name.formatForDisplayCapital»') %}
-                            <li role="presentation"«IF varContainer == getSortedVariableContainers.head || varContainer.isImageArea» class="«IF varContainer == getSortedVariableContainers.head»active«ENDIF»«IF varContainer.isImageArea» dropdown«ENDIF»"«ENDIF»>
+                            «IF targets('3.0')»
+                                <li class="nav-item«IF varContainer.isImageArea» dropdown«ENDIF»" role="presentation">
+                            «ELSE»
+                                <li role="presentation"«IF varContainer == getSortedVariableContainers.head || varContainer.isImageArea» class="«IF varContainer == getSortedVariableContainers.head»active«ENDIF»«IF varContainer.isImageArea» dropdown«ENDIF»"«ENDIF»>
+                            «ENDIF»
                                 «IF varContainer.isImageArea»
-                                    <a id="imagesTabDrop" class="dropdown-toggle" href="#" data-toggle="dropdown" aria-controls="imagesTabDropSections" aria-expanded="false" title="{{ tabTitle|e('html_attr') }}">{{ tabTitle }}<span class="caret"></span></a>
+                                    <a id="imagesTabDrop" class="«IF targets('3.0')»nav-link «IF varContainer == getSortedVariableContainers.head»active «ENDIF»«ENDIF»dropdown-toggle" href="#" data-toggle="dropdown" aria-controls="imagesTabDropSections" aria-expanded="false" title="{{ tabTitle|e('html_attr') }}">{{ tabTitle }}«IF !targets('3.0')»<span class="caret"></span>«ENDIF»</a>
                                     <ul id="imagesTabDropSections" class="dropdown-menu" aria-labelledby="imagesTabDrop">
                                     «FOR entity : getAllEntities.filter[hasImageFieldsEntity]»
                                         «FOR imageUploadField : entity.imageFieldsEntity»
@@ -66,12 +70,12 @@ class Config {
                                     «ENDFOR»
                                     </ul>
                                 «ELSE»
-                                    <a id="vars«varContainer.sortOrder»Tab" href="#tab«varContainer.sortOrder»" title="{{ tabTitle|e('html_attr') }}" role="tab" data-toggle="tab">{{ tabTitle }}</a>
+                                    <a id="vars«varContainer.sortOrder»Tab" href="#tab«varContainer.sortOrder»" title="{{ tabTitle|e('html_attr') }}" role="tab" data-toggle="tab"«IF targets('3.0')» class="nav-link«IF varContainer == getSortedVariableContainers.head» active«ENDIF»"«ENDIF»>{{ tabTitle }}</a>
                                 «ENDIF»
                             </li>
                         «ENDFOR»
                         {% set tabTitle = __('Workflows') %}
-                        <li role="presentation">
+                        <li«IF targets('3.0')» class="nav-item"«ENDIF» role="presentation">
                             <a id="workflowsTab" href="#tabWorkflows" title="{{ tabTitle|e('html_attr') }}" role="tab" data-toggle="tab">{{ tabTitle }}</a>
                         </li>
                     </ul>
@@ -82,8 +86,8 @@ class Config {
                     </div>
                 </div>
 
-                <div class="form-group form-buttons">
-                    <div class="col-sm-offset-3 col-sm-9">
+                <div class="form-group form-buttons«IF targets('3.0')» row«ENDIF»">
+                    <div class="«IF targets('3.0')»col-md-9 offset-md-3«ELSE»col-sm-offset-3 col-sm-9«ENDIF»">
                         {{ form_widget(form.save) }}
                         {{ form_widget(form.reset) }}
                         {{ form_widget(form.cancel) }}
@@ -124,7 +128,7 @@ class Config {
         «IF isImageArea»
             «configSectionBodyImages(app, isPrimaryVarContainer)»
         «ELSE»
-            <div role="tabpanel" class="tab-pane fade«IF isPrimaryVarContainer» in active«ENDIF»" id="tab«sortOrder»" aria-labelledby="vars«sortOrder»Tab">
+            <div role="tabpanel" class="tab-pane fade«IF isPrimaryVarContainer» «IF app.targets('3.0')»show«ELSE»in«ENDIF» active«ENDIF»" id="tab«sortOrder»" aria-labelledby="vars«sortOrder»Tab">
                 {% set tabTitle = __('«name.formatForDisplayCapital»') %}
                 «configSectionBody(app, isPrimaryVarContainer)»
             </div>
@@ -134,7 +138,7 @@ class Config {
     def private configSectionBodyImages(Variables it, Application app, Boolean isPrimaryVarContainer) '''
         «FOR entity : app.getAllEntities.filter[hasImageFieldsEntity]»
             «FOR imageUploadField : entity.imageFieldsEntity»
-                <div role="tabpanel" class="tab-pane fade«IF isPrimaryVarContainer && entity == app.getAllEntities.filter[hasImageFieldsEntity].head && imageUploadField == entity.imageFieldsEntity.head» in active«ENDIF»" id="tabImages«entity.name.formatForCodeCapital»«imageUploadField.name.formatForCodeCapital»" aria-labelledby="images«entity.name.formatForCodeCapital»«imageUploadField.name.formatForCodeCapital»Tab">
+                <div role="tabpanel" class="tab-pane fade«IF isPrimaryVarContainer && entity == app.getAllEntities.filter[hasImageFieldsEntity].head && imageUploadField == entity.imageFieldsEntity.head» «IF app.targets('3.0')»show«ELSE»in«ENDIF» active«ENDIF»" id="tabImages«entity.name.formatForCodeCapital»«imageUploadField.name.formatForCodeCapital»" aria-labelledby="images«entity.name.formatForCodeCapital»«imageUploadField.name.formatForCodeCapital»Tab">
                     {% set tabTitle = __('Image settings for «entity.nameMultiple.formatForDisplay» «imageUploadField.name.formatForDisplay»') %}
                     <fieldset>
                         <legend>{{ tabTitle }}</legend>

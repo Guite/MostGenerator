@@ -141,8 +141,10 @@ class Actions {
         $request->query->set('sortdir', $sortdir);
         $request->query->set('pos', $pos);
 
-        /** @var RouterInterface $router */
-        $router = $this->get('router');
+        «IF !app.targets('3.0')»
+            /** @var RouterInterface $router */
+            $router = $this->get('router');
+        «ENDIF»
         $routeName = '«app.appName.formatForDB»_«name.toLowerCase»_' . ($isAdmin ? 'admin' : '') . 'view';
         $sortableColumns = new SortableColumns($router, $routeName, 'sort', 'sortdir');
         «IF tree != EntityTreeType.NONE»
@@ -292,7 +294,9 @@ class Actions {
     '''
 
     def private dispatch actionImplBody(Entity it, DeleteAction action) '''
-        $logger = $this->get('logger');
+        «IF !app.targets('3.0')»
+            $logger = $this->get('logger');
+        «ENDIF»
         $logArgs = ['app' => '«app.appName»', 'user' => «IF app.targets('3.0')»$currentUserApi«ELSE»$this->get('zikula_users_module.current_user')«ENDIF»->get('uname'), 'entity' => '«name.formatForDisplay»', 'id' => $«name.formatForCode»->getKey()];
 
         // determine available workflow actions
@@ -333,7 +337,7 @@ class Actions {
                     $hookHelper = $this->get('«app.appService».hook_helper');
 
                 «ENDIF»
-                // Call form aware display hooks
+                // call form aware display hooks
                 $formHook = $hookHelper->callFormDisplayHooks($form, $«name.formatForCode», FormAwareCategory::TYPE_DELETE);
             }
         «ENDIF»

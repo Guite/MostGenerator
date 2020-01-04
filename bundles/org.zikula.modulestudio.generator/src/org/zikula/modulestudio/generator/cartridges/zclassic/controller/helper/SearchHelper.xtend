@@ -168,7 +168,7 @@ class SearchHelper {
     '''
 
     def private getResults(Application it) '''
-        public function getResults(array $words, «IF targets('3.0')»string «ENDIF»$searchType = 'AND', «IF targets('3.0')»array «ENDIF»$modVars = null)«IF targets('3.0')»: array«ENDIF»
+        public function getResults(array $words, «IF targets('3.0')»string «ENDIF»$searchType = 'AND', «IF targets('3.0')»?array «ENDIF»$modVars = null)«IF targets('3.0')»: array«ENDIF»
         {
             if (!$this->permissionHelper->hasPermission(ACCESS_READ)) {
                 return [];

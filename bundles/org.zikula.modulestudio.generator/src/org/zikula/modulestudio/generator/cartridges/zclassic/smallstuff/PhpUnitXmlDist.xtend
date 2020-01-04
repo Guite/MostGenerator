@@ -17,17 +17,19 @@ class PhpUnitXmlDist {
 
     def private phpUnitXml(Application it) '''
         <?xml version="1.0" encoding="UTF-8"?>
-        <phpunit
-            bootstrap="./../../../lib/bootstrap.php"
-            backupGlobals="false"
-            backupStaticAttributes="false"
-            colors="true"
-            convertErrorsToExceptions="true"
-            convertNoticesToExceptions="true"
-            convertWarningsToExceptions="true"
-            processIsolation="false"
-            stopOnFailure="false"
+        <phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                 xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/8.3/phpunit.xsd"
+                 bootstrap="../../vendor/autoload.php"
+                 executionOrder="depends,defects"
+                 forceCoversAnnotation="true"
+                 beStrictAboutCoversAnnotation="true"
+                 beStrictAboutOutputDuringTests="true"
+                 beStrictAboutTodoAnnotatedTests="true"
+                 verbose="true"
         >
+            <php>
+                <server name="KERNEL_CLASS" value="ZikulaKernel" />
+            </php>
             <testsuites>
                 <testsuite name="«appName» Test Suite">
                     <directory>./Tests</directory>
@@ -35,7 +37,6 @@ class PhpUnitXmlDist {
                     <exclude>./vendor</exclude>
                 </testsuite>
             </testsuites>
-        
             <filter>
                 <whitelist>
                     <directory>./</directory>

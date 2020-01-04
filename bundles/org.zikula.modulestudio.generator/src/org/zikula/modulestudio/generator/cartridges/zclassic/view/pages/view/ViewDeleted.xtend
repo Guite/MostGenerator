@@ -68,7 +68,7 @@ class ViewDeleted {
 
     def private historyTable(Entity it) '''
         <div class="table-responsive">
-            <table class="table table-striped table-bordered table-hover{% if routeArea == 'admin' %} table-condensed{% endif %}">
+            <table class="table table-striped table-bordered table-hover{% if routeArea == 'admin' %} table-«IF application.targets('3.0')»sm«ELSE»condensed«ENDIF»{% endif %}">
                 <colgroup>
                     <col id="cId" />
                     <col id="cDate" />
@@ -77,7 +77,7 @@ class ViewDeleted {
                 </colgroup>
                 <thead>
                     <tr>
-                        <th id="hId" scope="col" class="«IF !application.targets('2.0')»z-order-«ENDIF»unsorted z-w02">{{ __('ID') }}</th>
+                        <th id="hId" scope="col" class="«IF !application.targets('2.0')»z-order-«ENDIF»unsorted«IF !application.targets('3.0')» z-w02«ENDIF»">{{ __('ID') }}</th>
                         <th id="hTitle" scope="col" class="«IF !application.targets('2.0')»z-order-«ENDIF»unsorted">{{ __('Title') }}</th>
                         <th id="hDate" scope="col" class="«IF !application.targets('2.0')»z-order-«ENDIF»unsorted">{{ __('Date') }}</th>
                         <th id="hUser" scope="col" class="«IF !application.targets('2.0')»z-order-«ENDIF»unsorted">{{ __('User') }}</th>
@@ -96,7 +96,7 @@ class ViewDeleted {
                             <td headers="hActions" class="actions nowrap">
                                 «IF hasDisplayAction»
                                     {% set linkTitle = __f('Preview «name.formatForDisplay» %id%', {'%id%': logEntry.objectId}) %}
-                                    <a id="«name.formatForCode»ItemDisplay{{ logEntry.objectId }}" href="{{ path('«application.appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ 'undelete', {«getPrimaryKey.name.formatForCode»: logEntry.objectId, preview: 1, raw: 1}) }}" title="{{ linkTitle|e('html_attr') }}" class="«application.vendorAndName.toLowerCase»-inline-window hidden" data-modal-title="{{ __f('«name.formatForDisplayCapital» %id%', {'%id%': logEntry.objectId}) }}"><i class="fa fa-id-card«IF !application.targets('3.0')»-o«ENDIF»"></i></a>
+                                    <a id="«name.formatForCode»ItemDisplay{{ logEntry.objectId }}" href="{{ path('«application.appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ 'undelete', {«getPrimaryKey.name.formatForCode»: logEntry.objectId, preview: 1, raw: 1}) }}" title="{{ linkTitle|e('html_attr') }}" class="«application.vendorAndName.toLowerCase»-inline-window «IF application.targets('3.0')»d-none«ELSE»hidden«ENDIF»" data-modal-title="{{ __f('«name.formatForDisplayCapital» %id%', {'%id%': logEntry.objectId}) }}"><i class="fa fa-id-card«IF !application.targets('3.0')»-o«ENDIF»"></i></a>
                                 «ENDIF»
                                 {% set linkTitle = __f('Undelete «name.formatForDisplay» %id%', {'%id%': logEntry.objectId}) %}
                                 <a href="{{ path('«application.appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ 'undelete', {«getPrimaryKey.name.formatForCode»: logEntry.objectId}) }}" title="{{ linkTitle|e('html_attr') }}"><i class="fa fa-history"></i></a>

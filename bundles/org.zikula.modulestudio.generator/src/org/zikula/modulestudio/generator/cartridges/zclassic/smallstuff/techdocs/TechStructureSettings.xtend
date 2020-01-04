@@ -10,7 +10,7 @@ class TechStructureSettings {
 
     def generate(Application it, String language) {
         this.language = language
-        helper.table(settingsColumns, settingsHeader, settingsContent)
+        helper.table(it, settingsColumns, settingsHeader, settingsContent)
     }
 
     def private settingsColumns(Application it) '''

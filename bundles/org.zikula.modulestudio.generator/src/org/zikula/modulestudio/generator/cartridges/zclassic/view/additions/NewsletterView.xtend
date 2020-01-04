@@ -42,19 +42,24 @@ class NewsletterView {
     '''
 
     def private editTemplateObjectTypes(Application it) '''
-        <div class="col-sm-offset-3 col-sm-9">
-            <div class="checkbox">
-                <label>
-                    <input id="plugin_{$i}_enable_{$j}" type="checkbox" name="«appName»ObjectTypes[{$objectType}]" value="1"{if $objectTypeData.nwactive} checked="checked"{/if} /> {$objectTypeData.name|safetext}
-                </label>
+        <div class="«IF targets('3.0')»col-md-9 offset-md-3«ELSE»col-sm-offset-3 col-sm-9«ENDIF»">
+            <div class="«IF targets('3.0')»custom-control custom-checkbo«ELSE»checkbox«ENDIF»">
+                «IF targets('3.0')»
+                    <input id="plugin_{$i}_enable_{$j}" type="checkbox" name="«appName»ObjectTypes[{$objectType}]" class="custom-control-input" value="1"{if $objectTypeData.nwactive} checked="checked"{/if} />
+                    <label for="plugin_{$i}_enable_{$j}" class="custom-control-label">{$objectTypeData.name|safetext}</label>
+                «ELSE»
+                    <label>
+                        <input id="plugin_{$i}_enable_{$j}" type="checkbox" name="«appName»ObjectTypes[{$objectType}]" value="1"{if $objectTypeData.nwactive} checked="checked"{/if} /> {$objectTypeData.name|safetext}
+                    </label>
+                «ENDIF»
             </div>
         </div>
     '''
 
     def private editTemplateSorting(Application it) '''
-        <div class="form-group">
-            <label for="«appName.toFirstLower»Args_{$objectType}_sorting" class="col-sm-3 control-label">{gt text='Sorting'}:</label>
-            <div class="col-sm-9">
+        <div class="form-group«IF targets('3.0')» row«ENDIF»">
+            <label for="«appName.toFirstLower»Args_{$objectType}_sorting" class="col-«IF targets('3.0')»md«ELSE»sm«ENDIF»-3 «IF targets('3.0')»col-form«ELSE»control«ENDIF»-label">{gt text='Sorting'}:</label>
+            <div class="col-«IF targets('3.0')»md«ELSE»sm«ENDIF»-9">
                 <select id="«appName.toFirstLower»Args_{$objectType}_sorting" name="«appName»Args[{$objectType}][sorting]" class="form-control">
                     <option value="random"{if $pageArgs.$objectType.sorting eq 'random'} selected="selected"{/if}>{gt text='Random'}</option>
                     <option value="newest"{if $pageArgs.$objectType.sorting eq 'newest'} selected="selected"{/if}>{gt text='Newest'}</option>
@@ -66,9 +71,9 @@ class NewsletterView {
     '''
 
     def private editTemplateAmount(Application it) '''
-        <div class="form-group">
-            <label for="«appName.toFirstLower»Args_{$objectType}_amount" class="col-sm-3 control-label">{gt text='Amount'}:</label>
-            <div class="col-sm-9">
+        <div class="form-group«IF targets('3.0')» row«ENDIF»">
+            <label for="«appName.toFirstLower»Args_{$objectType}_amount" class="col-«IF targets('3.0')»md«ELSE»sm«ENDIF»-3 «IF targets('3.0')»col-form«ELSE»control«ENDIF»-label">{gt text='Amount'}:</label>
+            <div class="col-«IF targets('3.0')»md«ELSE»sm«ENDIF»-9">
                 <input type="text" id="«appName.toFirstLower»Args_{$objectType}_amount" name="«appName»Args[{$objectType}][amount]" value="{$pageArgs.$objectType.amount|default:'5'}" maxlength="2" size="10" class="form-control" />
             </div>
         </div>
@@ -76,34 +81,47 @@ class NewsletterView {
 
 /*
     def private editTemplateTemplate(Application it) '''
-        <div class="form-group">
-            <label for="«appName.toFirstLower»Args_{$objectType}_template" class="col-sm-3 control-label">{gt text='Template'}:</label>
-            <div class="col-sm-9">
+        <div class="form-group«IF targets('3.0')» row«ENDIF»">
+            <label for="«appName.toFirstLower»Args_{$objectType}_template" class="col-«IF targets('3.0')»md«ELSE»sm«ENDIF»-3 «IF targets('3.0')»col-form«ELSE»control«ENDIF»-label">{gt text='Template'}:</label>
+            <div class="col-«IF targets('3.0')»md«ELSE»sm«ENDIF»-9">
                 <select id="«appName.toFirstLower»Args_{$objectType}_template" name="«appName»Args[{$objectType}][template]" class="form-control">
                     <option value="itemlist_display.tpl"{if $pageArgs.$objectType.template eq 'itemlist_display.tpl'} selected="selected"{/if}>{gt text='Only item titles'}</option>
                     <option value="itemlist_display_description.tpl"{if $pageArgs.$objectType.template eq 'itemlist_display_description.tpl'} selected="selected"{/if}>{gt text='With description'}</option>
                     <option value="custom"{if $pageArgs.$objectType.template eq 'custom'} selected="selected"{/if}>{gt text='Custom template'}</option>
                 </select>
-                <span class="help-block">{gt text='Only for HTML Newsletter'}</span>
+                «IF targets('3.0')»
+                    <small class="form-text text-muted">{gt text='Only for HTML Newsletter'}</small>
+                «ELSE»
+                    <span class="help-block">{gt text='Only for HTML Newsletter'}</span>
+                «ENDIF
             </div>
         </div>
-        <div id="customTemplateArea_{$objectType}" class="form-group" data-switch="«appName.toFirstLower»Args_{$objectType}_template" data-switch-value="custom">
-            <label for="«appName.toFirstLower»Args_{$objectType}_customtemplate" class="col-sm-3 control-label">{gt text='Custom template'}:</label>
-            <div class="col-sm-9">
+        <div id="customTemplateArea_{$objectType}" class="form-group«IF targets('3.0')» row«ENDIF»" data-switch="«appName.toFirstLower»Args_{$objectType}_template" data-switch-value="custom">
+            <label for="«appName.toFirstLower»Args_{$objectType}_customtemplate" class="col-«IF targets('3.0')»md«ELSE»sm«ENDIF»-3 «IF targets('3.0')»col-form«ELSE»control«ENDIF»-label">{gt text='Custom template'}:</label>
+            <div class="col-«IF targets('3.0')»md«ELSE»sm«ENDIF»-9">
                 <input type="text" id="«appName.toFirstLower»Args_{$objectType}_customtemplate" name="«appName»Args[{$objectType}][customtemplate]" value="{$pageArgs.$objectType.customtemplate|default:''}" maxlength="80" size="40" class="form-control" />
-                <span class="help-block">{gt text='Example'}: <em>itemlist_{objecttype}_display.tpl</em></span>
-                <span class="help-block">{gt text='Only for HTML Newsletter'}</span>
+                «IF targets('3.0')»
+                    <small class="form-text text-muted">{gt text='Example'}: <code>itemlist_{objecttype}_display.tpl</code></small>
+                    <small class="form-text text-muted">{gt text='Only for HTML Newsletter'}</small>
+                «ELSE»
+                    <span class="help-block">{gt text='Example'}: <code>itemlist_{objecttype}_display.tpl</em></span>
+                    <span class="help-block">{gt text='Only for HTML Newsletter'}</span>
+                «ENDIF»
             </div>
         </div>
     '''
 */
 
     def private editTemplateFilter(Application it) '''
-        <div class="form-group">
-            <label for="«appName.toFirstLower»Args_{$objectType}_filter" class="col-sm-3 control-label">{gt text='Filter (expert option)'}:</label>
-            <div class="col-sm-9">
+        <div class="form-group«IF targets('3.0')» row«ENDIF»">
+            <label for="«appName.toFirstLower»Args_{$objectType}_filter" class="col-«IF targets('3.0')»md«ELSE»sm«ENDIF»-3 «IF targets('3.0')»col-form«ELSE»control«ENDIF»-label">{gt text='Filter (expert option)'}:</label>
+            <div class="col-«IF targets('3.0')»md«ELSE»sm«ENDIF»-9">
                 <input type="text" id="«appName.toFirstLower»Args_{$objectType}_filter" name="«appName»Args[{$objectType}][filter]" value="{$pageArgs.$objectType.filter|default:''}" size="40" class="form-control" />
-                <span class="help-block">{gt text='Example'}: <em>tbl.age >= 18</em></span>
+                «IF targets('3.0')»
+                    <small class="form-text text-muted">{gt text='Example'}: <code>tbl.age >= 18</code></small>
+                «ELSE»
+                    <span class="help-block">{gt text='Example'}: <code>tbl.age >= 18</code></span>
+                «ENDIF»
             </div>
         </div>
     '''

@@ -63,7 +63,7 @@ class ItemSelector {
         };
 
         «objName».itemSelector.onParamChanged = function () {
-            jQuery('#ajaxIndicator').removeClass('hidden');
+            jQuery('#ajaxIndicator').removeClass('«IF targets('3.0')»d-none«ELSE»hidden«ENDIF»');
 
             «objName».itemSelector.getItemList();
         };
@@ -90,7 +90,7 @@ class ItemSelector {
 
                 baseId = «objName».itemSelector.baseId;
                 «objName».itemSelector.items[baseId] = data;
-                jQuery('#ajaxIndicator').addClass('hidden');
+                jQuery('#ajaxIndicator').addClass('«IF targets('3.0')»d-none«ELSE»hidden«ENDIF»');
                 «objName».itemSelector.updateItemDropdownEntries();
                 «objName».itemSelector.updatePreview();
             });
@@ -120,7 +120,7 @@ class ItemSelector {
             baseId = «objName».itemSelector.baseId;
             items = «objName».itemSelector.items[baseId];
 
-            jQuery('#' + baseId + 'PreviewContainer').addClass('hidden');
+            jQuery('#' + baseId + 'PreviewContainer').addClass('«IF targets('3.0')»d-none«ELSE»hidden«ENDIF»');
 
             if (items.length === 0) {
                 return;
@@ -139,7 +139,7 @@ class ItemSelector {
             if (null !== selectedElement) {
                 jQuery('#' + baseId + 'PreviewContainer')
                     .html(window.atob(selectedElement.previewInfo))
-                    .removeClass('hidden');
+                    .removeClass('«IF targets('3.0')»d-none«ELSE»hidden«ENDIF»');
                 «IF hasImageFields»
                     «vendorAndName»InitImageViewer();
                 «ENDIF»

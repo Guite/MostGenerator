@@ -99,8 +99,8 @@ class DisplayFunctions {
 
             var fieldPrefix = '«appName.formatForDB»_' + objectType.toLowerCase() + 'quicknav_';
             // we can hide the submit button if we have no visible quick search field
-            if (jQuery('#' + fieldPrefix + 'q').length < 1 || jQuery('#' + fieldPrefix + 'q').parent().parent().hasClass('hidden')) {
-                jQuery('#' + fieldPrefix + 'updateview').addClass('hidden');
+            if (jQuery('#' + fieldPrefix + 'q').length < 1 || jQuery('#' + fieldPrefix + 'q').parent().parent().hasClass('«IF targets('3.0')»d-none«ELSE»hidden«ENDIF»')) {
+                jQuery('#' + fieldPrefix + 'updateview').addClass('«IF targets('3.0')»d-none«ELSE»hidden«ENDIF»');
             }
         }
     '''
@@ -129,8 +129,8 @@ class DisplayFunctions {
                     «vendorAndName»SimpleAlert(toggleLink, Translator.__('Success'), data.message, 'toggle' + idSuffix + 'DoneAlert', 'success');
                 }*/
 
-                toggleLink.find('.fa-check').toggleClass('hidden', true !== data.state);
-                toggleLink.find('.fa-times').toggleClass('hidden', true === data.state);
+                toggleLink.find('.fa-check').toggleClass('«IF targets('3.0')»d-none«ELSE»hidden«ENDIF»', true !== data.state);
+                toggleLink.find('.fa-times').toggleClass('«IF targets('3.0')»d-none«ELSE»hidden«ENDIF»', true === data.state);
             })«/*,
             fail: function (jqXHR, textStatus, errorThrown) {
                 // nothing to do yet
@@ -156,7 +156,7 @@ class DisplayFunctions {
                 itemId = jQuery(this).data('item-id');
 
                 «vendorAndName»ToggleFlag(objectType, fieldName, itemId);
-            }).removeClass('hidden');
+            }).removeClass('«IF targets('3.0')»d-none«ELSE»hidden«ENDIF»');
         }
     '''
 
@@ -251,7 +251,7 @@ class DisplayFunctions {
             containers.find('.dropdown > ul').removeClass('list-inline').addClass('list-unstyled dropdown-menu');
             containers.find('.dropdown > ul a i').addClass('fa-fw');
             if (containers.find('.dropdown-toggle').length > 0) {
-                containers.find('.dropdown-toggle').removeClass('hidden').dropdown();
+                containers.find('.dropdown-toggle').removeClass('«IF targets('3.0')»d-none«ELSE»hidden«ENDIF»').dropdown();
             }
         «ENDIF»
     '''
@@ -267,7 +267,7 @@ class DisplayFunctions {
             var modalTitle;
 
             // show the container (hidden for users without JavaScript)
-            containerElem.removeClass('hidden');
+            containerElem.removeClass('«IF targets('3.0')»d-none«ELSE»hidden«ENDIF»');
 
             // define name of window
             newWindowId = containerElem.attr('id') + 'Dialog';

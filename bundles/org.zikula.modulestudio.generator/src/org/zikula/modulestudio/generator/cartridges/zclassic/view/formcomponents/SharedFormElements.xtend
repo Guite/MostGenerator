@@ -17,7 +17,7 @@ class SharedFormElements {
 
     def fieldFormRow(DerivedField it, String subElem) '''
         «IF !visible»
-            <div class="hidden">
+            <div class="«IF application.targets('3.0')»d-none«ELSE»hidden«ENDIF»">
                 «formRow(it, subElem)»
             </div>
         «ELSE»

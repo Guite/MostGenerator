@@ -105,7 +105,7 @@ class Forms {
 
     def private formTemplateBody(Entity it, String actionName) '''
         {% form_theme form with [
-            '@«application.appName»/Form/bootstrap_3.html.twig',
+            '@«application.appName»/Form/bootstrap_«IF application.targets('3.0')»4«ELSE»3«ENDIF».html.twig',
             «IF application.targets('3.0')»
                 '@ZikulaFormExtension/Form/form_div_layout.html.twig'
             «ELSE»
@@ -115,47 +115,47 @@ class Forms {
         {{ form_start(form, {attr: {id: '«name.formatForCode»EditForm', class: '«app.vendorAndName.toLowerCase»-edit-form'}}) }}
         «IF useGroupingTabs('edit')»
             <div class="zikula-bootstrap-tab-container">
-                <ul class="nav nav-tabs">
-                    <li role="presentation" class="active">
-                        <a id="fieldsTab" href="#tabFields" title="{{ __('Fields') }}" role="tab" data-toggle="tab">{{ __('Fields') }}</a>
+                <ul class="nav nav-tabs" role="tablist">
+                    <li class="«IF application.targets('3.0')»nav-item«ELSE»active«ENDIF»" role="presentation">
+                        <a id="fieldsTab" href="#tabFields" title="{{ __('Fields') }}" role="tab" data-toggle="tab"«IF application.targets('3.0')» class="nav-link active"«ENDIF»>{{ __('Fields') }}</a>
                     </li>
                     «IF geographical»
-                        <li role="presentation">
-                            <a id="mapTab" href="#tabMap" title="{{ __('Map') }}" role="tab" data-toggle="tab">{{ __('Map') }}</a>
+                        <li«IF application.targets('3.0')» class="nav-item"«ENDIF» role="presentation">
+                            <a id="mapTab" href="#tabMap" title="{{ __('Map') }}" role="tab" data-toggle="tab"«IF application.targets('3.0')» class="nav-link"«ENDIF»>{{ __('Map') }}</a>
                         </li>
                     «ENDIF»
                     «new Relations(fsa, app, isSeparateAdminTemplate).generateTabTitles(it)»
                     «IF attributable»
                         {% if featureActivationHelper.isEnabled(constant('«app.vendor.formatForCodeCapital»\\«app.name.formatForCodeCapital»Module\\Helper\\FeatureActivationHelper::ATTRIBUTES'), '«name.formatForCode»') %}
-                            <li role="presentation">
-                                <a id="attributesTab" href="#tabAttributes" title="{{ __('Attributes') }}" role="tab" data-toggle="tab">{{ __('Attributes') }}</a>
+                            <li«IF application.targets('3.0')» class="nav-item"«ENDIF» role="presentation">
+                                <a id="attributesTab" href="#tabAttributes" title="{{ __('Attributes') }}" role="tab" data-toggle="tab"«IF application.targets('3.0')» class="nav-link"«ENDIF»>{{ __('Attributes') }}</a>
                             </li>
                         {% endif %}
                     «ENDIF»
                     «IF categorisable»
                         {% if featureActivationHelper.isEnabled(constant('«app.vendor.formatForCodeCapital»\\«app.name.formatForCodeCapital»Module\\Helper\\FeatureActivationHelper::CATEGORIES'), '«name.formatForCode»') %}
-                            <li role="presentation">
-                                <a id="categoriesTab" href="#tabCategories" title="{{ __('Categories') }}" role="tab" data-toggle="tab">{{ __('Categories') }}</a>
+                            <li«IF application.targets('3.0')» class="nav-item"«ENDIF» role="presentation">
+                                <a id="categoriesTab" href="#tabCategories" title="{{ __('Categories') }}" role="tab" data-toggle="tab"«IF application.targets('3.0')» class="nav-link"«ENDIF»>{{ __('Categories') }}</a>
                             </li>
                         {% endif %}
                     «ENDIF»
                     «IF standardFields»
                         {% if mode != 'create' %}
-                            <li role="presentation">
-                                <a id="standardFieldsTab" href="#tabStandardFields" title="{{ __('Creation and update') }}" role="tab" data-toggle="tab">{{ __('Creation and update') }}</a>
+                            <li«IF application.targets('3.0')» class="nav-item"«ENDIF» role="presentation">
+                                <a id="standardFieldsTab" href="#tabStandardFields" title="{{ __('Creation and update') }}" role="tab" data-toggle="tab"«IF application.targets('3.0')» class="nav-link"«ENDIF»>{{ __('Creation and update') }}</a>
                             </li>
                         {% endif %}
                     «ENDIF»
                     {% if form.moderationSpecificCreator is defined or form.moderationSpecificCreationDate is defined %}
-                        <li role="presentation">
-                            <a id="moderationTab" href="#tabModeration" title="{{ __('Moderation options') }}" role="tab" data-toggle="tab">{{ __('Moderation') }}</a>
+                        <li«IF application.targets('3.0')» class="nav-item"«ENDIF» role="presentation">
+                            <a id="moderationTab" href="#tabModeration" title="{{ __('Moderation options') }}" role="tab" data-toggle="tab"«IF application.targets('3.0')» class="nav-link"«ENDIF»>{{ __('Moderation') }}</a>
                         </li>
                     {% endif %}
                 </ul>
 
                 {{ form_errors(form) }}
                 <div class="tab-content">
-                    <div role="tabpanel" class="tab-pane fade in active" id="tabFields" aria-labelledby="fieldsTab">
+                    <div role="tabpanel" class="tab-pane fade «IF application.targets('3.0')»show«ELSE»in«ENDIF» active" id="tabFields" aria-labelledby="fieldsTab">
                         <h3>{{ __('Fields') }}</h3>
                         «fieldDetails('')»
                     </div>
@@ -191,10 +191,10 @@ class Forms {
         «IF hasTranslatableFields»
             {% if translationsEnabled == true %}
                 <div class="zikula-bootstrap-tab-container">
-                    <ul class="{{ form.vars.id|lower }}-translation-locales nav nav-tabs">
+                    <ul class="{{ form.vars.id|lower }}-translation-locales nav nav-tabs" role="tablist">
                         {% for language in supportedLanguages %}
-                            <li{% if language == app.request.locale %} class="active"{% endif %}>
-                                <a href="#" data-toggle="tab" data-target=".{{ form.vars.id|lower }}-translations-fields-{{ language }}">
+                            <li«IF application.targets('3.0')» class="nav-item{% if language == app.request.locale %} active{% endif %}"«ELSE»{% if language == app.request.locale %} class="active"{% endif %}«ENDIF» role="presentation">
+                                <a href="#" data-toggle="tab" data-target=".{{ form.vars.id|lower }}-translations-fields-{{ language }}"«IF application.targets('3.0')» class="nav-link{% if language == app.request.locale %} active{% endif %}"«ENDIF»>
                                     {% if not form.vars.valid %}
                                         <span class="label label-danger"><i class="fa fa-«IF application.targets('3.0')»exclamation-triangle«ELSE»warning«ENDIF»"></i> <span class="sr-only">{{ __('Errors') }}</span></span>
                                     {% endif %}
@@ -206,7 +206,7 @@ class Forms {
                     </ul>
                     <div class="{{ form.vars.id|lower }}-translation-fields tab-content">
                         {% for language in supportedLanguages %}
-                            <div class="{{ form.vars.id|lower }}-translations-fields-{{ language }} tab-pane fade{% if language == app.request.locale %} active in{% endif %}">
+                            <div class="{{ form.vars.id|lower }}-translations-fields-{{ language }} tab-pane fade{% if language == app.request.locale %} «IF application.targets('3.0')»show«ELSE»in«ENDIF» active{% endif %}">
                                 <fieldset>
                                     <legend>{{ language|«IF application.targets('3.0')»language_name«ELSE»languageName|safeHtml«ENDIF» }}</legend>
                                     {% if language == app.request.locale %}
@@ -316,8 +316,8 @@ class Forms {
 
     def private submitActions(Entity it) '''
         {# include possible submit actions #}
-        <div class="form-group form-buttons">
-            <div class="col-sm-offset-3 col-sm-9">
+        <div class="form-group form-buttons«IF application.targets('3.0')» row«ENDIF»">
+            <div class="«IF application.targets('3.0')»col-md-9 offset-md-3«ELSE»col-sm-offset-3 col-sm-9«ENDIF»">
                 «submitActionsImpl»
             </div>
         </div>
