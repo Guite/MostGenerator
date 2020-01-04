@@ -264,7 +264,7 @@ class ViewTable {
     '''
 
     def private massActionFields(Entity it) '''
-        <fieldset>
+        <fieldset«IF application.targets('3.0')» class="form-group row mt-3«ENDIF»>
             <label for="«appName.toFirstLower»Action" class="col-«IF application.targets('3.0')»md«ELSE»sm«ENDIF»-3 «IF application.targets('3.0')»col-form«ELSE»control«ENDIF»-label">{{ __('With selected «nameMultiple.formatForDisplay»') }}</label>
             <div class="col-«IF application.targets('3.0')»md«ELSE»sm«ENDIF»-6">
                 <select id="«appName.toFirstLower»Action" name="action" class="form-control «IF application.targets('3.0')»form-control«ELSE»input«ENDIF»-sm">
@@ -291,7 +291,7 @@ class ViewTable {
                 </select>
             </div>
             <div class="col-«IF application.targets('3.0')»md«ELSE»sm«ENDIF»-3">
-                <input type="submit" value="{{ __('Submit') }}" class="btn btn-default btn-sm" />
+                <input type="submit" value="{{ __('Submit') }}" class="btn btn-«IF application.targets('3.0')»primary«ELSE»default«ENDIF» btn-sm" />
             </div>
         </fieldset>
     '''
