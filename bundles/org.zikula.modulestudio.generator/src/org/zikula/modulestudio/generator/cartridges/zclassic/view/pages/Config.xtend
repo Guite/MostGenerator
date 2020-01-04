@@ -76,7 +76,7 @@ class Config {
                         «ENDFOR»
                         {% set tabTitle = __('Workflows') %}
                         <li«IF targets('3.0')» class="nav-item"«ENDIF» role="presentation">
-                            <a id="workflowsTab" href="#tabWorkflows" title="{{ tabTitle|e('html_attr') }}" role="tab" data-toggle="tab"«IF targets('3.0')» class="nav-link«ENDIF»>{{ tabTitle }}</a>
+                            <a id="workflowsTab" href="#tabWorkflows" title="{{ tabTitle|e('html_attr') }}" role="tab" data-toggle="tab"«IF targets('3.0')» class="nav-link"«ENDIF»>{{ tabTitle }}</a>
                         </li>
                     </ul>
 
