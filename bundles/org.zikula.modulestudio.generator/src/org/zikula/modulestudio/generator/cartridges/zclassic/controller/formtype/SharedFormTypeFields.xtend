@@ -838,18 +838,24 @@ class SharedFormTypeFields {
     def addCommonSubmitButtons(Application it) '''
         $builder->add('reset', ResetType::class, [
             'label' => $this->__('Reset'),
-            'icon' => 'fa-refresh',
+            «IF targets('3.0')»
+                'validate' => false,
+            «ENDIF»
+            'icon' => 'fa-«IF targets('3.0')»sync«ELSE»refresh«ENDIF»',
             'attr' => [
-                'class' => 'btn btn-default',
-                'formnovalidate' => 'formnovalidate'
+                'class' => 'btn btn-default'«IF !targets('3.0')»,
+                'formnovalidate' => 'formnovalidate'«ENDIF»
             ]
         ]);
         $builder->add('cancel', SubmitType::class, [
             'label' => $this->__('Cancel'),
+            «IF targets('3.0')»
+                'validate' => false,
+            «ENDIF»
             'icon' => 'fa-times',
             'attr' => [
-                'class' => 'btn btn-default',
-                'formnovalidate' => 'formnovalidate'
+                'class' => 'btn btn-default'«IF !targets('3.0')»,
+                'formnovalidate' => 'formnovalidate'«ENDIF»
             ]
         ]);
     '''

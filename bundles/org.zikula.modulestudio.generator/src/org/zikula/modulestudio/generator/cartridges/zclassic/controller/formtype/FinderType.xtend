@@ -119,10 +119,13 @@ class FinderType {
                     ])
                     ->add('cancel', SubmitType::class, [
                         'label' => $this->__('Cancel'),
+                        «IF app.targets('3.0')»
+                            'validate' => false,
+                        «ENDIF»
                         'icon' => 'fa-times',
                         'attr' => [
-                            'class' => 'btn btn-default',
-                            'formnovalidate' => 'formnovalidate'
+                            'class' => 'btn btn-default'«IF !app.targets('3.0')»,
+                            'formnovalidate' => 'formnovalidate'«ENDIF»
                         ]
                     ])
                 ;
