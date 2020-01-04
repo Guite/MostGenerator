@@ -264,36 +264,48 @@ class ViewTable {
     '''
 
     def private massActionFields(Entity it) '''
-        <fieldset«IF application.targets('3.0')» class="form-group row mt-3«ENDIF»>
-            <label for="«appName.toFirstLower»Action" class="col-«IF application.targets('3.0')»md«ELSE»sm«ENDIF»-3 «IF application.targets('3.0')»col-form«ELSE»control«ENDIF»-label">{{ __('With selected «nameMultiple.formatForDisplay»') }}</label>
-            <div class="col-«IF application.targets('3.0')»md«ELSE»sm«ENDIF»-6">
-                <select id="«appName.toFirstLower»Action" name="action" class="form-control «IF application.targets('3.0')»form-control«ELSE»input«ENDIF»-sm">
-                    <option value="">{{ __('Choose action') }}</option>
-                    «IF workflow != EntityWorkflowType.NONE»
-                        «IF workflow == EntityWorkflowType.ENTERPRISE»
-                            <option value="accept" title="{{ __('«getWorkflowActionDescription(workflow, 'Accept')»') }}">{{ __('Accept') }}</option>
-                            «IF ownerPermission»
-                                <option value="reject" title="{{ __('«getWorkflowActionDescription(workflow, 'Reject')»') }}">{{ __('Reject') }}</option>
-                            «ENDIF»
-                            <option value="demote" title="{{ __('«getWorkflowActionDescription(workflow, 'Demote')»') }}">{{ __('Demote') }}</option>
+        «IF application.targets('3.0')»
+            <fieldset class="my-3 pt-3">
+                <div class="row">
+                    «massActionFieldsInner»
+                </div>
+            </fieldset>
+        «ELSE»
+            <fieldset>
+                «massActionFieldsInner»
+            </fieldset>
+        «ENDIF»
+    '''
+
+    def private massActionFieldsInner(Entity it) '''
+        <label for="«appName.toFirstLower»Action" class="col-«IF application.targets('3.0')»md«ELSE»sm«ENDIF»-3 «IF application.targets('3.0')»col-form«ELSE»control«ENDIF»-label">{{ __('With selected «nameMultiple.formatForDisplay»') }}</label>
+        <div class="col-«IF application.targets('3.0')»md«ELSE»sm«ENDIF»-6">
+            <select id="«appName.toFirstLower»Action" name="action" class="form-control «IF application.targets('3.0')»form-control«ELSE»input«ENDIF»-sm">
+                <option value="">{{ __('Choose action') }}</option>
+                «IF workflow != EntityWorkflowType.NONE»
+                    «IF workflow == EntityWorkflowType.ENTERPRISE»
+                        <option value="accept" title="{{ __('«getWorkflowActionDescription(workflow, 'Accept')»') }}">{{ __('Accept') }}</option>
+                        «IF ownerPermission»
+                            <option value="reject" title="{{ __('«getWorkflowActionDescription(workflow, 'Reject')»') }}">{{ __('Reject') }}</option>
                         «ENDIF»
-                        <option value="approve" title="{{ __('«getWorkflowActionDescription(workflow, 'Approve')»') }}">{{ __('Approve') }}</option>
+                        <option value="demote" title="{{ __('«getWorkflowActionDescription(workflow, 'Demote')»') }}">{{ __('Demote') }}</option>
                     «ENDIF»
-                    «IF hasTray»
-                        <option value="unpublish" title="{{ __('«getWorkflowActionDescription(workflow, 'Unpublish')»') }}">{{ __('Unpublish') }}</option>
-                        <option value="publish" title="{{ __('«getWorkflowActionDescription(workflow, 'Publish')»') }}">{{ __('Publish') }}</option>
-                    «ENDIF»
-                    «IF hasArchive»
-                        <option value="archive" title="{{ __('«getWorkflowActionDescription(workflow, 'Archive')»') }}">{{ __('Archive') }}</option>
-                        <option value="unarchive" title="{{ __('«getWorkflowActionDescription(workflow, 'Unarchive')»') }}">{{ __('Unarchive') }}</option>
-                    «ENDIF»
-                    <option value="delete" title="{{ __('«getWorkflowActionDescription(workflow, 'Delete')»') }}">{{ __('Delete') }}</option>
-                </select>
-            </div>
-            <div class="col-«IF application.targets('3.0')»md«ELSE»sm«ENDIF»-3">
-                <input type="submit" value="{{ __('Submit') }}" class="btn btn-«IF application.targets('3.0')»primary«ELSE»default«ENDIF» btn-sm" />
-            </div>
-        </fieldset>
+                    <option value="approve" title="{{ __('«getWorkflowActionDescription(workflow, 'Approve')»') }}">{{ __('Approve') }}</option>
+                «ENDIF»
+                «IF hasTray»
+                    <option value="unpublish" title="{{ __('«getWorkflowActionDescription(workflow, 'Unpublish')»') }}">{{ __('Unpublish') }}</option>
+                    <option value="publish" title="{{ __('«getWorkflowActionDescription(workflow, 'Publish')»') }}">{{ __('Publish') }}</option>
+                «ENDIF»
+                «IF hasArchive»
+                    <option value="archive" title="{{ __('«getWorkflowActionDescription(workflow, 'Archive')»') }}">{{ __('Archive') }}</option>
+                    <option value="unarchive" title="{{ __('«getWorkflowActionDescription(workflow, 'Unarchive')»') }}">{{ __('Unarchive') }}</option>
+                «ENDIF»
+                <option value="delete" title="{{ __('«getWorkflowActionDescription(workflow, 'Delete')»') }}">{{ __('Delete') }}</option>
+            </select>
+        </div>
+        <div class="col-«IF application.targets('3.0')»md«ELSE»sm«ENDIF»-3">
+            <input type="submit" value="{{ __('Submit') }}" class="btn btn-«IF application.targets('3.0')»primary«ELSE»default«ENDIF» btn-sm" />
+        </div>
     '''
 
     def private columnDef(DerivedField it) '''
