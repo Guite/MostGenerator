@@ -82,7 +82,7 @@ class Forms {
         «ENDIF»
         {% block title mode == 'create' ? __('Create «name.formatForDisplay»') : __('Edit «name.formatForDisplay»') %}
         «IF !application.separateAdminTemplates || isSeparateAdminTemplate»
-            {% block admin_page_icon mode == 'create' ? 'plus' : 'pencil-square-o' %}
+            {% block admin_page_icon mode == 'create' ? 'plus' : '«IF application.targets('3.0')»edit«ELSE»pencil-square-o«ENDIF»' %}
         «ENDIF»
         {% block content %}
             <div class="«app.appName.toLowerCase»-«name.formatForDB» «app.appName.toLowerCase»-edit">
