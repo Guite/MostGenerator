@@ -193,7 +193,7 @@ class Forms {
                 <div class="zikula-bootstrap-tab-container">
                     <ul class="{{ form.vars.id|lower }}-translation-locales nav nav-tabs" role="tablist">
                         {% for language in supportedLanguages %}
-                            <li«IF application.targets('3.0')» class="nav-item{% if language == app.request.locale %} active{% endif %}"«ELSE»{% if language == app.request.locale %} class="active"{% endif %}«ENDIF» role="presentation">
+                            <li«IF application.targets('3.0')» class="nav-item"«ELSE»{% if language == app.request.locale %} class="active"{% endif %}«ENDIF» role="presentation">
                                 <a href="#" data-toggle="tab" data-target=".{{ form.vars.id|lower }}-translations-fields-{{ language }}"«IF application.targets('3.0')» class="nav-link{% if language == app.request.locale %} active{% endif %}"«ENDIF»>
                                     {% if not form.vars.valid %}
                                         <span class="label label-danger"><i class="fa fa-«IF application.targets('3.0')»exclamation-triangle«ELSE»warning«ENDIF»"></i> <span class="sr-only">{{ __('Errors') }}</span></span>
