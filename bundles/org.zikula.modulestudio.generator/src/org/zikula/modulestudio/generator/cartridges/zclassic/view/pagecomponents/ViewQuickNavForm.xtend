@@ -42,24 +42,32 @@ class ViewQuickNavForm {
                 <i class="fa fa-filter" aria-hidden="true"></i> {{ __('Filter') }}
             </a>
             <div id="collapse«name.formatForCodeCapital»QuickNav" class="collapse">
-                <fieldset>
-                    <h3>{{ __('Quick navigation') }}</h3>
-                    «formFields»
-                    {{ form_widget(quickNavForm.updateview) }}
-                    <a href="{{ path('«application.appName.formatForDB»_«name.formatForCode.toLowerCase»_' ~ routeArea|default ~ 'view', {tpl: app.request.query.get('tpl', ''), all: app.request.query.get('all', '')}) }}" title="{{ __('Back to default view') }}" class="btn btn-default btn-sm">{{ __('Reset') }}</a>
-                    «IF categorisable»
-                        {% if categoriesEnabled %}
-                            {% if categoryFilter is defined and categoryFilter != true %}
-                            {% else %}
-                                    </div>
-                                </div>
-                            {% endif %}
-                        {% endif %}
-                    «ENDIF»
-                </fieldset>
+                «IF application.targets('3.0')»
+                    «formContent»
+                «ELSE»
+                    <fieldset>
+                        «formContent»
+                    </fieldset>
+                «ENDIF»
             </div>
             {{ form_end(quickNavForm) }}
         {% endif %}
+    '''
+
+    def private formContent(Entity it) '''
+        <h3>{{ __('Quick navigation') }}</h3>
+        «formFields»
+        {{ form_widget(quickNavForm.updateview) }}
+        <a href="{{ path('«application.appName.formatForDB»_«name.formatForCode.toLowerCase»_' ~ routeArea|default ~ 'view', {tpl: app.request.query.get('tpl', ''), all: app.request.query.get('all', '')}) }}" title="{{ __('Back to default view') }}" class="btn btn-default btn-sm">{{ __('Reset') }}</a>
+        «IF categorisable»
+            {% if categoriesEnabled %}
+                {% if categoryFilter is defined and categoryFilter != true %}
+                {% else %}
+                        </div>
+                    </div>
+                {% endif %}
+            {% endif %}
+        «ENDIF»
     '''
 
     def private formFields(Entity it) '''

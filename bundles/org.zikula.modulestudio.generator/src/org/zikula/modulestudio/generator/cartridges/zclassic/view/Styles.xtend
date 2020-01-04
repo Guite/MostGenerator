@@ -237,19 +237,39 @@ class Styles {
             padding: 8px 12px;
             border: 1px solid #ccc;
         }
+        «IF !targets('3.0')»
 
-        div.«cssPrefix»-view form.«cssPrefix»-quicknav fieldset {
-            padding: 3px 10px;
-            margin-bottom: 0;
-        }
+            div.«cssPrefix»-view form.«cssPrefix»-quicknav fieldset {
+                padding: 3px 10px;
+                margin-bottom: 0;
+            }
+        «ENDIF»
 
-        div.«cssPrefix»-view form.«cssPrefix»-quicknav fieldset h3 {
-            margin-top: 0;
+        div.«cssPrefix»-view form.«cssPrefix»-quicknav «IF !targets('3.0')»fieldset «ENDIF»h3 {
             display: none;
         }
+        «IF targets('3.0')»
 
-        div.«cssPrefix»-view form.«cssPrefix»-quicknav fieldset label {
-            margin-right: 5px;
+            div.«cssPrefix»-view form.«cssPrefix»-quicknav .form-group {
+                display: inline-block;
+            }
+            «IF hasCategorisableEntities»
+
+                div.«cssPrefix»-view form.«cssPrefix»-quicknav .col-md-3 fieldset {
+                    border: none;
+                    padding: 0;
+                    background: none;
+                }
+            «ENDIF»
+        «ENDIF»
+
+        div.«cssPrefix»-view form.«cssPrefix»-quicknav «IF !targets('3.0')»fieldset «ENDIF»label {
+            «IF targets('3.0')»
+               margin: 0 5px;
+               display: inline;
+            «ELSE»
+               margin-right: 5px;
+            «ENDIF»
         }
     '''
 
