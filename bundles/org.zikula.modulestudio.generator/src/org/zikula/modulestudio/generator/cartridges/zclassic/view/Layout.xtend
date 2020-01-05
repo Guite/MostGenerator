@@ -88,6 +88,21 @@ class Layout {
     def private commonFooter(Application it) '''
         «IF generatePoweredByBacklinksIntoFooterTemplates»
             «new FileHelper(it).msWeblink»
+            {% set customScript %}
+                <script>
+                /* <![CDATA[ */
+                    ( function($) {
+                        $(document).ready(function() {
+                            if ($('#poweredBy').length > 0) {
+                                $('#poweredBy').html($('#poweredBy').html() + ' {{ __('and') }} ').append($('#poweredByMost a'));
+                                $('#poweredByMost').remove();
+                            }
+                        });
+                    })(jQuery);
+                /* ]]> */
+                </script>
+            {% endset %}
+            {{ pageAddAsset('footer', customScript) }}
         «ENDIF»
         {{ pageAddAsset('stylesheet', zasset('@«appName»:css/custom.css'), 120) }}
         «IF needsJQueryUI»

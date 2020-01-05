@@ -33,7 +33,7 @@ class FileHelper {
     extension Utils = new Utils
 
     def msWeblink() '''
-        <p class="text-center">
+        <p id="poweredByMost" class="text-center">
             Powered by <a href="«msUrl»" title="Get the MOST out of Zikula!">ModuleStudio «msVersion»</a>
         </p>
     '''
