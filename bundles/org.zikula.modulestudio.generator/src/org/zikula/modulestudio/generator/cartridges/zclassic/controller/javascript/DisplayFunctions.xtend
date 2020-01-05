@@ -221,11 +221,11 @@ class DisplayFunctions {
 
     def private initItemActionStyle(Application it, ItemActionsStyle style, String context) '''
         «IF style == ItemActionsStyle.ICON»
-            jQuery('ul.list-inline > li > a > i.tooltips').tooltip();
+            jQuery('ul.«IF targets('3.0')»nav«ELSE»list-inline«ENDIF» > li > a > i.tooltips').tooltip();
         «ELSEIF style == ItemActionsStyle.BUTTON_GROUP»
             jQuery('.btn-group-sm.item-actions').each(function (index) {
                 var innerList;
-                innerList = jQuery(this).children('ul.list-inline').first().detach();
+                innerList = jQuery(this).children('ul.«IF targets('3.0')»nav«ELSE»list-inline«ENDIF»').first().detach();
                 jQuery(this).append(innerList.find('a.btn'));
             });
         «ELSEIF style == ItemActionsStyle.DROPDOWN»
@@ -248,7 +248,7 @@ class DisplayFunctions {
                 return;
             }
 
-            containers.find('.dropdown > ul').removeClass('list-inline').addClass('list-unstyled dropdown-menu');
+            containers.find('.dropdown > ul').removeClass('«IF targets('3.0')»nav«ELSE»list-inline«ENDIF»').addClass('list-unstyled dropdown-menu');
             «IF targets('3.0')»
                 containers.find('.dropdown > ul > li').addClass('dropdown-item').css('padding', 0);
                 containers.find('.dropdown > ul a').addClass('d-block').css('padding', '3px 5px');

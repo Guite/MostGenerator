@@ -40,7 +40,7 @@ class ViewActions {
                             'uri' => 'javascript:void(0)'
                         ]);
                         $menu[$title]->setLinkAttribute('id', 'treeAddRoot');
-                        $menu[$title]->setLinkAttribute('class', 'hidden');
+                        $menu[$title]->setLinkAttribute('class', '«IF app.targets('3.0')»d-none«ELSE»hidden«ENDIF»');
                         $menu[$title]->setLinkAttribute('data-object-type', $objectType);
                         $menu[$title]->setLinkAttribute('title', $title);
                         $menu[$title]->setAttribute('icon', 'fa fa-plus');

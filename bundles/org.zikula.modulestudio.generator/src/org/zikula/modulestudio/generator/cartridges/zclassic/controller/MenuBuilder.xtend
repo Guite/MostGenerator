@@ -205,7 +205,7 @@ class MenuBuilder {
                 $objectType = $options['objectType'];
                 $routeArea = $options['area'];
             «ENDIF»
-            $menu->setChildrenAttribute('class', 'list-inline «actionType»-actions');
+            $menu->setChildrenAttribute('class', '«IF targets('3.0')»nav«ELSE»list-inline«ENDIF» «actionType»-actions');
 
             «IF targets('3.0')»
                 $this->eventDispatcher->dispatch(
