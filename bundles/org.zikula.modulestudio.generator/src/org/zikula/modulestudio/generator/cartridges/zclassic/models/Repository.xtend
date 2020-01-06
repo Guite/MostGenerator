@@ -392,7 +392,7 @@ class Repository {
             bool $useJoins = true,
             bool $slimMode = false,
             int $excludeId = 0
-        ): «name.formatForCodeCapital»Entity {«ELSE»(
+        ): ?«name.formatForCodeCapital»Entity {«ELSE»(
             $slugTitle = '',
             $useJoins = true,
             $slimMode = false,
