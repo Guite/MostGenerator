@@ -168,7 +168,7 @@ class DisplayFunctions {
             var alertBox;
 
             alertBox = ' \
-                <div id="' + alertId + '" class="alert alert-' + cssClass + ' fade"> \
+                <div id="' + alertId + '" class="alert alert-' + cssClass + ' fade«IF targets('3.0')» show«ENDIF»"> \
                   <button type="button" class="close" data-dismiss="alert">&times;</button> \
                   <h4>' + title + '</h4> \
                   <p>' + content + '</p> \
