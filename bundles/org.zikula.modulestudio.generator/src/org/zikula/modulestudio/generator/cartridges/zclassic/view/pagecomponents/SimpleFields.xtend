@@ -90,7 +90,7 @@ class SimpleFields {
     def dispatch displayField(StringField it, String objName, String page) {
         if (role == StringRole.PASSWORD) return ''
         if (role == StringRole.COLOUR) '''
-            <span class="label label-default" style="background-color: {{ «objName».«name.formatForCode»|e('html_attr') }}">{{ «objName».«name.formatForCode» }}</span>'''
+            <span class="«IF application.targets('3.0')»badge badge«ELSE»label label«ENDIF»-default" style="background-color: {{ «objName».«name.formatForCode»|e('html_attr') }}">{{ «objName».«name.formatForCode» }}</span>'''
         else if (application.targets('2.0') && role == StringRole.DATE_INTERVAL) '''
             {{ «objName».«name.formatForCode»|«application.appName.formatForDB»_dateInterval }}'''
         else if (application.targets('3.0') && role == StringRole.COUNTRY) '''
