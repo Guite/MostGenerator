@@ -192,6 +192,7 @@ class Forms {
     '''
 
     def private translatableFieldDetails(Entity it, String subElem) '''
+        «app = application»
         «IF hasTranslatableFields»
             {% if translationsEnabled == true %}
                 <div class="zikula-bootstrap-tab-container">
