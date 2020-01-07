@@ -346,7 +346,7 @@ class ViewTable {
     '''
 
     def private headerSortingLink(Object it, DataObject entity, String fieldName, String label) '''
-        <a href="{{ sort.«fieldName».url }}" title="«IF entity.application.targets('3.0')»'Sort by %s'|trans({'%s': '«label.formatForDisplay»'})«ELSE»{{ __f('Sort by %s', {'%s': '«label.formatForDisplay»'})«ENDIF»|e('html_attr') }}" class="{{ sort.«fieldName».class }}">«IF entity.application.targets('3.0')»{% trans %}«label.formatForDisplayCapital»{% endtrans %}«ELSE»{{ __('«label.formatForDisplayCapital»') }}«ENDIF»</a>
+        <a href="{{ sort.«fieldName».url }}" title="{{ «IF entity.application.targets('3.0')»'Sort by %s'|trans({'%s': '«label.formatForDisplay»'})«ELSE»__f('Sort by %s', {'%s': '«label.formatForDisplay»'})«ENDIF»|e('html_attr') }}" class="{{ sort.«fieldName».class }}">«IF entity.application.targets('3.0')»{% trans %}«label.formatForDisplayCapital»{% endtrans %}«ELSE»{{ __('«label.formatForDisplayCapital»') }}«ENDIF»</a>
     '''
 
     def private headerTitle(Object it, DataObject entity, String fieldName, String label) '''
