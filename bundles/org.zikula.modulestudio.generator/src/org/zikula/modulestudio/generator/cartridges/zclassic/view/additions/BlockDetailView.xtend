@@ -24,7 +24,7 @@ class BlockDetailView {
     }
 
     def private editTemplate(Application it) '''
-        {# Purpose of this template: Edit block for generic item detail view #}
+        {# purpose of this template: Edit block for generic item detail view #}
         «IF !isSystemModule && targets('3.0')»
             {% trans_default_domain '«appName.formatForDB»' %}
         «ENDIF»

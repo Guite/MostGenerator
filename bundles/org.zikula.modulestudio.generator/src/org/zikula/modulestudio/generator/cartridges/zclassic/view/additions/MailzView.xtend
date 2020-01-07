@@ -33,7 +33,7 @@ class MailzView {
     }
 
     def private textTemplate(Entity it, Application app) '''
-        {# Purpose of this template: Display «nameMultiple.formatForDisplay» in text mailings #}
+        {# purpose of this template: Display «nameMultiple.formatForDisplay» in text mailings #}
         «IF !app.isSystemModule && app.targets('3.0')»
             {% trans_default_domain '«app.appName.formatForDB»' %}
         «ENDIF»
@@ -46,7 +46,7 @@ class MailzView {
     '''
 
     def private htmlTemplate(Entity it, Application app) '''
-        {# Purpose of this template: Display «nameMultiple.formatForDisplay» in html mailings #}
+        {# purpose of this template: Display «nameMultiple.formatForDisplay» in html mailings #}
         «IF !app.isSystemModule && app.targets('3.0')»
             {% trans_default_domain '«app.appName.formatForDB»' %}
         «ENDIF»

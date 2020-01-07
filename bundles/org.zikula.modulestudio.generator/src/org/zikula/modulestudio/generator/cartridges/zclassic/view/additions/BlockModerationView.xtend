@@ -23,7 +23,7 @@ class BlockModerationView {
     }
 
     def private displayTemplate(Application it) '''
-        {# Purpose of this template: show moderation block #}
+        {# purpose of this template: show moderation block #}
         «IF !isSystemModule && targets('3.0')»
             {% trans_default_domain '«appName.formatForDB»' %}
         «ENDIF»

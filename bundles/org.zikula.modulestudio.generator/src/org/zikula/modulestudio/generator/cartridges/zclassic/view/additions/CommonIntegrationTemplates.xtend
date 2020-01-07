@@ -35,7 +35,7 @@ class CommonIntegrationTemplates {
     }
 
     def private displayDescTemplate(Entity it, Application app) '''
-        {# Purpose of this template: Display «nameMultiple.formatForDisplay» within an external context #}
+        {# purpose of this template: Display «nameMultiple.formatForDisplay» within an external context #}
         «IF !app.isSystemModule && app.targets('3.0')»
             {% trans_default_domain '«app.appName.formatForDB»' %}
         «ENDIF»
@@ -65,7 +65,7 @@ class CommonIntegrationTemplates {
     '''
 
     def private displayTemplate(Entity it, Application app) '''
-        {# Purpose of this template: Display «nameMultiple.formatForDisplay» within an external context #}
+        {# purpose of this template: Display «nameMultiple.formatForDisplay» within an external context #}
         «IF !app.isSystemModule && app.targets('3.0')»
             {% trans_default_domain '«app.appName.formatForDB»' %}
         «ENDIF»
@@ -78,7 +78,7 @@ class CommonIntegrationTemplates {
     '''
 
     def private fallbackDisplayTemplate(Application it) '''
-        {# Purpose of this template: Display objects within an external context #}
+        {# purpose of this template: Display objects within an external context #}
         «IF !isSystemModule && targets('3.0')»
             {% trans_default_domain '«appName.formatForDB»' %}
         «ENDIF»

@@ -28,7 +28,7 @@ class ContentTypeDetailView {
     }
 
     def private editTemplate(Application it) '''
-        {# Purpose of this template: edit view of specific item detail view content type #}
+        {# purpose of this template: edit view of specific item detail view content type #}
         «IF !isSystemModule && targets('3.0')»
             {% trans_default_domain '«appName.formatForDB»' %}
         «ENDIF»
