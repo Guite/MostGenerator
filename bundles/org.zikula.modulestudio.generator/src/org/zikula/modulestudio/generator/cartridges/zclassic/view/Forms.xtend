@@ -192,28 +192,27 @@ class Forms {
     '''
 
     def private translatableFieldDetails(Entity it, String subElem) '''
-        «app = application»
         «IF hasTranslatableFields»
             {% if translationsEnabled == true %}
                 <div class="zikula-bootstrap-tab-container">
                     <ul class="{{ form.vars.id|lower }}-translation-locales nav nav-tabs" role="tablist">
                         {% for language in supportedLanguages %}
-                            <li«IF app.targets('3.0')» class="nav-item"«ELSE»{% if language == app.request.locale %} class="active"{% endif %}«ENDIF» role="presentation">
-                                <a href="#" data-toggle="tab" data-target=".{{ form.vars.id|lower }}-translations-fields-{{ language }}"«IF app.targets('3.0')» class="nav-link{% if language == app.request.locale %} active{% endif %}"«ENDIF»>
+                            <li«IF application.targets('3.0')» class="nav-item"«ELSE»{% if language == app.request.locale %} class="active"{% endif %}«ENDIF» role="presentation">
+                                <a href="#" data-toggle="tab" data-target=".{{ form.vars.id|lower }}-translations-fields-{{ language }}"«IF application.targets('3.0')» class="nav-link{% if language == app.request.locale %} active{% endif %}"«ENDIF»>
                                     {% if not form.vars.valid %}
-                                        <span class="label label-danger"><i class="fa fa-«IF app.targets('3.0')»exclamation-triangle«ELSE»warning«ENDIF»"></i> <span class="sr-only">«IF app.targets('3.0')»{% trans %}Errors{% endtrans %}«ELSE»{{ __('Errors') }}«ENDIF»</span></span>
+                                        <span class="label label-danger"><i class="fa fa-«IF application.targets('3.0')»exclamation-triangle«ELSE»warning«ENDIF»"></i> <span class="sr-only">«IF application.targets('3.0')»{% trans %}Errors{% endtrans %}«ELSE»{{ __('Errors') }}«ENDIF»</span></span>
                                     {% endif %}
                                     {% set hasRequiredFields = language in localesWithMandatoryFields %}
-                                    {% if hasRequiredFields %}<span class="required">{% endif %}{{ language|«IF app.targets('3.0')»language_name«ELSE»languageName|safeHtml«ENDIF» }}{% if hasRequiredFields %}</span>{% endif %}
+                                    {% if hasRequiredFields %}<span class="required">{% endif %}{{ language|«IF application.targets('3.0')»language_name«ELSE»languageName|safeHtml«ENDIF» }}{% if hasRequiredFields %}</span>{% endif %}
                                 </a>
                             </li>
                         {% endfor %}
                     </ul>
                     <div class="{{ form.vars.id|lower }}-translation-fields tab-content">
                         {% for language in supportedLanguages %}
-                            <div class="{{ form.vars.id|lower }}-translations-fields-{{ language }} tab-pane fade{% if language == app.request.locale %} «IF app.targets('3.0')»show«ELSE»in«ENDIF» active{% endif %}">
+                            <div class="{{ form.vars.id|lower }}-translations-fields-{{ language }} tab-pane fade{% if language == app.request.locale %} «IF application.targets('3.0')»show«ELSE»in«ENDIF» active{% endif %}">
                                 <fieldset>
-                                    <legend>{{ language|«IF app.targets('3.0')»language_name«ELSE»languageName|safeHtml«ENDIF» }}</legend>
+                                    <legend>{{ language|«IF application.targets('3.0')»language_name«ELSE»languageName|safeHtml«ENDIF» }}</legend>
                                     {% if language == app.request.locale %}
                                         «fieldSet(subElem)»
                                     {% else %}
@@ -227,7 +226,7 @@ class Forms {
             {% else %}
                 {% set language = app.request.locale %}
                 <fieldset>
-                    <legend>{{ language|«IF app.targets('3.0')»language_name«ELSE»languageName|safeHtml«ENDIF» }}</legend>
+                    <legend>{{ language|«IF application.targets('3.0')»language_name«ELSE»languageName|safeHtml«ENDIF» }}</legend>
                     «fieldSet(subElem)»
                 </fieldset>
             {% endif %}
