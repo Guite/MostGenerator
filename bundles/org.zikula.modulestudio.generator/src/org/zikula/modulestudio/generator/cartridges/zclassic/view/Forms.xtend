@@ -242,7 +242,7 @@ class Forms {
 
     def private fieldDetailsFurtherOptions(Entity it, String subElem) '''
         <fieldset>
-            <legend>«IF app.targets('3.0')»{% trans %}«IF hasTranslatableFields»Further properties«ELSE»Content«ENDIF»{% endtrans %}«ELSE»{{ __('«IF hasTranslatableFields»Further properties«ELSE»Content«ENDIF»') }}«ENDIF»</legend>
+            <legend>«IF application.targets('3.0')»{% trans %}«IF hasTranslatableFields»Further properties«ELSE»Content«ENDIF»{% endtrans %}«ELSE»{{ __('«IF hasTranslatableFields»Further properties«ELSE»Content«ENDIF»') }}«ENDIF»</legend>
             «IF tree != EntityTreeType.NONE»
                 {% if mode == 'create' and form.parent is defined %}
                     {{ form_row(form.parent) }}
