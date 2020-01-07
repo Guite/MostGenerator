@@ -84,7 +84,14 @@ class ViewTable {
                 {% extends routeArea == 'admin' ? '«application.appName»::adminBase.html.twig' : '«application.appName»::base.html.twig' %}
             «ENDIF»
         «ENDIF»
-        {% block title own ? __('My «nameMultiple.formatForDisplay»') : __('«nameMultiple.formatForDisplayCapital» list') %}
+        «IF !application.isSystemModule && application.targets('3.0')»
+            {% trans_default_domain '«application.appName.formatForDB»' %}
+        «ENDIF»
+        «IF application.targets('3.0')»
+            {% block title own ? 'My «nameMultiple.formatForDisplay»'|trans : '«nameMultiple.formatForDisplayCapital» list'|trans %}
+        «ELSE»
+            {% block title own ? __('My «nameMultiple.formatForDisplay»') : __('«nameMultiple.formatForDisplayCapital» list') %}
+        «ENDIF»
         «IF !application.separateAdminTemplates || isAdmin»
             {% block admin_page_icon 'list-alt' %}
         «ENDIF»
@@ -141,7 +148,7 @@ class ViewTable {
                 {% set activateSortable = routeArea == 'admin' and sort.«getSortableFields.head.name.formatForCode».class == '«IF app.targets('2.0')»sorted-«ELSE»z-order-«ENDIF»asc' %}
             «ENDIF»
             <div class="table-responsive">
-            <table«IF hasSortableFields»{% if activateSortable and items|length > 1 %} id="sortableTable" data-object-type="«name.formatForCode»" data-min="{{ items|first.«getSortableFields.head.name.formatForCode» }}" data-max="{{ items|last.«getSortableFields.head.name.formatForCode» }}"{% endif %}«ENDIF» class="table table-striped table-bordered table-hover«IF (listItemsFields.size + listItemsIn.size + listItemsOut.size + 1) > 7» table-condensed«ELSE»{% if routeArea == 'admin' %} table-condensed{% endif %}«ENDIF»">
+            <table«IF hasSortableFields»{% if activateSortable and items|length > 1 %} id="sortableTable" data-object-type="«name.formatForCode»" data-min="{{ items|first.«getSortableFields.head.name.formatForCode» }}" data-max="{{ items|last.«getSortableFields.head.name.formatForCode» }}"{% endif %}«ENDIF» class="table table-striped table-bordered table-hover«IF (listItemsFields.size + listItemsIn.size + listItemsOut.size + 1) > 7» table-«IF application.targets('3.0')»sm«ELSE»condensed«ENDIF»«ELSE»{% if routeArea == 'admin' %} table-condensed{% endif %}«ENDIF»">
                 <colgroup>
                     {% if routeArea == 'admin' %}
                         <col id="cSelect" />
@@ -169,18 +176,18 @@ class ViewTable {
                         </th>
                     {% endif %}
                     «IF #[ItemActionsPosition.START, ItemActionsPosition.BOTH].contains(app.viewActionsPosition)»
-                        <th id="hItemActionsStart" scope="col" class="«IF !app.targets('3.0')»«IF !app.targets('2.0')»z-order-unsorted«ENDIF» z-w02«ENDIF»">{{ __('Actions') }}</th>
+                        <th id="hItemActionsStart" scope="col" class="«IF !app.targets('3.0')»«IF !app.targets('2.0')»z-order-unsorted«ENDIF» z-w02«ENDIF»">«IF app.targets('3.0')»{% trans %}Actions{% endtrans %}«ELSE»{{ __('Actions') }}«ENDIF»</th>
                     «ENDIF»
                     «IF hasSortableFields»
                         {% if activateSortable %}
-                            <th id="hSortable" scope="col" class="«IF !app.targets('3.0')»«IF !app.targets('2.0')»z-order-unsorted«ENDIF» z-w02«ENDIF»">{{ __('Sorting') }}</th>
+                            <th id="hSortable" scope="col" class="«IF !app.targets('3.0')»«IF !app.targets('2.0')»z-order-unsorted«ENDIF» z-w02«ENDIF»">«IF app.targets('3.0')»{% trans %}Sorting{% endtrans %}«ELSE»{{ __('Sorting') }}«ENDIF»</th>
                         {% endif %}
                     «ENDIF»
                     «FOR field : listItemsFields»«field.headerLine»«ENDFOR»
                     «FOR relation : listItemsIn»«relation.headerLine(false)»«ENDFOR»
                     «FOR relation : listItemsOut»«relation.headerLine(true)»«ENDFOR»
                     «IF #[ItemActionsPosition.END, ItemActionsPosition.BOTH].contains(app.viewActionsPosition)»
-                        <th id="hItemActionsEnd" scope="col" class="«IF !app.targets('3.0')»«IF !app.targets('2.0')»z-order-unsorted«ENDIF» z-w02«ENDIF»">{{ __('Actions') }}</th>
+                        <th id="hItemActionsEnd" scope="col" class="«IF !app.targets('3.0')»«IF !app.targets('2.0')»z-order-unsorted«ENDIF» z-w02«ENDIF»">«IF app.targets('3.0')»{% trans %}Actions{% endtrans %}«ELSE»{{ __('Actions') }}«ENDIF»</th>
                     «ENDIF»
                 </tr>
                 </thead>
@@ -208,7 +215,7 @@ class ViewTable {
                 «IF hasSortableFields»
                     {% if activateSortable %}
                         <td headers="hSortable" class="text-center«IF !application.targets('3.0')» z-w02«ENDIF»">
-                            <i class="fa fa-arrows«IF application.targets('3.0')»-alt«ENDIF» sort-handle pointer" title="{{ __('Drag to reorder') }}"></i>
+                            <i class="fa fa-arrows«IF application.targets('3.0')»-alt«ENDIF» sort-handle pointer" title="{{ «IF application.targets('3.0')»'Drag to reorder'|trans«ELSE»__('Drag to reorder')«ENDIF»|e('html_attr') }}"></i>
                         </td>
                     {% endif %}
                 «ENDIF»
@@ -234,7 +241,7 @@ class ViewTable {
                 <tr class="«IF application.targets('3.0')»table-info«ELSE»z-{{ routeArea == 'admin' ? 'admin' : 'data' }}tableempty«ENDIF»">
                 «'    '»<td«IF !application.targets('3.0')» class="text-left"«ENDIF» colspan="{% if routeArea == 'admin' %}«(listItemsFields.size + listItemsIn.size + listItemsOut.size + 1 + 1)»{% else %}«(listItemsFields.size + listItemsIn.size + listItemsOut.size + 1 + 0)»{% endif %}"«IF application.targets('3.0')» class="text-center"«ENDIF»>
             «ENDIF»
-            {{ __('No «nameMultiple.formatForDisplay» found.') }}
+            «IF application.targets('3.0')»{% trans %}No «nameMultiple.formatForDisplay» found.{% endtrans %}«ELSE»{{ __('No «nameMultiple.formatForDisplay» found.') }}«ENDIF»
             «IF listType == LIST_TYPE_UL || listType == LIST_TYPE_OL»
                 </li>
             «ELSEIF listType == LIST_TYPE_DL»
@@ -278,33 +285,33 @@ class ViewTable {
     '''
 
     def private massActionFieldsInner(Entity it) '''
-        <label for="«appName.toFirstLower»Action" class="col-«IF application.targets('3.0')»md«ELSE»sm«ENDIF»-3 «IF application.targets('3.0')»col-form«ELSE»control«ENDIF»-label">{{ __('With selected «nameMultiple.formatForDisplay»') }}</label>
+        <label for="«appName.toFirstLower»Action" class="col-«IF application.targets('3.0')»md«ELSE»sm«ENDIF»-3 «IF application.targets('3.0')»col-form«ELSE»control«ENDIF»-label">«IF application.targets('3.0')»{% trans %}With selected «nameMultiple.formatForDisplay»{% endtrans %}«ELSE»{{ __('With selected «nameMultiple.formatForDisplay»') }}«ENDIF»</label>
         <div class="col-«IF application.targets('3.0')»md«ELSE»sm«ENDIF»-6">
             <select id="«appName.toFirstLower»Action" name="action" class="form-control «IF application.targets('3.0')»form-control«ELSE»input«ENDIF»-sm">
-                <option value="">{{ __('Choose action') }}</option>
+                <option value="">«IF application.targets('3.0')»{% trans %}Choose action{% endtrans %}«ELSE»{{ __('Choose action') }}«ENDIF»</option>
                 «IF workflow != EntityWorkflowType.NONE»
                     «IF workflow == EntityWorkflowType.ENTERPRISE»
-                        <option value="accept" title="{{ __('«getWorkflowActionDescription(workflow, 'Accept')»') }}">{{ __('Accept') }}</option>
+                        <option value="accept" title="{{ «IF application.targets('3.0')»'«getWorkflowActionDescription(workflow, 'Accept')»'|trans«ELSE»__('«getWorkflowActionDescription(workflow, 'Accept')»')«ENDIF»|e('html_attr') }}">«IF application.targets('3.0')»{% trans %}Accept{% endtrans %}«ELSE»{{ __('Accept') }}«ENDIF»</option>
                         «IF ownerPermission»
-                            <option value="reject" title="{{ __('«getWorkflowActionDescription(workflow, 'Reject')»') }}">{{ __('Reject') }}</option>
+                            <option value="reject" title="{{ «IF application.targets('3.0')»'«getWorkflowActionDescription(workflow, 'Reject')»'|trans«ELSE»__('«getWorkflowActionDescription(workflow, 'Reject')»')«ENDIF»|e('html_attr') }}">«IF application.targets('3.0')»{% trans %}Reject{% endtrans %}«ELSE»{{ __('Reject') }}«ENDIF»</option>
                         «ENDIF»
-                        <option value="demote" title="{{ __('«getWorkflowActionDescription(workflow, 'Demote')»') }}">{{ __('Demote') }}</option>
+                        <option value="demote" title="{{ «IF application.targets('3.0')»'«getWorkflowActionDescription(workflow, 'Demote')»'|trans«ELSE»__('«getWorkflowActionDescription(workflow, 'Demote')»')«ENDIF»|e('html_attr') }}">«IF application.targets('3.0')»{% trans %}Demote{% endtrans %}«ELSE»{{ __('Demote') }}«ENDIF»</option>
                     «ENDIF»
-                    <option value="approve" title="{{ __('«getWorkflowActionDescription(workflow, 'Approve')»') }}">{{ __('Approve') }}</option>
+                    <option value="approve" title="{{ «IF application.targets('3.0')»'«getWorkflowActionDescription(workflow, 'Approve')»'|trans«ELSE»__('«getWorkflowActionDescription(workflow, 'Approve')»')«ENDIF»|e('html_attr') }}">«IF application.targets('3.0')»{% trans %}Approve{% endtrans %}«ELSE»{{ __('Approve') }}«ENDIF»</option>
                 «ENDIF»
                 «IF hasTray»
-                    <option value="unpublish" title="{{ __('«getWorkflowActionDescription(workflow, 'Unpublish')»') }}">{{ __('Unpublish') }}</option>
-                    <option value="publish" title="{{ __('«getWorkflowActionDescription(workflow, 'Publish')»') }}">{{ __('Publish') }}</option>
+                    <option value="publish" title="{{ «IF application.targets('3.0')»'«getWorkflowActionDescription(workflow, 'Publish')»'|trans«ELSE»__('«getWorkflowActionDescription(workflow, 'Publish')»')«ENDIF»|e('html_attr') }}">«IF application.targets('3.0')»{% trans %}Publish{% endtrans %}«ELSE»{{ __('Publish') }}«ENDIF»</option>
+                    <option value="unpublish" title="{{ «IF application.targets('3.0')»'«getWorkflowActionDescription(workflow, 'Unpublish')»'|trans«ELSE»__('«getWorkflowActionDescription(workflow, 'Unpublish')»')«ENDIF»|e('html_attr') }}">«IF application.targets('3.0')»{% trans %}Unpublish{% endtrans %}«ELSE»{{ __('Unpublish') }}«ENDIF»</option>
                 «ENDIF»
                 «IF hasArchive»
-                    <option value="archive" title="{{ __('«getWorkflowActionDescription(workflow, 'Archive')»') }}">{{ __('Archive') }}</option>
-                    <option value="unarchive" title="{{ __('«getWorkflowActionDescription(workflow, 'Unarchive')»') }}">{{ __('Unarchive') }}</option>
+                    <option value="archive" title="{{ «IF application.targets('3.0')»'«getWorkflowActionDescription(workflow, 'Archive')»'|trans«ELSE»__('«getWorkflowActionDescription(workflow, 'Archive')»')«ENDIF»|e('html_attr') }}">«IF application.targets('3.0')»{% trans %}Archive{% endtrans %}«ELSE»{{ __('Archive') }}«ENDIF»</option>
+                    <option value="unarchive" title="{{ «IF application.targets('3.0')»'«getWorkflowActionDescription(workflow, 'Unarchive')»'|trans«ELSE»__('«getWorkflowActionDescription(workflow, 'Unarchive')»')«ENDIF»|e('html_attr') }}">«IF application.targets('3.0')»{% trans %}Unarchive{% endtrans %}«ELSE»{{ __('Unarchive') }}«ENDIF»</option>
                 «ENDIF»
-                <option value="delete" title="{{ __('«getWorkflowActionDescription(workflow, 'Delete')»') }}">{{ __('Delete') }}</option>
+                <option value="delete" title="{{ «IF application.targets('3.0')»'«getWorkflowActionDescription(workflow, 'Delete')»'|trans«ELSE»__('«getWorkflowActionDescription(workflow, 'Delete')»')«ENDIF»|e('html_attr') }}">«IF application.targets('3.0')»{% trans %}Delete{% endtrans %}«ELSE»{{ __('Delete') }}«ENDIF»</option>
             </select>
         </div>
         <div class="col-«IF application.targets('3.0')»md«ELSE»sm«ENDIF»-3">
-            <input type="submit" value="{{ __('Submit') }}" class="btn btn-«IF application.targets('3.0')»primary«ELSE»default«ENDIF» btn-sm" />
+            <input type="submit" value="{{ «IF application.targets('3.0')»'Submit'|trans«ELSE»__('Submit')«ENDIF»|e('html_attr') }}" class="btn btn-«IF application.targets('3.0')»primary«ELSE»default«ENDIF» btn-sm" />
         </div>
     '''
 
@@ -339,11 +346,11 @@ class ViewTable {
     '''
 
     def private headerSortingLink(Object it, DataObject entity, String fieldName, String label) '''
-        <a href="{{ sort.«fieldName».url }}" title="{{ __f('Sort by %s', {'%s': '«label.formatForDisplay»'}) }}" class="{{ sort.«fieldName».class }}">{{ __('«label.formatForDisplayCapital»') }}</a>
+        <a href="{{ sort.«fieldName».url }}" title="«IF entity.application.targets('3.0')»'Sort by %s'|trans({'%s': '«label.formatForDisplay»'})«ELSE»{{ __f('Sort by %s', {'%s': '«label.formatForDisplay»'})«ENDIF»|e('html_attr') }}" class="{{ sort.«fieldName».class }}">«IF entity.application.targets('3.0')»{% trans %}«label.formatForDisplayCapital»{% endtrans %}«ELSE»{{ __('«label.formatForDisplayCapital»') }}«ENDIF»</a>
     '''
 
     def private headerTitle(Object it, DataObject entity, String fieldName, String label) '''
-        {{ __('«label.formatForDisplayCapital»') }}
+        «IF entity.application.targets('3.0')»{% trans %}«label.formatForDisplayCapital»{% endtrans %}«ELSE»{{ __('«label.formatForDisplayCapital»') }}«ENDIF»
     '''
 
     def private displayEntry(Object it, Boolean useTarget) '''
@@ -372,7 +379,7 @@ class ViewTable {
     def private dispatch displayEntryInner(DerivedField it, Boolean useTarget) '''
         «IF #['name', 'title'].contains(name)»
             «IF entity instanceof Entity && (entity as Entity).hasDisplayAction»
-                <a href="{{ path('«application.appName.formatForDB»_«entity.name.formatForDB»_' ~ routeArea ~ 'display'«(entity as Entity).routeParams(entity.name.formatForCode, true)») }}" title="{{ __('View detail page')|e('html_attr') }}">«displayLeadingEntry»</a>
+                <a href="{{ path('«application.appName.formatForDB»_«entity.name.formatForDB»_' ~ routeArea ~ 'display'«(entity as Entity).routeParams(entity.name.formatForCode, true)») }}" title="{{ «IF application.targets('3.0')»'View detail page'|trans«ELSE»__('View detail page')«ENDIF»|e('html_attr') }}">«displayLeadingEntry»</a>
             «ELSE»
                 «displayLeadingEntry»
             «ENDIF»
@@ -399,10 +406,10 @@ class ViewTable {
               {{ «relObjName»|«application.appName.formatForDB»_formattedTitle }}
             «IF linkEntity.hasDisplayAction»
                 {% «IF application.targets('3.0')»endapply«ELSE»endspaceless«ENDIF» %}</a>
-                <a id="«linkEntity.name.formatForCode»Item{{ «mainEntity.name.formatForCode».getKey() }}_rel_{{ «relObjName».getKey() }}Display" href="{{ path('«application.appName.formatForDB»_«linkEntity.name.formatForDB»_' ~ routeArea ~ 'display', {«IF !linkEntity.hasSluggableFields || !linkEntity.slugUnique»«linkEntity.routePkParams(relObjName, true)»«ENDIF»«linkEntity.appendSlug(relObjName, true)», raw: 1}) }}" title="{{ __('Open quick view window')|e('html_attr') }}" class="«application.vendorAndName.toLowerCase»-inline-window «IF application.targets('3.0')»d-none«ELSE»hidden«ENDIF»" data-modal-title="{{ «relObjName»|«application.appName.formatForDB»_formattedTitle|e('html_attr') }}"><i class="fa fa-id-card«IF !application.targets('3.0')»-o«ENDIF»"></i></a>
+                <a id="«linkEntity.name.formatForCode»Item{{ «mainEntity.name.formatForCode».getKey() }}_rel_{{ «relObjName».getKey() }}Display" href="{{ path('«application.appName.formatForDB»_«linkEntity.name.formatForDB»_' ~ routeArea ~ 'display', {«IF !linkEntity.hasSluggableFields || !linkEntity.slugUnique»«linkEntity.routePkParams(relObjName, true)»«ENDIF»«linkEntity.appendSlug(relObjName, true)», raw: 1}) }}" title="{{ «IF application.targets('3.0')»'Open quick view window'|trans«ELSE»__('Open quick view window')«ENDIF»|e('html_attr') }}" class="«application.vendorAndName.toLowerCase»-inline-window «IF application.targets('3.0')»d-none«ELSE»hidden«ENDIF»" data-modal-title="{{ «relObjName»|«application.appName.formatForDB»_formattedTitle|e('html_attr') }}"><i class="fa fa-id-card«IF !application.targets('3.0')»-o«ENDIF»"></i></a>
             «ENDIF»
         {% else %}
-            {{ __('Not set.') }}
+            «IF application.targets('3.0')»{% trans %}Not set{% endtrans %}«ELSE»{{ __('Not set.') }}«ENDIF»
         {% endif %}
     '''
 
@@ -433,7 +440,7 @@ class ViewTable {
         «IF listType != LIST_TYPE_TABLE»
             <«listType.asItemTag»>
         «ELSE»
-            <td id="«new MenuViews().itemActionContainerViewId(it)»«idSuffix»" headers="hItemActions«idSuffix»" class="actions nowrap«IF !application.targets('3.0')» z-w02«ENDIF»">
+            <td id="«new MenuViews().itemActionContainerViewId(it)»«idSuffix»" headers="hItemActions«idSuffix»" class="actions«IF !application.targets('3.0')» nowrap z-w02«ENDIF»">
         «ENDIF»
             «new MenuViews().itemActions(it, 'view', idSuffix)»
         </«listType.asItemTag»>

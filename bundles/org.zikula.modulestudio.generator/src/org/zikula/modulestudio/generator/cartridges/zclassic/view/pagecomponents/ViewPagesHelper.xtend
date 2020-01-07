@@ -1,6 +1,8 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.view.pagecomponents
 
+import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.Entity
+import de.guite.modulestudio.metamodel.NamedObject
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
@@ -10,16 +12,28 @@ class ViewPagesHelper {
     extension Utils = new Utils
 
     def commonHeader(Entity it) '''
+        «docsWithVariables(application)»
+        «new MenuViews().viewActions(it)»
+
+    '''
+
+    def docsWithVariables(NamedObject it, Application app) '''
         «IF null !== documentation && !documentation.empty»
-            «IF !documentation.containedTwigVariables.empty»
-                <p class="alert alert-info">{{ __f('«documentation.replace('\'', '\\\'').replaceTwigVariablesForTranslation»', {«documentation.containedTwigVariables.map[v|'\'%' + v + '%\': ' + v + '|default'].join(', ')»}) }}</p>
+            «IF app.targets('3.0')»
+                «IF !documentation.containedTwigVariables.empty»
+                    <p class="alert alert-info">{% trans with {«documentation.containedTwigVariables.map[v|'\'%' + v + '%\': ' + v + '|default'].join(', ')»} %}«documentation.replace('\'', '\\\'').replaceTwigVariablesForTranslation»{% endtrans %}</p>
+                «ELSE»
+                    <p class="alert alert-info">{% trans %}«documentation.replace('\'', '\\\'')»{% endtrans %}</p>
+                «ENDIF»
             «ELSE»
-                <p class="alert alert-info">{{ __('«documentation.replace('\'', '\\\'')»') }}</p>
+                «IF !documentation.containedTwigVariables.empty»
+                    <p class="alert alert-info">{{ __f('«documentation.replace('\'', '\\\'').replaceTwigVariablesForTranslation»', {«documentation.containedTwigVariables.map[v|'\'%' + v + '%\': ' + v + '|default'].join(', ')»}) }}</p>
+                «ELSE»
+                    <p class="alert alert-info">{{ __('«documentation.replace('\'', '\\\'')»') }}</p>
+                «ENDIF»
             «ENDIF»
 
         «ENDIF»
-        «new MenuViews().viewActions(it)»
-
     '''
 
     def callDisplayHooks(Entity it) '''

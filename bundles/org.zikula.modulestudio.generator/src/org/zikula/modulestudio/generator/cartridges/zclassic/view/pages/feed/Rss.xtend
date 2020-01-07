@@ -1,5 +1,6 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.view.pages.feed
 
+import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.StringField
 import de.guite.modulestudio.metamodel.TextField
@@ -18,23 +19,26 @@ class Rss {
     extension UrlExtensions = new UrlExtensions
     extension Utils = new Utils
 
-    def generate(Entity it, String appName, IMostFileSystemAccess fsa) {
+    def generate(Entity it, IMostFileSystemAccess fsa) {
         if (!hasViewAction) {
             return
         }
         ('Generating RSS view templates for entity "' + name.formatForDisplay + '"').printIfNotTesting(fsa)
 
         var templateFilePath = templateFileWithExtension('view', 'rss')
-        fsa.generateFile(templateFilePath, rssView(appName))
+        fsa.generateFile(templateFilePath, rssView(application))
 
         if (application.separateAdminTemplates) {
             templateFilePath = templateFileWithExtension('Admin/view', 'rss')
-            fsa.generateFile(templateFilePath, rssView(appName))
+            fsa.generateFile(templateFilePath, rssView(application))
         }
     }
 
-    def private rssView(Entity it, String appName) '''
+    def private rssView(Entity it, Application app) '''
         {# purpose of this template: «nameMultiple.formatForDisplay» rss feed #}
+        «IF !app.isSystemModule && app.targets('3.0')»
+            {% trans_default_domain '«app.appName.formatForDB»' %}
+        «ENDIF»
         <?xml version="1.0" encoding="{% set charset = pageGetVar('meta.charset') %}{% if charset == 'ISO-8859-15' %}ISO-8859-1{% else %}{{ charset }}{% endif %}" ?>
         <rss version="2.0"
             xmlns:dc="http://purl.org/dc/elements/1.1/"
@@ -45,10 +49,10 @@ class Rss {
             xmlns:atom="http://www.w3.org/2005/Atom">
         {#<rss version="0.92">#}
             <channel>
-                <title>{{ __('Latest «nameMultiple.formatForDisplay»') }}</title>
+                <title>«IF app.targets('3.0')»{% trans %}Latest «nameMultiple.formatForDisplay»{% endtrans %}«ELSE»{{ __('Latest «nameMultiple.formatForDisplay»') }}«ENDIF»</title>
                 <link>{{ app.request.schemeAndHttpHost ~ app.request.basePath }}</link>
                 <atom:link href="{{ app.request.schemeAndHttpHost ~ app.request.basePath ~ app.request.pathInfo }}" rel="self" type="application/rss+xml" />
-                <description>{{ __('A direct feed showing the list of «nameMultiple.formatForDisplay»') }} - {{ getSystemVar('slogan') }}</description>
+                <description>«IF app.targets('3.0')»{% trans %}A direct feed showing the list of «nameMultiple.formatForDisplay»{% endtrans %}«ELSE»{{ __('A direct feed showing the list of «nameMultiple.formatForDisplay»') }}«ENDIF» - {{ getSystemVar('slogan') }}</description>
                 <language>{{ app.request.locale }}</language>
                 {# commented out as imagepath is not defined and we can't know whether this logo exists or not
                 <image>
@@ -63,9 +67,9 @@ class Rss {
         «val objName = name.formatForCode»
         {% for «objName» in items %}
             <item>
-                <title><![CDATA[{{ «objName»|«application.appName.formatForDB»_formattedTitle«IF !skipHookSubscribers»|notifyFilters('«appName.formatForDB».filterhook.«nameMultiple.formatForDB»')|safeHtml«ENDIF» }}]]></title>
-                <link>{{ url('«appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ '«defaultAction»'«IF hasDisplayAction»«routeParams(objName, true)»«ENDIF») }}</link>
-                <guid>{{ url('«appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ '«defaultAction»'«IF hasDisplayAction»«routeParams(objName, true)»«ENDIF») }}</guid>
+                <title><![CDATA[{{ «objName»|«app.appName.formatForDB»_formattedTitle«IF !skipHookSubscribers»|notifyFilters('«app.appName.formatForDB».filterhook.«nameMultiple.formatForDB»')|safeHtml«ENDIF» }}]]></title>
+                <link>{{ url('«app.appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ '«defaultAction»'«IF hasDisplayAction»«routeParams(objName, true)»«ENDIF») }}</link>
+                <guid>{{ url('«app.appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ '«defaultAction»'«IF hasDisplayAction»«routeParams(objName, true)»«ENDIF») }}</guid>
                 «IF standardFields»
                     {% if «objName».createdBy|default and «objName».createdBy.getUid() > 0 %}
                         {% set creatorAttributes = «objName».createdBy.getAttributes() %}
@@ -73,7 +77,7 @@ class Rss {
                     {% endif %}
                 «ENDIF»
                 «IF categorisable»
-                    <category><![CDATA[{{ __('Categories') }}: {% for catMapping in «objName».categories %}{{ catMapping.category.display_name[app.request.locale]|default(catMapping.category.name) }}{% if not loop.last %}, {% endif %}{% endfor %}]]></category>
+                    <category><![CDATA[«IF app.targets('3.0')»{% trans %}Categories{% endtrans %}«ELSE»{{ __('Categories') }}«ENDIF»: {% for catMapping in «objName».categories %}{{ catMapping.category.display_name[app.request.locale]|default(catMapping.category.name) }}{% if not loop.last %}, {% endif %}{% endfor %}]]></category>
                 «ENDIF»
                 «description(objName)»
             </item>

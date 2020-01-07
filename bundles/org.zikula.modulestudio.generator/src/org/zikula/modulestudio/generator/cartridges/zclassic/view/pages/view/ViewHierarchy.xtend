@@ -55,7 +55,10 @@ class ViewHierarchy {
                 {% extends routeArea == 'admin' ? '«appName»::adminBase.html.twig' : '«appName»::base.html.twig' %}
             «ENDIF»
         «ENDIF»
-        {% block title __('«name.formatForDisplayCapital» hierarchy') %}
+        «IF !application.isSystemModule && application.targets('3.0')»
+            {% trans_default_domain '«application.appName.formatForDB»' %}
+        «ENDIF»
+        {% block title «IF application.targets('3.0')»'«name.formatForDisplayCapital» hierarchy'|trans«ELSE»__('«name.formatForDisplayCapital» hierarchy')«ENDIF» %}
         «IF !application.separateAdminTemplates || isAdmin»
             {% block admin_page_icon 'code-«IF application.targets('3.0')»branch«ELSE»fork«ENDIF»' %}
         «ENDIF»
@@ -94,14 +97,14 @@ class ViewHierarchy {
         {% set idPrefix = '«name.formatForCode.toFirstLower»Tree' ~ rootId %}
 
         <p>
-            <label for="{{ idPrefix }}SearchTerm">{{ __('Quick search') }}:</label>
+            <label for="{{ idPrefix }}SearchTerm">«IF application.targets('3.0')»{% trans %}Quick search{% endtrans %}«ELSE»{{ __('Quick search') }}«ENDIF»:</label>
             <input type="search" id="{{ idPrefix }}SearchTerm" value="" />
         </p>
 
-        <div class="btn-toolbar" role="toolbar" aria-label="{{ __('Tree button toolbar') }}">
+        <div class="btn-toolbar" role="toolbar" aria-label="{{ «IF application.targets('3.0')»'Tree button toolbar'|trans«ELSE»__('Tree button toolbar')«ENDIF»|e('html_attr') }}">
             <div class="btn-group btn-group-sm" role="group" aria-label="«name.formatForDB» buttons">
-                <button type="button" id="{{ idPrefix }}Expand" class="btn btn-«IF application.targets('3.0')»secondary«ELSE»info«ENDIF»" title="{{ __('Expand all nodes') }}"><i class="fa fa-expand"></i> {{ __('Expand all') }}</button>
-                <button type="button" id="{{ idPrefix }}Collapse" class="btn btn-«IF application.targets('3.0')»secondary«ELSE»info«ENDIF»" title="{{ __('Collapse all nodes') }}"><i class="fa fa-compress"></i> {{ __('Collapse all') }}</button>
+                <button type="button" id="{{ idPrefix }}Expand" class="btn btn-«IF application.targets('3.0')»secondary«ELSE»info«ENDIF»" title="{{ «IF application.targets('3.0')»'Expand all nodes'|trans«ELSE»__('Expand all nodes')«ENDIF»|e('html_attr') }}"><i class="fa fa-expand"></i> «IF application.targets('3.0')»{% trans %}Expand all{% endtrans %}«ELSE»{{ __('Expand all') }}«ENDIF»</button>
+                <button type="button" id="{{ idPrefix }}Collapse" class="btn btn-«IF application.targets('3.0')»secondary«ELSE»info«ENDIF»" title="{{ «IF application.targets('3.0')»'Collapse all nodes'|trans«ELSE»__('Collapse all nodes')«ENDIF»|e('html_attr') }}"><i class="fa fa-compress"></i> «IF application.targets('3.0')»{% trans %}Collapse all{% endtrans %}«ELSE»{{ __('Collapse all') }}«ENDIF»</button>
             </div>
         </div>
         <div class="clearfix">

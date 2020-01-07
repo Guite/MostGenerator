@@ -19,24 +19,27 @@ class Ics {
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
 
-    def generate(Entity it, String appName, IMostFileSystemAccess fsa) {
+    def generate(Entity it, IMostFileSystemAccess fsa) {
         if (!hasDisplayAction) {
             return
         }
         ('Generating ICS view templates for entity "' + name.formatForDisplay + '"').printIfNotTesting(fsa)
 
         var templateFilePath = templateFileWithExtension('display', 'ics')
-        fsa.generateFile(templateFilePath, icsDisplay(appName))
+        fsa.generateFile(templateFilePath, icsDisplay)
 
         if (application.separateAdminTemplates) {
             templateFilePath = templateFileWithExtension('Admin/display', 'ics')
-            fsa.generateFile(templateFilePath, icsDisplay(appName))
+            fsa.generateFile(templateFilePath, icsDisplay)
         }
     }
 
-    def private icsDisplay(Entity it, String appName) '''
+    def private icsDisplay(Entity it) '''
         «val objName = name.formatForCode»
         {# purpose of this template: «nameMultiple.formatForDisplay» display ics view #}
+        «IF !application.isSystemModule && application.targets('3.0')»
+            {% trans_default_domain '«application.appName.formatForDB»' %}
+        «ENDIF»
         BEGIN:VCALENDAR
         VERSION:2.0
         PRODID:{{ app.request.schemeAndHttpHost }}
@@ -44,7 +47,7 @@ class Ics {
         BEGIN:VEVENT
         DTSTART:{{ «objName»|date('Ymd\THi00\Z') }}
         DTEND:{{ «objName»|date('Ymd\THi00\Z') }}
-        {% if «objName».zipcode != '' and «objName».city is not empty %}{% set location = «objName».zipcode ~ ' ' ~ «objName».city %}LOCATION{{ location|«appName.formatForDB»_icalText }}{% endif %}
+        {% if «objName».zipcode != '' and «objName».city is not empty %}{% set location = «objName».zipcode ~ ' ' ~ «objName».city %}LOCATION{{ location|«application.appName.formatForDB»_icalText }}{% endif %}
         «IF geographical»
             {% if «objName».latitude and «objName».longitude %}GEO:{{ «objName».longitude }};{{ «objName».latitude }}
             {% endif %}
@@ -59,10 +62,10 @@ class Ics {
         «IF categorisable»
             CATEGORIES:{% for propName, catMapping in «objName».categories %}{% if not loop.first %},{% endif %}{{ catMapping.category.display_name[lang]|upper }}{% endfor %}
         «ENDIF»
-        SUMMARY{{ «objName»|«application.appName.formatForDB»_formattedTitle|«appName.formatForDB»_icalText }}
+        SUMMARY{{ «objName»|«application.appName.formatForDB»_formattedTitle|«application.appName.formatForDB»_icalText }}
         «IF hasTextFieldsEntity»
             «val field = getTextFieldsEntity.head»
-            {% if «objName».«field.name.formatForCode» is not empty %}DESCRIPTION{{ «objName».«field.name.formatForCode»|«appName.formatForDB»_icalText }}{% endif %}
+            {% if «objName».«field.name.formatForCode» is not empty %}DESCRIPTION{{ «objName».«field.name.formatForCode»|«application.appName.formatForDB»_icalText }}{% endif %}
         «ENDIF»
         PRIORITY:5
         «IF hasUploadFieldsEntity»

@@ -27,27 +27,30 @@ class Csv {
 
     SimpleFields fieldHelper = new SimpleFields
 
-    def generate(Entity it, String appName, IMostFileSystemAccess fsa) {
+    def generate(Entity it, IMostFileSystemAccess fsa) {
         if (!hasViewAction) {
             return
         }
         ('Generating CSV view templates for entity "' + name.formatForDisplay + '"').printIfNotTesting(fsa)
 
         var templateFilePath = templateFileWithExtension('view', 'csv')
-        fsa.generateFile(templateFilePath, csvView(appName))
+        fsa.generateFile(templateFilePath, csvView)
 
         if (application.separateAdminTemplates) {
             templateFilePath = templateFileWithExtension('Admin/view', 'csv')
-            fsa.generateFile(templateFilePath, csvView(appName))
+            fsa.generateFile(templateFilePath, csvView)
         }
     }
 
-    def private csvView(Entity it, String appName) '''
+    def private csvView(Entity it) '''
         {# purpose of this template: «nameMultiple.formatForDisplay» view csv view #}
-        «FOR field : getDisplayFields.filter[name != 'workflowState'] SEPARATOR ';'»«field.headerLine»«ENDFOR»«IF geographical»«FOR geoFieldName : newArrayList('latitude', 'longitude')»;"{{ __('«geoFieldName.formatForDisplayCapital»') }}"«ENDFOR»«ENDIF»«IF hasVisibleWorkflow»;"{{ __('Workflow state') }}"«ENDIF»«headerLinesRelations»
+        «IF !application.isSystemModule && application.targets('3.0')»
+            {% trans_default_domain '«application.appName.formatForDB»' %}
+        «ENDIF»
+        «FOR field : getDisplayFields.filter[name != 'workflowState'] SEPARATOR ';'»«field.headerLine»«ENDFOR»«IF geographical»«FOR geoFieldName : newArrayList('latitude', 'longitude')»;"«IF application.targets('3.0')»{% trans %}«geoFieldName.formatForDisplayCapital»{% endtrans %}«ELSE»{{ __('«geoFieldName.formatForDisplayCapital»') }}«ENDIF»"«ENDFOR»«ENDIF»«IF hasVisibleWorkflow»;"«IF application.targets('3.0')»{% trans %}Workflow state{% endtrans %}«ELSE»{{ __('Workflow state') }}«ENDIF»"«ENDIF»«headerLinesRelations»
         «val objName = name.formatForCode»
         {% for «objName» in items %}
-        «FOR field : getDisplayFields.filter[name != 'workflowState'] SEPARATOR ';'»«field.displayEntry»«ENDFOR»«IF geographical»«FOR geoFieldName : newArrayList('latitude', 'longitude')»;"{{ «name.formatForCode».«geoFieldName»|«appName.formatForDB»_geoData }}"«ENDFOR»«ENDIF»«IF hasVisibleWorkflow»;"{{ «name.formatForCode».workflowState|«appName.formatForDB»_objectState(false)|lower }}"«ENDIF»«dataLinesRelations»
+        «FOR field : getDisplayFields.filter[name != 'workflowState'] SEPARATOR ';'»«field.displayEntry»«ENDFOR»«IF geographical»«FOR geoFieldName : newArrayList('latitude', 'longitude')»;"{{ «name.formatForCode».«geoFieldName»|«application.appName.formatForDB»_geoData }}"«ENDFOR»«ENDIF»«IF hasVisibleWorkflow»;"{{ «name.formatForCode».workflowState|«application.appName.formatForDB»_objectState(false)|lower }}"«ENDIF»«dataLinesRelations»
         {% endfor %}
     '''
 
@@ -70,9 +73,9 @@ class Csv {
         output
     }
 
-    def private headerLine(DerivedField it) '''"{{ __('«name.formatForDisplayCapital»') }}"'''
+    def private headerLine(DerivedField it) '''"«IF application.targets('3.0')»{% trans %}«name.formatForDisplayCapital»{% endtrans %}«ELSE»{{ __('«name.formatForDisplayCapital»') }}«ENDIF»"'''
 
-    def private headerLineRelation(JoinRelationship it, Boolean useTarget) ''';"{{ __('«getRelationAliasName(useTarget).formatForDisplayCapital»') }}"'''
+    def private headerLineRelation(JoinRelationship it, Boolean useTarget) ''';"«IF application.targets('3.0')»{% trans %}«getRelationAliasName(useTarget).formatForDisplayCapital»{% endtrans %}«ELSE»{{ __('«getRelationAliasName(useTarget).formatForDisplayCapital»') }}«ENDIF»"'''
 
     def private dispatch displayEntry(DerivedField it) '''"«fieldHelper.displayField(it, entity.name.formatForCode, 'viewcsv')»"'''
 

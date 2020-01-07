@@ -107,29 +107,29 @@ class Views {
                 new ViewHierarchy().generate(entity, appName, fsa)
             }
             if (generateCsvTemplates) {
-                new Csv().generate(entity, appName, fsa)
+                new Csv().generate(entity, fsa)
             }
             if (generateRssTemplates) {
-                new Rss().generate(entity, appName, fsa)
+                new Rss().generate(entity, fsa)
             }
             if (generateAtomTemplates) {
-                new Atom().generate(entity, appName, fsa)
+                new Atom().generate(entity, fsa)
             }
         }
         if (entity.hasViewAction || entity.hasDisplayAction) {
             if (generateXmlTemplates) {
-                new Xml().generate(entity, appName, fsa)
+                new Xml().generate(entity, fsa)
             }
             if (generateJsonTemplates) {
-                new Json().generate(entity, appName, fsa)
+                new Json().generate(entity, fsa)
             }
             if (generateKmlTemplates && entity.geographical) {
-                new Kml().generate(entity, appName, fsa)
+                new Kml().generate(entity, fsa)
             }
         }
         if (entity.hasDisplayAction) {
             if (generateIcsTemplates && null !== entity.startDateField && null !== entity.endDateField) {
-                new Ics().generate(entity, appName, fsa)
+                new Ics().generate(entity, fsa)
             }
         }
         if (entity.hasDisplayAction) {

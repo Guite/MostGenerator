@@ -36,6 +36,9 @@ class CommonIntegrationTemplates {
 
     def private displayDescTemplate(Entity it, Application app) '''
         {# Purpose of this template: Display «nameMultiple.formatForDisplay» within an external context #}
+        «IF !app.isSystemModule && app.targets('3.0')»
+            {% trans_default_domain '«app.appName.formatForDB»' %}
+        «ENDIF»
         <dl>
             {% for «name.formatForCode» in items %}
                 <dt>{{ «name.formatForCode»|«app.appName.formatForDB»_formattedTitle }}</dt>
@@ -53,29 +56,35 @@ class CommonIntegrationTemplates {
                     «ENDIF»
                 «ENDIF»
                 «IF hasDisplayAction»
-                    <dd>«detailLink(app.appName)»</dd>
+                    <dd>«detailLink»</dd>
                 «ENDIF»
             {% else %}
-                <dt>{{ __('No entries found.') }}</dt>
+                <dt>«IF app.targets('3.0')»{% trans %}No «nameMultiple.formatForDisplay» found.{% endtrans %}«ELSE»{{ __('No «nameMultiple.formatForDisplay» found.') }}«ENDIF»</dt>
             {% endfor %}
         </dl>
     '''
 
     def private displayTemplate(Entity it, Application app) '''
         {# Purpose of this template: Display «nameMultiple.formatForDisplay» within an external context #}
+        «IF !app.isSystemModule && app.targets('3.0')»
+            {% trans_default_domain '«app.appName.formatForDB»' %}
+        «ENDIF»
         {% for «name.formatForCode» in items %}
             <h3>{{ «name.formatForCode»|«app.appName.formatForDB»_formattedTitle }}</h3>
             «IF hasDisplayAction»
-                <p>«detailLink(app.appName)»</p>
+                <p>«detailLink»</p>
             «ENDIF»
         {% endfor %}
     '''
 
     def private fallbackDisplayTemplate(Application it) '''
         {# Purpose of this template: Display objects within an external context #}
+        «IF !isSystemModule && targets('3.0')»
+            {% trans_default_domain '«appName.formatForDB»' %}
+        «ENDIF»
     '''
 
-    def private detailLink(Entity it, String appName) '''
-        <a href="{{ path('«appName.formatForDB»_«name.formatForDB»_display'«routeParams(name.formatForCode, true)») }}" title="{{ __('Read more')|e('html_attr') }}">{{ __('Read more') }}</a>
+    def private detailLink(Entity it) '''
+        <a href="{{ path('«application.appName.formatForDB»_«name.formatForDB»_display'«routeParams(name.formatForCode, true)») }}" title="{{ «IF application.targets('3.0')»'Read more'|trans«ELSE»__('Read more')«ENDIF»|e('html_attr') }}">«IF application.targets('3.0')»{% trans %}Read more{% endtrans %}«ELSE»{{ __('Read more') }}«ENDIF»</a>
     '''
 }

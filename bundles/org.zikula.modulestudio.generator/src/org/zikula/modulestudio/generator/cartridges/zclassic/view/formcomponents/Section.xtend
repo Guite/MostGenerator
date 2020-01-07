@@ -39,11 +39,11 @@ class Section {
         «IF geographical»
             «IF useGroupingTabs('edit')»
                 <div role="tabpanel" class="tab-pane fade" id="tabMap" aria-labelledby="mapTab">
-                    <h3>{{ __('Map') }}</h3>
+                    <h3>«IF app.targets('3.0')»{% trans %}Map{% endtrans %}«ELSE»{{ __('Map') }}«ENDIF»</h3>
             «ELSE»
                 <fieldset class="«app.appName.toLowerCase»-map">
             «ENDIF»
-                <legend>{{ __('Map') }}</legend>
+                <legend>«IF app.targets('3.0')»{% trans %}Map{% endtrans %}«ELSE»{{ __('Map') }}«ENDIF»</legend>
                 <div id="mapContainer" class="«app.appName.toLowerCase»-mapcontainer">
                 </div>
                 <br />
@@ -78,7 +78,7 @@ class Section {
     def private additionalRemark(Entity it) '''
         «IF workflow != EntityWorkflowType.NONE»
             <fieldset>
-                <legend>{{ __('Communication') }}</legend>
+                <legend>«IF application.targets('3.0')»{% trans %}Communication{% endtrans %}«ELSE»{{ __('Communication') }}«ENDIF»</legend>
                 {{ form_row(form.additionalNotificationRemarks) }}
             </fieldset>
 
@@ -90,7 +90,7 @@ class Section {
             {% if form.moderationSpecificCreator is defined or form.moderationSpecificCreationDate is defined %}
                 «IF useGroupingTabs('edit')»
                     <div role="tabpanel" class="tab-pane fade" id="tabModeration" aria-labelledby="moderationTab">
-                        <h3>{{ __('Moderation') }}</h3>
+                        <h3>«IF application.targets('3.0')»{% trans %}Moderation{% endtrans %}«ELSE»{{ __('Moderation') }}«ENDIF»</h3>
                         {% if form.moderationSpecificCreator is defined %}
                             {{ form_row(form.moderationSpecificCreator) }}
                         {% endif %}
@@ -100,7 +100,7 @@ class Section {
                     </div>
                 «ELSE»
                     <fieldset id="moderationFieldsSection">
-                        <legend>{{ __('Moderation') }} <i class="fa fa-expand"></i></legend>
+                        <legend>«IF application.targets('3.0')»{% trans %}Moderation{% endtrans %}«ELSE»{{ __('Moderation') }}«ENDIF» <i class="fa fa-expand"></i></legend>
                         <div id="moderationFieldsContent">
                             {% if form.moderationSpecificCreator is defined %}
                                 {{ form_row(form.moderationSpecificCreator) }}

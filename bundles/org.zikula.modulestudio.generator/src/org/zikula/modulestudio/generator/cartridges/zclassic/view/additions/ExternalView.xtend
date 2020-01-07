@@ -53,6 +53,9 @@ class ExternalView {
 
     def private displayTemplate(Entity it, Application app) '''
         {# Purpose of this template: Display one certain «name.formatForDisplay» within an external context #}
+        «IF !app.isSystemModule && app.targets('3.0')»
+            {% trans_default_domain '«app.appName.formatForDB»' %}
+        «ENDIF»
         «IF hasImageFieldsEntity»
             {{ pageAddAsset('javascript', asset('magnific-popup/jquery.magnific-popup.min.js'), 90) }}
             {{ pageAddAsset('stylesheet', asset('magnific-popup/magnific-popup.css'), 90) }}
@@ -150,6 +153,9 @@ class ExternalView {
 
     def private itemInfoTemplate(Entity it, Application app) '''
         {# Purpose of this template: Display item information for previewing from other modules #}
+        «IF !app.isSystemModule && app.targets('3.0')»
+            {% trans_default_domain '«app.appName.formatForDB»' %}
+        «ENDIF»
         <dl id="«name.formatForCode»{{ «name.formatForCode».getKey() }}">
         <dt>{{ «name.formatForCode»|«app.appName.formatForDB»_formattedTitle«IF !skipHookSubscribers»|notifyFilters('«app.name.formatForDB».filter_hooks.«nameMultiple.formatForDB».filter')|safeHtml«ENDIF» }}</dt>
         «IF hasImageFieldsEntity»
@@ -168,13 +174,16 @@ class ExternalView {
 
     def private findTemplate(Entity it, Application app) '''
         {# Purpose of this template: Display a popup selector of «nameMultiple.formatForDisplay» for scribite integration #}
+        «IF !app.isSystemModule && app.targets('3.0')»
+            {% trans_default_domain '«app.appName.formatForDB»' %}
+        «ENDIF»
         {% set useFinder = true %}
         «IF app.targets('3.0')»
             {% extends '@«app.appName»/raw.html.twig' %}
         «ELSE»
             {% extends '«app.appName»::raw.html.twig' %}
         «ENDIF»
-        {% block title __('Search and select «name.formatForDisplay»') %}
+        {% block title «IF app.targets('3.0')»'Search and select «name.formatForDisplay»'|trans«ELSE»__('Search and select «name.formatForDisplay»')«ENDIF» %}
         {% block content %}
             <div class="container">
                 «findTemplateObjectTypeSwitcher(app)»
@@ -189,7 +198,7 @@ class ExternalView {
                 {{ form_start(finderForm, {attr: {id: '«app.appName.toFirstLower»SelectorForm'}}) }}
                 {{ form_errors(finderForm) }}
                 <fieldset>
-                    <legend>{{ __('Search and select «name.formatForDisplay»') }}</legend>
+                    <legend>«IF application.targets('3.0')»{% trans %}Search and select «name.formatForDisplay»{% endtrans %}«ELSE»{{ __('Search and select «name.formatForDisplay»') }}«ENDIF»</legend>
                     «IF categorisable»
                         {% if featureActivationHelper.isEnabled(constant('«app.vendor.formatForCodeCapital»\\«app.name.formatForCodeCapital»Module\\Helper\\FeatureActivationHelper::CATEGORIES'), '«name.formatForCode»') %}
                             {{ form_row(finderForm.categories) }}
@@ -246,11 +255,11 @@ class ExternalView {
                     {% if '«entity.name.formatForCode»' in activatedObjectTypes %}
                         «IF app.targets('3.0')»
                             <li class="nav-item">
-                                <a href="{{ path('«app.appName.formatForDB»_external_finder', {objectType: '«entity.name.formatForCode»', editor: editorName}) }}" title="{{ __('Search and select «entity.name.formatForDisplay»') }}" class="nav-link{{ objectType == '«entity.name.formatForCode»' ? ' active' : '' }}">{{ __('«entity.nameMultiple.formatForDisplayCapital»') }}</a>
+                                <a href="{{ path('«app.appName.formatForDB»_external_finder', {objectType: '«entity.name.formatForCode»', editor: editorName}) }}" title="{{ 'Search and select «entity.name.formatForDisplay»'|trans|e('html_attr') }}" class="nav-link{{ objectType == '«entity.name.formatForCode»' ? ' active' : '' }}">{% trans %}«entity.nameMultiple.formatForDisplayCapital»{% endtrans %}</a>
                             </li>
                         «ELSE»
                             <li{{ objectType == '«entity.name.formatForCode»' ? ' class="active"' : '' }}>
-                                <a href="{{ path('«app.appName.formatForDB»_external_finder', {objectType: '«entity.name.formatForCode»', editor: editorName}) }}" title="{{ __('Search and select «entity.name.formatForDisplay»') }}">{{ __('«entity.nameMultiple.formatForDisplayCapital»') }}</a>
+                                <a href="{{ path('«app.appName.formatForDB»_external_finder', {objectType: '«entity.name.formatForCode»', editor: editorName}) }}" title="{{ __('Search and select «entity.name.formatForDisplay»')|e('html_attr') }}">{{ __('«entity.nameMultiple.formatForDisplayCapital»') }}</a>
                             </li>
                         «ENDIF»
                     {% endif %}
@@ -262,7 +271,7 @@ class ExternalView {
 
     def private findTemplateObjectId(Entity it, Application app) '''
         <div class="form-group«IF app.targets('3.0')» row«ENDIF»">
-            <label class="«IF app.targets('3.0')»col-md-3 col-form«ELSE»col-sm-3 control«ENDIF»-label">{{ __('«name.formatForDisplayCapital»') }}:</label>
+            <label class="«IF app.targets('3.0')»col-md-3 col-form«ELSE»col-sm-3 control«ENDIF»-label">«IF app.targets('3.0')»{% trans %}«name.formatForDisplayCapital»{% endtrans %}«ELSE»{{ __('«name.formatForDisplayCapital»') }}«ENDIF»:</label>
             <div class="col-«IF app.targets('3.0')»md«ELSE»sm«ENDIF»-9">
                 <div id="«app.appName.toLowerCase»ItemContainer">
                     «IF hasImageFieldsEntity»
@@ -317,9 +326,9 @@ class ExternalView {
                             «ENDIF»
                         {% else %}
                             «IF hasImageFieldsEntity»
-                                {% if not onlyImages %}<li>{% endif %}{{ __('No «nameMultiple.formatForDisplay» found.') }}{% if not onlyImages %}</li>{% endif %}
+                                {% if not onlyImages %}<li>{% endif %}«IF application.targets('3.0')»{% trans %}No «nameMultiple.formatForDisplay» found.{% endtrans %}«ELSE»{{ __('No «nameMultiple.formatForDisplay» found.') }}«ENDIF»{% if not onlyImages %}</li>{% endif %}
                             «ELSE»
-                                <li>{{ __('No «nameMultiple.formatForDisplay» found.') }}</li>
+                                <li>«IF application.targets('3.0')»{% trans %}No «nameMultiple.formatForDisplay» found.{% endtrans %}«ELSE»{{ __('No «nameMultiple.formatForDisplay» found.') }}«ENDIF»</li>
                             «ENDIF»
                         {% endfor %}
                     «IF hasImageFieldsEntity»

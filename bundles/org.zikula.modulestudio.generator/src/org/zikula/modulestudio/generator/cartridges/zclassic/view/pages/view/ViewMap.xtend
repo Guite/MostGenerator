@@ -51,7 +51,14 @@ class ViewMap {
                 {% extends routeArea == 'admin' ? '«appName»::adminBase.html.twig' : '«appName»::base.html.twig' %}
             «ENDIF»
         «ENDIF»
-        {% block title own ? __('My «nameMultiple.formatForDisplay»') : __('«nameMultiple.formatForDisplayCapital» list') %}
+        «IF !application.isSystemModule && application.targets('3.0')»
+            {% trans_default_domain '«application.appName.formatForDB»' %}
+        «ENDIF»
+        «IF application.targets('3.0')»
+             {% block title own ? 'My «nameMultiple.formatForDisplay»'|trans : '«nameMultiple.formatForDisplayCapital» list'|trans %}
+         «ELSE»
+             {% block title own ? __('My «nameMultiple.formatForDisplay»') : __('«nameMultiple.formatForDisplayCapital» list') %}
+         «ENDIF»
         «IF !application.separateAdminTemplates || isAdmin»
             {% block admin_page_icon 'map«IF application.targets('3.0')»«ELSE»-o«ENDIF»' %}
         «ENDIF»

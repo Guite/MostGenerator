@@ -14,7 +14,7 @@ class Json {
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
 
-    def generate(Entity it, String appName, IMostFileSystemAccess fsa) {
+    def generate(Entity it, IMostFileSystemAccess fsa) {
         if (!(hasViewAction || hasDisplayAction)) {
             return
         }
@@ -22,27 +22,30 @@ class Json {
         var templateFilePath = ''
         if (hasViewAction) {
             templateFilePath = templateFileWithExtension('view', 'json')
-            fsa.generateFile(templateFilePath, jsonView(appName))
+            fsa.generateFile(templateFilePath, jsonView)
 
             if (application.separateAdminTemplates) {
                 templateFilePath = templateFileWithExtension('Admin/view', 'json')
-                fsa.generateFile(templateFilePath, jsonView(appName))
+                fsa.generateFile(templateFilePath, jsonView)
             }
         }
         if (hasDisplayAction) {
             templateFilePath = templateFileWithExtension('display', 'json')
-            fsa.generateFile(templateFilePath, jsonDisplay(appName))
+            fsa.generateFile(templateFilePath, jsonDisplay)
 
             if (application.separateAdminTemplates) {
                 templateFilePath = templateFileWithExtension('Admin/display', 'json')
-                fsa.generateFile(templateFilePath, jsonDisplay(appName))
+                fsa.generateFile(templateFilePath, jsonDisplay)
             }
         }
     }
 
-    def private jsonView(Entity it, String appName) '''
+    def private jsonView(Entity it) '''
         «val objName = name.formatForCode»
         {# purpose of this template: «nameMultiple.formatForDisplay» view json view #}
+        «IF !application.isSystemModule && application.targets('3.0')»
+            {% trans_default_domain '«application.appName.formatForDB»' %}
+        «ENDIF»
         [
         {% for «objName» in items %}
             {% if not loop.first %},{% endif %}
@@ -51,9 +54,12 @@ class Json {
         ]
     '''
 
-    def private jsonDisplay(Entity it, String appName) '''
+    def private jsonDisplay(Entity it) '''
         «val objName = name.formatForCode»
         {# purpose of this template: «nameMultiple.formatForDisplay» display json view #}
+        «IF !application.isSystemModule && application.targets('3.0')»
+            {% trans_default_domain '«application.appName.formatForDB»' %}
+        «ENDIF»
         {{ «objName».toArray()|json_encode()|raw }}
     '''
 }

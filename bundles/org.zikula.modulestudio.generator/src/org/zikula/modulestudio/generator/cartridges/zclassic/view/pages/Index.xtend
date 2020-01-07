@@ -43,13 +43,20 @@ class Index {
                 {% extends routeArea == 'admin' ? '«application.appName»::adminBase.html.twig' : '«application.appName»::base.html.twig' %}
             «ENDIF»
         «ENDIF»
-        {% block title __('«nameMultiple.formatForDisplayCapital»') %}
+        «IF !application.isSystemModule && application.targets('3.0')»
+            {% trans_default_domain '«application.appName.formatForDB»' %}
+        «ENDIF»
+        {% block title «IF application.targets('3.0')»'«nameMultiple.formatForDisplayCapital»'|trans«ELSE»__('«nameMultiple.formatForDisplayCapital»')«ENDIF» %}
         «IF !application.separateAdminTemplates || isAdmin»
             {% block admin_page_icon 'home' %}
         «ENDIF»
         {% block content %}
             <div class="«application.appName.toLowerCase»-«name.formatForDB» «application.appName.toLowerCase»-index">
-                <p>{{ __('Welcome to the «name.formatForDisplay» section of the «application.name.formatForDisplayCapital» application.') }}</p>
+                «IF application.targets('3.0')»
+                    <p>{% trans %}Welcome to the «name.formatForDisplay» section of the «application.name.formatForDisplayCapital» application.{% endtrans %}</p>
+                «ELSE»
+                    <p>{{ __('Welcome to the «name.formatForDisplay» section of the «application.name.formatForDisplayCapital» application.') }}</p>
+                «ENDIF»
             </div>
         {% endblock %}
     '''

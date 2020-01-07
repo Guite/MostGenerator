@@ -1,5 +1,6 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.view.pages.feed
 
+import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.StringField
 import de.guite.modulestudio.metamodel.TextField
@@ -18,45 +19,48 @@ class Atom {
     extension UrlExtensions = new UrlExtensions
     extension Utils = new Utils
 
-    def generate(Entity it, String appName, IMostFileSystemAccess fsa) {
+    def generate(Entity it, IMostFileSystemAccess fsa) {
         if (!hasViewAction) {
             return
         }
         ('Generating Atom view templates for entity "' + name.formatForDisplay + '"').printIfNotTesting(fsa)
 
         var templateFilePath = templateFileWithExtension('view', 'atom')
-        fsa.generateFile(templateFilePath, atomView(appName))
+        fsa.generateFile(templateFilePath, atomView(application))
 
         if (application.separateAdminTemplates) {
             templateFilePath = templateFileWithExtension('Admin/view', 'atom')
-            fsa.generateFile(templateFilePath, atomView(appName))
+            fsa.generateFile(templateFilePath, atomView(application))
         }
     }
 
-    def private atomView(Entity it, String appName) '''
+    def private atomView(Entity it, Application app) '''
         {# purpose of this template: «nameMultiple.formatForDisplay» atom feed #}
+        «IF !app.isSystemModule && app.targets('3.0')»
+            {% trans_default_domain '«app.appName.formatForDB»' %}
+        «ENDIF»
         <?xml version="1.0" encoding="{% set charset = pageGetVar('meta.charset') %}{% if charset == 'ISO-8859-15' %}ISO-8859-1{% else %}{{ charset }}{% endif %}" ?>
         <feed xmlns="http://www.w3.org/2005/Atom">
-            <title type="text">{{ __('Latest «nameMultiple.formatForDisplay»') }}</title>
-            <subtitle type="text">{{ __('A direct feed showing the list of «nameMultiple.formatForDisplay»') }} - {{ getSystemVar('slogan') }}</subtitle>
+            <title type="text">«IF app.targets('3.0')»{% trans %}Latest «nameMultiple.formatForDisplay»{% endtrans %}«ELSE»{{ __('Latest «nameMultiple.formatForDisplay»') }}«ENDIF»</title>
+            <subtitle type="text">«IF app.targets('3.0')»{% trans %}A direct feed showing the list of «nameMultiple.formatForDisplay»{% endtrans %}«ELSE»{{ __('A direct feed showing the list of «nameMultiple.formatForDisplay»') }}«ENDIF» - {{ getSystemVar('slogan') }}</subtitle>
             <author>
                 <name>{{ getSystemVar('sitename') }}</name>
             </author>
         {% set amountOfItems = items|length %}
         {% if amountOfItems > 0 %}
-        {% set uniqueID %}tag:{{ app.request.schemeAndHttpHost|replace({'http://': '', '/': ''}) }},{{ «IF standardFields»items.first.createdDate«ELSE»'now'«ENDIF»|date('Y-m-d') }}:{{ path('«appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ '«defaultAction»'«IF hasDisplayAction»«routeParams('items.first', true)»«ENDIF») }}{% endset %}
+        {% set uniqueID %}tag:{{ app.request.schemeAndHttpHost|replace({'http://': '', '/': ''}) }},{{ «IF standardFields»items.first.createdDate«ELSE»'now'«ENDIF»|date('Y-m-d') }}:{{ path('«app.appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ '«defaultAction»'«IF hasDisplayAction»«routeParams('items.first', true)»«ENDIF») }}{% endset %}
             <id>{{ uniqueID }}</id>
             <updated>{{ «IF standardFields»items[0].updatedDate«ELSE»'now'«ENDIF»|date('Y-m-dTH:M:SZ') }}</updated>
         {% endif %}
-            <link rel="alternate" type="text/html" hreflang="{{ app.request.locale }}" href="{{ url('«appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ '«IF hasIndexAction»index«ELSEIF hasViewAction»view«ELSE»«defaultAction»«ENDIF»') }}" />
+            <link rel="alternate" type="text/html" hreflang="{{ app.request.locale }}" href="{{ url('«app.appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ '«IF hasIndexAction»index«ELSEIF hasViewAction»view«ELSE»«defaultAction»«ENDIF»') }}" />
             <link rel="self" type="application/atom+xml" href="{{ app.request.schemeAndHttpHost ~ app.request.basePath }}" />
             <rights>Copyright (c) {{ 'now'|date('Y') }}, {{ app.request.schemeAndHttpHost }}</rights>
         «val objName = name.formatForCode»
         {% for «objName» in items %}
             <entry>
-                <title type="html">{{ «objName»|«application.appName.formatForDB»_formattedTitle«IF !skipHookSubscribers»|notifyFilters('«appName.formatForDB».filterhook.«nameMultiple.formatForDB»')|safeHtml«ENDIF» }}</title>
-                <link rel="alternate" type="text/html" href="{{ url('«appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ '«defaultAction»'«IF hasDisplayAction»«routeParams(objName, true)»«ENDIF») }}" />
-                {% set uniqueID %}tag:{{ app.request.schemeAndHttpHost|replace({ 'http://': '', '/': '' }) }},{{ «IF standardFields»«objName».createdDate«ELSE»'now'«ENDIF»|date('Y-m-d') }}:{{ path('«appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ '«defaultAction»'«IF hasDisplayAction»«routeParams(objName, true)»«ENDIF») }}{% endset %}
+                <title type="html">{{ «objName»|«app.appName.formatForDB»_formattedTitle«IF !skipHookSubscribers»|notifyFilters('«app.appName.formatForDB».filterhook.«nameMultiple.formatForDB»')|safeHtml«ENDIF» }}</title>
+                <link rel="alternate" type="text/html" href="{{ url('«app.appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ '«defaultAction»'«IF hasDisplayAction»«routeParams(objName, true)»«ENDIF») }}" />
+                {% set uniqueID %}tag:{{ app.request.schemeAndHttpHost|replace({ 'http://': '', '/': '' }) }},{{ «IF standardFields»«objName».createdDate«ELSE»'now'«ENDIF»|date('Y-m-d') }}:{{ path('«app.appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ '«defaultAction»'«IF hasDisplayAction»«routeParams(objName, true)»«ENDIF») }}{% endset %}
                 <id>{{ uniqueID }}</id>
                 «IF standardFields»
                     {% if «objName».updatedDate|default %}

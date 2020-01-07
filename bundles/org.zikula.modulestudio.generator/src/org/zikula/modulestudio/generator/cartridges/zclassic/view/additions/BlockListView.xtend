@@ -2,12 +2,14 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.view.additions
 
 import de.guite.modulestudio.metamodel.Application
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
+import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class BlockListView {
 
+    extension FormattingExtensions = new FormattingExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
@@ -27,11 +29,17 @@ class BlockListView {
 
     def private displayTemplate(Application it) '''
         {# Purpose of this template: Display items within a block (fallback template) #}
+        «IF !isSystemModule && targets('3.0')»
+            {% trans_default_domain '«appName.formatForDB»' %}
+        «ENDIF»
         Default block for generic item list.
     '''
 
     def private editTemplate(Application it) '''
         {# Purpose of this template: Edit block for generic item list view #}
+        «IF !isSystemModule && targets('3.0')»
+            {% trans_default_domain '«appName.formatForDB»' %}
+        «ENDIF»
         {{ form_row(form.objectType) }}
         «IF hasCategorisableEntities»
             {% if form.categories is defined %}

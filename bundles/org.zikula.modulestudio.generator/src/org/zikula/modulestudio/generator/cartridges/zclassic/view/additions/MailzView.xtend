@@ -34,16 +34,22 @@ class MailzView {
 
     def private textTemplate(Entity it, Application app) '''
         {# Purpose of this template: Display «nameMultiple.formatForDisplay» in text mailings #}
+        «IF !app.isSystemModule && app.targets('3.0')»
+            {% trans_default_domain '«app.appName.formatForDB»' %}
+        «ENDIF»
         {% for «name.formatForCode» in items %}
         «mailzEntryText»
         -----
         {% else %}
-        {{ __('No «nameMultiple.formatForDisplay» found.') }}
+        «IF app.targets('3.0')»{% trans %}No «nameMultiple.formatForDisplay» found.{% endtrans %}«ELSE»{{ __('No «nameMultiple.formatForDisplay» found.') }}«ENDIF»
         {% endfor %}
     '''
 
     def private htmlTemplate(Entity it, Application app) '''
         {# Purpose of this template: Display «nameMultiple.formatForDisplay» in html mailings #}
+        «IF !app.isSystemModule && app.targets('3.0')»
+            {% trans_default_domain '«app.appName.formatForDB»' %}
+        «ENDIF»
         «IF app.generateListContentType»{#«ENDIF»
         <ul>
         {% for «name.formatForCode» in items %}
@@ -51,7 +57,7 @@ class MailzView {
                 «mailzEntryHtml»
             </li>
         {% else %}
-            <li>{{ __('No «nameMultiple.formatForDisplay» found.') }}</li>
+            <li>«IF app.targets('3.0')»{% trans %}No «nameMultiple.formatForDisplay» found.{% endtrans %}«ELSE»{{ __('No «nameMultiple.formatForDisplay» found.') }}«ENDIF»</li>
         {% endfor %}
         </ul>
         «IF app.generateListContentType»#}

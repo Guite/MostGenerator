@@ -33,23 +33,23 @@ class SimpleFields {
     def dispatch displayField(BooleanField it, String objName, String page) {
         if (ajaxTogglability && (page == 'view' || page == 'display')) '''
             {% set itemId = «objName».getKey() %}
-            <a id="toggle«name.formatForCodeCapital»{{ itemId }}" href="javascript:void(0);" class="«application.vendorAndName.toLowerCase»-ajax-toggle «IF application.targets('3.0')»d-none«ELSE»hidden«ENDIF»" data-object-type="«entity.name.formatForCode»" data-field-name="«name.formatForCode»" data-item-id="{{ itemId }}">
-                <i class="fa fa-check text-success{% if not «objName».«name.formatForCode» %} «IF application.targets('3.0')»d-none«ELSE»hidden«ENDIF»{% endif %}" id="yes«name.formatForCodeCapital»{{ itemId }}" title="{{ __('This setting is enabled. Click here to disable it.') }}"></i>
-                <i class="fa fa-times text-danger{% if «objName».«name.formatForCode» %} «IF application.targets('3.0')»d-none«ELSE»hidden«ENDIF»{% endif %}" id="no«name.formatForCodeCapital»{{ itemId }}" title="{{ __('This setting is disabled. Click here to enable it.') }}"></i>
+            <a id="toggle«name.formatForCodeCapital»{{ itemId|e('html_attr') }}" href="javascript:void(0);" class="«application.vendorAndName.toLowerCase»-ajax-toggle «IF application.targets('3.0')»d-none«ELSE»hidden«ENDIF»" data-object-type="«entity.name.formatForCode»" data-field-name="«name.formatForCode»" data-item-id="{{ itemId|e('html_attr') }}">
+                <i class="fa fa-check text-success{% if not «objName».«name.formatForCode» %} «IF application.targets('3.0')»d-none«ELSE»hidden«ENDIF»{% endif %}" id="yes«name.formatForCodeCapital»{{ itemId }}" title="{{ «IF application.targets('3.0')»'This setting is enabled. Click here to disable it.'|trans«ELSE»__('This setting is enabled. Click here to disable it.')«ENDIF»|e('html_attr') }}"></i>
+                <i class="fa fa-times text-danger{% if «objName».«name.formatForCode» %} «IF application.targets('3.0')»d-none«ELSE»hidden«ENDIF»{% endif %}" id="no«name.formatForCodeCapital»{{ itemId }}" title="{{ «IF application.targets('3.0')»'This setting is disabled. Click here to enable it.'|trans«ELSE»__('This setting is disabled. Click here to enable it.')«ENDIF»|e('html_attr') }}"></i>
             </a>
-            <noscript><div id="noscript«name.formatForCodeCapital»{{ itemId }}">
+            <noscript><div id="noscript«name.formatForCodeCapital»{{ itemId|e('html_attr') }}">
                 {% if «objName».«name.formatForCode» %}
-                    <i class="fa fa-check text-success" title="{{ __('Yes') }}"></i>
+                    <i class="fa fa-check text-success" title="{{ «IF application.targets('3.0')»'Yes'|trans«ELSE»__('Yes')«ENDIF»|e('html_attr') }}"></i>
                 {% else %}
-                    <i class="fa fa-times text-danger" title="{{ __('No') }}"></i>
+                    <i class="fa fa-times text-danger" title="{{ «IF application.targets('3.0')»'No'|trans«ELSE»__('No')«ENDIF»|e('html_attr') }}"></i>
                 {% endif %}
             </div></noscript>
         '''
         else '''
             {% if «objName».«name.formatForCode» %}
-                <i class="fa fa-check text-success" title="{{ __('Yes') }}"></i>
+                <i class="fa fa-check text-success" title="{{ «IF application.targets('3.0')»'Yes'|trans«ELSE»__('Yes')«ENDIF»|e('html_attr') }}"></i>
             {% else %}
-                <i class="fa fa-times text-danger" title="{{ __('No') }}"></i>
+                <i class="fa fa-times text-danger" title="{{ «IF application.targets('3.0')»'No'|trans«ELSE»__('No')«ENDIF»|e('html_attr') }}"></i>
             {% endif %}
         '''
     }
@@ -74,7 +74,7 @@ class SimpleFields {
             «IF page == 'display'»
                   {% if not isQuickView %}
             «ENDIF»
-                {{ «realName».uid|profileLinkByUserId }}{% if currentUser.loggedIn %}{% set sendMessageUrl = «realName».uid|messageSendLink(urlOnly=true) %}{% if sendMessageUrl != '#' %}<a href="{{ sendMessageUrl }}" title="{{ __f('Send private message to %userName%', {'%userName%': «realName».uname}) }}"><i class="fa fa-envelope«IF !application.targets('3.0')»-o«ENDIF»"></i></a>{% endif %}{% endif %}
+                {{ «realName».uid|profileLinkByUserId }}{% if currentUser.loggedIn %}{% set sendMessageUrl = «realName».uid|messageSendLink(urlOnly=true) %}{% if sendMessageUrl != '#' %}{% set linkTitle = «IF application.targets('3.0')»'Send private message to %userName%'|trans({'%userName%': «realName».uname})«ELSE»__f('Send private message to %userName%', {'%userName%': «realName».uname})«ENDIF» %}<a href="{{ sendMessageUrl }}" title="{{ linkTitle|e('html_attr') }}"><i class="fa fa-envelope«IF !application.targets('3.0')»-o«ENDIF»"></i></a>{% endif %}{% endif %}
                 <span class="avatar">{{ userAvatar(«realName».uid, {rating: 'g'}) }}</span>
             «IF page == 'display'»
                 {% else %}
@@ -120,7 +120,7 @@ class SimpleFields {
             «IF page == 'display'»
                   {% if not isQuickView %}
             «ENDIF»
-            <a href="mailto:{{ «realName»|protectMail }}" title="{{ __('Send an email') }}"><i class="fa fa-envelope"></i></a>
+            <a href="mailto:{{ «realName»|protectMail }}" title="{{ «IF application.targets('3.0')»'Send an email'|trans«ELSE»__('Send an email')«ENDIF»|e('html_attr') }}"><i class="fa fa-envelope"></i></a>
             «IF page == 'display'»
                 {% else %}
                     {{ «realName»|protectMail }}
@@ -142,7 +142,7 @@ class SimpleFields {
             «IF page == 'display'»
                   {% if not isQuickView %}
             «ENDIF»
-            <a href="{{ «realName» }}" title="{{ __('Visit this page') }}"><i class="fa fa-external-link-square«IF application.targets('3.0')»-alt«ENDIF»"></i></a>
+            <a href="{{ «realName» }}" title="{{ «IF application.targets('3.0')»'Visit this page'|trans«ELSE»__('Visit this page')«ENDIF»|e('html_attr') }}"><i class="fa fa-external-link-square«IF application.targets('3.0')»-alt«ENDIF»"></i></a>
             «IF page == 'display'»
                 {% else %}
                     {{ «realName» }}
@@ -170,7 +170,7 @@ class SimpleFields {
                 {% set thumbOptions = attribute(thumbRuntimeOptions, '«entity.name.formatForCode»«name.formatForCodeCapital»') %}
                 <img src="«IF application.generatePdfSupport»{% if app.request.requestFormat == 'pdf' %}{{ «realName».getPathname() }}{% else %}«ENDIF»{{ «realName».getPathname()|imagine_filter('zkroot', thumbOptions) }}«IF application.generatePdfSupport»{% endif %}«ENDIF»" alt="{{ «objName»|«application.appName.formatForDB»_formattedTitle|e('html_attr') }}" width="{{ thumbOptions.thumbnail.size[0] }}" height="{{ thumbOptions.thumbnail.size[1] }}" class="img-thumbnail" />
             {% else %}
-                {{ __('Download') }} ({{ «realName»Meta.size|«appNameSmall»_fileSize(«realName».getPathname(), false, false) }})
+                «IF application.targets('3.0')»{% trans %}Download{% endtrans %}«ELSE»{{ __('Download') }}«ENDIF» ({{ «realName»Meta.size|«appNameSmall»_fileSize(«realName».getPathname(), false, false) }})
             {% endif %}
             </a>
             «IF !mandatory»

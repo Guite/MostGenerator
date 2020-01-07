@@ -41,13 +41,20 @@ class Delete {
                 {% extends routeArea == 'admin' ? '«app.appName»::adminBase.html.twig' : '«app.appName»::base.html.twig' %}
             «ENDIF»
         «ENDIF»
-        {% block title __('Delete «name.formatForDisplay»') %}
+        «IF !app.isSystemModule && app.targets('3.0')»
+            {% trans_default_domain '«app.appName.formatForDB»' %}
+        «ENDIF»
+        {% block title «IF app.targets('3.0')»'Delete «name.formatForDisplay»'|trans«ELSE»__('Delete «name.formatForDisplay»')«ENDIF» %}
         «IF !application.separateAdminTemplates || isAdmin»
             {% block admin_page_icon 'trash-«IF application.targets('3.0')»alt«ELSE»o«ENDIF»' %}
         «ENDIF»
         {% block content %}
             <div class="«app.appName.toLowerCase»-«name.formatForDB» «app.appName.toLowerCase»-delete">
-                <p class="alert alert-warning">{{ __f('Do you really want to delete this «name.formatForDisplay»: "%name%" ?', {'%name%': «name.formatForCode»|«app.appName.formatForDB»_formattedTitle}) }}</p>
+                «IF app.targets('3.0')»
+                    <p class="alert alert-warning">{% trans with {'%name%': «name.formatForCode»|«app.appName.formatForDB»_formattedTitle} %}Do you really want to delete this «name.formatForDisplay»: "%name%" ?{% endtrans %}</p>
+                «ELSE»
+                    <p class="alert alert-warning">{{ __f('Do you really want to delete this «name.formatForDisplay»: "%name%" ?', {'%name%': «name.formatForCode»|«app.appName.formatForDB»_formattedTitle}) }}</p>
+                «ENDIF»
 
                 {% form_theme deleteForm with [
                     '@«app.appName»/Form/bootstrap_«IF application.targets('3.0')»4«ELSE»3«ENDIF».html.twig',
@@ -70,7 +77,7 @@ class Delete {
                     {% endif %}
                 «ENDIF»
                 <fieldset>
-                    <legend>{{ __('Confirmation prompt') }}</legend>
+                    <legend>«IF app.targets('3.0')»{% trans %}Confirmation prompt{% endtrans %}«ELSE»{{ __('Confirmation prompt') }}«ENDIF»</legend>
                     <div class="form-group«IF application.targets('3.0')» row«ENDIF»">
                         <div class="«IF application.targets('3.0')»col-md-9 offset-md-3«ELSE»col-sm-offset-3 col-sm-9«ENDIF»">
                             {{ form_widget(deleteForm.delete) }}

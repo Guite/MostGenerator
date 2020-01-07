@@ -32,6 +32,9 @@ class ViewQuickNavForm {
 
     def private quickNavForm(Entity it) '''
         {# purpose of this template: «nameMultiple.formatForDisplay» view filter form #}
+        «IF !application.isSystemModule && application.targets('3.0')»
+            {% trans_default_domain '«application.appName.formatForDB»' %}
+        «ENDIF»
         {% if permissionHelper.mayUseQuickNav('«name.formatForCode»') %}
             {% form_theme quickNavForm with [
                 'bootstrap_«IF application.targets('3.0')»4«ELSE»3«ENDIF»_layout.html.twig'
@@ -39,7 +42,7 @@ class ViewQuickNavForm {
             {{ form_start(quickNavForm, {attr: {id: '«application.appName.toFirstLower»«name.formatForCodeCapital»QuickNavForm', class: '«application.appName.toLowerCase»-quicknav «IF application.targets('3.0')»form-inline«ELSE»navbar-form«ENDIF»', role: 'navigation'}}) }}
             {{ form_errors(quickNavForm) }}
             <a href="#collapse«name.formatForCodeCapital»QuickNav" role="button" data-toggle="collapse" class="btn btn-default" aria-expanded="false" aria-controls="collapse«name.formatForCodeCapital»QuickNav">
-                <i class="fa fa-filter" aria-hidden="true"></i> {{ __('Filter') }}
+                <i class="fa fa-filter" aria-hidden="true"></i> «IF application.targets('3.0')»{% trans %}Filter{% endtrans %}«ELSE»{{ __('Filter') }}«ENDIF»
             </a>
             <div id="collapse«name.formatForCodeCapital»QuickNav" class="collapse">
                 «IF application.targets('3.0')»
@@ -55,10 +58,10 @@ class ViewQuickNavForm {
     '''
 
     def private formContent(Entity it) '''
-        <h3>{{ __('Quick navigation') }}</h3>
+        <h3>«IF application.targets('3.0')»{% trans %}Quick navigation{% endtrans %}«ELSE»{{ __('Quick navigation') }}«ENDIF»</h3>
         «formFields»
         {{ form_widget(quickNavForm.updateview) }}
-        <a href="{{ path('«application.appName.formatForDB»_«name.formatForCode.toLowerCase»_' ~ routeArea|default ~ 'view', {tpl: app.request.query.get('tpl', ''), all: app.request.query.get('all', '')}) }}" title="{{ __('Back to default view') }}" class="btn btn-default btn-sm">{{ __('Reset') }}</a>
+        <a href="{{ path('«application.appName.formatForDB»_«name.formatForCode.toLowerCase»_' ~ routeArea|default ~ 'view', {tpl: app.request.query.get('tpl', ''), all: app.request.query.get('all', '')}) }}" title="«IF application.targets('3.0')»{% trans %}Back to default view{% endtrans %}«ELSE»{{ __('Back to default view') }}«ENDIF»" class="btn btn-default btn-sm">«IF application.targets('3.0')»{% trans %}Reset{% endtrans %}«ELSE»{{ __('Reset') }}«ENDIF»</a>
         «IF categorisable»
             {% if categoriesEnabled %}
                 {% if categoryFilter is defined and categoryFilter != true %}

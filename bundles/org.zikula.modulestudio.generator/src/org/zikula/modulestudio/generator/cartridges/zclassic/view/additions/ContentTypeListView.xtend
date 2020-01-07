@@ -30,6 +30,9 @@ class ContentTypeListView {
 
     def private editTemplate(Application it) '''
         {# Purpose of this template: edit view of generic item list content type #}
+        «IF !isSystemModule && targets('3.0')»
+            {% trans_default_domain '«appName.formatForDB»' %}
+        «ENDIF»
         {{ form_row(form.objectType) }}
         «IF hasCategorisableEntities»
             {% if form.categories is defined %}
@@ -50,7 +53,7 @@ class ContentTypeListView {
         <script>
             (function($) {
             	$('#«appName.toFirstLower»Template').change(function() {
-            	    $('#customTemplateArea').toggleClass('hidden', $(this).val() != 'custom');
+            	    $('#customTemplateArea').toggleClass('«IF targets('3.0')»d-none«ELSE»hidden«ENDIF»', 'custom' != $(this).val());
         	    }).trigger('change');
             })(jQuery)
         </script>
