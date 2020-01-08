@@ -686,6 +686,8 @@ class TechStructureFields {
                 return if (language == 'de') 'Repräsentiert eine Zeitzone.' else 'Represents a time zone.'
             case UUID:
                 return if (language == 'de') 'Repräsentiert eine UUID (Universally Unique Identifier).' else 'Represents an UUID (Universally Unique Identifier).'
+            case WEEK:
+                return if (language == 'de') 'Repräsentiert eine Wochennummer.' else 'Represents a week number.'
         }
     }
 

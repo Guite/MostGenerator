@@ -130,6 +130,9 @@ class SharedFormTypeFields {
         «IF !fields.filter(UrlField).empty»
             use «nsSymfonyFormType»UrlType;
         «ENDIF»
+        «IF app.targets('3.0') && !fields.filter(StringField).filter[role == StringRole.WEEK].empty»
+            use «nsSymfonyFormType»WeekType;
+        «ENDIF»
         use Symfony\Component\Form\FormBuilderInterface;
         «IF null !== dataObject»
             use Symfony\Component\Form\FormInterface;
@@ -605,7 +608,7 @@ class SharedFormTypeFields {
         'scale' => «scale»
     '''
 
-    def private dispatch formType(StringField it) '''«IF role == StringRole.COLOUR»«IF application.targets('2.0')»Color«ELSE»Colour«ENDIF»«ELSEIF role == StringRole.COUNTRY»Country«ELSEIF role == StringRole.CURRENCY»Currency«ELSEIF role == StringRole.LANGUAGE»Language«ELSEIF role == StringRole.LOCALE»Locale«ELSEIF role == StringRole.PASSWORD»Password«ELSEIF role == StringRole.DATE_INTERVAL && application.targets('2.0')»DateInterval«ELSEIF role == StringRole.PHONE_NUMBER»Tel«ELSEIF role == StringRole.TIME_ZONE»Timezone«ELSE»Text«ENDIF»'''
+    def private dispatch formType(StringField it) '''«IF role == StringRole.COLOUR»«IF application.targets('2.0')»Color«ELSE»Colour«ENDIF»«ELSEIF role == StringRole.COUNTRY»Country«ELSEIF role == StringRole.CURRENCY»Currency«ELSEIF role == StringRole.LANGUAGE»Language«ELSEIF role == StringRole.LOCALE»Locale«ELSEIF role == StringRole.PASSWORD»Password«ELSEIF role == StringRole.DATE_INTERVAL && application.targets('2.0')»DateInterval«ELSEIF role == StringRole.PHONE_NUMBER»Tel«ELSEIF role == StringRole.TIME_ZONE»Timezone«ELSEIF role == StringRole.WEEK && application.targets('3.0')»Week«ELSE»Text«ENDIF»'''
     def private dispatch titleAttribute(StringField it) '''«IF role == StringRole.COLOUR || role == StringRole.COUNTRY || role == StringRole.CURRENCY || (role == StringRole.DATE_INTERVAL && application.targets('2.0')) || role == StringRole.LANGUAGE || role == StringRole.LOCALE || role == StringRole.TIME_ZONE»Choose the «name.formatForDisplay»«ELSE»Enter the «name.formatForDisplay»«ENDIF»«IF null !== entity» of the «entity.name.formatForDisplay»«ENDIF».'''
     def private dispatch additionalAttributes(StringField it) '''
         'maxlength' => «length»,
@@ -668,6 +671,8 @@ class SharedFormTypeFields {
             «ELSEIF role == StringRole.TIME_ZONE»
                 'choice_translation_locale' => $this->requestStack->getCurrentRequest()->getLocale(),
                 'intl' => true
+            «ELSEIF role == StringRole.WEEK»
+                'input' => 'string'
             «ENDIF»
         «ENDIF»
     '''
