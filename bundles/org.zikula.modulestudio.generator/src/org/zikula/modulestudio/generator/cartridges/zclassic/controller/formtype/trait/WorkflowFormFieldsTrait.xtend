@@ -47,22 +47,22 @@ class WorkflowFormFieldsTrait {
         {
             $helpText = '';
             if ($options['is_moderator']«IF hasWorkflow(EntityWorkflowType.ENTERPRISE)» || $options['is_super_moderator']«ENDIF») {
-                $helpText = $this->__('These remarks (like a reason for deny) are not stored, but added to any notification emails send to the creator.');
+                $helpText = $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('These remarks (like a reason for deny) are not stored, but added to any notification emails send to the creator.');
             } elseif ($options['is_creator']) {
-                $helpText = $this->__('These remarks (like questions about conformance) are not stored, but added to any notification emails send to our moderators.');
+                $helpText = $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('These remarks (like questions about conformance) are not stored, but added to any notification emails send to our moderators.');
             }
 
             $builder->add('additionalNotificationRemarks', TextareaType::class, [
                 'mapped' => false,
-                'label' => $this->__('Additional remarks'),
+                'label' => $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Additional remarks'),
                 'label_attr' => [
                     'class' => 'tooltips',
                     'title' => $helpText
                 ],
                 'attr' => [
                     'title' => 'create' == $options['mode']
-                        ? $this->__('Enter any additions about your content')
-                        : $this->__('Enter any additions about your changes')
+                        ? $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Enter any additions about your content')
+                        : $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Enter any additions about your changes')
                 ],
                 'required' => false,
                 'help' => $helpText

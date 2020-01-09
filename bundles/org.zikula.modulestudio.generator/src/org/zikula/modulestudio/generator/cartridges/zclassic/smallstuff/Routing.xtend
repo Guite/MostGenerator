@@ -1,4 +1,4 @@
-package org.zikula.modulestudio.generator.cartridges.zclassic.controller.additions
+package org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff
 
 import de.guite.modulestudio.metamodel.Application
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
@@ -22,10 +22,10 @@ class Routing {
     }
 
     def private routingConfig(Application it) '''
-        «appName.toLowerCase»:
-            # define routing support for these controllers
-            resource: "@«appName»/Controller"
-            # enable support for defining routes by annotations
-            type: annotation
-    '''
+		«appName.toLowerCase»:
+		    # define routing support for these controllers
+		    resource: "@«appName»/Controller"
+		    # enable support for defining routes by annotations
+		    type: annotation
+	'''
 }

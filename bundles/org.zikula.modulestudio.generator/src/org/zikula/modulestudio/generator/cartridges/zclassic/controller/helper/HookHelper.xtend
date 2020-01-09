@@ -265,9 +265,14 @@ class HookHelper {
     def private hookSubscriberBaseImpl(Entity it, String category, String subscriberType) '''
         namespace «application.appNamespace»\HookSubscriber\Base;
 
+        «IF application.targets('3.0')»
+            use Symfony\Contracts\Translation\TranslatorInterface;
+        «ENDIF»
         use Zikula\Bundle\HookBundle\Category\«category»Category;
         use Zikula\Bundle\HookBundle\HookSubscriberInterface;
-        use Zikula\Common\Translator\TranslatorInterface;
+        «IF !application.targets('3.0')»
+            use Zikula\Common\Translator\TranslatorInterface;
+        «ENDIF»
 
         /**
          * Base class for «subscriberType.formatForDisplay» subscriber.
@@ -352,13 +357,16 @@ class HookHelper {
     def private filterHooksProviderBaseImpl(Application it) '''
         namespace «appNamespace»\HookProvider\Base;
 
+        «IF targets('3.0')»
+            use Symfony\Contracts\Translation\TranslatorInterface;
+        «ENDIF»
         use Zikula\Bundle\HookBundle\Category\FilterHooksCategory;
         use Zikula\Bundle\HookBundle\Hook\FilterHook;
         use Zikula\Bundle\HookBundle\«providerInterface(filterHookProvider)»;
         «IF !targets('3.0')»
             use Zikula\Bundle\HookBundle\ServiceIdTrait;
+            use Zikula\Common\Translator\TranslatorInterface;
         «ENDIF»
-        use Zikula\Common\Translator\TranslatorInterface;
 
         /**
          * Base class for filter hooks provider.
@@ -396,7 +404,7 @@ class HookHelper {
                 $hook->setData(
                     $hook->getData()
                     . '<p>'
-                    . $this->translator->__('This is a dummy addition by a generated filter provider.')
+                    . $this->translator->«IF targets('3.0')»trans«ELSE»__«ENDIF»('This is a dummy addition by a generated filter provider.')
                     . '</p>'
                 );
             }
@@ -433,6 +441,9 @@ class HookHelper {
             use Doctrine\ORM\QueryBuilder;
         «ENDIF»
         use Symfony\Component\HttpFoundation\RequestStack;
+        «IF application.targets('3.0')»
+            use Symfony\Contracts\Translation\TranslatorInterface;
+        «ENDIF»
         «IF category == 'UiHooks'»
             use Twig«IF application.targets('3.0')»\«ELSE»_«ENDIF»Environment;
         «ENDIF»
@@ -450,8 +461,8 @@ class HookHelper {
         use Zikula\Bundle\HookBundle\«providerInterface(if (category == 'FormAware') formAwareHookProvider else if (category == 'UiHooks') uiHooksProvider else HookProviderMode.ENABLED)»;
         «IF !application.targets('3.0')»
             use Zikula\Bundle\HookBundle\ServiceIdTrait;
+            use Zikula\Common\Translator\TranslatorInterface;
         «ENDIF»
-        use Zikula\Common\Translator\TranslatorInterface;
         «IF category == 'FormAware'»
             use «application.appNamespace»\Form\Type\Hook\Delete«name.formatForCodeCapital»Type;
             use «application.appNamespace»\Form\Type\Hook\Edit«name.formatForCodeCapital»Type;
@@ -864,7 +875,7 @@ class HookHelper {
 
         public function getTitle()«IF targets('3.0')»: string«ENDIF»
         {
-            return $this->translator->__('«group.formatForDisplayCapital» «category.formatForDisplay» «type»');
+            return $this->translator->«IF targets('3.0')»trans«ELSE»__«ENDIF»('«group.formatForDisplayCapital» «category.formatForDisplay» «type»');
         }
         «IF targets('3.0')»
 

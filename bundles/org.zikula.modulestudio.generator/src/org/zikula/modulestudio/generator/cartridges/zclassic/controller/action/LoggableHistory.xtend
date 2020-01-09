@@ -106,7 +106,7 @@ class LoggableHistory {
 
     def private loggableHistoryBaseImpl(Entity it) '''
         if (empty(«IF hasSluggableFields && slugUnique»$slug«ELSE»$id«ENDIF»)) {
-            throw new NotFoundHttpException($this->__('No such «name.formatForDisplay» found.'));
+            throw new NotFoundHttpException($this->«IF application.targets('3.0')»trans«ELSE»__«ENDIF»('No such «name.formatForDisplay» found.'));
         }
 
         «IF !application.targets('3.0')»
@@ -114,7 +114,7 @@ class LoggableHistory {
         «ENDIF»
         $«name.formatForCode» = $entityFactory->getRepository('«name.formatForCode»')->selectBy«IF hasSluggableFields && slugUnique»Slug($slug)«ELSE»Id($id)«ENDIF»;
         if (null === $«name.formatForCode») {
-            throw new NotFoundHttpException($this->__('No such «name.formatForDisplay» found.'));
+            throw new NotFoundHttpException($this->«IF application.targets('3.0')»trans«ELSE»__«ENDIF»('No such «name.formatForDisplay» found.'));
         }
 
         «IF !application.targets('3.0')»
@@ -152,7 +152,7 @@ class LoggableHistory {
                 if ($success) {
                     $this->addFlash(
                         'status',
-                        $this->__f(
+                        $this->«IF application.targets('3.0')»trans«ELSE»__f«ENDIF»(
                             'Done! Reverted «name.formatForDisplay» to version %version%.',
                             ['%version%' => $revertToVersion]
                         )
@@ -160,7 +160,7 @@ class LoggableHistory {
                 } else {
                     $this->addFlash(
                         'error',
-                        $this->__f(
+                        $this->«IF application.targets('3.0')»trans«ELSE»__f«ENDIF»(
                             'Error! Reverting «name.formatForDisplay» to version %version% failed.',
                             ['%version%' => $revertToVersion]
                         )
@@ -169,7 +169,7 @@ class LoggableHistory {
             } catch (Exception $exception) {
                 $this->addFlash(
                     'error',
-                    $this->__f(
+                    $this->«IF application.targets('3.0')»trans«ELSE»__f«ENDIF»(
                         'Sorry, but an error occured during the %action% action. Please apply the changes again!',
                         ['%action%' => 'update']
                     ) . '  ' . $exception->getMessage()

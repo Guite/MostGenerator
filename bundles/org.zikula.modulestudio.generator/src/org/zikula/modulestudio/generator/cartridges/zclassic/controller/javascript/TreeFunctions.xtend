@@ -201,8 +201,8 @@ class TreeFunctions {
             });
             if (true === hasDisplayAction) {
                 actions.display = {
-                    label: Translator.__('Display'),
-                    title: Translator.__('Show detail page'),
+                    label: Translator.«IF targets('3.0')»trans«ELSE»__«ENDIF»('Display'),
+                    title: Translator.«IF targets('3.0')»trans«ELSE»__«ENDIF»('Show detail page'),
                     action: function (node) {
                         document.location.href = Routing.generate('«appName.formatForDB»_' + objectType.toLowerCase() + '_display', nodeEntityRouteArgs, true);
                     },
@@ -211,8 +211,8 @@ class TreeFunctions {
             }
             if (true === hasEditAction) {
                 actions.edit = {
-                    label: Translator.__('Edit'),
-                    title: Translator.__('Show edit form'),
+                    label: Translator.«IF targets('3.0')»trans«ELSE»__«ENDIF»('Edit'),
+                    title: Translator.«IF targets('3.0')»trans«ELSE»__«ENDIF»('Show edit form'),
                     action: function (node) {
                         document.location.href = Routing.generate('«appName.formatForDB»_' + objectType.toLowerCase() + '_edit', nodeEntityRouteArgs, true);
                     },
@@ -220,24 +220,24 @@ class TreeFunctions {
                 };
             }
             actions.addChildNode = {
-                label: Translator.__('Add child node'),
-                title: Translator.__('Add child node'),
+                label: Translator.«IF targets('3.0')»trans«ELSE»__«ENDIF»('Add child node'),
+                title: Translator.«IF targets('3.0')»trans«ELSE»__«ENDIF»('Add child node'),
                 action: function (node) {
                     «vendorAndName»PerformTreeOperation(objectType, rootId, 'addChildNode');
                 },
                 icon: 'fa fa-fw fa-plus'
             };
             actions.deleteNode = {
-                label: Translator.__('Delete'),
-                title: Translator.__('Delete this node'),
+                label: Translator.«IF targets('3.0')»trans«ELSE»__«ENDIF»('Delete'),
+                title: Translator.«IF targets('3.0')»trans«ELSE»__«ENDIF»('Delete this node'),
                 action: function (node) {
                     var confirmQuestion;
                     var amountOfChildren;
 
-                    confirmQuestion = Translator.__('Do you really want to remove this node?');
+                    confirmQuestion = Translator.«IF targets('3.0')»trans«ELSE»__«ENDIF»('Do you really want to remove this node?');
                     amountOfChildren = currentNode.children.length;
                     if (amountOfChildren > 0) {
-                        confirmQuestion = Translator.__('Do you really want to remove this node including all child nodes?');
+                        confirmQuestion = Translator.«IF targets('3.0')»trans«ELSE»__«ENDIF»('Do you really want to remove this node including all child nodes?');
                     }
                     if (false !== window.confirm(confirmQuestion)) {
                         «vendorAndName»PerformTreeOperation(objectType, rootId, 'deleteNode');
@@ -258,8 +258,8 @@ class TreeFunctions {
         if (!currentNodeDom.is(':first-child')) {
             // has previous sibling
             actions.moveTop = {
-                label: Translator.__('Move to top'),
-                title: Translator.__('Move to top position'),
+                label: Translator.«IF targets('3.0')»trans«ELSE»__«ENDIF»('Move to top'),
+                title: Translator.«IF targets('3.0')»trans«ELSE»__«ENDIF»('Move to top position'),
                 action: function (node) {
                     «vendorAndName»PerformTreeOperation(objectType, rootId, 'moveNodeTop');
                 },
@@ -267,8 +267,8 @@ class TreeFunctions {
                 separator_before: true
             };
             actions.moveUp = {
-                label: Translator.__('Move up'),
-                title: Translator.__('Move one position up'),
+                label: Translator.«IF targets('3.0')»trans«ELSE»__«ENDIF»('Move up'),
+                title: Translator.«IF targets('3.0')»trans«ELSE»__«ENDIF»('Move one position up'),
                 action: function (node) {
                     «vendorAndName»PerformTreeOperation(objectType, rootId, 'moveNodeUp');
                 },
@@ -278,8 +278,8 @@ class TreeFunctions {
         if (!currentNodeDom.is(':last-child')) {
             // has next sibling
             actions.moveDown = {
-                label: Translator.__('Move down'),
-                title: Translator.__('Move one position down'),
+                label: Translator.«IF targets('3.0')»trans«ELSE»__«ENDIF»('Move down'),
+                title: Translator.«IF targets('3.0')»trans«ELSE»__«ENDIF»('Move one position down'),
                 action: function (node) {
                     «vendorAndName»PerformTreeOperation(objectType, rootId, 'moveNodeDown');
                 },
@@ -287,8 +287,8 @@ class TreeFunctions {
                 separator_before: currentNodeDom.is(':first-child')
             };
             actions.moveBottom = {
-                label: Translator.__('Move to bottom'),
-                title: Translator.__('Move to bottom position'),
+                label: Translator.«IF targets('3.0')»trans«ELSE»__«ENDIF»('Move to bottom'),
+                title: Translator.«IF targets('3.0')»trans«ELSE»__«ENDIF»('Move to bottom position'),
                 action: function (node) {
                     «vendorAndName»PerformTreeOperation(objectType, rootId, 'moveNodeBottom');
                 },
@@ -315,7 +315,7 @@ class TreeFunctions {
 
             if (op !== 'addRootNode') {
                 if (!nodeEntityId) {
-                    «vendorAndName»SimpleAlert(jQuery('.tree-container'), Translator.__('Error'), Translator.__('Invalid node id'), 'treeInvalidNodeAlert', 'danger');
+                    «vendorAndName»SimpleAlert(jQuery('.tree-container'), Translator.«IF targets('3.0')»trans«ELSE»__«ENDIF»('Error'), Translator.«IF targets('3.0')»trans«ELSE»__«ENDIF»('Invalid node id'), 'treeInvalidNodeAlert', 'danger');
                     return;
                 }
                 params['root'] = rootId;
@@ -338,7 +338,7 @@ class TreeFunctions {
                 data: params
             }).done(function (data) {
                 if (data.result == 'success') {
-                    /*«vendorAndName»SimpleAlert(jQuery('.tree-container'), Translator.__('Success'), data.message, 'treeAjaxDoneAlert', 'success');*/
+                    /*«vendorAndName»SimpleAlert(jQuery('.tree-container'), Translator.«IF targets('3.0')»trans«ELSE»__«ENDIF»('Success'), data.message, 'treeAjaxDoneAlert', 'success');*/
 
                     if (typeof data.returnUrl !== 'undefined') {
                         window.location = data.returnUrl;
@@ -346,10 +346,10 @@ class TreeFunctions {
                         window.location.reload();
                     }
                 } else {
-                    «vendorAndName»SimpleAlert(jQuery('.tree-container'), Translator.__('Error'), data.message !== '' ? data.message : Translator.__('Could not persist your change.'), 'treeAjaxFailedAlert', 'danger');
+                    «vendorAndName»SimpleAlert(jQuery('.tree-container'), Translator.«IF targets('3.0')»trans«ELSE»__«ENDIF»('Error'), data.message !== '' ? data.message : Translator.«IF targets('3.0')»trans«ELSE»__«ENDIF»('Could not persist your change.'), 'treeAjaxFailedAlert', 'danger');
                 }
             }).fail(function (jqXHR, textStatus) {
-                «vendorAndName»SimpleAlert(jQuery('.tree-container'), Translator.__('Error'), Translator.__('Could not persist your change.'), 'treeAjaxFailedAlert', 'danger');
+                «vendorAndName»SimpleAlert(jQuery('.tree-container'), Translator.«IF targets('3.0')»trans«ELSE»__«ENDIF»('Error'), Translator.«IF targets('3.0')»trans«ELSE»__«ENDIF»('Could not persist your change.'), 'treeAjaxFailedAlert', 'danger');
             });
         }
     '''
@@ -442,7 +442,7 @@ class TreeFunctions {
 
                 return true;
             }).fail(function (jqXHR, textStatus) {
-                «vendorAndName»SimpleAlert(jQuery('.tree-container'), Translator.__('Error'), Translator.__('Could not persist your change.'), 'treeAjaxFailedAlert', 'danger');
+                «vendorAndName»SimpleAlert(jQuery('.tree-container'), Translator.«IF targets('3.0')»trans«ELSE»__«ENDIF»('Error'), Translator.«IF targets('3.0')»trans«ELSE»__«ENDIF»('Could not persist your change.'), 'treeAjaxFailedAlert', 'danger');
 
                 window.location.reload();
 

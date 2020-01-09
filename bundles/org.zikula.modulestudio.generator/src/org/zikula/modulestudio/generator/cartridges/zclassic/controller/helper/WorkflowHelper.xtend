@@ -32,7 +32,11 @@ class WorkflowHelper {
         use Psr\Log\LoggerInterface;
         use RuntimeException;
         use Symfony\Component\Workflow\Registry;
-        use Zikula\Common\Translator\TranslatorInterface;
+        «IF targets('3.0')»
+            use Symfony\Contracts\Translation\TranslatorInterface;
+        «ELSE»
+            use Zikula\Common\Translator\TranslatorInterface;
+        «ENDIF»
         use Zikula\Core\Doctrine\EntityAccess;
         use Zikula\UsersModule\Api\ApiInterface\CurrentUserApiInterface;
         use «appNamespace»\Entity\Factory\EntityFactory;
@@ -140,7 +144,7 @@ class WorkflowHelper {
     def private stateInfo(Application it, ListFieldItem item) '''
         $states[] = [
             'value' => '«item.value»',
-            'text' => $this->translator->__('«item.name»'),
+            'text' => $this->translator->«IF targets('3.0')»trans«ELSE»__«ENDIF»('«item.name»'),
             'ui' => '«uiFeedback(item)»'
         ];
     '''
@@ -235,71 +239,71 @@ class WorkflowHelper {
             switch ($actionId) {
                 «IF hasWorkflowState('deferred')»
                     case 'defer':
-                        $title = $this->translator->__('Defer');
+                        $title = $this->translator->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Defer');
                         break;
                 «ENDIF»
                 case 'submit':
-                    $title = $this->translator->__('Submit');
+                    $title = $this->translator->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Submit');
                     break;
                 «IF hasWorkflowState('deferred')»
                     case 'reject':
-                        $title = $this->translator->__('Reject');
+                        $title = $this->translator->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Reject');
                         break;
                 «ENDIF»
                 «IF hasWorkflowState('accepted')»
                     case 'accept':
-                        $title = $currentState == 'initial' ? $this->translator->__('Submit and accept') : $this->translator->__('Accept');
+                        $title = $currentState == 'initial' ? $this->translator->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Submit and accept') : $this->translator->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Accept');
                         break;
                 «ENDIF»
                 «IF hasWorkflow(EntityWorkflowType::STANDARD) || hasWorkflow(EntityWorkflowType::ENTERPRISE)»
                     case 'approve':
                         $title = 'initial' === $currentState
-                            ? $this->translator->__('Submit and approve')
-                            : $this->translator->__('Approve')
+                            ? $this->translator->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Submit and approve')
+                            : $this->translator->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Approve')
                         ;
                         break;
                 «ENDIF»
                 «IF hasWorkflowState('accepted')»
                     case 'demote':
-                        $title = $this->translator->__('Demote');
+                        $title = $this->translator->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Demote');
                         break;
                 «ENDIF»
                 «IF hasWorkflowState('suspended')»
                     case 'unpublish':
-                        $title = $this->translator->__('Unpublish');
+                        $title = $this->translator->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Unpublish');
                         break;
                     case 'publish':
-                        $title = $this->translator->__('Publish');
+                        $title = $this->translator->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Publish');
                         break;
                 «ENDIF»
                 «IF hasWorkflowState('archived')»
                     case 'archive':
-                        $title = $this->translator->__('Archive');
+                        $title = $this->translator->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Archive');
                         break;
                     case 'unarchive':
-                        $title = $this->translator->__('Unarchive');
+                        $title = $this->translator->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Unarchive');
                         break;
                 «ENDIF»
                 «IF hasWorkflowState('trashed')»
                     case 'trash':
-                        $title = $this->translator->__('Trash');
+                        $title = $this->translator->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Trash');
                         break;
                     case 'recover':
-                        $title = $this->translator->__('Recover');
+                        $title = $this->translator->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Recover');
                         break;
                 «ENDIF»
                 case 'delete':
-                    $title = $this->translator->__('Delete');
+                    $title = $this->translator->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Delete');
                     break;
             }
 
             if ('' === $title) {
                 if ('update' === «IF targets('2.0')»$actionId«ELSE»substr($actionId, 0, 6)«ENDIF») {
-                    $title = $this->translator->__('Update');
+                    $title = $this->translator->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Update');
                 } elseif ('trash' === «IF targets('2.0')»$actionId«ELSE»substr($actionId, 0, 5)«ENDIF») {
-                    $title = $this->translator->__('Trash');
+                    $title = $this->translator->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Trash');
                 } elseif ('recover' === «IF targets('2.0')»$actionId«ELSE»substr($actionId, 0, 7)«ENDIF») {
-                    $title = $this->translator->__('Recover');
+                    $title = $this->translator->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Recover');
                 }
             }
 
@@ -516,7 +520,7 @@ class WorkflowHelper {
             if (0 < $amount) {
                 $amounts[] = [
                     'aggregateType' => '«nameMultiple.formatForCode»«requiredAction.toFirstUpper»',
-                    'description' => $this->translator->__('«nameMultiple.formatForCodeCapital» pending «requiredAction»'),
+                    'description' => $this->translator->«IF application.targets('3.0')»trans«ELSE»__«ENDIF»('«nameMultiple.formatForCodeCapital» pending «requiredAction»'),
                     'amount' => $amount,
                     'objectType' => $objectType,
                     'state' => $state,

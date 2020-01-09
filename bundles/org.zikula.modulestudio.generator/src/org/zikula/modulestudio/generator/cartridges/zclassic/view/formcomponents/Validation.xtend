@@ -31,5 +31,5 @@ class Validation {
 
     def private fieldValidationCssClassAdditionsDefault(DatetimeField it) '''«IF it.past» validate-«fieldTypeAsString(false).toLowerCase»-past«ELSEIF it.future» validate-«fieldTypeAsString(false).toLowerCase»-future«ENDIF»'''
 
-    def private fieldValidationCssClassDateRange(DatetimeField it) '''«IF null !== entity && entity.hasStartAndEndDateField && (startDate || endDate)» validate-daterange-«entity.name.formatForDB»«ELSEIF null !== varContainer && varContainer.hasStartAndEndDateField && (startDate || endDate)» validate-daterange-«varContainer.name.formatForDB»«ENDIF»'''
+    def private fieldValidationCssClassDateRange(DatetimeField it) '''«IF null !== entity && entity.hasStartAndEndDateField && (startDate || endDate)» validate-daterange-entity-«entity.name.formatForDB»«ELSEIF null !== varContainer && varContainer.hasStartAndEndDateField && (startDate || endDate)» validate-daterange-vars-«varContainer.name.formatForDB»«ENDIF»'''
 }

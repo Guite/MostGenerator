@@ -63,7 +63,7 @@ class UserDeletion {
         )«IF application.targets('3.0')»: void«ENDIF» {
             «IF application.targets('3.0')»
                 if (0 === $userId || 0 === $newUserId) {
-                    throw new InvalidArgumentException($translator->__('Invalid user identifier received.'));
+                    throw new InvalidArgumentException($translator->trans('Invalid user identifier received.'));
                 }
             «ELSE»
                 if (
@@ -118,7 +118,7 @@ class UserDeletion {
         )«IF application.targets('3.0')»: void«ENDIF» {
             «IF application.targets('3.0')»
                 if (0 === $userId || 0 === $newUserId) {
-                    throw new InvalidArgumentException($translator->__('Invalid user identifier received.'));
+                    throw new InvalidArgumentException($translator->trans('Invalid user identifier received.'));
                 }
             «ELSE»
                 if (
@@ -170,7 +170,7 @@ class UserDeletion {
             CurrentUserApiInterface $currentUserApi
         )«IF application.targets('3.0')»: void«ENDIF» {
             if (0 === $userId«IF !application.targets('3.0')» || !is_numeric($userId)«ENDIF») {
-                throw new InvalidArgumentException($translator->__('Invalid user identifier received.'));
+                throw new InvalidArgumentException($translator->«IF application.targets('3.0')»trans«ELSE»__«ENDIF»('Invalid user identifier received.'));
             }
 
             $qb = $this->getEntityManager()->createQueryBuilder();
@@ -213,7 +213,7 @@ class UserDeletion {
             CurrentUserApiInterface $currentUserApi
         )«IF application.targets('3.0')»: void«ENDIF» {
             if (0 === $userId«IF !application.targets('3.0')» || !is_numeric($userId)«ENDIF») {
-                throw new InvalidArgumentException($translator->__('Invalid user identifier received.'));
+                throw new InvalidArgumentException($translator->«IF application.targets('3.0')»trans«ELSE»__«ENDIF»('Invalid user identifier received.'));
             }
 
             $qb = $this->getEntityManager()->createQueryBuilder();
@@ -260,11 +260,11 @@ class UserDeletion {
             CurrentUserApiInterface $currentUserApi
         )«IF application.targets('3.0')»: void«ENDIF» {
             if (empty($userFieldName) || !in_array($userFieldName, [«FOR field : getUserFieldsEntity SEPARATOR ', '»'«field.name.formatForCode»'«ENDFOR»], true)) {
-                throw new InvalidArgumentException($translator->__('Invalid user field name received.'));
+                throw new InvalidArgumentException($translator->«IF application.targets('3.0')»trans«ELSE»__«ENDIF»('Invalid user field name received.'));
             }
             «IF application.targets('3.0')»
                 if (0 === $userId || 0 === $newUserId) {
-                    throw new InvalidArgumentException($translator->__('Invalid user identifier received.'));
+                    throw new InvalidArgumentException($translator->trans('Invalid user identifier received.'));
                 }
             «ELSE»
                 if (
@@ -320,10 +320,10 @@ class UserDeletion {
             CurrentUserApiInterface $currentUserApi
         )«IF application.targets('3.0')»: void«ENDIF» {
             if (empty($userFieldName) || !in_array($userFieldName, [«FOR field : getUserFieldsEntity SEPARATOR ', '»'«field.name.formatForCode»'«ENDFOR»], true)) {
-                throw new InvalidArgumentException($translator->__('Invalid user field name received.'));
+                throw new InvalidArgumentException($translator->«IF application.targets('3.0')»trans«ELSE»__«ENDIF»('Invalid user field name received.'));
             }
             if (0 === $userId«IF !application.targets('3.0')» || !is_numeric($userId)«ENDIF») {
-                throw new InvalidArgumentException($translator->__('Invalid user identifier received.'));
+                throw new InvalidArgumentException($translator->«IF application.targets('3.0')»trans«ELSE»__«ENDIF»('Invalid user identifier received.'));
             }
 
             $qb = $this->getEntityManager()->createQueryBuilder();

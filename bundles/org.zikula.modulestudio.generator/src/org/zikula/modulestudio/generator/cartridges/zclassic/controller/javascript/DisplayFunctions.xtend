@@ -126,7 +126,7 @@ class DisplayFunctions {
                 toggleLink = jQuery('#toggle' + idSuffix);
 
                 /*if (data.message) {
-                    «vendorAndName»SimpleAlert(toggleLink, Translator.__('Success'), data.message, 'toggle' + idSuffix + 'DoneAlert', 'success');
+                    «vendorAndName»SimpleAlert(toggleLink, Translator.«IF targets('3.0')»trans«ELSE»__«ENDIF»('Success'), data.message, 'toggle' + idSuffix + 'DoneAlert', 'success');
                 }*/
 
                 toggleLink.find('.fa-check').toggleClass('«IF targets('3.0')»d-none«ELSE»hidden«ENDIF»', true !== data.state);
@@ -135,7 +135,7 @@ class DisplayFunctions {
             fail: function (jqXHR, textStatus, errorThrown) {
                 // nothing to do yet
                 var idSuffix = fieldName + '_' + itemId;
-                «vendorAndName»SimpleAlert(jQuery('#toggle' + idSuffix), Translator.__('Error'), Translator.__('Could not persist your change.'), 'toggle' + idSuffix + 'FailedAlert', 'danger');
+                «vendorAndName»SimpleAlert(jQuery('#toggle' + idSuffix), Translator.«IF targets('3.0')»trans«ELSE»__«ENDIF»('Error'), Translator.«IF targets('3.0')»trans«ELSE»__«ENDIF»('Could not persist your change.'), 'toggle' + idSuffix + 'FailedAlert', 'danger');
             })*/»;
         }
     '''
@@ -359,9 +359,9 @@ class DisplayFunctions {
                     enabled: true,
                     navigateByImgClick: true,
                     arrowMarkup: '<button title="%title%" type="button" class="mfp-arrow mfp-arrow-%dir%"></button>',
-                    tPrev: Translator.__('Previous (Left arrow key)'),
-                    tNext: Translator.__('Next (Right arrow key)'),
-                    tCounter: '<span class="mfp-counter">%curr% ' + Translator.__('of') + ' %total%</span>'
+                    tPrev: Translator.«IF targets('3.0')»trans«ELSE»__«ENDIF»('Previous (Left arrow key)'),
+                    tNext: Translator.«IF targets('3.0')»trans«ELSE»__«ENDIF»('Next (Right arrow key)'),
+                    tCounter: '<span class="mfp-counter">%curr% ' + Translator.«IF targets('3.0')»trans«ELSE»__«ENDIF»('of') + ' %total%</span>'
                 },
                 zoom: {
                     enabled: true,
@@ -405,7 +405,7 @@ class DisplayFunctions {
                         }
                     }).done(function (data) {
                         /*if (data.message) {
-                            «vendorAndName»SimpleAlert(jQuery('#sortableTable'), Translator.__('Success'), data.message, 'sortingDoneAlert', 'success');
+                            «vendorAndName»SimpleAlert(jQuery('#sortableTable'), Translator.«IF targets('3.0')»trans«ELSE»__«ENDIF»('Success'), data.message, 'sortingDoneAlert', 'success');
                         }*/
                         window.location.reload();
                     });

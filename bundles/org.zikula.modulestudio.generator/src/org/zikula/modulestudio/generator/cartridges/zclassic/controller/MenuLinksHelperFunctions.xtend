@@ -67,5 +67,5 @@ class MenuLinksHelperFunctions {
         }
     '''
 
-    def private translate(Application it, String text) '''$this->__('«text»'«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»)'''
+    def private translate(Application it, String text) '''$this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('«text»'«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»)'''
 }

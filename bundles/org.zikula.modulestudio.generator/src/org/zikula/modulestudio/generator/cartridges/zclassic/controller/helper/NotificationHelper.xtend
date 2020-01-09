@@ -29,9 +29,14 @@ class NotificationHelper {
         use Symfony\Component\HttpFoundation\RequestStack;
         use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
         use Symfony\Component\Routing\RouterInterface;
+        «IF targets('3.0')»
+            use Symfony\Contracts\Translation\TranslatorInterface;
+        «ENDIF»
         use Twig«IF targets('3.0')»\«ELSE»_«ENDIF»Environment;
         use Zikula\Bundle\CoreBundle\HttpKernel\ZikulaHttpKernelInterface;
-        use Zikula\Common\Translator\TranslatorInterface;
+        «IF !targets('3.0')»
+            use Zikula\Common\Translator\TranslatorInterface;
+        «ENDIF»
         use Zikula\Common\Translator\TranslatorTrait;
         use Zikula\Core\Doctrine\EntityAccess;
         use Zikula\ExtensionsModule\Api\ApiInterface\VariableApiInterface;
@@ -204,24 +209,10 @@ class NotificationHelper {
                 return true;
             }
 
-            $request = $this->requestStack->getCurrentRequest();
-            $session = null !== $request && $request->hasSession() ? $request->getSession() : null;
-
-            if (null === $this->kernel->getModule('ZikulaMailerModule')) {
-                if (null !== $session) {
-                    $session->getFlashBag()->add(
-                        'error',
-                        $this->__(
-                            'Could not inform other persons about your amendments, because the Mailer module is not available - please contact an administrator about that!'
-                        )
-                    );
-                }
-
-                return false;
-            }
-
             $result = $this->sendMails();
 
+            $request = $this->requestStack->getCurrentRequest();
+            $session = null !== $request && $request->hasSession() ? $request->getSession() : null;
             if (null !== $session) {
                 $session->remove($this->name . 'AdditionalNotificationRemarks');
             }
@@ -392,29 +383,29 @@ class NotificationHelper {
                 || $this->usesDesignatedEntityFields()
             ) {
                 if ('submit' === $this->action) {
-                    $mailSubject = $this->__('New content has been submitted');
+                    $mailSubject = $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('New content has been submitted');
                 } elseif ('demote' === $this->action) {
-                    $mailSubject = $this->__('Content has been demoted');
+                    $mailSubject = $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Content has been demoted');
                 } elseif ('accept' === $this->action) {
-                    $mailSubject = $this->__('Content has been accepted');
+                    $mailSubject = $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Content has been accepted');
                 } elseif ('approve' === $this->action) {
-                    $mailSubject = $this->__('Content has been approved');
+                    $mailSubject = $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Content has been approved');
                 } elseif ('delete' === $this->action) {
-                    $mailSubject = $this->__('Content has been deleted');
+                    $mailSubject = $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Content has been deleted');
                 } else {
-                    $mailSubject = $this->__('Content has been updated');
+                    $mailSubject = $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Content has been updated');
                 }
             } elseif ('creator' === $this->recipientType) {
                 if ('accept' === $this->action) {
-                    $mailSubject = $this->__('Your submission has been accepted');
+                    $mailSubject = $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Your submission has been accepted');
                 } elseif ('approve' === $this->action) {
-                    $mailSubject = $this->__('Your submission has been approved');
+                    $mailSubject = $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Your submission has been approved');
                 } elseif ('reject' === $this->action) {
-                    $mailSubject = $this->__('Your submission has been rejected');
+                    $mailSubject = $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Your submission has been rejected');
                 } elseif ('delete' === $this->action) {
-                    $mailSubject = $this->__('Your submission has been deleted');
+                    $mailSubject = $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Your submission has been deleted');
                 } else {
-                    $mailSubject = $this->__('Your submission has been updated');
+                    $mailSubject = $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Your submission has been updated');
                 }
             }
 

@@ -25,7 +25,11 @@ class LinkContainer {
         namespace «appNamespace»\Container\Base;
 
         use Symfony\Component\Routing\RouterInterface;
-        use Zikula\Common\Translator\TranslatorInterface;
+        «IF targets('3.0')»
+            use Symfony\Contracts\Translation\TranslatorInterface;
+        «ELSE»
+            use Zikula\Common\Translator\TranslatorInterface;
+        «ENDIF»
         use Zikula\Common\Translator\TranslatorTrait;
         use Zikula\Core\LinkContainer\LinkContainerInterface;
         «IF generateAccountApi»
@@ -122,7 +126,7 @@ class LinkContainer {
                                     $routeName = '«appName.formatForDB»_' . strtolower($objectType) . '_view';
                                     $links[] = [
                                         'url' => $this->router->generate($routeName, $routeArgs),
-                                        'text' => $this->__('My «entity.nameMultiple.formatForDisplay»'«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»),
+                                        'text' => $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('My «entity.nameMultiple.formatForDisplay»'«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»),
                                         'icon' => 'list-alt'
                                     ];
                                 }
@@ -132,7 +136,7 @@ class LinkContainer {
                         if ($this->permissionHelper->hasPermission(ACCESS_ADMIN)) {
                             $links[] = [
                                 'url' => $this->router->generate('«appName.formatForDB»_«getLeadingEntity.name.formatForDB»_admin«getLeadingEntity.getPrimaryAction»'),
-                                'text' => $this->__('«name.formatForDisplayCapital» Backend'«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»),
+                                'text' => $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('«name.formatForDisplayCapital» Backend'«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»),
                                 'icon' => 'wrench'
                             ];
                         }

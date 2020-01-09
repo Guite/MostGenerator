@@ -30,7 +30,11 @@ class MenuBuilder {
         use Knp\Menu\ItemInterface;
         use Symfony\«IF targets('3.0')»Contracts«ELSE»Component«ENDIF»\EventDispatcher\EventDispatcherInterface;
         use Symfony\Component\HttpFoundation\RequestStack;
-        use Zikula\Common\Translator\TranslatorInterface;
+        «IF targets('3.0')»
+            use Symfony\Contracts\Translation\TranslatorInterface;
+        «ELSE»
+            use Zikula\Common\Translator\TranslatorInterface;
+        «ENDIF»
         use Zikula\Common\Translator\TranslatorTrait;
         «IF hasViewActions»
             use Zikula\ExtensionsModule\Api\ApiInterface\VariableApiInterface;

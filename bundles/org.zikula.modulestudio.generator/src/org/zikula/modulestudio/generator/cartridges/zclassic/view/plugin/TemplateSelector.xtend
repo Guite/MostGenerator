@@ -64,15 +64,15 @@ class TemplateSelector {
                 ];
             «ELSE»
                 $result[] = [
-                    'text' => $this->__('Only item titles'),
+                    'text' => $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Only item titles'),
                     'value' => 'itemlist_display«templateExtension»'
                 ];
                 $result[] = [
-                    'text' => $this->__('With description'),
+                    'text' => $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('With description'),
                     'value' => 'itemlist_display_description«templateExtension»'
                 ];
                 $result[] = [
-                    'text' => $this->__('Custom template'),
+                    'text' => $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Custom template'),
                     'value' => 'custom'
                 ];
             «ENDIF»

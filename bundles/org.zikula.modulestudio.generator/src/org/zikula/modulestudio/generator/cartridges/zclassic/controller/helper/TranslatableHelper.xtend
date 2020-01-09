@@ -34,7 +34,11 @@ class TranslatableHelper {
         «ENDIF»
         use Symfony\Component\Form\FormInterface;
         use Symfony\Component\HttpFoundation\RequestStack;
-        use Zikula\Common\Translator\TranslatorInterface;
+        «IF targets('3.0')»
+            use Symfony\Contracts\Translation\TranslatorInterface;
+        «ELSE»
+            use Zikula\Common\Translator\TranslatorInterface;
+        «ENDIF»
         use Zikula\Core\Doctrine\EntityAccess;
         use Zikula\ExtensionsModule\Api\ApiInterface\VariableApiInterface;
         use Zikula\SettingsModule\Api\ApiInterface\LocaleApiInterface;

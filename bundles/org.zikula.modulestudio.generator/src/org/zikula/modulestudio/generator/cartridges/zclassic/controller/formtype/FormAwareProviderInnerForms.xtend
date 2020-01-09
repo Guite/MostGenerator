@@ -44,7 +44,11 @@ class FormAwareProviderInnerForms {
         use Symfony\Component\Form\Extension\Core\Type\TextType;
         use Symfony\Component\Form\FormBuilderInterface;
         use Symfony\Component\OptionsResolver\OptionsResolver;
-        use Zikula\Common\Translator\TranslatorInterface;
+        «IF app.targets('3.0')»
+            use Symfony\Contracts\Translation\TranslatorInterface;
+        «ELSE»
+            use Zikula\Common\Translator\TranslatorInterface;
+        «ENDIF»
         use Zikula\Common\Translator\TranslatorTrait;
 
         /**
@@ -65,18 +69,18 @@ class FormAwareProviderInnerForms {
             {
                 $builder
                     ->add('dummyName', TextType::class, [
-                        'label' => $this->__('Dummy «name.formatForDisplay» text'),
+                        'label' => $this->«IF app.targets('3.0')»trans«ELSE»__«ENDIF»('Dummy «name.formatForDisplay» text'),
                         'required' => true
                     ])
                     ->add('dummyChoice', ChoiceType::class, [
-                        'label' => $this->__('Dummy «name.formatForDisplay» choice'),
+                        'label' => $this->«IF app.targets('3.0')»trans«ELSE»__«ENDIF»('Dummy «name.formatForDisplay» choice'),
                         'label_attr' => [
                             'class' => 'checkbox-«IF app.targets('3.0')»custom«ELSE»inline«ENDIF»'
                         ],
                         'choices' => [
-                            $this->__('Option A') => 'A',
-                            $this->__('Option B') => 'B',
-                            $this->__('Option C') => 'C'
+                            $this->«IF app.targets('3.0')»trans«ELSE»__«ENDIF»('Option A') => 'A',
+                            $this->«IF app.targets('3.0')»trans«ELSE»__«ENDIF»('Option B') => 'B',
+                            $this->«IF app.targets('3.0')»trans«ELSE»__«ENDIF»('Option C') => 'C'
                         ],
                         «IF !app.targets('2.0')»
                             'choices_as_values' => true,

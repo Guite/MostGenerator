@@ -28,7 +28,11 @@ class AuthenticationMethod {
             use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
             use Symfony\Component\Routing\RouterInterface;
         «ENDIF»
-        use Zikula\Common\Translator\TranslatorInterface;
+        «IF targets('3.0')»
+            use Symfony\Contracts\Translation\TranslatorInterface;
+        «ELSE»
+            use Zikula\Common\Translator\TranslatorInterface;
+        «ENDIF»
         use Zikula\ExtensionsModule\Api\ApiInterface\VariableApiInterface;
         use Zikula\UsersModule\AuthenticationMethodInterface\«IF authenticationMethod == AuthMethodType.LOCAL»Non«ENDIF»ReEntrantAuthenticationMethodInterface;
         use Zikula\ZAuthModule\Api\ApiInterface\PasswordApiInterface;
@@ -113,19 +117,19 @@ class AuthenticationMethod {
 
         public function getDisplayName()«IF targets('3.0')»: string«ENDIF»
         {
-            return $this->translator->__('«name.formatForDisplayCapital»');
+            return $this->translator->«IF targets('3.0')»trans«ELSE»__«ENDIF»('«name.formatForDisplayCapital»');
         }
 
         public function getDescription()«IF targets('3.0')»: string«ENDIF»
         {
-            return $this->translator->__('Allow a user to authenticate and login using the «name.formatForDisplay» module.');
+            return $this->translator->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Allow a user to authenticate and login using the «name.formatForDisplay» module.');
         }
 
         public function authenticate(array $data = [])«IF targets('3.0')»: ?int«ENDIF»
         {
             $request = $this->requestStack->getCurrentRequest();
             if ($request->hasSession() && ($session = $request->getSession())) {
-                $session->getFlashBag()->add('error', $this->translator->__('Login for «name.formatForDisplay» authentication method is not implemented yet.'));
+                $session->getFlashBag()->add('error', $this->translator->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Login for «name.formatForDisplay» authentication method is not implemented yet.'));
             }
 
             return null;
@@ -135,7 +139,7 @@ class AuthenticationMethod {
         {
             $request = $this->requestStack->getCurrentRequest();
             if ($request->hasSession() && ($session = $request->getSession())) {
-                $session->getFlashBag()->add('error', $this->translator->__('Registration for «name.formatForDisplay» authentication method is not implemented yet.'));
+                $session->getFlashBag()->add('error', $this->translator->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Registration for «name.formatForDisplay» authentication method is not implemented yet.'));
             }
 
             return false;

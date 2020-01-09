@@ -85,6 +85,7 @@ class Plugins {
             use Symfony\Component\Routing\RouterInterface;
         «ENDIF»
         «IF targets('3.0')»
+            use Symfony\Contracts\Translation\TranslatorInterface;
             use Twig\Extension\AbstractExtension;
             use Twig\TwigFilter;
             use Twig\TwigFunction;
@@ -94,7 +95,9 @@ class Plugins {
         «ELSE»
             use Twig_Extension;
         «ENDIF»
-        use Zikula\Common\Translator\TranslatorInterface;
+        «IF !targets('3.0')»
+            use Zikula\Common\Translator\TranslatorInterface;
+        «ENDIF»
         use Zikula\Common\Translator\TranslatorTrait;
         use Zikula\Core\Doctrine\EntityAccess;
         use Zikula\ExtensionsModule\Api\ApiInterface\VariableApiInterface;

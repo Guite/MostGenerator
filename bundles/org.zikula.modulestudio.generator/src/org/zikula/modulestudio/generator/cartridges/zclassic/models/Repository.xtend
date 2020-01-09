@@ -283,7 +283,11 @@ class Repository {
         «ENDIF»
         use InvalidArgumentException;
         use Psr\Log\LoggerInterface;
-        use Zikula\Common\Translator\TranslatorInterface;
+        «IF app.targets('3.0')»
+            use Symfony\Contracts\Translation\TranslatorInterface;
+        «ELSE»
+            use Zikula\Common\Translator\TranslatorInterface;
+        «ENDIF»
         use Zikula\UsersModule\Api\ApiInterface\CurrentUserApiInterface;
         use «entityClassName('', false)»;
         use «app.appNamespace»\Helper\CollectionFilterHelper;

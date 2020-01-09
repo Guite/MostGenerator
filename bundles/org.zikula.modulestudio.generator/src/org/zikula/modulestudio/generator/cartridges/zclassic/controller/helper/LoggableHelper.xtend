@@ -41,7 +41,11 @@ class LoggableHelper {
         use Exception;
         use Gedmo\Loggable\Entity\MappedSuperclass\AbstractLogEntry;
         use Gedmo\Loggable\LoggableListener;
-        use Zikula\Common\Translator\TranslatorInterface;
+        «IF targets('3.0')»
+            use Symfony\Contracts\Translation\TranslatorInterface;
+        «ELSE»
+            use Zikula\Common\Translator\TranslatorInterface;
+        «ENDIF»
         use Zikula\Common\Translator\TranslatorTrait;
         use Zikula\Core\Doctrine\EntityAccess;
         use «appNamespace»\Entity\Factory\EntityFactory;
@@ -496,10 +500,10 @@ class LoggableHelper {
 
     def private actionDescriptions(Entity it, String constantPrefix, String displayName) '''
         case '«constantPrefix»CREATED':
-            $actionTranslated = $this->__('«displayName» created');
+            $actionTranslated = $this->«IF application.targets('3.0')»trans«ELSE»__«ENDIF»('«displayName» created');
             break;
         case '«constantPrefix»UPDATED':
-            $actionTranslated = $this->__('«displayName» updated');
+            $actionTranslated = $this->«IF application.targets('3.0')»trans«ELSE»__«ENDIF»('«displayName» updated');
             break;
         case '«constantPrefix»CLONED':
             if (isset($parameters['%«name.formatForCode»']) && is_numeric($parameters['%«name.formatForCode»'])) {
@@ -508,23 +512,23 @@ class LoggableHelper {
                     $parameters['%«name.formatForCode»'] = $this->entityDisplayHelper->getFormattedTitle($originalEntity);
                 }
             }
-            $actionTranslated = $this->__f('«displayName» cloned from «name.formatForDisplay» "%«name.formatForCode»"', $parameters);
+            $actionTranslated = $this->«IF application.targets('3.0')»trans«ELSE»__f«ENDIF»('«displayName» cloned from «name.formatForDisplay» "%«name.formatForCode»"', $parameters);
             break;
         case '«constantPrefix»RESTORED':
-            $actionTranslated = $this->__f('«displayName» restored from version "%version"', $parameters);
+            $actionTranslated = $this->«IF application.targets('3.0')»trans«ELSE»__f«ENDIF»('«displayName» restored from version "%version"', $parameters);
             break;
         case '«constantPrefix»DELETED':
-            $actionTranslated = $this->__('«displayName» deleted');
+            $actionTranslated = $this->«IF application.targets('3.0')»trans«ELSE»__«ENDIF»('«displayName» deleted');
             break;
         «IF hasTranslatableFields»«/* currently not used by default but provided for convenience */»
             case '«constantPrefix»TRANSLATION_CREATED':
-                $actionTranslated = $this->__('«displayName» translation created');
+                $actionTranslated = $this->«IF application.targets('3.0')»trans«ELSE»__«ENDIF»('«displayName» translation created');
                 break;
             case '«constantPrefix»TRANSLATION_UPDATED':
-                $actionTranslated = $this->__('«displayName» translation updated');
+                $actionTranslated = $this->«IF application.targets('3.0')»trans«ELSE»__«ENDIF»('«displayName» translation updated');
                 break;
             case '«constantPrefix»TRANSLATION_DELETED':
-                $actionTranslated = $this->__('«displayName» translation deleted');
+                $actionTranslated = $this->«IF application.targets('3.0')»trans«ELSE»__«ENDIF»('«displayName» translation deleted');
                 break;
         «ENDIF»
     '''

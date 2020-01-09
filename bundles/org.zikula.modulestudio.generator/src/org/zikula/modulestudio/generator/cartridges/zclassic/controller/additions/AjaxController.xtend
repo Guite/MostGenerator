@@ -176,7 +176,7 @@ class AjaxController {
 
     def private getItemListFinderBaseImpl(Application it) '''
         if (!$request->isXmlHttpRequest()) {
-            return «IF targets('2.0')»$this->json«ELSE»new JsonResponse«ENDIF»($this->__('Only ajax access is allowed!'), Response::HTTP_BAD_REQUEST);
+            return «IF targets('2.0')»$this->json«ELSE»new JsonResponse«ENDIF»($this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Only ajax access is allowed!'), Response::HTTP_BAD_REQUEST);
         }
 
         if (!$this->hasPermission('«appName»::Ajax', '::', ACCESS_EDIT)) {
@@ -345,7 +345,7 @@ class AjaxController {
 
     def private getItemListAutoCompletionBaseImpl(Application it) '''
         if (!$request->isXmlHttpRequest()) {
-            return «IF targets('2.0')»$this->json«ELSE»new JsonResponse«ENDIF»($this->__('Only ajax access is allowed!'), Response::HTTP_BAD_REQUEST);
+            return «IF targets('2.0')»$this->json«ELSE»new JsonResponse«ENDIF»($this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Only ajax access is allowed!'), Response::HTTP_BAD_REQUEST);
         }
 
         if (!$this->hasPermission('«appName»::Ajax', '::', ACCESS_EDIT)) {
@@ -388,7 +388,7 @@ class AjaxController {
                 «IF hasImageFields»
                     $itemTitleStripped = str_replace('"', '', $itemTitle);
                 «ENDIF»
-                $itemDescription = isset($item[$descriptionFieldName]) && !empty($item[$descriptionFieldName]) ? $item[$descriptionFieldName] : '';//$this->__('No description yet.')
+                $itemDescription = isset($item[$descriptionFieldName]) && !empty($item[$descriptionFieldName]) ? $item[$descriptionFieldName] : '';//$this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('No description yet.')
                 if (!empty($itemDescription)) {
                     $itemDescription = strip_tags($itemDescription);
                     $descriptionLength = 50;
@@ -477,7 +477,7 @@ class AjaxController {
 
     def private checkForDuplicateBaseImpl(Application it) '''
         if (!$request->isXmlHttpRequest()) {
-            return «IF targets('2.0')»$this->json«ELSE»new JsonResponse«ENDIF»($this->__('Only ajax access is allowed!'), Response::HTTP_BAD_REQUEST);
+            return «IF targets('2.0')»$this->json«ELSE»new JsonResponse«ENDIF»($this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Only ajax access is allowed!'), Response::HTTP_BAD_REQUEST);
         }
 
         if (!$this->hasPermission('«appName»::Ajax', '::', ACCESS_EDIT)) {
@@ -529,7 +529,7 @@ class AjaxController {
         $value = $request->query->get('v');
 
         if (empty($fieldName) || empty($value)) {
-            return «IF targets('2.0')»$this->json«ELSE»new JsonResponse«ENDIF»($this->__('Error: invalid input.'), JsonResponse::HTTP_BAD_REQUEST);
+            return «IF targets('2.0')»$this->json«ELSE»new JsonResponse«ENDIF»($this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Error: invalid input.'), JsonResponse::HTTP_BAD_REQUEST);
         }
 
         // check if the given field is existing and unique
@@ -545,7 +545,7 @@ class AjaxController {
             «ENDFOR»
         }
         if (!count($uniqueFields) || !in_array($fieldName, $uniqueFields, true)) {
-            return «IF targets('2.0')»$this->json«ELSE»new JsonResponse«ENDIF»($this->__('Error: invalid input.'), JsonResponse::HTTP_BAD_REQUEST);
+            return «IF targets('2.0')»$this->json«ELSE»new JsonResponse«ENDIF»($this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Error: invalid input.'), JsonResponse::HTTP_BAD_REQUEST);
         }
 
         $exclude = $request->query->getInt('ex');
@@ -592,7 +592,7 @@ class AjaxController {
 
     def private toggleFlagBaseImpl(Application it) '''
         if (!$request->isXmlHttpRequest()) {
-            return «IF targets('2.0')»$this->json«ELSE»new JsonResponse«ENDIF»($this->__('Only ajax access is allowed!'), Response::HTTP_BAD_REQUEST);
+            return «IF targets('2.0')»$this->json«ELSE»new JsonResponse«ENDIF»($this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Only ajax access is allowed!'), Response::HTTP_BAD_REQUEST);
         }
 
         if (!$this->hasPermission('«appName»::Ajax', '::', ACCESS_EDIT)) {
@@ -611,7 +611,7 @@ class AjaxController {
                 || ('«entity.name.formatForCode»' === $objectType && !in_array($field, [«FOR field : entity.getBooleansWithAjaxToggleEntity('') SEPARATOR ', '»'«field.name.formatForCode»'«ENDFOR»], true))
             «ENDFOR»
         ) {
-            return «IF targets('2.0')»$this->json«ELSE»new JsonResponse«ENDIF»($this->__('Error: invalid input.'), JsonResponse::HTTP_BAD_REQUEST);
+            return «IF targets('2.0')»$this->json«ELSE»new JsonResponse«ENDIF»($this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Error: invalid input.'), JsonResponse::HTTP_BAD_REQUEST);
         }
 
         // select data from data source
@@ -621,7 +621,7 @@ class AjaxController {
         $repository = $entityFactory->getRepository($objectType);
         $entity = $repository->selectById($id, false);
         if (null === $entity) {
-            return «IF targets('2.0')»$this->json«ELSE»new JsonResponse«ENDIF»($this->__('No such item.'), JsonResponse::HTTP_NOT_FOUND);
+            return «IF targets('2.0')»$this->json«ELSE»new JsonResponse«ENDIF»($this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('No such item.'), JsonResponse::HTTP_NOT_FOUND);
         }
 
         // toggle the flag
@@ -646,7 +646,7 @@ class AjaxController {
         return «IF targets('2.0')»$this->json«ELSE»new JsonResponse«ENDIF»([
             'id' => $id,
             'state' => $entity[$field],
-            'message' => $this->__('The setting has been successfully changed.')
+            'message' => $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('The setting has been successfully changed.')
         ]);
     '''
 
@@ -695,7 +695,7 @@ class AjaxController {
 
     def private handleTreeOperationBaseImpl(Application it) '''
         if (!$request->isXmlHttpRequest()) {
-            return «IF targets('2.0')»$this->json«ELSE»new JsonResponse«ENDIF»($this->__('Only ajax access is allowed!'), Response::HTTP_BAD_REQUEST);
+            return «IF targets('2.0')»$this->json«ELSE»new JsonResponse«ENDIF»($this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Only ajax access is allowed!'), Response::HTTP_BAD_REQUEST);
         }
 
         if (!$this->hasPermission('«appName»::Ajax', '::', ACCESS_EDIT)) {
@@ -729,7 +729,7 @@ class AjaxController {
             $rootId = $request->request->getInt('root');
             if (!$rootId) {
                 $returnValue['result'] = 'failure';
-                $returnValue['message'] = $this->__('Error: invalid root node.');
+                $returnValue['message'] = $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Error: invalid root node.');
 
                 return «IF targets('2.0')»$this->json«ELSE»new JsonResponse«ENDIF»($returnValue);
             }
@@ -744,7 +744,7 @@ class AjaxController {
 
         «treeOperationSwitch»
 
-        $returnValue['message'] = $this->__('The operation was successful.');
+        $returnValue['message'] = $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('The operation was successful.');
 
         // Renew tree
         /** postponed, for now we do a page reload
@@ -758,7 +758,7 @@ class AjaxController {
         $op = $request->request->getAlpha('op');
         if (!in_array($op, ['addRootNode', 'addChildNode', 'deleteNode', 'moveNode', 'moveNodeTo'], true)) {
             $returnValue['result'] = 'failure';
-            $returnValue['message'] = $this->__('Error: invalid operation.');
+            $returnValue['message'] = $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Error: invalid operation.');
 
             return «IF targets('2.0')»$this->json«ELSE»new JsonResponse«ENDIF»($returnValue);
         }
@@ -769,7 +769,7 @@ class AjaxController {
             $id = $request->request->getInt('id');
             if (!$id) {
                 $returnValue['result'] = 'failure';
-                $returnValue['message'] = $this->__('Error: invalid node.');
+                $returnValue['message'] = $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Error: invalid node.');
 
                 return «IF targets('2.0')»$this->json«ELSE»new JsonResponse«ENDIF»($returnValue);
             }
@@ -820,10 +820,10 @@ class AjaxController {
     def private treeOperationAddRootNode(Application it) '''
         $entity = $entityFactory->$createMethod();
         if (!empty($titleFieldName)) {
-            $entity[$titleFieldName] = $this->__('New root node');
+            $entity[$titleFieldName] = $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('New root node');
         }
         if (!empty($descriptionFieldName)) {
-            $entity[$descriptionFieldName] = $this->__('This is a new root node');
+            $entity[$descriptionFieldName] = $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('This is a new root node');
         }
         «IF hasStandardFieldEntities»
             if (method_exists($entity, 'setCreatedBy')) {
@@ -847,7 +847,7 @@ class AjaxController {
             }
         } catch (Exception $exception) {
             $returnValue['result'] = 'failure';
-            $returnValue['message'] = $this->__f(
+            $returnValue['message'] = $this->«IF targets('3.0')»trans«ELSE»__f«ENDIF»(
                 'Sorry, but an error occured during the %action% action. Please apply the changes again!',
                 ['%action%' => $action]
             ) . '  ' . $exception->getMessage();
@@ -860,15 +860,15 @@ class AjaxController {
         $parentId = $request->request->getInt('pid');
         if (!$parentId) {
             $returnValue['result'] = 'failure';
-            $returnValue['message'] = $this->__('Error: invalid parent node.');
+            $returnValue['message'] = $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Error: invalid parent node.');
 
             return «IF targets('2.0')»$this->json«ELSE»new JsonResponse«ENDIF»($returnValue);
         }
 
         $childEntity = $entityFactory->$createMethod();
-        $childEntity[$titleFieldName] = $this->__('New child node');
+        $childEntity[$titleFieldName] = $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('New child node');
         if (!empty($descriptionFieldName)) {
-            $childEntity[$descriptionFieldName] = $this->__('This is a new child node');
+            $childEntity[$descriptionFieldName] = $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('This is a new child node');
         }
         «IF hasStandardFieldEntities»
             if (method_exists($childEntity, 'setCreatedBy')) {
@@ -879,7 +879,7 @@ class AjaxController {
         $parentEntity = $repository->selectById($parentId, false);
         if (null === $parentEntity) {
             $returnValue['result'] = 'failure';
-            $returnValue['message'] = $this->__('No such item.');
+            $returnValue['message'] = $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('No such item.');
 
             return «IF targets('2.0')»$this->json«ELSE»new JsonResponse«ENDIF»($returnValue);
         }
@@ -917,7 +917,7 @@ class AjaxController {
             «ENDIF»
         } catch (Exception $exception) {
             $returnValue['result'] = 'failure';
-            $returnValue['message'] = $this->__f(
+            $returnValue['message'] = $this->«IF targets('3.0')»trans«ELSE»__f«ENDIF»(
                 'Sorry, but an error occured during the %action% action. Please apply the changes again!',
                 ['%action%' => $action]
             ) . '  ' . $exception->getMessage();
@@ -931,7 +931,7 @@ class AjaxController {
         $entity = $repository->selectById($id, false);
         if (null === $entity) {
             $returnValue['result'] = 'failure';
-            $returnValue['message'] = $this->__('No such item.');
+            $returnValue['message'] = $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('No such item.');
 
             return «IF targets('2.0')»$this->json«ELSE»new JsonResponse«ENDIF»($returnValue);
         }
@@ -949,7 +949,7 @@ class AjaxController {
             }
         } catch (Exception $exception) {
             $returnValue['result'] = 'failure';
-            $returnValue['message'] = $this->__f(
+            $returnValue['message'] = $this->«IF targets('3.0')»trans«ELSE»__f«ENDIF»(
                 'Sorry, but an error occured during the %action% action. Please apply the changes again!',
                 ['%action%' => $action]
             ) . '  ' . $exception->getMessage();
@@ -965,7 +965,7 @@ class AjaxController {
         $moveDirection = $request->request->getAlpha('direction');
         if (!in_array($moveDirection, ['top', 'up', 'down', 'bottom'], true)) {
             $returnValue['result'] = 'failure';
-            $returnValue['message'] = $this->__('Error: invalid direction.');
+            $returnValue['message'] = $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Error: invalid direction.');
 
             return «IF targets('2.0')»$this->json«ELSE»new JsonResponse«ENDIF»($returnValue);
         }
@@ -973,7 +973,7 @@ class AjaxController {
         $entity = $repository->selectById($id, false);
         if (null === $entity) {
             $returnValue['result'] = 'failure';
-            $returnValue['message'] = $this->__('No such item.');
+            $returnValue['message'] = $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('No such item.');
 
             return «IF targets('2.0')»$this->json«ELSE»new JsonResponse«ENDIF»($returnValue);
         }
@@ -994,7 +994,7 @@ class AjaxController {
         $moveDirection = $request->request->getAlpha('direction');
         if (!in_array($moveDirection, ['after', 'before', 'bottom'], true)) {
             $returnValue['result'] = 'failure';
-            $returnValue['message'] = $this->__('Error: invalid direction.');
+            $returnValue['message'] = $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Error: invalid direction.');
 
             return «IF targets('2.0')»$this->json«ELSE»new JsonResponse«ENDIF»($returnValue);
         }
@@ -1002,7 +1002,7 @@ class AjaxController {
         $destId = $request->request->getInt('destid');
         if (!$destId) {
             $returnValue['result'] = 'failure';
-            $returnValue['message'] = $this->__('Error: invalid destination node.');
+            $returnValue['message'] = $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Error: invalid destination node.');
 
             return «IF targets('2.0')»$this->json«ELSE»new JsonResponse«ENDIF»($returnValue);
         }
@@ -1011,7 +1011,7 @@ class AjaxController {
         $destEntity = $repository->selectById($destId, false);
         if (null === $entity || null === $destEntity) {
             $returnValue['result'] = 'failure';
-            $returnValue['message'] = $this->__('No such item.');
+            $returnValue['message'] = $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('No such item.');
 
             return «IF targets('2.0')»$this->json«ELSE»new JsonResponse«ENDIF»($returnValue);
         }

@@ -61,14 +61,14 @@ class ModerationFormFieldsTrait {
             ) {
                 $builder->add('moderationSpecificCreator', UserLiveSearchType::class, [
                     'mapped' => false,
-                    'label' => $this->__('Creator') . ':',
+                    'label' => $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Creator') . ':',
                     'attr' => [
                         'maxlength' => 11,
-                        'title' => $this->__('Here you can choose a user which will be set as creator.')
+                        'title' => $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Here you can choose a user which will be set as creator.')
                     ],
                     'empty_data' => 0,
                     'required' => false,
-                    'help' => $this->__('Here you can choose a user which will be set as creator.')
+                    'help' => $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Here you can choose a user which will be set as creator.')
                 ]);
             }
             if (
@@ -77,17 +77,17 @@ class ModerationFormFieldsTrait {
             ) {
                 $builder->add('moderationSpecificCreationDate', DateTimeType::class, [
                     'mapped' => false,
-                    'label' => $this->__('Creation date') . ':',
+                    'label' => $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Creation date') . ':',
                     'attr' => [
                         'class' => '',
-                        'title' => $this->__('Here you can choose a custom creation date.')
+                        'title' => $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Here you can choose a custom creation date.')
                     ],
                     'empty_data' => '',
                     'required' => false,
                     'with_seconds' => true,
                     'date_widget' => 'single_text',
                     'time_widget' => 'single_text',
-                    'help' => $this->__('Here you can choose a custom creation date.')
+                    'help' => $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Here you can choose a custom creation date.')
                 ]);
             }
         }

@@ -332,7 +332,6 @@ class EntityMethods {
                 $props = $ref->getProperties();
 
                 $serializeFields = [];
-
                 foreach ($props as $prop) {
                     $serializeFields[] = $prop->name;
                 }

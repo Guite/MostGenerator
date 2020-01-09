@@ -42,7 +42,11 @@ class ControllerHelper {
         «IF hasUiHooksProviders»
             use Symfony\Component\Routing\RouterInterface;
         «ENDIF»
-        use Zikula\Common\Translator\TranslatorInterface;
+        «IF targets('3.0')»
+            use Symfony\Contracts\Translation\TranslatorInterface;
+        «ELSE»
+            use Zikula\Common\Translator\TranslatorInterface;
+        «ENDIF»
         use Zikula\Common\Translator\TranslatorTrait;
         «IF hasViewActions»
             use Zikula\Component\SortableColumns\SortableColumns;
@@ -310,12 +314,12 @@ class ControllerHelper {
         )«IF targets('3.0')»: array«ENDIF» {
             $contextArgs = ['controller' => $objectType, 'action' => 'view'];
             if (!in_array($objectType, $this->getObjectTypes('controllerAction', $contextArgs), true)) {
-                throw new Exception($this->__('Error! Invalid object type received.'));
+                throw new Exception($this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Error! Invalid object type received.'));
             }
 
             $request = $this->requestStack->getCurrentRequest();
             if (null === $request) {
-                throw new Exception($this->__('Error! Controller helper needs a request.'));
+                throw new Exception($this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Error! Controller helper needs a request.'));
             }
             $repository = $this->entityFactory->getRepository($objectType);
 
@@ -527,7 +531,7 @@ class ControllerHelper {
         )«IF targets('3.0')»: array«ENDIF» {
             $contextArgs = ['controller' => $objectType, 'action' => 'display'];
             if (!in_array($objectType, $this->getObjectTypes('controllerAction', $contextArgs), true)) {
-                throw new Exception($this->__('Error! Invalid object type received.'));
+                throw new Exception($this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Error! Invalid object type received.'));
             }
             «IF hasHookSubscribers»
 
@@ -610,7 +614,7 @@ class ControllerHelper {
         )«IF targets('3.0')»: array«ENDIF» {
             $contextArgs = ['controller' => $objectType, 'action' => 'edit'];
             if (!in_array($objectType, $this->getObjectTypes('controllerAction', $contextArgs), true)) {
-                throw new Exception($this->__('Error! Invalid object type received.'));
+                throw new Exception($this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Error! Invalid object type received.'));
             }
 
             return $this->addTemplateParameters($objectType, $templateParameters, 'controllerAction', $contextArgs);
@@ -638,7 +642,7 @@ class ControllerHelper {
         )«IF targets('3.0')»: array«ENDIF» {
             $contextArgs = ['controller' => $objectType, 'action' => 'delete'];
             if (!in_array($objectType, $this->getObjectTypes('controllerAction', $contextArgs), true)) {
-                throw new Exception($this->__('Error! Invalid object type received.'));
+                throw new Exception($this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Error! Invalid object type received.'));
             }
 
             return $this->addTemplateParameters($objectType, $templateParameters, 'controllerAction', $contextArgs);

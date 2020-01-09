@@ -151,7 +151,7 @@ class ConfigType {
         public function addSubmitButtons(FormBuilderInterface $builder, array $options = [])«IF targets('3.0')»: void«ENDIF»
         {
             $builder->add('save', SubmitType::class, [
-                'label' => $this->__('Update configuration'),
+                'label' => $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Update configuration'),
                 'icon' => 'fa-check',
                 'attr' => [
                     'class' => 'btn btn-success'

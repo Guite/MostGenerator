@@ -43,7 +43,11 @@ class EntityDisplayHelper {
         «IF hasAnyDateTimeFields || hasNumberFields»
             use Symfony\Component\HttpFoundation\RequestStack;
         «ENDIF»
-        use Zikula\Common\Translator\TranslatorInterface;
+        «IF targets('3.0')»
+            use Symfony\Contracts\Translation\TranslatorInterface;
+        «ELSE»
+            use Zikula\Common\Translator\TranslatorInterface;
+        «ENDIF»
         use Zikula\Core\Doctrine\EntityAccess;
         «FOR entity : getAllEntities»
             use «appNamespace»\Entity\«entity.name.formatForCodeCapital»Entity;
@@ -154,9 +158,9 @@ class EntityDisplayHelper {
         protected function format«name.formatForCodeCapital»(«name.formatForCodeCapital»Entity $entity)«IF application.targets('3.0')»: string«ENDIF»
         {
             «IF displayPatternParts.length < 2»«/* no field references, just pass to translator */»
-                return $this->translator->__('«getUsedDisplayPattern.formatForCodeCapital»');
+                return $this->translator->«IF application.targets('3.0')»trans«ELSE»__«ENDIF»('«getUsedDisplayPattern.formatForCodeCapital»');
             «ELSE»
-                return $this->translator->__f('«getUsedDisplayPattern.replaceAll('#', '%')»', [
+                return $this->translator->«IF application.targets('3.0')»trans«ELSE»__f«ENDIF»('«getUsedDisplayPattern.replaceAll('#', '%')»', [
                     «displayPatternArguments»
                 ]);
             «ENDIF»

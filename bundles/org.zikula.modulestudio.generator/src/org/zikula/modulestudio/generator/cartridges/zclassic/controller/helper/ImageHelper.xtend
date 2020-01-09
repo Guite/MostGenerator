@@ -29,7 +29,11 @@ class ImageHelper {
 
         use Imagine\Image\ImageInterface;
         use Symfony\Component\HttpFoundation\RequestStack;
-        use Zikula\Common\Translator\TranslatorInterface;
+        «IF targets('3.0')»
+            use Symfony\Contracts\Translation\TranslatorInterface;
+        «ELSE»
+            use Zikula\Common\Translator\TranslatorInterface;
+        «ENDIF»
         use Zikula\ExtensionsModule\Api\ApiInterface\VariableApiInterface;
 
         /**
@@ -222,7 +226,7 @@ class ImageHelper {
             $session = $this->requestStack->getCurrentRequest()->getSession();
             $session->getFlashBag()->add(
                 'warning',
-                $this->translator->__f(
+                $this->translator->«IF targets('3.0')»trans«ELSE»__f«ENDIF»(
                     'The cache directory "%directory%" does not exist. Please create it and make it writable for the webserver.',
                     ['%directory%' => $cachePath]
                 )

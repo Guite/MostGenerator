@@ -440,7 +440,7 @@ class LifecycleListener {
                     $currentUserApi = $this->container->get(«IF targets('3.0')»CurrentUserApi::class«ELSE»'zikula_users_module.current_user'«ENDIF»);
                     $userName = $currentUserApi->isLoggedIn()
                         ? $currentUserApi->get('uname')
-                        : $this->container->get(«IF targets('3.0')»Translator::class«ELSE»'translator.default'«ENDIF»)->__('Guest')
+                        : $this->container->get(«IF targets('3.0')»Translator::class«ELSE»'translator.default'«ENDIF»)->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Guest')
                     ;
 
                     $customLoggableListener->setUsername($userName);

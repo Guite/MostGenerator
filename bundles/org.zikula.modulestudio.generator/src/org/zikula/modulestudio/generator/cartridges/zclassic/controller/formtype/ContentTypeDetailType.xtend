@@ -36,9 +36,14 @@ class ContentTypeDetailType {
         use «nsSymfonyFormType»TextType;
         use Symfony\Component\Form\FormBuilderInterface;
         use Symfony\Component\OptionsResolver\OptionsResolver;
+        «IF targets('3.0')»
+            use Symfony\Contracts\Translation\TranslatorInterface;
+        «ENDIF»
         use Zikula\Common\Content\AbstractContentFormType;
         use Zikula\Common\Content\ContentTypeInterface;
-        use Zikula\Common\Translator\TranslatorInterface;
+        «IF !targets('3.0')»
+            use Zikula\Common\Translator\TranslatorInterface;
+        «ENDIF»
         use «appNamespace»\Entity\Factory\EntityFactory;
         use «appNamespace»\Helper\EntityDisplayHelper;
 
@@ -111,16 +116,16 @@ class ContentTypeDetailType {
         public function addObjectTypeField(FormBuilderInterface $builder, array $options = [])«IF targets('3.0')»: void«ENDIF»
         {
             $builder->add('objectType', «IF getAllEntities.filter[hasDisplayAction].size == 1»Hidden«ELSE»Choice«ENDIF»Type::class, [
-                'label' => $this->__('Object type'«IF !isSystemModule», '«appName.formatForDB»'«ENDIF») . ':',
+                'label' => $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Object type'«IF !isSystemModule», '«appName.formatForDB»'«ENDIF») . ':',
                 'empty_data' => '«leadingEntity.name.formatForCode»'«IF getAllEntities.filter[hasDisplayAction].size > 1»,«ENDIF»
                 «IF getAllEntities.filter[hasDisplayAction].size > 1»
                     'attr' => [
-                        'title' => $this->__('If you change this please save the element once to reload the parameters below.'«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»)
+                        'title' => $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('If you change this please save the element once to reload the parameters below.'«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»)
                     ],
-                    'help' => $this->__('If you change this please save the element once to reload the parameters below.'«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»),
+                    'help' => $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('If you change this please save the element once to reload the parameters below.'«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»),
                     'choices' => [
                         «FOR entity : getAllEntities.filter[hasDisplayAction]»
-                            $this->__('«entity.nameMultiple.formatForDisplayCapital»'«IF !isSystemModule», '«appName.formatForDB»'«ENDIF») => '«entity.name.formatForCode»'«IF entity != getAllEntities.filter[hasDisplayAction].last»,«ENDIF»
+                            $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('«entity.nameMultiple.formatForDisplayCapital»'«IF !isSystemModule», '«appName.formatForDB»'«ENDIF») => '«entity.name.formatForCode»'«IF entity != getAllEntities.filter[hasDisplayAction].last»,«ENDIF»
                         «ENDFOR»
                     ],
                     'multiple' => false,
@@ -151,7 +156,7 @@ class ContentTypeDetailType {
                 'expanded' => false,
                 'choices' => $choices,
                 'required' => true,
-                'label' => $this->__('Entry to display'«IF !isSystemModule», '«appName.formatForDB»'«ENDIF») . ':'
+                'label' => $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Entry to display'«IF !isSystemModule», '«appName.formatForDB»'«ENDIF») . ':'
             ]);
         }
     '''
@@ -163,14 +168,14 @@ class ContentTypeDetailType {
         public function addDisplayModeField(FormBuilderInterface $builder, array $options = [])«IF targets('3.0')»: void«ENDIF»
         {
             $builder->add('displayMode', ChoiceType::class, [
-                'label' => $this->__('Display mode'«IF !isSystemModule», '«appName.formatForDB»'«ENDIF») . ':',
+                'label' => $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Display mode'«IF !isSystemModule», '«appName.formatForDB»'«ENDIF») . ':',
                 'label_attr' => [
                     'class' => 'radio-«IF targets('3.0')»custom«ELSE»inline«ENDIF»'
                 ],
                 'empty_data' => 'embed',
                 'choices' => [
-                    $this->__('Link to object'«IF !isSystemModule», '«appName.formatForDB»'«ENDIF») => 'link',
-                    $this->__('Embed object display'«IF !isSystemModule», '«appName.formatForDB»'«ENDIF») => 'embed'
+                    $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Link to object'«IF !isSystemModule», '«appName.formatForDB»'«ENDIF») => 'link',
+                    $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Embed object display'«IF !isSystemModule», '«appName.formatForDB»'«ENDIF») => 'embed'
                 ],
                 'multiple' => false,
                 'expanded' => true
@@ -186,15 +191,15 @@ class ContentTypeDetailType {
         {
             $builder
                 ->add('customTemplate', TextType::class, [
-                    'label' => $this->__('Custom template'«IF !isSystemModule», '«appName.formatForDB»'«ENDIF») . ':',
+                    'label' => $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Custom template'«IF !isSystemModule», '«appName.formatForDB»'«ENDIF») . ':',
                     'required' => false,
                     'attr' => [
                         'maxlength' => 80,
-                        'title' => $this->__('Example'«IF !isSystemModule», '«appName.formatForDB»'«ENDIF») . ': displaySpecial.html.twig'
+                        'title' => $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Example'«IF !isSystemModule», '«appName.formatForDB»'«ENDIF») . ': displaySpecial.html.twig'
                     ],
                     'help' => [
-                        $this->__('Example'«IF !isSystemModule», '«appName.formatForDB»'«ENDIF») . ': <code>displaySpecial.html.twig</code>',
-                        $this->__('Needs to be located in the "External/YourEntity/" directory.'«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»)
+                        $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Example'«IF !isSystemModule», '«appName.formatForDB»'«ENDIF») . ': <code>displaySpecial.html.twig</code>',
+                        $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Needs to be located in the "External/YourEntity/" directory.'«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»)
                     ]«IF targets('3.0')»,
                     'help_html' => true«ENDIF»
                 ])

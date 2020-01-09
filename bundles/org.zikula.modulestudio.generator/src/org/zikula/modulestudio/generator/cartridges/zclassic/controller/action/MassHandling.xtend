@@ -154,7 +154,7 @@ class MassHandling {
             } catch (Exception $exception) {
                 $this->addFlash(
                     'error',
-                    $this->__f(
+                    $this->«IF application.targets('3.0')»trans«ELSE»__f«ENDIF»(
                         'Sorry, but an error occured during the %action% action.',
                         ['%action%' => $action]
                     ) . '  ' . $exception->getMessage()
@@ -178,7 +178,7 @@ class MassHandling {
             }
 
             if ('delete' === $action) {
-                $this->addFlash('status', $this->__('Done! Item deleted.'));
+                $this->addFlash('status', $this->«IF application.targets('3.0')»trans«ELSE»__«ENDIF»('Done! Item deleted.'));
                 $logger->notice(
                     '{app}: User {user} deleted the {entity} with id {id}.',
                     [
@@ -189,7 +189,7 @@ class MassHandling {
                     ]
                 );
             } else {
-                $this->addFlash('status', $this->__('Done! Item updated.'));
+                $this->addFlash('status', $this->«IF application.targets('3.0')»trans«ELSE»__«ENDIF»('Done! Item updated.'));
                 $logger->notice(
                     '{app}: User {user} executed the {action} workflow action for the {entity} with id {id}.',
                     [

@@ -65,18 +65,18 @@ class GetFileSize {
          */
         private function getReadableFileSize«IF targets('3.0')»(int $size, bool $nodesc = false, bool $onlydesc = false): string«ELSE»($size, $nodesc = false, $onlydesc = false)«ENDIF»
         {
-            $sizeDesc = $this->__('Bytes');
+            $sizeDesc = $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Bytes');
             if ($size >= 1024) {
                 $size /= 1024;
-                $sizeDesc = $this->__('KB');
+                $sizeDesc = $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('KB');
             }
             if ($size >= 1024) {
                 $size /= 1024;
-                $sizeDesc = $this->__('MB');
+                $sizeDesc = $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('MB');
             }
             if ($size >= 1024) {
                 $size /= 1024;
-                $sizeDesc = $this->__('GB');
+                $sizeDesc = $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('GB');
             }
             $sizeDesc = '&nbsp;' . $sizeDesc;
 

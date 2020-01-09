@@ -43,7 +43,7 @@ class Actions {
                 $«name.formatForCode» = «IF app.targets('3.0')»$entityFactory«ELSE»$this->get('«application.appService».entity_factory')«ENDIF»->getRepository('«name.formatForCode»')->«IF hasSluggableFields && slugUnique»selectBySlug($slug)«ELSE»selectById($id)«ENDIF»;
             }
             if (null === $«name.formatForCode») {
-                throw new NotFoundHttpException($this->__('No such «name.formatForDisplay» found.'));
+                throw new NotFoundHttpException($this->«IF application.targets('3.0')»trans«ELSE»__«ENDIF»('No such «name.formatForDisplay» found.'));
             }
 
         «ENDIF»
@@ -305,9 +305,9 @@ class Actions {
         «ENDIF»
         $actions = $workflowHelper->getActionsForObject($«name.formatForCode»);
         if (false === $actions || !is_array($actions)) {
-            $this->addFlash('error', $this->__('Error! Could not determine workflow actions.'));
+            $this->addFlash('error', $this->«IF application.targets('3.0')»trans«ELSE»__«ENDIF»('Error! Could not determine workflow actions.'));
             $logger->error('{app}: User {user} tried to delete the {entity} with id {id}, but failed to determine available workflow actions.', $logArgs);
-            throw new RuntimeException($this->__('Error! Could not determine workflow actions.'));
+            throw new RuntimeException($this->«IF application.targets('3.0')»trans«ELSE»__«ENDIF»('Error! Could not determine workflow actions.'));
         }
 
         // redirect to the «IF hasViewAction»list of «nameMultiple.formatForDisplay»«ELSE»index page«ENDIF»
@@ -324,7 +324,7 @@ class Actions {
             break;
         }
         if (!$deleteAllowed) {
-            $this->addFlash('error', $this->__('Error! It is not allowed to delete this «name.formatForDisplay».'));
+            $this->addFlash('error', $this->«IF application.targets('3.0')»trans«ELSE»__«ENDIF»('Error! It is not allowed to delete this «name.formatForDisplay».'));
             $logger->error('{app}: User {user} tried to delete the {entity} with id {id}, but this action was not allowed.', $logArgs);
 
             return $this->redirectToRoute($redirectRoute);
@@ -347,7 +347,7 @@ class Actions {
             if ($form->get('delete')->isClicked()) {
                 «deletionProcess(action)»
             } elseif ($form->get('cancel')->isClicked()) {
-                $this->addFlash('status', $this->__('Operation cancelled.'));
+                $this->addFlash('status', $this->«IF application.targets('3.0')»trans«ELSE»__«ENDIF»('Operation cancelled.'));
 
                 return $this->redirectToRoute($redirectRoute);
             }
@@ -400,7 +400,7 @@ class Actions {
         // execute the workflow action
         $success = $workflowHelper->executeAction($«name.formatForCode», $deleteActionId);
         if ($success) {
-            $this->addFlash('status', $this->__('Done! Item deleted.'));
+            $this->addFlash('status', $this->«IF application.targets('3.0')»trans«ELSE»__«ENDIF»('Done! Item deleted.'));
             $logger->notice('{app}: User {user} deleted the {entity} with id {id}.', $logArgs);
         }
         «IF !skipHookSubscribers»

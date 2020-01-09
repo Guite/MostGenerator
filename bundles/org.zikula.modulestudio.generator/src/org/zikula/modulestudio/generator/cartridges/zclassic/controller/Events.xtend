@@ -35,7 +35,7 @@ class Events {
 
         for (entity : getAllEntities) {
             fsa.generateClassPair('Event/Filter' + entity.name.formatForCodeCapital + 'Event.php',
-                filterEventBaseClass(entity), filterEventImpl(entity)
+                entity.filterEventBaseClass, entity.filterEventImpl
             )
         }
     }

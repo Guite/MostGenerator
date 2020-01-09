@@ -29,7 +29,11 @@ class ListEntriesHelper {
     def private listFieldFunctionsBaseImpl(Application it) '''
         namespace «appNamespace»\Helper\Base;
 
-        use Zikula\Common\Translator\TranslatorInterface;
+        «IF targets('3.0')»
+            use Symfony\Contracts\Translation\TranslatorInterface;
+        «ELSE»
+            use Zikula\Common\Translator\TranslatorInterface;
+        «ENDIF»
         use Zikula\Common\Translator\TranslatorTrait;
 
         /**
@@ -281,9 +285,9 @@ class ListEntriesHelper {
     def private entryInfo(ListFieldItem it, Application app) '''
         $states[] = [
             'value'   => '«IF null !== value»«value.replace("'", "")»«ELSE»«name.formatForCode.replace("'", "")»«ENDIF»',
-            'text'    => $this->__('«name.toFirstUpper.replace("'", "")»'),
-            'title'   => «IF null !== documentation && !documentation.empty»$this->__('«documentation.replace("'", "")»')«ELSE»''«ENDIF»,
-            'image'   => '«IF null !== image && !image.empty»«image».png«ENDIF»',
+            'text'    => $this->«IF app.targets('3.0')»trans«ELSE»__«ENDIF»('«name.toFirstUpper.replace("'", "")»'),
+            'title'   => «IF null !== documentation && !documentation.empty»$this->«IF app.targets('3.0')»trans«ELSE»__«ENDIF»('«documentation.replace("'", "")»')«ELSE»''«ENDIF»,
+            'image'   => '«IF null !== image && !image.empty»«image»«ENDIF»',
             'default' => «^default.displayBool»
         ];
     '''
@@ -291,8 +295,8 @@ class ListEntriesHelper {
     def private entryInfoNegative(ListFieldItem it, Application app) '''
         $states[] = [
             'value'   => '!«IF null !== value»«value.replace("'", "")»«ELSE»«name.formatForCode.replace("'", "")»«ENDIF»',
-            'text'    => $this->__('All except «name.toFirstLower.replace("'", "")»'),
-            'title'   => $this->__('Shows all items except these which are «name.formatForDisplay.replace("'", "")»'),
+            'text'    => $this->«IF app.targets('3.0')»trans«ELSE»__«ENDIF»('All except «name.toFirstLower.replace("'", "")»'),
+            'title'   => $this->«IF app.targets('3.0')»trans«ELSE»__«ENDIF»('Shows all items except these which are «name.formatForDisplay.replace("'", "")»'),
             'image'   => '',
             'default' => false
         ];

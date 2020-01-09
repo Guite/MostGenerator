@@ -116,7 +116,7 @@ class Installer {
             try {
                 $this->schemaTool->create($this->entities);
             } catch (Exception $exception) {
-                $this->addFlash('error', $this->__('Doctrine Exception') . ': ' . $exception->getMessage());
+                $this->addFlash('error', $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Doctrine Exception') . ': ' . $exception->getMessage());
                 $«IF targets('3.0')»this->«ENDIF»logger->error(
                     '{app}: Could not create the database tables during installation. Error details: {errorMessage}.',
                     ['app' => '«appName»', 'errorMessage' => $exception->getMessage()]
@@ -169,7 +169,7 @@ class Installer {
                         } catch (Exception $exception) {
                             $this->addFlash(
                                 'warning',
-                                $this->__f(
+                                $this->«IF targets('3.0')»trans«ELSE»__f«ENDIF»(
                                     'Error! Could not create a category registry for the %entity% entity. If you want to use categorisation, register at least one registry in the Categories administration.',
                                     ['%entity%' => '«entity.name.formatForDisplay»']
                                 )
@@ -245,7 +245,7 @@ class Installer {
                     try {
                         $this->schemaTool->update($this->entities);
                     } catch (Exception $exception) {
-                        $this->addFlash('error', $this->__('Doctrine Exception') . ': ' . $exception->getMessage());
+                        $this->addFlash('error', $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Doctrine Exception') . ': ' . $exception->getMessage());
                         $«IF targets('3.0')»this->«ENDIF»logger->error(
                             '{app}: Could not update the database tables during the upgrade.'
                                 . ' Error details: {errorMessage}.',
@@ -277,7 +277,7 @@ class Installer {
             try {
                 $this->schemaTool->drop($this->entities);
             } catch (Exception $exception) {
-                $this->addFlash('error', $this->__('Doctrine Exception') . ': ' . $exception->getMessage());
+                $this->addFlash('error', $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Doctrine Exception') . ': ' . $exception->getMessage());
                 $«IF targets('3.0')»this->«ENDIF»logger->error(
                     '{app}: Could not remove the database tables during uninstallation. Error details: {errorMessage}.',
                     ['app' => '«appName»', 'errorMessage' => $exception->getMessage()]
@@ -310,7 +310,7 @@ class Installer {
                 $uploadPath = $this->container->getParameter('datadir') . '/«appName»/';
                 $this->addFlash(
                     'status',
-                    $this->__f(
+                    $this->«IF targets('3.0')»trans«ELSE»__f«ENDIF»(
                         'The upload directories at "%path%" can be removed manually.',
                         ['%path%' => $uploadPath]
                     )

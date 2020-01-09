@@ -12,9 +12,9 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.controller.action.M
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.additions.AjaxController
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.additions.ConfigController
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.additions.ExternalController
-import org.zikula.modulestudio.generator.cartridges.zclassic.controller.additions.Routing
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.additions.Scribite
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype.QuickNavigationType
+import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.Routing
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.DateTimeExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions

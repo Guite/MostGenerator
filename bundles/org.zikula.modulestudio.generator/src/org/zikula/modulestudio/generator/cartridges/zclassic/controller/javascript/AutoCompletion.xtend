@@ -136,7 +136,7 @@ class AutoCompletion {
                     href: 'javascript:«vendorAndName»RemoveRelatedItem(\'' + idPrefix + '\', ' + newItemId + ');'
                 }).append(
                     jQuery('<span>', { class: 'fa fa-trash-«IF targets('3.0')»alt«ELSE»o«ENDIF»' })
-                        .append(' ' + Translator.__('remove'))
+                        .append(' ' + Translator.«IF targets('3.0')»trans«ELSE»__«ENDIF»('remove'))
                 )
             );
 
@@ -235,7 +235,7 @@ class AutoCompletion {
                         jQuery('#' + idPrefix + 'LiveSearch .empty-message').remove();
                         if (ui.content.length === 0) {
                             jQuery('#' + idPrefix + 'LiveSearch').append(
-                                jQuery('<div>', { class: 'empty-message' }).text(Translator.__('No results found!'))
+                                jQuery('<div>', { class: 'empty-message' }).text(Translator.«IF targets('3.0')»trans«ELSE»__«ENDIF»('No results found!'))
                             );
                         }
                     },

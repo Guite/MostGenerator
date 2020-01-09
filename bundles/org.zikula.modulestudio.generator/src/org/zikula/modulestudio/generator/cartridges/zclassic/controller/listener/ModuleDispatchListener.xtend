@@ -29,7 +29,7 @@ class ModuleDispatchListener {
          * Inject router and translator services and format data like this:
          *     `$event->data[] = [
          *         'url' => $router->generate('«appName.formatForDB»_user_index'),
-         *         'text' => $translator->__('Link text')
+         *         'text' => $translator->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Link text')
          *     ];`
          *
          «commonExample.generalEventProperties(it, false)»

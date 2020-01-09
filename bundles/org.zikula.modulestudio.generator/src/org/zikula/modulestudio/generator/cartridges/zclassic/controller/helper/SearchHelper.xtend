@@ -31,7 +31,11 @@ class SearchHelper {
         use Symfony\Component\Form\Extension\Core\Type\HiddenType;
         use Symfony\Component\Form\FormBuilderInterface;
         use Symfony\Component\HttpFoundation\RequestStack;
-        use Zikula\Common\Translator\TranslatorInterface;
+        «IF targets('3.0')»
+            use Symfony\Contracts\Translation\TranslatorInterface;
+        «ELSE»
+            use Zikula\Common\Translator\TranslatorInterface;
+        «ENDIF»
         use Zikula\Common\Translator\TranslatorTrait;
         use Zikula\Core\RouteUrl;
         use Zikula\SearchModule\Entity\SearchResultEntity;
@@ -114,7 +118,7 @@ class SearchHelper {
                 «FOR entity : entitiesWithStrings»
                     '«appName.toFirstLower»«entity.nameMultiple.formatForCodeCapital»' => [
                         'value' => '«entity.name.formatForCode»',
-                        'label' => $this->__('«entity.nameMultiple.formatForDisplayCapital»'«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»)
+                        'label' => $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('«entity.nameMultiple.formatForDisplayCapital»'«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»)
                     ]«IF entity != entitiesWithStrings.last»,«ENDIF»
                 «ENDFOR»
             ];

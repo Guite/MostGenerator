@@ -86,12 +86,12 @@ class ContentTypeDetail {
 
         public function getTitle()«IF targets('3.0')»: string«ENDIF»
         {
-            return $this->translator->__('«name.formatForDisplayCapital» detail', '«appName.formatForDB»');
+            return $this->translator->«IF targets('3.0')»trans«ELSE»__«ENDIF»('«name.formatForDisplayCapital» detail', '«appName.formatForDB»');
         }
 
         public function getDescription()«IF targets('3.0')»: string«ENDIF»
         {
-            return $this->translator->__('Display or link a single «name.formatForDisplay» object.', '«appName.formatForDB»');
+            return $this->translator->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Display or link a single «name.formatForDisplay» object.', '«appName.formatForDB»');
         }
 
         public function getDefaultData()«IF targets('3.0')»: array«ENDIF»
@@ -143,7 +143,7 @@ class ContentTypeDetail {
         public function displayEditing()«IF targets('3.0')»: string«ENDIF»
         {
             if (null === $this->data['id'] || empty($this->data['id']) || empty($this->data['displayMode'])) {
-                return $this->translator->__('No item selected.', '«appName.formatForDB»');
+                return $this->translator->«IF targets('3.0')»trans«ELSE»__«ENDIF»('No item selected.', '«appName.formatForDB»');
             }
 
             return parent::displayEditing();

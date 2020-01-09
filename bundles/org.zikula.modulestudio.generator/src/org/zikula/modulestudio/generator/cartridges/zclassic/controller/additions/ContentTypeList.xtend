@@ -124,12 +124,12 @@ class ContentTypeList {
 
         public function getTitle()«IF targets('3.0')»: string«ENDIF»
         {
-            return $this->translator->__('«name.formatForDisplayCapital» list', '«appName.formatForDB»');
+            return $this->translator->«IF targets('3.0')»trans«ELSE»__«ENDIF»('«name.formatForDisplayCapital» list', '«appName.formatForDB»');
         }
 
         public function getDescription()«IF targets('3.0')»: string«ENDIF»
         {
-            return $this->translator->__('Display a list of «name.formatForDisplay» objects.', '«appName.formatForDB»');
+            return $this->translator->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Display a list of «name.formatForDisplay» objects.', '«appName.formatForDB»');
         }
 
         public function getDefaultData()«IF targets('3.0')»: array«ENDIF»

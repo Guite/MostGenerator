@@ -25,9 +25,14 @@ class CategoryHelper {
         use InvalidArgumentException;
         use Psr\Log\LoggerInterface;
         use Symfony\Component\HttpFoundation\RequestStack;
+        «IF targets('3.0')»
+            use Symfony\Contracts\Translation\TranslatorInterface;
+        «ENDIF»
         use Zikula\CategoriesModule\Api\ApiInterface\CategoryPermissionApiInterface;
         use Zikula\CategoriesModule\Entity\RepositoryInterface\CategoryRegistryRepositoryInterface;
-        use Zikula\Common\Translator\TranslatorInterface;
+        «IF !targets('3.0')»
+            use Zikula\Common\Translator\TranslatorInterface;
+        «ENDIF»
         use Zikula\Core\Doctrine\EntityAccess;
         use Zikula\UsersModule\Api\ApiInterface\CurrentUserApiInterface;
 
@@ -102,7 +107,7 @@ class CategoryHelper {
         public function hasMultipleSelection(«IF targets('3.0')»string «ENDIF»$objectType = '', «IF targets('3.0')»string «ENDIF»$registry = '')«IF targets('3.0')»: bool«ENDIF»
         {
             if (empty($objectType)) {
-                throw new InvalidArgumentException($this->translator->__('Invalid object type received.'));
+                throw new InvalidArgumentException($this->translator->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Invalid object type received.'));
             }
             if (empty($args['registry'])) {
                 // default to the primary registry
@@ -137,7 +142,7 @@ class CategoryHelper {
         public function retrieveCategoriesFromRequest(«IF targets('3.0')»string «ENDIF»$objectType = '', «IF targets('3.0')»string «ENDIF»$source = 'POST')«IF targets('3.0')»: array«ENDIF»
         {
             if (empty($objectType)) {
-                throw new InvalidArgumentException($this->translator->__('Invalid object type received.'));
+                throw new InvalidArgumentException($this->translator->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Invalid object type received.'));
             }
 
             $request = $this->requestStack->getCurrentRequest();
@@ -268,7 +273,7 @@ class CategoryHelper {
         public function getAllProperties(«IF targets('3.0')»string «ENDIF»$objectType = '')«IF targets('3.0')»: array«ENDIF»
         {
             if (empty($objectType)) {
-                throw new InvalidArgumentException($this->translator->__('Invalid object type received.'));
+                throw new InvalidArgumentException($this->translator->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Invalid object type received.'));
             }
 
             $moduleRegistries = $this->categoryRegistryRepository->findBy([
@@ -297,7 +302,7 @@ class CategoryHelper {
         public function getAllPropertiesWithMainCat(«IF targets('3.0')»string «ENDIF»$objectType = '', «IF targets('3.0')»string «ENDIF»$arrayKey = 'property')«IF targets('3.0')»: array«ENDIF»
         {
             if (empty($objectType)) {
-                throw new InvalidArgumentException($this->translator->__('Invalid object type received.'));
+                throw new InvalidArgumentException($this->translator->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Invalid object type received.'));
             }
 
             $moduleRegistries = $this->categoryRegistryRepository->findBy([
@@ -327,7 +332,7 @@ class CategoryHelper {
         public function getMainCatForProperty(«IF targets('3.0')»string «ENDIF»$objectType = '', «IF targets('3.0')»string «ENDIF»$property = '')«IF targets('3.0')»: ?int«ENDIF»
         {
             if (empty($objectType)) {
-                throw new InvalidArgumentException($this->translator->__('Invalid object type received.'));
+                throw new InvalidArgumentException($this->translator->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Invalid object type received.'));
             }
 
             $registries = $this->getAllPropertiesWithMainCat($objectType);

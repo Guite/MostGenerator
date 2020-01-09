@@ -210,11 +210,11 @@ class InlineEditing {
                 createButton = jQuery('<a>', {
                     id: createButtonId,
                     href: createUrl,
-                    title: Translator.__('Create new entry'),
+                    title: Translator.«IF targets('3.0')»trans«ELSE»__«ENDIF»('Create new entry'),
                     class: 'btn btn-default «appName.toLowerCase»-inline-button'
                 }).append(
                     jQuery('<i>', { class: 'fa fa-plus' })
-                ).append(' ' + Translator.__('Create'));
+                ).append(' ' + Translator.«IF targets('3.0')»trans«ELSE»__«ENDIF»('Create'));
 
                 if (inputType === 'select-single' || inputType === 'select-multi') {
                     inputReference.field.parent().append(createButton);
@@ -252,7 +252,7 @@ class InlineEditing {
                             jQuery('<a>', {
                                 id: elemPrefix,
                                 href: createUrl,
-                                title: Translator.__('Edit this entry')
+                                title: Translator.«IF targets('3.0')»trans«ELSE»__«ENDIF»('Edit this entry')
                             }).append(
                                 jQuery('<span>', { class: 'fa fa-«IF targets('3.0')»edit«ELSE»pencil-square-o«ENDIF»' })
                             )
@@ -306,7 +306,7 @@ class InlineEditing {
 
                 // show a message
                 anchorElement = (inputType === 'autocomplete') ? inputReference.field : inputReference.field.parents('.form-group').first();
-                window.parent.«vendorAndName»SimpleAlert(anchorElement, window.parent.Translator.__('Information'), window.parent.Translator.__('Action has been completed.'), 'actionDoneAlert', 'success');
+                window.parent.«vendorAndName»SimpleAlert(anchorElement, window.parent.Translator.«IF targets('3.0')»trans«ELSE»__«ENDIF»('Information'), window.parent.Translator.«IF targets('3.0')»trans«ELSE»__«ENDIF»('Action has been completed.'), 'actionDoneAlert', 'success');
 
                 // check if a new item has been created
                 if (itemId > 0) {

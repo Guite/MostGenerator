@@ -299,7 +299,11 @@ class Listeners {
             «ENDIF»
             use Symfony\Component\EventDispatcher\EventSubscriberInterface;
             «IF hasStandardFieldEntities || hasUserFields»
-                use Zikula\Common\Translator\TranslatorInterface;
+                «IF targets('3.0')»
+                    use Symfony\Contracts\Translation\TranslatorInterface;
+                «ELSE»
+                    use Zikula\Common\Translator\TranslatorInterface;
+                «ENDIF»
             «ENDIF»
             use Zikula\Core\Event\GenericEvent;
             «IF hasUserVariables»
@@ -506,7 +510,7 @@ class Listeners {
             «IF targets('3.0')»
                 «IF !getJoinRelations.empty && !getAllEntities.filter[!getOutgoingJoinRelationsWithoutDeleteCascade.empty].empty»
                     use Symfony\Component\Workflow\TransitionBlocker;
-                    use Zikula\Common\Translator\TranslatorInterface;
+                    use Symfony\Contracts\Translation\TranslatorInterface;
                 «ENDIF»
             «ENDIF»
             use Zikula\Core\Doctrine\EntityAccess;

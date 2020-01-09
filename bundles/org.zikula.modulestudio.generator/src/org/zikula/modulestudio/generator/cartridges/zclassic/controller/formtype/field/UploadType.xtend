@@ -33,7 +33,11 @@ class UploadType {
         use Symfony\Component\HttpFoundation\File\File;
         use Symfony\Component\OptionsResolver\OptionsResolver;
         use Symfony\Component\PropertyAccess\PropertyAccess;
-        use Zikula\Common\Translator\TranslatorInterface;
+        «IF targets('3.0')»
+            use Symfony\Contracts\Translation\TranslatorInterface;
+        «ELSE»
+            use Zikula\Common\Translator\TranslatorInterface;
+        «ENDIF»
         use «appNamespace»\Form\DataTransformer\UploadFileTransformer;
         use «appNamespace»\Helper\ImageHelper;
         use «appNamespace»\Helper\UploadHelper;
@@ -101,7 +105,7 @@ class UploadType {
 
                 if ($options['allow_deletion'] && !$options['required']) {
                     $builder->add($fieldName . 'DeleteFile', CheckboxType::class, [
-                        'label' => $this->translator->__('Delete existing file'),
+                        'label' => $this->translator->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Delete existing file'),
                         «IF targets('3.0')»
                             'label_attr' => [
                                 'class' => 'switch-custom'
@@ -109,7 +113,7 @@ class UploadType {
                         «ENDIF»
                         'required' => false,
                         'attr' => [
-                            'title' => $this->translator->__('Delete this file ?')
+                            'title' => $this->translator->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Delete this file ?')
                         ]
                     ]);
                 }
@@ -117,12 +121,12 @@ class UploadType {
 
                     if (true === $options['custom_filename']) {
                         $builder->add($fieldName . 'CustomFileName', TextType::class, [
-                            'label' => $this->translator->__('Custom file name'),
+                            'label' => $this->translator->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Custom file name'),
                             'required' => false,
                             'attr' => [
-                                'title' => $this->translator->__('Optionally enter a custom file name (without extension)')
+                                'title' => $this->translator->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Optionally enter a custom file name (without extension)')
                             ],
-                            'help' => $this->translator->__('Optionally enter a custom file name (without extension)')
+                            'help' => $this->translator->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Optionally enter a custom file name (without extension)')
                         ]);
                     }
                 «ENDIF»

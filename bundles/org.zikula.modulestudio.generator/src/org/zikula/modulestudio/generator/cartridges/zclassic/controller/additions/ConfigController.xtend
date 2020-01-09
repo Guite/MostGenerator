@@ -104,7 +104,7 @@ class ConfigController {
                 $appSettings = $form->getData();
                 $appSettings->save();
 
-                $this->addFlash('status', $this->__('Done! Module configuration updated.'));
+                $this->addFlash('status', $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Done! Module configuration updated.'));
                 «IF targets('3.0')»
                     $userName = $currentUserApi->get('uname');
                     $logger->notice(
@@ -119,7 +119,7 @@ class ConfigController {
                     );
                 «ENDIF»
             } elseif ($form->get('cancel')->isClicked()) {
-                $this->addFlash('status', $this->__('Operation cancelled.'));
+                $this->addFlash('status', $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Operation cancelled.'));
             }
 
             // redirect to config page again (to show with GET request)

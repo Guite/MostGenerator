@@ -91,7 +91,11 @@ class ListEntryValidator {
 
         use Symfony\Component\Validator\Constraint;
         use Symfony\Component\Validator\ConstraintValidator;
-        use Zikula\Common\Translator\TranslatorInterface;
+        «IF targets('3.0')»
+            use Symfony\Contracts\Translation\TranslatorInterface;
+        «ELSE»
+            use Zikula\Common\Translator\TranslatorInterface;
+        «ENDIF»
         use Zikula\Common\Translator\TranslatorTrait;
         use «appNamespace»\Helper\ListEntriesHelper;
 
@@ -135,7 +139,7 @@ class ListEntryValidator {
                     // single-valued list
                     if ('' !== $value && !in_array($value, $allowedValues/*, true*/)) {
                         $this->context->buildViolation(
-                            $this->__f('The value "%value%" is not allowed for the "%property%" property.', [
+                            $this->«IF targets('3.0')»trans«ELSE»__f«ENDIF»('The value "%value%" is not allowed for the "%property%" property.', [
                                 '%value%' => $value,
                                 '%property%' => $constraint->propertyName
                             ])
@@ -153,7 +157,7 @@ class ListEntryValidator {
                     }
                     if (!in_array($singleValue, $allowedValues/*, true*/)) {
                         $this->context->buildViolation(
-                            $this->__f('The value "%value%" is not allowed for the "%property%" property.', [
+                            $this->«IF targets('3.0')»trans«ELSE»__f«ENDIF»('The value "%value%" is not allowed for the "%property%" property.', [
                                 '%value%' => $singleValue,
                                 '%property%' => $constraint->propertyName
                             ])

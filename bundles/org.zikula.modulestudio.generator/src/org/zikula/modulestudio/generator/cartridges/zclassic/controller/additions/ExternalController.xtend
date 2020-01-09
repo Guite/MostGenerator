@@ -141,7 +141,7 @@ class ExternalController {
         // assign object data fetched from the database
         $entity = $repository->selectById($id);
         if (null === $entity) {
-            return new Response($this->__('No such item.'));
+            return new Response($this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('No such item.'));
         }
 
         if (!«IF targets('3.0')»$permissionHelper«ELSE»$this->get('«appService».permission_helper')«ENDIF»->mayRead($entity)) {
@@ -272,7 +272,7 @@ class ExternalController {
         }
 
         if (empty($editor) || !in_array($editor, ['ckeditor', 'quill', 'summernote', 'tinymce'], true)) {
-            return new Response($this->__('Error: Invalid editor context given for external controller action.'));
+            return new Response($this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Error: Invalid editor context given for external controller action.'));
         }
 
         «IF !targets('3.0')»

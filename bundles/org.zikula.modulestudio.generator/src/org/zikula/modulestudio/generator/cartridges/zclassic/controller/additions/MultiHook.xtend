@@ -92,7 +92,7 @@ class MultiHook {
             }
 
             if (!$container->get('kernel')->isBundle('«app.appName»')) {
-                $cache[$nid] = '<em>' . htmlspecialchars($translator->__f('Module "%moduleName%" is not available.', ['%moduleName%' => '«app.appName»'], '«app.appName.formatForDB»')) . '</em>';
+                $cache[$nid] = '<em>' . htmlspecialchars($translator->«IF app.targets('3.0')»trans«ELSE»__f«ENDIF»('Module "%moduleName%" is not available.', ['%moduleName%' => '«app.appName»'], '«app.appName.formatForDB»')) . '</em>';
 
                 return $cache[$nid];
             }
@@ -108,7 +108,7 @@ class MultiHook {
                     if (!$permissionHelper->hasComponentPermission('«name.formatForCode»', ACCESS_READ)) {
                         $cache[$nid] = '';
                     } else {
-                        $cache[$nid] = '<a href="' . $router->generate('«app.appName.formatForDB»_«name.formatForDB»_view', [], UrlGeneratorInterface::ABSOLUTE_URL) . '" title="' . $translator->__('View «nameMultiple.formatForDisplay»', '«app.appName.formatForDB»') . '">' . $translator->__('«nameMultiple.formatForDisplayCapital»', '«app.appName.formatForDB»') . '</a>';
+                        $cache[$nid] = '<a href="' . $router->generate('«app.appName.formatForDB»_«name.formatForDB»_view', [], UrlGeneratorInterface::ABSOLUTE_URL) . '" title="' . $translator->«IF app.targets('3.0')»trans«ELSE»__«ENDIF»('View «nameMultiple.formatForDisplay»', '«app.appName.formatForDB»') . '">' . $translator->«IF app.targets('3.0')»trans«ELSE»__«ENDIF»('«nameMultiple.formatForDisplayCapital»', '«app.appName.formatForDB»') . '</a>';
                     }
 
                     return $cache[$nid];
@@ -128,7 +128,7 @@ class MultiHook {
                 $repository = $container->get('«app.appService».entity_factory')->getRepository('«name.formatForCode»');
                 $entity = $repository->selectById($entityId, false);
                 if (null === $entity) {
-                    $cache[$nid] = '<em>' . $translator->__f('«name.formatForDisplayCapital» with id %id% could not be found', ['%id%' => $entityId], '«app.appName.formatForDB»') . '</em>';
+                    $cache[$nid] = '<em>' . $translator->«IF app.targets('3.0')»trans«ELSE»__f«ENDIF»('«name.formatForDisplayCapital» with id %id% could not be found', ['%id%' => $entityId], '«app.appName.formatForDB»') . '</em>';
 
                     return $cache[$nid];
                 }
@@ -186,9 +186,11 @@ class MultiHook {
         use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
         use Symfony\Component\Routing\RouterInterface;
         «IF application.targets('3.0')»
+            use Symfony\Contracts\Translation\TranslatorInterface;
             use Zikula\Common\MultiHook\NeedleInterface;
+        «ELSE»
+            use Zikula\Common\Translator\TranslatorInterface;
         «ENDIF»
-        use Zikula\Common\Translator\TranslatorInterface;
         «IF hasDisplayAction»
             use «app.appNamespace»\Entity\Factory\EntityFactory;
             use «app.appNamespace»\Helper\EntityDisplayHelper;

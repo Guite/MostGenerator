@@ -73,7 +73,7 @@ class ObjectTypeSelector {
                 ];
             «ELSE»
                 $result[] = [
-                    'text' => $this->__('«entity.nameMultiple.formatForDisplayCapital»'),
+                    'text' => $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('«entity.nameMultiple.formatForDisplayCapital»'),
                     'value' => '«entity.name.formatForCode»'
                 ];
             «ENDIF»

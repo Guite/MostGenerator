@@ -31,10 +31,15 @@ class ArchiveHelper {
         use Exception;
         use Psr\Log\LoggerInterface;
         use Symfony\Component\HttpFoundation\RequestStack;
+        «IF targets('3.0')»
+            use Symfony\Contracts\Translation\TranslatorInterface;
+        «ENDIF»
         «IF hasHookSubscribers»
             use Zikula\Bundle\HookBundle\Category\UiHooksCategory;
         «ENDIF»
-        use Zikula\Common\Translator\TranslatorInterface;
+        «IF !targets('3.0')»
+            use Zikula\Common\Translator\TranslatorInterface;
+        «ENDIF»
         use Zikula\Core\Doctrine\EntityAccess;
         use Zikula\Core\RouteUrl;
         use «appNamespace»\Entity\Factory\EntityFactory;
@@ -240,7 +245,7 @@ class ArchiveHelper {
                 if (null !== $session) {
                     $session->getFlashBag()->add(
                         'error',
-                        $this->translator->__f(
+                        $this->translator->«IF targets('3.0')»trans«ELSE»__f«ENDIF»(
                             'Sorry, but an error occured during the %action% action. Please apply the changes again!',
                             ['%action%' => $action]
                         ) . '  ' . $exception->getMessage()

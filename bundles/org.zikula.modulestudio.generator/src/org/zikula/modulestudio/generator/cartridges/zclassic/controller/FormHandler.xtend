@@ -158,12 +158,17 @@ class FormHandler {
         «ENDIF»
         use Symfony\Component\Routing\RouterInterface;
         use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+        «IF targets('3.0')»
+            use Symfony\Contracts\Translation\TranslatorInterface;
+        «ENDIF»
         use Zikula\Bundle\CoreBundle\HttpKernel\ZikulaHttpKernelInterface;
         «IF hasHookSubscribers»
             use Zikula\Bundle\HookBundle\Category\FormAwareCategory;
             use Zikula\Bundle\HookBundle\Category\UiHooksCategory;
         «ENDIF»
-        use Zikula\Common\Translator\TranslatorInterface;
+        «IF !targets('3.0')»
+            use Zikula\Common\Translator\TranslatorInterface;
+        «ENDIF»
         use Zikula\Common\Translator\TranslatorTrait;
         use Zikula\Core\Doctrine\EntityAccess;
         «IF hasHookSubscribers»
@@ -630,7 +635,7 @@ class FormHandler {
 
             if (null === $entity) {
                 if (null !== $session) {
-                    $session->getFlashBag()->add('error', $this->__('No such item found.'));
+                    $session->getFlashBag()->add('error', $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('No such item found.'));
                 }
 
                 return new RedirectResponse($this->getRedirectUrl(['commandName' => 'cancel']), 302);
@@ -655,7 +660,7 @@ class FormHandler {
                 if (null !== $session) {
                     $session->getFlashBag()->add(
                         'error',
-                        $this->__('Error! Could not determine workflow actions.')
+                        $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Error! Could not determine workflow actions.')
                     );
                 }
                 $logArgs = [
@@ -669,7 +674,7 @@ class FormHandler {
                         . ' but failed to determine available workflow actions.',
                     $logArgs
                 );
-                throw new RuntimeException($this->__('Error! Could not determine workflow actions.'));
+                throw new RuntimeException($this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Error! Could not determine workflow actions.'));
             }
 
             $this->templateParameters['actions'] = $actions;
@@ -1100,23 +1105,23 @@ class FormHandler {
             switch ($args['commandName']) {
                 case 'create':
                     if (true === $success) {
-                        $message = $this->__('Done! Item created.');
+                        $message = $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Done! Item created.');
                     } else {
-                        $message = $this->__('Error! Creation attempt failed.');
+                        $message = $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Error! Creation attempt failed.');
                     }
                     break;
                 case 'update':
                     if (true === $success) {
-                        $message = $this->__('Done! Item updated.');
+                        $message = $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Done! Item updated.');
                     } else {
-                        $message = $this->__('Error! Update attempt failed.');
+                        $message = $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Error! Update attempt failed.');
                     }
                     break;
                 case 'delete':
                     if (true === $success) {
-                        $message = $this->__('Done! Item deleted.');
+                        $message = $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Done! Item deleted.');
                     } else {
-                        $message = $this->__('Error! Deletion attempt failed.');
+                        $message = $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Error! Deletion attempt failed.');
                     }
                     break;
             }
@@ -1430,7 +1435,7 @@ class FormHandler {
                 if ($request->hasSession() && ($session = $request->getSession())) {
                     $session->getFlashBag()->add(
                         'error',
-                        $this->__('Sorry, but you can not create the «name.formatForDisplay» yet as other items are required which must be created before!')
+                        $this->«IF app.targets('3.0')»trans«ELSE»__«ENDIF»('Sorry, but you can not create the «name.formatForDisplay» yet as other items are required which must be created before!')
                     );
                 }
                 $logArgs = [
@@ -1560,21 +1565,21 @@ class FormHandler {
                 «ENDIF»
                 case 'submit':
                     if ('create' === $this->templateParameters['mode']) {
-                        $message = $this->__('Done! «name.formatForDisplayCapital» created.');
+                        $message = $this->«IF app.targets('3.0')»trans«ELSE»__«ENDIF»('Done! «name.formatForDisplayCapital» created.');
                     } else {
-                        $message = $this->__('Done! «name.formatForDisplayCapital» updated.');
+                        $message = $this->«IF app.targets('3.0')»trans«ELSE»__«ENDIF»('Done! «name.formatForDisplayCapital» updated.');
                     }
                     «IF EntityWorkflowType.NONE !== workflow»
                         if ('waiting' === $this->entityRef->getWorkflowState()) {
-                            $message .= ' ' . $this->__('It is now waiting for approval by our moderators.');
+                            $message .= ' ' . $this->«IF app.targets('3.0')»trans«ELSE»__«ENDIF»('It is now waiting for approval by our moderators.');
                         }
                     «ENDIF»
                     break;
                 case 'delete':
-                    $message = $this->__('Done! «name.formatForDisplayCapital» deleted.');
+                    $message = $this->«IF app.targets('3.0')»trans«ELSE»__«ENDIF»('Done! «name.formatForDisplayCapital» deleted.');
                     break;
                 default:
-                    $message = $this->__('Done! «name.formatForDisplayCapital» updated.');
+                    $message = $this->«IF app.targets('3.0')»trans«ELSE»__«ENDIF»('Done! «name.formatForDisplayCapital» updated.');
                     break;
             }
 
@@ -1633,7 +1638,7 @@ class FormHandler {
                 if ($request->hasSession() && ($session = $request->getSession())) {
                     $session->getFlashBag()->add(
                         'error',
-                        $this->__f(
+                        $this->«IF app.targets('3.0')»trans«ELSE»__f«ENDIF»(
                             'Sorry, but an error occured during the %action% action. Please apply the changes again!',
                             ['%action%' => $action]
                         ) . ' ' . $exception->getMessage()

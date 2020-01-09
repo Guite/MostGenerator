@@ -64,20 +64,20 @@ class Mailz {
             $plugins[] = [
                 'pluginid'    => 1,
                 'module'      => '«appName»',
-                'title'       => $translator->__('3 newest «itemDesc»'),
-                'description' => $translator->__('A list of the three newest «itemDesc».')
+                'title'       => $translator->«IF targets('3.0')»trans«ELSE»__«ENDIF»('3 newest «itemDesc»'),
+                'description' => $translator->«IF targets('3.0')»trans«ELSE»__«ENDIF»('A list of the three newest «itemDesc».')
             ];
             $plugins[] = [
                 'pluginid'    => 2,
                 'module'      => '«appName»',
-                'title'       => $translator->__('3 recently updated «itemDesc»'),
-                'description' => $translator->__('A list of the three recently updated «itemDesc».')
+                'title'       => $translator->«IF targets('3.0')»trans«ELSE»__«ENDIF»('3 recently updated «itemDesc»'),
+                'description' => $translator->«IF targets('3.0')»trans«ELSE»__«ENDIF»('A list of the three recently updated «itemDesc».')
             ];
             $plugins[] = [
                 'pluginid'    => 3,
                 'module'      => '«appName»',
-                'title'       => $translator->__('3 random «itemDesc»'),
-                'description' => $translator->__('A list of three random «itemDesc».')
+                'title'       => $translator->«IF targets('3.0')»trans«ELSE»__«ENDIF»('3 random «itemDesc»'),
+                'description' => $translator->«IF targets('3.0')»trans«ELSE»__«ENDIF»('A list of three random «itemDesc».')
             ];
 
             return $plugins;

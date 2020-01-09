@@ -59,10 +59,15 @@ class ExampleDataHelper {
         use Exception;
         use Psr\Log\LoggerInterface;
         use Symfony\Component\HttpFoundation\RequestStack;
+        «IF targets('3.0')»
+            use Symfony\Contracts\Translation\TranslatorInterface;
+        «ENDIF»
         «IF hasCategorisableEntities»
             use Zikula\CategoriesModule\Entity\CategoryEntity;
         «ENDIF»
-        use Zikula\Common\Translator\TranslatorInterface;
+        «IF !targets('3.0')»
+            use Zikula\Common\Translator\TranslatorInterface;
+        «ENDIF»
         «IF hasUserFields»
             use Zikula\UsersModule\Constant as UsersConstant;
             use Zikula\UsersModule\Entity\RepositoryInterface\UserRepositoryInterface;
@@ -268,7 +273,7 @@ class ExampleDataHelper {
                 $flashBag = $this->requestStack->getCurrentRequest()->getSession()->getFlashBag();
                 $flashBag->add(
                     'error',
-                    $this->translator->__('Exception during example data creation')
+                    $this->translator->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Exception during example data creation')
                         . ': ' . $exception->getMessage()
                 );
             }

@@ -156,7 +156,7 @@ class EditFunctions {
             formButtons = editForm.find('.form-buttons input');
             if (editForm.find('.btn-danger').length > 0) {
                 editForm.find('.btn-danger').first().bind('click keypress', function (event) {
-                    if (!window.confirm(Translator.__('Do you really want to delete this entry?'))) {
+                    if (!window.confirm(Translator.«IF targets('3.0')»trans«ELSE»__«ENDIF»('Do you really want to delete this entry?'))) {
                         event.preventDefault();
                     }
                 });

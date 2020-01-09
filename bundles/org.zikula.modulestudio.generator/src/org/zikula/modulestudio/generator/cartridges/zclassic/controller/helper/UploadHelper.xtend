@@ -42,7 +42,11 @@ class UploadHelper {
         use Symfony\Component\HttpFoundation\File\File;
         use Symfony\Component\HttpFoundation\File\UploadedFile;
         use Symfony\Component\HttpFoundation\RequestStack;
-        use Zikula\Common\Translator\TranslatorInterface;
+        «IF targets('3.0')»
+            use Symfony\Contracts\Translation\TranslatorInterface;
+        «ELSE»
+            use Zikula\Common\Translator\TranslatorInterface;
+        «ENDIF»
         use Zikula\Common\Translator\TranslatorTrait;
         use Zikula\Core\Doctrine\EntityAccess;
         use Zikula\ExtensionsModule\Api\ApiInterface\VariableApiInterface;
@@ -324,7 +328,7 @@ class UploadHelper {
                 if (null !== $flashBag) {
                     $flashBag->add(
                         'error',
-                        $this->__('Error! This file type is not allowed. Please choose another file format.')
+                        $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Error! This file type is not allowed. Please choose another file format.')
                     );
                 }
                 $logArgs = [
@@ -351,7 +355,7 @@ class UploadHelper {
             $imgInfo = getimagesize(«fileVar»);
             if (!is_array($imgInfo) || !$imgInfo[0] || !$imgInfo[1]) {
                 if (null !== $flashBag) {
-                    $flashBag->add('error', $this->__('Error! This file type seems not to be a valid image.'));
+                    $flashBag->add('error', $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Error! This file type seems not to be a valid image.'));
                 }
                 $this->logger->error(
                     '{app}: User {user} tried to upload a file which is seems not to be a valid image.',
@@ -779,7 +783,7 @@ class UploadHelper {
                         break;
                 «ENDIF»
                 default:
-                    throw new Exception($this->__('Error! Invalid object type received.'));
+                    throw new Exception($this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Error! Invalid object type received.'));
             }
 
             $result = $basePath;
@@ -849,7 +853,7 @@ class UploadHelper {
                     if (null !== $flashBag) {
                         $flashBag->add(
                             'error',
-                            $this->__f(
+                            $this->«IF targets('3.0')»trans«ELSE»__f«ENDIF»(
                                 'The upload directory "%path%" does not exist and could not be created. Try to create it yourself and make sure that this folder is accessible via the web and writable by the webserver.',
                                 ['%path%' => $exception->getPath()]
                             )
@@ -872,7 +876,7 @@ class UploadHelper {
                     if (null !== $flashBag) {
                         $flashBag->add(
                             'warning',
-                            $this->__f(
+                            $this->«IF targets('3.0')»trans«ELSE»__f«ENDIF»(
                                 'Warning! The upload directory at "%path%" exists but is not writable by the webserver.',
                                 ['%path%' => $exception->getPath()]
                             )
@@ -903,7 +907,7 @@ class UploadHelper {
                     if (null !== $flashBag) {
                         $flashBag->add(
                             'error',
-                            $this->__f(
+                            $this->«IF targets('3.0')»trans«ELSE»__f«ENDIF»(
                                 'An error occured during creation of the .htaccess file in directory "%path%".',
                                 ['%path%' => $exception->getPath()]
                             )

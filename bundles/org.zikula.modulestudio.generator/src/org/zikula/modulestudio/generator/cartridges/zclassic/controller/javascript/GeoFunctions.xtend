@@ -126,7 +126,7 @@ class GeoFunctions {
         }
 
         function «vendorAndName»HandlePositionError (event) {
-            «vendorAndName»SimpleAlert(jQuery('#mapContainer'), Translator.__('Error during geolocation'), event.message, 'geoLocationAlert', 'danger');
+            «vendorAndName»SimpleAlert(jQuery('#mapContainer'), Translator.«IF targets('3.0')»trans«ELSE»__«ENDIF»('Error during geolocation'), event.message, 'geoLocationAlert', 'danger');
         }
     '''
 
