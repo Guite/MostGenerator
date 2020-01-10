@@ -42,17 +42,6 @@ jobs:
         mkdir -p deploy/repo
         cp -R releng/org.zikula.modulestudio.generator.build/target/repository/* deploy/repo
 
-    # see https://github.com/SamKirkland/FTP-Deploy-Action
-    - name: Deploy repository
-      uses: SamKirkland/FTP-Deploy-Action@master
-      env:
-        FTP_SERVER: ${{ secrets.FTP_SERVER }}
-        FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
-        FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
-        LOCAL_DIR: deploy/repo
-        REMOTE_DIR: components/generator
-        ARGS: --delete --continue
-
     # see https://github.com/WebFreak001/deploy-nightly
     - name: Deploy standalone generator
       uses: WebFreak001/deploy-nightly@master
@@ -67,6 +56,22 @@ jobs:
         asset_content_type: application/java-archive
         max_releases: 1 # optional, if there are more releases than this matching the asset_name, the oldest ones are going to be deleted
 
+    - name: Regenerate modules
+      run: ./.github/scripts/regenerateModules.sh
+      env:
+        DISPATCH_TOKEN: ${{ secrets.DISPATCH_TOKEN }}
+
+    # see https://github.com/SamKirkland/FTP-Deploy-Action
+    - name: Deploy repository
+      uses: SamKirkland/FTP-Deploy-Action@master
+      env:
+        FTP_SERVER: ${{ secrets.FTP_SERVER }}
+        FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
+        FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
+        LOCAL_DIR: deploy/repo
+        REMOTE_DIR: components/generator
+        ARGS: --delete --continue
+
     # see https://github.com/peter-evans/repository-dispatch
     - name: Dispatch downstream job
       uses: peter-evans/repository-dispatch@master
@@ -74,8 +79,3 @@ jobs:
         token: ${{ secrets.DISPATCH_TOKEN }}
         repository: Guite/MostProduct
         event-type: upstream-build
-
-    - name: Regenerate modules
-      run: ./.github/scripts/regenerateModules.sh
-      env:
-        DISPATCH_TOKEN: ${{ secrets.DISPATCH_TOKEN }}
