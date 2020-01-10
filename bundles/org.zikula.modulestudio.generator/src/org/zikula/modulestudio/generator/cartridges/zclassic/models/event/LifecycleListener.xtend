@@ -61,6 +61,9 @@ class LifecycleListener {
         «IF targets('3.0')»
             use Zikula\UsersModule\Api\CurrentUserApi;
         «ENDIF»
+        «IF hasLoggable»
+            use Zikula\UsersModule\Constant as UsersConstant;
+        «ENDIF»
         «IF targets('3.0') && hasLoggable»
             use «appNamespace»\Entity\Factory\EntityFactory;
         «ENDIF»
@@ -437,10 +440,11 @@ class LifecycleListener {
                         }
                     «ENDIF»
 
+                    $variableApi = $this->container->get(«IF targets('3.0')»VariableApi::class«ELSE»'zikula_extensions_module.api.variable'«ENDIF»);
                     $currentUserApi = $this->container->get(«IF targets('3.0')»CurrentUserApi::class«ELSE»'zikula_users_module.current_user'«ENDIF»);
                     $userName = $currentUserApi->isLoggedIn()
                         ? $currentUserApi->get('uname')
-                        : $this->container->get(«IF targets('3.0')»Translator::class«ELSE»'translator.default'«ENDIF»)->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Guest')
+                        : $variableApi->get(UsersConstant::MODNAME, UsersConstant::MODVAR_ANONYMOUS_DISPLAY_NAME, 'Guest')
                     ;
 
                     $customLoggableListener->setUsername($userName);
