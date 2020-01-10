@@ -40,9 +40,6 @@ class ContentTypeListType {
         use «nsSymfonyFormType»TextType;
         use Symfony\Component\Form\FormBuilderInterface;
         use Symfony\Component\OptionsResolver\OptionsResolver;
-        «IF targets('3.0')»
-            use Symfony\Contracts\Translation\TranslatorInterface;
-        «ENDIF»
         «IF hasCategorisableEntities»
             use Zikula\CategoriesModule\Entity\RepositoryInterface\CategoryRepositoryInterface;
             use Zikula\CategoriesModule\Form\Type\CategoriesType;
@@ -69,10 +66,16 @@ class ContentTypeListType {
 
             «ENDIF»
             public function __construct(
-                TranslatorInterface $translator«IF hasCategorisableEntities»,
-                CategoryRepositoryInterface $categoryRepository«ENDIF»
+                «IF !targets('3.0')»
+                    TranslatorInterface $translator«IF hasCategorisableEntities»,«ENDIF»
+                «ENDIF»
+                «IF hasCategorisableEntities»
+                    CategoryRepositoryInterface $categoryRepository
+                «ENDIF»
             ) {
-                $this->setTranslator($translator);
+                «IF !targets('3.0')»
+                    $this->setTranslator($translator);
+                «ENDIF»
                 «IF hasCategorisableEntities»
                     $this->categoryRepository = $categoryRepository;
                 «ENDIF»
@@ -153,15 +156,16 @@ class ContentTypeListType {
          */
         public function addObjectTypeField(FormBuilderInterface $builder, array $options = [])«IF targets('3.0')»: void«ENDIF»
         {
-            $helpText = $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»(
-                'If you change this please save the element once to reload the parameters below.'«IF !isSystemModule»,
-                «IF targets('3.0')»
-                    [],
-                «ENDIF»
-                '«appName.formatForDB»'«ENDIF»
-            );
+            «IF targets('3.0')»
+                $helpText = 'If you change this please save the element once to reload the parameters below.';
+            «ELSE»
+                $helpText = $this->__(
+                    'If you change this please save the element once to reload the parameters below.'«IF !isSystemModule»,
+                    '«appName.formatForDB»'«ENDIF»
+                );
+            «ENDIF»
             $builder->add('objectType', «IF getAllEntities.size == 1»Hidden«ELSE»Choice«ENDIF»Type::class, [
-                'label' => $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Object type'«IF !isSystemModule»«IF targets('3.0')», []«ENDIF», '«appName.formatForDB»'«ENDIF») . ':',
+                'label' => «IF !targets('3.0')»$this->__(«ENDIF»'Object type:'«IF !targets('3.0')»«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»)«ENDIF»,
                 'empty_data' => '«leadingEntity.name.formatForCode»'«IF getAllEntities.size > 1»,«ENDIF»
                 «IF getAllEntities.size > 1»
                     'attr' => [
@@ -170,7 +174,7 @@ class ContentTypeListType {
                     'help' => $helpText,
                     'choices' => [
                         «FOR entity : getAllEntities»
-                            $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('«entity.nameMultiple.formatForDisplayCapital»'«IF targets('3.0')», []«ENDIF»«IF !isSystemModule», '«appName.formatForDB»'«ENDIF») => '«entity.name.formatForCode»'«IF entity != getAllEntities.last»,«ENDIF»
+                            «IF !targets('3.0')»$this->__(«ENDIF»'«entity.nameMultiple.formatForDisplayCapital»'«IF targets('3.0')», []«ENDIF»«IF !isSystemModule», '«appName.formatForDB»'«ENDIF») => '«entity.name.formatForCode»'«IF entity != getAllEntities.last»,«ENDIF»
                         «ENDFOR»
                     ],
                     'multiple' => false,
@@ -192,8 +196,8 @@ class ContentTypeListType {
 
             $objectType = $options['object_type'];
             $label = $hasMultiSelection
-                ? $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Categories'«IF !isSystemModule»«IF targets('3.0')», []«ENDIF», '«appName.formatForDB»'«ENDIF»)
-                : $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Category'«IF !isSystemModule»«IF targets('3.0')», []«ENDIF», '«appName.formatForDB»'«ENDIF»)
+                ? «IF !targets('3.0')»$this->__(«ENDIF»'Categories'«IF !targets('3.0')»«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»)«ENDIF»
+                : «IF !targets('3.0')»$this->__(«ENDIF»'Category'«IF !targets('3.0')»«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»)«ENDIF»
             ;
             $hasMultiSelection = $options['category_helper']->hasMultipleSelection($objectType);
             $entityCategoryClass = '«appNamespace»\Entity\\' . ucfirst($objectType) . 'CategoryEntity';
@@ -202,9 +206,9 @@ class ContentTypeListType {
                 'empty_data' => $hasMultiSelection ? [] : null,
                 'attr' => [
                     'class' => 'category-selector',
-                    'title' => $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('This is an optional filter.'«IF !isSystemModule»«IF targets('3.0')», []«ENDIF», '«appName.formatForDB»'«ENDIF»)
+                    'title' => «IF !targets('3.0')»$this->__(«ENDIF»'This is an optional filter.'«IF !targets('3.0')»«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»)«ENDIF»
                 ],
-                'help' => $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('This is an optional filter.'«IF !isSystemModule»«IF targets('3.0')», []«ENDIF», '«appName.formatForDB»'«ENDIF»),
+                'help' => «IF !targets('3.0')»$this->__(«ENDIF»'This is an optional filter.'«IF !targets('3.0')»«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»)«ENDIF»,
                 'required' => false,
                 'multiple' => $hasMultiSelection,
                 'module' => '«appName»',
@@ -255,16 +259,16 @@ class ContentTypeListType {
         public function addSortingField(FormBuilderInterface $builder, array $options = [])«IF targets('3.0')»: void«ENDIF»
         {
             $builder->add('sorting', ChoiceType::class, [
-                'label' => $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Sorting'«IF !isSystemModule»«IF targets('3.0')», []«ENDIF», '«appName.formatForDB»'«ENDIF») . ':',
+                'label' => «IF !targets('3.0')»$this->__(«ENDIF»'Sorting:'«IF !targets('3.0')»«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»)«ENDIF»,
                 'label_attr' => [
                     'class' => 'radio-«IF targets('3.0')»custom«ELSE»inline«ENDIF»'
                 ],
                 'empty_data' => 'default',
                 'choices' => [
-                    $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Random'«IF !isSystemModule»«IF targets('3.0')», []«ENDIF», '«appName.formatForDB»'«ENDIF») => 'random',
-                    $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Newest'«IF !isSystemModule»«IF targets('3.0')», []«ENDIF», '«appName.formatForDB»'«ENDIF») => 'newest',
-                    $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Updated'«IF !isSystemModule»«IF targets('3.0')», []«ENDIF», '«appName.formatForDB»'«ENDIF») => 'updated',
-                    $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Default'«IF !isSystemModule»«IF targets('3.0')», []«ENDIF», '«appName.formatForDB»'«ENDIF») => 'default'
+                    «IF !targets('3.0')»$this->__(«ENDIF»'Random'«IF !targets('3.0')»«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»)«ENDIF» => 'random',
+                    «IF !targets('3.0')»$this->__(«ENDIF»'Newest'«IF !targets('3.0')»«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»)«ENDIF» => 'newest',
+                    «IF !targets('3.0')»$this->__(«ENDIF»'Updated'«IF !targets('3.0')»«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»)«ENDIF» => 'updated',
+                    «IF !targets('3.0')»$this->__(«ENDIF»'Default'«IF !targets('3.0')»«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»)«ENDIF» => 'default'
                 ],
                 'multiple' => false,
                 'expanded' => true
@@ -278,11 +282,11 @@ class ContentTypeListType {
          */
         public function addAmountField(FormBuilderInterface $builder, array $options = [])«IF targets('3.0')»: void«ENDIF»
         {
-            $helpText = $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('The maximum amount of items to be shown.'«IF !isSystemModule»«IF targets('3.0')», []«ENDIF», '«appName.formatForDB»'«ENDIF»)
-                . ' ' . $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Only digits are allowed.'«IF !isSystemModule»«IF targets('3.0')», []«ENDIF», '«appName.formatForDB»'«ENDIF»)
+            $helpText = «IF !targets('3.0')»$this->__(«ENDIF»'The maximum amount of items to be shown.'«IF !targets('3.0')»«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»)«ENDIF»
+                . ' ' . «IF !targets('3.0')»$this->__(«ENDIF»'Only digits are allowed.'«IF !targets('3.0')»«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»)«ENDIF»
             ;
             $builder->add('amount', IntegerType::class, [
-                'label' => $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Amount'«IF !isSystemModule»«IF targets('3.0')», []«ENDIF», '«appName.formatForDB»'«ENDIF») . ':',
+                'label' => «IF !targets('3.0')»$this->__(«ENDIF»'Amount:'«IF !targets('3.0')»«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»)«ENDIF»,
                 'attr' => [
                     'maxlength' => 2,
                     'title' => $helpText
@@ -300,25 +304,25 @@ class ContentTypeListType {
         public function addTemplateFields(FormBuilderInterface $builder, array $options = [])«IF targets('3.0')»: void«ENDIF»
         {
             $builder->add('template', ChoiceType::class, [
-                'label' => $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Template'«IF !isSystemModule»«IF targets('3.0')», []«ENDIF», '«appName.formatForDB»'«ENDIF») . ':',
+                'label' => «IF !targets('3.0')»$this->__(«ENDIF»'Template:'«IF !targets('3.0')»«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»)«ENDIF»,
                 'empty_data' => 'itemlist_display.html.twig',
                 'choices' => [
-                    $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Only item titles'«IF !isSystemModule»«IF targets('3.0')», []«ENDIF», '«appName.formatForDB»'«ENDIF») => 'itemlist_display.html.twig',
-                    $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('With description'«IF !isSystemModule»«IF targets('3.0')», []«ENDIF», '«appName.formatForDB»'«ENDIF») => 'itemlist_display_description.html.twig',
-                    $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Custom template'«IF !isSystemModule»«IF targets('3.0')», []«ENDIF», '«appName.formatForDB»'«ENDIF») => 'custom'
+                    «IF !targets('3.0')»$this->__(«ENDIF»'Only item titles'«IF !targets('3.0')»«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»)«ENDIF» => 'itemlist_display.html.twig',
+                    «IF !targets('3.0')»$this->__(«ENDIF»'With description'«IF !targets('3.0')»«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»)«ENDIF» => 'itemlist_display_description.html.twig',
+                    «IF !targets('3.0')»$this->__(«ENDIF»'Custom template'«IF !targets('3.0')»«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»)«ENDIF» => 'custom'
                 ],
                 'multiple' => false,
                 'expanded' => false
             ]);
             $exampleTemplate = 'itemlist_[objectType]_display.html.twig';
             $builder->add('customTemplate', TextType::class, [
-                'label' => $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Custom template'«IF !isSystemModule»«IF targets('3.0')», []«ENDIF», '«appName.formatForDB»'«ENDIF») . ':',
+                'label' => «IF !targets('3.0')»$this->__(«ENDIF»'Custom template:'«IF !targets('3.0')»«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»)«ENDIF»,
                 'required' => false,
                 'attr' => [
                     'maxlength' => 80,
-                    'title' => $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Example'«IF !isSystemModule»«IF targets('3.0')», []«ENDIF», '«appName.formatForDB»'«ENDIF») . ': ' . $exampleTemplate
+                    'title' => «IF !targets('3.0')»$this->__(«ENDIF»'Example'«IF !targets('3.0')»«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»)«ENDIF» . ': ' . $exampleTemplate
                 ],
-                'help' => $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Example'«IF !isSystemModule»«IF targets('3.0')», []«ENDIF», '«appName.formatForDB»'«ENDIF») . ': <code>' . $exampleTemplate . '</code>'«IF targets('3.0')»,
+                'help' => «IF !targets('3.0')»$this->__(«ENDIF»'Example'«IF !targets('3.0')»«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»)«ENDIF» . ': <code>' . $exampleTemplate . '</code>'«IF targets('3.0')»,
                 'help_html' => true«ENDIF»
             ]);
         }
@@ -331,13 +335,13 @@ class ContentTypeListType {
         public function addFilterField(FormBuilderInterface $builder, array $options = [])«IF targets('3.0')»: void«ENDIF»
         {
             $builder->add('filter', TextType::class, [
-                'label' => $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Filter (expert option)'«IF !isSystemModule»«IF targets('3.0')», []«ENDIF», '«appName.formatForDB»'«ENDIF») . ':',
+                'label' => «IF !targets('3.0')»$this->__(«ENDIF»'Filter (expert option):'«IF !targets('3.0')»«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»)«ENDIF»,
                 'required' => false,
                 'attr' => [
                     'maxlength' => 255,
-                    'title' => $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Example'«IF !isSystemModule»«IF targets('3.0')», []«ENDIF», '«appName.formatForDB»'«ENDIF») . ': tbl.age >= 18'
+                    'title' => «IF !targets('3.0')»$this->__(«ENDIF»'Example'«IF !targets('3.0')»«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»)«ENDIF» . ': tbl.age >= 18'
                 ],
-                'help' => $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Example'«IF !isSystemModule»«IF targets('3.0')», []«ENDIF», '«appName.formatForDB»'«ENDIF») . ': tbl.age >= 18'
+                'help' => «IF !targets('3.0')»$this->__(«ENDIF»'Example'«IF !targets('3.0')»«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»)«ENDIF» . ': tbl.age >= 18'
             ]);
         }
     '''

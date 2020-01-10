@@ -33,9 +33,7 @@ class UploadType {
         use Symfony\Component\HttpFoundation\File\File;
         use Symfony\Component\OptionsResolver\OptionsResolver;
         use Symfony\Component\PropertyAccess\PropertyAccess;
-        «IF targets('3.0')»
-            use Symfony\Contracts\Translation\TranslatorInterface;
-        «ELSE»
+        «IF !targets('3.0')»
             use Zikula\Common\Translator\TranslatorInterface;
         «ENDIF»
         use «appNamespace»\Form\DataTransformer\UploadFileTransformer;
@@ -47,11 +45,13 @@ class UploadType {
          */
         abstract class AbstractUploadType extends AbstractType
         {
-            /**
-             * @var TranslatorInterface
-             */
-            protected $translator;
+            «IF !targets('3.0')»
+                /**
+                 * @var TranslatorInterface
+                 */
+                protected $translator;
 
+            «ENDIF»
             /**
              * @var ImageHelper
              */
@@ -73,11 +73,15 @@ class UploadType {
             protected $entity = null;
 
             public function __construct(
-                TranslatorInterface $translator,
+                «IF !targets('3.0')»
+                    TranslatorInterface $translator,
+                «ENDIF»
                 ImageHelper $imageHelper,
                 UploadHelper $uploadHelper
             ) {
-                $this->translator = $translator;
+                «IF !targets('3.0')»
+                    $this->translator = $translator;
+                «ENDIF»
                 $this->imageHelper = $imageHelper;
                 $this->uploadHelper = $uploadHelper;
             }
@@ -105,7 +109,7 @@ class UploadType {
 
                 if ($options['allow_deletion'] && !$options['required']) {
                     $builder->add($fieldName . 'DeleteFile', CheckboxType::class, [
-                        'label' => $this->translator->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Delete existing file'),
+                        'label' => «IF !targets('3.0')»$this->translator->__(«ENDIF»'Delete existing file'«IF !targets('3.0')»)«ENDIF»,
                         «IF targets('3.0')»
                             'label_attr' => [
                                 'class' => 'switch-custom'
@@ -113,7 +117,7 @@ class UploadType {
                         «ENDIF»
                         'required' => false,
                         'attr' => [
-                            'title' => $this->translator->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Delete this file ?')
+                            'title' => «IF !targets('3.0')»$this->translator->__(«ENDIF»'Delete this file ?'«IF !targets('3.0')»)«ENDIF»
                         ]
                     ]);
                 }
@@ -121,12 +125,12 @@ class UploadType {
 
                     if (true === $options['custom_filename']) {
                         $builder->add($fieldName . 'CustomFileName', TextType::class, [
-                            'label' => $this->translator->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Custom file name'),
+                            'label' => «IF !targets('3.0')»$this->translator->__(«ENDIF»'Custom file name'«IF !targets('3.0')»)«ENDIF»,
                             'required' => false,
                             'attr' => [
-                                'title' => $this->translator->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Optionally enter a custom file name (without extension)')
+                                'title' => «IF !targets('3.0')»$this->translator->__(«ENDIF»'Optionally enter a custom file name (without extension)'«IF !targets('3.0')»)«ENDIF»
                             ],
-                            'help' => $this->translator->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Optionally enter a custom file name (without extension)')
+                            'help' => «IF !targets('3.0')»$this->translator->__(«ENDIF»'Optionally enter a custom file name (without extension)'«IF !targets('3.0')»)«ENDIF»
                         ]);
                     }
                 «ENDIF»

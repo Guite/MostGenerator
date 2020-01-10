@@ -61,14 +61,14 @@ class ModerationFormFieldsTrait {
             ) {
                 $builder->add('moderationSpecificCreator', UserLiveSearchType::class, [
                     'mapped' => false,
-                    'label' => $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Creator') . ':',
+                    'label' => «IF !targets('3.0')»$this->__(«ENDIF»'Creator:'«IF !targets('3.0')»)«ENDIF»,
                     'attr' => [
                         'maxlength' => 11,
-                        'title' => $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Here you can choose a user which will be set as creator.')
+                        'title' => «IF !targets('3.0')»$this->__(«ENDIF»'Here you can choose a user which will be set as creator.'«IF !targets('3.0')»)«ENDIF»
                     ],
                     'empty_data' => 0,
                     'required' => false,
-                    'help' => $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Here you can choose a user which will be set as creator.')
+                    'help' => «IF !targets('3.0')»$this->__(«ENDIF»'Here you can choose a user which will be set as creator.'«IF !targets('3.0')»)«ENDIF»
                 ]);
             }
             if (
@@ -77,17 +77,17 @@ class ModerationFormFieldsTrait {
             ) {
                 $builder->add('moderationSpecificCreationDate', DateTimeType::class, [
                     'mapped' => false,
-                    'label' => $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Creation date') . ':',
+                    'label' => «IF !targets('3.0')»$this->__(«ENDIF»'Creation date:'«IF !targets('3.0')»)«ENDIF»,
                     'attr' => [
                         'class' => '',
-                        'title' => $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Here you can choose a custom creation date.')
+                        'title' => «IF !targets('3.0')»$this->__(«ENDIF»'Here you can choose a custom creation date.'«IF !targets('3.0')»)«ENDIF»
                     ],
                     'empty_data' => '',
                     'required' => false,
                     'with_seconds' => true,
                     'date_widget' => 'single_text',
                     'time_widget' => 'single_text',
-                    'help' => $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Here you can choose a custom creation date.')
+                    'help' => «IF !targets('3.0')»$this->__(«ENDIF»'Here you can choose a custom creation date.'«IF !targets('3.0')»)«ENDIF»
                 ]);
             }
         }

@@ -47,22 +47,22 @@ class WorkflowFormFieldsTrait {
         {
             $helpText = '';
             if ($options['is_moderator']«IF hasWorkflow(EntityWorkflowType.ENTERPRISE)» || $options['is_super_moderator']«ENDIF») {
-                $helpText = $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('These remarks (like a reason for deny) are not stored, but added to any notification emails send to the creator.');
+                $helpText = «IF !targets('3.0')»$this->__(«ENDIF»'These remarks (like a reason for deny) are not stored, but added to any notification emails send to the creator.'«IF !targets('3.0')»)«ENDIF»;
             } elseif ($options['is_creator']) {
-                $helpText = $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('These remarks (like questions about conformance) are not stored, but added to any notification emails send to our moderators.');
+                $helpText = «IF !targets('3.0')»$this->__(«ENDIF»'These remarks (like questions about conformance) are not stored, but added to any notification emails send to our moderators.'«IF !targets('3.0')»)«ENDIF»;
             }
 
             $builder->add('additionalNotificationRemarks', TextareaType::class, [
                 'mapped' => false,
-                'label' => $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Additional remarks'),
+                'label' => «IF !targets('3.0')»$this->__(«ENDIF»'Additional remarks'«IF !targets('3.0')»)«ENDIF»,
                 'label_attr' => [
                     'class' => 'tooltips',
                     'title' => $helpText
                 ],
                 'attr' => [
                     'title' => 'create' == $options['mode']
-                        ? $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Enter any additions about your content')
-                        : $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Enter any additions about your changes')
+                        ? «IF !targets('3.0')»$this->__(«ENDIF»'Enter any additions about your content'«IF !targets('3.0')»)«ENDIF»
+                        : «IF !targets('3.0')»$this->__(«ENDIF»'Enter any additions about your changes'«IF !targets('3.0')»)«ENDIF»
                 ],
                 'required' => false,
                 'help' => $helpText

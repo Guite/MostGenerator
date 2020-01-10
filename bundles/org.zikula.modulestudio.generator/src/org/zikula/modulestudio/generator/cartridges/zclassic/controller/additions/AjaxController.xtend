@@ -1066,7 +1066,7 @@ class AjaxController {
 
     def private updateSortPositionsBaseImpl(Application it) '''
         if (!$request->isXmlHttpRequest()) {
-            return «IF targets('2.0')»$this->json«ELSE»new JsonResponse«ENDIF»($this->__('Only ajax access is allowed!'), Response::HTTP_BAD_REQUEST);
+            return «IF targets('2.0')»$this->json«ELSE»new JsonResponse«ENDIF»($this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Only ajax access is allowed!'), Response::HTTP_BAD_REQUEST);
         }
 
         if (!$this->hasPermission('«appName»::Ajax', '::', ACCESS_EDIT)) {
@@ -1079,7 +1079,7 @@ class AjaxController {
         $max = $request->request->getInt('max');
 
         if (!is_array($itemIds) || 2 > count($itemIds) || 1 > $max || $max <= $min) {
-            return «IF targets('2.0')»$this->json«ELSE»new JsonResponse«ENDIF»($this->__('Error: invalid input.'), JsonResponse::HTTP_BAD_REQUEST);
+            return «IF targets('2.0')»$this->json«ELSE»new JsonResponse«ENDIF»($this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Error: invalid input.'), JsonResponse::HTTP_BAD_REQUEST);
         }
 
         «IF !targets('3.0')»
@@ -1110,7 +1110,7 @@ class AjaxController {
 
         // return response
         return «IF targets('2.0')»$this->json«ELSE»new JsonResponse«ENDIF»([
-            'message' => $this->__('The setting has been successfully changed.')
+            'message' => $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('The setting has been successfully changed.')
         ]);
     '''
 
@@ -1190,7 +1190,7 @@ class AjaxController {
 
     def private attachHookObjectBaseImpl(Application it) '''
         if (!$request->isXmlHttpRequest()) {
-            return «IF targets('2.0')»$this->json«ELSE»new JsonResponse«ENDIF»($this->__('Only ajax access is allowed!'), Response::HTTP_BAD_REQUEST);
+            return «IF targets('2.0')»$this->json«ELSE»new JsonResponse«ENDIF»($this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Only ajax access is allowed!'), Response::HTTP_BAD_REQUEST);
         }
 
         if (!$this->hasPermission('«appName»::Ajax', '::', ACCESS_EDIT)) {
@@ -1205,7 +1205,7 @@ class AjaxController {
         $assignedId = $request->request->getInt('assignedId');
 
         if (!$subscriberOwner || !$subscriberAreaId || !$subscriberObjectId || !$assignedEntity || !$assignedId) {
-            return «IF targets('2.0')»$this->json«ELSE»new JsonResponse«ENDIF»($this->__('Error: invalid input.'), JsonResponse::HTTP_BAD_REQUEST);
+            return «IF targets('2.0')»$this->json«ELSE»new JsonResponse«ENDIF»($this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Error: invalid input.'), JsonResponse::HTTP_BAD_REQUEST);
         }
 
         $subscriberUrl = !empty($subscriberUrl) ? unserialize($subscriberUrl) : [];
@@ -1231,7 +1231,7 @@ class AjaxController {
 
     def private detachHookObjectBaseImpl(Application it) '''
         if (!$request->isXmlHttpRequest()) {
-            return «IF targets('2.0')»$this->json«ELSE»new JsonResponse«ENDIF»($this->__('Only ajax access is allowed!'), Response::HTTP_BAD_REQUEST);
+            return «IF targets('2.0')»$this->json«ELSE»new JsonResponse«ENDIF»($this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Only ajax access is allowed!'), Response::HTTP_BAD_REQUEST);
         }
 
         if (!$this->hasPermission('«appName»::Ajax', '::', ACCESS_EDIT)) {
@@ -1240,7 +1240,7 @@ class AjaxController {
 
         $id = $request->request->getInt('id', 0);
         if (!$id) {
-            return «IF targets('2.0')»$this->json«ELSE»new JsonResponse«ENDIF»($this->__('Error: invalid input.'), JsonResponse::HTTP_BAD_REQUEST);
+            return «IF targets('2.0')»$this->json«ELSE»new JsonResponse«ENDIF»($this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Error: invalid input.'), JsonResponse::HTTP_BAD_REQUEST);
         }
 
         «IF !targets('3.0')»

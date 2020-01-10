@@ -82,9 +82,6 @@ class QuickNavigationType {
             use Symfony\Component\HttpFoundation\RequestStack;
         «ENDIF»
         use Symfony\Component\OptionsResolver\OptionsResolver;
-        «IF app.targets('3.0')»
-            use Symfony\Contracts\Translation\TranslatorInterface;
-        «ENDIF»
         «IF hasLocaleFieldsEntity»
             use Zikula\Bundle\FormExtensionBundle\Form\Type\LocaleType;
         «ENDIF»
@@ -93,8 +90,8 @@ class QuickNavigationType {
         «ENDIF»
         «IF !app.targets('3.0')»
             use Zikula\Common\Translator\TranslatorInterface;
+            use Zikula\Common\Translator\TranslatorTrait;
         «ENDIF»
-        use Zikula\Common\Translator\TranslatorTrait;
         «IF hasLocaleFieldsEntity»
             use Zikula\SettingsModule\Api\ApiInterface\LocaleApiInterface;
         «ENDIF»
@@ -119,9 +116,10 @@ class QuickNavigationType {
          */
         abstract class Abstract«name.formatForCodeCapital»QuickNavType extends AbstractType
         {
-            use TranslatorTrait;
+            «IF !app.targets('3.0')»
+                use TranslatorTrait;
+            «ENDIF»
             «IF !incomingRelations.empty»
-
                 /**
                  * @var RequestStack
                  */
@@ -131,38 +129,49 @@ class QuickNavigationType {
                  * @var EntityDisplayHelper
                  */
                 protected $entityDisplayHelper;
+
             «ENDIF»
             «IF hasListFieldsEntity»
-
                 /**
                  * @var ListEntriesHelper
                  */
                 protected $listHelper;
+
             «ENDIF»
             «IF hasLocaleFieldsEntity»
-
                 /**
                  * @var LocaleApiInterface
                  */
                 protected $localeApi;
+
             «ENDIF»
             «IF app.needsFeatureActivationHelper»
-
                 /**
                  * @var FeatureActivationHelper
                  */
                 protected $featureActivationHelper;
-            «ENDIF»
 
+            «ENDIF»
             public function __construct(
-                TranslatorInterface $translator«IF !incomingRelations.empty»,
-                RequestStack $requestStack,
-                EntityDisplayHelper $entityDisplayHelper«ENDIF»«IF hasListFieldsEntity»,
-                ListEntriesHelper $listHelper«ENDIF»«IF hasLocaleFieldsEntity»,
-                LocaleApiInterface $localeApi«ENDIF»«IF app.needsFeatureActivationHelper»,
-                FeatureActivationHelper $featureActivationHelper«ENDIF»
+                «IF !app.targets('3.0')»
+                    TranslatorInterface $translator«IF !incomingRelations.empty»,
+                    RequestStack $requestStack,
+                    EntityDisplayHelper $entityDisplayHelper«ENDIF»«IF hasListFieldsEntity»,
+                    ListEntriesHelper $listHelper«ENDIF»«IF hasLocaleFieldsEntity»,
+                    LocaleApiInterface $localeApi«ENDIF»«IF app.needsFeatureActivationHelper»,
+                    FeatureActivationHelper $featureActivationHelper«ENDIF»
+                «ELSE»
+                    «IF !incomingRelations.empty»
+                    RequestStack $requestStack,
+                    EntityDisplayHelper $entityDisplayHelper«ENDIF»«IF hasListFieldsEntity»,
+                    ListEntriesHelper $listHelper«ENDIF»«IF hasLocaleFieldsEntity»,
+                    LocaleApiInterface $localeApi«ENDIF»«IF app.needsFeatureActivationHelper»,
+                    FeatureActivationHelper $featureActivationHelper«ENDIF»
+                «ENDIF»
             ) {
-                $this->setTranslator($translator);
+                «IF !app.targets('3.0')»
+                    $this->setTranslator($translator);
+                «ENDIF»
                 «IF !incomingRelations.empty»
                     $this->requestStack = $requestStack;
                     $this->entityDisplayHelper = $entityDisplayHelper;
@@ -229,7 +238,7 @@ class QuickNavigationType {
                     $this->addBooleanFields($builder, $options);
                 «ENDIF»
                 $builder->add('updateview', SubmitType::class, [
-                    'label' => $this->«IF app.targets('3.0')»trans«ELSE»__«ENDIF»('OK'),
+                    'label' => «IF !app.targets('3.0')»$this->__(«ENDIF»'OK'«IF !app.targets('3.0')»)«ENDIF»,
                     'attr' => [
                         'class' => 'btn btn-default btn-sm'
                     ]
@@ -308,11 +317,11 @@ class QuickNavigationType {
             $objectType = '«name.formatForCode»';
             $entityCategoryClass = '«app.appNamespace»\Entity\\' . ucfirst($objectType) . 'CategoryEntity';
             $builder->add('categories', CategoriesType::class, [
-                'label' => $this->«IF app.targets('3.0')»trans«ELSE»__«ENDIF»('«IF categorisableMultiSelection»Categories«ELSE»Category«ENDIF»'),
+                'label' => «IF !app.targets('3.0')»$this->__(«ENDIF»'«IF categorisableMultiSelection»Categories«ELSE»Category«ENDIF»'«IF !app.targets('3.0')»)«ENDIF»,
                 'empty_data' => «IF categorisableMultiSelection»[]«ELSE»null«ENDIF»,
                 'attr' => [
                     'class' => '«IF app.targets('3.0')»form-control«ELSE»input«ENDIF»-sm category-selector',
-                    'title' => $this->«IF app.targets('3.0')»trans«ELSE»__«ENDIF»('This is an optional filter.')
+                    'title' => «IF !app.targets('3.0')»$this->__(«ENDIF»'This is an optional filter.'«IF !app.targets('3.0')»)«ENDIF»
                 ],
                 'required' => false,
                 'multiple' => «categorisableMultiSelection.displayBool»,
@@ -447,7 +456,7 @@ class QuickNavigationType {
         public function addSearchField(FormBuilderInterface $builder, array $options = [])«IF app.targets('3.0')»: void«ENDIF»
         {
             $builder->add('q', SearchType::class, [
-                'label' => $this->«IF app.targets('3.0')»trans«ELSE»__«ENDIF»('Search'),
+                'label' => «IF !app.targets('3.0')»$this->__(«ENDIF»'Search'«IF !app.targets('3.0')»)«ENDIF»,
                 'attr' => [
                     'maxlength' => 255,
                     'class' => '«IF app.targets('3.0')»form-control«ELSE»input«ENDIF»-sm'
@@ -465,21 +474,21 @@ class QuickNavigationType {
         {
             $builder
                 ->add('sort', ChoiceType::class, [
-                    'label' => $this->«IF app.targets('3.0')»trans«ELSE»__«ENDIF»('Sort by'),
+                    'label' => «IF !app.targets('3.0')»$this->__(«ENDIF»'Sort by'«IF !app.targets('3.0')»)«ENDIF»,
                     'attr' => [
                         'class' => '«IF app.targets('3.0')»form-control«ELSE»input«ENDIF»-sm'
                     ],
                     'choices' =>             [
                         «FOR field : getSortingFields»
                             «IF field.name.formatForCode != 'workflowState' || workflow != EntityWorkflowType.NONE»
-                                $this->«IF app.targets('3.0')»trans«ELSE»__«ENDIF»('«field.name.formatForDisplayCapital»') => '«field.name.formatForCode»'«IF standardFields || field != getDerivedFields.last»,«ENDIF»
+                                «IF !app.targets('3.0')»$this->__(«ENDIF»'«field.name.formatForDisplayCapital»'«IF !app.targets('3.0')»)«ENDIF» => '«field.name.formatForCode»'«IF standardFields || field != getDerivedFields.last»,«ENDIF»
                             «ENDIF»
                         «ENDFOR»
                         «IF standardFields»
-                            $this->«IF app.targets('3.0')»trans«ELSE»__«ENDIF»('Creation date') => 'createdDate',
-                            $this->«IF app.targets('3.0')»trans«ELSE»__«ENDIF»('Creator') => 'createdBy',
-                            $this->«IF app.targets('3.0')»trans«ELSE»__«ENDIF»('Update date') => 'updatedDate',
-                            $this->«IF app.targets('3.0')»trans«ELSE»__«ENDIF»('Updater') => 'updatedBy'
+                            «IF !app.targets('3.0')»$this->__(«ENDIF»'Creation date'«IF !app.targets('3.0')»)«ENDIF» => 'createdDate',
+                            «IF !app.targets('3.0')»$this->__(«ENDIF»'Creator'«IF !app.targets('3.0')»)«ENDIF» => 'createdBy',
+                            «IF !app.targets('3.0')»$this->__(«ENDIF»'Update date'«IF !app.targets('3.0')»)«ENDIF» => 'updatedDate',
+                            «IF !app.targets('3.0')»$this->__(«ENDIF»'Updater'«IF !app.targets('3.0')»)«ENDIF» => 'updatedBy'
                         «ENDIF»
                     ],
                     «IF !app.targets('2.0')»
@@ -489,14 +498,14 @@ class QuickNavigationType {
                     'expanded' => false
                 ])
                 ->add('sortdir', ChoiceType::class, [
-                    'label' => $this->«IF app.targets('3.0')»trans«ELSE»__«ENDIF»('Sort direction'),
+                    'label' => «IF !app.targets('3.0')»$this->__(«ENDIF»'Sort direction'«IF !app.targets('3.0')»)«ENDIF»,
                     'empty_data' => 'asc',
                     'attr' => [
                         'class' => '«IF app.targets('3.0')»form-control«ELSE»input«ENDIF»-sm'
                     ],
                     'choices' => [
-                        $this->«IF app.targets('3.0')»trans«ELSE»__«ENDIF»('Ascending') => 'asc',
-                        $this->«IF app.targets('3.0')»trans«ELSE»__«ENDIF»('Descending') => 'desc'
+                        «IF !app.targets('3.0')»$this->__(«ENDIF»'Ascending'«IF !app.targets('3.0')»)«ENDIF» => 'asc',
+                        «IF !app.targets('3.0')»$this->__(«ENDIF»'Descending'«IF !app.targets('3.0')»)«ENDIF» => 'desc'
                     ],
                     «IF !app.targets('2.0')»
                         'choices_as_values' => true,
@@ -515,7 +524,7 @@ class QuickNavigationType {
         public function addAmountField(FormBuilderInterface $builder, array $options = [])«IF app.targets('3.0')»: void«ENDIF»
         {
             $builder->add('num', ChoiceType::class, [
-                'label' => $this->«IF app.targets('3.0')»trans«ELSE»__«ENDIF»('Page size'),
+                'label' => «IF !app.targets('3.0')»$this->__(«ENDIF»'Page size'«IF !app.targets('3.0')»)«ENDIF»,
                 'empty_data' => 20,
                 'attr' => [
                     'class' => '«IF app.targets('3.0')»form-control«ELSE»input«ENDIF»-sm text-right'
@@ -552,7 +561,7 @@ class QuickNavigationType {
 
     def private dispatch fieldImpl(DerivedField it) '''
         $builder->add('«name.formatForCode»', «IF it instanceof StringField && (it as StringField).role == StringRole.LOCALE»Locale«ELSEIF it instanceof ListField && (it as ListField).multiple»MultiList«ELSEIF it instanceof UserField»Entity«ELSE»«fieldType»«ENDIF»Type::class, [
-            'label' => $this->«IF app.targets('3.0')»trans«ELSE»__«ENDIF»('«IF name == 'workflowState'»State«ELSE»«name.formatForDisplayCapital»«ENDIF»'),
+            'label' => «IF !app.targets('3.0')»$this->__(«ENDIF»'«IF name == 'workflowState'»State«ELSE»«name.formatForDisplayCapital»«ENDIF»'«IF !app.targets('3.0')»)«ENDIF»,
             'attr' => [
                 'class' => '«IF app.targets('3.0')»form-control«ELSE»input«ENDIF»-sm'
             ],
@@ -567,7 +576,7 @@ class QuickNavigationType {
     def private dispatch fieldType(StringField it) '''«IF role == StringRole.COUNTRY»Country«ELSEIF role == StringRole.CURRENCY»Currency«ELSEIF role == StringRole.LANGUAGE»Language«ELSEIF role == StringRole.LOCALE»Locale«ELSEIF role == StringRole.TIME_ZONE»Timezone«ENDIF»'''
     def private dispatch additionalOptions(StringField it) '''
         «IF !mandatory && #[StringRole.COUNTRY, StringRole.CURRENCY, StringRole.LANGUAGE, StringRole.LOCALE, StringRole.TIME_ZONE].contains(role)»
-            'placeholder' => $this->«IF app.targets('3.0')»trans«ELSE»__«ENDIF»('All')«IF role == StringRole.LOCALE»,«ENDIF»
+            'placeholder' => «IF !app.targets('3.0')»$this->__(«ENDIF»'All'«IF !app.targets('3.0')»)«ENDIF»«IF role == StringRole.LOCALE»,«ENDIF»
         «ENDIF»
         «IF role == StringRole.LOCALE»
             'choices' => $this->localeApi->getSupportedLocaleNames()«IF !app.targets('2.0')»,«ENDIF»
@@ -578,14 +587,14 @@ class QuickNavigationType {
     '''
 
     def private dispatch additionalOptions(UserField it) '''
-        'placeholder' => $this->«IF app.targets('3.0')»trans«ELSE»__«ENDIF»('All'),
+        'placeholder' => «IF !app.targets('3.0')»$this->__(«ENDIF»'All'«IF !app.targets('3.0')»)«ENDIF»,
         'class' => UserEntity::class,
         'choice_label' => 'uname'
     '''
 
     def private dispatch fieldType(ListField it) '''«/* called for multiple=false only */»Choice'''
     def private dispatch additionalOptions(ListField it) '''
-        'placeholder' => $this->«IF app.targets('3.0')»trans«ELSE»__«ENDIF»('All'),
+        'placeholder' => «IF !app.targets('3.0')»$this->__(«ENDIF»'All'«IF !app.targets('3.0')»)«ENDIF»,
         'choices' => $choices,
         «IF !app.targets('2.0')»
             'choices_as_values' => true,
@@ -597,10 +606,10 @@ class QuickNavigationType {
 
     def private dispatch fieldType(BooleanField it) '''Choice'''
     def private dispatch additionalOptions(BooleanField it) '''
-        'placeholder' => $this->«IF app.targets('3.0')»trans«ELSE»__«ENDIF»('All'),
+        'placeholder' => «IF !app.targets('3.0')»$this->__(«ENDIF»'All'«IF !app.targets('3.0')»)«ENDIF»,
         'choices' => [
-            $this->«IF app.targets('3.0')»trans«ELSE»__«ENDIF»('No') => 'no',
-            $this->«IF app.targets('3.0')»trans«ELSE»__«ENDIF»('Yes') => 'yes'
+            «IF !app.targets('3.0')»$this->__(«ENDIF»'No'«IF !app.targets('3.0')»)«ENDIF» => 'no',
+            «IF !app.targets('3.0')»$this->__(«ENDIF»'Yes'«IF !app.targets('3.0')»)«ENDIF» => 'yes'
         ]«IF !app.targets('2.0')»,«ENDIF»
         «IF !app.targets('2.0')»
             'choices_as_values' => true
@@ -621,9 +630,9 @@ class QuickNavigationType {
             'class' => '«app.appName»:«source.name.formatForCodeCapital»Entity',
             'choice_label' => $choiceLabelClosure,
             'query_builder' => $queryBuilder,
-            'placeholder' => $this->«IF app.targets('3.0')»trans«ELSE»__«ENDIF»('All'),
+            'placeholder' => «IF !app.targets('3.0')»$this->__(«ENDIF»'All'«IF !app.targets('3.0')»)«ENDIF»,
             'required' => false,
-            'label' => $this->«IF app.targets('3.0')»trans«ELSE»__«ENDIF»('«sourceAliasName.formatForDisplayCapital»'),
+            'label' => «IF !app.targets('3.0')»$this->__(«ENDIF»'«sourceAliasName.formatForDisplayCapital»'«IF !app.targets('3.0')»)«ENDIF»,
             'attr' => [
                 'class' => '«IF app.targets('3.0')»form-control«ELSE»input«ENDIF»-sm'
             ]

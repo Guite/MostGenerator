@@ -44,45 +44,43 @@ class FormAwareProviderInnerForms {
         use Symfony\Component\Form\Extension\Core\Type\TextType;
         use Symfony\Component\Form\FormBuilderInterface;
         use Symfony\Component\OptionsResolver\OptionsResolver;
-        «IF app.targets('3.0')»
-            use Symfony\Contracts\Translation\TranslatorInterface;
-        «ELSE»
+        «IF !app.targets('3.0')»
             use Zikula\Common\Translator\TranslatorInterface;
+            use Zikula\Common\Translator\TranslatorTrait;
         «ENDIF»
-        use Zikula\Common\Translator\TranslatorTrait;
 
         /**
          * «action.formatForDisplayCapital» «name.formatForDisplay» form type base class.
          */
         abstract class Abstract«action.formatForCodeCapital»«name.formatForCodeCapital»Type extends AbstractType
         {
-            use TranslatorTrait;
-
-            public function __construct(TranslatorInterface $translator)
-            {
-                $this->setTranslator($translator);
-            }
             «IF !app.targets('3.0')»
+                use TranslatorTrait;
+
+                public function __construct(TranslatorInterface $translator)
+                {
+                    $this->setTranslator($translator);
+                }
 
                 «app.setTranslatorMethod»
-            «ENDIF»
 
+            «ENDIF»
             public function buildForm(FormBuilderInterface $builder, array $options)
             {
                 $builder
                     ->add('dummyName', TextType::class, [
-                        'label' => $this->«IF app.targets('3.0')»trans«ELSE»__«ENDIF»('Dummy «name.formatForDisplay» text'),
+                        'label' => «IF !app.targets('3.0')»$this->__(«ENDIF»'Dummy «name.formatForDisplay» text'«IF !app.targets('3.0')»)«ENDIF»,
                         'required' => true
                     ])
                     ->add('dummyChoice', ChoiceType::class, [
-                        'label' => $this->«IF app.targets('3.0')»trans«ELSE»__«ENDIF»('Dummy «name.formatForDisplay» choice'),
+                        'label' => «IF !app.targets('3.0')»$this->__(«ENDIF»'Dummy «name.formatForDisplay» choice'«IF !app.targets('3.0')»)«ENDIF»,
                         'label_attr' => [
                             'class' => 'checkbox-«IF app.targets('3.0')»custom«ELSE»inline«ENDIF»'
                         ],
                         'choices' => [
-                            $this->«IF app.targets('3.0')»trans«ELSE»__«ENDIF»('Option A') => 'A',
-                            $this->«IF app.targets('3.0')»trans«ELSE»__«ENDIF»('Option B') => 'B',
-                            $this->«IF app.targets('3.0')»trans«ELSE»__«ENDIF»('Option C') => 'C'
+                            «IF !app.targets('3.0')»$this->__(«ENDIF»'Option A'«IF !app.targets('3.0')»)«ENDIF» => 'A',
+                            «IF !app.targets('3.0')»$this->__(«ENDIF»'Option B'«IF !app.targets('3.0')»)«ENDIF» => 'B',
+                            «IF !app.targets('3.0')»$this->__(«ENDIF»'Option C'«IF !app.targets('3.0')»)«ENDIF» => 'C'
                         ],
                         «IF !app.targets('2.0')»
                             'choices_as_values' => true,
