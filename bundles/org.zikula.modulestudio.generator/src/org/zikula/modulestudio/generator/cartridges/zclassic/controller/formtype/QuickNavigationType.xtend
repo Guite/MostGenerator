@@ -164,7 +164,8 @@ class QuickNavigationType {
                 «ELSE»
                     «IF !incomingRelations.empty»
                         RequestStack $requestStack,
-                        EntityDisplayHelper $entityDisplayHelper«ENDIF»«IF hasListFieldsEntity || hasLocaleFieldsEntity || app.needsFeatureActivationHelper»,«ENDIF»
+                        EntityDisplayHelper $entityDisplayHelper«IF hasListFieldsEntity || hasLocaleFieldsEntity || app.needsFeatureActivationHelper»,«ENDIF»
+                    «ENDIF»
                     «IF hasListFieldsEntity»
                         ListEntriesHelper $listHelper«IF incomingRelations.empty && (hasLocaleFieldsEntity || app.needsFeatureActivationHelper)»,«ENDIF»
                     «ENDIF»
