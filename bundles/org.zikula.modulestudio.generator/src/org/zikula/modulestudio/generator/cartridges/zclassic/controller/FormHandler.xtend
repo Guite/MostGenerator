@@ -1610,7 +1610,7 @@ class FormHandler {
                     if ($templateId > 0) {
                         $entityT = $this->entityFactory->getRepository($this->objectType)->selectById($templateId, false, true);
                         if (null !== $entityT) {
-                            $entity->set_actionDescriptionForLogEntry('_HISTORY_«name.formatForCode.toUpperCase»_CLONED|%«name.formatForCode»=' . $entityT->getKey());
+                            $entity->set_actionDescriptionForLogEntry('_HISTORY_«name.formatForCode.toUpperCase»_CLONED|%«name.formatForCode»%=' . $entityT->getKey());
                         }
                     }
                     if (!$entity->get_actionDescriptionForLogEntry()) {

@@ -366,7 +366,7 @@ class LoggableHelper {
 
             $entity->set_actionDescriptionForLogEntry(
                 '_HISTORY_' . strtoupper($objectType) . '_RESTORED'
-                . '|%version=' . $lastVersionBeforeDeletion
+                . '|%version%=' . $lastVersionBeforeDeletion
             );
 
             return $this->revertPostProcess($entity);
@@ -508,16 +508,16 @@ class LoggableHelper {
             $actionTranslated = $this->«IF application.targets('3.0')»trans«ELSE»__«ENDIF»('«displayName» updated');
             break;
         case '«constantPrefix»CLONED':
-            if (isset($parameters['%«name.formatForCode»']) && is_numeric($parameters['%«name.formatForCode»'])) {
-                $originalEntity = $this->entityFactory->getRepository('«name.formatForCode»')->selectById($parameters['%«name.formatForCode»']);
+            if (isset($parameters['%«name.formatForCode»%']) && is_numeric($parameters['%«name.formatForCode»%'])) {
+                $originalEntity = $this->entityFactory->getRepository('«name.formatForCode»')->selectById($parameters['%«name.formatForCode»%']);
                 if (null !== $originalEntity) {
-                    $parameters['%«name.formatForCode»'] = $this->entityDisplayHelper->getFormattedTitle($originalEntity);
+                    $parameters['%«name.formatForCode»%'] = $this->entityDisplayHelper->getFormattedTitle($originalEntity);
                 }
             }
-            $actionTranslated = $this->«IF application.targets('3.0')»trans«ELSE»__f«ENDIF»('«displayName» cloned from «name.formatForDisplay» "%«name.formatForCode»"', $parameters);
+            $actionTranslated = $this->«IF application.targets('3.0')»trans«ELSE»__f«ENDIF»('«displayName» cloned from «name.formatForDisplay» "%«name.formatForCode»%"', $parameters);
             break;
         case '«constantPrefix»RESTORED':
-            $actionTranslated = $this->«IF application.targets('3.0')»trans«ELSE»__f«ENDIF»('«displayName» restored from version "%version"', $parameters);
+            $actionTranslated = $this->«IF application.targets('3.0')»trans«ELSE»__f«ENDIF»('«displayName» restored from version "%version%"', $parameters);
             break;
         case '«constantPrefix»DELETED':
             $actionTranslated = $this->«IF application.targets('3.0')»trans«ELSE»__«ENDIF»('«displayName» deleted');
