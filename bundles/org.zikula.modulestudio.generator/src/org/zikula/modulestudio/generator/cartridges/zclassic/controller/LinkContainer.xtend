@@ -128,7 +128,7 @@ class LinkContainer {
                                     $routeName = '«appName.formatForDB»_' . strtolower($objectType) . '_view';
                                     $links[] = [
                                         'url' => $this->router->generate($routeName, $routeArgs),
-                                        'text' => $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('My «entity.nameMultiple.formatForDisplay»'«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»),
+                                        'text' => $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('My «entity.nameMultiple.formatForDisplay»'«IF !isSystemModule»«IF targets('3.0')», []«ENDIF», '«appName.formatForDB»'«ENDIF»),
                                         'icon' => 'list-alt'
                                     ];
                                 }
@@ -138,7 +138,7 @@ class LinkContainer {
                         if ($this->permissionHelper->hasPermission(ACCESS_ADMIN)) {
                             $links[] = [
                                 'url' => $this->router->generate('«appName.formatForDB»_«getLeadingEntity.name.formatForDB»_admin«getLeadingEntity.getPrimaryAction»'),
-                                'text' => $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('«name.formatForDisplayCapital» Backend'«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»),
+                                'text' => $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('«name.formatForDisplayCapital» Backend'«IF !isSystemModule»«IF targets('3.0')», []«ENDIF», '«appName.formatForDB»'«ENDIF»),
                                 'icon' => 'wrench'
                             ];
                         }
