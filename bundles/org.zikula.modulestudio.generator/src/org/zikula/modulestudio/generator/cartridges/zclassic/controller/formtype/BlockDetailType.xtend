@@ -51,8 +51,10 @@ class BlockDetailType {
          */
         abstract class AbstractItemBlockType extends AbstractType
         {
-            use TranslatorTrait;
+            «IF !targets('3.0')»
+                use TranslatorTrait;
 
+            «ENDIF»
             /**
              * @var EntityFactory
              */
@@ -64,11 +66,15 @@ class BlockDetailType {
             protected $entityDisplayHelper;
 
             public function __construct(
-                TranslatorInterface $translator,
+                «IF !targets('3.0')»
+                    TranslatorInterface $translator,
+                «ENDIF»
                 EntityFactory $entityFactory,
                 EntityDisplayHelper $entityDisplayHelper
             ) {
-                $this->setTranslator($translator);
+                «IF !targets('3.0')»
+                    $this->setTranslator($translator);
+                «ENDIF»
                 $this->entityFactory = $entityFactory;
                 $this->entityDisplayHelper = $entityDisplayHelper;
             }
