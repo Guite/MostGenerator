@@ -185,7 +185,7 @@ class MultiHook {
 
         use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
         use Symfony\Component\Routing\RouterInterface;
-        «IF application.targets('3.0')»
+        «IF app.targets('3.0')»
             use Symfony\Contracts\Translation\TranslatorInterface;
             use Zikula\Common\MultiHook\NeedleInterface;
         «ELSE»
@@ -200,7 +200,7 @@ class MultiHook {
         /**
          * «name.formatForCodeCapital»Needle base class.
          */
-        abstract class Abstract«name.formatForCodeCapital»Needle«IF application.targets('3.0')» implements NeedleInterface«ENDIF»
+        abstract class Abstract«name.formatForCodeCapital»Needle«IF app.targets('3.0')» implements NeedleInterface«ENDIF»
         {
             «needleBaseImpl»
         }
@@ -271,49 +271,49 @@ class MultiHook {
             $this->name = str_replace('Needle', '', array_pop($nsParts));
         }
 
-        public function getName()«IF application.targets('3.0')»: string«ENDIF»
+        public function getName()«IF app.targets('3.0')»: string«ENDIF»
         {
             return $this->name;
         }
 
-        public function getIcon()«IF application.targets('3.0')»: string«ENDIF»
+        public function getIcon()«IF app.targets('3.0')»: string«ENDIF»
         {
             return 'circle-o';
         }
 
-        public function getTitle()«IF application.targets('3.0')»: string«ENDIF»
+        public function getTitle()«IF app.targets('3.0')»: string«ENDIF»
         {
-            return $this->translator->__('«nameMultiple.formatForDisplayCapital»', «IF app.targets('3.0')»[], «ENDIF»'«app.appName.formatForDB»');
+            return $this->translator->«IF app.targets('3.0')»trans«ELSE»__«ENDIF»('«nameMultiple.formatForDisplayCapital»', «IF app.targets('3.0')»[], «ENDIF»'«app.appName.formatForDB»');
         }
 
-        public function getDescription()«IF application.targets('3.0')»: string«ENDIF»
+        public function getDescription()«IF app.targets('3.0')»: string«ENDIF»
         {
-            return $this->translator->__('Links to «IF hasViewAction»the list of «nameMultiple.formatForDisplay»«ENDIF»«IF hasDisplayAction»«IF hasViewAction» and «ENDIF»specific «nameMultiple.formatForDisplay»«ENDIF».', «IF app.targets('3.0')»[], «ENDIF»'«app.appName.formatForDB»');
+            return $this->translator->«IF app.targets('3.0')»trans«ELSE»__«ENDIF»('Links to «IF hasViewAction»the list of «nameMultiple.formatForDisplay»«ENDIF»«IF hasDisplayAction»«IF hasViewAction» and «ENDIF»specific «nameMultiple.formatForDisplay»«ENDIF».', «IF app.targets('3.0')»[], «ENDIF»'«app.appName.formatForDB»');
         }
 
-        public function getUsageInfo()«IF application.targets('3.0')»: string«ENDIF»
+        public function getUsageInfo()«IF app.targets('3.0')»: string«ENDIF»
         {
             return '«app.prefix.toUpperCase»{«IF hasViewAction»«nameMultiple.formatForCode.toUpperCase»«ENDIF»«IF hasDisplayAction»«IF hasViewAction»|«ENDIF»«name.formatForCode.toUpperCase»-«name.formatForCode»Id«ENDIF»}';
         }
 
-        public function isActive()«IF application.targets('3.0')»: bool«ENDIF»
+        public function isActive()«IF app.targets('3.0')»: bool«ENDIF»
         {
             return true;
         }
 
-        public function isCaseSensitive()«IF application.targets('3.0')»: bool«ENDIF»
+        public function isCaseSensitive()«IF app.targets('3.0')»: bool«ENDIF»
         {
             return true;
         }
 
-        public function getSubjects()«IF application.targets('3.0')»: array«ENDIF»
+        public function getSubjects()«IF app.targets('3.0')»: array«ENDIF»
         {
             return [«IF hasViewAction»'«app.prefix.toUpperCase»«nameMultiple.formatForCode.toUpperCase»'«ENDIF»«IF hasDisplayAction»«IF hasViewAction», «ENDIF»'«app.prefix.toUpperCase»«name.formatForCode.toUpperCase»-'«ENDIF»];
         }
 
         /**
          * Applies the needle functionality.
-         «IF !application.targets('3.0')»
+         «IF !app.targets('3.0')»
          *
          * @param string $needleId
          * @param string $needleText
@@ -321,7 +321,7 @@ class MultiHook {
          * @return string Replaced value for the needle
          «ENDIF»
          */
-        public function apply«IF application.targets('3.0')»(string $needleId, string $needleText): string«ELSE»($needleId, $needleText)«ENDIF»
+        public function apply«IF app.targets('3.0')»(string $needleId, string $needleText): string«ELSE»($needleId, $needleText)«ENDIF»
         {
             // cache the results
             static $cache;
@@ -347,8 +347,8 @@ class MultiHook {
                             [],
                             UrlGeneratorInterface::ABSOLUTE_URL
                         );
-                        $linkTitle = $this->translator->«IF application.targets('3.0')»trans«ELSE»__«ENDIF»('View «nameMultiple.formatForDisplay»', «IF application.targets('3.0')»[], «ENDIF»'«app.appName.formatForDB»');
-                        $linkText = $this->translator->«IF application.targets('3.0')»trans«ELSE»__«ENDIF»('«nameMultiple.formatForDisplayCapital»', «IF application.targets('3.0')»[], «ENDIF»'«app.appName.formatForDB»');
+                        $linkTitle = $this->translator->«IF app.targets('3.0')»trans«ELSE»__«ENDIF»('View «nameMultiple.formatForDisplay»', «IF app.targets('3.0')»[], «ENDIF»'«app.appName.formatForDB»');
+                        $linkText = $this->translator->«IF app.targets('3.0')»trans«ELSE»__«ENDIF»('«nameMultiple.formatForDisplayCapital»', «IF app.targets('3.0')»[], «ENDIF»'«app.appName.formatForDB»');
                         $cache[$needleId] = '<a href="' . $route . '" title="' . $linkTitle . '">' . $linkText . '</a>';
                     }
 
@@ -367,7 +367,7 @@ class MultiHook {
                 $repository = $this->entityFactory->getRepository('«name.formatForCode»');
                 $entity = $repository->selectById($entityId, false);
                 if (null === $entity) {
-                    $notFoundMessage = $this->translator->«IF application.targets('3.0')»trans«ELSE»__f«ENDIF»(
+                    $notFoundMessage = $this->translator->«IF app.targets('3.0')»trans«ELSE»__f«ENDIF»(
                         '«name.formatForDisplayCapital» with id %id% could not be found',
                         ['%id%' => $entityId],
                         '«app.appName.formatForDB»'
@@ -395,7 +395,7 @@ class MultiHook {
             return $cache[$needleId];
         }
 
-        public function getBundleName()«IF application.targets('3.0')»: string«ENDIF»
+        public function getBundleName()«IF app.targets('3.0')»: string«ENDIF»
         {
             return $this->bundleName;
         }

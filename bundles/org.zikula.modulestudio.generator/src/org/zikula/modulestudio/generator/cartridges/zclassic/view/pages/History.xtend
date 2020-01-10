@@ -242,7 +242,7 @@ class History {
                                                     </li>
                                                 {% else %}
                                                     «IF app.targets('3.0')»
-                                                        <li>{{ '%field% set to <em>%value%</em>'|trans({'%field%': field|humanize, '%value%': __('an empty collection')})|raw }}</li>
+                                                        <li>{{ '%field% set to <em>%value%</em>'|trans({'%field%': field|humanize, '%value%': 'an empty collection'|trans})|raw }}</li>
                                                     «ELSE»
                                                         <li>{{ __f('%field% set to <em>%value%</em>', {'%field%': field|humanize, '%value%': __('an empty collection')})|raw }}</li>
                                                     «ENDIF»
