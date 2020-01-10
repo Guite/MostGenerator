@@ -118,6 +118,7 @@ class QuickNavigationType {
         {
             «IF !app.targets('3.0')»
                 use TranslatorTrait;
+
             «ENDIF»
             «IF !incomingRelations.empty»
                 /**
@@ -162,11 +163,17 @@ class QuickNavigationType {
                     FeatureActivationHelper $featureActivationHelper«ENDIF»
                 «ELSE»
                     «IF !incomingRelations.empty»
-                    RequestStack $requestStack,
-                    EntityDisplayHelper $entityDisplayHelper«ENDIF»«IF hasListFieldsEntity»,
-                    ListEntriesHelper $listHelper«ENDIF»«IF hasLocaleFieldsEntity»,
-                    LocaleApiInterface $localeApi«ENDIF»«IF app.needsFeatureActivationHelper»,
-                    FeatureActivationHelper $featureActivationHelper«ENDIF»
+                        RequestStack $requestStack,
+                        EntityDisplayHelper $entityDisplayHelper«ENDIF»«IF hasListFieldsEntity || hasLocaleFieldsEntity || app.needsFeatureActivationHelper»,«ENDIF»
+                    «IF hasListFieldsEntity»
+                        ListEntriesHelper $listHelper«IF incomingRelations.empty && (hasLocaleFieldsEntity || app.needsFeatureActivationHelper)»,«ENDIF»
+                    «ENDIF»
+                    «IF hasLocaleFieldsEntity»
+                        LocaleApiInterface $localeApi«IF incomingRelations.empty && app.needsFeatureActivationHelper»,«ENDIF»
+                    «ENDIF»
+                    «IF app.needsFeatureActivationHelper»
+                        FeatureActivationHelper $featureActivationHelper
+                    «ENDIF»
                 «ENDIF»
             ) {
                 «IF !app.targets('3.0')»
