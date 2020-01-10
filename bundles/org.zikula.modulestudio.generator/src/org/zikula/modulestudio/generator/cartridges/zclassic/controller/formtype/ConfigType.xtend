@@ -98,8 +98,10 @@ class ConfigType {
                     $this->localeApi = $localeApi;
                 «ENDIF»
             }
+            «IF !targets('3.0')»
 
-            «setTranslatorMethod»
+                «setTranslatorMethod»
+            «ENDIF»
 
             public function buildForm(FormBuilderInterface $builder, array $options)
             {

@@ -84,8 +84,10 @@ class LinkContainer {
                 $this->controllerHelper = $controllerHelper;
                 $this->permissionHelper = $permissionHelper;
             }
+            «IF !targets('3.0')»
 
-            «setTranslatorMethod»
+                «setTranslatorMethod»
+            «ENDIF»
 
             «IF !targets('3.0')»
             /**

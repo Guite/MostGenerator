@@ -133,8 +133,10 @@ class UploadHelper {
                 'exe', 'com', 'bat', 'jsp', 'cfm', 'shtml'
             ];
         }
+        «IF !targets('3.0')»
 
-        «setTranslatorMethod»
+            «setTranslatorMethod»
+        «ENDIF»
 
         «performFileUpload»
 

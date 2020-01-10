@@ -223,8 +223,10 @@ class Plugins {
                 $this->menuBuilder = $menuBuilder;
             «ENDIF»
         }
+        «IF !targets('3.0')»
 
-        «setTranslatorMethod»
+            «setTranslatorMethod»
+        «ENDIF»
 
         «IF !targets('3.0')»
             /**

@@ -116,8 +116,10 @@ class ListEntryValidator {
                 $this->setTranslator($translator);
                 $this->listEntriesHelper = $listEntriesHelper;
             }
+            «IF !targets('3.0')»
 
-            «setTranslatorMethod»
+                «setTranslatorMethod»
+            «ENDIF»
 
             public function validate($value, Constraint $constraint)
             {

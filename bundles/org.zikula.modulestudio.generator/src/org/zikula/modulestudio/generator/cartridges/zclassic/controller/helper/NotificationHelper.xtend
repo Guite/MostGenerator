@@ -172,8 +172,10 @@ class NotificationHelper {
             $this->workflowHelper = $workflowHelper;
             $this->name = '«appName»';
         }
+        «IF !targets('3.0')»
 
-        «setTranslatorMethod»
+            «setTranslatorMethod»
+        «ENDIF»
 
         /**
          * Sends a mail to either an item's creator or a group of moderators.

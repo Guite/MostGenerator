@@ -62,8 +62,10 @@ class FormAwareProviderInnerForms {
             {
                 $this->setTranslator($translator);
             }
+            «IF !app.targets('3.0')»
 
-            «app.setTranslatorMethod»
+                «app.setTranslatorMethod»
+            «ENDIF»
 
             public function buildForm(FormBuilderInterface $builder, array $options)
             {

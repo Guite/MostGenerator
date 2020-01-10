@@ -74,8 +74,10 @@ class BlockDetailType {
                 $this->entityFactory = $entityFactory;
                 $this->entityDisplayHelper = $entityDisplayHelper;
             }
+            «IF !targets('3.0')»
 
-            «setTranslatorMethod»
+                «setTranslatorMethod»
+            «ENDIF»
 
             public function buildForm(FormBuilderInterface $builder, array $options)
             {

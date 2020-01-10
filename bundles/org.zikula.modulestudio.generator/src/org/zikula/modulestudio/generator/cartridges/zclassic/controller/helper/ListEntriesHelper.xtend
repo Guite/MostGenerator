@@ -52,8 +52,10 @@ class ListEntriesHelper {
         {
             $this->setTranslator($translator);
         }
+        «IF !targets('3.0')»
 
-        «setTranslatorMethod»
+            «setTranslatorMethod»
+        «ENDIF»
 
         «resolve»
 

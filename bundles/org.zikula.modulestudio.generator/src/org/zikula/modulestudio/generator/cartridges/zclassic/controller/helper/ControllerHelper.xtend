@@ -209,8 +209,10 @@ class ControllerHelper {
                 $archiveHelper->archiveObsoleteObjects(75);
             «ENDIF»
         }
+        «IF !targets('3.0')»
 
-        «setTranslatorMethod»
+            «setTranslatorMethod»
+        «ENDIF»
 
         «getObjectTypes»
 

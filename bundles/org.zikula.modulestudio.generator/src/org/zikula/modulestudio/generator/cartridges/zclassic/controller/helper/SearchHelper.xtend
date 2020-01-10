@@ -97,8 +97,10 @@ class SearchHelper {
             $this->entityDisplayHelper = $entityDisplayHelper;
             $this->permissionHelper = $permissionHelper;
         }
+        «IF !targets('3.0')»
 
-        «setTranslatorMethod»
+            «setTranslatorMethod»
+        «ENDIF»
 
         «amendForm»
 

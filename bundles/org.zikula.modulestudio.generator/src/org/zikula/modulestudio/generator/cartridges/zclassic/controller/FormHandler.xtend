@@ -482,8 +482,10 @@ class FormHandler {
                     $this->featureActivationHelper = $featureActivationHelper;
                 «ENDIF»
             }
+            «IF !targets('3.0')»
 
-            «setTranslatorMethod»
+                «setTranslatorMethod»
+            «ENDIF»
 
             «processForm»
 

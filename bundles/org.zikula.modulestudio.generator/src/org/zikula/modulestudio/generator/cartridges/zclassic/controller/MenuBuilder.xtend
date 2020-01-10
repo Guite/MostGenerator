@@ -162,8 +162,10 @@ class MenuBuilder {
                 $this->modelHelper = $modelHelper;
             «ENDIF»
         }
+        «IF !targets('3.0')»
 
-        «setTranslatorMethod»
+            «setTranslatorMethod»
+        «ENDIF»
 
         «createMenu('item')»
         «IF hasViewActions»

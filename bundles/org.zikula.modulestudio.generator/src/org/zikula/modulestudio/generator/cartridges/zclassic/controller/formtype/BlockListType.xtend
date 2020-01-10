@@ -79,8 +79,10 @@ class BlockListType {
                     $this->categoryRepository = $categoryRepository;
                 «ENDIF»
             }
+            «IF !targets('3.0')»
 
-            «setTranslatorMethod»
+                «setTranslatorMethod»
+            «ENDIF»
 
             public function buildForm(FormBuilderInterface $builder, array $options)
             {

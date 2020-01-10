@@ -96,6 +96,10 @@ class ContentTypeListType {
                 $this->addTemplateFields($builder, $options);
                 $this->addFilterField($builder, $options);
             }
+            «IF !targets('3.0')»
+
+                «setTranslatorMethod»
+            «ENDIF»
 
             «addObjectTypeField»
 

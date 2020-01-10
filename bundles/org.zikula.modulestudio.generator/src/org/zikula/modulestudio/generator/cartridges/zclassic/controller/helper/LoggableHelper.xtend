@@ -104,8 +104,10 @@ class LoggableHelper {
                 $this->translatableHelper = $translatableHelper;
             «ENDIF»
         }
+        «IF !targets('3.0')»
 
-        «setTranslatorMethod»
+            «setTranslatorMethod»
+        «ENDIF»
 
         «determineDiffViewParameters»
 

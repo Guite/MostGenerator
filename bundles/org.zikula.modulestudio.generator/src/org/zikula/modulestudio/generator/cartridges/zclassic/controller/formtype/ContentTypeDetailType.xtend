@@ -4,6 +4,7 @@ import de.guite.modulestudio.metamodel.Application
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
+import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
@@ -11,6 +12,7 @@ class ContentTypeDetailType {
 
     extension ControllerExtensions = new ControllerExtensions
     extension FormattingExtensions = new FormattingExtensions
+    extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension ModelExtensions = new ModelExtensions
     extension Utils = new Utils
 
@@ -79,6 +81,10 @@ class ContentTypeDetailType {
                 $this->addDisplayModeField($builder, $options);
                 $this->addTemplateField($builder, $options);
             }
+            «IF !targets('3.0')»
+
+                «setTranslatorMethod»
+            «ENDIF»
 
             «addObjectTypeField»
 
