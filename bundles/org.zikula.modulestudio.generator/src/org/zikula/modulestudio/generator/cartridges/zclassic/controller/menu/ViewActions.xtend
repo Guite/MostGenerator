@@ -35,7 +35,7 @@ class ViewActions {
             if ('tree' === $currentTemplate) {
                 «IF hasEditAction»
                     if ($this->permissionHelper->hasComponentPermission($objectType, ACCESS_«IF workflow == EntityWorkflowType.NONE»EDIT«ELSE»COMMENT«ENDIF»)) {
-                        $title = $this->«IF app.targets('3.0')»trans«ELSE»__«ENDIF»('Add root node', '«app.appName.formatForDB»');
+                        $title = $this->«IF app.targets('3.0')»trans«ELSE»__«ENDIF»('Add root node', «IF app.targets('3.0')»[], «ENDIF»'«app.appName.formatForDB»');
                         $menu->addChild($title, [
                             'uri' => 'javascript:void(0)'
                         ]);
@@ -46,7 +46,7 @@ class ViewActions {
                         $menu[$title]->setAttribute('icon', 'fa fa-plus');
                     }
                 «ENDIF»
-                $title = $this->«IF app.targets('3.0')»trans«ELSE»__«ENDIF»('Switch to table view', '«app.appName.formatForDB»');
+                $title = $this->«IF app.targets('3.0')»trans«ELSE»__«ENDIF»('Switch to table view', «IF app.targets('3.0')»[], «ENDIF»'«app.appName.formatForDB»');
                 $menu->addChild($title, [
                     'route' => $routePrefix . $routeArea . 'view'
                 ]);
@@ -65,7 +65,7 @@ class ViewActions {
             «linkToEntityCreation»
             «linkTogglePagination»
             «IF tree != EntityTreeType.NONE»
-                $title = $this->«IF app.targets('3.0')»trans«ELSE»__«ENDIF»('Switch to hierarchy view', '«app.appName.formatForDB»');
+                $title = $this->«IF app.targets('3.0')»trans«ELSE»__«ENDIF»('Switch to hierarchy view', «IF app.targets('3.0')»[], «ENDIF»'«app.appName.formatForDB»');
                 $menu->addChild($title, [
                     'route' => $routePrefix . $routeArea . 'view',
                     'routeParameters' => ['tpl' => 'tree']
@@ -74,7 +74,7 @@ class ViewActions {
                 $menu[$title]->setAttribute('icon', 'fa fa-code-«IF app.targets('3.0')»branch«ELSE»fork«ENDIF»');
             «ENDIF»
             «IF geographical»
-                $title = $this->«IF app.targets('3.0')»trans«ELSE»__«ENDIF»('Show map', '«app.appName.formatForDB»');
+                $title = $this->«IF app.targets('3.0')»trans«ELSE»__«ENDIF»('Show map', «IF app.targets('3.0')»[], «ENDIF»'«app.appName.formatForDB»');
                 $menu->addChild($title, [
                     'route' => $routePrefix . $routeArea . 'view',
                     'routeParameters' => ['tpl' => 'map', 'all' => 1]
@@ -90,7 +90,7 @@ class ViewActions {
                     $hasDeletedEntities = $this->loggableHelper->hasDeletedEntities($objectType);
                 }
                 if ($hasDeletedEntities) {
-                    $title = $this->«IF app.targets('3.0')»trans«ELSE»__«ENDIF»('View deleted «nameMultiple.formatForDisplay»', '«app.appName.formatForDB»');
+                    $title = $this->«IF app.targets('3.0')»trans«ELSE»__«ENDIF»('View deleted «nameMultiple.formatForDisplay»', «IF app.targets('3.0')»[], «ENDIF»'«app.appName.formatForDB»');
                     $menu->addChild($title, [
                         'route' => $routePrefix . $routeArea . 'view',
                         'routeParameters' => ['deleted' => 1]
@@ -111,7 +111,7 @@ class ViewActions {
         $canBeCreated = $this->modelHelper->canBeCreated($objectType);
         if ($canBeCreated) {
             if ($this->permissionHelper->hasComponentPermission($objectType, ACCESS_«IF workflow == EntityWorkflowType.NONE»EDIT«ELSE»COMMENT«ENDIF»)) {
-                $title = $this->«IF application.targets('3.0')»trans«ELSE»__«ENDIF»('Create «name.formatForDisplay»', '«application.appName.formatForDB»');
+                $title = $this->«IF application.targets('3.0')»trans«ELSE»__«ENDIF»('Create «name.formatForDisplay»', «IF application.targets('3.0')»[], «ENDIF»'«application.appName.formatForDB»');
                 $menu->addChild($title, [
                     'route' => $routePrefix . $routeArea . 'edit'
                 ]);
@@ -130,10 +130,10 @@ class ViewActions {
         }
         if (1 === $query->getInt('all')) {
             unset($routeParameters['all']);
-            $title = $this->«IF application.targets('3.0')»trans«ELSE»__«ENDIF»('Back to paginated view', '«application.appName.formatForDB»');
+            $title = $this->«IF application.targets('3.0')»trans«ELSE»__«ENDIF»('Back to paginated view', «IF application.targets('3.0')»[], «ENDIF»'«application.appName.formatForDB»');
         } else {
             $routeParameters['all'] = 1;
-            $title = $this->«IF application.targets('3.0')»trans«ELSE»__«ENDIF»('Show all entries', '«application.appName.formatForDB»');
+            $title = $this->«IF application.targets('3.0')»trans«ELSE»__«ENDIF»('Show all entries', «IF application.targets('3.0')»[], «ENDIF»'«application.appName.formatForDB»');
         }
         $menu->addChild($title, [
             'route' => $routePrefix . $routeArea . 'view',
@@ -155,11 +155,11 @@ class ViewActions {
         $routeParameters = $query->all();
         if (1 === $query->getInt('own')) {
             unset($routeParameters['own']);
-            $title = $this->«IF application.targets('3.0')»trans«ELSE»__«ENDIF»('Show also entries from other users', '«application.appName.formatForDB»');
+            $title = $this->«IF application.targets('3.0')»trans«ELSE»__«ENDIF»('Show also entries from other users', «IF application.targets('3.0')»[], «ENDIF»'«application.appName.formatForDB»');
             $icon = 'users';
         } else {
             $routeParameters['own'] = 1;
-            $title = $this->«IF application.targets('3.0')»trans«ELSE»__«ENDIF»('Show only own entries', '«application.appName.formatForDB»');
+            $title = $this->«IF application.targets('3.0')»trans«ELSE»__«ENDIF»('Show only own entries', «IF application.targets('3.0')»[], «ENDIF»'«application.appName.formatForDB»');
             $icon = 'user';
         }
         $menu->addChild($title, [

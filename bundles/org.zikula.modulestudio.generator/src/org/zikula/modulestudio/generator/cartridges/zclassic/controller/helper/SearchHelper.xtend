@@ -120,7 +120,7 @@ class SearchHelper {
                 «FOR entity : entitiesWithStrings»
                     '«appName.toFirstLower»«entity.nameMultiple.formatForCodeCapital»' => [
                         'value' => '«entity.name.formatForCode»',
-                        'label' => $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('«entity.nameMultiple.formatForDisplayCapital»'«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»)
+                        'label' => $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('«entity.nameMultiple.formatForDisplayCapital»'«IF !isSystemModule»«IF targets('3.0')», []«ENDIF», '«appName.formatForDB»'«ENDIF»)
                     ]«IF entity != entitiesWithStrings.last»,«ENDIF»
                 «ENDFOR»
             ];

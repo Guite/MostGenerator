@@ -108,7 +108,7 @@ class MultiHook {
                     if (!$permissionHelper->hasComponentPermission('«name.formatForCode»', ACCESS_READ)) {
                         $cache[$nid] = '';
                     } else {
-                        $cache[$nid] = '<a href="' . $router->generate('«app.appName.formatForDB»_«name.formatForDB»_view', [], UrlGeneratorInterface::ABSOLUTE_URL) . '" title="' . $translator->«IF app.targets('3.0')»trans«ELSE»__«ENDIF»('View «nameMultiple.formatForDisplay»', '«app.appName.formatForDB»') . '">' . $translator->«IF app.targets('3.0')»trans«ELSE»__«ENDIF»('«nameMultiple.formatForDisplayCapital»', '«app.appName.formatForDB»') . '</a>';
+                        $cache[$nid] = '<a href="' . $router->generate('«app.appName.formatForDB»_«name.formatForDB»_view', [], UrlGeneratorInterface::ABSOLUTE_URL) . '" title="' . $translator->«IF app.targets('3.0')»trans«ELSE»__«ENDIF»('View «nameMultiple.formatForDisplay»', '«app.appName.formatForDB»') . '">' . $translator->«IF app.targets('3.0')»trans«ELSE»__«ENDIF»('«nameMultiple.formatForDisplayCapital»', «IF app.targets('3.0')»[], «ENDIF»'«app.appName.formatForDB»') . '</a>';
                     }
 
                     return $cache[$nid];
@@ -283,12 +283,12 @@ class MultiHook {
 
         public function getTitle()«IF application.targets('3.0')»: string«ENDIF»
         {
-            return $this->translator->__('«nameMultiple.formatForDisplayCapital»', '«app.appName.formatForDB»');
+            return $this->translator->__('«nameMultiple.formatForDisplayCapital»', «IF app.targets('3.0')»[], «ENDIF»'«app.appName.formatForDB»');
         }
 
         public function getDescription()«IF application.targets('3.0')»: string«ENDIF»
         {
-            return $this->translator->__('Links to «IF hasViewAction»the list of «nameMultiple.formatForDisplay»«ENDIF»«IF hasDisplayAction»«IF hasViewAction» and «ENDIF»specific «nameMultiple.formatForDisplay»«ENDIF».', '«app.appName.formatForDB»');
+            return $this->translator->__('Links to «IF hasViewAction»the list of «nameMultiple.formatForDisplay»«ENDIF»«IF hasDisplayAction»«IF hasViewAction» and «ENDIF»specific «nameMultiple.formatForDisplay»«ENDIF».', «IF app.targets('3.0')»[], «ENDIF»'«app.appName.formatForDB»');
         }
 
         public function getUsageInfo()«IF application.targets('3.0')»: string«ENDIF»
@@ -347,8 +347,8 @@ class MultiHook {
                             [],
                             UrlGeneratorInterface::ABSOLUTE_URL
                         );
-                        $linkTitle = $this->translator->__('View «nameMultiple.formatForDisplay»', '«app.appName.formatForDB»');
-                        $linkText = $this->translator->__('«nameMultiple.formatForDisplayCapital»', '«app.appName.formatForDB»');
+                        $linkTitle = $this->translator->«IF application.targets('3.0')»trans«ELSE»__«ENDIF»('View «nameMultiple.formatForDisplay»', «IF application.targets('3.0')»[], «ENDIF»'«app.appName.formatForDB»');
+                        $linkText = $this->translator->«IF application.targets('3.0')»trans«ELSE»__«ENDIF»('«nameMultiple.formatForDisplayCapital»', «IF application.targets('3.0')»[], «ENDIF»'«app.appName.formatForDB»');
                         $cache[$needleId] = '<a href="' . $route . '" title="' . $linkTitle . '">' . $linkText . '</a>';
                     }
 
@@ -367,7 +367,7 @@ class MultiHook {
                 $repository = $this->entityFactory->getRepository('«name.formatForCode»');
                 $entity = $repository->selectById($entityId, false);
                 if (null === $entity) {
-                    $notFoundMessage = $this->translator->__f(
+                    $notFoundMessage = $this->translator->«IF application.targets('3.0')»trans«ELSE»__f«ENDIF»(
                         '«name.formatForDisplayCapital» with id %id% could not be found',
                         ['%id%' => $entityId],
                         '«app.appName.formatForDB»'
