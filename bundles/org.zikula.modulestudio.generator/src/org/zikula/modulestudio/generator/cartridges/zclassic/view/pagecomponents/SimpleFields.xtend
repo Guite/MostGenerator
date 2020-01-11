@@ -103,6 +103,8 @@ class SimpleFields {
             {{ «objName».«name.formatForCode»|locale_name }}'''
         else if (application.targets('3.0') && role == StringRole.TIME_ZONE) '''
             {{ «objName».«name.formatForCode»|timezone_name }}'''
+        else if (application.targets('3.0') && role == StringRole.ICON) '''
+            {% if «objName».«name.formatForCode» %}<i class="fa-fw {{ «objName».«name.formatForCode»|e('html_attr') }}"></i>{% endif %}'''
         else '''
             {{ «objName».«name.formatForCode»«IF role == StringRole.COUNTRY»|«application.appName.formatForDB»_countryName«ELSEIF role == StringRole.LANGUAGE || role == StringRole.LOCALE»|languageName«ENDIF» }}'''
     }

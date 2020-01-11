@@ -150,6 +150,9 @@ class SharedFormTypeFields {
         «IF !fields.filter(StringField).filter[role == StringRole.LOCALE].empty»
             use Zikula\Bundle\FormExtensionBundle\Form\Type\LocaleType;
         «ENDIF»
+        «IF app.targets('3.0') && !fields.filter(StringField).filter[role == StringRole.ICON].empty»
+            use Zikula\Bundle\FormExtensionBundle\Form\Type\IconType;
+        «ENDIF»
         «IF null !== dataObject && dataObject instanceof Entity && (dataObject as Entity).categorisable»
             use Zikula\CategoriesModule\Form\Type\CategoriesType;
         «ENDIF»
@@ -613,7 +616,7 @@ class SharedFormTypeFields {
         'scale' => «scale»
     '''
 
-    def private dispatch formType(StringField it) '''«IF role == StringRole.COLOUR»«IF application.targets('2.0')»Color«ELSE»Colour«ENDIF»«ELSEIF role == StringRole.COUNTRY»Country«ELSEIF role == StringRole.CURRENCY»Currency«ELSEIF role == StringRole.LANGUAGE»Language«ELSEIF role == StringRole.LOCALE»Locale«ELSEIF role == StringRole.PASSWORD»Password«ELSEIF role == StringRole.DATE_INTERVAL && application.targets('2.0')»DateInterval«ELSEIF role == StringRole.PHONE_NUMBER»Tel«ELSEIF role == StringRole.TIME_ZONE»Timezone«ELSEIF role == StringRole.WEEK && application.targets('3.0')»Week«ELSE»Text«ENDIF»'''
+    def private dispatch formType(StringField it) '''«IF role == StringRole.COLOUR»«IF application.targets('2.0')»Color«ELSE»Colour«ENDIF»«ELSEIF role == StringRole.COUNTRY»Country«ELSEIF role == StringRole.CURRENCY»Currency«ELSEIF role == StringRole.LANGUAGE»Language«ELSEIF role == StringRole.LOCALE»Locale«ELSEIF role == StringRole.PASSWORD»Password«ELSEIF role == StringRole.DATE_INTERVAL && application.targets('2.0')»DateInterval«ELSEIF role == StringRole.PHONE_NUMBER»Tel«ELSEIF role == StringRole.TIME_ZONE»Timezone«ELSEIF role == StringRole.WEEK && application.targets('3.0')»Week«ELSEIF role == StringRole.ICON && application.targets('3.0')»Icon«ELSE»Text«ENDIF»'''
     def private dispatch titleAttribute(StringField it) '''«IF role == StringRole.COLOUR || role == StringRole.COUNTRY || role == StringRole.CURRENCY || (role == StringRole.DATE_INTERVAL && application.targets('2.0')) || role == StringRole.LANGUAGE || role == StringRole.LOCALE || role == StringRole.TIME_ZONE»Choose the «name.formatForDisplay»«ELSE»Enter the «name.formatForDisplay»«ENDIF»«IF null !== entity» of the «entity.name.formatForDisplay»«ENDIF».'''
     def private dispatch additionalAttributes(StringField it) '''
         'maxlength' => «length»,
