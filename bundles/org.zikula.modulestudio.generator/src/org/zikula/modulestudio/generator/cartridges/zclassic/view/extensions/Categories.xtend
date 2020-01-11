@@ -51,7 +51,7 @@ class Categories {
     def private viewBody(Application it) '''
         <ul class="category-list">
         {% for catMapping in obj.categories %}
-            <li>{{ catMapping.category.display_name[app.request.locale]|default(catMapping.category.name) }}</li>
+            <li>«IF targets('3.0')»{% if catMapping.category.icon %}<i class="fa-fw {{ catMapping.category.icon|e('html_attr') }}"></i> {% endif %}«ENDIF»{{ catMapping.category.display_name[app.request.locale]|default(catMapping.category.name) }}</li>
         {% endfor %}
         </ul>
     '''
