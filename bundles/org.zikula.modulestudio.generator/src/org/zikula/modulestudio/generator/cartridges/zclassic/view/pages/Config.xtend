@@ -67,7 +67,7 @@ class Config {
                                     <ul id="imagesTabDropSections" class="dropdown-menu" aria-labelledby="imagesTabDrop">
                                     «FOR entity : getAllEntities.filter[hasImageFieldsEntity]»
                                         «FOR imageUploadField : entity.imageFieldsEntity»
-                                            <li>
+                                            <li«IF targets('3.0')» class="dropdown-item"«ENDIF»>
                                                 <a id="images«entity.name.formatForCodeCapital»«imageUploadField.name.formatForCodeCapital»Tab" href="#tabImages«entity.name.formatForCodeCapital»«imageUploadField.name.formatForCodeCapital»" role="tab" data-toggle="tab" aria-controls="tabImages«entity.name.formatForCodeCapital»«imageUploadField.name.formatForCodeCapital»">«IF targets('3.0')»{% trans %}«entity.nameMultiple.formatForDisplayCapital» «imageUploadField.name.formatForDisplay»{% endtrans %}«ELSE»{{ __('«entity.nameMultiple.formatForDisplayCapital» «imageUploadField.name.formatForDisplay»') }}«ENDIF»</a>
                                             </li>
                                         «ENDFOR»

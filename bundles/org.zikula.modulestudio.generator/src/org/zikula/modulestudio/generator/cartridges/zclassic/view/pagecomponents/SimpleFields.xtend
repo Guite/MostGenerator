@@ -55,13 +55,13 @@ class SimpleFields {
     }
 
     def dispatch displayField(IntegerField it, String objName, String page) '''
-        {{ «objName».«name.formatForCode» }}«IF percentage»%«ENDIF»'''
+        {{ «objName».«name.formatForCode» }}«IF unit != ''»&nbsp;«IF application.targets('3.0')»{% trans %}«unit»{% endtrans %}«ELSE»{{ __('«unit»') }}«ENDIF»«ELSEIF percentage»%«ENDIF»'''
 
     def dispatch displayField(NumberField it, String objName, String page) {
         if (percentage) '''
-            {{ («objName».«name.formatForCode» * 100)|«IF application.targets('3.0')»format_number«ELSE»localizednumber«ENDIF» }}%'''
+            {{ («objName».«name.formatForCode» * 100)|«IF application.targets('3.0')»format_number«ELSE»localizednumber«ENDIF» }}«IF unit != ''»&nbsp;«IF application.targets('3.0')»{% trans %}«unit»{% endtrans %}«ELSE»{{ __('«unit»') }}«ENDIF»«ELSE»%«ENDIF»'''
         else '''
-            {{ «objName».«name.formatForCode»|«IF application.targets('3.0')»format_«ELSE»localized«ENDIF»«IF currency»currency('EUR')«ELSE»number«ENDIF» }}'''
+            {{ «objName».«name.formatForCode»|«IF application.targets('3.0')»format_«ELSE»localized«ENDIF»«IF currency»currency('EUR')«ELSE»number«ENDIF» }}«IF unit != ''»&nbsp;«IF application.targets('3.0')»{% trans %}«unit»{% endtrans %}«ELSE»{{ __('«unit»') }}«ENDIF»«ENDIF»'''
     }
 
     def dispatch displayField(UserField it, String objName, String page) {
@@ -90,24 +90,26 @@ class SimpleFields {
     def dispatch displayField(StringField it, String objName, String page) {
         if (role == StringRole.PASSWORD) return ''
         if (role == StringRole.COLOUR) '''
-            <span class="«IF application.targets('3.0')»badge badge«ELSE»label label«ENDIF»-default" style="background-color: {{ «objName».«name.formatForCode»|e('html_attr') }}">{{ «objName».«name.formatForCode» }}</span>'''
+            <span class="«IF application.targets('3.0')»badge badge«ELSE»label label«ENDIF»-default" style="background-color: {{ «objName».«name.formatForCode»|e('html_attr') }}">{{ «objName».«name.formatForCode» }}«displayUnit»</span>'''
         else if (application.targets('2.0') && role == StringRole.DATE_INTERVAL) '''
-            {{ «objName».«name.formatForCode»|«application.appName.formatForDB»_dateInterval }}'''
+            {{ «objName».«name.formatForCode»|«application.appName.formatForDB»_dateInterval }}«displayUnit»'''
         else if (application.targets('3.0') && role == StringRole.COUNTRY) '''
-            {{ «objName».«name.formatForCode»|country_name }}'''
+            {{ «objName».«name.formatForCode»|country_name }}«displayUnit»'''
         else if (application.targets('3.0') && role == StringRole.CURRENCY) '''
-            {{ «objName».«name.formatForCode»|currency_name }}'''
+            {{ «objName».«name.formatForCode»|currency_name }}«displayUnit»'''
         else if (application.targets('3.0') && role == StringRole.LANGUAGE) '''
-            {{ «objName».«name.formatForCode»|language_name }}'''
+            {{ «objName».«name.formatForCode»|language_name }}«displayUnit»'''
         else if (application.targets('3.0') && role == StringRole.LOCALE) '''
-            {{ «objName».«name.formatForCode»|locale_name }}'''
+            {{ «objName».«name.formatForCode»|locale_name }}«displayUnit»'''
         else if (application.targets('3.0') && role == StringRole.TIME_ZONE) '''
-            {{ «objName».«name.formatForCode»|timezone_name }}'''
+            {{ «objName».«name.formatForCode»|timezone_name }}«displayUnit»'''
         else if (application.targets('3.0') && role == StringRole.ICON) '''
-            {% if «objName».«name.formatForCode» %}<i class="fa-fw {{ «objName».«name.formatForCode»|e('html_attr') }}"></i>{% endif %}'''
+            {% if «objName».«name.formatForCode» %}<i class="fa-fw {{ «objName».«name.formatForCode»|e('html_attr') }}"></i>«displayUnit»{% endif %}'''
         else '''
-            {{ «objName».«name.formatForCode»«IF role == StringRole.COUNTRY»|«application.appName.formatForDB»_countryName«ELSEIF role == StringRole.LANGUAGE || role == StringRole.LOCALE»|languageName«ENDIF» }}'''
+            {{ «objName».«name.formatForCode»«IF role == StringRole.COUNTRY»|«application.appName.formatForDB»_countryName«ELSEIF role == StringRole.LANGUAGE || role == StringRole.LOCALE»|languageName«ENDIF» }}«displayUnit»'''
     }
+
+    def private displayUnit(StringField it) '''«IF unit != ''»&nbsp;«IF application.targets('3.0')»{% trans %}«unit»{% endtrans %}«ELSE»{{ __('«unit»') }}«ENDIF»«ENDIF»'''
 
     def dispatch displayField(TextField it, String objName, String page) '''
         {{ «objName».«name.formatForCode»«IF page == 'view'»|striptags|«IF application.targets('3.0')»u.«ENDIF»truncate(50)«ELSE»«IF page == 'display' && null !== entity && entity instanceof Entity && !(entity as Entity).skipHookSubscribers»|notifyFilters('«entity.application.appName.formatForDB».filter_hooks.«(entity as Entity).nameMultiple.formatForDB».filter')«ENDIF»|safeHtml«ENDIF» }}'''

@@ -307,11 +307,13 @@ class PersistenceTransformer {
                     name = 'shrinkWidth' + fieldSuffix
                     defaultValue = '800'
                     documentation = 'The maximum image width in pixels.'
+                    unit = 'pixels'
                 ]
                 varContainer.fields += factory.createIntegerField => [
                     name = 'shrinkHeight' + fieldSuffix
                     defaultValue = '600'
                     documentation = 'The maximum image height in pixels.'
+                    unit = 'pixels'
                 ]
                 val thumbModeField = factory.createListField => [
                     name = 'thumbnailMode' + fieldSuffix
@@ -333,11 +335,13 @@ class PersistenceTransformer {
                             name = 'thumbnailWidth' + fieldSuffix + action.toFirstUpper
                             defaultValue = if (action == 'view') '32' else '240'
                             documentation = 'Thumbnail width on ' + action + ' pages in pixels.'
+                            unit = 'pixels'
                         ]
                         varContainer.fields += factory.createIntegerField => [
                             name = 'thumbnailHeight' + fieldSuffix + action.toFirstUpper
                             defaultValue = if (action == 'view') '24' else '180'
                             documentation = 'Thumbnail height on ' + action + ' pages in pixels.'
+                            unit = 'pixels'
                         ]
                     }
                 }

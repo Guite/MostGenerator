@@ -108,13 +108,13 @@ class ServiceDefinitions {
                 lazy: true
 
             «specificServices»
-        «IF hasImageFields || !getAllVariables.filter(UploadField).filter[isImageField].empty»
+            «IF hasImageFields || !getAllVariables.filter(UploadField).filter[isImageField].empty»
 
-            liip_imagine.cache.signer:
-                class: «appNamespace»\Imagine\Cache\DummySigner
-                arguments:
-                    $secret: '%kernel.secret%'
-        «ENDIF»
+                liip_imagine.cache.signer:
+                    class: «appNamespace»\Imagine\Cache\DummySigner
+                    arguments:
+                        $secret: '%kernel.secret%'
+            «ENDIF»
     '''
 
     def private specificServices(Application it) '''

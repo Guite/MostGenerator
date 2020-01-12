@@ -594,8 +594,8 @@ class SharedFormTypeFields {
             «IF percentage»
                 'type' => 'integer',
             «ENDIF»
-            «IF isShrinkDimensionField || isThumbDimensionField»
-                'input_group' => ['right' => $this->«IF application.targets('3.0')»trans«ELSE»__«ENDIF»('pixels')]
+            «IF unit != ''»
+                'input_group' => ['right' => $this->«IF application.targets('3.0')»trans«ELSE»__«ENDIF»('«unit»')]
             «ENDIF»
         «ENDIF»
     '''
@@ -613,7 +613,10 @@ class SharedFormTypeFields {
         «/* not required since these are the default values IF percentage»
             'type' => 'fractional',
         «ENDIF*/»
-        'scale' => «scale»
+        'scale' => «scale»«IF unit != ''»,«ENDIF»
+        «IF unit != ''»
+            'input_group' => ['right' => $this->«IF application.targets('3.0')»trans«ELSE»__«ENDIF»('«unit»')]
+        «ENDIF»
     '''
 
     def private dispatch formType(StringField it) '''«IF role == StringRole.COLOUR»«IF application.targets('2.0')»Color«ELSE»Colour«ENDIF»«ELSEIF role == StringRole.COUNTRY»Country«ELSEIF role == StringRole.CURRENCY»Currency«ELSEIF role == StringRole.LANGUAGE»Language«ELSEIF role == StringRole.LOCALE»Locale«ELSEIF role == StringRole.PASSWORD»Password«ELSEIF role == StringRole.DATE_INTERVAL && application.targets('2.0')»DateInterval«ELSEIF role == StringRole.PHONE_NUMBER»Tel«ELSEIF role == StringRole.TIME_ZONE»Timezone«ELSEIF role == StringRole.WEEK && application.targets('3.0')»Week«ELSEIF role == StringRole.ICON && application.targets('3.0')»Icon«ELSE»Text«ENDIF»'''
@@ -629,6 +632,9 @@ class SharedFormTypeFields {
     def private dispatch additionalOptions(StringField it) '''
         «IF !mandatory && #[StringRole.COUNTRY, StringRole.CURRENCY, StringRole.LANGUAGE, StringRole.LOCALE, StringRole.TIME_ZONE].contains(role)»
             'placeholder' => $this->«IF application.targets('3.0')»trans«ELSE»__«ENDIF»('All')«IF role == StringRole.LOCALE»,«ENDIF»
+        «ENDIF»
+        «IF unit != ''»
+            'input_group' => ['right' => $this->«IF application.targets('3.0')»trans«ELSE»__«ENDIF»('«unit»')],
         «ENDIF»
         «IF role == StringRole.LOCALE»
             'choices' => $this->localeApi->getSupportedLocaleNames(),
