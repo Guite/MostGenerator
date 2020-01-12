@@ -174,7 +174,7 @@ class ContentTypeListType {
                     'help' => $helpText,
                     'choices' => [
                         «FOR entity : getAllEntities»
-                            «IF !targets('3.0')»$this->__(«ENDIF»'«entity.nameMultiple.formatForDisplayCapital»'«IF targets('3.0')», []«ENDIF»«IF !isSystemModule», '«appName.formatForDB»'«ENDIF») => '«entity.name.formatForCode»'«IF entity != getAllEntities.last»,«ENDIF»
+                            «IF !targets('3.0')»$this->__(«ENDIF»'«entity.nameMultiple.formatForDisplayCapital»'«IF !targets('3.0')»«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»)«ENDIF» => '«entity.name.formatForCode»'«IF entity != getAllEntities.last»,«ENDIF»
                         «ENDFOR»
                     ],
                     'multiple' => false,

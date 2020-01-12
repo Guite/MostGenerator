@@ -110,8 +110,10 @@ class ServiceDefinitions {
             «specificServices»
         «IF hasImageFields || !getAllVariables.filter(UploadField).filter[isImageField].empty»
 
-            parameters:
-                liip_imagine.cache.signer.class: «appNamespace»\Imagine\Cache\DummySigner
+            liip_imagine.cache.signer:
+                class: «appNamespace»\Imagine\Cache\DummySigner
+                arguments:
+                    $secret: '%kernel.secret%'
         «ENDIF»
     '''
 
@@ -125,12 +127,12 @@ class ServiceDefinitions {
                 Zikula\Common\Content\ContentTypeInterface:
                     bind:
                          $permissionHelper: '@«appNamespace»\Helper\PermissionHelper'
-            «IF needsDetailContentType»
+            «/*IF needsDetailContentType»
 
                 «appNamespace»\ContentType\ItemType:
                     arguments:
                         $fragmentHandler: '@fragment.handler'
-            «ENDIF»
+            «ENDIF*/»
         «ENDIF»
         «IF hasEditActions»
 

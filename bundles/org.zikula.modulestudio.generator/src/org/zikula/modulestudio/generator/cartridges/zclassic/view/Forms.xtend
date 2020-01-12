@@ -326,7 +326,7 @@ class Forms {
             </div>
         </div>
         «IF app.targets('3.0') && !getOutgoingJoinRelationsWithoutDeleteCascade.empty»
-            {% if not workflow_can(«name.formatForDB», 'delete') %}
+            {% if mode != 'create' and not workflow_can(«name.formatForDB», 'delete') %}
                 <div class="alert alert-info">
                     <h4>«IF app.targets('3.0')»{% trans %}Deletion of this «name.formatForDisplay» is not possible{% endtrans %}«ELSE»{{ __('Deletion of this «name.formatForDisplay» is not possible') }}«ENDIF»</h4>
                     <ul>

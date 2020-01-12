@@ -59,7 +59,7 @@ class StandardFields {
             <dd class="avatar">{{ userAvatar(obj.createdBy.uid, {rating: 'g'}) }}</dd>
             <dd>
                 «IF targets('3.0')»
-                    {{ 'Created by %user% on %date%'|trans({'%user%': profileLink|raw, '%date%': obj.createdDate|format_datetime('medium', 'short')}) }}
+                    {{ 'Created by %user% on %date%'|trans({'%user%': profileLink, '%date%': obj.createdDate|format_datetime('medium', 'short')})|raw }}
                 «ELSE»
                     {{ __f('Created by %user on %date', {'%user': profileLink, '%date': obj.createdDate|localizeddate('medium', 'short')})|raw }}
                 «ENDIF»
@@ -77,7 +77,7 @@ class StandardFields {
             <dd class="avatar">{{ userAvatar(obj.updatedBy.uid, {rating: 'g'}) }}</dd>
             <dd>
                 «IF targets('3.0')»
-                    {{ 'Updated by %user% on %date%'|trans({'%user%': profileLink|raw, '%date%': obj.updatedDate|format_datetime('medium', 'short')}) }}
+                    {{ 'Updated by %user% on %date%'|trans({'%user%': profileLink, '%date%': obj.updatedDate|format_datetime('medium', 'short')})|raw }}
                 «ELSE»
                     {{ __f('Updated by %user on %date', {'%user': profileLink, '%date': obj.updatedDate|localizeddate('medium', 'short')})|raw }}
                 «ENDIF»

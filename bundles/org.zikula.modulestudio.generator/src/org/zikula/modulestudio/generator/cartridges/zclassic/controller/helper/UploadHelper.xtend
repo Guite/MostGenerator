@@ -113,7 +113,7 @@ class UploadHelper {
             TranslatorInterface $translator,
             Filesystem $filesystem,
             RequestStack $requestStack,
-            LoggerInterface $logger,
+            LoggerInterface $logger«IF targets('3.0')» = null«ENDIF»,
             CurrentUserApiInterface $currentUserApi,
             VariableApiInterface $variableApi,
             «IF targets('3.0')»string «ENDIF»$dataDirectory
@@ -816,11 +816,11 @@ class UploadHelper {
             «FOR uploadEntity : getUploadEntities»
 
                 «FOR uploadField : uploadEntity.getUploadFieldsEntity»
-                    $result &= $this->checkAndCreateUploadFolder('«uploadField.entity.name.formatForCode»', '«uploadField.name.formatForCode»', '«uploadField.allowedExtensions»');
+                    $result = $result && $this->checkAndCreateUploadFolder('«uploadField.entity.name.formatForCode»', '«uploadField.name.formatForCode»', '«uploadField.allowedExtensions»');
                 «ENDFOR»
             «ENDFOR»
             «FOR uploadField : getUploadVariables»
-                $result &= $this->checkAndCreateUploadFolder('appSettings', '«uploadField.name.formatForCode»', '«uploadField.allowedExtensions»');
+                $result = $result && $this->checkAndCreateUploadFolder('appSettings', '«uploadField.name.formatForCode»', '«uploadField.allowedExtensions»');
             «ENDFOR»
 
             return $result;
@@ -861,10 +861,12 @@ class UploadHelper {
                             )
                         );
                     }
-                    $this->logger->error(
-                        '{app}: The upload directory {directory} does not exist and could not be created.',
-                        ['app' => '«appName»', 'directory' => $uploadPath]
-                    );
+                    if (null !== $this->logger) {
+                        $this->logger->error(
+                            '{app}: The upload directory {directory} does not exist and could not be created.',
+                            ['app' => '«appName»', 'directory' => $uploadPath]
+                        );
+                    }
 
                     return false;
                 }
