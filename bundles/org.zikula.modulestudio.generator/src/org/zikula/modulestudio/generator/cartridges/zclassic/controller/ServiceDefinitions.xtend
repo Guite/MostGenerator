@@ -126,7 +126,7 @@ class ServiceDefinitions {
             _instanceof:
                 Zikula\Common\Content\ContentTypeInterface:
                     bind:
-                         $permissionHelper: '@«appNamespace»\Helper\PermissionHelper'
+                        $permissionHelper: '@?Zikula\ContentModule\Helper\PermissionHelper'
             «/*IF needsDetailContentType»
 
                 «appNamespace»\ContentType\ItemType:

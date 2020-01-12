@@ -124,12 +124,12 @@ class ContentTypeList {
 
         public function getTitle()«IF targets('3.0')»: string«ENDIF»
         {
-            return $this->translator->«IF targets('3.0')»trans«ELSE»__«ENDIF»('«name.formatForDisplayCapital» list', '«appName.formatForDB»');
+            return $this->translator->«IF targets('3.0')»trans«ELSE»__«ENDIF»('«name.formatForDisplayCapital» list', «IF targets('3.0')»[], «ENDIF»'«appName.formatForDB»');
         }
 
         public function getDescription()«IF targets('3.0')»: string«ENDIF»
         {
-            return $this->translator->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Display a list of «name.formatForDisplay» objects.', '«appName.formatForDB»');
+            return $this->translator->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Display a list of «name.formatForDisplay» objects.', «IF targets('3.0')»[], «ENDIF»'«appName.formatForDB»');
         }
 
         public function getDefaultData()«IF targets('3.0')»: array«ENDIF»
@@ -306,9 +306,9 @@ class ContentTypeList {
              * @required
              */
         «ENDIF»
-        public function setModulePermissionHelper(PermissionHelper $permissionHelper)«IF targets('3.0')»: void«ENDIF»
+        public function setModulePermissionHelper(PermissionHelper $modulePermissionHelper)«IF targets('3.0')»: void«ENDIF»
         {
-            $this->modulePermissionHelper = $permissionHelper;
+            $this->modulePermissionHelper = $modulePermissionHelper;
         }
 
         «IF targets('3.0')»

@@ -298,10 +298,10 @@ class Validation {
                         if ('DIV' == jQuery(this).prop('tagName')) {
                             if (!«vendorAndName»ValidateDateRange«entity.name.formatForCodeCapital»()) {
                                 jQuery('#' + jQuery(this).attr('id') + '_date').get(0).setCustomValidity(Translator.«IF targets('3.0')»trans«ELSE»__«ENDIF»('The start must be before the end.'));
-                                jQuery('#' + jQuery(this).attr('id') + '_time').setCustomValidity(Translator.«IF targets('3.0')»trans«ELSE»__«ENDIF»('The start must be before the end.'));
+                                jQuery('#' + jQuery(this).attr('id') + '_time').get(0).setCustomValidity(Translator.«IF targets('3.0')»trans«ELSE»__«ENDIF»('The start must be before the end.'));
                             } else {
                                 jQuery('#' + jQuery(this).attr('id') + '_date').get(0).setCustomValidity('');
-                                jQuery('#' + jQuery(this).attr('id') + '_time').setCustomValidity('');
+                                jQuery('#' + jQuery(this).attr('id') + '_time').get(0).setCustomValidity('');
                             }
                         } else {
                             if (!«vendorAndName»ValidateDateRange«entity.name.formatForCodeCapital»()) {
