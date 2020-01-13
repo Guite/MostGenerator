@@ -25,6 +25,7 @@ import de.guite.modulestudio.metamodel.UploadNamingScheme
 import de.guite.modulestudio.metamodel.UrlField
 import de.guite.modulestudio.metamodel.UserField
 import java.math.BigInteger
+import java.util.ArrayList
 import java.util.List
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.entity.Property
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.formcomponents.Validation
@@ -145,7 +146,8 @@ class SharedFormTypeFields {
         «ENDIF»
         use Symfony\Component\OptionsResolver\OptionsResolver;
         «IF app.targets('3.0')»
-            use Symfony\Contracts\Translation\TranslatorInterface;
+            use Translation\Extractor\Annotation\Ignore;
+            use Translation\Extractor\Annotation\Translate;
         «ENDIF»
         «IF !fields.filter(StringField).filter[role == StringRole.LOCALE].empty»
             use Zikula\Bundle\FormExtensionBundle\Form\Type\LocaleType;
@@ -158,8 +160,8 @@ class SharedFormTypeFields {
         «ENDIF»
         «IF !app.targets('3.0')»
             use Zikula\Common\Translator\TranslatorInterface;
+            use Zikula\Common\Translator\TranslatorTrait;
         «ENDIF»
-        use Zikula\Common\Translator\TranslatorTrait;
         «IF null !== dataObject && dataObject instanceof Entity && (dataObject as Entity).hasTranslatableFields»
             use Zikula\ExtensionsModule\Api\ApiInterface\VariableApiInterface;
         «ENDIF»
@@ -207,11 +209,11 @@ class SharedFormTypeFields {
             «val useCustomSwitch = it instanceof BooleanField && application.targets('3.0')»
             «val isExpandedListField = it instanceof ListField && (it as ListField).expanded»
             $builder->add('«name.formatForCode»', «formType»Type::class, [
-                'label' => $this->«IF application.targets('3.0')»trans«ELSE»__«ENDIF»('«name.formatForDisplayCapital»') . ':',
+                'label' => «IF !application.targets('3.0')»$this->__(«ENDIF»'«name.formatForDisplayCapital»:'«IF !application.targets('3.0')»)«ENDIF»,
                 «IF null !== documentation && !documentation.empty»
                     'label_attr' => [
                         'class' => 'tooltips«IF useCustomSwitch» switch-custom«ELSEIF isExpandedListField» «IF (it as ListField).multiple»checkbox«ELSE»radio«ENDIF»-«IF application.targets('3.0')»custom«ELSE»inline«ENDIF»«ENDIF»',
-                        'title' => $this->«IF application.targets('3.0')»trans«ELSE»__«ENDIF»('«documentation.replace("'", '"')»')
+                        'title' => «IF !application.targets('3.0')»$this->__(«ENDIF»'«documentation.replace("'", '"')»'«IF !application.targets('3.0')»)«ENDIF»
                     ],
                 «ELSEIF useCustomSwitch»
                     'label_attr' => [
@@ -252,7 +254,7 @@ class SharedFormTypeFields {
                             'max' => «maxValue»,
                         «ENDIF»
                     «ENDIF»
-                    'title' => $this->«IF application.targets('3.0')»trans«ELSE»__«ENDIF»('«titleAttribute»')
+                    'title' => «IF !application.targets('3.0')»$this->__(«ENDIF»'«titleAttribute»'«IF !application.targets('3.0')»)«ENDIF»
                 ],
                 «requiredOption»
                 «additionalOptions»
@@ -260,12 +262,16 @@ class SharedFormTypeFields {
         «ENDIF»
     '''
 
-    def private helpAttribute(DerivedField it) '''«IF !helpMessages.empty»'help' => «IF helpMessages.length > 1»[«ENDIF»«helpMessages.join(', ')»«IF helpMessages.length > 1»]«ENDIF»,«ENDIF»'''
+    def private helpAttribute(DerivedField it) {
+        val messages = if (application.targets('3.0')) helpMessages else helpMessagesLegacy
+        val parameters = if (application.targets('3.0')) helpMessageParameters else newArrayList
+        new SharedFormTypeHelper().displayHelpMessages(application, messages, parameters)
+    }
 
     def private helpDocumentation(DerivedField it) {
         val messages = newArrayList
         if (null !== documentation && !documentation.empty) {
-            messages += '$this->' + (if (application.targets('3.0')) 'trans' else '__') + '(\'' + documentation.replace("'", '"') + '\')'
+            messages += (if (!application.targets('3.0')) '$this->__(' else '') + '\'' + documentation.replace("'", '"') + '\'' + (if (!application.targets('3.0')) ')' else '')
         }
         messages
     }
@@ -283,14 +289,14 @@ class SharedFormTypeFields {
         if (!range && (hasMin || hasMax)) {
             if (hasMin && hasMax) {
                 if (minValue == maxValue) {
-                    messages += '''$this->«IF application.targets('3.0')»trans«ELSE»__f«ENDIF»('Note: this value must exactly be %value%.', ['%value%' => «minValue»])'''
+                    messages += '''«''»'Note: this value must exactly be %value%.'«''»'''
                 } else {
-                    messages += '''$this->«IF application.targets('3.0')»trans«ELSE»__f«ENDIF»('Note: this value must be between %minValue% and %maxValue%.', ['%minValue%' => «minValue», '%maxValue%' => «maxValue»])'''
+                    messages += '''«''»'Note: this value must be between %minValue% and %maxValue%.'«''»'''
                 }
             } else if (hasMin) {
-                messages += '''$this->«IF application.targets('3.0')»trans«ELSE»__f«ENDIF»('Note: this value must not be lower than %minValue%.', ['%minValue%' => «minValue»])'''
+                messages += '''«''»'Note: this value must not be lower than %minValue%.'«''»'''
             } else if (hasMax) {
-                messages += '''$this->«IF application.targets('3.0')»trans«ELSE»__f«ENDIF»('Note: this value must not be greater than %maxValue%.', ['%maxValue%' => «maxValue»])'''
+                messages += '''«''»'Note: this value must not be greater than %maxValue%.'«''»'''
             }
         }
 
@@ -302,14 +308,14 @@ class SharedFormTypeFields {
 
         if (minValue > 0 && maxValue > 0) {
             if (minValue == maxValue) {
-                messages += '''$this->«IF application.targets('3.0')»trans«ELSE»__f«ENDIF»('Note: this value must exactly be %value%.', ['%value%' => «minValue»])'''
+                messages += '''«''»'Note: this value must exactly be %value%.'«''»'''
             } else {
-                messages += '''$this->«IF application.targets('3.0')»trans«ELSE»__f«ENDIF»('Note: this value must be between %minValue% and %maxValue%.', ['%minValue%' => «minValue», '%maxValue%' => «maxValue»])'''
+                messages += '''«''»'Note: this value must be between %minValue% and %maxValue%.'«''»'''
             }
         } else if (minValue > 0) {
-            messages += '''$this->«IF application.targets('3.0')»trans«ELSE»__f«ENDIF»('Note: this value must not be lower than %minValue%.', ['%minValue%' => «minValue»])'''
+            messages += '''«''»'Note: this value must not be lower than %minValue%.'«''»'''
         } else if (maxValue > 0) {
-            messages += '''$this->«IF application.targets('3.0')»trans«ELSE»__f«ENDIF»('Note: this value must not be greater than %maxValue%.', ['%maxValue%' => «maxValue»])'''
+            messages += '''«''»'Note: this value must not be greater than %maxValue%.'«''»'''
         }
 
         messages
@@ -321,31 +327,177 @@ class SharedFormTypeFields {
 
         if (!isSelector) {
             if (true === fixed) {
-                messages += '''$this->«IF application.targets('3.0')»trans«ELSE»__f«ENDIF»('Note: this value must have a length of %amount% characters.', ['%amount%' => «length»])'''
+                messages += '''«''»'Note: this value must have a length of %length% characters.'«''»'''
             }
             if (minLength > 0) {
-                messages += '''$this->«IF application.targets('3.0')»trans«ELSE»__f«ENDIF»('Note: this value must have a minimum length of %amount% characters.', ['%amount%' => «minLength»])'''
+                messages += '''«''»'Note: this value must have a minimum length of %minLength% characters.'«''»'''
             }
         }
         if (null !== regexp && !regexp.empty) {
-            messages += '''$this->«IF application.targets('3.0')»trans«ELSE»__f«ENDIF»('Note: this value must«IF regexpOpposite» not«ENDIF» conform to the regular expression "%pattern%".', ['%pattern%' => '«regexp.replace('\'', '')»'])'''
+            messages += '''«''»'Note: this value must«IF regexpOpposite» not«ENDIF» conform to the regular expression "%pattern%".'«''»'''
         }
         if (role == StringRole.BIC) {
-            messages += '''$this->«IF application.targets('3.0')»trans«ELSE»__«ENDIF»('Note: this value must be a valid BIC (Business Identifier Code).')'''
+            messages += '''«''»'Note: this value must be a valid BIC (Business Identifier Code).'«''»'''
         } else if (role == StringRole.CREDIT_CARD) {
-            messages += '''$this->«IF application.targets('3.0')»trans«ELSE»__«ENDIF»('Note: this value must be a valid credit card number.')'''
+            messages += '''«''»'Note: this value must be a valid credit card number.'«''»'''
         } else if (role == StringRole.IBAN) {
-            messages += '''$this->«IF application.targets('3.0')»trans«ELSE»__«ENDIF»('Note: this value must be a valid IBAN (International Bank Account Number).')'''
+            messages += '''«''»'Note: this value must be a valid IBAN (International Bank Account Number).'«''»'''
         } else if (isbn != StringIsbnStyle.NONE) {
-            messages += '''$this->«IF application.targets('3.0')»trans«ELSE»__«ENDIF»('Note: this value must be a valid ISBN (International Standard Book Number).«isbn.isbnMessage»')'''
+            messages += '''«''»'Note: this value must be a valid ISBN (International Standard Book Number).«isbn.isbnMessage»'«''»'''
         } else if (issn != StringIssnStyle.NONE) {
-            messages += '''$this->«IF application.targets('3.0')»trans«ELSE»__«ENDIF»('Note: this value must be a valid ISSN (International Standard Serial Number.«issn.issnMessage»')'''
+            messages += '''«''»'Note: this value must be a valid ISSN (International Standard Serial Number.«issn.issnMessage»'«''»'''
         } else if (ipAddress != IpAddressScope.NONE) {
-            messages += '''$this->«IF application.targets('3.0')»trans«ELSE»__«ENDIF»('Note: this value must be a valid IP address.«ipAddress.scopeMessage»')'''
+            messages += '''«''»'Note: this value must be a valid IP address.«ipAddress.scopeMessage»'«''»'''
         //} else if (role == StringRole.PHONE_NUMBER) {
-        //    messages += '''$this->«IF application.targets('3.0')»trans«ELSE»__«ENDIF»('Note: this value must be a valid telephone number.')'''
+        //    messages += '''«''»'Note: this value must be a valid telephone number.'«''»'''
         } else if (role == StringRole.UUID) {
-            messages += '''$this->«IF application.targets('3.0')»trans«ELSE»__«ENDIF»('Note: this value must be a valid UUID (Universally Unique Identifier).')'''
+            messages += '''«''»'Note: this value must be a valid UUID (Universally Unique Identifier).'«''»'''
+        }
+
+        messages
+    }
+
+    def private dispatch ArrayList<String> helpMessageParameters(DerivedField it) {
+        newArrayList
+    }
+
+    def private dispatch helpMessageParameters(IntegerField it) {
+        val parameters = newArrayList
+
+        val hasMin = minValue.compareTo(BigInteger.valueOf(0)) > 0
+        val hasMax = maxValue.compareTo(BigInteger.valueOf(0)) > 0
+        if (!range && (hasMin || hasMax)) {
+            if (hasMin && hasMax) {
+                if (minValue == maxValue) {
+                    parameters += '''«''»'%value%' => «minValue»'''
+                } else {
+                    parameters += '''«''»'%minValue%' => «minValue»'''
+                    parameters += '''«''»'%maxValue%' => «maxValue»'''
+                }
+            } else if (hasMin) {
+                parameters += '''«''»'%minValue%' => «minValue»'''
+            } else if (hasMax) {
+                parameters += '''«''»'%maxValue%' => «maxValue»'''
+            }
+        }
+
+        parameters
+    }
+
+    def private dispatch helpMessageParameters(NumberField it) {
+        val parameters = newArrayList
+
+        if (minValue > 0 && maxValue > 0) {
+            if (minValue == maxValue) {
+                parameters += '''«''»'%value%' => «minValue»'''
+            } else {
+                parameters += '''«''»'%minValue%' => «minValue»'''
+                parameters += '''«''»'%maxValue%' => «maxValue»'''
+            }
+        } else if (minValue > 0) {
+            parameters += '''«''»'%minValue%' => «minValue»'''
+        } else if (maxValue > 0) {
+            parameters += '''«''»'%maxValue%' => «maxValue»'''
+        }
+
+        parameters
+    }
+
+    def private dispatch helpMessageParameters(StringField it) {
+        val parameters = newArrayList
+        val isSelector = #[StringRole.COLOUR, StringRole.COUNTRY, StringRole.CURRENCY, StringRole.LANGUAGE, StringRole.LOCALE, StringRole.TIME_ZONE].contains(role)
+
+        if (!isSelector) {
+            if (true === fixed) {
+                parameters += '''«''»'%length%' => «length»'''
+            }
+            if (minLength > 0) {
+                parameters += '''«''»'%minLength%' => «minLength»'''
+            }
+        }
+        if (null !== regexp && !regexp.empty) {
+            parameters += '''«''»'%pattern%' => '«regexp.replace('\'', '')»'«''»'''
+        }
+
+        parameters
+    }
+
+    def private dispatch helpMessagesLegacy(DerivedField it) {
+        val messages = helpDocumentation
+        messages
+    }
+
+    def private dispatch helpMessagesLegacy(IntegerField it) {
+        val messages = helpDocumentation
+
+        val hasMin = minValue.compareTo(BigInteger.valueOf(0)) > 0
+        val hasMax = maxValue.compareTo(BigInteger.valueOf(0)) > 0
+        if (!range && (hasMin || hasMax)) {
+            if (hasMin && hasMax) {
+                if (minValue == maxValue) {
+                    messages += '''$this->__f('Note: this value must exactly be %value%.', ['%value%' => «minValue»])'''
+                } else {
+                    messages += '''$this->__f('Note: this value must be between %minValue% and %maxValue%.', ['%minValue%' => «minValue», '%maxValue%' => «maxValue»])'''
+                }
+            } else if (hasMin) {
+                messages += '''$this->__f('Note: this value must not be lower than %minValue%.', ['%minValue%' => «minValue»])'''
+            } else if (hasMax) {
+                messages += '''$this->__f('Note: this value must not be greater than %maxValue%.', ['%maxValue%' => «maxValue»])'''
+            }
+        }
+
+        messages
+    }
+
+    def private dispatch helpMessagesLegacy(NumberField it) {
+        val messages = helpDocumentation
+
+        if (minValue > 0 && maxValue > 0) {
+            if (minValue == maxValue) {
+                messages += '''$this->__f('Note: this value must exactly be %value%.', ['%value%' => «minValue»])'''
+            } else {
+                messages += '''$this->__f('Note: this value must be between %minValue% and %maxValue%.', ['%minValue%' => «minValue», '%maxValue%' => «maxValue»])'''
+            }
+        } else if (minValue > 0) {
+            messages += '''$this->__f('Note: this value must not be lower than %minValue%.', ['%minValue%' => «minValue»])'''
+        } else if (maxValue > 0) {
+            messages += '''$this->__f('Note: this value must not be greater than %maxValue%.', ['%maxValue%' => «maxValue»])'''
+        }
+
+        messages
+    }
+
+    def private dispatch helpMessagesLegacy(StringField it) {
+        val messages = helpDocumentation
+        val isSelector = #[StringRole.COLOUR, StringRole.COUNTRY, StringRole.CURRENCY, StringRole.LANGUAGE, StringRole.LOCALE, StringRole.TIME_ZONE].contains(role)
+
+        if (!isSelector) {
+            if (true === fixed) {
+                messages += '''$this->__f('Note: this value must have a length of %length% characters.', ['%length%' => «length»])'''
+            }
+            if (minLength > 0) {
+                messages += '''$this->__f('Note: this value must have a minimum length of %minLength% characters.', ['%minLength%' => «minLength»])'''
+            }
+        }
+        if (null !== regexp && !regexp.empty) {
+            messages += '''$this->__f('Note: this value must«IF regexpOpposite» not«ENDIF» conform to the regular expression "%pattern%".', ['%pattern%' => '«regexp.replace('\'', '')»'])'''
+        }
+        if (role == StringRole.BIC) {
+            messages += '''$this->__f('Note: this value must be a valid BIC (Business Identifier Code).')'''
+        } else if (role == StringRole.CREDIT_CARD) {
+            messages += '''$this->__f('Note: this value must be a valid credit card number.')'''
+        } else if (role == StringRole.IBAN) {
+            messages += '''$this->__f('Note: this value must be a valid IBAN (International Bank Account Number).')'''
+        } else if (isbn != StringIsbnStyle.NONE) {
+            messages += '''$this->__f('Note: this value must be a valid ISBN (International Standard Book Number).«isbn.isbnMessage»')'''
+        } else if (issn != StringIssnStyle.NONE) {
+            messages += '''$this->__f('Note: this value must be a valid ISSN (International Standard Serial Number.«issn.issnMessage»')'''
+        } else if (ipAddress != IpAddressScope.NONE) {
+            messages += '''$this->__f('Note: this value must be a valid IP address.«ipAddress.scopeMessage»')'''
+        //} else if (role == StringRole.PHONE_NUMBER) {
+        //    messages += '''$this->__f('Note: this value must be a valid telephone number.')'''
+        } else if (role == StringRole.UUID) {
+            messages += '''$this->__f('Note: this value must be a valid UUID (Universally Unique Identifier).')'''
         }
 
         messages
@@ -414,15 +566,15 @@ class SharedFormTypeFields {
         val messages = helpDocumentation
 
         if (true === fixed) {
-            messages += '''$this->«IF application.targets('3.0')»trans«ELSE»__f«ENDIF»('Note: this value must have a length of %amount% characters.', ['%amount%' => «length»])'''
+            messages += '''«''»'Note: this value must have a length of %length% characters.'«''»'''
         } else {
-            messages += '''$this->«IF application.targets('3.0')»trans«ELSE»__f«ENDIF»('Note: this value must not exceed %amount% characters.', ['%amount%' => «length»])'''
+            messages += '''«''»'Note: this value must not exceed %length% characters.'«''»'''
         }
         if (minLength > 0) {
-            messages += '''$this->«IF application.targets('3.0')»trans«ELSE»__f«ENDIF»('Note: this value must have a minimum length of %amount% characters.', ['%amount%' => «minLength»])'''
+            messages += '''«''»'Note: this value must have a minimum length of %minLength% characters.'«''»'''
         }
         if (null !== regexp && !regexp.empty) {
-            messages += '''$this->«IF application.targets('3.0')»trans«ELSE»__f«ENDIF»('Note: this value must«IF regexpOpposite» not«ENDIF» conform to the regular expression "%pattern%".', ['%pattern%' => '«regexp.replace('\'', '')»'])'''
+            messages += '''«''»'Note: this value must«IF regexpOpposite» not«ENDIF» conform to the regular expression "%pattern%".'«''»'''
         }
 
         messages
@@ -432,10 +584,10 @@ class SharedFormTypeFields {
         val messages = helpDocumentation
 
         if (true === fixed) {
-            messages += '''$this->«IF application.targets('3.0')»trans«ELSE»__f«ENDIF»('Note: this value must have a length of %amount% characters.', ['%amount%' => «length»])'''
+            messages += '''«''»'Note: this value must have a length of %length% characters.'«''»'''
         }
         if (minLength > 0) {
-            messages += '''$this->«IF application.targets('3.0')»trans«ELSE»__f«ENDIF»('Note: this value must have a minimum length of %amount% characters.', ['%amount%' => «minLength»])'''
+            messages += '''«''»'Note: this value must have a minimum length of %minLength% characters.'«''»'''
         }
 
         if (!multiple) {
@@ -443,14 +595,14 @@ class SharedFormTypeFields {
         }
         if (min > 0 && max > 0) {
             if (min == max) {
-                messages += '''$this->«IF application.targets('3.0')»trans«ELSE»__f«ENDIF»('Note: you must select exactly %amount% choices.', ['%amount%' => «min»])'''
+                messages += '''«''»'Note: you must select exactly %amount% choices.'«''»'''
             } else {
-                messages += '''$this->«IF application.targets('3.0')»trans«ELSE»__f«ENDIF»('Note: you must select between %min% and %max% choices.', ['%min%' => «min», '%max%' => «max»])'''
+                messages += '''«''»'Note: you must select between %min% and %max% choices.'«''»'''
             }
         } else if (min > 0) {
-            messages += '''$this->«IF application.targets('3.0')»trans«ELSE»__f«ENDIF»('Note: you must select at least %min% choices.', ['%min%' => «min»])'''
+            messages += '''«''»'Note: you must select at least %min% choices.'«''»'''
         } else if (max > 0) {
-            messages += '''$this->«IF application.targets('3.0')»trans«ELSE»__f«ENDIF»('Note: you must not select more than %max% choices.', ['%max%' => «max»])'''
+            messages += '''«''»'Note: you must not select more than %max% choices.'«''»'''
         }
 
         messages
@@ -461,68 +613,66 @@ class SharedFormTypeFields {
 
         if (minWidth > 0 && maxWidth > 0) {
             if (minWidth == maxWidth) {
-                messages += '''$this->«IF application.targets('3.0')»trans«ELSE»__f«ENDIF»('Note: the image must have a width of %amount% pixels.', ['%amount%' => «minWidth»])'''
+                messages += '''«''»'Note: the image must have a width of %fixedWidth% pixels.'«''»'''
             } else {
-                messages += '''$this->«IF application.targets('3.0')»trans«ELSE»__f«ENDIF»('Note: the image must have a width between %min% and %max% pixels.', ['%min%' => «minWidth», '%max%' => «maxWidth»])'''
+                messages += '''«''»'Note: the image must have a width between %minWidth% and %maxWidth% pixels.'«''»'''
             }
         } else if (minWidth > 0) {
-            messages += '''$this->«IF application.targets('3.0')»trans«ELSE»__f«ENDIF»('Note: the image must have a width of at least %min% pixels.', ['%min%' => «minWidth»])'''
+            messages += '''«''»'Note: the image must have a width of at least %minWidth% pixels.'«''»'''
         } else if (maxWidth > 0) {
-            messages += '''$this->«IF application.targets('3.0')»trans«ELSE»__f«ENDIF»('Note: the image must have a width of at most %max% pixels.', ['%max%' => «maxWidth»])'''
+            messages += '''«''»'Note: the image must have a width of at most %maxWidth% pixels.'«''»'''
         }
 
         if (minHeight > 0 && maxHeight > 0) {
             if (minHeight == maxHeight) {
-                messages += '''$this->«IF application.targets('3.0')»trans«ELSE»__f«ENDIF»('Note: the image must have a height of %amount% pixels.', ['%amount%' => «minHeight»])'''
+                messages += '''«''»'Note: the image must have a height of %fixedHeight% pixels.'«''»'''
             } else {
-                messages += '''$this->«IF application.targets('3.0')»trans«ELSE»__f«ENDIF»('Note: the image must have a height between %min% and %max% pixels.', ['%min%' => «minHeight», '%max%' => «maxHeight»])'''
+                messages += '''«''»'Note: the image must have a height between %minHeight% and %maxHeight% pixels.'«''»'''
             }
         } else if (minHeight > 0) {
-            messages += '''$this->«IF application.targets('3.0')»trans«ELSE»__f«ENDIF»('Note: the image must have a height of at least %min% pixels.', ['%min%' => «minHeight»])'''
+            messages += '''«''»'Note: the image must have a height of at least %minHeight% pixels.'«''»'''
         } else if (maxHeight > 0) {
-            messages += '''$this->«IF application.targets('3.0')»trans«ELSE»__f«ENDIF»('Note: the image must have a height of at most %max% pixels.', ['%max%' => «maxHeight»])'''
+            messages += '''«''»'Note: the image must have a height of at most %maxHeight% pixels.'«''»'''
         }
 
-        if (application.targets('2.0')) {
-            if (minPixels > 0 && maxPixels > 0) {
-                if (minPixels == maxPixels) {
-                    messages += '''$this->«IF application.targets('3.0')»trans«ELSE»__f«ENDIF»('Note: the amount of pixels must be exactly equal to %amount% pixels.', ['%amount%' => «minPixels»])'''
-                } else {
-                    messages += '''$this->«IF application.targets('3.0')»trans«ELSE»__f«ENDIF»('Note: the amount of pixels must be between %min% and %max% pixels.', ['%min%' => «minPixels», '%max%' => «maxPixels»])'''
-                }
+        if (minPixels > 0 && maxPixels > 0) {
+            if (minPixels == maxPixels) {
+                messages += '''«''»'Note: the amount of pixels must be exactly equal to %fixedPixels% pixels.'«''»'''
+            } else {
+                messages += '''«''»'Note: the amount of pixels must be between %minPixels% and %maxPixels% pixels.'«''»'''
             }
-            else if (minPixels > 0) {
-                messages += '''$this->«IF application.targets('3.0')»trans«ELSE»__f«ENDIF»('Note: the amount of pixels must be at least %min% pixels.', ['%min%' => «minPixels»])'''
-            } else if (maxPixels > 0) {
-                messages += '''$this->«IF application.targets('3.0')»trans«ELSE»__f«ENDIF»('Note: the amount of pixels must be at most %max% pixels.', ['%max%' => «maxPixels»])'''
-            }
+        }
+        else if (minPixels > 0) {
+            messages += '''«''»'Note: the amount of pixels must be at least %minPixels% pixels.'«''»'''
+        } else if (maxPixels > 0) {
+            messages += '''«''»'Note: the amount of pixels must be at most %maxPixels% pixels.'«''»'''
         }
 
         if (minRatio > 0 && maxRatio > 0) {
             if (minRatio == maxRatio) {
-                messages += '''$this->«IF application.targets('3.0')»trans«ELSE»__f«ENDIF»('Note: the image aspect ratio (width / height) must be %amount%.', ['%amount%' => «minRatio»])'''
+                messages += '''«''»'Note: the image aspect ratio (width / height) must be %fixedRatio%.'«''»'''
             } else {
-                messages += '''$this->«IF application.targets('3.0')»trans«ELSE»__f«ENDIF»('Note: the image aspect ratio (width / height) must be between %min% and %max%.', ['%min%' => «minRatio», '%max%' => «maxRatio»])'''
+                messages += '''«''»'Note: the image aspect ratio (width / height) must be between %minRatio% and %maxRatio%.'«''»'''
             }
         } else if (minRatio > 0) {
-            messages += '''$this->«IF application.targets('3.0')»trans«ELSE»__f«ENDIF»('Note: the image aspect ratio (width / height) must be at least %min%.', ['%min%' => «minRatio»])'''
+            messages += '''«''»'Note: the image aspect ratio (width / height) must be at least %minRatio%.'«''»'''
         } else if (maxRatio > 0) {
-            messages += '''$this->«IF application.targets('3.0')»trans«ELSE»__f«ENDIF»('Note: the image aspect ratio (width / height) must be at most %max%.', ['%max%' => «maxRatio»])'''
+            messages += '''«''»'Note: the image aspect ratio (width / height) must be at most %maxRatio%.'«''»'''
         }
 
         if (!(allowSquare && allowLandscape && allowPortrait)) {
             if (allowSquare && !allowLandscape && !allowPortrait) {
-                messages += '''$this->«IF application.targets('3.0')»trans«ELSE»__«ENDIF»('Note: only square dimension (no portrait or landscape) is allowed.')'''
+                messages += '''«''»'Note: only square dimension (no portrait or landscape) is allowed.'«''»'''
             } else if (!allowSquare && allowLandscape && !allowPortrait) {
-                messages += '''$this->«IF application.targets('3.0')»trans«ELSE»__«ENDIF»('Note: only landscape dimension (no square or portrait) is allowed.')'''
+                messages += '''«''»'Note: only landscape dimension (no square or portrait) is allowed.'«''»'''
             } else if (!allowSquare && !allowLandscape && allowPortrait) {
-                messages += '''$this->«IF application.targets('3.0')»trans«ELSE»__«ENDIF»('Note: only portrait dimension (no square or landscape) is allowed.')'''
+                messages += '''«''»'Note: only portrait dimension (no square or landscape) is allowed.'«''»'''
             } else if (allowSquare && allowLandscape && !allowPortrait) {
-                messages += '''$this->«IF application.targets('3.0')»trans«ELSE»__«ENDIF»('Note: only square or landscape dimension (no portrait) is allowed.')'''
+                messages += '''«''»'Note: only square or landscape dimension (no portrait) is allowed.'«''»'''
             } else if (allowSquare && !allowLandscape && allowPortrait) {
-                messages += '''$this->«IF application.targets('3.0')»trans«ELSE»__«ENDIF»('Note: only square or portrait dimension (no landscape) is allowed.')'''
+                messages += '''«''»'Note: only square or portrait dimension (no landscape) is allowed.'«''»'''
             } else if (!allowSquare && allowLandscape && allowPortrait) {
-                messages += '''$this->«IF application.targets('3.0')»trans«ELSE»__«ENDIF»('Note: only landscape or portrait dimension (no square) is allowed.')'''
+                messages += '''«''»'Note: only landscape or portrait dimension (no square) is allowed.'«''»'''
             }
         }
 
@@ -532,30 +682,306 @@ class SharedFormTypeFields {
     def private dispatch helpMessages(ArrayField it) {
         val messages = helpDocumentation
 
-        messages += '''$this->«IF application.targets('3.0')»trans«ELSE»__«ENDIF»('Enter one entry per line.')'''
+        messages += '''«''»'Enter one entry per line.'«''»'''
 
         if (min > 0 && max > 0) {
             if (min == max) {
-                messages += '''$this->«IF application.targets('3.0')»trans«ELSE»__f«ENDIF»('Note: you must specify exactly %amount% values.', ['%amount%' => «min»])'''
+                messages += '''«''»'Note: you must specify exactly %amount% values.'«''»'''
             } else {
-                messages += '''$this->«IF application.targets('3.0')»trans«ELSE»__f«ENDIF»('Note: you must specify between %min% and %max% values.', ['%min%' => «min», '%max%' => «max»])'''
+                messages += '''«''»'Note: you must specify between %min% and %max% values.'«''»'''
             }
         } else if (min > 0) {
-            messages += '''$this->«IF application.targets('3.0')»trans«ELSE»__f«ENDIF»('Note: you must specify at least %min% values.', ['%min%' => «min»])'''
+            messages += '''«''»'Note: you must specify at least %min% values.'«''»'''
         } else if (max > 0) {
-            messages += '''$this->«IF application.targets('3.0')»trans«ELSE»__f«ENDIF»('Note: you must not specify more than %max% values.', ['%max%' => «max»])'''
+            messages += '''«''»'Note: you must not specify more than %max% values.'«''»'''
         }
 
         messages
+    }
+
+    def private dispatch helpMessageParameters(TextField it) {
+        val parameters = newArrayList
+
+        if (true === fixed) {
+            parameters += '''«''»'%length%' => «length»'''
+        } else {
+            parameters += '''«''»'%length%' => «length»'''
+        }
+        if (minLength > 0) {
+            parameters += '''«''»'%minLength%' => «minLength»'''
+        }
+        if (null !== regexp && !regexp.empty) {
+            parameters += '''«''»'%pattern%' => '«regexp.replace('\'', '')»'«''»'''
+        }
+
+        parameters
+    }
+
+    def private dispatch helpMessageParameters(ListField it) {
+        val parameters = newArrayList
+
+        if (true === fixed) {
+            parameters += '''«''»'%length%' => «length»'''
+        }
+        if (minLength > 0) {
+            parameters += '''«''»'%minLength%' => «minLength»'''
+        }
+
+        if (!multiple) {
+            return parameters
+        }
+        if (min > 0 && max > 0) {
+            if (min == max) {
+                parameters += '''«''»'%amount%' => «min»'''
+            } else {
+                parameters += '''«''»'%min%' => «min»'''
+                parameters += '''«''»'%max%' => «max»'''
+            }
+        } else if (min > 0) {
+            parameters += '''«''»'%min%' => «min»'''
+        } else if (max > 0) {
+            parameters += '''«''»'%max%' => «max»'''
+        }
+
+        parameters
+    }
+
+    def private dispatch helpMessageParameters(UploadField it) {
+        val parameters = newArrayList
+
+        if (minWidth > 0 && maxWidth > 0) {
+            if (minWidth == maxWidth) {
+                parameters += '''«''»'%fixedWidth%' => «minWidth»'''
+            } else {
+                parameters += '''«''»'%minWidth%' => «minWidth»'''
+                parameters += '''«''»'%maxWidth%' => «maxWidth»'''
+            }
+        } else if (minWidth > 0) {
+            parameters += '''«''»'%minWidth%' => «minWidth»'''
+        } else if (maxWidth > 0) {
+            parameters += '''«''»'%maxWidth%' => «maxWidth»'''
+        }
+
+        if (minHeight > 0 && maxHeight > 0) {
+            if (minHeight == maxHeight) {
+                parameters += '''«''»'%fixedHeight%' => «minHeight»'''
+            } else {
+                parameters += '''«''»'%minHeight%' => «minHeight»'''
+                parameters += '''«''»'%maxHeight%' => «maxHeight»'''
+            }
+        } else if (minHeight > 0) {
+            parameters += '''«''»'%minHeight%' => «minHeight»'''
+        } else if (maxHeight > 0) {
+            parameters += '''«''»'%maxHeight%' => «maxHeight»'''
+        }
+
+        if (minPixels > 0 && maxPixels > 0) {
+            if (minPixels == maxPixels) {
+                parameters += '''«''»'%fixedPixels%' => «minPixels»'''
+            } else {
+                parameters += '''«''»'%minPixels%' => «minPixels»'''
+                parameters += '''«''»'%maxPixels%' => «maxPixels»'''
+            }
+        }
+        else if (minPixels > 0) {
+            parameters += '''«''»'%minPixels%' => «minPixels»'''
+        } else if (maxPixels > 0) {
+            parameters += '''«''»'%maxPixels%' => «maxPixels»'''
+        }
+
+        if (minRatio > 0 && maxRatio > 0) {
+            if (minRatio == maxRatio) {
+                parameters += '''«''»'%fixedRatio%' => «minRatio»'''
+            } else {
+                parameters += '''«''»'%minRatio%' => «minRatio»'''
+                parameters += '''«''»'%maxRatio%' => «maxRatio»'''
+            }
+        } else if (minRatio > 0) {
+            parameters += '''«''»'%minRatio%' => «minRatio»'''
+        } else if (maxRatio > 0) {
+            parameters += '''«''»'%maxRatio%' => «maxRatio»'''
+        }
+
+        parameters
+    }
+
+    def private dispatch helpMessageParameters(ArrayField it) {
+        val parameters = newArrayList
+
+        if (min > 0 && max > 0) {
+            if (min == max) {
+                parameters += '''«''»'%amount%' => «min»'''
+            } else {
+                parameters += '''«''»'%min%' => «min»'''
+                parameters += '''«''»'%max%' => «max»'''
+            }
+        } else if (min > 0) {
+            parameters += '''«''»'%min%' => «min»'''
+        } else if (max > 0) {
+            parameters += '''«''»'%max%' => «max»'''
+        }
+
+        parameters
     }
 
     def private dispatch helpMessages(DatetimeField it) {
         val messages = helpDocumentation
 
         if (past) {
-            messages += '''$this->«IF application.targets('3.0')»trans«ELSE»__«ENDIF»('Note: this value must be in the past.')'''
+            messages += '''«''»'Note: this value must be in the past.'«''»'''
         } else if (future) {
-            messages += '''$this->«IF application.targets('3.0')»trans«ELSE»__«ENDIF»('Note: this value must be in the future.')'''
+            messages += '''«''»'Note: this value must be in the future.'«''»'''
+        }
+
+        messages
+    }
+
+    def private dispatch helpMessagesLegacy(TextField it) {
+        val messages = helpDocumentation
+
+        if (true === fixed) {
+            messages += '''$this->__f('Note: this value must have a length of %length% characters.', ['%length%' => «length»])'''
+        } else {
+            messages += '''$this->__f('Note: this value must not exceed %length% characters.', ['%length%' => «length»])'''
+        }
+        if (minLength > 0) {
+            messages += '''$this->__f('Note: this value must have a minimum length of %minLength% characters.', ['%minLength%' => «minLength»])'''
+        }
+        if (null !== regexp && !regexp.empty) {
+            messages += '''$this->__f('Note: this value must«IF regexpOpposite» not«ENDIF» conform to the regular expression "%pattern%".', ['%pattern%' => '«regexp.replace('\'', '')»'])'''
+        }
+
+        messages
+    }
+
+    def private dispatch helpMessagesLegacy(ListField it) {
+        val messages = helpDocumentation
+
+        if (true === fixed) {
+            messages += '''$this->__f('Note: this value must have a length of %length% characters.', ['%length%' => «length»])'''
+        }
+        if (minLength > 0) {
+            messages += '''$this->__f('Note: this value must have a minimum length of %minLength% characters.', ['%minLength%' => «minLength»])'''
+        }
+
+        if (!multiple) {
+            return messages
+        }
+        if (min > 0 && max > 0) {
+            if (min == max) {
+                messages += '''$this->__f('Note: you must select exactly %amount% choices.', ['%amount%' => «min»])'''
+            } else {
+                messages += '''$this->__f('Note: you must select between %min% and %max% choices.', ['%min%' => «min», '%max%' => «max»])'''
+            }
+        } else if (min > 0) {
+            messages += '''$this->__f('Note: you must select at least %min% choices.', ['%min%' => «min»])'''
+        } else if (max > 0) {
+            messages += '''$this->__f('Note: you must not select more than %max% choices.', ['%max%' => «max»])'''
+        }
+
+        messages
+    }
+
+    def private dispatch helpMessagesLegacy(UploadField it) {
+        val messages = helpDocumentation
+
+        if (minWidth > 0 && maxWidth > 0) {
+            if (minWidth == maxWidth) {
+                messages += '''$this->__f('Note: the image must have a width of %fixedWidth% pixels.', ['%fixedWidth%' => «minWidth»])'''
+            } else {
+                messages += '''$this->__f('Note: the image must have a width between %minWidth% and %maxWidth% pixels.', ['%minWidth%' => «minWidth», '%maxWidth%' => «maxWidth»])'''
+            }
+        } else if (minWidth > 0) {
+            messages += '''$this->__f('Note: the image must have a width of at least %minWidth% pixels.', ['%minWidth%' => «minWidth»])'''
+        } else if (maxWidth > 0) {
+            messages += '''$this->__f('Note: the image must have a width of at most %maxWidth% pixels.', ['%maxWidth%' => «maxWidth»])'''
+        }
+
+        if (minHeight > 0 && maxHeight > 0) {
+            if (minHeight == maxHeight) {
+                messages += '''$this->__f('Note: the image must have a height of %fixedHeight% pixels.', ['%fixedHeight%' => «minHeight»])'''
+            } else {
+                messages += '''$this->__f('Note: the image must have a height between %minHeight% and %maxHeight% pixels.', ['%minHeight%' => «minHeight», '%maxHeight%' => «maxHeight»])'''
+            }
+        } else if (minHeight > 0) {
+            messages += '''$this->__f('Note: the image must have a height of at least %minHeight% pixels.', ['%minHeight%' => «minHeight»])'''
+        } else if (maxHeight > 0) {
+            messages += '''$this->__f('Note: the image must have a height of at most %maxHeight% pixels.', ['%maxHeight%' => «maxHeight»])'''
+        }
+
+        if (application.targets('2.0')) {
+            if (minPixels > 0 && maxPixels > 0) {
+                if (minPixels == maxPixels) {
+                    messages += '''$this->__f('Note: the amount of pixels must be exactly equal to %fixedPixels% pixels.', ['%fixedPixels%' => «minPixels»])'''
+                } else {
+                    messages += '''$this->__f('Note: the amount of pixels must be between %minPixels% and %maxPixels% pixels.', ['%minPixels%' => «minPixels», '%maxPixels%' => «maxPixels»])'''
+                }
+            }
+            else if (minPixels > 0) {
+                messages += '''$this->__f('Note: the amount of pixels must be at least %minPixels% pixels.', ['%minPixels%' => «minPixels»])'''
+            } else if (maxPixels > 0) {
+                messages += '''$this->__f('Note: the amount of pixels must be at most %maxPixels% pixels.', ['%maxPixels%' => «maxPixels»])'''
+            }
+        }
+
+        if (minRatio > 0 && maxRatio > 0) {
+            if (minRatio == maxRatio) {
+                messages += '''$this->__f('Note: the image aspect ratio (width / height) must be %fixedRatio%.', ['%fixedRatio%' => «minRatio»])'''
+            } else {
+                messages += '''$this->__f('Note: the image aspect ratio (width / height) must be between %minRatio% and %maxRatio%.', ['%minRatio%' => «minRatio», '%maxRatio%' => «maxRatio»])'''
+            }
+        } else if (minRatio > 0) {
+            messages += '''$this->__f('Note: the image aspect ratio (width / height) must be at least %minRatio%.', ['%minRatio%' => «minRatio»])'''
+        } else if (maxRatio > 0) {
+            messages += '''$this->__f('Note: the image aspect ratio (width / height) must be at most %maxRatio%.', ['%maxRatio%' => «maxRatio»])'''
+        }
+
+        if (!(allowSquare && allowLandscape && allowPortrait)) {
+            if (allowSquare && !allowLandscape && !allowPortrait) {
+                messages += '''$this->__('Note: only square dimension (no portrait or landscape) is allowed.')'''
+            } else if (!allowSquare && allowLandscape && !allowPortrait) {
+                messages += '''$this->__('Note: only landscape dimension (no square or portrait) is allowed.')'''
+            } else if (!allowSquare && !allowLandscape && allowPortrait) {
+                messages += '''$this->__('Note: only portrait dimension (no square or landscape) is allowed.')'''
+            } else if (allowSquare && allowLandscape && !allowPortrait) {
+                messages += '''$this->__('Note: only square or landscape dimension (no portrait) is allowed.')'''
+            } else if (allowSquare && !allowLandscape && allowPortrait) {
+                messages += '''$this->__('Note: only square or portrait dimension (no landscape) is allowed.')'''
+            } else if (!allowSquare && allowLandscape && allowPortrait) {
+                messages += '''$this->__('Note: only landscape or portrait dimension (no square) is allowed.')'''
+            }
+        }
+
+        messages
+    }
+
+    def private dispatch helpMessagesLegacy(ArrayField it) {
+        val messages = helpDocumentation
+
+        messages += '''$this->__('Enter one entry per line.')'''
+
+        if (min > 0 && max > 0) {
+            if (min == max) {
+                messages += '''$this->__f('Note: you must specify exactly %amount% values.', ['%amount%' => «min»])'''
+            } else {
+                messages += '''$this->__f('Note: you must specify between %min% and %max% values.', ['%min%' => «min», '%max%' => «max»])'''
+            }
+        } else if (min > 0) {
+            messages += '''$this->__f('Note: you must specify at least %min% values.', ['%min%' => «min»])'''
+        } else if (max > 0) {
+            messages += '''$this->__f('Note: you must not specify more than %max% values.', ['%max%' => «max»])'''
+        }
+
+        messages
+    }
+
+    def private dispatch helpMessagesLegacy(DatetimeField it) {
+        val messages = helpDocumentation
+
+        if (past) {
+            messages += '''$this->__('Note: this value must be in the past.')'''
+        } else if (future) {
+            messages += '''$this->__('Note: this value must be in the future.')'''
         }
 
         messages
@@ -577,7 +1003,7 @@ class SharedFormTypeFields {
     def private dispatch additionalAttributes(BooleanField it) ''''''
 
     def private dispatch formType(IntegerField it) '''«IF isUserGroupSelector»Entity«ELSEIF percentage»Percent«ELSEIF range»Range«ELSE»Integer«ENDIF»'''
-    def private dispatch titleAttribute(IntegerField it) '''«IF isUserGroupSelector»Choose the «name.formatForDisplay»«ELSE»«IF isShrinkDimensionField || isThumbDimensionField»Enter the «labelText.toLowerCase»«ELSE»Enter the «name.formatForDisplay»«IF null !== entity» of the «entity.name.formatForDisplay»«ENDIF».') . ' ' . $this->«IF application.targets('3.0')»trans«ELSE»__«ENDIF»('Only digits are allowed.«ENDIF»«ENDIF»'''
+    def private dispatch titleAttribute(IntegerField it) '''«IF isUserGroupSelector»Choose the «name.formatForDisplay»«ELSE»«IF isShrinkDimensionField || isThumbDimensionField»Enter the «labelText.toLowerCase»«ELSE»Enter the «name.formatForDisplay»«IF null !== entity» of the «entity.name.formatForDisplay»«ENDIF». Only digits are allowed.«ENDIF»«ENDIF»'''
     def private dispatch additionalAttributes(IntegerField it) '''
         «IF isUserGroupSelector»
             'maxlength' => 255,
@@ -595,7 +1021,7 @@ class SharedFormTypeFields {
                 'type' => 'integer',
             «ENDIF»
             «IF unit != ''»
-                'input_group' => ['right' => $this->«IF application.targets('3.0')»trans«ELSE»__«ENDIF»('«unit»')]
+                'input_group' => ['right' => «IF !application.targets('3.0')»$this->__(«ELSE»/** @Translate */«ENDIF»'«unit»'«IF !application.targets('3.0')»)«ENDIF»]
             «ENDIF»
         «ENDIF»
     '''
@@ -615,7 +1041,7 @@ class SharedFormTypeFields {
         «ENDIF*/»
         'scale' => «scale»«IF unit != ''»,«ENDIF»
         «IF unit != ''»
-            'input_group' => ['right' => $this->«IF application.targets('3.0')»trans«ELSE»__«ENDIF»('«unit»')]
+            'input_group' => ['right' => «IF !application.targets('3.0')»$this->__(«ELSE»/** @Translate */«ENDIF»'«unit»'«IF !application.targets('3.0')»)«ENDIF»]
         «ENDIF»
     '''
 
@@ -631,13 +1057,13 @@ class SharedFormTypeFields {
     '''
     def private dispatch additionalOptions(StringField it) '''
         «IF !mandatory && #[StringRole.COUNTRY, StringRole.CURRENCY, StringRole.LANGUAGE, StringRole.LOCALE, StringRole.TIME_ZONE].contains(role)»
-            'placeholder' => $this->«IF application.targets('3.0')»trans«ELSE»__«ENDIF»('All')«IF role == StringRole.LOCALE»,«ENDIF»
+            'placeholder' => «IF !application.targets('3.0')»$this->__(«ENDIF»'All'«IF !application.targets('3.0')»)«ENDIF»«IF role == StringRole.LOCALE»,«ENDIF»
         «ENDIF»
         «IF unit != ''»
-            'input_group' => ['right' => $this->«IF application.targets('3.0')»trans«ELSE»__«ENDIF»('«unit»')],
+            'input_group' => ['right' => «IF !application.targets('3.0')»$this->__(«ELSE»/** @Translate */«ENDIF»'«unit»'«IF !application.targets('3.0')»)«ENDIF»],
         «ENDIF»
         «IF role == StringRole.LOCALE»
-            'choices' => $this->localeApi->getSupportedLocaleNames(),
+            'choices' => «IF application.targets('3.0')»/** @Ignore */«ENDIF»$this->localeApi->getSupportedLocaleNames(),
             «IF application.targets('2.0')»
                 'choice_loader' => null,
             «ELSE»
@@ -645,22 +1071,28 @@ class SharedFormTypeFields {
             «ENDIF»
         «ENDIF»
         «IF role == StringRole.DATE_INTERVAL && application.targets('2.0')»
+            «IF application.targets('3.0')»
+                /** @Ignore */
+            «ENDIF»
             'labels' => [
-                'years' => $this->«IF application.targets('3.0')»trans«ELSE»__«ENDIF»('Years'),
-                'months' => $this->«IF application.targets('3.0')»trans«ELSE»__«ENDIF»('Months'),
-                'days' => $this->«IF application.targets('3.0')»trans«ELSE»__«ENDIF»('Days'),
-                'hours' => $this->«IF application.targets('3.0')»trans«ELSE»__«ENDIF»('Hours'),
-                'minutes' => $this->«IF application.targets('3.0')»trans«ELSE»__«ENDIF»('Minutes'),
-                'seconds' => $this->«IF application.targets('3.0')»trans«ELSE»__«ENDIF»('Seconds')
+                'years' => «IF !application.targets('3.0')»$this->__(«ELSE»/** @Translate */«ENDIF»'Years'«IF !application.targets('3.0')»)«ENDIF»,
+                'months' => «IF !application.targets('3.0')»$this->__(«ELSE»/** @Translate */«ENDIF»'Months'«IF !application.targets('3.0')»)«ENDIF»,
+                'days' => «IF !application.targets('3.0')»$this->__(«ELSE»/** @Translate */«ENDIF»'Days'«IF !application.targets('3.0')»)«ENDIF»,
+                'hours' => «IF !application.targets('3.0')»$this->__(«ELSE»/** @Translate */«ENDIF»'Hours'«IF !application.targets('3.0')»)«ENDIF»,
+                'minutes' => «IF !application.targets('3.0')»$this->__(«ELSE»/** @Translate */«ENDIF»'Minutes'«IF !application.targets('3.0')»)«ENDIF»,
+                'seconds' => «IF !application.targets('3.0')»$this->__(«ELSE»/** @Translate */«ENDIF»'Seconds'«IF !application.targets('3.0')»)«ENDIF»
             ],
             «IF !mandatory»
+                «IF application.targets('3.0')»
+                    /** @Ignore */
+                «ENDIF»
                 'placeholder' => [
-                    'years' => $this->«IF application.targets('3.0')»trans«ELSE»__«ENDIF»('Years'),
-                    'months' => $this->«IF application.targets('3.0')»trans«ELSE»__«ENDIF»('Months'),
-                    'days' => $this->«IF application.targets('3.0')»trans«ELSE»__«ENDIF»('Days'),
-                    'hours' => $this->«IF application.targets('3.0')»trans«ELSE»__«ENDIF»('Hours'),
-                    'minutes' => $this->«IF application.targets('3.0')»trans«ELSE»__«ENDIF»('Minutes'),
-                    'seconds' => $this->«IF application.targets('3.0')»trans«ELSE»__«ENDIF»('Seconds')
+                    'years' => «IF !application.targets('3.0')»$this->__(«ELSE»/** @Translate */«ENDIF»'Years'«IF !application.targets('3.0')»)«ENDIF»,
+                    'months' => «IF !application.targets('3.0')»$this->__(«ELSE»/** @Translate */«ENDIF»'Months'«IF !application.targets('3.0')»)«ENDIF»,
+                    'days' => «IF !application.targets('3.0')»$this->__(«ELSE»/** @Translate */«ENDIF»'Days'«IF !application.targets('3.0')»)«ENDIF»,
+                    'hours' => «IF !application.targets('3.0')»$this->__(«ELSE»/** @Translate */«ENDIF»'Hours'«IF !application.targets('3.0')»)«ENDIF»,
+                    'minutes' => «IF !application.targets('3.0')»$this->__(«ELSE»/** @Translate */«ENDIF»'Minutes'«IF !application.targets('3.0')»)«ENDIF»,
+                    'seconds' => «IF !application.targets('3.0')»$this->__(«ELSE»/** @Translate */«ENDIF»'Seconds'«IF !application.targets('3.0')»)«ENDIF»
                 ],
             «ENDIF»
             'input' => 'string',
@@ -754,9 +1186,9 @@ class SharedFormTypeFields {
     def private dispatch additionalAttributes(ListField it) ''''''
     def private dispatch additionalOptions(ListField it) '''
         «IF !expanded && !mandatory»
-            'placeholder' => $this->«IF application.targets('3.0')»trans«ELSE»__«ENDIF»('Choose an option'),
+            'placeholder' => «IF !application.targets('3.0')»$this->__(«ENDIF»'Choose an option'«IF !application.targets('3.0')»)«ENDIF»,
         «ENDIF»
-        'choices' => $choices,
+        'choices' => «IF application.targets('3.0')»/** @Ignore */«ENDIF»$choices,
         «IF !application.targets('2.0')»
             'choices_as_values' => true,
         «ENDIF»
@@ -856,7 +1288,7 @@ class SharedFormTypeFields {
 
     def addCommonSubmitButtons(Application it) '''
         $builder->add('reset', ResetType::class, [
-            'label' => $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Reset'),
+            'label' => «IF !targets('3.0')»$this->__(«ENDIF»'Reset'«IF !targets('3.0')»)«ENDIF»,
             'icon' => 'fa-«IF targets('3.0')»sync«ELSE»refresh«ENDIF»',
             'attr' => [
                 'class' => 'btn btn-default',
@@ -864,7 +1296,7 @@ class SharedFormTypeFields {
             ]
         ]);
         $builder->add('cancel', SubmitType::class, [
-            'label' => $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Cancel'),
+            'label' => «IF !targets('3.0')»$this->__(«ENDIF»'Cancel'«IF !targets('3.0')»)«ENDIF»,
             «IF targets('3.0')»
                 'validate' => false,
             «ENDIF»

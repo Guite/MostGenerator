@@ -82,6 +82,9 @@ class QuickNavigationType {
             use Symfony\Component\HttpFoundation\RequestStack;
         «ENDIF»
         use Symfony\Component\OptionsResolver\OptionsResolver;
+        «IF app.targets('3.0')»
+            use Translation\Extractor\Annotation\Ignore;
+        «ENDIF»
         «IF hasLocaleFieldsEntity»
             use Zikula\Bundle\FormExtensionBundle\Form\Type\LocaleType;
         «ENDIF»
@@ -537,6 +540,9 @@ class QuickNavigationType {
                 'attr' => [
                     'class' => '«IF app.targets('3.0')»form-control«ELSE»input«ENDIF»-sm text-right'
                 ],
+                «IF app.targets('3.0')»
+                    /** @Ignore */
+                «ENDIF»
                 'choices' => [
                     5 => 5,
                     10 => 10,

@@ -47,7 +47,10 @@ class ConfigType {
          */
         abstract class AbstractConfigType extends AbstractType
         {
-            use TranslatorTrait;
+            «IF !targets('3.0')»
+                use TranslatorTrait;
+
+            «ENDIF»
             «IF targets('3.0') && !getAllVariables.filter(StringField).filter[#[StringRole.COUNTRY, StringRole.CURRENCY, StringRole.LANGUAGE, StringRole.LOCALE, StringRole.TIME_ZONE].contains(role)].empty»
                 /**
                  * @var RequestStack
@@ -78,14 +81,14 @@ class ConfigType {
             «ENDIF»
 
             public function __construct(
-                TranslatorInterface $translator«IF targets('3.0') && !getAllVariables.filter(StringField).filter[#[StringRole.COUNTRY, StringRole.CURRENCY, StringRole.LANGUAGE, StringRole.LOCALE, StringRole.TIME_ZONE].contains(role)].empty»,
-                RequestStack $requestStack«ENDIF»«IF !getAllVariables.filter(ListField).empty»,
+                «IF !targets('3.0')»TranslatorInterface $translator«ELSEIF targets('3.0') && !getAllVariables.filter(StringField).filter[#[StringRole.COUNTRY, StringRole.CURRENCY, StringRole.LANGUAGE, StringRole.LOCALE, StringRole.TIME_ZONE].contains(role)].empty»RequestStack $requestStack«ENDIF»«IF !getAllVariables.filter(ListField).empty»,
                 ListEntriesHelper $listHelper«ENDIF»«IF hasUploadVariables»,
                 UploadHelper $uploadHelper«ENDIF»«IF !getAllVariables.filter(StringField).filter[role == StringRole.LOCALE].empty»,
                 LocaleApiInterface $localeApi«ENDIF»
             ) {
-                $this->setTranslator($translator);
-                «IF targets('3.0') && !getAllVariables.filter(StringField).filter[#[StringRole.COUNTRY, StringRole.CURRENCY, StringRole.LANGUAGE, StringRole.LOCALE, StringRole.TIME_ZONE].contains(role)].empty»
+                «IF !targets('3.0')»
+                    $this->setTranslator($translator);
+                «ELSEIF targets('3.0') && !getAllVariables.filter(StringField).filter[#[StringRole.COUNTRY, StringRole.CURRENCY, StringRole.LANGUAGE, StringRole.LOCALE, StringRole.TIME_ZONE].contains(role)].empty»
                     $this->requestStack = $requestStack;
                 «ENDIF»
                 «IF !getAllVariables.filter(ListField).empty»
@@ -125,11 +128,10 @@ class ConfigType {
 
             public function configureOptions(OptionsResolver $resolver)
             {
-                $resolver
-                    ->setDefaults([
-                        // define class for underlying data
-                        'data_class' => AppSettings::class,
-                    ]);
+                $resolver->setDefaults([
+                    // define class for underlying data
+                    'data_class' => AppSettings::class,
+                ]);
             }
         }
     '''
@@ -153,7 +155,7 @@ class ConfigType {
         public function addSubmitButtons(FormBuilderInterface $builder, array $options = [])«IF targets('3.0')»: void«ENDIF»
         {
             $builder->add('save', SubmitType::class, [
-                'label' => $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Update configuration'),
+                'label' => «IF !targets('3.0')»$this->__(«ENDIF»'Update configuration'«IF !targets('3.0')»)«ENDIF»,
                 'icon' => 'fa-check',
                 'attr' => [
                     'class' => 'btn btn-success'

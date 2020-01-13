@@ -49,6 +49,9 @@ class FinderType {
         use «nsSymfonyFormType»SubmitType;
         use Symfony\Component\Form\FormBuilderInterface;
         use Symfony\Component\OptionsResolver\OptionsResolver;
+        «IF app.targets('3.0')»
+            use Translation\Extractor\Annotation\Ignore;
+        «ENDIF»
         «IF categorisable»
             use Zikula\CategoriesModule\Form\Type\CategoriesType;
         «ENDIF»
@@ -337,6 +340,9 @@ class FinderType {
                 'attr' => [
                     'class' => 'text-right'
                 ],
+                «IF app.targets('3.0')»
+                    /** @Ignore */
+                «ENDIF»
                 'choices' => [
                     5 => 5,
                     10 => 10,
