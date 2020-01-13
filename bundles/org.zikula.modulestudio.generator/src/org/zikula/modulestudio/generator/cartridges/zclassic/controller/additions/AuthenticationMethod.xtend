@@ -129,7 +129,7 @@ class AuthenticationMethod {
         {
             $request = $this->requestStack->getCurrentRequest();
             if ($request->hasSession() && ($session = $request->getSession())) {
-                $session->getFlashBag()->add('error', $this->translator->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Login for «name.formatForDisplay» authentication method is not implemented yet.'));
+                $session->getFlashBag()->add('error', «IF !targets('3.0')»$this->translator->__(«ENDIF»'Login for «name.formatForDisplay» authentication method is not implemented yet.'«IF !targets('3.0')»)«ENDIF»);
             }
 
             return null;
@@ -139,7 +139,7 @@ class AuthenticationMethod {
         {
             $request = $this->requestStack->getCurrentRequest();
             if ($request->hasSession() && ($session = $request->getSession())) {
-                $session->getFlashBag()->add('error', $this->translator->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Registration for «name.formatForDisplay» authentication method is not implemented yet.'));
+                $session->getFlashBag()->add('error', «IF !targets('3.0')»$this->translator->__(«ENDIF»'Registration for «name.formatForDisplay» authentication method is not implemented yet.'«IF !targets('3.0')»)«ENDIF»);
             }
 
             return false;

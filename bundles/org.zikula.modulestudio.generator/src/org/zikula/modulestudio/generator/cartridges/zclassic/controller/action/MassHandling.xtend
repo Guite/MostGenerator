@@ -178,7 +178,7 @@ class MassHandling {
             }
 
             if ('delete' === $action) {
-                $this->addFlash('status', $this->«IF application.targets('3.0')»trans«ELSE»__«ENDIF»('Done! Item deleted.'));
+                $this->addFlash('status', «IF !application.targets('3.0')»$this->__(«ENDIF»'Done! Item deleted.'«IF !application.targets('3.0')»)«ENDIF»);
                 $logger->notice(
                     '{app}: User {user} deleted the {entity} with id {id}.',
                     [
@@ -189,7 +189,7 @@ class MassHandling {
                     ]
                 );
             } else {
-                $this->addFlash('status', $this->«IF application.targets('3.0')»trans«ELSE»__«ENDIF»('Done! Item updated.'));
+                $this->addFlash('status', «IF !application.targets('3.0')»$this->__(«ENDIF»'Done! Item updated.'«IF !application.targets('3.0')»)«ENDIF»);
                 $logger->notice(
                     '{app}: User {user} executed the {action} workflow action for the {entity} with id {id}.',
                     [

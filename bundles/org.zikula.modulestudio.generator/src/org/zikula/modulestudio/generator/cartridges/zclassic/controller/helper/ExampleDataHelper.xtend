@@ -270,11 +270,13 @@ class ExampleDataHelper {
             «FOR entity : getExampleEntities»«entity.saveEntities(it)»«ENDFOR»
         } catch (Exception $exception) {
             if ($this->requestStack->getCurrentRequest()->hasSession()) {
-                $flashBag = $this->requestStack->getCurrentRequest()->getSession()->getFlashBag();
-                $flashBag->add(
+                $session = $this->requestStack->getCurrentRequest()->getSession();
+                $session->getFlashBag()->add(
                     'error',
-                    $this->translator->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Exception during example data creation')
-                        . ': ' . $exception->getMessage()
+                    $this->translator->«IF targets('3.0')»trans«ELSE»__f«ENDIF»(
+                        'Exception during example data creation: %message%',
+                        ['%message%' => $exception->getMessage()]
+                    )
                 );
             }
             $this->logger->error(

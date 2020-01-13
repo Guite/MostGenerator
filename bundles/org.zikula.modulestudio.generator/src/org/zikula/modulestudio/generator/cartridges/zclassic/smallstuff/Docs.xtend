@@ -114,15 +114,21 @@ class Docs {
         2. Open a console and navigate to the Zikula root directory.
         3. Execute this command replacing `en` by your desired locale code:
 
-        `php -dmemory_limit=2G «IF targets('2.0')»bin«ELSE»app«ENDIF»/console translation:extract en --bundle=«appName» --enable-extractor=jms_i18n_routing --output-format=po«IF needsComposerInstall» --exclude-dir=vendor«ENDIF»«IF generateNewsletterPlugin» --exclude-dir=NewsletterPlugin«ENDIF»«IF generateTagSupport» --exclude-dir=TaggedObjectMeta«ENDIF»`
+        «IF targets('3.0')»
+            `php -dmemory_limit=2G bin/console translation:extract --bundle=«appName» extension en`
 
-        You can also use multiple locales at once, for example `de fr es`.
+            4. Translate the resulting `.yaml` files in `«relativeAppRootPath»/Resources/translations/`.
+        «ELSE»
+            `php -dmemory_limit=2G «IF targets('2.0')»bin«ELSE»app«ENDIF»/console translation:extract en --bundle=«appName» --enable-extractor=jms_i18n_routing --output-format=po«IF needsComposerInstall» --exclude-dir=vendor«ENDIF»«IF generateNewsletterPlugin» --exclude-dir=NewsletterPlugin«ENDIF»«IF generateTagSupport» --exclude-dir=TaggedObjectMeta«ENDIF»`
 
-        4. Translate the resulting `.po` files in `«relativeAppRootPath»/Resources/translations/` using your favourite Gettext tooling.
+            You can also use multiple locales at once, for example `de fr es`.
 
-        Note you can even include custom views in `app/Resources/«appName»/views/` and JavaScript files in `app/Resources/«appName»/public/js/` like this:
+            4. Translate the resulting `.po` files in `«relativeAppRootPath»/Resources/translations/` using your favourite Gettext tooling.
 
-        `php -dmemory_limit=2G «IF targets('2.0')»bin«ELSE»app«ENDIF»/console translation:extract en --bundle=«appName» --enable-extractor=jms_i18n_routing --output-format=po«IF needsComposerInstall» --exclude-dir=vendor«ENDIF»«IF generateNewsletterPlugin» --exclude-dir=NewsletterPlugin«ENDIF»«IF generateTagSupport» --exclude-dir=TaggedObjectMeta«ENDIF» --dir=./«relativeAppRootPath» --dir=./app/Resources/«appName»`
+            Note you can even include custom views in `app/Resources/«appName»/views/` and JavaScript files in `app/Resources/«appName»/public/js/` like this:
+
+            `php -dmemory_limit=2G «IF targets('2.0')»bin«ELSE»app«ENDIF»/console translation:extract en --bundle=«appName» --enable-extractor=jms_i18n_routing --output-format=po«IF needsComposerInstall» --exclude-dir=vendor«ENDIF»«IF generateNewsletterPlugin» --exclude-dir=NewsletterPlugin«ENDIF»«IF generateTagSupport» --exclude-dir=TaggedObjectMeta«ENDIF» --dir=./«relativeAppRootPath» --dir=./app/Resources/«appName»`
+        «ENDIF»
 
         For questions and other remarks visit our homepage «url».
 

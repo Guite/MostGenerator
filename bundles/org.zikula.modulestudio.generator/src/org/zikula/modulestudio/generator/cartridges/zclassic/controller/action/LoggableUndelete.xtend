@@ -156,7 +156,7 @@ class LoggableUndelete {
     def private undeletion(Entity it) '''
         try {
             $loggableHelper->undelete($«name.formatForCode»);
-            $this->addFlash('status', $this->«IF application.targets('3.0')»trans«ELSE»__«ENDIF»('Done! Undeleted «name.formatForDisplay».'));
+            $this->addFlash('status', «IF !application.targets('3.0')»$this->__(«ENDIF»'Done! Undeleted «name.formatForDisplay».'«IF !application.targets('3.0')»)«ENDIF»);
         } catch (Exception $exception) {
             $this->addFlash(
                 'error',

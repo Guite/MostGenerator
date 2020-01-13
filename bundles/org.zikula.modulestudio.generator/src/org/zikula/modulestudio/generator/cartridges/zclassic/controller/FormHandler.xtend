@@ -637,7 +637,7 @@ class FormHandler {
 
             if (null === $entity) {
                 if (null !== $session) {
-                    $session->getFlashBag()->add('error', $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('No such item found.'));
+                    $session->getFlashBag()->add('error', «IF !targets('3.0')»$this->__(«ENDIF»'No such item found.'«IF !targets('3.0')»)«ENDIF»);
                 }
 
                 return new RedirectResponse($this->getRedirectUrl(['commandName' => 'cancel']), 302);
@@ -662,7 +662,7 @@ class FormHandler {
                 if (null !== $session) {
                     $session->getFlashBag()->add(
                         'error',
-                        $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Error! Could not determine workflow actions.')
+                        «IF !targets('3.0')»$this->__(«ENDIF»'Error! Could not determine workflow actions.'«IF !targets('3.0')»)«ENDIF»
                     );
                 }
                 $logArgs = [
@@ -1437,7 +1437,7 @@ class FormHandler {
                 if ($request->hasSession() && ($session = $request->getSession())) {
                     $session->getFlashBag()->add(
                         'error',
-                        $this->«IF app.targets('3.0')»trans«ELSE»__«ENDIF»('Sorry, but you can not create the «name.formatForDisplay» yet as other items are required which must be created before!')
+                        «IF !app.targets('3.0')»$this->__(«ENDIF»'Sorry, but you can not create the «name.formatForDisplay» yet as other items are required which must be created before!'«IF !app.targets('3.0')»)«ENDIF»
                     );
                 }
                 $logArgs = [
