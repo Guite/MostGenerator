@@ -143,9 +143,6 @@ class Relations {
     def private includedEditTemplate(JoinRelationship it, Entity ownEntity, Entity linkingEntity, Boolean hasEdit, Boolean many) '''
         «val ownEntityName = ownEntity.getEntityNameSingularPlural(many)»
         {# purpose of this template: inclusion template for managing related «ownEntityName.formatForDisplay» #}
-        «IF !application.isSystemModule && application.targets('3.0')»
-            {% trans_default_domain '«application.appName.formatForDB»' %}
-        «ENDIF»
         {% if displayMode is not defined or displayMode is empty %}
             {% set displayMode = 'choices' %}
         {% endif %}
@@ -200,9 +197,6 @@ class Relations {
 
     def private component_ItemList(JoinRelationship it, Entity targetEntity, Boolean many, Boolean includeEditing) '''
         {# purpose of this template: inclusion template for display of related «targetEntity.getEntityNameSingularPlural(many).formatForDisplay» #}
-        «IF !application.isSystemModule && application.targets('3.0')»
-            {% trans_default_domain '«application.appName.formatForDB»' %}
-        «ENDIF»
         <ul id="{{ idPrefix }}ReferenceList">
         {% if item«IF many»s«ENDIF» is defined«IF many» and items is iterable«ELSE» and item.getKey()|default«ENDIF» %}
         «IF many»

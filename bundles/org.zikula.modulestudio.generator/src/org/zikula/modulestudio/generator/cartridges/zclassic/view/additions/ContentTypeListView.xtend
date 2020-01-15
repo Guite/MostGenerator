@@ -30,9 +30,6 @@ class ContentTypeListView {
 
     def private editTemplate(Application it) '''
         {# purpose of this template: edit view of generic item list content type #}
-        «IF !isSystemModule && targets('3.0')»
-            {% trans_default_domain '«appName.formatForDB»' %}
-        «ENDIF»
         {{ form_row(form.objectType) }}
         «IF hasCategorisableEntities»
             {% if form.categories is defined %}

@@ -141,10 +141,14 @@ class ListEntryValidator {
                     // single-valued list
                     if ('' !== $value && !in_array($value, $allowedValues/*, true*/)) {
                         $this->context->buildViolation(
-                            $this->«IF targets('3.0')»trans«ELSE»__f«ENDIF»('The value "%value%" is not allowed for the "%property%" property.', [
-                                '%value%' => $value,
-                                '%property%' => $constraint->propertyName
-                            ])
+                            $this->«IF targets('3.0')»trans«ELSE»__f«ENDIF»(
+                                'The value "%value%" is not allowed for the "%property%" property.',
+                                [
+                                    '%value%' => $value,
+                                    '%property%' => $constraint->propertyName
+                                ]«IF targets('3.0')»,
+                                'validators'«ENDIF»
+                            )
                         )->addViolation();
                     }
 
@@ -159,10 +163,14 @@ class ListEntryValidator {
                     }
                     if (!in_array($singleValue, $allowedValues/*, true*/)) {
                         $this->context->buildViolation(
-                            $this->«IF targets('3.0')»trans«ELSE»__f«ENDIF»('The value "%value%" is not allowed for the "%property%" property.', [
-                                '%value%' => $singleValue,
-                                '%property%' => $constraint->propertyName
-                            ])
+                            $this->«IF targets('3.0')»trans«ELSE»__f«ENDIF»(
+                                'The value "%value%" is not allowed for the "%property%" property.',
+                                [
+                                    '%value%' => $singleValue,
+                                    '%property%' => $constraint->propertyName
+                                ]«IF targets('3.0')»,
+                                'validators'«ENDIF»
+                            )
                         )->addViolation();
                     }
                 }
@@ -177,7 +185,8 @@ class ListEntryValidator {
                                 [
                                     '%count%' => $count,
                                     '%limit%' => $constraint->min
-                                ]«IF !isSystemModule»,
+                                ]«IF targets('3.0')»,
+                                'validators'«ELSEIF !isSystemModule»,
                                 '«appName.formatForDB»'«ENDIF»
                             )
                         «ELSE»
@@ -186,7 +195,8 @@ class ListEntryValidator {
                                 $count,
                                 [
                                     '%limit%' => $constraint->min
-                                ]«IF !isSystemModule»,
+                                ]«IF targets('3.0')»,
+                                'validators'«ELSEIF !isSystemModule»,
                                 '«appName.formatForDB»'«ENDIF»
                             )
                         «ENDIF»
@@ -200,7 +210,8 @@ class ListEntryValidator {
                                 [
                                     '%count%' => $count,
                                     '%limit%' => $constraint->max
-                                ]«IF !isSystemModule»,
+                                ]«IF targets('3.0')»,
+                                'validators'«ELSEIF !isSystemModule»,
                                 '«appName.formatForDB»'«ENDIF»
                             )
                         «ELSE»
@@ -209,7 +220,8 @@ class ListEntryValidator {
                                 $count,
                                 [
                                     '%limit%' => $constraint->max
-                                ]«IF !isSystemModule»,
+                                ]«IF targets('3.0')»,
+                                'validators'«ELSEIF !isSystemModule»,
                                 '«appName.formatForDB»'«ENDIF»
                             )
                         «ENDIF»

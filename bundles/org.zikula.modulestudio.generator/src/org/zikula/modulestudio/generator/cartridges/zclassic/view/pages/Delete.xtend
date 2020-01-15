@@ -41,9 +41,6 @@ class Delete {
                 {% extends routeArea == 'admin' ? '«app.appName»::adminBase.html.twig' : '«app.appName»::base.html.twig' %}
             «ENDIF»
         «ENDIF»
-        «IF !app.isSystemModule && app.targets('3.0')»
-            {% trans_default_domain '«app.appName.formatForDB»' %}
-        «ENDIF»
         {% block title «IF app.targets('3.0')»'Delete «name.formatForDisplay»'|trans«ELSE»__('Delete «name.formatForDisplay»')«ENDIF» %}
         «IF !application.separateAdminTemplates || isAdmin»
             {% block admin_page_icon 'trash-«IF application.targets('3.0')»alt«ELSE»o«ENDIF»' %}

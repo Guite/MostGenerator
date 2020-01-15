@@ -29,17 +29,11 @@ class BlockListView {
 
     def private displayTemplate(Application it) '''
         {# purpose of this template: Display items within a block (fallback template) #}
-        «IF !isSystemModule && targets('3.0')»
-            {% trans_default_domain '«appName.formatForDB»' %}
-        «ENDIF»
         Default block for generic item list.
     '''
 
     def private editTemplate(Application it) '''
         {# purpose of this template: Edit block for generic item list view #}
-        «IF !isSystemModule && targets('3.0')»
-            {% trans_default_domain '«appName.formatForDB»' %}
-        «ENDIF»
         {{ form_row(form.objectType) }}
         «IF hasCategorisableEntities»
             {% if form.categories is defined %}

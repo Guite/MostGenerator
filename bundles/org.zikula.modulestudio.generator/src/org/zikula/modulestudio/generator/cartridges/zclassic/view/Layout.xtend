@@ -51,9 +51,6 @@ class Layout {
 
     def baseTemplate(Application it) '''
         {# purpose of this template: general base layout #}
-        «IF !isSystemModule && targets('3.0')»
-            {% trans_default_domain '«appName.formatForDB»' %}
-        «ENDIF»
         {% block header %}
             «IF hasGeographical && hasEditActions && !targets('3.0')»
                 {% if 'edit' in app.request.get('_route') %}
@@ -126,9 +123,6 @@ class Layout {
         {# purpose of this template: admin area base layout #}
         «IF targets('3.0')»
             {% extends '@«appName»/base.html.twig' %}
-            «IF !isSystemModule»
-                {% trans_default_domain '«appName.formatForDB»' %}
-            «ENDIF»
         «ELSE»
             {% extends '«appName»::base.html.twig' %}
         «ENDIF»
@@ -153,9 +147,6 @@ class Layout {
         {# purpose of this template: apply some general form extensions #}
         «IF targets('3.0')»
             {% extends '@ZikulaFormExtension/Form/bootstrap_4_zikula_admin_layout.html.twig' %}
-            «IF !isSystemModule»
-                {% trans_default_domain '«appName.formatForDB»' %}
-            «ENDIF»
         «ELSE»
             {% extends 'ZikulaFormExtensionBundle:Form:bootstrap_3_zikula_admin_layout.html.twig' %}
         «ENDIF»

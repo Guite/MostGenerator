@@ -45,9 +45,6 @@ class Custom {
                 {% extends routeArea == 'admin' ? '«app.appName»::adminBase.html.twig' : '«app.appName»::base.html.twig' %}
             «ENDIF»
         «ENDIF»
-        «IF !app.isSystemModule && app.targets('3.0')»
-            {% trans_default_domain '«app.appName.formatForDB»' %}
-        «ENDIF»
         {% block title «IF app.targets('3.0')»'«name.formatForDisplayCapital»'|trans«ELSE»__('«name.formatForDisplayCapital»')«ENDIF» %}
         «IF !app.separateAdminTemplates || isAdmin»
             {% block admin_page_icon 'square' %}

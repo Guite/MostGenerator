@@ -53,9 +53,6 @@ class ExternalView {
 
     def private displayTemplate(Entity it, Application app) '''
         {# purpose of this template: Display one certain «name.formatForDisplay» within an external context #}
-        «IF !app.isSystemModule && app.targets('3.0')»
-            {% trans_default_domain '«app.appName.formatForDB»' %}
-        «ENDIF»
         «IF hasImageFieldsEntity»
             {{ pageAddAsset('javascript', asset('magnific-popup/jquery.magnific-popup.min.js'), 90) }}
             {{ pageAddAsset('stylesheet', asset('magnific-popup/magnific-popup.css'), 90) }}
@@ -153,9 +150,6 @@ class ExternalView {
 
     def private itemInfoTemplate(Entity it, Application app) '''
         {# purpose of this template: Display item information for previewing from other modules #}
-        «IF !app.isSystemModule && app.targets('3.0')»
-            {% trans_default_domain '«app.appName.formatForDB»' %}
-        «ENDIF»
         <dl id="«name.formatForCode»{{ «name.formatForCode».getKey() }}">
         <dt>{{ «name.formatForCode»|«app.appName.formatForDB»_formattedTitle«IF !skipHookSubscribers»|notifyFilters('«app.name.formatForDB».filter_hooks.«nameMultiple.formatForDB».filter')|safeHtml«ENDIF» }}</dt>
         «IF hasImageFieldsEntity»
@@ -174,9 +168,6 @@ class ExternalView {
 
     def private findTemplate(Entity it, Application app) '''
         {# purpose of this template: Display a popup selector of «nameMultiple.formatForDisplay» for scribite integration #}
-        «IF !app.isSystemModule && app.targets('3.0')»
-            {% trans_default_domain '«app.appName.formatForDB»' %}
-        «ENDIF»
         {% set useFinder = true %}
         «IF app.targets('3.0')»
             {% extends '@«app.appName»/raw.html.twig' %}

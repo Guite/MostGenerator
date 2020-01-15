@@ -43,9 +43,6 @@ class Json {
     def private jsonView(Entity it) '''
         «val objName = name.formatForCode»
         {# purpose of this template: «nameMultiple.formatForDisplay» view json view #}
-        «IF !application.isSystemModule && application.targets('3.0')»
-            {% trans_default_domain '«application.appName.formatForDB»' %}
-        «ENDIF»
         [
         {% for «objName» in items %}
             {% if not loop.first %},{% endif %}
@@ -57,9 +54,6 @@ class Json {
     def private jsonDisplay(Entity it) '''
         «val objName = name.formatForCode»
         {# purpose of this template: «nameMultiple.formatForDisplay» display json view #}
-        «IF !application.isSystemModule && application.targets('3.0')»
-            {% trans_default_domain '«application.appName.formatForDB»' %}
-        «ENDIF»
         {{ «objName».toArray()|json_encode()|raw }}
     '''
 }

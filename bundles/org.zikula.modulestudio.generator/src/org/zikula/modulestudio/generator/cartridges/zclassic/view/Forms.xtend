@@ -77,9 +77,6 @@ class Forms {
         «ENDIF»
         «IF app.targets('3.0')»
             {% extends '@«app.appName»/' ~ baseTemplate ~ '.html.twig' %}
-            «IF !app.isSystemModule»
-                {% trans_default_domain '«app.appName.formatForDB»' %}
-            «ENDIF»
             {% block title mode == 'create' ? 'Create «name.formatForDisplay»'|trans : 'Edit «name.formatForDisplay»'|trans %}
         «ELSE»
             {% extends '«app.appName»::' ~ baseTemplate ~ '.html.twig' %}

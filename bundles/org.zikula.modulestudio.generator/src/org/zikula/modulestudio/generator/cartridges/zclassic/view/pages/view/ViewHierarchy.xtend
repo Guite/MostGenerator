@@ -55,9 +55,6 @@ class ViewHierarchy {
                 {% extends routeArea == 'admin' ? '«appName»::adminBase.html.twig' : '«appName»::base.html.twig' %}
             «ENDIF»
         «ENDIF»
-        «IF !application.isSystemModule && application.targets('3.0')»
-            {% trans_default_domain '«application.appName.formatForDB»' %}
-        «ENDIF»
         {% block title «IF application.targets('3.0')»'«name.formatForDisplayCapital» hierarchy'|trans«ELSE»__('«name.formatForDisplayCapital» hierarchy')«ENDIF» %}
         «IF !application.separateAdminTemplates || isAdmin»
             {% block admin_page_icon 'code-«IF application.targets('3.0')»branch«ELSE»fork«ENDIF»' %}

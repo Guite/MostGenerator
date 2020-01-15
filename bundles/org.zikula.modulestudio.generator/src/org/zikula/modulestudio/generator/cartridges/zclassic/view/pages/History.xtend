@@ -47,9 +47,6 @@ class History {
                 {% extends routeArea == 'admin' ? '«app.appName»::adminBase.html.twig' : '«app.appName»::base.html.twig' %}
             «ENDIF»
         «ENDIF»
-        «IF !app.isSystemModule && app.targets('3.0')»
-            {% trans_default_domain '«app.appName.formatForDB»' %}
-        «ENDIF»
         «IF !app.targets('3.0')»
             {% import _self as helper %}
         «ENDIF»

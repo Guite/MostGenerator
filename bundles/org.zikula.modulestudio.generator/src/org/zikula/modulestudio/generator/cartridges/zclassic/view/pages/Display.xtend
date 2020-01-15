@@ -79,9 +79,6 @@ class Display {
         «ELSE»
             {% extends '«application.appName»::' ~ baseTemplate ~ '.html.twig' %}
         «ENDIF»
-        «IF !application.isSystemModule && application.targets('3.0')»
-            {% trans_default_domain '«application.appName.formatForDB»' %}
-        «ENDIF»
         {% block pageTitle %}{{ «objName»|«application.appName.formatForDB»_formattedTitle|default(«IF application.targets('3.0')»'«name.formatForDisplayCapital»'|trans«ELSE»__('«name.formatForDisplayCapital»')«ENDIF») }}{% endblock %}
         {% block title %}
             «IF #[ItemActionsPosition.START, ItemActionsPosition.BOTH].contains(application.displayActionsPosition) && application.displayActionsStyle == ItemActionsStyle.DROPDOWN»
@@ -396,9 +393,6 @@ class Display {
             {# purpose of this template: show different forms of relatives for a given tree node in «IF isAdmin»admin«ELSE»user«ENDIF» area #}
         «ELSE»
             {# purpose of this template: show different forms of relatives for a given tree node #}
-        «ENDIF»
-        «IF !application.isSystemModule && application.targets('3.0')»
-            {% trans_default_domain '«application.appName.formatForDB»' %}
         «ENDIF»
         «IF !application.targets('3.0')»
             {% import _self as relatives %}

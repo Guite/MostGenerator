@@ -36,9 +36,6 @@ class Rss {
 
     def private rssView(Entity it, Application app) '''
         {# purpose of this template: «nameMultiple.formatForDisplay» rss feed #}
-        «IF !app.isSystemModule && app.targets('3.0')»
-            {% trans_default_domain '«app.appName.formatForDB»' %}
-        «ENDIF»
         <?xml version="1.0" encoding="{% set charset = pageGetVar('meta.charset') %}{% if charset == 'ISO-8859-15' %}ISO-8859-1{% else %}{{ charset }}{% endif %}" ?>
         <rss version="2.0"
             xmlns:dc="http://purl.org/dc/elements/1.1/"

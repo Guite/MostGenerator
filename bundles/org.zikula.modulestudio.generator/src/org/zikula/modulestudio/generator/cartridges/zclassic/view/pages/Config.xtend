@@ -37,9 +37,6 @@ class Config {
         «ELSE»
             {% extends '«appName»::adminBase.html.twig' %}
         «ENDIF»
-        «IF !isSystemModule && targets('3.0')»
-            {% trans_default_domain '«appName.formatForDB»' %}
-        «ENDIF»
         {% block title «IF targets('3.0')»'Settings'|trans«ELSE»__('Settings')«ENDIF» %}
         {% block admin_page_icon 'wrench' %}
         {% block content %}

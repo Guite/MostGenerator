@@ -38,9 +38,6 @@ class Relations {
 
     def private inclusionTemplate(Entity it, Application app, Boolean many) '''
         {# purpose of this template: inclusion template for display of related «nameMultiple.formatForDisplay»«IF uiHooksProvider != HookProviderMode.DISABLED» or hook assignments«ENDIF» #}
-        «IF !app.isSystemModule && app.targets('3.0')»
-            {% trans_default_domain '«app.appName.formatForDB»' %}
-        «ENDIF»
         «IF many && uiHooksProvider != HookProviderMode.DISABLED»
             {#
                 You can use the context variable to check for the context of this list:

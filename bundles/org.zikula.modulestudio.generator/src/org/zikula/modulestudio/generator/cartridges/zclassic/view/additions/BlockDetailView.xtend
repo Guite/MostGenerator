@@ -25,9 +25,6 @@ class BlockDetailView {
 
     def private editTemplate(Application it) '''
         {# purpose of this template: Edit block for generic item detail view #}
-        «IF !isSystemModule && targets('3.0')»
-            {% trans_default_domain '«appName.formatForDB»' %}
-        «ENDIF»
         {{ form_row(form.objectType) }}
         {{ form_row(form.id) }}
         {{ form_row(form.customTemplate) }}

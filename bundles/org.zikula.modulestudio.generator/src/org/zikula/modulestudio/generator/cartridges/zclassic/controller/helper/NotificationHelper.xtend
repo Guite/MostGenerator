@@ -385,29 +385,29 @@ class NotificationHelper {
                 || $this->usesDesignatedEntityFields()
             ) {
                 if ('submit' === $this->action) {
-                    $mailSubject = $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('New content has been submitted');
+                    $mailSubject = $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('New content has been submitted'«IF targets('3.0')», [], 'mail'«ENDIF»);
                 } elseif ('demote' === $this->action) {
-                    $mailSubject = $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Content has been demoted');
+                    $mailSubject = $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Content has been demoted'«IF targets('3.0')», [], 'mail'«ENDIF»);
                 } elseif ('accept' === $this->action) {
-                    $mailSubject = $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Content has been accepted');
+                    $mailSubject = $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Content has been accepted'«IF targets('3.0')», [], 'mail'«ENDIF»);
                 } elseif ('approve' === $this->action) {
-                    $mailSubject = $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Content has been approved');
+                    $mailSubject = $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Content has been approved'«IF targets('3.0')», [], 'mail'«ENDIF»);
                 } elseif ('delete' === $this->action) {
-                    $mailSubject = $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Content has been deleted');
+                    $mailSubject = $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Content has been deleted'«IF targets('3.0')», [], 'mail'«ENDIF»);
                 } else {
-                    $mailSubject = $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Content has been updated');
+                    $mailSubject = $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Content has been updated'«IF targets('3.0')», [], 'mail'«ENDIF»);
                 }
             } elseif ('creator' === $this->recipientType) {
                 if ('accept' === $this->action) {
-                    $mailSubject = $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Your submission has been accepted');
+                    $mailSubject = $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Your submission has been accepted'«IF targets('3.0')», [], 'mail'«ENDIF»);
                 } elseif ('approve' === $this->action) {
-                    $mailSubject = $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Your submission has been approved');
+                    $mailSubject = $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Your submission has been approved'«IF targets('3.0')», [], 'mail'«ENDIF»);
                 } elseif ('reject' === $this->action) {
-                    $mailSubject = $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Your submission has been rejected');
+                    $mailSubject = $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Your submission has been rejected'«IF targets('3.0')», [], 'mail'«ENDIF»);
                 } elseif ('delete' === $this->action) {
-                    $mailSubject = $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Your submission has been deleted');
+                    $mailSubject = $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Your submission has been deleted'«IF targets('3.0')», [], 'mail'«ENDIF»);
                 } else {
-                    $mailSubject = $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Your submission has been updated');
+                    $mailSubject = $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Your submission has been updated'«IF targets('3.0')», [], 'mail'«ENDIF»);
                 }
             }
 

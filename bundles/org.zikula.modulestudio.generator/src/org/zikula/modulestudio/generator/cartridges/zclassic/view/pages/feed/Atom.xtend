@@ -36,9 +36,6 @@ class Atom {
 
     def private atomView(Entity it, Application app) '''
         {# purpose of this template: «nameMultiple.formatForDisplay» atom feed #}
-        «IF !app.isSystemModule && app.targets('3.0')»
-            {% trans_default_domain '«app.appName.formatForDB»' %}
-        «ENDIF»
         <?xml version="1.0" encoding="{% set charset = pageGetVar('meta.charset') %}{% if charset == 'ISO-8859-15' %}ISO-8859-1{% else %}{{ charset }}{% endif %}" ?>
         <feed xmlns="http://www.w3.org/2005/Atom">
             <title type="text">«IF app.targets('3.0')»{% trans %}Latest «nameMultiple.formatForDisplay»{% endtrans %}«ELSE»{{ __('Latest «nameMultiple.formatForDisplay»') }}«ENDIF»</title>

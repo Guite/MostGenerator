@@ -44,9 +44,6 @@ class ViewDeleted {
                 {% extends routeArea == 'admin' ? '«application.appName»::adminBase.html.twig' : '«application.appName»::base.html.twig' %}
             «ENDIF»
         «ENDIF»
-        «IF !application.isSystemModule && application.targets('3.0')»
-            {% trans_default_domain '«application.appName.formatForDB»' %}
-        «ENDIF»
         {% block title «IF application.targets('3.0')»'Deleted «nameMultiple.formatForDisplay»'|trans«ELSE»__('Deleted «nameMultiple.formatForDisplay»')«ENDIF» %}
         «IF !application.separateAdminTemplates || isAdmin»
             {% block admin_page_icon 'trash-«IF application.targets('3.0')»alt«ELSE»o«ENDIF»' %}

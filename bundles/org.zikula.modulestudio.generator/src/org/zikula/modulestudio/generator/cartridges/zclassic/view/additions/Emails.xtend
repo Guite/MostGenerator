@@ -38,8 +38,8 @@ class Emails {
 
     def private notifyCreatorTemplate(Entity it) '''
         {# purpose of this template: Email for notification sent to content creator #}
-        «IF !application.isSystemModule && application.targets('3.0')»
-            {% trans_default_domain '«application.appName.formatForDB»' %}
+        «IF application.targets('3.0')»
+            {% trans_default_domain 'mail' %}
         «ENDIF»
         «IF application.targets('3.0')»
             <p>{% trans with {'%recipient%': recipient.name} %}Hello %recipient%{% endtrans %},</p>
@@ -88,8 +88,8 @@ class Emails {
 
     def private notifyModeratorTemplate(Entity it) '''
         {# purpose of this template: Email for notification sent to content moderator #}
-        «IF !application.isSystemModule && application.targets('3.0')»
-            {% trans_default_domain '«application.appName.formatForDB»' %}
+        «IF application.targets('3.0')»
+            {% trans_default_domain 'mail' %}
         «ENDIF»
         «IF application.targets('3.0')»
             <p>{% trans with {'%recipient%': recipient.name} %}Hello %recipient%{% endtrans %},</p>
