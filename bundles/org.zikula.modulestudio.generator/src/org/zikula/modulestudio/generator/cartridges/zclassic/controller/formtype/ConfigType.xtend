@@ -81,10 +81,25 @@ class ConfigType {
             «ENDIF»
 
             public function __construct(
-                «IF !targets('3.0')»TranslatorInterface $translator«ELSEIF targets('3.0') && !getAllVariables.filter(StringField).filter[#[StringRole.COUNTRY, StringRole.CURRENCY, StringRole.LANGUAGE, StringRole.LOCALE, StringRole.TIME_ZONE].contains(role)].empty»RequestStack $requestStack«ENDIF»«IF !getAllVariables.filter(ListField).empty»,
-                ListEntriesHelper $listHelper«ENDIF»«IF hasUploadVariables»,
-                UploadHelper $uploadHelper«ENDIF»«IF !getAllVariables.filter(StringField).filter[role == StringRole.LOCALE].empty»,
-                LocaleApiInterface $localeApi«ENDIF»
+                «IF targets('3.0')»
+                    «IF !getAllVariables.filter(StringField).filter[#[StringRole.COUNTRY, StringRole.CURRENCY, StringRole.LANGUAGE, StringRole.LOCALE, StringRole.TIME_ZONE].contains(role)].empty»
+                        RequestStack $requestStack«IF !getAllVariables.filter(ListField).empty || hasUploadVariables || !getAllVariables.filter(StringField).filter[role == StringRole.LOCALE].empty»,«ENDIF»
+                    «ENDIF»
+                    «IF !getAllVariables.filter(ListField).empty»
+                        ListEntriesHelper $listHelper«IF hasUploadVariables || !getAllVariables.filter(StringField).filter[role == StringRole.LOCALE].empty»,«ENDIF»
+                    «ENDIF»
+                    «IF hasUploadVariables»
+                        UploadHelper $uploadHelper«IF !getAllVariables.filter(StringField).filter[role == StringRole.LOCALE].empty»,«ENDIF»
+                    «ENDIF»
+                    «IF !getAllVariables.filter(StringField).filter[role == StringRole.LOCALE].empty»
+                        LocaleApiInterface $localeApi
+                    «ENDIF»
+                «ELSE»
+                    TranslatorInterface $translator«IF !getAllVariables.filter(ListField).empty»,
+                    ListEntriesHelper $listHelper«ENDIF»«IF hasUploadVariables»,
+                    UploadHelper $uploadHelper«ENDIF»«IF !getAllVariables.filter(StringField).filter[role == StringRole.LOCALE].empty»,
+                    LocaleApiInterface $localeApi«ENDIF»
+                «ENDIF»
             ) {
                 «IF !targets('3.0')»
                     $this->setTranslator($translator);
