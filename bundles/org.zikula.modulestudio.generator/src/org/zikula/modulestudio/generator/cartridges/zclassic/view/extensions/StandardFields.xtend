@@ -34,9 +34,6 @@ class StandardFields {
 
     def private standardFieldsViewImpl(Application it) '''
         {# purpose of this template: reusable display of standard fields #}
-        «IF !isSystemModule && targets('3.0')»
-            {% trans_default_domain '«appName.formatForDB»' %}
-        «ENDIF»
         {% if (obj.createdBy|default and obj.createdBy.uid > 0) or (obj.updatedBy|default and obj.updatedBy.uid > 0) %}
             {% if tabs|default(false) == true %}
                 <div role="tabpanel" class="tab-pane fade" id="tabStandardFields" aria-labelledby="standardFieldsTab">
@@ -94,9 +91,6 @@ class StandardFields {
 
     def private standardFieldsEditImpl(Application it) '''
         {# purpose of this template: reusable editing of standard fields #}
-        «IF !isSystemModule && targets('3.0')»
-            {% trans_default_domain '«appName.formatForDB»' %}
-        «ENDIF»
         {% if (obj.createdBy|default and obj.createdBy.uid > 0) or (obj.updatedBy|default and obj.updatedBy.uid > 0) %}
             {% if tabs|default(false) == true %}
                 <div role="tabpanel" class="tab-pane fade" id="tabStandardFields" aria-labelledby="standardFieldsTab">

@@ -29,9 +29,6 @@ class ModerationPanel {
 
     def private moderationPanelImpl(Application it) '''
         {# purpose of this template: show amount of pending items to moderators #}
-        «IF !isSystemModule && targets('3.0')»
-            {% trans_default_domain '«appName.formatForDB»' %}
-        «ENDIF»
         {% if not app.request.query.getBoolean('raw', false) and app.request.requestFormat != 'pdf' %}
             {% set moderationObjects = «appName.formatForDB»_moderationObjects() %}
             {% if moderationObjects|length > 0 %}

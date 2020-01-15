@@ -3,14 +3,12 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.view.extensions
 import de.guite.modulestudio.metamodel.Application
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
-import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class Attributes {
 
     extension ControllerExtensions = new ControllerExtensions
-    extension FormattingExtensions = new FormattingExtensions
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
 
@@ -31,9 +29,6 @@ class Attributes {
 
     def private attributesViewImpl(Application it) '''
         {# purpose of this template: reusable display of entity attributes #}
-        «IF !isSystemModule && targets('3.0')»
-            {% trans_default_domain '«appName.formatForDB»' %}
-        «ENDIF»
         {% if obj.attributes is defined %}
             {% if tabs|default(false) == true %}
                 <div role="tabpanel" class="tab-pane fade" id="tabAttributes" aria-labelledby="attributesTab">

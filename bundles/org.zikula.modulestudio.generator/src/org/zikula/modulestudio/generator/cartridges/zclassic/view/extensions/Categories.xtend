@@ -3,14 +3,12 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.view.extensions
 import de.guite.modulestudio.metamodel.Application
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
-import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class Categories {
 
     extension ControllerExtensions = new ControllerExtensions
-    extension FormattingExtensions = new FormattingExtensions
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
 
@@ -31,9 +29,6 @@ class Categories {
 
     def private categoriesViewImpl(Application it) '''
         {# purpose of this template: reusable display of entity categories #}
-        «IF !isSystemModule && targets('3.0')»
-            {% trans_default_domain '«appName.formatForDB»' %}
-        «ENDIF»
         {% if obj.categories is defined %}
             {% if tabs|default(false) == true %}
                 <div role="tabpanel" class="tab-pane fade" id="tabCategories" aria-labelledby="categoriesTab">
@@ -58,9 +53,6 @@ class Categories {
 
     def private categoriesEditImpl(Application it) '''
         {# purpose of this template: reusable editing of entity categories #}
-        «IF !isSystemModule && targets('3.0')»
-            {% trans_default_domain '«appName.formatForDB»' %}
-        «ENDIF»
         {% if tabs|default(false) == true %}
             <div role="tabpanel" class="tab-pane fade" id="tabCategories" aria-labelledby="categoriesTab">
                 <h3>«IF targets('3.0')»{% trans %}Categories{% endtrans %}«ELSE»{{ __('Categories') }}«ENDIF»</h3>
