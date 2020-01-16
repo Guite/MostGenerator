@@ -188,17 +188,17 @@ class SimpleFields {
         {{ «objName».«name.formatForCode»|«application.appName.formatForDB»_listEntry('«entity.name.formatForCode»', '«name.formatForCode»') }}'''
 
     def dispatch displayField(ArrayField it, String objName, String page) {
-        if (page == 'viewcsv') return '''{% if «objName».«name.formatForCode» is iterable and «objName».«name.formatForCode»|length > 0 %}{% set firstItem = true %}{% for entry in «objName».«name.formatForCode» if entry is not iterable %}{% if true == firstItem %}{% set firstItem = false %}{% else %}, {% endif %}{{ entry }}{% endfor %}{% endif %}'''
+        if (page == 'viewcsv') return '''{% if «objName».«name.formatForCode» is iterable and «objName».«name.formatForCode»|length > 0 %}{% set firstItem = true %}{% for entry in «objName».«name.formatForCode»«IF application.targets('3.0')»|filter(e => e is not iterable)«ELSE» if entry is not iterable«ENDIF» %}{% if true == firstItem %}{% set firstItem = false %}{% else %}, {% endif %}{{ entry }}{% endfor %}{% endif %}'''
         else return '''
             {% if «objName».«name.formatForCode» is iterable and «objName».«name.formatForCode»|length > 0 %}
                 «IF page == 'viewxml'»
                     {% set firstItem = true %}
-                    {% for entry in «objName».«name.formatForCode» if entry is not iterable %}
+                    {% for entry in «objName».«name.formatForCode»«IF application.targets('3.0')»|filter(e => e is not iterable)«ELSE» if entry is not iterable«ENDIF» %}
                         {% if true == firstItem %}{% set firstItem = false %}{% else %}, {% endif %}{{ entry }}
                     {% endfor %}
                 «ELSE»
                     <ul>
-                    {% for entry in «objName».«name.formatForCode»«IF page == 'viewcsv' || page == 'viewxml'» if entry is not iterable«ENDIF» %}
+                    {% for entry in «objName».«name.formatForCode»«IF page == 'viewcsv' || page == 'viewxml'»«IF application.targets('3.0')»|filter(e => e is not iterable)«ELSE» if entry is not iterable«ENDIF»«ENDIF» %}
                         <li>{{ entry }}</li>
                     {% endfor %}
                     </ul>
