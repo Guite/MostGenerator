@@ -418,7 +418,7 @@ class ExternalView {
                             <div class="input-group">
                                 <input type="text" id="{$baseID}SearchTerm" name="q" class="form-control" />
                                 <span class="input-group-btn">
-                                    <input type="button" id="«app.appName.toFirstLower»SearchGo" name="gosearch" value="{gt text='Filter'}" class="btn btn-default" />
+                                    <input type="button" id="«app.appName.toFirstLower»SearchGo" name="gosearch" value="{gt text='Filter'}" class="btn btn-«IF app.targets('3.0')»secondary«ELSE»default«ENDIF»" />
                                 </span>
                             </div>
                         </div>

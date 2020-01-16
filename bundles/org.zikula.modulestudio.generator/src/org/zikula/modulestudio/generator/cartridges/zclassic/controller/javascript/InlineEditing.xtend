@@ -211,7 +211,7 @@ class InlineEditing {
                     id: createButtonId,
                     href: createUrl,
                     title: Translator.«IF targets('3.0')»trans«ELSE»__«ENDIF»('Create new entry'),
-                    class: 'btn btn-default «appName.toLowerCase»-inline-button'
+                    class: 'btn btn-«IF targets('3.0')»secondary«ELSE»default«ENDIF» «appName.toLowerCase»-inline-button'
                 }).append(
                     jQuery('<i>', { class: 'fa fa-plus' })
                 ).append(' ' + Translator.«IF targets('3.0')»trans«ELSE»__«ENDIF»('Create'));

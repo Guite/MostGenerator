@@ -173,7 +173,7 @@ class ConfigType {
                 'label' => «IF !targets('3.0')»$this->__(«ENDIF»'Update configuration'«IF !targets('3.0')»)«ENDIF»,
                 'icon' => 'fa-check',
                 'attr' => [
-                    'class' => 'btn btn-success'
+                    'class' => '«IF !targets('3.0')»btn «ENDIF»btn-success'
                 ]
             ]);
             «addCommonSubmitButtons»

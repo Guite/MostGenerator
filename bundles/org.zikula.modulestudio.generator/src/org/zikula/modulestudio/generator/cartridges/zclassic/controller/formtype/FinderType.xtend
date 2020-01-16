@@ -131,7 +131,7 @@ class FinderType {
                         'label' => «IF !app.targets('3.0')»$this->__(«ENDIF»'Change selection'«IF !app.targets('3.0')»)«ENDIF»,
                         'icon' => 'fa-check',
                         'attr' => [
-                            'class' => 'btn btn-success'
+                            'class' => '«IF !app.targets('3.0')»btn «ENDIF»btn-success'
                         ]
                     ])
                     ->add('cancel', SubmitType::class, [
@@ -139,11 +139,11 @@ class FinderType {
                         «IF app.targets('3.0')»
                             'validate' => false,
                         «ENDIF»
-                        'icon' => 'fa-times',
+                        'icon' => 'fa-times'«IF !app.targets('3.0')»,
                         'attr' => [
-                            'class' => 'btn btn-default'«IF !app.targets('3.0')»,
-                            'formnovalidate' => 'formnovalidate'«ENDIF»
-                        ]
+                            'class' => 'btn btn-default',
+                            'formnovalidate' => 'formnovalidate'
+                        ]«ENDIF»
                     ])
                 ;
             }

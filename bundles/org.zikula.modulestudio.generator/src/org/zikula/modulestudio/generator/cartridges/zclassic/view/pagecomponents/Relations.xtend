@@ -140,9 +140,9 @@ class Relations {
                             <input type="hidden" name="{{ idPrefix }}" id="{{ idPrefix }}" value="{% for assignment in assignments %}{% if not loop.first %},{% endif %}{{ assignment.getAssignedId() }}{% endfor %}" />
                             <input type="hidden" name="{{ idPrefix }}Multiple" id="{{ idPrefix }}Multiple" value="0" />
                             <input type="text" id="{{ idPrefix }}Selector" name="{{ idPrefix }}Selector" autocomplete="off" />
-                            <input type="button" id="{{ idPrefix }}SelectorDoCancel" name="{{ idPrefix }}SelectorDoCancel" value="«IF app.targets('3.0')»{% trans %}Cancel{% endtrans %}«ELSE»{{ __('Cancel', '«app.appName.toLowerCase»') }}«ENDIF»" class="btn btn-default «app.appName.toLowerCase»-inline-button" />
+                            <input type="button" id="{{ idPrefix }}SelectorDoCancel" name="{{ idPrefix }}SelectorDoCancel" value="«IF app.targets('3.0')»{% trans %}Cancel{% endtrans %}«ELSE»{{ __('Cancel', '«app.appName.toLowerCase»') }}«ENDIF»" class="btn btn-«IF app.targets('3.0')»secondary«ELSE»default«ENDIF» «app.appName.toLowerCase»-inline-button" />
                             «IF hasEditAction»
-                                <a id="{{ idPrefix }}SelectorDoNew" href="{{ path('«app.appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ 'edit') }}" title="{{ createNewLinkText|e('html_attr') }}" class="btn btn-default «app.appName.toLowerCase»-inline-button"><i class="fa fa-plus"></i> «IF app.targets('3.0')»{% trans %}Create{% endtrans %}«ELSE»{{ __('Create', '«app.appName.toLowerCase»') }}«ENDIF»</a>
+                                <a id="{{ idPrefix }}SelectorDoNew" href="{{ path('«app.appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ 'edit') }}" title="{{ createNewLinkText|e('html_attr') }}" class="btn btn-«IF app.targets('3.0')»secondary«ELSE»default«ENDIF» «app.appName.toLowerCase»-inline-button"><i class="fa fa-plus"></i> «IF app.targets('3.0')»{% trans %}Create{% endtrans %}«ELSE»{{ __('Create', '«app.appName.toLowerCase»') }}«ENDIF»</a>
                             «ENDIF»
                             <noscript><p>«IF app.targets('3.0')»{% trans %}This function requires JavaScript activated!{% endtrans %}«ELSE»{{ __('This function requires JavaScript activated!') }}«ENDIF»</p></noscript>
                         </div>

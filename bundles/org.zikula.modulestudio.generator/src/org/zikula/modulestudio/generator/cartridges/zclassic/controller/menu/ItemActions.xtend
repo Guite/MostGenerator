@@ -71,7 +71,7 @@ class ItemActions {
                     'title',
                     $this->«IF app.targets('3.0')»trans«ELSE»__«ENDIF»('Open preview page'«IF !app.isSystemModule», «IF app.targets('3.0')»[], «ENDIF»'«app.appName.formatForDB»'«ENDIF»)
                 );
-                «app.addLinkClass('default')»
+                «app.addLinkClass(if (app.targets('3.0')) 'secondary' else 'default')»
                 «app.addIcon('search-plus')»
             }
             if ('display' !== $context) {
@@ -85,7 +85,7 @@ class ItemActions {
                     'title',
                     str_replace('"', '', $entityTitle)
                 );
-                «app.addLinkClass('default')»
+                «app.addLinkClass(if (app.targets('3.0')) 'secondary' else 'default')»
                 «app.addIcon('eye')»
             }
         «ENDIF»
@@ -116,7 +116,7 @@ class ItemActions {
                         'title',
                         $this->«IF app.targets('3.0')»trans«ELSE»__«ENDIF»('Watch version history'«IF !app.isSystemModule», «IF app.targets('3.0')»[], «ENDIF»'«app.appName.formatForDB»'«ENDIF»)
                     );
-                    «app.addLinkClass('default')»
+                    «app.addLinkClass(if (app.targets('3.0')) 'secondary' else 'default')»
                     «app.addIcon('history')»
                 }
             }
@@ -146,7 +146,7 @@ class ItemActions {
                     'route' => $routePrefix . $routeArea . 'view'
                 ]);
                 $menu[$title]->setLinkAttribute('title', $title);
-                «app.addLinkClass('default')»
+                «app.addLinkClass(if (app.targets('3.0')) 'secondary' else 'default')»
                 «app.addIcon('reply')»
             }
         «ENDIF»
@@ -174,7 +174,7 @@ class ItemActions {
                                 'routeParameters' => ['«relationAliasNameParam»' => $entity->«IF hasSluggableFields && slugUnique»getSlug()«ELSE»getKey()«ENDIF»]
                             ]);
                             $menu[$title]->setLinkAttribute('title', $title);
-                            «app.addLinkClass('default')»
+                            «app.addLinkClass(if (app.targets('3.0')) 'secondary' else 'default')»
                             «app.addIcon('plus')»
                         }
                     «ELSE»
@@ -184,7 +184,7 @@ class ItemActions {
                             'routeParameters' => ['«relationAliasNameParam»' => $entity->«IF hasSluggableFields && slugUnique»getSlug()«ELSE»getKey()«ENDIF»]
                         ]);
                         $menu[$title]->setLinkAttribute('title', $title);
-                        «app.addLinkClass('default')»
+                        «app.addLinkClass(if (app.targets('3.0')) 'secondary' else 'default')»
                         «app.addIcon('plus')»
                     «ENDIF»
                 }
@@ -203,7 +203,7 @@ class ItemActions {
                 'title',
                 $this->«IF application.targets('3.0')»trans«ELSE»__«ENDIF»('Edit this «name.formatForDisplay»'«IF !application.isSystemModule», «IF application.targets('3.0')»[], «ENDIF»'«application.appName.formatForDB»'«ENDIF»)
             );
-            «application.addLinkClass('default')»
+            «application.addLinkClass(if (application.targets('3.0')) 'secondary' else 'default')»
             «application.addIcon(if (application.targets('3.0')) 'edit' else 'pencil-square-o')»
         «ENDIF»
         $title = $this->«IF application.targets('3.0')»trans«ELSE»__«ENDIF»('Reuse'«IF !application.isSystemModule», «IF application.targets('3.0')»[], «ENDIF»'«application.appName.formatForDB»'«ENDIF»);
@@ -215,7 +215,7 @@ class ItemActions {
             'title',
             $this->«IF application.targets('3.0')»trans«ELSE»__«ENDIF»('Reuse for new «name.formatForDisplay»'«IF !application.isSystemModule», «IF application.targets('3.0')»[], «ENDIF»'«application.appName.formatForDB»'«ENDIF»)
         );
-        «application.addLinkClass('default')»
+        «application.addLinkClass(if (application.targets('3.0')) 'secondary' else 'default')»
         «application.addIcon('files-o')»
         «IF tree != EntityTreeType.NONE»
             if ($this->permissionHelper->hasEntityPermission($entity, ACCESS_ADD)) {
@@ -228,7 +228,7 @@ class ItemActions {
                     'title',
                     $this->«IF application.targets('3.0')»trans«ELSE»__«ENDIF»('Add a sub «name.formatForDisplay» to this «name.formatForDisplay»'«IF !application.isSystemModule», «IF application.targets('3.0')»[], «ENDIF»'«application.appName.formatForDB»'«ENDIF»)
                 );
-                «application.addLinkClass('default')»
+                «application.addLinkClass(if (application.targets('3.0')) 'secondary' else 'default')»
                 «application.addIcon('child')»
             }
         «ENDIF»

@@ -251,7 +251,7 @@ class QuickNavigationType {
                 $builder->add('updateview', SubmitType::class, [
                     'label' => «IF !app.targets('3.0')»$this->__(«ENDIF»'OK'«IF !app.targets('3.0')»)«ENDIF»,
                     'attr' => [
-                        'class' => 'btn btn-default btn-sm'
+                        'class' => '«IF app.targets('3.0')»btn-secondary«ELSE»btn btn-default«ENDIF» btn-sm'
                     ]
                 ]);
             }

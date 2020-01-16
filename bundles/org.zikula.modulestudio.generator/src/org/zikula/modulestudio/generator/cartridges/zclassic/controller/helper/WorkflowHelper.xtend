@@ -384,11 +384,19 @@ class WorkflowHelper {
                 $buttonClass = 'success';
             }
 
-            if (empty($buttonClass)) {
-                $buttonClass = 'default';
-            }
+            «IF targets('3.0')»
+                if (!empty($buttonClass)) {
+                    $buttonClass = 'btn-' . $buttonClass;
+                }
 
-            return 'btn btn-' . $buttonClass;
+                return $buttonClass;
+            «ELSE»
+                if (empty($buttonClass)) {
+                    $buttonClass = 'default';
+                }
+
+                return 'btn btn-' . $buttonClass;
+            «ENDIF»
         }
     '''
 

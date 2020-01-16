@@ -308,7 +308,7 @@ class ViewTable {
             </select>
         </div>
         <div class="col-«IF application.targets('3.0')»md«ELSE»sm«ENDIF»-3">
-            <input type="submit" value="{{ «IF application.targets('3.0')»'Submit'|trans«ELSE»__('Submit')«ENDIF»|e('html_attr') }}" class="btn btn-«IF application.targets('3.0')»primary«ELSE»default«ENDIF» btn-sm" />
+            <input type="submit" value="{{ «IF application.targets('3.0')»'Submit'|trans«ELSE»__('Submit')«ENDIF»|e('html_attr') }}" class="btn btn-«IF application.targets('3.0')»secondary«ELSE»default«ENDIF» btn-sm" />
         </div>
     '''
 

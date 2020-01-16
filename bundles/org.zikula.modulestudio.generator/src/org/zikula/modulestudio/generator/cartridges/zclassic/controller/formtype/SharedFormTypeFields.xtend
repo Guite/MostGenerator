@@ -1291,7 +1291,9 @@ class SharedFormTypeFields {
             'label' => «IF !targets('3.0')»$this->__(«ENDIF»'Reset'«IF !targets('3.0')»)«ENDIF»,
             'icon' => 'fa-«IF targets('3.0')»sync«ELSE»refresh«ENDIF»',
             'attr' => [
-                'class' => 'btn btn-default',
+                «IF !targets('3.0')»
+                    'class' => 'btn btn-default',
+                «ENDIF»
                 'formnovalidate' => 'formnovalidate'
             ]
         ]);
@@ -1300,11 +1302,11 @@ class SharedFormTypeFields {
             «IF targets('3.0')»
                 'validate' => false,
             «ENDIF»
-            'icon' => 'fa-times',
+            'icon' => 'fa-times'«IF !targets('3.0')»,
             'attr' => [
-                'class' => 'btn btn-default'«IF !targets('3.0')»,
-                'formnovalidate' => 'formnovalidate'«ENDIF»
-            ]
+                'class' => 'btn btn-default',
+                'formnovalidate' => 'formnovalidate'
+            ]«ENDIF»
         ]);
     '''
 }
