@@ -97,7 +97,7 @@ class TechHelper {
         </div>
     '''
 
-    def flag(Boolean value) '''
+    def flag(Application it, Boolean value) '''
         «IF value»
             <i class="fa«IF targets('3.0')»s«ENDIF» fa-check"></i>
         «ELSE»

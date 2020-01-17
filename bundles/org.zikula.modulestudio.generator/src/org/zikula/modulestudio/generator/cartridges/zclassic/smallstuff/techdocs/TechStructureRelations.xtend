@@ -64,7 +64,7 @@ class TechStructureRelations {
         <tr>
             <th id="h«name.formatForCodeCapital»Relation«counter»" scope="row" headers="h«name.formatForCodeCapital»RelationName">«relation.relationName»</th>
             <td headers="h«name.formatForCodeCapital»Relation«counter» h«name.formatForCodeCapital»RelationType">«relation.relationType»</td>
-            <td headers="h«name.formatForCodeCapital»Relation«counter» h«name.formatForCodeCapital»RelationIncoming" class="text-center">«helper.flag(incoming)»</td>
+            <td headers="h«name.formatForCodeCapital»Relation«counter» h«name.formatForCodeCapital»RelationIncoming" class="text-center">«helper.flag(application, incoming)»</td>
             <td headers="h«name.formatForCodeCapital»Relation«counter» h«name.formatForCodeCapital»RelationRemarks">
                 <ul>
                     «FOR remark : relation.remarks»

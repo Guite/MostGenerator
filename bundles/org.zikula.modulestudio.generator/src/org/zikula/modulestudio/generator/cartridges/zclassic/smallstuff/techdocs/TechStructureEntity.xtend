@@ -64,7 +64,7 @@ class TechStructureEntity {
     def private entitySettingsContent(Entity it) '''
         <tr>
             <th id="h«name.formatForCodeCapital»SettingsLeading" scope="row" headers="h«name.formatForCodeCapital»SettingsName">«IF language == 'de'»Führend«ELSE»Leading«ENDIF»</th>
-            <td headers="h«name.formatForCodeCapital»SettingsLeading h«name.formatForCodeCapital»SettingsValue" class="text-center">«helper.flag(leading)»</td>
+            <td headers="h«name.formatForCodeCapital»SettingsLeading h«name.formatForCodeCapital»SettingsValue" class="text-center">«helper.flag(application, leading)»</td>
             <td headers="h«name.formatForCodeCapital»SettingsLeading h«name.formatForCodeCapital»SettingsDescription">«IF language == 'de'»Ob dies die primäre Entität der Anwendung darstellt«ELSE»Whether this represents the primary entity of the application«ENDIF»</td>
         </tr>
         <tr>
@@ -89,7 +89,7 @@ class TechStructureEntity {
         </tr>
         <tr>
             <th id="h«name.formatForCodeCapital»SettingsReadOnly" scope="row" headers="h«name.formatForCodeCapital»SettingsName">«IF language == 'de'»Nur Lesen«ELSE»Read only«ENDIF»</th>
-            <td headers="h«name.formatForCodeCapital»SettingsReadOnly h«name.formatForCodeCapital»SettingsValue" class="text-center">«helper.flag(readOnly)»</td>
+            <td headers="h«name.formatForCodeCapital»SettingsReadOnly h«name.formatForCodeCapital»SettingsValue" class="text-center">«helper.flag(application, readOnly)»</td>
             <td headers="h«name.formatForCodeCapital»SettingsReadOnly h«name.formatForCodeCapital»SettingsDescription">«IF language == 'de'»Ob diese Entität nur gelesen werden darf oder nicht. Falls ja, ist das Bearbeiten nicht möglich.«ELSE»Whether this entity is read only or not. If yes, editing is not possible.«ENDIF»</td>
         </tr>
     '''
@@ -192,7 +192,7 @@ class TechStructureEntity {
         </tr>
         <tr>
             <th id="h«name.formatForCodeCapital»WorkflowOwnerPermission" scope="row" headers="h«name.formatForCodeCapital»WorkflowName">«IF language == 'de'»Benutzer können ihre eigenen Daten verwalten und bearbeiten«ELSE»Users are able to manage and edit their own data«ENDIF»</th>
-            <td headers="h«name.formatForCodeCapital»WorkflowOwnerPermission h«name.formatForCodeCapital»WorkflowDescription" class="text-center">«helper.flag(ownerPermission)»</td>
+            <td headers="h«name.formatForCodeCapital»WorkflowOwnerPermission h«name.formatForCodeCapital»WorkflowDescription" class="text-center">«helper.flag(application, ownerPermission)»</td>
         </tr>
         «IF standardFields»
             <tr>
@@ -235,19 +235,19 @@ class TechStructureEntity {
     def private entityBehaviourContent(Entity it) '''
         <tr>
             <th id="h«name.formatForCodeCapital»BehaviourAttributable" scope="row" headers="h«name.formatForCodeCapital»BehaviourName1">«IF language == 'de'»Attributierbar«ELSE»Attributable«ENDIF»</th>
-            <td headers="h«name.formatForCodeCapital»BehaviourAttributable h«name.formatForCodeCapital»BehaviourValue1" class="text-center">«helper.flag(attributable)»</td>
+            <td headers="h«name.formatForCodeCapital»BehaviourAttributable h«name.formatForCodeCapital»BehaviourValue1" class="text-center">«helper.flag(application, attributable)»</td>
             <th id="h«name.formatForCodeCapital»BehaviourLoggable" scope="row" headers="h«name.formatForCodeCapital»BehaviourName2">«IF language == 'de'»Versionierbar«ELSE»Versionable«ENDIF»</th>
-            <td headers="h«name.formatForCodeCapital»BehaviourLoggable h«name.formatForCodeCapital»BehaviourValue2" class="text-center">«helper.flag(loggable)»</td>
+            <td headers="h«name.formatForCodeCapital»BehaviourLoggable h«name.formatForCodeCapital»BehaviourValue2" class="text-center">«helper.flag(application, loggable)»</td>
         </tr>
         <tr>
             <th id="h«name.formatForCodeCapital»BehaviourCategorisable" scope="row" headers="h«name.formatForCodeCapital»BehaviourName1">«IF language == 'de'»Kategorisierbar«ELSE»Categorisable«ENDIF»</th>
-            <td headers="h«name.formatForCodeCapital»BehaviourCategorisable h«name.formatForCodeCapital»BehaviourValue1" class="text-center">«helper.flag(categorisable)»</td>
+            <td headers="h«name.formatForCodeCapital»BehaviourCategorisable h«name.formatForCodeCapital»BehaviourValue1" class="text-center">«helper.flag(application, categorisable)»</td>
             <th id="h«name.formatForCodeCapital»BehaviourCategorisableMulti" scope="row" headers="h«name.formatForCodeCapital»BehaviourName2">«IF language == 'de'»Kategorien Mehrfachauswahl«ELSE»Categories multi selection«ENDIF»</th>
-            <td headers="h«name.formatForCodeCapital»BehaviourCategorisableMulti h«name.formatForCodeCapital»BehaviourValue2" class="text-center">«helper.flag(categorisableMultiSelection)»</td>
+            <td headers="h«name.formatForCodeCapital»BehaviourCategorisableMulti h«name.formatForCodeCapital»BehaviourValue2" class="text-center">«helper.flag(application, categorisableMultiSelection)»</td>
         </tr>
         <tr>
             <th id="h«name.formatForCodeCapital»BehaviourSluggable" scope="row" headers="h«name.formatForCodeCapital»BehaviourName1">«IF language == 'de'»Permalinks«ELSE»Slugs«ENDIF»</th>
-            <td headers="h«name.formatForCodeCapital»BehaviourSluggable h«name.formatForCodeCapital»BehaviourValue1" class="text-center">«helper.flag(hasSluggableFields)»</td>
+            <td headers="h«name.formatForCodeCapital»BehaviourSluggable h«name.formatForCodeCapital»BehaviourValue1" class="text-center">«helper.flag(application, hasSluggableFields)»</td>
             <td headers="h«name.formatForCodeCapital»BehaviourSluggable h«name.formatForCodeCapital»BehaviourValue2" class="text-center">«IF hasSluggableFields»«IF !slugUpdatable»«IF language == 'de'»nicht«ELSE»not«ENDIF» «ENDIF»«IF language == 'de'»änderbar«ELSE»updatable«ENDIF»«ENDIF»</td>
             <td headers="h«name.formatForCodeCapital»BehaviourSluggable h«name.formatForCodeCapital»BehaviourValue2" class="text-center">«IF hasSluggableFields»«IF !slugUnique»«IF language == 'de'»nicht«ELSE»not«ENDIF» «ENDIF»«IF language == 'de'»eindeutig«ELSE»unique«ENDIF»«ENDIF»</td>
         </tr>
@@ -255,13 +255,13 @@ class TechStructureEntity {
             <th id="h«name.formatForCodeCapital»BehaviourTree" scope="row" headers="h«name.formatForCodeCapital»BehaviourName1">«IF language == 'de'»Baum«ELSE»Tree«ENDIF»</th>
             <td headers="h«name.formatForCodeCapital»BehaviourAttributable h«name.formatForCodeCapital»BehaviourValue1" class="text-center">«tree.literal»</td>
             <th id="h«name.formatForCodeCapital»BehaviourGeographical" scope="row" headers="h«name.formatForCodeCapital»BehaviourName2">«IF language == 'de'»Geografisch«ELSE»Geographical«ENDIF»</th>
-            <td headers="h«name.formatForCodeCapital»BehaviourGeographical h«name.formatForCodeCapital»BehaviourValue2" class="text-center">«helper.flag(geographical)»</td>
+            <td headers="h«name.formatForCodeCapital»BehaviourGeographical h«name.formatForCodeCapital»BehaviourValue2" class="text-center">«helper.flag(application, geographical)»</td>
         </tr>
         <tr>
             <th id="h«name.formatForCodeCapital»BehaviourStandardFields" scope="row" headers="h«name.formatForCodeCapital»BehaviourName1">«IF language == 'de'»Standardfelder«ELSE»Standard fields«ENDIF»</th>
-            <td headers="h«name.formatForCodeCapital»BehaviourStandardFields h«name.formatForCodeCapital»BehaviourValue1" class="text-center">«helper.flag(standardFields)»</td>
+            <td headers="h«name.formatForCodeCapital»BehaviourStandardFields h«name.formatForCodeCapital»BehaviourValue1" class="text-center">«helper.flag(application, standardFields)»</td>
             <th id="h«name.formatForCodeCapital»BehaviourHookSubscribers" scope="row" headers="h«name.formatForCodeCapital»BehaviourName2">«IF language == 'de'»Hook-Abonnenten«ELSE»Hook subscribers«ENDIF»</th>
-            <td headers="h«name.formatForCodeCapital»BehaviourHookSubscribers h«name.formatForCodeCapital»BehaviourValue2" class="text-center">«helper.flag(!skipHookSubscribers)»</td>
+            <td headers="h«name.formatForCodeCapital»BehaviourHookSubscribers h«name.formatForCodeCapital»BehaviourValue2" class="text-center">«helper.flag(application, !skipHookSubscribers)»</td>
         </tr>
         <tr>
             <th id="h«name.formatForCodeCapital»BehaviourFormAwareHookProvider" scope="row" headers="h«name.formatForCodeCapital»BehaviourName1">«IF language == 'de'»Anbieter für Formular-Hooks«ELSE»Form aware hooks provider«ENDIF»</th>

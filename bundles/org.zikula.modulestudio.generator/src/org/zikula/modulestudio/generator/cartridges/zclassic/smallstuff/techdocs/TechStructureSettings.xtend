@@ -34,87 +34,87 @@ class TechStructureSettings {
     def private settingsContent(Application it) '''
         <tr>
             <td headers="hSettingName1">«IF language == 'de'»Systemmodul«ELSE»System module«ENDIF»</td>
-            <td headers="hSettingValue1" class="text-center">«helper.flag(isSystemModule)»</td>
+            <td headers="hSettingValue1" class="text-center">«helper.flag(it, isSystemModule)»</td>
             <td headers="hSettingName2">«IF language == 'de'»Anzahl Beispielsätze«ELSE»Amount of example rows«ENDIF»</td>
             <td headers="hSettingValue2" class="text-center">«amountOfExampleRows»</td>
         </tr>
         <tr>
             <td headers="hSettingName1">«IF language == 'de'»Benutzerkonto«ELSE»Account panel«ENDIF»</td>
-            <td headers="hSettingValue1" class="text-center">«helper.flag(generateAccountApi)»</td>
+            <td headers="hSettingValue1" class="text-center">«helper.flag(it, generateAccountApi)»</td>
             <td headers="hSettingName2">«IF language == 'de'»Suche«ELSE»Search integration«ENDIF»</td>
-            <td headers="hSettingValue2" class="text-center">«helper.flag(generateSearchApi)»</td>
+            <td headers="hSettingValue2" class="text-center">«helper.flag(it, generateSearchApi)»</td>
         </tr>
         <tr>
             <td headers="hSettingName1">«IF language == 'de'»Block für Listenansichten«ELSE»List view block«ENDIF»</td>
-            <td headers="hSettingValue1" class="text-center">«helper.flag(generateListBlock)»</td>
+            <td headers="hSettingValue1" class="text-center">«helper.flag(it, generateListBlock)»</td>
             <td headers="hSettingName2">«IF language == 'de'»Block für Detailansichten«ELSE»Detail view block«ENDIF»</td>
-            <td headers="hSettingValue2" class="text-center">«helper.flag(generateDetailBlock)»</td>
+            <td headers="hSettingValue2" class="text-center">«helper.flag(it, generateDetailBlock)»</td>
         </tr>
         <tr>
             <td headers="hSettingName1">«IF language == 'de'»ContentType für Listenansichten«ELSE»List view content type«ENDIF»</td>
-            <td headers="hSettingValue1" class="text-center">«helper.flag(generateListContentType)»</td>
+            <td headers="hSettingValue1" class="text-center">«helper.flag(it, generateListContentType)»</td>
             <td headers="hSettingName2">«IF language == 'de'»ContentType für Detailansichten«ELSE»Detail view content type«ENDIF»</td>
-            <td headers="hSettingValue2" class="text-center">«helper.flag(generateDetailContentType)»</td>
+            <td headers="hSettingValue2" class="text-center">«helper.flag(it, generateDetailContentType)»</td>
         </tr>
         <tr>
             <td headers="hSettingName1">«IF language == 'de'»Support für Mailz«ELSE»Mailz support«ENDIF»</td>
-            <td headers="hSettingValue1" class="text-center">«helper.flag(generateMailzApi)»</td>
+            <td headers="hSettingValue1" class="text-center">«helper.flag(it, generateMailzApi)»</td>
             <td headers="hSettingName2">«IF language == 'de'»Newsletter Plugin«ELSE»Newsletter plugin«ENDIF»</td>
-            <td headers="hSettingValue2" class="text-center">«helper.flag(generateNewsletterPlugin)»</td>
+            <td headers="hSettingValue2" class="text-center">«helper.flag(it, generateNewsletterPlugin)»</td>
         </tr>
         <tr>
             <td headers="hSettingName1">«IF language == 'de'»Block zur Moderation«ELSE»Moderation block«ENDIF»</td>
-            <td headers="hSettingValue1" class="text-center">«helper.flag(generateModerationBlock)»</td>
+            <td headers="hSettingValue1" class="text-center">«helper.flag(it, generateModerationBlock)»</td>
             <td headers="hSettingName2">«IF language == 'de'»Panel zur Moderation«ELSE»Moderation panel«ENDIF»</td>
-            <td headers="hSettingValue2" class="text-center">«helper.flag(generateModerationPanel)»</td>
+            <td headers="hSettingValue2" class="text-center">«helper.flag(it, generateModerationPanel)»</td>
         </tr>
         <tr>
             <td headers="hSettingName1">«IF language == 'de'»Support für wartende Inhalte«ELSE»Pending content support«ENDIF»</td>
-            <td headers="hSettingValue1" class="text-center">«helper.flag(generatePendingContentSupport)»</td>
+            <td headers="hSettingValue1" class="text-center">«helper.flag(it, generatePendingContentSupport)»</td>
             <td headers="hSettingName2">«IF language == 'de'»MultiHook Needles«ELSE»MultiHook needles«ENDIF»</td>
-            <td headers="hSettingValue2" class="text-center">«helper.flag(generateMultiHookNeedles)»</td>
+            <td headers="hSettingValue2" class="text-center">«helper.flag(it, generateMultiHookNeedles)»</td>
         </tr>
         <tr>
             <td headers="hSettingName1">«IF language == 'de'»Externe Aufrufe und Finder«ELSE»External calls and Finder«ENDIF»</td>
-            <td headers="hSettingValue1" class="text-center">«helper.flag(generateExternalControllerAndFinder)»</td>
+            <td headers="hSettingValue1" class="text-center">«helper.flag(it, generateExternalControllerAndFinder)»</td>
             <td headers="hSettingName2">«IF language == 'de'»WYSIWYG-Plugins«ELSE»WYSIWYG plugins«ENDIF»</td>
-            <td headers="hSettingValue2" class="text-center">«helper.flag(generateScribitePlugins)»</td>
+            <td headers="hSettingValue2" class="text-center">«helper.flag(it, generateScribitePlugins)»</td>
         </tr>
         <tr>
             <td headers="hSettingName1">«IF language == 'de'»Authentifizierungsmethode«ELSE»Authentication method«ENDIF»</td>
             <td headers="hSettingValue1" class="text-center">«authenticationMethod.literal» &ndash; «authenticationMethod.authMethodDescription»</td>
             <td headers="hSettingName2">«IF language == 'de'»Support für Tagging«ELSE»Tagging support«ENDIF»</td>
-            <td headers="hSettingValue2" class="text-center">«helper.flag(generateTagSupport)»</td>
+            <td headers="hSettingValue2" class="text-center">«helper.flag(it, generateTagSupport)»</td>
         </tr>
         <tr>
             <td headers="hSettingName1">«IF language == 'de'»Anbieter für Filter-Hooks«ELSE»Filter hooks provider«ENDIF»</td>
             <td headers="hSettingValue1" class="text-center">«filterHookProvider.literal» &ndash; «helper.hookProviderDescription(filterHookProvider, language)»</td>
             <td headers="hSettingName2">«IF language == 'de'»Separate Admin-Templates«ELSE»Separate admin templates«ENDIF»</td>
-            <td headers="hSettingValue2" class="text-center">«helper.flag(separateAdminTemplates)»</td>
+            <td headers="hSettingValue2" class="text-center">«helper.flag(it, separateAdminTemplates)»</td>
         </tr>
         <tr>
             <td headers="hSettingName1">«IF language == 'de'»RSS-Templates«ELSE»RSS templates«ENDIF»</td>
-            <td headers="hSettingValue1" class="text-center">«helper.flag(generateRssTemplates)»</td>
+            <td headers="hSettingValue1" class="text-center">«helper.flag(it, generateRssTemplates)»</td>
             <td headers="hSettingName2">«IF language == 'de'»Atom-Templates«ELSE»Atom templates«ENDIF»</td>
-            <td headers="hSettingValue2" class="text-center">«helper.flag(generateAtomTemplates)»</td>
+            <td headers="hSettingValue2" class="text-center">«helper.flag(it, generateAtomTemplates)»</td>
         </tr>
         <tr>
             <td headers="hSettingName1">«IF language == 'de'»CSV-Templates«ELSE»CSV templates«ENDIF»</td>
-            <td headers="hSettingValue1" class="text-center">«helper.flag(generateCsvTemplates)»</td>
+            <td headers="hSettingValue1" class="text-center">«helper.flag(it, generateCsvTemplates)»</td>
             <td headers="hSettingName2">«IF language == 'de'»XML-Templates«ELSE»XML templates«ENDIF»</td>
-            <td headers="hSettingValue2" class="text-center">«helper.flag(generateXmlTemplates)»</td>
+            <td headers="hSettingValue2" class="text-center">«helper.flag(it, generateXmlTemplates)»</td>
         </tr>
         <tr>
             <td headers="hSettingName1">«IF language == 'de'»JSON-Templates«ELSE»JSON templates«ENDIF»</td>
-            <td headers="hSettingValue1" class="text-center">«helper.flag(generateJsonTemplates)»</td>
+            <td headers="hSettingValue1" class="text-center">«helper.flag(it, generateJsonTemplates)»</td>
             <td headers="hSettingName2">«IF language == 'de'»KML-Templates«ELSE»KML templates«ENDIF»</td>
-            <td headers="hSettingValue2" class="text-center">«helper.flag(generateKmlTemplates)»</td>
+            <td headers="hSettingValue2" class="text-center">«helper.flag(it, generateKmlTemplates)»</td>
         </tr>
         <tr>
             <td headers="hSettingName1">«IF language == 'de'»ICS-Templates«ELSE»ICS templates«ENDIF»</td>
-            <td headers="hSettingValue1" class="text-center">«helper.flag(generateIcsTemplates)»</td>
+            <td headers="hSettingValue1" class="text-center">«helper.flag(it, generateIcsTemplates)»</td>
             <td headers="hSettingName2">«IF language == 'de'»PDF-Unterstützung«ELSE»PDF support«ENDIF»</td>
-            <td headers="hSettingValue2" class="text-center">«helper.flag(generatePdfSupport)»</td>
+            <td headers="hSettingValue2" class="text-center">«helper.flag(it, generatePdfSupport)»</td>
         </tr>
     '''
 

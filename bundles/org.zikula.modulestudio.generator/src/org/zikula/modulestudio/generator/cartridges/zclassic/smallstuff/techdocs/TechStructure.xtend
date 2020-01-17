@@ -125,7 +125,7 @@ class TechStructure {
         «IF application.variables.length > 1»
             <p>«IF language == 'de'»Sortierwert«ELSE»Sort value«ENDIF»: «sortOrder»</p>
         «ENDIF»
-        <p>«IF language == 'de'»Kombination«ELSE»Composite«ENDIF»: «helper.flag(composite)»</p>
+        <p>«IF language == 'de'»Kombination«ELSE»Composite«ENDIF»: «helper.flag(application, composite)»</p>
         «IF !fields.empty»
             <h4><i class="fa«IF application.targets('3.0')»s«ENDIF» fa-bars"></i> «IF language == 'de'»Felder«ELSE»Fields«ENDIF»</h4>
             «new TechStructureFields().generate(it, language)»
