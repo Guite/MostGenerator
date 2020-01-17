@@ -99,15 +99,15 @@ class TechHelper {
 
     def flag(Boolean value) '''
         «IF value»
-            <i class="fa fa-check"></i>
+            <i class="fa«IF targets('3.0')»s«ENDIF» fa-check"></i>
         «ELSE»
-            <i class="fa fa-times"></i>
+            <i class="fa«IF targets('3.0')»s«ENDIF» fa-times"></i>
         «ENDIF»
     '''
 
     def basicInfo(Application it, String language) '''
         «table(basicInfoColumns, basicInfoHeader(language), basicInfoContent(language))»
-        <h2><i class="fa fa-sitemap"></i> «IF language == 'de'»Modell der Anwendung«ELSE»Application model«ENDIF»</h2>
+        <h2><i class="fa«IF targets('3.0')»s«ENDIF» fa-sitemap"></i> «IF language == 'de'»Modell der Anwendung«ELSE»Application model«ENDIF»</h2>
         <p><img src="«name.formatForCodeCapital»_Entities%20Diagram.jpg" alt="«name.formatForDisplayCapital» «IF language == 'de'»Modell«ELSE»Model«ENDIF»" class="img-thumbnail img-«IF targets('3.0')»fluid«ELSE»responsive«ENDIF»" /></p>
     '''
 
@@ -136,11 +136,11 @@ class TechHelper {
         </tr>
         <tr>
             <th id="hEmail" scope="row" headers="hBasicField">«IF language == 'de'»E-Mail«ELSE»Email«ENDIF»</th>
-            <td headers="hBasicValue hEmail"><a href="mailto:«email»"><i class="fa fa-envelope"></i> «email»</a></td>
+            <td headers="hBasicValue hEmail"><a href="mailto:«email»"><i class="fa«IF targets('3.0')»s«ENDIF» fa-envelope"></i> «email»</a></td>
         </tr>
         <tr>
             <th id="hUrl" scope="row" headers="hBasicField">URL</th>
-            <td headers="hBasicValue hUrl"><a href="«url»" title="«IF language == 'de'»Projektseite«ELSE»Project page«ENDIF»" target="_blank"><i class="fa fa-external-link-square«IF targets('3.0')»-alt«ENDIF»"></i> «url»</a></td>
+            <td headers="hBasicValue hUrl"><a href="«url»" title="«IF language == 'de'»Projektseite«ELSE»Project page«ENDIF»" target="_blank"><i class="fa«IF targets('3.0')»s«ENDIF» fa-external-link-square«IF targets('3.0')»-alt«ENDIF»"></i> «url»</a></td>
         </tr>
         <tr>
             <th id="hVersion" scope="row" headers="hBasicField">Version</th>

@@ -127,7 +127,7 @@ class Config {
                     «ELSE»
                         <h4>{{ __('«entity.nameMultiple.formatForDisplayCapital»') }}</h4>
                     «ENDIF»
-                    <p><a href="{{ path('zikula_workflow_editor_index', {workflow: '«appName.formatForDB»_«entity.workflow.textualName»'}) }}" title="{{ «IF targets('3.0')»'Edit workflow for «entity.nameMultiple.formatForDisplay»'|trans«ELSE»__('Edit workflow for «entity.nameMultiple.formatForDisplay»')«ENDIF»|e('html_attr') }}" target="_blank"><i class="fa fa-cubes"></i> «IF targets('3.0')»{% trans %}Edit «entity.nameMultiple.formatForDisplay» workflow{% endtrans %}«ELSE»{{ __('Edit «entity.nameMultiple.formatForDisplay» workflow') }}«ENDIF»</a>
+                    <p><a href="{{ path('zikula_workflow_editor_index', {workflow: '«appName.formatForDB»_«entity.workflow.textualName»'}) }}" title="{{ «IF targets('3.0')»'Edit workflow for «entity.nameMultiple.formatForDisplay»'|trans«ELSE»__('Edit workflow for «entity.nameMultiple.formatForDisplay»')«ENDIF»|e('html_attr') }}" target="_blank"><i class="fa«IF targets('3.0')»s«ENDIF» fa-cubes"></i> «IF targets('3.0')»{% trans %}Edit «entity.nameMultiple.formatForDisplay» workflow{% endtrans %}«ELSE»{{ __('Edit «entity.nameMultiple.formatForDisplay» workflow') }}«ENDIF»</a>
                 «ENDFOR»
             </fieldset>
         </div>

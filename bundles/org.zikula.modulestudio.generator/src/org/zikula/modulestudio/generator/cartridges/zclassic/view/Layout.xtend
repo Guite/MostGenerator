@@ -134,7 +134,7 @@ class Layout {
         {% endblock %}
         {% block appTitle %}{# empty on purpose #}{% endblock %}
         {% block titleArea %}
-            <h3><i class="fa fa-{% block admin_page_icon %}{% endblock %}"></i> {% block title %}{% endblock %}</h3>
+            <h3><i class="fa«IF targets('3.0')»s«ENDIF» fa-{% block admin_page_icon %}{% endblock %}"></i> {% block title %}{% endblock %}</h3>
         {% endblock %}
         {% block footer %}
             {% if not app.request.query.getBoolean('raw', false) %}
@@ -264,13 +264,13 @@ class Layout {
                     <div id="{{ idPrefix }}AddFields" class="«appName.toLowerCase»-autocomplete{{ withImage ? '-with-image' : '' }}">
                         <label for="{{ idPrefix }}Selector">{{ findLinkText }}</label>
                         <br />
-                        <i class="fa fa-search" title="{{ searchLinkText|e('html_attr') }}"></i>
+                        <i class="fa«IF targets('3.0')»s«ENDIF» fa-search" title="{{ searchLinkText|e('html_attr') }}"></i>
                         <input type="hidden" {{ block('widget_attributes') }} value="{{ value }}" />
                         <input type="hidden" name="{{ idPrefix }}Multiple" id="{{ idPrefix }}Multiple" value="{{ multiple ? '1' : '0' }}" />
                         <input type="text" id="{{ idPrefix }}Selector" name="{{ idPrefix }}Selector" autocomplete="off" />
-                        <button type="button" id="{{ idPrefix }}SelectorDoCancel" name="{{ idPrefix }}SelectorDoCancel" class="btn btn-«IF targets('3.0')»secondary«ELSE»default«ENDIF» «appName.toLowerCase»-inline-button"><i class="fa fa-times"></i> {{ __('Cancel') }}</button>
+                        <button type="button" id="{{ idPrefix }}SelectorDoCancel" name="{{ idPrefix }}SelectorDoCancel" class="btn btn-«IF targets('3.0')»secondary«ELSE»default«ENDIF» «appName.toLowerCase»-inline-button"><i class="fa«IF targets('3.0')»s«ENDIF» fa-times"></i> {{ __('Cancel') }}</button>
                         {% if create_url != '' %}
-                            <a id="{{ idPrefix }}SelectorDoNew" href="{{ create_url }}" title="{{ createNewLinkText|e('html_attr') }}" class="btn btn-«IF targets('3.0')»secondary«ELSE»default«ENDIF» «appName.toLowerCase»-inline-button"><i class="fa fa-plus"></i> «IF targets('3.0')»{% trans %}Create{% endtrans %}«ELSE»{{ __('Create') }}«ENDIF»</a>
+                            <a id="{{ idPrefix }}SelectorDoNew" href="{{ create_url }}" title="{{ createNewLinkText|e('html_attr') }}" class="btn btn-«IF targets('3.0')»secondary«ELSE»default«ENDIF» «appName.toLowerCase»-inline-button"><i class="fa«IF targets('3.0')»s«ENDIF» fa-plus"></i> «IF targets('3.0')»{% trans %}Create{% endtrans %}«ELSE»{{ __('Create') }}«ENDIF»</a>
                         {% endif %}
                         <noscript><p>«IF targets('3.0')»{% trans %}This function requires JavaScript activated!{% endtrans %}«ELSE»{{ __('This function requires JavaScript activated!') }}«ENDIF»</p></noscript>
                     </div>

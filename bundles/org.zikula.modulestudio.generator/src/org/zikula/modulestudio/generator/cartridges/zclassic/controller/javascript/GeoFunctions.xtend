@@ -200,7 +200,7 @@ class GeoFunctions {
                 var marker = markerData[i];
                 var markerCaption = (marker.image ? '<img src="' + marker.image + '" alt="Logo" style="max-width: 100px !important" /><br />' : '') + marker.title;
                 if ('undefined' !== typeof marker.detailUrl && marker.detailUrl) {
-                    markerCaption += '<br /><a href="' + marker.detailUrl + '" target="_blank"><i class="fa fa-arrow-circle-right"></i> Details</a>';
+                    markerCaption += '<br /><a href="' + marker.detailUrl + '" target="_blank"><i class="fa«IF targets('3.0')»s«ENDIF» fa-arrow-circle-right"></i> Details</a>';
                 }
                 L.marker([marker.latitude, marker.longitude]).bindPopup(markerCaption).addTo(entityMarkers);
                 L.marker([marker.latitude, marker.longitude], {

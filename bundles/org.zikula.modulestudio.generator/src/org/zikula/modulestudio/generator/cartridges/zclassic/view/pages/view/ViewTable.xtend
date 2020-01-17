@@ -212,7 +212,7 @@ class ViewTable {
                 «IF hasSortableFields»
                     {% if activateSortable %}
                         <td headers="hSortable" class="text-center«IF !application.targets('3.0')» z-w02«ENDIF»">
-                            <i class="fa fa-arrows«IF application.targets('3.0')»-alt«ENDIF» sort-handle pointer" title="{{ «IF application.targets('3.0')»'Drag to reorder'|trans«ELSE»__('Drag to reorder')«ENDIF»|e('html_attr') }}"></i>
+                            <i class="fa«IF application.targets('3.0')»s«ENDIF» fa-arrows«IF application.targets('3.0')»-alt«ENDIF» sort-handle pointer" title="{{ «IF application.targets('3.0')»'Drag to reorder'|trans«ELSE»__('Drag to reorder')«ENDIF»|e('html_attr') }}"></i>
                         </td>
                     {% endif %}
                 «ENDIF»
@@ -403,7 +403,7 @@ class ViewTable {
               {{ «relObjName»|«application.appName.formatForDB»_formattedTitle }}
             «IF linkEntity.hasDisplayAction»
                 {% «IF application.targets('3.0')»endapply«ELSE»endspaceless«ENDIF» %}</a>
-                <a id="«linkEntity.name.formatForCode»Item{{ «mainEntity.name.formatForCode».getKey() }}_rel_{{ «relObjName».getKey() }}Display" href="{{ path('«application.appName.formatForDB»_«linkEntity.name.formatForDB»_' ~ routeArea ~ 'display', {«IF !linkEntity.hasSluggableFields || !linkEntity.slugUnique»«linkEntity.routePkParams(relObjName, true)»«ENDIF»«linkEntity.appendSlug(relObjName, true)», raw: 1}) }}" title="{{ «IF application.targets('3.0')»'Open quick view window'|trans«ELSE»__('Open quick view window')«ENDIF»|e('html_attr') }}" class="«application.vendorAndName.toLowerCase»-inline-window «IF application.targets('3.0')»d-none«ELSE»hidden«ENDIF»" data-modal-title="{{ «relObjName»|«application.appName.formatForDB»_formattedTitle|e('html_attr') }}"><i class="fa fa-id-card«IF !application.targets('3.0')»-o«ENDIF»"></i></a>
+                <a id="«linkEntity.name.formatForCode»Item{{ «mainEntity.name.formatForCode».getKey() }}_rel_{{ «relObjName».getKey() }}Display" href="{{ path('«application.appName.formatForDB»_«linkEntity.name.formatForDB»_' ~ routeArea ~ 'display', {«IF !linkEntity.hasSluggableFields || !linkEntity.slugUnique»«linkEntity.routePkParams(relObjName, true)»«ENDIF»«linkEntity.appendSlug(relObjName, true)», raw: 1}) }}" title="{{ «IF application.targets('3.0')»'Open quick view window'|trans«ELSE»__('Open quick view window')«ENDIF»|e('html_attr') }}" class="«application.vendorAndName.toLowerCase»-inline-window «IF application.targets('3.0')»d-none«ELSE»hidden«ENDIF»" data-modal-title="{{ «relObjName»|«application.appName.formatForDB»_formattedTitle|e('html_attr') }}"><i class="fa«IF application.targets('3.0')»s«ENDIF» fa-id-card«IF !application.targets('3.0')»-o«ENDIF»"></i></a>
             «ENDIF»
         {% else %}
             «IF application.targets('3.0')»{% trans %}Not set{% endtrans %}«ELSE»{{ __('Not set.') }}«ENDIF»

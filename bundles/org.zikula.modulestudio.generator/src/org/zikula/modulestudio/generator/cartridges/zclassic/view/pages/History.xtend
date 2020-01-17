@@ -94,7 +94,7 @@ class History {
                     «historyTable»
                 </div>
                 <p>
-                    <button id="compareButton" type="submit" value="compare" class="btn btn-primary" disabled="disabled"><i class="fa fa-arrows«IF app.targets('3.0')»-alt«ENDIF»-h"></i> «IF app.targets('3.0')»{% trans %}Compare selected versions{% endtrans %}«ELSE»{{ __('Compare selected versions') }}«ENDIF»</button>
+                    <button id="compareButton" type="submit" value="compare" class="btn btn-primary" disabled="disabled"><i class="fa«IF application.targets('3.0')»s«ENDIF» fa-arrows«IF app.targets('3.0')»-alt«ENDIF»-h"></i> «IF app.targets('3.0')»{% trans %}Compare selected versions{% endtrans %}«ELSE»{{ __('Compare selected versions') }}«ENDIF»</button>
                 </p>
             </form>
         {% endblock %}
@@ -261,11 +261,11 @@ class History {
                         <td headers="hActions hVersion{{ logEntry.version|e('html_attr') }}" class="actions«IF !app.targets('3.0')» nowrap«ENDIF»">
                             «IF hasDisplayAction»
                                 {% set linkTitle = «IF app.targets('3.0')»'Preview version %version%'|trans({'%version%': logEntry.version})«ELSE»__f('Preview version %version%', {'%version%': logEntry.version})«ENDIF» %}
-                                <a id="«name.formatForCode»Item{{ «name.formatForCode».getKey() }}Display{{ logEntry.version }}" href="{{ path('«app.appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ 'display', {«IF !hasSluggableFields || !slugUnique»«routePkParams(name.formatForCode, true)»«ENDIF»«appendSlug(name.formatForCode, true)», version: logEntry.version, raw: 1}) }}" title="{{ linkTitle|e('html_attr') }}" class="«app.vendorAndName.toLowerCase»-inline-window «IF app.targets('3.0')»d-none«ELSE»hidden«ENDIF»" data-modal-title="{{ «name.formatForCode»|«app.appName.formatForDB»_formattedTitle|e('html_attr') ~ ' ' ~ «IF app.targets('3.0')»'version'|trans«ELSE»__('version')«ENDIF» ~ ' ' ~ logEntry.version }}"><i class="fa fa-id-card«IF !app.targets('3.0')»-o«ENDIF»"></i></a>
+                                <a id="«name.formatForCode»Item{{ «name.formatForCode».getKey() }}Display{{ logEntry.version }}" href="{{ path('«app.appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ 'display', {«IF !hasSluggableFields || !slugUnique»«routePkParams(name.formatForCode, true)»«ENDIF»«appendSlug(name.formatForCode, true)», version: logEntry.version, raw: 1}) }}" title="{{ linkTitle|e('html_attr') }}" class="«app.vendorAndName.toLowerCase»-inline-window «IF app.targets('3.0')»d-none«ELSE»hidden«ENDIF»" data-modal-title="{{ «name.formatForCode»|«app.appName.formatForDB»_formattedTitle|e('html_attr') ~ ' ' ~ «IF app.targets('3.0')»'version'|trans«ELSE»__('version')«ENDIF» ~ ' ' ~ logEntry.version }}"><i class="fa«IF application.targets('3.0')»s«ENDIF» fa-id-card«IF !app.targets('3.0')»-o«ENDIF»"></i></a>
                             «ENDIF»
                             {% if not loop.first %}
                                 {% set linkTitle = «IF app.targets('3.0')»'Revert to version %version%'|trans({ '%version%': logEntry.version })«ELSE»__f('Revert to version %version%', { '%version%': logEntry.version })«ENDIF» %}
-                                <a href="{{ path('«app.appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ 'loggablehistory', {«IF !hasSluggableFields || !slugUnique»«routePkParams(name.formatForCode, true)»«ENDIF»«appendSlug(name.formatForCode, true)», revert: logEntry.version}) }}" title="{{ linkTitle|e('html_attr') }}"><i class="fa fa-history"></i></a>
+                                <a href="{{ path('«app.appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ 'loggablehistory', {«IF !hasSluggableFields || !slugUnique»«routePkParams(name.formatForCode, true)»«ENDIF»«appendSlug(name.formatForCode, true)», revert: logEntry.version}) }}" title="{{ linkTitle|e('html_attr') }}"><i class="fa«IF application.targets('3.0')»s«ENDIF» fa-history"></i></a>
                             {% endif %}
                         </td>
                     </tr>
@@ -279,16 +279,16 @@ class History {
             <p>
                 {% if isDiffView == true %}
                     {% set linkTitle = «IF application.targets('3.0')»'Back to history'|trans«ELSE»__('Back to history')«ENDIF» %}
-                    <a href="{{ path('«appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ 'loggablehistory', {«IF hasSluggableFields && slugUnique»slug«ELSE»id«ENDIF»: «name.formatForCode».get«IF hasSluggableFields && slugUnique»Slug«ELSE»Key«ENDIF»()}) }}" title="{{ linkTitle|e('html_attr') }}"><i class="fa fa-history"></i> {{ linkTitle }}</a>
+                    <a href="{{ path('«appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ 'loggablehistory', {«IF hasSluggableFields && slugUnique»slug«ELSE»id«ENDIF»: «name.formatForCode».get«IF hasSluggableFields && slugUnique»Slug«ELSE»Key«ENDIF»()}) }}" title="{{ linkTitle|e('html_attr') }}"><i class="fa«IF application.targets('3.0')»s«ENDIF» fa-history"></i> {{ linkTitle }}</a>
                 {% else %}
                     «IF hasViewAction»
                         {% set linkTitle = «IF application.targets('3.0')»'«nameMultiple.formatForDisplayCapital» list'|trans«ELSE»__('«nameMultiple.formatForDisplayCapital» list')«ENDIF» %}
-                        <a href="{{ path('«appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ 'view') }}" title="{{ linkTitle|e('html_attr') }}"><i class="fa fa-reply"></i> {{ linkTitle }}</a>
+                        <a href="{{ path('«appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ 'view') }}" title="{{ linkTitle|e('html_attr') }}"><i class="fa«IF application.targets('3.0')»s«ENDIF» fa-reply"></i> {{ linkTitle }}</a>
                     «ENDIF»
                 {% endif %}
                 «IF hasDisplayAction»
                     {% set linkTitle = «IF application.targets('3.0')»'Back to detail view'|trans«ELSE»__('Back to detail view')«ENDIF» %}
-                    <a href="{{ path('«appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ 'display'«routeParams(name.formatForCode, true)») }}" title="{{ linkTitle|e('html_attr') }}"><i class="fa fa-eye"></i> {{ linkTitle }}</a>
+                    <a href="{{ path('«appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ 'display'«routeParams(name.formatForCode, true)») }}" title="{{ linkTitle|e('html_attr') }}"><i class="fa«IF application.targets('3.0')»s«ENDIF» fa-eye"></i> {{ linkTitle }}</a>
                 «ENDIF»
             </p>
         «ENDIF»

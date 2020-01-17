@@ -139,7 +139,7 @@ class InlineEditing {
                 href: editHref,
                 text: 'edit'
             }).append(
-                jQuery('<span>', { class: 'fa fa-«IF targets('3.0')»edit«ELSE»pencil-square-o«ENDIF»' })
+                jQuery('<span>', { class: 'fa«IF targets('3.0')»s«ENDIF» fa-«IF targets('3.0')»edit«ELSE»pencil-square-o«ENDIF»' })
             );
 
             return editLink;
@@ -213,7 +213,7 @@ class InlineEditing {
                     title: Translator.«IF targets('3.0')»trans«ELSE»__«ENDIF»('Create new entry'),
                     class: 'btn btn-«IF targets('3.0')»secondary«ELSE»default«ENDIF» «appName.toLowerCase»-inline-button'
                 }).append(
-                    jQuery('<i>', { class: 'fa fa-plus' })
+                    jQuery('<i>', { class: 'fa«IF targets('3.0')»s«ENDIF» fa-plus' })
                 ).append(' ' + Translator.«IF targets('3.0')»trans«ELSE»__«ENDIF»('Create'));
 
                 if (inputType === 'select-single' || inputType === 'select-multi') {
@@ -254,7 +254,7 @@ class InlineEditing {
                                 href: createUrl,
                                 title: Translator.«IF targets('3.0')»trans«ELSE»__«ENDIF»('Edit this entry')
                             }).append(
-                                jQuery('<span>', { class: 'fa fa-«IF targets('3.0')»edit«ELSE»pencil-square-o«ENDIF»' })
+                                jQuery('<span>', { class: 'fa«IF targets('3.0')»s«ENDIF» fa-«IF targets('3.0')»edit«ELSE»pencil-square-o«ENDIF»' })
                             )
                         );
                     }

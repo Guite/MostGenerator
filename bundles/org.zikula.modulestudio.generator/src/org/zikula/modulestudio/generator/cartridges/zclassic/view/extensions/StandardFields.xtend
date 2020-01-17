@@ -63,7 +63,7 @@ class StandardFields {
                 {% if currentUser.loggedIn %}
                     {% set sendMessageUrl = obj.createdBy.uid|messageSendLink(urlOnly=true) %}
                     {% if sendMessageUrl != '#' %}
-                        <a href="{{ sendMessageUrl }}" title="«IF targets('3.0')»{% trans with {'%userName%': obj.createdBy.uname} %}Send private message to %userName%{% endtrans %}«ELSE»{{ __f('Send private message to %userName%', {'%userName%': obj.createdBy.uname}) }}«ENDIF»"><i class="fa fa-envelope«IF !targets('3.0')»-o«ENDIF»"></i></a>
+                        <a href="{{ sendMessageUrl }}" title="«IF targets('3.0')»{% trans with {'%userName%': obj.createdBy.uname} %}Send private message to %userName%{% endtrans %}«ELSE»{{ __f('Send private message to %userName%', {'%userName%': obj.createdBy.uname}) }}«ENDIF»"><i class="fa«IF targets('3.0')»s«ENDIF» fa-envelope«IF !targets('3.0')»-o«ENDIF»"></i></a>
                     {% endif %}
                 {% endif %}
             </dd>
@@ -81,7 +81,7 @@ class StandardFields {
                 {% if currentUser.loggedIn %}
                     {% set sendMessageUrl = obj.updatedBy.uid|messageSendLink(urlOnly=true) %}
                     {% if sendMessageUrl != '#' %}
-                        <a href="{{ sendMessageUrl }}" title="«IF targets('3.0')»{% trans with {'%userName%': obj.updatedBy.uname} %}Send private message to %userName%{% endtrans %}«ELSE»{{ __f('Send private message to %userName%', {'%userName%': obj.updatedBy.uname}) }}«ENDIF»"><i class="fa fa-envelope«IF !targets('3.0')»-o«ENDIF»"></i></a>
+                        <a href="{{ sendMessageUrl }}" title="«IF targets('3.0')»{% trans with {'%userName%': obj.updatedBy.uname} %}Send private message to %userName%{% endtrans %}«ELSE»{{ __f('Send private message to %userName%', {'%userName%': obj.updatedBy.uname}) }}«ENDIF»"><i class="fa«IF targets('3.0')»s«ENDIF» fa-envelope«IF !targets('3.0')»-o«ENDIF»"></i></a>
                     {% endif %}
                 {% endif %}
             </dd>

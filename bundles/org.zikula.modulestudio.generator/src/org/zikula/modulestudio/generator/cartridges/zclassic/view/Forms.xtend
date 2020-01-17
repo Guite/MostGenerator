@@ -197,7 +197,7 @@ class Forms {
                             <li«IF application.targets('3.0')» class="nav-item"«ELSE»{% if language == app.request.locale %} class="active"{% endif %}«ENDIF» role="presentation">
                                 <a href="#" data-toggle="tab" data-target=".{{ form.vars.id|lower }}-translations-fields-{{ language }}"«IF application.targets('3.0')» class="nav-link{% if language == app.request.locale %} active{% endif %}"«ENDIF»>
                                     {% if not form.vars.valid %}
-                                        <span class="«IF application.targets('3.0')»badge badge«ELSE»label label«ENDIF»-danger"><i class="fa fa-«IF application.targets('3.0')»exclamation-triangle«ELSE»warning«ENDIF»"></i> <span class="sr-only">«IF application.targets('3.0')»{% trans %}Errors{% endtrans %}«ELSE»{{ __('Errors') }}«ENDIF»</span></span>
+                                        <span class="«IF application.targets('3.0')»badge badge«ELSE»label label«ENDIF»-danger"><i class="fa«IF application.targets('3.0')»s«ENDIF» fa-«IF application.targets('3.0')»exclamation-triangle«ELSE»warning«ENDIF»"></i> <span class="sr-only">«IF application.targets('3.0')»{% trans %}Errors{% endtrans %}«ELSE»{{ __('Errors') }}«ENDIF»</span></span>
                                     {% endif %}
                                     {% set hasRequiredFields = language in localesWithMandatoryFields %}
                                     {% if hasRequiredFields %}<span class="required">{% endif %}{{ language|«IF application.targets('3.0')»language_name«ELSE»languageName|safeHtml«ENDIF» }}{% if hasRequiredFields %}</span>{% endif %}

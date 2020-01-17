@@ -34,22 +34,22 @@ class SimpleFields {
         if (ajaxTogglability && (page == 'view' || page == 'display')) '''
             {% set itemId = «objName».getKey() %}
             <a id="toggle«name.formatForCodeCapital»{{ itemId|e('html_attr') }}" href="javascript:void(0);" class="«application.vendorAndName.toLowerCase»-ajax-toggle «IF application.targets('3.0')»d-none«ELSE»hidden«ENDIF»" data-object-type="«entity.name.formatForCode»" data-field-name="«name.formatForCode»" data-item-id="{{ itemId|e('html_attr') }}">
-                <i class="fa fa-check text-success{% if not «objName».«name.formatForCode» %} «IF application.targets('3.0')»d-none«ELSE»hidden«ENDIF»{% endif %}" id="yes«name.formatForCodeCapital»{{ itemId|e('html_attr') }}" title="{{ «IF application.targets('3.0')»'This setting is enabled. Click here to disable it.'|trans«ELSE»__('This setting is enabled. Click here to disable it.')«ENDIF»|e('html_attr') }}"></i>
-                <i class="fa fa-times text-danger{% if «objName».«name.formatForCode» %} «IF application.targets('3.0')»d-none«ELSE»hidden«ENDIF»{% endif %}" id="no«name.formatForCodeCapital»{{ itemId|e('html_attr') }}" title="{{ «IF application.targets('3.0')»'This setting is disabled. Click here to enable it.'|trans«ELSE»__('This setting is disabled. Click here to enable it.')«ENDIF»|e('html_attr') }}"></i>
+                <i class="fa«IF application.targets('3.0')»s«ENDIF» fa-check text-success{% if not «objName».«name.formatForCode» %} «IF application.targets('3.0')»d-none«ELSE»hidden«ENDIF»{% endif %}" id="yes«name.formatForCodeCapital»{{ itemId|e('html_attr') }}" title="{{ «IF application.targets('3.0')»'This setting is enabled. Click here to disable it.'|trans«ELSE»__('This setting is enabled. Click here to disable it.')«ENDIF»|e('html_attr') }}"></i>
+                <i class="fa«IF application.targets('3.0')»s«ENDIF» fa-times text-danger{% if «objName».«name.formatForCode» %} «IF application.targets('3.0')»d-none«ELSE»hidden«ENDIF»{% endif %}" id="no«name.formatForCodeCapital»{{ itemId|e('html_attr') }}" title="{{ «IF application.targets('3.0')»'This setting is disabled. Click here to enable it.'|trans«ELSE»__('This setting is disabled. Click here to enable it.')«ENDIF»|e('html_attr') }}"></i>
             </a>
             <noscript><div id="noscript«name.formatForCodeCapital»{{ itemId|e('html_attr') }}">
                 {% if «objName».«name.formatForCode» %}
-                    <i class="fa fa-check text-success" title="{{ «IF application.targets('3.0')»'Yes'|trans«ELSE»__('Yes')«ENDIF»|e('html_attr') }}"></i>
+                    <i class="fa«IF application.targets('3.0')»s«ENDIF» fa-check text-success" title="{{ «IF application.targets('3.0')»'Yes'|trans«ELSE»__('Yes')«ENDIF»|e('html_attr') }}"></i>
                 {% else %}
-                    <i class="fa fa-times text-danger" title="{{ «IF application.targets('3.0')»'No'|trans«ELSE»__('No')«ENDIF»|e('html_attr') }}"></i>
+                    <i class="fa«IF application.targets('3.0')»s«ENDIF» fa-times text-danger" title="{{ «IF application.targets('3.0')»'No'|trans«ELSE»__('No')«ENDIF»|e('html_attr') }}"></i>
                 {% endif %}
             </div></noscript>
         '''
         else '''
             {% if «objName».«name.formatForCode» %}
-                <i class="fa fa-check text-success" title="{{ «IF application.targets('3.0')»'Yes'|trans«ELSE»__('Yes')«ENDIF»|e('html_attr') }}"></i>
+                <i class="fa«IF application.targets('3.0')»s«ENDIF» fa-check text-success" title="{{ «IF application.targets('3.0')»'Yes'|trans«ELSE»__('Yes')«ENDIF»|e('html_attr') }}"></i>
             {% else %}
-                <i class="fa fa-times text-danger" title="{{ «IF application.targets('3.0')»'No'|trans«ELSE»__('No')«ENDIF»|e('html_attr') }}"></i>
+                <i class="fa«IF application.targets('3.0')»s«ENDIF» fa-times text-danger" title="{{ «IF application.targets('3.0')»'No'|trans«ELSE»__('No')«ENDIF»|e('html_attr') }}"></i>
             {% endif %}
         '''
     }
@@ -74,7 +74,7 @@ class SimpleFields {
             «IF page == 'display'»
                   {% if not isQuickView %}
             «ENDIF»
-                {{ «realName».uid|profileLinkByUserId }}{% if currentUser.loggedIn %}{% set sendMessageUrl = «realName».uid|messageSendLink(urlOnly=true) %}{% if sendMessageUrl != '#' %}{% set linkTitle = «IF application.targets('3.0')»'Send private message to %userName%'|trans({'%userName%': «realName».uname})«ELSE»__f('Send private message to %userName%', {'%userName%': «realName».uname})«ENDIF» %}<a href="{{ sendMessageUrl }}" title="{{ linkTitle|e('html_attr') }}"><i class="fa fa-envelope«IF !application.targets('3.0')»-o«ENDIF»"></i></a>{% endif %}{% endif %}
+                {{ «realName».uid|profileLinkByUserId }}{% if currentUser.loggedIn %}{% set sendMessageUrl = «realName».uid|messageSendLink(urlOnly=true) %}{% if sendMessageUrl != '#' %}{% set linkTitle = «IF application.targets('3.0')»'Send private message to %userName%'|trans({'%userName%': «realName».uname})«ELSE»__f('Send private message to %userName%', {'%userName%': «realName».uname})«ENDIF» %}<a href="{{ sendMessageUrl }}" title="{{ linkTitle|e('html_attr') }}"><i class="fa«IF application.targets('3.0')»s«ENDIF» fa-envelope«IF !application.targets('3.0')»-o«ENDIF»"></i></a>{% endif %}{% endif %}
                 <span class="avatar">{{ userAvatar(«realName».uid, {rating: 'g'}) }}</span>
             «IF page == 'display'»
                 {% else %}
@@ -124,7 +124,7 @@ class SimpleFields {
             «IF page == 'display'»
                   {% if not isQuickView %}
             «ENDIF»
-            <a href="mailto:{{ «realName»|protectMail }}" title="{{ «IF application.targets('3.0')»'Send an email'|trans«ELSE»__('Send an email')«ENDIF»|e('html_attr') }}"><i class="fa fa-envelope"></i></a>
+            <a href="mailto:{{ «realName»|protectMail }}" title="{{ «IF application.targets('3.0')»'Send an email'|trans«ELSE»__('Send an email')«ENDIF»|e('html_attr') }}"><i class="fa«IF application.targets('3.0')»s«ENDIF» fa-envelope"></i></a>
             «IF page == 'display'»
                 {% else %}
                     {{ «realName»|protectMail }}
@@ -146,7 +146,7 @@ class SimpleFields {
             «IF page == 'display'»
                   {% if not isQuickView %}
             «ENDIF»
-            <a href="{{ «realName» }}" title="{{ «IF application.targets('3.0')»'Visit this page'|trans«ELSE»__('Visit this page')«ENDIF»|e('html_attr') }}"><i class="fa fa-external-link-square«IF application.targets('3.0')»-alt«ENDIF»"></i></a>
+            <a href="{{ «realName» }}" title="{{ «IF application.targets('3.0')»'Visit this page'|trans«ELSE»__('Visit this page')«ENDIF»|e('html_attr') }}"><i class="fa«IF application.targets('3.0')»s«ENDIF» fa-external-link-square«IF application.targets('3.0')»-alt«ENDIF»"></i></a>
             «IF page == 'display'»
                 {% else %}
                     {{ «realName» }}

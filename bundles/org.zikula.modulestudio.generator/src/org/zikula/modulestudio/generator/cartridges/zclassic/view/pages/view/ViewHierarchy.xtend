@@ -100,8 +100,8 @@ class ViewHierarchy {
 
         <div class="btn-toolbar" role="toolbar" aria-label="{{ «IF application.targets('3.0')»'Tree button toolbar'|trans«ELSE»__('Tree button toolbar')«ENDIF»|e('html_attr') }}">
             <div class="btn-group btn-group-sm" role="group" aria-label="«name.formatForDB» buttons">
-                <button type="button" id="{{ idPrefix }}Expand" class="btn btn-«IF application.targets('3.0')»secondary«ELSE»info«ENDIF»" title="{{ «IF application.targets('3.0')»'Expand all nodes'|trans«ELSE»__('Expand all nodes')«ENDIF»|e('html_attr') }}"><i class="fa fa-expand"></i> «IF application.targets('3.0')»{% trans %}Expand all{% endtrans %}«ELSE»{{ __('Expand all') }}«ENDIF»</button>
-                <button type="button" id="{{ idPrefix }}Collapse" class="btn btn-«IF application.targets('3.0')»secondary«ELSE»info«ENDIF»" title="{{ «IF application.targets('3.0')»'Collapse all nodes'|trans«ELSE»__('Collapse all nodes')«ENDIF»|e('html_attr') }}"><i class="fa fa-compress"></i> «IF application.targets('3.0')»{% trans %}Collapse all{% endtrans %}«ELSE»{{ __('Collapse all') }}«ENDIF»</button>
+                <button type="button" id="{{ idPrefix }}Expand" class="btn btn-«IF application.targets('3.0')»secondary«ELSE»info«ENDIF»" title="{{ «IF application.targets('3.0')»'Expand all nodes'|trans«ELSE»__('Expand all nodes')«ENDIF»|e('html_attr') }}"><i class="fa«IF application.targets('3.0')»s«ENDIF» fa-expand"></i> «IF application.targets('3.0')»{% trans %}Expand all{% endtrans %}«ELSE»{{ __('Expand all') }}«ENDIF»</button>
+                <button type="button" id="{{ idPrefix }}Collapse" class="btn btn-«IF application.targets('3.0')»secondary«ELSE»info«ENDIF»" title="{{ «IF application.targets('3.0')»'Collapse all nodes'|trans«ELSE»__('Collapse all nodes')«ENDIF»|e('html_attr') }}"><i class="fa«IF application.targets('3.0')»s«ENDIF» fa-compress"></i> «IF application.targets('3.0')»{% trans %}Collapse all{% endtrans %}«ELSE»{{ __('Collapse all') }}«ENDIF»</button>
             </div>
         </div>
         <div class="clearfix">

@@ -254,14 +254,14 @@ class ItemActions {
 
     def private addIcon(Application it, String icon) '''
         «IF viewActionsWithIcons && displayActionsWithIcons»
-            $menu[$title]->setAttribute('icon', 'fa fa-«icon»');
+            $menu[$title]->setAttribute('icon', 'fa«IF targets('3.0')»s«ENDIF» fa-«icon»');
         «ELSEIF viewActionsWithIcons && !displayActionsWithIcons»
             if ('view' === $context) {
-                $menu[$title]->setAttribute('icon', 'fa fa-«icon»');
+                $menu[$title]->setAttribute('icon', 'fa«IF targets('3.0')»s«ENDIF» fa-«icon»');
             }
         «ELSEIF !viewActionsWithIcons && displayActionsWithIcons»
             if ('display' === $context) {
-                $menu[$title]->setAttribute('icon', 'fa fa-«icon»');
+                $menu[$title]->setAttribute('icon', 'fa«IF targets('3.0')»s«ENDIF» fa-«icon»');
             }
         «ENDIF»
     '''

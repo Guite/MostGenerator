@@ -91,7 +91,7 @@ class Relations {
         «IF hasDisplayAction»
             {% if not noLink %}
                 </a>
-                <a id="«name.formatForCode»Item{{ item.getKey() }}Display" href="{{ path('«app.appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ 'display', {«IF !hasSluggableFields || !slugUnique»«routePkParams('item', true)»«ENDIF»«appendSlug('item', true)», raw: 1}) }}" title="«IF app.targets('3.0')»{% trans %}Open quick view window{% endtrans %}«ELSE»{{ __('Open quick view window', '«app.appName.toLowerCase»') }}«ENDIF»" class="«app.vendorAndName.toLowerCase»-inline-window «IF app.targets('3.0')»d-none«ELSE»hidden«ENDIF»" data-modal-title="{{ item|«app.appName.formatForDB»_formattedTitle|e('html_attr') }}"><i class="fa fa-id-card«IF !app.targets('3.0')»-o«ENDIF»"></i></a>
+                <a id="«name.formatForCode»Item{{ item.getKey() }}Display" href="{{ path('«app.appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ 'display', {«IF !hasSluggableFields || !slugUnique»«routePkParams('item', true)»«ENDIF»«appendSlug('item', true)», raw: 1}) }}" title="«IF app.targets('3.0')»{% trans %}Open quick view window{% endtrans %}«ELSE»{{ __('Open quick view window', '«app.appName.toLowerCase»') }}«ENDIF»" class="«app.vendorAndName.toLowerCase»-inline-window «IF app.targets('3.0')»d-none«ELSE»hidden«ENDIF»" data-modal-title="{{ item|«app.appName.formatForDB»_formattedTitle|e('html_attr') }}"><i class="fa«IF app.targets('3.0')»s«ENDIF» fa-id-card«IF !app.targets('3.0')»-o«ENDIF»"></i></a>
             {% endif %}
             {% «IF app.targets('3.0')»endapply«ELSE»endspaceless«ENDIF» %}
         «ENDIF»
@@ -113,7 +113,7 @@ class Relations {
                     {% endfor %}
                     <p«IF !app.targets('3.0')» class="list-group-item-text"«ENDIF»>
                         {% set removeLinkText = «IF application.targets('3.0')»'Detach %name%'|trans({'%name%': entityNameTranslated})«ELSE»__f('Detach %name%', {'%name%': entityNameTranslated}, '«app.appName.toLowerCase»')«ENDIF» %}
-                        <a href="javascript:void(0);" title="{{ removeLinkText|e('html_attr') }}" class="detach-«app.appName.formatForDB»-object «IF app.targets('3.0')»d-none«ELSE»hidden«ENDIF»" data-assignment-id="{{ assignmentId|e('html_attr') }}"><i class="fa fa-«IF app.targets('3.0')»unlink«ELSE»chain-broken«ENDIF»"></i> {{ removeLinkText }}</a>
+                        <a href="javascript:void(0);" title="{{ removeLinkText|e('html_attr') }}" class="detach-«app.appName.formatForDB»-object «IF app.targets('3.0')»d-none«ELSE»hidden«ENDIF»" data-assignment-id="{{ assignmentId|e('html_attr') }}"><i class="fa«IF app.targets('3.0')»s«ENDIF» fa-«IF app.targets('3.0')»unlink«ELSE»chain-broken«ENDIF»"></i> {{ removeLinkText }}</a>
                     </p>
                 {% endif %}
             «ENDIF»
@@ -132,17 +132,17 @@ class Relations {
                         {% set createNewLinkText = «IF app.targets('3.0')»'Create new %name%'|trans({'%name%': entityNameTranslated})«ELSE»__f('Create new %name%', {'%name%': entityNameTranslated}, '«app.appName.toLowerCase»')«ENDIF» %}
                     «ENDIF»
                     <div id="{{ idPrefix }}LiveSearch" class="«app.appName.toLowerCase»-add-hook-assignment">
-                        <a id="{{ idPrefix }}AddLink" href="javascript:void(0);" title="{{ addLinkText|e('html_attr') }}" class="attach-«app.appName.formatForDB»-object «IF app.targets('3.0')»d-none«ELSE»hidden«ENDIF»" data-owner="{{ subscriberOwner|e('html_attr') }}" data-area-id="{{ subscriberAreaId|e('html_attr') }}" data-object-id="{{ subscriberObjectId|e('html_attr') }}" data-url="{{ subscriberUrl|e('html_attr') }}" data-assigned-entity="«name.formatForCode»"><i class="fa fa-link"></i> {{ addLinkText }}</a>
+                        <a id="{{ idPrefix }}AddLink" href="javascript:void(0);" title="{{ addLinkText|e('html_attr') }}" class="attach-«app.appName.formatForDB»-object «IF app.targets('3.0')»d-none«ELSE»hidden«ENDIF»" data-owner="{{ subscriberOwner|e('html_attr') }}" data-area-id="{{ subscriberAreaId|e('html_attr') }}" data-object-id="{{ subscriberObjectId|e('html_attr') }}" data-url="{{ subscriberUrl|e('html_attr') }}" data-assigned-entity="«name.formatForCode»"><i class="fa«IF app.targets('3.0')»s«ENDIF» fa-link"></i> {{ addLinkText }}</a>
                         <div id="{{ idPrefix }}AddFields" class="«app.appName.toLowerCase»-autocomplete«IF hasImageFieldsEntity»-with-image«ENDIF»">
                             <label for="{{ idPrefix }}Selector">{{ findLinkText }}</label>
                             <br />
-                            <i class="fa fa-search" title="{{ searchLinkText|e('html_attr') }}"></i>
+                            <i class="fa«IF app.targets('3.0')»s«ENDIF» fa-search" title="{{ searchLinkText|e('html_attr') }}"></i>
                             <input type="hidden" name="{{ idPrefix }}" id="{{ idPrefix }}" value="{% for assignment in assignments %}{% if not loop.first %},{% endif %}{{ assignment.getAssignedId() }}{% endfor %}" />
                             <input type="hidden" name="{{ idPrefix }}Multiple" id="{{ idPrefix }}Multiple" value="0" />
                             <input type="text" id="{{ idPrefix }}Selector" name="{{ idPrefix }}Selector" autocomplete="off" />
                             <input type="button" id="{{ idPrefix }}SelectorDoCancel" name="{{ idPrefix }}SelectorDoCancel" value="«IF app.targets('3.0')»{% trans %}Cancel{% endtrans %}«ELSE»{{ __('Cancel', '«app.appName.toLowerCase»') }}«ENDIF»" class="btn btn-«IF app.targets('3.0')»secondary«ELSE»default«ENDIF» «app.appName.toLowerCase»-inline-button" />
                             «IF hasEditAction»
-                                <a id="{{ idPrefix }}SelectorDoNew" href="{{ path('«app.appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ 'edit') }}" title="{{ createNewLinkText|e('html_attr') }}" class="btn btn-«IF app.targets('3.0')»secondary«ELSE»default«ENDIF» «app.appName.toLowerCase»-inline-button"><i class="fa fa-plus"></i> «IF app.targets('3.0')»{% trans %}Create{% endtrans %}«ELSE»{{ __('Create', '«app.appName.toLowerCase»') }}«ENDIF»</a>
+                                <a id="{{ idPrefix }}SelectorDoNew" href="{{ path('«app.appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ 'edit') }}" title="{{ createNewLinkText|e('html_attr') }}" class="btn btn-«IF app.targets('3.0')»secondary«ELSE»default«ENDIF» «app.appName.toLowerCase»-inline-button"><i class="fa«IF app.targets('3.0')»s«ENDIF» fa-plus"></i> «IF app.targets('3.0')»{% trans %}Create{% endtrans %}«ELSE»{{ __('Create', '«app.appName.toLowerCase»') }}«ENDIF»</a>
                             «ENDIF»
                             <noscript><p>«IF app.targets('3.0')»{% trans %}This function requires JavaScript activated!{% endtrans %}«ELSE»{{ __('This function requires JavaScript activated!') }}«ENDIF»</p></noscript>
                         </div>
@@ -199,7 +199,7 @@ class Relations {
                 {% if mayManage«IF otherEntity.ownerPermission» or (currentUser|default and «relatedEntity.name.formatForCode».createdBy|default and «relatedEntity.name.formatForCode».createdBy.getUid() == currentUser.uid)«ENDIF» %}
                     <p class="managelink">
                         {% set createTitle = «IF application.targets('3.0')»'Create «otherEntity.name.formatForDisplay»'|trans«ELSE»__('Create «otherEntity.name.formatForDisplay»')«ENDIF» %}
-                        <a href="{{ path('«appName.formatForDB»_«otherEntity.name.formatForDB»_' ~ routeArea ~ 'edit', {«relationAliasNameParam»: «relatedEntity.name.formatForCode».get«IF relatedEntity.hasSluggableFields && relatedEntity.slugUnique»Slug«ELSE»Key«ENDIF»()}) }}" title="{{ createTitle|e('html_attr') }}"><i class="fa fa-plus"></i> {{ createTitle }}</a>
+                        <a href="{{ path('«appName.formatForDB»_«otherEntity.name.formatForDB»_' ~ routeArea ~ 'edit', {«relationAliasNameParam»: «relatedEntity.name.formatForCode».get«IF relatedEntity.hasSluggableFields && relatedEntity.slugUnique»Slug«ELSE»Key«ENDIF»()}) }}" title="{{ createTitle|e('html_attr') }}"><i class="fa«IF application.targets('3.0')»s«ENDIF» fa-plus"></i> {{ createTitle }}</a>
                     </p>
                 {% endif %}
                 «IF !many»

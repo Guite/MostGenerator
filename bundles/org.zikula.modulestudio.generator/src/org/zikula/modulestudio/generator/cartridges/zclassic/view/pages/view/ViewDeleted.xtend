@@ -61,7 +61,7 @@ class ViewDeleted {
         {% block page_nav_links %}
             <p>
                 {% set linkTitle = «IF application.targets('3.0')»'Back to overview'|trans«ELSE»__('Back to overview')«ENDIF» %}
-                <a href="{{ path('«application.appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ 'view') }}" title="{{ linkTitle|e('html_attr') }}"><i class="fa fa-reply"></i> {{ linkTitle }}</a>
+                <a href="{{ path('«application.appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ 'view') }}" title="{{ linkTitle|e('html_attr') }}"><i class="fa«IF application.targets('3.0')»s«ENDIF» fa-reply"></i> {{ linkTitle }}</a>
             </p>
         {% endblock %}
     '''
@@ -96,10 +96,10 @@ class ViewDeleted {
                             <td headers="hActions hId{{ logEntry.objectId|e('html_attr') }}" class="actions«IF !application.targets('3.0')» nowrap«ENDIF»">
                                 «IF hasDisplayAction»
                                     {% set linkTitle = «IF application.targets('3.0')»'Preview «name.formatForDisplay» %id%'|trans({'%id%': logEntry.objectId})«ELSE»__f('Preview «name.formatForDisplay» %id%', {'%id%': logEntry.objectId})«ENDIF» %}
-                                    <a id="«name.formatForCode»ItemDisplay{{ logEntry.objectId }}" href="{{ path('«application.appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ 'undelete', {«getPrimaryKey.name.formatForCode»: logEntry.objectId, preview: 1, raw: 1}) }}" title="{{ linkTitle|e('html_attr') }}" class="«application.vendorAndName.toLowerCase»-inline-window «IF application.targets('3.0')»d-none«ELSE»hidden«ENDIF»" data-modal-title="{{ «IF application.targets('3.0')»'«name.formatForDisplayCapital» %id%'|trans({'%id%': logEntry.objectId})«ELSE»__f('«name.formatForDisplayCapital» %id%', {'%id%': logEntry.objectId})«ENDIF»|e('html_attr') }}"><i class="fa fa-id-card«IF !application.targets('3.0')»-o«ENDIF»"></i></a>
+                                    <a id="«name.formatForCode»ItemDisplay{{ logEntry.objectId }}" href="{{ path('«application.appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ 'undelete', {«getPrimaryKey.name.formatForCode»: logEntry.objectId, preview: 1, raw: 1}) }}" title="{{ linkTitle|e('html_attr') }}" class="«application.vendorAndName.toLowerCase»-inline-window «IF application.targets('3.0')»d-none«ELSE»hidden«ENDIF»" data-modal-title="{{ «IF application.targets('3.0')»'«name.formatForDisplayCapital» %id%'|trans({'%id%': logEntry.objectId})«ELSE»__f('«name.formatForDisplayCapital» %id%', {'%id%': logEntry.objectId})«ENDIF»|e('html_attr') }}"><i class="fa«IF application.targets('3.0')»s«ENDIF» fa-id-card«IF !application.targets('3.0')»-o«ENDIF»"></i></a>
                                 «ENDIF»
                                 {% set linkTitle = «IF application.targets('3.0')»'Undelete «name.formatForDisplay» %id%'|trans({'%id%': logEntry.objectId})«ELSE»__f('Undelete «name.formatForDisplay» %id%', {'%id%': logEntry.objectId})«ENDIF» %}
-                                <a href="{{ path('«application.appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ 'undelete', {«getPrimaryKey.name.formatForCode»: logEntry.objectId}) }}" title="{{ linkTitle|e('html_attr') }}"><i class="fa fa-history"></i></a>
+                                <a href="{{ path('«application.appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ 'undelete', {«getPrimaryKey.name.formatForCode»: logEntry.objectId}) }}" title="{{ linkTitle|e('html_attr') }}"><i class="fa«IF application.targets('3.0')»s«ENDIF» fa-history"></i></a>
                             </td>
                         </tr>
                     {% endfor %}

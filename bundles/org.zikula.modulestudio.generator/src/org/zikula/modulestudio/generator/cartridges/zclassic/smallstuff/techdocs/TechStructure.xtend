@@ -31,7 +31,7 @@ class TechStructure {
     def private content(Application it) '''
         «helper.basicInfo(it, language)»
         «IF !referredApplications.empty»
-            <h2><i class="fa fa-link"></i> «IF language == 'de'»Abhängigkeiten«ELSE»Dependencies«ENDIF»</h2>
+            <h2><i class="fa«IF targets('3.0')»s«ENDIF» fa-link"></i> «IF language == 'de'»Abhängigkeiten«ELSE»Dependencies«ENDIF»</h2>
             «helper.table(it, dependenciesColumns, dependenciesHeader, dependenciesContent)»
         «ENDIF»
         «entityInfo»
@@ -71,54 +71,54 @@ class TechStructure {
     '''
 
     def dispatch private CharSequence entityInfo(Application it) '''
-        <h2><i class="fa fa-database"></i> «IF language == 'de'»Datentabellen«ELSE»Data tables«ENDIF»</h2>
+        <h2><i class="fa«IF targets('3.0')»s«ENDIF» fa-database"></i> «IF language == 'de'»Datentabellen«ELSE»Data tables«ENDIF»</h2>
         «FOR entity : entities»
             «entity.entityInfo»
         «ENDFOR»
     '''
 
     def dispatch private entityInfo(DataObject it) '''
-        <h3><i class="fa fa-«IF application.targets('3.0')»address-chard«ELSE»vcard-o«ENDIF»"></i> «name.formatForDisplayCapital»«IF it instanceof Entity» / «nameMultiple.formatForDisplayCapital»«ENDIF»</h3>
+        <h3><i class="fa«IF application.targets('3.0')»s«ENDIF» fa-«IF application.targets('3.0')»address-chard«ELSE»vcard-o«ENDIF»"></i> «name.formatForDisplayCapital»«IF it instanceof Entity» / «nameMultiple.formatForDisplayCapital»«ENDIF»</h3>
         «IF null !== documentation && !documentation.empty»
             <p>«documentation»</p>
         «ENDIF»
         «IF it instanceof Entity»
-            <h4><i class="fa fa-cog"></i> «IF language == 'de'»Grundlegende Einstellungen«ELSE»Basic settings«ENDIF»</h4>
+            <h4><i class="fa«IF application.targets('3.0')»s«ENDIF» fa-cog"></i> «IF language == 'de'»Grundlegende Einstellungen«ELSE»Basic settings«ENDIF»</h4>
             «new TechStructureEntity().generateBasic(it, language)»
         «ENDIF»
         «IF !fields.empty»
-            <h4><i class="fa fa-bars"></i> «IF language == 'de'»Felder«ELSE»Fields«ENDIF»</h4>
+            <h4><i class="fa«IF application.targets('3.0')»s«ENDIF» fa-bars"></i> «IF language == 'de'»Felder«ELSE»Fields«ENDIF»</h4>
             «new TechStructureFields().generate(it, language)»
         «ENDIF»
         «IF !incoming.empty || !outgoing.empty»
-            <h4><i class="fa fa-arrows«IF application.targets('3.0')»-alt«ENDIF»-h"></i> «IF language == 'de'»Relationen«ELSE»Relations«ENDIF»</h4>
+            <h4><i class="fa«IF application.targets('3.0')»s«ENDIF» fa-arrows«IF application.targets('3.0')»-alt«ENDIF»-h"></i> «IF language == 'de'»Relationen«ELSE»Relations«ENDIF»</h4>
             «new TechStructureRelations().generate(it, language)»
         «ENDIF»
         «IF it instanceof Entity»
             «IF !indexes.empty»
-                <h4><i class="fa fa-key"></i> «IF language == 'de'»Indexe«ELSE»Indexes«ENDIF»</h4>
+                <h4><i class="fa«IF application.targets('3.0')»s«ENDIF» fa-key"></i> «IF language == 'de'»Indexe«ELSE»Indexes«ENDIF»</h4>
                 «new TechStructureEntity().generateIndexes(it, language)»
             «ENDIF»
             «IF !actions.empty»
-                <h4><i class="fa fa-paw"></i> «IF language == 'de'»Aktionen«ELSE»Actions«ENDIF»</h4>
+                <h4><i class="fa«IF application.targets('3.0')»s«ENDIF» fa-paw"></i> «IF language == 'de'»Aktionen«ELSE»Actions«ENDIF»</h4>
                 «new TechStructureEntity().generateActions(it, language)»
             «ENDIF»
-            <h4><i class="fa fa-map-signs"></i> Workflow</h4>
+            <h4><i class="fa«IF application.targets('3.0')»s«ENDIF» fa-map-signs"></i> Workflow</h4>
             «new TechStructureEntity().generateWorkflows(it, language)»
-            <h4><i class="fa fa-magic"></i> «IF language == 'de'»Verhalten«ELSE»Behaviour«ENDIF»</h4>
+            <h4><i class="fa«IF application.targets('3.0')»s«ENDIF» fa-magic"></i> «IF language == 'de'»Verhalten«ELSE»Behaviour«ENDIF»</h4>
             «new TechStructureEntity().generateBehaviour(it, language)»
         «ENDIF»
     '''
 
     def dispatch private CharSequence variableInfo(Application it) '''
-        <h2><i class="fa fa-wrench"></i> «IF language == 'de'»Variablen zur Konfiguration«ELSE»Configuration variables«ENDIF»</h2>
+        <h2><i class="fa«IF targets('3.0')»s«ENDIF» fa-wrench"></i> «IF language == 'de'»Variablen zur Konfiguration«ELSE»Configuration variables«ENDIF»</h2>
         «FOR varContainer : getSortedVariableContainers»
             «varContainer.variableInfo»
         «ENDFOR»
     '''
 
     def dispatch private variableInfo(Variables it) '''
-        <h3><i class="fa fa-server"></i> «name.formatForDisplayCapital»</h3>
+        <h3><i class="fa«IF application.targets('3.0')»s«ENDIF» fa-server"></i> «name.formatForDisplayCapital»</h3>
         «IF null !== documentation && !documentation.empty»
             <p>«documentation»</p>
         «ENDIF»
@@ -127,13 +127,13 @@ class TechStructure {
         «ENDIF»
         <p>«IF language == 'de'»Kombination«ELSE»Composite«ENDIF»: «helper.flag(composite)»</p>
         «IF !fields.empty»
-            <h4><i class="fa fa-bars"></i> «IF language == 'de'»Felder«ELSE»Fields«ENDIF»</h4>
+            <h4><i class="fa«IF application.targets('3.0')»s«ENDIF» fa-bars"></i> «IF language == 'de'»Felder«ELSE»Fields«ENDIF»</h4>
             «new TechStructureFields().generate(it, language)»
         «ENDIF»
     '''
 
     def private settingsInfo(Application it) '''
-        <h2><i class="fa fa-puzzle-piece"></i> «IF language == 'de'»Integrationseinstellungen«ELSE»Integration settings«ENDIF»</h2>
+        <h2><i class="fa«IF targets('3.0')»s«ENDIF» fa-puzzle-piece"></i> «IF language == 'de'»Integrationseinstellungen«ELSE»Integration settings«ENDIF»</h2>
         «new TechStructureSettings().generate(it, language)»
     '''
 

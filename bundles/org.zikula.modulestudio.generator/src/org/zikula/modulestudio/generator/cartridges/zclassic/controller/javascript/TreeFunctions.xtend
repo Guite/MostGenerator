@@ -206,7 +206,7 @@ class TreeFunctions {
                     action: function (node) {
                         document.location.href = Routing.generate('«appName.formatForDB»_' + objectType.toLowerCase() + '_display', nodeEntityRouteArgs, true);
                     },
-                    icon: 'fa fa-fw fa-eye'
+                    icon: 'fa«IF targets('3.0')»s«ENDIF» fa-fw fa-eye'
                 };
             }
             if (true === hasEditAction) {
@@ -216,7 +216,7 @@ class TreeFunctions {
                     action: function (node) {
                         document.location.href = Routing.generate('«appName.formatForDB»_' + objectType.toLowerCase() + '_edit', nodeEntityRouteArgs, true);
                     },
-                    icon: 'fa fa-fw fa-«IF targets('3.0')»edit«ELSE»pencil-square-o«ENDIF»'
+                    icon: 'fa«IF targets('3.0')»s«ENDIF» fa-fw fa-«IF targets('3.0')»edit«ELSE»pencil-square-o«ENDIF»'
                 };
             }
             actions.addChildNode = {
@@ -225,7 +225,7 @@ class TreeFunctions {
                 action: function (node) {
                     «vendorAndName»PerformTreeOperation(objectType, rootId, 'addChildNode');
                 },
-                icon: 'fa fa-fw fa-plus'
+                icon: 'fa«IF targets('3.0')»s«ENDIF» fa-fw fa-plus'
             };
             actions.deleteNode = {
                 label: Translator.«IF targets('3.0')»trans«ELSE»__«ENDIF»('Delete'),
@@ -243,7 +243,7 @@ class TreeFunctions {
                         «vendorAndName»PerformTreeOperation(objectType, rootId, 'deleteNode');
                     }
                 },
-                icon: 'fa fa-fw fa-trash-«IF targets('3.0')»alt«ELSE»o«ENDIF»'
+                icon: 'fa«IF targets('3.0')»s«ENDIF» fa-fw fa-trash-«IF targets('3.0')»alt«ELSE»o«ENDIF»'
             };
         }
 
@@ -263,7 +263,7 @@ class TreeFunctions {
                 action: function (node) {
                     «vendorAndName»PerformTreeOperation(objectType, rootId, 'moveNodeTop');
                 },
-                icon: 'fa fa-fw fa-angle-double-up',
+                icon: 'fa«IF targets('3.0')»s«ENDIF» fa-fw fa-angle-double-up',
                 separator_before: true
             };
             actions.moveUp = {
@@ -272,7 +272,7 @@ class TreeFunctions {
                 action: function (node) {
                     «vendorAndName»PerformTreeOperation(objectType, rootId, 'moveNodeUp');
                 },
-                icon: 'fa fa-fw fa-angle-up'
+                icon: 'fa«IF targets('3.0')»s«ENDIF» fa-fw fa-angle-up'
             };
         }
         if (!currentNodeDom.is(':last-child')) {
@@ -283,7 +283,7 @@ class TreeFunctions {
                 action: function (node) {
                     «vendorAndName»PerformTreeOperation(objectType, rootId, 'moveNodeDown');
                 },
-                icon: 'fa fa-fw fa-angle-down',
+                icon: 'fa«IF targets('3.0')»s«ENDIF» fa-fw fa-angle-down',
                 separator_before: currentNodeDom.is(':first-child')
             };
             actions.moveBottom = {
@@ -292,7 +292,7 @@ class TreeFunctions {
                 action: function (node) {
                     «vendorAndName»PerformTreeOperation(objectType, rootId, 'moveNodeBottom');
                 },
-                icon: 'fa fa-fw fa-angle-double-down'
+                icon: 'fa«IF targets('3.0')»s«ENDIF» fa-fw fa-angle-double-down'
             };
         }
 

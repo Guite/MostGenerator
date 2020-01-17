@@ -135,7 +135,7 @@ class AutoCompletion {
                     id: elemPrefix + 'Remove',
                     href: 'javascript:«vendorAndName»RemoveRelatedItem(\'' + idPrefix + '\', ' + newItemId + ');'
                 }).append(
-                    jQuery('<span>', { class: 'fa fa-trash-«IF targets('3.0')»alt«ELSE»o«ENDIF»' })
+                    jQuery('<span>', { class: 'fa«IF targets('3.0')»s«ENDIF» fa-trash-«IF targets('3.0')»alt«ELSE»o«ENDIF»' })
                         .append(' ' + Translator.«IF targets('3.0')»trans«ELSE»__«ENDIF»('remove'))
                 )
             );

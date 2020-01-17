@@ -43,7 +43,7 @@ class ViewActions {
                         $menu[$title]->setLinkAttribute('class', '«IF app.targets('3.0')»d-none«ELSE»hidden«ENDIF»');
                         $menu[$title]->setLinkAttribute('data-object-type', $objectType);
                         $menu[$title]->setLinkAttribute('title', $title);
-                        $menu[$title]->setAttribute('icon', 'fa fa-plus');
+                        $menu[$title]->setAttribute('icon', 'fa«IF app.targets('3.0')»s«ENDIF» fa-plus');
                     }
                 «ENDIF»
                 $title = $this->«IF app.targets('3.0')»trans«ELSE»__«ENDIF»('Switch to table view'«IF !app.isSystemModule», «IF app.targets('3.0')»[], «ENDIF»'«app.appName.formatForDB»'«ENDIF»);
@@ -51,7 +51,7 @@ class ViewActions {
                     'route' => $routePrefix . $routeArea . 'view'
                 ]);
                 $menu[$title]->setLinkAttribute('title', $title);
-                $menu[$title]->setAttribute('icon', 'fa fa-table');
+                $menu[$title]->setAttribute('icon', 'fa«IF app.targets('3.0')»s«ENDIF» fa-table');
             }
         «ENDIF»
         «IF geographical»
@@ -71,7 +71,7 @@ class ViewActions {
                     'routeParameters' => ['tpl' => 'tree']
                 ]);
                 $menu[$title]->setLinkAttribute('title', $title);
-                $menu[$title]->setAttribute('icon', 'fa fa-code-«IF app.targets('3.0')»branch«ELSE»fork«ENDIF»');
+                $menu[$title]->setAttribute('icon', 'fa«IF app.targets('3.0')»s«ENDIF» fa-code-«IF app.targets('3.0')»branch«ELSE»fork«ENDIF»');
             «ENDIF»
             «IF geographical»
                 $title = $this->«IF app.targets('3.0')»trans«ELSE»__«ENDIF»('Show map'«IF !app.isSystemModule», «IF app.targets('3.0')»[], «ENDIF»'«app.appName.formatForDB»'«ENDIF»);
@@ -80,7 +80,7 @@ class ViewActions {
                     'routeParameters' => ['tpl' => 'map', 'all' => 1]
                 ]);
                 $menu[$title]->setLinkAttribute('title', $title);
-                $menu[$title]->setAttribute('icon', 'fa fa-map«IF !app.targets('3.0')»-o«ENDIF»');
+                $menu[$title]->setAttribute('icon', 'fa«IF app.targets('3.0')»s«ENDIF» fa-map«IF !app.targets('3.0')»-o«ENDIF»');
             «ENDIF»
             «linkToggleOwner»
             «IF loggable»
@@ -96,7 +96,7 @@ class ViewActions {
                         'routeParameters' => ['deleted' => 1]
                     ]);
                     $menu[$title]->setLinkAttribute('title', $title);
-                    $menu[$title]->setAttribute('icon', 'fa fa-trash-«IF app.targets('3.0')»alt«ELSE»o«ENDIF»');
+                    $menu[$title]->setAttribute('icon', 'fa«IF app.targets('3.0')»s«ENDIF» fa-trash-«IF app.targets('3.0')»alt«ELSE»o«ENDIF»');
                 }
             «ENDIF»
         }
@@ -116,7 +116,7 @@ class ViewActions {
                     'route' => $routePrefix . $routeArea . 'edit'
                 ]);
                 $menu[$title]->setLinkAttribute('title', $title);
-                $menu[$title]->setAttribute('icon', 'fa fa-plus');
+                $menu[$title]->setAttribute('icon', 'fa«IF application.targets('3.0')»s«ENDIF» fa-plus');
             }
         }
     '''
@@ -140,7 +140,7 @@ class ViewActions {
             'routeParameters' => $routeParameters
         ]);
         $menu[$title]->setLinkAttribute('title', $title);
-        $menu[$title]->setAttribute('icon', 'fa fa-table');
+        $menu[$title]->setAttribute('icon', 'fa«IF application.targets('3.0')»s«ENDIF» fa-table');
     '''
 
     def private linkToggleOwner(Entity it) '''
@@ -167,6 +167,6 @@ class ViewActions {
             'routeParameters' => $routeParameters
         ]);
         $menu[$title]->setLinkAttribute('title', $title);
-        $menu[$title]->setAttribute('icon', 'fa fa-' . $icon);
+        $menu[$title]->setAttribute('icon', 'fa«IF application.targets('3.0')»s«ENDIF» fa-' . $icon);
     '''
 }

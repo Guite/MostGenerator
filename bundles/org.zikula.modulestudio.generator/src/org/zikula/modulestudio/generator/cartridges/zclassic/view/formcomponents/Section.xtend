@@ -100,7 +100,7 @@ class Section {
                     </div>
                 «ELSE»
                     <fieldset id="moderationFieldsSection">
-                        <legend>«IF application.targets('3.0')»{% trans %}Moderation{% endtrans %}«ELSE»{{ __('Moderation') }}«ENDIF» <i class="fa fa-expand"></i></legend>
+                        <legend>«IF application.targets('3.0')»{% trans %}Moderation{% endtrans %}«ELSE»{{ __('Moderation') }}«ENDIF» <i class="fa«IF application.targets('3.0')»s«ENDIF» fa-expand"></i></legend>
                         <div id="moderationFieldsContent">
                             {% if form.moderationSpecificCreator is defined %}
                                 {{ form_row(form.moderationSpecificCreator) }}

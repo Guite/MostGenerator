@@ -39,7 +39,7 @@ class ViewQuickNavForm {
             {{ form_start(quickNavForm, {attr: {id: '«application.appName.toFirstLower»«name.formatForCodeCapital»QuickNavForm', class: '«application.appName.toLowerCase»-quicknav «IF application.targets('3.0')»form-inline«ELSE»navbar-form«ENDIF»', role: 'navigation'}}) }}
             {{ form_errors(quickNavForm) }}
             <a href="#collapse«name.formatForCodeCapital»QuickNav" role="button" data-toggle="collapse" class="btn btn-«IF application.targets('3.0')»secondary«ELSE»default«ENDIF»" aria-expanded="false" aria-controls="collapse«name.formatForCodeCapital»QuickNav">
-                <i class="fa fa-filter" aria-hidden="true"></i> «IF application.targets('3.0')»{% trans %}Filter{% endtrans %}«ELSE»{{ __('Filter') }}«ENDIF»
+                <i class="fa«IF application.targets('3.0')»s«ENDIF» fa-filter" aria-hidden="true"></i> «IF application.targets('3.0')»{% trans %}Filter{% endtrans %}«ELSE»{{ __('Filter') }}«ENDIF»
             </a>
             <div id="collapse«name.formatForCodeCapital»QuickNav" class="collapse">
                 «IF application.targets('3.0')»
