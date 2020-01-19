@@ -3,7 +3,6 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.models.business
 import de.guite.modulestudio.metamodel.AbstractIntegerField
 import de.guite.modulestudio.metamodel.AbstractStringField
 import de.guite.modulestudio.metamodel.ArrayField
-import de.guite.modulestudio.metamodel.ArrayType
 import de.guite.modulestudio.metamodel.BooleanField
 import de.guite.modulestudio.metamodel.DataObject
 import de.guite.modulestudio.metamodel.DatetimeField
@@ -305,9 +304,6 @@ class ValidationConstraints {
         «' '»* @Assert\Type(type="array")
         «IF max > 0»
             «' '»* @Assert\Count(min="«min»", max="«max»")
-        «ENDIF»
-        «IF arrayType == ArrayType.JSON_ARRAY && application.targets('3.0')»
-            «' '»* @Assert\Json
         «ENDIF»
     '''
     def dispatch fieldAnnotations(ObjectField it) '''
