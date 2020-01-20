@@ -144,7 +144,6 @@ class ItemActions {
                 $menu->addChild(«IF !app.targets('3.0')»$this->__(«ENDIF»'«nameMultiple.formatForDisplayCapital» list'«IF !app.targets('3.0')»«IF !app.isSystemModule», '«app.appName.formatForDB»'«ENDIF»)«ENDIF», [
                     'route' => $routePrefix . $routeArea . 'view'
                 ])
-                    ->setLinkAttribute('title', $title)
                     «app.addLinkClass(if (app.targets('3.0')) 'secondary' else 'default')»
                     «app.addIcon('reply')»
                 ;
@@ -172,7 +171,6 @@ class ItemActions {
                                 'route' => '«app.appName.formatForDB»_«otherEntity.name.formatForDB»_' . $routeArea . 'edit',
                                 'routeParameters' => ['«relationAliasNameParam»' => $entity->«IF hasSluggableFields && slugUnique»getSlug()«ELSE»getKey()«ENDIF»]
                             ])
-                                ->setLinkAttribute('title', $title)
                                 «app.addLinkClass(if (app.targets('3.0')) 'secondary' else 'default')»
                                 «app.addIcon('plus')»
                             ;
@@ -182,7 +180,6 @@ class ItemActions {
                             'route' => '«app.appName.formatForDB»_«otherEntity.name.formatForDB»_' . $routeArea . 'edit',
                             'routeParameters' => ['«relationAliasNameParam»' => $entity->«IF hasSluggableFields && slugUnique»getSlug()«ELSE»getKey()«ENDIF»]
                         ])
-                            ->setLinkAttribute('title', $title)
                             «app.addLinkClass(if (app.targets('3.0')) 'secondary' else 'default')»
                             «app.addIcon('plus')»
                         ;
