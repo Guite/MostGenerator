@@ -64,7 +64,7 @@ class MenuLinksHelperFunctions {
     '''
 
     def private menuLinksBetweenControllers(Application it) '''
-        if (LinkContainerInterface::TYPE_ADMIN === $type) {
+        if («IF targets('3.0')»self«ELSE»LinkContainerInterface«ENDIF»::TYPE_ADMIN === $type) {
             if ($this->permissionHelper->hasPermission(ACCESS_READ)) {
                 «IF targets('3.0')»
                     $menu->addChild(«translate('Frontend')», [
