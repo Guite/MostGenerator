@@ -35,23 +35,21 @@ class ViewActions {
             if ('tree' === $currentTemplate) {
                 «IF hasEditAction»
                     if ($this->permissionHelper->hasComponentPermission($objectType, ACCESS_«IF workflow == EntityWorkflowType.NONE»EDIT«ELSE»COMMENT«ENDIF»)) {
-                        $title = «IF !app.targets('3.0')»$this->__(«ENDIF»'Add root node'«IF !app.targets('3.0')»«IF !app.isSystemModule», '«app.appName.formatForDB»'«ENDIF»)«ENDIF»;
-                        $menu->addChild($title, [
+                        $menu->addChild(«IF !app.targets('3.0')»$this->__(«ENDIF»'Add root node'«IF !app.targets('3.0')»«IF !app.isSystemModule», '«app.appName.formatForDB»'«ENDIF»)«ENDIF», [
                             'uri' => 'javascript:void(0)'
-                        ]);
-                        $menu[$title]->setLinkAttribute('id', 'treeAddRoot');
-                        $menu[$title]->setLinkAttribute('class', '«IF app.targets('3.0')»d-none«ELSE»hidden«ENDIF»');
-                        $menu[$title]->setLinkAttribute('data-object-type', $objectType);
-                        $menu[$title]->setLinkAttribute('title', $title);
-                        $menu[$title]->setAttribute('icon', 'fa«IF app.targets('3.0')»s«ENDIF» fa-plus');
+                        ])
+                            ->setLinkAttribute('id', 'treeAddRoot')
+                            ->setLinkAttribute('class', '«IF app.targets('3.0')»d-none«ELSE»hidden«ENDIF»')
+                            ->setLinkAttribute('data-object-type', $objectType)
+                            ->setAttribute('icon', 'fa«IF app.targets('3.0')»s«ENDIF» fa-plus')
+                        ;
                     }
                 «ENDIF»
-                $title = «IF !app.targets('3.0')»$this->__(«ENDIF»'Switch to table view'«IF !app.targets('3.0')»«IF !app.isSystemModule», '«app.appName.formatForDB»'«ENDIF»)«ENDIF»;
-                $menu->addChild($title, [
+                $menu->addChild(«IF !app.targets('3.0')»$this->__(«ENDIF»'Switch to table view'«IF !app.targets('3.0')»«IF !app.isSystemModule», '«app.appName.formatForDB»'«ENDIF»)«ENDIF», [
                     'route' => $routePrefix . $routeArea . 'view'
-                ]);
-                $menu[$title]->setLinkAttribute('title', $title);
-                $menu[$title]->setAttribute('icon', 'fa«IF app.targets('3.0')»s«ENDIF» fa-table');
+                ])
+                    ->setAttribute('icon', 'fa«IF app.targets('3.0')»s«ENDIF» fa-table')
+                ;
             }
         «ENDIF»
         «IF geographical»
@@ -65,22 +63,20 @@ class ViewActions {
             «linkToEntityCreation»
             «linkTogglePagination»
             «IF tree != EntityTreeType.NONE»
-                $title = «IF !app.targets('3.0')»$this->__(«ENDIF»'Switch to hierarchy view'«IF !app.targets('3.0')»«IF !app.isSystemModule», '«app.appName.formatForDB»'«ENDIF»)«ENDIF»;
-                $menu->addChild($title, [
+                $menu->addChild(«IF !app.targets('3.0')»$this->__(«ENDIF»'Switch to hierarchy view'«IF !app.targets('3.0')»«IF !app.isSystemModule», '«app.appName.formatForDB»'«ENDIF»)«ENDIF», [
                     'route' => $routePrefix . $routeArea . 'view',
                     'routeParameters' => ['tpl' => 'tree']
-                ]);
-                $menu[$title]->setLinkAttribute('title', $title);
-                $menu[$title]->setAttribute('icon', 'fa«IF app.targets('3.0')»s«ENDIF» fa-code-«IF app.targets('3.0')»branch«ELSE»fork«ENDIF»');
+                ])
+                    ->setAttribute('icon', 'fa«IF app.targets('3.0')»s«ENDIF» fa-code-«IF app.targets('3.0')»branch«ELSE»fork«ENDIF»')
+                ;
             «ENDIF»
             «IF geographical»
-                $title = «IF !app.targets('3.0')»$this->__(«ENDIF»'Show map'«IF !app.targets('3.0')»«IF !app.isSystemModule», '«app.appName.formatForDB»'«ENDIF»)«ENDIF»;
-                $menu->addChild($title, [
+                $menu->addChild(«IF !app.targets('3.0')»$this->__(«ENDIF»'Show map'«IF !app.targets('3.0')»«IF !app.isSystemModule», '«app.appName.formatForDB»'«ENDIF»)«ENDIF», [
                     'route' => $routePrefix . $routeArea . 'view',
                     'routeParameters' => ['tpl' => 'map', 'all' => 1]
-                ]);
-                $menu[$title]->setLinkAttribute('title', $title);
-                $menu[$title]->setAttribute('icon', 'fa«IF app.targets('3.0')»s«ENDIF» fa-map«IF !app.targets('3.0')»-o«ENDIF»');
+                ])
+                    ->setAttribute('icon', 'fa«IF app.targets('3.0')»s«ENDIF» fa-map«IF !app.targets('3.0')»-o«ENDIF»')
+                ;
             «ENDIF»
             «linkToggleOwner»
             «IF loggable»
@@ -90,13 +86,12 @@ class ViewActions {
                     $hasDeletedEntities = $this->loggableHelper->hasDeletedEntities($objectType);
                 }
                 if ($hasDeletedEntities) {
-                    $title = «IF !app.targets('3.0')»$this->__(«ENDIF»'View deleted «nameMultiple.formatForDisplay»'«IF !app.targets('3.0')»«IF !app.isSystemModule», '«app.appName.formatForDB»'«ENDIF»)«ENDIF»;
-                    $menu->addChild($title, [
+                    $menu->addChild(«IF !app.targets('3.0')»$this->__(«ENDIF»'View deleted «nameMultiple.formatForDisplay»'«IF !app.targets('3.0')»«IF !app.isSystemModule», '«app.appName.formatForDB»'«ENDIF»)«ENDIF», [
                         'route' => $routePrefix . $routeArea . 'view',
                         'routeParameters' => ['deleted' => 1]
-                    ]);
-                    $menu[$title]->setLinkAttribute('title', $title);
-                    $menu[$title]->setAttribute('icon', 'fa«IF app.targets('3.0')»s«ENDIF» fa-trash-«IF app.targets('3.0')»alt«ELSE»o«ENDIF»');
+                    ])
+                        ->setAttribute('icon', 'fa«IF app.targets('3.0')»s«ENDIF» fa-trash-«IF app.targets('3.0')»alt«ELSE»o«ENDIF»')
+                    ;
                 }
             «ENDIF»
         }
@@ -111,12 +106,11 @@ class ViewActions {
         $canBeCreated = $this->modelHelper->canBeCreated($objectType);
         if ($canBeCreated) {
             if ($this->permissionHelper->hasComponentPermission($objectType, ACCESS_«IF workflow == EntityWorkflowType.NONE»EDIT«ELSE»COMMENT«ENDIF»)) {
-                $title = «IF !application.targets('3.0')»$this->__(«ENDIF»'Create «name.formatForDisplay»'«IF !application.targets('3.0')»«IF !application.isSystemModule», '«application.appName.formatForDB»'«ENDIF»)«ENDIF»;
-                $menu->addChild($title, [
+                $menu->addChild(«IF !application.targets('3.0')»$this->__(«ENDIF»'Create «name.formatForDisplay»'«IF !application.targets('3.0')»«IF !application.isSystemModule», '«application.appName.formatForDB»'«ENDIF»)«ENDIF», [
                     'route' => $routePrefix . $routeArea . 'edit'
-                ]);
-                $menu[$title]->setLinkAttribute('title', $title);
-                $menu[$title]->setAttribute('icon', 'fa«IF application.targets('3.0')»s«ENDIF» fa-plus');
+                ])
+                    ->setAttribute('icon', 'fa«IF application.targets('3.0')»s«ENDIF» fa-plus')
+                ;
             }
         }
     '''
@@ -130,17 +124,21 @@ class ViewActions {
         }
         if (1 === $query->getInt('all')) {
             unset($routeParameters['all']);
-            $title = «IF !application.targets('3.0')»$this->__(«ENDIF»'Back to paginated view'«IF !application.targets('3.0')»«IF !application.isSystemModule», '«application.appName.formatForDB»'«ENDIF»)«ENDIF»;
+            $menu->addChild(«IF !application.targets('3.0')»$this->__(«ENDIF»'Back to paginated view'«IF !application.targets('3.0')»«IF !application.isSystemModule», '«application.appName.formatForDB»'«ENDIF»)«ENDIF», [
+                'route' => $routePrefix . $routeArea . 'view',
+                'routeParameters' => $routeParameters
+            ])
+                ->setAttribute('icon', 'fa«IF application.targets('3.0')»s«ENDIF» fa-table')
+            ;
         } else {
             $routeParameters['all'] = 1;
-            $title = «IF !application.targets('3.0')»$this->__(«ENDIF»'Show all entries'«IF !application.targets('3.0')»«IF !application.isSystemModule», '«application.appName.formatForDB»'«ENDIF»)«ENDIF»;
+            $menu->addChild(«IF !application.targets('3.0')»$this->__(«ENDIF»'Show all entries'«IF !application.targets('3.0')»«IF !application.isSystemModule», '«application.appName.formatForDB»'«ENDIF»)«ENDIF», [
+                'route' => $routePrefix . $routeArea . 'view',
+                'routeParameters' => $routeParameters
+            ])
+                ->setAttribute('icon', 'fa«IF application.targets('3.0')»s«ENDIF» fa-table')
+            ;
         }
-        $menu->addChild($title, [
-            'route' => $routePrefix . $routeArea . 'view',
-            'routeParameters' => $routeParameters
-        ]);
-        $menu[$title]->setLinkAttribute('title', $title);
-        $menu[$title]->setAttribute('icon', 'fa«IF application.targets('3.0')»s«ENDIF» fa-table');
     '''
 
     def private linkToggleOwner(Entity it) '''
@@ -155,18 +153,20 @@ class ViewActions {
         $routeParameters = $query->all();
         if (1 === $query->getInt('own')) {
             unset($routeParameters['own']);
-            $title = «IF !application.targets('3.0')»$this->__(«ENDIF»'Show also entries from other users'«IF !application.targets('3.0')»«IF !application.isSystemModule», '«application.appName.formatForDB»'«ENDIF»)«ENDIF»;
-            $icon = 'users';
+            $menu->addChild(«IF !application.targets('3.0')»$this->__(«ENDIF»'Show also entries from other users'«IF !application.targets('3.0')»«IF !application.isSystemModule», '«application.appName.formatForDB»'«ENDIF»)«ENDIF», [
+                'route' => $routePrefix . $routeArea . 'view',
+                'routeParameters' => $routeParameters
+            ])
+                ->setAttribute('icon', 'fa«IF application.targets('3.0')»s«ENDIF» fa-users')
+            ;
         } else {
             $routeParameters['own'] = 1;
-            $title = «IF !application.targets('3.0')»$this->__(«ENDIF»'Show only own entries'«IF !application.targets('3.0')»«IF !application.isSystemModule», '«application.appName.formatForDB»'«ENDIF»)«ENDIF»;
-            $icon = 'user';
+            $menu->addChild(«IF !application.targets('3.0')»$this->__(«ENDIF»'Show only own entries'«IF !application.targets('3.0')»«IF !application.isSystemModule», '«application.appName.formatForDB»'«ENDIF»)«ENDIF», [
+                'route' => $routePrefix . $routeArea . 'view',
+                'routeParameters' => $routeParameters
+            ])
+                ->setAttribute('icon', 'fa«IF application.targets('3.0')»s«ENDIF» fa-user')
+            ;
         }
-        $menu->addChild($title, [
-            'route' => $routePrefix . $routeArea . 'view',
-            'routeParameters' => $routeParameters
-        ]);
-        $menu[$title]->setLinkAttribute('title', $title);
-        $menu[$title]->setAttribute('icon', 'fa«IF application.targets('3.0')»s«ENDIF» fa-' . $icon);
     '''
 }

@@ -110,7 +110,9 @@ class ExtensionMenu {
                                     $menu->addChild('My «entity.nameMultiple.formatForDisplay»', [
                                         'route' => '«appName.formatForDB»_' . strtolower($objectType) . '_view',
                                         'routeParameters' => $routeParameters
-                                    ])->setAttribute('icon', 'fas fa-list-alt');
+                                    ])
+                                        ->setAttribute('icon', 'fas fa-list-alt')
+                                    ;
                                 }
                             }
 
@@ -118,7 +120,9 @@ class ExtensionMenu {
                         if ($this->permissionHelper->hasPermission(ACCESS_ADMIN)) {
                             $menu->addChild('«name.formatForDisplayCapital» Backend', [
                                 'route' => '«appName.formatForDB»_«getLeadingEntity.name.formatForDB»_admin«getLeadingEntity.getPrimaryAction»'
-                            ])->setAttribute('icon', 'fas fa-wrench');
+                            ])
+                                ->setAttribute('icon', 'fas fa-wrench')
+                            ;
                         }
 
                     «ENDIF»
