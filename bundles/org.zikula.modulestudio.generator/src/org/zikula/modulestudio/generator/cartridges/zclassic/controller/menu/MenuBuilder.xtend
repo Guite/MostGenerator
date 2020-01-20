@@ -1,4 +1,4 @@
-package org.zikula.modulestudio.generator.cartridges.zclassic.controller
+package org.zikula.modulestudio.generator.cartridges.zclassic.controller.menu
 
 import de.guite.modulestudio.metamodel.Application
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
@@ -30,12 +30,10 @@ class MenuBuilder {
         use Knp\Menu\ItemInterface;
         use Symfony\«IF targets('3.0')»Contracts«ELSE»Component«ENDIF»\EventDispatcher\EventDispatcherInterface;
         use Symfony\Component\HttpFoundation\RequestStack;
-        «IF targets('3.0')»
-            use Symfony\Contracts\Translation\TranslatorInterface;
-        «ELSE»
+        «IF !targets('3.0')»
             use Zikula\Common\Translator\TranslatorInterface;
+            use Zikula\Common\Translator\TranslatorTrait;
         «ENDIF»
-        use Zikula\Common\Translator\TranslatorTrait;
         «IF hasViewActions»
             use Zikula\ExtensionsModule\Api\ApiInterface\VariableApiInterface;
         «ENDIF»
@@ -72,8 +70,10 @@ class MenuBuilder {
     '''
 
     def private menuBuilderClassBaseImpl(Application it) '''
-        use TranslatorTrait;
+        «IF !targets('3.0')»
+            use TranslatorTrait;
 
+        «ENDIF»
         /**
          * @var FactoryInterface
          */
@@ -128,7 +128,9 @@ class MenuBuilder {
         «ENDIF»
 
         public function __construct(
-            TranslatorInterface $translator,
+            «IF !targets('3.0')»
+                TranslatorInterface $translator,
+            «ENDIF»
             FactoryInterface $factory,
             EventDispatcherInterface $eventDispatcher,
             RequestStack $requestStack,
@@ -143,7 +145,9 @@ class MenuBuilder {
             VariableApiInterface $variableApi«ENDIF»«IF hasViewActions && hasEditActions»,
             ModelHelper $modelHelper«ENDIF»
         ) {
-            $this->setTranslator($translator);
+            «IF !targets('3.0')»
+                $this->setTranslator($translator);
+            «ENDIF»
             $this->factory = $factory;
             $this->eventDispatcher = $eventDispatcher;
             $this->requestStack = $requestStack;

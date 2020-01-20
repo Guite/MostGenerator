@@ -14,6 +14,8 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.controller.addition
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.additions.ExternalController
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.additions.Scribite
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype.QuickNavigationType
+import org.zikula.modulestudio.generator.cartridges.zclassic.controller.menu.ExtensionMenu
+import org.zikula.modulestudio.generator.cartridges.zclassic.controller.menu.MenuBuilder
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.Routing
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.DateTimeExtensions
@@ -50,7 +52,7 @@ class ControllerLayer {
             new ConfigController().generate(it, fsa)
         }
 
-        new LinkContainer().generate(it, fsa)
+        new ExtensionMenu().generate(it, fsa)
         new MenuBuilder().generate(it, fsa)
         new Routing().generate(it, fsa)
         if (hasViewActions) {
