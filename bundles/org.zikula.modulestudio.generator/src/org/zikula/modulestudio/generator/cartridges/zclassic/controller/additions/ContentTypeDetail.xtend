@@ -86,12 +86,12 @@ class ContentTypeDetail {
 
         public function getTitle()«IF targets('3.0')»: string«ENDIF»
         {
-            return $this->translator->«IF targets('3.0')»trans«ELSE»__«ENDIF»('«name.formatForDisplayCapital» detail', '«appName.formatForDB»');
+            return $this->translator->«IF targets('3.0')»trans«ELSE»__«ENDIF»('«name.formatForDisplayCapital» detail', «IF targets('3.0')»[], «ENDIF»'«appName.formatForDB»');
         }
 
         public function getDescription()«IF targets('3.0')»: string«ENDIF»
         {
-            return $this->translator->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Display or link a single «name.formatForDisplay» object.', '«appName.formatForDB»');
+            return $this->translator->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Display or link a single «name.formatForDisplay» object.', «IF targets('3.0')»[], «ENDIF»'«appName.formatForDB»');
         }
 
         public function getDefaultData()«IF targets('3.0')»: array«ENDIF»
