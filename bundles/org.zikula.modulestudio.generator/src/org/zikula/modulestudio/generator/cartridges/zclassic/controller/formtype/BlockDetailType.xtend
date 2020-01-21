@@ -39,6 +39,10 @@ class BlockDetailType {
         use «nsSymfonyFormType»TextType;
         use Symfony\Component\Form\FormBuilderInterface;
         use Symfony\Component\OptionsResolver\OptionsResolver;
+        «IF targets('3.0')»
+            use Translation\Extractor\Annotation\Ignore;
+            use Translation\Extractor\Annotation\Translate;
+        «ENDIF»
         «IF !targets('3.0')»
             use Zikula\Common\Translator\TranslatorInterface;
             use Zikula\Common\Translator\TranslatorTrait;
@@ -162,7 +166,7 @@ class BlockDetailType {
             $builder->add('id', ChoiceType::class, [
                 'multiple' => false,
                 'expanded' => false,
-                'choices' => $choices,
+                'choices' => «IF targets('3.0')»/** @Ignore */«ENDIF»$choices,
                 «IF !targets('2.0')»
                     'choices_as_values' => true,
                 «ENDIF»
@@ -186,9 +190,12 @@ class BlockDetailType {
                         'maxlength' => 80,
                         'title' => «IF !targets('3.0')»$this->__(«ENDIF»'Example'«IF !targets('3.0')»«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»)«ENDIF» . ': displaySpecial.html.twig'
                     ],
+                    «IF targets('3.0')»
+                        /** @Ignore */
+                    «ENDIF»
                     'help' => [
-                        «IF !targets('3.0')»$this->__(«ENDIF»'Example'«IF !targets('3.0')»«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»)«ENDIF» . ': <code>displaySpecial.html.twig</code>',
-                        «IF !targets('3.0')»$this->__(«ENDIF»'Needs to be located in the "External/YourEntity/" directory.'«IF !targets('3.0')»«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»)«ENDIF»
+                        «IF targets('3.0')»/** @Translate */«ELSE»$this->__(«ENDIF»'Example'«IF !targets('3.0')»«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»)«ENDIF» . ': <code>displaySpecial.html.twig</code>',
+                        «IF targets('3.0')»/** @Translate */«ELSE»$this->__(«ENDIF»'Needs to be located in the "External/YourEntity/" directory.'«IF !targets('3.0')»«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»)«ENDIF»
                     ]«IF targets('3.0')»,
                     'help_html' => true«ENDIF»
                 ])

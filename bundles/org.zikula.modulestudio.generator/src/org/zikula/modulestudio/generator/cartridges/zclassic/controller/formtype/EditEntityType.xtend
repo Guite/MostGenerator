@@ -499,9 +499,12 @@ class EditEntityType {
                     «IF slugUnique»
                         'class' => 'validate-unique',
                     «ENDIF»
-                    'title' => «IF app.targets('3.0')»/** @Ignore */«ENDIF»$helpText
+                    'title' => $helpText
                 ],
-                'help' => «IF app.targets('3.0')»/** @Ignore */«ENDIF»$helpText
+                «IF app.targets('3.0')»
+                    /** @Ignore */
+                «ENDIF»
+                'help' => $helpText
             ]);
         «ENDIF»
     '''

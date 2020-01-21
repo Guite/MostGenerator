@@ -40,6 +40,10 @@ class ContentTypeListType {
         use «nsSymfonyFormType»TextType;
         use Symfony\Component\Form\FormBuilderInterface;
         use Symfony\Component\OptionsResolver\OptionsResolver;
+        «IF targets('3.0')»
+            use Translation\Extractor\Annotation\Ignore;
+            use Translation\Extractor\Annotation\Translate;
+        «ENDIF»
         «IF hasCategorisableEntities»
             use Zikula\CategoriesModule\Entity\RepositoryInterface\CategoryRepositoryInterface;
             use Zikula\CategoriesModule\Form\Type\CategoriesType;
@@ -157,7 +161,7 @@ class ContentTypeListType {
         public function addObjectTypeField(FormBuilderInterface $builder, array $options = [])«IF targets('3.0')»: void«ENDIF»
         {
             «IF targets('3.0')»
-                $helpText = 'If you change this please save the element once to reload the parameters below.';
+                $helpText = /** @Translate */'If you change this please save the element once to reload the parameters below.';
             «ELSE»
                 $helpText = $this->__(
                     'If you change this please save the element once to reload the parameters below.'«IF !isSystemModule»,
@@ -171,6 +175,9 @@ class ContentTypeListType {
                     'attr' => [
                         'title' => $helpText
                     ],
+                    «IF targets('3.0')»
+                        /** @Ignore */
+                    «ENDIF»
                     'help' => $helpText,
                     'choices' => [
                         «FOR entity : getAllEntities»
@@ -196,12 +203,15 @@ class ContentTypeListType {
 
             $objectType = $options['object_type'];
             $label = $hasMultiSelection
-                ? «IF !targets('3.0')»$this->__(«ENDIF»'Categories'«IF !targets('3.0')»«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»)«ENDIF»
-                : «IF !targets('3.0')»$this->__(«ENDIF»'Category'«IF !targets('3.0')»«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»)«ENDIF»
+                ? «IF targets('3.0')»/** @Translate */«ELSE»$this->__(«ENDIF»'Categories'«IF !targets('3.0')»«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»)«ENDIF»
+                : «IF targets('3.0')»/** @Translate */«ELSE»$this->__(«ENDIF»'Category'«IF !targets('3.0')»«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»)«ENDIF»
             ;
             $hasMultiSelection = $options['category_helper']->hasMultipleSelection($objectType);
             $entityCategoryClass = '«appNamespace»\Entity\\' . ucfirst($objectType) . 'CategoryEntity';
             $builder->add('categories', CategoriesType::class, [
+                «IF targets('3.0')»
+                    /** @Ignore */
+                «ENDIF»
                 'label' => $label . ':',
                 'empty_data' => $hasMultiSelection ? [] : null,
                 'attr' => [
@@ -282,8 +292,8 @@ class ContentTypeListType {
          */
         public function addAmountField(FormBuilderInterface $builder, array $options = [])«IF targets('3.0')»: void«ENDIF»
         {
-            $helpText = «IF !targets('3.0')»$this->__(«ENDIF»'The maximum amount of items to be shown.'«IF !targets('3.0')»«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»)«ENDIF»
-                . ' ' . «IF !targets('3.0')»$this->__(«ENDIF»'Only digits are allowed.'«IF !targets('3.0')»«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»)«ENDIF»
+            $helpText = «IF targets('3.0')»/** @Translate */«ELSE»$this->__(«ENDIF»'The maximum amount of items to be shown.'«IF !targets('3.0')»«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»)«ENDIF»
+                . ' ' . «IF targets('3.0')»/** @Translate */«ELSE»$this->__(«ENDIF»'Only digits are allowed.'«IF !targets('3.0')»«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»)«ENDIF»
             ;
             $builder->add('amount', IntegerType::class, [
                 'label' => «IF !targets('3.0')»$this->__(«ENDIF»'Amount:'«IF !targets('3.0')»«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»)«ENDIF»,
@@ -291,6 +301,9 @@ class ContentTypeListType {
                     'maxlength' => 2,
                     'title' => $helpText
                 ],
+                «IF targets('3.0')»
+                    /** @Ignore */
+                «ENDIF»
                 'help' => $helpText,
                 'empty_data' => 5
             ]);
@@ -322,7 +335,10 @@ class ContentTypeListType {
                     'maxlength' => 80,
                     'title' => «IF !targets('3.0')»$this->__(«ENDIF»'Example'«IF !targets('3.0')»«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»)«ENDIF» . ': ' . $exampleTemplate
                 ],
-                'help' => «IF !targets('3.0')»$this->__(«ENDIF»'Example'«IF !targets('3.0')»«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»)«ENDIF» . ': <code>' . $exampleTemplate . '</code>'«IF targets('3.0')»,
+                «IF targets('3.0')»
+                    /** @Ignore */
+                «ENDIF»
+                'help' => «IF targets('3.0')»/** @Translate */«ELSE»$this->__(«ENDIF»'Example'«IF !targets('3.0')»«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»)«ENDIF» . ': <code>' . $exampleTemplate . '</code>'«IF targets('3.0')»,
                 'help_html' => true«ENDIF»
             ]);
         }
@@ -341,7 +357,10 @@ class ContentTypeListType {
                     'maxlength' => 255,
                     'title' => «IF !targets('3.0')»$this->__(«ENDIF»'Example'«IF !targets('3.0')»«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»)«ENDIF» . ': tbl.age >= 18'
                 ],
-                'help' => «IF !targets('3.0')»$this->__(«ENDIF»'Example'«IF !targets('3.0')»«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»)«ENDIF» . ': tbl.age >= 18'
+                «IF targets('3.0')»
+                    /** @Ignore */
+                «ENDIF»
+                'help' => «IF targets('3.0')»/** @Translate */«ELSE»$this->__(«ENDIF»'Example'«IF !targets('3.0')»«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»)«ENDIF» . ': tbl.age >= 18'
             ]);
         }
     '''
